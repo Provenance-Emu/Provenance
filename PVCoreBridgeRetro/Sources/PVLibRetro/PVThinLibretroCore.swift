@@ -267,6 +267,7 @@ class PVThinLibretroCore: PVEmulatorCore {
     /// Re-seeds on every launch so tvOS Caches purges don't break PSP font rendering.
     /// The PSP system directory path is derived from `BIOSPath` using the same
     /// two-component strip used by `PVThinLibretroFrontend._systemSpecificDirectory`.
+    /// Only `.pgf` files are copied — other resource types are left untouched.
     private func seedPSPFlash0Assets() {
         guard let biosPath = BIOSPath, !biosPath.isEmpty else {
             WLOG("ThinCore: PSP font seeding skipped — BIOSPath not set")
@@ -300,13 +301,29 @@ class PVThinLibretroCore: PVEmulatorCore {
             let fontSrc = bundleResourceURL.appendingPathComponent("flash0/font").path
             guard fm.fileExists(atPath: fontSrc) else { continue }
             guard let fonts = try? fm.contentsOfDirectory(atPath: fontSrc) else { continue }
-            for font in fonts {
+            let pgfFonts = fonts.filter { $0.lowercased().hasSuffix(".pgf") }
+            guard !pgfFonts.isEmpty else {
+                WLOG("ThinCore: flash0/font bundle dir found but contains no .pgf files: \(fontSrc)")
+                return
+            }
+            var seededCount = 0
+            for font in pgfFonts {
                 let src = URL(fileURLWithPath: fontSrc).appendingPathComponent(font).path
                 let dst = URL(fileURLWithPath: fontDest).appendingPathComponent(font).path
-                // Silently skip if destination already exists — intentional (same as PPSSPPGameCore.mm)
-                try? fm.copyItem(atPath: src, toPath: dst)
+                // Skip if already seeded — idempotent (tvOS Caches purge will clear fontDest, re-triggering copy).
+                guard !fm.fileExists(atPath: dst) else { continue }
+                do {
+                    try fm.copyItem(atPath: src, toPath: dst)
+                    seededCount += 1
+                } catch {
+                    WLOG("ThinCore: failed to copy PSP font \(font): \(error.localizedDescription)")
+                }
             }
-            ILOG("ThinCore: seeded PSP flash0/font from \(fontSrc) → \(fontDest)")
+            if seededCount > 0 {
+                ILOG("ThinCore: seeded \(seededCount) PSP .pgf font(s) from \(fontSrc) → \(fontDest)")
+            } else {
+                DLOG("ThinCore: PSP fonts already seeded in \(fontDest) (\(pgfFonts.count) files)")
+            }
             return
         }
         WLOG("ThinCore: no flash0/font bundle directory found — PPSSPP may render without fonts")
@@ -360,11 +377,11 @@ class PVThinLibretroCore: PVEmulatorCore {
         // Rewrite szTosImageFileName in hatari.cfg
         guard let cfgContent = try? String(contentsOfFile: cfgPath, encoding: .utf8) else { return }
         let updated = cfgContent.components(separatedBy: "\n").map { line -> String in
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            if trimmed.hasPrefix("szTosImageFileName") {
-                return "szTosImageFileName = \(tos)"
-            }
-            return line
+            // Match the key with optional leading whitespace; preserve the indentation prefix.
+            let stripped = line.trimmingCharacters(in: .whitespaces)
+            guard stripped.hasPrefix("szTosImageFileName") else { return line }
+            let indent = line.prefix(while: { $0 == " " || $0 == "\t" })
+            return "\(indent)szTosImageFileName = \(tos)"
         }.joined(separator: "\n")
 
         do {
