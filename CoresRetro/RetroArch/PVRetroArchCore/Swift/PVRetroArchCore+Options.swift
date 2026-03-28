@@ -743,11 +743,14 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                     } else {
                         // Existing file: rebuild from full content, patching only what we must.
                         // This preserves user-configured audio, video, gameplay, and pak options.
+                        // Strip the old rsp-plugin line; we'll re-append with the correct value.
+                        // Using De Morgan's form for clarity: keep comment lines OR non-rsp-plugin lines.
                         var mergedLines = existingMupenOpt.components(separatedBy: "\n")
                             .filter { line in
-                                // Strip the old rsp-plugin line; we'll re-add with correct value.
-                                !(!line.hasPrefix("#") && line.hasPrefix("mupen64plus-rsp-plugin"))
+                                line.hasPrefix("#") || !line.hasPrefix("mupen64plus-rsp-plugin")
                             }
+                        // Drop trailing empty strings so appended lines don't produce blank-line gaps.
+                        while mergedLines.last == "" { mergedLines.removeLast() }
                         mergedLines.append("mupen64plus-rsp-plugin = \"cxd4\"")
                         ILOG("Mupen64Plus-Next: patched rsp-plugin = cxd4 in existing .opt")
                         // Add pak1 default only if absent (honour user-configured pak type).
@@ -758,14 +761,14 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                         } else {
                             ILOG("Mupen64Plus-Next: preserving existing pak1 setting in .opt")
                         }
-                        let merged = mergedLines.joined(separator: "\n")
-                        optionValues = merged.hasSuffix("\n") ? merged : merged + "\n"
+                        optionValues = mergedLines.joined(separator: "\n") + "\n"
                     }
                     optionOverwrite = true
                 } else {
-                    // iOS < 26: append-only (optionOverwrite = false means the file is only
-                    // written on first launch when it doesn't exist yet). Add pak1 default
-                    // if the key is absent so rumble-pak games work out of the box.
+                    // iOS < 26: write-only-if-not-exists (optionOverwrite = false means the
+                    // Obj-C layer skips the write when the file is already present, preserving
+                    // all user-configured settings). Add pak1 default to optionValues so that
+                    // fresh installs default to rumble-pak out of the box.
                     let hasPak1 = existingMupenOpt.components(separatedBy: "\n")
                         .contains { !$0.hasPrefix("#") && $0.hasPrefix("mupen64plus-pak1") }
                     if !hasPak1 {
