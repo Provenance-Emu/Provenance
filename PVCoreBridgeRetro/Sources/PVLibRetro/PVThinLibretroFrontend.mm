@@ -1884,6 +1884,9 @@ static bool thin_environment(unsigned cmd, void *data) {
 /// Falls back to BIOSPath if no system-specific directory is defined.
 /// Also ensures the directory exists.
 ///
+/// The short directory names below mirror `SystemIdentifier.systemDirectoryName` in
+/// `PVPrimitives` — update both if adding a new system.
+///
 /// Base directory is derived from the already-correct `BIOSPath` (set by PVEmulatorCore before
 /// core start) so that app-group containers and tvOS Caches→Documents redirect are handled
 /// automatically — no need for raw NSSearchPathForDirectoriesInDomains calls here.
@@ -1891,6 +1894,9 @@ static bool thin_environment(unsigned cmd, void *data) {
 /// On tvOS the OS may purge Caches at any time; callers that place bundle-derived assets here
 /// (e.g. PPSSPP fonts) must re-seed them on every core launch so the directory is always valid.
 - (NSString *)_systemSpecificDirectory {
+    // Maps PVSystem identifier strings to the conventional short directory name used by
+    // emulators inside Documents/System/<Name>/. Keep in sync with
+    // SystemIdentifier.systemDirectoryName in PVPrimitives/SystemIdentifier.swift.
     NSDictionary<NSString *, NSString *> *systemDirMap = @{
         @"com.provenance.psp":       @"PSP",
         @"com.provenance.ds":        @"NDS",
