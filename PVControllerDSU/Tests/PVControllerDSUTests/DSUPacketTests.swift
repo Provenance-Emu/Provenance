@@ -378,7 +378,6 @@ struct DSUPacketTests {
         #expect(mac1 == mac2)
         #expect(mac1 != mac3)
     }
-}
 
     // MARK: - Truncated payload
 
@@ -420,6 +419,7 @@ struct DSUPacketTests {
         }
         #expect(uid == 0xABCD1234)
     }
+}
 
 // MARK: - Tuple equality helpers (Swift tuples are not Equatable by default in all contexts)
 
