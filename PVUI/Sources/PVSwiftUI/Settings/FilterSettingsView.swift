@@ -31,8 +31,10 @@ struct FilterSettingsView: View {
         #endif
         .navigationTitle("Display Filters")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
 
         Text("Metal filters provided by Mr. J & Mame4iOS.")
             .font(.caption)

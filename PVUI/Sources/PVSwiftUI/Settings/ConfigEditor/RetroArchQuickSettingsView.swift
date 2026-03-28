@@ -20,8 +20,10 @@ struct RetroArchQuickSettingsView: View {
         }
         .navigationTitle("RetroArch Settings")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         .task {
             await viewModel.loadConfig()
         }

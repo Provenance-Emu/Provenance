@@ -49,7 +49,8 @@ internal struct AdvancedTogglesView: View {
                     PremiumThemedToggle(isOn: $autoJIT) {
                         SettingsRow(title: "Auto JIT",
                                     subtitle: "Automatically enable JIT when available.",
-                                    icon: .sfSymbol("bolt"))
+                                    icon: .sfSymbol("bolt"),
+                                    showChevron: false)
                     }
                     .padding(.vertical, 4)
                 }
@@ -57,7 +58,8 @@ internal struct AdvancedTogglesView: View {
                 PremiumThemedToggle(isOn: $disableAutoLock) {
                     SettingsRow(title: "Disable Auto Lock",
                                 subtitle: "Prevent device from auto-locking during gameplay.",
-                                icon: .sfSymbol("lock.open"))
+                                icon: .sfSymbol("lock.open"),
+                                showChevron: false)
                 }
                 .padding(.vertical, 4)
                 
@@ -65,7 +67,8 @@ internal struct AdvancedTogglesView: View {
                     PremiumThemedToggle(isOn: $iCloudSync) {
                         SettingsRow(title: "iCloud Sync",
                                     subtitle: "Sync save states and settings across devices.",
-                                    icon: .sfSymbol("icloud"))
+                                    icon: .sfSymbol("icloud"),
+                                    showChevron: false)
                     }
                     .padding(.vertical, 4)
                 }
@@ -76,25 +79,29 @@ internal struct AdvancedTogglesView: View {
                 )) {
                     SettingsRow(title: "OpenGL Renderer",
                                 subtitle: "Use OpenGL instead of Metal renderer for legacy graphics filters. Not all cores are supported.",
-                                icon: .sfSymbol("cpu"))
+                                icon: .sfSymbol("cpu"),
+                                showChevron: false)
                 }
                 
                 PremiumThemedPicker(selection: $mainUIMode) {
                     SettingsRow(title: "UI Mode",
                                 subtitle: "Choose between different UI modes: \(mainUIMode.description)",
-                                icon: .sfSymbol("switch.2"))
+                                icon: .sfSymbol("switch.2"),
+                                showChevron: false)
                 }
                 
                 PremiumThemedToggle(isOn: $webDavAlwaysOn) {
                     SettingsRow(title: "WebDAV Always On",
                                 subtitle: "Keep WebDAV server running in background.",
-                                icon: .sfSymbol("network"))
+                                icon: .sfSymbol("network"),
+                                showChevron: false)
                 }
                 
                 PremiumThemedToggle(isOn: $unsupportedCores) {
                     SettingsRow(title: "Show Unsupported Cores",
                                 subtitle: "Display experimental and unsupported cores.",
-                                icon: .sfSymbol("exclamationmark.triangle"))
+                                icon: .sfSymbol("exclamationmark.triangle"),
+                                showChevron: false)
                 }
             }
         }

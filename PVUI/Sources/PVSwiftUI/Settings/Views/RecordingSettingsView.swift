@@ -43,7 +43,8 @@ struct RecordingSettingsView: View {
                     SettingsRow(
                         title: "Controller Required",
                         subtitle: "Connect a game controller to enable recording and live streaming on Apple TV.",
-                        icon: .sfSymbol("gamecontroller.fill")
+                        icon: .sfSymbol("gamecontroller.fill"),
+                        showChevron: false
                     )
                 }
             }
@@ -54,7 +55,8 @@ struct RecordingSettingsView: View {
                     SettingsRow(
                         title: "Microphone",
                         subtitle: "Include microphone audio in recordings.",
-                        icon: .sfSymbol("mic.fill")
+                        icon: .sfSymbol("mic.fill"),
+                        showChevron: false
                     )
                 }
             }
@@ -65,7 +67,8 @@ struct RecordingSettingsView: View {
                     SettingsRow(
                         title: "Face-Cam Overlay",
                         subtitle: "Show a front-camera picture-in-picture during recordings.",
-                        icon: .sfSymbol("camera.fill")
+                        icon: .sfSymbol("camera.fill"),
+                        showChevron: false
                     )
                 }
 
@@ -79,7 +82,8 @@ struct RecordingSettingsView: View {
                         SettingsRow(
                             title: "Position",
                             subtitle: "Corner where the camera preview appears.",
-                            icon: .sfSymbol("pip")
+                            icon: .sfSymbol("pip"),
+                            showChevron: false
                         )
                     }
                     .pickerStyle(.automatic)
@@ -92,7 +96,8 @@ struct RecordingSettingsView: View {
                         SettingsRow(
                             title: "Size",
                             subtitle: "Diameter of the overlay.",
-                            icon: .sfSymbol("magnifyingglass")
+                            icon: .sfSymbol("magnifyingglass"),
+                            showChevron: false
                         )
                     }
 
@@ -104,7 +109,8 @@ struct RecordingSettingsView: View {
                         SettingsRow(
                             title: "Shape",
                             subtitle: "Mask shape for the overlay.",
-                            icon: .sfSymbol("circle.square")
+                            icon: .sfSymbol("circle.square"),
+                            showChevron: false
                         )
                     }
                 }
@@ -121,7 +127,8 @@ struct RecordingSettingsView: View {
                     SettingsRow(
                         title: "Auto-save to Photos",
                         subtitle: "Automatically save completed recordings to the Photos library.",
-                        icon: .sfSymbol("photo.on.rectangle.angled")
+                        icon: .sfSymbol("photo.on.rectangle.angled"),
+                        showChevron: false
                     )
                 }
             }
@@ -136,7 +143,8 @@ struct RecordingSettingsView: View {
                     SettingsRow(
                         title: "Show Recording Button in HUD",
                         subtitle: "Display the recording start/stop button in the in-game overlay.",
-                        icon: .sfSymbol("record.circle")
+                        icon: .sfSymbol("record.circle"),
+                        showChevron: false
                     )
                 }
             }
@@ -164,25 +172,30 @@ struct RecordingSettingsView: View {
                 SettingsRow(
                     title: "Broadcast via App Extensions",
                     subtitle: "Use 'Go Live' in the pause menu to stream via installed broadcast apps (e.g. Twitch).",
-                    icon: .sfSymbol("dot.radiowaves.left.and.right")
+                    icon: .sfSymbol("dot.radiowaves.left.and.right"),
+                    showChevron: false
                 )
                 SettingsRow(
                     title: "Direct RTMP Streaming",
                     subtitle: "Coming soon — stream directly to Twitch, YouTube, or Kick without a third-party app.",
-                    icon: .sfSymbol("antenna.radiowaves.left.and.right")
+                    icon: .sfSymbol("antenna.radiowaves.left.and.right"),
+                    showChevron: false
                 )
                 #if os(tvOS)
                 SettingsRow(
                     title: "Apple TV Requirement",
                     subtitle: "Recording and live streaming on Apple TV require a physical game controller to be connected.",
-                    icon: .sfSymbol("gamecontroller.fill")
+                    icon: .sfSymbol("gamecontroller.fill"),
+                    showChevron: false
                 )
                 #endif
             }
         }
         .navigationTitle("Recording & Streaming")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
     }
 }

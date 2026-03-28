@@ -22,6 +22,7 @@
 #import <sys/types.h>
 #import <sys/sysctl.h>
 #import <sys/mman.h>
+#import <dlfcn.h>
 #import <signal.h>
 #import <setjmp.h>
 #import <pthread.h>
@@ -938,18 +939,12 @@ static void ResetDolphinStaticState() {
     // 0xD65F03C0 = ret
     uint32_t code[] = { 0x52800020, 0xD65F03C0 };
 
-    // Switch to write mode, write code, switch to execute mode
-#if !TARGET_OS_TV
-    if (__builtin_available(iOS 14.0, *)) {
-        pthread_jit_write_protect_np(false);  // writable
-    }
-#endif
+    // pthread_jit_write_protect_np removed from iOS 26+ / tvOS SDKs — use dlsym
+    typedef void (*pjwpnp_t)(int);
+    pjwpnp_t pjwpnp = (pjwpnp_t)dlsym(RTLD_DEFAULT, "pthread_jit_write_protect_np");
+    if (pjwpnp) pjwpnp(false);  // writable
     memcpy(testPage, code, sizeof(code));
-#if !TARGET_OS_TV
-    if (__builtin_available(iOS 14.0, *)) {
-        pthread_jit_write_protect_np(true);   // executable
-    }
-#endif
+    if (pjwpnp) pjwpnp(true);   // executable
 
     // Make the page executable
     if (mprotect(testPage, PAGE_SIZE, PROT_READ | PROT_EXEC) != 0) {

@@ -20,6 +20,8 @@ struct TopShelfLogView: View {
     // Timer for auto-refresh
     @State private var timer: AnyCancellable?
 
+    @Environment(\.dismiss) private var dismiss
+
     #if os(tvOS)
     @FocusState private var focusedButton: FocusedButton?
     #endif
@@ -232,6 +234,11 @@ struct TopShelfLogView: View {
             timer?.cancel()
             timer = nil
         }
+        #if os(tvOS)
+        .focusSection()
+        .onExitCommand { dismiss() }
+        #endif
+        .settingsSubpageTracking()
     }
 
     /// Refreshes the log content

@@ -110,8 +110,10 @@ public struct BatchArtworkMatchingView: View {
         }
         .navigationTitle("Batch Artwork Matcher")
 #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
 #endif
+        .settingsSubpageTracking()
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif

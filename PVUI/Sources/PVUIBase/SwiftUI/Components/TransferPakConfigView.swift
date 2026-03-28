@@ -457,7 +457,7 @@ public struct TransferPakConfigView: View {
 
                 if !suggestedGames.isEmpty {
                     Divider()
-                    Section("Suggested for \(n64Title)") {
+                    SwiftUI.Section("Suggested for \(n64Title)") {
                         ForEach(suggestedGames, id: \.md5Hash) { gbGame in
                             Button {
                                 updateSlot(port: port, gbGame: gbGame)
@@ -476,7 +476,7 @@ public struct TransferPakConfigView: View {
                 if !otherGames.isEmpty {
                     Divider()
                     if !suggestedGames.isEmpty {
-                        Section("Other GB/GBC Games") {
+                        SwiftUI.Section("Other GB/GBC Games") {
                             ForEach(otherGames, id: \.md5Hash) { gbGame in
                                 Button {
                                     updateSlot(port: port, gbGame: gbGame)

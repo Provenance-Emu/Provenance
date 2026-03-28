@@ -15,9 +15,6 @@ public extension Notification.Name {
     static let skinInstallDidSucceed = Notification.Name("PVSkinInstallDidSucceed")
     /// Posted after a skin deep-link install fails. userInfo key: "error" (String).
     static let skinInstallDidFail = Notification.Name("PVSkinInstallDidFail")
-    /// Posted when a `provenance://netplay/join` deep link is received.
-    /// userInfo keys: "host" (String), "port" (UInt16), "relay" (String?), "game" (String?).
-    static let netplayJoinRequest = Notification.Name("PVNetplayJoinRequest")
 }
 
 public enum AppURLKeys: String, Codable {

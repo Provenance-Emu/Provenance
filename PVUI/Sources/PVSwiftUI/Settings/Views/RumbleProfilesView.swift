@@ -81,8 +81,10 @@ struct RumbleProfilesView: View {
         #endif
         .navigationTitle("Rumble Profiles")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -695,8 +697,10 @@ struct RumblePresetEditorView: View {
         #endif
         .navigationTitle(name.isEmpty ? "Edit Preset" : name)
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { save(); dismiss() }
         #endif
+        .settingsSubpageTracking()
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif

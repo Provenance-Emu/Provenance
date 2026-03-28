@@ -18,6 +18,7 @@ struct CoreProjectsView: View {
     @State private var searchText = ""
     /// State to force view updates when unsupportedCores changes
     @State private var viewUpdateTrigger = false
+    @Environment(\.dismiss) private var dismiss
 
     init() {
         let isAppStore = AppState.shared.isAppStore
@@ -53,6 +54,11 @@ struct CoreProjectsView: View {
         .searchable(text: $searchText, prompt: "Search cores or systems")
         .navigationTitle("Emulator Cores")
         .tvOSNavigationSupport(title: "Emulator Cores")
+        #if os(tvOS)
+        .focusSection()
+        .onExitCommand { dismiss() }
+        #endif
+        .settingsSubpageTracking()
         .onChange(of: unsupportedCores) { _ in
             /// Force view to update by toggling state
             viewUpdateTrigger.toggle()

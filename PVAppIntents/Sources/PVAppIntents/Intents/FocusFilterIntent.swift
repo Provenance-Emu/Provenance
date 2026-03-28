@@ -43,11 +43,21 @@ public struct ProvenanceFocusFilterIntent: SetFocusFilterIntent {
     )
     public var suppressNotifications: Bool
 
+    // MARK: - Display Representation
+
+    /// Describes the current focus filter configuration in system UI.
+    public var displayRepresentation: DisplayRepresentation {
+        DisplayRepresentation(
+            title: "Provenance Gaming Focus",
+            subtitle: suppressNotifications ? "Notifications suppressed" : "Notifications enabled"
+        )
+    }
+
     // MARK: - Focus App Context
 
     public var appContext: FocusFilterAppContext {
         get async {
-            FocusFilterAppContext(notificationFilteringEnabled: suppressNotifications)
+            FocusFilterAppContext(notificationFilterPredicate: suppressNotifications ? NSPredicate(value: false) : nil)
         }
     }
 

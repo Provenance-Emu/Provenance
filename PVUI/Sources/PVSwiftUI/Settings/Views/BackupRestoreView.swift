@@ -65,9 +65,11 @@ struct BackupRestoreView: View {
         }
         .navigationTitle("Backup & Restore")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
-        #if !os(tvOS)
+        .settingsSubpageTracking()
+    #if !os(tvOS)
         .navigationBarHidden(false)
         .sheet(isPresented: $showShareSheet, onDismiss: {
             coordinator.cleanupAfterShare()

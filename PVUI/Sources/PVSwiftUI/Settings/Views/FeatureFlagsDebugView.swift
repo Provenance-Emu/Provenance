@@ -107,8 +107,10 @@ struct FeatureFlagsDebugView: View {
         }
         .navigationTitle("Feature Flags Debug")
 #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
 #endif
+        .settingsSubpageTracking()
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif

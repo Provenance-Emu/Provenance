@@ -13,6 +13,8 @@ Provenance is a multi-platform emulator frontend for iOS/tvOS supporting 60+ ret
 - Ruby + Bundler (for fastlane)
 - `make setup` to install all dependencies
 
+- Mininimum targets: iOS 17+, tvOS 17+ mandatory, Linux, macOS, VisionOS, watchOS equivlant release versions when applicable
+
 ### Code Signing
 Copy `CodeSigning.xcconfig.sample` to `CodeSigning.xcconfig` and fill in your developer account details.
 
@@ -32,8 +34,8 @@ Build from Xcode: open `Provenance.xcworkspace` and select a scheme. Start with 
 ### Schemes
 - **Provenance-Lite (AppStore)** — lightweight, fewer cores
 - **Provenance (AppStore)** — standard release
-- **Provenance-XL (Release)** — includes more RetroArch and native cores
-- Each has iOS and tvOS variants
+- **Provenance-XL (Release)** — includes more RetroArch and native cores, not really used but should be kept updated regardless
+- Each is a multi-platfor target for iOS, tvOS and macOS Catalyst, and macOS where available. iOS and tvOS are our primary focus with possible future other Apple platform support
 
 ### CI
 GitHub Actions (`.github/workflows/build.yml`) builds all target variants on push/PR to `develop` and `master`.
@@ -43,21 +45,33 @@ GitHub Actions (`.github/workflows/build.yml`) builds all target variants on pus
 ### Module Structure
 The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 
-- **PVLibrary** — Data models, Realm persistence, game database, CloudKit sync
+- **PVAppIntents** — Siri and App intents
+- **PVAudio** — Swift audio apis
+- **PVCheevos** — RetroAchievements API integration
+- **PVCoreAudio / PVAudio** — Audio engine and playback
 - **PVCoreBridge** — Protocol/bridge between app and emulator cores
 - **PVCoreBridgeRetro** — RetroArch-specific core bridge
 - **PVCoreLoader** — Dynamic loading of emulator core packages
 - **PVEmulatorCore** — Base classes for emulator implementations
-- **PVUI** — SwiftUI-based shared UI components
-- **PVSettings** — User preferences
-- **PVCoreAudio / PVAudio** — Audio engine and playback
-- **PVSupport** — Shared utilities
-- **PVLogging** — Logging infrastructure (CocoaLumberjack-based)
-- **PVPrimitives** — Base data types shared across modules
-- **PVCheevos** — RetroAchievements integration
+- **PVFeatureFlags** — Feature flags manager
 - **PVHashing** — ROM file hashing for identification
-- **PVLookup** — Game metadata lookup
+- **PVHelp** — SwiftUI wiki and blog parser
 - **PVJIT** — JIT compilation support for emulator cores
+- **PVLibrary** — Data models, Realm persistence, game database, CloudKit sync
+- **PVLogging** — Logging infrastructure (CocoaLumberjack-based)
+- **PVLookup** — Game metadata and artwork and cheats lookup
+- **PVNetplay** — Central netplay support code for retroarch and game center
+- **PVPLlists** — Core and System plist processing and other serializer
+- **PVPatching** — Support for patch files for roms (WIP)
+- **PVPrimitives** — Base data types shared across modules
+- **PVQuicklookSupport** — iOS and macOS Quicklook api support code
+- **PVRcheevos** — RetroAchievements C client integration
+- **PVSettings** — User preferences
+- **PVShaders** — Metal shdader manager support
+- **PVSupport** — Shared utilities
+- **PVThemes** — UI Theming Support
+- **PVUI** — SwiftUI-based shared UI components
+- **PVWebServer** — Swift/Objective-C SwiftPM module for GCDWebServer and WIP new Swift webserver for webdav and http file management, future REST API
 
 ### Emulator Cores (`Cores/`)
 Each core lives in `Cores/<CoreName>/` and typically contains:
@@ -152,8 +166,27 @@ When modifying bridge files, ensure all controller types are handled (Extended, 
 - **Submodule source** — `Cores/<name>/<upstream-dir>/` contents are upstream code
 - **Generated files** — `Version.h`, `Version.swift`, files in `cmake/` build dirs
 - **CodeSigning.xcconfig** — contains developer-specific credentials
-- **project.pbxproj** — avoid when possible; prefer SPM Package.swift changes
+- **project.pbxproj** — editing is permitted and sometimes required (e.g., adding new app targets). When you add a new target, use deterministic UUID prefixes (e.g. `C0C0CAFE...`) to make additions easy to identify. Use `PBXFileSystemSynchronizedRootGroup` for source directories (Xcode 16+). Prefer minimal diffs — only touch the sections that need changing.
 - **Upstream RetroArch** — `CoresRetro/RetroArch/RetroArch/` is a submodule
+
+### Minimum Deployment Targets
+
+Provenance targets **iOS 17+, tvOS 17+, macOS 14+ (Catalyst), visionOS 1+**. All new code MUST be written against these minimum versions — do **not** add availability guards or fallbacks for APIs available since iOS 17 or earlier.
+
+**Prefer modern Swift/SwiftUI APIs** when the minimum deployment target supports them:
+
+| Prefer (iOS 16+/17+) | Over (older) |
+|---|---|
+| `ShareLink` | `UIActivityViewController` wrapped in `UIViewControllerRepresentable` |
+| `@Observable` macro (iOS 17+) | `@ObservableObject` + `@Published` |
+| `NavigationStack` | `NavigationView` |
+| `.navigationBarTitleDisplayMode(.inline)` on non-tvOS | conditional guard |
+| `UIWindowScene.keyWindow` | `UIApplication.shared.keyWindow` (deprecated iOS 13) |
+
+**`@StateObject` vs `@ObservedObject` rule:**
+- `@StateObject` — use only when the view **creates and owns** the object's lifetime (new instances).
+- `@ObservedObject` — use for **singletons** (e.g. `Foo.shared`) and objects passed in from outside.
+  Using `@StateObject` with a singleton is semantically wrong even though it compiles.
 
 ### Pre-PR Validation (MANDATORY)
 Agents MUST run these checks before creating a PR. Do NOT skip any step.

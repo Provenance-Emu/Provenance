@@ -24,8 +24,10 @@ public struct WikiHelpView: View {
         }
         .navigationTitle("Help & Wiki")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         .task {
             await viewModel.loadNavigationTree()
         }

@@ -57,8 +57,10 @@ public struct ROMTitleNormalizationView: View {
         }
         .navigationTitle("Normalize ROM Titles")
 #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
 #endif
+        .settingsSubpageTracking()
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarItems }

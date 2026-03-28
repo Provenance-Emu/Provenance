@@ -456,8 +456,10 @@ struct ControllerSettingsView: View {
         #endif
         .navigationTitle("Controller Settings")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         .confirmationDialog(
             "Select a controller for Player \(selectedPlayer ?? 0)",
             isPresented: $showingActionSheet,
@@ -908,8 +910,10 @@ struct ButtonRemappingView: View {
         }
         .navigationTitle(controller.vendorName ?? "Remap Buttons")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -1086,8 +1090,10 @@ private struct KeyboardControlsGuideView: View {
         }
         .navigationTitle("Keyboard Controls")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
         #endif

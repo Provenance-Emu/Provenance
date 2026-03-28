@@ -74,7 +74,6 @@ struct AudioEngineSettingsView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            #endif
             if audioEngine == .avAudioEngineGameAudioEngine {
                 Section(header: Text("Effects")) {
                     NavigationLink(destination: AUFilterSettingsView()) {
@@ -98,19 +97,23 @@ struct AudioEngineSettingsView: View {
                     }
                 }
             }
+            #endif
             #if DEBUG
             Section(header: Text("Debug Options")) {
                 ThemedToggle(isOn: $monoAudio) {
                     SettingsRow(title: "Mono Audio",
                                subtitle: "Combine left and right audio channels.",
-                               icon: .sfSymbol("speaker.wave.1"))
+                               icon: .sfSymbol("speaker.wave.1"),
+                               showChevron: false)
                 }
             }
             #endif
         }
         .navigationTitle("Audio Engine")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
     }
 }

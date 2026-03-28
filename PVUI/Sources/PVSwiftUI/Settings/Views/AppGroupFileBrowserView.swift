@@ -263,8 +263,10 @@ public struct AppGroupFileBrowserView: View {
         }
         .navigationTitle("App Group Files")
         #if os(tvOS)
+        .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         .sheet(isPresented: $showingFileContents) {
             FileContentsView(fileName: selectedItem?.name ?? "", contents: fileContents)
         }

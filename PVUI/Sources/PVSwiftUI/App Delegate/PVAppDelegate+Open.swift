@@ -15,6 +15,9 @@ import RxSwift
 import PVRealm
 import PVFileSystem
 import PVUIBase
+#if canImport(PVNetplay)
+import PVNetplay
+#endif
 
 #if !targetEnvironment(macCatalyst) && !os(macOS) && canImport(SteamController)
 import SteamController
@@ -226,8 +229,12 @@ extension PVAppDelegate {
                 ELOG("netplay/join: missing required 'host' parameter in \(url.absoluteString)")
                 return false
             }
-            let portStr = queryItems.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.port.rawValue })?.value ?? "55435"
+            #if canImport(PVNetplay)
+            let defaultPort = NetplayJoinRequest.defaultPort
+            #else
             let defaultPort: UInt16 = 55435
+            #endif
+            let portStr = queryItems.first(where: { $0.name == AppURLKeys.NetplayJoinKeys.port.rawValue })?.value ?? "\(defaultPort)"
             let portRaw = UInt16(portStr) ?? defaultPort
             // Port 0 is not a valid netplay connection target; fall back to the default.
             let port: UInt16 = portRaw > 0 ? portRaw : defaultPort
