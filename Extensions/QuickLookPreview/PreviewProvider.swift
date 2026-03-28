@@ -18,7 +18,9 @@ class PreviewProvider: QLPreviewProvider, QLPreviewingController {
 
     func providePreview(for request: QLFilePreviewRequest) async throws -> QLPreviewReply {
         let fileURL = request.fileURL
-        let filename = fileURL.lastPathComponent
+        // For iCloud placeholder files the URL contains the .icloud suffix — strip it
+        // so Realm lookups succeed without requiring the file to be downloaded.
+        let filename = ROMGameLookup.realFilename(from: fileURL)
 
         // Look up game metadata from the shared Realm database.
         let gameInfo = ROMGameLookup.lookup(forROMFilename: filename)
