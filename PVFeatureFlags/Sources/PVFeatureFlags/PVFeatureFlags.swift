@@ -92,6 +92,12 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// Currently only audio AirPlay is supported; video mirroring to Apple TV is not yet
     /// implemented. Disabled by default until full video AirPlay support lands.
     case airPlayMenu = "airPlayMenu"
+    /// Enables explicit SRAM/battery save import and export actions in the game context menu.
+    /// "Export Battery Save" copies `.sav`/`.srm`/`.ram` files to the share sheet (iOS) or
+    /// Documents/Exports (tvOS). "Import Battery Save" (iOS only) accepts raw battery save
+    /// files and `.zip` archives via the document picker, replacing the current battery save.
+    /// Disabled by default while the feature stabilises.
+    case sramImportExport = "sramImportExport"
 }
 
 /// Enum representing supported OS platforms for feature flag filtering
@@ -263,6 +269,12 @@ public struct FeatureFlag: Codable, Sendable {
     public static let airPlayMenu = FeatureFlag(
         enabled: false,
         description: "AirPlay route-picker button in the pause menu. Only audio AirPlay is currently supported; disabled by default until video AirPlay to Apple TV is implemented."
+    )
+
+    public static let sramImportExport = FeatureFlag(
+        enabled: false,
+        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
+        description: "Explicit SRAM/battery save import and export in the game context menu. Export shares .sav/.srm/.ram files; import accepts raw saves and .zip archives. Disabled by default while the feature stabilises — enable in Settings > Advanced > Feature Flags."
     )
 }
 
@@ -680,6 +692,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
     public var enhancedArtworkSearch: Bool { featureStates[.enhancedArtworkSearch] ?? false }
     public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
+    public var sramImportExport: Bool { featureStates[.sramImportExport] ?? false }
 
     // MARK: - Feature Queries
 
