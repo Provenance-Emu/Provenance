@@ -143,6 +143,21 @@ Higher tiers may import lower tiers. **Never the reverse.**
 - `resetOptionsForGame(md5:)` and `resetAllOptions()` are the scoped reset helpers.
 - Options stored in `UserDefaults` with key `"pvcore.<bundleIdentifier>.<optionKey>.<md5>"`.
 
+### PVControllerDSU — DSU/CemuHook Protocol (added in #3569)
+- `DSUFileStorage.baseURL` → `<Caches>/PVControllerDSU/`. **Never** use `.documentDirectory` —
+  it is restricted on tvOS and will crash at runtime. Flag 🔴 CRITICAL if any code in this module
+  passes `.documentDirectory` to `FileManager`.
+- `DSUSocket` is an `actor` and single-use: create → `startListening()` → use → `close()`.
+  It cannot be restarted after `close()`. If callers want to reconnect, they must create a new instance.
+- `DSUSocket` and `DSUDiscovery` are gated with `#if canImport(Network)` (Apple platforms only).
+  The pure-protocol types (`DSUCRC32`, `DSUPacket`, `DSUFileStorage`) work on Linux too.
+- On **watchOS**, UDP networking and Bonjour work but require an active extended runtime session
+  for background use. Do not add `#if !os(watchOS)` guards unless the API is genuinely unavailable.
+- All multi-byte fields in the DSU wire format are **little-endian**. Never use `withUnsafeBytes`
+  byte-swap shortcuts — the explicit LE helpers in `DSUPacket.swift` must remain the only encoding path.
+- `DSUCRC32.stamp(into:)` must be called **after** the full packet is assembled (header + payload).
+  Calling it before appending the payload produces an incorrect CRC. Flag 🟠 MAJOR if CRC is stamped mid-assembly.
+
 ### Lock Safety — `withLock` / `defer` pattern (added in #3531)
 - **Swift call-sites** on `NSLock` and `NSCondition` MUST use `.withLock { }` (or
   `defer { lock.unlock() }` for conditional-lock render blocks).  Never use bare

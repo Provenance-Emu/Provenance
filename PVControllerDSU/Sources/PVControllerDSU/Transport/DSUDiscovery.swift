@@ -21,6 +21,10 @@ import Foundation
 /// to the `DSUSocket`; the advertiser's listener discards any that arrive at its
 /// own connection handler.
 ///
+/// - Note: On **watchOS**, Bonjour advertisement requires the app to hold a network
+///   connection open (e.g., an `NWConnection`). Advertisement may be restricted when
+///   the app is in the background.
+///
 /// ```swift
 /// let advertiser = DSUServiceAdvertiser(port: 26760, name: "My Provenance")
 /// advertiser.start()
@@ -132,6 +136,10 @@ public enum DSUBrowserChange: Sendable {
 ///
 /// The `changeHandler` is called for both `.added` (server appeared) and
 /// `.removed` (server went offline) events.
+///
+/// - Note: On **watchOS** and **tvOS**, Bonjour browsing works but the discovered
+///   endpoint must be resolved (via `NWConnection`) before connecting. Background
+///   browsing may be limited by the OS on watchOS.
 ///
 /// ```swift
 /// let browser = DSUServiceBrowser { change in

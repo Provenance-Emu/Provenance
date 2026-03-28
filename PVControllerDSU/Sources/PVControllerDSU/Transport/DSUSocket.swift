@@ -23,6 +23,7 @@ public enum DSUSocketError: Error, Sendable {
 /// Usage:
 /// ```swift
 /// let socket = try DSUSocket(port: 26760)
+/// await socket.startListening()
 /// Task {
 ///     while true {
 ///         let (data, endpoint) = try await socket.receive()
@@ -32,6 +33,14 @@ public enum DSUSocketError: Error, Sendable {
 /// // Send a response
 /// try await socket.send(responseData, to: "192.168.1.5", port: 26760)
 /// ```
+///
+/// - Note: This type is supported on all Apple platforms that include Network.framework
+///   (iOS, tvOS, macOS, Mac Catalyst, visionOS, watchOS). On **watchOS**, background
+///   networking is restricted by the OS; use this only during an active extended runtime
+///   session or foreground interaction.
+///
+/// - Important: `DSUSocket` is single-use. After `close()` is called the socket cannot
+///   be restarted — create a new instance instead.
 public actor DSUSocket {
 
     // MARK: - Private state
@@ -65,7 +74,11 @@ public actor DSUSocket {
             throw DSUSocketError.listenerFailed("Invalid port: \(port)")
         }
 
-        self.listener = try NWListener(using: params, on: nwPort)
+        do {
+            self.listener = try NWListener(using: params, on: nwPort)
+        } catch {
+            throw DSUSocketError.listenerFailed(error.localizedDescription)
+        }
         // Note: listener.start() is deferred to startListening() so that the
         // newConnectionHandler is always installed before the listener begins
         // accepting connections — avoids a race where early datagrams are dropped.
@@ -81,6 +94,17 @@ public actor DSUSocket {
     public func startListening() {
         guard !isListening, !isClosed else { return }
         isListening = true
+
+        listener.stateUpdateHandler = { [weak self] state in
+            guard let self else { return }
+            // Close the socket when the listener reaches a terminal failure state so
+            // that any pending receive() calls are woken up with a DSUSocketError.closed
+            // error rather than hanging forever.
+            if case .failed = state {
+                Task { await self.close() }
+            }
+        }
+
         listener.newConnectionHandler = { [weak self] connection in
             guard let self else { return }
             Task {
@@ -171,6 +195,18 @@ public actor DSUSocket {
         }
         let endpoint = connection.endpoint
         connections[endpoint] = connection
+
+        connection.stateUpdateHandler = { [weak self] state in
+            switch state {
+            case .failed, .cancelled:
+                Task { [weak self] in
+                    await self?.removeConnection(for: endpoint)
+                }
+            default:
+                break
+            }
+        }
+
         connection.start(queue: .global(qos: .userInitiated))
         scheduleReceive(on: connection)
     }
