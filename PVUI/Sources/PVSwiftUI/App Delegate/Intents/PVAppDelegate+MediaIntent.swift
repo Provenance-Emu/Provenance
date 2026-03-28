@@ -81,7 +81,7 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
                     let resolved = INMediaItem(
                         identifier: md5,
                         title: game.title,
-                        type: .game,
+                        type: .unknown,
                         artwork: nil
                     )
                     results.append(.success(with: resolved))
@@ -101,14 +101,14 @@ extension PVAppDelegate: INPlayMediaIntentHandling {
                     let resolved = INMediaItem(
                         identifier: candidates[0].md5Hash,
                         title: candidates[0].title,
-                        type: .game,
+                        type: .unknown,
                         artwork: nil
                     )
                     results.append(.success(with: resolved))
                 default:
                     // Multiple matches — let Siri show disambiguation UI.
                     let resolved = candidates.map {
-                        INMediaItem(identifier: $0.md5Hash, title: $0.title, type: .game, artwork: nil)
+                        INMediaItem(identifier: $0.md5Hash, title: $0.title, type: .unknown, artwork: nil)
                     }
                     results.append(.disambiguation(with: resolved))
                 }

@@ -66,7 +66,7 @@ extension PVAppDelegate {
         let mediaItem = INMediaItem(
             identifier: md5,
             title: title,
-            type: .game,
+            type: .unknown,
             artwork: nil
         )
         let intent = INPlayMediaIntent(mediaItems: [mediaItem],
