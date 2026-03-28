@@ -14,9 +14,14 @@ import PVRealm
 import RealmSwift
 import PVUIBase
 
-/// Handler for Siri intents related to Provenance
+/// Handler for Siri intents related to Provenance.
+///
+/// - Important: Deprecated. Intent handling is now performed by `LaunchGameIntent`
+///   in `PVAppIntents`. This class is retained only to satisfy any in-flight
+///   `PVOpenIntent` migrations.
 #if os(iOS)
 @available(iOS 14.0, *)
+@available(*, deprecated, message: "Use LaunchGameIntent from PVAppIntents instead.")
 class PVIntentHandler: NSObject, PVOpenIntentHandling {
 
     /// Handles the intent to open a game by MD5 hash, name, or name+system combination

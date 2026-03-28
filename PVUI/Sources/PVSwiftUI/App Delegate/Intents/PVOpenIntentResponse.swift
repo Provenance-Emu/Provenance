@@ -10,7 +10,11 @@ import Foundation
 import Intents
 
 #if os(iOS)
+/// Legacy response code for `PVOpenIntent`.
+///
+/// - Important: Deprecated. Use `LaunchGameIntent` from `PVAppIntents` instead.
 @available(iOS 14.0, *)
+@available(*, deprecated, message: "Use LaunchGameIntent from PVAppIntents instead.")
 @objc(PVOpenIntentResponseCode)
 enum PVOpenIntentResponseCode: Int {
     case unspecified = 0
@@ -19,6 +23,7 @@ enum PVOpenIntentResponseCode: Int {
 }
 
 @available(iOS 14.0, *)
+@available(*, deprecated, message: "Use LaunchGameIntent from PVAppIntents instead.")
 @objc(PVOpenIntentResponse)
 class PVOpenIntentResponse: INIntentResponse {
     private var _codeValue: Int = 0

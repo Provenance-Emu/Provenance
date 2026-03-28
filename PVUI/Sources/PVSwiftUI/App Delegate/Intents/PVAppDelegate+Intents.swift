@@ -13,43 +13,20 @@ import PVLibrary
 import UIKit
 import PVUIBase
 
+// MARK: - Legacy INIntent support (deprecated)
+//
+// The PVOpenIntent-based Siri shortcut path is superseded by LaunchGameIntent
+// in PVAppIntents (#3308). The intent handler and donate calls below are kept
+// only so that existing NSCoder-archived PVOpenIntent shortcuts can still be
+// dispatched while users migrate. New shortcut donations use the AppIntents
+// infrastructure via processPendingAppIntents().
+//
+// Planned removal: once telemetry confirms no PVOpenIntent activations, delete
+// this file's legacy sections and the Intents/PV* companion files.
+
 #if os(iOS)
 @available(iOS 14.0, *)
 extension PVAppDelegate {
-
-    /// Registers the intent handler for Siri shortcuts
-    func registerIntentHandler() {
-        ILOG("PVAppDelegate: Registering intent handler for Siri shortcuts")
-
-        // The intent handler is registered through the Info.plist and
-        // the application(_:handlerFor:) method
-        // No need to call INExtension.shared.setIntentHandler here
-
-        // Donate intents for opening games
-        donateOpenIntents()
-    }
-
-    /// Donates intents for opening games to Siri
-    private func donateOpenIntents() {
-        ILOG("PVAppDelegate: Donating intents for opening games")
-
-        // Create a basic intent for opening a game by MD5
-        let openByMD5Intent = PVOpenIntent()
-        openByMD5Intent.suggestedInvocationPhrase = "Open game by MD5"
-
-        // Create an intent for opening a game by name
-        let openByNameIntent = PVOpenIntent()
-        openByNameIntent.suggestedInvocationPhrase = "Open game by name"
-
-        // Create an intent for opening a game by name and system
-        let openByNameAndSystemIntent = PVOpenIntent()
-        openByNameAndSystemIntent.suggestedInvocationPhrase = "Open game on system"
-
-        // Donate the intents to Siri
-        donateIntent(openByMD5Intent)
-        donateIntent(openByNameIntent)
-        donateIntent(openByNameAndSystemIntent)
-    }
 
     // MARK: - INPlayMediaIntent donation
 
@@ -88,21 +65,11 @@ extension PVAppDelegate {
         }
     }
 
-    /// Donates an intent to Siri
-    /// - Parameter intent: The intent to donate
-    private func donateIntent(_ intent: INIntent) {
-        let interaction = INInteraction(intent: intent, response: nil)
-
-        interaction.donate { error in
-            if let error = error {
-                ELOG("PVAppDelegate: Failed to donate intent: \(error.localizedDescription)")
-            } else {
-                ILOG("PVAppDelegate: Successfully donated intent")
-            }
-        }
-    }
-
-    /// Handle an intent response from Siri
+    /// Handle an intent response from Siri.
+    ///
+    /// The `PVOpenIntent` branch is a legacy migration path for users whose
+    /// archived Siri shortcuts predate `LaunchGameIntent`. New shortcuts use
+    /// the AppIntents infrastructure and never reach this handler.
     /// - Parameters:
     ///   - application: The UIApplication instance
     ///   - intent: The intent to handle
@@ -110,7 +77,9 @@ extension PVAppDelegate {
     public func application(_ application: UIApplication, handle intent: INIntent, completionHandler: @escaping (INIntentResponse) -> Void) {
         ILOG("PVAppDelegate: Handling intent: \(intent)")
 
+        // swiftlint:disable:next deprecated_declaration
         if let openIntent = intent as? PVOpenIntent {
+            // Legacy migration path — PVOpenIntent shortcuts donated before LaunchGameIntent.
             let intentHandler = PVIntentHandler()
             intentHandler.handle(intent: openIntent) { response in
                 completionHandler(response)
@@ -153,13 +122,14 @@ extension PVAppDelegate {
                     return true
                 }
             } else {
-                // Check if intent has parameters directly
+                // Check if intent has parameters directly (legacy migration path)
+                // swiftlint:disable:next deprecated_declaration
                 if let intent = userActivity.interaction?.intent as? PVOpenIntent {
-                    ILOG("PVAppDelegate: Found PVOpenIntent in user activity")
-                    // Handle the intent through the handler
+                    ILOG("PVAppDelegate: Found legacy PVOpenIntent in user activity — handling via migration path")
+                    // swiftlint:disable:next deprecated_declaration
                     let intentHandler = PVIntentHandler()
                     intentHandler.handle(intent: intent) { response in
-                        ILOG("PVAppDelegate: Intent handled with response code: \(response.code)")
+                        ILOG("PVAppDelegate: Legacy intent handled with response code: \(response.code)")
                     }
                     return true
                 } else {
@@ -171,14 +141,20 @@ extension PVAppDelegate {
         return false
     }
 
-    /// Returns the appropriate intent handler for the given intent
+    /// Returns the appropriate intent handler for the given intent.
+    ///
+    /// The `PVOpenIntent` branch is a legacy migration path retained for
+    /// archived Siri shortcuts. `LaunchGameIntent` in `PVAppIntents` handles
+    /// all newly donated shortcuts.
     /// - Parameters:
     ///   - application: The UIApplication instance
     ///   - intent: The intent to handle
     /// - Returns: The intent handler for the given intent
     public func application(_ application: UIApplication, handlerFor intent: INIntent) -> Any? {
+        // swiftlint:disable:next deprecated_declaration
         if intent is PVOpenIntent {
-            ILOG("PVAppDelegate: Providing handler for PVOpenIntent")
+            ILOG("PVAppDelegate: Providing legacy handler for PVOpenIntent (migration path)")
+            // swiftlint:disable:next deprecated_declaration
             return PVIntentHandler()
         }
 

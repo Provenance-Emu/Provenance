@@ -10,7 +10,15 @@ import Foundation
 import Intents
 
 #if os(iOS)
+/// Legacy INIntent-based Siri shortcut for opening a game.
+///
+/// - Important: Deprecated. Use `LaunchGameIntent` from `PVAppIntents` instead.
+///   `LaunchGameIntent` conforms to `CustomIntentMigratedAppIntent` with
+///   `intentClassName = "PVOpenIntent"`, which migrates existing user shortcuts
+///   automatically. This stub must remain in the binary until all users have
+///   migrated so that NSCoder-archived shortcuts can still be deserialised.
 @available(iOS 14.0, *)
+@available(*, deprecated, renamed: "LaunchGameIntent", message: "Use LaunchGameIntent from PVAppIntents. This stub is retained for Siri shortcut migration only.")
 @objc(PVOpenIntent)
 class PVOpenIntent: INIntent {
     var md5: String?
