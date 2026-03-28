@@ -22,10 +22,10 @@
 				<string>com.provenance.rom.atarist</string>
 				<string>com.provenance.rom.c64</string>
 				<string>com.provenance.rom.cdi</string>
+				<string>com.provenance.rom.colecovision</string>
 				<string>com.provenance.rom.cps1</string>
 				<string>com.provenance.rom.cps2</string>
 				<string>com.provenance.rom.cps3</string>
-				<string>com.provenance.rom.colecovision</string>
 				<string>com.provenance.rom.doom</string>
 				<string>com.provenance.rom.dos</string>
 				<string>com.provenance.rom.dreamcast</string>
