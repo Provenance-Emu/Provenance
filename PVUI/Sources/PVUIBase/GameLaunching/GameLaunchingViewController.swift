@@ -958,10 +958,11 @@ extension GameLaunchingViewController where Self: UIViewController {
         activity.isEligibleForSearch = false
         activity.isEligibleForPublicIndexing = false
         activity.isEligibleForHandoff = true
+
+        #if !os(tvOS)
         // persistentIdentifier is per-game so the OS tracks play patterns individually.
         activity.persistentIdentifier = NSUserActivityPersistentIdentifier("\(kGamePlayActivityType).\(md5)")
 
-        #if !os(tvOS)
         // isEligibleForPrediction is iOS/macOS only; tvOS does not support Siri Predictions.
         activity.isEligibleForPrediction = true
         activity.suggestedInvocationPhrase = "Play \(title)"
