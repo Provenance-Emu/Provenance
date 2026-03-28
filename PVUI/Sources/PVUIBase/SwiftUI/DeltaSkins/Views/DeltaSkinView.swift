@@ -1597,7 +1597,9 @@ public struct DeltaSkinView: View {
     }
 
     private func transformFrame(_ frame: CGRect, in geometry: GeometryProxy, mappingSize: CGSize) -> CGRect {
-        let (buttonScaleX, buttonScaleY, xOffset, yOffset) = calculateButtonTransform(in: geometry.size, mappingSize: mappingSize, safeAreaInsets: viewSafeAreaInsets)
+        // Use geometry.safeAreaInsets directly — it's always current and avoids a stale-state
+        // race on first render when viewSafeAreaInsets hasn't been set by onAppear yet.
+        let (buttonScaleX, buttonScaleY, xOffset, yOffset) = calculateButtonTransform(in: geometry.size, mappingSize: mappingSize, safeAreaInsets: geometry.safeAreaInsets)
 
         return CGRect(
             x: frame.minX * buttonScaleX + xOffset,
