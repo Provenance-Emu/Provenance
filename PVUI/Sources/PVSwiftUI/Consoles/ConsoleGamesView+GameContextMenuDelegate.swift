@@ -391,6 +391,9 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         do {
             let url = try await SaveExporter.shared.exportSRAM(for: game)
 #if os(tvOS)
+            // tvOS: move zip to Caches/Exports on a background thread to avoid blocking the
+            // main actor; only the showMessage calls return to the main actor.
+            // tvOS does not have a persistent Documents directory — use Caches instead.
             let rootDelegate = self.rootDelegate
             Task.detached(priority: .userInitiated) {
                 let exportsDir = URL.cachesPath.appendingPathComponent("Exports", isDirectory: true)
@@ -402,7 +405,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
                     }
                     try FileManager.default.moveItem(at: url, to: destURL)
                     await MainActor.run {
-                        rootDelegate?.showMessage("Battery save exported to Exports/\(url.lastPathComponent)", title: "Export Complete")
+                        rootDelegate?.showMessage("Battery save exported to Caches/Exports/\(url.lastPathComponent)", title: "Export Complete")
                     }
                 } catch {
                     SaveExporter.shared.cleanupExport(at: url)
