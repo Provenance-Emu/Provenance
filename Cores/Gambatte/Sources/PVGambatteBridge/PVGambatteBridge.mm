@@ -71,16 +71,20 @@ uint32_t gb_pad[PVGBButtonCount];
 // ---------------------------------------------------------------------------
 // MARK: - RetroAchievements rc_client integration
 //
-// The rc_client API is guarded by HAVE_RCHEEVOS. To enable full integration:
-//  1. Add a `librcheevos` SPM target (or depend on PVRcheevos package) in Package.swift.
-//  2. Add `.define("HAVE_RCHEEVOS", to: "1")` to cSettings of PVGambatteBridge target.
-//  3. Import the rc_client.h header.
+// Full integration is active when HAVE_RCHEEVOS=1 (set in Package.swift).
+// The PVRcheevos SPM package provides CRcheevos (compiled rcheevos C sources).
 //
-// What is implemented below:
-//  - wramBasePtr / vramBasePtr / wramSize — always available, backed by gambatte's
-//    wramData() / vramData() / wramSize() (added to gambatte's vendored source).
-//  - tickAchievements — calls rc_client_do_frame() when HAVE_RCHEEVOS is set.
-//  - The read-memory callback and event handler stubs that rc_client needs.
+// What is implemented below (all guarded by #if HAVE_RCHEEVOS):
+//  - pvgb_read_memory   — reads WRAM (0xC000–0xFDFF) and VRAM (0x8000–0x9FFF)
+//                         from live Gambatte memory via wramBasePtr/wramBank1Ptr/vramBankPtr.
+//  - pvgb_server_call   — forwards rc_client HTTP requests to the RA server via NSURLSession.
+//  - pvgb_event_handler — dispatches unlock/progress/leaderboard events to the Swift layer.
+//  - Login + load lifecycle in -loadAchievementsForGameHash:completion: reads
+//    ra_username/ra_session_token from NSUserDefaults and calls
+//    rc_client_begin_login_with_token → rc_client_begin_load_game.
+//  - tickAchievements   — calls rc_client_do_frame() once per emulated frame.
+//  - wramBasePtr / vramBasePtr / wramSize — always available (no HAVE_RCHEEVOS guard),
+//    backed by gambatte's wramData() / vramData() / wramSize().
 // ---------------------------------------------------------------------------
 #if HAVE_RCHEEVOS
 #include "rc_client.h"   // from the librcheevos SPM target
@@ -120,14 +124,51 @@ static uint32_t pvgb_read_memory(uint32_t address, uint8_t *buffer,
     return read;
 }
 
-// Minimal no-op server call; real implementation delegates to PVCheevos network layer.
-static void pvgb_server_call(const rc_api_request_t * __unused request,
+// Make an HTTP request to the RetroAchievements server on behalf of rc_client.
+// Uses NSURLSession so network I/O happens off the emulation thread.
+static void pvgb_server_call(const rc_api_request_t *request,
                               rc_client_server_callback_t callback,
-                              void *callback_data, rc_client_t * __unused client) {
-    // TODO: Forward to PVCheevos RetroNetworkClient.
-    rc_api_server_response_t resp = {};
-    resp.http_status_code = 0;
-    callback(&resp, callback_data);
+                              void *callback_data,
+                              rc_client_t * __unused client) {
+    if (!request->url) {
+        rc_api_server_response_t empty = {};
+        empty.http_status_code = 0;
+        callback(&empty, callback_data);
+        return;
+    }
+    NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:request->url]];
+    if (!url) {
+        rc_api_server_response_t empty = {};
+        empty.http_status_code = 400;
+        callback(&empty, callback_data);
+        return;
+    }
+    NSMutableURLRequest *urlReq = [NSMutableURLRequest requestWithURL:url];
+    urlReq.timeoutInterval = 30.0;
+    const char *postData = request->post_data;
+    if (postData && *postData) {
+        urlReq.HTTPMethod = @"POST";
+        urlReq.HTTPBody = [NSData dataWithBytes:postData length:strlen(postData)];
+        [urlReq setValue:@"application/x-www-form-urlencoded"
+      forHTTPHeaderField:@"Content-Type"];
+    } else {
+        urlReq.HTTPMethod = @"GET";
+    }
+    [urlReq setValue:@"Provenance/PVRcheevos" forHTTPHeaderField:@"User-Agent"];
+    [[[NSURLSession sharedSession]
+        dataTaskWithRequest:urlReq
+          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+              rc_api_server_response_t resp = {};
+              if (data && !error) {
+                  // `data` is retained by the block until callback returns.
+                  resp.body             = (const char *)data.bytes;
+                  resp.body_length      = (uint32_t)data.length;
+                  resp.http_status_code = (int)[(NSHTTPURLResponse *)response statusCode];
+              } else {
+                  resp.http_status_code = 0;
+              }
+              callback(&resp, callback_data);
+          }] resume];
 }
 
 static void pvgb_event_handler(const rc_client_event_t *event, rc_client_t *client) {
@@ -698,18 +739,19 @@ const int GBMap[] = {gambatte::InputGetter::UP, gambatte::InputGetter::DOWN, gam
 // MARK: - Achievement game loading
 
 #if HAVE_RCHEEVOS
+
+// ---------------------------------------------------------------------------
+// Load-game callback context (bridge + completion block).
+// ---------------------------------------------------------------------------
 typedef struct pvgb_load_ctx {
     void *bridge;        // __bridge_retained PVGBEmulatorCoreBridge *
-    void *completion;    // __bridge_retained void (^)(BOOL); explicit retain needed for C-struct fields
+    void *completion;    // __bridge_retained void (^)(BOOL)
 } pvgb_load_ctx_t;
 
 static void pvgb_load_callback(int result, const char * __unused error_message,
                                 rc_client_t * __unused client, void *userdata) {
     pvgb_load_ctx_t *ctx = (pvgb_load_ctx_t *)userdata;
-    // Transfer ownership back; __bridge_transfer moves the +1 retain to ARC.
     PVGBEmulatorCoreBridge *core = (__bridge_transfer PVGBEmulatorCoreBridge *)ctx->bridge;
-    // Transfer the __bridge_retained block back to ARC ownership so it is
-    // released when the local variable goes out of scope (balances [completion copy]).
     void (^completion)(BOOL) = (__bridge_transfer void (^)(BOOL))ctx->completion;
     ctx->completion = NULL;
     free(ctx);
@@ -718,6 +760,44 @@ static void pvgb_load_callback(int result, const char * __unused error_message,
     core->_achievementsActive.store(success);
     if (completion) { completion(success); }
 }
+
+// ---------------------------------------------------------------------------
+// Login callback context (bridge + game hash + completion block).
+// On successful login pvgb_login_callback chains into rc_client_begin_load_game.
+// ---------------------------------------------------------------------------
+typedef struct pvgb_login_ctx {
+    void *bridge;      // __bridge_retained PVGBEmulatorCoreBridge *
+    void *gameHash;    // __bridge_retained NSString *
+    void *completion;  // __bridge_retained void (^)(BOOL)
+} pvgb_login_ctx_t;
+
+static void pvgb_login_callback(int result, const char * __unused error_message,
+                                 rc_client_t *client, void *userdata) {
+    pvgb_login_ctx_t *lCtx = (pvgb_login_ctx_t *)userdata;
+    PVGBEmulatorCoreBridge *core = (__bridge_transfer PVGBEmulatorCoreBridge *)lCtx->bridge;
+    NSString *hash               = (__bridge_transfer NSString *)lCtx->gameHash;
+    void (^completion)(BOOL)     = (__bridge_transfer void (^)(BOOL))lCtx->completion;
+    lCtx->completion = NULL;
+    free(lCtx);
+
+    if (result != RC_OK) {
+        core->_achievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+
+    // Login succeeded — now load the game.
+    pvgb_load_ctx_t *loadCtx = (pvgb_load_ctx_t *)malloc(sizeof(pvgb_load_ctx_t));
+    if (!loadCtx) {
+        core->_achievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+    loadCtx->bridge     = (__bridge_retained void *)core;
+    loadCtx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+    rc_client_begin_load_game(client, hash.UTF8String, pvgb_load_callback, loadCtx);
+}
+
 #endif // HAVE_RCHEEVOS
 
 - (void)loadAchievementsForGameHash:(NSString *)gameHash
@@ -728,15 +808,46 @@ static void pvgb_load_callback(int result, const char * __unused error_message,
         if (completion) { completion(NO); }
         return;
     }
-    pvgb_load_ctx_t *ctx = (pvgb_load_ctx_t *)malloc(sizeof(pvgb_load_ctx_t));
-    if (!ctx) {
+
+    // If rc_client already has an authenticated user (e.g. second game in the same
+    // session), skip the login round-trip and go straight to loading the game.
+    if (rc_client_get_user_info(_rcClient) != NULL) {
+        pvgb_load_ctx_t *ctx = (pvgb_load_ctx_t *)malloc(sizeof(pvgb_load_ctx_t));
+        if (!ctx) {
+            _achievementsActive.store(false);
+            if (completion) { completion(NO); }
+            return;
+        }
+        ctx->bridge     = (__bridge_retained void *)self;
+        ctx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+        rc_client_begin_load_game(_rcClient, gameHash.UTF8String, pvgb_load_callback, ctx);
+        return;
+    }
+
+    // Read stored RetroAchievements credentials.
+    // Keys match PVCheevos RetroCredentialsManager / PVSettingsModel.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *username = [defaults stringForKey:@"ra_username"];
+    NSString *token    = [defaults stringForKey:@"ra_session_token"];
+    if (!username.length || !token.length) {
+        // User is not logged in — achievements unavailable.
         _achievementsActive.store(false);
         if (completion) { completion(NO); }
         return;
     }
-    ctx->bridge = (__bridge_retained void *)self;
-    ctx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
-    rc_client_load_game(_rcClient, gameHash.UTF8String, pvgb_load_callback, ctx);
+
+    // Login first; pvgb_login_callback chains into rc_client_begin_load_game on success.
+    pvgb_login_ctx_t *lCtx = (pvgb_login_ctx_t *)malloc(sizeof(pvgb_login_ctx_t));
+    if (!lCtx) {
+        _achievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+    lCtx->bridge     = (__bridge_retained void *)self;
+    lCtx->gameHash   = (__bridge_retained void *)[gameHash copy];
+    lCtx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+    rc_client_begin_login_with_token(_rcClient, username.UTF8String, token.UTF8String,
+                                     pvgb_login_callback, lCtx);
 #else
     _achievementsActive.store(false);
     if (completion) { completion(NO); }

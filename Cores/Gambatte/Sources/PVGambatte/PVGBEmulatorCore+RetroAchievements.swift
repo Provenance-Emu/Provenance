@@ -4,7 +4,7 @@
 //
 //  Conformance of PVGBEmulatorCore (Gambatte GB/GBC core) to CoreRetroAchievements.
 //
-//  ## Integration status
+//  ## Integration status — COMPLETE
 //
 //  The rc_client C API integration is compiled behind HAVE_RCHEEVOS in the ObjC
 //  bridge (PVGambatteBridge.mm). This Swift layer:
@@ -14,14 +14,11 @@
 //    - Forwards rc_client event callbacks (via the AchievementsEvents ObjC category
 //      that routes back through achievementsEventOwner) to RetroAchievementsOSDDelegate.
 //
-//  ## Activating full rcheevos integration
-//
-//  1. Add a `librcheevos` SPM target (or depend on PVRcheevos package) in Package.swift.
-//  2. In the PVGambatteBridge cSettings add `.define("HAVE_RCHEEVOS", to: "1")`.
-//  3. Implement `pvgb_server_call` in PVGambatteBridge.mm to forward HTTP requests
-//     to PVCheevos.RetroNetworkClient (see the stub in that file).
-//  4. Log in before calling prepareAchievements: use PVCheevos.AchievementSessionManager
-//     to obtain username/token, then call rc_client_begin_login_with_token via the bridge.
+//  Everything below is wired and active:
+//    - PVRcheevos (CRcheevos) is in Package.swift; HAVE_RCHEEVOS=1 is set.
+//    - pvgb_server_call uses NSURLSession to POST/GET the RA REST API.
+//    - loadAchievementsForGameHash reads ra_username/ra_session_token from
+//      NSUserDefaults and calls rc_client_begin_login_with_token before loading.
 //
 //  ## Memory layout (GB/GBC)
 //
