@@ -158,8 +158,6 @@ public final class SaveExporter: @unchecked Sendable {
             }
         }()
 
-
-
         // Track how many save files are actually copied so we can error if nothing ends up in the zip.
         var filesCopied = 0
         var stateEntries: [SaveBundleManifestV2.SaveStateEntry] = []
@@ -199,6 +197,14 @@ public final class SaveExporter: @unchecked Sendable {
                         } catch {
                             WLOG("SaveExporter: failed to copy save state screenshot \(imgSrc.lastPathComponent): \(error.localizedDescription)")
                         }
+                    }
+
+                    // Also copy the .svs.json metadata sidecar so Realm can re-register
+                    // the save state after a round-trip import via recoverSaveStates(forPath:).
+                    let sidecarSrc = src.appendingPathExtension("json")
+                    if fm.fileExists(atPath: sidecarSrc.path) {
+                        let sidecarDest = dest.appendingPathExtension("json")
+                        try? fm.copyItem(at: sidecarSrc, to: sidecarDest)
                     }
 
                     // Only add a manifest entry for successfully copied states.

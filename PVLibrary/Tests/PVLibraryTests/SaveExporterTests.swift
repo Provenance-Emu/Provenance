@@ -70,7 +70,7 @@ final class SaveExporterTests: XCTestCase {
         let game = makeGame(title: "Other", md5: gameMD5, romURL: nil)
 
         do {
-            try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+            _ = try await SaveExporter.shared.importSaves(from: zipURL, for: game)
             XCTFail("Expected gameMismatch to be thrown")
         } catch SaveExportError.gameMismatch {
             // expected
@@ -89,7 +89,9 @@ final class SaveExporterTests: XCTestCase {
         let game = makeGame(title: "MatchGame", md5: md5, romURL: romFile)
 
         // Should not throw — manifest matches and the zip has no battery/states to restore.
-        try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+        let result = try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+        XCTAssertFalse(result.sramRestored, "No battery saves in minimal bundle")
+        XCTAssertEqual(result.statesRestored, 0, "No save states in minimal bundle")
     }
 
     // MARK: - nil ROM URL guard
@@ -102,7 +104,7 @@ final class SaveExporterTests: XCTestCase {
         let game = makeGame(title: "NoROM", md5: md5, romURL: nil)
 
         do {
-            try await SaveExporter.shared.importSaves(from: zipURL, for: game)
+            _ = try await SaveExporter.shared.importSaves(from: zipURL, for: game)
             XCTFail("Expected invalidBundle to be thrown when romURL is nil")
         } catch SaveExportError.invalidBundle {
             // expected — prevents importing into the shared NULL directory
@@ -465,6 +467,51 @@ final class SaveExporterTests: XCTestCase {
         XCTAssertEqual(decoded.saveStates?[0].isAutosave, false)
         XCTAssertEqual(decoded.saveStates?[0].coreIdentifier, "com.provenance.core.snes")
         XCTAssertEqual(decoded.saveStates?[0].userDescription, "Boss fight save")
+    }
+
+    // MARK: - Sidecar copying in export
+
+    func testExportIncludesSVSJsonSidecar() async throws {
+        let md5 = "sidecar123"
+        let romFile = tempDir.appendingPathComponent("sidecar.sfc")
+        try Data().write(to: romFile)
+
+        // Create a save state directory with .svs and its .svs.json sidecar
+        let svsDir = Paths.saveStatePath(forROM: romFile)
+        try FileManager.default.createDirectory(at: svsDir, withIntermediateDirectories: true)
+        let svsFile = svsDir.appendingPathComponent("F7B81E3F.12345.svs")
+        let sidecarFile = svsDir.appendingPathComponent("F7B81E3F.12345.svs.json")
+        try "state data".data(using: .utf8)!.write(to: svsFile)
+        try "{\"id\":\"test\"}".data(using: .utf8)!.write(to: sidecarFile)
+        defer { try? FileManager.default.removeItem(at: svsDir) }
+
+        // Build a game that has the save state referenced
+        let game = makeGame(title: "SidecarGame", md5: md5, romURL: romFile)
+        try realm.write {
+            let thawedGame = game.thaw() ?? realm.objects(PVGame.self).first!
+            let pvFile = PVFile(withURL: svsFile)
+            let saveState = PVSaveState(withGame: thawedGame, core: PVCore(), file: pvFile, image: nil, isAutosave: false)
+            realm.add(saveState)
+        }
+
+        let frozenGame = realm.objects(PVGame.self).first!.freeze()
+        let zipURL = try await SaveExporter.shared.exportSaves(for: frozenGame)
+        defer { SaveExporter.shared.cleanupExport(at: zipURL) }
+
+        // Extract the zip and verify the sidecar is included
+        let extractDir = tempDir.appendingPathComponent("extract-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: extractDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: extractDir) }
+
+        guard SSZipArchive.unzipFile(atPath: zipURL.path, toDestination: extractDir.path) else {
+            XCTFail("Failed to extract export bundle")
+            return
+        }
+
+        let statesDirExtracted = extractDir.appendingPathComponent("states")
+        let files = (try? FileManager.default.contentsOfDirectory(atPath: statesDirExtracted.path)) ?? []
+        XCTAssertTrue(files.contains("F7B81E3F.12345.svs"), "Export must contain the .svs file")
+        XCTAssertTrue(files.contains("F7B81E3F.12345.svs.json"), "Export must contain the .svs.json sidecar")
     }
 
     // MARK: - Helpers

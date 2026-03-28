@@ -142,8 +142,10 @@ public struct SaveStateDropTargetModifier: ViewModifier {
             Task.detached(priority: .userInitiated) {
                 defer { try? FileManager.default.removeItem(at: tempDir) }
                 do {
-                    try await SaveExporter.shared.importSaves(from: zipURL, for: frozenGame)
-                    await MainActor.run { ILOG("SaveStateDropDelegate: Bundle import succeeded for '\(gameTitle)'") }
+                    let result = try await SaveExporter.shared.importSaves(from: zipURL, for: frozenGame)
+                    await MainActor.run {
+                        ILOG("SaveStateDropDelegate: Bundle import succeeded for '\(gameTitle)' — sram=\(result.sramRestored) states=\(result.statesRestored)")
+                    }
                 } catch {
                     await MainActor.run { ELOG("SaveStateDropDelegate: Bundle import failed: \(error.localizedDescription)") }
                 }
