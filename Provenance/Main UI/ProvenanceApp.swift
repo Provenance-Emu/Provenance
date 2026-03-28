@@ -306,12 +306,22 @@ extension ProvenanceApp {
             if let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: normalizedMD5) {
                 ILOG("ProvenanceApp: Found game '\(game.title)' for MD5: \(normalizedMD5)")
                 appState.emulationUIState.currentGame = game
+                #if os(iOS)
+                if #available(iOS 14.0, *) {
+                    appDelegate.donateMediaIntent(for: game)
+                }
+                #endif
             } else {
                 ELOG("ProvenanceApp: No game found for MD5: \(normalizedMD5)")
             }
         case .openGame(let game):
             ILOG("ProvenanceApp: Setting currentGame to '\(game.title)'")
             appState.emulationUIState.currentGame = game
+            #if os(iOS)
+            if #available(iOS 14.0, *) {
+                appDelegate.donateMediaIntent(for: game)
+            }
+            #endif
         case .openSaveStateID(let saveStateID):
             let realm = RomDatabase.sharedInstance.realm
             guard let saveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID) else {
@@ -322,6 +332,11 @@ extension ProvenanceApp {
             appState.emulationUIState.currentGame = frozen.game?.freeze()
             appState.emulationUIState.currentSaveState = frozen
             appState.emulationUIState.currentCore = frozen.core?.freeze()
+            #if os(iOS)
+            if #available(iOS 14.0, *), let game = frozen.game {
+                appDelegate.donateMediaIntent(for: game)
+            }
+            #endif
         case .openFile(let url):
             ILOG("ProvenanceApp: Opening file '\(url.lastPathComponent)' - emulator scene will handle import")
         case .none:
