@@ -732,16 +732,19 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
         isMultitap = NO;
         _isMouseGame = NO; // Reset on every ROM load so stale state is not carried across games.
+        [self resetSNESLightGunState]; // Reset light-gun session state before re-detecting.
 		// Automatically enable SNES Mouse, Super Scope, Justifier and Multitap where supported
 		if([snesJustifier containsObject:cartCRC32])
 		{
 			S9xSetController(1, CTL_JUSTIFIER, 0, 0, 0, 0);
 			S9xSetController(0, CTL_JOYPAD,    0, 0, 0, 0);
+            [self setupJustifierMappings];
 		}
 		else if([superscopeGames containsObject:cartCRC32])
 		{
 			S9xSetController(1, CTL_SUPERSCOPE, 0, 0, 0, 0);
-			S9xReportButton(17, true); // Super Scope turbo on by default
+			S9xSetController(0, CTL_JOYPAD,     0, 0, 0, 0); // Ensure port 0 is a standard joypad (not stale CTL_MOUSE, etc.)
+            [self setupSuperScopeMappings];
 		}
 		else if([snesMouseGames containsObject:cartCRC32])
 		{

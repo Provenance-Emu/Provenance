@@ -382,6 +382,14 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 - Only port 0 is supported. `AUX_C` (id 8) always returns 0 — not exposed in `LightGunResponder` protocol.
 - **Flag 🟠 MAJOR** if new lightgun cores use raw string `systemIdentifier` comparison instead of `pv_core_declares_lightgun_device()` or `LightGunSystemRegistry`.
 
+### Native Core ObjC Category Peripheral Pattern (added in #3589)
+- ObjC categories cannot add stored properties. When a native core (e.g. snes9x) needs to track per-session peripheral state in a `+LightGun.mm` or `+Mouse.mm` category, use **file-scope static variables** (declared at the top of the `.mm` file). This is safe because only one emulator session runs at a time.
+- The static state must be fully reset by a `reset<Peripheral>State` method called in `loadFileAtPath:` **before** CRC detection so that stale state from a previous game cannot carry across ROM reloads.
+- When adding a new device type for an existing core controller port (e.g. CTL_SUPERSCOPE on port 1), always **also** set the other port(s) to CTL_JOYPAD explicitly — do not rely on defaults or previous-game state.
+- Button/pointer mapping IDs must not overlap. Use non-overlapping `uint32_t` ranges (e.g. 0x9100–0x91FF for one peripheral type). Document the reserved ranges in a comment at the top of the `.mm` file alongside existing ranges.
+- **Flag 🟠 MAJOR** if a `reset<Peripheral>State` call is missing from `loadFileAtPath:` for a new peripheral category.
+- **Flag 🟡 MINOR** if a new controller branch in `loadFileAtPath:` sets one port's device type but leaves other ports in stale state.
+
 ### Multi-Select / Batch Operations Pattern (added in #2821)
 - `ConsoleGamesViewModel.isMultiSelectMode` — Bool flag; toggled via `enterMultiSelectMode()` / `exitMultiSelectMode()`.
 - `ConsoleGamesViewModel.selectedGameMD5s` — `Set<String>` of selected game MD5 hashes (never Realm objects). All batch operations consume this set.

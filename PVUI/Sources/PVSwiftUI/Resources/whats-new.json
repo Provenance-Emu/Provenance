@@ -546,6 +546,24 @@
     ]
   },
   {
+    "version": "3.9.4",
+    "title": "SNES Light Gun Support",
+    "features": [
+      {
+        "symbolName": "scope",
+        "symbolColor": "orange",
+        "title": "Super Scope & Justifier",
+        "subtitle": "Play Yoshi's Safari, Super Scope 6, Battle Clash, Lethal Enforcers, and other light gun titles on the native SNES9x core using touch or GCMouse aim."
+      },
+      {
+        "symbolName": "target",
+        "symbolColor": "red",
+        "title": "Full Button Mapping",
+        "subtitle": "Trigger, Pause, Cursor, ToggleTurbo, and the reload gesture are all supported for both the Super Scope and Konami Justifier."
+      }
+    ]
+  },
+  {
     "version": "3.9.3",
     "title": "Save Migration Guide",
     "features": [
