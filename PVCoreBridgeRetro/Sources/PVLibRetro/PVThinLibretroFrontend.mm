@@ -1905,14 +1905,21 @@ static bool thin_environment(unsigned cmd, void *data) {
         // No dedicated system dir for this system — fall back to BIOSPath
         return self.BIOSPath ?: _biosPath;
     }
-    // Derive the base directory from BIOSPath (e.g. ".../Documents/BIOS" → ".../Documents").
-    // This correctly handles tvOS (BIOSPath is already under Caches), app-group containers,
-    // and iCloud Drive paths without any platform-specific branching here.
+    // Derive the base documents directory from BIOSPath.
+    // BIOSPath is set by PVEmulatorCore to "<docs>/BIOS/<systemIdentifier>" (e.g.
+    // ".../Documents/BIOS/com.provenance.psp"), so we strip two path components to
+    // reach the documents root ("<docs>"), then append "System/<Name>".
+    // This handles tvOS (BIOSPath is under Caches), app-group containers, and iCloud
+    // Drive paths without any platform-specific branching here.
     NSString *biosPath = self.BIOSPath ?: _biosPath;
-    NSString *baseDir = biosPath ? biosPath.stringByDeletingLastPathComponent : nil;
-    if (!baseDir) {
+    // Strip "<systemIdentifier>" then "BIOS" to reach the documents root.
+    NSString *baseDir = biosPath
+        ? biosPath.stringByDeletingLastPathComponent.stringByDeletingLastPathComponent
+        : nil;
+    if (!baseDir || baseDir.length == 0 || [baseDir isEqualToString:@"/"]) {
         // BIOSPath unavailable (shouldn't happen in normal operation).
-        // Use platform-appropriate base directory without depending on PVLibrary.
+        // Use the platform-appropriate standard directory. Note: this does NOT account for
+        // app-group containers, but BIOSPath should always be set in practice.
 #if TARGET_OS_TV
         baseDir = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject;
 #else
