@@ -43,8 +43,6 @@ public struct GameContextMenu: View {
     weak var rootDelegate: PVRootDelegate?
     var contextMenuDelegate: GameContextMenuDelegate?
 
-    @State private var showArtworkSearch = false
-    @State private var showImagePicker = false
     @State private var showArtworkSourceAlert = false
     @State private var gameToUpdateCover: PVGame?
     @Environment(\.featureFlags) private var featureFlags
@@ -191,6 +189,11 @@ public struct GameContextMenu: View {
                         Label("Import Battery Save", systemImage: "square.and.arrow.down")
                     }
                     #endif
+                    Button {
+                        contextMenuDelegate?.gameContextMenu(self, didRequestImportSaveFor: game)
+                    } label: {
+                        Label("Import Save Bundle", systemImage: "archivebox.fill")
+                    }
                 }
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {

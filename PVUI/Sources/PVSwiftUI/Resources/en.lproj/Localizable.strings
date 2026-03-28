@@ -221,6 +221,58 @@
 "retro_menu.saves.auto_save_to_photos" = "Auto-Save to Photos";
 "retro_menu.plus.badge" = "PLUS";
 
+// MARK: - Save Import Wizard (SaveImportWizardView.swift)
+
+// Navigation titles
+"save_import.nav.file_selection" = "Import Save";
+"save_import.nav.game_matching" = "Match Game";
+"save_import.nav.summary" = "Confirm Import";
+"save_import.nav.progress" = "Importing\u2026";
+"save_import.nav.done" = "Done";
+
+// File selection step
+"save_import.step1.title" = "IMPORT SAVE";
+"save_import.step1.importing_for" = "Importing save for:";
+"save_import.step1.description" = "Choose a .zip save bundle or a battery save file (.sav, .srm, .ram) to import.";
+"save_import.step1.choose_file" = "Choose File";
+
+// tvOS fallback hint
+"save_import.tvos.icloud_hint" = "On Apple TV, saves arrive via iCloud Drive sync. Enable iCloud sync in Cloud Settings and share a save bundle from another device to import it here.";
+
+// Game matching step
+"save_import.matching.finding" = "Finding matching game\u2026";
+"save_import.matching.exact" = "Exact Match";
+"save_import.matching.probable" = "Probable Match";
+"save_import.matching.manual" = "Manual Selection";
+"save_import.matching.no_match" = "No matching game found";
+"save_import.matching.use_this" = "Use This Game";
+"save_import.matching.select_game" = "Select Game";
+"save_import.matching.choose_different" = "Choose Different Game";
+
+// Summary step
+"save_import.summary.ready_for" = "Ready to import saves for";
+"save_import.summary.file_label" = "File";
+"save_import.summary.type_label" = "Type";
+"save_import.summary.bundle_type" = "Save Bundle (.%@)";
+"save_import.summary.battery_type" = "Battery Save (.%@)";
+"save_import.summary.import_now" = "Import Now";
+"save_import.summary.overwrite_singular" = "This game has %d existing save state. Importing may overwrite matching files.";
+"save_import.summary.overwrite_plural" = "This game has %d existing save states. Importing may overwrite matching files.";
+
+// Progress step
+"save_import.progress.title" = "IMPORTING\u2026";
+
+// Done step
+"save_import.done.success_title" = "IMPORT COMPLETE";
+"save_import.done.success_message" = "Saves restored successfully.\nThey will appear after a library refresh or app relaunch.";
+"save_import.done.states_restored" = "%d save state(s) restored";
+"save_import.done.sram_restored" = "Battery save restored";
+"save_import.done.failure_title" = "IMPORT FAILED";
+"save_import.done.button" = "Done";
+
+// Game picker sheet
+"save_import.picker.title" = "Select Game";
+"save_import.picker.search_prompt" = "Search games\u2026";
 // MARK: - External Emulator Migration (ExternalEmulatorMigrationView.swift)
 "migration.nav.title" = "Import from Another Emulator";
 "migration.header.title" = "Bring Your Saves Over";

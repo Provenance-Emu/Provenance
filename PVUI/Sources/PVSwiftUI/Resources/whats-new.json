@@ -546,24 +546,6 @@
     ]
   },
   {
-    "version": "3.9.4",
-    "title": "SNES Light Gun Support",
-    "features": [
-      {
-        "symbolName": "scope",
-        "symbolColor": "orange",
-        "title": "Super Scope & Justifier",
-        "subtitle": "Play Yoshi's Safari, Super Scope 6, Battle Clash, Lethal Enforcers, and other light gun titles on the native SNES9x core using touch or GCMouse aim."
-      },
-      {
-        "symbolName": "target",
-        "symbolColor": "red",
-        "title": "Full Button Mapping",
-        "subtitle": "Trigger, Pause, Cursor, ToggleTurbo, and the reload gesture are all supported for both the Super Scope and Konami Justifier."
-      }
-    ]
-  },
-  {
     "version": "3.9.3",
     "title": "Save Migration Guide",
     "features": [
@@ -584,6 +566,48 @@
         "symbolColor": "purple",
         "title": "Manual Import Guide",
         "subtitle": "Not migrating from a specific app? A general guide covers .sav/.srm/.state imports via Files.app and the built-in web server."
+      }
+    ]
+  },
+  {
+    "version": "3.9.4",
+    "title": "Save Import Wizard",
+    "features": [
+      {
+        "symbolName": "archivebox.fill",
+        "symbolColor": "pink",
+        "title": "Save Import Wizard",
+        "subtitle": "A polished multi-step import wizard lets you bring in save bundles (.zip), battery saves (.sav/.srm/.ram), and .pvsave files from Settings → Library or via any game's context menu."
+      },
+      {
+        "symbolName": "checkmark.seal.fill",
+        "symbolColor": "green",
+        "title": "Automatic Game Matching",
+        "subtitle": "The import wizard automatically matches your save bundle to the correct game using MD5 manifest verification or filename heuristics, with a manual picker as fallback."
+      },
+      {
+        "symbolName": "arrow.down.circle.fill",
+        "symbolColor": "purple",
+        "title": "Retrowave Import UI",
+        "subtitle": "The wizard uses Provenance's full retrowave design system — neon glows, grid backgrounds, and animated progress tracking throughout the import flow."
+      }
+    ]
+  },
+  {
+    "version": "3.9.5",
+    "title": "SNES Light Gun Support",
+    "features": [
+      {
+        "symbolName": "scope",
+        "symbolColor": "orange",
+        "title": "Super Scope & Justifier",
+        "subtitle": "Play Yoshi's Safari, Super Scope 6, Battle Clash, Lethal Enforcers, and other light gun titles on the native SNES9x core using touch or GCMouse aim."
+      },
+      {
+        "symbolName": "target",
+        "symbolColor": "red",
+        "title": "Full Button Mapping",
+        "subtitle": "Trigger, Pause, Cursor, ToggleTurbo, and the reload gesture are all supported for both the Super Scope and Konami Justifier."
       }
     ]
   }

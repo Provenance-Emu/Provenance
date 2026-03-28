@@ -2473,6 +2473,7 @@ private struct LibrarySection: View {
 private struct LibrarySection2: View {
     @ObservedObject var viewModel: PVSettingsViewModel
     @Default(.autoNormalizeROMTitles) var autoNormalizeROMTitles
+    @State private var showSaveImportWizard = false
 
     var body: some View {
         Section(header: Text("settings.section.library_management", bundle: .module)) {
@@ -2517,6 +2518,24 @@ private struct LibrarySection2: View {
                             icon: .sfSymbol("archivebox"))
             }
             #endif
+
+            Button {
+                showSaveImportWizard = true
+            } label: {
+                SettingsRow(title: "Import Saves",
+                            #if os(tvOS)
+                            subtitle: "Saves sync automatically via iCloud. Tap to view guidance.",
+                            #else
+                            subtitle: "Import a save bundle or battery save from a .zip, .sav, .srm, or .ram file.",
+                            #endif
+                            icon: .sfSymbol("square.and.arrow.down"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+            .sheet(isPresented: $showSaveImportWizard) {
+                SaveImportWizardView()
+            }
 
             NavigationLink(destination: BatchArtworkMatchingView()) {
                 SettingsRow(title: "Batch Artwork Matcher",

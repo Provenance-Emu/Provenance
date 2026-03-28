@@ -271,7 +271,8 @@ extension ConsoleGamesView: GameContextMenuDelegate {
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowSaveStatesFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to show save states for game")
-        gamesViewModel.continuesManagementState = ContinuesManagementState(game: game)
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        gamesViewModel.continuesManagementState = ContinuesManagementState(game: frozenGame)
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowGameInfoFor gameId: String) {
@@ -280,18 +281,18 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowImagePickerFor game: PVGame) {
-        gamesViewModel.gameToUpdateCover = game
+        gamesViewModel.gameToUpdateCover = game.isFrozen ? game : game.freeze()
         gamesViewModel.showImagePicker = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame) {
-        gamesViewModel.gameToUpdateCover = game
+        gamesViewModel.gameToUpdateCover = game.isFrozen ? game : game.freeze()
         gamesViewModel.showArtworkSearch = true
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame) {
         DLOG("ConsoleGamesView: Received request to choose artwork source")
-        gamesViewModel.gameToUpdateCover = game
+        gamesViewModel.gameToUpdateCover = game.isFrozen ? game : game.freeze()
         // The following now calls the async function on the ViewModel
         Task {
             await gamesViewModel.prepareArtworkSourceAlert(for: game)
@@ -380,11 +381,20 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         }
     }
 
+    func gameContextMenu(_ menu: GameContextMenu, didRequestImportSaveFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        gamesViewModel.saveImportPreSelectedGame = game.isFrozen ? game : game.freeze()
+        gamesViewModel.showSaveImportWizard = true
+    }
+
     @MainActor
     private func exportSRAM(for game: PVGame) async {
         do {
             let url = try await SaveExporter.shared.exportSRAM(for: game)
 #if os(tvOS)
+            // tvOS: move zip to Caches/Exports on a background thread to avoid blocking the
+            // main actor; only the showMessage calls return to the main actor.
+            // tvOS does not have a persistent Documents directory — use Caches instead.
             let rootDelegate = self.rootDelegate
             Task.detached(priority: .userInitiated) {
                 let exportsDir = URL.cachesPath.appendingPathComponent("Exports", isDirectory: true)
@@ -396,7 +406,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
                     }
                     try FileManager.default.moveItem(at: url, to: destURL)
                     await MainActor.run {
-                        rootDelegate?.showMessage("Battery save exported to Exports/\(url.lastPathComponent)", title: "Export Complete")
+                        rootDelegate?.showMessage("Battery save exported to Caches/Exports/\(url.lastPathComponent)", title: "Export Complete")
                     }
                 } catch {
                     SaveExporter.shared.cleanupExport(at: url)

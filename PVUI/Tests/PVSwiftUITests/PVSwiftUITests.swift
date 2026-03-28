@@ -1,6 +1,69 @@
 import Testing
 @testable import PVSwiftUI
 
+// MARK: - SaveImportMatchingService Tests
+
+@Suite("SaveImportMatchingService")
+struct SaveImportMatchingServiceTests {
+
+    // MARK: normalize
+
+    @Test("Region and revision annotations are stripped")
+    func normalizeStripsAnnotations() {
+        #expect(SaveImportMatchingService.normalize("Super Mario Bros. (USA)") == "super mario bros")
+        #expect(SaveImportMatchingService.normalize("Kirby's Adventure [!]") == "kirby s adventure")
+        #expect(SaveImportMatchingService.normalize("Zelda II (Rev A)") == "zelda ii")
+    }
+
+    @Test("Output is lowercased")
+    func normalizeLowercases() {
+        #expect(SaveImportMatchingService.normalize("SONIC THE HEDGEHOG") == "sonic the hedgehog")
+    }
+
+    @Test("Whitespace is collapsed and tokens joined by single spaces")
+    func normalizeCollapsesWhitespace() {
+        let result = SaveImportMatchingService.normalize("My  Game  (USA)  [h1]")
+        #expect(!result.contains("  "))
+    }
+
+    @Test("Empty string normalizes to empty string")
+    func normalizeEmptyString() {
+        #expect(SaveImportMatchingService.normalize("") == "")
+    }
+
+    // MARK: similarity
+
+    @Test("Identical strings score 100")
+    func similarityIdentical() {
+        #expect(SaveImportMatchingService.similarity("super mario world", "super mario world") == 100)
+    }
+
+    @Test("Completely different strings score 0")
+    func similarityDisjoint() {
+        #expect(SaveImportMatchingService.similarity("sonic hedgehog", "zelda link") == 0)
+    }
+
+    @Test("Partial overlap scores between 0 and 100")
+    func similarityPartial() {
+        let score = SaveImportMatchingService.similarity("super mario world", "super mario bros")
+        #expect(score > 0 && score < 100)
+    }
+
+    @Test("Empty inputs score 0")
+    func similarityEmptyInputs() {
+        #expect(SaveImportMatchingService.similarity("", "super mario") == 0)
+        #expect(SaveImportMatchingService.similarity("super mario", "") == 0)
+        #expect(SaveImportMatchingService.similarity("", "") == 0)
+    }
+
+    @Test("Token order does not affect score")
+    func similarityTokenOrderIndependent() {
+        let s1 = SaveImportMatchingService.similarity("mario super world", "super mario world")
+        let s2 = SaveImportMatchingService.similarity("super mario world", "mario super world")
+        #expect(s1 == s2)
+    }
+}
+
 // MARK: - ROMTitleNormalizer Tests
 
 @Suite("ROMTitleNormalizer")

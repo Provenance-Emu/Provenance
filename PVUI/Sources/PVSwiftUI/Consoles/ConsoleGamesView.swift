@@ -841,6 +841,15 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
                 #endif
+                .sheet(isPresented: $gamesViewModel.showSaveImportWizard, onDismiss: {
+                    gamesViewModel.saveImportPreSelectedGame = nil
+                }) {
+                    if let game = gamesViewModel.saveImportPreSelectedGame {
+                        SaveImportWizardView(preSelectedGame: game)
+                    } else {
+                        SaveImportWizardView()
+                    }
+                }
 
                 .task(priority: .background) {
                     // Defer BIOS rescan significantly to avoid blocking tab switches
