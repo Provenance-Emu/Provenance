@@ -255,7 +255,7 @@ private struct RetroArchVirtualInputSupport {
         "com.provenance.quake2": .keyboardAndMouse(),
         "com.provenance.saturn": .keyboardAndMouse(), // Saturn Shuttle Mouse
         "com.provenance.snes": .keyboardAndMouse(), // SNES Mouse (Mario Paint, etc.)
-        "com.provenance.tic80": .keyboard(),
+        "com.provenance.tic80": .keyboard(required: true),
         "com.provenance.wolf3d": .keyboardAndMouse(),
         "com.provenance.zxspectrum": .keyboardAndMouse(requiredKeyboard: true)
     ]
@@ -287,7 +287,7 @@ private struct RetroArchVirtualInputSupport {
         "vitaquake2-xatrix.libretro.framework": .keyboardAndMouse(),
         "vitaquake2-zaero.libretro.framework": .keyboardAndMouse(),
         "vitaquake2.libretro.framework": .keyboardAndMouse(),
-        "tic80.libretro.framework": .keyboard(),
+        "tic80.libretro.framework": .keyboard(required: true),
         "x1.libretro.framework": .keyboard()
     ]
 }

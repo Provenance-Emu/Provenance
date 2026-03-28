@@ -39,7 +39,7 @@
             case "start": self = .start
             case "select": self = .select
             case "count": self = .count
-            default: self = .b
+            default: self = .up
         }
     }
 
