@@ -22,6 +22,9 @@ import PVLibrary
 /// Generates a QR code `UIImage` from a `SharedCheatEntry`.
 public enum CheatQRCodeGenerator {
 
+    /// Shared `CIContext` — creating one per call is expensive; reuse across renders.
+    private static let ciContext = CIContext(options: [.useSoftwareRenderer: false])
+
     /// Renders a square QR code image for `entry` at the specified output size.
     ///
     /// - Parameters:
@@ -52,8 +55,7 @@ public enum CheatQRCodeGenerator {
         let scaleY = size / ciImage.extent.height
         let scaled = ciImage.transformed(by: CGAffineTransform(scaleX: scaleX, y: scaleY))
 
-        let context = CIContext(options: [.useSoftwareRenderer: false])
-        guard let cgImage = context.createCGImage(scaled, from: scaled.extent) else { return nil }
+        guard let cgImage = ciContext.createCGImage(scaled, from: scaled.extent) else { return nil }
         return UIImage(cgImage: cgImage)
     }
 }

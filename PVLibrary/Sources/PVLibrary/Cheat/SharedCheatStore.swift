@@ -178,9 +178,9 @@ public actor SharedCheatStore {
     /// Append a new cheat entry, deduplicating by ID.
     ///
     /// If an entry with the same `id` already exists it is replaced.
-    /// - Throws: `EncodingError` / write error if the file cannot be updated.
+    /// - Throws: `DecodingError` if the existing file is corrupt; `EncodingError` / write error if the file cannot be updated.
     public func add(_ entry: SharedCheatEntry) throws {
-        var entries = (try? loadAll()) ?? []
+        var entries = try loadAll()
         entries.removeAll { $0.id == entry.id }
         entries.append(entry)
         try save(entries)
@@ -188,9 +188,9 @@ public actor SharedCheatStore {
 
     /// Remove a cheat entry by its UUID.
     ///
-    /// - Throws: `EncodingError` / write error if the file cannot be updated.
+    /// - Throws: `DecodingError` if the existing file is corrupt; `EncodingError` / write error if the file cannot be updated.
     public func remove(id: UUID) throws {
-        var entries = (try? loadAll()) ?? []
+        var entries = try loadAll()
         entries.removeAll { $0.id == id }
         try save(entries)
     }

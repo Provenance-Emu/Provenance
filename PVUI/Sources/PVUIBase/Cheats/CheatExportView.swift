@@ -30,6 +30,7 @@ public struct CheatExportView: View {
 
     // MARK: - State
 
+    @Environment(\.dismiss) private var dismiss
     @State private var isCopied = false
     @State private var qrImage: UIImage?
 
@@ -48,6 +49,9 @@ public struct CheatExportView: View {
             .navigationTitle("Export Cheat")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
+                }
                 ToolbarItem(placement: .confirmationAction) {
                     ShareLink(
                         item: entry.code,
