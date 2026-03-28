@@ -406,6 +406,24 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Returns an empty array if the core did not call SET_CONTENT_INFO_OVERRIDE.
 @property (nonatomic, readonly) NSArray<NSDictionary<NSString *, id> *> *contentInfoOverrides;
 
+// MARK: Memory maps
+
+/// Number of memory descriptors stored from RETRO_ENVIRONMENT_SET_MEMORY_MAPS.
+@property (nonatomic, readonly) unsigned memoryMapCount;
+
+/// Returns a snapshot of the stored memory descriptors.
+/// Each dictionary contains:
+///   @"flags"      : NSNumber (uint64_t)
+///   @"ptr"        : NSValue wrapping the raw void* (or NSNull if NULL)
+///   @"offset"     : NSNumber (size_t)
+///   @"start"      : NSNumber (uint64_t) — emulated address
+///   @"select"     : NSNumber (uint64_t)
+///   @"disconnect" : NSNumber (uint64_t)
+///   @"len"        : NSNumber (size_t)
+///   @"addrspace"  : NSString (or @"" if NULL)
+/// Returns an empty array if the core did not call SET_MEMORY_MAPS.
+@property (nonatomic, readonly) NSArray<NSDictionary<NSString *, id> *> *memoryMapDescriptors;
+
 // MARK: Input state
 
 /// Set or clear a single joypad button for a given player.
