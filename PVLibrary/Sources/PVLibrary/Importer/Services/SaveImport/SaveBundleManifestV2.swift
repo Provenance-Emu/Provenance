@@ -98,6 +98,10 @@ public struct SaveBundleManifestV2: Codable, Sendable {
             self.sizeBytes = sizeBytes
             self.md5 = md5
         }
+
+        /// Returns `true` if `filename` is safe to use as a bare filename (no path separators,
+        /// no leading dot, no traversal sequences).
+        public var isSafeFilename: Bool { SaveBundleManifestV2.isSafeFilename(filename) }
     }
 
     /// Metadata for a single save-state file.
@@ -130,6 +134,22 @@ public struct SaveBundleManifestV2: Codable, Sendable {
             self.userDescription = userDescription
             self.coreIdentifier = coreIdentifier
         }
+
+        /// Returns `true` if `filename` is safe to use as a bare filename.
+        public var isSafeFilename: Bool { SaveBundleManifestV2.isSafeFilename(filename) }
+    }
+
+    /// Returns `true` if `name` is a safe bare filename: no path separators, no leading dot,
+    /// no traversal sequences (`..`), and non-empty.
+    public static func isSafeFilename(_ name: String) -> Bool {
+        guard !name.isEmpty,
+              !name.hasPrefix("."),
+              !name.contains("/"),
+              !name.contains("\\"),
+              name != "..",
+              !name.contains("../"),
+              !name.contains("..\\") else { return false }
+        return true
     }
 
     // MARK: - CodingKeys

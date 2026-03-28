@@ -105,8 +105,10 @@ public final class SaveExporter: @unchecked Sendable {
         let batterySavesDir: URL? = romURL.map { Paths.batterySavesPath(forROM: $0) }
         let hasBatterySaves: Bool = {
             guard let dir = batterySavesDir else { return false }
-            return fm.fileExists(atPath: dir.path)
-                && ((try? fm.contentsOfDirectory(atPath: dir.path))?.isEmpty == false)
+            guard fm.fileExists(atPath: dir.path) else { return false }
+            let visibleFiles = try? fm.contentsOfDirectory(
+                at: dir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            return visibleFiles?.isEmpty == false
         }()
 
         guard hasAnySave || hasBatterySaves else {
@@ -135,14 +137,16 @@ public final class SaveExporter: @unchecked Sendable {
             )
         }
 
-        // Build battery saves index
+        // Build battery saves index (skip hidden files such as .DS_Store)
         let batteryEntries: [SaveBundleManifestV2.BatterySaveEntry]? = {
             guard let dir = batterySavesDir,
-                  let files = try? fm.contentsOfDirectory(atPath: dir.path) else { return nil }
-            return files.map { filename in
-                let fileURL = dir.appendingPathComponent(filename)
-                let size = (try? fm.attributesOfItem(atPath: fileURL.path))?[.size] as? Int
-                return SaveBundleManifestV2.BatterySaveEntry(filename: filename, sizeBytes: size)
+                  let fileURLs = try? fm.contentsOfDirectory(
+                      at: dir, includingPropertiesForKeys: [.fileSizeKey],
+                      options: .skipsHiddenFiles) else { return nil }
+            return fileURLs.map { fileURL in
+                let size = (try? fileURL.resourceValues(forKeys: [.fileSizeKey]))?.fileSize
+                return SaveBundleManifestV2.BatterySaveEntry(
+                    filename: fileURL.lastPathComponent, sizeBytes: size)
             }
         }()
 
@@ -318,8 +322,14 @@ public final class SaveExporter: @unchecked Sendable {
             let destStates = Paths.saveStatePath(forROM: romURL)
             // Ensure destination directory exists before copying individual files
             try fm.createDirectory(at: destStates, withIntermediateDirectories: true)
-            let stateFiles = (try? fm.contentsOfDirectory(atPath: srcStates.path)) ?? []
+            let stateFiles = (try? fm.contentsOfDirectory(
+                at: srcStates, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+                .map(\.lastPathComponent)) ?? []
             for fileName in stateFiles {
+                guard SaveBundleManifestV2.isSafeFilename(fileName) else {
+                    WLOG("SaveExporter: skipping unsafe filename in states/: \(fileName)")
+                    continue
+                }
                 let src = srcStates.appendingPathComponent(fileName)
                 let dest = destStates.appendingPathComponent(fileName)
                 if fm.fileExists(atPath: dest.path) {
@@ -428,7 +438,9 @@ public final class SaveExporter: @unchecked Sendable {
         let fm = FileManager.default
         let batteryDir = Paths.batterySavesPath(forROM: romURL)
         guard fm.fileExists(atPath: batteryDir.path),
-              let items = try? fm.contentsOfDirectory(atPath: batteryDir.path),
+              let items = try? fm.contentsOfDirectory(
+                  at: batteryDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+                  .map(\.lastPathComponent),
               !items.isEmpty else {
             throw SaveExportError.noSavesFound
         }
@@ -516,8 +528,15 @@ public final class SaveExporter: @unchecked Sendable {
         let fm = FileManager.default
         do {
             try fm.createDirectory(at: destination, withIntermediateDirectories: true)
-            let items = (try? fm.contentsOfDirectory(atPath: source.path)) ?? []
+            // Skip hidden files (e.g. .DS_Store) when restoring
+            let items = (try? fm.contentsOfDirectory(
+                at: source, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+                .map(\.lastPathComponent)) ?? []
             for item in items {
+                guard SaveBundleManifestV2.isSafeFilename(item) else {
+                    WLOG("SaveExporter: skipping unsafe filename in battery/: \(item)")
+                    continue
+                }
                 let src = source.appendingPathComponent(item)
                 let dest = destination.appendingPathComponent(item)
                 if fm.fileExists(atPath: dest.path) {

@@ -329,4 +329,54 @@ final class SaveBundleManifestV2Tests: XCTestCase {
     func testSaveFileCategoryPPSTIsState() {
         XCTAssertEqual(SaveFileCategory.infer(fromExtension: "ppst"), .saveState)
     }
+
+    // MARK: - isSafeFilename
+
+    func testIsSafeFilename_validNames() {
+        XCTAssertTrue(SaveBundleManifestV2.isSafeFilename("Mario.srm"))
+        XCTAssertTrue(SaveBundleManifestV2.isSafeFilename("save_state_001.svs"))
+        XCTAssertTrue(SaveBundleManifestV2.isSafeFilename("abc123.state"))
+        XCTAssertTrue(SaveBundleManifestV2.isSafeFilename("My Game (USA).sav"))
+    }
+
+    func testIsSafeFilename_rejectsEmpty() {
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename(""))
+    }
+
+    func testIsSafeFilename_rejectsHiddenFiles() {
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename(".DS_Store"))
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename(".hidden"))
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("._resource_fork"))
+    }
+
+    func testIsSafeFilename_rejectsPathTraversal() {
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("../etc/passwd"))
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename(".."))
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("foo/../bar.srm"))
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("subdir/Mario.srm"))
+    }
+
+    func testIsSafeFilename_rejectsBackslash() {
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("foo\\bar.srm"))
+        XCTAssertFalse(SaveBundleManifestV2.isSafeFilename("..\\passwd"))
+    }
+
+    func testBatterySaveEntry_isSafeFilename() {
+        let safe = SaveBundleManifestV2.BatterySaveEntry(filename: "Mario.srm")
+        XCTAssertTrue(safe.isSafeFilename)
+
+        let unsafe = SaveBundleManifestV2.BatterySaveEntry(filename: "../secret.srm")
+        XCTAssertFalse(unsafe.isSafeFilename)
+
+        let hidden = SaveBundleManifestV2.BatterySaveEntry(filename: ".DS_Store")
+        XCTAssertFalse(hidden.isSafeFilename)
+    }
+
+    func testSaveStateEntry_isSafeFilename() {
+        let safe = SaveBundleManifestV2.SaveStateEntry(filename: "abc.svs")
+        XCTAssertTrue(safe.isSafeFilename)
+
+        let unsafe = SaveBundleManifestV2.SaveStateEntry(filename: "../../etc/passwd")
+        XCTAssertFalse(unsafe.isSafeFilename)
+    }
 }
