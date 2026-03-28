@@ -29,7 +29,6 @@ public final class DriverExtensionManager: NSObject {
     }
 
     public private(set) var activationState: ActivationState = .unknown
-    public private(set) var isActivating = false
 
     // Tracks whether the in-flight request is a deactivation so that
     // `didFinishWithResult` can transition to the correct terminal state.
@@ -54,7 +53,6 @@ public final class DriverExtensionManager: NSObject {
         case .unknown, .notInstalled: break
         default: return
         }
-        isActivating = true
         activationState = .activating
 
         let request = OSSystemExtensionRequest.activationRequest(
@@ -109,7 +107,6 @@ extension DriverExtensionManager: OSSystemExtensionRequestDelegate {
         didFinishWithResult result: OSSystemExtensionRequest.Result
     ) {
         Task { @MainActor in
-            isActivating = false
             let wasDeactivation = pendingDeactivation
             pendingDeactivation = false
             switch result {
@@ -126,7 +123,6 @@ extension DriverExtensionManager: OSSystemExtensionRequestDelegate {
         didFailWithError error: Error
     ) {
         Task { @MainActor in
-            isActivating = false
             pendingDeactivation = false
             activationState = .failed(error.localizedDescription)
         }

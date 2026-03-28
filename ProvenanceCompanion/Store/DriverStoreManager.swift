@@ -32,7 +32,9 @@ public final class DriverStoreManager {
     // MARK: - Public API
 
     /// Load product metadata from App Store Connect.
+    /// No-op if a load is already in progress.
     public func loadProducts() async {
+        guard !isLoading else { return }
         isLoading = true
         defer { isLoading = false }
 

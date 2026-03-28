@@ -31,7 +31,7 @@
 	<true/>
 
 	<!-- IOUserClient allow list — apps that can open a UserClient to this dext -->
-	<!-- Add the Provenance main app bundle ID here to allow direct IPC -->
+	<!-- Both the main Provenance app and the Companion app are pre-authorised for IPC -->
 	<key>com.apple.developer.driverkit.userclient-access</key>
 	<array>
 		<string>org.provenance-emu.provenance</string>

@@ -28,9 +28,18 @@
 import HIDDriverKit
 import DriverKit
 
-/// USB matching tables for devices this dext claims.
-/// Each dictionary maps kIOHIDVendorIDKey + kIOHIDProductIDKey to a device entry.
-/// Add new devices here to expand the driver's scope.
+/// USB matching table — reference document for the dext's `IOKitPersonalities`.
+///
+/// These VID:PID pairs must be added to `Info.plist` under `IOKitPersonalities`
+/// so the OS assigns this dext to the matching USB device at boot time.
+/// This constant mirrors that plist data for documentation purposes; it is NOT
+/// read by the driver at runtime.
+///
+/// To add a new device:
+///  1. Add an entry here (for code review / documentation)
+///  2. Add a matching `IOKitPersonalities` dictionary entry in the dext's `Info.plist`
+///  3. Add the VID:PID to `KnownDeviceProfiles` in PVUSBManager so the companion
+///     app shows correct metadata for the device.
 let kUSBMatchingCriteria: [[String: Any]] = [
     // Sony DualShock 3
     [kIOHIDVendorIDKey: 0x054C, kIOHIDProductIDKey: 0x0268],
