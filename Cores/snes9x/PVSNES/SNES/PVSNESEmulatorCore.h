@@ -69,13 +69,13 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 /// Primary trigger press / release.
 - (void)snesLightGunTriggerDown;
 - (void)snesLightGunTriggerUp;
-/// Super Scope "Cursor" button (also used as AuxA for Super Scope games).
+/// Super Scope "Pause" button (AuxA).  No-op for Justifier.
 - (void)snesLightGunAuxADown;
 - (void)snesLightGunAuxAUp;
-/// Super Scope "ToggleTurbo" button (AuxB).
+/// Super Scope "ToggleTurbo" button (AuxB).  No-op for Justifier.
 - (void)snesLightGunAuxBDown;
 - (void)snesLightGunAuxBUp;
-/// Super Scope "Pause" / Justifier "Start" button.
+/// Super Scope "Cursor" button / Justifier "Start" button.
 - (void)snesLightGunStartDown;
 - (void)snesLightGunStartUp;
 /// Aim-offscreen + trigger simultaneously (reload gesture for both Super Scope and Justifier).

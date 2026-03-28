@@ -45,7 +45,7 @@
 
 #import "PVSNESEmulatorCore.h"
 
-#include "SNESCore/controls.h"
+#include "controls.h"
 
 // ── snes9x screen dimensions ─────────────────────────────────────────────────
 static const double kSNESScreenWidth  = 256.0;
@@ -182,22 +182,26 @@ static inline int16_t normToSNESY(CGFloat ny) {
 
 - (void)resetSNESLightGunState {
     // Release all held light-gun inputs and clear session state.
-    if (sOffscreenActive) {
-        switch (sLightGunType) {
-            case SNESLightGunTypeSuperScope:
-                S9xReportButton(kScopeOffscreenID, false);
-                S9xReportButton(kScopeFireID,      false);
-                break;
-            case SNESLightGunTypeJustifier:
-                S9xReportButton(kJustOffscreenID,  false);
-                S9xReportButton(kJustTriggerID,    false);
-                break;
-            default:
-                break;
-        }
-        sOffscreenActive = NO;
+    // Release unconditionally so a held trigger or offscreen button cannot carry
+    // across ROM reloads even when sOffscreenActive is NO.
+    switch (sLightGunType) {
+        case SNESLightGunTypeSuperScope:
+            S9xReportButton(kScopeOffscreenID, false);
+            S9xReportButton(kScopeFireID,      false);
+            S9xReportButton(kScopePauseID,     false);
+            S9xReportButton(kScopeCursorID,    false);
+            S9xReportButton(kScopeTurboID,     false);
+            break;
+        case SNESLightGunTypeJustifier:
+            S9xReportButton(kJustOffscreenID,  false);
+            S9xReportButton(kJustTriggerID,    false);
+            S9xReportButton(kJustStartID,      false);
+            break;
+        default:
+            break;
     }
-    sLightGunType = SNESLightGunTypeNone;
+    sOffscreenActive = NO;
+    sLightGunType    = SNESLightGunTypeNone;
 }
 
 #pragma mark - Aim
