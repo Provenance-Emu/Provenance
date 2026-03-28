@@ -37,5 +37,18 @@
 		<string>$(AppIdentifierPrefix)org.provenance-emu.provenance</string>
 		<string>$(AppIdentifierPrefix)org.provenance-emu</string>
 	</array>
+	<!-- SystemExtensions framework — required to activate/deactivate the embedded DriverKit dext -->
+	<key>com.apple.developer.system-extension.install</key>
+	<true/>
+	<!-- In-App Purchases (StoreKit 2) -->
+	<key>com.apple.developer.in-app-payments</key>
+	<array>
+		<string>org.provenance-emu.companion.iap.driver.ds3</string>
+		<string>org.provenance-emu.companion.iap.driver.gamecube</string>
+		<string>org.provenance-emu.companion.iap.driver.wheel</string>
+		<string>org.provenance-emu.companion.iap.driver.legacy-hid</string>
+		<string>org.provenance-emu.companion.iap.driver.memcard</string>
+		<string>org.provenance-emu.companion.iap.bundle.all</string>
+	</array>
 </dict>
 </plist>
