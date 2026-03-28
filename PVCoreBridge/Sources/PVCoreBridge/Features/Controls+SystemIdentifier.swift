@@ -100,7 +100,7 @@ public extension SystemIdentifier {
         case .SGFX: return PVPCFXButton.self    // TODO: Add me
         case .SNES: return PVSNESButton.self
         case .Supervision: return PVSupervisionButton.self
-        case .TIC80: return PVDOSButton.self // TODO: Add me
+        case .TIC80: return PVTIC80Button.self
         case .Vectrex: return PVVectrexButton.self
         case .VirtualBoy: return PVVBButton.self
         case .Wii: return PVWiiMoteButton.self

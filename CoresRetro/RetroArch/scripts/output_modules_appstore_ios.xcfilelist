@@ -108,6 +108,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/stella_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/stella2014_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/stella2023_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/theodore_libretro_ios.dylib
+#$(SRCROOT)/CoresRetro/RetroArch/modules/tic80_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/tyrquake_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/vba_next_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/vbam_libretro_ios.dylib
