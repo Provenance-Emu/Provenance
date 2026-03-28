@@ -844,7 +844,11 @@ struct ConsoleGamesView: SwiftUI.View {
                 .sheet(isPresented: $gamesViewModel.showSaveImportWizard, onDismiss: {
                     gamesViewModel.saveImportPreSelectedGame = nil
                 }) {
-                    SaveImportWizardView(preSelectedGame: gamesViewModel.saveImportPreSelectedGame)
+                    if let game = gamesViewModel.saveImportPreSelectedGame {
+                        SaveImportWizardView(preSelectedGame: game)
+                    } else {
+                        SaveImportWizardView()
+                    }
                 }
 
                 .task(priority: .background) {

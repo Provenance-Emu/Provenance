@@ -94,9 +94,9 @@ public enum PVFeature: String, CaseIterable, Sendable {
     case airPlayMenu = "airPlayMenu"
     /// Enables explicit SRAM/battery save import and export actions in the game context menu.
     /// "Export Battery Save" copies `.sav`/`.srm`/`.ram` files to the share sheet (iOS) or
-    /// Documents/Exports (tvOS). "Import Battery Save" (iOS only) accepts raw battery save
+    /// Caches/Exports (tvOS). "Import Battery Save" (iOS only) accepts raw battery save
     /// files and `.zip` archives via the document picker, replacing the current battery save.
-    /// Disabled by default while the feature stabilises.
+    /// Enabled by default; disable via Settings > Advanced > Feature Flags if regressions appear.
     case sramImportExport = "sramImportExport"
 }
 
@@ -272,9 +272,10 @@ public struct FeatureFlag: Codable, Sendable {
     )
 
     public static let sramImportExport = FeatureFlag(
-        enabled: false,
+        enabled: true,
+        allowedPlatforms: ["ios"],
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
-        description: "Explicit SRAM/battery save import and export in the game context menu. Export shares .sav/.srm/.ram files; import accepts raw saves and .zip archives. Disabled by default while the feature stabilises — enable in Settings > Advanced > Feature Flags."
+        description: "Explicit SRAM/battery save import and export in the game context menu. Export shares .sav/.srm/.ram files; import opens a document picker. iOS only (tvOS syncs saves via iCloud)."
     )
 }
 
@@ -692,7 +693,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
     public var enhancedArtworkSearch: Bool { featureStates[.enhancedArtworkSearch] ?? false }
     public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
-    public var sramImportExport: Bool { featureStates[.sramImportExport] ?? false }
+    public var sramImportExport: Bool { featureStates[.sramImportExport] ?? true }
 
     // MARK: - Feature Queries
 
