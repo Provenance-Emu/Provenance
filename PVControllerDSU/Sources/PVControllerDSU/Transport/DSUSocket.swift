@@ -209,6 +209,16 @@ public actor DSUSocket {
         let params = NWParameters.udp
         let connection = NWConnection(to: endpoint, using: params)
         connections[endpoint] = connection
+        connection.stateUpdateHandler = { [weak self] state in
+            switch state {
+            case .failed, .cancelled:
+                Task { [weak self] in
+                    await self?.removeConnection(for: endpoint)
+                }
+            default:
+                break
+            }
+        }
         connection.start(queue: .global(qos: .userInitiated))
         return connection
     }

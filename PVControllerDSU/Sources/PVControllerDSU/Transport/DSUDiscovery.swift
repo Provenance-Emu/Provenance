@@ -14,6 +14,13 @@ import Foundation
 ///
 /// Thread-safe: `start()` and `stop()` may be called from any thread.
 ///
+/// **Port sharing:** The advertiser binds to the same UDP port as the DSU server
+/// so that it can publish the Bonjour record. If you also run a `DSUSocket` on
+/// the same port, both objects set `allowLocalEndpointReuse = true`, which
+/// permits multiple sockets to share a port. Incoming datagrams will be routed
+/// to the `DSUSocket`; the advertiser's listener discards any that arrive at its
+/// own connection handler.
+///
 /// ```swift
 /// let advertiser = DSUServiceAdvertiser(port: 26760, name: "My Provenance")
 /// advertiser.start()
@@ -72,6 +79,8 @@ public final class DSUServiceAdvertiser: @unchecked Sendable {
     private func startOnQueue() {
         let params = NWParameters.udp
         params.includePeerToPeer = true
+        // Required so the advertiser can co-exist on the same port as DSUSocket.
+        params.allowLocalEndpointReuse = true
 
         guard let nwPort = NWEndpoint.Port(rawValue: port) else { return }
 
@@ -91,7 +100,9 @@ public final class DSUServiceAdvertiser: @unchecked Sendable {
             }
 
             listener.newConnectionHandler = { connection in
-                // DSU is connectionless UDP; reject any unexpected TCP connections.
+                // The advertiser listener is for Bonjour registration only.
+                // Any datagrams that arrive here are discarded; actual packet
+                // handling is done by DSUSocket on the same port.
                 connection.cancel()
             }
 

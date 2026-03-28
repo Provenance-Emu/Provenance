@@ -71,8 +71,6 @@ struct DSUPacketTests {
         #expect(decodedVersion == ver)
     }
 
-    // MARK: - ListPortsRequest round-trip
-
     // MARK: - ListPortsResponse round-trip
 
     @Test("ListPortsResponse encodes slot info, decodes back")
@@ -338,6 +336,36 @@ struct DSUPacketTests {
         // Corrupt a byte outside the CRC field to break the checksum
         data[19] ^= 0xFF
         #expect(DSUPacket.decode(data) == nil)
+    }
+
+    @Test("Decode returns nil for unknown message type")
+    func testDecodeUnknownMessageType() throws {
+        // Build a valid versionRequest then patch in an unknown msgType
+        var data = DSUPacket.versionRequest(clientUID: 0).encode()
+        // Overwrite message type (bytes 16-19) with an unrecognised value
+        data[16] = 0xFF
+        data[17] = 0xFF
+        data[18] = 0xFF
+        data[19] = 0xFF
+        // Re-stamp CRC so the decode doesn't fail on CRC before hitting the switch
+        DSUCRC32.stamp(into: &data)
+        #expect(DSUPacket.decode(data) == nil)
+    }
+
+    @Test("ListPortsRequest with empty ports list round-trips to empty array")
+    func testListPortsRequestEmptyPorts() throws {
+        let uid: UInt32 = 0xDEAD0000
+        let packet = DSUPacket.listPortsRequest(clientUID: uid, ports: [])
+        let data = packet.encode()
+        #expect(DSUCRC32.verify(data))
+
+        let decoded = try #require(DSUPacket.decode(data))
+        guard case .listPortsRequest(let decodedUID, let decodedPorts) = decoded else {
+            Issue.record("Expected .listPortsRequest")
+            return
+        }
+        #expect(decodedUID == uid)
+        #expect(decodedPorts.isEmpty)
     }
 
     // MARK: - MAC address equality helper
