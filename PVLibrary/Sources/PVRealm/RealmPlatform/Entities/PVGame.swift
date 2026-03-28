@@ -38,6 +38,12 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     }
 
     @Persisted public var requiresSync: Bool = true
+    /// Raw integer stored in Realm; use `matchSource` computed property for type-safe access
+    @Persisted public var matchSourceRaw: Int = GameMatchSource.none.rawValue
+    /// Bitmask of fields the user has explicitly customized; use `userCustomizedFields` for type-safe access
+    @Persisted public var userCustomizedFieldsMask: Int = 0
+    /// Date of the last metadata lookup attempt (nil = never looked up)
+    @Persisted public var lastMetadataLookupDate: Date? = nil
     @Persisted(indexed: true) public var isFavorite: Bool = false
 
     // CloudKit sync properties
@@ -233,35 +239,13 @@ public extension Game {
                             local: true)
         let gameDescription = game.gameDescription
         let publishDate = game.publishDate
+        let matchSourceRaw = game.matchSourceRaw
+        let userCustomizedFieldsMask = game.userCustomizedFieldsMask
+        let lastMetadataLookupDate = game.lastMetadataLookupDate
         // TODO: Screenshots
-        self.init(id: id, title: title, file: file, systemIdentifier: systemIdentifier, md5: md5, crc: crc, isFavorite: isFavorite, playCount: playCount, lastPlayed: lastPlayed, gameDescription: gameDescription, boxBackArtworkURL: boxBackArtworkURL, developer: developer, publisher: publisher, publishDate: publishDate, genres: genres, referenceURL: referenceURL, releaseID: releaseID, regionName: regionName, regionID: regionID, systemShortName: systemShortName, language: language)
+        self.init(id: id, title: title, file: file, systemIdentifier: systemIdentifier, md5: md5, crc: crc, isFavorite: isFavorite, playCount: playCount, lastPlayed: lastPlayed, gameDescription: gameDescription, boxBackArtworkURL: boxBackArtworkURL, developer: developer, publisher: publisher, publishDate: publishDate, genres: genres, referenceURL: referenceURL, releaseID: releaseID, regionName: regionName, regionID: regionID, systemShortName: systemShortName, language: language, matchSourceRaw: matchSourceRaw, userCustomizedFieldsMask: userCustomizedFieldsMask, lastMetadataLookupDate: lastMetadataLookupDate)
     }
 
-//    init(withGame game: Game_Data) {
-//        let id = game.id
-//        let title = game.title
-//        let systemIdentifier = game.systemIdentifier
-//        let md5 = game.md5Hash
-//        let crc = game.crc
-//        let isFavorite = game.isFavorite
-//        let playCount = UInt(game.playCount)
-//        let lastPlayed = game.lastPlayed
-//        let boxBackArtworkURL = game.boxBackArtworkURL
-//        let developer = game.developer
-//        let publisher = game.publisher
-//        let genres = game.genres
-//        let referenceURL = game.referenceURL
-//        let releaseID = game.releaseID
-//        let regionID = game.regionID
-//        let regionName = game.regionName
-//        let systemShortName = game.systemShortName
-//        let language = game.language
-//        let file = FileInfo(fileName: game.file.partialPath, size: game.file.size, md5: game.file.md5, online: game.file.online, local: true)
-//        let gameDescription = game.gameDescription
-//        let publishDate = game.publishDate
-//        // TODO: Screenshots
-//        self.init(id: id, title: title, file: file, systemIdentifier: systemIdentifier, md5: md5, crc: crc, isFavorite: isFavorite, playCount: playCount, lastPlayed: lastPlayed, gameDescription: gameDescription, boxBackArtworkURL: boxBackArtworkURL, developer: developer, publisher: publisher, publishDate: publishDate, genres: genres, referenceURL: referenceURL, releaseID: releaseID, regionName: regionName, regionID: regionID, systemShortName: systemShortName, language: language)
-//    }
 }
 
 extension PVGame: DomainConvertibleType {
@@ -312,6 +296,9 @@ public extension Realm {
             object.regionID = game.regionID
             object.systemShortName = game.systemShortName
             object.language = game.language
+            object.matchSourceRaw = game.matchSourceRaw
+            object.userCustomizedFieldsMask = game.userCustomizedFieldsMask
+            object.lastMetadataLookupDate = game.lastMetadataLookupDate
             object.file =  PVFile(withPartialPath: game.file.fileName, relativeRoot: .iCloud)
         }
     }
@@ -323,3 +310,40 @@ public extension Realm {
 //        return Predicate(\.date, .greaterThanOrEqualTo, Date().addingTimeInterval(-TimeInterval(days) * 24 * 60 * 60))
 //    }
 //}
+
+// MARK: - Metadata tracking
+
+public extension PVGame {
+    /// Type-safe access to how this game's metadata was sourced
+    var matchSource: GameMatchSource {
+        get { GameMatchSource(rawValue: matchSourceRaw) ?? .none }
+        set { matchSourceRaw = newValue.rawValue }
+    }
+
+    /// Type-safe access to the set of fields the user has customized
+    var userCustomizedFields: GameCustomizedFields {
+        get { GameCustomizedFields(rawValue: userCustomizedFieldsMask) }
+        set { userCustomizedFieldsMask = newValue.rawValue }
+    }
+
+    /// Returns true if the game has never been successfully matched against a database
+    var isUnmatched: Bool {
+        matchSource == .none || requiresSync
+    }
+
+    /// Returns true if the game is missing key metadata fields
+    var hasMissingMetadata: Bool {
+        let missingFields = [gameDescription, developer, publisher, originalArtworkURL.nilIfEmpty]
+            .filter { $0 == nil || $0?.isEmpty == true }
+        return missingFields.count >= 2
+    }
+
+    /// Returns true if a name-based metadata re-lookup should be triggered
+    var shouldTriggerMetadataLookup: Bool {
+        isUnmatched || hasMissingMetadata
+    }
+}
+
+private extension String {
+    var nilIfEmpty: String? { isEmpty ? nil : self }
+}

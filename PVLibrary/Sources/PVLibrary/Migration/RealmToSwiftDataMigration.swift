@@ -613,6 +613,9 @@ public actor RealmToSwiftDataMigration {
                 originalArtworkURL: g.originalArtworkURL,
                 originalArtworkFile: artworkData,
                 requiresSync: g.requiresSync,
+                matchSourceRaw: g.matchSourceRaw,
+                userCustomizedFieldsMask: g.userCustomizedFieldsMask,
+                lastMetadataLookupDate: g.lastMetadataLookupDate,
                 isFavorite: g.isFavorite,
                 romSerial: g.romSerial,
                 romHeader: g.romHeader,
@@ -990,6 +993,9 @@ struct GameSnapshot {
     let systemIdentifier: String
     let isFavorite: Bool
     let requiresSync: Bool
+    let matchSourceRaw: Int
+    let userCustomizedFieldsMask: Int
+    let lastMetadataLookupDate: Date?
     let romSerial: String?
     let romHeader: String?
     let importDate: Date
@@ -1038,9 +1044,12 @@ struct GameSnapshot {
         crc               = g.crc
         romPath           = g.romPath
         systemIdentifier  = g.systemIdentifier
-        isFavorite        = g.isFavorite
-        requiresSync      = g.requiresSync
-        romSerial         = g.romSerial
+        isFavorite               = g.isFavorite
+        requiresSync             = g.requiresSync
+        matchSourceRaw           = g.matchSourceRaw
+        userCustomizedFieldsMask = g.userCustomizedFieldsMask
+        lastMetadataLookupDate   = g.lastMetadataLookupDate
+        romSerial                = g.romSerial
         romHeader         = g.romHeader
         importDate        = g.importDate
         userPreferredCoreID = g.userPreferredCoreID
