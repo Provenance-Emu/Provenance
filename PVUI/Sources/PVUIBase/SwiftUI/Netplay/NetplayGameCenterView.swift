@@ -130,6 +130,11 @@ final class NetplayGKMatchCoordinator: NSObject, ObservableObject {
         do {
             var settings = NetplaySettings.fromStoredDefaults(roomName: gameName)
             settings.relayServer = netplayDefaultRelayServer
+            // Port 0 means OS-assigned; we cannot communicate that to peers,
+            // so fall back to the RetroArch default before hosting.
+            if settings.port == 0 {
+                settings.port = NetplayJoinRequest.defaultPort
+            }
             try await ObservableNetplayManager.shared.host(settings: settings)
             // Broadcast the port so joining peers can connect.
             let port = settings.port
@@ -222,14 +227,10 @@ struct GKMatchmakerRepresentable: UIViewControllerRepresentable {
             let fallbackRequest = GKMatchRequest()
             fallbackRequest.minPlayers = 2
             fallbackRequest.maxPlayers = 4
-            // This request is always valid; assertionFailure fires in debug if GameKit itself is broken.
-            guard let placeholder = GKMatchmakerViewController(matchRequest: fallbackRequest) else {
-                assertionFailure("[GameKit] Could not create fallback GKMatchmakerViewController — GameKit is broken")
-                // In release builds assertionFailure doesn't terminate; return a zeroed-out placeholder
-                // that will never be displayed (onCancelled above already dismissed the sheet).
-                return GKMatchmakerViewController()
-            }
-            return placeholder
+            // Force-unwrap is safe: hardcoded minPlayers=2/maxPlayers=4 always produce a
+            // valid GKMatchmakerViewController. The returned controller is never displayed
+            // because onCancelled() above already dismissed the presenting sheet.
+            return GKMatchmakerViewController(matchRequest: fallbackRequest)!
         }
         vc.matchmakerDelegate = context.coordinator
         return vc
