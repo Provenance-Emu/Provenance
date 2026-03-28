@@ -42,8 +42,9 @@ struct DeltaSkinScreenPositionWrapper: View {
             return nil
         }
 
-        // Check if this is a simple skin (no screens or screenGroups)
-        // Simple skins should use button-based calculation even if gameScreenFrame exists
+        // Determine whether this is a simple skin (no screens or screenGroups).
+        // Simple skins that carry a `gameScreenFrame` use that frame for positioning;
+        // those without fall back to the button-based calculation below.
         let screens = skin.screens(for: traits)
         let screenGroups = skin.screenGroups(for: traits)
         let isSimpleSkin = screens == nil && screenGroups == nil
@@ -281,11 +282,12 @@ struct DeltaSkinScreenPositionWrapper: View {
                 screenFrame = scaledFrame
             }
         }
-        // For simple skins, prioritize button-based calculation over gameScreenFrame
-        // This ensures simple skins scale from bottom center with screen above buttons
-        // Try gameScreenFrame dictionary (only for complex skins or if no buttons available)
-        else if !isSimpleSkin, let gameScreenFrame = getGameScreenFrame(traits: traits) {
-            DLOG("🎮 SKIN: Found gameScreenFrame (complex skin): \(gameScreenFrame)")
+        // Try gameScreenFrame dictionary — used by legacy skins (VB, GameGear, etc.) that define
+        // the game screen position explicitly without a modern "screens" array.  Previously this
+        // was skipped for simple skins, but that caused incorrect game screen placement for legacy
+        // skins that only carry gameScreenFrame with no screens/screenGroups.
+        else if let gameScreenFrame = getGameScreenFrame(traits: traits) {
+            DLOG("🎮 SKIN: Found gameScreenFrame (isSimpleSkin=\(isSimpleSkin)): \(gameScreenFrame)")
             DLOG("🎮 SKIN:   mappingSize: \(mappingSize)")
             DLOG("🎮 SKIN:   layout.width: \(layout.width), layout.height: \(layout.height)")
             DLOG("🎮 SKIN:   layout.scale: \(layout.scale)")
