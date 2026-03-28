@@ -35,7 +35,11 @@ public extension PVEmulatorViewController {
                 let image = self.captureScreenshot()
                 Task.detached {
                     do {
-                        return try await self.createNewSaveState(auto: true, screenshot: image)
+                        let saved = try await self.createNewSaveState(auto: true, screenshot: image)
+                        if saved {
+                            await self.recordLiveActivityAutosave()
+                        }
+                        return saved
                     } catch {
                         ELOG("Autosave timer failed to make save state: \(error.localizedDescription)")
                         return false

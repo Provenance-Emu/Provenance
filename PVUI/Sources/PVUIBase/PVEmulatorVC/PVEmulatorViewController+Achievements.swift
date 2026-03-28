@@ -27,6 +27,7 @@ private enum AssociatedKeys {
     static var sessionManager = "achievementSessionManager"
     static var overlayVC = "achievementOverlayVC"
     static var startToken = "achievementStartToken"
+    static var sessionPoints = "achievementSessionPoints"
 }
 
 /// Cancellation token that lets `stopAchievements()` invalidate an in-flight
@@ -179,6 +180,9 @@ public extension PVEmulatorViewController {
         achievementSessionManager = nil
         Task { await manager?.stopSession() }
 
+        // Reset session points counter.
+        achievementSessionPoints = 0
+
         removeAchievementOverlay()
     }
 
@@ -278,9 +282,23 @@ public extension PVEmulatorViewController {
 
 extension PVEmulatorViewController: RetroAchievementsOSDDelegate {
 
+    /// Running total of achievement points unlocked in this session.
+    /// Reset to 0 in `stopAchievements()`.
+    internal var achievementSessionPoints: Int {
+        get { (objc_getAssociatedObject(self, &AssociatedKeys.sessionPoints) as? NSNumber)?.intValue ?? 0 }
+        set { objc_setAssociatedObject(self, &AssociatedKeys.sessionPoints, NSNumber(value: newValue), .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
     public func achievementUnlocked(_ notification: AchievementUnlockNotification) {
         Task { @MainActor [weak self] in
             self?.achievementOverlayViewController?.showUnlock(notification)
+        }
+        // Accumulate session points and forward to Live Activity.
+        achievementSessionPoints += Int(notification.points)
+        let cumulativePoints = achievementSessionPoints
+        Task { @MainActor [weak self] in
+            // total = 0 means "unknown" — the progress bar is hidden in that case.
+            self?.updateLiveActivityAchievements(points: cumulativePoints, total: 0)
         }
         // Also post the award to the RA server.
         guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return }

@@ -610,5 +610,35 @@
         "subtitle": "Trigger, Pause, Cursor, ToggleTurbo, and the reload gesture are all supported for both the Super Scope and Konami Justifier."
       }
     ]
+  },
+  {
+    "version": "3.9.6",
+    "title": "Dynamic Island & Live Activities",
+    "features": [
+      {
+        "symbolName": "livephoto",
+        "symbolColor": "blue",
+        "title": "In-Game Live Activity",
+        "subtitle": "See your current game title and system in the Dynamic Island and on the lock screen while playing — no need to switch apps."
+      },
+      {
+        "symbolName": "clock.fill",
+        "symbolColor": "green",
+        "title": "Elapsed Play Time",
+        "subtitle": "The lock-screen widget tracks how long you've been playing the current session at a glance."
+      },
+      {
+        "symbolName": "star.fill",
+        "symbolColor": "yellow",
+        "title": "RetroAchievements Progress",
+        "subtitle": "Unlocked achievement points appear in the Live Activity so you can track your progress without leaving the game."
+      },
+      {
+        "symbolName": "square.and.arrow.down.fill",
+        "symbolColor": "purple",
+        "title": "Last Autosave Hint",
+        "subtitle": "The expanded lock-screen view shows how long ago the last autosave completed, so you always know your progress is safe."
+      }
+    ]
   }
 ]
