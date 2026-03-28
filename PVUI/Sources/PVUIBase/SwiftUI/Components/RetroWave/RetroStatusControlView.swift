@@ -61,15 +61,15 @@ public struct RetroStatusControlView: View {
         )
         .padding(.horizontal, 20)
         .padding(.vertical, 10)
-        .alert(item: $viewModel.currentAlert) { alert in
-            Alert(
-                title: Text(alert.title),
-                message: Text(alert.message),
-                dismissButton: .default(Text("OK")) {
-                    viewModel.dismissAlert()
-                }
-            )
-        }
+//        .alert(item: $viewModel.currentAlert) { alert in
+//            Alert(
+//                title: Text(alert.title),
+//                message: Text(alert.message),
+//                dismissButton: .default(Text("OK")) {
+//                    viewModel.dismissAlert()
+//                }
+//            )
+//        }
         #else
         // On other platforms, use the original layout
         VStack(alignment: .leading, spacing: 0) {
@@ -84,15 +84,15 @@ public struct RetroStatusControlView: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(RetroTheme.retroGradient, lineWidth: 2)
         )
-        .alert(item: $viewModel.currentAlert) { alert in
-            Alert(
-                title: Text(alert.title),
-                message: Text(alert.message),
-                dismissButton: .default(Text("OK")) {
-                    viewModel.dismissAlert() // Let ViewModel handle dismissal logic if needed
-                }
-            )
-        }
+//        .alert(item: $viewModel.currentAlert) { alert in
+//            Alert(
+//                title: Text(alert.title),
+//                message: Text(alert.message),
+//                dismissButton: .default(Text("OK")) {
+//                    viewModel.dismissAlert() // Let ViewModel handle dismissal logic if needed
+//                }
+//            )
+//        }
         #endif
         // No .onAppear/.onDisappear needed here, ViewModel handles lifecycle
         // No .onChange needed here, ViewModel uses Combine/Notifications internally
