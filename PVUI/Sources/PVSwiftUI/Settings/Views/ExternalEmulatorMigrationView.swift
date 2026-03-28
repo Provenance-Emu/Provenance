@@ -49,7 +49,7 @@ private extension KnownEmulator {
 
 // MARK: - KnownEmulator + Identifiable (for sheet(item:))
 
-extension KnownEmulator: Identifiable {
+extension KnownEmulator: @retroactive Identifiable {
     public var id: String { rawValue }
 }
 
