@@ -107,12 +107,12 @@ public struct CloudSyncSettingsView: View {
             }
         }
         #if os(tvOS)
-        .focusSection() // Contain focus to prevent escape to parent tab bar
+        .focusSection()
         .onExitCommand {
-            // Handle Menu button to go back properly
             dismiss()
         }
         #endif
+        .settingsSubpageTracking()
     }
 
     // MARK: - Status Header

@@ -60,6 +60,7 @@ public struct ROMTitleNormalizationView: View {
         .focusSection()
         .onExitCommand { dismiss() }
 #endif
+        .settingsSubpageTracking()
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarItems }

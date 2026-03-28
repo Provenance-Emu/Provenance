@@ -27,6 +27,7 @@ public struct WikiHelpView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         .task {
             await viewModel.loadNavigationTree()
         }

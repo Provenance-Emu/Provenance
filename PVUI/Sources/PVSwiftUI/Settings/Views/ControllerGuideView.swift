@@ -124,6 +124,7 @@ public struct ControllerGuideView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
         #endif

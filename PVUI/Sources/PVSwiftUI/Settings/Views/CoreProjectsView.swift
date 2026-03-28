@@ -58,6 +58,7 @@ struct CoreProjectsView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         .onChange(of: unsupportedCores) { _ in
             /// Force view to update by toggling state
             viewUpdateTrigger.toggle()

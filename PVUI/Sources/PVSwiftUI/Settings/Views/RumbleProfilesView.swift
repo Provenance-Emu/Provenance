@@ -84,6 +84,7 @@ struct RumbleProfilesView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -699,6 +700,7 @@ struct RumblePresetEditorView: View {
         .focusSection()
         .onExitCommand { save(); dismiss() }
         #endif
+        .settingsSubpageTracking()
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif

@@ -31,6 +31,7 @@ struct MouseInputSettingsView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
     }
 }
 

@@ -196,5 +196,6 @@ struct RecordingSettingsView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
     }
 }

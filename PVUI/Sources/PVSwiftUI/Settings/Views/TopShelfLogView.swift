@@ -238,6 +238,7 @@ struct TopShelfLogView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
     }
 
     /// Refreshes the log content

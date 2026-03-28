@@ -135,10 +135,9 @@ struct SystemSettingsView: View {
             }
         }
         .onExitCommand {
-            // Handle Menu button to go back properly
-            // This prevents focus from escaping to parent tab bar
             dismiss()
         }
+        .settingsSubpageTracking()
 #else
         ZStack {
             // Retrowave background

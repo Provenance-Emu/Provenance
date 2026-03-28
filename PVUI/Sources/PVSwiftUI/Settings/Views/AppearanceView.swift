@@ -184,6 +184,7 @@ struct AppearanceView: View {
                 .focusSection()
                 .onExitCommand { dismiss() }
                 #endif
+                .settingsSubpageTracking()
             }
         }
     }
@@ -364,6 +365,7 @@ fileprivate struct MissingArtworkStyleView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         .sheet(isPresented: $showingFullScreenPreview) {
             FullScreenPreview(style: selectedStyle, previewTitle: previewTitle)
         }

@@ -113,6 +113,7 @@ public struct BatchArtworkMatchingView: View {
         .focusSection()
         .onExitCommand { dismiss() }
 #endif
+        .settingsSubpageTracking()
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
 #endif

@@ -49,17 +49,7 @@ struct SettingsWrapperView: View {
         // PVSettingsView already contains its own NavigationStack.
         // Do NOT wrap it in another NavigationStack here — nested stacks
         // prevent NavigationLink activation on tvOS.
-        PVSettingsView(
-            conflictsController: conflictsController,
-            menuDelegate: menuDelegate,
-            showsDoneButton: false
-        ) {
-            showingSettings = false
-        }
-        .navigationBarHidden(true)
-        #if os(tvOS)
-        .background(TVOSSettingsNavigationCanPopReader(canPop: $canPop))
-        #endif
+        settingsView
 #if canImport(FreemiumKit)
         .environmentObject(FreemiumKit.shared)
 #endif
@@ -77,6 +67,31 @@ struct SettingsWrapperView: View {
         .toggleStyle(.automatic)
         #else
         .toggleStyle(.button)
+        #endif
+    }
+
+    @ViewBuilder
+    private var settingsView: some View {
+        #if os(tvOS)
+        PVSettingsView(
+            conflictsController: conflictsController,
+            menuDelegate: menuDelegate,
+            showsDoneButton: false,
+            onSubpagePushChanged: { pushed in canPop = pushed }
+        ) {
+            showingSettings = false
+        }
+        .navigationBarHidden(true)
+        .background(TVOSSettingsNavigationCanPopReader(canPop: $canPop))
+        #else
+        PVSettingsView(
+            conflictsController: conflictsController,
+            menuDelegate: menuDelegate,
+            showsDoneButton: false
+        ) {
+            showingSettings = false
+        }
+        .navigationBarHidden(true)
         #endif
     }
 

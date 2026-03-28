@@ -69,15 +69,47 @@ struct TVOSNavigationSupport: ViewModifier {
 @available(tvOS 14.0, *)
 struct TVOSSubpageFocusContainment: ViewModifier {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.settingsSubpagePushed) private var isSubpagePushed
 
     func body(content: Content) -> some View {
         content
-            // Contain focus within this view to prevent escape to parent tab bar
             .focusSection()
-            // Handle Menu/Back button press to dismiss properly
             .onExitCommand {
                 dismiss()
             }
+            .onAppear { isSubpagePushed?.wrappedValue = true }
+            .onDisappear { isSubpagePushed?.wrappedValue = false }
+    }
+}
+
+// MARK: - Settings Subpage Tracking
+
+/// Environment key that carries a binding from `PVSettingsView` indicating
+/// whether a subpage is currently pushed on the navigation stack.
+/// `SettingsSubpageTracker` writes to this binding on appear/disappear so
+/// the parent `SettingsWrapperView` can keep `canPop` up to date without
+/// relying solely on UIKit introspection.
+private struct SettingsSubpagePushedKey: EnvironmentKey {
+    static let defaultValue: Binding<Bool>? = nil
+}
+
+extension EnvironmentValues {
+    /// Binding provided by `PVSettingsView` to track subpage push state.
+    var settingsSubpagePushed: Binding<Bool>? {
+        get { self[SettingsSubpagePushedKey.self] }
+        set { self[SettingsSubpagePushedKey.self] = newValue }
+    }
+}
+
+/// ViewModifier applied to NavigationLink destinations that signals the
+/// settings root when a subpage appears or disappears.
+struct SettingsSubpageTracker: ViewModifier {
+    @Environment(\.settingsSubpagePushed) private var isSubpagePushed
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear { isSubpagePushed?.wrappedValue = true }
+            .onDisappear { isSubpagePushed?.wrappedValue = false }
     }
 }
 #endif
@@ -105,6 +137,15 @@ extension View {
         return self
         #endif
     }
+
+    /// Marks this view as a settings subpage so the parent can track push state.
+    func settingsSubpageTracking() -> some View {
+        #if os(tvOS)
+        self.modifier(SettingsSubpageTracker())
+        #else
+        self
+        #endif
+    }
 }
 
 #if os(tvOS)
@@ -115,18 +156,20 @@ struct TVOSSettingsSubpage<Content: View>: View {
     let title: String
     @ViewBuilder let content: () -> Content
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.settingsSubpagePushed) private var isSubpagePushed
 
     var body: some View {
         ScrollView {
             content()
-                .padding(.bottom, 50) // Extra padding to prevent focus escape at bottom
+                .padding(.bottom, 50)
         }
-        .focusSection() // Contain focus within this ScrollView
+        .focusSection()
         .navigationTitle(title)
         .onExitCommand {
-            // Handle Menu button to go back, not to parent's tab bar
             dismiss()
         }
+        .onAppear { isSubpagePushed?.wrappedValue = true }
+        .onDisappear { isSubpagePushed?.wrappedValue = false }
     }
 }
 
@@ -477,13 +520,30 @@ public struct PVSettingsView: View {
     @State private var showWiki = false
     @State private var destinationCancellable: AnyCancellable?
 
-    // Update initializer to take dismissAction
+    #if os(tvOS)
+    /// Tracks whether a subpage is currently pushed on the navigation stack.
+    /// Destination views write to this via the `settingsSubpagePushed` environment binding.
+    @State private var isSubpagePushed = false
+    /// Callback to notify the parent wrapper when subpage push state changes.
+    var onSubpagePushChanged: ((Bool) -> Void)?
+    #endif
+
+    #if os(tvOS)
+    public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, showsDoneButton: Bool = true, onSubpagePushChanged: ((Bool) -> Void)? = nil, dismissAction: @escaping () -> Void) {
+        self.conflictsController = conflictsController
+        self.dismissAction = dismissAction
+        self.onSubpagePushChanged = onSubpagePushChanged
+        _viewModel = StateObject(wrappedValue: PVSettingsViewModel(menuDelegate: menuDelegate, conflictsController: conflictsController))
+        self.showsDoneButton = showsDoneButton
+    }
+    #else
     public init(conflictsController: PVGameLibraryUpdatesController, menuDelegate: PVMenuDelegate, showsDoneButton: Bool = true, dismissAction: @escaping () -> Void) {
         self.conflictsController = conflictsController
         self.dismissAction = dismissAction
         _viewModel = StateObject(wrappedValue: PVSettingsViewModel(menuDelegate: menuDelegate, conflictsController: conflictsController))
         self.showsDoneButton = showsDoneButton
     }
+    #endif
 
     public var body: some View {
         NavigationStack {
@@ -670,6 +730,12 @@ public struct PVSettingsView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+        #if os(tvOS)
+        .environment(\.settingsSubpagePushed, $isSubpagePushed)
+        .onChange(of: isSubpagePushed) { pushed in
+            onSubpagePushChanged?(pushed)
+        }
+        #endif
         .onAppear {
             #if !os(tvOS)
             subscribeSettingsDestination()
@@ -1262,7 +1328,7 @@ private struct CoreOptionsSection: View {
             }
             #endif
 
-            NavigationLink(destination: CoreOptionsView()) {
+            NavigationLink(destination: CoreOptionsView().settingsSubpageTracking()) {
                 SettingsRow(title: "Core Options",
                             subtitle: "Configure emulator core settings.",
                             icon: .sfSymbol("gearshape.2"))
@@ -1357,6 +1423,7 @@ private struct CoreLanguageSelectionView: View {
         .background(Color.black)
         .focusSection()
         .onExitCommand { dismiss() }
+        .settingsSubpageTracking()
     }
 
     private var headerView: some View {

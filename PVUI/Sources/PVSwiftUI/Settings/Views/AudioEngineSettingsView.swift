@@ -114,5 +114,6 @@ struct AudioEngineSettingsView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
     }
 }

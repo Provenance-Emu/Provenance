@@ -266,6 +266,7 @@ public struct AppGroupFileBrowserView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         .sheet(isPresented: $showingFileContents) {
             FileContentsView(fileName: selectedItem?.name ?? "", contents: fileContents)
         }

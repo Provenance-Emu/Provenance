@@ -620,6 +620,7 @@ struct ThemeSelectionView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
     }
 
     // MARK: - Theme Application Methods

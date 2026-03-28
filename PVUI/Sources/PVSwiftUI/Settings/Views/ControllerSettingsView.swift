@@ -459,6 +459,7 @@ struct ControllerSettingsView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         .confirmationDialog(
             "Select a controller for Player \(selectedPlayer ?? 0)",
             isPresented: $showingActionSheet,
@@ -912,6 +913,7 @@ struct ButtonRemappingView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
@@ -1091,6 +1093,7 @@ private struct KeyboardControlsGuideView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
         #endif

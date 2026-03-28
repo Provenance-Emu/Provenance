@@ -23,6 +23,7 @@ struct RetroArchQuickSettingsView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
         .task {
             await viewModel.loadConfig()
         }

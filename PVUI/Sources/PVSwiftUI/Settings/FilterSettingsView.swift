@@ -34,6 +34,7 @@ struct FilterSettingsView: View {
         .focusSection()
         .onExitCommand { dismiss() }
         #endif
+        .settingsSubpageTracking()
 
         Text("Metal filters provided by Mr. J & Mame4iOS.")
             .font(.caption)
