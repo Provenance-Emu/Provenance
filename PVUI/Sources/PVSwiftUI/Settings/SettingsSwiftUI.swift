@@ -1668,11 +1668,13 @@ private struct VideoSection: View {
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
+            #if os(iOS)
             NavigationLink(destination: ExternalDisplaySettingsView()) {
                 SettingsRow(title: "External Display",
                             subtitle: "Configure how the game appears on a connected TV or monitor.",
                             icon: .sfSymbol("tv.and.hifispeaker.fill"))
             }
+            #endif
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
