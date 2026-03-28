@@ -398,6 +398,8 @@ public final class SaveExporter: @unchecked Sendable {
                 }
                 let destStates = Paths.saveStatePath(forROM: romURL)
                 let fm = FileManager.default
+                let iso8601 = ISO8601DateFormatter()
+                var registeredStates: [PVSaveState] = []
 
                 for entry in entries {
                     let svsURL = destStates.appendingPathComponent(entry.filename)
@@ -432,7 +434,7 @@ public final class SaveExporter: @unchecked Sendable {
                     }
 
                     let date: Date
-                    if let dateStr = entry.date, let parsed = ISO8601DateFormatter().date(from: dateStr) {
+                    if let dateStr = entry.date, let parsed = iso8601.date(from: dateStr) {
                         date = parsed
                     } else {
                         date = Date()
@@ -447,16 +449,25 @@ public final class SaveExporter: @unchecked Sendable {
                         isAutosave: entry.isAutosave ?? false,
                         userDescription: entry.userDescription
                     )
+                    registeredStates.append(saveState)
+                    ILOG("SaveExporter: queuing imported save '\(entry.filename)' for Realm registration")
+                }
 
+                // Batch all adds into a single write transaction for efficiency.
+                if !registeredStates.isEmpty {
                     try realm.write {
-                        realm.add(saveState)
+                        for saveState in registeredStates {
+                            realm.add(saveState)
+                        }
                     }
-                    NotificationCenter.default.post(
-                        name: .PVSaveStateSaved,
-                        object: nil,
-                        userInfo: ["saveStateID": saveState.id]
-                    )
-                    ILOG("SaveExporter: registered imported save '\(entry.filename)' in Realm as \(saveState.id)")
+                    for saveState in registeredStates {
+                        NotificationCenter.default.post(
+                            name: .PVSaveStateSaved,
+                            object: nil,
+                            userInfo: ["saveStateID": saveState.id]
+                        )
+                        ILOG("SaveExporter: registered imported save '\(saveState.id)' in Realm")
+                    }
                 }
             } else {
                 // v1 bundle or empty saves array — fall back to filesystem scan

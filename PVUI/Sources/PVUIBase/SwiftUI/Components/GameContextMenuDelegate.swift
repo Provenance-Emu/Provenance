@@ -11,7 +11,6 @@ import PVLibrary
 import RealmSwift
 import PVRealm
 import PVLogging
-import PVUIBase
 
 public protocol GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestRenameFor game: PVGame)
