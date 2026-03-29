@@ -311,6 +311,7 @@ public struct DiscRipperView: View {
 
 // MARK: - Track Row
 
+#if !os(tvOS)
 private struct TrackRowView: View {
     let track: DiscTrackInfo
     let isSelected: Bool
@@ -405,6 +406,7 @@ private struct RecentRipRowView: View {
         .padding(.vertical, 2)
     }
 }
+#endif // !os(tvOS)
 
 // MARK: - Previews
 

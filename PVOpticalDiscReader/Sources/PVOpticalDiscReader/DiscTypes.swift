@@ -132,6 +132,14 @@ public struct RipProgress: Sendable {
     public let currentTrack: Int
     /// Total number of tracks.
     public let totalTracks: Int
+
+    public init(currentSector: UInt32, totalSectors: UInt32, currentTrack: Int, totalTracks: Int) {
+        self.currentSector = currentSector
+        self.totalSectors = totalSectors
+        self.currentTrack = currentTrack
+        self.totalTracks = totalTracks
+    }
+
     /// Fraction complete in [0.0, 1.0].
     public var fraction: Double {
         totalSectors > 0 ? Double(currentSector) / Double(totalSectors) : 0

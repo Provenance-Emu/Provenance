@@ -410,3 +410,40 @@
 "disc_ripper.confirm_message" = "The disc will be ripped to your device. This may take several minutes.";
 "disc_ripper.track_type.audio" = "Audio";
 "disc_ripper.track_type.data" = "Data";
+
+// Disc Ripper — Drive Status
+"disc_ripper.drive_status_header" = "Drive Status";
+"disc_ripper.status.no_drive" = "No Drive";
+"disc_ripper.status.no_disc" = "No Disc";
+"disc_ripper.status.tray_open" = "Tray Open";
+"disc_ripper.status.disc_ready" = "Disc Ready";
+"disc_ripper.status.reading" = "Reading";
+"disc_ripper.status.no_drive.subtitle" = "Connect a USB optical drive to continue.";
+"disc_ripper.status.no_disc.subtitle" = "Insert a disc into the drive.";
+"disc_ripper.status.tray_open.subtitle" = "Close the drive tray to continue.";
+"disc_ripper.status.disc_ready.subtitle" = "Disc detected. Ready to rip.";
+"disc_ripper.status.reading.subtitle" = "Reading disc table of contents…";
+
+// Disc Ripper — Drive Status Badges
+"disc_ripper.badge.no_drive" = "No Drive";
+"disc_ripper.badge.no_disc" = "No Disc";
+"disc_ripper.badge.tray_open" = "Open";
+"disc_ripper.badge.ready" = "Ready";
+"disc_ripper.badge.reading" = "Reading";
+
+// Disc Ripper — Actions
+"disc_ripper.retry" = "Retry";
+"disc_ripper.total_size" = "Total Size";
+"disc_ripper.recent_rips_header" = "Recent Rips";
+
+// Ripper Progress Sheet
+"ripper_sheet.title" = "Ripping Disc";
+"ripper_sheet.cancel_confirm.title" = "Stop Ripping?";
+"ripper_sheet.cancel_confirm.stop" = "Stop Ripping";
+"ripper_sheet.cancel_confirm.continue" = "Keep Ripping";
+"ripper_sheet.cancel_confirm.message" = "Stopping now will discard the partial disc image.";
+"ripper_sheet.cancel_rip" = "Stop Ripping";
+"ripper_sheet.stat.sectors" = "Sectors";
+"ripper_sheet.stat.tracks" = "Tracks";
+"ripper_sheet.stat.speed" = "Speed";
+"ripper_sheet.stat.eta" = "ETA";
