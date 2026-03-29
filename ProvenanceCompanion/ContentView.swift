@@ -8,6 +8,11 @@ struct ContentView: View {
                     Label(String(localized: "tab.library"), systemImage: "books.vertical")
                 }
 
+            CheatsTabView()
+                .tabItem {
+                    Label(String(localized: "tab.cheats"), systemImage: "doc.on.clipboard")
+                }
+
             PeripheralsTabView()
                 .tabItem {
                     Label(String(localized: "tab.peripherals"), systemImage: "gamecontroller")

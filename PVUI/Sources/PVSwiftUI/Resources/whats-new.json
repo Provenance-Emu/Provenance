@@ -612,6 +612,36 @@
     ]
   },
   {
+    "version": "3.9.7",
+    "title": "Cheat Code Export & QR Sharing",
+    "features": [
+      {
+        "symbolName": "qrcode",
+        "symbolColor": "orange",
+        "title": "QR Code Export",
+        "subtitle": "Export any cheat code as a scannable QR image. Share it with friends, print it, or scan it from another device."
+      },
+      {
+        "symbolName": "doc.on.clipboard.fill",
+        "symbolColor": "blue",
+        "title": "One-Tap Copy",
+        "subtitle": "Copy any cheat code in the correct format to your clipboard with a single tap, ready to paste anywhere."
+      },
+      {
+        "symbolName": "square.and.arrow.up.fill",
+        "symbolColor": "green",
+        "title": "System Share Sheet",
+        "subtitle": "Share cheat QR codes via AirDrop, Messages, Mail, or any other app using the standard iOS share sheet."
+      },
+      {
+        "symbolName": "iphone.radiowaves.left.and.right",
+        "symbolColor": "purple",
+        "title": "Companion App Sync",
+        "subtitle": "Cheats saved in Provenance are automatically available in the Companion app via App Group sharing — no cloud required."
+      }
+    ]
+  },
+  {
     "version": "3.9.6",
     "title": "Dynamic Island & Live Activities",
     "features": [
