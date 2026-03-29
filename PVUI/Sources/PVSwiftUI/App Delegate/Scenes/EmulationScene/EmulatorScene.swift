@@ -15,6 +15,9 @@ import PVCoreBridge
 import PVLogging
 import PVThemes
 import RealmSwift
+#if canImport(PVAppIntents)
+import PVAppIntents
+#endif
 
 /// A SwiftUI scene for displaying the emulator screen and controls
 public struct EmulatorScene: Scene {
@@ -538,12 +541,59 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
     }
 
     func updateRecentGames(_ game: PVGame) {
-        (self as GameLaunchingViewController).updateRecentGames(game)
-        // Update recent games in app state
-        if let gameLibrary = AppState.shared.gameLibrary {
-            // Add game to recent games list
-            AppState.shared.emulationUIState.currentGame = game
+        // Update Realm recents database (inlined from protocol default to avoid infinite recursion)
+        defer {
+#if canImport(PVAppIntents)
+            Task { @MainActor in
+                WidgetDataWriter.shared.writeFromRealm()
+            }
+#endif
         }
+        let database = RomDatabase.sharedInstance
+        RomDatabase.refresh()
+
+        let recents: Results<PVRecentGame> = database.all(PVRecentGame.self)
+
+        let recentsMatchingGame = database.all(PVRecentGame.self, where: #keyPath(PVRecentGame.game.md5Hash), value: game.md5Hash)
+        if let recentToDelete = recentsMatchingGame.first {
+            do {
+                try database.delete(recentToDelete)
+            } catch {
+                ELOG("Failed to delete recent: \(error.localizedDescription)")
+            }
+        }
+
+        if recents.count >= PVMaxRecentsCount() {
+            if let oldestRecent: PVRecentGame = recents.sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false).last {
+                do {
+                    try database.delete(oldestRecent)
+                } catch {
+                    ELOG("Failed to delete recent: \(error.localizedDescription)")
+                }
+            }
+        }
+
+        if let currentRecent = game.recentPlays.first {
+            do {
+                currentRecent.lastPlayedDate = Date()
+                try database.add(currentRecent, update: true)
+            } catch {
+                ELOG("Failed to update Recent Game entry. \(error.localizedDescription)")
+            }
+        } else {
+            let newRecent = PVRecentGame(withGame: game)
+            do {
+                try database.add(newRecent, update: false)
+                let responder = self as? UIResponder ?? UIApplication.shared
+                let activity = game.spotlightActivity
+                responder.userActivity = activity
+            } catch {
+                ELOG("Failed to create Recent Game entry. \(error.localizedDescription)")
+            }
+        }
+
+        // Update recent games in app state
+        AppState.shared.emulationUIState.currentGame = game
     }
 
     @MainActor
