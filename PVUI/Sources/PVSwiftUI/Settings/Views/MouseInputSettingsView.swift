@@ -22,14 +22,20 @@ struct MouseInputSettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ScrollView {
-            MouseSection()
-                .tvOSSettingsHorizontalPadding()
-                #if os(tvOS)
-                .padding(.vertical, 24)
-                #else
-                .padding()
-                #endif
+        ZStack {
+            #if os(tvOS)
+            RetroSettingsBackground()
+            #endif
+
+            ScrollView {
+                MouseSection()
+                    .tvOSSettingsHorizontalPadding()
+                    #if os(tvOS)
+                    .padding(.vertical, 24)
+                    #else
+                    .padding()
+                    #endif
+            }
         }
         .navigationTitle("Mouse Input")
         #if os(tvOS)
