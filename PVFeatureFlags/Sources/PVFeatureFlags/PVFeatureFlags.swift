@@ -184,12 +184,12 @@ public struct FeatureFlag: Codable, Sendable {
     }
 
     public static let advancedSkinFeatures = FeatureFlag(
-        enabled: false,
+        enabled: true,
         description: "Enables advanced skin features like filters and debug mode"
     )
 
     public static let retroarchBuiltinEditor = FeatureFlag(
-        enabled: false,
+        enabled: true,
         minVersion: "3.0.5",
         allowedAppTypes: ["standard", "lite"],
         description: "Enables the built-in RetroArch editor. Disabled for App Store builds."
@@ -202,16 +202,26 @@ public struct FeatureFlag: Codable, Sendable {
         description: "Enables contentless cores like DOOM, Quake, etc. Disabled for App Store builds."
     )
 
+#if os(tvOS)
+    static let _dynamicLibretroScanner: Bool = true
+#else
+    static let _dynamicLibretroScanner: Bool = false
+#endif
     public static let dynamicLibretroScanner = FeatureFlag(
-        enabled: true,
+        enabled: _dynamicLibretroScanner,
         minVersion: "3.3.0",
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
         allowedPlatforms: ["tvos"],
         description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. On tvOS: enabled by default. On iOS: disabled by default but can be enabled in Settings > Advanced > Feature Flags."
     )
 
+#if os(tvOS)
+    static let _pauseTileMenu: Bool = true
+#else
+    static let _pauseTileMenu: Bool = false
+#endif
     public static let pauseTileMenu = FeatureFlag(
-        enabled: false,
+        enabled: _pauseTileMenu,
         description: "Experimental tile/grid based pause menu overlay that floats over the game screen. Default is the classic tab/list menu."
     )
 
@@ -254,8 +264,13 @@ public struct FeatureFlag: Codable, Sendable {
         description: "Companion Controller overlay — use this device as a secondary controller for systems with non-standard input peripherals (trackball, numpad, Atari 5200). Disabled until DSU integration is complete."
     )
 
+    #if os(tvOS)
+    static let _smartCoreSelection: Bool = true
+    #else
+    static let _smartCoreSelection: Bool = false
+    #endif
     public static let smartCoreSelection = FeatureFlag(
-        enabled: false,
+        enabled: _smartCoreSelection,
         description: "Enriched core selection UI with capability badges, quality rankings, and per-game recommendations. Disabled until core capability data is fully audited."
     )
 
@@ -277,9 +292,14 @@ public struct FeatureFlag: Codable, Sendable {
     )
 
     public static let sramImportExport = FeatureFlag(
-        enabled: true,
+        enabled: false,
+        allowedAppTypes: [
+            "standard",
+            "lite",
+            "standard.appstore",
+            "lite.appstore"
+        ],
         allowedPlatforms: ["ios"],
-        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
         description: "Explicit SRAM/battery save import and export in the game context menu. Export shares .sav/.srm/.ram files; import opens a document picker. iOS only (tvOS syncs saves via iCloud)."
     )
 }
