@@ -455,6 +455,10 @@ private struct NavigationBarConfigurator: UIViewControllerRepresentable {
         DispatchQueue.main.async {
             guard let navController = vc.navigationController else { return }
 
+            // Find the hosting view controller whose navigationItem is actually
+            // displayed in the navigation bar (not our hidden helper VC).
+            let hostingVC = navController.viewControllers.first ?? vc
+
             #if !os(tvOS)
             let appearance = UINavigationBarAppearance()
             appearance.configureWithOpaqueBackground()
@@ -475,9 +479,9 @@ private struct NavigationBarConfigurator: UIViewControllerRepresentable {
                 let imageView = UIImageView(image: image)
                 imageView.contentMode = .scaleAspectFit
                 imageView.tintColor = menuIconTint
-                vc.navigationItem.titleView = imageView
+                hostingVC.navigationItem.titleView = imageView
                 #if !os(tvOS)
-                vc.navigationItem.preferredSearchBarPlacement = .stacked
+                hostingVC.navigationItem.preferredSearchBarPlacement = .stacked
                 #endif
             } else {
                 if menuIconTint != .clear {
@@ -485,8 +489,8 @@ private struct NavigationBarConfigurator: UIViewControllerRepresentable {
                 }
                 let provenanceLogo = UIBarButtonItem(image: image)
                 provenanceLogo.tintColor = menuIconTint
-                vc.navigationItem.leftBarButtonItem = provenanceLogo
-                vc.navigationItem.leftBarButtonItem?.tintColor = menuIconTint
+                hostingVC.navigationItem.leftBarButtonItem = provenanceLogo
+                hostingVC.navigationItem.leftBarButtonItem?.tintColor = menuIconTint
                 navController.navigationBar.tintColor = menuIconTint
             }
         }
