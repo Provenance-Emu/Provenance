@@ -115,7 +115,10 @@ extension PVSNES9xEmulatorCore: LightGunResponder {
     public var requiresLightGun: Bool { false }
 
     public func lightGunMovedToPoint(_ point: CGPoint, isOffscreen: Bool) {
-        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunMovedToPoint(point, isOffscreen: isOffscreen)
+        (bridge as! PVSNESEmulatorCoreBridge).snesLightGunMoved(
+            to: point,
+            isOffscreen: isOffscreen
+        )
     }
 
     public func lightGunTriggerDown() {
