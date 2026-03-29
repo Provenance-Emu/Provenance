@@ -15,7 +15,6 @@ import PVFileSystem
 import PVRealm
 import RealmSwift
 import CloudKit
-import CryptoKit
 
 // MARK: - iOS/macOS Implementation
 
@@ -489,27 +488,10 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
             Task {
                 do {
-                    // Upload the file to CloudKit
-                    // Create a record for the BIOS file
-                    let recordID = CKRecord.ID(recordName: "bios_\(filename)")
-                    let record = CKRecord(recordType: "File", recordID: recordID)
-                    record["directory"] = "BIOS"
-                    record["filename"] = filename
-                    record["fileData"] = CKAsset(fileURL: localURL)
-                    record["lastModified"] = Date()
-
-                    // Calculate MD5 hash if possible
-                    if let data = try? Data(contentsOf: localURL) {
-                        // Calculate MD5 hash using CryptoKit
-                        let md5 = Insecure.MD5.hash(data: data).map { String(format: "%02hhx", $0) }.joined()
-                        record["md5"] = md5
-                    }
-
                     // Extract systemID from parent directory
                     let parentDirectoryName = localURL.deletingLastPathComponent().lastPathComponent
                     let systemID = SystemIdentifier(rawValue: parentDirectoryName)
 
-                    // Save the record to CloudKit
                     _ = try await self.uploadFile(localURL, gameID: nil, systemID: systemID)
                     await self.insertUploadedFile(localURL)
 
@@ -540,7 +522,6 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                 do {
                     // Find the record for this BIOS file
                     let recordID = CKRecord.ID(recordName: "bios_\(filename)")
-                    let privateDatabase = self.container.privateCloudDatabase
 
                     do {
                         let record = try await privateDatabase.record(for: recordID)
@@ -1380,7 +1361,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         }
 
         var processedCount = 0
-        let systemBase = URL.documentsPath.appendingPathComponent("System")
+        let systemBase = Paths.systemPath
 
         // Phase 1: Upload local files not yet in CloudKit.
         // `uploadFile()` performs date-based deduplication, so re-uploading an unchanged file
