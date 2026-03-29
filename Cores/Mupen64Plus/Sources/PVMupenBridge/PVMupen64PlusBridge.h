@@ -10,6 +10,7 @@
 #define PVMupen64PlusBridge_h
 
 #import <PVMupen64PlusBridge/PVMupenBridge.h>
+#import <PVMupen64PlusBridge/PVMupenBridge+Achievements.h>
 #import <PVMupen64PlusBridge/PVMupenBridge+Cheats.h>
 #import <PVMupen64PlusBridge/PVMupenBridge+Controls.h>
 #import <PVMupen64PlusBridge/PVMupenBridge+Mupen.h>
