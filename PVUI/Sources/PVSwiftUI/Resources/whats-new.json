@@ -670,5 +670,29 @@
         "subtitle": "The expanded lock-screen view shows how long ago the last autosave completed, so you always know your progress is safe."
       }
     ]
+  },
+  {
+    "version": "3.9.7",
+    "title": "Files App Integration",
+    "features": [
+      {
+        "symbolName": "folder.fill",
+        "symbolColor": "blue",
+        "title": "ROM Library in Files.app",
+        "subtitle": "Provenance now appears as a location in Files.app. Browse your ROMs by system, copy out save states, and drag in new ROMs directly."
+      },
+      {
+        "symbolName": "arrow.down.doc.fill",
+        "symbolColor": "green",
+        "title": "Drag & Drop Import",
+        "subtitle": "Drop ROM or BIOS files into any system folder in Files.app to import them directly into the Provenance library."
+      },
+      {
+        "symbolName": "doc.fill",
+        "symbolColor": "orange",
+        "title": "Save State Access",
+        "subtitle": "Copy your save states and screenshots out of the Provenance location in Files.app for backup or transfer."
+      }
+    ]
   }
 ]
