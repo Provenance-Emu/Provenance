@@ -11,6 +11,7 @@ public enum PeripheralCategory: String, Sendable, CaseIterable {
     case memoryCard     = "Memory Card Reader"
     case cartridgeReader = "Cartridge Reader"
     case massStorage    = "Mass Storage"
+    case opticalDrive   = "Optical Drive"
     case serialAdapter  = "Serial Adapter"
     case unknown        = "Unknown"
 
@@ -29,6 +30,7 @@ public enum PeripheralCategory: String, Sendable, CaseIterable {
         case .memoryCard:      return "peripheral.category.memory_card"
         case .cartridgeReader: return "peripheral.category.cartridge_reader"
         case .massStorage:     return "peripheral.category.mass_storage"
+        case .opticalDrive:    return "peripheral.category.optical_drive"
         case .serialAdapter:   return "peripheral.category.serial_adapter"
         case .unknown:         return "peripheral.category.unknown"
         }

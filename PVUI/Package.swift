@@ -42,6 +42,7 @@ let package = Package(
         .package(path: "../PVShaders"),
         .package(path: "../PVThemes"),
         .package(path: "../PVWebServer"),
+        .package(path: "../PVOpticalDiscReader"),
         .package(path: "../PVJIT"),
         .package(path: "../PVCheevos"),
         .package(path: "../External/Reachability.swift"),
@@ -266,6 +267,7 @@ let package = Package(
                 .product(name: "SiriusRating", package: "siriusrating-ios", condition: .when(platforms: [.iOS])),
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
+                "PVOpticalDiscReader",
             ],
             resources: [
                 .copy("Resources/whats-new.json"),

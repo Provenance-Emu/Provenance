@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  DriverKit entitlements for ProvenanceCompanionOpticalDriveDriverKit.dext
+
+	  IMPORTANT: The following entitlements require Apple approval before distribution:
+	    - com.apple.developer.driverkit
+	    - com.apple.developer.driverkit.transport.usb
+	    - com.apple.developer.driverkit.allow-any-usb-device (needed for generic mass storage)
+
+	  Request via: https://developer.apple.com/contact/request/driverkit/
+	  JoeMatt has initiated the entitlement request (March 2026).
+
+	  Development builds work without the `allow-any-usb-device` approval,
+	  but the driver will only match devices already in the signed matching table.
+	-->
+
+	<!-- Required: identifies this binary as a DriverKit extension -->
+	<key>com.apple.developer.driverkit</key>
+	<true/>
+
+	<!-- USB transport — required to open IOUSBHostInterface and send CDBs -->
+	<key>com.apple.developer.driverkit.transport.usb</key>
+	<true/>
+
+	<!--
+	  Generic USB mass storage device matching.
+	  Required because optical drives appear as generic bInterfaceClass=0x08 devices
+	  rather than having specific VID:PID entries in Apple's allow list.
+	  STATUS: pending Apple approval (applied March 2026).
+	-->
+	<key>com.apple.developer.driverkit.allow-any-usb-device</key>
+	<true/>
+
+	<!-- IOUserClient allow list — apps permitted to call IOServiceOpen on this dext -->
+	<key>com.apple.developer.driverkit.userclient-access</key>
+	<array>
+		<string>org.provenance-emu.provenance</string>
+		<string>org.provenance-emu.ProvenanceCompanion</string>
+	</array>
+
+	<!-- App sandbox (required for DriverKit extensions on iPadOS) -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+</dict>
+</plist>
