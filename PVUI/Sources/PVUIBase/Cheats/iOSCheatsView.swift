@@ -75,15 +75,11 @@ public struct iOSCheatsView: View {
         NavigationStack {
             Group {
                 if allCheats.isEmpty {
-                    if #available(iOS 17.0, *) {
-                        ContentUnavailableView(
-                            "No Cheat Codes",
-                            systemImage: "wand.and.stars",
-                            description: Text("Add a code manually or search the database")
-                        )
-                    } else {
-                        emptyStateView
-                    }
+                    ContentUnavailableView(
+                        "No Cheat Codes",
+                        systemImage: "wand.and.stars",
+                        description: Text("Add a code manually or search the database")
+                    )
                 } else {
                     List {
                         ForEach(Array(allCheats.enumerated()), id: \.element.id) { index, cheat in
@@ -181,24 +177,6 @@ public struct iOSCheatsView: View {
         }
     }
 
-    // MARK: - Empty State
-
-    private var emptyStateView: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "wand.and.stars")
-                .font(.system(size: 60))
-                .foregroundStyle(.secondary)
-            Text("No Cheat Codes")
-                .font(.title2.bold())
-            Text("Add a code manually or search the database")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
     // MARK: - Helpers
 
     /// Reload the cheats list after a short delay to allow the async Realm write to complete.
@@ -290,10 +268,7 @@ private struct iOSCheatRow: View {
     var body: some View {
         // Guard against Realm invalidation: if the object was deleted or the
         // Realm refreshed mid-render, any property access would crash.
-        guard !cheat.isInvalidated else {
-            return AnyView(EmptyView())
-        }
-        return AnyView(
+        if !cheat.isInvalidated {
             HStack(spacing: 12) {
                 Circle()
                     .fill(cheat.enabled ? Color.green : Color.gray.opacity(0.4))
@@ -316,7 +291,7 @@ private struct iOSCheatRow: View {
                     .foregroundStyle(cheat.enabled ? Color.green : Color.secondary)
             }
             .padding(.vertical, 4)
-        )
+        }
     }
 }
 
@@ -548,14 +523,14 @@ struct iOSCheatSearchView: View {
     @ViewBuilder
     private var emptyStateView: some View {
         VStack(spacing: 20) {
-            if #available(iOS 17.0, *), !filterText.isEmpty {
+            if !filterText.isEmpty {
                 ContentUnavailableView.search(text: filterText)
             } else {
                 VStack(spacing: 12) {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 48))
                         .foregroundStyle(.secondary)
-                    Text(filterText.isEmpty ? "No local cheat codes found" : "No results for \"\(filterText)\"")
+                    Text("No local cheat codes found")
                         .foregroundStyle(.secondary)
                 }
             }
