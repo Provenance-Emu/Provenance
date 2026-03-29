@@ -13,6 +13,7 @@
 
 import Foundation
 import MachO
+import Security
 
 let CS_EXECSEG_ALLOW_UNSIGNED: UInt64 = 0x10
 
@@ -72,30 +73,57 @@ private struct ParsedCodeSignature {
     let entitlements: [String: Any]
 }
 
-/// Returns boolean entitlement values parsed from the main executable's code signature.
+/// Reads a boolean entitlement from the **running process** via `SecTask` (preferred on Apple platforms).
+/// - Returns: `true` if present and true, `false` if absent or explicitly false, `nil` if the task could not be queried or the value is not a boolean (caller may fall back to Mach-O parsing).
+@available(iOS 13.4, tvOS 13.4, *)
+private func booleanEntitlementFromSecTask(_ entitlementKey: String) -> Bool? {
+    guard let task = SecTaskCreateFromSelf(nil) else { return nil }
+    let key = entitlementKey as CFString
+    guard let value = SecTaskCopyValueForEntitlement(task, key, nil) else {
+        /// Entitlement not present.
+        return false
+    }
+    if let b = value as? Bool {
+        return b
+    }
+    if let n = value as? NSNumber {
+        return n.boolValue
+    }
+    return nil
+}
+
+/// Returns boolean entitlement values, preferring `SecTaskCopyValueForEntitlement` and falling back to parsing the main executable’s embedded code signature.
 @available(iOS 13.4, tvOS 13.4, *)
 func HasBooleanEntitlement(_ entitlementKey: String) -> Bool {
+    switch booleanEntitlementFromSecTask(entitlementKey) {
+    case .some(let value):
+        return value
+    case .none:
+        break
+    }
     guard let entitlements = parsedCodeSignature()?.entitlements else {
         return false
     }
-
     return entitlements[entitlementKey] as? Bool == true
+}
+
+/// Mach header for the main executable (image index 0). Avoids `dladdr(#function)` which can resolve to the wrong dylib in Swift.
+@available(iOS 13.4, tvOS 13.4, *)
+private func mainExecutableMachHeader64() -> UnsafePointer<mach_header_64>? {
+    guard let mh = _dyld_get_image_header(0) else { return nil }
+    let raw = UnsafeRawPointer(mh)
+    guard raw.load(as: UInt32.self) == MH_MAGIC_64 else { return nil }
+    return raw.assumingMemoryBound(to: mach_header_64.self)
 }
 
 @available(iOS 13.4, tvOS 13.4, *)
 private func parsedCodeSignature() -> ParsedCodeSignature? {
-    var info = Dl_info()
-    guard dladdr(#function, &info) != 0, let base = info.dli_fbase else {
+    guard let header = mainExecutableMachHeader64() else {
         return nil
     }
-
-    let header = base.assumingMemoryBound(to: mach_header_64.self)
-    guard header.pointee.magic == MH_MAGIC_64 else {
-        return nil
-    }
-
+    let base = UnsafeMutableRawPointer(mutating: UnsafeRawPointer(header))
+    var lc = base + MemoryLayout<mach_header_64>.size
     var csLc: UnsafeMutablePointer<linkedit_data_command>?
-    var lc = UnsafeMutableRawPointer(base + MemoryLayout<mach_header_64>.size)
     for _ in 0..<header.pointee.ncmds {
         let loadCommand = lc.assumingMemoryBound(to: load_command.self)
         if loadCommand.pointee.cmd == LC_CODE_SIGNATURE {

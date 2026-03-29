@@ -396,24 +396,28 @@ public final class DOLJitManager {
         #if !APP_STORE
         return false
         #else
-        // 1. Bundle ID must be the official one — sideloaders commonly change this.
+        return _cachedIsGenuinelyAppStoreDistributed
+        #endif
+    }
+
+    #if APP_STORE
+    /// Cached once — bundle ID, entitlements, and provisioning profile layout do not change at runtime.
+    private static let _cachedIsGenuinelyAppStoreDistributed: Bool = {
         guard let bundleID = Bundle.main.bundleIdentifier,
               bundleID.hasPrefix("org.provenance-emu.provenance") else {
             return false
         }
-        // 2. JIT entitlement being present means the IPA was re-signed with it injected.
         if #available(iOS 13.4, tvOS 13.4, *) {
             if HasBooleanEntitlement("com.apple.developer.kernel.allow-jit") {
                 return false
             }
         }
-        // 3. App Store strips embedded.mobileprovision; its presence means sideload/TestFlight.
         if Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision") != nil {
             return false
         }
         return true
-        #endif
-    }
+    }()
+    #endif
 
     // MARK: - iOS 26 W×X Detection
 
@@ -584,10 +588,8 @@ public func PVJITManagerIsAcquired() -> Bool {
 /// C-callable entitlement check for the iOS 26 native JIT path.
 ///
 /// Returns `true` only when `com.apple.developer.kernel.allow-jit` is present
-/// **and** set to `true` in the running binary's code signature. Uses the same
-/// binary-level entitlement parser as `DOLJitManager.hasNativeJitEntitlement()`
-/// so that no Security.framework link-time dependency is introduced in the
-/// calling target.
+/// **and** set to `true` for the running process (via `SecTaskCopyValueForEntitlement`,
+/// with Mach-O signature fallback in `HasBooleanEntitlement`).
 ///
 /// ```objc
 /// extern bool PVJITHasNativeJITEntitlement(void) __attribute__((weak));
@@ -603,7 +605,7 @@ public func PVJITHasNativeJITEntitlement() -> Bool {
 /// C-callable check for whether this app was installed via TrollStore.
 ///
 /// Combines device-wide file-system markers with a `get-task-allow` entitlement
-/// check (via binary code-signature parsing) so that TrollStore being present on
+/// check (`SecTask` / `HasBooleanEntitlement`) so that TrollStore being present on
 /// the device alone is not sufficient — the app must also carry `get-task-allow`.
 /// This prevents a false-positive on non-TrollStore builds on TrollStore devices.
 ///

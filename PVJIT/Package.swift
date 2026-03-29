@@ -86,6 +86,9 @@ let package = Package(
             swiftSettings: [
                 .define("_USE_ALTKIT", .when(platforms: [.iOS])),
                 .define("APP_STORE"),
+            ],
+            linkerSettings: [
+                .linkedFramework("Security")
             ]
         ),
 
