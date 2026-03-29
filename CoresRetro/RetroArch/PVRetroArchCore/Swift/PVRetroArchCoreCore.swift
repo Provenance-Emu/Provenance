@@ -937,7 +937,7 @@ extension PVRetroArchCoreCore: PauseMenuLibretroPortPickerSource {
 
     /// Maps ``PVRetroArchCoreBridge/menuControllerPortInfo`` (RetroArch runloop `SET_CONTROLLER_INFO` snapshot).
     public var pauseMenuPortDeviceDescriptors: [[PortDeviceDescriptor]] {
-        _bridge.menuControllerPortInfo.map { portTypes in
+        _bridge.menuControllerPortInfo().map { portTypes in
             portTypes.compactMap { dict -> PortDeviceDescriptor? in
                 guard let name = dict["desc"] as? String,
                       let typeNum = dict["id"] as? NSNumber else { return nil }

@@ -13,7 +13,8 @@ extension PVRetroArchCoreCore {
     /// Async load that uses `loadStateFromFileAtPath:completionHandler:` so RetroArch waits off the caller thread.
     @objc public override func loadState(fromFileAtPath path: String) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            _bridge.loadState(fromFileAtPath: path, completionHandler: { error in
+            _bridge
+                .loadStateFromFile(atPath: path, completionHandler: { error in
                 if let error {
                     continuation.resume(throwing: error)
                 } else {
@@ -26,7 +27,7 @@ extension PVRetroArchCoreCore {
     /// Async save that uses `saveStateToFileAtPath:completionHandler:` so RetroArch waits off the caller thread.
     @objc public override func saveState(toFileAtPath path: String) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            _bridge.saveState(toFileAtPath: path, completionHandler: { error in
+            _bridge.saveStateToFile(atPath: path, completionHandler: { error in
                 if let error {
                     continuation.resume(throwing: error)
                 } else {
