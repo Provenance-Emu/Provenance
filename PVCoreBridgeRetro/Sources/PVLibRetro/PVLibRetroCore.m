@@ -33,15 +33,105 @@ extern struct retro_midi_interface *pv_libretro_midi_interface(void);
 /// Used by MIDIResponder implementations to forward decoded MIDI events from MIDIDeviceManager.
 extern void pv_libretro_midi_inject_byte(uint8_t byte);
 
-/// Performance interface callbacks defined in PVThinLibretroFrontend.mm.
-/// Shared so both frontend paths use the same counter storage and signpost instrumentation.
-extern retro_time_t pv_perf_get_time_usec(void);
-extern retro_perf_tick_t pv_perf_get_counter(void);
-extern uint64_t pv_perf_get_cpu_features(void);
-extern void pv_perf_register(struct retro_perf_counter *counter);
-extern void pv_perf_start(struct retro_perf_counter *counter);
-extern void pv_perf_stop(struct retro_perf_counter *counter);
-extern void pv_perf_log(void);
+// ---------------------------------------------------------------------------
+// MARK: - Performance interface (local copy for legacy core)
+// ---------------------------------------------------------------------------
+
+#include <mach/mach_time.h>
+#include <os/signpost.h>
+
+#define PV_PERF_MAX_COUNTERS 256
+
+static double pv_legacy_perf_timebase_ratio = 0.0;
+
+static void pv_legacy_perf_ensure_timebase(void) {
+    if (pv_legacy_perf_timebase_ratio == 0.0) {
+        mach_timebase_info_data_t info;
+        mach_timebase_info(&info);
+        pv_legacy_perf_timebase_ratio = (double)info.numer / (double)info.denom;
+    }
+}
+
+static struct retro_perf_counter *pv_legacy_perf_counters[PV_PERF_MAX_COUNTERS];
+static unsigned pv_legacy_perf_counter_count = 0;
+
+#if DEBUG
+static os_log_t pv_legacy_perf_signpost_log(void) {
+    static os_log_t log;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        log = os_log_create("org.provenance-emu.PVCoreBridgeRetro", "libretro-perf-legacy");
+    });
+    return log;
+}
+#endif
+
+static retro_time_t pv_legacy_perf_get_time_usec(void) {
+    pv_legacy_perf_ensure_timebase();
+    return (retro_time_t)(mach_absolute_time() * pv_legacy_perf_timebase_ratio / 1000.0);
+}
+
+static retro_perf_tick_t pv_legacy_perf_get_counter(void) {
+    return (retro_perf_tick_t)mach_absolute_time();
+}
+
+static uint64_t pv_legacy_perf_get_cpu_features(void) {
+#if defined(__aarch64__) || defined(__arm64__)
+    return RETRO_SIMD_NEON | RETRO_SIMD_ASIMD;
+#elif defined(__x86_64__)
+    return RETRO_SIMD_SSE | RETRO_SIMD_SSE2;
+#else
+    return 0;
+#endif
+}
+
+static void pv_legacy_perf_register(struct retro_perf_counter *counter) {
+    if (!counter || counter->registered || pv_legacy_perf_counter_count >= PV_PERF_MAX_COUNTERS)
+        return;
+    pv_legacy_perf_counters[pv_legacy_perf_counter_count++] = counter;
+    counter->registered = true;
+}
+
+static void pv_legacy_perf_start(struct retro_perf_counter *counter) {
+    if (!counter) return;
+    counter->call_cnt++;
+    counter->start = mach_absolute_time();
+#if DEBUG
+    if (counter->ident) {
+        os_signpost_interval_begin(pv_legacy_perf_signpost_log(),
+            (os_signpost_id_t)(uintptr_t)counter,
+            "perf_counter", "%s", counter->ident);
+    }
+#endif
+}
+
+static void pv_legacy_perf_stop(struct retro_perf_counter *counter) {
+    if (!counter) return;
+    counter->total += mach_absolute_time() - counter->start;
+#if DEBUG
+    if (counter->ident) {
+        os_signpost_interval_end(pv_legacy_perf_signpost_log(),
+            (os_signpost_id_t)(uintptr_t)counter,
+            "perf_counter", "%s", counter->ident);
+    }
+#endif
+}
+
+static void pv_legacy_perf_log(void) {
+    pv_legacy_perf_ensure_timebase();
+    double ns_ratio = pv_legacy_perf_timebase_ratio;
+    for (unsigned i = 0; i < pv_legacy_perf_counter_count; i++) {
+        struct retro_perf_counter *c = pv_legacy_perf_counters[i];
+        if (!c) continue;
+        double total_ms = (double)c->total * ns_ratio / 1e6;
+        ILOG(@"[PERF] %s: %.3f ms (%llu calls)",
+             c->ident ? c->ident : "(null)", total_ms, (unsigned long long)c->call_cnt);
+    }
+#if DEBUG
+    os_signpost_event_emit(pv_legacy_perf_signpost_log(), OS_SIGNPOST_ID_EXCLUSIVE,
+                           "perf_log", "dumped %u counters", pv_legacy_perf_counter_count);
+#endif
+}
 
 /// Rumble callback matching retro_set_rumble_state_t.
 /// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
@@ -2040,13 +2130,13 @@ static bool environment_callback(unsigned cmd, void *data) {
         case RETRO_ENVIRONMENT_GET_PERF_INTERFACE: {
             struct retro_perf_callback *cb = (struct retro_perf_callback *)data;
             if (!cb) return false;
-            cb->get_time_usec    = pv_perf_get_time_usec;
-            cb->get_cpu_features = pv_perf_get_cpu_features;
-            cb->get_perf_counter = pv_perf_get_counter;
-            cb->perf_register    = pv_perf_register;
-            cb->perf_start       = pv_perf_start;
-            cb->perf_stop        = pv_perf_stop;
-            cb->perf_log         = pv_perf_log;
+            cb->get_time_usec    = pv_legacy_perf_get_time_usec;
+            cb->get_cpu_features = pv_legacy_perf_get_cpu_features;
+            cb->get_perf_counter = pv_legacy_perf_get_counter;
+            cb->perf_register    = pv_legacy_perf_register;
+            cb->perf_start       = pv_legacy_perf_start;
+            cb->perf_stop        = pv_legacy_perf_stop;
+            cb->perf_log         = pv_legacy_perf_log;
             DLOG(@"Environ GET_PERF_INTERFACE — wired up");
             return true;
         }

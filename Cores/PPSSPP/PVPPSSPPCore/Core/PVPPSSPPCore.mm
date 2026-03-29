@@ -266,9 +266,9 @@
 	{
 		NSInteger rawLang = PVSettingsWrapper.coreLanguageRawValue;
 		if (rawLang < 0) {
-			g_Config.iLanguage = (int)CoreLocaleMapperObjC.currentPSPLanguageID;
+			g_Config.iLanguage = (int)CoreLocaleMapper.currentPSPLanguageID;
 		} else {
-			g_Config.iLanguage = (int)[CoreLocaleMapperObjC pspLanguageIDFromRetroArch:rawLang];
+			g_Config.iLanguage = (int)[CoreLocaleMapper pspLanguageIDFromRetroArch:rawLang];
 		}
 	}
 

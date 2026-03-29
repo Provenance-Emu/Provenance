@@ -87,6 +87,11 @@
 		B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB532949F73C00CC8234 /* Metal.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, xros, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3D991CD2F78A60F002F1DCB /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3D991CC2F78A60F002F1DCB /* PVSupport */; };
+		B3EA00012F56B000004A995B /* PVDolphinCore+Netplay.h in Headers */ = {isa = PBXBuildFile; fileRef = B3EA00042F56B000004A995B /* PVDolphinCore+Netplay.h */; };
+		B3EA00022F56B000004A995B /* PVDolphinCore+Netplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3EA00052F56B000004A995B /* PVDolphinCore+Netplay.mm */; };
+		B3EA00032F56B000004A995B /* PVDolphinCore+PVNetplayCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA00062F56B000004A995B /* PVDolphinCore+PVNetplayCapable.swift */; };
+		B3EA00072F56B000004A995B /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3EA00082F56B000004A995B /* PVNetplay */; };
 		B3F8E0FA2CB3C7E600017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0F92CB3C7E600017D1B /* PVPlists */; };
 		B3F8E0FD2CB3C83600017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0FC2CB3C83600017D1B /* PVCoreObjCBridge */; };
 		B3F8E1002CB3C87D00017D1B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0FF2CB3C87D00017D1B /* PVSettings */; };
@@ -94,10 +99,6 @@
 		B3F8E1262CB6007700017D1B /* PVDolphinCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1252CB6007700017D1B /* PVDolphinCore.swift */; };
 		B3F8E1292CB6052800017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1282CB6052800017D1B /* CorePlist.swift */; };
 		B3F8E12A2CB6052800017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1272CB6052800017D1B /* CorePlist-Generated.swift */; };
-		B3EA00012F56B000004A995B /* PVDolphinCore+Netplay.h in Headers */ = {isa = PBXBuildFile; fileRef = B3EA00042F56B000004A995B /* PVDolphinCore+Netplay.h */; };
-		B3EA00022F56B000004A995B /* PVDolphinCore+Netplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3EA00052F56B000004A995B /* PVDolphinCore+Netplay.mm */; };
-		B3EA00032F56B000004A995B /* PVDolphinCore+PVNetplayCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA00062F56B000004A995B /* PVDolphinCore+PVNetplayCapable.swift */; };
-		B3EA00072F56B000004A995B /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3EA00082F56B000004A995B /* PVNetplay */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -678,9 +679,6 @@
 		934FA1B92A7905880019C951 /* libdolphin.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdolphin.a; path = "dolphin-ios/build-$(PLATFORM_NAME)-$(DOL_CORE_BUILD_TARGET)/Source/iOS/Library/libdolphin.a"; sourceTree = "<group>"; };
 		93599B4C2955FD520049DAC8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		9366AC5E295976D000162286 /* PVDolphinCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVDolphinCore+Cheats.mm"; sourceTree = "<group>"; };
-		B3EA00042F56B000004A995B /* PVDolphinCore+Netplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVDolphinCore+Netplay.h"; sourceTree = "<group>"; };
-		B3EA00052F56B000004A995B /* PVDolphinCore+Netplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVDolphinCore+Netplay.mm"; sourceTree = "<group>"; };
-		B3EA00062F56B000004A995B /* PVDolphinCore+PVNetplayCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVDolphinCore+PVNetplayCapable.swift"; sourceTree = "<group>"; };
 		9366AC812959C6D800162286 /* Cheats_GeckoCode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Cheats_GeckoCode.mm; sourceTree = "<group>"; };
 		9366AC822959C6D900162286 /* Cheats_ActionReplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Cheats_ActionReplay.mm; sourceTree = "<group>"; };
 		9366AC852959CD4A00162286 /* Sys */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sys; path = "dolphin-ios/Data/Sys"; sourceTree = "<group>"; };
@@ -743,6 +741,9 @@
 		B3C76224207833DE009950E4 /* PVDolphinCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDolphinCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3DE9E492E2D7ABC008E97F6 /* PVlibDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibDolphin.xcframework; path = build/xcframework/PVlibDolphin.xcframework; sourceTree = "<group>"; };
+		B3EA00042F56B000004A995B /* PVDolphinCore+Netplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVDolphinCore+Netplay.h"; sourceTree = "<group>"; };
+		B3EA00052F56B000004A995B /* PVDolphinCore+Netplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVDolphinCore+Netplay.mm"; sourceTree = "<group>"; };
+		B3EA00062F56B000004A995B /* PVDolphinCore+PVNetplayCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVDolphinCore+PVNetplayCapable.swift"; sourceTree = "<group>"; };
 		B3F8E1252CB6007700017D1B /* PVDolphinCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDolphinCore.swift; sourceTree = "<group>"; };
 		B3F8E1272CB6052800017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B3F8E1282CB6052800017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
@@ -770,6 +771,7 @@
 				B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */,
 				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
 				B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */,
+				B3D991CD2F78A60F002F1DCB /* PVSupport in Frameworks */,
 				B34A8EF6295848010000D110 /* libbz2.tbd in Frameworks */,
 				B30E98FF2C6EF18400C1431E /* OpenGL.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
@@ -1081,6 +1083,7 @@
 				B36458D72EDD1A160020354E /* Defaults */,
 				B3A4832C2F569AC7004A995B /* PVPrimitives */,
 				B3EA00082F56B000004A995B /* PVNetplay */,
+				B3D991CC2F78A60F002F1DCB /* PVSupport */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVDolphin.framework */;
@@ -2403,6 +2406,11 @@
 		B3A4832C2F569AC7004A995B /* PVPrimitives */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVPrimitives;
+		};
+		B3D991CC2F78A60F002F1DCB /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B30E99002C6EF18E00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */;
+			productName = PVSupport;
 		};
 		B3EA00082F56B000004A995B /* PVNetplay */ = {
 			isa = XCSwiftPackageProductDependency;
