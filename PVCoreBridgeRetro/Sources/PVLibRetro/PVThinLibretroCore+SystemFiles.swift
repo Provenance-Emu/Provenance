@@ -317,6 +317,18 @@ extension PVThinLibretroCore {
         if coreID.contains("mame") {
             return ["mame"]
         }
+        // VICE Commodore emulator — each machine variant stores its ROMs in a
+        // machine-named subdirectory directly under the RetroArch system root.
+        // e.g. RetroArch/system/C64/ → System/C64/C64/
+        if coreID.contains("vice") {
+            return ["C64", "C64DTV", "C64SC", "C128", "VIC20",
+                    "PET", "CBM-II", "CBM-II-5x0", "PLUS4", "SCPU64"]
+        }
+        // melonDS — some RetroArch installations place DS system files in a
+        // melonDS/ subdirectory to keep them separate from other cores.
+        if coreID.contains("melonds") {
+            return ["melonDS"]
+        }
         return []
     }
 
@@ -335,6 +347,20 @@ extension PVThinLibretroCore {
         }
         if coreID.contains("rick_dangerous") || coreID == "rick" {
             return ["rick.pak"]
+        }
+        // VICE — machine-specific config files live at the RetroArch system root.
+        if coreID.contains("vice") {
+            // Each VICE variant writes a per-machine config file to the system root.
+            return ["vice-c64.cfg", "vice-c64dtv.cfg", "vice-c64sc.cfg",
+                    "vice-c128.cfg", "vice-xvic.cfg", "vice-xpet.cfg",
+                    "vice-xcbm2.cfg", "vice-xcbm5x0.cfg", "vice-xplus4.cfg",
+                    "vice-xscpu64.cfg"]
+        }
+        // melonDS — BIOS/firmware files may live at the RetroArch system root
+        // when the melonDS/ subdirectory layout is NOT used.
+        if coreID.contains("melonds") {
+            return ["bios7.bin", "bios9.bin", "firmware.bin",
+                    "dsi_bios7.bin", "dsi_bios9.bin", "dsi_firmware.bin", "dsi_nand.bin"]
         }
         return []
     }

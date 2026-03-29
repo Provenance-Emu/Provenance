@@ -10,6 +10,7 @@ import Foundation
 import PVLogging
 import RxSwift
 import PVPrimitives
+import PVSystems
 import PVFileSystem
 import PVRealm
 import RealmSwift
@@ -19,14 +20,21 @@ import CryptoKit
 // MARK: - iOS/macOS Implementation
 
 #if !os(tvOS)
-/// BIOS syncer for iOS/macOS using iCloud Documents
-public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
+/// BIOS syncer for iOS/macOS using iCloud Documents.
+///
+/// Also implements `SystemFileSyncing` so that per-console `System/<name>/`
+/// directories are included in the iCloud metadata query and can be uploaded
+/// and downloaded just like BIOS files.  The combined monitoring is achieved
+/// by passing both `"BIOS"` and `"System"` to `iCloudContainerSyncer.init`.
+///
+/// Part of Epic #3577 — System directory infrastructure.
+public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing, SystemFileSyncing {
     /// Initialize a new BIOS syncer
     /// - Parameters:
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
     public init(notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(directories: ["BIOS"], notificationCenter: notificationCenter, errorHandler: errorHandler)
+        super.init(directories: ["BIOS", "System"], notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
 
     /// Get the local URL for a BIOS file
@@ -221,6 +229,118 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing {
             return false
         }
 
+        return FileManager.default.fileExists(atPath: cloudURL.path)
+    }
+
+    // MARK: - SystemFileSyncing
+
+    /// Returns the on-device URL for a file in `System/<name>/<filename>`.
+    public func localSystemURL(forSystem system: SystemIdentifier, filename: String) -> URL? {
+        guard let name = system.systemDirectoryName else { return nil }
+        guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        return documentsURL
+            .appendingPathComponent("System")
+            .appendingPathComponent(name)
+            .appendingPathComponent(filename)
+    }
+
+    /// Returns the iCloud URL for a file in `System/<name>/<filename>`.
+    public func cloudSystemURL(forSystem system: SystemIdentifier, filename: String) -> URL? {
+        guard let name = system.systemDirectoryName else { return nil }
+        guard let containerURL = documentsURL else { return nil }
+        return containerURL
+            .appendingPathComponent("System")
+            .appendingPathComponent(name)
+            .appendingPathComponent(filename)
+    }
+
+    /// Upload a file from `System/<name>/<filename>` to iCloud.
+    public func uploadSystemFile(system: SystemIdentifier, filename: String) -> Completable {
+        return Completable.create { [weak self] observer in
+            Task {
+                guard let self = self,
+                      let localURL = self.localSystemURL(forSystem: system, filename: filename),
+                      let cloudURL = self.cloudSystemURL(forSystem: system, filename: filename) else {
+                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1,
+                                           userInfo: [NSLocalizedDescriptionKey: "Invalid system file or URLs"])))
+                    return
+                }
+
+                guard FileManager.default.fileExists(atPath: localURL.path) else {
+                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2,
+                                           userInfo: [NSLocalizedDescriptionKey: "System file not found locally: \(filename)"])))
+                    return
+                }
+
+                do {
+                    let cloudDir = cloudURL.deletingLastPathComponent()
+                    try FileManager.default.createDirectory(at: cloudDir, withIntermediateDirectories: true)
+                    if FileManager.default.fileExists(atPath: cloudURL.path) {
+                        try await FileManager.default.removeItem(at: cloudURL)
+                    }
+                    try FileManager.default.copyItem(at: localURL, to: cloudURL)
+                    await self.insertUploadedFile(cloudURL)
+                    DLOG("Uploaded system file to iCloud: System/\(system.systemDirectoryName ?? "?")/\(filename)")
+                    observer(.completed)
+                } catch {
+                    ELOG("Failed to upload system file \(filename): \(error.localizedDescription)")
+                    observer(.error(error))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+
+    /// Download a file from iCloud into `System/<name>/<filename>`.
+    public func downloadSystemFile(system: SystemIdentifier, filename: String) -> Completable {
+        return Completable.create { [weak self] observer in
+            Task {
+                guard let self = self,
+                      let cloudURL = self.cloudSystemURL(forSystem: system, filename: filename),
+                      let localURL = self.localSystemURL(forSystem: system, filename: filename) else {
+                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 1,
+                                           userInfo: [NSLocalizedDescriptionKey: "Invalid system file or URLs"])))
+                    return
+                }
+
+                guard FileManager.default.fileExists(atPath: cloudURL.path) else {
+                    observer(.error(NSError(domain: "com.provenance-emu.provenance", code: 2,
+                                           userInfo: [NSLocalizedDescriptionKey: "System file not found in iCloud: \(filename)"])))
+                    return
+                }
+
+                do {
+                    try FileManager.default.startDownloadingUbiquitousItem(at: cloudURL)
+                    await self.insertDownloadingFile(cloudURL)
+                    let localDir = localURL.deletingLastPathComponent()
+                    try FileManager.default.createDirectory(at: localDir, withIntermediateDirectories: true)
+                    if FileManager.default.fileExists(atPath: localURL.path) {
+                        try await FileManager.default.removeItem(at: localURL)
+                    }
+                    try FileManager.default.copyItem(at: cloudURL, to: localURL)
+                    await self.insertDownloadedFile(cloudURL)
+                    DLOG("Downloaded system file from iCloud: System/\(system.systemDirectoryName ?? "?")/\(filename)")
+                    observer(.completed)
+                } catch {
+                    ELOG("Failed to download system file \(filename): \(error.localizedDescription)")
+                    observer(.error(error))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+
+    /// Returns `true` when `System/<name>/<filename>` exists on device.
+    public func systemFileExists(system: SystemIdentifier, filename: String) -> Bool {
+        guard let localURL = localSystemURL(forSystem: system, filename: filename) else { return false }
+        return FileManager.default.fileExists(atPath: localURL.path)
+    }
+
+    /// Returns `true` when `System/<name>/<filename>` exists in iCloud.
+    public func systemFileExistsInCloud(system: SystemIdentifier, filename: String) -> Bool {
+        guard let cloudURL = cloudSystemURL(forSystem: system, filename: filename) else { return false }
         return FileManager.default.fileExists(atPath: cloudURL.path)
     }
 }
