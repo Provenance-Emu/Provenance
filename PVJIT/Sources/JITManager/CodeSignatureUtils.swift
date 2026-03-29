@@ -13,7 +13,9 @@
 
 import Foundation
 import MachO
+#if os(macOS)
 import Security
+#endif
 
 let CS_EXECSEG_ALLOW_UNSIGNED: UInt64 = 0x10
 
@@ -73,14 +75,88 @@ private struct ParsedCodeSignature {
     let entitlements: [String: Any]
 }
 
-/// Reads a boolean entitlement from the **running process** via `SecTask` (preferred on Apple platforms).
-/// - Returns: `true` if present and true, `false` if absent or explicitly false, `nil` if the task could not be queried or the value is not a boolean (caller may fall back to Mach-O parsing).
+/// Normalizes plist entitlement values (bool, `NSNumber`, or presence for string-style keys).
+@available(iOS 13.4, tvOS 13.4, *)
+private func entitlementPlistIndicatesEnabled(_ dict: [String: Any]?, key: String) -> Bool {
+    guard let dict, let value = dict[key] else { return false }
+    switch value {
+    case let b as Bool:
+        return b
+    case let n as NSNumber:
+        return n.boolValue
+    case let s as String:
+        return !s.isEmpty
+    default:
+        return false
+    }
+}
+
+/// Extracts the signed provisioning plist payload from `embedded.mobileprovision` (XML or binary plist after the CMS wrapper).
+/// Sideload / AltStore / enterprise installs keep this file in the app bundle; its `Entitlements` dict mirrors what was signed onto the app.
+@available(iOS 13.4, tvOS 13.4, *)
+private func entitlementsFromEmbeddedMobileProvision() -> [String: Any]? {
+    guard let url = Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision") else { return nil }
+    guard let raw = try? Data(contentsOf: url), raw.count > 32 else { return nil }
+
+    if let plistData = extractXMLPlistPayload(from: raw),
+       let top = try? PropertyListSerialization.propertyList(from: plistData, options: [], format: nil) as? [String: Any],
+       let ents = top["Entitlements"] as? [String: Any] {
+        return ents
+    }
+
+    if let bplistStart = firstSubdataIndex(of: Data("bplist00".utf8), in: raw) {
+        let tail = raw[bplistStart...]
+        if let top = try? PropertyListSerialization.propertyList(from: Data(tail), options: [], format: nil) as? [String: Any],
+           let ents = top["Entitlements"] as? [String: Any] {
+            return ents
+        }
+    }
+
+    return nil
+}
+
+/// Locates an XML plist inside the provisioning profile blob (bytes preserved via ISO Latin-1).
+@available(iOS 13.4, tvOS 13.4, *)
+private func extractXMLPlistPayload(from raw: Data) -> Data? {
+    guard let latin1 = String(data: raw, encoding: .isoLatin1) else { return nil }
+    let openers = ["<?xml", "<plist version"]
+    var start: String.Index?
+    for tag in openers {
+        if let r = latin1.range(of: tag) {
+            if let existing = start {
+                if r.lowerBound < existing { start = r.lowerBound }
+            } else {
+                start = r.lowerBound
+            }
+        }
+    }
+    guard let s = start, let end = latin1.range(of: "</plist>", range: s..<latin1.endIndex) else { return nil }
+    return String(latin1[s..<end.upperBound]).data(using: .utf8)
+}
+
+/// First index where `needle` occurs in `haystack` (byte scan; avoids colliding with `Data` API additions).
+@available(iOS 13.4, tvOS 13.4, *)
+private func firstSubdataIndex(of needle: Data, in haystack: Data) -> Data.Index? {
+    guard !needle.isEmpty, haystack.count >= needle.count else { return nil }
+    var i = haystack.startIndex
+    let limit = haystack.index(haystack.endIndex, offsetBy: -needle.count + 1)
+    while i < limit {
+        if haystack[i..<haystack.index(i, offsetBy: needle.count)] == needle {
+            return i
+        }
+        i = haystack.index(after: i)
+    }
+    return nil
+}
+
+/// Reads a boolean entitlement from the **running process** via `SecTask` (macOS only; not exposed on iOS/tvOS Swift SDKs).
+/// - Returns: On embedded OS, always `nil` so ``HasBooleanEntitlement`` uses Mach-O / provisioning profile. On macOS, `true` / `false` / `nil` as documented.
 @available(iOS 13.4, tvOS 13.4, *)
 private func booleanEntitlementFromSecTask(_ entitlementKey: String) -> Bool? {
-    guard let task = SecTaskCreateFromSelf(nil) else { return nil }
+    #if os(macOS)
+    guard let task = SecTaskCreateFromSelf(kCFAllocatorDefault) else { return nil }
     let key = entitlementKey as CFString
     guard let value = SecTaskCopyValueForEntitlement(task, key, nil) else {
-        /// Entitlement not present.
         return false
     }
     if let b = value as? Bool {
@@ -90,9 +166,13 @@ private func booleanEntitlementFromSecTask(_ entitlementKey: String) -> Bool? {
         return n.boolValue
     }
     return nil
+    #else
+    _ = entitlementKey
+    return nil
+    #endif
 }
 
-/// Returns boolean entitlement values, preferring `SecTaskCopyValueForEntitlement` and falling back to parsing the main executable’s embedded code signature.
+/// Returns boolean entitlement values: `SecTask` on macOS, else Mach-O embedded signature, else `embedded.mobileprovision` `Entitlements` (sideload).
 @available(iOS 13.4, tvOS 13.4, *)
 func HasBooleanEntitlement(_ entitlementKey: String) -> Bool {
     switch booleanEntitlementFromSecTask(entitlementKey) {
@@ -101,10 +181,10 @@ func HasBooleanEntitlement(_ entitlementKey: String) -> Bool {
     case .none:
         break
     }
-    guard let entitlements = parsedCodeSignature()?.entitlements else {
-        return false
+    if entitlementPlistIndicatesEnabled(parsedCodeSignature()?.entitlements, key: entitlementKey) {
+        return true
     }
-    return entitlements[entitlementKey] as? Bool == true
+    return entitlementPlistIndicatesEnabled(entitlementsFromEmbeddedMobileProvision(), key: entitlementKey)
 }
 
 /// Mach header for the main executable (image index 0). Avoids `dladdr(#function)` which can resolve to the wrong dylib in Swift.
@@ -218,7 +298,9 @@ func HasValidCodeSignature() -> Bool {
         return false
     }
 
-    guard signature.entitlements["get-task-allow"] as? Bool == true else {
+    let hasGetTaskAllow = entitlementPlistIndicatesEnabled(signature.entitlements, key: "get-task-allow")
+        || entitlementPlistIndicatesEnabled(entitlementsFromEmbeddedMobileProvision(), key: "get-task-allow")
+    guard hasGetTaskAllow else {
         DispatchQueue.main.async { DOLJitManager.shared.setAuxiliaryError("get-task-allow entitlement is not set to true.") }
         return false
     }
