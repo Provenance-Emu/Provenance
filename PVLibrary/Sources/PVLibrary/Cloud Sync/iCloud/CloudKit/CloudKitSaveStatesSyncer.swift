@@ -627,7 +627,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                                     ELOG("Thaw of SaveState failed")
                                     return
                                 }
-                                let file = PVFile(withURL: destinationURL, relativeRoot: .documents)
+                                let file = PVFile(withURL: destinationURL, relativeRoot: .platformDefault)
                                 thawed.file = file
                                 thawed.isDownloaded = true
                                 // Update lastUploadedDate to match cloud record's modification date
@@ -715,7 +715,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                                     ELOG("Save state thaw failed")
                                     return
                                 }
-                                let file = PVFile(withURL: destinationURL, relativeRoot: .documents)
+                                let file = PVFile(withURL: destinationURL, relativeRoot: .platformDefault)
                                 thawed.file = file
                                 thawed.isDownloaded = true
                                 // Update lastUploadedDate to match cloud record's modification date
@@ -1384,7 +1384,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         .appendingPathComponent(stableIdentifier)
                     let fileURL = directoryURL.appendingPathComponent(filename)
 
-                    let file = PVFile(withURL: fileURL, relativeRoot: .documents)
+                    let file = PVFile(withURL: fileURL, relativeRoot: .platformDefault)
                     saveState.file = file
 
                     realm.add(saveState)
@@ -1868,7 +1868,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         ELOG("Failed to thaw save state for artwork update")
                         return
                     }
-                    let imageFile = PVImageFile(withURL: artworkURL, relativeRoot: .documents)
+                    let imageFile = PVImageFile(withURL: artworkURL, relativeRoot: .platformDefault)
                     thawed.image = imageFile
                 }
             }
@@ -1963,7 +1963,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             try await self.withRealm { realm in
                 let applyUpdate = {
                     guard let liveSaveState = targetSaveState.thaw() else { return }
-                    let imageFile = PVImageFile(withURL: artworkURL, relativeRoot: .documents)
+                    let imageFile = PVImageFile(withURL: artworkURL, relativeRoot: .platformDefault)
                     liveSaveState.image = imageFile
                 }
                 if realm.isInWriteTransaction {

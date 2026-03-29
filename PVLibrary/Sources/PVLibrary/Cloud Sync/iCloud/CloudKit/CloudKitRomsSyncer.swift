@@ -2076,12 +2076,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // Update download status and size based on asset presence and local file existence
             if record.allKeys().contains(CloudKitSchema.ROMFields.fileData),
                let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset {
-                // Check if the local file actually exists before marking as downloaded
+                // Check if the local file actually exists before marking as downloaded.
+                // Also try the game's existing file URL directly as a fallback — localURL()
+                // may fail on tvOS if the PVFile was created with a mismatched relativeRoot.
                 let expectedLocalURL = self.localURL(for: localGame)
-                let hasLocalFile = expectedLocalURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false
-                localGame.isDownloaded = hasLocalFile
+                let existingFileURL = localGame.file?.url
+                let hasLocalFile = (expectedLocalURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false)
+                    || (existingFileURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false)
+                // Never downgrade isDownloaded from true→false during cloud sync.
+                // A locally-imported game should stay "downloaded" even if path resolution
+                // temporarily fails during sync reconciliation.
+                if hasLocalFile || !localGame.isDownloaded {
+                    localGame.isDownloaded = hasLocalFile
+                }
                 localGame.hasCloudAssets = true
-                ILOG("🔍 Updated game \(localGame.title): hasLocalFile=\(hasLocalFile), expectedPath=\(expectedLocalURL?.path ?? "nil"), isDownloaded=\(localGame.isDownloaded)")
+                ILOG("🔍 Updated game \(localGame.title): hasLocalFile=\(hasLocalFile), expectedPath=\(expectedLocalURL?.path ?? "nil"), existingFilePath=\(existingFileURL?.path ?? "nil"), isDownloaded=\(localGame.isDownloaded)")
                 // Get fileSize using FileManager
                 if let url = asset.fileURL, let attributes = try? FileManager.default.attributesOfItem(atPath: url.path), let fileSize = attributes[.size] as? Int64 {
                     localGame.fileSize = Int(fileSize)
@@ -2092,11 +2101,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 if let expectedLocalURL = expectedLocalURL {
                     if localGame.file == nil {
                         // Corrected RelativeRoot usage
-                        let newFile = PVFile(withURL: expectedLocalURL, relativeRoot: .documents)
+                        let newFile = PVFile(withURL: expectedLocalURL, relativeRoot: .platformDefault)
                         localGame.file = newFile // Create PVFile if missing
                     } else if localGame.file?.url != expectedLocalURL {
                         // Replace existing PVFile object as URL is get-only
-                        let updatedFile = PVFile(withURL: expectedLocalURL, relativeRoot: .documents) // Use same root as above
+                        let updatedFile = PVFile(withURL: expectedLocalURL, relativeRoot: .platformDefault) // Use same root as above
                         localGame.file = updatedFile
                         VLOG("Replaced PVFile due to differing URL for game \(localGame.md5Hash ?? "nil")")
                     }
@@ -2428,7 +2437,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         if PVMediaCache.fileExists(forKey: url) {
             if let localURL = PVMediaCache.filePath(forKey: url) {
-                let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
+                let file = PVImageFile(withURL: localURL, relativeRoot: .platformDefault)
                 try? await RealmContext.withBackgroundRealm { realm in
                     guard let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5).first else { return }
                     try? realm.write {
@@ -2458,7 +2467,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             // Create image file and assign to game on main thread
             if let localURL = PVMediaCache.filePath(forKey: url) {
-                let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
+                let file = PVImageFile(withURL: localURL, relativeRoot: .platformDefault)
                 try? await RealmContext.withBackgroundRealm { realm in
                     guard let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5).first else { return }
                     try? realm.write {
@@ -2505,7 +2514,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
 
                 if needsFileUpdate {
-                    let newFile = PVFile(withURL: validFileURL, relativeRoot: .documents)
+                    let newFile = PVFile(withURL: validFileURL, relativeRoot: .platformDefault)
                     liveGame.file = newFile // Replace or create
                     VLOG("Updated/Created PVFile with URL \(validFileURL.path) for game \(md5).")
                 } else {
