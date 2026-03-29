@@ -24,10 +24,8 @@ struct MouseInputSettingsView: View {
     var body: some View {
         ScrollView {
             MouseSection()
+                .tvOSSettingsHorizontalPadding()
                 #if os(tvOS)
-                // Leading padding accounts for the tvOS side-menu bar; trailing
-                // keeps symmetry. 80 pt matches other settings subpages.
-                .padding(.horizontal, 80)
                 .padding(.vertical, 24)
                 #else
                 .padding()
@@ -60,12 +58,12 @@ struct MouseSection: View {
             // Input source picker
             inputSourcePicker
 
-            retroDivider
+            RetroSettingsDivider()
 
             // Light gun crosshair style
             crosshairStylePicker
 
-            retroDivider
+            RetroSettingsDivider()
 
             // Global sensitivity
             sensitivitySlider(
@@ -76,7 +74,7 @@ struct MouseSection: View {
 
             // Gyro-specific controls (only relevant when gyro or auto)
             if inputSource == .gyro || inputSource == .auto {
-                retroDivider
+                RetroSettingsDivider()
 
                 Toggle(isOn: $gyroMouseEnabled) {
                     Label("Enable Gyro Mouse", systemImage: "gyroscope")
@@ -105,13 +103,6 @@ struct MouseSection: View {
                     .padding(.top, 4)
             }
         }
-    }
-
-    // MARK: - Retrowave divider
-
-    private var retroDivider: some View {
-        Divider()
-            .background(Color.retroBlue.opacity(0.3))
     }
 
     // MARK: - Input Source Picker

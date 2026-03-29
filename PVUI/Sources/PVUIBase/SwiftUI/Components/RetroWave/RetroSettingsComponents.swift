@@ -22,11 +22,73 @@ public struct RetroSettingsBackground: View {
     public var body: some View {
         ZStack {
             Color.black
-                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea(.all)
             RetroGrid()
-                .edgesIgnoringSafeArea(.all)
+                .ignoresSafeArea(.all)
                 .opacity(0.25)
         }
+    }
+}
+
+// MARK: - Retrowave Section Divider
+
+/// A retroBlue-tinted horizontal separator for use between sections in retrowave settings views.
+public struct RetroSettingsDivider: View {
+    public init() {}
+
+    public var body: some View {
+        Divider()
+            .background(Color.retroBlue.opacity(0.3))
+    }
+}
+
+// MARK: - Retrowave Section Header
+
+/// A retrowave-styled section header: retroPink SF Symbol + uppercase tracking label.
+///
+/// Matches the visual style used by all settings subpages.
+///
+/// Example:
+/// ```swift
+/// Section {
+///     // row content
+/// } header: {
+///     RetroSettingsSectionHeader(icon: "waveform", title: "Audio Engine")
+/// }
+/// ```
+public struct RetroSettingsSectionHeader: View {
+    let icon: String
+    let title: String
+
+    public init(icon: String, title: String) {
+        self.icon = icon
+        self.title = title
+    }
+
+    public var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(.retroPink)
+            Text(title.uppercased())
+                .font(.system(size: 11, weight: .semibold))
+                .tracking(1.2)
+                .foregroundColor(.retroPink)
+        }
+    }
+}
+
+// MARK: - tvOS horizontal padding modifier
+
+public extension View {
+    /// Applies the standard tvOS side-menu inset (80 pt) on tvOS; no-op on other platforms.
+    @ViewBuilder
+    func tvOSSettingsHorizontalPadding() -> some View {
+        #if os(tvOS)
+        self.padding(.horizontal, 80)
+        #else
+        self
+        #endif
     }
 }
 

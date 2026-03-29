@@ -136,15 +136,7 @@ public struct ROMTitleNormalizationView: View {
     }
 
     private var retroSectionHeader: some View {
-        HStack(spacing: 6) {
-            Image(systemName: "textformat.alt")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.retroPink)
-            Text("ROM TITLE CLEANUP")
-                .font(.system(size: 11, weight: .semibold))
-                .tracking(1.2)
-                .foregroundColor(.retroPink)
-        }
+        RetroSettingsSectionHeader(icon: "textformat.alt", title: "ROM Title Cleanup")
     }
 
     private var proposalsList: some View {

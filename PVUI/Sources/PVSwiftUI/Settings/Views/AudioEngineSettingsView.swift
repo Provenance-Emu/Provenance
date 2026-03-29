@@ -89,7 +89,7 @@ struct AudioEngineSettingsView: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
         } header: {
-            retroSectionHeader(icon: "waveform", title: "Audio Engine")
+            RetroSettingsSectionHeader(icon: "waveform", title: "Audio Engine")
         }
     }
 
@@ -113,7 +113,7 @@ struct AudioEngineSettingsView: View {
                 .font(.caption)
                 .foregroundColor(.secondary)
         } header: {
-            retroSectionHeader(icon: "timer", title: "Latency")
+            RetroSettingsSectionHeader(icon: "timer", title: "Latency")
         }
     }
 
@@ -140,7 +140,7 @@ struct AudioEngineSettingsView: View {
                     }
                 }
             } header: {
-                retroSectionHeader(icon: "waveform.badge.plus", title: "Effects")
+                RetroSettingsSectionHeader(icon: "waveform.badge.plus", title: "Effects")
             }
         }
     }
@@ -159,22 +159,8 @@ struct AudioEngineSettingsView: View {
                            showChevron: false)
             }
         } header: {
-            retroSectionHeader(icon: "ant", title: "Debug Options")
+            RetroSettingsSectionHeader(icon: "ant", title: "Debug Options")
         }
     }
     #endif
-
-    // MARK: - Helpers
-
-    private func retroSectionHeader(icon: String, title: String) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.retroPink)
-            Text(title.uppercased())
-                .font(.system(size: 11, weight: .semibold))
-                .tracking(1.2)
-                .foregroundColor(.retroPink)
-        }
-    }
 }
