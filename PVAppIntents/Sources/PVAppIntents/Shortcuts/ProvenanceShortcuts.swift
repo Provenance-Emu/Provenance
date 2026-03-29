@@ -99,6 +99,52 @@ public struct ProvenanceShortcuts: AppShortcutsProvider {
                 ],
                 shortTitle: "Search Games",
                 systemImageName: "magnifyingglass"
+            ),
+
+            // MARK: Save Game State
+            AppShortcut(
+                intent: SaveStateIntent(),
+                phrases: [
+                    "Save my game on \(.applicationName)",
+                    "Save state on \(.applicationName)",
+                    "Save game state in \(.applicationName)"
+                ],
+                shortTitle: "Save State",
+                systemImageName: "square.and.arrow.down"
+            ),
+
+            // MARK: Load Game State
+            AppShortcut(
+                intent: LoadSaveStateIntent(),
+                phrases: [
+                    "Load my saved game on \(.applicationName)",
+                    "Load save state on \(.applicationName)",
+                    "Continue from save on \(.applicationName)"
+                ],
+                shortTitle: "Load State",
+                systemImageName: "square.and.arrow.up"
+            ),
+
+            // MARK: Take Screenshot
+            AppShortcut(
+                intent: TakeScreenshotIntent(),
+                phrases: [
+                    "Take a screenshot on \(.applicationName)",
+                    "Screenshot my game in \(.applicationName)"
+                ],
+                shortTitle: "Take Screenshot",
+                systemImageName: "camera.fill"
+            ),
+
+            // MARK: Add Cheat Code
+            AppShortcut(
+                intent: AddCheatIntent(),
+                phrases: [
+                    "Add a cheat code in \(.applicationName)",
+                    "Enter cheat code on \(.applicationName)"
+                ],
+                shortTitle: "Add Cheat",
+                systemImageName: "chevron.left.forwardslash.chevron.right"
             )
         ]
     }

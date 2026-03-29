@@ -41,3 +41,10 @@ internal let pvAppGroupID: String = {
 internal var pvAppGroupDefaults: UserDefaults? {
     UserDefaults(suiteName: pvAppGroupID)
 }
+
+/// Returns true when the host app has an active emulation session.
+/// The host app sets `gameIsActive` = true in UserDefaults when a game starts
+/// and removes/sets it to false when the session ends.
+internal var pvGameIsActive: Bool {
+    pvAppGroupDefaults?.bool(forKey: "gameIsActive") ?? false
+}

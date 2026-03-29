@@ -73,17 +73,4 @@ public struct PlayRandomGameIntent: AppIntent {
     }
 }
 
-// MARK: - AppIntentError
-
-/// Typed errors thrown by PVAppIntents intents.
-public enum AppIntentError: LocalizedError {
-    case noGamesFound(in: String)
-
-    public var errorDescription: String? {
-        switch self {
-        case .noGamesFound(let source):
-            return "No games found in \(source)."
-        }
-    }
-}
 #endif
