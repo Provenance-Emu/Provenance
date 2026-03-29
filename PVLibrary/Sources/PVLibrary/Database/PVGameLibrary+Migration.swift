@@ -238,6 +238,8 @@ public final class ROMLocationMigrator {
 
     /// Fixes files that were incorrectly placed in the root ROMs directory by matching them to existing games
     public func fixOrphanedFiles() async throws {
+        // `Task` from `PVGameLibrary.init` can resume off the main actor; `try await Realm()` is not guaranteed to stay on one thread across awaits, which breaks Realm's thread confinement. Use the same main-thread Realm as `RomDatabase`.
+        try await MainActor.run {
         DLOG("Starting fixOrphanedFiles")
         // Get the root ROMs directory
         let romsRootDir = Paths.romsPath
@@ -251,8 +253,8 @@ public final class ROMLocationMigrator {
         DLOG("Found \(rootFiles.count) files in root directory")
 
         // Get all games from the database
-        let realm = try await Realm()
-        
+        let realm = RomDatabase.sharedInstance.realm
+
         let games = realm.objects(PVGame.self)
         DLOG("Found \(games.count) games in database")
 
@@ -352,13 +354,15 @@ public final class ROMLocationMigrator {
             }
         }
         DLOG("Completed fixOrphanedFiles")
+        }
     }
 
     /// Fixes PVFile partial paths that are missing the ROMs/ prefix
     public func fixPartialPaths() async throws {
+        try await MainActor.run {
         DLOG("Starting fixPartialPaths")
 
-        let realm = try await Realm()
+        let realm = RomDatabase.sharedInstance.realm
         let games = realm.objects(PVGame.self)
         DLOG("Found \(games.count) games to check")
 
@@ -401,6 +405,7 @@ public final class ROMLocationMigrator {
         }
 
         DLOG("Completed fixPartialPaths - fixed \(fixCount) paths")
+        }
     }
 }
 
