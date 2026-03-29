@@ -1,6 +1,5 @@
 import SwiftUI
 import PVUIBase
-import PVThemes
 import Defaults
 import PVCoreAudio
 import PVAudio
