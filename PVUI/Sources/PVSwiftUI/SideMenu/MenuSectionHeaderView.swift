@@ -13,9 +13,6 @@ import PVLibrary
 import PVThemes
 @_exported import PVUIBase
 
-#if canImport(Introspect)
-import Introspect
-#endif
 @available(iOS 14, tvOS 14, *)
 internal struct MenuSectionHeaderView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared

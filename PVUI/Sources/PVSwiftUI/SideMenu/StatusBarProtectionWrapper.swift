@@ -13,10 +13,6 @@ import PVLibrary
 import PVThemes
 @_exported import PVUIBase
 
-#if canImport(Introspect)
-import Introspect
-#endif
-
 internal struct StatusBarProtectionWrapper<Content: SwiftUI.View>: SwiftUI.View {
     // Scroll content inside of PVRootViewController's containerView will appear up in the status bar for some reason
     // Even though certain views will never have multiple pages/tabs, wrap them in a paged TabView to prevent this behavior

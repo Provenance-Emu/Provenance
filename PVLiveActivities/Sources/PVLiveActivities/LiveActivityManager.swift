@@ -172,6 +172,7 @@ public final class LiveActivityManager {
 #if !(os(iOS) && canImport(ActivityKit))
 /// Stub so call sites compile on tvOS, macOS, visionOS, and macCatalyst when
 /// ActivityKit is unavailable. All methods are no-ops.
+@MainActor
 public final class LiveActivityManager {
     public static let shared = LiveActivityManager()
     private init() {}

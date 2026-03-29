@@ -19,7 +19,6 @@
 
 @import Foundation;
 @import PVCoreObjCBridge;
-@import PVCoreBridge;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
@@ -176,7 +175,15 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 ///   the retro_hw_render_interface_vulkan to the core via GET_HW_RENDER_INTERFACE.
 ///   `context_reset` fires immediately after Vulkan setup completes.
 ///
+@protocol PVRetroArchCoreResponderClient;
+@protocol ObjCBridgedCoreBridge;
+@protocol DiscSwappable;
+@protocol EmulatorCoreViewportPositioning;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 @interface PVThinLibretroFrontend : PVCoreObjCBridge <ObjCBridgedCoreBridge>
+#pragma clang diagnostic pop
 
 // MARK: Properties
 

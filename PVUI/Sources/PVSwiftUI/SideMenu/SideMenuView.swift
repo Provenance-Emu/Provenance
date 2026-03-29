@@ -15,8 +15,8 @@ import PVThemes
 import Combine
 @_exported import PVUIBase
 
-#if canImport(Introspect)
-import Introspect
+#if canImport(UIKit)
+import UIKit
 #endif
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -377,48 +377,13 @@ SideMenuView: SwiftUI.View {
                 }
             }
         }
-#if canImport(Introspect)
-        .introspectNavigationController(customize: { navController in
-#if !os(tvOS)
-            if #available(iOS 17.0, tvOS 17.0, * ) {
-                let appearance = UINavigationBarAppearance()
-                appearance.configureWithOpaqueBackground()
-                appearance.backgroundColor = themeManager.currentPalette.menuHeaderBackground
-                appearance.titleTextAttributes = [.foregroundColor: themeManager.currentPalette.menuHeaderText]
-                appearance.largeTitleTextAttributes = [.foregroundColor: themeManager.currentPalette.menuHeaderText ]
-
-                navController.navigationBar.standardAppearance = appearance
-                navController.navigationBar.scrollEdgeAppearance = appearance
-                navController.navigationBar.compactAppearance = appearance
-                navController.navigationBar.tintColor = themeManager.currentPalette.menuIconTint
-                navController.navigationBar.prefersLargeTitles = false
-            }
-#endif
-
-            navController.navigationBar.tintColor = themeManager.currentPalette.menuHeaderIconTint
-        })
-        .introspectViewController(customize: { vc in
-            let image = UIImage(named: "provnavicon", in: PVUIBase.BundleLoader.myBundle, with: nil)
-            let menuIconTint = themeManager.currentPalette.menuIconTint
-            if #available(iOS 26.0, *) {
-                let imageView = UIImageView(image: image)
-                imageView.contentMode = .scaleAspectFit
-                imageView.tintColor = menuIconTint
-                vc.navigationItem.titleView = imageView
-                #if !os(tvOS)
-                vc.navigationItem.preferredSearchBarPlacement = .stacked
-                #endif
-            } else {
-                if menuIconTint != .clear {
-                    image?.applyTintEffectWithColor(menuIconTint)
-                }
-                let provenanceLogo = UIBarButtonItem(image: image)
-                provenanceLogo.tintColor = themeManager.currentPalette.menuIconTint
-                vc.navigationItem.leftBarButtonItem = provenanceLogo
-                vc.navigationItem.leftBarButtonItem?.tintColor = menuIconTint
-                vc.navigationController?.navigationBar.tintColor = menuIconTint
-            }
-        })
+#if canImport(UIKit)
+        .background(NavigationBarConfigurator(
+            headerBackground: themeManager.currentPalette.menuHeaderBackground,
+            headerText: themeManager.currentPalette.menuHeaderText,
+            headerIconTint: themeManager.currentPalette.menuHeaderIconTint,
+            menuIconTint: themeManager.currentPalette.menuIconTint
+        ))
         .foregroundStyle(themeManager.currentPalette.menuIconTint.swiftUIColor)
 #endif
         .background(themeManager.currentPalette.menuBackground.swiftUIColor)
@@ -467,6 +432,67 @@ SideMenuView: SwiftUI.View {
     }
 }
 
+// MARK: - NavigationBarConfigurator
+
+#if canImport(UIKit)
+/// A zero-size UIViewControllerRepresentable that walks up the responder chain
+/// to find the hosting UINavigationController and applies theme customization.
+/// Replaces the old SwiftUI-Introspect dependency.
+private struct NavigationBarConfigurator: UIViewControllerRepresentable {
+    let headerBackground: UIColor
+    let headerText: UIColor
+    let headerIconTint: UIColor
+    let menuIconTint: UIColor
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        let vc = UIViewController()
+        vc.view.isHidden = true
+        vc.view.frame = .zero
+        return vc
+    }
+
+    func updateUIViewController(_ vc: UIViewController, context: Context) {
+        DispatchQueue.main.async {
+            guard let navController = vc.navigationController else { return }
+
+            #if !os(tvOS)
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = headerBackground
+            appearance.titleTextAttributes = [.foregroundColor: headerText]
+            appearance.largeTitleTextAttributes = [.foregroundColor: headerText]
+
+            navController.navigationBar.standardAppearance = appearance
+            navController.navigationBar.scrollEdgeAppearance = appearance
+            navController.navigationBar.compactAppearance = appearance
+            navController.navigationBar.prefersLargeTitles = false
+            #endif
+
+            navController.navigationBar.tintColor = headerIconTint
+
+            let image = UIImage(named: "provnavicon", in: PVUIBase.BundleLoader.myBundle, with: nil)
+            if #available(iOS 26.0, *) {
+                let imageView = UIImageView(image: image)
+                imageView.contentMode = .scaleAspectFit
+                imageView.tintColor = menuIconTint
+                vc.navigationItem.titleView = imageView
+                #if !os(tvOS)
+                vc.navigationItem.preferredSearchBarPlacement = .stacked
+                #endif
+            } else {
+                if menuIconTint != .clear {
+                    image?.applyTintEffectWithColor(menuIconTint)
+                }
+                let provenanceLogo = UIBarButtonItem(image: image)
+                provenanceLogo.tintColor = menuIconTint
+                vc.navigationItem.leftBarButtonItem = provenanceLogo
+                vc.navigationItem.leftBarButtonItem?.tintColor = menuIconTint
+                navController.navigationBar.tintColor = menuIconTint
+            }
+        }
+    }
+}
+#endif
 
 #endif
 

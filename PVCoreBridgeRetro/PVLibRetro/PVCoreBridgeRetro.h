@@ -19,4 +19,6 @@ FOUNDATION_EXPORT const unsigned char PVLibRetroVersionString[];
 #import <PVCoreBridgeRetro/PVLibRetroGLESCore.h>
 #import <PVCoreBridgeRetro/PVThinLibretroFrontend.h>
 #import <PVCoreBridgeRetro/libretro.h>
+#if __has_include(<vulkan/vulkan.h>)
 #import <PVCoreBridgeRetro/libretro_vulkan.h>
+#endif

@@ -12,10 +12,6 @@ import PVLibrary
 import PVThemes
 @_exported import PVUIBase
 
-#if canImport(Introspect)
-import Introspect
-#endif
-
 /// Wraps a view and applies a background color based on the current theme.
 struct ApplyBackgroundWrapper<Content: SwiftUI.View>: SwiftUI.View {
     /// The content view to wrap.
