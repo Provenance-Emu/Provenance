@@ -596,28 +596,6 @@
         }
       }
     },
-    "store.product.cheat_library.description" : {
-      "comment" : "Description for the cheat library IAP",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Export cheat codes as QR codes, share via the system share sheet, and sync across devices via App Group."
-          }
-        }
-      }
-    },
-    "store.product.cheat_library.name" : {
-      "comment" : "Display name for the cheat library IAP",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cheat Library"
-          }
-        }
-      }
-    },
     "settings.about.app" : {
       "comment" : "Label for the app name in Settings > About",
       "localizations" : {
