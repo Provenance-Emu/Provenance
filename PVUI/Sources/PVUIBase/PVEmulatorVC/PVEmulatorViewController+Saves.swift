@@ -115,18 +115,24 @@ public extension PVEmulatorViewController {
             }
         }
 
-        // Resolve a live object from this Realm instance — the incoming `state` may be
-        // frozen (e.g. from PauseMenuSaveStateBrowserView) or from a different Realm.
-        guard let liveState = realm.object(ofType: PVSaveState.self, forPrimaryKey: state.id) else {
-            ELOG("Save state \(state.id) not found in Realm")
-            return false
+        let saveStateID = state.id
+
+        do {
+            try RomDatabase.sharedInstance.writeTransaction {
+                let r = RomDatabase.sharedInstance.realm
+                r.refresh()
+                guard let fresh = r.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID),
+                      !fresh.isInvalidated else {
+                    return
+                }
+                fresh.lastOpened = Date()
+            }
+        } catch {
+            ELOG("Failed to update lastOpened for save state \(saveStateID): \(error.localizedDescription)")
         }
 
-        try! realm.write {
-            liveState.lastOpened = Date()
-        }
-
-        guard let stateURL = liveState.file?.url, FileManager.default.fileExists(atPath: stateURL.path) else {
+        guard let stateURL = RomDatabase.sharedInstance.realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID)?.file?.url,
+              FileManager.default.fileExists(atPath: stateURL.path) else {
             return false
         }
 
