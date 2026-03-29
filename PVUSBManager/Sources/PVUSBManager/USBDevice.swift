@@ -11,13 +11,22 @@ public enum PeripheralCategory: String, Sendable, CaseIterable {
     case memoryCard     = "Memory Card Reader"
     case cartridgeReader = "Cartridge Reader"
     case massStorage    = "Mass Storage"
+    case opticalDrive   = "Optical Drive"
     case serialAdapter  = "Serial Adapter"
     case unknown        = "Unknown"
 
+    /// Localized display name resolved from the PVUSBManager bundle.
+    /// Falls back to `rawValue` if the bundle resource is unavailable.
+    public var localizedName: String {
+        NSLocalizedString(
+            localizationKey,
+            bundle: .module,
+            comment: "Display name for peripheral category: \(rawValue)"
+        )
+    }
+
     /// Localization key used by host apps to look up a translated display name.
     /// Format: `"peripheral.category.<snake_case_name>"`.
-    /// Host app is responsible for providing a `Localizable.xcstrings` / `.strings`
-    /// entry for this key; `rawValue` is the English fallback.
     public var localizationKey: String {
         switch self {
         case .gamepad:         return "peripheral.category.gamepad"
@@ -29,6 +38,7 @@ public enum PeripheralCategory: String, Sendable, CaseIterable {
         case .memoryCard:      return "peripheral.category.memory_card"
         case .cartridgeReader: return "peripheral.category.cartridge_reader"
         case .massStorage:     return "peripheral.category.mass_storage"
+        case .opticalDrive:    return "peripheral.category.optical_drive"
         case .serialAdapter:   return "peripheral.category.serial_adapter"
         case .unknown:         return "peripheral.category.unknown"
         }

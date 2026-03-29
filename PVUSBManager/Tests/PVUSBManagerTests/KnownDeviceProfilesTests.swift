@@ -261,4 +261,61 @@ final class KnownDeviceProfilesTests: XCTestCase {
         XCTAssertEqual(PeripheralTransport.mfi.rawValue, "MFi")
         XCTAssertEqual(PeripheralTransport.gcController.rawValue, "GCController")
     }
+
+    // MARK: - Localization
+
+    func testLocalizationKeysAreNonEmpty() {
+        for category in PeripheralCategory.allCases {
+            XCTAssertFalse(category.localizationKey.isEmpty, "Empty localization key for \(category)")
+        }
+    }
+
+    func testLocalizationKeysFollowNamingConvention() {
+        for category in PeripheralCategory.allCases {
+            XCTAssertTrue(category.localizationKey.hasPrefix("peripheral.category."),
+                "Key '\(category.localizationKey)' does not follow 'peripheral.category.<name>' convention")
+        }
+    }
+
+    func testLocalizedNameIsNonEmpty() {
+        for category in PeripheralCategory.allCases {
+            XCTAssertFalse(category.localizedName.isEmpty,
+                "localizedName should not be empty for \(category)")
+        }
+    }
+
+    func testLocalizedNameFallsBackToEnglish() {
+        // In test environments, the bundle may or may not include .strings.
+        // At minimum, localizedName must not be the raw localization key itself
+        // (which would indicate NSLocalizedString silently failing).
+        let name = PeripheralCategory.opticalDrive.localizedName
+        XCTAssertFalse(name.isEmpty)
+        XCTAssertNotEqual(name, "peripheral.category.optical_drive",
+            "localizedName should return the translated string, not the key itself")
+    }
+
+    // MARK: - Optical Drive Profiles
+
+    func testAppleSuperDriveProfile() {
+        let profile = KnownDeviceProfiles.profile(vendorID: KnownDeviceProfiles.vendorApple, productID: 0x1500)
+        XCTAssertNotNil(profile, "Apple SuperDrive profile should exist")
+        XCTAssertEqual(profile?.category, .opticalDrive)
+        XCTAssertTrue(profile?.requiresDriverKit == true)
+    }
+
+    func testOpticalDriveProfilesAllRequireDriverKit() {
+        let opticalProfiles = KnownDeviceProfiles.all.filter { $0.category == .opticalDrive }
+        XCTAssertFalse(opticalProfiles.isEmpty, "There should be at least one optical drive profile")
+        for profile in opticalProfiles {
+            XCTAssertTrue(profile.requiresDriverKit,
+                "Optical drive profile '\(profile.productName)' should require DriverKit")
+        }
+    }
+
+    func testLGOpticalDriveVendorFallback() {
+        // LG has a vendor-only entry (productID = nil), so any unknown LG PID should resolve
+        let profile = KnownDeviceProfiles.profile(vendorID: KnownDeviceProfiles.vendorLG, productID: 0xFFFF)
+        XCTAssertNotNil(profile, "LG optical drive vendor fallback should exist")
+        XCTAssertEqual(profile?.category, .opticalDrive)
+    }
 }

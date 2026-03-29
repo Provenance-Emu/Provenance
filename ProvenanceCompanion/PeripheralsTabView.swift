@@ -6,6 +6,7 @@ struct PeripheralsTabView: View {
     @State private var peripheralManager = USBPeripheralManager()
     #if !os(tvOS)
     @State private var driverExtManager = DriverExtensionManager()
+    @State private var opticalDriveManager = OpticalDriveManager()
     @State private var showDriverStore = false
     #endif
 
@@ -14,6 +15,7 @@ struct PeripheralsTabView: View {
             List {
                 #if !os(tvOS)
                 driverKitSection
+                OpticalDriveStatusView(manager: opticalDriveManager)
                 #endif
                 connectedDevicesSection
                 supportedDevicesSection
@@ -234,6 +236,7 @@ private struct DeviceRowView: View {
         case .memoryCard:       return "memorychip"
         case .cartridgeReader:  return "internaldrive.fill"
         case .massStorage:      return "externaldrive.fill"
+        case .opticalDrive:     return "opticaldisc.fill"
         case .serialAdapter:    return "cable.connector.horizontal"
         case .unknown:          return "questionmark.square"
         }
@@ -247,6 +250,7 @@ private struct DeviceRowView: View {
         case .memoryCard,
              .cartridgeReader,
              .massStorage:      return .green
+        case .opticalDrive:     return .cyan
         default:                return .secondary
         }
     }

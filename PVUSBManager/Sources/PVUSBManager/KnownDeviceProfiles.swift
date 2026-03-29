@@ -42,6 +42,15 @@ public enum KnownDeviceProfiles {
     public static let vendorThrustmaster: Int = 0x044F
     public static let vendorMayflash: Int   = 0x0079
 
+    // Optical drive vendors
+    public static let vendorASUS: Int       = 0x0B05
+    public static let vendorLG: Int         = 0x043E
+    public static let vendorSamsung: Int    = 0x04E8
+    public static let vendorPioneer: Int    = 0x08E4
+    public static let vendorVerbatim: Int   = 0x08EC
+    public static let vendorApple: Int      = 0x05AC // Apple SuperDrive
+    public static let vendorOWC: Int        = 0x2B09
+
     // MARK: - Profiles
 
     public static let all: [DeviceProfile] = [
@@ -118,6 +127,38 @@ public enum KnownDeviceProfiles {
         DeviceProfile(vendorID: vendorMayflash, productID: 0x1846,
                       manufacturerName: "Mayflash", productName: "GameCube Adapter",
                       category: .gamepad, requiresDriverKit: true),
+
+        // MARK: - USB Optical Drives
+        // These devices use ATAPI/BOT (bInterfaceClass=0x08, bInterfaceSubClass=0x02)
+        // and require the ProvenanceCompanionOpticalDriveDriverKit dext.
+
+        DeviceProfile(vendorID: vendorApple, productID: 0x1500,
+                      manufacturerName: "Apple", productName: "USB SuperDrive",
+                      category: .opticalDrive, requiresDriverKit: true),
+
+        DeviceProfile(vendorID: vendorASUS, productID: nil,
+                      manufacturerName: "ASUS", productName: "ASUS USB DVD Drive",
+                      category: .opticalDrive, requiresDriverKit: true),
+
+        DeviceProfile(vendorID: vendorLG, productID: nil,
+                      manufacturerName: "LG", productName: "LG USB DVD Drive",
+                      category: .opticalDrive, requiresDriverKit: true),
+
+        DeviceProfile(vendorID: vendorSamsung, productID: nil,
+                      manufacturerName: "Samsung", productName: "Samsung USB DVD Drive",
+                      category: .opticalDrive, requiresDriverKit: true),
+
+        DeviceProfile(vendorID: vendorPioneer, productID: nil,
+                      manufacturerName: "Pioneer", productName: "Pioneer USB DVD Drive",
+                      category: .opticalDrive, requiresDriverKit: true),
+
+        DeviceProfile(vendorID: vendorVerbatim, productID: nil,
+                      manufacturerName: "Verbatim", productName: "Verbatim USB DVD Drive",
+                      category: .opticalDrive, requiresDriverKit: true),
+
+        DeviceProfile(vendorID: vendorOWC, productID: nil,
+                      manufacturerName: "OWC", productName: "OWC USB DVD Drive",
+                      category: .opticalDrive, requiresDriverKit: true),
     ]
 
     /// Returns the best matching profile for the given VID:PID.

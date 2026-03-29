@@ -1,0 +1,35 @@
+/* PVUSBManager Localizable.strings — English
+   Keys follow the pattern established in USBDevice.swift:
+     peripheral.category.<snake_case>    → display name for PeripheralCategory
+*/
+
+// MARK: - PeripheralCategory display names
+
+"peripheral.category.gamepad" = "Gamepad";
+"peripheral.category.light_gun" = "Light Gun";
+"peripheral.category.steering_wheel" = "Steering Wheel";
+"peripheral.category.flight_stick" = "Flight Stick";
+"peripheral.category.mouse" = "Mouse";
+"peripheral.category.keyboard" = "Keyboard";
+"peripheral.category.memory_card" = "Memory Card Reader";
+"peripheral.category.cartridge_reader" = "Cartridge Reader";
+"peripheral.category.mass_storage" = "Mass Storage";
+"peripheral.category.optical_drive" = "Optical Drive";
+"peripheral.category.serial_adapter" = "Serial Adapter";
+"peripheral.category.unknown" = "Unknown";
+
+// MARK: - DriverKit extension status strings
+
+"driverkit.status.notInstalled" = "Not Installed";
+"driverkit.status.activating" = "Activating…";
+"driverkit.status.active" = "Active";
+"driverkit.status.deactivating" = "Deactivating…";
+"driverkit.status.failed" = "Failed";
+"driverkit.status.unknown" = "Unknown";
+
+// MARK: - USB peripheral status
+
+"usb.peripheral.connected" = "Connected";
+"usb.peripheral.disconnected" = "Disconnected";
+"usb.peripheral.requiresDriver" = "Requires Driver";
+"usb.peripheral.driverActive" = "Driver Active";
