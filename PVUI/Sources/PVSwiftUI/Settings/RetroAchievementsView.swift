@@ -100,6 +100,7 @@ public struct RetroAchievementsView: View {
                     }
                 }
                 .padding()
+                .tvOSSettingsHorizontalPadding()
             }
         }
         .navigationTitle("RetroAchievements")
@@ -344,8 +345,7 @@ public struct RetroAchievementsView: View {
             .shadow(color: RetroTheme.retroPink.opacity(0.5), radius: 5)
         }
         #if os(tvOS)
-        .buttonStyle(.card)
-        .retroThemedFocus(cornerRadius: 12)
+        .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 3, cornerRadius: 12)
         #else
         .buttonStyle(.plain)
         #endif
@@ -476,8 +476,7 @@ public struct RetroAchievementsView: View {
                 )
             }
             #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus(cornerRadius: 8, primaryColor: .red, secondaryColor: .retroPink)
+            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 8, primaryColor: .red, secondaryColor: .retroPink)
             #else
             .buttonStyle(.plain)
             #endif

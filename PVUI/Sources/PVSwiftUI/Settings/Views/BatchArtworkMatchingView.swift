@@ -84,11 +84,17 @@ public struct BatchArtworkMatchingView: View {
 
                 // Filter controls
                 filterControls
+                    .tvOSSettingsHorizontalPadding()
+                    #if !os(tvOS)
                     .padding(.horizontal)
+                    #endif
 
                 // Action buttons
                 actionButtons
+                    .tvOSSettingsHorizontalPadding()
+                    #if !os(tvOS)
                     .padding(.horizontal)
+                    #endif
 
                 // Content area
                 if isLoading {
@@ -253,8 +259,7 @@ public struct BatchArtworkMatchingView: View {
                 )
             }
             #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus(cornerRadius: 8)
+            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 8)
             #else
             .buttonStyle(PlainButtonStyle())
             #endif
@@ -290,8 +295,7 @@ public struct BatchArtworkMatchingView: View {
                     )
                 }
                 #if os(tvOS)
-                .buttonStyle(.card)
-                .retroThemedFocus(cornerRadius: 8)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 8, primaryColor: .retroPink, secondaryColor: .retroPurple)
                 #else
                 .buttonStyle(PlainButtonStyle())
                 #endif
@@ -328,8 +332,7 @@ public struct BatchArtworkMatchingView: View {
                 )
             }
             #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus(cornerRadius: 8)
+            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 8, primaryColor: .retroPurple, secondaryColor: .retroPink)
             #else
             .buttonStyle(PlainButtonStyle())
             #endif
@@ -444,8 +447,7 @@ public struct BatchArtworkMatchingView: View {
                     )
             }
             #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus()
+            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2, cornerRadius: 20)
             #else
             .buttonStyle(.plain)
             #endif
@@ -472,8 +474,7 @@ public struct BatchArtworkMatchingView: View {
                     )
             }
             #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus()
+            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 20, primaryColor: .retroPink, secondaryColor: .retroPurple)
             #else
             .buttonStyle(.plain)
             #endif
