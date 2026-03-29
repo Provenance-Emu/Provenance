@@ -55,6 +55,30 @@ public struct ImportStatusView: View {
         }
     }
 
+#if os(tvOS)
+    /// Removes one queue item by id (tvOS has no list swipe-to-delete).
+    private func deleteItem(withId id: ImportQueueItem.ID) {
+        guard let index = viewModel.queueItems.firstIndex(where: { $0.id == id }) else { return }
+        deleteItems(at: IndexSet(integer: index))
+    }
+
+    /// Destination for `systemSelectionItemId` navigation; queue may have changed while presented.
+    @ViewBuilder
+    private func tvOSSystemSelectionDestination(for id: UUID) -> some View {
+        if let item = viewModel.queueItems.first(where: { $0.id == id }) {
+            SystemSelectionView(item: item, onSystemSelected: { system, queueItem in
+                handleSystemSelection(system, for: queueItem)
+            })
+        } else {
+            Text("THIS IMPORT IS NO LONGER IN THE QUEUE")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(RetroTheme.retroBlue)
+                .multilineTextAlignment(.center)
+                .padding()
+        }
+    }
+#endif
+
     // Define the system selection handler
     private func handleSystemSelection(_ system: SystemIdentifier, for item: ImportQueueItem) {
         // Forward to the delegate
@@ -64,6 +88,11 @@ public struct ImportStatusView: View {
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var scanlineOffset: CGFloat = 0
+
+#if os(tvOS)
+    /// Drives `navigationDestination` for system picker rows; `NavigationLink(isActive:)` is unreliable with Siri Remote on tvOS.
+    @State private var systemSelectionItemId: UUID?
+#endif
 
     // MARK: - Helper Methods
 
@@ -154,7 +183,9 @@ public struct ImportStatusView: View {
                                             ForEach(viewModel.queueItems) { item in
                                                 ImportTaskRowView(
                                                     item: item,
-                                                    onSystemSelected: handleSystemSelection
+                                                    onSystemSelected: handleSystemSelection,
+                                                    onRequestSystemSelection: { systemSelectionItemId = item.id },
+                                                    onRemoveFromQueue: { deleteItem(withId: item.id) }
                                                 )
                                                 .id(item.id)
                                                 .padding(.horizontal)
@@ -290,10 +321,17 @@ public struct ImportStatusView: View {
 #endif
                             })
                         }
+#if os(tvOS)
+                        .navigationDestination(item: $systemSelectionItemId) { id in
+                            tvOSSystemSelectionDestination(for: id)
+                        }
+#endif
                     }
                     .preferredColorScheme(.dark)
+#if !os(tvOS)
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
+#endif
                     .onAppear {
                         // Start retrowave animations for NavigationStack content
                         withAnimation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true)) {

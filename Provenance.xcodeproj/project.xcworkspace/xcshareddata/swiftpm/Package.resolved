@@ -342,15 +342,6 @@
       }
     },
     {
-      "identity" : "sentry-cocoa",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/getsentry/sentry-cocoa/",
-      "state" : {
-        "revision" : "16cd512711375fa73f25ae5e373f596bdf4251ae",
-        "version" : "8.58.0"
-      }
-    },
-    {
       "identity" : "sidekit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SideStore/SideKit.git",
@@ -641,15 +632,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
       "state" : {
-        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
-      }
-    },
-    {
-      "identity" : "swiftui-introspect",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/siteline/SwiftUI-Introspect",
-      "state" : {
-        "revision" : "121c146fe591b1320238d054ae35c81ffa45f45a"
+        "revision" : "6c9745d44daf3b9db764433e4ea84c438796a714",
+        "version" : "1.1.3"
       }
     },
     {

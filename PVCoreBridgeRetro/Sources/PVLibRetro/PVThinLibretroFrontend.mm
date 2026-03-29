@@ -170,7 +170,7 @@ uint64_t pv_perf_get_cpu_features(void) {
 }
 
 /// Register a performance counter (retro_perf_register_t).
-void pv_perf_register(struct retro_perf_counter *counter) {
+void pv_perf_register(struct retro_perf_counter *_Nullable counter) {
     if (!counter || counter->registered || pv_perf_counter_count >= PV_PERF_MAX_COUNTERS)
         return;
     pv_perf_counters[pv_perf_counter_count++] = counter;
@@ -178,7 +178,7 @@ void pv_perf_register(struct retro_perf_counter *counter) {
 }
 
 /// Start a registered counter (retro_perf_start_t).
-void pv_perf_start(struct retro_perf_counter *counter) {
+void pv_perf_start(struct retro_perf_counter *_Nullable counter) {
     if (!counter) return;
     counter->call_cnt++;
     counter->start = mach_absolute_time();
@@ -192,7 +192,7 @@ void pv_perf_start(struct retro_perf_counter *counter) {
 }
 
 /// Stop a registered counter (retro_perf_stop_t).
-void pv_perf_stop(struct retro_perf_counter *counter) {
+void pv_perf_stop(struct retro_perf_counter *_Nullable counter) {
     if (!counter) return;
     counter->total += mach_absolute_time() - counter->start;
 #if DEBUG

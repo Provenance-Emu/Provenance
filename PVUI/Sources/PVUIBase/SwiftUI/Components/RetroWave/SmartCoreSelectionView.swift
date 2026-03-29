@@ -129,20 +129,7 @@ public struct SmartCoreSelectionView: View {
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         ForEach(items) { item in
-                            CoreSelectionCard(
-                                item: item,
-                                showSetDefault: showSetDefault && onSetDefault != nil,
-                                onSelect: {
-                                    onSelect(item.id)
-                                },
-                                onSetDefault: {
-                                    onSetDefault?(item.id)
-                                    onSelect(item.id)
-                                }
-                            )
-                            #if os(tvOS) || os(iOS)
-                            .focused($focusedItemId, equals: item.id)
-                            #endif
+                            coreSelectionRow(for: item)
                         }
                     }
                     .padding(.horizontal, 16)
@@ -187,6 +174,31 @@ public struct SmartCoreSelectionView: View {
 
     // MARK: - Subviews
 
+    /// Binds list-row focus to ``CoreSelectionCard`` so tvOS border/scale track ``focusedItemId`` (environment alone is unreliable when `.focused` wraps the card).
+    @ViewBuilder
+    private func coreSelectionRow(for item: SmartCoreSelectionItem) -> some View {
+        #if os(tvOS) || os(iOS)
+        coreSelectionCard(for: item, isItemFocused: focusedItemId == item.id)
+            .focused($focusedItemId, equals: item.id)
+        #else
+        coreSelectionCard(for: item, isItemFocused: false)
+        #endif
+    }
+
+    /// Shared row content for ``coreSelectionRow(for:)``.
+    private func coreSelectionCard(for item: SmartCoreSelectionItem, isItemFocused: Bool) -> CoreSelectionCard {
+        CoreSelectionCard(
+            item: item,
+            showSetDefault: showSetDefault && onSetDefault != nil,
+            isItemFocused: isItemFocused,
+            onSelect: { onSelect(item.id) },
+            onSetDefault: {
+                onSetDefault?(item.id)
+                onSelect(item.id)
+            }
+        )
+    }
+
     private var headerView: some View {
         VStack(spacing: 8) {
             Text(title)
@@ -216,6 +228,9 @@ public struct SmartCoreSelectionView: View {
                 )
         }
         .buttonStyle(.plain)
+        #if os(tvOS)
+        .tvOSDisableFocusEffect()
+        #endif
     }
 
     // MARK: - Helpers
@@ -232,6 +247,8 @@ public struct SmartCoreSelectionView: View {
 private struct CoreSelectionCard: View {
     let item: SmartCoreSelectionItem
     let showSetDefault: Bool
+    /// Matches parent ``FocusState`` when the row is focused (required for tvOS custom border/scale; see ``SmartCoreSelectionView/coreSelectionRow(for:)``).
+    let isItemFocused: Bool
     let onSelect: () -> Void
     let onSetDefault: () -> Void
 
@@ -252,8 +269,15 @@ private struct CoreSelectionCard: View {
             }
             .padding(14)
             .background(cardBackground)
+            #if os(tvOS)
+            .scaleEffect(isItemFocused ? 1.02 : 1.0)
+            .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isItemFocused)
+            #endif
         }
         .buttonStyle(.plain)
+        #if os(tvOS)
+        .tvOSDisableFocusEffect()
+        #endif
         .contextMenu {
             if showSetDefault {
                 Button {
@@ -370,10 +394,31 @@ private struct CoreSelectionCard: View {
     private var cardBackground: some View {
         RoundedRectangle(cornerRadius: 12)
             .fill(cardFillColor)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(cardBorderColor, lineWidth: 1)
-            )
+            .overlay(cardBorderStroke)
+    }
+
+    /// Rank-tinted 1pt stroke when unfocused; on tvOS, a thicker retro gradient when focused.
+    @ViewBuilder
+    private var cardBorderStroke: some View {
+        #if os(tvOS)
+        if isItemFocused {
+            RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color.retroBlue, Color.retroPink],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 3
+                )
+        } else {
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(cardBorderColor, lineWidth: 1)
+        }
+        #else
+        RoundedRectangle(cornerRadius: 12)
+            .stroke(cardBorderColor, lineWidth: 1)
+        #endif
     }
 
     private var cardFillColor: Color {

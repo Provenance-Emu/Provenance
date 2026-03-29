@@ -8,7 +8,7 @@ let platformTargetDeps: [Target.Dependency] = []
 #else
 let platformDeps: [Package.Dependency] = [
     .package(path: "../PVSettings/"),
-    .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0")
+    .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3")
 ]
 let platformTargetDeps: [Target.Dependency] = [
     "PVSettings"

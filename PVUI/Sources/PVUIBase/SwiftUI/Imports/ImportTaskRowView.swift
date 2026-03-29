@@ -34,7 +34,9 @@ func iconNameForStatus(_ status: ImportQueueItem.ImportStatus) -> String {
 // Individual Import Task Row View
 struct ImportTaskRowView: View {
     let item: ImportQueueItem
+#if !os(tvOS)
     @State private var isNavigatingToSystemSelection = false
+#endif
     @ObservedObject private var themeManager = ThemeManager.shared
     @Default(.unsupportedCores) private var unsupportedCores
     var currentPalette: any UXThemePalette { themeManager.currentPalette }
@@ -56,10 +58,17 @@ struct ImportTaskRowView: View {
     @State private var isHovered: Bool = false
 #if os(tvOS)
     @FocusState private var isFocusedTV: Bool
+    @FocusState private var isFocusedRemove: Bool
 #endif
 
     // Replace delegate with callback
     var onSystemSelected: ((SystemIdentifier, ImportQueueItem) -> Void)?
+
+    /// tvOS: parent sets `systemSelectionItemId` for `navigationDestination` (Siri Remote–friendly).
+    var onRequestSystemSelection: (() -> Void)?
+
+    /// tvOS: explicit remove; no swipe-to-delete on list.
+    var onRemoveFromQueue: (() -> Void)?
 
     // Retrowave colors
     var primaryColor: Color {
@@ -256,6 +265,9 @@ struct ImportTaskRowView: View {
             }
         }
 
+#if os(tvOS)
+        return tvOSMainRow(base: base)
+#else
         return Group {
             if needsSystemSelection {
                 NavigationLink(
@@ -267,23 +279,11 @@ struct ImportTaskRowView: View {
                 ) {
                     base
                         .contentShape(Rectangle())
-#if os(tvOS)
-                        .focusable(true)
-                        .focused($isFocusedTV)
-                        .scaleEffect(isFocusedTV ? 1.04 : 1.0)
-                        .tvOSDisableFocusEffect()
-#endif
                 }
                 .buttonStyle(.plain)
             } else {
                 base
                     .onTapGesture { isNavigatingToSystemSelection = false }
-#if os(tvOS)
-                    .focusable(true)
-                    .focused($isFocusedTV)
-                    .scaleEffect(isFocusedTV ? 1.04 : 1.0)
-                    .tvOSDisableFocusEffect()
-#endif
             }
         }
         .onTapGesture {
@@ -291,7 +291,69 @@ struct ImportTaskRowView: View {
                 isNavigatingToSystemSelection = true
             }
         }
+#endif
     }
+
+#if os(tvOS)
+    /// Row layout for Apple TV: explicit `Button` + optional remove control; parent owns `NavigationStack` destination.
+    @ViewBuilder
+    private func tvOSMainRow(base: some View) -> some View {
+        HStack(alignment: .center, spacing: 12) {
+            Group {
+                if needsSystemSelection {
+                    /// `.borderless` tends to activate more reliably than `.plain` with the Siri Remote; `.focusable` keeps `@FocusState` in sync for the retro border.
+                    Button(action: { onRequestSystemSelection?() }) {
+                        base
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.borderless)
+                    .focusable(true)
+                    .focused($isFocusedTV)
+                    .scaleEffect(isFocusedTV ? 1.04 : 1.0)
+                    .tvOSDisableFocusEffect()
+                } else {
+                    base
+                        .focusable(true)
+                        .focused($isFocusedTV)
+                        .scaleEffect(isFocusedTV ? 1.04 : 1.0)
+                        .tvOSDisableFocusEffect()
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            if onRemoveFromQueue != nil {
+                Button(action: { onRemoveFromQueue?() }) {
+                    Image(systemName: "trash")
+                        .font(.system(size: 22, weight: .bold))
+                        .foregroundColor(RetroTheme.retroPink)
+                        .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: 3, x: 0, y: 0)
+                        .frame(width: 56, height: 90)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.black.opacity(0.7))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [RetroTheme.retroPink, RetroTheme.retroPurple]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: isFocusedRemove ? 3.0 : 1.5
+                                )
+                                .shadow(color: RetroTheme.retroPink.opacity(glowOpacity), radius: isFocusedRemove ? 8 : 4, x: 0, y: 0)
+                        )
+                }
+                .buttonStyle(.borderless)
+                .focusable(true)
+                .focused($isFocusedRemove)
+                .scaleEffect(isFocusedRemove ? 1.04 : 1.0)
+                .tvOSDisableFocusEffect()
+            }
+        }
+    }
+#endif
 
     var body: some View {
         mainView

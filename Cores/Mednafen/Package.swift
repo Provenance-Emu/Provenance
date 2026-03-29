@@ -693,7 +693,7 @@ let package = Package(
     .package(path: "../../PVSupport"),
     .package(name: "PVPrimitives", path: "../../PVPrimitives/"),
     .package(path: "../../PVRcheevos"),
-    .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
+    .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
     .package(url: "https://github.com/OlehKulykov/PLzmaSDK.git",
              revision: "1.2.5"),
   ],

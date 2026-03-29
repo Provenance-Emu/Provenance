@@ -10,6 +10,8 @@ struct PackageBuildInfoPlugin: BuildToolPlugin {
     func createBuildCommands(context: PluginContext, target: Target) throws -> [Command] {
         guard let target = target as? SourceModuleTarget else { return [] }
         let outputFile = context.pluginWorkDirectoryURL.appending(path: "packageBuildInfo.swift")
+        /// `SourceModuleTarget.directoryURL` is not available on all PackagePlugin SDKs; derive a filesystem path from `directory` instead.
+        let targetDirectoryPath = target.directory.string
 
         // .buildCommand (not .prebuildCommand) is required because the tool is built
         // from source — Xcode 16+ forbids source-built executables in prebuild commands.
@@ -19,9 +21,9 @@ struct PackageBuildInfoPlugin: BuildToolPlugin {
             .appending(path: ".git")
             .appending(path: "HEAD")
         let command: Command = .buildCommand(
-            displayName: "Generating \(outputFile.lastPathComponent) for \(target.directory.string)",
+            displayName: "Generating \(outputFile.lastPathComponent) for \(targetDirectoryPath)",
             executable: try context.tool(named: "PackageBuildInfo").url,
-            arguments: [target.directory.string, outputFile.path],
+            arguments: [targetDirectoryPath, outputFile.path],
             inputFiles: [gitHead],
             outputFiles: [outputFile]
         )

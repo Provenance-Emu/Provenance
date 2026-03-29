@@ -13,7 +13,7 @@ import Combine
 import PVLogging
 import PVSupport
 import RxSwift
-import ZipArchive
+import PVArchiving
 import RealmSwift // Ensure RealmSwift is imported for error codes
 import PVLookup
 import PVLookupTypes
@@ -1612,10 +1612,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: -1, userInfo: [NSLocalizedDescriptionKey: "Archive file is empty or corrupted"]))
                 }
 
-                // Use ZipArchive
-                let success = SSZipArchive.unzipFile(atPath: assetURL.path, toDestination: destinationDirectory.path)
-                guard success else {
-                    throw CloudSyncError.zipError(DescriptiveError(description: "ZipArchive failed to unzip \(assetURL.path) to \(destinationDirectory.path). Archive may be corrupted."))
+                do {
+                    try ArchiveManager.shared.unzipFile(at: assetURL, to: destinationDirectory)
+                } catch {
+                    throw CloudSyncError.zipError(DescriptiveError(description: "Failed to unzip \(assetURL.path) to \(destinationDirectory.path): \(error.localizedDescription)"))
                 }
                 VLOG("Successfully unzipped archive to \(destinationDirectory.path)")
                 // Find the primary file (e.g., .iso, .bin) to return its URL
@@ -2763,10 +2763,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             let filePaths = files.map { $0.path }
             VLOG("Zip input files: \(filePaths)")
 
-            let success = SSZipArchive.createZipFile(atPath: outputURL.path, withFilesAtPaths: filePaths)
-
-            if !success {
-                // Enhanced error reporting for zip failures
+            do {
+                try ArchiveManager.shared.createZipArchive(at: outputURL, withFiles: filePaths)
+            } catch {
                 let errorDetails = [
                     "Output path: \(outputURL.path)",
                     "Input files: \(filePaths.count)",
@@ -2775,8 +2774,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     "Output directory writable: \(FileManager.default.isWritableFile(atPath: outputDirectory.path))"
                 ].joined(separator: ", ")
 
-                ELOG("ZipArchive creation failed. Details: \(errorDetails)")
-                throw CloudSyncError.zipError(DescriptiveError(description: "ZipArchive failed to create zip at \(outputURL.path). \(errorDetails)"))
+                ELOG("Zip creation failed: \(error.localizedDescription). Details: \(errorDetails)")
+                throw CloudSyncError.zipError(DescriptiveError(description: "Failed to create zip at \(outputURL.path). \(errorDetails)"))
             }
 
             // Verify the zip was actually created and has content

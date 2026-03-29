@@ -47,6 +47,9 @@
 		B3D991CB2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D991CA2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift */; };
 		B3D9A2B52F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */; };
 		B3D9A2B72F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D9A2B62F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift */; };
+		B3D9A2C22F78C26F002F1DCB /* PVArchiving in Frameworks */ = {isa = PBXBuildFile; productRef = B3D9A2C12F78C26F002F1DCB /* PVArchiving */; };
+		B3D9A2C42F78C26F002F1DCB /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B3D9A2C32F78C26F002F1DCB /* PVArchivingFormats */; };
+		B3D9A2C72F78C4FE002F1DCB /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3D9A2C62F78C4FE002F1DCB /* PVNetplay */; };
 		B3DF963F288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */; };
 		B3EA6C91292617F300010224 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
@@ -942,8 +945,11 @@
 				B341AD952E2BF5BE00B18E76 /* PVSupport in Frameworks */,
 				B377E9FA2CB25FA000E9B750 /* PVCoreObjCBridge in Frameworks */,
 				B377EBDF2CB2A18A00E9B750 /* PVSettings in Frameworks */,
+				B3D9A2C72F78C4FE002F1DCB /* PVNetplay in Frameworks */,
 				B394D80E2F6A86E200FAA916 /* JITManager in Frameworks */,
 				B345EAF72CC10F3600DE822B /* PVCoreBridge in Frameworks */,
+				B3D9A2C22F78C26F002F1DCB /* PVArchiving in Frameworks */,
+				B3D9A2C42F78C26F002F1DCB /* PVArchivingFormats in Frameworks */,
 				B3EC50032F630003DEADBEEF /* PVEmulatorCore in Frameworks */,
 				B377E9F72CB25F8800E9B750 /* PVLogging in Frameworks */,
 				B3EA6C91292617F300010224 /* libretro.a in Frameworks */,
@@ -2973,6 +2979,9 @@
 				B394D80D2F6A86E200FAA916 /* JITManager */,
 				B394D80F2F6A86E200FAA916 /* PVJIT */,
 				B336F2E82F6E843C004ABEE6 /* PVCheevos */,
+				B3D9A2C12F78C26F002F1DCB /* PVArchiving */,
+				B3D9A2C32F78C26F002F1DCB /* PVArchivingFormats */,
+				B3D9A2C62F78C4FE002F1DCB /* PVNetplay */,
 			);
 			productName = PVLibRetro;
 			productReference = B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */;
@@ -3023,6 +3032,8 @@
 				B394D8092F6A86BF00FAA916 /* XCLocalSwiftPackageReference "../PVPrimitives" */,
 				B394D80C2F6A86E200FAA916 /* XCLocalSwiftPackageReference "../PVJIT" */,
 				B336F2E72F6E843C004ABEE6 /* XCLocalSwiftPackageReference "../PVCheevos" */,
+				B3D9A2C02F78C26F002F1DCB /* XCLocalSwiftPackageReference "../PVArchiving" */,
+				B3D9A2C52F78C4FE002F1DCB /* XCLocalSwiftPackageReference "../PVNetplay" */,
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
@@ -3141,7 +3152,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -3204,7 +3215,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3392,7 +3403,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -3803,6 +3814,14 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVJIT;
 		};
+		B3D9A2C02F78C26F002F1DCB /* XCLocalSwiftPackageReference "../PVArchiving" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVArchiving;
+		};
+		B3D9A2C52F78C4FE002F1DCB /* XCLocalSwiftPackageReference "../PVNetplay" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVNetplay;
+		};
 		B3EC50012F630001DEADBEEF /* XCLocalSwiftPackageReference "../PVEmulatorCore" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVEmulatorCore;
@@ -3849,6 +3868,18 @@
 		B394D80F2F6A86E200FAA916 /* PVJIT */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVJIT;
+		};
+		B3D9A2C12F78C26F002F1DCB /* PVArchiving */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVArchiving;
+		};
+		B3D9A2C32F78C26F002F1DCB /* PVArchivingFormats */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVArchivingFormats;
+		};
+		B3D9A2C62F78C4FE002F1DCB /* PVNetplay */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVNetplay;
 		};
 		B3EC50022F630002DEADBEEF /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;

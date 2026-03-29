@@ -65,7 +65,6 @@
 		1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		1F8D52481D91993000C29F90 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		3517DB19FA9723965B285E5D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
-		37EEA2AB27BC81890070E222 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 37EEA2AA27BC81890070E222 /* Introspect */; };
 		38ACA2E4D781E99A8C193411 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		3B2C747A4EC0FF440E147CBA /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		46CDBD343311A863262EBE9B /* AppStoreAssets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3E17E222CCF91B000732AEA /* AppStoreAssets-Lite.xcassets */; };
@@ -480,7 +479,6 @@
 		B394CDAC2BDEE53A006B63E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		B394CDAD2BDEE53A006B63E8 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDA276B8B2E0031AECC /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B394CDAE2BDEE53A006B63E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
-		B394CDB12BDEE53A006B63E8 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B394CC612BDEE53A006B63E8 /* Introspect */; };
 		B394CDB82BDEE53A006B63E8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		B394CDB92BDEE53A006B63E8 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B394CDBF2BDEE53A006B63E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
@@ -550,8 +548,6 @@
 		B3A455662F77941000B6449F /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE00000000000001F0 /* PVUI */; };
 		B3A455672F77941000B6449F /* PVThemes in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0000000000000200 /* PVThemes */; };
 		B3A457282F77950300B6449F /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3A457272F77950300B6449F /* WhatsNewKit */; };
-		B3A457472F77955500B6449F /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B3A457462F77955500B6449F /* Introspect */; };
-		B3A457492F77955500B6449F /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = B3A457482F77955500B6449F /* SwiftUIIntrospect */; };
 		B3A477C52C941F120052500A /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A477C42C941F120052500A /* PVFCEU.framework */; };
 		B3A477C62C941F120052500A /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A477C42C941F120052500A /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A479CE2C96507A0052500A /* PVSNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A479CD2C96507A0052500A /* PVSNES.framework */; };
@@ -639,7 +635,6 @@
 		B3BDD41A2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD41B2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD41C2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD41E2D349220005F5AF9 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 54925F9AB59542258A6A5CE9 /* Sentry */; };
 		B3BDD41F2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD4202D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD4212D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
@@ -672,6 +667,7 @@
 		B3D1C1312CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */; };
 		B3D1C1322CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3D58F4E2E30194000E130BC /* MoltenVK-1.2.8 in Frameworks */ = {isa = PBXBuildFile; productRef = B3D58F4D2E30194000E130BC /* MoltenVK-1.2.8 */; };
+		B3D9A2CA2F78C6F5002F1DCB /* PVLiveActivities in Frameworks */ = {isa = PBXBuildFile; productRef = B3D9A2C92F78C6F5002F1DCB /* PVLiveActivities */; };
 		B3DD02002F20031900000000 /* ProvenanceWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01002F20031900000000 /* ProvenanceWidgetsBundle.swift */; };
 		B3DD02012F20031900000000 /* QuickLaunchWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01012F20031900000000 /* QuickLaunchWidget.swift */; };
 		B3DD02022F20031900000000 /* NowPlayingWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01022F20031900000000 /* NowPlayingWidget.swift */; };
@@ -2992,7 +2988,6 @@
 				B3271BDB276B8B2E0031AECC /* OpenGL.framework in Frameworks */,
 				B32C08E62D0538240024A3E2 /* MoltenVK in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
-				37EEA2AB27BC81890070E222 /* Introspect in Frameworks */,
 				B35AB4082CB6DBB5003273D4 /* PVPokeMini-Dynamic in Frameworks */,
 				B3FAC935292B451E005E8B11 /* PVGME.framework in Frameworks */,
 				B35AB41E2CB6DC9C003273D4 /* PVPicoDrive-Dynamic in Frameworks */,
@@ -3267,6 +3262,7 @@
 				B3636EF72F087C6500C64AAD /* PVlibDolphin.xcframework in Frameworks */,
 				B318E2A02CAB5A2600D0E599 /* PVProSystem-Dynamic in Frameworks */,
 				B34A20152C62F96100E34059 /* PVPlists in Frameworks */,
+				B3D9A2CA2F78C6F5002F1DCB /* PVLiveActivities in Frameworks */,
 				B3E46CEE2E2C9ADA00657240 /* PVDesmume2015.framework in Frameworks */,
 				B30585692C0C14EE00B91D7A /* PVWebServer in Frameworks */,
 				B3A186852CBCBAC800BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */,
@@ -3280,7 +3276,6 @@
 				B3FD98542D614E6400397643 /* CoreLocation.framework in Frameworks */,
 				B3BB79902F6E9D4E00938AB1 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B305856E2C0D52F200B91D7A /* PVLibrary in Frameworks */,
-				B3BDD41E2D349220005F5AF9 /* Sentry in Frameworks */,
 				B3BB798D2F6E9CC800938AB1 /* PVGME.framework in Frameworks */,
 				B318E28C2CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B33BD1B52C6A619F001E933A /* PVAtari800-Dynamic in Frameworks */,
@@ -3331,7 +3326,6 @@
 				B386DD682C8939C60021A7BA /* PVFreeDO-Dynamic in Frameworks */,
 				B394CDAE2BDEE53A006B63E8 /* CoreGraphics.framework in Frameworks */,
 				B318E2862CAB512F00D0E599 /* PVMupen64Plus.framework in Frameworks */,
-				B394CDB12BDEE53A006B63E8 /* Introspect in Frameworks */,
 				B3E0CFA82C05508500F45074 /* PVCoreAudio in Frameworks */,
 				B318E2952CAB571100D0E599 /* PVBliss-Dynamic in Frameworks */,
 				B33BD1C22C6A621A001E933A /* PVPokeMini-Dynamic in Frameworks */,
@@ -3619,9 +3613,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3A455672F77941000B6449F /* PVThemes in Frameworks */,
-				B3A457472F77955500B6449F /* Introspect in Frameworks */,
 				B3A455662F77941000B6449F /* PVUI in Frameworks */,
-				B3A457492F77955500B6449F /* SwiftUIIntrospect in Frameworks */,
 				B3A455652F77941000B6449F /* PVFeatureFlags in Frameworks */,
 				B3A455642F77941000B6449F /* PVLogging in Frameworks */,
 				B3A457282F77950300B6449F /* WhatsNewKit in Frameworks */,
@@ -6966,7 +6958,6 @@
 			name = Provenance;
 			packageProductDependencies = (
 				B3FB9678276DD7F600F7EDEE /* SteamController */,
-				37EEA2AA27BC81890070E222 /* Introspect */,
 				B3E88CB72977AB4400C90E86 /* Reachability */,
 				B35AB3FD2CB6CF4A003273D4 /* PVUI */,
 				B35AB3FF2CB6D0DF003273D4 /* PVJIT */,
@@ -7359,7 +7350,6 @@
 			name = "Provenance (AppStore)";
 			packageProductDependencies = (
 				B394CC5F2BDEE53A006B63E8 /* SteamController */,
-				B394CC612BDEE53A006B63E8 /* Introspect */,
 				B394CC632BDEE53A006B63E8 /* Reachability */,
 				B3E0CF9E2C054DEB00F45074 /* RxDataSources */,
 				B3E0CFA12C054F9F00F45074 /* ZipArchive */,
@@ -7396,7 +7386,6 @@
 				B3E77F832D1F57E6004A3AD2 /* PVFeatureFlags */,
 				B33A09332D2D0B0C00BFB6C9 /* PVJIT */,
 				B35F93E02D2F71450016E633 /* WhatsNewKit */,
-				54925F9AB59542258A6A5CE9 /* Sentry */,
 				B306D7E32D3DDC6B00C71EBE /* FirebaseAnalyticsWithoutAdIdSupport */,
 				B306D7E52D3DDC6B00C71EBE /* FirebaseCore */,
 				B306D7E72D3DDC6B00C71EBE /* FirebaseCrashlytics */,
@@ -7408,6 +7397,7 @@
 				B3CBD4502F778106009327EB /* PVAppIntents */,
 				B3A450DD2F7782F000B6449F /* PVRcheevosCore */,
 				B3A450FD2F77832100B6449F /* PVNetplay */,
+				B3D9A2C92F78C6F5002F1DCB /* PVLiveActivities */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -7715,8 +7705,6 @@
 				C0C0CAFE00000000000001F0 /* PVUI */,
 				C0C0CAFE0000000000000200 /* PVThemes */,
 				B3A457272F77950300B6449F /* WhatsNewKit */,
-				B3A457462F77955500B6449F /* Introspect */,
-				B3A457482F77955500B6449F /* SwiftUIIntrospect */,
 			);
 			productName = ProvenanceCompanion;
 			productReference = C0C0CAFE00000000000000AA /* Provenance Companion.app */;
@@ -7874,7 +7862,6 @@
 			packageReferences = (
 				B3D30FBD26F0B4CD0064603F /* XCRemoteSwiftPackageReference "SteamController" */,
 				B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */,
-				37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */,
 				B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */,
 				B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */,
@@ -7914,7 +7901,6 @@
 				B38A68BA2CCEFB73001C57D0 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */,
 				B3E77F822D1F57E6004A3AD2 /* XCLocalSwiftPackageReference "PVFeatureFlags" */,
 				B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */,
-				F8F20E7C3CB546288E1FB7F2 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				B306D7E22D3DDC6B00C71EBE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				B3E8817E2D90C1B700A80D83 /* XCRemoteSwiftPackageReference "OpenSSL" */,
 				3F9D6D721C96424F9D931C3B /* XCLocalSwiftPackageReference "PVQuickLookSupport" */,
@@ -7922,6 +7908,7 @@
 				B3CBD44F2F778106009327EB /* XCLocalSwiftPackageReference "PVAppIntents" */,
 				B3A450DC2F7782F000B6449F /* XCLocalSwiftPackageReference "PVRcheevosCore" */,
 				B3A450FC2F77832100B6449F /* XCLocalSwiftPackageReference "PVNetplay" */,
+				B3D9A2C82F78C6F5002F1DCB /* XCLocalSwiftPackageReference "PVLiveActivities" */,
 			);
 			preferredProjectObjectVersion = 63;
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
@@ -15575,6 +15562,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/Stella;
 		};
+		B3D9A2C82F78C6F5002F1DCB /* XCLocalSwiftPackageReference "PVLiveActivities" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVLiveActivities;
+		};
 		B3E0CFA32C054FC200F45074 /* XCLocalSwiftPackageReference "PVEmulatorCore" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVEmulatorCore;
@@ -15602,14 +15593,6 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
-			requirement = {
-				kind = revision;
-				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
-			};
-		};
 		930498C62A93073800BF257F /* XCRemoteSwiftPackageReference "AltKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/rileytestut/AltKit";
@@ -15762,14 +15745,6 @@
 				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
-		B394CC622BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
-			requirement = {
-				kind = revision;
-				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
-			};
-		};
 		B394CC642BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "Reachability" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
@@ -15899,11 +15874,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B35EEF602C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "SteamController" */;
 			productName = SteamController;
-		};
-		37EEA2AA27BC81890070E222 /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
 		};
 		4D15F087BB2592ED2DD7EE8D /* SiriusRating */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -16623,11 +16593,6 @@
 			package = B394CC602BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "SteamController" */;
 			productName = SteamController;
 		};
-		B394CC612BDEE53A006B63E8 /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B394CC622BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
-		};
 		B394CC632BDEE53A006B63E8 /* Reachability */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B394CC642BDEE53A006B63E8 /* XCRemoteSwiftPackageReference "Reachability" */;
@@ -16748,16 +16713,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B35F93DF2D2F71450016E633 /* XCRemoteSwiftPackageReference "WhatsNewKit" */;
 			productName = WhatsNewKit;
-		};
-		B3A457462F77955500B6449F /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
-		};
-		B3A457482F77955500B6449F /* SwiftUIIntrospect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = SwiftUIIntrospect;
 		};
 		B3A60FFE2CB880BE001D99C2 /* PVUI */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -16889,6 +16844,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */;
 			productName = "MoltenVK-1.2.8";
+		};
+		B3D9A2C92F78C6F5002F1DCB /* PVLiveActivities */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLiveActivities;
 		};
 		B3E0CF9E2C054DEB00F45074 /* RxDataSources */ = {
 			isa = XCSwiftPackageProductDependency;

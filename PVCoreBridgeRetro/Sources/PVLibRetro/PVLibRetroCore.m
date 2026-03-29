@@ -3506,7 +3506,7 @@ unsigned retro_api_version(void)
 @implementation PVLibRetroCoreBridge (TouchMouseInput)
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-- (void)handleTouchEvent:(UIEvent *)event {
+- (void)handleTouchEvent:(UIEvent *_Nonnull)event {
     if (!self.touchpadEnabled || event == nil) {
         return;
     }
@@ -3564,7 +3564,7 @@ unsigned retro_api_version(void)
     }
 }
 #else
-- (void)handleMouseEvent:(NSEvent *)event {
+- (void)handleMouseEvent:(NSEvent *_Nonnull)event {
     if (!event) {
         return;
     }

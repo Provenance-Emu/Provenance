@@ -645,17 +645,8 @@
         "repositoryURL": "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
         "state": {
           "branch": null,
-          "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
-          "version": null
-        }
-      },
-      {
-        "package": "swiftui-introspect",
-        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
-        "state": {
-          "branch": null,
-          "revision": "121c146fe591b1320238d054ae35c81ffa45f45a",
-          "version": null
+          "revision": "6c9745d44daf3b9db764433e4ea84c438796a714",
+          "version": "1.1.3"
         }
       },
       {

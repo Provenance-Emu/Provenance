@@ -654,14 +654,13 @@ struct TVMediaMainView: View {
         case .importStatus:
             if let gameImporter = appState.gameImporter,
                let updatesController = appState.libraryUpdatesController {
-                NavigationStack {
-                    ImportStatusView(
-                        updatesController: updatesController,
-                        gameImporter: gameImporter,
-                        delegate: nil,
-                        dismissAction: { router.dismissModal() }
-                    )
-                }
+                // ImportStatusView already embeds NavigationStack; nesting another stack breaks navigationDestination on tvOS.
+                ImportStatusView(
+                    updatesController: updatesController,
+                    gameImporter: gameImporter,
+                    delegate: nil,
+                    dismissAction: { router.dismissModal() }
+                )
             } else {
                 EmptyView()
             }

@@ -337,8 +337,18 @@ public final class GCControllerHapticsManager {
 
     // MARK: - Player → Controller Registration
 
+    /// How `register(controller:forPlayer:effect:)` updates non-haptic subsystems.
+    public enum RegistrationEffect: Sendable {
+        /// Haptic engines plus adaptive triggers and `ControllerLightBarManager` (normal gameplay).
+        case fullSync
+        /// Haptic engines only — skips light bar and adaptive-trigger updates (e.g. settings test rumble).
+        case hapticsEnginesOnly
+    }
+
     /// Register a GCController for a player slot (0-based index).
-    public func register(controller: GCController?, forPlayer player: Int) {
+    /// - Parameters:
+    ///   - effect: Use `.hapticsEnginesOnly` when you must avoid light bar / adaptive-trigger side effects.
+    public func register(controller: GCController?, forPlayer player: Int, effect: RegistrationEffect = .fullSync) {
         if let old = playerControllers[player] {
             // Clean up old engines if controller changed.
             if old !== controller {
@@ -348,14 +358,18 @@ public final class GCControllerHapticsManager {
 
         guard let controller = controller else {
             playerControllers.removeValue(forKey: player)
-            if #available(iOS 14.0, tvOS 14.0, *) {
-                ControllerLightBarManager.shared.register(controller: nil, forPlayer: player)
+            if effect == .fullSync {
+                if #available(iOS 14.0, tvOS 14.0, *) {
+                    ControllerLightBarManager.shared.register(controller: nil, forPlayer: player)
+                }
             }
             return
         }
 
         playerControllers[player] = controller
         buildEngines(forPlayer: player, controller: controller)
+
+        guard effect == .fullSync else { return }
 
         // Apply adaptive triggers to a newly registered DualSense if a system is active.
         if #available(iOS 14.5, tvOS 14.5, *) {

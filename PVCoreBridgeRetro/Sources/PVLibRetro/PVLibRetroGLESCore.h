@@ -29,11 +29,13 @@
 #import <GLUT/GLUT.h>
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 __attribute__((weak_import))
 @interface PVLibRetroGLESCoreBridge : PVLibRetroCoreBridge
 
 /// Hardware rendering setup — called from environment callback
-- (BOOL)setHardwareRenderCallback:(NSValue *)callbackValue;
+- (BOOL)setHardwareRenderCallback:(NSValue *_Nonnull)callbackValue;
 - (void)setupHardwareContext:(enum retro_hw_context_type)contextType;
 - (void)destroyHardwareContext;
 
@@ -41,7 +43,7 @@ __attribute__((weak_import))
 - (void)contextReset;
 - (void)contextDestroy;
 - (uintptr_t)getCurrentFramebuffer;
-- (void*)getProcAddress:(const char*)symbol;
+- (void *_Nullable)getProcAddress:(const char *_Nonnull)symbol;
 - (BOOL)getHardwareRenderInterface:(const struct retro_hw_render_interface * _Nullable * _Nonnull)renderInterface;
 
 /// GL context and FBO management for the emu thread
@@ -51,10 +53,12 @@ __attribute__((weak_import))
 
 // Touch and mouse input support
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-- (void)handleTouchEvent:(UIEvent *)event;
+- (void)handleTouchEvent:(UIEvent *_Nonnull)event;
 #else
-- (void)handleMouseEvent:(NSEvent *)event;
+- (void)handleMouseEvent:(NSEvent *_Nonnull)event;
 #endif
 - (int16_t)getPointerState:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)id;
 
 @end
+
+NS_ASSUME_NONNULL_END

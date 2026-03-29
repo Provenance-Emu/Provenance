@@ -41,6 +41,8 @@ typedef struct retro_core_t retro_core_t;
 @class PVLibRetroCoreBridge;
 static __weak PVLibRetroCoreBridge * _Nonnull _current;
 
+NS_ASSUME_NONNULL_BEGIN
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 __attribute__((weak_import))
@@ -72,9 +74,9 @@ __attribute__((weak_import))
 
 // Touch and mouse input support
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-- (void)handleTouchEvent:(UIEvent *)event;
+- (void)handleTouchEvent:(UIEvent *_Nonnull)event;
 #else
-- (void)handleMouseEvent:(NSEvent *)event;
+- (void)handleMouseEvent:(NSEvent *_Nonnull)event;
 #endif
 - (int16_t)getPointerState:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)id;
 
@@ -127,7 +129,7 @@ __attribute__((weak_import))
 /// Block invoked from the emulation thread when the core calls send_fn.
 /// The Swift transport layer sets this to forward packets over the network.
 @property (nonatomic, copy, nullable) void (^netpacketSendBlock)(int flags,
-    const void *buf, size_t len, uint16_t clientID);
+    const void *_Nonnull buf, size_t len, uint16_t clientID);
 
 /// Start a netpacket session with the given client ID.
 - (void)startNetpacketSessionWithClientID:(uint16_t)clientID;
@@ -147,11 +149,13 @@ __attribute__((weak_import))
 @end
 
 @interface PVLibRetroCoreBridge (Cheats)
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled;
-- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
-        setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error;
+- (void)setCheat:(NSString *_Nonnull)code setType:(NSString *_Nonnull)type setEnabled:(BOOL)enabled;
+- (BOOL)setCheat:(NSString *_Nonnull)code setType:(NSString *_Nonnull)type setCodeType:(NSString *_Nonnull)codeType
+        setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError * _Nullable * _Nullable)error;
 - (void)resetCheatCodes;
 @end
+
+NS_ASSUME_NONNULL_END
 
 #define SYMBOL(x) \
 do { \

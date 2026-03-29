@@ -551,13 +551,13 @@ public struct ControllerGuideView: View {
     @ViewBuilder
     private var wikiSection: some View {
         Section {
-            NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls")) {
+            NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls").settingsSubpageTracking()) {
                 Label("Controllers & Controls", systemImage: "books.vertical.fill")
             }
-            NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/bluetooth-controllers.md", title: "Bluetooth Controllers")) {
+            NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/bluetooth-controllers.md", title: "Bluetooth Controllers").settingsSubpageTracking()) {
                 Label("Bluetooth Controller Setup", systemImage: "dot.radiowaves.left.and.right")
             }
-            NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/icade-controllers.md", title: "iCade Controllers")) {
+            NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/icade-controllers.md", title: "iCade Controllers").settingsSubpageTracking()) {
                 Label("iCade / 8Bitdo Setup", systemImage: "keyboard")
             }
         } header: {

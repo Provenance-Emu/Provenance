@@ -229,6 +229,9 @@ public extension View {
                     onComplete(false)
                 }
             )
+            #if os(tvOS)
+            .settingsSheetDetachedFromSubpageDepth()
+            #endif
         }
     }
 }

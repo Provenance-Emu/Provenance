@@ -1,5 +1,5 @@
 {
-  "originHash" : "57ee84b9a8a7a7268f10ef762628fdcacfcfc03dfbbf9e29eb118a74b1285cd3",
+  "originHash" : "f5002c087c57b4b1d0573cf85898d6f970afac28156d84ea7b28e13a2745beb2",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -11,12 +11,12 @@
       }
     },
     {
-      "identity" : "csqlite",
+      "identity" : "checksum",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/stephencelis/CSQLite.git",
+      "location" : "https://github.com/JoeMatt/Checksum.git",
       "state" : {
-        "revision" : "9106e983d5e3d5149ee35281ec089484b0def018",
-        "version" : "0.0.3"
+        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version" : "1.1.1"
       }
     },
     {
@@ -185,7 +185,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
       "state" : {
-        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
+        "revision" : "084f83c3b285560adc94b121b74c228e16a126f9"
       }
     },
     {

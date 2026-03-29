@@ -40,7 +40,7 @@ let package = Package(
         // MARK: Plugins
 
         // SwiftGenPlugin
-        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
 
         // swift-macro-toolkit
         // https://github.com/stackotter/swift-macro-toolkit

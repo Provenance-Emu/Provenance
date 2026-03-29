@@ -1,7 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "PVRetroArchCoreBridge+Archive.h"
-@import LzhArchive;
-@import ZipArchive;
+@import PVArchiving;
 
 @interface PVRetroArchCoreBridge (Archive)
 @end
@@ -19,7 +18,7 @@
         NSLog(@"Core Rom %@\n", file);
         return file;
     }
-    if([[self systemIdentifier] containsString:@"mame"] || 
+    if([[self systemIdentifier] containsString:@"mame"] ||
        [[self systemIdentifier] containsString:@"neogeo"]
        ) {
         NSString *file=[self checkROM_MAME:romFile];
@@ -40,40 +39,18 @@
 }
 
 -(BOOL)extractLZH:(NSString *)atPath toDestination:(NSString *)toDestination overwrite:(BOOL)overwrite {
-    return [LzhArchive unLzhFileAtPath:atPath
-                         toDestination:toDestination
-                             overwrite:overwrite];
+    return [[PVArchiveHelper shared] extractLZH:atPath toDestination:toDestination overwrite:overwrite];
 }
 
 -(BOOL)extractZIP:(NSString *)atPath toDestination:(NSString *)toDestination overwrite:(BOOL)overwrite {
-    return [SSZipArchive unzipFileAtPath:atPath
-                           toDestination:toDestination
-                      preserveAttributes:NO
-                               overwrite:overwrite
-                          nestedZipLevel:3
-                                password:nil
-                                   error:nil
-                                delegate:nil
-                         progressHandler:nil
-                       completionHandler:nil];
+    return [[PVArchiveHelper shared] extractZIP:atPath toDestination:toDestination overwrite:overwrite];
 }
 
 -(BOOL)isArchive:(NSString *)atPath {
-    return ([atPath localizedCaseInsensitiveContainsString:@".zip"] ||
-            [atPath localizedCaseInsensitiveContainsString:@".lzh"] ||
-            [atPath localizedCaseInsensitiveContainsString:@".rar"]);
+    return [[PVArchiveHelper shared] isArchive:atPath];
 }
 
 -(BOOL)extractArchive:(NSString *)atPath toDestination:(NSString *)toDestination overwrite:(BOOL)overwrite {
-    if ([atPath localizedCaseInsensitiveContainsString:@".zip"]) {
-        return [self extractZIP:atPath toDestination:toDestination overwrite:overwrite];
-    }
-    if ([atPath localizedCaseInsensitiveContainsString:@".lzh"]) {
-        return [self extractLZH:atPath toDestination:toDestination overwrite:overwrite];
-    }
-    if ([atPath localizedCaseInsensitiveContainsString:@".rar"]) {
-        return [self extractRAR:atPath toDestination:toDestination overwrite:overwrite];
-    }
-    return false;
+    return [[PVArchiveHelper shared] extractArchive:atPath toDestination:toDestination overwrite:overwrite];
 }
 @end

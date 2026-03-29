@@ -11,7 +11,7 @@
 
 import Foundation
 import RealmSwift
-import ZipArchive
+import PVArchiving
 import PVFileSystem
 import PVLogging
 import PVMediaCache
@@ -221,8 +221,9 @@ public final class BackupManager: @unchecked Sendable {
         }
 
         // Extract archive
-        let success = SSZipArchive.unzipFile(atPath: zipURL.path, toDestination: tempDir.path)
-        guard success else {
+        do {
+            try ArchiveManager.shared.unzipFile(at: zipURL, to: tempDir)
+        } catch {
             throw BackupError.unzipFailed
         }
 
@@ -323,8 +324,9 @@ public final class BackupManager: @unchecked Sendable {
         let zipURL = FileManager.default.temporaryDirectory
             .appendingPathComponent("Provenance_Backup_\(timestamp).pvbackup")
 
-        let success = SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: directory.path)
-        guard success else {
+        do {
+            try ArchiveManager.shared.createZipArchive(at: zipURL, from: directory)
+        } catch {
             throw BackupError.zipCreationFailed
         }
         return zipURL

@@ -584,7 +584,7 @@ static bool video_driver_cached_frame(void)
 /// callbacks and only set the frontend-owned fields (get_current_framebuffer,
 /// get_proc_address). The core's context_reset is deferred until the render
 /// delegate creates the FBO (in runGLESRenderThread).
-- (BOOL)setHardwareRenderCallback:(NSValue *)callbackValue {
+- (BOOL)setHardwareRenderCallback:(NSValue *_Nonnull)callbackValue {
     if (!callbackValue) {
         ELOG(@"Hardware render callback value is NULL");
         return NO;
@@ -1137,7 +1137,7 @@ static void pv_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore) 
 /// Returns function pointers for the active rendering API.
 /// For GL ES: statically linked symbols via dlsym.
 /// For Vulkan: routes through vkGetInstanceProcAddr / vkGetDeviceProcAddr.
-- (void*)getProcAddress:(const char*)symbol {
+- (void *_Nullable)getProcAddress:(const char *_Nonnull)symbol {
     if (!symbol) {
         return NULL;
     }

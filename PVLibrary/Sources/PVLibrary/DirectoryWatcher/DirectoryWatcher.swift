@@ -12,8 +12,7 @@ import PVLogging
 import PVEmulatorCore
 import PVFileSystem
 @_exported import PVSupport
-import SWCompression
-@_exported import ZipArchive
+@_exported import PVArchiving
 import Combine
 import Observation
 import PVLibrary
@@ -459,12 +458,14 @@ public final class DirectoryWatcher: ObservableObject {
                 switch archiveError {
                 case .extractionFailed(let message):
                     ELOG("ArchiveError.extractionFailed: \(message)")
-                case .fileTooLarge:
-                    ELOG("ArchiveError.fileTooLarge")
+                case .fileTooLarge(let size):
+                    ELOG("ArchiveError.fileTooLarge: \(size / 1_000_000) MB")
                 case .invalidArchive:
                     ELOG("ArchiveError.invalidArchive")
                 case .batchMoveFailed(let succeeded, let total):
                     ELOG("ArchiveError.batchMoveFailed: \(succeeded)/\(total) file(s) moved successfully")
+                default:
+                    ELOG("ArchiveError: \(archiveError.localizedDescription)")
                 }
             }
 

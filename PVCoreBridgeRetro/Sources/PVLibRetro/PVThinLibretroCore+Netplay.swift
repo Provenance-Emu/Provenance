@@ -72,7 +72,7 @@ extension PVThinLibretroCore: PVNetplayCapable {
         }
 
         _bridge.netpacketSendBlock = { [weak transport] flags, buf, len, clientID in
-            guard let transport, let buf else { return }
+            guard let transport else { return }
             let data = Data(bytes: buf, count: len)
             transport.send(data: data, to: clientID, flags: flags)
         }

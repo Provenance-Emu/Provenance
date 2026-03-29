@@ -34,5 +34,8 @@ struct RetroArchConfigEditorWrapper: View {
             editVM.configEditor = configEditor
             await configEditor.loadConfig()
         }
+        #if os(tvOS)
+        .settingsSubpageTracking()
+        #endif
     }
 }

@@ -2,7 +2,7 @@
 #define _LZHARCH_H
 #import <Foundation/Foundation.h>
 
-#import "LzhArchive.h"
+#include "utf8.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @interface LzhArchive : NSObject

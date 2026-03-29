@@ -11,7 +11,7 @@
 //
 
 import Foundation
-import ZipArchive
+import PVArchiving
 import PVFileSystem
 import PVLogging
 import PVRealm
@@ -257,8 +257,9 @@ public final class SaveExporter: @unchecked Sendable {
         // Remove stale file if present
         try? fm.removeItem(at: pvsaveURL)
 
-        let success = SSZipArchive.createZipFile(atPath: pvsaveURL.path, withContentsOfDirectory: stagingDir.path)
-        guard success else {
+        do {
+            try ArchiveManager.shared.createZipArchive(at: pvsaveURL, from: stagingDir)
+        } catch {
             throw SaveExportError.zipCreationFailed
         }
 
@@ -336,7 +337,9 @@ public final class SaveExporter: @unchecked Sendable {
 
         try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
 
-        guard SSZipArchive.unzipFile(atPath: zipURL.path, toDestination: tempDir.path) else {
+        do {
+            try ArchiveManager.shared.unzipFile(at: zipURL, to: tempDir)
+        } catch {
             throw SaveExportError.invalidBundle("Failed to extract archive.")
         }
         // Defense-in-depth: verify no extracted entry escaped tempDir.
@@ -537,7 +540,9 @@ public final class SaveExporter: @unchecked Sendable {
 
         do {
             try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
-            guard SSZipArchive.unzipFile(atPath: zipURL.path, toDestination: tempDir.path) else {
+            do {
+                try ArchiveManager.shared.unzipFile(at: zipURL, to: tempDir)
+            } catch {
                 return nil
             }
             // Defense-in-depth: verify no extracted entry escaped tempDir via symlinks or traversal paths.
@@ -646,7 +651,9 @@ public final class SaveExporter: @unchecked Sendable {
 
         let zipURL = fm.temporaryDirectory.appendingPathComponent("\(safeTitle)-battery-\(timestamp).zip")
         try? fm.removeItem(at: zipURL)
-        guard SSZipArchive.createZipFile(atPath: zipURL.path, withContentsOfDirectory: stagingDir.path) else {
+        do {
+            try ArchiveManager.shared.createZipArchive(at: zipURL, from: stagingDir)
+        } catch {
             throw SaveExportError.zipCreationFailed
         }
         ILOG("SaveExporter: SRAM export (multi) → \(zipURL.lastPathComponent)")
@@ -698,7 +705,9 @@ public final class SaveExporter: @unchecked Sendable {
             defer { try? fm.removeItem(at: tempDir) }
             try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
 
-            guard SSZipArchive.unzipFile(atPath: fileURL.path, toDestination: tempDir.path) else {
+            do {
+                try ArchiveManager.shared.unzipFile(at: fileURL, to: tempDir)
+            } catch {
                 throw SaveExportError.invalidBundle("Failed to extract SRAM archive.")
             }
             try validateNoBundleEscape(in: tempDir)

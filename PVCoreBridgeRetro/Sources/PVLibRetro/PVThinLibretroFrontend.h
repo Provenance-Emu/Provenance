@@ -6,7 +6,7 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 //  A minimal libretro frontend that:
-//  - Depends ONLY on libretro.h (no RetroArch internals)
+//  - Depends on libretro.h and PVCoreBridge (ObjCBridgedCoreBridge); no RetroArch internals
 //  - Loads cores via dlopen/dlsym
 //  - Handles the full libretro environment callback API
 //  - Provides the 5 core callbacks (video, audio, audio_batch, input_poll, input_state)
@@ -19,8 +19,7 @@
 
 @import Foundation;
 @import PVCoreObjCBridge;
-
-@protocol ObjCBridgedCoreBridge;
+@import PVCoreBridge;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <UIKit/UIKit.h>
@@ -49,13 +48,13 @@ retro_perf_tick_t pv_perf_get_counter(void);
 uint64_t pv_perf_get_cpu_features(void);
 
 /// Register a named performance counter for tracking.
-void pv_perf_register(struct retro_perf_counter *counter);
+void pv_perf_register(struct retro_perf_counter *_Nullable counter);
 
 /// Start a registered counter (records start tick, emits signpost in debug).
-void pv_perf_start(struct retro_perf_counter *counter);
+void pv_perf_start(struct retro_perf_counter *_Nullable counter);
 
 /// Stop a registered counter (accumulates elapsed ticks, emits signpost in debug).
-void pv_perf_stop(struct retro_perf_counter *counter);
+void pv_perf_stop(struct retro_perf_counter *_Nullable counter);
 
 /// Log all registered counters to the Provenance log.
 void pv_perf_log(void);

@@ -37,11 +37,57 @@ typedef enum PVGBAButton: NSInteger PVGBAButton;
 @interface PVVisualBoyAdvanceBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVGBASystemResponderClient>
 #pragma clang diagnostic pop
 
+// MARK: - RetroAchievements memory access (GBA bus)
+
+/// EWRAM base (`workRAM`), 256 KiB at bus `0x02000000`, valid while a ROM is loaded.
+@property (nonatomic, readonly, nullable) void *ewramBasePtr;
+/// IWRAM base (`internalRAM`), 32 KiB at bus `0x03000000`, valid while a ROM is loaded.
+@property (nonatomic, readonly, nullable) void *iwramBasePtr;
+/// VRAM base, 96 KiB at bus `0x06000000`, valid while a ROM is loaded.
+@property (nonatomic, readonly, nullable) void *vbaVramBasePtr;
+
+/// Whether `rc_client` has a game successfully loaded for achievements.
+@property (nonatomic, readonly) BOOL achievementsActive;
+
+/// Weak back-reference to the owning Swift core (`PVVisualBoyAdvanceCore`).
+@property (nonatomic, weak, nullable) id achievementsEventOwner;
+
+/// Advance the achievement runtime by one frame (calls `rc_client_do_frame` when active).
+- (void)tickAchievements;
+
+/// Load the game into `rc_client` using the provided MD5 hash.
+- (void)loadAchievementsForGameHash:(NSString *)gameHash
+                         completion:(void (^)(BOOL success))completion;
+
+/// Unload the current game from `rc_client` and mark achievements inactive.
+- (void)unloadAchievements;
 
 // PVGBASystemResponderClient
 - (void)didPushGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
 - (void)didReleaseGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
 
+@end
+
+/// Achievement event callbacks invoked from the `rc_client` event handler.
+@interface PVVisualBoyAdvanceBridge (AchievementsEvents)
+- (void)rcAchievementTriggeredWithID:(uint32_t)achievementID
+                               title:(NSString * _Nullable)title
+                         description:(NSString * _Nullable)description
+                              points:(uint32_t)points
+                            badgeURL:(NSURL * _Nullable)badgeURL
+                          isHardcore:(BOOL)isHardcore;
+- (void)rcAchievementProgressWithID:(uint32_t)achievementID
+                              title:(NSString * _Nullable)title
+                       progressText:(NSString * _Nullable)progressText;
+- (void)rcLeaderboardStartedWithID:(uint32_t)leaderboardID
+                             title:(NSString * _Nullable)title
+                       description:(NSString * _Nullable)description
+                         scoreText:(NSString * _Nullable)scoreText;
+- (void)rcLeaderboardFailedWithID:(uint32_t)leaderboardID;
+- (void)rcLeaderboardSubmittedWithID:(uint32_t)leaderboardID
+                               title:(NSString * _Nullable)title
+                         description:(NSString * _Nullable)description
+                           scoreText:(NSString * _Nullable)scoreText;
 @end
 
 @interface PVVisualBoyAdvanceBridge (Cheats)

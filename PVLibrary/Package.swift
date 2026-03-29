@@ -50,7 +50,8 @@ let package = Package(
     dependencies:
         ["Support", "Logging", "Hashing",
          "EmulatorCore", "CoreLoader", "Primitives",
-         "Plists", "Lookup", "Settings", "FeatureFlags", "Patching"]
+         "Plists", "Lookup", "Settings", "FeatureFlags", "Patching",
+         "Archiving"]
         .map { .package(path: "../PV\($0)") }
         + [
         .package(url: "https://github.com/ReactiveX/RxSwift.git",
@@ -67,7 +68,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-async-algorithms",
                  from: "1.0.0"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
-                 revision: "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"),
+                 from: "1.1.3"),
         .package(url: "https://github.com/stephencelis/SQLite.swift.git",
                  .upToNextMajor(from: "0.15.3")),
         /// https://github.com/mtgto/Unrar.swift
@@ -108,6 +109,7 @@ let package = Package(
                 "PVEmulatorCore",
                 "PVCoreLoader",
                 "PVPatching",
+                "PVArchiving",
                 .product(name: "Unrar", package: "Unrar.swift"),
                 .product(name: "ZipArchive", package: "ZipArchive"),
                 .product(name: "SQLite", package: "SQLite.swift"),

@@ -36,7 +36,7 @@ let package = Package(
     dependencies: [
         .package(path: "../PVLogging"),
         .package(path: "../PVPrimitives"),
-        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
         .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
 
         ///

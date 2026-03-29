@@ -19,7 +19,6 @@ struct SettingsWrapperView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var themeManager: ThemeManager
     #if os(tvOS)
-    @Environment(\.tvMediaFocusCoordinator) private var focusCoordinator
     @Binding var canPop: Bool
     #endif
     #if !os(tvOS)

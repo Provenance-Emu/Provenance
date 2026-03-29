@@ -29,6 +29,7 @@ open class PVVisualBoyAdvanceCore: PVEmulatorCore {
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+        _bridge.achievementsEventOwner = self
     }
 
     // MARK: - RetroAchievements backing storage

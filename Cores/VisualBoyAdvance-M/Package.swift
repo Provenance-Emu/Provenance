@@ -44,7 +44,7 @@ let package = Package(
         .package(path: "../../PVPrimitives"),
         .package(path: "../../PVRcheevos"),
 
-        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
     ],
     targets: [
         // MARK: --------- Core -----------
@@ -107,6 +107,7 @@ let package = Package(
                 "PVObjCUtils",
                 "PVVisualBoyAdvanceOptions",
                 "libvisualboyadvance",
+                .product(name: "CRcheevos", package: "PVRcheevos"),
             ],
             resources: [
                 .copy("Resources/vba-over.ini")
@@ -115,6 +116,7 @@ let package = Package(
                 .define("C_CORE"),
                 .define("FINAL_VERSION"),
                 .define("HAVE_COCOATOUCH", to: "1"),
+                .define("HAVE_RCHEEVOS", to: "1"),
                 .define("INLINE", to: "inline"),
                 .define("NO_LINK"),
                 .define("NO_PNG"),
@@ -142,6 +144,7 @@ let package = Package(
                 .define("USE_STRUCTS", to: "1"),
 //                .define("__LIBRETRO__", to: __LIBRETRO__),
                 .define("HAVE_COCOATOUCH", to: "1"),
+                .define("HAVE_RCHEEVOS", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
                 .headerSearchPath("../libvisualboyadvance/include/"),
                 .headerSearchPath("../libvisualboyadvance/GBACore/"),

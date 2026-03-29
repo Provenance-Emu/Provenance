@@ -41,6 +41,128 @@
 
 #import "PVStellaBridge.h"
 
+#include <atomic>
+
+// ---------------------------------------------------------------------------
+// MARK: - RetroAchievements rc_client (HAVE_RCHEEVOS)
+// ---------------------------------------------------------------------------
+#if HAVE_RCHEEVOS
+#include "rc_client.h"
+
+static uint32_t pvstella_read_memory(uint32_t address, uint8_t *buffer,
+                                     uint32_t num_bytes, rc_client_t *client) {
+    (void)client;
+    uint8_t *ram = (uint8_t *)retro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
+    size_t ramSize = retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM);
+    for (uint32_t i = 0; i < num_bytes; ++i) {
+        uint32_t addr = address + i;
+        uint8_t value = 0xFF;
+        if (ram && ramSize > 0 && addr < ramSize) {
+            value = ram[addr];
+        }
+        buffer[i] = value;
+    }
+    return num_bytes;
+}
+
+static void pvstella_server_call(const rc_api_request_t *request,
+                                 rc_client_server_callback_t callback,
+                                 void *callback_data,
+                                 rc_client_t * __unused client) {
+    if (!request->url) {
+        rc_api_server_response_t empty = {};
+        empty.http_status_code = 0;
+        callback(&empty, callback_data);
+        return;
+    }
+    NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:request->url]];
+    if (!url) {
+        rc_api_server_response_t empty = {};
+        empty.http_status_code = 400;
+        callback(&empty, callback_data);
+        return;
+    }
+    NSMutableURLRequest *urlReq = [NSMutableURLRequest requestWithURL:url];
+    urlReq.timeoutInterval = 30.0;
+    const char *postData = request->post_data;
+    if (postData && *postData) {
+        urlReq.HTTPMethod = @"POST";
+        urlReq.HTTPBody = [NSData dataWithBytes:postData length:strlen(postData)];
+        [urlReq setValue:@"application/x-www-form-urlencoded"
+      forHTTPHeaderField:@"Content-Type"];
+    } else {
+        urlReq.HTTPMethod = @"GET";
+    }
+    [urlReq setValue:@"Provenance/PVRcheevos" forHTTPHeaderField:@"User-Agent"];
+    [[[NSURLSession sharedSession]
+        dataTaskWithRequest:urlReq
+          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+              rc_api_server_response_t resp = {};
+              if (data && !error) {
+                  resp.body             = (const char *)data.bytes;
+                  resp.body_length      = (uint32_t)data.length;
+                  resp.http_status_code = (int)[(NSHTTPURLResponse *)response statusCode];
+              } else {
+                  resp.http_status_code = 0;
+              }
+              callback(&resp, callback_data);
+          }] resume];
+}
+
+static void pvstella_event_handler(const rc_client_event_t *event, rc_client_t *client) {
+    PVStellaBridge *bridge = (__bridge PVStellaBridge *)rc_client_get_userdata(client);
+    if (!bridge) { return; }
+
+    switch (event->type) {
+        case RC_CLIENT_EVENT_ACHIEVEMENT_TRIGGERED: {
+            const rc_client_achievement_t *ach = event->achievement;
+            NSString *badgeName = ach->badge_name ? @(ach->badge_name) : nil;
+            NSURL *badgeURL = badgeName.length
+                ? [NSURL URLWithString:[NSString stringWithFormat:
+                      @"https://media.retroachievements.org/Badge/%@.png", badgeName]]
+                : nil;
+            [bridge rcAchievementTriggeredWithID:ach->id
+                                         title:ach->title       ? @(ach->title)       : nil
+                                   description:ach->description ? @(ach->description) : nil
+                                        points:ach->points
+                                      badgeURL:badgeURL
+                                    isHardcore:(BOOL)rc_client_get_hardcore_enabled(client)];
+            break;
+        }
+        case RC_CLIENT_EVENT_ACHIEVEMENT_PROGRESS_INDICATOR_SHOW: {
+            const rc_client_achievement_t *ach = event->achievement;
+            [bridge rcAchievementProgressWithID:ach->id
+                                        title:ach->title ? @(ach->title) : nil
+                                 progressText:ach->measured_progress ? @(ach->measured_progress) : nil];
+            break;
+        }
+        case RC_CLIENT_EVENT_LEADERBOARD_STARTED: {
+            const rc_client_leaderboard_t *lb = event->leaderboard;
+            [bridge rcLeaderboardStartedWithID:lb->id
+                                       title:lb->title       ? @(lb->title)       : nil
+                                 description:lb->description ? @(lb->description) : nil
+                                   scoreText:lb->tracker_value ? @(lb->tracker_value) : nil];
+            break;
+        }
+        case RC_CLIENT_EVENT_LEADERBOARD_FAILED:
+            if (event->leaderboard != NULL) {
+                [bridge rcLeaderboardFailedWithID:event->leaderboard->id];
+            }
+            break;
+        case RC_CLIENT_EVENT_LEADERBOARD_SUBMITTED: {
+            const rc_client_leaderboard_t *lb = event->leaderboard;
+            [bridge rcLeaderboardSubmittedWithID:lb->id
+                                         title:lb->title       ? @(lb->title)       : nil
+                                   description:lb->description ? @(lb->description) : nil
+                                     scoreText:lb->tracker_value ? @(lb->tracker_value) : nil];
+            break;
+        }
+        default:
+            break;
+    }
+}
+#endif // HAVE_RCHEEVOS
+
 #if __has_include(<OpenGLES/gltypes.h>)
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
@@ -60,6 +182,11 @@
     // RETRO_REGION_NTSC, RETRO_REGION_PAL
     unsigned region;
 
+#if HAVE_RCHEEVOS
+    rc_client_t *_rcClient;
+#endif
+    std::atomic<bool> _achievementsActive;
+
     // Trackball / Mouse state (Companion Controller input).
     // Accumulated relative deltas consumed each frame by input_state_callback.
     // Both the write side (main thread, companion input) and the read side
@@ -71,7 +198,62 @@
 @property (nonatomic, strong) NSMutableArray<NSString*>* cheats;
 @property (readwrite, nonatomic, copy) PVStellaBridgeOptionHandler optionHandler;
 
+- (void)pvstella_applyAchievementsLoadResult:(BOOL)success;
+
 @end
+
+#if HAVE_RCHEEVOS
+
+typedef struct pvstella_load_ctx {
+    void *bridge;
+    void *completion;
+} pvstella_load_ctx_t;
+
+static void pvstella_load_callback(int result, const char * __unused error_message,
+                                   rc_client_t * __unused client, void *userdata) {
+    pvstella_load_ctx_t *ctx = (pvstella_load_ctx_t *)userdata;
+    PVStellaBridge *bridge = (__bridge_transfer PVStellaBridge *)ctx->bridge;
+    void (^completion)(BOOL) = (__bridge_transfer void (^)(BOOL))ctx->completion;
+    ctx->completion = NULL;
+    free(ctx);
+
+    BOOL success = (result == RC_OK);
+    [bridge pvstella_applyAchievementsLoadResult:success];
+    if (completion) { completion(success); }
+}
+
+typedef struct pvstella_login_ctx {
+    void *bridge;
+    void *gameHash;
+    void *completion;
+} pvstella_login_ctx_t;
+
+static void pvstella_login_callback(int result, const char * __unused error_message,
+                                    rc_client_t *client, void *userdata) {
+    pvstella_login_ctx_t *lCtx = (pvstella_login_ctx_t *)userdata;
+    PVStellaBridge *bridge = (__bridge_transfer PVStellaBridge *)lCtx->bridge;
+    NSString *hash               = (__bridge_transfer NSString *)lCtx->gameHash;
+    void (^completion)(BOOL)     = (__bridge_transfer void (^)(BOOL))lCtx->completion;
+    lCtx->completion = NULL;
+    free(lCtx);
+
+    if (result != RC_OK) {
+        [bridge pvstella_applyAchievementsLoadResult:NO];
+        if (completion) { completion(NO); }
+        return;
+    }
+
+    pvstella_load_ctx_t *loadCtx = (pvstella_load_ctx_t *)malloc(sizeof(pvstella_load_ctx_t));
+    if (!loadCtx) {
+        [bridge pvstella_applyAchievementsLoadResult:NO];
+        if (completion) { completion(NO); }
+        return;
+    }
+    loadCtx->bridge     = (__bridge_retained void *)bridge;
+    loadCtx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+    rc_client_begin_load_game(client, hash.UTF8String, pvstella_load_callback, loadCtx);
+}
+#endif // HAVE_RCHEEVOS
 
 static __weak PVStellaBridge *_current;
 
@@ -295,6 +477,7 @@ static void writeSaveFile(const char* path, int type) {
         _pendingMouseDX = 0.0f;
         _pendingMouseDY = 0.0f;
         _mouseButtonLeft = NO;
+        _achievementsActive.store(false);
     }
 
 	return self;
@@ -308,6 +491,15 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (void)stopEmulation {
+#if HAVE_RCHEEVOS
+    if (_rcClient) {
+        rc_client_unload_game(_rcClient);
+        rc_client_destroy(_rcClient);
+        _rcClient = NULL;
+    }
+    _achievementsActive.store(false);
+#endif
+
     if ([self.batterySavesPath length]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
         NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
@@ -326,6 +518,12 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (void)dealloc {
+#if HAVE_RCHEEVOS
+    if (_rcClient) {
+        rc_client_destroy(_rcClient);
+        _rcClient = NULL;
+    }
+#endif
     dispatch_sync(dispatch_get_main_queue(), ^{
         if(self->_videoBuffer) {
             free(self->_videoBuffer);
@@ -340,6 +538,7 @@ static void writeSaveFile(const char* path, int type) {
     }
 #endif
     retro_run();
+    [self tickAchievements];
 }
 
 - (void)executeFrameSkippingFrame: (BOOL) skip {
@@ -349,6 +548,7 @@ static void writeSaveFile(const char* path, int type) {
     }
 #endif
     retro_run();
+    [self tickAchievements];
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
@@ -416,6 +616,16 @@ static void writeSaveFile(const char* path, int type) {
         }
 
         retro_run();
+
+#if HAVE_RCHEEVOS
+        if (!_rcClient) {
+            _rcClient = rc_client_create(pvstella_read_memory, pvstella_server_call);
+            if (_rcClient) {
+                rc_client_set_userdata(_rcClient, (__bridge void *)self);
+                rc_client_set_event_handler(_rcClient, pvstella_event_handler);
+            }
+        }
+#endif
         
         return YES;
     } else {
@@ -522,6 +732,89 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 #endif
+
+#pragma mark - RetroAchievements
+
+- (void *)stellaSystemRAMPtr {
+    return retro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
+}
+
+- (NSUInteger)stellaSystemRAMSize {
+    return (NSUInteger)retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM);
+}
+
+- (BOOL)achievementsActive {
+    return _achievementsActive.load();
+}
+
+- (void)tickAchievements {
+#if HAVE_RCHEEVOS
+    if (_rcClient && _achievementsActive.load()) {
+        rc_client_do_frame(_rcClient);
+    }
+#endif
+}
+
+- (void)pvstella_applyAchievementsLoadResult:(BOOL)success {
+    _achievementsActive.store(success);
+}
+
+- (void)loadAchievementsForGameHash:(NSString *)gameHash
+                         completion:(void (^)(BOOL success))completion {
+#if HAVE_RCHEEVOS
+    if (!_rcClient) {
+        _achievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+
+    if (rc_client_get_user_info(_rcClient) != NULL) {
+        pvstella_load_ctx_t *ctx = (pvstella_load_ctx_t *)malloc(sizeof(pvstella_load_ctx_t));
+        if (!ctx) {
+            _achievementsActive.store(false);
+            if (completion) { completion(NO); }
+            return;
+        }
+        ctx->bridge     = (__bridge_retained void *)self;
+        ctx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+        rc_client_begin_load_game(_rcClient, gameHash.UTF8String, pvstella_load_callback, ctx);
+        return;
+    }
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *username = [defaults stringForKey:@"ra_username"];
+    NSString *token    = [defaults stringForKey:@"ra_session_token"];
+    if (!username.length || !token.length) {
+        _achievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+
+    pvstella_login_ctx_t *lCtx = (pvstella_login_ctx_t *)malloc(sizeof(pvstella_login_ctx_t));
+    if (!lCtx) {
+        _achievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+    lCtx->bridge     = (__bridge_retained void *)self;
+    lCtx->gameHash   = (__bridge_retained void *)[gameHash copy];
+    lCtx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+    rc_client_begin_login_with_token(_rcClient, username.UTF8String, token.UTF8String,
+                                     pvstella_login_callback, lCtx);
+#else
+    _achievementsActive.store(false);
+    if (completion) { completion(NO); }
+#endif
+}
+
+- (void)unloadAchievements {
+#if HAVE_RCHEEVOS
+    if (_rcClient) {
+        rc_client_unload_game(_rcClient);
+    }
+#endif
+    _achievementsActive.store(false);
+}
 
 #pragma mark - Video
 - (const void *)videoBuffer

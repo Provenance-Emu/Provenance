@@ -2318,6 +2318,8 @@ private struct DualSenseExtrasSection: View {
 /// Button that fires a short test rumble on all player-assigned controllers and optional device Taptic feedback.
 private struct TestRumbleButton: View {
     @State private var isTesting = false
+    @Default(.rumbleEnabled) private var rumbleEnabled
+    @Default(.rumbleControllerEnabled) private var rumbleControllerEnabled
     @Default(.rumbleDeviceEnabled) private var rumbleDeviceEnabled
 
     var body: some View {
@@ -2337,31 +2339,49 @@ private struct TestRumbleButton: View {
                 }
             }
         }
-        .disabled(isTesting)
+        .disabled(isTesting || !rumbleEnabled)
     }
 
-    /// Registers slotted controllers with `GCControllerHapticsManager` and pulses each occupied player.
-    /// Device Taptic runs only when `rumbleDeviceEnabled` and no slotted controller has `GCDeviceHaptics`.
+    /// When controller rumble is enabled: clears unmapped player slots, registers slotted controllers without light bar / adaptive-trigger updates, then pulses motors.
+    /// Respects `rumbleDeviceEnabled` for phone Taptic (including controller-rumble-off device-only test). Disabled when master `rumbleEnabled` is off.
     @MainActor
     private func fireTestRumble() {
+        guard rumbleEnabled else { return }
         isTesting = true
         // Provenance player slots are 1-based; `GCControllerHapticsManager` uses 0-based indices like `PVEmulatorCore.controller1` → player 0.
         let live = PVControllerManager.shared.allLiveControllers
         let sortedSlots = live.sorted(by: { $0.key < $1.key })
-        for (pvSlot, controller) in sortedSlots {
-            GCControllerHapticsManager.shared.register(controller: controller, forPlayer: pvSlot - 1)
+        let occupiedZeroBased = Set(sortedSlots.map { $0.key - 1 })
+
+        if rumbleControllerEnabled {
+            if !sortedSlots.isEmpty {
+                // Clear only unassigned indices when at least one slot is live — avoids wiping all light bar / haptic state if `allLiveControllers` is momentarily empty during gameplay.
+                for player in 0..<8 where !occupiedZeroBased.contains(player) {
+                    GCControllerHapticsManager.shared.register(controller: nil, forPlayer: player, effect: .fullSync)
+                }
+                for (pvSlot, controller) in sortedSlots {
+                    GCControllerHapticsManager.shared.register(controller: controller, forPlayer: pvSlot - 1, effect: .hapticsEnginesOnly)
+                }
+                let params = GCControllerHapticsManager.RumbleParams(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4)
+                for (pvSlot, _) in sortedSlots {
+                    GCControllerHapticsManager.shared.rumble(player: pvSlot - 1, params: params)
+                }
+            }
         }
-        let params = GCControllerHapticsManager.RumbleParams(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4)
-        for (pvSlot, _) in sortedSlots {
-            GCControllerHapticsManager.shared.rumble(player: pvSlot - 1, params: params)
-        }
+
         #if !os(tvOS)
         if rumbleDeviceEnabled {
-            let anyMotorCapable = live.values.contains { $0.haptics != nil }
-            if !anyMotorCapable {
+            if !rumbleControllerEnabled {
                 let generator = UIImpactFeedbackGenerator(style: .heavy)
                 generator.prepare()
                 generator.impactOccurred(intensity: 0.8)
+            } else {
+                let anyMotorCapable = live.values.contains { $0.haptics != nil }
+                if !anyMotorCapable {
+                    let generator = UIImpactFeedbackGenerator(style: .heavy)
+                    generator.prepare()
+                    generator.impactOccurred(intensity: 0.8)
+                }
             }
         }
         #endif
@@ -2750,6 +2770,7 @@ private struct DeltaSkinsSection: View {
             // Button to select skins
             NavigationLink {
                 SystemSkinBrowserView()
+                    .settingsSubpageTracking()
             } label: {
                 SettingsRow(title: "Select Controller Skins",
                             subtitle: "Choose controller skins for each system and orientation.",
@@ -2759,6 +2780,7 @@ private struct DeltaSkinsSection: View {
             // Button to manage skins
             NavigationLink {
                 DeltaSkinListView(manager: DeltaSkinManager.shared)
+                    .settingsSubpageTracking()
             } label: {
                 SettingsRow(title: "Manage Controller Skins",
                             subtitle: "View, import, and delete controller skins.",
@@ -2768,6 +2790,7 @@ private struct DeltaSkinsSection: View {
             // Button to browse the skin catalog
             NavigationLink {
                 SkinCatalogBrowserView()
+                    .settingsSubpageTracking()
             } label: {
                 SettingsRow(title: "Skin Browser",
                             subtitle: "Browse and download skins from the community catalog.",
@@ -2777,6 +2800,7 @@ private struct DeltaSkinsSection: View {
             // Button to open skin documentation in the built-in wiki
             NavigationLink {
                 WikiPageView(path: "info/skins-guide.md", title: "Skin Documentation")
+                    .settingsSubpageTracking()
             } label: {
                 SettingsRow(title: "Skin Documentation",
                             subtitle: "Learn how to create and install controller skins.",

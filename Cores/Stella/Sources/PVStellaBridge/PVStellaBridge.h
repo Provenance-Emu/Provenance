@@ -67,6 +67,20 @@ typedef id _Nullable (^PVStellaBridgeOptionHandler)(NSString * _Nonnull option);
 - (NSTimeInterval)frameInterval;
 - (BOOL)rendersToOpenGL;
 
+// MARK: - RetroAchievements (rc_client)
+
+/// `RETRO_MEMORY_SYSTEM_RAM`: 128 bytes, achievement bus addresses `0x00`…`0x7F` (rcheevos Atari 2600 map).
+@property (nonatomic, readonly, nullable) void *stellaSystemRAMPtr;
+@property (nonatomic, readonly) NSUInteger stellaSystemRAMSize;
+
+@property (nonatomic, readonly) BOOL achievementsActive;
+@property (nonatomic, weak, nullable) id achievementsEventOwner;
+
+- (void)tickAchievements;
+- (void)loadAchievementsForGameHash:(NSString *)gameHash
+                         completion:(void (^)(BOOL success))completion;
+- (void)unloadAchievements;
+
 // MARK: Input
 - (void)pollControllers;
 
@@ -78,6 +92,27 @@ typedef id _Nullable (^PVStellaBridgeOptionHandler)(NSString * _Nonnull option);
 @interface PVStellaBridge (PV2600SystemResponderClient) <PV2600SystemResponderClient>
 - (void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
 - (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
+@end
+
+@interface PVStellaBridge (AchievementsEvents)
+- (void)rcAchievementTriggeredWithID:(uint32_t)achievementID
+                               title:(NSString * _Nullable)title
+                         description:(NSString * _Nullable)description
+                              points:(uint32_t)points
+                            badgeURL:(NSURL * _Nullable)badgeURL
+                          isHardcore:(BOOL)isHardcore;
+- (void)rcAchievementProgressWithID:(uint32_t)achievementID
+                              title:(NSString * _Nullable)title
+                       progressText:(NSString * _Nullable)progressText;
+- (void)rcLeaderboardStartedWithID:(uint32_t)leaderboardID
+                             title:(NSString * _Nullable)title
+                       description:(NSString * _Nullable)description
+                         scoreText:(NSString * _Nullable)scoreText;
+- (void)rcLeaderboardFailedWithID:(uint32_t)leaderboardID;
+- (void)rcLeaderboardSubmittedWithID:(uint32_t)leaderboardID
+                               title:(NSString * _Nullable)title
+                         description:(NSString * _Nullable)description
+                           scoreText:(NSString * _Nullable)scoreText;
 @end
 
 // MARK: - Trackball / Mouse input (Companion Controller)

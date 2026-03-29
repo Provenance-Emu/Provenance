@@ -120,6 +120,7 @@ struct ControllerProfilesView: View {
         } message: {
             Text(errorMessage ?? "An unknown error occurred.")
         }
+        .settingsSubpageTracking()
     }
 
     // MARK: - Row

@@ -40,7 +40,7 @@ let package = Package(
         .package(name: "PVNetplay", path: "../../PVNetplay"),
         .package(path: "../../PVRcheevos"),
 
-        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.0.0"),
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
     ],
     targets: [
         // MARK: ------- Core ---------
@@ -99,6 +99,7 @@ let package = Package(
                 "PVObjCUtils",
                 "PVStellaCPP",
                 "libstella",
+                .product(name: "CRcheevos", package: "PVRcheevos"),
             ],
             publicHeadersPath: "include",
             cSettings: [
@@ -106,6 +107,7 @@ let package = Package(
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
                 .define("HAVE_COCOATOUCH", to: "1"),
+                .define("HAVE_RCHEEVOS", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
 //                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],
@@ -118,6 +120,7 @@ let package = Package(
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
                 .define("HAVE_COCOATOUCH", to: "1"),
+                .define("HAVE_RCHEEVOS", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
 //                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],

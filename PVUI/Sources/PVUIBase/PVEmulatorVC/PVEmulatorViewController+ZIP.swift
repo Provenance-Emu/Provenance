@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVArchiving
 
 // MARK: File loading
 extension PVEmulatorViewController {
@@ -15,40 +16,35 @@ extension PVEmulatorViewController {
         if core.extractArchive, let filePath = romPathMaybe {
             if (filePath.pathExtension.caseInsensitiveCompare("zip") == .orderedSame) {
                 var unzippedFiles = [URL]()
-                
+
                 Task.detached {
                     let savePath = self.batterySavesPath.standardizedFileURL
-                    SSZipArchive.unzipFile(
-                        atPath: filePath.path,
-                        toDestination: savePath.path(percentEncoded: false),
-                        overwrite: true, password: nil,
-                        progressHandler: { (entry: String, _: unz_file_info, entryNumber: Int, total: Int) in
-                            if !entry.isEmpty {
-                                let url = savePath.appendingPathComponent(entry)
-                                unzippedFiles.append(url)
-                            }
-                        },
-                        completionHandler: { [weak self] (_: String?, succeeded: Bool, error: Error?) in
-                            guard let self = self else { return }
-                            if succeeded {
-                                var hasCue:Bool = false;
-                                var cueFile:URL?
-                                for file in unzippedFiles {
-                                    if let system = self.game.system, system.supportedExtensions.contains( file.pathExtension.lowercased() ) {
-                                        romPathMaybe = file;
-                                        if (file.pathExtension.lowercased() == "cue") {
-                                            cueFile = file;
-                                            hasCue = true;
-                                        }
+                    do {
+                        for try await url in ArchiveManager.shared.extract(at: filePath, to: savePath, format: .zip) {
+                            unzippedFiles.append(url)
+                        }
+                        await MainActor.run { [weak self] in
+                            guard let self else { return }
+                            var hasCue = false
+                            var cueFile: URL?
+                            for file in unzippedFiles {
+                                if let system = self.game.system,
+                                   system.supportedExtensions.contains(file.pathExtension.lowercased()) {
+                                    romPathMaybe = file
+                                    if file.pathExtension.lowercased() == "cue" {
+                                        cueFile = file
+                                        hasCue = true
                                     }
                                 }
-                                if hasCue, let file = cueFile {
-                                    romPathMaybe = file;
-                                }
                             }
-                        })
+                            if hasCue, let file = cueFile {
+                                romPathMaybe = file
+                            }
+                        }
+                    } catch {
+                        ELOG("Archive extraction failed: \(error.localizedDescription)")
+                    }
                 }
-                
             }
         }
         return romPathMaybe

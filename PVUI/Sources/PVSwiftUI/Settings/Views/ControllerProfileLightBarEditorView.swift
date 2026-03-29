@@ -80,6 +80,9 @@ struct ControllerProfileLightBarEditorView: View {
             }
         }
         .onAppear(perform: loadFromRealm)
+        #if os(tvOS)
+        .settingsSubpageTracking()
+        #endif
         .onChange(of: useCustomColor) { _, isOn in
             if isOn, ControllerLightBarManager.LightBarColor(hex: selectedHex) == nil {
                 selectedHex = ControllerLightBarManager.LightBarColor.default.hexString

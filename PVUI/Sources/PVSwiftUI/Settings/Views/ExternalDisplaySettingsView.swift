@@ -32,6 +32,7 @@ struct ExternalDisplaySettingsView: View {
         .onExitCommand {
             dismiss()
         }
+        .settingsSubpageTracking()
         #endif
     }
 }

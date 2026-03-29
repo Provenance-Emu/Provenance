@@ -23,6 +23,7 @@ public enum Extensions: String, CaseIterable {
     case xz = "xz"
     case zst = "zst"
     case zstd = "zstd"
+    case lzma = "lzma"
 
     // Images
     case png = "png"
@@ -72,7 +73,7 @@ public enum Extensions: String, CaseIterable {
 
     private static let _archiveExtensions: Set<Extensions> = [
         .sevenZip, .sevenZipAlt, .gzip, .gz, .rar, .zip,
-        .tar, .bz2, .bzip2, .lzh, .lha, .xz, .zst, .zstd
+        .tar, .bz2, .bzip2, .lzh, .lha, .xz, .zst, .zstd, .lzma
     ]
     private static let _artworkExtensions: Set<Extensions> = [.png, .jpg, .jpeg]
     private static let _discImageExtensions: Set<Extensions> = [.ccd, .img, .iso, .chd]

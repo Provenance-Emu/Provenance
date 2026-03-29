@@ -423,7 +423,7 @@ struct ControllerSettingsView: View {
                 NavigationLink(destination: ControllerGuideView()) {
                     Label("Controller Guide", systemImage: "gamecontroller.fill")
                 }
-                NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls")) {
+                NavigationLink(destination: WikiPageView(path: "info/controllers-and-controls/README.md", title: "Controllers & Controls").settingsSubpageTracking()) {
                     Label("Full Controller Wiki", systemImage: "books.vertical.fill")
                 }
             } header: {

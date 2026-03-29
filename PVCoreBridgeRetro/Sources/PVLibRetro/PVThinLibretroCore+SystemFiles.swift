@@ -22,7 +22,7 @@
 
 import Foundation
 import PVLogging
-import ZipArchive
+import PVArchiving
 
 // MARK: - Libretro Buildbot System File Definitions
 
@@ -215,17 +215,11 @@ extension PVThinLibretroCore {
                 return
             }
 
-            var extractError: NSError?
-            let success = SSZipArchive.unzipFile(atPath: tempURL.path,
-                                                 toDestination: destDir,
-                                                 overwrite: false,
-                                                 password: nil,
-                                                 error: &extractError)
-            if success {
+            do {
+                try Self.unzipFile(at: tempURL, to: URL(fileURLWithPath: destDir))
                 ILOG("ThinCore[SystemFiles]: extracted \(url.lastPathComponent) → \(destDir)")
-            } else {
-                let msg = extractError?.localizedDescription ?? "unknown error"
-                ELOG("ThinCore[SystemFiles]: extraction failed for \(url.lastPathComponent): \(msg)")
+            } catch {
+                ELOG("ThinCore[SystemFiles]: extraction failed for \(url.lastPathComponent): \(error.localizedDescription)")
             }
             try? fm.removeItem(at: tempURL)
         }
@@ -343,5 +337,9 @@ extension PVThinLibretroCore {
             return ["rick.pak"]
         }
         return []
+    }
+
+    private static func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+        try ArchiveManager.shared.unzipFile(at: sourceURL, to: destinationURL)
     }
 }

@@ -7,6 +7,7 @@
 
 import PVRealm
 import PVLogging
+import PVArchiving
 
 #if canImport(UIKit)
 import UIKit
@@ -152,11 +153,18 @@ public extension GameSharingViewController where Self: UIViewController {
             hud.detailsLabel.text = "Please be patient, this could take a while…"
 #endif
             DispatchQueue.global(qos: .background).async {
-                let success = SSZipArchive.createZipFile(atPath: zipPath.path, withFilesAtPaths: paths)
-                
+                let success: Bool
+                do {
+                    try ArchiveManager.shared.createZipArchive(at: zipPath, withFiles: paths)
+                    success = true
+                } catch {
+                    ELOG("Failed to create ZIP: \(error.localizedDescription)")
+                    success = false
+                }
+
                 DispatchQueue.main.async { [weak self] in
                     guard let `self` = self else { return }
-                    
+
 #if canImport(MBProgressHUD)
                     hud.hide(animated: true, afterDelay: 0.1)
 #endif

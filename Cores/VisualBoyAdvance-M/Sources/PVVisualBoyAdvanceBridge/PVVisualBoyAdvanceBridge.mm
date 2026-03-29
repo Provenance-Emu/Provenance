@@ -47,6 +47,7 @@
 #import <OpenGLES/EAGL.h>
 #endif
 
+#include <atomic>
 #include <sys/time.h>
 #include "System.h"
 #include "Util.h"
@@ -54,6 +55,136 @@
 #include "gba/RTC.h"
 #include "gba/Sound.h"
 #include "common/SoundDriver.h"
+
+// ---------------------------------------------------------------------------
+// MARK: - RetroAchievements rc_client (HAVE_RCHEEVOS)
+// Mirrors PVGambatteBridge: CRcheevos from PVRcheevos SPM; GBA bus addresses.
+// ---------------------------------------------------------------------------
+#if HAVE_RCHEEVOS
+#include "rc_client.h"
+
+static uint32_t pvvba_read_memory(uint32_t address, uint8_t *buffer,
+                                  uint32_t num_bytes, rc_client_t *client) {
+    (void)client;
+    for (uint32_t i = 0; i < num_bytes; ++i) {
+        uint32_t addr = address + i;
+        uint8_t value = 0xFF;
+        if (addr >= 0x02000000 && addr <= 0x0203FFFF) {
+            if (workRAM) {
+                value = workRAM[addr - 0x02000000];
+            }
+        } else if (addr >= 0x03000000 && addr <= 0x03007FFF) {
+            if (internalRAM) {
+                value = internalRAM[addr - 0x03000000];
+            }
+        } else if (addr >= 0x06000000 && addr <= 0x06017FFF) {
+            if (vram) {
+                value = vram[addr - 0x06000000];
+            }
+        }
+        buffer[i] = value;
+    }
+    return num_bytes;
+}
+
+static void pvvba_server_call(const rc_api_request_t *request,
+                              rc_client_server_callback_t callback,
+                              void *callback_data,
+                              rc_client_t * __unused client) {
+    if (!request->url) {
+        rc_api_server_response_t empty = {};
+        empty.http_status_code = 0;
+        callback(&empty, callback_data);
+        return;
+    }
+    NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:request->url]];
+    if (!url) {
+        rc_api_server_response_t empty = {};
+        empty.http_status_code = 400;
+        callback(&empty, callback_data);
+        return;
+    }
+    NSMutableURLRequest *urlReq = [NSMutableURLRequest requestWithURL:url];
+    urlReq.timeoutInterval = 30.0;
+    const char *postData = request->post_data;
+    if (postData && *postData) {
+        urlReq.HTTPMethod = @"POST";
+        urlReq.HTTPBody = [NSData dataWithBytes:postData length:strlen(postData)];
+        [urlReq setValue:@"application/x-www-form-urlencoded"
+      forHTTPHeaderField:@"Content-Type"];
+    } else {
+        urlReq.HTTPMethod = @"GET";
+    }
+    [urlReq setValue:@"Provenance/PVRcheevos" forHTTPHeaderField:@"User-Agent"];
+    [[[NSURLSession sharedSession]
+        dataTaskWithRequest:urlReq
+          completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+              rc_api_server_response_t resp = {};
+              if (data && !error) {
+                  resp.body             = (const char *)data.bytes;
+                  resp.body_length      = (uint32_t)data.length;
+                  resp.http_status_code = (int)[(NSHTTPURLResponse *)response statusCode];
+              } else {
+                  resp.http_status_code = 0;
+              }
+              callback(&resp, callback_data);
+          }] resume];
+}
+
+static void pvvba_event_handler(const rc_client_event_t *event, rc_client_t *client) {
+    PVVisualBoyAdvanceBridge *bridge = (__bridge PVVisualBoyAdvanceBridge *)
+                                        rc_client_get_userdata(client);
+    if (!bridge) { return; }
+
+    switch (event->type) {
+        case RC_CLIENT_EVENT_ACHIEVEMENT_TRIGGERED: {
+            const rc_client_achievement_t *ach = event->achievement;
+            NSString *badgeName = ach->badge_name ? @(ach->badge_name) : nil;
+            NSURL *badgeURL = badgeName.length
+                ? [NSURL URLWithString:[NSString stringWithFormat:
+                      @"https://media.retroachievements.org/Badge/%@.png", badgeName]]
+                : nil;
+            [bridge rcAchievementTriggeredWithID:ach->id
+                                         title:ach->title       ? @(ach->title)       : nil
+                                   description:ach->description ? @(ach->description) : nil
+                                        points:ach->points
+                                      badgeURL:badgeURL
+                                    isHardcore:(BOOL)rc_client_get_hardcore_enabled(client)];
+            break;
+        }
+        case RC_CLIENT_EVENT_ACHIEVEMENT_PROGRESS_INDICATOR_SHOW: {
+            const rc_client_achievement_t *ach = event->achievement;
+            [bridge rcAchievementProgressWithID:ach->id
+                                        title:ach->title ? @(ach->title) : nil
+                                 progressText:ach->measured_progress ? @(ach->measured_progress) : nil];
+            break;
+        }
+        case RC_CLIENT_EVENT_LEADERBOARD_STARTED: {
+            const rc_client_leaderboard_t *lb = event->leaderboard;
+            [bridge rcLeaderboardStartedWithID:lb->id
+                                       title:lb->title       ? @(lb->title)       : nil
+                                 description:lb->description ? @(lb->description) : nil
+                                   scoreText:lb->tracker_value ? @(lb->tracker_value) : nil];
+            break;
+        }
+        case RC_CLIENT_EVENT_LEADERBOARD_FAILED:
+            if (event->leaderboard != NULL) {
+                [bridge rcLeaderboardFailedWithID:event->leaderboard->id];
+            }
+            break;
+        case RC_CLIENT_EVENT_LEADERBOARD_SUBMITTED: {
+            const rc_client_leaderboard_t *lb = event->leaderboard;
+            [bridge rcLeaderboardSubmittedWithID:lb->id
+                                         title:lb->title       ? @(lb->title)       : nil
+                                   description:lb->description ? @(lb->description) : nil
+                                     scoreText:lb->tracker_value ? @(lb->tracker_value) : nil];
+            break;
+        }
+        default:
+            break;
+    }
+}
+#endif // HAVE_RCHEEVOS
 
 EmulatedSystem vba;
 int emulating = 0;
@@ -70,10 +201,16 @@ static __weak PVVisualBoyAdvanceBridge *_current;
     NSString *_romID;
     BOOL _enableRTC, _enableMirroring, _useBIOS, _haveFrame, _migratingSave;
     int _flashSize, _cpuSaveType;
+#if HAVE_RCHEEVOS
+    rc_client_t *_rcClient;
+#endif
+    std::atomic<bool> _achievementsActive;
 }
 - (void)loadOverrides:(NSString *)gameID;
 - (void)writeSaveFile;
 - (void)migrateSaveFile;
+/// Called from `pvvba_load_callback` / `pvvba_login_callback` (cannot use private ivars from static C functions).
+- (void)pvvba_applyAchievementsLoadResult:(BOOL)success;
 @end
 
 @implementation PVVisualBoyAdvanceBridge
@@ -83,6 +220,7 @@ static __weak PVVisualBoyAdvanceBridge *_current;
     if((self = [super init])) {
         self->videoBuffer = (uint8_t *) malloc(240 * 160 * 4);
         vba = GBASystem;
+        _achievementsActive.store(false);
     }
 
     _current = self;
@@ -91,6 +229,12 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 }
 
 - (void)dealloc {
+#if HAVE_RCHEEVOS
+    if (_rcClient) {
+        rc_client_destroy(_rcClient);
+        _rcClient = NULL;
+    }
+#endif
     if(self->videoBuffer) {
         free(self->videoBuffer);
         self->videoBuffer = nil;
@@ -210,6 +354,16 @@ static __weak PVVisualBoyAdvanceBridge *_current;
     }
     emulating = 1;
 
+#if HAVE_RCHEEVOS
+    if (!_rcClient) {
+        _rcClient = rc_client_create(pvvba_read_memory, pvvba_server_call);
+        if (_rcClient) {
+            rc_client_set_userdata(_rcClient, (__bridge void *)self);
+            rc_client_set_event_handler(_rcClient, pvvba_event_handler);
+        }
+    }
+#endif
+
     return YES;
 }
 
@@ -220,6 +374,7 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 - (void)executeFrameSkippingFrame:(BOOL)skip {
     self->_haveFrame = NO;
     while (!self->_haveFrame) { vba.emuMain(vba.emuCount); }
+    [self tickAchievements];
 }
 
 - (void)resetEmulation { vba.emuReset(); }
@@ -229,6 +384,15 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 
     emulating = 0;
 
+#if HAVE_RCHEEVOS
+    if (_rcClient) {
+        rc_client_unload_game(_rcClient);
+        rc_client_destroy(_rcClient);
+        _rcClient = NULL;
+    }
+    _achievementsActive.store(false);
+#endif
+
     [self writeSaveFile];
 
     vba.emuCleanUp();
@@ -237,6 +401,147 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 
 - (NSTimeInterval)frameInterval {
     return 59.727501;
+}
+
+# pragma mark - RetroAchievements
+
+- (void *)ewramBasePtr {
+    return (void *)workRAM;
+}
+
+- (void *)iwramBasePtr {
+    return (void *)internalRAM;
+}
+
+- (void *)vbaVramBasePtr {
+    return (void *)vram;
+}
+
+- (BOOL)achievementsActive {
+    return _achievementsActive.load();
+}
+
+- (void)tickAchievements {
+#if HAVE_RCHEEVOS
+    if (_rcClient && _achievementsActive.load()) {
+        rc_client_do_frame(_rcClient);
+    }
+#endif
+}
+
+#if HAVE_RCHEEVOS
+
+typedef struct pvvba_load_ctx {
+    void *bridge;
+    void *completion;
+} pvvba_load_ctx_t;
+
+static void pvvba_load_callback(int result, const char * __unused error_message,
+                                rc_client_t * __unused client, void *userdata) {
+    pvvba_load_ctx_t *ctx = (pvvba_load_ctx_t *)userdata;
+    PVVisualBoyAdvanceBridge *bridge = (__bridge_transfer PVVisualBoyAdvanceBridge *)ctx->bridge;
+    void (^completion)(BOOL) = (__bridge_transfer void (^)(BOOL))ctx->completion;
+    ctx->completion = NULL;
+    free(ctx);
+
+    BOOL success = (result == RC_OK);
+    [bridge pvvba_applyAchievementsLoadResult:success];
+    if (completion) { completion(success); }
+}
+
+typedef struct pvvba_login_ctx {
+    void *bridge;
+    void *gameHash;
+    void *completion;
+} pvvba_login_ctx_t;
+
+static void pvvba_login_callback(int result, const char * __unused error_message,
+                                 rc_client_t *client, void *userdata) {
+    pvvba_login_ctx_t *lCtx = (pvvba_login_ctx_t *)userdata;
+    PVVisualBoyAdvanceBridge *bridge = (__bridge_transfer PVVisualBoyAdvanceBridge *)lCtx->bridge;
+    NSString *hash               = (__bridge_transfer NSString *)lCtx->gameHash;
+    void (^completion)(BOOL)     = (__bridge_transfer void (^)(BOOL))lCtx->completion;
+    lCtx->completion = NULL;
+    free(lCtx);
+
+    if (result != RC_OK) {
+        [bridge pvvba_applyAchievementsLoadResult:NO];
+        if (completion) { completion(NO); }
+        return;
+    }
+
+    pvvba_load_ctx_t *loadCtx = (pvvba_load_ctx_t *)malloc(sizeof(pvvba_load_ctx_t));
+    if (!loadCtx) {
+        [bridge pvvba_applyAchievementsLoadResult:NO];
+        if (completion) { completion(NO); }
+        return;
+    }
+    loadCtx->bridge     = (__bridge_retained void *)bridge;
+    loadCtx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+    rc_client_begin_load_game(client, hash.UTF8String, pvvba_load_callback, loadCtx);
+}
+
+#endif // HAVE_RCHEEVOS
+
+- (void)loadAchievementsForGameHash:(NSString *)gameHash
+                         completion:(void (^)(BOOL success))completion {
+#if HAVE_RCHEEVOS
+    if (!_rcClient) {
+        _achievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+
+    if (rc_client_get_user_info(_rcClient) != NULL) {
+        pvvba_load_ctx_t *ctx = (pvvba_load_ctx_t *)malloc(sizeof(pvvba_load_ctx_t));
+        if (!ctx) {
+            _achievementsActive.store(false);
+            if (completion) { completion(NO); }
+            return;
+        }
+        ctx->bridge     = (__bridge_retained void *)self;
+        ctx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+        rc_client_begin_load_game(_rcClient, gameHash.UTF8String, pvvba_load_callback, ctx);
+        return;
+    }
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *username = [defaults stringForKey:@"ra_username"];
+    NSString *token    = [defaults stringForKey:@"ra_session_token"];
+    if (!username.length || !token.length) {
+        _achievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+
+    pvvba_login_ctx_t *lCtx = (pvvba_login_ctx_t *)malloc(sizeof(pvvba_login_ctx_t));
+    if (!lCtx) {
+        _achievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+    lCtx->bridge     = (__bridge_retained void *)self;
+    lCtx->gameHash   = (__bridge_retained void *)[gameHash copy];
+    lCtx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+    rc_client_begin_login_with_token(_rcClient, username.UTF8String, token.UTF8String,
+                                     pvvba_login_callback, lCtx);
+#else
+    _achievementsActive.store(false);
+    if (completion) { completion(NO); }
+#endif
+}
+
+- (void)unloadAchievements {
+#if HAVE_RCHEEVOS
+    if (_rcClient) {
+        rc_client_unload_game(_rcClient);
+    }
+#endif
+    _achievementsActive.store(false);
+}
+
+- (void)pvvba_applyAchievementsLoadResult:(BOOL)success {
+    _achievementsActive.store(success);
 }
 
 # pragma mark - Video
