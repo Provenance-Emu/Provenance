@@ -32,6 +32,8 @@
 		<string>app-usage</string>
 		<string>system-installation</string>
 	</array>
+	<key>com.apple.developer.live-activities</key>
+	<true/>
 	<key>com.apple.developer.usernotifications.time-sensitive</key>
 	<true/>
 	<key>com.apple.security.app-sandbox</key>

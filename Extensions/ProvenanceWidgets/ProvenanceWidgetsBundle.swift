@@ -24,6 +24,9 @@ import WidgetKit
 /// StandBy widgets:
 /// - **GameArtGalleryWidget** — rotating game art gallery (systemSmall in StandBy)
 /// - **NowPlayingStandByWidget** — full-screen album art + track info (systemSmall in StandBy)
+///
+/// Live Activities:
+/// - **GameLiveActivityWidget** — Dynamic Island + lock-screen activity for in-game sessions
 @main
 struct ProvenanceWidgetsBundle: WidgetBundle {
     var body: some Widget {
@@ -37,6 +40,8 @@ struct ProvenanceWidgetsBundle: WidgetBundle {
         // StandBy
         GameArtGalleryWidget()
         NowPlayingStandByWidget()
+        // Live Activities (requires iOS 16.2+; deployment target is iOS 17+)
+        GameLiveActivityWidget()
     }
 }
 #endif

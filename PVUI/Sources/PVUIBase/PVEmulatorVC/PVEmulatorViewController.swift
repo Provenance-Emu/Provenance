@@ -277,6 +277,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             // Single authoritative pause toggle to avoid conflicting calls
             guard core.isOn, !isQuitting else { return }
             core.setPauseEmulation(isShowingMenu)
+            setLiveActivityPaused(isShowingMenu)
         }
     }
 
@@ -869,6 +870,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         await applyPersistedTransferPakIfNeeded()
 
         core.startEmulation()
+
+        // Start Live Activity (Dynamic Island / lock screen) for this gameplay session.
+        startLiveActivityIfNeeded()
 
         // Warn if device audio is muted or volume is zero (iOS/iPadOS only, once per session).
         #if os(iOS) && !targetEnvironment(macCatalyst)
@@ -1538,6 +1542,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             MIDIDeviceManager.shared.setResponder(nil)
         }
         #endif
+
+        // End Live Activity before the core shuts down.
+        endLiveActivity()
 
         core.stopEmulation()
         gpuViewController.dismiss(animated: false)
