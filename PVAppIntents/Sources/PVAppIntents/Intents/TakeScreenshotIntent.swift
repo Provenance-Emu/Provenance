@@ -64,13 +64,17 @@ public struct TakeScreenshotIntent: AppIntent {
     private func waitForScreenshotFile(timeout: TimeInterval) async throws -> IntentFile? {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
-            try await Task.sleep(nanoseconds: 200_000_000) // 0.2 s
+            // Check before sleeping so a fast response (< 200 ms) is returned immediately.
             if let urlString = pvAppGroupDefaults?.string(forKey: "lastScreenshotURL"),
                let url = URL(string: urlString) {
                 pvAppGroupDefaults?.removeObject(forKey: "lastScreenshotURL")
-                let data = (try? Data(contentsOf: url)) ?? Data()
+                guard let data = try? Data(contentsOf: url) else {
+                    // URL present but unreadable — treat as a failed capture.
+                    return nil
+                }
                 return IntentFile(data: data, filename: url.lastPathComponent, type: .png)
             }
+            try await Task.sleep(nanoseconds: 200_000_000) // 0.2 s
         }
         return nil
     }

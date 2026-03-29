@@ -48,8 +48,8 @@ final class SaveStateIntentTests: XCTestCase {
     }
 
     func testPerformThrowsWhenNoAppGroup() async {
-        // In CI there is no App Group, so pvAppGroupDefaults is nil.
-        // SaveStateIntent should throw noActiveSession in that case.
+        // When no App Group is configured (e.g., Linux CI), pvAppGroupDefaults is nil
+        // so pvGameIsActive returns false, causing SaveStateIntent to throw noActiveSession.
         let intent = SaveStateIntent(slot: 1)
         do {
             _ = try await intent.perform()
