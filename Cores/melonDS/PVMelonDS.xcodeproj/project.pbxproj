@@ -225,7 +225,7 @@
 		93C36BC52A8B403B0007671D /* melon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = melon.icns; sourceTree = "<group>"; };
 		93C36BC62A8B403B0007671D /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		93C36BC72A8B403B0007671D /* melon.qrc */ = {isa = PBXFileReference; lastKnownFileType = text; path = melon.qrc; sourceTree = "<group>"; };
-		93C36BC82A8B403B0007671D /* contributing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = contributing.md; sourceTree = "<group>"; };
+		93C36BC82A8B403B0007671D /* contributing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 		93C36BCA2A8B403B0007671D /* FUNDING.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = FUNDING.yml; sourceTree = "<group>"; };
 		93C36BCC2A8B403B0007671D /* build-mac-arm64.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = "build-mac-arm64.yml"; sourceTree = "<group>"; };
 		93C36BCD2A8B403B0007671D /* build-mac-x86_64.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = "build-mac-x86_64.yml"; sourceTree = "<group>"; };
@@ -925,7 +925,7 @@
 		B338057B2877B5080009C732 /* melon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = melon.icns; sourceTree = "<group>"; };
 		B338057C2877B5080009C732 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B338057D2877B5080009C732 /* melon.qrc */ = {isa = PBXFileReference; lastKnownFileType = text; path = melon.qrc; sourceTree = "<group>"; };
-		B338057E2877B5080009C732 /* contributing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = contributing.md; sourceTree = "<group>"; };
+		B338057E2877B5080009C732 /* contributing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 		B33805802877B5080009C732 /* FUNDING.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = FUNDING.yml; sourceTree = "<group>"; };
 		B33805822877B5080009C732 /* build-mac-arm64.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = "build-mac-arm64.yml"; sourceTree = "<group>"; };
 		B33805832877B5080009C732 /* build-mac-x86_64.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = "build-mac-x86_64.yml"; sourceTree = "<group>"; };

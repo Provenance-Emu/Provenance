@@ -50,7 +50,7 @@ public struct TakeScreenshotIntent: AppIntent {
         // Poll for up to 3 s for the host app to write back the screenshot URL.
         let screenshotFile = try await waitForScreenshotFile(timeout: 3.0)
 
-        let dialog: LocalizedStringResource = screenshotFile != nil
+        let dialog: IntentDialog = screenshotFile != nil
             ? "Screenshot saved."
             : "Screenshot requested — check your Photos library."
 
@@ -79,8 +79,9 @@ public struct TakeScreenshotIntent: AppIntent {
         return nil
     }
 
+    /// No `@Parameter` properties — use a fixed summary (app name appears in `AppShortcut` phrases in `ProvenanceShortcuts`).
     public static var parameterSummary: some ParameterSummary {
-        Summary("Take a screenshot in \(.applicationName)")
+        Summary("Take a screenshot")
     }
 }
 #endif

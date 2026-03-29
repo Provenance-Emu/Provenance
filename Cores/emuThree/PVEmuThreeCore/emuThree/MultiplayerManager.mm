@@ -7,7 +7,7 @@
 //
 
 #import "MultiplayerManager.h"
-@import PVSettings;
+#import <UIKit/UIKit.h>
 
 #include <iostream>
 #include <memory>
@@ -198,7 +198,10 @@ static void OnStatusMessageReceived(const Network::StatusMessageEntry& msg) {
 
 -(void) connect:(NetworkRoom *)room andPassword:(NSString * _Nullable)password
       withErrorChange:(void(^)(ErrorChange error))errorChange withStateChange:(void(^)(StateChange state))stateChange {
-    [self connect:room withUsername:PVSettingsWrapper.resolvedPlayerUsername andPassword:password
+    [self connect:room withUsername:({
+        NSString *u = [[NSUserDefaults standardUserDefaults] stringForKey:@"playerUsername"];
+        (u.length > 0) ? u : [[UIDevice currentDevice] name];
+    }) andPassword:password
   withErrorChange:errorChange withStateChange:stateChange];
 }
 

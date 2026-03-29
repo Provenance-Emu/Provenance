@@ -3042,7 +3042,7 @@
 				DFB601D52038AE78001E70F1 /* src */,
 				DFB601CD2038AE78001E70F1 /* translations */,
 			);
-			path = gliden64;
+			path = GLideN64;
 			sourceTree = "<group>";
 		};
 		DFB6018C2038AE78001E70F1 /* licenses */ = {
@@ -5443,20 +5443,20 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNHQ\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/xxHash\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -5476,7 +5476,7 @@
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/gliden64/src\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/GLideN64/src\"";
 				USE_HEADERMAP = NO;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -5570,21 +5570,21 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ/inc\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)Sources//Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNHQ/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNHQ\"",
+					"\"$(SRCROOT)Sources//Plugins/Video/GLideN64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/xxHash\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
@@ -6230,21 +6230,21 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ/inc\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)Sources//Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNHQ/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNHQ\"",
+					"\"$(SRCROOT)Sources//Plugins/Video/GLideN64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/xxHash\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -6288,21 +6288,21 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ/inc\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)Sources//Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNHQ/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNHQ\"",
+					"\"$(SRCROOT)Sources//Plugins/Video/GLideN64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/xxHash\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
@@ -6770,20 +6770,20 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNHQ\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/xxHash\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -6802,7 +6802,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/gliden64/src\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/GLideN64/src\"";
 				USE_HEADERMAP = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -6861,20 +6861,20 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNHQ\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/GLideN64/src/xxHash\"",
 				);
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -6893,7 +6893,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/gliden64/src\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Video/GLideN64/src\"";
 				USE_HEADERMAP = NO;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";

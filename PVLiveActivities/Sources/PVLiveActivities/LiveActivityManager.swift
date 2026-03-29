@@ -35,6 +35,11 @@
 import ActivityKit
 import Foundation
 
+/// ActivityKit does not declare `Activity` as `Sendable`; Live Activity handles are used from `@MainActor`
+/// here and match ActivityKit’s main-run-loop delivery. This conformance silences Swift 6 “sending … risks
+/// data races” on `await activity.end` / `await activity.update` only for attribute payloads that are `Sendable`.
+extension Activity: @unchecked Sendable where Attributes: Sendable {}
+
 /// Manages the lifecycle of the Provenance in-game Live Activity.
 ///
 /// The manager is a `Sendable` actor-like class using `@MainActor` isolation so

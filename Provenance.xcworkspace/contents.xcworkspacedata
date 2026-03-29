@@ -57,7 +57,7 @@
             location = "group:Cores/NP2Kai/PVNP2Kai.xcodeproj">
          </FileRef>
          <FileRef
-            location = "group:Cores/Hatari/PVHatari.xcodeproj">
+            location = "group:Cores/hatari/PVHatari.xcodeproj">
          </FileRef>
          <FileRef
             location = "group:Cores/FinalBurnNeo/PVFBNeo.xcodeproj">
@@ -82,13 +82,13 @@
          location = "group:Cores/DosBox/PVDosBox.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/EP128Emu/PVEP128Emu.xcodeproj">
+         location = "group:Cores/ep128emu/PVEP128Emu.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Flycast/PVFlycast.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/fMSX/PVfMSX.xcodeproj">
+         location = "group:Cores/fmsx/PVfMSX.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/FreeIntv/PVFreeIntv.xcodeproj">
@@ -115,7 +115,7 @@
          location = "group:Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Opera/PVOpera.xcodeproj">
+         location = "group:Cores/opera/PVOpera.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj">

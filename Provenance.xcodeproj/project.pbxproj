@@ -292,6 +292,8 @@
 		B33BD1C62C6A622A001E933A /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B33BD1C82C6A6261001E933A /* PVStella-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C72C6A6261001E933A /* PVStella-Dynamic */; };
 		B33BD1C92C6A6261001E933A /* PVStella-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C72C6A6261001E933A /* PVStella-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B341A9382F78F4B8007C483B /* GameLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B341A9372F78F4B8007C483B /* GameLiveActivityWidget.swift */; };
+		B341A9572F78F52B007C483B /* PVLiveActivities in Frameworks */ = {isa = PBXBuildFile; productRef = B341A9562F78F52B007C483B /* PVLiveActivities */; };
 		B341AD912E2BF4BA00B18E76 /* PVMelonDS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B341AD902E2BF4BA00B18E76 /* PVMelonDS.framework */; platformFilters = (ios, maccatalyst, ); };
 		B341AD922E2BF4BA00B18E76 /* PVMelonDS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B341AD902E2BF4BA00B18E76 /* PVMelonDS.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3470E622F6E492D0066B958 /* DefaultsMacros in Frameworks */ = {isa = PBXBuildFile; productRef = B3470E612F6E492D0066B958 /* DefaultsMacros */; };
@@ -907,7 +909,6 @@
 		C885E52E5278B83804A0BF61 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DB17C8D60C0019F6D2 /* Security.framework */; };
 		D98C48D75C3DA4BF85D917D8 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */; };
 		DA5EB00A206C4DEB000B5F30 /* PVGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5EB009206C4DEB000B5F30 /* PVGame+TopShelf.swift */; };
-		E5EB2B28CA03479A91ABDF80 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = 54925F9AB59542258A6A5CE9 /* Sentry */; };
 		ED964A0F70624EDFB0DAE912 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
 		F54AF57907923FAA7CBC2FB0 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EB2BE7F8DD0066D4B6 /* libxml2.tbd */; };
 		F5A172889A9A49699317D6F9 /* PVQuickLookSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3416C07727A438EB2EE9A87 /* PVQuickLookSupport */; };
@@ -1838,6 +1839,7 @@
 		B33E2C592D682386005AD177 /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
 		B340E6091E088CF900AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34170C12C71765100469519 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B341A9372F78F4B8007C483B /* GameLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLiveActivityWidget.swift; sourceTree = "<group>"; };
 		B341AD902E2BF4BA00B18E76 /* PVMelonDS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMelonDS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B341FE092BE61EC400718929 /* ProvenanceTV-AppStore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ProvenanceTV-AppStore-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/ProvenanceTV/ProvenanceTV-AppStore-Info.plist"; sourceTree = "<absolute>"; };
 		B344605A27DCB73E0035B08E /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/swift/libswift_Concurrency.tbd; sourceTree = DEVELOPER_DIR; };
@@ -3122,6 +3124,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B341A9572F78F52B007C483B /* PVLiveActivities in Frameworks */,
 				B396209C2C66E1F30094F6F0 /* PVSupport in Frameworks */,
 				B396209A2C66E1EF0094F6F0 /* PVLibrary in Frameworks */,
 				B355E03B2920AC1A00E4C858 /* SwiftUI.framework in Frameworks */,
@@ -3389,7 +3392,6 @@
 				B32CEE412D20D4530083552D /* PVFeatureFlags in Frameworks */,
 				111962BE249FDCD2006EAA16 /* CoreServices.framework in Frameworks */,
 				B3EE55E32C66EC14004D06E4 /* Defaults in Frameworks */,
-				E5EB2B28CA03479A91ABDF80 /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6476,6 +6478,7 @@
 			isa = PBXGroup;
 			children = (
 				B3DD01002F20031900000000 /* ProvenanceWidgetsBundle.swift */,
+				B341A9372F78F4B8007C483B /* GameLiveActivityWidget.swift */,
 				B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */,
 				B3DD07032F20031900000000 /* WidgetLocalizedStrings.swift */,
 				B3DD07052F20031900000000 /* Localizable.strings */,
@@ -10136,6 +10139,7 @@
 				B3DD06002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift in Sources */,
 				B3DD06012F20031900000001 /* Widgets/FavoritesWidget.swift in Sources */,
 				B3DD06022F20031900000001 /* Widgets/LibraryStatsWidget.swift in Sources */,
+				B341A9382F78F4B8007C483B /* GameLiveActivityWidget.swift in Sources */,
 				B3DD06032F20031900000001 /* Views/GameArtworkView.swift in Sources */,
 				B3DD06042F20031900000001 /* Views/SystemBadgeView.swift in Sources */,
 			);
@@ -15811,14 +15815,6 @@
 				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
-		F8F20E7C3CB546288E1FB7F2 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/getsentry/sentry-cocoa/";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -15849,11 +15845,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3E8817E2D90C1B700A80D83 /* XCRemoteSwiftPackageReference "OpenSSL" */;
 			productName = OpenSSL;
-		};
-		54925F9AB59542258A6A5CE9 /* Sentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = F8F20E7C3CB546288E1FB7F2 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
-			productName = Sentry;
 		};
 		68BFA96F7C00F9335C5E5782 /* PVThemes */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -16192,6 +16183,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3F9D6D721C96424F9D931C3B /* XCLocalSwiftPackageReference "PVQuickLookSupport" */;
 			productName = PVQuickLookSupport;
+		};
+		B341A9562F78F52B007C483B /* PVLiveActivities */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D9A2C82F78C6F5002F1DCB /* XCLocalSwiftPackageReference "PVLiveActivities" */;
+			productName = PVLiveActivities;
 		};
 		B3470E612F6E492D0066B958 /* DefaultsMacros */ = {
 			isa = XCSwiftPackageProductDependency;

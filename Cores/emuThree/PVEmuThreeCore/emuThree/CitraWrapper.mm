@@ -11,7 +11,6 @@
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import <AVFoundation/AVFoundation.h>
-@import PVSettings;
 #import <PVEmuThree/CitraWrapper.h>
 #import "InputFactory.h"
 #import <sys/utsname.h>
@@ -417,7 +416,11 @@ static void InitializeLogging() {
             cfg->SetSystemLanguage(static_cast<Service::CFG::SystemLanguage>(languageValue));
         }
 
-        NSString *username = PVSettingsWrapper.resolvedPlayerUsername;
+        // Read player username from NSUserDefaults (mirrors PVSettingsWrapper.resolvedPlayerUsername)
+        NSString *username = [[NSUserDefaults standardUserDefaults] stringForKey:@"playerUsername"];
+        if (username.length == 0) {
+            username = [[UIDevice currentDevice] name];
+        }
         if (username.length > 0) {
             NSString *truncated = username.length > 10 ? [username substringToIndex:10] : username;
             std::u16string u16name;

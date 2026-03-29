@@ -137,15 +137,17 @@ public struct ProvenanceShortcuts: AppShortcutsProvider {
             ),
 
             // MARK: Add Cheat Code
-            AppShortcut(
-                intent: AddCheatIntent(),
-                phrases: [
-                    "Add a cheat code in \(.applicationName)",
-                    "Enter cheat code on \(.applicationName)"
-                ],
-                shortTitle: "Add Cheat",
-                systemImageName: "chevron.left.forwardslash.chevron.right"
-            )
+            // NOTE: Apple limits apps to 10 shortcuts max.
+            // AddCheatIntent is available as a manual shortcut but not registered here.
+            // AppShortcut(
+            //     intent: AddCheatIntent(),
+            //     phrases: [
+            //         "Add a cheat code in \(.applicationName)",
+            //         "Enter cheat code on \(.applicationName)"
+            //     ],
+            //     shortTitle: "Add Cheat",
+            //     systemImageName: "chevron.left.forwardslash.chevron.right"
+            // )
         ]
     }
 }

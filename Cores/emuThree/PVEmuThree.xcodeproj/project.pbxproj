@@ -344,6 +344,9 @@
 		B31DDD142D834B2400D6525B /* CitraWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 93A924722A6F88690059BFEA /* CitraWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B31DDD162D834C4F00D6525B /* InputBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 93DB10BD2A7B95E5005E83A4 /* InputBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
+		B341986F2F78E9E3007C483B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B341986E2F78E9E3007C483B /* PVSettings */; };
+		B34198712F78EA35007C483B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B34198702F78EA35007C483B /* PVSettings */; };
+		B341A9332F78F1DC007C483B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B341A9322F78F1DC007C483B /* AVFoundation.framework */; };
 		B34DDCC72D86BDC5008330B3 /* audio_cache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34DDCC52D86BDC5008330B3 /* audio_cache.cpp */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
@@ -16867,6 +16870,7 @@
 		B31DDD072D82C1B600D6525B /* MultiplayerManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MultiplayerManager.mm; sourceTree = "<group>"; };
 		B31DDD112D82CF8500D6525B /* aac_decoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = aac_decoder.cpp; sourceTree = "<group>"; };
 		B31DDD132D82CF8C00D6525B /* aac_decoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = aac_decoder.h; sourceTree = "<group>"; };
+		B341A9322F78F1DC007C483B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.4.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B34DDCC42D86BDC5008330B3 /* audio_cache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = audio_cache.h; sourceTree = "<group>"; };
 		B34DDCC52D86BDC5008330B3 /* audio_cache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = audio_cache.cpp; sourceTree = "<group>"; };
@@ -16992,6 +16996,7 @@
 				93E5AB042A77B261001C77A2 /* libboost_program_optionsEmuThree.a in Frameworks */,
 				93E5AB052A77B261001C77A2 /* libboost_serializationEmuThree.a in Frameworks */,
 				93E5AB062A77B261001C77A2 /* libdynarmicEmuThree.a in Frameworks */,
+				B34198712F78EA35007C483B /* PVSettings in Frameworks */,
 				93E5AB072A77B261001C77A2 /* libenetEmuThree.a in Frameworks */,
 				93E5AB082A77B261001C77A2 /* libfmtEmuThree.a in Frameworks */,
 				93E5AB092A77B261001C77A2 /* libGenericCodeGenEmuThree.a in Frameworks */,
@@ -16999,6 +17004,7 @@
 				93E5AB0B2A77B261001C77A2 /* libHLSLEmuThree.a in Frameworks */,
 				93E5AB0C2A77B261001C77A2 /* libMachineIndependentEmuThree.a in Frameworks */,
 				93E5AB0D2A77B261001C77A2 /* libmclEmuThree.a in Frameworks */,
+				B341A9332F78F1DC007C483B /* AVFoundation.framework in Frameworks */,
 				B31DDC752D8292B900D6525B /* libopenal.xcframework in Frameworks */,
 				93E5AB0E2A77B261001C77A2 /* libMoltenVK.dylib in Frameworks */,
 				93E5AB0F2A77B261001C77A2 /* libOGLCompilerEmuThree.a in Frameworks */,
@@ -17044,6 +17050,7 @@
 				B3A483422F569BD6004A995B /* PVPrimitives in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
+				B341986F2F78E9E3007C483B /* PVSettings in Frameworks */,
 				B31DDCF32D82A10100D6525B /* CoreBluetooth.framework in Frameworks */,
 				B30E9B102C6FBF1C00C1431E /* PVCoreBridge in Frameworks */,
 				B37CDBAF2CAA6AF90026E901 /* PVPlists in Frameworks */,
@@ -44583,6 +44590,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B341A9322F78F1DC007C483B /* AVFoundation.framework */,
 				B31DDCF22D82A10100D6525B /* CoreBluetooth.framework */,
 				B31DDC782D8292CF00D6525B /* SDL2.xcframework */,
 				B31DDC742D8292B900D6525B /* libopenal.xcframework */,
@@ -44668,6 +44676,7 @@
 			);
 			name = emuthree;
 			packageProductDependencies = (
+				B34198702F78EA35007C483B /* PVSettings */,
 			);
 			productName = reicast;
 			productReference = B30178D3207C901D0051B93D /* libemuthree.a */;
@@ -44698,6 +44707,7 @@
 				B3CC2E222CBC245F00D90EB1 /* MoltenVK */,
 				B36A16012D90D24100420484 /* OpenSSL */,
 				B3A483412F569BD6004A995B /* PVPrimitives */,
+				B341986E2F78E9E3007C483B /* PVSettings */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVEmuThree.framework */;
@@ -45741,6 +45751,16 @@
 		B30E9B122C6FBF2C00C1431E /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
+		};
+		B341986E2F78E9E3007C483B /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37CDBA72CAA6A580026E901 /* XCLocalSwiftPackageReference "../../PVSettings" */;
+			productName = PVSettings;
+		};
+		B34198702F78EA35007C483B /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B37CDBA72CAA6A580026E901 /* XCLocalSwiftPackageReference "../../PVSettings" */;
+			productName = PVSettings;
 		};
 		B36A16012D90D24100420484 /* OpenSSL */ = {
 			isa = XCSwiftPackageProductDependency;
