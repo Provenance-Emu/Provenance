@@ -38,6 +38,7 @@ public struct DiscRipperView: View {
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button(String(localized: "disc_ripper.cancel")) { dismiss() }
+                            .disabled(viewModel.isRipping)
                     }
                 }
         }

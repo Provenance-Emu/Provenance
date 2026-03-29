@@ -44,7 +44,6 @@ public struct RipperProgressSheet: View {
         ) {
             Button(String(localized: "ripper_sheet.cancel_confirm.stop"), role: .destructive) {
                 viewModel.cancelRip()
-                dismiss()
             }
             Button(String(localized: "ripper_sheet.cancel_confirm.continue"), role: .cancel) {
                 viewModel.showCancelRipConfirmation = false
@@ -83,7 +82,7 @@ public struct RipperProgressSheet: View {
                     .monospacedDigit()
                     .contentTransition(.numericText())
                 if let progress = viewModel.currentProgress {
-                    Text("Track \(progress.currentTrack) of \(progress.totalTracks)")
+                    Text(verbatim: "\(progress.currentTrack) / \(progress.totalTracks)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
