@@ -22,9 +22,20 @@ struct MouseInputSettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        ScrollView {
-            MouseSection()
-                .padding()
+        ZStack {
+            #if os(tvOS)
+            RetroSettingsBackground()
+            #endif
+
+            ScrollView {
+                MouseSection()
+                    .tvOSSettingsHorizontalPadding()
+                    #if os(tvOS)
+                    .padding(.vertical, 24)
+                    #else
+                    .padding()
+                    #endif
+            }
         }
         .navigationTitle("Mouse Input")
         #if os(tvOS)
@@ -49,18 +60,16 @@ struct MouseSection: View {
     @ObservedObject private var themeManager = ThemeManager.shared
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             // Input source picker
             inputSourcePicker
 
-            Divider()
-                .background(Color.retroBlue.opacity(0.3))
+            RetroSettingsDivider()
 
             // Light gun crosshair style
             crosshairStylePicker
 
-            Divider()
-                .background(Color.retroBlue.opacity(0.3))
+            RetroSettingsDivider()
 
             // Global sensitivity
             sensitivitySlider(
@@ -71,16 +80,18 @@ struct MouseSection: View {
 
             // Gyro-specific controls (only relevant when gyro or auto)
             if inputSource == .gyro || inputSource == .auto {
-                Divider()
-                    .background(Color.retroBlue.opacity(0.3))
+                RetroSettingsDivider()
 
                 Toggle(isOn: $gyroMouseEnabled) {
                     Label("Enable Gyro Mouse", systemImage: "gyroscope")
-                        .font(.system(size: 14, weight: .semibold))
+                        .font(.retroSettingsLabel)
                         .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                             ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 }
                 .tint(.retroBlue)
+                #if os(tvOS)
+                .retroThemedFocus()
+                #endif
 
                 if gyroMouseEnabled {
                     sensitivitySlider(
@@ -93,7 +104,7 @@ struct MouseSection: View {
                 }
 
                 Text("Note: Gyro mouse settings are stored but not yet applied during gameplay in this build.")
-                    .font(.footnote)
+                    .font(.retroSettingsRowSubtitle)
                     .foregroundColor(.secondary)
                     .padding(.top, 4)
             }
@@ -105,60 +116,25 @@ struct MouseSection: View {
     private var inputSourcePicker: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Input Source", systemImage: "computermouse")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.retroSettingsLabel)
                 .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                     ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
 
             ForEach(MouseInputSource.allCases.filter { source in
                 #if os(tvOS)
-                // Touchscreen virtual overlay is unavailable on tvOS
                 return source != .touchscreen
                 #else
                 return true
                 #endif
             }, id: \.rawValue) { source in
-                Button(action: { inputSource = source }) {
-                    HStack(spacing: 12) {
-                        Image(systemName: source.symbolName)
-                            .font(.system(size: 16))
-                            .frame(width: 24)
-                            .foregroundColor(inputSource == source ? .retroBlue : .secondary)
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(source.displayName)
-                                .font(.system(size: 15, weight: .medium))
-                                .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
-                                    ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                            Text(source.subtitle)
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                        }
-
-                        Spacer()
-
-                        if inputSource == source {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.retroBlue)
-                        }
-                    }
-                    .padding(10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(inputSource == source
-                                ? Color.retroBlue.opacity(0.12)
-                                : Color.clear)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        inputSource == source
-                                            ? Color.retroBlue.opacity(0.5)
-                                            : Color.white.opacity(0.08),
-                                        lineWidth: 1
-                                    )
-                            )
-                    )
+                RetroSettingsPickerRow(
+                    symbolName: source.symbolName,
+                    title: source.displayName,
+                    subtitle: source.subtitle,
+                    isSelected: inputSource == source
+                ) {
+                    inputSource = source
                 }
-                .buttonStyle(PlainButtonStyle())
             }
         }
     }
@@ -168,57 +144,23 @@ struct MouseSection: View {
     private var crosshairStylePicker: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Light Gun Crosshair", systemImage: "scope")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.retroSettingsLabel)
                 .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                     ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
 
             Text("Shown when playing light-gun games")
-                .font(.system(size: 12))
+                .font(.retroSettingsRowSubtitle)
                 .foregroundColor(.secondary)
 
             ForEach(LightGunCrosshairStyle.allCases, id: \.rawValue) { style in
-                Button(action: { crosshairStyle = style }) {
-                    HStack(spacing: 12) {
-                        Image(systemName: style.symbolName)
-                            .font(.system(size: 16))
-                            .frame(width: 24)
-                            .foregroundColor(crosshairStyle == style ? .retroBlue : .secondary)
-
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(style.displayName)
-                                .font(.system(size: 15, weight: .medium))
-                                .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
-                                    ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                            Text(style.subtitle)
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                        }
-
-                        Spacer()
-
-                        if crosshairStyle == style {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.retroBlue)
-                        }
-                    }
-                    .padding(10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(crosshairStyle == style
-                                ? Color.retroBlue.opacity(0.12)
-                                : Color.clear)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        crosshairStyle == style
-                                            ? Color.retroBlue.opacity(0.5)
-                                            : Color.white.opacity(0.08),
-                                        lineWidth: 1
-                                    )
-                            )
-                    )
+                RetroSettingsPickerRow(
+                    symbolName: style.symbolName,
+                    title: style.displayName,
+                    subtitle: style.subtitle,
+                    isSelected: crosshairStyle == style
+                ) {
+                    crosshairStyle = style
                 }
-                .buttonStyle(PlainButtonStyle())
             }
         }
     }
@@ -229,19 +171,22 @@ struct MouseSection: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Label(title, systemImage: "slider.horizontal.3")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.retroSettingsLabel)
                     .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                         ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 Spacer()
                 Text(String(format: "%.1f×", value.wrappedValue))
-                    .font(.system(size: 13, weight: .medium, design: .monospaced))
+                    .font(.retroSettingsValue)
                     .foregroundColor(.retroBlue)
             }
             Text(subtitle)
-                .font(.system(size: 12))
+                .font(.retroSettingsRowSubtitle)
                 .foregroundColor(.secondary)
             RetroWaveSlider(value: value, in: 0.1...5.0, step: 0.1)
                 .accentColor(.retroBlue)
+                #if os(tvOS)
+                .padding(.bottom, 8)
+                #endif
         }
     }
 
@@ -251,22 +196,24 @@ struct MouseSection: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Label("Gyro Dead Zone", systemImage: "gyroscope")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.retroSettingsLabel)
                     .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                         ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 Spacer()
                 Text(String(format: "%.2f", gyroDeadZone))
-                    .font(.system(size: 13, weight: .medium, design: .monospaced))
+                    .font(.retroSettingsValue)
                     .foregroundColor(.retroBlue)
             }
             Text("Minimum rotation (rad/s) to register as movement")
-                .font(.system(size: 12))
+                .font(.retroSettingsRowSubtitle)
                 .foregroundColor(.secondary)
             RetroWaveSlider(value: $gyroDeadZone,
                             in: 0.0...0.5,
                             step: 0.01)
                 .accentColor(.retroBlue)
+                #if os(tvOS)
+                .padding(.bottom, 8)
+                #endif
         }
     }
 }
-

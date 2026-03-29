@@ -108,25 +108,36 @@ public struct ControllerGuideView: View {
     public init() {}
 
     public var body: some View {
+        #if os(tvOS)
+        ZStack {
+            RetroSettingsBackground()
+
+            List {
+                controllerTypesSection
+                pairingGuideSection
+                platformNotesSection
+                wikiSection
+            }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            // Indent from left edge to account for the tvOS side-menu bar
+            .padding(.leading, 60)
+        }
+        .navigationTitle("Controller Guide")
+        .focusSection()
+        .onExitCommand { dismiss() }
+        .settingsSubpageTracking()
+        #else
         List {
             controllerTypesSection
             pairingGuideSection
             platformNotesSection
             wikiSection
         }
-        #if os(tvOS)
-        .listStyle(.plain)
-        #else
         .listStyle(.insetGrouped)
-        #endif
         .navigationTitle("Controller Guide")
-        #if os(tvOS)
-        .focusSection()
-        .onExitCommand { dismiss() }
-        #endif
-        .settingsSubpageTracking()
-        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.large)
+        .settingsSubpageTracking()
         #endif
     }
 
@@ -351,8 +362,7 @@ public struct ControllerGuideView: View {
             .contentShape(Rectangle())
         }
         #if os(tvOS)
-        .buttonStyle(.card)
-        .retroThemedFocus(cornerRadius: 12)
+        .retroFocusButtonStyle(focusScale: 1.03, focusBorderWidth: 2.5, cornerRadius: 12)
         #else
         .buttonStyle(.plain)
         #endif

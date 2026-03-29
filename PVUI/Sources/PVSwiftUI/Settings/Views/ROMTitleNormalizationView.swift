@@ -10,6 +10,8 @@ import SwiftUI
 import PVLibrary
 import PVPrimitives
 import PVLogging
+import PVUIBase
+import PVThemes
 
 // MARK: - Main View
 
@@ -31,40 +33,52 @@ public struct ROMTitleNormalizationView: View {
     // MARK: Body
 
     public var body: some View {
-        List {
-            if !isLoading && !proposals.isEmpty {
-                selectionHeader
-            }
+        ZStack {
+            #if os(tvOS)
+            RetroSettingsBackground()
+            #endif
 
-            if isLoading {
-                Section {
-                    HStack {
-                        Spacer()
-                        ProgressView("Scanning library...")
-                        Spacer()
+            List {
+                if !isLoading && !proposals.isEmpty {
+                    selectionHeader
+                }
+
+                if isLoading {
+                    Section {
+                        HStack {
+                            Spacer()
+                            ProgressView("Scanning library...")
+                                .foregroundColor(.secondary)
+                            Spacer()
+                        }
+                        .padding()
                     }
-                    .padding()
+                } else if proposals.isEmpty {
+                    Section {
+                        Text("All game titles are already clean — no changes needed.")
+                            .foregroundStyle(.secondary)
+                            .padding(.vertical, 8)
+                    }
+                } else {
+                    proposalsList
                 }
-            } else if proposals.isEmpty {
-                Section {
-                    Text("All game titles are already clean — no changes needed.")
-                        .foregroundStyle(.secondary)
-                        .padding(.vertical, 8)
-                }
-            } else {
-                proposalsList
             }
+            #if os(tvOS)
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .tvOSSettingsHorizontalPadding()
+            #endif
         }
         .navigationTitle("Normalize ROM Titles")
-#if os(tvOS)
+        #if os(tvOS)
         .focusSection()
         .onExitCommand { dismiss() }
-#endif
+        #endif
         .settingsSubpageTracking()
-#if !os(tvOS)
+        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarItems }
-#endif
+        #endif
         .task { await load() }
         .alert(resultIsError ? "Error" : "Done", isPresented: $showResult, actions: {
             Button("OK") {}
@@ -80,6 +94,9 @@ public struct ROMTitleNormalizationView: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text("\(proposals.count) title(s) can be cleaned up.")
                     .font(.subheadline)
+                    #if os(tvOS)
+                    .foregroundColor(.white)
+                    #endif
                 Text("Select which renames to apply, then tap Apply.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -87,16 +104,14 @@ public struct ROMTitleNormalizationView: View {
             .padding(.vertical, 4)
 
             HStack(spacing: 12) {
-                Button("Select All") {
+                RetroSettingsActionButton(title: "Select All", icon: "checkmark.circle", color: .retroBlue) {
                     selected = Set(proposals.map(\.id))
                 }
-                .buttonStyle(.bordered)
                 .disabled(isApplying)
 
-                Button("Select None") {
+                RetroSettingsActionButton(title: "Select None", icon: "circle", color: .retroPurple) {
                     selected = []
                 }
-                .buttonStyle(.bordered)
                 .disabled(isApplying)
 
                 Spacer()
@@ -104,15 +119,24 @@ public struct ROMTitleNormalizationView: View {
                 if isApplying {
                     ProgressView()
                 } else {
-                    Button("Apply (\(selected.count))") {
+                    RetroSettingsActionButton(
+                        title: "Apply (\(selected.count))",
+                        icon: "checkmark.seal.fill",
+                        color: .retroPink
+                    ) {
                         Task { await applySelected() }
                     }
-                    .buttonStyle(.borderedProminent)
                     .disabled(selected.isEmpty)
                 }
             }
             .padding(.vertical, 4)
+        } header: {
+            retroSectionHeader
         }
+    }
+
+    private var retroSectionHeader: some View {
+        RetroSettingsSectionHeader(icon: "textformat.alt", title: "ROM Title Cleanup")
     }
 
     private var proposalsList: some View {
@@ -218,14 +242,14 @@ private struct ProposalRow: View {
         Button(action: onTap) {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? Color.accentColor : Color.secondary)
+                    .foregroundStyle(isSelected ? Color.retroBlue : Color.secondary)
                     .font(.title3)
                     .padding(.top, 2)
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(proposal.currentTitle)
                         .font(.subheadline)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.secondary)
                         .strikethrough()
 
                     Label {
@@ -236,7 +260,7 @@ private struct ProposalRow: View {
                     } icon: {
                         Image(systemName: "arrow.right")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.retroBlue)
                     }
                 }
                 Spacer()
@@ -244,7 +268,11 @@ private struct ProposalRow: View {
             .padding(.vertical, 4)
             .contentShape(Rectangle())
         }
+        #if os(tvOS)
+        .retroFocusButtonStyle(focusScale: 1.02, focusBorderWidth: 2, cornerRadius: 8)
+        #else
         .buttonStyle(.plain)
+        #endif
     }
 }
 
@@ -252,7 +280,7 @@ private struct ProposalRow: View {
 
 #if DEBUG
 #Preview {
-    NavigationView {
+    NavigationStack {
         ROMTitleNormalizationView()
     }
 }
