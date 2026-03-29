@@ -4,7 +4,7 @@ import StoreKit
 /// Full-screen driver pack store sheet.
 struct DriverStoreView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var storeManager = DriverStoreManager()
+    @Environment(DriverStoreManager.self) private var storeManager
 
     var body: some View {
         NavigationStack {
@@ -40,7 +40,7 @@ struct DriverStoreView: View {
                 get: { storeManager.purchaseError != nil },
                 set: { if !$0 { storeManager.purchaseError = nil } }
             )) {
-                Button("OK", role: .cancel) {}
+                Button(String(localized: "store.done_button"), role: .cancel) {}
             } message: {
                 Text(verbatim: storeManager.purchaseError ?? "")
             }
@@ -132,4 +132,5 @@ private struct DriverProductCard: View {
 
 #Preview {
     DriverStoreView()
+        .environment(DriverStoreManager())
 }

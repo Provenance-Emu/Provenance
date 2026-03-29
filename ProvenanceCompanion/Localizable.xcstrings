@@ -596,28 +596,6 @@
         }
       }
     },
-    "store.product.cheat_library.description" : {
-      "comment" : "Description for the cheat library IAP",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Export cheat codes as QR codes, share via the system share sheet, and sync across devices via App Group."
-          }
-        }
-      }
-    },
-    "store.product.cheat_library.name" : {
-      "comment" : "Display name for the cheat library IAP",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cheat Library"
-          }
-        }
-      }
-    },
     "settings.about.app" : {
       "comment" : "Label for the app name in Settings > About",
       "localizations" : {
@@ -757,6 +735,237 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Support"
+          }
+        }
+      }
+    },
+    "store.product.cheat_library.description" : {
+      "comment" : "Description for the cheat library IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export, QR-share, and sync cheat codes across devices via App Group. Includes one-tap cheat import."
+          }
+        }
+      }
+    },
+    "store.product.cheat_library.name" : {
+      "comment" : "Display name for the cheat library IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cheat Library"
+          }
+        }
+      }
+    },
+    "store.product.virtual_controller.description" : {
+      "comment" : "Description for the virtual skin controller IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Delta skins as a wireless DSU controller over Wi-Fi. Works with Cemu, Yuzu, Dolphin, and any DSU-compatible emulator."
+          }
+        }
+      }
+    },
+    "store.product.virtual_controller.name" : {
+      "comment" : "Display name for the virtual skin controller IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Virtual Skin Controller"
+          }
+        }
+      }
+    },
+    "tab.controller" : {
+      "comment" : "Tab bar label for the Virtual Controller tab",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Controller"
+          }
+        }
+      }
+    },
+    "tab.library" : {
+      "comment" : "Tab bar label for the Library tab",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Library"
+          }
+        }
+      }
+    },
+    "tab.peripherals" : {
+      "comment" : "Tab bar label for the Peripherals tab",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peripherals"
+          }
+        }
+      }
+    },
+    "tab.settings" : {
+      "comment" : "Tab bar label for the Settings tab",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "virtual_controller.error.server_title" : {
+      "comment" : "Alert title when the DSU server encounters an error",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server Error"
+          }
+        }
+      }
+    },
+    "virtual_controller.locked.description" : {
+      "comment" : "Description on the Virtual Controller paywall screen",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn your iPhone or iPad into a wireless DSU controller. Works with Cemu, Yuzu, Dolphin, and any app that supports the CemuHook DSU protocol."
+          }
+        }
+      }
+    },
+    "virtual_controller.locked.feature.emulators" : {
+      "comment" : "Feature bullet on the Virtual Controller paywall — DSU compatibility",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Works with any DSU-compatible emulator on your network"
+          }
+        }
+      }
+    },
+    "virtual_controller.locked.feature.library" : {
+      "comment" : "Feature bullet on the Virtual Controller paywall — skin library integration",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pairs with the main Provenance app's skin library"
+          }
+        }
+      }
+    },
+    "virtual_controller.locked.feature.skins" : {
+      "comment" : "Feature bullet on the Virtual Controller paywall — Delta skin layout",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use Delta skins as your controller layout"
+          }
+        }
+      }
+    },
+    "virtual_controller.locked.feature.wifi" : {
+      "comment" : "Feature bullet on the Virtual Controller paywall — Wi-Fi streaming",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Streams over Wi-Fi via DSU / CemuHook protocol"
+          }
+        }
+      }
+    },
+    "virtual_controller.locked.title" : {
+      "comment" : "Heading on the Virtual Controller paywall screen",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Virtual Controller"
+          }
+        }
+      }
+    },
+    "virtual_controller.locked.unlock_button" : {
+      "comment" : "Button to open the store and purchase the Virtual Controller IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock Virtual Controller"
+          }
+        }
+      }
+    },
+    "virtual_controller.nav_title" : {
+      "comment" : "Navigation title for the Virtual Controller tab",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Virtual Controller"
+          }
+        }
+      }
+    },
+    "virtual_controller.server.start" : {
+      "comment" : "Toolbar button label to start the DSU server",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
+    "virtual_controller.server.stop" : {
+      "comment" : "Toolbar button label to stop the DSU server",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop"
+          }
+        }
+      }
+    },
+    "virtual_controller.status.broadcasting %lld" : {
+      "comment" : "Status banner when the DSU server is active. %lld is the UDP port number.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Broadcasting on port %lld"
+          }
+        }
+      }
+    },
+    "virtual_controller.status.starting" : {
+      "comment" : "Status banner while the DSU server is starting up",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starting server\u2026"
           }
         }
       }
