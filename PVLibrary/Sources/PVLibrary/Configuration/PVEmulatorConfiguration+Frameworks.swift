@@ -21,6 +21,83 @@ import UIKit
 // MARK: - System Scanner
 
 public extension PVEmulatorConfiguration {
+    /// Sendable snapshot of plist data used to build `PVCore` rows without touching Realm (safe to produce on many concurrent tasks).
+    private struct CoreImportBlueprint: Sendable {
+        let identifier: String
+        let principleClass: String
+        let supportedSystemIds: [String]
+        let projectName: String
+        let projectURL: String
+        let projectVersion: String
+        let disabled: Bool
+        let appStoreDisabled: Bool
+        let contentless: Bool
+        let supportedCheatTypes: [CheatCodeTypes]
+        let licenseName: String?
+        let licenseURL: String?
+        let copyright: String?
+
+        init(plist: EmulatorCoreInfoPlist) {
+            identifier = plist.identifier
+            principleClass = plist.principleClass
+            supportedSystemIds = plist.supportedSystems
+            projectName = plist.projectName
+            projectURL = plist.projectURL
+            projectVersion = plist.projectVersion
+            disabled = plist.disabled
+            appStoreDisabled = plist.appStoreDisabled
+            contentless = plist.contentless
+            supportedCheatTypes = plist.supportedCheatTypes
+            licenseName = plist.licenseName
+            licenseURL = plist.licenseURL
+            copyright = plist.copyright
+        }
+    }
+
+    /// Expands a plist into blueprint rows for the core plus nested sub-cores, applying the same skip rules as ``registerCore(_:)``.
+    private class func collectBlueprints(from plist: EmulatorCoreInfoPlist, unsupportedCoresAvailable: Bool) -> [CoreImportBlueprint] {
+        var rows: [CoreImportBlueprint] = []
+        if plist.disabled, !unsupportedCoresAvailable {
+            ILOG("Skipping disabled core \(plist.identifier)")
+        } else {
+            rows.append(CoreImportBlueprint(plist: plist))
+        }
+        plist.subCores?.forEach { sub in
+            rows.append(contentsOf: collectBlueprints(from: sub, unsupportedCoresAvailable: unsupportedCoresAvailable))
+        }
+        return rows
+    }
+
+    /// Single Realm write: resolve `PVSystem` links and upsert all cores (avoids N transactions and parallel Realm contention).
+    private class func persistCoreImportBlueprints(_ blueprints: [CoreImportBlueprint]) throws {
+        let database = RomDatabase.sharedInstance
+        try database.writeTransaction {
+            let realm = database.realm
+            var cores: [PVCore] = []
+            cores.reserveCapacity(blueprints.count)
+            for bp in blueprints {
+                let predicate = NSPredicate(format: "identifier IN %@", argumentArray: [bp.supportedSystemIds])
+                let supportedSystems = realm.objects(PVSystem.self).filter(predicate)
+                cores.append(PVCore(
+                    withIdentifier: bp.identifier,
+                    principleClass: bp.principleClass,
+                    supportedSystems: Array(supportedSystems),
+                    name: bp.projectName,
+                    url: bp.projectURL,
+                    version: bp.projectVersion,
+                    disabled: bp.disabled,
+                    appStoreDisabled: bp.appStoreDisabled,
+                    contentless: bp.contentless,
+                    supportedCheatTypes: bp.supportedCheatTypes,
+                    licenseName: bp.licenseName,
+                    licenseURL: bp.licenseURL,
+                    copyright: bp.copyright
+                ))
+            }
+            realm.add(cores, update: .all)
+        }
+    }
+
     /// Reset the initialization flags to allow re-initialization of systems and cores
     /// This is primarily used for testing purposes
     class func resetInitializationFlags() {
@@ -100,11 +177,33 @@ public extension PVEmulatorConfiguration {
             plist.subCores?.forEach { validIdentifiers.insert($0.identifier) }
         }
 
-        await plists.concurrentForEach { corePlist in
-            do {
-                try await registerCore(corePlist)
-            } catch {
-                ELOG("Failed to register core \(corePlist.identifier)")
+        // Build Sendable blueprints in parallel (no Realm), then one write transaction for all cores.
+        let unsupportedCoresAvailable = Defaults[.unsupportedCores]
+        let blueprintSlices = await withTaskGroup(of: [CoreImportBlueprint].self, returning: [[CoreImportBlueprint]].self) { group in
+            for plist in plists {
+                group.addTask {
+                    collectBlueprints(from: plist, unsupportedCoresAvailable: unsupportedCoresAvailable)
+                }
+            }
+            var slices: [[CoreImportBlueprint]] = []
+            slices.reserveCapacity(plists.count)
+            for await slice in group {
+                slices.append(slice)
+            }
+            return slices
+        }
+        let allBlueprints = blueprintSlices.flatMap { $0 }
+        ILOG("Batch core import: \(allBlueprints.count) rows from \(plists.count) plists")
+        do {
+            try persistCoreImportBlueprints(allBlueprints)
+        } catch {
+            ELOG("Batch core import failed (\(error.localizedDescription)); falling back to sequential registration")
+            await plists.asyncForEach { corePlist in
+                do {
+                    try await registerCore(corePlist)
+                } catch {
+                    ELOG("Failed to register core \(corePlist.identifier)")
+                }
             }
         }
 
