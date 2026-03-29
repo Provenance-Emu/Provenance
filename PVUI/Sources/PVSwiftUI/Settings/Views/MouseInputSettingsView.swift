@@ -130,19 +130,14 @@ struct MouseSection: View {
                 return true
                 #endif
             }, id: \.rawValue) { source in
-                Button(action: { inputSource = source }) {
-                    pickerRowContent(
-                        symbolName: source.symbolName,
-                        title: source.displayName,
-                        subtitle: source.subtitle,
-                        isSelected: inputSource == source
-                    )
+                RetroSettingsPickerRow(
+                    symbolName: source.symbolName,
+                    title: source.displayName,
+                    subtitle: source.subtitle,
+                    isSelected: inputSource == source
+                ) {
+                    inputSource = source
                 }
-                #if os(tvOS)
-                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 10)
-                #else
-                .buttonStyle(PlainButtonStyle())
-                #endif
             }
         }
     }
@@ -161,65 +156,16 @@ struct MouseSection: View {
                 .foregroundColor(.secondary)
 
             ForEach(LightGunCrosshairStyle.allCases, id: \.rawValue) { style in
-                Button(action: { crosshairStyle = style }) {
-                    pickerRowContent(
-                        symbolName: style.symbolName,
-                        title: style.displayName,
-                        subtitle: style.subtitle,
-                        isSelected: crosshairStyle == style
-                    )
+                RetroSettingsPickerRow(
+                    symbolName: style.symbolName,
+                    title: style.displayName,
+                    subtitle: style.subtitle,
+                    isSelected: crosshairStyle == style
+                ) {
+                    crosshairStyle = style
                 }
-                #if os(tvOS)
-                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 10)
-                #else
-                .buttonStyle(PlainButtonStyle())
-                #endif
             }
         }
-    }
-
-    // MARK: - Picker Row Content (shared layout)
-
-    private func pickerRowContent(symbolName: String, title: String, subtitle: String, isSelected: Bool) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: symbolName)
-                .font(.system(size: 18))
-                .frame(width: 28)
-                .foregroundColor(isSelected ? .retroBlue : .secondary)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.retroSettingsRowTitle)
-                    .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
-                        ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                Text(subtitle)
-                    .font(.retroSettingsRowSubtitle)
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
-
-            if isSelected {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundColor(.retroBlue)
-            }
-        }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(isSelected
-                    ? Color.retroBlue.opacity(0.12)
-                    : Color.clear)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .strokeBorder(
-                            isSelected
-                                ? Color.retroBlue.opacity(0.5)
-                                : Color.white.opacity(0.08),
-                            lineWidth: 1
-                        )
-                )
-        )
     }
 
     // MARK: - Sensitivity Slider

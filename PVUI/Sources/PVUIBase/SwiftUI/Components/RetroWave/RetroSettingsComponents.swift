@@ -30,50 +30,6 @@ public struct RetroSettingsBackground: View {
     }
 }
 
-// MARK: - Retrowave Settings Divider
-
-/// A thin retrowave-styled horizontal divider for settings sections.
-public struct RetroSettingsDivider: View {
-    public init() {}
-
-    public var body: some View {
-        Divider()
-            .background(Color.retroBlue.opacity(0.3))
-    }
-}
-
-// MARK: - Retrowave Section Header
-
-/// A section header styled for retrowave settings pages.
-public struct RetroSettingsSectionHeader: View {
-    let icon: String
-    let title: String
-
-    public init(icon: String, title: String) {
-        self.icon = icon
-        self.title = title
-    }
-
-    public var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [.retroPink, .retroBlue],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-            Text(title.uppercased())
-                .font(.system(size: 11, weight: .semibold))
-                .tracking(1.5)
-                .foregroundColor(.retroPink.opacity(0.9))
-        }
-        .padding(.bottom, 4)
-    }
-}
-
 // MARK: - Retrowave Picker Row
 
 /// A selectable row for use in retrowave-styled picker groups (radio-button-like selection).

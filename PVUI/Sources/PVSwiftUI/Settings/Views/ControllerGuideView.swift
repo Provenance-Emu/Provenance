@@ -2,7 +2,6 @@ import SwiftUI
 import PVPrimitives
 import PVUIBase
 import PVThemes
-import PVSettings
 
 // MARK: - Private view-display extensions
 
