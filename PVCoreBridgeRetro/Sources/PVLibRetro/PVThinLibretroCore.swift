@@ -159,7 +159,6 @@ class PVThinLibretroCore: PVEmulatorCore {
     /// (respects user overrides).
     private func applyPlatformDefaults() {
         let coreId = (coreIdentifier ?? "").lowercased()
-        let sysId = (systemIdentifier ?? "").lowercased()
 
         // MelonDS: enable touch mode for DS
         if coreId.contains("melonds") {
@@ -184,7 +183,16 @@ class PVThinLibretroCore: PVEmulatorCore {
             setDefaultOption("ppsspp_texture_scaling_level", value: "5x")
             setDefaultOption("ppsspp_ignore_bad_memory_access", value: "enabled")
             setDefaultOption("ppsspp_fast_memory", value: "enabled")
+            // Seed PSP flash0/font files into System/PSP/ — re-seeds on every launch for tvOS cache recovery.
+            seedPSPFlash0Assets()
         }
+
+        // For cores that need system files from the libretro buildbot,
+        // migrate from the legacy RetroArch/system/ directory first (if it exists),
+        // then download anything still missing from the buildbot.
+        // Both operations are idempotent and the download is async (non-blocking).
+        migrateRetroArchSystemDirectoryIfNeeded()
+        downloadBuildBotSystemFilesIfNeeded()
 
         // Mupen64Plus-Next: use angrylion RDP + apply any persisted Transfer Pak slots.
         if coreId.contains("mupen") {
@@ -203,11 +211,14 @@ class PVThinLibretroCore: PVEmulatorCore {
             setDefaultOption("prboom-rumble", value: "enabled")
         }
 
-        // Hatari: disable HD boot + copy hatari.cfg if needed
-        if coreId.contains("hatari") || sysId.contains("atarist") {
+        // Hatari: disable HD boot + copy hatari.cfg if needed + write dynamic TOS path
+        if coreId.contains("hatari") || SystemIdentifier(rawValue: systemIdentifier ?? "") == .AtariST {
             setDefaultOption("hatari_boot_hd", value: "disabled")
             copyBundledConfigIfNeeded(resourceName: "hatari", extension: "cfg",
                                       toDirectory: self.BIOSPath, fileName: "hatari.cfg")
+            // Rewrite szTosImageFileName to point to the actual TOS image in the BIOS directory.
+            // The bundled hatari.cfg has a placeholder path that is wrong on iOS/tvOS.
+            updateHatariTOSPath()
         }
 
         // VecX: use software renderer — hardware mode requires a full GL context
@@ -251,6 +262,178 @@ class PVThinLibretroCore: PVEmulatorCore {
                     WLOG("ThinLibretroCore: failed to copy \(fileName): \(error.localizedDescription)")
                 }
             }
+        }
+    }
+
+    // MARK: - PSP flash0 font seeding
+
+    /// Seed PPSSPP flash0/font files into `System/PSP/font/`.
+    ///
+    /// Mirrors the logic in `PPSSPPGameCore.mm:loadFileAtPath:`.
+    /// Re-seeds on every launch so tvOS Caches purges don't break PSP font rendering.
+    /// The PSP system directory path is derived from `BIOSPath` using the same
+    /// two-component strip used by `PVThinLibretroFrontend._systemSpecificDirectory`.
+    /// Only `.pgf` files are copied — other resource types are left untouched.
+    private func seedPSPFlash0Assets() {
+        guard let biosPath = BIOSPath, !biosPath.isEmpty else {
+            WLOG("ThinCore: PSP font seeding skipped — BIOSPath not set")
+            return
+        }
+        // BIOSPath = <docs>/BIOS/<systemIdentifier> — strip two components to get <docs>
+        let docsDir = URL(fileURLWithPath: biosPath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .path
+        guard docsDir != "/" && !docsDir.isEmpty else { return }
+        let pspSystemDir = URL(fileURLWithPath: docsDir)
+            .appendingPathComponent("System/PSP")
+            .path
+        let fontDest = URL(fileURLWithPath: pspSystemDir)
+            .appendingPathComponent("font")
+            .path
+
+        let fm = FileManager.default
+        do {
+            try fm.createDirectory(atPath: fontDest, withIntermediateDirectories: true)
+        } catch {
+            WLOG("ThinCore: could not create PSP font dir \(fontDest): \(error.localizedDescription)")
+            return
+        }
+
+        // Search all framework bundles for flash0/font resource directory (same approach as PPSSPPGameCore.mm)
+        let bundles = [Bundle.main] + Bundle.allFrameworks
+        for bundle in bundles {
+            guard let bundleResourceURL = bundle.resourceURL else { continue }
+            let fontSrc = bundleResourceURL.appendingPathComponent("flash0/font").path
+            guard fm.fileExists(atPath: fontSrc) else { continue }
+            guard let fonts = try? fm.contentsOfDirectory(atPath: fontSrc) else { continue }
+            let pgfFonts = fonts.filter { $0.lowercased().hasSuffix(".pgf") }
+            guard !pgfFonts.isEmpty else {
+                WLOG("ThinCore: flash0/font bundle dir found but contains no .pgf files: \(fontSrc)")
+                continue
+            }
+            var seededCount = 0
+            for font in pgfFonts {
+                let src = URL(fileURLWithPath: fontSrc).appendingPathComponent(font).path
+                let dst = URL(fileURLWithPath: fontDest).appendingPathComponent(font).path
+                // Skip if already seeded — idempotent (tvOS Caches purge will clear fontDest, re-triggering copy).
+                guard !fm.fileExists(atPath: dst) else { continue }
+                do {
+                    try fm.copyItem(atPath: src, toPath: dst)
+                    seededCount += 1
+                } catch {
+                    WLOG("ThinCore: failed to copy PSP font \(font): \(error.localizedDescription)")
+                }
+            }
+            if seededCount > 0 {
+                ILOG("ThinCore: seeded \(seededCount) PSP .pgf font(s) from \(fontSrc) → \(fontDest)")
+            } else {
+                DLOG("ThinCore: PSP fonts already seeded in \(fontDest) (\(pgfFonts.count) files)")
+            }
+            return
+        }
+        WLOG("ThinCore: no flash0/font bundle directory found — PPSSPP may render without fonts")
+    }
+
+    // MARK: - Hatari TOS path configuration
+
+    /// Search `BIOSPath` for a TOS image file and rewrite `szTosImageFileName` in hatari.cfg.
+    ///
+    /// The bundled `hatari.cfg` ships with empty fields; older copies may have Android
+    /// placeholder paths (`/storage/...`).  This method finds the first TOS image in `BIOSPath`
+    /// (searching `tos*.img`, `tos*.rom`, then any `.img`/`.rom`) and updates the cfg atomically.
+    /// It also clears any `/storage/` Android paths still present in `szDiskAFileName` /
+    /// `szDiskImageDirectory` from previously-copied configs.
+    ///
+    /// Called every launch (after `copyBundledConfigIfNeeded`) so a newly-added TOS image is
+    /// picked up without requiring the user to delete hatari.cfg manually.
+    private func updateHatariTOSPath() {
+        guard let biosDir = BIOSPath, !biosDir.isEmpty else { return }
+        let cfgPath = URL(fileURLWithPath: biosDir).appendingPathComponent("hatari.cfg").path
+        guard FileManager.default.fileExists(atPath: cfgPath) else { return }
+
+        let fm = FileManager.default
+        let candidates = (try? fm.contentsOfDirectory(atPath: biosDir))?.sorted() ?? []
+
+        let tosExtensions: Set<String> = ["img", "rom"]
+        var tosPath: String?
+        // 1. Prefer files whose name starts with "tos" (canonical naming)
+        for file in candidates {
+            let lower = file.lowercased()
+            let ext = URL(fileURLWithPath: file).pathExtension.lowercased()
+            if tosExtensions.contains(ext) && lower.hasPrefix("tos") {
+                tosPath = URL(fileURLWithPath: biosDir).appendingPathComponent(file).path
+                break
+            }
+        }
+        // 2. Fall back to any .img or .rom in the BIOS directory
+        if tosPath == nil {
+            for file in candidates {
+                let ext = URL(fileURLWithPath: file).pathExtension.lowercased()
+                if tosExtensions.contains(ext) {
+                    tosPath = URL(fileURLWithPath: biosDir).appendingPathComponent(file).path
+                    break
+                }
+            }
+        }
+
+        if tosPath == nil {
+            WLOG("ThinCore: no TOS image found in \(biosDir) — Hatari will not boot (place tos.img in BIOS/com.provenance.atarist/)")
+        }
+
+        // Rewrite szTosImageFileName in hatari.cfg and clear any Android-placeholder paths.
+        // Android /storage/ paths are cleared even if no TOS image is present (one-time migration).
+        // Keys whose value must be cleared when it starts with "/storage/" (Android artifact).
+        // szTosImageFileName is handled separately first so it can be set OR cleared.
+        let androidPlaceholderKeys: Set<String> = ["szDiskAFileName", "szDiskImageDirectory"]
+        guard let cfgContent = try? String(contentsOfFile: cfgPath, encoding: .utf8) else { return }
+        var androidClearedKeys: [String] = []
+        let updated = cfgContent.components(separatedBy: "\n").map { line -> String in
+            let stripped = line.trimmingCharacters(in: .whitespaces)
+            let indent = String(line.prefix(while: { $0 == " " || $0 == "\t" }))
+            // szTosImageFileName: set to the found image, or clear if it holds an Android path.
+            if stripped.hasPrefix("szTosImageFileName") {
+                if let tos = tosPath {
+                    return "\(indent)szTosImageFileName = \(tos)"
+                }
+                // No TOS image found — clear any residual Android /storage/ placeholder.
+                let parts = stripped.components(separatedBy: "=")
+                if parts.count >= 2 {
+                    let value = parts.dropFirst().joined(separator: "=").trimmingCharacters(in: .whitespaces)
+                    if value.hasPrefix("/storage/") {
+                        androidClearedKeys.append("szTosImageFileName")
+                        return "\(indent)szTosImageFileName ="
+                    }
+                }
+                return line
+            }
+            // Clear any other key whose value is an Android /storage/ path (one-time migration).
+            for key in androidPlaceholderKeys where stripped.hasPrefix(key) {
+                let parts = stripped.components(separatedBy: "=")
+                if parts.count >= 2 {
+                    let value = parts.dropFirst().joined(separator: "=").trimmingCharacters(in: .whitespaces)
+                    if value.hasPrefix("/storage/") {
+                        androidClearedKeys.append(key)
+                        return "\(indent)\(key) ="
+                    }
+                }
+            }
+            return line
+        }.joined(separator: "\n")
+
+        // Skip the write if nothing actually changed (avoids spurious mtime updates).
+        guard updated != cfgContent else { return }
+
+        do {
+            try updated.write(toFile: cfgPath, atomically: true, encoding: .utf8)
+            if let tos = tosPath {
+                ILOG("ThinCore: updated hatari.cfg → szTosImageFileName = \(tos)")
+            }
+            if !androidClearedKeys.isEmpty {
+                ILOG("ThinCore: cleared Android placeholder path(s) in hatari.cfg: \(androidClearedKeys.joined(separator: ", "))")
+            }
+        } catch {
+            WLOG("ThinCore: failed to update hatari.cfg TOS path: \(error.localizedDescription)")
         }
     }
 
