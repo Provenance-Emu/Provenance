@@ -381,24 +381,39 @@ class PVThinLibretroCore: PVEmulatorCore {
             WLOG("ThinCore: no TOS image found in \(biosDir) — Hatari will not boot (place tos.img in BIOS/com.provenance.atarist/)")
         }
 
-        // Rewrite szTosImageFileName in hatari.cfg and clear any Android-placeholder floppy paths.
+        // Rewrite szTosImageFileName in hatari.cfg and clear any Android-placeholder paths.
         // Android /storage/ paths are cleared even if no TOS image is present (one-time migration).
         // Keys whose value must be cleared when it starts with "/storage/" (Android artifact).
+        // szTosImageFileName is handled separately first so it can be set OR cleared.
         let androidPlaceholderKeys: Set<String> = ["szDiskAFileName", "szDiskImageDirectory"]
         guard let cfgContent = try? String(contentsOfFile: cfgPath, encoding: .utf8) else { return }
+        var androidClearedKeys: [String] = []
         let updated = cfgContent.components(separatedBy: "\n").map { line -> String in
             let stripped = line.trimmingCharacters(in: .whitespaces)
             let indent = String(line.prefix(while: { $0 == " " || $0 == "\t" }))
-            // Update TOS path when a valid image is found; otherwise leave unchanged.
-            if stripped.hasPrefix("szTosImageFileName"), let tos = tosPath {
-                return "\(indent)szTosImageFileName = \(tos)"
+            // szTosImageFileName: set to the found image, or clear if it holds an Android path.
+            if stripped.hasPrefix("szTosImageFileName") {
+                if let tos = tosPath {
+                    return "\(indent)szTosImageFileName = \(tos)"
+                }
+                // No TOS image found — clear any residual Android /storage/ placeholder.
+                let parts = stripped.components(separatedBy: "=")
+                if parts.count >= 2 {
+                    let value = parts.dropFirst().joined(separator: "=").trimmingCharacters(in: .whitespaces)
+                    if value.hasPrefix("/storage/") {
+                        androidClearedKeys.append("szTosImageFileName")
+                        return "\(indent)szTosImageFileName ="
+                    }
+                }
+                return line
             }
-            // Clear any key whose value is an Android /storage/ path (one-time migration for old copied configs).
+            // Clear any other key whose value is an Android /storage/ path (one-time migration).
             for key in androidPlaceholderKeys where stripped.hasPrefix(key) {
                 let parts = stripped.components(separatedBy: "=")
                 if parts.count >= 2 {
                     let value = parts.dropFirst().joined(separator: "=").trimmingCharacters(in: .whitespaces)
                     if value.hasPrefix("/storage/") {
+                        androidClearedKeys.append(key)
                         return "\(indent)\(key) ="
                     }
                 }
@@ -406,10 +421,16 @@ class PVThinLibretroCore: PVEmulatorCore {
             return line
         }.joined(separator: "\n")
 
+        // Skip the write if nothing actually changed (avoids spurious mtime updates).
+        guard updated != cfgContent else { return }
+
         do {
             try updated.write(toFile: cfgPath, atomically: true, encoding: .utf8)
             if let tos = tosPath {
                 ILOG("ThinCore: updated hatari.cfg → szTosImageFileName = \(tos)")
+            }
+            if !androidClearedKeys.isEmpty {
+                ILOG("ThinCore: cleared Android placeholder path(s) in hatari.cfg: \(androidClearedKeys.joined(separator: ", "))")
             }
         } catch {
             WLOG("ThinCore: failed to update hatari.cfg TOS path: \(error.localizedDescription)")
