@@ -171,8 +171,7 @@ public struct DiscRipperView: View {
         Section {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text(String(localized: "disc_ripper.ripping_track",
-                                defaultValue: "Track \(progress.currentTrack) of \(progress.totalTracks)"))
+                    Text(String(format: String(localized: "disc_ripper.ripping_track"), progress.currentTrack, progress.totalTracks))
                         .font(.subheadline)
                     Spacer()
                     Text(String(format: "%.0f%%", progress.fraction * 100))
