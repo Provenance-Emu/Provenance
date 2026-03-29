@@ -386,3 +386,27 @@
 "manual.tip.rom_example" = "ROM: Super Mario World (USA).sfc";
 "manual.tip.save_example" = "Save: Super Mario World (USA).srm";
 "manual.tip.note" = "Only the file extension changes — the base name must match exactly.";
+
+// MARK: - Disc Ripper (DiscRipperView.swift)
+"disc_ripper.nav_title" = "Rip Disc";
+"disc_ripper.cancel" = "Cancel";
+"disc_ripper.loading_toc" = "Reading disc…";
+"disc_ripper.error.title" = "Could Not Read Disc";
+"disc_ripper.unavailable.title" = "Optical Drive Not Supported";
+"disc_ripper.unavailable.description" = "USB optical drives are only supported on iPad with USB-C.";
+"disc_ripper.disc_info_header" = "Disc Info";
+"disc_ripper.disc_type" = "Disc Type";
+"disc_ripper.total_tracks" = "Tracks";
+"disc_ripper.total_sectors" = "Sectors";
+"disc_ripper.tracks_header" = "Tracks";
+"disc_ripper.tracks_footer" = "Select the tracks to include in the disc image.";
+"disc_ripper.select_all" = "Select All";
+"disc_ripper.deselect_all" = "Deselect All";
+"disc_ripper.progress_header" = "Ripping…";
+"disc_ripper.ripping_track" = "Track %1$d of %2$d";
+"disc_ripper.rip_button" = "Rip";
+"disc_ripper.confirm_title" = "Rip Disc?";
+"disc_ripper.confirm_rip" = "Rip";
+"disc_ripper.confirm_message" = "The disc will be ripped to your device. This may take several minutes.";
+"disc_ripper.track_type.audio" = "Audio";
+"disc_ripper.track_type.data" = "Data";

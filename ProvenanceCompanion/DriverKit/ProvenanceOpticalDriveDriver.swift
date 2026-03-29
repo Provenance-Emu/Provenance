@@ -158,7 +158,6 @@ final class ProvenanceOpticalDriveDriver: IOService {
 
     private func locateBulkPipes(on interface: IOUSBHostInterface) throws {
         // Enumerate descriptors to find bulk-IN and bulk-OUT endpoints.
-        var descriptor: IOUSBEndpointDescriptor?
         var next: IOUSBDescriptorHeader? = interface.deviceDescriptor
 
         while let desc = next {

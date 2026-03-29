@@ -969,6 +969,171 @@
           }
         }
       }
+    },
+    "optical_drive.section_header" : {
+      "comment" : "Section header for the optical drive card in PeripheralsTabView",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optical Drive"
+          }
+        }
+      }
+    },
+    "optical_drive.section_footer" : {
+      "comment" : "Section footer explaining optical drive requirements",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Requires a USB-C optical drive and the DriverKit extension."
+          }
+        }
+      }
+    },
+    "optical_drive.title" : {
+      "comment" : "Primary label for the optical drive row",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "USB Optical Drive"
+          }
+        }
+      }
+    },
+    "optical_drive.enable_button" : {
+      "comment" : "Button to activate the optical drive DriverKit extension",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable"
+          }
+        }
+      }
+    },
+    "optical_drive.status.unknown" : {
+      "comment" : "Optical drive activation state: not yet determined",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown"
+          }
+        }
+      }
+    },
+    "optical_drive.status.not_installed" : {
+      "comment" : "Optical drive extension has not been installed yet",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Installed"
+          }
+        }
+      }
+    },
+    "optical_drive.status.activating" : {
+      "comment" : "Optical drive extension is being activated",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activating\u2026"
+          }
+        }
+      }
+    },
+    "optical_drive.status.active" : {
+      "comment" : "Optical drive extension is active (no disc-specific status)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        }
+      }
+    },
+    "optical_drive.status.deactivating" : {
+      "comment" : "Optical drive extension is being deactivated",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deactivating\u2026"
+          }
+        }
+      }
+    },
+    "optical_drive.status.failed" : {
+      "comment" : "Optical drive extension failed to activate (full message prefix)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed"
+          }
+        }
+      }
+    },
+    "optical_drive.status.failed_short" : {
+      "comment" : "Optical drive extension failed — short subtitle label",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to activate"
+          }
+        }
+      }
+    },
+    "optical_drive.disc.present" : {
+      "comment" : "Disc is inserted and ready",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disc Inserted"
+          }
+        }
+      }
+    },
+    "optical_drive.disc.none" : {
+      "comment" : "No disc is currently inserted",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Disc"
+          }
+        }
+      }
+    },
+    "optical_drive.disc.reading" : {
+      "comment" : "Drive is actively reading the disc",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading\u2026"
+          }
+        }
+      }
+    },
+    "optical_drive.disc.tray_open" : {
+      "comment" : "Drive tray is open",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tray Open"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

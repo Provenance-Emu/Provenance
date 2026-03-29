@@ -88,8 +88,7 @@ struct OpticalDriveStatusView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
         case .driverNotActive, .unknown:
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundStyle(.green)
+            EmptyView()
         }
     }
 
