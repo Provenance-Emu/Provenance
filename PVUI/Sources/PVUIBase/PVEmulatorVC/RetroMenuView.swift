@@ -783,14 +783,12 @@ struct RetroMenuView: View {
         let hasMouse = (core as? MouseResponder)?.gameSupportsMouse == true
         let hasKeyboard = (core as? KeyboardResponder)?.gameSupportsKeyboard == true
 
-        // Check for thin wrapper port info
-        let portInfo: [[NSDictionary]]? = {
-            guard let bridge = (core as? NSObject)?.value(forKey: "_bridge") as? NSObject,
-                  bridge.responds(to: Selector(("controllerPortInfo"))) else { return nil }
-            return bridge.value(forKey: "controllerPortInfo") as? [[NSDictionary]]
-        }()
+        /// Pause-menu port rows (e.g. RetroArch) use ``PauseMenuLibretroPortPickerSource`` instead of KVC on `_bridge`.
+        let pausePortPicker = core as? PauseMenuLibretroPortPickerSource
+        let pausePortDescriptors = pausePortPicker?.pauseMenuPortDeviceDescriptors ?? []
+        let hasPauseMenuPortPickers = !hasPortDeviceOptions && pausePortDescriptors.contains { $0.count > 1 }
 
-        let showSection = hasMouse || hasKeyboard || (!hasPortDeviceOptions && portInfo != nil && !(portInfo?.isEmpty ?? true))
+        let showSection = hasMouse || hasKeyboard || hasPauseMenuPortPickers
 
         if showSection {
             skinSectionHeader(String(localized: "PERIPHERALS"), systemImage: "cable.connector")
@@ -817,27 +815,16 @@ struct RetroMenuView: View {
                 }
             }
 
-            // Per-port device type picker (from SET_CONTROLLER_INFO) — only shown when the
-            // core does NOT conform to PortDeviceConfigurable (which gets its own richer UI
-            // in the CORE tab via portDevicePickerSection, preventing duplicate controls).
-            if !hasPortDeviceOptions, let portInfo = portInfo, !portInfo.isEmpty {
-                ForEach(Array(portInfo.enumerated()), id: \.offset) { portIndex, devices in
-                    if devices.count > 1 { // Only show if there are multiple options
-                        let deviceNames = devices.compactMap { $0["desc"] as? String }
+            // Per-port device type picker — only when CORE tab has no picker (see ``hasPortDeviceOptions``)
+            // but the core still exposes SET_CONTROLLER_INFO via ``PauseMenuLibretroPortPickerSource``.
+            if let pickerCore = pausePortPicker, !hasPortDeviceOptions {
+                ForEach(Array(pickerCore.pauseMenuPortDeviceDescriptors.enumerated()), id: \.offset) { portIndex, devices in
+                    if devices.count > 1 {
+                        let deviceNames = devices.map(\.name)
                         Menu {
-                            ForEach(Array(devices.enumerated()), id: \.offset) { idx, device in
-                                if let desc = device["desc"] as? String,
-                                   let deviceId = device["id"] as? UInt32 {
-                                    Button(desc) {
-                                        if let bridge = (core as? NSObject)?.value(forKey: "_bridge") as? NSObject,
-                                           bridge.responds(to: Selector(("setControllerPortDevice:forPort:"))) {
-                                            bridge.perform(
-                                                Selector(("setControllerPortDevice:forPort:")),
-                                                with: NSNumber(value: deviceId),
-                                                with: NSNumber(value: UInt32(portIndex))
-                                            )
-                                        }
-                                    }
+                            ForEach(devices, id: \.deviceType) { descriptor in
+                                Button(descriptor.name) {
+                                    pickerCore.setPauseMenuPortDevice(descriptor.deviceType, forPort: portIndex)
                                 }
                             }
                         } label: {

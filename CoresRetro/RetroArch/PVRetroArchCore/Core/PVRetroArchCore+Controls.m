@@ -939,6 +939,28 @@ static bool is_virtual_touch_controller(GCController *controller) {
     ILOG(@"[RA] setControllerPortDevice: port=%u device=%u", port, device);
 }
 
+- (NSArray<NSArray<NSDictionary<NSString *, id> *> *> *)menuControllerPortInfo {
+    rarch_system_info_t *sys_info = &runloop_state_get_ptr()->system;
+    if (!sys_info || !sys_info->ports.data || sys_info->ports.size == 0) {
+        return @[];
+    }
+    NSMutableArray<NSMutableArray<NSDictionary<NSString *, id> *> *> *outer = [NSMutableArray array];
+    for (unsigned port = 0; port < sys_info->ports.size; port++) {
+        const struct retro_controller_info *info = &sys_info->ports.data[port];
+        NSMutableArray<NSDictionary<NSString *, id> *> *inner = [NSMutableArray array];
+        if (info->types) {
+            for (unsigned j = 0; j < info->num_types; j++) {
+                const char *d = info->types[j].desc;
+                NSString *desc = (d && d[0] != '\0') ? [NSString stringWithUTF8String:d] : @"";
+                unsigned devId = info->types[j].id;
+                [inner addObject:@{ @"desc": desc, @"id": @(devId) }];
+            }
+        }
+        [outer addObject:inner];
+    }
+    return outer;
+}
+
 @end
 static bool apple_gamecontroller_available(void) {
 	return true;

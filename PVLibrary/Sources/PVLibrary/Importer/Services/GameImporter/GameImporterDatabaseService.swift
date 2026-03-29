@@ -371,7 +371,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                         }
                     }
 
-                    /// Keep legacy launch and validation code paths aligned with the resolved local file.
+                    // Keep legacy launch and validation code paths aligned with the resolved local file.
                     if gameToUpdate.romPath != partialPath {
                         gameToUpdate.romPath = partialPath
                         ILOG("[LOCAL SCAN FIX] Updated romPath for game: \(gameToUpdate.title)")

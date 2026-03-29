@@ -23,5 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Wraps RetroArch's core_set_controller_port_device().
 /// Must be called after the core has loaded (retro_load_game has run).
 - (void)setControllerPortDevice:(uint32_t)device forPort:(uint32_t)port;
+
+/// Snapshot of `RETRO_ENVIRONMENT_SET_CONTROLLER_INFO` for in-app menus (Provenance pause menu).
+/// Outer array index = port (0-based); each inner dictionary has keys `@"desc"` (NSString) and `@"id"` (NSNumber unsigned).
+/// Empty before the core populates runloop system info or when the core reports no ports.
+- (NSArray<NSArray<NSDictionary<NSString *, id> *> *> *)menuControllerPortInfo;
 @end
 NS_ASSUME_NONNULL_END

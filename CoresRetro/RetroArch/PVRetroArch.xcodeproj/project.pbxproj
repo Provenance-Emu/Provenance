@@ -125,6 +125,7 @@
 		B3061F862F7768AC000F8839 /* PVRetroArchCore+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F822F7768AC000F8839 /* PVRetroArchCore+Cheats.swift */; };
 		B3061F872F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F832F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift */; };
 		B3061F882F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F842F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift */; };
+		C0C0CAFE2E92000100CAFE01 /* PVRetroArchCoreCore+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE2E92000100CAFE02 /* PVRetroArchCoreCore+Saves.swift */; };
 		B3061F892F7768AC000F8839 /* RetroArchCoreOptionsFileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F852F7768AC000F8839 /* RetroArchCoreOptionsFileHelper.swift */; };
 		B3061F8B2F776924000F8839 /* PVRetroArchCore+Controls+SG1000.m in Sources */ = {isa = PBXBuildFile; fileRef = B3061F8A2F776924000F8839 /* PVRetroArchCore+Controls+SG1000.m */; };
 		B3061F8E2F776FA3000F8839 /* JITManager in Frameworks */ = {isa = PBXBuildFile; productRef = B3061F8D2F776FA3000F8839 /* JITManager */; };
@@ -445,6 +446,7 @@
 		B3061F822F7768AC000F8839 /* PVRetroArchCore+Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+Cheats.swift"; sourceTree = "<group>"; };
 		B3061F832F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCoreBridge+Language.swift"; sourceTree = "<group>"; };
 		B3061F842F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCoreCore+RetroAchievements.swift"; sourceTree = "<group>"; };
+		C0C0CAFE2E92000100CAFE02 /* PVRetroArchCoreCore+Saves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCoreCore+Saves.swift"; sourceTree = "<group>"; };
 		B3061F852F7768AC000F8839 /* RetroArchCoreOptionsFileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroArchCoreOptionsFileHelper.swift; sourceTree = "<group>"; };
 		B3061F8A2F776924000F8839 /* PVRetroArchCore+Controls+SG1000.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+SG1000.m"; sourceTree = "<group>"; };
 		B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_slang.cpp; sourceTree = "<group>"; };
@@ -891,6 +893,7 @@
 				B3EEF06F2D66AF400080CA51 /* PVRetroArchCoreBridge.swift */,
 				B3F0001E2F91AB2300CAFE05 /* PVRetroArchCoreBridge+PVNetplayCapable.swift */,
 				B3FC974D2CB8D29100C6DB31 /* PVRetroArchCoreCore.swift */,
+				C0C0CAFE2E92000100CAFE02 /* PVRetroArchCoreCore+Saves.swift */,
 				B3F0002B2F91AB2300CAFE09 /* PVRetroArchCoreCore+PVNetplayCapable.swift */,
 				B37106F32D51AFC300688298 /* RetroArchCoreOptionsLoader.swift */,
 				B3061F822F7768AC000F8839 /* PVRetroArchCore+Cheats.swift */,
@@ -1454,6 +1457,7 @@
 				B3EEFB6B2D66C7630080CA51 /* PVRetroArchCore+Options.swift in Sources */,
 				B3EEFB6C2D66C7630080CA51 /* CorePlist.swift in Sources */,
 				B3EEFB6D2D66C7630080CA51 /* PVRetroArchCoreCore.swift in Sources */,
+				C0C0CAFE2E92000100CAFE01 /* PVRetroArchCoreCore+Saves.swift in Sources */,
 				B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */,
 				B3EEF0702D66AF440080CA51 /* PVRetroArchCoreBridge.swift in Sources */,
 				B3F0001B2F91AB2300CAFE02 /* PVRetroArchCore+Netplay.swift in Sources */,

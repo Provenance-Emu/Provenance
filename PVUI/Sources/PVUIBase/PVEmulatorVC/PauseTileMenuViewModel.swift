@@ -793,14 +793,13 @@ final class PauseTileMenuViewModel: ObservableObject {
 #endif
     }
 
+    /// True for cores like RetroArch: CORE tab hides the port picker (empty ``PortDeviceConfigurable/controllerPortDescriptors``)
+    /// but ``PauseMenuLibretroPortPickerSource`` still exposes SET_CONTROLLER_INFO for the pause/tile menu.
     private static func hasLegacyPortDeviceOptions(core: PVEmulatorCore) -> Bool {
-        guard core as? PortDeviceConfigurable == nil else { return false }
-        guard let coreObject = core as? NSObject,
-              let bridge = coreObject.value(forKey: "_bridge") as? NSObject else { return false }
-        let selector = Selector(("controllerPortInfo"))
-        guard bridge.responds(to: selector),
-              let info = bridge.value(forKey: "controllerPortInfo") as? [[NSDictionary]] else { return false }
-        return info.contains { $0.count > 1 }
+        guard let pause = core as? PauseMenuLibretroPortPickerSource else { return false }
+        let hasCORETabPortPicker = (core as? PortDeviceConfigurable).map { !$0.controllerPortDescriptors.isEmpty } ?? false
+        guard !hasCORETabPortPicker else { return false }
+        return pause.pauseMenuPortDeviceDescriptors.contains { $0.count > 1 }
     }
 }
 // swiftlint:enable type_body_length

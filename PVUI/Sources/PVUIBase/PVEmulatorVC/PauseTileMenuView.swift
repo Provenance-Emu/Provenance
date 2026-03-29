@@ -1308,13 +1308,9 @@ struct PauseTileMenuView: View {
                         ForEach(Array(legacyPortDeviceInfo.enumerated()), id: \.offset) { portIndex, devices in
                             if devices.count > 1 {
                                 SwiftUI.Section(String(format: String(localized: "Port %d"), portIndex + 1)) {
-                                    ForEach(Array(devices.indices), id: \.self) { deviceIndex in
-                                        let device = devices[deviceIndex]
-                                        let title = (device["desc"] as? String) ?? String(localized: "Unknown Device")
-                                        Button(title) {
-                                            if let deviceId = (device["id"] as? NSNumber)?.uint32Value {
-                                                setLegacyPortDevice(deviceId, forPort: portIndex)
-                                            }
+                                    ForEach(devices, id: \.deviceType) { device in
+                                        Button(device.name) {
+                                            setLegacyPortDevice(device.deviceType, forPort: portIndex)
                                         }
                                     }
                                 }
@@ -1671,21 +1667,12 @@ struct PauseTileMenuView: View {
         rebuildSections()
     }
 
-    private var legacyPortDeviceInfo: [[NSDictionary]] {
-        guard let coreObject = emulatorVC.core as? NSObject,
-              let bridge = coreObject.value(forKey: "_bridge") as? NSObject else { return [] }
-        let selector = Selector(("controllerPortInfo"))
-        guard bridge.responds(to: selector),
-              let info = bridge.value(forKey: "controllerPortInfo") as? [[NSDictionary]] else { return [] }
-        return info
+    private var legacyPortDeviceInfo: [[PortDeviceDescriptor]] {
+        (emulatorVC.core as? PauseMenuLibretroPortPickerSource)?.pauseMenuPortDeviceDescriptors ?? []
     }
 
-    private func setLegacyPortDevice(_ deviceID: UInt32, forPort portIndex: Int) {
-        guard let coreObject = emulatorVC.core as? NSObject,
-              let bridge = coreObject.value(forKey: "_bridge") as? NSObject else { return }
-        let selector = Selector(("setControllerPortDevice:forPort:"))
-        guard bridge.responds(to: selector) else { return }
-        bridge.perform(selector, with: NSNumber(value: deviceID), with: NSNumber(value: UInt32(portIndex)))
+    private func setLegacyPortDevice(_ deviceID: UInt, forPort portIndex: Int) {
+        (emulatorVC.core as? PauseMenuLibretroPortPickerSource)?.setPauseMenuPortDevice(deviceID, forPort: portIndex)
         rebuildSections()
     }
 

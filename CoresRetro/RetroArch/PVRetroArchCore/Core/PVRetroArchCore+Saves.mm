@@ -95,12 +95,11 @@ NSString *autoLoadStatefileName;
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+	/// RetroArch's save/load pipeline calls into the core from the same context as the UI runloop; waiting on a global queue led to `core_serialize_size` / task-queue crashes during load (nested RAM backup save).
+	dispatch_async(dispatch_get_main_queue(), ^{
 		NSError *error = nil;
 		BOOL success = [self saveStateToFileAtPath:fileName error:&error];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			block(success ? nil : error);
-		});
+		block(success ? nil : error);
 	});
 }
 
@@ -202,9 +201,9 @@ NSString *autoLoadStatefileName;
 			sleep(LOAD_WAIT_INTERVAL);
 		}
 
-		NSError *error = nil;
-		BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
 		dispatch_async(dispatch_get_main_queue(), ^{
+			NSError *error = nil;
+			BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
 			block(success ? nil : error);
 		});
 	});
@@ -226,10 +225,12 @@ NSString *autoLoadStatefileName;
         }
         if (self.isRunning) {
             ILOG(@"Loading State: Waited while loading\n");
-            if (content_load_state(autoLoadStatefileName.UTF8String, false, true)) {
-                content_wait_for_load_state_task();
-            }
-            firstLoad = false;
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                if (content_load_state(autoLoadStatefileName.UTF8String, false, true)) {
+                    content_wait_for_load_state_task();
+                }
+                firstLoad = false;
+            });
         }
 	}
 }
