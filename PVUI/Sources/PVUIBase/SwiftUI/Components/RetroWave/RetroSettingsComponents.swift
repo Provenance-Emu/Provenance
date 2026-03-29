@@ -218,16 +218,3 @@ public extension Font {
     }
 }
 
-// MARK: - View helpers
-
-public extension View {
-    /// Applies standard tvOS horizontal padding (80 pt) to account for the side-menu bar.
-    /// Falls back to the default horizontal padding on iOS.
-    func tvOSSettingsHorizontalPadding() -> some View {
-        #if os(tvOS)
-        self.padding(.horizontal, 80)
-        #else
-        self.padding(.horizontal)
-        #endif
-    }
-}
