@@ -31,7 +31,6 @@ public extension PVEmulatorViewController {
     /// widget extension can render it without a network fetch.
     func startLiveActivityIfNeeded() {
 #if os(iOS) && canImport(PVLiveActivities)
-        guard #available(iOS 16.2, *) else { return }
         let gameTitle = game?.title ?? ""
         let systemName = game?.systemShortName ?? game?.systemIdentifier ?? ""
         let md5 = game?.md5Hash ?? ""
@@ -51,7 +50,6 @@ public extension PVEmulatorViewController {
     /// End the Live Activity, removing it from the Dynamic Island and lock screen.
     func endLiveActivity() {
 #if os(iOS) && canImport(PVLiveActivities)
-        guard #available(iOS 16.2, *) else { return }
         Task { @MainActor in
             await LiveActivityManager.shared.endActivity()
         }
@@ -63,7 +61,6 @@ public extension PVEmulatorViewController {
     /// Reflect pause/resume state in the Live Activity.
     func setLiveActivityPaused(_ paused: Bool) {
 #if os(iOS) && canImport(PVLiveActivities)
-        guard #available(iOS 16.2, *) else { return }
         Task { @MainActor in
             await LiveActivityManager.shared.setPaused(paused)
         }
@@ -74,7 +71,6 @@ public extension PVEmulatorViewController {
     /// "saved Xm ago".
     func recordLiveActivityAutosave() {
 #if os(iOS) && canImport(PVLiveActivities)
-        guard #available(iOS 16.2, *) else { return }
         Task { @MainActor in
             await LiveActivityManager.shared.recordAutosave()
         }
@@ -88,7 +84,6 @@ public extension PVEmulatorViewController {
     ///   - total: Maximum points available for this game.
     func updateLiveActivityAchievements(points: Int, total: Int) {
 #if os(iOS) && canImport(PVLiveActivities)
-        guard #available(iOS 16.2, *) else { return }
         Task { @MainActor in
             await LiveActivityManager.shared.updateAchievements(points: points, total: total)
         }

@@ -167,11 +167,11 @@ public final class LiveActivityManager {
 }
 #endif
 
-// MARK: - No-op stubs for non-iOS platforms
+// MARK: - No-op stubs for non-iOS/non-ActivityKit platforms
 
-#if !os(iOS)
-/// Stub so `#if canImport(PVLiveActivities)` call sites compile on tvOS/macOS/visionOS.
-/// ActivityKit is iOS-only; all methods are no-ops on other platforms.
+#if !(os(iOS) && canImport(ActivityKit))
+/// Stub so call sites compile on tvOS, macOS, visionOS, and macCatalyst when
+/// ActivityKit is unavailable. All methods are no-ops.
 public final class LiveActivityManager {
     public static let shared = LiveActivityManager()
     private init() {}
