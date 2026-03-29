@@ -35,6 +35,7 @@ public struct iOSCheatsView: View {
     @State private var showingAddCheat = false
     @State private var showingSearchDB = false
     @State private var cheatToEdit: CheatEditContext?
+    @State private var cheatToExport: SharedCheatEntry?
 
     private struct CheatEditContext: Identifiable {
         let id: String
@@ -103,6 +104,12 @@ public struct iOSCheatsView: View {
                                         Label("Edit", systemImage: "pencil")
                                     }
                                     .tint(.blue)
+                                    Button {
+                                        cheatToExport = sharedEntry(for: cheat)
+                                    } label: {
+                                        Label("Export", systemImage: "qrcode")
+                                    }
+                                    .tint(.orange)
                                 }
                         }
                     }
@@ -161,6 +168,9 @@ public struct iOSCheatsView: View {
             }
             .sheet(item: $cheatToEdit, onDismiss: { delayedReload() }) { ctx in
                 iOSEditCheatView(cheat: ctx.cheat, cheatTypes: cheatTypes)
+            }
+            .sheet(item: $cheatToExport) { entry in
+                CheatExportView(entry: entry)
             }
         }
         .onAppear {
@@ -246,6 +256,24 @@ public struct iOSCheatsView: View {
         } catch {
             ELOG("Error deleting cheat: \(error)")
         }
+    }
+
+    /// Converts a Realm-backed `PVCheats` into a `SharedCheatEntry` for export / QR sharing.
+    private func sharedEntry(for cheat: PVCheats) -> SharedCheatEntry? {
+        guard !cheat.isInvalidated, let code = cheat.code else { return nil }
+        let name = cheat.type ?? code
+        let format = cheat.codeType.isEmpty ? (cheat.type ?? "") : cheat.codeType
+        let system = gameSystemIdentifier ?? cheat.game?.system?.name ?? cheat.game?.systemIdentifier ?? ""
+        let game = cheat.game?.title ?? gameTitle ?? ""
+        return SharedCheatEntry(
+            id: UUID(uuidString: cheat.id) ?? UUID(),
+            name: name,
+            code: code,
+            format: format,
+            systemName: system,
+            gameName: game,
+            addedDate: cheat.date
+        )
     }
 }
 

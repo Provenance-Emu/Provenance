@@ -783,6 +783,72 @@
         }
       }
     },
+    "cheats.empty.description" : {
+      "comment" : "Detail text shown when the shared cheat library is empty",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export cheat codes from Provenance to share them here via the App Group."
+          }
+        }
+      }
+    },
+    "cheats.empty.title" : {
+      "comment" : "Title shown when no cheats have been shared from Provenance",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Shared Cheats"
+          }
+        }
+      }
+    },
+    "cheats.paywall.subtitle" : {
+      "comment" : "Subtitle on the cheat library paywall screen",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purchase the Cheat Library to export QR codes, copy codes to clipboard, and sync cheats between Provenance and this app."
+          }
+        }
+      }
+    },
+    "cheats.paywall.title" : {
+      "comment" : "Title on the cheat library paywall screen",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock Cheat Library"
+          }
+        }
+      }
+    },
+    "cheats.paywall.unlock_button" : {
+      "comment" : "Button label to open the store and unlock the Cheat Library IAP",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock in Store"
+          }
+        }
+      }
+    },
+    "tab.cheats" : {
+      "comment" : "Tab bar label for the Cheats tab",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cheats"
+          }
+        }
+      }
+    },
     "tab.controller" : {
       "comment" : "Tab bar label for the Virtual Controller tab",
       "localizations" : {
