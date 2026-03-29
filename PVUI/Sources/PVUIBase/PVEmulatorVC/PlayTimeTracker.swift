@@ -10,6 +10,7 @@ import Foundation
 import PVLibrary
 import PVRealm
 import PVLogging
+import RealmSwift
 
 /// Tracks emulation session play time and persists it to Realm.
 ///
@@ -96,15 +97,20 @@ final class PlayTimeTracker {
 
     // MARK: - Private
 
+    /// Persists play time via `asyncWriteTransaction` so the main actor never blocks on Realm’s writer lock.
     private func persistElapsed(_ seconds: Int) {
-        do {
-            try RomDatabase.sharedInstance.writeTransaction {
-                self.game.realm?.refresh()
-                self.game.timeSpentInGame += seconds
-                ILOG("PlayTimeTracker: +\(seconds)s → total \(self.game.timeSpentInGame)s for '\(self.game.title)'")
+        let md5 = game.md5Hash
+        let titleSnapshot = game.title
+        RomDatabase.sharedInstance.asyncWriteTransaction {
+            autoreleasepool {
+                guard let realm = try? Realm(configuration: RealmConfiguration.realmConfig),
+                      let live = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+                      !live.isInvalidated else {
+                    return
+                }
+                live.timeSpentInGame += seconds
+                ILOG("PlayTimeTracker: +\(seconds)s → total \(live.timeSpentInGame)s for '\(titleSnapshot)'")
             }
-        } catch {
-            ELOG("PlayTimeTracker: failed to flush elapsed time: \(error)")
         }
     }
 }
