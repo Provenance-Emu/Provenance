@@ -288,7 +288,7 @@ private struct ProposalRow: View {
 
 #if DEBUG
 #Preview {
-    NavigationView {
+    NavigationStack {
         ROMTitleNormalizationView()
     }
 }

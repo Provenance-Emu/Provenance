@@ -15,46 +15,6 @@ import Defaults
 import PVThemes
 import PVUIBase
 
-// MARK: - Font size helpers (tvOS needs larger text)
-
-private extension Font {
-    /// Label / title font — larger on tvOS where users sit farther from the screen.
-    static var settingsLabel: Font {
-        #if os(tvOS)
-        .system(size: 20, weight: .semibold)
-        #else
-        .system(size: 14, weight: .semibold)
-        #endif
-    }
-
-    /// Primary row text.
-    static var settingsRowTitle: Font {
-        #if os(tvOS)
-        .system(size: 18, weight: .medium)
-        #else
-        .system(size: 15, weight: .medium)
-        #endif
-    }
-
-    /// Subtitle / description text.
-    static var settingsRowSubtitle: Font {
-        #if os(tvOS)
-        .system(size: 15)
-        #else
-        .system(size: 12)
-        #endif
-    }
-
-    /// Monospaced value readout (e.g. "1.0×").
-    static var settingsValue: Font {
-        #if os(tvOS)
-        .system(size: 16, weight: .medium, design: .monospaced)
-        #else
-        .system(size: 13, weight: .medium, design: .monospaced)
-        #endif
-    }
-}
-
 // MARK: - MouseInputSettingsView (full-page navigation target)
 
 /// Full-page settings view for mouse input, suitable as a `NavigationLink` destination.
@@ -120,7 +80,7 @@ struct MouseSection: View {
 
                 Toggle(isOn: $gyroMouseEnabled) {
                     Label("Enable Gyro Mouse", systemImage: "gyroscope")
-                        .font(.settingsLabel)
+                        .font(.retroSettingsLabel)
                         .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                             ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 }
@@ -140,7 +100,7 @@ struct MouseSection: View {
                 }
 
                 Text("Note: Gyro mouse settings are stored but not yet applied during gameplay in this build.")
-                    .font(.settingsRowSubtitle)
+                    .font(.retroSettingsRowSubtitle)
                     .foregroundColor(.secondary)
                     .padding(.top, 4)
             }
@@ -159,7 +119,7 @@ struct MouseSection: View {
     private var inputSourcePicker: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Input Source", systemImage: "computermouse")
-                .font(.settingsLabel)
+                .font(.retroSettingsLabel)
                 .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                     ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
 
@@ -192,12 +152,12 @@ struct MouseSection: View {
     private var crosshairStylePicker: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Light Gun Crosshair", systemImage: "scope")
-                .font(.settingsLabel)
+                .font(.retroSettingsLabel)
                 .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                     ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
 
             Text("Shown when playing light-gun games")
-                .font(.settingsRowSubtitle)
+                .font(.retroSettingsRowSubtitle)
                 .foregroundColor(.secondary)
 
             ForEach(LightGunCrosshairStyle.allCases, id: \.rawValue) { style in
@@ -229,11 +189,11 @@ struct MouseSection: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.settingsRowTitle)
+                    .font(.retroSettingsRowTitle)
                     .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                         ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 Text(subtitle)
-                    .font(.settingsRowSubtitle)
+                    .font(.retroSettingsRowSubtitle)
                     .foregroundColor(.secondary)
             }
 
@@ -268,16 +228,16 @@ struct MouseSection: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Label(title, systemImage: "slider.horizontal.3")
-                    .font(.settingsLabel)
+                    .font(.retroSettingsLabel)
                     .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                         ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 Spacer()
                 Text(String(format: "%.1f×", value.wrappedValue))
-                    .font(.settingsValue)
+                    .font(.retroSettingsValue)
                     .foregroundColor(.retroBlue)
             }
             Text(subtitle)
-                .font(.settingsRowSubtitle)
+                .font(.retroSettingsRowSubtitle)
                 .foregroundColor(.secondary)
             RetroWaveSlider(value: value, in: 0.1...5.0, step: 0.1)
                 .accentColor(.retroBlue)
@@ -293,16 +253,16 @@ struct MouseSection: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Label("Gyro Dead Zone", systemImage: "gyroscope")
-                    .font(.settingsLabel)
+                    .font(.retroSettingsLabel)
                     .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor
                         ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 Spacer()
                 Text(String(format: "%.2f", gyroDeadZone))
-                    .font(.settingsValue)
+                    .font(.retroSettingsValue)
                     .foregroundColor(.retroBlue)
             }
             Text("Minimum rotation (rad/s) to register as movement")
-                .font(.settingsRowSubtitle)
+                .font(.retroSettingsRowSubtitle)
                 .foregroundColor(.secondary)
             RetroWaveSlider(value: $gyroDeadZone,
                             in: 0.0...0.5,
