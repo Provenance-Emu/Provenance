@@ -11,7 +11,7 @@ import PVThemes
 import SwiftUI
 
 /// Custom themed `UINavigationController` for the main center view
-/// that's embedded in the SideNavigationController
+/// that's embedded in the `PVSwiftUISideMenuContainer`
 public final class PVRootViewNavigationController: UINavigationController {
 
     /// Constants for styling
@@ -126,7 +126,7 @@ public final class PVRootViewNavigationController: UINavigationController {
     }
 
     private func updateAppearance() {
-        if parent is SideNavigationController {
+        if parent is PVSwiftUISideMenuContainer {
             applyCustomTheme()
         } else {
             resetToDefaultTheme()
