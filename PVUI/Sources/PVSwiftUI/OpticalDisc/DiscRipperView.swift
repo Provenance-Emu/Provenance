@@ -231,7 +231,7 @@ public struct DiscRipperView: View {
     }
 
     private func startRip() {
-        guard let _ = toc else { return }
+        guard toc != nil else { return }
         isRipping = true
         ripError = nil
         Task {
@@ -301,9 +301,12 @@ private struct TrackRowView: View {
                             .monospacedDigit()
                     }
                     HStack(spacing: 8) {
-                        Label(track.isAudio ? "Audio" : "Data", systemImage: track.isAudio ? "music.note" : "doc.fill")
-                            .font(.caption2)
-                            .foregroundStyle(track.isAudio ? .purple : .blue)
+                        Label(
+                            track.isAudio ? String(localized: "disc_ripper.track_type.audio") : String(localized: "disc_ripper.track_type.data"),
+                            systemImage: track.isAudio ? "music.note" : "doc.fill"
+                        )
+                        .font(.caption2)
+                        .foregroundStyle(track.isAudio ? .purple : .blue)
                         Text(verbatim: "LBA \(track.startLBA)")
                             .font(.caption2)
                             .foregroundStyle(.tertiary)
@@ -316,9 +319,10 @@ private struct TrackRowView: View {
     }
 
     private var trackTitle: String {
-        track.isAudio
-            ? "Track \(track.trackNumber) (Audio)"
-            : "Track \(track.trackNumber) (Data)"
+        let typeLabel = track.isAudio
+            ? String(localized: "disc_ripper.track_type.audio")
+            : String(localized: "disc_ripper.track_type.data")
+        return "Track \(track.trackNumber) (\(typeLabel))"
     }
 
     private var sizeString: String {

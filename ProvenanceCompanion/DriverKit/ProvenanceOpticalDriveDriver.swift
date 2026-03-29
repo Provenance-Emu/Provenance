@@ -264,17 +264,12 @@ final class ProvenanceOpticalDriveDriver: IOService {
         guard let bulkOut, let bulkIn else { throw DriverError.pipesNotReady }
 
         // --- 1. Build and send CBW ---
-        var cbw = CommandBlockWrapper(
-            tag: cbwTag,
-            transferLength: UInt32(transferLength),
-            flags: direction == .in ? 0x80 : 0x00,
-            lun: 0,
-            cdbLength: UInt8(cdb.count),
-            cdb: cdb
-        )
+        // Build the 31-byte CBW explicitly to guarantee correct byte layout.
+        // Using a struct with `var cdb: [UInt8]` and withUnsafeBytes would only
+        // capture the Array's heap-pointer metadata, not the CDB bytes inline.
+        let cbwBuffer = makeCBWBuffer(tag: cbwTag, transferLength: transferLength, direction: direction, cdb: cdb)
         cbwTag &+= 1
 
-        let cbwBuffer = withUnsafeBytes(of: &cbw) { Array($0) }
         try await bulkOut.enqueueIORequest(
             buffer: cbwBuffer,
             length: UInt32(cbwBuffer.count),
@@ -376,26 +371,44 @@ public enum OpticalDriveStatus: UInt32, Sendable {
     case reading       = 4
 }
 
-/// Compact Command Block Wrapper for USB BOT protocol.
-private struct CommandBlockWrapper {
-    let signature: UInt32 = 0x43425355 // "USBC" little-endian
-    var tag: UInt32
-    var transferLength: UInt32
-    var flags: UInt8
-    var lun: UInt8
-    var cdbLength: UInt8
-    var cdb: [UInt8] // 16 bytes; shorter CDBs are zero-padded
-
-    init(tag: UInt32, transferLength: UInt32, flags: UInt8, lun: UInt8, cdbLength: UInt8, cdb: [UInt8]) {
-        self.tag = tag
-        self.transferLength = transferLength
-        self.flags = flags
-        self.lun = lun
-        self.cdbLength = cdbLength
-        var padded = [UInt8](repeating: 0, count: 16)
-        padded.replaceSubrange(0..<min(cdb.count, 16), with: cdb.prefix(16))
-        self.cdb = padded
+/// Builds a 31-byte USB BOT Command Block Wrapper (CBW) as a plain byte array.
+///
+/// The CBW layout per "USB MSC Bulk-Only Transport 1.0" §5.1:
+///   Bytes  0– 3  dCBWSignature        0x43425355 ("USBC", little-endian)
+///   Bytes  4– 7  dCBWTag              host-supplied tag (little-endian)
+///   Bytes  8–11  dCBWDataTransferLength (little-endian)
+///   Byte  12     bmCBWFlags           0x80 = data-in, 0x00 = data-out
+///   Byte  13     bCBWLUN              logical unit number (0 for single-LUN drives)
+///   Byte  14     bCBWCBLength         length of the CBWCB field (1–16)
+///   Bytes 15–30  CBWCB               SCSI CDB, zero-padded to 16 bytes
+///
+/// Building the buffer explicitly avoids the layout hazard of using a Swift struct
+/// that contains a heap-allocated `[UInt8]` field with `withUnsafeBytes(of:)`.
+private func makeCBWBuffer(tag: UInt32, transferLength: Int, direction: TransferDirection, cdb: [UInt8]) -> [UInt8] {
+    var buf = [UInt8](repeating: 0, count: 31)
+    // dCBWSignature "USBC" little-endian
+    buf[0] = 0x55; buf[1] = 0x53; buf[2] = 0x42; buf[3] = 0x43
+    // dCBWTag little-endian
+    buf[4] = UInt8(tag & 0xFF)
+    buf[5] = UInt8((tag >> 8) & 0xFF)
+    buf[6] = UInt8((tag >> 16) & 0xFF)
+    buf[7] = UInt8((tag >> 24) & 0xFF)
+    // dCBWDataTransferLength little-endian
+    buf[8]  = UInt8(transferLength & 0xFF)
+    buf[9]  = UInt8((transferLength >> 8) & 0xFF)
+    buf[10] = UInt8((transferLength >> 16) & 0xFF)
+    buf[11] = UInt8((transferLength >> 24) & 0xFF)
+    // bmCBWFlags
+    buf[12] = direction == .in ? 0x80 : 0x00
+    // bCBWLUN = 0 (single-LUN optical drives)
+    buf[13] = 0
+    // bCBWCBLength
+    buf[14] = UInt8(min(cdb.count, 16))
+    // CBWCB — 16 inline bytes
+    for (i, byte) in cdb.prefix(16).enumerated() {
+        buf[15 + i] = byte
     }
+    return buf
 }
 
 // MARK: - Errors
