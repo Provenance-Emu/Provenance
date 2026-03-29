@@ -25,7 +25,18 @@ typealias UIImage = NSImage
 #endif
 // import UIKit
 
+/// HTTPS base paths for ``NSUserActivity/webpageURL`` (custom URL schemes are rejected). Must match `applinks:provenance-emu.com` and the host’s `apple-app-site-association`.
+private enum ProvenanceUserActivityWebLink {
+    /// Public game page by ROM MD5 — keep in sync with provenance-emu.com routing and AASA `paths`.
+    static let gameByMD5Prefix = "https://provenance-emu.com/game/"
+}
+
 public extension PVGame {
+    
+    fileprivate enum Consts {
+        static let spotlightActivityType = "org.provenance-emu.game-search"
+    }
+    
     var url: URL? { get {
         return file?.url
     }}
@@ -223,7 +234,7 @@ public extension PVGame {
 
     var spotlightActivity: NSUserActivity {
         guard !self.isInvalidated else { return NSUserActivity() }
-        let activity = NSUserActivity(activityType: "org.provenance-emu.game-search")
+        let activity = NSUserActivity(activityType: Consts.spotlightActivityType)
         activity.title = title
         activity.userInfo = ["md5": md5Hash]
 
@@ -239,8 +250,10 @@ public extension PVGame {
         activity.contentAttributeSet = spotlightContentSet
         #endif
 
-        // Set a web URL for fallback
-        activity.webpageURL = URL(string: "provenance://game/\(md5Hash)")
+        // Universal link / Handoff: https only (`provenance://` is not allowed here).
+        if let pageURL = URL(string: "\(ProvenanceUserActivityWebLink.gameByMD5Prefix)\(md5Hash)") {
+            activity.webpageURL = pageURL
+        }
 
         return activity
     }
