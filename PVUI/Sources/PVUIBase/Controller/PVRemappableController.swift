@@ -88,6 +88,9 @@ public final class PVRemappableController: NSObject {
     /// The underlying controller being wrapped
     private let wrappedController: GCController
 
+    /// Underlying `GCController` for hardware features (light bar, etc.) used by PVUIBase extensions.
+    internal var backingGCController: GCController { wrappedController }
+
     /// Dictionary of button remappings
     private var buttonMappings: [ButtonIdentifier: ButtonMapping] = [:]
 

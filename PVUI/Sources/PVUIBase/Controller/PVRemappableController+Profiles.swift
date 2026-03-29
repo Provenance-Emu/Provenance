@@ -7,9 +7,13 @@
 //
 
 import Foundation
+import PVCoreBridge
 import PVLibrary
 import PVLogging
 import PVRealm
+#if canImport(GameController)
+import GameController
+#endif
 
 // MARK: - Realm-backed profile persistence
 
@@ -54,6 +58,14 @@ public extension PVRemappableController {
         }
         // Persist via UserDefaults for the remapping system
         saveMappings()
+        #if canImport(GameController)
+        if #available(iOS 14.0, tvOS 14.0, *) {
+            ControllerLightBarManager.shared.setProfileLightBarOverride(
+                controller: backingGCController,
+                hex: profile.lightBarColorHex
+            )
+        }
+        #endif
         ILOG("Applied controller profile '\(profileName)' (\(rawMappings.count) mappings)")
     }
 

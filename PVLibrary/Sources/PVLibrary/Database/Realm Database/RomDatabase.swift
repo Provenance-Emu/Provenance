@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 27
+public let schemaVersion: UInt64 = 28
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -319,6 +319,10 @@ public final class RealmConfiguration {
                     newObject?["lastMetadataLookupDate"] = nil
                 }
                 ILOG("Migration to version 27 complete. (Added PVGame.matchSourceRaw/userCustomizedFieldsMask/lastMetadataLookupDate)")
+            }
+            if oldSchemaVersion < 28 {
+                // PVControllerProfile.lightBarColorHex — optional String; Realm defaults new optional fields to nil.
+                ILOG("Migration to version 28 complete. (Added PVControllerProfile.lightBarColorHex)")
             }
         }
 

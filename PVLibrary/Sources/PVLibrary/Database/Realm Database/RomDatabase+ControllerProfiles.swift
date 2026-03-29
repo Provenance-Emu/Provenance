@@ -111,6 +111,7 @@ public extension RomDatabase {
         systemIdentifier: String? = nil,
         coreIdentifier: String? = nil,
         gameID: String? = nil,
+        lightBarColorHex: String? = nil,
         mappings: [(source: String, destination: String)] = []
     ) throws -> PVControllerProfile {
         let profile = PVControllerProfile(
@@ -120,6 +121,7 @@ public extension RomDatabase {
             coreIdentifier: coreIdentifier,
             gameID: gameID
         )
+        profile.lightBarColorHex = lightBarColorHex
         try realm.write {
             realm.add(profile)
             let realmMappings = mappings.map { PVControllerMapping(source: $0.source, destination: $0.destination) }
@@ -144,6 +146,14 @@ public extension RomDatabase {
     func renameControllerProfile(_ profile: PVControllerProfile, to newName: String) throws {
         try realm.write {
             profile.name = newName
+            profile.lastModifiedDate = Date()
+        }
+    }
+
+    /// Set or clear the optional light bar color (`#RRGGBB`) stored on this profile.
+    func updateControllerProfileLightBarColor(_ profile: PVControllerProfile, hex: String?) throws {
+        try realm.write {
+            profile.lightBarColorHex = hex
             profile.lastModifiedDate = Date()
         }
     }

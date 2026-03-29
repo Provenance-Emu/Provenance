@@ -119,6 +119,11 @@ struct InSessionProfilePickerView: View {
                     Text("\(profile.mappings.count) mapping\(profile.mappings.count == 1 ? "" : "s")")
                         .font(.caption)
                         .foregroundColor(.secondary)
+                    if let hex = profile.lightBarColorHex?.trimmingCharacters(in: .whitespacesAndNewlines), !hex.isEmpty {
+                        Text("Light: \(hex)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
                 }
 
                 Spacer()

@@ -52,6 +52,9 @@ public final class PVControllerProfile: RealmSwift.Object, Identifiable {
     /// The individual button remappings stored in this profile
     @Persisted public var mappings: List<PVControllerMapping>
 
+    /// Optional light bar color (`#RRGGBB`) for DualSense / DualShock 4 when supported. `nil` uses the global per-system color chain.
+    @Persisted public var lightBarColorHex: String?
+
     // MARK: - Metadata
 
     @Persisted public var createdDate: Date = Date()

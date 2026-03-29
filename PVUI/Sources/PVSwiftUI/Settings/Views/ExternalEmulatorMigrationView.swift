@@ -112,6 +112,9 @@ public struct ExternalEmulatorMigrationView: View {
             NavigationStack {
                 EmulatorMigrationGuideView(emulator: emulator)
             }
+            #if os(tvOS)
+            .settingsSheetDetachedFromSubpageDepth()
+            #endif
         }
         .task {
             await loadInstalledEmulators()

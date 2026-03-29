@@ -368,6 +368,9 @@ fileprivate struct MissingArtworkStyleView: View {
         .settingsSubpageTracking()
         .sheet(isPresented: $showingFullScreenPreview) {
             FullScreenPreview(style: selectedStyle, previewTitle: previewTitle)
+                #if os(tvOS)
+                .settingsSheetDetachedFromSubpageDepth()
+                #endif
         }
     }
 }

@@ -89,6 +89,24 @@ final class ControllerProfileTests: XCTestCase {
         XCTAssertNil(profile.gameID)
     }
 
+    func testAddControllerProfile_storesLightBarColorHex() throws {
+        let profile = try db.addControllerProfile(
+            name: "Lit",
+            controllerVendorName: vendor,
+            lightBarColorHex: "#00FF40"
+        )
+        XCTAssertEqual(profile.lightBarColorHex, "#00FF40")
+    }
+
+    func testUpdateControllerProfileLightBarColor_persistsHex() throws {
+        let profile = try db.addControllerProfile(name: "P", controllerVendorName: vendor)
+        XCTAssertNil(profile.lightBarColorHex)
+        try db.updateControllerProfileLightBarColor(profile, hex: "#ABCDEF")
+        XCTAssertEqual(profile.lightBarColorHex, "#ABCDEF")
+        try db.updateControllerProfileLightBarColor(profile, hex: nil)
+        XCTAssertNil(profile.lightBarColorHex)
+    }
+
     // MARK: - Activation tests
 
     func testActivateControllerProfile_setsIsActive() throws {

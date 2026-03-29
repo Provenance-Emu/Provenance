@@ -50,6 +50,9 @@ internal struct SecretSettingsRow: View {
             SecretDPadView {
                 showFeatureFlagsDebug = true
             }
+            #if os(tvOS)
+            .settingsSheetDetachedFromSubpageDepth()
+            #endif
         }
     }
 

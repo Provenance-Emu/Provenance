@@ -105,6 +105,9 @@ public struct CloudSyncSettingsView: View {
                         }
                     }
             }
+            #if os(tvOS)
+            .settingsSheetDetachedFromSubpageDepth()
+            #endif
         }
         #if os(tvOS)
         .focusSection()

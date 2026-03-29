@@ -269,6 +269,9 @@ public struct AppGroupFileBrowserView: View {
         .settingsSubpageTracking()
         .sheet(isPresented: $showingFileContents) {
             FileContentsView(fileName: selectedItem?.name ?? "", contents: fileContents)
+                #if os(tvOS)
+                .settingsSheetDetachedFromSubpageDepth()
+                #endif
         }
     }
 

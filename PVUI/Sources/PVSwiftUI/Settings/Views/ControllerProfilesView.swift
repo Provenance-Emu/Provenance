@@ -8,6 +8,7 @@
 
 import SwiftUI
 import GameController
+import PVCoreBridge
 import PVLibrary
 import PVRealm
 import PVLogging
@@ -47,6 +48,11 @@ struct ControllerProfilesView: View {
 
     private var accentColor: Color {
         themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .accentColor
+    }
+
+    /// DualSense / DualShock 4 expose `light`; other pads do not.
+    private var controllerSupportsLightBar: Bool {
+        controller.light != nil
     }
 
     // MARK: - Body
@@ -120,37 +126,54 @@ struct ControllerProfilesView: View {
 
     @ViewBuilder
     private func profileRow(_ profile: PVControllerProfile) -> some View {
-        Button(action: { toggleActive(profile) }) {
-            HStack(spacing: 12) {
-                // Active indicator
-                Image(systemName: profile.isActive ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(profile.isActive ? accentColor : .secondary)
-                    .imageScale(.large)
+        HStack(spacing: 12) {
+            Button(action: { toggleActive(profile) }) {
+                HStack(spacing: 12) {
+                    Image(systemName: profile.isActive ? "checkmark.circle.fill" : "circle")
+                        .foregroundColor(profile.isActive ? accentColor : .secondary)
+                        .imageScale(.large)
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(profile.name)
-                        .font(.body)
-                        .foregroundColor(.primary)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(profile.name)
+                            .font(.body)
+                            .foregroundColor(.primary)
 
-                    Text(scopeLabel(for: profile))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        Text(scopeLabel(for: profile))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
 
-                    Text("\(profile.mappings.count) mapping\(profile.mappings.count == 1 ? "" : "s")")
+                        Text("\(profile.mappings.count) mapping\(profile.mappings.count == 1 ? "" : "s")")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+
+                        if let hex = profile.lightBarColorHex?.trimmingCharacters(in: .whitespacesAndNewlines), !hex.isEmpty {
+                            Text("Light: \(hex)")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    Spacer(minLength: 8)
+
+                    Text(profile.lastModifiedDate, style: .relative)
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
-
-                Spacer()
-
-                // Last modified
-                Text(profile.lastModifiedDate, style: .relative)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
+                .contentShape(Rectangle())
             }
-            .contentShape(Rectangle())
+            .buttonStyle(.plain)
+
+            if controllerSupportsLightBar {
+                NavigationLink {
+                    ControllerProfileLightBarEditorView(controller: controller, profileID: profile.id, onSaved: reloadProfiles)
+                } label: {
+                    Image(systemName: "light.max")
+                        .foregroundColor(accentColor)
+                        .accessibilityLabel(String(localized: "Light bar color"))
+                }
+                .buttonStyle(.plain)
+            }
         }
-        .buttonStyle(.plain)
         #if !os(tvOS)
         .swipeActions(edge: .leading) {
             Button("Rename") { startRename(profile) }
@@ -188,6 +211,9 @@ struct ControllerProfilesView: View {
             guard let live = db.controllerProfile(withID: profile.id) else { return }
             if live.isActive {
                 try db.deactivateControllerProfile(live)
+                if #available(iOS 14.0, tvOS 14.0, *) {
+                    ControllerLightBarManager.shared.setProfileLightBarOverride(controller: controller, hex: nil)
+                }
             } else {
                 try db.activateControllerProfile(live)
                 // Apply to in-memory controller immediately.
@@ -202,12 +228,20 @@ struct ControllerProfilesView: View {
 
     private func deleteProfiles(at offsets: IndexSet) {
         let db = RomDatabase.sharedInstance
+        var clearedLightBarOverride = false
         for index in offsets {
             guard let live = db.controllerProfile(withID: profiles[index].id) else { continue }
+            let wasActive = live.isActive
             do {
                 try db.deleteControllerProfile(live)
+                if wasActive { clearedLightBarOverride = true }
             } catch {
                 showProfileError(error)
+            }
+        }
+        if clearedLightBarOverride {
+            if #available(iOS 14.0, tvOS 14.0, *) {
+                ControllerLightBarManager.shared.setProfileLightBarOverride(controller: controller, hex: nil)
             }
         }
         reloadProfiles()

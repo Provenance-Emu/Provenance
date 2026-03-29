@@ -96,6 +96,9 @@ struct CloudKitRecordsManagementView: View {
         }
         .sheet(item: $showingRecordDetail) { record in
             recordDetailSheet(record: record)
+                #if os(tvOS)
+                .settingsSheetDetachedFromSubpageDepth()
+                #endif
         }
     }
 

@@ -18,7 +18,7 @@ import Defaults
 import AudioToolbox
 import PVCheevos
 
-#if os(tvOS)
+#if canImport(GameController)
 import GameController
 #endif
 
@@ -64,12 +64,49 @@ struct TVOSNavigationSupport: ViewModifier {
 }
 
 #if os(tvOS)
+/// Increments/decrements a shared refcount so nested settings destinations (A → B) keep
+/// `depth > 0` until the last tracked view disappears; a plain `Bool` would clear on the first pop.
+private enum SettingsSubpageDepthTracking {
+    /// Registers one pushed settings subpage; no-op when `depth` is `nil` (e.g. inside a detached sheet).
+    static func register(_ depth: Binding<Int>?) {
+        guard let depth else { return }
+        depth.wrappedValue += 1
+    }
+
+    /// Unregisters one subpage; clamps at zero.
+    static func unregister(_ depth: Binding<Int>?) {
+        guard let depth else { return }
+        depth.wrappedValue = max(0, depth.wrappedValue - 1)
+    }
+}
+
+/// Environment key: refcount of tracked NavigationLink destinations under Settings’ root stack.
+/// `nil` means “do not mutate” (sheet / overlay trees use this to avoid corrupting the root count).
+private struct SettingsSubpageDepthKey: EnvironmentKey {
+    static let defaultValue: Binding<Int>? = nil
+}
+
+extension EnvironmentValues {
+    /// Refcount binding from `PVSettingsView`; child destinations increment on appear and decrement on disappear.
+    var settingsSubpageDepth: Binding<Int>? {
+        get { self[SettingsSubpageDepthKey.self] }
+        set { self[SettingsSubpageDepthKey.self] = newValue }
+    }
+}
+
+extension View {
+    /// Detaches presented content from the settings subpage refcount so sheet dismissals do not desync the main stack.
+    func settingsSheetDetachedFromSubpageDepth() -> some View {
+        environment(\.settingsSubpageDepth, nil)
+    }
+}
+
 /// ViewModifier that contains focus within a subpage to prevent accidental back navigation
 /// when scrolling past content on tvOS. This prevents focus from escaping to parent tab bars.
 @available(tvOS 14.0, *)
 struct TVOSSubpageFocusContainment: ViewModifier {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.settingsSubpagePushed) private var isSubpagePushed
+    @Environment(\.settingsSubpageDepth) private var settingsSubpageDepth
 
     func body(content: Content) -> some View {
         content
@@ -77,39 +114,21 @@ struct TVOSSubpageFocusContainment: ViewModifier {
             .onExitCommand {
                 dismiss()
             }
-            .onAppear { isSubpagePushed?.wrappedValue = true }
-            .onDisappear { isSubpagePushed?.wrappedValue = false }
+            .onAppear { SettingsSubpageDepthTracking.register(settingsSubpageDepth) }
+            .onDisappear { SettingsSubpageDepthTracking.unregister(settingsSubpageDepth) }
     }
 }
 
 // MARK: - Settings Subpage Tracking
 
-/// Environment key that carries a binding from `PVSettingsView` indicating
-/// whether a subpage is currently pushed on the navigation stack.
-/// `SettingsSubpageTracker` writes to this binding on appear/disappear so
-/// the parent `SettingsWrapperView` can keep `canPop` up to date without
-/// relying solely on UIKit introspection.
-private struct SettingsSubpagePushedKey: EnvironmentKey {
-    static let defaultValue: Binding<Bool>? = nil
-}
-
-extension EnvironmentValues {
-    /// Binding provided by `PVSettingsView` to track subpage push state.
-    var settingsSubpagePushed: Binding<Bool>? {
-        get { self[SettingsSubpagePushedKey.self] }
-        set { self[SettingsSubpagePushedKey.self] = newValue }
-    }
-}
-
-/// ViewModifier applied to NavigationLink destinations that signals the
-/// settings root when a subpage appears or disappears.
+/// ViewModifier applied to NavigationLink destinations that adjusts the settings subpage refcount on appear/disappear.
 struct SettingsSubpageTracker: ViewModifier {
-    @Environment(\.settingsSubpagePushed) private var isSubpagePushed
+    @Environment(\.settingsSubpageDepth) private var settingsSubpageDepth
 
     func body(content: Content) -> some View {
         content
-            .onAppear { isSubpagePushed?.wrappedValue = true }
-            .onDisappear { isSubpagePushed?.wrappedValue = false }
+            .onAppear { SettingsSubpageDepthTracking.register(settingsSubpageDepth) }
+            .onDisappear { SettingsSubpageDepthTracking.unregister(settingsSubpageDepth) }
     }
 }
 #endif
@@ -156,7 +175,7 @@ struct TVOSSettingsSubpage<Content: View>: View {
     let title: String
     @ViewBuilder let content: () -> Content
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.settingsSubpagePushed) private var isSubpagePushed
+    @Environment(\.settingsSubpageDepth) private var settingsSubpageDepth
 
     var body: some View {
         ScrollView {
@@ -168,8 +187,8 @@ struct TVOSSettingsSubpage<Content: View>: View {
         .onExitCommand {
             dismiss()
         }
-        .onAppear { isSubpagePushed?.wrappedValue = true }
-        .onDisappear { isSubpagePushed?.wrappedValue = false }
+        .onAppear { SettingsSubpageDepthTracking.register(settingsSubpageDepth) }
+        .onDisappear { SettingsSubpageDepthTracking.unregister(settingsSubpageDepth) }
     }
 }
 
@@ -521,10 +540,9 @@ public struct PVSettingsView: View {
     @State private var destinationCancellable: AnyCancellable?
 
     #if os(tvOS)
-    /// Tracks whether a subpage is currently pushed on the navigation stack.
-    /// Destination views write to this via the `settingsSubpagePushed` environment binding.
-    @State private var isSubpagePushed = false
-    /// Callback to notify the parent wrapper when subpage push state changes.
+    /// Refcount of tracked subpages (NavigationLink destinations using `.settingsSubpageTracking()` etc.).
+    @State private var settingsSubpageDepth = 0
+    /// Callback to notify the parent wrapper when subpage push state changes (`depth > 0`).
     var onSubpagePushChanged: ((Bool) -> Void)?
     #endif
 
@@ -731,9 +749,9 @@ public struct PVSettingsView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
         #if os(tvOS)
-        .environment(\.settingsSubpagePushed, $isSubpagePushed)
-        .onChange(of: isSubpagePushed) { pushed in
-            onSubpagePushChanged?(pushed)
+        .environment(\.settingsSubpageDepth, $settingsSubpageDepth)
+        .onChange(of: settingsSubpageDepth) { depth in
+            onSubpagePushChanged?(depth > 0)
         }
         #endif
         .onAppear {
@@ -755,12 +773,11 @@ public struct PVSettingsView: View {
                         }
                     }
             }
+            #if os(tvOS)
+            .settingsSheetDetachedFromSubpageDepth()
+            #endif
         }
     }
-
-#if os(tvOS)
-    @Environment(\.tvMediaFocusCoordinator) private var tvMediaFocusCoordinator
-#endif
 
     #if !os(tvOS)
     private var tabItems: [RetroTabItem] {
@@ -2063,6 +2080,9 @@ private struct AnalogDeadzoneSection: View {
             #endif
             .sheet(isPresented: $showingCompatibility) {
                 CoreDeadzoneCompatibilityView()
+                    #if os(tvOS)
+                    .settingsSheetDetachedFromSubpageDepth()
+                    #endif
             }
         }
     }
@@ -2295,9 +2315,10 @@ private struct DualSenseExtrasSection: View {
     }
 }
 
-/// Button that fires a short test rumble on all registered controllers and device Taptic Engine.
+/// Button that fires a short test rumble on all player-assigned controllers and optional device Taptic feedback.
 private struct TestRumbleButton: View {
     @State private var isTesting = false
+    @Default(.rumbleDeviceEnabled) private var rumbleDeviceEnabled
 
     var body: some View {
         Button {
@@ -2319,23 +2340,30 @@ private struct TestRumbleButton: View {
         .disabled(isTesting)
     }
 
+    /// Registers slotted controllers with `GCControllerHapticsManager` and pulses each occupied player.
+    /// Device Taptic runs only when `rumbleDeviceEnabled` and no slotted controller has `GCDeviceHaptics`.
     @MainActor
     private func fireTestRumble() {
         isTesting = true
-        // Fire on all registered player slots (0–3) so any connected controller vibrates,
-        // and also trigger the device Taptic Engine via HapticsManager (respects rumbleDeviceEnabled).
-        for player in 0..<4 {
-            GCControllerHapticsManager.shared.rumble(
-                player: player,
-                params: .init(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4)
-            )
+        // Provenance player slots are 1-based; `GCControllerHapticsManager` uses 0-based indices like `PVEmulatorCore.controller1` → player 0.
+        let live = PVControllerManager.shared.allLiveControllers
+        let sortedSlots = live.sorted(by: { $0.key < $1.key })
+        for (pvSlot, controller) in sortedSlots {
+            GCControllerHapticsManager.shared.register(controller: controller, forPlayer: pvSlot - 1)
         }
-        // Device Taptic Engine fallback — the GCControllerHapticsManager loop above
-        // already rumbles all connected external controllers. This just gives on-device
-        // feedback so the user feels something even without an external controller.
+        let params = GCControllerHapticsManager.RumbleParams(lowFrequency: 0.8, highFrequency: 0.5, duration: 0.4)
+        for (pvSlot, _) in sortedSlots {
+            GCControllerHapticsManager.shared.rumble(player: pvSlot - 1, params: params)
+        }
         #if !os(tvOS)
-        let generator = UIImpactFeedbackGenerator(style: .heavy)
-        generator.impactOccurred(intensity: 0.8)
+        if rumbleDeviceEnabled {
+            let anyMotorCapable = live.values.contains { $0.haptics != nil }
+            if !anyMotorCapable {
+                let generator = UIImpactFeedbackGenerator(style: .heavy)
+                generator.prepare()
+                generator.impactOccurred(intensity: 0.8)
+            }
+        }
         #endif
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 600_000_000)
@@ -2522,12 +2550,14 @@ private struct LibrarySection2: View {
             Button {
                 showSaveImportWizard = true
             } label: {
+                #if os(tvOS)
+                let subtitle = "Saves sync automatically via iCloud. Tap to view guidance."
+                #else
+                let subtitle = "Import a save bundle or battery save from a .zip, .sav, .srm, or .ram file."
+                #endif
+
                 SettingsRow(title: "Import Saves",
-                            #if os(tvOS)
-                            subtitle: "Saves sync automatically via iCloud. Tap to view guidance.",
-                            #else
-                            subtitle: "Import a save bundle or battery save from a .zip, .sav, .srm, or .ram file.",
-                            #endif
+                            subtitle: subtitle,
                             icon: .sfSymbol("square.and.arrow.down"))
             }
             #if os(tvOS)
@@ -2535,6 +2565,9 @@ private struct LibrarySection2: View {
             #endif
             .sheet(isPresented: $showSaveImportWizard) {
                 SaveImportWizardView()
+                    #if os(tvOS)
+                    .settingsSheetDetachedFromSubpageDepth()
+                    #endif
             }
 
             NavigationLink(destination: BatchArtworkMatchingView()) {

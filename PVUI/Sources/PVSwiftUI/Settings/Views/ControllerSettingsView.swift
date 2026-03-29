@@ -944,18 +944,23 @@ struct ButtonRemappingView: View {
             Text(saveProfileErrorMessage)
         }
         .sheet(isPresented: $showingTapToRemap) {
-            if let source = selectedButton {
-                TapToRemapView(
-                    controller: controller,
-                    targetButton: source
-                ) { detected in
-                    showingTapToRemap = false
-                    remapButton(source, to: detected)
-                } onCancel: {
-                    showingTapToRemap = false
-                    selectedButton = nil
+            Group {
+                if let source = selectedButton {
+                    TapToRemapView(
+                        controller: controller,
+                        targetButton: source
+                    ) { detected in
+                        showingTapToRemap = false
+                        remapButton(source, to: detected)
+                    } onCancel: {
+                        showingTapToRemap = false
+                        selectedButton = nil
+                    }
                 }
             }
+            #if os(tvOS)
+            .settingsSheetDetachedFromSubpageDepth()
+            #endif
         }
         .confirmationDialog(
             "Map \(selectedButton.map { buttonDisplayName($0) } ?? "button") to:",

@@ -51,11 +51,17 @@ struct AUFilterSettingsView: View {
             AddEffectSheet { effectType in
                 addEffect(effectType)
             }
+            #if os(tvOS)
+            .settingsSheetDetachedFromSubpageDepth()
+            #endif
         }
         .sheet(isPresented: $showingSavePreset) {
             SavePresetSheet(presetName: $newPresetName) {
                 saveCurrentChainAsPreset()
             }
+            #if os(tvOS)
+            .settingsSheetDetachedFromSubpageDepth()
+            #endif
         }
         #if os(tvOS)
         .onExitCommand { dismiss() }

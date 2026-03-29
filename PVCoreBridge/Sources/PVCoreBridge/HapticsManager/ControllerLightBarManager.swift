@@ -96,6 +96,10 @@ public final class ControllerLightBarManager {
     /// Maps 0-based player index → GCController.
     private var playerControllers: [Int: GCController] = [:]
 
+    /// Per-controller RGB override from the active `PVControllerProfile` (`lightBarColorHex`).
+    /// Keyed by controller object identity for the current `GCController` instance.
+    private var profileLightBarOverrides: [ObjectIdentifier: LightBarColor] = [:]
+
     /// The system identifier of the currently active emulation session.
     private var currentSystemIdentifier: String?
 
@@ -131,12 +135,39 @@ public final class ControllerLightBarManager {
     /// Register a GCController for a player slot (0-based).
     public func register(controller: GCController?, forPlayer player: Int) {
         if let controller = controller {
+            if let old = playerControllers[player], old !== controller {
+                profileLightBarOverrides.removeValue(forKey: ObjectIdentifier(old))
+            }
             playerControllers[player] = controller
             if let sysId = currentSystemIdentifier {
                 applyColor(forSystemIdentifier: sysId, to: controller)
             }
         } else {
+            if let old = playerControllers[player] {
+                profileLightBarOverrides.removeValue(forKey: ObjectIdentifier(old))
+            }
             playerControllers.removeValue(forKey: player)
+        }
+    }
+
+    // MARK: - Profile override (Realm `PVControllerProfile.lightBarColorHex`)
+
+    /// Store or clear a per-controller light bar color from the active controller profile.
+    /// Pass `nil` or empty `hex` to remove the override (global per-system color chain applies again).
+    ///
+    /// When no emulation session is active, updates the hardware light immediately for idle preview.
+    public func setProfileLightBarOverride(controller: GCController, hex: String?) {
+        let id = ObjectIdentifier(controller)
+        if let hex, !hex.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+           let color = LightBarColor(hex: hex) {
+            profileLightBarOverrides[id] = color
+        } else {
+            profileLightBarOverrides.removeValue(forKey: id)
+        }
+        if let sysId = currentSystemIdentifier {
+            applyColor(forSystemIdentifier: sysId, to: controller)
+        } else {
+            applyIdleLightBarPreview(to: controller)
         }
     }
 
@@ -153,6 +184,7 @@ public final class ControllerLightBarManager {
     /// Call this when an emulation session ends.
     public func resetSystemColor() {
         currentSystemIdentifier = nil
+        profileLightBarOverrides.removeAll()
         let enabled = isLightBarEnabled()
         for controller in playerControllers.values {
             setLightBar(of: controller, to: enabled ? .default : .off)
@@ -173,8 +205,23 @@ public final class ControllerLightBarManager {
             setLightBar(of: controller, to: .off)
             return
         }
-        let color = effectiveColor(forSystemIdentifier: sysId)
+        let color = effectiveColor(forSystemIdentifier: sysId, applyingTo: controller)
         setLightBar(of: controller, to: color)
+    }
+
+    /// When not in an emulation session, apply profile idle preview or global default/off.
+    private func applyIdleLightBarPreview(to controller: GCController) {
+        guard controller.light != nil else { return }
+        guard isLightBarEnabled() else {
+            setLightBar(of: controller, to: .off)
+            return
+        }
+        let id = ObjectIdentifier(controller)
+        if let overrideColor = profileLightBarOverrides[id] {
+            setLightBar(of: controller, to: overrideColor)
+        } else {
+            setLightBar(of: controller, to: .default)
+        }
     }
 
     private func setLightBar(of controller: GCController, to color: LightBarColor) {
@@ -185,10 +232,18 @@ public final class ControllerLightBarManager {
 
     // MARK: - Color Resolution
 
-    /// Resolve the effective color for a system identifier.
-    /// Priority: user override → built-in default.
+    /// Resolve the effective color for a system identifier (global path — no per-controller profile).
+    /// Priority: Settings per-system hex → built-in default.
     public func effectiveColor(forSystemIdentifier sysId: String) -> LightBarColor {
-        // User override: stored as hex string keyed by system identifier.
+        effectiveColor(forSystemIdentifier: sysId, applyingTo: nil)
+    }
+
+    /// Resolve the color applied to a specific controller during gameplay.
+    /// Priority: active profile `lightBarColorHex` → Settings per-system hex → built-in default.
+    public func effectiveColor(forSystemIdentifier sysId: String, applyingTo controller: GCController?) -> LightBarColor {
+        if let controller, let override = profileLightBarOverrides[ObjectIdentifier(controller)] {
+            return override
+        }
         let overrides = Defaults[.controllerLightBarSystemColors]
         if let hexValue = overrides[sysId],
            let color = LightBarColor(hex: hexValue) {

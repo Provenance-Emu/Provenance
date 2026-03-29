@@ -82,7 +82,7 @@ struct SettingsWrapperView: View {
             showingSettings = false
         }
         .navigationBarHidden(true)
-        .background(TVOSSettingsNavigationCanPopReader(canPop: $canPop))
+        .background(TVOSSettingsNavigationPopBridge())
         #else
         PVSettingsView(
             conflictsController: conflictsController,
@@ -157,73 +157,34 @@ extension Notification.Name {
     static let tvOSSettingsRequestPop = Notification.Name("TVOSSettingsRequestPop")
 }
 
-/// Tracks whether the Settings navigation stack can pop (i.e. a subpage is pushed).
-/// This is used by the tvOS Media UI to suppress sidebar gestures while inside Settings subpages.
-private struct TVOSSettingsNavigationCanPopReader: UIViewControllerRepresentable {
-    @Binding var canPop: Bool
+#if os(tvOS)
+import UIKit
 
+/// Hosts a lightweight UIKit controller so the tvOS Media shell can pop one UIKit-backed
+/// SwiftUI navigation level when Menu is pressed (`canPop` is driven only by SwiftUI subpage refcount).
+private struct TVOSSettingsNavigationPopBridge: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> Controller {
-        Controller(canPop: $canPop)
+        Controller()
     }
 
-    func updateUIViewController(_ uiViewController: Controller, context: Context) {
-        uiViewController.canPop = $canPop
-        uiViewController.refresh()
-    }
+    func updateUIViewController(_ uiViewController: Controller, context: Context) {}
 
-    final class Controller: UIViewController, UINavigationControllerDelegate {
-        var canPop: Binding<Bool>
-
-        init(canPop: Binding<Bool>) {
-            self.canPop = canPop
-            super.init(nibName: nil, bundle: nil)
-        }
-
-        @available(*, unavailable)
-        required init?(coder: NSCoder) { nil }
-
+    final class Controller: UIViewController {
         deinit {
             NotificationCenter.default.removeObserver(self, name: .tvOSSettingsRequestPop, object: nil)
         }
 
         override func viewDidLoad() {
             super.viewDidLoad()
-            NotificationCenter.default.addObserver(self,
-                                                   selector: #selector(handleSettingsPopRequest),
-                                                   name: .tvOSSettingsRequestPop,
-                                                   object: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(handleSettingsPopRequest),
+                name: .tvOSSettingsRequestPop,
+                object: nil
+            )
         }
 
-        override func didMove(toParent parent: UIViewController?) {
-            super.didMove(toParent: parent)
-            refresh()
-        }
-
-        override func viewDidAppear(_ animated: Bool) {
-            super.viewDidAppear(animated)
-            refresh()
-        }
-
-        func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-            refresh(for: navigationController)
-        }
-
-        func refresh() {
-            // SwiftUI can host nested NavigationStack containers, where `self.navigationController`
-            // may be nil even though a stack is active. Resolve the closest active UINavigationController.
-            refresh(for: resolvedNavigationController())
-        }
-
-        private func refresh(for navigationController: UINavigationController?) {
-            navigationController?.delegate = self
-            let value = (navigationController?.viewControllers.count ?? 1) > 1
-            if canPop.wrappedValue != value {
-                canPop.wrappedValue = value
-            }
-        }
-
-        /// Resolves the nearest active UINavigationController for this representable.
-        /// This keeps `canPop` accurate when Settings is hosted inside nested SwiftUI stacks.
+        /// Resolves the nearest active `UINavigationController` (SwiftUI may not set `self.navigationController`).
         private func resolvedNavigationController() -> UINavigationController? {
             if let navigationController {
                 return navigationController
@@ -243,7 +204,6 @@ private struct TVOSSettingsNavigationCanPopReader: UIViewControllerRepresentable
             return firstNavigationController(in: children)
         }
 
-        /// Depth-first search for the first UINavigationController within child controllers.
         private func firstNavigationController(in controllers: [UIViewController]) -> UINavigationController? {
             for controller in controllers {
                 if let nav = controller as? UINavigationController {
@@ -260,7 +220,7 @@ private struct TVOSSettingsNavigationCanPopReader: UIViewControllerRepresentable
         @objc private func handleSettingsPopRequest() {
             guard let nav = resolvedNavigationController(), nav.viewControllers.count > 1 else { return }
             nav.popViewController(animated: true)
-            refresh(for: nav)
         }
     }
 }
+#endif
