@@ -531,7 +531,14 @@ NSUInteger webDavPort = 81;
 - (void)stopServers
 {
 #if !TARGET_OS_OSX
-    [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
+    /// UIKit requires main-thread access (see `BSServiceMainRunLoopQueue assertBarrierOnQueue` when called from a worker queue).
+    if ([NSThread isMainThread]) {
+        [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
+        });
+    }
 #endif
     [self stopWWWUploadServer];
     [self stopWebDavServer];
