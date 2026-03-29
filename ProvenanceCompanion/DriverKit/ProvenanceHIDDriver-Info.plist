@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>DEXT</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>OSBundleUsageDescription</key>
+	<string>Provenance needs to communicate with your USB game controller to provide input.</string>
+
+	<!-- IOKitPersonalities declares which USB HID devices this dext claims.
+	     Each entry matches one VID:PID pair. The driver re-exposes the device
+	     as a virtual GCController visible to GameController.framework.
+	     Requires entitlements: driverkit.family.hid.device, driverkit.family.hid.eventservice
+	-->
+	<key>IOKitPersonalities</key>
+	<dict>
+		<key>SonyDualShock3</key>
+		<dict>
+			<key>CFBundleIdentifier</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>IOClass</key>
+			<string>AppleUserUSBHostHIDDevice</string>
+			<key>IOUserClass</key>
+			<string>ProvenanceHIDDriver</string>
+			<key>IOUserServerName</key>
+			<string>org.provenance-emu.ProvenanceCompanion.driverkit</string>
+			<key>IOProviderClass</key>
+			<string>IOUSBHostHIDDevice</string>
+			<!-- Sony VID = 0x054C -->
+			<key>idVendor</key>
+			<integer>1356</integer>
+			<!-- DualShock 3 PID = 0x0268 -->
+			<key>idProduct</key>
+			<integer>616</integer>
+			<key>IOProbeScore</key>
+			<integer>100</integer>
+		</dict>
+		<key>NintendoGameCubeAdapter</key>
+		<dict>
+			<key>CFBundleIdentifier</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>IOClass</key>
+			<string>AppleUserUSBHostHIDDevice</string>
+			<key>IOUserClass</key>
+			<string>ProvenanceHIDDriver</string>
+			<key>IOUserServerName</key>
+			<string>org.provenance-emu.ProvenanceCompanion.driverkit</string>
+			<key>IOProviderClass</key>
+			<string>IOUSBHostHIDDevice</string>
+			<!-- Nintendo VID = 0x057E -->
+			<key>idVendor</key>
+			<integer>1406</integer>
+			<!-- GameCube USB Adapter PID = 0x0337 -->
+			<key>idProduct</key>
+			<integer>823</integer>
+			<key>IOProbeScore</key>
+			<integer>100</integer>
+		</dict>
+		<key>MayflashGameCubeAdapter</key>
+		<dict>
+			<key>CFBundleIdentifier</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>IOClass</key>
+			<string>AppleUserUSBHostHIDDevice</string>
+			<key>IOUserClass</key>
+			<string>ProvenanceHIDDriver</string>
+			<key>IOUserServerName</key>
+			<string>org.provenance-emu.ProvenanceCompanion.driverkit</string>
+			<key>IOProviderClass</key>
+			<string>IOUSBHostHIDDevice</string>
+			<!-- Mayflash VID = 0x0079 -->
+			<key>idVendor</key>
+			<integer>121</integer>
+			<!-- Mayflash GC Adapter PID = 0x1846 -->
+			<key>idProduct</key>
+			<integer>6214</integer>
+			<key>IOProbeScore</key>
+			<integer>100</integer>
+		</dict>
+		<key>LogitechG920</key>
+		<dict>
+			<key>CFBundleIdentifier</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>IOClass</key>
+			<string>AppleUserUSBHostHIDDevice</string>
+			<key>IOUserClass</key>
+			<string>ProvenanceHIDDriver</string>
+			<key>IOUserServerName</key>
+			<string>org.provenance-emu.ProvenanceCompanion.driverkit</string>
+			<key>IOProviderClass</key>
+			<string>IOUSBHostHIDDevice</string>
+			<!-- Logitech VID = 0x046D -->
+			<key>idVendor</key>
+			<integer>1133</integer>
+			<!-- G920 PID = 0xC261 -->
+			<key>idProduct</key>
+			<integer>49761</integer>
+			<key>IOProbeScore</key>
+			<integer>100</integer>
+		</dict>
+		<key>LogitechG923PS</key>
+		<dict>
+			<key>CFBundleIdentifier</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>IOClass</key>
+			<string>AppleUserUSBHostHIDDevice</string>
+			<key>IOUserClass</key>
+			<string>ProvenanceHIDDriver</string>
+			<key>IOUserServerName</key>
+			<string>org.provenance-emu.ProvenanceCompanion.driverkit</string>
+			<key>IOProviderClass</key>
+			<string>IOUSBHostHIDDevice</string>
+			<!-- Logitech VID = 0x046D -->
+			<key>idVendor</key>
+			<integer>1133</integer>
+			<!-- G923 PS PID = 0xC266 -->
+			<key>idProduct</key>
+			<integer>49766</integer>
+			<key>IOProbeScore</key>
+			<integer>100</integer>
+		</dict>
+	</dict>
+</dict>
+</plist>

@@ -15,10 +15,18 @@ public enum PeripheralCategory: String, Sendable, CaseIterable {
     case serialAdapter  = "Serial Adapter"
     case unknown        = "Unknown"
 
+    /// Localized display name resolved from the PVUSBManager bundle.
+    /// Falls back to `rawValue` if the bundle resource is unavailable.
+    public var localizedName: String {
+        NSLocalizedString(
+            localizationKey,
+            bundle: .module,
+            comment: "Display name for peripheral category: \(rawValue)"
+        )
+    }
+
     /// Localization key used by host apps to look up a translated display name.
     /// Format: `"peripheral.category.<snake_case_name>"`.
-    /// Host app is responsible for providing a `Localizable.xcstrings` / `.strings`
-    /// entry for this key; `rawValue` is the English fallback.
     public var localizationKey: String {
         switch self {
         case .gamepad:         return "peripheral.category.gamepad"

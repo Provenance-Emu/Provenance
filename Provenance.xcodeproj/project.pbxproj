@@ -915,6 +915,12 @@
 		FA238F54C40F350213B82181 /* SYSTEMS.md in Resources */ = {isa = PBXBuildFile; fileRef = B39FAC222D5E7F630065B66B /* SYSTEMS.md */; };
 		FDB4C87A5701DDBE32B4983E /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DC17C8D60C0019F6D2 /* SystemConfiguration.framework */; };
 		FE3FDA0FAF06ABA5B5CC386E /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
+		C0C0DE0100000004 /* ProvenanceOpticalDriveDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000002 /* ProvenanceOpticalDriveDriver.swift */; };
+		C0C0DE0100000005 /* DriverKit.framework in Frameworks (OpticalDrive dext) */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
+		C0C0DE010000000F /* ProvenanceOpticalDriveDriver.dext in Embed DriverKit Extensions */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C0C0DE0200000004 /* ProvenanceHIDDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0DE0200000002 /* ProvenanceHIDDriver.swift */; };
+		C0C0DE0200000005 /* DriverKit.framework in Frameworks (HID dext) */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
+		C0C0DE020000000F /* ProvenanceHIDDriver.dext in Embed DriverKit Extensions */ = {isa = PBXBuildFile; fileRef = C0C0DE0200000001 /* ProvenanceHIDDriver.dext */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1106,6 +1112,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = C0C0CAFE000000000000001A;
 			remoteInfo = ProvenanceCompanion;
+		};
+		C0C0DE010000000E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0C0DE0100000008;
+			remoteInfo = ProvenanceOpticalDriveDriverKit;
+		};
+		C0C0DE020000000E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0C0DE0200000008;
+			remoteInfo = ProvenanceHIDDriverKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1471,6 +1491,18 @@
 			files = (
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0C0DE0100000010 /* Embed DriverKit Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C0C0DE010000000F /* ProvenanceOpticalDriveDriver.dext in Embed DriverKit Extensions */,
+				C0C0DE020000000F /* ProvenanceHIDDriver.dext in Embed DriverKit Extensions */,
+			);
+			name = "Embed DriverKit Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -2477,6 +2509,12 @@
 		DFB603BD2038B6C0001E70F1 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC51A109C1C4AE07721D70ED /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEB7FA87625F4D0ADE667929 /* Provenance-CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */ = {isa = PBXFileReference; explicitFileType = "wrapper.driver-extension"; includeInIndex = 0; path = ProvenanceOpticalDriveDriver.dext; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0C0DE0100000002 /* ProvenanceOpticalDriveDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProvenanceOpticalDriveDriver.swift; path = ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver.swift; sourceTree = SOURCE_ROOT; };
+		C0C0DE0100000003 /* ProvenanceOpticalDriveDriver-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ProvenanceOpticalDriveDriver-Info.plist"; path = "ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver-Info.plist"; sourceTree = SOURCE_ROOT; };
+		C0C0DE0200000001 /* ProvenanceHIDDriver.dext */ = {isa = PBXFileReference; explicitFileType = "wrapper.driver-extension"; includeInIndex = 0; path = ProvenanceHIDDriver.dext; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0C0DE0200000002 /* ProvenanceHIDDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProvenanceHIDDriver.swift; path = ProvenanceCompanion/DriverKit/ProvenanceHIDDriver.swift; sourceTree = SOURCE_ROOT; };
+		C0C0DE0200000003 /* ProvenanceHIDDriver-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ProvenanceHIDDriver-Info.plist"; path = "ProvenanceCompanion/DriverKit/ProvenanceHIDDriver-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -2597,6 +2635,14 @@
 				OpenSSL.xcframework,
 			);
 			target = 930498BE2A93073800BF257F /* Provenance-UnderDevelopment */;
+		};
+		C0C0DE0100000020 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"DriverKit/ProvenanceOpticalDriveDriver.swift",
+				"DriverKit/ProvenanceHIDDriver.swift",
+			);
+			target = C0C0CAFE000000000000001A /* ProvenanceCompanion */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -2906,7 +2952,7 @@
 		B3BE9FA62C7987B1006D989E /* ROM File Provider */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File Provider"; sourceTree = "<group>"; };
 		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Provenance Stickers"; sourceTree = "<group>"; };
 		B3FD95D52D613D2B00397643 /* Dependencies */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3FD984A2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD987B2D615C9400397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984B2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984C2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98592D615C5100397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98912D615CF000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984E2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984F2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98C12D615D3300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Dependencies; sourceTree = "<group>"; };
-		C0C0CAFE00000000000000BA /* ProvenanceCompanion */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ProvenanceCompanion; sourceTree = "<group>"; };
+		C0C0CAFE00000000000000BA /* ProvenanceCompanion */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C0C0DE0100000020 /* PBXFileSystemSynchronizedBuildFileExceptionSet */,); explicitFileTypes = {}; explicitFolders = (); path = ProvenanceCompanion; sourceTree = "<group>"; };
 		C0C0CAFE100000000000000A /* ProvenanceCompanionTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ProvenanceCompanionTests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -3630,6 +3676,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0C0DE0100000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0C0DE0100000005 /* DriverKit.framework in Frameworks (OpticalDrive dext) */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0C0DE0200000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0C0DE0200000005 /* DriverKit.framework in Frameworks (HID dext) */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -3736,6 +3798,8 @@
 				B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */,
 				C0C0CAFE00000000000000AA /* Provenance Companion.app */,
 				C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */,
+				C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */,
+				C0C0DE0200000001 /* ProvenanceHIDDriver.dext */,
 				FEB7FA87625F4D0ADE667929 /* Provenance-CI.app */,
 				61D0A2BEE5E0D601A0F11C55 /* Provenance-CI.app */,
 				EC51A109C1C4AE07721D70ED /* Provenance-CI.app */,
@@ -7687,10 +7751,13 @@
 				C0C0CAFE000000000000007A /* Frameworks */,
 				C0C0CAFE000000000000008A /* Resources */,
 				C0C0CAFE000000000000009A /* Script: Set Build Number */,
+				C0C0DE0100000010 /* Embed DriverKit Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C0C0DE010000000D /* PBXTargetDependency */,
+				C0C0DE020000000D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				C0C0CAFE00000000000000BA /* ProvenanceCompanion */,
@@ -7730,6 +7797,38 @@
 			productName = ProvenanceCompanionTests;
 			productReference = C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C0C0DE0100000008 /* ProvenanceOpticalDriveDriverKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0C0DE010000000C /* Build configuration list for PBXNativeTarget "ProvenanceOpticalDriveDriverKit" */;
+			buildPhases = (
+				C0C0DE0100000006 /* Sources */,
+				C0C0DE0100000007 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ProvenanceOpticalDriveDriverKit;
+			productName = ProvenanceOpticalDriveDriverKit;
+			productReference = C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */;
+			productType = "com.apple.product-type.driver-extension";
+		};
+		C0C0DE0200000008 /* ProvenanceHIDDriverKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0C0DE020000000C /* Build configuration list for PBXNativeTarget "ProvenanceHIDDriverKit" */;
+			buildPhases = (
+				C0C0DE0200000006 /* Sources */,
+				C0C0DE0200000007 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ProvenanceHIDDriverKit;
+			productName = ProvenanceHIDDriverKit;
+			productReference = C0C0DE0200000001 /* ProvenanceHIDDriver.dext */;
+			productType = "com.apple.product-type.driver-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -7838,6 +7937,12 @@
 								enabled = 1;
 							};
 						};
+					};
+					C0C0DE0100000008 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					C0C0DE0200000008 = {
+						CreatedOnToolsVersion = 16.0;
 					};
 				};
 			};
@@ -9330,6 +9435,8 @@
 				B3BE9FCF2C7988BD006D989E /* Provenance Stickers */,
 				C0C0CAFE000000000000001A /* ProvenanceCompanion */,
 				C0C0CAFE1000000000000001 /* ProvenanceCompanionTests */,
+				C0C0DE0100000008 /* ProvenanceOpticalDriveDriverKit */,
+				C0C0DE0200000008 /* ProvenanceHIDDriverKit */,
 			);
 		};
 /* End PBXProject section */
@@ -10244,6 +10351,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0C0DE0100000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0C0DE0100000004 /* ProvenanceOpticalDriveDriver.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0C0DE0200000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0C0DE0200000004 /* ProvenanceHIDDriver.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -10440,6 +10563,16 @@
 			isa = PBXTargetDependency;
 			target = C0C0CAFE000000000000001A /* ProvenanceCompanion */;
 			targetProxy = C0C0CAFE100000000000000B /* PBXContainerItemProxy */;
+		};
+		C0C0DE010000000D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0C0DE0100000008 /* ProvenanceOpticalDriveDriverKit */;
+			targetProxy = C0C0DE010000000E /* PBXContainerItemProxy */;
+		};
+		C0C0DE020000000D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0C0DE0200000008 /* ProvenanceHIDDriverKit */;
+			targetProxy = C0C0DE020000000E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -15148,6 +15281,118 @@
 			};
 			name = Archive;
 		};
+		C0C0DE0100000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DRIVERKIT_DEPLOYMENT_TARGET = 21.0;
+				INFOPLIST_FILE = "ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanion.opticaldrive.driverkit";
+				PRODUCT_NAME = ProvenanceOpticalDriveDriver;
+				SDKROOT = driverkit;
+				SUPPORTED_PLATFORMS = driverkit;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C0C0DE010000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DRIVERKIT_DEPLOYMENT_TARGET = 21.0;
+				INFOPLIST_FILE = "ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanion.opticaldrive.driverkit";
+				PRODUCT_NAME = ProvenanceOpticalDriveDriver;
+				SDKROOT = driverkit;
+				SUPPORTED_PLATFORMS = driverkit;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C0C0DE010000000B /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DRIVERKIT_DEPLOYMENT_TARGET = 21.0;
+				INFOPLIST_FILE = "ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanion.opticaldrive.driverkit";
+				PRODUCT_NAME = ProvenanceOpticalDriveDriver;
+				SDKROOT = driverkit;
+				SUPPORTED_PLATFORMS = driverkit;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		C0C0DE0200000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/DriverKit/ProvenanceHIDDriver.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DRIVERKIT_DEPLOYMENT_TARGET = 21.0;
+				INFOPLIST_FILE = "ProvenanceCompanion/DriverKit/ProvenanceHIDDriver-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanion.driverkit";
+				PRODUCT_NAME = ProvenanceHIDDriver;
+				SDKROOT = driverkit;
+				SUPPORTED_PLATFORMS = driverkit;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C0C0DE020000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/DriverKit/ProvenanceHIDDriver.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DRIVERKIT_DEPLOYMENT_TARGET = 21.0;
+				INFOPLIST_FILE = "ProvenanceCompanion/DriverKit/ProvenanceHIDDriver-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanion.driverkit";
+				PRODUCT_NAME = ProvenanceHIDDriver;
+				SDKROOT = driverkit;
+				SUPPORTED_PLATFORMS = driverkit;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C0C0DE020000000B /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "ProvenanceCompanion/DriverKit/ProvenanceHIDDriver.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				DRIVERKIT_DEPLOYMENT_TARGET = 21.0;
+				INFOPLIST_FILE = "ProvenanceCompanion/DriverKit/ProvenanceHIDDriver-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanion.driverkit";
+				PRODUCT_NAME = ProvenanceHIDDriver;
+				SDKROOT = driverkit;
+				SUPPORTED_PLATFORMS = driverkit;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -15437,6 +15682,26 @@
 				68924679E576F1D2FA3C72C5 /* Debug */,
 				5BCF70194B858F1D6129D28E /* Release */,
 				62ACB4A07CDD0A7012A48AE7 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0C0DE010000000C /* Build configuration list for PBXNativeTarget "ProvenanceOpticalDriveDriverKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0C0DE0100000009 /* Debug */,
+				C0C0DE010000000A /* Release */,
+				C0C0DE010000000B /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0C0DE020000000C /* Build configuration list for PBXNativeTarget "ProvenanceHIDDriverKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0C0DE0200000009 /* Debug */,
+				C0C0DE020000000A /* Release */,
+				C0C0DE020000000B /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

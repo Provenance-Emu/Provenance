@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>DEXT</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>OSBundleUsageDescription</key>
+	<string>Provenance needs to communicate with your USB optical drive to read game discs.</string>
+
+	<!-- IOKitPersonalities declares which USB devices this dext claims.
+	     bInterfaceClass=0x08 (Mass Storage), bInterfaceSubClass=0x02 (ATAPI/SFF-8020i),
+	     bInterfaceProtocol=0x50 (Bulk-Only Transport) — matches all USB optical drives.
+	     Requires entitlement: com.apple.developer.driverkit.allow-any-usb-device
+	     (pending Apple approval — request via developer.apple.com/contact/request/driverkit)
+	-->
+	<key>IOKitPersonalities</key>
+	<dict>
+		<key>ProvenanceUSBOpticalDrive</key>
+		<dict>
+			<key>CFBundleIdentifier</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>IOClass</key>
+			<string>IOUserService</string>
+			<key>IOUserClass</key>
+			<string>ProvenanceOpticalDriveDriver</string>
+			<key>IOUserServerName</key>
+			<string>org.provenance-emu.ProvenanceCompanion.opticaldrive.driverkit</string>
+			<key>IOProviderClass</key>
+			<string>IOUSBHostInterface</string>
+			<!-- bInterfaceClass 0x08 = Mass Storage Class -->
+			<key>bInterfaceClass</key>
+			<integer>8</integer>
+			<!-- bInterfaceSubClass 0x02 = ATAPI (CD-ROM / DVD-ROM) -->
+			<key>bInterfaceSubClass</key>
+			<integer>2</integer>
+			<!-- bInterfaceProtocol 0x50 = Bulk-Only Transport -->
+			<key>bInterfaceProtocol</key>
+			<integer>80</integer>
+			<key>IOProbeScore</key>
+			<integer>100</integer>
+		</dict>
+	</dict>
+</dict>
+</plist>

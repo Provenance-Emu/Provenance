@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "PVUSBManager",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v17),
         .tvOS(.v17),
@@ -21,6 +22,9 @@ let package = Package(
         .target(
             name: "PVUSBManager",
             dependencies: [],
+            resources: [
+                .process("Resources")
+            ],
             swiftSettings: [
                 .swiftLanguageMode(.v5)
             ]
