@@ -71,9 +71,8 @@ public struct AddCheatIntent: AppIntent {
             "description": cheatDescription,
             "type": type
         ]
-        if let data = try? JSONEncoder().encode(payload) {
-            pvAppGroupDefaults?.set(data, forKey: "pendingAddCheat")
-        }
+        let data = try JSONEncoder().encode(payload)
+        pvAppGroupDefaults?.set(data, forKey: "pendingAddCheat")
 
         return .result(dialog: "Added cheat \"\(cheatDescription)\" to the current game.")
     }

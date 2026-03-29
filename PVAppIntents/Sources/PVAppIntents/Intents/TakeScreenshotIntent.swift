@@ -41,6 +41,9 @@ public struct TakeScreenshotIntent: AppIntent {
         guard pvGameIsActive else {
             throw AppIntentError.noActiveSession
         }
+        // Clear any stale screenshot URL *before* signalling the host app to avoid
+        // a race where the app writes a new URL before we reach the polling loop.
+        pvAppGroupDefaults?.removeObject(forKey: "lastScreenshotURL")
         // Signal the host app to capture a screenshot.
         pvAppGroupDefaults?.set(true, forKey: "pendingTakeScreenshot")
 
@@ -57,11 +60,9 @@ public struct TakeScreenshotIntent: AppIntent {
     // MARK: - Private helpers
 
     /// Polls `lastScreenshotURL` in App Group UserDefaults until the host app
-    /// writes a value or the timeout elapses. Clears the key before returning.
+    /// writes a value or the timeout elapses. Clears the key after consuming the URL.
     private func waitForScreenshotFile(timeout: TimeInterval) async throws -> IntentFile? {
         let deadline = Date().addingTimeInterval(timeout)
-        // Clear any stale value first.
-        pvAppGroupDefaults?.removeObject(forKey: "lastScreenshotURL")
         while Date() < deadline {
             try await Task.sleep(nanoseconds: 200_000_000) // 0.2 s
             if let urlString = pvAppGroupDefaults?.string(forKey: "lastScreenshotURL"),

@@ -57,7 +57,7 @@ public struct LoadSaveStateIntent: AppIntent {
         if let slot {
             pvAppGroupDefaults?.set(slot, forKey: "pendingLoadStateSlot")
         } else {
-            // Signal host app to load the most recent save (mostRecentSaveSlot = most recent).
+            // Sentinel value -1 signals the host app to load the most recently created save.
             pvAppGroupDefaults?.set(mostRecentSaveSlot, forKey: "pendingLoadStateSlot")
         }
         let slotLabel = slot.map { $0 == 0 ? "auto-save" : "slot \($0)" } ?? "most recent save"
