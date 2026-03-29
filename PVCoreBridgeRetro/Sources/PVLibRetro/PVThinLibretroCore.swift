@@ -159,7 +159,6 @@ class PVThinLibretroCore: PVEmulatorCore {
     /// (respects user overrides).
     private func applyPlatformDefaults() {
         let coreId = (coreIdentifier ?? "").lowercased()
-        let sysId = (systemIdentifier ?? "").lowercased()
 
         // MelonDS: enable touch mode for DS
         if coreId.contains("melonds") {
@@ -213,7 +212,7 @@ class PVThinLibretroCore: PVEmulatorCore {
         }
 
         // Hatari: disable HD boot + copy hatari.cfg if needed + write dynamic TOS path
-        if coreId.contains("hatari") || sysId.contains("atarist") {
+        if coreId.contains("hatari") || SystemIdentifier(rawValue: systemIdentifier ?? "") == .AtariST {
             setDefaultOption("hatari_boot_hd", value: "disabled")
             copyBundledConfigIfNeeded(resourceName: "hatari", extension: "cfg",
                                       toDirectory: self.BIOSPath, fileName: "hatari.cfg")
@@ -340,12 +339,14 @@ class PVThinLibretroCore: PVEmulatorCore {
 
     /// Search `BIOSPath` for a TOS image file and rewrite `szTosImageFileName` in hatari.cfg.
     ///
-    /// The bundled `hatari.cfg` ships with an Android placeholder path (`/storage/system/tos.img`)
-    /// that is always wrong on iOS/tvOS. This method finds the first TOS image in `BIOSPath`
-    /// (searching for `tos*.img`, `tos*.rom`, then any `.img`/`.rom` file) and updates the
-    /// already-copied cfg atomically.
+    /// The bundled `hatari.cfg` ships with empty fields; older copies may have Android
+    /// placeholder paths (`/storage/...`).  This method finds the first TOS image in `BIOSPath`
+    /// (searching `tos*.img`, `tos*.rom`, then any `.img`/`.rom`) and updates the cfg atomically.
+    /// It also clears any `/storage/` Android paths still present in `szDiskAFileName` /
+    /// `szDiskImageDirectory` from previously-copied configs.
     ///
-    /// Called immediately after `copyBundledConfigIfNeeded` places hatari.cfg in BIOSPath.
+    /// Called every launch (after `copyBundledConfigIfNeeded`) so a newly-added TOS image is
+    /// picked up without requiring the user to delete hatari.cfg manually.
     private func updateHatariTOSPath() {
         guard let biosDir = BIOSPath, !biosDir.isEmpty else { return }
         let cfgPath = URL(fileURLWithPath: biosDir).appendingPathComponent("hatari.cfg").path
@@ -376,24 +377,40 @@ class PVThinLibretroCore: PVEmulatorCore {
             }
         }
 
-        guard let tos = tosPath else {
+        if tosPath == nil {
             WLOG("ThinCore: no TOS image found in \(biosDir) — Hatari will not boot (place tos.img in BIOS/com.provenance.atarist/)")
-            return
         }
 
-        // Rewrite szTosImageFileName in hatari.cfg
+        // Rewrite szTosImageFileName in hatari.cfg and clear any Android-placeholder floppy paths.
+        // Android /storage/ paths are cleared even if no TOS image is present (one-time migration).
+        // Keys whose value must be cleared when it starts with "/storage/" (Android artifact).
+        let androidPlaceholderKeys: Set<String> = ["szDiskAFileName", "szDiskImageDirectory"]
         guard let cfgContent = try? String(contentsOfFile: cfgPath, encoding: .utf8) else { return }
         let updated = cfgContent.components(separatedBy: "\n").map { line -> String in
-            // Match the key with optional leading whitespace; preserve the indentation prefix.
             let stripped = line.trimmingCharacters(in: .whitespaces)
-            guard stripped.hasPrefix("szTosImageFileName") else { return line }
-            let indent = line.prefix(while: { $0 == " " || $0 == "\t" })
-            return "\(indent)szTosImageFileName = \(tos)"
+            let indent = String(line.prefix(while: { $0 == " " || $0 == "\t" }))
+            // Update TOS path when a valid image is found; otherwise leave unchanged.
+            if stripped.hasPrefix("szTosImageFileName"), let tos = tosPath {
+                return "\(indent)szTosImageFileName = \(tos)"
+            }
+            // Clear any key whose value is an Android /storage/ path (one-time migration for old copied configs).
+            for key in androidPlaceholderKeys where stripped.hasPrefix(key) {
+                let parts = stripped.components(separatedBy: "=")
+                if parts.count >= 2 {
+                    let value = parts.dropFirst().joined(separator: "=").trimmingCharacters(in: .whitespaces)
+                    if value.hasPrefix("/storage/") {
+                        return "\(indent)\(key) ="
+                    }
+                }
+            }
+            return line
         }.joined(separator: "\n")
 
         do {
             try updated.write(toFile: cfgPath, atomically: true, encoding: .utf8)
-            ILOG("ThinCore: updated hatari.cfg → szTosImageFileName = \(tos)")
+            if let tos = tosPath {
+                ILOG("ThinCore: updated hatari.cfg → szTosImageFileName = \(tos)")
+            }
         } catch {
             WLOG("ThinCore: failed to update hatari.cfg TOS path: \(error.localizedDescription)")
         }
