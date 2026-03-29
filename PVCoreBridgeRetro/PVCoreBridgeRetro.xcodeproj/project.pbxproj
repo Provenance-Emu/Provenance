@@ -45,6 +45,8 @@
 		B3D991C72F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D991C62F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift */; };
 		B3D991C92F788AF2002F1DCB /* PVLibRetroRumbleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D991C82F788AF2002F1DCB /* PVLibRetroRumbleHelper.swift */; };
 		B3D991CB2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D991CA2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift */; };
+		B3D9A2B52F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */; };
+		B3D9A2B72F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D9A2B62F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift */; };
 		B3DF963F288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */; };
 		B3EA6C91292617F300010224 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
@@ -900,6 +902,8 @@
 		B3D991C62F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+Palette.swift"; sourceTree = "<group>"; };
 		B3D991C82F788AF2002F1DCB /* PVLibRetroRumbleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLibRetroRumbleHelper.swift; sourceTree = "<group>"; };
 		B3D991CA2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SystemIdentifier+ObjCBridge.swift"; sourceTree = "<group>"; };
+		B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+SystemFiles.swift"; sourceTree = "<group>"; };
+		B3D9A2B62F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+Netplay.swift"; sourceTree = "<group>"; };
 		B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLibRetroGLESCore.h; sourceTree = "<group>"; };
 		B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLibRetroGLESCore.m; sourceTree = "<group>"; };
 		B3F7E5B529775B8000362B92 /* PVLogging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVLogging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2851,7 +2855,9 @@
 				B4F1A2B3C4D5E60011223348 /* PVThinLibretroCore+Controls.swift */,
 				B4F1A2B3C4D5E6001122334A /* PVThinLibretroCore+Features.swift */,
 				B330D5442F7731A200440DFA /* PVThinLibretroCore+MIDI.swift */,
+				B3D9A2B62F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift */,
 				B3D991C62F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift */,
+				B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */,
 				B4F1A2B3C4D5E60011223341 /* PVThinLibretroFrontend.h */,
 				B4F1A2B3C4D5E60011223342 /* PVThinLibretroFrontend.mm */,
 				B3D991CA2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift */,
@@ -3075,6 +3081,7 @@
 				B30681562895D407003E465F /* PVLibRetroCore+Options.m in Sources */,
 				B3D991CB2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift in Sources */,
 				B30681502895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */,
+				B3D9A2B72F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift in Sources */,
 				B30681542895D407003E465F /* PVLibRetroCore+Audio.m in Sources */,
 				B30681522895D407003E465F /* PVLibRetroCore+Video.m in Sources */,
 				B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */,
@@ -3087,6 +3094,7 @@
 				B4F1A2B3C4D5E60011223347 /* PVThinLibretroCore+Controls.swift in Sources */,
 				B4F1A2B3C4D5E60011223349 /* PVThinLibretroCore+Features.swift in Sources */,
 				B4F1A2B3C4D5E6001122334B /* PVLibRetro+JIT.swift in Sources */,
+				B3D9A2B52F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
