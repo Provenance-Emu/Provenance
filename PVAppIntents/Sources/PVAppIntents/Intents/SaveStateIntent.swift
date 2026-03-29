@@ -49,7 +49,7 @@ public struct SaveStateIntent: AppIntent {
     // MARK: - Perform
 
     public func perform() async throws -> some IntentResult & ProvidesDialog {
-        guard pvAppGroupDefaults != nil else {
+        guard pvGameIsActive else {
             throw AppIntentError.noActiveSession
         }
         pvAppGroupDefaults?.set(slot, forKey: "pendingSaveStateSlot")

@@ -10,6 +10,10 @@
 import AppIntents
 import Foundation
 
+/// Sentinel slot value that instructs the host app to load the most recently
+/// created save state for the running game.
+private let mostRecentSaveSlot: Int = -1
+
 /// Loads a previously saved game state.
 ///
 /// If `slot` is nil the host app loads the most recently created save state for
@@ -47,14 +51,14 @@ public struct LoadSaveStateIntent: AppIntent {
     // MARK: - Perform
 
     public func perform() async throws -> some IntentResult & ProvidesDialog {
-        guard pvAppGroupDefaults != nil else {
+        guard pvGameIsActive else {
             throw AppIntentError.noActiveSession
         }
         if let slot {
             pvAppGroupDefaults?.set(slot, forKey: "pendingLoadStateSlot")
         } else {
-            // Signal host app to load the most recent save (slot -1 = most recent).
-            pvAppGroupDefaults?.set(-1, forKey: "pendingLoadStateSlot")
+            // Signal host app to load the most recent save (mostRecentSaveSlot = most recent).
+            pvAppGroupDefaults?.set(mostRecentSaveSlot, forKey: "pendingLoadStateSlot")
         }
         let slotLabel = slot.map { $0 == 0 ? "auto-save" : "slot \($0)" } ?? "most recent save"
         return .result(dialog: "Loading game state from \(slotLabel).")

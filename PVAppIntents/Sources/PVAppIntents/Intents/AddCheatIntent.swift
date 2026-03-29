@@ -60,7 +60,7 @@ public struct AddCheatIntent: AppIntent {
         guard !trimmedCode.isEmpty else {
             throw AppIntentError.invalidCheatCode(trimmedCode)
         }
-        guard pvAppGroupDefaults != nil else {
+        guard pvGameIsActive else {
             throw AppIntentError.noActiveSession
         }
 

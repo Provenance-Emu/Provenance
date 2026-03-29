@@ -164,4 +164,58 @@ final class TakeScreenshotIntentTests: XCTestCase {
     }
 }
 
+// MARK: - SaveStateEntity Tests
+
+@available(iOS 17, tvOS 17, macOS 14, watchOS 10, *)
+final class SaveStateEntityTests: XCTestCase {
+
+    private func makeSaveState(slot: Int = 1, id: String = "save-001") -> SaveStateEntity {
+        SaveStateEntity(
+            id: id,
+            gameTitle: "Super Mario World",
+            gameMD5: "abc123",
+            slot: slot,
+            screenshotURL: nil,
+            date: Date(timeIntervalSince1970: 0)
+        )
+    }
+
+    func testSaveStateEntityInit() {
+        let entity = makeSaveState(slot: 2, id: "save-xyz")
+        XCTAssertEqual(entity.id, "save-xyz")
+        XCTAssertEqual(entity.gameTitle, "Super Mario World")
+        XCTAssertEqual(entity.gameMD5, "abc123")
+        XCTAssertEqual(entity.slot, 2)
+        XCTAssertNil(entity.screenshotURL)
+        XCTAssertEqual(entity.date, Date(timeIntervalSince1970: 0))
+    }
+
+    func testSaveStateEntityDeepLinkURL() {
+        let entity = makeSaveState(slot: 1, id: "save-001")
+        let url = entity.deepLinkURL
+        XCTAssertEqual(url.scheme, "provenance")
+        XCTAssertEqual(url.host, "open")
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        let queryItems = components?.queryItems ?? []
+        let md5Item = queryItems.first(where: { $0.name == "md5" })
+        let saveStateIdItem = queryItems.first(where: { $0.name == "saveStateId" })
+        XCTAssertEqual(md5Item?.value, "abc123")
+        XCTAssertEqual(saveStateIdItem?.value, "save-001")
+    }
+
+    func testSaveStateEntityDisplayRepresentationAutoSave() {
+        let entity = makeSaveState(slot: 0)
+        let repr = entity.displayRepresentation
+        XCTAssertTrue(repr.subtitle?.key.contains("Auto-save") == true,
+                      "Slot 0 should display 'Auto-save', got: \(String(describing: repr.subtitle))")
+    }
+
+    func testSaveStateEntityDisplayRepresentationSlot() {
+        let entity = makeSaveState(slot: 3)
+        let repr = entity.displayRepresentation
+        XCTAssertTrue(repr.subtitle?.key.contains("Slot 3") == true,
+                      "Slot 3 should display 'Slot 3', got: \(String(describing: repr.subtitle))")
+    }
+}
+
 #endif // canImport(AppIntents)
