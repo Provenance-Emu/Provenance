@@ -221,10 +221,7 @@ public final class PVRootViewNavigationController: UINavigationController {
         }
     }
 
-    // Don't forget to remove the observer when it's no longer needed
     deinit {
-        if #unavailable(iOS 17.0, tvOS 17.0) {
-            NotificationCenter.default.removeObserver(self)
-        }
+        NotificationCenter.default.removeObserver(self)
     }
 }
