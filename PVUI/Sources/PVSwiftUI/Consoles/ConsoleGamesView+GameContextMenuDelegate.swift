@@ -485,10 +485,11 @@ extension ConsoleGamesView: GameContextMenuDelegate {
         let landscapeOrientation: SkinOrientation = .landscape
         #endif
 
-        // Clear skin preferences for both orientations using centralized manager
+        // Pin built-in SwiftUI skin for this game (both orientations); `nil` would only remove the override and inherit a system-level `.deltaskin`.
         Task { @MainActor in
-            DeltaSkinSelectionManager.shared.setSkin(nil, for: systemId, gameId: game.id, orientation: portraitOrientation, scope: .game)
-            DeltaSkinSelectionManager.shared.setSkin(nil, for: systemId, gameId: game.id, orientation: landscapeOrientation, scope: .game)
+            let token = DeltaSkinSelectionManager.builtInSkinPreferenceToken
+            DeltaSkinSelectionManager.shared.setSkin(token, for: systemId, gameId: game.id, orientation: portraitOrientation, scope: .game)
+            DeltaSkinSelectionManager.shared.setSkin(token, for: systemId, gameId: game.id, orientation: landscapeOrientation, scope: .game)
         }
 
         rootDelegate?.showMessage("Skin preference reset for \(game.title)", title: "Skin Reset")

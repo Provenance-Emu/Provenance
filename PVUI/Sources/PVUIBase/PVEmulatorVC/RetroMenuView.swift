@@ -2783,17 +2783,18 @@ struct RetroMenuView: View {
                 // Don't apply skin immediately - wait for apply button to be clicked
                 ILOG("skins: Skin preference saved, will be applied when Apply button is clicked")
             } else {
-                // User selected "Default" skin - clear selection
-                skinIdentifier = nil
-
-                guard let emulatorVC = emulatorVC as? PVEmulatorViewController else {
-                    return
-                }
-
-                // Use centralized selection manager to clear
+                // User selected "Default" skin — session/game store a built-in token so resolution does not fall through to a saved `.deltaskin`; system scope clears the system preference.
                 await MainActor.run {
+                    let storedIdentifier: String? = {
+                        switch scope {
+                        case .system:
+                            return nil
+                        case .session, .game:
+                            return DeltaSkinSelectionManager.builtInSkinPreferenceToken
+                        }
+                    }()
                     DeltaSkinSelectionManager.shared.setSkin(
-                        nil,
+                        storedIdentifier,
                         for: systemId,
                         gameId: gameId,
                         orientation: orientation,

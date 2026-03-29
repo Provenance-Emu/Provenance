@@ -9,6 +9,10 @@ public final class DeltaSkinSelectionManager: ObservableObject {
     /// Shared singleton instance
     public static let shared = DeltaSkinSelectionManager()
 
+    /// Stored in session or game preferences when the user explicitly chooses the built-in SwiftUI controller skin.
+    /// Must not collide with any real `.deltaskin` identifier; `effectiveSkinIdentifier` maps this to `nil` without falling through to inherited prefs.
+    public static let builtInSkinPreferenceToken = "__PV_BuiltInSkin__"
+
     /// Notification name for when skin selection changes
     public static let selectionChangedNotification = NSNotification.Name("DeltaSkinSelectionChanged")
 
@@ -35,7 +39,7 @@ public final class DeltaSkinSelectionManager: ObservableObject {
 
     /// Set a skin for a specific scope
     /// - Parameters:
-    ///   - skinIdentifier: The skin identifier to set (nil to clear)
+    ///   - skinIdentifier: The skin identifier to set (`nil` to remove override / inherit), or `builtInSkinPreferenceToken` to force the built-in skin for this scope
     ///   - systemId: The system identifier
     ///   - gameId: Optional game identifier
     ///   - orientation: The orientation (portrait or landscape)
@@ -121,24 +125,39 @@ public final class DeltaSkinSelectionManager: ObservableObject {
             // Priority 1: Game-specific session skin
             if let gameId = gameId {
                 if let gameSessionSkin = getSessionSkin(for: systemId, gameId: gameId, orientation: orientation) {
+                    if gameSessionSkin == Self.builtInSkinPreferenceToken {
+                        return nil
+                    }
                     return gameSessionSkin
                 }
             }
 
             // Priority 2: System-level session skin
             if let systemSessionSkin = getSessionSkin(for: systemId, gameId: nil, orientation: orientation) {
+                if systemSessionSkin == Self.builtInSkinPreferenceToken {
+                    return nil
+                }
                 return systemSessionSkin
             }
 
             // Priority 3: Game preference
             if let gameId = gameId {
                 if let gamePref = preferences.selectedSkinIdentifier(for: gameId, orientation: orientation) {
+                    if gamePref == Self.builtInSkinPreferenceToken {
+                        return nil
+                    }
                     return gamePref
                 }
             }
 
             // Priority 4: System preference
-            return preferences.selectedSkinIdentifier(for: systemId, orientation: orientation)
+            if let systemPref = preferences.selectedSkinIdentifier(for: systemId, orientation: orientation) {
+                if systemPref == Self.builtInSkinPreferenceToken {
+                    return nil
+                }
+                return systemPref
+            }
+            return nil
         }
     }
 

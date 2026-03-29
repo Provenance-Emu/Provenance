@@ -951,14 +951,20 @@ public struct SystemSkinSelectionView: View {
         }
     }
 
-
     private func selectSkin(_ identifier: String?) {
         Task {
             if identifier == nil {
-                // Reverting to default: clear both orientations so the emulator
-                // uses the built-in skin regardless of device orientation.
+                // Reverting to default: for session/game persist the built-in token (so we do not inherit a system `.deltaskin`); for system scope clear prefs only.
                 for orientation in SkinOrientation.allCases {
-                    await selectionManager.setSkin(nil, for: system, gameId: scopedGameId, orientation: orientation, scope: effectiveScope)
+                    let stored: String? = {
+                        switch effectiveScope {
+                        case .system:
+                            return nil
+                        case .session, .game:
+                            return DeltaSkinSelectionManager.builtInSkinPreferenceToken
+                        }
+                    }()
+                    await selectionManager.setSkin(stored, for: system, gameId: scopedGameId, orientation: orientation, scope: effectiveScope)
                 }
                 await MainActor.run {
                     self.selectedPortraitSkinId = nil
