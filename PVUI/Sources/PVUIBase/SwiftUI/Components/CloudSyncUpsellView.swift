@@ -39,8 +39,8 @@ public struct CloudSyncUpsellView: View {
 
     #if canImport(FreemiumKit)
     private var isPremium: Bool {
-        // Treat self-built / non-App Store builds as premium.
-        if !AppState.shared.isAppStore { return true }
+        // Treat self-built, sideloaded, and TestFlight builds as premium.
+        if !AppState.shared.isInstalledFromAppStore { return true }
         return FreemiumKit.shared.purchasedTier != nil
     }
     #else
