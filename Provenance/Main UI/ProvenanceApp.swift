@@ -547,13 +547,8 @@ extension ProvenanceApp {
                     // Reload skins to update the UI
                     await DeltaSkinManager.shared.reloadSkins()
 
-                    // Post notification that a skin was imported
                     await MainActor.run {
-                        NotificationCenter.default.post(
-                            name: NSNotification.Name("DeltaSkinImported"),
-                            object: nil,
-                            userInfo: ["filename": filename]
-                        )
+                        AppState.shared.presentExternalImportAcknowledgement(.skinImported(fileName: filename))
                     }
                 } catch {
                     ELOG("ProvenanceApp: Failed to import skin \(filename): \(error.localizedDescription)")
@@ -582,11 +577,13 @@ extension ProvenanceApp {
             //                try FileManager.default.moveItem(at: url, to: destinationPath)
             //            }
 
-            // Set the app open action to open the file
-            AppState.shared.appOpenAction = .openFile(destinationPath)
-
-            // Open the emulator scene
-            openEmulatorSceneIfNeeded()
+            let copiedDestination = destinationPath
+            let copiedFilename = filename
+            Task { @MainActor in
+                AppState.shared.presentExternalImportAcknowledgement(.fileCopiedToImports(fileName: copiedFilename))
+                AppState.shared.appOpenAction = .openFile(copiedDestination)
+                self.openEmulatorSceneIfNeeded()
+            }
         } catch {
             ELOG("Unable to move file from \(url.path) to \(destinationPath.path) because \(error.localizedDescription)")
             return
