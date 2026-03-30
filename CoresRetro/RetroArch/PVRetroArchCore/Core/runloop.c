@@ -7699,6 +7699,8 @@ bool core_set_controller_port_device(retro_ctx_controller_info_t *pad)
 #endif
 #endif
 
+   if (!runloop_st->current_core.retro_set_controller_port_device)
+      return false;
    runloop_st->current_core.retro_set_controller_port_device(pad->port, pad->device);
    return true;
 }
@@ -7746,6 +7748,11 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
        * should be reset once core is deinitialised */
       input_state_get_ptr()->flags   |=  INP_FLAG_REMAPPING_CACHE_ACTIVE;
       runloop_st->current_core.flags |=  RETRO_CORE_FLAG_GAME_LOADED;
+
+      /* Notify Provenance that the core has loaded the game and is ready
+       * to accept port device configuration, light gun setup, etc. */
+      extern void pv_notify_core_game_loaded(void);
+      pv_notify_core_game_loaded();
 
 #ifdef HAVE_GAME_AI
       /* load models */

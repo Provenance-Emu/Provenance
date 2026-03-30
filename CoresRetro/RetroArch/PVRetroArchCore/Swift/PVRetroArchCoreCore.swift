@@ -128,22 +128,23 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
             }
 #endif
         }
-        super.startEmulation()
-        // Apply per-port device type defaults after the game has loaded.
-        // RetroArch loads the game synchronously inside startVM: (called from the ObjC
-        // bridge's startEmulation), so by the time super.startEmulation() returns the
-        // core's retro_load_game has already run and port device types can be configured.
-        restorePortDeviceTypes()
-        // Cache light gun capability into the shared registry so that future queries
-        // (before a core is loaded) return the correct answer for this system.
-        if _bridge.coreDeclaresLightGunDevice,
-           let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") {
-            LightGunSystemRegistry.shared.register(system: sysID)
+        // Set the callback BEFORE super.startEmulation() so it's in place when
+        // rarch_main → retro_load_game succeeds on the background queue.
+        // The bridge invokes this on the main thread exactly once, then nils it.
+        _bridge.onCoreGameLoaded = { [weak self] in
+            guard let self else { return }
+            self.restorePortDeviceTypes()
+            if self._bridge.coreDeclaresLightGunDevice,
+               let sysID = SystemIdentifier(rawValue: self.systemIdentifier ?? "") {
+                LightGunSystemRegistry.shared.register(system: sysID)
+            }
         }
+        super.startEmulation()
     }
 
     /// Reset the haptic profile so the next core starts with neutral tuning.
     public override func stopEmulation() {
+        _bridge.onCoreGameLoaded = nil
         // Clear any held light-gun buttons so the next session starts clean.
         _bridge.resetLightGunState()
 #if canImport(GameController) && canImport(CoreHaptics)

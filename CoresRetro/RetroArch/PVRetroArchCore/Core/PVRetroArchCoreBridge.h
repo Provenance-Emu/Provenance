@@ -53,6 +53,9 @@
 @property (nonatomic, assign) int volume;
 @property (nonatomic, assign) int ffSpeed;
 @property (nonatomic, assign) int smSpeed;
+/// Called on the main thread once retro_load_game succeeds.
+/// Set before calling startEmulation; automatically nilled after invocation.
+@property (nonatomic, copy, nullable) void (^onCoreGameLoaded)(void);
 @property (nonatomic, assign) bool isRootView;
 @property (nonatomic, assign) bool retroArchControls;
 @property (nonatomic, assign) bool hasTouchControls;
