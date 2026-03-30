@@ -82,6 +82,9 @@ extension Defaults.Keys {
 
     static let showGameTitles = Key<Bool>("showGameTitles", default: true)
 
+    /// When true, long game titles in the library scroll horizontally; when false, they stay on one line with tail truncation.
+    static let scrollLongGameTitles = Key<Bool>("scrollLongGameTitles", default: true)
+
     static let gameLibraryScale = Key<Float>("gameLibraryScale", default: 4.0)
 
 #if os(tvOS)
@@ -89,7 +92,6 @@ extension Defaults.Keys {
 #else
     static let webDavAlwaysOn = Key<Bool>("webDavAlwaysOn", default: false)
 #endif
-
 
     static let buttonTints = Key<Bool>("buttonTints", default: true)
     static let use8BitdoM30 = Key<Bool>("use8BitdoM30", default: false)

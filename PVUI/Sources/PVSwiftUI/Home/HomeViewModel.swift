@@ -168,6 +168,45 @@ final class HomeViewModel: ObservableObject {
 
     // MARK: - Model rebuilding
 
+    /// Pending model snapshots waiting to be flushed to @Published properties.
+    /// Multiple Realm observers fire independently; coalescing prevents 3-4 separate
+    /// SwiftUI re-renders into one batched update.
+    private var pendingAllGames: [GameCellModel]?
+    private var pendingFavorites: [GameCellModel]?
+    private var pendingMostPlayed: [GameCellModel]?
+    private var pendingRecents: [GameCellModel]?
+    private var flushWorkItem: DispatchWorkItem?
+
+    /// Schedules a coalesced flush of all pending model updates to the main thread.
+    /// Multiple Realm observers firing within the same run loop iteration are batched
+    /// into a single @Published write, preventing cascading SwiftUI re-renders that
+    /// cause scroll position jumps.
+    private func scheduleFlush() {
+        flushWorkItem?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            let all = self.pendingAllGames
+            let favs = self.pendingFavorites
+            let most = self.pendingMostPlayed
+            let recents = self.pendingRecents
+
+            self.pendingAllGames = nil
+            self.pendingFavorites = nil
+            self.pendingMostPlayed = nil
+            self.pendingRecents = nil
+
+            Task { @MainActor [weak self] in
+                guard let self, !self.isShuttingDown else { return }
+                if let all { self.allGamesModels = all }
+                if let favs { self.favoritesModels = favs }
+                if let most { self.mostPlayedModels = most }
+                if let recents { self.recentlyPlayedModels = recents }
+            }
+        }
+        flushWorkItem = work
+        modelsQueue.asyncAfter(deadline: .now() + 0.05, execute: work)
+    }
+
     private func rebuildAllGamesModels(from games: Results<PVGame>) {
         autoreleasepool {
             var byMD5: [String: GameCellModel] = [:]
@@ -187,15 +226,10 @@ final class HomeViewModel: ObservableObject {
             // Re-derive recently played from existing order with updated models.
             let recents = self.recentMD5Order.compactMap { byMD5[$0] }
 
-            // Snapshot sort direction before dispatching to avoid reading self on main
             let ascending = self.sortAscending
-            let sortedAll = self.sorted(all, ascending: ascending)
-
-            Task { @MainActor [weak self] in
-                guard let self, !self.isShuttingDown else { return }
-                self.allGamesModels = sortedAll
-                self.recentlyPlayedModels = recents
-            }
+            self.pendingAllGames = self.sorted(all, ascending: ascending)
+            self.pendingRecents = recents
+            scheduleFlush()
         }
     }
 
@@ -206,11 +240,8 @@ final class HomeViewModel: ObservableObject {
             for game in games where !game.isInvalidated {
                 favs.append(GameCellModel(game: game))
             }
-            let sortedFavs = self.sorted(favs, ascending: self.sortAscending)
-            Task { @MainActor [weak self] in
-                guard let self, !self.isShuttingDown else { return }
-                self.favoritesModels = sortedFavs
-            }
+            self.pendingFavorites = self.sorted(favs, ascending: self.sortAscending)
+            scheduleFlush()
         }
     }
 
@@ -221,12 +252,9 @@ final class HomeViewModel: ObservableObject {
             for game in games where !game.isInvalidated {
                 models.append(GameCellModel(game: game))
             }
-            // Sort by play count descending.
             models.sort { $0.playCount > $1.playCount }
-            Task { @MainActor [weak self] in
-                guard let self, !self.isShuttingDown else { return }
-                self.mostPlayedModels = models
-            }
+            self.pendingMostPlayed = models
+            scheduleFlush()
         }
     }
 
@@ -239,12 +267,8 @@ final class HomeViewModel: ObservableObject {
                 return game.md5Hash
             }
 
-            let models = recentMD5Order.compactMap { modelsByMD5[$0] }
-
-            Task { @MainActor [weak self] in
-                guard let self, !self.isShuttingDown else { return }
-                self.recentlyPlayedModels = models
-            }
+            self.pendingRecents = recentMD5Order.compactMap { modelsByMD5[$0] }
+            scheduleFlush()
         }
     }
 

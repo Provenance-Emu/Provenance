@@ -26,13 +26,20 @@ struct GameItemThumbnail: SwiftUI.View {
     /// Blur radius for artwork obfuscation.
     private let obfuscationBlurRadius: CGFloat = 6
 
+    /// The aspect ratio used for layout — consistent between placeholder and loaded artwork
+    /// to prevent cell size jumps when artwork loads asynchronously.
+    private var layoutAspectRatio: CGFloat {
+        boxartAspectRatio.rawValue
+    }
+
     var body: some SwiftUI.View {
         Group {
             if let artwork = artwork {
-                /// Use the natural aspect ratio of the artwork image
+                /// Use the boxart aspect ratio for layout consistency, not the image's
+                /// natural ratio. This prevents scroll jumps when artwork loads.
                 Image(uiImage: artwork)
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .aspectRatio(layoutAspectRatio, contentMode: .fit)
                     .blur(radius: obfuscateArtwork ? obfuscationBlurRadius : 0)
             } else {
                 /// Fallback to text-based artwork with the specified aspect ratio

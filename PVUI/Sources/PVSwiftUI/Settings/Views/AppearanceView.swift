@@ -7,6 +7,8 @@
 
 import SwiftUI
 import Combine
+import Defaults
+import PVSettings
 import PVThemes
 #if canImport(FreemiumKit)
 import FreemiumKit
@@ -15,6 +17,7 @@ import FreemiumKit
 struct AppearanceView: View {
     @Environment(\.dismiss) private var dismiss
     @Default(.showGameTitles) var showGameTitles
+    @Default(.scrollLongGameTitles) var scrollLongGameTitles
     @Default(.showRecentGames) var showRecentGames
     @Default(.showSearchbar) var showSearchbar
     @Default(.showRecentSaveStates) var showRecentSaveStates
@@ -78,10 +81,18 @@ struct AppearanceView: View {
                             }
                             .padding(.vertical, 4)
 
-                            ThemedToggle(isOn: $showGameTitles) {
+                            ThemedToggle(isOn: $showSearchbar) {
                                 SettingsRow(title: "Show Search Bar",
-                                            subtitle: "Show searcbar for quick game searching.",
+                                            subtitle: "Show search bar for quick game searching.",
                                             icon: .sfSymbol("magnifyingglass"),
+                                            showChevron: false)
+                            }
+                            .padding(.vertical, 4)
+
+                            ThemedToggle(isOn: $scrollLongGameTitles) {
+                                SettingsRow(title: "Scroll Long Titles",
+                                            subtitle: "Animate long game titles in the library; off uses a single line with ellipsis.",
+                                            icon: .sfSymbol("text.line.first.and.arrowtriangle.forward"),
                                             showChevron: false)
                             }
                             .padding(.vertical, 4)
@@ -192,6 +203,7 @@ struct AppearanceView: View {
 
 internal struct AppearanceSection: View {
     @Default(.showGameTitles) var showGameTitles
+    @Default(.scrollLongGameTitles) var scrollLongGameTitles
     @Default(.showRecentGames) var showRecentGames
     @Default(.showSearchbar) var showSearchbar
     @Default(.showRecentSaveStates) var showRecentSaveStates
@@ -209,8 +221,14 @@ internal struct AppearanceSection: View {
             }
             ThemedToggle(isOn: $showSearchbar) {
                 SettingsRow(title: "Show Search Bar",
-                            subtitle: "Show searcbar for quick game searching.",
+                            subtitle: "Show search bar for quick game searching.",
                             icon: .sfSymbol("magnifyingglass"),
+                            showChevron: false)
+            }
+            ThemedToggle(isOn: $scrollLongGameTitles) {
+                SettingsRow(title: "Scroll Long Titles",
+                            subtitle: "Animate long game titles in the library; off uses a single line with ellipsis.",
+                            icon: .sfSymbol("text.line.first.and.arrowtriangle.forward"),
                             showChevron: false)
             }
             ThemedToggle(isOn: $showRecentGames) {

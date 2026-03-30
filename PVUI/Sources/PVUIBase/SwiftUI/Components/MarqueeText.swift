@@ -1,5 +1,7 @@
 import SwiftUI
+import Defaults
 import PVLogging
+import PVSettings
 
 /// Actor to handle text width calculations asynchronously
 private actor TextWidthCalculator {
@@ -109,7 +111,10 @@ public struct MarqueeText: View {
 
     /// Environment value for reduce motion setting
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    
+
+    /// User preference: library setting to allow horizontal scrolling for overflowing titles.
+    @Default(.scrollLongGameTitles) private var scrollLongGameTitles
+
     /// Check if the animation should be running based on all visibility factors
     private var shouldAnimationRun: Bool {
         /// Animation should run only if:
@@ -117,21 +122,23 @@ public struct MarqueeText: View {
         /// 2. The text is wider than the container (or width hasn't been calculated yet)
         /// 3. The app is in the active scene phase
         /// 4. Reduce motion is not enabled
-        return isInViewHierarchy && 
-               (!hasCalculatedWidth || textWidth > containerWidth) && 
-               scenePhase == .active && 
-               !reduceMotion
+        /// 5. User has not disabled scrolling titles in Library appearance settings
+        return isInViewHierarchy &&
+               (!hasCalculatedWidth || textWidth > containerWidth) &&
+               scenePhase == .active &&
+               !reduceMotion &&
+               scrollLongGameTitles
     }
 
     public var body: some View {
         GeometryReader { geometry in
-            if reduceMotion {
-                // Static version with truncation when reduce motion is enabled
+            if reduceMotion || !scrollLongGameTitles {
+                // Static version with truncation when reduce motion is enabled or scrolling titles are off
                 Text(text)
                     .font(font)
                     .lineLimit(1)
                     .truncationMode(.tail)
-                    .frame(width: containerWidth, alignment: .leading)
+                    .frame(width: geometry.size.width, alignment: .leading)
             } else {
                 // Animated marquee when reduce motion is disabled
                 ZStack(alignment: .leading) {
@@ -191,6 +198,18 @@ public struct MarqueeText: View {
             // Reset width calculation flag when text changes
             hasCalculatedWidth = false
             resetAnimation()
+        }
+        .onChange(of: scrollLongGameTitles) { _, enabled in
+            if enabled {
+                Task {
+                    await ensureTextWidthCalculated()
+                    if shouldAnimationRun {
+                        startAnimation()
+                    }
+                }
+            } else {
+                stopAnimation()
+            }
         }
         /// Monitor scene phase changes to pause/resume animations
         .onChange(of: scenePhase) { newPhase in
@@ -265,11 +284,11 @@ public struct MarqueeText: View {
     }
 
     private func startAnimation() {
-        /// Don't start animation if reduce motion is enabled
-        if reduceMotion {
+        /// Don't start animation if reduce motion is enabled or scrolling titles are disabled
+        if reduceMotion || !scrollLongGameTitles {
             return
         }
-        
+
         /// Ensure we have valid measurements before attempting animation
         if containerWidth <= 0 || !hasCalculatedWidth {
             /// Retry after a short delay if container width isn't ready or text width hasn't been calculated

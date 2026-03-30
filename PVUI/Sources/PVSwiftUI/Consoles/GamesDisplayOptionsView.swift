@@ -12,11 +12,10 @@ import RealmSwift
 import PVLibrary
 import PVThemes
 import Defaults
+import PVSettings
 import PVUIBase
 import PVCoreBridge
 import UIKit
-// Import for core options detail view
-import struct PVUIBase.CoreOptionsDetailView
 
 @available(iOS 14, tvOS 14, *)
 /// Context for the settings button to determine its behavior
@@ -32,6 +31,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
     @Default(.gameLibraryScale) private var gameLibraryScale
     @Default(.showGameTitles) private var showGameTitles
+    @Default(.scrollLongGameTitles) private var scrollLongGameTitles
     @Default(.showRecentGames) private var showRecentGames
     @Default(.showSearchbar) private var showSearchbar
     @Default(.showRecentSaveStates) private var showRecentSaveStates
@@ -108,6 +108,12 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             .onChange(of: showGameTitles) { _ in
                 Haptics.impact(style: .light)
             }
+            Toggle(isOn: $scrollLongGameTitles) {
+                Label("Scroll Long Titles", systemImage: "text.line.first.and.arrowtriangle.forward")
+            }
+            .onChange(of: scrollLongGameTitles) { _ in
+                Haptics.impact(style: .light)
+            }
             Toggle(isOn: $showSearchbar) {
                 Label("Show Search Bar", systemImage: "magnifyingglass")
             }
@@ -153,6 +159,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             Menu {
                 Toggle(isOn: $showGameTitles) {
                     Label("Show Game Titles", systemImage: "textformat")
+                }
+                Toggle(isOn: $scrollLongGameTitles) {
+                    Label("Scroll Long Titles", systemImage: "text.line.first.and.arrowtriangle.forward")
                 }
                 Toggle(isOn: $showSearchbar) {
                     Label("Show Search Bar", systemImage: "magnifyingglass")

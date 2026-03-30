@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import Defaults
+import PVSettings
 import PVThemes
 
 @available(iOS 14, tvOS 14, *)
