@@ -314,6 +314,25 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing, SystemFi
                 do {
                     try FileManager.default.startDownloadingUbiquitousItem(at: cloudURL)
                     await self.insertDownloadingFile(cloudURL)
+
+                    // Poll until the ubiquitous item is fully downloaded (timeout: 60 s)
+                    var isDownloaded = false
+                    for _ in 0..<60 {
+                        if let values = try? cloudURL.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey]),
+                           values.ubiquitousItemDownloadingStatus == .current {
+                            isDownloaded = true
+                            break
+                        }
+                        try await Task.sleep(nanoseconds: 1_000_000_000)
+                    }
+                    guard isDownloaded else {
+                        observer(.error(NSError(
+                            domain: "com.provenance-emu.provenance", code: 3,
+                            userInfo: [NSLocalizedDescriptionKey: "iCloud download timed out for system file: \(filename)"]
+                        )))
+                        return
+                    }
+
                     let localDir = localURL.deletingLastPathComponent()
                     try FileManager.default.createDirectory(at: localDir, withIntermediateDirectories: true)
                     if FileManager.default.fileExists(atPath: localURL.path) {
