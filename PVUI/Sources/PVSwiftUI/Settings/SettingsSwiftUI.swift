@@ -2725,6 +2725,16 @@ private struct AdvancedSection: View {
                 .retroFocusButtonStyle(showBorder: false)
                 #endif
 
+                // Session log file browser
+                NavigationLink(destination: PVLogSessionBrowserView()) {
+                    SettingsRow(title: "Session Logs",
+                                subtitle: "View and manage file-based session log archives.",
+                                icon: .sfSymbol("doc.on.doc"))
+                }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
+
                 SecretSettingsRow()
             }
         }
