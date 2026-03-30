@@ -45,7 +45,7 @@
             "description": "Scans Frameworks/ at startup for bare .libretro.framework dylibs and registers them as thin-wrapper cores (no RetroArch binary required). On tvOS: enabled by default. On iOS: disabled by default but can be enabled in Settings > Advanced > Feature Flags."
         },
         "pauseTileMenu": {
-            "enabled": false,
+            "enabled": true,
             "description": "Experimental tile/grid based pause menu that floats over the game screen instead of the classic tab/list panel. Enable in Settings > Advanced > Feature Flags."
         },
         "tapToRemapUI": {

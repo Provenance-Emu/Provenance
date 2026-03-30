@@ -215,11 +215,7 @@ public struct FeatureFlag: Codable, Sendable {
         description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. On tvOS: enabled by default. On iOS: disabled by default but can be enabled in Settings > Advanced > Feature Flags."
     )
 
-#if os(tvOS)
     static let _pauseTileMenu: Bool = true
-#else
-    static let _pauseTileMenu: Bool = false
-#endif
     public static let pauseTileMenu = FeatureFlag(
         enabled: _pauseTileMenu,
         description: "Experimental tile/grid based pause menu overlay that floats over the game screen. Default is the classic tab/list menu."
