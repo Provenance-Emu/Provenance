@@ -45,6 +45,21 @@ public struct DiscRipperView: View {
         .sheet(isPresented: $viewModel.showRipperSheet) {
             RipperProgressSheet(viewModel: viewModel)
         }
+        .alert(
+            String(localized: "disc_ripper.rip_error.title"),
+            isPresented: Binding(
+                get: { viewModel.ripError != nil },
+                set: { if !$0 { viewModel.ripError = nil } }
+            )
+        ) {
+            Button(String(localized: "disc_ripper.rip_error.dismiss")) {
+                viewModel.ripError = nil
+            }
+        } message: {
+            if let error = viewModel.ripError {
+                Text(verbatim: error)
+            }
+        }
         .task { await viewModel.connect() }
     }
 
@@ -359,7 +374,7 @@ private struct TrackRowView: View {
         let typeLabel = track.isAudio
             ? String(localized: "disc_ripper.track_type.audio")
             : String(localized: "disc_ripper.track_type.data")
-        return "Track \(track.trackNumber) (\(typeLabel))"
+        return String(format: String(localized: "disc_ripper.track_title"), track.trackNumber, typeLabel)
     }
 
     private var sizeString: String {

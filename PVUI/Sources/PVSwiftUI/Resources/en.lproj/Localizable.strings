@@ -435,6 +435,9 @@
 "disc_ripper.retry" = "Retry";
 "disc_ripper.total_size" = "Total Size";
 "disc_ripper.recent_rips_header" = "Recent Rips";
+"disc_ripper.track_title" = "Track %1$d (%2$@)";
+"disc_ripper.rip_error.title" = "Rip Failed";
+"disc_ripper.rip_error.dismiss" = "OK";
 
 // Ripper Progress Sheet
 "ripper_sheet.title" = "Ripping Disc";

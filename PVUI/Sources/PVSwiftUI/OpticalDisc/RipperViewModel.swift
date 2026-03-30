@@ -196,6 +196,7 @@ public final class RipperViewModel {
                 progressObserver.cancel()
                 recordFailedRip(reason: error.localizedDescription)
                 ripError = error.localizedDescription
+                showRipperSheet = false
                 DLOG("RipperViewModel: rip error — \(error)")
             }
         }
