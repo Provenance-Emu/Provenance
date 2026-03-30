@@ -35,7 +35,6 @@ final class PVLogSessionViewModel: ObservableObject {
 
     func refresh() {
         isLoggingEnabled = PVLogFileManager.shared.isLogging
-        let fm = FileManager.default
         let currentURL = PVLogFileManager.shared.currentSessionURL
         logFiles = PVLogFileManager.shared.logFiles().compactMap { url in
             let resources = try? url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
@@ -48,7 +47,6 @@ final class PVLogSessionViewModel: ObservableObject {
                 isCurrentSession: url == currentURL
             )
         }
-        _ = fm // suppress unused warning
     }
 
     func startLogging() {

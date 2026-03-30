@@ -30,8 +30,10 @@ public final class PVLogFileManager: @unchecked Sendable {
 
     /// Directory where log files are stored.
     public var logsDirectory: URL = {
-        let lib = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!
-        return lib.appendingPathComponent("Logs/Provenance")
+        if let lib = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first {
+            return lib.appendingPathComponent("Logs/Provenance")
+        }
+        return FileManager.default.temporaryDirectory.appendingPathComponent("Provenance/Logs")
     }()
 
     /// Maximum size of a single log file before rotation (default: 2 MB).
@@ -46,22 +48,34 @@ public final class PVLogFileManager: @unchecked Sendable {
     private var currentFileURL: URL?
     private var currentFileSize: Int64 = 0
     private let queue = DispatchQueue(label: "com.provenance.logfilemanager", qos: .utility)
+#if canImport(Combine)
     private var cancellable: AnyCancellable?
+#endif
 
     private init() {}
 
     // MARK: - Public API
 
     /// Returns true if file logging is currently active.
-    public var isLogging: Bool { cancellable != nil }
+    public var isLogging: Bool {
+#if canImport(Combine)
+        queue.sync { cancellable != nil }
+#else
+        queue.sync { currentFileHandle != nil }
+#endif
+    }
 
     /// The URL of the file being written to in the current session, or `nil` if not logging.
-    public var currentSessionURL: URL? { currentFileURL }
+    public var currentSessionURL: URL? { queue.sync { currentFileURL } }
 
     /// Begin writing log entries to disk. Creates a new session log file.
     public func startLogging() {
         queue.async { [self] in
+#if canImport(Combine)
             guard cancellable == nil else { return }
+#else
+            guard currentFileHandle == nil else { return }
+#endif
             createDirectory()
             openNewFile()
 
@@ -79,8 +93,10 @@ public final class PVLogFileManager: @unchecked Sendable {
     /// Stop writing to disk and close the current log file.
     public func stopLogging() {
         queue.async { [self] in
+#if canImport(Combine)
             cancellable?.cancel()
             cancellable = nil
+#endif
             currentFileHandle?.closeFile()
             currentFileHandle = nil
             currentFileURL = nil
