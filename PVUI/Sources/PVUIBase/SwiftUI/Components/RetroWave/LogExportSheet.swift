@@ -67,7 +67,9 @@ public struct LogExportSheet: View {
                 }
             }
             .navigationTitle("Export Logs")
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -263,27 +265,23 @@ public struct LogExportSheet: View {
             includeRetroArchLogs: includeRetroArchLogs && exportFormat == .zip
         )
 
-        DispatchQueue.global(qos: .userInitiated).async {
-            let url: URL?
-            switch exportFormat {
-            case .text:
-                url = viewModel.exportLogsAsText(options: options)
-            case .zip:
-                url = viewModel.exportLogsAsZip(options: options)
-            }
-
-            DispatchQueue.main.async {
-                isExporting = false
-                guard let url else {
-                    exportError = "Failed to create export file."
-                    return
-                }
-#if !os(tvOS)
-                shareItems = [url]
-                showingShareSheet = true
-#endif
-            }
+        let url: URL?
+        switch exportFormat {
+        case .text:
+            url = viewModel.exportLogsAsText(options: options)
+        case .zip:
+            url = viewModel.exportLogsAsZip(options: options)
         }
+
+        isExporting = false
+        guard let url else {
+            exportError = "Failed to create export file."
+            return
+        }
+#if !os(tvOS)
+        shareItems = [url]
+        showingShareSheet = true
+#endif
     }
 }
 

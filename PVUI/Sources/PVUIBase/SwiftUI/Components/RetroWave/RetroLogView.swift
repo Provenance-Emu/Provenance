@@ -216,34 +216,30 @@ public struct RetroLogView: View {
                 }
                 #else
                 // Log level picker
-                if #available(tvOS 17.0, *) {
-                    Menu {
-                        Picker("Log Level", selection: $viewModel.minLogLevel) {
-                            Text("Verbose").tag(LogLevel.verbose)
-                            Text("Debug").tag(LogLevel.debug)
-                            Text("Info").tag(LogLevel.info)
-                            Text("Warning").tag(LogLevel.warning)
-                            Text("Error").tag(LogLevel.error)
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text("Level: \(viewModel.minLogLevel.name)")
-                                .font(.system(size: 12))
-                                .foregroundColor(RetroTheme.retroBlue)
-
-                            Image(systemName: "chevron.down")
-                                .font(.system(size: 10))
-                                .foregroundColor(RetroTheme.retroBlue)
-                        }
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
-                        )
+                Menu {
+                    Picker("Log Level", selection: $viewModel.minLogLevel) {
+                        Text("Verbose").tag(LogLevel.verbose)
+                        Text("Debug").tag(LogLevel.debug)
+                        Text("Info").tag(LogLevel.info)
+                        Text("Warning").tag(LogLevel.warning)
+                        Text("Error").tag(LogLevel.error)
                     }
-                } else {
-                    // TODO: tvOS menu
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("Level: \(viewModel.minLogLevel.name)")
+                            .font(.system(size: 12))
+                            .foregroundColor(RetroTheme.retroBlue)
+
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 10))
+                            .foregroundColor(RetroTheme.retroBlue)
+                    }
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 4)
+                            .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                    )
                 }
 
                 // Auto-scroll toggle
@@ -376,7 +372,9 @@ public struct RetroLogView: View {
                     .font(.system(size: 12))
                     .foregroundColor(.white)
                     .autocorrectionDisabled(true)
+                    #if !os(tvOS)
                     .textInputAutocapitalization(.never)
+                    #endif
 
                 if !viewModel.searchText.isEmpty {
                     Button(action: {
