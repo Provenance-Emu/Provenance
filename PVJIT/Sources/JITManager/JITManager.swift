@@ -407,6 +407,7 @@ public final class DOLJitManager {
               bundleID.hasPrefix("org.provenance-emu.provenance") else {
             return false
         }
+        #if false
         if #available(iOS 13.4, tvOS 13.4, *) {
             if HasBooleanEntitlement("com.apple.developer.kernel.allow-jit") {
                 return false
@@ -415,6 +416,12 @@ public final class DOLJitManager {
         if Bundle.main.url(forResource: "embedded", withExtension: "mobileprovision") != nil {
             return false
         }
+        #endif
+        // If the bundle ID is our official one, this is a genuine App Store or
+        // TestFlight build — JIT is never available through sideloading tools
+        // because sideloaders must change the bundle ID. Skip the Mach-O code
+        // signature parsing which crashes on some TestFlight/App Store signed
+        // binaries (objc_retain on garbage from parsedCodeSignature()).
         return true
     }()
     #endif
