@@ -99,35 +99,45 @@ public class MissingArtworkCacheManager {
             }
         }
 
-        // Clean up disk cache if needed
-        cleanupDiskCache()
+        // Clean up disk cache if needed (debounced, off main thread)
+        scheduleDiskCacheCleanup()
     }
 
-    /// Clean up disk cache if it exceeds the maximum number of files
-    private func cleanupDiskCache() {
-        do {
-            let fileURLs = try FileManager.default.contentsOfDirectory(
-                at: diskCacheURL,
-                includingPropertiesForKeys: [.contentModificationDateKey],
-                options: .skipsHiddenFiles
-            )
+    /// Pending cleanup work item — coalesces rapid storeImage calls.
+    private static var cleanupWorkItem: DispatchWorkItem?
 
-            if fileURLs.count > maxDiskCachedImages {
-                // Sort by modification date (oldest first)
-                let sortedURLs = try fileURLs.sorted { url1, url2 in
-                    let date1 = try url1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
-                    let date2 = try url2.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
-                    return date1 < date2
-                }
+    /// Schedules a debounced disk cache cleanup on a background queue.
+    /// Multiple storeImage calls within 2 seconds share one cleanup pass.
+    private func scheduleDiskCacheCleanup() {
+        Self.cleanupWorkItem?.cancel()
+        let cacheURL = diskCacheURL
+        let limit = maxDiskCachedImages
+        let work = DispatchWorkItem {
+            Self.performDiskCacheCleanup(cacheURL: cacheURL, limit: limit)
+        }
+        Self.cleanupWorkItem = work
+        DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 2.0, execute: work)
+    }
 
-                // Remove oldest files to get back under the limit
-                let filesToRemove = sortedURLs.prefix(fileURLs.count - maxDiskCachedImages)
-                for fileURL in filesToRemove {
-                    try FileManager.default.removeItem(at: fileURL)
-                }
-            }
-        } catch {
-            print("Error cleaning up disk cache: \(error)")
+    /// Performs the actual disk cache cleanup. Runs on a background queue.
+    private static func performDiskCacheCleanup(cacheURL: URL, limit: Int) {
+        guard let fileURLs = try? FileManager.default.contentsOfDirectory(
+            at: cacheURL,
+            includingPropertiesForKeys: [.contentModificationDateKey],
+            options: .skipsHiddenFiles
+        ) else { return }
+
+        guard fileURLs.count > limit else { return }
+
+        let sortedURLs = (try? fileURLs.sorted { url1, url2 in
+            let date1 = (try? url1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast
+            let date2 = (try? url2.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast
+            return date1 < date2
+        }) ?? []
+
+        let filesToRemove = sortedURLs.prefix(fileURLs.count - limit)
+        for fileURL in filesToRemove {
+            try? FileManager.default.removeItem(at: fileURL)
         }
     }
 
