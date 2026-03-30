@@ -518,7 +518,8 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                 return Disposables.create()
             }
 
-            Task {
+            Task { [weak self] in
+                guard let self = self else { return }
                 do {
                     // Find the record for this BIOS file
                     let recordID = CKRecord.ID(recordName: "bios_\(filename)")
