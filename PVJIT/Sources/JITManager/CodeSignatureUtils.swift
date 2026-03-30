@@ -19,28 +19,12 @@ import Security
 
 let CS_EXECSEG_ALLOW_UNSIGNED: UInt64 = 0x10
 
-struct CSBlobIndex {
-    var type: UInt32
-    var offset: UInt32
-}
-
-struct CSSuperblob {
-    var magic: UInt32
-    var length: UInt32
-    var count: UInt32
-    var index: [CSBlobIndex]
-}
-
-struct CSGeneric {
-    var magic: UInt32
-    var length: UInt32
-}
-
-struct CSEntitlements {
-    var magic: UInt32
-    var length: UInt32
-    var entitlements: [CChar]
-}
+/// Superblob magic (`CSMAGIC_EMBEDDED_SIGNATURE`).
+private let kCSSuperblobMagic: UInt32 = 0xfade0cc0
+/// Embedded DER entitlements blob (`CSMAGIC_EMBEDDED_ENTITLEMENT_DER`).
+private let kCSEntitlementsDERMagic: UInt32 = 0xfade7171
+/// Code directory blob (`CSMAGIC_CODEDIRECTORY`).
+private let kCSCodeDirectoryMagic: UInt32 = 0xfade0c02
 
 struct CSCodedirectory {
     var magic: UInt32
@@ -187,6 +171,27 @@ func HasBooleanEntitlement(_ entitlementKey: String) -> Bool {
     return entitlementPlistIndicatesEnabled(entitlementsFromEmbeddedMobileProvision(), key: entitlementKey)
 }
 
+/// Reads a big-endian `UInt32` from `data` at `offset` (Mach-O code-signature fields are BE).
+@available(iOS 13.4, tvOS 13.4, *)
+private func bigEndianUInt32(in data: Data, offset: Int) -> UInt32? {
+    guard offset >= 0, data.count >= offset + 4 else { return nil }
+    return (UInt32(data[offset]) << 24)
+        | (UInt32(data[offset + 1]) << 16)
+        | (UInt32(data[offset + 2]) << 8)
+        | UInt32(data[offset + 3])
+}
+
+/// Reads a big-endian `UInt64` from `data` at `offset`.
+@available(iOS 13.4, tvOS 13.4, *)
+private func bigEndianUInt64(in data: Data, offset: Int) -> UInt64? {
+    guard offset >= 0, data.count >= offset + 8 else { return nil }
+    var v: UInt64 = 0
+    for b in 0..<8 {
+        v = (v << 8) | UInt64(data[offset + b])
+    }
+    return v
+}
+
 /// Mach header for the main executable (image index 0). Avoids `dladdr(#function)` which can resolve to the wrong dylib in Swift.
 @available(iOS 13.4, tvOS 13.4, *)
 private func mainExecutableMachHeader64() -> UnsafePointer<mach_header_64>? {
@@ -232,36 +237,49 @@ private func parsedCodeSignature() -> ParsedCodeSignature? {
         return nil
     }
 
-    let cs = csData.withUnsafeBytes { $0.load(as: CSSuperblob.self) }
-    guard UInt32(bigEndian: cs.magic) == 0xfade0cc0 else {
+    /// Parse a `CS_SuperBlob` without `load(as:)` — a Swift `[CSBlobIndex]` is **not** layout-compatible with the on-disk
+    /// trailing index table; treating Mach-O bytes as one caused invalid `objc_retain` under the debugger on recent OS builds.
+    guard csData.count >= 12,
+          let sbMagic = bigEndianUInt32(in: csData, offset: 0),
+          sbMagic == kCSSuperblobMagic,
+          let sbLength = bigEndianUInt32(in: csData, offset: 4),
+          let blobCount = bigEndianUInt32(in: csData, offset: 8)
+    else {
         return nil
     }
+    let superblobTotal = Int(sbLength)
+    guard superblobTotal >= 12, superblobTotal <= csData.count else { return nil }
+    guard blobCount <= 64 else { return nil }
+    let indexTableEnd = 12 + Int(blobCount) * 8
+    guard csData.count >= indexTableEnd else { return nil }
 
     var verifiedDirectory = false
     var entitlementsData: Data?
 
-    for i in 0..<UInt32(bigEndian: cs.count) {
-        let genericOffset = UInt32(bigEndian: cs.index[Int(i)].offset)
-        let generic = csData.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> CSGeneric in
-            let genericPtr = ptr.baseAddress! + Int(genericOffset)
-            return genericPtr.assumingMemoryBound(to: CSGeneric.self).pointee
-        }
-        let magic = UInt32(bigEndian: generic.magic)
+    for i in 0..<Int(blobCount) {
+        let entryBase = 12 + i * 8
+        guard let blobOffset = bigEndianUInt32(in: csData, offset: entryBase + 4) else { continue }
+        let genericOffset = Int(blobOffset)
+        guard genericOffset >= 0, genericOffset + 8 <= csData.count else { continue }
+        guard let magic = bigEndianUInt32(in: csData, offset: genericOffset),
+              let blobLength = bigEndianUInt32(in: csData, offset: genericOffset + 4)
+        else { continue }
+        let blobEnd = genericOffset + Int(blobLength)
+        guard blobEnd <= csData.count, blobEnd >= genericOffset + 8 else { continue }
 
-        if magic == 0xfade7171 {
-            let ents = csData.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> CSEntitlements in
-                let entsPtr = ptr.baseAddress! + Int(genericOffset)
-                return entsPtr.assumingMemoryBound(to: CSEntitlements.self).pointee
-            }
-            let length = UInt32(bigEndian: ents.length) - UInt32(MemoryLayout<CSEntitlements>.offset(of: \.entitlements)!)
-            entitlementsData = csData.subdata(in: Int(genericOffset + UInt32(MemoryLayout<CSEntitlements>.offset(of: \.entitlements)!))..<Int(genericOffset + length))
-        } else if magic == 0xfade0c02 {
-            let directory = csData.withUnsafeBytes { (ptr: UnsafeRawBufferPointer) -> CSCodedirectory in
-                let directoryPtr = ptr.baseAddress! + Int(genericOffset)
-                return directoryPtr.assumingMemoryBound(to: CSCodedirectory.self).pointee
-            }
-            let version = UInt32(bigEndian: directory.version)
-            let execSegmentFlags = UInt64(bigEndian: directory.execSegmentFlags)
+        if magic == kCSEntitlementsDERMagic {
+            let payloadStart = genericOffset + 8
+            entitlementsData = csData.subdata(in: payloadStart..<blobEnd)
+        } else if magic == kCSCodeDirectoryMagic {
+            guard let verRel = MemoryLayout<CSCodedirectory>.offset(of: \.version),
+                  let execRel = MemoryLayout<CSCodedirectory>.offset(of: \.execSegmentFlags)
+            else { continue }
+            let versionOffset = genericOffset + verRel
+            let execFlagsOffset = genericOffset + execRel
+            guard execFlagsOffset + 8 <= blobEnd, versionOffset + 4 <= blobEnd,
+                  let version = bigEndianUInt32(in: csData, offset: versionOffset),
+                  let execSegmentFlags = bigEndianUInt64(in: csData, offset: execFlagsOffset)
+            else { continue }
 
             if version < 0x20400 {
                 let error = "CodeDirectory version is 0x\(String(version, radix: 16)). Should be 0x20400 or higher."
