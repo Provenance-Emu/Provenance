@@ -29,6 +29,9 @@ public struct RetroLogView: View {
     /// Controls whether the view is presented in fullscreen mode
     @Binding private var isFullscreen: Bool
 
+    /// Controls presentation of the export options sheet
+    @State private var showingExportSheet = false
+
     #if os(tvOS)
     /// Focus states for header buttons
     @FocusState private var focusedButton: HeaderButton?
@@ -39,6 +42,7 @@ public struct RetroLogView: View {
         case sortOrder
         case showDetails
         case clear
+        case export
         case fullscreen
     }
     #endif
@@ -113,6 +117,9 @@ public struct RetroLogView: View {
             }
         }
         #endif
+        .sheet(isPresented: $showingExportSheet) {
+            LogExportSheet(viewModel: viewModel)
+        }
     }
 
     // MARK: - Subviews
@@ -186,6 +193,15 @@ public struct RetroLogView: View {
                     accentColor: RetroTheme.retroPink.opacity(0.7)
                 ) {
                     viewModel.clearLogs()
+                }
+
+                // Export / share button
+                headerButton(
+                    button: .export,
+                    icon: "square.and.arrow.up",
+                    accentColor: RetroTheme.retroBlue
+                ) {
+                    showingExportSheet = true
                 }
 
                 Spacer()
@@ -286,6 +302,20 @@ public struct RetroLogView: View {
                         )
                 }
                 .disabled(viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty)
+
+                // Export / share button
+                Button(action: {
+                    showingExportSheet = true
+                }) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 12))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .padding(6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                        )
+                }
 
                 // Clear logs button
                 Button(action: {

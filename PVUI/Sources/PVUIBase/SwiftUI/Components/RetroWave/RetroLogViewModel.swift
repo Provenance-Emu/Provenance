@@ -18,38 +18,38 @@ public final class RetroLogViewModel: ObservableObject {
         case newestFirst
         case oldestFirst
     }
-    
+
     // MARK: - Published Properties
-    
+
     /// The raw logs, typically appended chronologically
     @Published public var logs: [LogEntry] = []
-    
+
     /// The minimum log level to display
     @Published public var minLogLevel: LogLevel = .info
-    
+
     /// Whether to auto-scroll to the bottom
     @Published public var autoScroll = true
-    
+
     /// Whether to show full log details
     @Published public var showFullDetails = false
-    
+
     /// Search text
     @Published public var searchText = ""
 
     /// Current sort order for logs
-    @Published public var sortOrder: SortOrder = .newestFirst // Default to newest first
-    
+    @Published public var sortOrder: SortOrder = .newestFirst
+
     // MARK: - Private Properties
-    
+
     /// Subscription to log publisher
     private var cancellables = Set<AnyCancellable>()
-    
+
     // MARK: - Initialization
-    
+
     public init() {
         // Load initial logs
         logs = PVLogPublisher.shared.getRecentLogs(minLevel: minLogLevel)
-        
+
         // Subscribe to log updates
         PVLogPublisher.shared.logPublisher
             .receive(on: RunLoop.main)
@@ -58,9 +58,9 @@ public final class RetroLogViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
     // MARK: - Public Methods
-    
+
     /// Clear all logs
     public func clearLogs() {
         logs.removeAll()
@@ -84,18 +84,16 @@ public final class RetroLogViewModel: ObservableObject {
             entryText += log.message
             return entryText
         }
-        
-        UIPasteboard.general.string = logTexts.joined(separator: "\n\n") // Add an extra newline for readability between entries
+
+        UIPasteboard.general.string = logTexts.joined(separator: "\n\n")
     }
 #endif
 
     /// Toggle the sort order of logs.
     public func toggleSortOrder() {
         sortOrder = (sortOrder == .newestFirst) ? .oldestFirst : .newestFirst
-        // Note: Auto-scroll behavior might need adjustment in the View
-        // depending on the sort order, especially if autoScroll means "scroll to newest".
     }
-    
+
     /// Get color for log level
     public func logLevelColor(_ level: LogLevel) -> Color {
         switch level {
@@ -111,20 +109,155 @@ public final class RetroLogViewModel: ObservableObject {
             return RetroTheme.retroPink
         }
     }
-    
+
     /// Get filtered and sorted logs based on search text, minimum log level, and sort order.
-    public var displayedLogs: [LogEntry] { // Renamed from filteredLogs
+    public var displayedLogs: [LogEntry] {
         let filtered = logs.filter { log in
             (searchText.isEmpty || log.message.localizedCaseInsensitiveContains(searchText)) &&
             log.level.rawValue >= minLogLevel.rawValue
         }
-        
+
         switch sortOrder {
         case .newestFirst:
-            // Assumes 'logs' are [oldest, ..., newest], so reverse for newest first display.
             return filtered.reversed()
         case .oldestFirst:
             return filtered
+        }
+    }
+
+    // MARK: - Export
+
+    /// Options controlling what to include in a log export.
+    public struct LogExportOptions {
+        public var includeAppLogs: Bool
+        public var includeDeviceInfo: Bool
+        public var includeRetroArchLogs: Bool
+
+        public init(includeAppLogs: Bool = true, includeDeviceInfo: Bool = true, includeRetroArchLogs: Bool = true) {
+            self.includeAppLogs = includeAppLogs
+            self.includeDeviceInfo = includeDeviceInfo
+            self.includeRetroArchLogs = includeRetroArchLogs
+        }
+    }
+
+    /// Returns the RetroArch logs directory URL, or nil if it doesn't exist on disk.
+    public var retroArchLogsDirectory: URL? {
+        guard let docDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        let dir = docDir.appendingPathComponent("RetroArch/logs")
+        return FileManager.default.fileExists(atPath: dir.path) ? dir : nil
+    }
+
+    /// Builds a device/app info header string.
+    private func buildDeviceInfo() -> String {
+        var info = "=== Provenance Log Export ===\n"
+        info += "Date: \(DateFormatter.localizedString(from: Date(), dateStyle: .full, timeStyle: .long))\n"
+        let bundle = Bundle.main
+        if let version = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
+           let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
+            info += "App Version: \(version) (\(build))\n"
+        }
+#if canImport(UIKit) && !os(tvOS)
+        info += "Device: \(UIDevice.current.model)\n"
+        info += "OS: \(UIDevice.current.systemName) \(UIDevice.current.systemVersion)\n"
+#elseif os(tvOS)
+        info += "Platform: tvOS\n"
+#endif
+        info += "Displayed Log Count: \(displayedLogs.count) (total in session: \(logs.count))\n"
+        return info
+    }
+
+    /// Formats a single log entry as plain text.
+    private func formatEntry(_ log: LogEntry) -> String {
+        var text = "[\(log.formattedTimestamp)] [\(log.level.name.uppercased())]"
+        if !log.category.isEmpty { text += " (\(log.category))" }
+        if showFullDetails {
+            let fileName = (log.file as NSString).lastPathComponent
+            text += " [\(fileName):\(log.line)]"
+        }
+        text += " \(log.message)"
+        return text
+    }
+
+    /// Exports the currently displayed logs as a plain-text file in the temp directory.
+    /// - Returns: URL of the created `.txt` file, or `nil` on failure.
+    public func exportLogsAsText(options: LogExportOptions = .init()) -> URL? {
+        var content = ""
+        if options.includeDeviceInfo {
+            content += buildDeviceInfo() + "\n\n"
+        }
+        if options.includeAppLogs && !displayedLogs.isEmpty {
+            content += "=== App Logs ===\n"
+            content += displayedLogs.map { formatEntry($0) }.joined(separator: "\n")
+        }
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        let filename = "provenance_logs_\(formatter.string(from: Date())).txt"
+        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
+
+        do {
+            try content.write(to: fileURL, atomically: true, encoding: .utf8)
+            return fileURL
+        } catch {
+            return nil
+        }
+    }
+
+    /// Exports logs and optional RetroArch logs as a ZIP bundle in the temp directory.
+    /// - Returns: URL of the created `.zip` file, or `nil` on failure.
+    public func exportLogsAsZip(options: LogExportOptions = .init()) -> URL? {
+        let fm = FileManager.default
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
+        let timestamp = formatter.string(from: Date())
+        let tempDir = fm.temporaryDirectory.appendingPathComponent("pv_log_export_\(timestamp)")
+        let zipURL = fm.temporaryDirectory.appendingPathComponent("provenance_logs_\(timestamp).zip")
+
+        do {
+            try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
+
+            if options.includeDeviceInfo {
+                let infoURL = tempDir.appendingPathComponent("device_info.txt")
+                try buildDeviceInfo().write(to: infoURL, atomically: true, encoding: .utf8)
+            }
+
+            if options.includeAppLogs {
+                let logsText = displayedLogs.map { formatEntry($0) }.joined(separator: "\n")
+                let logsURL = tempDir.appendingPathComponent("app_logs.txt")
+                try logsText.write(to: logsURL, atomically: true, encoding: .utf8)
+            }
+
+            if options.includeRetroArchLogs, let raDir = retroArchLogsDirectory {
+                let destRADir = tempDir.appendingPathComponent("retroarch_logs")
+                try fm.copyItem(at: raDir, to: destRADir)
+            }
+
+            try fm.zipDirectory(at: tempDir, to: zipURL)
+            try? fm.removeItem(at: tempDir)
+            return zipURL
+        } catch {
+            try? fm.removeItem(at: tempDir)
+            return nil
+        }
+    }
+}
+
+// MARK: - FileManager + Simple Zip
+
+private extension FileManager {
+    /// Creates a ZIP archive at `destination` containing all files in `directory`.
+    /// Uses Foundation's built-in zip coordination (macOS/iOS 13+).
+    func zipDirectory(at directory: URL, to destination: URL) throws {
+        var error: NSError?
+        NSFileCoordinator().coordinate(readingItemAt: directory, options: .forUploading, error: &error) { zippedURL in
+            do {
+                try self.copyItem(at: zippedURL, to: destination)
+            } catch {
+                // Copy failed; ignore — the outer error check handles this
+            }
+        }
+        if let error {
+            throw error
         }
     }
 }
