@@ -692,6 +692,25 @@
         "symbolColor": "orange",
         "title": "Save State Access",
         "subtitle": "Copy your save states and screenshots out of the Provenance location in Files.app for backup or transfer."
+    "title": "Disc Ripping",
+    "features": [
+      {
+        "symbolName": "opticaldiscdrive.fill",
+        "symbolColor": "blue",
+        "title": "Rip Physical Discs",
+        "subtitle": "Connect a USB optical drive to your iPad and rip PlayStation, Saturn, Mega CD, and more directly into your library."
+      },
+      {
+        "symbolName": "gauge.with.dots.needle.33percent",
+        "symbolColor": "green",
+        "title": "Real-Time Progress",
+        "subtitle": "Watch sector-by-sector progress with live speed (MB/s) and estimated time remaining while ripping."
+      },
+      {
+        "symbolName": "music.note.list",
+        "symbolColor": "purple",
+        "title": "Track Selection",
+        "subtitle": "Choose exactly which tracks to include — data and audio — before starting a rip."
       }
     ]
   }

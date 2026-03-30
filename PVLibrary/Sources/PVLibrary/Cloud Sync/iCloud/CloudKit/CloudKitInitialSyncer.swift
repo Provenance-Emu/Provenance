@@ -764,8 +764,8 @@ public actor CloudKitInitialSyncer {
 
             // Create CloudKit syncer with proper managed directories
             let errorHandler = CloudSyncErrorHandler()
-            // Initialize with "BIOS" as the managed directory
-            let syncer = CloudKitBIOSSyncer(container: container, directories: ["BIOS"], errorHandler: errorHandler)
+            // Initialize with BIOS and System as managed directories
+            let syncer = CloudKitBIOSSyncer(container: container, directories: ["BIOS", "System"], errorHandler: errorHandler)
 
             // Sync each BIOS file
             var syncedCount = 0
