@@ -4,8 +4,6 @@
 <dict>
     <key>NSExtension</key>
     <dict>
-        <key>NSExtensionFileProviderDocumentGroup</key>
-        <string>group.org.provenance-emu.provenance</string>
         <key>NSExtensionPointIdentifier</key>
         <string>com.apple.fileprovider-ui</string>
         <key>NSExtensionPrincipalClass</key>
