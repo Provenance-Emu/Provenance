@@ -4,6 +4,13 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
+	<!-- DriverKit entitlements removed pending Apple approval (March 2026).
+	     Re-add when approved:
+	       com.apple.developer.driverkit.communicates-with-drivers
+	       com.apple.developer.driverkit.family.midi
+	       com.apple.developer.driverkit.transport.pci
+	       com.apple.developer.system-extension.install
+	-->
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
 		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
@@ -26,9 +33,6 @@
 		<string>$(APP_GROUP_IDENTIFIER)</string>
 	</array>
 	<key>com.apple.security.network.client</key>
-	<true/>
-	<!-- SystemExtensions framework — required to activate/deactivate the embedded DriverKit dext -->
-	<key>com.apple.developer.system-extension.install</key>
 	<true/>
 </dict>
 </plist>

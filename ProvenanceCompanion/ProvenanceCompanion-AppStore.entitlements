@@ -9,6 +9,13 @@
 		<string>applinks:provenance-emu.com</string>
 		<string>applinks:provenance.app</string>
 	</array>
+	<!-- DriverKit entitlements removed pending Apple approval (March 2026).
+	     Re-add when approved:
+	       com.apple.developer.driverkit.communicates-with-drivers
+	       com.apple.developer.driverkit.family.midi
+	       com.apple.developer.driverkit.transport.pci
+	       com.apple.developer.system-extension.install
+	-->
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
 		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
@@ -37,8 +44,5 @@
 		<string>$(AppIdentifierPrefix)org.provenance-emu.provenance</string>
 		<string>$(AppIdentifierPrefix)org.provenance-emu</string>
 	</array>
-	<!-- SystemExtensions framework — required to activate/deactivate the embedded DriverKit dext -->
-	<key>com.apple.developer.system-extension.install</key>
-	<true/>
 </dict>
 </plist>

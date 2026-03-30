@@ -7,36 +7,15 @@
 
 	  IMPORTANT: You must request the "com.apple.developer.driverkit" entitlement
 	  from Apple Developer Portal (https://developer.apple.com/contact/request/driverkit/)
-	  before building a distribution build. Development builds work without the approval.
-	-->
+	  before building a distribution build.
 
-	<!-- Required: identifies this as a DriverKit extension -->
-	<key>com.apple.developer.driverkit</key>
-	<true/>
-
-	<!-- USB HID device family — allows claiming USB HID interface -->
-	<key>com.apple.developer.driverkit.family.hid.device</key>
-	<true/>
-
-	<!-- HID EventService — allows posting HID events to IOHIDEventSystem -->
-	<key>com.apple.developer.driverkit.family.hid.eventservice</key>
-	<true/>
-
-	<!--
-	  USB transport entitlement (required to communicate with USB devices).
-	  Add USB host entitlement once approved:
+	  Re-add when approved:
+	    com.apple.developer.driverkit
+	    com.apple.developer.driverkit.family.hid.device
+	    com.apple.developer.driverkit.family.hid.eventservice
 	    com.apple.developer.driverkit.transport.usb
+	    com.apple.developer.driverkit.userclient-access (array: org.provenance-emu.provenance, org.provenance-emu.ProvenanceCompanion)
 	-->
-	<key>com.apple.developer.driverkit.transport.usb</key>
-	<true/>
-
-	<!-- IOUserClient allow list — apps that can open a UserClient to this dext -->
-	<!-- Both the main Provenance app and the Companion app are pre-authorised for IPC -->
-	<key>com.apple.developer.driverkit.userclient-access</key>
-	<array>
-		<string>org.provenance-emu.provenance</string>
-		<string>org.provenance-emu.ProvenanceCompanion</string>
-	</array>
 
 	<!-- App sandbox (required for DriverKit extensions on iPadOS) -->
 	<key>com.apple.security.app-sandbox</key>
