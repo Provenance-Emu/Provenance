@@ -802,6 +802,17 @@ font_renderer_t metal_raster_font = {
 - (void)drawWithEncoder:(id<MTLRenderCommandEncoder>)rce;
 @end
 
+/* UIKit/MetalKit view and layer access must run on the main queue; video_driver_init may call from a worker thread. */
+static void PVMetalDriverRunOnMainThread(dispatch_block_t block)
+{
+   if (!block)
+      return;
+   if ([NSThread isMainThread])
+      block();
+   else
+      dispatch_sync(dispatch_get_main_queue(), block);
+}
+
 @implementation MetalDriver
 {
    FrameView *_frameView;
@@ -857,13 +868,17 @@ font_renderer_t metal_raster_font = {
 {
    if (self = [super init])
    {
-      _device                       = MTLCreateSystemDefaultDevice();
-      MetalView *view               = (MetalView *)apple_platform.renderView;
-      view.device                   = _device;
-      view.delegate                 = self;
-      _layer                        = (CAMetalLayer *)view.layer;
-      _pvFilterRenderer             = [PVMetalFilterRenderer new];
-      _currentPixelFormat           = _layer.pixelFormat;
+      _device = MTLCreateSystemDefaultDevice();
+
+      PVMetalDriverRunOnMainThread(^{
+         MetalView *view = (MetalView *)apple_platform.renderView;
+         view.device           = _device;
+         view.delegate         = self;
+         _layer                = (CAMetalLayer *)view.layer;
+         _currentPixelFormat   = _layer.pixelFormat;
+      });
+
+      _pvFilterRenderer = [PVMetalFilterRenderer new];
       [_pvFilterRenderer configureWithDevice:_device
                                  pixelFormat:_currentPixelFormat
                                    flipYAxis:NO];
@@ -877,28 +892,31 @@ font_renderer_t metal_raster_font = {
 
       _keepAspect                   = _video.force_aspect;
 
-      gfx_ctx_mode_t mode = {
+      __block gfx_ctx_mode_t mode = {
          .width = _video.width,
          .height = _video.height,
          .fullscreen = _video.fullscreen,
       };
 
-      if (mode.width == 0 || mode.height == 0)
-      {
-         /* 0 indicates full screen, so we'll use the view's dimensions,
-          * which should already be full screen
-          * If this turns out to be the wrong assumption, we can use NSScreen
-          * to query the dimensions */
-         CGSize size = view.frame.size;
-         mode.width  = (unsigned int)size.width;
-         mode.height = (unsigned int)size.height;
-      }
+      PVMetalDriverRunOnMainThread(^{
+         MetalView *view = (MetalView *)apple_platform.renderView;
+         if (mode.width == 0 || mode.height == 0)
+         {
+            /* 0 indicates full screen, so we'll use the view's dimensions,
+             * which should already be full screen
+             * If this turns out to be the wrong assumption, we can use NSScreen
+             * to query the dimensions */
+            CGSize size = view.frame.size;
+            mode.width  = (unsigned int)size.width;
+            mode.height = (unsigned int)size.height;
+         }
 
-      [apple_platform setVideoMode:mode];
+         [apple_platform setVideoMode:mode];
 
 #ifdef HAVE_COCOATOUCH
-      [self mtkView:view drawableSizeWillChange:CGSizeMake(mode.width, mode.height)];
+         [self mtkView:view drawableSizeWillChange:CGSizeMake(mode.width, mode.height)];
 #endif
+      });
 
       *input         = NULL;
       *inputData     = NULL;
@@ -935,9 +953,11 @@ font_renderer_t metal_raster_font = {
 #ifdef HAVE_VULKAN
    [self termVulkanHWContext];
 #endif
-   MetalView *view = (MetalView *)apple_platform.renderView;
-   if ([view respondsToSelector:@selector(setDelegate:)])
-      view.delegate = nil;
+   PVMetalDriverRunOnMainThread(^{
+      MetalView *view = (MetalView *)apple_platform.renderView;
+      if ([view respondsToSelector:@selector(setDelegate:)])
+         view.delegate = nil;
+   });
 
    if (_viewport)
    {

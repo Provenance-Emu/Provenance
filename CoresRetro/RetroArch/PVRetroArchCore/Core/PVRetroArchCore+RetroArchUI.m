@@ -1539,71 +1539,18 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 - (void)startVM:(UIView *)view {
 	apple_platform     = self;
     ILOG(@"Starting VM\n");
-	NSString *optConfig = [NSString stringWithFormat:@"%@/../../RetroArch/config/opt.cfg",
-						  self.batterySavesPath];
-    NSFileManager *fm = [[NSFileManager alloc] init];
-	if(!self.coreIdentifier || [[self coreIdentifier] isEqualToString:@"com.provenance.core.retroarch"] || !romPath) {
-        if (romPath != nil && romPath.length > 0 && [fm fileExistsAtPath: romPath]) {
-            optConfig = romPath;
-        }
-		char *param[] = {
-            "retroarch",
-            CORE_TYPE_PLAIN,
-            "--appendconfig",
-            optConfig.UTF8String,
-            NULL};
-        argc = 4;
-		argv = param;
-        ILOG(@"Loading %s\n", param[0]);
-	} else {
-        NSBundle *mainBundle = [NSBundle mainBundle];
-        NSString *mainBundlePath = mainBundle.bundlePath;
 
-        NSString *coreIdentifier = [self coreIdentifier];
-        NSString *coreBinary = [coreIdentifier stringByDeletingPathExtension];
-        NSString *resourceName = [NSString stringWithFormat:@"%@", coreIdentifier];
-        NSString *resourcePath = [NSString stringWithFormat:@"Frameworks/%@", resourceName];
-        NSString *sysPath = [NSString stringWithFormat:@"%@/%@", mainBundlePath, resourcePath];
+    // Capture properties on the calling thread so they can be used safely in the
+    // background block below.  All filesystem I/O (fileExistsAtPath, bundlePath,
+    // checkROM, archive extraction) is deferred to the background queue to avoid
+    // blocking the main thread.
+    NSString *capturedBatterySavesPath = self.batterySavesPath;
+    NSString *capturedCoreIdentifier   = [self coreIdentifier];
+    NSString *capturedRomPath          = romPath;
+    NSString *capturedSystemIdentifier = [self systemIdentifier];
+    BOOL      capturedProcessingInit   = processing_init;
+    if (capturedProcessingInit) processing_init = false;
 
-        /// Check if the module is found at the expected path
-        if ([fm fileExistsAtPath: sysPath]) {
-            ILOG(@"Found Module %@\n", sysPath);
-        } else {
-            ELOG(@"Error: No module found at %@\n", sysPath);
-        }
-
-        /// Check if the ROM is found at the expected path
-		if ([fm fileExistsAtPath: romPath]) {
-            romPath=[self checkROM:romPath];
-			WLOG(@"Found Game %s\n", romPath.UTF8String);
-        } else {
-            ELOG(@"No game found at path: %@", romPath);
-        }
-
-		// Core Identifier is the dylib file name
-        char *param[] = { "retroarch",
-            "-L", sysPath.stringByStandardizingPath.UTF8String, romPath.stringByStandardizingPath.UTF8String,
-            "--appendconfig", optConfig.UTF8String,
-            "--verbose", NULL };
-		argc=7;
-		argv=param;
-        ILOG(@"Loading %s %s\n", param[2], param[3]);
-	}
-    if (processing_init) {
-        dispatch_sync(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
-            [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
-        });
-        processing_init=false;
-    }
-//	NSError *error;
-//    [[AVAudioSession sharedInstance]
-//     setCategory:AVAudioSessionCategoryAmbient
-//     mode:AVAudioSessionModeDefault
-//     options:AVAudioSessionCategoryOptionAllowBluetooth |
-//     AVAudioSessionCategoryOptionAllowAirPlay |
-//     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
-//     AVAudioSessionCategoryOptionMixWithOthers
-//     error:&error];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAudioSessionInterruption:) name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
 
 	[self refreshSystemConfig];
@@ -1615,21 +1562,65 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     // thread that dispatch_sync deadlocks (main blocked waiting for video thread;
     // video thread blocked waiting for main). Run rarch_main on a background
     // thread so the main thread stays free to service those UI-setup dispatches.
-    //
-    // argv points to a local stack array that evaporates when startVM: returns,
-    // so copy each argument string with strdup before handing off to the block.
-    int capturedArgc = argc;
-    char **capturedArgv = malloc(sizeof(char *) * (capturedArgc + 1));
-    for (int i = 0; i < capturedArgc; i++) {
-        capturedArgv[i] = strdup(argv[i]);
-    }
-    capturedArgv[capturedArgc] = NULL;
-
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
-        rarch_main(capturedArgc, capturedArgv, NULL);
+        NSString *optConfig = [NSString stringWithFormat:@"%@/../../RetroArch/config/opt.cfg",
+                              capturedBatterySavesPath];
+        NSFileManager *fm = [[NSFileManager alloc] init];
 
-        for (int i = 0; i < capturedArgc; i++) { free(capturedArgv[i]); }
-        free(capturedArgv);
+        int bgArgc = 0;
+        char **bgArgv = NULL;
+
+        if (!capturedCoreIdentifier || [capturedCoreIdentifier isEqualToString:@"com.provenance.core.retroarch"] || !capturedRomPath) {
+            if (capturedRomPath != nil && capturedRomPath.length > 0 && [fm fileExistsAtPath:capturedRomPath]) {
+                optConfig = capturedRomPath;
+            }
+            bgArgc = 4;
+            bgArgv = malloc(sizeof(char *) * (bgArgc + 1));
+            bgArgv[0] = strdup("retroarch");
+            bgArgv[1] = strdup(CORE_TYPE_PLAIN);
+            bgArgv[2] = strdup("--appendconfig");
+            bgArgv[3] = strdup(optConfig.UTF8String);
+            bgArgv[4] = NULL;
+            ILOG(@"Loading %s\n", bgArgv[0]);
+        } else {
+            NSString *mainBundlePath = [NSBundle mainBundle].bundlePath;
+            NSString *sysPath = [NSString stringWithFormat:@"%@/Frameworks/%@", mainBundlePath, capturedCoreIdentifier];
+
+            if ([fm fileExistsAtPath:sysPath]) {
+                ILOG(@"Found Module %@\n", sysPath);
+            } else {
+                ELOG(@"Error: No module found at %@\n", sysPath);
+            }
+
+            NSString *resolvedRomPath = capturedRomPath;
+            if ([fm fileExistsAtPath:resolvedRomPath]) {
+                resolvedRomPath = [self checkROM:resolvedRomPath];
+                WLOG(@"Found Game %s\n", resolvedRomPath.UTF8String);
+            } else {
+                ELOG(@"No game found at path: %@", resolvedRomPath);
+            }
+
+            bgArgc = 7;
+            bgArgv = malloc(sizeof(char *) * (bgArgc + 1));
+            bgArgv[0] = strdup("retroarch");
+            bgArgv[1] = strdup("-L");
+            bgArgv[2] = strdup(sysPath.stringByStandardizingPath.UTF8String);
+            bgArgv[3] = strdup(resolvedRomPath.stringByStandardizingPath.UTF8String);
+            bgArgv[4] = strdup("--appendconfig");
+            bgArgv[5] = strdup(optConfig.UTF8String);
+            bgArgv[6] = strdup("--verbose");
+            bgArgv[7] = NULL;
+            ILOG(@"Loading %s %s\n", bgArgv[2], bgArgv[3]);
+        }
+
+        if (capturedProcessingInit) {
+            [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[capturedBatterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
+        }
+
+        rarch_main(bgArgc, bgArgv, NULL);
+
+        for (int i = 0; i < bgArgc; i++) { free(bgArgv[i]); }
+        free(bgArgv);
 
         _isInitialized = true;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
@@ -1962,12 +1953,21 @@ static void trigger_retroarch_update_action(enum msg_hash_enums enum_idx) {
 - (void)setVideoMode:(gfx_ctx_mode_t)mode
 {
 #ifdef HAVE_COCOA_METAL
-   MetalView *metalView = (MetalView*) _renderView;
-   CGFloat scale        = [[UIScreen mainScreen] scale];
-   [metalView setDrawableSize:CGSizeMake(
-                                          _renderView.bounds.size.width * scale,
-                                          _renderView.bounds.size.height * scale
-                                          )];
+   (void)mode;
+   void (^apply)(void) = ^{
+      MetalView *metalView = (MetalView *)_renderView;
+      if (!metalView)
+         return;
+      CGFloat scale = [[UIScreen mainScreen] scale];
+      [metalView setDrawableSize:CGSizeMake(
+                                             _renderView.bounds.size.width * scale,
+                                             _renderView.bounds.size.height * scale
+                                             )];
+   };
+   if ([NSThread isMainThread])
+      apply();
+   else
+      dispatch_sync(dispatch_get_main_queue(), apply);
 #endif
 }
 - (void)setCursorVisible:(bool)v { /* no-op for iOS */ }
