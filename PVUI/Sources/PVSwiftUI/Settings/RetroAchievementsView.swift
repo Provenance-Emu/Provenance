@@ -6,7 +6,6 @@ import Defaults
 import Combine
 
 /// RetroAchievements login and profile view with RetroWave styling
-@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 public struct RetroAchievementsView: View {
     // MARK: - Configuration
 
@@ -586,7 +585,6 @@ public struct RetroAchievementsView: View {
             if let currentClient = client {
                 Task {
                     let authenticated = await currentClient.isAuthenticated
-                    let currentUser = await currentClient.currentUsername
 
                     await MainActor.run {
                         isAuthenticated = authenticated
@@ -779,8 +777,8 @@ public struct RetroAchievementsView: View {
                     Spacer()
 
                     Toggle("", isOn: $retroAchievementsEnabled)
-                        .toggleStyle(RetroToggleStyle())
-                        .onChange(of: retroAchievementsEnabled) { newValue in
+                        .toggleStyle(RetroTheme.RetroToggleStyle())
+                        .onChange(of: retroAchievementsEnabled) { _, newValue in
                             PVCheevos.retroArch.isRetroAchievementsEnabled = newValue
                             postSystemToast(
                                 newValue ? "RetroAchievements enabled" : "RetroAchievements disabled",
@@ -805,8 +803,8 @@ public struct RetroAchievementsView: View {
                     Spacer()
 
                     Toggle("", isOn: $hardcoreModeEnabled)
-                        .toggleStyle(RetroToggleStyle())
-                        .onChange(of: hardcoreModeEnabled) { newValue in
+                        .toggleStyle(RetroTheme.RetroToggleStyle())
+                        .onChange(of: hardcoreModeEnabled) { _, newValue in
                             PVCheevos.retroArch.isHardcoreModeEnabled = newValue
                             postSystemToast(
                                 newValue ? "Hardcore Mode ON" : "Hardcore Mode OFF",
@@ -854,7 +852,6 @@ public struct RetroAchievementsView: View {
 
 /// A compact toggle row styled like the rest of the RetroAchievements settings,
 /// bound to a `Defaults.Keys` boolean. Keeps the new-notification toggles tidy.
-@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 private struct RetroSettingsToggleRow: View {
     let title: String
     let subtitle: String
@@ -878,8 +875,8 @@ private struct RetroSettingsToggleRow: View {
             Spacer()
 
             Toggle("", isOn: $isOn)
-                .toggleStyle(RetroToggleStyle())
-                .onChange(of: isOn) { newValue in
+                .toggleStyle(RetroTheme.RetroToggleStyle())
+                .onChange(of: isOn) { _, newValue in
                     Defaults[defaultsKey] = newValue
                 }
         }
@@ -889,64 +886,6 @@ private struct RetroSettingsToggleRow: View {
     }
 }
 
-// MARK: - Custom Toggle Style
-
-struct RetroToggleStyle: ToggleStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        HStack {
-            configuration.label
-            Spacer()
-            toggleSwitch(isOn: configuration.isOn) {
-                configuration.isOn.toggle()
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func toggleSwitch(isOn: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            toggleBackground(isOn: isOn)
-                .overlay(toggleThumb(isOn: isOn))
-                .frame(width: 50, height: 30)
-        }
-        .buttonStyle(.plain)
-    }
-
-    @ViewBuilder
-    private func toggleBackground(isOn: Bool) -> some View {
-        RoundedRectangle(cornerRadius: 16)
-            .fill(backgroundFill(isOn: isOn))
-            .overlay(backgroundBorder(isOn: isOn))
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isOn)
-    }
-
-    @ViewBuilder
-    private func toggleThumb(isOn: Bool) -> some View {
-        Circle()
-            .fill(Color.white)
-            .frame(width: 26, height: 26)
-            .offset(x: isOn ? 10 : -10)
-            .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isOn)
-    }
-
-    private func backgroundFill(isOn: Bool) -> AnyShapeStyle {
-        if isOn {
-            return AnyShapeStyle(RetroTheme.retroHorizontalGradient)
-        } else {
-            return AnyShapeStyle(Color.black.opacity(0.6))
-        }
-    }
-
-    @ViewBuilder
-    private func backgroundBorder(isOn: Bool) -> some View {
-        RoundedRectangle(cornerRadius: 16)
-            .strokeBorder(
-                isOn ? Color.clear : Color.white.opacity(0.3),
-                lineWidth: 1
-            )
-    }
-}
 
 // MARK: - Supporting Types
 
@@ -967,15 +906,3 @@ enum LoginError: LocalizedError {
     }
 }
 
-#if !os(tvOS)
-/// Share sheet for tvOS compatibility
-struct ShareSheet: UIViewControllerRepresentable {
-    let activityItems: [Any]
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-    }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-#endif

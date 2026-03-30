@@ -58,7 +58,6 @@ public struct BatchArtworkMatchingView: View {
 
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
-    @State private var scanlineOffset: CGFloat = 0
 
     // MARK: - Body
 
@@ -314,6 +313,7 @@ public struct BatchArtworkMatchingView: View {
                     Text("REFRESH")
                         .font(.system(size: 14, weight: .bold))
                 }
+                .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .background(

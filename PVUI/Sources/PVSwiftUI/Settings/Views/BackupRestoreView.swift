@@ -113,13 +113,13 @@ struct BackupRestoreView: View {
             #endif
         }
         #if !os(tvOS)
-        .onChange(of: coordinator.backupState) { state in
+        .onChange(of: coordinator.backupState) { _, state in
             if state == .done, coordinator.backupURL != nil {
                 showShareSheet = true
             }
         }
         #endif
-        .onChange(of: coordinator.restoreState) { state in
+        .onChange(of: coordinator.restoreState) { _, state in
             switch state {
             case .done(let restored):
                 // Release security-scoped access now that restore has finished
