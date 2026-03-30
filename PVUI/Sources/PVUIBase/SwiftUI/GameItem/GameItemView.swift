@@ -166,6 +166,8 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
     @ObservedObject private var gamepadManager = GamepadManager.shared
     @State private var artwork: SwiftImage?
     @State private var isVisible: Bool = false
+    /// Cancellable handle for the current artwork load so scrolling away cancels stale work.
+    @State private var artworkTask: Task<Void, Never>?
     public var action: () -> Void
 
     public init(
@@ -224,6 +226,8 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
             }
             .onDisappear {
                 isVisible = false
+                artworkTask?.cancel()
+                artworkTask = nil
                 ArtworkLoader.shared.cancelLoading(for: game.id)
             }
             .onChange(of: isFocused) { newValue in
@@ -233,6 +237,7 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
             }
             .onChange(of: game.trueArtworkURL) { _ in
                 /// Clear cached artwork and reload when URL changes (e.g., custom artwork set)
+                artworkTask?.cancel()
                 artwork = nil
                 loadArtworkIfNeeded()
             }
@@ -252,24 +257,31 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
     }
 
     private func loadArtworkWithPriority(_ priority: TaskPriority) {
+        // Cancel any in-flight load for this cell — the new request takes priority
+        artworkTask?.cancel()
+
         let gameId = game.id
         let artworkURL = game.trueArtworkURL
         let gameTitle = game.title
 
-        Task.detached(priority: priority) { [isVisible] in
+        artworkTask = Task(priority: priority) {
+            // Brief yield so rapid-scroll onAppear/onDisappear pairs cancel before
+            // starting real work. Visible focused items skip the delay.
+            if priority != .high {
+                try? await Task.sleep(nanoseconds: 50_000_000) // 50ms debounce
+            }
+            guard !Task.isCancelled else { return }
+
             let image = await ArtworkLoader.shared.loadArtwork(
                 gameId: gameId,
                 artworkURL: artworkURL,
                 gameTitle: gameTitle,
                 priority: priority,
-                isVisible: isVisible
+                isVisible: true
             )
 
-            if isVisible {
-                await MainActor.run {
-                    self.artwork = image
-                }
-            }
+            guard !Task.isCancelled else { return }
+            self.artwork = image
         }
     }
 }
