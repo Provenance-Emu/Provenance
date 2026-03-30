@@ -8,6 +8,7 @@
 
 import Foundation
 import PVLogging
+import PVUIBase
 
 #if canImport(PVWebServer)
 import PVWebServer
