@@ -65,8 +65,9 @@ public struct ROMTitleNormalizationView: View {
             }
             #if os(tvOS)
             .listStyle(.plain)
-            .scrollContentBackground(.hidden)
             .tvOSSettingsHorizontalPadding()
+            #else
+            .scrollContentBackground(.hidden)
             #endif
         }
         .navigationTitle("Normalize ROM Titles")
