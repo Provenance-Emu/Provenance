@@ -9,8 +9,8 @@
 //  Documents/RetroArch/logs/ on the device.
 
 import SwiftUI
+import Observation
 import PVUIBase
-import PVLogging
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -18,10 +18,11 @@ import UIKit
 // MARK: - ViewModel
 
 @MainActor
-final class RetroArchLogBrowserViewModel: ObservableObject {
-    @Published var logFiles: [LogFileEntry] = []
-    @Published var isLoading = false
-    @Published var errorMessage: String?
+@Observable
+final class RetroArchLogBrowserViewModel {
+    var logFiles: [LogFileEntry] = []
+    var isLoading = false
+    var errorMessage: String?
 
     /// Well-known RetroArch logs directory inside the app's Documents folder.
     static let logsDirectory: URL? = {
@@ -51,7 +52,7 @@ final class RetroArchLogBrowserViewModel: ObservableObject {
         do {
             let urls = try fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey], options: .skipsHiddenFiles)
             logFiles = urls
-                .filter { $0.pathExtension.lowercased() == "log" || $0.pathExtension.lowercased() == "txt" || !$0.hasDirectoryPath }
+                .filter { !$0.hasDirectoryPath }
                 .compactMap { url -> LogFileEntry? in
                     let resources = try? url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
                     let size = Int64(resources?.fileSize ?? 0)
@@ -86,13 +87,9 @@ final class RetroArchLogBrowserViewModel: ObservableObject {
 
 /// Lists all RetroArch log files with options to view, share, and delete them.
 public struct RetroArchLogBrowserView: View {
-    @StateObject private var viewModel = RetroArchLogBrowserViewModel()
+    @State private var viewModel = RetroArchLogBrowserViewModel()
     @State private var selectedEntry: RetroArchLogBrowserViewModel.LogFileEntry?
     @State private var showingDeleteAllConfirm = false
-#if !os(tvOS)
-    @State private var shareItems: [Any] = []
-    @State private var showingShareSheet = false
-#endif
 
     public init() {}
 
@@ -126,22 +123,17 @@ public struct RetroArchLogBrowserView: View {
         .sheet(item: $selectedEntry) { entry in
             LogFileViewerSheet(fileURL: entry.url)
         }
-#if !os(tvOS)
-        .sheet(isPresented: $showingShareSheet) {
-            if !shareItems.isEmpty {
-                ShareSheetViewController(activityItems: shareItems)
-                    .ignoresSafeArea()
-            }
-        }
-#endif
         .alert("Delete All Logs?", isPresented: $showingDeleteAllConfirm) {
             Button("Delete All", role: .destructive) { viewModel.deleteAllFiles() }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This will permanently delete all \(viewModel.logFiles.count) RetroArch log files.")
         }
-        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
-            Button("OK") { viewModel.errorMessage = nil }
+        .alert("Error", isPresented: Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { if !$0 { viewModel.errorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
@@ -154,11 +146,13 @@ public struct RetroArchLogBrowserView: View {
             ForEach(viewModel.logFiles) { entry in
                 logFileRow(entry)
             }
+#if !os(tvOS)
             .onDelete { offsets in
                 for i in offsets {
                     viewModel.deleteFile(viewModel.logFiles[i])
                 }
             }
+#endif
         }
         .scrollContentBackground(.hidden)
         .background(Color.black)
@@ -188,10 +182,7 @@ public struct RetroArchLogBrowserView: View {
 
             HStack(spacing: 12) {
 #if !os(tvOS)
-                Button {
-                    shareItems = [entry.url]
-                    showingShareSheet = true
-                } label: {
+                ShareLink(item: entry.url) {
                     Image(systemName: "square.and.arrow.up")
                         .foregroundColor(RetroTheme.retroBlue)
                         .font(.system(size: 14))
@@ -260,10 +251,6 @@ struct LogFileViewerSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var content = ""
     @State private var isLoading = true
-#if !os(tvOS)
-    @State private var shareItems: [Any] = []
-    @State private var showingShareSheet = false
-#endif
 
     var body: some View {
         NavigationStack {
@@ -293,24 +280,13 @@ struct LogFileViewerSheet: View {
                 }
 #if !os(tvOS)
                 ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        shareItems = [fileURL]
-                        showingShareSheet = true
-                    } label: {
+                    ShareLink(item: fileURL) {
                         Image(systemName: "square.and.arrow.up")
                     }
                     .foregroundColor(RetroTheme.retroBlue)
                 }
 #endif
             }
-#if !os(tvOS)
-            .sheet(isPresented: $showingShareSheet) {
-                if !shareItems.isEmpty {
-                    ShareSheetViewController(activityItems: shareItems)
-                        .ignoresSafeArea()
-                }
-            }
-#endif
         }
         .task {
             await loadContent()
@@ -325,20 +301,6 @@ struct LogFileViewerSheet: View {
         isLoading = false
     }
 }
-
-// MARK: - UIActivityViewController wrapper (iOS only)
-
-#if !os(tvOS)
-private struct ShareSheetViewController: UIViewControllerRepresentable {
-    let activityItems: [Any]
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-    }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-#endif
 
 // MARK: - Preview
 
