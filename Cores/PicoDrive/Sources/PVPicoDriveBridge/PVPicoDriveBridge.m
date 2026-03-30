@@ -541,6 +541,8 @@ static void writeSaveFile(const char* path, int type)
 
 - (void)stopEmulation {
     atomic_store(&_shouldRun, false);
+    // Snapshot before shutdown: after `shutdownCoreIfNeeded`, libretro must not be queried (e.g. second `stopEmulation`).
+    BOOL const hadGameLoaded = atomic_load(&_isGameLoaded);
     [super stopEmulation];
 
     NSString *path = romName;
@@ -548,7 +550,7 @@ static void writeSaveFile(const char* path, int type)
 
     NSString *batterySavesDirectory = [self batterySavesPath];
 
-    if([batterySavesDirectory length] != 0) {
+    if (hadGameLoaded && [batterySavesDirectory length] != 0 && [extensionlessFilename length] != 0) {
         [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
 
         NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];

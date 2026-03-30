@@ -1723,7 +1723,10 @@ size_t retro_get_memory_size(unsigned type)
          }
 
          if (Pico.m.frame_count == 0)
-            return Pico.sv.size;
+            return (Pico.sv.data != NULL) ? Pico.sv.size : 0;
+
+         if (Pico.sv.data == NULL || Pico.sv.size == 0)
+            return 0;
 
          // if game doesn't write to sram, don't report it to
          // libretro so that RA doesn't write out zeroed .srm
