@@ -10,6 +10,7 @@ import Foundation
 import PVSupport
 import PVLogging
 import PVSettings
+import PVUIBase
 
 #if canImport(PVWebServer)
 import PVWebServer

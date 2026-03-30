@@ -75,17 +75,27 @@ extension PVEmulatorViewController {
         // Also use replaceKey for common RA sequential messages like
         // "Controller connected", achievement notifications, etc.
         let replaceKey: String?
+        var progress: Double? = nil
         if message.contains("%") {
             // Progress messages: "Loading... 5%", "Compiling shaders: 42%", etc.
             // Use a stable key based on the message prefix (before any numbers)
             let prefix = message.replacingOccurrences(of: "\\d+", with: "#", options: .regularExpression)
             replaceKey = "progress:\(prefix)"
+
+            // Parse the numeric percentage value for the progress bar.
+            // Matches patterns like "98%", "5 %", "42.5%"
+            if let range = message.range(of: "\\d+\\.?\\d*\\s*%", options: .regularExpression) {
+                let matched = message[range].replacingOccurrences(of: "[^\\d.]", with: "", options: .regularExpression)
+                if let value = Double(matched), value >= 0, value <= 100 {
+                    progress = value / 100.0
+                }
+            }
         } else if message.lowercased().contains("controller") || message.lowercased().contains("connected") || message.lowercased().contains("disconnected") {
             replaceKey = "controller-status"
         } else {
             replaceKey = nil
         }
 
-        PVToastManager.post(message, type: toastType, duration: duration, category: "osd", replaceKey: replaceKey)
+        PVToastManager.post(message, type: toastType, duration: duration, category: "osd", replaceKey: replaceKey, progress: progress)
     }
 }
