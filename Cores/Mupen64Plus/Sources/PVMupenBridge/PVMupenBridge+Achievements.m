@@ -29,9 +29,10 @@ extern AUDIO_INFO AudioInfo;
 static const NSUInteger kN64RDRAMSize = 8u * 1024u * 1024u; // 8 MiB
 
 // Associated-object keys for stored properties added via ObjC category.
-// The address of each char is used as the unique key (not the value).
-static const char kHardcoreModeKey       = 0;
-static const char kAchievementsActiveKey = 0;
+// The address of each variable is used as the unique key (not the value).
+// Non-const so the linker/optimiser cannot merge them into one symbol.
+static char kHardcoreModeKey;
+static char kAchievementsActiveKey;
 
 @implementation PVMupenBridge (Achievements)
 
