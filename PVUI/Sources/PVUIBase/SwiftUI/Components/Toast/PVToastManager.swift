@@ -110,21 +110,32 @@ public final class PVToastManager: ObservableObject {
         duration: TimeInterval = 3.0,
         icon: String? = nil,
         category: String? = nil,
-        replaceKey: String? = nil
+        replaceKey: String? = nil,
+        progress: Double? = nil
     ) {
         // If a replaceKey is provided, update the existing toast in-place
         // instead of creating a new one (for progress messages, etc.)
         if let replaceKey {
             if let idx = toasts.firstIndex(where: { $0.id == replaceKey }) {
-                toasts[idx] = PVToast(id: replaceKey, message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category)
+                withAnimation {
+                    toasts[idx] = PVToast(id: replaceKey, message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category, progress: progress)
+                }
+                // Reset the dismiss timer so the toast stays visible while updates arrive
+                dismissTimers[replaceKey]?.cancel()
+                scheduleAutoDismiss(id: replaceKey, after: duration)
                 return
             }
-            // No existing toast with this key — create one with the key as ID
-            let toast = PVToast(id: replaceKey, message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category)
-            processToast(toast)
+            // No existing toast with this key — create one with the key as ID.
+            // Bypass processToast to skip category grouping (replaceKey has its own dedup).
+            let toast = PVToast(id: replaceKey, message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category, progress: progress)
+            recordTimestamp()
+            enqueue(toast)
+            scheduleAutoDismiss(id: toast.id, after: toast.duration)
+            postAccessibilityAnnouncement(toast)
+            enforceMaxVisible()
             return
         }
-        let toast = PVToast(message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category)
+        let toast = PVToast(message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category, progress: progress)
         processToast(toast)
     }
 
@@ -373,10 +384,11 @@ public extension PVToastManager {
         duration: TimeInterval = 3.0,
         icon: String? = nil,
         category: String? = nil,
-        replaceKey: String? = nil
+        replaceKey: String? = nil,
+        progress: Double? = nil
     ) {
         Task { @MainActor in
-            PVToastManager.shared.show(message, type: type, duration: duration, icon: icon, category: category, replaceKey: replaceKey)
+            PVToastManager.shared.show(message, type: type, duration: duration, icon: icon, category: category, replaceKey: replaceKey, progress: progress)
         }
     }
 
