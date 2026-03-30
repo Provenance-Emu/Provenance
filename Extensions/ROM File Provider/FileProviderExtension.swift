@@ -7,6 +7,7 @@
 //
 
 import CryptoKit
+import Foundation
 import FileProvider
 import PVLibrary
 import PVLogging
@@ -135,20 +136,20 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
     ) -> Progress {
         // Only files — reject folder-creation requests.
         guard itemTemplate.contentType != .folder else {
-            completionHandler(nil, [], false, NSFileProviderError(.unsupported))
+            completionHandler(nil, [], false, CocoaError(.featureUnsupported))
             return Progress()
         }
 
         // File content is required; placeholder-only creation is not supported.
         guard let sourceURL = url else {
-            completionHandler(nil, [], false, NSFileProviderError(.unsupported))
+            completionHandler(nil, [], false, CocoaError(.featureUnsupported))
             return Progress()
         }
 
         // Only accept drops directly into a system folder (not the root container).
         let parentRaw = itemTemplate.parentItemIdentifier.rawValue
         guard parentRaw.hasPrefix(FileProviderItem.systemIdentifierPrefix) else {
-            completionHandler(nil, [], false, NSFileProviderError(.unsupported))
+            completionHandler(nil, [], false, CocoaError(.featureUnsupported))
             return Progress()
         }
         let systemID = String(parentRaw.dropFirst(FileProviderItem.systemIdentifierPrefix.count))
@@ -202,7 +203,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         let raw = item.itemIdentifier.rawValue
         guard raw.hasPrefix(FileProviderItem.gameIdentifierPrefix) else {
             // System folders and root are not directly modifiable.
-            completionHandler(nil, [], false, NSFileProviderError(.unsupported))
+            completionHandler(nil, [], false, CocoaError(.featureUnsupported))
             return Progress()
         }
 
@@ -221,7 +222,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
             // in an inconsistent state.  Reject the request so Files.app surfaces an error
             // instead of silently corrupting the identifier / Realm record.
             if changedFields.contains(.contents) {
-                completionHandler(nil, [], false, NSFileProviderError(.unsupported))
+                completionHandler(nil, [], false, CocoaError(.featureUnsupported))
                 return Progress()
             }
 
@@ -289,7 +290,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         let raw = identifier.rawValue
         guard raw.hasPrefix(FileProviderItem.gameIdentifierPrefix) else {
             // Cannot delete system folders or the root container.
-            completionHandler(NSFileProviderError(.unsupported))
+            completionHandler(CocoaError(.featureUnsupported))
             return Progress()
         }
 

@@ -10,6 +10,7 @@ import FileProvider
 import RealmSwift
 import PVLibrary
 import PVRealm
+import PVPrimitives
 
 /// Enumerates items in the Provenance ROM library for the Files.app file provider.
 ///
@@ -78,11 +79,14 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
 
     /// Decodes a page offset from a page token, returning 0 for initial pages.
     ///
-    /// Page tokens are encoded as 8-byte little-endian UInt64. Malformed tokens
-    /// (wrong size) are treated as offset 0 rather than crashing.
+    /// System initial pages (`NSFileProviderInitialPageSortedByName` / `ByDate`) bridge as `NSData`; compare
+    /// against `page.rawValue` because `NSFileProviderPage` is `RawRepresentable` with `Data`.
+    ///
+    /// Custom continuation tokens are 8-byte little-endian `UInt64`. Malformed tokens (wrong size) are treated as offset 0.
     private func decodePageOffset(_ page: NSFileProviderPage) -> Int {
-        if page == .initialPageSortedByName ||
-           page == .initialPageSortedByDate {
+        let initialByName = NSFileProviderPage.initialPageSortedByName as Data
+        let initialByDate = NSFileProviderPage.initialPageSortedByDate as Data
+        if page.rawValue == initialByName || page.rawValue == initialByDate {
             return 0
         }
         let rawData = page.rawValue

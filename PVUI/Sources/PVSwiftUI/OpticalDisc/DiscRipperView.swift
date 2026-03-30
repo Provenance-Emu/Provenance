@@ -286,7 +286,7 @@ private struct TrackRowView: View {
         Button(action: onToggle) {
             HStack(spacing: 12) {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? .accentColor : .secondary)
+                    .foregroundStyle(isSelected ? Color.accentColor : .secondary)
                     .font(.title3)
 
                 VStack(alignment: .leading, spacing: 2) {
