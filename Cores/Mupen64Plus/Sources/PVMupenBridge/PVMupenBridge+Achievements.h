@@ -24,7 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// When YES, save-state *loads* are rejected to enforce hardcore rules.
 /// Save-state *saves* are still permitted.
 @property (nonatomic, assign) BOOL hardcoreMode;
-
 // MARK: - Achievement session state
 
 /// Indicates whether the achievement runtime is currently active.

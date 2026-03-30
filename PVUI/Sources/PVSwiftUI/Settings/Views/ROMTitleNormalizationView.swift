@@ -260,7 +260,7 @@ private struct ProposalRow: View {
                     } icon: {
                         Image(systemName: "arrow.right")
                             .font(.caption)
-                            .foregroundStyle(.retroBlue)
+                            .foregroundStyle(Color.retroBlue)
                     }
                 }
                 Spacer()

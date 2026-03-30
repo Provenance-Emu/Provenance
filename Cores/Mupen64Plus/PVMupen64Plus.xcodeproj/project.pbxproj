@@ -147,6 +147,9 @@
 		B3AF47E321072BCB002211EE /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B30559E42072FEE9001212D2 /* mupen64plus.ini */; };
 		B3B6E7FF2CA51C5C00002BFD /* MupenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C078592C74EC64006F109B /* MupenGameCore.swift */; };
 		B3B6E8022CA5217400002BFD /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3B6E8012CA5217400002BFD /* PVCoreObjCBridge */; };
+		B3B8D79A2F79FBA70086B1DC /* MupenGameCore+RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8D7992F79FBA70086B1DC /* MupenGameCore+RetroAchievements.swift */; };
+		B3B8D79D2F79FBC30086B1DC /* PVMupenBridge+Achievements.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B8D79B2F79FBC30086B1DC /* PVMupenBridge+Achievements.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3B8D79E2F79FBC30086B1DC /* PVMupenBridge+Achievements.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B8D79C2F79FBC30086B1DC /* PVMupenBridge+Achievements.m */; };
 		B3C078582C74DDA2006F109B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3C078572C74DDA2006F109B /* PVSettings */; };
 		B3C0787D2C750D33006F109B /* PVMupenBridge+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B39C29DC27A12DA20078D028 /* PVMupenBridge+Saves.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C0787E2C750D33006F109B /* PVMupenBridge+Resources.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C078692C74F9FF006F109B /* PVMupenBridge+Resources.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1184,6 +1187,9 @@
 		B3AE1F2920733D3500AD06D4 /* audio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = audio.c; sourceTree = "<group>"; };
 		B3AF705721916ED0000FA7F9 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3B8D7992F79FBA70086B1DC /* MupenGameCore+RetroAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+RetroAchievements.swift"; sourceTree = "<group>"; };
+		B3B8D79B2F79FBC30086B1DC /* PVMupenBridge+Achievements.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVMupenBridge+Achievements.h"; sourceTree = "<group>"; };
+		B3B8D79C2F79FBC30086B1DC /* PVMupenBridge+Achievements.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVMupenBridge+Achievements.m"; sourceTree = "<group>"; };
 		B3C078592C74EC64006F109B /* MupenGameCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MupenGameCore.swift; sourceTree = "<group>"; };
 		B3C0785A2C74EC64006F109B /* MupenGameCore+Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Audio.swift"; sourceTree = "<group>"; };
 		B3C0785B2C74EC64006F109B /* MupenGameCore+Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Controls.swift"; sourceTree = "<group>"; };
@@ -2581,6 +2587,8 @@
 				B39C29D727A12D0F0078D028 /* PVMupenBridge+Cheats.m */,
 				B39C29D327A121150078D028 /* PVMupenBridge+Controls.h */,
 				B39C29D027A120780078D028 /* PVMupenBridge+Controls.m */,
+				B3B8D79B2F79FBC30086B1DC /* PVMupenBridge+Achievements.h */,
+				B3B8D79C2F79FBC30086B1DC /* PVMupenBridge+Achievements.m */,
 				B39C29E227A12E690078D028 /* PVMupenBridge+Mupen.h */,
 				B39C29E327A12E6A0078D028 /* PVMupenBridge+Mupen.m */,
 				B3C078692C74F9FF006F109B /* PVMupenBridge+Resources.h */,
@@ -2601,6 +2609,7 @@
 				B3C078592C74EC64006F109B /* MupenGameCore.swift */,
 				B3C078672C74EFA8006F109B /* MupenGameCore+Core.swift */,
 				B3C0785A2C74EC64006F109B /* MupenGameCore+Audio.swift */,
+				B3B8D7992F79FBA70086B1DC /* MupenGameCore+RetroAchievements.swift */,
 				B3C0785B2C74EC64006F109B /* MupenGameCore+Controls.swift */,
 				B391B4392F73A1DB00A03B02 /* MupenGameCore+PVNetplayCapable.swift */,
 				B3C0785C2C74EC64006F109B /* MupenGameCore+Resources.swift */,
@@ -2975,7 +2984,7 @@
 		B3B10458218ECFE100210C39 /* Video */ = {
 			isa = PBXGroup;
 			children = (
-				DFB6018A2038AE78001E70F1 /* gliden64 */,
+				DFB6018A2038AE78001E70F1 /* GLideN64 */,
 				B3A302842073F2AA008C1955 /* rice */,
 			);
 			path = Video;
@@ -3033,7 +3042,7 @@
 			path = Plugins;
 			sourceTree = "<group>";
 		};
-		DFB6018A2038AE78001E70F1 /* gliden64 */ = {
+		DFB6018A2038AE78001E70F1 /* GLideN64 */ = {
 			isa = PBXGroup;
 			children = (
 				DFB601C92038AE78001E70F1 /* ini */,
@@ -3941,6 +3950,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3C0787D2C750D33006F109B /* PVMupenBridge+Saves.h in Headers */,
+				B3B8D79D2F79FBC30086B1DC /* PVMupenBridge+Achievements.h in Headers */,
 				B3C0787E2C750D33006F109B /* PVMupenBridge+Resources.h in Headers */,
 				B3C0787F2C750D33006F109B /* PVMupenBridge+Cheats.h in Headers */,
 				B3C078802C750D33006F109B /* r4300_core.h in Headers */,
@@ -4571,6 +4581,7 @@
 				B3C65E652CA53CAB000E37B0 /* CorePlist.swift in Sources */,
 				B383C8792CAD392500F532C9 /* MupenGameCore+Rumble.swift in Sources */,
 				B383C7F42CAD279B00F532C9 /* MupenGameCore+Video.swift in Sources */,
+				B3B8D79A2F79FBA70086B1DC /* MupenGameCore+RetroAchievements.swift in Sources */,
 				B391B43A2F73A1DB00A03B02 /* MupenGameCore+PVNetplayCapable.swift in Sources */,
 				B383C87A2CAD3CBB00F532C9 /* MupenGameCore+Resources.swift in Sources */,
 				B383C7F22CAD237200F532C9 /* MupenGameCore+Audio.swift in Sources */,
@@ -4655,6 +4666,7 @@
 				B3C65E472CA53127000E37B0 /* PVMupenBridge+Mupen.m in Sources */,
 				B3C65E492CA53127000E37B0 /* PVMupenBridge+Controls.m in Sources */,
 				B3C078A42C750D33006F109B /* ai_controller.c in Sources */,
+				B3B8D79E2F79FBC30086B1DC /* PVMupenBridge+Achievements.m in Sources */,
 				B3C078A52C750D33006F109B /* dummy_rsp.c in Sources */,
 				B3C078A62C750D33006F109B /* si_controller.c in Sources */,
 				B3C078A72C750D33006F109B /* audio_plugin_compat.c in Sources */,
