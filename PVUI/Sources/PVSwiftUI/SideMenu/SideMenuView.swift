@@ -218,16 +218,11 @@ SideMenuView: SwiftUI.View {
     // MARK: - View Builders
     @ViewBuilder
     private func headerItems() -> some View {
-        Group {
-            Divider()
-                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-
-            MenuItemView(icon: .named("prov_settings_gear", PVUIBase.BundleLoader.myBundle), rowTitle: "Settings", isFocused: focusedItem == "settings") {
-                delegate.didTapSettings()
-            }
-            .focusableIfAvailable()
-            .focused($focusedItem, equals: "settings")
+        MenuItemView(icon: .named("prov_settings_gear", PVUIBase.BundleLoader.myBundle), rowTitle: "Settings", isFocused: focusedItem == "settings") {
+            delegate.didTapSettings()
         }
+        .focusableIfAvailable()
+        .focused($focusedItem, equals: "settings")
     }
 
     @ViewBuilder
@@ -356,14 +351,7 @@ SideMenuView: SwiftUI.View {
                                 footerSection()
                             }
                         }
-                        .padding(.top, {
-                            let basePadding = geometry.safeAreaInsets.top
-                            if #available(iOS 26.0, *) {
-                                return basePadding + 44
-                            } else {
-                                return basePadding
-                            }
-                        }())
+                        .padding(.top, geometry.safeAreaInsets.top)
                         .onChange(of: focusedItem) { newValue in
                             handleFocusChange(newValue, proxy: proxy)
                         }
