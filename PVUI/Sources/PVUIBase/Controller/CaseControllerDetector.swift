@@ -115,6 +115,28 @@ public enum CaseControllerDetector {
         }
     }
 
+    /// True when `skinIdentifier` is listed as a companion skin for a known physical case (see ``knownLayouts``).
+    public static func isCompanionSkinForKnownCase(_ skinIdentifier: String) -> Bool {
+        !casesCompatibleWithSkin(skinIdentifier).isEmpty
+    }
+
+    /// True when a connected `GCController` matches a known smart-case layout (GameSir, Soolra, …).
+    /// Passive cases (e.g. Buppin) have no controller — they are only used after explicit skin selection or session auto-load.
+    public static var isKnownPhysicalCaseControllerConnected: Bool {
+        #if os(iOS) || targetEnvironment(macCatalyst)
+        return GCController.controllers().contains { layout(for: $0) != nil }
+        #else
+        return false
+        #endif
+    }
+
+    /// Automatic skin pickers (no explicit user/session selection for this identifier) should omit companion case skins
+    /// unless a matching physical case controller is connected.
+    public static func isAllowedInAutomaticSkinSelection(_ skinIdentifier: String) -> Bool {
+        if isKnownPhysicalCaseControllerConnected { return true }
+        return !isCompanionSkinForKnownCase(skinIdentifier)
+    }
+
     /// Returns the first ``PhysicalCaseLayout`` compatible with `skinIdentifier`,
     /// or `nil` if no known case uses that skin ID.
     public static func caseLayout(forSkinIdentifier skinIdentifier: String) -> PhysicalCaseLayout? {

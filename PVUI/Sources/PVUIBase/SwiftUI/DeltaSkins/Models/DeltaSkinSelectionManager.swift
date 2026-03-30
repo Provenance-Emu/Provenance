@@ -170,6 +170,30 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         return effectiveSkinIdentifier(for: systemId, gameId: gameId, orientation: orientation)
     }
 
+    /// `true` when the first non-empty selection in the same priority chain as ``effectiveSkinIdentifier(for:gameId:orientation:)`` is ``builtInSkinPreferenceToken``.
+    /// Used to skip packaged `.deltaskin` fallbacks so the SwiftUI default controller stays active.
+    public func prefersBuiltInControllerSkin(for systemId: SystemIdentifier, gameId: String?, orientation: SkinOrientation) -> Bool {
+        return queue.sync {
+            if let gameId = gameId {
+                if let v = getSessionSkin(for: systemId, gameId: gameId, orientation: orientation) {
+                    return v == Self.builtInSkinPreferenceToken
+                }
+            }
+            if let v = getSessionSkin(for: systemId, gameId: nil, orientation: orientation) {
+                return v == Self.builtInSkinPreferenceToken
+            }
+            if let gameId = gameId {
+                if let v = preferences.selectedSkinIdentifier(for: gameId, orientation: orientation) {
+                    return v == Self.builtInSkinPreferenceToken
+                }
+            }
+            if let v = preferences.selectedSkinIdentifier(for: systemId, orientation: orientation) {
+                return v == Self.builtInSkinPreferenceToken
+            }
+            return false
+        }
+    }
+
     // MARK: - Private: Session Skin Management
 
     private func setSessionSkin(
@@ -290,9 +314,13 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         ILOG("skins: Effective skin '\(skin.name)' doesn't support \(orientation.rawValue), finding fallback")
 
         // Try to find first available skin that supports this orientation
+        let allowCaseSkins = CaseControllerDetector.isKnownPhysicalCaseControllerConnected
         for fallbackSkin in availableSkins {
             // Skip the current skin
             if fallbackSkin.identifier == skinId {
+                continue
+            }
+            if !allowCaseSkins && CaseControllerDetector.isCompanionSkinForKnownCase(fallbackSkin.identifier) {
                 continue
             }
 

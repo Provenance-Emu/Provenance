@@ -120,8 +120,11 @@ public final class DeltaSkinPreferences: ObservableObject {
             // Passive cases (e.g. Buppin) can only be identified via their
             // companion skin's identifier — this is the only detection point for them.
             // Physical iPhone cases only make sense on iOS / Mac Catalyst.
+            // Built-in preference sentinel is not a real skin id — never run case matching on it.
             #if os(iOS) || targetEnvironment(macCatalyst)
-            CaseControllerDetector.notifyIfCaseSkin(skinIdentifier)
+            if skinIdentifier != DeltaSkinSelectionManager.builtInSkinPreferenceToken {
+                CaseControllerDetector.notifyIfCaseSkin(skinIdentifier)
+            }
             #endif
         } else {
             selectedSkins[system]?[orientation] = nil

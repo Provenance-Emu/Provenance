@@ -67,7 +67,9 @@ class DeltaSkinLoader: ObservableObject {
                         if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
                            let skin = await MainActor.run(body: {
                                manager.loadedSkins.first(where: {
-                                   $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
+                                   let matchesType = $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
+                                   guard matchesType else { return false }
+                                   return CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier)
                                })
                            }) {
                             // Update UI state immediately but don't await - return skin right away

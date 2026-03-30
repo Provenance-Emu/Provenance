@@ -1082,13 +1082,22 @@ struct EmulatorWithSkinView: View {
                 }
             }
 
+            // When the user chose the SwiftUI default, effectiveId is nil — do not substitute the first bundled `.deltaskin` (often case-specific).
+            let skipPackagedSkinFallback = await MainActor.run { () -> Bool in
+                if let gameId = self.gameId, !gameId.isEmpty {
+                    return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: systemId, gameId: gameId, orientation: currentOrientation)
+                }
+                return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: systemId, gameId: nil, orientation: currentOrientation)
+            }
+
             // PRIORITY 3: Fallback to default skin if nothing found
-            if foundSkin == nil {
+            if foundSkin == nil, !skipPackagedSkinFallback {
                 if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
                    manager.skinsAreLoaded,
                    let defaultSkin = manager.loadedSkins.first(where: {
                        let matchesType = $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
-                       return matchesType && skinSupportsCurrentDevice($0)
+                       guard matchesType && skinSupportsCurrentDevice($0) else { return false }
+                       return CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier)
                    }) {
                     foundSkin = defaultSkin
                     DLOG("🎮 EmulatorWithSkinView: Using default skin: \(defaultSkin.name)")

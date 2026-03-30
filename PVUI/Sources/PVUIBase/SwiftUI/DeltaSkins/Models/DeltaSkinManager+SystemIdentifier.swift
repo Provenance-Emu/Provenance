@@ -72,7 +72,7 @@ public extension DeltaSkinManager {
     func defaultSkin(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
         ILOG("skins: defaultSkin(for: \(system.rawValue)) called")
         let systemSkins = try await skins(for: system)
-        if let skin = systemSkins.first {
+        if let skin = systemSkins.first(where: { CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier) }) {
             ILOG("skins: Found default skin '\(skin.name)' for system \(system.rawValue)")
             return skin
         } else {
@@ -114,17 +114,17 @@ public extension DeltaSkinManager {
 
         // Find a skin that matches the identifier
         let matchingSkin = allSkins.first { skin in
-            if skin.identifier.contains(skinIdentifier) ||
-               skin.gameType.matchesIdentifier(skinIdentifier) {
-                return true
-            }
-
-            // Special case: GB systems can use GBC skins
-            if systemIdentifier == .GB && skin.gameType == .gbc {
-                return true
-            }
-
-            return false
+            let typeMatches: Bool = {
+                if skin.identifier.contains(skinIdentifier) || skin.gameType.matchesIdentifier(skinIdentifier) {
+                    return true
+                }
+                if systemIdentifier == .GB && skin.gameType == .gbc {
+                    return true
+                }
+                return false
+            }()
+            guard typeMatches else { return false }
+            return CaseControllerDetector.isAllowedInAutomaticSkinSelection(skin.identifier)
         }
 
         if let skin = matchingSkin {
@@ -211,20 +211,23 @@ public extension DeltaSkinManager {
     public func defaultSkin(for systemIdentifier: String) -> (any DeltaSkinProtocol)? {
         return loadedSkins.first { skin in
             let candidates = [skin.gameType.deltaIdentifierString, skin.gameType.manicIdentifierString].compactMap { $0?.lowercased() }
-            return candidates.contains(systemIdentifier.lowercased())
+            guard candidates.contains(systemIdentifier.lowercased()) else { return false }
+            return CaseControllerDetector.isAllowedInAutomaticSkinSelection(skin.identifier)
         }
     }
 
     /// Get the default skin for a system
     public func defaultSkin(for systemIdentifier: SystemIdentifier) -> (any DeltaSkinProtocol)? {
-        // First try exact match
-        if let exactMatch = loadedSkins.first(where: { $0.gameType.systemIdentifier == systemIdentifier }) {
+        if let exactMatch = loadedSkins.first(where: {
+            $0.gameType.systemIdentifier == systemIdentifier && CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier)
+        }) {
             return exactMatch
         }
 
-        // Special case: GB systems can use GBC skins
         if systemIdentifier == .GB {
-            return loadedSkins.first { $0.gameType == .gbc }
+            return loadedSkins.first {
+                $0.gameType == .gbc && CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier)
+            }
         }
 
         return nil

@@ -77,6 +77,23 @@ final class CaseControllerDetectorTests: XCTestCase {
         XCTAssertTrue(layouts.isEmpty)
     }
 
+    func testIsCompanionSkinForKnownCase() {
+        XCTAssertTrue(CaseControllerDetector.isCompanionSkinForKnownCase("com.buppin.case"))
+        XCTAssertTrue(CaseControllerDetector.isCompanionSkinForKnownCase("com.gamesir.pockettaco"))
+        XCTAssertFalse(CaseControllerDetector.isCompanionSkinForKnownCase("com.unknown.skin.abc123"))
+    }
+
+    func testIsAllowedInAutomaticSkinSelection_genericSkinAlwaysAllowed() {
+        XCTAssertTrue(CaseControllerDetector.isAllowedInAutomaticSkinSelection("com.unknown.skin.abc123"))
+    }
+
+    func testIsAllowedInAutomaticSkinSelection_excludesCompanionWhenNoCaseController() {
+        // Unless a physical case controller is connected (unlikely in unit tests), companion IDs are excluded from automatic pickers.
+        if !CaseControllerDetector.isKnownPhysicalCaseControllerConnected {
+            XCTAssertFalse(CaseControllerDetector.isAllowedInAutomaticSkinSelection("com.buppin.case"))
+        }
+    }
+
     func testCaseLayoutForSkinIdentifierConvenience() {
         let layout = CaseControllerDetector.caseLayout(forSkinIdentifier: "com.soolra.controller")
         XCTAssertNotNil(layout)

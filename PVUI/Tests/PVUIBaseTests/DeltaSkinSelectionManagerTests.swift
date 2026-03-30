@@ -52,4 +52,40 @@ final class DeltaSkinSelectionManagerTests: XCTestCase {
         let effective = manager.effectiveGameSkinIdentifier(for: testSystem, gameId: testGameId, orientation: .landscape)
         XCTAssertNil(effective)
     }
+
+    func testPrefersBuiltInWhenGamePreferenceIsToken() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        manager.setSkin(
+            DeltaSkinSelectionManager.builtInSkinPreferenceToken,
+            for: testSystem,
+            gameId: testGameId,
+            orientation: .portrait,
+            scope: .game
+        )
+        XCTAssertTrue(manager.prefersBuiltInControllerSkin(for: testSystem, gameId: testGameId, orientation: .portrait))
+    }
+
+    func testPrefersBuiltInFalseWhenSessionOverridesWithRealSkin() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        manager.setSkin(
+            DeltaSkinSelectionManager.builtInSkinPreferenceToken,
+            for: testSystem,
+            gameId: testGameId,
+            orientation: .portrait,
+            scope: .game
+        )
+        manager.setSkin("com.example.real-skin", for: testSystem, gameId: testGameId, orientation: .portrait, scope: .session)
+        XCTAssertFalse(manager.prefersBuiltInControllerSkin(for: testSystem, gameId: testGameId, orientation: .portrait))
+    }
+
+    func testPrefersBuiltInFalseWhenNoToken() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        XCTAssertFalse(manager.prefersBuiltInControllerSkin(for: testSystem, gameId: testGameId, orientation: .portrait))
+    }
 }
