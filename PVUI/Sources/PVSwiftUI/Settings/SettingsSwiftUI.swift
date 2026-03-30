@@ -2708,8 +2708,18 @@ private struct AdvancedSection: View {
                 // Log view
                 NavigationLink(destination: RetroLogView().tvOSSubpageFocusContainment()) {
                     SettingsRow(title: "Logs",
-                                subtitle: "View logs for debugging.",
+                                subtitle: "View, search, and export app logs.",
                                 icon: .sfSymbol("doc.text.magnifyingglass"))
+                }
+                #if os(tvOS)
+                .retroFocusButtonStyle(showBorder: false)
+                #endif
+
+                // RetroArch log file browser
+                NavigationLink(destination: RetroArchLogBrowserView()) {
+                    SettingsRow(title: "RetroArch Logs",
+                                subtitle: "Browse, view, share, and delete RetroArch log files.",
+                                icon: .sfSymbol("gamecontroller"))
                 }
                 #if os(tvOS)
                 .retroFocusButtonStyle(showBorder: false)
