@@ -151,8 +151,9 @@ public struct Paths {
     /// **tvOS note:** The OS may purge `Caches` at any time.
     /// - Bundle-derived assets (e.g. PPSSPP flash0 fonts) are re-seeded from the app bundle
     ///   on every core launch — no special recovery needed for those.
-    /// - User-placed firmware/BIOS files are at risk of loss. TODO(#2725): extend the CloudKit
-    ///   BIOS syncer to cover `System/` subdirectories so they can be restored after a purge.
+    /// - User-placed firmware/BIOS files are backed up to CloudKit by `CloudKitBIOSSyncer`,
+    ///   which covers the directories listed in `CloudKitBIOSSyncer.systemDirectoriesToSync`
+    ///   (PSP, DC, AtariST, Saturn). See #3582.
     ///
     /// Part of Epic #2725 — future UI will let users manage these directories.
     ///

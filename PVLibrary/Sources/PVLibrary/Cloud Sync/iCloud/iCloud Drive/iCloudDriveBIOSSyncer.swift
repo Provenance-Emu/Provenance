@@ -15,7 +15,6 @@ import PVFileSystem
 import PVRealm
 import RealmSwift
 import CloudKit
-import CryptoKit
 
 // MARK: - iOS/macOS Implementation
 
@@ -370,12 +369,20 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing, SystemFi
 /// BIOS syncer for all OSs  using CloudKit
 public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
+    /// System subdirectory short names that contain user-placed firmware requiring CloudKit backup.
+    ///
+    /// Only user-placed firmware is synced — bundle-seeded assets (e.g. PPSSPP flash0 fonts) are
+    /// excluded because they are automatically re-seeded from the app bundle on every core launch.
+    ///
+    /// Directory layout: `System/<name>/…` (e.g. `System/PSP/`, `System/DC/`)
+    public static let systemDirectoriesToSync: Set<String> = ["PSP", "DC", "AtariST", "Saturn"]
+
     /// Initialize a new BIOS syncer
     /// - Parameters:
-    ///   - directories: Directories to manage (defaults to ["BIOS"])
+    ///   - directories: Directories to manage (defaults to ["BIOS", "System"])
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
-    public override init(container: CKContainer, directories: Set<String> = ["BIOS"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
+    public override init(container: CKContainer, directories: Set<String> = ["BIOS", "System"], notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
         super.init(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
 
@@ -437,7 +444,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
     public init(container: CKContainer, notificationCenter: NotificationCenter = .default, errorHandler: CloudSyncErrorHandler) {
-        super.init(container: container, directories: ["BIOS"], notificationCenter: notificationCenter, errorHandler: errorHandler)
+        super.init(container: container, directories: ["BIOS", "System"], notificationCenter: notificationCenter, errorHandler: errorHandler)
     }
 
     /// Get the local URL for a BIOS file
@@ -481,27 +488,10 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
             Task {
                 do {
-                    // Upload the file to CloudKit
-                    // Create a record for the BIOS file
-                    let recordID = CKRecord.ID(recordName: "bios_\(filename)")
-                    let record = CKRecord(recordType: "File", recordID: recordID)
-                    record["directory"] = "BIOS"
-                    record["filename"] = filename
-                    record["fileData"] = CKAsset(fileURL: localURL)
-                    record["lastModified"] = Date()
-
-                    // Calculate MD5 hash if possible
-                    if let data = try? Data(contentsOf: localURL) {
-                        // Calculate MD5 hash using CryptoKit
-                        let md5 = Insecure.MD5.hash(data: data).map { String(format: "%02hhx", $0) }.joined()
-                        record["md5"] = md5
-                    }
-
                     // Extract systemID from parent directory
                     let parentDirectoryName = localURL.deletingLastPathComponent().lastPathComponent
                     let systemID = SystemIdentifier(rawValue: parentDirectoryName)
 
-                    // Save the record to CloudKit
                     _ = try await self.uploadFile(localURL, gameID: nil, systemID: systemID)
                     await self.insertUploadedFile(localURL)
 
@@ -532,7 +522,6 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                 do {
                     // Find the record for this BIOS file
                     let recordID = CKRecord.ID(recordName: "bios_\(filename)")
-                    let privateDatabase = self.container.privateCloudDatabase
 
                     do {
                         let record = try await privateDatabase.record(for: recordID)
@@ -818,6 +807,11 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         Task { @MainActor in
             await self.downloadMissingBIOSFiles()
         }
+
+        // Also sync System/ firmware directories (PSP, DC, AtariST, Saturn).
+        // These live in Caches on tvOS and may be purged; CloudKit is their recovery path.
+        let systemCount = await syncSystemFiles()
+        processedCount += systemCount
 
         return processedCount
     }
@@ -1345,6 +1339,102 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
         ILOG("[SYNC] BIOS upload complete: \(uploadedCount) of \(biosArray.count) uploaded")
         return uploadedCount
+    }
+
+    // MARK: - System Directory Sync
+
+    /// Sync `System/<name>/` firmware directories to/from CloudKit.
+    ///
+    /// Covers only the directories listed in ``systemDirectoriesToSync``.  Files that already exist
+    /// locally are skipped on download; files already in CloudKit are skipped on upload (date-based
+    /// deduplication is handled by the underlying `uploadFile(_:gameID:systemID:)` method).
+    ///
+    /// This is called automatically at the end of ``syncMetadataOnly()``.
+    ///
+    /// - Returns: Number of System/ files uploaded or downloaded during this pass.
+    public func syncSystemFiles() async -> Int {
+        ILOG("[SYSTEM SYNC] Starting System/ directory sync...")
+
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
+            ILOG("[SYSTEM SYNC] Skipping — paused for emulation")
+            return 0
+        }
+
+        var processedCount = 0
+        let systemBase = Paths.systemPath
+
+        // Phase 1: Upload local files not yet in CloudKit.
+        // `uploadFile()` performs date-based deduplication, so re-uploading an unchanged file
+        // is a no-op from CloudKit's perspective.
+        for dirName in Self.systemDirectoriesToSync {
+            let dirURL = systemBase.appendingPathComponent(dirName)
+            guard FileManager.default.fileExists(atPath: dirURL.path) else { continue }
+
+            guard let enumerator = FileManager.default.enumerator(
+                at: dirURL,
+                includingPropertiesForKeys: [.isDirectoryKey],
+                options: [.skipsHiddenFiles]
+            ) else { continue }
+
+            for case let fileURL as URL in enumerator {
+                var isDir: ObjCBool = false
+                guard FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDir),
+                      !isDir.boolValue else { continue }
+
+                do {
+                    _ = try await uploadFile(fileURL, gameID: nil, systemID: nil)
+                    await insertUploadedFile(fileURL)
+                    processedCount += 1
+                    DLOG("[SYSTEM SYNC] Uploaded: \(fileURL.lastPathComponent)")
+                } catch {
+                    ELOG("[SYSTEM SYNC] Upload failed for \(fileURL.lastPathComponent): \(error.localizedDescription)")
+                }
+            }
+        }
+
+        // Phase 2: Download System/ records from CloudKit that are missing locally.
+        do {
+            let predicate = NSPredicate(format: "directory == %@", "System")
+            let query = CKQuery(recordType: recordType, predicate: predicate)
+            let (results, _) = try await privateDatabase.records(matching: query, resultsLimit: 500)
+
+            let records = results.compactMap { _, result -> CKRecord? in try? result.get() }
+            ILOG("[SYSTEM SYNC] Found \(records.count) System/ records in CloudKit")
+
+            for record in records {
+                guard let relativePath = record["filename"] as? String,
+                      let asset = record["fileData"] as? CKAsset,
+                      let assetURL = asset.fileURL,
+                      FileManager.default.fileExists(atPath: assetURL.path) else { continue }
+
+                // Only restore files from our known sync-able system directories.
+                let topDir = relativePath.components(separatedBy: "/").first ?? ""
+                guard Self.systemDirectoriesToSync.contains(topDir) else { continue }
+
+                let destinationURL = systemBase.appendingPathComponent(relativePath)
+
+                // Skip if already present locally — don't overwrite the user's version.
+                guard !FileManager.default.fileExists(atPath: destinationURL.path) else { continue }
+
+                do {
+                    let parentDir = destinationURL.deletingLastPathComponent()
+                    try FileManager.default.createDirectory(at: parentDir, withIntermediateDirectories: true)
+                    try FileManager.default.copyItem(at: assetURL, to: destinationURL)
+                    await insertDownloadedFile(destinationURL)
+                    processedCount += 1
+                    ILOG("[SYSTEM SYNC] Downloaded: \(relativePath)")
+                } catch {
+                    ELOG("[SYSTEM SYNC] Download failed for \(relativePath): \(error.localizedDescription)")
+                }
+            }
+        } catch let ckError as CKError where ckError.code == .unknownItem {
+            DLOG("[SYSTEM SYNC] No System/ records found in CloudKit yet")
+        } catch {
+            ELOG("[SYSTEM SYNC] Failed to query System/ records: \(error.localizedDescription)")
+        }
+
+        ILOG("[SYSTEM SYNC] Complete: processed \(processedCount) System/ files")
+        return processedCount
     }
 
     // MARK: - Diagnostics

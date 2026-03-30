@@ -1085,7 +1085,7 @@ public class CloudSyncManager {
         ILOG("[SYNC] Starting BIOS audit...")
         let syncer = CloudKitBIOSSyncer(
             container: ckContainer,
-            directories: ["BIOS"],
+            directories: ["BIOS", "System"],
             errorHandler: errorHandler
         )
         let result = await syncer.auditBIOSCloudRecords()
@@ -1108,7 +1108,7 @@ public class CloudSyncManager {
         ILOG("[SYNC] Starting BIOS sync repair...")
         let syncer = CloudKitBIOSSyncer(
             container: ckContainer,
-            directories: ["BIOS"],
+            directories: ["BIOS", "System"],
             errorHandler: errorHandler
         )
         let count = await syncer.repairBIOSSync()
@@ -1130,7 +1130,7 @@ public class CloudSyncManager {
         ILOG("[SYNC] Starting forced BIOS download...")
         let syncer = CloudKitBIOSSyncer(
             container: ckContainer,
-            directories: ["BIOS"],
+            directories: ["BIOS", "System"],
             errorHandler: errorHandler
         )
 
@@ -1163,7 +1163,7 @@ public class CloudSyncManager {
 
         let syncer = CloudKitBIOSSyncer(
             container: ckContainer,
-            directories: ["BIOS"],
+            directories: ["BIOS", "System"],
             errorHandler: errorHandler
         )
 
