@@ -445,3 +445,10 @@
 "ripper_sheet.stat.tracks" = "Tracks";
 "ripper_sheet.stat.speed" = "Speed";
 "ripper_sheet.stat.eta" = "ETA";
+
+// External file URL import (Open in Provenance — copy / skin import, not import queue)
+"external_import.unknown_file" = "File";
+"external_import.skin.title" = "SKIN IMPORTED";
+"external_import.skin.subtitle" = "%@";
+"external_import.file.title" = "FILE ADDED";
+"external_import.file.subtitle" = "%@ was copied to imports.";
