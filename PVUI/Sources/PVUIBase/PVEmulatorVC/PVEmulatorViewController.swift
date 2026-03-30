@@ -2372,9 +2372,13 @@ extension PVEmulatorViewController {
         let deltaOrientation = orientation.deltaSkinOrientation
 
         // Try to find first available skin that can actually render
+        let allowCaseSkins = CaseControllerDetector.isKnownPhysicalCaseControllerConnected
         for fallbackSkin in availableSkins {
             // Skip the failed skin
             if fallbackSkin.identifier == failedSkin.identifier {
+                continue
+            }
+            if !allowCaseSkins && CaseControllerDetector.isCompanionSkinForKnownCase(fallbackSkin.identifier) {
                 continue
             }
 
@@ -2463,9 +2467,13 @@ extension PVEmulatorViewController {
         let availableSkins = try await DeltaSkinManager.shared.skins(for: systemId)
 
         // Try to find first available skin that supports this orientation
+        let allowCaseSkinsOrientation = CaseControllerDetector.isKnownPhysicalCaseControllerConnected
         for fallbackSkin in availableSkins {
             // Skip the requested skin
             if fallbackSkin.identifier == skin.identifier {
+                continue
+            }
+            if !allowCaseSkinsOrientation && CaseControllerDetector.isCompanionSkinForKnownCase(fallbackSkin.identifier) {
                 continue
             }
 
@@ -2660,8 +2668,28 @@ extension PVEmulatorViewController {
                         DeltaSkinManager.shared.effectiveSkinIdentifier(for: $0, gameId: gameId, orientation: newOrientation)
                     }
 
+                    let prefersBuiltIn: Bool = {
+                        guard let sid = systemId else { return false }
+                        if !gameId.isEmpty {
+                            return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: sid, gameId: gameId, orientation: newOrientation)
+                        }
+                        return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: sid, gameId: nil, orientation: newOrientation)
+                    }()
+
                     let currentId = self.currentSkin?.identifier
-                    DLOG("Effective skin id: \(effectiveId ?? "nil"), current: \(currentId ?? "nil")")
+                    DLOG("Effective skin id: \(effectiveId ?? "nil"), current: \(currentId ?? "nil"), prefersBuiltIn: \(prefersBuiltIn)")
+
+                    // Built-in choice: do not keep a stray `.deltaskin` on screen when effective id is nil.
+                    if effectiveId == nil, prefersBuiltIn, let current = self.currentSkin {
+                        let isSwiftUIDefault = current.identifier.hasPrefix("default-") ||
+                            current.identifier == "default" ||
+                            current.name.lowercased() == "default"
+                        if !isSwiftUIDefault {
+                            try? await self.resetToDefaultSkin()
+                            self.ensureProperZOrder()
+                            return
+                        }
+                    }
 
                     // If effective id is nil but we have a current skin, keep current and relayout
                     if effectiveId == nil, let current = self.currentSkin {
