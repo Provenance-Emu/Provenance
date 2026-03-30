@@ -1452,6 +1452,8 @@ struct RetroMenuView: View {
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isHoveredSkinId: String? = nil
+    /// Collapsed by default; companion skins for physical cases (GameSir, Buppin, Soolra) live under the disclosure group.
+    @State private var retroSkinPickerCaseSectionExpanded = false
 
     // Mouse input settings
     @Default(.mouseInputSource) private var mouseInputSource
@@ -1801,8 +1803,8 @@ struct RetroMenuView: View {
                                     }
                                 )
 
-                                // Custom skins with previews (filtered by selected orientation)
-                                ForEach(availableSkinObjects.filter { skinSupportsOrientation($0, orientation: currentOrientation) }, id: \.identifier) { skin in
+                                // Custom skins (non–case-companion) for the active orientation
+                                ForEach(retroSkinPickerRegularSkins, id: \.identifier) { skin in
                                     SkinPreviewItemView(
                                         skin: skin,
                                         isSelected: (currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin) == skin.name,
@@ -1810,13 +1812,59 @@ struct RetroMenuView: View {
                                         isHovered: isHoveredSkinId == skin.identifier,
                                         onSelect: {
                                             showingSkinPicker = false
-                                            // Apply immediately using the scope already chosen in the SKINS tab
                                             Task { @MainActor in
                                                 await applySkinSelection(skinName: skin.name, identifier: skin.identifier, orientation: currentOrientation, scope: selectedSkinScope)
                                                 await applySkinAndFilterChanges()
                                             }
                                         }
                                     )
+                                }
+
+                                if !retroSkinPickerCaseSkins.isEmpty {
+                                    DisclosureGroup(isExpanded: $retroSkinPickerCaseSectionExpanded) {
+                                        VStack(spacing: 16) {
+                                            ForEach(retroSkinPickerCaseSkins, id: \.identifier) { skin in
+                                                SkinPreviewItemView(
+                                                    skin: skin,
+                                                    isSelected: (currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin) == skin.name,
+                                                    glowOpacity: glowOpacity,
+                                                    isHovered: isHoveredSkinId == skin.identifier,
+                                                    onSelect: {
+                                                        showingSkinPicker = false
+                                                        Task { @MainActor in
+                                                            await applySkinSelection(skinName: skin.name, identifier: skin.identifier, orientation: currentOrientation, scope: selectedSkinScope)
+                                                            await applySkinAndFilterChanges()
+                                                        }
+                                                    }
+                                                )
+                                            }
+                                        }
+                                        .padding(.top, 4)
+                                    } label: {
+                                        HStack(alignment: .top, spacing: 10) {
+                                            Image(systemName: {
+#if os(tvOS)
+                                                "gamecontroller.fill"
+#else
+                                                "iphone.radiowaves.left.and.right"
+#endif
+                                            }())
+                                                .font(.system(size: 16, weight: .semibold))
+                                                .foregroundColor(palette.defaultTintColor.swiftUIColor)
+                                                .frame(width: 24, alignment: .center)
+                                            VStack(alignment: .leading, spacing: 2) {
+                                                Text(String(localized: "Case controller skins"))
+                                                    .font(.system(size: 14, weight: .bold))
+                                                    .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                                                Text(String(localized: "GameSir, Buppin, Soolra, and similar — expand if you use one of these accessories."))
+                                                    .font(.system(size: 11, weight: .medium))
+                                                    .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.65))
+                                                    .fixedSize(horizontal: false, vertical: true)
+                                            }
+                                        }
+                                        .padding(.vertical, 4)
+                                    }
+                                    .tint(palette.defaultTintColor.swiftUIColor)
                                 }
                             }
                             .padding(.horizontal, 16)
@@ -2606,6 +2654,17 @@ struct RetroMenuView: View {
                     self.selectedLandscapeSkin = "Default"
                     ILOG("skins: loadAvailableSkins - set landscape skin to: Default")
                 }
+
+                let filteredForPicker = filteredSkins.filter { self.skinSupportsOrientation($0, orientation: self.currentOrientation) }
+                let regularCount = filteredForPicker.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }.count
+                let caseCount = filteredForPicker.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }.count
+                let onlyCaseSkinsShown = regularCount == 0 && caseCount > 0
+                let activeName = self.currentOrientation == .portrait ? self.selectedPortraitSkin : self.selectedLandscapeSkin
+                let selectionIsCaseSkin = filteredForPicker.first(where: { $0.name == activeName })
+                    .map { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) } ?? false
+                if onlyCaseSkinsShown || selectionIsCaseSkin {
+                    self.retroSkinPickerCaseSectionExpanded = true
+                }
             }
         } catch {
             print("Error loading skins: \(error)")
@@ -2616,8 +2675,6 @@ struct RetroMenuView: View {
             }
         }
     }
-
-
 
     /// Get the current device type
     private var currentDevice: DeltaSkinDevice {
@@ -2663,6 +2720,18 @@ struct RetroMenuView: View {
             if skin.supports(traits) { return true }
         }
         return false
+    }
+
+    private var retroSkinPickerSkinsForOrientation: [DeltaSkinProtocol] {
+        availableSkinObjects.filter { skinSupportsOrientation($0, orientation: currentOrientation) }
+    }
+
+    private var retroSkinPickerRegularSkins: [DeltaSkinProtocol] {
+        retroSkinPickerSkinsForOrientation.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
+    }
+
+    private var retroSkinPickerCaseSkins: [DeltaSkinProtocol] {
+        retroSkinPickerSkinsForOrientation.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
     }
 
     /// Import skins from URLs
