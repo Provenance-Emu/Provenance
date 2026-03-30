@@ -115,21 +115,32 @@ extension PVModernWebServer: PVWebServerProtocol {
 
     @discardableResult
     public func startServers() async throws -> Bool {
-        async let httpOK  = startHTTPServer()
-        async let davOK   = startWebDAVServer()
-        let results = try await (httpOK, davOK)
+        async let httpOK = startHTTPServer()
+        async let davOK = startWebDAVServer()
+        let results: (Bool, Bool)
+        do {
+            results = try await (httpOK, davOK)
+        } catch {
+            await stopServers()
+            throw error
+        }
 
-        if results.0 { startBonjourAdvertisement() }
+        guard results.0 && results.1 else {
+            await stopServers()
+            WLOG("[PVModernWebServer] start aborted (HTTP ok: \(results.0), WebDAV ok: \(results.1)); listeners torn down.")
+            return false
+        }
 
-        postStatusNotification(isRunning: true, type: "WebUploader", port: httpPort,   url: serverURL)
+        startBonjourAdvertisement()
+
+        postStatusNotification(isRunning: true, type: "WebUploader", port: httpPort, url: serverURL)
         postStatusNotification(isRunning: true, type: "WebDAV", port: webDAVPort, url: webDAVURL)
 
 #if canImport(UIKit) && !os(watchOS)
-        await MainActor.run {
-            UIApplication.shared.isIdleTimerDisabled = true
-        }
+        /// Use the main GCD queue instead of `MainActor.run` so `@MainActor` callers awaiting `PVWebServerManager.start()` cannot deadlock with this type’s isolation.
+        await setIdleTimerDisabledOnMainQueue(true)
 #endif
-        return results.0 && results.1
+        return true
     }
 
     public func stopServers() async {
@@ -139,16 +150,14 @@ extension PVModernWebServer: PVWebServerProtocol {
         webDAVServerTask = nil
         netService?.stop()
         netService = nil
-        _isHTTPRunning  = false
+        _isHTTPRunning = false
         _isWebDAVRunning = false
 
-        postStatusNotification(isRunning: false, type: "WebUploader", port: httpPort,   url: nil)
+        postStatusNotification(isRunning: false, type: "WebUploader", port: httpPort, url: nil)
         postStatusNotification(isRunning: false, type: "WebDAV", port: webDAVPort, url: nil)
 
 #if canImport(UIKit) && !os(watchOS)
-        await MainActor.run {
-            UIApplication.shared.isIdleTimerDisabled = false
-        }
+        await setIdleTimerDisabledOnMainQueue(false)
 #endif
     }
 }
@@ -156,6 +165,19 @@ extension PVModernWebServer: PVWebServerProtocol {
 // MARK: - HTTP Server
 
 private extension PVModernWebServer {
+
+#if canImport(UIKit) && !os(watchOS)
+    /// UIKit idle-timer updates must run on the main thread; use GCD async instead of `MainActor.run` to avoid the same
+    /// `@MainActor` / `PVWebServerManager.start()` ordering deadlock as the legacy server path.
+    func setIdleTimerDisabledOnMainQueue(_ disabled: Bool) async {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            DispatchQueue.main.async {
+                UIApplication.shared.isIdleTimerDisabled = disabled
+                continuation.resume()
+            }
+        }
+    }
+#endif
 
     func startHTTPServer() async throws -> Bool {
         let dir = self.uploadDirectory

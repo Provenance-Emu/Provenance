@@ -11,6 +11,7 @@
 //
 
 import Foundation
+import PVLogging
 import PVWebServerObjC
 
 /// Wraps the ObjC `PVWebServer` singleton so it can be used behind the
@@ -37,21 +38,25 @@ extension PVLegacyWebServerAdapter: PVWebServerProtocol {
         return URL(string: str)
     }
 
+    /// Runs `PVWebServer` on the main **queue** (UIKit / `NSUserActivity` / GCDWebServer expectations).
+    /// Uses `DispatchQueue.main.async` instead of `MainActor.run` so callers on `@MainActor` that
+    /// `await PVWebServerManager.shared.start()` do not deadlock (actor waits for MainActor while MainActor waits for the actor).
     @discardableResult
     public func startServers() async throws -> Bool {
-        // Legacy ObjC method is synchronous — call off main actor to avoid blocking.
-        await withCheckedContinuation { continuation in
-            DispatchQueue.global(qos: .userInitiated).async { [self] in
-                let ok = self.legacy.startServers()
+        await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+            DispatchQueue.main.async { [legacy] in
+                let ok = legacy.startServers()
+                ILOG("[LegacyWebServerAdapter] startServers on main queue → \(ok)")
                 continuation.resume(returning: ok)
             }
         }
     }
 
+    /// Stops legacy servers asynchronously on the main queue (pairs with `startServers()` threading).
     public func stopServers() async {
-        await withCheckedContinuation { continuation in
-            DispatchQueue.global(qos: .userInitiated).async { [self] in
-                self.legacy.stopServers()
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            DispatchQueue.main.async { [legacy] in
+                legacy.stopServers()
                 continuation.resume()
             }
         }
