@@ -1820,6 +1820,7 @@ struct RetroMenuView: View {
                                     )
                                 }
 
+#if !os(tvOS)
                                 if !retroSkinPickerCaseSkins.isEmpty {
                                     DisclosureGroup(isExpanded: $retroSkinPickerCaseSectionExpanded) {
                                         VStack(spacing: 16) {
@@ -1842,13 +1843,7 @@ struct RetroMenuView: View {
                                         .padding(.top, 4)
                                     } label: {
                                         HStack(alignment: .top, spacing: 10) {
-                                            Image(systemName: {
-#if os(tvOS)
-                                                "gamecontroller.fill"
-#else
-                                                "iphone.radiowaves.left.and.right"
-#endif
-                                            }())
+                                            Image(systemName: "iphone.radiowaves.left.and.right")
                                                 .font(.system(size: 16, weight: .semibold))
                                                 .foregroundColor(palette.defaultTintColor.swiftUIColor)
                                                 .frame(width: 24, alignment: .center)
@@ -1866,6 +1861,7 @@ struct RetroMenuView: View {
                                     }
                                     .tint(palette.defaultTintColor.swiftUIColor)
                                 }
+#endif
                             }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 20)
@@ -2655,6 +2651,7 @@ struct RetroMenuView: View {
                     ILOG("skins: loadAvailableSkins - set landscape skin to: Default")
                 }
 
+#if !os(tvOS)
                 let filteredForPicker = filteredSkins.filter { self.skinSupportsOrientation($0, orientation: self.currentOrientation) }
                 let regularCount = filteredForPicker.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }.count
                 let caseCount = filteredForPicker.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }.count
@@ -2665,6 +2662,7 @@ struct RetroMenuView: View {
                 if onlyCaseSkinsShown || selectionIsCaseSkin {
                     self.retroSkinPickerCaseSectionExpanded = true
                 }
+#endif
             }
         } catch {
             print("Error loading skins: \(error)")
