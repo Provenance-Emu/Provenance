@@ -82,6 +82,11 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// iOS only (tvOS lacks DragGesture). Disabled by default; enable in
     /// Settings > Advanced > Feature Flags.
     case skinButtonReposition = "skinButtonReposition"
+    /// Enables case-companion skins (Buppin, GameSir Pocket Taco, Soolra, etc.)
+    /// in the skin browser and automatic skin selection. When disabled, companion skins
+    /// are hidden from the selection UI and excluded from automatic skin resolution.
+    /// Disabled by default while the feature is under development.
+    case caseCompanionSkins = "caseCompanionSkins"
     /// Enables multi-source artwork matching at ROM import time: queries TheGamesDB,
     /// LibretroDB, and OpenVGDB in parallel and selects the best result by artwork type priority.
     /// A background `ArtworkSearchQueue` retries games that were not matched
@@ -274,6 +279,12 @@ public struct FeatureFlag: Codable, Sendable {
         enabled: false,
         allowedPlatforms: ["ios"],
         description: "Drag-to-reposition button layout editor for custom skins. Shows an 'Edit Layout' toolbar over the skin; users drag buttons to reposition them. Offsets persist per skin in UserDefaults. iOS only. Disabled by default — enable in Settings > Advanced > Feature Flags."
+    )
+
+    public static let caseCompanionSkins = FeatureFlag(
+        enabled: false,
+        allowedPlatforms: ["ios"],
+        description: "Case-companion skins for phone-case controllers (Buppin, GameSir Pocket Taco, Soolra). Shows companion skins in the skin browser and includes them in automatic skin selection. iOS only. Disabled by default while under development."
     )
 
     public static let enhancedArtworkSearch = FeatureFlag(
@@ -712,6 +723,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var smartCoreSelection: Bool { featureStates[.smartCoreSelection] ?? false }
     public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
     public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
+    public var caseCompanionSkins: Bool { featureStates[.caseCompanionSkins] ?? false }
     public var enhancedArtworkSearch: Bool { featureStates[.enhancedArtworkSearch] ?? false }
     public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
     public var sramImportExport: Bool { featureStates[.sramImportExport] ?? false }

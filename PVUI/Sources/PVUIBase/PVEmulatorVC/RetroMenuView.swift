@@ -1452,8 +1452,10 @@ struct RetroMenuView: View {
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isHoveredSkinId: String? = nil
+#if !os(tvOS)
     /// Collapsed by default; companion skins for physical cases (GameSir, Buppin, Soolra) live under the disclosure group.
     @State private var retroSkinPickerCaseSectionExpanded = false
+#endif
 
     // Mouse input settings
     @Default(.mouseInputSource) private var mouseInputSource
@@ -2728,8 +2730,13 @@ struct RetroMenuView: View {
         retroSkinPickerSkinsForOrientation.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
     }
 
+    /// Phone-case companion skins are not surfaced on tvOS (no `DisclosureGroup` API; no case-controller use case).
     private var retroSkinPickerCaseSkins: [DeltaSkinProtocol] {
+#if os(tvOS)
+        []
+#else
         retroSkinPickerSkinsForOrientation.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
+#endif
     }
 
     /// Import skins from URLs

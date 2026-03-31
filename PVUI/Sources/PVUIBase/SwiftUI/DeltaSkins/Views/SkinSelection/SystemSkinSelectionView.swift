@@ -2,6 +2,7 @@ import SwiftUI
 import PVPrimitives
 import PVLibrary
 import PVLogging
+import PVFeatureFlags
 import UniformTypeIdentifiers
 #if canImport(SafariServices)
 import SafariServices
@@ -40,8 +41,10 @@ public struct SystemSkinSelectionView: View {
     @State private var glowIntensity: CGFloat = 0.5
     @State private var selectedCellScale: CGFloat = 1.0
     @State private var hoveredSkinId: String? = nil
+#if !os(tvOS)
     /// Collapsed by default so GameSir / Buppin / Soolra companion skins do not clutter the main grid.
     @State private var caseSkinsSectionExpanded = false
+#endif
 
     @Environment(\.dismiss) private var dismiss
 
@@ -107,19 +110,58 @@ public struct SystemSkinSelectionView: View {
         }
     }
 
-    /// Skins for the main grid (excludes companion skins tied to physical phone cases).
+    /// Skins for the main grid (excludes companion skins when the feature flag is on).
     private var regularSkinsForCurrentOrientation: [DeltaSkinProtocol] {
-        filteredSkinsForCurrentOrientation.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
+        guard PVFeatureFlagsManager.shared.caseCompanionSkins else {
+            return filteredSkinsForCurrentOrientation
+        }
+        return filteredSkinsForCurrentOrientation.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
     }
 
-    /// Companion skins for GameSir Pocket Taco, Buppin, Soolra, etc. — shown under a disclosure group.
+    /// Companion skins (phone-case controllers) — gated behind the `caseCompanionSkins` feature flag.
     private var caseCompanionSkinsForCurrentOrientation: [DeltaSkinProtocol] {
-        filteredSkinsForCurrentOrientation.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
+#if os(tvOS)
+        return []
+#else
+        guard PVFeatureFlagsManager.shared.caseCompanionSkins else { return [] }
+        return filteredSkinsForCurrentOrientation.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
+#endif
     }
 
     private var skinSelectionGridColumns: [GridItem] {
         [GridItem(.adaptive(minimum: 160, maximum: 200), spacing: 20)]
     }
+
+#if !os(tvOS)
+    /// Label row for the case companion skins `DisclosureGroup`.
+    private var caseCompanionSkinsSectionLabel: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "iphone.radiowaves.left.and.right")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(RetroTheme.retroHorizontalGradient)
+                .frame(width: 28, alignment: .center)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Case controller skins")
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                Text("GameSir, Buppin, Soolra, and similar — expand if you use one of these accessories.")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(.white.opacity(0.55))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    /// Grid of case companion skins inside the disclosure section.
+    private var caseCompanionSkinsGrid: some View {
+        LazyVGrid(columns: skinSelectionGridColumns, spacing: 24) {
+            ForEach(caseCompanionSkinsForCurrentOrientation, id: \.identifier) { skin in
+                skinCell(for: skin)
+            }
+        }
+    }
+#endif
 
     /// Check if a skin supports a given orientation for the current device
     private func skinSupportsOrientation(_ skin: DeltaSkinProtocol, orientation: SkinOrientation) -> Bool {
@@ -622,7 +664,7 @@ public struct SystemSkinSelectionView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
 
-                // Skin grid with retrowave styling (case companion skins live in the section below)
+                // Skin grid with retrowave styling (iOS: case companion skins may appear in a disclosure section below)
                 LazyVGrid(columns: skinSelectionGridColumns, spacing: 24) {
                     defaultSkinCell
 
@@ -633,42 +675,19 @@ public struct SystemSkinSelectionView: View {
                 .padding(.horizontal)
                 .padding(.top, 8)
 
+#if !os(tvOS)
                 if !caseCompanionSkinsForCurrentOrientation.isEmpty {
                     DisclosureGroup(isExpanded: $caseSkinsSectionExpanded) {
-                        LazyVGrid(columns: skinSelectionGridColumns, spacing: 24) {
-                            ForEach(caseCompanionSkinsForCurrentOrientation, id: \.identifier) { skin in
-                                skinCell(for: skin)
-                            }
-                        }
-                        .padding(.top, 8)
+                        caseCompanionSkinsGrid
+                            .padding(.top, 8)
                     } label: {
-                        HStack(alignment: .top, spacing: 10) {
-                            Image(systemName: {
-#if os(tvOS)
-                                "gamecontroller.fill"
-#else
-                                "iphone.radiowaves.left.and.right"
-#endif
-                            }())
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundStyle(RetroTheme.retroHorizontalGradient)
-                                .frame(width: 28, alignment: .center)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Case controller skins")
-                                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white)
-                                Text("GameSir, Buppin, Soolra, and similar — expand if you use one of these accessories.")
-                                    .font(.system(size: 11, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.55))
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                        }
-                        .padding(.vertical, 4)
+                        caseCompanionSkinsSectionLabel
                     }
                     .tint(RetroTheme.retroPink)
                     .padding(.horizontal)
                     .padding(.top, 4)
                 }
+#endif
 
                 Spacer(minLength: 0)
                     .frame(height: 20)
@@ -958,6 +977,7 @@ public struct SystemSkinSelectionView: View {
                 self.loadingProgress = 1.0
             }
 
+#if !os(tvOS)
             /// Open the case skins section when it is the only option for this orientation, or when the active pick is a case skin.
             let filteredForUI = deviceFilteredSkins.filter { self.skinSupportsOrientation($0, orientation: self.selectedOrientation) }
             let regularCount = filteredForUI.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }.count
@@ -968,6 +988,7 @@ public struct SystemSkinSelectionView: View {
             if onlyCaseSkinsShown || selectionIsCaseSkin {
                 self.caseSkinsSectionExpanded = true
             }
+#endif
         }
     }
 
