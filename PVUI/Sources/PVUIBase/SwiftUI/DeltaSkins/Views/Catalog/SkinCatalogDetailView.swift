@@ -829,10 +829,8 @@ public struct SkinCatalogDetailView: View {
     /// Downloads the skin file to a temporary location using URLSessionDownloadTask for efficiency.
     private func downloadSkin() async throws -> URL {
         let downloadURL = entry.downloadURL
-        let fileName = downloadURL.lastPathComponent.isEmpty
-            ? "\(entry.id).deltaskin"
-            : downloadURL.lastPathComponent
-        let destURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+        // Save as `entry.preferredLocalDownloadFileName()` so `DeltaSkins/` import keeps a `.deltaskin` suffix for scanning.
+        let destURL = FileManager.default.temporaryDirectory.appendingPathComponent(entry.preferredLocalDownloadFileName())
 
         return try await withCheckedThrowingContinuation { continuation in
             let delegate = SkinDownloadDelegate(

@@ -705,8 +705,9 @@ private struct CatalogSkinCard: View {
 ///
 /// Matching is done in priority order:
 /// 1. Catalog `id` matches the skin's internal `identifier` (exact match).
-/// 2. The download URL filename (without extension) matches the skin's file on disk.
-/// 3. The catalog `name` matches the skin's `name` (case-insensitive).
+/// 2. The on-disk stem matches ``SkinCatalogEntry/preferredLocalDownloadFileName()`` (catalog installs use this name).
+/// 3. The download URL filename (without extension) matches the skin's file on disk.
+/// 4. The catalog `name` matches the skin's `name` (case-insensitive).
 ///
 /// Used by both `SkinCatalogBrowserView` and `SkinCatalogDetailView` to keep
 /// installed-matching logic in a single place.
@@ -718,7 +719,15 @@ func matchingInstalledSkin(for entry: SkinCatalogEntry, in skins: [DeltaSkinProt
         return match
     }
 
-    // 2. Filename match: compare the download URL stem to the local file stem
+    // 2. Stem match: file saved as `preferredLocalDownloadFileName()` under DeltaSkins
+    let preferredStem = URL(fileURLWithPath: entry.preferredLocalDownloadFileName()).deletingPathExtension().lastPathComponent.lowercased()
+    if !preferredStem.isEmpty, let match = skins.first(where: {
+        $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == preferredStem
+    }) {
+        return match
+    }
+
+    // 3. Filename match: compare the download URL stem to the local file stem (manual / legacy installs)
     let catalogStem = entry.downloadURL.deletingPathExtension().lastPathComponent.lowercased()
     if !catalogStem.isEmpty, let match = skins.first(where: {
         $0.fileURL.deletingPathExtension().lastPathComponent.lowercased() == catalogStem
@@ -726,7 +735,7 @@ func matchingInstalledSkin(for entry: SkinCatalogEntry, in skins: [DeltaSkinProt
         return match
     }
 
-    // 3. Name match (case-insensitive fallback)
+    // 4. Name match (case-insensitive fallback)
     let entryNameLower = entry.name.lowercased()
     return skins.first(where: { $0.name.lowercased() == entryNameLower })
 }
