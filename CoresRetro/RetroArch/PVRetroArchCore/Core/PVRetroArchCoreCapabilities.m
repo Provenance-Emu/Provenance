@@ -15,9 +15,11 @@
 // Core game-loaded callback
 // ---------------------------------------------------------------------------
 void pv_notify_core_game_loaded(void) {
-    PVRetroArchCoreBridge *bridge = [PVRetroArchCoreBridge get];
-    if (bridge.onCoreGameLoaded) {
-        void (^callback)(void) = bridge.onCoreGameLoaded;
+    PVRetroArchCoreBridge *bridge = _current;
+    if (!bridge) return;
+    if (![bridge respondsToSelector:@selector(onCoreGameLoaded)]) return;
+    void (^callback)(void) = bridge.onCoreGameLoaded;
+    if (callback) {
         bridge.onCoreGameLoaded = nil;
         dispatch_async(dispatch_get_main_queue(), callback);
     }

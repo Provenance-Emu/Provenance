@@ -133,9 +133,9 @@ const char *record_driver_find_ident(int idx);
 
 /**
  * gfx_ctx_init_first:
- * @backend                 : Recording backend handle.
- * @data                    : Recording data handle.
- * @params                  : Recording info parameters.
+ * @param backend            Recording backend handle.
+ * @param data               Recording data handle.
+ * @param params             Recording info parameters.
  *
  * Finds first suitable recording context driver and initializes.
  *

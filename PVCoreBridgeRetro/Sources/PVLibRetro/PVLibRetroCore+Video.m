@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "PVCoreBridgeRetro.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmacro-redefined"
+#pragma clang diagnostic ignored "-Wdocumentation"
+#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -85,13 +91,13 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
    { "Custom",        0.0f }
 };
 
-@implementation PVLibRetroCoreBridge (Audio)
+@implementation PVLibRetroCoreBridge (Video)
 
 # pragma mark - Video
 
 - (NSTimeInterval)frameInterval {
     NSTimeInterval fps = av_info.timing.fps ?: 60;
-    VLOG(@"%f", fps);
+    VLOG("%f", fps);
     return fps;
 }
 
@@ -197,3 +203,5 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
 }
 
 @end
+
+#pragma clang diagnostic pop

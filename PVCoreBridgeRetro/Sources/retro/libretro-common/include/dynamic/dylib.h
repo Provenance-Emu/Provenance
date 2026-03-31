@@ -31,10 +31,12 @@
 
 #include <retro_common_api.h>
 
+/* Xcode may predefine NEED_DYNAMIC; always reset before (re)defining to silence -Wmacro-redefined. */
+#ifdef NEED_DYNAMIC
+#undef NEED_DYNAMIC
+#endif
 #if defined(HAVE_DYNAMIC) || defined(HAVE_DYLIB)
 #define NEED_DYNAMIC
-#else
-#undef NEED_DYNAMIC
 #endif
 
 RETRO_BEGIN_DECLS

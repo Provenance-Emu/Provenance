@@ -59,6 +59,7 @@ extern int g_gs_preference;
 	NSString *autoLoadStatefileName;
 }
 @dynamic documentsDirectory;
+@synthesize onCoreGameLoaded = _onCoreGameLoaded;
 
 - (instancetype)init {
 	if (self = [super init]) {

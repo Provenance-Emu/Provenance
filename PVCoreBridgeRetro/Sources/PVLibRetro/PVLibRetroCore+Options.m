@@ -9,52 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "PVCoreBridgeRetro.h"
 
-#include "libretro.h"
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#include "dynamic.h"
-#include <dynamic/dylib.h>
-#include <string/stdstring.h>
-
-#include "command.h"
-#include "core_info.h"
-
-#include "managers/state_manager.h"
-//#include "audio/audio_driver.h"
-//#include "camera/camera_driver.h"
-//#include "location/location_driver.h"
-//#include "record/record_driver.h"
-#include "core.h"
-#include "runloop.h"
-#include "performance_counters.h"
-#include "system.h"
-#include "record/record_driver.h"
-//#include "queues/message_queue.h"
-#include "gfx/video_driver.h"
-#include "gfx/video_context_driver.h"
-#include "gfx/scaler/scaler.h"
-//#include "gfx/video_frame.h"
-
-#include <retro_assert.h>
-
-#include "cores/internal_cores.h"
-#include "frontend/frontend_driver.h"
-#include "content.h"
-#ifdef HAVE_CHEEVOS
-#include "cheevos.h"
-#endif
-#include "retroarch.h"
-#include "configuration.h"
-#include "general.h"
-#include "msg_hash.h"
-#include "verbosity.h"
-
-# pragma mark - Options
+/// `getVariable:` is implemented on the primary `PVLibRetroCoreBridge` class in `PVLibRetroCore.m`.
+/// This translation unit remains so the Xcode target keeps a stable file list.
 @implementation PVLibRetroCoreBridge (Options)
-- (void *)getVariable:(const char *)variable {
-    ELOG(@"This should be done in sub class: %s", variable);
-    return NULL;
-}
 @end

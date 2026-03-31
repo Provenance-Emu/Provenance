@@ -28,7 +28,7 @@ import OpenGLES.ES3
 #else
     override var rendersToOpenGL: Bool { false }
 #endif
-    override var videoBuffer: UnsafeMutableRawPointer? { nil }
+    override var videoBuffer: UnsafeRawPointer? { nil }
     
     override var bufferSize: CGSize { .init(width: Int(_bridge.videoWidth), height: Int(_bridge.videoHeight)) }
     override var screenRect: CGRect { .init(x: 0, y: 0, width: Int(_bridge.videoWidth), height: Int(_bridge.videoHeight)) }

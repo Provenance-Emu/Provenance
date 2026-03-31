@@ -28,7 +28,7 @@ import PVPrimitives
     @objc dynamic var renderFPS: Double { get }
     @objc dynamic var rendersToOpenGL: Bool { get }
     @objc dynamic var screenRect: CGRect  { get }
-    @objc dynamic var videoBuffer: UnsafeMutableRawPointer? { get }
+    @objc dynamic var videoBuffer: UnsafeRawPointer? { get }
     
     @objc dynamic var bufferSize: CGSize { get }
     

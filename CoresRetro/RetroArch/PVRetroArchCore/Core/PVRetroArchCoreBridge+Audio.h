@@ -6,7 +6,7 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import <PVRetroArch/PVRetroArch.h>
+#import <PVRetroArch/PVRetroArchCoreBridge.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 NS_ASSUME_NONNULL_BEGIN

@@ -18,8 +18,9 @@ FOUNDATION_EXPORT const unsigned char PVRetroArchVersionString[];
 #import <PVRetroArch/PVRetroArchCoreBridge+Netplay.h>
 #import <PVRetroArch/PVRetroArchCoreBridge+Controls.h>
 #import <PVRetroArch/PVRetroArchCoreBridge+LightGun.h>
-//#import <PVRetroArch/PVRetroArchCoreBridge+Audio.h>
-//#import <PVRetroArch/PVRetroArchCoreBridge+Video.h>
+#import <PVRetroArch/PVRetroArchCoreBridge+Audio.h>
+#import <PVRetroArch/PVRetroArchCoreBridge+Saves.h>
+#import <PVRetroArch/PVRetroArchCoreBridge+Video.h>
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
 #pragma clang diagnostic ignored "-Wnone"
@@ -43,7 +44,3 @@ FOUNDATION_EXPORT const unsigned char PVRetroArchVersionString[];
 #import <PVRetroArch/runloop.h>
 #pragma clang diagnostic pop
 
-//#import <PVRetroArch/PVRetroArchCoreBridge+Audio.h>
-//#import <PVRetroArch/PVRetroArchCoreBridge+Controls.h>
-//#import <PVRetroArch/PVRetroArchCoreBridge+Saves.h>
-//#import <PVRetroArch/PVRetroArchCoreBridge+Video.h>

@@ -129,6 +129,15 @@ void logger_send_v(const char *__format, va_list args);
 
 #endif
 #else
+/* HAVE_LOGGER branch defines these names as macros; undef before real prototypes. */
+#undef RARCH_LOG
+#undef RARCH_LOG_V
+#undef RARCH_LOG_OUTPUT
+#undef RARCH_LOG_OUTPUT_V
+#undef RARCH_WARN
+#undef RARCH_WARN_V
+#undef RARCH_ERR
+#undef RARCH_ERR_V
 void RARCH_LOG_V(const char *tag, const char *fmt, va_list ap);
 void RARCH_LOG(const char *fmt, ...);
 void RARCH_LOG_OUTPUT_V(const char *tag, const char *msg, va_list ap);
