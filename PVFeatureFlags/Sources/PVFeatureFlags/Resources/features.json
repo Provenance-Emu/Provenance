@@ -17,13 +17,13 @@
             "description": "Use SwiftUI for the cheats interface."
         },
         "retroarchBuiltinEditor": {
-            "enabled": false,
+            "enabled": true,
             "minVersion": "3.0.5",
             "allowedAppTypes": ["standard", "lite"],
             "description": "Enables the built-in RetroArch editor. Disabled for App Store builds."
         },
         "advancedSkinFeatures": {
-            "enabled": false,
+            "enabled": true,
             "description": "Enables advanced skin features like filters and debug mode."
         },
         "contentlessCores": {
