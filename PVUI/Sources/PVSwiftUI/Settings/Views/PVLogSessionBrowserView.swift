@@ -9,6 +9,7 @@
 //  written by PVLogFileManager.
 
 import SwiftUI
+import Observation
 import PVUIBase
 import PVLogging
 #if canImport(UIKit)
@@ -18,10 +19,11 @@ import UIKit
 // MARK: - ViewModel
 
 @MainActor
-final class PVLogSessionViewModel: ObservableObject {
-    @Published var logFiles: [SessionLogEntry] = []
-    @Published var isLoggingEnabled = false
-    @Published var errorMessage: String?
+@Observable
+final class PVLogSessionViewModel {
+    var logFiles: [SessionLogEntry] = []
+    var isLoggingEnabled = false
+    var errorMessage: String?
 
     struct SessionLogEntry: Identifiable {
         let id = UUID()
@@ -78,7 +80,7 @@ final class PVLogSessionViewModel: ObservableObject {
 
 /// Lists Provenance session log files with view, share, and delete actions.
 public struct PVLogSessionBrowserView: View {
-    @StateObject private var viewModel = PVLogSessionViewModel()
+    @State private var viewModel = PVLogSessionViewModel()
     @State private var selectedEntry: PVLogSessionViewModel.SessionLogEntry?
     @State private var showingDeleteAllConfirm = false
 #if !os(tvOS)

@@ -149,7 +149,7 @@ public final class PVLogFileManager: @unchecked Sendable {
         let filename = "session_\(formatter.string(from: Date())).log"
         let url = logsDirectory.appendingPathComponent(filename)
 
-        FileManager.default.createFile(atPath: url.path, contents: nil)
+        _ = FileManager.default.createFile(atPath: url.path, contents: nil)
         currentFileHandle = try? FileHandle(forWritingTo: url)
         currentFileURL = url
         currentFileSize = 0
@@ -157,7 +157,7 @@ public final class PVLogFileManager: @unchecked Sendable {
         // Write header
         let header = "=== Provenance Log Session ===\nStarted: \(Date())\n\n"
         if let data = header.data(using: .utf8) {
-            currentFileHandle?.write(data)
+            try? currentFileHandle?.write(contentsOf: data)
             currentFileSize += Int64(data.count)
         }
     }
@@ -166,7 +166,7 @@ public final class PVLogFileManager: @unchecked Sendable {
         let line = "[\(entry.formattedTimestamp)] [\(entry.level.name.uppercased())] (\(entry.category)) \(entry.message)\n"
         guard let data = line.data(using: .utf8) else { return }
 
-        currentFileHandle?.write(data)
+        try? currentFileHandle?.write(contentsOf: data)
         currentFileSize += Int64(data.count)
 
         if currentFileSize >= maxFileSize {
