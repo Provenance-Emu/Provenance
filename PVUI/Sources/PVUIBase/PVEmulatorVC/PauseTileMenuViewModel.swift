@@ -190,6 +190,19 @@ final class PauseTileMenuViewModel: ObservableObject {
         #endif
 
         gameTiles.append(PauseMenuTile(id: "gameInfo", icon: "info.circle", label: String(localized: "Game Info"), colorKey: .blue))
+
+        // RetroArch menu — root-level for libretro cores
+        if emulatorVC.core.coreIdentifier?.contains("libretro") == true,
+           PauseMenuViewRegistry.retroArchSettingsView() != nil {
+            gameTiles.append(PauseMenuTile(
+                id: "retroArchSettings",
+                icon: "gearshape.2",
+                label: String(localized: "RetroArch Menu"),
+                colorKey: .cyan,
+                dismissOnTap: false
+            ))
+        }
+
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"), isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
         if (featureFlags.netplayEnabled || PVFeatureFlagsManager.shared.netplayEnabled) && Self.coreSupportsNetplay(emulatorVC) {
             gameTiles.append(PauseMenuTile(
@@ -279,20 +292,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 colorKey: .cyan,
                 dismissOnTap: false
             )
-        ] + {
-            guard emulatorVC.core.coreIdentifier?.contains("libretro") == true,
-                  PauseMenuViewRegistry.retroArchSettingsView() != nil else { return [] }
-            return [
-                PauseMenuTile(
-                    id: "retroArchSettings",
-                    icon: "gearshape.2",
-                    label: String(localized: "RetroArch Quick Settings"),
-                    description: String(localized: "Open curated RetroArch settings"),
-                    colorKey: .cyan,
-                    dismissOnTap: false
-                )
-            ]
-        }()
+        ]
         built.append(PauseMenuTileSection(id: "menu", title: String(localized: "MENU"), tiles: menuTiles))
 
         // ── QUICK SETTINGS section ──────────────────────────────────────
@@ -526,7 +526,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             let optionIDs: Set<String> = [
                 "fastForwardToggle", "gameSpeedCycle", "fpsCounterToggle", "rewindToggle",
                 "filterCycle", "shaderSettings", "rumbleToggle", "airPlay", "keyboardToggle", "mouseToggle",
-                "retroArchSettings", "audioVisualizer", "mouseInputSource", "mouseSensitivity"
+                "audioVisualizer", "mouseInputSource", "mouseSensitivity"
             ]
             let tiles = tiles(matching: optionIDs, from: rootSections)
             return [PauseMenuTileSection(id: "options_route", title: String(localized: "OPTIONS"), tiles: tiles)]
