@@ -28,10 +28,26 @@ public struct RetroMultiSelectToolbar: View {
             topBorder
 
             // Main bar content
-            HStack(spacing: 14) {
-                selectionBadge
-                Spacer()
-                actionButtons
+            VStack(spacing: 10) {
+                HStack(spacing: 14) {
+                    selectionBadge
+                    Spacer()
+                    doneButton
+                }
+
+                // Action buttons row
+                HStack(spacing: 8) {
+                    actionButton(title: "Delete", icon: "trash", color: .retroPink, action: state.onDelete)
+                    actionButton(title: "Move", icon: "folder.badge.plus", color: .retroOrange, action: state.onMoveToSystem)
+                    actionButton(title: "Normalize", icon: "textformat.abc", color: .retroBlue, action: state.onNormalizeTitles)
+
+                    if state.canOffload {
+                        actionButton(title: "Offload", icon: "icloud.and.arrow.up", color: .retroCyan, action: state.onOffload)
+                    }
+                    if state.canDownload {
+                        actionButton(title: "Download", icon: "icloud.and.arrow.down", color: .retroGreen, action: state.onDownload)
+                    }
+                }
             }
             .padding(.horizontal, 20)
             .padding(.top, 14)
@@ -98,58 +114,59 @@ public struct RetroMultiSelectToolbar: View {
         }
     }
 
-    // MARK: - Action buttons
+    // MARK: - Action button helper
 
-    private var actionButtons: some View {
-        HStack(spacing: 10) {
-            // Normalize titles
-            Button {
-                state.onNormalizeTitles?()
-            } label: {
-                HStack(spacing: 5) {
-                    Image(systemName: "textformat.abc")
-                        .font(.system(size: 12, weight: .semibold))
-                    Text("Normalize")
-                        .font(.system(size: 12, weight: .semibold))
-                }
-                .padding(.horizontal, 12)
+    private func actionButton(title: String, icon: String, color: Color, action: (() -> Void)?) -> some View {
+        let enabled = state.selectedCount > 0
+        return Button {
+            action?()
+        } label: {
+            VStack(spacing: 3) {
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .semibold))
+                Text(title)
+                    .font(.system(size: 10, weight: .semibold))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(color.opacity(enabled ? 0.15 : 0.05))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(
+                                color.opacity(enabled ? 0.6 : 0.2),
+                                lineWidth: 1
+                            )
+                    )
+            )
+            .foregroundColor(enabled ? color : .white.opacity(0.3))
+        }
+        .disabled(!enabled)
+    }
+
+    // MARK: - Done button
+
+    private var doneButton: some View {
+        Button {
+            state.onDone?()
+        } label: {
+            Text("Done")
+                .font(.system(size: 13, weight: .bold))
+                .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.retroBlue.opacity(state.selectedCount > 0 ? 0.15 : 0.05))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(
-                                    Color.retroBlue.opacity(state.selectedCount > 0 ? 0.6 : 0.2),
-                                    lineWidth: 1
-                                )
+                        .fill(
+                            LinearGradient(
+                                colors: [.retroPink, .retroPurple],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
                         )
                 )
-                .foregroundColor(state.selectedCount > 0 ? .retroBlue : .white.opacity(0.3))
-            }
-            .disabled(state.selectedCount == 0)
-
-            // Done
-            Button {
-                state.onDone?()
-            } label: {
-                Text("Done")
-                    .font(.system(size: 13, weight: .bold))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(
-                                LinearGradient(
-                                    colors: [.retroPink, .retroPurple],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                    )
-                    .foregroundColor(.white)
-                    .shadow(color: Color.retroPink.opacity(0.4), radius: 6)
-            }
+                .foregroundColor(.white)
+                .shadow(color: Color.retroPink.opacity(0.4), radius: 6)
         }
     }
 
