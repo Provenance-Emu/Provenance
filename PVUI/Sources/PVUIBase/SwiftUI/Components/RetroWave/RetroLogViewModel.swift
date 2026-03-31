@@ -248,16 +248,16 @@ private extension FileManager {
     /// Creates a ZIP archive at `destination` containing all files in `directory`.
     /// Uses Foundation's built-in zip coordination (macOS/iOS 13+).
     func zipDirectory(at directory: URL, to destination: URL) throws {
-        var error: NSError?
-        NSFileCoordinator().coordinate(readingItemAt: directory, options: .forUploading, error: &error) { zippedURL in
+        var coordinatorError: NSError?
+        var copyError: Error?
+        NSFileCoordinator().coordinate(readingItemAt: directory, options: .forUploading, error: &coordinatorError) { zippedURL in
             do {
                 try self.copyItem(at: zippedURL, to: destination)
             } catch {
-                // Copy failed; ignore — the outer error check handles this
+                copyError = error
             }
         }
-        if let error {
-            throw error
-        }
+        if let error = coordinatorError { throw error }
+        if let error = copyError { throw error }
     }
 }

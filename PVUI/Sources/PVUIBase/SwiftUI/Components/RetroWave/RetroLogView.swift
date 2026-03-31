@@ -88,9 +88,9 @@ public struct RetroLogView: View {
                 #if os(tvOS)
                 .focusSection()
                 #endif
-                .onChange(of: viewModel.displayedLogs.count) { _ in handleAutoScroll(scrollView: scrollView) }
-                .onChange(of: viewModel.autoScroll) { _ in handleAutoScroll(scrollView: scrollView) }
-                .onChange(of: viewModel.sortOrder) { _ in handleAutoScroll(scrollView: scrollView) }
+                .onChange(of: viewModel.displayedLogs.count) { _, _ in handleAutoScroll(scrollView: scrollView) }
+                .onChange(of: viewModel.autoScroll) { _, _ in handleAutoScroll(scrollView: scrollView) }
+                .onChange(of: viewModel.sortOrder) { _, _ in handleAutoScroll(scrollView: scrollView) }
             }
         }
         .background(

@@ -11,10 +11,6 @@
 import SwiftUI
 import PVLogging
 
-#if canImport(UIKit)
-import UIKit
-#endif
-
 /// Sheet for configuring and triggering a log export.
 public struct LogExportSheet: View {
     // MARK: - Properties
@@ -28,10 +24,7 @@ public struct LogExportSheet: View {
     @State private var exportFormat: ExportFormat = .text
     @State private var isExporting = false
     @State private var exportError: String?
-#if !os(tvOS)
-    @State private var shareItems: [Any] = []
-    @State private var showingShareSheet = false
-#endif
+    @State private var exportedURL: URL?
 
     public enum ExportFormat: String, CaseIterable {
         case text = "Text File (.txt)"
@@ -60,7 +53,7 @@ public struct LogExportSheet: View {
                         // Summary
                         summarySection
 
-                        // Export button
+                        // Export / share button
                         exportButton
                     }
                     .padding()
@@ -77,14 +70,6 @@ public struct LogExportSheet: View {
                 }
             }
         }
-#if !os(tvOS)
-        .sheet(isPresented: $showingShareSheet) {
-            if !shareItems.isEmpty {
-                ShareSheetView(activityItems: shareItems)
-                    .ignoresSafeArea()
-            }
-        }
-#endif
     }
 
     // MARK: - Sections
@@ -98,6 +83,7 @@ public struct LogExportSheet: View {
             ForEach(ExportFormat.allCases, id: \.self) { format in
                 Button {
                     exportFormat = format
+                    exportedURL = nil
                 } label: {
                     HStack {
                         Image(systemName: exportFormat == format ? "largecircle.fill.circle" : "circle")
@@ -193,34 +179,63 @@ public struct LogExportSheet: View {
                     .multilineTextAlignment(.center)
             }
 
-            Button {
-                performExport()
-            } label: {
-                HStack {
-                    if isExporting {
-                        ProgressView()
-                            .tint(.white)
-                            .scaleEffect(0.8)
-                    } else {
+            if let url = exportedURL {
+                // File ready — present native share sheet via ShareLink
+                ShareLink(item: url) {
+                    HStack {
                         Image(systemName: "square.and.arrow.up")
+                        Text("Share Export")
+                            .font(.system(size: 15, weight: .bold, design: .monospaced))
                     }
-                    Text(isExporting ? "Preparing…" : "Export & Share")
-                        .font(.system(size: 15, weight: .bold, design: .monospaced))
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .foregroundColor(.white)
-                .background(
-                    LinearGradient(
-                        colors: [RetroTheme.retroPink, RetroTheme.retroBlue],
-                        startPoint: .leading,
-                        endPoint: .trailing
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .foregroundColor(.white)
+                    .background(
+                        LinearGradient(
+                            colors: [RetroTheme.retroPink, RetroTheme.retroBlue],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
                     )
-                )
-                .cornerRadius(8)
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+
+                Button("Re-export") {
+                    exportedURL = nil
+                }
+                .font(.system(size: 12, design: .monospaced))
+                .foregroundColor(RetroTheme.retroBlue)
+            } else {
+                Button {
+                    performExport()
+                } label: {
+                    HStack {
+                        if isExporting {
+                            ProgressView()
+                                .tint(.white)
+                                .scaleEffect(0.8)
+                        } else {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                        Text(isExporting ? "Preparing…" : "Export & Share")
+                            .font(.system(size: 15, weight: .bold, design: .monospaced))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .foregroundColor(.white)
+                    .background(
+                        LinearGradient(
+                            colors: [RetroTheme.retroPink, RetroTheme.retroBlue],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+                .disabled(isExporting || (!includeAppLogs && !includeDeviceInfo && !includeRetroArchLogs))
             }
-            .buttonStyle(.plain)
-            .disabled(isExporting || (!includeAppLogs && !includeDeviceInfo && !includeRetroArchLogs))
         }
     }
 
@@ -230,6 +245,7 @@ public struct LogExportSheet: View {
     private func retroToggleRow(label: String, icon: String, isOn: Binding<Bool>) -> some View {
         Button {
             isOn.wrappedValue.toggle()
+            exportedURL = nil
         } label: {
             HStack {
                 Image(systemName: icon)
@@ -278,26 +294,9 @@ public struct LogExportSheet: View {
             exportError = "Failed to create export file."
             return
         }
-#if !os(tvOS)
-        shareItems = [url]
-        showingShareSheet = true
-#endif
+        exportedURL = url
     }
 }
-
-// MARK: - UIActivityViewController wrapper (iOS only)
-
-#if !os(tvOS)
-private struct ShareSheetView: UIViewControllerRepresentable {
-    let activityItems: [Any]
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-    }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-#endif
 
 // MARK: - Preview
 
