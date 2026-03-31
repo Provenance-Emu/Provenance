@@ -305,28 +305,30 @@ public class AppState: ObservableObject {
     private func setupImportPauseMonitoring() {
         ILOG("AppState: Setting up import pause monitoring")
 
-        /// Monitor emulation state and pause/resume all services via the central registry.
-        /// Individual callers (SceneCoordinator, EmulatorVC) may also call pauseAll/resumeAll;
-        /// reason-based tracking ensures only one actual pause/resume cycle occurs.
-        $emulationUIState
-            .map { $0.core?.isOn == true }
-            .removeDuplicates()
-            .sink { [weak self] isEmulationActive in
-                if isEmulationActive {
-                    ILOG("AppState: Pausing services due to active emulation")
-                    self?.pauseImports(reason: "Emulation active")
-                    Task { @MainActor in
-                        BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
-                    }
-                } else {
-                    ILOG("AppState: Emulation inactive, resuming services")
-                    self?.resumeImportsIfNoOtherConditions(previousCondition: "Emulation")
-                    Task { @MainActor in
-                        BackgroundServiceRegistry.shared.resumeAll(reason: .emulation)
+        /// Monitor emulator UI scene via `SceneCoordinator` (published). `core?.isOn` does not reliably emit through `@Published` on reference-type `EmulationUIState`.
+        /// SceneCoordinator and Emulator VC also call `pauseAll` / `resumeAll`; reason-based tracking merges duplicate reasons.
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            SceneCoordinator.shared.$currentScene
+                .map { $0 == .emulator }
+                .removeDuplicates()
+                .sink { [weak self] isEmulatorScene in
+                    if isEmulatorScene {
+                        ILOG("AppState: Pausing services — emulator UI scene active")
+                        self?.pauseImports(reason: "Emulator scene active")
+                        Task { @MainActor in
+                            BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
+                        }
+                    } else {
+                        ILOG("AppState: Emulator UI scene inactive — resuming services when other conditions allow")
+                        self?.resumeImportsIfNoOtherConditions(previousCondition: "Emulator scene")
+                        Task { @MainActor in
+                            BackgroundServiceRegistry.shared.resumeAll(reason: .emulation)
+                        }
                     }
                 }
-            }
-            .store(in: &importPauseSubscriptions)
+                .store(in: &self.importPauseSubscriptions)
+        }
 
         // Monitor app background state
         $emulationUIState
@@ -398,17 +400,17 @@ public class AppState: ObservableObject {
     /// - Parameter previousCondition: The condition that was previously preventing imports
     public func resumeImportsIfNoOtherConditions(previousCondition: String) {
         // Check if there are any other conditions that require imports to be paused
-        let emulationActive = emulationUIState.core?.isOn == true
+        let emulatorSceneActive = SceneCoordinator.shared.currentScene == .emulator
         let isInBackground = emulationUIState.isInBackground
         let isInitialDelayActive = initialImportResumeTimer != nil && initialImportResumeTimer!.isValid
 
-        if !emulationActive && !isInBackground && !isInitialDelayActive {
+        if !emulatorSceneActive && !isInBackground && !isInitialDelayActive {
             ILOG("AppState: Resuming imports - \(previousCondition) condition cleared and no other blocking conditions")
             shouldPauseImports = false
             gameImporter?.resume()
         } else {
             var reasons = [String]()
-            if emulationActive { reasons.append("Emulation active") }
+            if emulatorSceneActive { reasons.append("Emulator scene active") }
             if isInBackground { reasons.append("App in background") }
             if isInitialDelayActive { reasons.append("Initial delay not expired") }
 
