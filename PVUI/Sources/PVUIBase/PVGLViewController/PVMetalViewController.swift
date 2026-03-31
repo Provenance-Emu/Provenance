@@ -901,28 +901,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         #endif
     }
 
-#if DEBUG
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        /// Print full view hierarchy for debugging
-        ILOG("Full view hierarchy:")
-        var currentView: UIView? = mtlView
-        while let view = currentView {
-            ILOG("""
-                View: \(type(of: view))
-                Frame: \(view.frame)
-                Bounds: \(view.bounds)
-                Transform: \(view.transform)
-                AutoresizingMask: \(view.autoresizingMask)
-                Constraints: \(view.constraints)
-                SuperView: \(String(describing: view.superview))
-                ----------------
-                """)
-            currentView = view.superview
-        }
-    }
-#endif
 
     func updateInputTexture() throws {
         guard let emulatorCore = emulatorCore else {
