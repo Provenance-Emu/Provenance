@@ -547,12 +547,7 @@ extension ProvenanceApp {
                     // Reload skins to update the UI
                     await DeltaSkinManager.shared.reloadSkins()
 
-                    PVToastManager.post(
-                        "Skin imported: \(filename)",
-                        type: .success,
-                        duration: 3.5,
-                        icon: "paintbrush.fill"
-                    )
+                    PVToastManager.post(.skinImported(fileName: filename))
                 } catch {
                     ELOG("ProvenanceApp: Failed to import skin \(filename): \(error.localizedDescription)")
                 }
@@ -583,12 +578,7 @@ extension ProvenanceApp {
             let copiedDestination = destinationPath
             let copiedFilename = filename
             Task { @MainActor in
-                PVToastManager.post(
-                    "File imported: \(copiedFilename)",
-                    type: .success,
-                    duration: 3.5,
-                    icon: "doc.badge.plus"
-                )
+                PVToastManager.post(.fileImported(fileName: copiedFilename))
                 AppState.shared.appOpenAction = .openFile(copiedDestination)
                 self.openEmulatorSceneIfNeeded()
             }

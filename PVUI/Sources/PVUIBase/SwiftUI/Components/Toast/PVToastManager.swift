@@ -421,3 +421,57 @@ public extension PVToastManager {
         }
     }
 }
+
+// MARK: - Typed app-level events
+
+/// Strongly-typed toast events so call sites don't use raw strings.
+/// Add new cases here as new toast-worthy events are added to the app.
+public enum PVToastEvent: Sendable {
+    /// A `.deltaskin` / `.manicskin` was imported via `DeltaSkinManager`.
+    case skinImported(fileName: String)
+    /// A file was copied into the ROM import directory from an incoming URL.
+    case fileImported(fileName: String)
+    /// A cloud-synced ROM finished downloading.
+    case cloudDownloadComplete(fileName: String)
+    /// Generic import error.
+    case importError(fileName: String, error: String)
+
+    var message: String {
+        switch self {
+        case .skinImported(let name):       return "Skin imported: \(name)"
+        case .fileImported(let name):       return "File imported: \(name)"
+        case .cloudDownloadComplete(let n): return "Download complete: \(n)"
+        case .importError(let name, let e): return "Import failed: \(name) — \(e)"
+        }
+    }
+
+    var type: PVToastType {
+        switch self {
+        case .skinImported, .fileImported, .cloudDownloadComplete: return .success
+        case .importError: return .error
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .skinImported:        return "paintbrush.fill"
+        case .fileImported:        return "doc.badge.plus"
+        case .cloudDownloadComplete: return "icloud.and.arrow.down.fill"
+        case .importError:         return "exclamationmark.triangle.fill"
+        }
+    }
+
+    var duration: TimeInterval {
+        switch self {
+        case .importError: return 5.0
+        default:           return 3.5
+        }
+    }
+}
+
+public extension PVToastManager {
+    /// Post a typed app-level event from any context — no `await` needed.
+    nonisolated static func post(_ event: PVToastEvent) {
+        post(event.message, type: event.type, duration: event.duration, icon: event.icon)
+    }
+}

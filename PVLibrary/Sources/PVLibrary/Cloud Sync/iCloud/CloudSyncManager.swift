@@ -120,7 +120,7 @@ public class CloudSyncManager {
     /// Active reasons the service is paused (PausableService conformance)
     @MainActor public private(set) var activePauseReasons = Set<ServiceLifecycleReason>()
 
-    /// Backward-compatible flag — `true` when paused for `.emulation`
+    /// Backward-compatible flag — `true` when paused for `.emulation` (emulator UI session / gameplay scene, not core `setPauseEmulation`).
     @MainActor public var isPausedForEmulation: Bool {
         activePauseReasons.contains(.emulation)
     }
@@ -2144,6 +2144,10 @@ extension CloudSyncManager: PausableService {
         romsSyncer?.workQueue?.isSuspended = true
         saveStatesSyncer?.workQueue?.isSuspended = true
         biosSyncer?.workQueue?.isSuspended = true
+
+        if reason == .emulation {
+            Task { await CloudKitUploadQueueActor.shared.setEmulatorSessionUploadsPaused(true) }
+        }
     }
 
     @MainActor
@@ -2170,6 +2174,10 @@ extension CloudSyncManager: PausableService {
 
         if Defaults[.iCloudSync] {
             startMetadataBootstrap(reason: "resume-\(reason.rawValue)")
+        }
+
+        if reason == .emulation {
+            Task { await CloudKitUploadQueueActor.shared.setEmulatorSessionUploadsPaused(false) }
         }
     }
 }

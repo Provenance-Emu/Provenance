@@ -69,6 +69,9 @@ public actor CloudKitUploadQueueActor {
     private let maxConcurrentUploads: Int = 2
     private var isProcessing = false
 
+    /// When true, dequeue is suspended during an emulator UI session (same signal as `CloudSyncManager` `.emulation` pause). In-flight uploads may finish.
+    private var emulatorSessionUploadsPaused = false
+
     // Progress tracking
     private let progressSubject = CurrentValueSubject<UploadProgress, Never>(UploadProgress())
     public nonisolated var progressPublisher: AnyPublisher<UploadProgress, Never> {
@@ -92,6 +95,19 @@ public actor CloudKitUploadQueueActor {
     }
 
     private init() {}
+
+    // MARK: - Emulator session (BackgroundServiceRegistry / CloudSyncManager)
+
+    /// Called from `CloudSyncManager.pause` / `resume` for `.emulation` so queued uploads align with other CloudKit I/O during gameplay.
+    public func setEmulatorSessionUploadsPaused(_ paused: Bool) {
+        emulatorSessionUploadsPaused = paused
+        if paused {
+            ILOG("📤 CloudKitUploadQueueActor: emulator session active — deferring new uploads (in-flight may complete)")
+        } else {
+            ILOG("📤 CloudKitUploadQueueActor: emulator session ended — resuming upload processing")
+            startProcessingIfNeeded()
+        }
+    }
 
     // MARK: - Public Interface
 
@@ -225,6 +241,7 @@ public actor CloudKitUploadQueueActor {
     // MARK: - Private Implementation
 
     private func startProcessingIfNeeded() {
+        guard !emulatorSessionUploadsPaused else { return }
         guard !isProcessing else { return }
         guard !uploadQueue.isEmpty else { return }
         guard activeUploads.count < maxConcurrentUploads else { return }
@@ -239,6 +256,7 @@ public actor CloudKitUploadQueueActor {
 
     private func processQueue() async {
         while !uploadQueue.isEmpty && activeUploads.count < maxConcurrentUploads {
+            guard !emulatorSessionUploadsPaused else { break }
             let task = uploadQueue.removeFirst()
 
             uploadStatuses[task.id] = .uploading
@@ -293,7 +311,7 @@ public actor CloudKitUploadQueueActor {
             activeUploads.removeValue(forKey: task.id)
 
             // Log detailed error information
-            let errorDetails = formatDetailedError(error)
+            let errorDetails = formatCloudKitUploadQueueError(error)
             let identifier: String
             switch task.kind {
             case .rom(let md5, _):
@@ -311,76 +329,6 @@ public actor CloudKitUploadQueueActor {
         startProcessingIfNeeded()
     }
 
-    /// Formats error with detailed information for logging
-    private func formatDetailedError(_ error: Error) -> String {
-        if let cloudSyncError = error as? CloudSyncError {
-            switch cloudSyncError {
-            case .noUbiquityURL:
-                return "No iCloud Drive URL available"
-            case .notImplemented:
-                return "Feature not implemented"
-            case .invalidData:
-                return "Invalid game data"
-            case .missingDependency:
-                return "Missing required dependency"
-            case .cloudKitContainerUnavailable:
-                return "CloudKit is not available (check iCloud / CloudKit entitlements and provisioning)"
-            case .alreadyExists:
-                return "Record already exists"
-            case .cloudKitError(let underlyingError):
-                if let ckError = underlyingError as? CKError {
-                    return "CloudKit error: \(ckError.localizedDescription) (code: \(ckError.code.rawValue)"
-                }
-                return "CloudKit error: \(underlyingError.localizedDescription)"
-            case .fileSystemError(let underlyingError):
-                return "File system error: \(underlyingError.localizedDescription)"
-            case .zipError(let underlyingError):
-                return "Zip error: \(underlyingError.localizedDescription)"
-            case .realmError(let underlyingError):
-                return "Realm error: \(underlyingError.localizedDescription)"
-            case .unknown:
-                return "Unknown error"
-            case .recordNotFound:
-                return "Record not found"
-            case .genericError(let message):
-                return "Generic error: \(message)"
-            case .gameNotFound(let message):
-                return "Game not found: \(message)"
-            case .noAccount:
-                return "No iCloud account configured"
-            case .accountRestricted:
-                return "iCloud account is restricted"
-            case .accountStatusUnknown:
-                return "Could not determine iCloud account status"
-            case .accountTemporarilyUnavailable:
-                return "iCloud account temporarily unavailable"
-            case .insufficientSpace(let required, let available):
-                return "Insufficient space: need \(ByteCountFormatter.string(fromByteCount: required, countStyle: .file)), have \(ByteCountFormatter.string(fromByteCount: available, countStyle: .file))"
-            case .downloadCancelled:
-                return "Download cancelled"
-            case .downloadQueueFull:
-                return "Download queue is full"
-            case .assetTooLarge(let size, let maxSize):
-                return "Asset too large: \(ByteCountFormatter.string(fromByteCount: size, countStyle: .file)) > \(ByteCountFormatter.string(fromByteCount: maxSize, countStyle: .file))"
-            case .networkUnavailable:
-                return "Network unavailable"
-            case .pausedForEmulation:
-                return "Paused for emulation"
-            }
-        }
-
-        // For non-CloudSyncError errors, provide detailed info
-        let nsError = error as NSError
-        var details = "\(error.localizedDescription)"
-        if !nsError.domain.isEmpty && nsError.domain != "NSCocoaErrorDomain" {
-            details += " (domain: \(nsError.domain), code: \(nsError.code))"
-        }
-        if let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? Error {
-            details += " - Underlying: \(underlyingError.localizedDescription)"
-        }
-        return details
-    }
-
     private func updateProgress() {
         let stats = getQueueStats()
         let totalBytes: Int64 = 0 // TODO: Track actual bytes uploaded if needed
@@ -395,6 +343,81 @@ public actor CloudKitUploadQueueActor {
 
         progressSubject.send(progress)
     }
+}
+
+// MARK: - Upload error formatting
+
+/// Formats upload failures for logging (file scope keeps `CloudKitUploadQueueActor` under SwiftLint type body limits).
+private func formatCloudKitUploadQueueError(_ error: Error) -> String {
+    if let cloudSyncError = error as? CloudSyncError {
+        switch cloudSyncError {
+        case .noUbiquityURL:
+            return "No iCloud Drive URL available"
+        case .notImplemented:
+            return "Feature not implemented"
+        case .invalidData:
+            return "Invalid game data"
+        case .missingDependency:
+            return "Missing required dependency"
+        case .cloudKitContainerUnavailable:
+            return "CloudKit is not available (check iCloud / CloudKit entitlements and provisioning)"
+        case .alreadyExists:
+            return "Record already exists"
+        case .cloudKitError(let underlyingError):
+            if let ckError = underlyingError as? CKError {
+                return "CloudKit error: \(ckError.localizedDescription) (code: \(ckError.code.rawValue)"
+            }
+            return "CloudKit error: \(underlyingError.localizedDescription)"
+        case .fileSystemError(let underlyingError):
+            return "File system error: \(underlyingError.localizedDescription)"
+        case .zipError(let underlyingError):
+            return "Zip error: \(underlyingError.localizedDescription)"
+        case .realmError(let underlyingError):
+            return "Realm error: \(underlyingError.localizedDescription)"
+        case .unknown:
+            return "Unknown error"
+        case .recordNotFound:
+            return "Record not found"
+        case .genericError(let message):
+            return "Generic error: \(message)"
+        case .gameNotFound(let message):
+            return "Game not found: \(message)"
+        case .noAccount:
+            return "No iCloud account configured"
+        case .accountRestricted:
+            return "iCloud account is restricted"
+        case .accountStatusUnknown:
+            return "Could not determine iCloud account status"
+        case .accountTemporarilyUnavailable:
+            return "iCloud account temporarily unavailable"
+        case .insufficientSpace(let required, let available):
+            let need = ByteCountFormatter.string(fromByteCount: required, countStyle: .file)
+            let have = ByteCountFormatter.string(fromByteCount: available, countStyle: .file)
+            return "Insufficient space: need \(need), have \(have)"
+        case .downloadCancelled:
+            return "Download cancelled"
+        case .downloadQueueFull:
+            return "Download queue is full"
+        case .assetTooLarge(let size, let maxSize):
+            let sz = ByteCountFormatter.string(fromByteCount: size, countStyle: .file)
+            let maxSz = ByteCountFormatter.string(fromByteCount: maxSize, countStyle: .file)
+            return "Asset too large: \(sz) > \(maxSz)"
+        case .networkUnavailable:
+            return "Network unavailable"
+        case .pausedForEmulation:
+            return "Paused for emulator session"
+        }
+    }
+
+    let nsError = error as NSError
+    var details = "\(error.localizedDescription)"
+    if !nsError.domain.isEmpty && nsError.domain != "NSCocoaErrorDomain" {
+        details += " (domain: \(nsError.domain), code: \(nsError.code))"
+    }
+    if let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? Error {
+        details += " - Underlying: \(underlyingError.localizedDescription)"
+    }
+    return details
 }
 
 // MARK: - CloudSyncError Extension
