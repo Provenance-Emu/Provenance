@@ -101,7 +101,6 @@ enum RomFileProviderLibrary {
         return "Unknown"
     }
 
-
     /// Human-readable label for a `rating:<key>` virtual folder.
     static func ratingFolderLabel(forKey key: String) -> String {
         if key == "unrated" { return "Unrated" }

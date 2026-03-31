@@ -75,11 +75,11 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
 
     private func encodePageOffset(_ offset: Int) -> NSFileProviderPage {
         var value = UInt64(offset).littleEndian
-        return NSFileProviderPage(Data(bytes: &value, count: MemoryLayout<UInt64>.size))
+        let data = withUnsafeBytes(of: &value) { Data($0) }
+        return NSFileProviderPage(data)
     }
 
     // MARK: - CPDI local entry cache
-
 
     private func loadLocalRowsIfNeeded() -> [RomFileProviderLibrary.LocalEntry] {
         if let cached = cachedLocalRows { return cached }
@@ -173,8 +173,8 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
         case .publishers:
             let rows = loadLocalRowsIfNeeded()
             var titles: [String: String] = [:]
-            for row in rows {
-                if titles[row.publisherKey] == nil { titles[row.publisherKey] = row.publisherTitle }
+            for row in rows where titles[row.publisherKey] == nil {
+                titles[row.publisherKey] = row.publisherTitle
             }
             let keys = titles.keys.sorted { k1, k2 in
                 (titles[k1] ?? "").localizedCaseInsensitiveCompare(titles[k2] ?? "") == .orderedAscending
@@ -200,8 +200,8 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
         case .regions:
             let rows = loadLocalRowsIfNeeded()
             var map: [String: String] = [:]
-            for row in rows {
-                if map[row.regionKey] == nil { map[row.regionKey] = row.regionTitle }
+            for row in rows where map[row.regionKey] == nil {
+                map[row.regionKey] = row.regionTitle
             }
             let keys = map.keys.sorted { k1, k2 in
                 (map[k1] ?? "").localizedCaseInsensitiveCompare(map[k2] ?? "") == .orderedAscending
@@ -234,8 +234,7 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
         if cachedLocalSystemIDs == nil {
             cachedLocalSystemIDs = Set(loadLocalRowsIfNeeded().map { $0.game.systemIdentifier })
         }
-        let localSystemIDs = cachedLocalSystemIDs!
-        guard !localSystemIDs.isEmpty else { return ([], 0) }
+        guard let localSystemIDs = cachedLocalSystemIDs, !localSystemIDs.isEmpty else { return ([], 0) }
 
         let systems = RomFileProviderLibrary.realm.objects(PVSystem.self)
             .filter("identifier IN %@", Array(localSystemIDs))
@@ -260,7 +259,7 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
             ).map { ($0.game, $0.romURL) }
             cachedCanonicalGames = localGames
         }
-        let localGames = cachedCanonicalGames!
+        guard let localGames = cachedCanonicalGames else { return ([], 0) }
         let total = localGames.count
         let page = localGames.dropFirst(offset).prefix(limit)
         let items = page.map { pair -> FileProviderItem in
@@ -271,22 +270,28 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
 
     private func buildPublisherInterior(groupingKey: String, encodedSegment: String, offset: Int, limit: Int) throws -> ([FileProviderItem], Int) {
         let rows = loadLocalRowsIfNeeded().filter { $0.publisherKey == groupingKey }
-        let allGames = FileProviderItem(publisherAllGamesFolderGroupingKey: groupingKey, parentItemIdentifier: NSFileProviderItemIdentifier(RomFileProviderVirtualPath.publisherFolderPrefix + encodedSegment))
+        let pubFolderId = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.publisherFolderPrefix + encodedSegment)
+        let allGames = FileProviderItem(
+            publisherAllGamesFolderGroupingKey: groupingKey,
+            parentItemIdentifier: pubFolderId
+        )
 
         var systemIds = Set<String>()
         for row in rows { systemIds.insert(row.game.systemIdentifier) }
-        let systems = RomFileProviderLibrary.realm.objects(PVSystem.self)
-            .filter("identifier IN %@", Array(systemIds))
-            .sorted(byKeyPath: "name", ascending: true)
 
         var children: [FileProviderItem] = [allGames]
-        for pvSystem in systems {
-            guard !pvSystem.isInvalidated else { continue }
-            children.append(FileProviderItem(
-                publisherSystemFolderGroupingKey: groupingKey,
-                system: pvSystem.asDomain(),
-                parentItemIdentifier: NSFileProviderItemIdentifier(RomFileProviderVirtualPath.publisherFolderPrefix + encodedSegment)
-            ))
+        if !systemIds.isEmpty {
+            let systems = RomFileProviderLibrary.realm.objects(PVSystem.self)
+                .filter("identifier IN %@", Array(systemIds))
+                .sorted(byKeyPath: "name", ascending: true)
+            for pvSystem in systems {
+                guard !pvSystem.isInvalidated else { continue }
+                children.append(FileProviderItem(
+                    publisherSystemFolderGroupingKey: groupingKey,
+                    system: pvSystem.asDomain(),
+                    parentItemIdentifier: pubFolderId
+                ))
+            }
         }
         return pageSlice(items: children, offset: offset, limit: limit)
     }
@@ -303,12 +308,13 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
         let end = min(offset + limit, total)
         let slice = rows[offset..<end]
         let items = slice.map { row -> FileProviderItem in
-            let sid = RomFileProviderVirtualPath.symlinkIdentifier(gameMD5: row.game.md5, parentItemRaw: parentRaw)
+            let md5Key = row.game.md5.uppercased()
+            let sid = RomFileProviderVirtualPath.symlinkIdentifier(gameMD5: md5Key, parentItemRaw: parentRaw)
             return FileProviderItem(
                 symlinkTo: row.game,
                 romURL: row.romURL,
                 symlinkRawId: sid,
-                targetGameMD5: row.game.md5,
+                targetGameMD5: md5Key,
                 parentItemIdentifier: parentIdentifier
             )
         }

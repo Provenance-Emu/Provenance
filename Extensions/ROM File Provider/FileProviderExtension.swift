@@ -499,7 +499,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
     }
 
     private func resolveCanonicalGame(raw: String) -> FileProviderItem? {
-        let md5 = String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count))
+        let md5 = String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count)).uppercased()
         let realm = RomFileProviderLibrary.realm
         guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
               !pvGame.isInvalidated else { return nil }
@@ -543,6 +543,5 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.publisherFolderPrefix + enc)
         return FileProviderItem(publisherSystemFolderGroupingKey: groupingKey, system: pvSystem.asDomain(), parentItemIdentifier: parent)
     }
-
-
 }
+
