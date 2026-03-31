@@ -36,6 +36,10 @@ public class SceneCoordinator: ObservableObject {
     // Track whether we should show the emulator
     @Published public var showEmulator: Bool = false
 
+    /// Guards against concurrent `launchGameWithValidation` tasks.
+    /// When non-nil, a launch is already in progress and new calls are dropped.
+    private var activeLaunchTask: Task<Void, Never>?
+
     // Cancellables for observation
     private var cancellables = Set<AnyCancellable>()
 
@@ -144,16 +148,24 @@ public class SceneCoordinator: ObservableObject {
 
     /// Launch a specific game with error handling and sync validation
     public func launchGame(_ game: PVGame) {
+        guard activeLaunchTask == nil else {
+            ILOG("SceneCoordinator: Ignoring launchGame — launch already in progress")
+            return
+        }
         ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id))")
 
-        // Validate and sync game before launch
-        Task { @MainActor in
-            await launchGameWithValidation(game)
+        activeLaunchTask = Task { @MainActor [weak self] in
+            defer { self?.activeLaunchTask = nil }
+            await self?.launchGameWithValidation(game)
         }
     }
 
     /// Launch a save state with sync validation for game ROM, BIOS, and save state
     public func launchSaveState(_ saveState: PVSaveState, core: PVCore? = nil) {
+        guard activeLaunchTask == nil else {
+            ILOG("SceneCoordinator: Ignoring launchSaveState — launch already in progress")
+            return
+        }
         guard let game = saveState.game else {
             showGameLaunchError(
                 title: "Cannot Launch Save State",
@@ -164,19 +176,23 @@ public class SceneCoordinator: ObservableObject {
 
         ILOG("SceneCoordinator: Launching save state: \(saveState.id) for game: \(game.title)")
 
-        // Validate and sync before launch
-        Task { @MainActor in
-            await launchSaveStateWithValidation(saveState, game: game, core: core)
+        activeLaunchTask = Task { @MainActor [weak self] in
+            defer { self?.activeLaunchTask = nil }
+            await self?.launchSaveStateWithValidation(saveState, game: game, core: core)
         }
     }
 
     /// Launch a game with optional core (bypasses core selection if core is provided)
     public func launchGame(_ game: PVGame, core: PVCore?) {
+        guard activeLaunchTask == nil else {
+            ILOG("SceneCoordinator: Ignoring launchGame(core:) — launch already in progress")
+            return
+        }
         ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id)) with core: \(core?.projectName ?? "auto")")
 
-        // Validate and sync game before launch
-        Task { @MainActor in
-            await launchGameWithValidation(game, core: core)
+        activeLaunchTask = Task { @MainActor [weak self] in
+            defer { self?.activeLaunchTask = nil }
+            await self?.launchGameWithValidation(game, core: core)
         }
     }
 
@@ -568,15 +584,14 @@ public class SceneCoordinator: ObservableObject {
         guard pendingBIOSDownloads.contains(name) else { return }
         pendingBIOSDownloads.remove(name)
 
-        if currentScene == .main {
-            alertState.show(
-                title: "BIOS Downloaded",
-                message: " '\(url.lastPathComponent)' is ready. You can launch games that require it.",
-                type: .success
-            )
-        } else {
-            completedBIOSDownloadsWhileInEmulator.append(url.lastPathComponent)
-        }
+        // Use non-blocking toasts instead of modal alerts so downloads completing
+        // during a launch flow don't interrupt core selection or other UI.
+        PVToastManager.post(
+            "BIOS ready: \(url.lastPathComponent)",
+            type: .success,
+            duration: 3.5,
+            icon: "internaldrive.fill"
+        )
     }
 
     /// Show any BIOS download completions that happened while in emulator, once back in library
@@ -586,10 +601,11 @@ public class SceneCoordinator: ObservableObject {
         completedBIOSDownloadsWhileInEmulator.removeAll()
 
         let list = names.joined(separator: ", ")
-        alertState.show(
-            title: "BIOS Downloads Completed",
-            message: "\(list) ready. You can launch games that need these BIOS files.",
-            type: .success
+        PVToastManager.post(
+            "BIOS ready: \(list)",
+            type: .success,
+            duration: 4.0,
+            icon: "internaldrive.fill"
         )
     }
 
