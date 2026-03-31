@@ -205,7 +205,6 @@ public struct N64ControllerPakView: View {
                 .foregroundStyle(Color.retroPink)
                 .shadow(color: Color.retroPink.opacity(0.7), radius: 6)
 
-            /// Fills remaining width so the footnote wraps correctly beside the icon on narrow screens.
             VStack(alignment: .leading, spacing: 6) {
                 if let title = gameTitle {
                     Text(title)
