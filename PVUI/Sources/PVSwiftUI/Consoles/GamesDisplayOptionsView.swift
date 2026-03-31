@@ -144,6 +144,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             .onChange(of: showGameBadges) { _ in
                 Haptics.impact(style: .light)
             }
+            Toggle(isOn: $scrollLongGameTitles) {
+                Label("Scroll Game Titles", systemImage: "textformat.characters.arrow.left.and.right")
+            }
         }
         label: {
             ZStack {
@@ -177,6 +180,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
                 Toggle(isOn: $showGameBadges) {
                     Label("Show Badges", systemImage: "rosette")
+                }
+                Toggle(isOn: $scrollLongGameTitles) {
+                    Label("Scroll Game Titles", systemImage: "textformat.characters.arrow.left.and.right")
                 }
             }
             label: {

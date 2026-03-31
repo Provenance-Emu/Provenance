@@ -98,9 +98,9 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
         /// Indicates whether items in this state should block duplicate entries in the queue
         public var blocksDuplicateProcessing: Bool {
             switch self {
-            case .queued, .processing, .extracting, .partial:
+            case .queued, .processing, .extracting, .partial, .conflict:
                 return true
-            case .success, .failure, .conflict:
+            case .success, .failure:
                 return false
             }
         }
@@ -140,6 +140,10 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
                     switch status {
                     case .conflict, .failure: // .failure has an associated value, .conflict does not
                         self.status = .queued // Explicit self for clarity within switch
+                        // Trigger processing restart for newly queued item
+                        Task {
+                            NotificationCenter.default.post(name: .GameImporterQueueItemRequeued, object: self)
+                        }
                     case .partial(let expectedFiles):
                         // When user selects a system for a partial item, change to queued
                         // The import process will check if files are resolved and handle accordingly

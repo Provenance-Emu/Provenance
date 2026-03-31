@@ -46,8 +46,6 @@ static bool _isOff = false;
 }
 
 @synthesize valueChangedHandler;
-@dynamic ringBuffers;
-@dynamic discCount;
 
 - (instancetype)init {
     if (self = [super init]) {

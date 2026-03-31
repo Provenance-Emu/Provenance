@@ -3,11 +3,27 @@
 // Implements the helpers declared in PVRetroArchCoreCapabilities.h by reading
 // live RetroArch runloop state that the core populated during initialization.
 
+#import <Foundation/Foundation.h>
 #include "PVRetroArchCoreCapabilities.h"
+#import "PVRetroArchCoreBridge.h"
 
 /* RetroArch internals */
 #include "libretro-common/include/libretro.h"
 #include "../../retroarch.h"
+
+// ---------------------------------------------------------------------------
+// Core game-loaded callback
+// ---------------------------------------------------------------------------
+void pv_notify_core_game_loaded(void) {
+    PVRetroArchCoreBridge *bridge = _current;
+    if (!bridge) return;
+    if (![bridge respondsToSelector:@selector(onCoreGameLoaded)]) return;
+    void (^callback)(void) = bridge.onCoreGameLoaded;
+    if (callback) {
+        bridge.onCoreGameLoaded = nil;
+        dispatch_async(dispatch_get_main_queue(), callback);
+    }
+}
 
 // ---------------------------------------------------------------------------
 // RETRO_DEVICE_MOUSE detection

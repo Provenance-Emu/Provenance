@@ -1086,7 +1086,8 @@ public final class GameImporter: GameImporting, ObservableObject {
         let queuedItems = queueSnapshot.filter { $0.status == .queued }
         guard !queuedItems.isEmpty else { return }
 
-        let currentState = await MainActor.run { processingState }
+        // Use normalizedProcessingState to detect and recover from stale .processing state
+        let currentState = await normalizedProcessingState(reason: context)
         guard currentState == .idle else {
             VLOG("GameImporter: Skipping auto-restart (\(context)) - state \(currentState)")
             return
@@ -2227,6 +2228,13 @@ public final class GameImporter: GameImporting, ObservableObject {
             }
             NotificationCenter.default.post(name: .GameImporterDidFinish, object: nil)
         }
+
+        // Auto-clear completed items after processing finishes
+        await clearCompleted()
+
+        // Check if new items were queued during processing (e.g., from conflict resolution)
+        // and restart if needed
+        await restartProcessingIfQueueHasPendingWork(context: "post-processQueue-recheck")
     }
 
     // Process a single ImportItem and update its status

@@ -12,3 +12,10 @@
 "Delete" = "삭제";
 "Error" = "오류";
 "Warning" = "경고";
+
+// External file URL import (Open in Provenance — copy / skin import, not import queue)
+"external_import.unknown_file" = "파일";
+"external_import.skin.title" = "스킨 가져옴";
+"external_import.skin.subtitle" = "%@";
+"external_import.file.title" = "파일 추가됨";
+"external_import.file.subtitle" = "%@이(가) 가져오기 폴더에 복사되었습니다.";

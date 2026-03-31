@@ -2747,7 +2747,11 @@ static void cocoa_input_grab_mouse(void *data, bool state)
    apple->mouse_grabbed = state;
 
    if (@available(iOS 14, *))
-      [[CocoaView get] setNeedsUpdateOfPrefersPointerLocked];
+   {
+      dispatch_async(dispatch_get_main_queue(), ^{
+         [[CocoaView get] setNeedsUpdateOfPrefersPointerLocked];
+      });
+   }
 }
 #endif
 

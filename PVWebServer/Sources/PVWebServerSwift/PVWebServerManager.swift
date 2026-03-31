@@ -62,8 +62,8 @@ public actor PVWebServerManager {
 
     /// Start both the HTTP and WebDAV servers using the current `useModernServer` value.
     ///
-    /// Call `refreshFeatureFlag()` before `start()` if you need to re-evaluate the
-    /// `modernWebServer` flag from `UserDefaults` debug overrides or `features.json`.
+    /// Call `refreshFeatureFlag()` before `start()` when linking `PVUIBase` so `useModernServer`
+    /// matches `PVFeatureFlags` (including debug overrides). Otherwise call `setModernServerEnabled(_:)`.
     ///
     /// - Returns: `true` if both servers started successfully.
     /// - Throws: Any error propagated from the active server implementation.
@@ -78,13 +78,23 @@ public actor PVWebServerManager {
         }
 
         let server = await makeServer()
-        let ok = try await server.startServers()
-        if ok {
-            activeServer = server
-            let implName = useModernServer ? "Modern (Hummingbird)" : "Legacy (GCDWebServer)"
-            ILOG("[WebServerManager] Started \(implName) server — HTTP: \(server.serverURL?.absoluteString ?? "?"), DAV: \(server.webDAVURL?.absoluteString ?? "?")")
+        do {
+            let ok = try await server.startServers()
+            if ok {
+                activeServer = server
+                let implName = useModernServer ? "Modern (Hummingbird)" : "Legacy (GCDWebServer)"
+                ILOG("[WebServerManager] Started \(implName) server — HTTP: \(server.serverURL?.absoluteString ?? "?"), DAV: \(server.webDAVURL?.absoluteString ?? "?")")
+            } else {
+                // Modern may report false after tearing down listeners; legacy rolls back one service — always stop so the next start() is idempotent.
+                await server.stopServers()
+                WLOG("[WebServerManager] startServers returned false; implementation was stopped to reset state.")
+            }
+            return ok
+        } catch {
+            await server.stopServers()
+            ELOG("[WebServerManager] startServers threw: \(error.localizedDescription)")
+            throw error
         }
-        return ok
     }
 
     /// Stop the active server (if any).
@@ -99,16 +109,19 @@ public actor PVWebServerManager {
 
     /// Creates the active server implementation.
     ///
-    /// `PVLegacyWebServerAdapter` wraps the ObjC `PVWebServer` singleton whose
-    /// `+initialize` method (`GCDWebServerInitializeFunctions`) asserts it is called
-    /// on the main thread.  Bounce through `MainActor.run` so the first ObjC class
-    /// initialisation always happens on the main thread regardless of which actor
-    /// or queue this method is called from.
+    /// `PVLegacyWebServerAdapter` touches the ObjC `PVWebServer` singleton whose
+    /// `+initialize` path expects the main thread. Use `DispatchQueue.main.async`
+    /// (not `MainActor.run`) so `@MainActor` callers awaiting `start()` do not deadlock
+    /// with this actor.
     private func makeServer() async -> any PVWebServerProtocol {
         if useModernServer {
             return PVModernWebServer()
         } else {
-            return await MainActor.run { PVLegacyWebServerAdapter() }
+            return await withCheckedContinuation { (continuation: CheckedContinuation<PVLegacyWebServerAdapter, Never>) in
+                DispatchQueue.main.async {
+                    continuation.resume(returning: PVLegacyWebServerAdapter())
+                }
+            }
         }
     }
 }
@@ -145,24 +158,6 @@ extension PVWebServerManager {
 // MARK: - Feature Flag Evaluation
 
 extension PVWebServerManager {
-
-    /// Call this once at app startup (or when feature flags are refreshed) to
-    /// pick up the current `modernWebServer` flag value.  Safe to call from any
-    /// isolation context — the actor serialises the write.
-    public func refreshFeatureFlag() {
-        // Check UserDefaults debug override first (mirrors PVFeatureFlags logic).
-        if let rawDict = UserDefaults.standard.dictionary(forKey: "PVFeatureFlagsDebugOverrides"),
-           let override = rawDict["modernWebServer"] as? Bool {
-            useModernServer = override
-            return
-        }
-
-        // No debug override present — default to the legacy ObjC web server.
-        // NOTE: This does NOT currently read from PVFeatureFlags/features.json.
-        // Callers with a resolved PVFeatureFlagsManager should inject the value explicitly:
-        //   await PVWebServerManager.shared.setModernServerEnabled(flags.modernWebServer)
-        useModernServer = false
-    }
 
     /// Programmatically override the implementation selection (useful for tests
     /// or for callers that already have a resolved `PVFeatureFlagsManager`).

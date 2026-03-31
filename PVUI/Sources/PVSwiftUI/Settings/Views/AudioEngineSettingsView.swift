@@ -37,6 +37,7 @@ struct AudioEngineSettingsView: View {
             }
             #if os(tvOS)
             .listStyle(.plain)
+            #else
             .scrollContentBackground(.hidden)
             #endif
         }

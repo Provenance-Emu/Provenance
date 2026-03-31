@@ -285,7 +285,9 @@ public struct CloudSyncSettingsView: View {
         }
     }
 
-    /// Account status warning banner
+    /// Account status warning banner — shows the specific reason from the view model
+    /// so the user knows whether the issue is a missing account, restricted access,
+    /// a missing entitlement, or a transient error.
     private var accountStatusWarning: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
@@ -297,9 +299,21 @@ public struct CloudSyncSettingsView: View {
                     .foregroundColor(.white)
             }
 
-            Text("cloud_sync.account.issue_description", bundle: .module)
-                .font(.subheadline)
-                .foregroundColor(.gray)
+            // Show the specific status from the view model when available,
+            // otherwise fall back to the generic localized description.
+            if !viewModel.syncStatus.isEmpty {
+                Text(viewModel.syncStatus)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            } else {
+                Text("cloud_sync.account.issue_description", bundle: .module)
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+            }
+
+            Text("Check that iCloud is enabled in Settings → Apple Account → iCloud, and that Provenance is allowed under \"Apps Using iCloud\".")
+                .font(.caption)
+                .foregroundColor(.gray.opacity(0.8))
         }
         .padding()
         .background(Color.orange.opacity(0.2))

@@ -95,6 +95,10 @@ extern "C" bool pvjit_acquired(void);
 
 @import GameController;
 
+@interface NSObject (PVLibRetroRumbleHelperDecl)
++ (void)rumbleWithPort:(uint32_t)port isStrong:(BOOL)isStrong strength:(uint16_t)strength;
+@end
+
 /// Rumble callback matching retro_set_rumble_state_t.
 /// Dispatches to PVLibRetroRumbleHelper (Swift) via ObjC runtime.
 static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect effect, uint16_t strength) {

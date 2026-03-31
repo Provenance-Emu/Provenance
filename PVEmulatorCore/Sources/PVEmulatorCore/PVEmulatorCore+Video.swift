@@ -72,7 +72,7 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
 
 //    @MainActor
     @objc
-    open var videoBuffer: UnsafeMutableRawPointer? {
+    open var videoBuffer: UnsafeRawPointer? {
         bridge.videoBuffer
     }
 

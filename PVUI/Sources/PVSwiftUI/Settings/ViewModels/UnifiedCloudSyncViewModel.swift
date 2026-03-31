@@ -1304,19 +1304,21 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         }
     }
 
-    /// Convert CKAccountStatus to string
+    /// Convert CKAccountStatus to a user-facing description
     private func accountStatusString(_ status: CKAccountStatus) -> String {
         switch status {
         case .available:
             return "Available"
         case .couldNotDetermine:
-            return "Could not determine"
+            return "Could not determine iCloud status — this is usually temporary, try again in a moment"
         case .restricted:
-            return "Restricted"
+            return "iCloud is restricted on this device (parental controls or MDM policy)"
         case .noAccount:
-            return "No account"
+            return "No iCloud account signed in, or Provenance is not enabled under iCloud settings"
+        case .temporarilyUnavailable:
+            return "iCloud is temporarily unavailable — try again in a moment"
         @unknown default:
-            return "Unknown"
+            return "Unknown iCloud status"
         }
     }
 

@@ -102,8 +102,6 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @interface PVCoreObjCBridge : NSObject {
 
 @public
-    NSMutableArray<id<RingBufferProtocol>> *ringBuffers;
-
 	double _sampleRate;
 
 	NSTimeInterval gameInterval;
@@ -131,6 +129,10 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
     UIViewController* _Nullable _touchViewController;
 #endif
 }
+
+/// Exposed for Swift `EmulatorCoreAudioDataSource` (`@synthesize` in PVCoreObjCBridge.m).
+@property (nonatomic, strong, readwrite, nullable) NSMutableArray<id<RingBufferProtocol>> *ringBuffers;
+@property (nonatomic, readonly) NSUInteger discCount;
 
 @property (nonatomic, copy, nullable) NSString *romName;
 @property (nonatomic, copy, nullable) NSString *batterySavesPath;
@@ -218,7 +220,7 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, readonly) BOOL rendersToOpenGL;
 @property (nonatomic, readonly) NSTimeInterval frameInterval;
 
-@property (nonatomic, readonly, nullable) const void * videoBuffer;
+@property (nonatomic, readonly, nullable) const void *videoBuffer;
 - (void)swapBuffers;
 - (void)executeFrame;
 //@end

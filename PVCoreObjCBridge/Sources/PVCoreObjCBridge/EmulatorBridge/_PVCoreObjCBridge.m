@@ -73,6 +73,8 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 //PV_OBJC_DIRECT_MEMBERS
 @implementation PVCoreObjCBridge
 
+@synthesize ringBuffers;
+
 + (void)initialize {
     if (self == [PVCoreObjCBridge class]) {
         PVEmulatorCoreClass = [PVCoreObjCBridge class];
@@ -89,7 +91,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 - (instancetype)init {
 	if ((self = [super init])) {
         NSUInteger count         = [self audioBufferCount];
-        ringBuffers              = [[NSMutableArray<id<RingBufferProtocol>> alloc] init];
+        self.ringBuffers         = [[NSMutableArray<id<RingBufferProtocol>> alloc] init];
         _emulationLoopThreadLock = [NSLock new];
         _frontBufferCondition    = [NSCondition new];
         _frontBufferLock         = [NSLock new];
@@ -766,20 +768,20 @@ static NSString *_systemName;
 }
 
 - (id<RingBufferProtocol>)ringBufferAtIndex:(NSUInteger)index {
-    if (UNLIKELY(ringBuffers.count <= index)) {
+    if (UNLIKELY(self.ringBuffers.count <= index)) {
         NSInteger length = [self audioBufferSizeForBuffer:index] * 32;
         RingBufferType bufferType = [PVSettingsWrapper audioRingBufferType];
 
         id<RingBufferProtocol> newRingBuffer = [RingBufferFactory makeWithType:bufferType withLength:length];
         if(newRingBuffer) {
-            [ringBuffers addObject:newRingBuffer];
+            [self.ringBuffers addObject:newRingBuffer];
         } else {
             ELOG(@"Failed to created newRingBuffer");
         }
         return newRingBuffer;
     }
 
-    return ringBuffers[index];
+    return self.ringBuffers[index];
 }
 @end
 

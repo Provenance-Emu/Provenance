@@ -1,430 +1,580 @@
 {
-  "originHash": "179078be3f52533082cc8e669d45ff0237a9193e235d57c120c7cd544a818ead",
-  "pins": [
+  "originHash" : "bb4da55c69e45e7f8c6636a099a1134f39cd36e7800bbdd632ce2d20350517cc",
+  "pins" : [
     {
-      "identity": "activityindicatorview",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/exyte/ActivityIndicatorView.git",
-      "state": {
-        "revision": "9970fd0bb7a05dad0b6566ae1f56937716686b24",
-        "version": "1.1.1"
+      "identity" : "activityindicatorview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/ActivityIndicatorView.git",
+      "state" : {
+        "revision" : "9970fd0bb7a05dad0b6566ae1f56937716686b24",
+        "version" : "1.1.1"
       }
     },
     {
-      "identity": "animatedgradient",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/exyte/AnimatedGradient.git",
-      "state": {
-        "revision": "70f5d34bc553483936e86eca3984b6e12302ead2",
-        "version": "1.0.0"
+      "identity" : "animatedgradient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/AnimatedGradient.git",
+      "state" : {
+        "revision" : "70f5d34bc553483936e86eca3984b6e12302ead2",
+        "version" : "1.0.0"
       }
     },
     {
-      "identity": "bitbytedata",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/tsolomko/BitByteData",
-      "state": {
-        "revision": "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
-        "version": "2.0.4"
+      "identity" : "async-http-client",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-server/async-http-client.git",
+      "state" : {
+        "revision" : "3a5b74a58782c3b4c1f0bc75e9b67b10c2494e8f",
+        "version" : "1.33.1"
       }
     },
     {
-      "identity": "buildenvironment",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/DimaRU/BuildEnvironment.git",
-      "state": {
-        "revision": "5f7dc4a7f9bde8414764b8a342b091b2e987e674",
-        "version": "1.0.0"
+      "identity" : "bitbytedata",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tsolomko/BitByteData",
+      "state" : {
+        "revision" : "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
+        "version" : "2.0.4"
       }
     },
     {
-      "identity": "checksum",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/JoeMatt/Checksum.git",
-      "state": {
-        "revision": "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
-        "version": "1.1.1"
+      "identity" : "buildenvironment",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DimaRU/BuildEnvironment.git",
+      "state" : {
+        "revision" : "5f7dc4a7f9bde8414764b8a342b091b2e987e674",
+        "version" : "1.0.0"
       }
     },
     {
-      "identity": "daterangepicker",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/MrAsterisco/DateRangePicker",
-      "state": {
-        "revision": "5b1ec8990b42f7f4f21a596300707d3a024dd782",
-        "version": "1.0.3"
+      "identity" : "checksum",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Checksum.git",
+      "state" : {
+        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version" : "1.1.1"
       }
     },
     {
-      "identity": "defaults",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/sindresorhus/Defaults.git",
-      "state": {
-        "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
-        "version": "9.0.8",
-        "branch": null
+      "identity" : "daterangepicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MrAsterisco/DateRangePicker",
+      "state" : {
+        "revision" : "5b1ec8990b42f7f4f21a596300707d3a024dd782",
+        "version" : "1.0.3"
       }
     },
     {
-      "identity": "floatingbutton",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/exyte/FloatingButton.git",
-      "state": {
-        "revision": "cf77c2f124df1423d90a9a1985e9b9ccfa4b9b3e",
-        "version": "1.3.0"
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "revision" : "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
+        "version" : "9.0.8"
       }
     },
     {
-      "identity": "freemiumkit",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/FlineDev/FreemiumKit.git",
-      "state": {
-        "revision": "540652a0a0ba8b1a998e6022d944e42ee545d867",
-        "version": "1.19.0"
+      "identity" : "floatingbutton",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/FloatingButton.git",
+      "state" : {
+        "revision" : "cf77c2f124df1423d90a9a1985e9b9ccfa4b9b3e",
+        "version" : "1.3.0"
       }
     },
     {
-      "identity": "highlightr",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/raspu/Highlightr.git",
-      "state": {
-        "revision": "bcf2d0590f32ac2528feb72d7e34f5b463801a47",
-        "version": "2.2.1"
+      "identity" : "freemiumkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/FlineDev/FreemiumKit.git",
+      "state" : {
+        "revision" : "540652a0a0ba8b1a998e6022d944e42ee545d867",
+        "version" : "1.19.0"
       }
     },
     {
-      "identity": "keychainaccess",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/kishikawakatsumi/KeychainAccess.git",
-      "state": {
-        "revision": "84e546727d66f1adc5439debad16270d0fdd04e7",
-        "version": "4.2.2"
+      "identity" : "highlightr",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/raspu/Highlightr.git",
+      "state" : {
+        "revision" : "bcf2d0590f32ac2528feb72d7e34f5b463801a47",
+        "version" : "2.2.1"
       }
     },
     {
-      "identity": "lighter",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/JoeMatt/Lighter.git",
-      "state": {
-        "branch": "develop",
-        "revision": "b1c78989db429349427cd90b9b99925ff3253853"
+      "identity" : "hummingbird",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hummingbird-project/hummingbird.git",
+      "state" : {
+        "revision" : "d1ce7bbd2f1b17f22031ca4c0daeb39eff07a92e",
+        "version" : "2.21.1"
       }
     },
     {
-      "identity": "markdownview",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/LiYanan2004/MarkdownView.git",
-      "state": {
-        "revision": "8b746c5146b7842e9547b4d60adb2f1712cebb33",
-        "version": "1.7.0"
+      "identity" : "keychainaccess",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kishikawakatsumi/KeychainAccess.git",
+      "state" : {
+        "revision" : "84e546727d66f1adc5439debad16270d0fdd04e7",
+        "version" : "4.2.2"
       }
     },
     {
-      "identity": "mbprogresshud",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/jdg/MBProgressHUD.git",
-      "state": {
-        "revision": "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
-        "version": "1.2.0"
+      "identity" : "lighter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Lighter.git",
+      "state" : {
+        "revision" : "b1c78989db429349427cd90b9b99925ff3253853",
+        "version" : "1.0.0"
       }
     },
     {
-      "identity": "opendateinterval",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/MrAsterisco/OpenDateInterval",
-      "state": {
-        "revision": "acf88f98adae4ef2f7040d3fcc23685b094b219b",
-        "version": "1.0.0"
+      "identity" : "markdownview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LiYanan2004/MarkdownView.git",
+      "state" : {
+        "revision" : "8b746c5146b7842e9547b4d60adb2f1712cebb33",
+        "version" : "1.7.0"
       }
     },
     {
-      "identity": "plzmasdk",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/OlehKulykov/PLzmaSDK.git",
-      "state": {
-        "branch": "1.2.5",
-        "revision": "ee2666a06aa1f6632d5060d1cf316520ed8aecbd"
+      "identity" : "mbprogresshud",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jdg/MBProgressHUD.git",
+      "state" : {
+        "revision" : "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
+        "version" : "1.2.0"
       }
     },
     {
-      "identity": "prefire",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/BarredEwe/Prefire",
-      "state": {
-        "revision": "172a7f0a95f99f6656f6b2d0531b648c08d26c56",
-        "version": "2.10.0"
+      "identity" : "opendateinterval",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MrAsterisco/OpenDateInterval",
+      "state" : {
+        "revision" : "acf88f98adae4ef2f7040d3fcc23685b094b219b",
+        "version" : "1.0.0"
       }
     },
     {
-      "identity": "realm-core",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/realm/realm-core.git",
-      "state": {
-        "revision": "15493076ad9fef22c16cc64cbfbf9e5b65c385f9",
-        "version": "20.1.0"
+      "identity" : "plzmasdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/OlehKulykov/PLzmaSDK.git",
+      "state" : {
+        "branch" : "1.2.5",
+        "revision" : "ee2666a06aa1f6632d5060d1cf316520ed8aecbd"
       }
     },
     {
-      "identity": "realm-swift",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/realm/realm-swift.git",
-      "state": {
-        "revision": "6260534683132eb981338c7c39fd5e69205876e6",
-        "version": "20.0.3"
+      "identity" : "prefire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BarredEwe/Prefire",
+      "state" : {
+        "revision" : "172a7f0a95f99f6656f6b2d0531b648c08d26c56",
+        "version" : "2.10.0"
       }
     },
     {
-      "identity": "rxdatasources",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/RxSwiftCommunity/RxDataSources.git",
-      "state": {
-        "revision": "90c29b48b628479097fe775ed1966d75ac374518",
-        "version": "5.0.2"
+      "identity" : "realm-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-core.git",
+      "state" : {
+        "revision" : "15493076ad9fef22c16cc64cbfbf9e5b65c385f9",
+        "version" : "20.1.0"
       }
     },
     {
-      "identity": "rxrealm",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/RxSwiftCommunity/RxRealm.git",
-      "state": {
-        "branch": "main",
-        "revision": "a7c89c2a0ce72946a2842f1b2645d2ded84a9c69"
+      "identity" : "realm-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-swift.git",
+      "state" : {
+        "revision" : "6260534683132eb981338c7c39fd5e69205876e6",
+        "version" : "20.0.3"
       }
     },
     {
-      "identity": "rxswift",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/ReactiveX/RxSwift.git",
-      "state": {
-        "revision": "c7c7d2cf50a3211fe2843f76869c698e4e417930",
-        "version": "6.8.0"
+      "identity" : "rxdatasources",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RxSwiftCommunity/RxDataSources.git",
+      "state" : {
+        "revision" : "90c29b48b628479097fe775ed1966d75ac374518",
+        "version" : "5.0.2"
       }
     },
     {
-      "identity": "sidekit",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/SideStore/SideKit.git",
-      "state": {
-        "branch": "main",
-        "revision": "ab959a54fc2217464ffabd09322ec3351e3ca456"
+      "identity" : "rxrealm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RxSwiftCommunity/RxRealm.git",
+      "state" : {
+        "revision" : "a7c89c2a0ce72946a2842f1b2645d2ded84a9c69"
       }
     },
     {
-      "identity": "siriusrating-ios",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/theappcapital/SiriusRating-iOS.git",
-      "state": {
-        "revision": "f2f1d88d960c6438f4b2e2562744f7814304cbf4",
-        "version": "1.0.8"
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift.git",
+      "state" : {
+        "revision" : "c7c7d2cf50a3211fe2843f76869c698e4e417930",
+        "version" : "6.8.0"
       }
     },
     {
-      "identity": "sqlite.swift",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/stephencelis/SQLite.swift.git",
-      "state": {
-        "revision": "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
-        "version": "0.15.3"
+      "identity" : "sidekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/SideKit.git",
+      "state" : {
+        "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
       }
     },
     {
-      "identity": "swcompression",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/JoeMatt/SWCompression.git",
-      "state": {
-        "branch": "develop",
-        "revision": "6ab39d1a3d9db303947ea5408925c48b9367204f"
+      "identity" : "siriusrating-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/theappcapital/SiriusRating-iOS.git",
+      "state" : {
+        "revision" : "f2f1d88d960c6438f4b2e2562744f7814304cbf4",
+        "version" : "1.0.8"
       }
     },
     {
-      "identity": "swift-asn1",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-asn1.git",
-      "state": {
-        "revision": "810496cf121e525d660cd0ea89a758740476b85f",
-        "version": "1.5.1"
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stephencelis/SQLite.swift.git",
+      "state" : {
+        "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
+        "version" : "0.15.3"
       }
     },
     {
-      "identity": "swift-async-algorithms",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-async-algorithms",
-      "state": {
-        "revision": "4c3ea81f81f0a25d0470188459c6d4bf20cf2f97",
-        "version": "1.0.3"
+      "identity" : "swcompression",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/SWCompression.git",
+      "state" : {
+        "revision" : "6ab39d1a3d9db303947ea5408925c48b9367204f",
+        "version" : "1.0.0"
       }
     },
     {
-      "identity": "swift-atomics",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-atomics.git",
-      "state": {
-        "revision": "cd142fd2f64be2100422d658e7411e39489da985",
-        "version": "1.2.0"
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms.git",
+      "state" : {
+        "revision" : "87e50f483c54e6efd60e885f7f5aa946cee68023",
+        "version" : "1.2.1"
       }
     },
     {
-      "identity": "swift-cmark",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-cmark.git",
-      "state": {
-        "revision": "3ccff77b2dc5b96b77db3da0d68d28068593fa53",
-        "version": "0.5.0"
+      "identity" : "swift-asn1",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-asn1.git",
+      "state" : {
+        "revision" : "810496cf121e525d660cd0ea89a758740476b85f",
+        "version" : "1.5.1"
       }
     },
     {
-      "identity": "swift-collections",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-collections",
-      "state": {
-        "revision": "671108c96644956dddcd89dd59c203dcdb36cec7",
-        "version": "1.1.4"
+      "identity" : "swift-async-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-async-algorithms",
+      "state" : {
+        "revision" : "9d349bcc328ac3c31ce40e746b5882742a0d1272",
+        "version" : "1.1.3"
       }
     },
     {
-      "identity": "swift-crypto",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-crypto.git",
-      "state": {
-        "revision": "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
-        "version": "3.15.1"
+      "identity" : "swift-atomics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-atomics.git",
+      "state" : {
+        "revision" : "cd142fd2f64be2100422d658e7411e39489da985",
+        "version" : "1.2.0"
       }
     },
     {
-      "identity": "swift-custom-dump",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/pointfreeco/swift-custom-dump",
-      "state": {
-        "revision": "06c57924455064182d6b217f06ebc05d00cb2990",
-        "version": "1.5.0"
+      "identity" : "swift-certificates",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-certificates.git",
+      "state" : {
+        "revision" : "24ccdeeeed4dfaae7955fcac9dbf5489ed4f1a25",
+        "version" : "1.18.0"
       }
     },
     {
-      "identity": "swift-http-types",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-http-types",
-      "state": {
-        "revision": "ef18d829e8b92d731ad27bb81583edd2094d1ce3",
-        "version": "1.3.1"
+      "identity" : "swift-cmark",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-cmark.git",
+      "state" : {
+        "revision" : "3ccff77b2dc5b96b77db3da0d68d28068593fa53",
+        "version" : "0.5.0"
       }
     },
     {
-      "identity": "swift-log",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-log.git",
-      "state": {
-        "revision": "bbd81b6725ae874c69e9b8c8804d462356b55523",
-        "version": "1.10.1"
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections",
+      "state" : {
+        "revision" : "6675bc0ff86e61436e615df6fc5174e043e57924",
+        "version" : "1.4.1"
       }
     },
     {
-      "identity": "swift-markdown",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-markdown.git",
-      "state": {
-        "revision": "8f79cb175981458a0a27e76cb42fee8e17b1a993",
-        "version": "0.5.0"
+      "identity" : "swift-configuration",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-configuration.git",
+      "state" : {
+        "revision" : "be76c4ad929eb6c4bcaf3351799f2adf9e6848a9",
+        "version" : "1.2.0"
       }
     },
     {
-      "identity": "swift-openapi-runtime",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/apple/swift-openapi-runtime",
-      "state": {
-        "revision": "5e119a3d52dde0229312ed586be99c666c6b6f64",
-        "version": "1.7.0"
+      "identity" : "swift-crypto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-crypto.git",
+      "state" : {
+        "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
+        "version" : "3.15.1"
       }
     },
     {
-      "identity": "swift-snapshot-testing",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/pointfreeco/swift-snapshot-testing.git",
-      "state": {
-        "revision": "bf8d8c27f0f0c6d5e77bff0db76ab68f2050d15d",
-        "version": "1.18.9"
+      "identity" : "swift-custom-dump",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-custom-dump",
+      "state" : {
+        "revision" : "06c57924455064182d6b217f06ebc05d00cb2990",
+        "version" : "1.5.0"
       }
     },
     {
-      "identity": "swift-syntax",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/swiftlang/swift-syntax.git",
-      "state": {
-        "revision": "0687f71944021d616d34d922343dcef086855920",
-        "version": "600.0.1"
+      "identity" : "swift-distributed-tracing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-distributed-tracing.git",
+      "state" : {
+        "revision" : "dc4030184203ffafbb2ec614352487235d747fe0",
+        "version" : "1.4.1"
       }
     },
     {
-      "identity": "swiftgenplugin",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
-      "state": {
-        "branch": "develop",
-        "revision": "084f83c3b285560adc94b121b74c228e16a126f9"
+      "identity" : "swift-http-structured-headers",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-http-structured-headers.git",
+      "state" : {
+        "revision" : "76d7627bd88b47bf5a0f8497dd244885960dde0b",
+        "version" : "1.6.0"
       }
     },
     {
-      "identity": "swiftuikit",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/danielsaidi/SwiftUIKit.git",
-      "state": {
-        "revision": "e8010b950528712edd4cb022da60ba98cbb85b04",
-        "version": "5.0.2"
+      "identity" : "swift-http-types",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-http-types",
+      "state" : {
+        "revision" : "ef18d829e8b92d731ad27bb81583edd2094d1ce3",
+        "version" : "1.3.1"
       }
     },
     {
-      "identity": "swiftuix",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/SwiftUIX/SwiftUIX.git",
-      "state": {
-        "revision": "e984fd2e08140ad5a95d084be38fe02b774bc15d",
-        "version": "0.2.3"
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
+        "version" : "1.10.1"
       }
     },
     {
-      "identity": "swipecellsui",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/DominikButz/SwipeCellSUI.git",
-      "state": {
-        "revision": "d1b121a9b30789b603d7fa7559889925f20fe47e",
-        "version": "2.1.4"
+      "identity" : "swift-markdown",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-markdown.git",
+      "state" : {
+        "revision" : "8f79cb175981458a0a27e76cb42fee8e17b1a993",
+        "version" : "0.5.0"
       }
     },
     {
-      "identity": "unrar.swift",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/mtgto/Unrar.swift.git",
-      "state": {
-        "revision": "3449a14f6302d92b505245149a51dc1a4f1681c3",
-        "version": "0.5.2"
+      "identity" : "swift-metrics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-metrics.git",
+      "state" : {
+        "revision" : "f17c111cec972c2a4922cef38cf64f76f7e87886",
+        "version" : "2.8.0"
       }
     },
     {
-      "identity": "xctest-dynamic-overlay",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/pointfreeco/xctest-dynamic-overlay",
-      "state": {
-        "revision": "dfd70507def84cb5fb821278448a262c6ff2bbad",
-        "version": "1.9.0"
+      "identity" : "swift-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio.git",
+      "state" : {
+        "revision" : "558f24a4647193b5a0e2104031b71c55d31ff83a",
+        "version" : "2.97.1"
       }
     },
     {
-      "identity": "ziparchive",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/ZipArchive/ZipArchive.git",
-      "state": {
-        "revision": "38e0ce0598e06b034271f296a8e15b149c91aa19",
-        "version": "2.4.3"
+      "identity" : "swift-nio-extras",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-extras.git",
+      "state" : {
+        "revision" : "abcf5312eb8ed2fb11916078aef7c46b06f20813",
+        "version" : "1.33.0"
       }
     },
     {
-      "identity": "zipfoundation",
-      "kind": "remoteSourceControl",
-      "location": "https://github.com/weichsel/ZIPFoundation.git",
-      "state": {
-        "revision": "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
-        "version": "0.9.19"
+      "identity" : "swift-nio-http2",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-http2.git",
+      "state" : {
+        "revision" : "6d8d596f0a9bfebb925733003731fe2d749b7e02",
+        "version" : "1.42.0"
+      }
+    },
+    {
+      "identity" : "swift-nio-ssl",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-ssl.git",
+      "state" : {
+        "revision" : "df9c3406028e3297246e6e7081977a167318b692",
+        "version" : "2.36.1"
+      }
+    },
+    {
+      "identity" : "swift-nio-transport-services",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-transport-services.git",
+      "state" : {
+        "revision" : "60c3e187154421171721c1a38e800b390680fb5d",
+        "version" : "1.26.0"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics.git",
+      "state" : {
+        "revision" : "0c0290ff6b24942dadb83a929ffaaa1481df04a2",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "swift-openapi-runtime",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-openapi-runtime",
+      "state" : {
+        "revision" : "5e119a3d52dde0229312ed586be99c666c6b6f64",
+        "version" : "1.7.0"
+      }
+    },
+    {
+      "identity" : "swift-service-context",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-service-context.git",
+      "state" : {
+        "revision" : "d0997351b0c7779017f88e7a93bc30a1878d7f29",
+        "version" : "1.3.0"
+      }
+    },
+    {
+      "identity" : "swift-service-lifecycle",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-server/swift-service-lifecycle.git",
+      "state" : {
+        "revision" : "89888196dd79c61c50bca9a103d8114f32e1e598",
+        "version" : "2.10.1"
+      }
+    },
+    {
+      "identity" : "swift-snapshot-testing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-snapshot-testing.git",
+      "state" : {
+        "revision" : "ad5e3190cc63dc288f28546f9c6827efc1e9d495",
+        "version" : "1.19.2"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "2b59c0c741e9184ab057fd22950b491076d42e91",
+        "version" : "603.0.0"
+      }
+    },
+    {
+      "identity" : "swift-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-system",
+      "state" : {
+        "revision" : "7c6ad0fc39d0763e0b699210e4124afd5041c5df",
+        "version" : "1.6.4"
+      }
+    },
+    {
+      "identity" : "swiftgenplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
+      "state" : {
+        "revision" : "6c9745d44daf3b9db764433e4ea84c438796a714",
+        "version" : "1.1.3"
+      }
+    },
+    {
+      "identity" : "swiftuikit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/danielsaidi/SwiftUIKit.git",
+      "state" : {
+        "revision" : "e8010b950528712edd4cb022da60ba98cbb85b04",
+        "version" : "5.0.2"
+      }
+    },
+    {
+      "identity" : "swiftuix",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftUIX/SwiftUIX.git",
+      "state" : {
+        "revision" : "e984fd2e08140ad5a95d084be38fe02b774bc15d",
+        "version" : "0.2.3"
+      }
+    },
+    {
+      "identity" : "swipecellsui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DominikButz/SwipeCellSUI.git",
+      "state" : {
+        "revision" : "d1b121a9b30789b603d7fa7559889925f20fe47e",
+        "version" : "2.1.4"
+      }
+    },
+    {
+      "identity" : "unrar.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mtgto/Unrar.swift.git",
+      "state" : {
+        "revision" : "3449a14f6302d92b505245149a51dc1a4f1681c3",
+        "version" : "0.5.2"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "dfd70507def84cb5fb821278448a262c6ff2bbad",
+        "version" : "1.9.0"
+      }
+    },
+    {
+      "identity" : "ziparchive",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ZipArchive/ZipArchive.git",
+      "state" : {
+        "revision" : "38e0ce0598e06b034271f296a8e15b149c91aa19",
+        "version" : "2.4.3"
+      }
+    },
+    {
+      "identity" : "zipfoundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/weichsel/ZIPFoundation.git",
+      "state" : {
+        "revision" : "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
+        "version" : "0.9.19"
       }
     }
   ],
-  "version": 3
+  "version" : 3
 }

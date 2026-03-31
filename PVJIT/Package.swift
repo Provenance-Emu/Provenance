@@ -52,9 +52,12 @@ let package = Package(
                 "JITManager",
                 "FastmemUtil"
             ],
+            // TODO: These define's are really left over from objective-c using xcode xccnfig schemes
+            // this needs to be worked into CI or replaced with all runtime checks
             swiftSettings: [
                 .define("_USE_ALTKIT", .when(platforms: [.iOS])),
                 .define("APP_STORE"),
+                .define("NONJAILBROKEN"),
             ],
             linkerSettings: [
                 .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS])),

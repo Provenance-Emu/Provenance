@@ -12,6 +12,13 @@
 @import PVCoreBridge;
 @import PVSettings;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmacro-redefined"
+#pragma clang diagnostic ignored "-Wdocumentation"
+#pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
+#pragma clang diagnostic ignored "-Wstrict-prototypes"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -308,3 +315,5 @@
 }
 
 @end
+
+#pragma clang diagnostic pop

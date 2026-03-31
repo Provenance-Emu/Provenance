@@ -119,7 +119,6 @@ public struct ControllerGuideView: View {
                 wikiSection
             }
             .listStyle(.plain)
-            .scrollContentBackground(.hidden)
             // Indent from left edge to account for the tvOS side-menu bar
             .padding(.leading, 60)
         }

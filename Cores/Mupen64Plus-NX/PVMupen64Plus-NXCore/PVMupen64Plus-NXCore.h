@@ -16,22 +16,11 @@
 
 @protocol PVN64SystemResponderClient;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 __attribute__((visibility("default")))
 @interface PVMupen64PlusNXCore : PVLibRetroGLESCoreBridge <PVN64SystemResponderClient> {
-//	uint8_t padData[4][PVDOSButtonCount];
-//	int8_t xAxis[4];
-//	int8_t yAxis[4];
-//	//    int videoWidth;
-//	//    int videoHeight;
-//	//    int videoBitDepth;
-//	int videoDepthBitDepth; // eh
-//
-//	float sampleRate;
-//
-//	BOOL isNTSC;
-//@public
-//    dispatch_queue_t _callbackQueue;
-
+#pragma clang diagnostic pop
 @public
     /// GB/GBC ROM paths mounted in each Transfer Pak slot (index 0-3, nil = empty).
     NSString * __nullable gbCartROMPath[4];

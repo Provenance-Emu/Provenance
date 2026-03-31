@@ -23,6 +23,8 @@ public struct PVToast: Identifiable, Sendable {
     public internal(set) var repeatCount: Int
     /// Optional grouping category for collapsing similar messages
     public let category: String?
+    /// Optional progress value (0.0–1.0) for progress-bar display
+    public var progress: Double?
 
     init(
         id: String = UUID().uuidString,
@@ -32,7 +34,8 @@ public struct PVToast: Identifiable, Sendable {
         duration: TimeInterval = 3.0,
         isPersistent: Bool = false,
         repeatCount: Int = 1,
-        category: String? = nil
+        category: String? = nil,
+        progress: Double? = nil
     ) {
         self.id = id
         self.message = message
@@ -42,6 +45,7 @@ public struct PVToast: Identifiable, Sendable {
         self.isPersistent = isPersistent
         self.repeatCount = repeatCount
         self.category = category
+        self.progress = progress
     }
 
     /// The display message including repeat count badge if applicable
@@ -63,31 +67,53 @@ struct PVToastItemView: View {
     @State private var glowOpacity: Double = 0.6
 
     var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: toast.icon)
-                .foregroundColor(toast.type.color)
-                .font(.system(size: 16, weight: .semibold))
-                .shadow(color: toast.type.color.opacity(glowOpacity), radius: 4)
-                .accessibilityHidden(true)
+        VStack(spacing: 6) {
+            HStack(spacing: 10) {
+                Image(systemName: toast.icon)
+                    .foregroundColor(toast.type.color)
+                    .font(.system(size: 16, weight: .semibold))
+                    .shadow(color: toast.type.color.opacity(glowOpacity), radius: 4)
+                    .accessibilityHidden(true)
 
-            Text(toast.displayMessage)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.white)
-                .multilineTextAlignment(.leading)
-                .lineLimit(3)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityLabel("\(toast.type.accessibilityLabel): \(toast.displayMessage)")
+                Text(toast.displayMessage)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityLabel("\(toast.type.accessibilityLabel): \(toast.displayMessage)")
 
-            Spacer(minLength: 4)
+                Spacer(minLength: 4)
 
-            if !toast.isPersistent {
-                Button(action: onDismiss) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
-                        .font(.system(size: 14))
+                if !toast.isPersistent {
+                    Button(action: onDismiss) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(RetroTheme.retroPurple.opacity(0.8))
+                            .font(.system(size: 14))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .accessibilityLabel("Dismiss notification")
                 }
-                .buttonStyle(PlainButtonStyle())
-                .accessibilityLabel("Dismiss notification")
+            }
+
+            if let progress = toast.progress {
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(Color.white.opacity(0.15))
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [toast.type.color, toast.type.color.opacity(0.7)]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: max(0, geo.size.width * CGFloat(min(1.0, max(0.0, progress)))))
+                    }
+                }
+                .frame(height: 6)
+                .accessibilityValue("\(Int(progress * 100))%")
             }
         }
         .padding(.vertical, 10)

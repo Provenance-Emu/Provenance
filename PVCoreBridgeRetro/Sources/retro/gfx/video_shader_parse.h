@@ -218,14 +218,14 @@ bool video_shader_resolve_parameters(config_file_t *conf,
 
 /**
  * video_shader_parse_type:
- * @path              : Shader path.
- * @fallback          : Fallback shader type in case no
- *                      type could be found.
+ *
+ * \param path Shader path.
+ * \param fallback Fallback shader type in case no type could be found.
  *
  * Parses type of shader.
  *
  * Returns: value of shader type on success, otherwise will return
- * user-supplied @fallback value. 
+ * user-supplied fallback value.
  **/
 enum rarch_shader_type video_shader_parse_type(const char *path,
       enum rarch_shader_type fallback);

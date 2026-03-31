@@ -160,11 +160,22 @@ struct HomeView: SwiftUI.View {
     }
 
     private var isLibraryCompletelyEmpty: Bool {
-        allGames.isEmpty &&
-        recentlyPlayedGames.isEmpty &&
-        favorites.isEmpty &&
-        mostPlayed.isEmpty &&
-        recentSaveStates.isEmpty
+        // If the view model arrays are populated, trust them.
+        guard allGames.isEmpty,
+              recentlyPlayedGames.isEmpty,
+              favorites.isEmpty,
+              mostPlayed.isEmpty,
+              recentSaveStates.isEmpty
+        else { return false }
+
+        // View model observations are async and may not have delivered yet.
+        // Fall back to a synchronous Realm count (O(1)) to avoid briefly
+        // flashing the empty-state CloudSyncUpsellView while data loads.
+        if let realm = try? Realm(),
+           realm.objects(PVGame.self).count > 0 {
+            return false
+        }
+        return true
     }
 
     var body: some SwiftUI.View {

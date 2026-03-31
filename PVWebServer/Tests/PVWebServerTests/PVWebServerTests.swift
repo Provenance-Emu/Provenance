@@ -28,25 +28,13 @@ class PVWebServerTests: XCTestCase {
         XCTAssertFalse(isRunning)
     }
 
-    func testManagerRefreshFeatureFlag() async {
-        let manager = PVWebServerManager()
-        let defaults = UserDefaults.standard
-        let originalOverrides = defaults.object(forKey: "PVFeatureFlagsDebugOverrides")
-
-        defer {
-            if let originalOverrides {
-                defaults.set(originalOverrides, forKey: "PVFeatureFlagsDebugOverrides")
-            } else {
-                defaults.removeObject(forKey: "PVFeatureFlagsDebugOverrides")
-            }
-        }
-
-        // Simulate a debug override enabling the modern web server.
-        defaults.set(["modernWebServer": true], forKey: "PVFeatureFlagsDebugOverrides")
-        await manager.refreshFeatureFlag()
-
-        let isModern = await manager.useModernServer
-        XCTAssertTrue(isModern, "Manager should enable modern server when debug override is set to true")
+    /// `refreshFeatureFlag()` lives in PVUIBase and reads `PVFeatureFlags`; here we only verify the manager obeys `setModernServerEnabled`.
+    func testManagerSetModernServerEnabled() async {
+        let manager = PVWebServerManager(useModernServer: false)
+        await manager.setModernServerEnabled(true)
+        XCTAssertTrue(await manager.useModernServer)
+        await manager.setModernServerEnabled(false)
+        XCTAssertFalse(await manager.useModernServer)
     }
 
     // MARK: - PVModernWebServer unit tests
@@ -185,6 +173,6 @@ class PVWebServerTests: XCTestCase {
 
         wait(for: [expectation], timeout: 1)
         XCTAssertEqual(receivedEvent?.from, "/old/a.rom")
-        XCTAssertEqual(receivedEvent?.to,   "/new/a.rom")
+        XCTAssertEqual(receivedEvent?.to, "/new/a.rom")
     }
 }

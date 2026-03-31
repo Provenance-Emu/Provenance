@@ -17,6 +17,7 @@ public enum PauseTileMenuRoute: String, Sendable, Hashable, CaseIterable {
     case options
     case recording
     case core
+    /// Skins submenu in `PauseTileMenuView`. Choosing a portrait/landscape skin presents `SystemSkinSelectionView` (same sheet as the library), not this file.
     case skins
 }
 

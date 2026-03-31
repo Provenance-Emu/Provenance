@@ -12,3 +12,10 @@
 "Delete" = "حذف";
 "Error" = "خطأ";
 "Warning" = "تحذير";
+
+// External file URL import (Open in Provenance — copy / skin import, not import queue)
+"external_import.unknown_file" = "ملف";
+"external_import.skin.title" = "تم استيراد المظهر";
+"external_import.skin.subtitle" = "%@";
+"external_import.file.title" = "تمت إضافة الملف";
+"external_import.file.subtitle" = "تم نسخ %@ إلى مجلد الاستيراد.";

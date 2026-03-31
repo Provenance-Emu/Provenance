@@ -84,15 +84,17 @@ public class ArtworkLoader: ObservableObject {
             }
         }
 
-        // Create a new loading task with the specified priority
+        // Create a new loading task — fetch image off main thread via detached task
         let loadingTask = Task(priority: priority) {
-            // Yield to allow UI updates if we're loading many items
-            if !isVisible {
-                try await Task.sleep(nanoseconds: 10_000_000) // 10ms delay for non-visible items
-            }
+            try Task.checkCancellation()
 
-            // Fetch the artwork directly from PVMediaCache using the pre-extracted URL
-            return await PVMediaCache.shareInstance().image(forKey: artworkURL)
+            // Run the actual disk I/O off the MainActor to avoid blocking UI
+            let image = try await Task.detached(priority: priority) {
+                try Task.checkCancellation()
+                return await PVMediaCache.shareInstance().image(forKey: artworkURL)
+            }.value
+
+            return image
         }
 
         // Store the task

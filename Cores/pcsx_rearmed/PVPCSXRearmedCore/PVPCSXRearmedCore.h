@@ -17,33 +17,14 @@
  */
 @protocol PVPSXSystemResponderClient;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
+
 __attribute__((visibility("default")))
 #if GPU_NEON // Neon GPU Plugin
-@interface PVPCSXRearmedCoreBridge : PVLibRetroGLESCoreBridge <PVPSXSystemResponderClient> {
+@interface PVPCSXRearmedCoreBridge : PVLibRetroGLESCoreBridge <PVPSXSystemResponderClient>
 #else // GLES GPU Plugin
-@interface PVPCSXRearmedCoreBridge : PVLibRetroGLESCoreBridge <PVPSXSystemResponderClient> {
+@interface PVPCSXRearmedCoreBridge : PVLibRetroGLESCoreBridge <PVPSXSystemResponderClient>
 #endif
-//	uint8_t padData[4][PVDOSButtonCount];
-//	int8_t xAxis[4];
-//	int8_t yAxis[4];
-//	//    int videoWidth;
-//	//    int videoHeight;
-//	//    int videoBitDepth;
-//	int videoDepthBitDepth; // eh
-//
-//	float sampleRate;
-//
-//	BOOL isNTSC;
-//@public
-//    dispatch_queue_t _callbackQueue;
-}
-//
-//@property (nonatomic, assign) int videoWidth;
-//@property (nonatomic, assign) int videoHeight;
-//@property (nonatomic, assign) int videoBitDepth;
-//
-//- (void) swapBuffers;
-//- (const char *) getBundlePath;
-//- (void) SetScreenSize:(int)width :(int)height;
-
+#pragma clang diagnostic pop
 @end
