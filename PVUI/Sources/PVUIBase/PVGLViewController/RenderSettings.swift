@@ -16,5 +16,5 @@ struct RenderSettings: Sendable {
     var videoBufferSize: CGSize = .zero
     var videoBufferPixelFormat: GLenum = GLenum(GL_RGB)
     var videoBufferPixelType: GLenum = GLenum(GL_RGB8)
-    var videoBuffer: UnsafeMutableRawPointer? = nil
+    var videoBuffer: UnsafeRawPointer? = nil
 }

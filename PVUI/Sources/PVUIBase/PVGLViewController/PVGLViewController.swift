@@ -893,17 +893,13 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 //        }
 //    }
     func draw(in view: MTKView) {
-        guard let safeCurrentDrawable = view.currentDrawable,
-              let safeCommandBuffer = commandQueue!.makeCommandBuffer() else {
-            return
-        }
-
-        guard let emulatorCore = self.emulatorCore else {
+        guard let emulatorCore = self.emulatorCore,
+              let commandQueue = commandQueue else {
             return
         }
 
         var screenRect: CGRect = .zero
-        var videoBuffer: UnsafeMutableRawPointer?
+        var videoBuffer: UnsafeRawPointer?
         var videoBufferPixelFormat: GLenum = 0
         var videoBufferPixelType: GLenum = 0
         var videoBufferSize: CGSize = .zero
@@ -971,13 +967,13 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             glBindTexture(GLenum(GL_TEXTURE_2D), 0)
         }
 
+        // Acquire a drawable only after we know GL work will run, so we do not block `nextDrawable` while waiting on the core.
+        var shouldPresent = false
+
         if emulatorCore.rendersToOpenGL {
             if (!emulatorCore.isSpeedModified && !emulatorCore.isEmulationPaused) || emulatorCore.isFrontBufferReady {
                 let isFrontBufferReady = emulatorCore.frontBufferCondition.withLock {
-                    while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                        emulatorCore.frontBufferCondition.wait()
-                    }
-                    return emulatorCore.isFrontBufferReady
+                    emulatorCore.isFrontBufferReady
                 }
                 if isFrontBufferReady {
                     fetchVideoBuffer()
@@ -986,23 +982,33 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                         emulatorCore.isFrontBufferReady = false
                         emulatorCore.frontBufferCondition.signal()
                     }
+                    shouldPresent = true
                 }
+            } else {
+                fetchVideoBuffer()
+                renderBlock()
+                shouldPresent = true
             }
         } else {
             if emulatorCore.isSpeedModified {
                 fetchVideoBuffer()
                 renderBlock()
+                shouldPresent = true
             } else {
                 if emulatorCore.isDoubleBuffered {
-                    emulatorCore.frontBufferCondition.withLock {
-                        while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                            emulatorCore.frontBufferCondition.wait()
+                    let didAcquireFrame = emulatorCore.frontBufferCondition.withLock {
+                        if !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
+                            return false
                         }
                         emulatorCore.isFrontBufferReady = false
+                        return true
+                    }
+                    if didAcquireFrame {
                         emulatorCore.frontBufferLock.withLock {
                             fetchVideoBuffer()
                             renderBlock()
                         }
+                        shouldPresent = true
                     }
                 } else {
                     // Non-double-buffered: synchronize with emulator core's @synchronized(self)
@@ -1011,8 +1017,16 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                     defer { objc_sync_exit(emulatorCore) }
                     fetchVideoBuffer()
                     renderBlock()
+                    shouldPresent = true
                 }
             }
+        }
+
+        guard shouldPresent else { return }
+
+        guard let safeCurrentDrawable = view.currentDrawable,
+              let safeCommandBuffer = commandQueue.makeCommandBuffer() else {
+            return
         }
 
         safeCommandBuffer.present(safeCurrentDrawable)
@@ -1038,7 +1052,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         //        weak var weakSelf = self
 
         var screenRect: CGRect = .zero
-        var videoBuffer: UnsafeMutableRawPointer? = nil
+        var videoBuffer: UnsafeRawPointer? = nil
         var videoBufferPixelFormat: GLenum = 0
         var videoBufferPixelType: GLenum = 0
         var videoBufferSize: CGSize = .zero
@@ -1162,11 +1176,9 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 
         if emulatorCore.rendersToOpenGL {
             if (!emulatorCore.isSpeedModified && !emulatorCore.isEmulationPaused) || emulatorCore.isFrontBufferReady {
+                // Avoid blocking the main thread in `glkView(_:drawIn:)` when the emu thread has not posted a frame.
                 let isFrontBufferReady = emulatorCore.frontBufferCondition.withLock {
-                    while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                        emulatorCore.frontBufferCondition.wait()
-                    }
-                    return emulatorCore.isFrontBufferReady
+                    emulatorCore.isFrontBufferReady
                 }
                 if isFrontBufferReady {
                     fetchVideoBuffer()
@@ -1182,11 +1194,14 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                 fetchVideoBuffer()
                 renderBlock()
             } else if emulatorCore.isDoubleBuffered {
-                emulatorCore.frontBufferCondition.withLock {
-                    while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                        emulatorCore.frontBufferCondition.wait()
+                let didAcquireFrame = emulatorCore.frontBufferCondition.withLock {
+                    if !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
+                        return false
                     }
                     emulatorCore.isFrontBufferReady = false
+                    return true
+                }
+                if didAcquireFrame {
                     emulatorCore.frontBufferLock.withLock {
                         fetchVideoBuffer()
                         renderBlock()
