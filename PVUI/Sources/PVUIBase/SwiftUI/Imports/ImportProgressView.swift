@@ -95,12 +95,21 @@ public struct ImportProgressView: View {
     
     // MARK: - Helper Views
     private var headerView: some View {
-        // Header with count of imports
+        // Header with context-appropriate title
         HStack {
-            // Assuming viewModel.importQueueItems is correctly populated by the external ViewModel
-            Text(viewModel.importQueueItems.isEmpty ? "" : "IMPORTING \(viewModel.importQueueItems.count) FILES")
-                .font(.system(size: 12, weight: .bold))
-                .foregroundColor(.retroBlue)
+            if !viewModel.importQueueItems.isEmpty {
+                Text("IMPORTING \(viewModel.importQueueItems.count) FILES")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.retroBlue)
+            } else if viewModel.isSyncing {
+                Text("SYNCING")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.retroBlue)
+            } else if viewModel.isFileCopying {
+                Text("COPYING FILES")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(.retroBlue)
+            }
             Spacer()
 
             // Show processing status if any item is processing
@@ -230,15 +239,20 @@ public struct ImportProgressView: View {
     private var contentView: some View {
         VStack(alignment: .leading, spacing: 8) {
             headerView
-            
-            // File copy progress section (mini version)
-            if viewModel.isFileCopying {
-                fileCopyProgressView
+
+            // Only show import-specific UI (progress bar, counts) when there are actual imports.
+            // Without this guard the overlay renders empty bars + "0" counts when only
+            // iCloud sync or log messages keep it visible.
+            if !viewModel.importQueueItems.isEmpty {
+                // File copy progress section (mini version)
+                if viewModel.isFileCopying {
+                    fileCopyProgressView
+                }
+
+                progressBarsView
+                statusDetailsView // Existing view for counts
             }
-            
-            progressBarsView
-            statusDetailsView // Existing view for counts
-            
+
             // New section for scrollable log messages
             if !viewModel.statusLogMessages.isEmpty {
                 ScrollView {

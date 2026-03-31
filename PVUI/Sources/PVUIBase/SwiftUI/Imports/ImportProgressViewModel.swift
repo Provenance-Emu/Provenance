@@ -185,8 +185,8 @@ public class ImportProgressViewModel: ObservableObject {
             // Cancel any existing timer for this specific message ID (e.g., if it's an update to an existing message concept)
             self.messageExpiryTimers[statusMessage.id]?.invalidate()
 
-            // Start 8-second timer for this new message
-            let timer = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: false) { [weak self] _ in
+            // Start 5-second timer for this new message
+            let timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { [weak self] _ in
                 guard let self = self else { return }
                 self.logMessages.removeAll { $0.id == statusMessage.id }
                 self.messageExpiryTimers.removeValue(forKey: statusMessage.id)
@@ -649,8 +649,8 @@ public class ImportProgressViewModel: ObservableObject {
                 // Conditions to show are NOT met.
                 // If view is currently shown and no hide timer is active, start one.
                 if self.shouldShow && self.hideViewTimer == nil {
-                    ILOG("ImportProgressViewModel: Conditions NOT met, starting 8s hide timer.")
-                    self.hideViewTimer = Timer.scheduledTimer(withTimeInterval: 8.0, repeats: false) { [weak self] _ in
+                    ILOG("ImportProgressViewModel: Conditions NOT met, starting 2s hide timer.")
+                    self.hideViewTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { [weak self] _ in
                         guard let self = self else { return }
                         // Re-check conditions one last time before hiding.
                         if !self._recalculateShouldShowConditions() {
