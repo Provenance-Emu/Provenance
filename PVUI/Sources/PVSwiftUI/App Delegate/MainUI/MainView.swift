@@ -55,12 +55,14 @@ struct MainView: View {
                     emulatorView
                 }
 
-                ExternalFileImportToastOverlay()
+                // Unified toast overlay — PVToastManager.post(...) works from
+                // anywhere (library, emulator, settings, background actors).
+                PVToastStackView(position: .top)
+                    .allowsHitTesting(false)
             }
         }
         .onAppear {
             ILOG("MainView: Appeared")
-            appState.ensureExternalImportToastDismissScheduledIfNeeded()
         }
         .edgesIgnoringSafeArea(.all)
         // Pre-launch Transfer Pak setup sheet — covers all UI modes (RetroMainView,
