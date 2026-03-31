@@ -87,12 +87,6 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// are hidden from the selection UI and excluded from automatic skin resolution.
     /// Disabled by default while the feature is under development.
     case caseCompanionSkins = "caseCompanionSkins"
-    /// Enables multi-source artwork matching at ROM import time: queries TheGamesDB,
-    /// LibretroDB, and OpenVGDB in parallel and selects the best result by artwork type priority.
-    /// A background `ArtworkSearchQueue` retries games that were not matched
-    /// during import. Enabled by default; disable via Settings > Advanced > Feature Flags
-    /// if regressions are found.
-    case enhancedArtworkSearch = "enhancedArtworkSearch"
     /// Shows the AirPlay route-picker button in the pause menu (both tile and retro-menu styles).
     /// Currently only audio AirPlay is supported; video mirroring to Apple TV is not yet
     /// implemented. Disabled by default until full video AirPlay support lands.
@@ -287,12 +281,6 @@ public struct FeatureFlag: Codable, Sendable {
         description: "Case-companion skins for phone-case controllers (Buppin, GameSir Pocket Taco, Soolra). Shows companion skins in the skin browser and includes them in automatic skin selection. iOS only. Disabled by default while under development."
     )
 
-    public static let enhancedArtworkSearch = FeatureFlag(
-        enabled: true,
-        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
-        description: "Multi-source artwork matching at import time (TheGamesDB, LibretroDB, OpenVGDB). Background ArtworkSearchQueue retries unmatched games. Enabled by default — disable in Settings > Advanced > Feature Flags if regressions are found."
-    )
-
     public static let airPlayMenu = FeatureFlag(
         enabled: false,
         description: "AirPlay route-picker button in the pause menu. Only audio AirPlay is currently supported; disabled by default until video AirPlay to Apple TV is implemented."
@@ -339,7 +327,7 @@ public struct FeatureFlagsConfiguration: Codable, Sendable {
 /// Usage:
 /// ```swift
 /// // Synchronous — no await, no actor hop
-/// if PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) { ... }
+/// if PVFeatureFlags.shared.isEnabled(.pauseTileMenu) { ... }
 /// if PVFeatureFlags.shared[.pauseTileMenu] { ... }
 ///
 /// // Async configuration loading (network I/O)
@@ -724,7 +712,6 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
     public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
     public var caseCompanionSkins: Bool { featureStates[.caseCompanionSkins] ?? false }
-    public var enhancedArtworkSearch: Bool { featureStates[.enhancedArtworkSearch] ?? false }
     public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
     public var sramImportExport: Bool { featureStates[.sramImportExport] ?? false }
     public var thirdPartyEcosystemIntegration: Bool { featureStates[.thirdPartyEcosystemIntegration] ?? false }
