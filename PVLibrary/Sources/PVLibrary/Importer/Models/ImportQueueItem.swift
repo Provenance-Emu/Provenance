@@ -98,9 +98,9 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
         /// Indicates whether items in this state should block duplicate entries in the queue
         public var blocksDuplicateProcessing: Bool {
             switch self {
-            case .queued, .processing, .extracting, .partial:
+            case .queued, .processing, .extracting, .partial, .conflict:
                 return true
-            case .success, .failure, .conflict:
+            case .success, .failure:
                 return false
             }
         }
