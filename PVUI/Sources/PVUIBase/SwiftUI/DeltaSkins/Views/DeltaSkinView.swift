@@ -1029,6 +1029,7 @@ public struct DeltaSkinView: View {
         }
     }
 
+    /// Loads raster assets asynchronously so PDF/PNG decode can run off the immediate layout pass; `@State` updates occur when this task resumes on the main actor.
     private func loadSkinResources() {
         ILOG("skins: loadSkinResources() called - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
         ILOG("skins: Checking if skin supports traits: \(traits.description)")
@@ -1042,7 +1043,7 @@ public struct DeltaSkinView: View {
             ELOG("skins: ERROR - Skin has no mapping size for traits: \(traits.description)")
         }
 
-        Task {
+        Task(priority: .userInitiated) {
             // Load skin image
             ILOG("skins: Attempting to load skin image for traits: \(traits.description)")
             do {
