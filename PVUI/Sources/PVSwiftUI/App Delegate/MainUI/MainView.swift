@@ -31,25 +31,36 @@ struct MainView: View {
             let rawUseTVMedia = shouldUseTVMediaUI(isLandscape: isLandscape)
             let useTVMedia = effectiveUseTVMedia
 #endif
-            Group {
+            ZStack {
+                // Keep the library view alive across emulator transitions.
+                // Using if/else would destroy the entire library hierarchy
+                // (view models, Realm observations, artwork caches) on every
+                // game launch, causing a slow rebuild on return.
+#if os(iOS)
+                iOSContentView(useTVMedia: useTVMedia)
+                    .animation(.easeInOut(duration: 0.32), value: useTVMedia)
+                    .onAppear { effectiveUseTVMedia = rawUseTVMedia }
+                    .onChange(of: rawUseTVMedia) { newValue in
+                        handleTVMediaChange(newValue)
+                    }
+                    .opacity(isEmulatorActive ? 0 : 1)
+                    .allowsHitTesting(!isEmulatorActive)
+#else
+                tvOSContentView
+                    .opacity(isEmulatorActive ? 0 : 1)
+                    .allowsHitTesting(!isEmulatorActive)
+#endif
+
                 if isEmulatorActive {
                     emulatorView
-                } else {
-#if os(iOS)
-                    iOSContentView(useTVMedia: useTVMedia)
-                        .animation(.easeInOut(duration: 0.32), value: useTVMedia)
-                        .onAppear { effectiveUseTVMedia = rawUseTVMedia }
-                        .onChange(of: rawUseTVMedia) { newValue in
-                            handleTVMediaChange(newValue)
-                        }
-#else
-                    tvOSContentView
-#endif
                 }
+
+                ExternalFileImportToastOverlay()
             }
         }
         .onAppear {
             ILOG("MainView: Appeared")
+            appState.ensureExternalImportToastDismissScheduledIfNeeded()
         }
         .edgesIgnoringSafeArea(.all)
         // Pre-launch Transfer Pak setup sheet — covers all UI modes (RetroMainView,
