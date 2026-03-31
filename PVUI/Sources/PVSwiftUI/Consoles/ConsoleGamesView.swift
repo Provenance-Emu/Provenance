@@ -1511,7 +1511,11 @@ extension ConsoleGamesView {
                     } else {
                         showGamesList(fakeGames)
                     }
-                } else if AppState.shared.bootupStateManager.isBootupCompleted {
+                } else if AppState.shared.bootupStateManager.isBootupCompleted,
+                          // Fast synchronous Realm count to avoid briefly flashing the
+                          // empty-state while async view model observations spin up.
+                          (try? Realm())?.objects(PVGame.self)
+                              .filter("systemIdentifier == %@", console.identifier).count == 0 {
                     cloudSyncUpsell()
                         .padding(.vertical, 12)
                 } else {
