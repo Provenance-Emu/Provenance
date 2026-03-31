@@ -146,6 +146,9 @@ public struct N64ControllerPakView: View {
 
     @State private var selectedTypes: [N64PakType] = Array(repeating: .auto, count: 4)
 
+    /// Shown in the info card; markdown used for inline emphasis when parsing succeeds.
+    private static let infoCardMarkdown = "Choose the pak type for each controller port. Most games need a **Memory Pak** to save. Pokémon Stadium needs a **Transfer Pak**."
+
     public init(gameMD5: String? = nil,
                 gameTitle: String? = nil,
                 onDismiss: (() -> Void)? = nil) {
@@ -158,19 +161,21 @@ public struct N64ControllerPakView: View {
 
     public var body: some View {
         NavigationStack {
-            ZStack {
-                Color.retroBlack.ignoresSafeArea()
-                RetroGrid(lineSpacing: 28, lineColor: Color.retroPurple.opacity(0.22))
-                    .ignoresSafeArea()
-
-                ScrollView {
-                    VStack(spacing: 16) {
-                        infoCard
-                        portsCard
-                        restartNote
-                    }
-                    .padding()
+            ScrollView {
+                VStack(spacing: 16) {
+                    infoCard
+                    portsCard
+                    restartNote
                 }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+            }
+            .background {
+                ZStack {
+                    Color.retroBlack
+                    RetroGrid(lineSpacing: 28, lineColor: Color.retroPurple.opacity(0.22))
+                }
+                .ignoresSafeArea()
             }
             .navigationTitle("")
             #if !os(tvOS)
@@ -200,16 +205,16 @@ public struct N64ControllerPakView: View {
                 .foregroundStyle(Color.retroPink)
                 .shadow(color: Color.retroPink.opacity(0.7), radius: 6)
 
+            /// Fills remaining width so the footnote wraps correctly beside the icon on narrow screens.
             VStack(alignment: .leading, spacing: 6) {
                 if let title = gameTitle {
                     Text(title)
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(Color.retroYellow)
                 }
-                Text("Choose the pak type for each controller port. Most games need a **Memory Pak** to save. Pokémon Stadium needs a **Transfer Pak**.")
-                    .font(.footnote)
-                    .foregroundStyle(.white.opacity(0.85))
+                infoCardInstructionText
             }
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
         .padding(14)
         .background(
@@ -221,6 +226,24 @@ public struct N64ControllerPakView: View {
                 )
         )
         .shadow(color: Color.retroPink.opacity(0.15), radius: 8)
+    }
+
+    /// Renders bold segments from markdown when parsing succeeds; otherwise shows plain copy without asterisks.
+    @ViewBuilder
+    private var infoCardInstructionText: some View {
+        let plainFallback = Self.infoCardMarkdown.replacingOccurrences(of: "**", with: "")
+        if let attributed = try? AttributedString(
+            markdown: Self.infoCardMarkdown,
+            options: AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
+        ) {
+            Text(attributed)
+                .font(.footnote)
+                .foregroundStyle(.white.opacity(0.85))
+        } else {
+            Text(plainFallback)
+                .font(.footnote)
+                .foregroundStyle(.white.opacity(0.85))
+        }
     }
 
     // MARK: - Ports Card
@@ -238,7 +261,8 @@ public struct N64ControllerPakView: View {
             .padding(.top, 12)
             .padding(.bottom, 10)
 
-            Divider().background(Color.retroPurple.opacity(0.4))
+            Divider()
+                .background(Color.retroPurple.opacity(0.4))
 
             ForEach(0..<4, id: \.self) { index in
                 portRow(index: index)
@@ -269,75 +293,97 @@ public struct N64ControllerPakView: View {
 
     // MARK: - Port Row
 
+    /// Circular icon for the selected pak type on this port.
+    @ViewBuilder
+    private func portBadge(selected: N64PakType) -> some View {
+        ZStack {
+            Circle()
+                .fill(selected.accentColor.opacity(0.18))
+                .overlay(Circle().strokeBorder(selected.accentColor.opacity(0.5), lineWidth: 1.5))
+                .frame(width: 36, height: 36)
+            Image(systemName: selected.systemImage)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(selected.accentColor)
+        }
+        .accessibilityHidden(true)
+    }
+
+    /// Middle column fills space between badge and trailing menu; `minWidth: 0` lets subtitles wrap on narrow widths.
+    @ViewBuilder
+    private func portLabels(port: Int, selected: N64PakType) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text("Controller \(port)")
+                .font(.body.weight(.medium))
+                .foregroundStyle(.white)
+            Text(selected.subtitle)
+                .font(.caption2)
+                .foregroundStyle(selected.accentColor.opacity(0.8))
+                .lineLimit(3)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Trailing menu control only (no `maxWidth: .infinity`); matches `TransferPakConfigView` so portrait sheets keep normal horizontal margins.
+    @ViewBuilder
+    private func pakTypeMenuChip(selected: N64PakType) -> some View {
+        HStack(alignment: .center, spacing: 4) {
+            Text(selected.title)
+                .font(.caption.weight(.semibold))
+                .multilineTextAlignment(.trailing)
+                .lineLimit(2)
+                .minimumScaleFactor(0.75)
+            Image(systemName: "chevron.down")
+                .font(.caption2)
+        }
+        .foregroundStyle(selected.accentColor)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 6)
+                .fill(selected.accentColor.opacity(0.1))
+                .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(selected.accentColor.opacity(0.4), lineWidth: 1))
+        )
+    }
+
+    @ViewBuilder
+    private func pakTypeMenu(port: Int, index: Int, selected: N64PakType) -> some View {
+        Menu {
+            ForEach(N64PakType.allCases) { pakType in
+                Button {
+                    selectedTypes[index] = pakType
+                    N64PakStore.setPakType(pakType, forPort: port, gameMD5: gameMD5)
+                } label: {
+                    HStack {
+                        Image(systemName: pakType.systemImage)
+                        VStack(alignment: .leading) {
+                            Text(pakType.title)
+                            Text(pakType.subtitle)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        if selectedTypes[index] == pakType {
+                            Spacer()
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                }
+            }
+        } label: {
+            pakTypeMenuChip(selected: selected)
+        }
+        .accessibilityLabel("Select pak type for Controller \(port)")
+    }
+
     @ViewBuilder
     private func portRow(index: Int) -> some View {
         let port = index + 1
         let selected = selectedTypes[index]
 
-        HStack(spacing: 12) {
-            // Port number badge
-            ZStack {
-                Circle()
-                    .fill(selected.accentColor.opacity(0.18))
-                    .overlay(Circle().strokeBorder(selected.accentColor.opacity(0.5), lineWidth: 1.5))
-                    .frame(width: 36, height: 36)
-                Image(systemName: selected.systemImage)
-                    .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(selected.accentColor)
-            }
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Controller \(port)")
-                    .font(.body.weight(.medium))
-                    .foregroundStyle(.white)
-                Text(selected.subtitle)
-                    .font(.caption2)
-                    .foregroundStyle(selected.accentColor.opacity(0.8))
-                    .lineLimit(2)
-            }
-
-            Spacer()
-
-            // Pak type picker
-            Menu {
-                ForEach(N64PakType.allCases) { pakType in
-                    Button {
-                        selectedTypes[index] = pakType
-                        N64PakStore.setPakType(pakType, forPort: port, gameMD5: gameMD5)
-                    } label: {
-                        HStack {
-                            Image(systemName: pakType.systemImage)
-                            VStack(alignment: .leading) {
-                                Text(pakType.title)
-                                Text(pakType.subtitle)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            if selectedTypes[index] == pakType {
-                                Spacer()
-                                Image(systemName: "checkmark")
-                            }
-                        }
-                    }
-                }
-            } label: {
-                HStack(spacing: 4) {
-                    Text(selected.title)
-                        .font(.caption.weight(.semibold))
-                        .lineLimit(1)
-                    Image(systemName: "chevron.down")
-                        .font(.caption2)
-                }
-                .foregroundStyle(selected.accentColor)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(selected.accentColor.opacity(0.1))
-                        .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(selected.accentColor.opacity(0.4), lineWidth: 1))
-                )
-            }
-            .accessibilityLabel("Select pak type for Controller \(port)")
+        HStack(alignment: .top, spacing: 12) {
+            portBadge(selected: selected)
+            portLabels(port: port, selected: selected)
+            pakTypeMenu(port: port, index: index, selected: selected)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
@@ -346,13 +392,14 @@ public struct N64ControllerPakView: View {
     // MARK: - Restart Note
 
     private var restartNote: some View {
-        HStack(spacing: 8) {
+        HStack(alignment: .top, spacing: 8) {
             Image(systemName: "arrow.clockwise.circle")
                 .foregroundStyle(Color.retroYellow)
                 .font(.caption)
             Text("Changes take effect the next time the game loads.")
                 .font(.caption)
                 .foregroundStyle(Color.retroYellow.opacity(0.75))
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
