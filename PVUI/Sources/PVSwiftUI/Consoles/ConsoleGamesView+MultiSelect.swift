@@ -46,15 +46,17 @@ extension ConsoleGamesView {
     }
 
     /// Wraps a game cell with a selection indicator overlay when multi-select is active.
+    /// Selection checkmark is placed top-leading to avoid conflicting with the
+    /// cloud sync indicator badge at top-trailing.
     @ViewBuilder
     func multiSelectOverlay(md5: String, @ViewBuilder content: () -> some View) -> some View {
         let isSelected = gamesViewModel.selectedGameMD5s.contains(md5)
-        ZStack(alignment: .topTrailing) {
+        ZStack(alignment: .topLeading) {
             content()
                 .overlay {
                     if isSelected {
                         RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(Color.accentColor, lineWidth: 3)
+                            .strokeBorder(Color.retroPink, lineWidth: 3)
                     }
                 }
                 // Disable hit-testing on the inner content when in multi-select mode
@@ -64,9 +66,13 @@ extension ConsoleGamesView {
             if gamesViewModel.isMultiSelectMode {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(isSelected ? Color.accentColor : Color.white)
-                    .background(Circle().fill(isSelected ? Color.accentColor.opacity(0.2) : Color.black.opacity(0.4)))
-                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(isSelected ? Color.retroPink : Color.white.opacity(0.7))
+                    .background(
+                        Circle()
+                            .fill(isSelected ? Color.retroPink.opacity(0.25) : Color.black.opacity(0.5))
+                            .shadow(color: isSelected ? Color.retroPink.opacity(0.5) : .clear, radius: 4)
+                    )
+                    .font(.system(size: 22, weight: .bold))
                     .padding(6)
                     .allowsHitTesting(false)
             }
@@ -79,57 +85,33 @@ extension ConsoleGamesView {
         }
     }
 
-    // MARK: - Batch-action toolbar
+    // MARK: - Multi-select state sync
 
-    /// Floating toolbar shown at the bottom while in multi-select mode.
-    @ViewBuilder
+    /// Syncs local multi-select state to the shared `MultiSelectToolbarState`
+    /// so `RetroMainView` can render the toolbar above the tab bar.
     var multiSelectToolbar: some View {
-        if gamesViewModel.isMultiSelectMode {
-            VStack(spacing: 0) {
-                Spacer()
-                batchActionsBar
-            }
-            .ignoresSafeArea(edges: .bottom)
-            .transition(.move(edge: .bottom).combined(with: .opacity))
-            .animation(.easeInOut(duration: 0.25), value: gamesViewModel.isMultiSelectMode)
-        }
-    }
-
-    @ViewBuilder
-    private var batchActionsBar: some View {
-        let count = gamesViewModel.selectedGameMD5s.count
-        VStack(spacing: 0) {
-            Divider()
-            HStack(spacing: 20) {
-                Text(count == 0 ? "Select Games" : "\(count) Selected")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundColor(.secondary)
-
-                Spacer()
-
-                // Normalize titles action
-                Button {
-                    gamesViewModel.showNormalizeTitlePreview = true
-                } label: {
-                    Label("Normalize Titles", systemImage: "textformat.abc")
-                        .font(.subheadline)
-                }
-                .disabled(count == 0)
-                .buttonStyle(.bordered)
-                .tint(.accentColor)
-
-                // Done button
-                Button("Done") {
-                    Task { @MainActor in
-                        gamesViewModel.exitMultiSelectMode()
+        Color.clear
+            .frame(width: 0, height: 0)
+            .allowsHitTesting(false)
+            .onChange(of: gamesViewModel.isMultiSelectMode) { isActive in
+                let state = MultiSelectToolbarState.shared
+                if isActive {
+                    state.activate()
+                    state.onNormalizeTitles = { [weak gamesViewModel] in
+                        gamesViewModel?.showNormalizeTitlePreview = true
                     }
+                    state.onDone = { [weak gamesViewModel] in
+                        Task { @MainActor in
+                            gamesViewModel?.exitMultiSelectMode()
+                        }
+                    }
+                } else {
+                    state.deactivate()
                 }
-                .buttonStyle(.borderedProminent)
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(.regularMaterial)
-        }
+            .onChange(of: gamesViewModel.selectedGameMD5s.count) { count in
+                MultiSelectToolbarState.shared.updateCount(count)
+            }
     }
 
     // MARK: - Edit / Done toggle button (placed in titleBar)
@@ -149,23 +131,23 @@ extension ConsoleGamesView {
             }
         } label: {
             Text(gamesViewModel.isMultiSelectMode ? "Done" : "Select")
-                .font(.caption.weight(.medium))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .font(.caption.weight(.semibold))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
                 .background(
                     RoundedRectangle(cornerRadius: 6)
                         .fill(gamesViewModel.isMultiSelectMode
-                              ? Color.accentColor.opacity(0.2)
-                              : Color.retroPurple.opacity(0.2))
+                              ? Color.retroPink.opacity(0.2)
+                              : Color.retroPurple.opacity(0.15))
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
                                 .strokeBorder(gamesViewModel.isMultiSelectMode
-                                              ? Color.accentColor
+                                              ? Color.retroPink
                                               : Color.retroBlue,
                                               lineWidth: 1)
                         )
                 )
-                .foregroundColor(gamesViewModel.isMultiSelectMode ? .accentColor : themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .foregroundColor(gamesViewModel.isMultiSelectMode ? .retroPink : .retroBlue)
         }
     }
 

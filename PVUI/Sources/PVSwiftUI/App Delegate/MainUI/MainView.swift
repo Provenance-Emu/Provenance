@@ -55,6 +55,9 @@ struct MainView: View {
                     emulatorView
                 }
 
+                // Multi-select toolbar (paged mode) — above tab bar / content
+                RetroMultiSelectToolbar()
+
                 // Unified toast overlay — PVToastManager.post(...) works from
                 // anywhere (library, emulator, settings, background actors).
                 PVToastStackView(position: .top)
