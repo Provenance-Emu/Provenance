@@ -22,13 +22,13 @@ import UIKit
 final class RetroArchLogBrowserViewModel {
     var logFiles: [LogFileEntry] = []
     var isLoading = false
+    var directoryExists = true
     var errorMessage: String?
 
-    /// Well-known RetroArch logs directory inside the app's Documents folder.
-    static let logsDirectory: URL? = {
+    /// Static URL for the RetroArch logs directory (computed once, no existence check).
+    static let logsDirectoryURL: URL? = {
         guard let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
-        let dir = docs.appendingPathComponent("RetroArch/logs")
-        return FileManager.default.fileExists(atPath: dir.path) ? dir : nil
+        return docs.appendingPathComponent("RetroArch/logs")
     }()
 
     struct LogFileEntry: Identifiable {
@@ -42,25 +42,42 @@ final class RetroArchLogBrowserViewModel {
         }
     }
 
-    func loadFiles() {
-        guard let dir = Self.logsDirectory else {
+    func loadFiles() async {
+        guard let dir = Self.logsDirectoryURL else {
+            directoryExists = false
+            return
+        }
+        // Check existence dynamically each load so the view refreshes correctly
+        // after RetroArch creates the logs directory for the first time.
+        let exists = FileManager.default.fileExists(atPath: dir.path)
+        directoryExists = exists
+        guard exists else {
             logFiles = []
             return
         }
         isLoading = true
-        let fm = FileManager.default
-        do {
-            let urls = try fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey], options: .skipsHiddenFiles)
-            logFiles = urls
-                .filter { !$0.hasDirectoryPath }
-                .compactMap { url -> LogFileEntry? in
-                    let resources = try? url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
-                    let size = Int64(resources?.fileSize ?? 0)
-                    let date = resources?.contentModificationDate ?? Date.distantPast
-                    return LogFileEntry(url: url, size: size, modificationDate: date)
-                }
-                .sorted { $0.modificationDate > $1.modificationDate }
-        } catch {
+        let loadResult = await Task.detached(priority: .userInitiated) {
+            let fm = FileManager.default
+            do {
+                let urls = try fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey], options: .skipsHiddenFiles)
+                let entries = urls
+                    .filter { !$0.hasDirectoryPath }
+                    .compactMap { url -> LogFileEntry? in
+                        let resources = try? url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
+                        let size = Int64(resources?.fileSize ?? 0)
+                        let date = resources?.contentModificationDate ?? Date.distantPast
+                        return LogFileEntry(url: url, size: size, modificationDate: date)
+                    }
+                    .sorted { $0.modificationDate > $1.modificationDate }
+                return Result<[LogFileEntry], Error>.success(entries)
+            } catch {
+                return Result<[LogFileEntry], Error>.failure(error)
+            }
+        }.value
+        switch loadResult {
+        case .success(let entries):
+            logFiles = entries
+        case .failure(let error):
             errorMessage = error.localizedDescription
         }
         isLoading = false
@@ -97,7 +114,7 @@ public struct RetroArchLogBrowserView: View {
         ZStack {
             Color.black.edgesIgnoringSafeArea(.all)
 
-            if RetroArchLogBrowserViewModel.logsDirectory == nil {
+            if !viewModel.directoryExists {
                 emptyStateView(
                     icon: "folder.badge.questionmark",
                     title: "No RetroArch Logs",
@@ -119,7 +136,7 @@ public struct RetroArchLogBrowserView: View {
         .navigationTitle("RetroArch Logs")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarContent }
-        .onAppear { viewModel.loadFiles() }
+        .task { await viewModel.loadFiles() }
         .sheet(item: $selectedEntry) { entry in
             LogFileViewerSheet(fileURL: entry.url)
         }
@@ -148,9 +165,9 @@ public struct RetroArchLogBrowserView: View {
             }
 #if !os(tvOS)
             .onDelete { offsets in
-                for i in offsets {
-                    viewModel.deleteFile(viewModel.logFiles[i])
-                }
+                // Collect entries first so index shifts from removeAll don't affect iteration
+                let entries = offsets.map { viewModel.logFiles[$0] }
+                entries.forEach { viewModel.deleteFile($0) }
             }
 #endif
         }
