@@ -12,6 +12,9 @@ import RealmSwift
 import PVLibrary
 import PVRealm
 import PVThemes
+import PVSettings
+import PVLogging
+import PVUIBase
 
 // MARK: - Multi-Select UI Helpers
 
@@ -28,6 +31,7 @@ extension ConsoleGamesView {
         #endif
         Task { @MainActor in
             gamesViewModel.toggleSelection(md5: md5)
+            updateCloudActionAvailability()
         }
     }
 
@@ -100,6 +104,22 @@ extension ConsoleGamesView {
                     state.onNormalizeTitles = { [weak gamesViewModel] in
                         gamesViewModel?.showNormalizeTitlePreview = true
                     }
+                    state.onDelete = { [weak gamesViewModel] in
+                        guard let vm = gamesViewModel else { return }
+                        vm.showBatchDeleteConfirmation = true
+                    }
+                    state.onMoveToSystem = { [weak gamesViewModel] in
+                        guard let vm = gamesViewModel else { return }
+                        vm.showBatchMoveToSystem = true
+                    }
+                    state.onOffload = { [weak gamesViewModel] in
+                        guard let vm = gamesViewModel else { return }
+                        vm.showBatchOffloadConfirmation = true
+                    }
+                    state.onDownload = { [weak gamesViewModel] in
+                        guard let vm = gamesViewModel else { return }
+                        vm.showBatchDownloadConfirmation = true
+                    }
                     state.onDone = { [weak gamesViewModel] in
                         Task { @MainActor in
                             gamesViewModel?.exitMultiSelectMode()
@@ -111,7 +131,34 @@ extension ConsoleGamesView {
             }
             .onChange(of: gamesViewModel.selectedGameMD5s.count) { count in
                 MultiSelectToolbarState.shared.updateCount(count)
+                updateCloudActionAvailability()
             }
+    }
+
+    // MARK: - Cloud action availability
+
+    /// Updates the toolbar's offload/download button visibility based on selected games.
+    private func updateCloudActionAvailability() {
+        let state = MultiSelectToolbarState.shared
+        guard Defaults[.iCloudSync] else {
+            state.canOffload = false
+            state.canDownload = false
+            return
+        }
+        let realm = RomDatabase.sharedInstance.realm
+        var hasOffloadable = false
+        var hasDownloadable = false
+        for md5 in gamesViewModel.selectedGameMD5s {
+            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            if game.cloudRecordID != nil {
+                if game.isDownloaded { hasOffloadable = true }
+                else { hasDownloadable = true }
+            }
+            if hasOffloadable && hasDownloadable { break }
+        }
+        state.canOffload = hasOffloadable
+        state.canDownload = hasDownloadable
     }
 
     // MARK: - Edit / Done toggle button (placed in titleBar)
@@ -211,6 +258,252 @@ extension ConsoleGamesView {
                         "Failed to normalize titles: \(error.localizedDescription)",
                         title: "Error"
                     )
+                }
+            }
+        }
+    }
+
+    // MARK: - Batch Delete
+
+    func performBatchDelete() {
+        let selectedMD5s = gamesViewModel.selectedGameMD5s
+        guard !selectedMD5s.isEmpty else { return }
+
+        let realm = RomDatabase.sharedInstance.realm
+        var failedTitles: [String] = []
+        var deletedCount = 0
+
+        for md5 in selectedMD5s {
+            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            do {
+                try RomDatabase.sharedInstance.delete(game: game, deleteSaves: false)
+                deletedCount += 1
+            } catch {
+                failedTitles.append(game.title)
+                ELOG("Failed to delete game \(game.title): \(error)")
+            }
+        }
+
+        gamesViewModel.exitMultiSelectMode()
+
+        if failedTitles.isEmpty {
+            rootDelegate?.showMessage(
+                "Deleted \(deletedCount) game\(deletedCount == 1 ? "" : "s").",
+                title: "Deleted"
+            )
+        } else {
+            rootDelegate?.showMessage(
+                "Deleted \(deletedCount) game\(deletedCount == 1 ? "" : "s"). Failed: \(failedTitles.joined(separator: ", "))",
+                title: "Partial Delete"
+            )
+        }
+    }
+
+    // MARK: - Batch Move to System
+
+    func performBatchMove(to system: PVSystem) {
+        let selectedMD5s = gamesViewModel.selectedGameMD5s
+        guard !selectedMD5s.isEmpty else { return }
+
+        let realm = RomDatabase.sharedInstance.realm
+        var movedCount = 0
+        var failedTitles: [String] = []
+
+        for md5 in selectedMD5s {
+            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+
+            // Skip games already on this system
+            if game.systemIdentifier == system.identifier { continue }
+
+            do {
+                guard let sourceURL = PVEmulatorConfiguration.path(forGame: game) else {
+                    failedTitles.append(game.title)
+                    continue
+                }
+                let destinationURL = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system.identifier)
+                    .appendingPathComponent(sourceURL.lastPathComponent)
+
+                try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
+
+                try realm.write {
+                    let thawedGame = game.thaw()
+                    thawedGame?.system = system
+                    thawedGame?.systemIdentifier = system.identifier
+                    // Update ROM path
+                    let newRelativePath = "\(system.identifier)/\(sourceURL.lastPathComponent)"
+                    thawedGame?.romPath = newRelativePath
+                }
+                movedCount += 1
+            } catch {
+                failedTitles.append(game.title)
+                ELOG("Failed to move game \(game.title): \(error)")
+            }
+        }
+
+        gamesViewModel.exitMultiSelectMode()
+
+        if failedTitles.isEmpty {
+            rootDelegate?.showMessage(
+                "Moved \(movedCount) game\(movedCount == 1 ? "" : "s") to \(system.name).",
+                title: "Moved"
+            )
+        } else {
+            rootDelegate?.showMessage(
+                "Moved \(movedCount), failed \(failedTitles.count): \(failedTitles.joined(separator: ", "))",
+                title: "Partial Move"
+            )
+        }
+    }
+
+    // MARK: - Batch Offload
+
+    func performBatchOffload() {
+        let selectedMD5s = gamesViewModel.selectedGameMD5s
+        guard !selectedMD5s.isEmpty else { return }
+
+        Task {
+            let realm = RomDatabase.sharedInstance.realm
+            var offloadedCount = 0
+            var failedTitles: [String] = []
+
+            for md5 in selectedMD5s {
+                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+                        ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+                guard game.cloudRecordID != nil, game.isDownloaded else { continue }
+
+                do {
+                    if let url = game.file?.url, FileManager.default.fileExists(atPath: url.path) {
+                        try FileManager.default.removeItem(at: url)
+                    }
+                    try await RomDatabase.sharedInstance.asyncWriteTransaction {
+                        if let thawed = game.thaw() {
+                            thawed.isDownloaded = false
+                            thawed.file = nil
+                        }
+                    }
+                    offloadedCount += 1
+                } catch {
+                    failedTitles.append(game.title)
+                    ELOG("Failed to offload game \(game.title): \(error)")
+                }
+            }
+
+            await MainActor.run {
+                gamesViewModel.exitMultiSelectMode()
+                if failedTitles.isEmpty {
+                    rootDelegate?.showMessage(
+                        "Offloaded \(offloadedCount) game\(offloadedCount == 1 ? "" : "s") from this device.",
+                        title: "Offloaded"
+                    )
+                } else {
+                    rootDelegate?.showMessage(
+                        "Offloaded \(offloadedCount), failed \(failedTitles.count): \(failedTitles.joined(separator: ", "))",
+                        title: "Partial Offload"
+                    )
+                }
+            }
+        }
+    }
+
+    // MARK: - Batch Download
+
+    func performBatchDownload() {
+        let selectedMD5s = gamesViewModel.selectedGameMD5s
+        guard !selectedMD5s.isEmpty else { return }
+
+        let realm = RomDatabase.sharedInstance.realm
+        var gamesToDownload: [(recordID: String, md5: String, title: String)] = []
+
+        for md5 in selectedMD5s {
+            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            guard let recordID = game.cloudRecordID, !game.isDownloaded else { continue }
+            gamesToDownload.append((recordID: recordID, md5: game.md5Hash, title: game.title))
+        }
+
+        gamesViewModel.exitMultiSelectMode()
+
+        guard !gamesToDownload.isEmpty else { return }
+
+        rootDelegate?.showMessage(
+            "Downloading \(gamesToDownload.count) game\(gamesToDownload.count == 1 ? "" : "s") from Cloud…",
+            title: "Downloading"
+        )
+
+        Task {
+            guard let syncer = CloudKitSyncerStore.shared.getSyncer() else {
+                await MainActor.run {
+                    rootDelegate?.showMessage("No CloudKit syncer available.", title: "Error")
+                }
+                return
+            }
+
+            var downloadedCount = 0
+            var failedTitles: [String] = []
+
+            for game in gamesToDownload {
+                do {
+                    let _ = try await syncer.downloadFileOnDemand(recordName: game.recordID)
+                    try await updateGameDownloadStatus(recordID: game.recordID, isDownloaded: true)
+                    downloadedCount += 1
+                } catch {
+                    failedTitles.append(game.title)
+                    ELOG("Failed to download game \(game.title): \(error)")
+                }
+            }
+
+            await MainActor.run {
+                if failedTitles.isEmpty {
+                    rootDelegate?.showMessage(
+                        "Downloaded \(downloadedCount) game\(downloadedCount == 1 ? "" : "s").",
+                        title: "Done"
+                    )
+                } else {
+                    rootDelegate?.showMessage(
+                        "Downloaded \(downloadedCount), failed \(failedTitles.count): \(failedTitles.joined(separator: ", "))",
+                        title: "Partial Download"
+                    )
+                }
+            }
+        }
+    }
+
+    // MARK: - Batch Move Sheet
+
+    @ViewBuilder
+    var batchMoveToSystemSheet: some View {
+        let systems = PVEmulatorConfiguration.systems.filter {
+            !(AppState.shared.isAppStore && $0.appStoreDisabled)
+        }
+        NavigationStack {
+            List {
+                ForEach(systems) { system in
+                    Button {
+                        gamesViewModel.showBatchMoveToSystem = false
+                        performBatchMove(to: system)
+                    } label: {
+                        HStack {
+                            Text(system.name)
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Text(system.shortName)
+                                .foregroundColor(.secondary)
+                                .font(.caption)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Move \(gamesViewModel.selectedGameMD5s.count) Game\(gamesViewModel.selectedGameMD5s.count == 1 ? "" : "s") to…")
+            #if !os(tvOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        gamesViewModel.showBatchMoveToSystem = false
+                    }
                 }
             }
         }

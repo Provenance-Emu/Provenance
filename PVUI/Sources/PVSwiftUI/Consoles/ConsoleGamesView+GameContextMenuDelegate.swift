@@ -131,7 +131,7 @@ extension ConsoleGamesView: GameContextMenuDelegate {
     }
 
     /// Update the download status of a game in the database
-    private func updateGameDownloadStatus(recordID: String, isDownloaded: Bool) async throws {
+    func updateGameDownloadStatus(recordID: String, isDownloaded: Bool) async throws {
         let realm = try await Realm()
 
         try await realm.asyncWrite {

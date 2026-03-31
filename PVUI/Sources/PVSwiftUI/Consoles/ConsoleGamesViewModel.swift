@@ -98,6 +98,14 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var selectedGameMD5s: Set<String> = []
     /// Controls presentation of the "Normalize Titles" preview sheet.
     @Published var showNormalizeTitlePreview: Bool = false
+    /// Controls presentation of the batch delete confirmation alert.
+    @Published var showBatchDeleteConfirmation: Bool = false
+    /// Controls presentation of the batch move-to-system picker.
+    @Published var showBatchMoveToSystem: Bool = false
+    /// Controls presentation of the batch offload confirmation alert.
+    @Published var showBatchOffloadConfirmation: Bool = false
+    /// Controls presentation of the batch download confirmation alert.
+    @Published var showBatchDownloadConfirmation: Bool = false
 
     /// Toggle a game in/out of the selection set.
     @MainActor
