@@ -143,6 +143,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     var menuButton: MenuButton?
 
+    /// Toast overlay hosting controller — must survive `radicalCleanup`.
+    private var toastHostingController: PVToastHostingController?
+
     // RTL: do not flip — the emulator screen renders pixel-accurate game content.
     // Mirroring the GPU viewport would produce a horizontally inverted image, breaking gameplay.
     private(set) lazy var gpuViewController: PVGPUViewController = {
@@ -570,7 +573,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Install toast overlay AFTER skin setup so it renders above all emulator views
         #if canImport(UIKit)
-        PVToastHostingController.install(in: self)
+        toastHostingController = PVToastHostingController.install(in: self)
         #endif
 
         initNotificationObservers()
@@ -2235,9 +2238,13 @@ extension PVEmulatorViewController {
         if let mb = menuButton {
             preservedViews.insert(ObjectIdentifier(mb))
         }
+        // Preserve the toast overlay container (parent of the hosting controller's view)
+        if let toastContainer = toastHostingController?.view.superview {
+            preservedViews.insert(ObjectIdentifier(toastContainer))
+        }
 
-        // 2. Remove ALL child view controllers except the GPU controller
-        // and virtual-input hosting controllers (cursor overlay, keyboard).
+        // 2. Remove ALL child view controllers except the GPU controller,
+        // virtual-input hosting controllers, and the toast overlay.
         let preservedControllers: Set<ObjectIdentifier> = {
             var set: Set<ObjectIdentifier> = [ObjectIdentifier(gpuViewController)]
             #if !os(tvOS)
@@ -2248,6 +2255,9 @@ extension PVEmulatorViewController {
                 set.insert(ObjectIdentifier(kbHost))
             }
             #endif
+            if let toastHost = toastHostingController {
+                set.insert(ObjectIdentifier(toastHost))
+            }
             return set
         }()
         for child in children {
@@ -2291,6 +2301,11 @@ extension PVEmulatorViewController {
         if let gpuView = gpuView, gpuView.superview == nil {
             DLOG("Re-adding GPU view")
             view.addSubview(gpuView)
+        }
+
+        // 6b. Ensure toast overlay stays on top after cleanup
+        if let toastContainer = toastHostingController?.view.superview {
+            view.bringSubviewToFront(toastContainer)
         }
 
         // 7. Force a layout update

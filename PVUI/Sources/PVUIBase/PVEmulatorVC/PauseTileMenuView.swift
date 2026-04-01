@@ -492,10 +492,15 @@ struct PauseTileMenuView: View {
             break
             #endif
         case "retroArchMenu":
-            guard let action = (emulatorVC.core as? CoreActions)?.coreActions?.first(where: { $0.title == RetroArchCoreActionTitles.internalMenu }) else { return }
-            let emu = emulatorVC
-            dismissThenResumeAndRun {
-                emu.handleCoreAction(action)
+            guard let action = (emulatorVC.core as? CoreActions)?.coreActions?.first(where: { $0.title == RetroArchCoreActionTitles.internalMenu }) else {
+                ELOG("retroArchMenu: failed to get CoreAction — core type: \(type(of: emulatorVC.core)), conforms to CoreActions: \(emulatorVC.core is CoreActions)")
+                return
+            }
+            DLOG("retroArchMenu: got action, dismissing then toggling RA menu")
+            let emulatorVC = self.emulatorVC
+            emulatorVC.dismissNav(resumeEmulation: true) {
+                DLOG("retroArchMenu: dismiss completed, calling handleCoreAction")
+                emulatorVC.handleCoreAction(action)
             }
         case "retroArchSettings":
             showingRetroArchSettings = true

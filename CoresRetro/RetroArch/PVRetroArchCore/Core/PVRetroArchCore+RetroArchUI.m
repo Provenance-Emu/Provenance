@@ -65,6 +65,8 @@ static void rarch_draw_observer(CFRunLoopObserverRef observer,
 
 static CFRunLoopObserverRef iterate_observer;
 
+/// Set while `overlays.zip` is downloading so duplicate `writeConfigFile` / boot paths do not start parallel downloads.
+static BOOL s_overlayZipDownloadInFlight = NO;
 
 apple_frontend_settings_t apple_frontend_settings;
 extern id<ApplePlatform> apple_platform;
@@ -332,6 +334,7 @@ int argc =  1;
 /// and all other Hatari/Atari ST BIOS helpers live in PVRetroArchCore+BIOS+AtariST.m.
 
 - (void)setupEmulation {
+    ILOG(@"setupEmulation: ENTER — retroArchRootPath=%@", self.retroArchRootPath);
     self.alwaysUseMetal = true;
     self.skipLayout = true;
     self.skipEmulationLoop = true;
@@ -358,6 +361,8 @@ int argc =  1;
         //settings->bools.cheevos_enable = true;
     }
     [self writeConfigFile];
+    ILOG(@"setupEmulation: writeConfigFile returned, checking retroarch.cfg exists=%d",
+         [[NSFileManager defaultManager] fileExistsAtPath:[self.retroArchRootPath stringByAppendingPathComponent:@"config/retroarch.cfg"]]);
     /// Sync BIOS resources to the RetroArch system directory.
     /// writeConfigFile already validated and wrote tos.img (for Hatari/Atari ST) before this call.
     /// syncResources only copies files that are absent at the destination, so if writeConfigFile
@@ -528,7 +533,7 @@ int argc =  1;
 void extract_bundles();
 
 - (void) writeConfigFile {
-
+    ILOG(@"writeConfigFile: ENTER");
     [PVRetroArchCoreBridge synchronizeOptionsWithRetroArch];
 
     // Initialize file manager
@@ -558,21 +563,37 @@ void extract_bundles();
     BOOL shouldUpdateAssets = [self shouldUpdateAssets];
     ILOG(@"Should update assets: %@", shouldUpdateAssets ? @"YES" : @"NO");
 
-#if TARGET_OS_TV
-    BOOL shouldUpdateOverlays = false;
-#else
-    BOOL shouldUpdateOverlays = [self shouldUpdateOverlays];
-#endif
-    ILOG(@"Should update overlays: %@", shouldUpdateOverlays ? @"YES" : @"NO");
-
-
     if (isFirstRunOrVersionUpdate || shouldUpdateAssets) {
+        [PVOSDNotification postMessage:@"Setting up RetroArch resources…" type:PVOSDTypeInfo duration:0];
 
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"retroarch.cfg" ofType:nil];
+        ILOG(@"writeConfigFile: bundled retroarch.cfg source path: %@", src ?: @"(nil!)");
+        if (!src) {
+            ELOG(@"writeConfigFile: CRITICAL — retroarch.cfg not found in bundle [%@]! Config will not be created.",
+                 [NSBundle bundleForClass:[PVRetroArchCoreBridge class]].bundlePath);
+        }
+
+        // Ensure the config directory exists before trying to write
+        NSString *configDir = [self.retroArchRootPath stringByAppendingPathComponent:@"config"];
+        if (![fm fileExistsAtPath:configDir]) {
+            NSError *mkdirErr = nil;
+            [fm createDirectoryAtPath:configDir withIntermediateDirectories:YES attributes:nil error:&mkdirErr];
+            if (mkdirErr) {
+                ELOG(@"writeConfigFile: Failed to create config dir %@: %@", configDir, mkdirErr.localizedDescription);
+            } else {
+                ILOG(@"writeConfigFile: Created config directory: %@", configDir);
+            }
+        }
 
         if (!configFileExists) {
-            ILOG(@"Writing config file to %@", fileName);
+            ILOG(@"writeConfigFile: Writing config file to %@", fileName);
             [self syncResource:src to:fileName];
+            // Verify it was actually written
+            if ([fm fileExistsAtPath:fileName]) {
+                ILOG(@"writeConfigFile: Successfully created retroarch.cfg");
+            } else {
+                ELOG(@"writeConfigFile: FAILED to create retroarch.cfg at %@", fileName);
+            }
         } else if (!versionFileExists) {
             // Version update: merge forced defaults into existing user config.
             // Keys listed here will be overwritten to match the bundled cfg value.
@@ -622,11 +643,8 @@ void extract_bundles();
     }
 #endif // !TARGET_OS_TV
 
-    // Handle overlay updates
-    if (shouldUpdateOverlays) {
-        ILOG(@"Overlays need updating, starting download...");
-        [self downloadAndExtractOverlays];
-    }
+    // Overlay download disabled — Provenance uses its own skin system.
+    // The bundled pv_ui_overlay (RGUI button overlay) is synced via syncResources above.
 
     // Check if we need to trigger RetroArch updates (first run or version update)
     BOOL shouldTriggerUpdates = isFirstRunOrVersionUpdate;
@@ -638,8 +656,8 @@ void extract_bundles();
 
     // Always sync user_language in retroarch.cfg so locale/override changes
     // take effect on next core launch (not just on first-run or version update).
-    NSString *mainCfgPath = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
-                             self.documentsDirectory];
+    NSString *mainCfgPath = [NSString stringWithFormat:@"%@/config/retroarch.cfg",
+                             self.retroArchRootPath];
     if ([fm fileExistsAtPath:mainCfgPath]) {
         [self applyUserLanguageToRetroArchConfig:mainCfgPath];
     }
@@ -862,124 +880,161 @@ void extract_bundles();
     // opt.cfg may contain core option values whose format differs from retroarch.cfg.
 
     fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"config/opt.cfg"];
-    ILOG(@"Writing options config to %@", fileName);
+    ILOG(@"writeConfigFile: Writing opt.cfg to %@", fileName);
+
+    // Ensure config directory exists (may be a fresh install)
+    NSString *optConfigDir = [fileName stringByDeletingLastPathComponent];
+    if (![fm fileExistsAtPath:optConfigDir]) {
+        [fm createDirectoryAtPath:optConfigDir withIntermediateDirectories:YES attributes:nil error:nil];
+        ILOG(@"writeConfigFile: Created config directory for opt.cfg: %@", optConfigDir);
+    }
+
     NSError *error;
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
                    error:&error];
     if (error) {
-        ELOG(@"Error writing options config to %@: %@", fileName, error.localizedDescription);
+        ELOG(@"writeConfigFile: Error writing opt.cfg to %@: %@", fileName, error.localizedDescription);
     } else {
-        ILOG(@"Options config written to %@", fileName);
+        ILOG(@"writeConfigFile: opt.cfg written successfully to %@", fileName);
     }
 }
 
 - (bool)shouldUpdateAssets {
-// #if DEBUG
-//     return true;
-// #else
-    // If assets were updated, refresh config
     NSFileManager *fm = [[NSFileManager alloc] init];
-    NSString *file=[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/flatui/png/arrow.png"];
-    ILOG(@"Checking if assets exist at %@", file);
 
-    if ([fm fileExistsAtPath:file]) {
-        unsigned long long fileSize = [[fm attributesOfItemAtPath:file error:nil] fileSize];
-        ILOG(@"File size: %llu", fileSize);
-
-        /// Any non-empty asset means we already synced this version; skip
-        if (fileSize > 0) {
-            ILOG(@"Assets present; no update needed");
+    // Primary check: if the version-stamped config exists, we already set up
+    // assets for this app version — don't redo the work.
+    // Use objectForInfoDictionaryKey: to match writeConfigFile's version lookup.
+    NSString *appVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"] ?: @"unknown";
+    NSString *verFile = [self.retroArchRootPath stringByAppendingPathComponent:
+                         [NSString stringWithFormat:@"config/%@.cfg", appVersion]];
+    if ([fm fileExistsAtPath:verFile]) {
+        // Sanity: verify a representative asset actually exists on disk.
+        // On tvOS the system can purge files independently, so the version
+        // stamp alone isn't proof the assets survived.
+        NSString *assetFile = [self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/flatui/png/arrow.png"];
+        if ([fm fileExistsAtPath:assetFile]) {
+            DLOG(@"shouldUpdateAssets: version file + asset present — skip");
             return false;
         }
+        ILOG(@"shouldUpdateAssets: version file exists but asset missing — re-syncing");
+    } else {
+        ILOG(@"shouldUpdateAssets: no version file for %@ — first run or update", appVersion);
     }
 
-    ILOG(@"File missing or empty, update assets");
     return true;
-// #endif
 }
 
 - (bool)shouldUpdateOverlays {
-    /// Check if overlays need to be downloaded by looking for the COPYING file
+    @synchronized([PVRetroArchCoreBridge class]) {
+        if (s_overlayZipDownloadInFlight) {
+            DLOG(@"shouldUpdateOverlays: download already in-flight, skipping");
+            return false;
+        }
+    }
+    /// The libretro buildbot `overlays.zip` has entries at the root level (COPYING,
+    /// gamepads/, keyboards/, etc. — no `overlays/` prefix). We extract into
+    /// `retroArchRootPath/overlays/` so that files land at `overlays/COPYING`, etc.
     NSFileManager *fm = [[NSFileManager alloc] init];
-    NSString *copyingFile = [self.retroArchRootPath stringByAppendingPathComponent:@"overlays/COPYING"];
-    ILOG(@"Checking if overlays COPYING file exists at %@", copyingFile);
+    NSString *overlaysDir = [self.retroArchRootPath stringByAppendingPathComponent:@"overlays"];
+    NSString *copyingPath = [overlaysDir stringByAppendingPathComponent:@"COPYING"];
 
-    if ([fm fileExistsAtPath:copyingFile]) {
-        ILOG(@"Overlays COPYING file exists, no update needed");
+    if ([fm fileExistsAtPath:copyingPath]) {
+        DLOG(@"shouldUpdateOverlays: COPYING present at %@, no download needed", copyingPath);
         return false;
     }
 
-    ILOG(@"Overlays COPYING file does not exist, update needed");
+    ILOG(@"shouldUpdateOverlays: COPYING missing at %@, download needed", copyingPath);
     return true;
 }
 
 - (void)downloadAndExtractOverlays {
-    /// Download and extract overlays from libretro buildbot
-    NSString *overlayURL = @"https://buildbot.libretro.com/assets/frontend/overlays.zip";
-    NSString *overlaysDestination = [self.retroArchRootPath stringByAppendingPathComponent:@"overlays"];
+    @synchronized([PVRetroArchCoreBridge class]) {
+        if (s_overlayZipDownloadInFlight) {
+            DLOG(@"Overlay download already in progress, ignoring duplicate request");
+            return;
+        }
+        s_overlayZipDownloadInFlight = YES;
+    }
 
-    ILOG(@"Starting overlay download from %@", overlayURL);
+    /// The buildbot `overlays.zip` has root-level entries (COPYING, gamepads/, etc.).
+    /// Extract into `retroArchRootPath/overlays/` so they land at the correct paths.
+    /// Use `overwrite:NO` to preserve bundled content like `pv_ui_overlay`.
+    NSString *overlayURL = @"https://buildbot.libretro.com/assets/frontend/overlays.zip";
+    NSString *extractRoot = [self.retroArchRootPath stringByAppendingPathComponent:@"overlays"];
+
+    ILOG(@"Starting overlay download from %@ → %@", overlayURL, extractRoot);
 
     NSURLSessionConfiguration *config = [NSURLSessionConfiguration defaultSessionConfiguration];
     config.timeoutIntervalForRequest = 30.0;
-    config.timeoutIntervalForResource = 300.0; // 5 minutes for large file
+    config.timeoutIntervalForResource = 300.0;
 
     NSURLSession *session = [NSURLSession sessionWithConfiguration:config];
 
     NSURL *url = [NSURL URLWithString:overlayURL];
     NSURLSessionDownloadTask *downloadTask = [session downloadTaskWithURL:url completionHandler:^(NSURL *tempLocation, NSURLResponse *response, NSError *error) {
 
+        void (^clearInFlight)(void) = ^{
+            @synchronized([PVRetroArchCoreBridge class]) {
+                s_overlayZipDownloadInFlight = NO;
+            }
+        };
+
         if (error) {
             ELOG(@"Error downloading overlays: %@", error.localizedDescription);
+            clearInFlight();
             return;
         }
 
         if (!tempLocation) {
             ELOG(@"No temporary file location for downloaded overlays");
+            clearInFlight();
             return;
         }
 
-        ILOG(@"Overlays downloaded successfully to temporary location: %@", tempLocation.path);
+        ILOG(@"Overlays downloaded (%lld bytes), extracting on background thread",
+             [[[NSFileManager defaultManager] attributesOfItemAtPath:tempLocation.path error:nil] fileSize]);
 
-        dispatch_async(dispatch_get_main_queue(), ^{
+        /// Extract on a background queue — ZIP extraction is pure file I/O and can
+        /// take 20+ seconds. Running it on main thread blocks `setViewType:` dispatch_sync
+        /// from the RetroArch video thread, deadlocking core initialization.
+        dispatch_async(dispatch_get_global_queue(QOS_CLASS_UTILITY, 0), ^{
             NSFileManager *fm = [[NSFileManager alloc] init];
 
-            // Create overlays directory if it doesn't exist
-            NSError *dirError;
-            if (![fm fileExistsAtPath:overlaysDestination]) {
-                [fm createDirectoryAtPath:overlaysDestination withIntermediateDirectories:YES attributes:nil error:&dirError];
-                if (dirError) {
-                    ELOG(@"Error creating overlays directory: %@", dirError.localizedDescription);
-                    return;
-                }
-                ILOG(@"Created overlays directory at %@", overlaysDestination);
+            /// Ensure the overlays directory exists before extraction
+            NSError *mkdirErr = nil;
+            [fm createDirectoryAtPath:extractRoot withIntermediateDirectories:YES attributes:nil error:&mkdirErr];
+            if (mkdirErr) {
+                ELOG(@"Failed to create overlays dir %@: %@", extractRoot, mkdirErr.localizedDescription);
             }
 
-            // Extract the downloaded zip file
-            BOOL extractSuccess = [self extractZIP:tempLocation.path toDestination:overlaysDestination overwrite:YES];
+            [PVOSDNotification postMessage:@"Extracting overlays…" type:PVOSDTypeInfo duration:0];
+            BOOL extractSuccess = [self extractZIP:tempLocation.path toDestination:extractRoot overwrite:NO];
 
             if (extractSuccess) {
-                ILOG(@"Overlays extracted successfully to %@", overlaysDestination);
-
-                // Verify the COPYING file exists after extraction
-                NSString *copyingFile = [NSString stringWithFormat:@"%@/COPYING", overlaysDestination];
-                if ([fm fileExistsAtPath:copyingFile]) {
-                    ILOG(@"Overlay installation verified - COPYING file found");
+                NSString *copyingPath = [extractRoot stringByAppendingPathComponent:@"COPYING"];
+                if ([fm fileExistsAtPath:copyingPath]) {
+                    ILOG(@"Overlays extracted and verified at %@", extractRoot);
+                    [PVOSDNotification postMessage:@"RetroArch overlays ready" type:PVOSDTypeSuccess duration:2.0];
                 } else {
-                    WLOG(@"Warning: COPYING file not found after extraction");
+                    WLOG(@"Overlays extracted to %@ but COPYING not found — zip structure may have changed", extractRoot);
+                    NSArray *contents = [fm contentsOfDirectoryAtPath:extractRoot error:nil];
+                    ILOG(@"overlays/ contents (%lu items): %@",
+                         (unsigned long)contents.count,
+                         [[contents subarrayWithRange:NSMakeRange(0, MIN(contents.count, 20))] componentsJoinedByString:@", "]);
                 }
             } else {
                 ELOG(@"Failed to extract overlays zip file");
             }
 
-            // Clean up temporary file
             NSError *removeError;
             [fm removeItemAtURL:tempLocation error:&removeError];
             if (removeError) {
-                WLOG(@"Warning: Could not remove temporary file: %@", removeError.localizedDescription);
+                WLOG(@"Could not remove temporary overlay zip: %@", removeError.localizedDescription);
             }
+            clearInFlight();
         });
     }];
 
@@ -1026,11 +1081,17 @@ void extract_bundles();
 }
 
 - (void)syncResource:(NSString*)from to:(NSString*)to {
+    ILOG(@"syncResource: %@ -> %@", from ?: @"(nil)", to ?: @"(nil)");
     if (!from) {
-        ELOG(@"From path is nil");
+        ELOG(@"syncResource: source path is nil, cannot copy");
         return;
     }
     NSFileManager *fm = [[NSFileManager alloc] init];
+
+    if (![fm fileExistsAtPath:from]) {
+        ELOG(@"syncResource: source file does not exist: %@", from);
+        return;
+    }
 
     NSString *destDir = [to stringByDeletingLastPathComponent];
     if (![fm fileExistsAtPath:destDir]) {
@@ -1610,15 +1671,49 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
             bgArgv[2] = strdup("--appendconfig");
             bgArgv[3] = strdup(optConfig.UTF8String);
             bgArgv[4] = NULL;
-            ILOG(@"Loading %s\n", bgArgv[0]);
+            ILOG(@"startVM: plain core mode (no core identifier), optConfig=%@", optConfig);
         } else {
             NSString *mainBundlePath = [NSBundle mainBundle].bundlePath;
+            // Pass the .framework directory to -L; RetroArch's dylib_load() natively
+            // handles .framework bundles by resolving the inner Mach-O binary itself
+            // (see dylib.c:131-143). Do NOT pass the inner binary path directly.
             NSString *sysPath = [NSString stringWithFormat:@"%@/Frameworks/%@", mainBundlePath, capturedCoreIdentifier];
+
+            ILOG(@"startVM: mainBundlePath=%@", mainBundlePath);
+            ILOG(@"startVM: coreIdentifier=%@", capturedCoreIdentifier);
+            ILOG(@"startVM: framework path=%@", sysPath);
 
             if ([fm fileExistsAtPath:sysPath]) {
                 ILOG(@"Found Module %@\n", sysPath);
             } else {
-                ELOG(@"Error: No module found at %@\n", sysPath);
+                ELOG(@"Error: No module found at %@ (Core.plist PVCoreIdentifier: %@)\n", sysPath, capturedCoreIdentifier);
+                NSString *fwParent = [mainBundlePath stringByAppendingPathComponent:@"Frameworks"];
+                NSArray *contents = [fm contentsOfDirectoryAtPath:fwParent error:nil];
+
+                // Log partial matches so we can see similar framework names
+                NSString *coreStem = [capturedCoreIdentifier stringByDeletingPathExtension]; // e.g. "a5200.libretro"
+                NSMutableArray *partialMatches = [NSMutableArray new];
+                for (NSString *item in contents) {
+                    if ([item.lowercaseString containsString:coreStem.lowercaseString] ||
+                        [item.lowercaseString containsString:@"libretro"] ||
+                        [item.lowercaseString containsString:@"retroarch"]) {
+                        [partialMatches addObject:item];
+                    }
+                }
+                ELOG(@"Looking for: '%@' in %@/Frameworks/ (%lu total)",
+                     capturedCoreIdentifier, mainBundlePath, (unsigned long)contents.count);
+                ELOG(@"Related frameworks: %@",
+                     partialMatches.count > 0 ? [partialMatches componentsJoinedByString:@", "] : @"NONE found");
+                ILOG(@"All frameworks: %@", [contents componentsJoinedByString:@", "]);
+
+                // Post OSD error so user sees it on screen
+                [PVOSDNotification postMessage:[NSString stringWithFormat:@"Core not found: %@", capturedCoreIdentifier]
+                                          type:PVOSDTypeError
+                                      duration:5.0];
+
+                // Don't proceed — rarch_main will just fail after a long wait
+                ELOG(@"Aborting startVM: core framework not present in this build");
+                return;
             }
 
             NSString *resolvedRomPath = capturedRomPath;
@@ -1643,14 +1738,39 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
         }
 
         if (capturedProcessingInit) {
-            [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"assets.zip" ofType:nil] toDestination:capturedRetroArchRoot overwrite:true];
+            ILOG(@"startVM: Extracting assets.zip to %@", capturedRetroArchRoot);
+            [PVOSDNotification postMessage:@"Extracting RetroArch assets…" type:PVOSDTypeInfo duration:0];
+            /// Use overwrite:NO so we don't delete the entire retroArchRootPath (which
+            /// contains config/retroarch.cfg written moments ago by writeConfigFile).
+            /// overwrite:YES was nuking the config every boot, causing rarch_main to fail
+            /// with "Config not found" and preventing cores from ever initializing.
+            [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"assets.zip" ofType:nil] toDestination:capturedRetroArchRoot overwrite:false];
         }
 
-        rarch_main(bgArgc, bgArgv, NULL);
+        // Log the full argv for debugging
+        ILOG(@"startVM: optConfig=%@", optConfig);
+        ILOG(@"startVM: optConfig exists=%d", [fm fileExistsAtPath:optConfig]);
+        NSString *retroarchCfg = [capturedRetroArchRoot stringByAppendingPathComponent:@"config/retroarch.cfg"];
+        ILOG(@"startVM: retroarch.cfg=%@, exists=%d", retroarchCfg, [fm fileExistsAtPath:retroarchCfg]);
+        for (int i = 0; i < bgArgc; i++) {
+            ILOG(@"startVM: argv[%d]=%s", i, bgArgv[i]);
+        }
+
+        [PVOSDNotification postMessage:@"Starting RetroArch…" type:PVOSDTypeInfo duration:0];
+        int rarchResult = rarch_main(bgArgc, bgArgv, NULL);
 
         for (int i = 0; i < bgArgc; i++) { free(bgArgv[i]); }
         free(bgArgv);
 
+        if (rarchResult != 0) {
+            ELOG(@"startVM: rarch_main returned error %d — skipping observer and joypad setup to prevent crash", rarchResult);
+            [PVOSDNotification postMessage:[NSString stringWithFormat:@"RetroArch failed to start (error %d)", rarchResult]
+                                      type:PVOSDTypeError
+                                  duration:5.0];
+            return;
+        }
+
+        ILOG(@"startVM: rarch_main returned successfully, setting up observer and joypad");
         _isInitialized = true;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
             runloop_state_t *runloop_st = runloop_state_get_ptr();
@@ -2072,8 +2192,8 @@ static void trigger_retroarch_update_action(enum msg_hash_enums enum_idx) {
 		if (!self.batterySavesPath) {
 			NSFileManager *fm = [[NSFileManager alloc] init];
 			self.batterySavesPath = [self.retroArchRootPath stringByAppendingPathComponent:@"config"];
-			NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
-								  self.documentsDirectory];
+			NSString *fileName = [NSString stringWithFormat:@"%@/config/retroarch.cfg",
+                                  self.retroArchRootPath];
 			if ([fm fileExistsAtPath: fileName]) {
 				//[fm removeItemAtPath:fileName error:nil];
 			}
@@ -2209,6 +2329,13 @@ static uintptr_t ui_companion_cocoatouch_get_app_icon_texture(const char *icon)
 static void rarch_draw_observer(CFRunLoopObserverRef observer,
 	CFRunLoopActivity activity, void *info)
 {
+   /* Guard against calling runloop_iterate before rarch_main has initialised
+    * the video driver.  If the driver data pointer is NULL we would crash in
+    * vulkan_alive / gl_alive / etc.  This can happen if the observer is fired
+    * before init completes or after a failed init. */
+   if (!_isInitialized) {
+       return;
+   }
    uint32_t runloop_flags;
    int          ret   = runloop_iterate();
    if (ret == -1) {

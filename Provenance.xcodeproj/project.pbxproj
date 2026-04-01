@@ -2656,6 +2656,7 @@
 			membershipExceptions = (
 				DriverKit/ProvenanceHIDDriver.swift,
 				DriverKit/ProvenanceOpticalDriveDriver.swift,
+				"ProvenanceCompanion-Info.plist",
 			);
 			target = C0C0CAFE000000000000001A /* ProvenanceCompanion */;
 		};
@@ -7034,6 +7035,7 @@
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				B3A60E872CB770C8001D99C2 /* Script: Generate Frameworks */,
+				C0C0CAFE0001000000000001 /* Script: Validate Frameworks */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
 				1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */,
 			);
@@ -7415,6 +7417,7 @@
 				B394CD6A2BDEE53A006B63E8 /* Embed Foundation Extensions */,
 				B394CD6C2BDEE53A006B63E8 /* Frameworks */,
 				B3CC2E0D2CBC0D4F00D90EB1 /* Script: Generate Frameworks */,
+				C0C0CAFE0001000000000002 /* Script: Validate Frameworks */,
 				B394CDB62BDEE53A006B63E8 /* Resources */,
 				B394CDDA2BDEE53A006B63E8 /* Script: Set Build Number */,
 				B306D7EB2D3DDD3300C71EBE /* Crashlytics */,
@@ -7700,6 +7703,7 @@
 				B3F7E5A8297736C200362B92 /* Embed Foundation Extensions */,
 				B3F7E500297736C200362B92 /* Frameworks */,
 				B3A60E802CB76E39001D99C2 /* Script: Generate Frameworks */,
+				C0C0CAFE0001000000000003 /* Script: Validate Frameworks */,
 				B3F7E550297736C200362B92 /* Resources */,
 				B3F7E573297736C200362B92 /* Script: Set Build Number */,
 			);
@@ -7866,7 +7870,7 @@
 				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftUpdateCheck = 1620;
-				LastUpgradeCheck = 1610;
+				LastUpgradeCheck = 2640;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
@@ -10044,6 +10048,60 @@
 			shellPath = /bin/sh;
 			shellScript = "echo \"Begin: Generate Frameworks\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch\necho \"End: Generate Frameworks\"\n";
 		};
+		C0C0CAFE0001000000000001 /* Script: Validate Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Script: Validate Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/validate_frameworks.sh\n";
+		};
+		C0C0CAFE0001000000000002 /* Script: Validate Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Script: Validate Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/validate_frameworks.sh\n";
+		};
+		C0C0CAFE0001000000000003 /* Script: Validate Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Script: Validate Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/validate_frameworks.sh\n";
+		};
 		B3CC2E0E2CBC0D7700D90EB1 /* Script: Get RetroArch Modules */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -10770,6 +10828,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -10830,6 +10889,7 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -11408,6 +11468,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -11479,6 +11540,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -11551,6 +11613,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -12203,6 +12266,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).ThumbnailExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -12263,6 +12327,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).ThumbnailExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -12322,6 +12387,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).ThumbnailExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -12370,6 +12436,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).SpotlightImportExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = YES;
@@ -12421,6 +12488,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).SpotlightImportExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = YES;
@@ -12471,6 +12539,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).SpotlightImportExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = YES;
@@ -12532,6 +12601,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).WidgetExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -12596,6 +12666,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).WidgetExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -12659,6 +12730,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).WidgetExtension";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -13011,6 +13083,7 @@
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_SWIFT_FLAGS = "-Xfrontend -warn-long-function-bodies=300 -Xfrontend -warn-long-expression-type-checking=200";
 				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -13229,6 +13302,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = YES;
@@ -14231,6 +14305,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).QuickLookPreview";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -14280,6 +14355,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).QuickLookPreview";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -14328,6 +14404,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).QuickLookPreview";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -14373,6 +14450,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = YES;
@@ -14425,6 +14503,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "$(SPOTLIGHT_PRODUCT_BUNDLE_IDENTIFIER)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				REGISTER_APP_GROUPS = YES;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = YES;
@@ -15324,6 +15403,10 @@
 		C0C0DE0100000009 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
+				CLANG_ANALYZER_DIVIDE_BY_ZERO = NO;
+				CLANG_ANALYZER_NULL_DEREFERENCE = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -15333,6 +15416,7 @@
 				INFOPLIST_FILE = "ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanion.opticaldrive.driverkit";
 				PRODUCT_NAME = ProvenanceOpticalDriveDriver;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = driverkit;
 				SUPPORTED_PLATFORMS = driverkit;
 				SWIFT_VERSION = 5.0;
@@ -15342,6 +15426,7 @@
 		C0C0DE010000000A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -15361,6 +15446,7 @@
 		C0C0DE010000000B /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -15380,6 +15466,10 @@
 		C0C0DE0200000009 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
+				CLANG_ANALYZER_DIVIDE_BY_ZERO = NO;
+				CLANG_ANALYZER_NULL_DEREFERENCE = NO;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/DriverKit/ProvenanceHIDDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -15389,6 +15479,7 @@
 				INFOPLIST_FILE = "ProvenanceCompanion/DriverKit/ProvenanceHIDDriver-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ProvenanceCompanion.driverkit";
 				PRODUCT_NAME = ProvenanceHIDDriver;
+				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = driverkit;
 				SUPPORTED_PLATFORMS = driverkit;
 				SWIFT_VERSION = 5.0;
@@ -15398,6 +15489,7 @@
 		C0C0DE020000000A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/DriverKit/ProvenanceHIDDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -15417,6 +15509,7 @@
 		C0C0DE020000000B /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/DriverKit/ProvenanceHIDDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
