@@ -637,7 +637,7 @@ struct DefaultControllerSkinView: View {
         let aspectRatio = getValidatedAspectRatio()
 
         // Check if native scale is enabled
-        let nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+        let nativeScaleEnabled = Defaults[.scalingMode] == .nativeResolution
 
         let horizontalSafe = safeInsets.leading + safeInsets.trailing
         let verticalSafe = safeInsets.top + safeInsets.bottom

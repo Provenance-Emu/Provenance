@@ -197,14 +197,14 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         renderSettings.metalFilterMode = Defaults[.metalFilterMode]
         renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-        renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+        renderSettings.scalingMode = Defaults[.scalingMode]
 
         Task {
-            for await value in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing]) {
+            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .scalingMode]) {
                 renderSettings.metalFilterMode = Defaults[.metalFilterMode]
                 renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                 renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-                renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+                renderSettings.scalingMode = Defaults[.scalingMode]
             }
         }
     }
@@ -337,7 +337,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             break
         }
 
-        if Defaults[.nativeScaleEnabled] {
+        if Defaults[.scalingMode] == .nativeResolution {
             let scale = UIScreen.main.scale
             if scale != 1 {
                 view.layer.contentsScale = scale
@@ -464,21 +464,65 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             var height: CGFloat = 0
             var width: CGFloat = 0
 
-            if parentSize.width > parentSize.height {
-                height = Defaults[.integerScaleEnabled] ?
-                floor(parentSize.height / aspectSize.height) * aspectSize.height : parentSize.height
-                width = height * ratio
-                if width > parentSize.width {
-                    width = parentSize.width
-                    height = width / ratio
-                }
-            } else {
-                width = Defaults[.integerScaleEnabled] ?
-                floor(parentSize.width / aspectSize.width) * aspectSize.width : parentSize.width
-                height = width / ratio
-                if height > parentSize.height {
+            let scalingMode = renderSettings.scalingMode
+            switch scalingMode {
+            case .stretch:
+                width = parentSize.width
+                height = parentSize.height
+
+            case .aspectFill:
+                if parentSize.width > parentSize.height {
                     height = parentSize.height
                     width = height * ratio
+                    if width < parentSize.width {
+                        width = parentSize.width
+                        height = width / ratio
+                    }
+                } else {
+                    width = parentSize.width
+                    height = width / ratio
+                    if height < parentSize.height {
+                        height = parentSize.height
+                        width = height * ratio
+                    }
+                }
+
+            case .nativeResolution:
+                width = aspectSize.width
+                height = aspectSize.height
+
+            case .integerScale:
+                if parentSize.width > parentSize.height {
+                    height = floor(parentSize.height / aspectSize.height) * aspectSize.height
+                    width = height * ratio
+                    if width > parentSize.width {
+                        width = parentSize.width
+                        height = width / ratio
+                    }
+                } else {
+                    width = floor(parentSize.width / aspectSize.width) * aspectSize.width
+                    height = width / ratio
+                    if height > parentSize.height {
+                        height = parentSize.height
+                        width = height * ratio
+                    }
+                }
+
+            case .aspectFit:
+                if parentSize.width > parentSize.height {
+                    height = parentSize.height
+                    width = height * ratio
+                    if width > parentSize.width {
+                        width = parentSize.width
+                        height = width / ratio
+                    }
+                } else {
+                    width = parentSize.width
+                    height = width / ratio
+                    if height > parentSize.height {
+                        height = parentSize.height
+                        width = height * ratio
+                    }
                 }
             }
 

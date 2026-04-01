@@ -1853,8 +1853,7 @@ private struct VideoSection: View {
     @Default(.multiSampling) var multiSampling
     @Default(.imageSmoothing) var imageSmoothing
     @Default(.showFPSCount) var showFPSCount
-    @Default(.nativeScaleEnabled) var nativeScaleEnabled
-    @Default(.integerScaleEnabled) var integerScaleEnabled
+    @Default(.scalingMode) var scalingMode
     @Default(.vsyncEnabled) var vsyncEnabled
 
     var body: some View {
@@ -1877,18 +1876,18 @@ private struct VideoSection: View {
                             icon: .sfSymbol("square.stack.3d.up"),
                             showChevron: false)
             }
-            ThemedToggle(isOn: $nativeScaleEnabled) {
-                SettingsRow(title: "Native Resolution",
-                            subtitle: nativeScaleEnabled ? "Use the original console's resolution." : "Scale to fit the window.",
-                            icon: .sfSymbol("arrow.up.left.and.arrow.down.right"),
+            Picker(selection: $scalingMode) {
+                ForEach(ScalingMode.allCases, id: \.self) { mode in
+                    Label(mode.displayName, systemImage: mode.symbolName)
+                        .tag(mode)
+                }
+            } label: {
+                SettingsRow(title: "Scaling Mode",
+                            subtitle: scalingMode.subtitle,
+                            icon: .sfSymbol(scalingMode.symbolName),
                             showChevron: false)
             }
-            ThemedToggle(isOn: $integerScaleEnabled) {
-                SettingsRow(title: "Integer Scaling",
-                            subtitle: "Scale by whole numbers only for pixel-perfect display.",
-                            icon: .sfSymbol("square.grid.4x3.fill"),
-                            showChevron: false)
-            }
+            .pickerStyle(.navigationLink)
             ThemedToggle(isOn: $imageSmoothing) {
                 SettingsRow(title: "Image Smoothing",
                             subtitle: "Smooth scaled graphics. Off for sharp pixels.",

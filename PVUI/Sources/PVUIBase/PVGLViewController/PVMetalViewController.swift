@@ -270,16 +270,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         renderSettings.metalFilterMode = Defaults[.metalFilterMode]
         renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-        renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+        renderSettings.scalingMode = Defaults[.scalingMode]
 
         filterObservationTask = Task { [weak self] in
-            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing]) {
+            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .scalingMode]) {
                 await MainActor.run {
                     guard let self else { return }
                     self.renderSettings.metalFilterMode = Defaults[.metalFilterMode]
                     self.renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                     self.renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-                    self.renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+                    self.renderSettings.scalingMode = Defaults[.scalingMode]
                     self.configureFilterRenderer(reason: "defaultsUpdate", force: true)
                 }
             }
@@ -786,32 +786,76 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             var height: CGFloat = 0
             var width: CGFloat = 0
 
+            let scalingMode = renderSettings.scalingMode
+
             /// Calculate dimensions in points first
-            if parentSize.width > parentSize.height {
-                if Defaults[.integerScaleEnabled] {
-                    height = floor(parentSize.height / effectiveSize.height) * effectiveSize.height
-                } else {
-                    height = parentSize.height
-                }
-                width = height * ratio
-                if width > parentSize.width {
-                    width = parentSize.width
-                    height = width / ratio
-                }
-            } else {
-                if Defaults[.integerScaleEnabled] {
-                    width = floor(parentSize.width / effectiveSize.width) * effectiveSize.width
-                } else {
-                    width = parentSize.width
-                }
-                height = width / ratio
-                if height > parentSize.height {
+            switch scalingMode {
+            case .stretch:
+                // Fill the entire parent view — no aspect ratio preserved
+                width = parentSize.width
+                height = parentSize.height
+
+            case .aspectFill:
+                // Scale to fill, preserving aspect ratio (may overflow; clipping applied by view hierarchy)
+                if parentSize.width > parentSize.height {
                     height = parentSize.height
                     width = height * ratio
+                    if width < parentSize.width {
+                        width = parentSize.width
+                        height = width / ratio
+                    }
+                } else {
+                    width = parentSize.width
+                    height = width / ratio
+                    if height < parentSize.height {
+                        height = parentSize.height
+                        width = height * ratio
+                    }
+                }
+
+            case .nativeResolution:
+                // 1:1 pixel mapping — use the core's effective output dimensions directly
+                width = effectiveSize.width
+                height = effectiveSize.height
+
+            case .integerScale:
+                // Snap to the largest integer multiple that fits
+                if parentSize.width > parentSize.height {
+                    height = floor(parentSize.height / effectiveSize.height) * effectiveSize.height
+                    width = height * ratio
+                    if width > parentSize.width {
+                        width = parentSize.width
+                        height = width / ratio
+                    }
+                } else {
+                    width = floor(parentSize.width / effectiveSize.width) * effectiveSize.width
+                    height = width / ratio
+                    if height > parentSize.height {
+                        height = parentSize.height
+                        width = height * ratio
+                    }
+                }
+
+            case .aspectFit:
+                // Default: aspect-correct fit (letterbox / pillarbox)
+                if parentSize.width > parentSize.height {
+                    height = parentSize.height
+                    width = height * ratio
+                    if width > parentSize.width {
+                        width = parentSize.width
+                        height = width / ratio
+                    }
+                } else {
+                    width = parentSize.width
+                    height = width / ratio
+                    if height > parentSize.height {
+                        height = parentSize.height
+                        width = height * ratio
+                    }
                 }
             }
 
-            DLOG("Calculated dimensions: \(width)x\(height) with ratio: \(ratio)")
+            DLOG("Calculated dimensions: \(width)x\(height) with ratio: \(ratio) mode: \(scalingMode)")
 
             /// Calculate center position
             let x = (parentSize.width - width) / 2
@@ -833,7 +877,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                                    abs(view.frame.height - frame.height) > 0.5
 
             if viewFrameChanged {
-                if renderSettings.nativeScaleEnabled {
+                if scalingMode.requiresNativeScaleFactor {
                     let scale = UIScreen.main.scale
 
                     /// Apply frame to main view without triggering additional layout
@@ -871,7 +915,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Metal render only supports native scale on iOS/tvOS
         #if !(os(macOS) || targetEnvironment(macCatalyst))
         let screenBounds = UIScreen.main.bounds
-        let nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+        let nativeScaleEnabled = Defaults[.scalingMode] == .nativeResolution
 
         if lastScreenBounds != screenBounds || lastNativeScaleEnabled != nativeScaleEnabled {
             lastScreenBounds = screenBounds
@@ -2013,7 +2057,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 #if os(iOS) || os(tvOS)
         let screenBounds = UIScreen.main.bounds
         let screenScale = UIScreen.main.scale
-        let useNativeScale = Defaults[.nativeScaleEnabled]
+        let useNativeScale = Defaults[.scalingMode] == .nativeResolution
 #else
         let screenBounds = view.bounds
         let screenScale = view.window?.screen?.backingScaleFactor ?? 1.0
@@ -3311,7 +3355,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 metalView.clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
                 configureMetalLayer(for: metalView)
 
-                if Defaults[.nativeScaleEnabled] {
+                if Defaults[.scalingMode] == .nativeResolution {
                     let scale = UIScreen.main.scale
                     if scale != 1.0 {
                         metalView.layer.contentsScale = scale

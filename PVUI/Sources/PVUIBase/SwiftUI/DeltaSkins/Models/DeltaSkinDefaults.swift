@@ -102,8 +102,9 @@ enum DeltaSkinDefaults {
         }
 
         // Calculate screen size based on settings
-        let useIntegerScale = Defaults[.integerScaleEnabled]
-        let useNativeScale = Defaults[.nativeScaleEnabled]
+        let scalingMode = Defaults[.scalingMode]
+        let useIntegerScale = scalingMode == .integerScale
+        let useNativeScale = scalingMode == .nativeResolution
 
         // Calculate available space in screen coordinates
         let deviceScale = UIScreen.main.scale
