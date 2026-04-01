@@ -422,12 +422,11 @@ public class CloudKitSyncer: SyncProvider {
         // Create the query with the final predicate
         let query = CKQuery(recordType: recordType ?? self.recordType, predicate: finalPredicate)
 
-        // We want all fields
-        #if os(tvOS)
+        // Fetch metadata only — do NOT include "fileData" in the initial query.
+        // CKAssets are downloaded automatically when included in desiredKeys,
+        // which wastes bandwidth re-downloading files that already exist locally.
+        // File data is fetched on-demand in processRecord() only for missing files.
         let desiredKeys = ["directory", "filename", "title", "md5", "system", "description", "gameID", "systemIdentifier", "fileSize", "lastModified"]
-        #else
-        let desiredKeys = ["directory", "filename", "title", "md5", "system", "description", "gameID", "systemIdentifier", "fileSize", "lastModified", "fileData"]
-        #endif
 
         // Use pagination to handle large record sets
         var allRecords: [CKRecord] = []
@@ -835,18 +834,41 @@ public class CloudKitSyncer: SyncProvider {
 
         DLOG("Processing record: \(record.recordID.recordName) - Directory: \(directory), Filename: \(filename)")
 
-        // Check if this is a metadata-only sync or a full file sync
-        if let fileAsset = record["fileData"] as? CKAsset, let fileURL = fileAsset.fileURL {
-            // This is a full file sync - download the file
-            await downloadFile(from: fileURL, to: directory, filename: filename, record: record)
-        } else {
-            // This is a metadata-only sync - just create the database entry
-            // For ROMs, we always want to create database entries even without file data
-            await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
+        // Check if the file already exists locally
+        let destinationDirectory = URL.documentsPath.appendingPathComponent(directory, isDirectory: true)
+        let destinationURL = destinationDirectory.appendingPathComponent(filename)
 
-            if record.recordType == CloudKitSyncer.RecordType.rom || record.recordType == "Game" {
-                DLOG("Created database entry for ROM: \(filename) (metadata only)")
+        if fileManager.fileExists(atPath: destinationURL.path) {
+            // File exists — just ensure the database entry is up to date
+            DLOG("File already exists locally, skipping download: \(filename)")
+            await createDatabaseEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: true)
+            return
+        }
+
+        // File is missing locally — check if we already have the asset data
+        // (e.g. from an on-demand fetch or subscription notification)
+        if let fileAsset = record["fileData"] as? CKAsset, let fileURL = fileAsset.fileURL {
+            await downloadFile(from: fileURL, to: directory, filename: filename, record: record)
+            return
+        }
+
+        // Asset not included in this fetch (metadata-only query).
+        // Fetch the full record with file data on-demand.
+        do {
+            let fullRecord = try await privateDatabase.record(for: record.recordID)
+            if let fileAsset = fullRecord["fileData"] as? CKAsset, let fileURL = fileAsset.fileURL {
+                await downloadFile(from: fileURL, to: directory, filename: filename, record: fullRecord)
+            } else {
+                // No file data available — metadata-only record
+                await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
+                if record.recordType == CloudKitSyncer.RecordType.rom || record.recordType == "Game" {
+                    DLOG("Created database entry for ROM: \(filename) (metadata only, no file asset)")
+                }
             }
+        } catch {
+            ELOG("Failed to fetch file data for \(filename): \(error.localizedDescription)")
+            // Still create the database entry so the game appears in the UI
+            await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
         }
     }
 
@@ -898,6 +920,24 @@ public class CloudKitSyncer: SyncProvider {
 
         let destinationDirectory = URL.documentsPath.appendingPathComponent(directory, isDirectory: true)
         let destinationURL = destinationDirectory.appendingPathComponent(filename)
+
+        // Skip if the file already exists locally — avoids redundant I/O and
+        // the "item with the same name already exists" FileManager error.
+        if fileManager.fileExists(atPath: destinationURL.path) {
+            DLOG("File already exists locally, skipping download: \(filename)")
+            // Still ensure database entry exists for the local file
+            await createDatabaseEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: true)
+            if shouldStartTracking {
+                await CloudKitSyncAnalytics.shared.recordSuccessfulSync(bytesDownloaded: 0)
+            }
+            return
+        }
+
+        // Respect task cancellation (e.g. emulation pause)
+        guard !Task.isCancelled else {
+            DLOG("Download cancelled before starting: \(filename)")
+            return
+        }
 
         var downloadedFileSize: Int64 = 0
         var success = false
