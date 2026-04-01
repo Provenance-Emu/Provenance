@@ -136,28 +136,26 @@ public struct RetroLogView: View {
                 Spacer()
 
                 #if os(tvOS)
-                // Log level picker - tvOS 17+
-                if #available(tvOS 17.0, *) {
-                    Menu {
-                        Picker("Log Level", selection: $viewModel.minLogLevel) {
-                            Text("Verbose").tag(LogLevel.verbose)
-                            Text("Debug").tag(LogLevel.debug)
-                            Text("Info").tag(LogLevel.info)
-                            Text("Warning").tag(LogLevel.warning)
-                            Text("Error").tag(LogLevel.error)
-                        }
-                    } label: {
-                        headerButtonContent(
-                            icon: "line.3.horizontal.decrease",
-                            label: "Level: \(viewModel.minLogLevel.name)",
-                            accentColor: RetroTheme.retroBlue,
-                            isFocused: focusedButton == .logLevel
-                        )
+                // Log level picker
+                Menu {
+                    Picker("Log Level", selection: $viewModel.minLogLevel) {
+                        Text("Verbose").tag(LogLevel.verbose)
+                        Text("Debug").tag(LogLevel.debug)
+                        Text("Info").tag(LogLevel.info)
+                        Text("Warning").tag(LogLevel.warning)
+                        Text("Error").tag(LogLevel.error)
                     }
-                    .buttonStyle(TVMediaCardButtonStyle())
-                    .tvOSDisableFocusEffect()
-                    .focused($focusedButton, equals: .logLevel)
+                } label: {
+                    headerButtonContent(
+                        icon: "line.3.horizontal.decrease",
+                        label: "Level: \(viewModel.minLogLevel.name)",
+                        accentColor: RetroTheme.retroBlue,
+                        isFocused: focusedButton == .logLevel
+                    )
                 }
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+                .focused($focusedButton, equals: .logLevel)
 
                 // Auto-scroll toggle
                 headerButton(

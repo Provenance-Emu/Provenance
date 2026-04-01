@@ -272,6 +272,7 @@ public struct LogExportSheet: View {
     }
 
     private func performExport() {
+        guard !isExporting else { return }
         isExporting = true
         exportError = nil
 
@@ -280,21 +281,28 @@ public struct LogExportSheet: View {
             includeDeviceInfo: includeDeviceInfo,
             includeRetroArchLogs: includeRetroArchLogs && exportFormat == .zip
         )
+        let format = exportFormat
+        let vm = viewModel
 
-        let url: URL?
-        switch exportFormat {
-        case .text:
-            url = viewModel.exportLogsAsText(options: options)
-        case .zip:
-            url = viewModel.exportLogsAsZip(options: options)
+        // Dispatch file I/O to a background queue so the spinner remains visible.
+        // vm properties are safe to read from the background because the button
+        // is disabled (isExporting = true), preventing concurrent writes.
+        Task { @MainActor in
+            let url: URL? = await withCheckedContinuation { continuation in
+                DispatchQueue.global(qos: .userInitiated).async {
+                    switch format {
+                    case .text: continuation.resume(returning: vm.exportLogsAsText(options: options))
+                    case .zip: continuation.resume(returning: vm.exportLogsAsZip(options: options))
+                    }
+                }
+            }
+            isExporting = false
+            if let url {
+                exportedURL = url
+            } else {
+                exportError = "Failed to create export file."
+            }
         }
-
-        isExporting = false
-        guard let url else {
-            exportError = "Failed to create export file."
-            return
-        }
-        exportedURL = url
     }
 }
 
