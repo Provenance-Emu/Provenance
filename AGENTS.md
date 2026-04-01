@@ -14,7 +14,7 @@
 
 ## Hard constraints
 - Do not modify upstream submodule source under `Cores/<name>/<upstream-dir>/`.
-- Do not modify upstream RetroArch source under `CoresRetro/RetroArch/RetroArch/`.
+- **`CoresRetro/RetroArch/RetroArch/`** is a **Provenance-maintained RetroArch fork** (not read-only upstream). Edit when needed for integration; keep diffs minimal and intentional.
 - Do not modify `CodeSigning.xcconfig`.
 - Avoid `project.pbxproj` changes unless there is no viable package-based alternative.
 - Prefer `Package.swift` updates over Xcode project edits whenever possible.
