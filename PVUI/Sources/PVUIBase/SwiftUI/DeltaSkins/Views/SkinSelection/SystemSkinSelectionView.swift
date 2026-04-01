@@ -16,8 +16,8 @@ public struct SystemSkinSelectionView: View {
     let system: SystemIdentifier
     let game: PVGame?
 
-    @StateObject private var skinManager = DeltaSkinManager.shared
-    @StateObject private var selectionManager = DeltaSkinSelectionManager.shared
+    @ObservedObject private var skinManager = DeltaSkinManager.shared
+    @ObservedObject private var selectionManager = DeltaSkinSelectionManager.shared
 
     // Skin data
     @State private var availableSkins: [DeltaSkinProtocol] = []
@@ -110,18 +110,15 @@ public struct SystemSkinSelectionView: View {
         }
     }
 
-    /// Skins for the main grid (excludes companion skins when the feature flag is on).
+    /// Skins for the main grid — always excludes companion skins (they appear in their own section when the flag is on).
     private var regularSkinsForCurrentOrientation: [DeltaSkinProtocol] {
-        guard PVFeatureFlagsManager.shared.caseCompanionSkins else {
-            return filteredSkinsForCurrentOrientation
-        }
-        return filteredSkinsForCurrentOrientation.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
+        filteredSkinsForCurrentOrientation.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
     }
 
     /// Companion skins (phone-case controllers) — gated behind the `caseCompanionSkins` feature flag.
     private var caseCompanionSkinsForCurrentOrientation: [DeltaSkinProtocol] {
 #if os(tvOS)
-        return []
+        []
 #else
         guard PVFeatureFlagsManager.shared.caseCompanionSkins else { return [] }
         return filteredSkinsForCurrentOrientation.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
@@ -699,10 +696,17 @@ public struct SystemSkinSelectionView: View {
                             .font(.system(size: 14, weight: .medium))
                             .foregroundColor(.white.opacity(0.6))
                             .multilineTextAlignment(.center)
+#if os(tvOS)
+                        Text("Download skins below.")
+                            .font(.system(size: 12))
+                            .foregroundColor(.white.opacity(0.4))
+                            .multilineTextAlignment(.center)
+#else
                         Text("Download skins below or import a .deltaskin file.")
                             .font(.system(size: 12))
                             .foregroundColor(.white.opacity(0.4))
                             .multilineTextAlignment(.center)
+#endif
                     }
                     .padding(.horizontal)
                     .padding(.top, 4)
@@ -924,7 +928,15 @@ public struct SystemSkinSelectionView: View {
 
         // Use the same method as RetroMenuView to ensure consistent filtering
         do {
+            let allSkins = try await skinManager.availableSkins()
+            ILOG("skins: [SelectionView] Total loaded skins: \(allSkins.count), filtering for system: \(system.rawValue)")
             let filteredSkins = try await skinManager.skins(for: system)
+            ILOG("skins: [SelectionView] After system filter: \(filteredSkins.count) skins for \(system.rawValue)")
+            if filteredSkins.isEmpty && !allSkins.isEmpty {
+                // Log game types of all loaded skins for debugging
+                let gameTypes = Set(allSkins.map { "\($0.gameType)" })
+                WLOG("skins: [SelectionView] No skins matched system \(system.rawValue). Available game types: \(gameTypes.sorted().joined(separator: ", "))")
+            }
             await processSkins(filteredSkins)
         } catch {
             await MainActor.run {
@@ -939,6 +951,7 @@ public struct SystemSkinSelectionView: View {
         // Filter skins to only include those that support the current device type
         // This ensures we don't show iPhone-only skins on iPad or vice versa
         let device = currentDevice
+        ILOG("skins: [SelectionView] processSkins: \(skins.count) skins, device=\(device.rawValue)")
         let deviceFilteredSkins = skins.filter { skin in
             let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
             let orientations: [SkinOrientation] = [.portrait, .landscape]
@@ -954,8 +967,10 @@ public struct SystemSkinSelectionView: View {
                     if skin.supports(traits) { return true }
                 }
             }
+            WLOG("skins: [SelectionView] Skin '\(skin.name)' (\(skin.identifier)) rejected — no representations for device \(device.rawValue)")
             return false
         }
+        ILOG("skins: [SelectionView] After device filter: \(deviceFilteredSkins.count) skins (rejected \(skins.count - deviceFilteredSkins.count))")
 
         // Get currently selected skins for both orientations using centralized manager
         let portraitSelection: String?

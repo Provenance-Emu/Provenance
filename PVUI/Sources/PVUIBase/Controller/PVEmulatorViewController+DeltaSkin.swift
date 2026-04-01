@@ -210,11 +210,22 @@ extension PVEmulatorViewController {
             self?.showEmulatorMenu()
         }
 
+        let preselectedSkinIdentifier: String? = await MainActor.run { [weak self] in
+            guard let self, let sid = self.game.system?.systemIdentifier else { return nil }
+            let orient = self.currentOrientation
+            let gid = self.game.id
+            if !gid.isEmpty {
+                return DeltaSkinSelectionManager.shared.effectiveGameSkinIdentifier(for: sid, gameId: gid, orientation: orient)
+            }
+            return DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(for: sid, gameId: nil, orientation: orient)
+        }
+
         // Create a container for the skin
         let containerView = DeltaSkinContainerView.create(
             game: game,
             core: core,
             inputHandler: inputHandler,
+            preselectedSkinIdentifier: preselectedSkinIdentifier,
             onSkinLoaded: { [weak self] in
                 guard let self = self else { return }
 

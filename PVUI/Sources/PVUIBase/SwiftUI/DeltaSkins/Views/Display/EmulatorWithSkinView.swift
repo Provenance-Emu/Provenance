@@ -23,6 +23,8 @@ struct EmulatorWithSkinView: View {
     let onRefreshRequested: () -> Void
     /// Optional override to force a specific skin for this session (identifier)
     let preselectedSkinIdentifier: String?
+    /// Unblocks ``PVEmulatorViewController/awaitDeltaSkinInitialResolutionIfNeeded()`` after the first resolution pass.
+    let onInitialSkinResolutionComplete: (() -> Void)?
 
     @EnvironmentObject internal var inputHandler: DeltaSkinInputHandler
     @StateObject private var skinLoader = DeltaSkinLoader()
@@ -48,8 +50,13 @@ struct EmulatorWithSkinView: View {
     // State for D-pad/joystick toggle in default skin
     @State internal var useJoystick = false
 
-    // Timeout for skin loading to prevent hanging
-    @State private var loadingTimeoutTask: Task<Void, Never>?
+    // Notification observer tokens — removed on disappear to prevent duplicates
+    @State private var orientationObserver: NSObjectProtocol?
+    @State private var skinChangeObserver: NSObjectProtocol?
+    @State private var filterChangeObserver: NSObjectProtocol?
+
+    // Active skin-loading task — cancelled when a new load starts or the view disappears
+    @State private var activeSkinLoadTask: Task<Void, Never>?
 
     // Live binding to built-in filter selection
     @Default(.metalFilterMode) private var metalFilterMode
@@ -75,7 +82,14 @@ struct EmulatorWithSkinView: View {
     #endif
 
     // Initialize with a game, extracting the necessary properties
-    init(game: PVGame, coreInstance: PVEmulatorCore, onSkinLoaded: @escaping () -> Void, onRefreshRequested: @escaping () -> Void, preselectedSkinIdentifier: String? = nil) {
+    init(
+        game: PVGame,
+        coreInstance: PVEmulatorCore,
+        onSkinLoaded: @escaping () -> Void,
+        onRefreshRequested: @escaping () -> Void,
+        preselectedSkinIdentifier: String? = nil,
+        onInitialSkinResolutionComplete: (() -> Void)? = nil
+    ) {
         self.gameTitle = game.title
         self.systemName = game.system?.name
 
@@ -89,6 +103,7 @@ struct EmulatorWithSkinView: View {
         self.onSkinLoaded = onSkinLoaded
         self.onRefreshRequested = onRefreshRequested
         self.preselectedSkinIdentifier = preselectedSkinIdentifier
+        self.onInitialSkinResolutionComplete = onInitialSkinResolutionComplete
     }
 
     var body: some View {
@@ -98,32 +113,12 @@ struct EmulatorWithSkinView: View {
                 Color.clear.edgesIgnoringSafeArea(.all)
 
                 if skinLoader.isLoading {
-                    // Loading view with progress
                     loadingView
-                        .onAppear {
-                            // Set timeout to prevent hanging - call onSkinLoaded after 2 seconds max
-                            loadingTimeoutTask?.cancel()
-                            loadingTimeoutTask = Task {
-                                try? await Task.sleep(nanoseconds: 2_000_000_000) // 2 seconds
-                                if !Task.isCancelled && skinLoader.isLoading {
-                                    DLOG("🎮 EmulatorWithSkinView: Skin loading timeout - proceeding without skin")
-                                    await MainActor.run {
-                                        // Force completion to show game view
-                                        skinLoader.isLoading = false
-                                        onSkinLoaded()
-                                    }
-                                }
-                            }
-                        }
-                        .onDisappear {
-                            loadingTimeoutTask?.cancel()
-                        }
                 } else if let skin = skinLoader.selectedSkin, skin.supports(createSkinTraits()) {
                     // Skin supports the current orientation — render it
                     skinContentView(skin: skin, geometry: geometry)
                         .background(Color.clear)
                         .onAppear {
-                            loadingTimeoutTask?.cancel()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 if !skinRenderComplete {
                                     skinRenderComplete = true
@@ -156,7 +151,6 @@ struct EmulatorWithSkinView: View {
                     defaultControllerSkin()
                         .background(Color.clear)
                         .onAppear {
-                            loadingTimeoutTask?.cancel()
                             if !skinRenderComplete {
                                 skinRenderComplete = true
                                 onSkinLoaded()
@@ -290,8 +284,16 @@ struct EmulatorWithSkinView: View {
                 #endif
             }
             .onDisappear {
-                // Clean up notifications
-                NotificationCenter.default.removeObserver(self)
+                // Cancel any in-flight skin loading task
+                activeSkinLoadTask?.cancel()
+                activeSkinLoadTask = nil
+                // Clean up closure-based notification observers using stored tokens
+                if let obs = orientationObserver { NotificationCenter.default.removeObserver(obs) }
+                if let obs = skinChangeObserver { NotificationCenter.default.removeObserver(obs) }
+                if let obs = filterChangeObserver { NotificationCenter.default.removeObserver(obs) }
+                orientationObserver = nil
+                skinChangeObserver = nil
+                filterChangeObserver = nil
             }
             .onChange(of: selectedFilterName) { _ in
                 // Filter changes propagate naturally via state to DeltaSkinView's filters parameter
@@ -305,243 +307,6 @@ struct EmulatorWithSkinView: View {
             .environment(\.debugSkinMappings, showDebugOverlay)
         }
         .background(Color.clear) // Ensure the background is transparent
-    }
-
-    // MARK: - Loading View
-
-    private var loadingView: some View {
-        /// A compact retrowave-themed loading view with neon colors and animated elements
-        GeometryReader { geometry in
-            ZStack {
-                // Retrowave background gradient
-                LinearGradient(gradient: Gradient(colors: [
-                    Color.black,
-                    Color(red: 0.1, green: 0.0, blue: 0.2),
-                    Color(red: 0.2, green: 0.0, blue: 0.3)
-                ]), startPoint: .bottom, endPoint: .top)
-                .edgesIgnoringSafeArea(.all)
-
-                // Grid overlay - smaller scale for a more compact look
-                RetroGrid()
-                    .opacity(0.3)
-                    .scaleEffect(0.8)
-
-                // Content container - reduced spacing for more compact layout
-                VStack(spacing: 15) {
-                    // Smaller title with maintained glow effect
-                    Text("LOADING SKIN")
-                        .font(.custom("Futura-Bold", size: 22))
-                        .foregroundStyle(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroPurple]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .shadow(color: .retroPink.opacity(0.7), radius: 8, x: 0, y: 0)
-                        .shadow(color: .retroPink.opacity(0.3), radius: 15, x: 0, y: 0)
-                        .padding(.bottom, 5)
-
-                    // Smaller Retrowave sun with progress indicator
-                    ZStack {
-                        // Sun backdrop - reduced size
-                        Circle()
-                            .fill(
-                                RadialGradient(
-                                    gradient: Gradient(colors: [
-                                        .retroYellow,
-                                        .retroPink,
-                                        Color(red: 0.1, green: 0.0, blue: 0.2)
-                                    ]),
-                                    center: .center,
-                                    startRadius: 3,
-                                    endRadius: 80
-                                )
-                            )
-                            .frame(width: 100, height: 100)
-                            .blur(radius: 3)
-
-                        // Horizon line - reduced size
-//                        Rectangle()
-//                            .fill(Color.black)
-//                            .frame(width: 140, height: 50)
-//                            .offset(y: 25)
-
-                        // Progress circle - reduced size
-                        Circle()
-                            .trim(from: 0, to: CGFloat(skinLoader.loadingProgress))
-                            .stroke(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ),
-                                style: StrokeStyle(lineWidth: 5, lineCap: .round)
-                            )
-                            .frame(width: 85, height: 85)
-                            .rotationEffect(.degrees(-90))
-                            .animation(.easeInOut(duration: 0.3), value: skinLoader.loadingProgress)
-                    }
-                    .padding(.bottom, 10)
-
-                    // Compact loading status with system name
-                    HStack(spacing: 10) {
-                        // System name and loading stage in one line
-                        VStack(alignment: .trailing, spacing: 2) {
-                            Text(systemName?.uppercased() ?? "GAME")
-                                .font(.custom("Menlo-Bold", size: 12))
-                                .tracking(1)
-                                .foregroundColor(.retroPink)
-                                .shadow(color: .retroPink.opacity(0.6), radius: 3, x: 0, y: 0)
-
-                            Text(skinLoader.loadingStage.rawValue.uppercased())
-                                .font(.custom("Menlo", size: 10))
-                                .tracking(1)
-                                .foregroundColor(.retroBlue)
-                                .shadow(color: .retroBlue.opacity(0.6), radius: 3, x: 0, y: 0)
-                        }
-
-                        // Percentage in more prominent display
-                        Text("\(Int(skinLoader.loadingProgress * 100))%")
-                            .font(.custom("Menlo-Bold", size: 18))
-                            .foregroundColor(.retroBlue)
-                            .shadow(color: .retroBlue.opacity(0.7), radius: 6, x: 0, y: 0)
-                            .frame(width: 50)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.black.opacity(0.7))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 1.5
-                                    )
-                            )
-                    )
-
-                    // Smaller animated cassette tape
-                    RetroTapeAnimation()
-                        .frame(width: 80, height: 50)
-                        .opacity(0.7)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .scaleEffect(0.95) // Slightly scale down the entire content for more compact look
-            }
-        }
-    }
-
-    /// A retrowave grid background
-    private struct RetroGrid: View {
-        @State private var animateGrid = false
-
-        var body: some View {
-            VStack(spacing: 0) {
-                ForEach(0..<20, id: \.self) { y in
-                    HStack(spacing: 0) {
-                        ForEach(0..<20, id: \.self) { x in
-                            Rectangle()
-                                .strokeBorder(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color.retroPurple.opacity(0.3),
-                                            Color.retroPink.opacity(0.1)
-                                        ]),
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                ),
-                                lineWidth: 1
-                            )
-                            .aspectRatio(1, contentMode: .fit)
-                        }
-                    }
-                }
-            }
-            .scaleEffect(1.2) // Reduced scale from 1.5
-            .rotationEffect(Angle(degrees: 60))
-            .offset(y: animateGrid ? 80 : -80) // Reduced offset from 100
-            .animation(
-                Animation.linear(duration: 20)
-                    .repeatForever(autoreverses: false),
-                value: animateGrid
-            )
-            .onAppear {
-                animateGrid = true
-            }
-        }
-    }
-
-    /// Animated cassette tape
-    private struct RetroTapeAnimation: View {
-        @State private var rotateReels = false
-
-        var body: some View {
-            ZStack {
-                // Tape case - reduced size
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.black)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 6)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                ),
-                                lineWidth: 1.5
-                            )
-                    )
-                    .frame(width: 70, height: 40)
-
-                // Cassette label - reduced size
-                RoundedRectangle(cornerRadius: 3)
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color.retroPurple.opacity(0.5),
-                                Color.retroPink.opacity(0.5)
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .frame(width: 50, height: 20)
-
-                // Reels - reduced size and spacing
-                HStack(spacing: 20) {
-                    Circle()
-                        .stroke(Color.retroBlue, lineWidth: 1.5)
-                        .frame(width: 16, height: 16)
-                        .overlay(
-                            Circle()
-                                .stroke(Color.white, lineWidth: 1)
-                                .frame(width: 8, height: 8)
-                        )
-                        .rotationEffect(Angle(degrees: rotateReels ? 360 : 0))
-
-                    Circle()
-                        .stroke(Color.retroBlue, lineWidth: 1.5)
-                        .frame(width: 16, height: 16)
-                        .overlay(
-                            Circle()
-                                .stroke(Color.white, lineWidth: 1)
-                                .frame(width: 8, height: 8)
-                        )
-                        .rotationEffect(Angle(degrees: rotateReels ? 360 : 0))
-                }
-            }
-            .onAppear {
-                withAnimation(Animation.linear(duration: 2).repeatForever(autoreverses: false)) {
-                    rotateReels = true
-                }
-            }
-        }
     }
 
     // MARK: - Skin Content View
@@ -614,39 +379,19 @@ struct EmulatorWithSkinView: View {
             return nil
         }()
 
-        return Group {
-            if let deltaSkin = skin as? DeltaSkin {
-                // If we have a DeltaSkin, use the specialized view
-                DeltaSkinView(
-                    skin: deltaSkin,
-                    traits: traits,
-                    filters: effects,
-                    showDebugOverlay: showDebugOverlay,
-                    showHitTestOverlay: false,
-                    screenAspectRatio: aspectRatio,
-                    isInEmulator: true,
-                    inputHandler: inputHandler,
-                    core: coreInstance,
-                    isEditMode: $isEditMode,
-                    buttonOffsets: buttonOffsets
-                )
-            } else {
-                // For other skin types
-                DeltaSkinView(
-                    skin: skin,
-                    traits: traits,
-                    filters: effects,
-                    showDebugOverlay: showDebugOverlay,
-                    showHitTestOverlay: false,
-                    screenAspectRatio: aspectRatio,
-                    isInEmulator: true,
-                    inputHandler: inputHandler,
-                    core: coreInstance,
-                    isEditMode: $isEditMode,
-                    buttonOffsets: buttonOffsets
-                )
-            }
-        }
+        return DeltaSkinView(
+            skin: skin,
+            traits: traits,
+            filters: effects,
+            showDebugOverlay: showDebugOverlay,
+            showHitTestOverlay: false,
+            screenAspectRatio: aspectRatio,
+            isInEmulator: true,
+            inputHandler: inputHandler,
+            core: coreInstance,
+            isEditMode: $isEditMode,
+            buttonOffsets: buttonOffsets
+        )
         .environmentObject(inputHandler)
         // NOTE: Removed aggressive .id() modifier that was causing AG::precondition_failure crashes
         // when changing filters. The filter is passed as a parameter to DeltaSkinView and updates
@@ -715,40 +460,37 @@ struct EmulatorWithSkinView: View {
         // We still need to use NotificationCenter for device orientation changes
         // as it's a system notification
 #if os(iOS)
-        NotificationCenter.default.addObserver(
+        // Remove any previous observer to prevent duplicates
+        if let old = orientationObserver { NotificationCenter.default.removeObserver(old) }
+        orientationObserver = NotificationCenter.default.addObserver(
             forName: UIDevice.orientationDidChangeNotification,
             object: nil,
             queue: .main
         ) { _ in
             let newOrientation = UIDevice.current.orientation
-            if newOrientation.isLandscape || newOrientation.isPortrait {
-                self.currentOrientation = newOrientation
-                self.rotationCount += 1
-                // Reset so DeltaSkinLoaded fires again when skin view reappears after rotation.
-                // Without this, rotating back to an orientation the skin supports would not
-                // notify PVEmulatorViewController to reposition the GPU view.
-                self.skinRenderComplete = false
-                DLOG("🎮 EmulatorWithSkinView: Orientation changed to: \(newOrientation.isLandscape ? "landscape" : "portrait"), rotation count: \(self.rotationCount)")
+            // Only act on real landscape/portrait changes, and only when the
+            // landscape vs portrait category actually flipped.  Going from
+            // faceDown → portrait (picking up the phone) used to trigger a
+            // full skin reload even though the effective orientation hadn't
+            // changed, causing a visible flicker mid-gameplay.
+            guard newOrientation.isLandscape || newOrientation.isPortrait else { return }
+            let wasLandscape = self.currentOrientation.isLandscape
+            let nowLandscape = newOrientation.isLandscape
+            guard wasLandscape != nowLandscape else { return }
 
-                // Refresh the view and reload skin for the new orientation
-                self.refreshView()
-                Task { @MainActor in self.loadSkinSafely() }
+            self.currentOrientation = newOrientation
+            self.rotationCount += 1
+            // Reset so DeltaSkinLoaded fires again when skin view reappears after rotation.
+            self.skinRenderComplete = false
+            DLOG("🎮 EmulatorWithSkinView: Orientation changed to: \(nowLandscape ? "landscape" : "portrait"), rotation count: \(self.rotationCount)")
+
+            // Request a layout refresh after a brief delay, then reload the skin
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.onRefreshRequested()
             }
+            Task { @MainActor in self.loadSkinSafely() }
         }
 #endif
-    }
-
-    /// Refresh the view after orientation changes
-    private func refreshView() {
-        // Force traits recalculation by updating rotation count
-        // This triggers trait recalculation without full view rebuild
-        rotationCount += 1
-        DLOG("🎮 EmulatorWithSkinView: Refreshing view, rotation count: \(rotationCount)")
-
-        // Request a refresh after orientation change to update screen positions
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            onRefreshRequested()
-        }
     }
 
     // MARK: - Skin Traits
@@ -775,25 +517,13 @@ struct EmulatorWithSkinView: View {
 
         // Determine display type
         let displayType: DeltaSkinDisplayType
-        if #available(iOS 11.0, *) {
-            let window = UIApplication.shared.windows.first
-            let bottomInset = window?.safeAreaInsets.bottom ?? 0
-            displayType = bottomInset > 0 ? .edgeToEdge : .standard
-        } else {
-            displayType = .standard
-        }
+        let bottomInset = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first?.windows.first?.safeAreaInsets.bottom ?? 0
+        displayType = bottomInset > 0 ? .edgeToEdge : .standard
 
         // Determine iPad model if applicable
-        let iPadModel: DeltaSkinIPadModel?
-        if deviceType == .ipad {
-            let screenSize = UIScreen.main.bounds.size
-            let maxDimension = max(screenSize.width, screenSize.height)
-
-            // Just use mini for all iPad models since we don't know the exact enum values
-            iPadModel = .mini
-        } else {
-            iPadModel = nil
-        }
+        let iPadModel: DeltaSkinIPadModel? = deviceType == .ipad ? .mini : nil
 
         return DeltaSkinTraits(
             device: deviceType,
@@ -908,7 +638,8 @@ struct EmulatorWithSkinView: View {
     /// Set up notification observer for skin selection changes
     /// Reloads skin when selection changes to ensure view updates immediately
     private func setupSkinChangeNotificationObserver() {
-        NotificationCenter.default.addObserver(
+        if let old = skinChangeObserver { NotificationCenter.default.removeObserver(old) }
+        skinChangeObserver = NotificationCenter.default.addObserver(
             forName: DeltaSkinSelectionManager.selectionChangedNotification,
             object: nil,
             queue: .main
@@ -932,7 +663,8 @@ struct EmulatorWithSkinView: View {
     }
 
     private func setupFilterNotificationObserver() {
-        NotificationCenter.default.addObserver(
+        if let old = filterChangeObserver { NotificationCenter.default.removeObserver(old) }
+        filterChangeObserver = NotificationCenter.default.addObserver(
             forName: NSNotification.Name("ApplyScreenFilter"),
             object: nil,
             queue: .main
@@ -956,51 +688,100 @@ struct EmulatorWithSkinView: View {
             }
         }
     }
+}
 
-    // MARK: - Loading Logic
+// MARK: - Packaged skin resolution (extension keeps the main ``EmulatorWithSkinView`` body under SwiftLint limits)
 
-    /// Load the skin safely without Realm threading issues
-    /// Completely non-blocking: sets isLoading=false immediately, loads skin in background
-    /// Now checks effective skin identifier (session > game > system preferences) dynamically
+extension EmulatorWithSkinView {
+
+    /// Resolves the effective skin on a background task, shows loading until a packaged skin is chosen or the user is on the built-in-only path.
     @MainActor
-    private func loadSkinSafely() {
-        DLOG("🎮 EmulatorWithSkinView: Starting to load skin safely")
+    fileprivate func loadSkinSafely() {
+        // Cancel any in-flight skin load to avoid stale tasks mutating state
+        activeSkinLoadTask?.cancel()
+        activeSkinLoadTask = nil
 
-        // IMMEDIATELY set loading to false so UI doesn't block
-        skinLoader.isLoading = false
-        skinLoader.loadingProgress = 1.0
-        skinLoader.loadingStage = .complete
-        onSkinLoaded()
-        DLOG("🎮 EmulatorWithSkinView: Set loading=false immediately, game can boot now")
+        DLOG("🎮 EmulatorWithSkinView: Starting to load skin safely")
 
         guard let systemId = systemId else {
             ELOG("🎮 EmulatorWithSkinView: No system ID available")
+            skinLoader.isLoading = false
+            skinLoader.loadingStage = .complete
+            skinLoader.loadingProgress = 1.0
+            onInitialSkinResolutionComplete?()
             return
         }
 
-        // Load skin in background without blocking
-        Task.detached(priority: .utility) {
+        // Capture UIKit values once on the main thread
+        #if !os(tvOS)
+        let currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
+        let currentDevice: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #else
+        let currentOrientation: SkinOrientation = .landscape
+        let currentDevice: DeltaSkinDevice = .ipad
+        #endif
+
+        let prefersBuiltInOnly: Bool = {
+            if let gameId = gameId, !gameId.isEmpty {
+                return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: systemId, gameId: gameId, orientation: currentOrientation)
+            }
+            return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: systemId, gameId: nil, orientation: currentOrientation)
+        }()
+
+        if prefersBuiltInOnly {
+            skinLoader.isLoading = false
+            skinLoader.selectedSkin = nil
+            skinLoader.loadingProgress = 1.0
+            skinLoader.loadingStage = .complete
+            skinRenderComplete = false
+            onInitialSkinResolutionComplete?()
+            DLOG("🎮 EmulatorWithSkinView: Built-in skin preference — skipping packaged skin load")
+            return
+        }
+
+        let shouldPauseDuringResolve = skinLoader.selectedSkin != nil
+        if shouldPauseDuringResolve {
+            coreInstance.setPauseEmulation(true)
+        }
+
+        skinRenderComplete = false
+        skinLoader.isLoading = true
+        skinLoader.loadingStage = .loading
+        skinLoader.loadingProgress = 0.5
+
+        let preselected = preselectedSkinIdentifier
+        let gameIdSnapshot = gameId
+        let onResolved = onInitialSkinResolutionComplete
+
+        // Safety timeout: if skin resolution takes longer than 5 seconds, proceed without a skin.
+        let skinLoaderRef = skinLoader
+        let coreRef = coreInstance
+        let timeoutTask = Task {
+            try await Task.sleep(nanoseconds: 5_000_000_000)
+            await MainActor.run {
+                if skinLoaderRef.isLoading {
+                    WLOG("🎮 EmulatorWithSkinView: Skin loading timeout (5s) — proceeding without skin")
+                    skinLoaderRef.selectedSkin = nil
+                    skinLoaderRef.isLoading = false
+                    skinLoaderRef.loadingProgress = 1.0
+                    skinLoaderRef.loadingStage = .complete
+                    if shouldPauseDuringResolve {
+                        coreRef.setPauseEmulation(false)
+                    }
+                    onResolved?()
+                }
+            }
+        }
+
+        activeSkinLoadTask = Task.detached(priority: .userInitiated) {
+            defer { timeoutTask.cancel() }
             let manager = DeltaSkinManager.shared
-            var foundSkin: (any DeltaSkinProtocol)? = nil
+            var foundSkin: (any DeltaSkinProtocol)?
 
-            // Determine current orientation for effective skin lookup
-            #if !os(tvOS)
-            let currentOrientation: SkinOrientation = UIDevice.current.orientation.isLandscape ? .landscape : .portrait
-            #else
-            let currentOrientation: SkinOrientation = .landscape
-            #endif
-
-            // Helper function to check if skin supports current device
             func skinSupportsCurrentDevice(_ skin: DeltaSkinProtocol) -> Bool {
-                #if os(tvOS)
-                let device: DeltaSkinDevice = .ipad // No real skins use "tv"; iPad landscape is best for tvOS
-                #else
-                let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-                #endif
+                let device = currentDevice
                 let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
                 let orientations: [SkinOrientation] = [.portrait, .landscape]
-
-                // Check if skin supports at least one orientation for the current device
                 for orientation in orientations {
                     for display in displayTypes {
                         let traits = DeltaSkinTraits(
@@ -1014,35 +795,21 @@ struct EmulatorWithSkinView: View {
                 return false
             }
 
-            // PRIORITY 1: If a specific skin has been requested for this session (preselectedSkinIdentifier), honor it immediately
-            if let overrideId = preselectedSkinIdentifier {
-                if manager.skinsAreLoaded, let skin = manager.loadedSkins.first(where: { $0.identifier == overrideId }) {
-                    // Verify skin supports current device before using it
-                    if skinSupportsCurrentDevice(skin) {
-                        foundSkin = skin
-                        DLOG("🎮 EmulatorWithSkinView: Using preselected skin from cache: \(skin.name)")
-                    } else {
-                        DLOG("🎮 EmulatorWithSkinView: Preselected skin \(skin.name) doesn't support current device, skipping")
-                    }
-                } else {
-                    // Attempt to resolve skin by identifier even if not in cache yet
-                    if let resolved = try? await manager.skin(withIdentifier: overrideId) {
-                        // Verify resolved skin supports current device before using it
-                        if skinSupportsCurrentDevice(resolved) {
-                            foundSkin = resolved
-                            DLOG("🎮 EmulatorWithSkinView: Resolved preselected skin by identifier: \(resolved.name)")
-                        } else {
-                            DLOG("🎮 EmulatorWithSkinView: Resolved preselected skin \(resolved.name) doesn't support current device, skipping")
-                        }
-                    }
+            if let overrideId = preselected {
+                if await MainActor.run(body: { manager.skinsAreLoaded }),
+                   let skin = await MainActor.run(body: { manager.loadedSkins.first(where: { $0.identifier == overrideId }) }),
+                   skinSupportsCurrentDevice(skin) {
+                    foundSkin = skin
+                    DLOG("🎮 EmulatorWithSkinView: Using preselected skin from cache: \(skin.name)")
+                } else if let resolved = try? await manager.skin(withIdentifier: overrideId), skinSupportsCurrentDevice(resolved) {
+                    foundSkin = resolved
+                    DLOG("🎮 EmulatorWithSkinView: Resolved preselected skin by identifier: \(resolved.name)")
                 }
             }
 
-            // PRIORITY 2: Check effective skin identifier using centralized selection manager
             if foundSkin == nil {
                 let effectiveId: String?
-                if let gameId = self.gameId, !gameId.isEmpty {
-                    // Use centralized selection manager for game-specific lookup
+                if let gameId = gameIdSnapshot, !gameId.isEmpty {
                     effectiveId = await MainActor.run {
                         DeltaSkinSelectionManager.shared.effectiveGameSkinIdentifier(
                             for: systemId,
@@ -1051,7 +818,6 @@ struct EmulatorWithSkinView: View {
                         )
                     }
                 } else {
-                    // Use centralized selection manager for system-level lookup
                     effectiveId = await MainActor.run {
                         DeltaSkinSelectionManager.shared.effectiveSkinIdentifier(
                             for: systemId,
@@ -1061,63 +827,277 @@ struct EmulatorWithSkinView: View {
                     }
                 }
 
-                if let effectiveId = effectiveId {
-                    if manager.skinsAreLoaded, let skin = manager.loadedSkins.first(where: { $0.identifier == effectiveId }) {
-                        // Verify skin supports current device before using it
-                        if skinSupportsCurrentDevice(skin) {
-                            foundSkin = skin
-                            DLOG("🎮 EmulatorWithSkinView: Found effective skin: \(skin.name) (id: \(effectiveId))")
-                        } else {
-                            DLOG("🎮 EmulatorWithSkinView: Effective skin \(skin.name) doesn't support current device, skipping")
-                        }
-                    } else if let resolved = try? await manager.skin(withIdentifier: effectiveId) {
-                        // Verify resolved skin supports current device before using it
-                        if skinSupportsCurrentDevice(resolved) {
-                            foundSkin = resolved
-                            DLOG("🎮 EmulatorWithSkinView: Resolved effective skin: \(resolved.name)")
-                        } else {
-                            DLOG("🎮 EmulatorWithSkinView: Resolved skin \(resolved.name) doesn't support current device, skipping")
-                        }
+                if let effectiveId {
+                    if await MainActor.run(body: { manager.skinsAreLoaded }),
+                       let skin = await MainActor.run(body: { manager.loadedSkins.first(where: { $0.identifier == effectiveId }) }),
+                       skinSupportsCurrentDevice(skin) {
+                        foundSkin = skin
+                        DLOG("🎮 EmulatorWithSkinView: Found effective skin: \(skin.name) (id: \(effectiveId))")
+                    } else if let resolved = try? await manager.skin(withIdentifier: effectiveId), skinSupportsCurrentDevice(resolved) {
+                        foundSkin = resolved
+                        DLOG("🎮 EmulatorWithSkinView: Resolved effective skin: \(resolved.name)")
                     }
                 }
             }
 
-            // When the user chose the SwiftUI default, effectiveId is nil — do not substitute the first bundled `.deltaskin` (often case-specific).
             let skipPackagedSkinFallback = await MainActor.run { () -> Bool in
-                if let gameId = self.gameId, !gameId.isEmpty {
+                if let gameId = gameIdSnapshot, !gameId.isEmpty {
                     return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: systemId, gameId: gameId, orientation: currentOrientation)
                 }
                 return DeltaSkinSelectionManager.shared.prefersBuiltInControllerSkin(for: systemId, gameId: nil, orientation: currentOrientation)
             }
 
-            // PRIORITY 3: Fallback to default skin if nothing found
             if foundSkin == nil, !skipPackagedSkinFallback {
                 if let gameType = DeltaSkinGameType(systemIdentifier: systemId),
-                   manager.skinsAreLoaded,
-                   let defaultSkin = manager.loadedSkins.first(where: {
-                       let matchesType = $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
-                       guard matchesType && skinSupportsCurrentDevice($0) else { return false }
-                       return CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier)
+                   await MainActor.run(body: { manager.skinsAreLoaded }),
+                   let defaultSkin = await MainActor.run(body: {
+                       manager.loadedSkins.first(where: {
+                           let matchesType = $0.gameType == gameType || (systemId == .GB && $0.gameType == .gbc)
+                           guard matchesType && skinSupportsCurrentDevice($0) else { return false }
+                           return CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier)
+                       })
                    }) {
                     foundSkin = defaultSkin
                     DLOG("🎮 EmulatorWithSkinView: Using default skin: \(defaultSkin.name)")
-                } else {
-                    // Try to get a device-compatible default skin
-                    if let defaultSkin = try? await DeltaSkinManager.shared.skinToUse(for: systemId),
-                       skinSupportsCurrentDevice(defaultSkin) {
-                        foundSkin = defaultSkin
-                    }
+                } else if let defaultSkin = try? await DeltaSkinManager.shared.skinToUse(for: systemId), skinSupportsCurrentDevice(defaultSkin) {
+                    foundSkin = defaultSkin
                 }
             }
 
-            // Update UI with skin if found
-            if let skin = foundSkin {
-                await MainActor.run {
-                    self.skinLoader.selectedSkin = skin
+            // Don't apply results if this task was cancelled (a newer load replaced us)
+            guard !Task.isCancelled else {
+                DLOG("🎮 EmulatorWithSkinView: Skin load task cancelled — discarding results")
+                return
+            }
+
+            await MainActor.run {
+                self.skinLoader.selectedSkin = foundSkin
+                self.skinLoader.isLoading = false
+                self.skinLoader.loadingProgress = 1.0
+                self.skinLoader.loadingStage = .complete
+                if shouldPauseDuringResolve {
+                    self.coreInstance.setPauseEmulation(false)
                 }
-                DLOG("🎮 EmulatorWithSkinView: Updated UI with skin: \(skin.name)")
-            } else {
-                DLOG("🎮 EmulatorWithSkinView: No skin found, will use default controller")
+                onResolved?()
+                if let skin = foundSkin {
+                    DLOG("🎮 EmulatorWithSkinView: Updated UI with skin: \(skin.name)")
+                } else {
+                    DLOG("🎮 EmulatorWithSkinView: No packaged skin — programmatic controller")
+                }
+            }
+        }
+    }
+
+    // MARK: - Loading View
+
+    fileprivate var loadingView: some View {
+        GeometryReader { _ in
+            ZStack {
+                LinearGradient(gradient: Gradient(colors: [
+                    Color.black,
+                    Color(red: 0.1, green: 0.0, blue: 0.2),
+                    Color(red: 0.2, green: 0.0, blue: 0.3)
+                ]), startPoint: .bottom, endPoint: .top)
+                .edgesIgnoringSafeArea(.all)
+
+                RetroGrid()
+                    .opacity(0.3)
+                    .scaleEffect(0.8)
+
+                VStack(spacing: 15) {
+                    Text("LOADING SKIN")
+                        .font(.custom("Futura-Bold", size: 22))
+                        .foregroundStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .shadow(color: .retroPink.opacity(0.7), radius: 8, x: 0, y: 0)
+                        .shadow(color: .retroPink.opacity(0.3), radius: 15, x: 0, y: 0)
+                        .padding(.bottom, 5)
+
+                    ZStack {
+                        Circle()
+                            .fill(
+                                RadialGradient(
+                                    gradient: Gradient(colors: [
+                                        .retroYellow,
+                                        .retroPink,
+                                        Color(red: 0.1, green: 0.0, blue: 0.2)
+                                    ]),
+                                    center: .center,
+                                    startRadius: 3,
+                                    endRadius: 80
+                                )
+                            )
+                            .frame(width: 100, height: 100)
+                            .blur(radius: 3)
+
+                        Circle()
+                            .trim(from: 0, to: CGFloat(skinLoader.loadingProgress))
+                            .stroke(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                            )
+                            .frame(width: 85, height: 85)
+                            .rotationEffect(.degrees(-90))
+                            .animation(.easeInOut(duration: 0.3), value: skinLoader.loadingProgress)
+                    }
+                    .padding(.bottom, 10)
+
+                    HStack(spacing: 10) {
+                        VStack(alignment: .trailing, spacing: 2) {
+                            Text(systemName?.uppercased() ?? "GAME")
+                                .font(.custom("Menlo-Bold", size: 12))
+                                .tracking(1)
+                                .foregroundColor(.retroPink)
+                                .shadow(color: .retroPink.opacity(0.6), radius: 3, x: 0, y: 0)
+
+                            Text(skinLoader.loadingStage.rawValue.uppercased())
+                                .font(.custom("Menlo", size: 10))
+                                .tracking(1)
+                                .foregroundColor(.retroBlue)
+                                .shadow(color: .retroBlue.opacity(0.6), radius: 3, x: 0, y: 0)
+                        }
+
+                        Text("\(Int(skinLoader.loadingProgress * 100))%")
+                            .font(.custom("Menlo-Bold", size: 18))
+                            .foregroundColor(.retroBlue)
+                            .shadow(color: .retroBlue.opacity(0.7), radius: 6, x: 0, y: 0)
+                            .frame(width: 50)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.black.opacity(0.7))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .strokeBorder(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        ),
+                                        lineWidth: 1.5
+                                    )
+                            )
+                    )
+
+                    RetroTapeAnimation()
+                        .frame(width: 80, height: 50)
+                        .opacity(0.7)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .scaleEffect(0.95)
+            }
+        }
+    }
+
+    private struct RetroGrid: View {
+        @State private var animateGrid = false
+
+        var body: some View {
+            VStack(spacing: 0) {
+                ForEach(0..<20, id: \.self) { _ in
+                    HStack(spacing: 0) {
+                        ForEach(0..<20, id: \.self) { _ in
+                            Rectangle()
+                                .strokeBorder(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color.retroPurple.opacity(0.3),
+                                            Color.retroPink.opacity(0.1)
+                                        ]),
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                ),
+                                lineWidth: 1
+                            )
+                            .aspectRatio(1, contentMode: .fit)
+                        }
+                    }
+                }
+            }
+            .scaleEffect(1.2)
+            .rotationEffect(Angle(degrees: 60))
+            .offset(y: animateGrid ? 80 : -80)
+            .animation(
+                Animation.linear(duration: 20)
+                    .repeatForever(autoreverses: false),
+                value: animateGrid
+            )
+            .onAppear {
+                animateGrid = true
+            }
+        }
+    }
+
+    private struct RetroTapeAnimation: View {
+        @State private var rotateReels = false
+
+        var body: some View {
+            ZStack {
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.black)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .strokeBorder(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .frame(width: 70, height: 40)
+
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color.retroPurple.opacity(0.5),
+                                Color.retroPink.opacity(0.5)
+                            ]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: 50, height: 20)
+
+                HStack(spacing: 20) {
+                    Circle()
+                        .stroke(Color.retroBlue, lineWidth: 1.5)
+                        .frame(width: 16, height: 16)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white, lineWidth: 1)
+                                .frame(width: 8, height: 8)
+                        )
+                        .rotationEffect(Angle(degrees: rotateReels ? 360 : 0))
+
+                    Circle()
+                        .stroke(Color.retroBlue, lineWidth: 1.5)
+                        .frame(width: 16, height: 16)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white, lineWidth: 1)
+                                .frame(width: 8, height: 8)
+                        )
+                        .rotationEffect(Angle(degrees: rotateReels ? 360 : 0))
+                }
+            }
+            .onAppear {
+                withAnimation(Animation.linear(duration: 2).repeatForever(autoreverses: false)) {
+                    rotateReels = true
+                }
             }
         }
     }

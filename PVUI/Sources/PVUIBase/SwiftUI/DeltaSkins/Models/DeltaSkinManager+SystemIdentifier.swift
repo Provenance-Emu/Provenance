@@ -40,7 +40,8 @@ public extension DeltaSkinManager {
 
     /// Get the currently selected skin for a system
     /// - Parameter system: The system identifier
-    /// - Returns: The selected skin, or nil if none selected
+    /// - Returns: The selected skin, or nil if none selected (also returns nil when the
+    ///   selected skin is a case-companion skin that shouldn't be auto-loaded right now)
     func selectedSkin(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
         ILOG("skins: selectedSkin(for: \(system.rawValue)) called")
         // Get the selected skin identifier from centralized manager (includes session overrides)
@@ -54,6 +55,13 @@ public extension DeltaSkinManager {
             return nil
         }
         ILOG("skins: Selected skin identifier for \(system.rawValue): \(selectedIdentifier)")
+
+        // If the saved preference is a companion skin and it shouldn't be auto-loaded
+        // (flag off or no case controller connected), skip it instead of showing the wrong skin
+        if !CaseControllerDetector.isAllowedInAutomaticSkinSelection(selectedIdentifier) {
+            ILOG("skins: Selected skin '\(selectedIdentifier)' is a companion skin not allowed for auto-selection, skipping")
+            return nil
+        }
 
         // Find the skin with this identifier
         let systemSkins = try await skins(for: system)

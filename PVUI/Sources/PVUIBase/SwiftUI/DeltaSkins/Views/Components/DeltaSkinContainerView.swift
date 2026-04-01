@@ -11,6 +11,8 @@ class DeltaSkinContainerView: UIView {
         game: PVGame,
         core: PVEmulatorCore,
         inputHandler: DeltaSkinInputHandler,
+        preselectedSkinIdentifier: String? = nil,
+        onInitialSkinResolutionComplete: (() -> Void)? = nil,
         onSkinLoaded: @escaping () -> Void,
         onRefreshRequested: @escaping () -> Void,
         virtualInputState: VirtualInputState? = nil
@@ -28,7 +30,8 @@ class DeltaSkinContainerView: UIView {
             coreInstance: core,
             onSkinLoaded: onSkinLoaded,
             onRefreshRequested: onRefreshRequested,
-            preselectedSkinIdentifier: nil,
+            preselectedSkinIdentifier: preselectedSkinIdentifier,
+            onInitialSkinResolutionComplete: onInitialSkinResolutionComplete,
             inputHandler: inputHandler,
             virtualInputState: virtualInputState
         )

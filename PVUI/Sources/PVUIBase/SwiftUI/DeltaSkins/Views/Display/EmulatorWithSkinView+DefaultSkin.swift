@@ -186,6 +186,28 @@ struct DefaultControllerSkinView: View {
         self.coreInstance = coreInstance
     }
 
+    /// System-appropriate label for the Start/Run button.
+    private var startButtonLabel: String {
+        switch systemId {
+        case .PCE, .PCECD, .SGFX:
+            return "RUN"
+        case .AtariJaguar, .AtariJaguarCD:
+            return "PAUSE"
+        default:
+            return "START"
+        }
+    }
+
+    /// System-appropriate label for the Select/Option button.
+    private var selectButtonLabel: String {
+        switch systemId {
+        case .AtariJaguar, .AtariJaguarCD:
+            return "OPTION"
+        default:
+            return "SELECT"
+        }
+    }
+
     var body: some View {
         // Load control layout data when view appears
         GeometryReader { geometry in
@@ -421,8 +443,8 @@ struct DefaultControllerSkinView: View {
                     HStack {
                         Spacer()
                         HStack(spacing: 30) {
-                            pillButton(label: "SELECT", color: .black)
-                            pillButton(label: "START", color: .black)
+                            pillButton(label: selectButtonLabel, color: .black)
+                            pillButton(label: startButtonLabel, color: .black)
                         }
                         .padding(.bottom, 20)
                         Spacer()
@@ -911,8 +933,8 @@ struct DefaultControllerSkinView: View {
             HStack {
                 Spacer() // Center the buttons
                 HStack(spacing: 30) { // Increased spacing between buttons
-                    pillButton(label: "SELECT", color: .black)
-                    pillButton(label: "START", color: .black)
+                    pillButton(label: selectButtonLabel, color: .black)
+                    pillButton(label: startButtonLabel, color: .black)
                 }
                 Spacer() // Center the buttons
             }
@@ -1477,10 +1499,10 @@ struct DefaultControllerSkinView: View {
 
                         HStack(spacing: 30) {
                             if hasControl(type: "PVSelectButton", in: layout) {
-                                pillButton(label: "SELECT", color: .black)
+                                pillButton(label: selectButtonLabel, color: .black)
                             }
                             if hasControl(type: "PVStartButton", in: layout) {
-                                pillButton(label: "START", color: .black)
+                                pillButton(label: startButtonLabel, color: .black)
                             }
                         }
                         .padding(.bottom, 20)
@@ -1847,10 +1869,10 @@ struct DefaultControllerSkinView: View {
                 Spacer()
                 HStack(spacing: 20) {
                     if hasControl(type: "PVSelectButton", in: layout) {
-                        pillButton(label: "SELECT", color: .black)
+                        pillButton(label: selectButtonLabel, color: .black)
                     }
                     if hasControl(type: "PVStartButton", in: layout) {
-                        pillButton(label: "START", color: .black)
+                        pillButton(label: startButtonLabel, color: .black)
                     }
                 }
                 Spacer()
