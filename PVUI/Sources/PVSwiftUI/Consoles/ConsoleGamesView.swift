@@ -76,8 +76,6 @@ struct ConsoleGamesView: SwiftUI.View {
     weak var rootDelegate: PVRootDelegate?
     var showGameInfo: (String) -> Void
 
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
     init(
         console: PVSystem,
         viewModel: PVRootViewModel,
@@ -922,12 +920,6 @@ struct ConsoleGamesView: SwiftUI.View {
 #endif
     }
 
-    private var sectionHeight: CGFloat {
-        // Use compact size class to determine if we're in portrait on iPhone
-        let baseHeight: CGFloat = horizontalSizeClass == .compact ? 150 : 75
-        return verticalSizeClass == .compact ? baseHeight / 2 : baseHeight
-    }
-
     private func loadGame(_ game: PVGame) {
         Task.detached { @MainActor in
             SceneCoordinator.shared.launchGame(game.freeze())
@@ -1499,12 +1491,13 @@ extension ConsoleGamesView {
     private func favoritesSection() -> some View {
         Group {
             if showFavorites && !favoritesModels.isEmpty {
+                /// Intrinsic height (title + row) — do not cap with a fixed frame; shelf cells use `PVRowHeight`
+                /// and a shorter container clips artwork in the horizontal `ScrollView`.
                 HomeSection(title: String(localized: "Favorites")) {
                     ForEach(favoritesModels, id: \.id) { game in
                         gameItem(game, section: .favorites)
                     }
                 }
-                .frame(height: sectionHeight)
                 HomeDividerView()
             }
         }
@@ -1519,7 +1512,6 @@ extension ConsoleGamesView {
                         gameItem(game, section: .recentlyPlayedGames)
                     }
                 }
-                .frame(height: sectionHeight)
                 HomeDividerView()
             }
         }
