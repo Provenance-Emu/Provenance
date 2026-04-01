@@ -1200,14 +1200,41 @@ struct RetroMenuView: View {
             }
             #endif
 
-            // RetroArch settings button (only for libretro cores)
-            if emulatorVC.core.coreIdentifier?.contains("libretro") == true,
-               PauseMenuViewRegistry.retroArchSettingsView() != nil {
-                menuButton(title: String(localized: "RETROARCH SETTINGS"), icon: "gearshape.2", color: .retroCyan) {
-                    showingRetroArchSettings = true
-                }
-                .sheet(isPresented: $showingRetroArchSettings) {
-                    PauseMenuViewRegistry.retroArchSettingsView()
+            // RetroArch internal menu (RGUI/XMB) + Provenance RetroArch settings (libretro cores)
+            if emulatorVC.core.coreIdentifier?.contains("libretro") == true {
+                let retroArchMenuAction = (emulatorVC.core as? CoreActions)?
+                    .coreActions?
+                    .first(where: { $0.title == RetroArchCoreActionTitles.internalMenu })
+                let retroArchSettings = PauseMenuViewRegistry.retroArchSettingsView()
+                if let menuAction = retroArchMenuAction, let settings = retroArchSettings {
+                    HStack(spacing: 12) {
+                        menuButton(title: String(localized: "RETROARCH MENU"), icon: "square.grid.2x2", color: .retroPurple) {
+                            dismissMenuThenResumeAndRun {
+                                emulatorVC.handleCoreAction(menuAction)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        menuButton(title: String(localized: "RETROARCH SETTINGS"), icon: "gearshape.2", color: .retroCyan) {
+                            showingRetroArchSettings = true
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .sheet(isPresented: $showingRetroArchSettings) {
+                        settings
+                    }
+                } else if let menuAction = retroArchMenuAction {
+                    menuButton(title: String(localized: "RETROARCH MENU"), icon: "square.grid.2x2", color: .retroPurple) {
+                        dismissMenuThenResumeAndRun {
+                            emulatorVC.handleCoreAction(menuAction)
+                        }
+                    }
+                } else if let settings = retroArchSettings {
+                    menuButton(title: String(localized: "RETROARCH SETTINGS"), icon: "gearshape.2", color: .retroCyan) {
+                        showingRetroArchSettings = true
+                    }
+                    .sheet(isPresented: $showingRetroArchSettings) {
+                        settings
+                    }
                 }
             }
 
@@ -1452,8 +1479,10 @@ struct RetroMenuView: View {
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
     @State private var isHoveredSkinId: String? = nil
+#if !os(tvOS)
     /// Collapsed by default; companion skins for physical cases (GameSir, Buppin, Soolra) live under the disclosure group.
     @State private var retroSkinPickerCaseSectionExpanded = false
+#endif
 
     // Mouse input settings
     @Default(.mouseInputSource) private var mouseInputSource
@@ -1820,6 +1849,7 @@ struct RetroMenuView: View {
                                     )
                                 }
 
+#if !os(tvOS)
                                 if !retroSkinPickerCaseSkins.isEmpty {
                                     DisclosureGroup(isExpanded: $retroSkinPickerCaseSectionExpanded) {
                                         VStack(spacing: 16) {
@@ -1842,13 +1872,7 @@ struct RetroMenuView: View {
                                         .padding(.top, 4)
                                     } label: {
                                         HStack(alignment: .top, spacing: 10) {
-                                            Image(systemName: {
-#if os(tvOS)
-                                                "gamecontroller.fill"
-#else
-                                                "iphone.radiowaves.left.and.right"
-#endif
-                                            }())
+                                            Image(systemName: "iphone.radiowaves.left.and.right")
                                                 .font(.system(size: 16, weight: .semibold))
                                                 .foregroundColor(palette.defaultTintColor.swiftUIColor)
                                                 .frame(width: 24, alignment: .center)
@@ -1866,6 +1890,7 @@ struct RetroMenuView: View {
                                     }
                                     .tint(palette.defaultTintColor.swiftUIColor)
                                 }
+#endif
                             }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 20)
@@ -2655,6 +2680,7 @@ struct RetroMenuView: View {
                     ILOG("skins: loadAvailableSkins - set landscape skin to: Default")
                 }
 
+#if !os(tvOS)
                 let filteredForPicker = filteredSkins.filter { self.skinSupportsOrientation($0, orientation: self.currentOrientation) }
                 let regularCount = filteredForPicker.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }.count
                 let caseCount = filteredForPicker.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }.count
@@ -2665,6 +2691,7 @@ struct RetroMenuView: View {
                 if onlyCaseSkinsShown || selectionIsCaseSkin {
                     self.retroSkinPickerCaseSectionExpanded = true
                 }
+#endif
             }
         } catch {
             print("Error loading skins: \(error)")
@@ -2730,8 +2757,13 @@ struct RetroMenuView: View {
         retroSkinPickerSkinsForOrientation.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
     }
 
+    /// Phone-case companion skins are not surfaced on tvOS (no `DisclosureGroup` API; no case-controller use case).
     private var retroSkinPickerCaseSkins: [DeltaSkinProtocol] {
+#if os(tvOS)
+        []
+#else
         retroSkinPickerSkinsForOrientation.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
+#endif
     }
 
     /// Import skins from URLs

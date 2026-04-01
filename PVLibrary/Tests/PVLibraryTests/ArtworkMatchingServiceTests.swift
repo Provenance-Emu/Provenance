@@ -10,7 +10,6 @@
 
 import XCTest
 import Foundation
-import PVFeatureFlags
 import PVLookupTypes
 import PVSystems
 @testable import PVLibrary
@@ -160,15 +159,11 @@ final class ArtworkMatchingServiceTests: XCTestCase {
 
     // MARK: setUp / tearDown
 
-    /// Enable the feature flag before every test so `findArtwork` is not gated by the flag.
     override func setUp() async throws {
         try await super.setUp()
-        PVFeatureFlags.shared.setDebugOverride(for: .enhancedArtworkSearch, enabled: true)
     }
 
-    /// Clear the override after every test to avoid cross-test contamination.
     override func tearDown() async throws {
-        PVFeatureFlags.shared.setDebugOverride(for: .enhancedArtworkSearch, enabled: nil)
         try await super.tearDown()
     }
 
@@ -402,19 +397,6 @@ final class ArtworkMatchingServiceTests: XCTestCase {
         let result = await service.findArtwork(exactTitle: "   ", md5: "abc", systemID: nil)
 
         XCTAssertNil(result, "Should return nil for whitespace-only title")
-    }
-
-    func testFindArtwork_returnsNilWhenFeatureFlagDisabled() async {
-        PVFeatureFlags.shared.setDebugOverride(for: .enhancedArtworkSearch, enabled: false)
-
-        let mock = MockArtworkMatchingLookup(artworkResults: [makeArtwork(urlString: "https://example.com/art.jpg")])
-
-        let service = FastArtworkLookupService(lookup: mock)
-        let result = await service.findArtwork(exactTitle: "Any Game", md5: "abc", systemID: nil)
-
-        PVFeatureFlags.shared.setDebugOverride(for: .enhancedArtworkSearch, enabled: nil)
-
-        XCTAssertNil(result, "Should return nil when enhancedArtworkSearch feature flag is disabled")
     }
 
     // MARK: Error Handling

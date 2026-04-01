@@ -156,9 +156,9 @@ static __inline__ __attribute__((always_inline)) void* TPCircularBufferTail(TPCi
 static __inline__ __attribute__((always_inline)) void TPCircularBufferConsume(TPCircularBuffer *buffer, BufferSize amount) {
     buffer->tail = (buffer->tail + amount) % buffer->length;
     if ( buffer->atomic ) {
-        atomicFetchAdd(&buffer->fillCount, -(int)amount);
+        atomicFetchAdd(&buffer->fillCount, -(int)(long)amount);
     } else {
-        buffer->fillCount -= amount;
+        buffer->fillCount -= (int)(long)amount;
     }
     assert(buffer->fillCount >= 0);
 }
@@ -192,9 +192,9 @@ static __inline__ __attribute__((always_inline)) void* TPCircularBufferHead(TPCi
 static __inline__ __attribute__((always_inline)) void TPCircularBufferProduce(TPCircularBuffer *buffer, BufferSize amount) {
     buffer->head = (buffer->head + amount) % buffer->length;
     if ( buffer->atomic ) {
-        atomicFetchAdd(&buffer->fillCount, (int)amount);
+        atomicFetchAdd(&buffer->fillCount, (int)(long)amount);
     } else {
-        buffer->fillCount += amount;
+        buffer->fillCount += (int)(long)amount;
     }
     assert(buffer->fillCount <= buffer->length);
 }
@@ -224,7 +224,7 @@ static __inline__ __attribute__((always_inline)) bool TPCircularBufferProduceByt
 static __inline__ __attribute__((always_inline)) __deprecated_msg("use TPCircularBufferSetAtomic(false) and TPCircularBufferConsume instead")
 void TPCircularBufferConsumeNoBarrier(TPCircularBuffer *buffer, BufferSize amount) {
     buffer->tail = (buffer->tail + amount) % buffer->length;
-    buffer->fillCount -= amount;
+    buffer->fillCount -= (int)(long)amount;
     assert(buffer->fillCount >= 0);
 }
 
@@ -234,7 +234,7 @@ void TPCircularBufferConsumeNoBarrier(TPCircularBuffer *buffer, BufferSize amoun
 static __inline__ __attribute__((always_inline)) __deprecated_msg("use TPCircularBufferSetAtomic(false) and TPCircularBufferProduce instead")
 void TPCircularBufferProduceNoBarrier(TPCircularBuffer *buffer, BufferSize amount) {
     buffer->head = (buffer->head + amount) % buffer->length;
-    buffer->fillCount += amount;
+    buffer->fillCount += (int)(long)amount;
     assert(buffer->fillCount <= buffer->length);
 }
 

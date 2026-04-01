@@ -345,6 +345,9 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 requiresRestart: false
             )
 
+            /// Snapshot for the value handler so the `@Sendable` closure does not capture the mutable `values` buffer.
+            let enumValuesForValueHandler = values
+
             /// Create a value handler closure that will update the RetroArch option
             let valueHandler: @Sendable (OptionValueRepresentable) -> Void = { newValue in
                 var valIdx: size_t = 0
@@ -360,7 +363,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                         core_option_manager_set_val(optionsPtr, valIdx, boolValue ? 1 : 0, true)
                     } else if let stringValue = newValue as? String {
                         // For string values, find the matching option
-                        for (idx, value) in values.enumerated() {
+                        for (idx, value) in enumValuesForValueHandler.enumerated() {
                             if value.title == stringValue || value.description == stringValue {
                                 core_option_manager_set_val(optionsPtr, valIdx, size_t(idx), true)
                                 break
@@ -675,8 +678,8 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 self.extractArchive = false;
             }
         }
-        if let coreIdentifier = self.coreIdentifier?.lowercased() {
-            if (coreIdentifier.contains("vecx")) {
+        let coreIdentifier = self.coreIdentifier.lowercased()
+        if (coreIdentifier.contains("vecx")) {
                 // Hardware mode broken, force software mode
                 optionValues += "vecx_bloom_brightness = \"4\"\n"
                 optionValues += "vecx_bloom_width = \"8x\"\n"
@@ -725,7 +728,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionValuesFile = "Mupen64Plus-Next/Mupen64Plus-Next.opt"
                 #if os(iOS) || os(tvOS)
                 // Read the existing .opt file so we can do targeted in-place updates.
-                let mupenOptPath = (self.documentsDirectory ?? "") + "/RetroArch/config/Mupen64Plus-Next/Mupen64Plus-Next.opt"
+                let mupenOptPath = (self.retroArchRootPath ?? "") + "/config/Mupen64Plus-Next/Mupen64Plus-Next.opt"
                 DLOG("Mupen64Plus-Next: opt file path: \(mupenOptPath)")
                 // Use fileExists to distinguish "no file" (fresh install) from "empty file"
                 // (needs migration). String(contentsOfFile:) returns nil for both, so relying
@@ -866,7 +869,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 /// (Resources/hatari.cfg) which now includes [HardDisk] and [ACSI] sections
                 /// with all HD/ACSI emulation disabled.  This .opt file write is a secondary
                 /// defence that ensures the core option variable also reads "disabled".
-                let hatariOptPath = (self.documentsDirectory ?? "") + "/RetroArch/config/Hatari/Hatari.opt"
+                let hatariOptPath = (self.retroArchRootPath ?? "") + "/config/Hatari/Hatari.opt"
                 let optBefore = (try? String(contentsOfFile: hatariOptPath, encoding: .utf8)) ?? "(not found)"
                 DLOG("Hatari: hatari_boot_hd BEFORE fix in \(hatariOptPath):\n\(optBefore)")
                 optionValues += "hatari_boot_hd = \"disabled\"\n"
@@ -913,7 +916,6 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionValuesFile = "Beetle PSX/Beetle PSX.opt"
                 optionOverwrite = false
             }
-        }
         self.coreOptionConfig = optionValues;
         self.coreOptionConfigPath = optionValuesFile
         self.coreOptionOverwrite = optionOverwrite
@@ -944,9 +946,9 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 emuController.removeFromParent()
                 secondaryWindow.rootViewController = emuController
             }
-            self.window.isHidden = false
+            secondaryWindow.isHidden = false
         } else {
-            self.window.windowScene = externalScene
+            self.window?.windowScene = externalScene
         }
     }
 
@@ -960,7 +962,7 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
 
 /// User-facing labels for pause-menu quick actions.
 private enum RetroArchActionTitle {
-    static let retroArchMenu = "RetroArch Menu"
+    static let retroArchMenu = RetroArchCoreActionTitles.internalMenu
     static let toggleEject = "Toggle Eject"
     static let toggleTouchKeyboard = "Toggle Touch Keyboard"
     static let toggleTouchMouse = "Toggle Touch Mouse"
@@ -1029,7 +1031,8 @@ private extension PVRetroArchCoreCore {
     /// Toggle the RetroArch custom keyboard and mirror the helper-bar behavior.
     func toggleTouchKeyboard() {
         DispatchQueue.main.async {
-            guard let cocoaView = CocoaView.get(), let keyboardController = cocoaView.keyboardController else {
+            let cocoaView = CocoaView.get()
+            guard let keyboardController = cocoaView.keyboardController else {
                 return
             }
             cocoaView.toggleCustomKeyboard()
@@ -1042,7 +1045,8 @@ private extension PVRetroArchCoreCore {
     /// Toggle the touch mouse handler while surfacing the RetroArch toast.
     func toggleTouchMouse() {
         DispatchQueue.main.async {
-            guard let cocoaView = CocoaView.get(), let mouseHandler = cocoaView.mouseHandler else {
+            let cocoaView = CocoaView.get()
+            guard let mouseHandler = cocoaView.mouseHandler else {
                 return
             }
             mouseHandler.enabled.toggle()
@@ -1125,7 +1129,7 @@ extension PVRetroArchCoreCore {
     /// Values typically: index 0 = digital, 1 = analog (DualShock)
     /// PCSX ReARMed: key "pcsx_rearmed_pad1type" values 0/1 or similar
     func togglePSXAnalogMode() {
-        guard let coreId = _bridge.coreIdentifier?.lowercased() else { return }
+        let coreId = _bridge.coreIdentifier.lowercased()
         if coreId.contains("psx_hw") {
             // Beetle PSX HW
             PVRetroArchCoreBridge.setOption(keyOrTitle: "beetle_psx_hw_pad1type", valueIndex: 1 - currentRAOptionIndex("beetle_psx_hw_pad1type"))

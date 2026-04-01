@@ -491,6 +491,12 @@ struct PauseTileMenuView: View {
             #else
             break
             #endif
+        case "retroArchMenu":
+            guard let action = (emulatorVC.core as? CoreActions)?.coreActions?.first(where: { $0.title == RetroArchCoreActionTitles.internalMenu }) else { return }
+            let emu = emulatorVC
+            dismissThenResumeAndRun {
+                emu.handleCoreAction(action)
+            }
         case "retroArchSettings":
             showingRetroArchSettings = true
         case "audioVisualizer":

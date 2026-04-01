@@ -148,39 +148,39 @@ NSString* AppleII_EXTENSIONS  = @"dsk|do|bin|nib|fdi|td0|imd|cqm|d77|d88|1dd|ima
         return romFile;
 }
 - (void) writeApple2Ini:(NSString *)options {
-    NSString *hp1=[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system"];
+    NSString *hp1=[self.retroArchRootPath stringByAppendingPathComponent:@"system"];
     NSString *hp2=self.batterySavesPath;
-    NSString *hp3=[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame"];
-    NSString *rom1=[self.batterySavesPath stringByAppendingPathComponent:@"../../com.provenance.appleii"];
-    NSString *rom2=[self.batterySavesPath stringByAppendingPathComponent:@"../../com.provenance.mame"];
-    NSString *ini=[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini"];
+    NSString *hp3=[self.retroArchRootPath stringByAppendingPathComponent:@"system/mame"];
+    NSString *rom1=[self.documentsDirectory stringByAppendingPathComponent:@"com.provenance.appleii"];
+    NSString *rom2=[self.documentsDirectory stringByAppendingPathComponent:@"com.provenance.mame"];
+    NSString *ini=[self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini"];
     NSString *content = [NSString stringWithFormat:
                          @"# CORE CONFIGURATION OPTIONS\n"
                          @"readconfig                1\n"
                          @"writeconfig               1\n"
                          @"# CORE SEARCH PATH OPTIONS\n"
-                         @"homepath                  %s/../../RetroArch/system/mame\n"
+                         @"homepath                  %s/system/mame\n"
                          @"rompath                   ./;%s;%s;%s;%s;%s\n"
-                         @"hashpath                  %s/../../RetroArch/system/mame/hash\n"
-                         @"samplepath                %s/../../RetroArch/system/mame/samples\n"
-                         @"artpath                   %s/../../RetroArch/system/mame/artwork\n"
-                         @"ctrlrpath                 %s/../../RetroArch/system/mame/ctrlr\n"
+                         @"hashpath                  %s/system/mame/hash\n"
+                         @"samplepath                %s/system/mame/samples\n"
+                         @"artpath                   %s/system/mame/artwork\n"
+                         @"ctrlrpath                 %s/system/mame/ctrlr\n"
                          @"inipath                   ./;%s\n"
-                         @"fontpath                  %s/../../RetroArch/system/mame/\n"
-                         @"cheatpath                 %s/../../RetroArch/system/mame/cheat\n"
-                         @"crosshairpath             %s/../../RetroArch/system/mame/crosshair\n"
-                         @"pluginspath               %s/../../RetroArch/system/mame/plugins\n"
-                         @"languagepath              %s/../../RetroArch/system/mame/language\n"
+                         @"fontpath                  %s/system/mame/\n"
+                         @"cheatpath                 %s/system/mame/cheat\n"
+                         @"crosshairpath             %s/system/mame/crosshair\n"
+                         @"pluginspath               %s/system/mame/plugins\n"
+                         @"languagepath              %s/system/mame/language\n"
                          @"swpath                    ./;%s;%s;%s;%s;%s\n"
                          @"# CORE OUTPUT DIRECTORY OPTIONS\n"
-                         @"cfg_directory             %s/../../RetroArch/states/mame/cfg\n"
-                         @"nvram_directory           %s/../../RetroArch/states/mame/nvram\n"
-                         @"input_directory           %s/../../RetroArch/states/mame/inp\n"
-                         @"state_directory           %s/../../RetroArch/states/mame/sta\n"
-                         @"snapshot_directory        %s/../../RetroArch/screenshots/mame\n"
-                         @"diff_directory            %s/../../RetroArch/system/mame/diff\n"
-                         @"comment_directory         %s/../../RetroArch/system/mame/comments\n"
-                         @"share_directory           %s/../../RetroArch/system/mame/share\n"
+                         @"cfg_directory             %s/states/mame/cfg\n"
+                         @"nvram_directory           %s/states/mame/nvram\n"
+                         @"input_directory           %s/states/mame/inp\n"
+                         @"state_directory           %s/states/mame/sta\n"
+                         @"snapshot_directory        %s/screenshots/mame\n"
+                         @"diff_directory            %s/system/mame/diff\n"
+                         @"comment_directory         %s/system/mame/comments\n"
+                         @"share_directory           %s/system/mame/share\n"
                          @"# CORE STATE/PLAYBACK OPTIONS\n"
                          @"state\n"
                          @"autosave                  0\n"
@@ -428,81 +428,81 @@ NSString* AppleII_EXTENSIONS  = @"dsk|do|bin|nib|fdi|td0|imd|cqm|d77|d88|1dd|ima
                          @"# SLOT DEVICES\n"
                          @"gameio                    joy\n"
                          @"%s\n",
-                         self.batterySavesPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
                          hp1.UTF8String,
                          hp2.UTF8String,
                          hp3.UTF8String,
                          rom1.UTF8String,
                          rom2.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
                          ini.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
                          hp1.UTF8String,
                          hp2.UTF8String,
                          hp3.UTF8String,
                          rom1.UTF8String,
                          rom2.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
-                         self.batterySavesPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
+                         self.retroArchRootPath.UTF8String,
                          options.UTF8String];
-    [[NSFileManager defaultManager] createDirectoryAtPath:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/cheat/"]
+    [[NSFileManager defaultManager] createDirectoryAtPath:[self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/cheat/"]
                               withIntermediateDirectories:YES
                                                attributes:nil
                                                     error:nil];
-    [[NSFileManager defaultManager] createDirectoryAtPath:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/"]
+    [[NSFileManager defaultManager] createDirectoryAtPath:[self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/"]
                               withIntermediateDirectories:YES
                                                attributes:nil
                                                     error:nil];
-    NSString *fileName = [self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/apple2ee.ini"];
+    NSString *fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/apple2ee.ini"];
     NSLog(@"Archive: Writing %s to %s (%s)", content.UTF8String, fileName.UTF8String, options.UTF8String);
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
                    error:nil];
-    fileName = [self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/apple2e.ini"];
+    fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/apple2e.ini"];
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
                    error:nil];
-    fileName = [self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/apple2p.ini"];
+    fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/apple2p.ini"];
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
                    error:nil];
-    fileName = [self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/apple2c.ini"];
+    fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/apple2c.ini"];
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
                    error:nil];
-    fileName = [self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/apple2gs.ini"];
+    fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/apple2gs.ini"];
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
                    error:nil];
-    fileName = [self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/apple2.ini"];
+    fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/apple2.ini"];
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
                    error:nil];
-    fileName = [self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/apple3.ini"];
+    fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/apple3.ini"];
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
                    error:nil];
-    fileName = [self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/mame.ini"];
+    fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/mame.ini"];
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
@@ -573,7 +573,7 @@ NSString* AppleII_EXTENSIONS  = @"dsk|do|bin|nib|fdi|td0|imd|cqm|d77|d88|1dd|ima
                          @"forced4x3                 1\n"
                          @"info_audit_enabled        0\n"
                          @"hide_romless              1\n"];
-    NSString *fileName = [self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/ui.ini"];
+    NSString *fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/ui.ini"];
     [content writeToFile:fileName
               atomically:NO
                 encoding:NSStringEncodingConversionAllowLossy
@@ -599,7 +599,7 @@ NSString* AppleII_EXTENSIONS  = @"dsk|do|bin|nib|fdi|td0|imd|cqm|d77|d88|1dd|ima
                              @"timer                     1\n"
                              @"xml                       1\n"
                          ];
-    NSString *fileName = [self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/ini/plugin.ini"];
+    NSString *fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/ini/plugin.ini"];
     if (![[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
         [content writeToFile:fileName
                   atomically:NO

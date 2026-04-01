@@ -1,6 +1,7 @@
 import Foundation
 import GameController
 import PVLogging
+import PVFeatureFlags
 
 /// Identifies physical iPhone cases with built-in controller buttons.
 ///
@@ -116,8 +117,10 @@ public enum CaseControllerDetector {
     }
 
     /// True when `skinIdentifier` is listed as a companion skin for a known physical case (see ``knownLayouts``).
+    /// Always returns `false` when the `caseCompanionSkins` feature flag is off.
     public static func isCompanionSkinForKnownCase(_ skinIdentifier: String) -> Bool {
-        !casesCompatibleWithSkin(skinIdentifier).isEmpty
+        guard PVFeatureFlags.shared.isEnabled(.caseCompanionSkins) else { return false }
+        return !casesCompatibleWithSkin(skinIdentifier).isEmpty
     }
 
     /// True when a connected `GCController` matches a known smart-case layout (GameSir, Soolra, …).
@@ -132,7 +135,9 @@ public enum CaseControllerDetector {
 
     /// Automatic skin pickers (no explicit user/session selection for this identifier) should omit companion case skins
     /// unless a matching physical case controller is connected.
+    /// When the `caseCompanionSkins` feature flag is off, all skins are allowed (no filtering).
     public static func isAllowedInAutomaticSkinSelection(_ skinIdentifier: String) -> Bool {
+        guard PVFeatureFlags.shared.isEnabled(.caseCompanionSkins) else { return true }
         if isKnownPhysicalCaseControllerConnected { return true }
         return !isCompanionSkinForKnownCase(skinIdentifier)
     }

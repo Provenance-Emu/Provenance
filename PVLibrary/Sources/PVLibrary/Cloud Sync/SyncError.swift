@@ -94,7 +94,7 @@ extension CloudSyncError: LocalizedError {
         case .networkUnavailable:
             return "Network unavailable"
         case .pausedForEmulation:
-            return "Paused for emulation"
+            return "Paused for emulator session"
         }
     }
 }

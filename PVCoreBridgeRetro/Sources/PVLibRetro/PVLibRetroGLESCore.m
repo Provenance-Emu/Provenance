@@ -133,7 +133,7 @@ extern void MakeCurrentThreadRealTime(void);
 
 void input_poll(void);
 
-void gl_swap() {
+void gl_swap(void) {
     GET_CURRENT_OR_RETURN();
     [current swapBuffers];
 }
@@ -311,20 +311,22 @@ static void pv_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore);
 }
 
 
-void* libPvr_GetRenderTarget() {
+void *libPvr_GetRenderTarget(void) {
     return 0;
 }
 
-void* libPvr_GetRenderSurface() {
+void *libPvr_GetRenderSurface(void) {
     return 0;
 
 }
 
-bool gl_init(void*, void*) {
+bool gl_init(void *renderTarget, void *renderSurface) {
+    (void)renderTarget;
+    (void)renderSurface;
     return true;
 }
 
-bool gles_init()
+bool gles_init(void)
 {
 
     if (!gl_init((void*)libPvr_GetRenderTarget(),

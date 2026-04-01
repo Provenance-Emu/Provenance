@@ -2,7 +2,7 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 
 MARKETING_VERSION = 3.4.0
-CURRENT_PROJECT_VERSION = 2900
+CURRENT_PROJECT_VERSION = 2903
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) NONJAILBROKEN=1
@@ -27,6 +27,8 @@ OTHER_CFLAGS = $(inherited) -fPIC
 OTHER_CFLAGS = $(inherited) -fmodules
 OTHER_CFLAGS = $(inherited) -fcxx-modules
 OTHER_CFLAGS = $(inherited) -Wno-module-import-in-extern-c
+// Ensures generated Swift headers (e.g. PVCoreBridge-Swift.h referencing EAGLContext) compile without GLES deprecation noise in every TU.
+OTHER_CFLAGS = $(inherited) -DGLES_SILENCE_DEPRECATION=1
 
 // Vars to be overwritten by `CodeSigning.xcconfig` if exists
 DEVELOPMENT_TEAM = S32Z3HMYVQ
@@ -94,9 +96,9 @@ PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).$(PROJECT_NAME:lower).PVLibr
 ENABLE_BITCODE = NO
 
 // -- Explicitly Built Modules (Xcode 16+) --
-// Speeds up ComputeTargetDependencyGraph by making module builds explicit
-// and schedulable by the build system rather than implicitly during compilation.
-// If a clang/ObjC build breaks, try removing CLANG_ENABLE_EXPLICIT_MODULES first
-// (it can conflict with -fmodules/-fcxx-modules in OTHER_CFLAGS).
-SWIFT_ENABLE_EXPLICIT_MODULES = YES
+// DISABLED: Explicit modules conflict with -fmodules/-fcxx-modules in OTHER_CFLAGS
+// and cause "Planning Swift module" to hang with 26+ local SPM packages.
+// The implicit module system handles this workspace's dependency graph much faster.
+// Re-enable only after removing -fmodules/-fcxx-modules from OTHER_CFLAGS.
+SWIFT_ENABLE_EXPLICIT_MODULES = NO
 //COMBINE_HIDPI_IMAGES = NO

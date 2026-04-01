@@ -9,9 +9,13 @@
 #import <PVRetroArch/PVRetroArchCoreBridge.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
-NS_ASSUME_NONNULL_BEGIN
 @protocol EmulatorCoreWaveformProvider;
+
+NS_ASSUME_NONNULL_BEGIN
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 @interface PVRetroArchCoreBridge (Audio) <EmulatorCoreWaveformProvider>
+#pragma clang diagnostic pop
 
 /// Install a PCM waveform tap inside RetroArch audio path
 - (void)installWaveformTap;

@@ -452,6 +452,31 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     )
                 }
+                // Batch delete confirmation
+                .alert("Delete Selected Games?", isPresented: $gamesViewModel.showBatchDeleteConfirmation) {
+                    Button("Delete", role: .destructive) { performBatchDelete() }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("This will delete \(gamesViewModel.selectedGameMD5s.count) game\(gamesViewModel.selectedGameMD5s.count == 1 ? "" : "s") and their ROM files. Save states will be kept.")
+                }
+                // Batch move to system
+                .sheet(isPresented: $gamesViewModel.showBatchMoveToSystem) {
+                    batchMoveToSystemSheet
+                }
+                // Batch offload confirmation
+                .alert("Offload Selected Games?", isPresented: $gamesViewModel.showBatchOffloadConfirmation) {
+                    Button("Offload", role: .destructive) { performBatchOffload() }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("This will remove the ROM files from this device. You can re-download them from Cloud later.")
+                }
+                // Batch download confirmation
+                .alert("Download Selected Games?", isPresented: $gamesViewModel.showBatchDownloadConfirmation) {
+                    Button("Download") { performBatchDownload() }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("This will queue the selected games for download from Cloud.")
+                }
                 // Import Status View
                 .fullScreenCover(isPresented: Binding<Bool>(
                     get: { gamesViewModel.showImportStatusView },

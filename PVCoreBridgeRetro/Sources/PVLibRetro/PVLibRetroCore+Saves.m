@@ -15,6 +15,7 @@
 #pragma clang diagnostic ignored "-Wdocumentation-unknown-command"
 #pragma clang diagnostic ignored "-Wstrict-prototypes"
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H

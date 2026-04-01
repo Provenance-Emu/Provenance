@@ -87,7 +87,7 @@ let package = Package(
 
 
         /// https://swiftpackageindex.com/SvenTiigi/WhatsNewKit
-//        .package(url: "https://github.com/SvenTiigi/WhatsNewKit.git", from: "2.2.1")
+        .package(url: "https://github.com/SvenTiigi/WhatsNewKit.git", from: "2.2.1"),
 
         /// https://swiftpackageindex.com/LiYanan2004/MarkdownView
         .package(url: "https://github.com/LiYanan2004/MarkdownView.git", from: "1.7.0"),
@@ -136,6 +136,7 @@ let package = Package(
                 "PVCheevos",
                 .product(name: "PVJIT", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
                 .product(name: "JITManager", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
+                .product(name: "Reachability", package: "reachability.swift"),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "MBProgressHUD", condition: .when(platforms: [.iOS, .macCatalyst, .tvOS, .watchOS])),
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
@@ -264,6 +265,7 @@ let package = Package(
                 "PVCheevos",
                 .product(name: "PVJIT", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
                 .product(name: "JITManager", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
+                .product(name: "WhatsNewKit", package: "whatsnewkit"),
                 .product(name: "SiriusRating", package: "siriusrating-ios", condition: .when(platforms: [.iOS])),
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),

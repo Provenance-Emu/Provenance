@@ -4,7 +4,7 @@ You are working on Provenance, a multi-platform emulator frontend for iOS/tvOS.
 - Read CLAUDE.md for full project conventions, module tiers, and architecture
 - Target the `develop` branch for all PRs
 - Use conventional commits: fix:, feat:, chore:, build:, refactor:, test:, docs:
-- Do NOT modify submodule source in Cores/<name>/<upstream-dir>/
+- Do NOT modify third-party submodule source in `Cores/<name>/<upstream-dir>/` (exception: Provenance RetroArch fork at `CoresRetro/RetroArch/RetroArch/` may be edited for integration)
 - Do NOT modify project.pbxproj unless absolutely necessary
 - Do NOT modify CodeSigning.xcconfig
 - Prefer SPM Package.swift changes over Xcode project changes

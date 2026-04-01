@@ -333,6 +333,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
     private static var imageCache: [String: UIImage] = [:]
     private static let imageCacheQueue = DispatchQueue(label: "com.provenance.deltaskin.imagecache", attributes: .concurrent)
 
+    /// Loads the primary skin artwork for the given traits; decoded rasters are memoized in an in-memory LRU cache on this type. Prefer calling from an `async` context so PDF/PNG work can run without blocking synchronous UI callbacks.
     public func image(for traits: DeltaSkinTraits) async throws -> UIImage {
         ILOG("skins: image(for:) called - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
         // Get the representation for these traits

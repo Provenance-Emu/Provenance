@@ -135,7 +135,7 @@ extension PVThinLibretroCore: CoreRetroAchievements {
 // Thin wrapper already conforms to CoreOptional (dynamic options from the core).
 // Adding SubCoreOptional lets the options UI request per-subcore overrides.
 
-extension PVThinLibretroCore: @preconcurrency SubCoreOptional {
+extension PVThinLibretroCore: SubCoreOptional {
     public static func options(forSubcoreIdentifier identifier: String, systemName: String) -> [CoreOption]? {
         // Thin wrapper surfaces the core's own options via CoreOptional.
         // Return nil so callers fall through to the dynamic CoreOptional options.

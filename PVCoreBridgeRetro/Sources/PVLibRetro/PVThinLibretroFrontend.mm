@@ -1033,13 +1033,13 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         }
 
 #if PV_HAS_ACCELERATE
-        // Source is BGRA, convert to XRGB8888 (ARGB) and scale to target size
-        vImage_Buffer srcBuf = {
-            .data = baseAddr,
-            .width = sourceWidth,
-            .height = sourceHeight,
-            .rowBytes = srcBytesPerRow
-        };
+        // Source is BGRA, convert to XRGB8888 (ARGB) and scale to target size.
+        // vImage_Buffer field order is data, height, width, rowBytes (C++ requires consistent init order).
+        vImage_Buffer srcBuf = {};
+        srcBuf.data = baseAddr;
+        srcBuf.height = (vImagePixelCount)sourceHeight;
+        srcBuf.width = (vImagePixelCount)sourceWidth;
+        srcBuf.rowBytes = srcBytesPerRow;
 
         // Allocate a temporary buffer for BGRA->ARGB permuted full-size image
         size_t intermediateRowBytes = sourceWidth * 4;
@@ -1049,12 +1049,11 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
             return;
         }
 
-        vImage_Buffer intermediateBuf = {
-            .data = intermediateData,
-            .width = sourceWidth,
-            .height = sourceHeight,
-            .rowBytes = intermediateRowBytes
-        };
+        vImage_Buffer intermediateBuf = {};
+        intermediateBuf.data = intermediateData;
+        intermediateBuf.height = (vImagePixelCount)sourceHeight;
+        intermediateBuf.width = (vImagePixelCount)sourceWidth;
+        intermediateBuf.rowBytes = intermediateRowBytes;
 
         // BGRA -> ARGB (which is XRGB8888 in libretro convention: xx RR GG BB)
         uint8_t permuteMap[4] = {3, 2, 1, 0}; // BGRA -> ARGB
@@ -1066,12 +1065,11 @@ didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
         }
 
         // Scale to target dimensions
-        vImage_Buffer dstBuf = {
-            .data = self.frameBuffer,
-            .width = self.targetWidth,
-            .height = self.targetHeight,
-            .rowBytes = self.targetWidth * 4
-        };
+        vImage_Buffer dstBuf = {};
+        dstBuf.data = self.frameBuffer;
+        dstBuf.height = (vImagePixelCount)self.targetHeight;
+        dstBuf.width = (vImagePixelCount)self.targetWidth;
+        dstBuf.rowBytes = (size_t)self.targetWidth * 4;
 
         err = vImageScale_ARGB8888(&intermediateBuf, &dstBuf, NULL, kvImageHighQualityResampling);
         free(intermediateData);
@@ -2044,6 +2042,23 @@ static bool thin_environment(unsigned cmd, void *data) {
 @synthesize frontendDelegate = _frontendDelegate;
 // Note: controllerPortInfo is a readonly property with an explicit getter below; no @synthesize needed.
 
+#if !TARGET_OS_WATCH
+/// Required by `EmulatorCoreControllerDataSource` (`controller(forPlayer:)` in Swift).
+- (GCController * _Nullable)controllerForPlayer:(NSUInteger)player {
+    switch (player) {
+        case 1: return self.controller1;
+        case 2: return self.controller2;
+        case 3: return self.controller3;
+        case 4: return self.controller4;
+        case 5: return self.controller5;
+        case 6: return self.controller6;
+        case 7: return self.controller7;
+        case 8: return self.controller8;
+        default: return nil;
+    }
+}
+#endif
+
 // MARK: - System directory helpers
 
 /// Returns the system-specific path for this core (e.g. Documents/System/PSP for PPSSPP).
@@ -2796,6 +2811,9 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 // MARK: - File-based save states (compatible with PVRetroArch save files)
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError **)error {
     NSData *data = [self saveState];
     if (!data) {
@@ -2823,7 +2841,8 @@ static bool thin_environment(unsigned cmd, void *data) {
     });
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError **)error {
+/// `EmulatorCoreSavesSerializer` / `ObjCBridgedCoreBridge` expect this selector; keep `loadStateFromFileAtPath:` as a legacy alias.
+- (BOOL)loadStateToFileAtPath:(NSString *)fileName error:(NSError **)error {
     NSData *data = [NSData dataWithContentsOfFile:fileName];
     if (!data) {
         if (error) {
@@ -2843,13 +2862,19 @@ static bool thin_environment(unsigned cmd, void *data) {
     return success;
 }
 
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError **)error {
+    return [self loadStateToFileAtPath:fileName error:error];
+}
+
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError * _Nullable))block {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSError *error = nil;
-        [self loadStateFromFileAtPath:fileName error:&error];
+        [self loadStateToFileAtPath:fileName error:&error];
         if (block) block(error);
     });
 }
+
+#pragma clang diagnostic pop
 
 // MARK: - Battery saves (SRAM)
 
@@ -4345,7 +4370,7 @@ static bool thin_environment(unsigned cmd, void *data) {
             // Resolve from PVSettings coreLanguage override, falling back to
             // device locale via CoreLocaleMapper when set to systemLocale (-1).
             if (data) {
-                int langRaw = PVSettingsWrapper.coreLanguageRawValue;
+                int langRaw = (int)PVSettingsWrapper.coreLanguageRawValue;
                 if (langRaw < 0) {
                     *(unsigned *)data = (unsigned)CoreLocaleMapper.currentRetroArchLanguageID;
                 } else {

@@ -1,51 +1,21 @@
-#/bin/bash -e
+#!/bin/bash -e
 # Pull GIT version number to use for informational purposes
+# IMPORTANT: This script uses write-if-changed to avoid touching file timestamps
+# when content hasn't changed, preventing unnecessary Swift module re-planning.
 
 # Scripts invoked by Xcode don't read any of the usual shell configuration files
 # doing it here manually. PATH=foo:$PATH also gets ignored by XCode. 'source' seems to work fine though
 
 if [ -f "$HOME/.profile" ] ; then
     source "$HOME/.profile"
-else
-    echo "No $HOME/.profile exists. PATH may not find correct version of Git if installed outside of XCode; ie. MacPorts or other build systems."
 fi
 
 if [ -f "$HOME/.bash_profile" ] ; then
     source "$HOME/.bash_profile"
-else
-    echo "No $HOME/.bash_profile exists. PATH may not find correct version of Git if installed outside of XCode; ie. MacPorts or other build systems."
 fi
 
 PLISTBUDDY=/usr/libexec/PlistBuddy
-NOW=`date`
 INFOPATH="${PROJECT_DIR}/${INFOPLIST_FILE}"
-
-###### ------------ SVN VERSION -------------------
-#SVNBIN=svn
-#SVNVERSIONBIN=svnversion
-#
-# if [ "command -v $SVNVERSIONBIN" ] ; then
-#     svnrevision=`$SVNVERSIONBIN -nc ${PROJECT_DIR}| /usr/bin/sed -e 's/^[^:]*://'`
-#     svnrevisionnoflags=`$SVNVERSIONBIN -nc ${PROJECT_DIR}| /usr/bin/sed -e 's/^[^:]*://;s/[A-Za-z]//'`
-# else
-#     echo "$SVNVERSIONBIN not found."
-# fi
-
-# if [ "command -v $SVNBIN" ] ; then
-#     svndate=`LC_ALL=C $SVNBIN info ${PROJECT_DIR}| awk '/^Last Changed Date:/ {print $4,$5}'`
-# else
-#     echo "$SVNBIN not found."
-# fi
-
-# if [ "command -v $PLISTBUDDY" ] ; then
-#     ## Read the app version (x.y.z) from the PList
-#     appversion=$($PLISTBUDDY -c "Print :CFBundleShortVersionString" "${INFOPATH}")
-
-#     ## Set the build version as the SVN revision
-#     /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${svnrevisionnoflags}" ${INFOPATH}
-# else
-#     echo "$PLISTBUDDY not found."
-# fi
 
 plist_buddy_installed() {
   [-x "$(command -v "$PLISTBUDDY")"]
@@ -56,19 +26,6 @@ if [[ plist_buddy_installed && "${INFOPATH}" == *".plist"*  ]]; then
         ## Read the app version (x.y.z) from the PList
         appversion=$($PLISTBUDDY -c "Print :CFBundleShortVersionString" "${INFOPATH}")
         echo "appversion=${appversion}"
-
-        BUILT_INFO_PATH="${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
-        if [ -f "${BUILT_INFO_PATH}" ]; then
-          PLIST_GIT_COMMIT_COUNT=$($PLISTBUDDY -c "Print :CFBundleVersion" "${BUILT_INFO_PATH}")
-          echo "Plist version is $PLIST_GIT_COMMIT_COUNT"
-        else
-          PLIST_GIT_COMMIT_COUNT="0"
-        fi
-#        if [ "$x" = "Debug" ]; then
-#          appversion=$($PLISTBUDDY -c "Print :CFBundleShortVersionString" "${INFOPATH}")
-#        fi
-    else
-        error_exit "${INFOPATH} not found"
     fi
 fi
 
@@ -84,16 +41,34 @@ success_exit()
     exit 0
 }
 
+# Write file only if content has changed (preserves timestamps for incremental builds)
+write_if_changed()
+{
+    local target="$1"
+    local content="$2"
+    local tmpfile
+    tmpfile=$(mktemp "${TMPDIR:-/tmp}/version.XXXXXX")
+    printf '%s' "$content" > "$tmpfile"
+    if [ -f "$target" ] && cmp -s "$tmpfile" "$target"; then
+        rm -f "$tmpfile"
+        echo "Unchanged: $target"
+        return 0
+    fi
+    mv -f "$tmpfile" "$target"
+    echo "Updated: $target"
+    return 0
+}
+
 VERSION_H_PATH="${PROJECT_DIR}/Provenance/Version.h"
 VERSION_SWIFT_PATH="${PROJECT_DIR}/Provenance/Version.swift"
 
-######## --------------- GIT VERISON -------------------
-GIT=`xcrun -find git`
+######## --------------- GIT VERSION -------------------
+GIT=$(xcrun -find git)
 if [ "command -v '$GIT'" ] ; then
-    GIT_COMMIT_COUNT_RAW=`"${GIT}" rev-list --count HEAD`
-    GIT_TAG=`"${GIT}" describe --tags --always --dirty`
-    GIT_DATE=`"${GIT}" log -1 --format="%cd" --date="local"`
-    GIT_BRANCH=`"${GIT}" branch | grep \* | cut -d ' ' -f2-`
+    GIT_COMMIT_COUNT_RAW=$("${GIT}" rev-list --count HEAD)
+    GIT_TAG=$("${GIT}" describe --tags --always --dirty)
+    GIT_DATE=$("${GIT}" log -1 --format="%cd" --date="local")
+    GIT_BRANCH=$("${GIT}" branch | grep \* | cut -d ' ' -f2-)
     # Use this to bump the number by X
     GIT_COMMIT_COUNT=$(($GIT_COMMIT_COUNT_RAW+0))
     echo "Commit count is $GIT_COMMIT_COUNT"
@@ -101,30 +76,16 @@ else
     error_exit "$LINENO: $GIT not found."
 fi
 
-if [ "$GIT_COMMIT_COUNT" == "$PLIST_GIT_COMMIT_COUNT" ]; then
-  success_exit "GIT commit count hasn't changed. No need to update files."
-fi
-
+# Quick check: if the cache file matches current git state, skip entirely
 vpath="$SRCROOT/.version"
-echo "Testing for ${vpath}"
-if [[ -f $VERSION_H_PATH ]] && [[ -f $VERSION_SWIFT_PATH ]] && [[ -f $vpath ]] && [[ "$(< ${vpath})" == "${GIT_DATE}" ]]; then
-  success_exit "${vpath} matches ${GIT_DATE}"
-else
-  echo "$GIT_DATE" > "${vpath}"
+cache_key="${GIT_COMMIT_COUNT}|${GIT_TAG}|${GIT_BRANCH}|${CONFIGURATION}|${appversion}"
+if [[ -f "$VERSION_H_PATH" ]] && [[ -f "$VERSION_SWIFT_PATH" ]] && [[ -f "$vpath" ]] && [[ "$(< "${vpath}")" == "${cache_key}" ]]; then
+    success_exit "Cache matches — no version changes"
 fi
 
-echo "Creating Version.h in" ${PROJECT_DIR}
-
-cat <<EOF > "${VERSION_H_PATH}"
-
-// Do not edit!  This file was autogenerated
-//      by $0
-//      on $NOW
-//      user $VERSION_INFO_BUILDER
-//      for build target ${TARGET_NAME}
-//
-// gitrevision and gitdate are as reported by git at that point in time,
-// compiledate and compiletime are being filled gcc at compilation
+# Generate Version.h content (no timestamp in content — that caused needless rebuilds)
+VERSION_H_CONTENT=$(cat <<ENDOFHEADER
+// Do not edit!  This file was autogenerated by createVersionHeader.sh
 
 #include <stdlib.h>
 
@@ -159,32 +120,13 @@ static const char* kAppGroupIdentifier      = "${APP_GROUP_IDENTIFIER}";
 static const char* kiCloudContainerIdenfitier = "${ICLOUD_CONTAINER_IDENTIFIER}";
 static const char* kUbiquityIdentityTokenKey     = "${PRODUCT_BUNDLE_IDENTIFIER}.UbiquityIdentityToken";
 
-
-// static const char* compiletime          = __TIME__;
-// static const char* compiledate          = __DATE__;
-
 #pragma GCC diagnostic pop
+ENDOFHEADER
+)
 
-// Diagnostic info
-/*
-    Info.plist path:${INFOPATH}
-    PWD : ${PWD}
-    XCode version ${XCODE_PRODUCT_BUILD_VERSION}
-    PATH : ${PATH}
-*/
-EOF
-
-echo "Creating Version.swift in" ${PROJECT_DIR}
-
-cat <<EOF > "${VERSION_SWIFT_PATH}"
-// Do not edit!  This file was autogenerated
-//      by $0
-//      on $NOW
-//      user $VERSION_INFO_BUILDER
-//      for build target ${TARGET_NAME}
-//
-// gitrevision and gitdate are as reported by git at that point in time,
-// compiledate and compiletime are being filled gcc at compilation
+# Generate Version.swift content (no timestamp in content)
+VERSION_SWIFT_CONTENT=$(cat <<ENDOFSWIFT
+// Do not edit!  This file was autogenerated by createVersionHeader.sh
 
 public let kAppVersion : String = "${appversion}"
 public let kGITRevisionNumber : String = "${GIT_COMMIT_COUNT}"
@@ -206,17 +148,12 @@ public let kProductBundleIdentifier     = "${PRODUCT_BUNDLE_IDENTIFIER}"
 public let kAppGroupIdentifier          = "${APP_GROUP_IDENTIFIER}"
 public let kiCloudContainerIdenfitier   = "${ICLOUD_CONTAINER_IDENTIFIER}"
 public let kUbiquityIdentityTokenKey     = "${PRODUCT_BUNDLE_IDENTIFIER}.UbiquityIdentityToken"
+ENDOFSWIFT
+)
 
-// public let compiletime          = __TIME__
-// public let compiledate          = __DATE__
+# Only write files if content actually changed
+write_if_changed "$VERSION_H_PATH" "$VERSION_H_CONTENT"
+write_if_changed "$VERSION_SWIFT_PATH" "$VERSION_SWIFT_CONTENT"
 
-// Diagnostic info
-/*
-    Info.plist path:${INFOPATH}
-    PWD : ${PWD}
-    XCode version ${XCODE_PRODUCT_BUILD_VERSION}
-    PATH : ${PATH}
-*/
-EOF
-##
-#echo "$REV2" > ${PROJECT_DIR}/SvnRevision.txt
+# Update cache key so next build skips early
+echo "$cache_key" > "$vpath"

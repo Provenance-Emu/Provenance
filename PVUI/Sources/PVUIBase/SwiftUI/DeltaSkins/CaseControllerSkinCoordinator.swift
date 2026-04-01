@@ -1,6 +1,7 @@
 import Foundation
 import PVLogging
 import PVSettings
+import PVFeatureFlags
 
 #if os(iOS) || targetEnvironment(macCatalyst)
 import Defaults
@@ -47,7 +48,9 @@ public final class CaseControllerSkinCoordinator {
     // MARK: - Public API
 
     /// Begin observing `PVPhysicalCaseDidConnect` notifications.
+    /// No-op when the `caseCompanionSkins` feature flag is off.
     public func start() {
+        guard PVFeatureFlagsManager.shared.caseCompanionSkins else { return }
         guard observerToken == nil else { return }
         observerToken = NotificationCenter.default.addObserver(
             forName: .PVPhysicalCaseDidConnect,

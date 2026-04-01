@@ -172,10 +172,10 @@ static void cocoa_gl_gfx_ctx_destroy(void *data)
 #ifdef OSX
    [GLContextClass clearCurrentContext];
    [g_ctx clearDrawable];
-   RELEASE(g_ctx);
+   PVRA_OBJC_RELEASE(g_ctx);
    if (g_hw_ctx)
       [g_hw_ctx clearDrawable];
-   RELEASE(g_hw_ctx);
+   PVRA_OBJC_RELEASE(g_hw_ctx);
    [GLContextClass clearCurrentContext];
 #else
    [EAGLContext setCurrentContext:nil];
@@ -423,7 +423,7 @@ static bool cocoa_gl_gfx_ctx_set_video_mode(void *data,
       else
          g_ctx          = [[NSOpenGLContext alloc] initWithFormat:fmt shareContext:nil];
 
-      RELEASE(fmt);
+      PVRA_OBJC_RELEASE(fmt);
    }
 
    [g_ctx setView:g_view];

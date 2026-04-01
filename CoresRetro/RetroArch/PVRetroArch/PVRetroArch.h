@@ -21,9 +21,10 @@ FOUNDATION_EXPORT const unsigned char PVRetroArchVersionString[];
 #import <PVRetroArch/PVRetroArchCoreBridge+Audio.h>
 #import <PVRetroArch/PVRetroArchCoreBridge+Saves.h>
 #import <PVRetroArch/PVRetroArchCoreBridge+Video.h>
+#import <PVRetroArch/audio_thread_wrapper.h>
+#import <PVRetroArch/cocoa_common.h>
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
-#pragma clang diagnostic ignored "-Wnone"
 #pragma clang diagnostic ignored "-Wmodule-import-in-extern-c"
 #import <PVRetroArch/autosave.h>
 #import <PVRetroArch/audio_driver.h>

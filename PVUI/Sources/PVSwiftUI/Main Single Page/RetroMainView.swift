@@ -147,6 +147,10 @@ public struct RetroMainView: View {
                 tabItems: tabItems
             )
 
+            // Multi-select batch-action toolbar — rendered here (above RetroTabView)
+            // so it is not obscured by the tab bar.
+            RetroMultiSelectToolbar()
+
             // Sync status overlay for game launch and cloud downloads
             if syncStatusManager.isVisible {
                 GameSyncStatusView(

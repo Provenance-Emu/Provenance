@@ -487,7 +487,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// - Returns: True if the game was created or updated, false otherwise
     public func fetchAndProcessROMMetadata(md5: String) async -> Bool {
         guard !(await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation })) else {
-            ILOG("[SYNC] Emulation pause active, skipping ROM metadata fetch for MD5 \(md5)")
+            ILOG("[SYNC] Emulator session active, skipping ROM metadata fetch for MD5 \(md5)")
             return false
         }
 
@@ -578,9 +578,15 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// - Parameters:
     ///   - recordID: The CloudKit record identifier.
     ///   - includeAssets: When true, also fetches asset fields required for downloads.
-    public func fetchRecord(recordID: CKRecord.ID, includeAssets: Bool = false) async throws -> CKRecord? {
-        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
-            ILOG("[SYNC] Emulation pause active, skipping ROM fetch for \(recordID.recordName)")
+    ///   - bypassEmulationPause: When true, allows a metadata-only fetch while the emulator UI session has paused heavy sync I/O (not core `setPauseEmulation`).
+    ///     Use only for small CloudKit operations such as conflict resolution; do not combine with `includeAssets: true` during an active emulator session.
+    public func fetchRecord(
+        recordID: CKRecord.ID,
+        includeAssets: Bool = false,
+        bypassEmulationPause: Bool = false
+    ) async throws -> CKRecord? {
+        if !bypassEmulationPause, await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
+            ILOG("[SYNC] Emulator session active, skipping ROM fetch for \(recordID.recordName)")
             return nil
         }
 
@@ -616,7 +622,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         progressHandler: ((Double, String?) -> Void)? = nil
     ) async throws -> CKRecord? {
         if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
-            ILOG("[SYNC] Emulation pause active, skipping ROM fetch (with progress) for \(recordID.recordName)")
+            ILOG("[SYNC] Emulator session active, skipping ROM fetch (with progress) for \(recordID.recordName)")
             return nil
         }
 
@@ -2607,7 +2613,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         DLOG("Handling record conflict for \(localRecord.recordID.recordName)")
 
         // Fetch the existing record from CloudKit
-        guard let existingRecord = try await fetchRecord(recordID: localRecord.recordID) else {
+        guard let existingRecord = try await fetchRecord(recordID: localRecord.recordID, includeAssets: false, bypassEmulationPause: true) else {
             ELOG("Could not fetch existing record \(localRecord.recordID.recordName) to resolve conflict")
             throw CloudSyncError.cloudKitError(cloudKitError)
         }
@@ -3021,7 +3027,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     private func syncMetadataOnlyBody() async -> Int {
         if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
-            ILOG("[SYNC] ROM metadata sync skipped (paused for emulation)")
+            ILOG("[SYNC] ROM metadata sync skipped (emulator session active)")
             return 0
         }
         let startTime = Date()

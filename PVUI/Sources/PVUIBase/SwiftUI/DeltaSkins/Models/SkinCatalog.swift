@@ -139,6 +139,28 @@ public struct SkinCatalogEntry: Codable, Sendable, Identifiable, Hashable {
     }
 }
 
+// MARK: - Import file naming
+
+extension SkinCatalogEntry {
+    /// Stable local filename for a catalog download before it is copied into ``Documents/DeltaSkins``.
+    ///
+    /// Always ends with `.deltaskin` so ``DeltaSkinManager`` includes the file when scanning the import folder,
+    /// even when ``downloadURL`` uses a generic last path component (for example GitHub release asset URLs).
+    public func preferredLocalDownloadFileName() -> String {
+        let sanitized = Self.sanitizedCatalogSkinIdForFileName(id)
+        return "\(sanitized).deltaskin"
+    }
+
+    /// Removes characters that are unsafe or misleading in a single path component.
+    private static func sanitizedCatalogSkinIdForFileName(_ rawId: String) -> String {
+        let trimmed = rawId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "skin" }
+        let separators = CharacterSet(charactersIn: "/:\\\n\r\t")
+        let collapsed = trimmed.components(separatedBy: separators).filter { !$0.isEmpty }.joined(separator: "-")
+        return collapsed.isEmpty ? "skin" : collapsed
+    }
+}
+
 // MARK: - Sort Options
 
 /// Sorting options for skin catalog queries.

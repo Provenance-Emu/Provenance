@@ -236,6 +236,11 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
     /// Fallback fetch using CKDatabase.records(matching:) to detect schema/environment issues.
     private func fetchSaveStatesDirect() async throws -> [CKRecord] {
+        if await CloudSyncManager.shared.isPausedForEmulation {
+            ILOG("[SYNC] Emulation pause active, skipping save state metadata query")
+            return []
+        }
+        
         let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
         var all: [CKRecord] = []
         var cursor: CKQueryOperation.Cursor?

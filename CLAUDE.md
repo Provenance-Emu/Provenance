@@ -113,7 +113,7 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 ## Important Conventions
 
 - The `develop` branch is the main development branch
-- Emulator core submodules are in `Cores/<name>/<upstream-submodule-dir>` — avoid modifying upstream source directly
+- Emulator core submodules are in `Cores/<name>/<upstream-submodule-dir>` — avoid modifying third-party upstream source directly (exception: the RetroArch fork at `CoresRetro/RetroArch/RetroArch/` is maintained in-repo for Provenance)
 - Each PV* module is a standalone Swift Package with its own `Package.swift`
 - The top-level `Package.swift` is minimal (legacy SPM support for PVLibrary only); the real build system is the Xcode workspace
 - Build variants (Lite/Standard/XL) differ in which cores are included; see `CoresRetro/RetroArch/Scripts/` for core lists per target
@@ -163,11 +163,11 @@ When modifying bridge files, ensure all controller types are handled (Extended, 
 
 ### What NOT to Modify
 - **GitHub workflow files** — `.github/workflows/*.yml` cannot be pushed by GitHub Actions bots (requires `workflows` permission). If a task needs a new workflow, write the content to a comment or PR description and note that a maintainer must add it manually. Do NOT include workflow files in agent PR commits — the push will fail silently.
-- **Submodule source** — `Cores/<name>/<upstream-dir>/` contents are upstream code
+- **Submodule source** — `Cores/<name>/<upstream-dir>/` contents are third-party upstream code (do not casually fork in place)
 - **Generated files** — `Version.h`, `Version.swift`, files in `cmake/` build dirs
 - **CodeSigning.xcconfig** — contains developer-specific credentials
 - **project.pbxproj** — editing is permitted and sometimes required (e.g., adding new app targets). When you add a new target, use deterministic UUID prefixes (e.g. `C0C0CAFE...`) to make additions easy to identify. Use `PBXFileSystemSynchronizedRootGroup` for source directories (Xcode 16+). Prefer minimal diffs — only touch the sections that need changing.
-- **Upstream RetroArch** — `CoresRetro/RetroArch/RetroArch/` is a submodule
+- **RetroArch fork** — `CoresRetro/RetroArch/RetroArch/` is a Provenance-maintained submodule; changes for build integration or features are allowed with focused diffs
 
 ### Minimum Deployment Targets
 

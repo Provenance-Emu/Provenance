@@ -60,7 +60,7 @@ void PVLog(NSUInteger level, NSUInteger flag, const char *file,
 
 @implementation ClassFinderObjC
 
-+ (NSArray<Class> *)findSubclassesOf:(Class)parentClass {
++ (NSArray<Class> * _Nonnull)findSubclassesOf:(Class _Nonnull)parentClass {
     NSMutableArray<Class> *result = [NSMutableArray array];
     unsigned int count = 0;
     Class *classes = NULL;

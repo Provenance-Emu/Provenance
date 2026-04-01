@@ -238,6 +238,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     private var recoveryAttempts: Int = 0
     private let maxRecoveryAttempts: Int = 3
     private var lastRecoveryTime: TimeInterval = 0
+    /// Coalesces burst `addCompletedHandler` callbacks (e.g. multiple timed-out buffers when backgrounding).
+    private var lastDebouncedGPURecovery: TimeInterval = 0
+    private let gpuRecoveryDebounceInterval: TimeInterval = 0.2
+    /// Throttles DLOG when skipping recovery while inactive/background (separate from `lastDebouncedGPURecovery` so resume is not blocked).
+    private var lastInactiveGPUErrorLogTime: TimeInterval = 0
 
     // Add a property to store shader constants
     private var shaderConstants = MTLFunctionConstantValues()
@@ -302,6 +307,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Clean up cached resources
         cachedFlipYBuffer = nil
         renderPassDescriptor = nil
+
+#if canImport(UIKit) && !os(visionOS)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+#endif
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -383,12 +393,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         mtlView.colorPixelFormat = .bgra8Unorm
         mtlView.clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         mtlView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        if let layer = mtlView.layer as? CAMetalLayer {
-            layer.allowsNextDrawableTimeout = true
-            layer.framebufferOnly = true
-            layer.pixelFormat = .bgra8Unorm
-            layer.isOpaque = true
-        }
+        configureMetalLayer(for: mtlView)
 
         // Configure VSync settings
         updateVsyncSettings()
@@ -408,6 +413,21 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             name: Notification.Name("EmulatorCoreDidInitialize"),
             object: nil
         )
+
+#if canImport(UIKit) && !os(visionOS)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidEnterBackgroundForMetal),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidBecomeActiveForMetal),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+#endif
 
         // Add a colored border to the MTKView for debugging
         //        mtlView.layer.borderWidth = 5.0
@@ -432,6 +452,46 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 ELOG("Error updating texture after emulator core initialization: \(error)")
             }
         }
+    }
+
+#if canImport(UIKit) && !os(visionOS)
+    /// Stops the display link so in-flight Metal work is not fighting iOS GPU policy while backgrounded (avoids timeout cascades).
+    @objc private func handleAppDidEnterBackgroundForMetal() {
+        mtlView?.isPaused = true
+    }
+
+    /// Restores MTKView driving once the app is active again (after `didEnterBackground` pause). Using `didBecomeActive` avoids unpausing while `applicationState` is still `.inactive`, which matches GPU recovery gating.
+    @objc private func handleAppDidBecomeActiveForMetal() {
+        if !isPaused {
+            mtlView?.isPaused = false
+        }
+    }
+#endif
+
+    /// Handles `MTLCommandBuffer` failures from `addCompletedHandler` with debouncing and without tearing down pipelines while inactive.
+    private func handleCompletedCommandBufferError(_ error: Error) {
+        if !Thread.isMainThread {
+            DispatchQueue.main.async { [weak self] in
+                self?.handleCompletedCommandBufferError(error)
+            }
+            return
+        }
+#if canImport(UIKit)
+        if UIApplication.shared.applicationState != .active {
+            let now = Date().timeIntervalSince1970
+            if now - lastInactiveGPUErrorLogTime >= gpuRecoveryDebounceInterval {
+                DLOG("Skipping GPU pipeline recovery while app is not active: \(error.localizedDescription)")
+                lastInactiveGPUErrorLogTime = now
+            }
+            return
+        }
+#endif
+        let now = Date().timeIntervalSince1970
+        if now - lastDebouncedGPURecovery < gpuRecoveryDebounceInterval {
+            return
+        }
+        lastDebouncedGPURecovery = now
+        recoverFromGPUError()
     }
 
     @objc private func refreshTexture() {
@@ -841,28 +901,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         #endif
     }
 
-#if DEBUG
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        /// Print full view hierarchy for debugging
-        ILOG("Full view hierarchy:")
-        var currentView: UIView? = mtlView
-        while let view = currentView {
-            ILOG("""
-                View: \(type(of: view))
-                Frame: \(view.frame)
-                Bounds: \(view.bounds)
-                Transform: \(view.transform)
-                AutoresizingMask: \(view.autoresizingMask)
-                Constraints: \(view.constraints)
-                SuperView: \(String(describing: view.superview))
-                ----------------
-                """)
-            currentView = view.superview
-        }
-    }
-#endif
 
     func updateInputTexture() throws {
         guard let emulatorCore = emulatorCore else {
@@ -1483,6 +1521,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     // MARK: - MTKViewDelegate
 
+    /// Tunes `CAMetalLayer` so `nextDrawable` can time out instead of wedging the main thread when the swap chain is under pressure.
+    private func configureMetalLayer(for mtlView: MTKView) {
+        if let layer = mtlView.layer as? CAMetalLayer {
+            layer.allowsNextDrawableTimeout = true
+            layer.framebufferOnly = true
+            layer.pixelFormat = .bgra8Unorm
+            layer.isOpaque = true
+        }
+    }
+
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         // no-op
         DLOG("drawableSizeWillChange: \(size), UNSUPPORTED")
@@ -1558,11 +1606,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             if !emulatorCore.isSpeedModified
                 && (!emulatorCore.isEmulationPaused || emulatorCore.isFrontBufferReady)
                 && !emulatorCore.skipLayout { // Skip layout is mostly for Retroarch
+                // Snapshot front-buffer readiness without blocking the main run loop.
                 let isFrontBufferReady = emulatorCore.frontBufferCondition.withLock {
-                    while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
-                        emulatorCore.frontBufferCondition.wait()
-                    }
-                    return emulatorCore.isFrontBufferReady
+                    emulatorCore.isFrontBufferReady
                 }
 
                 if isFrontBufferReady {
@@ -1591,9 +1637,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             }
         }
 
-        // Schedule the next frame if needed
-        if !isPaused {
-            // Request another draw on the next frame
+        // With `enableSetNeedsDisplay == false`, MTKView is already driven by its display link; extra `setNeedsDisplay` calls can pile up Core Animation work and starve the drawable pool.
+        if !isPaused, view.enableSetNeedsDisplay {
             view.setNeedsDisplay()
         }
     }
@@ -2284,12 +2329,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     private func directRender(in view: MTKView) {
         guard let device = device,
               let commandQueue = commandQueue,
-              let drawable = view.currentDrawable,
               let inputTexture = inputTexture,
               let emulatorCore = emulatorCore else {
             ELOG("Missing required resources for direct rendering")
             // Call the recovery method when resources are missing
             recoverFromGPUError()
+            return
+        }
+        guard let drawable = view.currentDrawable else {
+            DLOG("No Metal drawable this frame; skipping present (pool busy, timeout, or transient layer state)")
             return
         }
 
@@ -2377,67 +2425,69 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        // Set the viewport to match the drawable size
-        // Ensure we're using the proper aspect ratio based on the effective screen rect
-        let viewport = MTLViewport(
-            originX: 0,
-            originY: 0,
-            width: Double(drawable.texture.width),
-            height: Double(drawable.texture.height),
-            znear: 0.0,
-            zfar: 1.0
-        )
-        renderEncoder.setViewport(viewport)
+        /// Local scope so `endEncoding` runs before `present`/`commit` (function-scoped `defer` would run too late and trip Metal debug `encoding in progress`).
+        do {
+            defer { renderEncoder.endEncoding() }
 
-        // Get the flipY parameter - set to true for non-OpenGL cores, false for OpenGL cores
-        let flipY: Bool = !emulatorCore.rendersToOpenGL
+            // Set the viewport to match the drawable size
+            // Ensure we're using the proper aspect ratio based on the effective screen rect
+            let viewport = MTLViewport(
+                originX: 0,
+                originY: 0,
+                width: Double(drawable.texture.width),
+                height: Double(drawable.texture.height),
+                znear: 0.0,
+                zfar: 1.0
+            )
+            renderEncoder.setViewport(viewport)
 
-        // Use cached flipY buffer if value hasn't changed, otherwise create new one
-        let flipYBuffer: MTLBuffer
-        if let cached = cachedFlipYBuffer, cachedFlipYValue == flipY {
-            flipYBuffer = cached
-        } else {
-            var flipYValue = flipY
-            guard let newBuffer = device.makeBuffer(bytes: &flipYValue, length: MemoryLayout<Bool>.size, options: .storageModeShared) else {
-                ELOG("Failed to create flipY buffer")
+            // Get the flipY parameter - set to true for non-OpenGL cores, false for OpenGL cores
+            let flipY: Bool = !emulatorCore.rendersToOpenGL
+
+            // Use cached flipY buffer if value hasn't changed, otherwise create new one
+            let flipYBuffer: MTLBuffer
+            if let cached = cachedFlipYBuffer, cachedFlipYValue == flipY {
+                flipYBuffer = cached
+            } else {
+                var flipYValue = flipY
+                guard let newBuffer = device.makeBuffer(bytes: &flipYValue, length: MemoryLayout<Bool>.size, options: .storageModeShared) else {
+                    ELOG("Failed to create flipY buffer")
+                    return
+                }
+                flipYBuffer = newBuffer
+                cachedFlipYBuffer = flipYBuffer
+                cachedFlipYValue = flipY
+            }
+
+            var filterApplied = false
+            if renderSettings.metalFilterMode != .none {
+                filterApplied = applyMetalFilterIfPossible(encoder: renderEncoder,
+                                                           targetTexture: drawable.texture,
+                                                           sourceTexture: inputTexture)
+            }
+
+            if filterApplied {
+                // Metal filter renderer handled drawing
+            } else if let customPipeline = customPipeline {
+                renderEncoder.setRenderPipelineState(customPipeline)
+                renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
+            } else if let blitPipeline = blitPipeline {
+                renderEncoder.setRenderPipelineState(blitPipeline)
+                renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
+                let sampler = renderSettings.smoothingEnabled ? linearSampler : pointSampler
+                if let sampler = sampler {
+                    renderEncoder.setFragmentSamplerState(sampler, index: 0)
+                }
+            } else {
+                ELOG("No pipeline available")
                 return
             }
-            flipYBuffer = newBuffer
-            cachedFlipYBuffer = flipYBuffer
-            cachedFlipYValue = flipY
-        }
 
-        var filterApplied = false
-        if renderSettings.metalFilterMode != .none {
-            filterApplied = applyMetalFilterIfPossible(encoder: renderEncoder,
-                                                       targetTexture: drawable.texture,
-                                                       sourceTexture: inputTexture)
-        }
-
-        if filterApplied {
-            // Metal filter renderer handled drawing
-        } else if let customPipeline = customPipeline {
-            renderEncoder.setRenderPipelineState(customPipeline)
-            renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
-        } else if let blitPipeline = blitPipeline {
-            renderEncoder.setRenderPipelineState(blitPipeline)
-            renderEncoder.setVertexBuffer(flipYBuffer, offset: 0, index: 1)
-            let sampler = renderSettings.smoothingEnabled ? linearSampler : pointSampler
-            if let sampler = sampler {
-                renderEncoder.setFragmentSamplerState(sampler, index: 0)
+            if !filterApplied {
+                renderEncoder.setFragmentTexture(inputTexture, index: 0)
+                renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
             }
-        } else {
-            ELOG("No pipeline available")
-            return
         }
-
-        if !filterApplied {
-            renderEncoder.setFragmentTexture(inputTexture, index: 0)
-            renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
-        }
-
-        // End encoding
-        renderEncoder.endEncoding()
 
         // Present the drawable
         commandBuffer.present(drawable)
@@ -2446,7 +2496,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         commandBuffer.addCompletedHandler { [weak self] buffer in
             if let error = buffer.error {
                 ELOG("GPU error during rendering: \(error)")
-                self?.recoverFromGPUError()
+                DispatchQueue.main.async {
+                    self?.handleCompletedCommandBufferError(error)
+                }
             }
         }
 
@@ -3181,11 +3233,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     }
                 }
 
-                // Force a redraw after another delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if let mtlView = self.mtlView {
-                        self.draw(in: mtlView)
+                // Force a redraw after another delay (only while active — explicit `draw` bypasses `MTKView.isPaused` display-link gating).
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                    guard let self, let mtlView = self.mtlView else { return }
+#if canImport(UIKit) && !os(visionOS)
+                    guard UIApplication.shared.applicationState == .active else {
+                        DLOG("Skipping post-recovery draw while app is not active")
+                        return
                     }
+#endif
+                    self.draw(in: mtlView)
                 }
 
                 // Log success
@@ -3248,14 +3305,19 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 let screenBounds = UIScreen.main.bounds
                 let metalView = MTKView(frame: screenBounds, device: device)
                 metalView.autoresizingMask = [] // Disable autoresizing
+                metalView.delegate = self
+                metalView.framebufferOnly = true
+                metalView.colorPixelFormat = .bgra8Unorm
+                metalView.clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+                configureMetalLayer(for: metalView)
 
                 if Defaults[.nativeScaleEnabled] {
                     let scale = UIScreen.main.scale
                     if scale != 1.0 {
-                        mtlView.layer.contentsScale = scale;
-                        mtlView.layer.rasterizationScale = scale;
-                        if abs(mtlView.contentScaleFactor - scale) > 0.01 {
-                            mtlView.contentScaleFactor = scale;
+                        metalView.layer.contentsScale = scale
+                        metalView.layer.rasterizationScale = scale
+                        if abs(metalView.contentScaleFactor - scale) > 0.01 {
+                            metalView.contentScaleFactor = scale
                         }
                     }
                 }

@@ -225,6 +225,9 @@ WLOG(@"%@", logMessage); \
 
 #define FORMAT(format, ...) [NSString stringWithFormat:(format), ##__VA_ARGS__]
 
+NS_ASSUME_NONNULL_BEGIN
 @interface ClassFinderObjC : NSObject
-+ (NSArray<Class> *)findSubclassesOf:(Class)parentClass;
+/// Returns all runtime-registered subclasses of `parentClass` (breadth-first, NSObject excluded).
++ (NSArray<Class> * _Nonnull)findSubclassesOf:(Class _Nonnull)parentClass;
 @end
+NS_ASSUME_NONNULL_END

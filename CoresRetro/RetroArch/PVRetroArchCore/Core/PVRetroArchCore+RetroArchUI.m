@@ -364,7 +364,7 @@ int argc =  1;
     /// wrote a valid tos.img it will not be overwritten.  If writeConfigFile skipped tos.img
     /// (e.g. because it detected a ZIP), syncResources would otherwise blindly copy the invalid
     /// file — guard against that by removing any ZIP tos.img after the sync.
-    NSString *systemDir = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
+    NSString *systemDir = [self.retroArchRootPath stringByAppendingPathComponent:@"system"];
     [self syncResources:self.BIOSPath to:systemDir];
 
     // For Hatari/Atari ST: repair any TOS files that arrived via syncResources with
@@ -533,8 +533,7 @@ void extract_bundles();
 
     // Initialize file manager
     NSFileManager *fm = [[NSFileManager alloc] init];
-    NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
-                          self.documentsDirectory];
+    NSString *fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"config/retroarch.cfg"];
     ILOG(@"Expecting config file to be at %@", fileName);
 
     // Get the version number from the app's Info.plist
@@ -544,8 +543,8 @@ void extract_bundles();
     }
     ILOG(@"App version: %@", appVersion);
 
-    NSString *verFile = [NSString stringWithFormat:@"%@/RetroArch/config/%@.cfg",
-                         self.documentsDirectory, appVersion];
+    NSString *verFile = [self.retroArchRootPath stringByAppendingPathComponent:
+                         [NSString stringWithFormat:@"config/%@.cfg", appVersion]];
     ILOG(@"Expecting version file to be at %@", verFile);
 
     BOOL configFileExists = [fm fileExistsAtPath:fileName];
@@ -589,25 +588,25 @@ void extract_bundles();
 
         if(shouldUpdateAssets) {
             NSString *overlay_back = [[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"arrow.png" ofType:nil];
-            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/flatui/png/arrow.png"]];
 
-            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/monochrome/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/monochrome/png/arrow.png"]];
 
-            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/automatic/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/automatic/png/arrow.png"]];
 
-            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/pixel/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/pixel/png/arrow.png"]];
 
-            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/daite/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/daite/png/arrow.png"]];
 
-            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/dot-art/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/dot-art/png/arrow.png"]];
 
-            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/neoactive/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/neoactive/png/arrow.png"]];
 
-            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/retroactive/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/retroactive/png/arrow.png"]];
 
-            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/retrosystem/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/retrosystem/png/arrow.png"]];
 
-            [self syncResource:overlay_back to:[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/systematic/png/arrow.png", self.documentsDirectory]];
+            [self syncResource:overlay_back to:[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/systematic/png/arrow.png"]];
         }
 
         processing_init = true;
@@ -685,11 +684,11 @@ void extract_bundles();
     /// These are copy-if-missing, but enumerating bundles is expensive; avoid doing it every launch.
     if (isFirstRunOrVersionUpdate) {
         [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"pv_ui_overlay" ofType:nil]
-                         to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/overlays/pv_ui_overlay" ]];
+                         to:[self.retroArchRootPath stringByAppendingPathComponent:@"overlays/pv_ui_overlay" ]];
         [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"mame_plugins" ofType:nil]
-                         to:[self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system/mame/plugins" ]];
+                         to:[self.retroArchRootPath stringByAppendingPathComponent:@"system/mame/plugins" ]];
     }
-    NSString *systemDirectory = [self.documentsDirectory stringByAppendingPathComponent:@"/RetroArch/system"];
+    NSString *systemDirectory = [self.retroArchRootPath stringByAppendingPathComponent:@"system"];
 
     /// Hatari TOS BIOS setup and hatari.cfg generation.
     /// Full logic (including BIOS search across all known locations, repair,
@@ -717,7 +716,8 @@ void extract_bundles();
         ILOG(@"Input overlay disabled.");
     }
     if (self.coreOptionConfigPath.length > 0 && self.coreOptionConfig.length > 0) {
-        fileName = [NSString stringWithFormat:@"%@/RetroArch/config/%@", self.documentsDirectory, self.coreOptionConfigPath];
+        fileName = [self.retroArchRootPath stringByAppendingPathComponent:
+                    [NSString stringWithFormat:@"config/%@", self.coreOptionConfigPath]];
         if (![fm fileExistsAtPath: fileName] || self.coreOptionOverwrite) {
             [fm createDirectoryAtPath:[fileName stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:nil];
             // Log BEFORE state for Hatari to confirm what was on disk previously.
@@ -845,10 +845,23 @@ void extract_bundles();
     } else if (self.coreOptionConfig.length > 0) {
         content=[content stringByAppendingString:self.coreOptionConfig];
     }
+    // Use batterySavesPath when available; fall back to <retroArchRoot>/cache
+    // so opt.cfg never contains "(null)" when called early (before initCore sets paths).
+    NSString *cacheDir = self.batterySavesPath;
+    if (!cacheDir.length) {
+        cacheDir = [self.retroArchRootPath stringByAppendingPathComponent:@"cache"];
+        [fm createDirectoryAtPath:cacheDir withIntermediateDirectories:YES attributes:nil error:nil];
+        WLOG(@"batterySavesPath is nil during writeConfigFile — using fallback cache dir: %@", cacheDir);
+    }
     content = [content stringByAppendingString:
-               [NSString stringWithFormat:@"cache_directory = \"%@\"\n", self.batterySavesPath]];
-    ILOG(@"Cache directory set to: %@", self.batterySavesPath);
-    fileName = [NSString stringWithFormat:@"%@/RetroArch/config/opt.cfg", self.documentsDirectory];
+               [NSString stringWithFormat:@"cache_directory = \"%@\"\n", cacheDir]];
+    ILOG(@"Cache directory set to: %@", cacheDir);
+
+    // NOTE: OSD notification suppression is handled via the bundled retroarch.cfg defaults
+    // and forcedDefaultKeys() migration.  Do NOT put retroarch.cfg-format keys in opt.cfg —
+    // opt.cfg may contain core option values whose format differs from retroarch.cfg.
+
+    fileName = [self.retroArchRootPath stringByAppendingPathComponent:@"config/opt.cfg"];
     ILOG(@"Writing options config to %@", fileName);
     NSError *error;
     [content writeToFile:fileName
@@ -868,7 +881,7 @@ void extract_bundles();
 // #else
     // If assets were updated, refresh config
     NSFileManager *fm = [[NSFileManager alloc] init];
-    NSString *file=[NSString stringWithFormat:@"%@/RetroArch/assets/xmb/flatui/png/arrow.png", self.documentsDirectory];
+    NSString *file=[self.retroArchRootPath stringByAppendingPathComponent:@"assets/xmb/flatui/png/arrow.png"];
     ILOG(@"Checking if assets exist at %@", file);
 
     if ([fm fileExistsAtPath:file]) {
@@ -890,7 +903,7 @@ void extract_bundles();
 - (bool)shouldUpdateOverlays {
     /// Check if overlays need to be downloaded by looking for the COPYING file
     NSFileManager *fm = [[NSFileManager alloc] init];
-    NSString *copyingFile = [NSString stringWithFormat:@"%@/RetroArch/overlays/COPYING", self.documentsDirectory];
+    NSString *copyingFile = [self.retroArchRootPath stringByAppendingPathComponent:@"overlays/COPYING"];
     ILOG(@"Checking if overlays COPYING file exists at %@", copyingFile);
 
     if ([fm fileExistsAtPath:copyingFile]) {
@@ -905,7 +918,7 @@ void extract_bundles();
 - (void)downloadAndExtractOverlays {
     /// Download and extract overlays from libretro buildbot
     NSString *overlayURL = @"https://buildbot.libretro.com/assets/frontend/overlays.zip";
-    NSString *overlaysDestination = [NSString stringWithFormat:@"%@/RetroArch/overlays", self.documentsDirectory];
+    NSString *overlaysDestination = [self.retroArchRootPath stringByAppendingPathComponent:@"overlays"];
 
     ILOG(@"Starting overlay download from %@", overlayURL);
 
@@ -1055,6 +1068,19 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     return @[
         @"notification_show_autoconfig",
         @"notification_show_autoconfig_fails",
+        @"notification_show_cheats_applied",
+        @"notification_show_config_override_load",
+        @"notification_show_disk_control",
+        @"notification_show_fast_forward",
+        @"notification_show_patch_applied",
+        @"notification_show_refresh_rate",
+        @"notification_show_remap_load",
+        @"notification_show_save_state",
+        @"notification_show_screenshot",
+        @"notification_show_set_initial_disk",
+        @"notification_show_when_menu_is_alive",
+        @"video_font_enable",
+        @"menu_enable_widgets",
         @"midi_input",
         @"midi_output",
     ];
@@ -1544,12 +1570,16 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     // background block below.  All filesystem I/O (fileExistsAtPath, bundlePath,
     // checkROM, archive extraction) is deferred to the background queue to avoid
     // blocking the main thread.
-    NSString *capturedBatterySavesPath = self.batterySavesPath;
+    NSString *capturedRetroArchRoot    = self.retroArchRootPath;
     NSString *capturedCoreIdentifier   = [self coreIdentifier];
     NSString *capturedRomPath          = romPath;
     NSString *capturedSystemIdentifier = [self systemIdentifier];
     BOOL      capturedProcessingInit   = processing_init;
     if (capturedProcessingInit) processing_init = false;
+
+    ILOG(@"startVM: coreIdentifier=%@, romPath=%@, systemIdentifier=%@, retroArchRoot=%@",
+         capturedCoreIdentifier ?: @"(nil)", capturedRomPath ?: @"(nil)",
+         capturedSystemIdentifier ?: @"(nil)", capturedRetroArchRoot ?: @"(nil)");
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAudioSessionInterruption:) name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
 
@@ -1563,8 +1593,7 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     // video thread blocked waiting for main). Run rarch_main on a background
     // thread so the main thread stays free to service those UI-setup dispatches.
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
-        NSString *optConfig = [NSString stringWithFormat:@"%@/../../RetroArch/config/opt.cfg",
-                              capturedBatterySavesPath];
+        NSString *optConfig = [capturedRetroArchRoot stringByAppendingPathComponent:@"config/opt.cfg"];
         NSFileManager *fm = [[NSFileManager alloc] init];
 
         int bgArgc = 0;
@@ -1614,7 +1643,7 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
         }
 
         if (capturedProcessingInit) {
-            [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[capturedBatterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
+            [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCoreBridge class]] pathForResource:@"assets.zip" ofType:nil] toDestination:capturedRetroArchRoot overwrite:true];
         }
 
         rarch_main(bgArgc, bgArgv, NULL);
@@ -1986,6 +2015,9 @@ static void trigger_retroarch_update_action(enum msg_hash_enums enum_idx) {
     });
 	return _documentsDirectory;
 }
+-(NSString*)retroArchRootPath {
+    return [self.documentsDirectory stringByAppendingPathComponent:@"RetroArch"];
+}
 - (void)refreshSystemConfig {
 #if TARGET_OS_IOS && !TARGET_OS_TV
 	/* Get enabled orientations */
@@ -2039,7 +2071,7 @@ static void trigger_retroarch_update_action(enum msg_hash_enums enum_idx) {
 	if (flag) {
 		if (!self.batterySavesPath) {
 			NSFileManager *fm = [[NSFileManager alloc] init];
-			self.batterySavesPath = [NSString stringWithFormat:@"%@/RetroArch/config", self.documentsDirectory];
+			self.batterySavesPath = [self.retroArchRootPath stringByAppendingPathComponent:@"config"];
 			NSString *fileName = [NSString stringWithFormat:@"%@/RetroArch/config/retroarch.cfg",
 								  self.documentsDirectory];
 			if ([fm fileExistsAtPath: fileName]) {

@@ -162,6 +162,9 @@ public class AppState: ObservableObject {
     /// Cancellable storage for Combine subscriptions
     private var importPauseSubscriptions = Set<AnyCancellable>()
 
+    /// Mirrors emulator scene for import gating; avoids reading `SceneCoordinator` during `AppState.init` (singleton cycle with `SceneCoordinator`).
+    private var cachedEmulatorSceneActiveForImportPause: Bool = false
+
     /// Timer for auto-resuming imports after initial delay
     private var initialImportResumeTimer: Timer?
 
@@ -305,28 +308,33 @@ public class AppState: ObservableObject {
     private func setupImportPauseMonitoring() {
         ILOG("AppState: Setting up import pause monitoring")
 
-        /// Monitor emulation state and pause/resume all services via the central registry.
-        /// Individual callers (SceneCoordinator, EmulatorVC) may also call pauseAll/resumeAll;
-        /// reason-based tracking ensures only one actual pause/resume cycle occurs.
-        $emulationUIState
-            .map { $0.core?.isOn == true }
-            .removeDuplicates()
-            .sink { [weak self] isEmulationActive in
-                if isEmulationActive {
-                    ILOG("AppState: Pausing services due to active emulation")
-                    self?.pauseImports(reason: "Emulation active")
-                    Task { @MainActor in
-                        BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
-                    }
-                } else {
-                    ILOG("AppState: Emulation inactive, resuming services")
-                    self?.resumeImportsIfNoOtherConditions(previousCondition: "Emulation")
-                    Task { @MainActor in
-                        BackgroundServiceRegistry.shared.resumeAll(reason: .emulation)
+        /// Subscribe next run loop: `SceneCoordinator.init` uses `AppState.shared`, so `SceneCoordinator.shared` during `AppState.init` deadlocks.
+        /// `core?.isOn` does not reliably emit through `@Published` on reference-type `EmulationUIState`.
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.cachedEmulatorSceneActiveForImportPause = SceneCoordinator.shared.currentScene == .emulator
+            SceneCoordinator.shared.$currentScene
+                .map { $0 == .emulator }
+                .removeDuplicates()
+                .sink { [weak self] isEmulatorScene in
+                    guard let self else { return }
+                    self.cachedEmulatorSceneActiveForImportPause = isEmulatorScene
+                    if isEmulatorScene {
+                        ILOG("AppState: Pausing services — emulator UI scene active")
+                        self.pauseImports(reason: "Emulator scene active")
+                        Task { @MainActor in
+                            BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
+                        }
+                    } else {
+                        ILOG("AppState: Emulator UI scene inactive — resuming services when other conditions allow")
+                        self.resumeImportsIfNoOtherConditions(previousCondition: "Emulator scene")
+                        Task { @MainActor in
+                            BackgroundServiceRegistry.shared.resumeAll(reason: .emulation)
+                        }
                     }
                 }
-            }
-            .store(in: &importPauseSubscriptions)
+                .store(in: &self.importPauseSubscriptions)
+        }
 
         // Monitor app background state
         $emulationUIState
@@ -398,17 +406,17 @@ public class AppState: ObservableObject {
     /// - Parameter previousCondition: The condition that was previously preventing imports
     public func resumeImportsIfNoOtherConditions(previousCondition: String) {
         // Check if there are any other conditions that require imports to be paused
-        let emulationActive = emulationUIState.core?.isOn == true
+        let emulatorSceneActive = cachedEmulatorSceneActiveForImportPause
         let isInBackground = emulationUIState.isInBackground
-        let isInitialDelayActive = initialImportResumeTimer != nil && initialImportResumeTimer!.isValid
+        let isInitialDelayActive = initialImportResumeTimer?.isValid == true
 
-        if !emulationActive && !isInBackground && !isInitialDelayActive {
+        if !emulatorSceneActive && !isInBackground && !isInitialDelayActive {
             ILOG("AppState: Resuming imports - \(previousCondition) condition cleared and no other blocking conditions")
             shouldPauseImports = false
             gameImporter?.resume()
         } else {
             var reasons = [String]()
-            if emulationActive { reasons.append("Emulation active") }
+            if emulatorSceneActive { reasons.append("Emulator scene active") }
             if isInBackground { reasons.append("App in background") }
             if isInitialDelayActive { reasons.append("Initial delay not expired") }
 

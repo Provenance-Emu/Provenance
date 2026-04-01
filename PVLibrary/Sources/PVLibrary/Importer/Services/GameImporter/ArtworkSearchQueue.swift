@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import PVFeatureFlags
 import PVLogging
 import PVLookup
 import PVLookupTypes
@@ -82,8 +81,6 @@ public actor ArtworkSearchQueue {
         systemID: SystemIdentifier?,
         md5Hash: String
     ) async {
-        guard PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) else { return }
-
         // Check if already queued
         if !pendingGames.contains(where: { $0.gameID == gameID }) {
             let metadata = ArtworkSearchMetadata(
@@ -114,13 +111,7 @@ public actor ArtworkSearchQueue {
     /// Process pending artwork searches (lower priority)
     /// Should be called after primary imports complete
     public func processPendingSearches() async {
-        let featureEnabled = PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch)
-        ILOG("ArtworkSearchQueue: processPendingSearches called (enhancedArtworkSearch=\(featureEnabled), isProcessing=\(isProcessing), pendingGames.count=\(pendingGames.count))")
-
-        guard featureEnabled else {
-            ILOG("ArtworkSearchQueue: Enhanced artwork search is disabled")
-            return
-        }
+        ILOG("ArtworkSearchQueue: processPendingSearches called (isProcessing=\(isProcessing), pendingGames.count=\(pendingGames.count))")
 
         guard !isProcessing else {
             ILOG("ArtworkSearchQueue: Already processing, skipping")
@@ -564,8 +555,6 @@ public actor ArtworkSearchQueue {
     /// Retry downloading artwork for games that have URLs but no files
     /// This should be called periodically or when games are accessed
     public func retryFailedArtworkDownloads() async {
-        guard PVFeatureFlags.shared.isEnabled(.enhancedArtworkSearch) else { return }
-
         // Find games with artwork URLs but no artwork files
         // Extract values from Realm objects inside detached task to avoid cross-thread access
         let gamesNeedingDownload = await Task.detached(priority: .utility) { () -> [ArtworkRetryMetadata] in
