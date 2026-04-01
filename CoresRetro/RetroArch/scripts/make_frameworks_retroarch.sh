@@ -69,6 +69,22 @@ fi
 
 FW_COUNT=0
 FW_FAIL=0
+FW_SKIP=0
+
+# Cache file tracks which dylibs have already been processed.
+# Format: one line per dylib with "filename:md5hash"
+CACHE_FILE="${BASE_DIR}/modules/.fw_cache_${PLATFORM:-unknown}"
+
+# Load existing cache
+declare -A CACHED_HASHES
+if [ -f "$CACHE_FILE" ]; then
+    while IFS=: read -r fname fhash; do
+        CACHED_HASHES["$fname"]="$fhash"
+    done < "$CACHE_FILE"
+fi
+
+# Will rebuild cache from scratch (only includes dylibs still present)
+declare -A NEW_HASHES
 
 for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$') ; do
     intermediate=$(basename "$dylib")
@@ -77,6 +93,19 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
         intermediate="${intermediate/%$SUFFIX/}"
     fi
     fwName="${intermediate//_/.}"
+    fwDir="${OUTDIR}/${fwName}.framework"
+
+    # Compute hash of the input dylib to detect changes
+    DYLIB_HASH=$(md5 -q "$dylib" 2>/dev/null || md5sum "$dylib" | awk '{print $1}')
+    DYLIB_BASE=$(basename "$dylib")
+    NEW_HASHES["$DYLIB_BASE"]="$DYLIB_HASH"
+
+    # Skip if dylib unchanged AND framework already exists with executable
+    if [ "${CACHED_HASHES[$DYLIB_BASE]:-}" = "$DYLIB_HASH" ] && \
+       { [ -f "$fwDir/$fwName" ] || [ -L "$fwDir/$fwName" ]; }; then
+        FW_SKIP=$((FW_SKIP + 1))
+        continue
+    fi
 
     # Validate the dylib is actually a Mach-O binary, not a corrupt/truncated file
     FILE_TYPE=$(file -b "$dylib" 2>/dev/null)
@@ -92,7 +121,6 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
 
     echo "MakeFrameworks: Making framework $fwName from $dylib"
 
-    fwDir="${OUTDIR}/${fwName}.framework"
     mkdir -p "$fwDir"
     if [ "$PLATFORM_FAMILY_NAME" = "iOS" -o "$PLATFORM_FAMILY_NAME" = "tvOS" ] ; then
         build_sdk=$(vtool -show-build "$dylib" | grep sdk | awk '{print $2}')
@@ -135,9 +163,18 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
     FW_COUNT=$((FW_COUNT + 1))
 done
 
-echo "MakeFrameworks: Created ${FW_COUNT} frameworks from ${DYLIB_COUNT} dylibs (${FW_FAIL} failed)"
+# Write updated cache
+{
+    for fname in "${!NEW_HASHES[@]}"; do
+        echo "${fname}:${NEW_HASHES[$fname]}"
+    done
+} > "$CACHE_FILE"
 
-if [ "${FW_COUNT}" -eq 0 ] && [ "${DYLIB_COUNT}" -gt 0 ]; then
+echo "MakeFrameworks: Created ${FW_COUNT} frameworks, skipped ${FW_SKIP} unchanged, from ${DYLIB_COUNT} dylibs (${FW_FAIL} failed)"
+
+FW_TOTAL=$((FW_COUNT + FW_SKIP))
+
+if [ "${FW_TOTAL}" -eq 0 ] && [ "${DYLIB_COUNT}" -gt 0 ]; then
     echo "MakeFrameworks: ERROR — 0 frameworks created from ${DYLIB_COUNT} dylibs! All cores broken." >&2
     exit 1
 fi
@@ -145,8 +182,8 @@ fi
 # Warn if significantly fewer frameworks than dylibs (> 20% loss)
 if [ "${DYLIB_COUNT}" -gt 0 ]; then
     THRESHOLD=$((DYLIB_COUNT * 80 / 100))
-    if [ "${FW_COUNT}" -lt "${THRESHOLD}" ]; then
-        echo "MakeFrameworks: WARNING — only ${FW_COUNT}/${DYLIB_COUNT} frameworks created. Check logs for failures." >&2
+    if [ "${FW_TOTAL}" -lt "${THRESHOLD}" ]; then
+        echo "MakeFrameworks: WARNING — only ${FW_TOTAL}/${DYLIB_COUNT} frameworks available. Check logs for failures." >&2
     fi
 fi
 
