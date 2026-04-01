@@ -11,9 +11,6 @@
 import SwiftUI
 import Observation
 import PVUIBase
-#if canImport(UIKit)
-import UIKit
-#endif
 
 // MARK: - ViewModel
 
@@ -112,7 +109,7 @@ public struct RetroArchLogBrowserView: View {
 
     public var body: some View {
         ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
+            Color.black.ignoresSafeArea()
 
             if !viewModel.directoryExists {
                 emptyStateView(
@@ -272,7 +269,7 @@ struct LogFileViewerSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
+                Color.black.ignoresSafeArea()
 
                 if isLoading {
                     ProgressView()
@@ -284,7 +281,9 @@ struct LogFileViewerSheet: View {
                             .foregroundColor(.white.opacity(0.9))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
+#if !os(tvOS)
                             .textSelection(.enabled)
+#endif
                     }
                 }
             }
