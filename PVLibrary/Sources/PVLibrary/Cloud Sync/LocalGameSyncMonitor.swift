@@ -209,6 +209,18 @@ public final class LocalGameSyncMonitor {
                         continue
                     }
 
+                    // Skip if only sync-metadata fields changed (cloudRecordID,
+                    // lastCloudSyncDate, hasCloudAssets). These are written by
+                    // updateLocalGamePostUpload after an upload completes. Without
+                    // this guard, the Realm notification fires after the
+                    // CloudKitRemoteApplyGuard scope exits, causing an infinite
+                    // re-upload loop.
+                    if let existingCloudID = modifiedGame.cloudRecordID,
+                       !existingCloudID.isEmpty {
+                        VLOG("Skipping upload for \(md5): no user-metadata change and cloudRecordID already set")
+                        continue
+                    }
+
                     // Skip if game is marked as not downloaded (likely downloading/syncing)
                     if !modifiedGame.isDownloaded {
                         VLOG("Skipping upload for \(md5): Game marked as not downloaded (likely syncing)")
