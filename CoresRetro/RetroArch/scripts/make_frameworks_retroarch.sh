@@ -77,6 +77,11 @@ if [ -n "$FILTER_LIST" ] && [ -f "$FILTER_LIST" ]; then
     echo "MakeFrameworks: Filtering dylibs using $(echo "$FILTER_NAMES" | wc -l | tr -d ' ') entries from $FILTER_LIST"
 fi
 
+# Locally-built dylibs that are never downloaded from the buildbot but should
+# always be included in every build variant.  Must match the patterns used by
+# get-modules.sh so they are never purged OR filtered out.
+LOCAL_DYLIB_PATTERNS=( "*-jitless*" )
+
 # Count input dylibs
 DYLIB_COUNT=$(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$' 2>/dev/null | wc -l | tr -d ' ')
 echo "MakeFrameworks: Found ${DYLIB_COUNT} input dylibs in $BASE_DIR/modules/"
@@ -112,9 +117,14 @@ FW_FILTER=0
 for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$') ; do
     DYLIB_BASE=$(basename "$dylib")
 
-    # Skip dylibs not in the filter list (if a filter is active)
+    # Skip dylibs not in the filter list (if a filter is active),
+    # but always include locally-built dylibs matching LOCAL_DYLIB_PATTERNS.
     if [ -n "$FILTER_NAMES" ]; then
-        if ! echo "$FILTER_NAMES" | grep -qx "$DYLIB_BASE"; then
+        IS_LOCAL=0
+        for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
+            case "$DYLIB_BASE" in ${pat}*) IS_LOCAL=1; break ;; esac
+        done
+        if [ "$IS_LOCAL" = "0" ] && ! echo "$FILTER_NAMES" | grep -qx "$DYLIB_BASE"; then
             FW_FILTER=$((FW_FILTER + 1))
             continue
         fi
