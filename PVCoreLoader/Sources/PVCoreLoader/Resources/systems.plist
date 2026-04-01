@@ -7550,7 +7550,19 @@
 		<array>
 			<dict>
 				<key>Description</key>
-				<string>3DO BIOS</string>
+				<string>Panasonic FZ-1 BIOS</string>
+				<key>MD5</key>
+				<string>f47264dd47fe30f73ab3c010015c155b</string>
+				<key>Name</key>
+				<string>panafz1.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Panasonic FZ-10 BIOS</string>
 				<key>MD5</key>
 				<string>51f2f43ae2f3508a14d9f56597e2d3ce</string>
 				<key>Name</key>
@@ -7562,11 +7574,11 @@
 			</dict>
 			<dict>
 				<key>Description</key>
-				<string>3DO Patches BIOS</string>
+				<string>Panasonic FZ-10 BIOS (encryption check disabled)</string>
 				<key>MD5</key>
 				<string>1477bda80dc33731a65468c1f5bcbee9</string>
 				<key>Name</key>
-				<string>panafz10-patched.bin</string>
+				<string>panafz10-norsa.bin</string>
 				<key>Optional</key>
 				<true/>
 				<key>Size</key>
@@ -7574,7 +7586,127 @@
 			</dict>
 			<dict>
 				<key>Description</key>
-				<string>Japanese Character ROM</string>
+				<string>Panasonic FZ-10E ANVIL BIOS</string>
+				<key>MD5</key>
+				<string>a48e6746bd7edec0f40cff078f0bb19f</string>
+				<key>Name</key>
+				<string>panafz10e-anvil.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Panasonic FZ-10E ANVIL BIOS (encryption check disabled)</string>
+				<key>MD5</key>
+				<string>cf11bbb5a16d7af9875cca9de9a15e09</string>
+				<key>Name</key>
+				<string>panafz10e-anvil-norsa.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Goldstar GDO-101M BIOS</string>
+				<key>MD5</key>
+				<string>8639fd5e549bd6238cfee79e3e749114</string>
+				<key>Name</key>
+				<string>goldstar.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Sanyo Try IMP-21J BIOS</string>
+				<key>MD5</key>
+				<string>35fa1a1ebaaeea286dc5cd15487c13ea</string>
+				<key>Name</key>
+				<string>sanyotry.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>3DO Arcade — Shootout at Old Tucson BIOS</string>
+				<key>MD5</key>
+				<string>8970fc987ab89a7f64da9f8a8c4333ff</string>
+				<key>Name</key>
+				<string>3do_arcade_saot.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>524288</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Panasonic FZ-1 Kanji font ROM</string>
+				<key>MD5</key>
+				<string>b8dc97f778a6245c58e064b0312e8281</string>
+				<key>Name</key>
+				<string>panafz1-kanji.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>933636</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Panasonic FZ-10JA ANVIL Kanji font ROM</string>
+				<key>MD5</key>
+				<string>428577250f43edc902ea239c50d2240d</string>
+				<key>Name</key>
+				<string>panafz10ja-anvil-kanji.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Panasonic FZ-1J BIOS</string>
+				<key>MD5</key>
+				<string>a496cfdded3da562759be3561317b605</string>
+				<key>Name</key>
+				<string>panafz1j.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Panasonic FZ-1J BIOS (encryption check disabled)</string>
+				<key>MD5</key>
+				<string>f6c71de7470d16abe4f71b1444883dc8</string>
+				<key>Name</key>
+				<string>panafz1j-norsa.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Panasonic FZ-1J Kanji font ROM</string>
+				<key>MD5</key>
+				<string>c23fb5d5e6bb1c240d02cf968972be37</string>
+				<key>Name</key>
+				<string>panafz1j-kanji.bin</string>
+				<key>Optional</key>
+				<true/>
+				<key>Size</key>
+				<integer>1048576</integer>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>Japanese character ROM (FreeDO / legacy filename)</string>
 				<key>MD5</key>
 				<string>428577250f43edc902ea239c50d2240d</string>
 				<key>Name</key>
