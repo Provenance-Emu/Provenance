@@ -555,7 +555,7 @@
 		B3A455652F77941000B6449F /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE00000000000001E0 /* PVFeatureFlags */; };
 		B3A455662F77941000B6449F /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE00000000000001F0 /* PVUI */; };
 		B3A455672F77941000B6449F /* PVThemes in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0000000000000200 /* PVThemes */; };
-		B3A457282F77950300B6449F /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3A457272F77950300B6449F /* WhatsNewKit */; };
+		B3A457282F77950300B6449F /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = B3A457272F77950300B6449F /* WhatsNewKit */; };
 		B3A477C52C941F120052500A /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A477C42C941F120052500A /* PVFCEU.framework */; };
 		B3A477C62C941F120052500A /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A477C42C941F120052500A /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3A479CE2C96507A0052500A /* PVSNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A479CD2C96507A0052500A /* PVSNES.framework */; };
@@ -579,7 +579,7 @@
 		B3A47B292F5677C9004A995B /* SiriusRating in Frameworks */ = {isa = PBXBuildFile; productRef = 4D15F087BB2592ED2DD7EE8D /* SiriusRating */; };
 		B3A47B2A2F5677C9004A995B /* FreemiumKit in Frameworks */ = {isa = PBXBuildFile; productRef = BF22FE93F78CC6239039CD8F /* FreemiumKit */; };
 		B3A47B2C2F5677C9004A995B /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = 9C4E9B7E289A972E85DD3226 /* PVFeatureFlags */; };
-		B3A47B2D2F5677C9004A995B /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7D3C80A17BC5A8B6EB08E8D8 /* WhatsNewKit */; };
+		B3A47B2D2F5677C9004A995B /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = 7D3C80A17BC5A8B6EB08E8D8 /* WhatsNewKit */; };
 		B3A47B2E2F5677C9004A995B /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = 53040F2E23B73F97BE1CAB5D /* OpenSSL */; };
 		B3A481B62F79ED9F00F3FF6B /* ROM File Provider.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3BE9FA42C7987B1006D989E /* ROM File Provider.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A60FFF2CB880BE001D99C2 /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B3A60FFE2CB880BE001D99C2 /* PVUI */; };
@@ -10046,7 +10046,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Begin: Generate Frameworks\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch\necho \"End: Generate Frameworks\"\n";
+			shellScript = "echo \"Begin: Generate Frameworks\"\nif [ \"${PLATFORM_NAME}\" = \"appletvos\" ]; then\n  FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore-tv.txt\"\nelse\n  FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore.txt\"\nfi\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch \"$FILTER\"\necho \"End: Generate Frameworks\"\n";
 		};
 		C0C0CAFE0001000000000001 /* Script: Validate Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

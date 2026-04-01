@@ -66,6 +66,17 @@ echo "MakeFrameworks: Creating directory: $OUTDIR"
 
 mkdir -p "$OUTDIR"
 
+# Optional filter list: if a URL list file is passed as $2, only process dylibs
+# whose basenames appear in that file. This allows build variants (AppStore vs XL)
+# to share the same modules/ directory without bloating the app bundle.
+FILTER_LIST="${2:-}"
+FILTER_NAMES=""
+if [ -n "$FILTER_LIST" ] && [ -f "$FILTER_LIST" ]; then
+    # Extract dylib basenames from URLs (strip path and .zip suffix)
+    FILTER_NAMES=$(grep -v '^#' "$FILTER_LIST" | sed 's|.*/||' | sed 's/\.zip$//' | sort -u)
+    echo "MakeFrameworks: Filtering dylibs using $(echo "$FILTER_NAMES" | wc -l | tr -d ' ') entries from $FILTER_LIST"
+fi
+
 # Count input dylibs
 DYLIB_COUNT=$(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$' 2>/dev/null | wc -l | tr -d ' ')
 echo "MakeFrameworks: Found ${DYLIB_COUNT} input dylibs in $BASE_DIR/modules/"
@@ -97,9 +108,19 @@ cached_hash() {
     fi
 }
 
+FW_FILTER=0
 for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$') ; do
-    intermediate=$(basename "$dylib")
-    intermediate="${intermediate/%.dylib/}"
+    DYLIB_BASE=$(basename "$dylib")
+
+    # Skip dylibs not in the filter list (if a filter is active)
+    if [ -n "$FILTER_NAMES" ]; then
+        if ! echo "$FILTER_NAMES" | grep -qx "$DYLIB_BASE"; then
+            FW_FILTER=$((FW_FILTER + 1))
+            continue
+        fi
+    fi
+
+    intermediate="${DYLIB_BASE/%.dylib/}"
     if [ -n "$SUFFIX" ] ; then
         intermediate="${intermediate/%$SUFFIX/}"
     fi
@@ -108,7 +129,6 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
 
     # Compute hash of the input dylib to detect changes
     DYLIB_HASH=$(md5 -q "$dylib" 2>/dev/null || md5sum "$dylib" | awk '{print $1}')
-    DYLIB_BASE=$(basename "$dylib")
     echo "${DYLIB_BASE}:${DYLIB_HASH}" >> "$NEW_CACHE_FILE"
 
     # Skip if dylib unchanged AND framework already exists with executable
@@ -178,7 +198,11 @@ done
 # Write updated cache
 mv "$NEW_CACHE_FILE" "$CACHE_FILE"
 
-echo "MakeFrameworks: Created ${FW_COUNT} frameworks, skipped ${FW_SKIP} unchanged, from ${DYLIB_COUNT} dylibs (${FW_FAIL} failed)"
+if [ "$FW_FILTER" -gt 0 ]; then
+    echo "MakeFrameworks: Created ${FW_COUNT} frameworks, skipped ${FW_SKIP} unchanged, filtered out ${FW_FILTER}, from ${DYLIB_COUNT} dylibs (${FW_FAIL} failed)"
+else
+    echo "MakeFrameworks: Created ${FW_COUNT} frameworks, skipped ${FW_SKIP} unchanged, from ${DYLIB_COUNT} dylibs (${FW_FAIL} failed)"
+fi
 
 FW_TOTAL=$((FW_COUNT + FW_SKIP))
 
