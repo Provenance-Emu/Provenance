@@ -358,21 +358,6 @@ struct BackupRestoreView: View {
     }
 
     #if os(tvOS)
-    private func moveTVOSBackup(from tempURL: URL) {
-        let dest = URL.documentsPath.appendingPathComponent(tempURL.lastPathComponent)
-        do {
-            if FileManager.default.fileExists(atPath: dest.path) {
-                try FileManager.default.removeItem(at: dest)
-            }
-            try FileManager.default.moveItem(at: tempURL, to: dest)
-            alertMessage = "Backup saved to Documents: \(dest.lastPathComponent)"
-            showAlert = true
-        } catch {
-            // State update handled via coordinator.backupState observer
-            ELOG("BackupRestoreView: could not move tvOS backup: \(error)")
-        }
-    }
-
     private func startTVOSRestore() {
         let docs = URL.documentsPath
         let fm = FileManager.default

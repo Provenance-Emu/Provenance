@@ -23,7 +23,6 @@ public struct RetroAchievementsView: View {
     @State private var loadingProgress: Double = 0
     @State private var errorMessage: String?
     @State private var showingError = false
-    @State private var currentSession: RAUserSession?
     @State private var userProfile: RAUserProfile?
     @State private var isAuthenticated = false
 
@@ -576,31 +575,21 @@ public struct RetroAchievementsView: View {
         }
     }
 
+    @MainActor
     private func initializeClient() async {
         // Create client and check for existing session
         client = PVCheevos.client()
 
-        await MainActor.run {
-            // Check if already authenticated
-            if let currentClient = client {
-                Task {
-                    let authenticated = await currentClient.isAuthenticated
+        guard let currentClient = client else { return }
 
-                    await MainActor.run {
-                        isAuthenticated = authenticated
-                        if authenticated {
-                            // Load stored profile or create basic one
-                            if let storedProfile = RetroCredentialsManager.shared.loadUserProfile() {
-                                userProfile = storedProfile
-                            }
-                        }
-
-                        // Load RetroArch settings
-                        loadRetroArchSettings()
-                    }
-                }
+        let authenticated = currentClient.isAuthenticated
+        isAuthenticated = authenticated
+        if authenticated {
+            if let storedProfile = RetroCredentialsManager.shared.loadUserProfile() {
+                userProfile = storedProfile
             }
         }
+        loadRetroArchSettings()
     }
 
     private func loadRetroArchSettings() {

@@ -49,6 +49,7 @@ public struct BatchArtworkMatchingView: View {
     @State private var searchProgress: Double = 0
     @State private var currentSearchTitle: String = ""
     @State private var errorMessage: String?
+    @State private var showErrorAlert = false
 
     // Game and artwork data
     @State private var gamesNeedingArtwork: [PVGame] = []
@@ -134,10 +135,11 @@ public struct BatchArtworkMatchingView: View {
         .uiKitAlert(
             "Error",
             message: errorMessage ?? "",
-            isPresented: .constant(errorMessage != nil),
+            isPresented: $showErrorAlert,
             preferredContentSize: CGSize(width: 500, height: 300)
         ) {
             UIAlertAction(title: "OK", style: .default) { _ in
+                showErrorAlert = false
                 errorMessage = nil
             }
         }
@@ -513,6 +515,7 @@ public struct BatchArtworkMatchingView: View {
         } catch {
             ELOG("Error loading games: \(error)")
             errorMessage = "Error loading games: \(error.localizedDescription)"
+            showErrorAlert = true
         }
     }
 
@@ -582,6 +585,7 @@ public struct BatchArtworkMatchingView: View {
         } catch {
             ELOG("Error searching for artwork: \(error)")
             errorMessage = "Error searching for artwork: \(error.localizedDescription)"
+            showErrorAlert = true
             if clearExisting {
                 // Show partial failure info from an interrupted initial scan.
                 failedGames = newFailures
@@ -671,6 +675,7 @@ public struct BatchArtworkMatchingView: View {
         } catch {
             ELOG("Error applying artwork: \(error)")
             errorMessage = "Error applying artwork: \(error.localizedDescription)"
+            showErrorAlert = true
         }
     }
 }
