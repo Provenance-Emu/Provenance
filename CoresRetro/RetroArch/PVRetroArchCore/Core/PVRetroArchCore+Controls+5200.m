@@ -44,14 +44,9 @@ extern GCController *touch_controller;
     [self handle5200Button:button forPlayer:player pressed:false value:0];
 }
 
-// TODO: Finish joystick repsonder for 5200
-//- (void)didMove5200JoystickDirection:(PV5200Button)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
-//    switch (button) {
-//        case(PV5200ButtonAnalog):
-//            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xValue yAxis:yValue];
-//            break;
-//    }
-//}
+- (void)didMove5200JoystickDirection:(PV5200Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
+    [self handle5200Button:button forPlayer:player pressed:(value != 0) value:value];
+}
 
 - (void)handle5200Button:(PV5200Button)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
     switch (button) {
