@@ -62,6 +62,11 @@ extern bool _isInitialized;
 extern __weak PVRetroArchCoreBridge *_current;
 void handle_touch_event(NSArray* touches);
 void handle_click_event(CGPoint click, bool pressed);
+/// Maximum number of virtual touch controllers Provenance creates.
+/// Capped at 8 (Provenance's player limit) to avoid exceeding RetroArch's input_max_users
+/// and generating spurious "No free and unreserved player slots" errors.
+#define PV_MAX_PLAYERS 8
+
 /// Virtual controller for player 1 (used for on-screen touch controls and forwarded hardware input)
 GCController *touch_controller;
 /// Array of virtual controllers for multiplayer support (one per player)
@@ -408,7 +413,7 @@ static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) 
 
 /// Check if a controller is one of our virtual touch_controllers
 static bool is_virtual_touch_controller(GCController *controller) {
-    for (int i = 0; i < MAX_USERS; i++) {
+    for (int i = 0; i < PV_MAX_PLAYERS; i++) {
         if (controller == touch_controllers[i])
             return true;
     }
@@ -666,7 +671,7 @@ static bool is_virtual_touch_controller(GCController *controller) {
 -(void)refresh_gamecontrollers {
     /// Connect all virtual touch_controllers for multiplayer support
     /// Each player slot gets its own touch_controller that hardware controllers forward to
-    for (int player = 0; player < MAX_USERS; player++) {
+    for (int player = 0; player < PV_MAX_PLAYERS; player++) {
         if (touch_controllers[player]) {
             apple_gamecontroller_joypad_connect(touch_controllers[player]);
         }
@@ -905,7 +910,7 @@ static bool is_virtual_touch_controller(GCController *controller) {
              containsString:@RETROARCH_PVOVERLAY]) {
             NSString *overlay=@RETROARCH_DEFAULT_OVERLAY;
             NSString *new_overlay=[overlay stringByReplacingOccurrencesOfString:@"/RetroArch"
-             withString:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch" ]];
+             withString:self.retroArchRootPath];
             if (![new_overlay isEqualToString:original_overlay]) {
                 configuration_set_string(settings,
                         settings->paths.path_overlay,
@@ -1016,7 +1021,7 @@ static void apple_gamecontroller_joypad_poll_internal(GCController *controller)
 		const float triggerThreshold = 0.1f;
 		/// Check if this is any of the virtual touch_controllers
 		bool isVirtualController = false;
-		for (int i = 0; i < MAX_USERS; i++) {
+		for (int i = 0; i < PV_MAX_PLAYERS; i++) {
 			if (controller == touch_controllers[i]) {
 				isVirtualController = true;
 				break;
@@ -1120,7 +1125,7 @@ static void apple_gamecontroller_joypad_poll(void)
 	/// Hardware controller inputs are forwarded via bindControls handlers to the appropriate touch_controller
 	/// This prevents double input registration (buttons appearing on multiple players)
 	if (provenance_controller_mode) {
-		for (int player = 0; player < MAX_USERS; player++) {
+		for (int player = 0; player < PV_MAX_PLAYERS; player++) {
 			if (touch_controllers[player])
 				apple_gamecontroller_joypad_poll_internal(touch_controllers[player]);
 		}
@@ -1365,7 +1370,7 @@ void *apple_gamecontroller_joypad_init(void *data) {
 #endif
     /// Initialize virtual touch_controllers for each player slot
     /// This allows each hardware controller to map to its own player correctly
-    for (int player = 0; player < MAX_USERS; player++) {
+    for (int player = 0; player < PV_MAX_PLAYERS; player++) {
         if (!touch_controllers[player]) {
             /// controllerWithExtendedGamepad returns an already-initialized virtual controller
             /// Do NOT call init again - that would return a different/invalid object
@@ -1398,7 +1403,7 @@ void apple_gamecontroller_joypad_destroy(void) {
         apple_gamecontroller_joypad_disconnect(gc);
      */
     /// Clean up all virtual touch_controllers
-    for (int player = 0; player < MAX_USERS; player++) {
+    for (int player = 0; player < PV_MAX_PLAYERS; player++) {
         touch_controllers[player] = nil;
     }
     touch_controller = nil;

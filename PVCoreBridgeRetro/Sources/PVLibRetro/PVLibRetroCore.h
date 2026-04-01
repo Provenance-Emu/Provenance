@@ -67,44 +67,8 @@ __attribute__((weak_import))
     enum retro_pixel_format pix_fmt;
 }
 - (instancetype _Nonnull )init;
-- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
-- (void)pollControllers;
 
 - (void *_Nonnull)getVariable:(const char *_Nonnull)variable;
-
-// Touch and mouse input support
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-- (void)handleTouchEvent:(UIEvent *_Nonnull)event;
-#else
-- (void)handleMouseEvent:(NSEvent *_Nonnull)event;
-#endif
-- (int16_t)getPointerState:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)id;
-
-// Keyboard event forwarding for libretro keyboard-based cores (e.g., DosBox, MSX)
-// hidCode: HID USB usage page key code (matches GCKeyCode.rawValue on iOS 14+)
-// character: Unicode character value (pass 0 if unknown)
-- (void)sendKeyboardEvent:(BOOL)down hidCode:(unsigned)hidCode character:(uint32_t)character;
-
-// Mouse state management for libretro mouse-based cores
-// normalizedPoint: coordinates in 0.0-1.0 range relative to the video surface
-- (void)setMousePosition:(CGPoint)normalizedPoint;
-- (void)setLeftMouseButtonPressed:(BOOL)pressed;
-- (void)setRightMouseButtonPressed:(BOOL)pressed;
-
-/// Sets the libretro controller device type for a specific port.
-/// Returns YES when the device type was applied, NO when the core is not yet
-/// initialised (logs an info message). Safe to call before init — callers can retry
-/// on the next input event. Ideally called after `retro_load_game` succeeds.
-- (BOOL)pv_setControllerPortDevice:(unsigned)device forPort:(unsigned)port;
-
-/// Inject a single raw MIDI byte into the libretro MIDI input ring buffer.
-///
-/// Called by `MIDIResponder` protocol implementations to forward decoded MIDI
-/// events received from `MIDIDeviceManager` into the `retro_midi_interface`
-/// read path so that the emulated core receives them on the next `retro_run` frame.
-///
-/// Thread-safe; silently drops bytes when the buffer is full.
-- (void)injectMIDIByte:(uint8_t)byte;
 
 @property (nonatomic, readonly) CGFloat videoWidth;
 @property (nonatomic, readonly) CGFloat videoHeight;
@@ -146,6 +110,42 @@ __attribute__((weak_import))
 /// Notify the core that a remote peer disconnected.
 - (void)netpacketPeerDisconnected:(uint16_t)clientID;
 
+@end
+
+@interface PVLibRetroCoreBridge (Controls)
+- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
+- (void)pollControllers;
+@end
+
+@interface PVLibRetroCoreBridge (TouchMouseInput)
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+- (void)handleTouchEvent:(UIEvent *_Nonnull)event;
+#else
+- (void)handleMouseEvent:(NSEvent *_Nonnull)event;
+#endif
+- (int16_t)getPointerState:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)id;
+// Keyboard event forwarding for libretro keyboard-based cores (e.g., DosBox, MSX)
+// hidCode: HID USB usage page key code (matches GCKeyCode.rawValue on iOS 14+)
+// character: Unicode character value (pass 0 if unknown)
+- (void)sendKeyboardEvent:(BOOL)down hidCode:(unsigned)hidCode character:(uint32_t)character;
+// Mouse state management for libretro mouse-based cores
+// normalizedPoint: coordinates in 0.0-1.0 range relative to the video surface
+- (void)setMousePosition:(CGPoint)normalizedPoint;
+- (void)setLeftMouseButtonPressed:(BOOL)pressed;
+- (void)setRightMouseButtonPressed:(BOOL)pressed;
+/// Sets the libretro controller device type for a specific port.
+/// Returns YES when the device type was applied, NO when the core is not yet
+/// initialised (logs an info message). Safe to call before init — callers can retry
+/// on the next input event. Ideally called after `retro_load_game` succeeds.
+- (BOOL)pv_setControllerPortDevice:(unsigned)device forPort:(unsigned)port;
+/// Inject a single raw MIDI byte into the libretro MIDI input ring buffer.
+///
+/// Called by `MIDIResponder` protocol implementations to forward decoded MIDI
+/// events received from `MIDIDeviceManager` into the `retro_midi_interface`
+/// read path so that the emulated core receives them on the next `retro_run` frame.
+///
+/// Thread-safe; silently drops bytes when the buffer is full.
+- (void)injectMIDIByte:(uint8_t)byte;
 @end
 
 @interface PVLibRetroCoreBridge (Cheats)

@@ -6,14 +6,20 @@
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 #import <UIKit/UIKit.h>
+#ifndef GLES_SILENCE_DEPRECATION
+#define GLES_SILENCE_DEPRECATION 1
+#endif
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
+#import <PVRetroArch/core_option_manager.h>
 
 @protocol PVRetroArchCoreResponderClient;
 @protocol ObjCBridgedCoreBridge;
 @protocol DiscSwappable;
 @protocol EmulatorCoreViewportPositioning;
+
+NS_ASSUME_NONNULL_BEGIN
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
@@ -27,23 +33,23 @@
     float sampleRate;
     BOOL isNTSC;
     BOOL isRootView;
-    UIView *m_view;
-    UIViewController *m_view_controller;
-    UIViewController *backup_view_controller;
-    CAMetalLayer* m_metal_layer;
-    CAEAGLLayer *m_gl_layer;
-    NSString *romPath;
-    CFRunLoopObserverRef iterate_observer;
+    UIView * _Nullable m_view;
+    UIViewController * _Nullable m_view_controller;
+    UIViewController * _Nullable backup_view_controller;
+    CAMetalLayer * _Nullable m_metal_layer;
+    CAEAGLLayer * _Nullable m_gl_layer;
+    NSString * _Nullable romPath;
+    CFRunLoopObserverRef _Nullable iterate_observer;
     bool retroArchControls;
     bool bindAnalogKeys;
     bool hasSecondScreen;
     bool coreOptionOverwrite;
-    NSString* coreOptionConfigPath;
-    NSString* coreOptionConfig;
+    NSString * _Nullable coreOptionConfigPath;
+    NSString * _Nullable coreOptionConfig;
     // Controls
     float xAxis, yAxis, ltXAxis, ltYAxis, rtXAxis, rtYAxis, axisMult;
 @public
-    dispatch_queue_t _callbackQueue;
+    dispatch_queue_t _Nonnull _callbackQueue;
 }
 @property (nonatomic, assign) int videoWidth;
 @property (nonatomic, assign) int videoHeight;
@@ -64,23 +70,26 @@
 @property (nonatomic, assign) bool bindAnalogDpad;
 @property (nonatomic, assign) bool hasSecondScreen;
 @property (nonatomic, assign) int machineType;
-@property (nonatomic, copy) NSString* coreIdentifier;
-@property (nonatomic) NSString* coreOptionConfigPath;
-@property (nonatomic) NSString* coreOptionConfig;
+@property (nonatomic, copy) NSString * coreIdentifier;
+@property (nonatomic, nullable) NSString * coreOptionConfigPath;
+@property (nonatomic, nullable) NSString * coreOptionConfig;
 @property (nonatomic) bool coreOptionOverwrite;
 // Apple Platform (Libretro)
-@property (nonatomic) UIView* view;
-@property (nonatomic) UIWindow* window;
-@property (nonatomic) NSString* documentsDirectory;
+@property (nonatomic, nullable) UIView * view;
+@property (nonatomic, nullable) UIWindow * window;
+@property (nonatomic, nullable) NSString * documentsDirectory;
+/// Root path for all RetroArch data: `<documentsDirectory>/RetroArch`.
+/// Use this instead of manually appending @"RetroArch" or using `../../` hacks.
+@property (nonatomic, readonly, nullable) NSString * retroArchRootPath;
 @property (nonatomic) int menu_count;
-+ (PVRetroArchCoreBridge *)get;
++ (PVRetroArchCoreBridge * _Nonnull)get;
 - (void)showGameView;
 - (void)setShowFPSCounterVisible:(BOOL)visible;
 - (void)supportOtherAudioSessions;
 - (void)refreshSystemConfig;
 
 /*! @brief renderView returns the current render view based on the viewType */
-@property(readonly) id renderView;
+@property (readonly, nullable) id renderView;
 /*! @brief isActive returns true if the application has focus */
 @property(readonly) bool hasFocus;
 /*! @brief setCursorVisible specifies whether the cursor is visible */
@@ -96,25 +105,27 @@
 - (void) setRootView:(BOOL)flag;
 - (void) setupWindow;
 - (void) refreshScreenSize;
-- (void) startVM:(UIView *)view;
+- (void) startVM:(UIView * _Nonnull)view;
 - (void) setupControllers;
 - (void) pollControllers;
 - (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;
 - (void) gamepadEventIrRecenter:(int)action;
-- (BOOL) setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
+- (BOOL) setCheat:(NSString * _Nonnull)code setType:(NSString * _Nonnull)type setCodeType:(NSString * _Nonnull)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError * _Nullable * _Nullable)error;
 - (void) resetCheatCodes;
 - (void) useRetroArchController:(BOOL)flag;
-- (void) controllerConnected:(NSNotification *)notification;
-- (void) controllerDisconnected:(NSNotification *)notification;
+- (void) controllerConnected:(NSNotification * _Nonnull)notification;
+- (void) controllerDisconnected:(NSNotification * _Nonnull)notification;
 - (void) processKeyPress:(int)key pressed:(bool)pressed;
 - (void) setVolume;
 - (void) setSpeed;
-- (void) syncResources:(NSString*)from to:(NSString*)to;
+- (void) syncResources:(NSString * _Nonnull)from to:(NSString * _Nonnull)to;
 - (void) setupJoypad;
 // Viewport positioning API
 - (void)setUseCustomRenderViewLayout:(BOOL)enabled;
 - (void)applyRenderViewFrameInTouchView:(CGRect)frame;
 @end
+
+NS_ASSUME_NONNULL_END
 
 /* iOS UI */
 #if TARGET_OS_TV
@@ -143,6 +154,8 @@
 #define UIUserInterfaceIdiomCarPlay 3
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 #if TARGET_OS_IOS
 @class EmulatorKeyboardController;
 
@@ -157,18 +170,18 @@
 #endif
 
 #if TARGET_OS_IOS && defined(HAVE_IOS_CUSTOMKEYBOARD)
-@property(nonatomic,strong) EmulatorKeyboardController *keyboardController;
+@property(nonatomic,strong) EmulatorKeyboardController * _Nullable keyboardController;
 @property(nonatomic,assign) unsigned int keyboardModifierState;
 -(void)toggleCustomKeyboard;
--(void)handle_touch_event:(NSSet*) touches;
+-(void)handle_touch_event:(NSSet * _Nonnull)touches;
 #endif
 
 #ifdef HAVE_IOS_TOUCHMOUSE
-@property(nonatomic,strong) EmulatorTouchMouseHandler *mouseHandler;
+@property(nonatomic,strong) EmulatorTouchMouseHandler * _Nullable mouseHandler;
 #endif
 
 #if defined(HAVE_IOS_SWIFT)
-@property(nonatomic,strong) UIView *helperBarView;
+@property(nonatomic,strong) UIView * _Nullable helperBarView;
 #endif
 
 #if TARGET_OS_IOS
@@ -178,27 +191,30 @@
 #endif
 #endif
 
-@property(nonatomic,readwrite) CADisplayLink *displayLink;
+@property(nonatomic,readwrite) CADisplayLink * _Nullable displayLink;
 
-+ (CocoaView*)get;
++ (CocoaView * _Nonnull)get;
 @end
 
-void get_ios_version(int *major, int *minor);
+NS_ASSUME_NONNULL_END
+
 #else
 #define RAScreen NSScreen
 
+NS_ASSUME_NONNULL_BEGIN
 @interface CocoaView : NSView
 
-+ (CocoaView*)get;
++ (CocoaView * _Nonnull)get;
 #if !defined(HAVE_COCOA) && !defined(HAVE_COCOA_METAL)
 - (void)display;
 #endif
 
 #if __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000
-@property(nonatomic,readwrite) CADisplayLink *displayLink API_AVAILABLE(macos(14.0));
+@property(nonatomic,readwrite) CADisplayLink * _Nullable displayLink API_AVAILABLE(macos(14.0));
 #endif
 
 @end
+NS_ASSUME_NONNULL_END
 #endif
 
 typedef struct
@@ -217,11 +233,11 @@ extern apple_frontend_settings_t apple_frontend_settings;
 #if defined(__clang__)
 /* ARC is only available for Clang */
 #if __has_feature(objc_arc)
-#define RELEASE(x)   x = nil
+#define PVRA_OBJC_RELEASE(x)   x = nil
 #define BRIDGE       __bridge
 #define UNSAFE_UNRETAINED __unsafe_unretained
 #else
-#define RELEASE(x)   [x release]; \
+#define PVRA_OBJC_RELEASE(x)   [x release]; \
 	x = nil
 #define BRIDGE
 #define UNSAFE_UNRETAINED
@@ -229,14 +245,14 @@ extern apple_frontend_settings_t apple_frontend_settings;
 #else
 /* On compilers other than Clang (e.g. GCC), assume ARC
 	is going to be unavailable */
-#define RELEASE(x)   [x release]; \
+#define PVRA_OBJC_RELEASE(x)   [x release]; \
 	x = nil
 #define BRIDGE
 #define UNSAFE_UNRETAINED
 #endif
 
-void get_ios_version(int *major, int *minor);
-extern __weak PVRetroArchCoreBridge *_current;
+void get_ios_version(int * _Nonnull major, int * _Nonnull minor);
+extern __weak PVRetroArchCoreBridge * _Nullable _current;
 #define RETRO_DEVICE_KEYBOARD 3
 #ifndef KEYCODE_KEYCODE_H
 #define KEYCODE_KEYCODE_H
@@ -389,6 +405,7 @@ void menuToggle();
 #define RETROARCH_DEFAULT_OVERLAY "/RetroArch/overlays/gamepads/neo-retropad/neo-retropad-clear.cfg"
 
 // Disc swap
+NS_ASSUME_NONNULL_BEGIN
 @interface PVRetroArchCoreBridge (DiscSwappable)
 @property (readonly) unsigned long numberOfDiscs;
 @property (readonly) BOOL currentGameSupportsMultipleDiscs;
@@ -399,14 +416,13 @@ void menuToggle();
 - (BOOL)isEjected;
 @end
 
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
-#pragma clang diagnostic ignored "-Wnone"
 #pragma clang diagnostic ignored "-Wmodule-import-in-extern-c"
-#import <PVRetroArch/core_option_manager.h>
-#pragma clang diagnostic pop
 @interface PVRetroArchCoreBridge (CoreOptions)
-+ (core_option_manager_t  * _Nullable ) getOptions;
+#pragma clang diagnostic pop
++ (core_option_manager_t * _Nullable)getOptions;
 
 /*! @brief Returns the path to the per-game .opt file for RetroArch core options
  *  @param gameFilename The filename of the game (ROM name without path)
@@ -415,7 +431,7 @@ void menuToggle();
  *  The returned path follows RetroArch's convention:
  *  <Documents>/RetroArch/config/<core_name>/<game_name>.opt
  */
-+ (NSString * _Nullable)perGameOptionsPathForGame:(NSString *)gameFilename;
++ (NSString * _Nullable)perGameOptionsPathForGame:(NSString * _Nonnull)gameFilename;
 
 /*! @brief Returns the path to the per-core global .opt file for RetroArch core options
  *  @return NSString path to the core's global .opt file, or nil if paths cannot be determined
@@ -430,3 +446,5 @@ void menuToggle();
  */
 + (NSString * _Nullable)coreLibraryName;
 @end
+
+NS_ASSUME_NONNULL_END

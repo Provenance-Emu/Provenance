@@ -51,14 +51,6 @@ __attribute__((weak_import))
 - (void)setupEmuThreadFBO;
 - (void)destroyEmuThreadFBO;
 
-// Touch and mouse input support
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-- (void)handleTouchEvent:(UIEvent *_Nonnull)event;
-#else
-- (void)handleMouseEvent:(NSEvent *_Nonnull)event;
-#endif
-- (int16_t)getPointerState:(unsigned)port device:(unsigned)device index:(unsigned)index id:(unsigned)id;
-
 @end
 
 NS_ASSUME_NONNULL_END

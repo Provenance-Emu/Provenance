@@ -24,6 +24,10 @@ let package = Package(
             name: "PVCoreBridge-Static",
             type: .static,
             targets: ["PVCoreBridge"]),
+        // ObjC-compatible forward declarations — import in .h files
+        .library(
+            name: "PVCoreBridgeTypes",
+            targets: ["PVCoreBridgeTypes"]),
     ],
 
     dependencies: [
@@ -92,6 +96,15 @@ let package = Package(
 //            ]
 //        ),
 
+
+        // Pure ObjC header target — forward-declares all @objc types from PVCoreBridge.
+        // ObjC .h files can `#import <PVCoreBridgeTypes/PVCoreBridgeTypes.h>` or `@import PVCoreBridgeTypes;`
+        // then `@import PVCoreBridge;` in .m/.mm files for full definitions.
+        .target(
+            name: "PVCoreBridgeTypes",
+            dependencies: [],
+            publicHeadersPath: "include"
+        ),
 
         // MARK: SwiftPM tests
         .testTarget(

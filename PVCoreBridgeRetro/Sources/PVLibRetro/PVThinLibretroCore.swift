@@ -29,7 +29,7 @@ import CoreHaptics
 /// `principleClass` lookups still work.
 // swiftlint:disable:next attributes
 @objc(PVThinLibretroCore) @objcMembers
-class PVThinLibretroCore: PVEmulatorCore {
+class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
 
     // MARK: Lifecycle
 
@@ -439,8 +439,7 @@ class PVThinLibretroCore: PVEmulatorCore {
 
     /// Set a core option only if it hasn't been set yet (preserves user overrides).
     private func setDefaultOption(_ key: String, value: String) {
-        let current = _bridge.coreOptions[key] as? String
-        if current == nil {
+        if _bridge.coreOptions[key] == nil {
             _bridge.setCoreOption(key, value: value)
         }
     }
@@ -448,7 +447,7 @@ class PVThinLibretroCore: PVEmulatorCore {
 
 // MARK: - CoreOptional
 
-extension PVThinLibretroCore: @preconcurrency CoreOptional {
+extension PVThinLibretroCore: CoreOptional {
 
     static var options: [CoreOption] {
         guard let instance = PVThinLibretroCore.current else {

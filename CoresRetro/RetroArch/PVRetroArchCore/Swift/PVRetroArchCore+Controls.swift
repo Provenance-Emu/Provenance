@@ -20,28 +20,29 @@ extension CocoaView {
 		helperVC.viewModel = viewModel
 		addChild(helperVC)
 		helperVC.didMove(toParent: self)
-		helperBarView = helperVC.view
-		helperBarView.translatesAutoresizingMaskIntoConstraints = false
-		helperBarView.isUserInteractionEnabled = true
-		helperBarView.layer.zPosition = 1000
+		guard let barView = helperVC.view else { return }
+		helperBarView = barView
+		barView.translatesAutoresizingMaskIntoConstraints = false
+		barView.isUserInteractionEnabled = true
+		barView.layer.zPosition = 1000
 
 		/// Add to mtkView (superview) if available, so it's a sibling of Metal container
 		/// Otherwise add to rootView (self.view)
 		if let mtkView = view.superview {
-			helperBarView.removeFromSuperview()
-			mtkView.addSubview(helperBarView)
-			helperBarView.leadingAnchor.constraint(equalTo: mtkView.leadingAnchor).isActive = true
-			helperBarView.trailingAnchor.constraint(equalTo: mtkView.trailingAnchor).isActive = true
-			helperBarView.topAnchor.constraint(equalTo: mtkView.safeAreaLayoutGuide.topAnchor).isActive = true
-			helperBarView.heightAnchor.constraint(equalToConstant: 75).isActive = true
-			mtkView.bringSubviewToFront(helperBarView)
+			barView.removeFromSuperview()
+			mtkView.addSubview(barView)
+			barView.leadingAnchor.constraint(equalTo: mtkView.leadingAnchor).isActive = true
+			barView.trailingAnchor.constraint(equalTo: mtkView.trailingAnchor).isActive = true
+			barView.topAnchor.constraint(equalTo: mtkView.safeAreaLayoutGuide.topAnchor).isActive = true
+			barView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+			mtkView.bringSubviewToFront(barView)
 		} else {
-			view.addSubview(helperBarView)
-			helperBarView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-			helperBarView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-			helperBarView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-			helperBarView.heightAnchor.constraint(equalToConstant: 75).isActive = true
-			view.bringSubviewToFront(helperBarView)
+			view.addSubview(barView)
+			barView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+			barView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+			barView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+			barView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+			view.bringSubviewToFront(barView)
 		}
 	}
 }
@@ -60,10 +61,11 @@ extension CocoaView: HelperBarActionDelegate {
 
 	func mouseButtonTapped() {
 #if !os(tvOS)
-		mouseHandler.enabled.toggle()
-        let message = mouseHandler.enabled ? "Touch Mouse Enabled" : "Touch Mouse Disabled"
-        runloop_msg_queue_push(message.cString(using: .utf8)!,
-                               message.lengthOfBytes(using: .utf8),
+		guard let handler = mouseHandler else { return }
+		handler.enabled.toggle()
+        let message = handler.enabled ? "Touch Mouse Enabled" : "Touch Mouse Disabled"
+        runloop_msg_queue_push(message.cString(using: String.Encoding.utf8)!,
+                               message.lengthOfBytes(using: String.Encoding.utf8),
                                1, 100, true, nil, MESSAGE_QUEUE_ICON_DEFAULT, MESSAGE_QUEUE_CATEGORY_SUCCESS)
 #endif
 	}
@@ -77,7 +79,8 @@ extension CocoaView: HelperBarActionDelegate {
 
 	var isKeyboardEnabled: Bool {
         #if !os(tvOS)
-		!keyboardController.view.isHidden
+		guard let kc = keyboardController else { return false }
+		return !kc.view.isHidden
         #else
         return false
         #endif
@@ -87,7 +90,7 @@ extension CocoaView: HelperBarActionDelegate {
 #if os(tvOS)
         false
 #else
-		mouseHandler.enabled
+		mouseHandler?.enabled ?? false
 #endif
 	}
 }
@@ -270,25 +273,25 @@ extension CocoaView {
 
 	open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 #if !os(tvOS)
-		 mouseHandler.touchesBegan(touches: touches, event: event)
+		mouseHandler?.touchesBegan(touches: touches, event: event)
 #endif
 	}
 
 	open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
 #if !os(tvOS)
-        mouseHandler.touchesMoved(touches: touches)
+        mouseHandler?.touchesMoved(touches: touches)
 #endif
 	}
 
 	open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
 #if !os(tvOS)
-        mouseHandler.touchesCancelled(touches: touches, event: event)
+        mouseHandler?.touchesCancelled(touches: touches, event: event)
 #endif
 	}
 
 	open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 #if !os(tvOS)
-        mouseHandler.touchesEnded(touches: touches, event: event)
+        mouseHandler?.touchesEnded(touches: touches, event: event)
 #endif
 	}
 }
@@ -518,22 +521,23 @@ extension CocoaView {
 
 	@objc public func setupEmulatorKeyboard() {
         #if !os(tvOS)
-		keyboardController = EmulatorKeyboardController(leftKeyboardModel: leftKeyboardModel, rightKeyboardModel: rightKeyboardModel)
-		keyboardController.leftKeyboardModel.delegate = self;
-		keyboardController.rightKeyboardModel.delegate = self;
-		addChild(keyboardController)
-		keyboardController.didMove(toParent: self)
-		keyboardController.view.translatesAutoresizingMaskIntoConstraints = false
-		view.addSubview(keyboardController.view)
-		keyboardController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-		keyboardController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-		keyboardController.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-		keyboardController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-		keyboardController.leftKeyboardModel.delegate = self
-		keyboardController.rightKeyboardModel.delegate = self
-		keyboardController.leftKeyboardModel.modifierDelegate = self
-		keyboardController.rightKeyboardModel.modifierDelegate = self
-		keyboardController.view.isHidden = true
+		let kc = EmulatorKeyboardController(leftKeyboardModel: leftKeyboardModel, rightKeyboardModel: rightKeyboardModel)
+		keyboardController = kc
+		kc.leftKeyboardModel.delegate = self;
+		kc.rightKeyboardModel.delegate = self;
+		addChild(kc)
+		kc.didMove(toParent: self)
+		kc.view.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(kc.view)
+		kc.view.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+		kc.view.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+		kc.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+		kc.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+		kc.leftKeyboardModel.delegate = self
+		kc.rightKeyboardModel.delegate = self
+		kc.leftKeyboardModel.modifierDelegate = self
+		kc.rightKeyboardModel.modifierDelegate = self
+		kc.view.isHidden = true
 		keyboardModifierState = 0
         #endif
 	}

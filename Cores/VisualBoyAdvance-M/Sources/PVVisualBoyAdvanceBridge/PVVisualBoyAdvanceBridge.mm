@@ -24,6 +24,10 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef GLES_SILENCE_DEPRECATION
+#define GLES_SILENCE_DEPRECATION 1
+#endif
+
 @import PVEmulatorCore;
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
@@ -215,6 +219,23 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 
 @implementation PVVisualBoyAdvanceBridge
 @synthesize valueChangedHandler;
+
+#if !TARGET_OS_WATCH
+/// Required by `EmulatorCoreControllerDataSource` (`controller(forPlayer:)` in Swift).
+- (GCController * _Nullable)controllerForPlayer:(NSUInteger)player {
+    switch (player) {
+        case 1: return self.controller1;
+        case 2: return self.controller2;
+        case 3: return self.controller3;
+        case 4: return self.controller4;
+        case 5: return self.controller5;
+        case 6: return self.controller6;
+        case 7: return self.controller7;
+        case 8: return self.controller8;
+        default: return nil;
+    }
+}
+#endif
 
 - (instancetype)init {
     if((self = [super init])) {
@@ -574,6 +595,9 @@ static void pvvba_login_callback(int result, const char * __unused error_message
 
 # pragma mark - Save States
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
     @synchronized(self) {
         BOOL success = vba.emuWriteState([fileName UTF8String]);
@@ -596,7 +620,8 @@ static void pvvba_login_callback(int result, const char * __unused error_message
     }
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
+/// `EmulatorCoreSavesSerializer` exposes this selector (`@objc(loadStateToFileAtPath:error:)`).
+- (BOOL)loadStateToFileAtPath:(NSString *)fileName error:(NSError **)error {
     @synchronized(self) {
         BOOL success = vba.emuReadState([fileName UTF8String]);
 		if (!success) {
@@ -617,6 +642,12 @@ static void pvvba_login_callback(int result, const char * __unused error_message
 		return success;
     }
 }
+
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
+    return [self loadStateToFileAtPath:fileName error:error];
+}
+
+#pragma clang diagnostic pop
 
 # pragma mark - Input
 

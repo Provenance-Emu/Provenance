@@ -810,9 +810,6 @@
 		B3A53F632C93F04100D36642 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3A53F642C93F04100D36642 /* PVPPSSPPCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVPPSSPPCore.swift; sourceTree = "<group>"; };
 		B3A53F672C93F0A600D36642 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
-		B3FF10002F600000004A9955 /* PVPPSSPPCore+Netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVPPSSPPCore+Netplay.h"; sourceTree = "<group>"; };
-		B3FF10012F600000004A9955 /* PVPPSSPPCore+Netplay.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPPSSPPCore+Netplay.mm"; sourceTree = "<group>"; };
-		B3FF10022F600000004A9955 /* PVPPSSPPCore+PVNetplayCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVPPSSPPCore+PVNetplayCapable.swift"; sourceTree = "<group>"; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVPPSSPP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPPSSPP.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -822,6 +819,9 @@
 		B3C76223207833DE009950E4 /* PVPPSSPPCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPPSSPPCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVPPSSPPCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVPPSSPPCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3FF10002F600000004A9955 /* PVPPSSPPCore+Netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVPPSSPPCore+Netplay.h"; sourceTree = "<group>"; };
+		B3FF10012F600000004A9955 /* PVPPSSPPCore+Netplay.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPPSSPPCore+Netplay.mm"; sourceTree = "<group>"; };
+		B3FF10022F600000004A9955 /* PVPPSSPPCore+PVNetplayCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVPPSSPPCore+PVNetplayCapable.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2225,6 +2225,7 @@
 					"'STACK_LINE_READER_BUFFER_SIZE=1024'",
 					"$(inherited)",
 				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					./libretro_ppsspp/ext/glslang,
@@ -2657,6 +2658,7 @@
 					"'STACK_LINE_READER_BUFFER_SIZE=1024'",
 					"$(inherited)",
 				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					./libretro_ppsspp/ext/glslang,

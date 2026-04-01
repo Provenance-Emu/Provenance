@@ -108,6 +108,7 @@
 		B338090D2877B9F10009C732 /* ARM_InstrInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B338068A2877B5080009C732 /* ARM_InstrInfo.cpp */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
+		B33E16A12F7C4B1C0028E627 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98B52C6EEF6600C1431E /* PVSupport */; };
 		B341AD962E2C0C3E00B18E76 /* opengl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33806AB2877B5080009C732 /* opengl.cpp */; };
 		B3447E9C218B826F00557ACE /* PVMelonDS+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E9A218B826F00557ACE /* PVMelonDS+Audio.h */; };
 		B3447E9F218B858100557ACE /* PVMelonDSCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVMelonDSCore+Controls.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -120,6 +121,10 @@
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B39313802870FB9A00372EBB /* libMelonDS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libMelonDS.a */; };
+		B3A1B0032F6AB000004A9956 /* PVMelonDSCore+Netplay.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A1B0002F6AB000004A9956 /* PVMelonDSCore+Netplay.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3A1B0042F6AB000004A9956 /* PVMelonDSCore+Netplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A1B0012F6AB000004A9956 /* PVMelonDSCore+Netplay.mm */; };
+		B3A1B0052F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A1B0022F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift */; };
+		B3A1B0062F6AB000004A9956 /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3A1B0082F6AB000004A9956 /* PVNetplay */; };
 		B3A483452F569C08004A995B /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = B3A483442F569C08004A995B /* PVPrimitives */; };
 		B3C7621520783162009950E4 /* PVMelonDS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVMelonDS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, xros, ); };
@@ -157,10 +162,6 @@
 		B3F8E1162CB3CCEC00017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1152CB3CCEC00017D1B /* CorePlist-Generated.swift */; };
 		B3F8E1172CB3CCEC00017D1B /* PVMelonDSCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1132CB3CCEC00017D1B /* PVMelonDSCore.swift */; };
 		B3F8E1182CB3CCEC00017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1142CB3CCEC00017D1B /* CorePlist.swift */; };
-		B3A1B0032F6AB000004A9956 /* PVMelonDSCore+Netplay.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A1B0002F6AB000004A9956 /* PVMelonDSCore+Netplay.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A1B0042F6AB000004A9956 /* PVMelonDSCore+Netplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A1B0012F6AB000004A9956 /* PVMelonDSCore+Netplay.mm */; };
-		B3A1B0052F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A1B0022F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift */; };
-		B3A1B0062F6AB000004A9956 /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3A1B0082F6AB000004A9956 /* PVNetplay */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -225,7 +226,7 @@
 		93C36BC52A8B403B0007671D /* melon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = melon.icns; sourceTree = "<group>"; };
 		93C36BC62A8B403B0007671D /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		93C36BC72A8B403B0007671D /* melon.qrc */ = {isa = PBXFileReference; lastKnownFileType = text; path = melon.qrc; sourceTree = "<group>"; };
-		93C36BC82A8B403B0007671D /* contributing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
+		93C36BC82A8B403B0007671D /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
 		93C36BCA2A8B403B0007671D /* FUNDING.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = FUNDING.yml; sourceTree = "<group>"; };
 		93C36BCC2A8B403B0007671D /* build-mac-arm64.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = "build-mac-arm64.yml"; sourceTree = "<group>"; };
 		93C36BCD2A8B403B0007671D /* build-mac-x86_64.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = "build-mac-x86_64.yml"; sourceTree = "<group>"; };
@@ -925,7 +926,7 @@
 		B338057B2877B5080009C732 /* melon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = melon.icns; sourceTree = "<group>"; };
 		B338057C2877B5080009C732 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B338057D2877B5080009C732 /* melon.qrc */ = {isa = PBXFileReference; lastKnownFileType = text; path = melon.qrc; sourceTree = "<group>"; };
-		B338057E2877B5080009C732 /* contributing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
+		B338057E2877B5080009C732 /* contributing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = contributing.md; sourceTree = "<group>"; };
 		B33805802877B5080009C732 /* FUNDING.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = FUNDING.yml; sourceTree = "<group>"; };
 		B33805822877B5080009C732 /* build-mac-arm64.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = "build-mac-arm64.yml"; sourceTree = "<group>"; };
 		B33805832877B5080009C732 /* build-mac-x86_64.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = "build-mac-x86_64.yml"; sourceTree = "<group>"; };
@@ -1618,6 +1619,9 @@
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B364D4B62870E7D300B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3A1B0002F6AB000004A9956 /* PVMelonDSCore+Netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVMelonDSCore+Netplay.h"; sourceTree = "<group>"; };
+		B3A1B0012F6AB000004A9956 /* PVMelonDSCore+Netplay.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVMelonDSCore+Netplay.mm"; sourceTree = "<group>"; };
+		B3A1B0022F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVMelonDSCore+PVNetplayCapable.swift"; sourceTree = "<group>"; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVMelonDS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMelonDS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVMelonDS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMelonDS.h; sourceTree = "<group>"; };
@@ -1635,9 +1639,6 @@
 		B3F8E1132CB3CCEC00017D1B /* PVMelonDSCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVMelonDSCore.swift; sourceTree = "<group>"; };
 		B3F8E1142CB3CCEC00017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3F8E1152CB3CCEC00017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
-		B3A1B0002F6AB000004A9956 /* PVMelonDSCore+Netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVMelonDSCore+Netplay.h"; sourceTree = "<group>"; };
-		B3A1B0012F6AB000004A9956 /* PVMelonDSCore+Netplay.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVMelonDSCore+Netplay.mm"; sourceTree = "<group>"; };
-		B3A1B0022F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVMelonDSCore+PVNetplayCapable.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1660,6 +1661,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B33E16A12F7C4B1C0028E627 /* PVSupport in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B3F8E1092CB3CB9D00017D1B /* PVSettings in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
@@ -1704,7 +1706,7 @@
 				93C36BC52A8B403B0007671D /* melon.icns */,
 				93C36BC62A8B403B0007671D /* .gitignore */,
 				93C36BC72A8B403B0007671D /* melon.qrc */,
-				93C36BC82A8B403B0007671D /* contributing.md */,
+				93C36BC82A8B403B0007671D /* CONTRIBUTING.md */,
 				93C36BC92A8B403B0007671D /* .github */,
 				93C36BD22A8B403B0007671D /* .gitlab-ci.yml */,
 				93C36BD32A8B403B0007671D /* icon */,
@@ -5646,13 +5648,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -5769,13 +5771,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_EXPLICIT_MODULES = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -6047,6 +6049,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B3A1B0072F6AB000004A9956 /* XCLocalSwiftPackageReference "../../PVNetplay" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVNetplay;
+		};
 		B3A483432F569C08004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPrimitives;
@@ -6071,16 +6077,22 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVEmulatorCore;
 		};
-		B3A1B0072F6AB000004A9956 /* XCLocalSwiftPackageReference "../../PVNetplay" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../PVNetplay;
-		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B30E98B52C6EEF6600C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B30E98B42C6EEF6600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */;
+			productName = PVSupport;
+		};
 		B30E99C82C6F03F300C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
+		};
+		B3A1B0082F6AB000004A9956 /* PVNetplay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3A1B0072F6AB000004A9956 /* XCLocalSwiftPackageReference "../../PVNetplay" */;
+			productName = PVNetplay;
 		};
 		B3A483442F569C08004A995B /* PVPrimitives */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -6105,16 +6117,6 @@
 		B3F8E1112CB3CC4B00017D1B /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
-		};
-		B3A1B0082F6AB000004A9956 /* PVNetplay */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3A1B0072F6AB000004A9956 /* XCLocalSwiftPackageReference "../../PVNetplay" */;
-			productName = PVNetplay;
-		};
-		B30E98B52C6EEF6600C1431E /* PVSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B30E98B42C6EEF6600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */;
-			productName = PVSupport;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

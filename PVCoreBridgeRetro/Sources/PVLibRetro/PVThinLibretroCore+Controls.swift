@@ -1692,6 +1692,9 @@ extension PVThinLibretroCore: PVA8SystemResponderClient {
         case .left:  return .left
         case .right: return .right
         case .fire:  return .b
+        case .optionKey: return .select
+        case .selectKey: return .select
+        case .startKey: return .start
         case .count: return .b
         @unknown default: return .b
         }

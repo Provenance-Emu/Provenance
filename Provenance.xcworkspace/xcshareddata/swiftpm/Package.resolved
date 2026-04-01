@@ -501,8 +501,8 @@
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {
           "branch": null,
-          "revision": "bbd81b6725ae874c69e9b8c8804d462356b55523",
-          "version": "1.10.1"
+          "revision": "8c0f217f01000dd30f60d6e536569ad4e74291f9",
+          "version": "1.11.0"
         }
       },
       {
@@ -609,8 +609,8 @@
         "repositoryURL": "https://github.com/swift-server/swift-service-lifecycle.git",
         "state": {
           "branch": null,
-          "revision": "89888196dd79c61c50bca9a103d8114f32e1e598",
-          "version": "2.10.1"
+          "revision": "9829955b385e5bb88128b73f1b8389e9b9c3191a",
+          "version": "2.11.0"
         }
       },
       {

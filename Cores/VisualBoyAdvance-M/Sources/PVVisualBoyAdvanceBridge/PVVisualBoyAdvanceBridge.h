@@ -32,6 +32,8 @@
 @protocol PVGBASystemResponderClient;
 typedef enum PVGBAButton: NSInteger PVGBAButton;
 
+NS_ASSUME_NONNULL_BEGIN
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 @interface PVVisualBoyAdvanceBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVGBASystemResponderClient>
@@ -56,8 +58,8 @@ typedef enum PVGBAButton: NSInteger PVGBAButton;
 - (void)tickAchievements;
 
 /// Load the game into `rc_client` using the provided MD5 hash.
-- (void)loadAchievementsForGameHash:(NSString *)gameHash
-                         completion:(void (^)(BOOL success))completion;
+- (void)loadAchievementsForGameHash:(NSString * _Nonnull)gameHash
+                         completion:(void (^ _Nullable)(BOOL success))completion;
 
 /// Unload the current game from `rc_client` and mark achievements inactive.
 - (void)unloadAchievements;
@@ -91,8 +93,10 @@ typedef enum PVGBAButton: NSInteger PVGBAButton;
 @end
 
 @interface PVVisualBoyAdvanceBridge (Cheats)
-- (BOOL)setCheatWithCode:(NSString *)code type:(NSString *)type codeType:(NSString *)codeType cheatIndex:(uint8_t)cheatIndex enabled:(BOOL)enabled;
-- (NSArray<NSString *> *)cheatCodeTypes;
+- (BOOL)setCheatWithCode:(NSString * _Nonnull)code type:(NSString * _Nonnull)type codeType:(NSString * _Nonnull)codeType cheatIndex:(uint8_t)cheatIndex enabled:(BOOL)enabled;
+- (NSArray<NSString *> * _Nonnull)cheatCodeTypes;
 - (BOOL)supportsCheatCode;
 - (void)resetCheatCodes;
 @end
+
+NS_ASSUME_NONNULL_END

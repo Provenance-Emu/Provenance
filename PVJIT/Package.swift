@@ -37,6 +37,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/SideStore/SideKit.git", revision: "ab959a54fc2217464ffabd09322ec3351e3ca456"),
 //        .package(url: "https://github.com/SideStore/SideKit.git", .upToNextMajor(from: "0.0.1")),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.0"),
         .package(name: "PVSupport", path: "../PVSupport/"),
         .package(name: "PVLogging", path: "../PVLogging/"),
     ],
@@ -47,8 +48,9 @@ let package = Package(
             name: "PVJIT",
             dependencies: [
                 "PVSupport",
-                "PVLogging",
-                .product(name: "SideKit", package: "SideKit", condition: .when(platforms: [.iOS])),
+                .product(name: "PVLogging", package: "pvlogging"),
+                /// SideKit supports tvOS; unconditional dep satisfies Swift 6 dependency scan for `#if _USE_ALTKIT` + `import SideKit` in JITManager sources.
+                .product(name: "SideKit", package: "sidekit"),
                 "JITManager",
                 "FastmemUtil"
             ],
@@ -82,9 +84,10 @@ let package = Package(
         .target(
             name: "JITManager",
             dependencies: [
-                "PVLogging",
+                .product(name: "PVLogging", package: "pvlogging"),
                 "DebuggerUtils",
-                .product(name: "SideKit", package: "SideKit", condition: .when(platforms: [.iOS])),
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "SideKit", package: "sidekit"),
             ],
             swiftSettings: [
                 .define("_USE_ALTKIT", .when(platforms: [.iOS])),
