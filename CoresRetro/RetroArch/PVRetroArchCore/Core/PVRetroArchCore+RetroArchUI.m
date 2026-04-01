@@ -1577,6 +1577,10 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     BOOL      capturedProcessingInit   = processing_init;
     if (capturedProcessingInit) processing_init = false;
 
+    ILOG(@"startVM: coreIdentifier=%@, romPath=%@, systemIdentifier=%@, retroArchRoot=%@",
+         capturedCoreIdentifier ?: @"(nil)", capturedRomPath ?: @"(nil)",
+         capturedSystemIdentifier ?: @"(nil)", capturedRetroArchRoot ?: @"(nil)");
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAudioSessionInterruption:) name:AVAudioSessionInterruptionNotification object:[AVAudioSession sharedInstance]];
 
 	[self refreshSystemConfig];
