@@ -49,6 +49,8 @@ extern GCController *touch_controller;
 }
 
 - (void)handle5200Button:(PV5200Button)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
+    static float xAxis=0;
+    static float yAxis=0;
     switch (button) {
         case(PV5200ButtonUp):
             yAxis=pressed?(!xAxis?1.0:0.5):0;
