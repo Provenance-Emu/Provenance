@@ -3,7 +3,7 @@ import UniformTypeIdentifiers
 
 /// View for importing Delta skins
 public struct DeltaSkinImportView: View {
-    @StateObject private var skinManager = DeltaSkinManager.shared
+    @ObservedObject private var skinManager = DeltaSkinManager.shared
     @Environment(\.dismiss) private var dismiss
 
     @State private var isShowingFilePicker = false

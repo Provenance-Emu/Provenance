@@ -3,7 +3,7 @@ import PVPrimitives
 
 /// View for configuring AI enhancements for Delta skins
 public struct DeltaSkinAIEnhancementView: View {
-    @StateObject private var enhancer = DeltaSkinAIEnhancer.shared
+    @ObservedObject private var enhancer = DeltaSkinAIEnhancer.shared
     @State private var showingInfo = false
     @State private var selectedMode: DeltaSkinAIEnhancer.EnhancementMode?
 
