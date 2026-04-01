@@ -191,16 +191,27 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         gameTiles.append(PauseMenuTile(id: "gameInfo", icon: "info.circle", label: String(localized: "Game Info"), colorKey: .blue))
 
-        // RetroArch menu — root-level for libretro cores
-        if emulatorVC.core.coreIdentifier?.contains("libretro") == true,
-           PauseMenuViewRegistry.retroArchSettingsView() != nil {
+        // RetroArch tiles — root-level for libretro cores
+        if emulatorVC.core.coreIdentifier?.contains("libretro") == true {
+            // Internal RetroArch menu (RGUI/XMB) toggle — handled via dismissThenResumeAndRun
             gameTiles.append(PauseMenuTile(
-                id: "retroArchSettings",
-                icon: "gearshape.2",
+                id: "retroArchMenu",
+                icon: "square.grid.2x2",
                 label: String(localized: "RetroArch Menu"),
-                colorKey: .cyan,
+                colorKey: .purple,
                 dismissOnTap: false
             ))
+
+            // Provenance-managed RetroArch settings sheet
+            if PauseMenuViewRegistry.retroArchSettingsView() != nil {
+                gameTiles.append(PauseMenuTile(
+                    id: "retroArchSettings",
+                    icon: "gearshape.2",
+                    label: String(localized: "RetroArch Settings"),
+                    colorKey: .cyan,
+                    dismissOnTap: false
+                ))
+            }
         }
 
         gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"), isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
@@ -442,9 +453,12 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         if let actions = (emulatorVC.core as? CoreActions)?.coreActions {
             let isPaletteProviding = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
-            let filteredActions = isPaletteProviding
-                ? actions.filter { $0.title != changePaletteLegacyActionTitle }
-                : actions
+            let isLibretro = emulatorVC.core.coreIdentifier?.contains("libretro") == true
+            let filteredActions = actions.filter { action in
+                if isPaletteProviding && action.title == changePaletteLegacyActionTitle { return false }
+                if isLibretro && action.title == RetroArchCoreActionTitles.internalMenu { return false }
+                return true
+            }
             if !filteredActions.isEmpty {
                 coreTiles += CoreActionTileProvider.tiles(from: filteredActions)
             }

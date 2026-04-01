@@ -1200,14 +1200,41 @@ struct RetroMenuView: View {
             }
             #endif
 
-            // RetroArch settings button (only for libretro cores)
-            if emulatorVC.core.coreIdentifier?.contains("libretro") == true,
-               PauseMenuViewRegistry.retroArchSettingsView() != nil {
-                menuButton(title: String(localized: "RETROARCH SETTINGS"), icon: "gearshape.2", color: .retroCyan) {
-                    showingRetroArchSettings = true
-                }
-                .sheet(isPresented: $showingRetroArchSettings) {
-                    PauseMenuViewRegistry.retroArchSettingsView()
+            // RetroArch internal menu (RGUI/XMB) + Provenance RetroArch settings (libretro cores)
+            if emulatorVC.core.coreIdentifier?.contains("libretro") == true {
+                let retroArchMenuAction = (emulatorVC.core as? CoreActions)?
+                    .coreActions?
+                    .first(where: { $0.title == RetroArchCoreActionTitles.internalMenu })
+                let retroArchSettings = PauseMenuViewRegistry.retroArchSettingsView()
+                if let menuAction = retroArchMenuAction, let settings = retroArchSettings {
+                    HStack(spacing: 12) {
+                        menuButton(title: String(localized: "RETROARCH MENU"), icon: "square.grid.2x2", color: .retroPurple) {
+                            dismissMenuThenResumeAndRun {
+                                emulatorVC.handleCoreAction(menuAction)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        menuButton(title: String(localized: "RETROARCH SETTINGS"), icon: "gearshape.2", color: .retroCyan) {
+                            showingRetroArchSettings = true
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .sheet(isPresented: $showingRetroArchSettings) {
+                        settings
+                    }
+                } else if let menuAction = retroArchMenuAction {
+                    menuButton(title: String(localized: "RETROARCH MENU"), icon: "square.grid.2x2", color: .retroPurple) {
+                        dismissMenuThenResumeAndRun {
+                            emulatorVC.handleCoreAction(menuAction)
+                        }
+                    }
+                } else if let settings = retroArchSettings {
+                    menuButton(title: String(localized: "RETROARCH SETTINGS"), icon: "gearshape.2", color: .retroCyan) {
+                        showingRetroArchSettings = true
+                    }
+                    .sheet(isPresented: $showingRetroArchSettings) {
+                        settings
+                    }
                 }
             }
 
