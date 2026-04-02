@@ -343,7 +343,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         stopObserving()
         var result: SyncResult = .indeterminate
         defer {
-            CloudSyncManager.syncLog.event(.sync, item: "container/remove", status: result == .success ? .completed : .failed, detail: "\(directories) removed from iCloud result: \(result)")
+            CloudSyncManager.syncLog.event(.sync, item: "container/remove", status: result == .success ? .ok : .failed, detail: "\(directories) removed from iCloud result: \(result)")
         }
         let allDirectories = localAndCloudDirectories
         guard allDirectories.count > 0
