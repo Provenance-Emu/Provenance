@@ -98,104 +98,60 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     // MARK: - View Components
 
+    /// Shared display toggles for the options menu (iOS and tvOS).
+    @ViewBuilder
+    private var displayOptionsToggleRows: some View {
+        HapticFeedbackToggle(isOn: $showGameTitles) {
+            Label("Show Game Titles", systemImage: "textformat")
+        }
+        HapticFeedbackToggle(isOn: $scrollLongGameTitles) {
+            Label("Scroll Long Titles", systemImage: "textformat.characters.arrow.left.and.right")
+        }
+        HapticFeedbackToggle(isOn: $showSearchbar) {
+            Label("Show Search Bar", systemImage: "magnifyingglass")
+        }
+        HapticFeedbackToggle(isOn: $showRecentGames) {
+            Label("Show Recent Games", systemImage: "clock")
+        }
+        HapticFeedbackToggle(isOn: $showRecentSaveStates) {
+            Label("Show Save States", systemImage: "bookmark")
+        }
+        HapticFeedbackToggle(isOn: $showFavorites) {
+            Label("Show Favorites", systemImage: "star")
+        }
+        HapticFeedbackToggle(isOn: $showGameBadges) {
+            Label("Show Badges", systemImage: "rosette")
+        }
+    }
+
     @ViewBuilder
     private var displayOptionsMenu: some View {
 #if !os(tvOS)
         Menu {
-            Toggle(isOn: $showGameTitles) {
-                Label("Show Game Titles", systemImage: "textformat")
-            }
-            .onChange(of: showGameTitles) { _ in
-                Haptics.impact(style: .light)
-            }
-            Toggle(isOn: $scrollLongGameTitles) {
-                Label("Scroll Long Titles", systemImage: "text.line.first.and.arrowtriangle.forward")
-            }
-            .onChange(of: scrollLongGameTitles) { _ in
-                Haptics.impact(style: .light)
-            }
-            Toggle(isOn: $showSearchbar) {
-                Label("Show Search Bar", systemImage: "magnifyingglass")
-            }
-            .onChange(of: showSearchbar) { _ in
-                Haptics.impact(style: .light)
-            }
-            Toggle(isOn: $showRecentGames) {
-                Label("Show Recent Games", systemImage: "clock")
-            }
-            .onChange(of: showRecentGames) { _ in
-                Haptics.impact(style: .light)
-            }
-            Toggle(isOn: $showRecentSaveStates) {
-                Label("Show Save States", systemImage: "bookmark")
-            }
-            .onChange(of: showRecentSaveStates) { _ in
-                Haptics.impact(style: .light)
-            }
-            Toggle(isOn: $showFavorites) {
-                Label("Show Favorites", systemImage: "star")
-            }
-            .onChange(of: showFavorites) { _ in
-                Haptics.impact(style: .light)
-            }
-            Toggle(isOn: $showGameBadges) {
-                Label("Show Badges", systemImage: "rosette")
-            }
-            .onChange(of: showGameBadges) { _ in
-                Haptics.impact(style: .light)
-            }
-            Toggle(isOn: $scrollLongGameTitles) {
-                Label("Scroll Game Titles", systemImage: "textformat.characters.arrow.left.and.right")
-            }
-        }
-        label: {
-            ZStack {
-                Color.clear.frame(width: iconSize, height: iconSize)
-                Image(systemName: "line.3.horizontal.decrease.circle")
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .font(font)
-            }
-            .contentShape(Rectangle())
+            displayOptionsToggleRows
+        } label: {
+            displayOptionsMenuLabel
         }
 #else
         if #available(tvOS 17.0, *) {
             Menu {
-                Toggle(isOn: $showGameTitles) {
-                    Label("Show Game Titles", systemImage: "textformat")
-                }
-                Toggle(isOn: $scrollLongGameTitles) {
-                    Label("Scroll Long Titles", systemImage: "text.line.first.and.arrowtriangle.forward")
-                }
-                Toggle(isOn: $showSearchbar) {
-                    Label("Show Search Bar", systemImage: "magnifyingglass")
-                }
-                Toggle(isOn: $showRecentGames) {
-                    Label("Show Recent Games", systemImage: "clock")
-                }
-                Toggle(isOn: $showRecentSaveStates) {
-                    Label("Show Save States", systemImage: "bookmark")
-                }
-                Toggle(isOn: $showFavorites) {
-                    Label("Show Favorites", systemImage: "star")
-                }
-                Toggle(isOn: $showGameBadges) {
-                    Label("Show Badges", systemImage: "rosette")
-                }
-                Toggle(isOn: $scrollLongGameTitles) {
-                    Label("Scroll Game Titles", systemImage: "textformat.characters.arrow.left.and.right")
-                }
-            }
-            label: {
-                ZStack {
-                    Color.clear.frame(width: iconSize, height: iconSize)
-                    Image(systemName: "line.3.horizontal.decrease.circle")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(font)
-                }
-                .contentShape(Rectangle())
+                displayOptionsToggleRows
+            } label: {
+                displayOptionsMenuLabel
             }
         }
 #endif
+    }
+
+    /// Trailing label for the display options `Menu`.
+    private var displayOptionsMenuLabel: some View {
+        ZStack {
+            Color.clear.frame(width: iconSize, height: iconSize)
+            Image(systemName: "line.3.horizontal.decrease.circle")
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .font(font)
+        }
+        .contentShape(Rectangle())
     }
 
     @ViewBuilder
@@ -207,9 +163,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
             // Sort indicator
             OptionsIndicator(pointDown: viewModel.sortGamesAscending, action: {
-                #if !os(tvOS)
-                Haptics.impact(style: .light)
-                #endif
+                Haptics.impact(strength: .light)
                 toggleSortAction()
             }) {
                 ZStack {
@@ -223,9 +177,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
             // View type toggle
             Button(action: {
-                #if !os(tvOS)
-                Haptics.impact(style: .light)
-                #endif
+                Haptics.impact(strength: .light)
                 toggleViewTypeAction()
             }) {
                 ZStack {
@@ -240,11 +192,8 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             Divider()
                 .frame(width: 1, height: 12)
 
-            // Zoom out
+            // Zoom out (haptic only when zoom applies — see `zoomOut()`)
             Button(action: {
-                #if !os(tvOS)
-                Haptics.impact(style: .light)
-                #endif
                 zoomOut()
             }) {
                 ZStack {
@@ -257,11 +206,8 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             .disabled(!canZoomOut)
             .contentShape(Rectangle())
 
-            // Zoom in
+            // Zoom in (haptic only when zoom applies — see `zoomIn()`)
             Button(action: {
-                #if !os(tvOS)
-                Haptics.impact(style: .light)
-                #endif
                 zoomIn()
             }) {
                 ZStack {
@@ -294,9 +240,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
                 // Log viewer
                 Button(action: {
-#if !os(tvOS)
-                    Haptics.impact(style: .light)
-#endif
+                    Haptics.impact(strength: .light)
                     if let action = logViewerAction {
                         action()
                     }
@@ -304,9 +248,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                     Label("View Logs", systemImage: "doc.text")
                 }
                 Button(action: {
-#if !os(tvOS)
-                    Haptics.impact(style: .light)
-#endif
+                    Haptics.impact(strength: .light)
                     if let action = systemStatusAction {
                         action()
                     } else {
@@ -319,9 +261,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 // Import status - only show if we have an action or binding
                 if importStatusAction != nil || showImportStatusView != nil {
                     Button(action: {
-#if !os(tvOS)
-                        Haptics.impact(style: .light)
-#endif
+                        Haptics.impact(strength: .light)
                         if let action = importStatusAction {
                             action()
                         }
@@ -347,18 +287,14 @@ struct GamesDisplayOptionsView: SwiftUI.View {
 
     private func zoomIn() {
         if canZoomIn {
-            #if !os(tvOS)
-            Haptics.impact(style: .light)
-            #endif
+            Haptics.impact(strength: .light)
             Defaults[.gameLibraryScale] -= 1
         }
     }
 
     private func zoomOut() {
         if canZoomOut {
-            #if !os(tvOS)
-            Haptics.impact(style: .light)
-            #endif
+            Haptics.impact(strength: .light)
             Defaults[.gameLibraryScale] += 1
         }
     }
@@ -372,9 +308,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
         case .home:
             // Main app settings button
             Button(action: {
-                #if !os(tvOS)
-                Haptics.impact(style: .light)
-                #endif
+                Haptics.impact(strength: .light)
                 if let action = settingsAction {
                     action()
                 }
@@ -385,9 +319,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
         case .console(let system):
             // App settings (like HomeView)
             Button(action: {
-                #if !os(tvOS)
-                Haptics.impact(style: .light)
-                #endif
+                Haptics.impact(strength: .light)
                 if let action = settingsAction {
                     action()
                 }
@@ -398,9 +330,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             // Skin selection for system
             if let skinAction = skinSelectionAction {
                 Button(action: {
-                    #if !os(tvOS)
-                    Haptics.impact(style: .light)
-                    #endif
+                    Haptics.impact(strength: .light)
                     skinAction()
                 }) {
                     Label("Controller Skins", systemImage: "gamecontroller")
@@ -410,9 +340,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             // Browse skin catalog for system
             if let catalogAction = skinCatalogAction {
                 Button(action: {
-                    #if !os(tvOS)
-                    Haptics.impact(style: .light)
-                    #endif
+                    Haptics.impact(strength: .light)
                     catalogAction()
                 }) {
                     Label("Browse Skin Catalog", systemImage: "arrow.down.circle")
@@ -425,9 +353,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             ForEach(system.cores, id: \.identifier) { core in
                 if let coreClass = NSClassFromString(core.principleClass) as? CoreOptional.Type {
                     Button(action: {
-                        #if !os(tvOS)
-                        Haptics.impact(style: .light)
-                        #endif
+                        Haptics.impact(strength: .light)
                         presentCoreOptions(for: coreClass, title: core.projectName)
                     }) {
                         Label("\(core.projectName) Options", systemImage: "slider.horizontal.3")
