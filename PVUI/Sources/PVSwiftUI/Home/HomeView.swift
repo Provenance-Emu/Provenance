@@ -707,22 +707,8 @@ struct HomeView: SwiftUI.View {
         )
         .padding(.vertical, 12)
         .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.black.opacity(0.7))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-        )
-        .shadow(color: RetroTheme.retroPurple.opacity(0.7), radius: 3, x: 0, y: 0)
+        .retroPausePanelBackground(isDark: themeManager.currentPalette.dark)
+        .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
         .padding(.horizontal, 8)
         .padding(.vertical, 8)
     }

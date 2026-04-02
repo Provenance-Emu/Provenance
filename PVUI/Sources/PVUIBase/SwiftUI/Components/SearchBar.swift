@@ -119,7 +119,9 @@ public struct PVSearchBar: View {
                     .foregroundColor(
                         isSearching
                             ? themeManager.currentPalette.defaultTintColor.swiftUIColor
-                            : (themeManager.currentPalette.dark ? Color.gray : Color.gray.opacity(0.7))
+                            : (themeManager.currentPalette.dark
+                                ? Color.white.opacity(0.7)
+                                : Color.gray.opacity(0.65))
                     )
                     .animation(.easeInOut(duration: 0.2), value: isSearching)
 
@@ -143,26 +145,9 @@ public struct PVSearchBar: View {
                 }
             }
             .padding(10)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(
-                        themeManager.currentPalette.dark
-                            ? Color.retroBlack.opacity(0.7)
-                            : Color.white.opacity(0.9)
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1.5
-                            )
-                    )
-            )
-            .shadow(color: RetroTheme.retroBlue.opacity(0.5), radius: 3, x: 0, y: 0)
+            .background {
+                RetroPauseSearchFieldBackgroundThemed(isDark: themeManager.currentPalette.dark)
+            }
         }
 //        .padding(.vertical, 8)
 //        .padding(.horizontal, 8)

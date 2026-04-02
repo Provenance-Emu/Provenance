@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVThemes
+import PVUIBase
 
 @available(iOS 14, tvOS 14, *)
 struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
@@ -19,8 +20,8 @@ struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
     var body: some SwiftUI.View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title.uppercased())
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                .font(.system(size: 11))
+                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(RetroPauseChrome.sectionTitleMutedOpacity))
+                .retroPauseSectionHeaderTypography()
                 .padding(.horizontal, 10)
                 .padding(.top, 20)
                 .padding(.bottom, 8)
