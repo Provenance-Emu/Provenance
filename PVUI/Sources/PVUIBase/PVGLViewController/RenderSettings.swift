@@ -23,6 +23,6 @@ struct RenderSettings: Sendable {
     /// Convenience shim — true when `scalingMode == .nativeResolution`.
     var nativeScaleEnabled: Bool {
         get { scalingMode == .nativeResolution }
-        set { if newValue { scalingMode = .nativeResolution } }
+        set { scalingMode = newValue ? .nativeResolution : .aspectFit }
     }
 }

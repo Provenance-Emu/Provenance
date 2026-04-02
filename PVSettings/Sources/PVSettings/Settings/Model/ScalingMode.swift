@@ -39,7 +39,8 @@ import Defaults
 /// These are passed as `RETRO_ENVIRONMENT_GET_VARIABLE` options and can be set via
 /// `RETRO_ENVIRONMENT_SET_VARIABLES` callbacks before `retro_load_game`.
 public enum ScalingMode: String, Codable, Equatable, Hashable,
-    UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, Sendable {
+    UserDefaultsRepresentable, Defaults.Serializable, CaseIterable, Sendable,
+    CustomStringConvertible {
 
     /// Scale to fit within the display bounds while preserving the core's reported aspect ratio.
     /// Unused screen area shows the background (pillarboxed or letterboxed).
@@ -123,4 +124,6 @@ public enum ScalingMode: String, Codable, Equatable, Hashable,
     public var usesIntegerSnapping: Bool {
         self == .integerScale
     }
+
+    public var description: String { displayName }
 }
