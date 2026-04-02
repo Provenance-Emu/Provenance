@@ -345,10 +345,11 @@ public class ImportProgressViewModel: ObservableObject {
 
         // Overall Sync Status (from CloudSyncManager)
         CloudSyncManager.shared.syncStatusPublisher
+            .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] libraryStatus in
                 guard let self = self else { return }
-                ILOG("CloudSyncManager status received: \(libraryStatus)")
+                DLOG("CloudSyncManager status received: \(libraryStatus)")
                 self.syncStatus = libraryStatus // Direct assignment
                 self.isSyncing = self.syncStatus == .syncing || self.syncStatus == .initialSync || self.syncStatus == .uploading || self.syncStatus == .downloading || self.syncStatus == .initializing
 
@@ -649,7 +650,7 @@ public class ImportProgressViewModel: ObservableObject {
                 // Conditions to show are NOT met.
                 // If view is currently shown and no hide timer is active, start one.
                 if self.shouldShow && self.hideViewTimer == nil {
-                    ILOG("ImportProgressViewModel: Conditions NOT met, starting 2s hide timer.")
+                    DLOG("ImportProgressViewModel: Conditions NOT met, starting 2s hide timer.")
                     self.hideViewTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { [weak self] _ in
                         guard let self = self else { return }
                         // Re-check conditions one last time before hiding.

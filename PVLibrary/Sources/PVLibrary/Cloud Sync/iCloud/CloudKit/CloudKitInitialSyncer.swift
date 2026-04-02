@@ -546,7 +546,8 @@ public actor CloudKitInitialSyncer {
     // TODO: I would prefer this not be main actor, but realm keeps crashing, even making a local realm @JoeMatt
     @MainActor
     private func syncAllROMs(forceSync: Bool = false) async -> Int {
-        ILOG("[SYNC] Syncing all ROMs to CloudKit (forceSync: \(forceSync))...")
+        let syncLog = CloudSyncManager.syncLog
+        syncLog.event(.start, item: "syncAllROMs", status: .inProgress, detail: "forceSync=\(forceSync)")
 
         do {
             let realm = RomDatabase.sharedInstance.realm
@@ -560,7 +561,7 @@ public actor CloudKitInitialSyncer {
                 return size1 < size2
             }
 
-            ILOG("[SYNC] Found \(games.count) ROMs in Realm, sorted by file size (smallest first)")
+            syncLog.info("Found \(games.count) ROMs, sorted by size")
 
             // Update progress
             var progress = await MainActor.run { syncProgressSubject.value }
@@ -576,13 +577,11 @@ public actor CloudKitInitialSyncer {
             // Batch progress sends: only update UI every N items to avoid flooding the main
             // actor with thousands of trivial updates (e.g. 1953 already-synced ROMs).
             let progressBatchSize = 50
-            DLOG("Starting to process \(games.count) ROMs...")
 
-            for (index, game) in games.enumerated() {
-                DLOG("Processing ROM \(index + 1)/\(games.count): \(game.title) (\(game.md5Hash ?? "no-md5"))")
-                // Skip logic: only skip if not forcing sync AND record has cloudRecordID
-                if !forceSync && game.cloudRecordID != nil && !game.cloudRecordID!.isEmpty {
-                    VLOG("ROM already synced: \(game.title) (\(game.md5Hash))")
+            for game in games {
+                // Skip logic: only skip if not forcing sync AND record has cloudRecordID AND assets verified in CloudKit
+                if !forceSync && game.cloudRecordID != nil && !game.cloudRecordID!.isEmpty && game.hasCloudAssets {
+                    syncLog.event(.skip, item: "rom/\(game.md5Hash)", status: .exists, detail: "already synced")
                     progress.romsCompleted += 1
                     syncedCount += 1
                     // Batch: only send progress every N skipped items to avoid main-thread flooding
@@ -592,11 +591,7 @@ public actor CloudKitInitialSyncer {
                     continue
                 }
 
-                if forceSync {
-                    DLOG("Force sync: uploading ROM regardless of existing cloudRecordID: \(game.title) (\(game.md5Hash))")
-                } else {
-                    DLOG("No cloudRecordID found, uploading ROM: \(game.title) (\(game.md5Hash))")
-                }
+                syncLog.event(.upload, item: "rom/\(game.md5Hash)", status: .pending, detail: forceSync ? "force" : "new", size: game.fileSize)
 
                 do {
                     // Queue the upload instead of blocking sync
@@ -608,14 +603,14 @@ public actor CloudKitInitialSyncer {
                             filePath: romURL,
                             priority: .normal
                         )
-                        DLOG("Queued ROM upload: \(game.title) (\(game.md5Hash)) - Task ID: \(taskId)")
+                        syncLog.event(.upload, item: "rom/\(game.md5Hash)", status: .inProgress, detail: "queued task=\(taskId)")
                     } else {
                         // Fallback to direct upload if queueing fails
                         try await romsSyncer.uploadGame(game.md5Hash)
                     }
 
                     syncedCount += 1
-                    DLOG("Successfully initiated upload for ROM: \(game.title) (\(game.md5Hash))")
+                    syncLog.event(.upload, item: "rom/\(game.md5Hash)", status: .ok)
 
                 } catch let error as CloudSyncError {
                     if case .alreadyExists = error {
@@ -623,10 +618,10 @@ public actor CloudKitInitialSyncer {
                          // we can count it as 'synced' for the initial sync purpose.
                          // We might want to verify the asset exists too, but for initial sync,
                          // assuming the record existing is enough.
-                         WLOG("ROM \(game.title) (\(game.md5Hash)) record already exists in CloudKit. Skipping initial upload.")
+                         syncLog.event(.skip, item: "rom/\(game.md5Hash)", status: .exists, detail: "record exists in CloudKit")
                          syncedCount += 1 // Count it as done for initial sync progress
                     } else {
-                        ELOG("Error uploading ROM \(game.title) (\(game.md5Hash)): \(error.localizedDescription)")
+                        syncLog.event(.upload, item: "rom/\(game.md5Hash)", status: .failed, detail: error.localizedDescription)
 
                         // Add to retry queue for later processing
                         let md5 = game.md5Hash
@@ -635,7 +630,7 @@ public actor CloudKitInitialSyncer {
                     }
 
                 } catch {
-                    ELOG("Error uploading ROM \(game.title) (\(game.md5Hash)): \(error.localizedDescription)")
+                    syncLog.event(.upload, item: "rom/\(game.md5Hash)", status: .failed, detail: error.localizedDescription)
 
                     // Add to retry queue for later processing
                     let md5 = game.md5Hash
@@ -650,10 +645,10 @@ public actor CloudKitInitialSyncer {
             // Flush final progress after loop
             syncProgressSubject.send(progress)
 
-            DLOG("Completed ROM sync: \(syncedCount) of \(games.count) ROMs synced")
+            syncLog.event(.complete, item: "syncAllROMs", status: .ok, detail: "\(syncedCount)/\(games.count) synced")
             return syncedCount
         } catch {
-            ELOG("Error syncing ROMs: \(error.localizedDescription)")
+            syncLog.event(.complete, item: "syncAllROMs", status: .failed, detail: error.localizedDescription)
             return 0
         }
     }
@@ -683,44 +678,34 @@ public actor CloudKitInitialSyncer {
             // Use the injected save states syncer
 
                         // Sync each save state
+            let syncLog = CloudSyncManager.syncLog
+            syncLog.event(.start, item: "syncAllSaveStates", status: .inProgress, detail: "forceSync=\(forceSync)")
+
             var syncedCount = 0
-            for (index, saveState) in saveStates.enumerated() {
+            let progressBatchSize = 50
+            for saveState in saveStates {
                 // Skip logic: only skip if not forcing sync AND record has cloudRecordID
                 if !forceSync && saveState.cloudRecordID != nil && !saveState.cloudRecordID!.isEmpty {
-                    VLOG("Save state already synced: \(saveState.fileName)")
-
-                    // Update progress
+                    syncLog.event(.skip, item: "save/\(saveState.id)", status: .exists)
                     progress.saveStatesCompleted += 1
-                    await MainActor.run {
+                    syncedCount += 1
+                    if progress.saveStatesCompleted % progressBatchSize == 0 {
                         syncProgressSubject.send(progress)
                     }
-
-                    syncedCount += 1
                     continue
                 }
 
-                if forceSync {
-                    DLOG("Force sync: uploading save state regardless of existing cloudRecordID: \(saveState.fileName)")
-                } else {
-                    DLOG("No cloudRecordID found, uploading save state: \(saveState.fileName)")
-                }
+                syncLog.event(.upload, item: "save/\(saveState.id)", status: .pending, detail: forceSync ? "force" : "new")
 
                 do {
-                    // Upload save state using the protocol method
-                    DLOG("Uploading save state \(index + 1)/\(saveStates.count): \(saveState.fileName)")
                     try await saveStatesSyncer.uploadSaveState(for: saveState).toAsync()
-
                     syncedCount += 1
+                    syncLog.event(.upload, item: "save/\(saveState.id)", status: .ok)
 
-                    // Update progress
                     progress.saveStatesCompleted += 1
-                    await MainActor.run {
-                        syncProgressSubject.send(progress)
-                    }
-
-                    DLOG("Successfully uploaded save state: \(saveState.fileName)")
+                    syncProgressSubject.send(progress)
                 } catch {
-                    ELOG("Error uploading save state \(saveState.fileName): \(error.localizedDescription)")
+                    syncLog.event(.upload, item: "save/\(saveState.id)", status: .failed, detail: error.localizedDescription)
 
                     // Add to retry queue for later processing
                     let retryUpload = RetryableUpload(type: .saveState(id: saveState.id), error: error)
@@ -728,7 +713,7 @@ public actor CloudKitInitialSyncer {
                 }
             }
 
-            DLOG("Completed save state sync: \(syncedCount) of \(saveStates.count) save states synced")
+            syncLog.event(.complete, item: "syncAllSaveStates", status: .ok, detail: "\(syncedCount)/\(saveStates.count) synced")
             return syncedCount
         } catch {
             ELOG("Error syncing save states: \(error.localizedDescription)")
@@ -747,13 +732,14 @@ public actor CloudKitInitialSyncer {
             return 0
         }
 
-        DLOG("Syncing all BIOS files to CloudKit...")
+        let syncLog = CloudSyncManager.syncLog
+        syncLog.event(.start, item: "syncAllBIOS", status: .inProgress, detail: "forceSync=\(forceSync)")
 
         do {
             let realm = RomDatabase.sharedInstance.realm
             let biosFiles = Array(realm.objects(PVBIOS.self))
 
-            DLOG("Found \(biosFiles.count) BIOS files in Realm")
+            syncLog.info("Found \(biosFiles.count) BIOS files")
 
             // Update progress
             var progress = await MainActor.run { syncProgressSubject.value }
@@ -769,20 +755,18 @@ public actor CloudKitInitialSyncer {
 
             // Sync each BIOS file
             var syncedCount = 0
-            for (index, bios) in biosFiles.enumerated() {
+            for bios in biosFiles {
                 let biosFilename = bios.file?.fileName ?? bios.expectedFilename
 
                 // Skip if already synced - ALWAYS verify the record has asset
                 if let existingRecordID = bios.cloudRecordID, !existingRecordID.isEmpty {
-                    // Always verify the cloud record actually has a file asset
-                    // This ensures records without assets get re-uploaded
-                    DLOG("[BIOS SYNC] Verifying CloudKit asset for: \(biosFilename) (recordID: \(existingRecordID))")
+                    syncLog.event(.check, item: "bios/\(biosFilename)", status: .inProgress, detail: "verifying asset")
                     let hasValidAsset = await verifyBIOSCloudAsset(recordID: existingRecordID, filename: biosFilename)
                     if !hasValidAsset {
                         let sanitizedRecordID = Self.sanitizeRecordNameComponent(existingRecordID)
                         if sanitizedRecordID != existingRecordID,
                            await verifyBIOSCloudAsset(recordID: sanitizedRecordID, filename: biosFilename) {
-                            ILOG("[BIOS SYNC] ✓ Found BIOS asset under sanitized recordID: \(sanitizedRecordID)")
+                            syncLog.event(.check, item: "bios/\(biosFilename)", status: .ok, detail: "found under sanitized ID")
                             try? await realm.asyncWrite {
                                 bios.cloudRecordID = sanitizedRecordID
                             }
@@ -791,13 +775,12 @@ public actor CloudKitInitialSyncer {
                             syncedCount += 1
                             continue
                         }
-                        WLOG("[BIOS SYNC] Record \(existingRecordID) missing asset, will re-upload: \(biosFilename)")
-                        // Clear the recordID so it gets re-uploaded below
+                        syncLog.event(.check, item: "bios/\(biosFilename)", status: .notFound, detail: "asset missing, will re-upload")
                         try? await realm.asyncWrite {
                             bios.cloudRecordID = nil
                         }
                     } else {
-                        ILOG("[BIOS SYNC] ✓ Verified asset exists for: \(biosFilename)")
+                        syncLog.event(.skip, item: "bios/\(biosFilename)", status: .exists, detail: "asset verified")
                         progress.biosCompleted += 1
                         await MainActor.run { syncProgressSubject.send(progress) }
                         syncedCount += 1
@@ -807,30 +790,28 @@ public actor CloudKitInitialSyncer {
 
                 // Get BIOS file path
                 guard let fileURL = bios.file?.url else {
-                    WLOG("BIOS \(bios.expectedFilename) missing PVFile reference; skipping")
+                    syncLog.event(.skip, item: "bios/\(biosFilename)", status: .notFound, detail: "no PVFile reference")
                     continue
                 }
 
-                guard let system = bios.system else {
-                    ELOG("BIOS file has no system")
+                guard bios.system != nil else {
+                    syncLog.event(.skip, item: "bios/\(biosFilename)", status: .failed, detail: "no system")
                     continue
                 }
                 // Check if file exists
                 guard FileManager.default.fileExists(atPath: fileURL.path) else {
-                    WLOG("BIOS file does not exist at PVFile URL: \(fileURL.path)")
+                    syncLog.event(.skip, item: "bios/\(biosFilename)", status: .notFound, detail: "file missing on disk")
                     continue
                 }
 
                 do {
-                    // Upload BIOS file to CloudKit
-                    ILOG("[BIOS SYNC] Uploading BIOS file \(index + 1)/\(biosFiles.count): \(biosFilename)")
+                    syncLog.event(.upload, item: "bios/\(biosFilename)", status: .pending)
                     let parentDirectoryName = fileURL.deletingLastPathComponent().lastPathComponent
                     let systemID = SystemIdentifier(rawValue: parentDirectoryName)
                     let record = try await syncer.uploadFile(fileURL, gameID: nil as String?, systemID: systemID)
 
-                    // Verify the upload actually has the asset
                     let hasAsset = record["fileData"] as? CKAsset != nil
-                    ILOG("[BIOS SYNC] Upload complete for \(biosFilename): recordID=\(record.recordID.recordName), hasAsset=\(hasAsset)")
+                    syncLog.event(.upload, item: "bios/\(biosFilename)", status: .ok, detail: "hasAsset=\(hasAsset)")
 
                     // Update Realm object with CloudKit record ID
                     try await realm.asyncWrite {
@@ -838,23 +819,17 @@ public actor CloudKitInitialSyncer {
                     }
 
                     syncedCount += 1
-
-                    // Update progress
                     progress.biosCompleted += 1
-                    await MainActor.run {
-                        syncProgressSubject.send(progress)
-                    }
-
-                    ILOG("[BIOS SYNC] Successfully uploaded BIOS file: \(biosFilename), recordID: \(record.recordID.recordName)")
+                    await MainActor.run { syncProgressSubject.send(progress) }
                 } catch {
-                    ELOG("[BIOS SYNC] Error uploading BIOS file \(biosFilename): \(error.localizedDescription)")
+                    syncLog.event(.upload, item: "bios/\(biosFilename)", status: .failed, detail: error.localizedDescription)
                 }
             }
 
-            ILOG("[BIOS SYNC] Completed BIOS sync: \(syncedCount) of \(biosFiles.count) BIOS files synced")
+            syncLog.event(.complete, item: "syncAllBIOS", status: .ok, detail: "\(syncedCount)/\(biosFiles.count) synced")
             return syncedCount
         } catch {
-            ELOG("Error syncing BIOS files: \(error.localizedDescription)")
+            syncLog.event(.complete, item: "syncAllBIOS", status: .failed, detail: error.localizedDescription)
             return 0
         }
     }

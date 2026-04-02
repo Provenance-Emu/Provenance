@@ -64,8 +64,18 @@ public class CloudKitSubscriptionManager {
 
     // MARK: - Public Methods
 
+    /// Prevents concurrent calls to setupSubscriptions().
+    private var isSettingUpSubscriptions = false
+
     /// Set up subscriptions for CloudKit updates
     public func setupSubscriptions() async {
+        guard !isSettingUpSubscriptions else {
+            DLOG("[CloudKitSubscriptionManager] setupSubscriptions already in progress, skipping")
+            return
+        }
+        isSettingUpSubscriptions = true
+        defer { isSettingUpSubscriptions = false }
+
         guard let privateDatabase = privateDatabase else {
             WLOG("[CloudKitSubscriptionManager] CloudKit container unavailable — skipping subscription setup")
             return

@@ -217,57 +217,30 @@ public final class LocalGameSyncMonitor {
                     // re-upload loop.
                     if let existingCloudID = modifiedGame.cloudRecordID,
                        !existingCloudID.isEmpty {
-                        VLOG("Skipping upload for \(md5): no user-metadata change and cloudRecordID already set")
+                        CloudSyncManager.syncLog.event(.skip, item: "rom/\(md5)", status: .exists, detail: "cloudRecordID set, no metadata change")
                         continue
                     }
 
                     // Skip if game is marked as not downloaded (likely downloading/syncing)
                     if !modifiedGame.isDownloaded {
-                        VLOG("Skipping upload for \(md5): Game marked as not downloaded (likely syncing)")
+                        CloudSyncManager.syncLog.event(.skip, item: "rom/\(md5)", status: .skipped, detail: "not downloaded")
                         continue
                     }
 
                     // Skip if file doesn't exist (can't upload what isn't there)
                     guard let fileURL = modifiedGame.file?.url,
                           FileManager.default.fileExists(atPath: fileURL.path) else {
-                        WLOG("Skipping upload for \(md5): File not found at expected location")
+                        CloudSyncManager.syncLog.event(.skip, item: "rom/\(md5)", status: .notFound, detail: "file missing")
                         continue
                     }
 
                     Task {
                         do {
-                            VLOG("Realm modification detected for \(md5). Triggering CloudKit upload/update.")
+                            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .inProgress, detail: "realm modification")
                             try await self.romsSyncer.uploadGame(md5)
-                            VLOG("CloudKit upload/update task completed for modified game \(md5).")
-                        } catch let error as CloudSyncError {
-                            // Log specific error types
-                            switch error {
-                            case .invalidData:
-                                ELOG("Failed to upload \(md5): Invalid game data")
-                            case .assetTooLarge(let size, let maxSize):
-                                let sizeMB = Double(size) / (1024 * 1024)
-                                let maxMB = Double(maxSize) / (1024 * 1024)
-                                ELOG("Failed to upload \(md5): File too large (\(String(format: "%.1f", sizeMB))MB > \(String(format: "%.1f", maxMB))MB)")
-                            case .fileSystemError(let underlyingError):
-                                ELOG("Failed to upload \(md5): File system error - \(underlyingError.localizedDescription)")
-                            case .cloudKitError(let ckError):
-                                if let ckErr = ckError as? CKError {
-                                    switch ckErr.code {
-                                    case .networkUnavailable, .networkFailure:
-                                        WLOG("Failed to upload \(md5): Network unavailable - will retry later")
-                                    case .quotaExceeded:
-                                        ELOG("Failed to upload \(md5): iCloud storage quota exceeded")
-                                    default:
-                                        ELOG("Failed to upload \(md5): CloudKit error - \(ckErr.localizedDescription)")
-                                    }
-                                } else {
-                                    ELOG("Failed to upload \(md5): CloudKit error - \(ckError.localizedDescription)")
-                                }
-                            default:
-                                ELOG("Failed to upload \(md5): \(error.localizedDescription)")
-                            }
+                            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .ok)
                         } catch {
-                            ELOG("Error uploading/updating modified game \(md5) to CloudKit: \(error.localizedDescription)")
+                            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: error.localizedDescription)
                         }
                     }
                 }
