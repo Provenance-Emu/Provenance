@@ -12,9 +12,6 @@ import SwiftUI
 import Observation
 import PVUIBase
 import PVLogging
-#if canImport(UIKit)
-import UIKit
-#endif
 
 // MARK: - ViewModel
 
@@ -83,10 +80,6 @@ public struct PVLogSessionBrowserView: View {
     @State private var viewModel = PVLogSessionViewModel()
     @State private var selectedEntry: PVLogSessionViewModel.SessionLogEntry?
     @State private var showingDeleteAllConfirm = false
-#if !os(tvOS)
-    @State private var shareItems: [Any] = []
-    @State private var showingShareSheet = false
-#endif
 
     public init() {}
 
@@ -114,20 +107,16 @@ public struct PVLogSessionBrowserView: View {
         .sheet(item: $selectedEntry) { entry in
             LogFileViewerSheet(entry: entry)
         }
-#if !os(tvOS)
-        .sheet(isPresented: $showingShareSheet) {
-            if !shareItems.isEmpty {
-                ActivityShareSheet(activityItems: shareItems).ignoresSafeArea()
-            }
-        }
-#endif
         .alert("Delete All Logs?", isPresented: $showingDeleteAllConfirm) {
             Button("Delete All", role: .destructive) { viewModel.deleteAllFiles() }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("This permanently deletes all \(viewModel.logFiles.count) session log files.")
         }
-        .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
+        .alert("Error", isPresented: Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { if !$0 { viewModel.errorMessage = nil } }
+        )) {
             Button("OK") { viewModel.errorMessage = nil }
         } message: {
             Text(viewModel.errorMessage ?? "")
@@ -216,10 +205,7 @@ public struct PVLogSessionBrowserView: View {
 
             HStack(spacing: 12) {
 #if !os(tvOS)
-                Button {
-                    shareItems = [entry.url]
-                    showingShareSheet = true
-                } label: {
+                ShareLink(item: entry.url) {
                     Image(systemName: "square.and.arrow.up")
                         .foregroundColor(RetroTheme.retroBlue)
                         .font(.system(size: 14))
@@ -243,7 +229,7 @@ public struct PVLogSessionBrowserView: View {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
+        ToolbarItem(placement: .topBarTrailing) {
             if !viewModel.logFiles.isEmpty {
                 Button(role: .destructive) {
                     showingDeleteAllConfirm = true
@@ -283,10 +269,6 @@ private struct LogFileViewerSheet: View {
     @Environment(\.dismiss) private var dismiss
     @State private var content = ""
     @State private var isLoading = true
-#if !os(tvOS)
-    @State private var shareItems: [Any] = []
-    @State private var showingShare = false
-#endif
 
     var body: some View {
         NavigationStack {
@@ -313,23 +295,13 @@ private struct LogFileViewerSheet: View {
                 }
 #if !os(tvOS)
                 ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        shareItems = [entry.url]
-                        showingShare = true
-                    } label: {
+                    ShareLink(item: entry.url) {
                         Image(systemName: "square.and.arrow.up")
                     }
                     .foregroundColor(RetroTheme.retroBlue)
                 }
 #endif
             }
-#if !os(tvOS)
-            .sheet(isPresented: $showingShare) {
-                if !shareItems.isEmpty {
-                    ActivityShareSheet(activityItems: shareItems).ignoresSafeArea()
-                }
-            }
-#endif
         }
         .task { await loadContent() }
     }
@@ -342,18 +314,6 @@ private struct LogFileViewerSheet: View {
         isLoading = false
     }
 }
-
-// MARK: - Share Sheet Wrapper
-
-#if !os(tvOS)
-private struct ActivityShareSheet: UIViewControllerRepresentable {
-    let activityItems: [Any]
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-    }
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
-}
-#endif
 
 // MARK: - Preview
 
