@@ -170,7 +170,9 @@ public struct RetroArchLogBrowserView: View {
             }
 #endif
         }
+        #if !os(tvOS)
         .scrollContentBackground(.hidden)
+        #endif
         .background(Color.black)
         .listStyle(.plain)
     }
