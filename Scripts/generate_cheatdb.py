@@ -30,23 +30,45 @@ Each .cht file is INI-style:
     cheat0_enable = false
     cheat1_desc = ...
 
+Flycast / RetroArch memory cheats (common on Dreamcast) may leave cheatN_code empty and set
+cheatN_address, cheatN_value, and cheatN_cheat_type instead — those are folded into a single
+synthetic code line for the database (same convention as CheatOnlineLookup).
+
 MD5 cross-reference uses CLRMamePro DAT files (from metadat/no-intro/,
 metadat/redump/, and dat/) to add ROM MD5 hashes to each game entry.
+Rom lines are parsed per line so quoted filenames containing parentheses
+(e.g. "(Japan)") still match md5 fields (a whole-block regex would stop early).
+When exact cheat filename stem != DAT rom stem, a conservative fuzzy match is used
+(short libretro .cht title vs long Redump/No-Intro names, optional (Japanese)/(USA)/… hints)
+only if the match yields a single MD5; large DAT sets skip fuzzy for speed.
 """
 
 import argparse
 import os
 import re
 import sqlite3
-import zipfile
 import sys
+import zipfile
 from pathlib import Path
+from typing import Optional
 
 
 # Map libretro cht/ directory names to short system names.
 # These must match SystemIdentifier.libretroCheatSystemName in Provenance
 # (which may differ from libretroDatabaseName used for thumbnail URLs —
 # e.g. DOOM cheats use "PrBoom" but thumbnails use "DOOM").
+#
+# --- Upstream coverage vs preemptive keys ---------------------------------
+# libretro-database only publishes a subset of systems under cht/ (see
+# https://github.com/libretro/libretro-database/tree/master/cht ). Many keys
+# below are *preemptive*: they apply when/if libretro adds that folder (e.g.
+# "The 3DO Company - 3DO", "Nintendo - GameCube", "Bandai - WonderSwan",
+# "SNK - Neo Geo Pocket", "GCE - Vectrex", "Nintendo - Virtual Boy",
+# "Nintendo - Pokemon Mini", "Sega - SG-1000", "Watara - Supervision",
+# "Nintendo - Wii"). If a system is missing from your generator summary, it is
+# usually because upstream has no cht/ directory yet — not because Provenance
+# lacks a mapping.
+# ---------------------------------------------------------------------------
 SYSTEM_SHORT_NAMES = {
     "Atari - 2600": "2600",
     "Atari - 5200": "5200",
@@ -153,6 +175,27 @@ EXCLUDED_SYSTEMS = {
     "Thomson - MOTO":         "Thomson MO/TO home computers; no Provenance core",
 }
 
+
+def audit_cht_directories(cht_root):
+    """Print warnings for cht/ subdirs that are neither mapped nor explicitly excluded.
+
+    New upstream folders should be added to SYSTEM_SHORT_NAMES or EXCLUDED_SYSTEMS.
+    """
+    root = Path(cht_root)
+    if not root.is_dir():
+        return
+    known = set(SYSTEM_SHORT_NAMES) | set(EXCLUDED_SYSTEMS)
+    present = {p.name for p in root.iterdir() if p.is_dir()}
+    orphan = sorted(present - known)
+    if not orphan:
+        return
+    print(
+        "\nWARNING: libretro cht/ contains directories with no SYSTEM_SHORT_NAMES entry "
+        "and not in EXCLUDED_SYSTEMS — add a mapping or exclusion:\n  - "
+        + "\n  - ".join(orphan),
+        file=sys.stderr,
+    )
+
 # Regex to extract region from filename like "Game Name (USA)" or "Game (USA, Europe)"
 REGION_RE = re.compile(r"\(([^)]*(?:USA|Europe|Japan|World|Korea|France|Germany|Spain|Italy|Brazil|Australia|Asia|China|Taiwan)[^)]*)\)")
 
@@ -170,10 +213,31 @@ DEVICE_SUFFIXES = [
 ]
 DEVICE_RE = re.compile(r"\((" + "|".join(re.escape(d) for d in DEVICE_SUFFIXES) + r")\)", re.IGNORECASE)
 
-# CLRMamePro DAT parsing patterns
-_DAT_GAME_NAME_RE = re.compile(r'^\s*name\s+"([^"]+)"', re.MULTILINE)
-_DAT_ROM_MD5_RE = re.compile(r'rom\s*\([^)]*\bmd5\s+([0-9a-fA-F]{32})', re.IGNORECASE)
-_DAT_ROM_NAME_RE = re.compile(r'rom\s*\([^)]*\bname\s+"([^"]+)"', re.IGNORECASE)
+# CLRMamePro DAT parsing — rom lines are parsed per line so parentheses inside
+# quoted filenames (e.g. "(Japan)") do not break matching; a single regex over
+# `rom ( ... )` using `[^)]*` stops at the first `)` inside the name.
+_DAT_ROM_LINE_RE = re.compile(r"\brom\s*\(", re.IGNORECASE)
+_DAT_ROM_LINE_NAME_RE = re.compile(r'\bname\s+"([^"]+)"', re.IGNORECASE)
+_DAT_ROM_LINE_MD5_RE = re.compile(r"\bmd5\s+([0-9a-fA-F]{32})", re.IGNORECASE)
+
+
+def _flycast_address_cheat_line(data, index):
+    """Build a single-line code from Flycast/RetroArch memory cheat fields when cheatN_code is empty.
+
+    Many Dreamcast (and some other) .cht files use cheatN_address / cheatN_value / cheatN_cheat_type
+    with an empty cheatN_code; the classic RetroArch INI cheat parser still applies these at runtime.
+    """
+    addr = data.get(f"cheat{index}_address", "").strip().strip('"')
+    if not addr:
+        return None
+    val = data.get(f"cheat{index}_value", "").strip().strip('"')
+    ctype = data.get(f"cheat{index}_cheat_type", "").strip().strip('"')
+    parts = [addr]
+    if val != "":
+        parts.append(val)
+    if ctype != "":
+        parts.append(ctype)
+    return " ".join(parts)
 
 
 def parse_cht_file(filepath):
@@ -206,6 +270,8 @@ def parse_cht_file(filepath):
     for i in range(num_cheats):
         desc = data.get(f"cheat{i}_desc", "").strip().strip('"')
         code = data.get(f"cheat{i}_code", "").strip().strip('"')
+        if not code:
+            code = _flycast_address_cheat_line(data, i) or ""
         if not desc and not code:
             continue
         if not desc:
@@ -247,6 +313,104 @@ def extract_device_name(filename_stem):
 def _stem_without_device(filename_stem):
     """Return the cht stem with device suffix removed (for DAT lookup)."""
     return DEVICE_RE.sub("", filename_stem).strip()
+
+
+def _dat_stem_match_base(dat_stem: str) -> str:
+    """Normalize a DAT rom stem for comparison: drop Redump track suffixes, then strip all (groups)."""
+    s = dat_stem
+    while True:
+        nxt = re.sub(r"\s*\(\s*Track\s+\d+\)\s*$", "", s, flags=re.IGNORECASE).strip()
+        if nxt == s:
+            break
+        s = nxt
+    s = re.sub(r"\s*\([^)]*\)", "", s)
+    return " ".join(s.split())
+
+
+def _lookup_core_title(lookup_stem: str) -> str:
+    """Strip trailing (Region) segments from a cheat filename stem (outermost first)."""
+    s = lookup_stem
+    while True:
+        nxt = re.sub(r"\s*\([^)]*\)\s*$", "", s).strip()
+        if nxt == s:
+            break
+        s = nxt
+    return " ".join(s.split())
+
+
+def _extract_region_hint_from_cht_stem(lookup_stem: str) -> Optional[str]:
+    """Map libretro .cht parenthetical region tags to No-Intro-style hints for DAT key filtering."""
+    if re.search(r"\(Japanese\)\s*$", lookup_stem, re.IGNORECASE):
+        return "japan"
+    if re.search(r"\(USA\)\s*$", lookup_stem, re.IGNORECASE):
+        return "usa"
+    if re.search(r"\(European\)\s*$", lookup_stem, re.IGNORECASE) or re.search(r"\(Europe\)\s*$", lookup_stem, re.IGNORECASE):
+        return "europe"
+    if re.search(r"\(Pal\)\s*$", lookup_stem, re.IGNORECASE):
+        return "europe"
+    if re.search(r"\(World\)\s*$", lookup_stem, re.IGNORECASE):
+        return "world"
+    return None
+
+
+def _dat_key_matches_region_hint(dat_key: str, hint: str) -> bool:
+    k = dat_key.lower()
+    if hint == "japan":
+        return "(japan)" in k
+    if hint == "usa":
+        return "(usa)" in k
+    if hint == "europe":
+        return (
+            "(europe)" in k
+            or "(en,fr" in k
+            or "(en,fr," in k
+            or "(germany)" in k
+            or "(france)" in k
+            or "(italy)" in k
+            or "(spain)" in k
+            or "(uk)" in k
+        )
+    if hint == "world":
+        return "(world)" in k
+    return True
+
+
+def _build_md5_base_index(sys_md5: dict) -> dict:
+    """Map normalized DAT bases -> list of (original_stem, md5) for fuzzy lookup."""
+    idx: dict[str, list] = {}
+    for stem_key, md5 in sys_md5.items():
+        b = _dat_stem_match_base(stem_key)
+        idx.setdefault(b, []).append((stem_key, md5))
+    return idx
+
+
+def _lookup_md5_fuzzy(sys_md5: dict, base_index: dict, lookup_stem: str) -> Optional[str]:
+    """Resolve MD5: exact stem, then conservative fuzzy match (short cht title vs long No-Intro/Redump name)."""
+    if not sys_md5:
+        return None
+    direct = sys_md5.get(lookup_stem)
+    if direct:
+        return direct
+    if not base_index:
+        return None
+    hint = _extract_region_hint_from_cht_stem(lookup_stem)
+    lookup_core = _lookup_core_title(lookup_stem)
+    if not lookup_core:
+        return None
+    candidates: list = []
+    candidates.extend(base_index.get(lookup_core, []))
+    prefix = lookup_core + " -"
+    for b, pairs in base_index.items():
+        if b.startswith(prefix):
+            candidates.extend(pairs)
+    if hint:
+        candidates = [(k, m) for k, m in candidates if _dat_key_matches_region_hint(k, hint)]
+    if not candidates:
+        return None
+    unique_md5 = {m for _, m in candidates}
+    if len(unique_md5) != 1:
+        return None
+    return next(iter(unique_md5))
 
 
 # Format detection patterns, evaluated in order.
@@ -342,19 +506,18 @@ def parse_dat_file(dat_path):
         end = positions[i + 1] if i + 1 < len(positions) else len(content)
         block = content[start:end]
 
-        # Extract the rom entry's name and md5
-        rom_md5_m = _DAT_ROM_MD5_RE.search(block)
-        rom_name_m = _DAT_ROM_NAME_RE.search(block)
-
-        if not rom_md5_m or not rom_name_m:
-            continue
-
-        md5 = rom_md5_m.group(1).lower()
-        rom_filename = rom_name_m.group(1)  # e.g. "Game Name (USA).sfc"
-
-        # Strip file extension to get the lookup stem
-        stem = Path(rom_filename).stem  # e.g. "Game Name (USA)"
-        result[stem] = md5
+        # One `rom (` line can list name + md5; multi-ROM games yield multiple lines.
+        for line in block.splitlines():
+            if not _DAT_ROM_LINE_RE.search(line):
+                continue
+            name_m = _DAT_ROM_LINE_NAME_RE.search(line)
+            md5_m = _DAT_ROM_LINE_MD5_RE.search(line)
+            if not name_m or not md5_m:
+                continue
+            rom_filename = name_m.group(1)
+            md5 = md5_m.group(1).lower()
+            stem = Path(rom_filename).stem
+            result[stem] = md5
 
     return result
 
@@ -495,6 +658,10 @@ def process_cht_directory(cht_root, db_path, md5_map=None):
 
         # Get MD5 lookup dict for this system (may be None)
         sys_md5 = md5_map.get(system_name, {})
+        # Fuzzy path scans all DAT bases per miss — skip on huge sets (e.g. DS) to keep runs fast.
+        md5_fuzzy_budget = 30000
+        use_md5_fuzzy = bool(sys_md5) and len(sys_md5) <= md5_fuzzy_budget
+        md5_base_index = _build_md5_base_index(sys_md5) if use_md5_fuzzy else {}
 
         for cht_file in sorted(system_dir.glob("*.cht")):
             stem = cht_file.stem
@@ -506,9 +673,12 @@ def process_cht_directory(cht_root, db_path, md5_map=None):
             title, region = extract_title_and_region(stem)
             device = extract_device_name(stem)
 
-            # MD5 lookup: strip device suffix from stem to get the No-Intro name
+            # MD5 lookup: exact stem, then fuzzy (short libretro .cht names vs long Redump/No-Intro ROM names).
             lookup_stem = _stem_without_device(stem)
-            md5 = sys_md5.get(lookup_stem)
+            if use_md5_fuzzy:
+                md5 = _lookup_md5_fuzzy(sys_md5, md5_base_index, lookup_stem)
+            else:
+                md5 = sys_md5.get(lookup_stem)
             if md5:
                 system_md5_hits += 1
 
@@ -629,6 +799,8 @@ def main():
             print()
 
     total_games, total_cheats = process_cht_directory(cht_dir, args.output, md5_map)
+
+    audit_cht_directories(cht_dir)
 
     if total_cheats == 0:
         print("Warning: No cheats were found!", file=sys.stderr)
