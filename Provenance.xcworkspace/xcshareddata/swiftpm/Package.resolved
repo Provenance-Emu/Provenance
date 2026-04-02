@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "abseil",
-        "repositoryURL": "https://github.com/google/abseil-cpp-binary.git",
-        "state": {
-          "branch": null,
-          "revision": "bbe8b69694d7873315fd3a4ad41efe043e1c07c5",
-          "version": "1.2024072200.0"
-        }
-      },
-      {
         "package": "ActivityIndicatorView",
         "repositoryURL": "https://github.com/exyte/ActivityIndicatorView.git",
         "state": {
@@ -26,15 +17,6 @@
           "branch": null,
           "revision": "c0e19120abda483a61058721c6c7d65c82c4ebe9",
           "version": "1.0.1"
-        }
-      },
-      {
-        "package": "AppCheck",
-        "repositoryURL": "https://github.com/google/app-check.git",
-        "state": {
-          "branch": null,
-          "revision": "61b85103a1aeed8218f17c794687781505fbbef5",
-          "version": "11.2.0"
         }
       },
       {
@@ -101,15 +83,6 @@
         }
       },
       {
-        "package": "Firebase",
-        "repositoryURL": "https://github.com/firebase/firebase-ios-sdk",
-        "state": {
-          "branch": null,
-          "revision": "fdc352fabaf5916e7faa1f96ad02b1957e93e5a5",
-          "version": "11.15.0"
-        }
-      },
-      {
         "package": "FloatingButton",
         "repositoryURL": "https://github.com/exyte/FloatingButton.git",
         "state": {
@@ -128,60 +101,6 @@
         }
       },
       {
-        "package": "GoogleAdsOnDeviceConversion",
-        "repositoryURL": "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
-        "state": {
-          "branch": null,
-          "revision": "a2d0f1f1666de591eb1a811f40b1706f5c63a2ed",
-          "version": "2.3.0"
-        }
-      },
-      {
-        "package": "GoogleAppMeasurement",
-        "repositoryURL": "https://github.com/google/GoogleAppMeasurement.git",
-        "state": {
-          "branch": null,
-          "revision": "45ce435e9406d3c674dd249a042b932bee006f60",
-          "version": "11.15.0"
-        }
-      },
-      {
-        "package": "GoogleDataTransport",
-        "repositoryURL": "https://github.com/google/GoogleDataTransport.git",
-        "state": {
-          "branch": null,
-          "revision": "617af071af9aa1d6a091d59a202910ac482128f9",
-          "version": "10.1.0"
-        }
-      },
-      {
-        "package": "GoogleUtilities",
-        "repositoryURL": "https://github.com/google/GoogleUtilities.git",
-        "state": {
-          "branch": null,
-          "revision": "60da361632d0de02786f709bdc0c4df340f7613e",
-          "version": "8.1.0"
-        }
-      },
-      {
-        "package": "gRPC",
-        "repositoryURL": "https://github.com/google/grpc-binary.git",
-        "state": {
-          "branch": null,
-          "revision": "75b31c842f664a0f46a2e590a570e370249fd8f6",
-          "version": "1.69.1"
-        }
-      },
-      {
-        "package": "GTMSessionFetcher",
-        "repositoryURL": "https://github.com/google/gtm-session-fetcher.git",
-        "state": {
-          "branch": null,
-          "revision": "c756a29784521063b6a1202907e2cc47f41b667c",
-          "version": "4.5.0"
-        }
-      },
-      {
         "package": "Highlightr",
         "repositoryURL": "https://github.com/raspu/Highlightr.git",
         "state": {
@@ -197,24 +116,6 @@
           "branch": null,
           "revision": "d1ce7bbd2f1b17f22031ca4c0daeb39eff07a92e",
           "version": "2.21.1"
-        }
-      },
-      {
-        "package": "InteropForGoogle",
-        "repositoryURL": "https://github.com/google/interop-ios-for-google-sdks.git",
-        "state": {
-          "branch": null,
-          "revision": "040d087ac2267d2ddd4cca36c757d1c6a05fdbfe",
-          "version": "101.0.0"
-        }
-      },
-      {
-        "package": "leveldb",
-        "repositoryURL": "https://github.com/firebase/leveldb.git",
-        "state": {
-          "branch": null,
-          "revision": "a0bc79961d7be727d258d33d5a6b2f1023270ba1",
-          "version": "1.22.5"
         }
       },
       {
@@ -242,15 +143,6 @@
           "branch": null,
           "revision": "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
           "version": "1.2.0"
-        }
-      },
-      {
-        "package": "nanopb",
-        "repositoryURL": "https://github.com/firebase/nanopb.git",
-        "state": {
-          "branch": null,
-          "revision": "b7e1104502eca3a213b46303391ca4d3bc8ddec1",
-          "version": "2.30910.0"
         }
       },
       {
@@ -287,15 +179,6 @@
           "branch": "1.2.5",
           "revision": "ee2666a06aa1f6632d5060d1cf316520ed8aecbd",
           "version": null
-        }
-      },
-      {
-        "package": "Promises",
-        "repositoryURL": "https://github.com/google/promises.git",
-        "state": {
-          "branch": null,
-          "revision": "540318ecedd63d883069ae7f1ed811a2df00b6ac",
-          "version": "2.4.0"
         }
       },
       {
@@ -341,6 +224,15 @@
           "branch": null,
           "revision": "132aea4f236ccadc51590b38af0357a331d51fa2",
           "version": "6.10.2"
+        }
+      },
+      {
+        "package": "Sentry",
+        "repositoryURL": "https://github.com/getsentry/sentry-cocoa",
+        "state": {
+          "branch": null,
+          "revision": "16cd512711375fa73f25ae5e373f596bdf4251ae",
+          "version": "8.58.0"
         }
       },
       {
@@ -584,15 +476,6 @@
           "branch": null,
           "revision": "f039fa6d6338aab5164f3d1be16281524c9a8f89",
           "version": "1.11.0"
-        }
-      },
-      {
-        "package": "SwiftProtobuf",
-        "repositoryURL": "https://github.com/apple/swift-protobuf.git",
-        "state": {
-          "branch": null,
-          "revision": "a008af1a102ff3dd6cc3764bb69bf63226d0f5f6",
-          "version": "1.36.1"
         }
       },
       {

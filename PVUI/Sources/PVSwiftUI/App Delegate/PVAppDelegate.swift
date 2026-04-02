@@ -438,7 +438,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
         let orchestrator = BootstrapOrchestrator()
             .with(LoggingBootstrapTask())
-            .with(FirebaseBootstrapTask())
+            .with(SentryBootstrapTask(isAppStore: isAppStore))
             .with(AppCenterBootstrapTask(isAppStore: isAppStore))
             .with(SettingsBundleBootstrapTask())
             .with(ThemeBootstrapTask())

@@ -16,7 +16,7 @@ import PVLogging
 /// ```swift
 /// let orchestrator = BootstrapOrchestrator()
 ///     .with(LoggingBootstrapTask())
-///     .with(FirebaseBootstrapTask())
+///     .with(SentryBootstrapTask(isAppStore: true))
 /// await orchestrator.run()
 /// ```
 ///

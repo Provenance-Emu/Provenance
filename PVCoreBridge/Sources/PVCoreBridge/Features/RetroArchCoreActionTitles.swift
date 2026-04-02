@@ -6,4 +6,8 @@ import Foundation
 public enum RetroArchCoreActionTitles {
     /// Toggles the in-core RetroArch menu (RGUI/XMB) via ``menuToggle()``.
     public static let internalMenu = "RetroArch Menu"
+    /// RetroArch on-screen keyboard (non-tvOS); surfaced in the pause menu Controls group.
+    public static let toggleTouchKeyboard = "Toggle Touch Keyboard"
+    /// RetroArch touch mouse overlay (non-tvOS); surfaced in the pause menu Controls group.
+    public static let toggleTouchMouse = "Toggle Touch Mouse"
 }
