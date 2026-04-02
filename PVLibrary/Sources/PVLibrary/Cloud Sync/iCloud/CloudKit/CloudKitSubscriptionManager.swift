@@ -76,8 +76,9 @@ public class CloudKitSubscriptionManager {
         isSettingUpSubscriptions = true
         defer { isSettingUpSubscriptions = false }
 
+        let syncLog = CloudSyncManager.syncLog
         guard let privateDatabase = privateDatabase else {
-            WLOG("[CloudKitSubscriptionManager] CloudKit container unavailable — skipping subscription setup")
+            syncLog.event(.start, item: "subscription/setup", status: .skipped, detail: "CloudKit container unavailable")
             return
         }
         do {
@@ -87,7 +88,7 @@ public class CloudKitSubscriptionManager {
             if success {
                 DLOG("CloudKit schema initialized successfully")
             } else {
-                ELOG("Failed to initialize CloudKit schema")
+                syncLog.event(.start, item: "subscription/schema", status: .failed, detail: "Failed to initialize CloudKit schema")
             }
 
             // Create subscriptions for each record type
@@ -98,7 +99,7 @@ public class CloudKitSubscriptionManager {
 
             DLOG("CloudKit subscriptions set up successfully")
         } catch {
-            ELOG("Failed to set up CloudKit subscriptions: \(error.localizedDescription)")
+            syncLog.event(.start, item: "subscription/setup", status: .failed, detail: "Failed to set up CloudKit subscriptions: \(error.localizedDescription)")
         }
     }
 
@@ -109,7 +110,7 @@ public class CloudKitSubscriptionManager {
         let notification = CKNotification(fromRemoteNotificationDictionary: userInfo)
 
         guard let notification = notification else {
-            ELOG("Invalid CloudKit notification")
+            CloudSyncManager.syncLog.event(.sync, item: "notification/remote", status: .failed, detail: "Invalid CloudKit notification")
             return
         }
 
@@ -140,7 +141,7 @@ public class CloudKitSubscriptionManager {
         // Request authorization for notifications
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if let error = error {
-                ELOG("Error requesting notification authorization: \(error.localizedDescription)")
+                CloudSyncManager.syncLog.event(.start, item: "notification/authorization", status: .failed, detail: "Error requesting notification authorization: \(error.localizedDescription)")
                 return
             }
 
@@ -152,7 +153,7 @@ public class CloudKitSubscriptionManager {
                     UIApplication.shared.registerForRemoteNotifications()
                 }
             } else {
-                ELOG("Notification authorization denied")
+                CloudSyncManager.syncLog.event(.start, item: "notification/authorization", status: .failed, detail: "Notification authorization denied")
             }
         }
     }
@@ -162,7 +163,7 @@ public class CloudKitSubscriptionManager {
     /// Create a subscription for file records
     private func createFileSubscription() async throws {
         guard let privateDatabase = privateDatabase else {
-            WLOG("[CloudKitSubscriptionManager] createFileSubscription: no database")
+            CloudSyncManager.syncLog.event(.start, item: "subscription/file", status: .skipped, detail: "No database available")
             return
         }
         // Create subscription ID
@@ -204,7 +205,7 @@ public class CloudKitSubscriptionManager {
     /// Create a subscription for ROM records
     private func createROMSubscription() async throws {
         guard let privateDatabase = privateDatabase else {
-            WLOG("[CloudKitSubscriptionManager] createROMSubscription: no database")
+            CloudSyncManager.syncLog.event(.start, item: "subscription/rom", status: .skipped, detail: "No database available")
             return
         }
         // Create subscription ID
@@ -246,7 +247,7 @@ public class CloudKitSubscriptionManager {
     /// Create a subscription for save state records
     private func createSaveStateSubscription() async throws {
         guard let privateDatabase = privateDatabase else {
-            WLOG("[CloudKitSubscriptionManager] createSaveStateSubscription: no database")
+            CloudSyncManager.syncLog.event(.start, item: "subscription/savestate", status: .skipped, detail: "No database available")
             return
         }
         // Create subscription ID
@@ -288,7 +289,7 @@ public class CloudKitSubscriptionManager {
     /// Create a subscription for BIOS records
     private func createBIOSSubscription() async throws {
         guard let privateDatabase = privateDatabase else {
-            WLOG("[CloudKitSubscriptionManager] createBIOSSubscription: no database")
+            CloudSyncManager.syncLog.event(.start, item: "subscription/bios", status: .skipped, detail: "No database available")
             return
         }
         // Create subscription ID
@@ -356,6 +357,7 @@ public class CloudKitSubscriptionManager {
     ///   - queryNotification: The notification object
     ///   - recordID: The ID of the affected record
     private func handleQueryNotification(_ queryNotification: CKQueryNotification, recordID: CKRecord.ID) {
+        let syncLog = CloudSyncManager.syncLog
         // Check if we've already processed this record recently to prevent loops
         if wasRecentlyProcessed(recordID) {
             DLOG("Skipping recently processed record: \(recordID.recordName)")
@@ -376,11 +378,11 @@ public class CloudKitSubscriptionManager {
                         try await saveStateSyncer.handleRemoteSaveStateChange(recordID: recordID)
                         DLOG("Processed SaveState notification via CloudKitSaveStatesSyncer for \(recordID.recordName)")
                     } catch {
-                        ELOG("Error processing SaveState notification for \(recordID.recordName): \(error)")
+                        syncLog.event(.error, item: "notification/savestate/\(recordID.recordName)", status: .failed, detail: "Error processing SaveState notification: \(error)")
                         await CloudSyncManager.shared.errorHandler.handle(error: error)
                     }
                 } else {
-                    WLOG("SaveStates Syncer is not CloudKitSaveStatesSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")
+                    syncLog.event(.sync, item: "notification/savestate/\(recordID.recordName)", status: .skipped, detail: "SaveStates Syncer is not CloudKitSaveStatesSyncer or is nil")
                 }
 
             case "rom-changes":
@@ -391,10 +393,10 @@ public class CloudKitSubscriptionManager {
                         try await cloudKitSyncer.handleRemoteGameChange(recordID: recordID)
                         DLOG("Processed ROM notification via CloudKitRomsSyncer for \(recordID.recordName)")
                     } catch {
-                        ELOG("Error processing ROM notification for \(recordID.recordName): \(error)")
+                        syncLog.event(.error, item: "notification/rom/\(recordID.recordName)", status: .failed, detail: "Error processing ROM notification: \(error)")
                     }
                 } else {
-                    WLOG("Roms Syncer is not CloudKitRomsSyncer or is nil. Cannot handle CloudKit notification for \(recordID.recordName).")
+                    syncLog.event(.sync, item: "notification/rom/\(recordID.recordName)", status: .skipped, detail: "Roms Syncer is not CloudKitRomsSyncer or is nil")
                 }
 
             case "file-changes", "bios-changes":
@@ -406,14 +408,14 @@ public class CloudKitSubscriptionManager {
                         try await nonDatabaseSyncer.processRemoteRecordUpdate(recordID: recordID)
                         DLOG("Processed File/BIOS notification via nonDatabaseSyncer for \(recordID.recordName)")
                     } catch {
-                        ELOG("NonDatabaseSyncer failed processing update for \(recordID.recordName): \(error)")
+                        syncLog.event(.error, item: "notification/file-bios/\(recordID.recordName)", status: .failed, detail: "NonDatabaseSyncer failed processing update: \(error)")
                     }
                 } else {
-                    WLOG("NonDatabase Syncer not available to handle notification for \(recordID.recordName)")
+                    syncLog.event(.sync, item: "notification/file-bios/\(recordID.recordName)", status: .skipped, detail: "NonDatabase Syncer not available")
                 }
 
             default:
-                WLOG("Unhandled subscription ID: \(subscriptionID) for record \(recordID.recordName)")
+                syncLog.event(.sync, item: "notification/\(subscriptionID)/\(recordID.recordName)", status: .skipped, detail: "Unhandled subscription ID")
                 // Optional: Add logic to fetch the record to determine its type if needed.
             }
         }
@@ -448,6 +450,7 @@ public class CloudKitSubscriptionManager {
     ///   - notification: The query notification
     ///   - recordID: The record ID
     private func handleFileNotification(_ notification: CKQueryNotification, recordID: CKRecord.ID) {
+        let syncLog = CloudSyncManager.syncLog
         // Handle based on notification type
         switch notification.queryNotificationReason {
         case .recordCreated:
@@ -457,7 +460,7 @@ public class CloudKitSubscriptionManager {
             // Fetch the file record
             Task {
                 guard let privateDatabase = privateDatabase else {
-                    WLOG("[CloudKitSubscriptionManager] handleFileNotification(created): no CloudKit database")
+                    syncLog.event(.download, item: "file/\(recordID.recordName)", status: .skipped, detail: "No CloudKit database available for created file")
                     return
                 }
                 do {
@@ -503,7 +506,7 @@ public class CloudKitSubscriptionManager {
                         }
                     }
                 } catch {
-                    ELOG("Error fetching file record: \(error.localizedDescription)")
+                    syncLog.event(.download, item: "file/\(recordID.recordName)", status: .failed, detail: "Error fetching file record: \(error.localizedDescription)")
                 }
             }
 
@@ -514,7 +517,7 @@ public class CloudKitSubscriptionManager {
             // Similar to created, but post different notification
             Task {
                 guard let privateDatabase = privateDatabase else {
-                    WLOG("[CloudKitSubscriptionManager] handleFileNotification(updated): no CloudKit database")
+                    syncLog.event(.download, item: "file/\(recordID.recordName)", status: .skipped, detail: "No CloudKit database available for updated file")
                     return
                 }
                 do {
@@ -560,7 +563,7 @@ public class CloudKitSubscriptionManager {
                         }
                     }
                 } catch {
-                    ELOG("Error fetching file record: \(error.localizedDescription)")
+                    syncLog.event(.download, item: "file/\(recordID.recordName)", status: .failed, detail: "Error fetching updated file record: \(error.localizedDescription)")
                 }
             }
 

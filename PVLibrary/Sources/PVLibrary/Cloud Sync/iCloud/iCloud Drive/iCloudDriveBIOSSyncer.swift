@@ -129,7 +129,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing, SystemFi
                     DLOG("Uploaded BIOS to iCloud: \(filename)")
                     observer(.completed)
                 } catch {
-                    ELOG("Failed to upload BIOS: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.upload, item: "bios/\(filename)", status: .failed, detail: "Failed to upload BIOS: \(error.localizedDescription)")
                     observer(.error(error))
                 }
             }
@@ -192,16 +192,16 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing, SystemFi
                                     DLOG("Downloaded BIOS from iCloud: \(filename)")
                                     observer(.completed)
                                 } catch {
-                                    ELOG("Failed to copy BIOS to local storage: \(error.localizedDescription)")
+                                    CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .failed, detail: "Failed to copy BIOS to local storage: \(error.localizedDescription)")
                                     observer(.error(error))
                                 }
                             }
                         }, onError: { error in
-                            ELOG("Failed to download BIOS: \(error.localizedDescription)")
+                            CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .failed, detail: "Failed to download BIOS: \(error.localizedDescription)")
                             observer(.error(error))
                         })
                 } catch {
-                    ELOG("Failed to start downloading BIOS: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .failed, detail: "Failed to start downloading BIOS: \(error.localizedDescription)")
                     observer(.error(error))
                 }
             }
@@ -284,7 +284,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing, SystemFi
                     DLOG("Uploaded system file to iCloud: System/\(system.systemDirectoryName ?? "?")/\(filename)")
                     observer(.completed)
                 } catch {
-                    ELOG("Failed to upload system file \(filename): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.upload, item: "system/\(filename)", status: .failed, detail: "Failed to upload system file: \(error.localizedDescription)")
                     observer(.error(error))
                 }
             }
@@ -342,7 +342,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing, SystemFi
                     DLOG("Downloaded system file from iCloud: System/\(system.systemDirectoryName ?? "?")/\(filename)")
                     observer(.completed)
                 } catch {
-                    ELOG("Failed to download system file \(filename): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.download, item: "system/\(filename)", status: .failed, detail: "Failed to download system file: \(error.localizedDescription)")
                     observer(.error(error))
                 }
             }
@@ -402,7 +402,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                 case .success(let record):
                     return record
                 case .failure(let error):
-                    ELOG("Error fetching BIOS record: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.query, item: "bios/record", status: .failed, detail: "Error fetching BIOS record: \(error.localizedDescription)")
                     return nil
                 }
             }
@@ -410,7 +410,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
             DLOG("Fetched \(recordsArray.count) BIOS records from CloudKit")
             return recordsArray
         } catch {
-            ELOG("Failed to fetch BIOS records: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.query, item: "bios/records", status: .failed, detail: "Failed to fetch BIOS records: \(error.localizedDescription)")
             return []
         }
     }
@@ -498,7 +498,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     DLOG("Uploaded BIOS to CloudKit: \(filename)")
                     observer(.completed)
                 } catch {
-                    ELOG("Failed to upload BIOS to CloudKit: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.upload, item: "bios/\(filename)", status: .failed, detail: "Failed to upload BIOS to CloudKit: \(error.localizedDescription)")
                     await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
@@ -595,7 +595,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                         observer(.completed)
                     }
                 } catch {
-                    ELOG("Failed to download BIOS from CloudKit: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .failed, detail: "Failed to download BIOS from CloudKit: \(error.localizedDescription)")
                     await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
@@ -630,7 +630,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     /// Fetch all BIOS records from CloudKit (with pagination and timeout)
     /// - Returns: Array of CKRecord objects
     public func fetchAllBIOSRecords() async -> [CKRecord] {
-        ILOG("[SYNC] Fetching all BIOS records from CloudKit...")
+        CloudSyncManager.syncLog.event(.query, item: "bios/fetch-all", status: .inProgress, detail: "Fetching all BIOS records from CloudKit")
         var allRecords: [CKRecord] = []
 
         // Query both record types since BIOS files may be stored as either:
@@ -671,7 +671,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                         (results, nextCursor) = try await fetchTask.value
                         timeoutTask.cancel()
                     } catch is CancellationError {
-                        WLOG("[BIOS FETCH] CloudKit query timed out for recordType: \(recordType)")
+                        CloudSyncManager.syncLog.event(.query, item: "bios/\(recordType)", status: .cancelled, detail: "CloudKit query timed out")
                         timeoutTask.cancel()
                         break
                     }
@@ -684,25 +684,25 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                             DLOG("[BIOS FETCH] Found record: \(id.recordName), filename: \(filename), hasAsset: \(hasAsset)")
                             return record
                         case .failure(let error):
-                            WLOG("[BIOS FETCH] Failed to fetch record \(id.recordName): \(error.localizedDescription)")
+                            CloudSyncManager.syncLog.event(.query, item: "bios/\(id.recordName)", status: .failed, detail: "Failed to fetch record: \(error.localizedDescription)")
                             return nil
                         }
                     }
                     allRecords.append(contentsOf: records)
                     cursor = nextCursor
-                    ILOG("[BIOS FETCH] Fetched batch of \(records.count) \(recordType) records, total: \(allRecords.count)")
+                    CloudSyncManager.syncLog.event(.query, item: "bios/\(recordType)", status: .inProgress, detail: "Fetched batch of \(records.count) records, total: \(allRecords.count)")
                 } while cursor != nil
             } catch let error as CKError where error.code == .unknownItem {
                 // Record type might not exist yet, that's okay
                 DLOG("[SYNC] No \(recordType) records found for BIOS (unknownItem)")
             } catch let error as CKError {
-                ELOG("[SYNC] CloudKit error fetching \(recordType) BIOS records: code=\(error.code.rawValue), \(error.localizedDescription)")
+                CloudSyncManager.syncLog.event(.error, item: "bios/\(recordType)", status: .failed, detail: "CloudKit error code=\(error.code.rawValue): \(error.localizedDescription)")
             } catch {
-                ELOG("[SYNC] Failed to fetch \(recordType) BIOS records: \(error.localizedDescription)")
+                CloudSyncManager.syncLog.event(.error, item: "bios/\(recordType)", status: .failed, detail: "Failed to fetch BIOS records: \(error.localizedDescription)")
             }
         }
 
-        ILOG("[SYNC] Fetched \(allRecords.count) total BIOS records from CloudKit")
+        CloudSyncManager.syncLog.event(.query, item: "bios/fetch-all", status: .ok, detail: "Fetched \(allRecords.count) total BIOS records from CloudKit")
         return allRecords
     }
 
@@ -710,7 +710,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     /// - Returns: Number of BIOS files processed
     @MainActor
     public func syncMetadataOnly() async -> Int {
-        ILOG("[SYNC] Starting BIOS metadata sync...")
+        CloudSyncManager.syncLog.event(.sync, item: "bios/metadata", status: .inProgress, detail: "Starting BIOS metadata sync")
         DLOG("[SYNC] Container: \(container.containerIdentifier ?? "nil"), database: \(privateDatabase)")
 
         // Run fetch off main actor to avoid potential deadlocks, with overall timeout
@@ -721,7 +721,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         let timeoutTask = Task {
             try await Task.sleep(nanoseconds: 60_000_000_000) // 60 second overall timeout
             fetchTask.cancel()
-            WLOG("[SYNC] BIOS metadata fetch timed out after 60 seconds")
+            CloudSyncManager.syncLog.event(.sync, item: "bios/metadata", status: .cancelled, detail: "BIOS metadata fetch timed out after 60 seconds")
         }
 
         var records: [CKRecord] = []
@@ -729,33 +729,33 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
             records = try await fetchTask.value
             timeoutTask.cancel()
         } catch is CancellationError {
-            WLOG("[SYNC] BIOS metadata fetch was cancelled (timeout)")
+            CloudSyncManager.syncLog.event(.sync, item: "bios/metadata", status: .cancelled, detail: "BIOS metadata fetch was cancelled (timeout)")
             timeoutTask.cancel()
             // Continue anyway - we'll try direct download by predicted IDs
         } catch {
-            ELOG("[SYNC] BIOS metadata fetch failed: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.sync, item: "bios/metadata", status: .failed, detail: "BIOS metadata fetch failed: \(error.localizedDescription)")
             timeoutTask.cancel()
         }
         guard !records.isEmpty else {
-            ILOG("[SYNC] No BIOS records found in CloudKit")
+            CloudSyncManager.syncLog.event(.sync, item: "bios/metadata", status: .ok, detail: "No BIOS records found in CloudKit")
             return 0
         }
 
         var processedCount = 0
         let realm = RomDatabase.sharedInstance.realm
 
-        ILOG("[BIOS META] Processing \(records.count) cloud records...")
+        CloudSyncManager.syncLog.event(.sync, item: "bios/metadata", status: .inProgress, detail: "Processing \(records.count) cloud records")
 
         for record in records {
             guard let filename = record["filename"] as? String else {
-                WLOG("[BIOS META] BIOS record missing filename, skipping: recordID=\(record.recordID.recordName)")
+                CloudSyncManager.syncLog.event(.skip, item: "bios/\(record.recordID.recordName)", status: .skipped, detail: "BIOS record missing filename")
                 continue
             }
 
             // Log record details
             let hasAsset = record["fileData"] as? CKAsset != nil
             let recordType = record.recordType
-            ILOG("[BIOS META] Processing record: filename=\(filename), recordType=\(recordType), recordID=\(record.recordID.recordName), hasAsset=\(hasAsset)")
+            CloudSyncManager.syncLog.event(.sync, item: "bios/\(filename)", status: .inProgress, detail: "Processing record: recordType=\(recordType), recordID=\(record.recordID.recordName), hasAsset=\(hasAsset)")
 
             // Extract system identifier from directory path or relativePath
             let relativePath = record["relativePath"] as? String ?? filename
@@ -769,7 +769,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
             let matchingBIOS = findMatchingBIOS(filename: filename, md5: md5, in: realm)
 
             if let bios = matchingBIOS {
-                ILOG("[BIOS META] Found matching PVBIOS for \(filename): expectedFilename=\(bios.expectedFilename), expectedMD5=\(bios.expectedMD5)")
+                CloudSyncManager.syncLog.event(.sync, item: "bios/\(filename)", status: .ok, detail: "Found matching PVBIOS: expectedFilename=\(bios.expectedFilename), expectedMD5=\(bios.expectedMD5)")
 
                 // Update the PVBIOS with cloud info
                 do {
@@ -781,27 +781,27 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                         let fileExists = FileManager.default.fileExists(atPath: localPath.path)
                         bios.isDownloaded = fileExists
 
-                        ILOG("[BIOS META] Updated BIOS \(filename): cloudRecordID=\(record.recordID.recordName), localPath=\(localPath.path), fileExists=\(fileExists)")
+                        CloudSyncManager.syncLog.event(.sync, item: "bios/\(filename)", status: .ok, detail: "Updated BIOS: cloudRecordID=\(record.recordID.recordName), fileExists=\(fileExists)")
 
                         // If file exists and we don't have a PVFile, create one
                         if fileExists && bios.file == nil {
                             let pvFile = PVFile()
                             pvFile.partialPath = relativePath
                             bios.file = pvFile
-                            ILOG("[BIOS META] Created PVFile for existing BIOS: \(filename)")
+                            CloudSyncManager.syncLog.event(.sync, item: "bios/\(filename)", status: .ok, detail: "Created PVFile for existing BIOS")
                         }
                     }
                     processedCount += 1
                     DLOG("[SYNC] Updated BIOS entry: \(filename), isDownloaded: \(bios.isDownloaded)")
                 } catch {
-                    ELOG("[SYNC] Failed to update BIOS \(filename): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.error, item: "bios/\(filename)", status: .failed, detail: "Failed to update BIOS: \(error.localizedDescription)")
                 }
             } else {
                 DLOG("[SYNC] No matching PVBIOS for cloud record: \(filename)")
             }
         }
 
-        ILOG("[SYNC] BIOS metadata sync complete: processed \(processedCount) of \(records.count) records")
+        CloudSyncManager.syncLog.event(.sync, item: "bios/metadata", status: .ok, detail: "BIOS metadata sync complete: processed \(processedCount) of \(records.count) records")
 
         // After metadata sync, trigger download of missing BIOS files
         // Must run on MainActor since downloadMissingBIOSFiles accesses Realm
@@ -872,16 +872,16 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     @MainActor
     public func downloadMissingBIOSFiles() async {
         if CloudSyncManager.shared.isPausedForEmulation {
-            ILOG("[BIOS DOWNLOAD] Skipping missing BIOS download scan - paused for emulation")
+            CloudSyncManager.syncLog.event(.skip, item: "bios/download-scan", status: .skipped, detail: "Skipping missing BIOS download scan - paused for emulation")
             return
         }
 
-        ILOG("[BIOS DOWNLOAD] Checking for missing BIOS files to download...")
+        CloudSyncManager.syncLog.event(.download, item: "bios/missing-scan", status: .inProgress, detail: "Checking for missing BIOS files to download")
 
         // Extract data from Realm into value types for thread-safe access
         let (biosWithCloudRecordsInfo, biosWithoutCloudRecordsInfo) = extractBIOSDownloadInfo()
 
-        ILOG("[BIOS DOWNLOAD] Found \(biosWithCloudRecordsInfo.count) BIOS with cloudRecordID, \(biosWithoutCloudRecordsInfo.count) without")
+        CloudSyncManager.syncLog.event(.download, item: "bios/missing-scan", status: .inProgress, detail: "Found \(biosWithCloudRecordsInfo.count) BIOS with cloudRecordID, \(biosWithoutCloudRecordsInfo.count) without")
 
         // Try to download BIOS files without cloudRecordID by guessing the record ID
         for info in biosWithoutCloudRecordsInfo {
@@ -890,7 +890,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
             // Try to find the record using predicted ID format: {systemID}_{filename}_{md5prefix}
             let md5Prefix = String(info.expectedMD5.prefix(8)).uppercased()
             let predictedRecordID = "\(systemID)_\(info.expectedFilename)_\(md5Prefix)"
-            ILOG("[BIOS DOWNLOAD] Trying predicted recordID for \(info.expectedFilename): \(predictedRecordID)")
+            CloudSyncManager.syncLog.event(.download, item: "bios/\(info.expectedFilename)", status: .inProgress, detail: "Trying predicted recordID: \(predictedRecordID)")
 
             if await tryFetchAndDownloadByInfo(predictedRecordID, info: info) {
                 continue // Successfully downloaded
@@ -898,7 +898,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
             // Also try without MD5 suffix (simpler format)
             let simpleRecordID = "\(systemID)_\(info.expectedFilename)"
-            ILOG("[BIOS DOWNLOAD] Trying simple recordID for \(info.expectedFilename): \(simpleRecordID)")
+            CloudSyncManager.syncLog.event(.download, item: "bios/\(info.expectedFilename)", status: .inProgress, detail: "Trying simple recordID: \(simpleRecordID)")
 
             if await tryFetchAndDownloadByInfo(simpleRecordID, info: info) {
                 continue // Successfully downloaded
@@ -906,32 +906,32 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
         }
 
         guard !biosWithCloudRecordsInfo.isEmpty else {
-            ILOG("[BIOS DOWNLOAD] No missing BIOS files with known cloudRecordID to download")
+            CloudSyncManager.syncLog.event(.download, item: "bios/missing-scan", status: .ok, detail: "No missing BIOS files with known cloudRecordID to download")
             return
         }
 
-        ILOG("[BIOS DOWNLOAD] Found \(biosWithCloudRecordsInfo.count) BIOS files with cloudRecordID to download from CloudKit")
+        CloudSyncManager.syncLog.event(.download, item: "bios/missing-scan", status: .inProgress, detail: "Found \(biosWithCloudRecordsInfo.count) BIOS files with cloudRecordID to download from CloudKit")
 
         for info in biosWithCloudRecordsInfo {
             guard let recordID = info.cloudRecordID, !recordID.isEmpty else {
-                WLOG("[BIOS DOWNLOAD] Skipping BIOS with empty recordID: \(info.expectedFilename)")
+                CloudSyncManager.syncLog.event(.skip, item: "bios/\(info.expectedFilename)", status: .skipped, detail: "Skipping BIOS with empty recordID")
                 continue
             }
 
-            ILOG("[BIOS DOWNLOAD] Initiating download: filename=\(info.expectedFilename), recordID=\(recordID), systemID=\(info.systemIdentifier ?? "nil")")
+            CloudSyncManager.syncLog.event(.download, item: "bios/\(info.expectedFilename)", status: .inProgress, detail: "Initiating download: recordID=\(recordID), systemID=\(info.systemIdentifier ?? "nil")")
 
             do {
                 try await downloadBIOSFromCloudKit(recordID: recordID, filename: info.expectedFilename, systemIdentifier: info.systemIdentifier)
-                ILOG("[BIOS DOWNLOAD] Successfully downloaded: \(info.expectedFilename)")
+                CloudSyncManager.syncLog.event(.download, item: "bios/\(info.expectedFilename)", status: .ok, detail: "Successfully downloaded")
             } catch {
-                ELOG("[BIOS DOWNLOAD] Failed to download BIOS \(info.expectedFilename): \(error.localizedDescription)")
+                CloudSyncManager.syncLog.event(.download, item: "bios/\(info.expectedFilename)", status: .failed, detail: "Failed to download BIOS: \(error.localizedDescription)")
                 if let ckError = error as? CKError {
-                    ELOG("[BIOS DOWNLOAD] CKError code: \(ckError.code.rawValue), description: \(ckError.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.error, item: "bios/\(info.expectedFilename)", status: .failed, detail: "CKError code: \(ckError.code.rawValue), description: \(ckError.localizedDescription)")
                 }
             }
         }
 
-        ILOG("[BIOS DOWNLOAD] Download phase complete")
+        CloudSyncManager.syncLog.event(.download, item: "bios/missing-scan", status: .ok, detail: "Download phase complete")
     }
 
     /// Extract BIOS download info from Realm into thread-safe value types
@@ -1005,7 +1005,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                 return false
             }
 
-            ILOG("[BIOS DOWNLOAD] ✓ Found record \(recordID) with valid asset, downloading...")
+            CloudSyncManager.syncLog.event(.download, item: "bios/\(info.expectedFilename)", status: .inProgress, detail: "Found record \(recordID) with valid asset, downloading")
 
             let destinationURL = localPathForBIOS(filename: info.expectedFilename, systemIdentifier: info.systemIdentifier)
 
@@ -1035,7 +1035,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
             NotificationCenter.default.post(name: .BIOSFileFound, object: destinationURL)
 
-            ILOG("[BIOS DOWNLOAD] ✓ Successfully downloaded BIOS via predicted recordID: \(info.expectedFilename)")
+            CloudSyncManager.syncLog.event(.download, item: "bios/\(info.expectedFilename)", status: .ok, detail: "Successfully downloaded BIOS via predicted recordID")
             return true
 
         } catch let ckError as CKError where ckError.code == .unknownItem {
@@ -1194,7 +1194,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     NotificationCenter.default.post(name: .BIOSFileFound, object: destinationURL)
                 }
 
-                ILOG("[BIOS FAST] Downloaded via \(recordType) query: \(filename)")
+                CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .ok, detail: "Downloaded via \(recordType) query")
                 return true
             }
 
@@ -1213,13 +1213,13 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     ///   - systemIdentifier: The system identifier for subdirectory
     private func downloadBIOSFromCloudKit(recordID: String, filename: String, systemIdentifier: String?) async throws {
         if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
-            ILOG("[BIOS DOWNLOAD] Skipping BIOS download (paused for emulation): \(recordID)")
+            CloudSyncManager.syncLog.event(.skip, item: "bios/\(filename)", status: .skipped, detail: "Skipping BIOS download (paused for emulation): \(recordID)")
             return
         }
 
         let ckRecordID = CKRecord.ID(recordName: recordID)
 
-        ILOG("[BIOS DOWNLOAD] Starting download for: filename=\(filename), recordID=\(recordID), systemIdentifier=\(systemIdentifier ?? "nil")")
+        CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .inProgress, detail: "Starting download: recordID=\(recordID), systemIdentifier=\(systemIdentifier ?? "nil")")
 
         do {
             DLOG("[BIOS DOWNLOAD] Fetching record from CloudKit: \(recordID)")
@@ -1227,26 +1227,26 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
             DLOG("[BIOS DOWNLOAD] Record fetched successfully, checking for asset...")
             guard let asset = record["fileData"] as? CKAsset else {
-                ELOG("[BIOS DOWNLOAD] Record \(recordID) has no fileData asset!")
+                CloudSyncManager.syncLog.event(.error, item: "bios/\(filename)", status: .failed, detail: "Record \(recordID) has no fileData asset")
                 throw CloudSyncError.invalidData
             }
 
             guard let assetURL = asset.fileURL else {
-                ELOG("[BIOS DOWNLOAD] Asset exists but fileURL is nil for \(recordID)")
+                CloudSyncManager.syncLog.event(.error, item: "bios/\(filename)", status: .failed, detail: "Asset exists but fileURL is nil for \(recordID)")
                 throw CloudSyncError.invalidData
             }
 
-            ILOG("[BIOS DOWNLOAD] Asset found at cache path: \(assetURL.path)")
+            CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .inProgress, detail: "Asset found at cache path: \(assetURL.path)")
 
             // Verify asset file exists in cache
             guard FileManager.default.fileExists(atPath: assetURL.path) else {
-                ELOG("[BIOS DOWNLOAD] Asset file not found at cache path: \(assetURL.path)")
+                CloudSyncManager.syncLog.event(.error, item: "bios/\(filename)", status: .notFound, detail: "Asset file not found at cache path: \(assetURL.path)")
                 throw CloudSyncError.invalidData
             }
 
             // Determine destination path
             let destinationURL = localPathForBIOS(filename: filename, systemIdentifier: systemIdentifier)
-            ILOG("[BIOS DOWNLOAD] Destination path: \(destinationURL.path)")
+            CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .inProgress, detail: "Destination path: \(destinationURL.path)")
 
             // Create directory if needed
             let directory = destinationURL.deletingLastPathComponent()
@@ -1263,7 +1263,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
             // Verify the copy succeeded
             let copiedFileExists = FileManager.default.fileExists(atPath: destinationURL.path)
-            ILOG("[BIOS DOWNLOAD] Download complete: \(filename) -> \(destinationURL.path), verified: \(copiedFileExists)")
+            CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .ok, detail: "Download complete -> \(destinationURL.path), verified: \(copiedFileExists)")
 
             // Update Realm entry
             await MainActor.run {
@@ -1287,7 +1287,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
             await insertDownloadedFile(destinationURL)
         } catch let ckError as CKError where ckError.code == .unknownItem {
-            WLOG("[SYNC] BIOS record not found in CloudKit: \(recordID)")
+            CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .notFound, detail: "BIOS record not found in CloudKit: \(recordID)")
             throw CloudSyncError.recordNotFound
         }
     }
@@ -1295,7 +1295,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     /// Upload all local BIOS files that have PVFile entries but no cloudRecordID
     @MainActor
     public func uploadMissingBIOSFiles() async -> Int {
-        ILOG("[SYNC] Checking for local BIOS files to upload...")
+        CloudSyncManager.syncLog.event(.upload, item: "bios/upload-scan", status: .inProgress, detail: "Checking for local BIOS files to upload")
 
         let realm = RomDatabase.sharedInstance.realm
         let biosToUpload = realm.objects(PVBIOS.self)
@@ -1303,11 +1303,11 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
         let biosArray = Array(biosToUpload)
         guard !biosArray.isEmpty else {
-            ILOG("[SYNC] No local BIOS files need uploading")
+            CloudSyncManager.syncLog.event(.upload, item: "bios/upload-scan", status: .ok, detail: "No local BIOS files need uploading")
             return 0
         }
 
-        ILOG("[SYNC] Found \(biosArray.count) BIOS files to upload")
+        CloudSyncManager.syncLog.event(.upload, item: "bios/upload-scan", status: .inProgress, detail: "Found \(biosArray.count) BIOS files to upload")
 
         var uploadedCount = 0
         for bios in biosArray {
@@ -1317,7 +1317,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
             }
 
             let filename = bios.expectedFilename
-            ILOG("[SYNC] Uploading BIOS: \(filename)")
+            CloudSyncManager.syncLog.event(.upload, item: "bios/\(filename)", status: .inProgress, detail: "Uploading BIOS")
 
             do {
                 // Extract system identifier from path
@@ -1332,13 +1332,13 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                 }
 
                 uploadedCount += 1
-                ILOG("[SYNC] Uploaded BIOS: \(filename), recordID: \(record.recordID.recordName)")
+                CloudSyncManager.syncLog.event(.upload, item: "bios/\(filename)", status: .ok, detail: "Uploaded BIOS, recordID: \(record.recordID.recordName)")
             } catch {
-                ELOG("[SYNC] Failed to upload BIOS \(filename): \(error.localizedDescription)")
+                CloudSyncManager.syncLog.event(.upload, item: "bios/\(filename)", status: .failed, detail: "Failed to upload BIOS: \(error.localizedDescription)")
             }
         }
 
-        ILOG("[SYNC] BIOS upload complete: \(uploadedCount) of \(biosArray.count) uploaded")
+        CloudSyncManager.syncLog.event(.upload, item: "bios/upload-scan", status: .ok, detail: "BIOS upload complete: \(uploadedCount) of \(biosArray.count) uploaded")
         return uploadedCount
     }
 
@@ -1354,10 +1354,10 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     ///
     /// - Returns: Number of System/ files uploaded or downloaded during this pass.
     public func syncSystemFiles() async -> Int {
-        ILOG("[SYSTEM SYNC] Starting System/ directory sync...")
+        CloudSyncManager.syncLog.event(.sync, item: "system/directory-sync", status: .inProgress, detail: "Starting System/ directory sync")
 
         if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
-            ILOG("[SYSTEM SYNC] Skipping — paused for emulation")
+            CloudSyncManager.syncLog.event(.skip, item: "system/directory-sync", status: .skipped, detail: "Skipping - paused for emulation")
             return 0
         }
 
@@ -1388,7 +1388,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     processedCount += 1
                     DLOG("[SYSTEM SYNC] Uploaded: \(fileURL.lastPathComponent)")
                 } catch {
-                    ELOG("[SYSTEM SYNC] Upload failed for \(fileURL.lastPathComponent): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.upload, item: "system/\(fileURL.lastPathComponent)", status: .failed, detail: "Upload failed: \(error.localizedDescription)")
                 }
             }
         }
@@ -1400,7 +1400,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
             let (results, _) = try await privateDatabase.records(matching: query, resultsLimit: 500)
 
             let records = results.compactMap { _, result -> CKRecord? in try? result.get() }
-            ILOG("[SYSTEM SYNC] Found \(records.count) System/ records in CloudKit")
+            CloudSyncManager.syncLog.event(.query, item: "system/records", status: .ok, detail: "Found \(records.count) System/ records in CloudKit")
 
             for record in records {
                 guard let relativePath = record["filename"] as? String,
@@ -1423,18 +1423,18 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     try FileManager.default.copyItem(at: assetURL, to: destinationURL)
                     await insertDownloadedFile(destinationURL)
                     processedCount += 1
-                    ILOG("[SYSTEM SYNC] Downloaded: \(relativePath)")
+                    CloudSyncManager.syncLog.event(.download, item: "system/\(relativePath)", status: .ok, detail: "Downloaded")
                 } catch {
-                    ELOG("[SYSTEM SYNC] Download failed for \(relativePath): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.download, item: "system/\(relativePath)", status: .failed, detail: "Download failed: \(error.localizedDescription)")
                 }
             }
         } catch let ckError as CKError where ckError.code == .unknownItem {
             DLOG("[SYSTEM SYNC] No System/ records found in CloudKit yet")
         } catch {
-            ELOG("[SYSTEM SYNC] Failed to query System/ records: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.query, item: "system/records", status: .failed, detail: "Failed to query System/ records: \(error.localizedDescription)")
         }
 
-        ILOG("[SYSTEM SYNC] Complete: processed \(processedCount) System/ files")
+        CloudSyncManager.syncLog.event(.sync, item: "system/directory-sync", status: .ok, detail: "Complete: processed \(processedCount) System/ files")
         return processedCount
     }
 
@@ -1444,13 +1444,13 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     /// This is useful for diagnosing sync issues
     /// - Returns: Audit results containing valid, invalid, and missing records
     public func auditBIOSCloudRecords() async -> BIOSAuditResult {
-        ILOG("[BIOS AUDIT] Starting CloudKit BIOS audit...")
+        CloudSyncManager.syncLog.event(.check, item: "bios/audit", status: .inProgress, detail: "Starting CloudKit BIOS audit")
 
         var result = BIOSAuditResult()
 
         // Fetch all records from CloudKit
         let cloudRecords = await fetchAllBIOSRecords()
-        ILOG("[BIOS AUDIT] Found \(cloudRecords.count) BIOS records in CloudKit")
+        CloudSyncManager.syncLog.event(.check, item: "bios/audit", status: .inProgress, detail: "Found \(cloudRecords.count) BIOS records in CloudKit")
 
         // Check each record for valid asset
         for record in cloudRecords {
@@ -1465,15 +1465,15 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                         DLOG("[BIOS AUDIT] ✓ Valid: \(filename) - asset at \(fileURL.path)")
                     } else {
                         result.assetMissingRecords.append((recordID: recordID, filename: filename))
-                        WLOG("[BIOS AUDIT] ⚠ Asset file missing: \(filename) - expected at \(fileURL.path)")
+                        CloudSyncManager.syncLog.event(.check, item: "bios/\(filename)", status: .notFound, detail: "Asset file missing - expected at \(fileURL.path)")
                     }
                 } else {
                     result.assetMissingRecords.append((recordID: recordID, filename: filename))
-                    WLOG("[BIOS AUDIT] ⚠ Asset URL nil: \(filename)")
+                    CloudSyncManager.syncLog.event(.check, item: "bios/\(filename)", status: .notFound, detail: "Asset URL nil")
                 }
             } else {
                 result.noAssetRecords.append((recordID: recordID, filename: filename))
-                ELOG("[BIOS AUDIT] ✗ No asset: \(filename)")
+                CloudSyncManager.syncLog.event(.error, item: "bios/\(filename)", status: .failed, detail: "No asset field on record")
             }
         }
 
@@ -1488,25 +1488,18 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     let found = cloudRecords.contains { $0.recordID.recordName == cloudRecordID }
                     if !found {
                         result.orphanedLocalRecords.append((recordID: cloudRecordID, filename: bios.expectedFilename))
-                        WLOG("[BIOS AUDIT] ⚠ Orphaned local record: \(bios.expectedFilename) - cloudRecordID \(cloudRecordID) not found in CloudKit")
+                        CloudSyncManager.syncLog.event(.check, item: "bios/\(bios.expectedFilename)", status: .notFound, detail: "Orphaned local record - cloudRecordID \(cloudRecordID) not found in CloudKit")
                     }
                 } else if bios.file?.url != nil && FileManager.default.fileExists(atPath: bios.file!.url!.path) {
                     // Local file exists but no cloud record
                     result.localOnlyFiles.append((filename: bios.expectedFilename, path: bios.file!.url!.path))
-                    ILOG("[BIOS AUDIT] Local-only: \(bios.expectedFilename) exists locally but not in CloudKit")
+                    CloudSyncManager.syncLog.event(.check, item: "bios/\(bios.expectedFilename)", status: .exists, detail: "Local-only: exists locally but not in CloudKit")
                 }
             }
         }
 
         // Log summary
-        ILOG("""
-        [BIOS AUDIT] Audit complete:
-          - Valid records with assets: \(result.validRecords.count)
-          - Records missing assets: \(result.assetMissingRecords.count)
-          - Records with no asset field: \(result.noAssetRecords.count)
-          - Orphaned local records (cloud record deleted): \(result.orphanedLocalRecords.count)
-          - Local-only files (not uploaded): \(result.localOnlyFiles.count)
-        """)
+        CloudSyncManager.syncLog.event(.check, item: "bios/audit", status: .ok, detail: "Audit complete: valid=\(result.validRecords.count), missingAssets=\(result.assetMissingRecords.count), noAsset=\(result.noAssetRecords.count), orphaned=\(result.orphanedLocalRecords.count), localOnly=\(result.localOnlyFiles.count)")
 
         return result
     }
@@ -1516,7 +1509,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
     /// - Returns: Number of BIOS files re-uploaded
     @MainActor
     public func repairBIOSSync(forRecordIDs recordIDs: [String]? = nil) async -> Int {
-        ILOG("[BIOS REPAIR] Starting BIOS sync repair...")
+        CloudSyncManager.syncLog.event(.sync, item: "bios/repair", status: .inProgress, detail: "Starting BIOS sync repair")
 
         let realm = RomDatabase.sharedInstance.realm
 
@@ -1527,7 +1520,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
                     try? realm.write {
                         bios.cloudRecordID = nil
                     }
-                    ILOG("[BIOS REPAIR] Cleared cloudRecordID for \(bios.expectedFilename)")
+                    CloudSyncManager.syncLog.event(.sync, item: "bios/\(bios.expectedFilename)", status: .ok, detail: "Cleared cloudRecordID for repair")
                 }
             }
         } else {
@@ -1555,7 +1548,7 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
         // Now upload missing BIOS files
         let uploadedCount = await uploadMissingBIOSFiles()
-        ILOG("[BIOS REPAIR] Repair complete: uploaded \(uploadedCount) BIOS files")
+        CloudSyncManager.syncLog.event(.sync, item: "bios/repair", status: .ok, detail: "Repair complete: uploaded \(uploadedCount) BIOS files")
 
         return uploadedCount
     }

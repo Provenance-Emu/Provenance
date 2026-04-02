@@ -453,7 +453,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     let syncLog = CloudSyncManager.syncLog
                     // Check if paused for emulation
                     if await CloudSyncManager.shared.isPausedForEmulation {
-                        syncLog.event(.skip, item: "save/upload", status: .skipped, detail: "paused for emulation")
+                        CloudSyncManager.syncLog.event(.skip, item: "save/upload", status: .skipped, detail: "paused for emulation")
                         observer(.completed)
                         return
                     }
@@ -511,7 +511,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     let privateDatabase = self.container.privateCloudDatabase
                     let savedRecord = try await privateDatabase.save(record)
 
-                    syncLog.event(.upload, item: "save/\(filename)", status: .ok, detail: "record=\(savedRecord.recordID.recordName) game=\(gameIdentifier) system=\(game.systemIdentifier)")
+                    CloudSyncManager.syncLog.event(.upload, item: "save/\(filename)", status: .ok, detail: "record=\(savedRecord.recordID.recordName) game=\(gameIdentifier) system=\(game.systemIdentifier)")
 
                     // Update local save state with CloudKit metadata
                     try await self.withRealm { realm in
@@ -529,15 +529,15 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                     DLOG("[SYNC] Save state upload complete: \(filename)")
                     observer(.completed)
                 } catch let error as CKError {
-                    syncLog.event(.upload, item: "save/\(saveState.file?.fileName ?? saveState.id)", status: .failed, detail: "CKError \(error.code.rawValue): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.upload, item: "save/\(saveState.file?.fileName ?? saveState.id)", status: .failed, detail: "CKError \(error.code.rawValue): \(error.localizedDescription)")
                     if error.isRecoverableCloudKitError {
-                        syncLog.event(.retry, item: "save/\(saveState.file?.fileName ?? saveState.id)", status: .pending, detail: "recoverable error")
+                        CloudSyncManager.syncLog.event(.retry, item: "save/\(saveState.file?.fileName ?? saveState.id)", status: .pending, detail: "recoverable error")
                     }
 
                     await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 } catch {
-                    syncLog.event(.upload, item: "save/\(saveState.file?.fileName ?? saveState.id)", status: .failed, detail: error.localizedDescription)
+                    CloudSyncManager.syncLog.event(.upload, item: "save/\(saveState.file?.fileName ?? saveState.id)", status: .failed, detail: error.localizedDescription)
                     await self.errorHandler.handle(error: error)
                     observer(.error(error))
                 }
@@ -730,18 +730,18 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 } catch let error as CKError {
                     let item = "save/\(saveState.file?.fileName ?? saveState.id)"
                     let syncLog = CloudSyncManager.syncLog
-                    syncLog.event(.download, item: item, status: .failed, detail: "CKError \(error.code.rawValue): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.download, item: item, status: .failed, detail: "CKError \(error.code.rawValue): \(error.localizedDescription)")
 
                     switch error.code {
                     case .unknownItem:
-                        syncLog.event(.download, item: item, status: .notFound, detail: "may have been deleted")
+                        CloudSyncManager.syncLog.event(.download, item: item, status: .notFound, detail: "may have been deleted")
                     case .networkFailure, .networkUnavailable:
-                        syncLog.event(.retry, item: item, status: .pending, detail: "network error")
+                        CloudSyncManager.syncLog.event(.retry, item: item, status: .pending, detail: "network error")
                     case .requestRateLimited:
-                        syncLog.event(.retry, item: item, status: .pending, detail: "rate limited")
+                        CloudSyncManager.syncLog.event(.retry, item: item, status: .pending, detail: "rate limited")
                     default:
                         if error.isRecoverableCloudKitError {
-                            syncLog.event(.retry, item: item, status: .pending, detail: "recoverable error")
+                            CloudSyncManager.syncLog.event(.retry, item: item, status: .pending, detail: "recoverable error")
                         }
                     }
 
@@ -822,12 +822,12 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 defer { self.isLoadAllInFlight.withLock { $0 = false } }
                 do {
                     let syncLog = CloudSyncManager.syncLog
-                    syncLog.event(.start, item: "save/loadAll", status: .inProgress)
+                    CloudSyncManager.syncLog.event(.start, item: "save/loadAll", status: .inProgress)
                     await CloudKitSyncAnalytics.shared.startSync(operation: "Load SaveStates")
 
                     // Fetch all save state records
                     let records = await self.getAllRecords()
-                    syncLog.event(.query, item: "save/loadAll", status: .ok, detail: "\(records.count) records")
+                    CloudSyncManager.syncLog.event(.query, item: "save/loadAll", status: .ok, detail: "\(records.count) records")
 
                     // Process each record
                     for record in records {
@@ -921,7 +921,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
                 // Log progress every 5 batches (150 records)
                 if batchIndex % 5 == 0 {
-                    syncLog.event(.sync, item: "save/metadataSync", status: .inProgress, detail: "\(processedCount)/\(records.count) processed")
+                    CloudSyncManager.syncLog.event(.sync, item: "save/metadataSync", status: .inProgress, detail: "\(processedCount)/\(records.count) processed")
                 }
             }
 
@@ -962,7 +962,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
             // Check by: 1) original ID from metadata, 2) cloudRecordID, 3) filename
             let (frozenGame, existingSaveState): (PVGame?, PVSaveState?) = try await self.withRealm { [self] realm in
                 guard let realmGame = self.resolveGame(for: record, realm: realm) else {
-                    syncLog.event(.check, item: "save/\(cloudRecordID)", status: .notFound, detail: "game not found locally, will retry")
+                    CloudSyncManager.syncLog.event(.check, item: "save/\(cloudRecordID)", status: .notFound, detail: "game not found locally, will retry")
                     return (nil, nil)
                 }
 
@@ -973,7 +973,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 if let originalID = originalSaveStateID {
                     existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: originalID)
                     if existing != nil {
-                        syncLog.event(.check, item: "save/\(filename)", status: .exists, detail: "matched by originalID=\(originalID)")
+                        CloudSyncManager.syncLog.event(.check, item: "save/\(filename)", status: .exists, detail: "matched by originalID=\(originalID)")
                     }
                 }
 
@@ -983,7 +983,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                         .filter("cloudRecordID == %@", cloudRecordID)
                         .first
                     if existing != nil {
-                        syncLog.event(.check, item: "save/\(filename)", status: .exists, detail: "matched by cloudRecordID")
+                        CloudSyncManager.syncLog.event(.check, item: "save/\(filename)", status: .exists, detail: "matched by cloudRecordID")
                     }
                 }
 
@@ -991,12 +991,12 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 if existing == nil {
                     existing = realmGame.saveStates.first(where: { $0.file?.fileName == filename })
                     if existing != nil {
-                        syncLog.event(.check, item: "save/\(filename)", status: .exists, detail: "matched by filename")
+                        CloudSyncManager.syncLog.event(.check, item: "save/\(filename)", status: .exists, detail: "matched by filename")
                     }
                 }
 
                 if existing == nil {
-                    syncLog.event(.check, item: "save/\(filename)", status: .notFound, detail: "will create new")
+                    CloudSyncManager.syncLog.event(.check, item: "save/\(filename)", status: .notFound, detail: "will create new")
                 }
 
                 return (realmGame.freeze(), existing?.freeze())
@@ -1028,12 +1028,12 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                             try realm.write {
                                 if let thawed = existingSaveState.thaw() {
                                     thawed.cloudRecordID = cloudRecordID
-                                    syncLog.event(.sync, item: "save/\(existingSaveState.id)", status: .ok, detail: "updated cloudRecordID")
+                                    CloudSyncManager.syncLog.event(.sync, item: "save/\(existingSaveState.id)", status: .ok, detail: "updated cloudRecordID")
                                 }
                             }
                         }
                     } catch {
-                        syncLog.event(.sync, item: "save/\(existingSaveState.id)", status: .failed, detail: "cloudRecordID update: \(error.localizedDescription)")
+                        CloudSyncManager.syncLog.event(.sync, item: "save/\(existingSaveState.id)", status: .failed, detail: "cloudRecordID update: \(error.localizedDescription)")
                     }
                 }
             } else if let newSaveState = await self.createSaveStateFromCloudRecord(record, game: frozenGame, originalID: originalSaveStateID, preferredCoreID: coreHint.coreID, preferredCoreVersion: coreHint.coreVersion) {
@@ -1529,7 +1529,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         do {
             try await self.withRealm { realm in
                 guard let live = frozenSaveState.thaw() else {
-                    syncLog.event(.error, item: "save/\(recordID)", status: .failed, detail: "thaw failed for download marking")
+                    CloudSyncManager.syncLog.event(.error, item: "save/\(recordID)", status: .failed, detail: "thaw failed for download marking")
                     return
                 }
 

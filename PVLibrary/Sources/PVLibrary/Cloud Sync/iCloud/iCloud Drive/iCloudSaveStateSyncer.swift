@@ -61,7 +61,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
                 let romsDatastore: RomsDatastore = try await .init()
                 try await romsDatastore.deleteSaveStatesRemoveWhileApplicationClosed()
             } catch {
-                ELOG("error clearing saves deleted while application was closed")
+                CloudSyncManager.syncLog.event(.sync, item: "savestates/purge", status: .failed, detail: "error clearing saves deleted while application was closed")
             }
         }
     }
@@ -73,7 +73,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        ILOG("downloaded save file: \(file)")
+        CloudSyncManager.syncLog.event(.download, item: "savestates/\(file.lastPathComponent)", status: .ok, detail: "downloaded save file: \(file)")
         await newFiles.insert(file)
         await importNewSaves()
     }
@@ -88,7 +88,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
             try await romsDatastore.deleteSaveState(file: file)
         } catch {
             await errorHandler.handleError(error, file: file)
-            ELOG("error deleting \(file) from database: \(error)")
+            CloudSyncManager.syncLog.event(.delete, item: "savestates/\(file.lastPathComponent)", status: .failed, detail: "error deleting \(file) from database: \(error)")
         }
     }
 
@@ -132,19 +132,19 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
     func getUpdatedSaveState2(from fileContents: Data, json: URL) throws -> Data {
         guard var stringContents = String(data: fileContents, encoding: .utf8)
         else {
-            ELOG("error converting \(json) to a string")
+            CloudSyncManager.syncLog.event(.error, item: "savestates/migration", status: .failed, detail: "error converting \(json) to a string")
             throw SaveStateUpdateError.failedToConvertToString
         }
         if let firstCurlyBrace = stringContents.range(of: "{") {
             stringContents.insert(contentsOf: "\"isPinned\":false,\"isFavorite\":false,", at: firstCurlyBrace.upperBound)
         } else {
-            ELOG("error \(json) does NOT contain an opening curly brace {")
+            CloudSyncManager.syncLog.event(.error, item: "savestates/migration", status: .failed, detail: "error \(json) does NOT contain an opening curly brace {")
             throw SaveStateUpdateError.missingOpeningCurlyBrace
         }
         if let range = stringContents.range(of: "\"core\":{") {
             stringContents.insert(contentsOf: "\"systems\":[],", at: range.upperBound)
         } else {
-            ELOG("error \(json) does NOT contain a 'core' field")
+            CloudSyncManager.syncLog.event(.error, item: "savestates/migration", status: .failed, detail: "error \(json) does NOT contain a 'core' field")
             throw SaveStateUpdateError.missingCoreKey
         }
         guard let updated = stringContents.data(using: .utf8)
@@ -179,7 +179,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         await processingState.set(value: .processing)
         var processedCount = await processed.value
         let pendingFilesToDownloadCount = await pendingFilesToDownload.count
-        ILOG("Saves: downloading: \(pendingFilesToDownloadCount), processing: \(jsonFiles.count), total processed: \(processedCount)")
+        CloudSyncManager.syncLog.event(.sync, item: "savestates/import", status: .inProgress, detail: "Saves: downloading: \(pendingFilesToDownloadCount), processing: \(jsonFiles.count), total processed: \(processedCount)")
         for json in jsonFiles {
             do {
                 await processed.set(value: await processed.value + 1)
@@ -191,7 +191,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
                 let romsDatastore = try await RomsDatastore()
                 guard let existing: PVSaveState = await romsDatastore.findSaveState(forPrimaryKey: save.id)
                 else {
-                    ILOG("Saves: processing: save #(\(processedCount)) \(json)")
+                    CloudSyncManager.syncLog.event(.sync, item: "savestates/\(json.lastPathComponent)", status: .inProgress, detail: "Saves: processing: save #(\(processedCount)) \(json)")
                     await storeNewSave(save, romsDatastore, json)
                     continue
                 }
@@ -199,7 +199,7 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
 
             } catch {
                 await errorHandler.handleError(error, file: json)
-                ELOG("Decode error on \(json): \(error)")
+                CloudSyncManager.syncLog.event(.error, item: "savestates/\(json.lastPathComponent)", status: .failed, detail: "Decode error on \(json): \(error)")
             }
         }
         //update processed count
@@ -213,12 +213,12 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
         else {
             return
         }
-        ILOG("Saves: updating: save #(\(processedCount)) \(json)")
+        CloudSyncManager.syncLog.event(.sync, item: "savestates/\(json.lastPathComponent)", status: .inProgress, detail: "Saves: updating: save #(\(processedCount)) \(json)")
         do {
             try await romsDatastore.update(existingSave: existing, with: game)
         } catch {
             await errorHandler.handleError(error, file: json)
-            ELOG("Failed to update game \(json): \(error)")
+            CloudSyncManager.syncLog.event(.error, item: "savestates/\(json.lastPathComponent)", status: .failed, detail: "Failed to update game \(json): \(error)")
         }
     }
 
@@ -230,8 +230,8 @@ class iCloudSaveStateSyncer: iCloudContainerSyncer {
             }
         } catch {
             await errorHandler.handleError(error, file: json)
-            ELOG("error adding new save \(json): \(error)")
+            CloudSyncManager.syncLog.event(.error, item: "savestates/\(json.lastPathComponent)", status: .failed, detail: "error adding new save \(json): \(error)")
         }
-        ILOG("Added new save \(json)")
+        CloudSyncManager.syncLog.event(.sync, item: "savestates/\(json.lastPathComponent)", status: .ok, detail: "Added new save \(json)")
     }
 }

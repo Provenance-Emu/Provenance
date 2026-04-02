@@ -78,7 +78,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
             let romsDatastore = try await RomsDatastore()
             await romsDatastore.deleteGamesDeletedWhileApplicationClosed(romsPath: romsPath)
         } catch {
-            ELOG("error removing game entries that do NOT exist in the cloud container \(romsPath)")
+            CloudSyncManager.syncLog.event(.sync, item: "roms/purge", status: .failed, detail: "error removing game entries that do NOT exist in the cloud container \(romsPath)")
         }
     }
     
@@ -102,7 +102,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
             DLOG("\(file) already exists in database. skipping...")
             return
         }
-        ILOG("\(file) does NOT exist in database, adding to import set")
+        CloudSyncManager.syncLog.event(.download, item: "roms/\(file.lastPathComponent)", status: .inProgress, detail: "\(file) does NOT exist in database, adding to import set")
         switch file.system {
         case .Atari2600, .Atari5200, .Atari7800, .Genesis:
             await newFiles.insert(file)
@@ -169,7 +169,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
             try await romsDatastore.deleteGame(md5Hash: existingGame.md5Hash)
         } catch {
             await errorHandler.handleError(error, file: file)
-            ELOG("error deleting ROM \(file) from database: \(error)")
+            CloudSyncManager.syncLog.event(.delete, item: "roms/\(file.lastPathComponent)", status: .failed, detail: "error deleting ROM \(file) from database: \(error)")
         }
     }
     
@@ -216,7 +216,7 @@ public class iCloudRomsSyncer: iCloudContainerSyncer {
         await gameImporter.addImports(forPaths: importPaths)
         let pendingProcessingCount = await downloadedCount
         let pendingFilesToDownloadCount = await pendingFilesToDownload.count
-        ILOG("ROMs: downloading: \(pendingFilesToDownloadCount), pending to process: \(pendingProcessingCount), processing: \(importPaths.count)")
+        CloudSyncManager.syncLog.event(.sync, item: "roms/import", status: .inProgress, detail: "ROMs: downloading: \(pendingFilesToDownloadCount), pending to process: \(pendingProcessingCount), processing: \(importPaths.count)")
         if await newFiles.isEmpty {
             await uploadedFiles.removeAll()
         }

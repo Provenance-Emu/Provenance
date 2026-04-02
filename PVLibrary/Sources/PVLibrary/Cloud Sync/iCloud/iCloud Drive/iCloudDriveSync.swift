@@ -118,7 +118,7 @@ public enum iCloudDriveSync {
     }
 
     static func iCloudSyncChanged(_ newValue: Bool) async {
-        ILOG("new iCloudSync value: \(newValue)")
+        CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/setting", status: .inProgress, detail: "new iCloudSync value: \(newValue)")
         guard newValue
         else {
             await turnOff()
@@ -166,7 +166,7 @@ public enum iCloudDriveSync {
     /// Handle changes to the iCloudSyncMode setting
     /// - Parameter newMode: The new iCloudSyncMode value
     static func iCloudSyncModeChanged(_ newMode: iCloudSyncMode) async {
-        ILOG("new iCloudSyncMode value: \(newMode.description)")
+        CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/mode", status: .inProgress, detail: "new iCloudSyncMode value: \(newMode.description)")
 
         // Always check for files in iCloud Drive that might need to be recovered
         if newMode.isCloudKit {
@@ -211,7 +211,7 @@ public enum iCloudDriveSync {
                     try fileManager.removeItem(atPath: existing.pathDecoded)
                 } catch {
                     await errorHandler.handleError(error, file: existing)
-                    ELOG("error deleting existing file \(existing) that already exists in iCloud: \(error)")
+                    CloudSyncManager.syncLog.event(.delete, item: "icloud-drive/\(existing.lastPathComponent)", status: .failed, detail: "error deleting existing file that already exists in iCloud: \(error)")
                 }
             }, moveClosure: { currentSource, currentDestination in
                 try fileManager.setUbiquitous(true, itemAt: currentSource, destinationURL: currentDestination)
@@ -220,7 +220,7 @@ public enum iCloudDriveSync {
     }
 
     static func moveAllLocalFilesToCloudContainer(_ documentsDirectory: URL) async {
-        ILOG("Initial Download: moving all local files to cloud container: \(documentsDirectory)")
+        CloudSyncManager.syncLog.event(.upload, item: "icloud-drive/all-files", status: .inProgress, detail: "Initial Download: moving all local files to cloud container: \(documentsDirectory)")
         await withTaskGroup(of: Void.self) { group in
             group.addTask {
                 var sharedDirectories = [
@@ -241,7 +241,7 @@ public enum iCloudDriveSync {
                 await moveLocalFilesToCloudContainer(directories: ["ROMs"], parentContainer: documentsDirectory)
             }
             await group.waitForAll()
-            ILOG("Initial Download: finished moving all local files to cloud container: \(documentsDirectory)")
+            CloudSyncManager.syncLog.event(.upload, item: "icloud-drive/all-files", status: .ok, detail: "Initial Download: finished moving all local files to cloud container: \(documentsDirectory)")
         }
     }
 
@@ -249,11 +249,11 @@ public enum iCloudDriveSync {
     static func initiateDownloadOfiCloudDocumentsContainer() async {
         guard let documentsDirectory = URL.iCloudDocumentsDirectory
         else {
-            ELOG("Initial Download: error obtaining iCloud documents directory")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/documents-directory", status: .failed, detail: "Initial Download: error obtaining iCloud documents directory")
             return
         }
         await moveAllLocalFilesToCloudContainer(documentsDirectory)
-        ILOG("Initial Download: initiate downloading all files...")
+        CloudSyncManager.syncLog.event(.download, item: "icloud-drive/all-files", status: .inProgress, detail: "Initial Download: initiate downloading all files")
         let romsDirectory = documentsDirectory.appendingPathComponent("ROMs")
         let saveStatesDirectory = documentsDirectory.appendingPathComponent("Save States")
         let biosDirectory = documentsDirectory.appendingPathComponent("BIOS")
@@ -280,19 +280,19 @@ public enum iCloudDriveSync {
                 await startDownloading(directory: retroArchDirectory)
             }
             await group.waitForAll()
-            ILOG("Initial Download: completed initiating downloading of all files...")
+            CloudSyncManager.syncLog.event(.download, item: "icloud-drive/all-files", status: .ok, detail: "Initial Download: completed initiating downloading of all files")
         }
     }
 
     static func startDownloading(directory: URL) async {
-        ILOG("Initial Download: attempting to start downloading iCloud directory: \(directory)")
+        CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(directory.lastPathComponent)", status: .inProgress, detail: "Initial Download: attempting to start downloading iCloud directory")
         let fileManager: FileManager = .default
         let children: [String]
         do {
             children = try fileManager.subpathsOfDirectory(atPath: directory.pathDecoded)
-            ILOG("Initial Download: found \(children.count) in \(directory)")
+            CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(directory.lastPathComponent)", status: .inProgress, detail: "Initial Download: found \(children.count) files")
         } catch {
-            ELOG("Initial Download: error grabbing sub-directories of \(directory)")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(directory.lastPathComponent)", status: .failed, detail: "Initial Download: error grabbing sub-directories")
             await errorHandler.handleError(error, file: directory)
             return
         }
@@ -327,11 +327,11 @@ public enum iCloudDriveSync {
                         sleep(1)
                     }
                 } catch {
-                    ELOG("Initial Download: #\(count) error initiating download of \(currentUrl)")
+                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(currentUrl.lastPathComponent)", status: .failed, detail: "Initial Download: #\(count) error initiating download")
                     await errorHandler.handleError(error, file: currentUrl)
                 }
             } catch {
-                ELOG("Initial Download: #\(count) error checking if \(currentUrl) is a directory")
+                CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(currentUrl.lastPathComponent)", status: .failed, detail: "Initial Download: #\(count) error checking if file is a directory")
             }
         }
     }
@@ -341,25 +341,17 @@ public enum iCloudDriveSync {
             return try url.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey,
                                                     .ubiquitousItemIsDownloadingKey]).ubiquitousItemDownloadingStatus
         } catch {
-            ELOG("Initial Download: Error checking iCloud file status for: \(url), error: \(error)")
+            CloudSyncManager.syncLog.event(.check, item: "icloud-drive/\(url.lastPathComponent)", status: .failed, detail: "Initial Download: Error checking iCloud file status: \(error)")
             return nil
         }
     }
 
     static func turnOn() async {
         guard URL.supportsICloudDrive else {
-            ELOG("attempted to turn on iCloud, but iCloud is NOT setup on the device")
-
-            /// Log the error to CloudSyncLogManager
-            CloudSyncLogManager.shared.logSyncOperation(
-                "Failed to enable iCloud sync: iCloud Drive not available on device",
-                level: .error,
-                operation: .initialization,
-                provider: .iCloudDrive
-            )
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/setup", status: .failed, detail: "attempted to turn on iCloud, but iCloud is NOT setup on the device")
             return
         }
-        ILOG("turning on iCloud")
+        CloudSyncManager.syncLog.event(.start, item: "icloud-drive/sync", status: .inProgress, detail: "turning on iCloud")
         /// Reset ROMs path
         gameImporter.gameImporterDatabaseService.setRomsPath(url: gameImporter.romsPath)
         await errorHandler.clear()
@@ -370,7 +362,7 @@ public enum iCloudDriveSync {
                 UserDefaults.standard.set(newTokenData, forKey: UbiquityIdentityTokenKey)
             } catch {
                 await errorHandler.handleError(error, file: nil)
-                ELOG("error serializing iCloud token: \(error)")
+                CloudSyncManager.syncLog.event(.error, item: "icloud-drive/token", status: .failed, detail: "error serializing iCloud token: \(error)")
             }
         } else {
             UserDefaults.standard.removeObject(forKey: UbiquityIdentityTokenKey)
@@ -405,7 +397,7 @@ public enum iCloudDriveSync {
             }
             .observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
-                ELOG(error.localizedDescription)
+                CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/non-database-syncer", status: .failed, detail: error.localizedDescription)
             }) {
                 DLOG("disposing nonDatabaseFileSyncer")
                 Task {
@@ -443,7 +435,7 @@ public enum iCloudDriveSync {
             await saveStateSyncer.importNewSaves()
         }.observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
-                ELOG(error.localizedDescription)
+                CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/save-state-syncer", status: .failed, detail: error.localizedDescription)
             }) {
                 DLOG("disposing saveStateSyncer")
                 Task {
@@ -455,7 +447,7 @@ public enum iCloudDriveSync {
             await romsSyncer.handleImportNewRomFiles()
         }.observe(on: MainScheduler.instance)
             .subscribe(onError: { error in
-                ELOG(error.localizedDescription)
+                CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/roms-syncer", status: .failed, detail: error.localizedDescription)
             }) {
                 DLOG("disposing romsSyncer")
                 Task {
@@ -466,15 +458,7 @@ public enum iCloudDriveSync {
     }
 
     static func turnOff() async {
-        ILOG("turning off iCloud")
-
-        // Log to CloudSyncLogManager
-        CloudSyncLogManager.shared.logSyncOperation(
-            "Turning off iCloud sync",
-            level: .info,
-            operation: .initialization,
-            provider: .iCloudDrive
-        )
+        CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/sync", status: .inProgress, detail: "turning off iCloud")
 
         romDatabaseInitialized?.cancel()
         await errorHandler.clear()
@@ -582,7 +566,7 @@ public enum iCloudDriveSync {
 
         // Ensure the file is downloaded before attempting to move it
         guard await ensureFileDownloaded(at: sourceFile) else {
-            ELOG("❌ Failed to download file from iCloud: \(sourceFile.lastPathComponent)")
+            CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Failed to download file from iCloud")
             return false
         }
 
@@ -612,7 +596,7 @@ public enum iCloudDriveSync {
                 }
             }
         } catch {
-            ELOG("Error checking download status: \(error)")
+            CloudSyncManager.syncLog.event(.check, item: "icloud-drive/download-status", status: .failed, detail: "Error checking download status: \(error)")
         }
 
         return false
@@ -643,7 +627,7 @@ public enum iCloudDriveSync {
             try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
         }
 
-        ELOG("Timeout waiting for download: \(url.lastPathComponent)")
+        CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(url.lastPathComponent)", status: .failed, detail: "Timeout waiting for download")
         return false
     }
 
@@ -745,7 +729,7 @@ public enum iCloudDriveSync {
     private static func processRetryQueue() async {
         guard !retryQueue.isEmpty else { return }
 
-        ILOG("Processing retry queue: \(retryQueue.count) files, attempt \(currentRetryAttempt) of \(maxRetryAttempts)")
+        CloudSyncManager.syncLog.event(.retry, item: "icloud-drive/retry-queue", status: .inProgress, detail: "Processing retry queue: \(retryQueue.count) files, attempt \(currentRetryAttempt) of \(maxRetryAttempts)")
 
         // Create a local copy of the queue to process
         let filesToRetry = retryQueue
@@ -773,7 +757,7 @@ public enum iCloudDriveSync {
                 DLOG("✅ Successfully copied file on retry: \(sourceFile.lastPathComponent)")
                 successCount += 1
             } catch {
-                ELOG("❌ Failed to copy file on retry: \(sourceFile.lastPathComponent) - \(error)")
+                CloudSyncManager.syncLog.event(.retry, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Failed to copy file on retry: \(error)")
                 // Add back to retry queue if we haven't exceeded max attempts
                 Task { @MainActor in
                     if currentRetryAttempt < maxRetryAttempts {
@@ -783,7 +767,7 @@ public enum iCloudDriveSync {
             }
         }
 
-        ILOG("Retry queue processing complete: \(successCount)/\(filesToRetry.count) files succeeded")
+        CloudSyncManager.syncLog.event(.retry, item: "icloud-drive/retry-queue", status: .ok, detail: "Retry queue processing complete: \(successCount)/\(filesToRetry.count) files succeeded")
     }
 
     /// Increment the number of files processed
@@ -796,7 +780,7 @@ public enum iCloudDriveSync {
         // Log progress every 10 files or when it's a multiple of 5%
         if processed % 10 == 0 || (total > 0 && processed * 20 % total == 0) {
             let percentage = total > 0 ? Double(processed) / Double(total) * 100.0 : 0
-            ILOG("File recovery progress: \(processed)/\(total) (\(Int(percentage))%)")
+            CloudSyncManager.syncLog.event(.download, item: "icloud-drive/recovery", status: .inProgress, detail: "File recovery progress: \(processed)/\(total) (\(Int(percentage))%)")
 
             // Post notification for progress updates
             Task { @MainActor in
@@ -815,7 +799,7 @@ public enum iCloudDriveSync {
             totalFilesToMove += count
             return (filesProcessed, totalFilesToMove)
         }
-        ILOG("Total files to move: \(total)")
+        CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/progress", status: .inProgress, detail: "Total files to move: \(total)")
 
         // Post notification for initial progress
         Task { @MainActor in
@@ -830,7 +814,7 @@ public enum iCloudDriveSync {
     /// Public method to manually trigger file recovery from iCloud Drive
     /// This is useful for testing and for users who want to manually trigger recovery
     public static func manuallyTriggerFileRecovery() async {
-        ILOG("Manually triggering file recovery from iCloud Drive")
+        CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/recovery", status: .inProgress, detail: "Manually triggering file recovery from iCloud Drive")
         // Reset the session flag first to ensure we can start a new session
         isRecoverySessionActive = false
         await moveFilesFromiCloudDriveToLocalDocuments()
@@ -858,7 +842,7 @@ public enum iCloudDriveSync {
 
         // Ensure heavy filesystem enumeration and copying never runs on the main actor/runloop.
         await Task.detached(priority: .utility) {
-            ILOG("Moving files from iCloud Drive to local Documents directory")
+            CloudSyncManager.syncLog.event(.download, item: "icloud-drive/recovery", status: .inProgress, detail: "Moving files from iCloud Drive to local Documents directory")
 
             // Reset progress tracking
             resetProgress()
@@ -882,7 +866,7 @@ public enum iCloudDriveSync {
             }
 
             guard let iCloudContainer = URL.iCloudContainerDirectory else {
-                ELOG("Cannot access iCloud container directory")
+                CloudSyncManager.syncLog.event(.error, item: "icloud-drive/container", status: .failed, detail: "Cannot access iCloud container directory")
                 return
             }
 
@@ -891,11 +875,11 @@ public enum iCloudDriveSync {
 
         // Check if the Documents directory exists
         if !FileManager.default.fileExists(atPath: iCloudDocuments.path) {
-            ELOG("iCloud Documents directory doesn't exist")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/documents", status: .failed, detail: "iCloud Documents directory doesn't exist")
             return
         }
 
-        ILOG("Using iCloud Documents path: \(iCloudDocuments.path)")
+        CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/documents", status: .inProgress, detail: "Using iCloud Documents path: \(iCloudDocuments.path)")
 
         var directories = [
             "BIOS",
@@ -922,7 +906,7 @@ public enum iCloudDriveSync {
             await group.waitForAll()
         }
 
-        ILOG("Completed moving files from iCloud Drive to local Documents directory (\(filesProcessed)/\(totalFilesToMove) files processed)")
+        CloudSyncManager.syncLog.event(.download, item: "icloud-drive/recovery", status: .ok, detail: "Completed moving files from iCloud Drive to local Documents directory (\(filesProcessed)/\(totalFilesToMove) files processed)")
 
         // Post final notification with complete progress
         NotificationCenter.default.post(
@@ -935,7 +919,7 @@ public enum iCloudDriveSync {
         if !retryQueue.isEmpty && currentRetryAttempt < maxRetryAttempts {
             currentRetryAttempt += 1
 
-            ILOG("Processing retry queue: \(retryQueue.count) files, attempt \(currentRetryAttempt) of \(maxRetryAttempts)")
+            CloudSyncManager.syncLog.event(.retry, item: "icloud-drive/retry-queue", status: .inProgress, detail: "Processing retry queue: \(retryQueue.count) files, attempt \(currentRetryAttempt) of \(maxRetryAttempts)")
 
             // Post notification about retry attempt
             Task { @MainActor in
@@ -977,7 +961,7 @@ public enum iCloudDriveSync {
 
     /// Count all files in the directories to get a total for progress tracking
     private static func countAllFiles(in directories: [String], iCloudContainer: URL) async {
-        ILOG("Starting to count files in \(directories.count) directories")
+        CloudSyncManager.syncLog.event(.check, item: "icloud-drive/count-files", status: .inProgress, detail: "Starting to count files in \(directories.count) directories")
 
         // Track files that need to be synced vs. total files
         var totalFilesInCloud = 0
@@ -1001,7 +985,7 @@ public enum iCloudDriveSync {
                 let dirAttributes = try FileManager.default.attributesOfItem(atPath: iCloudDirectory.path)
                 DLOG("Directory attributes for \(directory): \(dirAttributes)")
             } catch {
-                ELOG("❌ Cannot access directory attributes for \(directory): \(error)")
+                CloudSyncManager.syncLog.event(.check, item: "icloud-drive/\(directory)", status: .failed, detail: "Cannot access directory attributes: \(error)")
                 // Post notification with error
                 NotificationCenter.default.post(
                     name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1079,22 +1063,22 @@ public enum iCloudDriveSync {
                                 }
                             }
                         } catch {
-                            ELOG("Error checking file at \(fileURL.path): \(error)")
+                            CloudSyncManager.syncLog.event(.check, item: "icloud-drive/\(fileURL.lastPathComponent)", status: .failed, detail: "Error checking file: \(error)")
                         }
                     }
 
                     if count > 0 {
                         totalFilesInCloud += count
                         addToTotalFiles(needsSync) // Only count files that need syncing
-                        ILOG("✅ Found \(count) files in directory: \(directory), \(needsSync) need to be synced")
+                        CloudSyncManager.syncLog.event(.check, item: "icloud-drive/\(directory)", status: .ok, detail: "Found \(count) files in directory, \(needsSync) need to be synced")
                     } else {
                         DLOG("No files found in directory: \(directory)")
                     }
                 } else {
-                    ELOG("Could not create enumerator for directory: \(directory)")
+                    CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(directory)", status: .failed, detail: "Could not create enumerator for directory")
                 }
             } catch {
-                ELOG("❌ Error counting files in directory \(directory): \(error)")
+                CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(directory)", status: .failed, detail: "Error counting files in directory: \(error)")
                 // Post notification with error
                 NotificationCenter.default.post(
                     name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1104,22 +1088,22 @@ public enum iCloudDriveSync {
             }
         }
 
-        ILOG("Completed counting files. Total files in iCloud: \(totalFilesInCloud), files to sync: \(totalFilesToMove)")
+        CloudSyncManager.syncLog.event(.check, item: "icloud-drive/count-files", status: .ok, detail: "Completed counting files. Total files in iCloud: \(totalFilesInCloud), files to sync: \(totalFilesToMove)")
     }
 
     /// Move files from local Documents directory to iCloud Drive
     /// Used when switching from CloudKit mode to iCloud Drive mode
     static func moveFilesFromLocalDocumentsToiCloudDrive() async {
-        ILOG("Moving files from local Documents directory to iCloud Drive")
+        CloudSyncManager.syncLog.event(.upload, item: "icloud-drive/local-to-cloud", status: .inProgress, detail: "Moving files from local Documents directory to iCloud Drive")
 
         guard let iCloudContainer = URL.iCloudContainerDirectory else {
-            ELOG("Cannot access iCloud container directory")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/container", status: .failed, detail: "Cannot access iCloud container directory")
             return
         }
 
         await moveAllLocalFilesToCloudContainer(iCloudContainer)
 
-        ILOG("Completed moving files from local Documents directory to iCloud Drive")
+        CloudSyncManager.syncLog.event(.upload, item: "icloud-drive/local-to-cloud", status: .ok, detail: "Completed moving files from local Documents directory to iCloud Drive")
     }
 
     /// Move files from iCloud Drive to local Documents for a specific directory
@@ -1135,7 +1119,7 @@ public enum iCloudDriveSync {
         let localDirectory = URL.documentsDirectory.appendingPathComponent(directory)
         let iCloudDirectory = iCloudContainer.appendingPathComponent(directory)
 
-        ILOG("Moving files from \(iCloudDirectory.path) to \(localDirectory.path)")
+        CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(directory)", status: .inProgress, detail: "Moving files from \(iCloudDirectory.path) to \(localDirectory.path)")
 
         // Reset the file operation queue for this directory
         await fileOperationQueue.clearQueue()
@@ -1147,7 +1131,7 @@ public enum iCloudDriveSync {
             let containerAttributes = try fileManager.attributesOfItem(atPath: iCloudContainer.path)
             DLOG("iCloud container attributes: \(containerAttributes)")
         } catch {
-            ELOG("❌ Cannot access iCloud container: \(error)")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/container", status: .failed, detail: "Cannot access iCloud container: \(error)")
             // Post notification with error
             NotificationCenter.default.post(
                 name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1171,7 +1155,7 @@ public enum iCloudDriveSync {
             let contents = try fileManager.contentsOfDirectory(at: iCloudDirectory, includingPropertiesForKeys: nil)
             DLOG("Successfully listed \(contents.count) items in \(directory)")
         } catch {
-            ELOG("❌ Cannot access directory \(directory): \(error)")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(directory)", status: .failed, detail: "Cannot access directory: \(error)")
             // Post notification with error
             NotificationCenter.default.post(
                 name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1187,7 +1171,7 @@ public enum iCloudDriveSync {
                 try fileManager.createDirectory(at: localDirectory, withIntermediateDirectories: true)
                 DLOG("Created local directory: \(localDirectory.path)")
             } catch {
-                ELOG("Error creating local directory \(localDirectory.path): \(error)")
+                CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(localDirectory.lastPathComponent)", status: .failed, detail: "Error creating local directory: \(error)")
                 // Post notification with error
                 NotificationCenter.default.post(
                     name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1214,7 +1198,7 @@ public enum iCloudDriveSync {
 
         // Skip if source directory doesn't exist
         guard fileManager.fileExists(atPath: sourceDir.path) else {
-            ELOG("❌ Source directory doesn't exist: \(sourceDir.path)")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(sourceDir.lastPathComponent)", status: .failed, detail: "Source directory doesn't exist: \(sourceDir.path)")
             // Post notification with error
             NotificationCenter.default.post(
                 name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1229,7 +1213,7 @@ public enum iCloudDriveSync {
             let attributes = try fileManager.attributesOfItem(atPath: sourceDir.path)
             DLOG("Source directory attributes: \(attributes[.type] ?? "unknown")")
         } catch {
-            ELOG("❌ Cannot access source directory attributes: \(error)")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(sourceDir.lastPathComponent)", status: .failed, detail: "Cannot access source directory attributes: \(error)")
             // Post notification with error
             NotificationCenter.default.post(
                 name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1245,7 +1229,7 @@ public enum iCloudDriveSync {
                 try fileManager.createDirectory(at: destDir, withIntermediateDirectories: true)
                 DLOG("Created destination directory: \(destDir.path)")
             } catch {
-                ELOG("❌ Error creating destination directory \(destDir.path): \(error)")
+                CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(destDir.lastPathComponent)", status: .failed, detail: "Error creating destination directory: \(error)")
 
                 // Post notification with error
                 Task { @MainActor in
@@ -1333,7 +1317,7 @@ public enum iCloudDriveSync {
                                     allItemsProcessedSuccessfully = false
                                 }
                             } catch {
-                                ELOG("❌ Error checking or removing source subdirectory \(item.path): \(error)")
+                                CloudSyncManager.syncLog.event(.delete, item: "icloud-drive/\(item.lastPathComponent)", status: .failed, detail: "Error checking or removing source subdirectory: \(error)")
                                 allItemsProcessedSuccessfully = false
                             }
                         } else {
@@ -1379,11 +1363,11 @@ public enum iCloudDriveSync {
                             }
                         }
                     } else {
-                        ELOG("❌ Item no longer exists: \(item.path)")
+                        CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(item.lastPathComponent)", status: .notFound, detail: "Item no longer exists: \(item.path)")
                         allItemsProcessedSuccessfully = false
                     }
                 } catch {
-                    ELOG("❌ Error processing item \(item.path): \(error)")
+                    CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(item.lastPathComponent)", status: .failed, detail: "Error processing item: \(error)")
                     allItemsProcessedSuccessfully = false
                 }
             }
@@ -1394,7 +1378,7 @@ public enum iCloudDriveSync {
                 DLOG("⚠️ Some items in directory \(sourceDir.lastPathComponent) could not be processed")
             }
         } catch {
-            ELOG("❌ Error processing directory \(sourceDir.lastPathComponent): \(error)")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(sourceDir.lastPathComponent)", status: .failed, detail: "Error processing directory: \(error)")
             // Post notification with error
             NotificationCenter.default.post(
                 name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1409,7 +1393,7 @@ public enum iCloudDriveSync {
     ///   - sourceFile: Source file URL (iCloud)
     ///   - destFile: Destination file URL (local)
     /// - Returns: Whether the move was successful
-    /// This method logs all file operations to CloudSyncLogManager
+    /// This method logs all file operations to CloudSyncManager.syncLog
     @discardableResult
     static func moveFile(from sourceFile: URL, to destFile: URL) async -> Bool {
         // Track progress
@@ -1417,13 +1401,7 @@ public enum iCloudDriveSync {
         let fileManager = FileManager.default
 
         // Log the file we're processing
-        CloudSyncLogManager.shared.logSyncOperation(
-            "Moving file from iCloud: \(sourceFile.lastPathComponent)",
-            level: .info,
-            operation: .download,
-            filePath: sourceFile.path,
-            provider: .iCloudDrive
-        )
+        CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .inProgress, detail: "Moving file from iCloud")
         DLOG("📄 Processing file: \(sourceFile.lastPathComponent)")
 
         // Check if file is in iCloud and needs to be downloaded
@@ -1459,7 +1437,7 @@ public enum iCloudDriveSync {
                     }
 
                     if Date().timeIntervalSince(startTime) >= timeout {
-                        ELOG("⛔ Timeout waiting for file download: \(sourceFile.lastPathComponent)")
+                        CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Timeout waiting for file download")
                         // Post notification with error
                         NotificationCenter.default.post(
                             name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1469,7 +1447,7 @@ public enum iCloudDriveSync {
                     }
                 }
             } else if !isUploaded {
-                ELOG("⚠️ File is not fully uploaded to iCloud yet: \(sourceFile.lastPathComponent)")
+                CloudSyncManager.syncLog.event(.upload, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .inProgress, detail: "File is not fully uploaded to iCloud yet")
             }
         } catch {
             DLOG("Could not get iCloud status for file: \(error)")
@@ -1493,7 +1471,7 @@ public enum iCloudDriveSync {
                 DLOG("  - Created: \(creationDate)")
             }
         } catch {
-            ELOG("❌ Error getting file attributes for \(sourceFile.path): \(error)")
+            CloudSyncManager.syncLog.event(.check, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error getting file attributes: \(error)")
             // Post notification with error
             NotificationCenter.default.post(
                 name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1505,7 +1483,7 @@ public enum iCloudDriveSync {
 
         // Skip if source file doesn't exist
         guard fileManager.fileExists(atPath: sourceFile.path) else {
-            ELOG("❌ Source file doesn't exist: \(sourceFile.path)")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .notFound, detail: "Source file doesn't exist: \(sourceFile.path)")
             // Post notification with error
             NotificationCenter.default.post(
                 name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1540,7 +1518,7 @@ public enum iCloudDriveSync {
                 try fileManager.createDirectory(at: destParentDir, withIntermediateDirectories: true)
                 DLOG("Created parent directory: \(destParentDir.path)")
             } catch {
-                ELOG("❌ Error creating parent directory \(destParentDir.path): \(error)")
+                CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(destParentDir.lastPathComponent)", status: .failed, detail: "Error creating parent directory: \(error)")
 
                 // Post notification with error
                 Task { @MainActor in
@@ -1564,7 +1542,7 @@ public enum iCloudDriveSync {
                 try await fileManager.removeItem(at: destFile)
                 DLOG("Removed existing local file: \(destFile.path)")
             } catch {
-                ELOG("❌ Error removing existing local file \(destFile.path): \(error)")
+                CloudSyncManager.syncLog.event(.delete, item: "icloud-drive/\(destFile.lastPathComponent)", status: .failed, detail: "Error removing existing local file: \(error)")
                 // Post notification with error
                 Task { @MainActor in
                     NotificationCenter.default.post(
@@ -1603,18 +1581,12 @@ public enum iCloudDriveSync {
                         await filesBeingRecovered.remove(sourceFile.path)
                     }
 
-                    // Log success to CloudSyncLogManager
-                    CloudSyncLogManager.shared.logSyncOperation(
-                        "Successfully moved file from iCloud: \(sourceFile.lastPathComponent)",
-                        level: .info,
-                        operation: .download,
-                        filePath: destFile.path,
-                        provider: .iCloudDrive
-                    )
+                    // Log success
+                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .ok, detail: "Successfully moved file from iCloud")
 
                     return true
                 } catch is TimeoutError {
-                    ELOG("⛔ Timeout moving file: \(sourceFile.lastPathComponent)")
+                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Timeout moving file")
                     // Cancel the task
                     moveTask.cancel()
 
@@ -1633,7 +1605,7 @@ public enum iCloudDriveSync {
                     }
                     // Fall through to try copying instead
                 } catch {
-                    ELOG("❌ Error moving file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
+                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error moving file from iCloud to local: \(error)")
 
                     // Post notification with error
                     Task { @MainActor in
@@ -1663,7 +1635,7 @@ public enum iCloudDriveSync {
                             try await fileManager.removeItem(at: sourceFile)
                             DLOG("Removed source file after chunked copying: \(sourceFile.path)")
                         } catch {
-                            ELOG("Error removing source file after chunked copying \(sourceFile.path): \(error)")
+                            CloudSyncManager.syncLog.event(.delete, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error removing source file after chunked copying: \(error)")
                             // Still return true since the file was copied successfully
                         }
 
@@ -1672,19 +1644,13 @@ public enum iCloudDriveSync {
                             await filesBeingRecovered.remove(sourceFile.path)
                         }
 
-                        // Log success to CloudSyncLogManager
-                        CloudSyncLogManager.shared.logSyncOperation(
-                            "Successfully copied large file from iCloud: \(sourceFile.lastPathComponent)",
-                            level: .info,
-                            operation: .download,
-                            filePath: destFile.path,
-                            provider: .iCloudDrive
-                        )
+                        // Log success
+                        CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .ok, detail: "Successfully copied large file from iCloud")
 
                         return true
                     }
                 } catch {
-                    ELOG("❌ Error during chunked file transfer for \(sourceFile.lastPathComponent): \(error)")
+                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error during chunked file transfer: \(error)")
 
                     // Post notification with error
                     Task { @MainActor in
@@ -1729,14 +1695,8 @@ public enum iCloudDriveSync {
                         await filesBeingRecovered.remove(sourceFile.path)
                     }
 
-                    // Log success to CloudSyncLogManager
-                    CloudSyncLogManager.shared.logSyncOperation(
-                        "Successfully copied file from iCloud: \(sourceFile.lastPathComponent)",
-                        level: .info,
-                        operation: .download,
-                        filePath: destFile.path,
-                        provider: .iCloudDrive
-                    )
+                    // Log success
+                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .ok, detail: "Successfully copied file from iCloud")
 
                     // Post notification that file was recovered
                     NotificationCenter.default.post(
@@ -1751,12 +1711,12 @@ public enum iCloudDriveSync {
                         DLOG("Removed source file after copying: \(sourceFile.path)")
                         return true
                     } catch {
-                        ELOG("Error removing source file after copying \(sourceFile.path): \(error)")
+                        CloudSyncManager.syncLog.event(.delete, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error removing source file after copying: \(error)")
                         // Still return true since the file was copied successfully
                         return true
                     }
                 } catch is TimeoutError {
-                    ELOG("⛔ Timeout copying file: \(sourceFile.lastPathComponent)")
+                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Timeout copying file")
                     // Cancel the task
                     copyTask.cancel()
 
@@ -1778,16 +1738,7 @@ public enum iCloudDriveSync {
                     addFileToRetryQueue(sourceFile: sourceFile, destFile: destFile, retryCount: 1)
                     return false
                 } catch {
-                    ELOG("❌ Error copying file from iCloud to local \(sourceFile.lastPathComponent): \(error)")
-
-                    // Log the error to CloudSyncLogManager
-                    CloudSyncLogManager.shared.logSyncOperation(
-                        "Failed to copy file from iCloud: \(sourceFile.lastPathComponent) - Error: \(error.localizedDescription)",
-                        level: .error,
-                        operation: .error,
-                        filePath: sourceFile.path,
-                        provider: .iCloudDrive
-                    )
+                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error copying file from iCloud to local: \(error)")
 
                     // Check if the error is a directory not found error
                     var nsError = error as NSError
@@ -1805,7 +1756,7 @@ public enum iCloudDriveSync {
                             DLOG("✅ Successfully copied file after creating directory: \(sourceFile.lastPathComponent)")
                             return true
                         } catch {
-                            ELOG("❌ Failed to create directory or retry copy: \(error)")
+                            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Failed to create directory or retry copy: \(error)")
                         }
                     }
 
@@ -1845,7 +1796,7 @@ public enum iCloudDriveSync {
                     return false
                 }
             } catch {
-                ELOG("❌ Unexpected error handling file \(sourceFile.lastPathComponent): \(error)")
+                CloudSyncManager.syncLog.event(.error, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Unexpected error handling file: \(error)")
                 // Post notification with error
                 NotificationCenter.default.post(
                     name: iCloudDriveSync.iCloudFileRecoveryError,
@@ -1860,7 +1811,7 @@ public enum iCloudDriveSync {
     /// Check for files stuck in iCloud Drive and recover them if needed
     /// This helps users recover files even if sync is disabled
     public static func checkForStuckFilesInICloudDrive() async {
-        ILOG("Checking for files stuck in iCloud Drive that need recovery")
+        CloudSyncManager.syncLog.event(.check, item: "icloud-drive/stuck-files", status: .inProgress, detail: "Checking for files stuck in iCloud Drive that need recovery")
 
         // Only proceed if we're not using iCloud Drive mode
         let syncMode = Defaults[.iCloudSyncMode]
@@ -1871,7 +1822,7 @@ public enum iCloudDriveSync {
 
         // Check if iCloud Drive is accessible
         guard let iCloudContainer = URL.iCloudContainerDirectory else {
-            ELOG("Cannot access iCloud container directory to check for stuck files")
+            CloudSyncManager.syncLog.event(.error, item: "icloud-drive/container", status: .failed, detail: "Cannot access iCloud container directory to check for stuck files")
             return
         }
 
@@ -1932,13 +1883,13 @@ public enum iCloudDriveSync {
                     }
                 }
             } catch {
-                ELOG("Error recursively checking directory \(directory): \(error)")
+                CloudSyncManager.syncLog.event(.check, item: "icloud-drive/\(directory)", status: .failed, detail: "Error recursively checking directory: \(error)")
             }
         }
 
         // If we found stuck files, offer to recover them
         if hasStuckFiles {
-            ILOG("Found \(stuckFilesCount) files stuck in iCloud Drive. Attempting recovery...")
+            CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/stuck-files", status: .inProgress, detail: "Found \(stuckFilesCount) files stuck in iCloud Drive. Attempting recovery")
 
             // Move files from iCloud Drive to local Documents
             // This will handle the start notification internally
@@ -1963,7 +1914,7 @@ public enum iCloudDriveSync {
             // Reset the session flag
             iCloudDriveSync.isRecoverySessionActive = false
 
-            ILOG("File recovery from iCloud Drive completed")
+            CloudSyncManager.syncLog.event(.sync, item: "icloud-drive/stuck-files", status: .ok, detail: "File recovery from iCloud Drive completed")
         } else {
             DLOG("No stuck files found in iCloud Drive")
         }
