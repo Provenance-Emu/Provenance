@@ -131,7 +131,9 @@ public struct RetroArchLogBrowserView: View {
             }
         }
         .navigationTitle("RetroArch Logs")
+#if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+#endif
         .toolbar { toolbarContent }
         .task { await viewModel.loadFiles() }
         .sheet(item: $selectedEntry) { entry in
@@ -227,7 +229,7 @@ public struct RetroArchLogBrowserView: View {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
+        ToolbarItem(placement: .topBarTrailing) {
             if !viewModel.logFiles.isEmpty {
                 Button(role: .destructive) {
                     showingDeleteAllConfirm = true
@@ -288,7 +290,9 @@ struct LogFileViewerSheet: View {
                 }
             }
             .navigationTitle(fileURL.lastPathComponent)
+#if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }

@@ -2719,7 +2719,7 @@ private struct AdvancedSection: View {
                 NavigationLink(destination: RetroArchLogBrowserView()) {
                     SettingsRow(title: "RetroArch Logs",
                                 subtitle: "Browse, view, share, and delete RetroArch log files.",
-                                icon: .sfSymbol("gamecontroller"))
+                                icon: .sfSymbol("doc.text.below.ecg"))
                 }
                 #if os(tvOS)
                 .retroFocusButtonStyle(showBorder: false)
