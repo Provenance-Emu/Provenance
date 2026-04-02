@@ -6,6 +6,7 @@
 import PVLibrary
 import PVSupport
 import PVPrimitives
+import PVSystems
 import RealmSwift
 import PVRealm
 import PVLogging
@@ -191,11 +192,16 @@ extension PVEmulatorViewController {
         (core as? GameWithCheat)?.cheatCodeTypes ?? []
     }
 
-    /// Resolve the libretro cheat system name for the current game's system.
+    /// Resolve the libretro `cht/` folder name (e.g. `Sega - Dreamcast`) for cheat DB / online lookup.
+    ///
+    /// RetroArch-launched titles often store `systemIdentifier == com.provenance.retroarch`, which would map to
+    /// a non-existent `Retroarch` cheat tree — prefer the linked `PVSystem`, then Flycast core detection.
     private var gameLibretroDatabaseName: String? {
-        guard let sysID = SystemIdentifier(rawValue: game.systemIdentifier) else { return nil }
-        let name = sysID.libretroCheatSystemName
-        return name == "Unknown" ? nil : name
+        SystemIdentifier.cheatLookupLibretroFolderName(
+            gameSystemIdentifier: game.systemIdentifier,
+            linkedPVSystemIdentifier: game.system?.identifier,
+            coreIdentifier: core.coreIdentifier
+        )
     }
 }
 

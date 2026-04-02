@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import PVSystems
 @testable import PVPrimitives
 
 final class SystemDirectoryNameTests: XCTestCase {
