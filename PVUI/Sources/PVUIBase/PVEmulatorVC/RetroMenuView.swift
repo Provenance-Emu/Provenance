@@ -12,6 +12,7 @@ import PVLogging
 import PVSettings
 import PVSupport
 import PVLibrary
+import PVPrimitives
 import PVFeatureFlags
 import UniformTypeIdentifiers
 import PVThemes
@@ -44,6 +45,21 @@ struct RetroMenuView: View {
     @GestureState private var isDraggingCategoryBar: Bool = false
 
     private var palette: UXThemePalette { themeManager.currentPalette }
+
+    /// Same resolution as the pause tile menu so catalog activation matches the running emulator’s `SystemIdentifier`.
+    private var skinCatalogActiveSystemIdentifier: SystemIdentifier {
+        let game = emulatorVC.game
+        let candidates: [String?] = [
+            game.system?.identifier,
+            game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
+            emulatorVC.core.systemIdentifier
+        ]
+        let parsed = candidates.compactMap { raw -> SystemIdentifier? in
+            guard let raw, !raw.isEmpty else { return nil }
+            return SystemIdentifier(rawValue: raw)
+        }
+        return parsed.first(where: { $0 != .RetroArch }) ?? parsed.first ?? .RetroArch
+    }
 
     /// Dismisses the menu without resuming emulation - use when opening sub-sheets that should keep the game paused
     private func dismissMenuForSubSheet() {
@@ -1626,7 +1642,9 @@ struct RetroMenuView: View {
                 }) {
                     NavigationStack {
                         SkinCatalogBrowserView(
-                            preselectedSystem: emulatorVC.game.system?.systemIdentifier.skinCatalogSystemCode ?? nil
+                            preselectedSystem: skinCatalogActiveSystemIdentifier.skinCatalogSystemCode,
+                            activationContextSystemIdentifier: skinCatalogActiveSystemIdentifier,
+                            activationContextGameId: emulatorVC.game.id.isEmpty ? nil : emulatorVC.game.id
                         )
                         .toolbar {
                             ToolbarItem(placement: .topBarTrailing) {

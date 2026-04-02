@@ -659,18 +659,19 @@ extension PVRetroArchCoreCore: PVDOSSystemResponderClient, KeyboardResponder, Mo
     }
     public var gameSupportsMouse: Bool {
         guard virtualInputSupport.supportsMouse else { return false }
-        // For systems where only specific games use a mouse (PSX, Saturn, SNES, Dreamcast),
-        // delegate to MouseGameRegistry for per-game detection so titles like Crash Bandicoot
-        // don't incorrectly show the mouse cursor.
-        if let sysID = SystemIdentifier(rawValue: systemIdentifier ?? ""),
-           MouseGameRegistry.shared.systemHasAnyMouseSupport(sysID) {
-            return MouseGameRegistry.shared.gameSupportsMouse(
-                systemIdentifier: sysID,
-                md5: romMD5,
-                title: romName
-            )
+        // Always delegate to MouseGameRegistry for per-game detection.
+        // The registry handles always-mouse systems (DOS, Macintosh, etc.) and
+        // conditional systems (Dreamcast, SNES, etc.) with per-game MD5/title checks.
+        // Without this, generic RetroArch sessions (systemIdentifier = "com.provenance.retroarch")
+        // would incorrectly show the cursor for all games on mouse-capable cores like Flycast.
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else {
+            return false
         }
-        return true
+        return MouseGameRegistry.shared.gameSupportsMouse(
+            systemIdentifier: sysID,
+            md5: romMD5,
+            title: romName
+        )
     }
     public var requiresMouse: Bool {
         virtualInputSupport.requiresMouse

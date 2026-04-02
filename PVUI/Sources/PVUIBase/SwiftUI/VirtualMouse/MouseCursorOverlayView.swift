@@ -46,7 +46,8 @@ public struct MouseCursorOverlayView: View {
     /// True while a click animation is in progress.
     @State private var isClicking: Bool = false
     /// True once the cursor should be hidden (after idle timeout).
-    @State private var isHidden: Bool = false
+    /// Starts hidden so new users aren't confused by a static cursor on launch.
+    @State private var isHidden: Bool = true
 
     // MARK: Configuration
     private let cursorSize: CGFloat = 24
