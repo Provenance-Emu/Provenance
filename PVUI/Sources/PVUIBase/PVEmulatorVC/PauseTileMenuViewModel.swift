@@ -110,6 +110,8 @@ final class PauseTileMenuViewModel: ObservableObject {
         if supportsCheatCodes {
             gameTiles.append(PauseMenuTile(id: "cheats", icon: "wand.and.stars", label: String(localized: "Cheats"), colorKey: .purple))
         }
+        gameTiles.append(Self.fastForwardToggleTile(core: emulatorVC.core))
+        gameTiles.append(Self.gameSpeedTile(core: emulatorVC.core))
 
         #if os(iOS) || targetEnvironment(macCatalyst)
         gameTiles.append(PauseMenuTile(id: "screenshot", icon: "camera", label: String(localized: "Screenshot"), colorKey: .yellow))
@@ -304,10 +306,8 @@ final class PauseTileMenuViewModel: ObservableObject {
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
         built.append(PauseMenuTileSection(id: "statesData", title: String(localized: "STATES"), tiles: stateTiles))
 
-        // ── QUICK SETTINGS (gameplay toggles); video/skins live in **DISPLAY** at root end.
+        // ── QUICK SETTINGS (rewind / JIT); fast forward and game speed live under **GAME**.
         var displayTiles: [PauseMenuTile] = []
-        displayTiles.append(Self.fastForwardToggleTile(core: emulatorVC.core))
-        displayTiles.append(Self.gameSpeedTile(core: emulatorVC.core))
         let rewindQuickControlAdded = Self.appendRewindTileIfSupported(
             to: &displayTiles,
             core: emulatorVC.core,
