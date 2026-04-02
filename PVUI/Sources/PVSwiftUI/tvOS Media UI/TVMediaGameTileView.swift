@@ -116,6 +116,16 @@ struct TVMediaGameTileView: View {
                         .frame(width: tileWidth, height: baseHeight)
                         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .overlay(focusBorder)
+                        .overlay(alignment: .topTrailing) {
+                            if game.hasCloudAssets && !game.isDownloaded {
+                                CloudSyncIndicatorView(
+                                    isDownloaded: false,
+                                    hasCloudAssets: true,
+                                    size: 28
+                                )
+                                .padding(8)
+                            }
+                        }
                 }
                 .shadow(color: isFocused ? Color.retroPink.opacity(glowIntensity * 0.6) : .clear, radius: 25, x: 0, y: 8)
                 .shadow(color: isFocused ? Color.retroBlue.opacity(glowIntensity * 0.4) : .clear, radius: 35, x: 0, y: 12)
