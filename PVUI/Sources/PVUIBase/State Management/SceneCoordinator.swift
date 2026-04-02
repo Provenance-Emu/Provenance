@@ -38,6 +38,7 @@ public class SceneCoordinator: ObservableObject {
 
     /// Guards against concurrent `launchGameWithValidation` tasks.
     /// When non-nil, a launch is already in progress and new calls are dropped.
+    /// Cancel this task to abort an in-progress launch (e.g. when the user taps Cancel).
     private var activeLaunchTask: Task<Void, Never>?
 
     // Cancellables for observation
@@ -127,6 +128,17 @@ public class SceneCoordinator: ObservableObject {
 
         // If there were BIOS downloads completed while in emulator, surface them now
         flushCompletedBIOSDownloadAlerts()
+    }
+
+    /// Cancel any in-progress game launch so new launches can proceed.
+    /// Called when the user taps Cancel on the sync status overlay.
+    public func cancelActiveLaunch() {
+        if let task = activeLaunchTask {
+            ILOG("SceneCoordinator: Cancelling active launch task")
+            task.cancel()
+            activeLaunchTask = nil
+        }
+        syncStatusManager.hide()
     }
 
     /// Opens the emulator scene with the current game from AppState
@@ -242,8 +254,7 @@ public class SceneCoordinator: ObservableObject {
                 gameTitle: game.title,
                 statusMessage: "Validating requirements...",
                 onCancel: { [weak self] in
-                    self?.syncStatusManager.hide()
-                    self?.openMainScene()
+                    self?.cancelActiveLaunch()
                 }
             )
         }
@@ -269,8 +280,7 @@ public class SceneCoordinator: ObservableObject {
                     gameTitle: game.title,
                     statusMessage: "Checking game file...",
                     onCancel: { [weak self] in
-                        self?.syncStatusManager.hide()
-                        self?.openMainScene()
+                        self?.cancelActiveLaunch()
                     }
                 )
             } else {
@@ -283,13 +293,18 @@ public class SceneCoordinator: ObservableObject {
                 gameTitle: game.title,
                 statusMessage: "Checking game file...",
                 onCancel: { [weak self] in
-                    self?.syncStatusManager.hide()
-                    self?.openMainScene()
+                    self?.cancelActiveLaunch()
                 }
             )
         } else {
             // Early show was done, just update message
             syncStatusManager.update(statusMessage: "Checking game file...")
+        }
+
+        // Bail early if the user already cancelled
+        guard !Task.isCancelled else {
+            ILOG("SceneCoordinator: Launch cancelled before sync validation")
+            return
         }
 
         // Create validator if cloud sync is enabled
@@ -307,6 +322,12 @@ public class SceneCoordinator: ObservableObject {
                     self?.syncStatusManager.update(statusMessage: progressMessage)
                 }
                 ILOG("Game sync progress: \(progressMessage)")
+            }
+
+            // Check cancellation after potentially long sync operation
+            guard !Task.isCancelled else {
+                ILOG("SceneCoordinator: Launch cancelled during sync validation")
+                return
             }
 
             if isValid {
@@ -345,6 +366,12 @@ public class SceneCoordinator: ObservableObject {
 
         // Small delay to show completion status
         try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+
+        // Check cancellation after the delay
+        guard !Task.isCancelled else {
+            ILOG("SceneCoordinator: Launch cancelled after sync completed")
+            return
+        }
 
         // ALWAYS validate BIOS and core requirements before launching (not just for cloud downloads)
         // Show status for BIOS validation if system requires BIOS
@@ -746,8 +773,7 @@ public class SceneCoordinator: ObservableObject {
                 gameTitle: game.title,
                 statusMessage: "Validating requirements...",
                 onCancel: { [weak self] in
-                    self?.syncStatusManager.hide()
-                    self?.openMainScene()
+                    self?.cancelActiveLaunch()
                 }
             )
         }
@@ -773,8 +799,7 @@ public class SceneCoordinator: ObservableObject {
                     gameTitle: game.title,
                     statusMessage: "Checking game file...",
                     onCancel: { [weak self] in
-                        self?.syncStatusManager.hide()
-                        self?.openMainScene()
+                        self?.cancelActiveLaunch()
                     }
                 )
             } else {
@@ -787,8 +812,7 @@ public class SceneCoordinator: ObservableObject {
                 gameTitle: game.title,
                 statusMessage: "Checking game file...",
                 onCancel: { [weak self] in
-                    self?.syncStatusManager.hide()
-                    self?.openMainScene()
+                    self?.cancelActiveLaunch()
                 }
             )
         } else {
