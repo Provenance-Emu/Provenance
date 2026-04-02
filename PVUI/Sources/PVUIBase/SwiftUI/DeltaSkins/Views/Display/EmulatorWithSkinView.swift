@@ -93,8 +93,8 @@ struct EmulatorWithSkinView: View {
         self.gameTitle = game.title
         self.systemName = game.system?.name
 
-        // Convert string system identifier to enum
-        self.systemId = game.system?.systemIdentifier
+        // Linked PVSystem is authoritative; fall back to persisted PVGame.systemIdentifier when the relationship is missing so skin reload notifications still match.
+        self.systemId = game.system?.systemIdentifier ?? SystemIdentifier(rawValue: game.systemIdentifier)
 
         // Get game ID for skin preferences (must match game.id used in skin selection)
         self.gameId = game.id

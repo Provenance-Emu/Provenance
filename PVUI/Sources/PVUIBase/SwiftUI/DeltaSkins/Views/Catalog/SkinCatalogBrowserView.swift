@@ -20,13 +20,28 @@ public struct SkinCatalogBrowserView: View {
 
     #if os(tvOS)
     private let preselectedSystem: String?
-    public init(preselectedSystem: String? = nil) {
+    private let activationContextSystemIdentifier: SystemIdentifier?
+    private let activationContextGameId: String?
+    public init(
+        preselectedSystem: String? = nil,
+        activationContextSystemIdentifier: SystemIdentifier? = nil,
+        activationContextGameId: String? = nil
+    ) {
         self.preselectedSystem = preselectedSystem
+        self.activationContextSystemIdentifier = activationContextSystemIdentifier
+        self.activationContextGameId = activationContextGameId
     }
     public var body: some View {
-        TVOSSkinCatalogBrowserView(preselectedSystem: preselectedSystem)
+        TVOSSkinCatalogBrowserView(
+            preselectedSystem: preselectedSystem,
+            activationContextSystemIdentifier: activationContextSystemIdentifier,
+            activationContextGameId: activationContextGameId
+        )
     }
     #else
+
+    private let activationContextSystemIdentifier: SystemIdentifier?
+    private let activationContextGameId: String?
 
     // MARK: - State
 
@@ -66,7 +81,14 @@ public struct SkinCatalogBrowserView: View {
     ///
     /// When `preselectedSystem` is non-nil the filter bar is shown automatically
     /// so the user immediately sees which system is active and can change it.
-    public init(preselectedSystem: String? = nil) {
+    /// Pass `activationContextSystemIdentifier` / `activationContextGameId` when presenting from gameplay so “Set as active skin” updates the running session.
+    public init(
+        preselectedSystem: String? = nil,
+        activationContextSystemIdentifier: SystemIdentifier? = nil,
+        activationContextGameId: String? = nil
+    ) {
+        self.activationContextSystemIdentifier = activationContextSystemIdentifier
+        self.activationContextGameId = activationContextGameId
         _selectedSystem = State(initialValue: preselectedSystem)
         _showingFilters = State(initialValue: preselectedSystem != nil)
         // Pre-select the device filter that matches the current hardware so
@@ -79,6 +101,15 @@ public struct SkinCatalogBrowserView: View {
             #endif
         }()
         _selectedDevice = State(initialValue: defaultDevice)
+    }
+
+    @ViewBuilder
+    private func catalogDetailDestination(for entry: SkinCatalogEntry) -> some View {
+        SkinCatalogDetailView(
+            entry: entry,
+            activationContextSystemIdentifier: activationContextSystemIdentifier,
+            activationContextGameId: activationContextGameId
+        )
     }
 
     // MARK: - Body
@@ -314,7 +345,7 @@ public struct SkinCatalogBrowserView: View {
             ) {
                 ForEach(entries) { entry in
                     let isInstalled = isSkinInstalled(entry)
-                    NavigationLink(destination: SkinCatalogDetailView(entry: entry)) {
+                    NavigationLink(destination: catalogDetailDestination(for: entry)) {
                         CatalogSkinCard(entry: entry, glowIntensity: glowIntensity, isInstalled: isInstalled)
                     }
                     .buttonStyle(PlainButtonStyle())

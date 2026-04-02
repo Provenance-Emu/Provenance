@@ -24,6 +24,9 @@ import PVLogging
 /// Download and install is handled by `SkinCatalogDetailView` via `DeltaSkinManager`.
 public struct TVOSSkinCatalogBrowserView: View {
 
+    private let activationContextSystemIdentifier: SystemIdentifier?
+    private let activationContextGameId: String?
+
     // MARK: - State
 
     @State private var catalog: [SkinCatalogEntry] = []
@@ -39,8 +42,23 @@ public struct TVOSSkinCatalogBrowserView: View {
     // MARK: - Init
 
     /// Creates the browser, optionally pre-filtering to a system.
-    public init(preselectedSystem: String? = nil) {
+    public init(
+        preselectedSystem: String? = nil,
+        activationContextSystemIdentifier: SystemIdentifier? = nil,
+        activationContextGameId: String? = nil
+    ) {
         _selectedSystem = State(initialValue: preselectedSystem)
+        self.activationContextSystemIdentifier = activationContextSystemIdentifier
+        self.activationContextGameId = activationContextGameId
+    }
+
+    @ViewBuilder
+    private func catalogDetailDestination(for entry: SkinCatalogEntry) -> some View {
+        SkinCatalogDetailView(
+            entry: entry,
+            activationContextSystemIdentifier: activationContextSystemIdentifier,
+            activationContextGameId: activationContextGameId
+        )
     }
 
     // MARK: - Derived data
@@ -220,7 +238,7 @@ public struct TVOSSkinCatalogBrowserView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 24) {
                     ForEach(skins) { entry in
-                        NavigationLink(destination: SkinCatalogDetailView(entry: entry)) {
+                        NavigationLink(destination: catalogDetailDestination(for: entry)) {
                             TVOSSkinCard(entry: entry, glowIntensity: glowIntensity)
                         }
                         .retroFocusButtonStyle(focusScale: 1.08, cornerRadius: 16)
@@ -245,7 +263,7 @@ public struct TVOSSkinCatalogBrowserView: View {
                         spacing: 30
                     ) {
                         ForEach(searchResults) { entry in
-                            NavigationLink(destination: SkinCatalogDetailView(entry: entry)) {
+                            NavigationLink(destination: catalogDetailDestination(for: entry)) {
                                 TVOSSkinCard(entry: entry, glowIntensity: glowIntensity)
                             }
                             .retroFocusButtonStyle(focusScale: 1.08, cornerRadius: 16)

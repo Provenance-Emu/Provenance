@@ -1341,7 +1341,11 @@ struct PauseTileMenuView: View {
         }
         .sheet(isPresented: $showingSkinCatalog) {
             NavigationStack {
-                SkinCatalogBrowserView(preselectedSystem: activeSystemIdentifier.skinCatalogSystemCode)
+                SkinCatalogBrowserView(
+                    preselectedSystem: activeSystemIdentifier.skinCatalogSystemCode,
+                    activationContextSystemIdentifier: activeSystemIdentifier,
+                    activationContextGameId: emulatorVC.game.flatMap { $0.id.isEmpty ? nil : $0.id }
+                )
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button(String(localized: "Done")) { showingSkinCatalog = false }

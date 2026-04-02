@@ -22,6 +22,10 @@ public struct SkinCatalogDetailView: View {
     // MARK: - Properties
 
     let entry: SkinCatalogEntry
+    /// When set (e.g. opened from pause while playing), preferences and notifications use this system so they match ``EmulatorWithSkinView``.
+    private let activationContextSystemIdentifier: SystemIdentifier?
+    /// When set, activation writes **game** scope so per-game prefs override any prior selection (system-only writes were ignored by the effective-skin chain).
+    private let activationContextGameId: String?
 
     // MARK: - State
 
@@ -50,6 +54,18 @@ public struct SkinCatalogDetailView: View {
         case activating
         case activated
         case failed(String)
+    }
+
+    // MARK: - Init
+
+    public init(
+        entry: SkinCatalogEntry,
+        activationContextSystemIdentifier: SystemIdentifier? = nil,
+        activationContextGameId: String? = nil
+    ) {
+        self.entry = entry
+        self.activationContextSystemIdentifier = activationContextSystemIdentifier
+        self.activationContextGameId = activationContextGameId.flatMap { $0.isEmpty ? nil : $0 }
     }
 
     // MARK: - Body
@@ -347,7 +363,7 @@ public struct SkinCatalogDetailView: View {
                     )
                     .shadow(color: RetroTheme.retroPink.opacity(0.4), radius: 6)
 
-                    if let system = primarySystemIdentifier {
+                    if let system = resolvedSystemForActivation {
                         activateSkinButton(system: system)
                     }
                 }
@@ -604,6 +620,25 @@ public struct SkinCatalogDetailView: View {
         }.first
     }
 
+    /// System used for the activate button and for preference writes when the catalog was opened in-game.
+    private var resolvedSystemForActivation: SystemIdentifier? {
+        activationContextSystemIdentifier ?? primarySystemIdentifier
+    }
+
+    /// Order matters: prefer runtime context first, then catalog-derived id, so `DeltaSkinManager.skins(for:)` finds the install under the emulator’s system when they differ.
+    private var systemsToQueryForInstalledSkin: [SystemIdentifier] {
+        var result: [SystemIdentifier] = []
+        var seen = Set<SystemIdentifier>()
+        func appendUnique(_ id: SystemIdentifier?) {
+            guard let id, !seen.contains(id) else { return }
+            seen.insert(id)
+            result.append(id)
+        }
+        appendUnique(activationContextSystemIdentifier)
+        appendUnique(primarySystemIdentifier)
+        return result
+    }
+
     // MARK: - Installed Check
 
     /// Sets `downloadState` to `.installed` when the catalog entry matches a
@@ -723,19 +758,33 @@ public struct SkinCatalogDetailView: View {
             // Force a rescan so the just-installed skin is found
             await DeltaSkinManager.shared.reloadSkins()
 
-            let skins = try await DeltaSkinManager.shared.skins(for: system)
+            let querySystems = systemsToQueryForInstalledSkin.isEmpty ? [system] : systemsToQueryForInstalledSkin
+            var matchedSkin: DeltaSkinProtocol?
+            for sys in querySystems {
+                let skins = try await DeltaSkinManager.shared.skins(for: sys)
+                if let found = findMatchingInstalledSkin(for: entry, in: skins) {
+                    matchedSkin = found
+                    break
+                }
+            }
 
             guard !Task.isCancelled else { return }
 
-            guard let skin = findMatchingInstalledSkin(for: entry, in: skins) else {
-                // Log what we have vs what we're looking for
-                ELOG("activateSkin: skin '\(entry.name)' (id: \(entry.id)) not found. Available: \(skins.map { "\($0.name) (\($0.identifier))" })")
+            guard let skin = matchedSkin else {
+                ELOG("activateSkin: skin '\(entry.name)' (id: \(entry.id)) not found after querying systems: \(querySystems.map(\.rawValue))")
                 throw NSError(domain: "SkinCatalog", code: 1, userInfo: [NSLocalizedDescriptionKey: "Skin '\(entry.name)' not found after install. Try going back and re-entering."])
             }
 
+            // Must match EmulatorWithSkinView.systemId so selectionChangedNotification triggers a reload.
+            let prefSystem = activationContextSystemIdentifier ?? primarySystemIdentifier ?? system
             let manager = DeltaSkinSelectionManager.shared
-            await manager.setSkin(skin.identifier, for: system, orientation: .portrait, scope: .system)
-            await manager.setSkin(skin.identifier, for: system, orientation: .landscape, scope: .system)
+            if let gameId = activationContextGameId {
+                await manager.setSkin(skin.identifier, for: prefSystem, gameId: gameId, orientation: .portrait, scope: .game)
+                await manager.setSkin(skin.identifier, for: prefSystem, gameId: gameId, orientation: .landscape, scope: .game)
+            } else {
+                await manager.setSkin(skin.identifier, for: prefSystem, orientation: .portrait, scope: .system)
+                await manager.setSkin(skin.identifier, for: prefSystem, orientation: .landscape, scope: .system)
+            }
 
             guard !Task.isCancelled else { return }
 
@@ -744,7 +793,7 @@ public struct SkinCatalogDetailView: View {
                     activationState = .activated
                 }
             }
-            ILOG("SkinCatalogDetailView: Activated skin '\(skin.name)' for \(system)")
+            ILOG("SkinCatalogDetailView: Activated skin '\(skin.name)' for \(prefSystem) (gameId: \(activationContextGameId ?? "nil"))")
         } catch is CancellationError {
             // Task was cancelled (e.g. view dismissed) — don't update state
             return
