@@ -53,8 +53,10 @@ public struct LogExportSheet: View {
                         // Summary
                         summarySection
 
+#if !os(tvOS)
                         // Export / share button
                         exportButton
+#endif
                     }
                     .padding()
                 }
@@ -169,7 +171,7 @@ public struct LogExportSheet: View {
                 )
         )
     }
-
+#if !os(tvOS)
     private var exportButton: some View {
         VStack(spacing: 8) {
             if let errorMsg = exportError {
@@ -178,7 +180,6 @@ public struct LogExportSheet: View {
                     .foregroundColor(RetroTheme.retroPink)
                     .multilineTextAlignment(.center)
             }
-
             if let url = exportedURL {
                 // File ready — present native share sheet via ShareLink
                 ShareLink(item: url) {
@@ -238,7 +239,7 @@ public struct LogExportSheet: View {
             }
         }
     }
-
+#endif
     // MARK: - Helpers
 
     @ViewBuilder

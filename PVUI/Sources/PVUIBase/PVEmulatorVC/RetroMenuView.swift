@@ -48,7 +48,9 @@ struct RetroMenuView: View {
 
     /// Same resolution as the pause tile menu so catalog activation matches the running emulator’s `SystemIdentifier`.
     private var skinCatalogActiveSystemIdentifier: SystemIdentifier {
-        let game = emulatorVC.game
+        guard let game = emulatorVC.game else {
+            return .Unknown
+        }
         let candidates: [String?] = [
             game.system?.identifier,
             game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
@@ -58,7 +60,7 @@ struct RetroMenuView: View {
             guard let raw, !raw.isEmpty else { return nil }
             return SystemIdentifier(rawValue: raw)
         }
-        return parsed.first(where: { $0 != .RetroArch }) ?? parsed.first ?? .RetroArch
+        return parsed.first(where: { $0 != .Unknown }) ?? parsed.first ?? .Unknown
     }
 
     /// Dismisses the menu without resuming emulation - use when opening sub-sheets that should keep the game paused
