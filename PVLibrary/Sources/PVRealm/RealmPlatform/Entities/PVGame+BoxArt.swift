@@ -62,8 +62,10 @@ public extension PVGame {
         // CD jewel case systems
         case .Dreamcast, .NeoGeoCD, .CDi:
             return .cdJewelCase
-        case .PCECD, .PCFX, .SegaCD:
+        case .PCECD, .PCFX:
             return .square  // Standard jewel case front inserts are ~square
+        case .SegaCD:
+            return .cdJewelCase  // Tall CD jewel case style
 
         // Long box / specialty tall
         case ._3DO:
