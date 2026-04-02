@@ -173,6 +173,14 @@ public class CloudSyncManager {
         return q
     }()
 
+    /// Structured log channel for CloudKit sync operations.
+    /// Use `CloudSyncManager.syncLog` for structured events and `syncLog.info()/error()` for free-form messages.
+    public static let syncLog: PVLogChannel = {
+        let channel = PVLogChannel("cloudkit-sync", fileOutput: true, maxEntries: 1000)
+        PVLogChannelRegistry.shared.register(channel)
+        return channel
+    }()
+
     /// CloudKit Container. Nil when running without CloudKit entitlements (sideloaded builds).
     private let container: CKContainer?
 
