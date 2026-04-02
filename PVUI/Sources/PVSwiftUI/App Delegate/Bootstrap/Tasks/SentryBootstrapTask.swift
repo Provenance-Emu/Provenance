@@ -45,8 +45,13 @@ struct SentryBootstrapTask: BootstrapTask {
             // emulator cores use SIGSEGV for MMU memory mapping interrupts.
             // Sentry will still receive crash data via MetricKit instead.
             options.enableCrashHandler = false
+
+            // MetricKit integration — delivers symbolicated hang/crash/CPU diagnostics.
+            // API_UNAVAILABLE(tvos, watchos)
+            #if os(iOS) || targetEnvironment(macCatalyst)
             options.enableMetricKit = true
-            options.enableMetricKitAttachDiagnosticPayloads = true
+            options.enableMetricKitRawPayload = true
+            #endif
 
             // App hang detection (separate from signal-based crash handler)
             options.enableAppHangTracking = true
@@ -54,8 +59,10 @@ struct SentryBootstrapTask: BootstrapTask {
 
             // Performance monitoring
             options.tracesSampleRate = 0.2
-            options.profilesSampleRate = 0.1
             options.enableAutoPerformanceTracing = true
+
+            // Async stacktrace stitching for Swift concurrency
+            options.swiftAsyncStacktraces = true
 
             // Session tracking
             options.enableAutoSessionTracking = true
@@ -63,7 +70,7 @@ struct SentryBootstrapTask: BootstrapTask {
 
             // Attachments for diagnostics
             options.attachScreenshot = true
-            options.enableViewHierarchy = true
+            options.attachViewHierarchy = true
 
             // Release info
             if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
