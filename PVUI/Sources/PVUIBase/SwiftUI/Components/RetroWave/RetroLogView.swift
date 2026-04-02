@@ -9,12 +9,6 @@
 import SwiftUI
 import PVThemes
 import PVLogging
-import Combine
-import PVPrimitives
-import Defaults
-#if os(tvOS)
-import PVUIBase
-#endif
 
 /// A retrowave-styled log viewer component
 public struct RetroLogView: View {
@@ -48,10 +42,6 @@ public struct RetroLogView: View {
     #endif
 
     // MARK: - Initialization
-
-    public init() {
-        self._isFullscreen = .constant(false)
-    }
 
     public init(isFullscreen: Binding<Bool> = .constant(false)) {
         self._isFullscreen = isFullscreen

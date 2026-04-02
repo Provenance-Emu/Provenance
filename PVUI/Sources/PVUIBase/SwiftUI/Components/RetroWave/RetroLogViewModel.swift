@@ -157,11 +157,13 @@ public final class RetroLogViewModel: ObservableObject {
            let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String {
             info += "App Version: \(version) (\(build))\n"
         }
-#if canImport(UIKit) && !os(tvOS)
+#if os(iOS)
         info += "Device: \(UIDevice.current.model)\n"
         info += "OS: \(UIDevice.current.systemName) \(UIDevice.current.systemVersion)\n"
 #elseif os(tvOS)
         info += "Platform: tvOS\n"
+#elseif targetEnvironment(macCatalyst)
+        info += "Platform: macOS (Catalyst)\n"
 #endif
         info += "Displayed Log Count: \(displayedLogs.count) (total in session: \(logs.count))\n"
         return info
