@@ -290,45 +290,54 @@ public struct CloudSyncSettingsView: View {
     /// a missing entitlement, or a transient error.
     private var accountStatusWarning: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
+            HStack(spacing: 8) {
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundColor(.orange)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.retroOrange)
+                    .shadow(color: .retroOrange.opacity(0.6), radius: 4)
 
                 Text("cloud_sync.account.issue_title", bundle: .module)
-                    .font(.headline)
+                    .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.white)
             }
 
-            // Show the specific status from the view model when available,
-            // otherwise fall back to the generic localized description.
             if !viewModel.syncStatus.isEmpty {
                 Text(viewModel.syncStatus)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .font(.system(size: 13))
+                    .foregroundColor(.white.opacity(0.7))
             } else {
                 Text("cloud_sync.account.issue_description", bundle: .module)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .font(.system(size: 13))
+                    .foregroundColor(.white.opacity(0.7))
             }
 
             Text("Check that iCloud is enabled in Settings → Apple Account → iCloud, and that Provenance is allowed under \"Apps Using iCloud\".")
-                .font(.caption)
-                .foregroundColor(.gray.opacity(0.8))
+                .font(.system(size: 11))
+                .foregroundColor(.white.opacity(0.5))
         }
-        .padding()
-        .background(Color.orange.opacity(0.2))
-        .cornerRadius(10)
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.retroOrange.opacity(0.12))
+        )
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.orange.opacity(0.5), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color.retroOrange.opacity(0.6), Color.retroYellow.opacity(0.3)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
         )
     }
 
-    /// Sync log section with expandable detailed log viewer
+    /// Sync log section with expandable detailed log viewer — retrowave panel style
     private var syncLogSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Button(action: {
-                withAnimation {
+                withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
                     viewModel.showSyncLog.toggle()
                 }
 #if !os(tvOS)
@@ -336,29 +345,47 @@ public struct CloudSyncSettingsView: View {
 #endif
             }) {
                 HStack {
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.retroPink)
                     Text("cloud_sync.logs.title", bundle: .module)
                         .cloudSyncSectionTitle()
 
                     Spacer()
 
                     Image(systemName: viewModel.showSyncLog ? "chevron.down" : "chevron.right")
-                        .foregroundColor(.retroPink)
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.retroPink.opacity(0.7))
                 }
             }
             .buttonStyle(PlainButtonStyle())
 
             if viewModel.showSyncLog {
                 SyncLogViewer()
-                    .frame(height: 400)
+                    .frame(height: 450)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .transitionWithReducedMotion(
                         .move(edge: .top).combined(with: .opacity),
                         fallbackTransition: .opacity
                     )
             }
         }
-        .padding()
-        .background(Color.retroBlack.opacity(0.3))
-        .cornerRadius(10)
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.black.opacity(0.88))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color.retroPurple.opacity(0.5), Color.retroPink.opacity(0.5)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        )
     }
 
     // MARK: - Chart Data Helpers
@@ -1584,44 +1611,46 @@ public struct CloudSyncSettingsView: View {
 
 // MARK: - Styling Helpers
 
-/// Section title modifier: gradient text on tvOS, retroSectionHeader on iOS
+/// Section title modifier: pause menu header style (uppercase, heavy, tracked, retroPink)
 extension View {
     func cloudSyncSectionTitle() -> some View {
         #if os(tvOS)
         self
-            .font(.system(size: 22, weight: .bold, design: .rounded))
+            .font(.system(size: 18, weight: .heavy))
+            .textCase(.uppercase)
+            .tracking(1.5)
             .foregroundStyle(
                 LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
             )
         #else
-        self.retroSectionHeader()
+        self
+            .font(.system(size: 13, weight: .heavy))
+            .textCase(.uppercase)
+            .tracking(1.2)
+            .foregroundColor(.retroPink)
+            .padding(.bottom, 4)
         #endif
     }
 
-    /// Card modifier: translucent panel with gradient border on tvOS, retroCard on iOS
+    /// Card modifier: translucent panel with gradient border
     func cloudSyncCard() -> some View {
-        #if os(tvOS)
         self
-            .padding()
+            .padding(14)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color.white.opacity(0.03))
+                    .fill(Color.black.opacity(0.7))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .strokeBorder(
                         LinearGradient(
-                            colors: [Color.retroPink.opacity(0.2), Color.retroBlue.opacity(0.15)],
+                            colors: [Color.retroPurple.opacity(0.4), Color.retroPink.opacity(0.3)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
                         lineWidth: 1
                     )
             )
-            .cornerRadius(12)
-        #else
-        self.retroCard()
-        #endif
     }
 
     /// Stepper button styling for +/- controls on tvOS

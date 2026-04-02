@@ -108,7 +108,7 @@ struct CloudKitRecordsManagementView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("CloudKit Overview")
-                    .retroSectionHeader()
+                    .cloudSyncSectionTitle()
 
                 Spacer()
 
@@ -219,7 +219,7 @@ struct CloudKitRecordsManagementView: View {
     private var recordTypeCardsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Record Types")
-                .retroSectionHeader()
+                .cloudSyncSectionTitle()
 
             ForEach(viewModel.recordTypeStats) { stats in
                 recordTypeCard(stats: stats)
@@ -354,7 +354,7 @@ struct CloudKitRecordsManagementView: View {
                 if let selectedType = viewModel.selectedRecordType,
                    let stats = viewModel.recordTypeStats.first(where: { $0.recordType == selectedType }) {
                     Text("\(stats.displayName) Records")
-                        .retroSectionHeader()
+                        .cloudSyncSectionTitle()
                 }
 
                 Spacer()
