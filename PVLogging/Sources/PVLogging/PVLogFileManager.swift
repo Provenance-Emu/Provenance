@@ -77,6 +77,7 @@ public final class PVLogFileManager: @unchecked Sendable {
             guard currentFileHandle == nil else { return }
 #endif
             createDirectory()
+            pruneOldFiles()
             openNewFile()
 
 #if canImport(Combine)

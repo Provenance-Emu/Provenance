@@ -633,7 +633,7 @@ struct PVLogFileManagerTests {
         let mgr = makeManager()
         mgr.maxFileCount = 3
 
-        // Create more files than the limit
+        // Create more sessions than the limit; pruning runs at each startLogging call.
         for _ in 0..<5 {
             mgr.startLogging()
             Thread.sleep(forTimeInterval: 0.05)
@@ -641,10 +641,8 @@ struct PVLogFileManagerTests {
             Thread.sleep(forTimeInterval: 0.05)
         }
 
-        // logFiles() doesn't prune — pruning happens on rotation.
-        // Verify the directory contains files (pruning logic is internal).
         let files = mgr.logFiles()
-        #expect(files.count > 0)
+        #expect(files.count <= mgr.maxFileCount)
         mgr.deleteAllFiles()
     }
 }
