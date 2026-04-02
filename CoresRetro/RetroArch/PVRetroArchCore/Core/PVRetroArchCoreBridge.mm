@@ -9,6 +9,7 @@
 #import "PVRetroArchCoreBridge+Controls.h"
 #import "PVRetroArchCoreBridge+Audio.h"
 #import "PVRetroArchCoreBridge+Video.h"
+#import "PVRetroArchCoreBridge+BIOSAtariST.h"
 #import <PVRetroArch/PVRetroArch-Swift.h>
 
 #import <Foundation/Foundation.h>
@@ -108,6 +109,14 @@ extern int g_gs_preference;
     PVRetroArchCoreBridge.systemName = self.systemIdentifier;
     PVRetroArchCoreBridge.coreClassName = self.coreIdentifier;
     [self parseOptions];
+
+    // Validate Hatari TOS before the core starts. Without a valid TOS image,
+    // Hatari's Reset_Cold() fails and triggers a GUI dialog that crashes
+    // (null input_poll_cb inside input_gui → EXC_BAD_ACCESS).
+    if (![self validateHatariTOSOrError:error]) {
+        return NO;
+    }
+
 	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
 	NSString *configPath = self.saveStatesPath;
 	const char * dataPath = [[coreBundle resourcePath] fileSystemRepresentation];

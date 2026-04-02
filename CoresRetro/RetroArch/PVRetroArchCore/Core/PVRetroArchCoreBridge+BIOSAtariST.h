@@ -48,6 +48,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// Post-sync repair: repair any byte-swapped TOS files in the system directories.
 - (void)repairHatariTOSInSystemDir:(NSString *)systemDir;
 
+/// Validate that a usable TOS ROM is present. Returns YES if TOS is found and valid.
+/// On failure sets *error with a user-friendly description.
+/// Call from loadFileAtPath:error: to prevent Hatari from crashing when TOS is
+/// missing or corrupt (null input_gui → EXC_BAD_ACCESS in Dialog_DoProperty).
+- (BOOL)validateHatariTOSOrError:(NSError *_Nullable *_Nullable)error;
+
 @end
 
 NS_ASSUME_NONNULL_END
