@@ -832,15 +832,27 @@ public class CloudKitSyncer: SyncProvider {
             WLOG("Missing both filename and title, using record ID: \(filename)")
         }
 
-        DLOG("Processing record: \(record.recordID.recordName) - Directory: \(directory), Filename: \(filename)")
+        // Non-database file types (Screenshots, Battery States, DeltaSkins) are handled
+        // by CloudKitNonDatabaseSyncer. Skip database entry creation for these.
+        let nonDatabaseDirs = ["screenshots", "battery states", "deltaskins"]
+        let dirLower = directory.lowercased()
+        let isNonDatabaseFile = record.recordType == CloudKitSyncer.RecordType.file
+            || nonDatabaseDirs.contains(where: { dirLower.hasPrefix($0) })
+
+        if isNonDatabaseFile {
+            CloudSyncManager.syncLog.event(.skip, item: "file/\(filename)", status: .skipped, detail: "non-database dir=\(directory)")
+        } else {
+            CloudSyncManager.syncLog.event(.download, item: "record/\(filename)", status: .inProgress, detail: "dir=\(directory)")
+        }
 
         // Check if the file already exists locally
         let destinationDirectory = URL.documentsPath.appendingPathComponent(directory, isDirectory: true)
         let destinationURL = destinationDirectory.appendingPathComponent(filename)
 
         if fileManager.fileExists(atPath: destinationURL.path) {
-            // File exists — just ensure the database entry is up to date
-            DLOG("File already exists locally, skipping download: \(filename)")
+            if !isNonDatabaseFile {
+                CloudSyncManager.syncLog.event(.skip, item: "record/\(filename)", status: .exists, detail: "local file exists")
+            }
             await createDatabaseEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: true)
             return
         }
@@ -861,12 +873,10 @@ public class CloudKitSyncer: SyncProvider {
             } else {
                 // No file data available — metadata-only record
                 await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
-                if record.recordType == CloudKitSyncer.RecordType.rom || record.recordType == "Game" {
-                    DLOG("Created database entry for ROM: \(filename) (metadata only, no file asset)")
-                }
+                CloudSyncManager.syncLog.event(.download, item: "record/\(filename)", status: .ok, detail: "metadata only")
             }
         } catch {
-            ELOG("Failed to fetch file data for \(filename): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.download, item: "record/\(filename)", status: .failed, detail: error.localizedDescription)
             // Still create the database entry so the game appears in the UI
             await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
         }
@@ -1085,37 +1095,45 @@ public class CloudKitSyncer: SyncProvider {
         // This method will create or update a Realm entry based on the CloudKit record
         // The implementation will depend on your Realm model structure
 
-        // Log record details for debugging
-        VLOG("Creating database entry for record: \(record.recordID.recordName) of type: \(record.recordType) in directory: \(directory)")
+        let syncLog = CloudSyncManager.syncLog
+
+        // Non-database file types don't need Realm entries
+        let nonDatabaseDirs = ["screenshots", "battery states", "deltaskins"]
+        let dirLower = directory.lowercased()
+        if record.recordType == CloudKitSyncer.RecordType.file
+            || nonDatabaseDirs.contains(where: { dirLower.hasPrefix($0) }) {
+            // File-only records (screenshots, battery saves, skins) are synced to disk
+            // by CloudKitNonDatabaseSyncer — no database entry needed.
+            return
+        }
 
         switch record.recordType {
-        case CloudKitSyncer.RecordType.rom, "Game": // Handle both current and legacy record types
-            DLOG("Processing as ROM record")
+        case CloudKitSyncer.RecordType.rom, "Game":
+            syncLog.event(.download, item: "rom/\(filename)", status: .inProgress, detail: "creating db entry")
             await createROMEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
 
         case CloudKitSyncer.RecordType.saveState:
-            DLOG("Processing as SaveState record")
+            syncLog.event(.download, item: "save/\(filename)", status: .inProgress, detail: "creating db entry")
             await createSaveStateEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
 
         case CloudKitSyncer.RecordType.bios:
-            DLOG("Processing as BIOS record")
+            syncLog.event(.download, item: "bios/\(filename)", status: .inProgress, detail: "creating db entry")
             await createBIOSEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
 
         default:
-            WLOG("Encountered unknown record type: \(record.recordType)")
-
             // Try to determine the appropriate handler based on directory
-            if directory.lowercased().contains("rom") {
-                DLOG("Processing unknown record type as ROM based on directory")
+            if dirLower.contains("rom") {
+                syncLog.event(.download, item: "rom/\(filename)", status: .inProgress, detail: "inferred from dir")
                 await createROMEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
-            } else if directory.lowercased().contains("save") || directory.lowercased().contains("state") {
-                DLOG("Processing unknown record type as SaveState based on directory")
+            } else if dirLower.contains("save") || dirLower.contains("state") {
+                syncLog.event(.download, item: "save/\(filename)", status: .inProgress, detail: "inferred from dir")
                 await createSaveStateEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
-            } else if directory.lowercased().contains("bios") {
-                DLOG("Processing unknown record type as BIOS based on directory")
+            } else if dirLower.contains("bios") {
+                syncLog.event(.download, item: "bios/\(filename)", status: .inProgress, detail: "inferred from dir")
                 await createBIOSEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
             } else {
-                DLOG("Unable to determine record type from directory, skipping database entry creation")
+                syncLog.event(.skip, item: "unknown/\(filename)", status: .skipped,
+                              detail: "type=\(record.recordType) dir=\(directory)")
             }
         }
     }

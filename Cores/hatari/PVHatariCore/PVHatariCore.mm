@@ -50,149 +50,29 @@
 }
 
 #pragma mark - PVEmulatorCore
-
-/// Validate that a TOS image file is present and has a plausible header before
-/// the Hatari libretro core starts.  Without this check, an invalid or missing
-/// TOS causes Hatari's Reset_Cold() to fail and trigger its built-in SDL GUI
-/// dialog — which crashes because `input_poll_cb` is null in the libretro
-/// coroutine context (EXC_BAD_ACCESS inside `input_gui`).
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
-    // Locate tos.img in the BIOS directory (same directory the thin/retro frontend uses).
-    NSString *biosDir = self.BIOSPath;
-    if (!biosDir) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"PVHatariCore" code:1
-                                     userInfo:@{NSLocalizedDescriptionKey:
-                @"Atari ST BIOS directory is not configured. "
-                 "Cannot locate tos.img."}];
-        }
-        return NO;
-    }
-
-    NSString *tosPath = [self _findTOSImageInDirectory:biosDir];
-    if (!tosPath) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"PVHatariCore" code:2
-                                     userInfo:@{NSLocalizedDescriptionKey:
-                @"TOS ROM image not found. Place a valid tos.img file in "
-                 "the Atari ST BIOS folder (BIOS/com.provenance.atarist/)."}];
-        }
-        return NO;
-    }
-
-    NSError *validationError = nil;
-    if (![self _validateTOSImage:tosPath error:&validationError]) {
-        if (error) {
-            *error = validationError;
-        }
-        return NO;
-    }
-
-    return [super loadFileAtPath:path error:error];
-}
-
-/// Search `directory` for the first file that looks like a TOS image.
-/// Prefers files named "tos*" with .img/.rom extension, then falls back to any .img/.rom.
-- (NSString *)_findTOSImageInDirectory:(NSString *)directory {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSArray<NSString *> *files = [[fm contentsOfDirectoryAtPath:directory error:nil] sortedArrayUsingSelector:@selector(compare:)];
-    NSSet<NSString *> *tosExts = [NSSet setWithObjects:@"img", @"rom", nil];
-
-    // Pass 1: files starting with "tos"
-    for (NSString *file in files) {
-        NSString *ext = file.pathExtension.lowercaseString;
-        if ([tosExts containsObject:ext] && [file.lowercaseString hasPrefix:@"tos"]) {
-            return [directory stringByAppendingPathComponent:file];
-        }
-    }
-    // Pass 2: any .img or .rom
-    for (NSString *file in files) {
-        NSString *ext = file.pathExtension.lowercaseString;
-        if ([tosExts containsObject:ext]) {
-            return [directory stringByAppendingPathComponent:file];
-        }
-    }
-    return nil;
-}
-
-/// Validate the TOS image header (mirrors hatari/src/tos.c logic).
-/// Returns NO and sets `error` if the file is too small or has invalid version/address fields.
-- (BOOL)_validateTOSImage:(NSString *)path error:(NSError **)error {
-    NSData *header = [NSData dataWithContentsOfFile:path options:NSDataReadingMappedIfSafe error:error];
-    if (!header) {
-        return NO;
-    }
-
-    // TOS images must be at least 16KB (TOS 0.00 boot ROM is 16384 bytes)
-    if (header.length < 16384) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"PVHatariCore" code:3
-                                     userInfo:@{NSLocalizedDescriptionKey:
-                [NSString stringWithFormat:@"TOS ROM image is too small (%lu bytes). "
-                 "Expected at least 16 KB. The file may be corrupt.",
-                 (unsigned long)header.length]}];
-        }
-        return NO;
-    }
-
-    // TOS must be <= 1 MB
-    if (header.length > 1024 * 1024) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"PVHatariCore" code:4
-                                     userInfo:@{NSLocalizedDescriptionKey:
-                [NSString stringWithFormat:@"TOS ROM image is too large (%lu bytes). "
-                 "Expected at most 1 MB. The file may not be a valid TOS image.",
-                 (unsigned long)header.length]}];
-        }
-        return NO;
-    }
-
-    const uint8_t *bytes = (const uint8_t *)header.bytes;
-
-    // Check for RAM TOS loader header (magic 0x46FC2700) — skip validation for these
-    uint32_t firstWord = ((uint32_t)bytes[0] << 24) | ((uint32_t)bytes[1] << 16) |
-                         ((uint32_t)bytes[2] << 8) | (uint32_t)bytes[3];
-    if (firstWord == 0x46FC2700) {
-        // RAM TOS — Hatari handles these specially; allow them through
-        return YES;
-    }
-
-    // TOS version at offset 2 (big-endian uint16)
-    uint16_t tosVersion = ((uint16_t)bytes[2] << 8) | (uint16_t)bytes[3];
-    // TOS base address at offset 8 (big-endian uint32)
-    uint32_t tosAddress = ((uint32_t)bytes[8] << 24) | ((uint32_t)bytes[9] << 16) |
-                          ((uint32_t)bytes[10] << 8) | (uint32_t)bytes[11];
-
-    // TOS 0.00 (16 KB boot ROM) is valid
-    if (tosVersion == 0x000 && header.length == 16384) {
-        return YES;
-    }
-
-    // Normal TOS: version 1.00-4.xx, address must be 0xE00000 or 0xFC0000
-    if (tosVersion < 0x100 || tosVersion >= 0x500) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"PVHatariCore" code:5
-                                     userInfo:@{NSLocalizedDescriptionKey:
-                [NSString stringWithFormat:@"Invalid TOS ROM: version 0x%03X is outside the "
-                 "expected range (1.00–4.xx). The file may be corrupt or not a TOS image.",
-                 tosVersion]}];
-        }
-        return NO;
-    }
-
-    if (tosAddress != 0xE00000 && tosAddress != 0xFC0000) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"PVHatariCore" code:6
-                                     userInfo:@{NSLocalizedDescriptionKey:
-                [NSString stringWithFormat:@"Invalid TOS ROM: base address 0x%06X is not a "
-                 "known TOS ROM address (expected 0xE00000 or 0xFC0000).",
-                 tosAddress]}];
-        }
-        return NO;
-    }
-
-    return YES;
-}
+//- (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
+//	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
+//	const char *dataPath;
+//
+//    [self initControllBuffers];
+//
+//	// TODO: Proper path
+//	NSString *configPath = self.saveStatesPath;
+//	dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
+//
+//	[[NSFileManager defaultManager] createDirectoryAtPath:configPath
+//                              withIntermediateDirectories:YES
+//                                               attributes:nil
+//                                                    error:nil];
+//
+//	NSString *batterySavesDirectory = self.batterySavesPath;
+//	[[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory
+//                              withIntermediateDirectories:YES
+//                                               attributes:nil
+//                                                    error:NULL];
+//
+//    return YES;
+//}
 
 #pragma mark - Running
 //- (void)startEmulation {

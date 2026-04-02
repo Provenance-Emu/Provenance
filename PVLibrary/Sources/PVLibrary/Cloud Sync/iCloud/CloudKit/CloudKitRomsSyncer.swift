@@ -131,9 +131,8 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
         defer { isLoadAllInFlight.withLock { $0 = false } }
 
-        ILOG("[SYNC] Starting loadAllFromCloud for CloudKit ROMs...")
-        ILOG("[SYNC] CloudKit Database: \(database.databaseScope.rawValue == 2 ? "Private" : "Public")")
-        ILOG("[SYNC] Query Record Type: \(CloudKitSchema.RecordType.rom.rawValue)")
+        let syncLog = CloudSyncManager.syncLog
+        syncLog.event(.start, item: "loadAllFromCloud", status: .inProgress, detail: "db=\(database.databaseScope.rawValue == 2 ? "Private" : "Public"), type=\(CloudKitSchema.RecordType.rom.rawValue)")
 
         let query = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
         // Note: Removed sort descriptor as modificationDate is not marked sortable in CloudKit schema
@@ -142,9 +141,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         var allRecords: [CKRecord] = []
 
         do {
-            ILOG("[SYNC] Executing CloudKit query...")
+            syncLog.event(.query, item: "loadAllFromCloud", status: .inProgress)
             allRecords = try await fetchAllRecords(matching: query)
-            ILOG("[SYNC] CloudKit query completed. Processing \(allRecords.count) results...")
+            syncLog.event(.query, item: "loadAllFromCloud", status: .ok, detail: "\(allRecords.count) records")
 
             // Sort records by file size (smallest first) for better download reliability
             let sortedRecords = allRecords.sorted { record1, record2 in
@@ -153,42 +152,38 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 return size1 < size2
             }
 
-            ILOG("[SYNC] Found \(allRecords.count) ROM records, starting enhanced two-phase sync...")
+            syncLog.event(.sync, item: "loadAllFromCloud", status: .inProgress, detail: "\(allRecords.count) ROM records, two-phase sync")
 
             // Debug: If we found 0 records, let's investigate why
             if allRecords.isEmpty {
-                ELOG("[SYNC] ⚠️ No ROM records found in CloudKit! This suggests:")
-                ELOG("[SYNC]    1. No ROMs have been uploaded to CloudKit yet")
-                ELOG("[SYNC]    2. CloudKit authentication/permission issues")
-                ELOG("[SYNC]    3. Records are in a different database/zone")
-                ELOG("[SYNC]    4. Record ID format mismatch (old vs new format)")
+                syncLog.event(.query, item: "loadAllFromCloud", status: .notFound, detail: "No ROM records found; possible causes: no uploads, auth issues, wrong db/zone, ID format mismatch")
 
                 // Let's try a more specific query to see if there are ANY records
-                ILOG("🔍 Attempting to query for any records with 'rom_' prefix...")
+                syncLog.event(.query, item: "loadAllFromCloud/legacy", status: .inProgress, detail: "rom_ prefix fallback")
                 do {
                     let legacyQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue,
                                             predicate: NSPredicate(format: "recordID BEGINSWITH 'rom_'"))
                     let (legacyResults, _) = try await database.records(matching: legacyQuery)
-                    ILOG("🔍 Legacy format query found \(legacyResults.count) records")
+                    syncLog.event(.query, item: "loadAllFromCloud/legacy", status: .ok, detail: "\(legacyResults.count) records")
 
                     for (recordID, result) in legacyResults {
                         switch result {
                         case .success(let record):
-                            ILOG("🔍 Legacy ROM record found: \(recordID.recordName)")
+                            syncLog.event(.query, item: "rom/\(recordID.recordName)", status: .ok, detail: "legacy format")
                             allRecords.append(record)
                         case .failure(let error):
-                            WLOG("🔍 Legacy ROM record failed: \(recordID.recordName) - \(error.localizedDescription)")
+                            syncLog.event(.query, item: "rom/\(recordID.recordName)", status: .failed, detail: "legacy: \(error.localizedDescription)")
                         }
                     }
                 } catch {
-                    ELOG("🔍 Legacy query also failed: \(error.localizedDescription)")
+                    syncLog.event(.query, item: "loadAllFromCloud/legacy", status: .failed, detail: error.localizedDescription)
                 }
             }
 
-            ILOG("Total ROM records after legacy check: \(allRecords.count)")
+            syncLog.event(.query, item: "loadAllFromCloud", status: .ok, detail: "\(allRecords.count) total after legacy check")
 
             // PHASE 1: Sync all metadata first (fast) - SYNCHRONOUS
-            ILOG("📋 Phase 1: Syncing metadata for \(allRecords.count) ROM records...")
+            syncLog.event(.sync, item: "loadAllFromCloud/phase1", status: .inProgress, detail: "\(allRecords.count) ROM records")
             var metadataProcessedCount = 0
             var gamesNeedingDownload: [(md5: String, title: String, fileSize: Int64, systemIdentifier: String)] = []
 
@@ -203,32 +198,30 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 await Task.yield()
             }
 
-            ILOG("✅ Phase 1 complete: \(metadataProcessedCount) games synced, \(gamesNeedingDownload.count) need downloads")
+            syncLog.event(.sync, item: "loadAllFromCloud/phase1", status: .ok, detail: "\(metadataProcessedCount) synced, \(gamesNeedingDownload.count) need downloads")
             await MainActor.run {
                 SyncProgressTracker.shared.setDatabaseSynced(true)
             }
 
             // PHASE 2: Queue background downloads with intelligent prioritization
             if !gamesNeedingDownload.isEmpty {
-                ILOG("📥 Phase 2: Queuing background downloads for \(gamesNeedingDownload.count) games with space management...")
+                syncLog.event(.download, item: "loadAllFromCloud/phase2", status: .inProgress, detail: "\(gamesNeedingDownload.count) games queued")
                 await queueGamesForDownloadWithSpaceManagement(gamesNeedingDownload)
             } else {
-                ILOG("📥 Phase 2: No downloads needed - all games are up to date")
+                syncLog.event(.download, item: "loadAllFromCloud/phase2", status: .skipped, detail: "all games up to date")
             }
 
-            ILOG("🚀 Enhanced two-phase sync completed. UI should be responsive with \(metadataProcessedCount) games visible.")
+            syncLog.event(.complete, item: "loadAllFromCloud", status: .ok, detail: "\(metadataProcessedCount) games visible")
 #if os(tvOS)
             await reconcileMissingLocalGames()
 #endif
 
         } catch {
-            ELOG("❌ Failed to execute query for loadAllFromCloud: \(error.localizedDescription)")
             if let ckError = error as? CKError {
-                ELOG("❌ CloudKit Error Code: \(ckError.code.rawValue)")
-                ELOG("❌ CloudKit Error Domain: \(ckError.errorCode)")
-                ELOG("❌ CloudKit Error User Info: \(ckError.userInfo)")
+                syncLog.event(.error, item: "loadAllFromCloud", status: .failed, detail: "CKError code=\(ckError.code.rawValue): \(ckError.localizedDescription)")
+            } else {
+                syncLog.event(.error, item: "loadAllFromCloud", status: .failed, detail: error.localizedDescription)
             }
-            ELOG("❌ Full Error: \(error)")
             // Handle error appropriately (e.g., log, notify user)
             // Consider throwing or returning an error state if the protocol allowed.
         }
@@ -271,10 +264,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 return
             }
 
-            ILOG("Found game with MD5 \(md5) for URL \(file.path). Calling markGameAsDeleted.")
+            CloudSyncManager.syncLog.event(.delete, item: "rom/\(md5)", status: .inProgress, detail: file.path)
             try await markGameAsDeleted(md5: md5)
         } catch {
-            ELOG("Error during deleteFromDatastore for URL \(file.path): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.delete, item: "rom/\(file.path)", status: .failed, detail: error.localizedDescription)
             // Handle or propagate error
         }
     }
@@ -321,7 +314,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     do {
                         try await updatePVGame(from: record, gameMD5: md5.uppercased())
                     } catch {
-                        WLOG("[SYNC] Failed applying ROM metadata change for \(md5): \(error.localizedDescription)")
+                        CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .failed, detail: "remote change: \(error.localizedDescription)")
                     }
 
                 default:
@@ -333,7 +326,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 saveZoneChangeToken(newToken)
             }
         } catch {
-            WLOG("[SYNC] Remote change fetch failed: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.sync, item: "fetchRemoteChanges", status: .failed, detail: error.localizedDescription)
         }
     }
 
@@ -494,29 +487,29 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         do {
             let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
             guard let romRecord = try await fetchRecord(recordID: recordID, includeAssets: false) else {
-                WLOG("[SYNC] ROM record not found in CloudKit for MD5 \(md5)")
+                CloudSyncManager.syncLog.event(.query, item: "rom/\(md5)", status: .notFound)
                 return false
             }
 
             /// Try to create the game first
             do {
                 if let _ = try await createPVGame(from: romRecord) {
-                    ILOG("[SYNC] Created PVGame for MD5 \(md5) from ROM metadata")
+                    CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .ok, detail: "created from metadata")
                     return true
                 }
             } catch {
                 /// Game might already exist, try updating it
                 do {
                     try await updatePVGame(from: romRecord, gameMD5: md5.uppercased())
-                    ILOG("[SYNC] Updated PVGame for MD5 \(md5) from ROM metadata")
+                    CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .ok, detail: "updated from metadata")
                     return true
                 } catch {
-                    WLOG("[SYNC] Failed to process ROM metadata for MD5 \(md5): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .failed, detail: error.localizedDescription)
                     return false
                 }
             }
         } catch {
-            WLOG("[SYNC] Failed to fetch ROM metadata for MD5 \(md5): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.query, item: "rom/\(md5)", status: .failed, detail: error.localizedDescription)
             return false
         }
 
@@ -772,7 +765,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         let md5 = game.md5Hash
         guard !md5.isEmpty else {
-            ELOG("Cannot upload game without MD5: \(game.title)")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(game.title)", status: .failed, detail: "missing MD5")
             throw CloudSyncError.invalidData
         }
 
@@ -784,17 +777,17 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         } catch let cloudSyncError as CloudSyncError {
             // Extract underlying error details if it's a wrapped CloudKit error
             let errorDetails = extractErrorDetails(cloudSyncError)
-            ELOG("Failed to fetch or create base record for \(md5): \(errorDetails)")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "fetch base record: \(errorDetails)")
             throw cloudSyncError
         } catch {
             let errorDetails = extractErrorDetails(CloudSyncError.cloudKitError(error))
-            ELOG("Failed to fetch or create base record for \(md5): \(errorDetails)")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "fetch base record: \(errorDetails)")
             throw CloudSyncError.cloudKitError(error)
         }
 
         // Check if already marked deleted remotely, if so, skip upload
         if let isDeleted = record[CloudKitSchema.ROMFields.isDeleted] as? Bool, isDeleted == true {
-            WLOG("Skipping upload for \(md5): Record is marked as deleted in CloudKit.")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .skipped, detail: "marked deleted in CloudKit")
             // Optional: Update local state if needed?
             return
         }
@@ -803,11 +796,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         do {
             // Validate required fields before mapping
             guard !game.title.isEmpty else {
-                ELOG("Cannot upload game \(md5): Game title is empty")
+                CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "empty title")
                 throw CloudSyncError.invalidData
             }
             guard !game.systemIdentifier.isEmpty else {
-                ELOG("Cannot upload game \(md5): System identifier is empty")
+                CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "empty systemIdentifier")
                 throw CloudSyncError.invalidData
             }
 
@@ -817,13 +810,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             let recordMetadataSize = try estimateRecordMetadataSize(record)
             let maxRecordMetadataSize: Int64 = 1024 * 1024 // 1MB
             if recordMetadataSize > maxRecordMetadataSize {
-                ELOG("Cannot upload game \(md5): Record metadata size \(ByteCountFormatter.string(fromByteCount: recordMetadataSize, countStyle: .file)) exceeds CloudKit limit of \(ByteCountFormatter.string(fromByteCount: maxRecordMetadataSize, countStyle: .file))")
+                CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "metadata size \(ByteCountFormatter.string(fromByteCount: recordMetadataSize, countStyle: .file)) exceeds limit")
                 throw CloudSyncError.invalidData
             }
         } catch let error as CloudSyncError {
             throw error // Rethrow known sync errors
         } catch {
-            ELOG("Unexpected error mapping PVGame to record for \(md5): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "mapping error: \(error.localizedDescription)")
             throw CloudSyncError.unknown // Or map to a more specific error if possible
         }
 
@@ -837,13 +830,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // 3. Prepare Asset (CKAsset) - Zip if necessary using ZipArchive
         guard let primaryFileURL = game.file?.url else {
-            ELOG("Cannot upload game \(md5): Missing primary file URL in game.file.url.")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "missing primary file URL")
             throw CloudSyncError.invalidData
         }
 
         // Verify the file actually exists at the expected location
         guard FileManager.default.fileExists(atPath: primaryFileURL.path) else {
-            ELOG("Cannot upload game \(md5): Primary file does not exist at \(primaryFileURL.path)")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "file not found at \(primaryFileURL.path)")
             throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: 404, userInfo: [NSLocalizedDescriptionKey: "ROM file not found at expected path"]))
         }
 
@@ -855,11 +848,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 if fileSize > maxAssetSize {
                     let sizeMB = Double(fileSize) / (1024 * 1024)
                     let maxMB = Double(maxAssetSize) / (1024 * 1024)
-                    ELOG("Cannot upload game \(md5): File size \(String(format: "%.1f", sizeMB))MB exceeds CloudKit limit of \(String(format: "%.1f", maxMB))MB")
+                    CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "file \(String(format: "%.1f", sizeMB))MB exceeds \(String(format: "%.1f", maxMB))MB limit")
                     throw CloudSyncError.assetTooLarge(size: fileSize, maxSize: maxAssetSize)
                 }
                 if fileSize == 0 {
-                    ELOG("Cannot upload game \(md5): File size is 0 bytes")
+                    CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "file size is 0 bytes")
                     throw CloudSyncError.invalidData
                 }
                 VLOG("File size validation passed for \(md5): \(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))")
@@ -867,13 +860,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         } catch let error as CloudSyncError {
             throw error
         } catch {
-            ELOG("Failed to get file attributes for \(md5): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "file attributes: \(error.localizedDescription)")
             throw CloudSyncError.fileSystemError(error)
         }
 
         // Verify file is readable
         guard FileManager.default.isReadableFile(atPath: primaryFileURL.path) else {
-            ELOG("Cannot upload game \(md5): File is not readable at \(primaryFileURL.path)")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "file not readable at \(primaryFileURL.path)")
             throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: 403, userInfo: [NSLocalizedDescriptionKey: "ROM file is not readable"]))
         }
         let relatedFileURLs = game.relatedFiles.filter { $0.url?.lastPathComponent != primaryFileURL.lastPathComponent }.compactMap { $0.url }
@@ -911,13 +904,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         } catch let error as CloudSyncError {
             // If createZip threw a CloudSyncError, rethrow it
-            ELOG("CloudSyncError preparing asset for \(md5): \(error)")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "asset prep: \(error)")
             if let url = tempZipURL, FileManager.default.fileExists(atPath: url.path) {
                 try? await FileManager.default.removeItem(at: url) // Use sync remove here
             }
             throw error
         } catch {
-            ELOG("Unexpected error preparing asset for \(md5): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "unexpected asset error: \(error.localizedDescription)")
             if let url = tempZipURL, FileManager.default.fileExists(atPath: url.path) {
                 try? await FileManager.default.removeItem(at: url) // Use sync remove here
             }
@@ -927,7 +920,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // 4. Verify asset is set before saving to CloudKit
         if record[CloudKitSchema.ROMFields.fileData] as? CKAsset == nil {
-            ELOG("Critical error: Asset not set on record before upload for game \(md5)")
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "asset not set on record before save")
             if let url = tempZipURL, FileManager.default.fileExists(atPath: url.path) {
                 try? await FileManager.default.removeItem(at: url)
             }
@@ -937,11 +930,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Save Record to CloudKit
         do {
             try await saveRecord(record)
-            ILOG("""
-                [SYNC] ✅ ROM UPLOAD SUCCESS: \(game.title)
-                   RecordID: \(record.recordID.recordName)
-                   MD5: \(md5), System: \(game.systemIdentifier), HasAsset: \(record[CloudKitSchema.ROMFields.fileData] != nil)
-                """)
+            CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .ok, detail: "\(game.title), system=\(game.systemIdentifier)")
         } catch let error as CKError {
             // Clean up zip file if upload fails
             if let url = tempZipURL, FileManager.default.fileExists(atPath: url.path) {
@@ -951,19 +940,19 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // Provide specific error messages for common CloudKit errors
             switch error.code {
             case .invalidArguments:
-                ELOG("CloudKit invalidArguments error for \(md5): \(error.localizedDescription). This may indicate corrupted data or invalid record structure.")
+                CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "invalidArguments: corrupted data or invalid record")
                 throw CloudSyncError.invalidData
             case .assetFileNotFound:
-                ELOG("CloudKit assetFileNotFound error for \(md5): Asset file was removed or is inaccessible.")
+                CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "assetFileNotFound: removed or inaccessible")
                 throw CloudSyncError.fileSystemError(error)
             case .assetFileModified:
-                ELOG("CloudKit assetFileModified error for \(md5): Asset file was modified during upload.")
+                CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "assetFileModified: changed during upload")
                 throw CloudSyncError.fileSystemError(error)
             case .limitExceeded:
-                ELOG("CloudKit limitExceeded error for \(md5): Record or asset exceeds CloudKit size limits.")
+                CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "limitExceeded: record or asset too large")
                 throw CloudSyncError.assetTooLarge(size: 0, maxSize: 500 * 1024 * 1024)
             default:
-                ELOG("CloudKit error saving record for \(md5): \(error.localizedDescription) (Code: \(error.code.rawValue))")
+                CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .failed, detail: "CKError code=\(error.code.rawValue): \(error.localizedDescription)")
                 throw CloudSyncError.cloudKitError(error)
             }
         } catch {
@@ -986,7 +975,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
         }
 
-        ILOG("Completed upload process for game: \(game.title) (MD5: \(md5))")
+        CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .ok, detail: "completed: \(game.title)")
     }
     /// Marks a game record as deleted in CloudKit based on its MD5 hash.
     /// This performs a "soft delete" by setting the `isDeleted` flag.
@@ -1014,13 +1003,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             record[CloudKitSchema.ROMFields.isDeleted] = true
 
             try await saveRecord(record)
-            ILOG("Successfully marked CloudKit record as deleted: \(record.recordID.recordName) at \(record.modificationDate ?? Date())")
+            CloudSyncManager.syncLog.event(.delete, item: "rom/\(record.recordID.recordName)", status: .ok, detail: "soft delete")
         } catch let error as CKError where error.code == .unknownItem {
-            WLOG("Attempted to mark record as deleted, but it was not found in CloudKit (might have been deleted already): \(recordID.recordName). Error: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.delete, item: "rom/\(recordID.recordName)", status: .notFound, detail: "already deleted")
             // Consider this non-fatal in a soft-delete scenario
             return
         } catch {
-            ELOG("Failed to mark CloudKit record \(recordID.recordName) as deleted: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.delete, item: "rom/\(recordID.recordName)", status: .failed, detail: error.localizedDescription)
             throw CloudSyncError.cloudKitError(error)
         }
     }
@@ -1030,12 +1019,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         VLOG("Attempting HARD delete for CloudKit record: \(recordID.recordName)")
         do {
             try await database.deleteRecord(withID: recordID)
-            ILOG("Successfully deleted CloudKit record: \(recordID.recordName)")
+            CloudSyncManager.syncLog.event(.delete, item: "rom/\(recordID.recordName)", status: .ok, detail: "hard delete")
         } catch let error as CKError where error.code == .unknownItem {
             // Record was already deleted or never existed. This is fine.
             VLOG("Record \(recordID.recordName) not found in CloudKit for deletion (already deleted?). Ignoring.")
         } catch {
-            ELOG("Failed to delete record \(recordID.recordName) from CloudKit for MD5 \(md5): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.delete, item: "rom/\(md5)", status: .failed, detail: error.localizedDescription)
             // If this fails, the local delete succeeded, but the remote record remains.
             // It might get re-downloaded later unless we handle this state.
             throw CloudSyncError.cloudKitError(error)
@@ -1050,7 +1039,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private func processCloudRecordMetadata(_ record: CKRecord) async -> (md5: String, title: String, fileSize: Int64, systemIdentifier: String)? {
         // Extract MD5 from record ID using centralized method
         guard let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) else {
-            ELOG("Invalid ROM record ID format: \(record.recordID.recordName)")
+            CloudSyncManager.syncLog.event(.sync, item: "rom/\(record.recordID.recordName)", status: .failed, detail: "invalid record ID format")
             return nil
         }
 
@@ -1073,13 +1062,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             var updatedOrCreatedGame: PVGame?
 
             if let localGame = existingLocalGame {
-                VLOG("🔄 Local game found for MD5 \(md5). Updating from cloud record: \(localGame.title) (isDownloaded: \(localGame.isDownloaded))")
+                VLOG("Local game found for MD5 \(md5). Updating from cloud record: \(localGame.title) (isDownloaded: \(localGame.isDownloaded))")
                 try await updatePVGame(from: record, gameMD5: md5)
                 updatedOrCreatedGame = RomDatabase.sharedInstance.game(withMD5: md5)
             } else {
-                ILOG("🆕 No local game found for MD5 \(md5). Creating from cloud record...")
+                CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .inProgress, detail: "creating from cloud record")
                 updatedOrCreatedGame = try await createPVGame(from: record)
-                ILOG("📥 Created new game from CloudKit: \(updatedOrCreatedGame?.title ?? "Unknown") (isDownloaded: \(updatedOrCreatedGame?.isDownloaded ?? false))")
+                CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .ok, detail: "created: \(updatedOrCreatedGame?.title ?? "Unknown") (isDownloaded: \(updatedOrCreatedGame?.isDownloaded ?? false))")
             }
 
             // Check if download will be needed (but don't trigger it yet)
@@ -1089,34 +1078,34 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     VLOG("Local game \(md5) marked for background download")
                     return (md5: md5, title: title, fileSize: fileSize, systemIdentifier: systemIdentifier)
                 } else {
-                    WLOG("Local game \(md5) needs download, but remote record has no asset")
+                    CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .notFound, detail: "needs download but no remote asset")
                 }
             } else if let game = updatedOrCreatedGame {
                 VLOG("Local game \(md5) already downloaded or up to date")
             } else {
-                ELOG("Failed to create or update game for MD5 \(md5)")
+                CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .failed, detail: "create/update returned nil")
             }
 
         } catch let error as CKError {
-            ELOG("CloudKit error processing record \(record.recordID.recordName): \(error.localizedDescription) (Code: \(error.code.rawValue))")
+            CloudSyncManager.syncLog.event(.error, item: "rom/\(record.recordID.recordName)", status: .failed, detail: "CKError code=\(error.code.rawValue): \(error.localizedDescription)")
 
             // Handle specific CloudKit errors
             switch error.code {
             case .unknownItem:
-                WLOG("ROM record not found in CloudKit, may have been deleted")
+                CloudSyncManager.syncLog.event(.check, item: "rom/\(record.recordID.recordName)", status: .notFound, detail: "may have been deleted")
             case .networkFailure, .networkUnavailable:
-                WLOG("Network error processing ROM record, will retry automatically")
+                CloudSyncManager.syncLog.event(.retry, item: "rom/\(record.recordID.recordName)", status: .pending, detail: "network error")
             case .requestRateLimited:
-                WLOG("Rate limited processing ROM record, will retry after delay")
+                CloudSyncManager.syncLog.event(.retry, item: "rom/\(record.recordID.recordName)", status: .pending, detail: "rate limited")
             default:
                 if error.isRecoverableCloudKitError {
-                    WLOG("ROM record processing failed with recoverable error, will retry automatically")
+                    CloudSyncManager.syncLog.event(.retry, item: "rom/\(record.recordID.recordName)", status: .pending, detail: "recoverable error")
                 } else {
-                    ELOG("ROM record processing failed with non-recoverable CloudKit error")
+                    CloudSyncManager.syncLog.event(.error, item: "rom/\(record.recordID.recordName)", status: .failed, detail: "non-recoverable CKError")
                 }
             }
         } catch {
-            ELOG("Unexpected error processing cloud record \(record.recordID.recordName): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.error, item: "rom/\(record.recordID.recordName)", status: .failed, detail: error.localizedDescription)
         }
 
         return nil // No download needed
@@ -1131,7 +1120,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// - Returns: Upload task ID for tracking
     @discardableResult
     public func queueROMUpload(md5: String, gameTitle: String, filePath: URL, priority: CloudKitUploadQueueActor.UploadTask.Priority = .normal) async -> UUID {
-        ILOG("📤 Queueing ROM upload: \(gameTitle) (MD5: \(md5))")
+        CloudSyncManager.syncLog.event(.upload, item: "rom/\(md5)", status: .pending, detail: gameTitle)
         return await uploadQueue.enqueueUpload(md5: md5, gameTitle: gameTitle, filePath: filePath, priority: priority)
     }
 
@@ -1157,11 +1146,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// - Parameter gameInfos: Array of game info tuples for games that need downloads
     private func queueGamesForDownloadWithSpaceManagement(_ gameInfos: [(md5: String, title: String, fileSize: Int64, systemIdentifier: String)]) async {
         guard !gameInfos.isEmpty else {
-            ILOG("No games need background downloads")
+            CloudSyncManager.syncLog.event(.download, item: "downloadQueue", status: .skipped, detail: "no games need downloads")
             return
         }
 
-        ILOG("🔄 Queuing \(gameInfos.count) games for download with intelligent space management")
+        CloudSyncManager.syncLog.event(.download, item: "downloadQueue", status: .inProgress, detail: "\(gameInfos.count) games with space management")
 
         let downloadQueue = CloudKitDownloadQueue.shared
         var queuedCount = 0
@@ -1178,7 +1167,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         await progressTracker.updateDiskSpace()
         let availableSpace = await progressTracker.availableDiskSpace
 
-        ILOG("📊 Download space analysis: \(gameInfos.count) games need \(ByteCountFormatter.string(fromByteCount: totalSpaceNeeded, countStyle: .file)) total, \(ByteCountFormatter.string(fromByteCount: availableSpace, countStyle: .file)) available")
+        CloudSyncManager.syncLog.event(.check, item: "downloadQueue/space", status: .ok, detail: "\(gameInfos.count) games need \(ByteCountFormatter.string(fromByteCount: totalSpaceNeeded, countStyle: .file)), \(ByteCountFormatter.string(fromByteCount: availableSpace, countStyle: .file)) available")
 
         #if os(tvOS)
         // More conservative approach on tvOS
@@ -1186,7 +1175,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         var maxAllowableSpace = max(0, availableSpace - spaceBuffer)
 
         if totalSpaceNeeded > maxAllowableSpace {
-            WLOG("⚠️ tvOS: Total download size (\(ByteCountFormatter.string(fromByteCount: totalSpaceNeeded, countStyle: .file))) exceeds available space with buffer. Will queue selectively.")
+            CloudSyncManager.syncLog.event(.download, item: "downloadQueue/tvOS", status: .pending, detail: "size \(ByteCountFormatter.string(fromByteCount: totalSpaceNeeded, countStyle: .file)) exceeds space, queueing selectively")
         }
         var remainingAutoSyncBudget = maxAllowableSpace
         #endif
@@ -1204,7 +1193,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             #if os(tvOS)
             let canAutoSync = remainingAutoSyncBudget > 0 && gameInfo.fileSize <= remainingAutoSyncBudget
             if !canAutoSync {
-                WLOG("tvOS: Skipping auto-sync for \(gameInfo.title) due to limited space budget (\(ByteCountFormatter.string(fromByteCount: remainingAutoSyncBudget, countStyle: .file)) remaining)")
+                CloudSyncManager.syncLog.event(.skip, item: "rom/\(gameInfo.md5)", status: .skipped, detail: "tvOS space budget \(ByteCountFormatter.string(fromByteCount: remainingAutoSyncBudget, countStyle: .file)) remaining")
                 skippedCount += 1
                 continue
             }
@@ -1227,41 +1216,24 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 VLOG("Queued download: \(gameInfo.title) (\(gameInfo.md5)) - \(ByteCountFormatter.string(fromByteCount: gameInfo.fileSize, countStyle: .file))")
 
             } catch CloudSyncError.insufficientSpace(let required, let available) {
-                WLOG("Insufficient space for \(gameInfo.title): requires \(ByteCountFormatter.string(fromByteCount: required, countStyle: .file)), available: \(ByteCountFormatter.string(fromByteCount: available, countStyle: .file))")
+                CloudSyncManager.syncLog.event(.download, item: "rom/\(gameInfo.md5)", status: .skipped, detail: "insufficient space: need \(ByteCountFormatter.string(fromByteCount: required, countStyle: .file)), have \(ByteCountFormatter.string(fromByteCount: available, countStyle: .file))")
                 skippedCount += 1
 
                 #if os(tvOS)
                 // On tvOS, stop queuing more downloads if we hit space limits
-                WLOG("tvOS space limit reached - stopping further downloads")
+                CloudSyncManager.syncLog.event(.download, item: "downloadQueue/tvOS", status: .cancelled, detail: "space limit reached")
                 break
                 #endif
 
             } catch {
-                ELOG("Failed to queue download for \(gameInfo.title) (\(gameInfo.md5)): \(error)")
+                CloudSyncManager.syncLog.event(.download, item: "rom/\(gameInfo.md5)", status: .failed, detail: "\(error)")
                 skippedCount += 1
             }
         }
 
-        ILOG("✅ Download queue updated: \(queuedCount) queued, \(skippedCount) skipped")
-
-        if queuedCount > 0 {
-            ILOG("📥 Download queue will process \(queuedCount) games in background")
-
-            // Estimate total time based on average download speeds
-            let totalQueuedSize = sortedGameInfos.prefix(queuedCount).reduce(0) { $0 + $1.fileSize }
-            ILOG("📊 Total queued size: \(ByteCountFormatter.string(fromByteCount: totalQueuedSize, countStyle: .file))")
-        }
-
-        if skippedCount > 0 {
-            let skippedSize = sortedGameInfos.suffix(skippedCount).reduce(0) { $0 + $1.fileSize }
-            WLOG("⚠️ Skipped \(skippedCount) downloads (\(ByteCountFormatter.string(fromByteCount: skippedSize, countStyle: .file))) due to space or other constraints")
-
-            #if os(tvOS)
-            if skippedCount > queuedCount {
-                WLOG("💡 tvOS: Consider freeing up space by deleting unused apps or games")
-            }
-            #endif
-        }
+        let totalQueuedSize = queuedCount > 0 ? sortedGameInfos.prefix(queuedCount).reduce(0) { $0 + $1.fileSize } : Int64(0)
+        let skippedSize = skippedCount > 0 ? sortedGameInfos.suffix(skippedCount).reduce(0) { $0 + $1.fileSize } : Int64(0)
+        CloudSyncManager.syncLog.event(.complete, item: "downloadQueue", status: .ok, detail: "\(queuedCount) queued (\(ByteCountFormatter.string(fromByteCount: totalQueuedSize, countStyle: .file))), \(skippedCount) skipped (\(ByteCountFormatter.string(fromByteCount: skippedSize, countStyle: .file)))")
     }
 
     /// Legacy method - replaced by queueGamesForDownloadWithSpaceManagement
@@ -1269,11 +1241,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// - Parameter md5List: Array of MD5 hashes for games that need downloads
     private func queueGamesForDownload(_ md5List: [String]) async {
         guard !md5List.isEmpty else {
-            ILOG("No games need background downloads")
+            CloudSyncManager.syncLog.event(.download, item: "downloadQueue/legacy", status: .skipped, detail: "no games need downloads")
             return
         }
 
-        ILOG("🔄 Queuing \(md5List.count) games for download with space checking")
+        CloudSyncManager.syncLog.event(.download, item: "downloadQueue/legacy", status: .inProgress, detail: "\(md5List.count) games")
 
         let downloadQueue = CloudKitDownloadQueue.shared
         var queuedCount = 0
@@ -1282,7 +1254,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         for md5 in md5List {
             // Get game info for the download queue
             guard let game = RomDatabase.sharedInstance.game(withMD5: md5) else {
-                WLOG("Cannot queue download - game not found for MD5: \(md5)")
+                CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .notFound, detail: "game not in database")
                 skippedCount += 1
                 continue
             }
@@ -1301,30 +1273,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 VLOG("Queued download: \(game.title) (\(md5))")
 
             } catch CloudSyncError.insufficientSpace(let required, let available) {
-                WLOG("Insufficient space for \(game.title): requires \(ByteCountFormatter.string(fromByteCount: required, countStyle: .file)), available: \(ByteCountFormatter.string(fromByteCount: available, countStyle: .file))")
+                CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .skipped, detail: "insufficient space: need \(ByteCountFormatter.string(fromByteCount: required, countStyle: .file)), have \(ByteCountFormatter.string(fromByteCount: available, countStyle: .file))")
                 skippedCount += 1
 
                 #if os(tvOS)
-                // On tvOS, stop queuing more downloads if we hit space limits
-                WLOG("tvOS space limit reached - stopping further downloads")
+                CloudSyncManager.syncLog.event(.download, item: "downloadQueue/legacy/tvOS", status: .cancelled, detail: "space limit reached")
                 break
                 #endif
 
             } catch {
-                ELOG("Failed to queue download for \(game.title) (\(md5)): \(error)")
+                CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .failed, detail: "\(error)")
                 skippedCount += 1
             }
         }
 
-        ILOG("✅ Download queue updated: \(queuedCount) queued, \(skippedCount) skipped")
-
-        if queuedCount > 0 {
-            ILOG("📥 Download queue will process \(queuedCount) games in background")
-        }
-
-        if skippedCount > 0 {
-            WLOG("⚠️ Skipped \(skippedCount) downloads due to space or other constraints")
-        }
+        CloudSyncManager.syncLog.event(.complete, item: "downloadQueue/legacy", status: .ok, detail: "\(queuedCount) queued, \(skippedCount) skipped")
     }
 
     #if os(tvOS)
@@ -1338,7 +1301,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     .map { $0.freeze() }
             }
         } catch {
-            ELOG("Failed to fetch downloaded games for reconciliation: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.query, item: "reconcile/tvOS", status: .failed, detail: error.localizedDescription)
             return
         }
         guard !downloadedGames.isEmpty else { return }
@@ -1372,7 +1335,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     }
                 }
             } catch {
-                ELOG("Failed to flag missing game \(game.title) as not downloaded: \(error.localizedDescription)")
+                CloudSyncManager.syncLog.event(.sync, item: "rom/\(game.md5Hash)", status: .failed, detail: "flag not downloaded: \(error.localizedDescription)")
                 continue
             }
 
@@ -1386,9 +1349,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     priority: .normal,
                     onDemand: false
                 )
-                ILOG("tvOS: Re-queued missing game \(game.title) (\(md5)) after storage eviction.")
+                CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .pending, detail: "tvOS re-queued after eviction: \(game.title)")
             } catch {
-                ELOG("tvOS: Failed to re-queue \(game.title) (\(md5)): \(error.localizedDescription)")
+                CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .failed, detail: "tvOS re-queue: \(error.localizedDescription)")
             }
         }
     }
@@ -1403,7 +1366,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         do {
             fetchedRecord = try await fetchRecord(recordID: recordID, includeAssets: true)
         } catch let error as CKError where error.code == .unknownItem {
-            WLOG("Remote record \(recordID.recordName) not found when handling change. It might have been hard deleted. Skipping.")
+            CloudSyncManager.syncLog.event(.sync, item: "rom/\(recordID.recordName)", status: .notFound, detail: "may have been hard deleted")
             // If truly not found, we might need to delete locally if we have it?
             // Let's extract MD5 first to check local state.
         } catch {
@@ -1412,7 +1375,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         guard let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(recordID) else {
-            ELOG("Invalid ROM record ID format: \(recordID.recordName)")
+            CloudSyncManager.syncLog.event(.sync, item: "rom/\(recordID.recordName)", status: .failed, detail: "invalid record ID format")
             return
         }
 
@@ -1424,7 +1387,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             if isMarkedDeleted {
                 // --- Handle Soft Delete ---
-                ILOG("Remote record \(recordID.recordName) is marked as deleted. MD5: \(md5)")
+                CloudSyncManager.syncLog.event(.delete, item: "rom/\(md5)", status: .inProgress, detail: "remote soft delete")
                 if let localGame = RomDatabase.sharedInstance.game(withMD5: md5) {
                     VLOG("Deleting local game \(localGame.title) due to remote delete flag.")
                     do {
@@ -1432,9 +1395,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                         // or subsequent CloudKit update, otherwise it loops.
                         // Use source: .cloudKitSync to prevent notification cascade.
                         try RomDatabase.sharedInstance.delete(game: localGame, source: .cloudKitSync)
-                        ILOG("Successfully deleted local game \(md5) based on remote flag.")
+                        CloudSyncManager.syncLog.event(.delete, item: "rom/\(md5)", status: .ok, detail: "local game deleted per remote flag")
                     } catch {
-                        ELOG("Failed to delete local game \(md5) after remote delete flag: \(error)")
+                        CloudSyncManager.syncLog.event(.delete, item: "rom/\(md5)", status: .failed, detail: "remote flag delete: \(error)")
                         // Decide how to handle - retry? Log?
                     }
                 } else {
@@ -1444,7 +1407,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             } else {
                 // --- Handle Create or Update ---
-                ILOG("Remote record \(recordID.recordName) found and not deleted (Create/Update). MD5: \(md5)")
+                CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .inProgress, detail: "remote create/update")
                 let existingLocalGame = RomDatabase.sharedInstance.game(withMD5: md5)
                 var updatedOrCreatedGame: PVGame?
 
@@ -1469,7 +1432,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                             do {
                                 try await downloadGame(md5: md5)
                             } catch {
-                                ELOG("[SYNC] Download failed for \(md5): \(error.localizedDescription)")
+                                CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .failed, detail: error.localizedDescription)
                             }
                         }
                     } else {
@@ -1487,7 +1450,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         } else {
             // Fetched Record is nil (Record doesn't exist remotely, or fetch failed earlier)
             // This case is less likely with soft deletes. Might indicate a hard delete happened.
-            ILOG("Remote record \(recordID.recordName) not found when handling change (Hard Delete or Error?). MD5: \(md5)")
+            CloudSyncManager.syncLog.event(.delete, item: "rom/\(md5)", status: .inProgress, detail: "remote record missing, possible hard delete")
             // If we have the game locally, delete it.
             if let localGame = RomDatabase.sharedInstance.game(withMD5: md5) {
                 VLOG("Deleting local game \(localGame.title) because remote record was not found.")
@@ -1495,9 +1458,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     // Ensure this delete path also avoids triggering cloud sync again.
                     // Use source: .cloudKitSync to prevent notification cascade.
                     try RomDatabase.sharedInstance.delete(game: localGame, source: .cloudKitSync)
-                    ILOG("Successfully deleted local game \(md5) because remote record was missing.")
+                    CloudSyncManager.syncLog.event(.delete, item: "rom/\(md5)", status: .ok, detail: "local deleted, remote missing")
                 } catch {
-                    ELOG("Failed to delete local game \(md5) after remote record was missing: \(error)")
+                    CloudSyncManager.syncLog.event(.delete, item: "rom/\(md5)", status: .failed, detail: "remote missing delete: \(error)")
                 }
             } else {
                 VLOG("No local game found for \(md5), consistent with missing remote record.")
@@ -1524,7 +1487,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     ///   - md5: The game's MD5 hash
     ///   - progressHandler: Optional callback for download progress (0.0 to 1.0) and status message
     public func downloadGame(md5: String, progressHandler: ((Double, String) -> Void)?) async throws {
-        ILOG("[SYNC] Starting download for game MD5: \(md5)")
+        CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .inProgress)
         let startTime = Date()
 
         progressHandler?(0.0, "Connecting to iCloud...")
@@ -1549,10 +1512,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 progressHandler?(progress * 0.8, status)
             }
         ) else {
-            ELOG("Download failed: Record not found in CloudKit for MD5 \(md5).")
+            CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .notFound, detail: "record not in CloudKit")
             // Check local state and update if needed
             if let localGame = RomDatabase.sharedInstance.game(withMD5: md5), localGame.isDownloaded {
-                WLOG("Local game \(md5) was marked downloaded but record missing. Updating status.")
+                CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .pending, detail: "was marked downloaded, record missing")
                 try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: nil)
             }
             throw CloudSyncError.cloudKitError(CKError(.unknownItem))
@@ -1561,9 +1524,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // 2. Get Asset and Metadata from Record
         guard let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset,
               let assetURL = asset.fileURL else {
-            ELOG("Download failed: Missing fileData asset in record \(recordID.recordName). MD5: \(md5)")
+            CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .failed, detail: "missing fileData asset")
             if let localGame = RomDatabase.sharedInstance.game(withMD5: md5), localGame.isDownloaded {
-                WLOG("Local game \(md5) was marked downloaded but asset missing. Updating status.")
+                CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .pending, detail: "was marked downloaded, asset missing")
                 try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
             }
             throw CloudSyncError.invalidData
@@ -1571,12 +1534,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         let isArchive = (record[CloudKitSchema.ROMFields.isArchive] as? NSNumber)?.boolValue ?? false
         guard let primaryFilename = record[CloudKitSchema.ROMFields.originalFilename] as? String, !primaryFilename.isEmpty else {
-            ELOG("Download failed: Missing originalFilename in record \(recordID.recordName). MD5: \(md5)")
+            CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .failed, detail: "missing originalFilename")
             try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
             throw CloudSyncError.invalidData
         }
         guard let systemIdentifier = record[CloudKitSchema.ROMFields.systemIdentifier] as? String, !systemIdentifier.isEmpty else {
-            ELOG("Download failed: Missing systemIdentifier in record \(recordID.recordName). MD5: \(md5)")
+            CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .failed, detail: "missing systemIdentifier")
             try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
             throw CloudSyncError.invalidData
         }
@@ -1589,7 +1552,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // Verify asset file exists and is readable before proceeding
         guard FileManager.default.fileExists(atPath: assetURL.path) else {
-            ELOG("Download failed: Asset file does not exist at \(assetURL.path) for MD5 \(md5)")
+            CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .failed, detail: "asset file missing at \(assetURL.path)")
             try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
             throw CloudSyncError.fileSystemError(NSError(domain: "CloudKitRomsSyncer", code: 404, userInfo: [NSLocalizedDescriptionKey: "Asset file not found after download"]))
         }
@@ -1599,7 +1562,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         let assetFileSize = assetFileAttributes?[.size] as? Int64 ?? 0
         if let expectedFileSize = record[CloudKitSchema.ROMFields.fileSize] as? Int64, expectedFileSize > 0 {
             if assetFileSize != expectedFileSize && assetFileSize > 0 {
-                WLOG("Asset file size mismatch for \(md5): Expected \(expectedFileSize) bytes, got \(assetFileSize) bytes. File may be corrupted or incomplete.")
+                CloudSyncManager.syncLog.event(.check, item: "rom/\(md5)", status: .pending, detail: "size mismatch: expected \(expectedFileSize), got \(assetFileSize)")
             }
         }
 
@@ -1655,21 +1618,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
 
                 finalPrimaryFileURL = finalDestinationURL
-                ILOG("Successfully moved single file for \(md5) to \(finalDestinationURL.path).")
+                CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .inProgress, detail: "moved to \(finalDestinationURL.lastPathComponent)")
             }
         } catch let error as CloudSyncError {
-            ELOG("CloudSyncError during download/unzip for \(md5): \(error)")
+            CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .failed, detail: "unzip: \(error)")
             try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
             throw error
         } catch {
-            ELOG("File operation or ZipArchive error during download/unzip for \(md5): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .failed, detail: "file op: \(error.localizedDescription)")
             try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
             throw CloudSyncError.fileSystemError(error)
         }
 
         // 5. Update Local PVGame Status
         guard let confirmedPrimaryFileURL = finalPrimaryFileURL, FileManager.default.fileExists(atPath: confirmedPrimaryFileURL.path) else {
-            ELOG("Download failed: Primary file not found at expected location \(finalPrimaryFileURL?.path ?? "nil") after file operations for \(md5). Final check.")
+            CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .failed, detail: "primary file not found after extraction")
             try? await updateLocalDownloadStatus(md5: md5, isDownloaded: false, fileURL: nil, record: record)
             throw CloudSyncError.fileSystemError(CocoaError(.fileNoSuchFile))
         }
@@ -1682,9 +1645,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         let elapsed = Date().timeIntervalSince(startTime)
         let sizeStr = ByteCountFormatter.string(fromByteCount: assetFileSize, countStyle: .file)
         progressHandler?(1.0, "Complete!")
-        ILOG("[SYNC] Download complete for \(md5): \(sizeStr) in \(String(format: "%.1f", elapsed))s")
-
-        ILOG("Successfully completed download and local update for game MD5: \(md5).")
+        CloudSyncManager.syncLog.event(.download, item: "rom/\(md5)", status: .ok, detail: "\(sizeStr) in \(String(format: "%.1f", elapsed))s", duration: elapsed)
     }
 
     // MARK: - Mapping Helpers
@@ -1803,7 +1764,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     public func updateArtworkOnly(for game: PVGame, artworkKey: String) async throws -> Bool {
         let md5 = game.md5Hash
         guard !md5.isEmpty else {
-            ELOG("Cannot update artwork: game has no MD5 hash")
+            CloudSyncManager.syncLog.event(.upload, item: "artwork", status: .failed, detail: "game has no MD5 hash")
             return false
         }
 
@@ -1830,7 +1791,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             return false
         }
 
-        ILOG("Updating artwork-only for game: \(game.title) (MD5: \(md5))")
+        CloudSyncManager.syncLog.event(.upload, item: "artwork/\(md5)", status: .inProgress, detail: game.title)
 
         // Fetch or create the CloudKit record
         let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
@@ -1864,10 +1825,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         do {
             let database = ckContainer.privateCloudDatabase
             _ = try await database.save(record)
-            ILOG("Successfully updated artwork in CloudKit for game: \(game.title)")
+            CloudSyncManager.syncLog.event(.upload, item: "artwork/\(md5)", status: .ok, detail: game.title)
             return true
         } catch {
-            ELOG("Failed to save artwork record for game \(game.title): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.upload, item: "artwork/\(md5)", status: .failed, detail: error.localizedDescription)
             throw CloudSyncError.cloudKitError(error)
         }
     }
@@ -1940,7 +1901,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         try await saveRecord(record)
-        ILOG("[SYNC] ✅ Updated ROM metadata-only: \(frozenGame.title) (MD5: \(normalizedMD5))")
+        CloudSyncManager.syncLog.event(.upload, item: "rom/\(normalizedMD5)", status: .ok, detail: "metadata-only: \(frozenGame.title)")
         return true
     }
 
@@ -1969,7 +1930,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         let artworkURLChanged = localCustomArtworkURL != cloudCustomArtworkURL
 
         if artworkURLChanged {
-            ILOG("Custom artwork URL changed for game \(game.title): '\(localCustomArtworkURL)' -> '\(cloudCustomArtworkURL)'")
+            CloudSyncManager.syncLog.event(.download, item: "artwork/\(game.md5Hash)", status: .inProgress, detail: "URL changed: '\(localCustomArtworkURL)' -> '\(cloudCustomArtworkURL)'")
 
             // Remove old cached artwork if it exists and is different
             if !localCustomArtworkURL.isEmpty && PVMediaCache.fileExists(forKey: localCustomArtworkURL) {
@@ -1995,7 +1956,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // Cache the artwork in PVMediaCache using the cloudCustomArtworkURL as the key
             let cachedURL = try PVMediaCache.writeData(toDisk: artworkData, withKey: cloudCustomArtworkURL)
 
-            ILOG("Successfully downloaded and cached custom artwork for game: \(game.title) at: \(cachedURL.path) (key: \(cloudCustomArtworkURL))")
+            CloudSyncManager.syncLog.event(.download, item: "artwork/\(game.md5Hash)", status: .ok, detail: game.title)
 
             // Update the local game record with the new customArtworkURL if it changed
             if artworkURLChanged {
@@ -2015,12 +1976,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                             }
                         }
                     }
-                    ILOG("Updated local customArtworkURL for game \(gameTitle): \(cloudCustomArtworkURL)")
+                    CloudSyncManager.syncLog.event(.sync, item: "artwork/\(gameMD5)", status: .ok, detail: "updated local URL for \(gameTitle)")
                 }
             }
 
         } catch {
-            ELOG("Failed to download and cache custom artwork for game \(game.title): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.download, item: "artwork/\(game.md5Hash)", status: .failed, detail: error.localizedDescription)
             throw CloudSyncError.fileSystemError(error)
         }
     }
@@ -2044,7 +2005,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 throw CloudSyncError.invalidData
             }
 
-            ILOG("Updating local game \(localGame.md5Hash ?? "nil") from CloudKit record \(record.recordID.recordName).")
+            CloudSyncManager.syncLog.event(.sync, item: "rom/\(localGame.md5Hash ?? "nil")", status: .inProgress, detail: "updating from \(record.recordID.recordName)")
 
             let localSyncDate = localGame.lastCloudSyncDate ?? .distantPast
             if cloudModDate <= localSyncDate {
@@ -2096,7 +2057,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     localGame.isDownloaded = hasLocalFile
                 }
                 localGame.hasCloudAssets = true
-                ILOG("🔍 Updated game \(localGame.title): hasLocalFile=\(hasLocalFile), expectedPath=\(expectedLocalURL?.path ?? "nil"), existingFilePath=\(existingFileURL?.path ?? "nil"), isDownloaded=\(localGame.isDownloaded)")
+                CloudSyncManager.syncLog.event(.sync, item: "rom/\(localGame.md5Hash ?? "nil")", status: .ok, detail: "hasLocal=\(hasLocalFile), isDownloaded=\(localGame.isDownloaded)")
                 // Get fileSize using FileManager
                 if let url = asset.fileURL, let attributes = try? FileManager.default.attributesOfItem(atPath: url.path), let fileSize = attributes[.size] as? Int64 {
                     localGame.fileSize = Int(fileSize)
@@ -2118,7 +2079,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             } else if record.allKeys().contains(CloudKitSchema.ROMFields.fileData) {
                 // Mark as not downloaded
-                ILOG("📤 Marking game \(localGame.title) as not downloaded (no CloudKit asset)")
+                CloudSyncManager.syncLog.event(.sync, item: "rom/\(localGame.md5Hash ?? "nil")", status: .ok, detail: "no CloudKit asset, marking not downloaded")
                 localGame.isDownloaded = false
                 localGame.hasCloudAssets = false
 
@@ -2181,10 +2142,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         // Enhance with artwork if game doesn't already have any
         if !info.hasOriginalArtworkFile && info.customArtworkURL.isEmpty {
-            ILOG("🎨 Game \(info.title) has no artwork, attempting lookup...")
-            // Pass MD5 instead of the Realm object to avoid threading issues
+            CloudSyncManager.syncLog.event(.query, item: "artwork/\(gameMD5)", status: .inProgress, detail: "\(info.title) has no artwork")
             await enhanceGameWithArtworkAndMetadata(md5: gameMD5)
-            ILOG("🎨 Artwork enhancement completed for game with MD5: \(gameMD5)")
+            CloudSyncManager.syncLog.event(.query, item: "artwork/\(gameMD5)", status: .ok, detail: "enhancement complete")
         }
     }
 
@@ -2193,7 +2153,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         guard let md5 = record[CloudKitSchema.ROMFields.md5] as? String,
               let systemIdentifier = record[CloudKitSchema.ROMFields.systemIdentifier] as? String,
               let originalFilename = record[CloudKitSchema.ROMFields.originalFilename] as? String else {
-            ELOG("Cannot create PVGame: Missing essential fields (md5, systemIdentifier, originalFilename) in record \(record.recordID.recordName).")
+            CloudSyncManager.syncLog.event(.sync, item: "rom/\(record.recordID.recordName)", status: .failed, detail: "missing essential fields for PVGame creation")
             throw CloudSyncError.invalidData
         }
 
@@ -2237,11 +2197,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
                 try RomDatabase.sharedInstance.add(newGame, update: true) // Add the fully populated object
             }
-            ILOG("""
-                [SYNC] ✅ ROM ENTRY CREATED FROM CLOUD: \(title)
-                   RecordID: \(record.recordID.recordName), MD5: \(md5)
-                   System: \(systemIdentifier), isDownloaded: \(newGame.isDownloaded), hasCloudAssets: \(newGame.hasCloudAssets)
-                """)
+            CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .ok, detail: "created: \(title), system=\(systemIdentifier)")
 
             // Perform artwork and metadata lookup for the new game
             await enhanceGameWithArtworkAndMetadata(md5: md5)
@@ -2253,7 +2209,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // If it already exists, fetch and return the existing one
             return RomDatabase.sharedInstance.game(withMD5: md5)
         } catch {
-            ELOG("Failed to add new PVGame \(title) (MD5: \(md5)) to Realm: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .failed, detail: "Realm add: \(error.localizedDescription)")
             throw CloudSyncError.realmError(error)
         }
     }
@@ -2261,21 +2217,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         /// Perform artwork and metadata lookup for a game created from CloudKit
     /// - Parameter md5: The MD5 hash of the game to enhance with artwork and metadata
     private func enhanceGameWithArtworkAndMetadata(md5: String) async {
-        ILOG("🎨 Starting artwork and metadata lookup for game with MD5: \(md5)")
+        CloudSyncManager.syncLog.event(.query, item: "artwork/\(md5)", status: .inProgress, detail: "artwork and metadata lookup")
 
         let gameExists = (try? await RealmContext.withBackgroundRealm { realm in
             realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) != nil
         }) ?? false
 
         guard gameExists else {
-            WLOG("🎨 Game with MD5 \(md5) not found for artwork enhancement")
+            CloudSyncManager.syncLog.event(.query, item: "artwork/\(md5)", status: .notFound, detail: "game not found for enhancement")
             return
         }
 
         await getUpdatedGameInfo(forMD5: md5)
         await getArtwork(forGameMD5: md5)
 
-        ILOG("🎨 Completed artwork lookup for game with MD5: \(md5)")
+        CloudSyncManager.syncLog.event(.query, item: "artwork/\(md5)", status: .ok, detail: "artwork lookup complete")
     }
 
     /// Get updated game metadata from PVLookup database
@@ -2291,7 +2247,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 return (md5Hash: game.md5Hash, title: game.title, systemIdentifier: game.systemIdentifier)
             }
         } catch {
-            ELOG("Game lookup failed for metadata update \(md5): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.query, item: "metadata/\(md5)", status: .failed, detail: error.localizedDescription)
             return
         }
 
@@ -2389,7 +2345,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             }
         } catch {
-            ELOG("Error during metadata lookup for game with MD5 \(md5): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.query, item: "metadata/\(md5)", status: .failed, detail: "lookup: \(error.localizedDescription)")
         }
     }
 
@@ -2480,10 +2436,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                         game.originalArtworkFile = file
                     }
                 }
-                ILOG("Successfully downloaded and cached artwork for \(info.title)")
+                CloudSyncManager.syncLog.event(.download, item: "artwork/\(info.md5Hash)", status: .ok, detail: info.title)
             }
         } catch {
-            ELOG("Failed to download artwork for \(info.title): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.download, item: "artwork/\(info.md5Hash)", status: .failed, detail: error.localizedDescription)
         }
     }
 
@@ -2586,7 +2542,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             // Cast the result back to CKRecord
             guard let savedRecord = result as? CKRecord else {
-                ELOG("Retry operation returned unexpected type for saveRecord: \(type(of: result))")
+                CloudSyncManager.syncLog.event(.error, item: "saveRecord", status: .failed, detail: "unexpected type: \(type(of: result))")
                 throw CloudSyncError.unknown
             }
 
@@ -2603,7 +2559,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             WLOG("Record \(record.recordID.recordName) already exists in CloudKit. Attempting to update existing record.")
             try await handleRecordConflict(localRecord: record, cloudKitError: error)
         } catch {
-            ELOG("Failed to save record \(record.recordID.recordName): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.upload, item: "record/\(record.recordID.recordName)", status: .failed, detail: error.localizedDescription)
             throw CloudSyncError.cloudKitError(error)
         }
     }
@@ -2642,9 +2598,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 try await updateLocalGamePostUpload(md5: md5, record: savedRecord)
             }
 
-            ILOG("Successfully resolved conflict and updated record: \(savedRecord.recordID.recordName)")
+            CloudSyncManager.syncLog.event(.upload, item: "record/\(savedRecord.recordID.recordName)", status: .ok, detail: "conflict resolved")
         } catch {
-            ELOG("Failed to resolve record conflict for \(localRecord.recordID.recordName): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.upload, item: "record/\(localRecord.recordID.recordName)", status: .failed, detail: "conflict resolution: \(error.localizedDescription)")
             throw CloudSyncError.cloudKitError(error)
         }
     }
@@ -2694,7 +2650,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                         try await Task.sleep(nanoseconds: 100_000_000) // 100ms delay
                         continue
                     } else {
-                        ELOG("Cannot update game post-upload: Game \(md5) not found in Realm after \(maxRetries) attempts.")
+                        CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .failed, detail: "post-upload: game not found after \(maxRetries) attempts")
                         return
                     }
                 }
@@ -2710,7 +2666,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     retryCount += 1
                     try await Task.sleep(nanoseconds: 200_000_000) // 200ms delay
                 } else {
-                    ELOG("Failed to update game \(md5) post-upload after \(maxRetries) attempts: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .failed, detail: "post-upload after \(maxRetries) attempts: \(error.localizedDescription)")
                     throw error
                 }
             }
@@ -2808,7 +2764,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 throw CloudSyncError.zipError(DescriptiveError(description: "Created zip file is empty"))
             }
 
-            ILOG("Successfully created ZipArchive zip archive at \(outputURL.path) (\(fileSize) bytes) for primary file \(primaryFile.lastPathComponent).")
+            CloudSyncManager.syncLog.event(.upload, item: "zip/\(primaryFile.lastPathComponent)", status: .ok, detail: "\(fileSize) bytes", size: Int(fileSize))
 
         } catch let error as CocoaError {
             ELOG("CocoaError during ZipArchive zip creation for \(primaryFile.lastPathComponent): \(error.localizedDescription) (Code: \(error.code.rawValue))")
@@ -3031,7 +2987,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             return 0
         }
         let startTime = Date()
-        ILOG("[SYNC] Starting ROM metadata-only sync...")
+        CloudSyncManager.syncLog.event(.start, item: "syncMetadataOnly", status: .inProgress)
 
         do {
             // Must include originalFilename - required for createPVGame
@@ -3051,18 +3007,18 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             let metadataQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
             let metadataRecords = try await fetchAllRecords(matching: metadataQuery, desiredKeys: metadataKeys)
 
-            ILOG("[SYNC] Fetched \(metadataRecords.count) ROM records from CloudKit in \(String(format: "%.1f", Date().timeIntervalSince(startTime)))s")
+            CloudSyncManager.syncLog.event(.query, item: "syncMetadataOnly", status: .ok, detail: "\(metadataRecords.count) records in \(String(format: "%.1f", Date().timeIntervalSince(startTime)))s")
 
             // Use batch processing for speed
             let result = await processBatchedROMRecords(metadataRecords)
 
             let elapsed = Date().timeIntervalSince(startTime)
             let rate = elapsed > 0 ? Double(result.total) / elapsed : 0
-            ILOG("[SYNC] ROM metadata sync complete in \(String(format: "%.1f", elapsed))s: \(result.created) created, \(result.updated) updated, \(result.skipped) skipped, \(result.failed) failed (\(String(format: "%.1f", rate)) records/sec)")
+            CloudSyncManager.syncLog.event(.complete, item: "syncMetadataOnly", status: .ok, detail: "\(result.created) created, \(result.updated) updated, \(result.skipped) skipped, \(result.failed) failed (\(String(format: "%.1f", rate))/s)", duration: elapsed)
 
             return result.created + result.updated
         } catch {
-            ELOG("[SYNC] Fast metadata-only ROM sync failed: \(error)")
+            CloudSyncManager.syncLog.event(.complete, item: "syncMetadataOnly", status: .failed, detail: "\(error)")
             return 0
         }
     }
@@ -3159,7 +3115,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // Log progress every 10 batches (500 records)
             if batchIndex % 10 == 0 {
                 let processed = min(batchIndex * batchSize, records.count)
-                ILOG("[SYNC] Progress: \(processed)/\(records.count) records processed...")
+                CloudSyncManager.syncLog.event(.sync, item: "syncMetadataOnly", status: .inProgress, detail: "\(processed)/\(records.count) processed")
             }
         }
 
@@ -3329,7 +3285,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// Legacy sequential sync method - slower but more reliable for debugging
     public func syncMetadataOnlySequential() async -> Int {
         var createdOrUpdated = 0
-        ILOG("[SYNC] Starting sequential ROM metadata sync...")
+        CloudSyncManager.syncLog.event(.start, item: "syncMetadataSequential", status: .inProgress)
         do {
             let metadataKeys: [CKRecord.FieldKey] = [
                 CloudKitSchema.ROMFields.md5,
@@ -3346,7 +3302,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             let metadataQuery = CKQuery(recordType: CloudKitSchema.RecordType.rom.rawValue, predicate: NSPredicate(value: true))
             let metadataRecords = try await fetchAllRecords(matching: metadataQuery, desiredKeys: metadataKeys)
 
-            ILOG("[SYNC] Fetched \(metadataRecords.count) ROM records from CloudKit")
+            CloudSyncManager.syncLog.event(.query, item: "syncMetadataSequential", status: .ok, detail: "\(metadataRecords.count) records")
 
             for record in metadataRecords {
                 if let md5 = CloudKitSchema.RecordIDGenerator.extractMD5FromRomRecordID(record.recordID) {
@@ -3362,14 +3318,14 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                             createdOrUpdated += 1
                             VLOG("[SYNC] Updated: \(title)")
                         } catch {
-                            WLOG("[SYNC] Failed: \(title) - \(error.localizedDescription)")
+                            CloudSyncManager.syncLog.event(.sync, item: "rom/\(md5)", status: .failed, detail: "\(title): \(error.localizedDescription)")
                         }
                     }
                 }
             }
-            ILOG("[SYNC] Sequential sync complete: \(createdOrUpdated) entries")
+            CloudSyncManager.syncLog.event(.complete, item: "syncMetadataSequential", status: .ok, detail: "\(createdOrUpdated) entries")
         } catch {
-            ELOG("[SYNC] Sequential sync failed: \(error)")
+            CloudSyncManager.syncLog.event(.complete, item: "syncMetadataSequential", status: .failed, detail: "\(error)")
         }
         return createdOrUpdated
     }
@@ -3432,14 +3388,14 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 case .success(let record):
                     allRecords.append(record)
                 case .failure(let error):
-                    WLOG("[SYNC] Failed to fetch record \(recordID.recordName): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.query, item: "record/\(recordID.recordName)", status: .failed, detail: error.localizedDescription)
                 }
             }
 
             cursor = result.1
         } while cursor != nil
 
-        ILOG("[SYNC] Fetched \(allRecords.count) \(query.recordType) records from CloudKit")
+        CloudSyncManager.syncLog.event(.query, item: "fetchAll/\(query.recordType)", status: .ok, detail: "\(allRecords.count) records")
 
         return allRecords
     }
@@ -3534,7 +3490,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 return Array(candidates.prefix(batchSize)).map { $0.freeze() }
             }
         } catch {
-            ELOG("Failed to fetch games for audit: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.check, item: "auditCloudAssets", status: .failed, detail: error.localizedDescription)
             return
         }
         guard !sample.isEmpty else { return }
@@ -3551,7 +3507,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             } catch let error as CKError where error.code == .unknownItem {
                 await persistAuditResult(for: frozenGame, hasAsset: false, recordMissing: true)
             } catch {
-                WLOG("CloudKit audit failed for \(recordName): \(error.localizedDescription)")
+                CloudSyncManager.syncLog.event(.check, item: "rom/\(recordName)", status: .failed, detail: error.localizedDescription)
             }
         }
     }
@@ -3571,7 +3527,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             }
         } catch {
-            ELOG("Failed to persist audit result for \(frozenGame.md5Hash): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.check, item: "rom/\(frozenGame.md5Hash)", status: .failed, detail: "persist audit: \(error.localizedDescription)")
         }
     }
 
@@ -3590,7 +3546,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// - Returns: Tuple of (checked, repaired, unrepairable) counts
     @discardableResult
     public func auditAndRepairIncompleteRecords(batchSize: Int = 30) async -> (checked: Int, repaired: Int, unrepairable: Int) {
-        ILOG("[SYNC] Starting CloudKit record integrity audit...")
+        CloudSyncManager.syncLog.event(.start, item: "auditRepair", status: .inProgress)
 
         var checkedCount = 0
         var repairedCount = 0
@@ -3605,16 +3561,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     .map { $0.freeze() })
             }
         } catch {
-            ELOG("[SYNC] Failed to fetch local games for audit: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.check, item: "auditRepair", status: .failed, detail: "fetch games: \(error.localizedDescription)")
             return (0, 0, 0)
         }
 
         guard !localGames.isEmpty else {
-            ILOG("[SYNC] No games with cloudRecordID to audit")
+            CloudSyncManager.syncLog.event(.check, item: "auditRepair", status: .skipped, detail: "no games with cloudRecordID")
             return (0, 0, 0)
         }
 
-        ILOG("[SYNC] Auditing \(localGames.count) CloudKit records for completeness...")
+        CloudSyncManager.syncLog.event(.check, item: "auditRepair", status: .inProgress, detail: "\(localGames.count) records")
 
         // Process in batches
         for batch in localGames.chunked(into: batchSize) {
@@ -3630,7 +3586,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     let recordID = CKRecord.ID(recordName: recordName)
                     guard let record = try await fetchRecord(recordID: recordID, includeAssets: false) else {
                         // Record doesn't exist, mark for re-upload
-                        WLOG("[SYNC] Record missing for \(frozenGame.title), marking for re-upload")
+                        CloudSyncManager.syncLog.event(.check, item: "rom/\(frozenGame.md5Hash)", status: .notFound, detail: "marking for re-upload")
                         await markGameForReupload(frozenGame)
                         unrepairableCount += 1
                         continue
@@ -3646,19 +3602,19 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     }
 
                     if !missingFields.isEmpty {
-                        WLOG("[SYNC] Record \(recordName) missing fields: \(missingFields.joined(separator: ", "))")
+                        CloudSyncManager.syncLog.event(.check, item: "rom/\(recordName)", status: .failed, detail: "missing: \(missingFields.joined(separator: ", "))")
 
                         // Try to repair from local data
                         if await repairRecord(record, from: frozenGame, missingFields: missingFields) {
                             repairedCount += 1
-                            ILOG("[SYNC] ✅ Repaired record for \(frozenGame.title)")
+                            CloudSyncManager.syncLog.event(.sync, item: "rom/\(frozenGame.md5Hash)", status: .ok, detail: "repaired: \(frozenGame.title)")
                         } else {
                             unrepairableCount += 1
-                            WLOG("[SYNC] ⚠️ Could not repair record for \(frozenGame.title)")
+                            CloudSyncManager.syncLog.event(.sync, item: "rom/\(frozenGame.md5Hash)", status: .failed, detail: "unrepairable: \(frozenGame.title)")
                         }
                     }
                 } catch {
-                    WLOG("[SYNC] Audit error for \(frozenGame.title): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.check, item: "rom/\(frozenGame.md5Hash)", status: .failed, detail: "audit: \(error.localizedDescription)")
                 }
             }
 
@@ -3666,7 +3622,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
         }
 
-        ILOG("[SYNC] Record audit complete: checked=\(checkedCount), repaired=\(repairedCount), unrepairable=\(unrepairableCount)")
+        CloudSyncManager.syncLog.event(.complete, item: "auditRepair", status: .ok, detail: "checked=\(checkedCount), repaired=\(repairedCount), unrepairable=\(unrepairableCount)")
         return (checkedCount, repairedCount, unrepairableCount)
     }
 
@@ -3716,7 +3672,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         guard canRepair else {
-            WLOG("[SYNC] Missing local data to repair record for \(game.title)")
+            CloudSyncManager.syncLog.event(.sync, item: "rom/\(game.md5Hash)", status: .failed, detail: "missing local data for repair")
             return false
         }
 
@@ -3725,7 +3681,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             try await saveRecord(updatedRecord)
             return true
         } catch {
-            ELOG("[SYNC] Failed to save repaired record for \(game.title): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.sync, item: "rom/\(game.md5Hash)", status: .failed, detail: "save repair: \(error.localizedDescription)")
             return false
         }
     }
@@ -3741,7 +3697,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             }
         } catch {
-            ELOG("[SYNC] Failed to mark game for re-upload: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.sync, item: "markForReupload", status: .failed, detail: error.localizedDescription)
         }
     }
 }

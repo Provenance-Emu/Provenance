@@ -100,11 +100,12 @@ public actor CloudKitUploadQueueActor {
 
     /// Called from `CloudSyncManager.pause` / `resume` for `.emulation` so queued uploads align with other CloudKit I/O during gameplay.
     public func setEmulatorSessionUploadsPaused(_ paused: Bool) {
+        let syncLog = CloudSyncManager.syncLog
         emulatorSessionUploadsPaused = paused
         if paused {
-            ILOG("📤 CloudKitUploadQueueActor: emulator session active — deferring new uploads (in-flight may complete)")
+            syncLog.event(.upload, item: "queue/emulator-pause", status: .pending, detail: "deferring new uploads, in-flight may complete")
         } else {
-            ILOG("📤 CloudKitUploadQueueActor: emulator session ended — resuming upload processing")
+            syncLog.event(.upload, item: "queue/emulator-resume", status: .inProgress, detail: "resuming upload processing")
             startProcessingIfNeeded()
         }
     }
@@ -138,7 +139,8 @@ public actor CloudKitUploadQueueActor {
             return task1.createdAt < task2.createdAt
         }
 
-        ILOG("📤 Queued ROM upload: \(gameTitle) (MD5: \(md5), Priority: \(priority), Queue: \(uploadQueue.count))")
+        let syncLog = CloudSyncManager.syncLog
+        syncLog.event(.upload, item: "rom/\(md5)", status: .pending, detail: "\(gameTitle) pri=\(priority) queue=\(uploadQueue.count)")
 
         updateProgress()
         startProcessingIfNeeded()
@@ -166,7 +168,8 @@ public actor CloudKitUploadQueueActor {
             return task1.createdAt < task2.createdAt
         }
 
-        ILOG("📤 Queued save-state upload: \(gameTitle) (ID: \(saveStateID), Priority: \(priority))")
+        let syncLog = CloudSyncManager.syncLog
+        syncLog.event(.upload, item: "save/\(saveStateID)", status: .pending, detail: "\(gameTitle) pri=\(priority)")
         updateProgress()
         startProcessingIfNeeded()
         return task.id
@@ -188,7 +191,7 @@ public actor CloudKitUploadQueueActor {
             activeTask.cancel()
             activeUploads.removeValue(forKey: taskId)
             uploadStatuses[taskId] = .failed(CancellationError())
-            ILOG("🚫 Cancelled active upload: \(taskId)")
+            CloudSyncManager.syncLog.event(.upload, item: "task/\(taskId)", status: .cancelled, detail: "active upload cancelled")
             updateProgress()
             return true
         }
@@ -197,7 +200,7 @@ public actor CloudKitUploadQueueActor {
         if let index = uploadQueue.firstIndex(where: { $0.id == taskId }) {
             let task = uploadQueue.remove(at: index)
             uploadStatuses.removeValue(forKey: taskId)
-            ILOG("🚫 Cancelled queued upload: \(task.title)")
+            CloudSyncManager.syncLog.event(.upload, item: "task/\(task.title)", status: .cancelled, detail: "queued upload removed")
             updateProgress()
             return true
         }
@@ -218,7 +221,7 @@ public actor CloudKitUploadQueueActor {
             return true
         }
 
-        ILOG("🗑️ Cleared upload queue: \(queuedCount) tasks removed")
+        CloudSyncManager.syncLog.event(.delete, item: "queue/clear", status: .ok, detail: "\(queuedCount) tasks removed")
         updateProgress()
     }
 
@@ -262,11 +265,12 @@ public actor CloudKitUploadQueueActor {
             uploadStatuses[task.id] = .uploading
             updateProgress()
 
+            let syncLog = CloudSyncManager.syncLog
             switch task.kind {
             case .rom(let md5, _):
-                ILOG("🚀 Starting ROM upload: \(task.title) (MD5: \(md5))")
+                syncLog.event(.upload, item: "rom/\(md5)", status: .inProgress, detail: task.title)
             case .saveState(let id):
-                ILOG("🚀 Starting save-state upload: \(task.title) (ID: \(id))")
+                syncLog.event(.upload, item: "save/\(id)", status: .inProgress, detail: task.title)
             }
 
             let uploadTask = Task {
@@ -283,6 +287,7 @@ public actor CloudKitUploadQueueActor {
     }
 
     private func performUpload(task: UploadTask) async {
+        let syncLog = CloudSyncManager.syncLog
         do {
             switch task.kind {
             case .rom(let md5, let filePath):
@@ -290,7 +295,7 @@ public actor CloudKitUploadQueueActor {
                     throw CloudSyncError.syncerNotAvailable
                 }
                 try await romSyncer.uploadGameFile(md5: md5, filePath: filePath)
-                ILOG("✅ ROM upload completed: \(task.title) (MD5: \(md5))")
+                syncLog.event(.upload, item: "rom/\(md5)", status: .ok, detail: task.title)
             case .saveState(let saveStateID):
                 guard let saveState = try? await RealmContext.withRealm({ realm in
                     realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID)?.freeze()
@@ -298,7 +303,7 @@ public actor CloudKitUploadQueueActor {
                     throw CloudSyncError.gameNotFound("Save state \(saveStateID) not found locally")
                 }
                 try await CloudSyncManager.shared.uploadSaveState(for: saveState)
-                ILOG("✅ Save-state upload completed: \(task.title) (ID: \(saveStateID))")
+                syncLog.event(.upload, item: "save/\(saveStateID)", status: .ok, detail: task.title)
             }
 
             // Mark as completed
@@ -310,17 +315,13 @@ public actor CloudKitUploadQueueActor {
             uploadStatuses[task.id] = .failed(error)
             activeUploads.removeValue(forKey: task.id)
 
-            // Log detailed error information
             let errorDetails = formatCloudKitUploadQueueError(error)
-            let identifier: String
+            let itemKey: String
             switch task.kind {
-            case .rom(let md5, _):
-                identifier = "MD5: \(md5)"
-            case .saveState(let id):
-                identifier = "ID: \(id)"
+            case .rom(let md5, _): itemKey = "rom/\(md5)"
+            case .saveState(let id): itemKey = "save/\(id)"
             }
-            ELOG("❌ Upload failed: \(task.title) (\(identifier))")
-            ELOG("   Error details: \(errorDetails)")
+            syncLog.event(.upload, item: itemKey, status: .failed, detail: "\(task.title) - \(errorDetails)")
         }
 
         updateProgress()
