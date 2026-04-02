@@ -11,6 +11,21 @@ import PVMediaCache
 import RealmSwift
 import PVThemes
 
+/// Padding and scale for `DiscIndicatorView` on compact horizontal shelves (reduced `shelfRowHeightScale`).
+private enum CompactShelfDiscOverlay {
+    static let compactPadding: CGFloat = 2
+    static let fullPadding: CGFloat = 4
+    static let compactScale: CGFloat = 0.82
+
+    static func padding(constrainHeight: Bool, shelfRowHeightScale: CGFloat) -> CGFloat {
+        constrainHeight && shelfRowHeightScale < 1.0 ? compactPadding : fullPadding
+    }
+
+    static func scale(constrainHeight: Bool, shelfRowHeightScale: CGFloat) -> CGFloat {
+        constrainHeight && shelfRowHeightScale < 1.0 ? compactScale : 1.0
+    }
+}
+
 @available(iOS 16, tvOS 16, *)
 public struct GameItemView: SwiftUI.View {
 
@@ -18,6 +33,8 @@ public struct GameItemView: SwiftUI.View {
     /// thousands of Realm subscriptions for large libraries
     public let game: PVGame
     public var constrainHeight: Bool = false
+    /// Scales shelf cell height relative to `PVRowHeight` when using `.cell` with `constrainHeight`.
+    public var shelfRowHeightScale: CGFloat = 1.0
     public var viewType: GameItemViewType = .cell
     /// The section context this GameItemView is being rendered in
     public let sectionContext: HomeSectionType
@@ -34,9 +51,22 @@ public struct GameItemView: SwiftUI.View {
     @State private var cachedDiscCount: Int = 1
     public var action: () -> Void
 
-    public init(game: PVGame, constrainHeight: Bool = false, viewType: GameItemViewType = .cell, sectionContext: HomeSectionType = .allGames, isFocused: Binding<Bool> = .constant(false), themeManager: ThemeManager = ThemeManager.shared, gamepadManager: GamepadManager = GamepadManager.shared, artwork: SwiftImage? = nil, isVisible: Bool = false, action: @escaping () -> Void) {
+    public init(
+        game: PVGame,
+        constrainHeight: Bool = false,
+        shelfRowHeightScale: CGFloat = 1.0,
+        viewType: GameItemViewType = .cell,
+        sectionContext: HomeSectionType = .allGames,
+        isFocused: Binding<Bool> = .constant(false),
+        themeManager: ThemeManager = ThemeManager.shared,
+        gamepadManager: GamepadManager = GamepadManager.shared,
+        artwork: SwiftImage? = nil,
+        isVisible: Bool = false,
+        action: @escaping () -> Void
+    ) {
         self.game = game
         self.constrainHeight = constrainHeight
+        self.shelfRowHeightScale = shelfRowHeightScale
         self.viewType = viewType
         self.sectionContext = sectionContext
         self._isFocused = isFocused
@@ -62,11 +92,12 @@ public struct GameItemView: SwiftUI.View {
             } label: {
                 switch viewType {
                 case .cell:
-                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
+                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale, viewType: viewType)
                         .overlay(alignment: .topTrailing) {
                             if shouldShowDiscIndicator {
                                 DiscIndicatorView(count: cachedDiscCount)
-                                    .padding(4)
+                                    .padding(CompactShelfDiscOverlay.padding(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale))
+                                    .scaleEffect(CompactShelfDiscOverlay.scale(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale), anchor: .topTrailing)
                             }
                         }
                 case .row:
@@ -159,6 +190,8 @@ public struct GameItemView: SwiftUI.View {
 public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI.View {
     public let game: Presentable
     public var constrainHeight: Bool = false
+    /// Scales shelf cell height relative to `PVRowHeight` when using `.cell` with `constrainHeight`.
+    public var shelfRowHeightScale: CGFloat = 1.0
     public var viewType: GameItemViewType = .cell
     public let sectionContext: HomeSectionType
 
@@ -175,6 +208,7 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
     public init(
         game: Presentable,
         constrainHeight: Bool = false,
+        shelfRowHeightScale: CGFloat = 1.0,
         viewType: GameItemViewType = .cell,
         sectionContext: HomeSectionType = .allGames,
         isFocused: Binding<Bool> = .constant(false),
@@ -186,6 +220,7 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
     ) {
         self.game = game
         self.constrainHeight = constrainHeight
+        self.shelfRowHeightScale = shelfRowHeightScale
         self.viewType = viewType
         self.sectionContext = sectionContext
         self._isFocused = isFocused
@@ -211,11 +246,12 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
             } label: {
                 switch viewType {
                 case .cell:
-                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, viewType: viewType)
+                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale, viewType: viewType)
                         .overlay(alignment: .topTrailing) {
                             if shouldShowDiscIndicator {
                                 DiscIndicatorView(count: game.discCount)
-                                    .padding(4)
+                                    .padding(CompactShelfDiscOverlay.padding(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale))
+                                    .scaleEffect(CompactShelfDiscOverlay.scale(constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale), anchor: .topTrailing)
                             }
                         }
                 case .row:

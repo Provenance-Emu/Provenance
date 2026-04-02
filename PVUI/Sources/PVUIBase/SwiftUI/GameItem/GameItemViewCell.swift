@@ -27,7 +27,10 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
         lhs.game.boxartAspectRatio == rhs.game.boxartAspectRatio &&
         lhs.artwork?.hashValue == rhs.artwork?.hashValue &&
         lhs.hoverScale == rhs.hoverScale &&
-        lhs.glowIntensity == rhs.glowIntensity
+        lhs.glowIntensity == rhs.glowIntensity &&
+        lhs.shelfRowHeightScale == rhs.shelfRowHeightScale &&
+        lhs.constrainHeight == rhs.constrainHeight &&
+        lhs.viewType == rhs.viewType
     }
 
     /// Use plain property instead of @ObservedRealmObject for performance
@@ -36,6 +39,8 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     @Default(.iCloudSync) private var iCloudSyncEnabled
     var artwork: SwiftImage?
     var constrainHeight: Bool = false
+    /// Scales the fixed shelf height (`PVRowHeight`) when `constrainHeight` is true; favorites/recent shelves use `PVCompactShelfRowHeightScale`.
+    var shelfRowHeightScale: CGFloat = 1.0
     var viewType: GameItemViewType
     @State private var textMaxWidth: CGFloat = PVRowHeight
     @State private var hoverScale: CGFloat = 1.0
@@ -59,6 +64,24 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
 
     private var shouldShowCloudIndicator: Bool {
         iCloudSyncEnabled && game.hasCloudAssets
+    }
+
+    /// Drives iCloud badge and spacing so compact shelves (e.g. half `PVRowHeight`) are not dominated by chrome.
+    private var compactShelfChromeFactor: CGFloat {
+        guard constrainHeight else { return 1.0 }
+        return min(1.0, shelfRowHeightScale)
+    }
+
+    private var cloudSyncIndicatorSize: CGFloat {
+        max(14, 24 * compactShelfChromeFactor)
+    }
+
+    private var cloudSyncIndicatorOuterPadding: CGFloat {
+        max(2, 6 * compactShelfChromeFactor)
+    }
+
+    private var artworkToTitleSpacing: CGFloat {
+        max(2, 8 * compactShelfChromeFactor)
     }
 
     private var glowColor: Color {
@@ -85,12 +108,12 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                                 isDownloaded: game.isDownloaded,
                                 hasCloudAssets: game.hasCloudAssets,
                                 isDownloading: isDownloading,
-                                size: 24
+                                size: cloudSyncIndicatorSize
                             )
-                            .padding(6)
+                            .padding(cloudSyncIndicatorOuterPadding)
                         }
                     }
-                    .padding(.bottom, 8) /// Add padding between artwork and text
+                    .padding(.bottom, artworkToTitleSpacing) /// Add padding between artwork and text
 
                 if showGameTitles {
                     /// Use a ViewBuilder function to cache the text view
@@ -98,13 +121,17 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                 }
             }
             .if(constrainHeight) { view in
-                view.frame(height: PVRowHeight, alignment: .bottom)
+                view.frame(height: PVRowHeight * shelfRowHeightScale, alignment: .bottom)
             }
             .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
                 textMaxWidth = $0
             }
             .onAppear {
                 isVisible = true
+                /// Narrower shelf cells imply narrower artwork; seed width before `ArtworkDynamicWidthPreferenceKey` fires.
+                if constrainHeight, shelfRowHeightScale < 1.0 {
+                    textMaxWidth = PVRowHeight * shelfRowHeightScale
+                }
             }
             .onDisappear {
                 isVisible = false

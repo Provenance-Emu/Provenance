@@ -17,6 +17,9 @@ import PVThemes
     public let PVRowHeight: CGFloat = 150.0
 #endif
 
+/// Shelf row height scale for Favorites / Recently Played carousels (`PVRowHeight *` this value).
+public let PVCompactShelfRowHeightScale: CGFloat = 0.5
+
 public enum GameItemViewType {
     case cell
     case row
