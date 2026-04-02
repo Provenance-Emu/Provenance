@@ -247,8 +247,6 @@ struct PauseTileMenuView: View {
             return String(localized: "OPTIONS")
         case .recording:
             return String(localized: "RECORDING")
-        case .controls:
-            return String(localized: "CONTROLS")
         case .core:
             return String(localized: "CORE")
         case .skins:

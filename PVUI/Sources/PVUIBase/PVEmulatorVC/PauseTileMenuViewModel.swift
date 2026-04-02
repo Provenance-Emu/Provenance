@@ -494,24 +494,11 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
 
         if !controlsTiles.isEmpty {
-            built.append(PauseMenuTileSection(id: "controls", title: String(localized: "CONTROLS"), tiles: controlsTiles))
+            built.append(PauseMenuTileSection(id: "controlsData", title: String(localized: "CONTROLS"), tiles: controlsTiles))
         }
 
-        var menuTiles: [PauseMenuTile] = [
-            PauseMenuTile(id: "menu_recording", icon: "record.circle", label: String(localized: "Recording"), colorKey: .pink, dismissOnTap: false, destinationRoute: .recording)
-        ]
-        if !controlsTiles.isEmpty {
-            menuTiles.append(PauseMenuTile(
-                id: "menu_controls",
-                icon: "gamecontroller.fill",
-                label: String(localized: "Controls"),
-                description: String(localized: "Profiles, port devices, touch keyboard and mouse, rumble, and MIDI"),
-                colorKey: .purple,
-                dismissOnTap: false,
-                destinationRoute: .controls
-            ))
-        }
-        menuTiles.append(contentsOf: [
+        let menuTiles: [PauseMenuTile] = [
+            PauseMenuTile(id: "menu_recording", icon: "record.circle", label: String(localized: "Recording"), colorKey: .pink, dismissOnTap: false, destinationRoute: .recording),
             PauseMenuTile(id: "menu_core", icon: "cpu", label: String(localized: "Core"), colorKey: .purple, dismissOnTap: false, destinationRoute: .core),
             PauseMenuTile(id: "menu_skins", icon: "paintbrush.pointed", label: String(localized: "Skins"), colorKey: .orange, dismissOnTap: false, destinationRoute: .skins),
             PauseMenuTile(
@@ -530,7 +517,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 colorKey: .cyan,
                 dismissOnTap: false
             )
-        ])
+        ]
         built.insert(PauseMenuTileSection(id: "menu", title: String(localized: "MENU"), tiles: menuTiles), at: 2)
 
         // Build description lookup table
@@ -560,7 +547,10 @@ final class PauseTileMenuViewModel: ObservableObject {
     ) -> [PauseMenuTileSection] {
         switch route {
         case .root:
-            return rootSections.filter { $0.id == "game" || $0.id == "statesData" || $0.id == "display" || $0.id == "menu" }
+            // Peer sections on the root grid (like STATES); CONTROLS is not a MENU drill-in.
+            let rootSectionOrder = ["game", "statesData", "controlsData", "display", "menu"]
+            let byID = Dictionary(uniqueKeysWithValues: rootSections.map { ($0.id, $0) })
+            return rootSectionOrder.compactMap { byID[$0] }
         case .states:
             let stateIDs: Set<String> = ["saveState", "loadState", "browseSaves", "autoSaveState", "screenshot", "screenshots"]
             let tiles = tiles(matching: stateIDs, from: rootSections)
@@ -577,9 +567,6 @@ final class PauseTileMenuViewModel: ObservableObject {
             let recordingIDs: Set<String> = ["recording", "broadcast", "saveClip", "cameraPosition"]
             let tiles = tiles(matching: recordingIDs, from: rootSections)
             return [PauseMenuTileSection(id: "recording_route", title: String(localized: "RECORDING"), tiles: tiles)]
-        case .controls:
-            let section = rootSections.first(where: { $0.id == "controls" })
-            return section.map { [PauseMenuTileSection(id: "controls_route", title: String(localized: "CONTROLS"), tiles: $0.tiles)] } ?? []
         case .core:
             let core = rootSections.first(where: { $0.id == "core" })
             return core.map { [PauseMenuTileSection(id: "core_route", title: String(localized: "CORE"), tiles: $0.tiles)] } ?? []
