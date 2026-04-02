@@ -507,7 +507,7 @@ public struct ContinuesManagementView: View {
                     ContinuesManagementHeaderView(viewModel: viewModel.headerViewModel)
                 }
                 .frame(height: 180)
-                .clipShape(RoundedCorners(radius: 20, corners: [.bottomLeft, .bottomRight]))
+                .clipShape(RoundedCorners(radius: RetroPauseChrome.panelCornerRadius, corners: [.bottomLeft, .bottomRight]))
                 .shadow(color: accentColor.opacity(0.5), radius: 10, x: 0, y: 5)
                 .padding(.bottom, 10)
 
@@ -551,28 +551,13 @@ public struct ContinuesManagementView: View {
                         ContinuesManagementContentView(viewModel: viewModel)
                     }
                 }
-                .clipShape(RoundedCorners(radius: 20, corners: [.topLeft, .topRight]))
+                .clipShape(RoundedCorners(radius: RetroPauseChrome.panelCornerRadius, corners: [.topLeft, .topRight]))
                 .shadow(color: accentColor.opacity(0.5), radius: 10, x: 0, y: -5)
             }
-            .clipShape(RoundedCorners(radius: 20, corners: [.allCorners]))
+            .clipShape(RoundedCorners(radius: RetroPauseChrome.panelCornerRadius, corners: [.allCorners]))
             .overlay(
-                // Theme-aware border
-                RoundedRectangle(cornerRadius: 20)
-                    .strokeBorder(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                accentColor,
-                                accentColor.opacity(0.7),
-                                accentColor.opacity(0.5),
-                                accentColor.opacity(0.7),
-                                accentColor
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.5
-                    )
-                    .blur(radius: 1)
+                RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius)
+                    .strokeBorder(RetroPauseChrome.panelBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
             //        .background(viewModel.currentPalette.settingsCellBackground!.swiftUIColor)
             .onAppear {

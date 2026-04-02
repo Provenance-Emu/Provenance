@@ -1447,27 +1447,8 @@ extension ConsoleGamesView {
         )
         .padding(.vertical, 12)
         .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(
-                    themeManager.currentPalette.dark
-                        ? Color.black.opacity(0.7)
-                        : Color.white.opacity(0.9)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [RetroTheme.retroPurple, RetroTheme.retroPink]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-        .shadow(color: RetroTheme.retroPurple.opacity(0.4), radius: 3, x: 0, y: 0)
+        .retroPausePanelBackground(isDark: themeManager.currentPalette.dark)
+        .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
         .padding(.horizontal, 8)
         .allowsHitTesting(true)
     }
@@ -1588,16 +1569,9 @@ extension ConsoleGamesView {
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
-                .background(
-                    themeManager.currentPalette.dark
-                        ? Color.retroPurple.opacity(0.3)
-                        : Color.retroPurple.opacity(0.2)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(Color.retroBlue, lineWidth: 1)
-                )
-                .cornerRadius(12)
+                .background {
+                    RetroPauseInsetPillBackground(isDark: themeManager.currentPalette.dark)
+                }
 
 #if !os(tvOS)
             multiSelectToggleButton
@@ -1606,26 +1580,8 @@ extension ConsoleGamesView {
         .padding(.vertical, 12)
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(
-                    themeManager.currentPalette.dark
-                        ? Color.retroBlack.opacity(0.7)
-                        : Color.white.opacity(0.9)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(
-                            LinearGradient(
-                                gradient: Gradient(colors: [.retroPink, .retroBlue]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                )
-                .shadow(color: Color.retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
-        )
+        .retroPausePanelBackground(isDark: themeManager.currentPalette.dark)
+        .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
         .contentShape(Rectangle())
     }
 

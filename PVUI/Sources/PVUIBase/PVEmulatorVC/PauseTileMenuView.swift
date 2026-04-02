@@ -871,13 +871,12 @@ struct PauseTileMenuView: View {
         let iconSize: CGFloat = 30
         let labelSize: CGFloat = 13
         let badgeSize: CGFloat = 10
-        let cornerRadius: CGFloat = 14
         #else
         let iconSize: CGFloat = 20
         let labelSize: CGFloat = 10
         let badgeSize: CGFloat = 8
-        let cornerRadius: CGFloat = 10
         #endif
+        let cornerRadius = RetroPauseChrome.menuCellCornerRadius()
 
         Button {
             handle(tile)
@@ -919,13 +918,21 @@ struct PauseTileMenuView: View {
             .aspectRatio(1, contentMode: .fit)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(accentColor.opacity(isFocused ? 0.22 : 0.10))
+                    .fill(accentColor.opacity(isFocused ? RetroPauseChrome.menuCellFillOpacityFocused : RetroPauseChrome.menuCellFillOpacityUnfocused))
                     .overlay(
                         RoundedRectangle(cornerRadius: cornerRadius)
-                            .strokeBorder(accentColor.opacity(isFocused ? 0.85 : 0.35), lineWidth: isFocused ? 2 : 1)
+                            .strokeBorder(
+                                accentColor.opacity(isFocused ? RetroPauseChrome.menuCellStrokeOpacityFocused : RetroPauseChrome.menuCellStrokeOpacityUnfocused),
+                                lineWidth: isFocused ? RetroPauseChrome.menuCellStrokeWidthFocused : RetroPauseChrome.menuCellStrokeWidthUnfocused
+                            )
                     )
             )
-            .shadow(color: isFocused ? accentColor.opacity(0.5) : .clear, radius: 14, x: 0, y: 3)
+            .shadow(
+                color: isFocused ? accentColor.opacity(RetroPauseChrome.menuCellFocusShadowOpacity) : .clear,
+                radius: RetroPauseChrome.menuCellFocusShadowRadius,
+                x: 0,
+                y: 3
+            )
         }
         .buttonStyle(TileButtonStyle(isFocused: isFocused))
         .opacity(opacity)
@@ -953,19 +960,7 @@ struct PauseTileMenuView: View {
     }
 
     private var panelBackground: some View {
-        RoundedRectangle(cornerRadius: 18)
-            .fill(Color.black.opacity(0.88))
-            .overlay(
-                RoundedRectangle(cornerRadius: 18)
-                    .strokeBorder(
-                        LinearGradient(
-                            colors: [.retroPurple.opacity(0.65), .retroPink.opacity(0.65)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.5
-                    )
-            )
+        RetroPausePanelBackground(isDark: true)
     }
 
     // MARK: - Section view
@@ -1002,14 +997,9 @@ struct PauseTileMenuView: View {
         }
         .padding(.horizontal, tvOSAdjusted(10, tvOS: 14))
         .padding(.vertical, tvOSAdjusted(6, tvOS: 10))
-        .background(
-            RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
-                .fill(Color.white.opacity(0.08))
-                .overlay(
-                    RoundedRectangle(cornerRadius: tvOSAdjusted(8, tvOS: 12))
-                        .strokeBorder(Color.retroCyan.opacity(0.45), lineWidth: 1)
-                )
-        )
+        .background {
+            RetroPauseSearchFieldBackground()
+        }
     }
 
     /// Core-specific toggle controls for option scope and deferred restart behavior.

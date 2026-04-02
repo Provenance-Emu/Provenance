@@ -44,8 +44,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     private let container: CKContainer
     private let database: CKDatabase // Likely private database
     /// Read-only fallback databases tried when the primary returns no record.
-    /// Populated from `iCloudConstants.fallbackContainers` (e.g. dev container in prod builds).
-    private let fallbackDatabases: [CKDatabase]
+    /// Computed from `iCloudConstants.fallbackContainers` so invalidation takes effect immediately.
+    private var fallbackDatabases: [CKDatabase] {
+        iCloudConstants.fallbackContainers.map(\.privateCloudDatabase)
+    }
     private let retryOperation: CloudKitRetryOperation<Any> // Specify generic type <Any>
     private let romsDatastore: RomDatabase // Add Datastore reference
     private let fileManager = FileManager.default
@@ -100,7 +102,6 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     public init(container: CKContainer, retryStrategy: @escaping CloudKitRetryOperation<Any>, romsDatastore: RomDatabase = RomDatabase.sharedInstance) {
         self.container = container
         self.database = container.privateCloudDatabase
-        self.fallbackDatabases = iCloudConstants.fallbackContainers.map(\.privateCloudDatabase)
         // Store the passed strategy directly
         self.retryOperation = retryStrategy
         self.romsDatastore = romsDatastore
@@ -590,11 +591,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 return record
             }
 
-            // Try fallback databases (read-only, e.g. dev container in production builds)
+            // Try fallback databases (read-only, e.g. dev container in production builds).
+            // Regular TestFlight/App Store users won't have access to the dev container,
+            // so badContainer errors are caught and the fallback is disabled for the session.
             for fallbackDB in fallbackDatabases {
-                if let record = try await fetchRecord(recordID: recordID, includeAssets: includeAssets, from: fallbackDB) {
-                    DLOG("Fetched record from fallback container: \(record.recordID.recordName)")
-                    return record
+                do {
+                    if let record = try await fetchRecord(recordID: recordID, includeAssets: includeAssets, from: fallbackDB) {
+                        DLOG("Fetched record from fallback container: \(record.recordID.recordName)")
+                        return record
+                    }
+                } catch let error as CKError where error.code == .badContainer {
+                    DLOG("Fallback container not accessible (badContainer) — disabling for session")
+                    iCloudConstants.invalidateFallbackContainers()
+                    break
+                } catch {
+                    DLOG("Fallback container fetch failed: \(error.localizedDescription)")
                 }
             }
 

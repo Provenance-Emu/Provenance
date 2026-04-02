@@ -14,6 +14,7 @@ import SwiftData
 import RealmSwift
 import PVLibrary
 import PVThemes
+import PVUIBase
 import Combine
 import PVRealm
 
@@ -393,75 +394,35 @@ private struct ContinuesFooterView: View {
                     }
                     Spacer()
                     if !hideSystemLabel, let system = continueState.game?.system, !system.isInvalidated {
-                        // Retrowave-styled system name
                         Text(system.name)
                             .font(.system(size: 8, weight: .bold))
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .stroke(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [
-                                                RetroTheme.retroBlue,
-                                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink
-                                            ]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 1
-                                    )
-                            )
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [
-                                        RetroTheme.retroBlue,
-                                        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink
-                                    ]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
+                            .background {
+                                RetroPauseInsetPillBackground(isDark: themeManager.currentPalette.dark)
+                            }
+                            .foregroundStyle(themeManager.currentPalette.gameLibraryText.swiftUIColor)
                     }
                 }
                 .padding(.vertical, 10)
                 .padding(.horizontal, 10)
             }
             .frame(height: Constants.overlayHeight)
-            .background(
-                // Theme-aware retrowave-style background with blur and grid
+            .background {
                 ZStack {
-                    // Blurred background adapts to theme
                     Color(themeManager.currentPalette.dark
-                          ? UIColor.black.withAlphaComponent(0.7)
-                          : UIColor.white.withAlphaComponent(0.9)
+                        ? UIColor.black.withAlphaComponent(RetroPauseChrome.panelFillOpacityDark)
+                        : UIColor.white.withAlphaComponent(RetroPauseChrome.panelFillOpacityLight)
                     )
-                    .blur(radius: 3)
-                    
-                    // Grid overlay for retrowave effect (subtle)
                     RetroTheme.RetroGridView()
                         .opacity(themeManager.currentPalette.dark ? 0.1 : 0.05)
                 }
-            )
-            .overlay(
-                // Top border glow
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                RetroTheme.retroPurple,
-                                RetroTheme.retroBlue
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
+            }
+            .overlay(alignment: .top) {
+                Rectangle()
+                    .fill(Color.retroCyan.opacity(0.45))
                     .frame(height: 1)
-                    .blur(radius: 0.5)
-                    .opacity(0.7),
-                alignment: .top
-            )
+            }
             .frame(maxWidth: .infinity)
             .allowsHitTesting(false)
         }
@@ -598,14 +559,7 @@ struct HomeContinueSection: SwiftUI.View {
 #if !os(tvOS)
     @State private var hapticGenerator = UIImpactFeedbackGenerator(style: .light)
 #endif
-    
-    /// Constants for styling
-    private enum Constants {
-        static let cornerRadius: CGFloat = 16
-        static let borderWidth: CGFloat = 1.5
-        static let containerPadding: CGFloat = 16
-    }
-    
+
     init(rootDelegate: PVRootDelegate?, consoleIdentifier: String?, parentFocusedSection: Binding<HomeSectionType?>, parentFocusedItem: Binding<String?>, dataDriver: ContinuesDataDriver = RealmContinuesDataDriver()) {
         self.rootDelegate = rootDelegate
         self.consoleIdentifier = consoleIdentifier
@@ -727,41 +681,21 @@ struct HomeContinueSection: SwiftUI.View {
                     }
                 }
             }
-            // Theme-aware retrowave-style border with gradient and glow
             .background(
-                // Theme-aware retrowave-style background
                 ZStack {
-                    // Background adapts to theme
                     Color(themeManager.currentPalette.dark
-                          ? UIColor.black.withAlphaComponent(0.8)
-                          : UIColor.white.withAlphaComponent(0.9)
+                        ? UIColor.black.withAlphaComponent(RetroPauseChrome.panelFillOpacityDark)
+                        : UIColor.white.withAlphaComponent(RetroPauseChrome.panelFillOpacityLight)
                     )
-                    
-                    // Grid overlay for retrowave effect
                     RetroTheme.RetroGridView()
                         .opacity(themeManager.currentPalette.dark ? 0.15 : 0.1)
                 }
             )
-            // Neon border with gradient
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                RetroTheme.retroPurple,
-                                RetroTheme.retroBlue
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        lineWidth: Constants.borderWidth
-                    )
+                RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius)
+                    .strokeBorder(RetroPauseChrome.panelBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
-            // Add subtle glow effect
-            .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.6), radius: 5)
-            //.padding(.top, 4) // Add top padding to the bordered container
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
         }
         .onAppear {
             setupGamepadHandling()

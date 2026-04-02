@@ -171,7 +171,7 @@ struct ConsolesWrapperView: SwiftUI.View {
             Group {
                 // Add a glowing border line using glowColor
                 RetroDividerView()
-                    .shadow(color: .retroPink, radius: 4, x: 0, y: 1)
+                    .shadow(color: .retroPink.opacity(0.55), radius: 2, x: 0, y: 1)
 
                 if bootupStateManager.isBootupCompleted && (consoles.isEmpty || (consoles.count == 1 && consoles.first!.identifier == SystemIdentifier.RetroArch.rawValue)) {
                     noConsolesView

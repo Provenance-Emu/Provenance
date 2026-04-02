@@ -9,6 +9,7 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 import PVThemes
+import PVUIBase
 
 /// A view that displays BIOS files for a console system
 struct BiosesView: View {
@@ -27,7 +28,6 @@ struct BiosesView: View {
     /// Constants for the view
     private enum Constants {
         static let tabHeight: CGFloat = 30
-        static let borderWidth: CGFloat = 2
         static let dragThreshold: CGFloat = 50
     }
 
@@ -56,38 +56,20 @@ struct BiosesView: View {
                 .animation(.spring(response: 0.4, dampingFraction: 0.7), value: isExpanded)
             }
             .background(
-                // Theme-aware retrowave-style background
                 ZStack {
-                    // Background adapts to theme
                     Color(themeManager.currentPalette.dark
-                        ? UIColor.black.withAlphaComponent(0.8)
-                        : UIColor.white.withAlphaComponent(0.9)
+                        ? UIColor.black.withAlphaComponent(RetroPauseChrome.panelFillOpacityDark)
+                        : UIColor.white.withAlphaComponent(RetroPauseChrome.panelFillOpacityLight)
                     )
-
-                    // Grid overlay for retrowave effect
                     RetroTheme.RetroGridView()
                         .opacity(themeManager.currentPalette.dark ? 0.15 : 0.1)
                 }
             )
-            // Neon border with gradient
             .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                RetroTheme.retroPurple,
-                                RetroTheme.retroBlue
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        lineWidth: Constants.borderWidth
-                    )
+                RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius)
+                    .strokeBorder(RetroPauseChrome.panelBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
-            // Add subtle glow effect
-            .shadow(color: (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(0.6), radius: 5)
-            .clipShape(Rectangle()) // Clip the entire container
+            .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
             .offset(y: dragOffset)
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: dragOffset)
             #if !os(tvOS)

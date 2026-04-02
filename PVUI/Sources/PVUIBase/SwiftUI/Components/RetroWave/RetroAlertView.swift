@@ -55,8 +55,8 @@ public struct RetroAlertView<Content: View>: View {
     /// Content builder for buttons
     private let content: Content
 
-    /// Animation state for glow effect
-    @State private var glowOpacity: Double = 0.7
+    /// Animation state for glow effect (subtle pulse; aligned with `RetroPauseChrome` panel family).
+    @State private var glowOpacity: Double = 0.5
 
     /// Animation state for loading spinner
     @State private var spinnerRotation: Double = 0
@@ -154,23 +154,15 @@ public struct RetroAlertView<Content: View>: View {
                         .opacity(0.05)
                 }
             )
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(
-                        LinearGradient(
-                            gradient: Gradient(colors: borderColors),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 2
-                    )
+                RoundedRectangle(cornerRadius: RetroPauseChrome.panelCornerRadius)
+                    .strokeBorder(alertBorderGradient, lineWidth: RetroPauseChrome.panelStrokeLineWidth)
             )
-            .shadow(color: glowColor.opacity(glowOpacity), radius: 20, x: 0, y: 0)
+            .shadow(color: glowColor.opacity(glowOpacity), radius: 12, x: 0, y: 0)
             .onAppear {
-                // Animate glow effect
                 withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                    glowOpacity = 0.3
+                    glowOpacity = 0.28
                 }
 
                 // Animate spinner for loading type
@@ -275,6 +267,20 @@ public struct RetroAlertView<Content: View>: View {
             return [.red, .retroPink]
         case .warning:
             return [.orange, .yellow]
+        }
+    }
+
+    /// Standard/loading alerts use the same purple→pink frame as `PauseTileMenuView`; semantic types keep tinted borders.
+    private var alertBorderGradient: LinearGradient {
+        switch alertType {
+        case .standard, .loading:
+            return RetroPauseChrome.panelBorderGradient
+        case .success, .error, .warning:
+            return LinearGradient(
+                gradient: Gradient(colors: borderColors),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
         }
     }
 

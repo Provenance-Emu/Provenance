@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVThemes
+import PVUIBase
 import RealmSwift
 import PVLogging
 
@@ -45,11 +46,6 @@ struct HomeContinueItemView: SwiftUI.View {
         // Scanline effects
         static let scanlineOpacity: CGFloat = 0.3
         static let lcdOpacity: CGFloat = 0.1
-
-        // Retrowave effects
-        static let glowRadius: CGFloat = 4.0
-        static let glowOpacity: CGFloat = 0.7
-        static let borderWidth: CGFloat = 2.0
 
         // Image presentation
         static let zoomFactor: CGFloat = 1.15
@@ -114,7 +110,7 @@ struct HomeContinueItemView: SwiftUI.View {
             }
             // Accommodate the ghost card overhang so cards aren't clipped.
             .padding(.trailing, stackDepth >= 3 ? StackLayout.overhangPadding : (stackDepth >= 2 ? StackLayout.overhangPadding / 2 : 0))
-            .padding(.bottom,  stackDepth >= 3 ? StackLayout.overhangPadding : (stackDepth >= 2 ? StackLayout.overhangPadding / 2 : 0))
+            .padding(.bottom, stackDepth >= 3 ? StackLayout.overhangPadding : (stackDepth >= 2 ? StackLayout.overhangPadding / 2 : 0))
             .sheet(isPresented: $showFilmstrip) {
                 if #available(iOS 16, tvOS 16, *) {
                     filmstripSheet
@@ -181,30 +177,24 @@ struct HomeContinueItemView: SwiftUI.View {
                 )
             }
             .frame(height: height)
-            .clipShape(Rectangle())
-            // Focus border
+            .clipShape(RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius()))
+            // Focus border aligned with `PauseTileMenuView` cell stroke when focused.
             .overlay(
-                RoundedRectangle(cornerRadius: 4)
+                RoundedRectangle(cornerRadius: RetroPauseChrome.menuCellCornerRadius())
                     .strokeBorder(
-                        isFocused ?
-                        AnyShapeStyle(LinearGradient(
-                            gradient: Gradient(colors: [
-                                themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink,
-                                RetroTheme.retroPurple,
-                                RetroTheme.retroBlue
-                            ]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )) :
-                        AnyShapeStyle(Color.clear),
-                        lineWidth: isFocused ? CRTEffects.borderWidth : 0
+                        (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.retroCyan)
+                            .opacity(isFocused ? RetroPauseChrome.menuCellStrokeOpacityFocused : 0),
+                        lineWidth: isFocused ? RetroPauseChrome.menuCellStrokeWidthFocused : 0
                     )
             )
             .shadow(
                 color: isFocused
-                    ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? RetroTheme.retroPink).opacity(CRTEffects.glowOpacity)
+                    ? (themeManager.currentPalette.defaultTintColor.swiftUIColor ?? Color.retroCyan)
+                        .opacity(RetroPauseChrome.menuCellFocusShadowOpacity)
                     : Color.clear,
-                radius: CRTEffects.glowRadius
+                radius: isFocused ? RetroPauseChrome.menuCellFocusShadowRadius : 0,
+                x: 0,
+                y: 3
             )
             .scaleEffect(isFocused ? 1.05 : 1.0)
             .brightness(isFocused ? 0.1 : 0)
