@@ -9,12 +9,6 @@
 import SwiftUI
 import PVThemes
 import PVLogging
-import Combine
-import PVPrimitives
-import Defaults
-#if os(tvOS)
-import PVUIBase
-#endif
 
 /// A retrowave-styled log viewer component
 public struct RetroLogView: View {
@@ -29,6 +23,9 @@ public struct RetroLogView: View {
     /// Controls whether the view is presented in fullscreen mode
     @Binding private var isFullscreen: Bool
 
+    /// Controls presentation of the export options sheet
+    @State private var showingExportSheet = false
+
     #if os(tvOS)
     /// Focus states for header buttons
     @FocusState private var focusedButton: HeaderButton?
@@ -39,15 +36,12 @@ public struct RetroLogView: View {
         case sortOrder
         case showDetails
         case clear
+        case export
         case fullscreen
     }
     #endif
 
     // MARK: - Initialization
-
-    public init() {
-        self._isFullscreen = .constant(false)
-    }
 
     public init(isFullscreen: Binding<Bool> = .constant(false)) {
         self._isFullscreen = isFullscreen
@@ -84,9 +78,9 @@ public struct RetroLogView: View {
                 #if os(tvOS)
                 .focusSection()
                 #endif
-                .onChange(of: viewModel.displayedLogs.count) { _ in handleAutoScroll(scrollView: scrollView) }
-                .onChange(of: viewModel.autoScroll) { _ in handleAutoScroll(scrollView: scrollView) }
-                .onChange(of: viewModel.sortOrder) { _ in handleAutoScroll(scrollView: scrollView) }
+                .onChange(of: viewModel.displayedLogs.count) { _, _ in handleAutoScroll(scrollView: scrollView) }
+                .onChange(of: viewModel.autoScroll) { _, _ in handleAutoScroll(scrollView: scrollView) }
+                .onChange(of: viewModel.sortOrder) { _, _ in handleAutoScroll(scrollView: scrollView) }
             }
         }
         .background(
@@ -113,6 +107,9 @@ public struct RetroLogView: View {
             }
         }
         #endif
+        .sheet(isPresented: $showingExportSheet) {
+            LogExportSheet(viewModel: viewModel)
+        }
     }
 
     // MARK: - Subviews
@@ -129,28 +126,26 @@ public struct RetroLogView: View {
                 Spacer()
 
                 #if os(tvOS)
-                // Log level picker - tvOS 17+
-                if #available(tvOS 17.0, *) {
-                    Menu {
-                        Picker("Log Level", selection: $viewModel.minLogLevel) {
-                            Text("Verbose").tag(LogLevel.verbose)
-                            Text("Debug").tag(LogLevel.debug)
-                            Text("Info").tag(LogLevel.info)
-                            Text("Warning").tag(LogLevel.warning)
-                            Text("Error").tag(LogLevel.error)
-                        }
-                    } label: {
-                        headerButtonContent(
-                            icon: "line.3.horizontal.decrease",
-                            label: "Level: \(viewModel.minLogLevel.name)",
-                            accentColor: RetroTheme.retroBlue,
-                            isFocused: focusedButton == .logLevel
-                        )
+                // Log level picker
+                Menu {
+                    Picker("Log Level", selection: $viewModel.minLogLevel) {
+                        Text("Verbose").tag(LogLevel.verbose)
+                        Text("Debug").tag(LogLevel.debug)
+                        Text("Info").tag(LogLevel.info)
+                        Text("Warning").tag(LogLevel.warning)
+                        Text("Error").tag(LogLevel.error)
                     }
-                    .buttonStyle(TVMediaCardButtonStyle())
-                    .tvOSDisableFocusEffect()
-                    .focused($focusedButton, equals: .logLevel)
+                } label: {
+                    headerButtonContent(
+                        icon: "line.3.horizontal.decrease",
+                        label: "Level: \(viewModel.minLogLevel.name)",
+                        accentColor: RetroTheme.retroBlue,
+                        isFocused: focusedButton == .logLevel
+                    )
                 }
+                .buttonStyle(TVMediaCardButtonStyle())
+                .tvOSDisableFocusEffect()
+                .focused($focusedButton, equals: .logLevel)
 
                 // Auto-scroll toggle
                 headerButton(
@@ -188,6 +183,15 @@ public struct RetroLogView: View {
                     viewModel.clearLogs()
                 }
 
+                // Export / share button
+                headerButton(
+                    button: .export,
+                    icon: "square.and.arrow.up",
+                    accentColor: RetroTheme.retroBlue
+                ) {
+                    showingExportSheet = true
+                }
+
                 Spacer()
 
                 // Fullscreen toggle button
@@ -200,34 +204,30 @@ public struct RetroLogView: View {
                 }
                 #else
                 // Log level picker
-                if #available(tvOS 17.0, *) {
-                    Menu {
-                        Picker("Log Level", selection: $viewModel.minLogLevel) {
-                            Text("Verbose").tag(LogLevel.verbose)
-                            Text("Debug").tag(LogLevel.debug)
-                            Text("Info").tag(LogLevel.info)
-                            Text("Warning").tag(LogLevel.warning)
-                            Text("Error").tag(LogLevel.error)
-                        }
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text("Level: \(viewModel.minLogLevel.name)")
-                                .font(.system(size: 12))
-                                .foregroundColor(RetroTheme.retroBlue)
-
-                            Image(systemName: "chevron.down")
-                                .font(.system(size: 10))
-                                .foregroundColor(RetroTheme.retroBlue)
-                        }
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
-                        )
+                Menu {
+                    Picker("Log Level", selection: $viewModel.minLogLevel) {
+                        Text("Verbose").tag(LogLevel.verbose)
+                        Text("Debug").tag(LogLevel.debug)
+                        Text("Info").tag(LogLevel.info)
+                        Text("Warning").tag(LogLevel.warning)
+                        Text("Error").tag(LogLevel.error)
                     }
-                } else {
-                    // TODO: tvOS menu
+                } label: {
+                    HStack(spacing: 4) {
+                        Text("Level: \(viewModel.minLogLevel.name)")
+                            .font(.system(size: 12))
+                            .foregroundColor(RetroTheme.retroBlue)
+
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 10))
+                            .foregroundColor(RetroTheme.retroBlue)
+                    }
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 4)
+                            .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                    )
                 }
 
                 // Auto-scroll toggle
@@ -286,6 +286,20 @@ public struct RetroLogView: View {
                         )
                 }
                 .disabled(viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty)
+
+                // Export / share button
+                Button(action: {
+                    showingExportSheet = true
+                }) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(size: 12))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .padding(6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                        )
+                }
 
                 // Clear logs button
                 Button(action: {
@@ -346,7 +360,9 @@ public struct RetroLogView: View {
                     .font(.system(size: 12))
                     .foregroundColor(.white)
                     .autocorrectionDisabled(true)
+                    #if !os(tvOS)
                     .textInputAutocapitalization(.never)
+                    #endif
 
                 if !viewModel.searchText.isEmpty {
                     Button(action: {
