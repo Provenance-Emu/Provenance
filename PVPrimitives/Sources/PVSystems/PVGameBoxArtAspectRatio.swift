@@ -32,5 +32,30 @@ public enum PVGameBoxArtAspectRatio: CGFloat {
     case ggJAPAN = 0.86
     case Sega32XUSA = 0.7194636596
 
+    // CD jewel case front (Dreamcast, Neo Geo CD, CDi) — same as saturnJAPAN
+    public static var cdJewelCase: PVGameBoxArtAspectRatio { .saturnJAPAN }
+    // DVD/Blu-ray keepcases
+    case dvdCase = 0.7053
+    case blurayCase = 0.7836
+    // UMD case (PSP)
+    case umdCase = 0.6176
+    // N64 wide landscape box
+    case n64USA = 1.4113
+    // Tall specialty boxes
+    case longBox3DO = 0.5625
+    case vectrex = 0.6053
+    case supervision = 0.6818
+    // Cassette inlay (ZX Spectrum, EP128)
+    case cassetteBox = 0.6667
+    // Cartridge boxes
+    case atari8bit = 0.6571
+    case intellivision = 0.7436
+    // Computer software floppy boxes
+    case floppyBox = 0.7865
+    case atariST = 0.7755
+    case pc98 = 0.7054
+    // Famicom Disk System sleeve
+    case fds = 0.8636
+
     public static var jaguar: PVGameBoxArtAspectRatio { .tall }
 }

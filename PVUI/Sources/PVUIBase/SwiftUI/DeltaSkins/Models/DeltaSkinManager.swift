@@ -50,6 +50,11 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Queue for synchronizing skin operations
     private let queue = DispatchQueue(label: "com.provenance.deltaskin-manager")
 
+    /// Persisted map of skin identifier → package path for fast ``skin(withIdentifier:)`` without scanning every bundle first.
+    private var pathIndexByIdentifier: [String: String] = [:]
+    private var pathIndexLoadedFromDisk = false
+    private static let skinPathIndexFilename = "skin_path_index.json"
+
     /// Default traits for preview images
     private let defaultPreviewTraits = DeltaSkinTraits(device: .iphone, displayType: .standard, orientation: .portrait)
 
@@ -62,9 +67,8 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     ]
 
     public init() {
-        // Scan is intentionally deferred — Bundle.allFrameworks enumeration and
-        // .deltaskin discovery are I/O-heavy and compete with the core-plist scanner
-        // during app boot.  availableSkins() triggers the scan lazily on first use.
+        // Scan is intentionally deferred — .deltaskin discovery can be I/O-heavy during app boot.
+        // availableSkins() triggers the scan lazily on first use.
         ILOG("skins: Initializing DeltaSkinManager (scan deferred to first use)")
     }
 
@@ -108,23 +112,33 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     public func skin(withIdentifier identifier: String) async throws -> DeltaSkinProtocol? {
         ILOG("skins: skin(withIdentifier: \(identifier)) called")
         let result: DeltaSkinProtocol? = try await queue.asyncResult {
-            // Find the skin with the matching identifier (use lastScannedSkins for
-            // immediate access; loadedSkins is updated on MainActor asynchronously)
             if let skin = self.lastScannedSkins.first(where: { $0.identifier == identifier }) {
                 ILOG("skins: Found skin '\(skin.name)' with identifier '\(identifier)' in cache")
                 return skin as DeltaSkinProtocol?
-            } else {
-                ILOG("skins: Skin '\(identifier)' not found in cache, scanning for skins")
-                // Ensure skins are loaded
-                try self.scanForSkins()
-                if let skin = self.lastScannedSkins.first(where: { $0.identifier == identifier }) {
-                    ILOG("skins: Found skin '\(skin.name)' with identifier '\(identifier)' after scan")
-                    return skin as DeltaSkinProtocol?
-                } else {
-                    WLOG("skins: Skin with identifier '\(identifier)' not found after scan")
-                    return nil
-                }
             }
+
+            self.loadSkinPathIndexFromDiskIfNeeded()
+            if let path = self.pathIndexByIdentifier[identifier], FileManager.default.fileExists(atPath: path) {
+                let url = URL(fileURLWithPath: path)
+                if let skin = try? self.loadSkinFromURLWithoutAdding(url), skin.identifier == identifier {
+                    if !self.lastScannedSkins.contains(where: { $0.identifier == identifier }) {
+                        self.lastScannedSkins.append(skin)
+                    }
+                    ILOG("skins: Loaded skin '\(skin.name)' via path index for '\(identifier)'")
+                    return skin
+                }
+                self.pathIndexByIdentifier.removeValue(forKey: identifier)
+                self.persistSkinPathIndexUnlocked()
+            }
+
+            ILOG("skins: Skin '\(identifier)' not in cache or index, scanning")
+            try self.scanForSkins()
+            if let skin = self.lastScannedSkins.first(where: { $0.identifier == identifier }) {
+                ILOG("skins: Found skin '\(skin.name)' with identifier '\(identifier)' after scan")
+                return skin as DeltaSkinProtocol?
+            }
+            WLOG("skins: Skin with identifier '\(identifier)' not found after scan")
+            return nil
         }
         if let skin = result {
             ILOG("skins: Returning skin '\(skin.name)' for identifier '\(identifier)'")
@@ -181,7 +195,6 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             orientation: orientation
         )
     }
-
 
     /// Load a skin from a file URL
     public func loadSkin(from url: URL) async throws -> DeltaSkinProtocol {
@@ -245,7 +258,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
                             options: [.skipsHiddenFiles]
                         )
 
-                        for url in contents where (url.lastPathComponent.hasSuffix(".deltaskin") || url.lastPathComponent.hasSuffix(".manicskin")) {
+                        for url in contents where Self.isProbableSkinPackageInDirectory(url) {
                             ILOG("skins: Found skin file in directory: \(url.lastPathComponent)")
                             if let skin = try? loadSkinFromURLWithoutAdding(url) {
                                 if !scannedSkinIdentifiers.contains(skin.identifier) {
@@ -300,6 +313,7 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         // must be set on MainActor for SwiftUI).
         lastScannedSkins = scannedSkins
         hasScanned = true
+        rebuildAndPersistSkinPathIndex(from: scannedSkins)
         ILOG("skins: Scan complete, hasScanned set to true")
 
         // Capture the current generation so the MainActor task can detect
@@ -374,6 +388,12 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         return skin
     }
 
+    /// Whether a URL under a scanned directory (e.g. `Documents/DeltaSkins`) should be opened as a skin archive or package.
+    private static func isProbableSkinPackageInDirectory(_ url: URL) -> Bool {
+        let lower = url.pathExtension.lowercased()
+        return (["deltaskin", "manicskin", "zip"].firstIndex(of: lower) != nil)
+    }
+
     /// Get locations of skin files
     private func skinLocations() -> [URL] {
         var locations: [URL] = []
@@ -388,17 +408,6 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             locations.append(contentsOf: bundleSkins)
         } else {
             WLOG("skins: No skins found in any bundles")
-        }
-
-        // Add framework bundle skins (dynamic frameworks)
-        let frameworkSkins = Bundle.allFrameworks.flatMap { bundle in
-            let deltaSkins = bundle.urls(forResourcesWithExtension: "deltaskin", subdirectory: nil) ?? []
-            let manicSkins = bundle.urls(forResourcesWithExtension: "manicskin", subdirectory: nil) ?? []
-            return deltaSkins + manicSkins
-        }
-        if !frameworkSkins.isEmpty {
-            ILOG("skins: Found \(frameworkSkins.count) framework skins: \(frameworkSkins.map { $0.lastPathComponent }.joined(separator: ", "))")
-            locations.append(contentsOf: frameworkSkins)
         }
 
         // Add bundled DefaultSkins from this SwiftPM module's resource bundle.
@@ -420,6 +429,50 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
         ILOG("skins: Total locations to scan: \(locations.count)")
         return locations
+    }
+
+    /// JSON file under Documents/DeltaSkins mapping skin identifiers to on-disk package paths.
+    private func skinPathIndexFileURL() -> URL {
+        URL.documentsPath
+            .appendingPathComponent("DeltaSkins", isDirectory: true)
+            .appendingPathComponent(Self.skinPathIndexFilename, isDirectory: false)
+    }
+
+    /// Loads the persisted path index once per process before the first full scan (hot path for ``skin(withIdentifier:)``).
+    private func loadSkinPathIndexFromDiskIfNeeded() {
+        dispatchPrecondition(condition: .onQueue(queue))
+        guard !pathIndexLoadedFromDisk else { return }
+        pathIndexLoadedFromDisk = true
+        let url = skinPathIndexFileURL()
+        guard FileManager.default.fileExists(atPath: url.path),
+              let data = try? Data(contentsOf: url),
+              let dict = try? JSONDecoder().decode([String: String].self, from: data) else {
+            return
+        }
+        pathIndexByIdentifier = dict
+        ILOG("skins: Loaded skin path index from disk (\(dict.count) entries)")
+    }
+
+    /// Replaces the in-memory index and persists it after a full scan or import.
+    private func rebuildAndPersistSkinPathIndex(from skins: [DeltaSkinProtocol]) {
+        dispatchPrecondition(condition: .onQueue(queue))
+        var map: [String: String] = [:]
+        for skin in skins {
+            map[skin.identifier] = skin.fileURL.path
+        }
+        pathIndexByIdentifier = map
+        persistSkinPathIndexUnlocked()
+    }
+
+    private func persistSkinPathIndexUnlocked() {
+        dispatchPrecondition(condition: .onQueue(queue))
+        let url = skinPathIndexFileURL()
+        let directory = url.deletingLastPathComponent()
+        if !FileManager.default.fileExists(atPath: directory.path) {
+            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        }
+        guard let data = try? JSONEncoder().encode(pathIndexByIdentifier) else { return }
+        try? data.write(to: url, options: [.atomic])
     }
 
     /// Directory for storing imported skins
@@ -475,7 +528,16 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             // Copy to skins directory
             ILOG("skins: Copying skin to: \(destinationURL.path)")
             try FileManager.default.copyItem(at: url, to: destinationURL)
-            ILOG("skins: Skin import completed successfully")
+
+            do {
+                _ = try self.loadSkinFromURLWithoutAdding(destinationURL)
+            } catch {
+                ELOG("skins: Imported file failed validation (not a readable Delta skin): \(destinationURL.lastPathComponent) — \(error)")
+                try? FileManager.default.removeItem(at: destinationURL)
+                throw error
+            }
+
+            ILOG("skins: Skin import validated and completed successfully")
 
             // Scan to reload all skins
             try self.scanForSkins()

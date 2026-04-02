@@ -1209,7 +1209,7 @@ struct RetroMenuView: View {
                 if let menuAction = retroArchMenuAction, let settings = retroArchSettings {
                     HStack(spacing: 12) {
                         menuButton(title: String(localized: "RETROARCH MENU"), icon: "square.grid.2x2", color: .retroPurple) {
-                            dismissMenuThenResumeAndRun {
+                            emulatorVC.dismissNav(resumeEmulation: true) {
                                 emulatorVC.handleCoreAction(menuAction)
                             }
                         }
@@ -1224,7 +1224,7 @@ struct RetroMenuView: View {
                     }
                 } else if let menuAction = retroArchMenuAction {
                     menuButton(title: String(localized: "RETROARCH MENU"), icon: "square.grid.2x2", color: .retroPurple) {
-                        dismissMenuThenResumeAndRun {
+                        emulatorVC.dismissNav(resumeEmulation: true) {
                             emulatorVC.handleCoreAction(menuAction)
                         }
                     }
@@ -2757,12 +2757,14 @@ struct RetroMenuView: View {
         retroSkinPickerSkinsForOrientation.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
     }
 
-    /// Phone-case companion skins are not surfaced on tvOS (no `DisclosureGroup` API; no case-controller use case).
+    /// Phone-case companion skins — only shown when the `caseCompanionSkins` feature flag is on.
+    /// Not surfaced on tvOS (no `DisclosureGroup` API; no case-controller use case).
     private var retroSkinPickerCaseSkins: [DeltaSkinProtocol] {
 #if os(tvOS)
         []
 #else
-        retroSkinPickerSkinsForOrientation.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
+        guard PVFeatureFlagsManager.shared.caseCompanionSkins else { return [] }
+        return retroSkinPickerSkinsForOrientation.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
 #endif
     }
 

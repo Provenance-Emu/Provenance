@@ -34,7 +34,9 @@ extern GCController *touch_controller;
 @end
 
 @implementation PVRetroArchCoreBridge (_3DOControls)
+
 #pragma mark - Control
+
 - (void)didPush3DOButton:(PV3DOButton)button forPlayer:(NSInteger)player {
     [self handle3DOButton:button forPlayer:player pressed:true value:1];
 }
@@ -46,6 +48,7 @@ extern GCController *touch_controller;
 - (void)didMove3DOJoystickDirection:(PV3DOButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
     [self handle3DOButton:button forPlayer:player pressed:(value != 0) value:value];
 }
+
 - (void)handle3DOButton:(PV3DOButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed value:(CGFloat)value {
     switch (button) {
         case(PV3DOButtonUp):

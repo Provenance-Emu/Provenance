@@ -7,8 +7,8 @@ struct SystemSkinPreviewRow: View {
 
     let system: SystemIdentifier
 
-    @StateObject private var skinManager = DeltaSkinManager.shared
-    @StateObject private var selectionManager = DeltaSkinSelectionManager.shared
+    @ObservedObject private var skinManager = DeltaSkinManager.shared
+    @ObservedObject private var selectionManager = DeltaSkinSelectionManager.shared
 
     @State private var portraitSkin: (any DeltaSkinProtocol)? = nil
     @State private var landscapeSkin: (any DeltaSkinProtocol)? = nil

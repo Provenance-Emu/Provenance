@@ -2321,7 +2321,8 @@ private struct TVMediaSaveStateTileButton: View {
                 subtitle: item.date,
                 thumbnail: thumbnail,
                 isFocused: isFocused,
-                coreName: item.coreName.isEmpty ? nil : item.coreName
+                coreName: item.coreName.isEmpty ? nil : item.coreName,
+                isDownloaded: item.isDownloaded
             )
         }
         .buttonStyle(TVMediaCardButtonStyle())
@@ -4629,7 +4630,8 @@ struct TVMediaSaveStatesShelfRow: View {
                 subtitle: item.date,
                 thumbnail: thumbs[item.id],
                 isFocused: isFocused,
-                coreName: item.coreName.isEmpty ? nil : item.coreName
+                coreName: item.coreName.isEmpty ? nil : item.coreName,
+                isDownloaded: item.isDownloaded
             )
         }
         .buttonStyle(TVMediaCardButtonStyle())
@@ -4974,16 +4976,18 @@ struct TVMediaSaveStateTile: View {
     let thumbnail: UIImage?
     let isFocused: Bool
     let coreName: String?
+    let isDownloaded: Bool
 
     private let tileWidth: CGFloat = 300
     private let tileHeight: CGFloat = 190
 
-    init(title: String, subtitle: Date, thumbnail: UIImage?, isFocused: Bool, coreName: String? = nil) {
+    init(title: String, subtitle: Date, thumbnail: UIImage?, isFocused: Bool, coreName: String? = nil, isDownloaded: Bool = true) {
         self.title = title
         self.subtitle = subtitle
         self.thumbnail = thumbnail
         self.isFocused = isFocused
         self.coreName = coreName
+        self.isDownloaded = isDownloaded
     }
 
     var body: some View {
@@ -5014,6 +5018,16 @@ struct TVMediaSaveStateTile: View {
                 }
                 .frame(width: tileWidth, height: tileHeight)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(alignment: .topTrailing) {
+                    if !isDownloaded {
+                        CloudSyncIndicatorView(
+                            isDownloaded: false,
+                            hasCloudAssets: true,
+                            size: 28
+                        )
+                        .padding(8)
+                    }
+                }
 
                 // Scanline overlay - optimized with Canvas for better performance
                 Canvas { context, size in

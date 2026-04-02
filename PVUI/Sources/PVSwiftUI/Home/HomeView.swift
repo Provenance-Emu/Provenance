@@ -22,14 +22,6 @@ import UIKit
 import FreemiumKit
 #endif
 
-/// Reference-type scroll tracking that avoids triggering SwiftUI re-renders on every scroll frame.
-/// `previousOffset` is intentionally not published — only `isSearchBarVisible` drives rendering.
-/// Stored as a plain class (no ObservableObject) to avoid unnecessary subscription overhead;
-/// use @State to hold the reference so it persists across view updates without causing redraws.
-private final class ScrollTracker {
-    var previousOffset: CGFloat = 0
-}
-
 @available(iOS 14, tvOS 14, *)
 struct HomeView: SwiftUI.View {
 
@@ -98,10 +90,6 @@ struct HomeView: SwiftUI.View {
 
     @State private var searchText = ""
 
-    /// Mutable scroll-tracking state stored in a reference type so that updates to
-    /// `previousOffset` do NOT trigger a HomeView body re-render on every scroll frame.
-    @State private var scrollTracker = ScrollTracker()
-    @State private var isSearchBarVisible: Bool = true
 
     init(
         gameLibrary: PVGameLibrary<RealmDatabaseDriver>? = nil,
@@ -181,17 +169,7 @@ struct HomeView: SwiftUI.View {
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             VStack(spacing: 0) {
-                // Add search bar with visibility control
-                if allGames.count > 8 && showSearchbar {
-                    PVSearchBar(text: $searchText)
-                        .padding(.horizontal)
-                        .padding(.bottom, 8)
-                        .opacity(isSearchBarVisible ? 1 : 0)
-                        .frame(height: isSearchBarVisible ? nil : 0)
-                        .animation(.easeInOut(duration: 0.3), value: isSearchBarVisible)
-                        .padding(.horizontal, 8)
-                        .padding(.bottom, 8)
-                }
+                displayOptionsView()
 
                 // Import Progress View
                 ImportProgressView(
@@ -204,28 +182,15 @@ struct HomeView: SwiftUI.View {
                     }
                 )
 
-                ScrollViewWithOffset(
-                    offsetChanged: { offset in
-                        // Detect scroll direction and distance using reference-type tracker
-                        // (avoids a HomeView body re-render on every pixel of scroll)
-                        let scrollingDown = offset < scrollTracker.previousOffset
-                        let scrollDistance = abs(offset - scrollTracker.previousOffset)
-                        scrollTracker.previousOffset = offset
-
-                        // Only respond to significant scroll movements
-                        guard scrollDistance > 5 else { return }
-
-                        // Only write @State when visibility actually needs to change
-                        let shouldBeVisible = !scrollingDown || offset >= -10
-                        if shouldBeVisible != isSearchBarVisible {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                isSearchBarVisible = shouldBeVisible
-                            }
-                        }
-                    }
-                ) {
+                ScrollView {
                     ScrollViewReader { proxy in
                         LazyVStack {
+                            // Search bar inside scroll — no auto-hide, just scrolls with content
+                            if allGames.count > 8 && showSearchbar {
+                                PVSearchBar(text: $searchText)
+                                    .padding(.horizontal, 16)
+                                    .padding(.bottom, 8)
+                            }
                             if bootupStateManager.isBootupCompleted && isLibraryCompletelyEmpty {
                                 cloudSyncUpsell()
                                     .padding(.horizontal)
@@ -237,7 +202,6 @@ struct HomeView: SwiftUI.View {
                             recentlyPlayedSection()
                                 .id("section_recent")
                             mostPlayedSection()
-                            displayOptionsView()
                             if viewModel.viewGamesAsGrid {
                                 showGamesGrid(allGames)
                                     .id("section_allgames")
@@ -633,7 +597,6 @@ struct HomeView: SwiftUI.View {
     private func consumePendingSearch() {
         LibraryNavigator.shared.consumeSearch { query in
             searchText = query
-            isSearchBarVisible = true
         }
     }
 
@@ -1570,7 +1533,7 @@ struct ScrollViewWithOffset<Content: View>: View {
     init(
         axes: Axis.Set = .vertical,
         showsIndicators: Bool = true,
-        offsetChanged: @escaping (CGFloat) -> Void,
+        offsetChanged: @escaping (CGFloat) -> Void = { _ in },
         @ViewBuilder content: () -> Content
     ) {
         self.axes = axes

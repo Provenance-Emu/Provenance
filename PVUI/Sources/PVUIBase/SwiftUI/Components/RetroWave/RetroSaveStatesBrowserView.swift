@@ -24,8 +24,10 @@ public struct RetroSaveStateItem: Identifiable, Hashable {
     public let createdWithCoreVersion: String?
     /// The core identifier that created this save state, if known.
     public let coreIdentifier: String?
-    
-    public init(id: String, gameId: String, gameTitle: String, systemId: String, systemName: String, date: Date, isAutosave: Bool, isFavorite: Bool, fileSize: Int, imageURL: URL? = nil, coreName: String, createdWithCoreVersion: String? = nil, coreIdentifier: String? = nil) {
+    /// Whether the save state file is available locally (false = needs download from iCloud).
+    public let isDownloaded: Bool
+
+    public init(id: String, gameId: String, gameTitle: String, systemId: String, systemName: String, date: Date, isAutosave: Bool, isFavorite: Bool, fileSize: Int, imageURL: URL? = nil, coreName: String, createdWithCoreVersion: String? = nil, coreIdentifier: String? = nil, isDownloaded: Bool = true) {
         self.id = id
         self.gameId = gameId
         self.gameTitle = gameTitle
@@ -39,6 +41,7 @@ public struct RetroSaveStateItem: Identifiable, Hashable {
         self.coreName = coreName
         self.createdWithCoreVersion = createdWithCoreVersion
         self.coreIdentifier = coreIdentifier
+        self.isDownloaded = isDownloaded
     }
 }
 
@@ -371,7 +374,8 @@ public final class RetroSaveStatesStore: ObservableObject {
             imageURL: state.image?.url,
             coreName: coreName,
             createdWithCoreVersion: state.createdWithCoreVersion,
-            coreIdentifier: state.core?.identifier
+            coreIdentifier: state.core?.identifier,
+            isDownloaded: state.isDownloaded
         )
     }
 

@@ -45,7 +45,7 @@ public struct SkinCatalogBrowserView: View {
     @State private var filterTask: Task<Void, Never>?
 
     /// Observe the skin manager so we can show which catalog skins are already installed.
-    @StateObject private var skinManager = DeltaSkinManager.shared
+    @ObservedObject private var skinManager = DeltaSkinManager.shared
 
     // MARK: - Filter Options
 

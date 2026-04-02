@@ -10,7 +10,7 @@ import SafariServices
 public struct SystemSkinBrowserView: View {
     // MARK: - Properties
 
-    @StateObject private var skinManager = DeltaSkinManager.shared
+    @ObservedObject private var skinManager = DeltaSkinManager.shared
     @State private var systemSkinCounts: [SystemIdentifier: Int] = [:]
     @State private var isLoading = true
     @State private var loadingProgress: Double = 0

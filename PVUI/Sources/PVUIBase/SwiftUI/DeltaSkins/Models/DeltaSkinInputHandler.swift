@@ -1166,7 +1166,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 let b = PVDreamcastButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
-        case .PCE:
+        case .PCE, .SGFX:
             if let r = core as? PVPCESystemResponderClient {
                 let b = PVPCEButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
@@ -1267,10 +1267,10 @@ public class DeltaSkinInputHandler: ObservableObject {
                 DLOG("AtariST button (via DOS): original=\(buttonId), normalized=\(id), PVDOSButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
-        case .PCFX, .SGFX:
+        case .PCFX:
             if let r = core as? PVPCFXSystemResponderClient {
                 let b = PVPCFXButton(id)
-                DLOG("PVPFXButton button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                DLOG("PVPCFXButton button: original=\(buttonId), normalized=\(id), PVPCFXButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
         case .MSX, .MSX2:
@@ -1346,11 +1346,9 @@ public class DeltaSkinInputHandler: ObservableObject {
             if let r = core as? PVDOSSystemResponderClient {
                 let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
-
             }
-        default:
-            // For other systems, try generic approach
-            DLOG("No specific D-pad handler for system \(systemId), attempting generic")
+        case .C64, .MegaDuck, .Music, .PalmOS, .PC98, .RetroArch, .Unknown:
+            DLOG("No specific D-pad handler for system \(systemId)")
             break
         }
     }
@@ -1900,7 +1898,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
-        case .PCE:
+        case .PCE, .SGFX:
             if let r = core as? PVPCESystemResponderClient {
                 let b = PVPCEButton(id)
                 DLOG("PCE button: original=\(buttonId), normalized=\(id), PVPCEButton=\(b.stringValue), rawValue=\(b.rawValue)")
@@ -2033,10 +2031,10 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
-        case .PCFX, .SGFX:
+        case .PCFX:
             if let r = core as? PVPCFXSystemResponderClient {
                 let b = PVPCFXButton(id)
-                DLOG("PVPFXButton button (via PVA8): original=\(buttonId), normalized=\(id), PVA8Button=\(b.stringValue)")
+                DLOG("PVPFXButton button: original=\(buttonId), normalized=\(id), PVPCFXButton=\(b.stringValue)")
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
@@ -2134,7 +2132,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
-        default:
+        case .C64, .MegaDuck, .Music, .PalmOS, .PC98, .RetroArch, .Unknown:
             break
         }
 
@@ -2367,8 +2365,8 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["r", "r1"].contains(s) { return "r" }
             if ["start"].contains(s) { return s }
             return s
-        case .PCE, .PCECD:
-            /// PCE/PCECD button normalization - supports: up, down, left, right, button1-6, run, select, mode
+        case .PCE, .PCECD, .SGFX:
+            /// PCE/PCECD/SGFX button normalization - supports: up, down, left, right, button1-6, run, select, mode
             /// Also handles Unicode Roman numerals (ⅰ, ⅱ, ⅲ, ⅳ, ⅴ, ⅵ and Ⅰ, Ⅱ, Ⅲ, Ⅳ, Ⅴ, Ⅵ)
             let normalized = normalizeRomanNumerals(s)
             if ["up", "down", "left", "right"].contains(normalized) { return normalized }

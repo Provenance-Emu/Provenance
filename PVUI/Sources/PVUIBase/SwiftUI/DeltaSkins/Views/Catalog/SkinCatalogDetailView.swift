@@ -33,7 +33,7 @@ public struct SkinCatalogDetailView: View {
     @State private var activationState: ActivationState = .idle
 
     /// Observe the skin manager so we can detect already-installed skins.
-    @StateObject private var skinManager = DeltaSkinManager.shared
+    @ObservedObject private var skinManager = DeltaSkinManager.shared
 
     // MARK: - Types
 

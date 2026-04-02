@@ -43,7 +43,39 @@ public enum SaveStateVersionChecker {
         guard let v = version?.trimmingCharacters(in: .whitespacesAndNewlines), !v.isEmpty else {
             return nil
         }
-        return ignoredVersions.contains(v.lowercased()) ? nil : v
+        if ignoredVersions.contains(v.lowercased()) { return nil }
+        return extractSemanticVersion(v)
+    }
+
+    /// Extracts the semantic version portion from a version string, stripping
+    /// git hashes, build numbers, and other metadata that change between builds
+    /// but don't indicate an actual version difference.
+    ///
+    /// Examples:
+    /// - `"v1.24.0 efd1797"` → `"1.24.0"`
+    /// - `"1.24.0"` → `"1.24.0"`
+    /// - `"2.8-Vulkan bc43bce"` → `"2.8-Vulkan"`
+    /// - `"2024.10.29"` → `"2024.10.29"` (date-based version, kept as-is)
+    /// - `"nightly-abc1234"` → `"nightly-abc1234"` (no semver found, returned as-is)
+    private static func extractSemanticVersion(_ version: String) -> String {
+        // Strip leading "v" or "V" prefix
+        var v = version
+        if v.hasPrefix("v") || v.hasPrefix("V") {
+            v = String(v.dropFirst())
+        }
+
+        // Try to match a semver-like pattern at the start: digits.digits[.digits][-tag]
+        // Stop at the first whitespace which usually precedes a git hash or build metadata
+        let components = v.split(separator: " ", maxSplits: 1)
+        let candidate = String(components[0])
+
+        // If the candidate looks like a version (starts with digit or contains a dot), use it
+        if candidate.first?.isNumber == true || candidate.contains(".") {
+            return candidate
+        }
+
+        // Fallback: return the space-stripped version as-is
+        return candidate
     }
 
     /// Returns a `SaveStateVersionMismatch` if the save state was created with a different
@@ -76,8 +108,8 @@ public enum SaveStateVersionChecker {
     /// Human-readable warning message for a version mismatch.
     public static func warningMessage(for mismatch: SaveStateVersionMismatch) -> String {
         return """
-        This save was created with \(mismatch.coreName) v\(mismatch.savedVersion), \
-        but the current version is v\(mismatch.currentVersion).
+        This save was created with \(mismatch.coreName) \(mismatch.savedVersion), \
+        but the current version is \(mismatch.currentVersion).
 
         Loading may fail or behave unexpectedly. Create a new save state after \
         loading to avoid this warning in the future.

@@ -265,7 +265,7 @@ let package = Package(
                 "PVCheevos",
                 .product(name: "PVJIT", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
                 .product(name: "JITManager", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
-                .product(name: "WhatsNewKit", package: "whatsnewkit"),
+                .product(name: "WhatsNewKit", package: "whatsnewkit", condition: .when(platforms: [.iOS, .macCatalyst, .visionOS])),
                 .product(name: "SiriusRating", package: "siriusrating-ios", condition: .when(platforms: [.iOS])),
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),

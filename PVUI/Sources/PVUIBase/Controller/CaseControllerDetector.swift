@@ -117,9 +117,9 @@ public enum CaseControllerDetector {
     }
 
     /// True when `skinIdentifier` is listed as a companion skin for a known physical case (see ``knownLayouts``).
-    /// Always returns `false` when the `caseCompanionSkins` feature flag is off.
+    /// This identification is always performed regardless of the `caseCompanionSkins` feature flag —
+    /// the flag controls *visibility* in the UI, not identification.
     public static func isCompanionSkinForKnownCase(_ skinIdentifier: String) -> Bool {
-        guard PVFeatureFlags.shared.isEnabled(.caseCompanionSkins) else { return false }
         return !casesCompatibleWithSkin(skinIdentifier).isEmpty
     }
 
@@ -134,12 +134,12 @@ public enum CaseControllerDetector {
     }
 
     /// Automatic skin pickers (no explicit user/session selection for this identifier) should omit companion case skins
-    /// unless a matching physical case controller is connected.
-    /// When the `caseCompanionSkins` feature flag is off, all skins are allowed (no filtering).
+    /// unless the feature flag is on AND a matching physical case controller is connected.
+    /// Companion skins are always excluded from automatic selection unless a case controller is connected.
     public static func isAllowedInAutomaticSkinSelection(_ skinIdentifier: String) -> Bool {
-        guard PVFeatureFlags.shared.isEnabled(.caseCompanionSkins) else { return true }
-        if isKnownPhysicalCaseControllerConnected { return true }
-        return !isCompanionSkinForKnownCase(skinIdentifier)
+        guard isCompanionSkinForKnownCase(skinIdentifier) else { return true }
+        // It's a companion skin — only allow if the flag is on AND a case controller is connected
+        return PVFeatureFlags.shared.isEnabled(.caseCompanionSkins) && isKnownPhysicalCaseControllerConnected
     }
 
     /// Returns the first ``PhysicalCaseLayout`` compatible with `skinIdentifier`,
