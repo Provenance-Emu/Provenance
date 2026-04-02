@@ -21,11 +21,12 @@ public struct CloudKitSyncAnalyticsView: View {
     // MARK: - Body
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            // Header
+        VStack(alignment: .leading, spacing: 14) {
+            // Header — retrowave section style
             HStack {
-                Text("Sync Analytics")
-                    .font(.headline)
+                Text("SYNC ANALYTICS")
+                    .font(.system(size: 13, weight: .heavy))
+                    .tracking(1.2)
                     .foregroundColor(.retroPink)
 
                 Spacer()
@@ -34,11 +35,26 @@ public struct CloudKitSyncAnalyticsView: View {
                     Button(action: {
                         analytics.resetAnalytics()
                     }) {
-                        Label("Reset", systemImage: "arrow.counterclockwise")
-                            .font(.caption)
-                            .foregroundColor(.retroBlue)
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.counterclockwise")
+                                .font(.system(size: 10, weight: .bold))
+                            Text("RESET")
+                                .font(.system(size: 10, weight: .heavy))
+                                .tracking(0.5)
+                        }
+                        .foregroundColor(.retroPurple)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                .fill(Color.retroPurple.opacity(0.12))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                .strokeBorder(Color.retroPurple.opacity(0.35), lineWidth: 1)
+                        )
                     }
-                    .buttonStyle(BorderlessButtonStyle())
+                    .buttonStyle(PlainButtonStyle())
                 } else {
                     // Fallback on earlier versions
                 }
@@ -46,104 +62,117 @@ public struct CloudKitSyncAnalyticsView: View {
 
             // Main stats
             VStack(alignment: .leading, spacing: 8) {
-                // Sync counts
+                // Sync counts — neon stat tiles
                 HStack {
-                    VStack(alignment: .leading) {
-                        Text("Total Syncs")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("TOTAL")
+                            .font(.system(size: 10, weight: .heavy))
+                            .tracking(0.8)
+                            .foregroundColor(.white.opacity(0.5))
                         Text("\(analytics.totalSyncs)")
-                            .font(.title3)
+                            .font(.system(size: 22, weight: .bold, design: .monospaced))
                             .foregroundColor(.white)
                     }
 
                     Spacer()
 
-                    VStack(alignment: .leading) {
-                        Text("Successful")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("SUCCESS")
+                            .font(.system(size: 10, weight: .heavy))
+                            .tracking(0.8)
+                            .foregroundColor(.white.opacity(0.5))
                         Text("\(analytics.successfulSyncs)")
-                            .font(.title3)
-                            .foregroundColor(.green)
+                            .font(.system(size: 22, weight: .bold, design: .monospaced))
+                            .foregroundColor(.retroGreen)
+                            .shadow(color: .retroGreen.opacity(0.4), radius: 4)
                     }
 
                     Spacer()
 
-                    VStack(alignment: .leading) {
-                        Text("Failed")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("FAILED")
+                            .font(.system(size: 10, weight: .heavy))
+                            .tracking(0.8)
+                            .foregroundColor(.white.opacity(0.5))
                         Text("\(analytics.failedSyncs)")
-                            .font(.title3)
-                            .foregroundColor(.red)
+                            .font(.system(size: 22, weight: .bold, design: .monospaced))
+                            .foregroundColor(.retroOrange)
+                            .shadow(color: .retroOrange.opacity(0.4), radius: 4)
                     }
                 }
                 .padding(.vertical, 4)
 
-                Divider()
-                    .background(Color.retroPurple.opacity(0.5))
+                // Gradient divider
+                Rectangle()
+                    .fill(LinearGradient(colors: [.retroPurple.opacity(0.4), .retroPink.opacity(0.2)], startPoint: .leading, endPoint: .trailing))
+                    .frame(height: 1)
 
                 // Data transferred
                 HStack {
-                    VStack(alignment: .leading) {
-                        Text("Uploaded")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("UPLOADED")
+                            .font(.system(size: 10, weight: .heavy))
+                            .tracking(0.8)
+                            .foregroundColor(.white.opacity(0.5))
                         Text(ByteCountFormatter.string(fromByteCount: analytics.totalBytesUploaded, countStyle: .file))
-                            .font(.subheadline)
+                            .font(.system(size: 15, weight: .semibold, design: .monospaced))
                             .foregroundColor(.retroBlue)
                     }
 
                     Spacer()
 
-                    VStack(alignment: .leading) {
-                        Text("Downloaded")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("DOWNLOADED")
+                            .font(.system(size: 10, weight: .heavy))
+                            .tracking(0.8)
+                            .foregroundColor(.white.opacity(0.5))
                         Text(ByteCountFormatter.string(fromByteCount: analytics.totalBytesDownloaded, countStyle: .file))
-                            .font(.subheadline)
+                            .font(.system(size: 15, weight: .semibold, design: .monospaced))
                             .foregroundColor(.retroBlue)
                     }
                 }
                 .padding(.vertical, 4)
 
-                Divider()
-                    .background(Color.retroPurple.opacity(0.5))
+                // Gradient divider
+                Rectangle()
+                    .fill(LinearGradient(colors: [.retroPurple.opacity(0.4), .retroPink.opacity(0.2)], startPoint: .leading, endPoint: .trailing))
+                    .frame(height: 1)
 
                 // Timing information
                 HStack {
-                    VStack(alignment: .leading) {
-                        Text("Last Sync")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("LAST SYNC")
+                            .font(.system(size: 10, weight: .heavy))
+                            .tracking(0.8)
+                            .foregroundColor(.white.opacity(0.5))
                         Group {
                             if let lastSyncTime = analytics.lastSyncTime {
                                 if #available(iOS 15.0, tvOS 15.0, *) {
                                     Text(lastSyncTime.formatted(date: .abbreviated, time: .shortened))
-                                        .font(.subheadline)
+                                        .font(.system(size: 13, weight: .medium))
                                         .foregroundColor(.white)
                                 } else {
                                     Text(formatDate(lastSyncTime))
-                                        .font(.subheadline)
+                                        .font(.system(size: 13, weight: .medium))
                                         .foregroundColor(.white)
                                 }
                             } else {
                                 Text("Never")
-                                    .font(.subheadline)
-                                    .foregroundColor(.white)
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.5))
                             }
                         }
                     }
 
                     Spacer()
 
-                    VStack(alignment: .leading) {
-                        Text("Avg Duration")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("AVG DURATION")
+                            .font(.system(size: 10, weight: .heavy))
+                            .tracking(0.8)
+                            .foregroundColor(.white.opacity(0.5))
                         Text(String(format: "%.2fs", analytics.averageSyncDuration))
-                            .font(.subheadline)
+                            .font(.system(size: 13, weight: .semibold, design: .monospaced))
                             .foregroundColor(.white)
                     }
                 }
@@ -151,17 +180,20 @@ public struct CloudKitSyncAnalyticsView: View {
 
                 // Current operation if syncing
                 if analytics.isSyncing {
-                    Divider()
-                        .background(Color.retroPurple.opacity(0.5))
+                    Rectangle()
+                        .fill(LinearGradient(colors: [.retroPink.opacity(0.5), .retroPurple.opacity(0.3)], startPoint: .leading, endPoint: .trailing))
+                        .frame(height: 1)
 
-                    HStack {
+                    HStack(spacing: 8) {
                         Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.retroPink)
+                            .shadow(color: .retroPink.opacity(0.6), radius: 4)
                             .rotationEffect(.degrees(analytics.isSyncing ? 360 : 0))
                             .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false), value: analytics.isSyncing)
 
                         Text("Syncing: \(analytics.currentSyncOperation)")
-                            .font(.subheadline)
+                            .font(.system(size: 13, weight: .semibold))
                             .foregroundColor(.retroPink)
                     }
                     .padding(.vertical, 4)
@@ -169,42 +201,71 @@ public struct CloudKitSyncAnalyticsView: View {
 
                 // Last error if any
                 if let error = analytics.lastSyncError {
-                    Divider()
-                        .background(Color.retroPurple.opacity(0.5))
+                    Rectangle()
+                        .fill(LinearGradient(colors: [.retroOrange.opacity(0.4), .clear], startPoint: .leading, endPoint: .trailing))
+                        .frame(height: 1)
 
-                    HStack {
-                        Image(systemName: "exclamationmark.triangle")
-                            .foregroundColor(.red)
+                    HStack(spacing: 6) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(.retroOrange)
+                            .shadow(color: .retroOrange.opacity(0.5), radius: 3)
 
-                        Text("Last Error: \(error.localizedDescription)")
-                            .font(.caption)
-                            .foregroundColor(.red)
+                        Text(error.localizedDescription)
+                            .font(.system(size: 12))
+                            .foregroundColor(.retroOrange.opacity(0.9))
                             .lineLimit(2)
                     }
                     .padding(.vertical, 4)
                 }
             }
-            .padding()
-            .background(Color.retroBlack.opacity(0.3))
-            .cornerRadius(10)
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.black.opacity(0.7))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [Color.retroPurple.opacity(0.4), Color.retroPink.opacity(0.3)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
 
             // Sync history toggle
             if #available(tvOS 17.0, *) {
                 Button(action: {
-                    withAnimation {
+                    withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
                         showHistory.toggle()
                     }
                 }) {
-                    HStack {
-                        Text(showHistory ? "Hide Sync History" : "Show Sync History")
-                            .font(.subheadline)
-                            .foregroundColor(.retroBlue)
-
+                    HStack(spacing: 6) {
+                        Image(systemName: "clock.arrow.circlepath")
+                            .font(.system(size: 12, weight: .semibold))
+                        Text(showHistory ? "HIDE HISTORY" : "SHOW HISTORY")
+                            .font(.system(size: 11, weight: .heavy))
+                            .tracking(0.8)
+                        Spacer()
                         Image(systemName: showHistory ? "chevron.up" : "chevron.down")
-                            .foregroundColor(.retroBlue)
+                            .font(.system(size: 10, weight: .bold))
                     }
+                    .foregroundColor(.retroCyan)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(Color.retroCyan.opacity(0.08))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .strokeBorder(Color.retroCyan.opacity(0.25), lineWidth: 1)
+                    )
                 }
-                .buttonStyle(BorderlessButtonStyle())
+                .buttonStyle(PlainButtonStyle())
                 .padding(.top, 4)
             } else {
                 // Fallback on earlier versions
@@ -222,15 +283,16 @@ public struct CloudKitSyncAnalyticsView: View {
 
     private var syncHistoryView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Recent Sync Operations")
-                .font(.subheadline)
-                .foregroundColor(.retroPurple)
-                .padding(.bottom, 4)
+            Text("RECENT OPERATIONS")
+                .font(.system(size: 11, weight: .heavy))
+                .tracking(1.2)
+                .foregroundColor(.retroPink)
+                .padding(.bottom, 2)
 
             if analytics.syncHistory.isEmpty {
                 Text("No sync history available")
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                    .font(.system(size: 13))
+                    .foregroundColor(.white.opacity(0.4))
                     .padding()
             } else {
                 ForEach(analytics.syncHistory) { operation in
@@ -238,21 +300,36 @@ public struct CloudKitSyncAnalyticsView: View {
                 }
             }
         }
-        .padding()
-        .background(Color.retroBlack.opacity(0.3))
-        .cornerRadius(10)
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.black.opacity(0.7))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color.retroPurple.opacity(0.3), Color.retroBlue.opacity(0.2)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
     }
 
     private func syncHistoryItemView(_ operation: SyncOperation) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                // Status icon
-                Image(systemName: operation.success ? "checkmark.circle" : "xmark.circle")
-                    .foregroundColor(operation.success ? .green : .red)
+                // Status icon with glow
+                Image(systemName: operation.success ? "checkmark.circle.fill" : "xmark.circle.fill")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(operation.success ? .retroGreen : .retroOrange)
+                    .shadow(color: (operation.success ? Color.retroGreen : Color.retroOrange).opacity(0.5), radius: 3)
 
                 // Operation name
                 Text(operation.operation)
-                    .font(.subheadline)
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.white)
 
                 Spacer()
@@ -261,48 +338,49 @@ public struct CloudKitSyncAnalyticsView: View {
                 Group {
                     if #available(iOS 15.0, tvOS 15.0, *) {
                         Text(operation.timestamp.formatted(date: .omitted, time: .shortened))
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.4))
                     } else {
                         Text(formatTime(operation.timestamp))
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                            .font(.system(size: 11, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.4))
                     }
                 }
             }
 
             // Details
             HStack {
-                Text("Duration: \(String(format: "%.2fs", operation.duration))")
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                Text("\(String(format: "%.2fs", operation.duration))")
+                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.5))
 
                 Spacer()
 
                 if operation.bytesUploaded > 0 {
                     Text("↑ \(ByteCountFormatter.string(fromByteCount: operation.bytesUploaded, countStyle: .file))")
-                        .font(.caption)
+                        .font(.system(size: 11, weight: .medium, design: .monospaced))
                         .foregroundColor(.retroBlue)
                 }
 
                 if operation.bytesDownloaded > 0 {
                     Text("↓ \(ByteCountFormatter.string(fromByteCount: operation.bytesDownloaded, countStyle: .file))")
-                        .font(.caption)
-                        .foregroundColor(.retroBlue)
+                        .font(.system(size: 11, weight: .medium, design: .monospaced))
+                        .foregroundColor(.retroCyan)
                 }
             }
 
             // Error message if any
             if let errorMessage = operation.errorMessage {
-                Text("Error: \(errorMessage)")
-                    .font(.caption)
-                    .foregroundColor(.red)
+                Text(errorMessage)
+                    .font(.system(size: 11))
+                    .foregroundColor(.retroOrange.opacity(0.9))
                     .lineLimit(2)
                     .padding(.top, 2)
             }
 
-            Divider()
-                .background(Color.retroPurple.opacity(0.3))
+            Rectangle()
+                .fill(Color.white.opacity(0.06))
+                .frame(height: 1)
         }
         .padding(.vertical, 4)
     }

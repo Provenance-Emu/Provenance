@@ -26,23 +26,31 @@ struct GameItemThumbnail: SwiftUI.View {
     /// Blur radius for artwork obfuscation.
     private let obfuscationBlurRadius: CGFloat = 6
 
-    /// The aspect ratio used for layout — consistent between placeholder and loaded artwork
-    /// to prevent cell size jumps when artwork loads asynchronously.
-    private var layoutAspectRatio: CGFloat {
-        boxartAspectRatio.rawValue
+    /// The aspect ratio for the artwork image. Uses the image's natural ratio when
+    /// artwork is loaded, and falls back to the system-defined ratio for placeholders.
+    /// This shows cover art in its true proportions while keeping placeholders predictable.
+    private var artworkAspectRatio: CGFloat {
+        if let artwork = artwork {
+            let w = artwork.size.width
+            let h = artwork.size.height
+            if w > 0 && h > 0 {
+                return w / h
+            }
+        }
+        return boxartAspectRatio.rawValue
     }
 
     var body: some SwiftUI.View {
         Group {
             if let artwork = artwork {
-                /// Use the boxart aspect ratio for layout consistency, not the image's
-                /// natural ratio. This prevents scroll jumps when artwork loads.
+                /// Use the artwork's natural aspect ratio so cover art displays
+                /// in its true proportions. The system ratio is only used for placeholders.
                 Image(uiImage: artwork)
                     .resizable()
-                    .aspectRatio(layoutAspectRatio, contentMode: .fit)
+                    .aspectRatio(artworkAspectRatio, contentMode: .fit)
                     .blur(radius: obfuscateArtwork ? obfuscationBlurRadius : 0)
             } else {
-                /// Fallback to text-based artwork with the specified aspect ratio
+                /// Fallback to text-based artwork with the system-defined aspect ratio
                 ArtworkImageBaseView(artwork: artwork, gameTitle: gameTitle, boxartAspectRatio: boxartAspectRatio)
             }
         }

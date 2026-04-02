@@ -294,7 +294,7 @@ extension CloudSyncSettingsView {
         }
     }
 
-    /// Reusable action button with retrowave gradient styling and tvOS focus support
+    /// Reusable action button with retrowave panel styling and tvOS focus support
     func cloudSyncActionButton(
         title: String,
         icon: String,
@@ -302,26 +302,45 @@ extension CloudSyncSettingsView {
         trailing: AnyView? = nil,
         action: @escaping () -> Void
     ) -> some View {
-        Button(action: action) {
-            HStack {
+        let primaryColor = colors.first ?? .retroBlue
+        return Button(action: action) {
+            HStack(spacing: 10) {
                 Image(systemName: icon)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(primaryColor)
+                    .shadow(color: primaryColor.opacity(0.5), radius: 4)
                 Text(title)
+                    .font(.system(size: 15, weight: .semibold))
                     #if os(tvOS)
                     .font(.system(size: 18, weight: .medium))
                     #endif
                 Spacer()
                 if let trailing = trailing {
                     trailing
+                } else {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.white.opacity(0.3))
                 }
             }
-            .padding()
-            .background(LinearGradient(
-                gradient: Gradient(colors: colors),
-                startPoint: .leading,
-                endPoint: .trailing
-            ))
-            .cornerRadius(12)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
             .foregroundColor(.white)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(primaryColor.opacity(0.12))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: colors.map { $0.opacity(0.5) },
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: 1.5
+                    )
+            )
         }
         #if os(tvOS)
         .buttonStyle(TVMediaPlainButtonStyle())

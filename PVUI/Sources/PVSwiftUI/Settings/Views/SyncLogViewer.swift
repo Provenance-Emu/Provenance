@@ -53,19 +53,19 @@ public struct SyncLogEntry: Identifiable, Equatable {
         case debug
         case verbose
 
-        /// The color associated with the log type
+        /// The color associated with the log type — retrowave neon palette
         public var color: Color {
             switch self {
             case .info:
                 return .retroBlue
             case .warning:
-                return .yellow
+                return .retroYellow
             case .error:
-                return .red
+                return .retroOrange
             case .debug:
-                return .green
+                return .retroGreen
             case .verbose:
-                return .gray
+                return .retroPurple
             }
         }
     }
@@ -476,6 +476,7 @@ public struct SyncLogViewer: View {
             // Pagination controls
             paginationControls
         }
+        .background(Color.clear)
         .onAppear {
             // Set initial date range
             viewModel.dateRange = .custom
@@ -486,40 +487,64 @@ public struct SyncLogViewer: View {
 
     /// The search and filter bar
     private var searchAndFilterBar: some View {
-        HStack {
-            // Search field
-            HStack {
+        HStack(spacing: 10) {
+            // Search field — pause menu search bar style
+            HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.retroCyan.opacity(0.7))
 
                 TextField("Search logs...", text: $viewModel.searchText)
                     .textFieldStyle(PlainTextFieldStyle())
+                    .foregroundColor(.white)
 
                 if !viewModel.searchText.isEmpty {
                     Button(action: {
                         viewModel.searchText = ""
                     }) {
                         Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
+                            .foregroundColor(.white.opacity(0.5))
                     }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
-            .padding(8)
-            .background(Color.retroBlack.opacity(0.3))
-            .cornerRadius(8)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(Color.white.opacity(0.08))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .strokeBorder(Color.retroCyan.opacity(0.45), lineWidth: 1)
+            )
 
             // Filter toggle
             Button(action: {
-                withAnimation(.spring()) {
+                withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
                     isFilterExpanded.toggle()
                 }
 #if !os(tvOS)
                 HapticFeedbackService.shared.playSelection()
 #endif
             }) {
-                Label("Filter", systemImage: "line.3.horizontal.decrease.circle\(isFilterExpanded ? ".fill" : "")")
+                Image(systemName: "line.3.horizontal.decrease.circle\(isFilterExpanded ? ".fill" : "")")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(isFilterExpanded ? .retroPink : .white.opacity(0.7))
+                    .frame(width: 36, height: 36)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(isFilterExpanded ? Color.retroPurple.opacity(0.3) : Color.white.opacity(0.08))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .strokeBorder(
+                                isFilterExpanded ? Color.retroPink.opacity(0.6) : Color.white.opacity(0.15),
+                                lineWidth: 1
+                            )
+                    )
             }
-            .retroButton(colors: [.retroPurple])
+            .buttonStyle(PlainButtonStyle())
 
             // Clear logs
             Button(action: {
@@ -528,23 +553,37 @@ public struct SyncLogViewer: View {
                 HapticFeedbackService.shared.playWarning()
 #endif
             }) {
-                Label("Clear", systemImage: "trash")
+                Image(systemName: "trash")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.retroOrange)
+                    .frame(width: 36, height: 36)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(Color.retroOrange.opacity(0.15))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .strokeBorder(Color.retroOrange.opacity(0.4), lineWidth: 1)
+                    )
             }
-            .retroButton(colors: [.red.opacity(0.7), .orange.opacity(0.7)])
+            .buttonStyle(PlainButtonStyle())
         }
-        .padding()
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
     }
 
-    /// The filter panel
+    /// The filter panel — retrowave panel style with gradient border
     private var filterPanel: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 14) {
             // Log type filters
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Log Types")
-                    .retroSectionHeader()
+            VStack(alignment: .leading, spacing: 6) {
+                Text("LOG TYPES")
+                    .font(.system(size: 11, weight: .heavy))
+                    .foregroundColor(.retroPink)
+                    .tracking(1.2)
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
                         ForEach(SyncLogEntry.LogType.allCases, id: \.self) { logType in
                             let isSelected = viewModel.selectedLogTypes.contains(logType)
 
@@ -558,28 +597,37 @@ public struct SyncLogViewer: View {
                                 HapticFeedbackService.shared.playSelection()
 #endif
                             }) {
-                                Text(logType.rawValue.capitalized)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(isSelected ? logType.color.opacity(0.7) : Color.retroBlack.opacity(0.5))
-                                    .cornerRadius(16)
-                                    .foregroundColor(isSelected ? .white : .gray)
-                                    .retroGlowingBorder(color: isSelected ? logType.color : .clear, lineWidth: 1)
+                                Text(logType.rawValue.uppercased())
+                                    .font(.system(size: 11, weight: .bold))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .foregroundColor(isSelected ? .white : .white.opacity(0.5))
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                            .fill(isSelected ? logType.color.opacity(0.25) : Color.white.opacity(0.05))
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                            .strokeBorder(isSelected ? logType.color.opacity(0.7) : Color.white.opacity(0.1), lineWidth: 1)
+                                    )
+                                    .shadow(color: isSelected ? logType.color.opacity(0.4) : .clear, radius: 4)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
                     }
-                    .padding(.horizontal, 4)
+                    .padding(.horizontal, 2)
                 }
             }
 
             // Operation filters
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Operations")
-                    .retroSectionHeader()
+            VStack(alignment: .leading, spacing: 6) {
+                Text("OPERATIONS")
+                    .font(.system(size: 11, weight: .heavy))
+                    .foregroundColor(.retroPink)
+                    .tracking(1.2)
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
                         ForEach(SyncLogEntry.SyncOperation.allCases, id: \.self) { operation in
                             let isSelected = viewModel.selectedOperations.contains(operation)
 
@@ -595,28 +643,38 @@ public struct SyncLogViewer: View {
                             }) {
                                 HStack(spacing: 4) {
                                     Image(systemName: operation.icon)
-                                    Text(operation.rawValue.capitalized)
+                                        .font(.system(size: 11))
+                                    Text(operation.rawValue.uppercased())
+                                        .font(.system(size: 11, weight: .bold))
                                 }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(isSelected ? Color.retroBlue.opacity(0.7) : Color.retroBlack.opacity(0.5))
-                                .cornerRadius(16)
-                                .foregroundColor(isSelected ? .white : .gray)
-                                .retroGlowingBorder(color: isSelected ? .retroBlue : .clear, lineWidth: 1)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .foregroundColor(isSelected ? .white : .white.opacity(0.5))
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                        .fill(isSelected ? Color.retroBlue.opacity(0.25) : Color.white.opacity(0.05))
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                        .strokeBorder(isSelected ? Color.retroBlue.opacity(0.7) : Color.white.opacity(0.1), lineWidth: 1)
+                                )
+                                .shadow(color: isSelected ? Color.retroBlue.opacity(0.4) : .clear, radius: 4)
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
                     }
-                    .padding(.horizontal, 4)
+                    .padding(.horizontal, 2)
                 }
             }
 
             // Date range filter
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Date Range")
-                    .retroSectionHeader()
+            VStack(alignment: .leading, spacing: 6) {
+                Text("DATE RANGE")
+                    .font(.system(size: 11, weight: .heavy))
+                    .foregroundColor(.retroPink)
+                    .tracking(1.2)
 
-                HStack {
+                HStack(spacing: 8) {
                     Button(action: {
                         withAnimation {
                             showDateRangePicker.toggle()
@@ -625,21 +683,30 @@ public struct SyncLogViewer: View {
                         HapticFeedbackService.shared.playSelection()
 #endif
                     }) {
-                        HStack {
+                        HStack(spacing: 6) {
                             Image(systemName: "calendar")
-                            Text("\(dateOnlyFormatter.string(from: startDate)) - \(dateOnlyFormatter.string(from: endDate))")
+                                .font(.system(size: 12))
+                                .foregroundColor(.retroCyan)
+                            Text("\(dateOnlyFormatter.string(from: startDate)) – \(dateOnlyFormatter.string(from: endDate))")
+                                .font(.system(size: 12, weight: .medium))
                         }
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .background(Color.retroBlack.opacity(0.5))
-                        .cornerRadius(8)
-                        .foregroundColor(.white)
+                        .foregroundColor(.white.opacity(0.8))
+                        .background(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(Color.white.opacity(0.06))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .strokeBorder(Color.retroCyan.opacity(0.3), lineWidth: 1)
+                        )
                     }
+                    .buttonStyle(PlainButtonStyle())
 
                     Spacer()
 
                     Button(action: {
-                        // Reset to last 7 days
                         startDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
                         endDate = Date()
                         viewModel.customStartDate = startDate
@@ -648,13 +715,22 @@ public struct SyncLogViewer: View {
                         HapticFeedbackService.shared.playSelection()
 #endif
                     }) {
-                        Text("Reset")
-                            .padding(.horizontal, 12)
+                        Text("RESET")
+                            .font(.system(size: 10, weight: .heavy))
+                            .tracking(0.8)
+                            .padding(.horizontal, 10)
                             .padding(.vertical, 6)
-                            .background(Color.retroPurple.opacity(0.7))
-                            .cornerRadius(8)
-                            .foregroundColor(.white)
+                            .foregroundColor(.retroPurple)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .fill(Color.retroPurple.opacity(0.15))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .strokeBorder(Color.retroPurple.opacity(0.5), lineWidth: 1)
+                            )
                     }
+                    .buttonStyle(PlainButtonStyle())
                 }
 #if !os(tvOS)
                 if showDateRangePicker {
@@ -671,16 +747,37 @@ public struct SyncLogViewer: View {
                                 viewModel.customEndDate = endDate
                             }
                     }
-                    .padding()
-                    .background(Color.retroBlack.opacity(0.3))
-                    .cornerRadius(8)
+                    .padding(10)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(Color.white.opacity(0.05))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .strokeBorder(Color.retroPurple.opacity(0.3), lineWidth: 1)
+                    )
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
 #endif
             }
         }
-        .padding()
-        .background(Color.retroBlack.opacity(0.2))
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color.black.opacity(0.88))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [Color.retroPurple.opacity(0.65), Color.retroPink.opacity(0.65)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
+        )
+        .padding(.horizontal, 12)
         .transition(.move(edge: .top).combined(with: .opacity))
     }
 
@@ -689,19 +786,27 @@ public struct SyncLogViewer: View {
         let paginatedEntries = getPaginatedEntries()
 
         return ScrollView {
-            LazyVStack(spacing: 8) {
+            LazyVStack(spacing: 6) {
                 ForEach(paginatedEntries) { entry in
                     logEntryRow(entry)
                         .transition(.opacity)
                 }
 
                 if paginatedEntries.isEmpty {
-                    Text("No logs match the current filters")
-                        .foregroundColor(.gray)
-                        .padding()
+                    VStack(spacing: 8) {
+                        Image(systemName: "doc.text.magnifyingglass")
+                            .font(.system(size: 28))
+                            .foregroundColor(.retroPurple.opacity(0.5))
+                        Text("No logs match the current filters")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.white.opacity(0.4))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
                 }
             }
-            .padding()
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
         }
     }
 
@@ -718,55 +823,82 @@ public struct SyncLogViewer: View {
         return Array(viewModel.filteredEntries[startIndex..<endIndex])
     }
 
-    /// Create a log entry row
-    /// - Parameter entry: The log entry
-    /// - Returns: A view
+    /// Create a log entry row — retrowave panel card style
     private func logEntryRow(_ entry: SyncLogEntry) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                // Operation icon with glow
+                Image(systemName: entry.operation.icon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(entry.type.color)
+                    .shadow(color: entry.type.color.opacity(0.7), radius: 4)
+
                 // Timestamp
-                Text(dateFormatter.string(from: entry.timestamp))
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                Text(timeFormatter.string(from: entry.timestamp))
+                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.5))
 
                 Spacer()
 
-                // Log type badge
+                // Log type badge — neon pill style
                 Text(entry.type.rawValue.uppercased())
-                    .retroBadge(color: entry.type.color)
-
-                // Operation icon
-                Image(systemName: entry.operation.icon)
-                    .foregroundColor(entry.type.color)
+                    .font(.system(size: 9, weight: .heavy))
+                    .tracking(0.5)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .foregroundColor(.white)
+                    .background(
+                        Capsule()
+                            .fill(entry.type.color.opacity(0.3))
+                    )
+                    .overlay(
+                        Capsule()
+                            .strokeBorder(entry.type.color.opacity(0.7), lineWidth: 1)
+                    )
+                    .shadow(color: entry.type.color.opacity(0.4), radius: 3)
             }
 
             // Message
             Text(entry.message)
-                .font(.body)
-                .foregroundColor(.white)
+                .font(.system(size: 13, weight: .regular))
+                .foregroundColor(.white.opacity(0.9))
+                .lineLimit(3)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             // File if available
             if let file = entry.file {
-                HStack {
-                    Image(systemName: "doc")
-                        .foregroundColor(.gray)
+                HStack(spacing: 4) {
+                    Image(systemName: "doc.text")
+                        .font(.system(size: 10))
+                        .foregroundColor(.retroCyan.opacity(0.6))
 
                     Text(file)
-                        .font(.caption)
-                        .foregroundColor(.gray)
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundColor(.retroCyan.opacity(0.6))
                 }
             }
         }
-        .padding()
-        .background(Color.retroBlack.opacity(0.3))
-        .cornerRadius(8)
-        .retroGlowingBorder(color: entry.type.color.opacity(0.5), lineWidth: 1)
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color.black.opacity(0.6))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [entry.type.color.opacity(0.4), entry.type.color.opacity(0.15)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
     }
 
-    /// The pagination controls
+    /// The pagination controls — retrowave divider bar style
     private var paginationControls: some View {
-        HStack {
+        HStack(spacing: 16) {
             // Previous page
             Button(action: {
                 withAnimation {
@@ -777,18 +909,18 @@ public struct SyncLogViewer: View {
 #endif
             }) {
                 Image(systemName: "chevron.left")
-                    .foregroundColor(currentPage > 0 ? .white : .gray)
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(currentPage > 0 ? .retroCyan : .white.opacity(0.2))
             }
             .disabled(currentPage <= 0)
+            .buttonStyle(PlainButtonStyle())
 
             Spacer()
 
             // Page info
-            Text("Page \(currentPage + 1) of \(max(1, (viewModel.filteredEntries.count + itemsPerPage - 1) / itemsPerPage))")
-                .font(.caption)
-                .foregroundColor(.gray)
-
-            Spacer()
+            Text("\(currentPage + 1) / \(max(1, (viewModel.filteredEntries.count + itemsPerPage - 1) / itemsPerPage))")
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .foregroundColor(.white.opacity(0.6))
 
             // Items per page selector
             if #available(tvOS 17.0, *) {
@@ -798,18 +930,24 @@ public struct SyncLogViewer: View {
                     Button("50 per page") { itemsPerPage = 50 }
                     Button("100 per page") { itemsPerPage = 100 }
                 } label: {
-                    HStack {
-                        Text("\(itemsPerPage) per page")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-
+                    HStack(spacing: 4) {
+                        Text("\(itemsPerPage)")
+                            .font(.system(size: 11, weight: .medium, design: .monospaced))
                         Image(systemName: "chevron.down")
-                            .font(.caption)
-                            .foregroundColor(.gray)
+                            .font(.system(size: 8, weight: .bold))
                     }
+                    .foregroundColor(.retroPurple)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                            .fill(Color.retroPurple.opacity(0.12))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                            .strokeBorder(Color.retroPurple.opacity(0.3), lineWidth: 1)
+                    )
                 }
-            } else {
-                // Fallback on earlier versions
             }
 
             Spacer()
@@ -825,12 +963,29 @@ public struct SyncLogViewer: View {
 #endif
             }) {
                 Image(systemName: "chevron.right")
-                    .foregroundColor(currentPage < (viewModel.filteredEntries.count - 1) / itemsPerPage ? .white : .gray)
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(currentPage < (viewModel.filteredEntries.count - 1) / itemsPerPage ? .retroCyan : .white.opacity(0.2))
             }
             .disabled(currentPage >= (viewModel.filteredEntries.count - 1) / itemsPerPage)
+            .buttonStyle(PlainButtonStyle())
         }
-        .padding()
-        .background(Color.retroBlack.opacity(0.2))
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(
+            Rectangle()
+                .fill(Color.black.opacity(0.5))
+        )
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [.retroPurple.opacity(0.4), .retroPink.opacity(0.4)],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(height: 1)
+        }
     }
 }
 
