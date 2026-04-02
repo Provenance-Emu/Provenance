@@ -659,20 +659,19 @@ extension PVRetroArchCoreCore: PVDOSSystemResponderClient, KeyboardResponder, Mo
     }
     public var gameSupportsMouse: Bool {
         guard virtualInputSupport.supportsMouse else { return false }
-        // Always delegate to MouseGameRegistry when a valid system identifier is available.
-        // The registry handles both always-mouse systems (DOS, Macintosh, etc.) and
+        // Always delegate to MouseGameRegistry for per-game detection.
+        // The registry handles always-mouse systems (DOS, Macintosh, etc.) and
         // conditional systems (Dreamcast, SNES, etc.) with per-game MD5/title checks.
-        // This prevents false positives where e.g. all Dreamcast games show a cursor.
-        if let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") {
-            return MouseGameRegistry.shared.gameSupportsMouse(
-                systemIdentifier: sysID,
-                md5: romMD5,
-                title: romName
-            )
+        // Without this, generic RetroArch sessions (systemIdentifier = "com.provenance.retroarch")
+        // would incorrectly show the cursor for all games on mouse-capable cores like Flycast.
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else {
+            return false
         }
-        // Unknown system identifier — fall back to the static support table.
-        // This only triggers for unresolved/generic RetroArch sessions.
-        return true
+        return MouseGameRegistry.shared.gameSupportsMouse(
+            systemIdentifier: sysID,
+            md5: romMD5,
+            title: romName
+        )
     }
     public var requiresMouse: Bool {
         virtualInputSupport.requiresMouse
