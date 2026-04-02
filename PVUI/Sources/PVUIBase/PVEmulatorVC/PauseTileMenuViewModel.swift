@@ -175,10 +175,53 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         #endif
 
+        // Root **SETTINGS** section (after STATES): core, app, logs, RetroArch, AirPlay, shader, etc.
+        var settingsTiles: [PauseMenuTile] = []
+
+        gameTiles.append(PauseMenuTile(id: "gameInfo", icon: "info.circle", label: String(localized: "Game Info"), colorKey: .blue))
+
+        // RetroArch — libretro cores only
+        if emulatorVC.core.coreIdentifier?.contains("libretro") == true {
+            settingsTiles.append(PauseMenuTile(
+                id: "retroArchMenu",
+                icon: "square.grid.2x2",
+                label: String(localized: "RetroArch Menu"),
+                colorKey: .purple,
+                dismissOnTap: false
+            ))
+            if PauseMenuViewRegistry.retroArchSettingsView() != nil {
+                settingsTiles.append(PauseMenuTile(
+                    id: "retroArchSettings",
+                    icon: "gearshape.2",
+                    label: String(localized: "RetroArch Settings"),
+                    colorKey: .cyan,
+                    dismissOnTap: false
+                ))
+            }
+        }
+
+        settingsTiles.append(PauseMenuTile(id: "menu_core", icon: "cpu", label: String(localized: "Core"), colorKey: .purple, dismissOnTap: false, destinationRoute: .core))
+        settingsTiles.append(PauseMenuTile(
+            id: "appSettings",
+            icon: "gearshape",
+            label: String(localized: "App Settings"),
+            description: String(localized: "Open global app settings"),
+            colorKey: .teal,
+            dismissOnTap: false
+        ))
+        settingsTiles.append(PauseMenuTile(
+            id: "logViewer",
+            icon: "doc.text.magnifyingglass",
+            label: String(localized: "Log Viewer"),
+            description: String(localized: "Open runtime logs"),
+            colorKey: .cyan,
+            dismissOnTap: false
+        ))
+
         // AirPlay — iOS / Catalyst only; hidden until video AirPlay is implemented
         #if os(iOS) || targetEnvironment(macCatalyst)
         if featureFlags.airPlayMenu || PVFeatureFlagsManager.shared.airPlayMenu {
-            gameTiles.append(PauseMenuTile(
+            settingsTiles.append(PauseMenuTile(
                 id: "airPlay",
                 icon: "airplayaudio",
                 label: String(localized: "AirPlay"),
@@ -188,31 +231,6 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
         #endif
-
-        gameTiles.append(PauseMenuTile(id: "gameInfo", icon: "info.circle", label: String(localized: "Game Info"), colorKey: .blue))
-
-        // RetroArch tiles — root-level for libretro cores
-        if emulatorVC.core.coreIdentifier?.contains("libretro") == true {
-            // Internal RetroArch menu (RGUI/XMB) toggle — handled via dismissThenResumeAndRun
-            gameTiles.append(PauseMenuTile(
-                id: "retroArchMenu",
-                icon: "square.grid.2x2",
-                label: String(localized: "RetroArch Menu"),
-                colorKey: .purple,
-                dismissOnTap: false
-            ))
-
-            // Provenance-managed RetroArch settings sheet
-            if PauseMenuViewRegistry.retroArchSettingsView() != nil {
-                gameTiles.append(PauseMenuTile(
-                    id: "retroArchSettings",
-                    icon: "gearshape.2",
-                    label: String(localized: "RetroArch Settings"),
-                    colorKey: .cyan,
-                    dismissOnTap: false
-                ))
-            }
-        }
 
         // Input/controller-related tiles shown under **Controls** (not on the root GAME grid).
         var controlsTiles: [PauseMenuTile] = []
@@ -286,21 +304,33 @@ final class PauseTileMenuViewModel: ObservableObject {
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
         built.append(PauseMenuTileSection(id: "statesData", title: String(localized: "STATES"), tiles: stateTiles))
 
-        // ── QUICK SETTINGS section ──────────────────────────────────────
+        // ── QUICK SETTINGS (gameplay toggles); video/skins live in **DISPLAY** at root end.
         var displayTiles: [PauseMenuTile] = []
         displayTiles.append(Self.fastForwardToggleTile(core: emulatorVC.core))
         displayTiles.append(Self.gameSpeedTile(core: emulatorVC.core))
-        displayTiles.append(Self.fpsCounterToggleTile(showFPSCount: showFPSCount))
         let rewindQuickControlAdded = Self.appendRewindTileIfSupported(
             to: &displayTiles,
             core: emulatorVC.core,
             coreOptionsMD5: coreOptionsMD5
         )
-        displayTiles.append(Self.filterCycleTile(metalFilterMode: metalFilterMode))
-        // Shader settings tile — shown when the current filter has adjustable parameters
+
+        var screenDisplayTiles: [PauseMenuTile] = [
+            PauseMenuTile(
+                id: "menu_skins",
+                icon: "paintbrush.pointed",
+                label: String(localized: "Skins"),
+                description: String(localized: "Controller skins and on-screen layout"),
+                colorKey: .orange,
+                dismissOnTap: false,
+                destinationRoute: .skins
+            ),
+            Self.fpsCounterToggleTile(showFPSCount: showFPSCount),
+            Self.filterCycleTile(metalFilterMode: metalFilterMode)
+        ]
+        // Shader parameters live under **SETTINGS** with other configuration tiles.
         let currentFilter = MetalFilterModeOption.parseCurrentFilter(from: metalFilterMode)
         if currentFilter.hasEditableParameters {
-            displayTiles.append(PauseMenuTile(
+            settingsTiles.append(PauseMenuTile(
                 id: "shaderSettings",
                 icon: "slider.horizontal.3",
                 label: String(localized: "Shader Settings"),
@@ -320,7 +350,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         #if os(iOS)
         if emulatorVC.core.supportsAudioVisualizer {
-            displayTiles.append(Self.audioVisualizerTile(currentMode: emulatorVC.visualizerMode))
+            screenDisplayTiles.append(Self.audioVisualizerTile(currentMode: emulatorVC.visualizerMode))
         }
         #endif
         #if canImport(UIKit) && !os(tvOS)
@@ -331,8 +361,11 @@ final class PauseTileMenuViewModel: ObservableObject {
             controlsTiles.append(mouseTile)
         }
         #endif
+        if !settingsTiles.isEmpty {
+            built.append(PauseMenuTileSection(id: "settingsData", title: String(localized: "SETTINGS"), tiles: settingsTiles))
+        }
         if !displayTiles.isEmpty {
-            built.append(PauseMenuTileSection(id: "display", title: String(localized: "QUICK SETTINGS"), tiles: displayTiles))
+            built.append(PauseMenuTileSection(id: "quickSettingsData", title: String(localized: "QUICK SETTINGS"), tiles: displayTiles))
         }
         if !recordingTiles.isEmpty {
             built.append(PauseMenuTileSection(id: "recording", title: String(localized: "RECORDING"), tiles: recordingTiles))
@@ -498,27 +531,13 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
 
         let menuTiles: [PauseMenuTile] = [
-            PauseMenuTile(id: "menu_recording", icon: "record.circle", label: String(localized: "Recording"), colorKey: .pink, dismissOnTap: false, destinationRoute: .recording),
-            PauseMenuTile(id: "menu_core", icon: "cpu", label: String(localized: "Core"), colorKey: .purple, dismissOnTap: false, destinationRoute: .core),
-            PauseMenuTile(id: "menu_skins", icon: "paintbrush.pointed", label: String(localized: "Skins"), colorKey: .orange, dismissOnTap: false, destinationRoute: .skins),
-            PauseMenuTile(
-                id: "appSettings",
-                icon: "gearshape",
-                label: String(localized: "App Settings"),
-                description: String(localized: "Open global app settings"),
-                colorKey: .teal,
-                dismissOnTap: false
-            ),
-            PauseMenuTile(
-                id: "logViewer",
-                icon: "doc.text.magnifyingglass",
-                label: String(localized: "Log Viewer"),
-                description: String(localized: "Open runtime logs"),
-                colorKey: .cyan,
-                dismissOnTap: false
-            )
+            PauseMenuTile(id: "menu_recording", icon: "record.circle", label: String(localized: "Recording"), colorKey: .pink, dismissOnTap: false, destinationRoute: .recording)
         ]
         built.insert(PauseMenuTileSection(id: "menu", title: String(localized: "MENU"), tiles: menuTiles), at: 2)
+
+        if !screenDisplayTiles.isEmpty {
+            built.append(PauseMenuTileSection(id: "displayData", title: String(localized: "DISPLAY"), tiles: screenDisplayTiles))
+        }
 
         // Build description lookup table
         var descs: [String: String] = [:]
@@ -548,7 +567,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         switch route {
         case .root:
             // Peer sections on the root grid (like STATES); CONTROLS is not a MENU drill-in.
-            let rootSectionOrder = ["game", "statesData", "controlsData", "display", "menu"]
+            let rootSectionOrder = ["game", "statesData", "settingsData", "controlsData", "quickSettingsData", "menu", "displayData"]
             let byID = Dictionary(uniqueKeysWithValues: rootSections.map { ($0.id, $0) })
             return rootSectionOrder.compactMap { byID[$0] }
         case .states:
