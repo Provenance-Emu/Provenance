@@ -1887,7 +1887,11 @@ private struct VideoSection: View {
                             icon: .sfSymbol(scalingMode.symbolName),
                             showChevron: false)
             }
+            #if os(tvOS)
+            .pickerStyle(.automatic)
+            #else
             .pickerStyle(.navigationLink)
+            #endif
             ThemedToggle(isOn: $imageSmoothing) {
                 SettingsRow(title: "Image Smoothing",
                             subtitle: "Smooth scaled graphics. Off for sharp pixels.",
