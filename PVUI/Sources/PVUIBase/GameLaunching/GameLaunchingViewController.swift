@@ -1263,20 +1263,32 @@ extension GameLaunchingViewController where Self: UIViewController {
     func openSaveState(_ saveState: PVSaveState) async {
 
         if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
-            // Check for core version mismatch before loading.
-            // Enable UIKit controller interaction so MFi gamepads can navigate the alert
-            // on tvOS (GCEventViewController intercepts input while the game is running).
-            let pvCore = saveState.core
-            let presenter = (gameVC as? UIViewController) ?? self
-            gameVC.enableControllerInput(true)
-            let shouldLoad = await SaveStateVersionChecker.confirmLoad(
-                saveState: saveState,
-                overrideCore: pvCore,
-                on: presenter
-            )
-            gameVC.enableControllerInput(false)
-            guard shouldLoad else {
-                return
+            // Skip the version mismatch prompt if SceneCoordinator already confirmed
+            // this save state during the pre-launch flow (prevents double-alert).
+            let alreadyConfirmed: Bool
+            if AppState.shared.emulationUIState.confirmedMismatchSaveStateID == saveState.id {
+                AppState.shared.emulationUIState.confirmedMismatchSaveStateID = nil
+                alreadyConfirmed = true
+            } else {
+                alreadyConfirmed = false
+            }
+
+            if !alreadyConfirmed {
+                // Check for core version mismatch before loading.
+                // Enable UIKit controller interaction so MFi gamepads can navigate the alert
+                // on tvOS (GCEventViewController intercepts input while the game is running).
+                let pvCore = saveState.core
+                let presenter = (gameVC as? UIViewController) ?? self
+                gameVC.enableControllerInput(true)
+                let shouldLoad = await SaveStateVersionChecker.confirmLoad(
+                    saveState: saveState,
+                    overrideCore: pvCore,
+                    on: presenter
+                )
+                gameVC.enableControllerInput(false)
+                guard shouldLoad else {
+                    return
+                }
             }
 
             try? saveState.realm!.write {
