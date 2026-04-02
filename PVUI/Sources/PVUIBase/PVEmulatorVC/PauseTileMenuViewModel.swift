@@ -214,7 +214,10 @@ final class PauseTileMenuViewModel: ObservableObject {
             }
         }
 
-        gameTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"), isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
+        // Input/controller-related tiles shown under **Controls** (not on the root GAME grid).
+        var controlsTiles: [PauseMenuTile] = []
+        controlsTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"), isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
+
         if (featureFlags.netplayEnabled || PVFeatureFlagsManager.shared.netplayEnabled) && Self.coreSupportsNetplay(emulatorVC) {
             gameTiles.append(PauseMenuTile(
                 id: "networkPlay",
@@ -228,7 +231,7 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         #if os(iOS) || targetEnvironment(macCatalyst)
         if featureFlags.companionController || PVFeatureFlagsManager.shared.companionController {
-            gameTiles.append(PauseMenuTile(
+            controlsTiles.append(PauseMenuTile(
                 id: "companionController",
                 icon: "iphone.and.arrow.forward",
                 label: String(localized: "Companion"),
@@ -243,7 +246,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         if let player1 = PVControllerManager.shared.player1 {
 #if os(iOS)
             if Defaults[.missingButtonsAlwaysOn] || player1.extendedGamepad != nil || wantsStartSelectInMenu {
-                gameTiles.append(PauseMenuTile(
+                controlsTiles.append(PauseMenuTile(
                     id: "p1Controls",
                     icon: "gamecontroller",
                     label: String(localized: "P1 Controls"),
@@ -252,7 +255,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             }
 #else
             if player1.extendedGamepad != nil || wantsStartSelectInMenu {
-                gameTiles.append(PauseMenuTile(
+                controlsTiles.append(PauseMenuTile(
                     id: "p1Controls",
                     icon: "gamecontroller",
                     label: String(localized: "P1 Controls"),
@@ -263,7 +266,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         if let player2 = PVControllerManager.shared.player2,
            player2.extendedGamepad != nil || wantsStartSelectInMenu {
-            gameTiles.append(PauseMenuTile(
+            controlsTiles.append(PauseMenuTile(
                 id: "p2Controls",
                 icon: "gamecontroller",
                 label: String(localized: "P2 Controls"),
@@ -271,7 +274,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
         if gameSystemID == n64ID {
-            gameTiles.append(PauseMenuTile(
+            controlsTiles.append(PauseMenuTile(
                 id: "n64PakSlots",
                 icon: "gamecontroller.fill",
                 label: String(localized: "Pak Slots"),
@@ -282,29 +285,6 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
         built.append(PauseMenuTileSection(id: "statesData", title: String(localized: "STATES"), tiles: stateTiles))
-
-        let menuTiles: [PauseMenuTile] = [
-            PauseMenuTile(id: "menu_recording", icon: "record.circle", label: String(localized: "Recording"), colorKey: .pink, dismissOnTap: false, destinationRoute: .recording),
-            PauseMenuTile(id: "menu_core", icon: "cpu", label: String(localized: "Core"), colorKey: .purple, dismissOnTap: false, destinationRoute: .core),
-            PauseMenuTile(id: "menu_skins", icon: "paintbrush.pointed", label: String(localized: "Skins"), colorKey: .orange, dismissOnTap: false, destinationRoute: .skins),
-            PauseMenuTile(
-                id: "appSettings",
-                icon: "gearshape",
-                label: String(localized: "App Settings"),
-                description: String(localized: "Open global app settings"),
-                colorKey: .teal,
-                dismissOnTap: false
-            ),
-            PauseMenuTile(
-                id: "logViewer",
-                icon: "doc.text.magnifyingglass",
-                label: String(localized: "Log Viewer"),
-                description: String(localized: "Open runtime logs"),
-                colorKey: .cyan,
-                dismissOnTap: false
-            )
-        ]
-        built.append(PauseMenuTileSection(id: "menu", title: String(localized: "MENU"), tiles: menuTiles))
 
         // ── QUICK SETTINGS section ──────────────────────────────────────
         var displayTiles: [PauseMenuTile] = []
@@ -329,11 +309,11 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
         if let rumbleTile = Self.rumbleToggleTile(core: emulatorVC.core, hapticFeedbackEnabled: hapticFeedbackEnabled) {
-            displayTiles.append(rumbleTile)
+            controlsTiles.append(rumbleTile)
         }
         if emulatorVC.virtualInputState.supportsMouse {
-            displayTiles.append(Self.mouseInputSourceTile(source: Defaults[.mouseInputSource]))
-            displayTiles.append(Self.mouseSensitivityTile(sensitivity: Defaults[.mouseSensitivity]))
+            controlsTiles.append(Self.mouseInputSourceTile(source: Defaults[.mouseInputSource]))
+            controlsTiles.append(Self.mouseSensitivityTile(sensitivity: Defaults[.mouseSensitivity]))
         }
         if let jitTile = Self.jitStatusTile(core: emulatorVC.core, indicatorRegistry: indicatorRegistry) {
             displayTiles.append(jitTile)
@@ -345,10 +325,10 @@ final class PauseTileMenuViewModel: ObservableObject {
         #endif
         #if canImport(UIKit) && !os(tvOS)
         if let keyboardTile = Self.keyboardToggleTile(emulatorVC: emulatorVC) {
-            displayTiles.append(keyboardTile)
+            controlsTiles.append(keyboardTile)
         }
         if let mouseTile = Self.mouseToggleTile(emulatorVC: emulatorVC) {
-            displayTiles.append(mouseTile)
+            controlsTiles.append(mouseTile)
         }
         #endif
         if !displayTiles.isEmpty {
@@ -377,7 +357,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 // Show "!" badge when this is a known Transfer Pak game but nothing is configured —
                 // this nudges the user to set it up without blocking launch.
                 let badge: String? = configuredCount > 0 ? "\(configuredCount)" : "!"
-                coreTiles.append(PauseMenuTile(
+                controlsTiles.append(PauseMenuTile(
                     id: "transferPak",
                     icon: "arrow.triangle.2.circlepath",
                     label: String(localized: "Transfer Pak"),
@@ -404,7 +384,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         // Port device type picker — shown when core supports per-port device selection
         if let portDeviceCore = emulatorVC.core as? (any PortDeviceConfigurable),
            !portDeviceCore.controllerPortDescriptors.isEmpty {
-            coreTiles.append(PauseMenuTile(
+            controlsTiles.append(PauseMenuTile(
                 id: "portDevices",
                 icon: "gamecontroller",
                 label: String(localized: "Port Devices"),
@@ -420,7 +400,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         // settings via the classic RetroMenuView on macCatalyst.
         #if canImport(CoreMIDI) && !os(tvOS) && !targetEnvironment(macCatalyst)
         if emulatorVC.core.supportsMIDI {
-            coreTiles.append(PauseMenuTile(
+            controlsTiles.append(PauseMenuTile(
                 id: "midiDevice",
                 icon: "pianokeys",
                 label: String(localized: "MIDI Device"),
@@ -431,7 +411,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         #endif
 
         if Self.isRetroArchMIDICapable(emulatorVC: emulatorVC) {
-            coreTiles.append(PauseMenuTile(
+            controlsTiles.append(PauseMenuTile(
                 id: "retroArchMIDIToggle",
                 icon: Defaults[.retroArchMIDIEnabled] ? "pianokeys" : "pianokeys.inverse",
                 label: String(localized: "RetroArch MIDI"),
@@ -441,7 +421,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
         if Self.hasLegacyPortDeviceOptions(core: emulatorVC.core) {
-            coreTiles.append(PauseMenuTile(
+            controlsTiles.append(PauseMenuTile(
                 id: "legacyPortDevices",
                 icon: "gamecontroller",
                 label: String(localized: "Port Devices (Legacy)"),
@@ -454,13 +434,22 @@ final class PauseTileMenuViewModel: ObservableObject {
         if let actions = (emulatorVC.core as? CoreActions)?.coreActions {
             let isPaletteProviding = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
             let isLibretro = emulatorVC.core.coreIdentifier?.contains("libretro") == true
+            let retroArchInputActions: Set<String> = [
+                RetroArchCoreActionTitles.toggleTouchKeyboard,
+                RetroArchCoreActionTitles.toggleTouchMouse
+            ]
+            let actionsForControlsRoute = actions.filter { retroArchInputActions.contains($0.title) }
             let filteredActions = actions.filter { action in
+                if retroArchInputActions.contains(action.title) { return false }
                 if isPaletteProviding && action.title == changePaletteLegacyActionTitle { return false }
                 if isLibretro && action.title == RetroArchCoreActionTitles.internalMenu { return false }
                 return true
             }
             if !filteredActions.isEmpty {
                 coreTiles += CoreActionTileProvider.tiles(from: filteredActions)
+            }
+            if !actionsForControlsRoute.isEmpty {
+                controlsTiles += CoreActionTileProvider.tiles(from: actionsForControlsRoute)
             }
         }
 
@@ -504,6 +493,46 @@ final class PauseTileMenuViewModel: ObservableObject {
             built.append(PauseMenuTileSection(id: "core", title: String(localized: "CORE"), tiles: coreTiles))
         }
 
+        if !controlsTiles.isEmpty {
+            built.append(PauseMenuTileSection(id: "controls", title: String(localized: "CONTROLS"), tiles: controlsTiles))
+        }
+
+        var menuTiles: [PauseMenuTile] = [
+            PauseMenuTile(id: "menu_recording", icon: "record.circle", label: String(localized: "Recording"), colorKey: .pink, dismissOnTap: false, destinationRoute: .recording)
+        ]
+        if !controlsTiles.isEmpty {
+            menuTiles.append(PauseMenuTile(
+                id: "menu_controls",
+                icon: "gamecontroller.fill",
+                label: String(localized: "Controls"),
+                description: String(localized: "Profiles, port devices, touch keyboard and mouse, rumble, and MIDI"),
+                colorKey: .purple,
+                dismissOnTap: false,
+                destinationRoute: .controls
+            ))
+        }
+        menuTiles.append(contentsOf: [
+            PauseMenuTile(id: "menu_core", icon: "cpu", label: String(localized: "Core"), colorKey: .purple, dismissOnTap: false, destinationRoute: .core),
+            PauseMenuTile(id: "menu_skins", icon: "paintbrush.pointed", label: String(localized: "Skins"), colorKey: .orange, dismissOnTap: false, destinationRoute: .skins),
+            PauseMenuTile(
+                id: "appSettings",
+                icon: "gearshape",
+                label: String(localized: "App Settings"),
+                description: String(localized: "Open global app settings"),
+                colorKey: .teal,
+                dismissOnTap: false
+            ),
+            PauseMenuTile(
+                id: "logViewer",
+                icon: "doc.text.magnifyingglass",
+                label: String(localized: "Log Viewer"),
+                description: String(localized: "Open runtime logs"),
+                colorKey: .cyan,
+                dismissOnTap: false
+            )
+        ])
+        built.insert(PauseMenuTileSection(id: "menu", title: String(localized: "MENU"), tiles: menuTiles), at: 2)
+
         // Build description lookup table
         var descs: [String: String] = [:]
         for section in built {
@@ -539,8 +568,8 @@ final class PauseTileMenuViewModel: ObservableObject {
         case .options:
             let optionIDs: Set<String> = [
                 "fastForwardToggle", "gameSpeedCycle", "fpsCounterToggle", "rewindToggle",
-                "filterCycle", "shaderSettings", "rumbleToggle", "airPlay", "keyboardToggle", "mouseToggle",
-                "audioVisualizer", "mouseInputSource", "mouseSensitivity"
+                "filterCycle", "shaderSettings", "airPlay",
+                "audioVisualizer"
             ]
             let tiles = tiles(matching: optionIDs, from: rootSections)
             return [PauseMenuTileSection(id: "options_route", title: String(localized: "OPTIONS"), tiles: tiles)]
@@ -548,6 +577,9 @@ final class PauseTileMenuViewModel: ObservableObject {
             let recordingIDs: Set<String> = ["recording", "broadcast", "saveClip", "cameraPosition"]
             let tiles = tiles(matching: recordingIDs, from: rootSections)
             return [PauseMenuTileSection(id: "recording_route", title: String(localized: "RECORDING"), tiles: tiles)]
+        case .controls:
+            let section = rootSections.first(where: { $0.id == "controls" })
+            return section.map { [PauseMenuTileSection(id: "controls_route", title: String(localized: "CONTROLS"), tiles: $0.tiles)] } ?? []
         case .core:
             let core = rootSections.first(where: { $0.id == "core" })
             return core.map { [PauseMenuTileSection(id: "core_route", title: String(localized: "CORE"), tiles: $0.tiles)] } ?? []
