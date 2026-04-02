@@ -68,7 +68,7 @@ typedef enum PV3DSButton: NSInteger PV3DSButton;
 - (void) setupView;
 - (void) swap:(BOOL)pressed;
 - (void) rotate:(BOOL)pressed;
-- (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;
+- (void) gamepadEventOnPad:(int)player button:(PV3DSButton)button action:(int)action;
 - (void) gamepadEventIrRecenter:(int)action;
 - (BOOL) setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
 -(void) controllerConnected:(NSNotification *)notification;

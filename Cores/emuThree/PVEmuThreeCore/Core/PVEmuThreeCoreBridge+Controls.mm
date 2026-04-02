@@ -167,7 +167,7 @@ extern bool _isInitialized;
     }
 }
 
-- (void)gamepadEventOnPad:(int)pad button:(int)button action:(int)action
+- (void)gamepadEventOnPad:(int)pad button:(PV3DSButton)button action:(int)action
 {
     GCControllerButtonInput *selectInput = self.controller1.extendedGamepad.buttonOptions;
     if (@available(iOS 14.5, tvOS 14.5, *)) {
