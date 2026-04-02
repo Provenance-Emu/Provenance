@@ -873,6 +873,10 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 let optBefore = (try? String(contentsOfFile: hatariOptPath, encoding: .utf8)) ?? "(not found)"
                 DLOG("Hatari: hatari_boot_hd BEFORE fix in \(hatariOptPath):\n\(optBefore)")
                 optionValues += "hatari_boot_hd = \"disabled\"\n"
+                // Prevent hatari from opening its internal SDL GUI dialog on startup.
+                // The dialog calls input_gui() before RetroArch sets input callbacks,
+                // causing a NULL pointer crash (EXC_BAD_ACCESS in input_gui+60).
+                optionValues += "hatari_start_in_ui = \"disabled\"\n"
                 optionValuesFile = "Hatari/Hatari.opt"
                 optionOverwrite = true
                 ILOG("Hatari: queued hatari_boot_hd = \"disabled\" → will overwrite \(hatariOptPath)")
