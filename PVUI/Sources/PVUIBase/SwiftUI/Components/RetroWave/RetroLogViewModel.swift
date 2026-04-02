@@ -114,7 +114,7 @@ public final class RetroLogViewModel: ObservableObject {
     public var displayedLogs: [LogEntry] {
         let filtered = logs.filter { log in
             (searchText.isEmpty || log.message.localizedCaseInsensitiveContains(searchText)) &&
-            log.level.rawValue >= minLogLevel.rawValue
+            log.level >= minLogLevel
         }
 
         switch sortOrder {
@@ -148,6 +148,7 @@ public final class RetroLogViewModel: ObservableObject {
     }
 
     /// Builds a device/app info header string.
+    @MainActor
     private func buildDeviceInfo() -> String {
         var info = "=== Provenance Log Export ===\n"
         info += "Date: \(DateFormatter.localizedString(from: Date(), dateStyle: .full, timeStyle: .long))\n"
@@ -180,6 +181,8 @@ public final class RetroLogViewModel: ObservableObject {
 
     /// Exports the currently displayed logs as a plain-text file in the temp directory.
     /// - Returns: URL of the created `.txt` file, or `nil` on failure.
+    /// Must be called from the main actor to safely read `displayedLogs`.
+    @MainActor
     public func exportLogsAsText(options: LogExportOptions = .init()) -> URL? {
         var content = ""
         if options.includeDeviceInfo {
@@ -205,6 +208,8 @@ public final class RetroLogViewModel: ObservableObject {
 
     /// Exports logs and optional RetroArch logs as a ZIP bundle in the temp directory.
     /// - Returns: URL of the created `.zip` file, or `nil` on failure.
+    /// Must be called from the main actor to safely read `displayedLogs`.
+    @MainActor
     public func exportLogsAsZip(options: LogExportOptions = .init()) -> URL? {
         let fm = FileManager.default
         let formatter = DateFormatter()
