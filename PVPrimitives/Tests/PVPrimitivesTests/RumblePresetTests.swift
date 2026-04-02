@@ -102,10 +102,9 @@ final class RumblePresetTests: XCTestCase {
         XCTAssertEqual(names.count, Set(names).count, "All built-in preset names should be unique")
     }
 
-    func testBuiltInFromProfile_n64() {
-        let preset = RumblePreset.builtIns.first { $0.name == "N64 Rumble Pak" }
-        XCTAssertNotNil(preset)
-        XCTAssertEqual(preset?.lowFrequencyScale, RumbleSystemProfile.n64RumblePak.lowFrequencyScale, accuracy: 0.001)
+    func testBuiltInFromProfile_n64() throws {
+        let preset = try XCTUnwrap(RumblePreset.builtIns.first { $0.name == "N64 Rumble Pak" })
+        XCTAssertEqual(preset.lowFrequencyScale, RumbleSystemProfile.n64RumblePak.lowFrequencyScale, accuracy: 0.001)
     }
 
     // MARK: - Codable stability

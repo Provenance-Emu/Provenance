@@ -35,6 +35,8 @@ let package = Package(
         .package(path: "../PVEmulatorCore"),
         .package(path: "../PVArchiving"),
         .package(path: "../PVLibrary"),
+        /// Direct dependency so `PVUIBase` can `import PVSystems` (`SystemIdentifier` cheat lookup helpers).
+        .package(path: "../PVPrimitives"),
         .package(path: "../PVLogging"),
         .package(path: "../PVPatreon"),
         .package(path: "../PVSupport"),
@@ -122,6 +124,7 @@ let package = Package(
                 "PVHelp",
                 "PVArchiving",
                 "PVLibrary",
+                .product(name: "PVPrimitives", package: "PVPrimitives"),
                 "PVLogging",
                 .product(name: "PVAppIntents", package: "PVAppIntents", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
                 .product(name: "PVLiveActivities", package: "PVLiveActivities", condition: .when(platforms: [.iOS])),
