@@ -7614,6 +7614,9 @@ bool core_set_cheat(retro_ctx_cheat_info_t *info)
    }
 #endif
 
+   if (!runloop_st->current_core.retro_cheat_set)
+      return false;
+
    runloop_st->current_core.retro_cheat_set(info->index, info->enabled, info->code);
 
 #if defined(HAVE_RUNAHEAD) && (defined(HAVE_DYNAMIC) || defined(HAVE_DYLIB))
@@ -7654,7 +7657,8 @@ bool core_reset_cheat(void)
    }
 #endif
 
-   runloop_st->current_core.retro_cheat_reset();
+   if (runloop_st->current_core.retro_cheat_reset)
+      runloop_st->current_core.retro_cheat_reset();
 
 #if defined(HAVE_RUNAHEAD) && (defined(HAVE_DYNAMIC) || defined(HAVE_DYLIB))
    if (   (want_runahead)
