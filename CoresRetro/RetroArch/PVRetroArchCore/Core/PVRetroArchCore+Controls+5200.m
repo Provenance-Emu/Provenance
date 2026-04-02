@@ -52,21 +52,25 @@ extern GCController *touch_controller;
     static float xAxis=0;
     static float yAxis=0;
     switch (button) {
+        // The 5200 had an analog joystick — map to leftThumbstick so the
+        // libretro core (a800/atari800) receives RETRO_DEVICE_INDEX_ANALOG_LEFT.
+        // Mapping to dpad only sends digital RETRO_DEVICE_JOYPAD bits which
+        // the core ignores for joystick movement.
         case(PV5200ButtonUp):
             yAxis=pressed?(!xAxis?1.0:0.5):0;
-            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PV5200ButtonDown):
             yAxis=pressed?(!xAxis?-1.0:-0.5):0;
-            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PV5200ButtonLeft):
             xAxis=pressed?(!yAxis?-1.0:-0.5):0;
-            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PV5200ButtonRight):
             xAxis=pressed?(!yAxis?1.0:0.5):0;
-            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PV5200ButtonFire1):
             [touch_controller.extendedGamepad.buttonA setValue:pressed?1:0];
