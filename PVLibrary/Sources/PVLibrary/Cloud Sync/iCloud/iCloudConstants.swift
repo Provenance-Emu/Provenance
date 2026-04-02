@@ -97,16 +97,32 @@ public enum iCloudConstants {
     /// In production/TestFlight builds the dev container is added as a fallback so that
     /// records synced during development are still readable without re-uploading to production.
     /// Writes always go to `container` (primary) — fallbacks are read-only.
-    public static let fallbackContainers: [CKContainer] = {
+    ///
+    /// The dev container is validated lazily: if the first access produces a `badContainer`
+    /// error (code 5), `invalidateFallbackContainers()` should be called to disable further
+    /// attempts for the rest of the session.
+    public static var fallbackContainers: [CKContainer] = {
         guard isCloudKitEntitlementPresent else { return [] }
         #if DEBUG
         // Debug: primary is dev, no fallback needed
         return []
         #else
-        // Production/TestFlight: fall back to dev container for reads
+        // Production/TestFlight: fall back to dev container for reads.
+        // Regular TestFlight users won't have access to the dev container —
+        // the caller must catch badContainer errors and call invalidateFallbackContainers().
         return [CKContainer(identifier: devContainerIdentifier)]
         #endif
     }()
+
+    /// Disables fallback containers for the remainder of this process lifetime.
+    /// Call this when a fallback fetch returns `CKError.badContainer` (code 5),
+    /// indicating the user doesn't have access to the dev container.
+    public static func invalidateFallbackContainers() {
+        if !fallbackContainers.isEmpty {
+            ILOG("[iCloudConstants] Disabling fallback containers — dev container not accessible")
+            fallbackContainers = []
+        }
+    }
 
     /// All containers in priority order: primary first, then fallbacks.
     public static var allContainers: [CKContainer] {
