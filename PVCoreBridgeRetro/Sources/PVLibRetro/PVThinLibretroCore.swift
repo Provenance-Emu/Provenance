@@ -69,6 +69,10 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     var _padTouchPrevY: Float = 0
     var _padTouchPrevValid: Bool = false
 
+    /// Set by `updateHatariTOSPath()` when TOS validation fails.
+    /// Checked by `startEmulation()` to abort before `retro_load_game` crashes.
+    private var _hatariTOSError: String?
+
     // MARK: - Skin support
 
     /// Systems that don't have adequate skin support — disable skins to show
@@ -129,6 +133,14 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             self.startMIDIDestinationObservation()
         }
 #endif
+        // Abort if Hatari TOS validation failed during applyPlatformDefaults().
+        // Without valid TOS, Hatari's Reset_Cold() fails and triggers a GUI dialog
+        // that crashes (null input_poll_cb in input_gui → EXC_BAD_ACCESS).
+        if let tosError = _hatariTOSError {
+            ELOG("ThinCore: aborting startEmulation — \(tosError)")
+            return
+        }
+
         ILOG("ThinCore: startEmulation — inputPollBlock wired, sysId=\(systemIdentifier ?? "nil")")
         super.startEmulation()
     }
@@ -377,8 +389,17 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             }
         }
 
-        if tosPath == nil {
-            WLOG("ThinCore: no TOS image found in \(biosDir) — Hatari will not boot (place tos.img in BIOS/com.provenance.atarist/)")
+        if let tos = tosPath {
+            // Validate TOS header to prevent Hatari crash.
+            // When TOS is invalid, Reset_Cold() fails → Dialog_DoProperty() → input_gui()
+            // calls null input_poll_cb → EXC_BAD_ACCESS.
+            if let validationError = Self.validateTOSHeader(atPath: tos) {
+                _hatariTOSError = validationError
+                ELOG("ThinCore: TOS validation failed: \(validationError)")
+            }
+        } else {
+            _hatariTOSError = "TOS ROM image not found. Place a valid tos.img file in the Atari ST BIOS folder (BIOS/com.provenance.atarist/)."
+            WLOG("ThinCore: no TOS image found in \(biosDir) — Hatari will crash without TOS")
         }
 
         // Rewrite szTosImageFileName in hatari.cfg and clear any Android-placeholder paths.
@@ -435,6 +456,38 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         } catch {
             WLOG("ThinCore: failed to update hatari.cfg TOS path: \(error.localizedDescription)")
         }
+    }
+
+    /// Validate a TOS image file header (mirrors hatari/src/tos.c logic).
+    /// Returns nil on success, or a user-facing error string on failure.
+    private static func validateTOSHeader(atPath path: String) -> String? {
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe) else {
+            return "Cannot read TOS ROM file."
+        }
+        guard data.count >= 16384 else {
+            return "TOS ROM is too small (\(data.count) bytes). Expected at least 16 KB."
+        }
+        guard data.count <= 1024 * 1024 else {
+            return "TOS ROM is too large (\(data.count) bytes). Expected at most 1 MB."
+        }
+
+        // RAM TOS loader header (magic 0x46FC2700) — Hatari handles these specially
+        let firstWord = UInt32(data[0]) << 24 | UInt32(data[1]) << 16 | UInt32(data[2]) << 8 | UInt32(data[3])
+        if firstWord == 0x46FC2700 { return nil }
+
+        let tosVersion = UInt16(data[2]) << 8 | UInt16(data[3])
+        let tosAddress = UInt32(data[8]) << 24 | UInt32(data[9]) << 16 | UInt32(data[10]) << 8 | UInt32(data[11])
+
+        // TOS 0.00 boot ROM (16 KB)
+        if tosVersion == 0x000 && data.count == 16384 { return nil }
+
+        if tosVersion < 0x100 || tosVersion >= 0x500 {
+            return String(format: "Invalid TOS ROM: version 0x%03X outside expected range (1.00-4.xx).", tosVersion)
+        }
+        if tosAddress != 0xE00000 && tosAddress != 0xFC0000 && tosAddress != 0xE80000 {
+            return String(format: "Invalid TOS ROM: base address 0x%06X is not a known TOS ROM address.", tosAddress)
+        }
+        return nil
     }
 
     /// Set a core option only if it hasn't been set yet (preserves user overrides).

@@ -162,7 +162,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         guard initialSyncResult != .saveFailure,
               initialSyncResult != .denied
         else {
-            ELOG("error moving files to iCloud container")
+            CloudSyncManager.syncLog.event(.sync, item: "container/setup", status: .failed, detail: "error moving files to iCloud container")
             return
         }
         DLOG("directories: \(directories)")
@@ -234,7 +234,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                     await handleFileToDownload(file, isDownloading: isDownloading, percentDownload: percentDownloaded)
                 case NSMetadataUbiquitousItemDownloadingStatusCurrent:
                     await handleDownloadedFile(file)
-                default: ILOG("Other: \(file): download status: \(downloadStatus)")
+                default: CloudSyncManager.syncLog.event(.sync, item: "container/download-status", status: .inProgress, detail: "Other: \(file): download status: \(downloadStatus)")
                 }
             }
         }
@@ -246,7 +246,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                     return
                 }
                 if let file = item.value(forAttribute: NSMetadataItemURLKey) as? URL {
-                    ILOG("file DELETED from iCloud: \(file)")
+                    CloudSyncManager.syncLog.event(.delete, item: "container/\(file.lastPathComponent)", status: .ok, detail: "file DELETED from iCloud: \(file)")
                     await deleteFromDatastore(file)
                 }
             }
@@ -254,7 +254,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         await setNewCloudFilesAvailable()
         let pendingFilesToDownloadCount = await pendingFilesToDownload.count
         let totalDownloadedCount = await downloadedCount
-        ILOG("\(notification.name): \(directories): current iteration: files pending to be downloaded: \(pendingFilesToDownloadCount), files downloaded pending to process: \(totalDownloadedCount)")
+        CloudSyncManager.syncLog.event(.sync, item: "container/iteration", status: .inProgress, detail: "\(notification.name): \(directories): files pending to be downloaded: \(pendingFilesToDownloadCount), files downloaded pending to process: \(totalDownloadedCount)")
         await hitiCloud(with: .wrench)
     }
 
@@ -286,18 +286,18 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                     }
                 }
                 try fileManager.startDownloadingUbiquitousItem(at: fileToDownload)
-                ILOG("Download started for: \(file.pathDecoded)")
+                CloudSyncManager.syncLog.event(.download, item: "container/\(file.lastPathComponent)", status: .inProgress, detail: "Download started for: \(file.pathDecoded)")
             }
         } catch {
             await errorHandler.handleError(error, file: file)
-            ELOG("Failed to start download on file \(file.pathDecoded): \(error)")
+            CloudSyncManager.syncLog.event(.download, item: "container/\(file.lastPathComponent)", status: .failed, detail: "Failed to start download on file \(file.pathDecoded): \(error)")
         }
     }
 
     func handleDownloadedFile(_ file: URL) async {
         DLOG("item up to date: \(file)")
         if !fileManager.fileExists(atPath: file.pathDecoded) {
-            WLOG("file marked as current, but does NOT exist locally. This may be a mistake, processing anyways: \(file)")
+            CloudSyncManager.syncLog.event(.download, item: "container/\(file.lastPathComponent)", status: .skipped, detail: "file marked as current, but does NOT exist locally. This may be a mistake, processing anyways: \(file)")
         }
         //in the case when we are initially turning on iCloud or the app is opened and coming into the foreground for the first time, we try to import any files already downloaded. this is to ensure that a downloaded file gets imported and we do this just when the icloud switch is turned on and subsequent updates only happen after they are downloaded
         if await status.value == .initialUpload {
@@ -324,7 +324,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
          try fileManager.removeItem(atPath: existing.pathDecoded)
          } catch {
          await errorHandler.handleError(error, file: existing)
-         ELOG("error deleting existing file \(existing) that already exists in iCloud: \(error)")
+         CloudSyncManager.syncLog.event(.delete, item: "container/\(existing.lastPathComponent)", status: .failed, detail: "error deleting existing file \(existing) that already exists in iCloud: \(error)")
          }
          }, moveClosure: { currentSource, currentDestination in
          try fileManager.setUbiquitous(true, itemAt: currentSource, destinationURL: currentDestination)
@@ -343,7 +343,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         stopObserving()
         var result: SyncResult = .indeterminate
         defer {
-            ILOG("\(directories) removed from iCloud result: \(result)")
+            CloudSyncManager.syncLog.event(.sync, item: "container/remove", status: result == .success ? .completed : .failed, detail: "\(directories) removed from iCloud result: \(result)")
         }
         let allDirectories = localAndCloudDirectories
         guard allDirectories.count > 0
@@ -368,7 +368,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                      of course there could be a real error when this happens, but this is significant enough to document in case you see it in the log.
                      */
                     await errorHandler.handleError(error, file: existing)
-                    ELOG("error evicting iCloud file: \(existing), \(error)")
+                    CloudSyncManager.syncLog.event(.delete, item: "container/\(existing.lastPathComponent)", status: .failed, detail: "error evicting iCloud file: \(existing), \(error)")
                 }
             }, moveClosure: { currentSource, currentDestination in
                 try fileManager.copyItem(at: currentSource, to: currentDestination)
@@ -376,7 +376,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                     try fileManager.evictUbiquitousItem(at: currentSource)
                 } catch {//this happens when a file is being presented on the UI (saved states image) and thus we can't remove the icloud download
                     await errorHandler.handleError(error, file: currentSource)
-                    ELOG("error evicting iCloud file: \(currentSource), \(error)")
+                    CloudSyncManager.syncLog.event(.delete, item: "container/\(currentSource.lastPathComponent)", status: .failed, detail: "error evicting iCloud file: \(currentSource), \(error)")
                 }
             })
             if moved == .saveFailure {
@@ -397,7 +397,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
         //TODO: if there a lot of files, this will take some time. we could fire off 2 threads to at least make it execute in half the time at a minimum.
         let fileManager: FileManager = .default
         let errorHandler/*: ErrorHandler*/ = CloudSyncErrorHandler.shared
-        ILOG("source: \(source), destination: \(containerDestination)")
+        CloudSyncManager.syncLog.event(.sync, item: "container/move-files", status: .inProgress, detail: "source: \(source), destination: \(containerDestination)")
         guard fileManager.fileExists(atPath: source.pathDecoded)
         else {
             return .fileNotExist
@@ -407,7 +407,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
             subdirectories = try fileManager.subpathsOfDirectory(atPath: source.pathDecoded)
         } catch {
             await errorHandler.handleError(error, file: source)
-            ELOG("failed to get directory contents \(source): \(error)")
+            CloudSyncManager.syncLog.event(.error, item: "container/directory-contents", status: .failed, detail: "failed to get directory contents \(source): \(error)")
             return .saveFailure
         }
         var totalMoved = 0
@@ -426,7 +426,7 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                     try fileManager.createDirectory(atPath: destination.pathDecoded, withIntermediateDirectories: true)
                 } catch {
                     await errorHandler.handleError(error, file: destination)
-                    ELOG("error creating directory: \(destination), \(error)")
+                    CloudSyncManager.syncLog.event(.error, item: "container/create-directory", status: .failed, detail: "error creating directory: \(destination), \(error)")
                 }
             }
             if isDirectory.boolValue {
@@ -463,16 +463,16 @@ public class iCloudContainerSyncer: iCloudTypeSyncer {
                     } catch {
                         await errorHandler.handleError(error, file: currentItem)
                         //this could indicate no more space is left when moving to iCloud
-                        ELOG("#\(totalMoved) failed to move \(currentItem.pathDecoded) to both \(destination.pathDecoded) and fallback \(fallbackDestination.pathDecoded): \(error)")
+                        CloudSyncManager.syncLog.event(.upload, item: "container/\(currentItem.lastPathComponent)", status: .failed, detail: "#\(totalMoved) failed to move \(currentItem.pathDecoded) to both \(destination.pathDecoded) and fallback \(fallbackDestination.pathDecoded): \(error)")
                     }
                 } else {
                     await errorHandler.handleError(error, file: currentItem)
                     //this could indicate no more space is left when moving to iCloud
-                    ELOG("#\(totalMoved) failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
+                    CloudSyncManager.syncLog.event(.upload, item: "container/\(currentItem.lastPathComponent)", status: .failed, detail: "#\(totalMoved) failed to move \(currentItem.pathDecoded) to \(destination.pathDecoded): \(error)")
                 }
             }
         }
-        ILOG("\(logPrefix) moved a total of \(totalMoved)")
+        CloudSyncManager.syncLog.event(.sync, item: "container/move-files", status: .ok, detail: "\(logPrefix) moved a total of \(totalMoved)")
         return .success
     }
 }

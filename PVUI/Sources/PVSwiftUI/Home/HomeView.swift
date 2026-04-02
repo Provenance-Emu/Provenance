@@ -1101,7 +1101,7 @@ struct HomeView: SwiftUI.View {
         if showRecentGames {
             HomeSection(title: String(localized: "Recently Played")) {
                 ForEach(recentlyPlayedGames, id: \.id) { model in
-                    gameItem(model, section: .recentlyPlayedGames)
+                    gameItem(model, section: .recentlyPlayedGames, shelfRowHeightScale: PVCompactShelfRowHeightScale)
                 }
             }
             HomeDividerView()
@@ -1113,7 +1113,7 @@ struct HomeView: SwiftUI.View {
         if showFavorites {
             HomeSection(title: String(localized: "Favorites")) {
                 ForEach(favorites, id: \.id) { model in
-                    gameItem(model, section: .favorites)
+                    gameItem(model, section: .favorites, shelfRowHeightScale: PVCompactShelfRowHeightScale)
                 }
             }
             HomeDividerView()
@@ -1132,10 +1132,11 @@ struct HomeView: SwiftUI.View {
 
     /// Shared game item builder used by all horizontal carousel sections.
     @ViewBuilder
-    private func gameItem(_ model: GameCellModel, section: HomeSectionType) -> some View {
+    private func gameItem(_ model: GameCellModel, section: HomeSectionType, shelfRowHeightScale: CGFloat = 1.0) -> some View {
         GameItemPresentableView(
             game: model,
             constrainHeight: true,
+            shelfRowHeightScale: shelfRowHeightScale,
             viewType: .cell,
             sectionContext: section,
             isFocused: Binding(

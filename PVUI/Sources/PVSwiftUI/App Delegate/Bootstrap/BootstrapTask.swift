@@ -34,7 +34,6 @@ public protocol BootstrapTask: Sendable {
 /// Well-known provision key constants shared across bootstrap tasks.
 public enum BootstrapKey {
     public static let logging       = "logging"
-    public static let firebase      = "firebase"
     public static let crashReporting = "crashReporting"
     public static let analytics     = "analytics"
     public static let settings      = "settings"

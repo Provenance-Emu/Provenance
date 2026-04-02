@@ -441,7 +441,7 @@ public class CloudSyncManager {
         await MainActor.run {
             // In a real implementation, you would show a proper notification
             // For now, we'll just log it
-            ILOG("Sync Notification: \(message)")
+            Self.syncLog.event(.sync, item: "notification", status: .ok, detail: message)
 
             // You could integrate with UNUserNotificationCenter here
             // let content = UNMutableNotificationContent()
@@ -461,7 +461,7 @@ public class CloudSyncManager {
                 DLOG("Deleted local save state file: \(fileURL.lastPathComponent)")
             }
         } catch {
-            ELOG("Failed to delete local save state file: \(error)")
+            Self.syncLog.event(.delete, item: "save-state/local-file", status: .failed, detail: error.localizedDescription)
         }
     }
 
@@ -496,16 +496,17 @@ public class CloudSyncManager {
             return
         }
 
-        ILOG("[SYNC] Starting CloudKit sync...")
+        let syncLog = Self.syncLog
+        syncLog.event(.start, item: "sync/cloudkit", status: .inProgress, detail: "Starting CloudKit sync")
 
         // Initialize sync providers if needed
         if romsSyncer == nil || saveStatesSyncer == nil || nonDatabaseSyncer == nil {
-            ILOG("Initializing sync providers...")
+            syncLog.event(.start, item: "sync/providers", status: .inProgress, detail: "Initializing sync providers")
             initializeSyncProviders()
         }
 
         guard romsSyncer != nil || saveStatesSyncer != nil || nonDatabaseSyncer != nil else {
-            ELOG("Sync providers failed to initialize. Aborting sync.")
+            syncLog.event(.start, item: "sync/providers", status: .failed, detail: "Sync providers failed to initialize")
             updateSyncStatus(.error(CloudSyncError.missingDependency))
             return
         }
@@ -534,7 +535,7 @@ public class CloudSyncManager {
             let syncCount = await CloudKitInitialSyncer.shared?.performInitialSync(forceSync: false)
             DLOG("CloudKit initial sync completed - potentially uploaded \(syncCount) new records.")
         } catch {
-            ELOG("CloudKit initial sync failed: \(error.localizedDescription)")
+            syncLog.event(.sync, item: "sync/initial", status: .failed, detail: error.localizedDescription)
             hasErrors = true
             lastError = error
             await errorHandler.handle(error: error)
@@ -542,7 +543,7 @@ public class CloudSyncManager {
 
         // Update status based on results (do not cancel ongoing remote fetch)
         if hasErrors {
-            ELOG("Sync completed with errors")
+            syncLog.event(.sync, item: "sync/cloudkit", status: .failed, detail: "Sync completed with errors")
             if let error = lastError {
                 updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
             }
@@ -571,7 +572,7 @@ public class CloudSyncManager {
         }
 
         guard romsSyncer != nil || saveStatesSyncer != nil || nonDatabaseSyncer != nil else {
-            ELOG("Sync providers failed to initialize. Aborting fetch.")
+            Self.syncLog.event(.sync, item: "sync/providers", status: .failed, detail: "Sync providers failed to initialize, aborting fetch")
             return
         }
 
@@ -718,7 +719,7 @@ public class CloudSyncManager {
                     errorMessage = "Upload failed: \(error.localizedDescription)"
                 }
 
-                ELOG("Failed to upload ROM \(title) (attempt \(retryCount)/\(maxRetries)): \(errorMessage)")
+                Self.syncLog.event(.upload, item: "rom/\(title)", status: .failed, detail: "attempt \(retryCount)/\(maxRetries): \(errorMessage)")
 
                 if retryCount >= maxRetries {
                     updateSyncStatus(.error(error))
@@ -732,7 +733,7 @@ public class CloudSyncManager {
                 }
             } catch {
                 retryCount += 1
-                ELOG("Failed to upload ROM \(title) (attempt \(retryCount)/\(maxRetries)): \(error.localizedDescription)")
+                Self.syncLog.event(.upload, item: "rom/\(title)", status: .failed, detail: "attempt \(retryCount)/\(maxRetries): \(error.localizedDescription)")
 
                 if retryCount >= maxRetries {
                     updateSyncStatus(.error(error))
@@ -763,7 +764,7 @@ public class CloudSyncManager {
             DLOG("Successfully downloaded ROM: \(game.title)")
             updateSyncStatus(.idle)
         } catch {
-            ELOG("Failed to download ROM \(game.title): \(error)")
+            Self.syncLog.event(.download, item: "rom/\(game.title)", status: .failed, detail: error.localizedDescription)
             updateSyncStatus(.error(error))
             throw error
         }
@@ -791,12 +792,13 @@ public class CloudSyncManager {
         }
 
         let md5 = game.md5Hash
+        let syncLog = Self.syncLog
         guard !md5.isEmpty else {
-            ELOG("Cannot sync artwork: game has no MD5 hash")
+            syncLog.event(.sync, item: "artwork/unknown", status: .failed, detail: "Game has no MD5 hash")
             return false
         }
 
-        ILOG("Syncing custom artwork for game: \(game.title), key: \(artworkKey)")
+        syncLog.event(.sync, item: "artwork/\(game.title)", status: .inProgress, detail: "key: \(artworkKey)")
 
         do {
             var success = false
@@ -826,11 +828,11 @@ public class CloudSyncManager {
                         ]
                     )
                 }
-                ILOG("Successfully synced artwork for game: \(game.title)")
+                syncLog.event(.sync, item: "artwork/\(game.title)", status: .ok)
             }
             return success
         } catch {
-            ELOG("Failed to sync artwork for game \(game.title): \(error.localizedDescription)")
+            syncLog.event(.sync, item: "artwork/\(game.title)", status: .failed, detail: error.localizedDescription)
             throw error
         }
     }
@@ -839,14 +841,14 @@ public class CloudSyncManager {
     @discardableResult
     public func syncArtwork(forMD5 md5: String, artworkKey: String) async throws -> Bool {
         guard !md5.isEmpty else {
-            ELOG("Cannot sync artwork: missing MD5")
+            Self.syncLog.event(.sync, item: "artwork/unknown", status: .failed, detail: "Missing MD5")
             return false
         }
         let frozenGame = await MainActor.run {
             RomDatabase.sharedInstance.game(withMD5: md5)?.freeze()
         }
         guard let frozenGame else {
-            ELOG("Cannot sync artwork: game not found for MD5 \(md5)")
+            Self.syncLog.event(.sync, item: "artwork/\(md5)", status: .notFound, detail: "Game not found for MD5")
             return false
         }
         return try await syncArtwork(for: frozenGame, artworkKey: artworkKey)
@@ -868,14 +870,15 @@ public class CloudSyncManager {
             return 0
         }
 
-        ILOG("Starting batch artwork sync for \(gameMD5s.count) games")
+        let syncLog = Self.syncLog
+        syncLog.event(.sync, item: "artwork/batch", status: .inProgress, detail: "\(gameMD5s.count) games")
         var successCount = 0
 
         for md5 in gameMD5s {
             guard let game = await MainActor.run(body: {
                 RomDatabase.sharedInstance.game(withMD5: md5)
             }) else {
-                WLOG("Game not found for MD5: \(md5)")
+                syncLog.event(.sync, item: "artwork/\(md5)", status: .notFound, detail: "Game not found for MD5")
                 continue
             }
 
@@ -899,7 +902,7 @@ public class CloudSyncManager {
                 // Small delay between uploads to avoid rate limiting
                 try? await Task.sleep(nanoseconds: 100_000_000) // 100ms
             } catch {
-                ELOG("Failed to sync artwork for game \(game.title): \(error.localizedDescription)")
+                syncLog.event(.sync, item: "artwork/\(game.title)", status: .failed, detail: error.localizedDescription)
             }
         }
 
@@ -914,7 +917,7 @@ public class CloudSyncManager {
             }
         }
 
-        ILOG("Batch artwork sync complete: \(successCount)/\(gameMD5s.count) games synced")
+        syncLog.event(.sync, item: "artwork/batch", status: .ok, detail: "\(successCount)/\(gameMD5s.count) games synced")
         return successCount
     }
 
@@ -973,7 +976,7 @@ public class CloudSyncManager {
                 return
             } catch {
                 retryCount += 1
-                ELOG("Failed to upload save state for game \(saveState.game.title) (attempt \(retryCount)/\(maxRetries)): \(error)")
+                Self.syncLog.event(.upload, item: "save-state/\(saveState.game.title)", status: .failed, detail: "attempt \(retryCount)/\(maxRetries): \(error.localizedDescription)")
 
                 if retryCount >= maxRetries {
                     updateSyncStatus(.error(error))
@@ -1001,12 +1004,12 @@ public class CloudSyncManager {
         do {
             // Ensure downloadSaveState exists, handle Completable return
             // Assuming Completable has an extension like .toAsync()
-            ILOG("Downloading save state for game: \(saveState.game.title)")
+            Self.syncLog.event(.download, item: "save-state/\(saveState.game.title)", status: .inProgress)
             try await saveStatesSyncer.downloadSaveState(for: saveState).toAsync()
             DLOG("Successfully downloaded save state for game: \(saveState.game.title)")
             updateSyncStatus(.idle)
         } catch {
-            ELOG("Failed to download save state for game \(saveState.game.title): \(error)")
+            Self.syncLog.event(.download, item: "save-state/\(saveState.game.title)", status: .failed, detail: error.localizedDescription)
             updateSyncStatus(.error(error))
             throw error
         }
@@ -1066,76 +1069,80 @@ public class CloudSyncManager {
 
     /// Manually trigger a full integrity audit including record repair
     public func runFullIntegrityAudit() async {
+        let syncLog = Self.syncLog
         guard Defaults[.iCloudSync],
               let romSyncer = romsSyncer as? CloudKitRomsSyncer else {
-            WLOG("[SYNC] Cannot run audit - sync disabled or no ROM syncer")
+            syncLog.event(.check, item: "audit/full", status: .skipped, detail: "Sync disabled or no ROM syncer")
             return
         }
 
-        ILOG("[SYNC] Starting manual full integrity audit...")
+        syncLog.event(.check, item: "audit/full", status: .inProgress, detail: "Starting manual full integrity audit")
         await romSyncer.auditCloudAssets()
         await romSyncer.auditAndRepairIncompleteRecords()
-        ILOG("[SYNC] Manual full integrity audit complete")
+        syncLog.event(.check, item: "audit/full", status: .ok, detail: "Manual full integrity audit complete")
     }
 
     /// Run BIOS CloudKit audit to diagnose sync issues
     /// - Returns: Audit result containing details about BIOS sync state
     public func runBIOSAudit() async -> BIOSAuditResult? {
+        let syncLog = Self.syncLog
         guard Defaults[.iCloudSync] else {
-            WLOG("[SYNC] Cannot run BIOS audit - sync disabled")
+            syncLog.event(.check, item: "audit/bios", status: .skipped, detail: "Sync disabled")
             return nil
         }
         guard let ckContainer = iCloudConstants.container else {
-            WLOG("[SYNC] Cannot run BIOS audit - CloudKit entitlement not present")
+            syncLog.event(.check, item: "audit/bios", status: .skipped, detail: "CloudKit entitlement not present")
             return nil
         }
 
-        ILOG("[SYNC] Starting BIOS audit...")
+        syncLog.event(.check, item: "audit/bios", status: .inProgress)
         let syncer = CloudKitBIOSSyncer(
             container: ckContainer,
             directories: ["BIOS", "System"],
             errorHandler: errorHandler
         )
         let result = await syncer.auditBIOSCloudRecords()
-        ILOG("[SYNC] BIOS audit complete")
+        syncLog.event(.check, item: "audit/bios", status: .ok)
         return result
     }
 
     /// Repair BIOS sync issues by re-uploading problematic files
     /// - Returns: Number of BIOS files re-uploaded
     public func repairBIOSSync() async -> Int {
+        let syncLog = Self.syncLog
         guard Defaults[.iCloudSync] else {
-            WLOG("[SYNC] Cannot repair BIOS sync - sync disabled")
+            syncLog.event(.sync, item: "bios/repair", status: .skipped, detail: "Sync disabled")
             return 0
         }
         guard let ckContainer = iCloudConstants.container else {
-            WLOG("[SYNC] Cannot repair BIOS sync - CloudKit entitlement not present")
+            syncLog.event(.sync, item: "bios/repair", status: .skipped, detail: "CloudKit entitlement not present")
             return 0
         }
 
-        ILOG("[SYNC] Starting BIOS sync repair...")
+        syncLog.event(.sync, item: "bios/repair", status: .inProgress)
         let syncer = CloudKitBIOSSyncer(
             container: ckContainer,
             directories: ["BIOS", "System"],
             errorHandler: errorHandler
         )
         let count = await syncer.repairBIOSSync()
-        ILOG("[SYNC] BIOS sync repair complete: \(count) files re-uploaded")
+        syncLog.event(.sync, item: "bios/repair", status: .ok, detail: "\(count) files re-uploaded")
         return count
     }
 
     /// Force BIOS download from CloudKit (re-syncs metadata and downloads missing files)
     public func forceBIOSDownload() async {
+        let syncLog = Self.syncLog
         guard Defaults[.iCloudSync] else {
-            WLOG("[SYNC] Cannot force BIOS download - sync disabled")
+            syncLog.event(.download, item: "bios/force", status: .skipped, detail: "Sync disabled")
             return
         }
         guard let ckContainer = iCloudConstants.container else {
-            WLOG("[SYNC] Cannot force BIOS download - CloudKit entitlement not present")
+            syncLog.event(.download, item: "bios/force", status: .skipped, detail: "CloudKit entitlement not present")
             return
         }
 
-        ILOG("[SYNC] Starting forced BIOS download...")
+        syncLog.event(.download, item: "bios/force", status: .inProgress)
         let syncer = CloudKitBIOSSyncer(
             container: ckContainer,
             directories: ["BIOS", "System"],
@@ -1148,7 +1155,7 @@ public class CloudSyncManager {
         // Then force download all missing files
         await syncer.downloadMissingBIOSFiles()
 
-        ILOG("[SYNC] Forced BIOS download complete")
+        syncLog.event(.download, item: "bios/force", status: .ok)
     }
 
     /// Fast targeted download of a single BIOS file from CloudKit
@@ -1158,16 +1165,17 @@ public class CloudSyncManager {
     ///   - systemIdentifier: The system identifier (e.g., "com.provenance.psx")
     /// - Returns: True if the BIOS was downloaded successfully
     public func downloadSingleBIOS(filename: String, expectedMD5: String, systemIdentifier: String) async -> Bool {
+        let syncLog = Self.syncLog
         guard Defaults[.iCloudSync] else {
-            WLOG("[BIOS FAST] Cannot download - sync disabled")
+            syncLog.event(.download, item: "bios/\(filename)", status: .skipped, detail: "Sync disabled")
             return false
         }
         guard let ckContainer = iCloudConstants.container else {
-            WLOG("[BIOS FAST] Cannot download - CloudKit entitlement not present")
+            syncLog.event(.download, item: "bios/\(filename)", status: .skipped, detail: "CloudKit entitlement not present")
             return false
         }
 
-        ILOG("[BIOS FAST] Starting targeted download for: \(filename)")
+        syncLog.event(.download, item: "bios/\(filename)", status: .inProgress, detail: "Starting targeted download")
 
         let syncer = CloudKitBIOSSyncer(
             container: ckContainer,
@@ -1192,7 +1200,7 @@ public class CloudSyncManager {
             DLOG("[BIOS FAST] Trying recordID: \(recordID)")
 
             if await syncer.tryDownloadBIOSByRecordID(recordID, filename: filename, systemIdentifier: systemIdentifier) {
-                ILOG("[BIOS FAST] ✓ Successfully downloaded \(filename) using recordID: \(recordID)")
+                syncLog.event(.download, item: "bios/\(filename)", status: .ok, detail: "Downloaded using recordID: \(recordID)")
                 return true
             }
         }
@@ -1200,11 +1208,11 @@ public class CloudSyncManager {
         // If direct lookup failed, try a targeted query by filename
         DLOG("[BIOS FAST] Direct lookup failed, trying filename query...")
         if await syncer.tryDownloadBIOSByFilename(filename, systemIdentifier: systemIdentifier) {
-            ILOG("[BIOS FAST] ✓ Successfully downloaded \(filename) via filename query")
+            syncLog.event(.download, item: "bios/\(filename)", status: .ok, detail: "Downloaded via filename query")
             return true
         }
 
-        WLOG("[BIOS FAST] Failed to download BIOS: \(filename)")
+        syncLog.event(.download, item: "bios/\(filename)", status: .notFound)
         return false
     }
 
@@ -1248,9 +1256,10 @@ public class CloudSyncManager {
             return
         }
 
-        ILOG("[SYNC] Metadata bootstrap has syncers: ROMs=\(romSyncer != nil), SaveStates=\(saveStatesSyncer != nil), BIOS=\(biosSyncer != nil)")
+        let syncLog = Self.syncLog
+        syncLog.event(.sync, item: "metadata/bootstrap", status: .inProgress, detail: "syncers: ROMs=\(romSyncer != nil), SaveStates=\(saveStatesSyncer != nil), BIOS=\(biosSyncer != nil)")
 
-        ILOG("[SYNC] Starting CloudKit metadata bootstrap (\(reason))")
+        syncLog.event(.start, item: "metadata/bootstrap", status: .inProgress, detail: reason)
 
         var totalProcessed = 0
 
@@ -1274,7 +1283,7 @@ public class CloudSyncManager {
             totalProcessed += await biosSyncer.syncMetadataOnly()
         }
 
-        ILOG("[SYNC] Metadata bootstrap finished (\(reason)) - processed \(totalProcessed) records.")
+        syncLog.event(.complete, item: "metadata/bootstrap", status: .ok, detail: "\(reason) - processed \(totalProcessed) records")
     }
 
     // MARK: - Private Methods
@@ -1293,7 +1302,7 @@ public class CloudSyncManager {
                 await CloudKitSyncerStore.shared.refreshRomRemoteChanges()
                 DLOG("Finished applying remote ROM changes")
             } catch {
-                ELOG("Error fetching remote ROM changes: \(error.localizedDescription)")
+                Self.syncLog.event(.download, item: "remote/roms", status: .failed, detail: error.localizedDescription)
                 hasErrors = true
                 lastError = error
                 await errorHandler.handle(error: error)
@@ -1309,7 +1318,7 @@ public class CloudSyncManager {
                 _ = try await saveStatesSyncer.loadAllFromCloud(iterationComplete: nil).toAsync()
                 DLOG("Successfully fetched remote save state changes")
             } catch {
-                ELOG("Error fetching remote save state changes: \(error.localizedDescription)")
+                Self.syncLog.event(.download, item: "remote/save-states", status: .failed, detail: error.localizedDescription)
                 hasErrors = true
                 lastError = error
                 await errorHandler.handle(error: error)
@@ -1325,18 +1334,18 @@ public class CloudSyncManager {
                 _ = try await nonDatabaseSyncer.loadAllFromCloud(iterationComplete: nil).toAsync()
                 DLOG("Successfully fetched remote non-database file changes")
             } catch {
-                ELOG("Error fetching remote non-database file changes: \(error.localizedDescription)")
+                Self.syncLog.event(.download, item: "remote/non-database", status: .failed, detail: error.localizedDescription)
                 hasErrors = true
                 lastError = error
                 await errorHandler.handle(error: error)
             }
         } else {
-            WLOG("Non-database syncer not available for fetching remote changes")
+            Self.syncLog.event(.download, item: "remote/non-database", status: .skipped, detail: "Non-database syncer not available")
         }
 
         // Update sync status based on results
         if hasErrors {
-            ELOG("Completed fetching remote changes with errors")
+            Self.syncLog.event(.download, item: "remote/all", status: .failed, detail: "Completed with errors")
             if let error = lastError {
                 updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
             }
@@ -1352,7 +1361,7 @@ public class CloudSyncManager {
         // Ensure tvOS always uses CloudKit
         #if os(tvOS)
         if !syncMode.isCloudKit {
-            WLOG("tvOS does not support iCloud Drive. Switching to CloudKit mode.")
+            Self.syncLog.event(.sync, item: "providers/init", status: .pending, detail: "tvOS does not support iCloud Drive, switching to CloudKit mode")
             syncMode = .cloudKit
             Defaults[.iCloudSyncMode] = .cloudKit
         }
@@ -1363,7 +1372,7 @@ public class CloudSyncManager {
 
         // Validate CloudKit container configuration
         guard let container = container, container.containerIdentifier != nil else {
-            ELOG("CloudKit container unavailable or identifier is nil. Check entitlements and Info.plist configuration.")
+            Self.syncLog.event(.start, item: "providers/init", status: .failed, detail: "CloudKit container unavailable or identifier is nil")
             updateSyncStatus(.error(CloudSyncError.missingDependency))
             return
         }
@@ -1402,7 +1411,7 @@ public class CloudSyncManager {
             errorHandler: errorHandler
         )
         self.biosSyncer?.workQueue = biosQueue
-        ILOG("[SYNC] BIOS syncer initialized: \(self.biosSyncer != nil ? "SUCCESS" : "FAILED")")
+        Self.syncLog.event(.start, item: "providers/bios", status: self.biosSyncer != nil ? .ok : .failed)
 
         // 4. Initialize Non-Database Syncer (CloudKit only for now)
         // Non-database syncer should exclude BIOS so BIOS files are handled only by the BIOS syncer.
@@ -1426,7 +1435,7 @@ public class CloudSyncManager {
 
         // Check if all initializations were successful (optional, depends on initializer throwing)
         if romsSyncer == nil || saveStatesSyncer == nil || nonDatabaseSyncer == nil {
-            ELOG("One or more CloudKit sync providers failed to initialize.")
+            Self.syncLog.event(.start, item: "providers/init", status: .failed, detail: "One or more CloudKit sync providers failed to initialize")
             updateSyncStatus(.error(CloudSyncError.missingDependency)) // Use .missingDependency
             // Optionally clear partially initialized syncers?
             self.romsSyncer = nil
@@ -1445,7 +1454,7 @@ public class CloudSyncManager {
                 DLOG("CloudKitInitialSyncer configured with dependency injection.")
             } catch {
                 let syncError = (error as? CloudSyncError) ?? CloudSyncError.cloudKitError(error)
-                ELOG("[CloudSyncManager] CloudKitInitialSyncer could not be configured: \(syncError.localizedDescription). Initial batch sync is disabled; ROM/save-state syncers remain available.")
+                Self.syncLog.event(.start, item: "providers/initial-syncer", status: .failed, detail: "CloudKitInitialSyncer could not be configured: \(syncError.localizedDescription). Initial batch sync disabled; ROM/save-state syncers remain available.")
                 updateSyncStatus(.error(syncError))
                 // Fallback: `CloudKitInitialSyncer.shared` stays nil; callers use optional chaining / guard.
             }
@@ -1529,7 +1538,7 @@ public class CloudSyncManager {
             do {
                 _ = try Realm()
             } catch {
-                ELOG("Failed to initialize Realm for save state observer: \(error.localizedDescription)")
+                Self.syncLog.event(.start, item: "save-state/observer", status: .failed, detail: "Failed to initialize Realm: \(error.localizedDescription)")
                 return
             }
 
@@ -1537,7 +1546,7 @@ public class CloudSyncManager {
             do {
                 realm = try Realm()
             } catch {
-                ELOG("Failed to open Realm for save state observer: \(error.localizedDescription)")
+                Self.syncLog.event(.start, item: "save-state/observer", status: .failed, detail: "Failed to open Realm: \(error.localizedDescription)")
                 return
             }
 
@@ -1584,7 +1593,7 @@ public class CloudSyncManager {
                         }
                     }
                 case .error(let error):
-                    ELOG("Error in save state observer: \(error.localizedDescription)")
+                    Self.syncLog.event(.sync, item: "save-state/observer", status: .failed, detail: error.localizedDescription)
                     Task { [weak self] in
                         await self?.errorHandler.handle(error: error)
                     }
@@ -1624,8 +1633,9 @@ public class CloudSyncManager {
     private func checkAccountStatusAndSetupIfNeeded() async {
         DLOG("Checking CloudKit account status...")
 
+        let syncLog = Self.syncLog
         guard let container = container else {
-            WLOG("[CloudSync] CloudKit container unavailable — skipping account status check")
+            syncLog.event(.check, item: "account/status", status: .skipped, detail: "CloudKit container unavailable")
             updateSyncStatus(.disabled)
             return
         }
@@ -1634,14 +1644,14 @@ public class CloudSyncManager {
             let accountStatus = try await container.accountStatus()
 
             // Log account status for debugging
-            ILOG("CloudKit account status: \(accountStatus.rawValue)")
+            syncLog.event(.check, item: "account/status", status: .ok, detail: "status=\(accountStatus.rawValue)")
 
             switch accountStatus {
             case .available:
-                ILOG("CloudKit account is available. Proceeding with sync setup.")
+                syncLog.event(.check, item: "account/status", status: .ok, detail: "Account available, proceeding with sync setup")
                 // Verify container identifier is configured
                 guard container.containerIdentifier != nil else {
-                    ELOG("CloudKit container identifier is nil. Check Info.plist configuration.")
+                    syncLog.event(.check, item: "account/container", status: .failed, detail: "CloudKit container identifier is nil")
                     updateSyncStatus(.error(CloudSyncError.missingDependency))
                     return
                 }
@@ -1650,18 +1660,18 @@ public class CloudSyncManager {
                 await startSync()
 
             case .noAccount:
-                WLOG("No iCloud account configured. CloudKit sync will be disabled.")
+                syncLog.event(.check, item: "account/status", status: .failed, detail: "No iCloud account configured")
                 updateSyncStatus(.error(CloudSyncError.noAccount))
                 // Post notification for UI to show helpful message
                 NotificationCenter.default.post(name: .iCloudSyncAccountNotAvailable, object: nil)
 
             case .restricted:
-                WLOG("iCloud account is restricted (e.g., parental controls). CloudKit sync will be disabled.")
+                syncLog.event(.check, item: "account/status", status: .failed, detail: "iCloud account restricted (e.g., parental controls)")
                 updateSyncStatus(.error(CloudSyncError.accountRestricted))
                 NotificationCenter.default.post(name: .iCloudSyncAccountRestricted, object: nil)
 
             case .couldNotDetermine:
-                WLOG("Could not determine iCloud account status. This may be temporary.")
+                syncLog.event(.check, item: "account/status", status: .pending, detail: "Could not determine iCloud account status")
                 updateSyncStatus(.error(CloudSyncError.accountStatusUnknown))
                 // Retry after a short delay
                 Task {
@@ -1670,7 +1680,7 @@ public class CloudSyncManager {
                 }
 
             case .temporarilyUnavailable:
-                WLOG("iCloud account temporarily unavailable. Will retry in 30 seconds.")
+                syncLog.event(.check, item: "account/status", status: .pending, detail: "iCloud account temporarily unavailable, will retry in 30s")
                 updateSyncStatus(.error(CloudSyncError.accountTemporarilyUnavailable))
 
                 // Schedule a retry after a delay
@@ -1680,21 +1690,21 @@ public class CloudSyncManager {
                 }
 
             @unknown default:
-                WLOG("Unknown iCloud account status: \(accountStatus.rawValue). CloudKit sync disabled.")
+                syncLog.event(.check, item: "account/status", status: .failed, detail: "Unknown iCloud account status: \(accountStatus.rawValue)")
                 updateSyncStatus(.error(CloudSyncError.accountStatusUnknown))
             }
 
         } catch {
-            ELOG("Failed to check CloudKit account status: \(error.localizedDescription)")
+            syncLog.event(.check, item: "account/status", status: .failed, detail: error.localizedDescription)
 
             // Provide more specific error handling
             if let ckError = error as? CKError {
                 switch ckError.code {
                 case .networkUnavailable, .networkFailure:
-                    WLOG("Network unavailable while checking CloudKit account status.")
+                    syncLog.event(.check, item: "account/network", status: .failed, detail: "Network unavailable while checking CloudKit account status")
                     updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
                 case .serviceUnavailable:
-                    WLOG("CloudKit service unavailable. Will retry later.")
+                    syncLog.event(.check, item: "account/service", status: .failed, detail: "CloudKit service unavailable, will retry later")
                     updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
                     Task {
                         try await Task.sleep(nanoseconds: 30_000_000_000)
@@ -1777,15 +1787,15 @@ public class CloudSyncManager {
             // Freeze the game while still on main actor (safe Realm snapshot),
             // then detach to perform the network upload off the main thread.
             let frozenGame = game.freeze()
-            ILOG("Uploading newly imported game to CloudKit: \(frozenGame.title) (MD5: \(frozenGame.md5Hash))")
+            Self.syncLog.event(.upload, item: "rom/\(frozenGame.title)", status: .inProgress, detail: "MD5: \(frozenGame.md5Hash)")
 
             Task.detached { [weak self] in
                 guard let self = self else { return }
                 do {
                     try await self.uploadROM(for: frozenGame)
-                    ILOG("Successfully uploaded newly imported game: \(frozenGame.title)")
+                    Self.syncLog.event(.upload, item: "rom/\(frozenGame.title)", status: .ok, detail: "Newly imported game uploaded")
                 } catch {
-                    ELOG("Failed to upload newly imported game \(frozenGame.title): \(error.localizedDescription)")
+                    Self.syncLog.event(.upload, item: "rom/\(frozenGame.title)", status: .failed, detail: error.localizedDescription)
                     await self.errorHandler.handle(error: error)
                     self.updateSyncStatus(.error(error))
                 }
@@ -1800,7 +1810,7 @@ public class CloudSyncManager {
             do {
                 try await romsSyncer.markGameAsDeleted(md5: md5)
             } catch {
-                ELOG("Failed to mark game as deleted in CloudKit (MD5: \(md5)): \(error)")
+                Self.syncLog.event(.delete, item: "rom/\(md5)", status: .failed, detail: error.localizedDescription)
                 await errorHandler.handle(error: error)
                 // Update status? Or rely on errorHandler?
                 updateSyncStatus(.error(error))
@@ -1830,7 +1840,7 @@ public class CloudSyncManager {
             do {
                 try await saveStatesSyncer.deleteSaveStateFromCloudKit(cloudRecordID: cloudRecordID)
             } catch {
-                ELOG("Failed to delete save state from CloudKit: \(error.localizedDescription)")
+                Self.syncLog.event(.delete, item: "save-state/\(cloudRecordID)", status: .failed, detail: error.localizedDescription)
                 await errorHandler.handle(error: error)
             }
         }
@@ -1856,7 +1866,8 @@ public class CloudSyncManager {
             return
         }
 
-        ILOG("Checking for missing ROM files...")
+        let syncLog = Self.syncLog
+        syncLog.event(.check, item: "rom/missing-files", status: .inProgress)
         updateSyncStatus(.syncing, info: ["action": "checking_missing_files"])
 
         let fileManager = FileManager.default
@@ -1873,7 +1884,7 @@ public class CloudSyncManager {
                         .map { $0.freeze() })
                 }
             } catch {
-                ELOG("[SYNC] Failed to fetch games for missing file check: \(error.localizedDescription)")
+                syncLog.event(.check, item: "rom/missing-files", status: .failed, detail: "Failed to fetch games: \(error.localizedDescription)")
                 return
             }
             DLOG("Checking \(frozenGames.count) games for missing files (excluding contentless)")
@@ -1927,12 +1938,12 @@ public class CloudSyncManager {
             }
 
         } catch {
-            ELOG("Error checking for missing ROM files: \(error.localizedDescription)")
+            syncLog.event(.check, item: "rom/missing-files", status: .failed, detail: error.localizedDescription)
             updateSyncStatus(.error(error))
             return
         }
 
-        ILOG("Missing ROM file check complete. Marked \(markedGamesCount) games for sync.")
+        syncLog.event(.check, item: "rom/missing-files", status: .ok, detail: "Marked \(markedGamesCount) games for sync")
         updateSyncStatus(.idle)
     }
 
@@ -1978,7 +1989,7 @@ public class CloudSyncManager {
                 return false
             }
 
-            WLOG("Error checking CloudKit record for game with MD5 \(md5): \(error.localizedDescription)")
+            Self.syncLog.event(.check, item: "rom/\(md5)", status: .failed, detail: "Error checking CloudKit record: \(error.localizedDescription)")
             return false
         }
     }
@@ -1995,7 +2006,7 @@ public class CloudSyncManager {
         let liveGame: PVGame? = game.isFrozen ? game.thaw() : realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash)
 
         guard let gameToUpdate = liveGame else {
-            ELOG("Game failed to resolve for sync marking.")
+            Self.syncLog.event(.sync, item: "rom/mark-for-sync", status: .failed, detail: "Game failed to resolve for sync marking")
             return
         }
 
@@ -2008,9 +2019,9 @@ public class CloudSyncManager {
                 // Clear last sync date since we need to re-sync
                 gameToUpdate.lastCloudSyncDate = nil
             }
-            ILOG("Marked game \(gameToUpdate.title) (MD5: \(gameToUpdate.md5Hash ?? "N/A")) as needing sync (isDownloaded=false, requiresSync=true)")
+            Self.syncLog.event(.sync, item: "rom/\(gameToUpdate.title)", status: .ok, detail: "Marked for sync (MD5: \(gameToUpdate.md5Hash ?? "N/A"), isDownloaded=false, requiresSync=true)")
         } catch {
-            ELOG("Failed to mark game \(gameToUpdate.title) as needing sync: \(error.localizedDescription)")
+            Self.syncLog.event(.sync, item: "rom/\(gameToUpdate.title)", status: .failed, detail: "Failed to mark for sync: \(error.localizedDescription)")
         }
     }
 
@@ -2033,7 +2044,7 @@ public class CloudSyncManager {
                 }
             }
         } catch {
-            ELOG("Failed to batch mark games for sync (count=\(md5s.count)): \(error.localizedDescription)")
+            Self.syncLog.event(.sync, item: "rom/batch-mark", status: .failed, detail: "count=\(md5s.count): \(error.localizedDescription)")
         }
     }
 

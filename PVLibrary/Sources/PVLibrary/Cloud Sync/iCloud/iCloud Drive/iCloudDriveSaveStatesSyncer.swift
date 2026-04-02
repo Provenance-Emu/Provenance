@@ -86,7 +86,7 @@ public class iCloudDriveSaveStatesSyncer: iCloudContainerSyncer, SaveStatesSynci
                     DLOG("Uploaded save state to iCloud: \(cloudURL.lastPathComponent)")
                     observer(.completed)
                 } catch {
-                    ELOG("Failed to upload save state: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.upload, item: "savestates/upload", status: .failed, detail: "Failed to upload save state: \(error.localizedDescription)")
                     observer(.error(error))
                 }
             }
@@ -137,11 +137,11 @@ public class iCloudDriveSaveStatesSyncer: iCloudContainerSyncer, SaveStatesSynci
                                 observer(.completed)
                             }
                         }, onError: { error in
-                            ELOG("Failed to download save state: \(error.localizedDescription)")
+                            CloudSyncManager.syncLog.event(.download, item: "savestates/download", status: .failed, detail: "Failed to download save state: \(error.localizedDescription)")
                             observer(.error(error))
                         })
                 } catch {
-                    ELOG("Failed to start downloading save state: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.download, item: "savestates/download", status: .failed, detail: "Failed to start downloading save state: \(error.localizedDescription)")
                     observer(.error(error))
                 }
             }

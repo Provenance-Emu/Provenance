@@ -274,7 +274,8 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                     return
                 }
 
-                DLOG("Starting force sync for directory: \(directory)")
+                let syncLog = CloudSyncManager.syncLog
+                syncLog.event(.start, item: "nondb/\(directory)", status: .inProgress, detail: "force sync")
                 await CloudKitSyncAnalytics.shared.startSync(operation: "Force Sync: \(directory)")
 
                 var totalBytesUploaded: Int64 = 0
@@ -284,12 +285,12 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                 do {
                     // Get all local files in the directory
                     let localFiles = await self.getAllFiles(in: directory)
-                    DLOG("Found \(localFiles.count) local files in \(directory)")
+                    syncLog.info("nondb/\(directory): \(localFiles.count) local files")
 
                     // Fetch existing records for this directory
                     let existingRecords = try await self.fetchAllRecords(for: directory)
                     let recordMap = Dictionary(uniqueKeysWithValues: existingRecords.map { ($0[Field.directory] as! String, $0) })
-                    DLOG("Fetched \(existingRecords.count) existing CloudKit records for \(directory)")
+                    syncLog.info("nondb/\(directory): \(existingRecords.count) cloud records")
 
                     // Process files in batches
                     let batchSize = 20 // Adjust batch size as needed
@@ -297,7 +298,7 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                         let batchEnd = min(batchStart + batchSize, localFiles.count)
                         let batch = Array(localFiles[batchStart..<batchEnd])
 
-                        DLOG("Processing batch \(batchStart + 1)-\(batchEnd) of \(localFiles.count) for \(directory)")
+                        syncLog.debug("nondb/\(directory): batch \(batchStart + 1)-\(batchEnd) of \(localFiles.count)")
 
                         // Use TaskGroup for parallel uploads within the batch
                         try await withThrowingTaskGroup(of: Int64.self) { group in
@@ -313,24 +314,24 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                                        let localModDate = (try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate {
                                         shouldUpload = localModDate > cloudModDate
                                         if !shouldUpload {
-                                            DLOG("Skipping upload for \(filename), local file not newer than cloud.")
+                                            CloudSyncManager.syncLog.event(.skip, item: "file/\(filename)", status: .exists, detail: "cloud newer")
                                         }
                                     }
 
                                     if shouldUpload {
-                                        DLOG("Uploading file: \(filename)")
+                                        CloudSyncManager.syncLog.event(.upload, item: "file/\(filename)", status: .pending)
                                         do {
                                             let uploadedRecord = try await self.uploadFile(fileURL, gameID: nil, systemID: nil)
                                             if let attributes = try? self.fileManager.attributesOfItem(atPath: fileURL.path),
                                                let fileSize = attributes[.size] as? Int64 {
-                                                DLOG("Successfully uploaded \(filename) (\(fileSize) bytes)")
-                                                return fileSize // Return bytes uploaded for this file
+                                                CloudSyncManager.syncLog.event(.upload, item: "file/\(filename)", status: .ok, size: Int(fileSize))
+                                                return fileSize
                                             } else {
-                                                DLOG("Successfully uploaded \(filename), but failed to get size.")
+                                                CloudSyncManager.syncLog.event(.upload, item: "file/\(filename)", status: .ok)
                                                 return 0
                                             }
                                         } catch {
-                                            ELOG("Failed to upload file \(filename): \(error.localizedDescription)")
+                                            CloudSyncManager.syncLog.event(.upload, item: "file/\(filename)", status: .failed, detail: error.localizedDescription)
                                             // Don't throw, just log and return 0 bytes, marking overall failure later
                                             await self.errorHandler.handle(error: error)
                                             // Collect errors to report failure
@@ -359,12 +360,12 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                         }
                     }
 
-                    DLOG("Completed force sync for directory: \(directory). Uploaded \(totalBytesUploaded) bytes.")
+                    syncLog.event(.complete, item: "nondb/\(directory)", status: .ok, size: Int(totalBytesUploaded))
                     observer(.completed)
                     await CloudKitSyncAnalytics.shared.recordSuccessfulSync(bytesUploaded: totalBytesUploaded)
 
                 } catch {
-                    ELOG("Error during force sync for directory \(directory): \(error.localizedDescription)")
+                    syncLog.event(.complete, item: "nondb/\(directory)", status: .failed, detail: error.localizedDescription)
                     overallSuccess = false
                     errors.append(error)
                     observer(.error(error))
@@ -383,17 +384,17 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Throws: CloudSyncError if download fails
     public func downloadFile(for recordID: CKRecord.ID) async throws {
         try await runOnQueue { [self] in
-            DLOG("Downloading file for record ID: \(recordID.recordName)")
+            let syncLog = CloudSyncManager.syncLog
+            syncLog.event(.download, item: "file/\(recordID.recordName)", status: .inProgress)
 
             let record: CKRecord
             do {
                 record = try await privateDatabase.record(for: recordID)
-                DLOG("Successfully fetched record: \(record.recordType) - \(record.recordID.recordName)")
             } catch let error as CKError where error.code == .unknownItem {
-                ELOG("Record \(recordID.recordName) not found in CloudKit.")
+                syncLog.event(.download, item: "file/\(recordID.recordName)", status: .notFound)
                 throw CloudSyncError.recordNotFound
             } catch {
-                ELOG("Error fetching record \(recordID.recordName): \(error.localizedDescription)")
+                syncLog.event(.download, item: "file/\(recordID.recordName)", status: .failed, detail: error.localizedDescription)
                 throw CloudSyncError.cloudKitError(error)
             }
 
@@ -401,7 +402,7 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
             let relativePath = resolveRelativePath(from: record, directory: directory)
             let fileAsset = resolveAsset(from: record)
             guard let directory, let relativePath, let fileAsset, let assetURL = fileAsset.fileURL else {
-                ELOG("Record \(recordID.recordName) is missing required fields or asset even after fallback resolution.")
+                syncLog.event(.download, item: "file/\(recordID.recordName)", status: .failed, detail: "missing fields/asset")
                 throw CloudSyncError.invalidData
             }
 
@@ -414,15 +415,14 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
 
                 if FileManager.default.fileExists(atPath: fileURL.path) {
                     try await FileManager.default.removeItem(at: fileURL)
-                    DLOG("Removed existing local file at \(fileURL.path)")
                 }
 
                 try FileManager.default.copyItem(at: assetURL, to: fileURL)
-                ILOG("Successfully downloaded file \(relativePath) in \(directory) from CloudKit.")
+                syncLog.event(.download, item: "file/\(relativePath)", status: .ok, detail: "dir=\(directory)")
 
                 notificationCenter.post(name: .PVCloudSyncDidDownloadFile, object: self, userInfo: ["fileURL": fileURL, "directory": directory])
             } catch {
-                ELOG("Error saving downloaded file to \(fileURL.path): \(error.localizedDescription)")
+                syncLog.event(.download, item: "file/\(relativePath)", status: .failed, detail: error.localizedDescription)
                 throw CloudSyncError.fileSystemError(error)
             }
         }
@@ -433,17 +433,17 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     /// - Parameter recordID: The ID of the record that changed.
     public func processRemoteRecordUpdate(recordID: CKRecord.ID) async throws {
         guard await SyncProgressTracker.shared.databaseSynced else { return }
-        DLOG("Processing remote update notification for record ID: \(recordID.recordName)")
+        let syncLog = CloudSyncManager.syncLog
+        syncLog.event(.sync, item: "file/\(recordID.recordName)", status: .inProgress, detail: "remote update")
         try await runOnQueue { [self] in
             do {
                 let record = try await privateDatabase.record(for: recordID)
-                DLOG("Successfully fetched record: \(record.recordType) - \(record.recordID.recordName)")
 
                 let directory = resolveDirectory(from: record)
                 let relativePath = resolveRelativePath(from: record, directory: directory)
                 let fileAsset = resolveAsset(from: record)
                 guard let directory, let relativePath, let fileAsset else {
-                    WLOG("Record \(recordID.recordName) is missing required fields (directory, relativePath, or fileAsset) even after fallback. Skipping.")
+                    syncLog.event(.skip, item: "file/\(recordID.recordName)", status: .skipped, detail: "missing fields")
                     return
                 }
 
@@ -452,26 +452,23 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                 let fileURL = directoryURL.appendingPathComponent(relativePath)
 
                 if let assetURL = fileAsset.fileURL {
-                    DLOG("Attempting to copy/move downloaded asset for \(relativePath) in \(directory) from \(assetURL.path) to \(fileURL.path)")
-
                     try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
 
                     if FileManager.default.fileExists(atPath: fileURL.path) {
                         try await FileManager.default.removeItem(at: fileURL)
-                        DLOG("Removed existing local file at \(fileURL.path)")
                     }
 
                     try FileManager.default.copyItem(at: assetURL, to: fileURL)
-                    ILOG("Successfully updated local file \(relativePath) in \(directory) from CloudKit.")
+                    syncLog.event(.download, item: "file/\(relativePath)", status: .ok, detail: "remote update")
                 } else {
-                    WLOG("File asset for record \(recordID.recordName) does not have a fileURL. Cannot download.")
+                    syncLog.event(.skip, item: "file/\(recordID.recordName)", status: .failed, detail: "no asset URL")
                 }
 
                 notificationCenter.post(name: .PVCloudSyncDidDownloadFile, object: self, userInfo: ["fileURL": fileURL, "directory": directory])
             } catch let error as CKError where error.code == .unknownItem {
-                WLOG("Record \(recordID.recordName) not found in CloudKit. Assuming deleted remotely.")
+                syncLog.event(.delete, item: "file/\(recordID.recordName)", status: .ok, detail: "deleted remotely")
             } catch {
-                ELOG("Error processing remote update for record \(recordID.recordName): \(error.localizedDescription)")
+                syncLog.event(.sync, item: "file/\(recordID.recordName)", status: .failed, detail: error.localizedDescription)
                 await errorHandler.handleError(error, file: nil)
             }
         }

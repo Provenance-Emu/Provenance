@@ -16,6 +16,8 @@ public enum PauseTileMenuRoute: String, Sendable, Hashable, CaseIterable {
     case states
     case options
     case recording
+    /// Controller profiles, port devices, touch keyboard/mouse, rumble, and related input tiles.
+    case controls
     case core
     /// Skins submenu in `PauseTileMenuView`. Choosing a portrait/landscape skin presents `SystemSkinSelectionView` (same sheet as the library), not this file.
     case skins

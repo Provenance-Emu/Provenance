@@ -800,4 +800,59 @@ static NSArray<NSString *> *TOSAllFilenames(void) {
     }
 }
 
+// ---------------------------------------------------------------------------
+// MARK: validateHatariTOSOrError:
+// ---------------------------------------------------------------------------
+
+- (BOOL)validateHatariTOSOrError:(NSError **)error {
+    if (![self pv_isHatariSystem]) {
+        return YES;
+    }
+
+    NSFileManager *fm = [NSFileManager defaultManager];
+
+    // Search all directories where TOS might live: BIOS dir, RetroArch system dir, system/hatari/
+    NSMutableArray<NSString *> *searchDirs = [NSMutableArray array];
+    if (self.BIOSPath.length > 0) {
+        [searchDirs addObject:self.BIOSPath];
+    }
+    NSString *systemDir = [self.retroArchRootPath stringByAppendingPathComponent:@"system"];
+    [searchDirs addObject:systemDir];
+    [searchDirs addObject:[systemDir stringByAppendingPathComponent:@"hatari"]];
+
+    for (NSString *dir in searchDirs) {
+        NSString *best = [self findBestTOSInDirectory:dir];
+        if (best) {
+            // findBestTOSInDirectory already validates header + repairs byte-swap issues
+            return YES;
+        }
+    }
+
+    // Also check for the canonical tos.img directly
+    for (NSString *dir in searchDirs) {
+        NSString *tosImg = [dir stringByAppendingPathComponent:@"tos.img"];
+        if ([fm fileExistsAtPath:tosImg]) {
+            // File exists but was rejected by findBestTOSInDirectory — corrupt or invalid
+            if (error) {
+                *error = [NSError errorWithDomain:@"PVRetroArchCore" code:101
+                                         userInfo:@{NSLocalizedDescriptionKey:
+                    @"Atari ST TOS ROM (tos.img) exists but appears corrupt or invalid. "
+                     "Delete and reimport a valid TOS ROM image."}];
+            }
+            return NO;
+        }
+    }
+
+    // No TOS found anywhere
+    if (error) {
+        *error = [NSError errorWithDomain:@"PVRetroArchCore" code:100
+                                 userInfo:@{NSLocalizedDescriptionKey:
+            @"Atari ST TOS ROM not found. Place a valid tos.img file in the "
+             "Atari ST BIOS folder. Without TOS, Hatari will crash on launch.",
+                     NSLocalizedRecoverySuggestionErrorKey:
+            @"Import a TOS ROM (tos.img, tos102.img, etc.) via the BIOS import screen."}];
+    }
+    return NO;
+}
+
 @end

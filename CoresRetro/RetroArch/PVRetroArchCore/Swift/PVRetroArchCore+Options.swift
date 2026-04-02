@@ -968,8 +968,8 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
 private enum RetroArchActionTitle {
     static let retroArchMenu = RetroArchCoreActionTitles.internalMenu
     static let toggleEject = "Toggle Eject"
-    static let toggleTouchKeyboard = "Toggle Touch Keyboard"
-    static let toggleTouchMouse = "Toggle Touch Mouse"
+    static let toggleTouchKeyboard = RetroArchCoreActionTitles.toggleTouchKeyboard
+    static let toggleTouchMouse = RetroArchCoreActionTitles.toggleTouchMouse
 }
 
 extension PVRetroArchCoreCore: CoreActions {

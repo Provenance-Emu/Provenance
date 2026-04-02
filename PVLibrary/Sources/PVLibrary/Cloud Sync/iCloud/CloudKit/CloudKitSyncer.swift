@@ -233,7 +233,7 @@ public class CloudKitSyncer: SyncProvider {
                     // Record successful sync
                     await CloudKitSyncAnalytics.shared.recordSuccessfulSync()
                 } catch {
-                    ELOG("Error loading records from CloudKit: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.sync, item: "cloudkit/\(self.recordType)", status: .failed, detail: error.localizedDescription)
                     // Record failure
                     await CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
                     await self.errorHandler.handle(error: error)
@@ -474,7 +474,7 @@ public class CloudKitSyncer: SyncProvider {
             // Handle completion
             operation.queryCompletionBlock = { cursor, error in
                 if let error = error {
-                    ELOG("Error fetching records: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.query, item: "cloudkit/records", status: .failed, detail: error.localizedDescription)
                     continuation.resume(throwing: error)
                 } else {
                     continuation.resume(returning: (batchRecords, cursor))
@@ -530,7 +530,7 @@ public class CloudKitSyncer: SyncProvider {
                     DLOG("Deleted CloudKit record for file: \(file.lastPathComponent)")
                 }
             } catch {
-                ELOG("Failed to delete CloudKit record: \(error.localizedDescription)")
+                CloudSyncManager.syncLog.event(.delete, item: "cloudkit/\(file.lastPathComponent)", status: .failed, detail: error.localizedDescription)
                 await errorHandler.handle(error: error)
             }
         }
@@ -626,7 +626,7 @@ public class CloudKitSyncer: SyncProvider {
                     try await privateDatabase.save(subscription)
                     DLOG("Created CloudKit subscription for directory: \(directory)")
                 } catch {
-                    ELOG("Failed to create CloudKit subscription: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.sync, item: "cloudkit/subscription/\(directory)", status: .failed, detail: error.localizedDescription)
                     await errorHandler.handle(error: error)
                 }
             }
@@ -643,6 +643,7 @@ public class CloudKitSyncer: SyncProvider {
 
     /// Handle CloudKit account changes
     private func handleCloudKitAccountChanged() async {
+        let syncLog = CloudSyncManager.syncLog
         Task {
             do {
                 // Check account status
@@ -654,14 +655,14 @@ public class CloudKitSyncer: SyncProvider {
                     // Load cloud data
                     _ = try? await loadAllFromCloud(iterationComplete: nil).value
                 case .noAccount, .restricted, .couldNotDetermine:
-                    ELOG("CloudKit account is not available: \(accountStatus)")
+                    syncLog.event(.check, item: "cloudkit/account", status: .failed, detail: "account not available: \(accountStatus)")
                     initialSyncResult = .denied
                 @unknown default:
-                    ELOG("Unknown CloudKit account status: \(accountStatus)")
+                    syncLog.event(.check, item: "cloudkit/account", status: .failed, detail: "unknown status: \(accountStatus)")
                     initialSyncResult = .indeterminate
                 }
             } catch {
-                ELOG("Error checking CloudKit account status: \(error.localizedDescription)")
+                syncLog.event(.check, item: "cloudkit/account", status: .failed, detail: error.localizedDescription)
                 await errorHandler.handle(error: error)
             }
         }
@@ -725,7 +726,7 @@ public class CloudKitSyncer: SyncProvider {
             DLOG("Synced metadata for \(records.count) \(typeToSync) records")
             return records.count
         } catch {
-            ELOG("Error syncing metadata for \(typeToSync): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.sync, item: "cloudkit/metadata/\(typeToSync)", status: .failed, detail: error.localizedDescription)
             // Record failed metadata sync
             await CloudKitSyncAnalytics.shared.recordFailedSync(error: error)
             await errorHandler.handle(error: error)
@@ -788,7 +789,7 @@ public class CloudKitSyncer: SyncProvider {
             // Handle completion
             operation.queryCompletionBlock = { cursor, error in
                 if let error = error {
-                    ELOG("Error fetching metadata records: \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.query, item: "cloudkit/metadata", status: .failed, detail: error.localizedDescription)
                     continuation.resume(throwing: error)
                 } else {
                     continuation.resume(returning: (batchRecords, cursor))
@@ -803,6 +804,8 @@ public class CloudKitSyncer: SyncProvider {
     /// Process a CloudKit record
     /// - Parameter record: The CloudKit record to process
     private func processRecord(_ record: CKRecord) async {
+        let syncLog = CloudSyncManager.syncLog
+
         // Extract directory and filename with fallbacks
         let directory: String
         if let directoryValue = record["directory"] as? String {
@@ -811,9 +814,9 @@ public class CloudKitSyncer: SyncProvider {
             // For ROMs, use a default directory if missing
             let system = record["system"] as? String ?? "Unknown"
             directory = "roms/\(system)"
-            WLOG("Missing directory for ROM record, using: \(directory)")
+            syncLog.event(.download, item: "record/\(record.recordID.recordName)", status: .pending, detail: "missing directory for ROM, using roms/\(system)")
         } else {
-            ELOG("Invalid CloudKit record: missing directory field")
+            syncLog.event(.error, item: "record/\(record.recordID.recordName)", status: .failed, detail: "missing directory field")
             return
         }
 
@@ -825,22 +828,34 @@ public class CloudKitSyncer: SyncProvider {
             // Use title as filename if available
             let fileExt = record.recordType == CloudKitSyncer.RecordType.rom ? ".rom" : ".dat"
             filename = titleValue.replacingOccurrences(of: " ", with: "_") + fileExt
-            WLOG("Missing filename for record, using title: \(filename)")
+            syncLog.event(.download, item: "record/\(record.recordID.recordName)", status: .pending, detail: "missing filename, using title: \(filename)")
         } else {
             // Last resort: use record ID as filename
             filename = record.recordID.recordName + ".dat"
-            WLOG("Missing both filename and title, using record ID: \(filename)")
+            syncLog.event(.download, item: "record/\(record.recordID.recordName)", status: .pending, detail: "missing filename and title, using record ID")
         }
 
-        DLOG("Processing record: \(record.recordID.recordName) - Directory: \(directory), Filename: \(filename)")
+        // Non-database file types (Screenshots, Battery States, DeltaSkins) are handled
+        // by CloudKitNonDatabaseSyncer. Skip database entry creation for these.
+        let nonDatabaseDirs = ["screenshots", "battery states", "deltaskins"]
+        let dirLower = directory.lowercased()
+        let isNonDatabaseFile = record.recordType == CloudKitSyncer.RecordType.file
+            || nonDatabaseDirs.contains(where: { dirLower.hasPrefix($0) })
+
+        if isNonDatabaseFile {
+            syncLog.event(.skip, item: "file/\(filename)", status: .skipped, detail: "non-database dir=\(directory)")
+        } else {
+            syncLog.event(.download, item: "record/\(filename)", status: .inProgress, detail: "dir=\(directory)")
+        }
 
         // Check if the file already exists locally
         let destinationDirectory = URL.documentsPath.appendingPathComponent(directory, isDirectory: true)
         let destinationURL = destinationDirectory.appendingPathComponent(filename)
 
         if fileManager.fileExists(atPath: destinationURL.path) {
-            // File exists — just ensure the database entry is up to date
-            DLOG("File already exists locally, skipping download: \(filename)")
+            if !isNonDatabaseFile {
+                syncLog.event(.skip, item: "record/\(filename)", status: .exists, detail: "local file exists")
+            }
             await createDatabaseEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: true)
             return
         }
@@ -861,12 +876,10 @@ public class CloudKitSyncer: SyncProvider {
             } else {
                 // No file data available — metadata-only record
                 await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
-                if record.recordType == CloudKitSyncer.RecordType.rom || record.recordType == "Game" {
-                    DLOG("Created database entry for ROM: \(filename) (metadata only, no file asset)")
-                }
+                syncLog.event(.download, item: "record/\(filename)", status: .ok, detail: "metadata only")
             }
         } catch {
-            ELOG("Failed to fetch file data for \(filename): \(error.localizedDescription)")
+            syncLog.event(.download, item: "record/\(filename)", status: .failed, detail: error.localizedDescription)
             // Still create the database entry so the game appears in the UI
             await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
         }
@@ -974,7 +987,7 @@ public class CloudKitSyncer: SyncProvider {
             }
             success = true
         } catch {
-            ELOG("Error downloading file \(filename) from CloudKit: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.download, item: "cloudkit/\(filename)", status: .failed, detail: error.localizedDescription)
             CloudSyncLogManager.shared.logSyncOperation(
                 "Failed to download file: \(filename) - Error: \(error.localizedDescription)",
                 level: .error,
@@ -999,6 +1012,8 @@ public class CloudKitSyncer: SyncProvider {
     /// Process a CloudKit record and create the appropriate database entry
     /// - Parameter record: The CloudKit record to process
     internal func processCloudKitRecord(_ record: CKRecord) async {
+        let syncLog = CloudSyncManager.syncLog
+
         // Log record information
         VLOG("Processing CloudKit record: \(record.recordID.recordName) of type: \(record.recordType)")
 
@@ -1017,13 +1032,13 @@ public class CloudKitSyncer: SyncProvider {
             // Use record name as fallback if it doesn't look like a UUID
             if !isUUID(recordName) {
                 filename = recordName
-                WLOG("Using record name as filename: \(recordName)")
+                syncLog.event(.sync, item: "record/\(recordName)", status: .pending, detail: "using record name as filename")
             }
         }
 
         // If we still don't have a filename, log and handle the record
         if filename == nil {
-            WLOG("Record missing filename: \(record.recordID.recordName)")
+            syncLog.event(.sync, item: "record/\(record.recordID.recordName)", status: .pending, detail: "missing filename")
 
             // If it's a test record (UUID-like name), delete it to prevent future sync issues
             let recordName = record.recordID.recordName
@@ -1033,7 +1048,7 @@ public class CloudKitSyncer: SyncProvider {
                         DLOG("Deleting invalid test record: \(recordName)")
                         try await privateDatabase.deleteRecord(withID: record.recordID)
                     } catch {
-                        ELOG("Failed to delete invalid test record: \(error.localizedDescription)")
+                        syncLog.event(.delete, item: "record/\(recordName)", status: .failed, detail: error.localizedDescription)
                     }
                 }
             }
@@ -1062,7 +1077,7 @@ public class CloudKitSyncer: SyncProvider {
             directory = "roms"
             DLOG("Converting legacy 'Game' record type to 'ROM'")
         default:
-            WLOG("Unknown record type: \(record.recordType) - attempting to process anyway")
+            syncLog.event(.sync, item: "record/\(filename ?? record.recordID.recordName)", status: .pending, detail: "unknown record type: \(record.recordType)")
             // Try to determine directory from record fields
             if let dirFromRecord = record["directory"] as? String {
                 directory = dirFromRecord.lowercased()
@@ -1085,37 +1100,45 @@ public class CloudKitSyncer: SyncProvider {
         // This method will create or update a Realm entry based on the CloudKit record
         // The implementation will depend on your Realm model structure
 
-        // Log record details for debugging
-        VLOG("Creating database entry for record: \(record.recordID.recordName) of type: \(record.recordType) in directory: \(directory)")
+        let syncLog = CloudSyncManager.syncLog
+
+        // Non-database file types don't need Realm entries
+        let nonDatabaseDirs = ["screenshots", "battery states", "deltaskins"]
+        let dirLower = directory.lowercased()
+        if record.recordType == CloudKitSyncer.RecordType.file
+            || nonDatabaseDirs.contains(where: { dirLower.hasPrefix($0) }) {
+            // File-only records (screenshots, battery saves, skins) are synced to disk
+            // by CloudKitNonDatabaseSyncer — no database entry needed.
+            return
+        }
 
         switch record.recordType {
-        case CloudKitSyncer.RecordType.rom, "Game": // Handle both current and legacy record types
-            DLOG("Processing as ROM record")
+        case CloudKitSyncer.RecordType.rom, "Game":
+            syncLog.event(.download, item: "rom/\(filename)", status: .inProgress, detail: "creating db entry")
             await createROMEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
 
         case CloudKitSyncer.RecordType.saveState:
-            DLOG("Processing as SaveState record")
+            syncLog.event(.download, item: "save/\(filename)", status: .inProgress, detail: "creating db entry")
             await createSaveStateEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
 
         case CloudKitSyncer.RecordType.bios:
-            DLOG("Processing as BIOS record")
+            syncLog.event(.download, item: "bios/\(filename)", status: .inProgress, detail: "creating db entry")
             await createBIOSEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
 
         default:
-            WLOG("Encountered unknown record type: \(record.recordType)")
-
             // Try to determine the appropriate handler based on directory
-            if directory.lowercased().contains("rom") {
-                DLOG("Processing unknown record type as ROM based on directory")
+            if dirLower.contains("rom") {
+                syncLog.event(.download, item: "rom/\(filename)", status: .inProgress, detail: "inferred from dir")
                 await createROMEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
-            } else if directory.lowercased().contains("save") || directory.lowercased().contains("state") {
-                DLOG("Processing unknown record type as SaveState based on directory")
+            } else if dirLower.contains("save") || dirLower.contains("state") {
+                syncLog.event(.download, item: "save/\(filename)", status: .inProgress, detail: "inferred from dir")
                 await createSaveStateEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
-            } else if directory.lowercased().contains("bios") {
-                DLOG("Processing unknown record type as BIOS based on directory")
+            } else if dirLower.contains("bios") {
+                syncLog.event(.download, item: "bios/\(filename)", status: .inProgress, detail: "inferred from dir")
                 await createBIOSEntryFromRecord(record, directory: directory, filename: filename, isDownloaded: isDownloaded)
             } else {
-                DLOG("Unable to determine record type from directory, skipping database entry creation")
+                syncLog.event(.skip, item: "unknown/\(filename)", status: .skipped,
+                              detail: "type=\(record.recordType) dir=\(directory)")
             }
         }
     }
@@ -1127,6 +1150,8 @@ public class CloudKitSyncer: SyncProvider {
     ///   - filename: The filename
     ///   - isDownloaded: Whether the file is downloaded locally
     private func createROMEntryFromRecord(_ record: CKRecord, directory: String, filename: String, isDownloaded: Bool) async {
+        let syncLog = CloudSyncManager.syncLog
+
         // Extract metadata from the record with fallbacks for different field names
         // This handles potential schema differences between devices
 
@@ -1147,7 +1172,7 @@ public class CloudKitSyncer: SyncProvider {
         } else {
             // Generate a unique identifier if MD5 is missing
             md5 = UUID().uuidString
-            WLOG("Missing MD5 for ROM record, generated UUID: \(md5)")
+            syncLog.event(.download, item: "rom/\(filename)", status: .pending, detail: "missing MD5, generated UUID: \(md5)")
         }
 
         // Get system with fallbacks
@@ -1159,7 +1184,7 @@ public class CloudKitSyncer: SyncProvider {
         } else {
             // Try to determine system from directory
             system = directory.components(separatedBy: "/").last ?? "Unknown"
-            WLOG("Missing system for ROM record, using directory: \(system)")
+            syncLog.event(.download, item: "rom/\(filename)", status: .pending, detail: "missing system, using directory: \(system)")
         }
 
         // Get file size with fallbacks
@@ -1170,7 +1195,7 @@ public class CloudKitSyncer: SyncProvider {
             fileSize = sizeValue
         } else {
             fileSize = 0
-            WLOG("Missing file size for ROM record")
+            syncLog.event(.download, item: "rom/\(filename)", status: .pending, detail: "missing file size")
         }
 
         DLOG("Processing ROM record - Title: \(title), System: \(system), MD5: \(md5), Size: \(fileSize)")
@@ -1238,7 +1263,7 @@ public class CloudKitSyncer: SyncProvider {
                 }
             }
         } catch {
-            ELOG("Error creating/updating ROM entry: \(error.localizedDescription)")
+            syncLog.event(.download, item: "rom/\(filename)", status: .failed, detail: error.localizedDescription)
         }
     }
 
@@ -1274,7 +1299,7 @@ public class CloudKitSyncer: SyncProvider {
         guard let gameID = record["gameID"] as? String,
               let fileSize = record["fileSize"] as? Int64
         else {
-            ELOG("Missing metadata for save state record: \(record.recordID.recordName)")
+            CloudSyncManager.syncLog.event(.download, item: "save/\(filename)", status: .failed, detail: "missing metadata for record: \(record.recordID.recordName)")
             return
         }
 
@@ -1334,7 +1359,7 @@ public class CloudKitSyncer: SyncProvider {
                 }
             }
         } catch {
-            ELOG("Error creating/updating SaveState entry: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.download, item: "save/\(filename)", status: .failed, detail: error.localizedDescription)
         }
     }
 
@@ -1424,7 +1449,7 @@ public class CloudKitSyncer: SyncProvider {
                 }
             }
         } catch {
-            ELOG("Error creating/updating BIOS entry: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.download, item: "bios/\(filename)", status: .failed, detail: error.localizedDescription)
         }
     }
 
@@ -1462,7 +1487,7 @@ public class CloudKitSyncer: SyncProvider {
                               let filename = record["filename"] as? String,
                               let fileAsset = record["fileData"] as? CKAsset,
                               let fileURL = fileAsset.fileURL else {
-                            ELOG("Record missing required fields - directory: \(record["directory"] != nil), filename: \(record["filename"] != nil), fileData: \(record["fileData"] != nil)")
+                            CloudSyncManager.syncLog.event(.download, item: "cloudkit/\(recordName)", status: .failed, detail: "missing required fields - directory: \(record["directory"] != nil), filename: \(record["filename"] != nil), fileData: \(record["fileData"] != nil)")
                             throw NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "Record does not contain required file data"])
                         }
 
@@ -1508,7 +1533,7 @@ public class CloudKitSyncer: SyncProvider {
                                         destinationURL = subdirectoryURL.appendingPathComponent(filename)
                                         DLOG("Created subdirectory: \(subdirectoryURL.path)")
                                     } catch {
-                                        ELOG("Error creating subdirectory: \(error.localizedDescription)")
+                                        CloudSyncManager.syncLog.event(.download, item: "cloudkit/\(filename)", status: .failed, detail: "error creating subdirectory: \(error.localizedDescription)")
                                     }
                                 }
                             } else {
@@ -1587,7 +1612,7 @@ public class CloudKitSyncer: SyncProvider {
         return try await runOnQueue {
             // Respect emulation pause: do not upload while emulation is running
             if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
-                WLOG("CloudKitSyncer: Upload skipped during emulation pause for file: \(file.lastPathComponent)")
+                CloudSyncManager.syncLog.event(.skip, item: "upload/\(file.lastPathComponent)", status: .skipped, detail: "paused for emulation")
                 throw CloudSyncError.genericError("Sync paused for emulation")
             }
 
@@ -1609,7 +1634,7 @@ public class CloudKitSyncer: SyncProvider {
 
                         // Ensure file exists before proceeding
                         guard self.fileManager.fileExists(atPath: file.path) else {
-                            WLOG("File does not exist, cannot upload: \(file.path)")
+                            CloudSyncManager.syncLog.event(.upload, item: "cloudkit/\(file.lastPathComponent)", status: .notFound, detail: "file does not exist: \(file.path)")
                             throw NSError(domain: "com.provenance-emu.provenance", code: 2, userInfo: [NSLocalizedDescriptionKey: "File not found for upload"])
                         }
 
@@ -1617,7 +1642,7 @@ public class CloudKitSyncer: SyncProvider {
                         guard let attributes = try? self.fileManager.attributesOfItem(atPath: file.path),
                               let size = attributes[.size] as? NSNumber,
                               let modifiedDate = attributes[.modificationDate] as? Date else {
-                            ELOG("Failed to get attributes for file: \(file.path)")
+                            CloudSyncManager.syncLog.event(.upload, item: "cloudkit/\(file.lastPathComponent)", status: .failed, detail: "failed to get file attributes")
                             throw NSError(domain: "com.provenance-emu.provenance", code: 3, userInfo: [NSLocalizedDescriptionKey: "Failed to get file attributes"])
                         }
 
@@ -1625,7 +1650,7 @@ public class CloudKitSyncer: SyncProvider {
                         let pathComponents = file.pathComponents
                         guard let baseIndex = pathComponents.firstIndex(where: { self.directories.contains($0) }),
                               baseIndex < pathComponents.count - 1 else {
-                            ELOG("Unable to resolve base sync directory for \(file.path)")
+                            CloudSyncManager.syncLog.event(.upload, item: "cloudkit/\(file.lastPathComponent)", status: .failed, detail: "unable to resolve base sync directory")
                             throw NSError(domain: "com.provenance-emu.provenance", code: 4, userInfo: [NSLocalizedDescriptionKey: "Invalid sync path"])
                         }
 
@@ -1827,7 +1852,7 @@ public class CloudKitSyncer: SyncProvider {
             }
         }
 
-        WLOG("File path does not start with an expected directory path. File: \(file.path), Directory Component: \(directory)")
+        CloudSyncManager.syncLog.event(.check, item: "path/\(file.lastPathComponent)", status: .notFound, detail: "file path does not start with expected directory, dir=\(directory)")
 
         // Fallback: if the file lives directly inside any candidate directory, just return the filename
         for root in candidateRoots {
@@ -1981,7 +2006,7 @@ public class CloudKitSyncer: SyncProvider {
             // Use pagination to handle large record sets
             return try await countRecordsWithPagination(query: query)
         } catch {
-            ELOG("Error getting record count for \(recordType): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.query, item: "cloudkit/\(recordType)/count", status: .failed, detail: error.localizedDescription)
             return 0
         }
     }
@@ -2039,7 +2064,7 @@ public class CloudKitSyncer: SyncProvider {
             // Handle completion
             operation.queryCompletionBlock = { cursor, error in
                 if let error = error {
-                    ELOG("Error fetching records for \(self.recordType): \(error.localizedDescription)")
+                    CloudSyncManager.syncLog.event(.query, item: "cloudkit/\(self.recordType)", status: .failed, detail: error.localizedDescription)
                     continuation.resume(throwing: error)
                 } else {
                     continuation.resume(returning: (batchCount, cursor))

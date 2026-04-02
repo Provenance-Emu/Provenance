@@ -65,7 +65,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
 
         guard let localURL = self.localURL(for: game),
               let cloudURL = self.cloudURL(for: game) else {
-            ELOG("Invalid ROM file or URLs for game: \(game.title)")
+            CloudSyncManager.syncLog.event(.upload, item: "roms/\(game.title)", status: .failed, detail: "Invalid ROM file or URLs for game: \(game.title)")
             throw CloudSyncError.invalidData
         }
 
@@ -74,7 +74,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
         do {
             try FileManager.default.createDirectory(at: cloudDir, withIntermediateDirectories: true, attributes: nil)
         } catch {
-            ELOG("Failed to create iCloud directory \(cloudDir.path): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.upload, item: "roms/directory", status: .failed, detail: "Failed to create iCloud directory \(cloudDir.path): \(error.localizedDescription)")
             throw CloudSyncError.fileSystemError(error)
         }
 
@@ -87,11 +87,11 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
             }
             VLOG("Copying ROM from \(localURL.path) to \(cloudURL.path)")
             try FileManager.default.copyItem(at: localURL, to: cloudURL)
-            ILOG("Successfully uploaded ROM \(localURL.lastPathComponent) to iCloud Drive.")
+            CloudSyncManager.syncLog.event(.upload, item: "roms/\(localURL.lastPathComponent)", status: .ok, detail: "Successfully uploaded ROM \(localURL.lastPathComponent) to iCloud Drive.")
             // Update local game sync status? (Maybe CloudSyncManager responsibility?)
             // await RomDatabase.shared.updateGame(md5: game.md5Hash ?? "") { $0?.cloudStatus = .synced } // Example
         } catch {
-            ELOG("Failed to copy ROM to iCloud Drive at \(cloudURL.path): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.upload, item: "roms/\(cloudURL.lastPathComponent)", status: .failed, detail: "Failed to copy ROM to iCloud Drive at \(cloudURL.path): \(error.localizedDescription)")
             throw CloudSyncError.fileSystemError(error)
         }
     }
@@ -102,20 +102,20 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
     public func downloadGame(md5: String) async throws {
         // 1. Get the PVGame object from the datastore
         guard let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5) else {
-            ELOG("Cannot download game: PVGame with MD5 \(md5) not found in local database.")
+            CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .failed, detail: "Cannot download game: PVGame with MD5 \(md5) not found in local database.")
             // Use .invalidData as the game mapping failed
             throw CloudSyncError.invalidData
         }
 
         guard let cloudURL = self.cloudURL(for: game),
               let localURL = self.localURL(for: game) else {
-             ELOG("Could not determine cloud or local URL for game MD5: \(md5)")
+             CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .failed, detail: "Could not determine cloud or local URL for game MD5: \(md5)")
              throw CloudSyncError.invalidData
         }
 
         // 2. Check if file exists in the cloud
         guard FileManager.default.fileExists(atPath: cloudURL.path) else {
-            ELOG("ROM file not found in iCloud Drive at \(cloudURL.path) for MD5: \(md5)")
+            CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .failed, detail: "ROM file not found in iCloud Drive at \(cloudURL.path) for MD5: \(md5)")
             // Use .invalidData as the expected cloud file is missing
             throw CloudSyncError.invalidData
         }
@@ -125,7 +125,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
         do {
             try FileManager.default.createDirectory(at: localDir, withIntermediateDirectories: true, attributes: nil)
         } catch {
-            ELOG("Failed to create local directory \(localDir.path): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.download, item: "roms/directory", status: .failed, detail: "Failed to create local directory \(localDir.path): \(error.localizedDescription)")
             throw CloudSyncError.fileSystemError(error)
         }
 
@@ -138,7 +138,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
             }
             VLOG("Downloading ROM from \(cloudURL.path) to \(localURL.path)")
             try FileManager.default.copyItem(at: cloudURL, to: localURL)
-            ILOG("Successfully downloaded ROM \(localURL.lastPathComponent) from iCloud Drive.")
+            CloudSyncManager.syncLog.event(.download, item: "roms/\(localURL.lastPathComponent)", status: .ok, detail: "Successfully downloaded ROM \(localURL.lastPathComponent) from iCloud Drive.")
 
             // Use a Realm write transaction to update the game properties
             try RomDatabase.sharedInstance.writeTransaction {
@@ -147,12 +147,12 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
                     gameToUpdate.isDownloaded = true
                     gameToUpdate.lastCloudSyncDate = Date()
                 } else {
-                    WLOG("Game with MD5 \(md5) not found during sync status update (success).")
+                    CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .skipped, detail: "Game with MD5 \(md5) not found during sync status update (success).")
                 }
             }
             NotificationCenter.default.post(name: .romDownloadCompleted, object: game)
         } catch {
-            ELOG("Failed to copy ROM from iCloud Drive at \(cloudURL.path): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.download, item: "roms/\(cloudURL.lastPathComponent)", status: .failed, detail: "Failed to copy ROM from iCloud Drive at \(cloudURL.path): \(error.localizedDescription)")
             // If download failed, ensure local file doesn't exist in partial state
             if FileManager.default.fileExists(atPath: localURL.path) {
                 try? await FileManager.default.removeItem(at: localURL)
@@ -164,7 +164,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
                     gameToUpdate.isDownloaded = false
                     // We don't have an error state, just mark as not downloaded
                 } else {
-                    WLOG("Game with MD5 \(md5) not found during sync status update (error).")
+                    CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .skipped, detail: "Game with MD5 \(md5) not found during sync status update (error).")
                 }
             }
             throw CloudSyncError.fileSystemError(error)
@@ -181,7 +181,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
         guard let game = RomDatabase.sharedInstance.object(ofType: PVGame.self, wherePrimaryKeyEquals: md5) else {
             // If the game isn't local, we can't determine the cloud path to delete.
             // We could potentially query CloudKit metadata if it existed, but for iCloud Drive, we rely on the local entry.
-            WLOG("Cannot mark game as deleted: PVGame with MD5 \(md5) not found locally.")
+            CloudSyncManager.syncLog.event(.delete, item: "roms/\(md5)", status: .skipped, detail: "Cannot mark game as deleted: PVGame with MD5 \(md5) not found locally.")
             // Consider if this should be an error or just a warning.
             // If called during a sync reconcile, maybe it's okay if local is gone?
             // For now, let's treat not finding the local game as ignorable.
@@ -190,13 +190,13 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
 
         // 2. Determine the Cloud URL
         guard let cloudURL = self.cloudURL(for: game) else {
-             ELOG("Could not determine cloud URL for game MD5: \(md5). Cannot delete.")
+             CloudSyncManager.syncLog.event(.delete, item: "roms/\(md5)", status: .failed, detail: "Could not determine cloud URL for game MD5: \(md5). Cannot delete.")
              throw CloudSyncError.invalidData
         }
 
         // 3. Check if the file exists in iCloud Drive
         guard FileManager.default.fileExists(atPath: cloudURL.path) else {
-            WLOG("Cloud file for game MD5 \(md5) at \(cloudURL.path) does not exist. Assuming already deleted.")
+            CloudSyncManager.syncLog.event(.delete, item: "roms/\(md5)", status: .skipped, detail: "Cloud file for game MD5 \(md5) at \(cloudURL.path) does not exist. Assuming already deleted.")
             // File is already gone, so consider the deletion successful/unnecessary.
             return
         }
@@ -205,7 +205,7 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
         do {
             VLOG("Deleting ROM file from iCloud Drive: \(cloudURL.path)")
             try await FileManager.default.removeItem(at: cloudURL)
-            ILOG("Successfully deleted ROM file \(cloudURL.lastPathComponent) from iCloud Drive for MD5: \(md5).")
+            CloudSyncManager.syncLog.event(.delete, item: "roms/\(cloudURL.lastPathComponent)", status: .ok, detail: "Successfully deleted ROM file \(cloudURL.lastPathComponent) from iCloud Drive for MD5: \(md5).")
 
             // TODO: Update local game sync status if necessary?
             // Perhaps set cloudStatus = .deleted ? Needs a new status.
@@ -213,10 +213,10 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
 
         } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
             // If we checked existence and it's gone now, treat as success (race condition?)
-            WLOG("File \(cloudURL.path) was not found during deletion attempt (maybe already deleted): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.delete, item: "roms/\(cloudURL.lastPathComponent)", status: .skipped, detail: "File \(cloudURL.path) was not found during deletion attempt (maybe already deleted): \(error.localizedDescription)")
             // Consider this case as successfully deleted.
         } catch {
-            ELOG("Failed to delete ROM file from iCloud Drive at \(cloudURL.path): \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.delete, item: "roms/\(cloudURL.lastPathComponent)", status: .failed, detail: "Failed to delete ROM file from iCloud Drive at \(cloudURL.path): \(error.localizedDescription)")
             throw CloudSyncError.fileSystemError(error)
         }
     }

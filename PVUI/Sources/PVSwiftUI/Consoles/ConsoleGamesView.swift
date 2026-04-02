@@ -1491,8 +1491,8 @@ extension ConsoleGamesView {
     private func favoritesSection() -> some View {
         Group {
             if showFavorites && !favoritesModels.isEmpty {
-                /// Intrinsic height (title + row) — do not cap with a fixed frame; shelf cells use `PVRowHeight`
-                /// and a shorter container clips artwork in the horizontal `ScrollView`.
+                /// Intrinsic height (title + row) — do not cap with a fixed frame; shelf cells use `PVRowHeight * PVCompactShelfRowHeightScale`
+                /// for favorites/recently played; a shorter container clips artwork in the horizontal `ScrollView`.
                 HomeSection(title: String(localized: "Favorites")) {
                     ForEach(favoritesModels, id: \.id) { game in
                         gameItem(game, section: .favorites)
@@ -1634,6 +1634,7 @@ extension ConsoleGamesView {
         GameItemPresentableView(
             game: game,
                 constrainHeight: true,
+                shelfRowHeightScale: PVCompactShelfRowHeightScale,
                 viewType: .cell,
                 sectionContext: section,
                 isFocused: focusBinding(itemId: game.id, section: section)

@@ -11,6 +11,26 @@ final class GeckoCodesLookupTests: XCTestCase {
 
     // MARK: - Happy Path
 
+    /// Matches RiiConnect24 / Dolphin `txt.php?txt=GAMEID` body shape (`GeckoCodeConfig.cpp` download parser).
+    func testParseDolphinRc24Format() async {
+        let fixture = """
+        GALE01
+        Super Smash Bros. Melee
+
+        Version 1.0
+
+        Target Test Never Ends [Link Master]
+        041C3374 38030000
+
+        Unrestricted Pause Camera [Link Master]
+        04450F94 42000000
+        """
+        let entries = await GeckoCodesLookup.shared.parseGeckoCodes(fixture, gameID: "GALE01")
+        XCTAssertGreaterThanOrEqual(entries.count, 2)
+        XCTAssertTrue(entries.contains { $0.cheatName.contains("Target Test Never Ends") && $0.cheatCode == "041C337438030000" })
+        XCTAssertTrue(entries.contains { $0.cheatName.contains("Unrestricted Pause Camera") })
+    }
+
     func testParseMultipleCheats() async {
         let fixture = """
         [GALE01 - Super Smash Bros. Melee]

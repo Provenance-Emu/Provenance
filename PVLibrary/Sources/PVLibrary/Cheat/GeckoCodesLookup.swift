@@ -5,7 +5,9 @@
 // database (https://codes.rc24.xyz) for GameCube and Wii games.
 //
 // Sources queried:
-//   - RiiConnect24 GeckoCodes mirror: https://codes.rc24.xyz/txt.php?txt=geckocodes&id=GAMEID
+//   - RiiConnect24 mirror uses the same URL shape as Dolphin:
+//     `https://codes.rc24.xyz/txt.php?txt=GAMEID` (e.g. txt=GALE01).
+//     The older `txt=geckocodes&id=` form returns 404 and must not be used.
 //
 // The 6-character game ID (e.g. "RMCE01" for Mario Kart Wii USA) is read from
 // the ROM header and stored in PVGame.romSerial by the game importer.
@@ -13,13 +15,11 @@
 // Caching: results are cached to disk for 24 hours and kept in memory for
 // the process lifetime to minimise network traffic.
 //
-// Gecko code format:
-//   [GAMEID - Game Title]
-//   $Cheat Name
-//   XXXXXXXX YYYYYYYY
-//   XXXXXXXX YYYYYYYY
-//   $Another Cheat
-//   XXXXXXXX YYYYYYYY
+// Parsed text formats:
+//   1) RiiConnect24 / Dolphin download layout (`Core/GeckoCodeConfig.cpp`): game ID line,
+//      title line, blank line, then blocks separated by blank lines; each cheat starts with
+//      `Name [Author]` followed by `XXXXXXXX YYYYYYYY` lines.
+//   2) Legacy: `[GAMEID - Title]` header, `$Cheat Name` or `*Cheat Name`, then hex lines.
 
 import Foundation
 import PVLogging
@@ -39,7 +39,7 @@ public actor GeckoCodesLookup {
 
     // MARK: - Constants
 
-    /// Base URL for the RiiConnect24 GeckoCodes text endpoint.
+    /// Base URL for the RiiConnect24 GeckoCodes text endpoint (`?txt=<GAMEID>`).
     private static let endpointBase = "https://codes.rc24.xyz/txt.php"
     /// How long (seconds) cached results are considered fresh.
     private static let cacheTTL: TimeInterval = 24 * 3600
@@ -63,7 +63,7 @@ public actor GeckoCodesLookup {
     ///   and `deviceName == "Gecko"`.  Returns an empty array if no codes are found.
     /// - Throws: Network errors. Returns empty array for 404 (game not in database).
     public func searchCheats(gameID: String) async throws -> [CheatDatabaseEntry] {
-        let key = gameID.uppercased()
+        let key = makeCacheKey(gameID)
 
         // 1. Memory cache
         if let hit = memoryCache[key], Date().timeIntervalSince(hit.fetchedAt) < Self.cacheTTL {
@@ -94,14 +94,13 @@ public actor GeckoCodesLookup {
     // MARK: - Fetch Logic
 
     private func fetchGeckoCodes(gameID: String) async throws -> [CheatDatabaseEntry] {
-        // Build URL: https://codes.rc24.xyz/txt.php?txt=geckocodes&id=GAMEID
+        /// Same query pattern as Dolphin `Gecko::DownloadCodes`: `txt.php?txt=<gametdb_or_game_id>`.
         guard var components = URLComponents(string: Self.endpointBase) else {
             WLOG("GeckoCodesLookup: failed to construct URLComponents from endpointBase '\(Self.endpointBase)'")
             return []
         }
         components.queryItems = [
-            URLQueryItem(name: "txt", value: "geckocodes"),
-            URLQueryItem(name: "id", value: gameID.uppercased())
+            URLQueryItem(name: "txt", value: gameID.uppercased())
         ]
         guard let url = components.url else { return [] }
 
@@ -132,34 +131,39 @@ public actor GeckoCodesLookup {
 
     // MARK: - Gecko Code Parser
 
-    /// Parse the GeckoCodes plain-text format into `CheatDatabaseEntry` values.
+    /// Parse RiiConnect24 / Dolphin plaintext Gecko lists and legacy `$` / `*` cheat files into `CheatDatabaseEntry` values.
     ///
-    /// Format:
-    /// ```
-    /// [GAMEID - Game Title]
-    /// $Cheat Name
-    /// XXXXXXXX YYYYYYYY
-    /// XXXXXXXX YYYYYYYY
-    /// $Another Cheat
-    /// XXXXXXXX YYYYYYYY
-    /// ```
+    /// Dolphin download format (`GeckoCodeConfig.cpp`): after a 3-line header (game ID, title, blank),
+    /// cheats are separated by blank lines; each cheat begins with `Name [Author]` then `XXXXXXXX YYYYYYYY` lines.
     ///
-    /// Lines beginning with `$` or `*` start a new cheat entry.
-    /// Lines matching 8 hex + space + 8 hex are code bytes for the current cheat.
-    /// Lines beginning with `[` are game-header lines (skipped).
-    /// Lines beginning with `#` are comments (skipped).
+    /// Legacy format: optional `[GAMEID - Title]` line, then `$Name` or `*Name` and hex lines (no blank-line requirement between cheats).
     func parseGeckoCodes(_ text: String, gameID: String) -> [CheatDatabaseEntry] {
-        var entries: [CheatDatabaseEntry] = []
-        var currentName: String?
-        var currentLines: [String] = []
-        var index = 0
+        let lines = text
+            .components(separatedBy: .newlines)
+            .map { line in
+                line.trimmingCharacters(in: .whitespacesAndNewlines)
+                    .replacingOccurrences(of: "\r", with: "")
+            }
 
-        /// Flush the current cheat into `entries`.
-        func flush() {
-            guard let name = currentName, !currentLines.isEmpty else { return }
-            let code = currentLines.joined(separator: "+")
-            entries.append(CheatDatabaseEntry(
-                id: Self.idOffset + index,
+        var index = 0
+        var entries: [CheatDatabaseEntry] = []
+
+        /// True when `line` is two whitespace-separated 8-hex values (Dolphin `DeserializeLine`).
+        func isGeckoHexPair(_ line: String) -> Bool {
+            let parts = line.split(whereSeparator: \.isWhitespace).map(String.init)
+            guard parts.count >= 2 else { return false }
+            let a = parts[0]
+            let b = parts[1]
+            guard a.count == 8, b.count == 8 else { return false }
+            let hex = CharacterSet(charactersIn: "0123456789abcdefABCDEF")
+            return a.unicodeScalars.allSatisfy { hex.contains($0) } && b.unicodeScalars.allSatisfy { hex.contains($0) }
+        }
+
+        func flushCheat(name: String?, hexLines: [String], into results: inout [CheatDatabaseEntry], idCounter: inout Int) {
+            guard let name, !name.isEmpty, !hexLines.isEmpty else { return }
+            let code = hexLines.joined(separator: "+")
+            results.append(CheatDatabaseEntry(
+                id: Self.idOffset + idCounter,
                 cheatName: name,
                 cheatCode: code,
                 cheatDescription: nil,
@@ -170,39 +174,116 @@ public actor GeckoCodesLookup {
                 systemName: nil,
                 isOnlineResult: true
             ))
-            index += 1
-            currentLines = []
+            idCounter += 1
         }
 
-        let codeLinePattern = try? NSRegularExpression(
-            pattern: #"^[0-9A-Fa-f]{8}\s[0-9A-Fa-f]{8}$"#
-        )
+        /// Dolphin `DownloadCodes` state machine: blank line ends a cheat; `Name [Author]` starts one.
+        /// Legacy `$` / `*` cheats may repeat without blank lines — finishing one `$` header starts the next.
+        func parseDolphinStyle(from start: Int) {
+            var i = start
+            /// 0 = expect cheat title, 1 = expect hex code lines, 2 = note lines until blank (Dolphin download)
+            var readState = 0
+            var currentName: String?
+            var currentCreator: String?
+            var hexLines: [String] = []
 
-        for rawLine in text.components(separatedBy: .newlines) {
-            let line = rawLine.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !line.isEmpty else { continue }
+            func displayName() -> String? {
+                guard let n = currentName, !n.isEmpty else { return nil }
+                if let c = currentCreator, !c.isEmpty { return "\(n) [\(c)]" }
+                return n
+            }
 
-            if line.hasPrefix("[") {
-                // Game header — skip
-                continue
-            } else if line.hasPrefix("#") {
-                // Comment — skip
-                continue
-            } else if line.hasPrefix("$") || line.hasPrefix("*") {
-                // New cheat name
-                flush()
-                currentName = String(line.dropFirst()).trimmingCharacters(in: .whitespaces)
-                currentLines = []
-            } else if let pattern = codeLinePattern,
-                      pattern.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)) != nil {
-                // Code bytes line
-                if currentName != nil {
-                    currentLines.append(line.replacingOccurrences(of: " ", with: ""))
+            func resetCheat() {
+                currentName = nil
+                currentCreator = nil
+                hexLines = []
+                readState = 0
+            }
+
+            func flushPending() {
+                flushCheat(name: displayName(), hexLines: hexLines, into: &entries, idCounter: &index)
+                resetCheat()
+            }
+
+            func applyTitleLine(_ line: String) {
+                if line.hasPrefix("$") {
+                    currentName = String(line.dropFirst()).trimmingCharacters(in: .whitespaces)
+                    currentCreator = nil
+                } else if line.hasPrefix("*") {
+                    currentName = String(line.dropFirst()).trimmingCharacters(in: .whitespaces)
+                    currentCreator = nil
+                } else if let openBracket = line.firstIndex(of: "[") {
+                    currentName = String(line[..<openBracket]).trimmingCharacters(in: .whitespaces)
+                    let after = line[line.index(after: openBracket)...]
+                    if let close = after.firstIndex(of: "]") {
+                        currentCreator = String(after[..<close]).trimmingCharacters(in: .whitespaces)
+                    } else {
+                        currentCreator = nil
+                    }
+                } else {
+                    currentName = line
+                    currentCreator = nil
+                }
+                readState = 1
+            }
+
+            while i < lines.count {
+                let line = lines[i]
+                i += 1
+                if line.isEmpty {
+                    if !hexLines.isEmpty {
+                        flushPending()
+                    } else {
+                        resetCheat()
+                    }
+                    continue
+                }
+                if line.hasPrefix("[") || line.hasPrefix("#") {
+                    continue
+                }
+                switch readState {
+                case 0:
+                    if isGeckoHexPair(line) {
+                        continue
+                    }
+                    applyTitleLine(line)
+                case 1:
+                    if line.hasPrefix("$") || line.hasPrefix("*") {
+                        if !hexLines.isEmpty {
+                            flushCheat(name: displayName(), hexLines: hexLines, into: &entries, idCounter: &index)
+                            hexLines = []
+                        }
+                        currentName = nil
+                        currentCreator = nil
+                        readState = 0
+                        i -= 1
+                        continue
+                    }
+                    if isGeckoHexPair(line) {
+                        let parts = line.split(whereSeparator: \.isWhitespace).map(String.init)
+                        hexLines.append(parts[0] + parts[1])
+                    } else {
+                        readState = 2
+                    }
+                case 2:
+                    break
+                default:
+                    break
                 }
             }
+            if !hexLines.isEmpty {
+                flushCheat(name: displayName(), hexLines: hexLines, into: &entries, idCounter: &index)
+            }
         }
-        flush()
 
+        var startLine = 0
+        if let first = lines.first,
+           first.count == 6,
+           first.allSatisfy({ $0.isLetter || $0.isNumber }) {
+            startLine = min(3, lines.count)
+        }
+
+        parseDolphinStyle(from: startLine)
         return entries
     }
 
@@ -217,8 +298,9 @@ public actor GeckoCodesLookup {
 
     // MARK: - Cache Key
 
+    /// Bumped when fetch URL or parse format changes so stale disk entries (e.g. empty 404 caches) are ignored.
     private func makeCacheKey(_ gameID: String) -> String {
-        "gecko__\(gameID.uppercased())"
+        "gecko_txt_v2__\(gameID.uppercased())"
     }
 
     // MARK: - Disk Cache

@@ -56,7 +56,7 @@ public class CloudKitNotificationManager {
         container = iCloudConstants.container
         privateDatabase = container?.privateCloudDatabase
         guard container != nil else {
-            WLOG("[CloudKitNotificationManager] CloudKit entitlement not present — notification manager disabled (sideloaded?)")
+            CloudSyncManager.syncLog.event(.check, item: "notifications/entitlement", status: .notFound, detail: "CloudKit entitlement not present — notification manager disabled (sideloaded?)")
             return
         }
         checkNotificationStatus()
@@ -80,9 +80,9 @@ public class CloudKitNotificationManager {
                     UIApplication.shared.registerForRemoteNotifications()
                 }
             } else if let error = error {
-                ELOG("Failed to request notification authorization: \(error.localizedDescription)")
+                CloudSyncManager.syncLog.event(.error, item: "notifications/authorization", status: .failed, detail: "Failed to request notification authorization: \(error.localizedDescription)")
             } else {
-                ELOG("Notification authorization denied by user")
+                CloudSyncManager.syncLog.event(.error, item: "notifications/authorization", status: .failed, detail: "Notification authorization denied by user")
             }
         }
     }
@@ -102,7 +102,7 @@ public class CloudKitNotificationManager {
 
             DLOG("CloudKit subscriptions setup successfully")
         } catch {
-            ELOG("Failed to setup CloudKit subscriptions: \(error.localizedDescription)")
+            CloudSyncManager.syncLog.event(.error, item: "notifications/subscriptions", status: .failed, detail: "Failed to setup CloudKit subscriptions: \(error.localizedDescription)")
         }
     }
 
@@ -112,13 +112,14 @@ public class CloudKitNotificationManager {
     @discardableResult
     public func processNotification(_ userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult {
         guard container != nil else { return .noData }
+        let syncLog = CloudSyncManager.syncLog
         // Check if this is a CloudKit notification
         guard let notification = CKNotification(fromRemoteNotificationDictionary: userInfo) else {
-            ELOG("[SYNC] Not a CloudKit notification")
+            syncLog.event(.check, item: "notifications/push", status: .skipped, detail: "Not a CloudKit notification")
             return .noData
         }
 
-        ILOG("[SYNC] 📬 CloudKit push: type=\(notification.notificationType.rawValue), subscription=\(notification.subscriptionID ?? "none")")
+        syncLog.event(.sync, item: "notifications/push", status: .inProgress, detail: "CloudKit push: type=\(notification.notificationType.rawValue), subscription=\(notification.subscriptionID ?? "none")")
 
         // Publish the notification for subscribers
         notificationSubject.send(notification)
@@ -150,7 +151,7 @@ public class CloudKitNotificationManager {
                 return .noData
             }
         } catch {
-            ELOG("[SYNC] Error processing CloudKit notification: \(error.localizedDescription)")
+            syncLog.event(.error, item: "notifications/push", status: .failed, detail: "Error processing CloudKit notification: \(error.localizedDescription)")
             return .failed
         }
 
@@ -175,7 +176,7 @@ public class CloudKitNotificationManager {
     /// Handle device token registration failure
     /// - Parameter error: The registration error
     public func didFailToRegisterForRemoteNotifications(withError error: Error) {
-        ELOG("Failed to register for remote notifications: \(error.localizedDescription)")
+        CloudSyncManager.syncLog.event(.error, item: "notifications/registration", status: .failed, detail: "Failed to register for remote notifications: \(error.localizedDescription)")
         isRegisteredForNotifications = false
     }
 
@@ -236,8 +237,9 @@ public class CloudKitNotificationManager {
     /// - Parameter notification: The query notification
     /// - Returns: Background fetch result
     private func processQueryNotification(_ notification: CKQueryNotification) async throws -> UIBackgroundFetchResult {
+        let syncLog = CloudSyncManager.syncLog
         guard let recordID = notification.recordID else {
-            WLOG("Query notification received without a recordID. SubscriptionID: \(notification.subscriptionID ?? "nil")")
+            syncLog.event(.query, item: "notifications/query", status: .skipped, detail: "Query notification received without a recordID. SubscriptionID: \(notification.subscriptionID ?? "nil")")
             return .noData
         }
 
@@ -245,7 +247,7 @@ public class CloudKitNotificationManager {
         // This relies on subscriptionID matching the recordType, which is how setupSubscription works.
         guard let subscriptionID = notification.subscriptionID,
               let recordType = subscriptionID.split(separator: ".").last.map(String.init) else {
-            WLOG("Could not determine record type from subscription ID: \(notification.subscriptionID ?? "nil")")
+            syncLog.event(.query, item: "notifications/query", status: .skipped, detail: "Could not determine record type from subscription ID: \(notification.subscriptionID ?? "nil")")
             // Fallback: Try to guess from recordID prefix? (Less reliable)
             // let recordName = recordID.recordName
             // if recordName.hasPrefix("rom_") { recordType = RecordType.rom } etc.
@@ -264,23 +266,23 @@ public class CloudKitNotificationManager {
                  // Call the method to handle a specific remote record change
                  try await syncer.handleRemoteGameChange(recordID: recordID)
                  dataChanged = true
-            } else { WLOG("CloudKitRomsSyncer not found.") }
+            } else { syncLog.event(.sync, item: "notifications/query/rom", status: .notFound, detail: "CloudKitRomsSyncer not found") }
 
         case RecordType.saveState:
             // Sync save states metadata
             if let syncer = CloudKitSyncerStore.shared.saveStateSyncers.first as? CloudKitSaveStatesSyncer {
                 try await syncer.handleRemoteSaveStateChange(recordID: recordID)
                 dataChanged = true
-            } else { WLOG("CloudKitSaveStatesSyncer not found.") }
+            } else { syncLog.event(.sync, item: "notifications/query/saveState", status: .notFound, detail: "CloudKitSaveStatesSyncer not found") }
 
         case RecordType.bios:
             // Sync BIOS files metadata
             if let syncer = CloudKitSyncerStore.shared.biosSyncers.first as? CloudKitBIOSSyncer {
                 // TODO: Implement handleRemoteBIOSChange in CloudKitBIOSSyncer
                 // try await syncer.handleRemoteBIOSChange(recordID: recordID)
-                WLOG("handleRemoteBIOSChange not yet implemented in CloudKitBIOSSyncer for notification processing.")
+                syncLog.event(.sync, item: "notifications/query/bios", status: .pending, detail: "handleRemoteBIOSChange not yet implemented in CloudKitBIOSSyncer for notification processing")
                 dataChanged = true // Assume data changed even if method is stubbed for now
-            } else { WLOG("CloudKitBIOSSyncer not found.") }
+            } else { syncLog.event(.sync, item: "notifications/query/bios", status: .notFound, detail: "CloudKitBIOSSyncer not found") }
 
         // Handle File type if NonDatabaseSyncer needs notification processing
         // case RecordType.file:
@@ -290,7 +292,7 @@ public class CloudKitNotificationManager {
         //     } else { WLOG("CloudKitNonDatabaseSyncer not found.") }
 
         default:
-            WLOG("Unhandled record type in query notification: \(recordType)")
+            syncLog.event(.query, item: "notifications/query/\(recordType)", status: .skipped, detail: "Unhandled record type in query notification")
             return .noData
         }
 
@@ -305,7 +307,7 @@ public class CloudKitNotificationManager {
 
         // Get the zone ID
         guard let zoneID = notification.recordZoneID else {
-            WLOG("Ignoring notification with no zone ID")
+            CloudSyncManager.syncLog.event(.sync, item: "notifications/zone", status: .skipped, detail: "Ignoring notification with no zone ID")
             return .noData
         }
 
@@ -313,7 +315,7 @@ public class CloudKitNotificationManager {
         // e.g., zoneID.ownerName == CKCurrentUserDefaultName
 
         // A zone-level notification often implies multiple changes or a need for a broader sync.
-        ILOG("Zone notification received. Posting notification for CloudSyncManager.")
+        CloudSyncManager.syncLog.event(.sync, item: "notifications/zone", status: .inProgress, detail: "Zone notification received, posting notification for CloudSyncManager")
 
         // Post a standard notification that CloudSyncManager can observe
         // Make sure .cloudKitZoneChanged is defined elsewhere (e.g., NotificationsAdditions.swift)
@@ -337,6 +339,7 @@ public class CloudKitNotificationManager {
     /// - Returns: Background fetch result
     private func syncAllData() async throws -> UIBackgroundFetchResult {
         DLOG("Syncing all data from CloudKit")
+        let syncLog = CloudSyncManager.syncLog
 
         var didSync = false
 
@@ -344,7 +347,7 @@ public class CloudKitNotificationManager {
         if let syncer = CloudKitSyncerStore.shared.romSyncers.first as? CloudKitRomsSyncer {
             // TODO: Implement a method to sync all ROMs triggered by database notification
             // await syncer.syncAll()
-            WLOG("Full ROM sync triggered by database notification not yet implemented.")
+            syncLog.event(.sync, item: "notifications/database/rom", status: .pending, detail: "Full ROM sync triggered by database notification not yet implemented")
             didSync = true
         }
 
@@ -352,7 +355,7 @@ public class CloudKitNotificationManager {
         if let syncer = CloudKitSyncerStore.shared.saveStateSyncers.first as? CloudKitSaveStatesSyncer {
             // TODO: Implement a method to sync all save states
             // await syncer.syncAll()
-            WLOG("Full save state sync triggered by database notification not yet implemented.")
+            syncLog.event(.sync, item: "notifications/database/saveState", status: .pending, detail: "Full save state sync triggered by database notification not yet implemented")
             didSync = true
         }
 
@@ -360,7 +363,7 @@ public class CloudKitNotificationManager {
         if let syncer = CloudKitSyncerStore.shared.biosSyncers.first as? CloudKitBIOSSyncer {
             // TODO: Implement a method to sync all BIOS files
             // await syncer.syncAll()
-            WLOG("Full BIOS sync triggered by database notification not yet implemented.")
+            syncLog.event(.sync, item: "notifications/database/bios", status: .pending, detail: "Full BIOS sync triggered by database notification not yet implemented")
             didSync = true
         }
 
