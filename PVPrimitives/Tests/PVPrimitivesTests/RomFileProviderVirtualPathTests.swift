@@ -81,6 +81,10 @@ struct RomFileProviderVirtualPathTests {
     @Test func parseSaveStateID_invalidPrefix() {
         #expect(RomFileProviderVirtualPath.parseSaveStateID(from: "game:ABCD") == nil)
         #expect(RomFileProviderVirtualPath.parseSaveStateGameMD5(from: "rating:5") == nil)
+        // Empty id after prefix
+        #expect(RomFileProviderVirtualPath.parseSaveStateID(from: "ss:") == nil)
+        // Empty MD5 after folder prefix
+        #expect(RomFileProviderVirtualPath.parseSaveStateGameMD5(from: "ss-game:") == nil)
     }
 
     // MARK: - Screenshot identifiers
@@ -105,6 +109,19 @@ struct RomFileProviderVirtualPathTests {
     @Test func parseScreenshotID_invalidPrefix() {
         #expect(RomFileProviderVirtualPath.parseScreenshotID(from: "game:ABCD") == nil)
         #expect(RomFileProviderVirtualPath.parseScreenshotGameMD5(from: "year:1998") == nil)
+        // Empty MD5 after folder prefix
+        #expect(RomFileProviderVirtualPath.parseScreenshotGameMD5(from: "sc-game:") == nil)
+        // sc-game: prefix must NOT be parsed as a screenshot item (sc: prefix)
+        let scGameRaw = "sc-game:" + String(repeating: "A", count: 32)
+        #expect(RomFileProviderVirtualPath.parseScreenshotID(from: scGameRaw) == nil)
+    }
+
+    @Test func screenshotItemIdentifier_zeroIndex() {
+        let md5 = String(repeating: "D", count: 32)
+        let id = RomFileProviderVirtualPath.screenshotItemIdentifier(gameMD5: md5, index: 0)
+        let parsed = RomFileProviderVirtualPath.parseScreenshotID(from: id)
+        #expect(parsed?.gameMD5 == md5.uppercased())
+        #expect(parsed?.index == 0)
     }
 
     // MARK: - Root categories

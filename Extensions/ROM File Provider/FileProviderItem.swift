@@ -251,11 +251,7 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         case .saveStateFile(let id, _, let date, let isAutosave, let userDescription, let fileURL, _):
             if let name = fileURL?.lastPathComponent, !name.isEmpty { return sanitize(name) }
             let label = isAutosave ? "Auto" : (userDescription ?? "")
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.timeZone = TimeZone(secondsFromGMT: 0)
-            formatter.dateFormat = "yyyy-MM-dd HH-mm-ss"
-            let dateStr = formatter.string(from: date)
+            let dateStr = FileProviderItem.saveStateDateFormatter.string(from: date)
             let prefix = label.isEmpty ? dateStr : "\(label) \(dateStr)"
             return sanitize("\(prefix) \(id.prefix(8)).pvs")
         case .screenshotGameFolder(let game, _):
@@ -423,6 +419,15 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         guard let romURL = romURL else { return nil }
         let attributes = try? FileManager.default.attributesOfItem(atPath: romURL.path)
         return attributes?[.modificationDate] as? Date
+    }()
+
+    /// Shared formatter for save state filenames — created once (DateFormatter is expensive).
+    private static let saveStateDateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(secondsFromGMT: 0)
+        f.dateFormat = "yyyy-MM-dd HH-mm-ss"
+        return f
     }()
 
     /// Sanitizes a raw name for safe use as a file provider filename.
