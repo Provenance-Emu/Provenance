@@ -73,6 +73,12 @@ public struct DeltaSkin: DeltaSkinProtocol {
     public var name: String { info.name }
     public var gameType: DeltaSkinGameType { info.gameTypeIdentifier }
     public var isDebugEnabled: Bool { info.debug }
+
+    /// True if the skin declared `"caseController": true` in info.json,
+    /// OR if the identifier matches known case-controller patterns.
+    public var isCaseControllerSkin: Bool {
+        info.caseController || CaseControllerDetector.isCompanionSkinForKnownCase(identifier)
+    }
     /// Keyboard overlay configuration decoded from the skin's `keyboardOverlay` JSON key.
     /// Returns `nil` for skins that do not declare a keyboard overlay.
     public var keyboardOverlay: KeyboardOverlayConfig? { info.keyboardOverlay }
@@ -572,8 +578,13 @@ public struct DeltaSkin: DeltaSkinProtocol {
         /// ```
         let gameOverrides: [String: [String: DeviceRepresentations]]?
 
+        /// Whether this skin is designed for a physical phone-case controller.
+        /// Set `"caseController": true` in info.json to mark a skin as case-specific.
+        /// Defaults to `false` when absent.
+        let caseController: Bool
+
         private enum CodingKeys: String, CodingKey {
-            case name, identifier, gameTypeIdentifier, debug, representations, keyboardOverlay, themes, gameOverrides
+            case name, identifier, gameTypeIdentifier, debug, representations, keyboardOverlay, themes, gameOverrides, caseController
         }
 
         public init(from decoder: Decoder) throws {
@@ -598,6 +609,8 @@ public struct DeltaSkin: DeltaSkinProtocol {
             representations = reps
             keyboardOverlay = try container.decodeIfPresent(KeyboardOverlayConfig.self, forKey: .keyboardOverlay)
             themes = try container.decodeIfPresent([Theme].self, forKey: .themes)
+
+            caseController = try container.decodeIfPresent(Bool.self, forKey: .caseController) ?? false
 
             // Decode per-game overrides
             if container.contains(.gameOverrides) {

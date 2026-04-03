@@ -110,9 +110,9 @@ public struct SystemSkinSelectionView: View {
         }
     }
 
-    /// Skins for the main grid — always excludes companion skins (they appear in their own section when the flag is on).
+    /// Skins for the main grid — always excludes case-controller skins (they appear in their own section when the flag is on).
     private var regularSkinsForCurrentOrientation: [DeltaSkinProtocol] {
-        filteredSkinsForCurrentOrientation.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
+        filteredSkinsForCurrentOrientation.filter { !$0.isCaseControllerSkin }
     }
 
     /// Companion skins (phone-case controllers) — gated behind the `caseCompanionSkins` feature flag.
@@ -121,7 +121,7 @@ public struct SystemSkinSelectionView: View {
         []
 #else
         guard PVFeatureFlagsManager.shared.caseCompanionSkins else { return [] }
-        return filteredSkinsForCurrentOrientation.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
+        return filteredSkinsForCurrentOrientation.filter { $0.isCaseControllerSkin }
 #endif
     }
 
@@ -995,11 +995,11 @@ public struct SystemSkinSelectionView: View {
 #if !os(tvOS)
             /// Open the case skins section when it is the only option for this orientation, or when the active pick is a case skin.
             let filteredForUI = deviceFilteredSkins.filter { self.skinSupportsOrientation($0, orientation: self.selectedOrientation) }
-            let regularCount = filteredForUI.filter { !CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }.count
-            let caseCount = filteredForUI.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }.count
+            let regularCount = filteredForUI.filter { !$0.isCaseControllerSkin }.count
+            let caseCount = filteredForUI.filter { $0.isCaseControllerSkin }.count
             let onlyCaseSkinsShown = regularCount == 0 && caseCount > 0
             let activeId = self.selectedOrientation == .portrait ? portraitSelection : landscapeSelection
-            let selectionIsCaseSkin = activeId.map { CaseControllerDetector.isCompanionSkinForKnownCase($0) } ?? false
+            let selectionIsCaseSkin = activeId.map { id in filteredForUI.first(where: { $0.identifier == id })?.isCaseControllerSkin ?? false } ?? false
             if onlyCaseSkinsShown || selectionIsCaseSkin {
                 self.caseSkinsSectionExpanded = true
             }

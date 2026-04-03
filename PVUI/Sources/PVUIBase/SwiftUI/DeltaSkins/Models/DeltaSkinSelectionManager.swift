@@ -321,7 +321,7 @@ public final class DeltaSkinSelectionManager: ObservableObject {
             if fallbackSkin.identifier == skinId {
                 continue
             }
-            if !allowCaseSkins && CaseControllerDetector.isCompanionSkinForKnownCase(fallbackSkin.identifier) {
+            if !allowCaseSkins && fallbackSkin.isCaseControllerSkin {
                 continue
             }
 

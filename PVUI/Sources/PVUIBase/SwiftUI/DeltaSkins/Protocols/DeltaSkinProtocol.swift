@@ -51,6 +51,10 @@ public protocol DeltaSkinProtocol: Identifiable, Equatable {
     /// Optional animated background configuration for this skin representation.
     /// Returns `nil` for skins that do not declare a background animation.
     func backgroundAnimation(for traits: DeltaSkinTraits) -> DeltaSkinBackgroundAnimation?
+
+    /// Whether this skin is designed for a physical phone-case controller (GameSir, Soolra, Buppin, etc.).
+    /// Determined by the `"caseController"` key in info.json, or by identifier heuristics.
+    var isCaseControllerSkin: Bool { get }
 }
 
 public extension DeltaSkinProtocol {
@@ -59,6 +63,11 @@ public extension DeltaSkinProtocol {
 
     /// Default implementation — skins without themes return an empty array.
     var availableThemes: [DeltaSkin.Theme] { [] }
+
+    /// Default: check identifier against known case-controller patterns.
+    var isCaseControllerSkin: Bool {
+        CaseControllerDetector.isCompanionSkinForKnownCase(identifier)
+    }
 
     /// Default implementation — reads/writes from DeltaSkinPreferences using the skin identifier.
     var selectedThemeId: String? {
