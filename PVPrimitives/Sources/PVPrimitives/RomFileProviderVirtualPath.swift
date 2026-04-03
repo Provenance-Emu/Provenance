@@ -5,7 +5,11 @@
 //  Identifier strings and encoding for the ROM File Provider virtual hierarchy.
 //
 
+#if canImport(CryptoKit)
 import CryptoKit
+#else
+import Crypto
+#endif
 import Foundation
 
 /// Root category folders under the file provider root (each maps to a stable `NSFileProviderItemIdentifier` raw value).

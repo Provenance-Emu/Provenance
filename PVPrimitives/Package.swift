@@ -32,13 +32,19 @@ let package = Package(
         .package(
             name: "PVHashing",
             path: "../PVHashing"
-        )
+        ),
+        .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0")
     ],
 
     targets: [
         .target(
             name: "PVPrimitives",
-            dependencies: ["PVSupport", "PVLogging", "PVHashing"]
+            dependencies: [
+                "PVSupport",
+                "PVLogging",
+                "PVHashing",
+                .product(name: "Crypto", package: "swift-crypto")
+            ]
         ),
         // MARK: ------------ Systems ------------
         .target(

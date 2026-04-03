@@ -266,7 +266,10 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
 
     var contentType: UTType {
         switch kind {
-        case .root, .categoryFolder, .systemFolder, .publisherFolder, .publisherAllGamesFolder, .publisherSystemFolder, .yearFolder, .regionFolder, .ratingFolder, .saveStateGameFolder, .screenshotGameFolder:
+        case .root, .categoryFolder, .systemFolder,
+             .publisherFolder, .publisherAllGamesFolder, .publisherSystemFolder,
+             .yearFolder, .regionFolder, .ratingFolder,
+             .saveStateGameFolder, .screenshotGameFolder:
             return .folder
         case .gameFile(let game, let romURL), .symlinkToGame(let game, let romURL, _, _, _):
             let ext = romURL?.pathExtension ?? ""
