@@ -631,6 +631,8 @@ struct PVLogFileManagerTests {
     @Test("pruneOldFiles keeps at most maxFileCount files")
     func pruneOldFilesKeepsMaxCount() throws {
         let mgr = makeManager()
+        let originalMaxFileCount = mgr.maxFileCount
+        defer { mgr.maxFileCount = originalMaxFileCount }
         mgr.maxFileCount = 3
 
         // Create more sessions than the limit; pruning runs at each startLogging call.

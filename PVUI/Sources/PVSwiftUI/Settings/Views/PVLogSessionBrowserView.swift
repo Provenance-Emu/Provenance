@@ -85,7 +85,7 @@ public struct PVLogSessionBrowserView: View {
 
     public var body: some View {
         ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
+            Color.black.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Status bar
@@ -273,7 +273,7 @@ private struct LogFileViewerSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.black.edgesIgnoringSafeArea(.all)
+                Color.black.ignoresSafeArea()
                 if isLoading {
                     ProgressView().tint(RetroTheme.retroPink)
                 } else {
