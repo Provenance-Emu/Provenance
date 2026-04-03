@@ -176,7 +176,7 @@ public actor CheatOnlineLookup {
 
         guard let text = String(data: data, encoding: .utf8), !text.isEmpty else { return nil }
 
-        let parsed = parseCht(text, romTitle: filename, systemName: system)
+        let parsed = parseLibretroCheatIniText(text, romTitle: filename, systemName: system, idOffset: Self.idOffset)
         return parsed.isEmpty ? nil : parsed
     }
 
@@ -228,69 +228,6 @@ public actor CheatOnlineLookup {
             try? await Task.sleep(nanoseconds: UInt64(wait * 1_000_000_000))
         }
         lastAPIRequestDate = Date()
-    }
-
-    // MARK: - .cht Parser
-
-    /// Parse the libretro `.cht` file format into `CheatDatabaseEntry` values.
-    ///
-    /// Format:
-    /// ```
-    /// cheats = N
-    /// cheat0_desc = "Description"
-    /// cheat0_code = "CODE+MORE"
-    /// cheat0_enable = false
-    /// ```
-    private func parseCht(_ text: String, romTitle: String, systemName: String?) -> [CheatDatabaseEntry] {
-        var descs: [Int: String] = [:]
-        var codes: [Int: String] = [:]
-
-        for line in text.components(separatedBy: .newlines) {
-            let trimmed = line.trimmingCharacters(in: .whitespaces)
-            guard !trimmed.isEmpty, !trimmed.hasPrefix("#"),
-                  let eqIdx = trimmed.firstIndex(of: "=") else { continue }
-
-            let key = trimmed[..<eqIdx].trimmingCharacters(in: .whitespaces)
-            let raw = trimmed[trimmed.index(after: eqIdx)...]
-                .trimmingCharacters(in: .whitespaces)
-                .trimmingCharacters(in: CharacterSet(charactersIn: "\""))
-
-            if key.hasSuffix("_desc"), let n = cheatIndex(from: key, suffix: "_desc") {
-                descs[n] = raw
-            } else if key.hasSuffix("_code"), let n = cheatIndex(from: key, suffix: "_code") {
-                codes[n] = raw
-            }
-        }
-
-        // Iterate the union of desc and code indices so entries with a code but no description are
-        // still included (and vice versa), rather than silently dropping them.
-        let allIndices = Set(descs.keys).union(codes.keys).sorted()
-        return allIndices.compactMap { n -> CheatDatabaseEntry? in
-            guard let code = codes[n], !code.isEmpty else { return nil }
-            let desc = descs[n] ?? "Cheat \(n)"
-            return CheatDatabaseEntry(
-                id: Self.idOffset + n,
-                cheatName: desc,
-                cheatCode: code,
-                cheatDescription: nil,
-                deviceName: "Libretro",
-                deviceFormat: nil,
-                category: "General",
-                romTitle: romTitle,
-                systemName: systemName,
-                isOnlineResult: true
-            )
-        }
-    }
-
-    /// Extract the numeric index from keys like `cheat0_desc` → `0`, `cheat12_code` → `12`.
-    private func cheatIndex(from key: String, suffix: String) -> Int? {
-        guard key.hasSuffix(suffix) else { return nil }
-        let stem = String(key.dropLast(suffix.count)) // e.g. "cheat0"
-        // Find the last run of digits
-        let digits = stem.reversed().prefix(while: \.isNumber)
-        guard !digits.isEmpty else { return nil }
-        return Int(String(digits.reversed()))
     }
 
     // MARK: - Filename Sanitisation
@@ -372,7 +309,8 @@ public actor CheatOnlineLookup {
     // MARK: - Cache Key
 
     private func makeCacheKey(title: String, system: String?) -> String {
-        "\(title.lowercased())__\(system?.lowercased() ?? "any")"
+        /// Suffix bumps when `.cht` parsing changes so stale “0 results” disk caches are not reused.
+        "\(title.lowercased())__\(system?.lowercased() ?? "any")__chtaddr_v1"
     }
 
     // MARK: - Disk Cache
@@ -467,6 +405,105 @@ public actor CheatOnlineLookup {
             let systemName: String?
         }
     }
+}
+
+// MARK: - Libretro .cht INI parsing
+
+/// Parses libretro `.cht` INI text into cheat entries.
+///
+/// Handles classic `cheatN_desc` + `cheatN_code`, and Flycast/RetroArch memory cheats where
+/// `cheatN_code` is empty but `cheatN_address` / `cheatN_value` / `cheatN_cheat_type` are set
+/// (common for Dreamcast `.cht` files in libretro-database).
+internal func parseLibretroCheatIniText(
+    _ text: String,
+    romTitle: String,
+    systemName: String?,
+    idOffset: Int = 2_000_000
+) -> [CheatDatabaseEntry] {
+    var data: [String: String] = [:]
+    var cheatsDeclared: Int?
+
+    for line in text.components(separatedBy: .newlines) {
+        let trimmed = line.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty, !trimmed.hasPrefix("#"),
+              let eqIdx = trimmed.firstIndex(of: "=") else { continue }
+
+        let key = String(trimmed[..<eqIdx]).trimmingCharacters(in: .whitespaces)
+        let raw = trimmed[trimmed.index(after: eqIdx)...]
+            .trimmingCharacters(in: .whitespaces)
+            .trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+
+        if key == "cheats" {
+            cheatsDeclared = Int(raw)
+            continue
+        }
+        data[key] = raw
+    }
+
+    let maxIndexed = libretroChtMaxCheatIndex(in: data)
+    let slotCount: Int
+    if let c = cheatsDeclared, c > 0 {
+        slotCount = c
+    } else if maxIndexed >= 0 {
+        slotCount = maxIndexed + 1
+    } else {
+        return []
+    }
+
+    var results: [CheatDatabaseEntry] = []
+    for i in 0..<slotCount {
+        let descRaw = data["cheat\(i)_desc"] ?? ""
+        var code = (data["cheat\(i)_code"] ?? "").trimmingCharacters(in: .whitespaces)
+        if code.isEmpty {
+            code = libretroChtSynthesizedAddressCode(from: data, index: i)
+        }
+        guard !code.isEmpty else { continue }
+        let cheatName = descRaw.trimmingCharacters(in: .whitespaces).isEmpty ? "Cheat \(i + 1)" : descRaw
+        results.append(CheatDatabaseEntry(
+            id: idOffset + i,
+            cheatName: cheatName,
+            cheatCode: code,
+            cheatDescription: nil,
+            deviceName: "Libretro",
+            deviceFormat: nil,
+            category: "General",
+            romTitle: romTitle,
+            systemName: systemName,
+            isOnlineResult: true
+        ))
+    }
+    return results
+}
+
+/// Largest cheat index N found in keys `cheatN_*`, or -1 if none.
+private func libretroChtMaxCheatIndex(in data: [String: String]) -> Int {
+    var maxI = -1
+    for key in data.keys {
+        guard key.hasPrefix("cheat"), let idx = libretroChtIndex(fromKey: key) else { continue }
+        maxI = max(maxI, idx)
+    }
+    return maxI
+}
+
+/// Parses leading digits after `cheat` in keys like `cheat12_desc`, `cheat0_address`.
+private func libretroChtIndex(fromKey key: String) -> Int? {
+    guard key.hasPrefix("cheat") else { return nil }
+    let afterPrefix = key.dropFirst(5)
+    let digits = String(afterPrefix.prefix(while: \.isNumber))
+    guard !digits.isEmpty else { return nil }
+    return Int(digits)
+}
+
+/// Builds `address [value] [cheat_type]` when `cheatN_code` is empty (Flycast memory cheat INI).
+private func libretroChtSynthesizedAddressCode(from data: [String: String], index: Int) -> String {
+    let addr = (data["cheat\(index)_address"] ?? "").trimmingCharacters(in: .whitespaces)
+    guard !addr.isEmpty else { return "" }
+    let val = (data["cheat\(index)_value"] ?? "").trimmingCharacters(in: .whitespaces)
+    let ctype = (data["cheat\(index)_cheat_type"] ?? "").trimmingCharacters(in: .whitespaces)
+    var parts = [addr]
+    if !val.isEmpty { parts.append(val) }
+    if !ctype.isEmpty { parts.append(ctype) }
+    return parts.joined(separator: " ")
 }
 
 // MARK: - GitHub API Model
