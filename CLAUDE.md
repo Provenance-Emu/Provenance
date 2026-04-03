@@ -162,7 +162,7 @@ Each core has a `PV<Core>CoreBridge+Controls.mm` file that maps controller input
 When modifying bridge files, ensure all controller types are handled (Extended, Micro, Keyboard).
 
 ### What NOT to Modify
-- **GitHub workflow files** — `.github/workflows/*.yml` cannot be pushed by GitHub Actions bots (requires `workflows` permission). If a task needs a new workflow, write the content to a comment or PR description and note that a maintainer must add it manually. Do NOT include workflow files in agent PR commits — the push will fail silently.
+- **GitHub workflow files** — `.github/workflows/*.yml` may be edited when fixing CI issues or optimizing builds. However, GitHub Actions bot PRs cannot push workflow changes (requires `workflows` permission) — if an agent PR needs to include workflow changes, note this in the PR description so a maintainer can push them manually.
 - **Submodule source** — `Cores/<name>/<upstream-dir>/` contents are third-party upstream code (do not casually fork in place)
 - **Generated files** — `Version.h`, `Version.swift`, files in `cmake/` build dirs
 - **CodeSigning.xcconfig** — contains developer-specific credentials

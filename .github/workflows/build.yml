@@ -105,8 +105,34 @@ jobs:
         if: steps.cache-git.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: false
           fetch-depth: 0
+
+      - name: Initialize submodules (non-recursive, then selective deep init)
+        if: steps.cache-git.outputs.cache-hit != 'true'
+        run: |
+          # First level: init all direct submodules (shallow where possible)
+          git submodule update --init --depth 1
+
+          # Selectively recurse into submodules that actually need nested deps for building.
+          # Skip deep recursion for cores that use pre-built xcframeworks (Dolphin, Play, PPSSPP, etc.)
+          # Their nested Externals/ submodules are NOT needed for the Xcode workspace build.
+          SKIP_RECURSIVE="Cores/Dolphin Cores/Play Cores/PPSSPP Cores/DuckStation Cores/Flycast Cores/Citra Cores/emuThree"
+          for sub in $(git submodule status | awk '{print $2}'); do
+            skip=false
+            for s in $SKIP_RECURSIVE; do
+              if [ "$sub" = "$s" ] || echo "$sub" | grep -q "^${s}/"; then
+                skip=true
+                break
+              fi
+            done
+            if [ "$skip" = "false" ]; then
+              echo "Recursing into $sub..."
+              git submodule update --init --recursive --depth 1 "$sub" 2>/dev/null || true
+            else
+              echo "Skipping deep recursion for $sub (uses pre-built xcframework)"
+            fi
+          done
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
