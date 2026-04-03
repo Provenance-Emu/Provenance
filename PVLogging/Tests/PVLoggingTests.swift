@@ -528,3 +528,123 @@ struct PVLogCategoryTests {
         #expect(PVLogPublisher.categoryName(from: .library) == "library")
     }
 }
+
+// MARK: - PVLogFileManager Tests
+
+@Suite("PVLogFileManager", .serialized)
+struct PVLogFileManagerTests {
+
+    /// Redirect log files to a temp directory so tests don't pollute Library/Logs.
+    private func makeManager() -> PVLogFileManager {
+        let mgr = PVLogFileManager.shared
+        mgr.logsDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PVLogFileManagerTests_\(UUID().uuidString)")
+        return mgr
+    }
+
+    @Test("Shared singleton is accessible")
+    func sharedSingleton() {
+        let m1 = PVLogFileManager.shared
+        let m2 = PVLogFileManager.shared
+        #expect(m1 === m2)
+    }
+
+    @Test("isLogging is false before startLogging")
+    func isLoggingFalseInitially() {
+        let mgr = makeManager()
+        mgr.stopLogging()
+        // Give the queue a moment to drain
+        Thread.sleep(forTimeInterval: 0.05)
+        #expect(!mgr.isLogging)
+    }
+
+    @Test("startLogging creates a session file and sets isLogging")
+    func startLoggingCreatesFile() throws {
+        let mgr = makeManager()
+        mgr.startLogging()
+        Thread.sleep(forTimeInterval: 0.1)
+
+        #expect(mgr.isLogging)
+        let url = mgr.currentSessionURL
+        #expect(url != nil)
+        if let url {
+            #expect(FileManager.default.fileExists(atPath: url.path))
+        }
+        mgr.stopLogging()
+        Thread.sleep(forTimeInterval: 0.05)
+    }
+
+    @Test("stopLogging clears isLogging and currentSessionURL")
+    func stopLoggingClearsState() {
+        let mgr = makeManager()
+        mgr.startLogging()
+        Thread.sleep(forTimeInterval: 0.05)
+        mgr.stopLogging()
+        Thread.sleep(forTimeInterval: 0.05)
+
+        #expect(!mgr.isLogging)
+        #expect(mgr.currentSessionURL == nil)
+    }
+
+    @Test("logFiles returns created session files")
+    func logFilesReturnsSessions() {
+        let mgr = makeManager()
+        mgr.startLogging()
+        Thread.sleep(forTimeInterval: 0.1)
+        mgr.stopLogging()
+        Thread.sleep(forTimeInterval: 0.05)
+
+        let files = mgr.logFiles()
+        #expect(!files.isEmpty)
+        #expect(files.allSatisfy { $0.pathExtension == "log" })
+    }
+
+    @Test("deleteFile removes the file from disk")
+    func deleteFileRemovesFromDisk() throws {
+        let mgr = makeManager()
+        mgr.startLogging()
+        Thread.sleep(forTimeInterval: 0.1)
+        mgr.stopLogging()
+        Thread.sleep(forTimeInterval: 0.05)
+
+        let files = mgr.logFiles()
+        guard let first = files.first else {
+            Issue.record("No log files created")
+            return
+        }
+        try mgr.deleteFile(at: first)
+        #expect(!FileManager.default.fileExists(atPath: first.path))
+    }
+
+    @Test("deleteAllFiles removes all log files")
+    func deleteAllFilesRemovesAll() {
+        let mgr = makeManager()
+        mgr.startLogging()
+        Thread.sleep(forTimeInterval: 0.1)
+        mgr.stopLogging()
+        Thread.sleep(forTimeInterval: 0.05)
+
+        mgr.deleteAllFiles()
+        #expect(mgr.logFiles().isEmpty)
+    }
+
+    @Test("pruneOldFiles keeps at most maxFileCount files")
+    func pruneOldFilesKeepsMaxCount() throws {
+        let mgr = makeManager()
+        let originalMaxFileCount = mgr.maxFileCount
+        defer { mgr.maxFileCount = originalMaxFileCount }
+        mgr.maxFileCount = 3
+
+        // Create more sessions than the limit; pruning runs at each startLogging call.
+        for _ in 0..<5 {
+            mgr.startLogging()
+            Thread.sleep(forTimeInterval: 0.05)
+            mgr.stopLogging()
+            Thread.sleep(forTimeInterval: 0.05)
+        }
+
+        let files = mgr.logFiles()
+        #expect(files.count <= mgr.maxFileCount)
+        mgr.deleteAllFiles()
+    }
+}
