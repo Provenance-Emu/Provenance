@@ -272,7 +272,7 @@ public final class PVSettingsViewController: QuickTableViewController {
                                 key: .imageSmoothing,
                                 icon: .sfSymbol("checkerboard.rectangle")),
             PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), detailText: .subtitle("Performance overlay with FPS, CPU and Memory stats. Note: FPS may not be accurate for threaded and/or GLES/Vulkan native cores."), key: .showFPSCount, icon: .sfSymbol("speedometer"))
-        ])
+        ] as [any TableRow])
 
         let avSection = Section(title: NSLocalizedString("Video Options", comment: "Video Options"), rows: avRows)
 

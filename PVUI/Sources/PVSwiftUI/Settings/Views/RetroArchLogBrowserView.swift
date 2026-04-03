@@ -137,7 +137,7 @@ public struct RetroArchLogBrowserView: View {
         .toolbar { toolbarContent }
         .task { await viewModel.loadFiles() }
         .sheet(item: $selectedEntry) { entry in
-            LogFileViewerSheet(fileURL: entry.url)
+            RetroArchLogFileViewerSheet(fileURL: entry.url)
         }
         .alert("Delete All Logs?", isPresented: $showingDeleteAllConfirm) {
             Button("Delete All", role: .destructive) { viewModel.deleteAllFiles() }
@@ -264,7 +264,7 @@ public struct RetroArchLogBrowserView: View {
 
 // MARK: - Log File Viewer Sheet
 
-struct LogFileViewerSheet: View {
+struct RetroArchLogFileViewerSheet: View {
     let fileURL: URL
     @Environment(\.dismiss) private var dismiss
     @State private var content = ""
