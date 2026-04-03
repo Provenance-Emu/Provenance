@@ -61,35 +61,58 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
         return Set(directories.filter { $0 != DeltaSkinSyncSupport.directoryName })
     }
 
+    /// Read-only fallback databases tried when the primary returns no record.
+    private var fallbackDatabases: [CKDatabase] {
+        iCloudConstants.fallbackContainers.map(\.privateCloudDatabase)
+    }
+
     /// Get all CloudKit records for files
+    /// Also queries fallback containers to merge records from dev environments.
     /// - Returns: Array of CKRecord objects
     public func getAllRecords() async -> [CKRecord] {
         do {
             return try await runOnQueue { [self] in
-                // Create a query for all file records
-                let query = CKQuery(recordType: RecordType.file, predicate: NSPredicate(value: true))
-
-                // Execute the query
-                let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
-
-                // Convert to array of CKRecord
-                let recordsArray = records.compactMap { _, result -> CKRecord? in
-                    switch result {
-                    case .success(let record):
-                        // Only include records for our managed directories
-                        if let directory = record[Field.directory] as? String,
-                           self.directories.contains(directory) {
-                            return record
+                func fetchFrom(_ db: CKDatabase) async throws -> [CKRecord] {
+                    let query = CKQuery(recordType: RecordType.file, predicate: NSPredicate(value: true))
+                    let (records, _) = try await db.records(matching: query, resultsLimit: 100)
+                    return records.compactMap { _, result -> CKRecord? in
+                        switch result {
+                        case .success(let record):
+                            if let directory = record[Field.directory] as? String,
+                               self.directories.contains(directory) {
+                                return record
+                            }
+                            return nil
+                        case .failure(let error):
+                            ELOG("Error fetching file record: \(error.localizedDescription)")
+                            return nil
                         }
-                        return nil
-                    case .failure(let error):
-                        ELOG("Error fetching file record: \(error.localizedDescription)")
-                        return nil
                     }
                 }
 
-                DLOG("Fetched \(recordsArray.count) file records from CloudKit")
-                return recordsArray
+                // Fetch from primary database
+                var allRecords = try await fetchFrom(privateDatabase)
+                DLOG("Fetched \(allRecords.count) file records from primary CloudKit container")
+
+                // Merge from fallback containers
+                let existingIDs = Set(allRecords.map(\.recordID.recordName))
+                for fallbackDB in fallbackDatabases {
+                    do {
+                        let fallbackRecords = try await fetchFrom(fallbackDB)
+                        let newRecords = fallbackRecords.filter { !existingIDs.contains($0.recordID.recordName) }
+                        if !newRecords.isEmpty {
+                            DLOG("Fetched \(newRecords.count) additional file records from fallback container")
+                            allRecords.append(contentsOf: newRecords)
+                        }
+                    } catch let error as CKError where error.code == .badContainer {
+                        iCloudConstants.invalidateFallbackContainers()
+                        break
+                    } catch {
+                        DLOG("Fallback file records fetch failed: \(error.localizedDescription)")
+                    }
+                }
+
+                return allRecords
             }
         } catch {
             ELOG("Failed to fetch file records: \(error.localizedDescription)")
@@ -107,10 +130,26 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
             return try await runOnQueue { [self] in
                 let predicate = NSPredicate(format: "%K == %@", Field.directory, directory)
                 let query = CKQuery(recordType: recordType, predicate: predicate)
+
+                var totalCount = 0
                 let (records, _) = try await privateDatabase.records(matching: query, resultsLimit: 100)
-                let count = records.count
-                DLOG("Found \(count) records of type \(recordType) in directory \(directory)")
-                return count
+                totalCount += records.count
+
+                // Also count from fallback containers
+                for fallbackDB in fallbackDatabases {
+                    do {
+                        let (fallbackRecords, _) = try await fallbackDB.records(matching: query, resultsLimit: 100)
+                        totalCount += fallbackRecords.count
+                    } catch let error as CKError where error.code == .badContainer {
+                        iCloudConstants.invalidateFallbackContainers()
+                        break
+                    } catch {
+                        DLOG("Fallback record count failed: \(error.localizedDescription)")
+                    }
+                }
+
+                DLOG("Found \(totalCount) records of type \(recordType) in directory \(directory)")
+                return totalCount
             }
         } catch {
             ELOG("Error getting record count for \(recordType) in directory \(directory): \(error.localizedDescription)")
@@ -380,6 +419,7 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
     }
 
     /// Downloads a file from CloudKit using its record ID
+    /// Tries fallback containers when the primary database returns not found.
     /// - Parameter recordID: The CloudKit record ID to download
     /// - Throws: CloudSyncError if download fails
     public func downloadFile(for recordID: CKRecord.ID) async throws {
@@ -387,15 +427,33 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
             let syncLog = CloudSyncManager.syncLog
             syncLog.event(.download, item: "file/\(recordID.recordName)", status: .inProgress)
 
-            let record: CKRecord
-            do {
-                record = try await privateDatabase.record(for: recordID)
-            } catch let error as CKError where error.code == .unknownItem {
+            func fetchRecordFrom(_ db: CKDatabase) async -> CKRecord? {
+                do {
+                    return try await db.record(for: recordID)
+                } catch let error as CKError where error.code == .unknownItem {
+                    return nil
+                } catch {
+                    DLOG("Fetch record from container failed: \(error.localizedDescription)")
+                    return nil
+                }
+            }
+
+            var record: CKRecord? = await fetchRecordFrom(privateDatabase)
+
+            // Try fallback containers if not found in primary
+            if record == nil {
+                for fallbackDB in fallbackDatabases {
+                    if let fallbackRecord = await fetchRecordFrom(fallbackDB) {
+                        DLOG("Found file record in fallback container: \(recordID.recordName)")
+                        record = fallbackRecord
+                        break
+                    }
+                }
+            }
+
+            guard let record else {
                 syncLog.event(.download, item: "file/\(recordID.recordName)", status: .notFound)
                 throw CloudSyncError.recordNotFound
-            } catch {
-                syncLog.event(.download, item: "file/\(recordID.recordName)", status: .failed, detail: error.localizedDescription)
-                throw CloudSyncError.cloudKitError(error)
             }
 
             let directory = resolveDirectory(from: record)
@@ -437,7 +495,22 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
         syncLog.event(.sync, item: "file/\(recordID.recordName)", status: .inProgress, detail: "remote update")
         try await runOnQueue { [self] in
             do {
-                let record = try await privateDatabase.record(for: recordID)
+                // Try primary, then fallback containers
+                var record: CKRecord?
+                do {
+                    record = try await privateDatabase.record(for: recordID)
+                } catch let error as CKError where error.code == .unknownItem {
+                    for fallbackDB in fallbackDatabases {
+                        do {
+                            record = try await fallbackDB.record(for: recordID)
+                            if record != nil {
+                                DLOG("Found file record in fallback container for remote update: \(recordID.recordName)")
+                                break
+                            }
+                        } catch { continue }
+                    }
+                }
+                guard let record else { throw CKError(.unknownItem) }
 
                 let directory = resolveDirectory(from: record)
                 let relativePath = resolveRelativePath(from: record, directory: directory)

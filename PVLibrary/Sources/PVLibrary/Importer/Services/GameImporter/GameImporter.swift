@@ -3541,8 +3541,14 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                     // Helper to check if game needs update and collect info
                     func checkGame(_ game: PVGame, fileURL: URL, partialPath: String) {
-                        if game.isDownloaded && game.file != nil {
-                            // Game is complete, just mark as existing
+                        let fileActuallyExists: Bool
+                        if let existingFileURL = game.file?.url {
+                            fileActuallyExists = FileManager.default.fileExists(atPath: existingFileURL.path)
+                        } else {
+                            fileActuallyExists = false
+                        }
+                        if game.isDownloaded && game.file != nil && fileActuallyExists {
+                            // Game is complete and file exists on disk, just mark as existing
                             existingURLs.insert(fileURL)
                         } else {
                             // CloudKit-created game needs local file update
@@ -3562,8 +3568,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                         continue
                     }
 
-                    /// Check by file path (in-memory set lookup)
-                    if filePathsSet.contains(item.url.path) {
+                    /// Check by file path (in-memory set lookup) — also verify the file actually exists on disk
+                    if filePathsSet.contains(item.url.path),
+                       FileManager.default.fileExists(atPath: item.url.path) {
                         VLOG("GameImporter: batchCheckExistingGames - Found existing game by file path: \(filename)")
                         existingURLs.insert(item.url)
                         continue
@@ -4092,13 +4099,16 @@ public final class GameImporter: GameImporting, ObservableObject {
                 let filename = item.url.lastPathComponent
                 if let systemID = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
                     let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
-                    if gameWithSameSize.romPath == partialPath {
+                    if gameWithSameSize.romPath == partialPath,
+                       let fileURL = gameWithSameSize.file?.url,
+                       FileManager.default.fileExists(atPath: fileURL.path) {
                         ILOG("Found existing game by file size and romPath match: \(gameWithSameSize.title ?? "Unknown")")
                         return true
                     }
                 }
                 if let gameFile = gameWithSameSize.file,
-                   gameFile.url?.path == filePath {
+                   gameFile.url?.path == filePath,
+                   FileManager.default.fileExists(atPath: filePath) {
                     ILOG("Found existing game by file path match: \(gameWithSameSize.title ?? "Unknown")")
                     return true
                 }
@@ -4119,9 +4129,10 @@ public final class GameImporter: GameImporting, ObservableObject {
             if let existingGame = gamesCache[partialPath] ?? gamesCache[similarName],
                systemFromPath.rawValue == existingGame.systemIdentifier,
                existingGame.file != nil {
-                /// Verify file path matches (handles cases where file moved but cache not updated)
+                /// Verify file path matches and file actually exists on disk
                 if let gameFileURL = existingGame.file?.url,
-                   gameFileURL.path == filePath {
+                   gameFileURL.path == filePath,
+                   FileManager.default.fileExists(atPath: filePath) {
                     ILOG("Found existing game in database by path system check: \(existingGame.title ?? "Unknown")")
                     return true
                 }
@@ -4132,7 +4143,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                 let md5Duplicate = try! await RealmContext.withBackgroundRealm { realm -> Bool in
                     if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
                        systemFromPath.rawValue == gameWithSameMD5.systemIdentifier,
-                       gameWithSameMD5.file != nil {
+                       gameWithSameMD5.file != nil,
+                       let fileURL = gameWithSameMD5.file?.url,
+                       FileManager.default.fileExists(atPath: fileURL.path) {
                         ILOG("Found existing game with same MD5 hash by path system: \(gameWithSameMD5.title ?? "Unknown")")
                         return true
                     }
@@ -4174,7 +4187,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                     }
                 }
                 if let gameFileURL = matchingGame.file?.url,
-                   gameFileURL.path == filePath {
+                   gameFileURL.path == filePath,
+                   FileManager.default.fileExists(atPath: filePath) {
                     ILOG("Found existing game by file path: \(matchingGame.title ?? "Unknown") at \(filePath)")
                     return true
                 }
@@ -4209,7 +4223,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                         /// Query Realm on current thread to verify file exists
                         let existsInRealm = try! await RealmContext.withRealm { realm -> Bool in
                             if let existingGame = realm.object(ofType: PVGame.self, forPrimaryKey: cachedGameId),
-                               existingGame.file != nil {
+                               existingGame.file != nil,
+                               let fileURL = existingGame.file?.url,
+                               FileManager.default.fileExists(atPath: fileURL.path) {
                                 ILOG("Found existing game in database: \(existingGame.title ?? "Unknown")")
                                 return true
                             }
@@ -4226,7 +4242,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                     let md5Exists = try! await RealmContext.withRealm { realm -> Bool in
                         if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
                            system.rawValue == gameWithSameMD5.systemIdentifier,
-                           gameWithSameMD5.file != nil {
+                           gameWithSameMD5.file != nil,
+                           let fileURL = gameWithSameMD5.file?.url,
+                           FileManager.default.fileExists(atPath: fileURL.path) {
                             ILOG("Found existing game with same MD5 hash: \(gameWithSameMD5.title ?? "Unknown")")
                             return true
                         }
@@ -4261,7 +4279,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                 .filter("romPath ENDSWITH %@", filename)
 
             if let matchingGame = gamesWithMatchingFile.first,
-               matchingGame.file != nil {
+               matchingGame.file != nil,
+               let fileURL = matchingGame.file?.url,
+               FileManager.default.fileExists(atPath: fileURL.path) {
                 VLOG("Quick filename check found existing game: \(matchingGame.title ?? "Unknown")")
                 return true
             }

@@ -182,8 +182,6 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
 
         return try await runSaveStateQueue { [self] in
-            var allRecords: [CKRecord] = []
-            var cursor: CKQueryOperation.Cursor?
             let desiredKeys = [
                 CloudKitSchema.SaveStateFields.filename,
                 CloudKitSchema.SaveStateFields.systemIdentifier,
@@ -196,71 +194,124 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 CloudKitSchema.SaveStateFields.imageAsset
             ]
 
-            repeat {
-                let (batch, nextCursor): ([CKRecord], CKQueryOperation.Cursor?) = try await withCheckedThrowingContinuation { continuation in
-                    let operation: CKQueryOperation
-                    if let cursor = cursor {
-                        operation = CKQueryOperation(cursor: cursor)
-                    } else {
-                        let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
-                        operation = CKQueryOperation(query: query)
-                    }
+            func fetchAllPages(from db: CKDatabase) async throws -> [CKRecord] {
+                var records: [CKRecord] = []
+                var cursor: CKQueryOperation.Cursor?
 
-                    operation.desiredKeys = desiredKeys
-                    operation.resultsLimit = 100
-
-                    var batchRecords: [CKRecord] = []
-                    operation.recordFetchedBlock = { record in
-                        batchRecords.append(record)
-                    }
-
-                    operation.queryCompletionBlock = { cursor, error in
-                        if let error = error {
-                            continuation.resume(throwing: error)
+                repeat {
+                    let (batch, nextCursor): ([CKRecord], CKQueryOperation.Cursor?) = try await withCheckedThrowingContinuation { continuation in
+                        let operation: CKQueryOperation
+                        if let cursor = cursor {
+                            operation = CKQueryOperation(cursor: cursor)
                         } else {
-                            continuation.resume(returning: (batchRecords, cursor))
+                            let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
+                            operation = CKQueryOperation(query: query)
                         }
+
+                        operation.desiredKeys = desiredKeys
+                        operation.resultsLimit = 100
+
+                        var batchRecords: [CKRecord] = []
+                        operation.recordFetchedBlock = { record in
+                            batchRecords.append(record)
+                        }
+
+                        operation.queryCompletionBlock = { cursor, error in
+                            if let error = error {
+                                continuation.resume(throwing: error)
+                            } else {
+                                continuation.resume(returning: (batchRecords, cursor))
+                            }
+                        }
+
+                        db.add(operation)
                     }
 
-                    self.privateDatabase.add(operation)
+                    records.append(contentsOf: batch)
+                    cursor = nextCursor
+                } while cursor != nil
+
+                return records
+            }
+
+            // Fetch from primary database
+            var allRecords = try await fetchAllPages(from: self.privateDatabase)
+            CloudSyncManager.syncLog.event(.query, item: "save/metadata", status: .ok, detail: "\(allRecords.count) records from primary")
+
+            // Merge from fallback containers
+            let existingIDs = Set(allRecords.map(\.recordID.recordName))
+            for fallbackDB in fallbackDatabases {
+                do {
+                    let fallbackRecords = try await fetchAllPages(from: fallbackDB)
+                    let newRecords = fallbackRecords.filter { !existingIDs.contains($0.recordID.recordName) }
+                    if !newRecords.isEmpty {
+                        DLOG("Fetched \(newRecords.count) additional save state metadata records from fallback container")
+                        allRecords.append(contentsOf: newRecords)
+                    }
+                } catch let error as CKError where error.code == .badContainer {
+                    iCloudConstants.invalidateFallbackContainers()
+                    break
+                } catch {
+                    DLOG("Fallback save state metadata fetch failed: \(error.localizedDescription)")
                 }
+            }
 
-                allRecords.append(contentsOf: batch)
-                CloudSyncManager.syncLog.event(.query, item: "save/batch", status: .ok, detail: "\(batch.count) fetched (total \(allRecords.count)) cursor=\(nextCursor != nil ? "more" : "end")")
-                cursor = nextCursor
-            } while cursor != nil
-
-            CloudSyncManager.syncLog.event(.complete, item: "save/metadata", status: .ok, detail: "\(allRecords.count) records")
+            CloudSyncManager.syncLog.event(.complete, item: "save/metadata", status: .ok, detail: "\(allRecords.count) records total")
             return allRecords
         }
     }
 
     /// Fallback fetch using CKDatabase.records(matching:) to detect schema/environment issues.
+    /// Also queries fallback containers to merge records from dev environments.
     private func fetchSaveStatesDirect() async throws -> [CKRecord] {
         if await CloudSyncManager.shared.isPausedForEmulation {
             CloudSyncManager.syncLog.event(.skip, item: "save/direct", status: .skipped, detail: "paused for emulation")
             return []
         }
 
-        let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
-        var all: [CKRecord] = []
-        var cursor: CKQueryOperation.Cursor?
+        func fetchAllPages(from db: CKDatabase) async throws -> [CKRecord] {
+            let query = CKQuery(recordType: CloudKitSchema.RecordType.saveState.rawValue, predicate: NSPredicate(value: true))
+            var records: [CKRecord] = []
+            var cursor: CKQueryOperation.Cursor?
 
-        repeat {
-            if let c = cursor {
-                let page = try await privateDatabase.records(continuingMatchFrom: c, desiredKeys: saveStateDesiredKeys(), resultsLimit: CKQueryOperation.maximumResults)
-                let pageRecords = page.matchResults.compactMap { _, result in try? result.get() }
-                all.append(contentsOf: pageRecords)
-                cursor = page.queryCursor
-                CloudSyncManager.syncLog.event(.query, item: "save/direct-page", status: .ok, detail: "\(pageRecords.count) fetched (total \(all.count)) cursor=\(cursor != nil ? "more" : "end")")
-            } else {
-                let first = try await privateDatabase.records(matching: query, desiredKeys: saveStateDesiredKeys(), resultsLimit: CKQueryOperation.maximumResults)
-                let pageRecords = first.matchResults.compactMap { _, result in try? result.get() }
-                all.append(contentsOf: pageRecords)
-                cursor = first.queryCursor
-                CloudSyncManager.syncLog.event(.query, item: "save/direct-first", status: .ok, detail: "\(pageRecords.count) fetched (total \(all.count)) cursor=\(cursor != nil ? "more" : "end")")
+            repeat {
+                if let c = cursor {
+                    let page = try await db.records(continuingMatchFrom: c, desiredKeys: saveStateDesiredKeys(), resultsLimit: CKQueryOperation.maximumResults)
+                    let pageRecords = page.matchResults.compactMap { _, result in try? result.get() }
+                    records.append(contentsOf: pageRecords)
+                    cursor = page.queryCursor
+                } else {
+                    let first = try await db.records(matching: query, desiredKeys: saveStateDesiredKeys(), resultsLimit: CKQueryOperation.maximumResults)
+                    let pageRecords = first.matchResults.compactMap { _, result in try? result.get() }
+                    records.append(contentsOf: pageRecords)
+                    cursor = first.queryCursor
+                }
+            } while cursor != nil
+
+            return records
+        }
+
+        // Fetch from primary database
+        var all = try await fetchAllPages(from: privateDatabase)
+        CloudSyncManager.syncLog.event(.query, item: "save/direct", status: .ok, detail: "\(all.count) records from primary")
+
+        // Also fetch from fallback containers and merge
+        let existingIDs = Set(all.map(\.recordID.recordName))
+        for fallbackDB in fallbackDatabases {
+            do {
+                let fallbackRecords = try await fetchAllPages(from: fallbackDB)
+                let newRecords = fallbackRecords.filter { !existingIDs.contains($0.recordID.recordName) }
+                if !newRecords.isEmpty {
+                    DLOG("Fetched \(newRecords.count) additional save state records from fallback container")
+                    all.append(contentsOf: newRecords)
+                }
+            } catch let error as CKError where error.code == .badContainer {
+                iCloudConstants.invalidateFallbackContainers()
+                break
+            } catch {
+                DLOG("Fallback save state direct fetch failed: \(error.localizedDescription)")
             }
-        } while cursor != nil
+        }
 
         return all
     }
@@ -320,27 +371,57 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     }
 
     /// Fetch a save-state record including assets.
+    /// Tries fallback containers when the primary database returns no record.
     private func fetchSaveStateRecordIncludingAssets(recordID: CKRecord.ID) async throws -> CKRecord? {
-        return try await withCheckedThrowingContinuation { continuation in
-            let op = CKFetchRecordsOperation(recordIDs: [recordID])
-            op.desiredKeys = saveStateDesiredKeys() + [CloudKitSchema.SaveStateFields.fileData]
-            var fetched: CKRecord?
+        func fetchFrom(_ db: CKDatabase) async throws -> CKRecord? {
+            try await withCheckedThrowingContinuation { continuation in
+                let op = CKFetchRecordsOperation(recordIDs: [recordID])
+                op.desiredKeys = saveStateDesiredKeys() + [CloudKitSchema.SaveStateFields.fileData]
+                var fetched: CKRecord?
 
-            op.perRecordResultBlock = { _, result in
-                if case let .success(r) = result { fetched = r }
-            }
-
-            op.fetchRecordsResultBlock = { result in
-                switch result {
-                case .success:
-                    continuation.resume(returning: fetched)
-                case .failure(let error):
-                    continuation.resume(throwing: error)
+                op.perRecordResultBlock = { _, result in
+                    if case let .success(r) = result { fetched = r }
                 }
-            }
 
-            self.privateDatabase.add(op)
+                op.fetchRecordsResultBlock = { result in
+                    switch result {
+                    case .success:
+                        continuation.resume(returning: fetched)
+                    case .failure(let error):
+                        if let ckError = error as? CKError,
+                           ckError.code == .unknownItem || (ckError.code == .partialFailure && ckError.partialErrorsByItemID?.values.allSatisfy({ ($0 as? CKError)?.code == .unknownItem }) == true) {
+                            continuation.resume(returning: nil)
+                        } else {
+                            continuation.resume(throwing: error)
+                        }
+                    }
+                }
+
+                db.add(op)
+            }
         }
+
+        // Try primary database first
+        if let record = try await fetchFrom(self.privateDatabase) {
+            return record
+        }
+
+        // Try fallback databases
+        for fallbackDB in fallbackDatabases {
+            do {
+                if let record = try await fetchFrom(fallbackDB) {
+                    DLOG("Fetched save state record (with assets) from fallback container: \(record.recordID.recordName)")
+                    return record
+                }
+            } catch let error as CKError where error.code == .badContainer {
+                iCloudConstants.invalidateFallbackContainers()
+                break
+            } catch {
+                DLOG("Fallback save state asset fetch failed: \(error.localizedDescription)")
+            }
+        }
+
+        return nil
     }
 
     /// Check if a file is downloaded locally
@@ -758,44 +839,92 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         }
     }
 
+    /// Read-only fallback databases tried when the primary returns no record.
+    /// Computed from `iCloudConstants.fallbackContainers` so invalidation takes effect immediately.
+    private var fallbackDatabases: [CKDatabase] {
+        iCloudConstants.fallbackContainers.map(\.privateCloudDatabase)
+    }
+
     /// Fetch a save-state CloudKit record while reporting real progress to `SyncProgressTracker` when the download is being managed by `CloudKitDownloadQueue`.
+    /// Tries fallback containers (e.g. dev container in production/TestFlight) when the primary database returns no record.
     private func fetchSaveStateRecordWithProgress(recordID: CKRecord.ID) async throws -> CKRecord {
-        try await withCheckedThrowingContinuation { continuation in
-            let op = CKFetchRecordsOperation(recordIDs: [recordID])
-            op.qualityOfService = .userInitiated
+        let kind = SyncProgressTracker.DownloadKind.saveState(recordID: recordID.recordName)
 
-            let kind = SyncProgressTracker.DownloadKind.saveState(recordID: recordID.recordName)
+        /// Fetch from a specific database, returning nil for "not found" errors.
+        func fetchFrom(_ db: CKDatabase) async throws -> CKRecord? {
+            try await withCheckedThrowingContinuation { continuation in
+                let op = CKFetchRecordsOperation(recordIDs: [recordID])
+                op.qualityOfService = .userInitiated
 
-            op.perRecordProgressBlock = { _, progress in
-                Task { @MainActor in
-                    guard let active = SyncProgressTracker.shared.activeDownloads.first(where: { $0.kind == kind }) else { return }
-                    let bytes = Int64(Double(active.fileSize) * progress)
-                    SyncProgressTracker.shared.updateDownloadProgress(kind: kind, bytesDownloaded: bytes)
-                }
-            }
-
-            var fetched: CKRecord?
-            op.perRecordResultBlock = { _, result in
-                if case let .success(record) = result {
-                    fetched = record
-                }
-            }
-
-            op.fetchRecordsResultBlock = { result in
-                switch result {
-                case .success:
-                    if let record = fetched {
-                        continuation.resume(returning: record)
-                    } else {
-                        continuation.resume(throwing: CloudSyncError.genericError("CloudKit record fetch succeeded but record was nil (\(recordID.recordName))"))
+                op.perRecordProgressBlock = { _, progress in
+                    Task { @MainActor in
+                        guard let active = SyncProgressTracker.shared.activeDownloads.first(where: { $0.kind == kind }) else { return }
+                        let bytes = Int64(Double(active.fileSize) * progress)
+                        SyncProgressTracker.shared.updateDownloadProgress(kind: kind, bytesDownloaded: bytes)
                     }
-                case .failure(let error):
-                    continuation.resume(throwing: error)
                 }
-            }
 
-            self.container.privateCloudDatabase.add(op)
+                var fetched: CKRecord?
+                op.perRecordResultBlock = { _, result in
+                    if case let .success(record) = result {
+                        fetched = record
+                    }
+                }
+
+                op.fetchRecordsResultBlock = { result in
+                    switch result {
+                    case .success:
+                        continuation.resume(returning: fetched)
+                    case .failure(let error):
+                        if let ckError = error as? CKError {
+                            if ckError.code == .unknownItem {
+                                continuation.resume(returning: nil)
+                            } else if ckError.code == .partialFailure,
+                                      let partialErrors = ckError.partialErrorsByItemID,
+                                      partialErrors.count == 1,
+                                      let (_, partialError) = partialErrors.first,
+                                      let partialCKError = partialError as? CKError,
+                                      partialCKError.code == .unknownItem {
+                                continuation.resume(returning: nil)
+                            } else {
+                                continuation.resume(throwing: CloudSyncError.cloudKitError(ckError))
+                            }
+                        } else {
+                            continuation.resume(throwing: CloudSyncError.cloudKitError(error))
+                        }
+                    }
+                }
+
+                db.add(op)
+            }
         }
+
+        // Try primary database first
+        if let record = try await fetchFrom(self.container.privateCloudDatabase) {
+            return record
+        }
+
+        // Try fallback databases (e.g. dev container in production/TestFlight builds)
+        for fallbackDB in fallbackDatabases {
+            do {
+                if let record = try await fetchFrom(fallbackDB) {
+                    DLOG("Fetched save state record from fallback container: \(record.recordID.recordName)")
+                    return record
+                }
+            } catch let syncError as CloudSyncError {
+                if case .cloudKitError(let inner) = syncError,
+                   let ckError = inner as? CKError, ckError.code == .badContainer {
+                    DLOG("Fallback container not accessible (badContainer) — disabling for session")
+                    iCloudConstants.invalidateFallbackContainers()
+                    break
+                }
+                DLOG("Fallback save state fetch failed: \(syncError.localizedDescription)")
+            } catch {
+                DLOG("Fallback save state fetch failed: \(error.localizedDescription)")
+            }
+        }
+
+        throw CloudSyncError.genericError("CloudKit save state record not found in any container (\(recordID.recordName))")
     }
 
     /// Load all save state records from CloudKit and process them
@@ -1196,11 +1325,31 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     /// - Parameter recordID: The CloudKit record identifier
     public func handleRemoteSaveStateChange(recordID: CKRecord.ID) async throws {
         do {
-            let record = try await privateDatabase.record(for: recordID)
-            await processCloudRecord(record)
-            await setNewCloudFilesAvailable()
-        } catch let error as CKError where error.code == .unknownItem {
-            await deleteLocalSaveState(recordID: recordID)
+            // Try primary database first
+            var record: CKRecord?
+            do {
+                record = try await privateDatabase.record(for: recordID)
+            } catch let error as CKError where error.code == .unknownItem {
+                // Try fallback containers
+                for fallbackDB in fallbackDatabases {
+                    do {
+                        record = try await fallbackDB.record(for: recordID)
+                        if record != nil {
+                            DLOG("Found save state record in fallback container: \(recordID.recordName)")
+                            break
+                        }
+                    } catch { continue }
+                }
+            }
+
+            if let record {
+                await processCloudRecord(record)
+                await setNewCloudFilesAvailable()
+            } else {
+                await deleteLocalSaveState(recordID: recordID)
+            }
+        } catch {
+            throw error
         }
     }
 

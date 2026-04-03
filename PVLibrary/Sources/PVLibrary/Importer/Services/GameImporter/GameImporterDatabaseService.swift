@@ -117,8 +117,9 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
            targetSystem.rawValue == existingGame.systemIdentifier {
             DLOG("Found existing game in cache: \(existingGame.title)")
 
-            // If the game already has a valid file and is in the correct location, we can skip further processing
-            if isInCorrectLocation && existingGame.file != nil {
+            // If the game already has a valid file on disk and is in the correct location, we can skip further processing
+            let fileExistsOnDisk = existingGame.file?.url.flatMap { FileManager.default.fileExists(atPath: $0.path) } ?? false
+            if isInCorrectLocation && existingGame.file != nil && fileExistsOnDisk {
                 ILOG("Game \(existingGame.title) already has a database entry with a valid file and is in the correct location, skipping import")
                 return
             }
