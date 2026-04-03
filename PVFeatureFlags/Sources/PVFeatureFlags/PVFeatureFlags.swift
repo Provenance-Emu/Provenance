@@ -32,9 +32,6 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// On iOS, enable via the PVFeatureFlags debug-override UI (accessible on all build
     /// types; hidden behind a cheat code on App Store builds).
     case dynamicLibretroScanner = "dynamicLibretroScanner"
-    /// Enables the experimental tile/grid based pause menu overlay that floats over the
-    /// game screen instead of the classic full-panel tab/list menu. Disabled by default.
-    case pauseTileMenu = "pauseTileMenu"
     /// Enables tap-to-remap UX in the button remapping settings: instead of selecting a
     /// destination button from a list, the user presses a physical button on their controller.
     /// Disabled by default while the feature is being developed.
@@ -218,12 +215,6 @@ public struct FeatureFlag: Codable, Sendable {
         allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
         allowedPlatforms: ["tvos"],
         description: "Scans Frameworks/ at startup for bare libretro dylibs/frameworks and loads them via PVThinLibretroFrontend. On tvOS: enabled by default. On iOS: disabled by default but can be enabled in Settings > Advanced > Feature Flags."
-    )
-
-    static let _pauseTileMenu: Bool = true
-    public static let pauseTileMenu = FeatureFlag(
-        enabled: _pauseTileMenu,
-        description: "Experimental tile/grid based pause menu overlay that floats over the game screen. Default is the classic tab/list menu."
     )
 
     public static let tapToRemapUI = FeatureFlag(
@@ -711,7 +702,6 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var contentlessCores: Bool { featureStates[.contentlessCores] ?? false }
     public var cheatsOnlineLookup: Bool { featureStates[.cheatsOnlineLookup] ?? true }
     public var dynamicLibretroScanner: Bool { featureStates[.dynamicLibretroScanner] ?? false }
-    public var pauseTileMenu: Bool { featureStates[.pauseTileMenu] ?? true }
     public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
     public var mupenTransferPak: Bool { featureStates[.mupenTransferPak] ?? false }
     public var netplayEnabled: Bool { featureStates[.netplayEnabled] ?? false }

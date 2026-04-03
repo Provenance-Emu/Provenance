@@ -44,10 +44,6 @@
             "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
             "description": "Scans Frameworks/ at startup for bare .libretro.framework dylibs and registers them as thin-wrapper cores (no RetroArch binary required). On tvOS: enabled by default. On iOS: disabled by default but can be enabled in Settings > Advanced > Feature Flags."
         },
-        "pauseTileMenu": {
-            "enabled": true,
-            "description": "Experimental tile/grid based pause menu that floats over the game screen instead of the classic tab/list panel. Enable in Settings > Advanced > Feature Flags."
-        },
         "tapToRemapUI": {
             "enabled": false,
             "description": "Tap-to-remap UX in button remapping settings: press a physical controller button to select the remapping destination instead of choosing from a list. Disabled by default during development — enable in Settings > Advanced > Feature Flags."

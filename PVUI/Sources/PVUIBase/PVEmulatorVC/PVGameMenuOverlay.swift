@@ -8,7 +8,6 @@
 import UIKit
 import SwiftUI
 import PVCoreBridge
-import PVFeatureFlags
 import PVLogging
 import PVSettings
 import GameController
@@ -59,34 +58,19 @@ enum MenuCategory {
 
         guard let emulatorVC = emulatorViewController else { return }
 
-        let useTileMenu = PVFeatureFlags.shared.isEnabled(.pauseTileMenu)
-
-        // Create the SwiftUI menu view — tile overlay when feature-flagged, classic otherwise
-        let hostingVC: UIViewController
-        if useTileMenu {
-            let tileView = PauseTileMenuView(
-                emulatorVC: emulatorVC,
-                dismissAction: { [weak self] resumeEmulation in
-                    self?.dismiss(resumeEmulation: resumeEmulation)
-                }
-            )
-            #if canImport(FreemiumKit)
-            let wrappedTileView = tileView.environmentObject(FreemiumKit.shared)
-            hostingVC = UIHostingController(rootView: wrappedTileView)
-            #else
-            hostingVC = UIHostingController(rootView: tileView)
-            #endif
-        } else {
-            var menuView: some View {
-                RetroMenuView(emulatorVC: emulatorVC, dismissAction: { [weak self] resumeEmulation in
-                    self?.dismiss(resumeEmulation: resumeEmulation)
-                })
-                #if canImport(FreemiumKit)
-                .environmentObject(FreemiumKit.shared)
-                #endif
+        // Tile menu is the permanent pause menu for all platforms
+        let tileView = PauseTileMenuView(
+            emulatorVC: emulatorVC,
+            dismissAction: { [weak self] resumeEmulation in
+                self?.dismiss(resumeEmulation: resumeEmulation)
             }
-            hostingVC = UIHostingController(rootView: menuView)
-        }
+        )
+        let hostingVC: UIViewController
+        #if canImport(FreemiumKit)
+        hostingVC = UIHostingController(rootView: tileView.environmentObject(FreemiumKit.shared))
+        #else
+        hostingVC = UIHostingController(rootView: tileView)
+        #endif
 
         hostingController = hostingVC
         hostingController?.view.backgroundColor = .clear

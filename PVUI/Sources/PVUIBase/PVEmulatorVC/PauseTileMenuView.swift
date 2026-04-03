@@ -36,11 +36,11 @@ import FreemiumKit
 
 // swiftlint:disable type_body_length
 /// Compact tile/grid pause overlay that floats over the game screen.
-/// Enabled when the `pauseTileMenu` feature flag is on; otherwise `PVGameMenuOverlay`
-/// falls back to the classic `RetroMenuView`.
+/// This is the default pause menu for all platforms.
 struct PauseTileMenuView: View {
     let emulatorVC: PVEmulatorViewController
     let dismissAction: (Bool) -> Void
+    var initialRoute: PauseTileMenuRoute = .root
 
     @ObservedObject private var themeManager = ThemeManager.shared
     @ObservedObject private var indicatorRegistry = PVIndicatorRegistry.shared
@@ -98,7 +98,7 @@ struct PauseTileMenuView: View {
     // MARK: tvOS Focus
 
     @FocusState private var focusedTileID: String?
-    @State private var routeStack: [PauseTileMenuRoute] = [.root]
+    @State private var routeStack: [PauseTileMenuRoute] = []
 
     // MARK: Size class / orientation
 
@@ -1525,7 +1525,7 @@ struct PauseTileMenuView: View {
         }
         .onAppear {
             orientation = UIDevice.current.orientation
-            routeStack = [.root]
+            routeStack = initialRoute == .root ? [.root] : [.root, initialRoute]
             refreshControllerProfileState()
             initializeHardwareSwitchStatesIfNeeded()
             rebuildSections()
@@ -1537,7 +1537,7 @@ struct PauseTileMenuView: View {
         }
         #elseif os(tvOS)
         .onAppear {
-            routeStack = [.root]
+            routeStack = initialRoute == .root ? [.root] : [.root, initialRoute]
             refreshControllerProfileState()
             initializeHardwareSwitchStatesIfNeeded()
             rebuildSections()
