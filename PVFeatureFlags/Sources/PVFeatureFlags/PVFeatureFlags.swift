@@ -705,13 +705,13 @@ public final class PVFeatureFlags: @unchecked Sendable {
 
     public var inAppFreeROMs: Bool { featureStates[.inAppFreeROMs] ?? false }
     public var romPathMigrator: Bool { featureStates[.romPathMigrator] ?? false }
-    public var cheatsUseSwiftUI: Bool { featureStates[.cheatsUseSwiftUI] ?? false }
+    public var cheatsUseSwiftUI: Bool { featureStates[.cheatsUseSwiftUI] ?? true }
     public var retroarchBuiltinEditor: Bool { featureStates[.retroarchBuiltinEditor] ?? false }
-    public var advancedSkinFeatures: Bool { featureStates[.advancedSkinFeatures] ?? false }
+    public var advancedSkinFeatures: Bool { featureStates[.advancedSkinFeatures] ?? true }
     public var contentlessCores: Bool { featureStates[.contentlessCores] ?? false }
-    public var cheatsOnlineLookup: Bool { featureStates[.cheatsOnlineLookup] ?? false }
+    public var cheatsOnlineLookup: Bool { featureStates[.cheatsOnlineLookup] ?? true }
     public var dynamicLibretroScanner: Bool { featureStates[.dynamicLibretroScanner] ?? false }
-    public var pauseTileMenu: Bool { featureStates[.pauseTileMenu] ?? false }
+    public var pauseTileMenu: Bool { featureStates[.pauseTileMenu] ?? true }
     public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
     public var mupenTransferPak: Bool { featureStates[.mupenTransferPak] ?? false }
     public var netplayEnabled: Bool { featureStates[.netplayEnabled] ?? false }
@@ -724,8 +724,8 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
     public var caseCompanionSkins: Bool { featureStates[.caseCompanionSkins] ?? false }
     public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
-    public var sramImportExport: Bool { featureStates[.sramImportExport] ?? false }
-    public var thirdPartyEcosystemIntegration: Bool { featureStates[.thirdPartyEcosystemIntegration] ?? false }
+    public var sramImportExport: Bool { featureStates[.sramImportExport] ?? true }
+    public var thirdPartyEcosystemIntegration: Bool { featureStates[.thirdPartyEcosystemIntegration] ?? true }
 
     // MARK: - Feature Queries
 

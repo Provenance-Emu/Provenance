@@ -213,6 +213,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
 
             syncLog.event(.complete, item: "loadAllFromCloud", status: .ok, detail: "\(metadataProcessedCount) games visible")
+
+            // PHASE 3: Backfill missing artwork for games that have a customArtworkURL in Realm
+            // but the local PVMediaCache file has been deleted (e.g. reinstall, cache clear).
+            await cacheMissingArtworkForExistingGames(limit: 200)
+
 #if os(tvOS)
             await reconcileMissingLocalGames()
 #endif
@@ -2021,6 +2026,51 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         } catch {
             CloudSyncManager.syncLog.event(.download, item: "artwork/\(game.md5Hash)", status: .failed, detail: error.localizedDescription)
             throw CloudSyncError.fileSystemError(error)
+        }
+    }
+
+    /// Backfill missing artwork for games whose `customArtworkURL` is set in Realm
+    /// but the corresponding PVMediaCache file no longer exists on disk (e.g. after
+    /// reinstall, cache clear, or migrating from dev→prod CloudKit container).
+    private func cacheMissingArtworkForExistingGames(limit: Int) async {
+        if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
+            CloudSyncManager.syncLog.event(.skip, item: "rom/artwork-backfill", status: .skipped, detail: "paused for emulation")
+            return
+        }
+
+        do {
+            let candidates = try await withRealm { realm in
+                realm.objects(PVGame.self)
+                    .filter("cloudRecordID != nil AND customArtworkURL != ''")
+                    .prefix(limit * 2)
+                    .map { $0.freeze() }
+            }
+
+            // Filter to games whose local cache file is missing
+            let missing = Array(candidates.filter { game in
+                !PVMediaCache.fileExists(forKey: game.customArtworkURL)
+            }.prefix(limit))
+
+            guard !missing.isEmpty else { return }
+            CloudSyncManager.syncLog.event(.start, item: "rom/artwork-backfill", status: .inProgress, detail: "\(missing.count) games missing local artwork")
+
+            for game in missing {
+                if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) || Task.isCancelled { break }
+
+                let md5 = game.md5Hash
+                let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
+                do {
+                    guard let record = try await fetchRecord(recordID: recordID, includeAssets: true) else { continue }
+                    guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else { continue }
+                    try await downloadCustomArtworkAsset(from: record, for: liveGame)
+                } catch {
+                    CloudSyncManager.syncLog.event(.download, item: "artwork-backfill/\(md5)", status: .failed, detail: error.localizedDescription)
+                }
+            }
+
+            CloudSyncManager.syncLog.event(.complete, item: "rom/artwork-backfill", status: .ok, detail: "\(missing.count) processed")
+        } catch {
+            CloudSyncManager.syncLog.event(.error, item: "rom/artwork-backfill", status: .failed, detail: error.localizedDescription)
         }
     }
 
