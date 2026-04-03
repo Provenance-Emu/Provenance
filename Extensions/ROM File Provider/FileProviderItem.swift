@@ -252,6 +252,8 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
             if let name = fileURL?.lastPathComponent, !name.isEmpty { return sanitize(name) }
             let label = isAutosave ? "Auto" : (userDescription ?? "")
             let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.timeZone = TimeZone(secondsFromGMT: 0)
             formatter.dateFormat = "yyyy-MM-dd HH-mm-ss"
             let dateStr = formatter.string(from: date)
             let prefix = label.isEmpty ? dateStr : "\(label) \(dateStr)"

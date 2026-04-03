@@ -131,14 +131,9 @@ enum RomFileProviderLibrary {
     static func loadAllSaveStateEntries() -> [SaveStateEntry] {
         realm.objects(PVSaveState.self).compactMap { pvSS -> SaveStateEntry? in
             guard !pvSS.isInvalidated,
-                  let pvGame = pvSS.game, !pvGame.isInvalidated else { return nil }
-            let fileURL: URL?
-            if let pvFile = pvSS.file, let url = pvFile.url,
-               FileManager.default.fileExists(atPath: url.path) {
-                fileURL = url
-            } else {
-                return nil
-            }
+                  let pvGame = pvSS.game, !pvGame.isInvalidated,
+                  let pvFile = pvSS.file, let fileURL = pvFile.url,
+                  FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
             return SaveStateEntry(
                 id: pvSS.id,
                 game: pvGame.asDomain(),
