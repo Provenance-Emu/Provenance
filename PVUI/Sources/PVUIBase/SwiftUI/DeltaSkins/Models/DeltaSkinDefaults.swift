@@ -107,7 +107,6 @@ enum DeltaSkinDefaults {
         let useNativeScale = scalingMode == .nativeResolution
 
         // Calculate available space in screen coordinates
-        let deviceScale = UIScreen.main.scale
         let isLandscape = mappingSize.width > mappingSize.height
 
         // Calculate ideal screen dimensions based on orientation and aspect ratio
