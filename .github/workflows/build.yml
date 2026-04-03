@@ -108,26 +108,13 @@ jobs:
           submodules: false
           fetch-depth: 0
 
-      - name: Initialize submodules (selective)
+      - name: Initialize submodules (shallow recursive)
         if: steps.cache-git.outputs.cache-hit != 'true'
         run: |
-          # Init all submodules with --depth 1 for speed.
-          # Cores/* get shallow, non-recursive init (Package.swift needed by Xcode
-          # but nested submodules are NOT required for the CI build).
-          # Non-Core submodules get normal --depth 1 init.
-
-          for sub in $(git config --file .gitmodules --get-regexp 'submodule\..*\.path' | awk '{print $2}'); do
-            case "$sub" in
-              Cores/*)
-                echo "Shallow-init $sub (no recursive)..."
-                git submodule update --init --depth 1 "$sub" 2>&1 || echo "WARNING: Failed to init $sub (continuing)"
-                ;;
-              *)
-                echo "Initializing $sub..."
-                git submodule update --init --depth 1 "$sub" 2>&1 || echo "WARNING: Failed to init $sub (continuing)"
-                ;;
-            esac
-          done
+          # Recursive --depth 1 init for all submodules.
+          # Cores need recursive init because their Package.swift files reference
+          # paths inside nested submodules (e.g. VirtualJaguar/Sources/virtualjaguar-libretro/).
+          git submodule update --init --recursive --depth 1 2>&1 || true
 
           echo "Submodule init complete."
 

@@ -132,6 +132,10 @@ public struct GameItemView: SwiftUI.View {
                 artwork = nil
                 loadArtworkIfNeeded()
             }
+            .onReceive(ArtworkLoader.shared.artworkBecameAvailable) { ids in
+                guard artwork == nil, isVisible, !game.isInvalidated, ids.contains(game.id) else { return }
+                loadArtworkWithPriority(.high)
+            }
             #if os(tvOS)
             /// On tvOS, use card button style for native focus effects (bloom/lift)
             .buttonStyle(.card)
@@ -278,6 +282,10 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
                 artworkTask?.cancel()
                 artwork = nil
                 loadArtworkIfNeeded()
+            }
+            .onReceive(ArtworkLoader.shared.artworkBecameAvailable) { ids in
+                guard artwork == nil, isVisible, !game.isInvalidated, ids.contains(game.id) else { return }
+                loadArtworkWithPriority(.high)
             }
             #if os(tvOS)
             .buttonStyle(.card)

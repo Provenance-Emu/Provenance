@@ -116,12 +116,23 @@ public enum CaseControllerDetector {
         }
     }
 
-    /// True when `skinIdentifier` is listed as a companion skin for a known physical case (see ``knownLayouts``).
+    /// True when `skinIdentifier` is listed as a companion skin for a known physical case (see ``knownLayouts``),
+    /// or when the identifier contains a known case keyword (broad matching for skins with non-standard IDs).
     /// This identification is always performed regardless of the `caseCompanionSkins` feature flag —
     /// the flag controls *visibility* in the UI, not identification.
     public static func isCompanionSkinForKnownCase(_ skinIdentifier: String) -> Bool {
-        return !casesCompatibleWithSkin(skinIdentifier).isEmpty
+        if !casesCompatibleWithSkin(skinIdentifier).isEmpty { return true }
+        // Broad keyword match for skins that reference a known case but use non-standard identifiers
+        let lowered = skinIdentifier.lowercased()
+        return caseKeywords.contains { lowered.contains($0) }
     }
+
+    /// Keywords that indicate a skin is designed for a physical phone case controller.
+    private static let caseKeywords: [String] = [
+        "gamesir", "pocket-taco", "pockettaco", "pocket.taco",
+        "soolra",
+        "buppin",
+    ]
 
     /// True when a connected `GCController` matches a known smart-case layout (GameSir, Soolra, …).
     /// Passive cases (e.g. Buppin) have no controller — they are only used after explicit skin selection or session auto-load.

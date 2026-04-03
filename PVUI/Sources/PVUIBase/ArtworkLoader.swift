@@ -20,6 +20,22 @@ public class ArtworkLoader: ObservableObject {
     /// Shared instance for the application
     public static let shared = ArtworkLoader()
 
+    /// Emits sets of game IDs whose artwork was just cached on disk.
+    /// Views observe this to retry loading artwork that was previously nil.
+    public let artworkBecameAvailable = PassthroughSubject<Set<String>, Never>()
+
+    /// Notifies views that artwork was cached for the given game IDs so they can retry loading.
+    public func notifyArtworkAvailable(gameIds: Set<String>) {
+        guard !gameIds.isEmpty else { return }
+        // Clear memo caches so the next load hits disk
+        for id in gameIds {
+            clearLocalURLCache(forGameId: id)
+            loadingTasks[id]?.cancel()
+            loadingTasks[id] = nil
+        }
+        artworkBecameAvailable.send(gameIds)
+    }
+
     /// Active loading tasks by game ID to prevent duplicate loads
     private var loadingTasks: [String: Task<UIImage?, Error>] = [:]
 
@@ -47,8 +63,23 @@ public class ArtworkLoader: ObservableObject {
     /// To test for a miss, check `localURLResolvedIds.contains(gameId)` first.
     private var localURLCache: [String: URL] = [:]
 
+    /// Well-known notification name posted by PVLibrary when artwork is backfilled.
+    /// userInfo: `["gameIds": Set<String>]`
+    private static let libraryArtworkCachedNotification = Notification.Name("PVLibraryArtworkDidCache")
+
+    private var librarySub: AnyCancellable?
+
     /// Initialize the loader with default settings
-    init() {}
+    init() {
+        // Bridge the cross-module notification into the Combine publisher
+        librarySub = NotificationCenter.default
+            .publisher(for: Self.libraryArtworkCachedNotification)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] note in
+                guard let ids = note.userInfo?["gameIds"] as? Set<String> else { return }
+                self?.notifyArtworkAvailable(gameIds: ids)
+            }
+    }
 
     /// Load artwork for a game with priority based on visibility
     /// Uses thread-safe parameters instead of Realm objects to avoid thread crashes
