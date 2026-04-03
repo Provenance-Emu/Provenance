@@ -672,7 +672,7 @@
     ]
   },
   {
-    "version": "3.9.7",
+    "version": "3.9.8",
     "title": "Disc Ripping",
     "features": [
       {
@@ -692,6 +692,30 @@
         "symbolColor": "purple",
         "title": "Track Selection",
         "subtitle": "Choose exactly which tracks to include — data and audio — before starting a rip."
+      }
+    ]
+  },
+  {
+    "version": "3.9.9",
+    "title": "Files App Integration",
+    "features": [
+      {
+        "symbolName": "folder.fill",
+        "symbolColor": "blue",
+        "title": "ROM Library in Files.app",
+        "subtitle": "Provenance now appears as a location in Files.app. Browse your ROMs by system, copy out save states, and drag in new ROMs directly."
+      },
+      {
+        "symbolName": "arrow.down.doc.fill",
+        "symbolColor": "green",
+        "title": "Drag & Drop Import",
+        "subtitle": "Drop ROM or BIOS files into any system folder in Files.app to import them directly into the Provenance library."
+      },
+      {
+        "symbolName": "doc.fill",
+        "symbolColor": "orange",
+        "title": "Save State Access",
+        "subtitle": "Copy your save states and screenshots out of the Provenance location in Files.app for backup or transfer."
       }
     ]
   }

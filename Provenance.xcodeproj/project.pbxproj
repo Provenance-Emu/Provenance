@@ -636,6 +636,8 @@
 		B3BB79902F6E9D4E00938AB1 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3BB798F2F6E9D4D00938AB1 /* PVCoreBridgeRetro.framework */; };
 		B3BB79912F6E9D4E00938AB1 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3BB798F2F6E9D4D00938AB1 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3BD3A1C2D729007000FBB11 /* Provenance Stickers.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C0C0CAFE3595000000000010 /* ROM File ProviderUI.appex in Embed Foundation Extensions (AppStore) */ = {isa = PBXBuildFile; fileRef = B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C0C0CAFE3595000000000013 /* ROM File ProviderUI.appex in Embed Foundation Extensions (Lite) */ = {isa = PBXBuildFile; fileRef = B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3BD3A232D7298BB000FBB11 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B3BD3A222D7298BB000FBB11 /* PVLibrary */; };
 		B3BD3A252D7298FA000FBB11 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3BD3A242D7298FA000FBB11 /* Defaults */; };
 		B3BDD4022D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
@@ -1068,6 +1070,20 @@
 			remoteGlobalIDString = B3BE9FCF2C7988BD006D989E;
 			remoteInfo = "Provenance Stickers";
 		};
+		C0C0CAFE3595000000000011 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3BE9FB22C7987B1006D989E;
+			remoteInfo = "ROM File ProviderUI";
+		};
+		C0C0CAFE3595000000000014 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3BE9FB22C7987B1006D989E;
+			remoteInfo = "ROM File ProviderUI";
+		};
 		B3DD06002F20031900000000 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1365,6 +1381,7 @@
 				B30D49C72E3809C10073B038 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 				B3DD04002F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
 				B32C30752F6E6AEE003150F0 /* ThumbnailExtension.appex in Embed Foundation Extensions */,
+				C0C0CAFE3595000000000010 /* ROM File ProviderUI.appex in Embed Foundation Extensions (AppStore) */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1396,6 +1413,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B3DD04012F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
+				C0C0CAFE3595000000000013 /* ROM File ProviderUI.appex in Embed Foundation Extensions (Lite) */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2541,6 +2559,13 @@
 			);
 			target = B3BE9FA32C7987B1006D989E /* ROM File Provider */;
 		};
+		C0C0CAFE3595000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */;
+		};
 		B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -2960,6 +2985,7 @@
 		B39436502CCDEC9D004D5DFB /* Main UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Main UI"; sourceTree = "<group>"; };
 		B39B10AE2DAF3D16004EEF79 /* TopShelfv2 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B39B10B92DAF3D16004EEF79 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TopShelfv2; sourceTree = "<group>"; };
 		B3BE9FA62C7987B1006D989E /* ROM File Provider */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File Provider"; sourceTree = "<group>"; };
+		C0C0CAFE3595000000000001 /* ROM File ProviderUI */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C0C0CAFE3595000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File ProviderUI"; sourceTree = "<group>"; };
 		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Provenance Stickers"; sourceTree = "<group>"; };
 		B3FD95D52D613D2B00397643 /* Dependencies */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3FD984A2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD987B2D615C9400397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984B2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984C2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98592D615C5100397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98912D615CF000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984E2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984F2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98C12D615D3300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Dependencies; sourceTree = "<group>"; };
 		C0C0CAFE00000000000000BA /* ProvenanceCompanion */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C0C0DE0100000020 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ProvenanceCompanion; sourceTree = "<group>"; };
@@ -3419,7 +3445,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3BDD42D2D349220005F5AF9 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5140,6 +5165,7 @@
 				B3DD05002F20031900000000 /* ProvenanceWidgets */,
 				B355DF9A29209B6700E4C858 /* QuickLookPreview */,
 				B3BE9FA62C7987B1006D989E /* ROM File Provider */,
+				C0C0CAFE3595000000000001 /* ROM File ProviderUI */,
 				B3E21D6C203211BE009939D3 /* Spotlight */,
 				B355E0122920AA9D00E4C858 /* SpotlightImportExtension */,
 				B355E0012920AA2600E4C858 /* ThumbnailExtension */,
@@ -7348,6 +7374,7 @@
 			dependencies = (
 				B35EEF552C6C6D1A00EBD1A8 /* PBXTargetDependency */,
 				B3DD07012F20031900000000 /* PBXTargetDependency */,
+				C0C0CAFE3595000000000015 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -7425,6 +7452,7 @@
 				B3DD07002F20031900000000 /* PBXTargetDependency */,
 				B32C30772F6E6AEE003150F0 /* PBXTargetDependency */,
 				B3A481B82F79ED9F00F3FF6B /* PBXTargetDependency */,
+				C0C0CAFE3595000000000012 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -7550,6 +7578,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C0C0CAFE3595000000000001 /* ROM File ProviderUI */,
 			);
 			name = "ROM File ProviderUI";
 			productName = "ROM File ProviderUI";
@@ -10580,6 +10611,18 @@
 			platformFilter = ios;
 			target = B3BE9FCF2C7988BD006D989E /* Provenance Stickers */;
 			targetProxy = B3BD3A1D2D729008000FBB11 /* PBXContainerItemProxy */;
+		};
+		C0C0CAFE3595000000000012 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */;
+			targetProxy = C0C0CAFE3595000000000011 /* PBXContainerItemProxy */;
+		};
+		C0C0CAFE3595000000000015 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */;
+			targetProxy = C0C0CAFE3595000000000014 /* PBXContainerItemProxy */;
 		};
 		B3DD07002F20031900000000 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13980,7 +14023,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_Provider.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_ProviderUI.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -13990,8 +14033,8 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Extensions/ROM File ProviderUI/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -14029,7 +14072,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_Provider.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_ProviderUI.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -14041,8 +14084,8 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Extensions/ROM File ProviderUI/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -14078,7 +14121,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_Provider.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Extensions/ROM File Provider/ROM_File_ProviderUI.entitlements";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -14090,8 +14133,8 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Extensions/ROM File ProviderUI/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
