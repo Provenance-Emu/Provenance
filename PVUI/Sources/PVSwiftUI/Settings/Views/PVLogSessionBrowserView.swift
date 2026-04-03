@@ -101,7 +101,9 @@ public struct PVLogSessionBrowserView: View {
             }
         }
         .navigationTitle("Session Logs")
+        #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar { toolbarContent }
         .onAppear { viewModel.refresh() }
         .sheet(item: $selectedEntry) { entry in
@@ -172,7 +174,9 @@ public struct PVLogSessionBrowserView: View {
                 for i in offsets { viewModel.deleteFile(viewModel.logFiles[i]) }
             }
         }
+        #if !os(tvOS)
         .scrollContentBackground(.hidden)
+        #endif
         .background(Color.black)
         .listStyle(.plain)
     }
@@ -283,12 +287,16 @@ private struct LogFileViewerSheet: View {
                             .foregroundColor(.white.opacity(0.9))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding()
+                            #if !os(tvOS)
                             .textSelection(.enabled)
+                            #endif
                     }
                 }
             }
             .navigationTitle(entry.name)
+            #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }.foregroundColor(RetroTheme.retroPink)
