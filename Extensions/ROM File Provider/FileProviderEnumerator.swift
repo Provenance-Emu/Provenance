@@ -14,8 +14,11 @@ import PVPrimitives
 
 /// Enumerates items in the Provenance ROM library for the Files.app file provider.
 ///
-/// Root lists category folders (**Systems**, **Publishers**, **Years**, **Regions**, **Ratings**).
+/// Root lists category folders (**Systems**, **Publishers**, **Years**, **Regions**, **Ratings**,
+/// **Save States**, **Screenshots**).
 /// Canonical ROM files (`game:<md5>`) live only under **Systems**; other axes use symlink rows.
+/// Save states (`ss-game:<md5>` / `ss:<id>`) and screenshots (`sc-game:<md5>` / `sc:<md5>:<index>`)
+/// are enumerated read-only from their respective virtual folders.
 ///
 /// Realm access is centralized in ``RomFileProviderLibrary`` (CPDI snapshots, same App Group as Spotlight / Top Shelf).
 final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
