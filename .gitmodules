@@ -136,7 +136,7 @@
 	url = https://github.com/Provenance-Emu/TIC-80.git
 [submodule "CoresRetro/RetroArch/RetroArch"]
         path = CoresRetro/RetroArch/RetroArch
-        url = https://github.com/libretro/RetroArch.git
+        url = https://github.com/Provenance-Emu/RetroArch.git
 [submodule "CoresRetro/RetroArch/libretro-super"]
         path = CoresRetro/RetroArch/libretro-super
         url = https://github.com/libretro/libretro-super.git
@@ -201,4 +201,4 @@
 	url = https://github.com/rtissera/libchdr
 [submodule "PVRcheevos/rcheevos"]
 	path = PVRcheevos/rcheevos
-	url = https://github.com/RetroAchievements/rcheevos.git
+	url = https://github.com/Provenance-Emu/rcheevos.git
