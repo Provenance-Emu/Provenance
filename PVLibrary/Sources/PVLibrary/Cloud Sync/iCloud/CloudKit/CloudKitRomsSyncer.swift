@@ -631,48 +631,40 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
 
         return try await runOnQueue { [self] in
+            let desiredKeys = [
+                CloudKitSchema.ROMFields.md5,
+                CloudKitSchema.ROMFields.title,
+                CloudKitSchema.ROMFields.systemIdentifier,
+                CloudKitSchema.ROMFields.fileSize,
+                CloudKitSchema.ROMFields.originalFilename,
+                CloudKitSchema.ROMFields.originalArtworkURL,
+                CloudKitSchema.ROMFields.customArtworkURL,
+                CloudKitSchema.ROMFields.isDeleted,
+                CloudKitSchema.ROMFields.fileData,
+                CloudKitSchema.ROMFields.isArchive,
+                CloudKitSchema.ROMFields.relatedFilenames,
+                CloudKitSchema.ROMFields.customArtworkAsset
+            ]
+
             let downloadStartTime = Date()
             var lastProgressUpdate = Date()
             var lastProgress: Double = 0
 
-            return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
-                let op = CKFetchRecordsOperation(recordIDs: [recordID])
-
-                // Include all fields including assets
-                op.desiredKeys = [
-                    CloudKitSchema.ROMFields.md5,
-                    CloudKitSchema.ROMFields.title,
-                    CloudKitSchema.ROMFields.systemIdentifier,
-                    CloudKitSchema.ROMFields.fileSize,
-                    CloudKitSchema.ROMFields.originalFilename,
-                    CloudKitSchema.ROMFields.originalArtworkURL,
-                    CloudKitSchema.ROMFields.customArtworkURL,
-                    CloudKitSchema.ROMFields.isDeleted,
-                    CloudKitSchema.ROMFields.fileData,
-                    CloudKitSchema.ROMFields.isArchive,
-                    CloudKitSchema.ROMFields.relatedFilenames,
-                    CloudKitSchema.ROMFields.customArtworkAsset
-                ]
-
-                // Track download progress with speed calculation
-                op.perRecordProgressBlock = { [expectedSize] _, progress in
+            let makeProgressBlock: () -> ((CKRecord.ID, Double) -> Void) = {
+                return { [expectedSize] _, progress in
                     let now = Date()
                     let elapsed = now.timeIntervalSince(downloadStartTime)
 
-                    // Calculate speed string
                     var speedString: String? = nil
                     if elapsed > 0.5 && progress > 0.01 {
                         if let totalSize = expectedSize, totalSize > 0 {
-                            // Calculate based on known file size
                             let downloadedBytes = Double(totalSize) * progress
                             let bytesPerSecond = downloadedBytes / elapsed
                             speedString = Self.formatSpeed(bytesPerSecond)
                         } else {
-                            // Estimate based on progress rate
                             let progressDelta = progress - lastProgress
                             let timeDelta = now.timeIntervalSince(lastProgressUpdate)
                             if timeDelta > 0.1 && progressDelta > 0 {
-                                // Rough estimate assuming ~10MB average ROM
                                 let estimatedBytesPerSecond = (progressDelta / timeDelta) * 10_000_000
                                 speedString = Self.formatSpeed(estimatedBytesPerSecond)
                             }
@@ -685,38 +677,73 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     DLOG("[SYNC] Download progress: \(Int(progress * 100))% \(speedString ?? "")")
                     progressHandler?(progress, speedString)
                 }
-
-                var fetched: CKRecord?
-                op.perRecordResultBlock = { _, result in
-                    if case let .success(r) = result { fetched = r }
-                }
-
-                op.fetchRecordsCompletionBlock = { _, error in
-                    if let error = error as? CKError {
-                        if error.code == .unknownItem {
-                            continuation.resume(returning: nil)
-                        } else if error.code == .partialFailure,
-                                  let partialErrors = error.partialErrorsByItemID,
-                                  partialErrors.count == 1,
-                                  let (_, partialError) = partialErrors.first,
-                                  let partialCKError = partialError as? CKError,
-                                  partialCKError.code == .unknownItem {
-                            continuation.resume(returning: nil)
-                        } else {
-                            continuation.resume(throwing: CloudSyncError.cloudKitError(error))
-                        }
-                    } else if let error = error {
-                        continuation.resume(throwing: CloudSyncError.cloudKitError(error))
-                    } else {
-                        continuation.resume(returning: fetched)
-                    }
-                }
-
-                // Set quality of service for faster downloads
-                op.qualityOfService = .userInitiated
-
-                self.database.add(op)
             }
+
+            /// Fetch from a specific database, returning nil for "not found" errors.
+            func fetchFrom(_ db: CKDatabase) async throws -> CKRecord? {
+                try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<CKRecord?, Error>) in
+                    let op = CKFetchRecordsOperation(recordIDs: [recordID])
+                    op.desiredKeys = desiredKeys
+                    op.perRecordProgressBlock = makeProgressBlock()
+
+                    var fetched: CKRecord?
+                    op.perRecordResultBlock = { _, result in
+                        if case let .success(r) = result { fetched = r }
+                    }
+
+                    op.fetchRecordsCompletionBlock = { _, error in
+                        if let error = error as? CKError {
+                            if error.code == .unknownItem {
+                                continuation.resume(returning: nil)
+                            } else if error.code == .partialFailure,
+                                      let partialErrors = error.partialErrorsByItemID,
+                                      partialErrors.count == 1,
+                                      let (_, partialError) = partialErrors.first,
+                                      let partialCKError = partialError as? CKError,
+                                      partialCKError.code == .unknownItem {
+                                continuation.resume(returning: nil)
+                            } else {
+                                continuation.resume(throwing: CloudSyncError.cloudKitError(error))
+                            }
+                        } else if let error = error {
+                            continuation.resume(throwing: CloudSyncError.cloudKitError(error))
+                        } else {
+                            continuation.resume(returning: fetched)
+                        }
+                    }
+
+                    op.qualityOfService = .userInitiated
+                    db.add(op)
+                }
+            }
+
+            // Try primary database first
+            if let record = try await fetchFrom(self.database) {
+                return record
+            }
+
+            // Try fallback databases (e.g. dev container in production/TestFlight builds)
+            for fallbackDB in fallbackDatabases {
+                do {
+                    if let record = try await fetchFrom(fallbackDB) {
+                        DLOG("Fetched record with progress from fallback container: \(record.recordID.recordName)")
+                        return record
+                    }
+                } catch let syncError as CloudSyncError {
+                    // Unwrap CloudSyncError to check for badContainer
+                    if case .cloudKitError(let inner) = syncError,
+                       let ckError = inner as? CKError, ckError.code == .badContainer {
+                        DLOG("Fallback container not accessible (badContainer) — disabling for session")
+                        iCloudConstants.invalidateFallbackContainers()
+                        break
+                    }
+                    DLOG("Fallback fetch with progress failed: \(syncError.localizedDescription)")
+                } catch {
+                    DLOG("Fallback fetch with progress failed: \(error.localizedDescription)")
+                }
+            }
+
+            return nil
         }
     }
 

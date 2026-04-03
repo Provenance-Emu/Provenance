@@ -16,6 +16,8 @@ public struct CloudSyncIndicatorView: View {
         case available
         case downloading
         case downloaded
+        /// Cloud assets exist but sync is disabled — nudge the user
+        case syncDisabled
         case none
     }
 
@@ -24,9 +26,11 @@ public struct CloudSyncIndicatorView: View {
 
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    public init(isDownloaded: Bool, hasCloudAssets: Bool, isDownloading: Bool = false, size: CGFloat = 20) {
+    public init(isDownloaded: Bool, hasCloudAssets: Bool, isDownloading: Bool = false, syncEnabled: Bool = true, size: CGFloat = 20) {
         if !hasCloudAssets {
             self.status = .none
+        } else if !syncEnabled && !isDownloaded {
+            self.status = .syncDisabled
         } else if isDownloading {
             self.status = .downloading
         } else if isDownloaded {
@@ -70,6 +74,16 @@ public struct CloudSyncIndicatorView: View {
                     .font(.system(size: size * 0.6))
                     .foregroundColor(.green)
             }
+        case .syncDisabled:
+            ZStack {
+                Circle()
+                    .fill(Color.black.opacity(0.7))
+                    .frame(width: size, height: size)
+
+                Image(systemName: "icloud.slash")
+                    .font(.system(size: size * 0.6))
+                    .foregroundColor(.gray)
+            }
         case .none:
             EmptyView()
         }
@@ -89,6 +103,9 @@ public struct CloudSyncIndicatorView: View {
 
         CloudSyncIndicatorView(isDownloaded: true, hasCloudAssets: false)
             .previewDisplayName("No Cloud Record")
+
+        CloudSyncIndicatorView(isDownloaded: false, hasCloudAssets: true, syncEnabled: false)
+            .previewDisplayName("Sync Disabled")
     }
     .padding()
     .background(Color.gray)

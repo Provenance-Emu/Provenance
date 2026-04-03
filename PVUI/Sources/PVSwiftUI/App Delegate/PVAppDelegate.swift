@@ -366,6 +366,10 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         ILOG("PVAppDelegate: Application did finish launching")
+
+        // Restore critical user preferences from iCloud KVS (survives reinstalls)
+        iCloudSettingsSync.setup()
+
         RealmConfiguration.setDefaultRealmConfig()
 
         // Register MetricKit subscriber to capture hang / crash diagnostics passively

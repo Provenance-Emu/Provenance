@@ -350,10 +350,13 @@ public class SceneCoordinator: ObservableObject {
 
             guard let fileURL = game.file?.url,
                   FileManager.default.fileExists(atPath: fileURL.path) else {
-                syncStatusManager.error("Game file not found. Please verify the ROM file exists.")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-                    self?.syncStatusManager.hide()
-                    self?.showGameLaunchError(
+                syncStatusManager.hide()
+
+                // If the game has cloud assets, offer to enable cloud sync instead of a dead-end error
+                if game.hasCloudAssets {
+                    showCloudSyncEnablePrompt(for: game, core: core)
+                } else {
+                    showGameLaunchError(
                         title: "Game File Not Found",
                         message: "The game file could not be found on your device.\n\nThis can happen if:\n• The file was deleted\n• The file was moved\n• There's a storage issue\n\nTry removing the game from your library and re-importing it."
                     )
@@ -1096,6 +1099,40 @@ public class SceneCoordinator: ObservableObject {
             title: title,
             message: message,
             type: .error
+        )
+    }
+
+    /// Show a prompt offering to enable cloud sync when a ROM is missing but has cloud assets.
+    /// Enabling sync and retrying the launch gives the user a one-tap path to recovery.
+    private func showCloudSyncEnablePrompt(for game: PVGame, core: PVCore?) {
+        openMainScene()
+
+        // Capture value types to avoid retaining a Realm object across the alert lifecycle
+        let gameMD5 = game.md5Hash
+        let coreID = core?.identifier
+
+        alertState.show(
+            title: "Game Available in iCloud",
+            message: "This game's ROM file isn't on your device, but it exists in your iCloud library.\n\nEnable Cloud Sync to download it automatically.",
+            type: .standard,
+            primaryButtonTitle: "Enable & Download",
+            primaryAction: { [weak self] in
+                // Turn on cloud sync
+                Defaults[.iCloudSync] = true
+                Defaults[.iCloudSyncMode] = .cloudKit
+
+                // Re-fetch the game from Realm (the original reference may be stale)
+                let realm = RomDatabase.sharedInstance.realm
+                guard let freshGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5) else {
+                    return
+                }
+                let freshCore: PVCore? = coreID.flatMap { realm.object(ofType: PVCore.self, forPrimaryKey: $0) }
+                self?.launchGame(freshGame, core: freshCore)
+            },
+            secondaryButtonTitle: "Open Settings",
+            secondaryAction: {
+                NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
+            }
         )
     }
 

@@ -63,7 +63,7 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     }
 
     private var shouldShowCloudIndicator: Bool {
-        iCloudSyncEnabled && game.hasCloudAssets
+        game.hasCloudAssets
     }
 
     /// Drives iCloud badge and spacing so compact shelves (e.g. half `PVRowHeight`) are not dominated by chrome.
@@ -108,6 +108,7 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                                 isDownloaded: game.isDownloaded,
                                 hasCloudAssets: game.hasCloudAssets,
                                 isDownloading: isDownloading,
+                                syncEnabled: iCloudSyncEnabled,
                                 size: cloudSyncIndicatorSize
                             )
                             .padding(cloudSyncIndicatorOuterPadding)

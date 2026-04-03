@@ -58,7 +58,7 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
     }
 
     private var shouldShowCloudIndicator: Bool {
-        iCloudSyncEnabled && game.hasCloudAssets
+        game.hasCloudAssets
     }
 
 //    private var textColor: Color {
@@ -102,6 +102,7 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
                                     isDownloaded: game.isDownloaded,
                                     hasCloudAssets: game.hasCloudAssets,
                                     isDownloading: isDownloading,
+                                    syncEnabled: iCloudSyncEnabled,
                                     size: 20
                                 )
                                 .padding(2)

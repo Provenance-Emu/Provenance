@@ -36,6 +36,7 @@ struct HomeView: SwiftUI.View {
     @Default(.showSearchbar) private var showSearchbar
     @Default(.showFavorites) private var showFavorites
     @Default(.showAutoSavesInRecents) private var showAutoSavesInRecents
+    @Default(.iCloudSync) private var iCloudSyncEnabled
 
     // Import status view properties
     @State private var showImportStatusView = false
@@ -194,6 +195,10 @@ struct HomeView: SwiftUI.View {
                             if bootupStateManager.isBootupCompleted && isLibraryCompletelyEmpty {
                                 cloudSyncUpsell()
                                     .padding(.horizontal)
+                            } else if !iCloudSyncEnabled && CloudSyncUpsellView.detectCachedCloudData() {
+                                cloudSyncUpsell()
+                                    .padding(.horizontal)
+                                    .padding(.vertical, 4)
                             }
                             continuesSection()
                                 .id("section_continues")

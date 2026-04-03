@@ -54,6 +54,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @Default(.showRecentGames) var showRecentGames: Bool
     @Default(.showSearchbar) var showSearchbar: Bool
     @Default(.unsupportedCores) var unsupportedCores: Bool
+    @Default(.iCloudSync) var iCloudSyncEnabled: Bool
 
     // Modal state for log viewer and system status
     @State private var showLogViewer = false
@@ -380,6 +381,8 @@ struct ConsoleGamesView: SwiftUI.View {
                     unsupportedSystemBanner
 
                     contentlessSetupGuide
+
+                    cloudSyncBanner
 
                     gamesScrollView
 
@@ -1706,6 +1709,17 @@ extension ConsoleGamesView {
                 NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
             }
         )
+    }
+
+    /// Compact banner shown above the game list when cloud sync is off but cloud data exists.
+    /// Only visible for Plus/sideloaded users who could enable sync.
+    @ViewBuilder
+    private var cloudSyncBanner: some View {
+        if !iCloudSyncEnabled && CloudSyncUpsellView.detectCachedCloudData() {
+            cloudSyncUpsell()
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+        }
     }
 }
 #endif
