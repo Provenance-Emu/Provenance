@@ -2537,15 +2537,16 @@ public final class GameImporter: GameImporting, ObservableObject {
     // This is the version of determineImportType called internally for quick checks, non-throwing.
     // Relies on the simpler helpers above.
     private func determineImportType(_ item: ImportQueueItem) -> ImportQueueItem.FileType {
-        // Check for directories first — could be MAME ROM sets or DOSBox game folders.
+        // Check skins BEFORE the generic directory check — skin bundles (.deltaskin, .manicskin)
+        // are directories and would otherwise be misclassified as .folder → treated as ROM sets.
+        if isSkin(item) { return .skin }
+
+        // Check for directories — could be MAME ROM sets or DOSBox game folders.
         // Both are returned as .folder; performImport resolves the specific system asynchronously.
         var isDir: ObjCBool = false
         if FileManager.default.fileExists(atPath: item.url.path, isDirectory: &isDir), isDir.boolValue {
             return .folder
         }
-
-        // Check skins first - trivial extension/directory check, no expensive operations needed
-        if isSkin(item) { return .skin }
         // Check artwork next - also trivial extension check
         if isArtwork(item) { return .artwork }
         // BIOS check is expensive (database lookups, MD5 checks), so do it after cheap checks
