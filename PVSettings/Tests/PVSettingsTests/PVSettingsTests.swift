@@ -1775,3 +1775,99 @@ struct LightGunSettingsTests {
     }
 }
 
+// MARK: - ScalingMode Tests
+
+@Suite("ScalingMode")
+struct ScalingModeTests {
+
+    @Test("scalingMode default is aspectFit")
+    func scalingModeDefault() {
+        Defaults.reset(.scalingMode)
+        #expect(Defaults[.scalingMode] == .aspectFit)
+    }
+
+    @Test("scalingMode round-trips through UserDefaults")
+    func scalingModeRoundTrip() {
+        for mode in ScalingMode.allCases {
+            Defaults[.scalingMode] = mode
+            #expect(Defaults[.scalingMode] == mode)
+        }
+        Defaults.reset(.scalingMode)
+    }
+
+    @Test("fromLegacy — integerScale takes precedence over nativeScale")
+    func fromLegacyIntegerScalePrecedence() {
+        let mode = ScalingMode.fromLegacy(nativeScale: true, integerScale: true)
+        #expect(mode == .integerScale)
+    }
+
+    @Test("fromLegacy — nativeResolution when only nativeScale is true")
+    func fromLegacyNativeScale() {
+        let mode = ScalingMode.fromLegacy(nativeScale: true, integerScale: false)
+        #expect(mode == .nativeResolution)
+    }
+
+    @Test("fromLegacy — aspectFit when both false")
+    func fromLegacyBothFalse() {
+        let mode = ScalingMode.fromLegacy(nativeScale: false, integerScale: false)
+        #expect(mode == .aspectFit)
+    }
+
+    @Test("requiresNativeScaleFactor only true for nativeResolution")
+    func requiresNativeScaleFactor() {
+        #expect(ScalingMode.nativeResolution.requiresNativeScaleFactor == true)
+        for mode in ScalingMode.allCases where mode != .nativeResolution {
+            #expect(mode.requiresNativeScaleFactor == false)
+        }
+    }
+
+    @Test("usesIntegerSnapping only true for integerScale")
+    func usesIntegerSnapping() {
+        #expect(ScalingMode.integerScale.usesIntegerSnapping == true)
+        for mode in ScalingMode.allCases where mode != .integerScale {
+            #expect(mode.usesIntegerSnapping == false)
+        }
+    }
+
+    @Test("migration — no-op when scalingMode already set")
+    func migrationNoOpWhenAlreadySet() {
+        let ud = UserDefaults(suiteName: "test.scalingmode.noop")!
+        ud.set(ScalingMode.stretch.rawValue, forKey: "scalingMode")
+        migrateScalingModeIfNeeded(userDefaults: ud)
+        #expect(ud.string(forKey: "scalingMode") == ScalingMode.stretch.rawValue)
+        ud.removePersistentDomain(forName: "test.scalingmode.noop")
+    }
+
+    @Test("migration — maps integerScaleEnabled=true to .integerScale")
+    func migrationIntegerScale() {
+        let ud = UserDefaults(suiteName: "test.scalingmode.integer")!
+        ud.removeObject(forKey: "scalingMode")
+        ud.set(true, forKey: "integerScaleEnabled")
+        ud.set(false, forKey: "nativeScaleEnabled")
+        migrateScalingModeIfNeeded(userDefaults: ud)
+        #expect(ud.string(forKey: "scalingMode") == ScalingMode.integerScale.rawValue)
+        ud.removePersistentDomain(forName: "test.scalingmode.integer")
+    }
+
+    @Test("migration — maps nativeScaleEnabled=true to .nativeResolution")
+    func migrationNativeResolution() {
+        let ud = UserDefaults(suiteName: "test.scalingmode.native")!
+        ud.removeObject(forKey: "scalingMode")
+        ud.set(false, forKey: "integerScaleEnabled")
+        ud.set(true, forKey: "nativeScaleEnabled")
+        migrateScalingModeIfNeeded(userDefaults: ud)
+        #expect(ud.string(forKey: "scalingMode") == ScalingMode.nativeResolution.rawValue)
+        ud.removePersistentDomain(forName: "test.scalingmode.native")
+    }
+
+    @Test("migration — both false does NOT write to UserDefaults (stays at default)")
+    func migrationBothFalseSkipsWrite() {
+        let ud = UserDefaults(suiteName: "test.scalingmode.default")!
+        ud.removeObject(forKey: "scalingMode")
+        ud.set(false, forKey: "integerScaleEnabled")
+        ud.set(false, forKey: "nativeScaleEnabled")
+        migrateScalingModeIfNeeded(userDefaults: ud)
+        #expect(ud.object(forKey: "scalingMode") == nil)
+        ud.removePersistentDomain(forName: "test.scalingmode.default")
+    }
+}

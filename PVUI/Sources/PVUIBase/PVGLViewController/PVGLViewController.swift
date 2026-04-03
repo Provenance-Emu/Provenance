@@ -33,6 +33,7 @@ import MetalKit
 import PVLogging
 import Defaults
 import PVSettings
+import PVFeatureFlags
 import PVUIObjC
 
 internal let SHADER_DIR = "GLES"
@@ -158,6 +159,9 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 
     var renderSettings = RenderSettings()
 
+    /// Cached feature flag — read once at init; unlikely to change during emulation.
+    private lazy var scalingModeRendererEnabled: Bool = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
+
 #if USE_METAL
     var glContext: CIContext?
     var alternateThreadGLContext: CIContext?
@@ -197,14 +201,14 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         renderSettings.metalFilterMode = Defaults[.metalFilterMode]
         renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-        renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+        renderSettings.scalingMode = Defaults[.scalingMode]
 
         Task {
-            for await value in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing]) {
+            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .scalingMode]) {
                 renderSettings.metalFilterMode = Defaults[.metalFilterMode]
                 renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                 renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-                renderSettings.nativeScaleEnabled = Defaults[.nativeScaleEnabled]
+                renderSettings.scalingMode = Defaults[.scalingMode]
             }
         }
     }
@@ -337,7 +341,9 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             break
         }
 
-        if Defaults[.nativeScaleEnabled] {
+        if (scalingModeRendererEnabled
+                ? Defaults[.scalingMode] == .nativeResolution
+                : Defaults[.nativeScaleEnabled]) {
             let scale = UIScreen.main.scale
             if scale != 1 {
                 view.layer.contentsScale = scale
@@ -464,21 +470,88 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             var height: CGFloat = 0
             var width: CGFloat = 0
 
-            if parentSize.width > parentSize.height {
-                height = Defaults[.integerScaleEnabled] ?
-                floor(parentSize.height / aspectSize.height) * aspectSize.height : parentSize.height
-                width = height * ratio
-                if width > parentSize.width {
+            let scalingMode = renderSettings.scalingMode
+            let useNewScalingRenderer = scalingModeRendererEnabled
+
+            if useNewScalingRenderer {
+                switch scalingMode {
+                case .stretch:
                     width = parentSize.width
-                    height = width / ratio
+                    height = parentSize.height
+
+                case .aspectFill:
+                    if parentSize.width > parentSize.height {
+                        height = parentSize.height
+                        width = height * ratio
+                        if width < parentSize.width {
+                            width = parentSize.width
+                            height = width / ratio
+                        }
+                    } else {
+                        width = parentSize.width
+                        height = width / ratio
+                        if height < parentSize.height {
+                            height = parentSize.height
+                            width = height * ratio
+                        }
+                    }
+
+                case .nativeResolution:
+                    width = aspectSize.width
+                    height = aspectSize.height
+
+                case .integerScale:
+                    if parentSize.width > parentSize.height {
+                        height = floor(parentSize.height / aspectSize.height) * aspectSize.height
+                        width = height * ratio
+                        if width > parentSize.width {
+                            width = parentSize.width
+                            height = width / ratio
+                        }
+                    } else {
+                        width = floor(parentSize.width / aspectSize.width) * aspectSize.width
+                        height = width / ratio
+                        if height > parentSize.height {
+                            height = parentSize.height
+                            width = height * ratio
+                        }
+                    }
+
+                case .aspectFit:
+                    if parentSize.width > parentSize.height {
+                        height = parentSize.height
+                        width = height * ratio
+                        if width > parentSize.width {
+                            width = parentSize.width
+                            height = width / ratio
+                        }
+                    } else {
+                        width = parentSize.width
+                        height = width / ratio
+                        if height > parentSize.height {
+                            height = parentSize.height
+                            width = height * ratio
+                        }
+                    }
                 }
             } else {
-                width = Defaults[.integerScaleEnabled] ?
-                floor(parentSize.width / aspectSize.width) * aspectSize.width : parentSize.width
-                height = width / ratio
-                if height > parentSize.height {
-                    height = parentSize.height
+                // Legacy layout: honours the old integerScaleEnabled / nativeScaleEnabled booleans.
+                if parentSize.width > parentSize.height {
+                    height = Defaults[.integerScaleEnabled] ?
+                        floor(parentSize.height / aspectSize.height) * aspectSize.height : parentSize.height
                     width = height * ratio
+                    if width > parentSize.width {
+                        width = parentSize.width
+                        height = width / ratio
+                    }
+                } else {
+                    width = Defaults[.integerScaleEnabled] ?
+                        floor(parentSize.width / aspectSize.width) * aspectSize.width : parentSize.width
+                    height = width / ratio
+                    if height > parentSize.height {
+                        height = parentSize.height
+                        width = height * ratio
+                    }
                 }
             }
 

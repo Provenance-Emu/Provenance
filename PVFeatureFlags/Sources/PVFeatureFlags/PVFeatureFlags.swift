@@ -102,6 +102,12 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// into those apps via deep links, and querying their game libraries.
     /// Disabled by default while the feature is being validated against each app's current URL scheme.
     case thirdPartyEcosystemIntegration = "thirdPartyEcosystemIntegration"
+    /// Activates the new `ScalingMode`-enum-based rendering paths in PVGLViewController and
+    /// PVMetalViewController. When disabled (default), the legacy `nativeScaleEnabled` /
+    /// `integerScaleEnabled` boolean code paths are used so existing scaling behaviour is
+    /// unchanged. Enable in Settings > Advanced > Feature Flags to test the new modes
+    /// (Stretch, Aspect Fill, etc.) before they are promoted to default in a future release.
+    case scalingModeRenderer = "scalingModeRenderer"
 }
 
 /// Enum representing supported OS platforms for feature flag filtering
@@ -296,6 +302,11 @@ public struct FeatureFlag: Codable, Sendable {
         ],
         allowedPlatforms: ["ios"],
         description: "Explicit SRAM/battery save import and export in the game context menu. Export shares .sav/.srm/.ram files; import opens a document picker. iOS only (tvOS syncs saves via iCloud)."
+    )
+
+    public static let scalingModeRenderer = FeatureFlag(
+        enabled: false,
+        description: "Activates the ScalingMode-enum renderer paths (Stretch, Aspect Fill, Integer Scale, Native Resolution). When disabled the legacy nativeScaleEnabled/integerScaleEnabled boolean code paths are used — existing scaling is unchanged. Enable in Settings > Advanced > Feature Flags to test new modes (Phase 2 of screen-scaling standardisation)."
     )
 }
 

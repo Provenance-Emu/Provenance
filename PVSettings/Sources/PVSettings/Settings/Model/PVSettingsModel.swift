@@ -23,13 +23,24 @@ fileprivate var IsAppStore: Bool {
 // Video
 public
 extension Defaults.Keys {
-#if os(iOS) || os(watchOS) || targetEnvironment(macCatalyst)
+    /// Primary scaling mode that controls how game video is sized to fit the display.
+    /// This supersedes the legacy `nativeScaleEnabled` and `integerScaleEnabled` booleans.
+    /// On first launch the value is migrated from any previously stored boolean flags.
+    static let scalingMode: Key<ScalingMode> = {
+        migrateScalingModeIfNeeded()
+        return Key<ScalingMode>("scalingMode", default: .aspectFit)
+    }()
+
+    /// Legacy: use `scalingMode` instead.
+    /// Kept for backwards-compatibility; the renderers read `scalingMode` directly.
+    @available(*, deprecated, renamed: "scalingMode", message: "Use Defaults[.scalingMode] == .nativeResolution")
     static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
-#else
-    static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
-#endif
+
     static let imageSmoothing = Key<Bool>("imageSmoothing", default: false)
 
+    /// Legacy: use `scalingMode` instead.
+    /// Kept for backwards-compatibility; the renderers read `scalingMode` directly.
+    @available(*, deprecated, renamed: "scalingMode", message: "Use Defaults[.scalingMode] == .integerScale")
     static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
 
     /// How the game is presented when an external display (HDMI / USB-C / AirPlay) is connected.
@@ -831,6 +842,25 @@ internal func migrateLegacyBoolPreferenceIfNeeded(primaryKey: String, legacyKey:
 internal func makeMigratingBoolKey(_ primaryKey: String, legacyKey: String, defaultValue: Bool) -> Defaults.Key<Bool> {
     migrateLegacyBoolPreferenceIfNeeded(primaryKey: primaryKey, legacyKey: legacyKey)
     return Defaults.Key<Bool>(primaryKey, default: defaultValue)
+}
+
+// MARK: ScalingMode Migration
+
+/// Migrates the legacy `nativeScaleEnabled` and `integerScaleEnabled` boolean flags
+/// to the unified `scalingMode` key on first access.
+/// - `integerScaleEnabled = true` maps to `.integerScale` (takes precedence).
+/// - `nativeScaleEnabled = true` maps to `.nativeResolution`.
+/// - Both false (or not set) maps to the default `.aspectFit`.
+internal func migrateScalingModeIfNeeded(userDefaults: UserDefaults = .standard) {
+    let scalingKey = "scalingMode"
+    guard userDefaults.object(forKey: scalingKey) == nil else { return }
+
+    let integerScale = userDefaults.bool(forKey: "integerScaleEnabled")
+    let nativeScale  = userDefaults.bool(forKey: "nativeScaleEnabled")
+    let mode = ScalingMode.fromLegacy(nativeScale: nativeScale, integerScale: integerScale)
+    if mode != .aspectFit {
+        userDefaults.set(mode.rawValue, forKey: scalingKey)
+    }
 }
 
 // MARK: Beta Options
