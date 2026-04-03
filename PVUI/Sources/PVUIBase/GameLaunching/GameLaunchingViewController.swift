@@ -668,7 +668,13 @@ public extension GameLaunchingViewController {
                     },
                     onSelectSave: { selectedItem in
                         Task { @MainActor in
-                            if let saveState = allSaves.first(where: { $0.id == selectedItem.saveStateId }) {
+                            // Re-fetch from Realm to get the latest state (the snapshot
+                            // in allSaves may be stale after a CloudKit download).
+                            let freshSave: PVSaveState? = {
+                                let realm = try? Realm()
+                                return realm?.object(ofType: PVSaveState.self, forPrimaryKey: selectedItem.saveStateId)
+                            }()
+                            if let saveState = freshSave {
                                 dismissAndResume(.loadSave(save: saveState, core: core))
                             } else {
                                 dismissAndResume(.startFresh(core: core))
