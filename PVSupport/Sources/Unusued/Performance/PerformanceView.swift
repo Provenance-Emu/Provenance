@@ -255,6 +255,7 @@ private extension PerformanceView {
 
 // MARK: Support Methods
 private extension PerformanceView {
+    @MainActor
     func showViewAboveStatusBarIfNeeded() {
         guard UIApplication.shared.applicationState == UIApplication.State.active, self.canBeVisible(), self.isHidden else {
             return
