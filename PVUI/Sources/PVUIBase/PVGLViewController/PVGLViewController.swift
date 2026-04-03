@@ -159,6 +159,9 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 
     var renderSettings = RenderSettings()
 
+    /// Cached feature flag — read once at init; unlikely to change during emulation.
+    private lazy var scalingModeRendererEnabled: Bool = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
+
 #if USE_METAL
     var glContext: CIContext?
     var alternateThreadGLContext: CIContext?
@@ -338,7 +341,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             break
         }
 
-        if (PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
+        if (scalingModeRendererEnabled
                 ? Defaults[.scalingMode] == .nativeResolution
                 : Defaults[.nativeScaleEnabled]) {
             let scale = UIScreen.main.scale
@@ -468,7 +471,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             var width: CGFloat = 0
 
             let scalingMode = renderSettings.scalingMode
-            let useNewScalingRenderer = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
+            let useNewScalingRenderer = scalingModeRendererEnabled
 
             if useNewScalingRenderer {
                 switch scalingMode {

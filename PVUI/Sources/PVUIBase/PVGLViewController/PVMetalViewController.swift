@@ -175,6 +175,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     var renderSettings: RenderSettings = .init()
 
+    /// Cached feature flag — read once at init; unlikely to change during emulation.
+    private lazy var scalingModeRendererEnabled: Bool = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
+
     // MARK: Internal properties
 
     var  device: MTLDevice? = nil
@@ -788,7 +791,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             var width: CGFloat = 0
 
             let scalingMode = renderSettings.scalingMode
-            let useNewScalingRenderer = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
+            let useNewScalingRenderer = scalingModeRendererEnabled
 
             /// Calculate dimensions in points first
             if useNewScalingRenderer {
@@ -944,7 +947,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Metal render only supports native scale on iOS/tvOS
         #if !(os(macOS) || targetEnvironment(macCatalyst))
         let screenBounds = UIScreen.main.bounds
-        let nativeScaleEnabled = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
+        let nativeScaleEnabled = scalingModeRendererEnabled
             ? Defaults[.scalingMode] == .nativeResolution
             : Defaults[.nativeScaleEnabled]
 
@@ -2088,7 +2091,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 #if os(iOS) || os(tvOS)
         let screenBounds = UIScreen.main.bounds
         let screenScale = UIScreen.main.scale
-        let useNativeScale = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
+        let useNativeScale = scalingModeRendererEnabled
             ? Defaults[.scalingMode] == .nativeResolution
             : Defaults[.nativeScaleEnabled]
 #else
@@ -3388,7 +3391,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 metalView.clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
                 configureMetalLayer(for: metalView)
 
-                let _nativeResolutionActive = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
+                let _nativeResolutionActive = scalingModeRendererEnabled
                     ? Defaults[.scalingMode] == .nativeResolution
                     : Defaults[.nativeScaleEnabled]
                 if _nativeResolutionActive {
