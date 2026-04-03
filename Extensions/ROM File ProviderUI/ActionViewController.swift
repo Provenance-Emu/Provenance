@@ -88,7 +88,7 @@ final class ActionViewController: FPUIActionExtensionViewController {
     // MARK: - Actions
 
     @objc private func dismissAction() {
-        extensionContext?.completeRequest()
+        extensionContext.completeRequest()
     }
 
     // MARK: - Layout
