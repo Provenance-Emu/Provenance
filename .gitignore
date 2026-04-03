@@ -132,3 +132,4 @@ build
 .claude/
 memory-bank/
 Package.resolved
+__pycache__

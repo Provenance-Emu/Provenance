@@ -206,6 +206,8 @@ ensure-cheatdb:
 
 ## Force-regenerate libretro cheat database from libretro-database repo
 ## Uses MD5 cross-referencing from DAT files for ROM hash lookup support.
+## Note: libretro only ships cheats under a subset of systems in cht/; see
+## Scripts/generate_cheatdb.py (SYSTEM_SHORT_NAMES / upstream comment).
 update-cheatdb:
 	$(info Generating libretro cheat database…)
 	rm -rf /tmp/libretro-database

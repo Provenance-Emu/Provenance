@@ -93,7 +93,8 @@ public class MissingArtworkCacheManager {
 
         // Store in disk cache
         let fileURL = diskURL(for: key as String)
-        Task.detached {
+        Task.detached { [weak image] in
+            guard let image else { return }
             if let data = image.pngData() {
                 try? data.write(to: fileURL)
             }
