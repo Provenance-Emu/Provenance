@@ -69,7 +69,7 @@ final class ActionViewController: FPUIActionExtensionViewController {
     /// `NSExtensionFileProviderActions` Info.plist entry (if any).
     /// `itemIdentifiers` are the items the user selected the action on.
     override func prepare(
-        forActionWithIdentifier actionIdentifier: String,
+        forAction actionIdentifier: String,
         itemIdentifiers: [NSFileProviderItemIdentifier]
     ) {
         titleLabel.text = "Provenance"
