@@ -11,8 +11,20 @@ import SwiftUI
 
 /// Design tokens and small views that mirror `PauseTileMenuView` so the game library, continues UI, and alerts stay visually consistent.
 public enum RetroPauseChrome {
-    /// Outer panel radius (`PauseTileMenuView.panelBackground`).
-    public static let panelCornerRadius: CGFloat = 18
+
+    // MARK: - Radius Scale
+
+    /// 4pt -- badges, tiny pills
+    public static let radiusXS: CGFloat = 4
+    /// 6pt -- search fields, buttons, small cards
+    public static let radiusSM: CGFloat = 6
+    /// 10pt -- sections, focus overlays, UIKit borders
+    public static let radiusMD: CGFloat = 10
+    /// 12pt -- alert dialogs, large overlays
+    public static let radiusLG: CGFloat = 12
+
+    /// Outer panel radius -- tight to match search field aesthetic.
+    public static let panelCornerRadius: CGFloat = radiusSM
 
     /// Panel border stroke width.
     public static let panelStrokeLineWidth: CGFloat = 1.5
@@ -33,9 +45,9 @@ public enum RetroPauseChrome {
     /// `PauseTileMenuView.searchBarView` corner radii.
     public static func searchFieldCornerRadius() -> CGFloat {
         #if os(tvOS)
-        return 12
+        return radiusMD
         #else
-        return 8
+        return radiusSM
         #endif
     }
 
@@ -46,9 +58,9 @@ public enum RetroPauseChrome {
     /// Corner radii for pause menu action cells (`PauseTileMenuView` grid buttons).
     public static func menuCellCornerRadius() -> CGFloat {
         #if os(tvOS)
-        return 14
+        return radiusMD + 2
         #else
-        return 10
+        return radiusSM + 2
         #endif
     }
 

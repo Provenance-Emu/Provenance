@@ -41,7 +41,7 @@ public class SearchBar: NSObject, ObservableObject {
             textField.backgroundColor = palette.dark
                 ? UIColor.black.withAlphaComponent(0.7)
                 : UIColor.white.withAlphaComponent(0.9)
-            textField.layer.cornerRadius = 10
+            textField.layer.cornerRadius = RetroPauseChrome.searchFieldCornerRadius()
             textField.layer.borderWidth = 1.5
 
             // Create gradient border - note this is simplified as UIKit doesn't support gradients as easily

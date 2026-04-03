@@ -26,7 +26,7 @@ public struct RetroViewModifiers {
             content
                 .padding()
                 .background(Color.retroBlack.opacity(opacity))
-                .cornerRadius(10)
+                .cornerRadius(RetroPauseChrome.radiusMD)
         }
     }
     
@@ -61,7 +61,7 @@ public struct RetroViewModifiers {
                         endPoint: .trailing
                     )
                 )
-                .cornerRadius(8)
+                .cornerRadius(RetroPauseChrome.radiusSM)
                 .foregroundColor(.white)
                 .shadow(color: colors.first?.opacity(0.5) ?? .clear, radius: 4, x: 0, y: 0)
         }
@@ -90,7 +90,7 @@ public struct RetroViewModifiers {
         public func body(content: Content) -> some View {
             content
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
                         .stroke(color, lineWidth: lineWidth)
                         .shadow(color: color.opacity(0.8), radius: reduceMotion ? 2 : 4, x: 0, y: 0)
                         .animation(
@@ -118,7 +118,7 @@ public struct RetroViewModifiers {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 2)
                 .background(color.opacity(0.7))
-                .cornerRadius(4)
+                .cornerRadius(RetroPauseChrome.radiusXS)
                 .foregroundColor(.white)
                 .shadow(color: color.opacity(0.5), radius: 2, x: 0, y: 0)
         }

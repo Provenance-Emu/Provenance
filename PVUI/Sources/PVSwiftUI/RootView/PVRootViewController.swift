@@ -177,6 +177,15 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         self.sideNavigationController?.closeSide()
     }
 
+    /// Creates a styled navigation title view with tracked uppercase text and optional console icon.
+    private func makeRetroTitleView(_ title: String, iconName: String? = nil) -> UIView {
+        let titleView = RetroNavTitleView(title: title, iconName: iconName)
+        let host = UIHostingController(rootView: titleView)
+        host.view.backgroundColor = .clear
+        host.view.sizeToFit()
+        return host.view
+    }
+
     public func determineInitialView() {
         let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
         loadIntoContainer(.home, newVC: makeHostingController(consolesView))
@@ -187,9 +196,11 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             .sink { [weak self] selectedTab in
                 guard let self = self else { return }
                 if selectedTab == "home" {
-                    self.navigationItem.title = "Home"
+                    self.navigationItem.titleView = self.makeRetroTitleView("Home", iconName: "house")
+                    self.navigationItem.title = nil
                 } else if let console = self.gameLibrary.system(identifier: selectedTab) {
-                    self.navigationItem.title = console.name
+                    self.navigationItem.titleView = self.makeRetroTitleView(console.name, iconName: console.iconName)
+                    self.navigationItem.title = nil
                 }
             }
 
@@ -217,14 +228,24 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         // remove old view
         self.containerView.subviews.forEach { $0.removeFromSuperview() }
         self.children.forEach { $0.removeFromParent() }
-        // set title
-        self.navigationItem.title = navItem.title
+        // set styled title
+        switch navItem {
+        case .home:
+            self.navigationItem.titleView = makeRetroTitleView("Home", iconName: "house")
+        case .settings:
+            self.navigationItem.titleView = makeRetroTitleView("Settings", iconName: "gear")
+        case .console(_, let title):
+            self.navigationItem.titleView = makeRetroTitleView(title)
+        }
+        self.navigationItem.title = nil
         // set bar button items (if any)
         switch navItem {
         case .settings, .home, .console:
-            self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal"), primaryAction: UIAction { _ in
+            let menuButton = UIBarButtonItem(image: UIImage(systemName: "line.3.horizontal"), primaryAction: UIAction { _ in
                 self.showMenu()
             })
+            menuButton.tintColor = ThemeManager.shared.currentPalette.defaultTintColor
+            self.navigationItem.leftBarButtonItem = menuButton
         }
         // load new view
         self.addChildViewController(newVC, toContainerView: self.containerView)
@@ -687,6 +708,52 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
         ILOG("Document picker was cancelled")
     }
 }
+/// Sharp, minimal navigation title with tracked uppercase text and a subtle accent icon.
+private struct RetroNavTitleView: View {
+    let title: String
+    let iconName: String?
+
+    /// Accent derived from the current theme palette
+    private var accent: Color {
+        ThemeManager.shared.currentPalette.defaultTintColor.swiftUIColor ?? .retroCyan
+    }
+
+    /// Primary text color from the theme palette
+    private var textColor: Color {
+        ThemeManager.shared.currentPalette.gameLibraryText.swiftUIColor
+    }
+
+    init(title: String, iconName: String? = nil) {
+        self.title = title
+        self.iconName = iconName
+    }
+
+    var body: some View {
+        HStack(spacing: 7) {
+            if let iconName {
+                if UIImage(systemName: iconName) != nil {
+                    Image(systemName: iconName)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(accent)
+                } else if UIImage(named: iconName, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) != nil {
+                    Image(iconName, bundle: PVUIBase.BundleLoader.myBundle)
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(accent)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 18, height: 18)
+                }
+            }
+            Text(title.uppercased())
+                .font(.system(size: 15, weight: .semibold))
+                .tracking(1.2)
+                .foregroundColor(textColor)
+                .lineLimit(1)
+        }
+        .fixedSize()
+    }
+}
+
 #endif // os(iOS)
 #endif // canImport(Combine)
 #endif // canImport(SwiftUI)

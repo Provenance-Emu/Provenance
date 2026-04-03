@@ -24,7 +24,7 @@ struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
                 .retroPauseSectionHeaderTypography()
                 .padding(.horizontal, 10)
                 .padding(.top, 20)
-                .padding(.bottom, 8)
+                .padding(.bottom, 14)
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     content()

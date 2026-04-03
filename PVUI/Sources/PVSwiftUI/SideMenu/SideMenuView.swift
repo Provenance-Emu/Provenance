@@ -451,8 +451,14 @@ private struct NavigationBarConfigurator: UIViewControllerRepresentable {
             let appearance = UINavigationBarAppearance()
             appearance.configureWithOpaqueBackground()
             appearance.backgroundColor = headerBackground
-            appearance.titleTextAttributes = [.foregroundColor: headerText]
-            appearance.largeTitleTextAttributes = [.foregroundColor: headerText]
+            let retroTitleFont = UIFont.systemFont(ofSize: 16, weight: .semibold)
+            appearance.titleTextAttributes = [
+                .foregroundColor: headerText,
+                .font: retroTitleFont
+            ]
+            appearance.largeTitleTextAttributes = [
+                .foregroundColor: headerText
+            ]
 
             navController.navigationBar.standardAppearance = appearance
             navController.navigationBar.scrollEdgeAppearance = appearance

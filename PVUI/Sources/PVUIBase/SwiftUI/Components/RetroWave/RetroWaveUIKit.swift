@@ -25,7 +25,7 @@ public extension UIView {
     func applyRetroWaveBorder(color: UIColor = .retroPink, width: CGFloat = 2.0) {
         layer.borderColor = color.cgColor
         layer.borderWidth = width
-        layer.cornerRadius = 12
+        layer.cornerRadius = RetroPauseChrome.radiusMD
     }
     
     func applyRetroWaveShadow(color: UIColor = .retroPink, opacity: Float = 0.7, radius: CGFloat = 5, offset: CGSize = .zero) {

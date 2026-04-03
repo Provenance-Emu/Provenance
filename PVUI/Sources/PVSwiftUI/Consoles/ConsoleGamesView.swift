@@ -188,10 +188,10 @@ struct ConsoleGamesView: SwiftUI.View {
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
                     .fill((supportLevel == .appStoreRestricted ? Color.orange : Color.red).opacity(0.1))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
+                        RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
                             .strokeBorder((supportLevel == .appStoreRestricted ? Color.orange : Color.red).opacity(0.4), lineWidth: 1)
                     )
             )
@@ -1567,9 +1567,9 @@ extension ConsoleGamesView {
             // Use the already-computed snapshot count to avoid a live Realm
             // relationship traversal on every body evaluation.
             Text("\(allGamesModels.count)")
-                .font(.caption)
-                .fontWeight(.medium)
+                .font(.system(size: 12, weight: .semibold, design: .rounded))
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
+                .shadow(color: .retroCyan.opacity(0.5), radius: 3)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .background {

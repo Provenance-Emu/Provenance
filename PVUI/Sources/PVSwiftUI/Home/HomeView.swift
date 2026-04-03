@@ -1053,15 +1053,15 @@ struct HomeView: SwiftUI.View {
                 // Section header with title and "Show All" button
                 HStack {
                     Text(String(localized: "RECENT SAVES"))
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(.system(size: 11))
+                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(RetroPauseChrome.sectionTitleMutedOpacity))
+                        .retroPauseSectionHeaderTypography()
                     Spacer()
                     if !recentSaveStates.isEmpty {
                         Button {
                             showAllSavesBrowser = true
                         } label: {
                             Text(String(localized: "Show All"))
-                                .font(.system(size: 11, weight: .medium))
+                                .retroPauseSectionHeaderTypography()
                                 .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
                         }
                         .buttonStyle(.plain)
@@ -1069,7 +1069,7 @@ struct HomeView: SwiftUI.View {
                 }
                 .padding(.horizontal, 10)
                 .padding(.top, 20)
-                .padding(.bottom, 8)
+                .padding(.bottom, 14)
 
                 HomeContinueSection(
                     rootDelegate: rootDelegate,

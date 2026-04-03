@@ -69,10 +69,17 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     var toggleSortAction: () -> Void
     var toggleViewTypeAction: () -> Void
 
-    let font: Font = .system(.footnote, design: .default)
     let spacing: CGFloat = 12
     let padding: CGFloat = 10
     let iconSize: CGFloat = 22
+
+    /// Unified icon font for all toolbar controls
+    private var iconFont: Font { .system(size: 14, weight: .medium) }
+
+    /// Accent color for toolbar icons derived from the current theme
+    private var iconTint: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .retroCyan
+    }
 
     var canZoomIn: Bool {
         gameLibraryScale > 1
@@ -148,8 +155,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
         ZStack {
             Color.clear.frame(width: iconSize, height: iconSize)
             Image(systemName: "line.3.horizontal.decrease.circle")
-                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                .font(font)
+                .foregroundColor(iconTint)
+                .font(iconFont)
+                .shadow(color: iconTint.opacity(0.4), radius: 2)
         }
         .contentShape(Rectangle())
     }
@@ -158,7 +166,8 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     private var coreControlsGroup: some View {
         HStack(spacing: spacing) {
 
-            Divider()
+            Rectangle()
+                .fill(Color.retroCyan.opacity(0.18))
                 .frame(width: 1, height: 12)
 
             // Sort indicator
@@ -169,8 +178,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 ZStack {
                     Color.clear.frame(width: iconSize, height: iconSize)
                     Image(systemName: viewModel.sortGamesAscending ? "chevron.down.dotted.2" :"chevron.up.dotted.2")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(font.weight(.light))
+                        .foregroundColor(iconTint)
+                        .font(iconFont)
+                        .shadow(color: iconTint.opacity(0.4), radius: 2)
                 }
             }
             .contentShape(Rectangle())
@@ -183,13 +193,15 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 ZStack {
                     Color.clear.frame(width: iconSize, height: iconSize)
                     Image(systemName: viewModel.viewGamesAsGrid ? "square.grid.3x3" : "rectangle.grid.1x2")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(font)
+                        .foregroundColor(iconTint)
+                        .font(iconFont)
+                        .shadow(color: iconTint.opacity(0.4), radius: 2)
                 }
             }
             .contentShape(Rectangle())
 
-            Divider()
+            Rectangle()
+                .fill(Color.retroCyan.opacity(0.18))
                 .frame(width: 1, height: 12)
 
             // Zoom out (haptic only when zoom applies — see `zoomOut()`)
@@ -199,9 +211,11 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 ZStack {
                     Color.clear.frame(width: iconSize, height: iconSize)
                     Image(systemName: "minus.magnifyingglass")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(font)
+                        .foregroundColor(iconTint)
+                        .font(iconFont)
+                        .shadow(color: iconTint.opacity(0.4), radius: 2)
                 }
+                .opacity(canZoomOut ? 1.0 : 0.35)
             }
             .disabled(!canZoomOut)
             .contentShape(Rectangle())
@@ -213,14 +227,17 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 ZStack {
                     Color.clear.frame(width: iconSize, height: iconSize)
                     Image(systemName: "plus.magnifyingglass")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(font)
+                        .foregroundColor(iconTint)
+                        .font(iconFont)
+                        .shadow(color: iconTint.opacity(0.4), radius: 2)
                 }
+                .opacity(canZoomIn ? 1.0 : 0.35)
             }
             .disabled(!canZoomIn)
             .contentShape(Rectangle())
 
-            Divider()
+            Rectangle()
+                .fill(Color.retroCyan.opacity(0.18))
                 .frame(width: 1, height: 12)
 
             // Consolidated log/status menu
@@ -274,8 +291,9 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 ZStack {
                     Color.clear.frame(width: iconSize, height: iconSize)
                     Image(systemName: "ellipsis.circle")
-                        .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        .font(font)
+                        .foregroundColor(iconTint)
+                        .font(iconFont)
+                        .shadow(color: iconTint.opacity(0.4), radius: 2)
                 }
                 .contentShape(Rectangle())
             }

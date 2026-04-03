@@ -83,14 +83,11 @@ public struct RetroTheme {
                 .padding(.vertical, 10)
                 .padding(.horizontal, 20)
                 .background(
-                    RoundedRectangle(cornerRadius: 8)
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
                         .fill(Color.black.opacity(0.6))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .strokeBorder(
-                                    configuration.isPressed ? RetroTheme.retroPink : RetroTheme.retroPink,
-                                    lineWidth: 2
-                                )
+                            RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
+                                .strokeBorder(RetroTheme.retroPink, lineWidth: 2)
                         )
                 )
                 .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
@@ -107,10 +104,10 @@ public struct RetroTheme {
             content
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.radiusMD)
                         .fill(Color.black.opacity(0.6))
                         .overlay(
-                            RoundedRectangle(cornerRadius: 12)
+                            RoundedRectangle(cornerRadius: RetroPauseChrome.radiusMD)
                                 .strokeBorder(RetroTheme.retroGradient, lineWidth: 1)
                         )
                 )

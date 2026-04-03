@@ -6,17 +6,14 @@
 //
 
 import SwiftUI
-import PVThemes
+import PVUIBase
 
 @available(iOS 14, tvOS 14, *)
 struct HomeDividerView: SwiftUI.View {
-    @ObservedObject private var themeManager = ThemeManager.shared
-
     var body: some SwiftUI.View {
-        Divider()
+        Rectangle()
+            .fill(Color.retroCyan.opacity(0.15))
             .frame(height: 1)
-            .background(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-            .opacity(0.1)
             .padding(.horizontal, 10)
     }
 }

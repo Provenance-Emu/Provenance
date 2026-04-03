@@ -57,10 +57,10 @@ struct ContinuesSearchBar: View {
             }
             .padding(10)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: RetroPauseChrome.searchFieldCornerRadius())
                     .fill(searchBackgroundColor)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: RetroPauseChrome.searchFieldCornerRadius())
                             .strokeBorder(
                                 LinearGradient(
                                     gradient: Gradient(colors: [accentColor, accentColor.opacity(0.7)]),
