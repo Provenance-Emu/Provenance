@@ -181,8 +181,6 @@
 		B3061FBD2F776FF4000F8839 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B3061FBC2F776FF4000F8839 /* PVJIT */; };
 		B3061FBF2F777019000F8839 /* JITManager in Frameworks */ = {isa = PBXBuildFile; productRef = B3061FBE2F777019000F8839 /* JITManager */; };
 		B3061FC12F777019000F8839 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B3061FC02F777019000F8839 /* PVJIT */; };
-		C0C0CA0100000001 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CA0100000002 /* Sentry */; };
-		C0C0CA0100000003 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CA0100000004 /* Sentry */; };
 		B30D49C42E3809C10073B038 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B30D49C72E3809C10073B038 /* SpotlightImportExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B30ED0D72CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */; };
@@ -636,8 +634,6 @@
 		B3BB79902F6E9D4E00938AB1 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3BB798F2F6E9D4D00938AB1 /* PVCoreBridgeRetro.framework */; };
 		B3BB79912F6E9D4E00938AB1 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3BB798F2F6E9D4D00938AB1 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3BD3A1C2D729007000FBB11 /* Provenance Stickers.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C0C0CAFE3595000000000010 /* ROM File ProviderUI.appex in Embed Foundation Extensions (AppStore) */ = {isa = PBXBuildFile; fileRef = B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C0C0CAFE3595000000000013 /* ROM File ProviderUI.appex in Embed Foundation Extensions (Lite) */ = {isa = PBXBuildFile; fileRef = B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3BD3A232D7298BB000FBB11 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B3BD3A222D7298BB000FBB11 /* PVLibrary */; };
 		B3BD3A252D7298FA000FBB11 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3BD3A242D7298FA000FBB11 /* Defaults */; };
 		B3BDD4022D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
@@ -655,7 +651,6 @@
 		B3BDD42A2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD42B2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BDD42C2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
-		B3BDD42D2D349220005F5AF9 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		B3BE9F9B2C79869F006D989E /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9A2C79869F006D989E /* PVSettings */; };
 		B3BE9F9D2C7986A4006D989E /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9C2C7986A4006D989E /* Defaults */; };
 		B3BE9F9F2C7986A9006D989E /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9E2C7986A9006D989E /* PVPlists */; };
@@ -911,6 +906,9 @@
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		BF7274B82A9B8A4C7CC1BD86 /* libc.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EF2BE7F9690066D4B6 /* libc.tbd */; };
+		C0C0CA0100000001 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CA0100000002 /* Sentry */; };
+		C0C0CA0100000003 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CA0100000004 /* Sentry */; };
+		C0C0CAFE3595000000000013 /* ROM File ProviderUI.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C0C0DE0100000004 /* ProvenanceOpticalDriveDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000002 /* ProvenanceOpticalDriveDriver.swift */; };
 		C0C0DE0100000005 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
 		C0C0DE010000000F /* ProvenanceOpticalDriveDriver.dext in Embed DriverKit Extensions */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -1070,20 +1068,6 @@
 			remoteGlobalIDString = B3BE9FCF2C7988BD006D989E;
 			remoteInfo = "Provenance Stickers";
 		};
-		C0C0CAFE3595000000000011 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3BE9FB22C7987B1006D989E;
-			remoteInfo = "ROM File ProviderUI";
-		};
-		C0C0CAFE3595000000000014 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3BE9FB22C7987B1006D989E;
-			remoteInfo = "ROM File ProviderUI";
-		};
 		B3DD06002F20031900000000 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1139,6 +1123,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = C0C0CAFE000000000000001A;
 			remoteInfo = ProvenanceCompanion;
+		};
+		C0C0CAFE3595000000000014 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3BE9FB22C7987B1006D989E;
+			remoteInfo = "ROM File ProviderUI";
 		};
 		C0C0DE010000000E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1381,7 +1372,6 @@
 				B30D49C72E3809C10073B038 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 				B3DD04002F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
 				B32C30752F6E6AEE003150F0 /* ThumbnailExtension.appex in Embed Foundation Extensions */,
-				C0C0CAFE3595000000000010 /* ROM File ProviderUI.appex in Embed Foundation Extensions (AppStore) */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1413,7 +1403,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B3DD04012F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
-				C0C0CAFE3595000000000013 /* ROM File ProviderUI.appex in Embed Foundation Extensions (Lite) */,
+				C0C0CAFE3595000000000013 /* ROM File ProviderUI.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2559,13 +2549,6 @@
 			);
 			target = B3BE9FA32C7987B1006D989E /* ROM File Provider */;
 		};
-		C0C0CAFE3595000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */;
-		};
 		B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -2669,6 +2652,13 @@
 				OpenSSL.xcframework,
 			);
 			target = 930498BE2A93073800BF257F /* Provenance-UnderDevelopment */;
+		};
+		C0C0CAFE3595000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */;
 		};
 		C0C0DE0100000020 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -2985,11 +2975,11 @@
 		B39436502CCDEC9D004D5DFB /* Main UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Main UI"; sourceTree = "<group>"; };
 		B39B10AE2DAF3D16004EEF79 /* TopShelfv2 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B39B10B92DAF3D16004EEF79 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TopShelfv2; sourceTree = "<group>"; };
 		B3BE9FA62C7987B1006D989E /* ROM File Provider */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File Provider"; sourceTree = "<group>"; };
-		C0C0CAFE3595000000000001 /* ROM File ProviderUI */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C0C0CAFE3595000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File ProviderUI"; sourceTree = "<group>"; };
 		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Provenance Stickers"; sourceTree = "<group>"; };
 		B3FD95D52D613D2B00397643 /* Dependencies */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3FD984A2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD987B2D615C9400397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984B2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984C2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98592D615C5100397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98912D615CF000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984E2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984F2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98C12D615D3300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Dependencies; sourceTree = "<group>"; };
 		C0C0CAFE00000000000000BA /* ProvenanceCompanion */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C0C0DE0100000020 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = ProvenanceCompanion; sourceTree = "<group>"; };
 		C0C0CAFE100000000000000A /* ProvenanceCompanionTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ProvenanceCompanionTests; sourceTree = "<group>"; };
+		C0C0CAFE3595000000000001 /* ROM File ProviderUI */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C0C0CAFE3595000000000002 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File ProviderUI"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -7452,7 +7442,6 @@
 				B3DD07002F20031900000000 /* PBXTargetDependency */,
 				B32C30772F6E6AEE003150F0 /* PBXTargetDependency */,
 				B3A481B82F79ED9F00F3FF6B /* PBXTargetDependency */,
-				C0C0CAFE3595000000000012 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -9948,21 +9937,6 @@
 			shellPath = /bin/bash;
 			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
 		};
-		C0C0CA0100000010 /* Upload Debug Symbols to Sentry */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
-			);
-			name = "Upload Debug Symbols to Sentry";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Only upload dSYMs during Archive builds (Xcode sets ACTION=install for archives).\nif [ \"$ACTION\" != \"install\" ]; then\n    exit 0\nfi\n\nif [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\n# sentry-cli reads ~/.sentryclirc automatically.\n# For CI, set SENTRY_AUTH_TOKEN as a GitHub Actions secret.\nif which sentry-cli >/dev/null; then\nexport SENTRY_ORG=provenance-emu\nexport SENTRY_PROJECT=provenance\nERROR=$(sentry-cli debug-files upload \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\nif [ ! $? -eq 0 ]; then\necho \"warning: sentry-cli - $ERROR\"\nfi\nelse\necho \"warning: sentry-cli not installed, run: brew install getsentry/tools/sentry-cli\"\nfi\n";
-		};
 		B383226226ED9C590029D12F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -10056,60 +10030,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "echo \"Begin: Generate Frameworks\"\nif [ \"${PLATFORM_NAME}\" = \"appletvos\" ]; then\n  FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore-tv.txt\"\nelse\n  FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore.txt\"\nfi\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch \"$FILTER\"\necho \"End: Generate Frameworks\"\n";
-		};
-		C0C0CAFE0001000000000001 /* Script: Validate Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Script: Validate Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/validate_frameworks.sh\n";
-		};
-		C0C0CAFE0001000000000002 /* Script: Validate Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Script: Validate Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/validate_frameworks.sh\n";
-		};
-		C0C0CAFE0001000000000003 /* Script: Validate Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Script: Validate Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/validate_frameworks.sh\n";
 		};
 		B3CC2E0E2CBC0D7700D90EB1 /* Script: Get RetroArch Modules */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10240,6 +10160,21 @@
 			shellPath = /bin/bash;
 			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
 		};
+		C0C0CA0100000010 /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Only upload dSYMs during Archive builds (Xcode sets ACTION=install for archives).\nif [ \"$ACTION\" != \"install\" ]; then\n    exit 0\nfi\n\nif [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\n# sentry-cli reads ~/.sentryclirc automatically.\n# For CI, set SENTRY_AUTH_TOKEN as a GitHub Actions secret.\nif which sentry-cli >/dev/null; then\nexport SENTRY_ORG=provenance-emu\nexport SENTRY_PROJECT=provenance\nERROR=$(sentry-cli debug-files upload \"$DWARF_DSYM_FOLDER_PATH\" 2>&1 >/dev/null)\nif [ ! $? -eq 0 ]; then\necho \"warning: sentry-cli - $ERROR\"\nfi\nelse\necho \"warning: sentry-cli not installed, run: brew install getsentry/tools/sentry-cli\"\nfi\n";
+		};
 		C0C0CAFE000000000000009A /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -10262,6 +10197,60 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = ". Scripts/set_bundle_build_number.sh ProvenanceCompanion\n";
+		};
+		C0C0CAFE0001000000000001 /* Script: Validate Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Script: Validate Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/validate_frameworks.sh\n";
+		};
+		C0C0CAFE0001000000000002 /* Script: Validate Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Script: Validate Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/validate_frameworks.sh\n";
+		};
+		C0C0CAFE0001000000000003 /* Script: Validate Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Script: Validate Frameworks";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/validate_frameworks.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -10612,18 +10601,6 @@
 			target = B3BE9FCF2C7988BD006D989E /* Provenance Stickers */;
 			targetProxy = B3BD3A1D2D729008000FBB11 /* PBXContainerItemProxy */;
 		};
-		C0C0CAFE3595000000000012 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */;
-			targetProxy = C0C0CAFE3595000000000011 /* PBXContainerItemProxy */;
-		};
-		C0C0CAFE3595000000000015 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */;
-			targetProxy = C0C0CAFE3595000000000014 /* PBXContainerItemProxy */;
-		};
 		B3DD07002F20031900000000 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilters = (
@@ -10682,6 +10659,12 @@
 			isa = PBXTargetDependency;
 			target = C0C0CAFE000000000000001A /* ProvenanceCompanion */;
 			targetProxy = C0C0CAFE100000000000000B /* PBXContainerItemProxy */;
+		};
+		C0C0CAFE3595000000000015 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilter = ios;
+			target = B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */;
+			targetProxy = C0C0CAFE3595000000000014 /* PBXContainerItemProxy */;
 		};
 		C0C0DE010000000D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -16042,14 +16025,6 @@
 				kind = branch;
 			};
 		};
-		C0C0CA0100000005 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.43.0;
-			};
-		};
 		B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jdg/MBProgressHUD.git";
@@ -16234,6 +16209,14 @@
 				revision = 55d2fe0484f4cc5ed3535033af6b0218621e37b2;
 			};
 		};
+		C0C0CA0100000005 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.43.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -16409,16 +16392,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B305856A2C0C150100B91D7A /* XCLocalSwiftPackageReference "PVJIT" */;
 			productName = PVJIT;
-		};
-		C0C0CA0100000002 /* Sentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C0C0CA0100000005 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
-			productName = Sentry;
-		};
-		C0C0CA0100000004 /* Sentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C0C0CA0100000005 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
-			productName = Sentry;
 		};
 		B30ED0D62CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -17386,6 +17359,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B35EEF642C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Reachability" */;
 			productName = Reachability;
+		};
+		C0C0CA0100000002 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CA0100000005 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
+		C0C0CA0100000004 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CA0100000005 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
 		};
 		C0C0CAFE00000000000001A0 /* PVLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
