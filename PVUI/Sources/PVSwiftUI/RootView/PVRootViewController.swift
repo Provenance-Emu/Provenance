@@ -177,33 +177,40 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         self.sideNavigationController?.closeSide()
     }
 
-    /// Creates a styled navigation title view with tracked uppercase text and optional console icon.
-    private func makeRetroTitleView(_ title: String, iconName: String? = nil) -> UIView {
-        let titleView = RetroNavTitleView(title: title, iconName: iconName)
-        let host = UIHostingController(rootView: titleView)
-        host.view.backgroundColor = .clear
-        host.view.sizeToFit()
-        return host.view
-    }
-
-    /// Swaps the navigation title with a crossfade + slight vertical slide animation.
+//    #if os(iOS) || targetEnvironment(macCatalyst)
+//    /// Creates a styled navigation title view with tracked uppercase text and optional console icon.
+//    private func makeRetroTitleView(_ title: String, iconName: String? = nil) -> UIView {
+//        let titleView = RetroNavTitleView(title: title, iconName: iconName)
+//        let host = UIHostingController(rootView: titleView)
+//        host.view.backgroundColor = .clear
+//        host.view.sizeToFit()
+//        return host.view
+//    }
+//
+//    /// Swaps the navigation title with a crossfade + slight vertical slide animation.
+//    private func animateTitleChange(_ title: String, iconName: String? = nil) {
+//        let oldView = self.navigationItem.titleView
+//        let newView = makeRetroTitleView(title, iconName: iconName)
+//        newView.alpha = 0
+//        newView.transform = CGAffineTransform(translationX: 0, y: -6)
+//        self.navigationItem.titleView = newView
+//        self.navigationItem.title = nil
+//        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
+//            newView.alpha = 1
+//            newView.transform = .identity
+//        }
+//        if let oldView {
+//            UIView.animate(withDuration: 0.15) {
+//                oldView.alpha = 0
+//            }
+//        }
+//    }
+//    #else
+    /// tvOS fallback -- plain title string, no custom title view
     private func animateTitleChange(_ title: String, iconName: String? = nil) {
-        let oldView = self.navigationItem.titleView
-        let newView = makeRetroTitleView(title, iconName: iconName)
-        newView.alpha = 0
-        newView.transform = CGAffineTransform(translationX: 0, y: -6)
-        self.navigationItem.titleView = newView
-        self.navigationItem.title = nil
-        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
-            newView.alpha = 1
-            newView.transform = .identity
-        }
-        if let oldView {
-            UIView.animate(withDuration: 0.15) {
-                oldView.alpha = 0
-            }
-        }
+        self.navigationItem.title = title
     }
+//    #endif
 
     public func determineInitialView() {
         let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
