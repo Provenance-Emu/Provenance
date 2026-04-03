@@ -418,6 +418,16 @@ will fail Linux CI — flag as 🟡 MINOR if in a Tier 0–2 module, ⚪ NIT oth
 - **Flag 🟠 MAJOR** if new DSU code modifies `listener`/`browser` state outside the `self.queue` serial queue in the Discovery classes.
 - **Flag 🟠 MAJOR** if `DSUSocket.startListening()` is inlined into `init` — the two-step design is load-bearing.
 
+### Screen Scaling — ScalingMode + AspectRatioOverride (Phase 1 #3616 / Phase 2 #3617)
+- `ScalingMode` enum is in `PVSettings/Sources/PVSettings/Settings/Model/ScalingMode.swift` — replaces the legacy `nativeScaleEnabled` / `integerScaleEnabled` boolean pair. The old booleans are `@available(*, deprecated)` shims.
+- `AspectRatioOverride` enum is in `PVPrimitives/Sources/PVPrimitives/System/AspectRatioOverride.swift` — per-core display geometry override. Default `.auto` means no override.
+- `CoreOptional.supportedAspectRatioOverrides` — static var declaring which `AspectRatioOverride` cases the core supports. Default: `[.auto]`.
+- `CoreOptional.preferredAspectRatioOverride` — static var returning the currently selected override. Default: `.auto`.
+- The `scalingModeRenderer` feature flag in `PVFeatureFlags` is **enabled by default** as of Phase 2. The renderer uses `ScalingMode` for layout; **do not** re-introduce the old boolean code paths.
+- **Flag 🔴 CRITICAL** if new code compares against `nativeScaleEnabled`/`integerScaleEnabled` directly instead of reading `scalingMode`.
+- **Flag 🟠 MAJOR** if a new core overrides `preferredAspectRatioOverride` without also declaring the case in `supportedAspectRatioOverrides`.
+- **Flag 🟡 MINOR** if a core's `supportedAspectRatioOverrides` includes `.ratio_16_9` but no widescreen option key is wired in the core options.
+
 ## GitHub Workflow Awareness
 
 Reviewers should be aware of — but NOT flag as code issues — the following:

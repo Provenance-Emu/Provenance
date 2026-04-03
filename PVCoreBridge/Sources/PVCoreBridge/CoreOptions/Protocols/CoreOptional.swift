@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVPrimitives
 
 
 public protocol CoreOptional {//where Self: EmulatorCoreIOInterface {
@@ -19,6 +20,24 @@ public protocol CoreOptional {//where Self: EmulatorCoreIOInterface {
     /// per-core global key (`<ClassName>.<optionKey>`).
     /// Set this when a game is loaded and clear it on unload.
     static var currentGameMD5: String? { get }
+
+    /// The set of aspect ratio overrides this core supports.
+    ///
+    /// Cores that support widescreen hacks, aspect ratio selection, or other
+    /// display geometry modifications should return the relevant cases here.
+    /// The UI uses this list to show only the options the core actually supports.
+    ///
+    /// The default implementation returns `[.auto]` (no overrides available).
+    static var supportedAspectRatioOverrides: [AspectRatioOverride] { get }
+
+    /// The aspect ratio override currently selected for this core.
+    ///
+    /// The renderer reads this property when compositing the frame. Returning
+    /// `.auto` (the default) means the core's native reported aspect ratio is used.
+    ///
+    /// Cores that store this preference in their own `CoreOption` key should
+    /// override this property to read from `UserDefaults` via `string(forOption:)`.
+    static var preferredAspectRatioOverride: AspectRatioOverride { get }
 
 //    static func bool(forOption option: String) -> Bool
 //    static func int(forOption option: String) -> Int
@@ -39,6 +58,12 @@ public protocol SubCoreOptional: CoreOptional {
 public extension CoreOptional {
     /// Default implementation: no per-game MD5 override.
     static var currentGameMD5: String? { nil }
+
+    /// Default: only `.auto` is available (no override supported).
+    static var supportedAspectRatioOverrides: [AspectRatioOverride] { [.auto] }
+
+    /// Default: use the core's natural aspect ratio.
+    static var preferredAspectRatioOverride: AspectRatioOverride { .auto }
 
     /// Reset a specific set of options to their default values
     /// - Parameter options: The options to reset
