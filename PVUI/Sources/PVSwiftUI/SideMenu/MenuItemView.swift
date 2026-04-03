@@ -45,12 +45,22 @@ struct MenuItemView: SwiftUI.View {
         shouldShowFocus ? themeManager.currentPalette.menuText.swiftUIColor : themeManager.currentPalette.menuText.swiftUIColor.opacity(controllerConnected ? 0.6 : 1.0)
     }
 
+    /// Whether this row represents the currently active console/tab
+    var isActive: Bool = false
+
     var body: some SwiftUI.View {
-//        let _ = print("MenuItemView '\(rowTitle)' isFocused: \(isFocused)")
         Button {
             action()
         } label: {
             HStack(spacing: 0) {
+                /// Active indicator -- thin accent bar on the leading edge
+                if isActive {
+                    RoundedRectangle(cornerRadius: 1.5)
+                        .fill(iconTint)
+                        .frame(width: 3, height: 24)
+                        .shadow(color: iconTint.opacity(0.5), radius: 4)
+                        .padding(.trailing, 6)
+                }
                 /// Icon
                 icon.image
                     .renderingMode(.template)
@@ -64,20 +74,20 @@ struct MenuItemView: SwiftUI.View {
                     .foregroundColor(iconTint)
                 /// Text
                 Text(rowTitle)
+                    .font(.system(size: 15, weight: isActive ? .semibold : .medium))
+                    .tracking(0.3)
                     .foregroundColor(textTint)
                 /// Space
                 Spacer()
             }
-            /// Height
             .frame(height: 40.0)
-            /// Background and focus state
             .background(
                 shouldShowFocus ?
                 themeManager.currentPalette.menuBackground.swiftUIColor.opacity(0.8) :
                 themeManager.currentPalette.menuBackground.swiftUIColor.opacity(controllerConnected ? 0.3 : 1.0)
             )
             .overlay(
-                Rectangle()
+                RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
                     .stroke(shouldStroke ? themeManager.currentPalette.menuIconTint.swiftUIColor : .clear, lineWidth: 2)
             )
         }

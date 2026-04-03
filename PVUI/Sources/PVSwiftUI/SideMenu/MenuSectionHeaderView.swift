@@ -25,15 +25,17 @@ internal struct MenuSectionHeaderView: SwiftUI.View {
     var body: some SwiftUI.View {
         VStack(spacing: 0) {
             /// Divider
-            Divider().frame(height: 2)
-                .background(themeManager.currentPalette.menuDivider.swiftUIColor)
+            Rectangle()
+                .fill(Color.retroCyan.opacity(0.15))
+                .frame(height: 1)
             /// Spacer
             Spacer()
             
             HStack(alignment: .bottom) {
                 Text(sectionTitle)
                     .foregroundColor(themeManager.currentPalette.menuSectionHeaderText.swiftUIColor)
-                    .font(.system(size: 13))
+                    .font(.system(size: 11, weight: .heavy))
+                    .tracking(1.5)
                 Spacer()
                 if sortable {
                     OptionsIndicator(pointDown: sortAscending, action: action) {

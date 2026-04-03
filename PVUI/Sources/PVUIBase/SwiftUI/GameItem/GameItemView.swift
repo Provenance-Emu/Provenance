@@ -332,12 +332,17 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
 /// to avoid conflicts between native bloom and custom styling
 struct FocusEffectsModifier: ViewModifier {
     let isFocused: Bool
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    /// Accent color for the focus ring, derived from the current theme
+    private var focusAccent: Color {
+        themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .retroCyan
+    }
 
     @ViewBuilder
     func body(content: Content) -> some View {
         #if os(tvOS)
         /// On tvOS, let the native focus system handle all focus effects
-        /// This provides consistent behavior with Siri Remote and game controllers
         content
         #else
         if isFocused {
@@ -345,8 +350,9 @@ struct FocusEffectsModifier: ViewModifier {
                 .scaleEffect(1.05)
                 .brightness(0.1)
                 .overlay(
-                    Rectangle()
-                        .stroke(Color.white, lineWidth: 2)
+                    RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
+                        .stroke(focusAccent, lineWidth: 2)
+                        .shadow(color: focusAccent.opacity(0.5), radius: 6)
                 )
                 .animation(.easeInOut(duration: 0.15), value: isFocused)
         } else {

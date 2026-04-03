@@ -228,8 +228,9 @@ SideMenuView: SwiftUI.View {
     @ViewBuilder
     private func addGamesSection() -> some View {
         Group {
-            Divider()
-                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+            Rectangle()
+                .fill(Color.retroCyan.opacity(0.15))
+                .frame(height: 1)
 
             MenuItemView(icon: .named("prov_add_games_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Add Games", isFocused: focusedItem == "addgames") {
                 delegate?.didTapAddGames()
@@ -243,8 +244,9 @@ SideMenuView: SwiftUI.View {
     @ViewBuilder
     private func importQueueSection() -> some View {
         Group {
-            Divider()
-                .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+            Rectangle()
+                .fill(Color.retroCyan.opacity(0.15))
+                .frame(height: 1)
 
             MenuItemView(icon: .sfSymbol("checklist"), rowTitle: "Import Queue", isFocused: focusedItem == "imports") {
                 delegate.didTapImports()
@@ -262,12 +264,13 @@ SideMenuView: SwiftUI.View {
                     viewModel.sortConsolesAscending.toggle()
                 }
 
-                Divider()
-                    .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                Rectangle()
+                    .fill(Color.retroCyan.opacity(0.15))
+                    .frame(height: 1)
 
                 // Home first
 
-                MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home") {
+                MenuItemView(icon: .named("prov_home_icon", PVUIBase.BundleLoader.myBundle), rowTitle: "Home", isFocused: focusedItem == "home", isActive: viewModel.selectedConsole == nil) {
                     delegate.didTapHome()
                 }
                 .focusableIfAvailable()
@@ -275,9 +278,10 @@ SideMenuView: SwiftUI.View {
                 .id("home")
 
                 ForEach(sortedConsoles(), id: \.self) { console in
-                    Divider()
-                        .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
-                    MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name, isFocused: focusedItem == console.identifier) {
+                    Rectangle()
+                        .fill(Color.retroCyan.opacity(0.15))
+                        .frame(height: 1)
+                    MenuItemView(icon: .named(console.iconName, PVUIBase.BundleLoader.myBundle), rowTitle: console.name, isFocused: focusedItem == console.identifier, isActive: viewModel.selectedConsole?.identifier == console.identifier) {
                         delegate.didTapConsole(with: console.identifier)
                     }
                     .focusableIfAvailable()
@@ -338,8 +342,9 @@ SideMenuView: SwiftUI.View {
                                 importQueueSection()
 
                                 #if canImport(FreemiumKit)
-                                Divider()
-                                    .foregroundStyle(themeManager.currentPalette.menuDivider.swiftUIColor)
+                                Rectangle()
+                                    .fill(Color.retroCyan.opacity(0.15))
+                                    .frame(height: 1)
                                 PaidStatusView(style: .plain)
                                     .freemiumKitColorReset()
                                     .listRowBackground(Color.accentColor)

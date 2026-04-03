@@ -54,8 +54,7 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     @ObservedObject private var themeManager = ThemeManager.shared
 
     private var textColor: Color {
-        let backgroundColor = themeManager.currentPalette.gameLibraryBackground.swiftUIColor
-        return backgroundColor.isDarkColor() ? .white : .black
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
     }
 
     private var discCount: Int {

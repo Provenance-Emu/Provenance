@@ -54,7 +54,7 @@ struct GameItemThumbnail: SwiftUI.View {
                 ArtworkImageBaseView(artwork: artwork, gameTitle: gameTitle, boxartAspectRatio: boxartAspectRatio)
             }
         }
-        .overlay(RoundedRectangle(cornerRadius: radius).stroke(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(0.5), lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: radius).stroke(themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.3), lineWidth: 1))
         .background(widthReader)
         .preference(key: ArtworkDynamicWidthPreferenceKey.self, value: measuredWidth)
         .cornerRadius(radius)

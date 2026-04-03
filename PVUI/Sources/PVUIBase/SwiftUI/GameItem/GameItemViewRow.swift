@@ -61,12 +61,8 @@ struct GameItemViewRow<Presentable: GameItemPresentable>: SwiftUI.View, Equatabl
         game.hasCloudAssets
     }
 
-//    private var textColor: Color {
-//        Color.retroPink
-//    }
     private var textColor: Color {
-        let backgroundColor = themeManager.currentPalette.gameLibraryBackground.swiftUIColor
-        return backgroundColor.isDarkColor() ? .white : .black
+        themeManager.currentPalette.gameLibraryText.swiftUIColor
     }
 
     private var glowColor: Color {

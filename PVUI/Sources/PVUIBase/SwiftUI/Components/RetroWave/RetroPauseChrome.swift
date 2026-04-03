@@ -23,8 +23,8 @@ public enum RetroPauseChrome {
     /// 12pt -- alert dialogs, large overlays
     public static let radiusLG: CGFloat = 12
 
-    /// Outer panel radius -- tight to match search field aesthetic.
-    public static let panelCornerRadius: CGFloat = radiusSM
+    /// Outer panel radius -- tighter than classic but slightly softer than search fields on larger surfaces.
+    public static let panelCornerRadius: CGFloat = radiusMD
 
     /// Panel border stroke width.
     public static let panelStrokeLineWidth: CGFloat = 1.5

@@ -186,6 +186,25 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         return host.view
     }
 
+    /// Swaps the navigation title with a crossfade + slight vertical slide animation.
+    private func animateTitleChange(_ title: String, iconName: String? = nil) {
+        let oldView = self.navigationItem.titleView
+        let newView = makeRetroTitleView(title, iconName: iconName)
+        newView.alpha = 0
+        newView.transform = CGAffineTransform(translationX: 0, y: -6)
+        self.navigationItem.titleView = newView
+        self.navigationItem.title = nil
+        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut) {
+            newView.alpha = 1
+            newView.transform = .identity
+        }
+        if let oldView {
+            UIView.animate(withDuration: 0.15) {
+                oldView.alpha = 0
+            }
+        }
+    }
+
     public func determineInitialView() {
         let consolesView = ConsolesWrapperView(consolesWrapperViewDelegate: consolesWrapperViewDelegate, viewModel: self.viewModel, rootDelegate: self)
         loadIntoContainer(.home, newVC: makeHostingController(consolesView))
@@ -196,11 +215,9 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
             .sink { [weak self] selectedTab in
                 guard let self = self else { return }
                 if selectedTab == "home" {
-                    self.navigationItem.titleView = self.makeRetroTitleView("Home", iconName: "house")
-                    self.navigationItem.title = nil
+                    self.animateTitleChange("Home", iconName: "house")
                 } else if let console = self.gameLibrary.system(identifier: selectedTab) {
-                    self.navigationItem.titleView = self.makeRetroTitleView(console.name, iconName: console.iconName)
-                    self.navigationItem.title = nil
+                    self.animateTitleChange(console.name, iconName: console.iconName)
                 }
             }
 
@@ -216,11 +233,13 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
     public func didTapHome() {
         consolesWrapperViewDelegate.selectedTab = "home"
+        viewModel.selectedConsole = nil
         closeMenu()
     }
 
     public func didTapConsole(with identifier: String) {
         consolesWrapperViewDelegate.selectedTab = identifier
+        viewModel.selectedConsole = gameLibrary.system(identifier: identifier)
         closeMenu()
     }
 
@@ -228,16 +247,15 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
         // remove old view
         self.containerView.subviews.forEach { $0.removeFromSuperview() }
         self.children.forEach { $0.removeFromParent() }
-        // set styled title
+        // set styled title with animation
         switch navItem {
         case .home:
-            self.navigationItem.titleView = makeRetroTitleView("Home", iconName: "house")
+            animateTitleChange("Home", iconName: "house")
         case .settings:
-            self.navigationItem.titleView = makeRetroTitleView("Settings", iconName: "gear")
+            animateTitleChange("Settings", iconName: "gear")
         case .console(_, let title):
-            self.navigationItem.titleView = makeRetroTitleView(title)
+            animateTitleChange(title)
         }
-        self.navigationItem.title = nil
         // set bar button items (if any)
         switch navItem {
         case .settings, .home, .console:
@@ -708,7 +726,7 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
         ILOG("Document picker was cancelled")
     }
 }
-/// Sharp, minimal navigation title with tracked uppercase text and a subtle accent icon.
+/// Navigation title with tracked uppercase text, accent icon, and a subtle retrowave tint.
 private struct RetroNavTitleView: View {
     let title: String
     let iconName: String?
@@ -718,36 +736,34 @@ private struct RetroNavTitleView: View {
         ThemeManager.shared.currentPalette.defaultTintColor.swiftUIColor ?? .retroCyan
     }
 
-    /// Primary text color from the theme palette
-    private var textColor: Color {
-        ThemeManager.shared.currentPalette.gameLibraryText.swiftUIColor
-    }
-
     init(title: String, iconName: String? = nil) {
         self.title = title
         self.iconName = iconName
     }
 
     var body: some View {
-        HStack(spacing: 7) {
+        HStack(spacing: 8) {
             if let iconName {
                 if UIImage(systemName: iconName) != nil {
                     Image(systemName: iconName)
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 15, weight: .semibold))
                         .foregroundColor(accent)
+                        .shadow(color: accent.opacity(0.4), radius: 3)
                 } else if UIImage(named: iconName, in: PVUIBase.BundleLoader.myBundle, compatibleWith: nil) != nil {
                     Image(iconName, bundle: PVUIBase.BundleLoader.myBundle)
                         .resizable()
                         .renderingMode(.template)
                         .foregroundColor(accent)
+                        .shadow(color: accent.opacity(0.4), radius: 3)
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 18, height: 18)
+                        .frame(width: 20, height: 20)
                 }
             }
             Text(title.uppercased())
-                .font(.system(size: 15, weight: .semibold))
-                .tracking(1.2)
-                .foregroundColor(textColor)
+                .font(.system(size: 17, weight: .bold))
+                .tracking(1.4)
+                .foregroundColor(accent)
+                .shadow(color: accent.opacity(0.25), radius: 4)
                 .lineLimit(1)
         }
         .fixedSize()
