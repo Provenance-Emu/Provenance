@@ -33,6 +33,7 @@ import MetalKit
 import PVLogging
 import Defaults
 import PVSettings
+import PVFeatureFlags
 import PVUIObjC
 
 internal let SHADER_DIR = "GLES"
@@ -337,7 +338,9 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             break
         }
 
-        if Defaults[.scalingMode] == .nativeResolution {
+        if (PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
+                ? Defaults[.scalingMode] == .nativeResolution
+                : Defaults[.nativeScaleEnabled]) {
             let scale = UIScreen.main.scale
             if scale != 1 {
                 view.layer.contentsScale = scale
@@ -465,59 +468,82 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             var width: CGFloat = 0
 
             let scalingMode = renderSettings.scalingMode
-            switch scalingMode {
-            case .stretch:
-                width = parentSize.width
-                height = parentSize.height
+            let useNewScalingRenderer = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
 
-            case .aspectFill:
-                if parentSize.width > parentSize.height {
-                    height = parentSize.height
-                    width = height * ratio
-                    if width < parentSize.width {
-                        width = parentSize.width
-                        height = width / ratio
-                    }
-                } else {
+            if useNewScalingRenderer {
+                switch scalingMode {
+                case .stretch:
                     width = parentSize.width
-                    height = width / ratio
-                    if height < parentSize.height {
+                    height = parentSize.height
+
+                case .aspectFill:
+                    if parentSize.width > parentSize.height {
                         height = parentSize.height
                         width = height * ratio
+                        if width < parentSize.width {
+                            width = parentSize.width
+                            height = width / ratio
+                        }
+                    } else {
+                        width = parentSize.width
+                        height = width / ratio
+                        if height < parentSize.height {
+                            height = parentSize.height
+                            width = height * ratio
+                        }
+                    }
+
+                case .nativeResolution:
+                    width = aspectSize.width
+                    height = aspectSize.height
+
+                case .integerScale:
+                    if parentSize.width > parentSize.height {
+                        height = floor(parentSize.height / aspectSize.height) * aspectSize.height
+                        width = height * ratio
+                        if width > parentSize.width {
+                            width = parentSize.width
+                            height = width / ratio
+                        }
+                    } else {
+                        width = floor(parentSize.width / aspectSize.width) * aspectSize.width
+                        height = width / ratio
+                        if height > parentSize.height {
+                            height = parentSize.height
+                            width = height * ratio
+                        }
+                    }
+
+                case .aspectFit:
+                    if parentSize.width > parentSize.height {
+                        height = parentSize.height
+                        width = height * ratio
+                        if width > parentSize.width {
+                            width = parentSize.width
+                            height = width / ratio
+                        }
+                    } else {
+                        width = parentSize.width
+                        height = width / ratio
+                        if height > parentSize.height {
+                            height = parentSize.height
+                            width = height * ratio
+                        }
                     }
                 }
-
-            case .nativeResolution:
-                width = aspectSize.width
-                height = aspectSize.height
-
-            case .integerScale:
+            } else {
+                // Legacy layout: honours the old integerScaleEnabled / nativeScaleEnabled booleans.
                 if parentSize.width > parentSize.height {
-                    height = floor(parentSize.height / aspectSize.height) * aspectSize.height
+                    height = Defaults[.integerScaleEnabled] ?
+                        floor(parentSize.height / aspectSize.height) * aspectSize.height : parentSize.height
                     width = height * ratio
                     if width > parentSize.width {
                         width = parentSize.width
                         height = width / ratio
                     }
                 } else {
-                    width = floor(parentSize.width / aspectSize.width) * aspectSize.width
-                    height = width / ratio
-                    if height > parentSize.height {
-                        height = parentSize.height
-                        width = height * ratio
-                    }
-                }
-
-            case .aspectFit:
-                if parentSize.width > parentSize.height {
-                    height = parentSize.height
-                    width = height * ratio
-                    if width > parentSize.width {
-                        width = parentSize.width
-                        height = width / ratio
-                    }
-                } else {
-                    width = parentSize.width
+                    width = Defaults[.integerScaleEnabled] ?
+                        floor(parentSize.width / aspectSize.width) * aspectSize.width : parentSize.width
                     height = width / ratio
                     if height > parentSize.height {
                         height = parentSize.height
