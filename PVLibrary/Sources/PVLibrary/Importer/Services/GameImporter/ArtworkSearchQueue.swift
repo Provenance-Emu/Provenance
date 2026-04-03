@@ -9,6 +9,7 @@ import Foundation
 import PVLogging
 import PVLookup
 import PVLookupTypes
+import PVMediaCache
 import PVRealm
 import RealmSwift
 import PVSystems
@@ -93,13 +94,12 @@ public actor ArtworkSearchQueue {
             pendingGames.append(metadata)
             ILOG("ArtworkSearchQueue: Queued game \(title) (ID: \(gameID)) for enhanced artwork search (queue size: \(pendingGames.count))")
 
-            // Schedule processing with debounce - cancel previous task and start new one
+            // Schedule processing with short debounce - cancel previous task and start new one
             processingTask?.cancel()
             processingTask = Task.detached(priority: .utility) { [self] in
                 do {
-                    // Debounce: wait for more games to be queued before processing.
-                    // CancellationError propagates when a newer task cancels this one.
-                    try await Task.sleep(for: .seconds(3))
+                    // Short debounce to batch rapid-fire queuing without delaying visible artwork
+                    try await Task.sleep(for: .milliseconds(500))
                 } catch {
                     return // Cancelled — the newest queued task will process instead
                 }
@@ -128,8 +128,8 @@ public actor ArtworkSearchQueue {
 
         ILOG("ArtworkSearchQueue: Starting enhanced artwork search for \(pendingGames.count) games")
 
-        // Process in batches to avoid overwhelming the system
-        let batchSize = 5
+        // Process in batches — 8 concurrent lookups with minimal delay
+        let batchSize = 8
         var processed = 0
 
         while !pendingGames.isEmpty {
@@ -139,8 +139,8 @@ public actor ArtworkSearchQueue {
             await processBatch(batch)
             processed += batch.count
 
-            // Small delay between batches to avoid rate limiting
-            try? await Task.sleep(for: .milliseconds(500))
+            // Minimal delay between batches — just enough to not hammer servers
+            try? await Task.sleep(for: .milliseconds(100))
         }
 
         ILOG("ArtworkSearchQueue: Completed enhanced artwork search for \(processed) games")
@@ -454,6 +454,7 @@ public actor ArtworkSearchQueue {
                 }
             }.value
             ILOG("ArtworkSearchQueue: Cached box-front artwork for \(gameTitle)")
+            notifyArtworkCached(gameId: md5Hash)
         } catch {
             WLOG("ArtworkSearchQueue: Failed to cache box-front for \(gameTitle): \(error.localizedDescription)")
         }
@@ -482,6 +483,7 @@ public actor ArtworkSearchQueue {
                 }
             }.value
             ILOG("ArtworkSearchQueue: Cached box-front artwork for \(gameTitle)")
+            notifyArtworkCached(gameId: md5Hash)
         } catch {
             WLOG("ArtworkSearchQueue: Failed to cache box-front for \(gameTitle): \(error.localizedDescription)")
         }
@@ -544,6 +546,21 @@ public actor ArtworkSearchQueue {
             WLOG("ArtworkSearchQueue: Failed to cache box-back for \(gameTitle): \(error.localizedDescription)")
         }
         #endif
+    }
+
+    // MARK: - UI notification
+
+    /// Notify the UI that artwork was cached for a game so visible cells redraw immediately.
+    /// Posts PVLibraryArtworkDidCache which ArtworkLoader bridges to its Combine publisher.
+    private func notifyArtworkCached(gameId: String) {
+        let ids: Set<String> = [gameId]
+        Task { @MainActor in
+            NotificationCenter.default.post(
+                name: Notification.Name("PVLibraryArtworkDidCache"),
+                object: nil,
+                userInfo: ["gameIds": ids]
+            )
+        }
     }
 
     /// Clear the queue (useful for testing or reset)
@@ -633,6 +650,7 @@ public actor ArtworkSearchQueue {
                         }.value
                         if saved {
                             ILOG("ArtworkSearchQueue: Successfully retried and downloaded artwork for \(gameTitle ?? "Unknown")")
+                            notifyArtworkCached(gameId: md5Hash)
                             processed += 1
                         }
                     } catch {
@@ -654,6 +672,7 @@ public actor ArtworkSearchQueue {
                         }.value
                         if saved {
                             ILOG("ArtworkSearchQueue: Successfully retried and downloaded artwork for \(gameTitle ?? "Unknown")")
+                            notifyArtworkCached(gameId: md5Hash)
                             processed += 1
                         }
                     } catch {
@@ -666,8 +685,8 @@ public actor ArtworkSearchQueue {
                 VLOG("ArtworkSearchQueue: Retry download failed for \(gameTitle ?? "Unknown"): \(error.localizedDescription)")
             }
 
-            // Small delay between downloads
-            try? await Task.sleep(for: .milliseconds(200))
+            // Brief yield between downloads
+            try? await Task.sleep(for: .milliseconds(50))
         }
 
         if processed > 0 {
