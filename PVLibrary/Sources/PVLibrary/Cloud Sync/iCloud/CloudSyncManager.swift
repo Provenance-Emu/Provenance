@@ -1015,6 +1015,13 @@ public class CloudSyncManager {
         }
     }
 
+    /// Re-downloads artwork for games whose PVMediaCache file is missing.
+    /// Safe to call multiple times — skips games that already have cached artwork.
+    public func backfillMissingArtwork() async {
+        guard Defaults[.iCloudSync], let romsSyncer = romsSyncer as? CloudKitRomsSyncer else { return }
+        await romsSyncer.cacheMissingArtworkForExistingGames()
+    }
+
     /// Update the sync status and notify listeners
     /// - Parameter status: The new sync status
     private func updateSyncStatus(_ status: SyncStatus, info: [String: Any]? = nil) {
@@ -1352,6 +1359,9 @@ public class CloudSyncManager {
         } else {
             DLOG("Completed fetching remote changes from CloudKit successfully")
         }
+
+        // Backfill missing artwork cache files (runs after every sync cycle)
+        await backfillMissingArtwork()
     }
 
     /// Initialize sync providers

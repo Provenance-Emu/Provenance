@@ -2032,7 +2032,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// Backfill missing artwork for games whose `customArtworkURL` is set in Realm
     /// but the corresponding PVMediaCache file no longer exists on disk (e.g. after
     /// reinstall, cache clear, or migrating from dev→prod CloudKit container).
-    private func cacheMissingArtworkForExistingGames(limit: Int) async {
+    /// Re-downloads artwork for games whose cache file is missing on disk.
+    /// Called automatically during `loadAllFromCloud()` and can also be triggered
+    /// independently (e.g. after the library screen appears).
+    public func cacheMissingArtworkForExistingGames(limit: Int = 200) async {
         if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
             CloudSyncManager.syncLog.event(.skip, item: "rom/artwork-backfill", status: .skipped, detail: "paused for emulation")
             return
