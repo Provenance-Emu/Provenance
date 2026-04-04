@@ -238,7 +238,10 @@ struct HomeView: SwiftUI.View {
             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
             .padding(.bottom, 64)
         }
-        .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
+        .background {
+            RetroTheme.RetroBackgroundView()
+                .environmentObject(themeManager)
+        }
         .onAppear {
             adjustZoomLevel(for: gameLibraryScale)
             setupGamepadHandling()

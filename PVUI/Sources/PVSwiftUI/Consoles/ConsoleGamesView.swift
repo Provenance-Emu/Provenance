@@ -367,8 +367,9 @@ struct ConsoleGamesView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         ZStack {
-            // Theme-aware solid background (matches HomeView)
-            themeManager.currentPalette.gameLibraryBackground.swiftUIColor
+            // Theme-aware RetroWave background (includes grid overlay)
+            RetroTheme.RetroBackgroundView()
+                .environmentObject(themeManager)
                 .edgesIgnoringSafeArea(.all)
 
                 VStack(spacing: 4) {
