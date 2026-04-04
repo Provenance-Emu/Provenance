@@ -30,6 +30,7 @@ struct SentryBootstrapTask: BootstrapTask {
 
     let isAppStore: Bool
 
+    @MainActor
     func execute() async throws {
 #if canImport(Sentry)
         guard isAppStore else {
