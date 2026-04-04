@@ -8,6 +8,7 @@
 import SwiftUI
 import PVRealm
 import PVMediaCache
+import PVLibrary
 import RealmSwift
 import PVThemes
 
@@ -108,12 +109,16 @@ public struct GameItemView: SwiftUI.View {
                 isVisible = true
                 loadArtworkIfNeeded()
                 refreshCachedDiscCount()
+                let md5 = game.md5Hash
+                Task { await SyncTaskQueueCoordinator.shared.boostPriority(forGameID: md5) }
             }
             .onDisappear {
                 isVisible = false
                 artworkTask?.cancel()
                 artworkTask = nil
                 ArtworkLoader.shared.cancelLoading(for: game.id)
+                let md5 = game.md5Hash
+                Task { await SyncTaskQueueCoordinator.shared.resetBoost(forGameID: md5) }
             }
             .onChange(of: game.relatedFiles.count) { _ in
                 /// Keep disc count in sync if related files change while cell is on screen
@@ -133,7 +138,7 @@ public struct GameItemView: SwiftUI.View {
                 loadArtworkIfNeeded()
             }
             .onReceive(ArtworkLoader.shared.artworkBecameAvailable) { ids in
-                guard artwork == nil, isVisible, !game.isInvalidated, ids.contains(game.id) else { return }
+                guard artwork == nil, isVisible, !game.isInvalidated, ids.contains(game.md5) || ids.contains(game.id) else { return }
                 loadArtworkWithPriority(.high)
             }
             #if os(tvOS)
@@ -265,12 +270,16 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
             .onAppear {
                 isVisible = true
                 loadArtworkIfNeeded()
+                let md5 = game.md5
+                Task { await SyncTaskQueueCoordinator.shared.boostPriority(forGameID: md5) }
             }
             .onDisappear {
                 isVisible = false
                 artworkTask?.cancel()
                 artworkTask = nil
                 ArtworkLoader.shared.cancelLoading(for: game.id)
+                let md5 = game.md5
+                Task { await SyncTaskQueueCoordinator.shared.resetBoost(forGameID: md5) }
             }
             .onChange(of: isFocused) { newValue in
                 if newValue && artwork == nil {
@@ -284,7 +293,7 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
                 loadArtworkIfNeeded()
             }
             .onReceive(ArtworkLoader.shared.artworkBecameAvailable) { ids in
-                guard artwork == nil, isVisible, !game.isInvalidated, ids.contains(game.id) else { return }
+                guard artwork == nil, isVisible, !game.isInvalidated, ids.contains(game.md5) || ids.contains(game.id) else { return }
                 loadArtworkWithPriority(.high)
             }
             #if os(tvOS)

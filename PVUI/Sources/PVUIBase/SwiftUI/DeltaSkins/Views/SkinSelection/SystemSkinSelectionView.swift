@@ -250,17 +250,10 @@ public struct SystemSkinSelectionView: View {
                 glowIntensity = 0.8
             }
 
-            // Only load if skins aren't already cached, otherwise use cached data
-            if skinManager.loadedSkins.isEmpty {
-                // Load skins with a slight delay for animation
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    loadSkins()
-                }
-            } else {
-                // Use cached skins immediately
-                Task {
-                    await loadSkinsFromCache()
-                }
+            // Always load via async path which reads lastScannedSkins (authoritative).
+            // loadedSkins (@Published) may lag behind due to MainActor scheduling.
+            Task {
+                await loadSkinsFromCache()
             }
         }
         .onChange(of: skinManager.loadedSkins.count) { _ in

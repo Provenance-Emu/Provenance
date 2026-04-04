@@ -551,14 +551,14 @@ public actor ArtworkSearchQueue {
     // MARK: - UI notification
 
     /// Notify the UI that artwork was cached for a game so visible cells redraw immediately.
-    /// Posts PVLibraryArtworkDidCache which ArtworkLoader bridges to its Combine publisher.
+    /// Posts `.artworkDidCache` which ArtworkLoader bridges to its Combine publisher.
     private func notifyArtworkCached(gameId: String) {
         let ids: Set<String> = [gameId]
         Task { @MainActor in
             NotificationCenter.default.post(
-                name: Notification.Name("PVLibraryArtworkDidCache"),
+                name: .artworkDidCache,
                 object: nil,
-                userInfo: ["gameIds": ids]
+                userInfo: [SyncNotification.gameIDsKey: ids]
             )
         }
     }

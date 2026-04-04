@@ -91,10 +91,9 @@ public class MissingArtworkCacheManager {
         // Store in memory cache
         memoryCache.setObject(image, forKey: key)
 
-        // Store in disk cache
+        // Store in disk cache — capture image strongly so it survives until write completes
         let fileURL = diskURL(for: key as String)
-        Task.detached { [weak image] in
-            guard let image else { return }
+        Task.detached {
             if let data = image.pngData() {
                 try? data.write(to: fileURL)
             }
@@ -106,17 +105,21 @@ public class MissingArtworkCacheManager {
 
     /// Pending cleanup work item — coalesces rapid storeImage calls.
     private static var cleanupWorkItem: DispatchWorkItem?
+    /// Protects `cleanupWorkItem` from concurrent access across threads.
+    private static let cleanupLock = NSLock()
 
     /// Schedules a debounced disk cache cleanup on a background queue.
     /// Multiple storeImage calls within 2 seconds share one cleanup pass.
     private func scheduleDiskCacheCleanup() {
-        Self.cleanupWorkItem?.cancel()
         let cacheURL = diskCacheURL
         let limit = maxDiskCachedImages
+        Self.cleanupLock.lock()
+        Self.cleanupWorkItem?.cancel()
         let work = DispatchWorkItem {
             Self.performDiskCacheCleanup(cacheURL: cacheURL, limit: limit)
         }
         Self.cleanupWorkItem = work
+        Self.cleanupLock.unlock()
         DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 2.0, execute: work)
     }
 

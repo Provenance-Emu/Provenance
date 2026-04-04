@@ -181,6 +181,9 @@ public class CloudSyncManager {
         return channel
     }()
 
+    /// Prioritized task queue coordinator for all sync operations.
+    public let taskCoordinator = SyncTaskQueueCoordinator()
+
     /// CloudKit Container. Nil when running without CloudKit entitlements (sideloaded builds).
     private let container: CKContainer?
 
@@ -202,6 +205,9 @@ public class CloudSyncManager {
             self.setupObservers()
             BackgroundServiceRegistry.shared.register(self)
         }
+
+        // Start cross-queue dependency listeners
+        Task { await taskCoordinator.startEventListeners() }
 
         // Initialize sync providers if iCloud sync is enabled
         if Defaults[.iCloudSync] {
@@ -1297,71 +1303,79 @@ public class CloudSyncManager {
 
     /// Fetch remote changes from CloudKit
     private func fetchRemoteChanges() async {
-        DLOG("Starting to fetch remote changes from CloudKit...")
+        DLOG("Starting to fetch remote changes via task coordinator...")
+        let coordinator = taskCoordinator
+        let syncLog = Self.syncLog
 
-        var hasErrors = false
-        var lastError: Error?
-
-        // Fetch ROM changes
-        if let romsSyncer = romsSyncer, shouldSyncROMContent() {
-            do {
-                DLOG("Fetching remote ROM changes (zone change token incremental)...")
+        // ── Task 1: ROM metadata (highest priority, serial) ──────────────
+        var metadataTaskID: UUID?
+        if romsSyncer != nil, shouldSyncROMContent() {
+            metadataTaskID = await coordinator.submit(
+                to: .metadata,
+                kind: .metadataSync,
+                priority: .metadataSync
+            ) { [weak self] in
+                guard let self else { return }
+                DLOG("Fetching remote ROM metadata (zone change token incremental)...")
                 await CloudKitSyncerStore.shared.refreshRomRemoteChanges()
-                DLOG("Finished applying remote ROM changes")
-            } catch {
-                Self.syncLog.event(.download, item: "remote/roms", status: .failed, detail: error.localizedDescription)
-                hasErrors = true
-                lastError = error
-                await errorHandler.handle(error: error)
+                DLOG("Finished applying remote ROM metadata changes")
             }
-        } else {
-            DLOG("ROM syncer not available or ROM content disabled; skipping ROM fetch.")
         }
 
-        // Fetch Save State changes
-        if let saveStatesSyncer = saveStatesSyncer, shouldSyncSaveStateContent() {
-            do {
+        // ── Task 2: Per-game artwork tasks (chained after metadata) ──────
+        let artworkDeps: Set<UUID> = metadataTaskID.map { [$0] } ?? []
+        // Submit a triage task that fans out into per-game artwork tasks
+        _ = await coordinator.submit(
+            to: .artwork,
+            kind: .custom(description: "artwork-triage"),
+            priority: .artworkRedownload,
+            dependencies: artworkDeps
+        ) { [weak self] in
+            guard let self, let syncer = self.romsSyncer as? CloudKitRomsSyncer else { return }
+            await syncer.submitArtworkTasks(to: coordinator)
+        }
+
+        // ── Task 3: Save state changes (chained after metadata) ──────────
+        if saveStatesSyncer != nil, shouldSyncSaveStateContent() {
+            await coordinator.submit(
+                to: .saveState,
+                kind: .custom(description: "save-state-sync"),
+                priority: .saveStateScreenshot,
+                dependencies: artworkDeps
+            ) { [weak self] in
+                guard let self, let syncer = self.saveStatesSyncer else { return }
                 DLOG("Fetching remote save state changes...")
-                _ = try await saveStatesSyncer.loadAllFromCloud(iterationComplete: nil).toAsync()
-                DLOG("Successfully fetched remote save state changes")
-            } catch {
-                Self.syncLog.event(.download, item: "remote/save-states", status: .failed, detail: error.localizedDescription)
-                hasErrors = true
-                lastError = error
-                await errorHandler.handle(error: error)
+                do {
+                    _ = try await syncer.loadAllFromCloud(iterationComplete: nil).toAsync()
+                    DLOG("Successfully fetched remote save state changes")
+                } catch {
+                    syncLog.event(.download, item: "remote/save-states", status: .failed, detail: error.localizedDescription)
+                    throw error
+                }
             }
-        } else {
-            DLOG("Save states syncer not available or save-state content disabled; skipping save-state fetch.")
         }
 
-        // Fetch Non-Database file changes (BIOS, screenshots, etc.)
-        if let nonDatabaseSyncer = nonDatabaseSyncer {
-            do {
+        // ── Task 4: BIOS + non-database files (chained after metadata) ───
+        if nonDatabaseSyncer != nil {
+            await coordinator.submit(
+                to: .bios,
+                kind: .custom(description: "bios-nondb-sync"),
+                priority: .biosSync,
+                dependencies: artworkDeps
+            ) { [weak self] in
+                guard let self, let syncer = self.nonDatabaseSyncer else { return }
                 DLOG("Fetching remote non-database file changes...")
-                _ = try await nonDatabaseSyncer.loadAllFromCloud(iterationComplete: nil).toAsync()
-                DLOG("Successfully fetched remote non-database file changes")
-            } catch {
-                Self.syncLog.event(.download, item: "remote/non-database", status: .failed, detail: error.localizedDescription)
-                hasErrors = true
-                lastError = error
-                await errorHandler.handle(error: error)
+                do {
+                    _ = try await syncer.loadAllFromCloud(iterationComplete: nil).toAsync()
+                    DLOG("Successfully fetched remote non-database file changes")
+                } catch {
+                    syncLog.event(.download, item: "remote/non-database", status: .failed, detail: error.localizedDescription)
+                    throw error
+                }
             }
-        } else {
-            Self.syncLog.event(.download, item: "remote/non-database", status: .skipped, detail: "Non-database syncer not available")
         }
 
-        // Update sync status based on results
-        if hasErrors {
-            Self.syncLog.event(.download, item: "remote/all", status: .failed, detail: "Completed with errors")
-            if let error = lastError {
-                updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
-            }
-        } else {
-            DLOG("Completed fetching remote changes from CloudKit successfully")
-        }
-
-        // Backfill missing artwork cache files (runs after every sync cycle)
-        await backfillMissingArtwork()
+        DLOG("All sync tasks submitted to coordinator")
     }
 
     /// Initialize sync providers
@@ -2170,6 +2184,9 @@ extension CloudSyncManager: PausableService {
         biosQueue.cancelAllOperations()
         nonDbQueue.cancelAllOperations()
 
+        // Pause the task coordinator (stops all queued sync tasks)
+        Task { await taskCoordinator.pauseAll() }
+
         romsSyncer?.workQueue?.isSuspended = true
         saveStatesSyncer?.workQueue?.isSuspended = true
         biosSyncer?.workQueue?.isSuspended = true
@@ -2196,6 +2213,9 @@ extension CloudSyncManager: PausableService {
         saveStatesQueue.isSuspended = false
         biosQueue.isSuspended = false
         nonDbQueue.isSuspended = false
+
+        // Resume the task coordinator
+        Task { await taskCoordinator.resumeAll() }
 
         romsSyncer?.workQueue?.isSuspended = false
         saveStatesSyncer?.workQueue?.isSuspended = false

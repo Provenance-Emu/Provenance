@@ -11,6 +11,7 @@ import PVSystems
 /// Minimal surface area needed to render a game cell/row without holding a live Realm object.
 public protocol GameItemPresentable {
     var id: String { get }
+    var md5: String { get }
     var title: String { get }
     var trueArtworkURL: String { get }
     var boxartAspectRatio: PVGameBoxArtAspectRatio { get }

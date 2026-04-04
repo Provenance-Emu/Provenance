@@ -102,18 +102,18 @@ public struct SkinCatalogDetailView: View {
             }
             // Check if this skin is already installed locally so the
             // action section shows "INSTALLED" instead of "DOWNLOAD".
-            checkIfAlreadyInstalled()
+            Task { await checkIfAlreadyInstalled() }
         }
         .onChange(of: skinManager.skinsAreLoaded) { _, loaded in
             // Re-check once skins finish loading (scan may complete after
             // onAppear if it was triggered lazily).
-            if loaded { checkIfAlreadyInstalled() }
+            if loaded { Task { await checkIfAlreadyInstalled() } }
         }
         .onChange(of: skinManager.loadedSkins.count) { _, _ in
             // Re-check after subsequent imports or rescans so the
             // installed state stays accurate even when skinsAreLoaded
             // was already true.
-            checkIfAlreadyInstalled()
+            Task { await checkIfAlreadyInstalled() }
         }
         .onDisappear {
             downloadTask?.cancel()
@@ -646,12 +646,18 @@ public struct SkinCatalogDetailView: View {
     /// browser grid (identifier, filename, name).
     /// Delegates to the shared `isCatalogSkinInstalled` helper so the
     /// matching logic is defined in one place.
-    private func checkIfAlreadyInstalled() {
+    /// Uses `availableSkins()` (reads `lastScannedSkins`) instead of `loadedSkins`
+    /// to avoid the race where `loadedSkins` hasn't been updated on MainActor yet.
+    private func checkIfAlreadyInstalled() async {
         // Only override when we haven't already started a download/install.
         guard downloadState == .idle else { return }
 
-        if isCatalogSkinInstalled(entry, in: skinManager.loadedSkins) {
-            downloadState = .installed
+        let skins = (try? await skinManager.availableSkins()) ?? []
+        let installed = isCatalogSkinInstalled(entry, in: skins)
+        await MainActor.run {
+            if installed, self.downloadState == .idle {
+                self.downloadState = .installed
+            }
         }
     }
 

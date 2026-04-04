@@ -77,58 +77,86 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Observe app state changes to handle background/foreground transitions
-    private func observeAppStateChanges() {
-        // Remove any existing observers
-        NotificationCenter.default.removeObserver(self, name: UIApplication.willEnterForegroundNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
+    // MARK: - Skin finalization after load
 
-        // Add observers for app state changes
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleAppWillEnterForeground),
-            name: UIApplication.willEnterForegroundNotification,
-            object: nil
-        )
+    /// Ensures the skin container and GPU view are correctly layered and visible.
+    /// Called after a short delay to let frame-notification arrive first.
+    private func finalizeSkinAfterLoad() {
+        if let skinContainer = skinContainerView {
+            skinContainer.isHidden = false
+            skinContainer.alpha = 1.0
+            skinContainer.frame = view.bounds
+            if let hostView = skinContainer.subviews.first {
+                hostView.isHidden = false
+                hostView.alpha = 1.0
+                hostView.frame = skinContainer.bounds
+            }
+            if let gpuView = gpuViewController.view {
+                view.insertSubview(gpuView, belowSubview: skinContainer)
+            }
+            view.bringSubviewToFront(skinContainer)
+        }
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleAppDidEnterBackground),
-            name: UIApplication.didEnterBackgroundNotification,
-            object: nil
-        )
-    }
-
-    /// Handle app coming to foreground
-    @objc private func handleAppWillEnterForeground() {
-        DLOG("App entering foreground, refreshing Metal view")
-        applyViewportFromCurrentSkin()
-    }
-
-    /// Handle app going to background
-    @objc private func handleAppDidEnterBackground() {
-        DLOG("App entering background")
-        // Any cleanup needed when going to background
-    }
-
-    /// Pause emulation temporarily and then resume after a delay
-    private func pauseEmulationTemporarily() {
-        // Pause emulation
-        DLOG("Pausing emulation temporarily after skin load")
-        core.setPauseEmulation(true)
-
-        // Resume after 1 second
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self = self else { return }
-
-            // Only resume if we're not showing a menu
-            if !self.isShowingMenu {
-                DLOG("Resuming emulation after temporary pause")
-                self.core.setPauseEmulation(false)
-            } else {
-                DLOG("Not resuming emulation because menu is showing")
+        // For non-RetroArch cores, compute a fallback frame if the notification didn't arrive
+        if core.coreIdentifier?.contains("libretro") != true, currentTargetFrame == nil {
+            if let calculatedFrame = currentSkinViewportFrame() {
+                currentTargetFrame = calculatedFrame
+                DLOG("SKIN: Using calculated fallback frame: \(calculatedFrame)")
             }
         }
+    }
+
+    // MARK: - Combine skin lifecycle subscriptions
+
+    /// Sets up all skin-related Combine subscriptions.
+    /// Call once during skin setup; previous subscriptions are cancelled automatically.
+    private func observeAppStateChanges() {
+        skinCancellables.removeAll()
+
+        // Foreground — refresh Metal viewport
+        NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                DLOG("App entering foreground, refreshing Metal view")
+                self?.applyViewportFromCurrentSkin()
+            }
+            .store(in: &skinCancellables)
+
+        // Background — placeholder for future cleanup
+        NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { _ in
+                DLOG("App entering background")
+            }
+            .store(in: &skinCancellables)
+    }
+
+    /// Reactive skin-load pipeline: waits for core to be running, pauses briefly,
+    /// then resumes unless a menu is showing.
+    ///
+    /// Flow: skinLoaded → `core.isRunning` == true → pause → 1 s delay → resume
+    func subscribeSkinLoadPause() {
+        skinLoadingCancellable?.cancel()
+
+        skinLoadingCancellable = core.publisher(for: \.isRunning)
+            .filter { $0 }
+            .first()
+            .receive(on: DispatchQueue.main)
+            .handleEvents(receiveOutput: { [weak self] _ in
+                DLOG("Skin load pipeline: core running — pausing briefly")
+                self?.core.setPauseEmulation(true)
+            })
+            .delay(for: .seconds(1), scheduler: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self else { return }
+                if !self.isShowingMenu {
+                    DLOG("Skin load pipeline: resuming emulation")
+                    self.core.setPauseEmulation(false)
+                } else {
+                    DLOG("Skin load pipeline: menu showing, staying paused")
+                }
+                self.skinLoadingCancellable = nil
+            }
     }
 
     /// Configure the GPU view properly
@@ -227,55 +255,17 @@ extension PVEmulatorViewController {
             inputHandler: inputHandler,
             preselectedSkinIdentifier: preselectedSkinIdentifier,
             onSkinLoaded: { [weak self] in
-                guard let self = self else { return }
-
-                // Wait a bit for the color bars notification to arrive with the correct frame
-                // The notification frame is more accurate than the calculated one
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                    guard let self = self else { return }
-
-                    // CRITICAL: Ensure skin container stays visible after delay
-                    // This prevents the container from disappearing on iPad
-                    if let skinContainer = self.skinContainerView {
-                        skinContainer.isHidden = false
-                        skinContainer.alpha = 1.0
-                        skinContainer.frame = self.view.bounds
-                        // Ensure hosting controller's view is also visible
-                        if let hostView = skinContainer.subviews.first {
-                            hostView.isHidden = false
-                            hostView.alpha = 1.0
-                            hostView.frame = skinContainer.bounds
-                        }
-                        // Ensure z-order is correct
-                        if let gpuView = self.gpuViewController.view {
-                            self.view.insertSubview(gpuView, belowSubview: skinContainer)
-                        }
-                        self.view.bringSubviewToFront(skinContainer)
+                guard let self else { return }
+                // Skin loaded → short delay for frame notification → finalize → pause pipeline
+                Just(())
+                    .delay(for: .milliseconds(300), scheduler: DispatchQueue.main)
+                    .sink { [weak self] _ in
+                        guard let self else { return }
+                        self.finalizeSkinAfterLoad()
+                        self.applyViewportFromCurrentSkin()
+                        self.subscribeSkinLoadPause()
                     }
-
-                    // For non-RetroArch cores, ensure we have a frame even if notification didn't arrive
-                    if self.core.coreIdentifier?.contains("libretro") != true {
-                        // If no frame received, calculate one as fallback
-                        if self.currentTargetFrame == nil {
-                            DLOG("🎮 SKIN: No frame notification received for non-RetroArch core, calculating fallback")
-                            if let calculatedFrame = self.currentSkinViewportFrame() {
-                                self.currentTargetFrame = calculatedFrame
-                                DLOG("🎮 SKIN: Using calculated fallback frame: \(calculatedFrame)")
-                            }
-                        }
-                    }
-
-                    // Apply viewport when skin is loaded
-                    // Don't force layout here - applyViewportFromCurrentSkin handles layout naturally
-                    self.applyViewportFromCurrentSkin()
-
-                    // Note: screen filters are applied via the DeltaSkinLoaded notification handler
-                    // (handleSkinLoaded) where currentSkin is set — calling here would apply the
-                    // filter a second time redundantly.
-
-                    // Pause emulation for 1 second after skin is loaded to ensure smooth startup
-                    self.pauseEmulationTemporarily()
-                }
+                    .store(in: &self.skinCancellables)
             },
             onRefreshRequested: { [weak self] in
                 // Re-apply viewport on explicit refresh

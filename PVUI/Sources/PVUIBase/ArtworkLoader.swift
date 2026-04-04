@@ -27,7 +27,9 @@ public class ArtworkLoader: ObservableObject {
     /// Notifies views that artwork was cached for the given game IDs so they can retry loading.
     public func notifyArtworkAvailable(gameIds: Set<String>) {
         guard !gameIds.isEmpty else { return }
-        // Clear memo caches so the next load hits disk
+        // Clear memo caches so the next load hits disk.
+        // gameIds may contain md5Hash values (from sync/import notifications)
+        // or UUID-based game IDs. Clear both lookup caches to be safe.
         for id in gameIds {
             clearLocalURLCache(forGameId: id)
             loadingTasks[id]?.cancel()
@@ -64,8 +66,8 @@ public class ArtworkLoader: ObservableObject {
     private var localURLCache: [String: URL] = [:]
 
     /// Well-known notification name posted by PVLibrary when artwork is backfilled.
-    /// userInfo: `["gameIds": Set<String>]`
-    private static let libraryArtworkCachedNotification = Notification.Name("PVLibraryArtworkDidCache")
+    /// userInfo: `[SyncNotification.gameIDsKey: Set<String>]`
+    private static let libraryArtworkCachedNotification: Notification.Name = .artworkDidCache
 
     private var librarySub: AnyCancellable?
 
@@ -76,7 +78,7 @@ public class ArtworkLoader: ObservableObject {
             .publisher(for: Self.libraryArtworkCachedNotification)
             .receive(on: RunLoop.main)
             .sink { [weak self] note in
-                guard let ids = note.userInfo?["gameIds"] as? Set<String> else { return }
+                guard let ids = note.userInfo?[SyncNotification.gameIDsKey] as? Set<String> else { return }
                 self?.notifyArtworkAvailable(gameIds: ids)
             }
     }

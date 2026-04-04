@@ -85,6 +85,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Store the original calculated frame for reset functionality
     var originalCalculatedFrame: CGRect?
 
+    // Combine subscriptions for skin lifecycle (app-state, load-pause, etc.)
+    var skinCancellables = Set<AnyCancellable>()
     // Store cancellables for skin loading observation
     var skinLoadingCancellable: AnyCancellable?
     /// Observes the FPS counter preference and updates the in-game HUD live.

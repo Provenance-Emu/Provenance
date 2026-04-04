@@ -2229,8 +2229,11 @@ public final class GameImporter: GameImporting, ObservableObject {
             NotificationCenter.default.post(name: .GameImporterDidFinish, object: nil)
         }
 
-        // Auto-clear completed items after processing finishes
-        await clearCompleted()
+        // Auto-clear completed items after a delay so the UI can show completion state
+        Task {
+            try? await Task.sleep(for: .seconds(5))
+            await clearCompleted()
+        }
 
         // Check if new items were queued during processing (e.g., from conflict resolution)
         // and restart if needed

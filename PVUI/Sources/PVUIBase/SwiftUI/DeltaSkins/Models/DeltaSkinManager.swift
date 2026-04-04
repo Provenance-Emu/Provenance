@@ -495,25 +495,33 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     public func reloadSkins() async {
         ILOG("skins: reloadSkins() called")
         do {
-            try await queue.asyncResult {
+            let scannedSkins: [DeltaSkinProtocol] = try await queue.asyncResult {
                 // Force rescan
                 ILOG("skins: Forcing rescan of skins")
                 self.hasScanned = false
                 try self.scanForSkins()
+                return self.lastScannedSkins
             }
-            // Trigger objectWillChange after scan completes
-            self.objectWillChange.send()
-            ILOG("skins: reloadSkins() completed successfully")
+            // Apply results on MainActor synchronously so callers can rely
+            // on loadedSkins being up-to-date when reloadSkins() returns.
+            await MainActor.run {
+                self.loadedSkins = scannedSkins
+                self.skinsAreLoaded = true
+                self.objectWillChange.send()
+            }
+            ILOG("skins: reloadSkins() completed successfully with \(scannedSkins.count) skins")
         } catch {
             ELOG("skins: Failed to reload skins: \(error)")
         }
     }
 
-    /// Import a skin from a URL, handling spaces in paths
+    /// Import a skin from a URL, handling spaces in paths.
+    /// After this method returns, `loadedSkins` is guaranteed to contain the
+    /// newly imported skin (the MainActor update is awaited, not fire-and-forget).
     public func importSkin(from url: URL) async throws {
         ILOG("skins: Starting skin import from: \(url.path)")
 
-        return try await queue.asyncResult { [self] in
+        let scannedSkins: [DeltaSkinProtocol] = try await queue.asyncResult { [self] in
             // Get destination in Documents directory
             let skinsDir = try self.skinsDirectory
             let destinationURL = skinsDir.appendingPathComponent(url.lastPathComponent)
@@ -541,6 +549,14 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
 
             // Scan to reload all skins
             try self.scanForSkins()
+            return self.lastScannedSkins
+        }
+
+        // Apply to loadedSkins synchronously on MainActor so callers see the
+        // new skin immediately (no fire-and-forget race).
+        await MainActor.run {
+            self.loadedSkins = scannedSkins
+            self.skinsAreLoaded = true
         }
     }
 
@@ -550,9 +566,10 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
         return skin.fileURL.path.contains(skinsDir.path)
     }
 
-    /// Delete a skin by its identifier
+    /// Delete a skin by its identifier.
+    /// After this method returns, `loadedSkins` is guaranteed to reflect the deletion.
     public func deleteSkin(_ identifier: String) async throws {
-        try await queue.asyncResult { [self] in
+        let scannedSkins: [DeltaSkinProtocol] = try await queue.asyncResult { [self] in
             // Find the skin (use lastScannedSkins for immediate access on this queue)
             guard let skin = self.lastScannedSkins.first(where: { $0.identifier == identifier }) else {
                 throw DeltaSkinError.notFound
@@ -567,25 +584,16 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             DLOG("Deleting skin at: \(skin.fileURL.path)")
             try FileManager.default.removeItem(at: skin.fileURL)
 
-            // Synchronously remove from lastScannedSkins on this queue so subsequent
-            // availableSkins()/skin(withIdentifier:) calls see the deletion immediately,
-            // before the full rescan below has completed.
-            self.lastScannedSkins.removeAll { $0.identifier == identifier }
-
-            // Also remove from loadedSkins on MainActor immediately so SwiftUI
-            // observers don't temporarily show the deleted skin while the rescan
-            // is in progress.  The subsequent rescan will set loadedSkins to the
-            // authoritative post-deletion list via its own MainActor task.
-            Task { @MainActor in
-                self.loadedSkins.removeAll { $0.identifier == identifier }
-            }
-
-            // Rescan on this queue (not on MainActor) so all mutations to
-            // lastScannedSkins/hasScanned remain queue-confined and race-free.
-            // scanForSkins() dispatches the authoritative MainActor loadedSkins
-            // update internally (guarded by generation counter).
+            // Rescan on this queue so lastScannedSkins is authoritative.
             self.hasScanned = false
             try self.scanForSkins()
+            return self.lastScannedSkins
+        }
+
+        // Apply to loadedSkins synchronously so callers see the deletion immediately.
+        await MainActor.run {
+            self.loadedSkins = scannedSkins
+            self.skinsAreLoaded = true
         }
     }
 }
