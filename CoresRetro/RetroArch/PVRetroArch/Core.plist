@@ -454,6 +454,8 @@
 			</array>
 		</dict>
 		<dict>
+			<key>PVAppStoreDisabled</key>
+			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © Libretro Contributors</string>
 			<key>PVCoreIdentifier</key>
@@ -1448,7 +1450,7 @@
 		</dict>
 		<dict>
 			<key>PVAppStoreDisabled</key>
-			<false/>
+			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © 1996-1997 id Software, 2007-2024 Kevin Shanahan</string>
 			<key>PVCoreIdentifier</key>
@@ -1646,7 +1648,7 @@
 		</dict>
 		<dict>
 			<key>PVAppStoreDisabled</key>
-			<false/>
+			<true/>
 			<key>PVContentless</key>
 			<true/>
 			<key>PVCopyright</key>
@@ -1886,7 +1888,7 @@
 		</dict>
 		<dict>
 			<key>PVAppStoreDisabled</key>
-			<false/>
+			<true/>
 			<key>PVContentless</key>
 			<true/>
 			<key>PVCopyright</key>
@@ -1967,7 +1969,7 @@
 		</dict>
 		<dict>
 			<key>PVAppStoreDisabled</key>
-			<false/>
+			<true/>
 			<key>PVCoreIdentifier</key>
 			<string>81.libretro.framework</string>
 			<key>PVLicenseName</key>
@@ -2074,6 +2076,8 @@
 			</array>
 		</dict>
 		<dict>
+			<key>PVAppStoreDisabled</key>
+			<true/>
 			<key>PVCoreIdentifier</key>
 			<string>freechaf.libretro.framework</string>
 			<key>PVLicenseName</key>
@@ -2423,6 +2427,8 @@
 			</array>
 		</dict>
 		<dict>
+			<key>PVAppStoreDisabled</key>
+			<true/>
 			<key>PVContentless</key>
 			<true/>
 			<key>PVCoreIdentifier</key>
