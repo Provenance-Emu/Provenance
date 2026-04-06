@@ -37,6 +37,13 @@ struct TVMediaImportStatusSheet: View {
     /// Drives `navigationDestination` for system selection rows.
     @State private var systemSelectionItemID: UUID?
 
+    /// Unified focus target — lives in the parent so focus survives row deletion.
+    enum FocusTarget: Hashable {
+        case row(UUID)
+        case delete(UUID)
+    }
+    @FocusState private var focusTarget: FocusTarget?
+
     init(gameImporter: any GameImporting, updatesController: PVGameLibraryUpdatesController, onDismiss: @escaping () -> Void) {
         self.gameImporter = gameImporter
         self.updatesController = updatesController
@@ -72,8 +79,10 @@ struct TVMediaImportStatusSheet: View {
                                 // Import queue items
                                 ForEach(viewModel.importQueueItems) { item in
                                     importItemRow(item)
+                                        .transition(.opacity.combined(with: .move(edge: .leading)))
                                 }
                             }
+                            .animation(.easeInOut(duration: 0.25), value: viewModel.importQueueItems.map(\.id))
                             .padding(.horizontal, 60)
                             .padding(.bottom, 60)
                         }
@@ -332,17 +341,39 @@ struct TVMediaImportStatusSheet: View {
     private func importItemRow(_ item: ImportQueueItem) -> some View {
         ImportItemRowView(
             item: item,
+            focusTarget: $focusTarget,
             needsSystemSelection: needsSystemSelection(item),
             onSelectSystem: { systemSelectionItemID = item.id },
-            onDelete: {
-                Task {
-                    if let index = viewModel.importQueueItems.firstIndex(where: { $0.id == item.id }) {
-                        await gameImporter.removeImports(at: IndexSet(integer: index))
-                    }
-                }
-            },
+            onDelete: { deleteItem(item) },
             content: { importItemContent(item) }
         )
+    }
+
+    /// Delete an item and move focus to the adjacent row so it doesn't vanish.
+    private func deleteItem(_ item: ImportQueueItem) {
+        let items = viewModel.importQueueItems
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
+
+        // Pick the next row to focus — prefer the row below, fall back to above
+        let nextFocusID: UUID? = {
+            if index + 1 < items.count {
+                return items[index + 1].id
+            } else if index > 0 {
+                return items[index - 1].id
+            }
+            return nil
+        }()
+
+        // Set focus to the next row *before* the removal so SwiftUI has a valid
+        // target while the ForEach re-evaluates. The .animation on LazyVStack
+        // handles the visual transition.
+        if let nextID = nextFocusID {
+            focusTarget = .row(nextID)
+        }
+
+        Task {
+            await gameImporter.removeImports(at: IndexSet(integer: index))
+        }
     }
 
     @ViewBuilder
@@ -400,24 +431,22 @@ struct TVMediaImportStatusSheet: View {
     }
 }
 
-// MARK: - Import Item Row (per-row focus state)
+// MARK: - Import Item Row (parent-owned focus)
 
-/// Each row owns its own `@FocusState` so Siri Remote up/down scrolls rows
-/// while left/right moves between the row button and the delete button.
+/// Row view that binds to the parent's `FocusState` so focus survives row
+/// deletion. Siri Remote up/down scrolls rows; left/right moves between
+/// the row button and the delete button within a single row.
 @available(tvOS 16.0, iOS 17.0, *)
 private struct ImportItemRowView<Content: View>: View {
     let item: ImportQueueItem
+    var focusTarget: FocusState<TVMediaImportStatusSheet.FocusTarget?>.Binding
     let needsSystemSelection: Bool
     let onSelectSystem: () -> Void
     let onDelete: () -> Void
     @ViewBuilder let content: () -> Content
 
-    private enum RowFocus: Hashable {
-        case row
-        case delete
-    }
-
-    @FocusState private var rowFocus: RowFocus?
+    private var isRowFocused: Bool { focusTarget.wrappedValue == .row(item.id) }
+    private var isDeleteFocused: Bool { focusTarget.wrappedValue == .delete(item.id) }
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -431,15 +460,15 @@ private struct ImportItemRowView<Content: View>: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(TVMediaCardButtonStyle())
-            .focused($rowFocus, equals: .row)
+            .focused(focusTarget, equals: .row(item.id))
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(Color.white.opacity(rowFocus == .row ? 0.06 : 0.03))
+                    .fill(Color.white.opacity(isRowFocused ? 0.06 : 0.03))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .strokeBorder(
-                        rowFocus == .row ?
+                        isRowFocused ?
                             LinearGradient(
                                 colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)],
                                 startPoint: .topLeading,
@@ -450,10 +479,10 @@ private struct ImportItemRowView<Content: View>: View {
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             ),
-                        lineWidth: rowFocus == .row ? 2 : 1
+                        lineWidth: isRowFocused ? 2 : 1
                     )
             )
-            .scaleEffect(rowFocus == .row ? 1.02 : 1.0)
+            .scaleEffect(isRowFocused ? 1.02 : 1.0)
             .tvOSDisableFocusEffect()
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -462,7 +491,7 @@ private struct ImportItemRowView<Content: View>: View {
                 Image(systemName: "trash")
                     .font(.system(size: 20, weight: .bold))
                     .foregroundStyle(Color.retroPink)
-                    .shadow(color: Color.retroPink.opacity(rowFocus == .delete ? 0.8 : 0.3), radius: rowFocus == .delete ? 6 : 2)
+                    .shadow(color: Color.retroPink.opacity(isDeleteFocused ? 0.8 : 0.3), radius: isDeleteFocused ? 6 : 2)
                     .frame(width: 56, height: 56)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
@@ -476,16 +505,17 @@ private struct ImportItemRowView<Content: View>: View {
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ),
-                                lineWidth: rowFocus == .delete ? 3.0 : 1.5
+                                lineWidth: isDeleteFocused ? 3.0 : 1.5
                             )
-                            .shadow(color: Color.retroPink.opacity(rowFocus == .delete ? 0.8 : 0.3), radius: rowFocus == .delete ? 8 : 3)
+                            .shadow(color: Color.retroPink.opacity(isDeleteFocused ? 0.8 : 0.3), radius: isDeleteFocused ? 8 : 3)
                     )
             }
             .buttonStyle(TVMediaCardButtonStyle())
-            .focused($rowFocus, equals: .delete)
-            .scaleEffect(rowFocus == .delete ? 1.08 : 1.0)
+            .focused(focusTarget, equals: .delete(item.id))
+            .scaleEffect(isDeleteFocused ? 1.08 : 1.0)
             .tvOSDisableFocusEffect()
         }
-        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: rowFocus)
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isRowFocused)
+        .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isDeleteFocused)
     }
 }
