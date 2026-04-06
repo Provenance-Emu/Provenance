@@ -131,22 +131,19 @@ public final class CoreLoader: Sendable {
         return plists
     }
 
+    /// Pre-filters `.framework` / `.bundle` directories by checking for
+    /// `Core.plist` existence via `access()` before attempting the more
+    /// expensive plist parse. Typical app bundles contain 100+ frameworks
+    /// but only ~15-20 are emulator cores — this avoids redundant work.
     static private func getCorePlistsFromFileSystem() -> [EmulatorCoreInfoPlist] {
         var plists: [EmulatorCoreInfoPlist] = []
 
-        // Get main bundle path
         let mainBundlePath = Bundle.main.bundleURL
-
-        // Get Frameworks directory path
         let frameworksPath = mainBundlePath.appendingPathComponent("Frameworks")
-
-        // Define paths to scan
         let pathsToScan = [mainBundlePath, frameworksPath]
 
         do {
-            // Scan each path for both .framework and .bundle
             for path in pathsToScan {
-                // Skip if directory doesn't exist
                 guard FileManager.default.fileExists(atPath: path.path) else { continue }
 
                 let contents = try FileManager.default.contentsOfDirectory(
@@ -155,14 +152,20 @@ public final class CoreLoader: Sendable {
                     options: .skipsHiddenFiles
                 )
 
-                // Filter for bundles and frameworks
-                let bundlePaths = contents.filter { url in
-                    let pathExtension = url.pathExtension.lowercased()
-                    return pathExtension == "framework" || pathExtension == "bundle"
+                /// Pre-filter: only keep .framework/.bundle dirs that contain a Core.plist.
+                /// Uses POSIX `access(_, F_OK)` which is a single stat() syscall —
+                /// cheaper than `FileManager.fileExists` (no ObjC dispatch, no NSError).
+                var totalBundles = 0
+                let coreBundlePaths = contents.filter { url in
+                    let ext = url.pathExtension.lowercased()
+                    guard ext == "framework" || ext == "bundle" else { return false }
+                    totalBundles += 1
+                    return access(url.appendingPathComponent("Core.plist").path, F_OK) == 0
                 }
 
-                // Load Core.plist from each bundle
-                for bundlePath in bundlePaths {
+                ILOG("CoreLoader: \(path.lastPathComponent) — \(coreBundlePaths.count) core bundles out of \(totalBundles) total")
+
+                for bundlePath in coreBundlePaths {
                     if let plist = try loadCorePlist(from: bundlePath) {
                         plists.append(plist)
                         ILOG("Loaded Core.plist from \(bundlePath.lastPathComponent)")
@@ -170,7 +173,6 @@ public final class CoreLoader: Sendable {
                 }
             }
 
-            // Also check main bundle itself for Core.plist
             if let mainBundlePlist = try loadCorePlist(from: mainBundlePath) {
                 plists.append(mainBundlePlist)
                 ILOG("Loaded Core.plist from main bundle")
