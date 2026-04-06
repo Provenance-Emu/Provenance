@@ -1029,7 +1029,6 @@ public class TVOSCheatsHostingController: UIHostingController<TVOSCheatsView> {
 /// SwiftUI sheet shown when the user taps "SEARCH" in the cheat codes screen on tvOS.
 struct TVOSCheatSearchView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.featureFlags) private var featureFlags
     @ObservedObject private var themeManager = ThemeManager.shared
 
     let gameMD5: String?
@@ -1061,7 +1060,7 @@ struct TVOSCheatSearchView: View {
         Color(themeManager.currentPalette.gameLibraryBackground)
     }
 
-    private var onlineLookupEnabled: Bool { featureFlags.cheatsOnlineLookup }
+    private var onlineLookupEnabled: Bool { true }
     private var hasOnlineResults: Bool { results.contains { $0.isOnlineResult } }
 
     private var filtered: [CheatDatabaseEntry] {

@@ -524,7 +524,6 @@ public struct PVSettingsView: View {
 
     @StateObject private var viewModel: PVSettingsViewModel
     @ObservedObject private var themeManager = ThemeManager.shared
-    @StateObject private var advancedSkinFeaturesFlag = PVFeatureFlagsManager.shared.flag(.advancedSkinFeatures)
     private let settingsNavigator = SettingsNavigator.shared
     var dismissAction: () -> Void
     weak var menuDelegate: PVMenuDelegate!

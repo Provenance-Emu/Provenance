@@ -11,31 +11,11 @@
             "enabled": true,
             "description": "Enables the ROM path migration tool."
         },
-        "cheatsUseSwiftUI": {
-            "enabled": true,
-            "minVersion": "3.0.5",
-            "description": "Use SwiftUI for the cheats interface."
-        },
-        "retroarchBuiltinEditor": {
-            "enabled": true,
-            "minVersion": "3.0.5",
-            "allowedAppTypes": ["standard", "lite"],
-            "description": "Enables the built-in RetroArch editor. Disabled for App Store builds."
-        },
-        "advancedSkinFeatures": {
-            "enabled": true,
-            "description": "Enables advanced skin features like filters and debug mode."
-        },
         "contentlessCores": {
             "enabled": false,
             "minVersion": "3.0.5",
             "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
             "description": "Enables contentless cores like DOOM, Quake, etc."
-        },
-        "cheatsOnlineLookup": {
-            "enabled": true,
-            "minVersion": "3.0.5",
-            "description": "Enables online lookup for cheat codes via GitHub API with 24h disk cache."
         },
         "dynamicLibretroScanner": {
             "enabled": true,

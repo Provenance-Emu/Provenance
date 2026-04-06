@@ -429,7 +429,6 @@ struct iOSAddCheatView: View {
 /// Sheet for searching the bundled cheat database and importing entries.
 struct iOSCheatSearchView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.featureFlags) private var featureFlags
 
     let gameMD5: String?
     let gameTitle: String?
@@ -448,7 +447,7 @@ struct iOSCheatSearchView: View {
     @State private var showingConfirm = false
     @State private var hasSearchedOnline = false
 
-    private var onlineLookupEnabled: Bool { featureFlags.cheatsOnlineLookup }
+    private var onlineLookupEnabled: Bool { true }
 
     private var filtered: [CheatDatabaseEntry] {
         guard !filterText.isEmpty else { return results }

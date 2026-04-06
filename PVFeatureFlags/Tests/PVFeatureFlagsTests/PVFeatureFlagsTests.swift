@@ -21,25 +21,21 @@ private let sampleJSON = """
             "enabled": true,
             "description": "Enables the ROM path migration tool."
         },
-        "cheatsUseSwiftUI": {
-            "enabled": false,
-            "description": "Use SwiftUI for the cheats interface."
-        },
-        "retroarchBuiltinEditor": {
-            "enabled": false,
-            "minVersion": "3.0.5",
-            "allowedAppTypes": ["standard", "lite"],
-            "description": "Enables the built-in RetroArch editor."
-        },
-        "advancedSkinFeatures": {
-            "enabled": false,
-            "description": "Enables advanced skin features."
-        },
         "contentlessCores": {
             "enabled": false,
             "minVersion": "3.0.5",
             "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
             "description": "Enables contentless cores."
+        },
+        "netplayEnabled": {
+            "enabled": false,
+            "minVersion": "3.1.0",
+            "allowedAppTypes": ["standard", "lite", "standard.appstore", "lite.appstore"],
+            "description": "Enables native netplay UI."
+        },
+        "tapToRemapUI": {
+            "enabled": false,
+            "description": "Tap-to-remap UX in button remapping settings."
         }
     }
 }
@@ -69,7 +65,7 @@ struct PVFeatureFlagsTests {
         #expect(config.features["inAppFreeROMs"]?.minBuildNumber == "100")
         #expect(config.features["inAppFreeROMs"]?.allowedAppTypes?.contains("standard") == true)
         #expect(config.features["romPathMigrator"]?.enabled == true)
-        #expect(config.features["cheatsUseSwiftUI"]?.enabled == false)
+        #expect(config.features["contentlessCores"]?.enabled == false)
     }
 
     // MARK: - PVAppType
@@ -101,7 +97,7 @@ struct PVFeatureFlagsTests {
         flags.clearDebugOverrides()
         #expect(flags.isEnabled(.inAppFreeROMs) == true)
         #expect(flags.isEnabled(.romPathMigrator) == true)
-        #expect(flags.isEnabled(.cheatsUseSwiftUI) == false)
+        #expect(flags.isEnabled(.contentlessCores) == false)
     }
 
     @Test func testIsEnabledByString() throws {
@@ -110,7 +106,7 @@ struct PVFeatureFlagsTests {
         flags.clearDebugOverrides()
         #expect(flags.isEnabled("inAppFreeROMs") == true)
         #expect(flags.isEnabled("romPathMigrator") == true)
-        #expect(flags.isEnabled("cheatsUseSwiftUI") == false)
+        #expect(flags.isEnabled("contentlessCores") == false)
         #expect(flags.isEnabled("unknownFeature") == false)
     }
 
@@ -120,36 +116,37 @@ struct PVFeatureFlagsTests {
         let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
         flags.clearDebugOverrides()
         #expect(flags[.inAppFreeROMs] == true)
-        #expect(flags[.cheatsUseSwiftUI] == false)
+        #expect(flags[.contentlessCores] == false)
     }
 
     @Test func testAppTypeRestriction() throws {
         let config = try makeConfig()
 
-        // standard.appstore is NOT in allowedAppTypes for retroarchBuiltinEditor
+        // netplayEnabled allows standard, lite, standard.appstore, lite.appstore — all types allowed
+        // but enabled: false in JSON, so it should still be false
         let appStoreFlags = PVFeatureFlags(
             configuration: config, appType: .standardAppStore, buildNumber: "101", appVersion: "3.1.0"
         )
         appStoreFlags.clearDebugOverrides()
-        #expect(appStoreFlags.isEnabled(.retroarchBuiltinEditor) == false)
+        #expect(appStoreFlags.isEnabled(.netplayEnabled) == false)
 
-        // lite is allowed for retroarchBuiltinEditor, but enabled: false in JSON
+        // contentlessCores allows all 4 app types but enabled: false in JSON
         let liteFlags = PVFeatureFlags(
             configuration: config, appType: .lite, buildNumber: "101", appVersion: "3.1.0"
         )
         liteFlags.clearDebugOverrides()
-        #expect(liteFlags.isEnabled(.retroarchBuiltinEditor) == false)
+        #expect(liteFlags.isEnabled(.contentlessCores) == false)
     }
 
     @Test func testVersionRestriction() throws {
         let config = try makeConfig()
 
-        // version below minVersion — retroarchBuiltinEditor requires 3.0.5
+        // version below minVersion — netplayEnabled requires 3.1.0
         let oldFlags = PVFeatureFlags(
             configuration: config, appType: .standard, buildNumber: "101", appVersion: "2.0.0"
         )
         oldFlags.clearDebugOverrides()
-        #expect(oldFlags.isEnabled(.retroarchBuiltinEditor) == false)
+        #expect(oldFlags.isEnabled(.netplayEnabled) == false)
     }
 
     @Test func testBuildNumberRestriction() throws {
@@ -276,17 +273,17 @@ struct PVFeatureFlagsTests {
         let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
         flags.clearDebugOverrides()
 
-        // cheatsUseSwiftUI is disabled in config; override to enable
-        flags.setDebugOverride(for: .cheatsUseSwiftUI, enabled: true)
-        #expect(flags.isEnabled(.cheatsUseSwiftUI) == true)
+        // contentlessCores is disabled in config; override to enable
+        flags.setDebugOverride(for: .contentlessCores, enabled: true)
+        #expect(flags.isEnabled(.contentlessCores) == true)
 
         // nil clears the per-feature override — should revert to config value (false)
-        flags.setDebugOverride(for: .cheatsUseSwiftUI, enabled: nil)
-        #expect(flags.isEnabled(.cheatsUseSwiftUI) == false)
+        flags.setDebugOverride(for: .contentlessCores, enabled: nil)
+        #expect(flags.isEnabled(.contentlessCores) == false)
 
         // Clear all overrides
         flags.clearDebugOverrides()
-        #expect(flags.isEnabled(.cheatsUseSwiftUI) == false)
+        #expect(flags.isEnabled(.contentlessCores) == false)
     }
 
     // MARK: - Nonisolated reads from a background actor
@@ -398,8 +395,6 @@ struct PVFeatureFlagsTests {
 
         #expect(manager.inAppFreeROMs == true)
         #expect(manager.romPathMigrator == true)
-        #expect(manager.cheatsUseSwiftUI == false)
-        #expect(manager.advancedSkinFeatures == false)
         #expect(manager.contentlessCores == false)
     }
 
@@ -410,27 +405,27 @@ struct PVFeatureFlagsTests {
         let manager = PVFeatureFlagsManager(featureFlags: flags)
 
         #expect(manager.isEnabled("inAppFreeROMs") == true)
-        #expect(manager.isEnabled("cheatsUseSwiftUI") == false)
+        #expect(manager.isEnabled("contentlessCores") == false)
         #expect(manager.isEnabled("unknownFeature") == false)
     }
 
-    @MainActor @Test func testManagerDebugOverrides() throws {
+    @MainActor @Test func testManagerDebugOverrides() async throws {
         let config = try makeConfig()
         let flags = PVFeatureFlags(configuration: config, appType: .standard, buildNumber: "101", appVersion: "1.1.0")
         flags.clearDebugOverrides()
         let manager = PVFeatureFlagsManager(featureFlags: flags)
 
-        #expect(manager.cheatsUseSwiftUI == false)
+        #expect(manager.tapToRemapUI == false)
 
-        manager.setDebugOverride(for: .cheatsUseSwiftUI, enabled: true)
+        manager.setDebugOverride(for: .tapToRemapUI, enabled: true)
         // stateDidChange fires and manager updates via Combine on main queue;
-        // since we are already on main actor, spin the run loop briefly.
-        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
-        #expect(manager.cheatsUseSwiftUI == true)
+        // yield to allow the Combine pipeline to propagate.
+        try await Task.sleep(nanoseconds: 100_000_000)
+        #expect(manager.tapToRemapUI == true)
 
         manager.clearDebugOverrides()
-        RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
-        #expect(manager.cheatsUseSwiftUI == false)
+        try await Task.sleep(nanoseconds: 100_000_000)
+        #expect(manager.tapToRemapUI == false)
     }
 
     @MainActor @Test func testManagerLoadFromCachedConfig() throws {
@@ -446,18 +441,15 @@ struct PVFeatureFlagsTests {
 
         // PVFeatureFlags.init() eagerly loads the bundled features.json, so
         // inAppFreeROMs is already enabled for the "standard" app type (minBuild 100,
-        // minVersion 1.0.0 satisfied). cheatsUseSwiftUI is enabled: true in the
-        // bundled config but enabled: false in sampleJSON — use it to verify the
-        // setDebugConfiguration override actually takes effect.
+        // minVersion 1.0.0 satisfied). netplayEnabled is enabled: false in both
+        // bundled config and sampleJSON, so it stays false either way.
         #expect(manager.inAppFreeROMs == true)   // enabled in bundled features.json
-        #expect(manager.cheatsUseSwiftUI == true) // enabled: true in bundled features.json
 
         manager.setDebugConfiguration(features: config.features)
         RunLoop.main.run(until: Date(timeIntervalSinceNow: 0.05))
         #expect(manager.inAppFreeROMs == true)
         #expect(manager.romPathMigrator == true)
-        // sampleJSON sets cheatsUseSwiftUI to enabled: false — confirms override applied
-        #expect(manager.cheatsUseSwiftUI == false)
+        #expect(manager.contentlessCores == false)
 
         fetcher.clearCache()
     }
@@ -560,8 +552,8 @@ struct ExampleView: View {
             if featureFlags.inAppFreeROMs {
                 Text("Free ROMs feature is enabled!")
             }
-            if featureFlags.cheatsUseSwiftUI {
-                Text("SwiftUI cheats enabled!")
+            if featureFlags.contentlessCores {
+                Text("Contentless cores enabled!")
             }
         }
         .task {

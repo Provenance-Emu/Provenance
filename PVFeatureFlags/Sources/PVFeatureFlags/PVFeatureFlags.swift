@@ -21,10 +21,6 @@ import Combine
 public enum PVFeature: String, CaseIterable, Sendable {
     case inAppFreeROMs = "inAppFreeROMs"
     case romPathMigrator = "romPathMigrator"
-    case cheatsUseSwiftUI = "cheatsUseSwiftUI"
-    case cheatsOnlineLookup = "cheatsOnlineLookup"
-    case retroarchBuiltinEditor = "retroarchBuiltinEditor"
-    case advancedSkinFeatures = "advancedSkinFeatures"
     case contentlessCores = "contentlessCores"
     /// Enables runtime scanning of Frameworks/ for bare libretro dylibs/frameworks
     /// and registers them through the thin PVThinLibretroFrontend.
@@ -184,18 +180,6 @@ public struct FeatureFlag: Codable, Sendable {
         self.allowedPlatforms = allowedPlatforms
         self.description = description
     }
-
-    public static let advancedSkinFeatures = FeatureFlag(
-        enabled: true,
-        description: "Enables advanced skin features like filters and debug mode"
-    )
-
-    public static let retroarchBuiltinEditor = FeatureFlag(
-        enabled: true,
-        minVersion: "3.0.5",
-        allowedAppTypes: ["standard", "lite"],
-        description: "Enables the built-in RetroArch editor. Disabled for App Store builds."
-    )
 
     public static let contentlessCores = FeatureFlag(
         enabled: false,
@@ -696,11 +680,7 @@ public final class PVFeatureFlags: @unchecked Sendable {
 
     public var inAppFreeROMs: Bool { featureStates[.inAppFreeROMs] ?? false }
     public var romPathMigrator: Bool { featureStates[.romPathMigrator] ?? false }
-    public var cheatsUseSwiftUI: Bool { featureStates[.cheatsUseSwiftUI] ?? true }
-    public var retroarchBuiltinEditor: Bool { featureStates[.retroarchBuiltinEditor] ?? false }
-    public var advancedSkinFeatures: Bool { featureStates[.advancedSkinFeatures] ?? true }
     public var contentlessCores: Bool { featureStates[.contentlessCores] ?? false }
-    public var cheatsOnlineLookup: Bool { featureStates[.cheatsOnlineLookup] ?? true }
     public var dynamicLibretroScanner: Bool { featureStates[.dynamicLibretroScanner] ?? false }
     public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
     public var mupenTransferPak: Bool { featureStates[.mupenTransferPak] ?? false }
