@@ -511,6 +511,8 @@ public class AppState: ObservableObject {
         bootState.updateTaskProgress("Loading system definitions…", fraction: 0.20)
         bootState.updateSubTask("Scanning cores…")
 
+        CorePlistResultCache.clearScanSentinel()
+
         do {
             try await GameImporter.shared.initCorePlists { completed, total, coreName in
                 Task { @MainActor in
@@ -525,6 +527,7 @@ public class AppState: ObservableObject {
                     )
                 }
             }
+            CorePlistResultCache.setScanSentinel()
             bootState.updateSubTask("")
             ILOG("AppState: Core scanning completed")
         } catch {

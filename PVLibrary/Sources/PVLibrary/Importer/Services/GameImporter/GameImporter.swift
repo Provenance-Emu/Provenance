@@ -768,6 +768,14 @@ public final class GameImporter: GameImporting, ObservableObject {
             // The cache is invalidated automatically on app update or when a core
             // dylib/bundle is added or removed (Frameworks dir mtime changes).
             let corePlists: [EmulatorCoreInfoPlist] = await Task.detached(priority: .userInitiated) {
+                /// If the previous scan was interrupted (crash / force-quit),
+                /// discard stale caches so we get a guaranteed full rescan.
+                if !CorePlistResultCache.didPreviousScanComplete {
+                    WLOG("GameImporter: previous core scan did not complete — invalidating caches")
+                    CorePlistResultCache.invalidate()
+                    CoreLoader.clearCoreListCache()
+                }
+
                 if let cached = CorePlistResultCache.load() {
                     ILOG("GameImporter: initCorePlists — cache hit, skipping scan (\(cached.count) cores)")
                     return cached
@@ -4389,7 +4397,7 @@ fileprivate extension String {
 ///
 /// Call `CorePlistResultCache.invalidate()` from Settings "Rescan Cores" to force
 /// a fresh probe on the next launch.
-internal enum CorePlistResultCache {
+public enum CorePlistResultCache {
 
     private static let cacheVersion = 2  // bumped: invalidate stale entries from loose Mach-O heuristic
 
@@ -4471,5 +4479,34 @@ internal enum CorePlistResultCache {
     public static func invalidate() {
         try? FileManager.default.removeItem(at: cacheURL)
         ILOG("CorePlistResultCache: invalidated")
+    }
+
+    // MARK: - Scan completion sentinel
+
+    /// Versioned UserDefaults key so it auto-resets on app updates.
+    private static var scanSentinelKey: String {
+        let fp = currentFingerprint()
+        return "coreScanCompleted-\(fp.appVersion)-\(fp.build)"
+    }
+
+    /// Mark the scan as not yet completed for this app version.
+    /// Call before starting the scan.
+    public static func clearScanSentinel() {
+        UserDefaults.standard.removeObject(forKey: scanSentinelKey)
+        ILOG("CorePlistResultCache: scan sentinel cleared")
+    }
+
+    /// Mark the scan as successfully completed for this app version.
+    /// Call after the scan finishes without error.
+    public static func setScanSentinel() {
+        UserDefaults.standard.set(true, forKey: scanSentinelKey)
+        ILOG("CorePlistResultCache: scan sentinel set")
+    }
+
+    /// Returns `true` if a previous scan completed successfully for
+    /// the current app version + build. A crash or force-quit mid-scan
+    /// leaves this as `false`, triggering a full rescan on next launch.
+    public static var didPreviousScanComplete: Bool {
+        UserDefaults.standard.bool(forKey: scanSentinelKey)
     }
 }
