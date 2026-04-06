@@ -671,7 +671,7 @@ public extension Defaults.Keys {
     /// Defaults to `false` — opt-in to avoid surprising existing users whose library
     /// already uses annotated filenames as titles. Enable in Library Management settings.
     /// Previously-imported titles are unaffected (use "Normalize Existing Library" to bulk-update them).
-    static let autoNormalizeROMTitles = Key<Bool>("autoNormalizeROMTitles", default: false)
+    static let autoNormalizeROMTitles = Key<Bool>("autoNormalizeROMTitles", default: true)
 }
 
 // MARK: Audio Options
