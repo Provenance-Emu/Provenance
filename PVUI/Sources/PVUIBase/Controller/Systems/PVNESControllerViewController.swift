@@ -12,11 +12,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVNESButton {
         get {
-            return PVNESButton(rawValue: tag)!
+            guard let mapped = PVNESButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for NES controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

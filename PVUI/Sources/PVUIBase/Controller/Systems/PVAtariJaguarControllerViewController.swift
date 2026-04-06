@@ -12,11 +12,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVJaguarButton {
         get {
-            return PVJaguarButton(rawValue: tag)!
+            guard let mapped = PVJaguarButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for Jaguar controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

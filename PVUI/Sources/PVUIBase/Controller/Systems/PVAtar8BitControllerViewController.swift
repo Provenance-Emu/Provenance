@@ -12,11 +12,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVA8Button {
         get {
-            return PVA8Button(rawValue: tag)!
+            guard let mapped = PVA8Button(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for Atari 8-bit controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

@@ -13,11 +13,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVGenesisButton {
         get {
-            return PVGenesisButton(rawValue: tag)!
+            guard let mapped = PVGenesisButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for Genesis controller; defaulting to .b")
+                return .b
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

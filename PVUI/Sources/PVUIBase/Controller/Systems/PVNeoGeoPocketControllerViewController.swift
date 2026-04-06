@@ -13,11 +13,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVNGPButton {
         get {
-            return PVNGPButton(rawValue: tag)!
+            guard let mapped = PVNGPButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for Neo Geo Pocket controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

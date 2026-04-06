@@ -13,11 +13,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVWSButton {
         get {
-            return PVWSButton(rawValue: tag)!
+            guard let mapped = PVWSButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for WonderSwan controller; defaulting to .x1")
+                return .x1
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

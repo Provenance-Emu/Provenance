@@ -12,11 +12,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVEP128Button {
         get {
-            return PVEP128Button(rawValue: tag)!
+            guard let mapped = PVEP128Button(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for EP128 controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

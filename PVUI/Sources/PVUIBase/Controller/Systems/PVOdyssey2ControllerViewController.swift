@@ -12,11 +12,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVOdyssey2Button {
         get {
-            return PVOdyssey2Button(rawValue: tag)!
+            guard let mapped = PVOdyssey2Button(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for Odyssey2 controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

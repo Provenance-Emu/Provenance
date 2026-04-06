@@ -13,11 +13,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PV3DOButton {
         get {
-            return PV3DOButton(rawValue: tag)!
+            guard let mapped = PV3DOButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for 3DO controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

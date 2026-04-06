@@ -12,11 +12,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVVectrexButton {
         get {
-            return PVVectrexButton(rawValue: tag)!
+            guard let mapped = PVVectrexButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for Vectrex controller; defaulting to .analogUp")
+                return .analogUp
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

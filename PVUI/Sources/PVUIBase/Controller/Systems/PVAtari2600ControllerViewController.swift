@@ -12,11 +12,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PV2600Button {
         get {
-            return PV2600Button(rawValue: tag)!
+            guard let mapped = PV2600Button(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for Atari 2600 controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

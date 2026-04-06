@@ -13,11 +13,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVSG1000Button {
         get {
-            return PVSG1000Button(rawValue: tag)!
+            guard let mapped = PVSG1000Button(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for SG-1000 controller; defaulting to .b")
+                return .b
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

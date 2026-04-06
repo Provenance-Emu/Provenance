@@ -13,11 +13,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVPCFXButton {
         get {
-            return PVPCFXButton(rawValue: tag)!
+            guard let mapped = PVPCFXButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for PC-FX controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

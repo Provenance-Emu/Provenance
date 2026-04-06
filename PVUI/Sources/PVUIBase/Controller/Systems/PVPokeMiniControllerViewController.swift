@@ -13,11 +13,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVPMButton {
         get {
-            return PVPMButton(rawValue: tag)!
+            guard let mapped = PVPMButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for PokeMini controller; defaulting to .menu")
+                return .menu
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

@@ -12,11 +12,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVMSXButton {
         get {
-            return PVMSXButton(rawValue: tag)!
+            guard let mapped = PVMSXButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for MSX controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

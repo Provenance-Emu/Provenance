@@ -13,11 +13,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVSega32XButton {
         get {
-            return PVSega32XButton(rawValue: tag)!
+            guard let mapped = PVSega32XButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for 32X controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

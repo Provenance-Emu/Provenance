@@ -15,11 +15,13 @@ import PVLogging
 private extension JSButton {
     var buttonTag: PVN64Button {
         get {
-            return PVN64Button(rawValue: tag)!
+            guard let mapped = PVN64Button(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for N64 controller; defaulting to .dPadUp")
+                return .dPadUp
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

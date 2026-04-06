@@ -12,11 +12,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVVBButton {
         get {
-            return PVVBButton(rawValue: tag)!
+            guard let mapped = PVVBButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for Virtual Boy controller; defaulting to .leftUp")
+                return .leftUp
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

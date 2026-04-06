@@ -11,11 +11,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PV3DSButton {
         get {
-            return PV3DSButton(rawValue: tag)!
+            guard let mapped = PV3DSButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for 3DS controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

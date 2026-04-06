@@ -11,11 +11,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVPS2Button {
         get {
-            return PVPS2Button(rawValue: tag)!
+            guard let mapped = PVPS2Button(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for PS2 controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

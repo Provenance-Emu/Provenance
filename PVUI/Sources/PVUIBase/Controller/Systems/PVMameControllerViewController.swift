@@ -11,11 +11,13 @@ import PVEmulatorCore
 private extension JSButton {
     var buttonTag: PVMAMEButton {
         get {
-            return PVMAMEButton(rawValue: tag)!
+            guard let mapped = PVMAMEButton(rawValue: tag) else {
+                assertionFailure("Unexpected JSButton tag \(tag) for MAME controller; defaulting to .up")
+                return .up
+            }
+            return mapped
         }
-        set {
-            tag = newValue.rawValue
-        }
+        set { tag = newValue.rawValue }
     }
 }
 

@@ -11,11 +11,13 @@ import PVEmulatorCore
 private extension JSButton {
 	var buttonTag: PVWiiMoteButton {
 		get {
-			return PVWiiMoteButton(rawValue: tag)!
+			guard let mapped = PVWiiMoteButton(rawValue: tag) else {
+				assertionFailure("Unexpected JSButton tag \(tag) for Wii controller; defaulting to .wiiDPadUp")
+				return .wiiDPadUp
+			}
+			return mapped
 		}
-		set {
-			tag = newValue.rawValue
-		}
+		set { tag = newValue.rawValue }
 	}
 }
 
