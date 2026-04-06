@@ -574,7 +574,6 @@
 		B3A47B2C2F5677C9004A995B /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = 9C4E9B7E289A972E85DD3226 /* PVFeatureFlags */; };
 		B3A47B2D2F5677C9004A995B /* WhatsNewKit in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); productRef = 7D3C80A17BC5A8B6EB08E8D8 /* WhatsNewKit */; };
 		B3A47B2E2F5677C9004A995B /* OpenSSL in Frameworks */ = {isa = PBXBuildFile; productRef = 53040F2E23B73F97BE1CAB5D /* OpenSSL */; };
-		B3A481B62F79ED9F00F3FF6B /* ROM File Provider.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3BE9FA42C7987B1006D989E /* ROM File Provider.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A60FFF2CB880BE001D99C2 /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B3A60FFE2CB880BE001D99C2 /* PVUI */; };
 		B3A610012CB88492001D99C2 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B3A610002CB88492001D99C2 /* PVJIT */; };
 		B3A610032CB885BD001D99C2 /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3A610022CB885BD001D99C2 /* PVCoremGBA-Dynamic */; };
@@ -717,7 +716,6 @@
 		B3E2AA522CB63A6200E2636D /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA502CB63A6200E2636D /* PVBeetlePSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E2AA542CB63A7B00E2636D /* PVBeetlePSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA532CB63A7B00E2636D /* PVBeetlePSX.framework */; };
 		B3E2AA552CB63A7B00E2636D /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E2AA532CB63A7B00E2636D /* PVBeetlePSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E2E83D2F6BBF880010BDDE /* QuickLookPreview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3CC22000000000100000001 /* QuickLookPreview.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E2E8412F6BC1ED0010BDDE /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2E8402F6BC1ED0010BDDE /* Defaults */; };
 		B3E46CE92E2C512D00657240 /* PVDosBox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E46CE82E2C512D00657240 /* PVDosBox.framework */; };
 		B3E46CEA2E2C512D00657240 /* PVDosBox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E46CE82E2C512D00657240 /* PVDosBox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1054,13 +1052,6 @@
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
 		};
-		B3A481B72F79ED9F00F3FF6B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3BE9FA32C7987B1006D989E;
-			remoteInfo = "ROM File Provider";
-		};
 		B3BD3A1D2D729008000FBB11 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1088,13 +1079,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B355E0372920AC1900E4C858;
 			remoteInfo = WidgetExtension;
-		};
-		B3E2E83E2F6BBF880010BDDE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3CC2200000000010000000A;
-			remoteInfo = QuickLookPreview;
 		};
 		B3F7E297297736BE00362B92 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1364,11 +1348,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B3E2E83D2F6BBF880010BDDE /* QuickLookPreview.appex in Embed Foundation Extensions */,
 				B3BD3A1C2D729007000FBB11 /* Provenance Stickers.appex in Embed Foundation Extensions */,
 				B379CA022F00C7BB00C3D7A7 /* TopShelfv2.appex in Embed Foundation Extensions */,
 				B30D49C42E3809C10073B038 /* Spotlight.appex in Embed Foundation Extensions */,
-				B3A481B62F79ED9F00F3FF6B /* ROM File Provider.appex in Embed Foundation Extensions */,
 				B30D49C72E3809C10073B038 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 				B3DD04002F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
 				B32C30752F6E6AEE003150F0 /* ThumbnailExtension.appex in Embed Foundation Extensions */,
@@ -7438,10 +7420,8 @@
 				B30D49C62E3809C10073B038 /* PBXTargetDependency */,
 				B30D49C92E3809C10073B038 /* PBXTargetDependency */,
 				B379CA042F00C7BB00C3D7A7 /* PBXTargetDependency */,
-				B3E2E83F2F6BBF880010BDDE /* PBXTargetDependency */,
 				B3DD07002F20031900000000 /* PBXTargetDependency */,
 				B32C30772F6E6AEE003150F0 /* PBXTargetDependency */,
-				B3A481B82F79ED9F00F3FF6B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				B39436502CCDEC9D004D5DFB /* Main UI */,
@@ -10589,12 +10569,6 @@
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B3A1866D2CBCA4F400BB1FFE /* PBXContainerItemProxy */;
 		};
-		B3A481B82F79ED9F00F3FF6B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = B3BE9FA32C7987B1006D989E /* ROM File Provider */;
-			targetProxy = B3A481B72F79ED9F00F3FF6B /* PBXContainerItemProxy */;
-		};
 		B3BD3A1E2D729008000FBB11 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilter = ios;
@@ -10619,15 +10593,6 @@
 			isa = PBXTargetDependency;
 			target = B355E0372920AC1900E4C858 /* WidgetExtension */;
 			targetProxy = B3DD06022F20031900000000 /* PBXContainerItemProxy */;
-		};
-		B3E2E83F2F6BBF880010BDDE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-			);
-			target = B3CC2200000000010000000A /* QuickLookPreview */;
-			targetProxy = B3E2E83E2F6BBF880010BDDE /* PBXContainerItemProxy */;
 		};
 		B3F7E296297736BE00362B92 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
