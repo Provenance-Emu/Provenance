@@ -6,18 +6,25 @@
 #
 # Run `python3 Scripts/generate_core_lists.py generate` to regenerate all files.
 #
+# PVCoreIdentifier mapping (must match PVRetroArch/Core.plist PVCores entries):
+#   YAML `name` uses underscores; the bundled framework id uses dots, e.g.
+#   mednafen_psx -> mednafen.psx.libretro.framework
+# Cores not listed in Core.plist should use enabled: false so buildbot dylibs are
+# not pulled until the meta core manifest is updated.
+#
 # Fields per core entry:
 #   name      - core name (used to derive filenames)
 #   ios       - included in iOS builds
 #   tvos      - included in tvOS builds
-#   appstore  - allowed in App Store builds (false = excluded from appstore variants)
+#   appstore  - allowed in App Store builds (false = excluded from appstore variants).
+#               Keep in sync with PVAppStoreDisabled on each core dict in PVRetroArch/Core.plist.
 #   enabled   - if false, written as a commented line (#url or #path) in ALL generated
 #               files — both url lists and xcfilelists use the same convention
 #   filename  - ONLY set for platform-neutral filenames (no _ios/_tvos suffix)
 #               e.g., "flycast_libretro.dylib"
 #               Omit for standard platform-suffixed cores.
 #   appstore_excluded_reason - optional human-readable reason for appstore: false
-
+#
 buildbot:
   base_url: "https://buildbot.libretro.com/nightly/apple"
   ios_path: "ios-arm64/latest"
@@ -30,22 +37,21 @@ buildbot:
   # pinned_date: "2026-03-18"
 
 cores:
+  # Order: plist-registered cores first (enabled), then not-in-plist (disabled).
+
+  # --- Listed in PVRetroArch/Core.plist (RetroArch meta core) ---
+
   # Globally disabled cores (commented out in all files)
   - name: snes9x
+    # Super Nintendo — disabled here; other SNES cores in plist
     ios: true
     tvos: true
     appstore: true
     enabled: false
 
   # App Store exclusions — present in sideload builds, commented in appstore builds
-  - name: mcsoftserve
-    ios: true
-    tvos: true
-    appstore: false
-    enabled: true
-    appstore_excluded_reason: "Not approved for App Store distribution"
-
   - name: dolphin
+    # GameCube / Wii
     ios: true
     tvos: true
     appstore: false
@@ -53,177 +59,161 @@ cores:
     filename: "dolphin_libretro.dylib"
     appstore_excluded_reason: "Contains JIT/dynamic recompilation not permitted in App Store"
 
-  # tvOS-only cores (not available on iOS)
   - name: vitaquake2
-    ios: false
+    # Quake II (Vita port)
+    ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: false
+    appstore_excluded_reason: "PVAppStoreDisabled — asset/setup differs from typical ROM cores; App Store build omits dylib"
 
   - name: vitaquake2-rogue
-    ios: false
+    # Quake II — Rogue
+    ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: false
+    appstore_excluded_reason: "PVAppStoreDisabled — asset/setup differs from typical ROM cores; App Store build omits dylib"
 
   - name: vitaquake2-xatrix
-    ios: false
+    # Quake II — Xatrix
+    ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: false
+    appstore_excluded_reason: "PVAppStoreDisabled — asset/setup differs from typical ROM cores; App Store build omits dylib"
 
   - name: vitaquake2-zaero
-    ios: false
+    # Quake II — Zaero
+    ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: false
+    appstore_excluded_reason: "PVAppStoreDisabled — asset/setup differs from typical ROM cores; App Store build omits dylib"
 
-  - name: puau
-    ios: false
-    tvos: true
-    appstore: true
-    enabled: true
-
-  - name: puau2021
-    ios: false
-    tvos: true
-    appstore: true
-    enabled: true
-
-  # Standard cores (present on both iOS and tvOS, appstore: true)
   - name: "2048"
+    # Puzzle (2048)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: "81"
+    # ZX81
     ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: true
-
+    appstore_excluded_reason: "PVAppStoreDisabled — no systems.plist/import path yet; may re-enable when catalogued"
   - name: a5200
+    # Atari 5200
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: atari800
+    # Atari 8-bit
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: bluemsx
+    # MSX / SVI / Coleco
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: bsnes_hd_beta
+    # Super Nintendo (bsnes HD)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: bsnes
+    # Super Nintendo (bsnes)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: bsnes_mercury_accuracy
+    # Super Nintendo (Mercury accuracy)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: bsnes_mercury_balanced
+    # Super Nintendo (Mercury balanced)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: bsnes_mercury_performance
+    # Super Nintendo (Mercury performance)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: cap32
+    # Amstrad CPC
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: desmume
+    # Nintendo DS
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: dice
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
-  - name: dinothawr
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: dosbox_pure
+    # DOS / PC
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: fbalpha2012_cps1
+    # Arcade CPS-1
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: fbalpha2012_cps2
+    # Arcade CPS-2
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: fbalpha2012_cps3
+    # Arcade CPS-3
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: fbalpha2012
+    # Arcade (FBA 2012)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: fbalpha2012_neogeo
+    # Arcade Neo Geo (FBA 2012)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: fbneo
+    # Arcade (FinalBurn Neo)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: fceumm
+    # NES / Famicom
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: flycast
+    # Dreamcast
     ios: true
     tvos: true
     appstore: true
@@ -231,6 +221,7 @@ cores:
     filename: "flycast_libretro.dylib"
 
   - name: fmsx
+    # MSX
     ios: true
     tvos: true
     appstore: true
@@ -238,216 +229,200 @@ cores:
     filename: "fmsx_libretro.dylib"
 
   - name: freechaf
+    # Fairchild Channel F
     ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: true
-
+    appstore_excluded_reason: "PVAppStoreDisabled — no systems.plist/import path yet; may re-enable when catalogued"
   - name: freeintv
+    # Mattel Intellivision
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: fuse
+    # ZX Spectrum
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: galaksija
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: gambatte
+    # Game Boy / Color
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: gearcoleco
+    # ColecoVision
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: genesis_plus_gx
+    # Sega Genesis / MS / GG / CD / SG-1000
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: genesis_plus_gx_wide
+    # Sega Genesis (widescreen)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: geolith
+    # Arcade (Geolith)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: gme
+    # Game Music Emulator
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: gpsp
+    # Game Boy Advance
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: gw
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: handy
+    # Atari Lynx
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: hatari
+    # Atari ST
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: holani
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: m2000
+    # Philips Videopac / Odyssey²
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mame
+    # Arcade (MAME)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mame2000
+    # Arcade (MAME 2000)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mame2003
+    # Arcade (MAME 2003)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mame2003_plus
+    # Arcade (MAME 2003-Plus)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mame2010
+    # Arcade (MAME 2010)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_gba
+    # Game Boy Advance
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_lynx
+    # Atari Lynx
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_ngp
+    # Neo Geo Pocket / Color
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_pce_fast
+    # PC Engine / TurboGrafx-16 (fast)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_pce
+    # PC Engine / TurboGrafx-16
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_pcfx
+    # PC-FX
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_psx_hw
+    # PlayStation (Beetle PSX HW)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_psx
+    # PlayStation (Beetle PSX)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_saturn
+    # Sega Saturn
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_snes
+    # Super Nintendo (Beetle)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_supergrafx
+    # PC Engine SuperGrafx
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_vb
+    # Virtual Boy
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mednafen_wswan
+    # WonderSwan / Color
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: melonds
+    # Nintendo DS
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: melondsds
+    # Nintendo DS (DSi)
     ios: true
     tvos: true
     appstore: true
@@ -455,132 +430,118 @@ cores:
     filename: "melondsds_libretro.dylib"
 
   - name: mesen
+    # NES / Famicom (Mesen)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mesen-s
+    # Super Nintendo (Mesen-S)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mgba
+    # Game Boy Advance
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: minivmac
+    # Classic Mac
     ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: true
-
-  - name: mrboom
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
+    appstore_excluded_reason: "PVAppStoreDisabled in Core.plist — not bundled for App Store"
   - name: mu
+    # Palm OS
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: mupen64plus_next
+    # Nintendo 64
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: nekop2
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: neocd
+    # Neo Geo CD
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: nestopia
+    # NES / Famicom
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: noods
+    # Nintendo DS
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: np2kai
+    # PC-98
     ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: true
-
+    appstore_excluded_reason: "PVAppStoreDisabled in Core.plist — not bundled for App Store"
   - name: numero
+    # NumWorks calculator
     ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: true
-
+    appstore_excluded_reason: "PVAppStoreDisabled in Core.plist — not bundled for App Store"
   - name: o2em
+    # Magnavox Odyssey² / Videopac
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: opera
+    # 3DO
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: parallel_n64
+    # Nintendo 64 (ParaLLEl)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: pcsx_rearmed
+    # PlayStation
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: play
+    # PlayStation 2
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: pocketcdg
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: pokemini
+    # Pokémon mini
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: potator
+    # Microvision
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: ppsspp
+    # PlayStation Portable
     ios: true
     tvos: true
     appstore: true
@@ -588,270 +549,335 @@ cores:
     filename: "ppsspp_libretro.dylib"
 
   - name: prboom
+    # DOOM
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: prosystem
+    # Atari 7800
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: puae
+    # Commodore Amiga
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: puae2021
+    # Commodore Amiga (PUAE 2021)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: px68k
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
-  - name: qemu
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: quicknes
+    # NES (fast)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: race
+    # Neo Geo Pocket / Color
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: same_cdi
+    # Philips CD-i
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: sameboy
+    # Game Boy / Color
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: sameduck
+    # Mega Duck
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: scummvm
+    # SCUMM / adventure games
     ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: true
-
+    appstore_excluded_reason: "PVAppStoreDisabled in Core.plist — not bundled for App Store"
   - name: smsplus
+    # Sega Master System / Game Gear
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: snes9x2002
+    # Super Nintendo (Snes9x 2002)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: snes9x2005
+    # Super Nintendo (Snes9x 2005)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: snes9x2005_plus
+    # Super Nintendo (Snes9x 2005+)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: snes9x2010
+    # Super Nintendo (Snes9x 2010)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: squirreljme
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: stella
+    # Atari 2600
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: stella2014
+    # Atari 2600 (Stella 2014)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: stella2023
+    # Atari 2600 (Stella 2023)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: theodore
+    # Thomson MO/TO
     ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: true
-
+    appstore_excluded_reason: "PVAppStoreDisabled in Core.plist — not bundled for App Store"
   # TIC-80 — not yet available on the buildbot (2026-03); enable when added
   - name: tic80
+    # TIC-80 (not on buildbot)
     ios: true
     tvos: true
     appstore: true
     enabled: false
 
   - name: tyrquake
+    # Quake
     ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: true
-
+    appstore_excluded_reason: "PVAppStoreDisabled — asset/setup differs from typical ROM cores; App Store build omits dylib"
   - name: vba_next
+    # Game Boy Advance
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: vbam
+    # Game Boy Advance
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: vecx
+    # Vectrex
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: vemulator
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: vice_x128
+    # Commodore 128
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: vice_x64
+    # Commodore 64
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: vice_x64sc
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
-  - name: vice_xcbm2
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
-  - name: vice_xcbm5x0
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: vice_xpet
+    # Commodore PET
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: vice_xplus4
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   # Note: "ibretro" typo (missing 'l') in the original upstream filename is preserved for compatibility.
   # The actual filenames are vice_xscpu64_ibretro_ios.dylib / vice_xscpu64_ibretro_tvos.dylib
   - name: vice_xscpu64
+    # Commodore xSCPU64 — not in Core.plist
     ios: true
     tvos: true
     appstore: true
-    enabled: true
+    enabled: false
     ios_filename: "vice_xscpu64_ibretro_ios.dylib"
     tvos_filename: "vice_xscpu64_ibretro_tvos.dylib"
 
   - name: vice_xvic
+    # Commodore VIC-20
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: vircon32
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: virtualjaguar
+    # Atari Jaguar
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
-  - name: virtualxt
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
-  - name: wasm4
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-
   - name: x1
+    # Sharp X1
     ios: true
     tvos: true
     appstore: true
     enabled: true
-
   - name: xrick
+    # Rick Dangerous
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+  - name: yabause
+    # Sega Saturn
     ios: true
     tvos: true
     appstore: true
     enabled: true
 
-  - name: yabause
+  # --- Not in Core.plist (fetch disabled until added to Core.plist) ---
+
+  - name: mcsoftserve
+    # Homebrew server — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: false
+    enabled: false
+    appstore_excluded_reason: "Not approved for App Store distribution"
+
+  - name: dice
+    # Discrete-logic arcade — not in Core.plist
     ios: true
     tvos: true
     appstore: true
-    enabled: true
+    enabled: false
+  - name: dinothawr
+    # Puzzle — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: galaksija
+    # Galaksija — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: gw
+    # Game & Watch — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: holani
+    # Atari Lynx — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: mrboom
+    # Bomberman-like — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: nekop2
+    # PC-98 — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: pocketcdg
+    # Karaoke CDG — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: px68k
+    # Sharp X68000 — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: qemu
+    # QEMU — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: squirreljme
+    # Java ME — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: false
+    enabled: false
+  - name: vemulator
+    # VMU — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: vice_x64sc
+    # Commodore 64 (x64sc) — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: vice_xcbm2
+    # Commodore CBM-II — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: vice_xcbm5x0
+    # Commodore PET/CBM5x0 — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: vice_xplus4
+    # Commodore Plus/4 — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: vircon32
+    # Vircon32 — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: virtualxt
+    # PC/XT — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: wasm4
+    # WASM-4 — not in Core.plist
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
