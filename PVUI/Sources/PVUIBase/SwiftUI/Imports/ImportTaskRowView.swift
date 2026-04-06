@@ -228,9 +228,16 @@ struct ImportTaskRowView: View {
 
     private var needsSystemSelection: Bool {
         guard item.userChosenSystem == nil else { return false }
+        // Only game/cdRom/unknown file types can have system conflicts
+        switch item.fileType {
+        case .artwork, .bios, .skin, .patch, .folder:
+            return false
+        default:
+            break
+        }
         switch item.status {
-        case .conflict, .failure:
-            return true
+        case .conflict:
+            return item.systems.count > 1
         case .partial:
             let ext = item.url.pathExtension.lowercased()
             return ext == "cue" || ext == "m3u"

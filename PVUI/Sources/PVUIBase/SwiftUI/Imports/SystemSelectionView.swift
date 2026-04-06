@@ -12,7 +12,7 @@ import PVThemes
 import PVRealm
 import PVSettings
 
-struct SystemSelectionView: View {
+public struct SystemSelectionView: View {
     @ObservedObject var item: ImportQueueItem
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -25,7 +25,12 @@ struct SystemSelectionView: View {
     
     // Replace delegate with callback
     var onSystemSelected: ((SystemIdentifier, ImportQueueItem) -> Void)?
-    
+
+    public init(item: ImportQueueItem, onSystemSelected: ((SystemIdentifier, ImportQueueItem) -> Void)? = nil) {
+        self._item = ObservedObject(wrappedValue: item)
+        self.onSystemSelected = onSystemSelected
+    }
+
     private var isAppStore: Bool { AppState.shared.isAppStore }
     
     private func supportLevel(for systemID: SystemIdentifier) -> CoreSupportLevel {
@@ -35,7 +40,7 @@ struct SystemSelectionView: View {
         return pvSystem.coreSupportLevel(isAppStore: isAppStore, unsupportedCores: unsupportedCores)
     }
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             // RetroWave background
             RetroTheme.retroBackground
