@@ -722,7 +722,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         //        }
 
         // Extract Zip before loading the ROM
-        romPathMaybe = handleArchives(atPath: romPathMaybe)
+        romPathMaybe = await handleArchives(atPath: romPathMaybe)
 
         //        guard let romPath = romPathMaybe else {
         //            throw CreateEmulatorError.gameHasNilRomPath
@@ -735,7 +735,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 /// Refresh ROM path after download completes
                 romPathMaybe = game.file?.url
                 /// Handle archives again in case the downloaded asset was a zip
-                romPathMaybe = handleArchives(atPath: romPathMaybe)
+                romPathMaybe = await handleArchives(atPath: romPathMaybe)
             } catch {
                 // Download was cancelled or failed - dismiss emulator and return
                 ELOG("Download cancelled or failed for \(game.title): \(error.localizedDescription)")
@@ -751,7 +751,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             self.game = refreshedGame
             if romPathMaybe == nil {
                 romPathMaybe = refreshedGame.file?.url
-                romPathMaybe = handleArchives(atPath: romPathMaybe)
+                romPathMaybe = await handleArchives(atPath: romPathMaybe)
             }
         }
 
