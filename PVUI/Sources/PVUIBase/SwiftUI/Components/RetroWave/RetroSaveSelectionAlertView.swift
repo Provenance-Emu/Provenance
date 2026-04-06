@@ -106,6 +106,7 @@ public class RetroSaveSelectionViewModel: ObservableObject {
 
     private var downloadTask: Task<Void, Never>?
     private var downloadingRecordID: String?
+    private var progressPollTask: Task<Void, Never>?
 
     public init(gameTitle: String, coreName: String, coreIdentifier: String, saves: [RetroSaveSelectionItem] = []) {
         self.gameTitle = gameTitle
@@ -160,10 +161,15 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                 let recordID = (saveState.cloudRecordID?.isEmpty == false) ? saveState.cloudRecordID! : saveState.id
                 downloadingRecordID = recordID
 
+                // Start polling SyncProgressTracker for real download progress
+                startProgressPolling(recordID: recordID)
+
                 ILOG("[SaveSelection] Starting direct CloudSyncManager download after \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - actionStart))s (recordID=\(recordID))")
                 let downloadStart = CFAbsoluteTimeGetCurrent()
                 try await CloudSyncManager.shared.downloadSaveState(for: saveState.freeze())
                 ILOG("[SaveSelection] Direct download completed in \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - downloadStart))s (recordID=\(recordID))")
+
+                stopProgressPolling()
 
                 // Verify download completed by refreshing the save state
                 let updatedRealm = try await Realm()
@@ -172,6 +178,9 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                    let fileURL = updatedSaveState.file?.url,
                    FileManager.default.fileExists(atPath: fileURL.path) {
                     ILOG("[SaveSelection] Download complete for: \(item.saveStateId)")
+                    downloadProgress = 1.0
+                    // Brief pause to show 100%
+                    try? await Task.sleep(nanoseconds: 300_000_000)
                     downloadingRecordID = nil
                     downloadingItemId = nil
                     downloadProgress = 0
@@ -181,6 +190,7 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                 }
             } catch {
                 ELOG("[SaveSelection] Download failed: \(error.localizedDescription)")
+                stopProgressPolling()
                 downloadError = error.localizedDescription
                 downloadingRecordID = nil
                 downloadingItemId = nil
@@ -189,8 +199,31 @@ public class RetroSaveSelectionViewModel: ObservableObject {
         }
     }
 
+    /// Polls SyncProgressTracker for real-time download progress
+    private func startProgressPolling(recordID: String) {
+        stopProgressPolling()
+        let kind = SyncProgressTracker.DownloadKind.saveState(recordID: recordID)
+        progressPollTask = Task { @MainActor in
+            while !Task.isCancelled {
+                if let active = SyncProgressTracker.shared.activeDownloads.first(where: { $0.kind == kind }) {
+                    let newProgress = active.progress
+                    if newProgress > self.downloadProgress {
+                        self.downloadProgress = newProgress
+                    }
+                }
+                try? await Task.sleep(nanoseconds: 200_000_000) // 200ms
+            }
+        }
+    }
+
+    private func stopProgressPolling() {
+        progressPollTask?.cancel()
+        progressPollTask = nil
+    }
+
     /// Cancels an in-progress download
     public func cancelDownload() {
+        stopProgressPolling()
         downloadTask?.cancel()
         downloadTask = nil
         downloadingRecordID = nil
@@ -199,6 +232,7 @@ public class RetroSaveSelectionViewModel: ObservableObject {
     }
 
     deinit {
+        progressPollTask?.cancel()
         downloadTask?.cancel()
     }
 }
@@ -309,41 +343,110 @@ public struct RetroSaveSelectionAlertView: View {
     // MARK: - Quick Actions Section
 
     private var quickActionsSection: some View {
-        HStack(spacing: 12) {
+        VStack(spacing: 12) {
+            if let mostRecent = viewModel.mostRecentSave {
+                quickContinueButton(for: mostRecent)
+            }
+
             RetroAlertButton(title: "Start Fresh", style: .secondary) {
                 onStartFresh()
             }
             #if os(tvOS)
             .focused($focusedItemId, equals: "start-fresh")
             #endif
-
-            if let mostRecent = viewModel.mostRecentSave {
-                quickContinueButton(for: mostRecent)
-            }
         }
         .padding(.horizontal, 20)
         .padding(.bottom, viewModel.saves.count > 1 ? 16 : 20)
     }
 
     private func quickContinueButton(for save: RetroSaveSelectionItem) -> some View {
-        RetroAlertButton(
-            title: "Quick Continue",
-            subtitle: save.isDownloaded ? nil : "☁️ Download required",
-            style: .primary
-        ) {
+        Button {
             handleSaveSelection(save)
-        }
-        .overlay(
-            Group {
-                if viewModel.downloadingItemId == save.id {
-                    downloadProgressOverlay
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
+        } label: {
+            HStack(spacing: 12) {
+                // Screenshot thumbnail
+                ZStack {
+                    thumbnailView(for: save)
+
+                    if !save.isDownloaded && viewModel.downloadingItemId != save.id {
+                        cloudBadge
+                    }
+
+                    if viewModel.downloadingItemId == save.id {
+                        downloadProgressOverlay
+                    }
                 }
+                .frame(width: 80, height: 60)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+
+                // Label and metadata
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Quick Continue")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(.white)
+
+                    Text(save.subtitle)
+                        .font(.system(size: 11))
+                        .foregroundColor(.white.opacity(0.6))
+                        .lineLimit(1)
+
+                    if !save.isDownloaded && viewModel.downloadingItemId != save.id {
+                        Text("☁️ Download required")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(.retroBlue.opacity(0.9))
+                    } else if viewModel.downloadingItemId == save.id {
+                        downloadStatusText
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "play.fill")
+                    .font(.system(size: 18))
+                    .foregroundColor(.retroPink)
             }
-        )
+            .padding(12)
+            .frame(maxWidth: .infinity)
+            .background(
+                LinearGradient(
+                    colors: [Color.retroPink.opacity(0.2), Color.retroBlue.opacity(0.15)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [.retroPink.opacity(0.6), .retroBlue.opacity(0.4)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        lineWidth: 1.5
+                    )
+            )
+        }
         #if os(tvOS)
+        .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
         .focused($focusedItemId, equals: "quick-continue")
         #endif
+    }
+
+    @ViewBuilder
+    private var downloadStatusText: some View {
+        if viewModel.downloadProgress > 0 {
+            Text("\(Int(viewModel.downloadProgress * 100))% downloaded")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(
+                    LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
+                )
+        } else {
+            Text("Connecting...")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(.white.opacity(0.5))
+        }
     }
 
     // MARK: - Saves Grid Section
@@ -485,24 +588,16 @@ public struct RetroSaveSelectionAlertView: View {
             VStack(spacing: 4) {
                 if viewModel.downloadProgress > 0 {
                     CircularProgressView(progress: viewModel.downloadProgress)
-                        .frame(width: 30, height: 30)
+                        .frame(width: 24, height: 24)
 
                     Text("\(Int(viewModel.downloadProgress * 100))%")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.white)
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(
+                            LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
+                        )
                 } else {
                     RetroIndeterminateSpinner()
-                        .frame(width: 30, height: 30)
-                    Text("DOWNLOADING")
-                        .font(.system(size: 10, weight: .bold))
-                        .tracking(1)
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.retroPink, .retroBlue],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
+                        .frame(width: 24, height: 24)
                 }
             }
         }
