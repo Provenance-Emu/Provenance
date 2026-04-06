@@ -2802,6 +2802,20 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 return
             }
 
+            // Skip no-op updates to avoid triggering Realm notifications and UI refreshes
+            let fileAlreadyCorrect: Bool
+            if isDownloaded, let validFileURL = fileURL {
+                fileAlreadyCorrect = liveGame.file?.url == validFileURL
+            } else if !isDownloaded {
+                fileAlreadyCorrect = true // We don't change the file for not-downloaded
+            } else {
+                fileAlreadyCorrect = false
+            }
+            if liveGame.isDownloaded == isDownloaded && fileAlreadyCorrect {
+                VLOG("Download status already correct for \(md5), skipping write")
+                return
+            }
+
             VLOG("Updating game: \(liveGame.title) (MD5: \(md5))")
             liveGame.isDownloaded = isDownloaded
             if let record {
