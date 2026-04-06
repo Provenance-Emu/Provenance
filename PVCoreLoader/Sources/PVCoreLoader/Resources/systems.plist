@@ -8301,7 +8301,7 @@
 		<array>
 			<dict>
 				<key>Description</key>
-				<string>ECWolf engine data pak — place ecwolf.pk3 in BIOS/com.provenance.wolf3d/. Download from https://maniacsvault.net/ecwolf/</string>
+				<string>ECWolf engine pak — must be at BIOS/com.provenance.wolf3d/ecwolf.pk3 (libretro system path). App fetches from buildbot assets when online; or download from https://maniacsvault.net/ecwolf/</string>
 				<key>MD5</key>
 				<string>c011b428819eea4a80b455c245a5a04d</string>
 				<key>Name</key>
@@ -8436,7 +8436,7 @@
 		<key>PVSystemName</key>
 		<string>Wolfenstein 3D</string>
 		<key>PVSystemShortName</key>
-		<string>Wold3D</string>
+		<string>Wolf3D</string>
 		<key>PVUsesCDs</key>
 		<false/>
 	</dict>
