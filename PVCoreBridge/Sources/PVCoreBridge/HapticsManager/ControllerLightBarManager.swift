@@ -111,7 +111,9 @@ public final class ControllerLightBarManager {
         registerNotifications()
     }
 
-    /// Registers main-queue notification handlers without creating Task send boundaries.
+    /// Registers main-queue notification handlers.
+    /// `UserDefaults.didChange` is handled via a deferred `Task` so we never read `Defaults` while SwiftyUserDefaults
+    /// one-time registration is still running (see comment at the observer).
     private func registerNotifications() {
         let nc = NotificationCenter.default
 
@@ -122,9 +124,13 @@ public final class ControllerLightBarManager {
         }
         notificationObservers.append(connectObs)
 
+        // Defer reapply to the next main run-loop turn: `registerDefaults` posts `UserDefaults.didChangeNotification`
+        // synchronously while `Defaults` keys may still be in one-time initialization; reading `Defaults` here would
+        // re-enter `dispatch_once` and trap in `_dispatch_once_wait`.
         let udObs = nc.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            MainActor.assumeIsolated {
-                self?.reapplyCurrentSystemColor()
+            guard let self else { return }
+            Task { @MainActor in
+                self.reapplyCurrentSystemColor()
             }
         }
         notificationObservers.append(udObs)
