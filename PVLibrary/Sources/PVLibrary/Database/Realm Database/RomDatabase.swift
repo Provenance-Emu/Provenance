@@ -255,10 +255,10 @@ public final class RealmConfiguration {
             if oldSchemaVersion < 20 {
                 ILOG("Migrating to version 20. Adding hasCloudAssets property to PVGame")
 
-                migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
-                    let cloudID = oldObject?["cloudRecordID"] as? String
+                migration.enumerateObjects(ofType: PVGame.className()) { _, newObject in
+                    let cloudID = newObject?["cloudRecordID"] as? String
                     let hadCloudRecord = !(cloudID?.isEmpty ?? true)
-                    let wasDownloaded = (oldObject?["isDownloaded"] as? Bool) ?? false
+                    let wasDownloaded = (newObject?["isDownloaded"] as? Bool) ?? false
                     newObject?["hasCloudAssets"] = hadCloudRecord || wasDownloaded
                 }
 
@@ -267,10 +267,10 @@ public final class RealmConfiguration {
             if oldSchemaVersion < 21 {
                 ILOG("Migrating to version 21. Recomputing hasCloudAssets for existing games")
 
-                migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
-                    let cloudID = oldObject?["cloudRecordID"] as? String
+                migration.enumerateObjects(ofType: PVGame.className()) { _, newObject in
+                    let cloudID = newObject?["cloudRecordID"] as? String
                     let hadCloudRecord = !(cloudID?.isEmpty ?? true)
-                    let wasDownloaded = (oldObject?["isDownloaded"] as? Bool) ?? false
+                    let wasDownloaded = (newObject?["isDownloaded"] as? Bool) ?? false
                     newObject?["hasCloudAssets"] = hadCloudRecord || wasDownloaded
                 }
 
