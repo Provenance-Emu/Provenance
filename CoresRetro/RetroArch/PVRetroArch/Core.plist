@@ -1834,6 +1834,8 @@
 			<key>PVAppStoreDisabled</key>
 			<false/>
 			<key>PVContentless</key>
+			<false/>
+			<key>PVDisabled</key>
 			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © 1998-2024 VICE Team</string>
@@ -1860,6 +1862,8 @@
 			<key>PVAppStoreDisabled</key>
 			<false/>
 			<key>PVContentless</key>
+			<false/>
+			<key>PVDisabled</key>
 			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © 1998-2024 VICE Team</string>
@@ -1906,12 +1910,15 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.retroarch</string>
+				<string>com.provenance.c64</string>
 			</array>
 		</dict>
 		<dict>
 			<key>PVAppStoreDisabled</key>
 			<false/>
 			<key>PVContentless</key>
+			<false/>
+			<key>PVDisabled</key>
 			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © Libretro Contributors</string>
@@ -1938,32 +1945,8 @@
 			<key>PVAppStoreDisabled</key>
 			<false/>
 			<key>PVContentless</key>
-			<true/>
-			<key>PVCopyright</key>
-			<string>Copyright © Libretro Contributors</string>
-			<key>PVCoreIdentifier</key>
-			<string>dice.libretro.framework</string>
-			<key>PVLicenseName</key>
-			<string>GPL-2.0-or-later</string>
-			<key>PVLicenseURL</key>
-			<string>https://docs.libretro.com/library/dice/</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>DICE (RetroArch)</string>
-			<key>PVProjectURL</key>
-			<string>https://docs.libretro.com/library/dice/</string>
-			<key>PVProjectVersion</key>
-			<string>Nightly</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.retroarch</string>
-			</array>
-		</dict>
-		<dict>
-			<key>PVAppStoreDisabled</key>
 			<false/>
-			<key>PVContentless</key>
+			<key>PVDisabled</key>
 			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © Libretro Contributors</string>
@@ -1990,33 +1973,7 @@
 			<key>PVAppStoreDisabled</key>
 			<false/>
 			<key>PVContentless</key>
-			<true/>
-			<key>PVCopyright</key>
-			<string>Copyright © Libretro Contributors</string>
-			<key>PVCoreIdentifier</key>
-			<string>pocketcdg.libretro.framework</string>
-			<key>PVLicenseName</key>
-			<string>GPL-2.0-or-later</string>
-			<key>PVLicenseURL</key>
-			<string>https://docs.libretro.com/library/pocketcdg/</string>
-			<key>PVPrincipleClass</key>
-			<string>PVRetroArch.PVRetroArchCoreCore</string>
-			<key>PVProjectName</key>
-			<string>PocketCDG (RetroArch)</string>
-			<key>PVProjectURL</key>
-			<string>https://docs.libretro.com/library/pocketcdg/</string>
-			<key>PVProjectVersion</key>
-			<string>Nightly</string>
-			<key>PVSupportedSystems</key>
-			<array>
-				<string>com.provenance.retroarch</string>
-			</array>
-		</dict>
-		<dict>
-			<key>PVAppStoreDisabled</key>
 			<false/>
-			<key>PVContentless</key>
-			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © Libretro Contributors</string>
 			<key>PVCoreIdentifier</key>
@@ -2043,6 +2000,8 @@
 			<key>PVAppStoreDisabled</key>
 			<false/>
 			<key>PVContentless</key>
+			<false/>
+			<key>PVDisabled</key>
 			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © Libretro Contributors</string>
@@ -2069,7 +2028,7 @@
 			<key>PVAppStoreDisabled</key>
 			<false/>
 			<key>PVContentless</key>
-			<true/>
+			<false/>
 			<key>PVCopyright</key>
 			<string>Copyright © Libretro Contributors</string>
 			<key>PVCoreIdentifier</key>
@@ -2096,6 +2055,8 @@
 			<key>PVAppStoreDisabled</key>
 			<false/>
 			<key>PVContentless</key>
+			<false/>
+			<key>PVDisabled</key>
 			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © Libretro Contributors</string>
@@ -2148,6 +2109,8 @@
 			<key>PVAppStoreDisabled</key>
 			<false/>
 			<key>PVContentless</key>
+			<false/>
+			<key>PVDisabled</key>
 			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © Libretro Contributors</string>
@@ -2983,6 +2946,8 @@
 			<false/>
 			<key>PVContentless</key>
 			<false/>
+			<key>PVDisabled</key>
+			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © 2017-2024 Vadim Grigoruk (Nesbox)</string>
 			<key>PVCoreIdentifier</key>
