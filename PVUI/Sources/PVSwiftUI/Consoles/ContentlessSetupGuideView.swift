@@ -109,14 +109,16 @@ struct ContentlessSetupGuideView: View {
             )
         case "com.provenance.wolf3d":
             return SetupGuide(
-                description: "Wolfenstein 3D needs the original game data files to run. You also need the ecwolf.pk3 engine file placed in the BIOS folder.",
+                description: "ECWolf needs Wolf3D episode data (VSWAP, MAPHEAD, AUDIO, etc. as .WL6 or .WL1, "
+                    + "or Spear .SOD/.SDM). You also need ecwolf.pk3 in the BIOS folder for this system "
+                    + "(auto-downloaded when online, or copy manually).",
                 requiredFiles: [
-                    "*.WL6 files (full version: 8 files such as VSWAP.WL6, MAPHEAD.WL6, etc.)",
-                    "*.WL1 files (shareware version)",
-                    "*.SOD / *.SDM files (Spear of Destiny)",
-                    "ecwolf.pk3 (required BIOS - download from maniacsvault.net/ecwolf/)"
+                    "Full Wolf3D: VSWAP.WL6, MAPHEAD.WL6, GAMEMAPS.WL6, AUDIOHED.WL6, AUDIOT.WL6, VGAGRAPH.WL6, VGAHEAD.WL6, VGADICT.WL6 (keep together)",
+                    "Shareware: VSWAP.WL1 and matching .WL1 set",
+                    "Spear of Destiny: .SOD / .SDM data set for that episode",
+                    "ecwolf.pk3 (engine data — BIOS; see strip below)"
                 ],
-                placementHint: "Import the game data files via the web server or Files app. Ensure ecwolf.pk3 is in the BIOS folder."
+                placementHint: "Import all episode files into the same ROM folder (folder import is best). Launch from VSWAP.WL6 or VSWAP.WL1. Place ecwolf.pk3 under BIOS → Wolfenstein 3D."
             )
         case "com.provenance.quake":
             return SetupGuide(
