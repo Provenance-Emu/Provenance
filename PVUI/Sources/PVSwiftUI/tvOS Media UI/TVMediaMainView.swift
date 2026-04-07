@@ -9,6 +9,7 @@ import RealmSwift
 import PVRealm
 import PVPrimitives
 import PVLogging
+import PVCoreBridge
 
 #if canImport(PVWebServer)
 import PVWebServer
@@ -434,8 +435,24 @@ struct TVMediaMainView: View {
                 }
         }
 
-        private var layoutWithAppearance: some View {
+        private var layoutWithCoreOptions: some View {
             layoutWithRenameAlert
+                .sheet(isPresented: $gameActions.showCoreOptionsSheet) {
+                    if let className = gameActions.coreOptionsClassName,
+                       let coreClass = NSClassFromString(className) as? CoreOptional.Type {
+                        NavigationView {
+                            CoreOptionsDetailView(
+                                coreClass: coreClass,
+                                title: gameActions.coreOptionsCoreName ?? "Core Options",
+                                gameMD5: gameActions.coreOptionsGameMD5
+                            )
+                        }
+                    }
+                }
+        }
+
+        private var layoutWithAppearance: some View {
+            layoutWithCoreOptions
                 .preferredColorScheme(.dark)
                 .ignoresSafeArea(.all)
                 .hideHomeIndicator()
@@ -888,7 +905,7 @@ final class TVMediaLibraryModel: ObservableObject {
         scheduledRefresh?.cancel()
     }
 
-    private func loadSystems() async {
+    func loadSystems() async {
         let loaded: [PVSystem] = await Task.detached(priority: .userInitiated) {
             do {
                 let realm = try Realm()
@@ -1027,6 +1044,12 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
     /// Tracks the game for artwork operations (set before alert or sheet)
     @Published var gameForArtworkUpdate: PVGame?
 
+    /// Core Options sheet state
+    @Published var showCoreOptionsSheet = false
+    @Published var coreOptionsClassName: String?
+    @Published var coreOptionsCoreName: String?
+    @Published var coreOptionsGameMD5: String?
+
     private let retroModel = RetroGameLibraryViewModel()
 
     @MainActor
@@ -1103,6 +1126,61 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
             showArtworkSourceAlert = true
             #endif
         }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestCoreOptionsFor game: PVGame, coreClassName: String, coreName: String) {
+        Task { @MainActor in
+            coreOptionsClassName = coreClassName
+            coreOptionsCoreName = coreName
+            coreOptionsGameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
+            showCoreOptionsSheet = true
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestExportSavesFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        Task { @MainActor in
+            do {
+                let url = try await SaveExporter.shared.exportSaves(for: frozenGame)
+                let exportsDir = URL.cachesPath.appendingPathComponent("Exports", isDirectory: true)
+                try FileManager.default.createDirectory(at: exportsDir, withIntermediateDirectories: true)
+                let destURL = exportsDir.appendingPathComponent(url.lastPathComponent)
+                if FileManager.default.fileExists(atPath: destURL.path) {
+                    try FileManager.default.removeItem(at: destURL)
+                }
+                try FileManager.default.moveItem(at: url, to: destURL)
+                ILOG("Saves exported to Exports/\(url.lastPathComponent)")
+            } catch {
+                ELOG("Export saves failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestExportSRAMFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        let frozenGame = game.isFrozen ? game : game.freeze()
+        Task { @MainActor in
+            do {
+                let url = try await SaveExporter.shared.exportSRAM(for: frozenGame)
+                let exportsDir = URL.cachesPath.appendingPathComponent("Exports", isDirectory: true)
+                try FileManager.default.createDirectory(at: exportsDir, withIntermediateDirectories: true)
+                let destURL = exportsDir.appendingPathComponent(url.lastPathComponent)
+                if FileManager.default.fileExists(atPath: destURL.path) {
+                    try FileManager.default.removeItem(at: destURL)
+                }
+                try FileManager.default.moveItem(at: url, to: destURL)
+                ILOG("SRAM exported to Exports/\(url.lastPathComponent)")
+            } catch {
+                ELOG("Export SRAM failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDownloadFromCloudFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        let menu = GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: self)
+        menu.downloadGameFromCloud()
     }
 }
 
@@ -2666,6 +2744,12 @@ struct TVMediaHomeView: View {
     private func loadAllGames() async {
         isLoading = true
         defer { isLoading = false }
+
+        // Ensure systems are loaded before iterating — .onAppear refresh() races with .task
+        if model.systems.isEmpty {
+            await model.loadSystems()
+        }
+
         // Load systems with a small concurrency cap to reduce startup time
         // without overwhelming Realm or the device on setups with many systems.
         let maxConcurrentLoads = 4
