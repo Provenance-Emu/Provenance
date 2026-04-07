@@ -705,13 +705,17 @@ public extension CoreLoader {
             $0.deletingPathExtension().lastPathComponent.hasSuffix(".libretro")
         }
 
+        /// Case-insensitive match: APFS can surface mixed casing; identifiers from Core.plist are canonical.
+        let knownLower = Set(knownIdentifiers.map { $0.lowercased() })
+
         let orphans = libretroFrameworks.filter { url in
-            /// Framework dirname IS the identifier (e.g. "scummvm.libretro.framework")
-            !knownIdentifiers.contains(url.lastPathComponent)
+            let resolved = url.resolvingSymlinksInPath()
+            let component = resolved.lastPathComponent
+            return !knownLower.contains(component.lowercased())
         }
 
         if !orphans.isEmpty {
-            let names = orphans.map { $0.deletingPathExtension().lastPathComponent }
+            let names = orphans.map { $0.resolvingSymlinksInPath().deletingPathExtension().lastPathComponent }
             WLOG("DynamicLibretroScanner: \(orphans.count) orphan libretro framework(s) not mapped to any system: \(names)")
             assertionFailure("Orphan libretro cores found in bundle — these add to app size but serve no purpose: \(names)")
         }
