@@ -427,11 +427,16 @@ public struct RetroSaveSelectionAlertView: View {
                     )
             )
         }
-        #if os(tvOS)
-        .buttonStyle(TVMediaCardButtonStyle())
-        .tvOSDisableFocusEffect()
-        .focused($focusedItemId, equals: "quick-continue")
-        #endif
+#if os(tvOS)
+        .retroFocusableButton(
+            focused: $focusedItemId,
+            equals: save.id,
+            focusScale: 1.03,
+            cornerRadius: 10,
+            glowRadius: 8,
+            showBorder: false
+        )
+#endif
     }
 
     @ViewBuilder
@@ -520,9 +525,10 @@ public struct RetroSaveSelectionAlertView: View {
         .retroFocusableButton(
             focused: $focusedItemId,
             equals: save.id,
-            focusScale: 1.15,
+            focusScale: 1.05,
             cornerRadius: 8,
-            glowRadius: 8
+            glowRadius: 8,
+            showBorder: false
         )
         #endif
     }

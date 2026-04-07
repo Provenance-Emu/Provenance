@@ -115,7 +115,9 @@ public struct SmartCoreSelectionView: View {
             // Dimmed background
             Color.black.opacity(0.85)
                 .edgesIgnoringSafeArea(.all)
+                #if !os(tvOS)
                 .onTapGesture { dismiss() }
+                #endif
 
             VStack(spacing: 0) {
                 headerView
@@ -169,7 +171,9 @@ public struct SmartCoreSelectionView: View {
                 focusedItemId = items.first?.id
                 #endif
             }
+            .tvOSDisableFocusEffect()
         }
+        .tvOSDisableFocusEffect()
     }
 
     // MARK: - Subviews
@@ -228,10 +232,8 @@ public struct SmartCoreSelectionView: View {
                         .stroke(Color.retroPink.opacity(0.5), lineWidth: 1)
                 )
         }
-        .buttonStyle(.plain)
-        #if os(tvOS)
+        .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
-        #endif
     }
 
     // MARK: - Helpers
@@ -275,10 +277,8 @@ private struct CoreSelectionCard: View {
             .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isItemFocused)
             #endif
         }
-        .buttonStyle(.plain)
-        #if os(tvOS)
+        .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
-        #endif
         .contextMenu {
             if showSetDefault {
                 Button {

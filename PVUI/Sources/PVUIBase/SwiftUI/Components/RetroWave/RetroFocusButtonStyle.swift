@@ -350,6 +350,7 @@ public struct RetroFocusableButtonModifier<FocusValue: Hashable>: ViewModifier {
     let primaryColor: Color
     let secondaryColor: Color
     let glowRadius: CGFloat
+    let showBorder: Bool
 
     private var isFocused: Bool {
         focusBinding.wrappedValue == focusValue
@@ -374,11 +375,15 @@ public struct RetroFocusableButtonModifier<FocusValue: Hashable>: ViewModifier {
             .focused(focusBinding, equals: focusValue)
             .scaleEffect(isFocused ? focusScale : 1.0)
             .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .strokeBorder(
-                        isFocused ? focusBorderGradient : clearGradient,
-                        lineWidth: isFocused ? focusBorderWidth : 0
-                    )
+                Group {
+                    if showBorder {
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .strokeBorder(
+                                isFocused ? focusBorderGradient : clearGradient,
+                                lineWidth: isFocused ? focusBorderWidth : 0
+                            )
+                    }
+                }
             )
             .shadow(
                 color: isFocused ? primaryColor.opacity(0.6) : .clear,
@@ -409,7 +414,8 @@ public extension View {
         cornerRadius: CGFloat = 12,
         primaryColor: Color = .retroPink,
         secondaryColor: Color = .retroBlue,
-        glowRadius: CGFloat = 10
+        glowRadius: CGFloat = 10,
+        showBorder: Bool = true
     ) -> some View {
         #if os(tvOS)
         if #available(tvOS 16.0, *) {
@@ -421,7 +427,8 @@ public extension View {
                 cornerRadius: cornerRadius,
                 primaryColor: primaryColor,
                 secondaryColor: secondaryColor,
-                glowRadius: glowRadius
+                glowRadius: glowRadius,
+                showBorder: showBorder
             ))
         } else {
             self.buttonStyle(.plain)
