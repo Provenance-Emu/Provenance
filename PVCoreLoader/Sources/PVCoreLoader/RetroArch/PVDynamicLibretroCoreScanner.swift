@@ -176,8 +176,25 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
     ) -> [DiscoveredLibretroCore] {
         ILOG("DynamicLibretroScanner: starting scan (knownIdentifiers: \(knownIdentifiers.count))")
 
-        let candidates = collectCandidateExecutables()
-        ILOG("DynamicLibretroScanner: \(candidates.count) candidate paths found")
+        let allCandidates = collectCandidateExecutables()
+        ILOG("DynamicLibretroScanner: \(allCandidates.count) candidate executables found")
+        guard !allCandidates.isEmpty else { return [] }
+
+        /// Pre-filter: derive the synthetic identifier from the framework
+        /// directory name and skip candidates already covered by static plists.
+        /// The framework dirname (e.g. "scummvm.libretro.framework") matches the
+        /// identifier format used in PVRetroArch/Core.plist sub-cores.
+        let candidates = allCandidates.filter { url in
+            let id = Self.syntheticIdentifier(fromExecutableURL: url)
+            if knownIdentifiers.contains(id) {
+                DLOG("DynamicLibretroScanner: skipping known core \(id) (pre-filter)")
+                return false
+            }
+            return true
+        }
+
+        let skippedCount = allCandidates.count - candidates.count
+        ILOG("DynamicLibretroScanner: \(skippedCount) already known, \(candidates.count) need probing")
         guard !candidates.isEmpty else { return [] }
 
         // ── Load disk cache ────────────────────────────────────────────────
@@ -196,7 +213,6 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
             if let entry = diskCache.entries[path],
                let mtime,
                abs(entry.modificationDate.timeIntervalSince(mtime)) < 1 {
-                // Cache hit — reconstruct without dlopen
                 let core = DiscoveredLibretroCore(
                     executablePath:  url,
                     libraryName:     entry.libraryName,
@@ -213,24 +229,16 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
         ILOG("DynamicLibretroScanner: \(cacheHits.count) cache hits, \(cacheMisses.count) need dlopen")
 
         // ── Probe cache misses concurrently ───────────────────────────────
-        // dlopen/dlclose are thread-safe on Darwin.
-        // We use a utility-QoS serial queue as the coordinator but spin probes
-        // off into a background-QoS concurrent pool via DispatchQueue.concurrentPerform.
-        // Using .background QoS keeps the probes from stealing CPU from the main
-        // thread's render loop while bootup animations are running.
         let probedResults = OSAllocatedUnfairLock<[(URL, DiscoveredLibretroCore)]>(initialState: [])
 
         if !cacheMisses.isEmpty {
             let total = candidates.count
             let completedCount = OSAllocatedUnfairLock<Int>(initialState: cacheHits.count)
 
-            // Report initial progress for cache hits
             if let onProgress, !cacheHits.isEmpty {
                 onProgress(cacheHits.count, total, "")
             }
 
-            // Try Mach-O fast-path first (no code-signing overhead) — falls through to
-            // dlopen only when the fast path cannot extract the info.
             let probeQueue = DispatchQueue(label: "com.provenance.libretro-probe",
                                            qos: .background,
                                            attributes: .concurrent)
@@ -241,7 +249,6 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
                     defer { group.leave() }
                     let url = cacheMisses[i]
                     let coreName = url.deletingLastPathComponent().lastPathComponent
-                    // Fast-path: try Mach-O string extraction without dlopen
                     let core = self.probeMachO(executableURL: url) ?? self.probe(executableURL: url)
                     if let core = core {
                         probedResults.withLock { $0.append((url, core)) }
@@ -252,7 +259,6 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
             }
             group.wait()
 
-            // Update disk cache with newly probed results
             for (url, core) in probedResults.withLock({ $0 }) {
                 let path = url.path
                 let mtime = (try? fm.attributesOfItem(atPath: path))?[.modificationDate] as? Date ?? Date()
@@ -270,16 +276,12 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
 
         if cacheModified { saveDiskCache(diskCache) }
 
-        // ── Merge all results into in-memory store ─────────────────────────
+        // ── Merge results into in-memory store ────────────────────────────
         let allCores = cacheHits + probedResults.withLock({ $0 }).map { $0.1 }
         var newCores: [DiscoveredLibretroCore] = []
 
         for core in allCores {
             let id = core.syntheticIdentifier
-            guard !knownIdentifiers.contains(id) else {
-                DLOG("DynamicLibretroScanner: skipping known core \(id)")
-                continue
-            }
             let inserted = discoveredStorage.withLock { cache -> Bool in
                 guard cache[id] == nil else { return false }
                 cache[id] = core
@@ -291,8 +293,23 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
             }
         }
 
-        ILOG("DynamicLibretroScanner: scan complete — \(newCores.count) new cores, \(cacheHits.count) from cache")
+        ILOG("DynamicLibretroScanner: scan complete — \(newCores.count) new cores")
         return newCores
+    }
+
+    /// Derives a synthetic identifier from an executable's path without probing.
+    ///
+    /// For framework executables the parent dir IS the identifier:
+    ///   `Frameworks/scummvm.libretro.framework/scummvm.libretro` → `"scummvm.libretro.framework"`
+    /// For bare dylibs, constructs an identifier from the filename:
+    ///   `Frameworks/mgba_libretro_ios.dylib` → `"mgba_libretro_ios.libretro.framework"`
+    static func syntheticIdentifier(fromExecutableURL url: URL) -> String {
+        let parentDir = url.deletingLastPathComponent().lastPathComponent
+        if parentDir.hasSuffix(".framework") {
+            return parentDir
+        }
+        let stem = url.deletingPathExtension().lastPathComponent
+        return "\(stem).libretro.framework"
     }
 
     /// Clears the on-disk probe cache. Call when frameworks are updated or for debugging.
@@ -369,16 +386,20 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
         }
     }
 
-    /// Collects all `.dylib` or `*.libretro.framework` executable URLs from
-    /// the app bundle's `Frameworks/` directory.
+    /// Collects libretro executable URLs from the app bundle's `Frameworks/` directory.
+    ///
+    /// Only considers `.dylib` files containing "libretro" in their name and
+    /// `*.libretro.framework` bundles. Search paths are deduplicated to avoid
+    /// scanning the same directory twice (iOS's `privateFrameworksURL` is `Frameworks/`).
     private func collectCandidateExecutables() -> [URL] {
         var candidates: [URL] = []
         let fm = FileManager.default
 
-        let searchBases: [URL] = [
+        /// Deduplicate search paths — on iOS both resolve to the same Frameworks/ dir
+        let searchBases: [URL] = Array(Set([
             Bundle.main.bundleURL.appendingPathComponent("Frameworks"),
             Bundle.main.privateFrameworksURL,
-        ].compactMap { $0 }
+        ].compactMap { $0?.standardizedFileURL }))
 
         for base in searchBases {
             guard fm.fileExists(atPath: base.path) else { continue }
@@ -390,21 +411,22 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
                 )
                 for url in contents {
                     if url.pathExtension == "dylib" {
+                        let name = url.deletingPathExtension().lastPathComponent
+                        guard name.contains("libretro") else { continue }
                         candidates.append(url)
                         continue
                     }
                     if url.pathExtension == "framework" {
                         let frameworkName = url.deletingPathExtension().lastPathComponent
-                        if frameworkName.hasSuffix(".libretro") {
-                            if let bundle = Bundle(url: url),
-                               let exec = bundle.executableURL,
-                               fm.fileExists(atPath: exec.path) {
-                                candidates.append(exec)
-                            } else {
-                                let direct = url.appendingPathComponent(frameworkName)
-                                if fm.fileExists(atPath: direct.path) {
-                                    candidates.append(direct)
-                                }
+                        guard frameworkName.hasSuffix(".libretro") else { continue }
+                        if let bundle = Bundle(url: url),
+                           let exec = bundle.executableURL,
+                           fm.fileExists(atPath: exec.path) {
+                            candidates.append(exec)
+                        } else {
+                            let direct = url.appendingPathComponent(frameworkName)
+                            if fm.fileExists(atPath: direct.path) {
+                                candidates.append(direct)
                             }
                         }
                     }
@@ -633,15 +655,19 @@ public extension CoreLoader {
         onProgress: (@Sendable (_ completed: Int, _ total: Int, _ currentName: String) -> Void)? = nil
     ) -> [EmulatorCoreInfoPlist] {
 
-        guard PVDynamicLibretroCoreScanner.isFeatureEnabled else {
-            ILOG("DynamicLibretroScanner: disabled via feature flag — skipping scan")
-            return plists
-        }
-
         var knownIds: Set<String> = []
         for plist in plists {
             knownIds.insert(plist.identifier)
             plist.subCores?.forEach { knownIds.insert($0.identifier) }
+        }
+
+        #if DEBUG
+        diagnosOrphanCores(knownIdentifiers: knownIds)
+        #endif
+
+        guard PVDynamicLibretroCoreScanner.isFeatureEnabled else {
+            ILOG("DynamicLibretroScanner: disabled via feature flag — skipping scan")
+            return plists
         }
 
         let scanner = PVDynamicLibretroCoreScanner.shared
@@ -658,6 +684,38 @@ public extension CoreLoader {
         ILOG("DynamicLibretroScanner: merging \(syntheticParent.subCores?.count ?? 0) thin-wrapper sub-cores into plist")
         return deduplicated + [syntheticParent]
     }
+
+    #if DEBUG
+    /// Logs libretro frameworks in the bundle that aren't mapped to any system,
+    /// indicating wasted bundle size. Only runs in DEBUG builds.
+    internal static func diagnosOrphanCores(knownIdentifiers: Set<String>) {
+        let fm = FileManager.default
+        let frameworksURL = Bundle.main.bundleURL.appendingPathComponent("Frameworks")
+        guard fm.fileExists(atPath: frameworksURL.path) else { return }
+
+        guard let contents = try? fm.contentsOfDirectory(
+            at: frameworksURL,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ) else { return }
+
+        let libretroFrameworks = contents.filter {
+            $0.pathExtension == "framework" &&
+            $0.deletingPathExtension().lastPathComponent.hasSuffix(".libretro")
+        }
+
+        let orphans = libretroFrameworks.filter { url in
+            /// Framework dirname IS the identifier (e.g. "scummvm.libretro.framework")
+            !knownIdentifiers.contains(url.lastPathComponent)
+        }
+
+        if !orphans.isEmpty {
+            let names = orphans.map { $0.deletingPathExtension().lastPathComponent }
+            WLOG("DynamicLibretroScanner: \(orphans.count) orphan libretro framework(s) not mapped to any system: \(names)")
+            assertionFailure("Orphan libretro cores found in bundle — these add to app size but serve no purpose: \(names)")
+        }
+    }
+    #endif
 }
 
 // ---------------------------------------------------------------------------
