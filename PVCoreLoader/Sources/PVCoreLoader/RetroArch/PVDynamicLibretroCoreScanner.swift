@@ -663,6 +663,7 @@ public extension CoreLoader {
 
         #if DEBUG
         diagnosOrphanCores(knownIdentifiers: knownIds)
+        diagnoseMissingCoreFrameworks(plists: plists)
         #endif
 
         guard PVDynamicLibretroCoreScanner.isFeatureEnabled else {
@@ -713,6 +714,40 @@ public extension CoreLoader {
             let names = orphans.map { $0.deletingPathExtension().lastPathComponent }
             WLOG("DynamicLibretroScanner: \(orphans.count) orphan libretro framework(s) not mapped to any system: \(names)")
             assertionFailure("Orphan libretro cores found in bundle — these add to app size but serve no purpose: \(names)")
+        }
+    }
+
+    /// Logs sub-cores declared in plists that are enabled but missing their
+    /// framework from the bundle — meaning the user sees a core option that
+    /// will fail at runtime. Catches build script omissions early.
+    internal static func diagnoseMissingCoreFrameworks(plists: [EmulatorCoreInfoPlist]) {
+        let fm = FileManager.default
+        let frameworksURL = Bundle.main.bundleURL.appendingPathComponent("Frameworks")
+
+        let isAppStore = Bundle.main.infoDictionary?["PVAppType"] as? String ?? ""
+        let appStoreMode = isAppStore.lowercased().contains("appstore")
+
+        var missing: [String] = []
+
+        for plist in plists {
+            for subCore in plist.subCores ?? [] {
+                guard !subCore.disabled else { continue }
+                if appStoreMode && subCore.appStoreDisabled { continue }
+                guard subCore.identifier.contains(".libretro") else { continue }
+
+                /// The identifier IS the framework dirname (e.g. "scummvm.libretro.framework")
+                let frameworkDir = frameworksURL.appendingPathComponent(subCore.identifier)
+                if !fm.fileExists(atPath: frameworkDir.path) {
+                    missing.append(subCore.identifier)
+                }
+            }
+        }
+
+        if !missing.isEmpty {
+            WLOG("CoreLoader: \(missing.count) enabled sub-core(s) missing their framework from bundle: \(missing)")
+            assertionFailure("Enabled libretro sub-cores missing from Frameworks/ — build scripts may have missed them: \(missing)")
+        } else {
+            ILOG("CoreLoader: all enabled libretro sub-cores have matching frameworks in bundle")
         }
     }
     #endif
