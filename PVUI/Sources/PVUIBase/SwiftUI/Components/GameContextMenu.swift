@@ -392,7 +392,7 @@ extension GameContextMenu {
         }
     }
     /// Download a game from CloudKit with progress tracking UI
-    func downloadGameFromCloud() {
+    public func downloadGameFromCloud() {
         guard !game.isInvalidated, let recordID = game.cloudRecordID else { return }
 
         let gameTitle = game.title
