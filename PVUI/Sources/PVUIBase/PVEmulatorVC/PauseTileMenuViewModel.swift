@@ -121,7 +121,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         // Broadcast — feature-flagged, iOS + tvOS
         var recordingTiles: [PauseMenuTile] = []
         #if os(iOS) || os(tvOS)
-        if featureFlags.liveBroadcast || PVFeatureFlagsManager.shared.liveBroadcast {
+        if featureFlags.liveBroadcast || featureFlags.liveBroadcast {
             let isBcast = emulatorVC.isBroadcasting
             recordingTiles.append(PauseMenuTile(
                 id: "broadcast",
@@ -133,7 +133,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
         // Save Clip — feature-flagged, only visible when clip buffering is active
-        if (featureFlags.clipBuffering || PVFeatureFlagsManager.shared.clipBuffering) && emulatorVC.isClipBufferingActive {
+        if (featureFlags.clipBuffering || featureFlags.clipBuffering) && emulatorVC.isClipBufferingActive {
             recordingTiles.append(PauseMenuTile(
                 id: "saveClip",
                 icon: "scissors.badge.ellipsis",
@@ -182,8 +182,11 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         gameTiles.append(PauseMenuTile(id: "gameInfo", icon: "info.circle", label: String(localized: "Game Info"), colorKey: .blue))
 
+        let usingThinWrapper = featureFlags.dynamicLibretroScanner
+        
         // RetroArch — libretro cores only
-        if emulatorVC.core.coreIdentifier?.contains("libretro") == true {
+        if emulatorVC.core.coreIdentifier?.contains("libretro") == true,
+            !usingThinWrapper {
             settingsTiles.append(PauseMenuTile(
                 id: "retroArchMenu",
                 icon: "square.grid.2x2",
@@ -222,7 +225,7 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         // AirPlay — iOS / Catalyst only; hidden until video AirPlay is implemented
         #if os(iOS) || targetEnvironment(macCatalyst)
-        if featureFlags.airPlayMenu || PVFeatureFlagsManager.shared.airPlayMenu {
+        if featureFlags.airPlayMenu || featureFlags.airPlayMenu {
             settingsTiles.append(PauseMenuTile(
                 id: "airPlay",
                 icon: "airplayaudio",
@@ -238,7 +241,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         var controlsTiles: [PauseMenuTile] = []
         controlsTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"), isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
 
-        if (featureFlags.netplayEnabled || PVFeatureFlagsManager.shared.netplayEnabled) && Self.coreSupportsNetplay(emulatorVC) {
+        if (featureFlags.netplayEnabled || featureFlags.netplayEnabled) && Self.coreSupportsNetplay(emulatorVC) {
             gameTiles.append(PauseMenuTile(
                 id: "networkPlay",
                 icon: "antenna.radiowaves.left.and.right",
@@ -250,7 +253,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
 
         #if os(iOS) || targetEnvironment(macCatalyst)
-        if featureFlags.companionController || PVFeatureFlagsManager.shared.companionController {
+        if featureFlags.companionController || featureFlags.companionController {
             controlsTiles.append(PauseMenuTile(
                 id: "companionController",
                 icon: "iphone.and.arrow.forward",
@@ -378,7 +381,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         // Showing it for all N64 games is misleading — most games don't use the Transfer Pak.
         let gameTitle = emulatorVC.game?.title ?? ""
         if let transferCore = emulatorVC.core as? TransferPakSupport,
-           featureFlags.mupenTransferPak || PVFeatureFlagsManager.shared.mupenTransferPak,
+           featureFlags.mupenTransferPak || featureFlags.mupenTransferPak,
            transferCore.transferPakSlotCount > 0 {
             // Count configured slots in one pass; reuse for both the visibility guard and
             // the badge label to avoid calling transferPakROM(forPort:) more than once per slot.
