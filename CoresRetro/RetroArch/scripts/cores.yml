@@ -9,8 +9,8 @@
 # PVCoreIdentifier mapping (must match PVRetroArch/Core.plist PVCores entries):
 #   YAML `name` uses underscores; the bundled framework id uses dots, e.g.
 #   mednafen_psx -> mednafen.psx.libretro.framework
-# Cores not listed in Core.plist should use enabled: false so buildbot dylibs are
-# not pulled until the meta core manifest is updated.
+# Cores not listed in Core.plist, or listed with PVDisabled (no importer support),
+# should use enabled: false so buildbot dylibs are not pulled into generated lists.
 #
 # Fields per core entry:
 #   name      - core name (used to derive filenames)
@@ -41,13 +41,12 @@ cores:
 
   # --- Listed in PVRetroArch/Core.plist (RetroArch meta core) ---
 
-  # Globally disabled cores (commented out in all files)
   - name: snes9x
-    # Super Nintendo — disabled here; other SNES cores in plist
+    # Super Nintendo (canonical Snes9x) — must stay enabled if listed in Core.plist
     ios: true
     tvos: true
     appstore: true
-    enabled: false
+    enabled: true
 
   # App Store exclusions — present in sideload builds, commented in appstore builds
   - name: dolphin
@@ -166,6 +165,12 @@ cores:
     enabled: true
   - name: dosbox_pure
     # DOS / PC
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+  - name: ecwolf
+    # Wolfenstein 3D (ECWolf)
     ios: true
     tvos: true
     appstore: true
@@ -664,9 +669,9 @@ cores:
     appstore: false
     enabled: true
     appstore_excluded_reason: "PVAppStoreDisabled in Core.plist — not bundled for App Store"
-  # TIC-80 — not yet available on the buildbot (2026-03); enable when added
+  # TIC-80 — libretro iOS/tvOS buildbot has no tic80 zip (HTTP 404); Core.plist uses PVDisabled
   - name: tic80
-    # TIC-80 (not on buildbot)
+    # TIC-80 — keep disabled until buildbot publishes dylibs
     ios: true
     tvos: true
     appstore: true
@@ -732,6 +737,36 @@ cores:
     tvos: true
     appstore: true
     enabled: true
+  - name: vice_x64sc
+    # Commodore 64 (VICE x64sc) — C64 PVSupportedExtensions
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+  - name: vice_xplus4
+    # Commodore Plus/4 — shared Commodore disk extensions with C64 in importer
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+  - name: virtualxt
+    # IBM PC/XT — DOS PVSupportedExtensions (img, ima, etc.)
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+  - name: nekop2
+    # PC-98 (Neko Project II) — PC98 PVSupportedExtensions
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+  - name: mrboom
+    # Bomberman-like — contentless (no ROM)
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
   - name: virtualjaguar
     # Atari Jaguar
     ios: true
@@ -757,7 +792,7 @@ cores:
     appstore: true
     enabled: true
 
-  # --- Not in Core.plist (fetch disabled until added to Core.plist) ---
+  # --- In Core.plist but PVDisabled (no matching Provenance importer extensions yet; keep enabled: false) ---
 
   - name: mcsoftserve
     # Homebrew server — not in Core.plist
@@ -767,26 +802,20 @@ cores:
     enabled: false
     appstore_excluded_reason: "Not approved for App Store distribution"
 
-  - name: dice
-    # Discrete-logic arcade — not in Core.plist
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: false
   - name: dinothawr
-    # Puzzle — not in Core.plist
+    # Puzzle — plist PVDisabled (requires game data; not contentless in Provenance sense)
     ios: true
     tvos: true
     appstore: true
     enabled: false
   - name: galaksija
-    # Galaksija — not in Core.plist
+    # Galaksija — plist PVDisabled (tape format not in importer)
     ios: true
     tvos: true
     appstore: true
     enabled: false
   - name: gw
-    # Game & Watch — not in Core.plist
+    # Game & Watch — plist PVDisabled (.mgw not in importer)
     ios: true
     tvos: true
     appstore: true
@@ -797,26 +826,8 @@ cores:
     tvos: true
     appstore: true
     enabled: false
-  - name: mrboom
-    # Bomberman-like — not in Core.plist
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: false
-  - name: nekop2
-    # PC-98 — not in Core.plist
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: false
-  - name: pocketcdg
-    # Karaoke CDG — not in Core.plist
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: false
   - name: px68k
-    # Sharp X68000 — not in Core.plist
+    # Sharp X68000 — plist PVDisabled (no X68000 system / extensions in importer)
     ios: true
     tvos: true
     appstore: true
@@ -834,43 +845,25 @@ cores:
     appstore: false
     enabled: false
   - name: vemulator
-    # VMU — not in Core.plist
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: false
-  - name: vice_x64sc
-    # Commodore 64 (x64sc) — not in Core.plist
+    # Dreamcast VMU — plist PVDisabled (.vms etc. not on Dreamcast PVSupportedExtensions)
     ios: true
     tvos: true
     appstore: true
     enabled: false
   - name: vice_xcbm2
-    # Commodore CBM-II — not in Core.plist
+    # Commodore CBM-II — plist PVDisabled (media not covered by C64 importer list)
     ios: true
     tvos: true
     appstore: true
     enabled: false
   - name: vice_xcbm5x0
-    # Commodore PET/CBM5x0 — not in Core.plist
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: false
-  - name: vice_xplus4
-    # Commodore Plus/4 — not in Core.plist
+    # Commodore PET/CBM5x0 — plist PVDisabled (PET-specific media not in importer)
     ios: true
     tvos: true
     appstore: true
     enabled: false
   - name: vircon32
     # Vircon32 — not in Core.plist
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: false
-  - name: virtualxt
-    # PC/XT — not in Core.plist
     ios: true
     tvos: true
     appstore: true

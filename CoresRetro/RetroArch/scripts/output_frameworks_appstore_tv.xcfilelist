@@ -16,7 +16,6 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_mercury_balanced_libretro_tvos.fra
 $(SRCROOT)/CoresRetro/RetroArch/modules/bsnes_performance_accuracy_libretro_tvos.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/cap32_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/desmume_libretro_ios.framework
-$(SRCROOT)/CoresRetro/RetroArch/modules/dice_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/dinothawr_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/dosbox_pure_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/fbalpha2012_cps1_libretro_ios.framework
@@ -83,7 +82,6 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/opera_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/parallel_n64_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/pcsx_rearmed_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/play_libretro_ios.framework
-$(SRCROOT)/CoresRetro/RetroArch/modules/pocketcdg_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/pokemini_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/potator_libretro_ios.framework
 $(SRCROOT)/CoresRetro/RetroArch/modules/ppsspp_libretro.framework
