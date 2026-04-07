@@ -624,7 +624,13 @@ public extension Defaults.Keys {
     static let cloudKitSyncFrequency = Key<CloudKitSyncFrequency>("cloudKitSyncFrequency", default: .fifteenMinutes)
 
     /// Content types to sync
+    /// tvOS defaults to metadataOnly — limited storage means ROMs download on-demand when launched.
+    /// Users can change this in settings if they prefer automatic downloads.
+    #if os(tvOS)
+    static let cloudKitSyncContentType = Key<CloudKitSyncContentType>("cloudKitSyncContentType", default: .metadataOnly)
+    #else
     static let cloudKitSyncContentType = Key<CloudKitSyncContentType>("cloudKitSyncContentType", default: .all)
+    #endif
 
     /// Pause sync when device is charging only
     static let cloudKitSyncOnlyWhenCharging = Key<Bool>("cloudKitSyncOnlyWhenCharging", default: false)

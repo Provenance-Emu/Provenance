@@ -18,6 +18,8 @@ import RealmSwift // Ensure RealmSwift is imported for error codes
 import PVLookup
 import PVLookupTypes
 import PVMediaCache
+import PVSettings
+import Defaults
 
 // Define the type for the retry function
 public typealias CloudKitRetryOperation<T> = (_ operation: @escaping () async throws -> T, _ maxRetries: Int, _ progressTracker: SyncProgressTracker?) async throws -> T
@@ -205,7 +207,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             }
 
             // PHASE 2: Queue background downloads with intelligent prioritization
-            if !gamesNeedingDownload.isEmpty {
+            // When content type is metadataOnly (default on tvOS), skip bulk ROM downloads.
+            // Games still appear in the library with a cloud badge and download on-demand when launched.
+            if Defaults[.cloudKitSyncContentType] == .metadataOnly {
+                syncLog.event(.download, item: "loadAllFromCloud/phase2", status: .skipped, detail: "metadataOnly — \(gamesNeedingDownload.count) games visible, downloads on-demand only")
+            } else if !gamesNeedingDownload.isEmpty {
                 syncLog.event(.download, item: "loadAllFromCloud/phase2", status: .inProgress, detail: "\(gamesNeedingDownload.count) games queued")
                 await queueGamesForDownloadWithSpaceManagement(gamesNeedingDownload)
             } else {
