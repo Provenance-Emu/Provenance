@@ -180,6 +180,7 @@ public struct SmartCoreSelectionView: View {
         #if os(tvOS) || os(iOS)
         coreSelectionCard(for: item, isItemFocused: focusedItemId == item.id)
             .focused($focusedItemId, equals: item.id)
+            .tvOSDisableFocusEffect()
         #else
         coreSelectionCard(for: item, isItemFocused: false)
         #endif
