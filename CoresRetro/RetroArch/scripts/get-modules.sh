@@ -217,6 +217,46 @@ prune_dylibs_not_in_manifest() {
 }
 prune_dylibs_not_in_manifest "${EFFECTIVE_MODULE_LIST}" "${CORES_DIR}"
 
+# Even when PLATFORM_CHANGED=0, modules/ can still contain the other platform's dylibs
+# (interrupted switch, manual copy, or a previous run that exited before purge). That
+# breaks make_frameworks_retroarch.sh (non-deterministic find order → wrong Mach-O in
+# *.libretro.framework) and causes DEBUG orphan assertions. Always drop stale suffixes.
+remove_stale_other_platform_dylibs() {
+	local mod_dir="$1"
+	local plat="$2"
+	local removed=0
+	local f base keep_local
+	for f in "${mod_dir}/"*.dylib; do
+		[ -f "$f" ] || continue
+		base=$(basename "$f")
+		keep_local=0
+		for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
+			case "$base" in ${pat}*) keep_local=1; break ;; esac
+		done
+		[ "$keep_local" = "1" ] && continue
+		case "$base" in
+			*_ios.dylib)
+				if [ "$plat" = "tvos" ]; then
+					echo "GetModule: removing stale iOS dylib after destination switch: ${base}"
+					rm -f "$f"
+					removed=$((removed + 1))
+				fi
+				;;
+			*_tvos.dylib)
+				if [ "$plat" = "ios" ]; then
+					echo "GetModule: removing stale tvOS dylib after destination switch: ${base}"
+					rm -f "$f"
+					removed=$((removed + 1))
+				fi
+				;;
+		esac
+	done
+	if [ "$removed" -gt 0 ]; then
+		echo "GetModule: removed ${removed} other-platform dylib(s) — mixed modules/ cleaned for current platform '${plat}'"
+	fi
+}
+remove_stale_other_platform_dylibs "${CORES_DIR}" "${CURRENT_PLATFORM}"
+
 # Fast-path: when the platform is known (active_platform.txt exists), unchanged,
 # the pin is unchanged, the timestamp is still fresh (no download due), and ≥80%
 # of expected dylibs are already present, skip both the purge and extraction.

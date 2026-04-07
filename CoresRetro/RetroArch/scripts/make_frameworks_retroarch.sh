@@ -133,9 +133,35 @@ dylib_matches_filter_list() {
     return 1
 }
 
+# Only consume dylibs for the Xcode destination being built. If both *_ios and *_tvos
+# dylibs are present in modules/ (stale mixed tree), find order is non-deterministic and
+# the wrong binary can end up in a *.libretro.framework — and orphan diagnostics explode.
+dylib_matches_current_platform() {
+    local b="$1"
+    case "$b" in
+        *_ios.dylib)
+            [ "$PLATFORM_FAMILY_NAME" = "iOS" ] && return 0
+            return 1
+            ;;
+        *_tvos.dylib)
+            [ "$PLATFORM_FAMILY_NAME" = "tvOS" ] && return 0
+            return 1
+            ;;
+        *)
+            # Neutral names (e.g. dolphin_libretro.dylib, ppsspp_libretro.dylib)
+            return 0
+            ;;
+    esac
+}
+
 FW_FILTER=0
 for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$') ; do
     DYLIB_BASE=$(basename "$dylib")
+
+    if ! dylib_matches_current_platform "$DYLIB_BASE"; then
+        FW_FILTER=$((FW_FILTER + 1))
+        continue
+    fi
 
     # Skip dylibs not in the filter list (if a filter is active),
     # but always include locally-built dylibs matching LOCAL_DYLIB_PATTERNS.
@@ -233,6 +259,9 @@ mv "$NEW_CACHE_FILE" "$CACHE_FILE"
 EXPECTED_FW_TMP=$(mktemp)
 for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$') ; do
     DYLIB_BASE=$(basename "$dylib")
+    if ! dylib_matches_current_platform "$DYLIB_BASE"; then
+        continue
+    fi
     if [ -n "$FILTER_NAMES" ]; then
         IS_LOCAL=0
         for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
