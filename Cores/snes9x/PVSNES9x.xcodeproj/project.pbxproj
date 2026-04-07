@@ -789,11 +789,10 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${SRCROOT}/../../CoresRetro/RetroArch/modules/snes9x_libretro_tvos.dylib",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"appletvsimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n\ncd \"${SRCROOT}/cmake/buildTV/libretro\"\ncp snes9x_libretro_tvos.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/snes9x_libretro_tvos.dylib\"\n\nexit\n";
+			shellScript = "if [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"appletvsimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n\n# When snes9x is listed in RetroArch url manifests, get-modules.sh is the sole producer of this dylib — skip copy to avoid Xcode \"Multiple commands produce\".\nRA_SCRIPTS=\"${SRCROOT}/../../CoresRetro/RetroArch/scripts\"\nfor f in \"${RA_SCRIPTS}/urls-tv.txt\" \"${RA_SCRIPTS}/urls-appstore-tv.txt\"; do\n    [ -f \"${f}\" ] || continue\n    if grep -v '^[[:space:]]*#' \"${f}\" 2>/dev/null | grep -qF \"snes9x_libretro_tvos.dylib\"; then\n        echo \"PVSNES9x: snes9x tvOS dylib from get-modules — skip copy to modules\"\n        exit 0\n    fi\ndone\n\ncd \"${SRCROOT}/cmake/buildTV/libretro\"\ncp snes9x_libretro_tvos.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/snes9x_libretro_tvos.dylib\"\n\nexit\n";
 		};
 		934BE9A2296F081B00FB9933 /* Build SNES9X RetroArch */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -828,11 +827,10 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${SRCROOT}/../../CoresRetro/RetroArch/modules/snes9x_libretro_ios.dylib",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp \"${SRCROOT}/cmake/build/libretro/\"snes9x_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/\"snes9x_libretro_ios.dylib\nexit 0\n";
+			shellScript = "if [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n    exit 0\nfi\n\n# When snes9x is listed in RetroArch url manifests, get-modules.sh is the sole producer of this dylib — skip copy to avoid Xcode \"Multiple commands produce\".\nRA_SCRIPTS=\"${SRCROOT}/../../CoresRetro/RetroArch/scripts\"\nfor f in \"${RA_SCRIPTS}/urls.txt\" \"${RA_SCRIPTS}/urls-appstore.txt\"; do\n    [ -f \"${f}\" ] || continue\n    if grep -v '^[[:space:]]*#' \"${f}\" 2>/dev/null | grep -qF \"snes9x_libretro_ios.dylib\"; then\n        echo \"PVSNES9x: snes9x iOS dylib from get-modules — skip copy to modules\"\n        exit 0\n    fi\ndone\n\ncp \"${SRCROOT}/cmake/build/libretro/\"snes9x_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/\"snes9x_libretro_ios.dylib\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
