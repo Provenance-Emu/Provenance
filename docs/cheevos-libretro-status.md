@@ -193,7 +193,6 @@ The "RA Coverage" column describes upstream RetroAchievements *game database* co
 | `gearcoleco` | ColecoVision | Low | ✅ | |
 | `theodore` | Thomson MO/TO | None | ✅ | |
 | `dinothawr` | Puzzle (homebrew) | None | ✅ | |
-| `pocketcdg` | CD+G | None | ✅ | |
 | `gme` | Game Music (chiptunes) | None | ✅ | |
 | `gw` | Game & Watch | None | ✅ | |
 | `scummvm` | LucasArts / SCUMM | Low | ✅ | |
@@ -201,7 +200,6 @@ The "RA Coverage" column describes upstream RetroAchievements *game database* co
 | `tyrquake` | Quake | None | ✅ | |
 | `prboom` | Doom | None | ✅ | |
 | `2048` | 2048 (puzzle) | None | ✅ | |
-| `dice` | DICE (logic sim) | None | ✅ | |
 | `vircon32` | Vircon32 (homebrew) | None | ✅ | |
 | `wasm4` | WASM-4 (fantasy) | None | ✅ | |
 | `xrick` | Rick Dangerous | None | ✅ | |
