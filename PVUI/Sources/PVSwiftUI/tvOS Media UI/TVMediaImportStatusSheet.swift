@@ -34,6 +34,9 @@ struct TVMediaImportStatusSheet: View {
     @StateObject private var viewModel: ImportProgressViewModel
     @FocusState private var focusedItemID: String?
     @Namespace private var sheetNamespace
+
+    /// Drives `navigationDestination` for system selection rows.
+    @State private var systemSelectionItemID: UUID?
     
     init(gameImporter: any GameImporting, updatesController: PVGameLibraryUpdatesController, onDismiss: @escaping () -> Void) {
         self.gameImporter = gameImporter
@@ -43,44 +46,60 @@ struct TVMediaImportStatusSheet: View {
     }
     
     var body: some View {
-        ZStack {
-            // Background
-            TVMediaBackground()
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
-                // Header
-                header
-                    .padding(.horizontal, 60)
-                    .padding(.top, 50)
-                    .padding(.bottom, 30)
-                
-                // Content
-                if viewModel.importQueueItems.isEmpty && !viewModel.isSyncing {
-                    emptyState
-                } else {
-                    ScrollView {
-                        LazyVStack(spacing: 16) {
-                            // iCloud sync status
-                            if viewModel.isSyncing {
-                                iCloudSyncCard
-                            }
-                            
-                            // Import queue items
-                            ForEach(viewModel.importQueueItems) { item in
-                                importItemRow(item)
-                            }
-                        }
+        NavigationStack {
+            ZStack {
+                // Background
+                TVMediaBackground()
+                    .ignoresSafeArea()
+
+                VStack(spacing: 0) {
+                    // Header
+                    header
                         .padding(.horizontal, 60)
-                        .padding(.bottom, 60)
+                        .padding(.top, 50)
+                        .padding(.bottom, 30)
+
+                    // Content
+                    if viewModel.importQueueItems.isEmpty && !viewModel.isSyncing {
+                        emptyState
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: 16) {
+                                // iCloud sync status
+                                if viewModel.isSyncing {
+                                    iCloudSyncCard
+                                }
+
+                                // Import queue items
+                                ForEach(viewModel.importQueueItems) { item in
+                                    importItemRow(item)
+                                }
+                            }
+                            .padding(.horizontal, 60)
+                            .padding(.bottom, 60)
+                        }
+                        .tvMediaFocusSection()
                     }
-                    .tvMediaFocusSection()
                 }
             }
-        }
-        .tvMediaFocusScope(sheetNamespace)
-        .tvMediaOnExitCommand {
-            onDismiss()
+            .tvMediaFocusScope(sheetNamespace)
+            .tvMediaOnExitCommand {
+                onDismiss()
+            }
+            #if os(tvOS)
+            .navigationDestination(item: $systemSelectionItemID) { id in
+                if let item = viewModel.importQueueItems.first(where: { $0.id == id }) {
+                    SystemSelectionView(item: item, onSystemSelected: { system, queueItem in
+                        if gameImporter.processingState == .idle {
+                            gameImporter.startProcessing()
+                        }
+                    })
+                } else {
+                    Text("This import is no longer in the queue.")
+                        .foregroundStyle(.white.opacity(0.6))
+                }
+            }
+            #endif
         }
     }
     
@@ -260,7 +279,7 @@ struct TVMediaImportStatusSheet: View {
             // Action buttons for conflict resolution
             if case .conflict = item.status {
                 Button("Select System") {
-                    // Would present system picker
+                    systemSelectionItemID = item.id
                 }
                 .font(.system(size: 12, weight: .bold))
                 .foregroundStyle(Color.retroBlue)
