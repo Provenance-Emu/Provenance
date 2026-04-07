@@ -1677,6 +1677,8 @@
 			<false/>
 			<key>PVContentless</key>
 			<true/>
+			<key>PVDisabled</key>
+			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © Libretro Contributors</string>
 			<key>PVCoreIdentifier</key>
