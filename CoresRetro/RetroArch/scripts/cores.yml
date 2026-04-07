@@ -155,8 +155,8 @@ cores:
     # Amstrad CPC
     ios: true
     tvos: true
-    appstore: true
-    enabled: true
+    appstore: false
+    enabled: false
   - name: desmume
     # Nintendo DS
     ios: true
@@ -226,12 +226,11 @@ cores:
     filename: "flycast_libretro.dylib"
 
   - name: fmsx
-    # MSX
+    # MSX — buildbot uses fmsx_libretro_ios.dylib / fmsx_libretro_tvos.dylib (no neutral zip)
     ios: true
     tvos: true
     appstore: true
     enabled: true
-    filename: "fmsx_libretro.dylib"
 
   - name: freechaf
     # Fairchild Channel F

@@ -20,7 +20,10 @@ if [ "$1" = "-appstore" ]; then
 fi
 
 cd "${SCRIPTS_DIR}"
-if [ "${PLATFORM_NAME}" = "appletvos" ]; then
+# tvOS device is appletvos; tvOS Simulator is appletvsimulator — both must use
+# urls*-tv.txt and tvOS zips. Only checking appletvos wrongly downloads iOS dylibs
+# for simulator builds, then App Store make_frameworks (tv filter) skips them.
+if [ "${PLATFORM_NAME}" = "appletvos" ] || [ "${PLATFORM_NAME}" = "appletvsimulator" ]; then
 	CORES_ARCHIVE_DIR="${SRCROOT}/CoresRetro/RetroArch/modules_compressed/tvOS"
 	MODULE_LIST="${SCRIPTS_DIR}/urls${URL_SUFFIX}-tv.txt"
 	CURRENT_PLATFORM="tvos"
@@ -111,6 +114,28 @@ if [ ! -d "${CORES_ARCHIVE_DIR}" ]; then
 	mkdir -p "${CORES_ARCHIVE_DIR}"
 fi
 
+# Fingerprint the URL list (+ pin) so `generate_core_lists.py` / cores.yml regen
+# invalidates the weekly fast-path without deleting modules/ manually.
+MANIFEST_CHANGED=0
+MANIFEST_FP_FILE="${CORES_ARCHIVE_DIR}/url_manifest.sha256"
+if [ -f "${MODULE_LIST}" ]; then
+	CURRENT_MANIFEST_SHA=$( { printf '%s\n' "${PINNED_DATE:-latest}"; cat "${MODULE_LIST}"; } | shasum -a 256 2>/dev/null | awk '{print $1}' )
+	if [ -z "${CURRENT_MANIFEST_SHA}" ]; then
+		CURRENT_MANIFEST_SHA=$( { printf '%s\n' "${PINNED_DATE:-latest}"; cat "${MODULE_LIST}"; } | openssl dgst -sha256 2>/dev/null | awk '{print $NF}' )
+	fi
+	STORED_MANIFEST_SHA=""
+	if [ -f "${MANIFEST_FP_FILE}" ]; then
+		STORED_MANIFEST_SHA=$(tr -d '[:space:]' < "${MANIFEST_FP_FILE}" 2>/dev/null || true)
+	fi
+	if [ -n "${CURRENT_MANIFEST_SHA}" ] && [ "${CURRENT_MANIFEST_SHA}" != "${STORED_MANIFEST_SHA}" ]; then
+		echo "GetModule: URL manifest changed (${MODULE_LIST} or pinned_date) — refreshing core downloads for this platform"
+		MANIFEST_CHANGED=1
+		rm -f "${CORES_ARCHIVE_DIR}/timestamp.txt"
+	fi
+else
+	echo "GetModule: WARNING — MODULE_LIST missing: ${MODULE_LIST}" >&2
+fi
+
 # Detect pin changes: if the stored pin differs from the current one, force a
 # re-download regardless of the time interval, and clear the existing dylibs so
 # the new snapshot is fully extracted (unzip -n would otherwise keep stale files).
@@ -144,11 +169,30 @@ prune_dylibs_not_in_manifest() {
 	[ -f "$manifest" ] || return 0
 	local expected
 	expected=$(mktemp)
+	# Build raw expected basenames from zip URLs, then expand: buildbot zips named
+	# fmsx_libretro.dylib.zip often extract to fmsx_libretro_tvos.dylib / _ios.dylib,
+	# so those on-disk names must count as in-manifest or prune deletes them.
+	local raw
+	raw=$(mktemp)
 	while IFS= read -r url || [ -n "$url" ]; do
 		case "$url" in \#*|"") continue ;; esac
 		zip_base=$(basename "$url")
 		echo "${zip_base%.zip}"
-	done < "$manifest" | sort -u > "$expected"
+	done < "$manifest" | sort -u > "$raw"
+	: > "$expected"
+	while IFS= read -r e || [ -n "$e" ]; do
+		[ -z "$e" ] && continue
+		echo "$e"
+		case "$e" in
+			*_ios.dylib|*_tvos.dylib) ;;
+			*.dylib)
+				stem="${e%.dylib}"
+				echo "${stem}_ios.dylib"
+				echo "${stem}_tvos.dylib"
+				;;
+		esac
+	done < "$raw" | sort -u > "$expected"
+	rm -f "$raw"
 
 	local removed=0
 	for dylib in "${mod_dir}/"*.dylib; do
@@ -180,7 +224,7 @@ prune_dylibs_not_in_manifest "${EFFECTIVE_MODULE_LIST}" "${CORES_DIR}"
 # when STORED_PLATFORM="" (first run, no sentinel).  The explicit [ -n "${STORED_PLATFORM}" ]
 # guard below prevents the fast-path from firing on that first run.  Without it, a fresh
 # machine with no sentinel but a populated modules/ dir could incorrectly skip extraction.
-if (( TIMESTAMP <= LAST_TIMESTAMP )) && [ -n "${STORED_PLATFORM}" ] && [ "${PLATFORM_CHANGED}" = "0" ] && [ "${PIN_CHANGED}" = "0" ]; then
+if (( TIMESTAMP <= LAST_TIMESTAMP )) && [ -n "${STORED_PLATFORM}" ] && [ "${PLATFORM_CHANGED}" = "0" ] && [ "${PIN_CHANGED}" = "0" ] && [ "${MANIFEST_CHANGED}" = "0" ]; then
 	# Count dylibs belonging to the current platform: include both platform-suffixed
 	# dylibs (e.g. *ios*.dylib / *tvos*.dylib) and platform-neutral ones (e.g.
 	# dolphin_libretro.dylib) so the 80% threshold is not artificially low when the
@@ -307,6 +351,10 @@ if [ "${PIN_CHANGED}" = "1" ]; then
 		[ "${KEEP}" = "0" ] && rm -f "$dylib"
 	done
 	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
+elif [ "${MANIFEST_CHANGED}" = "1" ]; then
+	# Regenerated urls*.txt: prune already removed dropped cores; overwrite dylibs
+	# from re-downloaded zips (unzip -n would skip same-named updates).
+	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
 elif [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
 	# Platform changed (or first run): stale dylibs purged above; overwrite to be safe.
 	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
@@ -333,4 +381,9 @@ echo "GetModule: Completed (${VALID_ZIPS} valid zips, ${DYLIB_COUNT} dylibs)"
 # Record the active platform so the fast-path check above can skip extraction
 # on subsequent same-platform builds without re-purging or re-extracting.
 echo "${CURRENT_PLATFORM}" > "${CORES_DIR}/active_platform.txt"
+
+# Save manifest fingerprint after a full run so regen of urls*.txt invalidates cache.
+if [ -n "${CURRENT_MANIFEST_SHA}" ]; then
+	echo "${CURRENT_MANIFEST_SHA}" > "${MANIFEST_FP_FILE}"
+fi
 exit 0

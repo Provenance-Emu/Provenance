@@ -268,8 +268,16 @@ for i in "\$@"; do
 done
 if [ -n "\$zip_file" ]; then
     base=\$(basename "\$zip_file" .zip)
-    # Write a minimal Mach-O header (magic bytes for arm64)
-    printf '\\xcf\\xfa\\xed\\xfe' > "\${dest_dir}/\${base}_libretro_${platform}.dylib"
+    # Match buildbot zip names: gambatte_libretro.dylib.zip → gambatte_libretro_ios.dylib;
+    # short names like core1.zip still map to core1_libretro_<platform>.dylib.
+    local_out="\${base}_libretro_${platform}.dylib"
+    case "\$base" in
+        *_libretro.dylib)
+            stem="\${base%_libretro.dylib}"
+            local_out="\${stem}_libretro_${platform}.dylib"
+            ;;
+    esac
+    printf '\\xcf\\xfa\\xed\\xfe' > "\${dest_dir}/\${local_out}"
 fi
 exit 0
 UNZIPEOF

@@ -28,11 +28,10 @@ if [ "$#" -lt 1 ]; then
     exit 1
 fi
 
-# Prefer the expanded name, if available.
-CODE_SIGN_IDENTITY_FOR_ITEMS="${EXPANDED_CODE_SIGN_IDENTITY}"
-if [ "${CODE_SIGN_IDENTITY_FOR_ITEMS}" = "" ] ; then
-    # Fall back to old behavior.
-    CODE_SIGN_IDENTITY_FOR_ITEMS="${CODE_SIGN_IDENTITY}"
+# Prefer the expanded name, if available (unset outside Xcode → use empty default for set -u).
+CODE_SIGN_IDENTITY_FOR_ITEMS="${EXPANDED_CODE_SIGN_IDENTITY:-}"
+if [ -z "${CODE_SIGN_IDENTITY_FOR_ITEMS}" ] ; then
+    CODE_SIGN_IDENTITY_FOR_ITEMS="${CODE_SIGN_IDENTITY:-}"
 fi
 
 echo "Identity:"
@@ -55,8 +54,8 @@ elif [ "$PLATFORM_FAMILY_NAME" = "macOS" ] ; then
     DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
 fi
 
-if [ -n "$BUILT_PRODUCTS_DIR" -a -n "$FRAMEWORKS_FOLDER_PATH" ] ; then
-    OUTDIR="$BUILT_PRODUCTS_DIR"/"$FRAMEWORKS_FOLDER_PATH"
+if [ -n "${BUILT_PRODUCTS_DIR:-}" ] && [ -n "${FRAMEWORKS_FOLDER_PATH:-}" ] ; then
+    OUTDIR="${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}"
 else
     OUTDIR="$BASE_DIR"/Frameworks
 fi
@@ -113,6 +112,27 @@ cached_hash() {
     fi
 }
 
+# True if dylib basename is allowed by urls filter. Zip URLs use platform-neutral
+# names (e.g. fmsx_libretro.dylib) while buildbot archives contain *_ios / *_tvos dylibs.
+dylib_matches_filter_list() {
+    local b="$1"
+    [ -z "$FILTER_NAMES" ] && return 0
+    echo "$FILTER_NAMES" | grep -qx "$b" && return 0
+    case "$b" in
+        *_ios.dylib)
+            local stem="${b%.dylib}"
+            stem="${stem%_ios}"
+            echo "$FILTER_NAMES" | grep -qx "${stem}.dylib" && return 0
+            ;;
+        *_tvos.dylib)
+            local stem="${b%.dylib}"
+            stem="${stem%_tvos}"
+            echo "$FILTER_NAMES" | grep -qx "${stem}.dylib" && return 0
+            ;;
+    esac
+    return 1
+}
+
 FW_FILTER=0
 for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$') ; do
     DYLIB_BASE=$(basename "$dylib")
@@ -124,7 +144,7 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
         for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
             case "$DYLIB_BASE" in ${pat}*) IS_LOCAL=1; break ;; esac
         done
-        if [ "$IS_LOCAL" = "0" ] && ! echo "$FILTER_NAMES" | grep -qx "$DYLIB_BASE"; then
+        if [ "$IS_LOCAL" = "0" ] && ! dylib_matches_filter_list "$DYLIB_BASE"; then
             FW_FILTER=$((FW_FILTER + 1))
             continue
         fi
@@ -218,7 +238,7 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
         for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
             case "$DYLIB_BASE" in ${pat}*) IS_LOCAL=1; break ;; esac
         done
-        if [ "$IS_LOCAL" = "0" ] && ! echo "$FILTER_NAMES" | grep -qx "$DYLIB_BASE"; then
+        if [ "$IS_LOCAL" = "0" ] && ! dylib_matches_filter_list "$DYLIB_BASE"; then
             continue
         fi
     fi

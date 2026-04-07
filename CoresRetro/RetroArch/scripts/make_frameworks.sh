@@ -22,7 +22,7 @@ OUTPUT_FOLDER="${3:-.}"
 mkdir -p "$OUTPUT_FOLDER"
 
 # Determine the platform based on Xcode environment variables
-if [ "${PLATFORM_NAME}" = "appletvos" ]; then
+if [ "${PLATFORM_NAME}" = "appletvos" ] || [ "${PLATFORM_NAME}" = "appletvsimulator" ]; then
     PLATFORM="tvos"
 else
     PLATFORM="ios"

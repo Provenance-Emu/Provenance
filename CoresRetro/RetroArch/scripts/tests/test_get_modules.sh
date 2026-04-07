@@ -311,13 +311,39 @@ _setup_integration_srcroot() {
     echo "${workdir}"
 }
 
+# Writes url_manifest.sha256 the same way get-modules.sh fingerprints MODULE_LIST
+# (pinned_date line from cores.yml if valid YYYY-MM-DD, else "latest", then urls file bytes).
+# Required for fast-path / skip-download tests after manifest-based cache invalidation.
+_write_integration_url_manifest_fp() {
+    local urls_file="$1"
+    local fp_path="$2"
+    local pin="latest"
+    local yml
+    yml="$(dirname "${urls_file}")/cores.yml"
+    if [ -f "${yml}" ]; then
+        pin=$(grep -v '^[[:space:]]*#' "${yml}" | grep -E '^[[:space:]]*pinned_date:' | sed 's/.*pinned_date:[[:space:]]*//' | tr -d '"' | tr -d "'" | tr -d '[:space:]' || true)
+        if [ -z "${pin}" ]; then
+            pin="latest"
+        elif ! echo "${pin}" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
+            pin="latest"
+        fi
+    fi
+    local sha=""
+    sha=$( { printf '%s\n' "${pin}"; cat "${urls_file}"; } | shasum -a 256 2>/dev/null | awk '{print $1}' )
+    if [ -z "${sha}" ]; then
+        sha=$( { printf '%s\n' "${pin}"; cat "${urls_file}"; } | openssl dgst -sha256 2>/dev/null | awk '{print $NF}' )
+    fi
+    mkdir -p "$(dirname "${fp_path}")"
+    printf '%s\n' "${sha}" > "${fp_path}"
+}
+
 test_integration_success() {
     # All downloads succeed → dylibs created → exit 0
     local workdir
     workdir=$(_setup_integration_srcroot "int_ok")
 
     # Minimal URL list (3 cores)
-    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+    printf 'http://example.com/core1_libretro.dylib.zip\nhttp://example.com/core2_libretro.dylib.zip\nhttp://example.com/core3_libretro.dylib.zip\n' \
         > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
 
     make_mock_curl_success
@@ -341,7 +367,7 @@ test_integration_all_downloads_fail() {
     workdir=$(_setup_integration_srcroot "int_fail")
 
     # Minimal URL list (3 cores)
-    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+    printf 'http://example.com/core1_libretro.dylib.zip\nhttp://example.com/core2_libretro.dylib.zip\nhttp://example.com/core3_libretro.dylib.zip\n' \
         > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
 
     make_mock_curl_fail
@@ -367,7 +393,7 @@ test_active_platform_written_after_extraction() {
     local workdir
     workdir=$(_setup_integration_srcroot "platform_write")
 
-    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+    printf 'http://example.com/core1_libretro.dylib.zip\nhttp://example.com/core2_libretro.dylib.zip\nhttp://example.com/core3_libretro.dylib.zip\n' \
         > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
 
     make_mock_curl_success
@@ -404,8 +430,9 @@ test_fastpath_skips_extraction_when_platform_unchanged() {
     local workdir
     workdir=$(_setup_integration_srcroot "fastpath")
 
-    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
-        > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+    local urls_ios="${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+    printf 'http://example.com/core1_libretro.dylib.zip\nhttp://example.com/core2_libretro.dylib.zip\nhttp://example.com/core3_libretro.dylib.zip\n' \
+        > "${urls_ios}"
 
     # Pre-populate modules/ with enough iOS dylibs (≥80% of 3 expected)
     mkdir -p "${workdir}/CoresRetro/RetroArch/modules"
@@ -417,6 +444,7 @@ test_fastpath_skips_extraction_when_platform_unchanged() {
     # Write a far-future timestamp so the download interval has not expired
     mkdir -p "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS"
     echo "9999999999" > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/timestamp.txt"
+    _write_integration_url_manifest_fp "${urls_ios}" "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/url_manifest.sha256"
 
     # Mock unzip to create a sentinel file when called — fast-path must NOT call it
     local flag_file="${workdir}/unzip_called"
@@ -441,7 +469,7 @@ test_platform_switch_purges_old_dylibs() {
     local workdir
     workdir=$(_setup_integration_srcroot "platform_switch")
 
-    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+    printf 'http://example.com/core1_libretro.dylib.zip\nhttp://example.com/core2_libretro.dylib.zip\nhttp://example.com/core3_libretro.dylib.zip\n' \
         > "${workdir}/CoresRetro/RetroArch/scripts/urls-tv.txt"
 
     # Pre-populate modules/ with iOS dylibs and record ios as the active platform
@@ -485,7 +513,7 @@ test_fastpath_requires_sentinel_file() {
     local workdir
     workdir=$(_setup_integration_srcroot "fastpath_no_sentinel")
 
-    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
+    printf 'http://example.com/core1_libretro.dylib.zip\nhttp://example.com/core2_libretro.dylib.zip\nhttp://example.com/core3_libretro.dylib.zip\n' \
         > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
 
     # Pre-populate modules/ with iOS dylibs — but do NOT write active_platform.txt
@@ -502,11 +530,11 @@ test_fastpath_requires_sentinel_file() {
     mkdir -p "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS"
     echo "9999999999" > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/timestamp.txt"
     printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
-        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core1.zip"
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core1_libretro.dylib.zip"
     printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
-        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core2.zip"
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core2_libretro.dylib.zip"
     printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
-        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core3.zip"
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core3_libretro.dylib.zip"
 
     # Mock unzip to record whether it was called — fast-path must NOT prevent this call
     local flag_file="${workdir}/unzip_called"
@@ -537,8 +565,9 @@ test_platform_switch_back_reuses_cached_dylibs() {
     local workdir
     workdir=$(_setup_integration_srcroot "switch_back")
 
-    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\nhttp://example.com/core3.zip\n' \
-        > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+    local urls_ios="${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+    printf 'http://example.com/core1_libretro.dylib.zip\nhttp://example.com/core2_libretro.dylib.zip\nhttp://example.com/core3_libretro.dylib.zip\n' \
+        > "${urls_ios}"
 
     # modules/ currently has tvOS dylibs (last platform was tvOS)
     mkdir -p "${workdir}/CoresRetro/RetroArch/modules"
@@ -548,13 +577,14 @@ test_platform_switch_back_reuses_cached_dylibs() {
     # Simulate previously-cached iOS zip archives + a fresh timestamp (no re-download needed)
     mkdir -p "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS"
     echo "9999999999" > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/timestamp.txt"
+    _write_integration_url_manifest_fp "${urls_ios}" "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/url_manifest.sha256"
     # Write minimal valid zip files so the zip-validation loop finds something to extract
     printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
-        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core1.zip"
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core1_libretro.dylib.zip"
     printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
-        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core2.zip"
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core2_libretro.dylib.zip"
     printf '\x50\x4b\x03\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00' \
-        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core3.zip"
+        > "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/core3_libretro.dylib.zip"
 
     # Mock tools: curl should NOT be called (timestamp is fresh); unzip creates ios dylibs
     make_mock_curl_fail   # if download is accidentally triggered, fail loudly
@@ -590,7 +620,7 @@ test_platform_switch_replaces_neutral_dylibs() {
     local workdir
     workdir=$(_setup_integration_srcroot "neutral_switch")
 
-    printf 'http://example.com/core1.zip\nhttp://example.com/core2.zip\n' \
+    printf 'http://example.com/core1_libretro.dylib.zip\nhttp://example.com/core2_libretro.dylib.zip\nhttp://example.com/dolphin_libretro.dylib.zip\n' \
         > "${workdir}/CoresRetro/RetroArch/scripts/urls-tv.txt"
 
     # Pre-populate modules/ with: one neutral dylib (shared name across platforms)
@@ -620,7 +650,15 @@ for i in "\$@"; do
 done
 if [ -n "\$zip_file" ]; then
     base=\$(basename "\$zip_file" .zip)
-    printf '\\xcf\\xfa\\xed\\xfe' > "\${dest_dir}/\${base}_libretro_tvos.dylib"
+    case "\$base" in
+        *_libretro.dylib)
+            stem="\${base%_libretro.dylib}"
+            printf '\\xcf\\xfa\\xed\\xfe' > "\${dest_dir}/\${stem}_libretro_tvos.dylib"
+            ;;
+        *)
+            printf '\\xcf\\xfa\\xed\\xfe' > "\${dest_dir}/\${base}_libretro_tvos.dylib"
+            ;;
+    esac
     # Simulate overwrite of the neutral dylib with new (distinct) contents so the
     # content-change assertion below can confirm the old iOS-built file was replaced.
     printf '\\xca\\xfe\\xba\\xbe' > "\${dest_dir}/dolphin_libretro.dylib"
@@ -641,8 +679,9 @@ UNZIPEOF
     assert_file_exists "neutral switch: dolphin_libretro.dylib re-extracted" \
         "${workdir}/CoresRetro/RetroArch/modules/dolphin_libretro.dylib"
     # Verify the neutral dylib content changed — proves it was replaced, not left as-is.
+    # Use system xxd: PATH still has the mock used by get-modules (returns "deadbeef" for non-.zip).
     local new_magic
-    new_magic=$(xxd -l 4 -p "${workdir}/CoresRetro/RetroArch/modules/dolphin_libretro.dylib" 2>/dev/null || echo "")
+    new_magic=$(PATH="/usr/bin:/bin" xxd -l 4 -p "${workdir}/CoresRetro/RetroArch/modules/dolphin_libretro.dylib" 2>/dev/null || echo "")
     if [ "${new_magic}" = "cafebabe" ]; then
         pass "neutral switch: dolphin_libretro.dylib contents replaced (old iOS bytes overwritten)"
     else

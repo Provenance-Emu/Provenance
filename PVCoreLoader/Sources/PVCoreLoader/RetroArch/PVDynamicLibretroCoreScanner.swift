@@ -718,8 +718,7 @@ public extension CoreLoader {
     }
 
     /// Logs sub-cores declared in plists that are enabled but missing their
-    /// framework from the bundle — meaning the user sees a core option that
-    /// will fail at runtime. Catches build script omissions early.
+    /// framework from the bundle — meaning the user sees a core option thatse    /// will fail at runtime. Catches build script omissions early.
     internal static func diagnoseMissingCoreFrameworks(plists: [EmulatorCoreInfoPlist]) {
         let fm = FileManager.default
         let frameworksURL = Bundle.main.bundleURL.appendingPathComponent("Frameworks")
