@@ -208,6 +208,38 @@ done
 # Write updated cache
 mv "$NEW_CACHE_FILE" "$CACHE_FILE"
 
+# Delete *.libretro.framework bundles in OUTDIR that have no matching dylib in
+# modules/ (e.g. core removed from cores.yml but framework left from an old build).
+EXPECTED_FW_TMP=$(mktemp)
+for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$') ; do
+    DYLIB_BASE=$(basename "$dylib")
+    if [ -n "$FILTER_NAMES" ]; then
+        IS_LOCAL=0
+        for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
+            case "$DYLIB_BASE" in ${pat}*) IS_LOCAL=1; break ;; esac
+        done
+        if [ "$IS_LOCAL" = "0" ] && ! echo "$FILTER_NAMES" | grep -qx "$DYLIB_BASE"; then
+            continue
+        fi
+    fi
+    intermediate="${DYLIB_BASE/%.dylib/}"
+    if [ -n "$SUFFIX" ] ; then
+        intermediate="${intermediate/%$SUFFIX/}"
+    fi
+    echo "${intermediate//_/.}"
+done | sort -u > "$EXPECTED_FW_TMP"
+
+while IFS= read -r fwdir; do
+    [ -n "$fwdir" ] || continue
+    [ -d "$fwdir" ] || continue
+    fwbase=$(basename "$fwdir" .framework)
+    if ! grep -qx "$fwbase" "$EXPECTED_FW_TMP"; then
+        echo "MakeFrameworks: removing orphan framework (no dylib for current filter/manifest): ${fwbase}.framework"
+        rm -rf "$fwdir"
+    fi
+done < <(find "$OUTDIR" -maxdepth 1 -type d -name "*.libretro.framework" 2>/dev/null)
+rm -f "$EXPECTED_FW_TMP"
+
 if [ "$FW_FILTER" -gt 0 ]; then
     echo "MakeFrameworks: Created ${FW_COUNT} frameworks, skipped ${FW_SKIP} unchanged, filtered out ${FW_FILTER}, from ${DYLIB_COUNT} dylibs (${FW_FAIL} failed)"
 else

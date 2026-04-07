@@ -135,6 +135,44 @@ echo "GetModule: ${TIMESTAMP} ${LAST_TIMESTAMP}"
 # Count expected cores from URL list (non-commented lines)
 EXPECTED_COUNT=$(grep -v '^#' "${EFFECTIVE_MODULE_LIST}" | grep -c '.' || echo 0)
 
+# Drop dylibs that are no longer listed in urls*.txt. Incremental extractions use
+# unzip -n, so cores removed from cores.yml would otherwise stay in modules/ forever
+# and keep producing orphan *.libretro.framework bundles in the app.
+prune_dylibs_not_in_manifest() {
+	local manifest="$1"
+	local mod_dir="$2"
+	[ -f "$manifest" ] || return 0
+	local expected
+	expected=$(mktemp)
+	while IFS= read -r url || [ -n "$url" ]; do
+		case "$url" in \#*|"") continue ;; esac
+		zip_base=$(basename "$url")
+		echo "${zip_base%.zip}"
+	done < "$manifest" | sort -u > "$expected"
+
+	local removed=0
+	for dylib in "${mod_dir}/"*.dylib; do
+		[ -f "$dylib" ] || continue
+		local base
+		base=$(basename "$dylib")
+		local keep_local=0
+		for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
+			case "$base" in ${pat}*) keep_local=1; break ;; esac
+		done
+		[ "$keep_local" = "1" ] && continue
+		if ! grep -qx "$base" "$expected"; then
+			echo "GetModule: removing stale dylib not in manifest: ${base}"
+			rm -f "$dylib"
+			removed=$((removed + 1))
+		fi
+	done
+	rm -f "$expected"
+	if [ "$removed" -gt 0 ]; then
+		echo "GetModule: pruned ${removed} stale dylib(s) (dropped from manifest — was still in modules/)"
+	fi
+}
+prune_dylibs_not_in_manifest "${EFFECTIVE_MODULE_LIST}" "${CORES_DIR}"
+
 # Fast-path: when the platform is known (active_platform.txt exists), unchanged,
 # the pin is unchanged, the timestamp is still fresh (no download due), and ≥80%
 # of expected dylibs are already present, skip both the purge and extraction.
