@@ -243,7 +243,50 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
 
         Task {
             do {
-                // Scan for differences first
+                // On tvOS (CloudKit-only) or when in CloudKit mode, use CloudKit syncer directly
+                if Defaults[.iCloudSyncMode].isCloudKit {
+                    DLOG("Using CloudKit syncer to download ROMs")
+                    CloudSyncLogManager.shared.logSyncOperation(
+                        "Starting CloudKit ROM download sync",
+                        level: .info,
+                        operation: .download,
+                        provider: .cloudKit
+                    )
+
+                    NotificationCenter.default.post(
+                        name: .iCloudSyncStarted,
+                        object: nil,
+                        userInfo: ["operation": "download_roms"]
+                    )
+
+                    // Trigger loadAllFromCloud which discovers and queues downloads for missing ROMs
+                    if let romsSyncer = CloudSyncManager.shared.romsSyncer {
+                        _ = await romsSyncer.loadAllFromCloud(iterationComplete: nil)
+                        DLOG("CloudKit ROM sync completed")
+                        CloudSyncLogManager.shared.logSyncOperation(
+                            "CloudKit ROM download sync completed",
+                            level: .info,
+                            operation: .download,
+                            provider: .cloudKit
+                        )
+                    } else {
+                        ELOG("CloudKit ROM syncer not available")
+                        CloudSyncLogManager.shared.logSyncOperation(
+                            "CloudKit ROM syncer not available",
+                            level: .error,
+                            operation: .download,
+                            provider: .cloudKit
+                        )
+                    }
+
+                    await MainActor.run {
+                        syncStatus = "ROM sync completed"
+                        isLoading = false
+                    }
+                    return
+                }
+
+                // iCloud Drive mode: scan for differences
                 await scanLocalFiles()
                 await scanICloudFiles()
                 await compareFiles()
@@ -279,7 +322,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                     "Error starting ROM download: \(error.localizedDescription)",
                     level: .error,
                     operation: .download,
-                    provider: .iCloudDrive
+                    provider: Defaults[.iCloudSyncMode].isCloudKit ? .cloudKit : .iCloudDrive
                 )
 
                 // Update UI
@@ -301,7 +344,49 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
 
         Task {
             do {
-                // Scan for differences first
+                // On tvOS (CloudKit-only) or when in CloudKit mode, use CloudKit syncer directly
+                if Defaults[.iCloudSyncMode].isCloudKit {
+                    DLOG("Using CloudKit syncer to download save states")
+                    CloudSyncLogManager.shared.logSyncOperation(
+                        "Starting CloudKit save state download sync",
+                        level: .info,
+                        operation: .download,
+                        provider: .cloudKit
+                    )
+
+                    NotificationCenter.default.post(
+                        name: .iCloudSyncStarted,
+                        object: nil,
+                        userInfo: ["operation": "download_save_states"]
+                    )
+
+                    if let saveStatesSyncer = CloudSyncManager.shared.saveStatesSyncer {
+                        _ = await saveStatesSyncer.loadAllFromCloud(iterationComplete: nil)
+                        DLOG("CloudKit save state sync completed")
+                        CloudSyncLogManager.shared.logSyncOperation(
+                            "CloudKit save state download sync completed",
+                            level: .info,
+                            operation: .download,
+                            provider: .cloudKit
+                        )
+                    } else {
+                        ELOG("CloudKit save state syncer not available")
+                        CloudSyncLogManager.shared.logSyncOperation(
+                            "CloudKit save state syncer not available",
+                            level: .error,
+                            operation: .download,
+                            provider: .cloudKit
+                        )
+                    }
+
+                    await MainActor.run {
+                        syncStatus = "Save state sync completed"
+                        isLoading = false
+                    }
+                    return
+                }
+
+                // iCloud Drive mode: scan for differences
                 await scanLocalFiles()
                 await scanICloudFiles()
                 await compareFiles()
@@ -337,7 +422,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                     "Error starting save state download: \(error.localizedDescription)",
                     level: .error,
                     operation: .download,
-                    provider: .iCloudDrive
+                    provider: Defaults[.iCloudSyncMode].isCloudKit ? .cloudKit : .iCloudDrive
                 )
 
                 // Update UI
@@ -359,7 +444,49 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
 
         Task {
             do {
-                // Scan for differences first
+                // On tvOS (CloudKit-only) or when in CloudKit mode, use CloudKit syncer directly
+                if Defaults[.iCloudSyncMode].isCloudKit {
+                    DLOG("Using CloudKit syncer to download BIOS files")
+                    CloudSyncLogManager.shared.logSyncOperation(
+                        "Starting CloudKit BIOS download sync",
+                        level: .info,
+                        operation: .download,
+                        provider: .cloudKit
+                    )
+
+                    NotificationCenter.default.post(
+                        name: .iCloudSyncStarted,
+                        object: nil,
+                        userInfo: ["operation": "download_bios"]
+                    )
+
+                    if let biosSyncer = CloudSyncManager.shared.biosSyncer {
+                        _ = await biosSyncer.loadAllFromCloud(iterationComplete: nil)
+                        DLOG("CloudKit BIOS sync completed")
+                        CloudSyncLogManager.shared.logSyncOperation(
+                            "CloudKit BIOS download sync completed",
+                            level: .info,
+                            operation: .download,
+                            provider: .cloudKit
+                        )
+                    } else {
+                        ELOG("CloudKit BIOS syncer not available")
+                        CloudSyncLogManager.shared.logSyncOperation(
+                            "CloudKit BIOS syncer not available",
+                            level: .error,
+                            operation: .download,
+                            provider: .cloudKit
+                        )
+                    }
+
+                    await MainActor.run {
+                        syncStatus = "BIOS sync completed"
+                        isLoading = false
+                    }
+                    return
+                }
+
+                // iCloud Drive mode: scan for differences
                 await scanLocalFiles()
                 await scanICloudFiles()
                 await compareFiles()
@@ -395,7 +522,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
                     "Error starting BIOS download: \(error.localizedDescription)",
                     level: .error,
                     operation: .download,
-                    provider: .iCloudDrive
+                    provider: Defaults[.iCloudSyncMode].isCloudKit ? .cloudKit : .iCloudDrive
                 )
 
                 // Update UI
@@ -916,8 +1043,8 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         var iCloudFileResults: [String: [URL]] = [:]
 
         // Get iCloud container URL
-        guard let containerURL = fileManager.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents") else {
-            ELOG("iCloud container directory is nil")
+        guard let containerURL = fileManager.url(forUbiquityContainerIdentifier: iCloudConstants.containerIdentifier)?.appendingPathComponent("Documents") else {
+            ELOG("iCloud container directory is nil for identifier: \(iCloudConstants.containerIdentifier)")
             return
         }
 
@@ -1171,7 +1298,7 @@ public class UnifiedCloudSyncViewModel: ObservableObject {
         var diagnostics = "iCloud Container Diagnostics:\n"
 
         // Check if iCloud is available
-        if let ubiquityContainer = fileManager.url(forUbiquityContainerIdentifier: nil) {
+        if let ubiquityContainer = fileManager.url(forUbiquityContainerIdentifier: iCloudConstants.containerIdentifier) {
             diagnostics += "iCloud is available at: \(ubiquityContainer.path)\n"
 
             // Check if Documents directory exists
