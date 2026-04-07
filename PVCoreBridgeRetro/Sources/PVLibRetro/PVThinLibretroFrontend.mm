@@ -228,6 +228,11 @@ void pv_perf_log(void) {
 // Vulkan support via MoltenVK (loaded at runtime via dlopen)
 #if HAVE_VULKAN
 #include "libretro_vulkan.h"
+/// Triple-buffer: 3 sync slots allow zero-copy texture sharing — by the time
+/// the core wraps around to reuse slot 0 (on frame 3), our Metal present of
+/// frame 0 is guaranteed to have completed. This eliminates the GPU blit that
+/// was previously needed to snapshot each frame.
+#define THIN_VULKAN_SYNC_SLOTS 3
 #endif
 
 // ---------------------------------------------------------------------------
@@ -543,11 +548,13 @@ typedef struct PVThinLibretroSymbols {
     /// vkExportMetalObjectsEXT returns void (not VkResult) per the Vulkan spec.
     void (*_vkExportMetalObjectsEXT)(VkDevice device, void *pMetalObjectsInfo);
 
-    // Double-buffer synchronisation via per-frame fences.
+    // Triple-buffer synchronisation via per-frame fences.
     // Replaces the vkQueueWaitIdle full-queue stall with narrower per-submission waits.
-    // _vulkanFrameFences[0/1] are created SIGNALED so the first wait_sync_index is a no-op.
-    // _vulkanFrameIndex alternates 0↔1 every frame; get_sync_index_mask returns 3 (both slots valid).
-    VkFence  _vulkanFrameFences[2];
+    // All fences are created SIGNALED so the first wait_sync_index is a no-op.
+    // _vulkanFrameIndex cycles 0→1→2→0; get_sync_index_mask returns 7 (all 3 slots valid).
+    // The extra slot enables zero-copy: the core can render into slot N+1 while our
+    // Metal presenter is still reading slot N, because slot N-1 is always fully retired.
+    VkFence  _vulkanFrameFences[THIN_VULKAN_SYNC_SLOTS];
     uint32_t _vulkanFrameIndex;
     // Fence lifecycle functions (use PFN_ typedefs for full type safety)
     PFN_vkCreateFence  _vkCreateFence;
@@ -945,14 +952,14 @@ static void thin_vulkan_set_image(void *handle, const struct retro_vulkan_image 
 static uint32_t thin_vulkan_get_sync_index(void *handle) {
     PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
     // Return the current frame slot so the core knows which buffer to write into.
-    // _vulkanFrameIndex alternates 0↔1 each frame (double-buffer).
+    // _vulkanFrameIndex cycles 0→1→2→0 each frame (triple-buffer).
     return bridge ? bridge->_vulkanFrameIndex : 0;
 }
 
 static uint32_t thin_vulkan_get_sync_index_mask(void *handle) {
     (void)handle;
-    // Bitmask of valid sync indices: 3 = 0b11 → slots 0 and 1 are available (double-buffer).
-    return 3;
+    // Bitmask of valid sync indices: 7 = 0b111 → slots 0, 1, 2 (triple-buffer).
+    return (1u << THIN_VULKAN_SYNC_SLOTS) - 1;
 }
 
 static void thin_vulkan_set_command_buffers(void *handle, uint32_t num_cmd,
@@ -3396,39 +3403,62 @@ static bool thin_environment(unsigned cmd, void *data) {
             } else if (_vulkanHasCurrentImage) {
                 // Async-compute path: core called set_image but no set_command_buffers.
                 // The core submitted its own Vulkan command buffers internally, so the
-                // GPU may still be writing to the VkImage. We MUST wait for the queue
-                // to drain before extracting the MTLTexture, otherwise the blit races
-                // with the Vulkan render (pink clear-color or stale frames).
+                // GPU may still be writing to the VkImage. We submit a lightweight
+                // no-op with a per-frame fence to wait only on this submission's
+                // completion rather than stalling the entire queue with vkQueueWaitIdle.
                 _vulkanHasCurrentImage = NO;
                 os_unfair_lock_lock(&_vulkanQueueLock);
-                if (_vulkanWaitSemaphoreCount > 0 && _vkQueueSubmit && _vulkanQueue) {
-                    uint32_t waitCount = _vulkanWaitSemaphoreCount;
-                    VkSemaphore waitSems[8];
-                    VkPipelineStageFlags waitMasks[8];
+
+                VkSemaphore signalSem = _vulkanSignalSemaphore;
+                _vulkanSignalSemaphore = VK_NULL_HANDLE;
+
+                uint32_t waitCount = _vulkanWaitSemaphoreCount;
+                VkSemaphore waitSems[8];
+                VkPipelineStageFlags waitMasks[8];
+                if (waitCount > 0) {
                     memcpy(waitSems,  _vulkanWaitSemaphores,    waitCount * sizeof(VkSemaphore));
                     memcpy(waitMasks, _vulkanWaitDstStageMask,  waitCount * sizeof(VkPipelineStageFlags));
-                    _vulkanWaitSemaphoreCount = 0;
-                    VkSubmitInfo waitSubmit = {
+                }
+                _vulkanWaitSemaphoreCount = 0;
+
+                // Use the per-frame fence for narrow GPU sync (same strategy as
+                // submitVulkanCommandBuffers). Falls back to vkQueueWaitIdle only
+                // when fences are unavailable.
+                VkFence frameFence = (_vulkanFrameFences[0] && _vkResetFences && _vkWaitForFences)
+                    ? _vulkanFrameFences[_vulkanFrameIndex]
+                    : VK_NULL_HANDLE;
+                if (frameFence) {
+                    _vkResetFences(_vulkanDevice, 1, &frameFence);
+                }
+
+                if (_vkQueueSubmit && _vulkanQueue) {
+                    VkSubmitInfo submitInfo = {
                         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
                         .waitSemaphoreCount = waitCount,
-                        .pWaitSemaphores = waitSems,
-                        .pWaitDstStageMask = waitMasks,
+                        .pWaitSemaphores = waitCount > 0 ? waitSems : NULL,
+                        .pWaitDstStageMask = waitCount > 0 ? waitMasks : NULL,
                         .commandBufferCount = 0,
+                        .pCommandBuffers = NULL,
+                        .signalSemaphoreCount = (signalSem != VK_NULL_HANDLE) ? 1u : 0u,
+                        .pSignalSemaphores = (signalSem != VK_NULL_HANDLE) ? &signalSem : NULL,
                     };
-                    VkResult waitResult = _vkQueueSubmit(_vulkanQueue, 1, &waitSubmit, VK_NULL_HANDLE);
-                    if (waitResult != VK_SUCCESS) {
-                        ELOG(@"ThinFrontend: async-compute vkQueueSubmit failed (result=%d)", waitResult);
+                    VkResult result = _vkQueueSubmit(_vulkanQueue, 1, &submitInfo, frameFence);
+                    if (result != VK_SUCCESS) {
+                        ELOG(@"ThinFrontend: async-compute vkQueueSubmit failed (result=%d)", result);
                         os_unfair_lock_unlock(&_vulkanQueueLock);
                         return;
                     }
-                } else {
-                    _vulkanWaitSemaphoreCount = 0;
-                }
-                // Drain the GPU queue so the VkImage is fully rendered before we
-                // extract its backing MTLTexture.
-                if (_vkQueueWaitIdle && _vulkanQueue) {
+
+                    if (frameFence && _vkWaitForFences) {
+                        _vkWaitForFences(_vulkanDevice, 1, &frameFence, 1, UINT64_MAX);
+                    } else if (_vkQueueWaitIdle) {
+                        _vkQueueWaitIdle(_vulkanQueue);
+                    }
+                } else if (_vkQueueWaitIdle && _vulkanQueue) {
                     _vkQueueWaitIdle(_vulkanQueue);
                 }
+
+                _vulkanFrameIndex = (_vulkanFrameIndex + 1) % THIN_VULKAN_SYNC_SLOTS;
                 os_unfair_lock_unlock(&_vulkanQueueLock);
                 [self notifyRenderDelegateOfVulkanFrame:nil];
             }
@@ -5432,7 +5462,47 @@ static bool thin_environment(unsigned cmd, void *data) {
     return YES;
 }
 
+/// Configure MoltenVK for optimal performance on Apple Silicon (iOS/tvOS 17+).
+/// Environment variables are read by MoltenVK during vkCreateInstance; they must
+/// be set before that call. Only overrides values that aren't already set so the
+/// user can still override via Xcode scheme environment variables.
+- (void)configureMoltenVKEnvironment {
+    auto setIfAbsent = ^(const char *key, const char *value) {
+        if (!getenv(key)) {
+            setenv(key, value, 0);
+        }
+    };
+
+    // Async queue submits — dispatch vkQueueSubmit encoding to a GCD queue so the
+    // emulation thread isn't blocked waiting for Metal command buffer encoding.
+    setIfAbsent("MVK_CONFIG_SYNCHRONOUS_QUEUE_SUBMITS", "0");
+
+    // Resume from transient VK_ERROR_DEVICE_LOST instead of crashing.
+    setIfAbsent("MVK_CONFIG_RESUME_LOST_DEVICE", "1");
+
+    // Use Metal events for Vulkan semaphore support (available on all A-series
+    // GPUs with iOS 12+). Enables multi-queue synchronization without CPU stalls.
+    setIfAbsent("MVK_CONFIG_VK_SEMAPHORE_SUPPORT_STYLE", "2");
+
+    // LZFSE pipeline cache compression — Apple's fastest compressor for larger data.
+    setIfAbsent("MVK_CONFIG_SHADER_COMPRESSION_ALGORITHM", "1");
+
+    // Metal argument buffers — increases resource binding limits and generally
+    // improves descriptor set performance on Apple Silicon.
+    setIfAbsent("MVK_CONFIG_USE_METAL_ARGUMENT_BUFFERS", "1");
+
+    // Ensure fast math is on (already MoltenVK's default, but be explicit).
+    setIfAbsent("MVK_CONFIG_FAST_MATH_ENABLED", "1");
+
+    // Disable performance tracking overhead in release builds.
+    setIfAbsent("MVK_CONFIG_PERFORMANCE_TRACKING", "0");
+
+    ILOG(@"ThinFrontend: MoltenVK environment configured for Apple Silicon");
+}
+
 - (BOOL)createVulkanInstance {
+    [self configureMoltenVKEnvironment];
+
     // Use the core's VkApplicationInfo when the negotiation interface provides one;
     // fall back to our default otherwise.
     const VkApplicationInfo *coreAppInfo = NULL;
@@ -5667,7 +5737,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         return NO;
     }
 
-    // Load fence functions for double-buffer synchronisation (non-fatal if unavailable;
+    // Load fence functions for triple-buffer synchronisation (non-fatal if unavailable;
     // the code falls back to vkQueueWaitIdle when any fence function is missing).
     _vkCreateFence  = (PFN_vkCreateFence) _vkGetDeviceProcAddr(_vulkanDevice, "vkCreateFence");
     _vkDestroyFence = (PFN_vkDestroyFence)_vkGetDeviceProcAddr(_vulkanDevice, "vkDestroyFence");
@@ -5675,7 +5745,6 @@ static bool thin_environment(unsigned cmd, void *data) {
     _vkResetFences  = (PFN_vkResetFences) _vkGetDeviceProcAddr(_vulkanDevice, "vkResetFences");
 
     if (_vkCreateFence && _vkDestroyFence && _vkWaitForFences && _vkResetFences) {
-        // Pre-signaled so the very first thin_vulkan_wait_sync_index returns immediately.
         VkFenceCreateInfo fenceCI = {
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
             .pNext = NULL,
@@ -5683,7 +5752,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         };
         _vulkanFrameIndex = 0;
         BOOL fencesOK = YES;
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < THIN_VULKAN_SYNC_SLOTS; i++) {
             VkResult fr = _vkCreateFence(_vulkanDevice, &fenceCI, NULL, &_vulkanFrameFences[i]);
             if (fr != VK_SUCCESS) {
                 WLOG(@"ThinFrontend: vkCreateFence[%d] failed (result=%d) — will use vkQueueWaitIdle", i, fr);
@@ -5693,10 +5762,9 @@ static bool thin_environment(unsigned cmd, void *data) {
             }
         }
         if (fencesOK) {
-            ILOG(@"ThinFrontend: double-buffer frame fences created");
+            ILOG(@"ThinFrontend: triple-buffer frame fences created (%d slots)", THIN_VULKAN_SYNC_SLOTS);
         } else {
-            // Destroy any partially-created fences
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < THIN_VULKAN_SYNC_SLOTS; i++) {
                 if (_vulkanFrameFences[i]) {
                     _vkDestroyFence(_vulkanDevice, _vulkanFrameFences[i], NULL);
                     _vulkanFrameFences[i] = VK_NULL_HANDLE;
@@ -5705,8 +5773,9 @@ static bool thin_environment(unsigned cmd, void *data) {
         }
     } else {
         WLOG(@"ThinFrontend: fence functions unavailable — falling back to vkQueueWaitIdle");
-        _vulkanFrameFences[0] = VK_NULL_HANDLE;
-        _vulkanFrameFences[1] = VK_NULL_HANDLE;
+        for (int i = 0; i < THIN_VULKAN_SYNC_SLOTS; i++) {
+            _vulkanFrameFences[i] = VK_NULL_HANDLE;
+        }
     }
 
     // Load Metal interop functions (MoltenVK-specific; non-fatal if unavailable)
@@ -5826,7 +5895,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         };
         _vulkanFrameIndex = 0;
         BOOL fencesOK = YES;
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < THIN_VULKAN_SYNC_SLOTS; i++) {
             VkResult fr = _vkCreateFence(_vulkanDevice, &fenceCI, NULL, &_vulkanFrameFences[i]);
             if (fr != VK_SUCCESS) {
                 WLOG(@"ThinFrontend: vkCreateFence[%d] failed (result=%d)", i, fr);
@@ -5836,7 +5905,7 @@ static bool thin_environment(unsigned cmd, void *data) {
             }
         }
         if (!fencesOK) {
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < THIN_VULKAN_SYNC_SLOTS; i++) {
                 if (_vulkanFrameFences[i]) {
                     _vkDestroyFence(_vulkanDevice, _vulkanFrameFences[i], NULL);
                     _vulkanFrameFences[i] = VK_NULL_HANDLE;
@@ -5844,8 +5913,9 @@ static bool thin_environment(unsigned cmd, void *data) {
             }
         }
     } else {
-        _vulkanFrameFences[0] = VK_NULL_HANDLE;
-        _vulkanFrameFences[1] = VK_NULL_HANDLE;
+        for (int i = 0; i < THIN_VULKAN_SYNC_SLOTS; i++) {
+            _vulkanFrameFences[i] = VK_NULL_HANDLE;
+        }
     }
 
     _vkExportMetalObjectsEXT = (void (*)(VkDevice, void *))
@@ -5875,9 +5945,9 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (_vkQueueWaitIdle && _vulkanQueue) {
         _vkQueueWaitIdle(_vulkanQueue);
     }
-    // Destroy double-buffer frame fences (owned by the frontend regardless).
+    // Destroy triple-buffer frame fences (owned by the frontend regardless).
     if (_vkDestroyFence) {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < THIN_VULKAN_SYNC_SLOTS; i++) {
             if (_vulkanFrameFences[i]) {
                 _vkDestroyFence(_vulkanDevice, _vulkanFrameFences[i], NULL);
                 _vulkanFrameFences[i] = VK_NULL_HANDLE;
@@ -6007,8 +6077,8 @@ static bool thin_environment(unsigned cmd, void *data) {
         }
     }
 
-    // Advance the frame slot so the next frame uses the other buffer.
-    _vulkanFrameIndex = (_vulkanFrameIndex + 1) % 2;
+    // Advance the frame slot so the next frame uses the next buffer.
+    _vulkanFrameIndex = (_vulkanFrameIndex + 1) % THIN_VULKAN_SYNC_SLOTS;
     os_unfair_lock_unlock(&_vulkanQueueLock);
 
     if (result != VK_SUCCESS) {

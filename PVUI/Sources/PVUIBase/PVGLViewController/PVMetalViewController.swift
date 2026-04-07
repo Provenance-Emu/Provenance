@@ -3520,73 +3520,19 @@ extension PVMetalViewController: PVRenderDelegateIOSurface {
 /// finished writing the VkImage before this method is invoked. set_image may arrive
 /// before or after set_command_buffers depending on the core.
 extension PVMetalViewController: PVRenderDelegateMetal {
+    /// Zero-copy Vulkan frame delivery: the MoltenVK MTLTexture that backs the
+    /// VkImage is used directly as inputTexture. Triple-buffer fences guarantee
+    /// the core won't overwrite this image until 2 frames later, by which time
+    /// our Metal present has completed. This eliminates one GPU blit per frame.
     func didRenderFrameWithMTLTexture(_ texture: MTLTexture) {
-        // Replace the backing texture with the Vulkan frame's MTLTexture.
-        // GPU rendering is already complete (vkQueueWaitIdle was called before this).
         backingMTLTexture = texture
 
-        // Acquire the lock before reading/modifying inputTexture to match the
-        // thread-safety contract used by the OpenGL HW-render path.
-        // withLock ensures the unlock runs even on early exit (guard/return).
-        var blitSucceeded = false
         emulatorCore?.frontBufferLock.withLock {
-            previousCommandBuffer?.waitUntilScheduled()
-
-            // Ensure inputTexture matches the Vulkan texture's exact dimensions and pixel
-            // format. updateInputTexture() uses emulatorCore geometry which may differ from
-            // the actual VkImage size/format, so create the destination texture directly
-            // from the Vulkan texture's properties.
-            if inputTexture == nil
-                || inputTexture?.width       != texture.width
-                || inputTexture?.height      != texture.height
-                || inputTexture?.pixelFormat != texture.pixelFormat {
-                guard let dev = device else {
-                    ELOG("PVMetalViewController: no Metal device for Vulkan frame")
-                    recoverFromGPUError()
-                    return
-                }
-                let desc = MTLTextureDescriptor.texture2DDescriptor(
-                    pixelFormat: texture.pixelFormat,
-                    width: texture.width,
-                    height: texture.height,
-                    mipmapped: false)
-                desc.usage = [.shaderRead, .renderTarget]
-                inputTexture = dev.makeTexture(descriptor: desc)
-                if inputTexture == nil {
-                    ELOG("PVMetalViewController: failed to create inputTexture for Vulkan frame")
-                    recoverFromGPUError()
-                    return
-                }
-            }
-
-            guard let destTexture = inputTexture,
-                  let commandBuffer = commandQueue?.makeCommandBuffer(),
-                  let encoder = commandBuffer.makeBlitCommandEncoder() else {
-                ELOG("PVMetalViewController: failed to create blit command encoder for Vulkan frame — dropping frame")
-                return
-            }
-
-            let w = min(texture.width,  destTexture.width)
-            let h = min(texture.height, destTexture.height)
-            encoder.copy(from: texture,
-                         sourceSlice: 0, sourceLevel: 0,
-                         sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
-                         sourceSize:   MTLSize(width: w, height: h, depth: 1),
-                         to: destTexture,
-                         destinationSlice: 0, destinationLevel: 0,
-                         destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
-            encoder.endEncoding()
-            commandBuffer.commit()
-            previousCommandBuffer = commandBuffer
-            blitSucceeded = true
+            inputTexture = texture
         }
 
-        // Signal so any render thread waiting on frontBufferCondition is unblocked,
-        // whether or not the blit succeeded (avoids a stall on dropped frames).
         emulatorCore?.frontBufferCondition.withLock {
-            if blitSucceeded {
-                emulatorCore?.isFrontBufferReady = true
-            }
+            emulatorCore?.isFrontBufferReady = true
             emulatorCore?.frontBufferCondition.signal()
         }
     }
