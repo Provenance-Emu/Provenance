@@ -367,26 +367,6 @@ struct ImportTaskRowView: View {
     }
 }
 
-#if os(tvOS)
-public struct TVOSDisableFocusEffect: ViewModifier {
-    public init() {}
-
-    public func body(content: Content) -> some View {
-        if #available(tvOS 17.0, *) {
-            content.focusEffectDisabled()
-        } else {
-            content
-        }
-    }
-}
-
-public extension View {
-    func tvOSDisableFocusEffect() -> some View {
-        modifier(TVOSDisableFocusEffect())
-    }
-}
-#endif
-
 #if DEBUG
 import PVThemes
 #Preview {
