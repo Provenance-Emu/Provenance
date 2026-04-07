@@ -82,14 +82,6 @@ extension View {
     }
 }
 
-#if os(iOS)
-extension View {
-    /// No-op replacement for tvOS focus effect disabling on iOS.
-    func tvOSDisableFocusEffect() -> some View {
-        self
-    }
-}
-#endif
 
 /// Modern tvOS focus coordination using best practices.
 /// Key principles:
