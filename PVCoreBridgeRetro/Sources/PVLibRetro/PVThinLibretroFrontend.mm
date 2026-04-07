@@ -491,6 +491,22 @@ typedef struct PVThinLibretroSymbols {
     os_unfair_lock _vulkanQueueLock;
     BOOL _hwSharedContext;
 
+    /// Vulkan context negotiation interface provided by the core via
+    /// SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE. The core keeps this
+    /// struct alive for the lifetime of the loaded game; we just store
+    /// the pointer. NULL when the core didn't provide one.
+    const struct retro_hw_render_context_negotiation_interface_vulkan *_vulkanNegotiationInterface;
+    /// YES when the core's create_device callback created the VkDevice.
+    /// In that case the frontend must NOT call vkDestroyDevice — the
+    /// core owns the device and will tear it down in destroy_device.
+    BOOL _vulkanCoreOwnsDevice;
+    /// YES when Vulkan context creation has been deferred until after
+    /// retro_load_game returns (to allow the negotiation interface to arrive).
+    BOOL _vulkanContextDeferred;
+    /// Queue family index reported by the core's create_device callback
+    /// (or 0 when the frontend created the device).
+    uint32_t _vulkanQueueFamilyIndex;
+
     // Per-frame Vulkan state set by the core callbacks
     VkSemaphore _vulkanSignalSemaphore;        // set by thin_vulkan_set_signal_semaphore
     VkImage _vulkanCurrentVkImage;             // set by thin_vulkan_set_image (VkImage only; no pNext copy)
@@ -524,7 +540,8 @@ typedef struct PVThinLibretroSymbols {
     // VK_EXT_metal_objects: vkExportMetalObjectsEXT(device, &info) — preferred in MoltenVK >= 1.2
     // Return type is VkResult per spec; pMetalObjectsInfo uses void* to avoid needing
     // VkExportMetalObjectsInfoEXT from the bundled vulkan.h (v17 predates this extension).
-    VkResult (*_vkExportMetalObjectsEXT)(VkDevice device, void *pMetalObjectsInfo);
+    /// vkExportMetalObjectsEXT returns void (not VkResult) per the Vulkan spec.
+    void (*_vkExportMetalObjectsEXT)(VkDevice device, void *pMetalObjectsInfo);
 
     // Double-buffer synchronisation via per-frame fences.
     // Replaces the vkQueueWaitIdle full-queue stall with narrower per-submission waits.
@@ -993,6 +1010,31 @@ static void thin_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore
     os_unfair_lock_lock(&bridge->_vulkanQueueLock);
     bridge->_vulkanSignalSemaphore = semaphore;
     os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
+}
+
+/// Logging wrapper around vkGetDeviceProcAddr so we can see which function
+/// the core resolves to NULL (causing a crash when called).
+static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
+thin_vulkan_get_device_proc_addr(VkDevice device, const char *pName) {
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self || !self->_vkGetDeviceProcAddr) return NULL;
+    PFN_vkVoidFunction fn = self->_vkGetDeviceProcAddr(device, pName);
+    if (!fn) {
+        WLOG(@"ThinFrontend: vkGetDeviceProcAddr(\"%s\") → NULL", pName);
+    }
+    return fn;
+}
+
+/// Logging wrapper around vkGetInstanceProcAddr.
+static VKAPI_ATTR PFN_vkVoidFunction VKAPI_CALL
+thin_vulkan_get_instance_proc_addr(VkInstance instance, const char *pName) {
+    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    if (!self || !self->_vkGetInstanceProcAddr) return NULL;
+    PFN_vkVoidFunction fn = self->_vkGetInstanceProcAddr(instance, pName);
+    if (!fn) {
+        WLOG(@"ThinFrontend: vkGetInstanceProcAddr(\"%s\") → NULL", pName);
+    }
+    return fn;
 }
 
 #endif // HAVE_VULKAN
@@ -2242,6 +2284,10 @@ static bool thin_environment(unsigned cmd, void *data) {
         _vulkanPendingCmdBufCount = 0;
         _vulkanCurrentVkImage = VK_NULL_HANDLE;
         _vulkanHasCurrentImage = NO;
+        _vulkanNegotiationInterface = NULL;
+        _vulkanCoreOwnsDevice = NO;
+        _vulkanContextDeferred = NO;
+        _vulkanQueueFamilyIndex = 0;
         _vulkanWaitSemaphoreCount = 0;
         _vulkanExtMetalObjectsEnabled = NO;
 #endif
@@ -2396,6 +2442,28 @@ static bool thin_environment(unsigned cmd, void *data) {
     _sym.retro_init();
     _coreDeinited = NO;
 
+#if TARGET_OS_IOS || TARGET_OS_TV
+    // Flycast's VRAM texture cache uses mprotect() to track writes. The SH4
+    // interpreter triggers EXC_BAD_ACCESS when writing to protected pages;
+    // a POSIX signal handler (fault_handler) normally catches this. With
+    // threaded rendering the emu thread's signal handler calls VramLockedWrite
+    // which takes a std::mutex — UB inside a signal handler and prone to
+    // deadlock. Disabling threaded rendering keeps everything on the
+    // retro_run thread, avoiding the cross-thread signal/mutex hazard.
+    // Also prevents lldb from intercepting Mach exceptions during debugging.
+    {
+        NSString *coreName = _rawSystemInfo.library_name
+            ? [NSString stringWithUTF8String:_rawSystemInfo.library_name] : @"";
+        if ([coreName.lowercaseString containsString:@"flycast"]) {
+            os_unfair_lock_lock(&_optionsLock);
+            _coreOptions[@"reicast_threaded_rendering"] = @"disabled";
+            _coreOptionsDirty = YES;
+            os_unfair_lock_unlock(&_optionsLock);
+            ILOG(@"ThinFrontend: forced reicast_threaded_rendering=disabled (iOS VRAM fault handler safety)");
+        }
+    }
+#endif
+
     // NOTE: Do NOT call retro_get_system_av_info before retro_load_game.
     // The libretro API requires content to be loaded first; many cores
     // (e.g. mGBA) store per-game state in globals that are NULL until
@@ -2487,6 +2555,25 @@ static bool thin_environment(unsigned cmd, void *data) {
         _thinCurrentTLS = nil;
         return NO;
     }
+
+#if HAVE_VULKAN
+    /// Fallback: if the core didn't set a negotiation interface (so the deferred
+    /// context wasn't finalized inside SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE),
+    /// finalize now using the frontend-created device.
+    if (_vulkanContextDeferred) {
+        [self finalizeVulkanContextDeferred];
+        if (!_vulkanDevice) {
+            if (error) {
+                *error = [NSError errorWithDomain:@"PVThinLibretroFrontend"
+                                             code:6
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Vulkan context setup failed"}];
+            }
+            _sym.retro_deinit();
+            _thinCurrentTLS = nil;
+            return NO;
+        }
+    }
+#endif
 
     // Refresh AV info after load (core may change geometry)
     if (_sym.retro_get_system_av_info) {
@@ -2656,6 +2743,29 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     [super stopEmulation]; // stops emulation loop thread before retro teardown
     [self clearAllInput];
+
+    // Notify the core to destroy its HW rendering resources BEFORE
+    // retro_unload_game / retro_deinit. The libretro lifecycle requires
+    // context_destroy while the core is still initialized and the
+    // VkDevice is still live, so the core can release its VkImages,
+    // pipelines, command pools, etc. Calling it after retro_deinit
+    // invokes a callback into partially-torn-down core state → crash
+    // on second game boot (dangling Vulkan handles in core globals).
+#if HAVE_VULKAN
+    if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN) {
+        os_unfair_lock_lock(&_vulkanQueueLock);
+        if (_vkQueueWaitIdle && _vulkanQueue) {
+            _vkQueueWaitIdle(_vulkanQueue);
+        }
+        os_unfair_lock_unlock(&_vulkanQueueLock);
+    }
+#endif
+    if (_hwRenderCallback.context_destroy) {
+        ILOG(@"ThinFrontend: calling context_destroy before retro_deinit");
+        _hwRenderCallback.context_destroy();
+        _hwRenderCallback.context_destroy = NULL;
+    }
+
     if (_sym.retro_unload_game) {
         _sym.retro_unload_game();
     }
@@ -3250,11 +3360,14 @@ static bool thin_environment(unsigned cmd, void *data) {
         return;
     }
 
-    // RETRO_HW_FRAME_BUFFER_VALID means the core has rendered into our FBO
-    // (_emuFBO / _ioSurface). Notify the Metal presenter so it can blit the
-    // IOSurface-backed texture to the display. The render delegate's
-    // didRenderFrameOnAlternateThread already calls glFlush(), so we do not
-    // flush here to avoid a redundant double-flush per frame.
+    static uint32_t _vkVideoRefreshCount = 0;
+    static uint32_t _videoRefreshTotal = 0;
+    _videoRefreshTotal++;
+    if (_videoRefreshTotal <= 3) {
+        ILOG(@"ThinFrontend: video_refresh #%u data=%p HW_VALID=%d w=%u h=%u ctxType=%d",
+             _videoRefreshTotal, data, (data == RETRO_HW_FRAME_BUFFER_VALID),
+             w, h, _hwRenderCallback.context_type);
+    }
     if (data == RETRO_HW_FRAME_BUFFER_VALID) {
 #if HAVE_VULKAN
         if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN) {
@@ -3269,6 +3382,11 @@ static bool thin_environment(unsigned cmd, void *data) {
                 _vulkanPendingCmdBufCount = 0;
             }
             os_unfair_lock_unlock(&_vulkanQueueLock);
+            if (_vkVideoRefreshCount < 5 || (_vkVideoRefreshCount % 300 == 0)) {
+                ILOG(@"ThinFrontend: Vulkan video_refresh #%u cmdBufs=%u hasImage=%d",
+                     _vkVideoRefreshCount, pendingCount, _vulkanHasCurrentImage);
+            }
+            _vkVideoRefreshCount++;
 
             if (pendingCount > 0) {
                 // Normal Vulkan path: submit the deferred command buffers now that
@@ -3277,11 +3395,13 @@ static bool thin_environment(unsigned cmd, void *data) {
                 // submitVulkanCommandBuffers notifies the delegate if _vulkanHasCurrentImage.
             } else if (_vulkanHasCurrentImage) {
                 // Async-compute path: core called set_image but no set_command_buffers.
-                // Consume wait semaphores (if any) via a wait-only queue submission,
-                // then export and present the VkImage.
+                // The core submitted its own Vulkan command buffers internally, so the
+                // GPU may still be writing to the VkImage. We MUST wait for the queue
+                // to drain before extracting the MTLTexture, otherwise the blit races
+                // with the Vulkan render (pink clear-color or stale frames).
                 _vulkanHasCurrentImage = NO;
+                os_unfair_lock_lock(&_vulkanQueueLock);
                 if (_vulkanWaitSemaphoreCount > 0 && _vkQueueSubmit && _vulkanQueue) {
-                    os_unfair_lock_lock(&_vulkanQueueLock);
                     uint32_t waitCount = _vulkanWaitSemaphoreCount;
                     VkSemaphore waitSems[8];
                     VkPipelineStageFlags waitMasks[8];
@@ -3296,14 +3416,20 @@ static bool thin_environment(unsigned cmd, void *data) {
                         .commandBufferCount = 0,
                     };
                     VkResult waitResult = _vkQueueSubmit(_vulkanQueue, 1, &waitSubmit, VK_NULL_HANDLE);
-                    if (waitResult == VK_SUCCESS && _vkQueueWaitIdle) {
-                        _vkQueueWaitIdle(_vulkanQueue);
-                    } else if (waitResult != VK_SUCCESS) {
+                    if (waitResult != VK_SUCCESS) {
                         ELOG(@"ThinFrontend: async-compute vkQueueSubmit failed (result=%d)", waitResult);
+                        os_unfair_lock_unlock(&_vulkanQueueLock);
+                        return;
                     }
-                    os_unfair_lock_unlock(&_vulkanQueueLock);
-                    if (waitResult != VK_SUCCESS) { return; }
+                } else {
+                    _vulkanWaitSemaphoreCount = 0;
                 }
+                // Drain the GPU queue so the VkImage is fully rendered before we
+                // extract its backing MTLTexture.
+                if (_vkQueueWaitIdle && _vulkanQueue) {
+                    _vkQueueWaitIdle(_vulkanQueue);
+                }
+                os_unfair_lock_unlock(&_vulkanQueueLock);
                 [self notifyRenderDelegateOfVulkanFrame:nil];
             }
             return;
@@ -3316,7 +3442,14 @@ static bool thin_environment(unsigned cmd, void *data) {
         return;
     }
 
-    if (!data || !_videoBufferData) return;
+    if (!data || !_videoBufferData) {
+        static uint32_t _nullFrameCount = 0;
+        if (_nullFrameCount < 5) {
+            ILOG(@"ThinFrontend: video_refresh NULL frame (data=%p vbuf=%p) #%u", data, _videoBufferData, _nullFrameCount);
+        }
+        _nullFrameCount++;
+        return;
+    }
     NSUInteger maxW = (_rawAVInfo.geometry.max_width  ?: w);
     NSUInteger bpp  = (_retroPixelFormat == RETRO_PIXEL_FORMAT_XRGB8888) ? 4 : 2;
     NSUInteger dstStride  = maxW * bpp;
@@ -3842,6 +3975,14 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (BOOL)rendersToOpenGL {
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     return _hwRenderRequested;
+#else
+    return NO;
+#endif
+}
+
+- (BOOL)rendersToVulkan {
+#if HAVE_VULKAN
+    return _hwRenderRequested && _hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN;
 #else
     return NO;
 #endif
@@ -4709,31 +4850,56 @@ static bool thin_environment(unsigned cmd, void *data) {
             return false;
         }
         case RETRO_ENVIRONMENT_SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE: {
-            // Cores use this to pass a context-negotiation interface *before* context_reset.
-            // We accept and log it; the interface is not actively driven because Provenance
-            // creates the context itself (EAGLContext / MoltenVK).  Returning true signals to
-            // the core that the interface was received; returning false would make cores like
-            // Beetle PSX HW fall back to a software path or refuse to run.
             const struct retro_hw_render_context_negotiation_interface *iface =
                 (const struct retro_hw_render_context_negotiation_interface *)data;
+#if HAVE_VULKAN
+            if (iface && iface->interface_type == RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN) {
+                _vulkanNegotiationInterface =
+                    (const struct retro_hw_render_context_negotiation_interface_vulkan *)iface;
+                ILOG(@"ThinEnv SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE Vulkan version=%u "
+                     @"get_application_info=%p create_device=%p destroy_device=%p",
+                     _vulkanNegotiationInterface->interface_version,
+                     (void *)_vulkanNegotiationInterface->get_application_info,
+                     (void *)_vulkanNegotiationInterface->create_device,
+                     (void *)_vulkanNegotiationInterface->destroy_device);
+
+                /// Finalize the deferred Vulkan context now that the negotiation
+                /// interface has arrived. This ensures the core's create_device
+                /// callback runs before context_reset, initializing the core's
+                /// internal Vulkan dispatch table.
+                if (_vulkanContextDeferred) {
+                    [self finalizeVulkanContextDeferred];
+                }
+
+                return true;
+            }
+#endif
             if (iface) {
-                ILOG(@"ThinEnv SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE type=%u version=%u",
+                ILOG(@"ThinEnv SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE type=%u version=%u (accepted, not driven)",
                      (unsigned)iface->interface_type, iface->interface_version);
             } else {
+#if HAVE_VULKAN
+                _vulkanNegotiationInterface = NULL;
+#endif
                 DLOG(@"ThinEnv SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE (null — core clearing interface)");
             }
             return true;
         }
         case RETRO_ENVIRONMENT_GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT: {
-            // Core queries which negotiation interface versions the frontend supports.
-            // We fill in interface_version = 0 (version 0 = "I know of this interface but
-            // don't drive it"; the core must still work with a frontend-created context).
             struct retro_hw_render_context_negotiation_interface *iface =
                 (struct retro_hw_render_context_negotiation_interface *)data;
             if (iface) {
+#if HAVE_VULKAN
+                if (iface->interface_type == RETRO_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_VULKAN) {
+                    // We support v1: get_application_info, create_device, destroy_device.
+                    iface->interface_version = 1;
+                    ILOG(@"ThinEnv GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT Vulkan — reporting version 1");
+                    return true;
+                }
+#endif
+                iface->interface_version = 0;
                 ILOG(@"ThinEnv GET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE_SUPPORT type=%u — reporting version 0",
                      (unsigned)iface->interface_type);
-                iface->interface_version = 0;
             }
             return true;
         }
@@ -4845,29 +5011,23 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (BOOL)setupHardwareRenderCallback:(struct retro_hw_render_callback *)hwCb {
 #if HAVE_VULKAN
     if (hwCb->context_type == RETRO_HW_CONTEXT_VULKAN) {
-        ILOG(@"ThinFrontend: core requesting Vulkan HW context");
+        ILOG(@"ThinFrontend: core requesting Vulkan HW context (context_reset=%p)",
+             (void *)hwCb->context_reset);
 
         _hwRenderCallback = *hwCb;
         _hwRenderRequested = YES;
 
-        // Install our proc address resolver (framebuffer is N/A for Vulkan)
         _hwRenderCallback.get_current_framebuffer = NULL;
         _hwRenderCallback.get_proc_address = thin_hw_get_proc_address;
         *hwCb = _hwRenderCallback;
 
-        // Set up Vulkan context via MoltenVK
-        if (![self setupVulkanContext]) {
-            ELOG(@"ThinFrontend: Vulkan context setup failed");
-            _hwRenderRequested = NO;
-            memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
-            return false;
-        }
-
-        // Fire context_reset immediately for Vulkan (no FBO setup needed)
-        if (_hwRenderCallback.context_reset) {
-            ILOG(@"ThinFrontend: firing Vulkan context_reset");
-            _hwRenderCallback.context_reset();
-        }
+        /// Vulkan context creation is deferred until after retro_load_game returns.
+        /// The core may call SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE after
+        /// SET_HW_RENDER — we need that negotiation interface (which contains
+        /// create_device) before creating the device, because cores like Flycast
+        /// use it to initialize their internal Vulkan dispatch table.
+        _vulkanContextDeferred = YES;
+        ILOG(@"ThinFrontend: Vulkan context creation deferred (waiting for negotiation interface)");
 
         return YES;
     }
@@ -5072,7 +5232,8 @@ static bool thin_environment(unsigned cmd, void *data) {
 #if HAVE_VULKAN
 
 - (BOOL)setupVulkanContext {
-    ILOG(@"ThinFrontend: setting up Vulkan context via MoltenVK");
+    ILOG(@"ThinFrontend: setting up Vulkan context via MoltenVK (negotiation=%p)",
+         (void *)_vulkanNegotiationInterface);
 
     if (![self loadMoltenVKLibrary]) {
         ELOG(@"ThinFrontend: failed to load MoltenVK library");
@@ -5098,18 +5259,57 @@ static bool thin_environment(unsigned cmd, void *data) {
         return NO;
     }
 
-    if (![self createVulkanDevice]) {
-        ELOG(@"ThinFrontend: failed to create Vulkan device");
-        [self destroyVulkanInstance];
-        [self unloadMoltenVKLibrary];
-        return NO;
+    // If the core provided a Vulkan context negotiation interface with a
+    // create_device callback, let the core create the VkDevice. This is
+    // required by cores like Flycast that need specific Vulkan extensions
+    // or features enabled on the device.
+    BOOL deviceReady = NO;
+    if (_vulkanNegotiationInterface && _vulkanNegotiationInterface->create_device) {
+        ILOG(@"ThinFrontend: calling core's create_device callback");
+        deviceReady = [self createVulkanDeviceViaCore];
+    }
+
+    if (!deviceReady) {
+        if (![self createVulkanDevice]) {
+            ELOG(@"ThinFrontend: failed to create Vulkan device");
+            [self destroyVulkanInstance];
+            [self unloadMoltenVKLibrary];
+            return NO;
+        }
     }
 
     [self getVulkanDeviceQueue];
     [self refreshVulkanRenderInterface];
 
-    ILOG(@"ThinFrontend: Vulkan hardware context created successfully via MoltenVK");
+    ILOG(@"ThinFrontend: Vulkan hardware context created successfully via MoltenVK "
+         @"(coreOwnsDevice=%d)", _vulkanCoreOwnsDevice);
     return YES;
+}
+
+/// Finalize a deferred Vulkan context: create instance/device and fire context_reset.
+/// Called either from SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE (when the core
+/// provides one) or after retro_load_game returns (fallback for cores that don't).
+- (void)finalizeVulkanContextDeferred {
+    _vulkanContextDeferred = NO;
+
+    ILOG(@"ThinFrontend: finalizing deferred Vulkan context (negotiation=%p)",
+         (void *)_vulkanNegotiationInterface);
+
+    if (![self setupVulkanContext]) {
+        ELOG(@"ThinFrontend: deferred Vulkan context setup failed");
+        _hwRenderRequested = NO;
+        memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
+        return;
+    }
+
+    ILOG(@"ThinFrontend: Vulkan context ready — device=%p queue=%p coreOwned=%d",
+         (void *)_vulkanDevice, (void *)_vulkanQueue, _vulkanCoreOwnsDevice);
+
+    if (_hwRenderCallback.context_reset) {
+        ILOG(@"ThinFrontend: firing deferred Vulkan context_reset");
+        _hwRenderCallback.context_reset();
+        ILOG(@"ThinFrontend: deferred Vulkan context_reset completed");
+    }
 }
 
 - (void)destroyVulkanContext {
@@ -5120,46 +5320,19 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (BOOL)loadMoltenVKLibrary {
-    // First try RTLD_DEFAULT — if MoltenVK is already linked into the process
-    // (e.g., as a dynamic framework in the app bundle), vkGetInstanceProcAddr
-    // will be available without an explicit dlopen.
-    {
-        void *sym = dlsym(RTLD_DEFAULT, "vkGetInstanceProcAddr");
-        if (sym) {
-            // Use sentinel handle: NULL means "use RTLD_DEFAULT for all dlsym calls"
-            _vulkanLibrary = RTLD_DEFAULT;
-            ILOG(@"ThinFrontend: MoltenVK symbols already available via RTLD_DEFAULT");
-            return YES;
-        }
-    }
-
-    // Build a list of candidate paths.  On iOS/tvOS the framework lives inside
-    // the app bundle's Frameworks/ directory, accessible via @rpath.
+    // Try explicit MoltenVK paths FIRST. RTLD_DEFAULT is unreliable because
+    // other frameworks (e.g. PVDolphin) may export their own vkGetInstanceProcAddr
+    // stub that shadows the real MoltenVK symbol and isn't callable.
     NSBundle *mainBundle = NSBundle.mainBundle;
     NSString *frameworksPath = [mainBundle.privateFrameworksPath
                                 stringByAppendingPathComponent:@"MoltenVK.framework/MoltenVK"];
     NSString *bundleFrameworksPath = [[mainBundle bundlePath]
                                       stringByAppendingPathComponent:@"Frameworks/MoltenVK.framework/MoltenVK"];
 
-    const char *hardcodedPaths[] = {
-        // rpath-resolved — works when the app has Frameworks/ in LD_RUNPATH_SEARCH_PATHS
-        "@rpath/MoltenVK.framework/MoltenVK",
-        "MoltenVK.framework/MoltenVK",
-        "MoltenVK",
-        "../Contents/MoltenVK.framework/MoltenVK",
-        "/System/Library/Frameworks/MoltenVK.framework/MoltenVK",
-        "/usr/local/lib/libMoltenVK.dylib",
-        NULL
-    };
-
-    // Try bundle-derived paths first (absolute, most reliable on iOS/tvOS)
     NSMutableArray<NSString *> *bundlePaths = [NSMutableArray array];
-    if (frameworksPath) {
-        [bundlePaths addObject:frameworksPath];
-    }
-    if (bundleFrameworksPath) {
-        [bundlePaths addObject:bundleFrameworksPath];
-    }
+    if (frameworksPath)       [bundlePaths addObject:frameworksPath];
+    if (bundleFrameworksPath) [bundlePaths addObject:bundleFrameworksPath];
+
     for (NSString *p in bundlePaths) {
         if (!p) continue;
         _vulkanLibrary = dlopen(p.UTF8String, RTLD_LOCAL | RTLD_LAZY);
@@ -5170,6 +5343,15 @@ static bool thin_environment(unsigned cmd, void *data) {
         DLOG(@"ThinFrontend: failed to load MoltenVK from %@ (%s)", p, dlerror());
     }
 
+    const char *hardcodedPaths[] = {
+        "@rpath/MoltenVK.framework/MoltenVK",
+        "MoltenVK.framework/MoltenVK",
+        "MoltenVK",
+        "../Contents/MoltenVK.framework/MoltenVK",
+        "/System/Library/Frameworks/MoltenVK.framework/MoltenVK",
+        "/usr/local/lib/libMoltenVK.dylib",
+        NULL
+    };
     for (int i = 0; hardcodedPaths[i] != NULL; i++) {
         _vulkanLibrary = dlopen(hardcodedPaths[i], RTLD_LOCAL | RTLD_LAZY);
         if (_vulkanLibrary) {
@@ -5177,6 +5359,32 @@ static bool thin_environment(unsigned cmd, void *data) {
             return YES;
         }
         DLOG(@"ThinFrontend: failed to load MoltenVK from: %s (%s)", hardcodedPaths[i], dlerror());
+    }
+
+    // Last resort: RTLD_DEFAULT. Validate with dladdr that the symbol actually
+    // lives in a MoltenVK image — other frameworks (PVDolphin, etc.) can export
+    // a non-functional vkGetInstanceProcAddr stub that crashes when called.
+    {
+        void *sym = dlsym(RTLD_DEFAULT, "vkGetInstanceProcAddr");
+        if (sym) {
+            Dl_info info = {0};
+            BOOL isMoltenVK = NO;
+            if (dladdr(sym, &info) && info.dli_fname) {
+                NSString *imagePath = [NSString stringWithUTF8String:info.dli_fname];
+                isMoltenVK = ([imagePath.lastPathComponent containsString:@"MoltenVK"]
+                              || [imagePath containsString:@"MoltenVK.framework"]);
+                ILOG(@"ThinFrontend: RTLD_DEFAULT vkGetInstanceProcAddr resolved from: %s (isMoltenVK=%d)",
+                     info.dli_fname, isMoltenVK);
+            }
+            if (isMoltenVK) {
+                _vulkanLibrary = RTLD_DEFAULT;
+                ILOG(@"ThinFrontend: MoltenVK symbols available via RTLD_DEFAULT (verified)");
+                return YES;
+            }
+            WLOG(@"ThinFrontend: RTLD_DEFAULT has vkGetInstanceProcAddr but NOT from MoltenVK — "
+                 @"rejecting to avoid crash (source: %s)",
+                 info.dli_fname ? info.dli_fname : "unknown");
+        }
     }
 
     ELOG(@"ThinFrontend: failed to load MoltenVK from any known path");
@@ -5203,11 +5411,14 @@ static bool thin_environment(unsigned cmd, void *data) {
     // When _vulkanLibrary == RTLD_DEFAULT the symbols are already in the
     // process image; use RTLD_DEFAULT directly for the initial dlsym lookup.
     void *libHandle = (_vulkanLibrary == RTLD_DEFAULT) ? RTLD_DEFAULT : _vulkanLibrary;
+    ILOG(@"ThinFrontend: resolving vkGetInstanceProcAddr from %s",
+         libHandle == RTLD_DEFAULT ? "RTLD_DEFAULT" : "dlopen handle");
     _vkGetInstanceProcAddr = (PFN_vkVoidFunction (*)(VkInstance, const char *))dlsym(libHandle, "vkGetInstanceProcAddr");
     if (!_vkGetInstanceProcAddr) {
-        ELOG(@"ThinFrontend: failed to load vkGetInstanceProcAddr");
+        ELOG(@"ThinFrontend: failed to load vkGetInstanceProcAddr (%s)", dlerror());
         return NO;
     }
+    ILOG(@"ThinFrontend: vkGetInstanceProcAddr=%p", (void *)_vkGetInstanceProcAddr);
 
     _vkCreateInstance = (VkResult (*)(const void *, const void *, VkInstance *))
         _vkGetInstanceProcAddr(NULL, "vkCreateInstance");
@@ -5216,51 +5427,66 @@ static bool thin_environment(unsigned cmd, void *data) {
         return NO;
     }
 
-    ILOG(@"ThinFrontend: essential Vulkan functions loaded");
+    ILOG(@"ThinFrontend: essential Vulkan functions loaded (vkCreateInstance=%p)",
+         (void *)_vkCreateInstance);
     return YES;
 }
 
 - (BOOL)createVulkanInstance {
-    struct {
-        int sType;           // VK_STRUCTURE_TYPE_APPLICATION_INFO = 0
-        const void *pNext;
-        const char *pApplicationName;
-        uint32_t applicationVersion;
-        const char *pEngineName;
-        uint32_t engineVersion;
-        uint32_t apiVersion;
-    } appInfo = {
-        .sType = 0,
+    // Use the core's VkApplicationInfo when the negotiation interface provides one;
+    // fall back to our default otherwise.
+    const VkApplicationInfo *coreAppInfo = NULL;
+    if (_vulkanNegotiationInterface && _vulkanNegotiationInterface->get_application_info) {
+        coreAppInfo = _vulkanNegotiationInterface->get_application_info();
+        if (coreAppInfo) {
+            ILOG(@"ThinFrontend: using core-provided VkApplicationInfo (app=%s api=0x%08x)",
+                 coreAppInfo->pApplicationName ? coreAppInfo->pApplicationName : "(null)",
+                 coreAppInfo->apiVersion);
+        }
+    }
+
+    // Query the highest Vulkan API version MoltenVK supports so the core
+    // can resolve 1.1/1.2 functions via get_device_proc_addr. Requesting
+    // 1.0 caused cores like Flycast to get NULL back for promoted functions
+    // (e.g. vkGetBufferMemoryRequirements2) and crash.
+    uint32_t bestApiVersion = VK_API_VERSION_1_2;
+    typedef VkResult (*PFN_vkEnumerateInstanceVersion)(uint32_t *);
+    PFN_vkEnumerateInstanceVersion enumVer = (PFN_vkEnumerateInstanceVersion)
+        _vkGetInstanceProcAddr(NULL, "vkEnumerateInstanceVersion");
+    if (enumVer) {
+        uint32_t instanceVersion = 0;
+        if (enumVer(&instanceVersion) == VK_SUCCESS && instanceVersion > 0) {
+            bestApiVersion = instanceVersion;
+            ILOG(@"ThinFrontend: MoltenVK reports instance version %u.%u.%u",
+                 VK_API_VERSION_MAJOR(bestApiVersion),
+                 VK_API_VERSION_MINOR(bestApiVersion),
+                 VK_API_VERSION_PATCH(bestApiVersion));
+        }
+    }
+
+    VkApplicationInfo defaultAppInfo = {
+        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
         .pNext = NULL,
         .pApplicationName = "PVThinFrontend",
         .applicationVersion = 1,
         .pEngineName = "PVThinFrontend",
         .engineVersion = 1,
-        .apiVersion = 0x00400000 // VK_API_VERSION_1_0
+        .apiVersion = bestApiVersion,
     };
 
-    struct {
-        int sType;           // VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO = 1
-        const void *pNext;
-        uint32_t flags;
-        const void *pApplicationInfo;
-        uint32_t enabledLayerCount;
-        const char *const *ppEnabledLayerNames;
-        uint32_t enabledExtensionCount;
-        const char *const *ppEnabledExtensionNames;
-    } createInfo = {
-        .sType = 1,
+    VkInstanceCreateInfo createInfo = {
+        .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
-        .pApplicationInfo = &appInfo,
+        .pApplicationInfo = coreAppInfo ? coreAppInfo : &defaultAppInfo,
         .enabledLayerCount = 0,
         .ppEnabledLayerNames = NULL,
         .enabledExtensionCount = 0,
-        .ppEnabledExtensionNames = NULL
+        .ppEnabledExtensionNames = NULL,
     };
 
     VkResult result = _vkCreateInstance(&createInfo, NULL, &_vulkanInstance);
-    if (result != 0) { // VK_SUCCESS = 0
+    if (result != VK_SUCCESS) {
         ELOG(@"ThinFrontend: vkCreateInstance failed (result=%d)", result);
         return NO;
     }
@@ -5323,39 +5549,62 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
 
     float queuePriority = 1.0f;
-    struct {
-        int sType;           // VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO = 2
-        const void *pNext;
-        uint32_t flags;
-        uint32_t queueFamilyIndex;
-        uint32_t queueCount;
-        const float *pQueuePriorities;
-    } queueCreateInfo = {
-        .sType = 2,
+    VkDeviceQueueCreateInfo queueCreateInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
         .queueFamilyIndex = 0,
         .queueCount = 1,
-        .pQueuePriorities = &queuePriority
+        .pQueuePriorities = &queuePriority,
     };
 
-    // Check for VK_EXT_metal_objects support before creating the device.
-    static const char *kExtMetalObjects = "VK_EXT_metal_objects";
-    BOOL extMetalObjectsAvailable = NO;
-    // Load vkEnumerateDeviceExtensionProperties via the instance proc addr (device not yet created)
+    // Enumerate available device extensions and enable the ones commonly
+    // needed by Vulkan cores (Flycast, Beetle PSX HW, etc.).
     PFN_vkEnumerateDeviceExtensionProperties vkEnumDevExts =
         (PFN_vkEnumerateDeviceExtensionProperties)
         _vkGetInstanceProcAddr(_vulkanInstance, "vkEnumerateDeviceExtensionProperties");
+
+    // Extensions we want to enable if available.
+    static const char *kDesiredExtensions[] = {
+        "VK_EXT_metal_objects",
+        "VK_KHR_push_descriptor",
+        "VK_KHR_dedicated_allocation",
+        "VK_KHR_get_memory_requirements2",
+        "VK_KHR_sampler_mirror_clamp_to_edge",
+        "VK_KHR_dynamic_rendering",
+        "VK_KHR_synchronization2",
+        "VK_KHR_portability_subset",
+        "VK_KHR_maintenance1",
+        "VK_KHR_maintenance2",
+        "VK_KHR_maintenance3",
+        "VK_KHR_bind_memory2",
+        "VK_KHR_descriptor_update_template",
+        "VK_KHR_image_format_list",
+        "VK_EXT_descriptor_indexing",
+        "VK_KHR_create_renderpass2",
+        "VK_KHR_timeline_semaphore",
+    };
+    static const uint32_t kDesiredCount = sizeof(kDesiredExtensions) / sizeof(kDesiredExtensions[0]);
+
+    const char *enabledExtensions[32];
+    uint32_t enabledExtensionCount = 0;
+    _vulkanExtMetalObjectsEnabled = NO;
+
     if (vkEnumDevExts) {
         uint32_t extCount = 0;
         if (vkEnumDevExts(_vulkanPhysicalDevice, NULL, &extCount, NULL) == VK_SUCCESS && extCount > 0) {
             VkExtensionProperties *exts = (VkExtensionProperties *)malloc(extCount * sizeof(VkExtensionProperties));
             if (exts) {
                 if (vkEnumDevExts(_vulkanPhysicalDevice, NULL, &extCount, exts) == VK_SUCCESS) {
-                    for (uint32_t i = 0; i < extCount; i++) {
-                        if (strcmp(exts[i].extensionName, kExtMetalObjects) == 0) {
-                            extMetalObjectsAvailable = YES;
-                            break;
+                    for (uint32_t d = 0; d < kDesiredCount && enabledExtensionCount < 32; d++) {
+                        for (uint32_t i = 0; i < extCount; i++) {
+                            if (strcmp(exts[i].extensionName, kDesiredExtensions[d]) == 0) {
+                                enabledExtensions[enabledExtensionCount++] = kDesiredExtensions[d];
+                                if (strcmp(kDesiredExtensions[d], "VK_EXT_metal_objects") == 0) {
+                                    _vulkanExtMetalObjectsEnabled = YES;
+                                }
+                                break;
+                            }
                         }
                     }
                 }
@@ -5364,25 +5613,13 @@ static bool thin_environment(unsigned cmd, void *data) {
         }
     }
 
-    const char *enabledExtensions[1];
-    uint32_t enabledExtensionCount = 0;
-    if (extMetalObjectsAvailable) {
-        enabledExtensions[enabledExtensionCount++] = kExtMetalObjects;
+    ILOG(@"ThinFrontend: enabling %u device extensions", enabledExtensionCount);
+    for (uint32_t i = 0; i < enabledExtensionCount; i++) {
+        DLOG(@"ThinFrontend:   [%u] %s", i, enabledExtensions[i]);
     }
 
-    struct {
-        int sType;           // VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO = 3
-        const void *pNext;
-        uint32_t flags;
-        uint32_t queueCreateInfoCount;
-        const void *pQueueCreateInfos;
-        uint32_t enabledLayerCount;
-        const char *const *ppEnabledLayerNames;
-        uint32_t enabledExtensionCount;
-        const char *const *ppEnabledExtensionNames;
-        const void *pEnabledFeatures;
-    } createInfo = {
-        .sType = 3,
+    VkDeviceCreateInfo createInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
         .queueCreateInfoCount = 1,
@@ -5391,17 +5628,16 @@ static bool thin_environment(unsigned cmd, void *data) {
         .ppEnabledLayerNames = NULL,
         .enabledExtensionCount = enabledExtensionCount,
         .ppEnabledExtensionNames = enabledExtensionCount > 0 ? enabledExtensions : NULL,
-        .pEnabledFeatures = NULL
+        .pEnabledFeatures = NULL,
     };
 
     VkResult result = _vkCreateDevice(_vulkanPhysicalDevice, &createInfo, NULL, &_vulkanDevice);
-    if (result != 0) {
+    if (result != VK_SUCCESS) {
         ELOG(@"ThinFrontend: vkCreateDevice failed (result=%d)", result);
         return NO;
     }
 
-    _vulkanExtMetalObjectsEnabled = extMetalObjectsAvailable;
-    if (extMetalObjectsAvailable) {
+    if (_vulkanExtMetalObjectsEnabled) {
         ILOG(@"ThinFrontend: VK_EXT_metal_objects enabled at device creation");
     }
 
@@ -5475,14 +5711,13 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     // Load Metal interop functions (MoltenVK-specific; non-fatal if unavailable)
     // Primary: VK_EXT_metal_objects (MoltenVK >= 1.2)
-    _vkExportMetalObjectsEXT = (VkResult (*)(VkDevice, void *))
+    _vkExportMetalObjectsEXT = (void (*)(VkDevice, void *))
         _vkGetDeviceProcAddr(_vulkanDevice, "vkExportMetalObjectsEXT");
     if (!_vkExportMetalObjectsEXT) {
-        _vkExportMetalObjectsEXT = (VkResult (*)(VkDevice, void *))
+        _vkExportMetalObjectsEXT = (void (*)(VkDevice, void *))
             _vkGetInstanceProcAddr(_vulkanInstance, "vkExportMetalObjectsEXT");
     }
 
-    // Fallback: deprecated MVK extension (vkGetMTLTextureMVK), available in all MoltenVK versions
     _vkGetMTLTextureMVK = (void (*)(VkImage, void **))
         _vkGetInstanceProcAddr(_vulkanInstance, "vkGetMTLTextureMVK");
     if (!_vkGetMTLTextureMVK) {
@@ -5498,18 +5733,109 @@ static bool thin_environment(unsigned cmd, void *data) {
         WLOG(@"ThinFrontend: no Vulkan→Metal interop available; frames won't display");
     }
 
-    ILOG(@"ThinFrontend: Vulkan device created");
+    ILOG(@"ThinFrontend: Vulkan device created (frontend-owned)");
     return YES;
 }
 
-- (void)destroyVulkanDevice {
-    if (_vulkanDevice && _vkDestroyDevice) {
-        // Drain the queue before tearing down fences to ensure no fence is still in-flight.
-        if (_vkQueueWaitIdle && _vulkanQueue) {
-            _vkQueueWaitIdle(_vulkanQueue);
+/// Let the core create the VkDevice via the context negotiation interface.
+/// On success, sets _vulkanDevice, _vulkanQueue, _vulkanPhysicalDevice,
+/// and marks _vulkanCoreOwnsDevice = YES. Also loads device-level function
+/// pointers from the core-created device.
+- (BOOL)createVulkanDeviceViaCore {
+    if (!_vulkanNegotiationInterface || !_vulkanNegotiationInterface->create_device) {
+        return NO;
+    }
+
+    struct retro_vulkan_context vkCtx = {0};
+
+    PFN_vkGetInstanceProcAddr realGetInstanceProcAddr =
+        (PFN_vkGetInstanceProcAddr)_vkGetInstanceProcAddr;
+
+    /// Zero-initialized features struct — cores dereference this pointer
+    /// unconditionally so passing NULL would crash.
+    VkPhysicalDeviceFeatures noFeatures = {0};
+
+    /// The frontend requires VK_EXT_metal_objects to extract MTLTextures
+    /// from core-rendered VkImages for display on screen.
+    const char *requiredExtensions[] = { "VK_EXT_metal_objects" };
+
+    ILOG(@"ThinFrontend: invoking core create_device(instance=%p gpu=%p)",
+         (void *)_vulkanInstance, (void *)_vulkanPhysicalDevice);
+
+    bool ok = _vulkanNegotiationInterface->create_device(
+        &vkCtx,
+        _vulkanInstance,
+        _vulkanPhysicalDevice,
+        VK_NULL_HANDLE,              // no surface — headless
+        realGetInstanceProcAddr,
+        requiredExtensions, 1,
+        NULL, 0,                     // no required device layers from frontend
+        &noFeatures
+    );
+
+    if (!ok || !vkCtx.device) {
+        WLOG(@"ThinFrontend: core create_device returned %s (device=%p) — falling back to frontend device",
+             ok ? "true" : "false", (void *)vkCtx.device);
+        return NO;
+    }
+
+    _vulkanDevice = vkCtx.device;
+    _vulkanQueue = vkCtx.queue;
+    _vulkanPhysicalDevice = vkCtx.gpu ? vkCtx.gpu : _vulkanPhysicalDevice;
+    _vulkanQueueFamilyIndex = vkCtx.queue_family_index;
+    _vulkanCoreOwnsDevice = YES;
+
+    ILOG(@"ThinFrontend: core created VkDevice=%p queue=%p queueFamily=%u",
+         (void *)_vulkanDevice, (void *)_vulkanQueue, _vulkanQueueFamilyIndex);
+
+    // Load device-level function pointers so the rest of the frontend
+    // (command submission, Metal interop, fences) works correctly with
+    // the core-created device.
+    _vkGetDeviceProcAddr = (PFN_vkVoidFunction (*)(VkDevice, const char *))
+        _vkGetInstanceProcAddr(_vulkanInstance, "vkGetDeviceProcAddr");
+    if (_vkGetDeviceProcAddr) {
+        _vkDestroyDevice = (void (*)(VkDevice, const void *))
+            _vkGetDeviceProcAddr(_vulkanDevice, "vkDestroyDevice");
+        _vkGetDeviceQueue = (void (*)(VkDevice, uint32_t, uint32_t, VkQueue *))
+            _vkGetDeviceProcAddr(_vulkanDevice, "vkGetDeviceQueue");
+    }
+
+    // Load command submission functions
+    _vkQueueSubmit = (PFN_vkQueueSubmit)
+        _vkGetDeviceProcAddr(_vulkanDevice, "vkQueueSubmit");
+    _vkQueueWaitIdle = (VkResult (*)(VkQueue))
+        _vkGetDeviceProcAddr(_vulkanDevice, "vkQueueWaitIdle");
+    _vkEnumerateDeviceExtensionProperties = (PFN_vkEnumerateDeviceExtensionProperties)
+        _vkGetInstanceProcAddr(_vulkanInstance, "vkEnumerateDeviceExtensionProperties");
+
+    if (!_vkQueueSubmit || !_vkQueueWaitIdle) {
+        WLOG(@"ThinFrontend: core-created device missing queue submit functions");
+    }
+
+    // Load fence functions (non-fatal)
+    _vkCreateFence  = (PFN_vkCreateFence) _vkGetDeviceProcAddr(_vulkanDevice, "vkCreateFence");
+    _vkDestroyFence = (PFN_vkDestroyFence)_vkGetDeviceProcAddr(_vulkanDevice, "vkDestroyFence");
+    _vkWaitForFences = (PFN_vkWaitForFences)_vkGetDeviceProcAddr(_vulkanDevice, "vkWaitForFences");
+    _vkResetFences  = (PFN_vkResetFences) _vkGetDeviceProcAddr(_vulkanDevice, "vkResetFences");
+
+    if (_vkCreateFence && _vkDestroyFence && _vkWaitForFences && _vkResetFences) {
+        VkFenceCreateInfo fenceCI = {
+            .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+            .pNext = NULL,
+            .flags = VK_FENCE_CREATE_SIGNALED_BIT,
+        };
+        _vulkanFrameIndex = 0;
+        BOOL fencesOK = YES;
+        for (int i = 0; i < 2; i++) {
+            VkResult fr = _vkCreateFence(_vulkanDevice, &fenceCI, NULL, &_vulkanFrameFences[i]);
+            if (fr != VK_SUCCESS) {
+                WLOG(@"ThinFrontend: vkCreateFence[%d] failed (result=%d)", i, fr);
+                _vulkanFrameFences[i] = VK_NULL_HANDLE;
+                fencesOK = NO;
+                break;
+            }
         }
-        // Destroy double-buffer frame fences.
-        if (_vkDestroyFence) {
+        if (!fencesOK) {
             for (int i = 0; i < 2; i++) {
                 if (_vulkanFrameFences[i]) {
                     _vkDestroyFence(_vulkanDevice, _vulkanFrameFences[i], NULL);
@@ -5517,19 +5843,79 @@ static bool thin_environment(unsigned cmd, void *data) {
                 }
             }
         }
-        _vulkanFrameIndex = 0;
-        _vkCreateFence  = NULL;
-        _vkDestroyFence = NULL;
-        _vkWaitForFences = NULL;
-        _vkResetFences  = NULL;
-        _vkDestroyDevice(_vulkanDevice, NULL);
-        _vulkanDevice = NULL;
-        _vulkanQueue = NULL;
-        ILOG(@"ThinFrontend: Vulkan device destroyed");
+    } else {
+        _vulkanFrameFences[0] = VK_NULL_HANDLE;
+        _vulkanFrameFences[1] = VK_NULL_HANDLE;
     }
+
+    _vkExportMetalObjectsEXT = (void (*)(VkDevice, void *))
+        _vkGetDeviceProcAddr(_vulkanDevice, "vkExportMetalObjectsEXT");
+    if (!_vkExportMetalObjectsEXT) {
+        _vkExportMetalObjectsEXT = (void (*)(VkDevice, void *))
+            _vkGetInstanceProcAddr(_vulkanInstance, "vkExportMetalObjectsEXT");
+    }
+    _vkGetMTLTextureMVK = (void (*)(VkImage, void **))
+        _vkGetInstanceProcAddr(_vulkanInstance, "vkGetMTLTextureMVK");
+    if (!_vkGetMTLTextureMVK) {
+        _vkGetMTLTextureMVK = (void (*)(VkImage, void **))
+            _vkGetDeviceProcAddr(_vulkanDevice, "vkGetMTLTextureMVK");
+    }
+
+    _vulkanExtMetalObjectsEnabled = (_vkExportMetalObjectsEXT != NULL);
+
+    ILOG(@"ThinFrontend: core-created device ready (Metal interop: export=%p mvk=%p)",
+         (void *)_vkExportMetalObjectsEXT, (void *)_vkGetMTLTextureMVK);
+    return YES;
+}
+
+- (void)destroyVulkanDevice {
+    if (!_vulkanDevice) return;
+
+    // Drain the queue before tearing down fences.
+    if (_vkQueueWaitIdle && _vulkanQueue) {
+        _vkQueueWaitIdle(_vulkanQueue);
+    }
+    // Destroy double-buffer frame fences (owned by the frontend regardless).
+    if (_vkDestroyFence) {
+        for (int i = 0; i < 2; i++) {
+            if (_vulkanFrameFences[i]) {
+                _vkDestroyFence(_vulkanDevice, _vulkanFrameFences[i], NULL);
+                _vulkanFrameFences[i] = VK_NULL_HANDLE;
+            }
+        }
+    }
+    _vulkanFrameIndex = 0;
+    _vkCreateFence  = NULL;
+    _vkDestroyFence = NULL;
+    _vkWaitForFences = NULL;
+    _vkResetFences  = NULL;
+
+    if (_vulkanCoreOwnsDevice) {
+        // Per libretro_vulkan.h: destroy_device is called before the
+        // VkInstance is destroyed so the core can release its resources.
+        // The core owns the VkDevice; we must NOT call vkDestroyDevice.
+        if (_vulkanNegotiationInterface && _vulkanNegotiationInterface->destroy_device) {
+            ILOG(@"ThinFrontend: calling core destroy_device");
+            _vulkanNegotiationInterface->destroy_device();
+        }
+        ILOG(@"ThinFrontend: Vulkan device released (core-owned)");
+    } else if (_vkDestroyDevice) {
+        _vkDestroyDevice(_vulkanDevice, NULL);
+        ILOG(@"ThinFrontend: Vulkan device destroyed (frontend-owned)");
+    }
+
+    _vulkanDevice = NULL;
+    _vulkanQueue = NULL;
+    _vulkanCoreOwnsDevice = NO;
 }
 
 - (void)getVulkanDeviceQueue {
+    // When the core created the device, the queue is already set from
+    // the retro_vulkan_context filled by create_device.
+    if (_vulkanCoreOwnsDevice && _vulkanQueue) {
+        ILOG(@"ThinFrontend: Vulkan queue already set by core (queue=%p)", (void *)_vulkanQueue);
+        return;
+    }
     if (_vulkanDevice && _vkGetDeviceQueue) {
         _vkGetDeviceQueue(_vulkanDevice, 0, 0, &_vulkanQueue);
         ILOG(@"ThinFrontend: Vulkan device queue obtained");
@@ -5554,10 +5940,10 @@ static bool thin_environment(unsigned cmd, void *data) {
     _vulkanRenderInterface.instance = _vulkanInstance;
     _vulkanRenderInterface.gpu = _vulkanPhysicalDevice;
     _vulkanRenderInterface.device = _vulkanDevice;
-    _vulkanRenderInterface.get_device_proc_addr = (PFN_vkGetDeviceProcAddr)_vkGetDeviceProcAddr;
-    _vulkanRenderInterface.get_instance_proc_addr = (PFN_vkGetInstanceProcAddr)_vkGetInstanceProcAddr;
+    _vulkanRenderInterface.get_device_proc_addr = thin_vulkan_get_device_proc_addr;
+    _vulkanRenderInterface.get_instance_proc_addr = thin_vulkan_get_instance_proc_addr;
     _vulkanRenderInterface.queue = _vulkanQueue;
-    _vulkanRenderInterface.queue_index = 0;
+    _vulkanRenderInterface.queue_index = _vulkanQueueFamilyIndex;
     _vulkanRenderInterface.set_image = thin_vulkan_set_image;
     _vulkanRenderInterface.get_sync_index = thin_vulkan_get_sync_index;
     _vulkanRenderInterface.get_sync_index_mask = thin_vulkan_get_sync_index_mask;
@@ -5657,14 +6043,12 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     // --- Path 1: vkGetMTLTextureMVK (deprecated MVK extension, works on all MoltenVK versions) ---
     if (_vkGetMTLTextureMVK) {
-        // Use void* to avoid ARC interference: MoltenVK returns a non-owning reference
-        // retained by the VkImage. Bridge-cast to a __strong local so ARC retains it.
         void *rawTexture = NULL;
         _vkGetMTLTextureMVK(vkImage, &rawTexture);
         if (rawTexture) {
-            DLOG(@"ThinFrontend: Vulkan→Metal via vkGetMTLTextureMVK");
             return (__bridge id<MTLTexture>)rawTexture;
         }
+        WLOG(@"ThinFrontend: vkGetMTLTextureMVK returned NULL for VkImage=%p", (void *)vkImage);
     }
 
     // --- Path 2: vkExportMetalObjectsEXT (VK_EXT_metal_objects, MoltenVK >= 1.2) ---
@@ -5699,16 +6083,14 @@ static bool thin_environment(unsigned cmd, void *data) {
             .sType = PV_VK_STYPE_EXPORT_METAL_OBJECTS_INFO_EXT,
             .pNext = &texInfo,
         };
-        VkResult exportResult = _vkExportMetalObjectsEXT(_vulkanDevice, &exportInfo);
-        if (exportResult == VK_SUCCESS && texInfo.mtlTexturePtr) {
-            DLOG(@"ThinFrontend: Vulkan→Metal via vkExportMetalObjectsEXT");
+        _vkExportMetalObjectsEXT(_vulkanDevice, &exportInfo);
+        if (texInfo.mtlTexturePtr) {
             return (__bridge id<MTLTexture>)texInfo.mtlTexturePtr;
-        } else if (exportResult != VK_SUCCESS) {
-            WLOG(@"ThinFrontend: vkExportMetalObjectsEXT failed (result=%d)", exportResult);
         }
     }
 
-    DLOG(@"ThinFrontend: getMTLTextureForVkImage — no interop path available");
+    WLOG(@"ThinFrontend: getMTLTextureForVkImage — no interop path available (mvk=%p export=%p image=%p)",
+         (void *)_vkGetMTLTextureMVK, (void *)_vkExportMetalObjectsEXT, (void *)vkImage);
     return nil;
 }
 
@@ -5719,9 +6101,18 @@ static bool thin_environment(unsigned cmd, void *data) {
     (void)image; // VkImage is already stored in _vulkanCurrentVkImage
     id<MTLTexture> mtlTexture = [self getMTLTextureForVkImage:_vulkanCurrentVkImage];
     if (!mtlTexture) {
-        DLOG(@"ThinFrontend: notifyRenderDelegateOfVulkanFrame — no MTLTexture");
+        WLOG(@"ThinFrontend: notifyRenderDelegateOfVulkanFrame — no MTLTexture (image=%p)", (void *)_vulkanCurrentVkImage);
         return;
     }
+    static uint32_t _vkFrameNotifyCount = 0;
+    if (_vkFrameNotifyCount < 5 || (_vkFrameNotifyCount % 300 == 0)) {
+        ILOG(@"ThinFrontend: Vulkan frame #%u %lux%lu fmt=%lu VkImage=%p delegate=%p",
+             _vkFrameNotifyCount,
+             (unsigned long)[mtlTexture width], (unsigned long)[mtlTexture height],
+             (unsigned long)[mtlTexture pixelFormat], (void *)_vulkanCurrentVkImage,
+             (__bridge void *)self.renderDelegate);
+    }
+    _vkFrameNotifyCount++;
 
     id renderDelegate = self.renderDelegate;
 
@@ -5731,6 +6122,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         [(id<PVRenderDelegateMetal>)renderDelegate didRenderFrameWithMTLTexture:mtlTexture];
         return;
     }
+    WLOG(@"ThinFrontend: renderDelegate %@ does not conform to PVRenderDelegateMetal", renderDelegate);
 
     // Fallback: try IOSurface path if the texture has IOSurface backing.
     // iosurface returns an IOSurfaceRef (a CF type), not an ObjC object — no bridge cast.
@@ -5760,6 +6152,10 @@ static bool thin_environment(unsigned cmd, void *data) {
         _vulkanCurrentVkImage = VK_NULL_HANDLE;
         _vulkanWaitSemaphoreCount = 0;
         _vulkanExtMetalObjectsEnabled = NO;
+        _vulkanNegotiationInterface = NULL;
+        _vulkanCoreOwnsDevice = NO;
+        _vulkanContextDeferred = NO;
+        _vulkanQueueFamilyIndex = 0;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
         _renderDelegateStarted = NO;
 #endif

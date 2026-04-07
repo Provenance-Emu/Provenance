@@ -187,6 +187,8 @@ NS_SWIFT_NAME(EmulatorCore)
 @property (nonatomic, readonly) CGSize bufferSize;
 @property (nonatomic, readonly) BOOL isDoubleBuffered;
 @property (nonatomic, readonly) BOOL rendersToOpenGL;
+/// YES when the core renders via Vulkan HW context (MoltenVK → Metal interop).
+@property (nonatomic, readonly) BOOL rendersToVulkan;
 @property (nonatomic, readonly) GLenum pixelFormat;
 @property (nonatomic, readonly) GLenum pixelType;
 @property (nonatomic, readonly) GLenum internalPixelFormat;

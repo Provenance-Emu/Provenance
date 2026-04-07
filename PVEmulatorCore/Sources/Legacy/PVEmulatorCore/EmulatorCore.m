@@ -374,6 +374,10 @@ static NSString *_systemName;
     return NO;
 }
 
+- (BOOL)rendersToVulkan {
+    return NO;
+}
+
 - (void)setPauseEmulation:(BOOL)flag {
     if (flag) {
         [self stopHaptic];

@@ -218,6 +218,8 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, readonly) CGSize bufferSize;
 @property (nonatomic, readonly) BOOL isDoubleBuffered;
 @property (nonatomic, readonly) BOOL rendersToOpenGL;
+/// YES when the core renders via Vulkan HW context (MoltenVK → Metal interop).
+@property (nonatomic, readonly) BOOL rendersToVulkan;
 @property (nonatomic, readonly) NSTimeInterval frameInterval;
 
 @property (nonatomic, readonly, nullable) const void *videoBuffer;

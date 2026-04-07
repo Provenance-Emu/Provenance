@@ -193,6 +193,10 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     return NO;
 }
 
+- (BOOL)rendersToVulkan {
+    return NO;
+}
+
 - (void)setPauseEmulation:(BOOL)flag {
     if (flag) {
         [self stopHaptic];

@@ -1500,7 +1500,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 
         let targetPixelFormat = override ?? mtlView.currentDrawable?.texture.pixelFormat ?? mtlView.colorPixelFormat
-        let flipY = emulatorCore?.rendersToOpenGL ?? false
+        /// Flip only for OpenGL-origin textures (bottom-left). Vulkan and software
+        /// cores both use top-left origin and should not be flipped.
+        let flipY = (emulatorCore?.rendersToOpenGL ?? false) && !(emulatorCore?.rendersToVulkan ?? false)
 
         if force || filterRendererPixelFormat != targetPixelFormat || filterRendererFlipY != flipY {
             metalFilterRenderer.configure(device: device,
@@ -1649,15 +1651,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 //                """)
 //        }
 
-        // Check if the texture needs to be created or updated
-        if inputTexture == nil {
+        // Create the initial input texture from screenRect when needed.
+        // Skip for Vulkan cores — their inputTexture is created by
+        // didRenderFrameWithMTLTexture: with the actual VkImage dimensions.
+        if inputTexture == nil && !emulatorCore.rendersToVulkan {
             do {
                 try updateInputTexture()
                 DLOG("Created input texture")
             } catch {
                 ELOG("Error creating texture in draw: \(error)")
-
-                // Use our recovery method instead of just retrying
                 recoverFromGPUError()
                 return
             }
@@ -2441,12 +2443,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // If screen rect is invalid or unusually small, use the full buffer size instead
         let effectiveScreenRect = isScreenRectValid ? screenRect : CGRect(x: 0, y: 0, width: bufferSize.width, height: bufferSize.height)
 
-        // Check if input texture dimensions match effective dimensions
+        // Check if input texture dimensions match effective dimensions.
+        // HW-render cores (Vulkan, OpenGL) manage inputTexture via
+        // didRenderFrameWithMTLTexture: / didRenderFrameOnAlternateThread — don't
+        // overwrite their texture with an empty one sized from screenRect.
+        let isHWRendering = emulatorCore.rendersToOpenGL
         let textureMatchesEffective = inputTexture.width == Int(effectiveScreenRect.width) &&
         inputTexture.height == Int(effectiveScreenRect.height)
 
-        // If texture doesn't match effective dimensions, recreate it
-        if !textureMatchesEffective {
+        if !textureMatchesEffective && !isHWRendering {
             ILOG("Texture dimensions (\(inputTexture.width)x\(inputTexture.height)) don't match effective dimensions (\(effectiveScreenRect.width)x\(effectiveScreenRect.height))")
             do {
                 try updateInputTexture()
@@ -2521,8 +2526,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             )
             renderEncoder.setViewport(viewport)
 
-            // Get the flipY parameter - set to true for non-OpenGL cores, false for OpenGL cores
-            let flipY: Bool = !emulatorCore.rendersToOpenGL
+            // flipY = true for top-left origin textures (software cores, Vulkan),
+            // false for bottom-left origin (OpenGL via IOSurface).
+            // Vulkan and Metal share top-left origin, but the shader's default UV
+            // mapping assumes bottom-left (OpenGL), so Vulkan frames need flipping.
+            let flipY: Bool = emulatorCore.rendersToVulkan || !emulatorCore.rendersToOpenGL
 
             // Use cached flipY buffer if value hasn't changed, otherwise create new one
             let flipYBuffer: MTLBuffer
@@ -3064,8 +3072,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     return
                 }
 
-                // Set up the flipY constant for OpenGL textures
-                var flipY = !(emulatorCore?.rendersToOpenGL ?? false)
+                // Vulkan & software cores need Y-flip (top-left origin);
+                // OpenGL cores do not (bottom-left origin, already handled).
+                var flipY = (emulatorCore?.rendersToVulkan ?? false) || !(emulatorCore?.rendersToOpenGL ?? false)
                 let constants = MTLFunctionConstantValues()
                 constants.setConstantValue(&flipY, type: .bool, index: 0)
 
@@ -3215,20 +3224,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 //        view.layoutIfNeeded()
 
 
-        // Update the texture
-        do {
-            // Force recreation of the texture
-            inputTexture = nil
-            try updateInputTexture()
-
-            // Force a redraw
-            draw(in: mtlView)
-
-            // Post a notification to refresh the GPU view
-            //    /        NotificationCenter.default.post(name: Notification.Name("RefreshGPUView"), object: nil)
-        } catch {
-            ELOG("Error updating texture after orientation change: \(error)")
+        // Vulkan cores manage their own inputTexture via didRenderFrameWithMTLTexture —
+        // recreating it from screenRect here would produce a wrong-sized texture.
+        if !(emulatorCore?.rendersToVulkan ?? false) {
+            do {
+                inputTexture = nil
+                try updateInputTexture()
+            } catch {
+                ELOG("Error updating texture after orientation change: \(error)")
+            }
         }
+
+        draw(in: mtlView)
     }
 
     // Add this method to check and refresh the texture if needed
@@ -3278,8 +3285,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Reset the command queue
         commandQueue = device?.makeCommandQueue()
 
-        // Reset the texture
-        inputTexture = nil
+        let isVulkan = emulatorCore?.rendersToVulkan ?? false
+
+        // Vulkan cores: keep inputTexture — it is managed by
+        // didRenderFrameWithMTLTexture and will be recreated from the
+        // actual VkImage dimensions on the next frame delivery.
+        if !isVulkan {
+            inputTexture = nil
+        }
 
         // Reset the pipelines
         blitPipeline = nil
@@ -3294,8 +3307,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             guard let self = self else { return }
 
             do {
-                // Recreate the texture
-                try self.updateInputTexture()
+                if !isVulkan {
+                    try self.updateInputTexture()
+                }
 
                 // Recreate the shaders
                 self.createBasicShaders()
@@ -3359,10 +3373,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         frameCount = 0
         previousCommandBuffer = nil
 
+        let isVulkan = emulatorCore?.rendersToVulkan ?? false
+
         // Release and recreate resources
         do {
-            // Release existing resources
-            inputTexture = nil
+            if !isVulkan {
+                inputTexture = nil
+            }
             commandQueue = nil
 
             // Recreate device if needed
@@ -3410,12 +3427,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 DLOG("Recreated MTKView")
             }
 
-            // Recreate input texture
-            if let emulatorCore = emulatorCore, emulatorCore.bufferSize.width > 0, emulatorCore.bufferSize.height > 0 {
+            // Vulkan cores: inputTexture is driven by didRenderFrameWithMTLTexture
+            if !isVulkan, let emulatorCore = emulatorCore,
+               emulatorCore.bufferSize.width > 0, emulatorCore.bufferSize.height > 0 {
                 try setupTexture()
                 try updateInputTexture()
                 DLOG("Recreated and updated input texture")
-            } else {
+            } else if !isVulkan {
                 ELOG("Cannot recreate input texture: Invalid buffer size or nil emulator core")
             }
 

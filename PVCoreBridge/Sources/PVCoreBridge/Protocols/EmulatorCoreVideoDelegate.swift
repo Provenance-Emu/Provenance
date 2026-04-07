@@ -27,6 +27,8 @@ import PVPrimitives
     @objc dynamic var isDoubleBuffered: Bool { get }
     @objc dynamic var renderFPS: Double { get }
     @objc dynamic var rendersToOpenGL: Bool { get }
+    /// YES when the core renders via Vulkan HW context (MoltenVK → Metal interop).
+    @objc dynamic var rendersToVulkan: Bool { get }
     @objc dynamic var screenRect: CGRect  { get }
     @objc dynamic var videoBuffer: UnsafeRawPointer? { get }
     

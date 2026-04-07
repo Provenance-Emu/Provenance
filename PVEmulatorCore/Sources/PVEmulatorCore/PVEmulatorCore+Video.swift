@@ -65,7 +65,11 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     open var rendersToOpenGL: Bool {
         bridge.rendersToOpenGL
     }
-   
+
+    open var rendersToVulkan: Bool {
+        bridge.rendersToVulkan
+    }
+
     open var screenRect: CGRect {
         bridge.screenRect
     }
