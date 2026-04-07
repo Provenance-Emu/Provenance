@@ -9,6 +9,8 @@ import CloudKit
 import os
 import RxSwift
 import RealmSwift
+import PVSettings
+import Defaults
 
 /// Save states syncer for all OS's using CloudKit
 public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
@@ -949,6 +951,19 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             Task {
                 defer { self.isLoadAllInFlight.withLock { $0 = false } }
+
+                // metadataOnly: use the lightweight metadata sync instead of full
+                // conflict resolution, artwork caching, and filesystem probes.
+                if Defaults[.cloudKitSyncContentType] == .metadataOnly {
+                    let syncLog = CloudSyncManager.syncLog
+                    syncLog.event(.start, item: "save/loadAll", status: .skipped, detail: "metadataOnly — using lightweight sync")
+                    let count = await self.syncMetadataOnly()
+                    syncLog.event(.complete, item: "save/loadAll", status: .ok, detail: "metadataOnly processed \(count) records")
+                    await iterationComplete?()
+                    observer(.completed)
+                    return
+                }
+
                 do {
                     let syncLog = CloudSyncManager.syncLog
                     CloudSyncManager.syncLog.event(.start, item: "save/loadAll", status: .inProgress)
@@ -1138,16 +1153,24 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             var targetSaveState: PVSaveState?
             var needsRomDownload = false
+            let isMetadataOnly = Defaults[.cloudKitSyncContentType] == .metadataOnly
 
             // Step 2: Handle existing or create new (async work)
             if let existingSaveState = existingSaveState {
-                syncLog.event(.sync, item: "save/\(existingSaveState.id)", status: .inProgress, detail: "handling existing")
-                await self.refreshLocalDownloadState(for: existingSaveState)
-                await self.handleSaveStateConflict(existingSaveState, cloudRecord: record, preferredCoreID: coreHint.coreID, preferredCoreVersion: coreHint.coreVersion)
-                targetSaveState = existingSaveState
-                // If the game isn't downloaded locally, flag for ROM download
-                if existingSaveState.game?.isDownloaded == false {
-                    needsRomDownload = true
+                if isMetadataOnly {
+                    // metadataOnly: skip conflict resolution and filesystem probes,
+                    // just ensure cloudRecordID is linked.
+                    syncLog.event(.sync, item: "save/\(existingSaveState.id)", status: .ok, detail: "metadataOnly — skipping conflict resolution")
+                    targetSaveState = existingSaveState
+                } else {
+                    syncLog.event(.sync, item: "save/\(existingSaveState.id)", status: .inProgress, detail: "handling existing")
+                    await self.refreshLocalDownloadState(for: existingSaveState)
+                    await self.handleSaveStateConflict(existingSaveState, cloudRecord: record, preferredCoreID: coreHint.coreID, preferredCoreVersion: coreHint.coreVersion)
+                    targetSaveState = existingSaveState
+                    // If the game isn't downloaded locally, flag for ROM download
+                    if existingSaveState.game?.isDownloaded == false {
+                        needsRomDownload = true
+                    }
                 }
 
                 // Ensure cloudRecordID is set if it wasn't before
@@ -1167,10 +1190,14 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 }
             } else if let newSaveState = await self.createSaveStateFromCloudRecord(record, game: frozenGame, originalID: originalSaveStateID, preferredCoreID: coreHint.coreID, preferredCoreVersion: coreHint.coreVersion) {
                 syncLog.event(.download, item: "save/\(newSaveState.id)", status: .ok, detail: "created new save state")
-                await self.markSaveStateForDownload(newSaveState, cloudRecord: record)
+                if !isMetadataOnly {
+                    await self.markSaveStateForDownload(newSaveState, cloudRecord: record)
+                }
                 targetSaveState = newSaveState
                 // New save states from cloud need the ROM downloaded
-                needsRomDownload = true
+                if !isMetadataOnly {
+                    needsRomDownload = true
+                }
             }
             else if frozenGame == nil {
                 // Defer processing until ROM metadata lands to avoid losing this record on fresh installs.
@@ -1184,7 +1211,9 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                                         to: targetSaveState,
                                         preferredCoreID: coreHint.coreID,
                                         preferredCoreVersion: coreHint.coreVersion)
-                if record[CloudKitSchema.SaveStateFields.imageAsset] as? CKAsset != nil {
+                // Skip artwork caching in metadataOnly mode — avoid I/O on every boot
+                if !isMetadataOnly,
+                   record[CloudKitSchema.SaveStateFields.imageAsset] as? CKAsset != nil {
                     await cacheSaveStateArtworkAsset(from: record, for: targetSaveState)
                 }
 

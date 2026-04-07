@@ -530,32 +530,37 @@ public class CloudSyncManager {
             await self?.checkForMissingROMFiles(force: false)
         }
 
-        // Proceed with initial sync (uploads) in parallel
-        updateSyncStatus(.initialSync)
+        // Enqueue initial sync (uploads) AFTER remote fetch completes.
+        // On a fresh install all local data came from CloudKit, so once
+        // fetchRemoteChanges finishes every Realm object already has a
+        // cloudRecordID and isInitialSyncNeeded() returns false — avoiding
+        // thousands of redundant per-file CloudKit queries.
+        enqueueMetadataWork { [weak self] in
+            guard let self else { return }
+            self.updateSyncStatus(.initialSync)
 
-        var hasErrors = false
-        var lastError: Error?
+            var hasErrors = false
+            var lastError: Error?
 
-        // Perform initial sync (this checks if needed internally unless forced)
-        do {
-            let syncCount = await CloudKitInitialSyncer.shared?.performInitialSync(forceSync: false)
-            DLOG("CloudKit initial sync completed - potentially uploaded \(syncCount) new records.")
-        } catch {
-            syncLog.event(.sync, item: "sync/initial", status: .failed, detail: error.localizedDescription)
-            hasErrors = true
-            lastError = error
-            await errorHandler.handle(error: error)
-        }
-
-        // Update status based on results (do not cancel ongoing remote fetch)
-        if hasErrors {
-            syncLog.event(.sync, item: "sync/cloudkit", status: .failed, detail: "Sync completed with errors")
-            if let error = lastError {
-                updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
+            do {
+                let syncCount = await CloudKitInitialSyncer.shared?.performInitialSync(forceSync: false)
+                DLOG("CloudKit initial sync completed - potentially uploaded \(syncCount ?? 0) new records.")
+            } catch {
+                CloudSyncManager.syncLog.event(.sync, item: "sync/initial", status: .failed, detail: error.localizedDescription)
+                hasErrors = true
+                lastError = error
+                await self.errorHandler.handle(error: error)
             }
-        } else if syncStatus != .error(CloudSyncError.cloudKitError(lastError ?? CloudSyncError.unknown)) {
-            updateSyncStatus(.idle)
-            DLOG("Initial sync phase completed successfully (remote fetch may still be in progress).")
+
+            if hasErrors {
+                CloudSyncManager.syncLog.event(.sync, item: "sync/cloudkit", status: .failed, detail: "Sync completed with errors")
+                if let error = lastError {
+                    self.updateSyncStatus(.error(CloudSyncError.cloudKitError(error)))
+                }
+            } else {
+                self.updateSyncStatus(.idle)
+                DLOG("Initial sync phase completed successfully.")
+            }
         }
     }
 

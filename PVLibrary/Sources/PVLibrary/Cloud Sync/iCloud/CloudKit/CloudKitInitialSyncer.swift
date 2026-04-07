@@ -13,6 +13,8 @@ import PVRealm
 import RealmSwift
 import Combine
 import PVFileSystem
+import PVSettings
+import Defaults
 import RxSwift
 import RxCocoa
 
@@ -213,6 +215,13 @@ public actor CloudKitInitialSyncer {
         // Check if sync is already in progress
         guard !isInitialSyncInProgress else {
             ILOG("⏸️ [performInitialSync] Initial sync already in progress")
+            return 0
+        }
+
+        // metadataOnly: this device is a download-only consumer (e.g. tvOS).
+        // Skip the initial upload sync — all local files came from CloudKit.
+        if !forceSync && Defaults[.cloudKitSyncContentType] == .metadataOnly {
+            ILOG("⏭️ [performInitialSync] Skipping — metadataOnly mode (download-only device)")
             return 0
         }
 
@@ -879,6 +888,13 @@ public actor CloudKitInitialSyncer {
     /// - Parameter forceSync: If true, upload all files regardless of existing records
     /// - Returns: Dictionary mapping directory names to sync counts
     private func syncAllNonDatabaseFiles(forceSync: Bool = false) async -> [String: Int] {
+        // metadataOnly: skip uploading non-database files (battery saves, screenshots, skins).
+        // On tvOS fresh install these files came from CloudKit — re-uploading wastes bandwidth.
+        if !forceSync && Defaults[.cloudKitSyncContentType] == .metadataOnly {
+            DLOG("Skipping non-database file upload — metadataOnly mode")
+            return [:]
+        }
+
         DLOG("Syncing all non-database files to CloudKit...")
 
         do {
