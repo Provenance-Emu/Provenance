@@ -413,12 +413,14 @@ static NSString *_systemName;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
-    if (flag) {
-        [self stopHaptic];
-        self.isRunning = NO;
-    } else {
-        [self startHaptic];
-        self.isRunning = YES;
+    @synchronized (self) {
+        if (flag) {
+            [self stopHaptic];
+            self.isRunning = NO;
+        } else {
+            [self startHaptic];
+            self.isRunning = YES;
+        }
     }
 }
 
