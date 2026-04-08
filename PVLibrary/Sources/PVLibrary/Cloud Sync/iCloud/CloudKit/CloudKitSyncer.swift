@@ -19,6 +19,8 @@ import Combine
 import PVFileSystem
 import PVRealm
 import CryptoKit
+import PVSettings
+import Defaults
 
 /// CloudKit-based sync provider for all OS's
 /// Implements the SyncProvider protocol to provide a consistent interface
@@ -864,6 +866,15 @@ public class CloudKitSyncer: SyncProvider {
         // (e.g. from an on-demand fetch or subscription notification)
         if let fileAsset = record["fileData"] as? CKAsset, let fileURL = fileAsset.fileURL {
             await downloadFile(from: fileURL, to: directory, filename: filename, record: record)
+            return
+        }
+
+        // metadataOnly devices (e.g. tvOS) should not download file assets during
+        // background sync — only create database entries so the library populates.
+        // Files are fetched on-demand when the user taps a game.
+        if Defaults[.cloudKitSyncContentType] == .metadataOnly {
+            await createDatabaseEntryFromRecord(record, directory: directory, filename: filename)
+            syncLog.event(.download, item: "record/\(filename)", status: .ok, detail: "metadataOnly — skipped asset download")
             return
         }
 
