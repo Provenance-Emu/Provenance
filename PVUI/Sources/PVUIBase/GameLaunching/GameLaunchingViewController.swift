@@ -741,53 +741,42 @@ public extension GameLaunchingViewController {
                         }
                     }
 
-                    // Show the enriched smart picker when the feature flag is on AND there is
-                    // useful metadata; fall back to the plain list picker otherwise.
-                    let smartFlagEnabled = PVFeatureFlags.shared.isEnabled(.smartCoreSelection)
-                    let useSmartPicker = smartFlagEnabled
-                    if useSmartPicker {
-                        let smartItems = recommendations.compactMap { rec -> SmartCoreSelectionItem? in
-                            guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
+                    // Always use the smart tile-based picker. Strip recommendation
+                    // metadata (rank, capabilities, tips, summary) when the
+                    // coreRecommendations flag is off.
+                    let showRecommendations = PVFeatureFlags.shared.isEnabled(.coreRecommendations)
+                    let smartItems = recommendations.compactMap { rec -> SmartCoreSelectionItem? in
+                        guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
+                        if showRecommendations {
                             return SmartCoreSelectionItem(recommendation: rec, coreName: core.projectName)
+                        } else {
+                            return SmartCoreSelectionItem(
+                                id: rec.coreIdentifier,
+                                coreName: core.projectName,
+                                saveCount: rec.saveCount
+                            )
                         }
-                        let system = game.system
-                        let coreSelectionView = SmartCoreSelectionHostingView(
-                            title: "Select Core",
-                            message: "Choose a core to run \(game.title)",
-                            items: smartItems,
-                            showSetDefault: system != nil,
-                            onSelect: handleCoreSelect,
-                            onSetDefault: system.map { sys in
-                                let systemId = sys.identifier
-                                return { [weak self] selectedId in
-                                    self?.setDefaultCore(identifier: selectedId, forSystemId: systemId)
-                                }
-                            },
-                            onCancel: {
-                                Task { @MainActor in
-                                    dismissAndResume(.cancelled)
-                                }
-                            }
-                        )
-                        stack.push(coreSelectionView, id: "core-selection")
-                    } else {
-                        let coreItems = recommendations.compactMap { rec -> RetroSelectionItem? in
-                            guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
-                            return RetroSelectionItem(id: rec.coreIdentifier, title: core.projectName, subtitle: formatSaveCountSubtitle(rec.saveCount))
-                        }
-                        let coreSelectionView = RetroSelectionAlertHostingView(
-                            title: "Select Core",
-                            message: "Choose a core to run \(game.title)",
-                            items: coreItems,
-                            onSelect: handleCoreSelect,
-                            onCancel: {
-                                Task { @MainActor in
-                                    dismissAndResume(.cancelled)
-                                }
-                            }
-                        )
-                        stack.push(coreSelectionView, id: "core-selection")
                     }
+                    let system = game.system
+                    let coreSelectionView = SmartCoreSelectionHostingView(
+                        title: "Select Core",
+                        message: "Choose a core to run \(game.title)",
+                        items: smartItems,
+                        showSetDefault: system != nil,
+                        onSelect: handleCoreSelect,
+                        onSetDefault: system.map { sys in
+                            let systemId = sys.identifier
+                            return { [weak self] selectedId in
+                                self?.setDefaultCore(identifier: selectedId, forSystemId: systemId)
+                            }
+                        },
+                        onCancel: {
+                            Task { @MainActor in
+                                dismissAndResume(.cancelled)
+                            }
+                        }
+                    )
+                    stack.push(coreSelectionView, id: "core-selection")
                 }
 
                 /// If the flow already resolved (e.g. no saves => start fresh), do not present the hosting UI.

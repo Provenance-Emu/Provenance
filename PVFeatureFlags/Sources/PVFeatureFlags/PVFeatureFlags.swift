@@ -64,6 +64,11 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// multiple available cores. When disabled, a plain list picker is used instead.
     /// Disabled by default until core capability data is fully audited.
     case smartCoreSelection = "smartCoreSelection"
+    /// Shows core recommendation metadata (rank badges, capability chips, summaries,
+    /// recommendation tips) in the smart core selection UI. When disabled the smart
+    /// picker is still used but only shows core name and save count.
+    /// Disabled by default until CoreCapabilities.json is fully audited.
+    case coreRecommendations = "coreRecommendations"
     /// Enables the light-gun crosshair overlay that renders a configurable crosshair
     /// at the cursor position during light-gun gameplay. When disabled, no crosshair
     /// is shown regardless of the `lightGunCrosshairStyle` setting.
@@ -240,14 +245,14 @@ public struct FeatureFlag: Codable, Sendable {
         description: "Companion Controller overlay — use this device as a secondary controller for systems with non-standard input peripherals (trackball, numpad, Atari 5200). Disabled until DSU integration is complete."
     )
 
-    #if os(tvOS)
-    static let _smartCoreSelection: Bool = true
-    #else
-    static let _smartCoreSelection: Bool = false
-    #endif
     public static let smartCoreSelection = FeatureFlag(
-        enabled: _smartCoreSelection,
-        description: "Enriched core selection UI with capability badges, quality rankings, and per-game recommendations. Disabled until core capability data is fully audited."
+        enabled: true,
+        description: "Enriched core selection UI with tile-based cards showing core name and save counts. Always enabled."
+    )
+
+    public static let coreRecommendations = FeatureFlag(
+        enabled: false,
+        description: "Show core recommendation metadata (rank badges, capability chips, summaries, tips) in the core selection UI. Disabled until CoreCapabilities.json is fully audited."
     )
 
     public static let skinButtonReposition = FeatureFlag(
