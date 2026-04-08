@@ -42,6 +42,7 @@
 
 import Foundation
 import os
+import PVFeatureFlags
 import PVLogging
 import PVPlists
 import PVSupport
@@ -136,6 +137,19 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
             // "nil" sentinel means explicitly cleared — fall through
         }
         return UserDefaults.standard.bool(forKey: featureFlagKey)
+    }
+
+    /// Whether `mergeDiscoveredLibretroCores(into:)` should run the scan / probe pipeline.
+    /// Prefer this over `isFeatureEnabled` alone: it respects `PVFeatureFlags` (tvOS default on),
+    /// legacy direct `UserDefaults`, and auto-enables when no plist lists libretro sub-cores (PVRetroArch not embedded).
+    public static func isDynamicScanEnabledForMerge(plists: [EmulatorCoreInfoPlist]) -> Bool {
+        if UserDefaults.standard.object(forKey: featureFlagKey) != nil {
+            return UserDefaults.standard.bool(forKey: featureFlagKey)
+        }
+        if PVFeatureFlags.shared.isEnabled(.dynamicLibretroScanner) {
+            return true
+        }
+        return !CoreLoader.hasStaticLibretroSubcoreRegistration(in: plists)
     }
 
     // In-memory store populated by scan().
@@ -645,8 +659,8 @@ public extension CoreLoader {
     /// Injects dynamically-discovered libretro cores into the core-plist list.
     /// Call this after `getCorePlists()` to merge in thin-wrapper sub-cores.
     ///
-    /// Guarded by the `dynamicLibretroScanner` feature flag (off by default).
-    /// Enable for testing:
+    /// Uses `isDynamicScanEnabledForMerge` (PVFeatureFlags + optional auto when PVRetroArch plist absent).
+    /// Legacy direct `UserDefaults` key still overrides. Enable manually:
     /// ```
     /// UserDefaults.standard.set(true, forKey: PVDynamicLibretroCoreScanner.featureFlagKey)
     /// ```
@@ -662,12 +676,14 @@ public extension CoreLoader {
         }
 
         #if DEBUG
-        diagnosOrphanCores(knownIdentifiers: knownIds)
+        if CoreLoader.hasStaticLibretroSubcoreRegistration(in: plists) {
+            diagnosOrphanCores(knownIdentifiers: knownIds)
+        }
         diagnoseMissingCoreFrameworks(plists: plists)
         #endif
 
-        guard PVDynamicLibretroCoreScanner.isFeatureEnabled else {
-            ILOG("DynamicLibretroScanner: disabled via feature flag — skipping scan")
+        guard PVDynamicLibretroCoreScanner.isDynamicScanEnabledForMerge(plists: plists) else {
+            ILOG("DynamicLibretroScanner: skipping scan — isDynamicScanEnabledForMerge returned false")
             return plists
         }
 
@@ -717,12 +733,12 @@ public extension CoreLoader {
         if !orphans.isEmpty {
             let names = orphans.map { $0.resolvingSymlinksInPath().deletingPathExtension().lastPathComponent }
             WLOG("DynamicLibretroScanner: \(orphans.count) orphan libretro framework(s) not mapped to any system: \(names)")
-            assertionFailure("Orphan libretro cores found in bundle — these add to app size but serve no purpose: \(names)")
         }
     }
 
     /// Logs sub-cores declared in plists that are enabled but missing their
-    /// framework from the bundle — meaning the user sees a core option thatse    /// will fail at runtime. Catches build script omissions early.
+    /// framework from the bundle — meaning the user sees a core option that
+    /// will fail at runtime. Catches build script omissions early.
     internal static func diagnoseMissingCoreFrameworks(plists: [EmulatorCoreInfoPlist]) {
         let fm = FileManager.default
         let frameworksURL = Bundle.main.bundleURL.appendingPathComponent("Frameworks")
@@ -747,8 +763,16 @@ public extension CoreLoader {
         }
 
         if !missing.isEmpty {
-            WLOG("CoreLoader: \(missing.count) enabled sub-core(s) missing their framework from bundle: \(missing)")
-            assertionFailure("Enabled libretro sub-cores missing from Frameworks/ — build scripts may have missed them: \(missing)")
+            /// When PVRetroArch.framework is absent from the app bundle (e.g. tvOS without the RA binary),
+            /// sub-core frameworks that aren't embedded are expected — the fallback embedded plist
+            /// carries all entries but only a subset of frameworks ship per variant.
+            let retroArchInBundle = fm.fileExists(atPath: frameworksURL.appendingPathComponent("PVRetroArch.framework").path)
+            if retroArchInBundle {
+                WLOG("CoreLoader: \(missing.count) enabled sub-core(s) missing their framework from bundle: \(missing)")
+                assertionFailure("Enabled libretro sub-cores missing from Frameworks/ — build scripts may have missed them: \(missing)")
+            } else {
+                ILOG("CoreLoader: \(missing.count) sub-core(s) missing frameworks (expected — PVRetroArch.framework not in bundle)")
+            }
         } else {
             ILOG("CoreLoader: all enabled libretro sub-cores have matching frameworks in bundle")
         }

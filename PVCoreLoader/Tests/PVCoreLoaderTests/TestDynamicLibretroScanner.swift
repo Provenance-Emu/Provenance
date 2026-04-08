@@ -6,16 +6,17 @@ final class TestDynamicLibretroScanner: XCTestCase {
 
     // MARK: - Feature flag gate
 
-    /// When the feature flag is OFF (default), mergeDiscoveredLibretroCores must
-    /// return the input plist list completely unchanged.
+    /// When the legacy direct UserDefaults key is explicitly `false`, merge must not run
+    /// (even if PVRetroArch is absent and auto-scan would otherwise enable).
     func testMergeIsNoOpWhenFeatureFlagDisabled() {
-        UserDefaults.standard.removeObject(forKey: PVDynamicLibretroCoreScanner.featureFlagKey)
+        UserDefaults.standard.set(false, forKey: PVDynamicLibretroCoreScanner.featureFlagKey)
+        defer { UserDefaults.standard.removeObject(forKey: PVDynamicLibretroCoreScanner.featureFlagKey) }
 
         let original = CoreLoader.shared.getCorePlists()
         let merged   = CoreLoader.mergeDiscoveredLibretroCores(into: original)
 
         XCTAssertEqual(merged.count, original.count,
-            "mergeDiscoveredLibretroCores must be a no-op when the feature flag is disabled")
+            "mergeDiscoveredLibretroCores must be a no-op when the direct UserDefaults key is false")
     }
 
     /// When enabled, a second call to mergeDiscoveredLibretroCores must NOT add a
@@ -94,6 +95,18 @@ final class TestDynamicLibretroScanner: XCTestCase {
     }
 
     // MARK: - DiscoveredLibretroCore.syntheticIdentifier
+
+    func testHasStaticLibretroSubcoreRegistrationFalseForEmptyPlists() {
+        XCTAssertFalse(CoreLoader.hasStaticLibretroSubcoreRegistration(in: []))
+    }
+
+    /// With no legacy UserDefaults override, iOS should still enable the merge pipeline when
+    /// no plist registers libretro sub-cores (PVRetroArch not embedded), via PVFeatureFlags + auto fallback.
+    func testDynamicScanMergeAutoEnablesWhenNoStaticLibretroEntries() {
+        UserDefaults.standard.removeObject(forKey: PVDynamicLibretroCoreScanner.featureFlagKey)
+        let on = PVDynamicLibretroCoreScanner.isDynamicScanEnabledForMerge(plists: [])
+        XCTAssertTrue(on, "Expected auto-enable when plists lack static libretro sub-cores and no UserDefaults override")
+    }
 
     func testSyntheticIdentifierSlugifiesName() {
         // DiscoveredLibretroCore is constructed via the scanner's probe path, but its

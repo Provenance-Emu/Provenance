@@ -113,7 +113,19 @@ public final class CoreLoader: Sendable {
 //        if #available(iOS 17, *) {
 //            return getCorePlistsFromDyload()
 //        } else {
-            let plists = getCorePlistsFromFileSystem()
+            var plists = getCorePlistsFromFileSystem()
+
+            /// When PVRetroArch.framework isn't linked (e.g. tvOS without the RA binary),
+            /// its sub-core metadata is missing. Load the bundled RetroArchCore.plist
+            /// symlink so system ↔ core associations, orphan checks, and missing-core
+            /// diagnostics still work.
+            if !hasStaticLibretroSubcoreRegistration(in: plists) {
+                if let fallback = loadEmbeddedRetroArchPlist() {
+                    ILOG("CoreLoader: PVRetroArch.framework absent — loaded embedded RetroArchCore.plist (\(fallback.subCores?.count ?? 0) sub-cores)")
+                    plists.append(fallback)
+                }
+            }
+
             return applyRuntimeMetadataOverrides(on: plists)
 //        }
     }
@@ -277,6 +289,34 @@ public final class CoreLoader: Sendable {
 
     static public func systemsPlist() ->  [[String: Any]] {
         return PlistFiles.items
+    }
+
+    /// True when any loaded plist still declares libretro sub-cores (e.g. PVRetroArch `PVCores` with `*.libretro.framework` identifiers).
+    /// When this is false — for example tvOS builds that omit the PVRetroArch framework — the dynamic libretro scanner must register cores from `Frameworks/` instead.
+    public static func hasStaticLibretroSubcoreRegistration(in plists: [EmulatorCoreInfoPlist]) -> Bool {
+        for plist in plists {
+            for sub in plist.subCores ?? [] where sub.identifier.contains(".libretro.framework") {
+                return true
+            }
+        }
+        return false
+    }
+
+    /// Loads the symlinked RetroArchCore.plist bundled inside PVCoreLoader's SPM resources.
+    /// Returns the parsed plist (with sub-cores) or nil if not found / parse failure.
+    static private func loadEmbeddedRetroArchPlist() -> EmulatorCoreInfoPlist? {
+        guard let url = Bundle.module.url(forResource: "RetroArchCore", withExtension: "plist") else {
+            DLOG("CoreLoader: RetroArchCore.plist not found in module bundle")
+            return nil
+        }
+        do {
+            let plist = try EmulatorCoreInfoPlist(fromURL: url)
+            ILOG("CoreLoader: loaded embedded RetroArchCore.plist — identifier=\(plist?.identifier ?? "nil")")
+            return plist
+        } catch {
+            ELOG("CoreLoader: failed to parse embedded RetroArchCore.plist: \(error)")
+            return nil
+        }
     }
 }
 
