@@ -37,21 +37,105 @@ fi
 echo "Identity:"
 echo "${CODE_SIGN_IDENTITY_FOR_ITEMS}"
 
-if [ "$PLATFORM_FAMILY_NAME" = "tvOS" ] ; then
-    BASE_DIR="$1"
+BASE_DIR="$1"
+MODULES_DIR="$BASE_DIR/modules"
+
+# Run Script phases always receive PLATFORM_NAME; PLATFORM_FAMILY_NAME is sometimes unset
+# (or inconsistent) — which left BASE_DIR/SUFFIX unset and made dylib_matches_current_platform
+# reject every *_tvos.dylib / *_ios.dylib. Prefer PLATFORM_NAME like get-modules.sh.
+MF_PLATFORM_FAMILY="${PLATFORM_FAMILY_NAME:-}"
+case "${PLATFORM_NAME:-}" in
+	appletvos|appletvsimulator)
+		MF_PLATFORM_FAMILY="tvOS"
+		;;
+	iphoneos|iphonesimulator)
+		MF_PLATFORM_FAMILY="iOS"
+		;;
+	macosx)
+		MF_PLATFORM_FAMILY="macOS"
+		;;
+esac
+
+# When modules/ contains only one platform suffix, align MF with that tree — Xcode sometimes
+# leaves PLATFORM_FAMILY_NAME=iOS while building tvOS (or omits env), which skips every *_tvos.dylib.
+# When PLATFORM_NAME clearly targets one OS but modules/ only has the other suffix, fail with a direct message.
+align_or_resolve_platform() {
+	local n_ios n_tvos pn
+	pn="${PLATFORM_NAME:-}"
+	if [ ! -d "$MODULES_DIR" ]; then
+		return 0
+	fi
+	n_ios=$(find "$MODULES_DIR" -maxdepth 1 -type f -name '*_ios.dylib' 2>/dev/null | wc -l | tr -d ' ')
+	n_tvos=$(find "$MODULES_DIR" -maxdepth 1 -type f -name '*_tvos.dylib' 2>/dev/null | wc -l | tr -d ' ')
+	if [ "${n_ios}" -gt 0 ] && [ "${n_tvos}" -gt 0 ]; then
+		echo "MakeFrameworks: ERROR — modules/ contains both *_ios.dylib and *_tvos.dylib. Remove stale dylibs or re-run get-modules.sh for this platform." >&2
+		exit 1
+	fi
+	case "$pn" in
+		appletvos|appletvsimulator)
+			if [ "${n_tvos}" -eq 0 ] && [ "${n_ios}" -gt 0 ]; then
+				echo "MakeFrameworks: ERROR — building for tvOS but modules/ only has *_ios.dylib. Run get-modules for tvOS or remove stale iOS dylibs." >&2
+				exit 1
+			fi
+			if [ "${n_tvos}" -gt 0 ] && [ "${n_ios}" -eq 0 ] && [ "$MF_PLATFORM_FAMILY" != "tvOS" ]; then
+				echo "MakeFrameworks: modules/ has only *_tvos.dylib — forcing tvOS (was MF=${MF_PLATFORM_FAMILY:-unset}, PLATFORM_FAMILY_NAME=${PLATFORM_FAMILY_NAME:-unset})" >&2
+				MF_PLATFORM_FAMILY="tvOS"
+			fi
+			;;
+		iphoneos|iphonesimulator)
+			if [ "${n_ios}" -eq 0 ] && [ "${n_tvos}" -gt 0 ]; then
+				echo "MakeFrameworks: ERROR — building for iOS but modules/ only has *_tvos.dylib. Run get-modules for iOS or remove stale tvOS dylibs." >&2
+				exit 1
+			fi
+			if [ "${n_ios}" -gt 0 ] && [ "${n_tvos}" -eq 0 ] && [ "$MF_PLATFORM_FAMILY" != "iOS" ]; then
+				echo "MakeFrameworks: modules/ has only *_ios.dylib — forcing iOS (was MF=${MF_PLATFORM_FAMILY:-unset}, PLATFORM_FAMILY_NAME=${PLATFORM_FAMILY_NAME:-unset})" >&2
+				MF_PLATFORM_FAMILY="iOS"
+			fi
+			;;
+	esac
+	# Some Run Script invocations omit PLATFORM_NAME; PLATFORM_FAMILY_NAME can still be wrong for the destination.
+	if [ -z "$pn" ]; then
+		if [ "${n_tvos}" -gt 0 ] && [ "${n_ios}" -eq 0 ] && [ "$MF_PLATFORM_FAMILY" = "iOS" ]; then
+			echo "MakeFrameworks: modules/ only *_tvos.dylib but PLATFORM_NAME unset and MF=iOS — using tvOS" >&2
+			MF_PLATFORM_FAMILY="tvOS"
+		elif [ "${n_ios}" -gt 0 ] && [ "${n_tvos}" -eq 0 ] && [ "$MF_PLATFORM_FAMILY" = "tvOS" ]; then
+			echo "MakeFrameworks: modules/ only *_ios.dylib but PLATFORM_NAME unset and MF=tvOS — using iOS" >&2
+			MF_PLATFORM_FAMILY="iOS"
+		fi
+	fi
+	if [ -z "${MF_PLATFORM_FAMILY:-}" ]; then
+		if [ "${n_tvos}" -gt 0 ] && [ "${n_ios}" -eq 0 ]; then
+			echo "MakeFrameworks: PLATFORM_NAME unset/unknown; inferring tvOS from modules/ (only *_tvos.dylib)" >&2
+			MF_PLATFORM_FAMILY="tvOS"
+		elif [ "${n_ios}" -gt 0 ] && [ "${n_tvos}" -eq 0 ]; then
+			echo "MakeFrameworks: PLATFORM_NAME unset/unknown; inferring iOS from modules/ (only *_ios.dylib)" >&2
+			MF_PLATFORM_FAMILY="iOS"
+		fi
+	fi
+}
+
+case "${PLATFORM_NAME:-}" in
+	macosx) ;;
+	*) align_or_resolve_platform ;;
+esac
+
+echo "MakeFrameworks: PLATFORM_NAME=${PLATFORM_NAME:-unset} PLATFORM_FAMILY_NAME=${PLATFORM_FAMILY_NAME:-unset} -> MF_PLATFORM_FAMILY=${MF_PLATFORM_FAMILY:-unset}"
+
+if [ "$MF_PLATFORM_FAMILY" = "tvOS" ] ; then
     SUFFIX="_tvos"
     PLATFORM="tvos"
-    DEPLOYMENT_TARGET="${TVOS_DEPLOYMENT_TARGET}"
-elif [ "$PLATFORM_FAMILY_NAME" = "iOS" ] ; then
-    BASE_DIR="$1"
+    DEPLOYMENT_TARGET="${TVOS_DEPLOYMENT_TARGET:-}"
+elif [ "$MF_PLATFORM_FAMILY" = "iOS" ] ; then
     SUFFIX="_ios"
     PLATFORM="ios"
-    DEPLOYMENT_TARGET="${IPHONEOS_DEPLOYMENT_TARGET}"
-elif [ "$PLATFORM_FAMILY_NAME" = "macOS" ] ; then
-    BASE_DIR="$1"
+    DEPLOYMENT_TARGET="${IPHONEOS_DEPLOYMENT_TARGET:-}"
+elif [ "$MF_PLATFORM_FAMILY" = "macOS" ] ; then
     SUFFIX=
     PLATFORM=
-    DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET}"
+    DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET:-}"
+else
+    echo "MakeFrameworks: ERROR — Unrecognized platform (PLATFORM_NAME=${PLATFORM_NAME:-} PLATFORM_FAMILY_NAME=${PLATFORM_FAMILY_NAME:-})" >&2
+    exit 1
 fi
 
 if [ -n "${BUILT_PRODUCTS_DIR:-}" ] && [ -n "${FRAMEWORKS_FOLDER_PATH:-}" ] ; then
@@ -140,11 +224,11 @@ dylib_matches_current_platform() {
     local b="$1"
     case "$b" in
         *_ios.dylib)
-            [ "$PLATFORM_FAMILY_NAME" = "iOS" ] && return 0
+            [ "$MF_PLATFORM_FAMILY" = "iOS" ] && return 0
             return 1
             ;;
         *_tvos.dylib)
-            [ "$PLATFORM_FAMILY_NAME" = "tvOS" ] && return 0
+            [ "$MF_PLATFORM_FAMILY" = "tvOS" ] && return 0
             return 1
             ;;
         *)
@@ -210,7 +294,7 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
     echo "MakeFrameworks: Making framework $fwName from $dylib"
 
     mkdir -p "$fwDir"
-    if [ "$PLATFORM_FAMILY_NAME" = "iOS" -o "$PLATFORM_FAMILY_NAME" = "tvOS" ] ; then
+    if [ "$MF_PLATFORM_FAMILY" = "iOS" ] || [ "$MF_PLATFORM_FAMILY" = "tvOS" ] ; then
         build_sdk=$(vtool -show-build "$dylib" | grep sdk | awk '{print $2}')
         if ! vtool -set-build-version "${PLATFORM}" "${DEPLOYMENT_TARGET}" "${build_sdk}" -set-build-tool "$PLATFORM" ld 1115.7.3 -set-source-version 0.0 -replace -output "$dylib" "$dylib"; then
             echo "MakeFrameworks: WARNING — vtool failed for ${fwName}; build version metadata may be missing" >&2
@@ -226,7 +310,7 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
         FW_FAIL=$((FW_FAIL + 1))
         continue
     fi
-    if [ "$PLATFORM_FAMILY_NAME" = "macOS" ] ; then
+    if [ "$MF_PLATFORM_FAMILY" = "macOS" ] ; then
         mkdir -p "$fwDir"/Versions/A/Resources
         mv "$fwDir/$fwName" "$fwDir"/Versions/A
         mv "$fwDir"/Info.plist "$fwDir"/Versions/A/Resources

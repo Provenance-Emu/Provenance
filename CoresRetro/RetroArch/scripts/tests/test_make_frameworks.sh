@@ -297,6 +297,33 @@ test_integration_make_frameworks_success() {
     assert_count_ge "integration make_frameworks: frameworks created" "${fw_count}" 2
 }
 
+test_integration_make_frameworks_tvos_dylibs_unset_platform_name_wrong_family() {
+    # modules/ only *_tvos.dylib but PLATFORM_FAMILY_NAME=iOS and PLATFORM_NAME unset — must still build (tvOS inference).
+    setup_test_root
+    make_mock_file_macho
+    make_mock_lipo
+    make_mock_codesign
+    make_mock_vtool
+
+    local workdir="${TEST_ROOT}/int_fw_tvos_infer"
+    mkdir -p "${workdir}/modules"
+    _write_fw_tmpl "${workdir}"
+
+    make_fake_dylib "${workdir}/modules/pcsx_rearmed_libretro_tvos.dylib"
+    make_fake_dylib "${workdir}/modules/gambatte_libretro_tvos.dylib"
+
+    local exit_code=0
+    PLATFORM_FAMILY_NAME="iOS" TVOS_DEPLOYMENT_TARGET="17.0" \
+        bash "${SCRIPTS_DIR}/make_frameworks_retroarch.sh" "${workdir}" \
+        >/dev/null 2>&1 || exit_code=$?
+
+    assert_exit "integration tvos dylibs + unset PLATFORM_NAME + FAMILY=iOS: exit 0" 0 "${exit_code}"
+
+    local fw_count
+    fw_count=$(find "${workdir}/Frameworks" -name "*.framework" -type d 2>/dev/null | wc -l | tr -d ' ')
+    assert_count_ge "integration tvos infer: frameworks created" "${fw_count}" 2
+}
+
 test_integration_make_frameworks_empty_dir_fails() {
     # Empty modules dir → exit 1
     setup_test_root
@@ -336,6 +363,7 @@ run_test "0 dylibs: caught at entry check" test_zero_both_counts_already_caught
 run_test "Multiple dylibs: all frameworks created" test_multiple_dylibs_all_frameworks_created
 
 run_test "Integration: valid dylibs → frameworks created, exit 0" test_integration_make_frameworks_success
+run_test "Integration: tvOS dylibs + unset PLATFORM_NAME + FAMILY=iOS → tvOS inferred" test_integration_make_frameworks_tvos_dylibs_unset_platform_name_wrong_family
 run_test "Integration: empty modules dir → exit 1" test_integration_make_frameworks_empty_dir_fails
 
 teardown_test_root
