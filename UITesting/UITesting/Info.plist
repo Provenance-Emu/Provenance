@@ -15,6 +15,18 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.org.provenance-emu.provenance.dev</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>Provenance UITesting</string>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>Any</string>
+		</dict>
+	</dict>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.games</string>
 	<key>UIFileSharingEnabled</key>

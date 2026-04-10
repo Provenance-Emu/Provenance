@@ -17,6 +17,7 @@ import RealmSwift
 import PVSystems
 import PVMediaCache
 import PVCoreLoader
+import PVPrimitives
 import ObjectiveC
 
 #if canImport(FreemiumKit)
@@ -31,6 +32,10 @@ struct UITestingApp: SwiftUI.App {
 
     init() {
         UITestingApp.shared = self
+        // Use in-memory SwiftData store for UITesting to avoid schema migration crashes
+        if let container = try? PVSwiftDataSchema.makePVModelContainer(inMemory: true) {
+            PVSwiftDataSchema.setSharedContainer(container)
+        }
     }
 
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -203,6 +208,77 @@ struct UITestingApp: SwiftUI.App {
         }
     }
 
+    // MARK: - Mock Library
+
+    /// Populates the default Realm with mock games when the library is empty.
+    /// Triggered on simulator or when `-useMockLibrary` launch argument is set.
+    private func populateMockLibraryIfNeeded() {
+        #if DEBUG
+        let shouldPopulate = LaunchArgument.useMockLibrary.isEnabled || AppState.shared.isSimulator
+        guard shouldPopulate else { return }
+
+        guard let realm = try? Realm() else {
+            ELOG("UITestingApp: Cannot open Realm for mock library")
+            return
+        }
+
+        // Only populate if the library is empty
+        guard realm.objects(PVGame.self).isEmpty else {
+            ILOG("UITestingApp: Library already has games, skipping mock population")
+            return
+        }
+
+        ILOG("UITestingApp: Populating mock library")
+
+        let mockGames: [(title: String, systemID: String, developer: String, publisher: String, genres: String, year: String)] = [
+            ("Super Mario World", SystemIdentifier.SNES.rawValue, "Nintendo EAD", "Nintendo", "Platform, Action", "1990"),
+            ("The Legend of Zelda: A Link to the Past", SystemIdentifier.SNES.rawValue, "Nintendo EAD", "Nintendo", "Action, Adventure", "1991"),
+            ("Super Metroid", SystemIdentifier.SNES.rawValue, "Nintendo R&D1", "Nintendo", "Action, Adventure", "1994"),
+            ("Chrono Trigger", SystemIdentifier.SNES.rawValue, "Square", "Square", "RPG", "1995"),
+            ("Super Mario Bros.", SystemIdentifier.NES.rawValue, "Nintendo", "Nintendo", "Platform", "1985"),
+            ("The Legend of Zelda", SystemIdentifier.NES.rawValue, "Nintendo", "Nintendo", "Action, Adventure", "1986"),
+            ("Mega Man 2", SystemIdentifier.NES.rawValue, "Capcom", "Capcom", "Platform, Action", "1988"),
+            ("Sonic the Hedgehog", SystemIdentifier.Genesis.rawValue, "Sonic Team", "Sega", "Platform", "1991"),
+            ("Streets of Rage 2", SystemIdentifier.Genesis.rawValue, "Sega", "Sega", "Beat 'em up", "1992"),
+            ("Pokemon Red", SystemIdentifier.GB.rawValue, "Game Freak", "Nintendo", "RPG", "1996"),
+            ("Tetris", SystemIdentifier.GB.rawValue, "Nintendo", "Nintendo", "Puzzle", "1989"),
+            ("Pokemon FireRed", SystemIdentifier.GBA.rawValue, "Game Freak", "Nintendo", "RPG", "2004"),
+            ("Metroid Fusion", SystemIdentifier.GBA.rawValue, "Nintendo R&D1", "Nintendo", "Action, Adventure", "2002"),
+            ("Super Mario 64", SystemIdentifier.N64.rawValue, "Nintendo EAD", "Nintendo", "Platform", "1996"),
+            ("The Legend of Zelda: Ocarina of Time", SystemIdentifier.N64.rawValue, "Nintendo EAD", "Nintendo", "Action, Adventure", "1998"),
+            ("Final Fantasy VII", SystemIdentifier.PSX.rawValue, "Square", "Square", "RPG", "1997"),
+            ("Castlevania: Symphony of the Night", SystemIdentifier.PSX.rawValue, "Konami", "Konami", "Action, RPG", "1997"),
+        ]
+
+        do {
+            try realm.write {
+                for mock in mockGames {
+                    let system = realm.objects(PVSystem.self).filter("identifier == %@", mock.systemID).first
+                    let game = PVGame()
+                    game.title = mock.title
+                    game.systemIdentifier = mock.systemID
+                    game.system = system
+                    game.md5Hash = UUID().uuidString
+                    game.developer = mock.developer
+                    game.publisher = mock.publisher
+                    game.genres = mock.genres
+                    game.publishDate = mock.year
+                    game.regionName = "USA"
+                    game.playCount = Int.random(in: 0...50)
+                    game.rating = Int.random(in: 3...5)
+                    game.timeSpentInGame = Int.random(in: 0...7200)
+                    let filename = mock.title.lowercased().replacingOccurrences(of: " ", with: "_") + ".rom"
+                    game.file = PVFile(withPartialPath: filename, relativeRoot: .caches, size: Int.random(in: 1024...4_194_304), md5: game.md5Hash)
+                    realm.add(game)
+                }
+            }
+            ILOG("UITestingApp: Added \(mockGames.count) mock games to library")
+        } catch {
+            ELOG("UITestingApp: Failed to populate mock library: \(error)")
+        }
+        #endif
+    }
+
     var body: some Scene {
         // Main window group for the UI
         WindowGroup(id: "main") {
@@ -237,6 +313,8 @@ struct UITestingApp: SwiftUI.App {
 
                     // Add additional refresh after a short delay for .completed state
                     if newState == .completed {
+                        // Populate mock library if on simulator with empty library
+                        populateMockLibraryIfNeeded()
                         // Cancel the timer when bootup completes
                         bootupRefreshTimer.upstream.connect().cancel()
 

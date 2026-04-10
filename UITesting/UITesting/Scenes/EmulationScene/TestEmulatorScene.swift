@@ -121,7 +121,7 @@ struct TestEmulatorScene: Scene {
 }
 
 /// A container view that manages the emulator view controller
-struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewController {
+struct EmulatorContainerView: UIViewControllerRepresentable {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var sceneCoordinator: SceneCoordinator
 
@@ -239,7 +239,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable, GameLaunchingViewCo
         }
     }
 
-    // MARK: - GameLaunchingViewController Protocol Implementation
+    // MARK: - Game Launching
 
     func load(_ game: PVRealm.PVGame, sender: Any?, core: PVRealm.PVCore?, saveState: PVRealm.PVSaveState?) async {
         ILOG("EmulatorContainerView: Delegating load to container view controller")
