@@ -6,7 +6,7 @@
 ///
 /// Not compiled on tvOS (optical drives require USB host mode, unavailable on tvOS).
 
-#if !os(tvOS)
+#if os(macOS) || targetEnvironment(macCatalyst)
 import SwiftUI
 
 /// Section card showing optical drive driver status and disc presence.
@@ -144,4 +144,4 @@ struct OpticalDriveStatusView: View {
         OpticalDriveStatusView(manager: OpticalDriveManager())
     }
 }
-#endif // !os(tvOS)
+#endif // os(macOS) || targetEnvironment(macCatalyst)

@@ -8,7 +8,7 @@
 /// Requires iOS/iPadOS 16+ or macOS 13+ (DriverKit minimum).
 /// Not available on tvOS (no USB host mode for optical drives).
 
-#if !os(tvOS)
+#if os(macOS) || targetEnvironment(macCatalyst)
 import Foundation
 import SystemExtensions
 
@@ -153,4 +153,4 @@ extension OpticalDriveManager: OSSystemExtensionRequestDelegate {
     }
 }
 
-#endif // !os(tvOS)
+#endif // os(macOS) || targetEnvironment(macCatalyst)

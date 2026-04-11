@@ -18,7 +18,7 @@ let package = Package(
         .package(path: "../PVLogging"),
         .package(url: "https://github.com/ZipArchive/ZipArchive.git", exact: "2.4.3"),
         .package(url: "https://github.com/OlehKulykov/PLzmaSDK.git", revision: "1.2.5"),
-        .package(url: "https://github.com/JoeMatt/SWCompression.git", from: "1.0.0"),
+        .package(name: "SWCompression", path: "../Dependencies/SWCompression"),
         .package(url: "https://github.com/mtgto/Unrar.swift.git", .upToNextMajor(from: "0.3.16")),
         .package(name: "LzhArchive", path: "../Dependencies/LzhArchive"),
     ],

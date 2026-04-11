@@ -202,3 +202,6 @@
 [submodule "PVRcheevos/rcheevos"]
 	path = PVRcheevos/rcheevos
 	url = https://github.com/Provenance-Emu/rcheevos.git
+[submodule "Dependencies/SWCompression"]
+	path = Dependencies/SWCompression
+	url = https://github.com/JoeMatt/SWCompression.git

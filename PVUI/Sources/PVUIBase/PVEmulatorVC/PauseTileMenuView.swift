@@ -980,6 +980,9 @@ struct PauseTileMenuView: View {
                     tileView(for: tile)
                 }
             }
+            #if os(tvOS)
+            .focusSection()
+            #endif
         }
     }
 

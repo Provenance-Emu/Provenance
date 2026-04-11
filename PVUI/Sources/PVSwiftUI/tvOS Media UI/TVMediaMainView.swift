@@ -108,6 +108,7 @@ struct TVMediaMainView: View {
     @State private var settingsCanPop: Bool = false
 
     @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
+    @ObservedObject private var alertState = SceneCoordinator.shared.alertState
 
     init() {}
 
@@ -161,6 +162,16 @@ struct TVMediaMainView: View {
         // This shared view is compiled for both iOS and tvOS.
         // romDropTarget() is iOS-only (onDrop is unavailable on tvOS).
         .romDropTarget() // ROM drag & drop import (#2136)
+#elseif os(tvOS)
+        // Present alerts via fullScreenCover on tvOS so the system focus engine
+        // cannot escape to the content behind.  This modifier lives on the
+        // OUTER view to avoid conflicting with the inner modal fullScreenCover.
+        .fullScreenCover(isPresented: $alertState.isPresented) {
+            RetroAlertStateView(alertState: alertState)
+        }
+        .onChange(of: alertState.isPresented) { presented in
+            focusCoordinator.isAlertPresented = presented
+        }
 #endif
     }
 
@@ -510,7 +521,7 @@ struct TVMediaMainView: View {
             .tvMediaFocusScope(sidebarNamespace)
             .tvMediaPrefersDefaultFocus(focusCoordinator.isSidebarExpanded, in: sidebarNamespace)
             .allowsHitTesting(!focusCoordinator.isAlertPresented && !isRenamePresented)
-            .disabled(!focusCoordinator.isSidebarExpanded || isRenamePresented)
+            .disabled(!focusCoordinator.isSidebarExpanded || isRenamePresented || focusCoordinator.isAlertPresented)
         }
     }
 

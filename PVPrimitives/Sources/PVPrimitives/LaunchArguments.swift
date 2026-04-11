@@ -27,6 +27,9 @@ public enum LaunchArgument: String, CaseIterable {
     
     /// Forces offline mode (no network requests)
     case forceOffline = "-forceOffline"
+
+    /// Populates the library with mock games when empty (simulator/UITesting)
+    case useMockLibrary = "-useMockLibrary"
     
     /// The raw argument string including the dash prefix
     public var argument: String { rawValue }

@@ -200,8 +200,8 @@ struct ConsoleGamesView: SwiftUI.View {
         }
     }
 
-    /// Setup guidance banner for contentless cores (Doom, Wolf3D, Quake).
-    /// Only shown when the system has a guide and the user has no imported games yet.
+    /// Setup guidance for contentless cores (Doom, Wolf3D, Quake) when the library is empty.
+    /// Wolf3D also uses `ConsoleSystemInstructionView` so file layout hints stay visible after import.
     @ViewBuilder
     var contentlessSetupGuide: some View {
         if allGamesModels.isEmpty || allGamesModels.allSatisfy({ liveGame(for: $0)?.contentless == true }) {
@@ -382,6 +382,8 @@ struct ConsoleGamesView: SwiftUI.View {
                     unsupportedSystemBanner
 
                     contentlessSetupGuide
+
+                    ConsoleSystemInstructionView(systemIdentifier: console.identifier)
 
                     cloudSyncBanner
 

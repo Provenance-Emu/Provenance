@@ -226,6 +226,11 @@ public class SceneCoordinator: ObservableObject {
 
     /// Launch game with sync validation
     private func launchGameWithValidation(_ game: PVGame, core: PVCore? = nil) async {
+        // Pause background sync so on-demand downloads get full CloudKit bandwidth
+        // and background BIOS processing doesn't interfere with targeted downloads.
+        CloudSyncManager.shared.pause(reason: .gameLaunch)
+        defer { CloudSyncManager.shared.resume(reason: .gameLaunch) }
+
         guard let system = game.system else {
             showGameLaunchError(
                 title: "Cannot Launch Game",
@@ -759,6 +764,9 @@ public class SceneCoordinator: ObservableObject {
 
     /// Launch save state with sync validation
     private func launchSaveStateWithValidation(_ saveState: PVSaveState, game: PVGame, core: PVCore? = nil) async {
+        CloudSyncManager.shared.pause(reason: .gameLaunch)
+        defer { CloudSyncManager.shared.resume(reason: .gameLaunch) }
+
         guard let system = game.system else {
             showGameLaunchError(
                 title: "Cannot Launch Save State",

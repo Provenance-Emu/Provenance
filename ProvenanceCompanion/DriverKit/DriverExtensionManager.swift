@@ -6,9 +6,9 @@
 ///
 /// SystemExtensions is available on iPadOS 16+ and macOS 10.15+.
 /// It is NOT available on tvOS or watchOS — all code in this file is guarded
-/// with `#if !os(tvOS)` so the companion app can compile for any Apple platform.
+/// with `#if os(macOS) || targetEnvironment(macCatalyst)` since SystemExtensions is macOS-only.
 
-#if !os(tvOS)
+#if os(macOS) || targetEnvironment(macCatalyst)
 import Foundation
 import SystemExtensions
 
@@ -134,4 +134,4 @@ extension DriverExtensionManager: OSSystemExtensionRequestDelegate {
     }
 }
 
-#endif // !os(tvOS)
+#endif // os(macOS) || targetEnvironment(macCatalyst)

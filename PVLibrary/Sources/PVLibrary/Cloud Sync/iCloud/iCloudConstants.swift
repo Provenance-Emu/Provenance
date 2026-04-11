@@ -44,7 +44,11 @@ public enum iCloudConstants {
     /// - Simulator: always returns true (simulator entitlements are always present).
     public static let isCloudKitEntitlementPresent: Bool = {
         #if targetEnvironment(simulator)
-        return true
+        // Simulator: only claim entitlement is present if Info.plist declares CloudKit containers
+        if let containers = Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject], !containers.isEmpty {
+            return true
+        }
+        return false
         #elseif os(macOS) || targetEnvironment(macCatalyst)
         guard let task = SecTaskCreateFromSelf(nil) else { return false }
         let key = "com.apple.developer.icloud-container-identifiers" as CFString

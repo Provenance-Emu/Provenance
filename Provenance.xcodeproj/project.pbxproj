@@ -909,10 +909,12 @@
 		C0C0CAFE3595000000000013 /* ROM File ProviderUI.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C0C0DE0100000004 /* ProvenanceOpticalDriveDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000002 /* ProvenanceOpticalDriveDriver.swift */; };
 		C0C0DE0100000005 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
-		C0C0DE010000000F /* ProvenanceOpticalDriveDriver.dext in Embed DriverKit Extensions */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C0C0DE010000000F /* ProvenanceOpticalDriveDriver.dext in Embed DriverKit Extensions */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C0C0DE0200000004 /* ProvenanceHIDDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0DE0200000002 /* ProvenanceHIDDriver.swift */; };
 		C0C0DE0200000005 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
-		C0C0DE020000000F /* ProvenanceHIDDriver.dext in Embed DriverKit Extensions */ = {isa = PBXBuildFile; fileRef = C0C0DE0200000001 /* ProvenanceHIDDriver.dext */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C0C0DE020000000F /* ProvenanceHIDDriver.dext in Embed DriverKit Extensions */ = {isa = PBXBuildFile; fileRef = C0C0DE0200000001 /* ProvenanceHIDDriver.dext */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C0C0DE0300000003 /* PVControllerDSU in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0DE0300000002 /* PVControllerDSU */; };
+		C0C0DE0400000003 /* PVUSBManager in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0DE0400000002 /* PVUSBManager */; };
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		C885E52E5278B83804A0BF61 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DB17C8D60C0019F6D2 /* Security.framework */; };
 		D98C48D75C3DA4BF85D917D8 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */; };
@@ -1855,6 +1857,7 @@
 		B32C08E22D0534450024A3E2 /* PVMelonDSRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMelonDSRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32C08EB2D053DD50024A3E2 /* PVEmuThree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmuThree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B32C08F82D053FF60024A3E2 /* PVMupen64PlusBridge.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusBridge.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32D18B22F8A0B12000C9C0D /* SWCompression.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = SWCompression.xcodeproj; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		B33155E32971D34D008767C5 /* PVFuse.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFuse.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33155E62971D360008767C5 /* PVMupen64Plus-NX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVMupen64Plus-NX.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3671,6 +3674,8 @@
 				B3A455632F77941000B6449F /* PVSettings in Frameworks */,
 				B3A455622F77941000B6449F /* PVSupport in Frameworks */,
 				B3A455612F77941000B6449F /* PVLibrary in Frameworks */,
+				C0C0DE0300000003 /* PVControllerDSU in Frameworks */,
+				C0C0DE0400000003 /* PVUSBManager in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4841,6 +4846,13 @@
 			sourceTree = "<group>";
 		};
 		B328B62F2D69AAF2005ABA6F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B32D18B42F8A0B12000C9C0D /* Products */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -7791,6 +7803,8 @@
 				C0C0CAFE00000000000001F0 /* PVUI */,
 				C0C0CAFE0000000000000200 /* PVThemes */,
 				B3A457272F77950300B6449F /* WhatsNewKit */,
+				C0C0DE0300000002 /* PVControllerDSU */,
+				C0C0DE0400000002 /* PVUSBManager */,
 			);
 			productName = ProvenanceCompanion;
 			productReference = C0C0CAFE00000000000000AA /* Provenance Companion.app */;
@@ -8034,6 +8048,8 @@
 				B3A450FC2F77832100B6449F /* XCLocalSwiftPackageReference "PVNetplay" */,
 				B3D9A2C82F78C6F5002F1DCB /* XCLocalSwiftPackageReference "PVLiveActivities" */,
 				B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */,
+				C0C0DE0300000001 /* XCLocalSwiftPackageReference "PVControllerDSU" */,
+				C0C0DE0400000001 /* XCLocalSwiftPackageReference "PVUSBManager" */,
 			);
 			preferredProjectObjectVersion = 63;
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
@@ -9412,6 +9428,10 @@
 					ProjectRef = 934BE9A6296F177A00FB9933 /* PVRetroArch.xcodeproj */;
 				},
 				{
+					ProductGroup = B32D18B42F8A0B12000C9C0D /* Products */;
+					ProjectRef = B32D18B22F8A0B12000C9C0D /* SWCompression.xcodeproj */;
+				},
+				{
 					ProductGroup = B3A4A3F12F57DF8C004A995B /* Products */;
 					ProjectRef = B3A4A3B32F57DF8C004A995B /* SwiftRefactorExtension.xcodeproj */;
 				},
@@ -10633,11 +10653,13 @@
 		};
 		C0C0DE010000000D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = maccatalyst;
 			target = C0C0DE0100000008 /* ProvenanceOpticalDriveDriverKit */;
 			targetProxy = C0C0DE010000000E /* PBXContainerItemProxy */;
 		};
 		C0C0DE020000000D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = maccatalyst;
 			target = C0C0DE0200000008 /* ProvenanceHIDDriverKit */;
 			targetProxy = C0C0DE020000000E /* PBXContainerItemProxy */;
 		};
@@ -15170,6 +15192,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "Companion Debug";
+				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15199,6 +15222,8 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -15215,6 +15240,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "Provenance Companion";
+				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15244,6 +15270,8 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -15258,6 +15286,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "Provenance Companion";
+				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -15287,6 +15316,8 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -15312,6 +15343,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -15337,6 +15371,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance Companion.app/Provenance Companion";
@@ -15362,6 +15399,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance Companion.app/Provenance Companion";
@@ -15372,6 +15412,7 @@
 		C0C0DE0100000009 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
 				CLANG_ANALYZER_DIVIDE_BY_ZERO = NO;
 				CLANG_ANALYZER_NULL_DEREFERENCE = NO;
@@ -15395,6 +15436,7 @@
 		C0C0DE010000000A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -15415,6 +15457,7 @@
 		C0C0DE010000000B /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/DriverKit/ProvenanceOpticalDriveDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -15435,6 +15478,7 @@
 		C0C0DE0200000009 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
 				CLANG_ANALYZER_DIVIDE_BY_ZERO = NO;
 				CLANG_ANALYZER_NULL_DEREFERENCE = NO;
@@ -15458,6 +15502,7 @@
 		C0C0DE020000000A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/DriverKit/ProvenanceHIDDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -15478,6 +15523,7 @@
 		C0C0DE020000000B /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = ProvenanceCompanion/DriverKit/ProvenanceHIDDriver.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -15962,6 +16008,14 @@
 		B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVCoreBridge;
+		};
+		C0C0DE0300000001 /* XCLocalSwiftPackageReference "PVControllerDSU" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVControllerDSU;
+		};
+		C0C0DE0400000001 /* XCLocalSwiftPackageReference "PVUSBManager" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVUSBManager;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -17369,6 +17423,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B34969562C4E64AD00D37F79 /* XCLocalSwiftPackageReference "PVThemes" */;
 			productName = PVThemes;
+		};
+		C0C0DE0300000002 /* PVControllerDSU */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0DE0300000001 /* XCLocalSwiftPackageReference "PVControllerDSU" */;
+			productName = PVControllerDSU;
+		};
+		C0C0DE0400000002 /* PVUSBManager */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0DE0400000001 /* XCLocalSwiftPackageReference "PVUSBManager" */;
+			productName = PVUSBManager;
 		};
 		EC3973475423A71BFE0C679F /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;

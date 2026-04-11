@@ -13,6 +13,25 @@
 - [ ] **Epic 9: Per-Game Core Options** — MD5 wiring done; VM, UI, RetroArch .opt routing pending
 - [ ] **Epic 10: DriverKit & USB Peripherals** (#3201) — PVUSBManager + DriverKit scaffold + StoreKit IAP done; remaining: Xcode dext target, DS3 HID report translation, GameCube adapter port mapping, Apple DriverKit entitlement approval
 
+## Release Blockers
+
+- [ ] Legacy UIKit Controller PVControllerViewController.swift 
+      - [ ] Has top bar of buttons, needs complete rewrite
+      - [ ] Touch mouse/keyboard blocks rest of touches
+      - [ ] Tapping the "toggle controller buttons visible" button, the other controller buttons ignore the alpha settings and also doesn't hide joysticks (is that a setting though?)
+- [ ] `RetroSaveSelectionAlertView.swift` sometimes when downloading a cloud save, it doesn't boot after download, tapping again boots though
+- [ ] RetroarArch and Menu buttons showing when using thing wrapper
+- [ ] tvOS test removing PVRetroArchCore from build
+- [ ] Thin wrappper
+      - [ ] N64 mupen video squashed
+      - [ ] N64 mupen rumble no worky
+      - [ ] PSX hardware renderer crashy
+- [ ] GameMoreInfo crashing
+- [ ] Sometimes when booting a game from ConsoleGamesView.swift and others, the game boot process starts and stops, and tapping any game again doesn't work (i think has to do with bios required, tries to download and fails even if available or not, but even bios not required games just don't react to taps anymore)
+- [ ] Skin selection, when downloading a skin from skin downloader, while playing a game from the pause menu, download a new skin, set the new skin as active, skin didn't change (tested on SG-1000, which is a git different since it mapped to a SMS skin since they're compatible, perhaps it's only for skins that are cross compatible). I can go into the skin selector after download and select it though (yes, i confirmed, with snes this flow works fine since skins directly mapped 1:1, but then again, 32x using a related skin also didnt' work)
+
+
+
 ## tvOS
 
 - [ ] New banner image that doesn't use copyrighted art

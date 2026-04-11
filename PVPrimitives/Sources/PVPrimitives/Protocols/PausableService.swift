@@ -22,6 +22,8 @@ public enum ServiceLifecycleReason: String, Sendable, CaseIterable, Hashable {
     case userInitiated
     /// System resource pressure (thermal, memory, low-power mode)
     case systemResource
+    /// On-demand game launch validation — yield bandwidth for targeted downloads
+    case gameLaunch
 }
 
 /// Protocol adopted by long-running background services that should

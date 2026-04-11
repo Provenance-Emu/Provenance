@@ -4,7 +4,7 @@ import PVUSBManager
 struct PeripheralsTabView: View {
 
     @State private var peripheralManager = USBPeripheralManager()
-    #if !os(tvOS)
+    #if os(macOS) || targetEnvironment(macCatalyst)
     @State private var driverExtManager = DriverExtensionManager()
     @State private var opticalDriveManager = OpticalDriveManager()
     @State private var showDriverStore = false
@@ -13,7 +13,7 @@ struct PeripheralsTabView: View {
     var body: some View {
         NavigationStack {
             List {
-                #if !os(tvOS)
+                #if os(macOS) || targetEnvironment(macCatalyst)
                 driverKitSection
                 OpticalDriveStatusView(manager: opticalDriveManager)
                 #endif
@@ -21,7 +21,7 @@ struct PeripheralsTabView: View {
                 supportedDevicesSection
             }
             .navigationTitle(String(localized: "peripherals.nav_title"))
-            #if !os(tvOS)
+            #if os(macOS) || targetEnvironment(macCatalyst)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -50,7 +50,7 @@ struct PeripheralsTabView: View {
     // MARK: - DriverKit Status Section
     // DriverKit and SystemExtensions are not available on tvOS.
 
-    #if !os(tvOS)
+    #if os(macOS) || targetEnvironment(macCatalyst)
     @ViewBuilder
     private var driverKitSection: some View {
         Section {
@@ -98,7 +98,7 @@ struct PeripheralsTabView: View {
             Text("peripherals.driverkit.description")
         }
     }
-    #endif // !os(tvOS)
+    #endif // os(macOS) || targetEnvironment(macCatalyst)
 
     // MARK: - Connected Devices Section
 
@@ -146,7 +146,7 @@ struct PeripheralsTabView: View {
     // MARK: - DriverKit Status Helpers
     // These helpers reference `driverExtManager` which is only available on non-tvOS.
 
-    #if !os(tvOS)
+    #if os(macOS) || targetEnvironment(macCatalyst)
     private var driverKitStatusIcon: String {
         switch driverExtManager.activationState {
         case .unknown:         return "questionmark.circle"
@@ -180,7 +180,7 @@ struct PeripheralsTabView: View {
         case .failed:          return "peripherals.driverkit.status.failed_short"
         }
     }
-    #endif // !os(tvOS)
+    #endif // os(macOS) || targetEnvironment(macCatalyst)
 }
 
 // MARK: - Device Row
