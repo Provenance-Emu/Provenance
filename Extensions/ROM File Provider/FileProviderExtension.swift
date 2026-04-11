@@ -432,139 +432,13 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
     ) throws -> NSFileProviderEnumerator {
         return FileProviderEnumerator(enumeratedItemIdentifier: containerItemIdentifier)
     }
+}
 
-    private func performImport(from sourceURL: URL, filename: String, systemID: String) throws -> FileProviderItem {
-        let realm = RomFileProviderLibrary.realm
+// MARK: - Item Resolution
 
-        guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: systemID),
-              !pvSystem.isInvalidated else {
-            throw NSFileProviderError(.noSuchItem)
-        }
+private extension FileProviderExtension {
 
-        try Task.checkCancellation()
-        guard let md5 = streamingMD5(for: sourceURL) else {
-            ELOG("FileProvider: failed to compute MD5 for \(filename)")
-            throw NSFileProviderError(.cannotSynchronize)
-        }
-
-        if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
-           !existing.isInvalidated {
-            if let existingFileURL = existing.file?.url,
-               FileManager.default.fileExists(atPath: existingFileURL.path) {
-                ILOG("FileProvider: ROM already exists (md5=\(md5)), skipping copy")
-                return FileProviderItem(game: existing.asDomain(), romURL: existingFileURL)
-            }
-        }
-
-        let destDir = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: systemID)
-        try FileManager.default.createDirectory(at: destDir, withIntermediateDirectories: true, attributes: nil)
-
-        try Task.checkCancellation()
-
-        let destURL = uniqueDestinationURL(in: destDir, for: filename)
-        try FileManager.default.copyItem(at: sourceURL, to: destURL)
-
-        try Task.checkCancellation()
-
-        if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
-           !existing.isInvalidated {
-            ILOG("FileProvider: existing ROM record for md5=\(md5) has no valid local file; updating record with imported copy at \(destURL.lastPathComponent)")
-            let newRomFile = PVFile(withURL: destURL)
-            let newPartialPath = newRomFile.partialPath
-            try realm.write {
-                if let oldFile = existing.file {
-                    realm.delete(oldFile)
-                }
-                realm.add(newRomFile)
-                existing.file = newRomFile
-                existing.romPath = newPartialPath
-                existing.isDownloaded = true
-            }
-            return FileProviderItem(game: existing.asDomain(), romURL: destURL)
-        }
-
-        let romFile = PVFile(withURL: destURL)
-        let actualFilename = destURL.lastPathComponent
-        let game = PVGame()
-        game.md5Hash = md5
-        game.systemIdentifier = systemID
-        game.system = pvSystem
-        game.title = (actualFilename as NSString).deletingPathExtension
-        game.requiresSync = true
-        game.isDownloaded = true
-        game.file = romFile
-        game.romPath = romFile.partialPath
-
-        try realm.write {
-            realm.add(romFile)
-            realm.add(game)
-        }
-
-        ILOG("FileProvider: imported \(filename) md5=\(md5) system=\(systemID)")
-        return FileProviderItem(game: game.asDomain(), romURL: destURL)
-    }
-
-    private func sanitizedFilename(from rawFilename: String) -> String {
-        var name = (rawFilename as NSString).lastPathComponent
-        name = name
-            .replacingOccurrences(of: "/", with: "-")
-            .replacingOccurrences(of: ":", with: "-")
-        let filteredScalars = name.unicodeScalars.filter { !CharacterSet.controlCharacters.contains($0) }
-        name = String(String.UnicodeScalarView(filteredScalars))
-        let components = name.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
-        name = components.joined(separator: " ")
-        return name.isEmpty ? "Untitled" : name
-    }
-
-    private func uniqueDestinationURL(in directory: URL, for filename: String) -> URL {
-        let safeFilename = sanitizedFilename(from: filename)
-        let candidate = directory.appendingPathComponent(safeFilename)
-        guard FileManager.default.fileExists(atPath: candidate.path) else {
-            return candidate
-        }
-        let base = (safeFilename as NSString).deletingPathExtension
-        let ext = (safeFilename as NSString).pathExtension
-        var counter = 2
-        while true {
-            let name = ext.isEmpty ? "\(base)-\(counter)" : "\(base)-\(counter).\(ext)"
-            let url = directory.appendingPathComponent(name)
-            if !FileManager.default.fileExists(atPath: url.path) { return url }
-            counter += 1
-        }
-    }
-
-    private func streamingMD5(for url: URL) -> String? {
-        let chunkSize = 1024 * 1024
-        guard let stream = InputStream(url: url) else { return nil }
-        stream.open()
-        defer { stream.close() }
-
-        var hasher = Insecure.MD5()
-        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: chunkSize)
-        defer { buffer.deallocate() }
-
-        while stream.hasBytesAvailable {
-            let n = stream.read(buffer, maxLength: chunkSize)
-            if n < 0 { return nil }
-            if n == 0 { break }
-            hasher.update(bufferPointer: UnsafeRawBufferPointer(start: buffer, count: n))
-        }
-
-        return hasher.finalize().map { String(format: "%02X", $0) }.joined()
-    }
-
-    /// Resolves symlink or canonical `game:` raw value to uppercase MD5 primary key.
-    private func canonicalGameMD5(from raw: String) -> String? {
-        if raw.hasPrefix(FileProviderItem.gameIdentifierPrefix) {
-            return String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count)).uppercased()
-        }
-        if raw.hasPrefix(RomFileProviderVirtualPath.symlinkPrefix) {
-            return RomFileProviderVirtualPath.parseSymlinkMD5(from: raw)
-        }
-        return nil
-    }
-
-    private func resolveItem(for identifier: NSFileProviderItemIdentifier) -> FileProviderItem? {
+    func resolveItem(for identifier: NSFileProviderItemIdentifier) -> FileProviderItem? {
         if identifier == .rootContainer {
             return FileProviderItem(root: ())
         }
@@ -642,7 +516,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         return nil
     }
 
-    private func resolveSystemFolder(raw: String) -> FileProviderItem? {
+    func resolveSystemFolder(raw: String) -> FileProviderItem? {
         let sysID = String(raw.dropFirst(FileProviderItem.systemIdentifierPrefix.count))
         let realm = RomFileProviderLibrary.realm
         guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: sysID),
@@ -651,7 +525,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         return FileProviderItem(system: pvSystem.asDomain(), parentItemIdentifier: parent)
     }
 
-    private func resolveCanonicalGame(raw: String) -> FileProviderItem? {
+    func resolveCanonicalGame(raw: String) -> FileProviderItem? {
         let md5 = String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count)).uppercased()
         let realm = RomFileProviderLibrary.realm
         guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
@@ -659,7 +533,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         return FileProviderItem(game: pvGame.asDomain(), romURL: pvGame.file?.url)
     }
 
-    private func resolveSymlink(raw: String) -> FileProviderItem? {
+    func resolveSymlink(raw: String) -> FileProviderItem? {
         guard let parsed = RomFileProviderVirtualPath.parseSymlink(from: raw) else { return nil }
         let realm = RomFileProviderLibrary.realm
         guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: parsed.md5),
@@ -676,7 +550,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         )
     }
 
-    private func resolvePublisherFolder(raw: String) -> FileProviderItem? {
+    func resolvePublisherFolder(raw: String) -> FileProviderItem? {
         let enc = String(raw.dropFirst(RomFileProviderVirtualPath.publisherFolderPrefix.count))
         guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
         let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.publishers.rawIdentifier)
@@ -684,7 +558,20 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         return FileProviderItem(publisherFolderGroupingKey: groupingKey, title: title, parentItemIdentifier: parent)
     }
 
-    private func resolveSaveStateGameFolder(md5: String) -> FileProviderItem? {
+    func resolvePublisherSystemFolder(raw: String) -> FileProviderItem? {
+        let rest = String(raw.dropFirst(RomFileProviderVirtualPath.publisherSystemPrefix.count))
+        guard let colon = rest.firstIndex(of: ":") else { return nil }
+        let enc = String(rest[..<colon])
+        let systemId = String(rest[rest.index(after: colon)...])
+        guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
+        let realm = RomFileProviderLibrary.realm
+        guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: systemId),
+              !pvSystem.isInvalidated else { return nil }
+        let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.publisherFolderPrefix + enc)
+        return FileProviderItem(publisherSystemFolderGroupingKey: groupingKey, system: pvSystem.asDomain(), parentItemIdentifier: parent)
+    }
+
+    func resolveSaveStateGameFolder(md5: String) -> FileProviderItem? {
         let realm = RomFileProviderLibrary.realm
         guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
               !pvGame.isInvalidated else { return nil }
@@ -692,7 +579,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         return FileProviderItem(saveStateGameFolder: pvGame.asDomain(), parentItemIdentifier: parent)
     }
 
-    private func resolveSaveStateItem(id: String) -> FileProviderItem? {
+    func resolveSaveStateItem(id: String) -> FileProviderItem? {
         let realm = RomFileProviderLibrary.realm
         guard let pvSS = realm.object(ofType: PVSaveState.self, forPrimaryKey: id),
               !pvSS.isInvalidated,
@@ -717,7 +604,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         )
     }
 
-    private func resolveScreenshotGameFolder(md5: String) -> FileProviderItem? {
+    func resolveScreenshotGameFolder(md5: String) -> FileProviderItem? {
         let realm = RomFileProviderLibrary.realm
         guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
               !pvGame.isInvalidated else { return nil }
@@ -725,7 +612,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         return FileProviderItem(screenshotGameFolder: pvGame.asDomain(), parentItemIdentifier: parent)
     }
 
-    private func resolveScreenshotItem(gameMD5: String, index: Int) -> FileProviderItem? {
+    func resolveScreenshotItem(gameMD5: String, index: Int) -> FileProviderItem? {
         let realm = RomFileProviderLibrary.realm
         guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5),
               !pvGame.isInvalidated else { return nil }
@@ -738,17 +625,140 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         return FileProviderItem(screenshotGameMD5: gameMD5, index: index, imageURL: imageURL, parentItemIdentifier: parent)
     }
 
-    private func resolvePublisherSystemFolder(raw: String) -> FileProviderItem? {
-        let rest = String(raw.dropFirst(RomFileProviderVirtualPath.publisherSystemPrefix.count))
-        guard let colon = rest.firstIndex(of: ":") else { return nil }
-        let enc = String(rest[..<colon])
-        let systemId = String(rest[rest.index(after: colon)...])
-        guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
+    /// Resolves symlink or canonical `game:` raw value to uppercase MD5 primary key.
+    func canonicalGameMD5(from raw: String) -> String? {
+        if raw.hasPrefix(FileProviderItem.gameIdentifierPrefix) {
+            return String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count)).uppercased()
+        }
+        if raw.hasPrefix(RomFileProviderVirtualPath.symlinkPrefix) {
+            return RomFileProviderVirtualPath.parseSymlinkMD5(from: raw)
+        }
+        return nil
+    }
+}
+
+// MARK: - Import & File Utilities
+
+private extension FileProviderExtension {
+
+    func performImport(from sourceURL: URL, filename: String, systemID: String) throws -> FileProviderItem {
         let realm = RomFileProviderLibrary.realm
-        guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: systemId),
-              !pvSystem.isInvalidated else { return nil }
-        let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.publisherFolderPrefix + enc)
-        return FileProviderItem(publisherSystemFolderGroupingKey: groupingKey, system: pvSystem.asDomain(), parentItemIdentifier: parent)
+
+        guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: systemID),
+              !pvSystem.isInvalidated else {
+            throw NSFileProviderError(.noSuchItem)
+        }
+
+        try Task.checkCancellation()
+        guard let md5 = streamingMD5(for: sourceURL) else {
+            ELOG("FileProvider: failed to compute MD5 for \(filename)")
+            throw NSFileProviderError(.cannotSynchronize)
+        }
+
+        if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+           !existing.isInvalidated {
+            if let existingFileURL = existing.file?.url,
+               FileManager.default.fileExists(atPath: existingFileURL.path) {
+                ILOG("FileProvider: ROM already exists (md5=\(md5)), skipping copy")
+                return FileProviderItem(game: existing.asDomain(), romURL: existingFileURL)
+            }
+        }
+
+        let destDir = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: systemID)
+        try FileManager.default.createDirectory(at: destDir, withIntermediateDirectories: true, attributes: nil)
+
+        try Task.checkCancellation()
+
+        let destURL = uniqueDestinationURL(in: destDir, for: filename)
+        try FileManager.default.copyItem(at: sourceURL, to: destURL)
+
+        try Task.checkCancellation()
+
+        if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+           !existing.isInvalidated {
+            ILOG("FileProvider: existing ROM record for md5=\(md5) has no valid local file; updating record with imported copy at \(destURL.lastPathComponent)")
+            let newRomFile = PVFile(withURL: destURL)
+            let newPartialPath = newRomFile.partialPath
+            try realm.write {
+                if let oldFile = existing.file {
+                    realm.delete(oldFile)
+                }
+                realm.add(newRomFile)
+                existing.file = newRomFile
+                existing.romPath = newPartialPath
+                existing.isDownloaded = true
+            }
+            return FileProviderItem(game: existing.asDomain(), romURL: destURL)
+        }
+
+        let romFile = PVFile(withURL: destURL)
+        let actualFilename = destURL.lastPathComponent
+        let game = PVGame()
+        game.md5Hash = md5
+        game.systemIdentifier = systemID
+        game.system = pvSystem
+        game.title = (actualFilename as NSString).deletingPathExtension
+        game.requiresSync = true
+        game.isDownloaded = true
+        game.file = romFile
+        game.romPath = romFile.partialPath
+
+        try realm.write {
+            realm.add(romFile)
+            realm.add(game)
+        }
+
+        ILOG("FileProvider: imported \(filename) md5=\(md5) system=\(systemID)")
+        return FileProviderItem(game: game.asDomain(), romURL: destURL)
+    }
+
+    func sanitizedFilename(from rawFilename: String) -> String {
+        var name = (rawFilename as NSString).lastPathComponent
+        name = name
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: ":", with: "-")
+        let filteredScalars = name.unicodeScalars.filter { !CharacterSet.controlCharacters.contains($0) }
+        name = String(String.UnicodeScalarView(filteredScalars))
+        let components = name.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+        name = components.joined(separator: " ")
+        return name.isEmpty ? "Untitled" : name
+    }
+
+    func uniqueDestinationURL(in directory: URL, for filename: String) -> URL {
+        let safeFilename = sanitizedFilename(from: filename)
+        let candidate = directory.appendingPathComponent(safeFilename)
+        guard FileManager.default.fileExists(atPath: candidate.path) else {
+            return candidate
+        }
+        let base = (safeFilename as NSString).deletingPathExtension
+        let ext = (safeFilename as NSString).pathExtension
+        var counter = 2
+        while true {
+            let name = ext.isEmpty ? "\(base)-\(counter)" : "\(base)-\(counter).\(ext)"
+            let url = directory.appendingPathComponent(name)
+            if !FileManager.default.fileExists(atPath: url.path) { return url }
+            counter += 1
+        }
+    }
+
+    func streamingMD5(for url: URL) -> String? {
+        let chunkSize = 1024 * 1024
+        guard let stream = InputStream(url: url) else { return nil }
+        stream.open()
+        defer { stream.close() }
+
+        var hasher = Insecure.MD5()
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: chunkSize)
+        defer { buffer.deallocate() }
+
+        while stream.hasBytesAvailable {
+            let n = stream.read(buffer, maxLength: chunkSize)
+            if n < 0 { return nil }
+            if n == 0 { break }
+            hasher.update(bufferPointer: UnsafeRawBufferPointer(start: buffer, count: n))
+        }
+
+        return hasher.finalize().map { String(format: "%02X", $0) }.joined()
     }
 }
 
