@@ -285,6 +285,13 @@
 		B33BD1C62C6A622A001E933A /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B33BD1C82C6A6261001E933A /* PVStella-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C72C6A6261001E933A /* PVStella-Dynamic */; };
 		B33BD1C92C6A6261001E933A /* PVStella-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C72C6A6261001E933A /* PVStella-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B33D87B12F90141D00248544 /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B33D87B02F90141D00248544 /* PVArchivingFormats */; };
+		B33D87B32F90147200248544 /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B33D87B22F90147200248544 /* PVArchivingFormats */; };
+		B33D87B52F9014C000248544 /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B33D87B42F9014C000248544 /* PVArchivingFormats */; };
+		B33D87B72F9014CE00248544 /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B33D87B62F9014CE00248544 /* PVArchivingFormats */; };
+		B33D87B92F9014D500248544 /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B33D87B82F9014D500248544 /* PVArchivingFormats */; };
+		B33D87BB2F9014E200248544 /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B33D87BA2F9014E200248544 /* PVArchivingFormats */; };
+		B33D87BD2F9014EE00248544 /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B33D87BC2F9014EE00248544 /* PVArchivingFormats */; };
 		B33E1A062F7C59B50028E627 /* ColoredIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */; };
 		B33E1A072F7C59B50028E627 /* ColoredIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */; };
 		B33E1A082F7C59B50028E627 /* ColoredIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3DF8ED72CC7AE1F0006F20E /* ColoredIcons.xcassets */; };
@@ -3156,6 +3163,7 @@
 			files = (
 				B355E0002920AA2100E4C858 /* QuickLookThumbnailing.framework in Frameworks */,
 				B32C307B2F6E6CDE003150F0 /* PVSettings in Frameworks */,
+				B33D87BD2F9014EE00248544 /* PVArchivingFormats in Frameworks */,
 				B3BDD4272D349220005F5AF9 /* (null) in Frameworks */,
 				B3THUMB0126520001BBBBBBBB /* PVLibrary in Frameworks */,
 				11D0B4AF90854D59A7612C29 /* PVQuickLookSupport in Frameworks */,
@@ -3174,6 +3182,7 @@
 				B39620942C66E1C70094F6F0 /* PVLogging in Frameworks */,
 				B32CEE3F2D20D40C0083552D /* PVFeatureFlags in Frameworks */,
 				B39620922C66E1BE0094F6F0 /* PVCoreBridge in Frameworks */,
+				B33D87BB2F9014E200248544 /* PVArchivingFormats in Frameworks */,
 				B3BDD41B2D349220005F5AF9 /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3189,6 +3198,7 @@
 				B3470E642F6E49350066B958 /* Defaults in Frameworks */,
 				B3470E622F6E492D0066B958 /* DefaultsMacros in Frameworks */,
 				B3470E662F6E493D0066B958 /* PVSettings in Frameworks */,
+				B33D87B32F90147200248544 /* PVArchivingFormats in Frameworks */,
 				B355E03A2920AC1A00E4C858 /* WidgetKit.framework in Frameworks */,
 				B39620A02C66E20B0094F6F0 /* PVCoreBridge in Frameworks */,
 				B396209E2C66E1FC0094F6F0 /* PVLogging in Frameworks */,
@@ -3414,6 +3424,7 @@
 				B3BD3A232D7298BB000FBB11 /* PVLibrary in Frameworks */,
 				B3BE9FA52C7987B1006D989E /* UniformTypeIdentifiers.framework in Frameworks */,
 				B3BDD4252D349220005F5AF9 /* (null) in Frameworks */,
+				B33D87B92F9014D500248544 /* PVArchivingFormats in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3432,6 +3443,7 @@
 				B3CC22000000000100000004 /* QuickLook.framework in Frameworks */,
 				B3CC22000000000100000005 /* PVLibrary in Frameworks */,
 				F5A172889A9A49699317D6F9 /* PVQuickLookSupport in Frameworks */,
+				B33D87B72F9014CE00248544 /* PVArchivingFormats in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3446,6 +3458,7 @@
 				B3AFCF962977A80700A01010 /* PVLogging in Frameworks */,
 				B32CEE412D20D4530083552D /* PVFeatureFlags in Frameworks */,
 				111962BE249FDCD2006EAA16 /* CoreServices.framework in Frameworks */,
+				B33D87B12F90141D00248544 /* PVArchivingFormats in Frameworks */,
 				B3EE55E32C66EC14004D06E4 /* Defaults in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3457,6 +3470,7 @@
 				B3EEEDB42920B0D5008E2603 /* QuickLookThumbnailing.framework in Frameworks */,
 				B3EEEDB52920B0D5008E2603 /* Quartz.framework in Frameworks */,
 				B3BDD4282D349220005F5AF9 /* (null) in Frameworks */,
+				B33D87B52F9014C000248544 /* PVArchivingFormats in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7303,6 +7317,7 @@
 				1BA3F6932C1D4965AC324A86 /* PVQuickLookSupport */,
 				B32C30782F6E6CD8003150F0 /* Defaults */,
 				B32C307A2F6E6CDE003150F0 /* PVSettings */,
+				B33D87BC2F9014EE00248544 /* PVArchivingFormats */,
 			);
 			productName = ThumbnailExtension;
 			productReference = B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */;
@@ -7544,6 +7559,7 @@
 			packageProductDependencies = (
 				B3BD3A222D7298BB000FBB11 /* PVLibrary */,
 				B3BD3A242D7298FA000FBB11 /* Defaults */,
+				B33D87B82F9014D500248544 /* PVArchivingFormats */,
 			);
 			productName = "ROM File Provider";
 			productReference = B3BE9FA42C7987B1006D989E /* ROM File Provider.appex */;
@@ -7605,6 +7621,7 @@
 				B3CC2200000000010000000F /* PVLibrary */,
 				B3E2E8402F6BC1ED0010BDDE /* Defaults */,
 				B3416C07727A438EB2EE9A87 /* PVQuickLookSupport */,
+				B33D87B62F9014CE00248544 /* PVArchivingFormats */,
 			);
 			productName = QuickLookPreview;
 			productReference = B3CC22000000000100000001 /* QuickLookPreview.appex */;
@@ -7632,6 +7649,7 @@
 				B3EE55E22C66EC14004D06E4 /* Defaults */,
 				B3A1867C2CBCB78C00BB1FFE /* PVLibrary */,
 				B32CEE402D20D4530083552D /* PVFeatureFlags */,
+				B33D87B02F90141D00248544 /* PVArchivingFormats */,
 			);
 			productName = Spotlight;
 			productReference = B3E21D6B203211BE009939D3 /* Spotlight.appex */;
@@ -9456,12 +9474,9 @@
 				34564105D5C5A21AF5C65E0A /* Provenance-CI */,
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
 				B3E21D6A203211BE009939D3 /* Spotlight */,
+				B355E0102920AA9700E4C858 /* SpotlightImportExtension */,
 				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
 				B39B10AA2DAF3D16004EEF79 /* TopShelfv2 */,
-				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
-				B383225D26ED9C530029D12F /* Check Git Submodules */,
-				B30E94832793B8BE00871E57 /* Check CodeSigning */,
-				B355E0102920AA9700E4C858 /* SpotlightImportExtension */,
 				B355DFFD2920AA2000E4C858 /* ThumbnailExtension */,
 				B3CC2200000000010000000A /* QuickLookPreview */,
 				B3EEEDB22920B0D4008E2603 /* ThumbnailExtensionMacOS */,
@@ -9477,6 +9492,9 @@
 				C0C0CAFE1000000000000001 /* ProvenanceCompanionTests */,
 				C0C0DE0100000008 /* ProvenanceOpticalDriveDriverKit */,
 				C0C0DE0200000008 /* ProvenanceHIDDriverKit */,
+				B30E94832793B8BE00871E57 /* Check CodeSigning */,
+				B383225D26ED9C530029D12F /* Check Git Submodules */,
+				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
 			);
 		};
 /* End PBXProject section */
@@ -16580,6 +16598,41 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
 			productName = "PVStella-Dynamic";
+		};
+		B33D87B02F90141D00248544 /* PVArchivingFormats */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */;
+			productName = PVArchivingFormats;
+		};
+		B33D87B22F90147200248544 /* PVArchivingFormats */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */;
+			productName = PVArchivingFormats;
+		};
+		B33D87B42F9014C000248544 /* PVArchivingFormats */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */;
+			productName = PVArchivingFormats;
+		};
+		B33D87B62F9014CE00248544 /* PVArchivingFormats */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */;
+			productName = PVArchivingFormats;
+		};
+		B33D87B82F9014D500248544 /* PVArchivingFormats */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */;
+			productName = PVArchivingFormats;
+		};
+		B33D87BA2F9014E200248544 /* PVArchivingFormats */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */;
+			productName = PVArchivingFormats;
+		};
+		B33D87BC2F9014EE00248544 /* PVArchivingFormats */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */;
+			productName = PVArchivingFormats;
 		};
 		B3416C07727A438EB2EE9A87 /* PVQuickLookSupport */ = {
 			isa = XCSwiftPackageProductDependency;
