@@ -17,7 +17,7 @@ public final class DriverStoreManager {
 
     // MARK: - Private
 
-    private var transactionListenerTask: Task<Void, Never>?
+    nonisolated(unsafe) private var transactionListenerTask: Task<Void, Never>?
 
     // MARK: - Lifecycle
 

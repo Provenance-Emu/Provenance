@@ -62,7 +62,7 @@ struct VirtualControllerTabView: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .frame(width: 28)
-                .foregroundStyle(.accent)
+//                .foregroundStyle(.accentColor)
             Text(key)
                 .font(.subheadline)
         }
