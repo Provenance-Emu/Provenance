@@ -748,18 +748,6 @@ cores:
     tvos: true
     appstore: true
     enabled: true
-  - name: virtualxt
-    # IBM PC/XT — DOS PVSupportedExtensions (img, ima, etc.)
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
-  - name: nekop2
-    # PC-98 (Neko Project II) — PC98 PVSupportedExtensions
-    ios: true
-    tvos: true
-    appstore: true
-    enabled: true
   - name: mrboom
     # Bomberman-like — contentless (no ROM)
     ios: true
@@ -793,6 +781,18 @@ cores:
 
   # --- In Core.plist but PVDisabled (no matching Provenance importer extensions yet; keep enabled: false) ---
 
+  - name: virtualxt
+    # IBM PC/XT — DOS PVSupportedExtensions (img, ima, etc.)
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
+  - name: nekop2
+    # PC-98 (Neko Project II) — PC98 PVSupportedExtensions
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: false
   - name: mcsoftserve
     # Homebrew server — not in Core.plist
     ios: true
@@ -800,7 +800,6 @@ cores:
     appstore: false
     enabled: false
     appstore_excluded_reason: "Not approved for App Store distribution"
-
   - name: dinothawr
     # Puzzle — plist PVDisabled (requires game data; not contentless in Provenance sense)
     ios: true

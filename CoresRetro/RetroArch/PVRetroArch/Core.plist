@@ -1974,6 +1974,8 @@
 		<dict>
 			<key>PVAppStoreDisabled</key>
 			<false/>
+			<key>PVDisabled</key>
+			<true/>
 			<key>PVContentless</key>
 			<false/>
 			<key>PVCopyright</key>
