@@ -2648,6 +2648,7 @@
 		C0C0DE0100000020 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				.version,
 				DriverKit/ProvenanceHIDDriver.swift,
 				DriverKit/ProvenanceOpticalDriveDriver.swift,
 				"ProvenanceCompanion-Info.plist",
