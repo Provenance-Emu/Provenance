@@ -2432,20 +2432,25 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                     }
                 }
             } else if record.allKeys().contains(CloudKitSchema.ROMFields.fileData) {
-                // Mark as not downloaded
-                CloudSyncManager.syncLog.event(.sync, item: "rom/\(localGame.md5Hash ?? "nil")", status: .ok, detail: "no CloudKit asset, marking not downloaded")
-                localGame.isDownloaded = false
-                localGame.hasCloudAssets = false
+                // CloudKit record has fileData key but no CKAsset — cloud asset was
+                // deleted or never uploaded.  Check if the file exists locally before
+                // marking not downloaded; a locally-imported game should stay "downloaded".
+                let noAssetLocalURL = self.localURL(for: localGame)
+                let noAssetExistingURL = localGame.file?.url
+                let hasLocalFileForNoAsset = (noAssetLocalURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false)
+                    || (noAssetExistingURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false)
+                if hasLocalFileForNoAsset {
+                    // File exists locally — keep downloaded status, just note cloud asset is gone
+                    localGame.isDownloaded = true
+                    localGame.hasCloudAssets = false
+                    CloudSyncManager.syncLog.event(.sync, item: "rom/\(localGame.md5Hash ?? "nil")", status: .ok, detail: "no CloudKit asset but local file exists, keeping downloaded")
+                } else {
+                    localGame.isDownloaded = false
+                    localGame.hasCloudAssets = false
+                    CloudSyncManager.syncLog.event(.sync, item: "rom/\(localGame.md5Hash ?? "nil")", status: .ok, detail: "no CloudKit asset and no local file, marking not downloaded")
+                }
 
-                // Optionally clear PVFile URL or mark as offline?
-                // localGame.file?.url = nil // Or keep url but mark PVFile as offline?
-                // For now, just setting isDownloaded = false might be enough.
-
-                // If download failed or was deleted, mark all related files as offline too?
-                // Or maybe clear the list entirely?
-                // For now, let's mark them offline if they had URLs.
                 for relatedFile in localGame.relatedFiles where relatedFile.url != nil {
-                    // No 'isOffline' property on PVFile. Their existence is tracked by PVGame.
                     VLOG("Related file \(relatedFile.fileName) exists for game \(localGame.md5Hash ?? "unknown") but primary is not downloaded.")
                 }
             }
@@ -2531,8 +2536,18 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         newGame.cloudRecordID = record.recordID.recordName
         newGame.lastCloudSyncDate = record.modificationDate
 
-        // Set other properties from the record
-        newGame.isDownloaded = false // Mark as not downloaded initially, download happens separately
+        // Preserve local download status if a locally-imported game already exists.
+        // `add(update: true)` is an upsert that overwrites ALL properties, so we must
+        // check the existing record before blindly setting isDownloaded = false.
+        let existingGame = RomDatabase.sharedInstance.game(withMD5: md5.uppercased())
+        if let existing = existingGame, existing.isDownloaded,
+           let fileURL = existing.file?.url,
+           FileManager.default.fileExists(atPath: fileURL.path) {
+            newGame.isDownloaded = true
+            DLOG("createPVGame: preserving isDownloaded=true for existing local game \(title) (MD5: \(md5))")
+        } else {
+            newGame.isDownloaded = false // Mark as not downloaded initially, download happens separately
+        }
         newGame.hasCloudAssets = recordDeclaresAssetPresence(record)
         newGame.playCount = record[CloudKitSchema.ROMFields.playCount] as? Int ?? 0
         newGame.lastPlayed = record[CloudKitSchema.ROMFields.lastPlayed] as? Date
@@ -2806,6 +2821,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else {
                 WLOG("Cannot update download status: PVGame with MD5 \(md5) not found locally.")
                 return
+            }
+
+            // Never downgrade isDownloaded from true→false if the local file actually exists.
+            // Background sync may pass isDownloaded=false based on stale state.
+            if !isDownloaded && liveGame.isDownloaded {
+                if let existingURL = liveGame.file?.url,
+                   FileManager.default.fileExists(atPath: existingURL.path) {
+                    DLOG("updateLocalDownloadStatus: refusing to downgrade isDownloaded for \(liveGame.title) — local file exists at \(existingURL.path)")
+                    return
+                }
             }
 
             // Skip no-op updates to avoid triggering Realm notifications and UI refreshes
@@ -3574,7 +3599,16 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                             newGame.lastCloudSyncDate = snap.modificationDate
                             newGame.fileSize = snap.fileSize
                             newGame.hasCloudAssets = snap.hasCloudAssets
-                            newGame.isDownloaded = false
+                            // Preserve isDownloaded if an existing local game already
+                            // has the file — realm.add(.modified) overwrites all properties.
+                            if let existingSnap = realm.object(ofType: PVGame.self, forPrimaryKey: snap.md5),
+                               existingSnap.isDownloaded,
+                               let fileURL = existingSnap.file?.url,
+                               FileManager.default.fileExists(atPath: fileURL.path) {
+                                newGame.isDownloaded = true
+                            } else {
+                                newGame.isDownloaded = false
+                            }
                             if let cloudOriginalArtworkURL = snap.originalArtworkURL, !cloudOriginalArtworkURL.isEmpty {
                                 newGame.originalArtworkURL = cloudOriginalArtworkURL
                             }

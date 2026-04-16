@@ -2040,12 +2040,16 @@ public class CloudSyncManager {
         }
 
         do {
+            // Re-check file existence on the live object — the caller may have used
+            // a frozen snapshot that missed the file during a background scan.
+            if let fileURL = gameToUpdate.file?.url,
+               FileManager.default.fileExists(atPath: fileURL.path) {
+                Self.syncLog.event(.sync, item: "rom/\(gameToUpdate.title)", status: .ok, detail: "Skipped markForSync — local file exists at \(fileURL.path)")
+                return
+            }
             try realm.write {
-                // Mark as not downloaded (file is missing locally)
                 gameToUpdate.isDownloaded = false
-                // Mark as requiring sync (needs to be downloaded from cloud)
                 gameToUpdate.requiresSync = true
-                // Clear last sync date since we need to re-sync
                 gameToUpdate.lastCloudSyncDate = nil
             }
             Self.syncLog.event(.sync, item: "rom/\(gameToUpdate.title)", status: .ok, detail: "Marked for sync (MD5: \(gameToUpdate.md5Hash ?? "N/A"), isDownloaded=false, requiresSync=true)")
@@ -2065,6 +2069,13 @@ public class CloudSyncManager {
                     try realm.write {
                         for md5 in md5s {
                             guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else { continue }
+                            // Re-check file existence on the live Realm object to avoid
+                            // race conditions where a stale/frozen snapshot missed the file.
+                            if let fileURL = game.file?.url,
+                               FileManager.default.fileExists(atPath: fileURL.path) {
+                                DLOG("markGamesForSync: skipping \(game.title) — local file exists at \(fileURL.path)")
+                                continue
+                            }
                             game.isDownloaded = false
                             game.requiresSync = true
                             game.lastCloudSyncDate = nil
