@@ -1,5 +1,10 @@
 SHELL := /bin/bash
-.PHONY: help ios update tvos lite ci update-cheatdb update-skin-catalog
+.PHONY: help ios update tvos lite ci \
+	generate-all generate-cheatdb generate-contributors generate-core-lists \
+	generate-default-skins generate-licenses generate-uti generate-changelog \
+	update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
+	test-all test-spm test-cheatdb test-scripts \
+	lint audit-localization bump-build bump-minor bump-major spm-validate
 
 RUBY := $(shell command -v ruby 2>/dev/null)
 HOMEBREW := $(shell command -v brew 2>/dev/null)
@@ -150,9 +155,9 @@ codecov_upload:
 danger:
 	bundle exec danger
 
-## -- Testing --
+## -- Fastlane Testing --
 
-## Run test on all targets
+## Run test on all targets (via fastlane)
 test:
 	bundle exec fastlane test
 
@@ -204,10 +209,10 @@ open:
 ensure-cheatdb:
 	@PVLookup/Scripts/generate_cheatdb_if_needed.sh
 
+# Uses MD5 cross-referencing from DAT files for ROM hash lookup support.
+# Note: libretro only ships cheats under a subset of systems in cht/; see
+# Scripts/generate_cheatdb.py (SYSTEM_SHORT_NAMES / upstream comment).
 ## Force-regenerate libretro cheat database from libretro-database repo
-## Uses MD5 cross-referencing from DAT files for ROM hash lookup support.
-## Note: libretro only ships cheats under a subset of systems in cht/; see
-## Scripts/generate_cheatdb.py (SYSTEM_SHORT_NAMES / upstream comment).
 update-cheatdb:
 	$(info Generating libretro cheat database…)
 	rm -rf /tmp/libretro-database
@@ -230,6 +235,136 @@ update-skin-catalog:
 		--skip-validation \
 		--output Scripts/catalog_seed.json
 	cp Scripts/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json
+
+## -- Code Generation --
+
+## Run all code generators
+generate-all: generate-contributors generate-core-lists generate-default-skins generate-licenses generate-uti generate-changelog update-core-versions
+
+## Generate CONTRIBUTORS.md from git history
+generate-contributors:
+	$(info Generating contributors…)
+	python3 Scripts/generate_contributors.py
+
+## Generate libretro core URL lists from cores.yml manifest
+generate-core-lists:
+	$(info Generating core lists…)
+	python3 Scripts/generate_core_lists.py generate
+
+## Validate core lists match manifest (dry run)
+validate-core-lists:
+	$(info Validating core lists…)
+	python3 Scripts/generate_core_lists.py validate
+
+## Generate default DeltaSkin bundles for physical controllers
+generate-default-skins:
+	$(info Generating default skins…)
+	python3 Scripts/generate_default_skins.py
+
+## Generate license manifest from Core.plist + SPM dependencies
+generate-licenses:
+	$(info Generating license manifest…)
+	python3 Scripts/generate_licenses.py
+
+## Check licenses are up-to-date (CI validation, no writes)
+check-licenses:
+	$(info Checking license manifest…)
+	python3 Scripts/generate_licenses.py --check
+
+## Generate UTI/MIME type declarations for Info.plist
+generate-uti:
+	$(info Generating UTI declarations…)
+	python3 Scripts/generate_uti_declarations.py
+
+## Generate changelog entries from conventional commits
+generate-changelog:
+	$(info Generating changelog…)
+	git log --oneline --no-merges $$(git describe --tags --abbrev=0 2>/dev/null || echo HEAD~50)..HEAD --format="%s" > /tmp/raw_commits.txt
+	python3 Scripts/changelog_generate_entries.py
+	python3 Scripts/changelog_update_file.py
+
+## Update core version strings in Core.plist from source
+update-core-versions:
+	$(info Updating core versions…)
+	python3 Scripts/update_core_versions.py --fix
+
+## Validate core versions are up-to-date (CI, no writes)
+check-core-versions:
+	$(info Checking core versions…)
+	python3 Scripts/update_core_versions.py
+
+## Sync RetroArch Core.plist license data from libretro .info files
+update-core-licenses:
+	$(info Updating core licenses…)
+	python3 CoresRetro/RetroArch/scripts/update_core_licenses.py
+
+## Generate systems markdown tables from systems.plist
+generate-systems-docs:
+	$(info Generating systems documentation…)
+	python3 Scripts/systems.py
+
+## -- Testing --
+
+## Run all tests (SPM modules + script tests)
+test-all: test-spm test-scripts
+
+## Build and test all standalone SPM modules (Tier 0-2)
+test-spm:
+	$(info Running SPM module validation…)
+	Scripts/spm-validate.sh
+
+## Build and test a single SPM module (usage: make test-module MODULE=PVLogging)
+test-module: | _var_MODULE
+	$(info Testing $(MODULE)…)
+	Scripts/spm-validate.sh $(MODULE)
+
+## Run Python script unit tests
+test-scripts:
+	$(info Running script tests…)
+	python3 -m pytest Scripts/test_generate_cheatdb_dat.py -v
+
+## Run cheatdb DAT parser tests
+test-cheatdb:
+	$(info Running cheatdb tests…)
+	python3 Scripts/test_generate_cheatdb_dat.py
+
+## -- Linting & Auditing --
+
+## Run SwiftLint on the project
+lint:
+	$(info Running SwiftLint…)
+	swiftlint lint --config .swiftlint.yml
+
+## Audit localization coverage
+audit-localization:
+	$(info Auditing localization…)
+	Scripts/audit_localization.sh
+
+## -- Version Management --
+
+## Bump build number in Build.xcconfig
+bump-build:
+	$(info Bumping build number…)
+	Scripts/bump-version.sh --build
+
+## Bump minor version in Build.xcconfig
+bump-minor:
+	$(info Bumping minor version…)
+	Scripts/bump-version.sh --minor
+
+## Bump major version in Build.xcconfig
+bump-major:
+	$(info Bumping major version…)
+	Scripts/bump-version.sh --major
+
+## Set specific marketing version (usage: make set-version VERSION=3.5.0)
+set-version: | _var_VERSION
+	Scripts/bump-version.sh --set-marketing $(VERSION)
+
+## -- Aliases --
+
+## Alias: validate standalone SPM modules
+spm-validate: test-spm
 
 ## tag and release to github
 release: | _var_VERSION

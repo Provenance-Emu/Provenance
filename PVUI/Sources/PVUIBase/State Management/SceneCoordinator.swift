@@ -267,14 +267,32 @@ public class SceneCoordinator: ObservableObject {
             return
         }
 
-        // Check if the game needs to be downloaded from the cloud
-        let needsDownload = !game.isDownloaded || !(game.file?.online ?? true)
+        // Fast path: check if the game file physically exists on disk.
+        // We check both the resolved URL (which may point to iCloud container)
+        // AND the local Documents path directly, because iCloud Drive sync mode
+        // can redirect `game.file?.url` to the iCloud container even when the
+        // file was imported locally to Documents.
+        let fileExistsLocally: Bool = {
+            if let fileURL = game.file?.url,
+               FileManager.default.fileExists(atPath: fileURL.path) {
+                return true
+            }
+            // Fallback: check local Documents directory directly
+            if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
+                #if os(tvOS)
+                let localURL = RelativeRoot.cachesDirectory.appendingPathComponent(partialPath)
+                #else
+                let localURL = RelativeRoot.documentsDirectory.appendingPathComponent(partialPath)
+                #endif
+                if FileManager.default.fileExists(atPath: localURL.path) {
+                    return true
+                }
+            }
+            return false
+        }()
 
-        // Fast path: file is already local — verify it exists and skip cloud validation entirely
-        if !needsDownload,
-           let fileURL = game.file?.url,
-           FileManager.default.fileExists(atPath: fileURL.path) {
-            ILOG("SceneCoordinator: Game file exists locally, skipping cloud validation: \(fileURL.lastPathComponent)")
+        if fileExistsLocally {
+            ILOG("SceneCoordinator: Game file exists locally, skipping cloud validation: \(game.file?.url?.lastPathComponent ?? game.title)")
             // Still need to validate BIOS if required
             if system.requiresBIOS {
                 syncStatusManager.show(
@@ -285,7 +303,7 @@ public class SceneCoordinator: ObservableObject {
                     }
                 )
             }
-        } else if needsDownload {
+        } else if !game.isDownloaded || !(game.file?.online ?? true) {
             // Show sync status overlay early if we need to validate (may download BIOS)
             syncStatusManager.show(
                 gameTitle: game.title,
@@ -789,14 +807,27 @@ public class SceneCoordinator: ObservableObject {
             return
         }
 
-        // Check if the game needs to be downloaded from the cloud
-        let needsDownload = !game.isDownloaded || !(game.file?.online ?? true)
+        // Fast path: check if the game file physically exists on disk (same logic as launchGameWithValidation)
+        let saveStateFileExistsLocally: Bool = {
+            if let fileURL = game.file?.url,
+               FileManager.default.fileExists(atPath: fileURL.path) {
+                return true
+            }
+            if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
+                #if os(tvOS)
+                let localURL = RelativeRoot.cachesDirectory.appendingPathComponent(partialPath)
+                #else
+                let localURL = RelativeRoot.documentsDirectory.appendingPathComponent(partialPath)
+                #endif
+                if FileManager.default.fileExists(atPath: localURL.path) {
+                    return true
+                }
+            }
+            return false
+        }()
 
-        // Fast path: file is already local — verify it exists and skip cloud validation
-        if !needsDownload,
-           let fileURL = game.file?.url,
-           FileManager.default.fileExists(atPath: fileURL.path) {
-            ILOG("SceneCoordinator: Game file exists locally, skipping cloud validation for save state: \(fileURL.lastPathComponent)")
+        if saveStateFileExistsLocally {
+            ILOG("SceneCoordinator: Game file exists locally, skipping cloud validation for save state: \(game.file?.url?.lastPathComponent ?? game.title)")
             if system.requiresBIOS {
                 syncStatusManager.show(
                     gameTitle: game.title,
@@ -806,7 +837,7 @@ public class SceneCoordinator: ObservableObject {
                     }
                 )
             }
-        } else if needsDownload {
+        } else if !game.isDownloaded || !(game.file?.online ?? true) {
             syncStatusManager.show(
                 gameTitle: game.title,
                 statusMessage: "Validating requirements...",
