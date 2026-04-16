@@ -24,13 +24,33 @@ struct GameMoreInfoViewController: UIViewControllerRepresentable {
     }
 
     func makeUIViewController(context: Context) -> GameMoreInfoPageViewController {
-        let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+        guard let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else {
+            ELOG("Failed to instantiate PVGameMoreInfoViewController from GameMoreInfo storyboard")
+            let fallback = GameMoreInfoPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            let errorVC = UIViewController()
+            let label = UILabel()
+            label.text = "Failed to load game info"
+            label.textAlignment = .center
+            label.translatesAutoresizingMaskIntoConstraints = false
+            errorVC.view.addSubview(label)
+            NSLayoutConstraint.activate([
+                label.centerXAnchor.constraint(equalTo: errorVC.view.centerXAnchor),
+                label.centerYAnchor.constraint(equalTo: errorVC.view.centerYAnchor)
+            ])
+            fallback.setViewControllers([errorVC], direction: .forward, animated: false, completion: nil)
+            return fallback
+        }
 
-        // Ensure we're using a frozen copy of the game
         let frozenGame = game.isFrozen ? game : game.freeze()
         firstVC.game = frozenGame
 
-        let moreInfoGamePageVC = UIStoryboard(name: "Provenance", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as! GameMoreInfoPageViewController
+        let provenanceStoryboard = UIStoryboard(name: "Provenance", bundle: BundleLoader.module)
+        guard let moreInfoGamePageVC = provenanceStoryboard.instantiateViewController(withIdentifier: "gameMoreInfoPageVC") as? GameMoreInfoPageViewController else {
+            ELOG("Failed to instantiate GameMoreInfoPageViewController from Provenance storyboard")
+            let fallback = GameMoreInfoPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
+            fallback.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
+            return fallback
+        }
 
         moreInfoGamePageVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
         return moreInfoGamePageVC

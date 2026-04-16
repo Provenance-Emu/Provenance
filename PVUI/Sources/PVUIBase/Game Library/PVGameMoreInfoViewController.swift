@@ -197,7 +197,10 @@ public final class GameMoreInfoPageViewController: GameMoreInfoPageViewControlle
         let nextGame = games[nextIndex]
         
         let storyboard = UIStoryboard(name: "Provenance", bundle: BundleLoader.module)
-        let nextVC = storyboard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+        guard let nextVC = storyboard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else {
+            ELOG("Failed to instantiate PVGameMoreInfoViewController from Provenance storyboard")
+            return nil
+        }
         nextVC.game = nextGame.freeze()
         return nextVC
     }
@@ -1168,7 +1171,7 @@ public final class MediaZoom: UIView, UIScrollViewDelegate {
     }
 
     public required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        return nil
     }
 
     public func show(onHide callback: (() -> Void)? = nil) {
