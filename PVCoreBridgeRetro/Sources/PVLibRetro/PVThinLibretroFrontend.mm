@@ -3378,6 +3378,13 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (data == RETRO_HW_FRAME_BUFFER_VALID) {
 #if HAVE_VULKAN
         if (_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN) {
+            // Guard: skip rendering if Vulkan context is not yet finalized.
+            // Cores may call video_refresh(HW_VALID) during retro_load_game
+            // before the deferred Vulkan context is ready.
+            if (_vulkanContextDeferred || !_vulkanDevice) {
+                WLOG(@"ThinFrontend: ignoring video_refresh(HW_VALID) — Vulkan context not ready");
+                return;
+            }
             // Snapshot and clear pending command buffers under the lock so we don't
             // race with thin_vulkan_set_command_buffers (which may be called from
             // any thread per the libretro Vulkan interface spec).
@@ -3424,7 +3431,7 @@ static bool thin_environment(unsigned cmd, void *data) {
                 // Use the per-frame fence for narrow GPU sync (same strategy as
                 // submitVulkanCommandBuffers). Falls back to vkQueueWaitIdle only
                 // when fences are unavailable.
-                VkFence frameFence = (_vulkanFrameFences[0] && _vkResetFences && _vkWaitForFences)
+                VkFence frameFence = (_vulkanFrameFences[0] && _vulkanDevice && _vkResetFences && _vkWaitForFences)
                     ? _vulkanFrameFences[_vulkanFrameIndex]
                     : VK_NULL_HANDLE;
                 if (frameFence) {
@@ -3449,7 +3456,7 @@ static bool thin_environment(unsigned cmd, void *data) {
                         return;
                     }
 
-                    if (frameFence && _vkWaitForFences) {
+                    if (frameFence && _vulkanDevice && _vkWaitForFences) {
                         _vkWaitForFences(_vulkanDevice, 1, &frameFence, 1, UINT64_MAX);
                     } else if (_vkQueueWaitIdle) {
                         _vkQueueWaitIdle(_vulkanQueue);
@@ -6029,7 +6036,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 // ---------------------------------------------------------------------------
 
 - (void)submitVulkanCommandBuffers:(const VkCommandBuffer *)cmdBufs count:(uint32_t)count {
-    if (!_vkQueueSubmit || !_vulkanQueue || !cmdBufs || count == 0) return;
+    if (!_vkQueueSubmit || !_vulkanQueue || !_vulkanDevice || !cmdBufs || count == 0) return;
 
     // Per libretro_vulkan.h: when set_command_buffers is used, semaphores provided via
     // set_image MUST be ignored — the spec explicitly says they are not consumed in this
