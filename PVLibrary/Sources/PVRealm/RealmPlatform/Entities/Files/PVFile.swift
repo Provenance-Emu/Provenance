@@ -369,40 +369,34 @@ public extension PVFile {
                 }
             }
 
-            // Use the trimmed fixedPartialPath to construct the URL (handles sync mode differences)
-            // This ensures we use the corrected path even if it was trimmed from an app bundle path
+            // Always resolve to the LOCAL directory first (Documents on iOS, Caches on tvOS).
+            // iCloud Drive mode only redirects to the iCloud container when the file
+            // isn't present locally — this prevents local imports from being "lost" when
+            // the user enables iCloud Drive sync.
+            #if os(tvOS)
+            let localUrl = RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
+            #else
+            let localUrl = RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
+            #endif
+
+            #if !os(tvOS)
             let syncMode = Defaults[.iCloudSyncMode]
-
-            // If we're using CloudKit, use the local documents directory
-            if syncMode.isCloudKit {
-                #if os(tvOS)
-                returnUrl = RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
-                #else
-                returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
-                #endif
-            } else {
-                // For iCloud Drive, prefer the iCloud container path if available.
-                // IMPORTANT: Do NOT hit the filesystem here (SwiftUI calls this a lot).
-                if let iCloudContainer = URL.iCloudContainerDirectory {
-                    returnUrl = iCloudContainer.appendingPathComponent(fixedPartialPath)
+            if syncMode.isICloudDrive,
+               let iCloudContainer = URL.iCloudContainerDirectory {
+                // iCloud Drive mode: only use iCloud container if file isn't local
+                if FileManager.default.fileExists(atPath: localUrl.path) {
+                    returnUrl = localUrl
                 } else {
-                    #if os(tvOS)
-                    returnUrl = RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
-                    #else
-                    returnUrl = RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
-                    #endif
+                    returnUrl = iCloudContainer.appendingPathComponent(fixedPartialPath)
                 }
+            } else {
+                // CloudKit mode or no iCloud container: always use local path
+                returnUrl = localUrl
             }
-            /*if !isPartialPathFixed {
-                DLOG("""
-                valid partial path: \(fixedPartialPath)
-                url: \(returnUrl)
-                relativeRoot: \(relativeRoot)
-                """)
-            }*/
+            #else
+            returnUrl = localUrl
+            #endif
 
-            // Fast-path: if we didn't detect any problematic patterns above, avoid any additional work.
-            // NOTE: We intentionally do not check filesystem existence here (SwiftUI calls this a lot).
             return returnUrl
         }
     }
