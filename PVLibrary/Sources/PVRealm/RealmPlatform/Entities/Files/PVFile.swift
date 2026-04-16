@@ -369,33 +369,10 @@ public extension PVFile {
                 }
             }
 
-            // Always resolve to the LOCAL directory first (Documents on iOS, Caches on tvOS).
-            // iCloud Drive mode only redirects to the iCloud container when the file
-            // isn't present locally — this prevents local imports from being "lost" when
-            // the user enables iCloud Drive sync.
-            #if os(tvOS)
-            let localUrl = RelativeRoot.cachesDirectory.appendingPathComponent(fixedPartialPath)
-            #else
-            let localUrl = RelativeRoot.documentsDirectory.appendingPathComponent(fixedPartialPath)
-            #endif
-
-            #if !os(tvOS)
-            let syncMode = Defaults[.iCloudSyncMode]
-            if syncMode.isICloudDrive,
-               let iCloudContainer = URL.iCloudContainerDirectory {
-                // iCloud Drive mode: only use iCloud container if file isn't local
-                if FileManager.default.fileExists(atPath: localUrl.path) {
-                    returnUrl = localUrl
-                } else {
-                    returnUrl = iCloudContainer.appendingPathComponent(fixedPartialPath)
-                }
-            } else {
-                // CloudKit mode or no iCloud container: always use local path
-                returnUrl = localUrl
-            }
-            #else
-            returnUrl = localUrl
-            #endif
+            // Delegate to FileLocationResolver for local-first resolution.
+            // Checks local directory first (Documents/Caches), then iCloud Drive
+            // container. This single codepath replaces ad-hoc resolution logic.
+            returnUrl = FileLocationResolver.shared.bestURL(for: fixedPartialPath)
 
             return returnUrl
         }

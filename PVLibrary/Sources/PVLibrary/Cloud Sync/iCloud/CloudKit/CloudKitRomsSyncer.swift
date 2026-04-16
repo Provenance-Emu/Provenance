@@ -19,6 +19,8 @@ import PVLookup
 import PVLookupTypes
 import PVMediaCache
 import PVSettings
+import PVFileSystem
+import PVRealm
 import Defaults
 
 // Define the type for the retry function
@@ -772,16 +774,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     // MARK: - RomsSyncing Protocol Implementation
 
     /// Returns the local file URL for the given game.
+    /// Delegates to ``FileLocationResolver`` for consistent path resolution.
     public func localURL(for game: PVGame) -> URL? {
-        // Check if the game object is valid first
         if game.isInvalidated {
             WLOG("Attempting to get localURL for invalidated game: \(game.debugDescription)")
             return nil
         }
 
-        // Check if the file URL exists and the file is actually present
-        guard let url = game.file?.url, fileManager.fileExists(atPath: url.path) else {
-            VLOG("Game \(game.title) (MD5: \(game.md5Hash ?? "N/A")) does not have a valid local file URL or the file doesn't exist.")
+        guard let partialPath = game.file?.partialPath, !partialPath.isEmpty else {
+            VLOG("Game \(game.title) (MD5: \(game.md5Hash ?? "N/A")) has no partialPath.")
+            return nil
+        }
+
+        let resolution = FileLocationResolver.shared.resolve(partialPath)
+        guard let url = resolution.url else {
+            VLOG("Game \(game.title) (MD5: \(game.md5Hash ?? "N/A")) file not found at any location.")
             return nil
         }
 
