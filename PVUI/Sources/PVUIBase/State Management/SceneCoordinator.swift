@@ -162,12 +162,16 @@ public class SceneCoordinator: ObservableObject {
     public func launchGame(_ game: PVGame) {
         guard activeLaunchTask == nil else {
             ILOG("SceneCoordinator: Ignoring launchGame — launch already in progress")
+            PVToastManager.post("Game launch already in progress", type: .info, duration: 2.0, icon: "hourglass")
             return
         }
         ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id))")
 
         activeLaunchTask = Task { @MainActor [weak self] in
-            defer { self?.activeLaunchTask = nil }
+            defer {
+                self?.activeLaunchTask = nil
+                self?.syncStatusManager.hide()
+            }
             await self?.launchGameWithValidation(game)
         }
     }
@@ -176,6 +180,7 @@ public class SceneCoordinator: ObservableObject {
     public func launchSaveState(_ saveState: PVSaveState, core: PVCore? = nil) {
         guard activeLaunchTask == nil else {
             ILOG("SceneCoordinator: Ignoring launchSaveState — launch already in progress")
+            PVToastManager.post("Game launch already in progress", type: .info, duration: 2.0, icon: "hourglass")
             return
         }
         guard let game = saveState.game else {
@@ -189,7 +194,10 @@ public class SceneCoordinator: ObservableObject {
         ILOG("SceneCoordinator: Launching save state: \(saveState.id) for game: \(game.title)")
 
         activeLaunchTask = Task { @MainActor [weak self] in
-            defer { self?.activeLaunchTask = nil }
+            defer {
+                self?.activeLaunchTask = nil
+                self?.syncStatusManager.hide()
+            }
             await self?.launchSaveStateWithValidation(saveState, game: game, core: core)
         }
     }
@@ -198,18 +206,27 @@ public class SceneCoordinator: ObservableObject {
     public func launchGame(_ game: PVGame, core: PVCore?) {
         guard activeLaunchTask == nil else {
             ILOG("SceneCoordinator: Ignoring launchGame(core:) — launch already in progress")
+            PVToastManager.post("Game launch already in progress", type: .info, duration: 2.0, icon: "hourglass")
             return
         }
         ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id)) with core: \(core?.projectName ?? "auto")")
 
         activeLaunchTask = Task { @MainActor [weak self] in
-            defer { self?.activeLaunchTask = nil }
+            defer {
+                self?.activeLaunchTask = nil
+                self?.syncStatusManager.hide()
+            }
             await self?.launchGameWithValidation(game, core: core)
         }
     }
 
     /// Launch a game with disc path (for multi-disc games)
     public func launchGame(_ game: PVGame, discPath: String, core: PVCore?, saveState: PVSaveState?) {
+        guard activeLaunchTask == nil else {
+            ILOG("SceneCoordinator: Ignoring launchGame(discPath:) — launch already in progress")
+            PVToastManager.post("Game launch already in progress", type: .info, duration: 2.0, icon: "hourglass")
+            return
+        }
         ILOG("SceneCoordinator: Launching game: \(game.title) with disc path: \(discPath)")
 
         // Create a temporary game object with the disc path
