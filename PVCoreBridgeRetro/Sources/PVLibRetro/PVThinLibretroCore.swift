@@ -206,9 +206,10 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         migrateRetroArchSystemDirectoryIfNeeded()
         downloadBuildBotSystemFilesIfNeeded()
 
-        // Mupen64Plus-Next: use angrylion RDP + apply any persisted Transfer Pak slots.
+        // Mupen64Plus-Next: use angrylion RDP, enable rumble pak, apply Transfer Pak slots.
         if coreId.contains("mupen") {
             setDefaultOption("mupen64plus-rdp-plugin", value: "angrylion")
+            setDefaultOption("mupen64plus-pak1", value: "rumble")
             // Re-apply Transfer Pak slots populated by TransferPakStore before this call.
             // reapplyTransferPakSlots() sets pak types for all configured ports and writes
             // the global mupen64plus-transfer-pak-path exactly once (lowest port wins),

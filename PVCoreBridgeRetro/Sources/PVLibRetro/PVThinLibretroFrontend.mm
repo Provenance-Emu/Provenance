@@ -439,6 +439,12 @@ typedef struct PVThinLibretroSymbols {
     struct retro_system_info _rawSystemInfo;
     struct retro_system_av_info _rawAVInfo;
 
+    // Last actually-rendered frame dimensions (from video_refresh callback).
+    // These may differ from _rawAVInfo.geometry when the core renders at a
+    // resolution that doesn't match its reported base geometry.
+    unsigned _lastRenderedWidth;
+    unsigned _lastRenderedHeight;
+
     // Core options
     NSMutableDictionary<NSString *, NSString *> *_coreOptions;
     BOOL _coreOptionsDirty;
@@ -3294,14 +3300,17 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (const void *)videoBuffer { return (const void *)_videoBufferData; }
 
 - (CGRect)screenRect {
-    unsigned w = _rawAVInfo.geometry.base_width  ?: 256;
-    unsigned h = _rawAVInfo.geometry.base_height ?: 240;
+    // Prefer the actual rendered frame size from video_refresh when available.
+    // Cores like Mupen64Plus may report a base geometry that doesn't match
+    // the actual output (e.g. base=640x480 but angrylion renders 320x240).
+    unsigned w = _lastRenderedWidth  ?: (_rawAVInfo.geometry.base_width  ?: 256);
+    unsigned h = _lastRenderedHeight ?: (_rawAVInfo.geometry.base_height ?: 240);
     return CGRectMake(0, 0, w, h);
 }
 
 - (CGSize)aspectSize {
-    unsigned w = _rawAVInfo.geometry.base_width  ?: 256;
-    unsigned h = _rawAVInfo.geometry.base_height ?: 240;
+    unsigned w = _lastRenderedWidth  ?: (_rawAVInfo.geometry.base_width  ?: 256);
+    unsigned h = _lastRenderedHeight ?: (_rawAVInfo.geometry.base_height ?: 240);
     float    ar = _rawAVInfo.geometry.aspect_ratio;
     if (ar > 0.01f) { return CGSizeMake((CGFloat)(h * ar), (CGFloat)h); }
     return CGSizeMake((CGFloat)w, (CGFloat)h);
@@ -3362,6 +3371,12 @@ static bool thin_environment(unsigned cmd, void *data) {
 // ---------------------------------------------------------------------------
 
 - (void)_thinVideoRefresh:(const void *)data width:(unsigned)w height:(unsigned)h pitch:(size_t)pitch {
+    // Track actual rendered dimensions so screenRect reflects reality.
+    if (w > 0 && h > 0) {
+        _lastRenderedWidth  = w;
+        _lastRenderedHeight = h;
+    }
+
     if (self.frontendDelegate) {
         [self.frontendDelegate libretroFrontend:self didRenderBuffer:data width:w height:h pitch:pitch];
         return;
@@ -6258,6 +6273,8 @@ static bool thin_environment(unsigned cmd, void *data) {
     _hwFBONeedsRebuild = NO;
 #endif
     _hwRenderRequested = NO;
+    _lastRenderedWidth  = 0;
+    _lastRenderedHeight = 0;
     memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
 }
 
