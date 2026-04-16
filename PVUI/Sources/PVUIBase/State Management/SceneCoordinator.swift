@@ -40,6 +40,7 @@ public class SceneCoordinator: ObservableObject {
     /// When non-nil, a launch is already in progress and new calls are dropped.
     /// Cancel this task to abort an in-progress launch (e.g. when the user taps Cancel).
     private var activeLaunchTask: Task<Void, Never>?
+    private var launchTimeoutTask: Task<Void, Never>?
 
     // Cancellables for observation
     private var cancellables = Set<AnyCancellable>()
@@ -138,7 +139,24 @@ public class SceneCoordinator: ObservableObject {
             task.cancel()
             activeLaunchTask = nil
         }
+        launchTimeoutTask?.cancel()
+        launchTimeoutTask = nil
         syncStatusManager.hide()
+    }
+
+    /// Safety net: if a launch task runs longer than 60 seconds, cancel it so the
+    /// user isn't permanently locked out of launching games.
+    private func scheduleActiveLaunchTimeout() {
+        launchTimeoutTask?.cancel()
+        launchTimeoutTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 60_000_000_000) // 60 seconds
+            guard !Task.isCancelled else { return }
+            if self?.activeLaunchTask != nil {
+                WLOG("SceneCoordinator: Launch task timed out after 60s — clearing to unblock taps")
+                self?.cancelActiveLaunch()
+                PVToastManager.post("Game launch timed out", type: .warning, duration: 3.0, icon: "exclamationmark.triangle")
+            }
+        }
     }
 
     /// Opens the emulator scene with the current game from AppState
@@ -153,6 +171,8 @@ public class SceneCoordinator: ObservableObject {
         ILOG("SceneCoordinator: Opening emulator scene")
         currentScene = .emulator
         showEmulator = true
+        launchTimeoutTask?.cancel()
+        launchTimeoutTask = nil
 
         /// Pause all background services via the central registry
         BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
@@ -174,6 +194,8 @@ public class SceneCoordinator: ObservableObject {
             }
             await self?.launchGameWithValidation(game)
         }
+        // Safety net: if the launch hangs, clear the task so taps aren't permanently blocked
+        scheduleActiveLaunchTimeout()
     }
 
     /// Launch a save state with sync validation for game ROM, BIOS, and save state
@@ -200,6 +222,7 @@ public class SceneCoordinator: ObservableObject {
             }
             await self?.launchSaveStateWithValidation(saveState, game: game, core: core)
         }
+        scheduleActiveLaunchTimeout()
     }
 
     /// Launch a game with optional core (bypasses core selection if core is provided)
@@ -218,6 +241,7 @@ public class SceneCoordinator: ObservableObject {
             }
             await self?.launchGameWithValidation(game, core: core)
         }
+        scheduleActiveLaunchTimeout()
     }
 
     /// Launch a game with disc path (for multi-disc games)
