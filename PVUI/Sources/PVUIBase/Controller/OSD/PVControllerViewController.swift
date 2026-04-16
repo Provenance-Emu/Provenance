@@ -480,20 +480,17 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 
     private var allButtons: [UIView] {
-        var views: [UIView?] = [
+        let views: [UIView?] = [
             dPad, dPad2, joyPad, joyPad2, buttonGroup,
             leftShoulderButton, rightShoulderButton,
             leftShoulderButton2, rightShoulderButton2,
             zTriggerButton, startButton, selectButton,
-            leftAnalogButton, rightAnalogButton,
-            quickSaveButton, quickLoadButton, fastForwardButton,
+            leftAnalogButton, rightAnalogButton
         ]
-        #if os(iOS)
-        views.append(recordButton)
-        #endif
-        // Note: keyboardToggleButton and mouseToggleButton are intentionally excluded —
-        // they are always-on HUD controls like fastForwardButton and must not dim with
-        // the controller opacity setting.
+        // Quick action buttons (quickSaveButton, quickLoadButton, fastForwardButton,
+        // recordButton, keyboardToggleButton, mouseToggleButton) are intentionally
+        // excluded — they are always-on HUD controls that must not be hidden or
+        // dimmed with the controller opacity setting.
         return views.compactMap { $0 }
     }
 
@@ -921,6 +918,16 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
         if let rightShoulderButton =  rightShoulderButton{
             view.bringSubviewToFront(rightShoulderButton)
+        }
+
+        // If buttons were toggled hidden before this layout pass, re-hide the
+        // newly created controls so they don't flash on screen.
+        if !buttonsVisible {
+            for button in allButtons {
+                button.alpha = 0.0
+                button.isHidden = true
+                button.isUserInteractionEnabled = false
+            }
         }
     }
 #endif // os(iOS)
@@ -1566,8 +1573,12 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     @objc private func toggleButtonVisibility() {
         buttonsVisible = !buttonsVisible
 
+        let targetAlpha = CGFloat(Defaults[.controllerOpacity])
         // Update visibility for all control elements
-        allButtons.forEach { $0.isHidden = !buttonsVisible }
+        allButtons.forEach {
+            $0.isHidden = !buttonsVisible
+            $0.alpha = buttonsVisible ? targetAlpha : 0.0
+        }
 
         // Update toggle button appearance
         updateToggleButtonAppearance()
@@ -1643,13 +1654,13 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     @objc private func toggleButtons() {
         buttonsVisible.toggle()
 
+        let targetAlpha = CGFloat(Defaults[.controllerOpacity])
+
         /// Animate the visibility change
         UIView.animate(withDuration: 0.3) {
             for button in self.allButtons {
-                button.alpha = self.buttonsVisible ? 1.0 : 0.0
-                // Also set isHidden to properly hide the controls, especially joypads
+                button.alpha = self.buttonsVisible ? targetAlpha : 0.0
                 button.isHidden = !self.buttonsVisible
-                // Disable user interaction when hidden to prevent ghost touches
                 button.isUserInteractionEnabled = self.buttonsVisible
             }
             self.toggleButton?.setImage(
