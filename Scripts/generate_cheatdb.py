@@ -74,6 +74,7 @@ SYSTEM_SHORT_NAMES = {
     "Atari - 5200": "5200",
     "Atari - 7800": "7800",
     "Atari - 8-bit Family": "Atari8bit",
+    "Atari - 400-800-1200XL": "Atari8bit",
     "Atari - Jaguar": "Jaguar",
     "Atari - Jaguar CD": "JaguarCD",
     "Atari - Lynx": "Lynx",
