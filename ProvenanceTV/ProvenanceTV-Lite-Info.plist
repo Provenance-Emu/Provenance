@@ -86,6 +86,7 @@
 				<string>com.provenance.rom.sgfx</string>
 				<string>com.provenance.rom.snes</string>
 				<string>com.provenance.rom.supervision</string>
+				<string>com.provenance.rom.tic80</string>
 				<string>com.provenance.rom.vb</string>
 				<string>com.provenance.rom.vectrex</string>
 				<string>com.provenance.rom.wii</string>

@@ -145,6 +145,7 @@
 				<string>com.provenance.rom.sgfx</string>
 				<string>com.provenance.rom.snes</string>
 				<string>com.provenance.rom.supervision</string>
+				<string>com.provenance.rom.tic80</string>
 				<string>com.provenance.rom.vb</string>
 				<string>com.provenance.rom.vectrex</string>
 				<string>com.provenance.rom.wii</string>
@@ -567,6 +568,31 @@
 				<key>public.mime-type</key>
 				<array>
 					<string>application/x-provenance-bios</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.zip-archive</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Provenance Save Bundle</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.provenance.pvsave</string>
+			<key>UTTypeReferenceURL</key>
+			<string>https://provenance-emu.com/</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>pvsave</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/x-provenance-savebundle</string>
 				</array>
 			</dict>
 		</dict>
@@ -2278,6 +2304,31 @@
 				<key>public.mime-type</key>
 				<array>
 					<string>application/x-provenance-supervision-rom</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>com.provenance.rom</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>TIC-80 ROM</string>
+			<key>UTTypeIconFiles</key>
+			<array/>
+			<key>UTTypeIdentifier</key>
+			<string>com.provenance.rom.tic80</string>
+			<key>UTTypeReferenceURL</key>
+			<string>https://provenance-emu.com/</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>tic</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/x-provenance-tic80-rom</string>
 				</array>
 			</dict>
 		</dict>
