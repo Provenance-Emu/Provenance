@@ -268,16 +268,17 @@ public class SceneCoordinator: ObservableObject {
         }
 
         // Fast path: check if the game file physically exists on disk.
-        // We check both the resolved URL (which may point to iCloud container)
-        // AND the local Documents path directly, because iCloud Drive sync mode
-        // can redirect `game.file?.url` to the iCloud container even when the
-        // file was imported locally to Documents.
+        // We check multiple locations because file metadata can be stale:
+        //  1. Resolved URL (may point to iCloud container in Drive mode)
+        //  2. Local Documents + partialPath (in case sync mode redirected the URL)
+        //  3. Current system ROMs directory + filename (handles moves between systems)
         let fileExistsLocally: Bool = {
+            // Check 1: resolved URL
             if let fileURL = game.file?.url,
                FileManager.default.fileExists(atPath: fileURL.path) {
                 return true
             }
-            // Fallback: check local Documents directory directly
+            // Check 2: local Documents/Caches directory directly
             if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
                 #if os(tvOS)
                 let localURL = RelativeRoot.cachesDirectory.appendingPathComponent(partialPath)
@@ -285,6 +286,33 @@ public class SceneCoordinator: ObservableObject {
                 let localURL = RelativeRoot.documentsDirectory.appendingPathComponent(partialPath)
                 #endif
                 if FileManager.default.fileExists(atPath: localURL.path) {
+                    return true
+                }
+            }
+            // Check 3: current system ROMs directory (file may have been moved between systems)
+            let filename = game.file?.fileName
+                ?? (game.romPath.isEmpty ? nil : URL(fileURLWithPath: game.romPath).lastPathComponent)
+            if let filename = filename, !filename.isEmpty {
+                let systemRomsDir = Paths.romsPath(forSystemIdentifier: system.identifier)
+                let expectedURL = systemRomsDir.appendingPathComponent(filename)
+                if FileManager.default.fileExists(atPath: expectedURL.path) {
+                    ILOG("SceneCoordinator: Found file at system ROMs path (stale partialPath): \(expectedURL.lastPathComponent)")
+                    // Fix the stale partialPath in the database
+                    if let liveGame = RomDatabase.sharedInstance.game(withMD5: game.md5Hash),
+                       let file = liveGame.file {
+                        let correctPartialPath = "\(system.identifier)/\(filename)"
+                        if file.partialPath != correctPartialPath {
+                            do {
+                                try RomDatabase.sharedInstance.writeTransaction {
+                                    file.partialPath = correctPartialPath
+                                    liveGame.isDownloaded = true
+                                }
+                                ILOG("SceneCoordinator: Fixed stale partialPath → \(correctPartialPath)")
+                            } catch {
+                                ELOG("SceneCoordinator: Failed to fix partialPath: \(error)")
+                            }
+                        }
+                    }
                     return true
                 }
             }
@@ -355,11 +383,23 @@ public class SceneCoordinator: ObservableObject {
             }
 
             if let validator = validator {
-                let isValid = await validator.ensureGameReady(game) { [weak self] progressMessage in
-                    Task { @MainActor in
-                        self?.syncStatusManager.update(statusMessage: progressMessage)
+                // Timeout cloud validation after 30s to prevent indefinite hangs
+                let isValid = await withTaskGroup(of: Bool.self) { group in
+                    group.addTask {
+                        await validator.ensureGameReady(game) { [weak self] progressMessage in
+                            Task { @MainActor in
+                                self?.syncStatusManager.update(statusMessage: progressMessage)
+                            }
+                            ILOG("Game sync progress: \(progressMessage)")
+                        }
                     }
-                    ILOG("Game sync progress: \(progressMessage)")
+                    group.addTask {
+                        try? await Task.sleep(nanoseconds: 30_000_000_000)
+                        return false
+                    }
+                    let result = await group.next() ?? false
+                    group.cancelAll()
+                    return result
                 }
 
                 guard !Task.isCancelled else {
@@ -807,7 +847,7 @@ public class SceneCoordinator: ObservableObject {
             return
         }
 
-        // Fast path: check if the game file physically exists on disk (same logic as launchGameWithValidation)
+        // Fast path: same multi-location check as launchGameWithValidation
         let saveStateFileExistsLocally: Bool = {
             if let fileURL = game.file?.url,
                FileManager.default.fileExists(atPath: fileURL.path) {
@@ -820,6 +860,27 @@ public class SceneCoordinator: ObservableObject {
                 let localURL = RelativeRoot.documentsDirectory.appendingPathComponent(partialPath)
                 #endif
                 if FileManager.default.fileExists(atPath: localURL.path) {
+                    return true
+                }
+            }
+            // Check current system ROMs directory (file may have been moved between systems)
+            let filename = game.file?.fileName
+                ?? (game.romPath.isEmpty ? nil : URL(fileURLWithPath: game.romPath).lastPathComponent)
+            if let filename = filename, !filename.isEmpty {
+                let systemRomsDir = Paths.romsPath(forSystemIdentifier: system.identifier)
+                let expectedURL = systemRomsDir.appendingPathComponent(filename)
+                if FileManager.default.fileExists(atPath: expectedURL.path) {
+                    ILOG("SceneCoordinator: Found file at system ROMs path for save state launch: \(expectedURL.lastPathComponent)")
+                    if let liveGame = RomDatabase.sharedInstance.game(withMD5: game.md5Hash),
+                       let file = liveGame.file {
+                        let correctPartialPath = "\(system.identifier)/\(filename)"
+                        if file.partialPath != correctPartialPath {
+                            try? RomDatabase.sharedInstance.writeTransaction {
+                                file.partialPath = correctPartialPath
+                                liveGame.isDownloaded = true
+                            }
+                        }
+                    }
                     return true
                 }
             }
@@ -877,11 +938,23 @@ public class SceneCoordinator: ObservableObject {
             }
 
             if let validator = validator {
-                let isValid = await validator.ensureGameReady(game) { [weak self] progressMessage in
-                    Task { @MainActor in
-                        self?.syncStatusManager.update(statusMessage: progressMessage)
+                // Timeout cloud validation after 30s to prevent indefinite hangs
+                let isValid = await withTaskGroup(of: Bool.self) { group in
+                    group.addTask {
+                        await validator.ensureGameReady(game) { [weak self] progressMessage in
+                            Task { @MainActor in
+                                self?.syncStatusManager.update(statusMessage: progressMessage)
+                            }
+                            ILOG("Game sync progress: \(progressMessage)")
+                        }
                     }
-                    ILOG("Game sync progress: \(progressMessage)")
+                    group.addTask {
+                        try? await Task.sleep(nanoseconds: 30_000_000_000)
+                        return false
+                    }
+                    let result = await group.next() ?? false
+                    group.cancelAll()
+                    return result
                 }
 
                 if !isValid {
