@@ -4,10 +4,10 @@
 
 ## Summary
 
-- **Total Contributors**: 93
-- **Total Commits**: 6417
-- **Total Lines Added**: 14091844
-- **Total Lines Removed**: 5822328
+- **Total Contributors**: 98
+- **Total Commits**: 9455
+- **Total Lines Added**: 16224966
+- **Total Lines Removed**: 6152700
 
 ## Contributor Details
 
@@ -18,9 +18,9 @@
 ![Joseph Mattiello](https://www.gravatar.com/avatar/79585fbd531fa1438a73a53fb2c9eacd?s=100&d=identicon)
 
 - **Emails Used**: git@joemattiello.com, jmattiello@MacBook-Pro-M2.local, jmattiello@hearst.com, joe.mattiello@salido.com, mail@joemattiello.com
-- **Commits**: `4813`
-- **Lines Added**: `11885482`
-- **Lines Removed**: `5034368`
+- **Commits**: `7142`
+- **Lines Added**: `13652452`
+- **Lines Removed**: `5262803`
 - **Most Active File**: `Provenance.xcodeproj/project.pbxproj`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -61,6 +61,19 @@
 - **Lines Added**: `153287`
 - **Lines Removed**: `423144`
 - **Most Active File**: `Cores/Mednafen/MednafenGameCore.mm`
+- **Activity**: `▰▰▰▰▰▰▰▰▰▰`
+
+---
+
+### github-actions[bot]
+
+![github-actions[bot]](https://www.gravatar.com/avatar/af2ab225b7c0eec44a8d0eba6b5c869a?s=100&d=identicon)
+
+- **Emails Used**: 41898282+github-actions[bot]@users.noreply.github.com
+- **Commits**: `440`
+- **Lines Added**: `344493`
+- **Lines Removed**: `95047`
+- **Most Active File**: `CHANGELOG.md`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
 ---
@@ -130,6 +143,19 @@
 
 ---
 
+### claude[bot]
+
+![claude[bot]](https://www.gravatar.com/avatar/1b30942c176ccc9aa137c4834447eb3d?s=100&d=identicon)
+
+- **Emails Used**: 41898282+claude[bot]@users.noreply.github.com
+- **Commits**: `83`
+- **Lines Added**: `12847`
+- **Lines Removed**: `2316`
+- **Most Active File**: `PVLibrary/Sources/PVLibrary/Migration/RealmToSwiftDataMigration.swift`
+- **Activity**: `▰▰▰▰▰▰▰▰▰▰`
+
+---
+
 ### David Proskin
 
 ![David Proskin](https://www.gravatar.com/avatar/7b68795bf193c22c93836ae7ed0ef8f3?s=100&d=identicon)
@@ -139,6 +165,19 @@
 - **Lines Added**: `6221`
 - **Lines Removed**: `5072`
 - **Most Active File**: `PVLibrary/Sources/PVLibrary/Importer/Services/GameImporter/GameImporter.swift`
+- **Activity**: `▰▰▰▰▰▰▰▰▰▰`
+
+---
+
+### pabloarista
+
+![pabloarista](https://www.gravatar.com/avatar/a009f6501a8521c845519c8c39d75461?s=100&d=identicon)
+
+- **Emails Used**: 3964831+pabloarista@users.noreply.github.com
+- **Commits**: `153`
+- **Lines Added**: `6699`
+- **Lines Removed**: `3939`
+- **Most Active File**: `PVLibrary/Sources/PVLibrary/Importer/iCloud/iCloudSync.swift`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
 ---
@@ -161,9 +200,9 @@
 ![Dave Nicolson](https://www.gravatar.com/avatar/14b3bbc589a438e8e38372b132b2f9d3?s=100&d=identicon)
 
 - **Emails Used**: david.nicolson@gmail.com
-- **Commits**: `215`
-- **Lines Added**: `1534`
-- **Lines Removed**: `4408`
+- **Commits**: `224`
+- **Lines Added**: `1569`
+- **Lines Removed**: `4430`
 - **Most Active File**: `Provenance/Settings/PVSettingsViewController.swift`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -234,6 +273,19 @@
 
 ---
 
+### Cursor Agent
+
+![Cursor Agent](https://www.gravatar.com/avatar/aaec642e8dc542f81beff3c51968cae4?s=100&d=identicon)
+
+- **Emails Used**: cursoragent@cursor.com
+- **Commits**: `10`
+- **Lines Added**: `790`
+- **Lines Removed**: `452`
+- **Most Active File**: `PVCoreBridgeRetro/Sources/PVLibRetro/PVLibRetroGLESCore.m`
+- **Activity**: `▰▰▰▰▰▰▰▰▰▰`
+
+---
+
 ### David Muzi
 
 ![David Muzi](https://www.gravatar.com/avatar/77b5f3ca545dfc65180379d07aa17eee?s=100&d=identicon)
@@ -270,6 +322,32 @@
 - **Lines Removed**: `642`
 - **Most Active File**: `Cartfile`
 - **Activity**: `▰▱▱▱▱▱▱▱▱▱`
+
+---
+
+### Copilot
+
+![Copilot](https://www.gravatar.com/avatar/16321112f0c942b96ebcb7362a402512?s=100&d=identicon)
+
+- **Emails Used**: 198982749+Copilot@users.noreply.github.com
+- **Commits**: `16`
+- **Lines Added**: `851`
+- **Lines Removed**: `123`
+- **Most Active File**: `PVPlists/Tests/PVPlistsTests/PVPlistsTests.swift`
+- **Activity**: `▰▰▰▰▰▰▰▰▰▰`
+
+---
+
+### Kimi Code Agent
+
+![Kimi Code Agent](https://www.gravatar.com/avatar/cb7b7994e594270ea25948a7bf186123?s=100&d=identicon)
+
+- **Emails Used**: github-actions[bot]@users.noreply.github.com
+- **Commits**: `2`
+- **Lines Added**: `562`
+- **Lines Removed**: `78`
+- **Most Active File**: `PVSettings/Sources/PVSettings/Settings/Model/PVSettingsModel.swift`
+- **Activity**: `▰▰▱▱▱▱▱▱▱▱`
 
 ---
 
@@ -413,19 +491,6 @@
 - **Lines Removed**: `83`
 - **Most Active File**: `Provenance/Emulator/PVEmulatorViewController.swift`
 - **Activity**: `▰▰▰▰▰▰▱▱▱▱`
-
----
-
-### pabloarista
-
-![pabloarista](https://www.gravatar.com/avatar/a009f6501a8521c845519c8c39d75461?s=100&d=identicon)
-
-- **Emails Used**: 3964831+pabloarista@users.noreply.github.com
-- **Commits**: `4`
-- **Lines Added**: `125`
-- **Lines Removed**: `40`
-- **Most Active File**: `Cores/Atari800/Sources/PVAtari800Bridge/PVAtari800Bridge.m`
-- **Activity**: `▰▰▰▰▱▱▱▱▱▱`
 
 ---
 

@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # This script generates a list of contributors from the Git history
 # and creates a markdown file with their information.
 
