@@ -253,9 +253,10 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             setDefaultOption("mame_cheats_enable", value: "enabled")
         }
 
-        // Beetle PSX HW: use Vulkan
+        // Beetle PSX HW: force software renderer — Vulkan via MoltenVK crashes
+        // in the thin wrapper (command buffer submission races with Metal presentation).
         if coreId.contains("psx_hw") || coreId.contains("beetle_psx") {
-            setDefaultOption("beetle_psx_hw_renderer", value: "hardware_vk")
+            setDefaultOption("beetle_psx_hw_renderer", value: "software")
         }
     }
 

@@ -123,6 +123,11 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
 
         let filename = item.url.lastPathComponent
         let fileExtension = filename.components(separatedBy: ".").last?.lowercased() ?? ""
+        /// Strip the file extension for database searches. The DB stores ROM filenames
+        /// with original extensions (.bin, .cue, .iso) — container formats like .chd
+        /// won't match. The `%..%` LIKE wrapping ensures extensionless names still
+        /// match DB entries that have any extension.
+        let searchFilename = (filename as NSString).deletingPathExtension
         let normalizedFilename = filename.lowercased()
         let parentDirectory = item.url.deletingLastPathComponent().lastPathComponent.lowercased()
         let cacheKey = SystemCacheKey(
@@ -181,7 +186,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
                 /// Try MD5 lookup constrained to extension-matched systems (with filename fallback)
                 if let systemID = try await lookup.systemIdentifier(
                     forRomMD5: md5,
-                    or: filename,
+                    or: searchFilename,
                     constrainedToSystems: systemIdentifiers,
                     allowFilenameSearch: true
                 ) {
@@ -190,7 +195,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
                 }
             } else if hasKnownExtension {
                 /// If no MD5 but extension is known, try filename search within extension-matched systems
-                if let results = try await lookup.searchDatabase(usingFilename: filename, systemIDs: systemIdentifiers),
+                if let results = try await lookup.searchDatabase(usingFilename: searchFilename, systemIDs: systemIdentifiers),
                    let firstResult = results.first {
                     DLOG("Found system by filename within extension-matched systems: \(firstResult.systemID)")
                     return cacheAndReturn([firstResult.systemID])
@@ -212,7 +217,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
             if let md5 = itemMd5 {
                 if let systemID = try await lookup.systemIdentifier(
                     forRomMD5: md5,
-                    or: filename,
+                    or: searchFilename,
                     constrainedToSystems: systemIdentifiers,
                     allowFilenameSearch: true
                 ) {
@@ -221,7 +226,7 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
                 }
             } else {
                 /// No MD5 — try filename-only database search
-                if let results = try await lookup.searchDatabase(usingFilename: filename, systemIDs: systemIdentifiers),
+                if let results = try await lookup.searchDatabase(usingFilename: searchFilename, systemIDs: systemIdentifiers),
                    let firstResult = results.first {
                     DLOG("Found system by filename within multi-system matches: \(firstResult.systemID)")
                     return cacheAndReturn([firstResult.systemID])
