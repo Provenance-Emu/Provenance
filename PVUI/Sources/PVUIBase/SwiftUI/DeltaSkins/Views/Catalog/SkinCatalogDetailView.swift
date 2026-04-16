@@ -625,7 +625,8 @@ public struct SkinCatalogDetailView: View {
         activationContextSystemIdentifier ?? primarySystemIdentifier
     }
 
-    /// Order matters: prefer runtime context first, then catalog-derived id, so `DeltaSkinManager.skins(for:)` finds the install under the emulator’s system when they differ.
+    /// Order matters: prefer runtime context first, then catalog-derived id,
+    /// then layout-group siblings so cross-compatible skins (e.g. SMS skin on SG-1000) are found.
     private var systemsToQueryForInstalledSkin: [SystemIdentifier] {
         var result: [SystemIdentifier] = []
         var seen = Set<SystemIdentifier>()
@@ -636,6 +637,20 @@ public struct SkinCatalogDetailView: View {
         }
         appendUnique(activationContextSystemIdentifier)
         appendUnique(primarySystemIdentifier)
+        // Also include layout-group siblings so cross-compatible skins are found
+        // (e.g. SG-1000 shares "sega-ms-family" with Master System and Game Gear)
+        let seedSystems = result
+        for sys in seedSystems {
+            if let gameType = DeltaSkinGameType(systemIdentifier: sys) {
+                let group = gameType.skinLayoutGroup
+                for candidate in SystemIdentifier.allCases {
+                    if let candidateType = DeltaSkinGameType(systemIdentifier: candidate),
+                       candidateType.skinLayoutGroup == group {
+                        appendUnique(candidate)
+                    }
+                }
+            }
+        }
         return result
     }
 
@@ -765,10 +780,13 @@ public struct SkinCatalogDetailView: View {
             await DeltaSkinManager.shared.reloadSkins()
 
             let querySystems = systemsToQueryForInstalledSkin.isEmpty ? [system] : systemsToQueryForInstalledSkin
+            ILOG("activateSkin: querying systems \(querySystems.map(\.rawValue)) for entry '\(entry.name)' (id: \(entry.id))")
             var matchedSkin: DeltaSkinProtocol?
             for sys in querySystems {
                 let skins = try await DeltaSkinManager.shared.skins(for: sys)
+                DLOG("activateSkin: skins(for: \(sys.rawValue)) returned \(skins.count) results")
                 if let found = findMatchingInstalledSkin(for: entry, in: skins) {
+                    ILOG("activateSkin: matched skin '\(found.name)' (id: \(found.identifier)) under system \(sys.rawValue)")
                     matchedSkin = found
                     break
                 }
