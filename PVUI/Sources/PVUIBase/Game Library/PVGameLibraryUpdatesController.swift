@@ -67,6 +67,12 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 
         self.biosWatcher = .shared
 
+        // Start lightweight ROM/BIOS/SaveState directory status watcher.
+        // This triggers GameFileStatusService.refreshAllStatuses() when files
+        // appear or disappear in those directories (e.g., via AirDrop, Files app,
+        // iCloud Drive sync, or manual deletion).
+        ROMStatusWatcher.shared.startMonitoring()
+
         /// Register watchers with registry for direct pause/resume control
         /// Defer registration until after initialization completes
         Task { [directoryWatcher] in

@@ -216,7 +216,7 @@ public final class DirectoryWatcher: ObservableObject {
     }
 
     public func isWatchingAnyFile() async -> Bool {
-        return await !watcherManager.hasActiveWatchers()
+        return await watcherManager.hasActiveWatchers()
     }
 
     /// Extract an archive from a file path
