@@ -130,8 +130,11 @@ public class RetroSaveSelectionViewModel: ObservableObject {
         downloadingItemId != nil
     }
 
-    /// Starts downloading a save state using the appropriate cloud syncer
-    public func startDownload(for item: RetroSaveSelectionItem, completion: @escaping (Bool) -> Void) {
+    private static let downloadTimeoutSeconds: UInt64 = 60
+
+    /// Starts downloading a save state using the appropriate cloud syncer.
+    /// On success, the completion receives a refreshed item with `isDownloaded = true`.
+    public func startDownload(for item: RetroSaveSelectionItem, completion: @escaping (RetroSaveSelectionItem?) -> Void) {
         let actionStart = CFAbsoluteTimeGetCurrent()
         downloadingItemId = item.id
         downloadProgress = 0
@@ -151,10 +154,11 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                 if saveState.isDownloaded, let fileURL = saveState.file?.url,
                    FileManager.default.fileExists(atPath: fileURL.path) {
                     ILOG("[SaveSelection] Save state already downloaded locally: \(item.saveStateId)")
+                    let refreshedItem = RetroSaveSelectionItem(from: saveState)
                     downloadingRecordID = nil
                     downloadingItemId = nil
                     downloadProgress = 0
-                    completion(true)
+                    completion(refreshedItem)
                     return
                 }
 
@@ -166,7 +170,22 @@ public class RetroSaveSelectionViewModel: ObservableObject {
 
                 ILOG("[SaveSelection] Starting direct CloudSyncManager download after \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - actionStart))s (recordID=\(recordID))")
                 let downloadStart = CFAbsoluteTimeGetCurrent()
-                try await CloudSyncManager.shared.downloadSaveState(for: saveState.freeze())
+
+                // Download with timeout
+                try await withThrowingTaskGroup(of: Void.self) { group in
+                    group.addTask {
+                        try await CloudSyncManager.shared.downloadSaveState(for: saveState.freeze())
+                    }
+                    group.addTask {
+                        try await Task.sleep(nanoseconds: Self.downloadTimeoutSeconds * 1_000_000_000)
+                        throw NSError(domain: "RetroSaveSelection", code: 3, userInfo: [NSLocalizedDescriptionKey: "Download timed out after \(Self.downloadTimeoutSeconds) seconds"])
+                    }
+                    // Wait for the first task to finish (download or timeout)
+                    try await group.next()
+                    // Cancel the remaining task
+                    group.cancelAll()
+                }
+
                 ILOG("[SaveSelection] Direct download completed in \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - downloadStart))s (recordID=\(recordID))")
 
                 stopProgressPolling()
@@ -179,12 +198,13 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                    FileManager.default.fileExists(atPath: fileURL.path) {
                     ILOG("[SaveSelection] Download complete for: \(item.saveStateId)")
                     downloadProgress = 1.0
-                    // Brief pause to show 100%
+                    let refreshedItem = RetroSaveSelectionItem(from: updatedSaveState)
+                    // Brief pause to show 100%, then clear download state after callback
                     try? await Task.sleep(nanoseconds: 300_000_000)
                     downloadingRecordID = nil
                     downloadingItemId = nil
+                    completion(refreshedItem)
                     downloadProgress = 0
-                    completion(true)
                 } else {
                     throw NSError(domain: "RetroSaveSelection", code: 2, userInfo: [NSLocalizedDescriptionKey: "File not available after download"])
                 }
@@ -194,7 +214,7 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                 downloadError = error.localizedDescription
                 downloadingRecordID = nil
                 downloadingItemId = nil
-                completion(false)
+                completion(nil)
             }
         }
     }
@@ -639,9 +659,9 @@ public struct RetroSaveSelectionAlertView: View {
         if save.isDownloaded {
             onSelectSave(save)
         } else {
-            viewModel.startDownload(for: save) { success in
-                if success {
-                    onSelectSave(save)
+            viewModel.startDownload(for: save) { refreshedItem in
+                if let refreshedItem {
+                    onSelectSave(refreshedItem)
                 }
             }
         }
