@@ -188,13 +188,23 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 #endif
 
-    private var toggleButton: UIButton?
     private var buttonsVisible = false
 
     // MARK: - Hardware Switch Overlay
     private var hardwareSwitchHostingVC: UIHostingController<HardwareSwitchRowView>?
 
-    // MARK: - Quick Action Buttons
+    // MARK: - Top Bar (unified HUD strip)
+    /// Single auto-hiding bar at the top containing all quick-action buttons.
+    private var topBarContainer: UIVisualEffectView?
+    private var topBarStack: UIStackView?
+    private var topBarAutoHideTimer: Timer?
+    /// How long the top bar stays visible before auto-hiding (seconds).
+    private let topBarAutoHideDelay: TimeInterval = 3.0
+    /// Invisible tap target at the top edge to reveal the bar.
+    private var topBarTapZone: UIView?
+
+    // MARK: - Quick Action Buttons (owned by topBarStack)
+    private var toggleButton: UIButton?
     private var quickSaveButton: UIButton?
     private var quickLoadButton: UIButton?
     private var fastForwardButton: UIButton?
@@ -212,14 +222,6 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     /// that modifies virtual input visibility (user tap, hardware keyboard, pause menu, etc.).
     private var virtualInputCancellables: Set<AnyCancellable> = []
     #endif
-    /// Tracks all quick-action HUD buttons so they can be brought to front together
-    /// in viewDidLayoutSubviews without a full-screen container view.
-    private var quickActionButtons: [UIButton] = []
-
-    // The toggle button is the sole always-on HUD control; hide it only during move mode.
-    private var shouldShowToggleButton: Bool {
-        return !inMoveMode
-    }
 
     private var coreSupportsStateSaves: Bool {
         return (emulatorCore as? PVEmulatorCore)?.supportsSaveStates == true
@@ -247,6 +249,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     deinit {
         NotificationCenter.default.removeObserver(self)
+        topBarAutoHideTimer?.invalidate()
         for controller in GCController.controllers() {
             controller.clearPauseHandler()
         }
@@ -389,12 +392,11 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 #endif // !macCatalyst
 #endif // os(iOS)
 
-        // Set up the HUD quick-action strip (toggle button + fast-forward/save/load/record row).
+        // Set up the unified auto-hiding top bar (all HUD buttons in one strip).
         // Scoped to iOS: the strip is touch-driven and recording is iOS-only.
         // tvOS uses a remote/controller; the pause menu covers save/load/FF there.
         #if os(iOS)
-        setupToggleButton()
-        setupQuickActionButtons()
+        setupTopBar()
         #endif
 
         // Hardware switch overlay (e.g. Atari difficulty / TV-type switches)
@@ -403,6 +405,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        topBarAutoHideTimer?.invalidate()
+        topBarAutoHideTimer = nil
         #if os(iOS)
         stopRecordPulse()
         #endif
@@ -470,9 +474,6 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 button.isHidden = false
                 button.alpha = CGFloat(Defaults[.controllerOpacity])
             }
-            print("Controller Alpha Set ", CGFloat(Defaults[.controllerOpacity]))
-            // Quick-action buttons always show at full opacity regardless of controllerOpacity
-            restoreQuickActionButtonAlpha()
             dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
         }
         setupTouchControls()
@@ -487,10 +488,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             zTriggerButton, startButton, selectButton,
             leftAnalogButton, rightAnalogButton
         ]
-        // Quick action buttons (quickSaveButton, quickLoadButton, fastForwardButton,
-        // recordButton, keyboardToggleButton, mouseToggleButton) are intentionally
-        // excluded — they are always-on HUD controls that must not be hidden or
-        // dimmed with the controller opacity setting.
+        // Quick action buttons live in the top bar container — not in allButtons.
         return views.compactMap { $0 }
     }
 
@@ -506,9 +504,6 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 button.isHidden = false
                 button.alpha = CGFloat(Defaults[.controllerOpacity])
             }
-            print("Controller Alpha Set", CGFloat(Defaults[.controllerOpacity]))
-            // Quick-action buttons always show at full opacity regardless of controllerOpacity
-            restoreQuickActionButtonAlpha()
             dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
         }
         setupTouchControls()
@@ -548,18 +543,11 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         updateHideTouchControls()
 #endif
 
-        /// Update toggle button visibility and keep HUD controls at the top of the z-order.
-        /// Bring each quick-action button individually so the full-screen overlay is never
-        /// needed — game-button views added by setupTouchControls() sit beneath each HUD
-        /// button directly, and touches in the gaps fall through naturally.
-        toggleButton?.isHidden = !shouldShowToggleButton
-        for btn in quickActionButtons {
-            if btn.superview === view {
-                view.bringSubviewToFront(btn)
-            }
-        }
-        if let toggleButton = toggleButton {
-            view.bringSubviewToFront(toggleButton)
+        /// Keep the top bar and its tap zone above game controls in z-order.
+        if let tapZone = topBarTapZone { view.bringSubviewToFront(tapZone) }
+        if let bar = topBarContainer {
+            view.bringSubviewToFront(bar)
+            bar.isHidden = inMoveMode
         }
         positionHardwareSwitchOverlay()
     }
@@ -1569,283 +1557,208 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 #endif // os(iOS)
 
-    // Add a method to toggle button visibility
-    @objc private func toggleButtonVisibility() {
-        buttonsVisible = !buttonsVisible
-
-        let targetAlpha = CGFloat(Defaults[.controllerOpacity])
-        // Update visibility for all control elements
-        allButtons.forEach {
-            $0.isHidden = !buttonsVisible
-            $0.alpha = buttonsVisible ? targetAlpha : 0.0
-        }
-
-        // Update toggle button appearance
-        updateToggleButtonAppearance()
-    }
-
-    // Add a method to update toggle button appearance
     private func updateToggleButtonAppearance() {
-        // Button is now at the top: "down" = hide buttons (send them away from top), "up" = show
-        toggleButton?.setImage(UIImage(systemName: buttonsVisible ? "chevron.down.circle" : "chevron.up.circle"), for: .normal)
+        toggleButton?.setImage(
+            UIImage(systemName: buttonsVisible ? "gamecontroller.fill" : "gamecontroller"),
+            for: .normal
+        )
     }
 
-    // Add a method to setup the toggle button
-    private func setupToggleButton() {
-        guard toggleButton == nil else { return }
-        /// Create and configure the toggle button
-        let toggleButton = MenuButton(type: .custom)
-        toggleButton.setImage(UIImage(systemName: "chevron.down.circle"), for: .normal)
-        toggleButton.tintColor = .white
-        toggleButton.backgroundColor = UIColor.black.withAlphaComponent(0.4) /// More transparent
-        toggleButton.layer.cornerRadius = 25
-        toggleButton.layer.masksToBounds = true
-        toggleButton.addTarget(self, action: #selector(toggleButtons), for: .touchUpInside)
-        // The toggle button is the only always-on HUD control; never hide it.
-        toggleButton.isHidden = false
+    // MARK: - Top Bar Setup
+
+    /// Builds the unified auto-hiding top bar containing all HUD buttons.
+    private func setupTopBar() {
+        guard topBarContainer == nil else { return }
+
+        // --- Invisible tap zone at the top edge to reveal the bar ---
+        let tapZone = UIView()
+        tapZone.backgroundColor = .clear
+        tapZone.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(tapZone)
+        NSLayoutConstraint.activate([
+            tapZone.topAnchor.constraint(equalTo: view.topAnchor),
+            tapZone.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tapZone.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tapZone.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(topBarTapZoneTapped))
+        tapZone.addGestureRecognizer(tapGesture)
+        self.topBarTapZone = tapZone
+
+        // --- Blur container ---
+        let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterialDark))
+        blur.layer.cornerRadius = 12
+        blur.layer.masksToBounds = true
+        blur.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(blur)
+        NSLayoutConstraint.activate([
+            blur.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
+            blur.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            blur.heightAnchor.constraint(equalToConstant: 48),
+        ])
+        self.topBarContainer = blur
+
+        // --- Stack view inside the blur ---
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.spacing = 6
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        blur.contentView.addSubview(stack)
+        NSLayoutConstraint.activate([
+            stack.topAnchor.constraint(equalTo: blur.contentView.topAnchor, constant: 4),
+            stack.bottomAnchor.constraint(equalTo: blur.contentView.bottomAnchor, constant: -4),
+            stack.leadingAnchor.constraint(equalTo: blur.contentView.leadingAnchor, constant: 8),
+            stack.trailingAnchor.constraint(equalTo: blur.contentView.trailingAnchor, constant: -8),
+        ])
+        self.topBarStack = stack
+
+        // --- Populate buttons into the stack (left → right) ---
+
+        // Virtual Keyboard / Mouse toggles (left side)
         #if !os(tvOS)
-        toggleButton.isPointerInteractionEnabled = true
+        if coreSupportsVirtualKeyboard {
+            let kbButton = makeTopBarButton(systemImage: "keyboard", accessibilityLabel: "Toggle Virtual Keyboard")
+            kbButton.addTarget(self, action: #selector(keyboardToggleTapped), for: .touchUpInside)
+            stack.addArrangedSubview(kbButton)
+            self.keyboardToggleButton = kbButton
+        }
+        if coreSupportsVirtualMouse {
+            let mouseButton = makeTopBarButton(systemImage: "cursorarrow", accessibilityLabel: "Toggle Virtual Mouse")
+            mouseButton.addTarget(self, action: #selector(mouseToggleTapped), for: .touchUpInside)
+            stack.addArrangedSubview(mouseButton)
+            self.mouseToggleButton = mouseButton
+        }
         #endif
 
-        /// Anchor to the top-right safe area corner.
-        /// The bottom strip is occupied by skin buttons (D-pad, face, Start/Select);
-        /// the top strip is reliably free of skin controls on every layout.
-        toggleButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(toggleButton)
-        NSLayoutConstraint.activate([
-            toggleButton.widthAnchor.constraint(equalToConstant: 50),
-            toggleButton.heightAnchor.constraint(equalToConstant: 50),
-            toggleButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
-            toggleButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
-        ])
-
-        /// Keep the toggle button above all other subviews at all times
-        view.bringSubviewToFront(toggleButton)
-        self.toggleButton = toggleButton
-    }
-
-    // Add this method to adjust D-Pad position
-    private func adjustDPadPosition() {
-        guard let dPad = dPad, !dPad.isCustomMoved else { return }
-        guard let toggleButton = toggleButton else { return }
-
-        /// Only adjust when the D-Pad frame actually intersects the toggle button area.
-        /// Previous code had an operator-precedence bug (`?? 0 - minSpacing` instead of
-        /// `(?? 0) - minSpacing`) that made the condition always true, pushing the D-Pad
-        /// off to safeAreaInsets.left on every layout pass.
-        let toggleMinX = toggleButton.frame.minX
-        let minSpacing: CGFloat = 16
-        let dPadFrame = dPad.frame
-
-        guard dPadFrame.maxX > toggleMinX - minSpacing else { return }
-
-        /// Shift D-Pad right so it clears the toggle button with the required spacing.
-        var newFrame = dPadFrame
-        newFrame.origin.x = toggleMinX - minSpacing - dPadFrame.width
-
-        /// Clamp to safe area so we never push the D-Pad fully off screen.
-        if newFrame.origin.x < view.safeAreaInsets.left {
-            newFrame.origin.x = view.safeAreaInsets.left
+        // Spacer to push action buttons to the right when KB/mouse are present
+        if stack.arrangedSubviews.count > 0 {
+            let spacer = UIView()
+            spacer.translatesAutoresizingMaskIntoConstraints = false
+            spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+            spacer.widthAnchor.constraint(greaterThanOrEqualToConstant: 8).isActive = true
+            stack.addArrangedSubview(spacer)
         }
-        dPad.frame = newFrame
+
+        // Record button
+        #if os(iOS)
+        if PVRecordingManager.shared.isAvailable {
+            let recButton = makeTopBarButton(systemImage: "record.circle", accessibilityLabel: "Record")
+            recButton.addTarget(self, action: #selector(recordTapped), for: .touchUpInside)
+            stack.addArrangedSubview(recButton)
+            self.recordButton = recButton
+            updateRecordButtonAppearance()
+        }
+        #endif
+
+        // Quick Save / Load
+        if coreSupportsStateSaves {
+            let qsButton = makeTopBarButton(systemImage: "square.and.arrow.down", accessibilityLabel: "Quick Save")
+            qsButton.addTarget(self, action: #selector(quickSaveTapped), for: .touchUpInside)
+            stack.addArrangedSubview(qsButton)
+            self.quickSaveButton = qsButton
+
+            let qlButton = makeTopBarButton(systemImage: "arrow.counterclockwise", accessibilityLabel: "Quick Load")
+            qlButton.addTarget(self, action: #selector(quickLoadTapped), for: .touchUpInside)
+            stack.addArrangedSubview(qlButton)
+            self.quickLoadButton = qlButton
+        }
+
+        // Fast Forward
+        let ffButton = makeTopBarButton(systemImage: "forward.fill", accessibilityLabel: "Fast Forward")
+        ffButton.addTarget(self, action: #selector(fastForwardTapped), for: .touchUpInside)
+        stack.addArrangedSubview(ffButton)
+        self.fastForwardButton = ffButton
+
+        // Controller toggle (show/hide game controls) — rightmost
+        let toggleBtn = makeTopBarButton(systemImage: "gamecontroller", accessibilityLabel: "Toggle Controls")
+        toggleBtn.addTarget(self, action: #selector(toggleButtons), for: .touchUpInside)
+        stack.addArrangedSubview(toggleBtn)
+        self.toggleButton = toggleBtn
+
+        // Start hidden — will show briefly then auto-hide
+        blur.alpha = 0
+        view.bringSubviewToFront(tapZone)
+        view.bringSubviewToFront(blur)
+
+        // Show the bar initially so the user knows it's there
+        showTopBar(autoHide: true)
     }
 
-    // Update the toggleButtons method
+    private func makeTopBarButton(systemImage: String, accessibilityLabel: String) -> UIButton {
+        let button = MenuButton(type: .custom)
+        button.setImage(UIImage(systemName: systemImage), for: .normal)
+        button.tintColor = .white
+        button.accessibilityLabel = accessibilityLabel
+        #if !os(tvOS)
+        button.isPointerInteractionEnabled = true
+        #endif
+        button.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            button.widthAnchor.constraint(equalToConstant: 40),
+            button.heightAnchor.constraint(equalToConstant: 40),
+        ])
+        return button
+    }
+
+    // MARK: - Top Bar Show / Hide
+
+    @objc private func topBarTapZoneTapped() {
+        showTopBar(autoHide: true)
+    }
+
+    func showTopBar(autoHide: Bool = true) {
+        topBarAutoHideTimer?.invalidate()
+        guard let bar = topBarContainer else { return }
+        UIView.animate(withDuration: 0.25) {
+            bar.alpha = 1.0
+        }
+        if autoHide {
+            topBarAutoHideTimer = Timer.scheduledTimer(withTimeInterval: topBarAutoHideDelay, repeats: false) { [weak self] _ in
+                self?.hideTopBar()
+            }
+        }
+    }
+
+    func hideTopBar() {
+        topBarAutoHideTimer?.invalidate()
+        topBarAutoHideTimer = nil
+        guard let bar = topBarContainer else { return }
+        UIView.animate(withDuration: 0.3) {
+            bar.alpha = 0.0
+        }
+    }
+
+    // D-Pad position adjustment — top bar is centered and auto-hides,
+    // so it no longer needs to dodge a fixed toggle button.
+    private func adjustDPadPosition() {
+        // No-op: the old toggle button that overlapped the D-pad is gone.
+        // Kept as a stub in case subclasses call it.
+    }
+
     @objc private func toggleButtons() {
         buttonsVisible.toggle()
 
         let targetAlpha = CGFloat(Defaults[.controllerOpacity])
 
-        /// Animate the visibility change
         UIView.animate(withDuration: 0.3) {
             for button in self.allButtons {
                 button.alpha = self.buttonsVisible ? targetAlpha : 0.0
                 button.isHidden = !self.buttonsVisible
                 button.isUserInteractionEnabled = self.buttonsVisible
             }
+            // Update the icon to reflect current state
             self.toggleButton?.setImage(
-                UIImage(systemName: self.buttonsVisible ? "chevron.up.circle" : "chevron.down.circle"),
+                UIImage(systemName: self.buttonsVisible ? "gamecontroller.fill" : "gamecontroller"),
                 for: .normal
             )
         }
+        // Reset the auto-hide timer since the user interacted
+        showTopBar(autoHide: true)
     }
 
-    // MARK: - Quick Action Buttons Setup
-
-    private func setupQuickActionButtons() {
-        guard fastForwardButton == nil else { return }
-
-        let buttonSize: CGFloat = 44
-        let spacing: CGFloat = 8
-        // All quick-action buttons live in the TOP strip, chained left from the toggle button.
-        // Skin control buttons (D-pad, face, Start/Select, shoulder) occupy the bottom/sides;
-        // the top safe-area edge is reliably free on every skin layout.
-        let safeTop = view.safeAreaLayoutGuide.topAnchor
-        let topInset: CGFloat = 4
-
-        // Fast Forward — top row, immediately left of the toggle button
-        let ffButton = makeQuickActionButton(
-            systemImage: "forward.fill",
-            accessibilityLabel: "Fast Forward"
-        )
-        ffButton.addTarget(self, action: #selector(fastForwardTapped), for: .touchUpInside)
-        ffButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(ffButton)
-        // If a toggle button exists, chain left of it; otherwise fall back to trailing safe area.
-        let ffTrailingAnchor: NSLayoutXAxisAnchor = toggleButton.map { $0.leadingAnchor } ?? view.safeAreaLayoutGuide.trailingAnchor
-        let ffTrailingConstant: CGFloat = toggleButton != nil ? -spacing : -8
-        NSLayoutConstraint.activate([
-            ffButton.widthAnchor.constraint(equalToConstant: buttonSize),
-            ffButton.heightAnchor.constraint(equalToConstant: buttonSize),
-            ffButton.trailingAnchor.constraint(equalTo: ffTrailingAnchor, constant: ffTrailingConstant),
-            ffButton.topAnchor.constraint(equalTo: safeTop, constant: topInset),
-        ])
-        self.fastForwardButton = ffButton
-        quickActionButtons.append(ffButton)
-
-        // Quick Save / Load — top row, stacked left of FF
-        if coreSupportsStateSaves {
-            let qlButton = makeQuickActionButton(
-                systemImage: "arrow.counterclockwise",
-                accessibilityLabel: "Quick Load"
-            )
-            qlButton.addTarget(self, action: #selector(quickLoadTapped), for: .touchUpInside)
-            qlButton.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(qlButton)
-            NSLayoutConstraint.activate([
-                qlButton.widthAnchor.constraint(equalToConstant: buttonSize),
-                qlButton.heightAnchor.constraint(equalToConstant: buttonSize),
-                qlButton.trailingAnchor.constraint(equalTo: ffButton.leadingAnchor, constant: -spacing),
-                qlButton.topAnchor.constraint(equalTo: safeTop, constant: topInset),
-            ])
-            self.quickLoadButton = qlButton
-            quickActionButtons.append(qlButton)
-
-            let qsButton = makeQuickActionButton(
-                systemImage: "square.and.arrow.down",
-                accessibilityLabel: "Quick Save"
-            )
-            qsButton.addTarget(self, action: #selector(quickSaveTapped), for: .touchUpInside)
-            qsButton.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(qsButton)
-            NSLayoutConstraint.activate([
-                qsButton.widthAnchor.constraint(equalToConstant: buttonSize),
-                qsButton.heightAnchor.constraint(equalToConstant: buttonSize),
-                qsButton.trailingAnchor.constraint(equalTo: qlButton.leadingAnchor, constant: -spacing),
-                qsButton.topAnchor.constraint(equalTo: safeTop, constant: topInset),
-            ])
-            self.quickSaveButton = qsButton
-            quickActionButtons.append(qsButton)
-        }
-
-        // Virtual Keyboard/Mouse toggles — top-left, anchored to safeArea leading.
-        // Placed on the opposite (left) side from the main action cluster so they don't
-        // crowd the right-side row and stay clear of the JIT indicator at top-left leading.
-        #if !os(tvOS)
-        if coreSupportsVirtualKeyboard {
-            let kbButton = makeQuickActionButton(
-                systemImage: "keyboard",
-                accessibilityLabel: "Toggle Virtual Keyboard"
-            )
-            kbButton.addTarget(self, action: #selector(keyboardToggleTapped), for: .touchUpInside)
-            kbButton.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(kbButton)
-            // Offset enough from leading to clear the JIT status pill (~100 pt wide at most).
-            NSLayoutConstraint.activate([
-                kbButton.widthAnchor.constraint(equalToConstant: buttonSize),
-                kbButton.heightAnchor.constraint(equalToConstant: buttonSize),
-                kbButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 108),
-                kbButton.topAnchor.constraint(equalTo: safeTop, constant: topInset),
-            ])
-            self.keyboardToggleButton = kbButton
-            quickActionButtons.append(kbButton)
-        }
-
-        if coreSupportsVirtualMouse {
-            let mouseButton = makeQuickActionButton(
-                systemImage: "cursorarrow",
-                accessibilityLabel: "Toggle Virtual Mouse"
-            )
-            mouseButton.addTarget(self, action: #selector(mouseToggleTapped), for: .touchUpInside)
-            mouseButton.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(mouseButton)
-            let mouseLeadingAnchor: NSLayoutXAxisAnchor = keyboardToggleButton.map {
-                $0.trailingAnchor
-            } ?? view.safeAreaLayoutGuide.leadingAnchor
-            let mouseLeadingConstant: CGFloat = keyboardToggleButton != nil ? spacing : 108
-            NSLayoutConstraint.activate([
-                mouseButton.widthAnchor.constraint(equalToConstant: buttonSize),
-                mouseButton.heightAnchor.constraint(equalToConstant: buttonSize),
-                mouseButton.leadingAnchor.constraint(equalTo: mouseLeadingAnchor, constant: mouseLeadingConstant),
-                mouseButton.topAnchor.constraint(equalTo: safeTop, constant: topInset),
-            ])
-            self.mouseToggleButton = mouseButton
-            quickActionButtons.append(mouseButton)
-        }
-        #endif // !os(tvOS)
-
-        // Record button — iOS only (ReplayKit not available on tvOS in the same way)
-        #if os(iOS)
-        setupRecordButton(buttonSize: buttonSize, spacing: spacing, safeTop: safeTop, topInset: topInset)
-        #endif
-    }
-
-    #if os(iOS)
-    private func setupRecordButton(buttonSize: CGFloat, spacing: CGFloat, safeTop: NSLayoutYAxisAnchor, topInset: CGFloat) {
-        guard PVRecordingManager.shared.isAvailable else { return }
-
-        let recButton = makeQuickActionButton(
-            systemImage: "record.circle",
-            accessibilityLabel: "Record"
-        )
-        recButton.addTarget(self, action: #selector(recordTapped), for: .touchUpInside)
-        recButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(recButton)
-
-        // Place left of quick-save (if it exists), else left of quick-load, else left of FF.
-        let recTrailingButton: UIButton? = quickSaveButton ?? quickLoadButton ?? fastForwardButton
-        let recTrailingAnchor: NSLayoutXAxisAnchor = recTrailingButton.map { $0.leadingAnchor } ?? view.safeAreaLayoutGuide.trailingAnchor
-        let recTrailingConstant: CGFloat = recTrailingButton != nil ? -spacing : -8
-
-        NSLayoutConstraint.activate([
-            recButton.widthAnchor.constraint(equalToConstant: buttonSize),
-            recButton.heightAnchor.constraint(equalToConstant: buttonSize),
-            recButton.trailingAnchor.constraint(equalTo: recTrailingAnchor, constant: recTrailingConstant),
-            recButton.topAnchor.constraint(equalTo: safeTop, constant: topInset),
-        ])
-        self.recordButton = recButton
-        quickActionButtons.append(recButton)
-        updateRecordButtonAppearance()
-    }
-    #endif
-
-    /// Resets the alpha of quick-action buttons to 1.0 after controller opacity has been
-    /// applied globally.  Game-controller buttons dim with `controllerOpacity`, but the
-    /// quick-action strip should remain fully opaque at all times.
-    private func restoreQuickActionButtonAlpha() {
-        var buttons: [UIButton?] = [fastForwardButton, quickSaveButton, quickLoadButton]
-        #if os(iOS)
-        buttons.append(recordButton)
-        #endif
-        #if !os(tvOS)
-        buttons += [keyboardToggleButton, mouseToggleButton]
-        #endif
-        buttons.compactMap { $0 }.forEach { $0.alpha = 1.0 }
-    }
-
-    private func makeQuickActionButton(systemImage: String, accessibilityLabel: String) -> UIButton {
-        let button = MenuButton(type: .custom)
-        button.setImage(UIImage(systemName: systemImage), for: .normal)
-        button.tintColor = .white
-        button.backgroundColor = UIColor.black.withAlphaComponent(0.4)
-        button.layer.cornerRadius = 22
-        button.layer.masksToBounds = true
-        button.accessibilityLabel = accessibilityLabel
-        #if !os(tvOS)
-        button.isPointerInteractionEnabled = true
-        #endif
-        return button
-    }
+    /// Quick-action buttons live inside topBarStack — no individual alpha management needed.
+    /// The top bar container manages opacity for all buttons as a group.
 
     @objc private func quickSaveTapped() {
         vibrate()
