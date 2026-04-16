@@ -65,7 +65,8 @@ public enum JITCoreCapability: CaseIterable {
         case .azahar:   return ["azahar", "citra", "3ds", "emuthree"]
         case .flycast:  return ["flycast", "dreamcast"]
         case .mupen:    return ["mupen", "n64"]
-        case .pcsx2:    return ["ps2", "pcsx2", "play"]
+        // NOTE: "ps2" removed — it falsely matches "cps2" (Capcom Play System 2)
+        case .pcsx2:    return ["pcsx2", "play"]
         }
     }
 
@@ -83,7 +84,8 @@ public enum JITCoreCapability: CaseIterable {
         case .azahar:   return ["3ds"]
         case .flycast:  return ["dreamcast"]
         case .mupen:    return ["n64"]
-        case .pcsx2:    return ["ps2"]
+        // Use ".ps2" to avoid matching "cps2" (com.provenance.cps2)
+        case .pcsx2:    return [".ps2"]
         }
     }
 
@@ -242,8 +244,12 @@ public enum JITCoreCapability: CaseIterable {
         assert(matchesJITSystem("com.provenance.psp"), "Expected PSP system to be JIT-capable.")
         assert(matchesJITSystem("com.provenance.n64"), "Expected N64 system to be JIT-capable.")
         assert(matchesJITSystem("com.provenance.gamecube"), "Expected GameCube system to be JIT-capable.")
-        // Expected non-JIT system (acts as a control)
+        assert(matchesJITSystem("com.provenance.ps2"), "Expected PS2 system to be JIT-capable.")
+        // Expected non-JIT systems (acts as a control)
         assert(!matchesJITSystem("com.provenance.snes"), "Expected SNES system to NOT be JIT-capable.")
+        assert(!matchesJITSystem("com.provenance.cps2"), "Expected CPS2 system to NOT be JIT-capable.")
+        assert(!matchesJITSystem("com.provenance.cps1"), "Expected CPS1 system to NOT be JIT-capable.")
+        assert(!matchesJITSystem("com.provenance.cps3"), "Expected CPS3 system to NOT be JIT-capable.")
         return true
     }()
 
