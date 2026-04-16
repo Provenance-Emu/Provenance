@@ -525,6 +525,16 @@ public class CloudSyncManager {
             await self?.fetchRemoteChanges()
         }
 
+        // Refresh isDownloaded for all games using a single directory scan.
+        // This catches any stale values left by crashes, partial syncs, or
+        // prior bugs that set isDownloaded=false on locally-imported games.
+        enqueueMetadataWork {
+            let result = await GameFileStatusService.shared.refreshAllStatuses()
+            if result.upgraded > 0 || result.downgraded > 0 {
+                DLOG("[SYNC] Startup status refresh: \(result.upgraded) upgraded, \(result.downgraded) downgraded out of \(result.totalGames) games")
+            }
+        }
+
         // Check for missing ROM files at startup (non-blocking)
         enqueueMetadataWork { [weak self] in
             await self?.checkForMissingROMFiles(force: false)
@@ -2040,10 +2050,15 @@ public class CloudSyncManager {
         }
 
         do {
-            // Re-check file existence on the live object — the caller may have used
-            // a frozen snapshot that missed the file during a background scan.
-            if let fileURL = gameToUpdate.file?.url,
-               FileManager.default.fileExists(atPath: fileURL.path) {
+            // Re-check file existence using FileLocationResolver for consistent
+            // multi-location checking (Documents/Caches + iCloud Drive).
+            if let partialPath = gameToUpdate.file?.partialPath, !partialPath.isEmpty {
+                if FileLocationResolver.shared.resolve(partialPath) != .notFound {
+                    Self.syncLog.event(.sync, item: "rom/\(gameToUpdate.title)", status: .ok, detail: "Skipped markForSync — file found via resolver")
+                    return
+                }
+            } else if let fileURL = gameToUpdate.file?.url,
+                      FileManager.default.fileExists(atPath: fileURL.path) {
                 Self.syncLog.event(.sync, item: "rom/\(gameToUpdate.title)", status: .ok, detail: "Skipped markForSync — local file exists at \(fileURL.path)")
                 return
             }
@@ -2069,10 +2084,15 @@ public class CloudSyncManager {
                     try realm.write {
                         for md5 in md5s {
                             guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else { continue }
-                            // Re-check file existence on the live Realm object to avoid
-                            // race conditions where a stale/frozen snapshot missed the file.
-                            if let fileURL = game.file?.url,
-                               FileManager.default.fileExists(atPath: fileURL.path) {
+                            // Re-check file existence using FileLocationResolver for
+                            // consistent multi-location checking (Documents/Caches + iCloud Drive).
+                            if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
+                                if FileLocationResolver.shared.resolve(partialPath) != .notFound {
+                                    DLOG("markGamesForSync: skipping \(game.title) — file found via resolver")
+                                    continue
+                                }
+                            } else if let fileURL = game.file?.url,
+                                      FileManager.default.fileExists(atPath: fileURL.path) {
                                 DLOG("markGamesForSync: skipping \(game.title) — local file exists at \(fileURL.path)")
                                 continue
                             }

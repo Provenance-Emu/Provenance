@@ -1364,7 +1364,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         let fileManager = FileManager.default
         for game in downloadedGames {
-            let hasFile = game.file?.url.map { fileManager.fileExists(atPath: $0.path) } ?? false
+            // Use FileLocationResolver for consistent multi-location file checking
+            let hasFile: Bool
+            if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
+                hasFile = FileLocationResolver.shared.resolve(partialPath) != .notFound
+            } else {
+                hasFile = game.file?.url.map { fileManager.fileExists(atPath: $0.path) } ?? false
+            }
             if hasFile {
                 continue
             }
@@ -1381,19 +1387,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 continue
             }
 
-            do {
-                try await withRealm { realm in
-                    guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash.uppercased()) else {
-                        return
-                    }
-                    try realm.write {
-                        liveGame.isDownloaded = false
-                    }
-                }
-            } catch {
-                CloudSyncManager.syncLog.event(.sync, item: "rom/\(game.md5Hash)", status: .failed, detail: "flag not downloaded: \(error.localizedDescription)")
-                continue
-            }
+            // Use GameFileStatusService instead of direct Realm write — it verifies
+            // file existence before downgrading isDownloaded
+            await GameFileStatusService.shared.refreshStatus(forGameMD5: md5)
 
             let fileSize = game.fileSize > 0 ? Int64(game.fileSize) : 1
             do {
