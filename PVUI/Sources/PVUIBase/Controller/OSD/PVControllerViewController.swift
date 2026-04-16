@@ -470,11 +470,14 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 hideTouchControls(for: controller)
             }
         } else {
-            for button in allButtons {
-                button.isHidden = false
-                button.alpha = CGFloat(Defaults[.controllerOpacity])
+            // Respect the user's toggle state — only show if buttons were visible
+            if buttonsVisible {
+                for button in allButtons {
+                    button.isHidden = false
+                    button.alpha = CGFloat(Defaults[.controllerOpacity])
+                }
+                dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
             }
-            dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
         }
         setupTouchControls()
 #endif // os(iOS)
@@ -500,11 +503,14 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 hideTouchControls(for: controller)
             }
         } else {
-            for button in allButtons {
-                button.isHidden = false
-                button.alpha = CGFloat(Defaults[.controllerOpacity])
+            // Respect the user's toggle state — only show if buttons were visible
+            if buttonsVisible {
+                for button in allButtons {
+                    button.isHidden = false
+                    button.alpha = CGFloat(Defaults[.controllerOpacity])
+                }
+                dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
             }
-            dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
         }
         setupTouchControls()
 #endif
