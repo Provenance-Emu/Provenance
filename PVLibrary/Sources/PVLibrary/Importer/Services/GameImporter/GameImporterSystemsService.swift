@@ -204,30 +204,39 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
             return cacheAndReturn(systemIdentifiers)
         }
 
-        /// Step 5: If multiple systems from extension, try filename-based matching to narrow down
+        /// Step 5: If multiple systems from extension, try database + filename-based matching to narrow down
         if systemIdentifiers.count > 1 {
+            /// Try database filename search constrained to extension-matched systems
+            /// This catches multi-system formats like CHD where the game title in the DB
+            /// disambiguates the system (e.g. "Duke Nukem - Time to Kill" → PSX)
+            if let md5 = itemMd5 {
+                if let systemID = try await lookup.systemIdentifier(
+                    forRomMD5: md5,
+                    or: filename,
+                    constrainedToSystems: systemIdentifiers,
+                    allowFilenameSearch: true
+                ) {
+                    DLOG("Found system by MD5/filename within multi-system matches: \(systemID)")
+                    return cacheAndReturn([systemID])
+                }
+            } else {
+                /// No MD5 — try filename-only database search
+                if let results = try await lookup.searchDatabase(usingFilename: filename, systemIDs: systemIdentifiers),
+                   let firstResult = results.first {
+                    DLOG("Found system by filename within multi-system matches: \(firstResult.systemID)")
+                    return cacheAndReturn([firstResult.systemID])
+                }
+            }
+
+            /// Fallback: check if system name appears in the filename (e.g. "Game (PSX).chd")
             let filenameBasedSystems = findSystemsByNameInFilename(filename)
             if !filenameBasedSystems.isEmpty {
                 DLOG("- Found \(filenameBasedSystems.count) systems by name in filename")
 
-                /// Find intersection of extension and filename matches
                 let intersection = Set(systemIdentifiers).intersection(Set(filenameBasedSystems))
                 if !intersection.isEmpty {
                     DLOG("- Found \(intersection.count) systems matching both extension and filename")
                     return cacheAndReturn(Array(intersection))
-                }
-            }
-
-            /// If we still have multiple systems but MD5 available, try constrained MD5 search
-            if let md5 = itemMd5 {
-                if let systemID = try await lookup.systemIdentifier(
-                    forRomMD5: md5,
-                    or: nil, /// Don't use filename for multi-system matches
-                    constrainedToSystems: systemIdentifiers,
-                    allowFilenameSearch: false
-                ) {
-                    DLOG("Found system by MD5 within extension-matched systems: \(systemID)")
-                    return cacheAndReturn([systemID])
                 }
             }
 

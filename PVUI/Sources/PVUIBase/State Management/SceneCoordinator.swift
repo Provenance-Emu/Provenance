@@ -270,8 +270,23 @@ public class SceneCoordinator: ObservableObject {
         // Check if the game needs to be downloaded from the cloud
         let needsDownload = !game.isDownloaded || !(game.file?.online ?? true)
 
-        // Show sync status overlay early if we need to validate (may download BIOS)
-        if needsDownload || system.requiresBIOS {
+        // Fast path: file is already local — verify it exists and skip cloud validation entirely
+        if !needsDownload,
+           let fileURL = game.file?.url,
+           FileManager.default.fileExists(atPath: fileURL.path) {
+            ILOG("SceneCoordinator: Game file exists locally, skipping cloud validation: \(fileURL.lastPathComponent)")
+            // Still need to validate BIOS if required
+            if system.requiresBIOS {
+                syncStatusManager.show(
+                    gameTitle: game.title,
+                    statusMessage: "Validating requirements...",
+                    onCancel: { [weak self] in
+                        self?.cancelActiveLaunch()
+                    }
+                )
+            }
+        } else if needsDownload {
+            // Show sync status overlay early if we need to validate (may download BIOS)
             syncStatusManager.show(
                 gameTitle: game.title,
                 statusMessage: "Validating requirements...",
@@ -279,10 +294,7 @@ public class SceneCoordinator: ObservableObject {
                     self?.cancelActiveLaunch()
                 }
             )
-        }
 
-        // If download is needed, validate requirements BEFORE downloading
-        if needsDownload {
             let validation = await validatePreDownloadRequirements(for: game, system: system)
 
             if !validation.canProceed {
@@ -300,97 +312,82 @@ public class SceneCoordinator: ObservableObject {
                 // Re-show status overlay after user chooses to continue
                 syncStatusManager.show(
                     gameTitle: game.title,
-                    statusMessage: "Checking game file...",
+                    statusMessage: "Downloading game file...",
                     onCancel: { [weak self] in
                         self?.cancelActiveLaunch()
                     }
                 )
             } else {
                 // Validation passed, update status
-                syncStatusManager.update(statusMessage: "Checking game file...")
+                syncStatusManager.update(statusMessage: "Downloading game file...")
             }
-        } else if !system.requiresBIOS {
-            // Show sync status overlay (no early show was done)
-            syncStatusManager.show(
-                gameTitle: game.title,
-                statusMessage: "Checking game file...",
-                onCancel: { [weak self] in
-                    self?.cancelActiveLaunch()
-                }
-            )
-        } else {
-            // Early show was done, just update message
-            syncStatusManager.update(statusMessage: "Checking game file...")
-        }
 
-        // Bail early if the user already cancelled
-        guard !Task.isCancelled else {
-            ILOG("SceneCoordinator: Launch cancelled before sync validation")
+            // Bail early if the user already cancelled
+            guard !Task.isCancelled else {
+                ILOG("SceneCoordinator: Launch cancelled before sync validation")
+                return
+            }
+
+            // Cloud validation is only needed when the file is NOT local
+            let validator: GameSyncValidator?
+            if Defaults[.iCloudSync] {
+                validator = GameSyncValidator(cloudSyncManager: CloudSyncManager.shared)
+            } else {
+                validator = nil
+            }
+
+            if let validator = validator {
+                let isValid = await validator.ensureGameReady(game) { [weak self] progressMessage in
+                    Task { @MainActor in
+                        self?.syncStatusManager.update(statusMessage: progressMessage)
+                    }
+                    ILOG("Game sync progress: \(progressMessage)")
+                }
+
+                guard !Task.isCancelled else {
+                    ILOG("SceneCoordinator: Launch cancelled during sync validation")
+                    return
+                }
+
+                if isValid {
+                    syncStatusManager.complete()
+                } else {
+                    syncStatusManager.error("Game file is not available. Please ensure iCloud sync is enabled and the game is synced.")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                        self?.syncStatusManager.hide()
+                        self?.showGameLaunchError(
+                            title: "Cannot Launch Game",
+                            message: "The game file is not available on this device.\n\nTo fix this:\n1. Make sure iCloud sync is enabled in Settings\n2. Wait for the game to finish syncing (check the cloud icon)\n3. Try launching again\n\nIf the problem persists, try removing and re-importing the game."
+                        )
+                    }
+                    return
+                }
+            } else {
+                // No cloud sync and file doesn't exist locally
+                syncStatusManager.hide()
+                showGameLaunchError(
+                    title: "Game File Not Found",
+                    message: "The game file could not be found on your device.\n\nThis can happen if:\n• The file was deleted\n• The file was moved\n• There's a storage issue\n\nTry removing the game from your library and re-importing it."
+                )
+                return
+            }
+
+            // Small delay to show completion status after download
+            try? await Task.sleep(nanoseconds: 500_000_000)
+        } else {
+            // File is marked as downloaded but can't be found on disk
+            syncStatusManager.hide()
+
+            if game.hasCloudAssets {
+                showCloudSyncEnablePrompt(for: game, core: core)
+            } else {
+                showGameLaunchError(
+                    title: "Game File Not Found",
+                    message: "The game file could not be found on your device.\n\nThis can happen if:\n• The file was deleted\n• The file was moved\n• There's a storage issue\n\nTry removing the game from your library and re-importing it."
+                )
+            }
             return
         }
-
-        // Create validator if cloud sync is enabled
-        let validator: GameSyncValidator?
-        if Defaults[.iCloudSync] {
-            validator = GameSyncValidator(cloudSyncManager: CloudSyncManager.shared)
-        } else {
-            validator = nil
-        }
-
-        // Validate game availability
-        if let validator = validator {
-            let isValid = await validator.ensureGameReady(game) { [weak self] progressMessage in
-                Task { @MainActor in
-                    self?.syncStatusManager.update(statusMessage: progressMessage)
-                }
-                ILOG("Game sync progress: \(progressMessage)")
-            }
-
-            // Check cancellation after potentially long sync operation
-            guard !Task.isCancelled else {
-                ILOG("SceneCoordinator: Launch cancelled during sync validation")
-                return
-            }
-
-            if isValid {
-                syncStatusManager.complete()
-            } else {
-                syncStatusManager.error("Game file is not available. Please ensure iCloud sync is enabled and the game is synced.")
-                // Show error alert after a delay
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-                    self?.syncStatusManager.hide()
-                    self?.showGameLaunchError(
-                        title: "Cannot Launch Game",
-                        message: "The game file is not available on this device.\n\nTo fix this:\n1. Make sure iCloud sync is enabled in Settings\n2. Wait for the game to finish syncing (check the cloud icon)\n3. Try launching again\n\nIf the problem persists, try removing and re-importing the game."
-                    )
-                }
-                return
-            }
-        } else {
-            // No cloud sync - just verify file exists
-            syncStatusManager.update(statusMessage: "Verifying file...")
-
-            guard let fileURL = game.file?.url,
-                  FileManager.default.fileExists(atPath: fileURL.path) else {
-                syncStatusManager.hide()
-
-                // If the game has cloud assets, offer to enable cloud sync instead of a dead-end error
-                if game.hasCloudAssets {
-                    showCloudSyncEnablePrompt(for: game, core: core)
-                } else {
-                    showGameLaunchError(
-                        title: "Game File Not Found",
-                        message: "The game file could not be found on your device.\n\nThis can happen if:\n• The file was deleted\n• The file was moved\n• There's a storage issue\n\nTry removing the game from your library and re-importing it."
-                    )
-                }
-                return
-            }
-
-            syncStatusManager.complete()
-        }
-
-        // Small delay to show completion status
-        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
 
         // Check cancellation after the delay
         guard !Task.isCancelled else {
@@ -795,8 +792,21 @@ public class SceneCoordinator: ObservableObject {
         // Check if the game needs to be downloaded from the cloud
         let needsDownload = !game.isDownloaded || !(game.file?.online ?? true)
 
-        // Show sync status overlay early if we need to validate (may download BIOS)
-        if needsDownload || system.requiresBIOS {
+        // Fast path: file is already local — verify it exists and skip cloud validation
+        if !needsDownload,
+           let fileURL = game.file?.url,
+           FileManager.default.fileExists(atPath: fileURL.path) {
+            ILOG("SceneCoordinator: Game file exists locally, skipping cloud validation for save state: \(fileURL.lastPathComponent)")
+            if system.requiresBIOS {
+                syncStatusManager.show(
+                    gameTitle: game.title,
+                    statusMessage: "Validating requirements...",
+                    onCancel: { [weak self] in
+                        self?.cancelActiveLaunch()
+                    }
+                )
+            }
+        } else if needsDownload {
             syncStatusManager.show(
                 gameTitle: game.title,
                 statusMessage: "Validating requirements...",
@@ -804,17 +814,11 @@ public class SceneCoordinator: ObservableObject {
                     self?.cancelActiveLaunch()
                 }
             )
-        }
 
-        // If download is needed, validate requirements BEFORE downloading
-        if needsDownload {
             let validation = await validatePreDownloadRequirements(for: game, system: system)
 
             if !validation.canProceed {
-                // Hide status overlay before showing warning
                 syncStatusManager.hide()
-
-                // Show warning and let user choose
                 let shouldContinue = await showPreDownloadWarning(validation: validation)
                 if !shouldContinue {
                     ILOG("SceneCoordinator: User cancelled save state launch due to missing requirements")
@@ -822,76 +826,65 @@ public class SceneCoordinator: ObservableObject {
                 }
                 ILOG("SceneCoordinator: User chose to continue save state launch despite missing requirements")
 
-                // Re-show status overlay after user chooses to continue
                 syncStatusManager.show(
                     gameTitle: game.title,
-                    statusMessage: "Checking game file...",
+                    statusMessage: "Downloading game file...",
                     onCancel: { [weak self] in
                         self?.cancelActiveLaunch()
                     }
                 )
             } else {
-                // Validation passed, update status
-                syncStatusManager.update(statusMessage: "Checking game file...")
-            }
-        } else if !system.requiresBIOS {
-            // Show sync status overlay (no early show was done)
-            syncStatusManager.show(
-                gameTitle: game.title,
-                statusMessage: "Checking game file...",
-                onCancel: { [weak self] in
-                    self?.cancelActiveLaunch()
-                }
-            )
-        } else {
-            // Early show was done, just update message
-            syncStatusManager.update(statusMessage: "Checking game file...")
-        }
-
-        // Create validator if cloud sync is enabled
-        let validator: GameSyncValidator?
-        if Defaults[.iCloudSync] {
-            validator = GameSyncValidator(cloudSyncManager: CloudSyncManager.shared)
-        } else {
-            validator = nil
-        }
-
-        // Validate game availability
-        if let validator = validator {
-            let isValid = await validator.ensureGameReady(game) { [weak self] progressMessage in
-                Task { @MainActor in
-                    self?.syncStatusManager.update(statusMessage: progressMessage)
-                }
-                ILOG("Game sync progress: \(progressMessage)")
+                syncStatusManager.update(statusMessage: "Downloading game file...")
             }
 
-            if !isValid {
-                syncStatusManager.error("Game file is not available. Please ensure iCloud sync is enabled and the game is synced.")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-                    self?.syncStatusManager.hide()
-                    self?.showGameLaunchError(
-                        title: "Cannot Launch Save State",
-                        message: "The game file is not available on this device.\n\nTo fix this:\n1. Make sure iCloud sync is enabled in Settings\n2. Wait for the game to finish syncing (check the cloud icon)\n3. Try launching again\n\nIf the problem persists, try removing and re-importing the game."
-                    )
+            // Cloud validation needed — file isn't local
+            let validator: GameSyncValidator?
+            if Defaults[.iCloudSync] {
+                validator = GameSyncValidator(cloudSyncManager: CloudSyncManager.shared)
+            } else {
+                validator = nil
+            }
+
+            if let validator = validator {
+                let isValid = await validator.ensureGameReady(game) { [weak self] progressMessage in
+                    Task { @MainActor in
+                        self?.syncStatusManager.update(statusMessage: progressMessage)
+                    }
+                    ILOG("Game sync progress: \(progressMessage)")
                 }
+
+                if !isValid {
+                    syncStatusManager.error("Game file is not available. Please ensure iCloud sync is enabled and the game is synced.")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                        self?.syncStatusManager.hide()
+                        self?.showGameLaunchError(
+                            title: "Cannot Launch Save State",
+                            message: "The game file is not available on this device.\n\nTo fix this:\n1. Make sure iCloud sync is enabled in Settings\n2. Wait for the game to finish syncing (check the cloud icon)\n3. Try launching again\n\nIf the problem persists, try removing and re-importing the game."
+                        )
+                    }
+                    return
+                }
+            } else {
+                // No cloud sync and file doesn't exist locally
+                syncStatusManager.hide()
+                showGameLaunchError(
+                    title: "Game File Not Found",
+                    message: "The game file could not be found on your device.\n\nThis can happen if:\n• The file was deleted\n• The file was moved\n• There's a storage issue\n\nTry removing the game from your library and re-importing it."
+                )
                 return
             }
         } else {
-            // No cloud sync - just verify file exists
-            syncStatusManager.update(statusMessage: "Verifying file...")
-
-            guard let fileURL = game.file?.url,
-                  FileManager.default.fileExists(atPath: fileURL.path) else {
-                syncStatusManager.error("Game file not found. Please verify the ROM file exists.")
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-                    self?.syncStatusManager.hide()
-                    self?.showGameLaunchError(
-                        title: "Game File Not Found",
-                        message: "The game file could not be found on your device.\n\nThis can happen if:\n• The file was deleted\n• The file was moved\n• There's a storage issue\n\nTry removing the game from your library and re-importing it."
-                    )
-                }
-                return
+            // File is marked as downloaded but not found on disk
+            syncStatusManager.hide()
+            if game.hasCloudAssets {
+                showCloudSyncEnablePrompt(for: game, core: core)
+            } else {
+                showGameLaunchError(
+                    title: "Game File Not Found",
+                    message: "The game file could not be found on your device.\n\nThis can happen if:\n• The file was deleted\n• The file was moved\n• There's a storage issue\n\nTry removing the game from your library and re-importing it."
+                )
             }
+            return
         }
 
         // Validate BIOS and core requirements

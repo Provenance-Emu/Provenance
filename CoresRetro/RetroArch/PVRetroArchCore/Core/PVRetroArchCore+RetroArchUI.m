@@ -456,23 +456,16 @@ int argc =  1;
         return;
     }
     command_event(flag ? CMD_EVENT_PAUSE : CMD_EVENT_UNPAUSE, NULL);
-    // I don't know what this code was suppoed to do, but it breaks the retroarch menu
-    // after pausing, seems fine to remove this. @JoeMatt
-//    runloop_state_t *runloop_st = runloop_state_get_ptr();
-//    if (flag) {
-//        ILOG(@"RetroArch: Pause\n");
-//        runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
-//        runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
-//        runloop_st->flags |= RUNLOOP_FLAG_PAUSED;
-//        runloop_st->flags |= RUNLOOP_FLAG_IDLE;
-//    } else {
-//        ILOG(@"RetroArch: UnPause\n");
-//        runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
-//        runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
-//        runloop_st->flags &= ~RUNLOOP_FLAG_PAUSED;
-//        runloop_st->flags &= ~RUNLOOP_FLAG_IDLE;
-//        [self setSpeed];
-//    }
+    // Set RUNLOOP_FLAG_IDLE when pausing so that rarch_draw_observer stops
+    // calling CFRunLoopWakeUp in a tight loop, which blocks the main thread
+    // and makes the Provenance pause menu (SwiftUI) unresponsive.
+    // Note: the old code also set RUNLOOP_FLAG_PAUSED here but that is
+    // already handled by CMD_EVENT_PAUSE/UNPAUSE above.
+    if (flag) {
+        runloop_st->flags |= RUNLOOP_FLAG_IDLE;
+    } else {
+        runloop_st->flags &= ~RUNLOOP_FLAG_IDLE;
+    }
 }
 
 - (void)setSpeed {
@@ -2336,6 +2329,15 @@ static void rarch_draw_observer(CFRunLoopObserverRef observer,
    if (!_isInitialized) {
        return;
    }
+
+   /* When the core is paused+idle (Provenance pause menu is showing),
+    * skip runloop_iterate entirely so the main thread stays responsive
+    * for SwiftUI / UIKit event handling. */
+   uint32_t pre_flags = runloop_get_flags();
+   if (pre_flags & RUNLOOP_FLAG_IDLE) {
+       return;
+   }
+
    uint32_t runloop_flags;
    int          ret   = runloop_iterate();
    if (ret == -1) {
