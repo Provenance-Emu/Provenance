@@ -26,6 +26,7 @@ import PVSettings
 import PVThemes
 import SwiftUI
 import PVArchiving
+import PVFileSystem
 #if canImport(PVJIT)
 import JITManager
 #endif
@@ -1167,30 +1168,30 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// - Parameter game: The game to check
     /// - Returns: True if the game needs to be downloaded from CloudKit
     private func needsCloudKitDownload(for game: PVGame) async -> Bool {
-        // PVFile.url now checks local first, so this is straightforward
-        guard let fileURL = game.file?.url else {
-            VLOG("Game \(game.title) has no file URL - needs download")
-            return true
-        }
-
-        guard FileManager.default.fileExists(atPath: fileURL.path) else {
-            VLOG("Game \(game.title) file doesn't exist at \(fileURL.path) - needs download")
-            return true
-        }
-
-        // Check if file is an iCloud placeholder (not yet downloaded)
-        do {
-            let resourceValues = try fileURL.resourceValues(forKeys: [.ubiquitousItemDownloadingStatusKey])
-            if let downloadStatus = resourceValues.ubiquitousItemDownloadingStatus,
-               downloadStatus == .notDownloaded {
-                VLOG("Game \(game.title) is an iCloud placeholder - needs download")
-                return true
+        // Use FileLocationResolver for consistent multi-location checking.
+        // This checks local Documents/Caches first, then iCloud Drive container.
+        if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
+            let resolution = FileLocationResolver.shared.resolve(partialPath)
+            if let resolvedURL = resolution.url {
+                // File found — check if it's an iCloud placeholder (not yet materialized)
+                if needsDownload(resolvedURL) {
+                    VLOG("Game \(game.title) is an iCloud placeholder at \(resolvedURL.path) - needs download")
+                    return true
+                }
+                return false
             }
-        } catch {
-            VLOG("Could not check iCloud status for \(game.title): \(error)")
         }
 
-        return false
+        // Fallback: check game.file.url directly (handles edge cases where
+        // partialPath is empty but url is set via other means)
+        if let fileURL = game.file?.url,
+           FileManager.default.fileExists(atPath: fileURL.path),
+           !needsDownload(fileURL) {
+            return false
+        }
+
+        VLOG("Game \(game.title) file not found locally - needs download")
+        return true
     }
 
     /// Handle on-demand download with improved progress UI

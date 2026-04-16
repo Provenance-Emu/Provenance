@@ -31,21 +31,29 @@ public func isICloudFile(_ url: URL) -> Bool {
 }
 
 public func needsDownload(_ url: URL) -> Bool {
+    // Only check ubiquitous resource keys for files that are actually in an
+    // iCloud container.  Local-only files may throw when querying these keys,
+    // and that is NOT an indication that the file needs downloading.
+    guard isICloudFile(url) else {
+        return false
+    }
     do {
         let resourceValues = try url.resourceValues(forKeys: [.ubiquitousItemIsDownloadingKey, .ubiquitousItemDownloadingStatusKey])
-        
+
         if resourceValues.ubiquitousItemDownloadingStatus == .notDownloaded {
             return true
         }
-        
+
         if resourceValues.ubiquitousItemIsDownloading ?? false {
             return true
         }
-        
+
         return false
     } catch {
-        print("Error checking if file needs download: \(error)")
-        return true // Assume it needs download if we can't determine
+        // If we can't determine the status of an iCloud file, assume it's available
+        // rather than triggering a spurious download attempt.
+        print("Error checking if iCloud file needs download: \(error)")
+        return false
     }
 }
 

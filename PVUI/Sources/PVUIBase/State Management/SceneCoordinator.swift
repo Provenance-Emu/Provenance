@@ -292,26 +292,19 @@ public class SceneCoordinator: ObservableObject {
         }
 
         // Fast path: check if the game file physically exists on disk.
-        // We check multiple locations because file metadata can be stale:
-        //  1. Resolved URL (may point to iCloud container in Drive mode)
-        //  2. Local Documents + partialPath (in case sync mode redirected the URL)
-        //  3. Current system ROMs directory + filename (handles moves between systems)
+        // Use FileLocationResolver for consistent local-first file checking.
+        // Also checks system ROMs directory for files that were moved between systems.
         let fileExistsLocally: Bool = {
-            // Check 1: resolved URL
+            // Check 1: FileLocationResolver (local Documents/Caches + iCloud Drive)
+            if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
+                if FileLocationResolver.shared.resolve(partialPath) != .notFound {
+                    return true
+                }
+            }
+            // Check 2: resolved URL fallback (handles edge cases)
             if let fileURL = game.file?.url,
                FileManager.default.fileExists(atPath: fileURL.path) {
                 return true
-            }
-            // Check 2: local Documents/Caches directory directly
-            if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
-                #if os(tvOS)
-                let localURL = RelativeRoot.cachesDirectory.appendingPathComponent(partialPath)
-                #else
-                let localURL = RelativeRoot.documentsDirectory.appendingPathComponent(partialPath)
-                #endif
-                if FileManager.default.fileExists(atPath: localURL.path) {
-                    return true
-                }
             }
             // Check 3: current system ROMs directory (file may have been moved between systems)
             let filename = game.file?.fileName
