@@ -88,7 +88,7 @@ extension LocalFile: CustomStringConvertible {
 // MARK: - LocalFileProvider
 extension LocalFile {
     public var online: Bool { get {
-        guard let url = url else { return true }
+        guard let url = url else { return false }
         return FileManager.default.fileExists(atPath: url.path)
     }}
 }

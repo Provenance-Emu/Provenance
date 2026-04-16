@@ -343,6 +343,11 @@ public class SceneCoordinator: ObservableObject {
 
             let validation = await validatePreDownloadRequirements(for: game, system: system)
 
+            guard !Task.isCancelled else {
+                ILOG("SceneCoordinator: Launch cancelled during pre-download validation")
+                return
+            }
+
             if !validation.canProceed {
                 // Hide status overlay before showing warning
                 syncStatusManager.hide()
@@ -908,6 +913,11 @@ public class SceneCoordinator: ObservableObject {
             )
 
             let validation = await validatePreDownloadRequirements(for: game, system: system)
+
+            guard !Task.isCancelled else {
+                ILOG("SceneCoordinator: Save state launch cancelled during pre-download validation")
+                return
+            }
 
             if !validation.canProceed {
                 syncStatusManager.hide()

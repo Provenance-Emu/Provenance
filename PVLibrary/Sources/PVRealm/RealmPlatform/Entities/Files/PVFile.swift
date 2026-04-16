@@ -517,10 +517,8 @@ public extension PVFile {
 
     // TODO: Make this live update and observable
     var online: Bool { get {
-        guard let url = url else { return true }
-
-        let exists = FileManager.default.fileExists(atPath: url.path)
-        return exists
+        guard let url = url else { return false }
+        return FileManager.default.fileExists(atPath: url.path)
     }}
 
     var pathExtension: String {get {
