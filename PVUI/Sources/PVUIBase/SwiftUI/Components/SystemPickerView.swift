@@ -110,6 +110,7 @@ public struct SystemPickerView: View {
                 // Create a new PVFile with the destination URL, which will calculate the correct partialPath
                 let newFile = PVFile(withURL: destinationURL)
                 thawedGame?.file = newFile
+                thawedGame?.isDownloaded = true
                 DLOG("Updated PVFile to point to new location: \(newFile.partialPath)")
 
                 updatedGame = thawedGame

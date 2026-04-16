@@ -182,11 +182,13 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         gameTiles.append(PauseMenuTile(id: "gameInfo", icon: "info.circle", label: String(localized: "Game Info"), colorKey: .blue))
 
-        let usingThinWrapper = String(describing: type(of: emulatorVC.core)) == "PVThinLibretroCore"
+        let coreTypeName = String(describing: type(of: emulatorVC.core))
+        let usingThinWrapper = coreTypeName.contains("ThinLibretro")
 
-        // RetroArch — libretro cores only (not thin wrapper cores which lack RetroArch's menu system)
+        // RetroArch — full RetroArch cores only (not thin wrapper cores which lack RetroArch's menu system)
         if emulatorVC.core.coreIdentifier?.contains("libretro") == true,
-            !usingThinWrapper {
+            !usingThinWrapper,
+            coreTypeName.contains("RetroArch") {
             settingsTiles.append(PauseMenuTile(
                 id: "retroArchMenu",
                 icon: "square.grid.2x2",

@@ -645,7 +645,8 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
 
     // Deal will nullable key paths
     private func editKey(_ key: WritableKeyPath<PVGame, String?>, title: String, label: UILabel) {
-        let currentValue = game![keyPath: key]
+        guard let game = game else { return }
+        let currentValue = game[keyPath: key]
         let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
 
         alert.addTextField { textField in
@@ -658,13 +659,13 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
 
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
-            let textField = alert.textFields?.first!
-            let submittedValue = textField?.text
+            guard let textField = alert.textFields?.first else { return }
+            let submittedValue = textField.text
 
             if submittedValue != currentValue {
                 do {
                     try RomDatabase.sharedInstance.writeTransaction {
-                        self.game![keyPath: key] = submittedValue
+                        self.game?[keyPath: key] = submittedValue
                     }
                     label.text = submittedValue
                 } catch {
@@ -678,7 +679,8 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
 
     // Deal with non-null - non-empty keys paths
     private func editKey(_ key: WritableKeyPath<PVGame, String>, title: String, label: UILabel, reloadGameInfoAfter: Bool = false) {
-        let currentValue = game![keyPath: key]
+        guard let game = game else { return }
+        let currentValue = game[keyPath: key]
         let alert = UIAlertController(title: "Edit \(title)", message: nil, preferredStyle: .alert)
 
         alert.addTextField { textField in
@@ -692,10 +694,10 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
 
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "Done", style: .default, handler: { _ in
-            let textField = alert.textFields?.first!
-            let submittedValue = textField?.text
+            guard let textField = alert.textFields?.first else { return }
+            let submittedValue = textField.text
 
-            if submittedValue == nil || submittedValue!.isEmpty {
+            if submittedValue?.isEmpty != false {
                 let errAlert = UIAlertController(title: "Invalid Value", message: "\(title) cannot be empty.", preferredStyle: .alert)
                 errAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 self.present(errAlert, animated: true, completion: nil)
@@ -706,7 +708,7 @@ public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBas
                             game.realm?.refresh()
                             game[keyPath: key] = newValue
                             label.text = newValue
-                            if reloadGameInfoAfter, game.releaseID == nil || game.releaseID!.isEmpty {
+                            if reloadGameInfoAfter, (game.releaseID ?? "").isEmpty {
                                 Task { [weak self] in
                                     guard let self = self else { return }
                                     //TODO: fix this
@@ -796,14 +798,15 @@ extension PVGameMoreInfoViewController {
         }
 
         let deleteAction = UIPreviewAction(title: "Delete", style: .destructive) { _, _ in
-            let alert = UIAlertController(title: "Delete \(self.game!.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Delete \(self.game?.title ?? "Game")", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_: UIAlertAction) -> Void in
                 Task { [weak self] in
                     // Delete from Realm
                     do {
                         try RomDatabase.sharedInstance.delete(game: game)
                     } catch {
-                        self?.presentError(error.localizedDescription, source: self!.view)
+                        guard let self = self else { return }
+                        self.presentError(error.localizedDescription, source: self.view)
                     }
                 }
             }))
@@ -837,7 +840,7 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
             #endif
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
-                    self.game!.gameDescription = descriptionTextView.text
+                    self.game?.gameDescription = descriptionTextView.text
                 }
             } catch {
                 ELOG("Failed to update game description : \(error.localizedDescription)")
@@ -896,7 +899,7 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
 
 extension PVGameMoreInfoViewController {
     private func askToResetAnalytics() {
-        let alert = UIAlertController(title: "Erase history?", message: "Would you like to erase your play counter and time spent in \(game!.title)?", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Erase history?", message: "Would you like to erase your play counter and time spent in \(game?.title ?? "this game")?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .default, handler: nil))
         alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in
             do {
