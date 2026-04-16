@@ -207,6 +207,10 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         downloadBuildBotSystemFilesIfNeeded()
 
         // Mupen64Plus-Next: use angrylion RDP, enable rumble pak, apply Transfer Pak slots.
+        // Upstream defaults pak1 to "memory" but the libretro core only fires the rumble
+        // callback when pak type is PLUGIN_RAW ("rumble"). Unlike the native bridge there
+        // is no Smart Pak combo mode — users who need memory pak saves can switch via
+        // core options. Most N64 games use SRAM/EEPROM/Flash for saves, not memory pak.
         if coreId.contains("mupen") {
             setDefaultOption("mupen64plus-rdp-plugin", value: "angrylion")
             setDefaultOption("mupen64plus-pak1", value: "rumble")
