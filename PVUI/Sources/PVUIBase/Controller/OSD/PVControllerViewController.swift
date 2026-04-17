@@ -188,7 +188,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 #endif
 
-    private var buttonsVisible = false
+    private var buttonsVisible = true
 
     // MARK: - Hardware Switch Overlay
     private var hardwareSwitchHostingVC: UIHostingController<HardwareSwitchRowView>?
@@ -451,15 +451,14 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     @objc func hideTouchControls(_: Notification?) {
 #if os(iOS) && !targetEnvironment(macCatalyst)
         buttonsVisible = false
-        updateToggleButtonAppearance()
+        applyButtonVisibility(animated: true)
 #endif // os(iOS)
     }
 
     @objc func showTouchControls(_: Notification?) {
 #if os(iOS) && !targetEnvironment(macCatalyst)
         buttonsVisible = true
-        
-        updateToggleButtonAppearance()
+        applyButtonVisibility(animated: true)
 #endif
     }
 
@@ -470,14 +469,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 hideTouchControls(for: controller)
             }
         } else {
-            // Respect the user's toggle state — only show if buttons were visible
-            if buttonsVisible {
-                for button in allButtons {
-                    button.isHidden = false
-                    button.alpha = CGFloat(Defaults[.controllerOpacity])
-                }
-                dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
-            }
+            // No player-1 controller — ensure touch controls match buttonsVisible state
+            applyButtonVisibility(animated: true)
+            dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
         }
         setupTouchControls()
 #endif // os(iOS)
@@ -503,14 +497,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 hideTouchControls(for: controller)
             }
         } else {
-            // Respect the user's toggle state — only show if buttons were visible
-            if buttonsVisible {
-                for button in allButtons {
-                    button.isHidden = false
-                    button.alpha = CGFloat(Defaults[.controllerOpacity])
-                }
-                dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
-            }
+            // No controllers left — show touch controls
+            buttonsVisible = true
+            applyButtonVisibility(animated: true)
+            dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
         }
         setupTouchControls()
 #endif
@@ -914,15 +904,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             view.bringSubviewToFront(rightShoulderButton)
         }
 
-        // If buttons were toggled hidden before this layout pass, re-hide the
-        // newly created controls so they don't flash on screen.
-        if !buttonsVisible {
-            for button in allButtons {
-                button.alpha = 0.0
-                button.isHidden = true
-                button.isUserInteractionEnabled = false
-            }
-        }
+        // Apply the current visibility state to all controls. This handles
+        // both "re-hide after layout" (buttonsVisible=false) and "ensure visible"
+        // (buttonsVisible=true with correct opacity) after controls are created.
+        applyButtonVisibility(animated: false)
     }
 #endif // os(iOS)
 
@@ -1744,27 +1729,30 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     @objc private func toggleButtons() {
         buttonsVisible.toggle()
-
-        let targetAlpha = CGFloat(Defaults[.controllerOpacity])
-
-        UIView.animate(withDuration: 0.3) {
-            for button in self.allButtons {
-                button.alpha = self.buttonsVisible ? targetAlpha : 0.0
-                button.isHidden = !self.buttonsVisible
-                button.isUserInteractionEnabled = self.buttonsVisible
-            }
-            // Update the icon to reflect current state
-            self.toggleButton?.setImage(
-                UIImage(systemName: self.buttonsVisible ? "gamecontroller.fill" : "gamecontroller"),
-                for: .normal
-            )
-        }
+        applyButtonVisibility(animated: true)
         // Reset the auto-hide timer since the user interacted
         showTopBar(autoHide: true)
     }
 
-    /// Quick-action buttons live inside topBarStack — no individual alpha management needed.
-    /// The top bar container manages opacity for all buttons as a group.
+    /// Applies the current `buttonsVisible` state to all game controls.
+    /// Called from `toggleButtons()`, `hideTouchControls`, `showTouchControls`,
+    /// and at the end of `setupTouchControls()` to ensure consistency.
+    private func applyButtonVisibility(animated: Bool) {
+        let targetAlpha = buttonsVisible ? CGFloat(Defaults[.controllerOpacity]) : 0.0
+        let changes = {
+            for button in self.allButtons {
+                button.alpha = targetAlpha
+                button.isHidden = !self.buttonsVisible
+                button.isUserInteractionEnabled = self.buttonsVisible
+            }
+        }
+        if animated {
+            UIView.animate(withDuration: 0.3, animations: changes)
+        } else {
+            changes()
+        }
+        updateToggleButtonAppearance()
+    }
 
     @objc private func quickSaveTapped() {
         vibrate()
