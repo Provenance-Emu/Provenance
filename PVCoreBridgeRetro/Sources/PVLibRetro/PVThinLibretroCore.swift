@@ -253,10 +253,12 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             setDefaultOption("mame_cheats_enable", value: "enabled")
         }
 
-        // Beetle PSX HW: force software renderer — Vulkan via MoltenVK crashes
-        // in the thin wrapper (command buffer submission races with Metal presentation).
+        // Beetle PSX HW: use OpenGL hardware renderer instead of Vulkan.
+        // Vulkan via MoltenVK has command buffer submission races with Metal
+        // presentation in the thin wrapper. OpenGL works (same path as Mupen64).
         if coreId.contains("psx_hw") || coreId.contains("beetle_psx") {
-            setDefaultOption("beetle_psx_hw_renderer", value: "software")
+            setDefaultOption("beetle_psx_hw_renderer", value: "hardware")
+            setDefaultOption("beetle_psx_hw_renderer_software_fb", value: "enabled")
         }
     }
 

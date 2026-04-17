@@ -4966,14 +4966,13 @@ static bool thin_environment(unsigned cmd, void *data) {
 
         // ---- Preferred HW render ----
         case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: {
-#if HAVE_VULKAN
-            // Prefer Vulkan when MoltenVK support is compiled in.
-            // Cores that can use either path will pick Vulkan first; cores that only support
-            // GLES will ignore this and call SET_HW_RENDER with a GLES context type instead.
-            if (data) *(unsigned *)data = RETRO_HW_CONTEXT_VULKAN;
-#else
+            // Prefer GLES3 in the thin wrapper. The thin wrapper runs on the UI
+            // thread via CADisplayLink — Vulkan command buffer submission races
+            // with Metal presentation on the same thread, causing crashes in
+            // cores like Beetle PSX HW. OpenGL ES works correctly (proven by
+            // Mupen64/ParaLLEl). Cores that only support Vulkan can still
+            // request it via SET_HW_RENDER and the Vulkan path remains available.
             if (data) *(unsigned *)data = RETRO_HW_CONTEXT_OPENGLES3;
-#endif
             return true;
         }
 
