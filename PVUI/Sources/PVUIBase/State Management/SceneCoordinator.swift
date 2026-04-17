@@ -871,21 +871,18 @@ public class SceneCoordinator: ObservableObject {
 
         // Fast path: same multi-location check as launchGameWithValidation
         let saveStateFileExistsLocally: Bool = {
+            // Check 1: FileLocationResolver (local Documents/Caches + iCloud Drive)
+            if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
+                if FileLocationResolver.shared.resolve(partialPath) != .notFound {
+                    return true
+                }
+            }
+            // Check 2: resolved URL fallback (handles edge cases)
             if let fileURL = game.file?.url,
                FileManager.default.fileExists(atPath: fileURL.path) {
                 return true
             }
-            if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
-                #if os(tvOS)
-                let localURL = RelativeRoot.cachesDirectory.appendingPathComponent(partialPath)
-                #else
-                let localURL = RelativeRoot.documentsDirectory.appendingPathComponent(partialPath)
-                #endif
-                if FileManager.default.fileExists(atPath: localURL.path) {
-                    return true
-                }
-            }
-            // Check current system ROMs directory (file may have been moved between systems)
+            // Check 3: current system ROMs directory (file may have been moved between systems)
             let filename = game.file?.fileName
                 ?? (game.romPath.isEmpty ? nil : URL(fileURLWithPath: game.romPath).lastPathComponent)
             if let filename = filename, !filename.isEmpty {
@@ -982,6 +979,11 @@ public class SceneCoordinator: ObservableObject {
                     let result = await group.next() ?? false
                     group.cancelAll()
                     return result
+                }
+
+                guard !Task.isCancelled else {
+                    ILOG("SceneCoordinator: Save state launch cancelled during sync validation")
+                    return
                 }
 
                 if !isValid {
@@ -1288,6 +1290,14 @@ public class SceneCoordinator: ObservableObject {
     /// Handles closing the emulator and returning to the main scene
     public func closeEmulator() {
         ILOG("SceneCoordinator: closeEmulator() called")
+
+        // Defensively clear the launch guard so taps aren't blocked after
+        // emulator dismissal (the Task defer should already have cleared it,
+        // but edge cases like system-initiated dismissal can skip it).
+        activeLaunchTask?.cancel()
+        activeLaunchTask = nil
+        launchTimeoutTask?.cancel()
+        launchTimeoutTask = nil
 
         // Reset the app open action FIRST to prevent any reopening attempts
         AppState.shared.appOpenAction = .none
