@@ -405,7 +405,10 @@ public class SceneCoordinator: ObservableObject {
             }
 
             if let validator = validator {
-                // Timeout cloud validation after 30s to prevent indefinite hangs
+                // Cloud validation timeout. iCloud cold-connection + large ROM
+                // download can legitimately take ~60s — anything tighter fires
+                // false "game not available" errors while the download is still
+                // making progress.
                 let isValid = await withTaskGroup(of: Bool.self) { group in
                     group.addTask {
                         await validator.ensureGameReady(game) { [weak self] progressMessage in
@@ -416,7 +419,7 @@ public class SceneCoordinator: ObservableObject {
                         }
                     }
                     group.addTask {
-                        try? await Task.sleep(nanoseconds: 30_000_000_000)
+                        try? await Task.sleep(nanoseconds: 60_000_000_000)
                         return false
                     }
                     let result = await group.next() ?? false
@@ -962,7 +965,10 @@ public class SceneCoordinator: ObservableObject {
             }
 
             if let validator = validator {
-                // Timeout cloud validation after 30s to prevent indefinite hangs
+                // Cloud validation timeout. iCloud cold-connection + large ROM
+                // download can legitimately take ~60s — anything tighter fires
+                // false "game not available" errors while the download is still
+                // making progress.
                 let isValid = await withTaskGroup(of: Bool.self) { group in
                     group.addTask {
                         await validator.ensureGameReady(game) { [weak self] progressMessage in
@@ -973,7 +979,7 @@ public class SceneCoordinator: ObservableObject {
                         }
                     }
                     group.addTask {
-                        try? await Task.sleep(nanoseconds: 30_000_000_000)
+                        try? await Task.sleep(nanoseconds: 60_000_000_000)
                         return false
                     }
                     let result = await group.next() ?? false
