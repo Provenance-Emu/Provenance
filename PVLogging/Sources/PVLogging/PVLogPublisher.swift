@@ -71,21 +71,57 @@ public final class PVLogPublisher: @unchecked Sendable {
 
     // MARK: - Category Name Resolution
 
+    #if canImport(OSLog)
+    /// Extract the internal `OSLog` class instance backing an `os.Logger`.
+    ///
+    /// `os.Logger` stores its underlying `OSLog` in a property named `logObject`
+    /// which isn't publicly accessible in all SDK versions. Using `Mirror` keeps
+    /// this resilient across SDKs while still giving us a stable reference for
+    /// identity comparison.
+    private static func logObject(for category: PVLogCategory) -> AnyObject? {
+        for child in Mirror(reflecting: category).children where child.label == "logObject" {
+            return child.value as AnyObject
+        }
+        return nil
+    }
+
+    /// Lookup table mapping the internal `OSLog` identity of every known
+    /// Provenance category to its canonical category string.
+    private static let categoryNameByLogObject: [ObjectIdentifier: String] = {
+        let entries: [(PVLogCategory, String)] = [
+            (.viewCycle, "viewcycle"),
+            (.statistics, "statistics"),
+            (.networking, "network"),
+            (.video, "video"),
+            (.audio, "audio"),
+            (.database, "database"),
+            (.general, "general"),
+            (.emulator, "emulator"),
+            (.ui, "ui"),
+            (.controller, "controller"),
+            (.saveState, "savestate"),
+            (.library, "library"),
+        ]
+        var map: [ObjectIdentifier: String] = [:]
+        for (category, name) in entries {
+            if let obj = logObject(for: category) {
+                map[ObjectIdentifier(obj)] = name
+            }
+        }
+        return map
+    }()
+    #endif
+
     /// Derive a human-readable category name from a `PVLogCategory`.
     ///
     /// On Apple platforms `os.Logger` does not expose its category string
-    /// directly, so we inspect the description and match against all known
-    /// Provenance categories. For custom loggers outside this set the fallback
-    /// is `"general"`.
+    /// publicly, so we compare the identity of its internal `OSLog` against a
+    /// precomputed table of the known Provenance categories. For custom
+    /// loggers outside this set the fallback is `"general"`.
     public static func categoryName(from category: PVLogCategory) -> String {
         #if canImport(OSLog)
-        let desc = String(describing: category)
-        // Map known categories (order: most specific first to avoid false matches)
-        let knownCategories = [
-            "viewcycle", "statistics", "network", "video", "audio",
-            "database", "emulator", "controller", "savestate", "library", "ui", "general"
-        ]
-        for name in knownCategories where desc.contains(name) {
+        if let obj = logObject(for: category),
+           let name = categoryNameByLogObject[ObjectIdentifier(obj)] {
             return name
         }
         return "general"

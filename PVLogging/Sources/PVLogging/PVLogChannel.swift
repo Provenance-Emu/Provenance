@@ -46,6 +46,7 @@ public struct PVLogEvent: Sendable {
         case notFound = "NOTFOUND"
         case exists = "EXISTS"
         case cancelled = "CANCEL"
+        case warning = "WARNING"
     }
 
     public init(
