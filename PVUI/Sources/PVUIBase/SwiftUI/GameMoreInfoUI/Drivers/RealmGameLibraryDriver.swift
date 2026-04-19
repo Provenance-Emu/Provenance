@@ -194,7 +194,13 @@ private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkOb
             } else {
                 // Set placeholder while loading
                 await MainActor.run {
-                    self.frontArtwork = UIImage.image(withText: game.title, ratio: boxArtAspectRatio)
+                    self.frontArtwork = UIImage.image(
+                        withText: game.title,
+                        ratio: boxArtAspectRatio,
+                        consoleAspect: game.boxartAspectRatio,
+                        systemIdentifierFallback: game.systemIdentifier,
+                        regionNameFallback: game.regionName
+                    )
                 }
             }
         }
@@ -210,7 +216,13 @@ private final class RealmGameWrapper: GameMoreInfoViewModelDataSource, ArtworkOb
                 await MainActor.run { self.backArtwork = image }
             } else {
                 await MainActor.run {
-                    self.frontArtwork = UIImage.image(withText: game.title, ratio: boxArtAspectRatio)
+                    self.backArtwork = UIImage.image(
+                        withText: game.title,
+                        ratio: boxArtAspectRatio,
+                        consoleAspect: game.boxartAspectRatio,
+                        systemIdentifierFallback: game.systemIdentifier,
+                        regionNameFallback: game.regionName
+                    )
                 }
                 // Suddenly this is crashing, probalby not needed right now @JoeMatt
                 // If not in cache, try to download

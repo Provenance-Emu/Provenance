@@ -13,7 +13,12 @@ public
 extension UIImage {
     class func image(withSize size: CGSize, color: UIColor, text: NSAttributedString) -> UIImage? {
         let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        UIGraphicsBeginImageContextWithOptions(rect.size, false, UIScreen.main.scale)
+        // `UIGraphicsBeginImageContextWithOptions` asserts when width/height are non-positive or non-finite.
+        guard rect.width > 0, rect.height > 0, rect.width.isFinite, rect.height.isFinite else {
+            return nil
+        }
+        let scale = UIScreen.main.scale > 0 ? UIScreen.main.scale : 1.0
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, scale)
 
         guard let context: CGContext = UIGraphicsGetCurrentContext() else {
             return nil

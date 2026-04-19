@@ -12,14 +12,14 @@ import RealmSwift
 import PVSystems
 
 public extension PVGame {
-    
+
     var activeArtworkURL: String? {
         customArtworkURL.isEmpty ? (originalArtworkURL.isEmpty ? nil : originalArtworkURL) : customArtworkURL
     }
-    
-    var boxartAspectRatio: PVGameBoxArtAspectRatio {
-        guard let system = system else { return .square }
-        switch system.enumValue {
+
+    /// Retail box aspect for a platform and optional region (same rules as ``PVGame/boxartAspectRatio``).
+    public static func boxArtAspect(systemEnum: SystemIdentifier, regionName: String?) -> PVGameBoxArtAspectRatio {
+        switch systemEnum {
 
         // Region-dependent systems
         case .PCE:
@@ -145,5 +145,16 @@ public extension PVGame {
         default:
             return .square
         }
+    }
+
+    var boxartAspectRatio: PVGameBoxArtAspectRatio {
+        guard let system = system else { return .square }
+        return Self.boxArtAspect(systemEnum: system.enumValue, regionName: regionName)
+    }
+
+    /// Resolved aspect for placeholder artwork when only persisted ``PVGame/systemIdentifier`` / region are reliable (e.g. invalid cached CGFloat ratio).
+    public static func boxArtAspectPlaceholder(systemIdentifier: String, regionName: String?) -> PVGameBoxArtAspectRatio {
+        guard let id = SystemIdentifier(rawValue: systemIdentifier) else { return .square }
+        return boxArtAspect(systemEnum: id, regionName: regionName)
     }
 }

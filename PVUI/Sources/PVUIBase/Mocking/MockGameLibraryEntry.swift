@@ -9,6 +9,7 @@ import Combine
 import Foundation
 import UIKit
 import PVRealm
+import PVSystems
 
 public protocol GameMoreInfoViewModelDataSource: ObservableObject {
     var name: String? { get set }
@@ -56,17 +57,29 @@ internal class MockGameLibraryEntry: Identifiable, ObservableObject, GameMoreInf
     var customArtworkURL: String = ""
     private var originalArtworkURL: URL? = URL(string: "https://example.com/mario.jpg")
     var boxFrontArtwork: UIImage? {
-        UIImage.image(withText: title, ratio: boxArtAspectRatio)
+        UIImage.image(
+            withText: title,
+            ratio: boxArtAspectRatio,
+            consoleAspect: .snesUSA,
+            systemIdentifierFallback: systemIdentifier,
+            regionNameFallback: regionName
+        )
     }
     var boxBackArtwork: UIImage? {
-        UIImage.image(withText: title, ratio: boxArtAspectRatio)
+        UIImage.image(
+            withText: title,
+            ratio: boxArtAspectRatio,
+            consoleAspect: .snesUSA,
+            systemIdentifierFallback: systemIdentifier,
+            regionNameFallback: regionName
+        )
     }
     var requiresSync: Bool = false
     var isFavorite: Bool = true
     var romSerial: String? = "SNS-MW-USA"
     var romHeader: String? = "SUPER MARIO WORLD"
     var importDate: Date = Date()
-    var systemIdentifier: String = "SNES"
+    var systemIdentifier: String = SystemIdentifier.SNES.rawValue
     var md5Hash: String = "cdd3c8c37322978ca8669b34bc89c804"
     var crc: String = "B19ED489"
     var userPreferredCoreID: String?
