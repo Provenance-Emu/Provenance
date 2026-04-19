@@ -171,10 +171,16 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                 ILOG("[SaveSelection] Starting direct CloudSyncManager download after \(String(format: "%.3f", CFAbsoluteTimeGetCurrent() - actionStart))s (recordID=\(recordID))")
                 let downloadStart = CFAbsoluteTimeGetCurrent()
 
+                // Freeze on the Realm-owning thread BEFORE handing off to the
+                // task group. Calling `.freeze()` from inside `addTask` crashes
+                // with `verifyThread` because that closure runs on a different
+                // executor than the Realm `saveState` is bound to.
+                let frozenSaveState = saveState.freeze()
+
                 // Download with timeout
                 try await withThrowingTaskGroup(of: Void.self) { group in
                     group.addTask {
-                        try await CloudSyncManager.shared.downloadSaveState(for: saveState.freeze())
+                        try await CloudSyncManager.shared.downloadSaveState(for: frozenSaveState)
                     }
                     group.addTask {
                         try await Task.sleep(nanoseconds: Self.downloadTimeoutSeconds * 1_000_000_000)
