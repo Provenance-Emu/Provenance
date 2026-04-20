@@ -28,12 +28,14 @@ public struct CoreActionOption {
 
 public struct CoreAction {
     public let title: String
+    public let description: String?
     public let requiresReset: Bool
     public let options: [CoreActionOption]?
     public let style: UIAlertAction.Style
 
-    public init(title: String, requiresReset: Bool = false, options: [CoreActionOption]? = nil, style: UIAlertAction.Style = .destructive) {
+    public init(title: String, description: String? = nil, requiresReset: Bool = false, options: [CoreActionOption]? = nil, style: UIAlertAction.Style = .destructive) {
         self.title = title
+        self.description = description
         self.requiresReset = requiresReset
         self.options = options
         self.style = style

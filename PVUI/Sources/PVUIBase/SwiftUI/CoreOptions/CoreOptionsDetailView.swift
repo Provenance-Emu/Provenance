@@ -175,6 +175,54 @@ private struct CoreOptionStepper: View {
         .tvOSDisableFocusEffect()
     }
 }
+
+/// Segmented-picker replacement tile for tvOS. Mirrors the retrowave focus styling so
+/// scope selection doesn't show the default tvOS focus halo / white blow-out.
+private struct ScopePickerButton: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(
+                    isSelected
+                        ? LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
+                        : LinearGradient(colors: [.white.opacity(0.85), .white.opacity(0.65)], startPoint: .leading, endPoint: .trailing)
+                )
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(
+                            isSelected
+                                ? LinearGradient(colors: [Color.retroPink.opacity(0.18), Color.retroBlue.opacity(0.12)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                : LinearGradient(colors: [Color.white.opacity(0.04), Color.white.opacity(0.01)], startPoint: .top, endPoint: .bottom)
+                        )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .strokeBorder(
+                            isFocused
+                                ? LinearGradient(colors: [Color.retroPink.opacity(0.8), Color.retroBlue.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                : (isSelected
+                                    ? LinearGradient(colors: [Color.retroPink.opacity(0.5), Color.retroBlue.opacity(0.3)], startPoint: .leading, endPoint: .trailing)
+                                    : LinearGradient(colors: [Color.white.opacity(0.08), Color.white.opacity(0.03)], startPoint: .top, endPoint: .bottom)),
+                            lineWidth: isFocused ? 2 : 1
+                        )
+                )
+                .shadow(color: isFocused ? Color.retroPink.opacity(0.3) : .clear, radius: 10, x: 0, y: 3)
+                .scaleEffect(isFocused ? 1.03 : 1.0)
+                .animation(.easeInOut(duration: 0.15), value: isFocused)
+        }
+        .focused($isFocused)
+        .buttonStyle(TVMediaPlainButtonStyle())
+        .tvOSDisableFocusEffect()
+    }
+}
 #endif
 
 // MARK: - CoreOptionsDetailView
@@ -370,11 +418,11 @@ public struct CoreOptionsDetailView: View {
                                 )
                         )
                     }
-                    .retroSettingsRowFocus(cornerRadius: 8)
                     #if os(tvOS)
-                    .tvOSDisableFocusEffect()
                     .buttonStyle(TVMediaPlainButtonStyle())
+                    .tvOSDisableFocusEffect()
                     #endif
+                    .retroSettingsRowFocus(cornerRadius: 8)
                     .padding(.horizontal)
                 }
 
@@ -416,11 +464,11 @@ public struct CoreOptionsDetailView: View {
                         )
                         .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.3), radius: 5)
                     }
-                    .retroSettingsRowFocus(cornerRadius: 8)
                     #if os(tvOS)
-                    .tvOSDisableFocusEffect()
                     .buttonStyle(TVMediaPlainButtonStyle())
+                    .tvOSDisableFocusEffect()
                     #endif
+                    .retroSettingsRowFocus(cornerRadius: 8)
                     .padding(.vertical, 20)
                     .padding(.horizontal)
                 }
@@ -479,6 +527,23 @@ public struct CoreOptionsDetailView: View {
     // MARK: - Scope Picker
 
     private var scopePickerView: some View {
+        #if os(tvOS)
+        HStack(spacing: 12) {
+            ScopePickerButton(title: "This Game", isSelected: perGameScope) {
+                guard !perGameScope else { return }
+                perGameScope = true
+            }
+            ScopePickerButton(title: "All Games", isSelected: !perGameScope) {
+                guard perGameScope else { return }
+                perGameScope = false
+            }
+        }
+        .padding(.horizontal, 16)
+        .onChange(of: perGameScope) { _ in
+            state.resetAllValues()
+            loadOptionValues()
+        }
+        #else
         Picker("Scope", selection: $perGameScope) {
             Text("This Game").tag(true)
             Text("All Games").tag(false)
@@ -489,6 +554,7 @@ public struct CoreOptionsDetailView: View {
             state.resetAllValues()
             loadOptionValues()
         }
+        #endif
     }
 
     // MARK: - Data Helpers

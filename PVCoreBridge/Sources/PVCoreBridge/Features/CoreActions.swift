@@ -47,12 +47,14 @@ extension CoreActionOption: Equatable {
 
 public struct CoreAction {
     public let title: String
+    public let description: String?
     public let requiresReset: Bool
     public let options: [CoreActionOption]?
     public let style: CoreActionAlertStyle
 
-    public init(title: String, requiresReset: Bool = false, options: [CoreActionOption]? = nil, style: CoreActionAlertStyle = CoreActionAlertDefaultStyle) {
+    public init(title: String, description: String? = nil, requiresReset: Bool = false, options: [CoreActionOption]? = nil, style: CoreActionAlertStyle = CoreActionAlertDefaultStyle) {
         self.title = title
+        self.description = description
         self.requiresReset = requiresReset
         self.options = options
         self.style = style

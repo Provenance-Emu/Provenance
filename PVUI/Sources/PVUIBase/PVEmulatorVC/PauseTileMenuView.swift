@@ -964,7 +964,6 @@ struct PauseTileMenuView: View {
     // MARK: - Section view
 
     private func sectionView(section: PauseMenuTileSection, cols: Int, spacing: CGFloat) -> some View {
-        let columns = Array(repeating: GridItem(.flexible(), spacing: spacing), count: cols)
         return VStack(alignment: .leading, spacing: 6) {
             if let title = section.title {
                 Text(title)
@@ -973,16 +972,50 @@ struct PauseTileMenuView: View {
                     .tracking(tvOSAdjusted(1.5, tvOS: 2.5))
                     .padding(.horizontal, 2)
             }
-            LazyVGrid(columns: columns, spacing: spacing) {
+            #if os(tvOS)
+            /// Eager row layout on tvOS: `LazyVGrid` defers rendering of rows below
+            /// the scroll viewport, which the focus engine reads as "no downward
+            /// candidate" and snaps focus back to the first tile. Rendering every
+            /// row up-front (pause menu has ~30 tiles, not a large list) gives the
+            /// focus engine stable vertical navigation across all sections.
+            eagerTileRows(tiles: section.tiles, cols: cols, spacing: spacing)
+            #else
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: cols), spacing: spacing) {
                 ForEach(section.tiles) { tile in
                     tileView(for: tile)
                 }
             }
-            #if os(tvOS)
-            .focusSection()
             #endif
         }
     }
+
+    #if os(tvOS)
+    /// Eagerly-rendered row-major grid built from a linear tile list. Used on tvOS
+    /// in place of `LazyVGrid` so the focus engine can see every row as a valid
+    /// navigation target even when it's currently scrolled off-screen.
+    private func eagerTileRows(tiles: [PauseMenuTile], cols: Int, spacing: CGFloat) -> some View {
+        let chunks = stride(from: 0, to: tiles.count, by: cols).map {
+            Array(tiles[$0..<min($0 + cols, tiles.count)])
+        }
+        return VStack(spacing: spacing) {
+            ForEach(Array(chunks.enumerated()), id: \.offset) { _, row in
+                HStack(spacing: spacing) {
+                    ForEach(row) { tile in
+                        tileView(for: tile)
+                            .frame(maxWidth: .infinity)
+                    }
+                    if row.count < cols {
+                        ForEach(0..<(cols - row.count), id: \.self) { _ in
+                            Color.clear
+                                .frame(maxWidth: .infinity)
+                                .aspectRatio(1, contentMode: .fit)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    #endif
 
     /// Thin stylized search bar for global tile lookup.
     private var searchBarView: some View {
@@ -1069,6 +1102,7 @@ struct PauseTileMenuView: View {
             )
         }
         .buttonStyle(.plain)
+        .tvOSDisableFocusEffect()
     }
 
     /// Thin neon-styled toggle row that is tap-friendly on iOS and tvOS.
@@ -1115,6 +1149,7 @@ struct PauseTileMenuView: View {
             )
         }
         .buttonStyle(.plain)
+        .tvOSDisableFocusEffect()
     }
 
     /// Search result list grouped by ranking order.
@@ -1166,6 +1201,7 @@ struct PauseTileMenuView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .tvOSDisableFocusEffect()
                 }
             }
         }
@@ -1222,14 +1258,23 @@ struct PauseTileMenuView: View {
                             }
 
                             if searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                // Grouped sections
-                                ForEach(sections) { section in
-                                    sectionView(section: section, cols: cols, spacing: spacing)
-                                    if section.id != sections.last?.id {
-                                        Divider()
-                                            .background(Color.white.opacity(0.12))
+                                // Grouped sections — one outer focus section for the whole
+                                // tile grid so tvOS treats it as a single focus region.
+                                // Per-section focusSections caused focus to snap to the top
+                                // when navigating between sections with off-screen tiles
+                                // (LazyVGrid defers rendering of rows below the fold).
+                                VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
+                                    ForEach(sections) { section in
+                                        sectionView(section: section, cols: cols, spacing: spacing)
+                                        if section.id != sections.last?.id {
+                                            Divider()
+                                                .background(Color.white.opacity(0.12))
+                                        }
                                     }
                                 }
+                                #if os(tvOS)
+                                .focusSection()
+                                #endif
                             } else {
                                 searchResultsView
                             }

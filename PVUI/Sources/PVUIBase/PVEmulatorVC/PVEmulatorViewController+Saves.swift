@@ -169,6 +169,14 @@ public extension PVEmulatorViewController {
                 "Reset Game will attempt to restore a playable state (best effort, " +
                 "may not fully recover all cores)."
 
+            /// On tvOS the emulator VC is a GCEventViewController running with
+            /// `controllerUserInteractionEnabled = false` so the game receives pad
+            /// input. A UIAlertController presented in that state is only navigable
+            /// by the Siri Remote (touch-based focus), not by external MFi pads.
+            /// Flip UIKit controller interaction on for the duration of the alert
+            /// and restore whatever state we had immediately after the user chooses.
+            enableControllerInput(true)
+
             let resetGame = await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
                 var resumed = false
 

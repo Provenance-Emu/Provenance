@@ -57,6 +57,7 @@ final class PauseTileMenuViewModel: ObservableObject {
     ///   - featureFlags: Feature flag environment value.
     ///   - indicatorRegistry: Shared indicator state registry.
     ///   - hasControllerProfiles: Whether any controller profiles exist.
+    // swiftlint:disable:next function_body_length
     func rebuild(
         emulatorVC: PVEmulatorViewController,
         metalFilterMode: MetalFilterModeOption,
@@ -85,20 +86,53 @@ final class PauseTileMenuViewModel: ObservableObject {
         // Resume + quit tiles are placed at the top (positions 0-2) to match
         // RetroMenuView's ordering where quit is near the top of the main section.
         var gameTiles: [PauseMenuTile] = [
-            PauseMenuTile(id: "resume", icon: "play.fill", label: String(localized: "Resume"), colorKey: .green)
+            PauseMenuTile(
+                id: "resume",
+                icon: "play.fill",
+                label: String(localized: "Resume"),
+                description: String(localized: "Close the menu and return to the game."),
+                colorKey: .green
+            )
         ]
         if shouldSave {
-            gameTiles.append(PauseMenuTile(id: "saveQuit", icon: "square.and.arrow.down.on.square", label: String(localized: "Save & Quit"), colorKey: .cyan))
+            gameTiles.append(PauseMenuTile(
+                id: "saveQuit",
+                icon: "square.and.arrow.down.on.square",
+                label: String(localized: "Save & Quit"),
+                description: String(localized: "Create a save state, then exit to the library."),
+                colorKey: .cyan
+            ))
         }
-        gameTiles.append(PauseMenuTile(id: "quit", icon: "xmark.circle", label: shouldSave ? String(localized: "Quit (No Save)") : String(localized: "Quit"), colorKey: .pink))
+        gameTiles.append(PauseMenuTile(
+            id: "quit",
+            icon: "xmark.circle",
+            label: shouldSave ? String(localized: "Quit (No Save)") : String(localized: "Quit"),
+            description: String(localized: "Exit to the library without saving."),
+            colorKey: .pink
+        ))
 
         let stateTiles: [PauseMenuTile] = [
-            PauseMenuTile(id: "saveState", icon: "square.and.arrow.down", label: String(localized: "Quick Save"), isEnabled: supportsSaveStates, colorKey: .cyan),
-            PauseMenuTile(id: "loadState", icon: "arrowshape.turn.up.left", label: String(localized: "Quick Load"), isEnabled: supportsSaveStates && hasSave, colorKey: .blue),
+            PauseMenuTile(
+                id: "saveState",
+                icon: "square.and.arrow.down",
+                label: String(localized: "Quick Save"),
+                description: String(localized: "Capture a save state of the current moment."),
+                isEnabled: supportsSaveStates,
+                colorKey: .cyan
+            ),
+            PauseMenuTile(
+                id: "loadState",
+                icon: "arrowshape.turn.up.left",
+                label: String(localized: "Quick Load"),
+                description: String(localized: "Load the most recent save state."),
+                isEnabled: supportsSaveStates && hasSave,
+                colorKey: .blue
+            ),
             PauseMenuTile(
                 id: "browseSaves",
                 icon: "list.bullet.rectangle.portrait",
                 label: String(localized: "Browse Saves"),
+                description: String(localized: "View, load, or delete every save state for this game."),
                 isEnabled: supportsSaveStates,
                 colorKey: .purple,
                 dismissOnTap: false
@@ -106,16 +140,41 @@ final class PauseTileMenuViewModel: ObservableObject {
             Self.timedAutoSaveTile(isEnabled: supportsSaveStates)
         ]
 
-        gameTiles.append(PauseMenuTile(id: "reset", icon: "arrow.counterclockwise", label: String(localized: "Reset"), colorKey: .orange))
+        gameTiles.append(PauseMenuTile(
+            id: "reset",
+            icon: "arrow.counterclockwise",
+            label: String(localized: "Reset"),
+            description: String(localized: "Soft-reset the emulated system."),
+            colorKey: .orange
+        ))
         if supportsCheatCodes {
-            gameTiles.append(PauseMenuTile(id: "cheats", icon: "wand.and.stars", label: String(localized: "Cheats"), colorKey: .purple))
+            gameTiles.append(PauseMenuTile(
+                id: "cheats",
+                icon: "wand.and.stars",
+                label: String(localized: "Cheats"),
+                description: String(localized: "Enable, disable, or add cheat codes."),
+                colorKey: .purple
+            ))
         }
         gameTiles.append(Self.fastForwardToggleTile(core: emulatorVC.core))
         gameTiles.append(Self.gameSpeedTile(core: emulatorVC.core))
 
         #if os(iOS) || targetEnvironment(macCatalyst)
-        gameTiles.append(PauseMenuTile(id: "screenshot", icon: "camera", label: String(localized: "Screenshot"), colorKey: .yellow))
-        gameTiles.append(PauseMenuTile(id: "screenshots", icon: "photo.on.rectangle", label: String(localized: "Screenshots"), colorKey: .yellow, dismissOnTap: false))
+        gameTiles.append(PauseMenuTile(
+            id: "screenshot",
+            icon: "camera",
+            label: String(localized: "Screenshot"),
+            description: String(localized: "Capture the current frame to Photos."),
+            colorKey: .yellow
+        ))
+        gameTiles.append(PauseMenuTile(
+            id: "screenshots",
+            icon: "photo.on.rectangle",
+            label: String(localized: "Screenshots"),
+            description: String(localized: "Browse screenshots captured from this game."),
+            colorKey: .yellow,
+            dismissOnTap: false
+        ))
         #endif
 
         // Broadcast — feature-flagged, iOS + tvOS
@@ -128,6 +187,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 icon: isBcast ? "stop.circle" : "dot.radiowaves.left.and.right",
                 label: String(localized: isBcast ? "Stop Live" : "Go Live"),
                 badge: isBcast ? "LIVE" : nil,
+                description: String(localized: "Broadcast gameplay live via ReplayKit."),
                 colorKey: isBcast ? .pink : .cyan,
                 dismissOnTap: false
             ))
@@ -138,6 +198,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 id: "saveClip",
                 icon: "scissors.badge.ellipsis",
                 label: String(localized: "Save Clip"),
+                description: String(localized: "Export the last few seconds of gameplay."),
                 colorKey: .purple,
                 dismissOnTap: true
             ))
@@ -152,6 +213,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 icon: isRec ? "stop.circle" : "record.circle",
                 label: String(localized: isRec ? "Stop Rec" : "Record"),
                 badge: isRec ? "REC" : nil,
+                description: String(localized: "Record gameplay video to Photos."),
                 colorKey: isRec ? .pink : .orange,
                 dismissOnTap: true
             ), at: 0)
@@ -169,6 +231,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                     icon: pos.symbolName,
                     label: String(localized: "Cam Corner"),
                     badge: pos.displayName,
+                    description: String(localized: "Pick which corner the facecam overlay appears in."),
                     colorKey: .blue,
                     dismissOnTap: false,
                     longPressOptions: lpOptions
@@ -180,7 +243,13 @@ final class PauseTileMenuViewModel: ObservableObject {
         // Root **SETTINGS** section (after STATES): core, app, logs, RetroArch, AirPlay, shader, etc.
         var settingsTiles: [PauseMenuTile] = []
 
-        gameTiles.append(PauseMenuTile(id: "gameInfo", icon: "info.circle", label: String(localized: "Game Info"), colorKey: .blue))
+        gameTiles.append(PauseMenuTile(
+            id: "gameInfo",
+            icon: "info.circle",
+            label: String(localized: "Game Info"),
+            description: String(localized: "View title, artwork, and metadata for this game."),
+            colorKey: .blue
+        ))
 
         let coreTypeName = String(describing: type(of: emulatorVC.core))
         let usingThinWrapper = coreTypeName.contains("ThinLibretro")
@@ -193,6 +262,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 id: "retroArchMenu",
                 icon: "square.grid.2x2",
                 label: String(localized: "RetroArch Menu"),
+                description: String(localized: "Open RetroArch's built-in quick menu."),
                 colorKey: .purple,
                 dismissOnTap: false
             ))
@@ -201,13 +271,22 @@ final class PauseTileMenuViewModel: ObservableObject {
                     id: "retroArchSettings",
                     icon: "gearshape.2",
                     label: String(localized: "RetroArch Settings"),
+                    description: String(localized: "Configure RetroArch core and system settings."),
                     colorKey: .cyan,
                     dismissOnTap: false
                 ))
             }
         }
 
-        settingsTiles.append(PauseMenuTile(id: "menu_core", icon: "cpu", label: String(localized: "Core"), colorKey: .purple, dismissOnTap: false, destinationRoute: .core))
+        settingsTiles.append(PauseMenuTile(
+            id: "menu_core",
+            icon: "cpu",
+            label: String(localized: "Core"),
+            description: String(localized: "Core options, actions, and hardware controls."),
+            colorKey: .purple,
+            dismissOnTap: false,
+            destinationRoute: .core
+        ))
         settingsTiles.append(PauseMenuTile(
             id: "appSettings",
             icon: "gearshape",
@@ -241,7 +320,15 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         // Input/controller-related tiles shown under **Controls** (not on the root GAME grid).
         var controlsTiles: [PauseMenuTile] = []
-        controlsTiles.append(PauseMenuTile(id: "controllerProfile", icon: "gamecontroller", label: String(localized: "Controller"), isEnabled: hasControllerProfiles, colorKey: .purple, dismissOnTap: false))
+        controlsTiles.append(PauseMenuTile(
+            id: "controllerProfile",
+            icon: "gamecontroller",
+            label: String(localized: "Controller"),
+            description: String(localized: "Apply or edit a controller profile for this game."),
+            isEnabled: hasControllerProfiles,
+            colorKey: .purple,
+            dismissOnTap: false
+        ))
 
         if (featureFlags.netplayEnabled || featureFlags.netplayEnabled) && Self.coreSupportsNetplay(emulatorVC) {
             gameTiles.append(PauseMenuTile(
@@ -260,6 +347,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 id: "companionController",
                 icon: "iphone.and.arrow.forward",
                 label: String(localized: "Companion"),
+                description: String(localized: "Use another device as a second controller."),
                 colorKey: .orange,
                 dismissOnTap: false
             ))
@@ -273,6 +361,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 id: "n64PakSlots",
                 icon: "gamecontroller.fill",
                 label: String(localized: "Pak Slots"),
+                description: String(localized: "Configure Controller Pak, Rumble Pak, and Transfer Pak slots."),
                 colorKey: .blue,
                 dismissOnTap: false
             ))
@@ -309,6 +398,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 id: "shaderSettings",
                 icon: "slider.horizontal.3",
                 label: String(localized: "Shader Settings"),
+                description: String(localized: "Tune parameters for the active Metal shader."),
                 colorKey: .teal,
                 dismissOnTap: false
             ))
@@ -370,6 +460,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                     icon: "arrow.triangle.2.circlepath",
                     label: String(localized: "Transfer Pak"),
                     badge: badge,
+                    description: String(localized: "Configure a Game Boy ROM for each N64 Transfer Pak slot."),
                     colorKey: .pink,
                     dismissOnTap: false
                 ))
@@ -384,6 +475,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 icon: "paintpalette.fill",
                 label: String(localized: "Palette"),
                 badge: currentName,
+                description: String(localized: "Choose a color palette for this system."),
                 colorKey: .purple,
                 dismissOnTap: false
             ))
@@ -396,6 +488,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 id: "portDevices",
                 icon: "gamecontroller",
                 label: String(localized: "Port Devices"),
+                description: String(localized: "Pick the device type plugged into each controller port."),
                 colorKey: .blue,
                 dismissOnTap: false
             ))
@@ -412,6 +505,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 id: "midiDevice",
                 icon: "pianokeys",
                 label: String(localized: "MIDI Device"),
+                description: String(localized: "Route emulator audio through a CoreMIDI instrument."),
                 colorKey: .purple,
                 dismissOnTap: false
             ))
@@ -424,6 +518,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                 icon: Defaults[.retroArchMIDIEnabled] ? "pianokeys" : "pianokeys.inverse",
                 label: String(localized: "RetroArch MIDI"),
                 badge: Defaults[.retroArchMIDIEnabled] ? "ON" : "OFF",
+                description: String(localized: "Enable MIDI input for RetroArch cores."),
                 colorKey: Defaults[.retroArchMIDIEnabled] ? .green : .gray,
                 dismissOnTap: false
             ))
@@ -480,6 +575,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                     icon: "switch.2",
                     label: descriptor.title,
                     badge: activePosition.label,
+                    description: String(localized: "Toggle this physical hardware switch."),
                     colorKey: isOn ? .green : .gray,
                     dismissOnTap: false
                 ))
@@ -491,6 +587,7 @@ final class PauseTileMenuViewModel: ObservableObject {
                     icon: "dot.radiowaves.left.and.right",
                     label: descriptor.title,
                     badge: descriptor.label,
+                    description: String(localized: "Send a momentary press to this hardware button."),
                     colorKey: .orange,
                     dismissOnTap: false
                 ))
@@ -506,7 +603,15 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
 
         let menuTiles: [PauseMenuTile] = [
-            PauseMenuTile(id: "menu_recording", icon: "record.circle", label: String(localized: "Recording"), colorKey: .pink, dismissOnTap: false, destinationRoute: .recording)
+            PauseMenuTile(
+                id: "menu_recording",
+                icon: "record.circle",
+                label: String(localized: "Recording"),
+                description: String(localized: "Recording, broadcasting, and clip tools."),
+                colorKey: .pink,
+                dismissOnTap: false,
+                destinationRoute: .recording
+            )
         ]
         built.insert(PauseMenuTileSection(id: "menu", title: String(localized: "MENU"), tiles: menuTiles), at: 2)
 
@@ -597,14 +702,60 @@ final class PauseTileMenuViewModel: ObservableObject {
                         PauseMenuTileLongPressOption(id: "skinScope_\($0.rawValue)", title: $0.rawValue, isSelected: $0 == skinScope)
                     }
                 ),
-                PauseMenuTile(id: "skins_pick_portrait", icon: "rectangle.portrait", label: String(localized: "Choose Portrait Skin"), badge: systemLabel, colorKey: .orange, dismissOnTap: false),
-                PauseMenuTile(id: "skins_pick_landscape", icon: "rectangle.landscape", label: String(localized: "Choose Landscape Skin"), badge: systemLabel, colorKey: .purple, dismissOnTap: false),
-                PauseMenuTile(id: "skins_button_effect", icon: "wand.and.sparkles", label: String(localized: "Button Effect"), badge: Defaults[.buttonPressEffect].description, colorKey: .purple, dismissOnTap: false),
-                PauseMenuTile(id: "skins_button_sound", icon: "speaker.wave.2", label: String(localized: "Button Sound"), badge: Defaults[.buttonSound].description, colorKey: .blue, dismissOnTap: false),
-                PauseMenuTile(id: "skins_browse_catalog", icon: "arrow.down.circle.fill", label: String(localized: "Browse Catalog"), colorKey: .orange, dismissOnTap: false)
+                PauseMenuTile(
+                    id: "skins_pick_portrait",
+                    icon: "rectangle.portrait",
+                    label: String(localized: "Choose Portrait Skin"),
+                    badge: systemLabel,
+                    description: String(localized: "Pick the skin used in portrait orientation."),
+                    colorKey: .orange,
+                    dismissOnTap: false
+                ),
+                PauseMenuTile(
+                    id: "skins_pick_landscape",
+                    icon: "rectangle.landscape",
+                    label: String(localized: "Choose Landscape Skin"),
+                    badge: systemLabel,
+                    description: String(localized: "Pick the skin used in landscape orientation."),
+                    colorKey: .purple,
+                    dismissOnTap: false
+                ),
+                PauseMenuTile(
+                    id: "skins_button_effect",
+                    icon: "wand.and.sparkles",
+                    label: String(localized: "Button Effect"),
+                    badge: Defaults[.buttonPressEffect].description,
+                    description: String(localized: "Visual effect played when on-screen buttons are pressed."),
+                    colorKey: .purple,
+                    dismissOnTap: false
+                ),
+                PauseMenuTile(
+                    id: "skins_button_sound",
+                    icon: "speaker.wave.2",
+                    label: String(localized: "Button Sound"),
+                    badge: Defaults[.buttonSound].description,
+                    description: String(localized: "Audible feedback played when on-screen buttons are pressed."),
+                    colorKey: .blue,
+                    dismissOnTap: false
+                ),
+                PauseMenuTile(
+                    id: "skins_browse_catalog",
+                    icon: "arrow.down.circle.fill",
+                    label: String(localized: "Browse Catalog"),
+                    description: String(localized: "Browse and download community-made skins."),
+                    colorKey: .orange,
+                    dismissOnTap: false
+                )
             ]
             #if !os(tvOS)
-            tiles.insert(PauseMenuTile(id: "skins_import_file", icon: "square.and.arrow.down", label: String(localized: "Import Skin File"), colorKey: .cyan, dismissOnTap: false), at: 3)
+            tiles.insert(PauseMenuTile(
+                id: "skins_import_file",
+                icon: "square.and.arrow.down",
+                label: String(localized: "Import Skin File"),
+                description: String(localized: "Import a .deltaskin or .provskin file from the Files app."),
+                colorKey: .cyan,
+                dismissOnTap: false
+            ), at: 3)
             #endif
             return [PauseMenuTileSection(id: "skins_root", title: String(localized: "SKINS"), tiles: tiles)]
         }
@@ -699,6 +850,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             icon: "camera.filters",
             label: String(localized: "Screen Filter"),
             badge: badge,
+            description: String(localized: "Tap to cycle screen filters. Long-press to pick one."),
             colorKey: .teal,
             dismissOnTap: false,
             longPressOptions: lpOptions
@@ -713,6 +865,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             icon: hapticFeedbackEnabled ? "waveform.path" : "waveform.path.badge.minus",
             label: String(localized: "Rumble"),
             badge: hapticFeedbackEnabled ? "ON" : "OFF",
+            description: String(localized: "Toggle rumble / haptic feedback for this core."),
             colorKey: hapticFeedbackEnabled ? .green : .gray,
             dismissOnTap: false
         )
@@ -727,6 +880,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             icon: isVisible ? "keyboard.fill" : "keyboard",
             label: String(localized: "Keyboard"),
             badge: isVisible ? "ON" : "OFF",
+            description: String(localized: "Show or hide the on-screen virtual keyboard."),
             colorKey: isVisible ? .green : .gray,
             dismissOnTap: false
         )
@@ -740,6 +894,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             icon: "cursorarrow",
             label: String(localized: "Mouse"),
             badge: isVisible ? "ON" : "OFF",
+            description: String(localized: "Show or hide the on-screen virtual mouse."),
             colorKey: isVisible ? .green : .gray,
             dismissOnTap: false
         )
@@ -755,6 +910,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             icon: isActive ? "bolt.fill" : "bolt.slash",
             label: "JIT",
             badge: isActive ? "ON" : "OFF",
+            description: String(localized: "JIT compilation status for this core."),
             isEnabled: false,
             colorKey: isActive ? .green : .orange,
             dismissOnTap: false
@@ -855,6 +1011,7 @@ private extension PauseTileMenuViewModel {
             icon: isFastForwarding ? "forward.fill" : "forward",
             label: String(localized: "Fast Forward"),
             badge: isFastForwarding ? "ON" : "OFF",
+            description: String(localized: "Speed up emulation to quickly skip ahead."),
             colorKey: isFastForwarding ? .green : .gray,
             dismissOnTap: false
         )
@@ -876,6 +1033,7 @@ private extension PauseTileMenuViewModel {
             icon: "speedometer",
             label: String(localized: "Game Speed"),
             badge: badge,
+            description: String(localized: "Tap to cycle emulation speed. Long-press to pick an exact multiplier."),
             colorKey: isBoosted ? .yellow : .cyan,
             dismissOnTap: false,
             longPressOptions: lpOptions
@@ -888,6 +1046,7 @@ private extension PauseTileMenuViewModel {
             icon: "speedometer",
             label: String(localized: "FPS Counter"),
             badge: showFPSCount ? "ON" : "OFF",
+            description: String(localized: "Show the current frames-per-second on screen."),
             colorKey: showFPSCount ? .green : .gray,
             dismissOnTap: false
         )
@@ -1008,6 +1167,7 @@ private extension PauseTileMenuViewModel {
             icon: isEnabled ? "backward.fill" : "backward",
             label: String(localized: "Rewind"),
             badge: isEnabled ? "ON" : "OFF",
+            description: String(localized: "Enable rewind to step back through recent gameplay."),
             colorKey: isEnabled ? .green : .gray,
             dismissOnTap: false
         ))

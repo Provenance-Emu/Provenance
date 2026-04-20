@@ -45,16 +45,29 @@ public struct CoreActionTileProvider {
             let currentOpt = action.options?.first(where: { $0.selected })
             let badge: String? = action.requiresReset ? "⚠︎" : currentOpt?.title
 
+            let description = action.description ?? defaultDescription(for: action)
             return PauseMenuTile(
                 id: tileID(for: action),
                 icon: "bolt.fill",
                 label: action.title,
                 badge: badge,
+                description: description,
                 colorKey: .orange,
                 dismissOnTap: false,
                 longPressOptions: lpOptions
             )
         }
+    }
+
+    /// Provides a sensible default tile description when the core author did not supply one.
+    private static func defaultDescription(for action: CoreAction) -> String? {
+        if action.requiresReset {
+            return String(localized: "Applies this action and resets emulation.")
+        }
+        if action.options != nil {
+            return String(localized: "Tap to pick an option, long-press for all choices.")
+        }
+        return nil
     }
 
     /// The stable tile ID for the given `CoreAction`.
@@ -337,4 +350,3 @@ public struct CoreOptionTileProvider {
         }
     }
 }
-

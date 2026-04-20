@@ -301,6 +301,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     private var bootHUD: RetroProgressHUD?
     private var bootHUDIsVisible = false
 
+    #if os(tvOS)
+    /// True after the first `isRunning` transition has fired the pause-menu hint toast,
+    /// so pause/unpause cycles don't re-trigger it.
+    private var pauseHintToastShown = false
+    #endif
+
     public required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
         self.game = game
@@ -360,6 +366,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                         self?.reestablishPauseHandlers()
                     }
+                    #if os(tvOS)
+                    /// Remote/controller pause buttons are discoverable on iOS via on-screen
+                    /// controls, but on tvOS users have no visual hint. Surface one once per
+                    /// session, tailored to whatever pad is connected.
+                    if !self.pauseHintToastShown {
+                        self.pauseHintToastShown = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in
+                            self?.showPauseMenuHintToast()
+                        }
+                    }
+                    #endif
                 } else {
                     self.playTimeTracker?.didPause()
                 }
@@ -974,6 +991,37 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             })
         }
     }
+
+    #if os(tvOS)
+    /// Show a one-time toast explaining how to open the pause menu, tailored to the
+    /// controller that's most likely to trigger it. tvOS has no on-screen pause button,
+    /// and the mapping varies by pad (Share/Options on DualSense, View on Xbox, Menu on
+    /// Siri Remote, L3+R3 on older MFi). Surfacing the exact gesture avoids the common
+    /// "how do I pause this?" support question.
+    private func showPauseMenuHintToast() {
+        let controllers = PVControllerManager.shared.controllers
+        let message: String
+        let icon: String
+
+        if controllers.contains(where: { $0.extendedGamepad?.buttonOptions != nil }) {
+            message = "Press Share / Create / View to open the pause menu"
+            icon = "square.and.arrow.up"
+        } else if controllers.contains(where: {
+            $0.extendedGamepad?.leftThumbstickButton != nil && $0.extendedGamepad?.rightThumbstickButton != nil
+        }) {
+            message = "Click both thumbsticks (L3 + R3) to open the pause menu"
+            icon = "l.joystick.fill"
+        } else if controllers.contains(where: { $0.microGamepad != nil && $0.extendedGamepad == nil }) {
+            message = "Press Menu on the Siri Remote to open the pause menu"
+            icon = "av.remote.fill"
+        } else {
+            message = "Press Menu / Options on your controller to open the pause menu"
+            icon = "gamecontroller.fill"
+        }
+
+        PVToastManager.post(message, type: .info, duration: 5.0, icon: icon)
+    }
+    #endif
 
     override public func viewDidAppear(_: Bool) {
         super.viewDidAppear(true)
