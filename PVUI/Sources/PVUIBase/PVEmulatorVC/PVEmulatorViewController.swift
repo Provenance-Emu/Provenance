@@ -1003,6 +1003,19 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         #if os(iOS) || os(tvOS)
         startClipBufferingIfAvailable()
         #endif
+
+        #if os(tvOS)
+        /// Defensive rebind: if a pre-launch modal (e.g. the SwiftUI version-mismatch
+        /// alert shown by SceneCoordinator) left any GCController pause handler in a
+        /// stale state, the initial `setupPauseHandler` call during viewDidLoad may
+        /// have landed before focus was restored to the emulator scene. Rebinding
+        /// here — and again a few frames later — makes the pause button reliable
+        /// when booting from a save state that prompted the user first.
+        reestablishPauseHandlers()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.reestablishPauseHandlers()
+        }
+        #endif
     }
 
     override public func viewWillDisappear(_ animated: Bool) {

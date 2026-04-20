@@ -871,6 +871,15 @@ public struct RetroAlertStateView: View {
                         #if os(tvOS) || os(iOS)
                         .focused($focusedButton, equals: .primary)
                         #endif
+                        #if os(tvOS)
+                        /// Forces tvOS's focus engine to pick this button as the default
+                        /// focus target within the alert's focus scope on appear. Without
+                        /// this hint, focus can remain on whatever view was focused
+                        /// behind the alert (e.g. a TVMediaMainView tile), leaving the
+                        /// alert un-navigable by an MFi controller even though the
+                        /// buttons are visible.
+                        .prefersDefaultFocus(true, in: alertFocusNamespace)
+                        #endif
 
                         // Secondary button if provided
                         if let secondaryTitle = alertState.secondaryButtonTitle {
@@ -902,6 +911,13 @@ public struct RetroAlertStateView: View {
                             #endif
                         }
                     }
+                    #if os(tvOS)
+                    /// Group the buttons as a single focus section so tvOS's focus
+                    /// engine treats up/down navigation between them as in-scope,
+                    /// and so the whole group is picked up as the default focus
+                    /// region when the alert appears over existing content.
+                    .focusSection()
+                    #endif
                 }
             }
             #if os(tvOS)
