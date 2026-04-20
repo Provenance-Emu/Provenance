@@ -77,13 +77,19 @@ public final class FileLocationResolver: @unchecked Sendable {
         #endif
     }
 
-    /// iCloud Drive container URL, if available.
+    /// Base URL for resolving partialPaths under iCloud Drive.
+    ///
+    /// Returns `<ubiquityContainer>/Documents/` — the root of the ubiquity
+    /// Documents folder, NOT the raw container. Files synced via iCloud Drive
+    /// live at `<ubiquityContainer>/Documents/<partialPath>`, so callers should
+    /// treat this as a drop-in peer of `localBaseURL`.
+    ///
     /// Returns `nil` when iCloud is not configured or on tvOS.
-    public var iCloudContainerURL: URL? {
+    public var iCloudBaseURL: URL? {
         #if os(tvOS)
         return nil
         #else
-        return URL.iCloudContainerDirectory
+        return URL.iCloudDocumentsDirectory
         #endif
     }
 
@@ -117,7 +123,7 @@ public final class FileLocationResolver: @unchecked Sendable {
 
         // 2. Check iCloud Drive container (iOS/macOS only, Drive mode only)
         #if !os(tvOS)
-        if isICloudDriveMode, let container = iCloudContainerURL {
+        if isICloudDriveMode, let container = iCloudBaseURL {
             let driveURL = container.appendingPathComponent(partialPath)
             if fm.fileExists(atPath: driveURL.path) {
                 return .cloudDrive(driveURL)
@@ -154,6 +160,145 @@ public final class FileLocationResolver: @unchecked Sendable {
         resolve(partialPath) != .notFound
     }
 
+    // MARK: - Filename Fallback
+
+    /// Locate a file by its basename within a subdirectory, ignoring the
+    /// stored partial path.
+    ///
+    /// Use when ``resolve(_:)`` returns ``FileResolution/notFound`` but you
+    /// suspect the file is present under a different relative path (e.g. the
+    /// importer wrote it with a different case, separator, or trailing
+    /// whitespace than what was persisted in `PVFile.partialPath`).
+    ///
+    /// The match is case-insensitive and scoped to immediate files under
+    /// `subdirectory`; it does not recurse deeply to avoid false positives
+    /// across unrelated systems.
+    ///
+    /// - Parameters:
+    ///   - subdirectory: Relative path under ``localBaseURL`` to scan
+    ///     (e.g. `"com.provenance.jaguar"`).
+    ///   - filename: The filename to look for (e.g. `"Game.j64"`).
+    /// - Returns: ``FileResolution/local(_:)`` or ``FileResolution/cloudDrive(_:)``
+    ///   on a match, otherwise ``FileResolution/notFound``.
+    public func resolveByFilename(under subdirectory: String, filename: String) -> FileResolution {
+        guard !filename.isEmpty else { return .notFound }
+        let lowered = filename.lowercased()
+
+        // ROMs live under "ROMs/<systemID>/" while save states / BIOS use the
+        // raw subdirectory. Try both layouts so this resolver works for any
+        // file type.
+        let romsScopedSubdir = "ROMs/" + subdirectory
+        let candidateLocalDirs = [
+            localBaseURL.appendingPathComponent(romsScopedSubdir),
+            localBaseURL.appendingPathComponent(subdirectory)
+        ]
+        for dir in candidateLocalDirs {
+            if let match = firstMatch(in: dir, filename: lowered) {
+                return .local(match)
+            }
+        }
+
+        #if !os(tvOS)
+        if isICloudDriveMode, let container = iCloudBaseURL {
+            let candidateCloudDirs = [
+                container.appendingPathComponent(romsScopedSubdir),
+                container.appendingPathComponent(subdirectory)
+            ]
+            for dir in candidateCloudDirs {
+                if let match = firstMatch(in: dir, filename: lowered) {
+                    return .cloudDrive(match)
+                }
+            }
+        }
+        #endif
+
+        return .notFound
+    }
+
+    /// Combined resolution: try `partialPath` first, then fall back to
+    /// filename-under-system-directory matching.
+    ///
+    /// Use this whenever a stored `partialPath` may have drifted from the
+    /// actual on-disk layout (e.g. CloudKit-created `PVGame` whose file was
+    /// later imported locally under a slightly different relative path).
+    ///
+    /// - Parameters:
+    ///   - partialPath: The stored `PVFile.partialPath`, if any.
+    ///   - systemIdentifier: The game's `systemIdentifier` used as the
+    ///     subdirectory to scope filename fallback.
+    ///   - candidateFilenames: Filenames to try for the fallback, in priority
+    ///     order (typically `[file.fileName, romPath.lastPathComponent]`).
+    /// - Returns: A ``FileResolution`` — `.local(_)` / `.cloudDrive(_)` if
+    ///   found, otherwise `.notFound`.
+    public func resolve(partialPath: String?,
+                        systemIdentifier: String?,
+                        candidateFilenames: [String]) -> FileResolution {
+        if let partialPath, !partialPath.isEmpty {
+            let primary = resolve(partialPath)
+            if primary != .notFound {
+                return primary
+            }
+        }
+        guard let systemID = systemIdentifier, !systemID.isEmpty else {
+            return .notFound
+        }
+        for name in candidateFilenames where !name.isEmpty {
+            let match = resolveByFilename(under: systemID, filename: name)
+            if match != .notFound {
+                return match
+            }
+        }
+        return .notFound
+    }
+
+    /// Compute a relative path (under `localBaseURL` or iCloud container)
+    /// for a resolved URL. Returns `nil` when the URL sits outside known
+    /// base locations. Tolerates the `/var` ↔ `/private/var` symlink that
+    /// iOS uses for the sandbox.
+    public func relativePath(for url: URL) -> String? {
+        if let stripped = stripPrefix(url: url, base: localBaseURL) {
+            return stripped
+        }
+        #if !os(tvOS)
+        if let container = iCloudBaseURL,
+           let stripped = stripPrefix(url: url, base: container) {
+            return stripped
+        }
+        #endif
+        return nil
+    }
+
+    /// Drop `base` from the front of `url`, accepting either the raw or
+    /// symlink-resolved form of the base prefix.
+    private func stripPrefix(url: URL, base: URL) -> String? {
+        let urlPath = url.path
+        let rawBase = base.path
+        let resolvedBase = base.resolvingSymlinksInPath().path
+        for candidate in [rawBase, resolvedBase] {
+            let prefix = candidate.hasSuffix("/") ? candidate : candidate + "/"
+            if urlPath.hasPrefix(prefix) {
+                return String(urlPath.dropFirst(prefix.count))
+            }
+        }
+        return nil
+    }
+
+    private func firstMatch(in directory: URL, filename lowered: String) -> URL? {
+        let fm = FileManager.default
+        var isDir: ObjCBool = false
+        guard fm.fileExists(atPath: directory.path, isDirectory: &isDir), isDir.boolValue else {
+            return nil
+        }
+        guard let entries = try? fm.contentsOfDirectory(at: directory,
+                                                        includingPropertiesForKeys: [.isRegularFileKey],
+                                                        options: [.skipsHiddenFiles]) else {
+            return nil
+        }
+        return entries.first { url in
+            url.lastPathComponent.lowercased() == lowered
+        }
+    }
+
     // MARK: - Batch Operations
 
     /// Scan a directory tree once and return a set of relative paths that
@@ -168,34 +313,57 @@ public final class FileLocationResolver: @unchecked Sendable {
     ///   scan the entire local directory tree.
     /// - Returns: A set of relative paths (relative to `localBaseURL`).
     public func buildLocalFileIndex(under subdirectory: String? = nil) -> Set<String> {
-        let scanURL: URL
+        return enumerateRelativePaths(base: localBaseURL, subdirectory: subdirectory)
+    }
+
+    /// Scan every base where ROM/save files may live (local Documents/Caches
+    /// plus the iCloud Drive Documents folder when in iCloud Drive mode) and
+    /// return the union of relative paths.
+    ///
+    /// Use this for availability checks where "downloaded" means "the file is
+    /// reachable through any supported storage" (local OR ubiquity).
+    ///
+    /// - Parameter subdirectory: Optional subdirectory to scope the scan.
+    /// - Returns: Union of relative paths across all bases.
+    public func buildAvailabilityIndex(under subdirectory: String? = nil) -> Set<String> {
+        var index = enumerateRelativePaths(base: localBaseURL, subdirectory: subdirectory)
+        #if !os(tvOS)
+        if isICloudDriveMode, let cloudBase = iCloudBaseURL {
+            index.formUnion(enumerateRelativePaths(base: cloudBase, subdirectory: subdirectory))
+        }
+        #endif
+        return index
+    }
+
+    private func enumerateRelativePaths(base: URL, subdirectory: String?) -> Set<String> {
+        // `enumerator(atPath:)` yields path strings already relative to the
+        // root we passed in — no `/var` ↔ `/private/var` symlink games, no
+        // absolute-path surgery. The enumerator's `fileAttributes` already
+        // contains the file type, so we don't need a separate `stat()` per
+        // entry.
+        let scanPath: String
         if let sub = subdirectory {
-            scanURL = localBaseURL.appendingPathComponent(sub)
+            scanPath = base.appendingPathComponent(sub).path
         } else {
-            scanURL = localBaseURL
+            scanPath = base.path
         }
 
-        guard let enumerator = FileManager.default.enumerator(
-            at: scanURL,
-            includingPropertiesForKeys: [.isRegularFileKey],
-            options: [.skipsHiddenFiles, .skipsPackageDescendants]
-        ) else {
-            WLOG("FileLocationResolver: failed to enumerate \(scanURL.path)")
+        guard let enumerator = FileManager.default.enumerator(atPath: scanPath) else {
+            WLOG("FileLocationResolver: failed to enumerate \(scanPath)")
             return []
         }
 
-        let basePrefix = localBaseURL.path + "/"
-        var index = Set<String>()
+        // If the caller passed a subdirectory, prepend it so the returned
+        // paths are relative to `base`, not to `base/sub`.
+        let prefix: String = subdirectory.map { $0.hasSuffix("/") ? $0 : $0 + "/" } ?? ""
 
-        for case let fileURL as URL in enumerator {
-            guard let values = try? fileURL.resourceValues(forKeys: [.isRegularFileKey]),
-                  values.isRegularFile == true else { continue }
-            // Store path relative to localBaseURL
-            let fullPath = fileURL.path
-            if fullPath.hasPrefix(basePrefix) {
-                let relativePath = String(fullPath.dropFirst(basePrefix.count))
-                index.insert(relativePath)
-            }
+        var index = Set<String>()
+        while let relativePath = enumerator.nextObject() as? String {
+            if relativePath.hasPrefix(".") { continue } // hidden files
+            guard let attrs = enumerator.fileAttributes,
+                  let type = attrs[.type] as? FileAttributeType,
+                  type == .typeRegular else { continue }
+            index.insert(prefix + relativePath)
         }
 
         return index

@@ -779,23 +779,19 @@ public struct SkinCatalogDetailView: View {
             // Force a rescan so the just-installed skin is found
             await DeltaSkinManager.shared.reloadSkins()
 
-            let querySystems = systemsToQueryForInstalledSkin.isEmpty ? [system] : systemsToQueryForInstalledSkin
-            ILOG("activateSkin: querying systems \(querySystems.map(\.rawValue)) for entry '\(entry.name)' (id: \(entry.id))")
-            var matchedSkin: DeltaSkinProtocol?
-            for sys in querySystems {
-                let skins = try await DeltaSkinManager.shared.skins(for: sys)
-                DLOG("activateSkin: skins(for: \(sys.rawValue)) returned \(skins.count) results")
-                if let found = findMatchingInstalledSkin(for: entry, in: skins) {
-                    ILOG("activateSkin: matched skin '\(found.name)' (id: \(found.identifier)) under system \(sys.rawValue)")
-                    matchedSkin = found
-                    break
-                }
-            }
+            /// Match against the full installed-skin list rather than per-system results.
+            /// Per-system filtering relies on `gameType` / `skinLayoutGroup`, which fails
+            /// for skins whose `info.json.gameTypeIdentifier` is misconfigured (the
+            /// SEGA SG-1000 thumbstick bug).  The shared matcher uses identifier,
+            /// filename stem, and name fallbacks so it's immune to that misconfig.
+            let allSkins = try await DeltaSkinManager.shared.availableSkins(forceRescan: false)
+            ILOG("activateSkin: searching \(allSkins.count) installed skins for entry '\(entry.name)' (id: \(entry.id))")
+            let matchedSkin = findMatchingInstalledSkin(for: entry, in: allSkins)
 
             guard !Task.isCancelled else { return }
 
             guard let skin = matchedSkin else {
-                ELOG("activateSkin: skin '\(entry.name)' (id: \(entry.id)) not found after querying systems: \(querySystems.map(\.rawValue))")
+                ELOG("activateSkin: skin '\(entry.name)' (id: \(entry.id)) not found in \(allSkins.count) installed skins")
                 throw NSError(domain: "SkinCatalog", code: 1, userInfo: [NSLocalizedDescriptionKey: "Skin '\(entry.name)' not found after install. Try going back and re-entering."])
             }
 
@@ -880,6 +876,11 @@ public struct SkinCatalogDetailView: View {
 
             try await DeltaSkinManager.shared.importSkin(from: localURL)
 
+            /// Write a `<stem>.skinmeta` sidecar so the override registry can authoritatively
+            /// map this skin back to the catalog systems even if `info.json.gameTypeIdentifier`
+            /// is misconfigured (the bug we hit with the SEGA SG-1000 thumbstick skin).
+            await persistCatalogSidecarForInstalledSkin()
+
             await MainActor.run {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                     downloadState = .installed
@@ -896,6 +897,27 @@ public struct SkinCatalogDetailView: View {
             await MainActor.run {
                 downloadState = .failed(error.localizedDescription)
             }
+        }
+    }
+
+    /// Looks up the just-installed skin via the shared matcher and writes a
+    /// catalog sidecar next to it.  Logs and continues on failure so a sidecar
+    /// write error never blocks the install flow.
+    private func persistCatalogSidecarForInstalledSkin() async {
+        do {
+            let allSkins = try await DeltaSkinManager.shared.availableSkins(forceRescan: false)
+            guard let skin = matchingInstalledSkin(for: entry, in: allSkins) else {
+                WLOG("SkinCatalogDetailView: Skipping sidecar write — installed skin not found for '\(entry.name)' (id: \(entry.id))")
+                return
+            }
+            try await SkinSystemOverrideRegistry.shared.writeSidecar(
+                for: skin.fileURL,
+                entry: entry,
+                skinIdentifier: skin.identifier
+            )
+            ILOG("SkinCatalogDetailView: Wrote catalog sidecar for '\(skin.name)' at \(SkinSystemOverrideRegistry.sidecarURL(for: skin.fileURL).lastPathComponent)")
+        } catch {
+            WLOG("SkinCatalogDetailView: Failed to write catalog sidecar for '\(entry.name)': \(error)")
         }
     }
 

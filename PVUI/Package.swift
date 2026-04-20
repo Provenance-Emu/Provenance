@@ -124,6 +124,7 @@ let package = Package(
                 "PVHelp",
                 "PVArchiving",
                 "PVLibrary",
+                .product(name: "PVMediaCache", package: "PVLibrary"),
                 .product(name: "PVPrimitives", package: "PVPrimitives"),
                 "PVLogging",
                 .product(name: "PVAppIntents", package: "PVAppIntents", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),

@@ -531,12 +531,30 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                 return Disposables.create()
             }
 
+            // Don't try to upload a save state whose file is missing — CloudKit's
+            // `save(record)` throws `open error: 2` per-asset and the whole upload
+            // ends up in the retry queue, which then re-fires and saturates the
+            // work queue forever. Surface a non-recoverable error so the upload
+            // path skips it cleanly; cleanup of the orphan Realm row is handled
+            // elsewhere.
+            guard FileManager.default.fileExists(atPath: localURL.path) else {
+                WLOG("Skipping save state upload — file missing on disk: \(localURL.path)")
+                CloudSyncManager.syncLog.event(.skip, item: "save/\(saveState.file?.fileName ?? saveState.id)", status: .skipped, detail: "file missing on disk")
+                observer(.error(NSError(domain: "com.provenance-emu.provenance",
+                                         code: 404,
+                                         userInfo: [NSLocalizedDescriptionKey: "Save state file missing on disk"])))
+                return Disposables.create()
+            }
+
             Task {
                 do {
                     let syncLog = CloudSyncManager.syncLog
-                    // Check if paused for emulation
-                    if await CloudSyncManager.shared.isPausedForEmulation {
-                        CloudSyncManager.syncLog.event(.skip, item: "save/upload", status: .skipped, detail: "paused for emulation")
+                    // Yield for active gameplay AND for in-flight game launch — during
+                    // launch the user is waiting on a ROM download and we don't want
+                    // background save-state uploads competing for the CloudKit work
+                    // queue.
+                    if await MainActor.run(body: { CloudSyncManager.shared.shouldYieldSync }) {
+                        CloudSyncManager.syncLog.event(.skip, item: "save/upload", status: .skipped, detail: "yielding for critical work")
                         observer(.completed)
                         return
                     }
@@ -641,9 +659,14 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
     }
 
     /// Download a save state from CloudKit
-    /// - Parameter saveState: The save state to download
+    /// - Parameters:
+    ///   - saveState: The save state to download
+    ///   - isUserInitiated: When `true`, bypasses the active-emulation yield check.
+    ///     Pass `true` for explicit user requests (save selector, push-notification
+    ///     fetch, queued download). Bulk background sweeps (`downloadAllSaveStates`)
+    ///     keep the default `false` so they yield while a game is running.
     /// - Returns: Completable that completes when the download is done
-    public func downloadSaveState(for saveState: PVSaveState) -> Completable {
+    public func downloadSaveState(for saveState: PVSaveState, isUserInitiated: Bool = false) -> Completable {
         let saveState = saveState.freeze()
         return Completable.create { [weak self] observer in
             guard let self = self else {
@@ -653,6 +676,17 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
 
             Task {
                 do {
+                    // Yield to active emulation for background sweeps only. User-initiated
+                    // downloads (save selector, push handler, queued download) must always
+                    // proceed — silently completing without fetching would mask a missing
+                    // file as success and the caller's "file exists" check fails moments later.
+                    if !isUserInitiated,
+                       await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
+                        CloudSyncManager.syncLog.event(.skip, item: "save/download", status: .skipped, detail: "paused for emulation")
+                        observer(.completed)
+                        return
+                    }
+
                     guard let game = saveState.game else {
                         WLOG("saveState.game == nil, skipping.")
                         return

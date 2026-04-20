@@ -508,6 +508,7 @@
 		B39B10AD2DAF3D16004EEF79 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39B10AC2DAF3D16004EEF79 /* TVServices.framework */; };
 		B39B10BC2DAF3FF8004EEF79 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10BB2DAF3FF8004EEF79 /* Defaults */; };
 		B39B10BE2DAF4000004EEF79 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10BD2DAF4000004EEF79 /* PVLibrary */; };
+		B3CAFE012F11A0010050C0DE /* PVMediaCache in Frameworks */ = {isa = PBXBuildFile; productRef = B3CAFE002F11A0010050C0DE /* PVMediaCache */; };
 		B39B10C02DAF4005004EEF79 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10BF2DAF4005004EEF79 /* PVSupport */; };
 		B39B10C22DAF400D004EEF79 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10C12DAF400D004EEF79 /* PVLogging */; };
 		B39B10C42DAF4015004EEF79 /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10C32DAF4015004EEF79 /* PVAudio */; };
@@ -3406,6 +3407,7 @@
 			files = (
 				B39B10C02DAF4005004EEF79 /* PVSupport in Frameworks */,
 				B39B10BE2DAF4000004EEF79 /* PVLibrary in Frameworks */,
+				B3CAFE012F11A0010050C0DE /* PVMediaCache in Frameworks */,
 				B39B10BC2DAF3FF8004EEF79 /* Defaults in Frameworks */,
 				B39B10C42DAF4015004EEF79 /* PVAudio in Frameworks */,
 				B3B521E92F78DB07008244D1 /* PVArchiving in Frameworks */,
@@ -7529,6 +7531,7 @@
 			packageProductDependencies = (
 				B39B10BB2DAF3FF8004EEF79 /* Defaults */,
 				B39B10BD2DAF4000004EEF79 /* PVLibrary */,
+				B3CAFE002F11A0010050C0DE /* PVMediaCache */,
 				B39B10BF2DAF4005004EEF79 /* PVSupport */,
 				B39B10C12DAF400D004EEF79 /* PVLogging */,
 				B39B10C32DAF4015004EEF79 /* PVAudio */,
@@ -17062,6 +17065,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
 			productName = PVLibrary;
+		};
+		B3CAFE002F11A0010050C0DE /* PVMediaCache */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
+			productName = PVMediaCache;
 		};
 		B39B10BF2DAF4005004EEF79 /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;

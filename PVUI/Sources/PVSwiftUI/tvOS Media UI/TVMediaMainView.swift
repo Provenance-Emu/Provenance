@@ -634,6 +634,7 @@ struct TVMediaMainView: View {
             GameSyncStatusView(
                 gameTitle: syncStatusManager.gameTitle,
                 statusMessage: syncStatusManager.statusMessage,
+                downloadProgress: syncStatusManager.downloadProgress,
                 isComplete: syncStatusManager.isComplete,
                 hasError: syncStatusManager.hasError,
                 onCancel: syncStatusManager.onCancel

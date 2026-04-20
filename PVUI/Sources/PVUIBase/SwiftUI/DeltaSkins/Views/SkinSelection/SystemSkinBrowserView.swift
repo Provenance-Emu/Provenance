@@ -553,10 +553,17 @@ public struct SystemSkinBrowserView: View {
 
         // Tally skins by their skinLayoutGroup (handles families like sega-md, gb, pce, psx…)
         var groupCounts: [String: Int] = [:]
+        var skinIdsByGroup: [String: Set<String>] = [:]
         for skin in allSkins {
             let group = skin.gameType.skinLayoutGroup
             groupCounts[group, default: 0] += 1
+            skinIdsByGroup[group, default: []].insert(skin.identifier)
         }
+
+        /// Catalog-derived overrides keyed by skin identifier so we can credit a
+        /// misconfigured skin to its true system family (for example a SEGA SG-1000
+        /// skin whose `info.json` says GBA still appears under SG-1000).
+        let overrideCodes = await SkinSystemOverrideRegistry.shared.overrideCodesByIdentifier(for: allSkins)
 
         // Map each SystemIdentifier to its layout-group count so that family members
         // (e.g. Genesis / Sega CD / 32X) all show the combined skin count.
@@ -564,8 +571,20 @@ public struct SystemSkinBrowserView: View {
         for system in SystemIdentifier.allCases {
             guard let gameType = DeltaSkinGameType(systemIdentifier: system) else { continue }
             let group = gameType.skinLayoutGroup
-            if let count = groupCounts[group], count > 0 {
-                counts[system] = count
+            var matchingSkinIds = skinIdsByGroup[group] ?? []
+
+            /// Add any skins whose override codes intersect this system's catalog
+            /// codes (direct + layout-group siblings) but whose declared
+            /// `skinLayoutGroup` doesn't already include them.
+            let requestedCodes = Set(system.relatedSkinCatalogSystemCodes)
+            if !requestedCodes.isEmpty {
+                for (skinId, codes) in overrideCodes where !codes.isDisjoint(with: requestedCodes) {
+                    matchingSkinIds.insert(skinId)
+                }
+            }
+
+            if !matchingSkinIds.isEmpty {
+                counts[system] = matchingSkinIds.count
             }
         }
 

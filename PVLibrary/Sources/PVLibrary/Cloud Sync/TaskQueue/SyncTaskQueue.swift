@@ -118,6 +118,8 @@ public actor SyncTaskQueue {
         tasks[taskID] = task
         eventContinuation?.yield(.cancelled(taskID: taskID))
         DLOG("SyncTaskQueue[\(name)]: Cancelled task \(taskID)")
+        // Cancellation is terminal — release dependents so they can proceed.
+        dependencyCompleted(taskID: taskID)
         scheduleNext()
     }
 
@@ -292,6 +294,10 @@ public actor SyncTaskQueue {
             tasks[taskID] = task
             eventContinuation?.yield(.failed(taskID: taskID, error: error.localizedDescription))
             ELOG("SyncTaskQueue[\(name)]: Failed \(task.kind) after \(maxRetries) retries: \(error)")
+            // A terminal failure must unblock dependents — otherwise a single
+            // failed prerequisite (e.g. ROM metadata fetch) permanently strands
+            // every downstream task (skins, save states, artwork triage).
+            dependencyCompleted(taskID: taskID)
             scheduleNext()
         }
     }
@@ -303,6 +309,8 @@ public actor SyncTaskQueue {
         runningTaskIDs.remove(taskID)
         runningSwiftTasks.removeValue(forKey: taskID)
         eventContinuation?.yield(.cancelled(taskID: taskID))
+        // Cancellation is terminal — release dependents so they can proceed.
+        dependencyCompleted(taskID: taskID)
         scheduleNext()
     }
 }

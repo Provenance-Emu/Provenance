@@ -22,14 +22,15 @@
 - [ ] `RetroSaveSelectionAlertView.swift` sometimes when downloading a cloud save, it doesn't boot after download, tapping again boots though
 - [ ] RetroarArch and Menu buttons showing when using thing wrapper
 - [ ] tvOS test removing PVRetroArchCore from build
-- [ ] Thin wrappper
-      - [ ] N64 mupen video squashed
-      - [ ] N64 mupen rumble no worky
+- [ ] Thin wrappper (tvOS only needed for release)
+      - [X] N64 mupen video squashed
+      - [X] N64 mupen rumble no worky -- 
+            - [ ] Seems to work on iPhone haptics, need to test controller
       - [ ] PSX hardware renderer crashy
-- [ ] GameMoreInfo crashing
-- [ ] Sometimes when booting a game from ConsoleGamesView.swift and others, the game boot process starts and stops, and tapping any game again doesn't work (i think has to do with bios required, tries to download and fails even if available or not, but even bios not required games just don't react to taps anymore)
-- [ ] Skin selection, when downloading a skin from skin downloader, while playing a game from the pause menu, download a new skin, set the new skin as active, skin didn't change (tested on SG-1000, which is a git different since it mapped to a SMS skin since they're compatible, perhaps it's only for skins that are cross compatible). I can go into the skin selector after download and select it though (yes, i confirmed, with snes this flow works fine since skins directly mapped 1:1, but then again, 32x using a related skin also didnt' work)
-
+- [X] GameMoreInfo crashing
+- [X] Sometimes when booting a game from ConsoleGamesView.swift and others, the game boot process starts and stops, and tapping any game again doesn't work (i think has to do with bios required, tries to download and fails even if available or not, but even bios not required games just don't react to taps anymore)
+- [X] Skin selection, when downloading a skin from skin downloader, while playing a game from the pause menu, download a new skin, set the new skin as active, skin didn't change (tested on SG-1000, which is a git different since it mapped to a SMS skin since they're compatible, perhaps it's only for skins that are cross compatible). I can go into the skin selector after download and select it though (yes, i confirmed, with snes this flow works fine since skins directly mapped 1:1, but then again, 32x using a related skin also didnt' work)
+- [ ] tvOS Pause tile menu focus sucks, like when going to the skins button, it jumps to the top and other buttons too, the focus needs to be grealy simplified
 
 
 ## tvOS

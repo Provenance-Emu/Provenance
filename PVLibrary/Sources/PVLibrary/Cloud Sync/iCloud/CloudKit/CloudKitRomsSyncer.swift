@@ -106,23 +106,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     public init(container: CKContainer, retryStrategy: @escaping CloudKitRetryOperation<Any>, romsDatastore: RomDatabase = RomDatabase.sharedInstance) {
         self.container = container
         self.database = container.privateCloudDatabase
-        // Store the passed strategy directly
         self.retryOperation = retryStrategy
         self.romsDatastore = romsDatastore
         super.init()
-        setupOperationQueue()
-        // TODO: Add any other necessary setup
     }
 
-    private func setupOperationQueue() {
-        guard let queue = workQueue else { return }
-        queue.name = "org.provenance.cloudsync.romsQueue.legacy"
-        queue.qualityOfService = .utility
-        queue.maxConcurrentOperationCount = 2
-    }
-
-    // MARK: - SyncProvider Conformance Methods (Stubs)
-    // TODO: Implement these methods based on CloudKit logic
+    // MARK: - SyncProvider Conformance Methods
     public func loadAllFromCloud(iterationComplete: (() async -> Void)?) async -> Completable {
         // Prevent overlapping full-library queries which spam CloudKit and UI logs
         guard isLoadAllInFlight.withLock({ inFlight -> Bool in
@@ -636,6 +625,7 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     public func fetchRecordWithProgress(
         recordID: CKRecord.ID,
         expectedSize: Int64? = nil,
+        bypassQueue: Bool = false,
         progressHandler: ((Double, String?) -> Void)? = nil
     ) async throws -> CKRecord? {
         if await MainActor.run(body: { CloudSyncManager.shared.isPausedForEmulation }) {
@@ -643,7 +633,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             return nil
         }
 
-        return try await runOnQueue { [self] in
+        // User-initiated downloads bypass `workQueue` so they aren't stuck
+        // behind background artwork/metadata fetches holding the 2 slots.
+        // The underlying `CKFetchRecordsOperation` already talks to CloudKit
+        // directly (`db.add(op)`), so our queue only serializes the *scheduling*
+        // of the op — not the network.
+        let work: @Sendable () async throws -> CKRecord? = { [self] in
             let desiredKeys = [
                 CloudKitSchema.ROMFields.md5,
                 CloudKitSchema.ROMFields.title,
@@ -758,6 +753,11 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
             return nil
         }
+
+        if bypassQueue {
+            return try await work()
+        }
+        return try await runOnQueue(work)
     }
 
     /// Format bytes per second into human-readable speed string
@@ -1520,12 +1520,6 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         }
     }
 
-    public func fetchRemoteGameRecord(md5: String) async throws -> CKRecord? {
-        // Helper for fetching based on MD5
-        ELOG("fetchRemoteGameRecord not yet implemented")
-        throw CloudSyncError.notImplemented // Placeholder
-    }
-
     // MARK: - Asset Handling
 
     /// Download a game (protocol conformance - no progress tracking)
@@ -1547,11 +1541,14 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Get expected file size from local game entry if available
         let expectedSize: Int64? = RomDatabase.sharedInstance.game(withMD5: md5).flatMap { $0.fileSize > 0 ? Int64($0.fileSize) : nil }
 
-        // 1. Fetch the CloudKit Record with progress tracking
+        // 1. Fetch the CloudKit Record with progress tracking.
+        // `bypassQueue: true` so this user-initiated download doesn't sit
+        // behind background artwork/metadata fetches in the 2-slot work queue.
         let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: md5)
         guard let record = try await fetchRecordWithProgress(
             recordID: recordID,
             expectedSize: expectedSize,
+            bypassQueue: true,
             progressHandler: { progress, speedString in
                 // Scale to 0-80% for download phase
                 let percent = Int(progress * 100)
@@ -2400,13 +2397,27 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             // Update download status and size based on asset presence and local file existence
             if record.allKeys().contains(CloudKitSchema.ROMFields.fileData),
                let asset = record[CloudKitSchema.ROMFields.fileData] as? CKAsset {
-                // Check if the local file actually exists before marking as downloaded.
-                // Also try the game's existing file URL directly as a fallback — localURL()
-                // may fail on tvOS if the PVFile was created with a mismatched relativeRoot.
-                let expectedLocalURL = self.localURL(for: localGame)
-                let existingFileURL = localGame.file?.url
-                let hasLocalFile = (expectedLocalURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false)
-                    || (existingFileURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false)
+                // Resolve the on-disk file via FileLocationResolver, falling back to
+                // filename-under-system-dir matching so stale `partialPath` values
+                // (e.g. CloudKit record seeded before the local import wrote the
+                // file under a slightly different relative path) do not incorrectly
+                // report the game as missing.
+                let candidates = GameFileStatusService.candidateFilenames(for: localGame)
+                let resolution = FileLocationResolver.shared.resolve(
+                    partialPath: localGame.file?.partialPath,
+                    systemIdentifier: localGame.systemIdentifier,
+                    candidateFilenames: candidates
+                )
+                let hasLocalFile = resolution.url != nil
+                // If filename fallback located the file under a different partial
+                // path than what was stored, repair it in-place so subsequent
+                // lookups take the fast path.
+                if let foundURL = resolution.url,
+                   let repaired = FileLocationResolver.shared.relativePath(for: foundURL),
+                   localGame.file?.partialPath != repaired {
+                    localGame.file?.partialPath = repaired
+                }
+                let expectedLocalURL = resolution.url ?? self.localURL(for: localGame)
                 // Never downgrade isDownloaded from true→false during cloud sync.
                 // A locally-imported game should stay "downloaded" even if path resolution
                 // temporarily fails during sync reconciliation.
@@ -2436,17 +2447,35 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 }
             } else if record.allKeys().contains(CloudKitSchema.ROMFields.fileData) {
                 // CloudKit record has fileData key but no CKAsset — cloud asset was
-                // deleted or never uploaded.  Check if the file exists locally before
-                // marking not downloaded; a locally-imported game should stay "downloaded".
-                let noAssetLocalURL = self.localURL(for: localGame)
-                let noAssetExistingURL = localGame.file?.url
-                let hasLocalFileForNoAsset = (noAssetLocalURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false)
-                    || (noAssetExistingURL.map { FileManager.default.fileExists(atPath: $0.path) } ?? false)
+                // deleted or never uploaded. Use the filename-fallback resolver so
+                // a stale `partialPath` (common for CK-seeded records whose file
+                // was later imported locally) doesn't cause a spurious downgrade.
+                let candidates = GameFileStatusService.candidateFilenames(for: localGame)
+                let resolution = FileLocationResolver.shared.resolve(
+                    partialPath: localGame.file?.partialPath,
+                    systemIdentifier: localGame.systemIdentifier,
+                    candidateFilenames: candidates
+                )
+                let hasLocalFileForNoAsset = resolution.url != nil
+                if let foundURL = resolution.url,
+                   let repaired = FileLocationResolver.shared.relativePath(for: foundURL),
+                   localGame.file?.partialPath != repaired {
+                    localGame.file?.partialPath = repaired
+                }
                 if hasLocalFileForNoAsset {
                     // File exists locally — keep downloaded status, just note cloud asset is gone
                     localGame.isDownloaded = true
                     localGame.hasCloudAssets = false
                     CloudSyncManager.syncLog.event(.sync, item: "rom/\(localGame.md5Hash ?? "nil")", status: .ok, detail: "no CloudKit asset but local file exists, keeping downloaded")
+                } else if localGame.isDownloaded {
+                    // Refuse to downgrade a locally-imported game whose file we just
+                    // failed to locate — reconciliation via GameFileStatusService owns
+                    // the true→false transition and verifies on-disk absence first.
+                    localGame.hasCloudAssets = false
+                    CloudSyncManager.syncLog.event(.sync,
+                                                   item: "rom/\(localGame.md5Hash ?? "nil")",
+                                                   status: .warning,
+                                                   detail: "no CK asset; resolver miss — keeping isDownloaded=true")
                 } else {
                     localGame.isDownloaded = false
                     localGame.hasCloudAssets = false
@@ -2542,12 +2571,22 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Preserve local download status if a locally-imported game already exists.
         // `add(update: true)` is an upsert that overwrites ALL properties, so we must
         // check the existing record before blindly setting isDownloaded = false.
+        // Use combined resolver (partialPath + filename fallback) so a stale partial
+        // path doesn't cause a spurious false on re-import.
         let existingGame = RomDatabase.sharedInstance.game(withMD5: md5.uppercased())
-        if let existing = existingGame, existing.isDownloaded,
-           let fileURL = existing.file?.url,
-           FileManager.default.fileExists(atPath: fileURL.path) {
-            newGame.isDownloaded = true
-            DLOG("createPVGame: preserving isDownloaded=true for existing local game \(title) (MD5: \(md5))")
+        if let existing = existingGame {
+            let candidates = GameFileStatusService.candidateFilenames(for: existing)
+            let resolution = FileLocationResolver.shared.resolve(
+                partialPath: existing.file?.partialPath,
+                systemIdentifier: existing.systemIdentifier,
+                candidateFilenames: candidates
+            )
+            if resolution.url != nil {
+                newGame.isDownloaded = true
+                DLOG("createPVGame: preserving isDownloaded=true for existing local game \(title) (MD5: \(md5))")
+            } else {
+                newGame.isDownloaded = existing.isDownloaded
+            }
         } else {
             newGame.isDownloaded = false // Mark as not downloaded initially, download happens separately
         }
@@ -3604,11 +3643,25 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                             newGame.hasCloudAssets = snap.hasCloudAssets
                             // Preserve isDownloaded if an existing local game already
                             // has the file — realm.add(.modified) overwrites all properties.
-                            if let existingSnap = realm.object(ofType: PVGame.self, forPrimaryKey: snap.md5),
-                               existingSnap.isDownloaded,
-                               let fileURL = existingSnap.file?.url,
-                               FileManager.default.fileExists(atPath: fileURL.path) {
-                                newGame.isDownloaded = true
+                            // Use combined resolver (partialPath + filename fallback) so a
+                            // stale partialPath doesn't cause a spurious false.
+                            if let existingSnap = realm.object(ofType: PVGame.self, forPrimaryKey: snap.md5) {
+                                let candidates = GameFileStatusService.candidateFilenames(for: existingSnap)
+                                let resolution = FileLocationResolver.shared.resolve(
+                                    partialPath: existingSnap.file?.partialPath,
+                                    systemIdentifier: existingSnap.systemIdentifier,
+                                    candidateFilenames: candidates
+                                )
+                                if resolution.url != nil {
+                                    newGame.isDownloaded = true
+                                    if let foundURL = resolution.url,
+                                       let repaired = FileLocationResolver.shared.relativePath(for: foundURL),
+                                       existingSnap.file?.partialPath != repaired {
+                                        existingSnap.file?.partialPath = repaired
+                                    }
+                                } else {
+                                    newGame.isDownloaded = existingSnap.isDownloaded
+                                }
                             } else {
                                 newGame.isDownloaded = false
                             }

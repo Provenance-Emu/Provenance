@@ -125,6 +125,14 @@ public class CloudSyncManager {
         activePauseReasons.contains(.emulation)
     }
 
+    /// `true` when any high-priority work (emulation OR game launch) wants the
+    /// sync layer to yield. Upload/background-sync paths should check this
+    /// rather than `isPausedForEmulation` so that user-initiated download
+    /// progress isn't starved by background uploads during launch.
+    @MainActor public var shouldYieldSync: Bool {
+        activePauseReasons.contains(.emulation) || activePauseReasons.contains(.gameLaunch)
+    }
+
     /// Notification tokens
     private var notificationTokens: [NSObjectProtocol] = []
     private var integrityAuditTask: Task<Void, Never>?
@@ -152,24 +160,31 @@ public class CloudSyncManager {
         let q = OperationQueue()
         q.name = "org.provenance.cloudsync.romsQueue"
         q.qualityOfService = .utility
+        // 4 slots gives background artwork/metadata fetches enough headroom to coexist
+        // without starving user-initiated work. User downloads bypass this queue entirely
+        // (see `fetchRecordWithProgress`'s `bypassQueue` param).
+        q.maxConcurrentOperationCount = 4
         return q
     }()
     private let saveStatesQueue: OperationQueue = {
         let q = OperationQueue()
         q.name = "org.provenance.cloudsync.saveStatesQueue"
         q.qualityOfService = .utility
+        q.maxConcurrentOperationCount = 4
         return q
     }()
     private let biosQueue: OperationQueue = {
         let q = OperationQueue()
         q.name = "org.provenance.cloudsync.biosQueue"
         q.qualityOfService = .utility
+        q.maxConcurrentOperationCount = 4
         return q
     }()
     private let nonDbQueue: OperationQueue = {
         let q = OperationQueue()
         q.name = "org.provenance.cloudsync.nonDbQueue"
         q.qualityOfService = .utility
+        q.maxConcurrentOperationCount = 4
         return q
     }()
 
@@ -1026,7 +1041,7 @@ public class CloudSyncManager {
             // Ensure downloadSaveState exists, handle Completable return
             // Assuming Completable has an extension like .toAsync()
             Self.syncLog.event(.download, item: "save-state/\(saveState.game.title)", status: .inProgress)
-            try await saveStatesSyncer.downloadSaveState(for: saveState).toAsync()
+            try await saveStatesSyncer.downloadSaveState(for: saveState, isUserInitiated: true).toAsync()
             DLOG("Successfully downloaded save state for game: \(saveState.game.title)")
             updateSyncStatus(.idle)
         } catch {
@@ -2050,16 +2065,23 @@ public class CloudSyncManager {
         }
 
         do {
-            // Re-check file existence using FileLocationResolver for consistent
-            // multi-location checking (Documents/Caches + iCloud Drive).
-            if let partialPath = gameToUpdate.file?.partialPath, !partialPath.isEmpty {
-                if FileLocationResolver.shared.resolve(partialPath) != .notFound {
-                    Self.syncLog.event(.sync, item: "rom/\(gameToUpdate.title)", status: .ok, detail: "Skipped markForSync — file found via resolver")
-                    return
+            // Re-check file existence using FileLocationResolver with filename
+            // fallback so stale partialPath doesn't cause a spurious downgrade.
+            let candidates = GameFileStatusService.candidateFilenames(for: gameToUpdate)
+            let resolution = FileLocationResolver.shared.resolve(
+                partialPath: gameToUpdate.file?.partialPath,
+                systemIdentifier: gameToUpdate.systemIdentifier,
+                candidateFilenames: candidates
+            )
+            if let foundURL = resolution.url {
+                // Repair stale partialPath in-place so subsequent resolves hit directly.
+                if let repaired = FileLocationResolver.shared.relativePath(for: foundURL),
+                   gameToUpdate.file?.partialPath != repaired {
+                    try? realm.write {
+                        gameToUpdate.file?.partialPath = repaired
+                    }
                 }
-            } else if let fileURL = gameToUpdate.file?.url,
-                      FileManager.default.fileExists(atPath: fileURL.path) {
-                Self.syncLog.event(.sync, item: "rom/\(gameToUpdate.title)", status: .ok, detail: "Skipped markForSync — local file exists at \(fileURL.path)")
+                Self.syncLog.event(.sync, item: "rom/\(gameToUpdate.title)", status: .ok, detail: "Skipped markForSync — file found via resolver")
                 return
             }
             try realm.write {
@@ -2084,16 +2106,20 @@ public class CloudSyncManager {
                     try realm.write {
                         for md5 in md5s {
                             guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5) else { continue }
-                            // Re-check file existence using FileLocationResolver for
-                            // consistent multi-location checking (Documents/Caches + iCloud Drive).
-                            if let partialPath = game.file?.partialPath, !partialPath.isEmpty {
-                                if FileLocationResolver.shared.resolve(partialPath) != .notFound {
-                                    DLOG("markGamesForSync: skipping \(game.title) — file found via resolver")
-                                    continue
+                            // Use combined resolver (partialPath + filename fallback) so a
+                            // stale partialPath doesn't cause a spurious downgrade.
+                            let candidates = GameFileStatusService.candidateFilenames(for: game)
+                            let resolution = FileLocationResolver.shared.resolve(
+                                partialPath: game.file?.partialPath,
+                                systemIdentifier: game.systemIdentifier,
+                                candidateFilenames: candidates
+                            )
+                            if let foundURL = resolution.url {
+                                if let repaired = FileLocationResolver.shared.relativePath(for: foundURL),
+                                   game.file?.partialPath != repaired {
+                                    game.file?.partialPath = repaired
                                 }
-                            } else if let fileURL = game.file?.url,
-                                      FileManager.default.fileExists(atPath: fileURL.path) {
-                                DLOG("markGamesForSync: skipping \(game.title) — local file exists at \(fileURL.path)")
+                                DLOG("markGamesForSync: skipping \(game.title) — file found via resolver")
                                 continue
                             }
                             game.isDownloaded = false

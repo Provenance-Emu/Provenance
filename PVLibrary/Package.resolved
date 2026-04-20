@@ -1,5 +1,5 @@
 {
-  "originHash" : "af60a978f4ba62621b3a08fc9e60e4021a2056718225ab6a53681664e66df3f3",
+  "originHash" : "e875a0f7807f9714704f55f17a2d04e2ffb45e93cb7427e1fb0ca6d4f1218711",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -88,15 +88,6 @@
       "state" : {
         "revision" : "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
         "version" : "0.15.3"
-      }
-    },
-    {
-      "identity" : "swcompression",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/SWCompression.git",
-      "state" : {
-        "revision" : "6ab39d1a3d9db303947ea5408925c48b9367204f",
-        "version" : "1.0.0"
       }
     },
     {

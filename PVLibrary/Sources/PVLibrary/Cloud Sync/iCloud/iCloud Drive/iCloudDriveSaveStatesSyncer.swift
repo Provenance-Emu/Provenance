@@ -95,9 +95,13 @@ public class iCloudDriveSaveStatesSyncer: iCloudContainerSyncer, SaveStatesSynci
     }
     
     /// Download a save state from the cloud
-    /// - Parameter saveState: The save state to download
+    /// - Parameters:
+    ///   - saveState: The save state to download
+    ///   - isUserInitiated: Unused — iCloud Drive backend doesn't yield to
+    ///     emulation, so the flag has no effect here. Accepted for protocol
+    ///     conformance.
     /// - Returns: Completable that completes when the download is done
-    public func downloadSaveState(for saveState: PVSaveState) -> Completable {
+    public func downloadSaveState(for saveState: PVSaveState, isUserInitiated: Bool = false) -> Completable {
         return Completable.create { [weak self] observer in
             Task {
                 guard let self = self,

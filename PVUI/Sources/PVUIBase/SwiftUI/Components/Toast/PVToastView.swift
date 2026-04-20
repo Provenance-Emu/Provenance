@@ -85,6 +85,7 @@ struct PVToastItemView: View {
 
                 Spacer(minLength: 4)
 
+                #if !os(tvOS)
                 if !toast.isPersistent {
                     Button(action: onDismiss) {
                         Image(systemName: "xmark.circle.fill")
@@ -94,6 +95,7 @@ struct PVToastItemView: View {
                     .buttonStyle(PlainButtonStyle())
                     .accessibilityLabel("Dismiss notification")
                 }
+                #endif
             }
 
             if let progress = toast.progress {

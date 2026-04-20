@@ -9,10 +9,31 @@ import SwiftUI
 import PVLibrary
 import PVThemes
 
+/// Structured download progress data so the status view can render a glanceable
+/// progress ring instead of a long wrapping sentence.
+public struct DownloadProgress: Equatable {
+    /// Normalized progress in 0...1
+    public let progress: Double
+    /// Bytes downloaded so far
+    public let bytesDownloaded: Int64
+    /// Total bytes for the download (0 if unknown)
+    public let totalBytes: Int64
+
+    public init(progress: Double, bytesDownloaded: Int64, totalBytes: Int64) {
+        self.progress = max(0, min(1, progress))
+        self.bytesDownloaded = bytesDownloaded
+        self.totalBytes = totalBytes
+    }
+
+    /// Integer percentage (0...100) for display
+    public var percent: Int { Int((progress * 100).rounded()) }
+}
+
 /// View showing sync status during game launch validation with RetroWave styling
 public struct GameSyncStatusView: View {
     let gameTitle: String
     let statusMessage: String
+    let downloadProgress: DownloadProgress?
     let isComplete: Bool
     let hasError: Bool
     let onCancel: (() -> Void)?
@@ -30,12 +51,14 @@ public struct GameSyncStatusView: View {
     public init(
         gameTitle: String,
         statusMessage: String,
+        downloadProgress: DownloadProgress? = nil,
         isComplete: Bool = false,
         hasError: Bool = false,
         onCancel: (() -> Void)? = nil
     ) {
         self.gameTitle = gameTitle
         self.statusMessage = statusMessage
+        self.downloadProgress = downloadProgress
         self.isComplete = isComplete
         self.hasError = hasError
         self.onCancel = onCancel
@@ -67,13 +90,26 @@ public struct GameSyncStatusView: View {
                 statusIndicatorView
                     .padding(.vertical, 8)
 
-                // Status message
-                Text(statusMessage)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white.opacity(0.9))
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
-                    .lineSpacing(4)
+                if let progress = downloadProgress, !isComplete, !hasError {
+                    /// Single-line size detail under the ring; auto-scales on narrow widths.
+                    Text(sizeDetail(for: progress))
+                        .font(.system(size: 14, weight: .medium, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.85))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                        .padding(.horizontal, 32)
+                } else {
+                    /// Plain status message; clamp to 2 lines and scale down so we never
+                    /// break mid-sentence inside the dialog.
+                    Text(statusMessage)
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.white.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 32)
+                        .lineSpacing(4)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.7)
+                }
 
                 // Cancel button (only show if not complete and not error)
                 if !isComplete && !hasError, let cancel = onCancel {
@@ -175,6 +211,35 @@ public struct GameSyncStatusView: View {
             }
             .shadow(color: Color.green.opacity(0.6), radius: 15)
 
+        } else if let progress = downloadProgress {
+            /// Determinate progress ring with the percentage in the center.
+            ZStack {
+                Circle()
+                    .stroke(Color.retroBlue.opacity(0.3), lineWidth: 6)
+                    .frame(width: 96, height: 96)
+
+                Circle()
+                    .trim(from: 0, to: CGFloat(progress.progress))
+                    .stroke(
+                        LinearGradient(
+                            gradient: Gradient(colors: [.retroBlue, .retroPink, .retroPurple]),
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        style: StrokeStyle(lineWidth: 6, lineCap: .round)
+                    )
+                    .frame(width: 96, height: 96)
+                    .rotationEffect(.degrees(-90))
+                    .animation(.easeInOut(duration: 0.25), value: progress.progress)
+
+                Text("\(progress.percent)%")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .monospacedDigit()
+                    .shadow(color: Color.retroBlue.opacity(0.6), radius: 6)
+            }
+            .shadow(color: Color.retroPink.opacity(0.5), radius: 15)
+
         } else {
             // Loading state - RetroWave spinner
             ZStack {
@@ -210,6 +275,15 @@ public struct GameSyncStatusView: View {
             }
             .shadow(color: Color.retroBlue.opacity(0.5), radius: 15)
         }
+    }
+
+    /// Format the bytes/total as a single-line "21.9 MB / 22.1 MB" string.
+    /// When the total is unknown (0), only the downloaded amount is shown.
+    private func sizeDetail(for progress: DownloadProgress) -> String {
+        let downloaded = ByteCountFormatter.string(fromByteCount: progress.bytesDownloaded, countStyle: .file)
+        guard progress.totalBytes > 0 else { return downloaded }
+        let total = ByteCountFormatter.string(fromByteCount: progress.totalBytes, countStyle: .file)
+        return "\(downloaded) / \(total)"
     }
 
     // MARK: - Computed Properties
@@ -375,6 +449,7 @@ public class GameSyncStatusManager: ObservableObject {
     @Published public var isVisible: Bool = false
     @Published public var gameTitle: String = ""
     @Published public var statusMessage: String = ""
+    @Published public var downloadProgress: DownloadProgress?
     @Published public var isComplete: Bool = false
     @Published public var hasError: Bool = false
 
@@ -387,19 +462,30 @@ public class GameSyncStatusManager: ObservableObject {
     ) {
         self.gameTitle = gameTitle
         self.statusMessage = statusMessage
+        self.downloadProgress = nil
         self.isComplete = false
         self.hasError = false
         self.onCancel = onCancel
         self.isVisible = true
     }
 
+    /// Set a plain status message and clear any active download progress.
     public func update(statusMessage: String) {
         self.statusMessage = statusMessage
+        self.downloadProgress = nil
+    }
+
+    /// Push structured download progress; the view will render a progress ring
+    /// with the percentage centered and a single-line size detail underneath.
+    public func update(downloadProgress: DownloadProgress) {
+        self.downloadProgress = downloadProgress
+        self.statusMessage = "Downloading"
     }
 
     public func complete() {
         self.isComplete = true
         self.statusMessage = "Game ready"
+        self.downloadProgress = nil
         // Auto-hide after a brief delay
         Task {
             try? await Task.sleep(nanoseconds: 1_000_000_000) // 1 second
@@ -410,12 +496,14 @@ public class GameSyncStatusManager: ObservableObject {
     public func error(_ message: String) {
         self.hasError = true
         self.statusMessage = message
+        self.downloadProgress = nil
     }
 
     public func hide() {
         self.isVisible = false
         self.gameTitle = ""
         self.statusMessage = ""
+        self.downloadProgress = nil
         self.isComplete = false
         self.hasError = false
         self.onCancel = nil
@@ -435,6 +523,19 @@ struct GameSyncStatusView_Previews: PreviewProvider {
                 onCancel: {}
             )
             .previewDisplayName("Loading")
+
+            // Downloading state with structured progress
+            GameSyncStatusView(
+                gameTitle: "Marvel vs. Capcom",
+                statusMessage: "Downloading",
+                downloadProgress: DownloadProgress(
+                    progress: 0.99,
+                    bytesDownloaded: 22_950_000,
+                    totalBytes: 23_180_000
+                ),
+                onCancel: {}
+            )
+            .previewDisplayName("Downloading")
 
             // Complete state
             GameSyncStatusView(

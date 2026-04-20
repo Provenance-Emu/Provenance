@@ -428,10 +428,11 @@ extension GameContextMenu {
                     if let activeDownload = progressTracker.activeDownloads.first(where: { $0.matchesROM(md5: gameMD5) }) {
                         let progress = activeDownload.progress
                         if progress != lastProgress {
-                            let percentage = Int(progress * 100)
-                            let bytesStr = ByteCountFormatter.string(fromByteCount: activeDownload.bytesDownloaded, countStyle: .file)
-                            let totalStr = ByteCountFormatter.string(fromByteCount: activeDownload.fileSize, countStyle: .file)
-                            syncStatusManager.update(statusMessage: "Downloading... \(percentage)% (\(bytesStr) / \(totalStr))")
+                            syncStatusManager.update(downloadProgress: DownloadProgress(
+                                progress: progress,
+                                bytesDownloaded: activeDownload.bytesDownloaded,
+                                totalBytes: activeDownload.fileSize
+                            ))
                             lastProgress = progress
                         }
                     } else if progressTracker.queuedDownloads.contains(where: { $0.matchesROM(md5: gameMD5) }) {

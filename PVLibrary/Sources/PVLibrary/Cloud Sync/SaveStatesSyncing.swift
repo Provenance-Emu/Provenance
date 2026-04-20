@@ -26,7 +26,20 @@ public protocol SaveStatesSyncing: SyncProvider {
     func uploadSaveState(for saveState: PVSaveState) -> Completable
     
     /// Download a save state from the cloud
-    /// - Parameter saveState: The save state to download
+    /// - Parameters:
+    ///   - saveState: The save state to download
+    ///   - isUserInitiated: When `true`, callers signal that the request came from
+    ///     a direct user action (save selector, push handler, queued download) and
+    ///     must not be silently skipped. Backends that yield to active emulation
+    ///     (CloudKit) should bypass the yield when `true`.
     /// - Returns: Completable that completes when the download is done
-    func downloadSaveState(for saveState: PVSaveState) -> Completable
+    func downloadSaveState(for saveState: PVSaveState, isUserInitiated: Bool) -> Completable
+}
+
+public extension SaveStatesSyncing {
+    /// Default-parameter shim so existing call sites that don't care about
+    /// origin (bulk sweeps) keep compiling unchanged.
+    func downloadSaveState(for saveState: PVSaveState) -> Completable {
+        downloadSaveState(for: saveState, isUserInitiated: false)
+    }
 }

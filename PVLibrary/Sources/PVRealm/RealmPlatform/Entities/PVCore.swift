@@ -40,9 +40,21 @@ public final class PVCore: RealmSwift.Object, Identifiable {
     @Persisted public var copyright: String?
 
     public var hasCoreClass: Bool {
-        let _class: AnyClass? = NSClassFromString(principleClass)
-        DLOG("Class: \(String(describing: _class)) for \(principleClass)")
-        return _class != nil
+        if let _class: AnyClass = NSClassFromString(principleClass) {
+            DLOG("Class: \(String(describing: _class)) for \(principleClass)")
+            return true
+        }
+        #if os(tvOS)
+        // tvOS ships without PVRetroArchCore; RetroArch-family principle classes
+        // resolve to PVThinLibretroCore at instantiation time. Treat them as
+        // available here so the core picker still surfaces them.
+        if principleClass.contains("RetroArch") || principleClass.contains("LibRetro") || principleClass == "PVRetroArchCoreBridge" {
+            DLOG("Class: \(principleClass) missing on tvOS — available via PVThinLibretroCore")
+            return true
+        }
+        #endif
+        DLOG("Class: nil for \(principleClass)")
+        return false
     }
 
     // Reverse links

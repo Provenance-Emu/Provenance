@@ -201,13 +201,23 @@ public actor SyncTaskQueueCoordinator {
 
     // MARK: - Cross-Queue Dependency Resolution
 
-    /// Called when a task completes to notify dependent tasks in other queues.
-    public func taskCompleted(taskID: UUID) async {
+    /// Called when a task reaches a terminal state (completed, failed, or
+    /// cancelled) to notify dependent tasks in other queues.
+    ///
+    /// Failure and cancellation are treated the same as completion for
+    /// dependency resolution — a terminal prerequisite must never strand
+    /// downstream work, regardless of outcome.
+    public func taskFinalized(taskID: UUID) async {
         guard let dependentCategories = crossQueueDependencies.removeValue(forKey: taskID) else { return }
 
         for category in dependentCategories {
             await queues[category]?.dependencyCompleted(taskID: taskID)
         }
+    }
+
+    /// Back-compat alias — prefer ``taskFinalized(taskID:)``.
+    public func taskCompleted(taskID: UUID) async {
+        await taskFinalized(taskID: taskID)
     }
 
     // MARK: - Monitoring
@@ -221,9 +231,12 @@ public actor SyncTaskQueueCoordinator {
                 for await event in events {
                     guard let self else { break }
                     switch event {
-                    case .completed(let taskID):
-                        await self.taskCompleted(taskID: taskID)
-                    default:
+                    case .completed(let taskID),
+                         .cancelled(let taskID):
+                        await self.taskFinalized(taskID: taskID)
+                    case .failed(let taskID, _):
+                        await self.taskFinalized(taskID: taskID)
+                    case .enqueued, .started, .reprioritized, .paused, .resumed:
                         break
                     }
                 }

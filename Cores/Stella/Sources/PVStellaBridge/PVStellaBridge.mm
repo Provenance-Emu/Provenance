@@ -187,6 +187,11 @@ static void pvstella_event_handler(const rc_client_event_t *event, rc_client_t *
 #endif
     std::atomic<bool> _achievementsActive;
 
+    // Tracks whether libretro is fully initialised AND a game is loaded.
+    // Guards retro_run() so the emulation thread cannot race against
+    // stopEmulation()'s teardown or against a fresh loadFileAtPath:.
+    std::atomic<bool> _loaded;
+
     // Trackball / Mouse state (Companion Controller input).
     // Accumulated relative deltas consumed each frame by input_state_callback.
     // Both the write side (main thread, companion input) and the read side
@@ -478,6 +483,7 @@ static void writeSaveFile(const char* path, int type) {
         _pendingMouseDY = 0.0f;
         _mouseButtonLeft = NO;
         _achievementsActive.store(false);
+        _loaded.store(false);
     }
 
 	return self;
@@ -486,11 +492,20 @@ static void writeSaveFile(const char* path, int type) {
 #pragma mark - Exectuion
 
 - (void)resetEmulation {
-//    [super resetEmulation];
-    retro_reset();
+    // Serialize against the emulation loop: retro_reset walks Stella's system
+    // state and cannot run concurrently with retro_run on the emulation thread.
+    @synchronized(self) {
+        if (!_loaded.load()) { return; }
+        retro_reset();
+    }
 }
 
 - (void)stopEmulation {
+    // Mark unloaded BEFORE anything else so the emulation thread's next
+    // executeFrame skips retro_run() instead of touching state we are about
+    // to tear down.
+    _loaded.store(false);
+
 #if HAVE_RCHEEVOS
     if (_rcClient) {
         rc_client_unload_game(_rcClient);
@@ -505,15 +520,25 @@ static void writeSaveFile(const char* path, int type) {
         NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
         [self writeSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
     }
-    
+
     [super stopEmulation];
-    
-    double delayInSeconds = 0.1;
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+
+    // Synchronous teardown. Previously this was dispatched 0.1s on the main
+    // queue, which raced two ways: (1) the emulation thread could still be
+    // inside retro_run when retro_unload_game fired, and (2) a quick re-launch
+    // would call retro_init for the new game *before* the stale unload/deinit
+    // ran, destroying the new game's state mid-frame and producing the
+    // "TIA::scanlines() with null myFrameManager" crash.
+    //
+    // The legacy emulation loop wraps each executeFrame in @synchronized(self)
+    // (see EmulatorCore.m). Acquiring the same monitor here blocks until any
+    // in-flight frame has returned, so retro_unload_game/retro_deinit can never
+    // race against retro_run.
+    @synchronized(self) {
         retro_unload_game();
         retro_deinit();
-    });
+    }
+
     self->region = RETRO_REGION_NTSC;
 }
 
@@ -532,6 +557,7 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (void)executeFrame {
+    if (!_loaded.load()) { return; }
 #if !TARGET_OS_WATCH
     if (self.controller1 || self.controller2) {
         [self pollControllers];
@@ -542,6 +568,7 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (void)executeFrameSkippingFrame: (BOOL) skip {
+    if (!_loaded.load()) { return; }
 #if !TARGET_OS_WATCH
     if (!skip && (self.controller1 || self.controller2)) {
         [self pollControllers];
@@ -552,71 +579,103 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
-	memset(_pad, 0, sizeof(int16_t) * NUMBER_OF_PADS * NUMBER_OF_PAD_INPUTS);
-    if(self->_videoBuffer) {
-        free(self->_videoBuffer);
-    }
-    self->_videoBuffer = (stellabuffer_t*)malloc(STELLA_WIDTH * STELLA_HEIGHT * 4);
+    // Flip `_loaded` off BEFORE taking the monitor so an emulation thread
+    // that's already inside @synchronized(self) and about to call retro_run
+    // returns early instead of racing the libretro teardown we're about to run.
+    _loaded.store(false);
 
-    const void *data;
-    size_t size;
     self.romName = [[[path lastPathComponent] componentsSeparatedByString:@"."] objectAtIndex:0]; //[path copy];
-    
+
     //load cart, read bytes, get length
     NSData* dataObj = [NSData dataWithContentsOfFile:[path stringByStandardizingPath]];
     if(dataObj == nil) return false;
-    size = [dataObj length];
-    data = (uint8_t*)[dataObj bytes];
+    size_t size = [dataObj length];
+    const void *data = (uint8_t*)[dataObj bytes];
     const char *meta = NULL;
-    
-    //memory.copy(data, size);
-    retro_set_environment(environment_callback);
-	retro_init();
-	
-    retro_set_audio_sample(audio_callback);
-    retro_set_audio_sample_batch(audio_batch_callback);
-    retro_set_video_refresh(video_callback);
-    retro_set_input_poll(input_poll_callback);
-    retro_set_input_state(input_state_callback);
-    
-    
+
     const char *fullPath = [path UTF8String];
-    
+
     struct retro_game_info info = {NULL};
     info.path = fullPath;
     info.data = data;
     info.size = size;
     info.meta = meta;
-    
-    BOOL loaded = retro_load_game(&info);
+
+    BOOL loaded = NO;
+
+    // Serialize the entire libretro state transition against the emulation
+    // loop's monitor. The emulation thread wraps executeFrame in
+    // @synchronized(self) (see _PVCoreObjCBridge.m:282) and executeFrame calls
+    // retro_run(). Holding the same monitor here guarantees that
+    // retro_unload_game/retro_deinit/retro_init/retro_load_game/retro_run
+    // cannot interleave with a retro_run on the emulation thread. Without this
+    // the TIA pointer inside Stella is destroyed under the emulation thread
+    // while it's mid-frame, producing a use-after-free on myFrameManager.
+    @synchronized(self) {
+        // Reset per-frame input and rebuild the video buffer under the
+        // monitor too — retro_run()'s video_callback writes into _videoBuffer,
+        // so a free/alloc outside the lock would race the emulation thread.
+        memset(_pad, 0, sizeof(int16_t) * NUMBER_OF_PADS * NUMBER_OF_PAD_INPUTS);
+        if(self->_videoBuffer) {
+            free(self->_videoBuffer);
+        }
+        self->_videoBuffer = (stellabuffer_t*)malloc(STELLA_WIDTH * STELLA_HEIGHT * 4);
+
+        // If a previous session is still in libretro state (e.g. quick
+        // re-launch before stopEmulation finished), tear it down first so we
+        // don't end up with two retro_init() calls without a matching
+        // retro_deinit() in between.
+        retro_unload_game();
+        retro_deinit();
+
+        retro_set_environment(environment_callback);
+        retro_init();
+
+        retro_set_audio_sample(audio_callback);
+        retro_set_audio_sample_batch(audio_batch_callback);
+        retro_set_video_refresh(video_callback);
+        retro_set_input_poll(input_poll_callback);
+        retro_set_input_state(input_state_callback);
+
+        loaded = retro_load_game(&info);
+
+        if (loaded) {
+            if ([self.batterySavesPath length]) {
+                [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath
+                                          withIntermediateDirectories:YES
+                                                           attributes:nil
+                                                                error:NULL];
+
+                NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
+
+                [self loadSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
+            }
+
+            struct retro_system_av_info av_info;
+            retro_get_system_av_info(&av_info);
+
+            self->_frameInterval = av_info.timing.fps;
+            self->_sampleRate = av_info.timing.sample_rate;
+
+            uint currentRegion = retro_get_region();
+            if (currentRegion == RETRO_REGION_PAL) {
+                self->region = RETRO_REGION_PAL;
+            } else {
+                self->region = RETRO_REGION_NTSC;
+            }
+
+            retro_run();
+
+            // Publish the loaded state only after retro_load_game and the
+            // prime retro_run() have completed, and only while we still hold
+            // the monitor. executeFrame reads this flag under the same
+            // monitor, so it is impossible for the emulation thread to enter
+            // retro_run() before Stella is fully initialised.
+            _loaded.store(true);
+        }
+    }
 
     if (loaded) {
-        if ([self.batterySavesPath length]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath 
-                                      withIntermediateDirectories:YES
-                                                       attributes:nil
-                                                            error:NULL];
-
-            NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
-            
-            [self loadSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
-        }
-        
-        struct retro_system_av_info info;
-        retro_get_system_av_info(&info);
-        
-        self->_frameInterval = info.timing.fps;
-        self->_sampleRate = info.timing.sample_rate;
-
-        uint currentRegion = retro_get_region();
-        if (currentRegion == RETRO_REGION_PAL) {
-            self->region = RETRO_REGION_PAL;
-        } else {
-            self->region = RETRO_REGION_NTSC;
-        }
-
-        retro_run();
-
 #if HAVE_RCHEEVOS
         if (!_rcClient) {
             _rcClient = rc_client_create(pvstella_read_memory, pvstella_server_call);
@@ -626,7 +685,7 @@ static void writeSaveFile(const char* path, int type) {
             }
         }
 #endif
-        
+
         return YES;
     } else {
         if(error) {

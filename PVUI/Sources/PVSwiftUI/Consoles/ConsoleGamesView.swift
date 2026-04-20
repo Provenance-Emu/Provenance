@@ -888,10 +888,11 @@ struct ConsoleGamesView: SwiftUI.View {
                     await BIOSWatcher.shared.rescanDirectory(systemPath)
                 }
                 .task(priority: .utility) {
-                    // Quick scan to fix games marked as iCloud-only but have local files
-                    // This fixes race conditions between CloudKit sync and local file scanning
+                    // Reconcile `isDownloaded` for all games via the centralized
+                    // service (single directory enumeration + filename fallback
+                    // for games whose stored partialPath drifted from disk).
                     try? await Task.sleep(nanoseconds: 200_000_000) // 200ms delay
-                    await scanAndFixLocalFileStatus(for: console)
+                    await GameFileStatusService.shared.refreshAllStatuses()
                 }
                 .task(priority: .utility) {
                     // Keep model sorting aligned with the root view sort setting.
@@ -1302,115 +1303,6 @@ struct ConsoleGamesView: SwiftUI.View {
         )
     }
 
-    /// Scans local ROM files for this system and updates games marked as iCloud-only
-    /// that actually have local files present. Fixes race condition between CloudKit
-    /// sync and local file scanning.
-    private func scanAndFixLocalFileStatus(for system: PVSystem) async {
-        let systemIdentifier = system.identifier
-        let systemRomsPath = Paths.romsPath(forSystemIdentifier: systemIdentifier)
-
-        // Step 1: Collect game info on main thread (fast Realm query)
-        let gameInfoList: [(md5: String, filenames: [String], title: String)] = await MainActor.run {
-            guard FileManager.default.fileExists(atPath: systemRomsPath.path) else {
-                DLOG("[LOCAL FILE FIX] No ROMs directory for system: \(systemIdentifier)")
-                return []
-            }
-
-            let realm = RomDatabase.sharedInstance.realm
-            let gamesNeedingCheck = realm.objects(PVGame.self)
-                .filter("systemIdentifier == %@ AND isDownloaded == false", systemIdentifier)
-
-            guard !gamesNeedingCheck.isEmpty else {
-                DLOG("[LOCAL FILE FIX] No games need local file check for system: \(systemIdentifier)")
-                return []
-            }
-
-            ILOG("[LOCAL FILE FIX] Checking \(gamesNeedingCheck.count) games for local files in system: \(systemIdentifier)")
-
-            return gamesNeedingCheck.map { game in
-                let filenames: [String] = [
-                    game.file?.fileName,
-                    game.romPath.isEmpty ? nil : URL(fileURLWithPath: game.romPath).lastPathComponent
-                ].compactMap { $0 }.filter { !$0.isEmpty }
-                return (md5: game.md5Hash, filenames: filenames, title: game.title)
-            }
-        }
-
-        guard !gameInfoList.isEmpty else { return }
-
-        // Step 2: Do file system scanning on background thread (no Realm access)
-        let gamesToFix: [(md5: String, filename: String, path: URL, title: String)] = await Task.detached(priority: .utility) {
-            let fileManager = FileManager.default
-
-            // Build map of local files (fast)
-            var localFiles: [String: URL] = [:]
-            if let enumerator = fileManager.enumerator(at: systemRomsPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles]) {
-                for case let fileURL as URL in enumerator {
-                    var isDir: ObjCBool = false
-                    if fileManager.fileExists(atPath: fileURL.path, isDirectory: &isDir), !isDir.boolValue {
-                        localFiles[fileURL.lastPathComponent.lowercased()] = fileURL
-                    }
-                }
-            }
-
-            guard !localFiles.isEmpty else {
-                return []
-            }
-
-            DLOG("[LOCAL FILE FIX] Found \(localFiles.count) local files to check against")
-
-            // Match games to local files
-            var results: [(md5: String, filename: String, path: URL, title: String)] = []
-            for game in gameInfoList {
-                for filename in game.filenames {
-                    if let foundPath = localFiles[filename.lowercased()] {
-                        results.append((md5: game.md5, filename: filename, path: foundPath, title: game.title))
-                        break
-                    }
-                }
-            }
-            return results
-        }.value
-
-        guard !gamesToFix.isEmpty else {
-            DLOG("[LOCAL FILE FIX] No local files found for games marked as iCloud-only")
-            return
-        }
-
-        // Step 3: Batch update Realm on main thread
-        let fixedCount = await MainActor.run {
-            let realm = RomDatabase.sharedInstance.realm
-            var count = 0
-
-            do {
-                try realm.write {
-                    for gameInfo in gamesToFix {
-                        guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameInfo.md5) else { continue }
-
-                        if liveGame.file == nil {
-                            let pvFile = PVFile(withURL: gameInfo.path)
-                            liveGame.file = pvFile
-                        } else if let existingFile = liveGame.file {
-                            let relativePath = "\(systemIdentifier)/\(gameInfo.filename)"
-                            if existingFile.partialPath != relativePath {
-                                existingFile.partialPath = relativePath
-                            }
-                        }
-                        liveGame.isDownloaded = true
-                        count += 1
-                        DLOG("[LOCAL FILE FIX] Updated: \(gameInfo.title)")
-                    }
-                }
-            } catch {
-                ELOG("[LOCAL FILE FIX] Failed to batch update games: \(error.localizedDescription)")
-            }
-            return count
-        }
-
-        if fixedCount > 0 {
-            ILOG("[LOCAL FILE FIX] Fixed \(fixedCount) games for system \(systemIdentifier) that had local files but were marked as iCloud-only")
-        }
-    }
 }
 
 // MARK: - View Components

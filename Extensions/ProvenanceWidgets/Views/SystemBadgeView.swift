@@ -31,6 +31,7 @@ struct SystemBadgeView: View {
             .padding(.horizontal, 5)
             .padding(.vertical, 2)
             .background(backgroundView)
+            .lineLimit(1)
     }
 
     @ViewBuilder

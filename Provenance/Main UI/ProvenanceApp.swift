@@ -730,8 +730,17 @@ extension ProvenanceApp {
         }
         #endif
 
-        // Initialize CloudKit for all platforms
-        appDelegate.initializeCloudKit()
+        // Reconcile `isDownloaded` for all games using a single directory scan
+        // BEFORE CloudKit sync starts, so the syncer never sees stale state and
+        // can't downgrade locally-imported games on first run after launch.
+        // CloudKit init is awaited on completion of this scan.
+        Task { @MainActor in
+            let result = await GameFileStatusService.shared.refreshAllStatuses()
+            ILOG("[Boot] Pre-CloudKit file status refresh: \(result.upgraded) upgraded, " +
+                 "\(result.downgraded) downgraded, \(result.partialPathRepaired) path-repaired " +
+                 "out of \(result.totalGames) games")
+            appDelegate.initializeCloudKit()
+        }
 
         // Keep the legacy iCloud document sync code in place but don't use it by default
         // We can uncomment this if we need to revert back to the old sync method

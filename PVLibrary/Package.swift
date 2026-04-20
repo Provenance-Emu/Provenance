@@ -46,6 +46,15 @@ let package = Package(
             type: .dynamic,
             targets: ["PVLibrary"]
         ),
+        /// Exposes `PVMediaCache` (including the shared `MissingArtworkGenerator`
+        /// retrowave placeholder) so other packages and app extensions can
+        /// `import PVMediaCache` directly without relying on PVLibrary's
+        /// `@_exported import` (which the IDE indexer doesn't reliably
+        /// propagate across package boundaries).
+        .library(
+            name: "PVMediaCache",
+            targets: ["PVMediaCache"]
+        ),
     ],
     dependencies:
         ["Support", "Logging", "Hashing",

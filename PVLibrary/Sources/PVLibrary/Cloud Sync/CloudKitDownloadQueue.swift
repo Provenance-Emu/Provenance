@@ -355,7 +355,7 @@ public class CloudKitDownloadQueue: ObservableObject {
             guard let saveState = frozenSaveState else {
                 throw CloudSyncError.genericError("Save state not found for recordID \(recordID)")
             }
-            try await saveStateSyncer.downloadSaveState(for: saveState).toAsync()
+            try await saveStateSyncer.downloadSaveState(for: saveState, isUserInitiated: true).toAsync()
 
         await MainActor.run {
                 self.progressTracker.updateDownloadProgress(kind: download.kind, bytesDownloaded: download.fileSize)

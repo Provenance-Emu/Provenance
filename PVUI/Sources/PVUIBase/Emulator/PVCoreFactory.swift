@@ -34,8 +34,9 @@ public extension PVCore {
         ILOG("createInstance: principleClass=\(className) for \(identifier)")
         if className.contains("RetroArch") || className.contains("LibRetro") || className == "PVRetroArchCoreBridge" {
             let featureEnabled = PVFeatureFlags.shared.isEnabled(.dynamicLibretroScanner)
+            let pvRetroArchCoreExists: Bool = NSClassFromString("PVRetroArchCore") != nil
             ILOG("ThinLibretro: featureEnabled=\(featureEnabled)")
-            if featureEnabled {
+            if featureEnabled || !pvRetroArchCoreExists {
                 // Force-load PVCoreBridgeRetro framework so the ObjC runtime has
                 // PVThinLibretroCore registered. Frameworks are lazily loaded and
                 // the class won't be visible until the framework is in memory.

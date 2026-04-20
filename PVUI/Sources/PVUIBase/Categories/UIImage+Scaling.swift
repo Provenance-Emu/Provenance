@@ -12,29 +12,27 @@ import UIKit
 public
 extension UIImage {
     class func image(withSize size: CGSize, color: UIColor, text: NSAttributedString) -> UIImage? {
-        let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        // `UIGraphicsBeginImageContextWithOptions` asserts when width/height are non-positive or non-finite.
-        guard rect.width > 0, rect.height > 0, rect.width.isFinite, rect.height.isFinite else {
+        // UIGraphicsImageRenderer handles allocation failures gracefully (the older
+        // UIGraphicsBeginImageContextWithOptions path would assert when the bitmap
+        // context couldn't be allocated — particularly in tight-memory snapshot
+        // contexts and on Catalyst).
+        guard size.width > 0, size.height > 0, size.width.isFinite, size.height.isFinite else {
             return nil
         }
-        let scale = UIScreen.main.scale > 0 ? UIScreen.main.scale : 1.0
-        UIGraphicsBeginImageContextWithOptions(rect.size, false, scale)
-
-        guard let context: CGContext = UIGraphicsGetCurrentContext() else {
-            return nil
+        let rect = CGRect(origin: .zero, size: size)
+        let format = UIGraphicsImageRendererFormat.default()
+        format.opaque = false
+        let renderer = UIGraphicsImageRenderer(size: rect.size, format: format)
+        return renderer.image { ctx in
+            let context = ctx.cgContext
+            context.setFillColor(color.cgColor)
+            context.setStrokeColor(UIColor(white: 0.7, alpha: 0.6).cgColor)
+            context.setLineWidth(0.5)
+            context.fill(rect)
+            var boundingRect = text.boundingRect(with: rect.size, options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil)
+            boundingRect.origin = CGPoint(x: rect.midX - (boundingRect.width / 2), y: rect.midY - (boundingRect.height / 2))
+            text.draw(in: boundingRect)
         }
-
-        context.setFillColor(color.cgColor)
-        context.setStrokeColor(UIColor(white: 0.7, alpha: 0.6).cgColor)
-        context.setLineWidth(0.5)
-        context.fill(rect)
-        var boundingRect: CGRect = text.boundingRect(with: rect.size, options: [.usesFontLeading, .usesLineFragmentOrigin], context: nil)
-        boundingRect.origin = CGPoint(x: rect.midX - (boundingRect.width / 2), y: rect.midY - (boundingRect.height / 2))
-        text.draw(in: boundingRect)
-        let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return image
     }
 
     func imageWithBorder(width: CGFloat, color: UIColor) -> UIImage? {

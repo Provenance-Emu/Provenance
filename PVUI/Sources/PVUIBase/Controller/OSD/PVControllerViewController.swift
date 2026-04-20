@@ -1577,7 +1577,11 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         self.topBarTapZone = tapZone
 
         // --- Blur container ---
+        #if os(tvOS)
+        let blur = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+        #else
         let blur = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterialDark))
+        #endif
         blur.layer.cornerRadius = 12
         blur.layer.masksToBounds = true
         blur.translatesAutoresizingMaskIntoConstraints = false

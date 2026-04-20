@@ -2440,6 +2440,9 @@ static bool thin_environment(unsigned cmd, void *data) {
         return NO;
     }
 
+    ILOG(@"ThinFrontend: startWithROMPath[%@] begin path=%@",
+         self.coreIdentifier ?: @"?", romPath.lastPathComponent);
+
     // Install TLS pointer for C callbacks
     _thinCurrentTLS = self;
     _romPath = [romPath copy];
@@ -2452,7 +2455,10 @@ static bool thin_environment(unsigned cmd, void *data) {
     _sym.retro_set_input_poll(thin_input_poll);
     _sym.retro_set_input_state(thin_input_state);
 
+    const CFTimeInterval _tInit0 = CACurrentMediaTime();
+    ILOG(@"ThinFrontend: calling retro_init");
     _sym.retro_init();
+    ILOG(@"ThinFrontend: retro_init done (%.2fs)", CACurrentMediaTime() - _tInit0);
     _coreDeinited = NO;
 
 #if TARGET_OS_IOS || TARGET_OS_TV
@@ -2554,7 +2560,12 @@ static bool thin_environment(unsigned cmd, void *data) {
         }
         loaded = YES;  // if we got a frame, load succeeded
     } else {
+        const CFTimeInterval _tLoad0 = CACurrentMediaTime();
+        ILOG(@"ThinFrontend: calling retro_load_game (need_fullpath=%d, romSize=%zu)",
+             _rawSystemInfo.need_fullpath, (size_t)romData.length);
         loaded = _sym.retro_load_game(&gameInfo);
+        ILOG(@"ThinFrontend: retro_load_game returned %d (%.2fs)",
+             loaded, CACurrentMediaTime() - _tLoad0);
     }
 
     if (!loaded) {

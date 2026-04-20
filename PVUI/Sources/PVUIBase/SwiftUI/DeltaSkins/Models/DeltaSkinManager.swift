@@ -569,6 +569,9 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
     /// Delete a skin by its identifier.
     /// After this method returns, `loadedSkins` is guaranteed to reflect the deletion.
     public func deleteSkin(_ identifier: String) async throws {
+        /// Captured outside the queue closure so we can drop the catalog sidecar
+        /// after the queue work completes (the registry is an actor).
+        var deletedSkinURL: URL?
         let scannedSkins: [DeltaSkinProtocol] = try await queue.asyncResult { [self] in
             // Find the skin (use lastScannedSkins for immediate access on this queue)
             guard let skin = self.lastScannedSkins.first(where: { $0.identifier == identifier }) else {
@@ -583,11 +586,18 @@ public final class DeltaSkinManager: ObservableObject, DeltaSkinManagerProtocol 
             // Delete the file
             DLOG("Deleting skin at: \(skin.fileURL.path)")
             try FileManager.default.removeItem(at: skin.fileURL)
+            deletedSkinURL = skin.fileURL
 
             // Rescan on this queue so lastScannedSkins is authoritative.
             self.hasScanned = false
             try self.scanForSkins()
             return self.lastScannedSkins
+        }
+
+        /// Drop the matching `<stem>.skinmeta` sidecar so cloud syncers stop
+        /// replicating stale metadata for a skin that no longer exists locally.
+        if let url = deletedSkinURL {
+            await SkinSystemOverrideRegistry.shared.removeSidecar(for: url, skinIdentifier: identifier)
         }
 
         // Apply to loadedSkins synchronously so callers see the deletion immediately.

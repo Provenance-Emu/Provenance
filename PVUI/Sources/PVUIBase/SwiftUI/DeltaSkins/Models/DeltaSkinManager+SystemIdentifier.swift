@@ -18,8 +18,13 @@ public extension DeltaSkinManager {
         let allSkins = try await availableSkins()
         ILOG("skins: Filtering \(allSkins.count) total skins for system \(system.rawValue)")
 
-        // Filter by game type, including compatible types via skinLayoutGroup
         let requestedGroup = gameType.skinLayoutGroup
+        let requestedCodes = Set(system.relatedSkinCatalogSystemCodes)
+        /// Override codes from sidecars / catalog cache, keyed by skin identifier.
+        /// Lets us include skins whose `info.json.gameTypeIdentifier` is wrong but
+        /// whose catalog metadata says they belong to this system family.
+        let overrideCodes = await SkinSystemOverrideRegistry.shared.overrideCodesByIdentifier(for: allSkins)
+
         let filtered = allSkins.filter { skin in
             // Exact match
             if skin.gameType == gameType {
@@ -29,6 +34,13 @@ public extension DeltaSkinManager {
             // Group-based match: skins in the same layout group are compatible
             // (e.g. a Genesis skin works for Sega CD and 32X; a GBC skin works for GB)
             if skin.gameType.skinLayoutGroup == requestedGroup {
+                return true
+            }
+
+            /// Authoritative override path: catalog metadata wins over a misconfigured
+            /// `gameTypeIdentifier` so SG-1000 skins that were saved with the wrong
+            /// game type still surface for the correct system family.
+            if let codes = overrideCodes[skin.identifier], !codes.isDisjoint(with: requestedCodes) {
                 return true
             }
 
@@ -155,9 +167,11 @@ public extension DeltaSkinManager {
         // Convert SystemIdentifier to a string identifier that DeltaSkinManager understands
         let skinIdentifier = skinIdentifier(for: systemIdentifier)
         let requestedGroup = DeltaSkinGameType(systemIdentifier: systemIdentifier)?.skinLayoutGroup
+        let requestedCodes = Set(systemIdentifier.relatedSkinCatalogSystemCodes)
 
         // Get all available skins
         let allSkins = try await availableSkins()
+        let overrideCodes = await SkinSystemOverrideRegistry.shared.overrideCodesByIdentifier(for: allSkins)
 
         // Filter skins for this system and convert to [DeltaSkin]
         let filteredSkins = allSkins.filter { skin in
@@ -169,6 +183,11 @@ public extension DeltaSkinManager {
 
             // Group-based match: skins in the same layout group are compatible
             if let group = requestedGroup, skin.gameType.skinLayoutGroup == group {
+                return true
+            }
+
+            /// Authoritative override path (see `skins(for:)`).
+            if let codes = overrideCodes[skin.identifier], !codes.isDisjoint(with: requestedCodes) {
                 return true
             }
 
@@ -184,6 +203,7 @@ public extension DeltaSkinManager {
         // Convert SystemIdentifier to a string identifier that DeltaSkinManager understands
         let skinIdentifier = skinIdentifier(for: systemIdentifier)
         let requestedGroup = DeltaSkinGameType(systemIdentifier: systemIdentifier)?.skinLayoutGroup
+        let requestedCodes = Set(systemIdentifier.relatedSkinCatalogSystemCodes)
 
         // Get all available skins synchronously
         let allSkins: [any DeltaSkinProtocol]
@@ -193,6 +213,8 @@ public extension DeltaSkinManager {
             ELOG("availableSkinsSync: Failed to load skins for system \(systemIdentifier.rawValue): \(error)")
             return []
         }
+
+        let overrideCodes = await SkinSystemOverrideRegistry.shared.overrideCodesByIdentifier(for: allSkins)
 
         // Filter skins for this system and convert to [DeltaSkin]
         let filteredSkins = allSkins.filter { skin in
@@ -204,6 +226,11 @@ public extension DeltaSkinManager {
 
             // Group-based match: skins in the same layout group are compatible
             if let group = requestedGroup, skin.gameType.skinLayoutGroup == group {
+                return true
+            }
+
+            /// Authoritative override path (see `skins(for:)`).
+            if let codes = overrideCodes[skin.identifier], !codes.isDisjoint(with: requestedCodes) {
                 return true
             }
 

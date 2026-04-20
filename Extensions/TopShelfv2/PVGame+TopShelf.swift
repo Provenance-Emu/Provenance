@@ -82,6 +82,22 @@ extension PVGame {
         return possiblePaths.first // Return first path for potential future use
     }
 
+    /// Generates (and caches in the app group container) a retrowave placeholder
+    /// PNG that matches the in-app default artwork. Returns nil if the app group
+    /// container is unavailable or PNG encoding fails.
+    fileprivate func placeholderArtworkURL() -> URL? {
+        let ratio = PVGame.boxArtAspectPlaceholder(
+            systemIdentifier: systemIdentifier,
+            regionName: regionName
+        ).rawValue
+        return MissingArtworkGenerator.cachedPlaceholderURL(
+            gameTitle: title,
+            ratio: ratio,
+            pattern: .rainbowNoise,
+            isDarkTheme: true
+        )
+    }
+
     /// Creates a TVTopShelfItem for this game for display in the Top Shelf
     func topShelfItem() -> TVTopShelfSectionedItem {
         let item = TVTopShelfSectionedItem(identifier: md5Hash)
@@ -112,6 +128,11 @@ extension PVGame {
                 item.setImageURL(imageURL, for: .screenScale1x)
                 item.setImageURL(imageURL, for: .screenScale2x)
                 DLOG("TopShelf: Using remote artwork URL for \(title): \(artworkURLString)")
+            } else if let placeholderURL = placeholderArtworkURL() {
+                /// Use the same retrowave placeholder the in-app library shows for missing artwork.
+                item.setImageURL(placeholderURL, for: .screenScale1x)
+                item.setImageURL(placeholderURL, for: .screenScale2x)
+                DLOG("TopShelf: Using retrowave placeholder for \(title): \(placeholderURL.path)")
             } else {
                 WLOG("TopShelf: No artwork available for game \(title), will use default")
             }
@@ -179,6 +200,11 @@ extension PVSaveState {
         } else if let fallbackArtworkURL = game.cachedArtworkURL {
             item.setImageURL(fallbackArtworkURL, for: .screenScale1x)
             item.setImageURL(fallbackArtworkURL, for: .screenScale2x)
+        } else if let placeholderURL = game.placeholderArtworkURL() {
+            /// Use the same retrowave placeholder the in-app library shows for missing artwork.
+            item.setImageURL(placeholderURL, for: .screenScale1x)
+            item.setImageURL(placeholderURL, for: .screenScale2x)
+            DLOG("TopShelf: Using retrowave placeholder for save state of \(gameTitle): \(placeholderURL.path)")
         }
 
         if let url = URL(string: "provenance://open?saveStateId=\(id)") {

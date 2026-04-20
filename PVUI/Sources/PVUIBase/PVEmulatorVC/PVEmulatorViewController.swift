@@ -386,7 +386,19 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         return "Starting emulator…"
     }
 
+    /// True when the running core is the thin libretro wrapper
+    /// (`PVThinLibretroCore`). The thin wrapper does not ship or
+    /// sync the RetroArch config bundle, so RetroArch-oriented
+    /// boot messaging must be suppressed for it.
+    private var isThinLibretroCore: Bool {
+        NSStringFromClass(type(of: core)) == "PVThinLibretroCore"
+    }
+
     private func shouldShowRetroArchSyncMessage() -> Bool {
+        // The thin libretro wrapper shares "libretro" in its core
+        // identifier but has no RetroArch resource sync step.
+        if isThinLibretroCore { return false }
+
         guard (core.coreIdentifier?.contains("libretro") == true) || (core.coreIdentifier?.localizedCaseInsensitiveContains("retroarch") == true) else {
             return false
         }
@@ -451,17 +463,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             playTimeTracker?.didPause()
         }
         destroyAutosaveTimer()
-        // Remove all menu-related gesture recognizers
-        #if os(tvOS)
-        // Remove all gesture recognizers that handle menu button presses
-        let menuGestures = view.gestureRecognizers?.filter { gesture in
-            if let tapGesture = gesture as? UITapGestureRecognizer {
-                return tapGesture.allowedPressTypes.contains(NSNumber(value: UIPress.PressType.menu.rawValue))
-            }
-            return false
-        }
-        menuGestures?.forEach { view.removeGestureRecognizer($0) }
-        #else
+        // Remove iOS menu gesture recognizer if present. tvOS no longer installs any
+        // UIPress menu gestures — pause input there comes exclusively from GCController.
+        #if !os(tvOS)
         if let menuGestureRecognizer = menuGestureRecognizer {
             view.removeGestureRecognizer(menuGestureRecognizer)
         }
@@ -928,32 +932,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     #if os(tvOS)
-    /// Set up tvOS-specific menu button gesture recognizers
+    /// tvOS pause-menu input is now driven exclusively by `GCController.setupPauseHandler`
+    /// (buttonOptions on modern controllers, L3+R3 combo as fallback, and
+    /// `controllerPausedHandler` for the Siri Remote). The previous double-tap-on-menu
+    /// gesture and `findStartButton` fake-Start path have been removed: they raced the
+    /// GCController handlers, depended on a controller overlay that doesn't exist on tvOS,
+    /// and were not actually wired to anything that worked.
     private func setupTVOSMenuGestures() {
-        // Single tap gesture for "start" button
-        let singleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleMenuSingleTap(_:)))
-        singleTapGesture.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
-        singleTapGesture.numberOfTapsRequired = 1
-
-        // Double tap gesture for pause menu
-        let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleMenuDoubleTap(_:)))
-        doubleTapGesture.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
-        doubleTapGesture.numberOfTapsRequired = 2
-
-        // Make single tap wait for double tap to fail
-        singleTapGesture.require(toFail: doubleTapGesture)
-
-        // Add gestures to the view
-        view.addGestureRecognizer(singleTapGesture)
-        view.addGestureRecognizer(doubleTapGesture)
-
-        // Store reference to single tap gesture (reusing existing property)
-        menuGestureRecognizer = singleTapGesture
-
-        ILOG("tvOS menu gestures configured: single tap = start button, double tap = pause menu")
+        // Intentionally empty — kept for symmetry with the previous viewDidAppear flow.
     }
 
-    /// Re-establish controller pause handlers (Menu/Home) that post PauseGame. Call after closing modals that may have interfered with controller state.
+    /// Re-establish controller pause handlers after a modal interfered with controller state.
     @objc func reestablishPauseHandlers() {
         for controller in PVControllerManager.shared.controllers {
             controller.setupPauseHandler(onPause: {
@@ -962,77 +951,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
     }
 
-    /// Remove any existing menu-press recognizers and reinstall them (used after dismissing sub-sheets)
+    /// No-op shim retained so existing callers (e.g. CoreOptions cleanup) compile.
+    /// We no longer manage UITapGestureRecognizers for the Siri Remote menu button.
     @objc func resetTVOSMenuGestures() {
-        // Remove existing menu-press gestures
-        let menuGestures = view.gestureRecognizers?.filter { gesture in
-            if let tapGesture = gesture as? UITapGestureRecognizer {
-                return tapGesture.allowedPressTypes.contains(NSNumber(value: UIPress.PressType.menu.rawValue))
-            }
-            return false
-        }
-        menuGestures?.forEach { view.removeGestureRecognizer($0) }
-
-        // Recreate them
-        setupTVOSMenuGestures()
-    }
-
-    /// Handle single tap of menu button - send "start" button press
-    @objc func handleMenuSingleTap(_ gesture: UITapGestureRecognizer) {
-        ILOG("tvOS menu single tap - sending start button press")
-
-        // Send start button press to the controller
-        if let controllerVC = controllerViewController {
-            // Try to find and trigger the start button
-            if let startButton = findStartButton(in: controllerVC.view) {
-                DLOG("Found start button, triggering press")
-                startButton.sendActions(for: .touchUpInside)
-            } else {
-                // Fallback: Log that no start button was found
-                DLOG("No start button found in controller view hierarchy")
-                // Could potentially add other fallback methods here if needed
-            }
-        }
-    }
-
-    /// Handle double tap of menu button - show pause menu
-    @objc func handleMenuDoubleTap(_ gesture: UITapGestureRecognizer) {
-        ILOG("tvOS menu double tap - showing pause menu")
-        showMenu(gesture)
-    }
-
-    /// Recursively find the start button in the controller view hierarchy
-    private func findStartButton(in view: UIView) -> UIButton? {
-        // Check if this view is a start button
-        if let button = view as? UIButton {
-            // Check button title, accessibility identifier, or tag to identify start button
-            if let title = button.titleLabel?.text?.lowercased(),
-               title.contains("start") || title.contains("pause")
-            {
-                return button
-            }
-
-            // Check accessibility identifier
-            if let identifier = button.accessibilityIdentifier?.lowercased(),
-               identifier.contains("start") || identifier.contains("pause")
-            {
-                return button
-            }
-
-            // Check tag (you might need to adjust this based on your button tagging system)
-            if button.tag == 1000 { // Assuming start button has a specific tag
-                return button
-            }
-        }
-
-        // Recursively search subviews
-        for subview in view.subviews {
-            if let startButton = findStartButton(in: subview) {
-                return startButton
-            }
-        }
-
-        return nil
+        // Intentionally empty.
     }
     #endif
 
@@ -1291,10 +1213,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 if let activeDownload = progressTracker.activeDownloads.first(where: { $0.matchesROM(md5: gameMD5) }) {
                     let progress = activeDownload.progress
                     if progress != lastProgress {
-                        let percentage = Int(progress * 100)
-                        let bytesStr = ByteCountFormatter.string(fromByteCount: activeDownload.bytesDownloaded, countStyle: .file)
-                        let totalStr = ByteCountFormatter.string(fromByteCount: activeDownload.fileSize, countStyle: .file)
-                        syncStatusManager.update(statusMessage: "Downloading... \(percentage)% (\(bytesStr) / \(totalStr))")
+                        syncStatusManager.update(downloadProgress: DownloadProgress(
+                            progress: progress,
+                            bytesDownloaded: activeDownload.bytesDownloaded,
+                            totalBytes: activeDownload.fileSize
+                        ))
                         lastProgress = progress
                     }
                 } else if progressTracker.queuedDownloads.contains(where: { $0.matchesROM(md5: gameMD5) }) {
@@ -1563,17 +1486,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         #endif
 
         destroyAutosaveTimer()
-        // Remove all menu-related gesture recognizers
-        #if os(tvOS)
-        // Remove all gesture recognizers that handle menu button presses
-        let menuGestures = view.gestureRecognizers?.filter { gesture in
-            if let tapGesture = gesture as? UITapGestureRecognizer {
-                return tapGesture.allowedPressTypes.contains(NSNumber(value: UIPress.PressType.menu.rawValue))
-            }
-            return false
-        }
-        menuGestures?.forEach { view.removeGestureRecognizer($0) }
-        #else
+        #if !os(tvOS)
         if let menuGestureRecognizer = menuGestureRecognizer {
             view.removeGestureRecognizer(menuGestureRecognizer)
         }
@@ -2948,13 +2861,38 @@ extension PVEmulatorViewController {
             }
         }
         gameAudio.pauseAudio()
+        #if os(tvOS)
+        /// On tvOS the PS/home button triggers Control Center, which fires resign-active
+        /// while the system UI is taking over the foreground. Calling `showMenu` here
+        /// races the system transition and can wedge the presentation state — leaving
+        /// `isShowingMenu = true` with no visible menu on return. Skip the auto-menu on
+        /// tvOS; `appDidBecomeActive` reconciles state when the app returns.
+        #else
         showMenu(self)
+        #endif
     }
 
     @objc func appDidBecomeActive(_: Notification?) {
         if !core.isOn {
             return
         }
+
+        #if os(tvOS)
+        /// Returning from Control Center (PS/home button) or any other transient
+        /// system UI can desync controller state. Two things can go wrong:
+        /// 1. GCController handlers may have been cleared by a brief reconnect.
+        /// 2. `isShowingMenu` may be stuck `true` from `appWillResignActive`'s
+        ///    `showMenu(self)` call, even though no menu VC is actually presented —
+        ///    which flips the next pause-button press into `hideMenu` instead of
+        ///    `showMenu`, so the menu appears "broken."
+        /// Reconcile both before the user touches a controller.
+        reestablishPauseHandlers()
+        if isShowingMenu && menuPresentationViewController == nil && presentedViewController == nil {
+            ILOG("appDidBecomeActive: isShowingMenu stuck true with no menu VC — resetting")
+            isShowingMenu = false
+        }
+        #endif
+
         /// Match pause state to the actual menu visibility instead of always forcing
         /// pause. This prevents returning from transient ReplayKit UI in a permanently
         /// paused-looking state with no visible pause menu.

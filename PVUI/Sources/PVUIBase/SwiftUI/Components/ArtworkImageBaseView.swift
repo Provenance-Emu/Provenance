@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVThemes
+import PVMediaCache
 import Defaults
 
 public struct ArtworkImageBaseView: SwiftUI.View {
@@ -65,7 +66,7 @@ private struct MissingArtworkAsyncView: View {
                             gameTitle: gameTitle,
                             ratio: ratio,
                             pattern: pattern,
-                            minFontSize: SwiftImage.RetroStyle.defaultMinFontSize,
+                            minFontSize: RetroStyle.defaultMinFontSize,
                             isDarkTheme: isDarkTheme
                         ) {
                             self.image = cached

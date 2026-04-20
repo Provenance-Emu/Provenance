@@ -693,6 +693,16 @@ public actor CloudKitInitialSyncer {
             var syncedCount = 0
             let progressBatchSize = 50
             for saveState in saveStates {
+                // Bail early if a higher-priority reason (game launch, active
+                // emulation) wants the sync layer to yield. This prevents us
+                // from spending minutes uploading save states while the user
+                // is waiting on a ROM download.
+                if await MainActor.run(body: { CloudSyncManager.shared.shouldYieldSync }) {
+                    syncLog.event(.skip, item: "syncAllSaveStates", status: .skipped, detail: "yielding mid-loop")
+                    break
+                }
+                if Task.isCancelled { break }
+
                 // Skip logic: only skip if not forcing sync AND record has cloudRecordID
                 if !forceSync && saveState.cloudRecordID != nil && !saveState.cloudRecordID!.isEmpty {
                     syncLog.event(.skip, item: "save/\(saveState.id)", status: .exists)
@@ -715,6 +725,14 @@ public actor CloudKitInitialSyncer {
                     syncProgressSubject.send(progress)
                 } catch {
                     syncLog.event(.upload, item: "save/\(saveState.id)", status: .failed, detail: error.localizedDescription)
+
+                    // Non-recoverable: save state file missing on disk. Don't retry.
+                    let nsError = error as NSError
+                    let isMissingFile = nsError.domain == "com.provenance-emu.provenance" && nsError.code == 404
+                    if isMissingFile {
+                        syncLog.event(.skip, item: "save/\(saveState.id)", status: .skipped, detail: "file missing; no retry")
+                        continue
+                    }
 
                     // Add to retry queue for later processing
                     let retryUpload = RetryableUpload(type: .saveState(id: saveState.id), error: error)

@@ -305,6 +305,59 @@ final class SyncTaskQueueTests: XCTestCase {
         XCTAssertEqual(order, ["first", "second"], "Intra-queue dependency should be resolved when first task completes")
     }
 
+    // MARK: - Terminal-state dependency release
+
+    /// Regression: a permanently-failed prerequisite must unblock its
+    /// dependents. Previously a failed task (retries exhausted) left
+    /// dependents stuck in `.pending` forever — which manifested as
+    /// DeltaSkin CloudKit sync never running when ROM metadata fetch
+    /// failed.
+    func test_failedDependency_unblocksDependent() async {
+        let queue = SyncTaskQueue(name: "test", maxConcurrentTasks: 2, maxRetries: 0)
+        let dependentRan = DidFinishTracker()
+
+        let failingID = await queue.submit(kind: .custom(description: "failing")) {
+            throw NSError(domain: "test", code: -1)
+        }
+
+        await queue.submit(
+            kind: .custom(description: "dependent"),
+            dependencies: [failingID]
+        ) {
+            await dependentRan.markFinished()
+        }
+
+        try? await Task.sleep(for: .seconds(1))
+        let ran = await dependentRan.finished
+        XCTAssertTrue(ran, "Dependent task should run even when its prerequisite fails terminally")
+    }
+
+    /// A cancelled prerequisite is terminal and must release dependents.
+    func test_cancelledDependency_unblocksDependent() async {
+        let queue = SyncTaskQueue(name: "test", maxConcurrentTasks: 2)
+        await queue.pause()
+
+        let dependentRan = DidFinishTracker()
+
+        let cancelledID = await queue.submit(kind: .custom(description: "will-be-cancelled")) {
+            try? await Task.sleep(for: .seconds(5))
+        }
+
+        await queue.submit(
+            kind: .custom(description: "dependent"),
+            dependencies: [cancelledID]
+        ) {
+            await dependentRan.markFinished()
+        }
+
+        await queue.cancel(taskID: cancelledID)
+        await queue.resume()
+
+        try? await Task.sleep(for: .milliseconds(500))
+        let ran = await dependentRan.finished
+        XCTAssertTrue(ran, "Dependent task should run even when its prerequisite is cancelled")
+    }
+
     // MARK: - Auto-pruning
 
     func test_pruneCompleted_removesTerminalTasks() async {
@@ -385,6 +438,51 @@ final class SyncTaskQueueCoordinatorTests: XCTestCase {
         let romQueue = await coordinator.queue(for: .romDownload)
         XCTAssertNotNil(artQueue)
         XCTAssertNotNil(romQueue)
+
+        await coordinator.cancelAll()
+    }
+
+    /// Regression: cross-queue dependents must unblock when the
+    /// prerequisite fails. Models the fetchRemoteChanges chain where
+    /// the non-DB (skins) task depends on the ROM metadata task — a
+    /// failed metadata task was stranding skin sync indefinitely.
+    func test_crossQueue_failedPrerequisite_unblocksDependent() async {
+        let coordinator = SyncTaskQueueCoordinator(globalMaxConcurrent: 4)
+        await coordinator.startEventListeners()
+
+        let dependentRan = DidFinishTracker()
+
+        // Prerequisite on metadata queue fails terminally (maxRetries=0 is
+        // not configurable per-task, so throw repeatedly — the built-in
+        // maxRetries default is small enough that it will terminally fail
+        // within the test timeout).
+        let prereqID = await coordinator.submit(
+            to: .metadata,
+            kind: .metadataSync
+        ) {
+            throw NSError(domain: "test", code: -1)
+        }
+        guard let prereqID else {
+            XCTFail("Failed to submit prerequisite")
+            return
+        }
+
+        // Dependent on a different queue waits on the failing prereq.
+        await coordinator.submit(
+            to: .bios,
+            kind: .custom(description: "skin-sync"),
+            dependencies: [prereqID]
+        ) {
+            await dependentRan.markFinished()
+        }
+
+        // Give the prerequisite time to exhaust retries and fail, then
+        // allow the coordinator's event listener to propagate the
+        // terminal-state notification to the bios queue.
+        try? await Task.sleep(for: .seconds(3))
+
+        let ran = await dependentRan.finished
+        XCTAssertTrue(ran, "Cross-queue dependent should run after prerequisite fails terminally")
 
         await coordinator.cancelAll()
     }

@@ -171,29 +171,18 @@ public actor GameSyncValidator {
             return .error("Cloud sync syncer not available")
         }
 
-        // Check if record exists in cloud
-        progressHandler?("Checking iCloud...")
-        let cloudStatus = await checkCloudRecordExists(game: game, syncer: romsSyncer)
+        // No explicit precheck. `downloadGame` does its own existence check
+        // via `fetchRecordWithProgress` and throws `CKError.unknownItem`
+        // when the record is gone. A separate precheck would just contend
+        // with the download itself for the syncer's 2-slot work queue —
+        // which is exactly how we got 60s "Checking iCloud…" timeouts when
+        // `loadAllFromCloud` or metadata sync was holding the slots.
 
-        switch cloudStatus {
-        case .notFound:
-            if game.isDownloaded {
-                return .needsUpload
-            }
-            return .error("Game file not found and no cloud record exists")
-        case .networkError(let message):
-            return .error(message)
-        case .exists:
-            break
-        }
-
-        // Record exists - download it with progress
         do {
             ILOG("Downloading game \(game.title) from cloud before launch...")
 
-            // Use CloudKitRomsSyncer's progress-enabled download if available
             if let cloudKitSyncer = romsSyncer as? CloudKitRomsSyncer {
-                try await cloudKitSyncer.downloadGame(md5: md5) { progress, status in
+                try await cloudKitSyncer.downloadGame(md5: md5) { _, status in
                     progressHandler?(status)
                 }
             } else {
@@ -201,7 +190,6 @@ public actor GameSyncValidator {
                 try await romsSyncer.downloadGame(md5: md5)
             }
 
-            // Verify file exists after download
             progressHandler?("Verifying download...")
             let refreshedGame = RomDatabase.sharedInstance.game(withMD5: md5) ?? game
             guard let refreshedURL = refreshedGame.file?.url,
@@ -211,48 +199,25 @@ public actor GameSyncValidator {
 
             ILOG("Successfully downloaded and validated game \(game.title)")
             return .ready
+        } catch let ckError as CKError where ckError.code == .unknownItem {
+            if game.isDownloaded {
+                return .needsUpload
+            }
+            return .error("Game file not found in iCloud")
+        } catch let syncError as CloudSyncError {
+            if case .cloudKitError(let inner) = syncError,
+               let ckError = inner as? CKError,
+               ckError.code == .unknownItem {
+                if game.isDownloaded {
+                    return .needsUpload
+                }
+                return .error("Game file not found in iCloud")
+            }
+            ELOG("Failed to download game \(game.title): \(syncError.localizedDescription)")
+            return .error("Download failed: \(syncError.localizedDescription)")
         } catch {
             ELOG("Failed to download game \(game.title): \(error.localizedDescription)")
             return .error("Download failed: \(error.localizedDescription)")
-        }
-    }
-
-    /// Result of cloud record check
-    private enum CloudRecordStatus {
-        case exists
-        case notFound
-        case networkError(String)
-    }
-
-    /// Checks if a cloud record exists for the game
-    private func checkCloudRecordExists(game: PVGame, syncer: RomsSyncing) async -> CloudRecordStatus {
-        guard let cloudKitSyncer = syncer as? CloudKitRomsSyncer else {
-            // For non-CloudKit syncers, assume record exists if sync is enabled
-            return Defaults[.iCloudSync] ? .exists : .notFound
-        }
-
-        if !game.hasCloudAssets {
-            return .notFound
-        }
-
-        let recordID = CloudKitSchema.RecordIDGenerator.romRecordID(md5: game.md5Hash)
-        do {
-            let record = try await cloudKitSyncer.fetchRecord(recordID: recordID)
-            return record != nil ? .exists : .notFound
-        } catch {
-            if let ckError = error as? CKError {
-                switch ckError.code {
-                case .unknownItem:
-                    return .notFound
-                case .networkFailure, .networkUnavailable, .serviceUnavailable, .requestRateLimited:
-                    WLOG("Network error checking cloud record: \(ckError.localizedDescription)")
-                    return .networkError("iCloud is temporarily unavailable. Check your network connection.")
-                default:
-                    break
-                }
-            }
-            WLOG("Error checking cloud record: \(error.localizedDescription)")
-            return .networkError("Could not check iCloud: \(error.localizedDescription)")
         }
     }
 
