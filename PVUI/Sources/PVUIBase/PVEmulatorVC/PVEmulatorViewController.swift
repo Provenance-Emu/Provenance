@@ -2893,6 +2893,14 @@ extension PVEmulatorViewController {
         ///    `showMenu`, so the menu appears "broken."
         /// Reconcile both before the user touches a controller.
         reestablishPauseHandlers()
+        /// Control Center dismissal on tvOS isn't atomic with didBecomeActive:
+        /// the system finishes retargeting GCController focus a few frames later.
+        /// Rebinding a second time after a short delay catches the case where the
+        /// first rebind landed before the system released `buttonOptions`, which
+        /// manifests as the pause button mapping silently breaking after PS/home.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.reestablishPauseHandlers()
+        }
         if isShowingMenu && menuPresentationViewController == nil && presentedViewController == nil {
             ILOG("appDidBecomeActive: isShowingMenu stuck true with no menu VC — resetting")
             isShowingMenu = false
