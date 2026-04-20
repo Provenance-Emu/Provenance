@@ -2206,6 +2206,13 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 - (instancetype)init {
     if ((self = [super init])) {
+        // Libretro cores load zip content themselves (via libretro-common's
+        // archive_file.c, or — for arcade cores like fbalpha2012 — by scanning
+        // the zip directly for parent/clone ROM chains). Extracting a CPS-style
+        // arcade zip would leave the loose chip files in a non-zip directory
+        // where the core cannot find the siblings it needs. Matches
+        // PVRetroArchCoreBridge.mm, which also disables pre-extraction.
+        self.extractArchive = NO;
         _dylibHandle = NULL;
         memset(&_sym, 0, sizeof(_sym));
         memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
@@ -4395,6 +4402,7 @@ static bool thin_environment(unsigned cmd, void *data) {
             if ([_frontendDelegate respondsToSelector:@selector(libretroFrontend:didUpdateAVInfo:)]) {
                 [_frontendDelegate libretroFrontend:self didUpdateAVInfo:self.avInfo];
             }
+            if (self.avInfoDidUpdateBlock) { self.avInfoDidUpdateBlock(); }
             return true;
         }
         case RETRO_ENVIRONMENT_SET_GEOMETRY: {
@@ -4424,6 +4432,7 @@ static bool thin_environment(unsigned cmd, void *data) {
             if ([_frontendDelegate respondsToSelector:@selector(libretroFrontend:didUpdateAVInfo:)]) {
                 [_frontendDelegate libretroFrontend:self didUpdateAVInfo:self.avInfo];
             }
+            if (self.avInfoDidUpdateBlock) { self.avInfoDidUpdateBlock(); }
             return true;
         }
 

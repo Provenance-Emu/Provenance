@@ -199,6 +199,13 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Delegate that receives video, audio, and input callbacks.
 @property (nonatomic, weak, nullable) id<PVThinLibretroDelegate> frontendDelegate;
 
+/// Fires on the emulation thread whenever the core reports new AV info
+/// (`SET_SYSTEM_AV_INFO` or `SET_GEOMETRY`). Lets the Swift layer invalidate
+/// any cached aspect-ratio state when the core changes resolution mid-run
+/// (e.g. DS dual-screen toggle, PSP buffer resize). Dispatch to main before
+/// touching UI state.
+@property (nonatomic, copy, nullable) void (^avInfoDidUpdateBlock)(void);
+
 /// Resolved system/AV info after the core loads successfully.
 @property (nonatomic, readonly) PVLibretroAVInfo avInfo;
 

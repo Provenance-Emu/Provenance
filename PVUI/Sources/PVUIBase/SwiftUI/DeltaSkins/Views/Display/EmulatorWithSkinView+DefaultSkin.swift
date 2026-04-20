@@ -374,6 +374,16 @@ struct DefaultControllerSkinView: View {
                 viewportBridge = nil
                 coreInstance.viewportLayoutProvider = nil
             }
+            // Notification posted by PVThinLibretroCore when the core reports new AV info
+            // (e.g. DS dual-screen toggle, PSP resolution switch). Raw string avoids a
+            // new PVCoreBridgeRetro import here; the name is defined on Notification.Name
+            // in PVThinLibretroCore.swift.
+            .onReceive(NotificationCenter.default.publisher(
+                for: Notification.Name("PVThinLibretroCoreAVInfoDidUpdate")
+            )) { _ in
+                cachedAspectRatio = nil
+                lastAspectSize = .zero
+            }
             .background(
                 Group {
                     if validSize {

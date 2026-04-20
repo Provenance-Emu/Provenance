@@ -22,6 +22,14 @@ import GameController
 import CoreHaptics
 #endif
 
+public extension Notification.Name {
+    /// Posted (on main) when the active thin-libretro core reports new AV info via
+    /// `RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO` or `SET_GEOMETRY`. SwiftUI views that
+    /// cache aspect-ratio data derived from the core should invalidate on receipt
+    /// so the next layout pass re-reads the core's current geometry.
+    static let PVThinLibretroCoreAVInfoDidUpdate = Notification.Name("PVThinLibretroCoreAVInfoDidUpdate")
+}
+
 /// Internal to keep `PVEmulatorCore` out of the generated
 /// `PVCoreBridgeRetro-Swift.h` header (which would break every
 /// downstream ObjC core target). `@objc` ensures the class is
@@ -100,6 +108,18 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
         PVThinLibretroCore.current = self
+        // Broadcast libretro AV-info changes so SwiftUI skin views invalidate their
+        // cached aspect ratio when the core resizes mid-run (e.g. DS dual-screen
+        // toggle). The block fires on the emulation thread; hop to main before any
+        // observers touch UI state.
+        _bridge.avInfoDidUpdateBlock = {
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: .PVThinLibretroCoreAVInfoDidUpdate,
+                    object: nil
+                )
+            }
+        }
         ILOG("ThinCore: initialized PVThinLibretroCore (bridge=\(_bridge), self=\(self))")
     }
 
