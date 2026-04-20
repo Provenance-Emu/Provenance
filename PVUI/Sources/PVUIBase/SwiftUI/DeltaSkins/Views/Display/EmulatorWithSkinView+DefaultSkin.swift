@@ -595,9 +595,13 @@ struct DefaultControllerSkinView: View {
         /// Calculate aspect ratio - ensure it's reasonable (most games are 4:3 or 16:9)
         var aspectRatio = aspectWidth / max(0.01, aspectHeight)
 
-        /// Check if aspectSize looks like screen dimensions instead of game aspect ratio
-        /// Screen dimensions are typically much larger (e.g., 440x956), while aspect ratios are small numbers (e.g., 4:3)
-        let looksLikeScreenSize = aspectWidth > 100 || aspectHeight > 100
+        /// Check if aspectSize looks like screen dimensions rather than a retro game's
+        /// logical pixel geometry. No retro-core base resolution exceeds ~1000 px on
+        /// either axis (Saturn HD tops out at 704×576, PSP at 480×272, N64/PS1 at 640×480),
+        /// but any modern tvOS/iOS screen is ≥1920. The previous 100-px threshold
+        /// tripped on almost every real core (NES is 256 wide) and silently clamped
+        /// non-4:3 cores (DS, PSP, Genesis) to 4:3.
+        let looksLikeScreenSize = aspectWidth > 1200 || aspectHeight > 1200
 
         /// Most games have aspect ratios between 1.0 (square) and 2.0 (ultrawide)
         /// If aspect ratio is outside reasonable bounds OR looks like screen dimensions, fix it
