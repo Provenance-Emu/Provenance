@@ -45,10 +45,19 @@ extension PVEmulatorViewController {
     }
 
     @objc func controllerDidConnect(_ note: Notification?) {
-
-        // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
-        // pause handler moved to controller (Notification PauseGame)
         hideOrShowMenuButton()
+        /// Rebind pause handlers for the freshly connected controller. Deferred by
+        /// one runloop tick so the core's own `controllerDidConnect` observer runs
+        /// first (cores typically install their own `pressedChangedHandler` on the
+        /// same buttons we use for pause) — we want our binding to be the last one
+        /// written so pause survives core wiring. A second pass at +0.3s catches
+        /// cores that wire the controller asynchronously during their first frame.
+        DispatchQueue.main.async { [weak self] in
+            self?.reestablishPauseHandlers()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            self?.reestablishPauseHandlers()
+        }
     }
 
     @objc func controllerDidDisconnect(_: Notification?) {

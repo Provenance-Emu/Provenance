@@ -351,6 +351,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 if isRunning {
                     self.hideBootHUDIfNeeded()
                     self.playTimeTracker?.didResume()
+                    /// Cores like RetroArch/Dolphin/Citra/PPSSPP overwrite our pause-button
+                    /// bindings inside their own `setupController:` step, which runs after
+                    /// `startEmulation` triggers `isRunning = true`. A second rebind at
+                    /// +0.3s catches cores that attach controllers asynchronously during
+                    /// the first frames of emulation (observed on the thin libretro wrapper).
+                    self.reestablishPauseHandlers()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                        self?.reestablishPauseHandlers()
+                    }
                 } else {
                     self.playTimeTracker?.didPause()
                 }
@@ -942,7 +951,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Intentionally empty — kept for symmetry with the previous viewDidAppear flow.
     }
 
-    /// Re-establish controller pause handlers after a modal interfered with controller state.
+    /// No-op shim retained so existing callers (e.g. CoreOptions cleanup) compile.
+    /// We no longer manage UITapGestureRecognizers for the Siri Remote menu button.
+    @objc func resetTVOSMenuGestures() {
+        // Intentionally empty.
+    }
+    #endif
+
+    /// Re-establish controller pause handlers after they were clobbered by a core's
+    /// own input bindings, a presented modal, or a Control Center roundtrip. Cores
+    /// such as RetroArch, Dolphin, Citra, PPSSPP, Play, and emuThree all overwrite
+    /// `buttonOptions.pressedChangedHandler` (and on iOS, `buttonMenu`/`buttonHome`)
+    /// during their own `setupController:`. Our pause binding from `setupControllers`
+    /// therefore gets silently erased as soon as the core finishes initializing —
+    /// which is *exactly* when the user would want to hit pause. Calling this after
+    /// core init, after menu dismissal, and after app foregrounding makes pause
+    /// survive the boot race consistently.
     @objc func reestablishPauseHandlers() {
         for controller in PVControllerManager.shared.controllers {
             controller.setupPauseHandler(onPause: {
@@ -950,13 +974,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             })
         }
     }
-
-    /// No-op shim retained so existing callers (e.g. CoreOptions cleanup) compile.
-    /// We no longer manage UITapGestureRecognizers for the Siri Remote menu button.
-    @objc func resetTVOSMenuGestures() {
-        // Intentionally empty.
-    }
-    #endif
 
     override public func viewDidAppear(_: Bool) {
         super.viewDidAppear(true)
