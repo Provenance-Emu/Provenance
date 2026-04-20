@@ -265,39 +265,9 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
         #endif
-        let wantsStartSelectInMenu = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(
-            emulatorVC.game?.system?.identifier ?? SystemIdentifier.RetroArch.rawValue
-        )
-        if let player1 = PVControllerManager.shared.player1 {
-#if os(iOS)
-            if Defaults[.missingButtonsAlwaysOn] || player1.extendedGamepad != nil || wantsStartSelectInMenu {
-                controlsTiles.append(PauseMenuTile(
-                    id: "p1Controls",
-                    icon: "gamecontroller",
-                    label: String(localized: "P1 Controls"),
-                    colorKey: .blue
-                ))
-            }
-#else
-            if player1.extendedGamepad != nil || wantsStartSelectInMenu {
-                controlsTiles.append(PauseMenuTile(
-                    id: "p1Controls",
-                    icon: "gamecontroller",
-                    label: String(localized: "P1 Controls"),
-                    colorKey: .blue
-                ))
-            }
-#endif
-        }
-        if let player2 = PVControllerManager.shared.player2,
-           player2.extendedGamepad != nil || wantsStartSelectInMenu {
-            controlsTiles.append(PauseMenuTile(
-                id: "p2Controls",
-                icon: "gamecontroller",
-                label: String(localized: "P2 Controls"),
-                colorKey: .purple
-            ))
-        }
+        // NOTE: The "P1 Controls" / "P2 Controls" tiles were previously listed
+        // here but their tap handler was a no-op (just dismissed the menu).
+        // They are omitted until per-player controls surface a real sub-sheet.
         if gameSystemID == n64ID {
             controlsTiles.append(PauseMenuTile(
                 id: "n64PakSlots",

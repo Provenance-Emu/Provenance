@@ -301,8 +301,6 @@ struct PauseTileMenuView: View {
             showingNetworkPlay = true
         case "controllerProfile":
             showingControllerProfiles = true
-        case "p1Controls", "p2Controls":
-            dismissAction(true)
         case "screenshot":
             dismissAction(true)
             emulatorVC.takeScreenshot()

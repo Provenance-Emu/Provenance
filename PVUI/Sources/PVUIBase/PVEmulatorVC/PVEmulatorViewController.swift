@@ -1538,6 +1538,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         enableControllerInput(false)
         #if os(tvOS)
         resetTVOSMenuGestures()
+        // Rebind pause-button handlers. Presenting a modal can leave the
+        // GCController pressedChangedHandlers in a stale state (the system
+        // retargets focus while `controllerUserInteractionEnabled` was true),
+        // which manifests as the pause menu refusing to reopen after any
+        // tile tap that also dismissed the menu.
+        reestablishPauseHandlers()
         #endif
     }
 
