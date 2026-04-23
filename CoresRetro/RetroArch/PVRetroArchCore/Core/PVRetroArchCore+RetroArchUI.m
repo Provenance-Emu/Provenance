@@ -21,6 +21,7 @@
 #include "./cocoa_common.h"
 #include "./apple_platform.h"
 #include "./metal_common.h"
+#include "./PVRetroArchEmulationThread.h"
 
 /* RetroArch Includes */
 #include <stdint.h>
@@ -1769,8 +1770,18 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
             runloop_state_t *runloop_st = runloop_state_get_ptr();
             runloop_st->flags &= ~RUNLOOP_FLAG_OVERRIDES_ACTIVE;
         });
+        // Drive RetroArch's frame loop on a dedicated emulation thread so a
+        // long-running runloop_iterate (netplay handshake, blocking task) cannot
+        // block the main thread / UI.
+        pv_retro_emu_thread_start();
+        CFRunLoopRef emuRL = pv_retro_emu_thread_runloop();
+        if (!emuRL) {
+            ELOG(@"startVM: emulation thread runloop not available, falling back to main");
+            emuRL = CFRunLoopGetMain();
+        }
         iterate_observer = CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting, true, 0, rarch_draw_observer, 0);
-        CFRunLoopAddObserver(CFRunLoopGetMain(), iterate_observer, kCFRunLoopCommonModes);
+        CFRunLoopAddObserver(emuRL, iterate_observer, kCFRunLoopCommonModes);
+        CFRunLoopWakeUp(emuRL);
         apple_gamecontroller_joypad_init(NULL);
         [self setupJoypad];
     });
@@ -2207,9 +2218,16 @@ void rarch_start_draw_observer(void)
 
    if (iterate_observer != NULL)
       CFRelease(iterate_observer);
+
+   pv_retro_emu_thread_start();
+   CFRunLoopRef emuRL = pv_retro_emu_thread_runloop();
+   if (!emuRL)
+       emuRL = CFRunLoopGetMain();
+
    iterate_observer = CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting,
                                               true, 0, rarch_draw_observer, 0);
-   CFRunLoopAddObserver(CFRunLoopGetMain(), iterate_observer, kCFRunLoopCommonModes);
+   CFRunLoopAddObserver(emuRL, iterate_observer, kCFRunLoopCommonModes);
+   CFRunLoopWakeUp(emuRL);
 }
 
 void rarch_stop_draw_observer(void)
@@ -2349,8 +2367,12 @@ static void rarch_draw_observer(CFRunLoopObserverRef observer,
     task_queue_check();
 
    runloop_flags = runloop_get_flags();
-   if (!(runloop_flags & RUNLOOP_FLAG_IDLE))
-	  CFRunLoopWakeUp(CFRunLoopGetMain());
+   if (!(runloop_flags & RUNLOOP_FLAG_IDLE)) {
+      // Self-wake the emulation thread runloop so the observer fires again on
+      // the next sleep cycle. Without this the runloop would idle indefinitely
+      // since no source (CADisplayLink etc.) is attached to the emu thread.
+      CFRunLoopWakeUp(CFRunLoopGetCurrent());
+   }
 }
 
 void get_ios_version(int *major, int *minor) {

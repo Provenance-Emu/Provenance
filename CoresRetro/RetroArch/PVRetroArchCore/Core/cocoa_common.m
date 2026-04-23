@@ -117,23 +117,15 @@ void cocoa_file_load_with_detect_core(const char *filename);
 -(void)step:(CADisplayLink*)target API_AVAILABLE(macos(14.0), ios(3.1), tvos(3.1))
 {
 #if defined(IOS)
-   if ([[UIApplication sharedApplication] applicationState] != UIApplicationStateActive)
-      return;
-
-//   int ret = runloop_iterate();
-
-   task_queue_check();
-
-//   if (ret == -1)
-//   {
-//      main_exit(NULL);
-//      exit(0);
-//      return;
-//   }
-
-   uint32_t runloop_flags = runloop_get_flags();
-   if (!(runloop_flags & RUNLOOP_FLAG_IDLE))
-      CFRunLoopWakeUp(CFRunLoopGetMain());
+   // RetroArch's frame loop (runloop_iterate + task_queue_check) now runs on
+   // the dedicated emulation thread (see PVRetroArchEmulationThread.h and the
+   // observer setup in PVRetroArchCore+RetroArchUI.m). This CADisplayLink-driven
+   // step: used to call task_queue_check on main and wake the main runloop;
+   // both are obsolete now that the emu thread owns the loop.
+   //
+   // We keep the no-op selector wired so the displayLink target survives, but
+   // do no real work here.
+   (void)target;
 #endif
 }
 #endif

@@ -45,6 +45,8 @@
 		93814F922AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m in Sources */ = {isa = PBXBuildFile; fileRef = 93814F912AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m */; };
 		9383580D296CDBB600A23231 /* metal.m in Sources */ = {isa = PBXBuildFile; fileRef = 9383580C296CDBB600A23231 /* metal.m */; };
 		93835811296CFAA700A23231 /* cocoa_common.m in Sources */ = {isa = PBXBuildFile; fileRef = 93835810296CFAA600A23231 /* cocoa_common.m */; };
+		C0C0CAFE0001029A00CAFE01 /* PVRetroArchEmulationThread.m in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0001029A00CAFE03 /* PVRetroArchEmulationThread.m */; };
+		C0C0CAFE0001029A00CAFE02 /* PVRetroArchEmulationThread.h in Headers */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0001029A00CAFE04 /* PVRetroArchEmulationThread.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9383581B296D362C00A23231 /* retroarch.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 9383581A296D362C00A23231 /* retroarch.cfg */; };
 		93835825296D58B900A23231 /* assets.zip in Resources */ = {isa = PBXBuildFile; fileRef = 93835824296D58B900A23231 /* assets.zip */; };
 		9389A8F9297AA46000B27656 /* arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 9389A8F8297AA46000B27656 /* arrow.png */; };
@@ -350,6 +352,8 @@
 		93814F912AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Archive+MAME.m"; sourceTree = "<group>"; };
 		9383580C296CDBB600A23231 /* metal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = metal.m; sourceTree = "<group>"; };
 		93835810296CFAA600A23231 /* cocoa_common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoa_common.m; sourceTree = "<group>"; };
+		C0C0CAFE0001029A00CAFE03 /* PVRetroArchEmulationThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVRetroArchEmulationThread.m; sourceTree = "<group>"; };
+		C0C0CAFE0001029A00CAFE04 /* PVRetroArchEmulationThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchEmulationThread.h; sourceTree = "<group>"; };
 		9383581A296D362C00A23231 /* retroarch.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = retroarch.cfg; sourceTree = "<group>"; };
 		93835824296D58B900A23231 /* assets.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = assets.zip; sourceTree = "<group>"; };
 		9389A8F8297AA46000B27656 /* arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrow.png; sourceTree = "<group>"; };
@@ -910,6 +914,8 @@
 				93FF383A2966337100772659 /* apple_platform.h */,
 				93FF38392966337100772659 /* cocoa_common.h */,
 				93835810296CFAA600A23231 /* cocoa_common.m */,
+				C0C0CAFE0001029A00CAFE04 /* PVRetroArchEmulationThread.h */,
+				C0C0CAFE0001029A00CAFE03 /* PVRetroArchEmulationThread.m */,
 				93BA743D2965B96D00A49D66 /* cocoa_gl_ctx.m */,
 				93BA743C2965B96D00A49D66 /* cocoa_vk_ctx.m */,
 				B3FD53FA2CD17E2200175917 /* dispserv_apple.m */,
@@ -1164,6 +1170,7 @@
 				B322019B2D8A692B00B1F81B /* vulkan_ios_tvos_helpers.h in Headers */,
 				932A5CC129686AEB0032C168 /* retroarch.h in Headers */,
 				93F66EC52966D6E100203EB3 /* cocoa_common.h in Headers */,
+				C0C0CAFE0001029A00CAFE02 /* PVRetroArchEmulationThread.h in Headers */,
 				B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */,
 				039F981B1E6C203CC74BC408 /* PVRetroArchOSD.h in Headers */,
 				CC001234ABCD000000000004 /* PVRetroArchCoreCapabilities.h in Headers */,
@@ -1465,6 +1472,7 @@
 				B3F0002A2F91AB2300CAFE08 /* PVRetroArchCoreCore+PVNetplayCapable.swift in Sources */,
 				936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */,
 				93835811296CFAA700A23231 /* cocoa_common.m in Sources */,
+				C0C0CAFE0001029A00CAFE01 /* PVRetroArchEmulationThread.m in Sources */,
 				2E434850122D7261A75CF7FE /* PVRetroArchOSD.m in Sources */,
 				CC001234ABCD000000000003 /* PVRetroArchCoreCapabilities.m in Sources */,
 				CC001235ABCD000000000003 /* PVRetroArchCoreBridge+LightGun.m in Sources */,
