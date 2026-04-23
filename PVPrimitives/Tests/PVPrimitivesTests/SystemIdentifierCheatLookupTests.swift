@@ -52,6 +52,32 @@ final class SystemIdentifierCheatLookupTests: XCTestCase {
         XCTAssertEqual(resolved, .Dreamcast)
     }
 
+    func testRetroArchWithVirtualJaguarCoreInfersAtariJaguar() {
+        let resolved = SystemIdentifier.cheatLookupResolvedIdentifier(
+            gameSystemIdentifier: SystemIdentifier.RetroArch.rawValue,
+            linkedPVSystemIdentifier: SystemIdentifier.RetroArch.rawValue,
+            coreIdentifier: "virtualjaguar.libretro.framework"
+        )
+        XCTAssertEqual(resolved, .AtariJaguar)
+        XCTAssertEqual(
+            SystemIdentifier.cheatLookupLibretroFolderName(
+                gameSystemIdentifier: SystemIdentifier.RetroArch.rawValue,
+                linkedPVSystemIdentifier: SystemIdentifier.RetroArch.rawValue,
+                coreIdentifier: "virtualjaguar.libretro.framework"
+            ),
+            "Atari - Jaguar"
+        )
+    }
+
+    func testProvenanceJaguarCoreIdentifierInfersAtariJaguar() {
+        let resolved = SystemIdentifier.cheatLookupResolvedIdentifier(
+            gameSystemIdentifier: SystemIdentifier.RetroArch.rawValue,
+            linkedPVSystemIdentifier: nil,
+            coreIdentifier: "com.provenance.core.jaguar"
+        )
+        XCTAssertEqual(resolved, .AtariJaguar)
+    }
+
     func testConcreteGameSystemWinsOverLinkedSystem() {
         let resolved = SystemIdentifier.cheatLookupResolvedIdentifier(
             gameSystemIdentifier: SystemIdentifier.SNES.rawValue,

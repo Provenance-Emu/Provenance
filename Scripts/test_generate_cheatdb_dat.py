@@ -16,6 +16,13 @@ parse_dat_file = _mod.parse_dat_file
 _build_md5_base_index = _mod._build_md5_base_index
 _lookup_md5_fuzzy = _mod._lookup_md5_fuzzy
 _dat_stem_match_base = _mod._dat_stem_match_base
+SYSTEM_SHORT_NAMES = _mod.SYSTEM_SHORT_NAMES
+
+
+class SystemShortNamesTests(unittest.TestCase):
+    def test_atari_jaguar_maps_for_libretro_cht(self):
+        self.assertEqual(SYSTEM_SHORT_NAMES.get("Atari - Jaguar"), "Jaguar")
+        self.assertEqual(SYSTEM_SHORT_NAMES.get("Atari - Jaguar CD"), "JaguarCD")
 
 
 class ParseDatFileTests(unittest.TestCase):

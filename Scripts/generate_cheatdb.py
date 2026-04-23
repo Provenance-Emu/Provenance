@@ -30,9 +30,10 @@ Each .cht file is INI-style:
     cheat0_enable = false
     cheat1_desc = ...
 
-Flycast / RetroArch memory cheats (common on Dreamcast) may leave cheatN_code empty and set
-cheatN_address, cheatN_value, and cheatN_cheat_type instead — those are folded into a single
-synthetic code line for the database (same convention as CheatOnlineLookup).
+RetroArch memory-style cheats (empty cheatN_code) — common on Dreamcast (Flycast) and
+Atari Jaguar (Virtual Jaguar) — may set cheatN_address, cheatN_value, and cheatN_cheat_type
+instead; those are folded into a single synthetic code line for the database (same convention
+as CheatOnlineLookup).
 
 MD5 cross-reference uses CLRMamePro DAT files (from metadat/no-intro/,
 metadat/redump/, and dat/) to add ROM MD5 hashes to each game entry.
@@ -60,8 +61,9 @@ from typing import Optional
 #
 # --- Upstream coverage vs preemptive keys ---------------------------------
 # libretro-database only publishes a subset of systems under cht/ (see
-# https://github.com/libretro/libretro-database/tree/master/cht ). Many keys
-# below are *preemptive*: they apply when/if libretro adds that folder (e.g.
+# https://github.com/libretro/libretro-database/tree/master/cht ). Atari - Jaguar
+# is upstream; many other keys below are *preemptive*: they apply when/if libretro
+# adds that folder (e.g.
 # "The 3DO Company - 3DO", "Nintendo - GameCube", "Bandai - WonderSwan",
 # "SNK - Neo Geo Pocket", "GCE - Vectrex", "Nintendo - Virtual Boy",
 # "Nintendo - Pokemon Mini", "Sega - SG-1000", "Watara - Supervision",
@@ -223,10 +225,11 @@ _DAT_ROM_LINE_MD5_RE = re.compile(r"\bmd5\s+([0-9a-fA-F]{32})", re.IGNORECASE)
 
 
 def _flycast_address_cheat_line(data, index):
-    """Build a single-line code from Flycast/RetroArch memory cheat fields when cheatN_code is empty.
+    """Build a single-line code from RetroArch memory cheat fields when cheatN_code is empty.
 
-    Many Dreamcast (and some other) .cht files use cheatN_address / cheatN_value / cheatN_cheat_type
-    with an empty cheatN_code; the classic RetroArch INI cheat parser still applies these at runtime.
+    Dreamcast (Flycast) and Atari Jaguar (Virtual Jaguar) .cht files often use
+    cheatN_address / cheatN_value / cheatN_cheat_type with an empty cheatN_code; the
+    RetroArch INI cheat parser applies these at runtime.
     """
     addr = data.get(f"cheat{index}_address", "").strip().strip('"')
     if not addr:

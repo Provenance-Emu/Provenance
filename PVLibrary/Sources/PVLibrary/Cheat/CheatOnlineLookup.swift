@@ -411,9 +411,9 @@ public actor CheatOnlineLookup {
 
 /// Parses libretro `.cht` INI text into cheat entries.
 ///
-/// Handles classic `cheatN_desc` + `cheatN_code`, and Flycast/RetroArch memory cheats where
+/// Handles classic `cheatN_desc` + `cheatN_code`, and RetroArch memory cheats where
 /// `cheatN_code` is empty but `cheatN_address` / `cheatN_value` / `cheatN_cheat_type` are set
-/// (common for Dreamcast `.cht` files in libretro-database).
+/// (common for Dreamcast and Atari Jaguar `.cht` files in libretro-database).
 internal func parseLibretroCheatIniText(
     _ text: String,
     romTitle: String,
@@ -494,7 +494,7 @@ private func libretroChtIndex(fromKey key: String) -> Int? {
     return Int(digits)
 }
 
-/// Builds `address [value] [cheat_type]` when `cheatN_code` is empty (Flycast memory cheat INI).
+/// Builds `address [value] [cheat_type]` when `cheatN_code` is empty (RetroArch memory cheat INI).
 private func libretroChtSynthesizedAddressCode(from data: [String: String], index: Int) -> String {
     let addr = (data["cheat\(index)_address"] ?? "").trimmingCharacters(in: .whitespaces)
     guard !addr.isEmpty else { return "" }

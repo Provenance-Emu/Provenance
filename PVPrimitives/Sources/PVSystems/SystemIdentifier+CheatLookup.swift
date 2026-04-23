@@ -3,7 +3,7 @@
 //
 // Resolves which hardware `SystemIdentifier` to use for libretro `cht/` cheat lookup when
 // denormalized game metadata says `RetroArch` (multi-system core) or the running core
-// is Flycast (Dreamcast).
+// implies a concrete system (e.g. Flycast → Dreamcast, Virtual Jaguar → Atari Jaguar).
 
 import Foundation
 
@@ -14,7 +14,7 @@ extension SystemIdentifier {
     /// - Parameters:
     ///   - gameSystemIdentifier: `PVGame.systemIdentifier` (may be `com.provenance.retroarch` for RetroArch-launched titles).
     ///   - linkedPVSystemIdentifier: `PVGame.system?.identifier` when the game is linked to a concrete `PVSystem`.
-    ///   - coreIdentifier: Running core id (e.g. `flycast.libretro.framework`, `com.provenance.core.flycast`).
+    ///   - coreIdentifier: Running core id (e.g. `flycast.libretro.framework`, `virtualjaguar.libretro.framework`, `com.provenance.core.jaguar`).
     /// - Returns: Resolved identifier, or `nil` when nothing usable is available.
     public static func cheatLookupResolvedIdentifier(
         gameSystemIdentifier: String,
@@ -30,8 +30,14 @@ extension SystemIdentifier {
         if let s = fromLinked, s != .Unknown, s != .RetroArch {
             return s
         }
-        if let cid = coreIdentifier?.lowercased(), cid.contains("flycast") {
-            return .Dreamcast
+        if let cid = coreIdentifier?.lowercased() {
+            if cid.contains("flycast") {
+                return .Dreamcast
+            }
+            // Virtual Jaguar (libretro + Provenance core): `cht/Atari - Jaguar/`; linked PVSystem still wins (e.g. Jaguar CD).
+            if cid.contains("virtualjaguar") || cid.contains("core.jaguar") {
+                return .AtariJaguar
+            }
         }
         if let g = fromGame, g != .Unknown {
             return g

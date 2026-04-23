@@ -43,4 +43,24 @@ struct LibretroChtParserTests {
         #expect(entries.count == 1)
         #expect(entries[0].cheatCode == "01FF99C5")
     }
+
+    @Test("Atari Jaguar-style decimal address cheats (libretro cht/) parse like Flycast memory cheats")
+    func jaguarAddressCheats() {
+        let fixture = """
+        cheats = "1"
+        cheat0_desc = "Infinite Health (All Characters)"
+        cheat0_code = ""
+        cheat0_address = "199275"
+        cheat0_value = "232"
+        cheat0_cheat_type = "1"
+        """
+        let entries = parseLibretroCheatIniText(
+            fixture,
+            romTitle: "Alien Vs Predator",
+            systemName: "Atari - Jaguar",
+            idOffset: 0
+        )
+        #expect(entries.count == 1)
+        #expect(entries[0].cheatCode == "199275 232 1")
+    }
 }
