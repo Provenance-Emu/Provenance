@@ -34,8 +34,13 @@ public extension PVCore {
         ILOG("createInstance: principleClass=\(className) for \(identifier)")
         if className.contains("RetroArch") || className.contains("LibRetro") || className == "PVRetroArchCoreBridge" {
             let featureEnabled = PVFeatureFlags.shared.isEnabled(.dynamicLibretroScanner)
-            let pvRetroArchCoreExists: Bool = NSClassFromString("PVRetroArchCore") != nil
-            ILOG("ThinLibretro: featureEnabled=\(featureEnabled)")
+            // The Swift class is exposed to the ObjC runtime as `PVRetroArch.PVRetroArchCoreCore`
+            // (module-prefixed), so the previous `NSClassFromString("PVRetroArchCore")` always
+            // returned nil and unconditionally forced the thin wrapper. Probe the actual
+            // principleClass we were asked to load instead — if it resolves, the legacy wrapper
+            // is available and we should only swap when the feature flag explicitly says so.
+            let pvRetroArchCoreExists = NSClassFromString(className) != nil
+            ILOG("ThinLibretro: featureEnabled=\(featureEnabled), legacyClassExists=\(pvRetroArchCoreExists) (probed=\(className))")
             if featureEnabled || !pvRetroArchCoreExists {
                 // Force-load PVCoreBridgeRetro framework so the ObjC runtime has
                 // PVThinLibretroCore registered. Frameworks are lazily loaded and
