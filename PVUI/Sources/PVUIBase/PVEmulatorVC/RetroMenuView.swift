@@ -1218,8 +1218,12 @@ struct RetroMenuView: View {
             }
             #endif
 
-            // RetroArch internal menu (RGUI/XMB) + Provenance RetroArch settings (libretro cores)
-            if emulatorVC.core.coreIdentifier?.contains("libretro") == true {
+            // RetroArch internal menu (RGUI/XMB) + Provenance RetroArch settings.
+            // Only the full RA wrapper (`PVRetroArchCoreCore`) provides RGUI; the thin libretro
+            // wrapper (`PVThinLibretroCore`) does not. The legacy wrapper's coreIdentifier is
+            // `com.provenance.core.retroarch` (no "libretro" substring), so detect by class name.
+            let coreTypeName = String(describing: type(of: emulatorVC.core))
+            if coreTypeName.contains("RetroArch"), !coreTypeName.contains("ThinLibretro") {
                 let retroArchMenuAction = (emulatorVC.core as? CoreActions)?
                     .coreActions?
                     .first(where: { $0.title == RetroArchCoreActionTitles.internalMenu })
