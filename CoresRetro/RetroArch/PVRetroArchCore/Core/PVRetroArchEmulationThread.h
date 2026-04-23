@@ -28,6 +28,12 @@ CFRunLoopRef pv_retro_emu_thread_runloop(void);
 /// Wake the emulation thread's runloop. Safe to call from any thread.
 void pv_retro_emu_thread_wakeup(void);
 
+/// Block the calling thread until any in-flight observer callback on the
+/// emulation thread has returned and an idle pass has completed. Use this
+/// before tearing down RetroArch state (main_exit etc.) to avoid racing the
+/// frame loop. No-op if the emulation thread has not started.
+void pv_retro_emu_thread_drain(void);
+
 /// Tear down the emulation thread. Invalidates the keep-alive source so the
 /// runloop returns and the thread exits cleanly.
 void pv_retro_emu_thread_stop(void);

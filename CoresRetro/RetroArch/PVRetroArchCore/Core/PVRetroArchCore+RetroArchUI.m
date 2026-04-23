@@ -400,6 +400,9 @@ int argc =  1;
                 CFRelease(iterate_observer);
                 iterate_observer = NULL;
             }
+            // Wait for any in-flight observer callback on the emu thread to
+            // finish before tearing down RetroArch state in main_exit.
+            pv_retro_emu_thread_drain();
             /// Properly shut down RetroArch before starting fresh
             /// This ensures Vulkan contexts are cleaned up in the correct order
             /// Must be on main thread for RetroArch cleanup
@@ -503,6 +506,10 @@ int argc =  1;
 		CFRelease(iterate_observer);
 	}
 	iterate_observer = NULL;
+    // Wait for any in-flight rarch_draw_observer callback on the emu thread to
+    // finish before tearing down RetroArch state. Without this barrier
+    // main_exit could free state that the emu thread is still iterating.
+    pv_retro_emu_thread_drain();
     retroarch_config_init();
 	task_queue_init(true, (void (*)(struct retro_task *, const char *, unsigned int, unsigned int, bool)) main_msg_queue_push);
 	main_exit(NULL);

@@ -33,6 +33,22 @@ static volatile BOOL s_emuStopRequested = NO;
         NSPort *keepAlivePort = [NSPort port];
         [[NSRunLoop currentRunLoop] addPort:keepAlivePort forMode:NSRunLoopCommonModes];
 
+        // Periodic wake so the BeforeWaiting observer keeps firing even when
+        // the rarch_draw_observer returns early due to RUNLOOP_FLAG_IDLE
+        // (Provenance pause menu open). Without this the runloop would sleep
+        // indefinitely after entering idle and never iterate again on resume.
+        // 60Hz matches the original CADisplayLink-driven cadence on main.
+        CFRunLoopTimerRef keepAliveTimer = CFRunLoopTimerCreateWithHandler(
+            kCFAllocatorDefault,
+            CFAbsoluteTimeGetCurrent() + (1.0 / 60.0),
+            1.0 / 60.0,
+            0, 0,
+            ^(CFRunLoopTimerRef t) {
+                /* no-op — purpose is the wake itself */
+                (void)t;
+            });
+        CFRunLoopAddTimer(rl, keepAliveTimer, kCFRunLoopCommonModes);
+
         dispatch_semaphore_signal(s_emuRunLoopReady);
 
         while (!s_emuStopRequested) {
@@ -41,6 +57,8 @@ static volatile BOOL s_emuStopRequested = NO;
             }
         }
 
+        CFRunLoopTimerInvalidate(keepAliveTimer);
+        CFRelease(keepAliveTimer);
         [[NSRunLoop currentRunLoop] removePort:keepAlivePort forMode:NSRunLoopCommonModes];
         s_emuRunLoop = NULL;
     }
@@ -76,6 +94,21 @@ void pv_retro_emu_thread_wakeup(void) {
     if (rl) {
         CFRunLoopWakeUp(rl);
     }
+}
+
+void pv_retro_emu_thread_drain(void) {
+    CFRunLoopRef rl = s_emuRunLoop;
+    if (!rl) return;
+    if (CFRunLoopGetCurrent() == rl) return; /* would deadlock */
+
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    CFRunLoopPerformBlock(rl, kCFRunLoopCommonModes, ^{
+        dispatch_semaphore_signal(sem);
+    });
+    CFRunLoopWakeUp(rl);
+    /* Bound the wait so a wedged emu thread cannot deadlock teardown. */
+    dispatch_semaphore_wait(sem,
+        dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)));
 }
 
 void pv_retro_emu_thread_stop(void) {
