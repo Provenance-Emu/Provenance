@@ -137,10 +137,23 @@ extension PVThinLibretroCore {
             let ly = Int16(-pad.leftThumbstick.yAxis.value * Float(kAnalogMax)) // Y inverted for libretro
             _bridge.setAnalogIndex(kAnalogLeftStick, axis: kAnalogAxisX, value: lx, forPlayer: player)
             _bridge.setAnalogIndex(kAnalogLeftStick, axis: kAnalogAxisY, value: ly, forPlayer: player)
-            let rx = Int16(pad.rightThumbstick.xAxis.value * Float(kAnalogMax))
-            let ry = Int16(-pad.rightThumbstick.yAxis.value * Float(kAnalogMax))
-            _bridge.setAnalogIndex(kAnalogRightStick, axis: kAnalogAxisX, value: rx, forPlayer: player)
-            _bridge.setAnalogIndex(kAnalogRightStick, axis: kAnalogAxisY, value: ry, forPlayer: player)
+            // Right stick: merge physical input with any active N64 C-button digital presses
+            // from DeltaSkin (mupen reads C-buttons on ANALOG_RIGHT X/Y). The merge takes the
+            // axis component with the larger magnitude so a pressed C-button always registers
+            // even if the physical stick is at rest, and a real stick movement isn't clobbered
+            // by idle C-button state. Physical-stick deadzone is applied by each core
+            // (mupen64plus-nx exposes `mupen64plus-nx-astick-deadzone`/`-rdeadzone`) or the
+            // universal deadzone path — no hardcoded filter here.
+            var rx = pad.rightThumbstick.xAxis.value
+            var ry = -pad.rightThumbstick.yAxis.value
+            if let c = _n64CButtons[playerIndex] {
+                let cx: Float = (c.right ? 1 : 0) - (c.left ? 1 : 0)
+                let cy: Float = (c.down ? 1 : 0) - (c.up ? 1 : 0)
+                if abs(cx) > abs(rx) { rx = cx }
+                if abs(cy) > abs(ry) { ry = cy }
+            }
+            _bridge.setAnalogIndex(kAnalogRightStick, axis: kAnalogAxisX, value: Int16(rx * Float(kAnalogMax)), forPlayer: player)
+            _bridge.setAnalogIndex(kAnalogRightStick, axis: kAnalogAxisY, value: Int16(ry * Float(kAnalogMax)), forPlayer: player)
 
             // DualSense / DualShock touchpad → mouse input (player 0 only, when mouse is active).
             // The touchpad reports absolute position in the [-1, 1] range per axis.
@@ -568,33 +581,60 @@ extension PVThinLibretroCore: PVN64SystemResponderClient {
         }
     }
     public func didPush(_ button: PVN64Button, forPlayer player: Int) {
+        if updateN64CButton(button, pressed: true, forPlayer: player) { return }
         guard let mapped = n64MapDigital(button) else { return }
         pressButton(mapped, forPlayer: player)
     }
     public func didRelease(_ button: PVN64Button, forPlayer player: Int) {
+        if updateN64CButton(button, pressed: false, forPlayer: player) { return }
         guard let mapped = n64MapDigital(button) else { return }
         releaseButton(mapped, forPlayer: player)
     }
 
+    /// If `button` is a C-button, update the per-player C-state and write the accumulated
+    /// value onto the right analog stick. Returns true when the event was consumed so the
+    /// caller skips the digital path. Mupen64plus-libretro reads C-buttons from
+    /// `RETRO_DEVICE_INDEX_ANALOG_RIGHT` X/Y, not from the retropad digital bitmask.
+    private func updateN64CButton(_ button: PVN64Button, pressed: Bool, forPlayer player: Int) -> Bool {
+        var state = _n64CButtons[player] ?? .init()
+        switch button {
+        case .cUp:    state.up = pressed
+        case .cDown:  state.down = pressed
+        case .cLeft:  state.left = pressed
+        case .cRight: state.right = pressed
+        default:      return false
+        }
+        _n64CButtons[player] = state
+        let x: CGFloat = (state.right ? 1 : 0) - (state.left ? 1 : 0)
+        let y: CGFloat = (state.down ? 1 : 0) - (state.up ? 1 : 0)
+        setAnalog(stick: kAnalogRightStick, axisX: x, axisY: y, forPlayer: player)
+        return true
+    }
+
+    /// Digital retropad mapping for N64 controls, matching mupen64plus-libretro-nx's
+    /// default "standard" descriptor table in `emulate_game_controller_via_libretro.c`:
+    ///   N64 A     → JOYPAD_B
+    ///   N64 B     → JOYPAD_Y
+    ///   N64 Z     → JOYPAD_L2
+    ///   N64 L/R   → JOYPAD_L/R
+    ///   N64 Start → JOYPAD_START
+    /// C-buttons are NOT in this table — they are handled via the right analog stick
+    /// (`updateN64CButton`). The previous incorrect mappings (A→A, B→B, C→various)
+    /// produced wrong in-game actions because mupen uses a different retropad layout.
     private func n64MapDigital(_ button: PVN64Button) -> RetroJoypad? {
-        // Standard mupen64plus-libretro mapping:
-        // C buttons map to right analog stick directions via the analog system,
-        // but for digital fallback we use the right-side face buttons.
         switch button {
         case .dPadUp:    return .up
         case .dPadDown:  return .down
         case .dPadLeft:  return .left
         case .dPadRight: return .right
-        case .a:         return .a
-        case .b:         return .b
-        case .cUp:       return .x
-        case .cDown:     return .y
-        case .cLeft:     return .l2
-        case .cRight:    return .r2
+        case .a:         return .b
+        case .b:         return .y
         case .l:         return .l
         case .r:         return .r
-        case .z:         return .l3      // Z trigger
+        case .z:         return .l2
         case .start:     return .start
+        case .cUp, .cDown, .cLeft, .cRight:
+            return nil // handled by updateN64CButton (right analog stick)
         case .analogUp, .analogDown, .analogLeft, .analogRight, .leftAnalog:
             return nil // handled by didMoveJoystick
         case .count:

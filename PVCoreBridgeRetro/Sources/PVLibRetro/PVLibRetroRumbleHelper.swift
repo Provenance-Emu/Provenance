@@ -37,10 +37,12 @@ public final class PVLibRetroRumbleHelper: NSObject {
 
         let low: Float = isStrong ? normalised : 0
         let high: Float = isStrong ? 0 : normalised
-        // Use a long duration so the haptic plays continuously until stopRumble() is called.
-        // The GCControllerHapticsManager will stop it via stopRumble(), which also classifies
-        // the burst duration for better fallback haptic selection.
-        let duration: TimeInterval = 10.0
+        // Cores like mupen64plus-libretro only fire set_rumble_state on game state changes
+        // (e.g. Rumble Pak on/off writes), so the helper must play long enough to cover a
+        // typical rumble event if the "off" signal is delayed or dropped (pause, exit, etc.).
+        // 2.0s is long enough for most Rumble Pak bursts while short enough that a lost
+        // "off" signal doesn't leave the controller buzzing for 10 seconds.
+        let duration: TimeInterval = 2.0
 
         Task { @MainActor in
 #if canImport(GameController) && canImport(CoreHaptics)

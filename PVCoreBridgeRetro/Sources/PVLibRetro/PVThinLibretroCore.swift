@@ -63,6 +63,14 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     /// Only populated when the core is a Mupen64Plus-based core.
     var _transferPakSlots: [Int: TransferPakROM] = [:]
 
+    // MARK: - N64 C-button state
+    /// Per-player C-button press state for N64. Mupen64plus-libretro expects C-buttons on
+    /// `RETRO_DEVICE_INDEX_ANALOG_RIGHT` (X/Y axes), not digital retropad buttons, so digital
+    /// C-button presses from DeltaSkin are accumulated here and written to the right analog
+    /// stick each frame during `pollControllers()`.
+    struct N64CButtonState { var up = false; var down = false; var left = false; var right = false }
+    var _n64CButtons: [Int: N64CButtonState] = [:]
+
     // MARK: - Mouse / pointer input state
     /// Previous normalized cursor position (0–1 range) used to compute per-event deltas
     /// for RETRO_DEVICE_MOUSE systems. Updated by `mouseMoved(atPoint:)`.
@@ -167,8 +175,14 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
 
     public override func stopEmulation() {
         // Reset haptic profile to generic so the next core doesn't inherit this system's tuning.
+        // Also stop any in-flight rumble on all ports — if emulation is torn down mid-burst
+        // (user exits while controller is rumbling), the core won't get a chance to fire
+        // set_rumble_state(0) and the long-duration haptic would keep playing past shutdown.
 #if canImport(GameController) && canImport(CoreHaptics)
         if #available(iOS 14.0, tvOS 14.0, *) {
+            for player in 0..<4 {
+                GCControllerHapticsManager.shared.stopRumble(player: player)
+            }
             GCControllerHapticsManager.shared.resetSystemProfile()
         }
 #endif
