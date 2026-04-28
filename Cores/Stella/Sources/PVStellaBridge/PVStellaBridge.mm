@@ -295,18 +295,40 @@ dispatch_queue_create("stella memcpy queue", dispatch_queue_attr_make_with_qos_c
 static void video_callback(const void *data, unsigned width, unsigned height, size_t pitch) {
     __strong PVStellaBridge *strongCurrent = _current;
 
-    strongCurrent->_videoWidth  = width;
-    strongCurrent->_videoHeight = height;
+    // Defensive bail-out: if anything is missing, skip this frame instead of
+    // racing into a heap-corrupting memcpy. This guards the prime retro_run()
+    // fired from loadFileAtPath: where _videoBuffer / data could (in theory)
+    // be momentarily nil, and any future teardown ordering bug.
+    if (strongCurrent == nil || data == NULL || strongCurrent->_videoBuffer == NULL ||
+        width == 0 || height == 0) {
+        strongCurrent = nil;
+        return;
+    }
 
-    dispatch_apply(height, memcpy_queue, ^(size_t y) {
-        const stellabuffer_t *src = (stellabuffer_t*)data + y * (pitch >> STELLA_PITCH_SHIFT); //pitch is in bytes not pixels
-        
-        //uint16_t *dst = current->videoBuffer + y * current->videoWidth;
-        stellabuffer_t *dst = strongCurrent->_videoBuffer + y * width;
-        
-        memcpy(dst, src, sizeof(stellabuffer_t)*width);
+    // The destination buffer is allocated as STELLA_WIDTH * STELLA_HEIGHT
+    // (160 x 256) stellabuffer_t pixels. Stella's libretro core can legally
+    // emit frames up to AtariNTSC::outWidth(160) = 568 wide (NTSC TV filter
+    // enabled) and 312 tall (PAL). Without clamping, dispatch_apply's parallel
+    // memcpy writes past the allocation and corrupts the heap — exactly the
+    // crash signature reported (dispatch_apply_invoke3 inside video_callback
+    // during the very first retro_run() in loadFileAtPath:).
+    const unsigned dstWidth  = STELLA_WIDTH;
+    const unsigned dstHeight = STELLA_HEIGHT;
+    const unsigned copyWidth  = (width  < dstWidth)  ? width  : dstWidth;
+    const unsigned copyHeight = (height < dstHeight) ? height : dstHeight;
+
+    strongCurrent->_videoWidth  = copyWidth;
+    strongCurrent->_videoHeight = copyHeight;
+
+    const size_t srcStride = pitch >> STELLA_PITCH_SHIFT; // pitch is in bytes, convert to pixels
+    stellabuffer_t *dstBase = strongCurrent->_videoBuffer;
+
+    dispatch_apply(copyHeight, memcpy_queue, ^(size_t y) {
+        const stellabuffer_t *src = (const stellabuffer_t*)data + y * srcStride;
+        stellabuffer_t *dst = dstBase + y * dstWidth;
+        memcpy(dst, src, sizeof(stellabuffer_t) * copyWidth);
     });
-    
+
     strongCurrent = nil;
 }
 

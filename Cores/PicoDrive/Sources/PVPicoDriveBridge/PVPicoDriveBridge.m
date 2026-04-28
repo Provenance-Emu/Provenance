@@ -60,7 +60,9 @@ __weak PVPicoDriveBridge *_current;
     uint16_t *videoBufferA;
     uint16_t *videoBufferB;
     int videoWidth, videoHeight;
-    int16_t _pad[2][12];
+    // Indexed by libretro RETRO_DEVICE_ID_JOYPAD_* constants (max R3 = 15), not by
+    // PVSega32XButton enum values — the two orderings differ.
+    int16_t _pad[2][16];
     NSString *romName;
     double sampleRate;
     NSTimeInterval frameInterval;
@@ -654,31 +656,35 @@ static void writeSaveFile(const char* path, int type)
 
         BOOL use8BitdoM30 = PVSettingsWrapper.use8BitdoM30;
 //        BOOL use8BitdoM30 = [NSUserDefaults.standardUserDefaults boolForKey:@"use8BitdoM30"];
+        // `buttonID` is the libretro RETRO_DEVICE_ID_JOYPAD_* constant passed by
+        // input_state_callback, NOT a PVSega32XButton enum value. The two orderings
+        // differ — see Sega32XLibretroMap. Cases below switch on the libretro ID
+        // and the comment names which Sega button the libretro ID represents.
         if (use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
         { switch (buttonID) {
-            case PVSega32XButtonUp:
+            case RETRO_DEVICE_ID_JOYPAD_UP:    // Sega Up
                 return [[[gamepad leftThumbstick] up] value] > 0.1;
-            case PVSega32XButtonDown:
+            case RETRO_DEVICE_ID_JOYPAD_DOWN:  // Sega Down
                 return [[[gamepad leftThumbstick] down] value] > 0.1;
-            case PVSega32XButtonLeft:
+            case RETRO_DEVICE_ID_JOYPAD_LEFT:  // Sega Left
                 return [[[gamepad leftThumbstick] left] value] > 0.1;
-            case PVSega32XButtonRight:
+            case RETRO_DEVICE_ID_JOYPAD_RIGHT: // Sega Right
                 return [[[gamepad leftThumbstick] right] value] > 0.1;
-            case PVSega32XButtonA:
+            case RETRO_DEVICE_ID_JOYPAD_Y:     // Sega A
                 return [[gamepad buttonA] isPressed];
-            case PVSega32XButtonB:
+            case RETRO_DEVICE_ID_JOYPAD_B:     // Sega B
                 return [[gamepad buttonB] isPressed];
-            case PVSega32XButtonC:
+            case RETRO_DEVICE_ID_JOYPAD_A:     // Sega C
                 return [[gamepad rightShoulder] isPressed];
-            case PVSega32XButtonX:
+            case RETRO_DEVICE_ID_JOYPAD_L:     // Sega X
                 return [[gamepad buttonX] isPressed];
-            case PVSega32XButtonY:
+            case RETRO_DEVICE_ID_JOYPAD_X:     // Sega Y
                 return [[gamepad buttonY] isPressed];
-            case PVSega32XButtonZ:
+            case RETRO_DEVICE_ID_JOYPAD_R:     // Sega Z
                 return [[gamepad leftShoulder] isPressed];
-            case PVSega32XButtonMode:
+            case RETRO_DEVICE_ID_JOYPAD_SELECT: // Sega Mode
                 return [[gamepad leftTrigger] isPressed];
-            case PVSega32XButtonStart:
+            case RETRO_DEVICE_ID_JOYPAD_START: // Sega Start
 #if TARGET_OS_TV
                 return [[gamepad buttonMenu] isPressed]?:[[gamepad rightTrigger] isPressed];
 #else
@@ -687,42 +693,61 @@ static void writeSaveFile(const char* path, int type)
             default:
                 break;
         }}
-        // Standard MFi extended gamepad mapping for Sega 32X (non-M30 layout).
-        // All 6 face buttons (A/B/C/X/Y/Z), Mode, and Start are fully accessible:
-        //   D-pad up/down/left/right  → D-pad (with left-thumbstick fallback)
-        //   buttonX                   → Genesis/32X A  (face, top-left position)
-        //   buttonA                   → Genesis/32X B  (face, bottom)
-        //   buttonB                   → Genesis/32X C  (face, bottom-right)
-        //   buttonY                   → Genesis/32X X  (face, top-right)
-        //   leftShoulder  (L1)        → Genesis/32X Y
-        //   rightShoulder (R1)        → Genesis/32X Z
-        //   rightTrigger  (R2)        → Genesis/32X Start
-        //   leftTrigger   (L2)        → Genesis/32X Mode
+        // Harmonized Sega 6-button MFi layout (matches 8BitDo M30 + Sega Genesis Mini conventions).
+        // Same physical button always means the same Sega button across every Sega-platform core,
+        // so a DualSense / Xbox / generic MFi pad gives an intuitive "label-to-label" mapping
+        // (Cross→A, Circle→B, Square→X, Triangle→Y) and the shoulder C/Z line up with M30.
+        //   D-pad up/down/left/right  → D-pad (with left-thumbstick fallback, deadzoned per-axis)
+        //   buttonA  (south, Cross)   → Sega A
+        //   buttonB  (east,  Circle)  → Sega B
+        //   rightShoulder (R1)        → Sega C
+        //   buttonX  (west,  Square)  → Sega X
+        //   buttonY  (north, Triangle)→ Sega Y
+        //   leftShoulder  (L1)        → Sega Z
+        //   rightTrigger  (R2)        → Sega Start  (tvOS pads without R2 cannot Start; do NOT poll buttonMenu — it owns pause)
+        //   leftTrigger   (L2)        → Sega Mode
         // No modifier combo is required: all 8 Genesis/32X inputs map to distinct physical buttons.
+        //
+        // Thumbstick fallback uses an explicit per-axis deadzone (PVSega32XThumbstickDeadzone)
+        // applied to the analog `value`, NOT the synthesized `up/down/left/right.isPressed` getters.
+        // Apple's synthesized direction-pad button on a thumbstick reports `isPressed=YES` for
+        // any non-zero magnitude on its half-axis — so a stick at (xAxis≈0.15, yAxis≈0.85) would
+        // fire UP *and* RIGHT simultaneously, producing the "diagonal bleed" symptom (32X is
+        // strictly digital so even a tiny cross-axis component becomes a full directional press).
+        //
+        // `buttonID` is the libretro RETRO_DEVICE_ID_JOYPAD_* constant passed by
+        // input_state_callback (see Sega32XLibretroMap above). Each case names
+        // which Sega button the libretro ID corresponds to.
+        static const float PVSega32XThumbstickDeadzone = 0.5f;
         { switch (buttonID) {
-            case PVSega32XButtonUp:
-                return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
-            case PVSega32XButtonDown:
-                return [[dpad down] isPressed]?:[[[gamepad leftThumbstick] down] isPressed];
-            case PVSega32XButtonLeft:
-                return [[dpad left] isPressed]?:[[[gamepad leftThumbstick] left] isPressed];
-            case PVSega32XButtonRight:
-                return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
-            case PVSega32XButtonA:
-                return [[gamepad buttonX] isPressed];
-            case PVSega32XButtonB:
+            case RETRO_DEVICE_ID_JOYPAD_UP:    // Sega Up
+                return [[dpad up] isPressed]?:([[[gamepad leftThumbstick] up] value]    > PVSega32XThumbstickDeadzone);
+            case RETRO_DEVICE_ID_JOYPAD_DOWN:  // Sega Down
+                return [[dpad down] isPressed]?:([[[gamepad leftThumbstick] down] value]  > PVSega32XThumbstickDeadzone);
+            case RETRO_DEVICE_ID_JOYPAD_LEFT:  // Sega Left
+                return [[dpad left] isPressed]?:([[[gamepad leftThumbstick] left] value]  > PVSega32XThumbstickDeadzone);
+            case RETRO_DEVICE_ID_JOYPAD_RIGHT: // Sega Right
+                return [[dpad right] isPressed]?:([[[gamepad leftThumbstick] right] value] > PVSega32XThumbstickDeadzone);
+            case RETRO_DEVICE_ID_JOYPAD_Y:     // Sega A
                 return [[gamepad buttonA] isPressed];
-            case PVSega32XButtonC:
+            case RETRO_DEVICE_ID_JOYPAD_B:     // Sega B
                 return [[gamepad buttonB] isPressed];
-            case PVSega32XButtonX:
-                return [[gamepad buttonY] isPressed];
-            case PVSega32XButtonY:
-                return [[gamepad leftShoulder] isPressed];
-            case PVSega32XButtonZ:
+            case RETRO_DEVICE_ID_JOYPAD_A:     // Sega C
                 return [[gamepad rightShoulder] isPressed];
-            case PVSega32XButtonStart:
+            case RETRO_DEVICE_ID_JOYPAD_L:     // Sega X
+                return [[gamepad buttonX] isPressed];
+            case RETRO_DEVICE_ID_JOYPAD_X:     // Sega Y
+                return [[gamepad buttonY] isPressed];
+            case RETRO_DEVICE_ID_JOYPAD_R:     // Sega Z
+                return [[gamepad leftShoulder] isPressed];
+            case RETRO_DEVICE_ID_JOYPAD_START: // Sega Start
+                // Do NOT fall back to buttonMenu on tvOS — buttonMenu is reserved
+                // for the pause-menu pipeline (controllerPausedHandler / GCEventViewController),
+                // and polling it from the bridge suppresses pause on Siri Remote and
+                // on MFi pads that lack buttonOptions / thumbstick-button pause triggers.
+                // See PVUI/Sources/PVUIBase/Controller/GCControllerExtensions.swift.
                 return [[gamepad rightTrigger] isPressed];
-             case PVSega32XButtonMode:
+            case RETRO_DEVICE_ID_JOYPAD_SELECT: // Sega Mode
                 return [[gamepad leftTrigger] isPressed];
             default:
                 break;
@@ -730,31 +755,36 @@ static void writeSaveFile(const char* path, int type)
     } else if ([controller gamepad]) {
         GCGamepad *gamepad = [controller gamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
+        // Legacy GCGamepad has only A/B/X/Y + L1/R1 — 6 buttons but 32X needs 8.
+        // Use L1+R1 as a Start/Mode modifier and map the four face buttons to the four
+        // primary face Sega buttons (A/B/X/Y) so labels stay consistent with the harmonized
+        // extended-gamepad layout. C and Z fall under the modifier (rare on basic gamepads).
+        // `buttonID` is the libretro RETRO_DEVICE_ID_JOYPAD_* constant.
         bool modifierPressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
         switch (buttonID) {
-            case PVSega32XButtonUp:
+            case RETRO_DEVICE_ID_JOYPAD_UP:    // Sega Up
                 return [[dpad up] isPressed];
-            case PVSega32XButtonDown:
+            case RETRO_DEVICE_ID_JOYPAD_DOWN:  // Sega Down
                 return [[dpad down] isPressed];
-            case PVSega32XButtonLeft:
+            case RETRO_DEVICE_ID_JOYPAD_LEFT:  // Sega Left
                 return [[dpad left] isPressed];
-            case PVSega32XButtonRight:
+            case RETRO_DEVICE_ID_JOYPAD_RIGHT: // Sega Right
                 return [[dpad right] isPressed];
-            case PVSega32XButtonA:
-                return [[gamepad buttonX] isPressed] && !modifierPressed;
-            case PVSega32XButtonB:
+            case RETRO_DEVICE_ID_JOYPAD_Y:     // Sega A
                 return [[gamepad buttonA] isPressed] && !modifierPressed;
-            case PVSega32XButtonC:
+            case RETRO_DEVICE_ID_JOYPAD_B:     // Sega B
                 return [[gamepad buttonB] isPressed] && !modifierPressed;
-            case PVSega32XButtonX:
-                return [[gamepad buttonY] isPressed];
-            case PVSega32XButtonY:
-                return [[gamepad leftShoulder] isPressed] && !modifierPressed;
-            case PVSega32XButtonZ:
+            case RETRO_DEVICE_ID_JOYPAD_A:     // Sega C
                 return [[gamepad rightShoulder] isPressed] && !modifierPressed;
-            case PVSega32XButtonStart:
+            case RETRO_DEVICE_ID_JOYPAD_L:     // Sega X
+                return [[gamepad buttonX] isPressed] && !modifierPressed;
+            case RETRO_DEVICE_ID_JOYPAD_X:     // Sega Y
+                return [[gamepad buttonY] isPressed] && !modifierPressed;
+            case RETRO_DEVICE_ID_JOYPAD_R:     // Sega Z
+                return [[gamepad leftShoulder] isPressed] && !modifierPressed;
+            case RETRO_DEVICE_ID_JOYPAD_START: // Sega Start
                 return modifierPressed && [[gamepad buttonA] isPressed];
-            case PVSega32XButtonMode:
+            case RETRO_DEVICE_ID_JOYPAD_SELECT: // Sega Mode
                 return modifierPressed && [[gamepad buttonB] isPressed];
             default:
                 break;
@@ -765,25 +795,30 @@ static void writeSaveFile(const char* path, int type)
     {
         GCMicroGamepad *gamepad = [controller microGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
+        // `buttonID` is the libretro RETRO_DEVICE_ID_JOYPAD_* constant.
         switch (buttonID) {
-            case PVSega32XButtonUp:
+            case RETRO_DEVICE_ID_JOYPAD_UP:    // Sega Up
                 return [[dpad up] value] > 0.5;
                 break;
-            case PVSega32XButtonDown:
+            case RETRO_DEVICE_ID_JOYPAD_DOWN:  // Sega Down
                 return [[dpad down] value] > 0.5;
                 break;
-            case PVSega32XButtonLeft:
+            case RETRO_DEVICE_ID_JOYPAD_LEFT:  // Sega Left
                 return [[dpad left] value] > 0.5;
                 break;
-            case PVSega32XButtonRight:
+            case RETRO_DEVICE_ID_JOYPAD_RIGHT: // Sega Right
                 return [[dpad right] value] > 0.5;
                 break;
-            case PVSega32XButtonA:
-                return [[gamepad buttonX] isPressed];
-                break;
-            case PVSega32XButtonB:
+            case RETRO_DEVICE_ID_JOYPAD_Y:     // Sega A
                 return [[gamepad buttonA] isPressed];
                 break;
+            case RETRO_DEVICE_ID_JOYPAD_L:     // Sega X
+                return [[gamepad buttonX] isPressed];
+                break;
+            // Siri Remote: do NOT bind Start to buttonMenu — buttonMenu is owned
+            // by the pause pipeline (controllerPausedHandler), and polling it from
+            // the bridge suppresses pause. Start is unreachable on Siri Remote;
+            // use a real MFi controller for 32X.
             default:
                 break;
         }
@@ -922,11 +957,35 @@ static void writeSaveFile(const char* path, int type)
 @implementation PVPicoDriveBridge (PVSega32XSystemResponderClient)
 #pragma mark - Input
 
+// PVSega32XButton enum ordinal → libretro RETRO_DEVICE_ID_JOYPAD_* constant.
+// Without this translation, _pad[] is indexed at the wrong slot — pressing on-screen
+// "A" would end up firing libretro UP (both happen to share index 4 in their
+// respective enums), making the entire control scheme nonsensical.
+//
+// PicoDrive's libretro Genesis/32X mapping (see libretro.c desc[] block):
+//   B(0)=Sega B,  Y(1)=Sega A,  SELECT(2)=Mode,  START(3)=Start,
+//   UP(4),        DOWN(5),       LEFT(6),         RIGHT(7),
+//   A(8)=Sega C,  X(9)=Sega Y,   L(10)=Sega X,    R(11)=Sega Z
+static const int Sega32XLibretroMap[] = {
+    [PVSega32XButtonUp]    = RETRO_DEVICE_ID_JOYPAD_UP,
+    [PVSega32XButtonDown]  = RETRO_DEVICE_ID_JOYPAD_DOWN,
+    [PVSega32XButtonLeft]  = RETRO_DEVICE_ID_JOYPAD_LEFT,
+    [PVSega32XButtonRight] = RETRO_DEVICE_ID_JOYPAD_RIGHT,
+    [PVSega32XButtonA]     = RETRO_DEVICE_ID_JOYPAD_Y,      // libretro Y → Sega A
+    [PVSega32XButtonB]     = RETRO_DEVICE_ID_JOYPAD_B,      // libretro B → Sega B
+    [PVSega32XButtonC]     = RETRO_DEVICE_ID_JOYPAD_A,      // libretro A → Sega C
+    [PVSega32XButtonX]     = RETRO_DEVICE_ID_JOYPAD_L,      // libretro L → Sega X
+    [PVSega32XButtonY]     = RETRO_DEVICE_ID_JOYPAD_X,      // libretro X → Sega Y
+    [PVSega32XButtonZ]     = RETRO_DEVICE_ID_JOYPAD_R,      // libretro R → Sega Z
+    [PVSega32XButtonStart] = RETRO_DEVICE_ID_JOYPAD_START,
+    [PVSega32XButtonMode]  = RETRO_DEVICE_ID_JOYPAD_SELECT, // libretro SELECT → Sega Mode
+};
+
 - (void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player; {
-    _pad[player][button] = 1;
+    _pad[player][Sega32XLibretroMap[button]] = 1;
 }
 
 - (void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player; {
-    _pad[player][button] = 0;
+    _pad[player][Sega32XLibretroMap[button]] = 0;
 }
 @end
