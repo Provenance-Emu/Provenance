@@ -2,64 +2,32 @@
 //  PVSNES9xEmulatorCore+RetroAchievements.swift
 //  PVSNES
 //
-//  Conformance of PVSNES9xEmulatorCore to CoreRetroAchievements.
+//  Conformance of PVSNES9xEmulatorCore (snes9x) to CoreRetroAchievements via
+//  the shared PVRcheevosBridge default impl.
 //
-//  ## Current status: protocol conformance stub
-//
-//  snes9x does not include rcheevos.  Full integration requires:
-//  1. Add a shared PVRcheevos SPM target (wrapping rcheevos C library) as a
-//     dependency of PVSNES in Package.swift.
-//  2. After `loadFileAtPath:`, hash the ROM and call rc_client_load_game().
-//  3. At end of each frame, call rc_client_do_frame() — hook into
-//     PVSNESEmulatorCoreBridge's executeFrame path.
-//  4. Expose SNES WRAM (0x7E0000–0x7FFFFF, 128 KiB) in achievementMemoryRegions().
-//  5. Register rc_client_achievement_triggered_callback and forward events
-//     to achievementsDelegate.
+//  Memory map:
+//    snes9x exposes 128 KiB of WRAM via `Memory.RAM`. We expose it at
+//    rcheevos address 0x7E0000 to match the SNES Bus-A WRAM bank
+//    convention used by the rcheevos memory map for the SNES system.
 //
 
 import Foundation
 import PVCoreBridge
+import PVRcheevos
+import PVRcheevosBridge
 
 extension PVSNES9xEmulatorCore: CoreRetroAchievements {
 
-    // MARK: - Delegate
-
-    public var achievementsDelegate: (any RetroAchievementsOSDDelegate)? {
-        get { _achievementsDelegate }
-        set { _achievementsDelegate = newValue }
-    }
-
-    // MARK: - Session lifecycle
-
-    public func prepareAchievements(gameHash: String) async {
-        // TODO: call rc_client_load_game once PVRcheevos is linked.
-    }
-
-    public func stopAchievements() {
-        // TODO: call rc_client_unload_game once PVRcheevos is linked.
-    }
-
-    // MARK: - Per-frame tick
-
-    public func tickAchievements() {
-        // TODO: call rc_client_do_frame once PVRcheevos is linked.
-    }
-
-    // MARK: - Memory regions
-
-    public func achievementMemoryRegions() -> [AchievementMemoryRegion] {
-        // TODO: expose SNES WRAM (128 KiB) at address 0x7E0000 once wired.
-        return []
-    }
-
-    // MARK: - State
-
-    public var achievementsActive: Bool {
-        return false // TODO: reflect rc_client state
-    }
-
-    public var hardcoreMode: Bool {
-        get { _hardcoreMode }
-        set { _hardcoreMode = newValue }
+    public func rcheevosRegions() -> [RcheevosRegion] {
+        let snesBridge = bridge as? PVSNESEmulatorCoreBridge
+        guard let ptr = snesBridge?.systemRAMPtr else { return [] }
+        let byteCount = UInt32(snesBridge?.systemRAMSize ?? 0)
+        guard byteCount > 0 else { return [] }
+        return [
+            RcheevosRegion(
+                rcAddress: 0x7E0000,
+                base: ptr,
+                size: byteCount)
+        ]
     }
 }

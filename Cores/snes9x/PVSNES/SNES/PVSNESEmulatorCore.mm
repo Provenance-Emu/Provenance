@@ -1175,4 +1175,14 @@ static void FinalizeSamplesAudioCallback(void *) {
     }
 }
 
+# pragma mark - RetroAchievements
+
+- (void *)systemRAMPtr {
+    return Memory.RAM;
+}
+
+- (NSUInteger)systemRAMSize {
+    return 0x20000; // 128 KiB SNES WRAM
+}
+
 @end

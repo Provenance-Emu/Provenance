@@ -86,6 +86,13 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)setupJustifierMappings;
 - (void)resetSNESLightGunState;
 
+# pragma mark - RetroAchievements
+/// Pointer to the SNES main WRAM (`Memory.RAM`).  128 KiB lives here, mapped
+/// at SNES address 0x7E0000 in the rcheevos memory map.
+@property (nonatomic, readonly, nullable) void *systemRAMPtr;
+/// Size in bytes of the WRAM block exposed via @c systemRAMPtr (128 KiB).
+@property (nonatomic, readonly) NSUInteger systemRAMSize;
+
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

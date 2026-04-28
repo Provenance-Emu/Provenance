@@ -37,6 +37,8 @@
 		B30E99272C6EF29B00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99262C6EF29B00C1431E /* PVSupport */; };
 		B30E9AD82C6FB24900C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AD72C6FB24900C1431E /* PVCoreBridge */; };
 		B30E9ADB2C6FB25400C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9ADA2C6FB25400C1431E /* PVEmulatorCore */; };
+		C0C0CAFE0001000000000001 /* PVRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0001000000000002 /* PVRcheevos */; };
+		C0C0CAFE0001000000000004 /* PVRcheevosBridge in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0001000000000005 /* PVRcheevosBridge */; };
 		B3547B632058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
 		B365107E21782E95008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107D21782E95008FDB7B /* libz.tbd */; };
 		B3A478B72C9649680052500A /* seta010.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA97C17F760390031B1C9 /* seta010.cpp */; };
@@ -109,6 +111,7 @@
 		B3D271B12C96717E004C0A92 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D271AF2C96717E004C0A92 /* CoreOptions.swift */; };
 		B3D271B22C96717E004C0A92 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D271B02C96717E004C0A92 /* CorePlist.swift */; };
 		CF87D338258AB6CE00838AF8 /* PVSNESEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D337258AB6CE00838AF8 /* PVSNESEmulatorCore.swift */; };
+		C0C0CAFE0001000000000007 /* PVSNES9xEmulatorCore+RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0001000000000008 /* PVSNES9xEmulatorCore+RetroAchievements.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -294,6 +297,7 @@
 		BED8C0211D71467600742D04 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
 		BED8C0221D71467600742D04 /* stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stream.h; sourceTree = "<group>"; };
 		CF87D337258AB6CE00838AF8 /* PVSNESEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSNESEmulatorCore.swift; sourceTree = "<group>"; };
+		C0C0CAFE0001000000000008 /* PVSNES9xEmulatorCore+RetroAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVSNES9xEmulatorCore+RetroAchievements.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -336,6 +340,8 @@
 				B30E9ADB2C6FB25400C1431E /* PVEmulatorCore in Frameworks */,
 				B3A478EB2C964B640052500A /* snes9x.framework in Frameworks */,
 				B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */,
+				C0C0CAFE0001000000000001 /* PVRcheevos in Frameworks */,
+				C0C0CAFE0001000000000004 /* PVRcheevosBridge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,6 +413,7 @@
 				B3D271B02C96717E004C0A92 /* CorePlist.swift */,
 				B3A478FE2C964D220052500A /* CorePlist-Generated.swift */,
 				CF87D337258AB6CE00838AF8 /* PVSNESEmulatorCore.swift */,
+				C0C0CAFE0001000000000008 /* PVSNES9xEmulatorCore+RetroAchievements.swift */,
 				1ACEA91A17F760390031B1C9 /* SNESCore */,
 			);
 			path = SNES;
@@ -678,6 +685,8 @@
 				B3A478F92C964C6A0052500A /* PVLogging */,
 				B3D270DC2C967013004C0A92 /* PVPlists */,
 				B3A483382F569B7C004A995B /* PVPrimitives */,
+				C0C0CAFE0001000000000002 /* PVRcheevos */,
+				C0C0CAFE0001000000000005 /* PVRcheevosBridge */,
 			);
 			productName = PVSNES;
 			productReference = B3C9D5321DEA83DE0068D057 /* PVSNES.framework */;
@@ -724,6 +733,8 @@
 				B3A478F82C964C6A0052500A /* XCLocalSwiftPackageReference "../../PVLogging" */,
 				B3D270DB2C967013004C0A92 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 				B3A483372F569B7C004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
+				C0C0CAFE0001000000000003 /* XCLocalSwiftPackageReference "../../PVRcheevos" */,
+				C0C0CAFE0001000000000006 /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */,
 			);
 			productRefGroup = 1ACEA8E517F75F350031B1C9 /* Products */;
 			projectDirPath = "";
@@ -902,6 +913,7 @@
 				B3D271B12C96717E004C0A92 /* CoreOptions.swift in Sources */,
 				B3D271B22C96717E004C0A92 /* CorePlist.swift in Sources */,
 				CF87D338258AB6CE00838AF8 /* PVSNESEmulatorCore.swift in Sources */,
+				C0C0CAFE0001000000000007 /* PVSNES9xEmulatorCore+RetroAchievements.swift in Sources */,
 				B3A478FF2C964D220052500A /* CorePlist-Generated.swift in Sources */,
 				B3C9D5951DEA86B80068D057 /* PVSNESEmulatorCore.mm in Sources */,
 			);
@@ -1657,6 +1669,14 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPlists;
 		};
+		C0C0CAFE0001000000000003 /* XCLocalSwiftPackageReference "../../PVRcheevos" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVRcheevos;
+		};
+		C0C0CAFE0001000000000006 /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVRcheevosBridge;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1696,6 +1716,16 @@
 		B3D270DC2C967013004C0A92 /* PVPlists */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVPlists;
+		};
+		C0C0CAFE0001000000000002 /* PVRcheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE0001000000000003 /* XCLocalSwiftPackageReference "../../PVRcheevos" */;
+			productName = PVRcheevos;
+		};
+		C0C0CAFE0001000000000005 /* PVRcheevosBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE0001000000000006 /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */;
+			productName = PVRcheevosBridge;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
