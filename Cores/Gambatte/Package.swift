@@ -41,6 +41,7 @@ let package = Package(
 
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
         .package(path: "../../PVRcheevos"),
+        .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),
     ],
     targets: [
         // MARK: ------- CORE --------
@@ -58,7 +59,9 @@ let package = Package(
                 "PVGambatteOptions",
                 "PVNetplay",
                 "libgambatte",
-                "libresample"
+                "libresample",
+                .product(name: "PVRcheevos", package: "PVRcheevos"),
+                .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
             ],
             resources: [
                 .process("Resources/Core.plist")

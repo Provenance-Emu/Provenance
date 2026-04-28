@@ -2,203 +2,47 @@
 //  PVGBEmulatorCore+RetroAchievements.swift
 //  PVGambatte
 //
-//  Conformance of PVGBEmulatorCore (Gambatte GB/GBC core) to CoreRetroAchievements.
+//  Conformance of PVGBEmulatorCore (Gambatte GB/GBC) to CoreRetroAchievements via
+//  the shared PVRcheevosBridge default impl.
 //
-//  ## Integration status — COMPLETE
-//
-//  The rc_client C API integration is compiled behind HAVE_RCHEEVOS in the ObjC
-//  bridge (PVGambatteBridge.mm). This Swift layer:
-//    - Calls through to the bridge for session lifecycle and per-frame ticking.
-//    - Returns actual GB/GBC WRAM and VRAM memory regions from the live
-//      Gambatte memory allocations (backed by wramBasePtr / vramBasePtr on the bridge).
-//    - Forwards rc_client event callbacks (via the AchievementsEvents ObjC category
-//      that routes back through achievementsEventOwner) to RetroAchievementsOSDDelegate.
-//
-//  Everything below is wired and active:
-//    - PVRcheevos (CRcheevos) is in Package.swift; HAVE_RCHEEVOS=1 is set.
-//    - pvgb_server_call uses NSURLSession to POST/GET the RA REST API.
-//    - loadAchievementsForGameHash reads ra_username/ra_session_token from
-//      NSUserDefaults and calls rc_client_begin_login_with_token before loading.
-//
-//  ## Memory layout (GB/GBC)
-//
-//  Region   | GB bus address | Size (DMG) | Size (GBC)
-//  ---------|----------------|------------|----------
-//  VRAM     | 0x8000–0x9FFF  | 8 KiB      | 16 KiB (bank-switched)
-//  WRAM     | 0xC000–0xDFFF  | 8 KiB      | 32 KiB (banks 1–7 switchable)
-//
-//  achievementMemoryRegions() exposes these two regions using live pointers from
-//  the vendored libgambatte wramData() / vramData() accessors.
+//  Memory map (rcheevos addresses match GB CPU bus addresses):
+//    WRAM — 8 KiB (DMG) / 32 KiB (GBC) at 0xC000
+//    VRAM — 8 KiB (DMG) / 16 KiB (GBC) at 0x8000
 //
 
 import Foundation
 import PVCoreBridge
+import PVGambatteBridge
+import PVRcheevos
+import PVRcheevosBridge
 
 extension PVGBEmulatorCore: CoreRetroAchievements {
 
-    // MARK: - Delegate
+    public func rcheevosRegions() -> [RcheevosRegion] {
+        var regions: [RcheevosRegion] = []
 
-    public var achievementsDelegate: (any RetroAchievementsOSDDelegate)? {
-        get { _achievementsDelegate }
-        set { _achievementsDelegate = newValue }
-    }
-
-    // MARK: - Session lifecycle
-
-    public func prepareAchievements(gameHash: String) async {
-        await withCheckedContinuation { continuation in
-            _bridge.loadAchievements(forGameHash: gameHash) { _ in
-                continuation.resume()
+        if let wramPtr = _bridge.wramBasePtr {
+            let wramSize = UInt32(_bridge.wramSize)
+            if wramSize > 0 {
+                regions.append(
+                    RcheevosRegion(
+                        rcAddress: 0xC000,
+                        base: wramPtr,
+                        size: wramSize)
+                )
             }
         }
-    }
 
-    public func stopAchievements() {
-        _bridge.unloadAchievements()
-    }
-
-    // MARK: - Per-frame tick
-
-    // tickAchievements is implicitly called each frame: PVGambatteBridge's
-    // executeFrameSkippingFrame: calls -[PVGBEmulatorCoreBridge tickAchievements],
-    // which calls rc_client_do_frame() when HAVE_RCHEEVOS is set.
-    // The default no-op from CoreRetroAchievements is therefore sufficient here.
-
-    // MARK: - Memory regions
-
-    public func achievementMemoryRegions() -> [AchievementMemoryRegion] {
-        guard let wramPtr = _bridge.wramBasePtr else { return [] }
-        let wramSize = Int(_bridge.wramSize)
-
-        var regions: [AchievementMemoryRegion] = [
-            AchievementMemoryRegion(
-                base: wramPtr,
-                size: wramSize,
-                kind: .systemRAM
-            )
-        ]
-
-        // vramBasePtr points to the start of the VRAM data allocation.
-        // Gambatte's vramData() returns rambankdata_ - 0x4000, which is the
-        // physical base of VRAM (index 0 = GB address 0x8000).
-        // 8 KiB for DMG; 16 KiB for GBC (two 8-KiB banks).
-        if let vramBase = _bridge.vramBasePtr {
-            let vramSize = _bridge.isGameboyColor ? 0x4000 : 0x2000
+        if let vramPtr = _bridge.vramBasePtr {
+            let vramSize: UInt32 = _bridge.isGameboyColor ? 0x4000 : 0x2000
             regions.append(
-                AchievementMemoryRegion(
-                    base: vramBase,
-                    size: vramSize,
-                    kind: .videoRAM
-                )
+                RcheevosRegion(
+                    rcAddress: 0x8000,
+                    base: vramPtr,
+                    size: vramSize)
             )
         }
 
         return regions
-    }
-
-    // MARK: - State
-
-    public var achievementsActive: Bool {
-        return _bridge.achievementsActive
-    }
-
-    public var hardcoreMode: Bool {
-        get { _hardcoreMode }
-        set { _hardcoreMode = newValue }
-    }
-}
-
-// MARK: - AchievementsEvents Swift overrides
-
-// The ObjC PVGambatteBridge (AchievementsEvents) category declares these
-// selectors for pvgb_event_handler to call, but their implementations are
-// provided here in Swift on PVGBEmulatorCoreBridge.
-// When pvgb_event_handler calls the method on the bridge instance, we route
-// the event through achievementsEventOwner → PVGBEmulatorCore → _achievementsDelegate.
-import PVGambatteBridge
-extension PVGBEmulatorCoreBridge {
-
-    private var _ownerCore: PVGBEmulatorCore? {
-        return achievementsEventOwner as? PVGBEmulatorCore
-    }
-
-    /// Snapshots the delegate into a `nonisolated(unsafe)` local so it can be
-    /// captured by `DispatchQueue.main.async` without a `Sendable` warning.
-    /// Safe because the delegate is only invoked on the main queue.
-    private func withMainActorDelegate(_ work: @Sendable @escaping (RetroAchievementsOSDDelegate) -> Void) {
-        guard let delegate = _ownerCore?._achievementsDelegate else { return }
-        nonisolated(unsafe) let unsafeDelegate = delegate
-        DispatchQueue.main.async { work(unsafeDelegate) }
-    }
-
-    @objc
-    public func rcAchievementTriggeredWithID(
-        _ achievementID: UInt32,
-        title: String?,
-        description: String?,
-        points: UInt32,
-        badgeURL: URL?,
-        isHardcore: Bool
-    ) {
-        let notification = AchievementUnlockNotification(
-            id: achievementID,
-            title: title ?? "",
-            description: description ?? "",
-            points: points,
-            badgeURL: badgeURL,
-            isHardcore: isHardcore
-        )
-        withMainActorDelegate { $0.achievementUnlocked(notification) }
-    }
-
-    @objc
-    public func rcAchievementProgressWithID(
-        _ achievementID: UInt32,
-        title: String?,
-        progressText: String?
-    ) {
-        let notification = AchievementProgressNotification(
-            achievementID: achievementID,
-            title: title ?? "",
-            progressText: progressText ?? ""
-        )
-        withMainActorDelegate { $0.achievementProgress(notification) }
-    }
-
-    @objc
-    public func rcLeaderboardStartedWithID(
-        _ leaderboardID: UInt32,
-        title: String?,
-        description: String?,
-        scoreText: String?
-    ) {
-        let notification = AchievementLeaderboardNotification(
-            leaderboardID: leaderboardID,
-            title: title ?? "",
-            description: description ?? "",
-            scoreText: scoreText ?? ""
-        )
-        withMainActorDelegate { $0.leaderboardStarted(notification) }
-    }
-
-    @objc
-    public func rcLeaderboardFailedWithID(_ leaderboardID: UInt32) {
-        withMainActorDelegate { $0.leaderboardFailed(leaderboardID: leaderboardID) }
-    }
-
-    @objc
-    public func rcLeaderboardSubmittedWithID(
-        _ leaderboardID: UInt32,
-        title: String?,
-        description: String?,
-        scoreText: String?
-    ) {
-        let notification = AchievementLeaderboardNotification(
-            leaderboardID: leaderboardID,
-            title: title ?? "",
-            description: description ?? "",
-            scoreText: scoreText ?? ""
-        )
-        withMainActorDelegate { $0.leaderboardSubmitted(notification) }
     }
 }
