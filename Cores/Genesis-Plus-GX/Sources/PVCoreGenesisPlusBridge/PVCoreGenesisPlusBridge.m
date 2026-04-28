@@ -707,6 +707,14 @@ static bool environment_callback(unsigned cmd, void *data)
     [data getBytes:ramData length:size];
 }
 
+- (void *)systemRAMPtr {
+    return retro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
+}
+
+- (NSUInteger)systemRAMSize {
+    return (NSUInteger)retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM);
+}
+
 - (BOOL)writeSaveFile:(NSString *)path forType:(int)type
 {
     size_t size = retro_get_memory_size(type);
@@ -1056,11 +1064,14 @@ static const int SG1000Map[] = {
                case PVGenesisButtonC: // Button2
                    return [[gamepad buttonX] isPressed];
                    break;
+               // Siri Remote: do NOT bind MS Pause to buttonMenu — buttonMenu is
+               // owned by the pause-menu pipeline (controllerPausedHandler) and
+               // polling it from the bridge suppresses pause.
                default:
                    break;
            }
        }
-           
+
 #endif
         // Game Gear…
     } else if (self.subCoreType == GenesisCoreTypeGameGear) {
@@ -1134,13 +1145,15 @@ static const int SG1000Map[] = {
                 case PVGenesisButtonC: // Button2
                     return [[gamepad buttonX] isPressed];
                     break;
+                // Siri Remote: do NOT bind GG Start to buttonMenu — buttonMenu
+                // is owned by the pause-menu pipeline; polling it suppresses pause.
                 default:
                     break;
             }
         }
-        
+
 #endif
-        
+
     // Sega Genesis/Mega Drive, Sega/Mega CD, 32X…
     } else {
        
@@ -1176,6 +1189,12 @@ static const int SG1000Map[] = {
                 default:
                     break;
             }}
+            // Harmonized Sega 6-button MFi layout — see PicoDrive 32X bridge for the full
+            // rationale. Same physical button = same Sega button across every Sega-platform core.
+            //   buttonA  → A,  buttonB  → B,  rightShoulder → C
+            //   buttonX  → X,  buttonY  → Y,  leftShoulder  → Z
+            //   rightTrigger → Start  (tvOS pads without R2 cannot Start; do NOT poll buttonMenu — it owns pause)
+            //   leftTrigger  → Mode
             { switch (buttonID) {
                 case PVGenesisButtonUp:
                     return [[dpad up] isPressed]?:[[[gamepad leftThumbstick] up] isPressed];
@@ -1186,20 +1205,24 @@ static const int SG1000Map[] = {
                 case PVGenesisButtonRight:
                     return [[dpad right] isPressed]?:[[[gamepad leftThumbstick] right] isPressed];
                 case PVGenesisButtonA:
-                    return [[gamepad buttonX] isPressed];
-                case PVGenesisButtonB:
                     return [[gamepad buttonA] isPressed];
-                case PVGenesisButtonC:
+                case PVGenesisButtonB:
                     return [[gamepad buttonB] isPressed];
+                case PVGenesisButtonC:
+                    return [[gamepad rightShoulder] isPressed];
                 case PVGenesisButtonX:
-                    return [[gamepad leftShoulder] isPressed];
+                    return [[gamepad buttonX] isPressed];
                 case PVGenesisButtonY:
                     return [[gamepad buttonY] isPressed];
                 case PVGenesisButtonZ:
-                    return [[gamepad rightShoulder] isPressed];
+                    return [[gamepad leftShoulder] isPressed];
                 case PVGenesisButtonMode:
                     return [[gamepad leftTrigger] isPressed];
                 case PVGenesisButtonStart:
+                    // Do NOT fall back to buttonMenu on tvOS — buttonMenu is reserved
+                    // for the pause-menu pipeline (controllerPausedHandler / GCEventViewController),
+                    // and polling it from the bridge suppresses pause on Siri Remote
+                    // and on MFi pads that lack buttonOptions / thumbstick-button pause triggers.
                     return [[gamepad rightTrigger] isPressed];
                 default:
                    break;
@@ -1208,6 +1231,12 @@ static const int SG1000Map[] = {
         } else if ([controller gamepad]) {
             GCGamepad *gamepad = [controller gamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
+            // Legacy GCGamepad has only A/B/X/Y + L1/R1 — 6 buttons but Genesis needs 8
+            // (A/B/C/X/Y/Z + Start + Mode). Use L1+R1 as a modifier combo for Start/Mode,
+            // and qualify the shoulder-bound and face buttons with `!modifierPressed` so they
+            // don't fire while the combo is engaged. Face buttons map A→A, B→B, X→X, Y→Y to
+            // match the harmonized extended-gamepad layout shared with PicoDrive 32X.
+            bool modifierPressed = [[gamepad leftShoulder] isPressed] && [[gamepad rightShoulder] isPressed];
             switch (buttonID) {
                 case PVGenesisButtonUp:
                     return [[dpad up] isPressed];
@@ -1218,24 +1247,28 @@ static const int SG1000Map[] = {
                 case PVGenesisButtonRight:
                     return [[dpad right] isPressed];
                 case PVGenesisButtonA:
-                    return [[gamepad buttonX] isPressed];
+                    return [[gamepad buttonA] isPressed] && !modifierPressed;
                 case PVGenesisButtonB:
-                    return [[gamepad buttonA] isPressed];
+                    return [[gamepad buttonB] isPressed] && !modifierPressed;
                 case PVGenesisButtonC:
-                    return [[gamepad buttonB] isPressed];
+                    return [[gamepad rightShoulder] isPressed] && !modifierPressed;
                 case PVGenesisButtonX:
-                    return [[gamepad leftShoulder] isPressed];
+                    return [[gamepad buttonX] isPressed] && !modifierPressed;
                 case PVGenesisButtonY:
-                    return [[gamepad buttonY] isPressed];
+                    return [[gamepad buttonY] isPressed] && !modifierPressed;
                 case PVGenesisButtonZ:
-                    return [[gamepad rightShoulder] isPressed];
+                    return [[gamepad leftShoulder] isPressed] && !modifierPressed;
+                case PVGenesisButtonStart:
+                    return modifierPressed && [[gamepad buttonA] isPressed];
+                case PVGenesisButtonMode:
+                    return modifierPressed && [[gamepad buttonB] isPressed];
                 default:
                     break;
             }
         }
-        
+
 #if TARGET_OS_TV
-        
+
         else if ([controller microGamepad]) {
             GCMicroGamepad *gamepad = [controller microGamepad];
             GCControllerDirectionPad *dpad = [gamepad dpad];
@@ -1258,13 +1291,17 @@ static const int SG1000Map[] = {
                 case PVGenesisButtonB:
                     return [[gamepad buttonX] isPressed];
                     break;
+                // Siri Remote: do NOT bind Start to buttonMenu — buttonMenu is
+                // owned by the pause-menu pipeline (controllerPausedHandler) and
+                // polling it from the bridge suppresses pause. Use a real MFi
+                // controller for Start on Genesis.
                 default:
                     break;
             }
         }
-        
+
   #endif
-        
+
     }
   
     

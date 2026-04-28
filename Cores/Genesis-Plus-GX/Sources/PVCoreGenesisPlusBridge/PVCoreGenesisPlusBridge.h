@@ -33,6 +33,13 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 @property (nonatomic, readonly) NSInteger lightGunPort;
 @end
 
+@interface PVCoreGenesisPlusBridge (RetroAchievements)
+/// Pointer to libretro RETRO_MEMORY_SYSTEM_RAM (Genesis 68K RAM, SMS/GG/SG-1000 work RAM).
+@property (nonatomic, readonly, nullable) void *systemRAMPtr;
+/// Size in bytes of the active system RAM region.
+@property (nonatomic, readonly) NSUInteger systemRAMSize;
+@end
+
 @interface PVCoreGenesisPlusBridge (Cheats)
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
         setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error;

@@ -31,6 +31,8 @@ let package = Package(
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
         .package(path: "../../PVObjCUtils"),
+        .package(path: "../../PVRcheevos"),
+        .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
 
     ],
@@ -48,6 +50,8 @@ let package = Package(
                 "PVSupport",
                 "PVCoreGenesisPlusBridge",
                 "libgenesisplus",
+                .product(name: "PVRcheevos", package: "PVRcheevos"),
+                .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
             ],
             cSettings: [
                 .define("NS_BLOCK_ASSERTIONS", to: "1"),

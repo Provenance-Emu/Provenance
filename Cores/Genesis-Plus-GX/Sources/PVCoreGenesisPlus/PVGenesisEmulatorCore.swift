@@ -69,6 +69,13 @@ open class PVCoreGenesisPlus: PVEmulatorCore, @unchecked Sendable {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
+
+    public override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
+    }
 }
 
 extension PVCoreGenesisPlus: PVSG1000SystemResponderClient {
