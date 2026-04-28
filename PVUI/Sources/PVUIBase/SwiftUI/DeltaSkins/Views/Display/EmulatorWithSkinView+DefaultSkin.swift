@@ -605,13 +605,32 @@ struct DefaultControllerSkinView: View {
         /// Calculate aspect ratio - ensure it's reasonable (most games are 4:3 or 16:9)
         var aspectRatio = aspectWidth / max(0.01, aspectHeight)
 
-        /// Check if aspectSize looks like screen dimensions rather than a retro game's
-        /// logical pixel geometry. No retro-core base resolution exceeds ~1000 px on
-        /// either axis (Saturn HD tops out at 704×576, PSP at 480×272, N64/PS1 at 640×480),
-        /// but any modern tvOS/iOS screen is ≥1920. The previous 100-px threshold
-        /// tripped on almost every real core (NES is 256 wide) and silently clamped
-        /// non-4:3 cores (DS, PSP, Genesis) to 4:3.
-        let looksLikeScreenSize = aspectWidth > 1200 || aspectHeight > 1200
+        /// Decide whether the reported `aspectSize` is the core's real
+        /// game-pixel geometry or a screen-bounds fallback.
+        ///
+        /// Bridges that have already received geometry from their core (or
+        /// that never used a screen-bounds fallback in the first place) set
+        /// `hasReceivedAspectFromCore = true`, in which case the reported
+        /// aspect is trusted unconditionally.
+        ///
+        /// As a defensive secondary check, we still treat the value as a
+        /// screen-bounds fallback when it equals the device's main-screen
+        /// size on either axis. This handles bridges that don't yet
+        /// implement the new flag (legacy cores, tests) without regressing
+        /// the prior behaviour.
+        #if canImport(UIKit)
+        let screenBounds = UIScreen.main.bounds
+        let screenW = max(screenBounds.width, screenBounds.height)
+        let screenH = min(screenBounds.width, screenBounds.height)
+        let matchesScreenAxis: (CGFloat) -> Bool = { value in
+            // Allow ±1pt slop for Retina conversions.
+            abs(value - screenW) < 1.0 || abs(value - screenH) < 1.0
+        }
+        let looksLikeScreenSize = !coreInstance.hasReceivedAspectFromCore &&
+            (matchesScreenAxis(aspectWidth) || matchesScreenAxis(aspectHeight))
+        #else
+        let looksLikeScreenSize = false
+        #endif
 
         /// Most games have aspect ratios between 1.0 (square) and 2.0 (ultrawide)
         /// If aspect ratio is outside reasonable bounds OR looks like screen dimensions, fix it

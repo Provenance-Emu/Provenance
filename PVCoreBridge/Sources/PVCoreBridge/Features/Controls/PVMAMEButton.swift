@@ -35,6 +35,7 @@
     case rightAnalogRight
     case leftAnalog
     case rightAnalog
+    case coin
     case count
 
     public init(_ value: String) {
@@ -67,6 +68,7 @@
             case "rightanalogright": self = .rightAnalogRight
             case "leftanalog": self = .leftAnalog
             case "rightanalog": self = .rightAnalog
+            case "coin", "insertcoin", "insert_coin", "insert coin": self = .coin
             case "count": self = .count
             default: self = .up
         }
@@ -130,6 +132,8 @@
                 return "leftAnalog"
             case .rightAnalog:
                 return "rightAnalog"
+            case .coin:
+                return "coin"
             case .count:
                 return "count"
         }

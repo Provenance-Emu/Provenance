@@ -25,16 +25,27 @@ open class PVYabauseCore: PVEmulatorCore {
 }
 
 extension PVYabauseCore: PVSaturnSystemResponderClient {
+    /// Resolve the bridge to a Saturn responder. Logs and traps in debug builds when
+    /// the bridge does not conform — this catches missing protocol implementations
+    /// during development rather than silently no-oping or crashing on a force cast.
+    private var saturnResponder: PVSaturnSystemResponderClient? {
+        guard let responder = _bridge as? PVSaturnSystemResponderClient else {
+            assertionFailure("PVYabauseCoreBridge does not conform to PVSaturnSystemResponderClient — Saturn input will be ignored.")
+            return nil
+        }
+        return responder
+    }
+
     public func didMoveJoystick(_ button: PVCoreBridge.PVSaturnButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
-        (_bridge as! PVSaturnSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+        saturnResponder?.didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
     }
     public func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
-        (_bridge as! PVSaturnSystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
+        saturnResponder?.didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
     }
     public func didPush(_ button: PVCoreBridge.PVSaturnButton, forPlayer player: Int) {
-        (_bridge as! PVSaturnSystemResponderClient).didPush(button, forPlayer: player)
+        saturnResponder?.didPush(button, forPlayer: player)
     }
     public func didRelease(_ button: PVCoreBridge.PVSaturnButton, forPlayer player: Int) {
-        (_bridge as! PVSaturnSystemResponderClient).didRelease(button, forPlayer: player)
+        saturnResponder?.didRelease(button, forPlayer: player)
     }
 }

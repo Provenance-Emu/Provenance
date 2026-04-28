@@ -42,6 +42,8 @@ final class PVMAMEControllerViewController: PVControllerViewController<PVMAMESys
                 button.buttonTag = .start
             } else if text.lowercased() == "select" {
                 button.buttonTag = .select
+            } else if text.lowercased() == "coin" || text.lowercased() == "insert coin" || text == "🪙" {
+                button.buttonTag = .coin
             } else if text.lowercased() == "l" || text.lowercased() == "l1" {
                 button.buttonTag = .l1
             } else if text.lowercased() == "r" || text.lowercased() == "r1" {

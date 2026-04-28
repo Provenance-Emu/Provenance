@@ -103,7 +103,14 @@ extern GCController *touch_controller;
             [touch_controller.extendedGamepad.rightThumbstickButton setValue:pressed?1:0];
             break;
         case(PVMAMEButtonSelect):
+            // Select maps to RetroPad Select via buttonOptions only.
+            // Coin (Insert Coin) is now a dedicated button — see PVMAMEButtonCoin below.
             [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
+            break;
+        case(PVMAMEButtonCoin):
+            // buttonHome is mapped to JOYPAD_SELECT in RetroArch's cocoa input driver,
+            // which MAME treats as Insert Coin. This de-overloads Select from Coin so
+            // hardware that distinguishes the two can drive each independently.
             [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
             break;
         case(PVMAMEButtonStart):

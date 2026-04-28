@@ -31,8 +31,17 @@ import PVPrimitives
     @objc dynamic var rendersToVulkan: Bool { get }
     @objc dynamic var screenRect: CGRect  { get }
     @objc dynamic var videoBuffer: UnsafeRawPointer? { get }
-    
+
     @objc dynamic var bufferSize: CGSize { get }
+
+    /// `true` once the underlying core has reported real game-pixel geometry
+    /// (e.g. via `SET_SYSTEM_AV_INFO` / `SET_GEOMETRY` on a libretro core, or
+    /// the first delivered frame). Bridges that always expose true game-pixel
+    /// dimensions (most native cores) should return `true`. Bridges that
+    /// initialise `aspectSize` from `UIScreen.bounds` until the first frame
+    /// arrives (RetroArch wrapper) should return `false` until the geometry
+    /// has been updated, so consumers know not to clamp the reported aspect.
+    @objc optional var hasReceivedAspectFromCore: Bool { get }
     
 //    @objc dynamic var videoBufferSize: CGSize { get }
     

@@ -2440,6 +2440,8 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["r3"].contains(s) { return "r3" }
             if ["start", "mode"].contains(s) { return "start" }
             if ["select", "back", "cbdc"].contains(s) { return "select" }
+            /// Dedicated Coin (Insert Coin) button — separate from Select.
+            if ["coin", "insertcoin", "insert_coin", "insert coin"].contains(s) { return "coin" }
             return s
         case .DS:
             /// DS button normalization - supports: up, down, left, right, a, b, x, y, l, r, start, select

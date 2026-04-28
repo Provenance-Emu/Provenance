@@ -48,6 +48,10 @@ NS_ASSUME_NONNULL_BEGIN
     NSString * _Nullable coreOptionConfig;
     // Controls
     float xAxis, yAxis, ltXAxis, ltYAxis, rtXAxis, rtYAxis, axisMult;
+    /// Latched once the libretro core has reported real game-pixel geometry
+    /// (via SET_SYSTEM_AV_INFO / SET_GEOMETRY or its first delivered frame).
+    /// Until then `aspectSize` falls back to `UIScreen.bounds`.
+    BOOL _hasReceivedAspectFromCore;
 @public
     dispatch_queue_t _Nonnull _callbackQueue;
 }
@@ -63,6 +67,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Set before calling startEmulation; automatically nilled after invocation.
 @property (nonatomic, copy, nullable) void (^onCoreGameLoaded)(void);
 @property (nonatomic, assign) bool isRootView;
+/// YES once the libretro core has reported real game-pixel geometry.
+/// Mirrors the `_hasReceivedAspectFromCore` ivar; consumers should prefer the
+/// readonly accessor declared on the `EmulatorCoreVideoDelegate` protocol.
+@property (nonatomic, readonly, assign) BOOL hasReceivedAspectFromCore;
 @property (nonatomic, assign) bool retroArchControls;
 @property (nonatomic, assign) bool hasTouchControls;
 @property (nonatomic, assign) bool bindAnalogKeys;

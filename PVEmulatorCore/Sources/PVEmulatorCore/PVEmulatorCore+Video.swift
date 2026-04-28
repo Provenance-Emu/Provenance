@@ -32,6 +32,17 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
         return bridge.aspectSize
     }
 
+    /// `true` when the core has reported real game-pixel geometry. Forwards to
+    /// the underlying bridge when it implements `hasReceivedAspectFromCore`;
+    /// otherwise defaults to `true` so consumers trust `aspectSize` for native
+    /// cores that always expose true game-pixel dimensions.
+    open var hasReceivedAspectFromCore: Bool {
+        if let bridgeFlag = bridge.hasReceivedAspectFromCore {
+            return bridgeFlag
+        }
+        return true
+    }
+
     open var emulationFPS: Double {
         bridge.emulationFPS
     }
