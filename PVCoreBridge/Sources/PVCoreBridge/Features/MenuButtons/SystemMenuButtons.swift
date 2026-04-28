@@ -121,9 +121,10 @@ public func systemMenuButtons(for system: SystemIdentifier) -> [SystemMenuButton
     case .PokemonMini:
         return [power, shake]
 
-    // Supervision — only `pause` button
+    // Supervision — Start (enter) + Select (clear). PVSupervisionButton
+    // names them differently on hardware but the init() aliases match.
     case .Supervision:
-        return [pause]
+        return [start, select]
 
     // Keypad-driven, analog-only, or already covered: skip
     case .ColecoVision, .Intellivision, .Vectrex, .Odyssey2,

@@ -1933,9 +1933,14 @@ struct PauseTileMenuView: View {
             }
         case .Supervision:
             guard let r = core as? PVSupervisionSystemResponderClient else { return }
-            if btn == "pause" {
-                r.didPush(.pause, forPlayer: player)
-                fireMomentaryRelease { r.didRelease(.pause, forPlayer: player) }
+            switch btn {
+            case "start":
+                r.didPush(.enter, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.enter, forPlayer: player) }
+            case "select":
+                r.didPush(.clear, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.clear, forPlayer: player) }
+            default: break
             }
         case .PokemonMini:
             guard let r = core as? PVPokeMiniSystemResponderClient else { return }
