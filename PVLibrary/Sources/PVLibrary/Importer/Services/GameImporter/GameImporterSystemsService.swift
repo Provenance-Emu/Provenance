@@ -177,6 +177,14 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         let hasKnownExtension = !fileExtension.isEmpty && !systemIdentifiers.isEmpty
         let hasLimitedSystems = systemIdentifiers.count <= 3 /// Consider "limited" if 3 or fewer systems
 
+        /// Step 2.5: If the extension uniquely identifies a single system (e.g. .jag, .j64, .gba),
+        /// short-circuit before any MD5 hashing or database lookups. This avoids reading the
+        /// entire ROM into memory just to confirm what the extension already told us.
+        if systemIdentifiers.count == 1 {
+            DLOG("Single system match by extension (fast path): \(systemIdentifiers.first!.rawValue)")
+            return cacheAndReturn(systemIdentifiers)
+        }
+
         /// Pre-compute MD5 asynchronously (off main thread) for use in lookup steps
         let itemMd5 = await item.md5Async()
 
@@ -201,12 +209,6 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
                     return cacheAndReturn([firstResult.systemID])
                 }
             }
-        }
-
-        /// Step 4: If we have extension matches but no constrained lookup match, return them
-        if systemIdentifiers.count == 1 {
-            DLOG("Single system match by extension: \(systemIdentifiers.first!.rawValue)")
-            return cacheAndReturn(systemIdentifiers)
         }
 
         /// Step 5: If multiple systems from extension, try database + filename-based matching to narrow down
