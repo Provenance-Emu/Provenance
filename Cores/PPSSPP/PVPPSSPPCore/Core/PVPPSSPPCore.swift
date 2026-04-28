@@ -19,6 +19,7 @@ import PVLogging
 import PVAudio
 import PVEmulatorCore
 import PVCoreObjCBridge
+import PVRcheevosBridge
 
 @objc
 @objcMembers
@@ -55,6 +56,9 @@ final class PVPPSSPPCore: PVEmulatorCore, @unchecked Sendable {
 
     public override func executeFrame() {
         bridge.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
     }
 }
 
