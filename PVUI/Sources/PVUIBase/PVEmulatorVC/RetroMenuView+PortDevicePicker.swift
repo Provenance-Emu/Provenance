@@ -13,6 +13,43 @@ import SwiftUI
 import PVCoreBridge
 import PVThemes
 
+// MARK: - Platform-aware metrics
+
+/// Font sizes and paddings for the Port Device picker rows.
+/// tvOS values are sized for 10-foot legibility; iOS values match the
+/// historical compact pause-menu styling.
+private enum PortDeviceRowMetrics {
+    #if os(tvOS)
+    static let sectionLabel: CGFloat = 20
+    static let sectionIcon: CGFloat = 18
+    static let portLabel: CGFloat = 22
+    static let valueText: CGFloat = 20
+    static let pickerItem: CGFloat = 20
+    static let pickerIcon: CGFloat = 20
+    static let chevron: CGFloat = 18
+    static let rowVerticalPadding: CGFloat = 16
+    static let rowHorizontalPadding: CGFloat = 22
+    static let pickerVerticalPadding: CGFloat = 12
+    static let pickerHorizontalPadding: CGFloat = 24
+    static let mainIconWidth: CGFloat = 32
+    static let pickerIconWidth: CGFloat = 28
+    #else
+    static let sectionLabel: CGFloat = 11
+    static let sectionIcon: CGFloat = 10
+    static let portLabel: CGFloat = 13
+    static let valueText: CGFloat = 12
+    static let pickerItem: CGFloat = 12
+    static let pickerIcon: CGFloat = 12
+    static let chevron: CGFloat = 11
+    static let rowVerticalPadding: CGFloat = 10
+    static let rowHorizontalPadding: CGFloat = 14
+    static let pickerVerticalPadding: CGFloat = 8
+    static let pickerHorizontalPadding: CGFloat = 18
+    static let mainIconWidth: CGFloat = 24
+    static let pickerIconWidth: CGFloat = 20
+    #endif
+}
+
 // MARK: - RetroMenuView extension
 
 extension RetroMenuView {
@@ -40,9 +77,9 @@ extension RetroMenuView {
                 // Section header
                 HStack(spacing: 5) {
                     Image(systemName: "gamecontroller")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: PortDeviceRowMetrics.sectionIcon, weight: .bold))
                     Text(String(localized: "PORT DEVICE TYPES"))
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .font(.system(size: PortDeviceRowMetrics.sectionLabel, weight: .bold, design: .monospaced))
                         .tracking(1.5)
                 }
                 .foregroundColor((pal.settingsCellTextDetail?.swiftUIColor ?? pal.gameLibraryText.swiftUIColor).opacity(0.55))
@@ -79,6 +116,10 @@ struct PortDeviceRow: View {
 
     @State private var expanded: Bool = false
     @State private var selectedDeviceType: UInt
+    /// Tracks focus across the main expand/collapse button and each picker-item button.
+    /// Stable IDs let us light up the appropriate row tint on focus and survive
+    /// list re-renders when the picker expands.
+    @FocusState private var focusedID: String?
 
     init(portIndex: Int, descriptors: [PortDeviceDescriptor], currentDeviceType: UInt,
          palette: UXThemePalette, onSelect: @escaping (UInt) -> Void) {
@@ -98,49 +139,63 @@ struct PortDeviceRow: View {
         String(format: NSLocalizedString("Port %d", comment: "Controller port label (e.g. Port 1)"), portIndex + 1).uppercased()
     }
 
+    private var mainID: String { "port_\(portIndex)_main" }
+    private func itemID(_ deviceType: UInt) -> String { "port_\(portIndex)_item_\(deviceType)" }
+
     var body: some View {
+        let isMainFocused = focusedID == mainID
+
         VStack(spacing: 4) {
             // Row header — tap to expand/collapse picker
             Button(action: { withAnimation(.easeInOut(duration: 0.2)) { expanded.toggle() } }) {
                 HStack {
                     Image(systemName: deviceSymbol(for: selectedDeviceType))
-                        .font(.system(size: 14))
+                        .font(.system(size: PortDeviceRowMetrics.portLabel))
                         .foregroundColor(palette.defaultTintColor.swiftUIColor)
-                        .frame(width: 24)
+                        .frame(width: PortDeviceRowMetrics.mainIconWidth)
 
                     Text(portLabel)
-                        .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                        .font(.system(size: PortDeviceRowMetrics.portLabel, weight: .semibold, design: .monospaced))
                         .foregroundColor(palette.gameLibraryText.swiftUIColor)
 
                     Spacer()
 
                     Text(currentDescriptor?.name ?? deviceFallbackName(selectedDeviceType))
-                        .font(.system(size: 12, design: .monospaced))
+                        .font(.system(size: PortDeviceRowMetrics.valueText, design: .monospaced))
                         .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
                         .lineLimit(1)
 
                     Image(systemName: expanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 11))
+                        .font(.system(size: PortDeviceRowMetrics.chevron))
                         .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.7))
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
+                .padding(.horizontal, PortDeviceRowMetrics.rowHorizontalPadding)
+                .padding(.vertical, PortDeviceRowMetrics.rowVerticalPadding)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(palette.defaultTintColor.swiftUIColor.opacity(0.08))
+                        .fill(palette.defaultTintColor.swiftUIColor.opacity(isMainFocused ? 0.18 : 0.08))
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .strokeBorder(palette.defaultTintColor.swiftUIColor.opacity(0.25), lineWidth: 1)
+                                .strokeBorder(
+                                    palette.defaultTintColor.swiftUIColor.opacity(isMainFocused ? 0.6 : 0.25),
+                                    lineWidth: isMainFocused ? 1.5 : 1
+                                )
                         )
                 )
             }
             .buttonStyle(.plain)
+            .focused($focusedID, equals: mainID)
+            .tvOSDisableFocusEffect()
+            .animation(.spring(response: 0.25, dampingFraction: 0.72), value: isMainFocused)
 
             // Picker list — shown when expanded
             if expanded {
                 VStack(spacing: 3) {
                     ForEach(descriptors, id: \.deviceType) { descriptor in
                         let isSelected = descriptor.deviceType == selectedDeviceType
+                        let id = itemID(descriptor.deviceType)
+                        let isItemFocused = focusedID == id
+
                         Button(action: {
                             selectedDeviceType = descriptor.deviceType
                             onSelect(descriptor.deviceType)
@@ -148,16 +203,16 @@ struct PortDeviceRow: View {
                         }) {
                             HStack {
                                 Image(systemName: deviceSymbol(for: descriptor.deviceType))
-                                    .font(.system(size: 12))
+                                    .font(.system(size: PortDeviceRowMetrics.pickerIcon))
                                     .foregroundColor(
                                         isSelected
                                         ? palette.defaultTintColor.swiftUIColor
                                         : palette.gameLibraryText.swiftUIColor.opacity(0.6)
                                     )
-                                    .frame(width: 20)
+                                    .frame(width: PortDeviceRowMetrics.pickerIconWidth)
 
                                 Text(descriptor.name)
-                                    .font(.system(size: 12, design: .monospaced))
+                                    .font(.system(size: PortDeviceRowMetrics.pickerItem, design: .monospaced))
                                     .foregroundColor(
                                         isSelected
                                         ? palette.defaultTintColor.swiftUIColor
@@ -168,22 +223,32 @@ struct PortDeviceRow: View {
 
                                 if isSelected {
                                     Image(systemName: "checkmark")
-                                        .font(.system(size: 11, weight: .bold))
+                                        .font(.system(size: PortDeviceRowMetrics.chevron, weight: .bold))
                                         .foregroundColor(palette.defaultTintColor.swiftUIColor)
                                 }
                             }
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, PortDeviceRowMetrics.pickerHorizontalPadding)
+                            .padding(.vertical, PortDeviceRowMetrics.pickerVerticalPadding)
                             .background(
                                 RoundedRectangle(cornerRadius: 8)
                                     .fill(
-                                        isSelected
-                                        ? palette.defaultTintColor.swiftUIColor.opacity(0.15)
-                                        : Color.clear
+                                        isItemFocused
+                                        ? palette.defaultTintColor.swiftUIColor.opacity(0.18)
+                                        : (isSelected ? palette.defaultTintColor.swiftUIColor.opacity(0.15) : Color.clear)
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .strokeBorder(
+                                                palette.defaultTintColor.swiftUIColor.opacity(isItemFocused ? 0.6 : 0.0),
+                                                lineWidth: isItemFocused ? 1.5 : 0
+                                            )
                                     )
                             )
                         }
                         .buttonStyle(.plain)
+                        .focused($focusedID, equals: id)
+                        .tvOSDisableFocusEffect()
+                        .animation(.spring(response: 0.25, dampingFraction: 0.72), value: isItemFocused)
                     }
                 }
                 .padding(.leading, 8)
