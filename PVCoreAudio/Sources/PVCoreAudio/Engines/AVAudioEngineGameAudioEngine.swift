@@ -181,13 +181,12 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
 
         switch reason {
         case .newDeviceAvailable, .oldDeviceUnavailable:
-            do {
-                try configureAudioSession()
-                try startAudio()
-                updateOutputVolume() // Update volume based on new route
-            } catch {
-                handleAudioError(error)
-            }
+            // Neither call below throws — both swallow errors internally.
+            // startAudio() itself guards against a nil gameCore (the typical
+            // case when this fires during emulator teardown).
+            configureAudioSession()
+            startAudio()
+            updateOutputVolume() // Update volume based on new route
         default:
             break
         }
@@ -595,8 +594,15 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
     }
 
     public func startAudio() {
-        precondition(gameCore.audioBufferCount == 1,
-                    "Only one buffer supported; got \(gameCore.audioBufferCount)")
+        // `gameCore` is a weak ref. Route-change notifications can fire after the
+        // emulator has been torn down, in which case the precondition below would
+        // crash on a nil unwrap. Bail out cleanly instead.
+        guard let core = gameCore else {
+            DLOG("startAudio called with no gameCore — ignoring (likely a route-change after teardown)")
+            return
+        }
+        precondition(core.audioBufferCount == 1,
+                    "Only one buffer supported; got \(core.audioBufferCount)")
 
         updateSourceNode()
         engine.prepare()
