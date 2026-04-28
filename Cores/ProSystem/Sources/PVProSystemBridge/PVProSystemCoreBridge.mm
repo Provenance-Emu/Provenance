@@ -491,6 +491,16 @@ const int ProSystemMap[] = { 3, 2, 1, 0, 4, 5, 9, 8, 7, 6, 10, 11, 13, 14, 12, 1
     }
 }
 
+#pragma mark - RetroAchievements
+
+- (void *)systemRAMPtr {
+    return (void *)memory_ram;
+}
+
+- (NSUInteger)systemRAMSize {
+    return MEMORY_SIZE;
+}
+
 @end
 
 @implementation PVProSystemGameCore (PV7800SystemResponderClient)

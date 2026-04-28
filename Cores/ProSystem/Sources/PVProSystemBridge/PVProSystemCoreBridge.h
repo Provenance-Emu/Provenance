@@ -55,6 +55,12 @@ __attribute__((visibility("default")))
 /// Toggle the right difficulty switch between A and B.
 - (void)toggleRightDifficulty;
 
+// MARK: RetroAchievements
+/// Pointer to the Atari 7800 6502 RAM (memory_ram, 64 KiB).
+@property (nonatomic, readonly, nullable) void *systemRAMPtr;
+/// Size in bytes of the exposed RAM (64 KiB).
+@property (nonatomic, readonly) NSUInteger systemRAMSize;
+
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

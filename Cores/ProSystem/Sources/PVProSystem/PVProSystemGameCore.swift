@@ -38,6 +38,13 @@ open class PVProSystemCore: PVEmulatorCore, @unchecked Sendable {
         super.startEmulation()
     }
 
+    public override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
+    }
+
     /// Apply the user's difficulty-switch preferences to the bridge input state.
     private func applyDifficultyOptions() {
         _bridge.leftDifficultyIsAdvanced  = PVProSystemCore.valueForOption(PVProSystemCoreOptions.leftDifficultyOption).asBool
