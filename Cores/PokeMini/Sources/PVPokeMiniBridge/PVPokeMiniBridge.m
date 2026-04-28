@@ -548,6 +548,16 @@ int saveEEPROM(const char *filename) {
 
 @synthesize valueChangedHandler;
 
+#pragma mark - RetroAchievements
+
+- (void *)systemRAMPtr {
+    return (void *)PM_RAM;
+}
+
+- (NSUInteger)systemRAMSize {
+    return 0x2000; // 8 KiB (4 KiB RAM + 4 KiB I/O), matches libretro RETRO_MEMORY_SYSTEM_RAM
+}
+
 @end
 
 @implementation PVPokeMiniBridge (Rumble)

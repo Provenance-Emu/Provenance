@@ -42,6 +42,12 @@
 - (double)sampleRate;
 - (void)setVideoSpec;
 
+// MARK: RetroAchievements
+/// Pointer to the Pokemon Mini RAM (PM_RAM, 8 KiB; 4 KiB RAM + 4 KiB I/O).
+@property (nonatomic, readonly, nullable) void *systemRAMPtr;
+/// Size in bytes of the exposed RAM (8 KiB).
+@property (nonatomic, readonly) NSUInteger systemRAMSize;
+
 @end
 
 @interface PVPokeMiniBridge (Rumble)
