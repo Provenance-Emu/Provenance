@@ -1,6 +1,8 @@
 import SwiftUI
 import PVUIBase
 import PVCheevos
+import PVSettings
+import Defaults
 import Combine
 
 /// RetroAchievements login and profile view with RetroWave styling
@@ -652,6 +654,7 @@ public struct RetroAchievementsView: View {
                             self.isLoading = false
                             self.formScale = 1.0
                         }
+                        postSystemToast("Logged in as \(profile.user)", type: .success, icon: "trophy.fill")
                     }
 
                 case .password:
@@ -667,6 +670,7 @@ public struct RetroAchievementsView: View {
                             self.isLoading = false
                             self.formScale = 1.0
                         }
+                        postSystemToast("Logged in as \(session.user.user)", type: .success, icon: "trophy.fill")
                     }
                 }
 
@@ -677,12 +681,15 @@ public struct RetroAchievementsView: View {
                     self.isLoading = false
                     self.formScale = 1.0
                     loadingProgress = 0
+                    postSystemToast("RetroAchievements login failed: \(error.localizedDescription)",
+                                    type: .error, icon: "xmark.circle.fill")
                 }
             }
         }
     }
 
     private func performLogout() {
+        let displayName = userProfile?.user ?? ""
         Task {
             if let currentClient = client {
                 await currentClient.logout()
@@ -694,8 +701,25 @@ public struct RetroAchievementsView: View {
                     isAuthenticated = false
                     clearForm()
                 }
+                let message = displayName.isEmpty
+                    ? "Signed out of RetroAchievements"
+                    : "Signed out of \(displayName)"
+                postSystemToast(message, type: .info, icon: "person.slash.fill")
             }
         }
+    }
+
+    // MARK: - System toast helper
+
+    /// Post a transient toast for RA login / mode-change / error events, gated
+    /// on the `retroAchievementsSystemToastsEnabled` setting. Mirrors RetroArch's
+    /// own OSD banner style.
+    @MainActor
+    private func postSystemToast(_ message: String,
+                                 type: PVToastType,
+                                 icon: String? = nil) {
+        guard Defaults[.retroAchievementsSystemToastsEnabled] else { return }
+        PVToastManager.shared.show(message, type: type, icon: icon)
     }
 
     private func formatMemberSince(_ dateString: String?) -> String {
@@ -748,6 +772,10 @@ public struct RetroAchievementsView: View {
                         .toggleStyle(RetroToggleStyle())
                         .onChange(of: retroAchievementsEnabled) { newValue in
                             PVCheevos.retroArch.isRetroAchievementsEnabled = newValue
+                            postSystemToast(
+                                newValue ? "RetroAchievements enabled" : "RetroAchievements disabled",
+                                type: newValue ? .success : .info,
+                                icon: "trophy.fill")
                         }
                 }
 
@@ -770,8 +798,34 @@ public struct RetroAchievementsView: View {
                         .toggleStyle(RetroToggleStyle())
                         .onChange(of: hardcoreModeEnabled) { newValue in
                             PVCheevos.retroArch.isHardcoreModeEnabled = newValue
+                            postSystemToast(
+                                newValue ? "Hardcore Mode ON" : "Hardcore Mode OFF",
+                                type: newValue ? .warning : .info,
+                                icon: newValue ? "flame.fill" : "flame")
                         }
                 }
+
+                // Divider
+                Rectangle()
+                    .fill(Color.white.opacity(0.1))
+                    .frame(height: 1)
+                    .padding(.vertical, 4)
+
+                // Notification toggles
+                RetroSettingsToggleRow(
+                    title: "In-Game Toasts",
+                    subtitle: "Show achievement unlock and challenge banners during gameplay",
+                    defaultsKey: .retroAchievementsToastsEnabled)
+
+                RetroSettingsToggleRow(
+                    title: "Unlock Sound",
+                    subtitle: "Play a short sound effect when an achievement unlocks",
+                    defaultsKey: .retroAchievementsSoundEnabled)
+
+                RetroSettingsToggleRow(
+                    title: "System Notifications",
+                    subtitle: "Show toasts for login, mode changes, and errors",
+                    defaultsKey: .retroAchievementsSystemToastsEnabled)
             }
         }
         .padding()
@@ -783,6 +837,45 @@ public struct RetroAchievementsView: View {
                         .strokeBorder(Color.white.opacity(0.1), lineWidth: 1)
                 )
         )
+    }
+}
+
+// MARK: - Settings Toggle Row (Defaults-bound)
+
+/// A compact toggle row styled like the rest of the RetroAchievements settings,
+/// bound to a `Defaults.Keys` boolean. Keeps the new-notification toggles tidy.
+@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
+private struct RetroSettingsToggleRow: View {
+    let title: String
+    let subtitle: String
+    let defaultsKey: Defaults.Key<Bool>
+
+    @State private var isOn: Bool = false
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.white)
+
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundColor(.white.opacity(0.7))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer()
+
+            Toggle("", isOn: $isOn)
+                .toggleStyle(RetroToggleStyle())
+                .onChange(of: isOn) { newValue in
+                    Defaults[defaultsKey] = newValue
+                }
+        }
+        .onAppear {
+            isOn = Defaults[defaultsKey]
+        }
     }
 }
 
