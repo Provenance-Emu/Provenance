@@ -48,6 +48,12 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)didReleaseA8Button:(PVA8Button)button forPlayer:(NSUInteger)player;
 - (void)didPushA8Button:(PVA8Button)button forPlayer:(NSUInteger)player;
 
+// MARK: RetroAchievements
+/// Pointer to the Atari 800 / 5200 6502 address space (MEMORY_mem, 64 KiB).
+@property (nonatomic, readonly, nullable) void *systemRAMPtr;
+/// Size in bytes of the exposed address space (64 KiB).
+@property (nonatomic, readonly) NSUInteger systemRAMSize;
+
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

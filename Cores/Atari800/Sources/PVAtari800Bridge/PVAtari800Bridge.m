@@ -1291,4 +1291,14 @@ void PLATFORM_SoundUnlock(void){}
     self.controllerStates[player].right = (xValue > kJoystickDeadzone);
 }
 
+#pragma mark - RetroAchievements
+
+- (void *)systemRAMPtr {
+    return (void *)MEMORY_mem;
+}
+
+- (NSUInteger)systemRAMSize {
+    return 65536;
+}
+
 @end

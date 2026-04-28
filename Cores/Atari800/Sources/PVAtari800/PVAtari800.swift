@@ -17,10 +17,19 @@ import GameController
 @objc
 @objcMembers
 public final class PVAtari800: PVEmulatorCore, @unchecked Sendable {
-    
+
+    let _bridge: PVAtari800Bridge = .init()
+
     public required init() {
         super.init()
-        bridge = (PVAtari800Bridge() as! any ObjCBridgedCoreBridge)
+        bridge = (_bridge as! any ObjCBridgedCoreBridge)
+    }
+
+    public override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
     }
 
 #if canImport(GameController)
