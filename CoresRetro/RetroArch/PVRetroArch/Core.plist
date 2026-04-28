@@ -1213,6 +1213,7 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.jaguar</string>
+				<string>com.provenance.jaguarcd</string>
 			</array>
 		</dict>
 		<dict>

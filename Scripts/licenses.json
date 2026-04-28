@@ -717,7 +717,8 @@
       "appStoreCompatible": null,
       "isRetroArch": false,
       "supportedSystems": [
-        "com.provenance.jaguar"
+        "com.provenance.jaguar",
+        "com.provenance.jaguarcd"
       ]
     },
     {
@@ -1953,7 +1954,8 @@
       "appStoreCompatible": null,
       "isRetroArch": true,
       "supportedSystems": [
-        "com.provenance.jaguar"
+        "com.provenance.jaguar",
+        "com.provenance.jaguarcd"
       ]
     },
     {
