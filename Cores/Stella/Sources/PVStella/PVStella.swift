@@ -75,17 +75,14 @@ public final class PVStellaGameCore: PVEmulatorCore {
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
-        _bridge.achievementsEventOwner = self
     }
 
-    // MARK: - RetroAchievements backing storage
-
-    /// Weak reference to the OSD delegate (stored here because Swift extensions
-    /// cannot add stored properties).
-    weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
-
-    /// Hardcore mode flag.
-    var _hardcoreMode: Bool = false
+    public override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
+    }
 }
 
 extension PVStellaGameCore: PV2600SystemResponderClient {
