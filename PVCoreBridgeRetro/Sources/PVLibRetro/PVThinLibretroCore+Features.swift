@@ -101,32 +101,157 @@ extension PVThinLibretroCore: GameWithCheat {
 
 // MARK: - CoreRetroAchievements
 //
-// The libretro core itself drives rcheevos internally (via HAVE_CHEEVOS in its
-// build flags).  We conform to CoreRetroAchievements so the app's achievements
-// UI is offered, but the session lifecycle is a no-op — the core manages it.
+// Unlike PVRetroArchCore — which bundles libretroarch.a (the full RetroArch
+// frontend) and gets rcheevos for free via HAVE_CHEEVOS — the thin wrapper
+// loads only a libretro core `.framework` that has no cheevos infrastructure.
+// The *frontend* (us) drives rcheevos externally via PVCheevos / `rc_client`,
+// reading memory directly through the libretro `retro_get_memory_data` /
+// `retro_get_memory_size` API.
+//
+// This mirrors the pattern used by native PV cores (e.g. MupenGameCore,
+// PVPicoDrive): we expose memory regions, and the external rcheevos client
+// evaluates achievement conditions against them.
 
 extension PVThinLibretroCore: CoreRetroAchievements {
 
+    // RETRO_MEMORY_* ids — see libretro.h.
+    private enum RetroMemoryID {
+        static let saveRAM: UInt32   = 0
+        static let rtc: UInt32       = 1
+        static let systemRAM: UInt32 = 2
+        static let videoRAM: UInt32  = 3
+    }
+
     public var achievementsDelegate: (any RetroAchievementsOSDDelegate)? {
         get { _achievementsDelegate }
-        set { _achievementsDelegate = newValue }
+        set {
+            _achievementsDelegate = newValue
+            wireFrontendAchievementBlocks()
+        }
     }
 
     public func prepareAchievements(gameHash: String) async {
-        // rcheevos is managed internally by the libretro core.
+        guard !gameHash.isEmpty else { return }
+        // Make sure the frontend's event blocks are pointing at the latest delegate.
+        // achievementsDelegate is normally set by PVEmulatorVC before this runs, but
+        // wiring here too guarantees the blocks are in place even if the order changes.
+        wireFrontendAchievementBlocks()
+
+        let hardcore = _hardcoreMode
+        // Bridge the ObjC completion callback into the awaiting Task. The frontend
+        // calls completion(success) on the URL session's delegate queue once the
+        // load-game roundtrip returns — `withCheckedContinuation` keeps this
+        // awaitable so PVEmulatorVC.startAchievementsIfNeeded() blocks until the
+        // session is confirmed before reporting `achievementSessionManager`.
+        let success: Bool = await withCheckedContinuation { continuation in
+            _bridge
+                .loadAchievements(
+                    forGameHash: gameHash,
+                    hardcore: hardcore
+                ) { ok in
+                continuation.resume(returning: ok)
+            }
+        }
+        _achievementsActive = success
+        if success {
+            ILOG("ThinLibretro achievements active — hash: \(gameHash), hardcore: \(hardcore)")
+        } else {
+            WLOG("ThinLibretro achievements unavailable for hash: \(gameHash)")
+        }
     }
 
-    public func stopAchievements() {}
+    public func stopAchievements() {
+        _achievementsActive = false
+        _bridge.unloadAchievements()
+        DLOG("ThinLibretro achievements stopped")
+    }
 
-    public func tickAchievements() {}
+    public func tickAchievements() {
+        // No-op: PVThinLibretroFrontend.executeFrame already calls tickAchievements
+        // on every emu-thread frame, so calling it again here would double-tick the
+        // rcheevos runtime.
+    }
 
-    public func achievementMemoryRegions() -> [AchievementMemoryRegion] { [] }
+    public func achievementMemoryRegions() -> [AchievementMemoryRegion] {
+        var regions: [AchievementMemoryRegion] = []
 
-    public var achievementsActive: Bool { false }
+        if let region = memoryRegion(forID: RetroMemoryID.systemRAM, kind: .systemRAM) {
+            regions.append(region)
+        }
+        if let region = memoryRegion(forID: RetroMemoryID.saveRAM, kind: .savedRAM) {
+            regions.append(region)
+        }
+        if let region = memoryRegion(forID: RetroMemoryID.videoRAM, kind: .videoRAM) {
+            regions.append(region)
+        }
+        if let region = memoryRegion(forID: RetroMemoryID.rtc, kind: .hardwareController) {
+            regions.append(region)
+        }
+
+        if regions.isEmpty {
+            WLOG("ThinLibretro achievementMemoryRegions: core exposes no readable memory")
+        }
+        return regions
+    }
+
+    public var achievementsActive: Bool { _achievementsActive }
 
     public var hardcoreMode: Bool {
         get { _hardcoreMode }
         set { _hardcoreMode = newValue }
+    }
+
+    // MARK: - Frontend block wiring
+
+    /// Point the frontend's rcheevos event blocks at our delegate. Each block fires
+    /// on the emulation thread; the delegate methods themselves are responsible for
+    /// hopping to the main queue before touching UI state (matches the contract used
+    /// by every other CoreRetroAchievements implementor).
+    func wireFrontendAchievementBlocks() {
+        _bridge.achievementTriggeredBlock = { [weak self] id, title, desc, points, badgeURL, hardcore in
+            guard let delegate = self?._achievementsDelegate else { return }
+            let notif = AchievementUnlockNotification(
+                id: id, title: title, description: desc, points: points,
+                badgeURL: badgeURL, isHardcore: hardcore
+            )
+            delegate.achievementUnlocked(notif)
+        }
+        _bridge.achievementProgressBlock = { [weak self] id, title, progressText in
+            guard let delegate = self?._achievementsDelegate else { return }
+            let notif = AchievementProgressNotification(
+                achievementID: id, title: title, progressText: progressText
+            )
+            delegate.achievementProgress(notif)
+        }
+        _bridge.leaderboardStartedBlock = { [weak self] id, title, desc, score in
+            guard let delegate = self?._achievementsDelegate else { return }
+            let notif = AchievementLeaderboardNotification(
+                leaderboardID: id, title: title, description: desc, scoreText: score
+            )
+            delegate.leaderboardStarted(notif)
+        }
+        _bridge.leaderboardFailedBlock = { [weak self] id in
+            self?._achievementsDelegate?.leaderboardFailed(leaderboardID: id)
+        }
+        _bridge.leaderboardSubmittedBlock = { [weak self] id, title, desc, score in
+            guard let delegate = self?._achievementsDelegate else { return }
+            let notif = AchievementLeaderboardNotification(
+                leaderboardID: id, title: title, description: desc, scoreText: score
+            )
+            delegate.leaderboardSubmitted(notif)
+        }
+    }
+
+    // MARK: - Private
+
+    private func memoryRegion(forID memoryID: UInt32,
+                              kind: AchievementMemoryRegion.Kind) -> AchievementMemoryRegion? {
+        var size: Int = 0
+        guard let ptr = _bridge.memoryData(forID: memoryID, size: &size),
+              size > 0 else {
+            return nil
+        }
+        return AchievementMemoryRegion(base: ptr, size: size, kind: kind)
     }
 }
 

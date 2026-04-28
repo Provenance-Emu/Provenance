@@ -57,6 +57,7 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     // MARK: - RetroAchievements backing storage
     weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
     var _hardcoreMode: Bool = false
+    var _achievementsActive: Bool = false
 
     // MARK: - Transfer Pak backing storage (for TransferPakSupport conformance)
     /// In-memory Transfer Pak slot map: controller port (0-based) → mounted GB/GBC ROM.

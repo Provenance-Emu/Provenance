@@ -117,6 +117,11 @@ static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect eff
 #include <os/lock.h>
 #include <pthread.h>
 #include <stdatomic.h>
+#include <atomic>
+
+#if HAVE_RCHEEVOS
+#include "rc_client.h"
+#endif
 
 // ---------------------------------------------------------------------------
 // MARK: - libretro Performance Interface
@@ -434,6 +439,20 @@ typedef struct PVThinLibretroSymbols {
 @interface PVThinLibretroFrontend () {
     void *_dylibHandle;
     PVThinLibretroSymbols _sym;
+
+#if HAVE_RCHEEVOS
+    /// rcheevos runtime owned by this frontend. Created lazily in
+    /// loadAchievementsForGameHash and reused across game changes.
+    rc_client_t *_rcClient;
+    /// Hardcore mode flag passed through to rc_client_set_hardcore_enabled.
+    /// Read by Swift via the achievementsActive accessor; written by
+    /// loadAchievementsForGameHash:hardcore:completion:.
+    BOOL _rcHardcore;
+#endif
+    /// Atomic guard read every frame inside tickAchievements. Set by the
+    /// load-game completion path and cleared by unloadAchievements so the
+    /// per-frame `rc_client_do_frame` call is gated on a confirmed session.
+    std::atomic<bool> _rcAchievementsActive;
 
     // AV info & system info
     struct retro_system_info _rawSystemInfo;
@@ -762,6 +781,11 @@ typedef struct PVThinLibretroSymbols {
 - (void)_locationStop;
 - (BOOL)_locationGetPositionLat:(double *)lat lon:(double *)lon horizAccuracy:(double *)ha vertAccuracy:(double *)va;
 
+// rcheevos session-state setter — declared here so the static rc_client
+// load-callback (defined later in this translation unit) can dispatch to it
+// without an "instance may not respond to selector" warning.
+- (void)_pvthin_setAchievementsActive:(BOOL)active;
+
 @end
 
 // ---------------------------------------------------------------------------
@@ -836,6 +860,12 @@ static void thin_netpacket_poll_receive(void) {
     [self _thinNetpacketPollReceive];
 }
 
+/// Most recent core error line that hints at a missing system/BIOS file.
+/// Cleared on each load attempt, captured by `thin_core_log` so
+/// `startWithROMPath:error:` can include the hint in its NSError when
+/// `retro_load_game` returns false.
+static char s_lastBiosHint[512] = {0};
+
 /// libretro logging bridge.
 static void thin_core_log(enum retro_log_level level, const char *fmt, ...) {
     // Throttle repeated error messages (e.g. Z_Malloc failure loops)
@@ -867,6 +897,19 @@ static void thin_core_log(enum retro_log_level level, const char *fmt, ...) {
         strncpy(s_lastErrorMsg, buf, sizeof(s_lastErrorMsg) - 1);
         s_lastErrorRepeat = 1;
         s_lastErrorTime = now;
+
+        // Capture the most recent BIOS / system-file hint so
+        // startWithROMPath:error: can include it in the surfaced NSError.
+        // Trim trailing newline for cleaner display.
+        if (strstr(buf, "BIOS") || strstr(buf, "bios")
+            || strstr(buf, "Cannot open") || strstr(buf, "system file")) {
+            strncpy(s_lastBiosHint, buf, sizeof(s_lastBiosHint) - 1);
+            s_lastBiosHint[sizeof(s_lastBiosHint) - 1] = '\0';
+            size_t len = strlen(s_lastBiosHint);
+            while (len > 0 && (s_lastBiosHint[len - 1] == '\n' || s_lastBiosHint[len - 1] == '\r')) {
+                s_lastBiosHint[--len] = '\0';
+            }
+        }
     }
 
     NSString *msg = [NSString stringWithUTF8String:buf];
@@ -2318,6 +2361,12 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (void)dealloc {
     [self stopEmulation];
     [self unloadCore];
+#if HAVE_RCHEEVOS
+    if (_rcClient) {
+        rc_client_destroy(_rcClient);
+        _rcClient = NULL;
+    }
+#endif
     if (_videoBufferData) { free(_videoBufferData); _videoBufferData = NULL; }
     if (_systemDirCString)    { free(_systemDirCString);    _systemDirCString = NULL; }
     if (_saveDirCString)      { free(_saveDirCString);      _saveDirCString = NULL; }
@@ -2450,6 +2499,10 @@ static bool thin_environment(unsigned cmd, void *data) {
     ILOG(@"ThinFrontend: startWithROMPath[%@] begin path=%@",
          self.coreIdentifier ?: @"?", romPath.lastPathComponent);
 
+    // Clear any BIOS hint captured from a previous load attempt so a fresh
+    // failure surfaces only the current attempt's hint (if any).
+    s_lastBiosHint[0] = '\0';
+
     // Install TLS pointer for C callbacks
     _thinCurrentTLS = self;
     _romPath = [romPath copy];
@@ -2578,9 +2631,20 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (!loaded) {
         ELOG(@"ThinFrontend: retro_load_game returned false");
         if (error) {
+            NSString *hint = (s_lastBiosHint[0] != '\0')
+                ? [NSString stringWithUTF8String:s_lastBiosHint]
+                : nil;
+            NSString *desc = hint
+                ? [NSString stringWithFormat:@"retro_load_game failed: %@", hint]
+                : @"retro_load_game failed";
+            NSMutableDictionary *info = [NSMutableDictionary dictionary];
+            info[NSLocalizedDescriptionKey] = desc;
+            if (hint) {
+                info[NSLocalizedFailureReasonErrorKey] = hint;
+            }
             *error = [NSError errorWithDomain:@"PVThinLibretroFrontend"
                                          code:5
-                                     userInfo:@{NSLocalizedDescriptionKey: @"retro_load_game failed"}];
+                                     userInfo:info];
         }
         _sym.retro_deinit();
         _thinCurrentTLS = nil;
@@ -2707,6 +2771,20 @@ static bool thin_environment(unsigned cmd, void *data) {
     return [result copy];
 }
 
+- (void *)memoryDataForID:(unsigned)memoryID size:(size_t *)outSize {
+    if (outSize) *outSize = 0;
+    if (!_sym.retro_get_memory_data || !_sym.retro_get_memory_size) {
+        return NULL;
+    }
+    void *data = _sym.retro_get_memory_data(memoryID);
+    size_t size = _sym.retro_get_memory_size(memoryID);
+    if (!data || size == 0) {
+        return NULL;
+    }
+    if (outSize) *outSize = size;
+    return data;
+}
+
 - (void)resetEmulation {
     if (_sym.retro_reset) {
         ILOG(@"ThinFrontend: retro_reset");
@@ -2771,6 +2849,10 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
     // Stop netpacket session if active
     [self stopNetpacketSession];
+
+    // Tear down the rcheevos runtime so the per-frame tick stops and the
+    // server session is unloaded before retro_unload_game.
+    [self unloadAchievements];
 
     [super stopEmulation]; // stops emulation loop thread before retro teardown
     [self clearAllInput];
@@ -3346,7 +3428,10 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 - (NSUInteger)channelCount { return 2; }
 
-- (void)executeFrame { [self runFrame]; }
+- (void)executeFrame {
+    [self runFrame];
+    [self tickAchievements];
+}
 
 // ---------------------------------------------------------------------------
 // MARK: - loadFileAtPath / startEmulation overrides for PVEmulatorCore flow
@@ -3371,6 +3456,19 @@ static bool thin_environment(unsigned cmd, void *data) {
     NSError *error = nil;
     if (![self startWithROMPath:self.romPath error:&error]) {
         ELOG(@"ThinFrontend: startWithROMPath failed: %@", error);
+        // Surface the failure to the UI layer (PVEmulatorViewController observes this
+        // notification and presents a toaster + dismisses). Posted on main so the
+        // observer can update UI state directly.
+        NSDictionary *info = error
+            ? @{ @"error": error,
+                 @"coreIdentifier": self.coreIdentifier ?: @"" }
+            : @{ @"coreIdentifier": self.coreIdentifier ?: @"" };
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter]
+                postNotificationName:@"PVEmulatorCoreDidFailToStart"
+                              object:nil
+                            userInfo:info];
+        });
         return;
     }
     [self _allocateVideoBuffer];
@@ -6325,6 +6423,312 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     dlclose(handle);
     return result;
+}
+
+// ---------------------------------------------------------------------------
+// MARK: - RetroAchievements (rc_client) integration
+// ---------------------------------------------------------------------------
+//
+// Mirrors the Stella bridge integration (Cores/Stella/Sources/PVStellaBridge/
+// PVStellaBridge.mm:52-163, 703-706, 831-889) so the thin libretro wrapper
+// drives rcheevos identically to a native PV core.
+//
+// Memory access goes through the public `memoryDataForID:size:` accessor
+// instead of the static `retro_get_memory_data` symbol, because each thin
+// frontend instance owns its own `_sym` table from a dlopen'd core dylib.
+//
+// Login flow: cached `ra_username` / `ra_session_token` from NSUserDefaults.
+// (Same keys used by PVCheevos.AccountStore — keeps a single source of
+// truth across the rest of the app.)
+
+#if HAVE_RCHEEVOS
+
+#pragma mark rcheevos C callbacks
+
+/// rc_client memory read trampoline.
+/// Walks each requested byte through `memoryDataForID:` so memory reads after
+/// `retro_unload_game` (during teardown) return the documented 0xFF fill,
+/// matching the contract of `rc_client_read_memory_func_t`.
+static uint32_t pvthin_rcheevos_read_memory(uint32_t address, uint8_t *buffer,
+                                            uint32_t num_bytes, rc_client_t *client) {
+    PVThinLibretroFrontend *bridge = (__bridge PVThinLibretroFrontend *)rc_client_get_userdata(client);
+    if (!bridge || num_bytes == 0) {
+        if (buffer) { memset(buffer, 0xFF, num_bytes); }
+        return num_bytes;
+    }
+    size_t ramSize = 0;
+    uint8_t *ram = (uint8_t *)[bridge memoryDataForID:RETRO_MEMORY_SYSTEM_RAM size:&ramSize];
+    for (uint32_t i = 0; i < num_bytes; ++i) {
+        uint32_t addr = address + i;
+        uint8_t value = 0xFF;
+        if (ram && ramSize > 0 && addr < (uint32_t)ramSize) {
+            value = ram[addr];
+        }
+        buffer[i] = value;
+    }
+    return num_bytes;
+}
+
+/// rc_client HTTP server-call trampoline. NSURLSession completes off-thread —
+/// rcheevos requires the callback to fire before this function returns or in a
+/// later run-loop tick, both of which `dataTaskWithRequest:completionHandler:`
+/// satisfies.
+static void pvthin_rcheevos_server_call(const rc_api_request_t *request,
+                                        rc_client_server_callback_t callback,
+                                        void *callback_data,
+                                        rc_client_t * __unused client) {
+    if (!request || !request->url) {
+        rc_api_server_response_t empty = {};
+        empty.http_status_code = 0;
+        callback(&empty, callback_data);
+        return;
+    }
+    NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:request->url]];
+    if (!url) {
+        rc_api_server_response_t empty = {};
+        empty.http_status_code = 400;
+        callback(&empty, callback_data);
+        return;
+    }
+    NSMutableURLRequest *urlReq = [NSMutableURLRequest requestWithURL:url];
+    urlReq.timeoutInterval = 30.0;
+    const char *postData = request->post_data;
+    if (postData && *postData) {
+        urlReq.HTTPMethod = @"POST";
+        urlReq.HTTPBody = [NSData dataWithBytes:postData length:strlen(postData)];
+        [urlReq setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    } else {
+        urlReq.HTTPMethod = @"GET";
+    }
+    [urlReq setValue:@"Provenance/ThinLibretro" forHTTPHeaderField:@"User-Agent"];
+    [[[NSURLSession sharedSession] dataTaskWithRequest:urlReq
+        completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+            rc_api_server_response_t resp = {};
+            if (data && !error) {
+                resp.body             = (const char *)data.bytes;
+                resp.body_length      = (uint32_t)data.length;
+                resp.http_status_code = (int)[(NSHTTPURLResponse *)response statusCode];
+            } else {
+                resp.http_status_code = 0;
+            }
+            callback(&resp, callback_data);
+        }] resume];
+}
+
+/// Build the full RetroAchievements badge URL for a `rc_client_achievement_t`.
+/// Returns nil when `badge_name` is empty.
+static NSURL * _Nullable pvthin_rcheevos_badge_url(const rc_client_achievement_t *ach) {
+    if (!ach || !ach->badge_name || ach->badge_name[0] == '\0') { return nil; }
+    NSString *name = @(ach->badge_name);
+    return [NSURL URLWithString:
+        [NSString stringWithFormat:@"https://media.retroachievements.org/Badge/%@.png", name]];
+}
+
+/// rc_client event handler — fans out to the public block properties on the
+/// frontend so the Swift core can convert them into `RetroAchievementsOSDDelegate`
+/// calls.
+static void pvthin_rcheevos_event_handler(const rc_client_event_t *event, rc_client_t *client) {
+    PVThinLibretroFrontend *bridge = (__bridge PVThinLibretroFrontend *)rc_client_get_userdata(client);
+    if (!bridge) { return; }
+
+    switch (event->type) {
+        case RC_CLIENT_EVENT_ACHIEVEMENT_TRIGGERED: {
+            const rc_client_achievement_t *ach = event->achievement;
+            if (!ach || !bridge.achievementTriggeredBlock) { break; }
+            NSString *title = ach->title ? @(ach->title) : @"";
+            NSString *desc  = ach->description ? @(ach->description) : @"";
+            NSURL *badge = pvthin_rcheevos_badge_url(ach);
+            BOOL hardcore = (BOOL)rc_client_get_hardcore_enabled(client);
+            bridge.achievementTriggeredBlock(ach->id, title, desc, ach->points, badge, hardcore);
+            break;
+        }
+        case RC_CLIENT_EVENT_ACHIEVEMENT_PROGRESS_INDICATOR_SHOW: {
+            const rc_client_achievement_t *ach = event->achievement;
+            if (!ach || !bridge.achievementProgressBlock) { break; }
+            NSString *title = ach->title ? @(ach->title) : @"";
+            NSString *progress = ach->measured_progress ? @(ach->measured_progress) : @"";
+            bridge.achievementProgressBlock(ach->id, title, progress);
+            break;
+        }
+        case RC_CLIENT_EVENT_LEADERBOARD_STARTED: {
+            const rc_client_leaderboard_t *lb = event->leaderboard;
+            if (!lb || !bridge.leaderboardStartedBlock) { break; }
+            NSString *title = lb->title ? @(lb->title) : @"";
+            NSString *desc  = lb->description ? @(lb->description) : @"";
+            NSString *score = lb->tracker_value ? @(lb->tracker_value) : @"";
+            bridge.leaderboardStartedBlock(lb->id, title, desc, score);
+            break;
+        }
+        case RC_CLIENT_EVENT_LEADERBOARD_FAILED: {
+            if (!event->leaderboard || !bridge.leaderboardFailedBlock) { break; }
+            bridge.leaderboardFailedBlock(event->leaderboard->id);
+            break;
+        }
+        case RC_CLIENT_EVENT_LEADERBOARD_SUBMITTED: {
+            const rc_client_leaderboard_t *lb = event->leaderboard;
+            if (!lb || !bridge.leaderboardSubmittedBlock) { break; }
+            NSString *title = lb->title ? @(lb->title) : @"";
+            NSString *desc  = lb->description ? @(lb->description) : @"";
+            NSString *score = lb->tracker_value ? @(lb->tracker_value) : @"";
+            bridge.leaderboardSubmittedBlock(lb->id, title, desc, score);
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+#pragma mark rcheevos load/login context
+
+typedef struct pvthin_rcheevos_load_ctx {
+    void *bridge;        // __bridge_retained PVThinLibretroFrontend *
+    void *completion;    // __bridge_retained void(^)(BOOL)
+} pvthin_rcheevos_load_ctx_t;
+
+static void pvthin_rcheevos_load_callback(int result, const char * __unused error_message,
+                                          rc_client_t * __unused client, void *userdata) {
+    pvthin_rcheevos_load_ctx_t *ctx = (pvthin_rcheevos_load_ctx_t *)userdata;
+    PVThinLibretroFrontend *bridge = (__bridge_transfer PVThinLibretroFrontend *)ctx->bridge;
+    void (^completion)(BOOL) = (__bridge_transfer void (^)(BOOL))ctx->completion;
+    ctx->completion = NULL;
+    free(ctx);
+
+    BOOL success = (result == RC_OK);
+    [bridge _pvthin_setAchievementsActive:success];
+    if (completion) { completion(success); }
+}
+
+typedef struct pvthin_rcheevos_login_ctx {
+    void *bridge;     // __bridge_retained PVThinLibretroFrontend *
+    void *gameHash;   // __bridge_retained NSString *
+    void *completion; // __bridge_retained void(^)(BOOL)
+} pvthin_rcheevos_login_ctx_t;
+
+static void pvthin_rcheevos_login_callback(int result, const char *error_message,
+                                           rc_client_t *client, void *userdata) {
+    pvthin_rcheevos_login_ctx_t *lCtx = (pvthin_rcheevos_login_ctx_t *)userdata;
+    PVThinLibretroFrontend *bridge = (__bridge_transfer PVThinLibretroFrontend *)lCtx->bridge;
+    NSString *hash               = (__bridge_transfer NSString *)lCtx->gameHash;
+    void (^completion)(BOOL)     = (__bridge_transfer void (^)(BOOL))lCtx->completion;
+    lCtx->completion = NULL;
+    free(lCtx);
+
+    if (result != RC_OK) {
+        WLOG(@"ThinFrontend: rcheevos login failed (%d): %s", result, error_message ?: "<no message>");
+        [bridge _pvthin_setAchievementsActive:NO];
+        if (completion) { completion(NO); }
+        return;
+    }
+
+    pvthin_rcheevos_load_ctx_t *loadCtx =
+        (pvthin_rcheevos_load_ctx_t *)malloc(sizeof(pvthin_rcheevos_load_ctx_t));
+    if (!loadCtx) {
+        [bridge _pvthin_setAchievementsActive:NO];
+        if (completion) { completion(NO); }
+        return;
+    }
+    loadCtx->bridge     = (__bridge_retained void *)bridge;
+    loadCtx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+    rc_client_begin_load_game(client, hash.UTF8String, pvthin_rcheevos_load_callback, loadCtx);
+}
+
+#endif // HAVE_RCHEEVOS
+
+#pragma mark Public methods
+
+- (BOOL)achievementsActive {
+    return _rcAchievementsActive.load();
+}
+
+- (void)_pvthin_setAchievementsActive:(BOOL)active {
+    _rcAchievementsActive.store((bool)active);
+}
+
+- (void)tickAchievements {
+#if HAVE_RCHEEVOS
+    if (_rcClient && _rcAchievementsActive.load()) {
+        rc_client_do_frame(_rcClient);
+    }
+#endif
+}
+
+- (void)loadAchievementsForGameHash:(NSString *)gameHash
+                           hardcore:(BOOL)hardcore
+                         completion:(void (^)(BOOL))completion {
+#if HAVE_RCHEEVOS
+    if (gameHash.length == 0) {
+        _rcAchievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+
+    if (!_rcClient) {
+        _rcClient = rc_client_create(pvthin_rcheevos_read_memory, pvthin_rcheevos_server_call);
+        if (!_rcClient) {
+            ELOG(@"ThinFrontend: rc_client_create returned NULL");
+            _rcAchievementsActive.store(false);
+            if (completion) { completion(NO); }
+            return;
+        }
+        rc_client_set_userdata(_rcClient, (__bridge void *)self);
+        rc_client_set_event_handler(_rcClient, pvthin_rcheevos_event_handler);
+    }
+
+    _rcHardcore = hardcore;
+    rc_client_set_hardcore_enabled(_rcClient, hardcore ? 1 : 0);
+
+    // If a previous session already authenticated this client, skip the login
+    // round-trip and go straight to load_game.
+    if (rc_client_get_user_info(_rcClient) != NULL) {
+        pvthin_rcheevos_load_ctx_t *ctx =
+            (pvthin_rcheevos_load_ctx_t *)malloc(sizeof(pvthin_rcheevos_load_ctx_t));
+        if (!ctx) {
+            _rcAchievementsActive.store(false);
+            if (completion) { completion(NO); }
+            return;
+        }
+        ctx->bridge     = (__bridge_retained void *)self;
+        ctx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+        rc_client_begin_load_game(_rcClient, gameHash.UTF8String,
+                                  pvthin_rcheevos_load_callback, ctx);
+        return;
+    }
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *username = [defaults stringForKey:@"ra_username"];
+    NSString *token    = [defaults stringForKey:@"ra_session_token"];
+    if (username.length == 0 || token.length == 0) {
+        WLOG(@"ThinFrontend: rcheevos login skipped — missing ra_username/ra_session_token");
+        _rcAchievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+
+    pvthin_rcheevos_login_ctx_t *lCtx =
+        (pvthin_rcheevos_login_ctx_t *)malloc(sizeof(pvthin_rcheevos_login_ctx_t));
+    if (!lCtx) {
+        _rcAchievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+    lCtx->bridge     = (__bridge_retained void *)self;
+    lCtx->gameHash   = (__bridge_retained void *)[gameHash copy];
+    lCtx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
+    rc_client_begin_login_with_token(_rcClient, username.UTF8String, token.UTF8String,
+                                     pvthin_rcheevos_login_callback, lCtx);
+#else
+    _rcAchievementsActive.store(false);
+    if (completion) { completion(NO); }
+#endif
+}
+
+- (void)unloadAchievements {
+#if HAVE_RCHEEVOS
+    if (_rcClient) {
+        rc_client_unload_game(_rcClient);
+    }
+#endif
+    _rcAchievementsActive.store(false);
 }
 
 @end

@@ -437,6 +437,16 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// Returns an empty array if the core did not call SET_MEMORY_MAPS.
 @property (nonatomic, readonly) NSArray<NSDictionary<NSString *, id> *> *memoryMapDescriptors;
 
+/// Returns the core's raw memory block for a given RETRO_MEMORY_* id, or NULL
+/// if the core does not expose that region. Pointer lifetime matches the
+/// loaded game — the buffer is valid from `retro_load_game` until
+/// `retro_unload_game` / `retro_deinit`.
+/// @param memoryID  One of `RETRO_MEMORY_SAVE_RAM` (0), `RETRO_MEMORY_RTC` (1),
+///                  `RETRO_MEMORY_SYSTEM_RAM` (2), or `RETRO_MEMORY_VIDEO_RAM` (3).
+/// @param outSize   On return, filled with the region size in bytes (0 if
+///                  the region is unavailable). May be NULL.
+- (nullable void *)memoryDataForID:(unsigned)memoryID size:(nullable size_t *)outSize;
+
 // MARK: Input state
 
 /// Set or clear a single joypad button for a given player.
@@ -493,6 +503,58 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// @param y        Vertical position.
 /// @param pressed  YES if the pointer/touch is active.
 - (void)setPointerX:(int16_t)x y:(int16_t)y pressed:(BOOL)pressed;
+
+// MARK: Achievements (rcheevos)
+
+/// Drive one frame of rcheevos trigger evaluation. Called automatically from
+/// `executeFrame` after `runFrame` returns, so the Swift core does not need
+/// to invoke this directly. No-op if the rcheevos client is not yet active.
+- (void)tickAchievements;
+
+/// Login (using cached `ra_username` / `ra_session_token` in `NSUserDefaults`)
+/// and load the game-hash session. Completion fires on the network queue with
+/// success=YES once `rc_client_begin_load_game` returns RC_OK.
+///
+/// If a previous session is active, the rc_client is reused and only the
+/// load-game step runs.
+///
+/// @param gameHash    The MD5 hash returned by Provenance's hashing layer.
+/// @param hardcore    YES to enable hardcore mode (no save-state/cheats/rewind).
+/// @param completion  Optional callback invoked with the load result.
+- (void)loadAchievementsForGameHash:(NSString *)gameHash
+                           hardcore:(BOOL)hardcore
+                         completion:(nullable void (^)(BOOL success))completion;
+
+/// Tear down the active rcheevos game session and stop frame ticking.
+/// The rc_client itself is preserved across game changes so the cached login
+/// token does not need re-validation.
+- (void)unloadAchievements;
+
+/// YES while the rcheevos client has a loaded game and trigger evaluation is
+/// running each frame. Reset to NO by `unloadAchievements` and on session load
+/// failure.
+@property (nonatomic, readonly) BOOL achievementsActive;
+
+/// Block invoked on the emulation thread when an achievement is unlocked.
+/// The Swift core converts this into a `RetroAchievementsOSDDelegate` call.
+/// Dispatch to main before touching UI state.
+@property (nonatomic, copy, nullable) void (^achievementTriggeredBlock)(uint32_t achievementID,
+    NSString *title, NSString *desc, uint32_t points, NSURL * _Nullable badgeURL, BOOL isHardcore);
+
+/// Block invoked when measurable achievement progress changes.
+@property (nonatomic, copy, nullable) void (^achievementProgressBlock)(uint32_t achievementID,
+    NSString *title, NSString *progressText);
+
+/// Block invoked when a leaderboard attempt starts.
+@property (nonatomic, copy, nullable) void (^leaderboardStartedBlock)(uint32_t leaderboardID,
+    NSString *title, NSString *desc, NSString *scoreText);
+
+/// Block invoked when a leaderboard attempt is cancelled or fails.
+@property (nonatomic, copy, nullable) void (^leaderboardFailedBlock)(uint32_t leaderboardID);
+
+/// Block invoked when a leaderboard score is submitted successfully.
+@property (nonatomic, copy, nullable) void (^leaderboardSubmittedBlock)(uint32_t leaderboardID,
+    NSString *title, NSString *desc, NSString *scoreText);
 
 // MARK: Light gun input
 

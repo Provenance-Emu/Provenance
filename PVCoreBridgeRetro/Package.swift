@@ -43,6 +43,7 @@ let package = Package(
         .package(path: "../PVSettings"),
         .package(path: "../PVSupport"),
         .package(path: "../PVArchiving"),
+        .package(path: "../PVRcheevos"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
     ],
 
@@ -67,6 +68,7 @@ let package = Package(
                 "PVSupport",
                 "PVArchiving",
                 "libretro",
+                .product(name: "CRcheevos", package: "PVRcheevos"),
             ],
             cSettings: [
                 .headerSearchPath("../libretro/include"),
@@ -75,6 +77,7 @@ let package = Package(
                 .headerSearchPath("../libretro/retro/"),
                 .headerSearchPath("../../MoltenVK/MoltenVK/include"),
                 .define("DEBUG", .when(configuration: .debug)),
+                .define("HAVE_RCHEEVOS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
                 .define("HAVE_THREADS", to: "1"),
                 .define("HAVE_OPENGL", to: "1"),
