@@ -540,10 +540,56 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Observer for refreshing Delta skin after a skin change
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleDeltaSkinChanged(_:)), name: Notification.Name("DeltaSkinChanged"), object: nil)
 
+        // Posted by PVThinLibretroFrontend when retro_load_game returns false
+        // (typically a missing BIOS / system file). Surface a toaster + dismiss
+        // so the user isn't left staring at a blank emulator window.
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleCoreFailedToStart(_:)), name: Notification.Name("PVEmulatorCoreDidFailToStart"), object: nil)
+
         #if !os(macOS)
         registerAudioRouteChangeObserver()
         #endif
         registerForOSDNotifications()
+    }
+
+    @objc func handleCoreFailedToStart(_ note: Notification) {
+        let userInfo = note.userInfo ?? [:]
+        let nsError = userInfo["error"] as? NSError
+        let reason = nsError?.localizedFailureReason
+            ?? nsError?.localizedDescription
+            ?? "The core could not load this game."
+
+        // Build a user-friendly message. Detect missing-BIOS phrasing from the
+        // core log and substitute a hint that points to the BIOS folder.
+        let lower = reason.lowercased()
+        let isBiosError = lower.contains("bios") || lower.contains("system file")
+            || lower.contains("cannot open")
+        let displayMessage: String
+        if isBiosError {
+            displayMessage = "Missing system file. \(reason). Check the BIOS folder for this system."
+        } else {
+            displayMessage = "Failed to start: \(reason)"
+        }
+
+        Task { @MainActor in
+            StatusMessageManager.shared.addMessage(
+                .init(message: displayMessage, type: .error, duration: 8.0, category: "core-load-error")
+            )
+            self.hideBootHUDIfNeeded()
+            // Give the toaster a moment to render before tearing down the scene.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                if let presented = self.presentedViewController {
+                    presented.dismiss(animated: false) {
+                        SceneCoordinator.shared.closeEmulator()
+                    }
+                } else if self.presentingViewController != nil {
+                    self.dismiss(animated: true) {
+                        SceneCoordinator.shared.closeEmulator()
+                    }
+                } else {
+                    SceneCoordinator.shared.closeEmulator()
+                }
+            }
+        }
     }
 
     private func addControllerOverlay() {
