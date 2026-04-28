@@ -16,7 +16,7 @@ import PVPrimitives
 extension StatusMessageManager {
     public struct StatusMessage: Identifiable, Equatable {
         public let id = UUID()
-        public let message: String
+        public internal(set) var message: String
         public let type: MessageType
         public let timestamp = Date()
         public let duration: TimeInterval
@@ -50,12 +50,18 @@ extension StatusMessageManager {
             self.category = category
         }
 
-        /// The display message including repeat count badge if applicable
+        /// The display message including repeat count badge if applicable.
+        /// Categories whose grouped summary already embeds the count (e.g. "game-import"
+        /// shows "Imported 21 games.") suppress the trailing badge to avoid "Imported 21 games. (×21)".
         public var displayMessage: String {
-            if repeatCount > 1 {
+            if repeatCount > 1 && !suppressesRepeatBadge {
                 return "\(message) (\u{00D7}\(repeatCount))"
             }
             return message
+        }
+
+        private var suppressesRepeatBadge: Bool {
+            category == "game-import"
         }
 
         public static func == (lhs: StatusMessage, rhs: StatusMessage) -> Bool {
@@ -419,7 +425,7 @@ public class StatusMessageManager: ObservableObject {
         let errorDescription = userInfo[PVNotificationUserInfoKeys.errorKey] as? String ?? "Unknown error"
         let displayName = URL(fileURLWithPath: fileName).lastPathComponent
         let errorMessage = "Failed to import \(displayName): \(errorDescription)"
-        addMessage(StatusMessage(message: errorMessage, type: .error, duration: 7.0)) // Longer duration for errors
+        addMessage(StatusMessage(message: errorMessage, type: .error, duration: 7.0, category: "game-import"))
         ELOG("Game import failure message added: \(errorMessage)")
     }
 
@@ -503,6 +509,12 @@ public class StatusMessageManager: ObservableObject {
         }
 
         messages[index].repeatCount += 1
+        // Rewrite the displayed text so the toast stops naming only the first file
+        // in a batch import — `(×N)` next to one filename is misleading when N
+        // different files were imported.
+        if let summary = groupedSummary(forCategory: category, type: message.type, count: messages[index].repeatCount) {
+            messages[index].message = summary
+        }
 
         // Reset the dismiss timer
         let existingID = messages[index].id
@@ -514,6 +526,19 @@ public class StatusMessageManager: ObservableObject {
         }
         messageTimers[existingID] = timer
         return true
+    }
+
+    /// Returns a summary string for a grouped message, or `nil` to keep the original text.
+    /// Currently summarizes per-file game-import success/error toasts so a 20-file batch
+    /// shows "Imported 20 games." instead of "Successfully imported foo.jag. (×20)".
+    private func groupedSummary(forCategory category: String, type: StatusMessage.MessageType, count: Int) -> String? {
+        guard category == "game-import" else { return nil }
+        let plural = count == 1 ? "" : "s"
+        switch type {
+        case .success: return "Imported \(count) game\(plural)."
+        case .error:   return "Failed to import \(count) game\(plural)."
+        default:       return nil
+        }
     }
 
     // MARK: - Rate Limiting
