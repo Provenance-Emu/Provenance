@@ -1874,25 +1874,35 @@ struct PauseTileMenuView: View {
             guard let r = core as? PVLynxSystemResponderClient else { return }
             switch btn {
             case "pause":
-                r.didPush(.pause, forPlayer: player)
-                fireMomentaryRelease { r.didRelease(.pause, forPlayer: player) }
+                r.didPush(LynxButton: .pause, forPlayer: player)
+                fireMomentaryRelease {
+                    r.didRelease(LynxButton: .pause, forPlayer: player)
+                }
             case "option1":
-                r.didPush(.option1, forPlayer: player)
-                fireMomentaryRelease { r.didRelease(.option1, forPlayer: player) }
+                r.didPush(LynxButton: .option1, forPlayer: player)
+                fireMomentaryRelease {
+                    r.didRelease(LynxButton: .option1, forPlayer: player)
+                }
             case "option2":
-                r.didPush(.option2, forPlayer: player)
-                fireMomentaryRelease { r.didRelease(.option2, forPlayer: player) }
+                r.didPush(LynxButton: .option2, forPlayer: player)
+                fireMomentaryRelease {
+                    r.didRelease(LynxButton: .option2, forPlayer: player)
+                }
             default: break
             }
         case .AtariJaguar, .AtariJaguarCD:
             guard let r = core as? PVJaguarSystemResponderClient else { return }
             switch btn {
             case "pause":
-                r.didPush(.pause, forPlayer: player)
-                fireMomentaryRelease { r.didRelease(.pause, forPlayer: player) }
+                r.didPush(jaguarButton: .pause, forPlayer: player)
+                fireMomentaryRelease {
+                    r.didRelease(jaguarButton: .pause, forPlayer: player)
+                }
             case "option":
-                r.didPush(.option, forPlayer: player)
-                fireMomentaryRelease { r.didRelease(.option, forPlayer: player) }
+                r.didPush(jaguarButton: .option, forPlayer: player)
+                fireMomentaryRelease {
+                    r.didRelease(jaguarButton: .option, forPlayer: player)
+                }
             default: break
             }
         case .MAME, .CPS1, .CPS2, .CPS3:
