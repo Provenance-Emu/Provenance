@@ -99,6 +99,10 @@
 		B3F8E1262CB6007700017D1B /* PVDolphinCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1252CB6007700017D1B /* PVDolphinCore.swift */; };
 		B3F8E1292CB6052800017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1282CB6052800017D1B /* CorePlist.swift */; };
 		B3F8E12A2CB6052800017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8E1272CB6052800017D1B /* CorePlist-Generated.swift */; };
+		C0C0CAFE0003000000000001 /* PVDolphinCore+RetroAchievements.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0003000000000002 /* PVDolphinCore+RetroAchievements.mm */; };
+		C0C0CAFE0003000000000003 /* PVDolphinCore+RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0003000000000004 /* PVDolphinCore+RetroAchievements.swift */; };
+		C0C0CAFE0003000000000006 /* PVRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0003000000000007 /* PVRcheevos */; };
+		C0C0CAFE0003000000000009 /* PVRcheevosBridge in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE000300000000000A /* PVRcheevosBridge */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -747,6 +751,9 @@
 		B3F8E1252CB6007700017D1B /* PVDolphinCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDolphinCore.swift; sourceTree = "<group>"; };
 		B3F8E1272CB6052800017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B3F8E1282CB6052800017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		C0C0CAFE0003000000000002 /* PVDolphinCore+RetroAchievements.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVDolphinCore+RetroAchievements.mm"; sourceTree = "<group>"; };
+		C0C0CAFE0003000000000004 /* PVDolphinCore+RetroAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVDolphinCore+RetroAchievements.swift"; sourceTree = "<group>"; };
+		C0C0CAFE0003000000000005 /* PVDolphinCore+RetroAchievements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVDolphinCore+RetroAchievements.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -785,6 +792,8 @@
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */,
+				C0C0CAFE0003000000000006 /* PVRcheevos in Frameworks */,
+				C0C0CAFE0003000000000009 /* PVRcheevosBridge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -829,6 +838,9 @@
 				B3EA00042F56B000004A995B /* PVDolphinCore+Netplay.h */,
 				B3EA00052F56B000004A995B /* PVDolphinCore+Netplay.mm */,
 				B3EA00062F56B000004A995B /* PVDolphinCore+PVNetplayCapable.swift */,
+				C0C0CAFE0003000000000005 /* PVDolphinCore+RetroAchievements.h */,
+				C0C0CAFE0003000000000002 /* PVDolphinCore+RetroAchievements.mm */,
+				C0C0CAFE0003000000000004 /* PVDolphinCore+RetroAchievements.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1084,6 +1096,8 @@
 				B3A4832C2F569AC7004A995B /* PVPrimitives */,
 				B3EA00082F56B000004A995B /* PVNetplay */,
 				B3D991CC2F78A60F002F1DCB /* PVSupport */,
+				C0C0CAFE0003000000000007 /* PVRcheevos */,
+				C0C0CAFE000300000000000A /* PVRcheevosBridge */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVDolphin.framework */;
@@ -1141,6 +1155,8 @@
 				B36458D62EDD1A160020354E /* XCRemoteSwiftPackageReference "Defaults" */,
 				B3A4832B2F569AC7004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 				B3EA00092F56B000004A995B /* XCLocalSwiftPackageReference "../../PVNetplay" */,
+				C0C0CAFE000300000000000B /* XCLocalSwiftPackageReference "../../PVRcheevos" */,
+				C0C0CAFE000300000000000C /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -1845,6 +1861,8 @@
 				B3135BA926E4CD600047F338 /* PVDolphinCore+Audio.mm in Sources */,
 				B3EA00022F56B000004A995B /* PVDolphinCore+Netplay.mm in Sources */,
 				B3EA00032F56B000004A995B /* PVDolphinCore+PVNetplayCapable.swift in Sources */,
+				C0C0CAFE0003000000000001 /* PVDolphinCore+RetroAchievements.mm in Sources */,
+				C0C0CAFE0003000000000003 /* PVDolphinCore+RetroAchievements.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2372,6 +2390,14 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVLogging;
 		};
+		C0C0CAFE000300000000000B /* XCLocalSwiftPackageReference "../../PVRcheevos" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVRcheevos;
+		};
+		C0C0CAFE000300000000000C /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVRcheevosBridge;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -2431,6 +2457,16 @@
 		B3F8E1022CB3C95600017D1B /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		C0C0CAFE0003000000000007 /* PVRcheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE000300000000000B /* XCLocalSwiftPackageReference "../../PVRcheevos" */;
+			productName = PVRcheevos;
+		};
+		C0C0CAFE000300000000000A /* PVRcheevosBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE000300000000000C /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */;
+			productName = PVRcheevosBridge;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
