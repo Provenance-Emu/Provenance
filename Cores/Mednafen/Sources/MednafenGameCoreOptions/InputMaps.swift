@@ -22,6 +22,6 @@ public class InputMaps: NSObject {
     @objc public static let VBMap: [Int32] = [9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11]
     @objc public static let WSMap: [Int32] = [0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11]
     @objc public static let NeoMap: [Int32] = [0, 1, 2, 3, 4, 5, 6]
-    @objc public static let SSMap: [Int32] = [4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 15, 3, 11]
+    @objc public static let SSMap: [Int32] = [4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 11, 12, 3]
     @objc public static let GenesisMap: [Int32] = [5, 7, 11, 10, 0, 1, 2, 3, 4, 6, 8, 9]
 }

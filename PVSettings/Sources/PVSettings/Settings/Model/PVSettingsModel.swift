@@ -74,7 +74,7 @@ extension Defaults.Keys {
 public
 extension Defaults.Keys {
     static let autoSave = Key<Bool>("autoSave", default: true)
-    static let timedAutoSaves = Key<Bool>("timedAutoSaves", default: true)
+    static let timedAutoSaves = Key<Bool>("timedAutoSaves", default: false) // Default off: timed saves at default interval flood iCloud sync.
     static let timedAutoSaveInterval = Key<TimeInterval>("timedAutoSaveInterval", default: minutes(10))
 
     static let askToAutoLoad = Key<Bool>("askToAutoLoad", default: true)
@@ -1021,6 +1021,26 @@ public extension Defaults.Keys {
         canonicalRetroAchievementsHardcoreDefaultsKey,
         legacyKey: legacyRetroAchievementsHardcoreDefaultsKey,
         defaultValue: false
+    )
+
+    /// Show the in-game overlay toast when an achievement unlocks, progresses,
+    /// or a challenge indicator appears.
+    static let retroAchievementsToastsEnabled = Key<Bool>(
+        "retroAchievementsToastsEnabled",
+        default: true
+    )
+
+    /// Play the achievement-unlock sound effect when an achievement unlocks.
+    static let retroAchievementsSoundEnabled = Key<Bool>(
+        "retroAchievementsSoundEnabled",
+        default: true
+    )
+
+    /// Emit app-level toasts for RetroAchievements login/logout/mode-change/error
+    /// events (mirrors RetroArch's own OSD banner style).
+    static let retroAchievementsSystemToastsEnabled = Key<Bool>(
+        "retroAchievementsSystemToastsEnabled",
+        default: true
     )
 }
 

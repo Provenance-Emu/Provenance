@@ -130,7 +130,7 @@ public struct GameContextMenu: View {
                             }
                         }
                     } label: {
-                        Label("Open in...", systemImage: "gamecontroller")
+                        Label("Choose Core...", systemImage: "gamecontroller")
                     }
                 }
                 // Core Options for this game — only shown when at least one core supports CoreOptional
