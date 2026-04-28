@@ -49,4 +49,14 @@
 // MARK: Save States
 - (void)saveStateToFileAtPath:(NSString *_Nullable)fileName completionHandler:(void (^_Nullable)(BOOL, NSError *_Nullable)) __attribute__((noescape)) block;
 - (void)loadStateFromFileAtPath:(NSString *_Nullable)fileName completionHandler:(void (^_Nullable)(BOOL, NSError *_Nullable)) __attribute__((noescape)) block;
+
+// MARK: RetroAchievements
+/// Pointer to GB/GBC work RAM via libretro RETRO_MEMORY_SYSTEM_RAM (DMG: 8 KiB, GBC: 32 KiB).
+@property (nonatomic, readonly, nullable) void *wramBasePtr;
+/// Size of work RAM exposed via RETRO_MEMORY_SYSTEM_RAM (in bytes).
+@property (nonatomic, readonly) NSUInteger wramSize;
+/// Pointer to GB/GBC video RAM via libretro RETRO_MEMORY_VIDEO_RAM (DMG: 8 KiB, GBC: 16 KiB).
+@property (nonatomic, readonly, nullable) void *vramBasePtr;
+/// Size of video RAM exposed via RETRO_MEMORY_VIDEO_RAM (in bytes).
+@property (nonatomic, readonly) NSUInteger vramSize;
 @end

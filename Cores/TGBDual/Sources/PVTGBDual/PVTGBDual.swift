@@ -21,7 +21,7 @@ import GameController
 @objc
 @objcMembers
 public final class PVTGBDualCore: PVEmulatorCore, @unchecked Sendable {
-    
+
     // TGBDual
     private var _sampleRate: Double = 44100
     override public var audioSampleRate: Double { get {_sampleRate}
@@ -31,9 +31,18 @@ public final class PVTGBDualCore: PVEmulatorCore, @unchecked Sendable {
         }}
 //    // MARK: Lifecycle
 
+    let _bridge: PVTGBDualBridge = .init()
+
     public required init() {
         super.init()
-        self.bridge = PVTGBDualBridge() as! any ObjCBridgedCoreBridge
+        self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+    }
+
+    public override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
     }
 }
 

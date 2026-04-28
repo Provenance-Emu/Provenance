@@ -374,8 +374,26 @@ static bool environment_callback(unsigned cmd, void *data) {
             WLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
             return false;
     }
-    
+
     return true;
+}
+
+#pragma mark - RetroAchievements
+
+- (void *)wramBasePtr {
+    return retro_get_memory_data_tgbdual(RETRO_MEMORY_SYSTEM_RAM);
+}
+
+- (NSUInteger)wramSize {
+    return retro_get_memory_size_tgbdual(RETRO_MEMORY_SYSTEM_RAM);
+}
+
+- (void *)vramBasePtr {
+    return retro_get_memory_data_tgbdual(RETRO_MEMORY_VIDEO_RAM);
+}
+
+- (NSUInteger)vramSize {
+    return retro_get_memory_size_tgbdual(RETRO_MEMORY_VIDEO_RAM);
 }
 
 @end
