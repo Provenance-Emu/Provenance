@@ -26,4 +26,11 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)resetCheatCodes;
 @end
 
+@interface PVPicoDriveBridge (RetroAchievements)
+/// Pointer to libretro RETRO_MEMORY_SYSTEM_RAM (Genesis 68K work RAM, etc.).
+@property (nonatomic, readonly, nullable) void *systemRAMPtr;
+/// Size in bytes of the active system RAM region.
+@property (nonatomic, readonly) NSUInteger systemRAMSize;
+@end
+
 NS_HEADER_AUDIT_END(nullability, sendability)

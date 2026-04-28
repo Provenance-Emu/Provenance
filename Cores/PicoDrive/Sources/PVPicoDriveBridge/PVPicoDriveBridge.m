@@ -518,6 +518,14 @@ static void writeSaveFile(const char* path, int type)
     [data getBytes:ramData length:size];
 }
 
+- (void *)systemRAMPtr {
+    return retro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
+}
+
+- (NSUInteger)systemRAMSize {
+    return (NSUInteger)retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM);
+}
+
 - (BOOL)writeSaveFile:(NSString *)path forType:(int)type {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);

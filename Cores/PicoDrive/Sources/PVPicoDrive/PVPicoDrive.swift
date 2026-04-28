@@ -28,7 +28,13 @@ public class PVPicoDrive: PVEmulatorCore, @unchecked Sendable {
         super.initialize()
         self.copyCartHWCFG()
     }
- 
+
+    public override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
+    }
 }
 
 extension PVPicoDrive {
