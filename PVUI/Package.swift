@@ -47,6 +47,10 @@ let package = Package(
         .package(path: "../PVOpticalDiscReader"),
         .package(path: "../PVJIT"),
         .package(path: "../PVCheevos"),
+        /// `RcheevosHash` (console-aware ROM hashing) lives in PVRcheevos and is used
+        /// by `PVEmulatorViewController+Achievements.swift` as the fallback when the
+        /// stored file MD5 doesn't match the RA database (CD-based systems).
+        .package(path: "../PVRcheevos"),
         .package(path: "../External/Reachability.swift"),
         //.package(url: "https://github.com/ashleymills/Reachability.swift.git", from: "5.2.4"),
         .package(url: "https://github.com/RxSwiftCommunity/RxDataSources.git", from: "5.0.2"),
@@ -138,6 +142,7 @@ let package = Package(
                 "PVWebServer",
                 .product(name: "PVWebServerObjC", package: "PVWebServer"),
                 "PVCheevos",
+                .product(name: "PVRcheevos", package: "PVRcheevos"),
                 .product(name: "PVJIT", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
                 .product(name: "JITManager", package: "PVJIT", condition: .when(platforms: [.iOS, .tvOS])),
                 .product(name: "Reachability", package: "reachability.swift"),

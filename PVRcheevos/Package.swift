@@ -104,6 +104,12 @@ let package = Package(
                 // must provide its own synchronisation.  Do NOT set this flag in cores
                 // that drive rc_client from multiple threads.
                 .define("RC_NO_THREADS", to: "1"),
+                // RC_CLIENT_SUPPORTS_HASH compiles in `rc_client_begin_identify_and_load_game`
+                // (and the iterator-driven hashing glue it uses). RetroArch's full cheevos.c
+                // calls this entry point with `RC_CONSOLE_UNKNOWN` and lets rcheevos pick the
+                // matching console + hash from the file path/contents — we want the same
+                // capability available to Provenance frontends.
+                .define("RC_CLIENT_SUPPORTS_HASH", to: "1"),
             ]
         ),
         // MARK: - PVRcheevos (Swift entry point, re-exports both)

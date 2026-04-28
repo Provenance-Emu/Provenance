@@ -15,6 +15,7 @@
 import PVCoreBridge
 import PVCheevos
 import PVLogging
+import PVRcheevos
 import PVSettings
 import SwiftUI
 #if canImport(UIKit)
@@ -91,10 +92,20 @@ public extension PVEmulatorViewController {
             DLOG("RetroAchievements: core \(core.description) does not conform to CoreRetroAchievements.")
             return
         }
-        guard let gameHash = game?.md5Hash, !gameHash.isEmpty else {
+        guard let fileMD5 = game?.md5Hash, !fileMD5.isEmpty else {
             WLOG("RetroAchievements: game has no MD5 hash, skipping achievements.")
             return
         }
+        // RA expects a console-aware hash. Our import pipeline already applies
+        // SystemIdentifier.offset to strip headers for iNES NES, A7800, Lynx,
+        // SNES copier, and normalises byte-swapped N64 to z64 — so the stored
+        // file MD5 already matches RA's expected hash for those systems.
+        // Try it first (fast path, avoids re-reading the ROM); fall back to
+        // rcheevos auto-detect only when the server doesn't recognise it.
+        // The fallback is required for CD systems (which hash system-area +
+        // boot exe rather than the disc image) and any cart format we don't
+        // header-strip during import.
+        let romPath = game?.file?.url?.path ?? ""
 
         // Attach the OSD overlay if not already present.
         setupAchievementOverlayIfNeeded()
@@ -125,42 +136,70 @@ public extension PVEmulatorViewController {
 
         Task { [weak self, weak achievementsCore] in
             guard let self, let achievementsCore else { return }
+
+            // Try the candidate hashes in order: file MD5 first (fast path —
+            // already matches RA for headerless and header-stripped carts);
+            // then the rcheevos auto-detect hash (CD systems and any format
+            // we don't strip during import). Computing the native hash is
+            // deferred until the MD5 attempt fails so we don't pay the cost
+            // for the common case.
+            let winningHash: String
+            let response: StartSessionResponse
             do {
-                let response = try await manager.startSession(gameHash: gameHash)
-                ILOG("RetroAchievements: session started for game \(manager.currentGameId ?? -1), \(response.unlocks?.count ?? 0) existing unlocks.")
-                // Session confirmed active — verify stopAchievements() hasn't run since
-                // we kicked off this Task. If it has, tear down the session we just
-                // started so the manager's ping loop does not keep running.
-                if token.isCancelled {
-                    await manager.stopSession()
+                response = try await manager.startSession(gameHash: fileMD5)
+                winningHash = fileMD5
+            } catch AchievementSessionError.unknownGame {
+                ILOG("RetroAchievements: file MD5 \(fileMD5) not in database, trying rcheevos native hash…")
+                guard !romPath.isEmpty,
+                      let nativeHash = RcheevosHash.compute(filePath: romPath),
+                      nativeHash != fileMD5 else {
+                    ILOG("RetroAchievements: no distinct rcheevos hash available, achievements unavailable.")
                     return
                 }
-
-                // Expose the manager and prepare the core.
-                await MainActor.run {
-                    self.achievementSessionManager = manager
+                do {
+                    response = try await manager.startSession(gameHash: nativeHash)
+                    winningHash = nativeHash
+                    ILOG("RetroAchievements: matched rcheevos native hash \(nativeHash)")
+                } catch AchievementSessionError.unknownGame {
+                    ILOG("RetroAchievements: native hash \(nativeHash) also not in database, achievements unavailable.")
+                    return
+                } catch {
+                    ELOG("RetroAchievements: session start failed (native hash): \(error.localizedDescription)")
+                    return
                 }
-                // Prepare the core's achievement runtime (rcheevos or equivalent).
-                await achievementsCore.prepareAchievements(gameHash: gameHash)
-                // If hardcore is enabled, enforce the speed restriction now that the
-                // session has successfully started. We use hardcoreMode alone here
-                // (not achievementsActive) because we are already in the success path
-                // of startSession+prepareAchievements, and some cores (e.g. RetroArch)
-                // always report achievementsActive == false even when a session is live.
-                if achievementsCore.hardcoreMode {
-                    await MainActor.run {
-                        guard !token.isCancelled else { return }
-                        self.core.gameSpeed = .normal
-                        // Sync the OSD fast-forward button so it doesn't remain highlighted.
-                        (self.controllerViewController as? OSDFastForwardObserver)?.syncFastForwardDisplay()
-                    }
-                }
-            } catch AchievementSessionError.unknownGame(let hash) {
-                ILOG("RetroAchievements: game hash \(hash) not in database, achievements unavailable.")
-                // achievementSessionManager was never set, so no cleanup needed.
             } catch {
                 ELOG("RetroAchievements: session start failed: \(error.localizedDescription)")
-                // achievementSessionManager was never set, so no cleanup needed.
+                return
+            }
+
+            ILOG("RetroAchievements: session started for game \(manager.currentGameId ?? -1) using hash \(winningHash), \(response.unlocks?.count ?? 0) existing unlocks.")
+
+            // Session confirmed active — verify stopAchievements() hasn't run since
+            // we kicked off this Task. If it has, tear down the session we just
+            // started so the manager's ping loop does not keep running.
+            if token.isCancelled {
+                await manager.stopSession()
+                return
+            }
+
+            // Expose the manager and prepare the core.
+            await MainActor.run {
+                self.achievementSessionManager = manager
+            }
+            // Prepare the core's achievement runtime (rcheevos or equivalent).
+            await achievementsCore.prepareAchievements(gameHash: winningHash)
+            // If hardcore is enabled, enforce the speed restriction now that the
+            // session has successfully started. We use hardcoreMode alone here
+            // (not achievementsActive) because we are already in the success path
+            // of startSession+prepareAchievements, and some cores (e.g. RetroArch)
+            // always report achievementsActive == false even when a session is live.
+            if achievementsCore.hardcoreMode {
+                await MainActor.run {
+                    guard !token.isCancelled else { return }
+                    self.core.gameSpeed = .normal
+                    // Sync the OSD fast-forward button so it doesn't remain highlighted.
+                    (self.controllerViewController as? OSDFastForwardObserver)?.syncFastForwardDisplay()
+                }
             }
         }
     }
@@ -290,9 +329,19 @@ extension PVEmulatorViewController: RetroAchievementsOSDDelegate {
     }
 
     public func achievementUnlocked(_ notification: AchievementUnlockNotification) {
-        Task { @MainActor [weak self] in
-            self?.achievementOverlayViewController?.showUnlock(notification)
+        // Snapshot settings once — checked on the calling thread (may be emu).
+        let showToast = Defaults[.retroAchievementsToastsEnabled]
+        let playSound = Defaults[.retroAchievementsSoundEnabled]
+
+        if showToast {
+            Task { @MainActor [weak self] in
+                self?.achievementOverlayViewController?.showUnlock(notification)
+            }
         }
+        if playSound {
+            AchievementSoundPlayer.playUnlock()
+        }
+
         // Accumulate session points and forward to Live Activity.
         achievementSessionPoints += Int(notification.points)
         let cumulativePoints = achievementSessionPoints
@@ -313,6 +362,7 @@ extension PVEmulatorViewController: RetroAchievementsOSDDelegate {
     }
 
     public func showChallengeIndicator(_ notification: AchievementChallengeNotification) {
+        guard Defaults[.retroAchievementsToastsEnabled] else { return }
         Task { @MainActor [weak self] in
             self?.achievementOverlayViewController?.showChallengeIndicator(notification)
         }
