@@ -561,6 +561,9 @@ struct PauseTileMenuView: View {
             guard let descriptor = hardwareMomentaryDescriptor(forTileID: id) else { return }
             dispatchHardwareSwitchButton(descriptor.buttonId)
 
+        case let id where id.hasPrefix(SystemButtonTileProvider.tileIDPrefix):
+            dispatchSystemButton(tileID: id)
+
         default:
             break
         }
@@ -1655,6 +1658,301 @@ struct PauseTileMenuView: View {
         }
         dispatchHardwareButton(buttonId)
     }
+
+    /// Briefly fires a press → release on the main queue, mimicking a momentary
+    /// physical button tap. The 50 ms delay matches `dispatchHardwareButton`.
+    private func fireMomentaryRelease(after: TimeInterval = 0.05, _ block: @escaping () -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + after, execute: block)
+    }
+
+    // swiftlint:disable cyclomatic_complexity function_body_length
+    /// Dispatches a system-specific button (Start/Select/Coin/etc.) by casting
+    /// the running core to the appropriate `PV<System>SystemResponderClient`
+    /// and calling `didPush(...)`/`didRelease(...)` for the encoded player.
+    ///
+    /// Tile IDs are `systemButton_pN_<btn>` and the button strings come from
+    /// `SystemMenuButton.id`.
+    private func dispatchSystemButton(tileID: String) {
+        guard let parsed = SystemButtonTileProvider.parse(tileID: tileID) else { return }
+        let player = parsed.player
+        let btn = parsed.buttonId
+        let core = emulatorVC.core
+        let sys = activeSystemIdentifier
+
+        switch sys {
+        case .NES, .FDS:
+            guard let r = core as? PVNESSystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .SNES:
+            guard let r = core as? PVSNESSystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .GB, .GBC, .MegaDuck:
+            guard let r = core as? PVGBSystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .GBA:
+            guard let r = core as? PVGBASystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .Genesis, .SegaCD, .GameGear:
+            guard let r = core as? PVGenesisSystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "mode":
+                r.didPush(.mode, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.mode, forPlayer: player) }
+            default: break
+            }
+        case .Sega32X:
+            guard let r = core as? PVSega32XSystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "mode":
+                r.didPush(.mode, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.mode, forPlayer: player) }
+            default: break
+            }
+        case .SG1000:
+            guard let r = core as? PVSG1000SystemResponderClient else { return }
+            if btn == "start" {
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            }
+        case .PCE, .PCECD:
+            guard let r = core as? PVPCESystemResponderClient else { return }
+            switch btn {
+            case "run":
+                r.didPush(.run, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.run, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .PCFX, .SGFX:
+            guard let r = core as? PVPCFXSystemResponderClient else { return }
+            switch btn {
+            case "run":
+                r.didPush(.run, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.run, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .NGP, .NGPC:
+            guard let r = core as? PVNeoGeoPocketSystemResponderClient else { return }
+            if btn == "option" {
+                r.didPush(.option, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.option, forPlayer: player) }
+            }
+        case .WonderSwan, .WonderSwanColor:
+            guard let r = core as? PVWonderSwanSystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "sound":
+                r.didPush(.sound, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.sound, forPlayer: player) }
+            default: break
+            }
+        case .N64:
+            guard let r = core as? PVN64SystemResponderClient else { return }
+            if btn == "start" {
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            }
+        case .PSX:
+            guard let r = core as? PVPSXSystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .PS2, .PS3:
+            guard let r = core as? PVPS2SystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .PSP:
+            guard let r = core as? PVPSPSystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .Saturn:
+            guard let r = core as? PVSaturnSystemResponderClient else { return }
+            if btn == "start" {
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            }
+        case .Dreamcast:
+            guard let r = core as? PVDreamcastSystemResponderClient else { return }
+            if btn == "start" {
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            }
+        case .GameCube:
+            guard let r = core as? PVGameCubeSystemResponderClient else { return }
+            if btn == "start" {
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            }
+        case .DS:
+            guard let r = core as? PVDSSystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .VirtualBoy:
+            guard let r = core as? PVVirtualBoySystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case .Lynx:
+            guard let r = core as? PVLynxSystemResponderClient else { return }
+            switch btn {
+            case "pause":
+                r.didPush(.pause, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.pause, forPlayer: player) }
+            case "option1":
+                r.didPush(.option1, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.option1, forPlayer: player) }
+            case "option2":
+                r.didPush(.option2, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.option2, forPlayer: player) }
+            default: break
+            }
+        case .AtariJaguar, .AtariJaguarCD:
+            guard let r = core as? PVJaguarSystemResponderClient else { return }
+            switch btn {
+            case "pause":
+                r.didPush(.pause, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.pause, forPlayer: player) }
+            case "option":
+                r.didPush(.option, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.option, forPlayer: player) }
+            default: break
+            }
+        case .MAME, .CPS1, .CPS2, .CPS3:
+            guard let r = core as? PVMAMESystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            case "coin":
+                r.didPush(.coin, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.coin, forPlayer: player) }
+            default: break
+            }
+        case .NeoGeo, .NeoGeoCD:
+            guard let r = core as? PVNeoGeoSystemResponderClient else { return }
+            switch btn {
+            case "start":
+                r.didPush(.start, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.start, forPlayer: player) }
+            case "select":
+                r.didPush(.select, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
+            default: break
+            }
+        case ._3DO:
+            guard let r = core as? PV3DOSystemResponderClient else { return }
+            switch btn {
+            case "stop":
+                r.didPush(.X, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.X, forPlayer: player) }
+            case "p":
+                r.didPush(.P, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.P, forPlayer: player) }
+            default: break
+            }
+        case .Supervision:
+            guard let r = core as? PVSupervisionSystemResponderClient else { return }
+            if btn == "pause" {
+                r.didPush(.pause, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.pause, forPlayer: player) }
+            }
+        case .PokemonMini:
+            guard let r = core as? PVPokeMiniSystemResponderClient else { return }
+            switch btn {
+            case "power":
+                r.didPush(.power, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.power, forPlayer: player) }
+            case "shake":
+                r.didPush(.shake, forPlayer: player)
+                fireMomentaryRelease { r.didRelease(.shake, forPlayer: player) }
+            default: break
+            }
+        default:
+            break
+        }
+    }
+    // swiftlint:enable cyclomatic_complexity function_body_length
 
     /// Locates a rewind-related bool option in the active core option tree.
     private func findRewindOption(in options: [CoreOption]) -> CoreOption? {

@@ -560,6 +560,18 @@ final class PauseTileMenuViewModel: ObservableObject {
             }
         }
 
+        // System-specific menu buttons (Start/Select/Coin/etc.) for controllers
+        // that lack them (Siri Remote, older BT pads) and always-on Coin for arcade.
+        if let systemForButtons = Self.resolvedSystemIdentifier(emulatorVC: emulatorVC) {
+            let missingOn = Defaults[.missingButtonsAlwaysOn]
+            let systemTiles = SystemButtonTileProvider.tiles(
+                for: systemForButtons,
+                controllerManager: PVControllerManager.shared,
+                missingButtonsAlwaysOn: missingOn
+            )
+            controlsTiles.append(contentsOf: systemTiles)
+        }
+
         if let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type {
             coreTiles += CoreOptionTileProvider.tiles(from: coreClass.options, coreClass: coreClass, md5Scope: coreOptionsMD5)
             if rewindQuickControlAdded {

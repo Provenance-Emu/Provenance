@@ -138,6 +138,30 @@ public final class PVControllerManager: NSObject, ObservableObject {
     public var hasControllers: Bool {
         return player1 != nil || player2 != nil || player3 != nil || player4 != nil  || player5 != nil || player6 != nil || player7 != nil || player8 != nil
     }
+
+    /// True when the controller assigned to `player` (0-indexed) lacks the
+    /// hardware buttons normally used to expose system-specific actions
+    /// (Start/Select etc.). The pause-menu tile UI uses this to decide
+    /// whether to surface the system-button tiles for that player.
+    ///
+    /// A controller "needs" the tiles when:
+    ///   * no controller is connected for that slot, or
+    ///   * it's a Siri Remote (`microGamepad` only, no `extendedGamepad`), or
+    ///   * it's an older/limited extended pad without an Options button.
+    public func controllerNeedsMissingButtons(forPlayer player: Int) -> Bool {
+        let pad: GCController?
+        switch player {
+        case 0: pad = player1
+        case 1: pad = player2
+        case 2: pad = player3
+        case 3: pad = player4
+        default: return false
+        }
+        guard let pad else { return true }
+        if pad.microGamepad != nil && pad.extendedGamepad == nil { return true }
+        if pad.extendedGamepad?.buttonOptions == nil { return true }
+        return false
+    }
     public var isKeyboardConnected: Bool {
         return keyboardController != nil
 //        if #available(iOS 14.0, *) {
