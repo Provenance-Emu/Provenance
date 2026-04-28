@@ -73,25 +73,20 @@ import GLKit
     //    private var coreHandle: UnsafeMutableRawPointer?
     //    private var plugins: [UnsafeMutableRawPointer?] = Array(repeating: nil, count: 4)
     
-    // MARK: - RetroAchievements backing storage
-    
-    /// Weak reference to the OSD delegate (stored here because Swift extensions
-    /// cannot add stored properties).
-    weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
-    
-    /// Hardcore mode flag — when true, save-state loads are blocked.
-    var _hardcoreMode: Bool = false
-    
-    /// Whether the achievement runtime is currently active for the loaded ROM.
-    var _achievementsActive: Bool = false
-    
     // MARK: - Initialization
-    
+
     public var _bridge: PVMupenBridge = .init()
-    
+
     required init() {
         super.init()
         self.bridge = (PVMupenBridge() as! any ObjCBridgedCoreBridge)
+    }
+
+    public override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
     }
 }
     

@@ -96,6 +96,8 @@ let package = Package(
         .package(path: "../../PVLogging"),
         .package(path: "../../PVObjCUtils"),
         .package(path: "../../PVNetplay"),
+        .package(path: "../../PVRcheevos"),
+        .package(name: "PVRcheevosBridge", path: "../../PVRcheevosBridge"),
 
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
     ],
@@ -119,6 +121,8 @@ let package = Package(
 //                "PVMupen64PlusVideoGlideN64",
 //                "PVMupen64PlusVideoRice",
                 "PVRSPCXD4",
+                .product(name: "PVRcheevos", package: "PVRcheevos"),
+                .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
                 .product(name: "PVNetplay", package: "PVNetplay",
                          condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
             ],
