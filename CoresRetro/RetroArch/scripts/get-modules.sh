@@ -13,6 +13,40 @@ SCRIPTS_DIR="${SRCROOT}/CoresRetro/RetroArch/scripts"
 # by platform-switch or pin-change purges.  Add new patterns as needed.
 LOCAL_DYLIB_PATTERNS=( "*-jitless*" )
 
+# Per-dylib sentinel convention: if `modules/<basename>.local` exists,
+# treat <basename> as locally-managed — never delete or overwrite it.
+# Lets developers drop in custom builds (e.g. an updated virtualjaguar) by
+# creating a zero-byte sentinel: `touch modules/virtualjaguar_libretro_ios.dylib.local`.
+# Returns 0 if $1 (a bare basename) is locally-overridden.
+is_local_dylib() {
+	local base="$1"
+	local pat
+	for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
+		case "$base" in ${pat}*) return 0 ;; esac
+	done
+	[ -f "${CORES_DIR}/${base}.local" ] && return 0
+	return 1
+}
+
+# Collect basenames of locally-overridden dylibs (sentinel-flagged).
+# Pattern-based locals (LOCAL_DYLIB_PATTERNS) can't be expanded into specific
+# exclude args without scanning the zip contents, so they rely on file-name
+# uniqueness — sentinels cover the explicit case.
+LOCAL_OVERRIDE_NAMES=()
+for sentinel in "${CORES_DIR}/"*.local; do
+	[ -f "$sentinel" ] || continue
+	base=$(basename "$sentinel" .local)
+	LOCAL_OVERRIDE_NAMES+=( "$base" )
+done
+unset sentinel base
+# unzip syntax: `<archive> [files...] -x <xfile1> <xfile2> ...` — exclude
+# args must follow the archive and use a single -x with N filenames.
+UNZIP_EXCLUDE_ARGS=()
+if [ "${#LOCAL_OVERRIDE_NAMES[@]}" -gt 0 ]; then
+	UNZIP_EXCLUDE_ARGS=( -x "${LOCAL_OVERRIDE_NAMES[@]}" )
+	echo "GetModule: protecting ${#LOCAL_OVERRIDE_NAMES[@]} locally-overridden dylib(s) from extraction (.local sentinel): ${LOCAL_OVERRIDE_NAMES[*]}"
+fi
+
 # Add parameter check
 URL_SUFFIX=""
 if [ "$1" = "-appstore" ]; then
@@ -199,11 +233,7 @@ prune_dylibs_not_in_manifest() {
 		[ -f "$dylib" ] || continue
 		local base
 		base=$(basename "$dylib")
-		local keep_local=0
-		for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
-			case "$base" in ${pat}*) keep_local=1; break ;; esac
-		done
-		[ "$keep_local" = "1" ] && continue
+		is_local_dylib "$base" && continue
 		if ! grep -qx "$base" "$expected"; then
 			echo "GetModule: removing stale dylib not in manifest: ${base}"
 			rm -f "$dylib"
@@ -225,15 +255,11 @@ remove_stale_other_platform_dylibs() {
 	local mod_dir="$1"
 	local plat="$2"
 	local removed=0
-	local f base keep_local
+	local f base
 	for f in "${mod_dir}/"*.dylib; do
 		[ -f "$f" ] || continue
 		base=$(basename "$f")
-		keep_local=0
-		for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
-			case "$base" in ${pat}*) keep_local=1; break ;; esac
-		done
-		[ "$keep_local" = "1" ] && continue
+		is_local_dylib "$base" && continue
 		case "$base" in
 			*_ios.dylib)
 				if [ "$plat" = "tvos" ]; then
@@ -292,18 +318,33 @@ fi
 # ios/tvos suffix, e.g. dolphin_libretro.dylib) so they are re-extracted for the
 # new platform rather than silently reused from the previous build.
 if [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
+	# Remove other-platform dylibs (suffix-matched), preserving any with a
+	# .local sentinel or matching LOCAL_DYLIB_PATTERNS.
 	if [ "${CURRENT_PLATFORM}" = "tvos" ]; then
-		rm -f "${CORES_DIR}/"*ios*.dylib 2>/dev/null
+		other_glob='*ios*.dylib'
 	else
-		rm -f "${CORES_DIR}/"*tvos*.dylib 2>/dev/null
+		other_glob='*tvos*.dylib'
 	fi
+	for f in "${CORES_DIR}"/${other_glob}; do
+		[ -f "$f" ] || continue
+		base=$(basename "$f")
+		is_local_dylib "$base" && continue
+		rm -f "$f"
+	done
+	unset other_glob f base
 	# Remove platform-neutral dylibs so they are not silently reused from the
 	# previous platform build (unzip -o below will re-extract the correct versions).
-	# Preserve locally-built dylibs matching LOCAL_DYLIB_PATTERNS.
+	# Preserve locally-built dylibs matching LOCAL_DYLIB_PATTERNS or a .local sentinel.
 	LOCAL_EXCLUDES=()
 	for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
 		LOCAL_EXCLUDES+=( -not -name "${pat}.dylib" -not -name "${pat}" )
 	done
+	for sentinel in "${CORES_DIR}/"*.local; do
+		[ -f "$sentinel" ] || continue
+		s_base=$(basename "$sentinel" .local)
+		LOCAL_EXCLUDES+=( -not -name "$s_base" )
+	done
+	unset sentinel s_base
 	find "${CORES_DIR}" -maxdepth 1 -name "*.dylib" \
 		-not -name "*ios*" -not -name "*tvos*" "${LOCAL_EXCLUDES[@]}" -type f -delete 2>/dev/null || true
 fi
@@ -381,25 +422,26 @@ fi
 # When the platform changed, platform-specific and neutral dylibs were already
 # purged above; -o ensures any remaining shared names are overwritten correctly.
 if [ "${PIN_CHANGED}" = "1" ]; then
-	# Purge all downloaded dylibs but preserve locally-built ones.
+	# Purge all downloaded dylibs but preserve locally-built ones (pattern or sentinel).
 	for dylib in "${CORES_DIR}/"*.dylib; do
 		[ -f "$dylib" ] || continue
-		KEEP=0
-		for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
-			case "$(basename "$dylib")" in ${pat}*) KEEP=1; break ;; esac
-		done
-		[ "${KEEP}" = "0" ] && rm -f "$dylib"
+		base=$(basename "$dylib")
+		is_local_dylib "$base" && continue
+		rm -f "$dylib"
 	done
-	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
+	unset base
+	# unzip syntax: archive [files] [-x xfile(s)] [-d exdir] — exclude args go
+	# after the archive and before -d.  Empty UNZIP_EXCLUDE_ARGS expands to nothing.
+	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} "${UNZIP_EXCLUDE_ARGS[@]}" -d "${CORES_DIR}/" ';'
 elif [ "${MANIFEST_CHANGED}" = "1" ]; then
 	# Regenerated urls*.txt: prune already removed dropped cores; overwrite dylibs
 	# from re-downloaded zips (unzip -n would skip same-named updates).
-	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
+	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} "${UNZIP_EXCLUDE_ARGS[@]}" -d "${CORES_DIR}/" ';'
 elif [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
 	# Platform changed (or first run): stale dylibs purged above; overwrite to be safe.
-	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} -d "${CORES_DIR}/" ';'
+	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} "${UNZIP_EXCLUDE_ARGS[@]}" -d "${CORES_DIR}/" ';'
 else
-	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -n {} -d "${CORES_DIR}/" ';'
+	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -n {} "${UNZIP_EXCLUDE_ARGS[@]}" -d "${CORES_DIR}/" ';'
 fi
 
 # Final validation: count dylibs and warn if suspiciously low
