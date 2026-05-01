@@ -178,7 +178,7 @@
 		B3FF10082F600000004A9955 /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3FF10072F600000004A9955 /* PVNetplay */; };
 		C0C0CAFE0002000000000001 /* PVPPSSPPCore+RetroAchievements.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0002000000000002 /* PVPPSSPPCore+RetroAchievements.mm */; };
 		C0C0CAFE0002000000000003 /* PVPPSSPPCore+RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0002000000000004 /* PVPPSSPPCore+RetroAchievements.swift */; };
-		C0C0CAFE0002000000000006 /* PVRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0002000000000007 /* PVRcheevos */; };
+		C0C0CAFE000200000000000C /* PVRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0002000000000007 /* PVRcheevos */; };
 		C0C0CAFE0002000000000009 /* PVRcheevosBridge in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE000200000000000A /* PVRcheevosBridge */; };
 /* End PBXBuildFile section */
 
@@ -874,7 +874,7 @@
 				B36458DB2EDD1A930020354E /* Defaults in Frameworks */,
 				93E74205295B67C70028EB94 /* OpenGLES.framework in Frameworks */,
 				B3FF10082F600000004A9955 /* PVNetplay in Frameworks */,
-				C0C0CAFE0002000000000006 /* PVRcheevos in Frameworks */,
+				C0C0CAFE000200000000000C /* PVRcheevos in Frameworks */,
 				C0C0CAFE0002000000000009 /* PVRcheevosBridge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
