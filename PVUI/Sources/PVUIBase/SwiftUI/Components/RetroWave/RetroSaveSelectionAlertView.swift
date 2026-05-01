@@ -162,7 +162,12 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                     return
                 }
 
-                let recordID = (saveState.cloudRecordID?.isEmpty == false) ? saveState.cloudRecordID! : saveState.id
+                let recordID: String = {
+                    if let cloudID = saveState.cloudRecordID, !cloudID.isEmpty {
+                        return cloudID
+                    }
+                    return saveState.id
+                }()
                 downloadingRecordID = recordID
 
                 // Start polling SyncProgressTracker for real download progress
@@ -209,12 +214,15 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                     if let idx = saves.firstIndex(where: { $0.id == item.id }) {
                         saves[idx] = refreshedItem
                     }
-                    // Brief pause to show 100%, then clear download state after callback
+                    // Brief pause to show 100%, then clear download state BEFORE invoking
+                    // the completion. Calling completion last ensures the receiver's
+                    // dismiss/boot work isn't racing with another @Published mutation
+                    // that could interrupt the alert dismissal animation.
                     try? await Task.sleep(nanoseconds: 300_000_000)
                     downloadingRecordID = nil
                     downloadingItemId = nil
-                    completion(refreshedItem)
                     downloadProgress = 0
+                    completion(refreshedItem)
                 } else {
                     throw NSError(domain: "RetroSaveSelection", code: 2, userInfo: [NSLocalizedDescriptionKey: "File not available after download"])
                 }
