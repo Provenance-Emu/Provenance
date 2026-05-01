@@ -580,8 +580,8 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                     ILOG("GameImporterDatabaseService: Trying artwork search using ROM metadata from MD5")
                     if let romMetadata = try? await lookup.searchROM(byMD5: game.md5Hash),
                        let artworkURLs = try? await lookup.getArtworkURLs(forRom: romMetadata),
-                       !artworkURLs.isEmpty {
-                        url = artworkURLs.first!.absoluteString
+                       let first = artworkURLs.first {
+                        url = first.absoluteString
                         ILOG("GameImporterDatabaseService: Found artwork URL from ROM metadata: \(url)")
                         game.originalArtworkURL = url
                     }
@@ -732,7 +732,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             resultsMaybe = try? await lookup.searchDatabase(usingMD5: game.md5Hash, systemID: nil)
 
             // Try filename lookup if MD5 failed
-            if resultsMaybe == nil || resultsMaybe!.isEmpty {
+            if (resultsMaybe ?? []).isEmpty {
                 let fileName = game.file?.url?.lastPathComponent ?? game.title
                 // Remove any extraneous stuff in the rom name
                 let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: _GameImporterDatabaseServiceCharset)
@@ -761,13 +761,13 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             // Prioritize results with artwork URLs, then try to find USA version
             // First, try to find USA version with artwork URL (Region ID 21)
             chosenResult = results.first { metadata in
-                return metadata.regionID == 21 && metadata.boxImageURL != nil && !metadata.boxImageURL!.isEmpty
+                return metadata.regionID == 21 && !(metadata.boxImageURL ?? "").isEmpty
             } ?? results.first { metadata in
                 // Fallback: USA version by region string with artwork URL
-                return (metadata.region?.uppercased().contains("USA") ?? false) && metadata.boxImageURL != nil && !metadata.boxImageURL!.isEmpty
+                return (metadata.region?.uppercased().contains("USA") ?? false) && !(metadata.boxImageURL ?? "").isEmpty
             } ?? results.first { metadata in
                 // Fallback: Any result with artwork URL (prioritize artwork over region)
-                return metadata.boxImageURL != nil && !metadata.boxImageURL!.isEmpty
+                return !(metadata.boxImageURL ?? "").isEmpty
             } ?? results.first { metadata in
                 // Fallback: USA version without artwork requirement
                 return metadata.regionID == 21
@@ -798,9 +798,9 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
                 ILOG("GameImporterDatabaseService: No artwork URL in metadata, searching PVLookup for artwork URLs")
                 do {
                     // Try to get artwork URLs from PVLookup using the ROM metadata
-                    if let artworkURLs = try await lookup.getArtworkURLs(forRom: metadata), !artworkURLs.isEmpty {
+                    if let artworkURLs = try await lookup.getArtworkURLs(forRom: metadata), let first = artworkURLs.first {
                         // Use the first artwork URL found
-                        let artworkURL = artworkURLs.first!.absoluteString
+                        let artworkURL = first.absoluteString
                         ILOG("GameImporterDatabaseService: Found artwork URL from PVLookup: \(artworkURL)")
                         updatedGame.originalArtworkURL = artworkURL
                     } else {

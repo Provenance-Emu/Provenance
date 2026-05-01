@@ -180,8 +180,8 @@ class GameImporterSystemsService: GameImporterSystemsServicing {
         /// Step 2.5: If the extension uniquely identifies a single system (e.g. .jag, .j64, .gba),
         /// short-circuit before any MD5 hashing or database lookups. This avoids reading the
         /// entire ROM into memory just to confirm what the extension already told us.
-        if systemIdentifiers.count == 1 {
-            DLOG("Single system match by extension (fast path): \(systemIdentifiers.first!.rawValue)")
+        if systemIdentifiers.count == 1, let only = systemIdentifiers.first {
+            DLOG("Single system match by extension (fast path): \(only.rawValue)")
             return cacheAndReturn(systemIdentifiers)
         }
 

@@ -1639,8 +1639,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 if cdRomFileHandler.fileExistsAtPath(binURL) && !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
                     primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
                     ILOG("Found BIN file on disk for CUE: \(binFile)")
-                } else if !primaryGameItem.expectedAssociatedFileNames!.contains(binFile) {
-                    primaryGameItem.expectedAssociatedFileNames!.append(binFile)
+                } else {
+                    primaryGameItem.addExpectedAssociatedFileName(binFile)
                     ILOG("Added expected BIN file from CUE: \(binFile)")
                 }
             }
@@ -1745,8 +1745,9 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Add a file to the expected files list of the primary game item
     private func addToExpectedFilesList(_ fileName: String, primaryGameItem: ImportQueueItem) {
-        if !primaryGameItem.expectedAssociatedFileNames!.contains(fileName) {
-            primaryGameItem.expectedAssociatedFileNames!.append(fileName)
+        let beforeCount = primaryGameItem.expectedAssociatedFileNames?.count ?? 0
+        primaryGameItem.addExpectedAssociatedFileName(fileName)
+        if (primaryGameItem.expectedAssociatedFileNames?.count ?? 0) > beforeCount {
             ILOG("Added expected file for M3U: \(fileName)")
         }
     }
@@ -1836,8 +1837,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                                     if cdRomFileHandler.fileExistsAtPath(binURL) && !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
                                         primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
                                         ILOG("Found BIN file on disk for CUE: \(binFile)")
-                                    } else if !primaryGameItem.expectedAssociatedFileNames!.contains(binFile) {
-                                        primaryGameItem.expectedAssociatedFileNames!.append(binFile)
+                                    } else {
+                                        primaryGameItem.addExpectedAssociatedFileName(binFile)
                                         ILOG("Added expected BIN file from CUE: \(binFile)")
                                     }
                                 }
@@ -1870,8 +1871,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                                     if cdRomFileHandler.fileExistsAtPath(binURL) && !primaryGameItem.resolvedAssociatedFileURLs.contains(binURL) {
                                         primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
                                         ILOG("Found BIN file on disk for related CUE: \(binFile)")
-                                    } else if !primaryGameItem.expectedAssociatedFileNames!.contains(binFile) {
-                                        primaryGameItem.expectedAssociatedFileNames!.append(binFile)
+                                    } else {
+                                        primaryGameItem.addExpectedAssociatedFileName(binFile)
                                         ILOG("Added expected BIN file from CUE: \(binFile)")
                                     }
                                 }
@@ -1895,8 +1896,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                     if cdRomFileHandler.fileExistsAtPath(binPath) && !primaryGameItem.resolvedAssociatedFileURLs.contains(binPath) {
                         primaryGameItem.resolvedAssociatedFileURLs.append(binPath)
                         ILOG("Found BIN file on disk for CUE: \(binPath.lastPathComponent)")
-                    } else if !primaryGameItem.expectedAssociatedFileNames!.contains(binFile) {
-                        primaryGameItem.expectedAssociatedFileNames!.append(binFile)
+                    } else {
+                        primaryGameItem.addExpectedAssociatedFileName(binFile)
                         ILOG("Added expected BIN file from CUE: \(binFile)")
                     }
                 }
@@ -1908,9 +1909,11 @@ public final class GameImporter: GameImporting, ObservableObject {
 
     /// Finalize the primary game item by deduplicating lists
     internal func finalizePrimaryGameItem(_ primaryGameItem: ImportQueueItem, m3uURL: URL) {
-        // Deduplicate resolvedAssociatedFileURLs
-        let uniqueURLs = NSOrderedSet(array: primaryGameItem.resolvedAssociatedFileURLs)
-        primaryGameItem.resolvedAssociatedFileURLs = uniqueURLs.array as! [URL]
+        // Deduplicate resolvedAssociatedFileURLs (preserve order)
+        var seen = Set<URL>()
+        primaryGameItem.resolvedAssociatedFileURLs = primaryGameItem.resolvedAssociatedFileURLs.filter {
+            seen.insert($0).inserted
+        }
 
         // Deduplicate and sort expectedAssociatedFileNames
         if var currentExpected = primaryGameItem.expectedAssociatedFileNames, !currentExpected.isEmpty {
@@ -2404,12 +2407,12 @@ public final class GameImporter: GameImporting, ObservableObject {
                         // Process it as a late-arriving file
                         await handleLateAssociatedFile(fileURL: binFileInImports, forCompletedItem: item)
                     } else {
-                        // Add to expected files if it doesn't exist yet
-                        if item.expectedAssociatedFileNames == nil {
-                            item.expectedAssociatedFileNames = [binFileName]
+                        let beforeCount = item.expectedAssociatedFileNames?.count ?? 0
+                        item.addExpectedAssociatedFileName(binFileName)
+                        let afterCount = item.expectedAssociatedFileNames?.count ?? 0
+                        if beforeCount == 0 && afterCount == 1 {
                             ILOG("Created expected files list with BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
-                        } else if !item.expectedAssociatedFileNames!.contains(binFileName) {
-                            item.expectedAssociatedFileNames!.append(binFileName)
+                        } else if afterCount > beforeCount {
                             ILOG("Added expected BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
                         }
                     }
@@ -2486,11 +2489,12 @@ public final class GameImporter: GameImporting, ObservableObject {
                             ILOG("Found BIN file \(binFileName) in imports directory for late-arriving CUE \(fileURL.lastPathComponent)")
                             binFilesToProcess.append(binFileInImports)
                         } else {
-                            if item.expectedAssociatedFileNames == nil {
-                                item.expectedAssociatedFileNames = [binFileName]
+                            let beforeCount = item.expectedAssociatedFileNames?.count ?? 0
+                            item.addExpectedAssociatedFileName(binFileName)
+                            let afterCount = item.expectedAssociatedFileNames?.count ?? 0
+                            if beforeCount == 0 && afterCount == 1 {
                                 ILOG("Created expected files list with BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
-                            } else if !item.expectedAssociatedFileNames!.contains(binFileName) {
-                                item.expectedAssociatedFileNames!.append(binFileName)
+                            } else if afterCount > beforeCount {
                                 ILOG("Added expected BIN file \(binFileName) for late-arriving CUE \(fileURL.lastPathComponent)")
                             }
                         }
@@ -2525,16 +2529,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                         primaryGameItem.resolvedAssociatedFileURLs.append(binURL)
                         ILOG("Found BIN file for similar CUE: \(binFile), added to resolvedAssociatedFileURLs for \(primaryGameItem.url.lastPathComponent)")
 
-                        // Now, also add its name (String) to expectedAssociatedFileNames
-                        // Ensure the array is initialized if it's currently nil
-                        if primaryGameItem.expectedAssociatedFileNames == nil {
-                            primaryGameItem.expectedAssociatedFileNames = []
-                        }
-
-                        // Add the filename if it's not already in the list
-                        // It's safe to force-unwrap expectedAssociatedFileNames here because we just initialized it if it was nil.
-                        if !primaryGameItem.expectedAssociatedFileNames!.contains(binFile) {
-                            primaryGameItem.expectedAssociatedFileNames!.append(binFile)
+                        let beforeCount = primaryGameItem.expectedAssociatedFileNames?.count ?? 0
+                        primaryGameItem.addExpectedAssociatedFileName(binFile)
+                        if (primaryGameItem.expectedAssociatedFileNames?.count ?? 0) > beforeCount {
                             ILOG("Added expected BIN file name from similar CUE: \(binFile) to \(primaryGameItem.url.lastPathComponent)")
                         }
                     }
@@ -2746,8 +2743,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 } else {
                     // Try extension-based detection as fallback
                     detectedArchiveType = ArchiveType(rawValue: fileExtension)
-                    if detectedArchiveType != nil {
-                        ILOG("Using extension-based detection for \(archiveURL.lastPathComponent): \(detectedArchiveType!.rawValue)")
+                    if let detected = detectedArchiveType {
+                        ILOG("Using extension-based detection for \(archiveURL.lastPathComponent): \(detected.rawValue)")
                     }
                 }
             } else {
@@ -3379,7 +3376,9 @@ public final class GameImporter: GameImporting, ObservableObject {
                     // Clear expected files list - we've checked on disk
                     item.expectedAssociatedFileNames = nil
                 }
-                ILOG("Item \(item.url.lastPathComponent) has user-selected system \(item.userChosenSystem!.rawValue), proceeding with import")
+                if let chosen = item.userChosenSystem {
+                    ILOG("Item \(item.url.lastPathComponent) has user-selected system \(chosen.rawValue), proceeding with import")
+                }
             }
         }
 
@@ -4411,7 +4410,8 @@ public enum CorePlistResultCache {
 
     /// File URL in the app's Caches directory.
     private static var cacheURL: URL {
-        let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            ?? URL(fileURLWithPath: NSTemporaryDirectory())
         return caches.appendingPathComponent("com.provenance.core-plists-v\(cacheVersion).json")
     }
 

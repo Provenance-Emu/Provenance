@@ -213,6 +213,15 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
         self.gameDatabaseID = nil            // Explicitly set
     }
 
+    /// Append a filename to `expectedAssociatedFileNames`, initialising the array on first use,
+    /// and only adding the name when it isn't already present (case-sensitive).
+    public func addExpectedAssociatedFileName(_ fileName: String) {
+        var current = expectedAssociatedFileNames ?? []
+        guard !current.contains(fileName) else { return }
+        current.append(fileName)
+        expectedAssociatedFileNames = current
+    }
+
     public var md5: String? {
         if let cached = cache.md5 {
             return cached
@@ -246,8 +255,8 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
             return nil
         }
 
-        if (systems.count == 1) {
-            return systems.first!
+        if systems.count == 1, let only = systems.first {
+            return only
         }
 
         if let chosenSystem = userChosenSystem {
