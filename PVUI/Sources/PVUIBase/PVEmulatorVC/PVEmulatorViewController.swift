@@ -283,6 +283,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             // Single authoritative pause toggle to avoid conflicting calls
             guard core.isOn, !isQuitting else { return }
             core.setPauseEmulation(isShowingMenu)
+            // When pausing for the menu, block on the emu-thread drain so the
+            // SwiftUI pause UI never paints over a half-updated frame. The
+            // drain selector is implemented by `PVRetroArchCoreBridge`; we
+            // dispatch dynamically to avoid taking a PVUI -> PVRetroArch
+            // module dependency. Non-RA cores simply won't respond to the
+            // selector and we fall through with existing behavior.
+            if isShowingMenu, let bridge = core.bridge as AnyObject? {
+                let drainSelector = NSSelectorFromString("drainEmulationThread")
+                if bridge.responds(to: drainSelector) {
+                    _ = bridge.perform(drainSelector)
+                }
+            }
             setLiveActivityPaused(isShowingMenu)
         }
     }

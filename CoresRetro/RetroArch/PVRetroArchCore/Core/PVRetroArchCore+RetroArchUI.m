@@ -463,12 +463,19 @@ int argc =  1;
     // Set RUNLOOP_FLAG_IDLE when pausing so that rarch_draw_observer stops
     // calling CFRunLoopWakeUp in a tight loop, which blocks the main thread
     // and makes the Provenance pause menu (SwiftUI) unresponsive.
-    // Note: the old code also set RUNLOOP_FLAG_PAUSED here but that is
-    // already handled by CMD_EVENT_PAUSE/UNPAUSE above.
+    //
+    // We *also* explicitly set/clear RUNLOOP_FLAG_PAUSED here. Although
+    // CMD_EVENT_PAUSE/UNPAUSE normally toggles RUNLOOP_FLAG_PAUSED on the
+    // emu thread, the command is processed asynchronously, so the IDLE bit
+    // we flip below can be observed by task_queue_check() before PAUSED has
+    // been updated. That window lets stale callbacks fire across the
+    // IDLE -> PAUSED -> RUNNING transition. Setting both flags atomically
+    // here keeps the runloop state machine consistent for any observer that
+    // checks the flags directly (see runloop.c task_queue_check call sites).
     if (flag) {
-        runloop_st->flags |= RUNLOOP_FLAG_IDLE;
+        runloop_st->flags |= (RUNLOOP_FLAG_IDLE | RUNLOOP_FLAG_PAUSED);
     } else {
-        runloop_st->flags &= ~RUNLOOP_FLAG_IDLE;
+        runloop_st->flags &= ~(RUNLOOP_FLAG_IDLE | RUNLOOP_FLAG_PAUSED);
     }
 }
 
@@ -495,6 +502,14 @@ int argc =  1;
             apple_direct_input_keyboard_event(true, (int)RETROK_F14, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
         }
 //    });
+}
+
+- (void)drainEmulationThread {
+    // Wraps pv_retro_emu_thread_drain so non-RA modules (PVUI) can dispatch to
+    // the emulation-thread barrier via NSSelectorFromString without taking a
+    // module-level dependency on PVRetroArch. Safe before the emu thread has
+    // started (the underlying helper is a no-op in that case).
+    pv_retro_emu_thread_drain();
 }
 
 - (void)stopEmulation {

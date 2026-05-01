@@ -136,9 +136,25 @@ public extension PVEmulatorViewController {
             return false
         }
 
+        // Snapshot the current pause state so we can restore it after the load.
+        // `retro_unserialize()` racing the running emu thread can corrupt core
+        // state (libretro cores are not thread-safe with respect to their own
+        // step/serialize entry points). Force-pause for the duration of the
+        // load and restore the prior state on every exit path.
+        let wasPausedBeforeLoad = self.core.isEmulationPaused
+        if !wasPausedBeforeLoad {
+            self.core.setPauseEmulation(true)
+        }
+
         let completion = {
-            self.core.setPauseEmulation(false)
-            self.isShowingMenu = false
+            // If the core was already paused going into the load, leave it paused.
+            // Otherwise resume it and dismiss the menu.
+            if wasPausedBeforeLoad {
+                self.core.setPauseEmulation(true)
+            } else {
+                self.core.setPauseEmulation(false)
+                self.isShowingMenu = false
+            }
             self.enableControllerInput(true)  // re-enable input after load
         }
 

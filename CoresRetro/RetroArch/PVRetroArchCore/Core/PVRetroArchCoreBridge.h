@@ -131,6 +131,13 @@ NS_ASSUME_NONNULL_BEGIN
 // Viewport positioning API
 - (void)setUseCustomRenderViewLayout:(BOOL)enabled;
 - (void)applyRenderViewFrameInTouchView:(CGRect)frame;
+/*! @brief Block the calling thread until any in-flight emulation-thread
+ *  observer callback has returned and the runloop has gone idle. Intended
+ *  to be called from the main thread after toggling the pause flag, so
+ *  pause-menu UI cannot render over a half-updated frame. Safe to call
+ *  before the emulation thread has started (no-op).
+ */
+- (void)drainEmulationThread;
 @end
 
 NS_ASSUME_NONNULL_END
