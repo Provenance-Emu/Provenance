@@ -14,7 +14,12 @@
 
 import Foundation
 import PVCoreBridge
+// PVCoreGenesisPlusBridge is a separate Swift target in Package.swift but is
+// part of the same framework target in PVGenesis.xcodeproj — the workspace
+// build path. Importing only when canImport satisfies both build paths.
+#if canImport(PVCoreGenesisPlusBridge)
 import PVCoreGenesisPlusBridge
+#endif
 import PVRcheevos
 import PVRcheevosBridge
 

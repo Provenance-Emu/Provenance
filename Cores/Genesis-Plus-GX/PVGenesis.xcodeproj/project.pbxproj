@@ -10,6 +10,8 @@
 		B30E99142C6EF20200C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99132C6EF20200C1431E /* PVSupport */; };
 		B30E9AF32C6FBA1100C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AF22C6FBA1100C1431E /* PVCoreBridge */; };
 		B30E9AF62C6FBA1D00C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AF52C6FBA1D00C1431E /* PVEmulatorCore */; };
+		C0C0CAFE0007000000000001 /* PVRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0007000000000002 /* PVRcheevos */; };
+		C0C0CAFE0007000000000004 /* PVRcheevosBridge in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0007000000000005 /* PVRcheevosBridge */; };
 		B36458752ED7B2250020354E /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C9D0662ED7AAD30031C7CC /* LzFind.c */; };
 		B36458762ED7B2250020354E /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C9D0692ED7AAD30031C7CC /* LzmaDec.c */; };
 		B36458772ED7B2670020354E /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C9D06B2ED7AAD30031C7CC /* LzmaEnc.c */; };
@@ -991,6 +993,8 @@
 				B373033B1DE7DB7300D0B366 /* AudioToolbox.framework in Frameworks */,
 				B373033A1DE7DB6F00D0B366 /* CoreGraphics.framework in Frameworks */,
 				B30E9AF62C6FBA1D00C1431E /* PVEmulatorCore in Frameworks */,
+				C0C0CAFE0007000000000001 /* PVRcheevos in Frameworks */,
+				C0C0CAFE0007000000000004 /* PVRcheevosBridge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2565,6 +2569,8 @@
 				B3816E182CA92C0C00DBA1A0 /* PVSettings */,
 				B3816E1B2CA92C7300DBA1A0 /* PVPlists */,
 				B3A4832F2F569AEA004A995B /* PVPrimitives */,
+				C0C0CAFE0007000000000002 /* PVRcheevos */,
+				C0C0CAFE0007000000000005 /* PVRcheevosBridge */,
 			);
 			productName = PVGenesis;
 			productReference = B3E432041DE6917700D3C91E /* PVGenesis.framework */;
@@ -2607,6 +2613,8 @@
 				B3816E172CA92C0C00DBA1A0 /* XCLocalSwiftPackageReference "../../PVSettings" */,
 				B3816E1A2CA92C7300DBA1A0 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 				B3A4832E2F569AEA004A995B /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
+				C0C0CAFE0007000000000003 /* XCLocalSwiftPackageReference "../../PVRcheevos" */,
+				C0C0CAFE0007000000000006 /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */,
 			);
 			productRefGroup = 1ACEA6AD17F74D150031B1C9 /* Products */;
 			projectDirPath = "";
@@ -3484,6 +3492,14 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPrimitives;
 		};
+		C0C0CAFE0007000000000003 /* XCLocalSwiftPackageReference "../../PVRcheevos" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVRcheevos;
+		};
+		C0C0CAFE0007000000000006 /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVRcheevosBridge;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3518,6 +3534,16 @@
 		B3AFCF7D2977A70400A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		C0C0CAFE0007000000000002 /* PVRcheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE0007000000000003 /* XCLocalSwiftPackageReference "../../PVRcheevos" */;
+			productName = PVRcheevos;
+		};
+		C0C0CAFE0007000000000005 /* PVRcheevosBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE0007000000000006 /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */;
+			productName = PVRcheevosBridge;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
