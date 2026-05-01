@@ -4101,31 +4101,35 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         /// Fast-path: Quick duplicate check using file size (before expensive MD5)
         if let fileSize = try? FileManager.default.attributesOfItem(atPath: filePath)[.size] as? Int64 {
-            let duplicateFound = try! await RealmContext.withBackgroundRealm { realm -> Bool in
-                let gamesWithSameSize = realm.objects(PVGame.self).filter("file.sizeCache == %@", Int(fileSize))
-                guard let gameWithSameSize = gamesWithSameSize.first else {
-                    return false
-                }
-                let filename = item.url.lastPathComponent
-                if let systemID = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
-                    let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
-                    if gameWithSameSize.romPath == partialPath,
-                       let fileURL = gameWithSameSize.file?.url,
-                       FileManager.default.fileExists(atPath: fileURL.path) {
-                        ILOG("Found existing game by file size and romPath match: \(gameWithSameSize.title ?? "Unknown")")
+            do {
+                let duplicateFound = try await RealmContext.withBackgroundRealm { realm -> Bool in
+                    let gamesWithSameSize = realm.objects(PVGame.self).filter("file.sizeCache == %@", Int(fileSize))
+                    guard let gameWithSameSize = gamesWithSameSize.first else {
+                        return false
+                    }
+                    let filename = item.url.lastPathComponent
+                    if let systemID = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
+                        let partialPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
+                        if gameWithSameSize.romPath == partialPath,
+                           let fileURL = gameWithSameSize.file?.url,
+                           FileManager.default.fileExists(atPath: fileURL.path) {
+                            ILOG("Found existing game by file size and romPath match: \(gameWithSameSize.title ?? "Unknown")")
+                            return true
+                        }
+                    }
+                    if let gameFile = gameWithSameSize.file,
+                       gameFile.url?.path == filePath,
+                       FileManager.default.fileExists(atPath: filePath) {
+                        ILOG("Found existing game by file path match: \(gameWithSameSize.title ?? "Unknown")")
                         return true
                     }
+                    return false
                 }
-                if let gameFile = gameWithSameSize.file,
-                   gameFile.url?.path == filePath,
-                   FileManager.default.fileExists(atPath: filePath) {
-                    ILOG("Found existing game by file path match: \(gameWithSameSize.title ?? "Unknown")")
+                if duplicateFound {
                     return true
                 }
-                return false
-            }
-            if duplicateFound {
-                return true
+            } catch {
+                WLOG("Realm unavailable during file-size duplicate check; proceeding without flagging duplicate: \(error.localizedDescription)")
             }
         }
 
@@ -4150,19 +4154,23 @@ public final class GameImporter: GameImporting, ObservableObject {
 
             /// Check by MD5 for this system (fast lookup - primary key is very fast)
             if let md5 = item.md5?.uppercased() {
-                let md5Duplicate = try! await RealmContext.withBackgroundRealm { realm -> Bool in
-                    if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
-                       systemFromPath.rawValue == gameWithSameMD5.systemIdentifier,
-                       gameWithSameMD5.file != nil,
-                       let fileURL = gameWithSameMD5.file?.url,
-                       FileManager.default.fileExists(atPath: fileURL.path) {
-                        ILOG("Found existing game with same MD5 hash by path system: \(gameWithSameMD5.title ?? "Unknown")")
+                do {
+                    let md5Duplicate = try await RealmContext.withBackgroundRealm { realm -> Bool in
+                        if let gameWithSameMD5 = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+                           systemFromPath.rawValue == gameWithSameMD5.systemIdentifier,
+                           gameWithSameMD5.file != nil,
+                           let fileURL = gameWithSameMD5.file?.url,
+                           FileManager.default.fileExists(atPath: fileURL.path) {
+                            ILOG("Found existing game with same MD5 hash by path system: \(gameWithSameMD5.title ?? "Unknown")")
+                            return true
+                        }
+                        return false
+                    }
+                    if md5Duplicate {
                         return true
                     }
-                    return false
-                }
-                if md5Duplicate {
-                    return true
+                } catch {
+                    WLOG("Realm unavailable during MD5 duplicate check (system from path); proceeding without flagging duplicate: \(error.localizedDescription)")
                 }
             }
         }
@@ -4181,32 +4189,36 @@ public final class GameImporter: GameImporting, ObservableObject {
 
         if needsPathCheck {
             /// Query Realm directly on current thread instead of iterating cache to avoid thread safety issues
-            let fileDuplicate = try! await RealmContext.withBackgroundRealm { realm -> Bool in
-                let fileURL = URL(fileURLWithPath: filePath)
-                let filename = fileURL.lastPathComponent
+            do {
+                let fileDuplicate = try await RealmContext.withBackgroundRealm { realm -> Bool in
+                    let fileURL = URL(fileURLWithPath: filePath)
+                    let filename = fileURL.lastPathComponent
 
-                let gamesWithMatchingFile = realm.objects(PVGame.self)
-                    .filter("romPath ENDSWITH %@", filename)
-                guard let matchingGame = gamesWithMatchingFile.first else { return false }
+                    let gamesWithMatchingFile = realm.objects(PVGame.self)
+                        .filter("romPath ENDSWITH %@", filename)
+                    guard let matchingGame = gamesWithMatchingFile.first else { return false }
 
-                if let systemID = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
-                    let expectedRomPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
-                    if matchingGame.romPath == expectedRomPath {
-                        ILOG("Found existing game by romPath match: \(matchingGame.title ?? "Unknown") at \(filePath)")
+                    if let systemID = SystemIdentifier(rawValue: item.url.deletingLastPathComponent().lastPathComponent) {
+                        let expectedRomPath = (systemID.rawValue as NSString).appendingPathComponent(filename)
+                        if matchingGame.romPath == expectedRomPath {
+                            ILOG("Found existing game by romPath match: \(matchingGame.title ?? "Unknown") at \(filePath)")
+                            return true
+                        }
+                    }
+                    if let gameFileURL = matchingGame.file?.url,
+                       gameFileURL.path == filePath,
+                       FileManager.default.fileExists(atPath: filePath) {
+                        ILOG("Found existing game by file path: \(matchingGame.title ?? "Unknown") at \(filePath)")
                         return true
                     }
+                    return false
                 }
-                if let gameFileURL = matchingGame.file?.url,
-                   gameFileURL.path == filePath,
-                   FileManager.default.fileExists(atPath: filePath) {
-                    ILOG("Found existing game by file path: \(matchingGame.title ?? "Unknown") at \(filePath)")
+
+                if fileDuplicate {
                     return true
                 }
-                return false
-            }
-
-            if fileDuplicate {
-                return true
+            } catch {
+                WLOG("Realm unavailable during file-path duplicate check; proceeding without flagging duplicate: \(error.localizedDescription)")
             }
         }
 
@@ -4231,18 +4243,22 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                     if system.rawValue == cachedSystemId {
                         /// Query Realm on current thread to verify file exists
-                        let existsInRealm = try! await RealmContext.withRealm { realm -> Bool in
-                            if let existingGame = realm.object(ofType: PVGame.self, forPrimaryKey: cachedGameId),
-                               existingGame.file != nil,
-                               let fileURL = existingGame.file?.url,
-                               FileManager.default.fileExists(atPath: fileURL.path) {
-                                ILOG("Found existing game in database: \(existingGame.title ?? "Unknown")")
+                        do {
+                            let existsInRealm = try await RealmContext.withRealm { realm -> Bool in
+                                if let existingGame = realm.object(ofType: PVGame.self, forPrimaryKey: cachedGameId),
+                                   existingGame.file != nil,
+                                   let fileURL = existingGame.file?.url,
+                                   FileManager.default.fileExists(atPath: fileURL.path) {
+                                    ILOG("Found existing game in database: \(existingGame.title ?? "Unknown")")
+                                    return true
+                                }
+                                return false
+                            }
+                            if existsInRealm {
                                 return true
                             }
-                            return false
-                        }
-                        if existsInRealm {
-                            return true
+                        } catch {
+                            WLOG("Realm unavailable during cached-game existence check; proceeding without flagging duplicate: \(error.localizedDescription)")
                         }
                     }
                 }
