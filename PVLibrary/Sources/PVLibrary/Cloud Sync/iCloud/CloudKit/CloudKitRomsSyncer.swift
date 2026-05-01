@@ -808,7 +808,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
     public func uploadGame(_ md5: String) async throws {
         let game = try await withRealm { realm -> PVGame in
-            guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+            guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()),
+                  !liveGame.isInvalidated else {
+                WLOG("CK sync: game \(md5) was deleted before upload could start; aborting upload")
                 throw CloudSyncError.invalidData
             }
             return liveGame.freeze()
@@ -1888,7 +1890,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     @discardableResult
     public func updateGameMetadata(md5: String) async throws -> Bool {
         let frozenGame = try await withRealm { realm -> PVGame in
-            guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+            guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()),
+                  !liveGame.isInvalidated else {
+                WLOG("CK sync: game \(md5) was deleted before metadata update could start; aborting")
                 throw CloudSyncError.gameNotFound("PVGame with MD5 \(md5) not found in Realm")
             }
             return liveGame.freeze()
@@ -2012,8 +2016,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 let gameMD5 = game.md5Hash
                 let gameTitle = game.title
                 try await withRealm { realm in
-                    guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5.uppercased()) else {
-                        ELOG("Game \(gameMD5) was invalidated during artwork URL update.")
+                    guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5.uppercased()),
+                          !liveGame.isInvalidated else {
+                        WLOG("CK sync: game \(gameMD5) was deleted before artwork URL could be updated; skipping")
                         return
                     }
                     try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
@@ -2021,6 +2026,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                             liveGame.customArtworkURL = cloudCustomArtworkURL
                         } else {
                             try realm.write {
+                                guard !liveGame.isInvalidated else {
+                                    WLOG("CK sync: game \(gameMD5) became invalidated inside artwork write tx; skipping")
+                                    return
+                                }
                                 liveGame.customArtworkURL = cloudCustomArtworkURL
                             }
                         }
@@ -2355,7 +2364,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Perform all Realm work on a background thread via withRealm to avoid
         // blocking the main thread (previously used RomDatabase.sharedInstance directly).
         let info = try await withRealm { realm -> GamePostWriteInfo in
-            guard let localGame = realm.object(ofType: PVGame.self, forPrimaryKey: normalizedMD5) else {
+            guard let localGame = realm.object(ofType: PVGame.self, forPrimaryKey: normalizedMD5),
+                  !localGame.isInvalidated else {
+                WLOG("CK sync: game \(normalizedMD5) was deleted before updatePVGame could apply changes; skipping")
                 throw CloudSyncError.invalidData
             }
 
@@ -2494,7 +2505,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 if realm.isInWriteTransaction {
                     applyUpdates()
                 } else {
-                    try realm.write { applyUpdates() }
+                    try realm.write {
+                        guard !localGame.isInvalidated else {
+                            WLOG("CK sync: game \(normalizedMD5) became invalidated inside updatePVGame write tx; skipping")
+                            return
+                        }
+                        applyUpdates()
+                    }
                 }
             }
 
@@ -2697,8 +2714,13 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             guard let results = resultsMaybe, !results.isEmpty else {
                 ILOG("No metadata found for game: \(info.title)")
                 try? await RealmContext.withBackgroundRealm { realm in
-                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { return }
+                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()),
+                          !game.isInvalidated else {
+                        WLOG("CK sync: game \(md5) was deleted before requiresSync clear; skipping")
+                        return
+                    }
                     try? realm.write {
+                        guard !game.isInvalidated else { return }
                         game.requiresSync = false
                     }
                 }
@@ -2724,9 +2746,17 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                 ILOG("Found metadata for \(info.title): \(result.gameTitle ?? "Unknown")")
 
                 try? await RealmContext.withBackgroundRealm { realm in
-                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { return }
+                    guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()),
+                          !game.isInvalidated else {
+                        WLOG("CK sync: game \(md5) was deleted before metadata could be applied; skipping")
+                        return
+                    }
 
                     try? realm.write {
+                        guard !game.isInvalidated else {
+                            WLOG("CK sync: game \(md5) became invalidated inside metadata write tx; skipping")
+                            return
+                        }
                         if let gameDescription = result.gameDescription {
                             game.gameDescription = gameDescription
                         }
@@ -2860,8 +2890,12 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         // Perform updates within a Realm write transaction via RomDatabase.shared
         try CloudKitRemoteApplyGuard.withApplyingRemoteChanges {
             try RomDatabase.sharedInstance.writeTransaction {
-            guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5) else {
-                WLOG("Cannot update download status: PVGame with MD5 \(md5) not found locally.")
+            // Re-fetch by primary key inside the write tx and guard against deletion races.
+            // A game may be deleted by another flow between the CloudKit fetch phase and
+            // this mutation, leaving an invalidated object that crashes on access.
+            guard let liveGame = RomDatabase.sharedInstance.game(withMD5: md5),
+                  !liveGame.isInvalidated else {
+                WLOG("CK sync: game \(md5) was deleted before download status could be set; skipping")
                 return
             }
 
@@ -3053,7 +3087,9 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
         while retryCount < maxRetries {
             do {
                 let updatedGame = try await withRealm { realm -> Bool in
-                    guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: normalizedMD5) else {
+                    guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: normalizedMD5),
+                          !liveGame.isInvalidated else {
+                        WLOG("CK sync: game \(normalizedMD5) was deleted before post-upload update; skipping")
                         return false
                     }
 
@@ -3070,6 +3106,10 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
                             applyUpdate()
                         } else {
                             try realm.write {
+                                guard !liveGame.isInvalidated else {
+                                    WLOG("CK sync: game \(normalizedMD5) became invalidated inside post-upload write tx; skipping")
+                                    return
+                                }
                                 applyUpdate()
                             }
                         }
