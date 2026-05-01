@@ -103,6 +103,7 @@
 		C0C0CAFE0003000000000003 /* PVDolphinCore+RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0003000000000004 /* PVDolphinCore+RetroAchievements.swift */; };
 		C0C0CAFE0003000000000006 /* PVRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0003000000000007 /* PVRcheevos */; };
 		C0C0CAFE0003000000000009 /* PVRcheevosBridge in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE000300000000000A /* PVRcheevosBridge */; };
+		C0C0CAFE000300000000000D /* PVDolphinCore+RetroAchievements.h in Headers */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0003000000000005 /* PVDolphinCore+RetroAchievements.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1063,6 +1064,7 @@
 				B3135BA126E4CC620047F338 /* PVDolphin.h in Headers */,
 				B3135B9E26E4CC330047F338 /* PVDolphinCore+Video.h in Headers */,
 				B3EA00012F56B000004A995B /* PVDolphinCore+Netplay.h in Headers */,
+				C0C0CAFE000300000000000D /* PVDolphinCore+RetroAchievements.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

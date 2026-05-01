@@ -17,3 +17,4 @@ FOUNDATION_EXPORT const unsigned char PVDolphinVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <PVDolphin/PublicHeader.h>
 #import <PVDolphin/PVDolphinCore.h>
 #import <PVDolphin/PVDolphinCore+Netplay.h>
+#import <PVDolphin/PVDolphinCore+RetroAchievements.h>
