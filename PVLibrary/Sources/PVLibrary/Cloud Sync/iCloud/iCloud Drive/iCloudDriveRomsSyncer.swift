@@ -140,15 +140,22 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
             try FileManager.default.copyItem(at: cloudURL, to: localURL)
             CloudSyncManager.syncLog.event(.download, item: "roms/\(localURL.lastPathComponent)", status: .ok, detail: "Successfully downloaded ROM \(localURL.lastPathComponent) from iCloud Drive.")
 
-            // Use a Realm write transaction to update the game properties
-            try RomDatabase.sharedInstance.writeTransaction {
-                // Re-fetch game within the transaction's Realm instance
-                if let gameToUpdate = try! Realm().object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
-                    gameToUpdate.isDownloaded = true
-                    gameToUpdate.lastCloudSyncDate = Date()
-                } else {
-                    CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .skipped, detail: "Game with MD5 \(md5) not found during sync status update (success).")
+            // Use a Realm write transaction to update the game properties.
+            // Inline realm.write here (instead of going through writeTransaction)
+            // so the fetch and mutation both happen on the same Realm instance
+            // that owns the active write transaction.
+            do {
+                let realm = Thread.isMainThread ? RomDatabase.sharedInstance.realm : try Realm(configuration: RealmConfiguration.realmConfig)
+                try realm.write {
+                    if let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
+                        gameToUpdate.isDownloaded = true
+                        gameToUpdate.lastCloudSyncDate = Date()
+                    } else {
+                        CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .skipped, detail: "Game with MD5 \(md5) not found during sync status update (success).")
+                    }
                 }
+            } catch {
+                WLOG("Failed to update game sync status (success path) for \(md5): \(error.localizedDescription)")
             }
             NotificationCenter.default.post(name: .romDownloadCompleted, object: game)
         } catch {
@@ -157,15 +164,22 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
             if FileManager.default.fileExists(atPath: localURL.path) {
                 try? await FileManager.default.removeItem(at: localURL)
             }
-            // Use a Realm write transaction to update the game properties
-            try? RomDatabase.sharedInstance.writeTransaction {
-                // Re-fetch game within the transaction's Realm instance
-                if let gameToUpdate = try! Realm().object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
-                    gameToUpdate.isDownloaded = false
-                    // We don't have an error state, just mark as not downloaded
-                } else {
-                    CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .skipped, detail: "Game with MD5 \(md5) not found during sync status update (error).")
+            // Use a Realm write transaction to update the game properties.
+            // Inline realm.write here (instead of going through writeTransaction)
+            // so the fetch and mutation both happen on the same Realm instance
+            // that owns the active write transaction.
+            do {
+                let realm = Thread.isMainThread ? RomDatabase.sharedInstance.realm : try Realm(configuration: RealmConfiguration.realmConfig)
+                try realm.write {
+                    if let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
+                        gameToUpdate.isDownloaded = false
+                        // We don't have an error state, just mark as not downloaded
+                    } else {
+                        CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .skipped, detail: "Game with MD5 \(md5) not found during sync status update (error).")
+                    }
                 }
+            } catch {
+                WLOG("Failed to update game sync status (error path) for \(md5): \(error.localizedDescription)")
             }
             throw CloudSyncError.fileSystemError(error)
         }
