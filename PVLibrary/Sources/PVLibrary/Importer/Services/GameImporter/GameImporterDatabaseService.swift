@@ -1026,57 +1026,86 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
     }
 
     /// Async MD5 calculation that yields control periodically to prevent blocking the import queue
+    ///
+    /// Uses `withTaskCancellationHandler` so that if the surrounding import task is cancelled
+    /// (e.g. user pauses or aborts), the detached hashing task is cancelled and the awaiting
+    /// caller is unblocked. The continuation is resumed exactly once - on success, on error,
+    /// or when the cancellation check at the top of the read loop fires - so the awaiting
+    /// caller never hangs.
     private func calculateMD5Async(at url: URL, fromOffset offset: UInt) async -> String? {
-        return await withCheckedContinuation { continuation in
-            Task.detached(priority: .utility) {
-                do {
-                    let fileHandle = try FileHandle(forReadingFrom: url)
-                    defer { try? fileHandle.close() }
+        // Box that lets the cancellation handler reach the detached task.
+        let taskBox = MD5TaskBox()
 
-                    try fileHandle.seek(toOffset: UInt64(offset))
+        return await withTaskCancellationHandler {
+            await withCheckedContinuation { (continuation: CheckedContinuation<String?, Never>) in
+                let task = Task.detached(priority: .utility) {
+                    do {
+                        let fileHandle = try FileHandle(forReadingFrom: url)
+                        defer { try? fileHandle.close() }
 
-                    var md5Context = CC_MD5_CTX()
-                    CC_MD5_Init(&md5Context)
+                        try fileHandle.seek(toOffset: UInt64(offset))
 
-                    let chunkSize = 1024 * 32 // 32KB chunks
-                    var iterationCount = 0
+                        var md5Context = CC_MD5_CTX()
+                        CC_MD5_Init(&md5Context)
 
-                    while true {
-                        let data = try fileHandle.read(upToCount: chunkSize)
+                        let chunkSize = 1024 * 32 // 32KB chunks
+                        var iterationCount = 0
 
-                        guard let data = data, !data.isEmpty else {
-                            break
+                        while true {
+                            // Honour cooperative cancellation between chunks so the
+                            // continuation always resumes if the import is aborted.
+                            if Task.isCancelled {
+                                ILOG("MD5 calculation cancelled for \(url.lastPathComponent)")
+                                continuation.resume(returning: nil)
+                                return
+                            }
+
+                            let data = try fileHandle.read(upToCount: chunkSize)
+
+                            guard let data = data, !data.isEmpty else {
+                                break
+                            }
+
+                            data.withUnsafeBytes { bytes in
+                                CC_MD5_Update(&md5Context, bytes.bindMemory(to: UInt8.self).baseAddress, CC_LONG(data.count))
+                            }
+
+                            // Yield control every 100 iterations (~3.2MB) to prevent blocking
+                            iterationCount += 1
+                            if iterationCount % 100 == 0 {
+                                await Task.yield()
+                            }
+
+                            // Break if we read less than the chunk size (end of file)
+                            if data.count < chunkSize {
+                                break
+                            }
                         }
 
-                        data.withUnsafeBytes { bytes in
-                            CC_MD5_Update(&md5Context, bytes.bindMemory(to: UInt8.self).baseAddress, CC_LONG(data.count))
-                        }
+                        // Finalize MD5
+                        var md5Digest = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
+                        CC_MD5_Final(&md5Digest, &md5Context)
 
-                        // Yield control every 100 iterations (~3.2MB) to prevent blocking
-                        iterationCount += 1
-                        if iterationCount % 100 == 0 {
-                            await Task.yield()
-                        }
+                        let md5String = md5Digest.map { String(format: "%02x", $0) }.joined().uppercased()
+                        continuation.resume(returning: md5String)
 
-                        // Break if we read less than the chunk size (end of file)
-                        if data.count < chunkSize {
-                            break
-                        }
+                    } catch {
+                        ELOG("Error calculating MD5 for file \(url.path): \(error)")
+                        continuation.resume(returning: nil)
                     }
-
-                    // Finalize MD5
-                    var md5Digest = [UInt8](repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
-                    CC_MD5_Final(&md5Digest, &md5Context)
-
-                    let md5String = md5Digest.map { String(format: "%02x", $0) }.joined().uppercased()
-                    continuation.resume(returning: md5String)
-
-                } catch {
-                    ELOG("Error calculating MD5 for file \(url.path): \(error)")
-                    continuation.resume(returning: nil)
                 }
+                taskBox.task = task
             }
+        } onCancel: {
+            // Signal the detached task; its next `Task.isCancelled` check (between chunks
+            // or at the next `Task.yield()`) will resume the continuation with nil.
+            taskBox.task?.cancel()
         }
+    }
+
+    /// Sendable box holding the detached MD5 task so the cancellation handler can cancel it.
+    private final class MD5TaskBox: @unchecked Sendable {
+        var task: Task<Void, Never>?
     }
 
     func getArtworkMappings() async throws -> ArtworkMapping {
