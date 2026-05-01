@@ -19,8 +19,7 @@ internal struct AdvancedTogglesView: View {
     @Default(.useMetal) var useMetalRenderer
     @Default(.mainUIMode) var mainUIMode
     @Default(.webDavAlwaysOn) var webDavAlwaysOn
-    @Default(.unsupportedCores) var unsupportedCores
-    
+
     /// Check if the app is from the App Store
     let isAppStore: Bool = {
         guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
@@ -94,13 +93,6 @@ internal struct AdvancedTogglesView: View {
                     SettingsRow(title: "WebDAV Always On",
                                 subtitle: "Keep WebDAV server running in background.",
                                 icon: .sfSymbol("network"),
-                                showChevron: false)
-                }
-                
-                PremiumThemedToggle(isOn: $unsupportedCores) {
-                    SettingsRow(title: "Show Unsupported Cores",
-                                subtitle: "Display experimental and unsupported cores.",
-                                icon: .sfSymbol("exclamationmark.triangle"),
                                 showChevron: false)
                 }
             }

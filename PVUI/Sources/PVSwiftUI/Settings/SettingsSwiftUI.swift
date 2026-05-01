@@ -2523,6 +2523,7 @@ private struct LibrarySection: View {
 private struct LibrarySection2: View {
     @ObservedObject var viewModel: PVSettingsViewModel
     @Default(.autoNormalizeROMTitles) var autoNormalizeROMTitles
+    @Default(.unsupportedCores) var unsupportedCores
     @State private var showSaveImportWizard = false
 
     var body: some View {
@@ -2605,6 +2606,13 @@ private struct LibrarySection2: View {
                 SettingsRow(title: "Auto-Normalize Titles on Import",
                             subtitle: "Strip region/revision tags from ROM filenames (e.g. '(USA)', '[!]') when importing.",
                             icon: .sfSymbol("textformat.abc"),
+                            showChevron: false)
+            }
+
+            ThemedToggle(isOn: $unsupportedCores) {
+                SettingsRow(title: "Show Unsupported Cores",
+                            subtitle: "Display experimental and unsupported cores.",
+                            icon: .sfSymbol("exclamationmark.triangle"),
                             showChevron: false)
             }
 
