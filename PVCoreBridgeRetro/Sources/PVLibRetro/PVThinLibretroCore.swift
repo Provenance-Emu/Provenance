@@ -13,6 +13,7 @@
 
 import Combine
 import Foundation
+import os
 import PVCoreBridge
 import PVEmulatorCore
 import PVLogging
@@ -45,6 +46,35 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     /// Used by the static `options` accessor since `CoreOptional` is static.
     /// Only one emulation runs at a time so this is safe.
     nonisolated(unsafe) static weak var current: PVThinLibretroCore?
+
+    /// Monotonic generation counter bumped on every `init` and on
+    /// `stopEmulation` / `deinit`. Captured by the libretro `inputPollBlock`
+    /// closure so a stale poll fired from the emu thread after a core swap
+    /// (or during this core's tear-down) becomes a no-op before it touches
+    /// `pollControllers()` and the half-deinit'd `_bridge` state.
+    private static let generationLock = OSAllocatedUnfairLock<Int>(initialState: 0)
+
+    /// This instance's generation tag — captured at `init`. The poll closure
+    /// bails out when this no longer matches `Self.currentGeneration`.
+    private let myGeneration: Int
+
+    /// Bumps and returns the new generation value. Called from `init` (to
+    /// claim a fresh tag) and from `stopEmulation` / `deinit` (to invalidate
+    /// any in-flight poll closures still referencing this instance).
+    @discardableResult
+    private static func bumpGeneration() -> Int {
+        return generationLock.withLock { gen in
+            gen &+= 1
+            return gen
+        }
+    }
+
+    /// Snapshot of the current generation. The poll closure compares against
+    /// its captured `myGeneration`; a mismatch means this core was superseded
+    /// or torn down and the closure must not touch `self`.
+    private static var currentGeneration: Int {
+        return generationLock.withLock { $0 }
+    }
 
     lazy var _bridge: PVThinLibretroFrontend = .init()
 
@@ -114,6 +144,10 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     }
 
     required init() {
+        // Claim a fresh generation BEFORE super.init so the poll closure
+        // installed during startEmulation captures a value that's guaranteed
+        // unique to this instance, even if a previous core is still mid-swap.
+        self.myGeneration = PVThinLibretroCore.bumpGeneration()
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
         PVThinLibretroCore.current = self
@@ -150,8 +184,22 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         _bridge.afterROMLoadBlock = { [weak self] in
             self?.restorePortDeviceTypes()
         }
-        // Wire physical GCController polling into the emulation thread's input poll
+        // Wire physical GCController polling into the emulation thread's input poll.
+        //
+        // Capture `myGeneration` so a stale poll fired by the libretro emu thread
+        // after a core swap (or while this instance is being torn down) sees a
+        // mismatched generation and bails out before touching `self`. The
+        // generation is bumped in `init`, `stopEmulation`, and `deinit`, which
+        // means: as soon as a new core is created OR this core's stopEmulation
+        // begins teardown, any in-flight or about-to-fire poll closure becomes
+        // a no-op. This closes the race where the emu thread's one-more-poll
+        // could read input state from a partially-torn-down `_bridge`.
+        let capturedGeneration = self.myGeneration
         _bridge.inputPollBlock = { [weak self] in
+            guard PVThinLibretroCore.currentGeneration == capturedGeneration else {
+                // Superseded by a newer core or already torn down — drop the poll.
+                return
+            }
             guard let strongSelf = self else { return }
             strongSelf.pollControllers()
         }
@@ -175,6 +223,13 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     }
 
     public override func stopEmulation() {
+        // Invalidate the input-poll generation BEFORE [super stopEmulation] so any
+        // poll fired from the libretro emu thread during teardown becomes a no-op
+        // before reaching `pollControllers()`. `[super stopEmulation]` waits on
+        // `emulationLoopThreadLock`, which already serialises with the loop, but
+        // bumping here closes the gap where a final in-flight poll could still
+        // run between teardown signalling and the loop noticing.
+        PVThinLibretroCore.bumpGeneration()
         // Reset haptic profile to generic so the next core doesn't inherit this system's tuning.
         // Also stop any in-flight rumble on all ports — if emulation is torn down mid-burst
         // (user exits while controller is rumbling), the core won't get a chance to fire
@@ -197,6 +252,14 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         }
 #endif
         super.stopEmulation()
+    }
+
+    deinit {
+        // Final safety net: if `stopEmulation` was skipped or this instance is
+        // being released while another core is mid-init, bump the generation so
+        // any captured poll closure still pinned by the bridge bails out before
+        // resolving its `[weak self]` against a tearing-down instance.
+        PVThinLibretroCore.bumpGeneration()
     }
 
     // MARK: - Per-core platform defaults
