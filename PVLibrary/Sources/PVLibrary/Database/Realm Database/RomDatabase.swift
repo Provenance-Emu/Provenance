@@ -491,12 +491,58 @@ public final class RomDatabase {
 
             ILOG("Database initialization completed")
             databaseInitialized = true
+
+            // Register the protected-keys provider for PVMediaCache.trimDiskCache().
+            // PVMediaCache cannot depend on Realm (would cycle through PVRealm), so
+            // we register a closure here — once Realm is configured and ready —
+            // that returns every cache key currently referenced by PVGame /
+            // PVSaveState. trimDiskCache() will hash these and skip the matching
+            // files on-disk so user-uploaded custom artwork and save-state
+            // thumbnails are never deleted by routine cache trimming.
+            registerMediaCacheProtectedKeysProvider()
+
             await MainActor.run {
                 NotificationCenter.default.post(name: .RomDatabaseInitialized, object: nil)
             }
         } else {
             ILOG("Database already initialized")
         }
+    }
+
+    /// Build and register the closure used by `PVMediaCache.trimDiskCache()` to
+    /// determine which on-disk cache files are protected from eviction.
+    ///
+    /// The closure runs on a background task each time `trimDiskCache()` runs,
+    /// so opening a fresh `Realm` inside it is correct (Realm objects are
+    /// thread-confined). It returns the **raw cache keys** — `PVMediaCache`
+    /// hashes them with md5 to match the on-disk filenames.
+    private static func registerMediaCacheProtectedKeysProvider() {
+        PVMediaCacheProtectedKeysRegistry.shared.setProvider {
+            guard let realm = try? Realm() else {
+                return []
+            }
+            var keys = Set<String>()
+
+            // Custom artwork keys referenced directly by PVGame.
+            for game in realm.objects(PVGame.self) {
+                let key = game.customArtworkURL
+                if !key.isEmpty {
+                    keys.insert(key)
+                }
+            }
+
+            // Save-state thumbnail keys. PVSaveState.image is a PVImageFile
+            // whose `url` resolves against the documents directory; the cache
+            // key used by PVMediaCache is the filename's last path component.
+            for save in realm.objects(PVSaveState.self) {
+                if let imageKey = save.image?.url?.lastPathComponent, !imageKey.isEmpty {
+                    keys.insert(imageKey)
+                }
+            }
+
+            return keys
+        }
+        ILOG("PVMediaCache: registered Realm-backed protected-keys provider")
     }
 
     /// Checks for a pending Realm restore staged by BackupManager (default.restored.realm).
