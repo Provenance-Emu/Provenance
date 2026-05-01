@@ -422,6 +422,12 @@ static bool is_virtual_touch_controller(GCController *controller) {
 
 -(void)controllerConnected:(NSNotification *)notification {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        /// Guard against late-firing callback after main_exit() has torn down RA state.
+        /// If the user disconnects/connects a controller and then exits emulation
+        /// inside the 1s window, RA's input driver pointers are stale.
+        if (!_isInitialized) {
+            return;
+        }
         /// In Provenance mode, don't connect hardware controllers to RetroArch's internal system
         /// Provenance manages controller assignments, and inputs are forwarded via bindControls
         if (!provenance_controller_mode) {
@@ -446,6 +452,13 @@ static bool is_virtual_touch_controller(GCController *controller) {
 }
 -(void)controllerDisconnected:(NSNotification *)notification {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        /// Guard against late-firing callback after main_exit() has torn down RA state.
+        /// Without this, apple_gamecontroller_joypad_disconnect dereferences a stale
+        /// input_state_get_ptr()->current_data when the user exits emulation right
+        /// after unplugging a controller (EXC_BAD_ACCESS).
+        if (!_isInitialized) {
+            return;
+        }
         /// In Provenance mode, hardware controllers aren't connected to RetroArch's internal system
         if (!provenance_controller_mode) {
             apple_gamecontroller_joypad_disconnect([notification object]);
