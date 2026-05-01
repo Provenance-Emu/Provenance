@@ -93,7 +93,13 @@ extension GameImporter {
     private func checkForAlreadyImportedFiles(_ fileNames: [String], primaryGameItem: ImportQueueItem, m3uURL: URL) async {
         ILOG("Checking if any files in M3U \(m3uURL.lastPathComponent) have already been imported to the database")
 
-        let realm = try! await Realm()
+        let realm: Realm
+        do {
+            realm = try await Realm()
+        } catch {
+            ELOG("Failed to open Realm while checking for already imported files for M3U \(m3uURL.lastPathComponent): \(error)")
+            return
+        }
         var filesToConsolidate: [PVFile] = []
         var gamesWithFilesToConsolidate = Set<PVGame>()
 
@@ -201,7 +207,13 @@ extension GameImporter {
     /// Find the imported game using multiple search strategies
     private func findImportedGame(primaryGameItem: ImportQueueItem, m3uURL: URL) async throws -> PVGame {
         let m3uFileName = m3uURL.lastPathComponent
-        let realm = try! await Realm()
+        let realm: Realm
+        do {
+            realm = try await Realm()
+        } catch {
+            ELOG("Failed to open Realm while finding imported M3U game for \(m3uFileName): \(error)")
+            throw error
+        }
         var m3uGame: PVGame?
 
         // Strategy 1: Find by filename
@@ -286,22 +298,45 @@ extension GameImporter {
     private func consolidateFilesUnderGame(game: PVGame, files: [PVFile], games: [PVGame], m3uURL: URL) async throws {
         let gameID = game.id
 
-        let realm = try! await Realm()
+        let realm: Realm
+        do {
+            realm = try await Realm()
+        } catch {
+            let titleForLog = game.title.isEmpty ? gameID : game.title
+            ELOG("Failed to open Realm while consolidating files under M3U game \(titleForLog): \(error)")
+            throw error
+        }
 
+        let m3uDirectory = m3uURL.deletingLastPathComponent()
+
+        // Snapshot the set of files we plan to consolidate (skipping ones already associated)
+        // and perform all file-system moves OUTSIDE of the realm.write transaction so
+        // blocking I/O cannot hold the write lock.
+        var filesToConsolidate: [PVFile] = []
+        // Parallel array of (file, newPartialPath?) so we don't depend on Object hashing.
+        var pendingPathUpdates: [(file: PVFile, newPartialPath: String)] = []
+        for file in files {
+            if isFileAssociatedWithGame(file: file, game: game) {
+                continue
+            }
+            filesToConsolidate.append(file)
+
+            // Perform the actual file move (no Realm writes inside) and capture the
+            // intended new partialPath so we can apply it inside the write block below.
+            if let newPartialPath = moveFileToM3UDirectoryOnDisk(file: file, m3uDirectory: m3uDirectory) {
+                pendingPathUpdates.append((file: file, newPartialPath: newPartialPath))
+            }
+        }
+
+        // Now enter the write transaction and only perform Realm property mutations.
         try realm.write {
-            // First, update the file paths to be in the same directory as the M3U
-            let m3uDirectory = m3uURL.deletingLastPathComponent()
+            // Apply any new partial paths produced by the file-system move step.
+            for update in pendingPathUpdates {
+                update.file.partialPath = update.newPartialPath
+            }
 
-            for file in files {
-                // Skip files already associated with this game
-                if isFileAssociatedWithGame(file: file, game: game) {
-                    continue
-                }
-
-                // Move the file to the M3U directory if needed
-                moveFileToM3UDirectory(file: file, m3uDirectory: m3uDirectory)
-
-                // Update file associations
+            // Update file associations
+            for file in filesToConsolidate {
                 updateFileAssociations(file: file, game: game, gameID: gameID, realm: realm)
             }
 
@@ -310,6 +345,52 @@ extension GameImporter {
 
             // Clean up empty games
             cleanupEmptyGames(games: games, gameID: gameID, realm: realm)
+        }
+    }
+
+    /// Perform only the on-disk move portion of `moveFileToM3UDirectory` and return
+    /// the new relative path that should be assigned to `file.partialPath` inside a
+    /// subsequent realm.write transaction. Returns nil when no path change is needed
+    /// (file already in the right place, missing on disk, or the move failed).
+    ///
+    /// This is intentionally split from the Realm-mutating path so that callers can
+    /// hoist the (potentially blocking) FileManager operations outside of a write
+    /// transaction and avoid holding the Realm write lock across I/O.
+    private func moveFileToM3UDirectoryOnDisk(file: PVFile, m3uDirectory: URL) -> String? {
+        guard let currentURL = file.url else { return nil }
+
+        let destinationURL = m3uDirectory.appendingPathComponent(currentURL.lastPathComponent)
+
+        guard currentURL != destinationURL,
+              FileManager.default.fileExists(atPath: currentURL.path) else {
+            return nil
+        }
+
+        // Snapshot the relativeRoot before any Realm mutation runs.
+        let relativeRoot = file.relativeRoot
+
+        do {
+            if FileManager.default.fileExists(atPath: destinationURL.path) {
+                // Resolve filename conflict by adding a numeric suffix.
+                var uniqueURL = destinationURL
+                var counter = 1
+                let baseName = destinationURL.deletingPathExtension().lastPathComponent
+                let fileExtension = destinationURL.pathExtension
+                while FileManager.default.fileExists(atPath: uniqueURL.path) {
+                    uniqueURL = m3uDirectory.appendingPathComponent("\(baseName)_\(counter).\(fileExtension)")
+                    counter += 1
+                }
+                try FileManager.default.moveItem(at: currentURL, to: uniqueURL)
+                ILOG("Moved file from \(currentURL.path) to \(uniqueURL.path)")
+                return relativeRoot.createRelativePath(fromURL: uniqueURL)
+            } else {
+                try FileManager.default.moveItem(at: currentURL, to: destinationURL)
+                ILOG("Moved file from \(currentURL.path) to \(destinationURL.path)")
+                return relativeRoot.createRelativePath(fromURL: destinationURL)
+            }
+        } catch {
+            ELOG("Error moving file \(currentURL.lastPathComponent) into M3U directory: \(error)")
+            return nil
         }
     }
 
