@@ -531,12 +531,14 @@ public final class RomDatabase {
                 }
             }
 
-            // Save-state thumbnail keys. PVSaveState.image is a PVImageFile
-            // whose `url` resolves against the documents directory; the cache
-            // key used by PVMediaCache is the filename's last path component.
+            // Save-state thumbnails normally live at PVImageFile's native path
+            // (read directly via FileManager, not through PVMediaCache). The one
+            // exception is PVSaveState.fetchUIImage()'s side-effect write, which
+            // stores under key "savestate_image_<absoluteString>". Protect that
+            // shape so a thumbnail re-cached on read isn't immediately evicted.
             for save in realm.objects(PVSaveState.self) {
-                if let imageKey = save.image?.url?.lastPathComponent, !imageKey.isEmpty {
-                    keys.insert(imageKey)
+                if let urlString = save.image?.url?.absoluteString, !urlString.isEmpty {
+                    keys.insert("savestate_image_\(urlString)")
                 }
             }
 

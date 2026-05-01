@@ -1707,13 +1707,17 @@ public class DeltaSkinInputHandler: ObservableObject {
     ///   not a recognized diagonal.
     private static func cardinalsForDiagonal(_ token: String) -> (String, String)? {
         switch token.lowercased() {
-        case "upleft", "up_left", "up-left", "leftup", "left_up", "left-up":
+        case "upleft", "up_left", "up-left", "up+left",
+             "leftup", "left_up", "left-up", "left+up":
             return ("up", "left")
-        case "upright", "up_right", "up-right", "rightup", "right_up", "right-up":
+        case "upright", "up_right", "up-right", "up+right",
+             "rightup", "right_up", "right-up", "right+up":
             return ("up", "right")
-        case "downleft", "down_left", "down-left", "leftdown", "left_down", "left-down":
+        case "downleft", "down_left", "down-left", "down+left",
+             "leftdown", "left_down", "left-down", "left+down":
             return ("down", "left")
-        case "downright", "down_right", "down-right", "rightdown", "right_down", "right-down":
+        case "downright", "down_right", "down-right", "down+right",
+             "rightdown", "right_down", "right-down", "right+down":
             return ("down", "right")
         default:
             return nil
