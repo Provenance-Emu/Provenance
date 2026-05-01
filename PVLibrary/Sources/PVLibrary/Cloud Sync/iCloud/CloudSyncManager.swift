@@ -2161,7 +2161,9 @@ public class CloudSyncManager {
         let results = realm.objects(PVGame.self).filter(predicate)
 
         if let existing = results.first {
-            return existing
+            // Freeze immediately so the returned object is safe to read from any
+            // thread, even after the Realm read transaction ends.
+            return existing.freeze()
         }
 
         return await withCheckedContinuation { continuation in
@@ -2179,7 +2181,11 @@ public class CloudSyncManager {
                 switch change {
                 case .initial(let collection), .update(let collection, _, _, _):
                     if let game = collection.first {
-                        finish(with: game)
+                        // Freeze the live Realm object before handing it to the
+                        // continuation. `finish` may also be invoked from the
+                        // timeout Task on a different queue; a frozen object is
+                        // thread-safe and never invalidated.
+                        finish(with: game.freeze())
                     }
                 case .error(let error):
                     ELOG("Realm observation error while waiting for game: \(error.localizedDescription)")
