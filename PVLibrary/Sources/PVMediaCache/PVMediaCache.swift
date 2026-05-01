@@ -65,7 +65,46 @@ public enum MediaCacheError: Error {
     case failedToScaleImage
 }
 
+/// Thread-safe holder for an external "protected cache keys" provider.
+///
+/// `PVMediaCache` cannot directly depend on Realm (that would create a
+/// dependency cycle with `PVRealm`), so higher-level modules (e.g. `PVRealm`
+/// / `PVLibrary`) register a closure here that returns the set of cache
+/// keys that must NOT be deleted by `trimDiskCache()` — typically the
+/// `customArtworkURL` of every active `PVGame`.
+///
+/// The closure returns the **raw cache keys**, NOT their md5 hashes;
+/// `trimDiskCache` will hash them when comparing against on-disk filenames.
+public final class PVMediaCacheProtectedKeysRegistry: @unchecked Sendable {
+    public static let shared = PVMediaCacheProtectedKeysRegistry()
+
+    private let lock = NSLock()
+    private var _provider: (@Sendable () -> Set<String>)?
+
+    private init() {}
+
+    /// Register the provider. Pass `nil` to clear it.
+    public func setProvider(_ provider: (@Sendable () -> Set<String>)?) {
+        lock.lock()
+        defer { lock.unlock() }
+        _provider = provider
+    }
+
+    /// Snapshot the current provider (for invocation outside the lock).
+    public func currentProvider() -> (@Sendable () -> Set<String>)? {
+        lock.lock()
+        defer { lock.unlock() }
+        return _provider
+    }
+}
+
 public final class PVMediaCache: NSObject, Sendable {
+
+    /// Disk-cache size at which trimming kicks in.
+    public static let maxCacheSize: UInt64 = 100 * 1024 * 1024 // 100MB
+    /// Target disk-cache size after a trim pass.
+    public static let targetCacheSize: UInt64 = 80 * 1024 * 1024 // 80MB
+
 #if canImport(UIKit)
     @MainActor static let memCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
@@ -375,55 +414,114 @@ public final class PVMediaCache: NSObject, Sendable {
         DLOG("Image added to memory cache with cost: \(cost)")
     }
 
-    /// Trim disk cache to prevent excessive storage usage
+    /// Trim disk cache to prevent excessive storage usage.
+    ///
+    /// Files whose md5-hashed filenames match any key produced by the
+    /// registered "protected keys" provider (see
+    /// `PVMediaCacheProtectedKeysRegistry`) are skipped — this is what
+    /// prevents user-uploaded custom artwork (`PVGame.customArtworkURL`)
+    /// from being deleted.
+    ///
+    /// If no provider is registered (or the snapshot fails), we bail out
+    /// without trimming rather than risk deletion of user content.
     public func trimDiskCache() {
-        #if false
-        // TODO: Fix me to only delete files we're not using anymore
         Task.detached(priority: .background) {
             let fileManager = FileManager.default
             let cachePath = PVMediaCache.cachePath
 
+            // Build the protected hash set first. If we can't, do not delete anything.
+            guard let provider = PVMediaCacheProtectedKeysRegistry.shared.currentProvider() else {
+                DLOG("trimDiskCache: no protected-keys provider registered, skipping trim")
+                return
+            }
+
+            let protectedHashes: Set<String>
+            // Provider returns raw keys; we hash them to match on-disk filenames.
+            let protectedKeys = provider()
+            protectedHashes = Set(protectedKeys.lazy.compactMap { key -> String? in
+                guard !key.isEmpty else { return nil }
+                return key.md5Hash
+            })
+            DLOG("trimDiskCache: protecting \(protectedHashes.count) custom-artwork files from deletion")
+
             do {
-                let contents = try fileManager.contentsOfDirectory(at: cachePath, includingPropertiesForKeys: [.contentModificationDateKey, .fileSizeKey])
+                let contents = try fileManager.contentsOfDirectory(
+                    at: cachePath,
+                    includingPropertiesForKeys: [.contentModificationDateKey, .fileSizeKey]
+                )
 
-                /// Sort by modification date (oldest first)
-                let sortedFiles = try contents.sorted { file1, file2 in
-                    let date1 = try file1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
-                    let date2 = try file2.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate ?? Date.distantPast
-                    return date1 < date2
-                }
-
-                /// Calculate total size
+                /// Calculate total size first to decide whether trimming is needed at all
                 var totalSize: UInt64 = 0
-                for file in sortedFiles {
-                    let size = try file.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+                for file in contents {
+                    let size = (try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
                     totalSize += UInt64(size)
                 }
 
-                /// If total size exceeds 100MB, remove oldest files until under 80MB
-                let maxSize: UInt64 = 100 * 1024 * 1024 // 100MB
-                let targetSize: UInt64 = 80 * 1024 * 1024 // 80MB
+                guard totalSize > PVMediaCache.maxCacheSize else {
+                    DLOG("trimDiskCache: cache is \(totalSize/1024/1024)MB, under cap \(PVMediaCache.maxCacheSize/1024/1024)MB — nothing to do")
+                    return
+                }
 
-                if totalSize > maxSize {
-                    DLOG("Trimming disk cache from \(totalSize/1024/1024)MB to \(targetSize/1024/1024)MB")
+                /// Sort by modification date (oldest first) for LRU eviction
+                let sortedFiles = contents.sorted { file1, file2 in
+                    let date1 = (try? file1.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast
+                    let date2 = (try? file2.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? Date.distantPast
+                    return date1 < date2
+                }
 
-                    for file in sortedFiles {
-                        if totalSize <= targetSize {
-                            break
-                        }
+                DLOG("trimDiskCache: trimming from \(totalSize/1024/1024)MB toward \(PVMediaCache.targetCacheSize/1024/1024)MB")
+                var removedCount = 0
+                var skippedProtected = 0
 
-                        let size = try file.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+                for file in sortedFiles {
+                    if totalSize <= PVMediaCache.targetCacheSize { break }
+
+                    let filename = file.lastPathComponent
+                    if protectedHashes.contains(filename) {
+                        skippedProtected += 1
+                        continue
+                    }
+
+                    let size = (try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+                    do {
                         try fileManager.removeItem(at: file)
                         totalSize -= UInt64(size)
-
-                        DLOG("Removed cached file: \(file.lastPathComponent), saved \(size/1024)KB")
+                        removedCount += 1
+                        DLOG("trimDiskCache: removed \(filename), freed \(size/1024)KB")
+                    } catch {
+                        ELOG("trimDiskCache: failed to remove \(filename): \(error.localizedDescription)")
                     }
                 }
+
+                DLOG("trimDiskCache: removed \(removedCount) file(s), protected \(skippedProtected) custom-artwork file(s), final size \(totalSize/1024/1024)MB")
             } catch {
-                ELOG("Error trimming disk cache: \(error.localizedDescription)")
+                ELOG("trimDiskCache: error enumerating cache directory: \(error.localizedDescription)")
             }
         }
-        #endif
+    }
+
+    /// Total size of the on-disk cache, in bytes. Returns 0 on error.
+    ///
+    /// Runs on a detached utility-priority task to avoid blocking the caller.
+    public static func cacheSize() async -> UInt64 {
+        await Task.detached(priority: .utility) { () -> UInt64 in
+            let fileManager = FileManager.default
+            let cachePath = PVMediaCache.cachePath
+
+            guard let contents = try? fileManager.contentsOfDirectory(
+                at: cachePath,
+                includingPropertiesForKeys: [.fileSizeKey]
+            ) else {
+                return 0
+            }
+
+            var total: UInt64 = 0
+            for file in contents {
+                let size = (try? file.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+                total += UInt64(size)
+            }
+            return total
+        }.value
     }
 
     /// Async version of image fetching with improved caching
