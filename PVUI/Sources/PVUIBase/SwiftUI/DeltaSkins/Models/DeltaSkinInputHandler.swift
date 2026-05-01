@@ -1690,10 +1690,50 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
     }
 
+    /// Map a D-pad diagonal token to its two cardinal components.
+    ///
+    /// `DeltaSkinView.resolveDiagonalDirections` collapses simultaneous cardinal
+    /// directions (e.g. `up` + `left`) into a single diagonal token (`upleft`)
+    /// when a skin's button mapping declares a diagonal key. However, no
+    /// `PV<System>Button` enum has a diagonal case — `init(_:String)` falls
+    /// through `default:` and silently drops one half of the input (issue #2611).
+    ///
+    /// Cores universally consume cardinal-only inputs and OR/store them
+    /// per-direction, so simultaneous cardinals correctly produce in-game
+    /// diagonals. The fix is to fan diagonal tokens back into two cardinal
+    /// dispatches before they reach `PV<System>Button.init`.
+    ///
+    /// - Returns: `(first, second)` cardinal pair, or `nil` if the token is
+    ///   not a recognized diagonal.
+    private static func cardinalsForDiagonal(_ token: String) -> (String, String)? {
+        switch token.lowercased() {
+        case "upleft", "up_left", "up-left", "leftup", "left_up", "left-up":
+            return ("up", "left")
+        case "upright", "up_right", "up-right", "rightup", "right_up", "right-up":
+            return ("up", "right")
+        case "downleft", "down_left", "down-left", "leftdown", "left_down", "left-down":
+            return ("down", "left")
+        case "downright", "down_right", "down-right", "rightdown", "right_down", "right-down":
+            return ("down", "right")
+        default:
+            return nil
+        }
+    }
+
     /// Forward button press to the emulator core
     private func forwardButtonPress(_ buttonId: String, isPressed: Bool) {
         guard let core = emulatorCore else {
             ELOG("Cannot forward button press - emulatorCore is nil")
+            return
+        }
+
+        // Fan D-pad diagonal tokens (e.g. "upleft") into two cardinal dispatches.
+        // No PV<System>Button enum has diagonal cases; without this, init(_:String)
+        // falls through default: and the diagonal half is silently dropped (#2611).
+        if let (first, second) = Self.cardinalsForDiagonal(buttonId) {
+            DLOG("Fanning out diagonal '\(buttonId)' -> '\(first)' + '\(second)' (isPressed=\(isPressed))")
+            forwardButtonPress(first, isPressed: isPressed)
+            forwardButtonPress(second, isPressed: isPressed)
             return
         }
 
