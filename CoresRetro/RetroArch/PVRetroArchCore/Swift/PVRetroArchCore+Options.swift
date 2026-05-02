@@ -882,6 +882,13 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 ILOG("Hatari: queued hatari_boot_hd = \"disabled\" → will overwrite \(hatariOptPath)")
                 DLOG("Hatari: hatari_boot_hd AFTER scheduled write — new content will be:\n\(optionValues)")
             }
+            if coreIdentifier.contains("virtualjaguar") || self.systemIdentifier?.lowercased().contains("jaguar") == true {
+                optionValues += "virtualjaguar_p1_numpad_to_kb = \"numbers\"\n"
+                optionValues += "virtualjaguar_p2_numpad_to_kb = \"numbers\"\n"
+                optionValues += "virtualjaguar_usefastblitter = \"enabled\"\n"
+                optionValuesFile = "Virtual Jaguar/Virtual Jaguar.opt"
+                optionOverwrite = false
+            }
             if (coreIdentifier.contains("prboom")) {
                 optionValues += "prboom-rumble = \"enabled\"\n"
                 optionValuesFile = "PrBoom/PrBoom.opt"

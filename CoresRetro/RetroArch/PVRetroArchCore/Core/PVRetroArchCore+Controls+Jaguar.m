@@ -36,30 +36,25 @@ extern GCController *touch_controller;
 @implementation PVRetroArchCoreBridge (JaguarControls)
 #pragma mark - Control
 
-// virtualjaguar libretro core mapping. RA loads the prebuilt dylib at
-// CoresRetro/RetroArch/modules/virtualjaguar_libretro_ios.dylib (built by libretro
-// buildbot from libretro/virtualjaguar-libretro upstream HEAD). The native
-// PVVirtualJaguar core does NOT use this path — it links libjaguar directly.
-// Mapping below was verified against upstream libretro.c default-input path
-// (enable_alt_inputs=false). With enable_alt_inputs=true the core consults the
-// per-button `virtualjaguar_*_pad_*` core options instead, which we do not set.
-//   Jaguar A      → RETRO_DEVICE_ID_JOYPAD_A      → MFi buttonB (east)   [mfi_joypad: buttonB→JOYPAD_A]
-//   Jaguar B      → RETRO_DEVICE_ID_JOYPAD_B      → MFi buttonA (south)  [mfi_joypad: buttonA→JOYPAD_B]
-//   Jaguar C      → RETRO_DEVICE_ID_JOYPAD_Y      → MFi buttonX (west)   [mfi_joypad: buttonX→JOYPAD_Y]
-//   Pause         → RETRO_DEVICE_ID_JOYPAD_SELECT → MFi buttonOptions
-//   Option        → RETRO_DEVICE_ID_JOYPAD_START  → MFi buttonMenu
-//   Numpad 0      → JOYPAD_X  (or RETROK_0)       → MFi buttonY
-//   Numpad 1      → JOYPAD_L  (or RETROK_1)       → MFi leftShoulder
-//   Numpad 2      → JOYPAD_R  (or RETROK_2)       → MFi rightShoulder
-//   Numpad 3      → JOYPAD_L2 (or RETROK_3)       → MFi leftTrigger
-//   Numpad 4      → JOYPAD_R2 (or RETROK_4)       → MFi rightTrigger
-//   Numpad 5      → JOYPAD_L3 (or RETROK_5)       → MFi leftThumbstickButton
-//   Numpad 6      → JOYPAD_R3 (or RETROK_6)       → MFi rightThumbstickButton
-// Numpad 7/8/9/* /# have no RetroPad bit — only readable via keyboard:
-//   Numpad 7 → RETROK_7    Numpad 8 → RETROK_8    Numpad 9 → RETROK_9
-//   Numpad * → RETROK_MINUS    Numpad # → RETROK_EQUALS
-// Use apple_direct_input_keyboard_event for these (takes RETROK_* directly; the regular
-// apple_input_keyboard_event expects HID USB codes that get translated via rarch_keysym_lut).
+// virtualjaguar libretro core mapping — dual-path input for maximum compatibility.
+//
+// Upstream virtualjaguar-libretro has two numpad input modes controlled by the
+// core option `virtualjaguar_p[1-2]_numpad_to_kb`:
+//   "disabled" → numpad 0-6 read from RETRO_DEVICE_JOYPAD only; 7-9/*/# unreachable
+//   "numbers"  → all numpad buttons ALSO readable via RETRO_DEVICE_KEYBOARD (RETROK_0-9)
+//   "keypad"   → same, but via keypad keys (KP_0-KP_9)
+//
+// We default `numpad_to_kb = "numbers"` via parseOptions() (PVRetroArchCore+Options.swift).
+// To support both modes, numpad 0-6 send BOTH joypad (MFi) AND keyboard events.
+// Numpad 7-9/*/# send keyboard only (no RetroPad bit exists for these).
+//
+// Joypad mapping (default mode, enable_alt_inputs=false):
+//   A → JOYPAD_A → MFi buttonB     B → JOYPAD_B → MFi buttonA     C → JOYPAD_Y → MFi buttonX
+//   Pause → JOYPAD_SELECT → buttonOptions    Option → JOYPAD_START → buttonMenu
+//   Num0 → JOYPAD_X → buttonY    Num1 → JOYPAD_L    Num2 → JOYPAD_R
+//   Num3 → JOYPAD_L2   Num4 → JOYPAD_R2   Num5 → JOYPAD_L3   Num6 → JOYPAD_R3
+// Keyboard mapping (numpad_to_kb="numbers"):
+//   Num0-9 → RETROK_0-9    * → RETROK_MINUS    # → RETROK_EQUALS
 
 - (void)didPushJaguarButton:(enum PVJaguarButton)button forPlayer:(NSInteger)player {
     [self handleJaguarButton:button forPlayer:player pressed:true];
@@ -91,48 +86,43 @@ extern GCController *touch_controller;
             [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
             break;
         case(PVJaguarButtonA):
-            // Jaguar A → JOYPAD_A → MFi buttonB (east). Matches native PVVirtualJaguar.
             [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
             break;
         case(PVJaguarButtonB):
-            // Jaguar B → JOYPAD_B → MFi buttonA (south). Matches native PVVirtualJaguar.
             [touch_controller.extendedGamepad.buttonA setValue:pressed?1:0];
             break;
         case(PVJaguarButtonC):
-            // Jaguar C → JOYPAD_Y → MFi buttonX (west)
             [touch_controller.extendedGamepad.buttonX setValue:pressed?1:0];
             break;
         case(PVJaguarButton0):
-            // Numpad 0 → JOYPAD_X → MFi buttonY
             [touch_controller.extendedGamepad.buttonY setValue:pressed?1:0];
+            apple_direct_input_keyboard_event(pressed, (int)RETROK_0, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButton1):
-            // Numpad 1 → JOYPAD_L → MFi leftShoulder
             [touch_controller.extendedGamepad.leftShoulder setValue:pressed?1:0];
+            apple_direct_input_keyboard_event(pressed, (int)RETROK_1, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButton2):
-            // Numpad 2 → JOYPAD_R → MFi rightShoulder
             [touch_controller.extendedGamepad.rightShoulder setValue:pressed?1:0];
+            apple_direct_input_keyboard_event(pressed, (int)RETROK_2, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButton3):
-            // Numpad 3 → JOYPAD_L2 → MFi leftTrigger
             [touch_controller.extendedGamepad.leftTrigger setValue:pressed?1:0];
+            apple_direct_input_keyboard_event(pressed, (int)RETROK_3, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButton4):
-            // Numpad 4 → JOYPAD_R2 → MFi rightTrigger
             [touch_controller.extendedGamepad.rightTrigger setValue:pressed?1:0];
+            apple_direct_input_keyboard_event(pressed, (int)RETROK_4, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButton5):
-            // Numpad 5 → JOYPAD_L3 → MFi leftThumbstickButton
             [touch_controller.extendedGamepad.leftThumbstickButton setValue:pressed?1:0];
+            apple_direct_input_keyboard_event(pressed, (int)RETROK_5, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButton6):
-            // Numpad 6 → JOYPAD_R3 → MFi rightThumbstickButton
             [touch_controller.extendedGamepad.rightThumbstickButton setValue:pressed?1:0];
+            apple_direct_input_keyboard_event(pressed, (int)RETROK_6, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButton7):
-            // Numpad 7-9, *, # have no RetroPad bit — always read from keyboard by core.
-            // Use apple_direct_input_keyboard_event (takes RETROK_* directly, no HID translation).
             apple_direct_input_keyboard_event(pressed, (int)RETROK_7, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButton8):
@@ -142,19 +132,15 @@ extern GCController *touch_controller;
             apple_direct_input_keyboard_event(pressed, (int)RETROK_9, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButtonAsterisk):
-            // Jaguar * → core reads RETROK_MINUS
             apple_direct_input_keyboard_event(pressed, (int)RETROK_MINUS, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButtonPound):
-            // Jaguar # → core reads RETROK_EQUALS
             apple_direct_input_keyboard_event(pressed, (int)RETROK_EQUALS, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
         case(PVJaguarButtonPause):
-            // Pause → JOYPAD_SELECT → MFi buttonOptions
             [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
             break;
         case(PVJaguarButtonOption):
-            // Option → JOYPAD_START → MFi buttonMenu
             [touch_controller.extendedGamepad.buttonMenu setValue:pressed?1:0];
             break;
     }

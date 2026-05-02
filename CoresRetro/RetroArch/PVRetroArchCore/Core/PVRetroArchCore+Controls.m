@@ -2440,7 +2440,20 @@ static int16_t cocoa_input_state(
          break;
 
       case RETRO_DEVICE_KEYBOARD:
-         return (id < RETROK_LAST) && apple_key_state[rarch_keysym_lut[(enum retro_key)id]];
+      {
+         int16_t kb_result = (id < RETROK_LAST) && apple_key_state[rarch_keysym_lut[(enum retro_key)id]];
+#ifdef DEBUG
+         if (kb_result && id >= RETROK_0 && id <= RETROK_9) {
+            static unsigned kb_log_count = 0;
+            if ((kb_log_count++ % 60) == 0)
+               RARCH_LOG("[KBPoll] RETROK_%c pressed! lut=%d state=%d\n",
+                         '0' + (int)(id - RETROK_0),
+                         rarch_keysym_lut[(enum retro_key)id],
+                         apple_key_state[rarch_keysym_lut[(enum retro_key)id]]);
+         }
+#endif
+         return kb_result;
+      }
       case RETRO_DEVICE_MOUSE:
       case RARCH_DEVICE_MOUSE_SCREEN:
          {
