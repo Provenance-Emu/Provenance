@@ -165,6 +165,41 @@ fi
 # get-modules.sh so they are never purged OR filtered out.
 LOCAL_DYLIB_PATTERNS=( "*-jitless*" )
 
+# Read local core names from cores.yml (cores with "local: true").
+# These bypass the filter list so they're included in all build variants.
+LOCAL_CORES_FROM_YML=()
+CORES_YML_PATH="${BASE_DIR}/scripts/cores.yml"
+if [ -f "${CORES_YML_PATH}" ]; then
+    _local_tmp=$(mktemp "${TMPDIR:-/tmp}/local_cores.XXXXXX")
+    awk '
+        /^[[:space:]]*- name:/ { name=$NF; gsub(/["'"'"']/, "", name) }
+        /^[[:space:]]*local:[[:space:]]*true/ { print name }
+    ' "${CORES_YML_PATH}" > "$_local_tmp"
+    while IFS= read -r _local_core; do
+        [ -n "$_local_core" ] && LOCAL_CORES_FROM_YML+=("$_local_core")
+    done < "$_local_tmp"
+    rm -f "$_local_tmp"
+fi
+unset _local_core _local_tmp
+if [ "${#LOCAL_CORES_FROM_YML[@]}" -gt 0 ]; then
+    echo "MakeFrameworks: local cores from cores.yml (bypass filter): ${LOCAL_CORES_FROM_YML[*]}"
+fi
+
+# is_local_core <dylib_basename> — returns 0 if this dylib belongs to a local core
+is_local_core() {
+    local base="$1"
+    local pat core_name
+    for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
+        case "$base" in ${pat}*) return 0 ;; esac
+    done
+    for core_name in "${LOCAL_CORES_FROM_YML[@]}"; do
+        case "$base" in
+            ${core_name}_libretro*.dylib) return 0 ;;
+        esac
+    done
+    return 1
+}
+
 # Count input dylibs
 DYLIB_COUNT=$(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*\.dylib$' 2>/dev/null | wc -l | tr -d ' ')
 echo "MakeFrameworks: Found ${DYLIB_COUNT} input dylibs in $BASE_DIR/modules/"
@@ -248,13 +283,9 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
     fi
 
     # Skip dylibs not in the filter list (if a filter is active),
-    # but always include locally-built dylibs matching LOCAL_DYLIB_PATTERNS.
+    # but always include locally-built dylibs (LOCAL_DYLIB_PATTERNS + cores.yml local: true).
     if [ -n "$FILTER_NAMES" ]; then
-        IS_LOCAL=0
-        for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
-            case "$DYLIB_BASE" in ${pat}*) IS_LOCAL=1; break ;; esac
-        done
-        if [ "$IS_LOCAL" = "0" ] && ! dylib_matches_filter_list "$DYLIB_BASE"; then
+        if ! is_local_core "$DYLIB_BASE" && ! dylib_matches_filter_list "$DYLIB_BASE"; then
             FW_FILTER=$((FW_FILTER + 1))
             continue
         fi
@@ -347,11 +378,7 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
         continue
     fi
     if [ -n "$FILTER_NAMES" ]; then
-        IS_LOCAL=0
-        for pat in "${LOCAL_DYLIB_PATTERNS[@]}"; do
-            case "$DYLIB_BASE" in ${pat}*) IS_LOCAL=1; break ;; esac
-        done
-        if [ "$IS_LOCAL" = "0" ] && ! dylib_matches_filter_list "$DYLIB_BASE"; then
+        if ! is_local_core "$DYLIB_BASE" && ! dylib_matches_filter_list "$DYLIB_BASE"; then
             continue
         fi
     fi
@@ -362,6 +389,8 @@ for dylib in $(find "$BASE_DIR"/modules -maxdepth 1 -type f -regex '.*libretro.*
     echo "${intermediate//_/.}"
 done | sort -u > "$EXPECTED_FW_TMP"
 
+_orphan_tmp=$(mktemp "${TMPDIR:-/tmp}/orphan_fw.XXXXXX")
+find "$OUTDIR" -maxdepth 1 -type d -name "*.libretro.framework" 2>/dev/null > "$_orphan_tmp"
 while IFS= read -r fwdir; do
     [ -n "$fwdir" ] || continue
     [ -d "$fwdir" ] || continue
@@ -370,7 +399,8 @@ while IFS= read -r fwdir; do
         echo "MakeFrameworks: removing orphan framework (no dylib for current filter/manifest): ${fwbase}.framework"
         rm -rf "$fwdir"
     fi
-done < <(find "$OUTDIR" -maxdepth 1 -type d -name "*.libretro.framework" 2>/dev/null)
+done < "$_orphan_tmp"
+rm -f "$_orphan_tmp"
 rm -f "$EXPECTED_FW_TMP"
 
 if [ "$FW_FILTER" -gt 0 ]; then

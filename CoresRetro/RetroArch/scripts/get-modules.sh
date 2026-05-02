@@ -15,8 +15,6 @@ LOCAL_DYLIB_PATTERNS=( "*-jitless*" )
 
 # Per-dylib sentinel convention: if `modules/<basename>.local` exists,
 # treat <basename> as locally-managed — never delete or overwrite it.
-# Lets developers drop in custom builds (e.g. an updated virtualjaguar) by
-# creating a zero-byte sentinel: `touch modules/virtualjaguar_libretro_ios.dylib.local`.
 # Returns 0 if $1 (a bare basename) is locally-overridden.
 is_local_dylib() {
 	local base="$1"
@@ -25,13 +23,37 @@ is_local_dylib() {
 		case "$base" in ${pat}*) return 0 ;; esac
 	done
 	[ -f "${CORES_DIR}/${base}.local" ] && return 0
+	# Check cores.yml local: true entries
+	local core_name
+	for core_name in "${LOCAL_CORES_FROM_YML[@]}"; do
+		case "$base" in
+			${core_name}_libretro*.dylib) return 0 ;;
+		esac
+	done
 	return 1
 }
 
-# Collect basenames of locally-overridden dylibs (sentinel-flagged).
-# Pattern-based locals (LOCAL_DYLIB_PATTERNS) can't be expanded into specific
-# exclude args without scanning the zip contents, so they rely on file-name
-# uniqueness — sentinels cover the explicit case.
+# Read local core names from cores.yml (cores with "local: true").
+# These are built locally and must never be downloaded, deleted, or overwritten.
+LOCAL_CORES_FROM_YML=()
+CORES_YML_EARLY="${SRCROOT}/CoresRetro/RetroArch/scripts/cores.yml"
+if [ -f "${CORES_YML_EARLY}" ]; then
+	_local_tmp=$(mktemp "${TMPDIR:-/tmp}/local_cores.XXXXXX")
+	awk '
+		/^[[:space:]]*- name:/ { name=$NF; gsub(/["'"'"']/, "", name) }
+		/^[[:space:]]*local:[[:space:]]*true/ { print name }
+	' "${CORES_YML_EARLY}" > "$_local_tmp"
+	while IFS= read -r _local_core; do
+		[ -n "$_local_core" ] && LOCAL_CORES_FROM_YML+=("$_local_core")
+	done < "$_local_tmp"
+	rm -f "$_local_tmp"
+fi
+unset _local_core _local_tmp
+if [ "${#LOCAL_CORES_FROM_YML[@]}" -gt 0 ]; then
+	echo "GetModule: local cores from cores.yml (will not download/delete): ${LOCAL_CORES_FROM_YML[*]}"
+fi
+
+# Collect basenames of locally-overridden dylibs (sentinel-flagged + cores.yml local: true).
 LOCAL_OVERRIDE_NAMES=()
 for sentinel in "${CORES_DIR}/"*.local; do
 	[ -f "$sentinel" ] || continue
@@ -39,6 +61,11 @@ for sentinel in "${CORES_DIR}/"*.local; do
 	LOCAL_OVERRIDE_NAMES+=( "$base" )
 done
 unset sentinel base
+# Also exclude dylibs belonging to cores.yml local: true cores from extraction.
+for _lc in "${LOCAL_CORES_FROM_YML[@]}"; do
+	LOCAL_OVERRIDE_NAMES+=( "${_lc}_libretro_ios.dylib" "${_lc}_libretro_tvos.dylib" "${_lc}_libretro.dylib" )
+done
+unset _lc
 # unzip syntax: `<archive> [files...] -x <xfile1> <xfile2> ...` — exclude
 # args must follow the archive and use a single -x with N filenames.
 UNZIP_EXCLUDE_ARGS=()

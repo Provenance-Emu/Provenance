@@ -110,13 +110,13 @@ https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/vice_xpet_libretro
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/vice_xvic_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/vice_x64sc_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/vice_xplus4_libretro_tvos.dylib.zip
-https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/virtualxt_libretro_tvos.dylib.zip
-https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/nekop2_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/mrboom_libretro_tvos.dylib.zip
-https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/virtualjaguar_libretro_tvos.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/virtualjaguar_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/x1_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/xrick_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/yabause_libretro_tvos.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/virtualxt_libretro_tvos.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/nekop2_libretro_tvos.dylib.zip
 #https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/mcsoftserve_libretro_tvos.dylib.zip
 #https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/dinothawr_libretro_tvos.dylib.zip
 #https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/galaksija_libretro_tvos.dylib.zip

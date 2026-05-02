@@ -110,13 +110,13 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vice_xpet_libretro_
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vice_xvic_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vice_x64sc_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/vice_xplus4_libretro_ios.dylib.zip
-https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/virtualxt_libretro_ios.dylib.zip
-https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/nekop2_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mrboom_libretro_ios.dylib.zip
-https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/virtualjaguar_libretro_ios.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/virtualjaguar_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/x1_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/xrick_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/yabause_libretro_ios.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/virtualxt_libretro_ios.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/nekop2_libretro_ios.dylib.zip
 #https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/mcsoftserve_libretro_ios.dylib.zip
 #https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/dinothawr_libretro_ios.dylib.zip
 #https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/galaksija_libretro_ios.dylib.zip

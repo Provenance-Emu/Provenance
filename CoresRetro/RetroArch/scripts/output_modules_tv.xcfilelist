@@ -110,13 +110,13 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/vice_xpet_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/vice_xvic_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/vice_x64sc_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/vice_xplus4_libretro_tvos.dylib
-$(SRCROOT)/CoresRetro/RetroArch/modules/virtualxt_libretro_tvos.dylib
-$(SRCROOT)/CoresRetro/RetroArch/modules/nekop2_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/mrboom_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/virtualjaguar_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/x1_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/xrick_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/yabause_libretro_tvos.dylib
+#$(SRCROOT)/CoresRetro/RetroArch/modules/virtualxt_libretro_tvos.dylib
+#$(SRCROOT)/CoresRetro/RetroArch/modules/nekop2_libretro_tvos.dylib
 #$(SRCROOT)/CoresRetro/RetroArch/modules/mcsoftserve_libretro_tvos.dylib
 #$(SRCROOT)/CoresRetro/RetroArch/modules/dinothawr_libretro_tvos.dylib
 #$(SRCROOT)/CoresRetro/RetroArch/modules/galaksija_libretro_tvos.dylib

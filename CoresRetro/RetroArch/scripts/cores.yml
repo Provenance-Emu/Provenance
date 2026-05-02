@@ -23,6 +23,10 @@
 #   filename  - ONLY set for platform-neutral filenames (no _ios/_tvos suffix)
 #               e.g., "flycast_libretro.dylib"
 #               Omit for standard platform-suffixed cores.
+#   local     - if true, dylib is built locally (not downloaded from buildbot).
+#               The core is commented out in URL lists so it won't be downloaded,
+#               and get-modules.sh / make_frameworks will never delete or overwrite it.
+#               You must manually place the dylib in modules/ yourself.
 #   appstore_excluded_reason - optional human-readable reason for appstore: false
 #
 buildbot:
@@ -755,11 +759,12 @@ cores:
     appstore: true
     enabled: true
   - name: virtualjaguar
-    # Atari Jaguar
+    # Atari Jaguar — locally built (our fork has fixes not on buildbot)
     ios: true
     tvos: true
     appstore: true
     enabled: true
+    local: true
   - name: x1
     # Sharp X1
     ios: true

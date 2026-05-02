@@ -276,6 +276,7 @@ class CoreEntry:
         self.tvos: bool = self._parse_flag(data.get("tvos"), "tvos", default=True)
         self.appstore: bool = self._parse_flag(data.get("appstore"), "appstore", default=True)
         self.enabled: bool = self._parse_flag(data.get("enabled"), "enabled", default=True)
+        self.local: bool = self._parse_flag(data.get("local"), "local", default=False)
         # Platform-neutral: same file for both iOS and tvOS
         self.filename: Optional[str] = data.get("filename") or None
         # Per-platform overrides (for cores with non-standard filenames)
@@ -390,11 +391,13 @@ def generate_url_file(
 
         # A core appears commented when:
         # 1. globally disabled (enabled=false), or
-        # 2. appstore build and this core is appstore-excluded (appstore=false)
+        # 2. appstore build and this core is appstore-excluded (appstore=false), or
+        # 3. locally built (local=true) — dylib is placed manually, not downloaded
         is_disabled = not core.enabled
         is_appstore_excluded = appstore and not core.appstore
+        is_local = core.local
 
-        if is_disabled or is_appstore_excluded:
+        if is_disabled or is_appstore_excluded or is_local:
             lines.append(f"#{url}\n")
         else:
             lines.append(f"{url}\n")
