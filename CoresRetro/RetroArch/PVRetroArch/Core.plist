@@ -1476,6 +1476,8 @@
 		<dict>
 			<key>PVAppStoreDisabled</key>
 			<true/>
+			<key>PVDisabled</key>
+			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 id Software</string>
 			<key>PVCoreIdentifier</key>
@@ -1499,6 +1501,8 @@
 		</dict>
 		<dict>
 			<key>PVAppStoreDisabled</key>
+			<true/>
+			<key>PVDisabled</key>
 			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 id Software</string>
@@ -1524,6 +1528,8 @@
 		<dict>
 			<key>PVAppStoreDisabled</key>
 			<true/>
+			<key>PVDisabled</key>
+			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 id Software</string>
 			<key>PVCoreIdentifier</key>
@@ -1547,6 +1553,8 @@
 		</dict>
 		<dict>
 			<key>PVAppStoreDisabled</key>
+			<true/>
+			<key>PVDisabled</key>
 			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © 1997-2024 id Software</string>
@@ -2034,6 +2042,8 @@
 			<false/>
 			<key>PVContentless</key>
 			<false/>
+			<key>PVDisabled</key>
+			<true/>
 			<key>PVCopyright</key>
 			<string>Copyright © Libretro Contributors</string>
 			<key>PVCoreIdentifier</key>

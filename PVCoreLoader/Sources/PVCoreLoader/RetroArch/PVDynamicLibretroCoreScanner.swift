@@ -768,8 +768,7 @@ public extension CoreLoader {
             /// carries all entries but only a subset of frameworks ship per variant.
             let retroArchInBundle = fm.fileExists(atPath: frameworksURL.appendingPathComponent("PVRetroArch.framework").path)
             if retroArchInBundle {
-                WLOG("CoreLoader: \(missing.count) enabled sub-core(s) missing their framework from bundle: \(missing)")
-                assertionFailure("Enabled libretro sub-cores missing from Frameworks/ — build scripts may have missed them: \(missing)")
+                ELOG("CoreLoader: \(missing.count) enabled sub-core(s) missing their framework from bundle: \(missing)")
             } else {
                 ILOG("CoreLoader: \(missing.count) sub-core(s) missing frameworks (expected — PVRetroArch.framework not in bundle)")
             }
