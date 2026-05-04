@@ -40,6 +40,29 @@ echo "${CODE_SIGN_IDENTITY_FOR_ITEMS}"
 BASE_DIR="$1"
 MODULES_DIR="$BASE_DIR/modules"
 
+# Read local core names from cores.yml early (before platform alignment)
+# so mixed-platform checks can exclude locally-built dylibs.
+# Store as colon-delimited string to avoid bash 3.2 empty-array issues with set -u.
+_EARLY_LOCAL_CORES=""
+_EARLY_CORES_YML="${BASE_DIR}/scripts/cores.yml"
+if [ -f "${_EARLY_CORES_YML}" ]; then
+    _EARLY_LOCAL_CORES=$(awk '
+        /^[[:space:]]*- name:/ { name=$NF; gsub(/["'"'"']/, "", name) }
+        /^[[:space:]]*local:[[:space:]]*true/ { print name }
+    ' "${_EARLY_CORES_YML}" | paste -sd: -)
+fi
+
+# is_early_local_dylib <basename> — true if dylib belongs to a local core
+_is_early_local_dylib() {
+    local base="$1"
+    [ -z "$_EARLY_LOCAL_CORES" ] && return 1
+    local IFS=":"
+    for cn in $_EARLY_LOCAL_CORES; do
+        case "$base" in ${cn}_libretro*) return 0 ;; esac
+    done
+    return 1
+}
+
 # Run Script phases always receive PLATFORM_NAME; PLATFORM_FAMILY_NAME is sometimes unset
 # (or inconsistent) — which left BASE_DIR/SUFFIX unset and made dylib_matches_current_platform
 # reject every *_tvos.dylib / *_ios.dylib. Prefer PLATFORM_NAME like get-modules.sh.
@@ -65,10 +88,17 @@ align_or_resolve_platform() {
 	if [ ! -d "$MODULES_DIR" ]; then
 		return 0
 	fi
-	n_ios=$(find "$MODULES_DIR" -maxdepth 1 -type f -name '*_ios.dylib' 2>/dev/null | wc -l | tr -d ' ')
-	n_tvos=$(find "$MODULES_DIR" -maxdepth 1 -type f -name '*_tvos.dylib' 2>/dev/null | wc -l | tr -d ' ')
+	# Count non-local dylibs per platform (local cores legitimately have both)
+	n_ios=0
+	n_tvos=0
+	for _dyl in $(find "$MODULES_DIR" -maxdepth 1 -type f -name '*_ios.dylib' 2>/dev/null); do
+		_is_early_local_dylib "$(basename "$_dyl")" || n_ios=$((n_ios + 1))
+	done
+	for _dyl in $(find "$MODULES_DIR" -maxdepth 1 -type f -name '*_tvos.dylib' 2>/dev/null); do
+		_is_early_local_dylib "$(basename "$_dyl")" || n_tvos=$((n_tvos + 1))
+	done
 	if [ "${n_ios}" -gt 0 ] && [ "${n_tvos}" -gt 0 ]; then
-		echo "MakeFrameworks: ERROR — modules/ contains both *_ios.dylib and *_tvos.dylib. Remove stale dylibs or re-run get-modules.sh for this platform." >&2
+		echo "MakeFrameworks: ERROR — modules/ contains both *_ios.dylib and *_tvos.dylib (excluding local cores). Remove stale dylibs or re-run get-modules.sh for this platform." >&2
 		exit 1
 	fi
 	case "$pn" in
