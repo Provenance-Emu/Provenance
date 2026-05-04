@@ -121,6 +121,7 @@ let package = Package(
 //                "PVMupen64PlusVideoGlideN64",
 //                "PVMupen64PlusVideoRice",
                 "PVRSPCXD4",
+                .product(name: "CRcheevos", package: "PVRcheevos"),
                 .product(name: "PVRcheevos", package: "PVRcheevos"),
                 .product(name: "PVRcheevosBridge", package: "PVRcheevosBridge"),
                 .product(name: "PVNetplay", package: "PVNetplay",

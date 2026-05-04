@@ -79,6 +79,9 @@
 		B3919A33292C3CF600519575 /* 3DMathNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603272038AE7B001E70F1 /* 3DMathNeon.cpp */; };
 		B391B43A2F73A1DB00A03B02 /* MupenGameCore+PVNetplayCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B391B4392F73A1DB00A03B02 /* MupenGameCore+PVNetplayCapable.swift */; };
 		B391B43D2F73A3D800A03B02 /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B391B43C2F73A3D800A03B02 /* PVNetplay */; };
+		C0C0CAFE0004000000000006 /* PVRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0004000000000007 /* PVRcheevos */; };
+		C0C0CAFE0004000000000008 /* PVRcheevosBridge in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE0004000000000009 /* PVRcheevosBridge */; };
+		C0C0CAFE000400000000000A /* CRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE000400000000000B /* CRcheevos */; };
 		B3962AEC26FBD89A00FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3962AEE26FBD8F100FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
@@ -1728,6 +1731,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0C0CAFE0004000000000006 /* PVRcheevos in Frameworks */,
+				C0C0CAFE0004000000000008 /* PVRcheevosBridge in Frameworks */,
+				C0C0CAFE000400000000000A /* CRcheevos in Frameworks */,
 				B3EED1FB2C7179BB00443F64 /* PVSupport in Frameworks */,
 				B3C078582C74DDA2006F109B /* PVSettings in Frameworks */,
 				B391B43D2F73A3D800A03B02 /* PVNetplay in Frameworks */,
@@ -4253,6 +4259,9 @@
 			);
 			name = PVMupen64Plus;
 			packageProductDependencies = (
+				C0C0CAFE0004000000000007 /* PVRcheevos */,
+				C0C0CAFE0004000000000009 /* PVRcheevosBridge */,
+				C0C0CAFE000400000000000B /* CRcheevos */,
 				B30E98F92C6EF15700C1431E /* PVSupport */,
 				B30E9B272C71348100C1431E /* PVCoreBridge */,
 				B30E9B2A2C71349500C1431E /* PVEmulatorCore */,
@@ -4402,6 +4411,8 @@
 			mainGroup = 089C166AFE841209C02AAC07 /* Mupen64Plus */;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				C0C0CAFE000400000000000C /* XCLocalSwiftPackageReference "../../PVRcheevos" */,
+				C0C0CAFE000400000000000D /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */,
 				B30E9B262C71348100C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 				B30E9B292C71349500C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
 				B3EED1F92C7179BB00443F64 /* XCLocalSwiftPackageReference "../../PVSupport" */,
@@ -7009,6 +7020,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		C0C0CAFE000400000000000C /* XCLocalSwiftPackageReference "../../PVRcheevos" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVRcheevos;
+		};
+		C0C0CAFE000400000000000D /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVRcheevosBridge;
+		};
 		B30E9B262C71348100C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
@@ -7048,6 +7067,21 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C0C0CAFE0004000000000007 /* PVRcheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE000400000000000C /* XCLocalSwiftPackageReference "../../PVRcheevos" */;
+			productName = PVRcheevos;
+		};
+		C0C0CAFE0004000000000009 /* PVRcheevosBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE000400000000000D /* XCLocalSwiftPackageReference "../../PVRcheevosBridge" */;
+			productName = PVRcheevosBridge;
+		};
+		C0C0CAFE000400000000000B /* CRcheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE000400000000000C /* XCLocalSwiftPackageReference "../../PVRcheevos" */;
+			productName = CRcheevos;
+		};
 		B30E98F92C6EF15700C1431E /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSupport;
