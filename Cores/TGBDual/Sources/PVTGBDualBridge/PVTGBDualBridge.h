@@ -30,7 +30,7 @@
 
 
 // MARK: Core
-- (void)loadFileAtPath:(NSString *_Nullable)path error:(NSError * _Nullable __autoreleasing *_Nullable)error;
+- (BOOL)loadFileAtPath:(NSString *_Nullable)path error:(NSError * _Nullable __autoreleasing *_Nullable)error;
 - (void)executeFrameSkippingFrame:(BOOL)skip;
 - (void)executeFrame;
 - (void)swapBuffers;

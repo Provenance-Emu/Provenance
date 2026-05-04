@@ -71,7 +71,7 @@ void log(retro_log_level level, const char *fmt, ...) {
 }
 
 #pragma mark - PVEmulatorCore
-- (void)loadFileAtPath:(NSString *)path error:(NSError **)error {
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
     memset(_gb_pad, 0, sizeof(uint16_t) * NUMBER_OF_PADS * NUMBER_OF_PAD_INPUTS);
     
     const void *data;

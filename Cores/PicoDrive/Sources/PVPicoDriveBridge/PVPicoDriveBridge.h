@@ -11,7 +11,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 @interface PVPicoDriveBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge>
-- (void)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error;
 @end
 
 @interface PVPicoDriveBridge (PVSega32XSystemResponderClient) <PVSega32XSystemResponderClient>

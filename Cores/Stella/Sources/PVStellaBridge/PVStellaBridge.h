@@ -54,7 +54,7 @@ typedef id _Nullable (^PVStellaBridgeOptionHandler)(NSString * _Nonnull option);
 @property (readonly, nonatomic, copy) PVStellaBridgeOptionHandler optionHandler;
 
 // MARK: Core
-- (void)loadFileAtPath:(NSString *)path error:(NSError * __autoreleasing *)error;
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError * __autoreleasing *)error;
 - (void)executeFrameSkippingFrame:(BOOL)skip;
 - (void)executeFrame;
 - (void)swapBuffers;
