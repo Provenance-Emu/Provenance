@@ -2,6 +2,100 @@
 
 <!-- AGENTS: Keep this file current. Check off items when done, add new items as discovered. -->
 
+## Release Testing Checklist (May 2026)
+
+### Build & Install
+- [ ] Clean build succeeds (Provenance-Lite, iOS)
+- [ ] Clean build succeeds (Provenance-Lite, tvOS)
+- [ ] No `get-modules.sh` or `make_frameworks_retroarch.sh` errors in build log
+- [ ] VirtualJaguar dylib preserved (not overwritten by buildbot) after clean build
+- [ ] App installs and launches on iOS device
+- [ ] App installs and launches on tvOS device (Apple TV)
+
+### Library & Import
+- [ ] Import a ROM via Files app / share sheet
+- [ ] Import a multi-disc game (M3U + CUE/BIN) — no crash
+- [ ] ROM appears in library with correct artwork
+- [ ] Delete a game from library
+- [ ] iCloud sync: ROM appears on second device after sync
+- [ ] Cloud save download works — tapping save boots the game
+
+### Core Launch & Video
+- [ ] NES game launches (Nestopia or FCEUmm via thin wrapper)
+- [ ] SNES game launches (Snes9x via thin wrapper)
+- [ ] N64 game launches (Mupen64Plus) — video not squashed
+- [ ] PSX game launches (Beetle PSX HW) — no crash on hardware renderer
+- [ ] DS game launches (MelonDS) — both screens visible, correct aspect
+- [ ] Saturn game launches (Mednafen) — draws correctly, not 4:3 clamped
+- [ ] Saturn game launches (Yabause) — all buttons work including Start
+- [ ] Jaguar game launches (VirtualJaguar via thin wrapper)
+- [ ] MAME game launches — verify coin button works separately from select
+- [ ] 3DO game launches
+
+### Jaguar Numpad (new — verify today's fix)
+- [ ] Numpad 0-6 work in-game (e.g. Battle Sphere)
+- [ ] Numpad 7-9 work in-game (e.g. AvP map = numpad 8)
+- [ ] Numpad * and # work in-game
+- [ ] D-pad and A/B/C face buttons work
+- [ ] Pause and Option buttons work
+- [ ] Numpad works with `numpad_to_kb = "numbers"` (default)
+- [ ] Numpad 0-6 still work if user sets `numpad_to_kb = "disabled"`
+
+### Aspect Ratio / Scaling (B3 regression check)
+- [ ] RA-wrapped core (any) fills screen correctly, not stuck in 4:3 box
+- [ ] DS portrait mode shows both screens, not clipped
+- [ ] Beetle Saturn draws (was no-draw before B3 fix)
+- [ ] Native cores (non-RA) still display at correct aspect
+- [ ] iPad landscape and iPhone portrait both letterbox correctly
+
+### Controls & Input
+- [ ] On-screen touch controls respond on iOS
+- [ ] MFi controller works (pair, all buttons respond)
+- [ ] MFi controller doesn't double-fire P1+P2 on tvOS
+- [ ] Controller share button → pause menu (not RA menu) on tvOS
+- [ ] Keyboard input works for cores that support it (DOS, Apple II)
+- [ ] Skin selection: download new skin from pause menu, set active, verify it changes
+- [ ] "Choose Core..." context menu only shows for multi-core systems
+
+### RetroAchievements
+- [ ] Login via Settings → RetroAchievements (toast confirms success)
+- [ ] Launch a cheevos-supported game — achievements load
+- [ ] Earn an achievement — toast + unlock SFX plays
+- [ ] Logout — toast confirms logout
+- [ ] Cheevos hash identifies game correctly (MD5 fast path)
+
+### Pause Menu & UI
+- [ ] Pause menu opens on iOS (skin pause button or controller)
+- [ ] Pause menu opens on tvOS (Menu button)
+- [ ] Save state from pause menu
+- [ ] Load state from pause menu
+- [ ] Screenshot from pause menu
+- [ ] "RetroArch Menu" / "RetroArch Settings" tiles NOT visible for thin wrapper cores
+- [ ] tvOS pause tile focus: navigating tiles doesn't jump unexpectedly
+- [ ] Timed auto-saves OFF by default (check Settings)
+
+### Skins
+- [ ] Default skin loads for each supported system
+- [ ] Custom skin can be selected per-game
+- [ ] Skin buttons all respond (verify a system with many buttons like Jaguar or Saturn)
+- [ ] Cross-compatible skins (e.g. SG-1000 → SMS) apply correctly from download
+
+### Stability
+- [ ] Play a game for 5+ minutes without crash
+- [ ] Background app and return — game resumes
+- [ ] Auto-save fires on app background (check Settings → auto-save = ON)
+- [ ] No BIOS-required game: shows toast with hint, doesn't hang
+- [ ] Memory pressure: launch a large ROM, no OOM crash
+
+### tvOS Specific
+- [ ] Siri Remote navigation through library
+- [ ] Siri Remote game selection and launch
+- [ ] Focus engine works in settings screens
+- [ ] Top Shelf extension shows recent games
+- [ ] Storage warning displays when space is low
+
+---
+
 ## Active Epics (March 2026)
 
 - [ ] **Epic 1: Cheats** — Online lookup working; remaining: MD5 regen with --dat-dir, CloudKit sync (#2505, #2506)
@@ -48,6 +142,8 @@
 - [X] Toast + dismiss when core fails to load (missing BIOS) (#3c4dd0911b)
 - [X] RetroAchievements toast feedback on login/logout + unlock SFX (#fe8640a991)
 - [X] Skip MD5 hashing when extension uniquely identifies system (#852d527355)
+- [X] VirtualJaguar numpad dual-path input + core option defaults (#745e7d2261)
+- [X] Build scripts: local core support in cores.yml + sh-compat fix (#b7175f3ab5)
 
 
 ## tvOS
