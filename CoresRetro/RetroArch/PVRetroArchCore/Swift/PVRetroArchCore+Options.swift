@@ -902,7 +902,10 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 optionOverwrite = false
             }
             if (coreIdentifier.contains("psx_hw")) {
-                optionValues += "beetle_psx_hw_renderer = \"hardware_vk\"\n"
+                // OpenGL hardware renderer — Vulkan via MoltenVK crashes on device-lost
+                // during teardown (GPU timeout → vkDestroyPipeline on freed objects).
+                // OpenGL avoids this while keeping PGXP, upscaling, and all HW features.
+                optionValues += "beetle_psx_hw_renderer = \"hardware\"\n"
                 optionValues += "beetle_psx_hw_renderer_software_fb = \"enabled\"\n"
                 optionValues += "beetle_psx_hw_pgxp_2d_tol = \"0px\"\n"
                 optionValues += "beetle_psx_hw_pgxp_mode = \"memory only\"\n"
