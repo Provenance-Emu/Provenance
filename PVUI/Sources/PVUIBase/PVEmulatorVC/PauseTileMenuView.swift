@@ -938,6 +938,7 @@ struct PauseTileMenuView: View {
         .buttonStyle(TileButtonStyle(isFocused: isFocused))
         .opacity(opacity)
         .disabled(!tile.isEnabled)
+        .id(tile.id)
         .focused($focusedTileID, equals: tile.id)
         .animation(.spring(response: 0.25, dampingFraction: 0.72), value: isFocused)
         .optionalContextMenu(tile.longPressOptions) { opt in
@@ -1227,6 +1228,7 @@ struct PauseTileMenuView: View {
                 let sections = viewModel.sections
 
                 VStack(spacing: 0) {
+                    ScrollViewReader { scrollProxy in
                     ScrollView(.vertical, showsIndicators: false) {
                         VStack(alignment: .leading, spacing: tvOSAdjusted(12, tvOS: 20)) {
                             // Panel title
@@ -1288,6 +1290,15 @@ struct PauseTileMenuView: View {
                         }
                         .padding(tvOSAdjusted(12, tvOS: 20))
                     }
+                    #if os(tvOS)
+                    .onChange(of: focusedTileID) { newID in
+                        guard let newID else { return }
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            scrollProxy.scrollTo(newID, anchor: .center)
+                        }
+                    }
+                    #endif
+                    } // ScrollViewReader
 
                     // Info shelf — shows description for focused/long-pressed tile
                     infoShelfView
