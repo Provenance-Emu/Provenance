@@ -518,9 +518,9 @@
         "package": "SwiftGenPlugin",
         "repositoryURL": "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
         "state": {
-          "branch": null,
+          "branch": "develop",
           "revision": "6c9745d44daf3b9db764433e4ea84c438796a714",
-          "version": "1.1.3"
+          "version": null
         }
       },
       {
