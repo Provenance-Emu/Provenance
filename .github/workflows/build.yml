@@ -90,32 +90,36 @@ jobs:
 
     runs-on: 'macos-26'
     continue-on-error: ${{ matrix.optional || false }}
-    timeout-minutes: 300
+    timeout-minutes: 120
     steps:
-      - name: Cache Git checkout
-        id: cache-git
-        uses: actions/cache@v4
-        with:
-          path: .
-          key: git-checkout-${{ github.sha }}
-          restore-keys: |
-            git-checkout-
-
       - name: Checkout code
-        if: steps.cache-git.outputs.cache-hit != 'true'
         uses: actions/checkout@v4
         with:
           submodules: false
           fetch-depth: 0
 
-      - name: Initialize submodules (shallow recursive)
-        if: steps.cache-git.outputs.cache-hit != 'true'
-        run: |
-          # Recursive --depth 1 init for all submodules.
-          # Cores need recursive init because their Package.swift files reference
-          # paths inside nested submodules (e.g. VirtualJaguar/Sources/virtualjaguar-libretro/).
-          git submodule update --init --recursive --depth 1 2>&1 || true
+      - name: Cache submodules
+        id: cache-submodules
+        uses: actions/cache@v4
+        with:
+          path: |
+            Cores
+            CoresRetro
+            PVRcheevos
+          key: submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-${{ github.sha }}
+          restore-keys: |
+            submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-
 
+      - name: Initialize submodules
+        run: |
+          if [ "${{ steps.cache-submodules.outputs.cache-hit }}" = "true" ]; then
+            echo "Submodule cache hit — syncing URLs and updating changed refs only..."
+            git submodule sync --recursive
+            git submodule update --init --recursive --depth 1 2>&1 || true
+          else
+            echo "Submodule cache miss — full shallow clone..."
+            git submodule update --init --recursive --depth 1 --jobs 4 2>&1 || true
+          fi
           echo "Submodule init complete."
 
       - name: Setup Xcode
@@ -219,8 +223,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install ldid
-          brew install xcbeautify
+          brew install ldid xcbeautify 2>/dev/null || true
 
       - name: Clean Build Directory
         run: |
@@ -405,8 +408,7 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
-          rm -rf .git
-          rm -rf .build
+          rm -rf ./build archive.xcarchive Payload *.ipa /tmp/xcodebuild.log
 
   # Update rolling alpha release on successful develop pushes
   # tvOS is continue-on-error so this runs even if only iOS succeeds
