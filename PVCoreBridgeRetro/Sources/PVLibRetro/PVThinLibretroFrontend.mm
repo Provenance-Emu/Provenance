@@ -5203,10 +5203,23 @@ static bool thin_environment(unsigned cmd, void *data) {
 #endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    // iOS only has GLES — map desktop GL requests to GLES3.
+    // Many libretro cores (Beetle PSX HW, ParaLLEl-N64, etc.) request
+    // RETRO_HW_CONTEXT_OPENGL_CORE because they're desktop-first.
+    // Full RetroArch handles this transparently; we do the same.
+    EAGLRenderingAPI api;
     switch (hwCb->context_type) {
         case RETRO_HW_CONTEXT_OPENGLES2:
+            api = kEAGLRenderingAPIOpenGLES2;
+            break;
         case RETRO_HW_CONTEXT_OPENGLES3:
         case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+            api = kEAGLRenderingAPIOpenGLES3;
+            break;
+        case RETRO_HW_CONTEXT_OPENGL:
+        case RETRO_HW_CONTEXT_OPENGL_CORE:
+            ILOG(@"ThinFrontend: core requested desktop GL (type %d) — mapping to GLES3", (int)hwCb->context_type);
+            api = kEAGLRenderingAPIOpenGLES3;
             break;
         default:
             WLOG(@"ThinFrontend: unsupported HW context type %d", (int)hwCb->context_type);
@@ -5220,13 +5233,6 @@ static bool thin_environment(unsigned cmd, void *data) {
     _hwRenderCallback.get_current_framebuffer = thin_hw_get_current_framebuffer;
     _hwRenderCallback.get_proc_address         = thin_hw_get_proc_address;
     *hwCb = _hwRenderCallback;
-
-    // Create the EAGLContext pair.
-    // _glShareContext is the render thread context; _glContext is the emu thread context.
-    // They share GL objects via sharegroup.
-    EAGLRenderingAPI api = (hwCb->context_type == RETRO_HW_CONTEXT_OPENGLES2)
-        ? kEAGLRenderingAPIOpenGLES2
-        : kEAGLRenderingAPIOpenGLES3;
 
     _glShareContext = [[EAGLContext alloc] initWithAPI:api];
     if (!_glShareContext) {
