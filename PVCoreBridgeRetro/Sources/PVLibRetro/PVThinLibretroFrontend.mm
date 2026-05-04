@@ -2879,6 +2879,11 @@ static bool thin_environment(unsigned cmd, void *data) {
         _hwRenderCallback.context_destroy = NULL;
     }
 
+    if (_videoBufferData) {
+        free(_videoBufferData);
+        _videoBufferData = NULL;
+    }
+
     if (_sym.retro_unload_game) {
         _sym.retro_unload_game();
     }
@@ -3619,13 +3624,13 @@ static bool thin_environment(unsigned cmd, void *data) {
         return;
     }
     NSUInteger maxW = (_rawAVInfo.geometry.max_width  ?: w);
+    NSUInteger maxH = (_rawAVInfo.geometry.max_height ?: h);
     NSUInteger bpp  = (_retroPixelFormat == RETRO_PIXEL_FORMAT_XRGB8888) ? 4 : 2;
     NSUInteger dstStride  = maxW * bpp;
     NSUInteger copyW = MIN(w, maxW);
-    // vImageCopyBuffer handles strided copies with NEON, avoiding per-row memcpy overhead.
-    // When pitch == dstStride it degrades to a single vectorised block copy.
-    vImage_Buffer src = { .data = (void *)data,       .height = h, .width = copyW, .rowBytes = pitch    };
-    vImage_Buffer dst = { .data = _videoBufferData,   .height = h, .width = copyW, .rowBytes = dstStride };
+    NSUInteger copyH = MIN((NSUInteger)h, maxH);
+    vImage_Buffer src = { .data = (void *)data,       .height = copyH, .width = copyW, .rowBytes = pitch    };
+    vImage_Buffer dst = { .data = _videoBufferData,   .height = copyH, .width = copyW, .rowBytes = dstStride };
     vImageCopyBuffer(&src, &dst, bpp, kvImageNoFlags);
 }
 
