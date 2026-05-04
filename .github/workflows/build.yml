@@ -203,8 +203,9 @@ jobs:
             .build
             ~/Library/Caches/org.swift.swiftpm
             ~/Library/Developer/Xcode/DerivedData
-          key: ${{ runner.os }}-spm-xcode-${{ hashFiles('**/Package.resolved') }}-${{ hashFiles('**/*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+          key: ${{ runner.os }}-spm-xcode-${{ hashFiles('**/Package.resolved') }}-${{ hashFiles('**/*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ hashFiles('.gitmodules') }}-${{ github.sha }}
           restore-keys: |
+            ${{ runner.os }}-spm-xcode-${{ hashFiles('**/Package.resolved') }}-${{ hashFiles('**/*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ hashFiles('.gitmodules') }}-
             ${{ runner.os }}-spm-xcode-
 
       # Cache the generated libretro cheat database (~31 MB zip).
@@ -229,6 +230,9 @@ jobs:
         run: |
           rm -rf ./build
           mkdir -p ./build
+          # Purge stale Xcode module caches to prevent precompiled headers
+          # from masking source changes in submodules (e.g. Dolphin Config.h).
+          find ~/Library/Developer/Xcode/DerivedData -name ModuleCache.noindex -type d -exec rm -rf {} + 2>/dev/null || true
 
       - name: Patch Info.plist for Alpha (bundle ID + display name)
         if: env.IS_ALPHA == 'true'
