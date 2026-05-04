@@ -113,12 +113,12 @@ jobs:
       - name: Initialize submodules
         run: |
           if [ "${{ steps.cache-submodules.outputs.cache-hit }}" = "true" ]; then
-            echo "Submodule cache hit — syncing URLs and updating changed refs only..."
+            echo "Submodule cache hit — syncing URLs and fetching updated refs..."
             git submodule sync --recursive
-            git submodule update --init --recursive --depth 1 2>&1 || true
+            git submodule update --init --recursive --jobs 4
           else
             echo "Submodule cache miss — full shallow clone..."
-            git submodule update --init --recursive --depth 1 --jobs 4 2>&1 || true
+            git submodule update --init --recursive --depth 1 --jobs 4
           fi
           echo "Submodule init complete."
 
