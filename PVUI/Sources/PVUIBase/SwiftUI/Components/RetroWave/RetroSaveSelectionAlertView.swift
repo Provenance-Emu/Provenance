@@ -210,19 +210,11 @@ public class RetroSaveSelectionViewModel: ObservableObject {
                     ILOG("[SaveSelection] Download complete for: \(item.saveStateId)")
                     downloadProgress = 1.0
                     let refreshedItem = RetroSaveSelectionItem(from: updatedSaveState)
-                    // Update the saves array so the UI reflects downloaded state
-                    if let idx = saves.firstIndex(where: { $0.id == item.id }) {
-                        saves[idx] = refreshedItem
-                    }
-                    // Brief pause to show 100%, then clear download state BEFORE invoking
-                    // the completion. Calling completion last ensures the receiver's
-                    // dismiss/boot work isn't racing with another @Published mutation
-                    // that could interrupt the alert dismissal animation.
                     try? await Task.sleep(nanoseconds: 300_000_000)
                     downloadingRecordID = nil
                     downloadingItemId = nil
-                    downloadProgress = 0
                     completion(refreshedItem)
+                    downloadProgress = 0
                 } else {
                     throw NSError(domain: "RetroSaveSelection", code: 2, userInfo: [NSLocalizedDescriptionKey: "File not available after download"])
                 }
@@ -674,20 +666,7 @@ public struct RetroSaveSelectionAlertView: View {
     // MARK: - Helpers
 
     private func handleSaveSelection(_ save: RetroSaveSelectionItem) {
-        // Re-check from Realm — the struct snapshot may be stale after a prior download
-        let currentlyDownloaded: Bool = {
-            guard let realm = try? Realm(),
-                  let live = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.saveStateId) else {
-                return save.isDownloaded
-            }
-            if live.isDownloaded, let url = live.file?.url,
-               FileManager.default.fileExists(atPath: url.path) {
-                return true
-            }
-            return false
-        }()
-
-        if currentlyDownloaded {
+        if save.isDownloaded {
             onSelectSave(save)
         } else {
             viewModel.startDownload(for: save) { refreshedItem in
