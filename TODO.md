@@ -113,21 +113,21 @@
       - [ ] Has top bar of buttons, needs complete rewrite
       - [ ] Touch mouse/keyboard blocks rest of touches
       - [ ] Tapping the "toggle controller buttons visible" button, the other controller buttons ignore the alpha settings and also doesn't hide joysticks (is that a setting though?)
-- [ ] `RetroSaveSelectionAlertView.swift` sometimes when downloading a cloud save, it doesn't boot after download, tapping again boots though
+- [X] `RetroSaveSelectionAlertView.swift` sometimes when downloading a cloud save, it doesn't boot after download, tapping again boots though (#334b463ec8)
 - [ ] RetroArch and Menu buttons showing when using thin wrapper
 - [ ] tvOS test removing PVRetroArchCore from build
 - [ ] Thin wrapper (tvOS only needed for release)
       - [X] N64 mupen video squashed
       - [X] N64 mupen rumble no worky --
             - [ ] Seems to work on iPhone haptics, need to test controller
-      - [ ] PSX hardware renderer crashy
+      - [X] PSX hardware renderer crashy — force OpenGL HW renderer in thin wrapper (develop)
       - [X] Hijacking RA cores when feature flag is off (#64df8f0c72)
       - [X] Per-frame rcheevos tick + unlock callback (#d337ba7f0b)
       - [X] RA frame loop off main thread to prevent UI freezes (#32375eebb0, #9fd1243bd9, #58544c89ff)
 - [X] GameMoreInfo crashing
 - [X] Sometimes when booting a game from ConsoleGamesView.swift and others, the game boot process starts and stops, and tapping any game again doesn't work (i think has to do with bios required, tries to download and fails even if available or not, but even bios not required games just don't react to taps anymore)
 - [X] Skin selection, when downloading a skin from skin downloader, while playing a game from the pause menu, download a new skin, set the new skin as active, skin didn't change (tested on SG-1000, which is a git different since it mapped to a SMS skin since they're compatible, perhaps it's only for skins that are cross compatible). I can go into the skin selector after download and select it though (yes, i confirmed, with snes this flow works fine since skins directly mapped 1:1, but then again, 32x using a related skin also didnt' work)
-- [ ] tvOS Pause tile menu focus sucks, like when going to the skins button, it jumps to the top and other buttons too, the focus needs to be greatly simplified
+- [X] tvOS Pause tile menu focus sucks, like when going to the skins button, it jumps to the top and other buttons too, the focus needs to be greatly simplified (#ca23b8b9db)
 - [X] M3U import crash — force-unwrap of `expectedAssociatedFileNames!` and unsafe `as! [URL]` cast in M3U/CUE import path (#7dcd58bd53)
 - [X] Audio crash — guard nil gameCore in startAudio (#7ec47ccdd5)
 - [X] Status messages — summarize batch game-import toasts (#a9232cbcbf)
