@@ -144,14 +144,17 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
             // Inline realm.write here (instead of going through writeTransaction)
             // so the fetch and mutation both happen on the same Realm instance
             // that owns the active write transaction.
+            // Realm(configuration:) is MainActor-isolated; download may run off the main actor — open/write on MainActor.
             do {
-                let realm = Thread.isMainThread ? RomDatabase.sharedInstance.realm : try Realm(configuration: RealmConfiguration.realmConfig)
-                try realm.write {
-                    if let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
-                        gameToUpdate.isDownloaded = true
-                        gameToUpdate.lastCloudSyncDate = Date()
-                    } else {
-                        CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .skipped, detail: "Game with MD5 \(md5) not found during sync status update (success).")
+                try await MainActor.run {
+                    let realm = RomDatabase.sharedInstance.realm
+                    try realm.write {
+                        if let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
+                            gameToUpdate.isDownloaded = true
+                            gameToUpdate.lastCloudSyncDate = Date()
+                        } else {
+                            CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .skipped, detail: "Game with MD5 \(md5) not found during sync status update (success).")
+                        }
                     }
                 }
             } catch {
@@ -168,14 +171,17 @@ public class iCloudDriveRomsSyncer: iCloudContainerSyncer, RomsSyncing {
             // Inline realm.write here (instead of going through writeTransaction)
             // so the fetch and mutation both happen on the same Realm instance
             // that owns the active write transaction.
+            // Same MainActor hop as the success path — Realm init/write must not run from an arbitrary async executor.
             do {
-                let realm = Thread.isMainThread ? RomDatabase.sharedInstance.realm : try Realm(configuration: RealmConfiguration.realmConfig)
-                try realm.write {
-                    if let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
-                        gameToUpdate.isDownloaded = false
-                        // We don't have an error state, just mark as not downloaded
-                    } else {
-                        CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .skipped, detail: "Game with MD5 \(md5) not found during sync status update (error).")
+                try await MainActor.run {
+                    let realm = RomDatabase.sharedInstance.realm
+                    try realm.write {
+                        if let gameToUpdate = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) {
+                            gameToUpdate.isDownloaded = false
+                            // We don't have an error state, just mark as not downloaded
+                        } else {
+                            CloudSyncManager.syncLog.event(.download, item: "roms/\(md5)", status: .skipped, detail: "Game with MD5 \(md5) not found during sync status update (error).")
+                        }
                     }
                 }
             } catch {
