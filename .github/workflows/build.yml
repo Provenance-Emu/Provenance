@@ -103,8 +103,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
+            .git/modules
             Cores
             CoresRetro
+            Dependencies
             PVRcheevos
           key: submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-${{ github.sha }}
           restore-keys: |
@@ -117,7 +119,11 @@ jobs:
             git submodule sync --recursive
             git submodule update --init --recursive --jobs 4
           else
-            echo "Submodule cache miss — full shallow clone..."
+            echo "Submodule cache miss — cleaning stale submodule refs and doing full clone..."
+            # restore-keys may have loaded partial cache content with dangling
+            # .git file pointers (the worktrees exist but .git/modules/ doesn't).
+            # Deinit clears these so update --init can re-clone cleanly.
+            git submodule deinit --all -f 2>/dev/null || true
             git submodule update --init --recursive --depth 1 --jobs 4
           fi
           echo "Submodule init complete."
