@@ -255,11 +255,12 @@ jobs:
         run: |
           set -o pipefail
 
-          # For alpha builds, override bundle identifier to allow side-by-side install
+          # For alpha builds, pass ALPHA_BUNDLE_SUFFIX so Build.xcconfig derives
+          # all bundle IDs (main app + extensions) consistently.
           EXTRA_BUILD_SETTINGS=""
           if [ "$IS_ALPHA" = "true" ]; then
-            EXTRA_BUILD_SETTINGS="PRODUCT_BUNDLE_IDENTIFIER=org.provenance-emu.provenance${ALPHA_BUNDLE_SUFFIX}"
-            echo "Alpha build: overriding bundle ID to org.provenance-emu.provenance${ALPHA_BUNDLE_SUFFIX}"
+            EXTRA_BUILD_SETTINGS="ALPHA_BUNDLE_SUFFIX=${ALPHA_BUNDLE_SUFFIX}"
+            echo "Alpha build: setting ALPHA_BUNDLE_SUFFIX=${ALPHA_BUNDLE_SUFFIX}"
           fi
 
           start_time=$(date +%s)
