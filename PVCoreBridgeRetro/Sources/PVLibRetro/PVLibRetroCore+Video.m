@@ -133,23 +133,19 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
 }
 
 - (CGSize)aspectSize {
-    /// Use cached av_info — avoids calling retro_get_system_av_info before core is ready
+    /// Honour the core's reported aspect_ratio directly. The previous
+    /// implementation binned the value into a small set of named ratios and
+    /// fell through to 4:3 for anything outside the bins — this clamped 16:9
+    /// (1.7778 > 1.7), ultrawide, and any per-core widescreen-hack output.
+    /// Mirrors PVThinLibretroFrontend.mm -aspectSize.
     float aspect_ratio = av_info.geometry.aspect_ratio;
-    if (aspect_ratio == 1.0) {
-        return CGSizeMake(1, 1);
-    } else if (aspect_ratio < 1.2 && aspect_ratio > 1.1) {
-        return CGSizeMake(10, 9);
-    } else if (aspect_ratio < 1.26 && aspect_ratio > 1.24) {
-        return CGSizeMake(5, 4);
-    } else if (aspect_ratio < 1.4 && aspect_ratio > 1.3) {
-        return CGSizeMake(4, 3);
-    } else if (aspect_ratio < 1.6 && aspect_ratio > 1.4) {
-        return CGSizeMake(3, 2);
-    } else if (aspect_ratio < 1.7 && aspect_ratio > 1.6) {
-        return CGSizeMake(16, 9);
-    } else {
-        return CGSizeMake(4, 3);
+    if (aspect_ratio > 0.01f) {
+        unsigned height = av_info.geometry.base_height ?: 240;
+        return CGSizeMake((CGFloat)((CGFloat)height * aspect_ratio), (CGFloat)height);
     }
+    unsigned width  = av_info.geometry.base_width  ?: 256;
+    unsigned height = av_info.geometry.base_height ?: 240;
+    return CGSizeMake((CGFloat)width, (CGFloat)height);
 }
 
 - (CGSize)bufferSize {

@@ -62,6 +62,15 @@ static const unsigned int kPVRAMaxReportedDim = 1200;
             if (!_hasReceivedAspectFromCore) {
                 _hasReceivedAspectFromCore = YES;
             }
+            // Honour geometry.aspect_ratio when the core reports one (libretro
+            // contract: > 0 means use this ratio for display, ignore the base
+            // pixel ratio). Without this, NES (256x240 = 1.067) is treated as
+            // ~1:1 instead of 4:3, and Dolphin in 16:9 (base still 640x528
+            // ~ 4:3) is clamped to 4:3 even when the core requests widescreen.
+            float ar = geom->aspect_ratio;
+            if (ar > 0.01f) {
+                return CGSizeMake((CGFloat)((CGFloat)baseH * ar), (CGFloat)baseH);
+            }
             return CGSizeMake((CGFloat)baseW, (CGFloat)baseH);
         }
     }
