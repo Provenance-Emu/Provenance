@@ -54,6 +54,10 @@ private final class RcheevosBridgeAdapter: @unchecked Sendable {
     var session: RcheevosSession?
     weak var delegate: (any RetroAchievementsOSDDelegate)?
     var hardcoreMode: Bool = false
+    // [CHEEVOS-DIAG] Per-frame tick counter for diagnostic logging only.
+    // Intentionally not synchronised — racy reads here are fine for logging.
+    var tickCount: UInt64 = 0
+    var firstRegionsLogged: Bool = false
 }
 
 private nonisolated(unsafe) var adapterKey: UInt8 = 0
@@ -83,9 +87,15 @@ public extension CoreRetroAchievements where Self: NSObject {
     // MARK: Lifecycle
 
     func prepareAchievements(gameHash: String) async {
+        // [CHEEVOS-DIAG] Log entry — proves prepareAchievements got called and with what hash.
+        ILOG("[CHEEVOS-DIAG] prepareAchievements ENTER core=\(type(of: self)) gameHash=\(gameHash) hardcore=\(rcheevosBridgeAdapter.hardcoreMode)")
+
         let regions = rcheevosRegions()
+        // [CHEEVOS-DIAG] Log region count immediately so we know if the core actually exposed memory.
+        ILOG("[CHEEVOS-DIAG] prepareAchievements regions.count=\(regions.count) for core=\(type(of: self))")
         guard !regions.isEmpty else {
             ILOG("RetroAchievements: core returned no regions, achievements off.")
+            ILOG("[CHEEVOS-DIAG] prepareAchievements EXIT (no regions) core=\(type(of: self))")
             return
         }
 
@@ -93,19 +103,34 @@ public extension CoreRetroAchievements where Self: NSObject {
         adapter.session?.unload()
         guard let session = RcheevosSession() else {
             ELOG("RetroAchievements: failed to create RcheevosSession.")
+            ILOG("[CHEEVOS-DIAG] prepareAchievements EXIT (session create failed) core=\(type(of: self))")
             return
         }
         session.setRegions(regions)
         session.setHardcoreEnabled(adapter.hardcoreMode)
         wireEventClosures(session: session, adapter: adapter)
+        // [CHEEVOS-DIAG] Confirm closures installed and which delegate is currently routed.
+        ILOG("[CHEEVOS-DIAG] event closures installed, delegate=\(adapter.delegate.map { String(describing: $0) } ?? "nil")")
         adapter.session = session
+        // Reset diagnostic counters for the new session.
+        adapter.tickCount = 0
+        adapter.firstRegionsLogged = false
 
         do {
+            // [CHEEVOS-DIAG] About to start loginAndLoad — the slow async step.
+            ILOG("[CHEEVOS-DIAG] loginAndLoad START gameHash=\(gameHash)")
             try await session.loginAndLoad(gameHash: gameHash)
+            // [CHEEVOS-DIAG] loginAndLoad returned without throwing.
+            ILOG("[CHEEVOS-DIAG] loginAndLoad SUCCESS gameHash=\(gameHash) session.isLoaded=\(session.isLoaded)")
             ILOG("RetroAchievements: rc_client loaded game \(gameHash).")
         } catch {
+            // [CHEEVOS-DIAG] loginAndLoad threw — log the type so we can see no-creds vs unknown-game vs network.
+            ILOG("[CHEEVOS-DIAG] loginAndLoad FAIL gameHash=\(gameHash) error=\(error) localized=\(error.localizedDescription)")
             WLOG("RetroAchievements: \(error.localizedDescription)")
         }
+
+        // [CHEEVOS-DIAG] One-shot post-load summary.
+        ILOG("[CHEEVOS-DIAG] prepareAchievements EXIT core=\(type(of: self)) achievementsActive=\(achievementsActive) hardcore=\(adapter.hardcoreMode)")
     }
 
     func stopAchievements() {
@@ -118,7 +143,15 @@ public extension CoreRetroAchievements where Self: NSObject {
         // doFrame() runs on the emulator thread; rcheevos is built with
         // `RC_NO_THREADS=1`, so single-emulator-thread cores satisfy the
         // synchronisation invariant without further locking.
-        rcheevosBridgeAdapter.session?.doFrame()
+        let adapter = rcheevosBridgeAdapter
+        adapter.session?.doFrame()
+        // [CHEEVOS-DIAG] Heartbeat: log every 600 frames (~10 s at 60 fps) so the
+        // tester can see the per-frame tick is alive and rc_client is being driven.
+        adapter.tickCount &+= 1
+        if adapter.tickCount % 600 == 0 {
+            let isLoaded = adapter.session?.isLoaded ?? false
+            ILOG("[CHEEVOS-DIAG] tickAchievements heartbeat core=\(type(of: self)) ticks=\(adapter.tickCount) achievementsActive=\(achievementsActive) session.isLoaded=\(isLoaded) hardcore=\(adapter.hardcoreMode) delegate=\(adapter.delegate != nil ? "set" : "nil")")
+        }
     }
 
     // MARK: State
@@ -144,7 +177,14 @@ private func wireEventClosures(
     adapter: RcheevosBridgeAdapter
 ) {
     session.onAchievementUnlocked = { event in
+        // [CHEEVOS-DIAG] rc_client fired an unlock — log BEFORE we hop to MainActor
+        // so we can confirm the C side actually evaluated the trigger even if the
+        // delegate has already been torn down by the time we reach main.
+        ILOG("[CHEEVOS-DIAG] onAchievementUnlocked id=\(event.achievementID) title=\(event.title) points=\(event.points) hardcore=\(event.isHardcore)")
         Task { @MainActor in
+            // [CHEEVOS-DIAG] Capture delegate state at delivery time.
+            let hasDelegate = adapter.delegate != nil
+            ILOG("[CHEEVOS-DIAG] onAchievementUnlocked dispatch -> delegate=\(hasDelegate ? "set" : "nil") id=\(event.achievementID)")
             adapter.delegate?.achievementUnlocked(
                 AchievementUnlockNotification(
                     id: event.achievementID,

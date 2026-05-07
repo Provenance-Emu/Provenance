@@ -79,23 +79,36 @@ public extension PVEmulatorViewController {
     /// - The core does not conform to `CoreRetroAchievements`.
     /// - The game has no MD5 hash.
     func startAchievementsIfNeeded() {
+        // [CHEEVOS-DIAG] Entry — proves we got past startEmulation and into the cheevos start path.
+        ILOG("[CHEEVOS-DIAG] startAchievementsIfNeeded ENTER core=\(type(of: core)) systemID=\(core.systemIdentifier ?? "nil")")
         guard #available(iOS 15.0, tvOS 15.0, macOS 12.0, *) else { return }
         guard Defaults[.retroAchievementsEnabled] else {
             DLOG("RetroAchievements: disabled in settings, skipping achievements.")
+            ILOG("[CHEEVOS-DIAG] startAchievementsIfNeeded EXIT: retroAchievementsEnabled=false")
             return
         }
         guard PVCheevos.hasValidSession else {
             DLOG("RetroAchievements: no valid session, skipping achievements.")
+            ILOG("[CHEEVOS-DIAG] startAchievementsIfNeeded EXIT: hasValidSession=false")
             return
         }
         guard let achievementsCore = core as? (any CoreRetroAchievements) else {
             DLOG("RetroAchievements: core \(core.description) does not conform to CoreRetroAchievements.")
+            ILOG("[CHEEVOS-DIAG] startAchievementsIfNeeded EXIT: core does not conform to CoreRetroAchievements (\(type(of: core)))")
             return
         }
         guard let fileMD5 = game?.md5Hash, !fileMD5.isEmpty else {
             WLOG("RetroAchievements: game has no MD5 hash, skipping achievements.")
+            ILOG("[CHEEVOS-DIAG] startAchievementsIfNeeded EXIT: game has no MD5 hash (game=\(game?.title ?? "nil"))")
             return
         }
+        // [CHEEVOS-DIAG] Dump everything we feed into the start path so the tester
+        // log shows exactly what hash + path + system the cheevos pipeline saw.
+        let diagSystemID = core.systemIdentifier ?? "nil"
+        let diagTitle = game?.title ?? "nil"
+        let diagRomPath = game?.file?.url?.path ?? "nil"
+        let diagHardcoreSetting = Defaults[.retroAchievementsHardcoreEnabled]
+        ILOG("[CHEEVOS-DIAG] startAchievementsIfNeeded inputs systemID=\(diagSystemID) title=\(diagTitle) fileMD5=\(fileMD5) romPath=\(diagRomPath) hardcoreSetting=\(diagHardcoreSetting)")
         // RA expects a console-aware hash. Our import pipeline already applies
         // SystemIdentifier.offset to strip headers for iNES NES, A7800, Lynx,
         // SNES copier, and normalises byte-swapped N64 to z64 — so the stored
@@ -173,6 +186,9 @@ public extension PVEmulatorViewController {
             }
 
             ILOG("RetroAchievements: session started for game \(manager.currentGameId ?? -1) using hash \(winningHash), \(response.unlocks?.count ?? 0) existing unlocks.")
+            // [CHEEVOS-DIAG] Mirror the success line under our diagnostic prefix so the tester
+            // can grep [CHEEVOS-DIAG] alone and still see the winning hash + game id + unlocks.
+            ILOG("[CHEEVOS-DIAG] startSession SUCCESS gameId=\(manager.currentGameId ?? -1) winningHash=\(winningHash) existingUnlocks=\(response.unlocks?.count ?? 0)")
 
             // Session confirmed active — verify stopAchievements() hasn't run since
             // we kicked off this Task. If it has, tear down the session we just
@@ -329,6 +345,10 @@ extension PVEmulatorViewController: RetroAchievementsOSDDelegate {
     }
 
     public func achievementUnlocked(_ notification: AchievementUnlockNotification) {
+        // [CHEEVOS-DIAG] OSD-delegate side received an unlock. If you see the
+        // RcheevosBridge "onAchievementUnlocked" line but never this one, the
+        // adapter.delegate is nil at delivery time.
+        ILOG("[CHEEVOS-DIAG] PVEmulatorVC achievementUnlocked id=\(notification.id) title=\(notification.title) points=\(notification.points) hardcore=\(notification.isHardcore)")
         // Snapshot settings once — checked on the calling thread (may be emu).
         let showToast = Defaults[.retroAchievementsToastsEnabled]
         let playSound = Defaults[.retroAchievementsSoundEnabled]

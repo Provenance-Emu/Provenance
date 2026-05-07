@@ -77,10 +77,23 @@ public final class PVStellaGameCore: PVEmulatorCore {
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
     }
 
+    // [CHEEVOS-DIAG] Diagnostic-only frame counter so we can see when the core is
+    // running frames but `achievementsActive` is false (i.e. the rc_client never
+    // finished loading). Logged every 600 frames (~10 s at 60 fps).
+    private static let diagLogStride: UInt64 = 600
+    nonisolated(unsafe) private static var diagFrameCount: UInt64 = 0
+    nonisolated(unsafe) private static var diagInactiveFrameCount: UInt64 = 0
+
     public override func executeFrame() {
         super.executeFrame()
+        Self.diagFrameCount &+= 1
         if achievementsActive {
             tickAchievements()
+        } else {
+            Self.diagInactiveFrameCount &+= 1
+            if Self.diagInactiveFrameCount % Self.diagLogStride == 0 {
+                ILOG("[CHEEVOS-DIAG] Stella executeFrame achievementsActive=false totalFrames=\(Self.diagFrameCount) inactiveFrames=\(Self.diagInactiveFrameCount)")
+            }
         }
     }
 }

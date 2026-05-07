@@ -12,6 +12,7 @@
 
 import Foundation
 import PVCoreBridge
+import PVLogging
 import PVRcheevos
 import PVRcheevosBridge
 import PVStellaBridge
@@ -19,9 +20,19 @@ import PVStellaBridge
 extension PVStellaGameCore: CoreRetroAchievements {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
-        guard let ptr = _bridge.stellaSystemRAMPtr else { return [] }
+        guard let ptr = _bridge.stellaSystemRAMPtr else {
+            // [CHEEVOS-DIAG] stellaSystemRAMPtr was nil — bridge not ready.
+            ILOG("[CHEEVOS-DIAG] Stella rcheevosRegions: stellaSystemRAMPtr=nil")
+            return []
+        }
         let byteCount = UInt32(_bridge.stellaSystemRAMSize)
-        guard byteCount > 0 else { return [] }
+        guard byteCount > 0 else {
+            // [CHEEVOS-DIAG] stellaSystemRAMSize was 0 — bridge not ready.
+            ILOG("[CHEEVOS-DIAG] Stella rcheevosRegions: byteCount=0 (stellaSystemRAMSize=\(_bridge.stellaSystemRAMSize))")
+            return []
+        }
+        // [CHEEVOS-DIAG] Log region details — Atari 2600 expects 128B at 0x0000.
+        ILOG("[CHEEVOS-DIAG] Stella rcheevosRegions rcAddress=0x0000 base=\(String(format: "%p", Int(bitPattern: ptr))) size=\(byteCount)")
         return [
             RcheevosRegion(
                 rcAddress: 0x0000,
