@@ -157,6 +157,30 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
         }
     }
 
+    // [CTRL-DIAG] Log only NON-ZERO returns for the libretro buttons that map onto shoulders/triggers
+    // for Sega 32X. The `_id` here is RETRO_DEVICE_ID_JOYPAD_*; for the harmonized 32X mapping these
+    // identify Sega A/B/C/X/Y/Z/Start/Mode (see Sega32XLibretroMap above PVPicoDriveBridge.m).
+    // Cases logged:
+    //   RETRO_DEVICE_ID_JOYPAD_A     (=8)  -> Sega C        (rightShoulder)
+    //   RETRO_DEVICE_ID_JOYPAD_R     (=5)  -> Sega Z        (leftShoulder)
+    //   RETRO_DEVICE_ID_JOYPAD_START (=3)  -> Sega Start    (rightTrigger)
+    //   RETRO_DEVICE_ID_JOYPAD_SELECT(=2)  -> Sega Mode     (leftTrigger)
+    if (value != 0 && device == RETRO_DEVICE_JOYPAD &&
+        (_id == RETRO_DEVICE_ID_JOYPAD_A ||
+         _id == RETRO_DEVICE_ID_JOYPAD_R ||
+         _id == RETRO_DEVICE_ID_JOYPAD_START ||
+         _id == RETRO_DEVICE_ID_JOYPAD_SELECT)) {
+        const char *name = "?";
+        switch (_id) {
+            case RETRO_DEVICE_ID_JOYPAD_A: name = "A=>SegaC(R1)"; break;
+            case RETRO_DEVICE_ID_JOYPAD_R: name = "R=>SegaZ(L1)"; break;
+            case RETRO_DEVICE_ID_JOYPAD_START: name = "START=>SegaStart(R2)"; break;
+            case RETRO_DEVICE_ID_JOYPAD_SELECT: name = "SELECT=>SegaMode(L2)"; break;
+            default: break;
+        }
+        ILOG(@"[CTRL-DIAG] PicoDrive 32X retro_id=%u (%s) port=%u -> %d", _id, name, port, value);
+    }
+
     strongCurrent = nil;
 
     return value;
@@ -407,6 +431,19 @@ static void writeSaveFile(const char* path, int type)
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {
 	memset((void*)_pad, 0, sizeof(int16_t) * 24);
+
+    // [CTRL-DIAG] Confirm which libretro core is actually starting up. Reporting library_name and
+    // library_version proves we're in PicoDrive (and not, say, somehow routed to another libretro
+    // core) when triaging the tester's "all 4 shoulders/triggers map to Start" report.
+    {
+        struct retro_system_info sysInfo = {0};
+        retro_get_system_info(&sysInfo);
+        ILOG(@"[CTRL-DIAG] PicoDrive loadFileAtPath: systemIdentifier=%@ libretro library_name=%s version=%s rom=%@",
+             [self systemIdentifier] ?: @"(nil)",
+             sysInfo.library_name ? sysInfo.library_name : "(null)",
+             sysInfo.library_version ? sysInfo.library_version : "(null)",
+             [path lastPathComponent]);
+    }
 
     const void *data;
     size_t size;
@@ -663,6 +700,48 @@ static void writeSaveFile(const char* path, int type)
         // TODO: Read this from Swift Defaults pacakge somehow? @JoeMatt
 
         BOOL use8BitdoM30 = PVSettingsWrapper.use8BitdoM30;
+        // [CTRL-DIAG] Logging-only diagnostic instrumentation (debug/controller-event-logging branch).
+        // One-shot at first call: gamepad class / vendor / use8BitdoM30 flag.
+        // Heartbeat every 600 calls (~10 s @ 60 fps polling): live shoulder/trigger state plus the
+        // libretro buttonID being queried so we can see what the libretro core asked the bridge for.
+        {
+            static dispatch_once_t pdDiagOnce;
+            static NSUInteger pdDiagCallCount = 0;
+            BOOL isDualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]];
+            BOOL isDualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]];
+            BOOL isXbox = [gamepad isKindOfClass:[GCXboxGamepad class]];
+            dispatch_once(&pdDiagOnce, ^{
+                ILOG(@"[CTRL-DIAG] PicoDrive 32X first input poll: gamepadClass=%@ productCategory=%@ vendorName=%@ use8BitdoM30=%@ isDualSense=%@ isDualShock=%@ isXbox=%@ player=%ld",
+                     NSStringFromClass([gamepad class]),
+                     controller.productCategory ?: @"(nil)",
+                     controller.vendorName ?: @"(nil)",
+                     use8BitdoM30 ? @"YES" : @"NO",
+                     isDualSense ? @"YES" : @"NO",
+                     isDualShock ? @"YES" : @"NO",
+                     isXbox ? @"YES" : @"NO",
+                     (long)player);
+            });
+            if ((pdDiagCallCount++ % 600) == 0) {
+                BOOL hasOptions = (gamepad.buttonOptions != nil);
+                BOOL hasMenu = (gamepad.buttonMenu != nil);
+                ILOG(@"[CTRL-DIAG] PicoDrive 32X poll #%lu retroButtonID=%u use8BitdoM30=%@ L1=%d R1=%d L2=%d R2=%d buttonMenu(present=%@,pressed=%d) buttonOptions(present=%@,pressed=%d) buttonA=%d buttonB=%d buttonX=%d buttonY=%d",
+                     (unsigned long)pdDiagCallCount,
+                     buttonID,
+                     use8BitdoM30 ? @"YES" : @"NO",
+                     [[gamepad leftShoulder] isPressed],
+                     [[gamepad rightShoulder] isPressed],
+                     [[gamepad leftTrigger] isPressed],
+                     [[gamepad rightTrigger] isPressed],
+                     hasMenu ? @"YES" : @"NO",
+                     hasMenu ? [gamepad.buttonMenu isPressed] : 0,
+                     hasOptions ? @"YES" : @"NO",
+                     hasOptions ? [gamepad.buttonOptions isPressed] : 0,
+                     [[gamepad buttonA] isPressed],
+                     [[gamepad buttonB] isPressed],
+                     [[gamepad buttonX] isPressed],
+                     [[gamepad buttonY] isPressed]);
+            }
+        }
 //        BOOL use8BitdoM30 = [NSUserDefaults.standardUserDefaults boolForKey:@"use8BitdoM30"];
         // `buttonID` is the libretro RETRO_DEVICE_ID_JOYPAD_* constant passed by
         // input_state_callback, NOT a PVSega32XButton enum value. The two orderings

@@ -775,6 +775,11 @@ static void emulation_run(BOOL skipFrame) {
         //mednafenCoreAspect = OEIntSizeMake(4, 3);
         //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
         self->sampleRate         = 44100;
+        // [CTRL-DIAG] Confirm which Mednafen module actually loaded for Saturn.
+        // If the tester reports "all 4 shoulders map to Start" we want to be 100% sure
+        // we're in the Saturn (ss) bridge path and not some other system.
+        ILOG(@"[CTRL-DIAG] Mednafen loadFileAtPath: systemIdentifier=%@ systemType=MednaSystemSS module=%@ rom=%@",
+             [self systemIdentifier], self->mednafenCoreModule, [path lastPathComponent]);
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.psx"])
     {

@@ -410,7 +410,29 @@
             return 0;
             break;
         case MednaSystemSS:
-            return [self SSValueForButtonID:buttonID forController:controller];
+        {
+            NSInteger ssResult = [self SSValueForButtonID:buttonID forController:controller];
+            // [CTRL-DIAG] Log only NON-ZERO returns for the buttons the tester reports breaking
+            // (PVSaturnButtonC=6, Z=9, L=10, R=11, Start=12). This tells us which
+            // PVSaturnButton* enum value the bridge is reporting "pressed" when the tester presses
+            // each shoulder/trigger one at a time. If pressing leftShoulder makes BOTH PVSaturnButtonC
+            // AND PVSaturnButtonStart fire as 1, we have a smoking gun on the duplicate-mapping bug.
+            if (ssResult != 0 &&
+                (buttonID == PVSaturnButtonC ||
+                 buttonID == PVSaturnButtonZ ||
+                 buttonID == PVSaturnButtonL ||
+                 buttonID == PVSaturnButtonR ||
+                 buttonID == PVSaturnButtonStart)) {
+                static const char *kSaturnBtnName[] = {
+                    "Up", "Down", "Left", "Right", "A", "B", "C", "X", "Y", "Z", "L", "R", "Start", "?13", "?14", "?15"
+                };
+                const char *name = (buttonID < (sizeof(kSaturnBtnName)/sizeof(kSaturnBtnName[0]))) ? kSaturnBtnName[buttonID] : "?";
+                ILOG(@"[CTRL-DIAG] Saturn buttonID=%u (%s) player=%ld -> %ld (use8BitdoM30=%@)",
+                     buttonID, name, (long)player, (long)ssResult,
+                     PVSettingsWrapper.use8BitdoM30 ? @"YES" : @"NO");
+            }
+            return ssResult;
+        }
             break;
         case MednaSystemGB:
             return [self GBValueForButtonID:buttonID forController:controller];
@@ -459,6 +481,49 @@
     if ([controller extendedGamepad]) {
         GCExtendedGamepad *gamepad = controller.extendedGamepad; //[[controller extendedGamepad] capture];
         GCControllerDirectionPad *dpad = [gamepad dpad];
+        // [CTRL-DIAG] Logging-only diagnostic instrumentation (debug/controller-event-logging branch).
+        // One-shot at first call: gamepad class, productCategory, vendor name, use8BitdoM30 flag.
+        // Heartbeat every 600 calls (~10 s @ 60 fps polling): live state of all 4 shoulders/triggers,
+        // buttonMenu, buttonOptions (where available), plus the buttonID being queried so we can
+        // confirm WHICH PVSaturnButton* the engine is asking about when the tester presses a shoulder.
+        {
+            static dispatch_once_t ctrlDiagOnce;
+            static NSUInteger ctrlDiagCallCount = 0;
+            BOOL m30 = PVSettingsWrapper.use8BitdoM30;
+            BOOL isDualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]];
+            BOOL isDualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]];
+            BOOL isXbox = [gamepad isKindOfClass:[GCXboxGamepad class]];
+            dispatch_once(&ctrlDiagOnce, ^{
+                ILOG(@"[CTRL-DIAG] Mednafen Saturn first input poll: gamepadClass=%@ productCategory=%@ vendorName=%@ use8BitdoM30=%@ isDualSense=%@ isDualShock=%@ isXbox=%@",
+                     NSStringFromClass([gamepad class]),
+                     controller.productCategory ?: @"(nil)",
+                     controller.vendorName ?: @"(nil)",
+                     m30 ? @"YES" : @"NO",
+                     isDualSense ? @"YES" : @"NO",
+                     isDualShock ? @"YES" : @"NO",
+                     isXbox ? @"YES" : @"NO");
+            });
+            if ((ctrlDiagCallCount++ % 600) == 0) {
+                BOOL hasOptions = (gamepad.buttonOptions != nil);
+                BOOL hasMenu = (gamepad.buttonMenu != nil);
+                ILOG(@"[CTRL-DIAG] Mednafen Saturn poll #%lu buttonID=%u use8BitdoM30=%@ L1=%d R1=%d L2=%d R2=%d buttonMenu(present=%@,pressed=%d) buttonOptions(present=%@,pressed=%d) buttonA=%d buttonB=%d buttonX=%d buttonY=%d",
+                     (unsigned long)ctrlDiagCallCount,
+                     buttonID,
+                     m30 ? @"YES" : @"NO",
+                     [[gamepad leftShoulder] isPressed],
+                     [[gamepad rightShoulder] isPressed],
+                     [[gamepad leftTrigger] isPressed],
+                     [[gamepad rightTrigger] isPressed],
+                     hasMenu ? @"YES" : @"NO",
+                     hasMenu ? [gamepad.buttonMenu isPressed] : 0,
+                     hasOptions ? @"YES" : @"NO",
+                     hasOptions ? [gamepad.buttonOptions isPressed] : 0,
+                     [[gamepad buttonA] isPressed],
+                     [[gamepad buttonB] isPressed],
+                     [[gamepad buttonX] isPressed],
+                     [[gamepad buttonY] isPressed]);
+            }
+        }
         // Maps the Sega Saturn Controls to the 8BitDo M30 if enabled in Settings/Controller
         if (PVSettingsWrapper.use8BitdoM30) {
             switch (buttonID) {
