@@ -7736,13 +7736,59 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
 
    set_save_state_in_background(false);
 
-   if (load_info && load_info->special)
-      game_loaded = runloop_st->current_core.retro_load_game_special(
-            load_info->special->id, load_info->info, load_info->content->size);
-   else if (load_info && !string_is_empty(load_info->content->elems[0].data))
-      game_loaded = runloop_st->current_core.retro_load_game(load_info->info);
-   else if (content_get_flags() & CONTENT_ST_FLAG_CORE_DOES_NOT_NEED_CONTENT)
-      game_loaded = runloop_st->current_core.retro_load_game(NULL);
+   /* [PPSSPP-DIAG] Log around retro_load_game so we can see whether the
+    * crash happens before, during, or after PPSSPP's MemoryMap_Setup.
+    * Gated on library_name containing "PPSSPP" (case-insensitive) to keep
+    * non-PSP cores quiet. */
+   {
+      const char *diag_lib_name = runloop_st->system.info.library_name;
+      bool diag_is_ppsspp = false;
+      if (diag_lib_name && diag_lib_name[0] != '\0')
+      {
+         /* Case-insensitive substring search for "ppsspp" */
+         const char *p = diag_lib_name;
+         size_t len = strlen(p);
+         for (size_t i = 0; i + 6 <= len; i++)
+         {
+            if ((p[i]   == 'p' || p[i]   == 'P') &&
+                (p[i+1] == 'p' || p[i+1] == 'P') &&
+                (p[i+2] == 's' || p[i+2] == 'S') &&
+                (p[i+3] == 's' || p[i+3] == 'S') &&
+                (p[i+4] == 'p' || p[i+4] == 'P') &&
+                (p[i+5] == 'p' || p[i+5] == 'P'))
+            {
+               diag_is_ppsspp = true;
+               break;
+            }
+         }
+      }
+      if (diag_is_ppsspp)
+      {
+         int diag_has_content = 0;
+         if (load_info && load_info->content
+             && !string_is_empty(load_info->content->elems[0].data))
+            diag_has_content = 1;
+         RARCH_LOG("[PPSSPP-DIAG] core_load_game: about to call retro_load_game library_name=%s has_special=%d has_content=%d no_content_flag=%d\n",
+                   diag_lib_name ? diag_lib_name : "<null>",
+                   (load_info && load_info->special) ? 1 : 0,
+                   diag_has_content,
+                   (content_get_flags() & CONTENT_ST_FLAG_CORE_DOES_NOT_NEED_CONTENT) ? 1 : 0);
+      }
+
+      if (load_info && load_info->special)
+         game_loaded = runloop_st->current_core.retro_load_game_special(
+               load_info->special->id, load_info->info, load_info->content->size);
+      else if (load_info && !string_is_empty(load_info->content->elems[0].data))
+         game_loaded = runloop_st->current_core.retro_load_game(load_info->info);
+      else if (content_get_flags() & CONTENT_ST_FLAG_CORE_DOES_NOT_NEED_CONTENT)
+         game_loaded = runloop_st->current_core.retro_load_game(NULL);
+
+      if (diag_is_ppsspp)
+      {
+         RARCH_LOG("[PPSSPP-DIAG] core_load_game: retro_load_game returned game_loaded=%d\n",
+                   game_loaded ? 1 : 0);
+      }
+   }
 
    if (game_loaded)
    {

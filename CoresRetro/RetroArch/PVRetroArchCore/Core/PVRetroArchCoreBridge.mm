@@ -106,6 +106,22 @@ extern int g_gs_preference;
     self.skipLayout = true;
     self.extractArchive = false;
 
+    /// [PPSSPP-DIAG] Capture entry to loadFileAtPath when the system is PSP.
+    /// This is the last Provenance-side hook before RetroArch starts its
+    /// load pipeline (which eventually calls retro_load_game).
+    {
+        NSString *diagSysId = self.systemIdentifier ?: @"<nil>";
+        BOOL diagIsPSP = [[diagSysId lowercaseString] containsString:@"psp"];
+        if (diagIsPSP) {
+            ILOG(@"[PPSSPP-DIAG] loadFileAtPath ENTER systemIdentifier=%@ coreIdentifier=%@ romPath=%@ matchesPSP=YES",
+                 diagSysId, self.coreIdentifier, path);
+        } else {
+            // Cheap one-liner for non-PSP cores so log noise stays minimal but
+            // we can still confirm the dispatch is reaching loadFileAtPath.
+            DLOG(@"[PPSSPP-DIAG] loadFileAtPath ENTER (non-PSP) systemIdentifier=%@", diagSysId);
+        }
+    }
+
     PVRetroArchCoreBridge.systemName = self.systemIdentifier;
     PVRetroArchCoreBridge.coreClassName = self.coreIdentifier;
     [self parseOptions];
@@ -130,6 +146,12 @@ extern int g_gs_preference;
 											   attributes:nil
 													error:NULL];
     romPath = [[path copy] stringByStandardizingPath];
+    {
+        NSString *diagSysId = self.systemIdentifier ?: @"";
+        if ([[diagSysId lowercaseString] containsString:@"psp"]) {
+            ILOG(@"[PPSSPP-DIAG] loadFileAtPath EXIT YES romPath=%@", romPath);
+        }
+    }
 	return YES;
 }
 -(void)startHaptic { }

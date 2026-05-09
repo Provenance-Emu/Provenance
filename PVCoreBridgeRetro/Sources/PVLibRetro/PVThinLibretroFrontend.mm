@@ -2621,11 +2621,27 @@ static bool thin_environment(unsigned cmd, void *data) {
         loaded = YES;  // if we got a frame, load succeeded
     } else {
         const CFTimeInterval _tLoad0 = CACurrentMediaTime();
+        /// [PPSSPP-DIAG] Add a PSP-gated log so a tester running PPSSPP via
+        /// the thin frontend can grep with the same prefix as the full RA
+        /// path. The unconditional ILOGs below remain for all cores.
+        BOOL diagThinIsPPSSPP = NO;
+        if (_rawSystemInfo.library_name && _rawSystemInfo.library_name[0]) {
+            NSString *libName = [NSString stringWithUTF8String:_rawSystemInfo.library_name];
+            diagThinIsPPSSPP = [[libName lowercaseString] containsString:@"ppsspp"];
+        }
+        if (diagThinIsPPSSPP) {
+            ILOG(@"[PPSSPP-DIAG] ThinFrontend: about to call retro_load_game library_name=%s need_fullpath=%d romSize=%zu",
+                 _rawSystemInfo.library_name, _rawSystemInfo.need_fullpath, (size_t)romData.length);
+        }
         ILOG(@"ThinFrontend: calling retro_load_game (need_fullpath=%d, romSize=%zu)",
              _rawSystemInfo.need_fullpath, (size_t)romData.length);
         loaded = _sym.retro_load_game(&gameInfo);
         ILOG(@"ThinFrontend: retro_load_game returned %d (%.2fs)",
              loaded, CACurrentMediaTime() - _tLoad0);
+        if (diagThinIsPPSSPP) {
+            ILOG(@"[PPSSPP-DIAG] ThinFrontend: retro_load_game returned %d (%.2fs)",
+                 loaded, CACurrentMediaTime() - _tLoad0);
+        }
     }
 
     if (!loaded) {

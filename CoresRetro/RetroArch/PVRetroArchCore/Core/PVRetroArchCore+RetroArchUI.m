@@ -390,6 +390,17 @@ int argc =  1;
         _current=self;
         firstLoad=true;
 
+        /// [PPSSPP-DIAG] startEmulation entry — useful to confirm we make it
+        /// past loadFileAtPath and into the emulation kickoff. If logs stop
+        /// here, the crash is during teardown of a previous run or in
+        /// setupEmulation/setOptionValues/startVM.
+        {
+            NSString *diagSysId = self.systemIdentifier ?: @"<nil>";
+            if ([[diagSysId lowercaseString] containsString:@"psp"]) {
+                ILOG(@"[PPSSPP-DIAG] startEmulation ENTER systemIdentifier=%@ coreIdentifier=%@ isInitialized=%d", diagSysId, self.coreIdentifier, _isInitialized);
+            }
+        }
+
         /// Ensure any existing RetroArch state is properly cleaned up before starting
         /// This prevents crashes when trying to destroy Vulkan contexts from previous failed loads
         if (_isInitialized) {

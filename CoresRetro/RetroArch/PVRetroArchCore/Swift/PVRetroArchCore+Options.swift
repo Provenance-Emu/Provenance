@@ -443,8 +443,28 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
     /// Synchronizes all stored option values with RetroArch's internal option system
     /// Call this when initializing the core to ensure RetroArch has the correct option values
     @objc public static func synchronizeOptionsWithRetroArch() {
+        /// [PPSSPP-DIAG] Log entry only when running PPSSPP — the
+        /// `coreLibraryName` lookup goes through RetroArch's runloop state, so
+        /// it's nil-safe to read here even before retro_load_game runs.
+        let diagSystemName = EmulationState.shared.stateSubject.value.systemName.lowercased()
+        let diagIsPSP = diagSystemName.contains("psp")
+        if diagIsPSP {
+            let diagCoreName = PVRetroArchCoreBridge.coreLibraryName() ?? "<nil>"
+            let diagOptsPath = PVRetroArchCoreBridge.perCoreOptionsPath() ?? "<nil>"
+            let diagExists: Bool
+            if let path = PVRetroArchCoreBridge.perCoreOptionsPath() {
+                diagExists = FileManager.default.fileExists(atPath: path)
+            } else {
+                diagExists = false
+            }
+            ILOG("[PPSSPP-DIAG] synchronizeOptionsWithRetroArch ENTER systemName=\(diagSystemName) coreLibraryName=\(diagCoreName) perCoreOptionsPath=\(diagOptsPath) exists=\(diagExists)")
+        }
+
         guard let optionsPtr: UnsafeMutablePointer<core_option_manager_t> = getOptions() else {
             WLOG("Failed to get RetroArch options manager")
+            if diagIsPSP {
+                ILOG("[PPSSPP-DIAG] synchronizeOptionsWithRetroArch EXIT early — getOptions() returned nil (RetroArch options manager not yet initialized)")
+            }
             return
         }
 
@@ -555,6 +575,9 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
         }
 
         ILOG("Synchronized all options with RetroArch")
+        if diagIsPSP {
+            ILOG("[PPSSPP-DIAG] synchronizeOptionsWithRetroArch EXIT normal completion")
+        }
     }
 }
 
@@ -599,6 +622,12 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
 
         if let systemIdentifier = self.systemIdentifier?.lowercased() {
             if (systemIdentifier.contains("psp")) {
+                /// [PPSSPP-DIAG] Diagnostic entry log — captures runtime context
+                /// when the PSP/RetroArch branch is entered. Logging-only; no
+                /// behavior change.
+                let diagOSVersion = ProcessInfo.processInfo.operatingSystemVersionString
+                ILOG("[PPSSPP-DIAG] parseOptions PSP branch entry: systemIdentifier=\(self.systemIdentifier ?? "<nil>") coreIdentifier=\(self.coreIdentifier) osVersion=\(diagOSVersion)")
+
                 /// PPSSPP fast-memory + Vulkan worked on older iOS/tvOS builds, but
                 /// iOS/tvOS 26+ can fail MemoryMap_Setup with vm_remap errors.
                 /// Keep fast path on older OSes and apply a stability fallback on 26+.
@@ -606,22 +635,29 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 if #available(iOS 26, tvOS 26, *) {
                     self.gsPreference = 1 // OpenGL ES fallback on 26+
                     ILOG("PPSSPP fallback: iOS/tvOS 26+ detected, forcing OpenGL ES and disabling fast memory to avoid MemoryMap vm_remap boot failures")
+                    ILOG("[PPSSPP-DIAG] writing option: ppsspp_fast_memory = \"disabled\"")
                     optionValues += "ppsspp_fast_memory = \"disabled\"\n";
                 } else {
                     self.gsPreference = 2 // Preserve historical Vulkan path.
                     ILOG("PPSSPP config: preserving Vulkan + fast memory on pre-iOS/tvOS 26")
+                    ILOG("[PPSSPP-DIAG] writing option: ppsspp_fast_memory = \"enabled\"")
                     optionValues += "ppsspp_fast_memory = \"enabled\"\n";
                 }
                 #else
                 self.gsPreference = 2 // Preserve historical Vulkan path.
                 ILOG("PPSSPP config: non-iOS/tvOS platform, preserving Vulkan + fast memory")
+                ILOG("[PPSSPP-DIAG] writing option: ppsspp_fast_memory = \"enabled\" (non-iOS/tvOS)")
                 optionValues += "ppsspp_fast_memory = \"enabled\"\n";
                 #endif
 
+                ILOG("[PPSSPP-DIAG] picked gsPreference=\(self.gsPreference) (1=GLES, 2=Vulkan); optionValues length so far=\(optionValues.count)")
+
+                ILOG("[PPSSPP-DIAG] writing option: ppsspp_ignore_bad_memory_access = \"enabled\"")
                 optionValues += "ppsspp_ignore_bad_memory_access = \"enabled\"\n";
 
                 optionValuesFile = "PPSSPP/PPSSPP.opt"
                 optionOverwrite = false
+                ILOG("[PPSSPP-DIAG] PSP branch complete: optionValuesFile=\(optionValuesFile) optionOverwrite=\(optionOverwrite) total optionValues length=\(optionValues.count)")
             }
 
             let systemsWithBindNumlock: Set<String> = [
