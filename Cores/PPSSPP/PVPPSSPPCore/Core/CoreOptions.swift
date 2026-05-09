@@ -2,6 +2,7 @@ import Foundation
 import PVEmulatorCore;
 import PVCoreBridge;
 import PVCoreObjCBridge;
+import PVLogging
 
 extension PVPPSSPPCore: CoreOptional {
     public static var options: [PVCoreBridge.CoreOption] {
@@ -294,7 +295,26 @@ public class PVPPSSPPCoreOptions: NSObject, CoreOptions {
 
 extension PVPPSSPPCoreBridge {
     func parseOptions() {
-        self.gsPreference = NSNumber(value: PVPPSSPPCoreOptions.gs).int8Value
+        // Native PPSSPP core's Vulkan path runs through MoltenVK and silently
+        // breaks on iOS/tvOS 26+ (vm_remap-style MemoryMap_Setup failures —
+        // same family of crashes that the RetroArch wrapper guards against in
+        // PVRetroArchCore+Options.swift). Force OpenGL on those OS versions
+        // regardless of the user's saved preference so they don't get a black
+        // screen / crash. The setting UI still shows their choice; this guard
+        // only affects what the renderer actually picks at boot.
+        let userGs = NSNumber(value: PVPPSSPPCoreOptions.gs).int8Value
+        #if os(iOS) || os(tvOS)
+        if #available(iOS 26, tvOS 26, *) {
+            if userGs == 3 {
+                ILOG("PPSSPP: iOS/tvOS 26+ — overriding Vulkan setting with OpenGL to avoid MoltenVK boot failure")
+            }
+            self.gsPreference = 0
+        } else {
+            self.gsPreference = userGs
+        }
+        #else
+        self.gsPreference = userGs
+        #endif
         self.resFactor = NSNumber(value: PVPPSSPPCoreOptions.resolution).int8Value
         self.cpuType = NSNumber(value:PVPPSSPPCoreOptions.cpu).int8Value
         self.taOption = NSNumber(value:PVPPSSPPCoreOptions.ta).int8Value
