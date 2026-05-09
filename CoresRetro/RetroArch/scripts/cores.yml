@@ -520,8 +520,11 @@ cores:
     enabled: true
   - name: parallel_n64
     # Nintendo 64 (ParaLLEl)
+    # tvOS dropped 2026-05: libretro buildbot stopped publishing
+    # parallel_n64_libretro_tvos.dylib (404). Use mupen64plus_next on tvOS
+    # until upstream resumes tvOS builds for this core.
     ios: true
-    tvos: true
+    tvos: false
     appstore: true
     enabled: true
   - name: pcsx_rearmed

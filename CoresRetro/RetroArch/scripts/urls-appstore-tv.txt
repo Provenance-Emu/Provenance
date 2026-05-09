@@ -73,7 +73,6 @@ https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/noods_libretro_tvo
 #https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/numero_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/o2em_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/opera_libretro_tvos.dylib.zip
-https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/parallel_n64_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/pcsx_rearmed_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/play_libretro_tvos.dylib.zip
 https://buildbot.libretro.com/nightly/apple/tvos-arm64/latest/pokemini_libretro_tvos.dylib.zip

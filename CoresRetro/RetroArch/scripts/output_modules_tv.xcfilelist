@@ -73,7 +73,6 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/np2kai_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/numero_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/o2em_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/opera_libretro_tvos.dylib
-$(SRCROOT)/CoresRetro/RetroArch/modules/parallel_n64_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/pcsx_rearmed_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/play_libretro_tvos.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/pokemini_libretro_tvos.dylib
