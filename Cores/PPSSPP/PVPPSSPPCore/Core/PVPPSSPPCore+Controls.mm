@@ -171,6 +171,17 @@ extern bool _isInitialized;
 			controller.extendedGamepad.buttonOptions.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				[self gamepadEventOnPad:player button:NKCODE_BUTTON_10 action:(pressed?1:0)]; // Start
 			};
+			// PS5 Options / Xbox Menu surfaces as `buttonMenu` in the GameController
+			// framework — distinct from `buttonOptions` (Share / Create / View).
+			// On tvOS the global pause-menu binding takes over `buttonOptions`, so
+			// the only path the user has to in-game Start with a DualSense is
+			// `buttonMenu`. Bridge it to NKCODE_BUTTON_10 (PSP Start under the iOS
+			// `defaultPadMap` in PPSSPP's KeyMapDefaults.cpp).
+			if (@available(iOS 14.0, tvOS 14.0, *)) {
+				controller.extendedGamepad.buttonMenu.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+					[self gamepadEventOnPad:player button:NKCODE_BUTTON_10 action:(pressed?1:0)]; // Start
+				};
+			}
 			#if defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
 			controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				[self gamepadEventOnPad:player button:NKCODE_BUTTON_15 action:(pressed?1:0)];

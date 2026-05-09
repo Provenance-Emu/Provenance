@@ -1409,10 +1409,18 @@ static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mo
         fmode = "rb";
     }
     FILE *fp = fopen(path, fmode);
-    if (!fp) return NULL;
+    if (!fp) {
+        ILOG(@"[VFS-DIAG] open FAIL path=%s mode=%s errno=%d (%s)", path, fmode, errno, strerror(errno));
+        return NULL;
+    }
     struct retro_vfs_file_handle *handle = (struct retro_vfs_file_handle *)calloc(1, sizeof(*handle));
     handle->fp = fp;
     handle->path = strdup(path);
+    // Log open of files >100 KB (skip tiny config/lang files which spam logs).
+    struct stat _diag_st;
+    if (stat(path, &_diag_st) == 0 && _diag_st.st_size >= (off_t)100*1024) {
+        ILOG(@"[VFS-DIAG] open OK path=%s mode=%s stat_size=%lld fp=%p", path, fmode, (long long)_diag_st.st_size, fp);
+    }
     return handle;
 }
 
@@ -1426,16 +1434,27 @@ static int thin_vfs_close(struct retro_vfs_file_handle *stream) {
 
 static int64_t thin_vfs_size(struct retro_vfs_file_handle *stream) {
     if (!stream) return -1;
-    long cur = ftell(stream->fp);
-    if (fseek(stream->fp, 0, SEEK_END) != 0) return -1;
-    long sz = ftell(stream->fp);
-    fseek(stream->fp, cur, SEEK_SET);
+    // Use fseeko/ftello for explicit 64-bit offsets. fseek/ftell take `long`
+    // which is 64-bit on arm64 Darwin but fseeko uses off_t unconditionally.
+    off_t cur = ftello(stream->fp);
+    if (fseeko(stream->fp, 0, SEEK_END) != 0) {
+        ILOG(@"[VFS-DIAG] size: fseeko END FAIL path=%s errno=%d", stream->path ?: "?", errno);
+        return -1;
+    }
+    off_t sz = ftello(stream->fp);
+    fseeko(stream->fp, cur, SEEK_SET);
+    if (sz < 0) {
+        ILOG(@"[VFS-DIAG] size: ftello FAIL path=%s errno=%d", stream->path ?: "?", errno);
+    } else if (sz >= 100*1024) {
+        ILOG(@"[VFS-DIAG] size: path=%s sz=%lld", stream->path ?: "?", (long long)sz);
+    }
     return (int64_t)sz;
 }
 
 static int64_t thin_vfs_tell(struct retro_vfs_file_handle *stream) {
     if (!stream) return -1;
-    return (int64_t)ftell(stream->fp);
+    off_t pos = ftello(stream->fp);
+    return (int64_t)pos;
 }
 
 static int64_t thin_vfs_seek(struct retro_vfs_file_handle *stream, int64_t offset, int seek_position) {
@@ -1447,8 +1466,20 @@ static int64_t thin_vfs_seek(struct retro_vfs_file_handle *stream, int64_t offse
         case RETRO_VFS_SEEK_POSITION_END:     whence = SEEK_END; break;
         default: return -1;
     }
-    if (fseek(stream->fp, (long)offset, whence) != 0) return -1;
-    return (int64_t)ftell(stream->fp);
+    // fseeko takes off_t (64-bit) explicitly; previous code used fseek with
+    // a (long)offset cast which silently truncates on 32-bit `long` ABIs.
+    // arm64 Darwin has 64-bit long so it was fine in practice, but switching
+    // to fseeko removes the ambiguity.
+    if (fseeko(stream->fp, (off_t)offset, whence) != 0) {
+        ILOG(@"[VFS-DIAG] seek FAIL path=%s offset=%lld whence=%d errno=%d",
+             stream->path ?: "?", (long long)offset, whence, errno);
+        return -1;
+    }
+    off_t pos = ftello(stream->fp);
+    if (whence == SEEK_END && offset == 0) {
+        ILOG(@"[VFS-DIAG] seek END->%lld path=%s", (long long)pos, stream->path ?: "?");
+    }
+    return (int64_t)pos;
 }
 
 static int64_t thin_vfs_read(struct retro_vfs_file_handle *stream, void *s, uint64_t len) {
@@ -1486,10 +1517,23 @@ static int64_t thin_vfs_truncate(struct retro_vfs_file_handle *stream, int64_t l
 static int thin_vfs_stat(const char *path, int32_t *size) {
     if (!path) return 0;
     struct stat st;
-    if (stat(path, &st) != 0) return 0;
+    if (stat(path, &st) != 0) {
+        ILOG(@"[VFS-DIAG] stat FAIL path=%s errno=%d (%s)", path, errno, strerror(errno));
+        return 0;
+    }
     int flags = RETRO_VFS_STAT_IS_VALID;
     if (S_ISDIR(st.st_mode)) flags |= RETRO_VFS_STAT_IS_DIRECTORY;
     if (S_ISCHR(st.st_mode)) flags |= RETRO_VFS_STAT_IS_CHARACTER_SPECIAL;
+    // libretro VFS spec passes size as int32_t — files >2GB will truncate.
+    // Log the underlying off_t before truncating so we can spot overflow.
+    if (st.st_size >= (off_t)100*1024) {
+        if (st.st_size > (off_t)INT32_MAX) {
+            WLOG(@"[VFS-DIAG] stat path=%s size=%lld TRUNCATED to int32_t (libretro VFS limit) — core may misread file size",
+                 path, (long long)st.st_size);
+        } else {
+            ILOG(@"[VFS-DIAG] stat path=%s size=%lld flags=0x%x", path, (long long)st.st_size, flags);
+        }
+    }
     if (size) *size = (int32_t)st.st_size;
     return flags;
 }

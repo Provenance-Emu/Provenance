@@ -45,6 +45,21 @@ extension PVEmulatorViewController {
         if (presentedViewController is TVAlertController) && !presentedViewController!.isBeingDismissed {
             dismiss(animated: true) { () -> Void in }
         }
+        // The pause-tile menu is presented as a generic UIViewController hosting
+        // a SwiftUI overlay (see showMenu in PVEmulatorViewController+PauseMenu.swift),
+        // so the type-specific dismissals above don't reach it. When the user
+        // toggles pause again with their controller (e.g. PS5 Options button),
+        // controllerPauseButtonPressed lands here and we have to actually dismiss
+        // that VC ourselves — otherwise the menu stays on screen and only the
+        // Siri Remote Menu button can clear it via the focus engine.
+        if let menuVC = menuPresentationViewController, !menuVC.isBeingDismissed {
+            menuVC.dismiss(animated: true) { [weak self] in
+                self?.menuPresentationViewController = nil
+                if let core = self?.core, core.isOn {
+                    core.setPauseEmulation(false)
+                }
+            }
+        }
 #if os(iOS)
         // if there is a DONE button, press it
         if let nav = presentedViewController as? UINavigationController, !presentedViewController!.isBeingDismissed {
