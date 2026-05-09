@@ -82,9 +82,12 @@ let OTHER_CFLAGS: [CSetting] = [
     "-Wdisabled-optimization",
     "-fmodules",
     "-fvisibility=default",
-    "-mcpu=apple-a10",
-    "-mtune=apple-a12",
-    "-march=armv8-a+simd+crc+crypto",
+    // ARM-specific tuning (-mcpu=apple-a10 / -mtune=apple-a12 /
+    // -march=armv8-a+simd+crc+crypto) was here, but SPM unsafeFlags can't be
+    // arch-gated — they were also passed on x86_64 simulator slices and
+    // clang errors with "unsupported option '-mcpu='". The default -mcpu for
+    // each arch is sufficient; the perf delta from explicit a10 tuning was
+    // marginal in practice. Removed so workspace builds for all destinations.
     //        "-fvisibility-inlines-hidden",
     //        "-fvisibility=hidden"
   ])
