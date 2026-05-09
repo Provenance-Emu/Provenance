@@ -381,7 +381,23 @@ private struct CoreSelectionCard: View {
     }
 
     private var bottomRow: some View {
-        HStack {
+        HStack(spacing: 8) {
+            // tvOS: a hint that long-press / hold sets this as the default. The
+            // gesture itself is wired via `.contextMenu` on the card; without
+            // this label users had no way to discover that the affordance
+            // exists. iOS uses the standard contextMenu glyph from the system
+            // so the same hint isn't needed there.
+            if showSetDefault {
+                #if os(tvOS)
+                HStack(spacing: 4) {
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 10))
+                    Text("Hold to set default")
+                        .font(.system(size: 11, weight: .medium))
+                }
+                .foregroundColor(Color.retroYellow.opacity(0.85))
+                #endif
+            }
             Spacer()
             Image(systemName: "play.fill")
                 .font(.system(size: 12))
