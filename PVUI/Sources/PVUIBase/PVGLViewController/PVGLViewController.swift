@@ -203,12 +203,23 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
         renderSettings.scalingMode = Defaults[.scalingMode]
 
-        Task {
+        Task { [weak self] in
             for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .scalingMode]) {
-                renderSettings.metalFilterMode = Defaults[.metalFilterMode]
-                renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
-                renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-                renderSettings.scalingMode = Defaults[.scalingMode]
+                await MainActor.run {
+                    guard let self else { return }
+                    let oldScaling = self.renderSettings.scalingMode
+                    self.renderSettings.metalFilterMode = Defaults[.metalFilterMode]
+                    self.renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
+                    self.renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
+                    self.renderSettings.scalingMode = Defaults[.scalingMode]
+                    // Scaling mode changes the calculated view frame — kick a
+                    // re-layout so the change is visible immediately. Filter /
+                    // smoothing changes don't need this.
+                    if oldScaling != self.renderSettings.scalingMode {
+                        self.view.setNeedsLayout()
+                        self.view.layoutIfNeeded()
+                    }
+                }
             }
         }
     }

@@ -280,11 +280,21 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .scalingMode]) {
                 await MainActor.run {
                     guard let self else { return }
+                    let oldScaling = self.renderSettings.scalingMode
                     self.renderSettings.metalFilterMode = Defaults[.metalFilterMode]
                     self.renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                     self.renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
                     self.renderSettings.scalingMode = Defaults[.scalingMode]
                     self.configureFilterRenderer(reason: "defaultsUpdate", force: true)
+                    // Scaling mode changes the calculated view frame — kick a
+                    // re-layout so the change is visible immediately without
+                    // waiting for the next size class change. The actual
+                    // recompute lives in viewDidLayoutSubviews. Filter / smoothing
+                    // changes don't need this; only re-layout when scaling moved.
+                    if oldScaling != self.renderSettings.scalingMode {
+                        self.view.setNeedsLayout()
+                        self.view.layoutIfNeeded()
+                    }
                 }
             }
         }
