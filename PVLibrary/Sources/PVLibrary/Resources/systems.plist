@@ -1561,6 +1561,8 @@
 		<array>
 			<string>zip</string>
 			<string>cmd</string>
+			<string>chd</string>
+			<string>7z</string>
 		</array>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.mame</string>

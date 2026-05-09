@@ -1,7 +1,11 @@
 #import <Foundation/Foundation.h>
 #import "PVRetroArchCoreBridge+Archive.h"
 
-NSString* MAME_EXTENSIONS  = @"zip|cmd";
+// Add chd (MAME compressed disc/HDD images) and 7z (RetroArch's MAME builds
+// link libchdr + 7z support). The wrapper rejected these at launch even
+// though the underlying core accepts them — same allow-list miss that the
+// systems.plist had.
+NSString* MAME_EXTENSIONS  = @"zip|cmd|chd|7z";
 
 @interface PVRetroArchCoreBridge (Archive)
 @end
