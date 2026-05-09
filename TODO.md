@@ -2,6 +2,41 @@
 
 <!-- AGENTS: Keep this file current. Check off items when done, add new items as discovered. -->
 
+## tvOS Tester Sprint Checklist (May 8-9 2026)
+
+Bundles 7 commits on `develop` from `477a7a48f2..093ac7c787`. 4 fixes + 3 diagnostic-logging spikes. Tester to run a single Console.app session capturing all three log filters in one pass.
+
+### Fixes — visual / behavioural verification (no logs)
+
+- [ ] **Aspect ratio** (`477a7a48f2`): RA-wrapped cores no longer clamped to 4:3. Check Dolphin GameCube widescreen, BeetlePSX, FBNeo, and any other libretro core that reports a non-4:3 `geometry.aspect_ratio`. Was: pillarboxed to 4:3. Should now: fill correctly.
+- [ ] **MAME CHD** (`8e6fb559b0`): Import a MAME CHD (`.chd`) ROM. Was: rejected at import (extension not in allow-list) or rejected at launch by the RA wrapper. Should now: import succeeds, game launches.
+- [ ] **MAME 7z** (`8e6fb559b0`): also added `.7z`. Verify a 7z-packed MAME set imports.
+- [ ] **PPSSPP renderer** (`524966ff72`): Native PPSSPP core on tvOS 26+ no longer attempts MoltenVK Vulkan and crashes / black-screens. Should auto-pick OpenGL regardless of the saved Vulkan setting. Look for log line `PPSSPP: iOS/tvOS 26+ — overriding Vulkan setting with OpenGL to avoid MoltenVK boot failure`.
+- [ ] **tvOS set-default-core hint** (`370b8e92b1`): Open the core picker on tvOS for a multi-core system. Each card should show a small `★ Hold to set default` label in the lower-left of the card body. Long-pressing the card still triggers `Set as Default for This System` from the contextMenu.
+
+### Diagnostic-logging spikes — capture Console.app logs
+
+Run all three in one session. Filter on each prefix in turn or use `CHEEVOS-DIAG OR CTRL-DIAG OR PPSSPP-DIAG` if your Console.app supports it.
+
+- [ ] **CHEEVOS-DIAG** (`73241135cd`): Boot SNES9x + F-Zero, race Mute City on Standard difficulty. Boot Stella + Pac-Man (Atari 2600), get to 500 points. Capture full log.
+  - Looking for: did `prepareAchievements` even run? Did MD5 / hash match? Did `tickAchievements` fire per frame? Did the unlock callback ever fire?
+- [ ] **CTRL-DIAG** (`765a35a2c3`): Boot Mednafen Saturn (any game). Press each shoulder + trigger ONE AT A TIME (left, right, L1, R1, L2, R2). Boot PicoDrive 32X. Repeat the same one-at-a-time test.
+  - Looking for: which gamepad button fires which `controllerValueForButtonID:` case. The one-shot log dumps the gamepad class + `use8BitdoM30` flag at first frame. Heartbeat every 600 polls shows the live state of all four shoulders + buttonMenu/buttonOptions presence.
+- [ ] **PPSSPP-DIAG** (`093ac7c787`): Boot a PSP game with the **RetroArch core** (NOT native PPSSPP). Capture Console.app session. If the app crashes on boot, also grab `/var/mobile/Library/Logs/CrashReporter/*.ips` for the device.
+  - Looking for: how far does the boot sequence get before the crash? Last `PPSSPP-DIAG` line tells us where it died. If we see `synchronizeOptionsWithRetroArch EXIT normal completion` and `loadFileAtPath ENTER` but never `retro_load_game returned`, the crash is inside PPSSPP's libretro core (probably MemoryMap_Setup with vm_remap).
+
+### Known pre-existing CI issue (not from this sprint)
+- tvOS CI build fails on `GetModule: FAILED to download parallel_n64_libretro_tvos.dylib.zip` (HTTP 404). Buildbot dylib infra issue. iOS CI passes. Local tvOS builds work — this is a remote-download regression upstream of our changes.
+
+### Deferred (not in this sprint)
+- "Open In" UX bug — confirmed not in codebase. Need a screenshot from tester to know what menu item they actually saw.
+- NES turbo / clockwise rotation working only on Nestopia — feature-gap, not bug. Separate epic.
+- DS portrait window on tvOS — explicitly deferred per maintainer.
+- Per-core widescreen hacks (`flycast_widescreen_hack`, `beetle_psx_widescreen_hack`, `dolphin_aspect_ratio`) — separate epic once the basic aspect_ratio fix is verified.
+- Beetle Saturn no-draw / crash — separate from button mapping; will be revisited.
+
+---
+
 ## Release Testing Checklist (May 2026)
 
 ### Build & Install
