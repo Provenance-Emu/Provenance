@@ -1334,6 +1334,27 @@ struct PauseTileMenuView: View {
         .fullScreenCover(isPresented: $showingLogViewer) {
             RetroLogView(isFullscreen: $showingLogViewer)
         }
+        // On tvOS the default `.sheet` modal renders narrow and centred,
+        // which makes Settings (a deep nested form) hard to read and
+        // navigate with the focus engine. Use `.fullScreenCover` for the
+        // App Settings on tvOS — same pattern already used for
+        // `showingLogViewer` above. iOS keeps the standard sheet, which
+        // sizes correctly there. The settings view's own "Done" button
+        // calls `dismissAction` so the user can leave the cover.
+        // RetroArch Settings stays as a sheet for now — its registered
+        // view doesn't accept a dismissAction, so a fullScreenCover
+        // could trap the user without a visible exit on tvOS.
+        #if os(tvOS)
+        .fullScreenCover(isPresented: $showingAppSettings) {
+            if let appSettings = PauseMenuViewRegistry.appSettingsView(dismissAction: {
+                showingAppSettings = false
+            }) {
+                appSettings
+            } else {
+                EmptyView()
+            }
+        }
+        #else
         .sheet(isPresented: $showingAppSettings) {
             if let appSettings = PauseMenuViewRegistry.appSettingsView(dismissAction: {
                 showingAppSettings = false
@@ -1343,6 +1364,7 @@ struct PauseTileMenuView: View {
                 EmptyView()
             }
         }
+        #endif
         .sheet(isPresented: $showingRetroArchSettings) {
             if let retroArchSettings = PauseMenuViewRegistry.retroArchSettingsView() {
                 retroArchSettings
