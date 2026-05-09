@@ -15,9 +15,13 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_SDL2=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_COREAUDIO=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) ENABLE_VULKAN=1
 
-OTHER_CFLAGS = $(inherited) -mcpu=apple-a10
-OTHER_CFLAGS = $(inherited) -mtune=apple-a12
-OTHER_CFLAGS = $(inherited) -march=armv8-a+simd+crc+crypto
+// ARM-only optimisation flags — these are rejected by clang on x86_64
+// (e.g. tvOS Simulator on Intel Macs, fat iOS sim builds). Gate them with
+// the [arch=arm64] specifier so they only apply to the ARM slice and the
+// x86_64 simulator slice can still build for development.
+OTHER_CFLAGS[arch=arm64] = $(inherited) -mcpu=apple-a10
+OTHER_CFLAGS[arch=arm64] = $(inherited) -mtune=apple-a12
+OTHER_CFLAGS[arch=arm64] = $(inherited) -march=armv8-a+simd+crc+crypto
 OTHER_CFLAGS = $(inherited) -ffast-math
 OTHER_CFLAGS = $(inherited) -ftree-vectorize
 OTHER_CFLAGS = $(inherited) -fno-strict-aliasing
