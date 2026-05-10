@@ -20,9 +20,12 @@ GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) NO_ASM=1
 
 OTHER_CFLAGS[arch=*] = $(inherited) -DGCC
 OTHER_CFLAGS[arch=*] = $(inherited) -pthread
-OTHER_CFLAGS[arch=*] = $(inherited) -march=armv8-a+simd+crc+crypto
-OTHER_CFLAGS[arch=*] = $(inherited) -mcpu=apple-a10
-OTHER_CFLAGS[arch=*] = $(inherited) -mtune=apple-a15
+// ARM-specific tuning — clang rejects these on x86_64 ('unsupported
+// option -mcpu=' and 'unknown target CPU armv8-a+...'). Gate to arm64
+// so the x86_64 simulator slice can build.
+OTHER_CFLAGS[arch=arm64] = $(inherited) -march=armv8-a+simd+crc+crypto
+OTHER_CFLAGS[arch=arm64] = $(inherited) -mcpu=apple-a10
+OTHER_CFLAGS[arch=arm64] = $(inherited) -mtune=apple-a15
 
 //-DNO_ASM
 
