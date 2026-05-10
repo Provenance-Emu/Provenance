@@ -100,6 +100,14 @@ PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).$(PROJECT_NAME:lower).PVLibr
 // -- General Settings --
 ENABLE_BITCODE = NO
 
+// tvOS Simulator: build arm64-only (Apple Silicon). Several emulator cores
+// use ARM NEON intrinsics (e.g. VirtualJaguar's blitter_simd_neon.c) and
+// arch-specific tuning that doesn't compile on x86_64. We don't ship to
+// Intel Macs so dropping the x86_64 sim slice is the simplest, most
+// robust way to keep tvOS Sim builds green. Apple Silicon Macs are
+// unaffected — they run the arm64 sim slice natively.
+EXCLUDED_ARCHS[sdk=appletvsimulator*] = x86_64
+
 // -- Explicitly Built Modules (Xcode 16+) --
 // DISABLED: Explicit modules conflict with -fmodules/-fcxx-modules in OTHER_CFLAGS
 // and cause "Planning Swift module" to hang with 26+ local SPM packages.
