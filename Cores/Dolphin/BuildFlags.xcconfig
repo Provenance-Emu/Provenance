@@ -27,9 +27,9 @@ OTHER_CFLAGS = $(inherited) -Wno-module-import-in-extern-c
 // (e.g. <chrono> not transitively exposing <ratio>, <mutex> needing explicit import)
 OTHER_CFLAGS = $(inherited) -include "$(SRCROOT)/PVDolphinCore/Core/DolphinCxxCompat.h"
 
-OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
-OTHER_CFLAGS = $(inherited) -mcpu=apple-a10
-OTHER_CFLAGS = $(inherited) -mtune=apple-a15
+OTHER_CFLAGS[arch=arm64] = $(inherited) -march=armv8-a+simd
+OTHER_CFLAGS[arch=arm64] = $(inherited) -mcpu=apple-a10
+OTHER_CFLAGS[arch=arm64] = $(inherited) -mtune=apple-a15
 
 // -DUSE_MEMORYWATCHER=1
 OTHER_LDFLAGS = $(inherited) -ObjC -l"c++" -l"z" -DIPHONEOS
