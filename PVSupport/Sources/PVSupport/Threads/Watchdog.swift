@@ -59,13 +59,13 @@ private final class PingThread: Thread {
     @preconcurrency
     nonisolated
     override func main() {
+        let lock = pingTaskIsRunningLock
+        let sem = semaphore
         while !isCancelled {
             pingTaskIsRunning = true
-            #warning("TODO: Implement a proper ping task")
-            DispatchQueue.main.async { [weak self] in
-//                guard let self else { return }
-//                self.pingTaskIsRunning = false
-//                self.semaphore.signal()
+            DispatchQueue.main.async {
+                lock.withLock { $0 = false }
+                sem.signal()
             }
 
             Thread.sleep(forTimeInterval: threshold)
@@ -73,7 +73,7 @@ private final class PingThread: Thread {
                 handler()
             }
 
-            _ = semaphore.wait(timeout: DispatchTime.distantFuture)
+            _ = sem.wait(timeout: DispatchTime.distantFuture)
         }
     }
 }
