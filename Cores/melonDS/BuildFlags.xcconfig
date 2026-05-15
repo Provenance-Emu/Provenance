@@ -26,6 +26,13 @@ OTHER_CPLUSPLUSFLAGS = $(inherited) -fvisibility=default -Wno-module-import-in-e
 OTHER_LDFLAGS = $(inherited) -ObjC -Wl,-all_load -all_load
 //OTHER_LDFLAGS = $(inherited) -Wl,-exported_symbols_list,$(SRCROOT)/exported_symbols.txt
 
+// Used by PVMelonDS.framework's pbxproj OTHER_LDFLAGS. Empty on simulator
+// because EXCLUDED_SOURCE_FILE_NAMES excludes all melonDS sources there —
+// the export list would otherwise require retro_* symbols that don't exist.
+PV_RETRO_EXPORTS_LDFLAG = -Wl,-exported_symbols_list,$(SRCROOT)/exported_symbols.txt
+PV_RETRO_EXPORTS_LDFLAG[sdk=iphonesimulator*] =
+PV_RETRO_EXPORTS_LDFLAG[sdk=appletvsimulator*] =
+
 GCC_PREPROCESSOR_DEFINITIONS[arch=armv7] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM=1
 GCC_PREPROCESSOR_DEFINITIONS[arch=armv72] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM=1
 GCC_PREPROCESSOR_DEFINITIONS[arch=arm64] = $(inherited) __RETRO_ARM__ ARCHITECTURE_ARM64=1

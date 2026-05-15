@@ -100,6 +100,18 @@ PVLIBRARY_PRODUCT_BUNDLE_IDENTIFIER = $(ORG_PREFIX).$(PROJECT_NAME:lower).PVLibr
 // -- General Settings --
 ENABLE_BITCODE = NO
 
+// -- Simulator excludes --
+// Frameworks/xcframeworks that lack iOS/tvOS Simulator slices, plus heavy
+// cores (3DS, GC/Wii) that cannot usefully run in simulator anyway. These
+// names are matched against the basename in every build phase (link, embed,
+// copy resources), so listing them once here drops them from the AppStore
+// target's sim builds without affecting device. Other targets that don't
+// reference these names get a no-op. Round 2 can restore individual entries
+// after rebuilding the corresponding xcframework with a simulator slice
+// (e.g. OpenAL-Soft is small enough to ship sim slices).
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = libopenal.xcframework PVDolphin.framework PVEmuThree.framework PVAzahar.framework glslang.xcframework PVlibDolphin.xcframework PVDolphin.xcframework
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*] = libopenal.xcframework PVDolphin.framework PVEmuThree.framework PVAzahar.framework glslang.xcframework PVlibDolphin.xcframework PVDolphin.xcframework
+
 // -- Explicitly Built Modules (Xcode 16+) --
 // DISABLED: Explicit modules conflict with -fmodules/-fcxx-modules in OTHER_CFLAGS
 // and cause "Planning Swift module" to hang with 26+ local SPM packages.

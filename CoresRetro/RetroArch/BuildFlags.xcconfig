@@ -134,9 +134,11 @@ OTHER_CFLAGS = $(inherited) -DWANT_RAW_DATA_SECTOR=1
 OTHER_CFLAGS = $(inherited) -DWANT_SUBCODE=1
 OTHER_CFLAGS = $(inherited) -D_7ZIP_ST
 OTHER_CFLAGS = $(inherited) -D__LIBRETRO__
-OTHER_CFLAGS = $(inherited) -march=armv8-a+simd
-OTHER_CFLAGS = $(inherited) -mcpu=apple-a10
-OTHER_CFLAGS = $(inherited) -mtune=apple-a15
+// ARM-only optimisation flags — rejected by clang on x86_64 (Intel Mac sim).
+// Gate to arm64 so x86_64 sim builds still compile.
+OTHER_CFLAGS[arch=arm64] = $(inherited) -march=armv8-a+simd
+OTHER_CFLAGS[arch=arm64] = $(inherited) -mcpu=apple-a10
+OTHER_CFLAGS[arch=arm64] = $(inherited) -mtune=apple-a15
 OTHER_CFLAGS = $(inherited) -DVULKAN_ROLLING_SCANLINE_SIMULATION
 OTHER_CFLAGS = $(inherited) -DHAVE_IOS_TOUCHMOUSE
 

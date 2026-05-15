@@ -5750,7 +5750,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
-					"-Wl,-exported_symbols_list,$(SRCROOT)/exported_symbols.txt",
+					"$(PV_RETRO_EXPORTS_LDFLAG)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.core.PVMelonDS";
 				PRODUCT_NAME = PVMelonDS;
@@ -5910,7 +5910,7 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
-					"-Wl,-exported_symbols_list,$(SRCROOT)/exported_symbols.txt",
+					"$(PV_RETRO_EXPORTS_LDFLAG)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.core.PVMelonDS";
 				PRODUCT_NAME = PVMelonDS;
