@@ -161,7 +161,7 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     { get { bridge.romMD5 } set { bridge.romMD5 = newValue } }
 
     @objc dynamic open var romSerial: String?
-    { get { bridge.romSerial } set { bridge.romMD5 = romSerial } }
+    { get { bridge.romSerial } set { bridge.romSerial = newValue } }
 
     @objc dynamic open var discCount: UInt { bridge.discCount }
 
