@@ -321,8 +321,8 @@
         "repositoryURL": "https://github.com/swiftlang/swift-cmark.git",
         "state": {
           "branch": null,
-          "revision": "5d9bdaa4228b381639fff09403e39a04926e2dbe",
-          "version": "0.7.1"
+          "revision": "924936d0427cb25a61169739a7660230bffa6ea6",
+          "version": "0.8.0"
         }
       },
       {
@@ -393,8 +393,8 @@
         "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
           "branch": null,
-          "revision": "7d9a5ce307528578dfa777d505496bd5f544ad94",
-          "version": "0.7.3"
+          "revision": "3c6f9523da3a1ec2fd829673e472d95b8097a3b8",
+          "version": "0.8.0"
         }
       },
       {
@@ -447,8 +447,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-transport-services.git",
         "state": {
           "branch": null,
-          "revision": "60c3e187154421171721c1a38e800b390680fb5d",
-          "version": "1.26.0"
+          "revision": "67787bb645a5e67d2edcdfbe48a216cc549222d5",
+          "version": "1.28.0"
         }
       },
       {

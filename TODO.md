@@ -12,7 +12,7 @@ Bundles 7 commits on `develop` from `477a7a48f2..093ac7c787`. 4 fixes + 3 diagno
 - [ ] **MAME CHD** (`8e6fb559b0`): Import a MAME CHD (`.chd`) ROM. Was: rejected at import (extension not in allow-list) or rejected at launch by the RA wrapper. Should now: import succeeds, game launches.
 - [ ] **MAME 7z** (`8e6fb559b0`): also added `.7z`. Verify a 7z-packed MAME set imports.
 - [ ] **PPSSPP renderer** (`524966ff72`): Native PPSSPP core on tvOS 26+ no longer attempts MoltenVK Vulkan and crashes / black-screens. Should auto-pick OpenGL regardless of the saved Vulkan setting. Look for log line `PPSSPP: iOS/tvOS 26+ — overriding Vulkan setting with OpenGL to avoid MoltenVK boot failure`.
-- [ ] **tvOS set-default-core hint** (`370b8e92b1`): Open the core picker on tvOS for a multi-core system. Each card should show a small `★ Hold to set default` label in the lower-left of the card body. Long-pressing the card still triggers `Set as Default for This System` from the contextMenu.
+- [X] **tvOS set-default-core hint** (`370b8e92b1`): Open the core picker on tvOS for a multi-core system. Each card should show a small `★ Hold to set default` label in the lower-left of the card body. Long-pressing the card still triggers `Set as Default for This System` from the contextMenu.
 
 ### Diagnostic-logging spikes — capture Console.app logs
 
