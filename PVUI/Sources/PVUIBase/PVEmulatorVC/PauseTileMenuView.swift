@@ -131,6 +131,7 @@ struct PauseTileMenuView: View {
 
     #if os(iOS)
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
+    @StateObject private var gamepadManager = GamepadManager.shared
     #endif
 
     private var isLandscape: Bool {
@@ -191,6 +192,43 @@ struct PauseTileMenuView: View {
             }
         }
         return nil
+    }
+
+    /// Flattened list of enabled tile IDs in display order; used for controller traversal.
+    private func enabledTileIDsInOrder() -> [String] {
+        viewModel.sections.flatMap { section in
+            section.tiles.filter { $0.isEnabled }.map { $0.id }
+        }
+    }
+
+    /// Returns the enabled tile object for an ID, if any.
+    private func tile(forID id: String) -> PauseMenuTile? {
+        for section in viewModel.sections {
+            if let tile = section.tiles.first(where: { $0.id == id && $0.isEnabled }) {
+                return tile
+            }
+        }
+        return nil
+    }
+
+    /// Moves the focused tile by `offset` positions through the enabled list (clamped).
+    private func moveFocus(by offset: Int) {
+        let ids = enabledTileIDsInOrder()
+        guard !ids.isEmpty else { return }
+        let currentIndex = focusedTileID.flatMap { ids.firstIndex(of: $0) } ?? -1
+        let nextIndex: Int
+        if currentIndex < 0 {
+            nextIndex = offset > 0 ? 0 : ids.count - 1
+        } else {
+            nextIndex = max(0, min(ids.count - 1, currentIndex + offset))
+        }
+        focusedTileID = ids[nextIndex]
+    }
+
+    /// Activates the currently focused tile via the standard tile handler.
+    private func activateFocusedTile() {
+        guard let id = focusedTileID, let tile = tile(forID: id) else { return }
+        handle(tile)
     }
 
     /// Reattaches focus to a valid tile when tvOS focus is lost after lifecycle transitions.
@@ -1611,10 +1649,38 @@ struct PauseTileMenuView: View {
             refreshControllerProfileState()
             initializeHardwareSwitchStatesIfNeeded()
             rebuildSections()
+            if focusedTileID == nil, let first = firstEnabledTileID() {
+                focusedTileID = first
+            }
         }
         .onChange(of: focusedTileID) { newID in
             withAnimation(.easeInOut(duration: 0.2)) {
                 infoText = viewModel.description(forTileID: newID)
+            }
+        }
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard gamepadManager.isControllerConnected else { return }
+            switch event {
+            case .horizontalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveFocus(by: value < 0 ? -1 : 1)
+            case .verticalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveFocus(by: value > 0 ? -1 : 1)
+            case .buttonPress(let isPressed):
+                guard isPressed else { return }
+                activateFocusedTile()
+            case .buttonB(let isPressed):
+                guard isPressed else { return }
+                handleBackCommand()
+            case .menuToggle(let isPressed):
+                guard isPressed else { return }
+                handleBackCommand()
+            case .start(let isPressed):
+                guard isPressed else { return }
+                handleBackCommand()
+            default:
+                break
             }
         }
         #elseif os(tvOS)
