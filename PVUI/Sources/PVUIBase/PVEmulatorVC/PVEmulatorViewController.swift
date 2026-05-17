@@ -866,11 +866,30 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         ILOG("Loading ROM: \(romURL.path)")
 
-        if let core = core as? any ObjCBridgedCore, let bridge = core.bridge as? EmulatorCoreIOInterface {
-            try bridge.loadFile(atPath: romURL.path)
-        } else {
-            try core.loadFile(atPath: romURL.path)
-        }
+        // ROM disk read (often 10–100 MB; N64/PSP/DS/Saturn payloads even larger)
+        // was happening on the main thread because createEmulator() inherits
+        // @MainActor isolation from PVEmulatorViewController. Sentry's mobile
+        // perf detector surfaced it as PROVENANCE-14W "File IO on Main Thread"
+        // (~60 slow frames, 2 frozen frames per launch on thermally throttled
+        // devices). Push the synchronous bridge/core load to a userInitiated
+        // detached task so the UI thread stays responsive while the file is
+        // read in.
+        let resolvedPath = romURL.path
+        nonisolated(unsafe) let coreRef = core
+        nonisolated(unsafe) let bridgeRef: EmulatorCoreIOInterface? = {
+            if let coreObj = core as? any ObjCBridgedCore,
+               let b = coreObj.bridge as? EmulatorCoreIOInterface {
+                return b
+            }
+            return nil
+        }()
+        try await Task.detached(priority: .userInitiated) {
+            if let bridgeRef {
+                try bridgeRef.loadFile(atPath: resolvedPath)
+            } else {
+                try coreRef.loadFile(atPath: resolvedPath)
+            }
+        }.value
 
         // Route game view to an external display when one is already connected at launch,
         // the user has chosen dedicated mode, and the core reports supportsExternalDisplay == true.
