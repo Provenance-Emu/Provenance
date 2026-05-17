@@ -302,17 +302,28 @@ struct TVMediaMainView: View {
                     guard gamepadManager.isControllerConnected else { return }
                     switch event {
                     case .menuToggle(let isPressed):
-                        if isPressed {
-                            focusCoordinator.toggleSidebar()
-                        }
+                        if isPressed { focusCoordinator.toggleSidebar() }
                     case .start(let isPressed):
-                        if isPressed {
-                            focusCoordinator.toggleSidebar()
-                        }
+                        if isPressed { focusCoordinator.toggleSidebar() }
                     case .buttonB(let isPressed):
-                        if isPressed, focusCoordinator.isSidebarExpanded {
-                            focusCoordinator.closeSidebar()
+                        guard isPressed else { break }
+                        if isRenamePresented {
+                            gameActions.clearRename()
+                            return
                         }
+                        if focusCoordinator.isAlertPresented || focusCoordinator.isModalPresented {
+                            return
+                        }
+                        if focusCoordinator.isSidebarExpanded {
+                            focusCoordinator.closeSidebar()
+                            return
+                        }
+                        if router.handleBack() { return }
+                        if router.destination == .settings, settingsCanPop {
+                            NotificationCenter.default.post(name: .tvOSSettingsRequestPop, object: nil)
+                            return
+                        }
+                        focusCoordinator.openSidebar()
                     default:
                         break
                     }
@@ -521,7 +532,11 @@ struct TVMediaMainView: View {
             .tvMediaFocusScope(sidebarNamespace)
             .tvMediaPrefersDefaultFocus(focusCoordinator.isSidebarExpanded, in: sidebarNamespace)
             .allowsHitTesting(!focusCoordinator.isAlertPresented && !isRenamePresented)
+            #if os(tvOS)
             .disabled(!focusCoordinator.isSidebarExpanded || isRenamePresented || focusCoordinator.isAlertPresented)
+            #else
+            .disabled(isRenamePresented || focusCoordinator.isAlertPresented)
+            #endif
         }
     }
 
