@@ -28,6 +28,9 @@ import Network
 #if canImport(UIKit)
 import UIKit
 #endif
+#if canImport(CoreImage)
+import CoreImage
+#endif
 import Hummingbird
 import PVLogging
 import PVPrimitives
@@ -50,8 +53,14 @@ public final class PVModernWebServer: @unchecked Sendable {
     public let httpPort: Int
     /// WebDAV port (81 on-device, 8081 in simulator / Catalyst).
     public let webDAVPort: Int
-    /// Directory exposed to the web uploader. Defaults to Documents/Imports.
+    /// Default destination for `POST /upload` when no `path` query parameter
+    /// is supplied. Defaults to `<browseRoot>/Imports`.
     public let uploadDirectory: URL
+    /// Root folder that the HTTP browser is allowed to navigate. All `path`
+    /// query parameters are resolved relative to this URL. Defaults to the
+    /// Documents directory on iOS / macOS and Caches on tvOS (where Documents
+    /// is unwritable). Matches GCDWebUploader's behaviour.
+    public let browseRoot: URL
 
     // MARK: State
 
@@ -59,13 +68,26 @@ public final class PVModernWebServer: @unchecked Sendable {
     private var webDAVServerTask: Task<Void, Error>?
     private var netService: NetService?
     private var cachedIPAddress: String?
+    /// Stamped on init so `/stats` can report process uptime to the dashboard.
+    private let serverStartTime: Date = Date()
+    /// Subscriber hub for the `GET /events` Server-Sent-Events stream.
+    /// Mutating route handlers `sseBroadcast(...)` after every successful op
+    /// so connected browsers refresh in real time without polling.
+    private let sseHub = SSEHub()
 
     private var _isHTTPRunning: Bool = false
     private var _isWebDAVRunning: Bool = false
 
     // MARK: Init
 
-    public init(uploadDirectory: URL? = nil, httpPort: Int? = nil, webDAVPort: Int? = nil) {
+    public init(uploadDirectory: URL? = nil,
+                browseRoot: URL? = nil,
+                httpPort: Int? = nil,
+                webDAVPort: Int? = nil) {
+        // Match the legacy GCDWebServer defaults: pretty 80/81 on real
+        // hardware (iOS/tvOS device) so the URL is just `http://<ip>/`,
+        // and 8080/8081 on Simulator + macOS Catalyst where binding
+        // privileged-style low ports causes friction with the host OS.
         let isSimulatorOrCatalyst: Bool = {
 #if targetEnvironment(simulator) || targetEnvironment(macCatalyst)
             return true
@@ -74,20 +96,22 @@ public final class PVModernWebServer: @unchecked Sendable {
 #endif
         }()
 
-        self.httpPort    = httpPort    ?? (isSimulatorOrCatalyst ? 8080 : 80)
-        self.webDAVPort  = webDAVPort  ?? (isSimulatorOrCatalyst ? 8081 : 81)
+        self.httpPort   = httpPort   ?? (isSimulatorOrCatalyst ? 8080 : 80)
+        self.webDAVPort = webDAVPort ?? (isSimulatorOrCatalyst ? 8081 : 81)
 
-        if let dir = uploadDirectory {
-            self.uploadDirectory = dir
-        } else {
-            let docs: URL
+        let resolvedBrowseRoot: URL = {
+            if let browseRoot { return browseRoot }
+            let dir: FileManager.SearchPathDirectory
 #if os(tvOS)
-            docs = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+            dir = .cachesDirectory
 #else
-            docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            dir = .documentDirectory
 #endif
-            self.uploadDirectory = docs.appendingPathComponent("Imports")
-        }
+            return FileManager.default.urls(for: dir, in: .userDomainMask)[0]
+        }()
+        self.browseRoot = resolvedBrowseRoot
+
+        self.uploadDirectory = uploadDirectory ?? resolvedBrowseRoot.appendingPathComponent("Imports")
 
         // Ensure upload directory exists
         try? FileManager.default.createDirectory(at: self.uploadDirectory,
@@ -180,33 +204,26 @@ private extension PVModernWebServer {
 #endif
 
     func startHTTPServer() async throws -> Bool {
-        let dir = self.uploadDirectory
-        let port = self.httpPort
-
-        let router = buildHTTPRouter(uploadDirectory: dir)
-        let app = Application(
-            router: router,
-            configuration: .init(address: .hostname("0.0.0.0", port: port))
+        return try await spawnAndConfirmBind(
+            label: "HTTP",
+            port: self.httpPort,
+            router: buildHTTPRouter(),
+            taskAssign: { [weak self] task in self?.httpServerTask = task },
+            runningFlag: { [weak self] running in self?._isHTTPRunning = running }
         )
-
-        // NOTE (Phase 1 limitation): `_isHTTPRunning` is set optimistically before
-        // the NIO event loop confirms the bind. If `app.run()` throws (e.g. port in
-        // use), the flag is never reset to false. Phase 2 should introduce a startup
-        // channel/continuation to observe the actual bind result before advertising.
-        httpServerTask = Task {
-            try await app.run()
-        }
-
-        _isHTTPRunning = true
-        return true
     }
 
-    func buildHTTPRouter(uploadDirectory: URL) -> Router<BasicRequestContext> {
+    func buildHTTPRouter() -> Router<BasicRequestContext> {
         let router = Router()
+        let browse = self.browseRoot
+        let defaultUploadSubpath = self.uploadDirectory
+            .path
+            .replacingOccurrences(of: browse.path, with: "")
+            .trimmingCharacters(in: CharacterSet(charactersIn: "/"))
 
         // GET / — serve built-in file-manager HTML
-        router.get("/") { request, context -> Response in
-            let html = PVModernWebServer.fileManagerHTML(uploadDirectory: uploadDirectory)
+        router.get("/") { _, _ -> Response in
+            let html = PVModernWebServer.fileManagerHTML(defaultUploadPath: defaultUploadSubpath)
             return Response(
                 status: .ok,
                 headers: [.contentType: "text/html; charset=utf-8"],
@@ -214,18 +231,45 @@ private extension PVModernWebServer {
             )
         }
 
-        // GET /files — JSON directory listing
-        router.get("/files") { request, context -> Response in
-            let listing = (try? FileManager.default.contentsOfDirectory(
-                at: uploadDirectory, includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey]
-            )) ?? []
-            let items = listing.map { url -> [String: Any] in
-                let attrs  = (try? url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey]))
-                let size   = attrs?.fileSize ?? 0
-                let mtime  = attrs?.contentModificationDate.map { ISO8601DateFormatter().string(from: $0) } ?? ""
-                return ["name": url.lastPathComponent, "size": size, "modified": mtime]
+        // GET /files?path=Foo/Bar — JSON listing of a subdirectory
+        // Returns: { "path": "Foo/Bar", "items": [{ name, size, modified, isDirectory }] }
+        router.get("/files") { [weak self] request, _ -> Response in
+            let rawPath = Self.queryParameter("path", from: request) ?? ""
+            guard let self,
+                  let target = self.resolvedPath(rawPath, withinDirectory: browse) else {
+                return Self.jsonError(status: .forbidden, message: "Path escapes root")
             }
-            let data = (try? JSONSerialization.data(withJSONObject: items)) ?? Data()
+            var isDir: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: target.path, isDirectory: &isDir), isDir.boolValue else {
+                return Self.jsonError(status: .notFound, message: "Not a directory")
+            }
+            let listing = (try? FileManager.default.contentsOfDirectory(
+                at: target,
+                includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey, .isDirectoryKey]
+            )) ?? []
+            let items = listing
+                .filter { !$0.lastPathComponent.hasPrefix(".") }
+                .map { url -> [String: Any] in
+                    let attrs = try? url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey, .isDirectoryKey])
+                    let isDirectory = attrs?.isDirectory ?? false
+                    return [
+                        "name": url.lastPathComponent,
+                        "size": isDirectory ? 0 : (attrs?.fileSize ?? 0),
+                        "modified": attrs?.contentModificationDate.map { ISO8601DateFormatter().string(from: $0) } ?? "",
+                        "isDirectory": isDirectory
+                    ]
+                }
+                .sorted { lhs, rhs in
+                    // Directories first, then alphabetical (case-insensitive).
+                    let lhsDir = (lhs["isDirectory"] as? Bool) ?? false
+                    let rhsDir = (rhs["isDirectory"] as? Bool) ?? false
+                    if lhsDir != rhsDir { return lhsDir && !rhsDir }
+                    let lhsName = (lhs["name"] as? String) ?? ""
+                    let rhsName = (rhs["name"] as? String) ?? ""
+                    return lhsName.localizedCaseInsensitiveCompare(rhsName) == .orderedAscending
+                }
+            let payload: [String: Any] = ["path": rawPath, "items": items]
+            let data = (try? JSONSerialization.data(withJSONObject: payload)) ?? Data()
             return Response(
                 status: .ok,
                 headers: [.contentType: "application/json"],
@@ -233,32 +277,435 @@ private extension PVModernWebServer {
             )
         }
 
-        // POST /upload — multipart file upload
+        // POST /upload?path=Foo/Bar — multipart upload routed to <browseRoot>/<path>
         router.post("/upload") { [weak self] request, context -> Response in
             guard let self else {
                 return Response(status: .internalServerError)
             }
-            return try await self.handleUpload(request: request, context: context, uploadDirectory: uploadDirectory)
+            let rawPath = Self.queryParameter("path", from: request) ?? defaultUploadSubpath
+            guard let dest = self.resolvedPath(rawPath, withinDirectory: browse) else {
+                return Self.jsonError(status: .forbidden, message: "Upload path escapes root")
+            }
+            try? FileManager.default.createDirectory(at: dest, withIntermediateDirectories: true)
+            return try await self.handleUpload(request: request, context: context, uploadDirectory: dest)
         }
 
-        // DELETE /files/:name — delete a file
-        router.delete("/files/:name") { [weak self] request, context -> Response in
-            guard let name = context.parameters.get("name") else {
-                return Response(status: .badRequest)
-            }
+        // GET /download?path=Foo/Bar/file.bin — file download
+        // FIXME (Phase 2): buffers entire file; replace with streaming response.
+        router.get("/download") { [weak self] request, _ -> Response in
+            let rawPath = Self.queryParameter("path", from: request) ?? ""
             guard let self,
-                  let target = self.resolvedPath(name, withinDirectory: uploadDirectory) else {
-                return Response(status: .badRequest)
+                  !rawPath.isEmpty,
+                  let target = self.resolvedPath(rawPath, withinDirectory: browse),
+                  let data = try? Data(contentsOf: target) else {
+                return Response(status: .notFound)
+            }
+            let filename = target.lastPathComponent
+            let dispositionField: HTTPField.Name? = HTTPField.Name("Content-Disposition")
+            var headers: HTTPFields = [.contentType: "application/octet-stream"]
+            if let dispositionField {
+                headers[dispositionField] = "attachment; filename=\"\(filename.replacingOccurrences(of: "\"", with: ""))\""
+            }
+            return Response(
+                status: .ok,
+                headers: headers,
+                body: .init(byteBuffer: ByteBuffer(bytes: data))
+            )
+        }
+
+        // POST /folders — body { "path": "<parent>", "name": "<newdir>" }
+        router.post("/folders") { [weak self] request, _ -> Response in
+            guard let self else { return Response(status: .internalServerError) }
+            let body = try await request.body.collect(upTo: 64 * 1024)
+            let data = body.withUnsafeReadableBytes { ptr in Data(ptr) }
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let name = (json["name"] as? String)?.trimmingCharacters(in: .whitespaces),
+                  !name.isEmpty,
+                  !name.contains("/"),
+                  !name.hasPrefix(".") else {
+                return Self.jsonError(status: .badRequest, message: "Invalid folder name")
+            }
+            let parentRaw = (json["path"] as? String) ?? ""
+            guard let parent = self.resolvedPath(parentRaw, withinDirectory: browse),
+                  let target = self.resolvedPath((parentRaw as NSString).appendingPathComponent(name), withinDirectory: browse) else {
+                return Self.jsonError(status: .forbidden, message: "Path escapes root")
+            }
+            var isDir: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: parent.path, isDirectory: &isDir), isDir.boolValue else {
+                return Self.jsonError(status: .notFound, message: "Parent not found")
+            }
+            do {
+                try FileManager.default.createDirectory(at: target, withIntermediateDirectories: false)
+                self.sseBroadcast(type: "folder", path: target.path)
+                return Response(status: .created)
+            } catch {
+                return Self.jsonError(status: .conflict, message: "Already exists or unwritable")
+            }
+        }
+
+        // PATCH /files — body { "from": "<path>", "to": "<path>" }  rename / move
+        guard let patchMethod = HTTPRequest.Method("PATCH") else {
+            preconditionFailure("PATCH must be a valid HTTP method token")
+        }
+        router.on("/files", method: patchMethod) { [weak self] request, _ -> Response in
+            guard let self else { return Response(status: .internalServerError) }
+            let body = try await request.body.collect(upTo: 64 * 1024)
+            let data = body.withUnsafeReadableBytes { ptr in Data(ptr) }
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let from = json["from"] as? String, !from.isEmpty,
+                  let to   = json["to"]   as? String, !to.isEmpty,
+                  let src  = self.resolvedPath(from, withinDirectory: browse),
+                  let dst  = self.resolvedPath(to,   withinDirectory: browse) else {
+                return Self.jsonError(status: .badRequest, message: "Invalid move payload")
+            }
+            try? FileManager.default.createDirectory(at: dst.deletingLastPathComponent(),
+                                                     withIntermediateDirectories: true)
+            do {
+                try FileManager.default.moveItem(at: src, to: dst)
+                NotificationCenter.default.post(
+                    name: .pvWebServerFileMoved,
+                    object: self,
+                    userInfo: ["fromPath": src.path, "toPath": dst.path]
+                )
+                self.sseBroadcast(
+                    type: "rename",
+                    path: dst.path,
+                    extra: ["from": self.relativeBrowsePath(for: src.path)]
+                )
+                return Response(status: .noContent)
+            } catch {
+                return Self.jsonError(status: .conflict, message: "Move failed")
+            }
+        }
+
+        // DELETE /files?path=Foo/Bar — delete a file or directory (recursive)
+        router.delete("/files") { [weak self] request, _ -> Response in
+            let rawPath = Self.queryParameter("path", from: request) ?? ""
+            guard let self,
+                  !rawPath.isEmpty,
+                  let target = self.resolvedPath(rawPath, withinDirectory: browse),
+                  target.standardized.path != browse.standardized.path else {
+                return Self.jsonError(status: .forbidden, message: "Refusing to delete root")
             }
             do {
                 try FileManager.default.removeItem(at: target)
+                NotificationCenter.default.post(
+                    name: .pvWebServerFileDeleted,
+                    object: self,
+                    userInfo: ["filePath": target.path]
+                )
+                self.sseBroadcast(type: "delete", path: target.path)
                 return Response(status: .noContent)
             } catch {
-                return Response(status: .internalServerError)
+                return Self.jsonError(status: .notFound, message: "Delete failed")
             }
         }
 
+        // POST /files/batch-delete — body { "paths": ["Imports/a.zip", ...] }
+        // Deletes each path with the same safety rules as single delete.
+        // Response: { "deleted": N, "failed": [{ path, error }] }
+        router.post("/files/batch-delete") { [weak self] request, _ -> Response in
+            guard let self else { return Response(status: .internalServerError) }
+            let body = try await request.body.collect(upTo: 128 * 1024)
+            let data = body.withUnsafeReadableBytes { ptr in Data(ptr) }
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let paths = json["paths"] as? [String], !paths.isEmpty else {
+                return Self.jsonError(status: .badRequest, message: "Missing paths array")
+            }
+            var deleted = 0
+            var failed: [[String: String]] = []
+            for raw in paths {
+                guard !raw.isEmpty,
+                      let target = self.resolvedPath(raw, withinDirectory: browse),
+                      target.standardized.path != browse.standardized.path else {
+                    failed.append(["path": raw, "error": "forbidden"])
+                    continue
+                }
+                do {
+                    try FileManager.default.removeItem(at: target)
+                    deleted += 1
+                    NotificationCenter.default.post(
+                        name: .pvWebServerFileDeleted,
+                        object: self,
+                        userInfo: ["filePath": target.path]
+                    )
+                    self.sseBroadcast(type: "delete", path: target.path)
+                } catch {
+                    failed.append(["path": raw, "error": error.localizedDescription])
+                }
+            }
+            let payload: [String: Any] = ["deleted": deleted, "failed": failed]
+            let respData = (try? JSONSerialization.data(withJSONObject: payload)) ?? Data()
+            return Response(
+                status: .ok,
+                headers: [.contentType: "application/json"],
+                body: .init(byteBuffer: ByteBuffer(bytes: respData))
+            )
+        }
+
+        // GET /stats — JSON dashboard payload for the file-manager UI.
+        router.get("/stats") { [weak self] _, _ -> Response in
+            guard let self else { return Response(status: .internalServerError) }
+            let payload = self.computeDashboardStats(browseRoot: browse)
+            let data = (try? JSONSerialization.data(withJSONObject: payload)) ?? Data()
+            return Response(
+                status: .ok,
+                headers: [.contentType: "application/json"],
+                body: .init(byteBuffer: ByteBuffer(bytes: data))
+            )
+        }
+
+        // GET /events — Server-Sent Events stream of file activity.
+        // Browsers connect via `new EventSource('/events')`; each mutating
+        // route below broadcasts a typed event after its filesystem op
+        // succeeds so every connected client refreshes in real time.
+        router.get("/events") { [weak self] _, _ -> Response in
+            guard let self else { return Response(status: .internalServerError) }
+            let hub = self.sseHub
+            let body = ResponseBody { writer in
+                let (stream, continuation) = AsyncStream<ByteBuffer>.makeStream(bufferingPolicy: .bufferingNewest(64))
+                let id = hub.subscribe(continuation)
+
+                // Initial preamble: hint reconnect delay + a hello event.
+                try await writer.write(ByteBuffer(string: "retry: 5000\n\n"))
+                try await writer.write(ByteBuffer(string:
+                    "event: hello\ndata: {\"ok\":true}\n\n"))
+
+                // Periodic keep-alive so middleboxes don't reap the connection.
+                let keepAlive = Task {
+                    while !Task.isCancelled {
+                        try? await Task.sleep(nanoseconds: 15_000_000_000)
+                        if Task.isCancelled { break }
+                        continuation.yield(ByteBuffer(string: ": ping\n\n"))
+                    }
+                }
+
+                do {
+                    for await chunk in stream {
+                        try await writer.write(chunk)
+                    }
+                } catch {
+                    // Client disconnected (writer.write threw) — fall through to cleanup.
+                }
+                keepAlive.cancel()
+                hub.unsubscribe(id)
+                try? await writer.finish(nil)
+            }
+            var headers: HTTPFields = [
+                .contentType: "text/event-stream; charset=utf-8",
+                .cacheControl: "no-cache, no-transform"
+            ]
+            if let connectionHeader = HTTPField.Name("Connection") {
+                headers[connectionHeader] = "keep-alive"
+            }
+            return Response(status: .ok, headers: headers, body: body)
+        }
+
+        // GET /qr.png?text=... — PNG QR code for the server URL.
+        // Defaults to the current serverURL so the dashboard can `<img src="/qr.png">`.
+        router.get("/qr.png") { [weak self] request, _ -> Response in
+            guard let self else { return Response(status: .internalServerError) }
+            let text = Self.queryParameter("text", from: request)
+                ?? self.serverURL?.absoluteString
+                ?? "http://provenance.local/"
+            guard let png = self.generateQRCodePNG(text: text, scale: 8) else {
+                return Self.jsonError(status: .internalServerError, message: "QR generation unavailable")
+            }
+            return Response(
+                status: .ok,
+                headers: [.contentType: "image/png"],
+                body: .init(byteBuffer: ByteBuffer(bytes: png))
+            )
+        }
+
         return router
+    }
+
+    // MARK: - SSE broadcast
+
+    /// Broadcasts a typed file event to every connected `/events` subscriber.
+    /// `type` examples: "upload", "delete", "rename", "folder". `path` is the
+    /// resolved on-disk path; the JS client compares it against its current
+    /// directory to decide whether to refresh the visible listing.
+    func sseBroadcast(type: String, path: String, extra: [String: String] = [:]) {
+        let relPath = relativeBrowsePath(for: path)
+        var payload: [String: String] = [
+            "type": type,
+            "path": relPath,
+            "name": (path as NSString).lastPathComponent
+        ]
+        for (k, v) in extra { payload[k] = v }
+        let data = (try? JSONSerialization.data(withJSONObject: payload)) ?? Data()
+        let dataString = String(data: data, encoding: .utf8) ?? "{}"
+        let frame = "event: \(type)\ndata: \(dataString)\n\n"
+        if let bytes = frame.data(using: .utf8) {
+            sseHub.broadcast(ByteBuffer(bytes: bytes))
+        }
+    }
+
+    /// Strips the browseRoot prefix from a fully-resolved disk path so the
+    /// SSE event carries the same UI-relative path the rest of the API uses.
+    func relativeBrowsePath(for fullPath: String) -> String {
+        let basePath = browseRoot.standardized.path
+        if fullPath.hasPrefix(basePath + "/") {
+            return String(fullPath.dropFirst(basePath.count + 1))
+        }
+        if fullPath == basePath { return "" }
+        return fullPath
+    }
+
+    // MARK: - Dashboard stats
+
+    /// Builds the JSON payload returned by `GET /stats`. Lives next to the
+    /// router so all the path lookups stay co-located with the routes that
+    /// expose them.
+    func computeDashboardStats(browseRoot: URL) -> [String: Any] {
+        // Quick-access subdirectories the dashboard highlights — same order
+        // as the UI's Quick Access tabs.
+        let quickAccess: [(name: String, sub: String)] = [
+            ("Imports",     "Imports"),
+            ("ROMs",        "ROMs"),
+            ("BIOS",        "BIOS"),
+            ("Save States", "Save States"),
+            ("Screenshots", "Screenshots"),
+            ("Cheats",      "Cheats")
+        ]
+        let directories = quickAccess.map { entry -> [String: Any] in
+            let url = browseRoot.appendingPathComponent(entry.sub)
+            let (count, size) = Self.recursiveFileStats(at: url)
+            return [
+                "name": entry.name,
+                "path": entry.sub,
+                "fileCount": count,
+                "sizeBytes": size
+            ]
+        }
+
+        var totalDisk: Int64 = 0
+        var freeDisk: Int64 = 0
+        if let attrs = try? FileManager.default.attributesOfFileSystem(forPath: browseRoot.path) {
+            totalDisk = (attrs[.systemSize]     as? NSNumber)?.int64Value ?? 0
+            freeDisk  = (attrs[.systemFreeSize] as? NSNumber)?.int64Value ?? 0
+        }
+        let usedDisk = max(totalDisk - freeDisk, 0)
+
+        let appVersion = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "?"
+        let buildNumber = (Bundle.main.infoDictionary?["CFBundleVersion"] as? String) ?? "?"
+        let uptime = Date().timeIntervalSince(serverStartTime)
+        let hostname = ProcessInfo.processInfo.hostName
+
+        return [
+            "appVersion":      appVersion,
+            "buildNumber":     buildNumber,
+            "hostname":        hostname,
+            "ipAddress":       currentIPAddress() ?? "",
+            "httpPort":        httpPort,
+            "webDAVPort":      webDAVPort,
+            "serverURL":       serverURL?.absoluteString ?? "",
+            "webDAVURL":       webDAVURL?.absoluteString ?? "",
+            "uptimeSeconds":   Int(uptime),
+            "totalDiskBytes":  totalDisk,
+            "freeDiskBytes":   freeDisk,
+            "usedDiskBytes":   usedDisk,
+            "directories":     directories
+        ]
+    }
+
+    /// Recursively walks `url`, returning (fileCount, totalSizeBytes).
+    /// Symlinks are NOT followed; hidden files are skipped.
+    static func recursiveFileStats(at url: URL) -> (count: Int, size: Int64) {
+        guard FileManager.default.fileExists(atPath: url.path) else { return (0, 0) }
+        var count = 0
+        var size: Int64 = 0
+        let keys: [URLResourceKey] = [.isDirectoryKey, .fileSizeKey, .isRegularFileKey]
+        guard let enumerator = FileManager.default.enumerator(
+            at: url,
+            includingPropertiesForKeys: keys,
+            options: [.skipsHiddenFiles, .skipsPackageDescendants]
+        ) else {
+            return (0, 0)
+        }
+        for case let file as URL in enumerator {
+            let attrs = try? file.resourceValues(forKeys: Set(keys))
+            if attrs?.isRegularFile == true {
+                count += 1
+                size += Int64(attrs?.fileSize ?? 0)
+            }
+        }
+        return (count, size)
+    }
+
+    // MARK: - QR code
+
+#if canImport(CoreImage) && canImport(UIKit)
+    /// CoreImage-backed QR generator. Returns PNG bytes for a 1-bit QR
+    /// scaled up by `scale` pixels per module. Returns nil if CIFilter
+    /// fails or the bitmap conversion drops the image.
+    func generateQRCodePNG(text: String, scale: CGFloat) -> Data? {
+        guard let data = text.data(using: .utf8),
+              let filter = CIFilter(name: "CIQRCodeGenerator") else {
+            return nil
+        }
+        filter.setValue(data, forKey: "inputMessage")
+        filter.setValue("M", forKey: "inputCorrectionLevel")
+        guard let raw = filter.outputImage else { return nil }
+        let transform = CGAffineTransform(scaleX: scale, y: scale)
+        let scaled = raw.transformed(by: transform)
+        let context = CIContext(options: [.useSoftwareRenderer: true])
+        guard let cg = context.createCGImage(scaled, from: scaled.extent) else { return nil }
+        let image = UIImage(cgImage: cg)
+        return image.pngData()
+    }
+#elseif canImport(CoreImage) && canImport(AppKit)
+    func generateQRCodePNG(text: String, scale: CGFloat) -> Data? {
+        guard let data = text.data(using: .utf8),
+              let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
+        filter.setValue(data, forKey: "inputMessage")
+        filter.setValue("M", forKey: "inputCorrectionLevel")
+        guard let raw = filter.outputImage else { return nil }
+        let scaled = raw.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+        let rep = NSCIImageRep(ciImage: scaled)
+        let nsImage = NSImage(size: rep.size)
+        nsImage.addRepresentation(rep)
+        guard let tiff = nsImage.tiffRepresentation,
+              let bitmap = NSBitmapImageRep(data: tiff) else { return nil }
+        return bitmap.representation(using: .png, properties: [:])
+    }
+#else
+    func generateQRCodePNG(text: String, scale: CGFloat) -> Data? { nil }
+#endif
+
+    // MARK: - Router helpers
+
+    /// Extract a single query-parameter value across Hummingbird URI shapes.
+    static func queryParameter(_ name: String, from request: Request) -> String? {
+        // Hummingbird exposes parsed query items via `request.uri.queryParameters`,
+        // but the API surface differs slightly between Hummingbird 2 minor
+        // versions. Fall back to a manual URLComponents parse so this works
+        // regardless of the SPM-pinned version.
+        if let value = request.uri.queryParameters[Substring(name)] {
+            let decoded = String(value).removingPercentEncoding ?? String(value)
+            return decoded.isEmpty ? nil : decoded
+        }
+        let uriString = String(describing: request.uri)
+        guard
+            let components = URLComponents(string: uriString.hasPrefix("http") ? uriString : "http://x" + uriString),
+            let items = components.queryItems,
+            let match = items.first(where: { $0.name == name })
+        else {
+            return nil
+        }
+        return match.value
+    }
+
+    static func jsonError(status: HTTPResponse.Status, message: String) -> Response {
+        let payload: [String: Any] = ["error": message]
+        let data = (try? JSONSerialization.data(withJSONObject: payload)) ?? Data()
+        return Response(
+            status: status,
+            headers: [.contentType: "application/json"],
+            body: .init(byteBuffer: ByteBuffer(bytes: data))
+        )
     }
 
     func handleUpload(
@@ -319,6 +766,11 @@ private extension PVModernWebServer {
                     object: self,
                     userInfo: ["fileName": dest.path, "fileSize": fileSize]
                 )
+                self.sseBroadcast(
+                    type: "upload",
+                    path: dest.path,
+                    extra: ["size": String(fileSize)]
+                )
             } catch {
                 NotificationCenter.default.post(
                     name: .pvWebServerFileUploadFailed,
@@ -363,23 +815,104 @@ private let kWebDAVFieldNameAllow: HTTPField.Name? = HTTPField.Name("Allow")
 private extension PVModernWebServer {
 
     func startWebDAVServer() async throws -> Bool {
-        let dir = self.uploadDirectory
-        let port = self.webDAVPort
+        // WebDAV exposes the full browse root so Finder etc. can navigate
+        // ROMs / BIOS / Save States subdirectories, matching the HTTP UI.
+        let dir = self.browseRoot
+        return try await spawnAndConfirmBind(
+            label: "WebDAV",
+            port: self.webDAVPort,
+            router: buildWebDAVRouter(uploadDirectory: dir),
+            taskAssign: { [weak self] task in self?.webDAVServerTask = task },
+            runningFlag: { [weak self] running in self?._isWebDAVRunning = running }
+        )
+    }
 
-        let router = buildWebDAVRouter(uploadDirectory: dir)
+    /// Boot one Hummingbird Application and only return `true` once it has
+    /// either signalled "bind succeeded" or the Task threw an early error.
+    /// Previously both startHTTPServer / startWebDAVServer set their running
+    /// flag optimistically before the NIO bind completed, so a port collision
+    /// silently presented as "server running" with a URL that nothing was
+    /// actually listening on.
+    func spawnAndConfirmBind(
+        label: String,
+        port: Int,
+        router: Router<BasicRequestContext>,
+        taskAssign: @escaping (Task<Void, Error>) -> Void,
+        runningFlag: @escaping (Bool) -> Void
+    ) async throws -> Bool {
         let app = Application(
             router: router,
             configuration: .init(address: .hostname("0.0.0.0", port: port))
         )
 
-        // Same Phase 1 limitation as startHTTPServer — bind is not confirmed
-        // before returning true. See the note there for Phase 2 follow-up.
-        webDAVServerTask = Task {
-            try await app.run()
+        // Track early failure via a shared box: the Hummingbird Task writes
+        // any thrown error into it; the probe loop reads it each tick.
+        // Swift's standard `Task` has no non-blocking "is it done?" API.
+        let earlyError = EarlyErrorBox()
+        let task = Task<Void, Error> {
+            do {
+                try await app.run()
+            } catch {
+                earlyError.set(error)
+                throw error
+            }
+        }
+        taskAssign(task)
+
+        let probeDeadline = Date().addingTimeInterval(2.0)
+        while Date() < probeDeadline {
+            if let error = earlyError.get() {
+                ELOG("[PVModernWebServer] \(label) bind failed on port \(port): \(error.localizedDescription)")
+                runningFlag(false)
+                return false
+            }
+            if probePort(port) {
+                ILOG("[PVModernWebServer] \(label) bound on 0.0.0.0:\(port)")
+                runningFlag(true)
+                return true
+            }
+            try? await Task.sleep(nanoseconds: 50_000_000)
         }
 
-        _isWebDAVRunning = true
-        return true
+        WLOG("[PVModernWebServer] \(label) bind not confirmed within 2s on port \(port); aborting.")
+        task.cancel()
+        runningFlag(false)
+        return false
+    }
+
+    /// Thread-safe box for surfacing an early Hummingbird Task error to the
+    /// `spawnAndConfirmBind` probe loop without blocking on `task.value`.
+    final class EarlyErrorBox: @unchecked Sendable {
+        private let lock = NSLock()
+        private var stored: Error?
+        func set(_ error: Error) {
+            lock.lock(); defer { lock.unlock() }
+            stored = error
+        }
+        func get() -> Error? {
+            lock.lock(); defer { lock.unlock() }
+            return stored
+        }
+    }
+
+    /// Cheap TCP-probe: returns true if a local connect to `127.0.0.1:port`
+    /// succeeds. Used to confirm Hummingbird has actually bound before the
+    /// manager reports the server as running.
+    func probePort(_ port: Int) -> Bool {
+        let fd = socket(AF_INET, SOCK_STREAM, 0)
+        guard fd >= 0 else { return false }
+        defer { close(fd) }
+        var addr = sockaddr_in()
+        addr.sin_family = sa_family_t(AF_INET)
+        addr.sin_port = in_port_t(UInt16(port).bigEndian)
+        addr.sin_addr.s_addr = inet_addr("127.0.0.1")
+        let addrLen = socklen_t(MemoryLayout<sockaddr_in>.size)
+        let result = withUnsafePointer(to: &addr) {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) { sockaddrPtr in
+                connect(fd, sockaddrPtr, addrLen)
+            }
+        }
+        return result == 0
     }
 
     func buildWebDAVRouter(uploadDirectory: URL) -> Router<BasicRequestContext> {
@@ -697,8 +1230,13 @@ private extension PVModernWebServer {
 
     // MARK: HTML UI
 
-    static func fileManagerHTML(uploadDirectory: URL) -> String {
-        """
+    static func fileManagerHTML(defaultUploadPath: String) -> String {
+        // Inject the default upload subpath as a JS constant so client-side
+        // navigation can target it before any user interaction.
+        let jsDefaultPath = defaultUploadPath
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+        return """
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -706,120 +1244,632 @@ private extension PVModernWebServer {
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <title>Provenance — Web File Manager</title>
           <style>
-            :root { color-scheme: light dark; }
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-                   max-width: 900px; margin: 0 auto; padding: 20px;
-                   background: #f2f2f7; color: #1c1c1e; }
-            @media (prefers-color-scheme: dark) {
-              body { background: #1c1c1e; color: #f2f2f7; }
-              .card { background: #2c2c2e; }
-              table { background: #2c2c2e; }
-              tr:nth-child(even) { background: #3a3a3c; }
+            :root {
+              color-scheme: dark;
+              --pv-bg: #1a1a2e;
+              --pv-surface: #16213e;
+              --pv-surface-hover: #1f2f52;
+              --pv-border: #2a3a5c;
+              --pv-text: #e0e0e0;
+              --pv-text-muted: #8899aa;
+              --pv-accent: #4a90d9;
+              --pv-accent-hover: #5ba3ec;
+              --pv-success: #27ae60;
+              --pv-danger: #c0392b;
+              --pv-warning: #f39c12;
             }
-            h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
-            .subtitle { color: #8e8e93; margin-bottom: 24px; font-size: 0.9rem; }
-            .card { background: #fff; border-radius: 12px; padding: 20px;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
-            .drop-zone { border: 2px dashed #007aff; border-radius: 10px;
-                         padding: 32px; text-align: center; cursor: pointer; transition: background 0.2s; }
-            .drop-zone.hover { background: rgba(0,122,255,0.08); }
-            .drop-zone p { margin: 8px 0; color: #8e8e93; font-size: 0.9rem; }
-            .btn { display: inline-block; padding: 10px 20px; border-radius: 8px;
-                   background: #007aff; color: #fff; border: none; cursor: pointer;
-                   font-size: 0.95rem; font-weight: 600; margin-top: 10px; }
-            .btn:hover { background: #0062cc; }
-            #progress-bar { width: 100%; height: 6px; background: #e5e5ea;
-                            border-radius: 3px; margin-top: 12px; display: none; }
-            #progress-fill { height: 100%; background: #007aff; border-radius: 3px;
-                             width: 0%; transition: width 0.2s; }
-            #status { margin-top: 8px; font-size: 0.85rem; color: #8e8e93; }
-            table { width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; }
-            th { text-align: left; padding: 10px 14px; font-size: 0.8rem; font-weight: 600;
-                 color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
-            td { padding: 10px 14px; font-size: 0.9rem; border-top: 1px solid #f2f2f7; }
-            @media (prefers-color-scheme: dark) { td { border-top-color: #3a3a3c; } }
-            .del-btn { background: none; border: none; color: #ff3b30; cursor: pointer;
-                       font-size: 0.85rem; padding: 4px 8px; border-radius: 6px; }
-            .del-btn:hover { background: rgba(255,59,48,0.1); }
-            .empty { color: #8e8e93; text-align: center; padding: 24px; font-size: 0.9rem; }
+            * { box-sizing: border-box; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+                   max-width: 1100px; margin: 0 auto; padding: 20px;
+                   background: var(--pv-bg); color: var(--pv-text);
+                   -webkit-font-smoothing: antialiased; }
+            header { display: flex; align-items: center; gap: 16px; padding: 8px 0 16px;
+                     border-bottom: 2px solid var(--pv-accent); margin-bottom: 20px; }
+            header .logo { font-size: 32px; line-height: 1; }
+            header h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+            header .sub { margin: 2px 0 0; color: var(--pv-text-muted); font-size: 13px; }
+
+            .card { background: var(--pv-surface); border: 1px solid var(--pv-border);
+                    border-radius: 10px; padding: 16px; margin-bottom: 16px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+            .card h2 { margin: 0 0 12px; font-size: 13px; font-weight: 600;
+                       color: var(--pv-text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+            .drop-zone { border: 2px dashed var(--pv-border); border-radius: 10px;
+                         padding: 28px 20px; text-align: center; transition: all 0.2s;
+                         background-color: rgba(74, 144, 217, 0.03); cursor: pointer; }
+            .drop-zone.hover { border-color: var(--pv-accent);
+                               background-color: rgba(74, 144, 217, 0.12);
+                               box-shadow: 0 0 18px rgba(74, 144, 217, 0.18); }
+            .drop-zone p { margin: 6px 0; color: var(--pv-text-muted); font-size: 13px; }
+            .drop-zone .lead { color: var(--pv-text); font-weight: 600; font-size: 15px; }
+            .btn { display: inline-block; padding: 8px 16px; border-radius: 6px;
+                   font-size: 14px; font-weight: 500; cursor: pointer;
+                   border: 1px solid transparent; transition: all 0.15s; }
+            .btn-primary { background: var(--pv-accent); color: #fff; border-color: var(--pv-accent); }
+            .btn-primary:hover { background: var(--pv-accent-hover); border-color: var(--pv-accent-hover); }
+            .btn-success { background: var(--pv-success); color: #fff; border-color: var(--pv-success); }
+            .btn-success:hover { filter: brightness(1.1); }
+            .btn-default { background: var(--pv-surface); color: var(--pv-text); border-color: var(--pv-border); }
+            .btn-default:hover { background: var(--pv-surface-hover); border-color: var(--pv-accent); color: #fff; }
+            .btn-sm { padding: 4px 10px; font-size: 13px; }
+            .btn-icon { padding: 4px 8px; background: none; border: none; color: var(--pv-text-muted);
+                        cursor: pointer; border-radius: 4px; font-size: 14px; }
+            .btn-icon:hover { background: rgba(255,255,255,0.06); color: #fff; }
+            .btn-icon.danger:hover { background: rgba(192,57,43,0.18); color: #e74c3c; }
+
+            .toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+            #progress-bar { width: 100%; height: 6px; background: var(--pv-bg); border-radius: 3px;
+                            margin-top: 12px; display: none; overflow: hidden; }
+            #progress-fill { height: 100%; background: var(--pv-accent); width: 0%; transition: width 0.2s; }
+            #status { margin-top: 8px; font-size: 13px; color: var(--pv-text-muted); }
+
+            .quick-nav { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+                         margin-bottom: 12px; }
+            .quick-nav-label { font-size: 13px; color: var(--pv-text-muted); font-weight: 500; }
+            .quick-nav .btn { background: var(--pv-surface); color: var(--pv-text);
+                              border: 1px solid var(--pv-border); padding: 4px 12px; font-size: 13px; }
+            .quick-nav .btn:hover { background: var(--pv-surface-hover); border-color: var(--pv-accent); color: #fff; }
+            .quick-nav .btn.active { background: var(--pv-accent); border-color: var(--pv-accent); color: #fff; }
+
+            .breadcrumb { display: flex; flex-wrap: wrap; gap: 4px; align-items: center;
+                          font-size: 13px; color: var(--pv-text-muted); margin-bottom: 10px; }
+            .breadcrumb a { color: var(--pv-accent); cursor: pointer; text-decoration: none; }
+            .breadcrumb a:hover { text-decoration: underline; color: var(--pv-accent-hover); }
+            .breadcrumb .sep { color: var(--pv-text-muted); }
+
+            table { width: 100%; border-collapse: collapse; }
+            thead th { text-align: left; padding: 8px 10px; font-size: 12px; font-weight: 600;
+                       color: var(--pv-text-muted); text-transform: uppercase; letter-spacing: 0.5px;
+                       border-bottom: 1px solid var(--pv-border); }
+            tbody tr { border-bottom: 1px solid var(--pv-border); transition: background 0.15s; }
+            tbody tr:hover { background: rgba(74,144,217,0.08); }
+            tbody td { padding: 10px; font-size: 14px; vertical-align: middle; color: var(--pv-text); }
+            .col-name { width: auto; }
+            .col-name .clickable { color: var(--pv-text); cursor: pointer; }
+            .col-name .clickable:hover { color: #fff; text-decoration: underline; }
+            .col-name .dir-icon { color: var(--pv-warning); margin-right: 6px; }
+            .col-name .file-icon { color: var(--pv-text-muted); margin-right: 6px; }
+            .col-size { width: 110px; text-align: right; color: var(--pv-text-muted);
+                        font-variant-numeric: tabular-nums; font-size: 13px; }
+            .col-mod { width: 200px; color: var(--pv-text-muted); font-size: 13px; }
+            .col-actions { width: 130px; text-align: right; white-space: nowrap; }
+            .empty { color: var(--pv-text-muted); text-align: center; padding: 32px 16px; font-size: 14px; }
+
+            .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+                              display: none; align-items: center; justify-content: center;
+                              z-index: 1000; }
+            .modal-backdrop.active { display: flex; }
+            .modal { background: var(--pv-surface); border: 1px solid var(--pv-border);
+                     border-radius: 10px; padding: 20px; min-width: 320px;
+                     box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+            .modal h3 { margin: 0 0 12px; font-size: 16px; }
+            .modal input { width: 100%; padding: 8px 12px; background: var(--pv-bg);
+                           border: 1px solid var(--pv-border); border-radius: 6px;
+                           color: var(--pv-text); font-size: 14px; }
+            .modal input:focus { border-color: var(--pv-accent); outline: none;
+                                 box-shadow: 0 0 0 2px rgba(74,144,217,0.25); }
+            .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+            /* ---------- Dashboard ---------- */
+            .dashboard { display: grid; grid-template-columns: 1fr 168px; gap: 20px; align-items: stretch; }
+            .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+            .stat { background: var(--pv-bg); border: 1px solid var(--pv-border); border-radius: 8px;
+                    padding: 12px; }
+            .stat .label { font-size: 11px; color: var(--pv-text-muted); text-transform: uppercase;
+                           letter-spacing: 0.5px; margin-bottom: 4px; }
+            .stat .value { font-size: 20px; font-weight: 700; color: #ffffff; font-variant-numeric: tabular-nums; }
+            .stat .sub { font-size: 12px; color: var(--pv-text-muted); margin-top: 2px; }
+            .disk-bar { margin-top: 10px; height: 6px; background: var(--pv-bg);
+                        border: 1px solid var(--pv-border); border-radius: 3px; overflow: hidden; }
+            .disk-fill { height: 100%; background: linear-gradient(90deg, var(--pv-accent), var(--pv-success));
+                         transition: width 0.4s ease; }
+            .qr-block { display: flex; flex-direction: column; align-items: center; gap: 6px;
+                        padding: 8px; background: #ffffff; border-radius: 8px; }
+            .qr-block img { width: 152px; height: 152px; display: block; image-rendering: pixelated; }
+            .qr-block .caption { color: #111; font-size: 11px; font-weight: 600; }
+            .server-url-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+                              margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--pv-border);
+                              font-size: 13px; }
+            .server-url-row code { background: var(--pv-bg); border: 1px solid var(--pv-border);
+                                   padding: 4px 8px; border-radius: 4px; color: var(--pv-accent); }
+            .copy-btn { padding: 4px 10px; font-size: 12px; }
+
+            /* ---------- Search + select toolbar ---------- */
+            .list-toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+                            margin-bottom: 10px; }
+            .search-input { flex: 1 1 220px; min-width: 160px; padding: 6px 10px;
+                            background: var(--pv-bg); border: 1px solid var(--pv-border);
+                            border-radius: 6px; color: var(--pv-text); font-size: 13px; }
+            .search-input:focus { border-color: var(--pv-accent); outline: none;
+                                  box-shadow: 0 0 0 2px rgba(74,144,217,0.25); }
+            .selection-pill { display: none; padding: 4px 10px; border-radius: 12px;
+                              background: rgba(74,144,217,0.18); color: var(--pv-accent);
+                              font-size: 12px; font-weight: 600; }
+            .selection-pill.active { display: inline-block; }
+
+            .col-check { width: 32px; text-align: center; }
+            .col-check input[type="checkbox"] { accent-color: var(--pv-accent); cursor: pointer;
+                                                 width: 14px; height: 14px; }
+
+            /* ---------- Toast notifications ---------- */
+            #toast-stack { position: fixed; top: 20px; right: 20px; z-index: 2000;
+                           display: flex; flex-direction: column; gap: 8px; max-width: 320px; }
+            .toast { background: var(--pv-surface); border: 1px solid var(--pv-border);
+                     border-radius: 8px; padding: 10px 14px; font-size: 13px;
+                     box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+                     animation: toastIn 0.18s ease-out; }
+            .toast.success { border-color: var(--pv-success); color: #ffffff; }
+            .toast.error   { border-color: var(--pv-danger);  color: #ffffff; }
+            .toast.info    { border-color: var(--pv-accent);  color: var(--pv-text); }
+            @keyframes toastIn { from { transform: translateY(-8px); opacity: 0; }
+                                 to   { transform: translateY(0);    opacity: 1; } }
+            .toast.leaving { animation: toastOut 0.18s ease-in forwards; }
+            @keyframes toastOut { to { transform: translateY(-8px); opacity: 0; } }
+
+            @media (max-width: 700px) {
+              .dashboard { grid-template-columns: 1fr; }
+              .qr-block  { align-self: center; }
+            }
+            @media (max-width: 600px) {
+              .col-mod { display: none; }
+              .col-size { width: 80px; }
+              .col-actions { width: 96px; }
+              .col-check { width: 28px; }
+            }
           </style>
         </head>
         <body>
-          <h1>🎮 Provenance</h1>
-          <p class="subtitle">Web File Manager — upload ROMs and BIOS files directly from your browser</p>
+          <div id="toast-stack" aria-live="polite"></div>
 
-          <div class="card">
-            <h2 style="margin-top:0;font-size:1.1rem">Upload Files</h2>
-            <div class="drop-zone" id="drop-zone">
-              <svg width="40" height="40" fill="#007aff" viewBox="0 0 24 24">
-                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-              </svg>
-              <p>Drag &amp; drop ROM files here</p>
-              <p>or</p>
-              <button class="btn" onclick="document.getElementById('file-input').click()">Choose Files</button>
-              <input type="file" id="file-input" multiple style="display:none">
+          <header>
+            <div class="logo">🎮</div>
+            <div>
+              <h1>Provenance Web Uploader</h1>
+              <p class="sub">Drag &amp; drop ROMs, BIOS, and save files from any device on your network.</p>
             </div>
-            <div id="progress-bar"><div id="progress-fill"></div></div>
-            <div id="status"></div>
+          </header>
+
+          <!-- Dashboard: disk stats, uptime, server URL, QR code -->
+          <div class="card">
+            <h2>Dashboard</h2>
+            <div class="dashboard">
+              <div>
+                <div class="stats-grid">
+                  <div class="stat">
+                    <div class="label">Disk Used</div>
+                    <div class="value" id="stat-disk-used">—</div>
+                    <div class="sub" id="stat-disk-sub">of — total</div>
+                    <div class="disk-bar"><div class="disk-fill" id="stat-disk-fill" style="width:0%"></div></div>
+                  </div>
+                  <div class="stat">
+                    <div class="label">Library Size</div>
+                    <div class="value" id="stat-library-size">—</div>
+                    <div class="sub" id="stat-library-count">— files across categories</div>
+                  </div>
+                  <div class="stat">
+                    <div class="label">Server Uptime</div>
+                    <div class="value" id="stat-uptime">—</div>
+                    <div class="sub" id="stat-version">Provenance —</div>
+                  </div>
+                </div>
+                <div class="server-url-row">
+                  <span class="quick-nav-label">Connect via:</span>
+                  <code id="server-url">—</code>
+                  <button class="btn btn-default copy-btn" id="copy-url-btn">📋 Copy</button>
+                  <span class="quick-nav-label">WebDAV:</span>
+                  <code id="webdav-url">—</code>
+                </div>
+              </div>
+              <div class="qr-block" id="qr-block" title="Scan to open from your phone">
+                <img id="qr-img" alt="QR code for server URL" src="/qr.png">
+                <div class="caption">Scan to open</div>
+              </div>
+            </div>
           </div>
 
           <div class="card">
-            <h2 style="margin-top:0;font-size:1.1rem">Files in Imports/</h2>
-            <table id="file-table">
-              <thead><tr><th>Name</th><th>Size</th><th>Modified</th><th></th></tr></thead>
-              <tbody id="file-list"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody>
+            <div class="drop-zone" id="drop-zone">
+              <p class="lead">Drop files here to upload</p>
+              <p>or</p>
+              <div class="toolbar">
+                <button class="btn btn-primary" id="upload-btn">⬆ Upload Files</button>
+                <button class="btn btn-success" id="newfolder-btn">📁 New Folder</button>
+                <button class="btn btn-default" id="refresh-btn">↻ Refresh</button>
+                <input type="file" id="file-input" multiple style="display:none">
+              </div>
+              <div id="progress-bar"><div id="progress-fill"></div></div>
+              <div id="status"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="quick-nav">
+              <span class="quick-nav-label">Quick Access:</span>
+              <button class="btn btn-sm" data-quick="Imports">Imports</button>
+              <button class="btn btn-sm" data-quick="ROMs">ROMs</button>
+              <button class="btn btn-sm" data-quick="BIOS">BIOS</button>
+              <button class="btn btn-sm" data-quick="Save States">Save States</button>
+              <button class="btn btn-sm" data-quick="">All Files</button>
+            </div>
+            <nav class="breadcrumb" id="breadcrumb"></nav>
+            <div class="list-toolbar">
+              <input type="search" class="search-input" id="search-input"
+                     placeholder="🔍 Filter files in this folder…" autocomplete="off">
+              <span class="selection-pill" id="selection-pill">0 selected</span>
+              <button class="btn btn-default btn-sm" id="select-all-btn">☑ Select All</button>
+              <button class="btn btn-default btn-sm" id="select-none-btn">☐ Clear</button>
+              <button class="btn btn-danger btn-sm" id="bulk-delete-btn" disabled
+                      style="background:var(--pv-danger);border-color:var(--pv-danger);color:#fff;opacity:0.55">
+                🗑 Delete Selected
+              </button>
+            </div>
+            <table>
+              <thead><tr>
+                <th class="col-check"><input type="checkbox" id="select-all-cb" title="Select all"></th>
+                <th class="col-name">Name</th>
+                <th class="col-size">Size</th>
+                <th class="col-mod">Modified</th>
+                <th class="col-actions"></th>
+              </tr></thead>
+              <tbody id="file-list"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
             </table>
           </div>
 
+          <div class="modal-backdrop" id="modal">
+            <div class="modal">
+              <h3 id="modal-title">New Folder</h3>
+              <input type="text" id="modal-input" autocomplete="off">
+              <div class="modal-actions">
+                <button class="btn btn-default" id="modal-cancel">Cancel</button>
+                <button class="btn btn-primary" id="modal-ok">OK</button>
+              </div>
+            </div>
+          </div>
+
           <script>
-            // File listing
-            async function loadFiles() {
-              try {
-                const res = await fetch('/files');
-                const items = await res.json();
-                const tbody = document.getElementById('file-list');
-                if (!items.length) {
-                  tbody.innerHTML = '<tr><td colspan="4" class="empty">No files yet — upload some ROMs!</td></tr>';
-                  return;
-                }
-                tbody.innerHTML = items.map(f => `
-                  <tr>
-                    <td>${esc(f.name)}</td>
-                    <td>${fmtSize(f.size)}</td>
-                    <td>${f.modified ? new Date(f.modified).toLocaleString() : ''}</td>
-                    <td><button class="del-btn" data-name="${esc(f.name)}">Delete</button></td>
-                  </tr>`).join('');
-              } catch(e) { console.error(e); }
+            const DEFAULT_UPLOAD_PATH = "\(jsDefaultPath)";
+            let currentPath = DEFAULT_UPLOAD_PATH;
+            let currentItems = [];          // Cached items for current dir (post-filter rendering)
+            const selectedNames = new Set(); // Names of selected items in current dir
+            let searchFilter = '';
+
+            // ----- Toasts -----
+            function toast(message, type = 'info', durationMs = 3200) {
+              const stack = document.getElementById('toast-stack');
+              if (!stack) return;
+              const el = document.createElement('div');
+              el.className = 'toast ' + type;
+              el.textContent = message;
+              stack.appendChild(el);
+              setTimeout(() => {
+                el.classList.add('leaving');
+                setTimeout(() => el.remove(), 220);
+              }, durationMs);
             }
 
-            async function deleteFile(name) {
-              if (!confirm('Delete ' + name + '?')) return;
-              await fetch('/files/' + encodeURIComponent(name), { method: 'DELETE' });
+            function esc(s) {
+              return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+                              .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+            }
+            function fmtSize(b) {
+              if (!b) return '0 B';
+              if (b < 1024) return b + ' B';
+              if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
+              if (b < 1024*1024*1024) return (b/1024/1024).toFixed(1) + ' MB';
+              return (b/1024/1024/1024).toFixed(2) + ' GB';
+            }
+            function fmtUptime(seconds) {
+              const d = Math.floor(seconds / 86400);
+              const h = Math.floor((seconds % 86400) / 3600);
+              const m = Math.floor((seconds % 3600) / 60);
+              const s = Math.floor(seconds % 60);
+              if (d > 0) return d + 'd ' + h + 'h';
+              if (h > 0) return h + 'h ' + m + 'm';
+              if (m > 0) return m + 'm ' + s + 's';
+              return s + 's';
+            }
+            function joinPath(a, b) {
+              if (!a) return b;
+              if (!b) return a;
+              return a.replace(/\\/+$/, '') + '/' + b.replace(/^\\/+/, '');
+            }
+            function parentPath(p) {
+              if (!p) return '';
+              const trimmed = p.replace(/\\/+$/, '');
+              const idx = trimmed.lastIndexOf('/');
+              return idx >= 0 ? trimmed.slice(0, idx) : '';
+            }
+
+            // ----- Modal helpers -----
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalInput = document.getElementById('modal-input');
+            const modalOk = document.getElementById('modal-ok');
+            const modalCancel = document.getElementById('modal-cancel');
+            let modalResolver = null;
+            function promptModal(title, placeholder) {
+              modalTitle.textContent = title;
+              modalInput.value = placeholder || '';
+              modal.classList.add('active');
+              modalInput.focus();
+              modalInput.select();
+              return new Promise(resolve => { modalResolver = resolve; });
+            }
+            modalOk.addEventListener('click', () => { modal.classList.remove('active');
+              const v = modalInput.value.trim(); modalResolver && modalResolver(v || null); });
+            modalCancel.addEventListener('click', () => { modal.classList.remove('active');
+              modalResolver && modalResolver(null); });
+            modalInput.addEventListener('keydown', e => { if (e.key === 'Enter') modalOk.click(); else if (e.key === 'Escape') modalCancel.click(); });
+
+            // ----- Listing + breadcrumb -----
+            async function loadFiles(path) {
+              const isNavigation = path !== undefined && path !== currentPath;
+              currentPath = path === undefined ? currentPath : path;
+              if (isNavigation) {
+                selectedNames.clear();
+                searchFilter = '';
+                const search = document.getElementById('search-input');
+                if (search) search.value = '';
+              }
+              renderBreadcrumb();
+              updateQuickActive();
+              const tbody = document.getElementById('file-list');
+              tbody.innerHTML = '<tr><td colspan="5" class="empty">Loading…</td></tr>';
+              try {
+                const res = await fetch('/files?path=' + encodeURIComponent(currentPath));
+                if (!res.ok) {
+                  const err = await res.json().catch(() => ({}));
+                  tbody.innerHTML = '<tr><td colspan="5" class="empty">' + esc(err.error || 'Failed to load') + '</td></tr>';
+                  return;
+                }
+                const payload = await res.json();
+                currentItems = payload.items || [];
+                renderFileList();
+              } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="5" class="empty">' + esc(e.message) + '</td></tr>';
+              }
+            }
+
+            function renderFileList() {
+              const tbody = document.getElementById('file-list');
+              const filtered = searchFilter
+                ? currentItems.filter(it => it.name.toLowerCase().includes(searchFilter))
+                : currentItems;
+              // Drop selections that no longer exist after a filter / refresh.
+              for (const name of Array.from(selectedNames)) {
+                if (!filtered.some(it => it.name === name)) selectedNames.delete(name);
+              }
+              let html = '';
+              if (currentPath) {
+                html += '<tr data-up="1"><td class="col-check"></td><td class="col-name"><span class="clickable"><span class="dir-icon">↑</span>..</span></td><td></td><td></td><td></td></tr>';
+              }
+              if (!filtered.length) {
+                const msg = searchFilter
+                  ? 'No files match "' + esc(searchFilter) + '".'
+                  : (currentPath ? 'This folder is empty.' : 'No files yet — drag and drop above to upload!');
+                tbody.innerHTML = html + '<tr><td colspan="5" class="empty">' + msg + '</td></tr>';
+                updateSelectionUI();
+                return;
+              }
+              html += filtered.map(it => {
+                const icon = it.isDirectory ? '<span class="dir-icon">📁</span>' : '<span class="file-icon">📄</span>';
+                const sizeCell = it.isDirectory ? '' : fmtSize(it.size);
+                const modCell = it.modified ? new Date(it.modified).toLocaleString() : '';
+                const checked = selectedNames.has(it.name) ? ' checked' : '';
+                const actions = it.isDirectory
+                  ? '<button class="btn-icon" data-action="rename" data-name="' + esc(it.name) + '" title="Rename">✎</button>' +
+                    '<button class="btn-icon danger" data-action="delete" data-name="' + esc(it.name) + '" data-is-dir="1" title="Delete">🗑</button>'
+                  : '<button class="btn-icon" data-action="download" data-name="' + esc(it.name) + '" title="Download">⬇</button>' +
+                    '<button class="btn-icon" data-action="rename" data-name="' + esc(it.name) + '" title="Rename">✎</button>' +
+                    '<button class="btn-icon danger" data-action="delete" data-name="' + esc(it.name) + '" title="Delete">🗑</button>';
+                return '<tr data-name="' + esc(it.name) + '" data-is-dir="' + (it.isDirectory ? '1' : '0') + '">' +
+                       '<td class="col-check"><input type="checkbox" data-select="' + esc(it.name) + '"' + checked + '></td>' +
+                       '<td class="col-name"><span class="clickable">' + icon + esc(it.name) + '</span></td>' +
+                       '<td class="col-size">' + esc(sizeCell) + '</td>' +
+                       '<td class="col-mod">' + esc(modCell) + '</td>' +
+                       '<td class="col-actions">' + actions + '</td>' +
+                       '</tr>';
+              }).join('');
+              tbody.innerHTML = html;
+              updateSelectionUI();
+            }
+
+            function updateSelectionUI() {
+              const count = selectedNames.size;
+              const pill = document.getElementById('selection-pill');
+              const bulkBtn = document.getElementById('bulk-delete-btn');
+              const headerCb = document.getElementById('select-all-cb');
+              pill.textContent = count + ' selected';
+              pill.classList.toggle('active', count > 0);
+              bulkBtn.disabled = count === 0;
+              bulkBtn.style.opacity = count === 0 ? '0.55' : '1';
+              if (headerCb) {
+                const total = currentItems.filter(it => !searchFilter || it.name.toLowerCase().includes(searchFilter)).length;
+                headerCb.checked = count > 0 && count === total;
+                headerCb.indeterminate = count > 0 && count < total;
+              }
+            }
+
+            function renderBreadcrumb() {
+              const crumb = document.getElementById('breadcrumb');
+              const parts = currentPath ? currentPath.split('/').filter(Boolean) : [];
+              let acc = '';
+              let html = '<a data-path="">📂 root</a>';
+              parts.forEach((p, i) => {
+                acc = acc ? acc + '/' + p : p;
+                html += '<span class="sep">/</span>';
+                if (i === parts.length - 1) {
+                  html += '<span>' + esc(p) + '</span>';
+                } else {
+                  html += '<a data-path="' + esc(acc) + '">' + esc(p) + '</a>';
+                }
+              });
+              crumb.innerHTML = html;
+            }
+            function updateQuickActive() {
+              document.querySelectorAll('.quick-nav .btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.quick === currentPath);
+              });
+            }
+
+            // ----- Row actions + selection -----
+            document.getElementById('file-list').addEventListener('click', async e => {
+              // Checkbox toggles update the selection set without reloading.
+              const cb = e.target.closest('input[type="checkbox"][data-select]');
+              if (cb) {
+                const name = cb.dataset.select;
+                if (cb.checked) selectedNames.add(name); else selectedNames.delete(name);
+                updateSelectionUI();
+                return;
+              }
+              const upRow = e.target.closest('tr[data-up]');
+              if (upRow) { loadFiles(parentPath(currentPath)); return; }
+              const actionBtn = e.target.closest('button[data-action]');
+              if (actionBtn) {
+                const name = actionBtn.dataset.name;
+                const action = actionBtn.dataset.action;
+                if (action === 'delete') await deletePath(joinPath(currentPath, name), name);
+                else if (action === 'rename') await renamePath(name);
+                else if (action === 'download') window.location.href = '/download?path=' + encodeURIComponent(joinPath(currentPath, name));
+                return;
+              }
+              const row = e.target.closest('tr[data-name]');
+              if (!row) return;
+              const nameClick = e.target.closest('.col-name .clickable');
+              if (!nameClick) return;
+              const name = row.dataset.name;
+              if (row.dataset.isDir === '1') loadFiles(joinPath(currentPath, name));
+              else window.location.href = '/download?path=' + encodeURIComponent(joinPath(currentPath, name));
+            });
+
+            // ----- Search filter -----
+            document.getElementById('search-input').addEventListener('input', e => {
+              searchFilter = e.target.value.trim().toLowerCase();
+              renderFileList();
+            });
+
+            // ----- Multi-select toolbar -----
+            document.getElementById('select-all-btn').addEventListener('click', () => {
+              const filtered = searchFilter
+                ? currentItems.filter(it => it.name.toLowerCase().includes(searchFilter))
+                : currentItems;
+              filtered.forEach(it => selectedNames.add(it.name));
+              renderFileList();
+            });
+            document.getElementById('select-none-btn').addEventListener('click', () => {
+              selectedNames.clear();
+              renderFileList();
+            });
+            document.getElementById('select-all-cb').addEventListener('change', e => {
+              if (e.target.checked) {
+                const filtered = searchFilter
+                  ? currentItems.filter(it => it.name.toLowerCase().includes(searchFilter))
+                  : currentItems;
+                filtered.forEach(it => selectedNames.add(it.name));
+              } else {
+                selectedNames.clear();
+              }
+              renderFileList();
+            });
+            document.getElementById('bulk-delete-btn').addEventListener('click', async () => {
+              if (selectedNames.size === 0) return;
+              if (!confirm('Delete ' + selectedNames.size + ' item(s)? This cannot be undone.')) return;
+              const paths = Array.from(selectedNames).map(n => joinPath(currentPath, n));
+              const res = await fetch('/files/batch-delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paths: paths })
+              });
+              if (!res.ok) { toast('Bulk delete failed', 'error'); return; }
+              const j = await res.json().catch(() => ({}));
+              const deleted = j.deleted || 0;
+              const failedCount = (j.failed || []).length;
+              if (failedCount === 0) {
+                toast('Deleted ' + deleted + ' item' + (deleted === 1 ? '' : 's'), 'success');
+              } else {
+                toast('Deleted ' + deleted + ', ' + failedCount + ' failed', 'error');
+              }
+              selectedNames.clear();
+              loadFiles();
+              refreshStats();
+            });
+
+            async function deletePath(path, label) {
+              if (!confirm('Delete "' + label + '"?')) return;
+              const res = await fetch('/files?path=' + encodeURIComponent(path), { method: 'DELETE' });
+              if (!res.ok) { toast('Delete failed', 'error'); return; }
+              toast('Deleted "' + label + '"', 'success');
+              loadFiles();
+              refreshStats();
+            }
+            async function renamePath(name) {
+              const newName = await promptModal('Rename "' + name + '" to:', name);
+              if (!newName || newName === name) return;
+              const from = joinPath(currentPath, name);
+              const to = joinPath(currentPath, newName);
+              const res = await fetch('/files', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ from: from, to: to })
+              });
+              if (!res.ok) { toast('Rename failed', 'error'); return; }
+              toast('Renamed to "' + newName + '"', 'success');
               loadFiles();
             }
 
-            function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;'); }
-            function fmtSize(b) {
-              if (b < 1024) return b + ' B';
-              if (b < 1024*1024) return (b/1024).toFixed(1) + ' KB';
-              return (b/1024/1024).toFixed(1) + ' MB';
-            }
+            // ----- Quick nav -----
+            document.querySelector('.quick-nav').addEventListener('click', e => {
+              const btn = e.target.closest('button[data-quick]');
+              if (!btn) return;
+              loadFiles(btn.dataset.quick);
+            });
 
-            // Drag & drop
+            // ----- Breadcrumb nav -----
+            document.getElementById('breadcrumb').addEventListener('click', e => {
+              const link = e.target.closest('a[data-path]');
+              if (!link) return;
+              loadFiles(link.dataset.path);
+            });
+
+            // ----- New folder -----
+            document.getElementById('newfolder-btn').addEventListener('click', async () => {
+              const name = await promptModal('New folder name', '');
+              if (!name) return;
+              const res = await fetch('/folders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: currentPath, name: name })
+              });
+              if (!res.ok) { alert('Could not create folder'); return; }
+              loadFiles();
+            });
+
+            // ----- Refresh -----
+            document.getElementById('refresh-btn').addEventListener('click', () => loadFiles());
+
+            // ----- Drag & drop / upload -----
             const zone = document.getElementById('drop-zone');
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('hover'); });
             zone.addEventListener('dragleave', () => zone.classList.remove('hover'));
-            zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('hover'); uploadFiles(e.dataTransfer.files); });
+            zone.addEventListener('drop', e => {
+              e.preventDefault();
+              zone.classList.remove('hover');
+              uploadFiles(e.dataTransfer.files);
+            });
+            document.getElementById('upload-btn').addEventListener('click', () => document.getElementById('file-input').click());
             document.getElementById('file-input').addEventListener('change', e => uploadFiles(e.target.files));
 
             async function uploadFiles(files) {
+              if (!files || !files.length) return;
               const bar = document.getElementById('progress-bar');
               const fill = document.getElementById('progress-fill');
               const status = document.getElementById('status');
               bar.style.display = 'block';
+              const targetPath = currentPath || DEFAULT_UPLOAD_PATH;
               for (let i = 0; i < files.length; i++) {
                 const f = files[i];
-                status.textContent = `Uploading ${f.name} (${i+1}/${files.length})…`;
+                status.textContent = 'Uploading ' + f.name + ' (' + (i+1) + '/' + files.length + ')…';
                 fill.style.width = (i / files.length * 100) + '%';
                 const fd = new FormData();
                 fd.append('files[]', f, f.name);
@@ -829,29 +1879,200 @@ private extension PVModernWebServer {
                     if (e.lengthComputable) fill.style.width = ((i + e.loaded/e.total) / files.length * 100) + '%';
                   };
                   xhr.onload = resolve;
-                  xhr.open('POST', '/upload');
+                  xhr.onerror = resolve;
+                  xhr.open('POST', '/upload?path=' + encodeURIComponent(targetPath));
                   xhr.send(fd);
                 });
               }
               fill.style.width = '100%';
-              status.textContent = `Done! ${files.length} file(s) uploaded.`;
-              setTimeout(() => { bar.style.display='none'; fill.style.width='0%'; status.textContent=''; }, 3000);
+              status.textContent = 'Done — ' + files.length + ' file(s) uploaded to ' + targetPath + '/';
+              toast('Uploaded ' + files.length + ' file' + (files.length === 1 ? '' : 's') + ' → ' + targetPath, 'success');
+              setTimeout(() => { bar.style.display = 'none'; fill.style.width = '0%'; status.textContent = ''; }, 3000);
               loadFiles();
+              refreshStats();
             }
 
-            // Use event delegation for delete buttons (avoids inline JS / XSS)
-            document.getElementById('file-list').addEventListener('click', async (e) => {
-                const btn = e.target.closest('.del-btn');
-                if (!btn) return;
-                const name = btn.dataset.name;
-                if (name) await deleteFile(name);
+            // ----- Dashboard stats -----
+            async function refreshStats() {
+              try {
+                const res = await fetch('/stats');
+                if (!res.ok) return;
+                const s = await res.json();
+                document.getElementById('stat-disk-used').textContent = fmtSize(s.usedDiskBytes);
+                document.getElementById('stat-disk-sub').textContent =
+                  'of ' + fmtSize(s.totalDiskBytes) + ' total · ' + fmtSize(s.freeDiskBytes) + ' free';
+                const pct = s.totalDiskBytes > 0
+                  ? Math.min(100, (s.usedDiskBytes / s.totalDiskBytes) * 100)
+                  : 0;
+                document.getElementById('stat-disk-fill').style.width = pct.toFixed(1) + '%';
+
+                let librarySize = 0;
+                let libraryCount = 0;
+                (s.directories || []).forEach(d => {
+                  librarySize += (d.sizeBytes || 0);
+                  libraryCount += (d.fileCount || 0);
+                });
+                document.getElementById('stat-library-size').textContent = fmtSize(librarySize);
+                document.getElementById('stat-library-count').textContent =
+                  libraryCount + ' file' + (libraryCount === 1 ? '' : 's') + ' across '
+                  + (s.directories || []).length + ' categories';
+
+                document.getElementById('stat-uptime').textContent = fmtUptime(s.uptimeSeconds || 0);
+                document.getElementById('stat-version').textContent =
+                  'Provenance ' + (s.appVersion || '?') + ' (' + (s.buildNumber || '?') + ')';
+
+                const httpURL = s.serverURL || ('http://' + (s.ipAddress || '?') + ':' + s.httpPort + '/');
+                document.getElementById('server-url').textContent = httpURL;
+                document.getElementById('webdav-url').textContent =
+                  s.webDAVURL || ('http://' + (s.ipAddress || '?') + ':' + s.webDAVPort + '/');
+
+                // Refresh QR if the visible URL changed (cache-busts).
+                const qr = document.getElementById('qr-img');
+                if (qr) qr.src = '/qr.png?text=' + encodeURIComponent(httpURL);
+              } catch (e) {
+                // Silent — dashboard is non-critical.
+                console.warn('stats fetch failed', e);
+              }
+            }
+
+            document.getElementById('copy-url-btn').addEventListener('click', async () => {
+              const text = document.getElementById('server-url').textContent.trim();
+              if (!text || text === '—') return;
+              try {
+                await navigator.clipboard.writeText(text);
+                toast('Copied: ' + text, 'success');
+              } catch {
+                toast('Copy failed — long-press the URL instead', 'error');
+              }
             });
 
-            loadFiles();
+            // Periodic dashboard refresh so disk/uptime stay live without page reload.
+            setInterval(refreshStats, 15000);
+            refreshStats();
+
+            // ----- Server-Sent Events (real-time file activity) -----
+            //
+            // Every connected browser opens an EventSource on /events. Each
+            // mutating route on the server broadcasts a typed event after the
+            // op succeeds. We refresh the file listing when the event touches
+            // the current folder, refresh the dashboard for any file op, and
+            // show a toast when the event came from someone else.
+            let liveEventSource = null;
+            let lastLocalOp = 0;        // ms timestamp of the most recent local op
+            let refreshTimer = null;    // debounce timer for file-list refresh
+
+            function noteLocalOp() { lastLocalOp = Date.now(); }
+
+            // Wrap our own toast-bearing actions so we know not to re-toast
+            // events that originated from this browser.
+            ['deletePath','renamePath','uploadFiles','bulkDeleteAction'].forEach(fn => {
+              if (typeof window[fn] !== 'function') return;
+              const orig = window[fn];
+              window[fn] = function() { noteLocalOp(); return orig.apply(this, arguments); };
+            });
+
+            function scheduleListRefresh() {
+              if (refreshTimer) clearTimeout(refreshTimer);
+              refreshTimer = setTimeout(() => {
+                refreshTimer = null;
+                loadFiles();
+              }, 250);
+            }
+
+            function pathInsideCurrentDir(eventPath) {
+              // Server returns paths relative to browseRoot; current dir is
+              // also relative. Match dirname == currentPath (or both root).
+              const norm = (eventPath || '').replace(/^\\/+/, '').replace(/\\/+$/, '');
+              const lastSlash = norm.lastIndexOf('/');
+              const parent = lastSlash >= 0 ? norm.slice(0, lastSlash) : '';
+              return parent === (currentPath || '');
+            }
+
+            function connectLiveEvents() {
+              if (typeof EventSource === 'undefined') return;
+              try { liveEventSource && liveEventSource.close(); } catch {}
+              const es = new EventSource('/events');
+              liveEventSource = es;
+
+              const handle = (kind) => (e) => {
+                let data = {};
+                try { data = JSON.parse(e.data || '{}'); } catch {}
+                const isLocal = (Date.now() - lastLocalOp) < 800; // assume our own op
+
+                if (pathInsideCurrentDir(data.path)) {
+                  scheduleListRefresh();
+                }
+                refreshStats();
+
+                if (!isLocal) {
+                  const name = data.name || data.path || '';
+                  if (kind === 'upload')      toast('📥 New upload: ' + name, 'info', 2400);
+                  else if (kind === 'delete') toast('🗑 Removed: ' + name, 'info', 2200);
+                  else if (kind === 'rename') toast('✎ Renamed → ' + name, 'info', 2200);
+                  else if (kind === 'folder') toast('📁 New folder: ' + name, 'info', 2200);
+                }
+              };
+              es.addEventListener('upload', handle('upload'));
+              es.addEventListener('delete', handle('delete'));
+              es.addEventListener('rename', handle('rename'));
+              es.addEventListener('folder', handle('folder'));
+              es.addEventListener('hello',  () => console.log('[SSE] connected'));
+
+              es.onerror = () => {
+                // Browser EventSource auto-reconnects per `retry:` hint.
+                console.warn('[SSE] dropped; auto-reconnecting…');
+              };
+            }
+            connectLiveEvents();
+
+            // Initial load — start at the default upload path (matches GCDWebUploader behaviour).
+            loadFiles(DEFAULT_UPLOAD_PATH);
           </script>
         </body>
         </html>
         """
+    }
+}
+
+// MARK: - SSE subscriber hub
+
+/// Fan-out broadcast hub for the `GET /events` Server-Sent-Events stream.
+/// Each subscriber owns an `AsyncStream<ByteBuffer>.Continuation`; the hub
+/// hands every broadcast to every active continuation. Subscribers self-
+/// remove via `unsubscribe(_:)` from the route's defer block when the client
+/// disconnects.
+final class SSEHub: @unchecked Sendable {
+    private let lock = NSLock()
+    private var subscribers: [UUID: AsyncStream<ByteBuffer>.Continuation] = [:]
+
+    func subscribe(_ continuation: AsyncStream<ByteBuffer>.Continuation) -> UUID {
+        let id = UUID()
+        lock.lock()
+        subscribers[id] = continuation
+        lock.unlock()
+        return id
+    }
+
+    func unsubscribe(_ id: UUID) {
+        lock.lock()
+        if let continuation = subscribers.removeValue(forKey: id) {
+            continuation.finish()
+        }
+        lock.unlock()
+    }
+
+    func broadcast(_ frame: ByteBuffer) {
+        lock.lock()
+        let snapshot = Array(subscribers.values)
+        lock.unlock()
+        for continuation in snapshot {
+            continuation.yield(frame)
+        }
+    }
+
+    var subscriberCount: Int {
+        lock.lock(); defer { lock.unlock() }
+        return subscribers.count
     }
 }
 

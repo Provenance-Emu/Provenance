@@ -14,8 +14,13 @@ import PVUIBase
 import PVWebServer
 #endif
 
-/// Sets up web-server notifications and, on tvOS, starts the upload and WebDAV
-/// servers (the only way to get files onto tvOS).
+/// Sets up web-server notifications, registers the lifecycle service with
+/// `BackgroundServiceRegistry` for emulation pause/resume, and starts both
+/// the upload (HTTP) and WebDAV servers on every platform.
+///
+/// On iOS / Catalyst the system Local Network permission alert fires when
+/// Hummingbird / Bonjour first touches the network; `LocalNetworkOnboardingView`
+/// in `MainView` displays an informational retrowave alert alongside it.
 ///
 /// Depends on `BootstrapKey.logging`. Provides `BootstrapKey.webServer`.
 @MainActor
@@ -35,21 +40,27 @@ struct WebServerBootstrapTask: BootstrapTask {
     func execute() async throws {
 #if canImport(PVWebServer)
         delegate?.setupWebServerNotifications()
-#if os(tvOS)
+
+        // Touch the lifecycle service so it self-registers with
+        // BackgroundServiceRegistry — that's how the web server gets
+        // paused during emulation and resumed when the user returns home.
+        _ = PVWebServerLifecycleService.shared
+
         await PVWebServerManager.shared.refreshFeatureFlag()
+        let impl = await PVWebServerManager.shared.implementationDescription
+        ILOG("WebServerBootstrapTask: starting web server (impl=\(impl))")
         do {
             let ok = try await PVWebServerManager.shared.start()
             if ok {
-                ILOG("WebServerBootstrapTask: tvOS servers started (PVWebServerManager)")
+                let http = await PVWebServerManager.shared.serverURL?.absoluteString ?? "?"
+                let dav  = await PVWebServerManager.shared.webDAVURL?.absoluteString ?? "?"
+                ILOG("WebServerBootstrapTask: web server started — HTTP: \(http), WebDAV: \(dav)")
             } else {
-                WLOG("WebServerBootstrapTask: tvOS servers did not start")
+                WLOG("WebServerBootstrapTask: web server did not start (impl=\(impl)) — see PVModernWebServer/PVLegacyWebServerAdapter log lines for the bind-confirm failure reason.")
             }
         } catch {
-            ELOG("WebServerBootstrapTask: failed to start servers: \(error.localizedDescription)")
+            ELOG("WebServerBootstrapTask: failed to start web server (impl=\(impl)): \(error.localizedDescription)")
         }
-#else
-        ILOG("WebServerBootstrapTask: Web server notifications registered")
-#endif
 #else
         ILOG("WebServerBootstrapTask: PVWebServer not available on this target")
 #endif

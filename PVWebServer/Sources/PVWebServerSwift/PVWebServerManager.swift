@@ -5,10 +5,11 @@
 //  Created by Agent on 2026-03-21.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Feature-flagged actor that owns the active web server implementation.
-//  Uses `PVModernWebServer` (Hummingbird) when the `modernWebServer` flag is
-//  enabled; falls back to the legacy ObjC `PVWebServer` via
-//  `PVLegacyWebServerAdapter` when the flag is off.
+//  Actor that owns the active web server implementation. Defaults to the
+//  legacy ObjC `PVWebServer` (`PVLegacyWebServerAdapter`) wrapping
+//  GCDWebServer + GCDWebUploader. The user may opt into `PVModernWebServer`
+//  (Hummingbird) via `Defaults[.useModernWebServer]` in
+//  Settings > Advanced.
 //
 //  Usage:
 //    let ok = try await PVWebServerManager.shared.start()
@@ -22,8 +23,8 @@ import PVLogging
 // MARK: - PVWebServerManager
 
 /// Unified async/await entry point for starting and stopping the web servers.
-/// Internally delegates to either `PVModernWebServer` or `PVLegacyWebServerAdapter`
-/// based on the `modernWebServer` feature flag.
+/// Delegates to `PVModernWebServer` when `Defaults[.useModernWebServer]` is
+/// true; otherwise uses `PVLegacyWebServerAdapter` (GCDWebServer).
 public actor PVWebServerManager {
 
     // MARK: Singleton
@@ -38,13 +39,11 @@ public actor PVWebServerManager {
     // MARK: Init
 
     /// Designated initialiser. `useModernServer` can be injected for tests;
-    /// production callers use the `shared` singleton which reads the feature flag.
+    /// production callers use the `shared` singleton which reads the user setting.
     public init(useModernServer: Bool? = nil) {
         if let override = useModernServer {
             self.useModernServer = override
         } else {
-            // Read from UserDefaults debug overrides (synchronous on init).
-            // Full feature-flag evaluation happens at start() time.
             self.useModernServer = false
         }
     }
@@ -54,6 +53,13 @@ public actor PVWebServerManager {
     /// Returns whether either server is currently running.
     public var isRunning: Bool { activeServer != nil }
 
+    /// Diagnostic description of the impl that will be / has been started.
+    /// Read from `WebServerBootstrapTask` so the log shows which backend is
+    /// in play even when `start()` later fails silently.
+    public var implementationDescription: String {
+        useModernServer ? "Modern (Hummingbird)" : "Legacy (GCDWebServer)"
+    }
+
     /// Local HTTP file-uploader URL, if the server is running.
     public var serverURL: URL? { activeServer?.serverURL }
 
@@ -62,8 +68,9 @@ public actor PVWebServerManager {
 
     /// Start both the HTTP and WebDAV servers using the current `useModernServer` value.
     ///
-    /// Call `refreshFeatureFlag()` before `start()` when linking `PVUIBase` so `useModernServer`
-    /// matches `PVFeatureFlags` (including debug overrides). Otherwise call `setModernServerEnabled(_:)`.
+    /// Call `setModernServerEnabled(_:)` (typically from a tiny PVSettings-aware shim in
+    /// PVUIBase) before `start()` to match the user's `Defaults[.useModernWebServer]`
+    /// preference. Tests can construct an instance with `useModernServer:` directly.
     ///
     /// - Returns: `true` if both servers started successfully.
     /// - Throws: Any error propagated from the active server implementation.
@@ -155,12 +162,13 @@ extension PVWebServerManager {
     }
 }
 
-// MARK: - Feature Flag Evaluation
+// MARK: - Implementation Selection
 
 extension PVWebServerManager {
 
-    /// Programmatically override the implementation selection (useful for tests
-    /// or for callers that already have a resolved `PVFeatureFlagsManager`).
+    /// Programmatically pick the implementation. Production callers wire this
+    /// from `Defaults[.useModernWebServer]` via a small PVSettings-aware shim
+    /// in PVUIBase (`PVWebServerManager+Settings.swift`).
     public func setModernServerEnabled(_ enabled: Bool) {
         useModernServer = enabled
     }

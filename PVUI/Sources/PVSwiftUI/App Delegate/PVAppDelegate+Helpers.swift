@@ -19,26 +19,23 @@ import PVWebServer
 // MARK: - Helpers
 extension PVAppDelegate {
 
-        // Start optional always on WebDav server using enviroment variable
-        // See XCode run scheme enviroment varialbes settings. 
-    func isWebDavServerEnvironmentVariableSet() -> Bool {
-        // Note: ENV variables are only passed when when from XCode scheme.
-        // Users clicking the app icon won't be passed this variable when run outside of XCode
-        let buildConfiguration = ProcessInfo.processInfo.environment["ALWAYS_ON_WEBDAV"]
-        return buildConfiguration == "1"
-    }
-
+    /// Boot the web server. Always-on across platforms; paused during emulation
+    /// via `BackgroundServiceRegistry`. The implementation choice (legacy
+    /// GCDWebServer vs. modern Hummingbird) is read from `Defaults[.useModernWebServer]`
+    /// by `PVWebServerManager.refreshFeatureFlag()`.
+    /// Legacy entry kept for any straggler callers. The canonical web-server
+    /// startup is `WebServerBootstrapTask` which runs as part of the bootstrap
+    /// pipeline on every platform. This shim defers to that lifecycle service
+    /// + manager so callers don't end up double-starting the server.
     func startOptionalWebDavServer() {
 #if canImport(PVWebServer)
-        // Check if the user setting is set or the optional ENV variable
-        if Defaults[.webDavAlwaysOn] || isWebDavServerEnvironmentVariableSet() {
-            Task {
-                await PVWebServerManager.shared.refreshFeatureFlag()
-                do {
-                    _ = try await PVWebServerManager.shared.start()
-                } catch {
-                    ELOG("startOptionalWebDavServer: \(error.localizedDescription)")
-                }
+        _ = PVWebServerLifecycleService.shared
+        Task {
+            await PVWebServerManager.shared.refreshFeatureFlag()
+            do {
+                _ = try await PVWebServerManager.shared.start()
+            } catch {
+                ELOG("startWebServer: \(error.localizedDescription)")
             }
         }
 #endif

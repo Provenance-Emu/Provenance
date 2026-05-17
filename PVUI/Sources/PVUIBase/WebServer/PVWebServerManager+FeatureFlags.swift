@@ -2,21 +2,24 @@
 //  PVWebServerManager+FeatureFlags.swift
 //  PVUI
 //
-//  Keeps `PVWebServerManager` aligned with `PVFeatureFlags` without adding a
-//  `PVFeatureFlags` dependency to the `PVWebServer` Swift package (SwiftPM graph).
+//  Bridges `PVWebServerManager` to `Defaults[.useModernWebServer]` without
+//  pulling `PVSettings` into the `PVWebServer` Swift package graph.
+//
+//  Filename retained for source-stability; the implementation now reads the
+//  user-facing Advanced setting rather than a remote feature flag.
 //
 
 import Foundation
-import PVFeatureFlags
+import PVSettings
 #if canImport(PVWebServer)
 import PVWebServer
 
 extension PVWebServerManager {
 
-    /// Updates `useModernServer` from `PVFeatureFlags` (bundled config, remote updates, and `PVFeatureFlagsDebugOverrides`).
+    /// Aligns `useModernServer` with `Defaults[.useModernWebServer]`.
     /// Synchronous on the manager actor; callers still use `await` to hop onto the actor.
     public func refreshFeatureFlag() {
-        setModernServerEnabled(PVFeatureFlags.shared.isEnabled(.modernWebServer))
+        setModernServerEnabled(Defaults[.useModernWebServer])
     }
 }
 #endif
