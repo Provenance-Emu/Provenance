@@ -759,42 +759,28 @@ public class SceneCoordinator: ObservableObject {
 
         ILOG("[BIOS ON-DEMAND] Starting fast targeted download for: \(filename)")
 
-        // Use a timeout task to prevent hanging
-        let downloadTask = Task { @MainActor () -> Bool in
-            // Try the fast targeted download first (tries predicted record IDs + filename query)
-            let fastResult = await CloudSyncManager.shared.downloadSingleBIOS(
+        // Fast targeted download with a strict timeout. The previous fallback to
+        // `forceBIOSDownload()` (a full library-wide BIOS sync) had no internal
+        // timeout and held the launch UI for minutes when the BIOS was not in
+        // CloudKit at all — the exact symptom in tester reports.
+        // Background `BIOSSyncing` already handles the bulk case asynchronously,
+        // so we no longer fall through to a synchronous full sync here.
+        let downloadTask = Task.detached { () -> Bool in
+            let ok = await CloudSyncManager.shared.downloadSingleBIOS(
                 filename: filename,
                 expectedMD5: expectedMD5,
                 systemIdentifier: systemIdentifier
             )
-
-            if fastResult {
-                // Verify the file now exists
-                let fileExists = FileManager.default.fileExists(atPath: biosPath.path)
-                if fileExists {
-                    ILOG("[BIOS ON-DEMAND] ✓ Fast download succeeded: \(filename)")
-                    return true
-                }
+            if ok && FileManager.default.fileExists(atPath: biosPath.path) {
+                ILOG("[BIOS ON-DEMAND] ✓ Fast download succeeded: \(filename)")
+                return true
             }
-
-            // Fast method failed - try the slower full sync as fallback
-            ILOG("[BIOS ON-DEMAND] Fast download failed, trying full sync for: \(filename)")
-            await CloudSyncManager.shared.forceBIOSDownload()
-
-            // Verify the file now exists
-            let fileExists = FileManager.default.fileExists(atPath: biosPath.path)
-            if fileExists {
-                ILOG("[BIOS ON-DEMAND] ✓ Full sync download verified: \(filename)")
-            } else {
-                WLOG("[BIOS ON-DEMAND] Download completed but file not found at: \(biosPath.path)")
-            }
-
-            return fileExists
+            WLOG("[BIOS ON-DEMAND] Fast download miss for \(filename); not falling through to full sync.")
+            return false
         }
 
-        // Timeout after 20 seconds (reduced from 45 since fast path should be quick)
         let timeoutTask = Task {
-            try await Task.sleep(nanoseconds: 20_000_000_000) // 20 seconds
+            try await Task.sleep(nanoseconds: 15_000_000_000) // 15s — fast path only
             downloadTask.cancel()
             WLOG("[BIOS ON-DEMAND] Download timed out for: \(filename)")
         }

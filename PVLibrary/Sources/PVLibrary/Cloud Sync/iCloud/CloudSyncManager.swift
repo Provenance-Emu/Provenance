@@ -360,7 +360,13 @@ public class CloudSyncManager {
         case .romsOnly:
             return type == .romsOnly
         case .metadataOnly:
-            return type == .metadataOnly
+            // `.metadataOnly` was originally meant as "skip the big files" — i.e.
+            // skip ROMs (which can be GB-scale). Save states are small (KB–MB)
+            // and the cross-device hand-off is the single most valuable thing
+            // CloudKit sync provides, so allow them through. This is what fixes
+            // the tvOS default install where save states never auto-uploaded
+            // and only appeared after manually triggering "Force Initial Sync".
+            return type == .metadataOnly || type == .saveStatesOnly
         }
     }
 
@@ -1401,6 +1407,22 @@ public class CloudSyncManager {
                 } catch {
                     syncLog.event(.download, item: "remote/non-database", status: .failed, detail: error.localizedDescription)
                     throw error
+                }
+
+                // Bidirectional sweep: upload local Battery States / Screenshots /
+                // Cheats / DeltaSkins that aren't yet (or are newer than) what's in
+                // CloudKit. Without this, those directories never round-trip — fixes
+                // tester report that battery saves never appeared in iCloud.
+                // `forceSyncFiles` is per-directory and internally diffs by modified
+                // date, so re-running it is cheap when there's nothing new.
+                let directories = CloudKitNonDatabaseSyncer.defaultDirectories()
+                for directory in directories {
+                    do {
+                        try await syncer.forceSyncFiles(in: directory).toAsync()
+                    } catch {
+                        syncLog.event(.upload, item: "local/\(directory)", status: .failed, detail: error.localizedDescription)
+                        // Continue with remaining directories — one failure shouldn't block the others.
+                    }
                 }
             }
         }

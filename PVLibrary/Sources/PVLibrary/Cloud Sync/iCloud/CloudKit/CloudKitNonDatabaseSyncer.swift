@@ -326,10 +326,23 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                     let localFiles = await self.getAllFiles(in: directory)
                     syncLog.info("nondb/\(directory): \(localFiles.count) local files")
 
-                    // Fetch existing records for this directory
+                    // Fetch existing records for this directory and build a
+                    // {filename → record} map so the per-file upload-decision
+                    // logic below can look up the cloud counterpart by name.
+                    //
+                    // Bug fix (was keyed by `Field.directory`, which is the
+                    // SAME value for every record in this directory → crashed
+                    // with "Duplicate values for key: 'DeltaSkins'" and the
+                    // subsequent `recordMap[filxename]` lookup always missed).
+                    // Last write wins on rare duplicates of the same relative
+                    // path (e.g. legacy uploads); avoids the crash.
                     let existingRecords = try await self.fetchAllRecords(for: directory)
-                    let recordMap = Dictionary(uniqueKeysWithValues: existingRecords.map { ($0[Field.directory] as! String, $0) })
-                    syncLog.info("nondb/\(directory): \(existingRecords.count) cloud records")
+                    let recordPairs: [(String, CKRecord)] = existingRecords.compactMap { record in
+                        guard let key = (record[Field.relativePath] as? String) ?? (record[Field.directory] as? String) else { return nil }
+                        return (URL(fileURLWithPath: key).lastPathComponent, record)
+                    }
+                    let recordMap = Dictionary(recordPairs, uniquingKeysWith: { _, newer in newer })
+                    syncLog.info("nondb/\(directory): \(existingRecords.count) cloud records (\(recordMap.count) unique filenames)")
 
                     // Process files in batches
                     let batchSize = 20 // Adjust batch size as needed
