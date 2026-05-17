@@ -73,6 +73,7 @@ struct MainView: View {
         // Presentation is derived from preLaunchTransferPakGame (single source of truth).
         // launchAction is the single callback for button taps; the sheet's own onDismiss
         // handles swipe-to-dismiss so no duplicate closures are needed.
+        .localNetworkOnboarding(bootCompleted: appState.bootupStateManager.currentState == .completed)
         .sheet(item: $sceneCoordinator.preLaunchTransferPakGame, onDismiss: {
             // onDismiss fires after the sheet animation fully completes.
             // Resume the launch continuation here (not in launchAction) so that

@@ -347,26 +347,6 @@ public final class PVSettingsViewController: QuickTableViewController {
         var libraryRows: [TableRow] = [ ]
 #endif
 
-#if os(tvOS)
-        let webServerAlwaysOn = PVSettingsSwitchRow(
-            text: "Web Server Always-On",
-            detailText: .subtitle(""),
-            key: .webDavAlwaysOn,
-            icon: .sfSymbol("lightswitch.on"),
-            customization: { cell, _ in
-                Task { @MainActor in
-                    if Defaults[.webDavAlwaysOn] {
-                        let dav = await PVWebServerManager.shared.webDAVURL?.absoluteString ?? ""
-                        cell.detailTextLabel?.text = "WebDAV: \(dav)"
-                    } else {
-                        cell.detailTextLabel?.text = nil
-                    }
-                }
-            }
-        )
-        libraryRows.append(webServerAlwaysOn)
-#endif
-
         let librarySection = Section(title: NSLocalizedString("Game Library", comment: "Game Library"), rows: libraryRows, footer: "Check the wiki about importing ROMs.")
 
         // Library Management

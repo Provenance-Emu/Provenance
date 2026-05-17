@@ -18,7 +18,7 @@ internal struct AdvancedTogglesView: View {
     @Default(.iCloudSync) var iCloudSync
     @Default(.useMetal) var useMetalRenderer
     @Default(.mainUIMode) var mainUIMode
-    @Default(.webDavAlwaysOn) var webDavAlwaysOn
+    @Default(.useModernWebServer) var useModernWebServer
 
     /// Check if the app is from the App Store
     let isAppStore: Bool = {
@@ -89,9 +89,9 @@ internal struct AdvancedTogglesView: View {
                                 showChevron: false)
                 }
                 
-                PremiumThemedToggle(isOn: $webDavAlwaysOn) {
-                    SettingsRow(title: "WebDAV Always On",
-                                subtitle: "Keep WebDAV server running in background.",
+                PremiumThemedToggle(isOn: $useModernWebServer) {
+                    SettingsRow(title: "Use Modern Web Server",
+                                subtitle: "Opt in to the native Swift Hummingbird HTTP / WebDAV server. The default GCDWebServer UI is fully featured; the modern implementation is still reaching parity.",
                                 icon: .sfSymbol("network"),
                                 showChevron: false)
                 }

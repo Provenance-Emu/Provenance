@@ -98,12 +98,6 @@ extension Defaults.Keys {
 
     static let gameLibraryScale = Key<Float>("gameLibraryScale", default: 4.0)
 
-#if os(tvOS)
-    static let webDavAlwaysOn = Key<Bool>("webDavAlwaysOn", default: true)
-#else
-    static let webDavAlwaysOn = Key<Bool>("webDavAlwaysOn", default: false)
-#endif
-
     static let buttonTints = Key<Bool>("buttonTints", default: true)
     static let use8BitdoM30 = Key<Bool>("use8BitdoM30", default: false)
 
@@ -607,7 +601,7 @@ public enum CloudKitSyncContentType: String, Codable, Equatable, UserDefaultsRep
         case .romsOnly:
             return "Sync only ROM files and game library"
         case .metadataOnly:
-            return "Sync only game metadata, artwork, and settings (no files)"
+            return "Sync game metadata, artwork, and save states (skips large ROM and BIOS files)"
         }
     }
 }
@@ -666,6 +660,21 @@ public extension Defaults.Keys {
 // MARK: File syste
 public extension Defaults.Keys {
     static let useAppGroups = Key<Bool>("useAppGroups", default: false)
+}
+
+// MARK: Web Server
+public extension Defaults.Keys {
+    /// Opt-in to the native Swift Hummingbird web server instead of the bundled
+    /// GCDWebServer implementation. The legacy GCDWebUploader UI ships as the
+    /// default because the modern UI is still reaching feature parity (Epic #2758).
+    /// Surfaced in Settings > Advanced.
+    static let useModernWebServer = Key<Bool>("useModernWebServer", default: false)
+
+    /// One-shot flag for the iOS local-network permission onboarding sheet.
+    /// `true` once the user has acknowledged the explainer (regardless of whether
+    /// they ultimately allowed local network access in the system alert).
+    /// tvOS and macOS skip the sheet entirely.
+    static let localNetworkOnboardingShown = Key<Bool>("localNetworkOnboardingShown", default: false)
 }
 
 // MARK: ROM Import Options
