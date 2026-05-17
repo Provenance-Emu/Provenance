@@ -14,9 +14,21 @@ import Defaults
 
 /// A view that displays a game item in a cell layout
 struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
-    /// Implement Equatable to prevent unnecessary redraws
+    /// Implement Equatable to prevent unnecessary redraws.
+    ///
+    /// **Performance note.** Earlier this implementation compared
+    /// `lhs.artwork?.hashValue == rhs.artwork?.hashValue`. `UIImage.hashValue`
+    /// walks the entire pixel buffer — hashing megabytes per cell — and
+    /// `LazyVGrid` evaluates `==` per visible cell on every scroll tick.
+    /// That single comparison was the main source of scroll stutter in the
+    /// library grid. Use a cheap identity + size proxy instead: if the
+    /// `UIImage` reference and dimensions are the same, the rendered pixels
+    /// are the same as far as this cell cares about. `@State` fields like
+    /// `hoverScale` / `glowIntensity` are intentionally NOT compared here —
+    /// SwiftUI re-renders the body via state invalidation regardless of what
+    /// this Equatable returns, so including them is both a no-op for
+    /// correctness and a slowdown per scroll tick.
     static func == (lhs: GameItemViewCell<Presentable>, rhs: GameItemViewCell<Presentable>) -> Bool {
-        /// Only redraw if these key properties change
         lhs.game.id == rhs.game.id &&
         lhs.game.title == rhs.game.title &&
         lhs.game.trueArtworkURL == rhs.game.trueArtworkURL &&
@@ -25,9 +37,8 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
         lhs.game.hasCloudAssets == rhs.game.hasCloudAssets &&
         lhs.game.isDownloaded == rhs.game.isDownloaded &&
         lhs.game.boxartAspectRatio == rhs.game.boxartAspectRatio &&
-        lhs.artwork?.hashValue == rhs.artwork?.hashValue &&
-        lhs.hoverScale == rhs.hoverScale &&
-        lhs.glowIntensity == rhs.glowIntensity &&
+        lhs.artwork === rhs.artwork &&
+        lhs.artwork?.size == rhs.artwork?.size &&
         lhs.shelfRowHeightScale == rhs.shelfRowHeightScale &&
         lhs.constrainHeight == rhs.constrainHeight &&
         lhs.viewType == rhs.viewType
@@ -42,7 +53,14 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     /// Scales the fixed shelf height (`PVRowHeight`) when `constrainHeight` is true; favorites/recent shelves use `PVCompactShelfRowHeightScale`.
     var shelfRowHeightScale: CGFloat = 1.0
     var viewType: GameItemViewType
-    @State private var textMaxWidth: CGFloat = PVRowHeight
+    /// Optional so the title `MarqueeText` only lays out once — after the
+    /// real artwork width is measured. Previously this defaulted to
+    /// `PVRowHeight`, which caused MarqueeText to set up its scrolling
+    /// animation at the wrong width, then immediately re-lay-out + restart
+    /// when the preference key delivered the actual width. With LazyVGrid
+    /// scrolling many cells through these two-pass layouts per recycle, the
+    /// duplicate setup + animation churn produced visible scroll hitches.
+    @State private var textMaxWidth: CGFloat? = nil
     @State private var hoverScale: CGFloat = 1.0
     @State private var glowIntensity: CGFloat = 0.0
     @State private var needsSync: Bool = false
@@ -123,13 +141,20 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
             .if(constrainHeight) { view in
                 view.frame(height: PVRowHeight * shelfRowHeightScale, alignment: .bottom)
             }
-            .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) {
-                textMaxWidth = $0
+            .onPreferenceChange(ArtworkDynamicWidthPreferenceKey.self) { width in
+                // `GameItemThumbnail.measuredWidth` defaults to 0 and publishes
+                // `.preference(value: 0)` on first render before its
+                // GeometryReader / onGeometryChange callback fires. Drop the
+                // bogus 0 so the title doesn't render at zero width, and
+                // dedupe identical writes so SwiftUI doesn't re-invalidate
+                // the cell body on every layout pass during scroll.
+                guard width > 0, textMaxWidth != width else { return }
+                textMaxWidth = width
             }
             .onAppear {
                 isVisible = true
                 /// Narrower shelf cells imply narrower artwork; seed width before `ArtworkDynamicWidthPreferenceKey` fires.
-                if constrainHeight, shelfRowHeightScale < 1.0 {
+                if constrainHeight, shelfRowHeightScale < 1.0, textMaxWidth == nil {
                     textMaxWidth = PVRowHeight * shelfRowHeightScale
                 }
             }
@@ -225,15 +250,26 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     private var textView: some View {
         // Title and date container
         VStack(alignment: .leading, spacing: 0) { /// No spacing between title and date
-            MarqueeText(text: game.title,
-                        font: .system(size: viewType.titleFontSize, weight: .bold, design: .monospaced),
-                        delay: 1.0,
-                        speed: 50.0,
-                        loop: true)
-            .foregroundColor(textColor)
-            .shadow(color: glowColor, radius: 3, x: 0, y: 0)
-            .frame(maxWidth: textMaxWidth, alignment: .leading)
-            .padding(.bottom, -2) /// Negative padding to remove default spacing
+            // Only build MarqueeText once we know its target width.
+            // Otherwise MarqueeText is laid out + animation-restarted at the
+            // wrong width when the real measurement arrives, which causes
+            // visible scroll hitches in LazyVGrid as cells recycle.
+            if let textMaxWidth, textMaxWidth > 0 {
+                MarqueeText(text: game.title,
+                            font: .system(size: viewType.titleFontSize, weight: .bold, design: .monospaced),
+                            delay: 1.0,
+                            speed: 50.0,
+                            loop: true)
+                .foregroundColor(textColor)
+                .shadow(color: glowColor, radius: 3, x: 0, y: 0)
+                .frame(maxWidth: textMaxWidth, alignment: .leading)
+                .padding(.bottom, -2) /// Negative padding to remove default spacing
+            } else {
+                // Reserve the slot so the cell's vertical layout doesn't
+                // jump when the title appears on the next frame.
+                Color.clear
+                    .frame(height: viewType.titleFontSize * 1.2)
+            }
 
             // Date and rating container
             HStack {
