@@ -81,7 +81,11 @@ public final class PVIndicatorOverlayViewController: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
+        view.backgroundColor = .clear
+        // Start fully transparent to touch — updateVisibility() flips this back on
+        // when we actually need to show indicators.
+        view.isHidden = true
+        view.isUserInteractionEnabled = false
         setupObservers()
         refreshJITState()
     }
@@ -93,19 +97,16 @@ public final class PVIndicatorOverlayViewController: UIViewController {
 
     // MARK: - Setup
 
-    private func setupView() {
-        view.backgroundColor = .clear
-        // isUserInteractionEnabled is managed by updateVisibility(); start disabled so
-        // the overlay never blocks touches when no indicators are shown.
-        view.isUserInteractionEnabled = false
+    /// Builds the SwiftUI hosting controller the first time the overlay needs to
+    /// be visible. Keeping this out of viewDidLoad avoids spinning up the SwiftUI
+    /// graph during emulator launch — a measured ~550ms main-thread hit (PROVENANCE-18N).
+    private func ensureHostingControllerLoaded() {
+        guard hostingController == nil else { return }
 
         let overlayView = PVIndicatorOverlayView(registry: PVIndicatorRegistry.shared)
         let host = UIHostingController(rootView: overlayView)
         host.view.backgroundColor = .clear
         host.view.isUserInteractionEnabled = false
-        /// Keep the hosting view sized to its content instead of pinning full-screen.
-        /// This prevents hidden SwiftUI internals from absorbing touches outside the
-        /// visible indicator row.
         host.view.setContentHuggingPriority(.required, for: .horizontal)
         host.view.setContentHuggingPriority(.required, for: .vertical)
         host.view.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -125,8 +126,6 @@ public final class PVIndicatorOverlayViewController: UIViewController {
         ])
         host.didMove(toParent: self)
         hostingController = host
-
-        updateVisibility()
     }
 
     private func setupObservers() {
@@ -149,6 +148,9 @@ public final class PVIndicatorOverlayViewController: UIViewController {
 
     private func updateVisibility() {
         let shouldShow = isOverlayEnabled && PVIndicatorRegistry.shared.hasVisibleIndicators
+        if shouldShow {
+            ensureHostingControllerLoaded()
+        }
         view.isHidden = !shouldShow
         // Only enable user interaction when indicators are actually visible so the
         // overlay never intercepts game or controller-button touches in empty areas.
