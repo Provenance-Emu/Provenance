@@ -786,6 +786,13 @@ typedef struct PVThinLibretroSymbols {
 // without an "instance may not respond to selector" warning.
 - (void)_pvthin_setAchievementsActive:(BOOL)active;
 
+// rcheevos memory-read helper. Resolves a rcheevos virtual address through the
+// libretro memory-map descriptors (env 36) when published, falling back to a
+// flat read against `RETRO_MEMORY_SYSTEM_RAM` for cores that omit the map.
+- (void)_pvthin_readMemoryAt:(uint32_t)address
+                        into:(uint8_t *)buffer
+                      length:(uint32_t)length;
+
 @end
 
 // ---------------------------------------------------------------------------
@@ -3053,6 +3060,42 @@ static bool thin_environment(unsigned cmd, void *data) {
             (unsigned)_cameraBufferWidth,
             (unsigned)_cameraBufferHeight,
             _cameraBufferWidth * sizeof(uint32_t));
+    }
+#endif
+
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    // Re-establish the GL state the core expects every frame.
+    //
+    // Previously this only happened inside the FBO setup/rebuild branch on
+    // the assumption that the emulation thread holds `_glContext` current
+    // forever. That assumption is fragile: AVCaptureSession, CoreMIDI,
+    // CLLocationManager, and dispatched callbacks (NSURLSession, etc.) that
+    // land on this thread can implicitly push/pop the current context. When
+    // the core's next `retro_run` sees no current context every GL call
+    // becomes a silent no-op, texture uploads never reach the GPU, and
+    // GLideN64 renders polygons as solid color fills — the exact symptom
+    // we see with Mupen64Plus via the thin wrapper.
+    //
+    // RetroArch's `gl.c` backend re-currents per frame for the same reason
+    // — that's why the legacy `PVRetroArchCoreCore` path works fine.
+    //
+    // Also:
+    //   • GL_UNPACK_ALIGNMENT defaults to 4. GLideN64 uploads textures whose
+    //     row stride isn't a multiple of 4; without alignment=1 those
+    //     uploads fail silently and the texture stays at its default solid
+    //     fill. RetroArch's glsm wrapper sets this on every retro_run entry;
+    //     we have to do it explicitly.
+    //   • Bind our FBO and set the viewport so cores that don't call
+    //     `hw_get_current_framebuffer()` every frame (or that rebind FBO 0
+    //     mid-frame for a screen blit) end up rendering into our IOSurface
+    //     instead of a stale framebuffer.
+    if (_hwRenderRequested && _glContext && _emuFBO) {
+        if ([EAGLContext currentContext] != _glContext) {
+            [EAGLContext setCurrentContext:_glContext];
+        }
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glBindFramebuffer(GL_FRAMEBUFFER, _emuFBO);
+        glViewport(0, 0, (GLsizei)_fboWidth, (GLsizei)_fboHeight);
     }
 #endif
 
@@ -6516,10 +6559,21 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 #pragma mark rcheevos C callbacks
 
+/// rc_client internal log message → CocoaLumberjack bridge. Lets the tester's
+/// log show the librcheevos diagnostic stream (especially "achievement N
+/// already unlocked" + load_game errors) which is otherwise invisible.
+static void pvthin_rcheevos_log_message(const char *message, const rc_client_t * __unused client) {
+    if (!message) { return; }
+    ILOG(@"[CHEEVOS-DIAG] rc_client: %s", message);
+}
+
 /// rc_client memory read trampoline.
-/// Walks each requested byte through `memoryDataForID:` so memory reads after
-/// `retro_unload_game` (during teardown) return the documented 0xFF fill,
-/// matching the contract of `rc_client_read_memory_func_t`.
+/// Resolves each requested byte through the libretro memory-map descriptors
+/// registered via `RETRO_ENVIRONMENT_SET_MEMORY_MAPS` (env 36) when available,
+/// falling back to a flat read against `RETRO_MEMORY_SYSTEM_RAM` for cores
+/// that never publish a memory map. Reads after `retro_unload_game` (during
+/// teardown) return the documented 0xFF fill, matching the contract of
+/// `rc_client_read_memory_func_t`.
 static uint32_t pvthin_rcheevos_read_memory(uint32_t address, uint8_t *buffer,
                                             uint32_t num_bytes, rc_client_t *client) {
     PVThinLibretroFrontend *bridge = (__bridge PVThinLibretroFrontend *)rc_client_get_userdata(client);
@@ -6527,16 +6581,7 @@ static uint32_t pvthin_rcheevos_read_memory(uint32_t address, uint8_t *buffer,
         if (buffer) { memset(buffer, 0xFF, num_bytes); }
         return num_bytes;
     }
-    size_t ramSize = 0;
-    uint8_t *ram = (uint8_t *)[bridge memoryDataForID:RETRO_MEMORY_SYSTEM_RAM size:&ramSize];
-    for (uint32_t i = 0; i < num_bytes; ++i) {
-        uint32_t addr = address + i;
-        uint8_t value = 0xFF;
-        if (ram && ramSize > 0 && addr < (uint32_t)ramSize) {
-            value = ram[addr];
-        }
-        buffer[i] = value;
-    }
+    [bridge _pvthin_readMemoryAt:address into:buffer length:num_bytes];
     return num_bytes;
 }
 
@@ -6572,15 +6617,46 @@ static void pvthin_rcheevos_server_call(const rc_api_request_t *request,
         urlReq.HTTPMethod = @"GET";
     }
     [urlReq setValue:@"Provenance/ThinLibretro" forHTTPHeaderField:@"User-Agent"];
+    // [CHEEVOS-DIAG] Strip the user/token query args so we don't leak the
+    // session token into the log. RA URLs look like
+    //   https://retroachievements.org/dorequest.php?r=awardachievement&u=…&t=…&a=12345&h=1
+    NSString *fullURL = url.absoluteString;
+    NSString *safeURL = fullURL;
+    NSRange tokenRange = [fullURL rangeOfString:@"&t="];
+    if (tokenRange.location != NSNotFound) {
+        NSUInteger tokenEnd = fullURL.length;
+        NSRange ampAfterToken = [fullURL rangeOfString:@"&"
+                                               options:0
+                                                 range:NSMakeRange(NSMaxRange(tokenRange), fullURL.length - NSMaxRange(tokenRange))];
+        if (ampAfterToken.location != NSNotFound) { tokenEnd = ampAfterToken.location; }
+        safeURL = [NSString stringWithFormat:@"%@&t=…%@",
+                   [fullURL substringToIndex:tokenRange.location],
+                   [fullURL substringFromIndex:tokenEnd]];
+    }
+    ILOG(@"[CHEEVOS-DIAG] rcheevos HTTP → %@", safeURL);
     [[[NSURLSession sharedSession] dataTaskWithRequest:urlReq
         completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
             rc_api_server_response_t resp = {};
+            NSInteger code = 0;
             if (data && !error) {
                 resp.body             = (const char *)data.bytes;
                 resp.body_length      = (uint32_t)data.length;
-                resp.http_status_code = (int)[(NSHTTPURLResponse *)response statusCode];
+                code = [(NSHTTPURLResponse *)response statusCode];
+                resp.http_status_code = (int)code;
             } else {
                 resp.http_status_code = 0;
+            }
+            // Log status + first 200 chars of body so we can spot
+            // RA server-side rejections (Success=false { Error: "..." }).
+            NSString *bodyPreview = @"";
+            if (data && data.length > 0) {
+                NSString *full = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] ?: @"";
+                bodyPreview = full.length > 200 ? [full substringToIndex:200] : full;
+            }
+            if (error) {
+                WLOG(@"[CHEEVOS-DIAG] rcheevos HTTP ← network error: %@", error.localizedDescription);
+            } else {
+                ILOG(@"[CHEEVOS-DIAG] rcheevos HTTP ← %ld %@", (long)code, bodyPreview);
             }
             callback(&resp, callback_data);
         }] resume];
@@ -6605,12 +6681,19 @@ static void pvthin_rcheevos_event_handler(const rc_client_event_t *event, rc_cli
     switch (event->type) {
         case RC_CLIENT_EVENT_ACHIEVEMENT_TRIGGERED: {
             const rc_client_achievement_t *ach = event->achievement;
-            if (!ach || !bridge.achievementTriggeredBlock) { break; }
+            if (!ach) { break; }
             NSString *title = ach->title ? @(ach->title) : @"";
             NSString *desc  = ach->description ? @(ach->description) : @"";
             NSURL *badge = pvthin_rcheevos_badge_url(ach);
             BOOL hardcore = (BOOL)rc_client_get_hardcore_enabled(client);
-            bridge.achievementTriggeredBlock(ach->id, title, desc, ach->points, badge, hardcore);
+            ILOG(@"[CHEEVOS-DIAG] TRIGGERED id=%u points=%u hardcore=%d title=%@ hasBlock=%d",
+                 ach->id, ach->points, (int)hardcore, title,
+                 (int)(bridge.achievementTriggeredBlock != nil));
+            if (bridge.achievementTriggeredBlock) {
+                bridge.achievementTriggeredBlock(ach->id, title, desc, ach->points, badge, hardcore);
+            } else {
+                WLOG(@"[CHEEVOS-DIAG] TRIGGERED dropped — achievementTriggeredBlock is nil; OSD toast will not appear.");
+            }
             break;
         }
         case RC_CLIENT_EVENT_ACHIEVEMENT_PROGRESS_INDICATOR_SHOW: {
@@ -6656,8 +6739,8 @@ typedef struct pvthin_rcheevos_load_ctx {
     void *completion;    // __bridge_retained void(^)(BOOL)
 } pvthin_rcheevos_load_ctx_t;
 
-static void pvthin_rcheevos_load_callback(int result, const char * __unused error_message,
-                                          rc_client_t * __unused client, void *userdata) {
+static void pvthin_rcheevos_load_callback(int result, const char *error_message,
+                                          rc_client_t *client, void *userdata) {
     pvthin_rcheevos_load_ctx_t *ctx = (pvthin_rcheevos_load_ctx_t *)userdata;
     PVThinLibretroFrontend *bridge = (__bridge_transfer PVThinLibretroFrontend *)ctx->bridge;
     void (^completion)(BOOL) = (__bridge_transfer void (^)(BOOL))ctx->completion;
@@ -6665,6 +6748,20 @@ static void pvthin_rcheevos_load_callback(int result, const char * __unused erro
     free(ctx);
 
     BOOL success = (result == RC_OK);
+    if (success) {
+        const rc_client_game_t *game = rc_client_get_game_info(client);
+        uint32_t gameID = game ? game->id : 0;
+        rc_client_user_game_summary_t summary = {};
+        rc_client_get_user_game_summary(client, &summary);
+        ILOG(@"[CHEEVOS-DIAG] load_game SUCCESS gameID=%u core=%u/%u unlocked(soft=%u/hard=%u)",
+             gameID,
+             summary.num_core_achievements,
+             summary.num_core_achievements + summary.num_unofficial_achievements,
+             summary.num_unlocked_achievements,
+             summary.num_unlocked_achievements);
+    } else {
+        WLOG(@"[CHEEVOS-DIAG] load_game FAILED (%d): %s", result, error_message ?: "<no message>");
+    }
     [bridge _pvthin_setAchievementsActive:success];
     if (completion) { completion(success); }
 }
@@ -6715,6 +6812,69 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
     _rcAchievementsActive.store((bool)active);
 }
 
+- (void)_pvthin_readMemoryAt:(uint32_t)address
+                        into:(uint8_t *)buffer
+                      length:(uint32_t)length {
+    if (!buffer || length == 0) { return; }
+    memset(buffer, 0xFF, length);
+
+    // Fast path: walk the libretro memory-map descriptors if the core
+    // published any. This is what RA's reference frontend uses and is the
+    // only way achievements work on systems whose rcheevos address space
+    // doesn't start at 0 (SNES WRAM at 0x7E0000, Genesis work-RAM at
+    // 0xFF0000, Saturn LWRAM/HWRAM at 0x00200000/0x06000000, …).
+    if (_memoryMapDescriptors && _memoryMapCount > 0) {
+        BOOL servicedAny = NO;
+        for (uint32_t i = 0; i < length; ++i) {
+            uint64_t addr = (uint64_t)address + i;
+            for (unsigned d = 0; d < _memoryMapCount; ++d) {
+                const struct retro_memory_descriptor *desc = &_memoryMapDescriptors[d];
+                if (!desc->ptr || desc->len == 0) { continue; }
+                uint64_t start = (uint64_t)desc->start;
+                uint64_t len   = (uint64_t)desc->len;
+                if (desc->select != 0) {
+                    // Mask-based addressing: (addr & select) must equal (start & select).
+                    if ((addr & (uint64_t)desc->select) != (start & (uint64_t)desc->select)) {
+                        continue;
+                    }
+                    uint64_t masked = addr & ~(uint64_t)desc->disconnect;
+                    if (masked < start) { continue; }
+                    uint64_t physical = (masked - start) + (uint64_t)desc->offset;
+                    if (physical >= len) { continue; }
+                    buffer[i] = ((uint8_t *)desc->ptr)[physical];
+                    servicedAny = YES;
+                    break;
+                } else {
+                    // Simple [start, start + len) range.
+                    if (addr < start || addr >= start + len) { continue; }
+                    uint64_t physical = (addr - start) + (uint64_t)desc->offset;
+                    buffer[i] = ((uint8_t *)desc->ptr)[physical];
+                    servicedAny = YES;
+                    break;
+                }
+            }
+        }
+        if (servicedAny) { return; }
+        // Fall through to the SYSTEM_RAM fallback if no descriptor matched —
+        // some cores publish descriptors only for ancillary regions while
+        // still expecting SYSTEM_RAM for the main bus.
+    }
+
+    // Fallback for cores that don't publish a memory map (or whose descriptors
+    // didn't cover this request). Treat `address` as a flat offset into
+    // SYSTEM_RAM. This matches the legacy behaviour and works for the systems
+    // where rcheevos uses a zero-based address space (NES, PSX MainRAM, etc.).
+    size_t ramSize = 0;
+    uint8_t *ram = (uint8_t *)[self memoryDataForID:RETRO_MEMORY_SYSTEM_RAM size:&ramSize];
+    if (!ram || ramSize == 0) { return; }
+    for (uint32_t i = 0; i < length; ++i) {
+        uint64_t addr = (uint64_t)address + i;
+        if (addr < (uint64_t)ramSize) {
+            buffer[i] = ram[addr];
+        }
+    }
+}
+
 - (void)tickAchievements {
 #if HAVE_RCHEEVOS
     if (_rcClient && _rcAchievementsActive.load()) {
@@ -6727,53 +6887,58 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
                            hardcore:(BOOL)hardcore
                          completion:(void (^)(BOOL))completion {
 #if HAVE_RCHEEVOS
+    ILOG(@"[CHEEVOS-DIAG] ThinFrontend.loadAchievements ENTER hash=%@ hardcore=%d",
+         gameHash ?: @"<nil>", (int)hardcore);
+
     if (gameHash.length == 0) {
+        WLOG(@"[CHEEVOS-DIAG] ThinFrontend.loadAchievements EXIT: empty hash");
         _rcAchievementsActive.store(false);
         if (completion) { completion(NO); }
         return;
     }
 
-    if (!_rcClient) {
-        _rcClient = rc_client_create(pvthin_rcheevos_read_memory, pvthin_rcheevos_server_call);
-        if (!_rcClient) {
-            ELOG(@"ThinFrontend: rc_client_create returned NULL");
-            _rcAchievementsActive.store(false);
-            if (completion) { completion(NO); }
-            return;
-        }
-        rc_client_set_userdata(_rcClient, (__bridge void *)self);
-        rc_client_set_event_handler(_rcClient, pvthin_rcheevos_event_handler);
+    // Tear down any cached rc_client so each game launch performs a fresh
+    // login. The previous "reuse client and skip login" path was masking a
+    // class of bugs: if the user re-logged in via Settings (rotating their
+    // session token) or the server invalidated the cached token between
+    // sessions, every subsequent API call (load_game, startsession, ping)
+    // would silently fail server-side — including the "now playing"
+    // registration the user sees on their RA profile.
+    if (_rcClient) {
+        rc_client_destroy(_rcClient);
+        _rcClient = NULL;
     }
+
+    _rcClient = rc_client_create(pvthin_rcheevos_read_memory, pvthin_rcheevos_server_call);
+    if (!_rcClient) {
+        ELOG(@"[CHEEVOS-DIAG] ThinFrontend: rc_client_create returned NULL");
+        _rcAchievementsActive.store(false);
+        if (completion) { completion(NO); }
+        return;
+    }
+    rc_client_set_userdata(_rcClient, (__bridge void *)self);
+    rc_client_set_event_handler(_rcClient, pvthin_rcheevos_event_handler);
+    // Bridge rc_client's internal log stream into our log so tester
+    // captures show things like "achievement X already unlocked" that
+    // originate inside librcheevos rather than our own code.
+    rc_client_enable_logging(_rcClient, RC_CLIENT_LOG_LEVEL_INFO, pvthin_rcheevos_log_message);
 
     _rcHardcore = hardcore;
     rc_client_set_hardcore_enabled(_rcClient, hardcore ? 1 : 0);
-
-    // If a previous session already authenticated this client, skip the login
-    // round-trip and go straight to load_game.
-    if (rc_client_get_user_info(_rcClient) != NULL) {
-        pvthin_rcheevos_load_ctx_t *ctx =
-            (pvthin_rcheevos_load_ctx_t *)malloc(sizeof(pvthin_rcheevos_load_ctx_t));
-        if (!ctx) {
-            _rcAchievementsActive.store(false);
-            if (completion) { completion(NO); }
-            return;
-        }
-        ctx->bridge     = (__bridge_retained void *)self;
-        ctx->completion = completion ? (__bridge_retained void *)[completion copy] : NULL;
-        rc_client_begin_load_game(_rcClient, gameHash.UTF8String,
-                                  pvthin_rcheevos_load_callback, ctx);
-        return;
-    }
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSString *username = [defaults stringForKey:@"ra_username"];
     NSString *token    = [defaults stringForKey:@"ra_session_token"];
     if (username.length == 0 || token.length == 0) {
-        WLOG(@"ThinFrontend: rcheevos login skipped — missing ra_username/ra_session_token");
+        WLOG(@"[CHEEVOS-DIAG] ThinFrontend: login skipped — missing ra_username (%@) or ra_session_token (len=%lu)",
+             username ?: @"<nil>", (unsigned long)token.length);
         _rcAchievementsActive.store(false);
         if (completion) { completion(NO); }
         return;
     }
+
+    ILOG(@"[CHEEVOS-DIAG] ThinFrontend: rc_client_begin_login_with_token user=%@ tokenLen=%lu",
+         username, (unsigned long)token.length);
 
     pvthin_rcheevos_login_ctx_t *lCtx =
         (pvthin_rcheevos_login_ctx_t *)malloc(sizeof(pvthin_rcheevos_login_ctx_t));
@@ -6788,6 +6953,7 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
     rc_client_begin_login_with_token(_rcClient, username.UTF8String, token.UTF8String,
                                      pvthin_rcheevos_login_callback, lCtx);
 #else
+    WLOG(@"[CHEEVOS-DIAG] ThinFrontend.loadAchievements EXIT: HAVE_RCHEEVOS undefined");
     _rcAchievementsActive.store(false);
     if (completion) { completion(NO); }
 #endif
@@ -6796,7 +6962,14 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
 - (void)unloadAchievements {
 #if HAVE_RCHEEVOS
     if (_rcClient) {
+        ILOG(@"[CHEEVOS-DIAG] ThinFrontend.unloadAchievements destroying rc_client");
         rc_client_unload_game(_rcClient);
+        // Destroy the client entirely so the next loadAchievementsForGameHash
+        // performs a fresh login + load_game roundtrip. Reusing the client
+        // across sessions caches a (potentially stale) session token that
+        // makes all subsequent server calls fail silently.
+        rc_client_destroy(_rcClient);
+        _rcClient = NULL;
     }
 #endif
     _rcAchievementsActive.store(false);
