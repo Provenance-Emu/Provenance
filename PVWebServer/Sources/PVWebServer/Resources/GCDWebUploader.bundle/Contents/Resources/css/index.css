@@ -287,22 +287,32 @@ body {
   transition: background-color 0.15s ease;
 }
 
-.table-striped > tbody > tr:nth-of-type(odd) {
+/* Selector specificity must match Bootstrap's
+   `.table-striped > tbody > tr:nth-child(odd) > td` (two compound selectors)
+   or it will be overridden and leave white rows under the dark theme. */
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
   background-color: rgba(255, 255, 255, 0.02);
+  color: var(--pv-text);
 }
 
-.table-striped > tbody > tr:nth-of-type(even) {
+.table-striped > tbody > tr:nth-child(even) > td,
+.table-striped > tbody > tr:nth-child(even) > th {
   background-color: transparent;
+  color: var(--pv-text);
 }
 
-.table-striped > tbody > tr:hover {
-  background-color: rgba(74, 144, 217, 0.08);
+.table-striped > tbody > tr:hover > td,
+.table-striped > tbody > tr:hover > th {
+  background-color: rgba(74, 144, 217, 0.12);
+  color: #ffffff;
 }
 
 .table > tbody > tr > td {
   border-top-color: var(--pv-border);
   vertical-align: middle;
   padding: 10px 8px;
+  color: var(--pv-text);
 }
 
 .table > tbody > tr > td > p {
@@ -569,4 +579,499 @@ body {
 /* nowrap helper (used in Localizable.strings) */
 .nowrap {
   white-space: nowrap;
+}
+
+/* ============================================
+   Retrowave Override Layer
+   ----------------------------------------------------------------------------
+   Catches every Bootstrap 3 surface that still tries to render with a white
+   background or near-white text. Each rule mirrors Bootstrap's own selector
+   specificity so the override actually wins. Anything we don't explicitly
+   re-skin would otherwise show up as a stray white block on the dark theme
+   (modals, dropdowns, table-bordered headers, navbar, etc.).
+   ============================================ */
+
+html,
+body {
+  background-color: var(--pv-bg);
+  color: var(--pv-text);
+}
+
+/* Generic header / heading colour */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  color: var(--pv-text);
+}
+
+/* --- Panels ------------------------------------------------------------- */
+.panel,
+.panel-default,
+.panel-primary,
+.panel-success,
+.panel-info,
+.panel-warning,
+.panel-danger {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  color: var(--pv-text);
+}
+
+.panel-body {
+  background-color: var(--pv-surface);
+  color: var(--pv-text);
+}
+
+.panel-footer {
+  background-color: var(--pv-surface);
+  border-top-color: var(--pv-border);
+  color: var(--pv-text-muted);
+}
+
+.panel-default > .panel-heading,
+.panel-primary > .panel-heading,
+.panel-success > .panel-heading,
+.panel-info > .panel-heading,
+.panel-warning > .panel-heading,
+.panel-danger > .panel-heading {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  color: var(--pv-text-muted);
+}
+
+.panel-title {
+  color: var(--pv-text);
+}
+
+.panel-default > .panel-heading + .panel-collapse > .panel-body {
+  border-top-color: var(--pv-border);
+}
+
+/* --- Tables (catch every variant) -------------------------------------- */
+.table,
+.table-condensed,
+.table-bordered,
+.table-hover {
+  background-color: transparent;
+  color: var(--pv-text);
+}
+
+.table > thead > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > tfoot > tr > td {
+  background-color: transparent;
+  color: var(--pv-text);
+  border-color: var(--pv-border);
+  border-bottom-color: var(--pv-border);
+}
+
+.table > thead > tr > th {
+  color: var(--pv-text-muted);
+}
+
+.table-bordered,
+.table-bordered > thead > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > th,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > th,
+.table-bordered > tfoot > tr > td {
+  border-color: var(--pv-border);
+}
+
+/* Bootstrap force-paints sticky table headers white !important; override at
+   the same specificity with !important so the dark surface wins. */
+.table th {
+  background-color: var(--pv-surface) !important;
+}
+
+.table .table {
+  background-color: var(--pv-surface);
+}
+
+.table > tbody > tr.active > td,
+.table > tbody > tr.active > th,
+.table > tbody > tr > td.active,
+.table > tbody > tr > th.active {
+  background-color: rgba(74, 144, 217, 0.18);
+  color: #ffffff;
+}
+
+/* --- Forms ------------------------------------------------------------- */
+.form-control,
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+textarea,
+select {
+  background-color: var(--pv-bg);
+  border-color: var(--pv-border);
+  color: var(--pv-text);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.form-control:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--pv-accent);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.25);
+}
+
+.form-control::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--pv-text-muted);
+  opacity: 1;
+}
+
+.input-group-addon,
+.input-group-btn > .btn {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  color: var(--pv-text);
+}
+
+label,
+.control-label {
+  color: var(--pv-text);
+}
+
+.help-block {
+  color: var(--pv-text-muted);
+}
+
+/* --- Buttons (kill Bootstrap's white + grey defaults) ------------------ */
+.btn {
+  text-shadow: none;
+  background-image: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.btn-default {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  color: var(--pv-text);
+}
+
+.btn-default:hover,
+.btn-default:focus,
+.btn-default.focus,
+.btn-default:active,
+.btn-default.active,
+.open > .dropdown-toggle.btn-default {
+  background-color: var(--pv-surface-hover);
+  border-color: var(--pv-accent);
+  color: #ffffff;
+}
+
+.btn-default.disabled,
+.btn-default[disabled],
+fieldset[disabled] .btn-default {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  color: var(--pv-text-muted);
+  opacity: 0.55;
+}
+
+.btn-link {
+  color: var(--pv-accent);
+}
+
+.btn-link:hover,
+.btn-link:focus {
+  color: var(--pv-accent-hover);
+}
+
+/* --- Navbar (in case any wiki/help template renders one) --------------- */
+.navbar,
+.navbar-default,
+.navbar-inverse {
+  background-color: var(--pv-surface);
+  background-image: none;
+  border-color: var(--pv-border);
+  color: var(--pv-text);
+}
+
+.navbar-default .navbar-brand,
+.navbar-default .navbar-text,
+.navbar-default .navbar-nav > li > a {
+  color: var(--pv-text);
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > li > a:hover {
+  background-color: var(--pv-surface-hover);
+  background-image: none;
+  color: #ffffff;
+}
+
+/* --- Modal ------------------------------------------------------------- */
+.modal-content {
+  background-color: var(--pv-surface);
+  border: 1px solid var(--pv-border);
+  -webkit-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  color: var(--pv-text);
+}
+
+.modal-header {
+  background-color: var(--pv-surface);
+  border-bottom-color: var(--pv-border);
+}
+
+.modal-header .modal-title,
+.modal-title {
+  color: #ffffff;
+}
+
+.modal-header .close {
+  color: var(--pv-text-muted);
+  text-shadow: none;
+  opacity: 0.7;
+}
+
+.modal-header .close:hover,
+.modal-header .close:focus {
+  color: #ffffff;
+  opacity: 1;
+}
+
+.modal-body {
+  background-color: var(--pv-surface);
+  color: var(--pv-text);
+}
+
+.modal-footer {
+  background-color: var(--pv-surface);
+  border-top-color: var(--pv-border);
+}
+
+.modal-backdrop,
+.modal-backdrop.in {
+  background-color: var(--pv-bg);
+  opacity: 0.75;
+}
+
+/* --- Dropdown menu ---------------------------------------------------- */
+.dropdown-menu {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  -webkit-box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+.dropdown-menu > li > a {
+  color: var(--pv-text);
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover {
+  background-color: var(--pv-surface-hover);
+  background-image: none;
+  color: #ffffff;
+}
+
+.dropdown-header {
+  color: var(--pv-text-muted);
+}
+
+.divider,
+.dropdown-menu .divider {
+  background-color: var(--pv-border);
+}
+
+/* --- List group ------------------------------------------------------- */
+.list-group {
+  background-color: transparent;
+}
+
+.list-group-item {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  color: var(--pv-text);
+}
+
+.list-group-item:hover,
+.list-group-item:focus {
+  background-color: var(--pv-surface-hover);
+  color: #ffffff;
+}
+
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
+  background-color: var(--pv-accent);
+  border-color: var(--pv-accent);
+  color: #ffffff;
+}
+
+/* --- Pagination ------------------------------------------------------- */
+.pagination > li > a,
+.pagination > li > span {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  color: var(--pv-accent);
+}
+
+.pagination > li > a:hover,
+.pagination > li > span:hover {
+  background-color: var(--pv-surface-hover);
+  color: #ffffff;
+}
+
+.pagination > .active > a,
+.pagination > .active > span {
+  background-color: var(--pv-accent);
+  border-color: var(--pv-accent);
+  color: #ffffff;
+}
+
+.pager li > a,
+.pager li > span {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  color: var(--pv-text);
+}
+
+/* --- Labels & badges -------------------------------------------------- */
+.label-default,
+.badge {
+  background-color: var(--pv-surface-hover);
+  color: var(--pv-text);
+}
+
+.label-primary { background-color: var(--pv-accent); color: #ffffff; }
+.label-success { background-color: var(--pv-success); color: #ffffff; }
+.label-info    { background-color: var(--pv-accent); color: #ffffff; }
+.label-warning { background-color: var(--pv-warning); color: #ffffff; }
+.label-danger  { background-color: var(--pv-danger); color: #ffffff; }
+
+.list-group-item.active > .badge,
+.nav-pills > .active > a > .badge {
+  color: var(--pv-accent);
+  background-color: #ffffff;
+}
+
+/* --- Wells, jumbotron ------------------------------------------------- */
+.well,
+.jumbotron {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  color: var(--pv-text);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+/* --- Code blocks ------------------------------------------------------ */
+code,
+kbd,
+pre,
+samp {
+  background-color: var(--pv-bg);
+  color: var(--pv-text);
+  border-color: var(--pv-border);
+}
+
+pre {
+  border: 1px solid var(--pv-border);
+}
+
+kbd {
+  background-color: var(--pv-surface-hover);
+  color: #ffffff;
+  box-shadow: inset 0 -1px 0 var(--pv-border);
+}
+
+/* --- Tooltips & popovers --------------------------------------------- */
+.tooltip-inner {
+  background-color: var(--pv-surface);
+  color: var(--pv-text);
+}
+
+.tooltip.top  .tooltip-arrow { border-top-color: var(--pv-surface); }
+.tooltip.right .tooltip-arrow { border-right-color: var(--pv-surface); }
+.tooltip.bottom .tooltip-arrow { border-bottom-color: var(--pv-surface); }
+.tooltip.left .tooltip-arrow { border-left-color: var(--pv-surface); }
+
+.popover {
+  background-color: var(--pv-surface);
+  border-color: var(--pv-border);
+  color: var(--pv-text);
+}
+
+.popover-title {
+  background-color: var(--pv-surface);
+  border-bottom-color: var(--pv-border);
+  color: #ffffff;
+}
+
+.popover-content {
+  color: var(--pv-text);
+}
+
+/* --- Progress bar (already partial above, finish here) ---------------- */
+.progress {
+  background-color: var(--pv-bg);
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+/* --- File input & jquery.fileupload chrome ---------------------------- */
+.fileinput-button {
+  background-color: var(--pv-accent);
+  border-color: var(--pv-accent);
+  color: #ffffff;
+}
+
+.fileinput-button:hover,
+.fileinput-button:focus {
+  background-color: var(--pv-accent-hover);
+  border-color: var(--pv-accent-hover);
+  color: #ffffff;
+}
+
+/* --- Misc text utilities --------------------------------------------- */
+.text-muted { color: var(--pv-text-muted); }
+.text-primary { color: var(--pv-accent); }
+.text-success { color: var(--pv-success); }
+.text-info    { color: var(--pv-accent); }
+.text-warning { color: var(--pv-warning); }
+.text-danger  { color: var(--pv-danger); }
+
+/* Scroll bars (WebKit) — match the dark surface so they don't flash white */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--pv-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--pv-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--pv-accent);
+}
+
+/* Selection highlight */
+::selection {
+  background: rgba(74, 144, 217, 0.5);
+  color: #ffffff;
+}
+::-moz-selection {
+  background: rgba(74, 144, 217, 0.5);
+  color: #ffffff;
 }
