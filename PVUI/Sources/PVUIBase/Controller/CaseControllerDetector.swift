@@ -137,19 +137,63 @@ public enum CaseControllerDetector {
     /// True when a connected `GCController` matches a known smart-case layout (GameSir, Soolra, …).
     /// Passive cases (e.g. Buppin) have no controller — they are only used after explicit skin selection or session auto-load.
     public static var isKnownPhysicalCaseControllerConnected: Bool {
-        #if os(iOS) || targetEnvironment(macCatalyst)
+        #if os(iOS) && !targetEnvironment(macCatalyst)
         return GCController.controllers().contains { layout(for: $0) != nil }
         #else
         return false
         #endif
     }
 
-    /// Automatic skin pickers (no explicit user/session selection for this identifier) should omit companion case skins
-    /// unless the feature flag is on AND a matching physical case controller is connected.
-    /// Companion skins are always excluded from automatic selection unless a case controller is connected.
+    /// True when there is at least one external `GCController` connected that
+    /// is NOT a known smart-case layout. When this is true, the user already
+    /// has real hardware input — the on-screen touch overlay (and any
+    /// case-specific companion skin) is redundant and visually conflicts with
+    /// the connected gamepad. Used to suppress case skins from automatic
+    /// selection in that scenario.
+    public static var isNonCaseExternalControllerConnected: Bool {
+        #if canImport(GameController) && os(iOS) && !targetEnvironment(macCatalyst)
+        return GCController.controllers().contains { controller in
+            controller.extendedGamepad != nil && layout(for: controller) == nil
+        }
+        #else
+        return false
+        #endif
+    }
+
+    /// True when the running device is an iPhone (the only form factor where
+    /// case companion skins make sense — no physical cases ship for iPad,
+    /// Mac, tvOS, or visionOS, and Catalyst on a desktop never needs one).
+    public static var isEligibleDeviceForCaseSkins: Bool {
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        return UIDevice.current.userInterfaceIdiom == .phone
+        #else
+        return false
+        #endif
+    }
+
+    /// Automatic skin pickers (no explicit user/session selection for this identifier)
+    /// should omit companion case skins unless ALL of these are true:
+    ///   1. The skin is identified as a companion for a known physical case.
+    ///   2. The running device is iPhone (no cases exist for iPad / Mac / tvOS).
+    ///   3. NO unrelated external controller is connected — if the user has a
+    ///      DualSense, Xbox pad, etc. plugged in, they have real input and
+    ///      don't need a touch overlay; using a case skin in that situation
+    ///      conflicts with the hardware controls.
+    ///   4. The `caseCompanionSkins` feature flag is on.
+    ///   5. A matching known case controller is actually connected.
     public static func isAllowedInAutomaticSkinSelection(_ skinIdentifier: String) -> Bool {
         guard isCompanionSkinForKnownCase(skinIdentifier) else { return true }
-        // It's a companion skin — only allow if the flag is on AND a case controller is connected
+
+        // Device must be an iPhone. No cases exist for iPad/Mac/tvOS/visionOS,
+        // and historically these skins have caused issues on iPad due to mis-
+        // matched aspect ratios and unreachable hardware buttons.
+        guard isEligibleDeviceForCaseSkins else { return false }
+
+        // If the user has a real external gamepad attached, the on-screen
+        // touch overlay a case skin provides is meaningless — and competes
+        // with the live controller mapping. Suppress.
+        guard !isNonCaseExternalControllerConnected else { return false }
+
         return PVFeatureFlags.shared.isEnabled(.caseCompanionSkins) && isKnownPhysicalCaseControllerConnected
     }
 

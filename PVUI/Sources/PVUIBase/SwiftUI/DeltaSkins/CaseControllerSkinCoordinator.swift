@@ -79,6 +79,22 @@ public final class CaseControllerSkinCoordinator {
             return
         }
 
+        // Defensive gate: case skins are iPhone-only and pointless when the
+        // user has a separate real external controller attached. The picker-
+        // side filter `CaseControllerDetector.isAllowedInAutomaticSkinSelection`
+        // applies the same rules, but a stray notification from another
+        // subsystem (smart case wakes up via Bluetooth, etc.) shouldn't be
+        // able to bypass those rules and auto-swap the user's skin out from
+        // under them.
+        guard CaseControllerDetector.isEligibleDeviceForCaseSkins else {
+            DLOG("CaseControllerSkinCoordinator: ignoring \(layout.name) — not an eligible device (iPhone only)")
+            return
+        }
+        guard !CaseControllerDetector.isNonCaseExternalControllerConnected else {
+            DLOG("CaseControllerSkinCoordinator: ignoring \(layout.name) — non-case external controller connected; user has real input")
+            return
+        }
+
         guard Defaults[.autoLoadCaseSkin] else {
             PVToastManager.post(
                 "\(layout.name) detected",
