@@ -611,6 +611,15 @@ public struct RetroAchievementsView: View {
         hardcoreModeEnabled = PVCheevos.retroArch.isHardcoreModeEnabled
     }
 
+    /// Turn achievements on (with hardcore mode off) right after a successful login,
+    /// so users don't have to flip a second toggle to actually start earning them.
+    private func enableAchievementsAfterLogin() {
+        PVCheevos.retroArch.isRetroAchievementsEnabled = true
+        PVCheevos.retroArch.isHardcoreModeEnabled = false
+        retroAchievementsEnabled = true
+        hardcoreModeEnabled = false
+    }
+
     private func performLogin() {
         guard isFormValid else { return }
 
@@ -649,6 +658,7 @@ public struct RetroAchievementsView: View {
                         self.userProfile = profile
                         isAuthenticated = true
                         loadingProgress = 1.0
+                        enableAchievementsAfterLogin()
 
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             self.isLoading = false
@@ -665,6 +675,7 @@ public struct RetroAchievementsView: View {
                         self.userProfile = session.user
                         isAuthenticated = true
                         loadingProgress = 1.0
+                        enableAchievementsAfterLogin()
 
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             self.isLoading = false
