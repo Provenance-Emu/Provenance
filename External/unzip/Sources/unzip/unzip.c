@@ -298,7 +298,7 @@ ZIP* openzip(const char* zipfile) {
 		free(zip);
 		return 0;
 	}
-	strcpy(zip->zip, zipfile);
+	memcpy(zip->zip, zipfile, strlen(zipfile) + 1);
 
 	return zip;
 }
