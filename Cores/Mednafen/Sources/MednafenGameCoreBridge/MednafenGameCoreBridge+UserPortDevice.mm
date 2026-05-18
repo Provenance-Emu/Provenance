@@ -74,7 +74,7 @@
             }
             break;
         case MednaSystemPCE:
-        case MednaSystemPCECD:
+        case MednaSystemPCFX:
             switch (libretroType) {
                 case 1: mapped = @"gamepad"; break;
                 case 2: mapped = @"mouse"; break;
