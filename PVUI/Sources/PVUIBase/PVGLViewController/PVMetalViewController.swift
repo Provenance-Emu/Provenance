@@ -3010,11 +3010,57 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         updateVsyncSettings()
     }
 
+    /// Builds the standard render pipeline + linear/point samplers from a pre-resolved
+    /// vertex/fragment pair. Used by both the precompiled `.metallib` path and the
+    /// runtime source-compile fallback in `createBasicShaders()`.
+    private func applyBasicPipeline(vertexFunction: MTLFunction,
+                                    fragmentFunction: MTLFunction,
+                                    label: String) {
+        guard let device = device, let mtlView = mtlView else { return }
+
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = vertexFunction
+        pipelineDescriptor.fragmentFunction = fragmentFunction
+        pipelineDescriptor.colorAttachments[0].pixelFormat = mtlView.colorPixelFormat
+
+        do {
+            customPipeline = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+            DLOG("Successfully created custom pipeline state (\(label))")
+
+            let linearSamplerDescriptor = MTLSamplerDescriptor()
+            linearSamplerDescriptor.minFilter = .linear
+            linearSamplerDescriptor.magFilter = .linear
+            linearSampler = device.makeSamplerState(descriptor: linearSamplerDescriptor)
+
+            let pointSamplerDescriptor = MTLSamplerDescriptor()
+            pointSamplerDescriptor.minFilter = .nearest
+            pointSamplerDescriptor.magFilter = .nearest
+            pointSampler = device.makeSamplerState(descriptor: pointSamplerDescriptor)
+        } catch {
+            ELOG("Failed to create pipeline state (\(label)): \(error)")
+            recoverFromGPUError()
+        }
+    }
+
     private func createBasicShaders() {
         DLOG("Creating basic shaders directly...")
 
         guard let device = device else {
             ELOG("No Metal device available")
+            return
+        }
+
+        // Fast path: load the precompiled `.metallib` that Xcode/SPM produces from
+        // PVBasicShaders.metal. Avoids the 300–500 ms runtime source compile that
+        // PROVENANCE-18N surfaced. Falls through to source compile if the bundled
+        // library is missing or doesn't expose the expected functions.
+        if let prebuilt = try? device.makeDefaultLibrary(bundle: Bundle.module),
+           let vertexFn = prebuilt.makeFunction(name: "basic_vertex"),
+           let fragmentFn = prebuilt.makeFunction(name: "basic_fragment") {
+            DLOG("Using precompiled basic shader metallib")
+            applyBasicPipeline(vertexFunction: vertexFn,
+                               fragmentFunction: fragmentFn,
+                               label: "precompiled")
             return
         }
 
@@ -3170,6 +3216,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         guard let device = device else {
             ELOG("No Metal device available")
+            return
+        }
+
+        // Same fast path as createBasicShaders — try the bundled metallib so we
+        // don't pay the runtime source compile when the fallback path runs too.
+        if let prebuilt = try? device.makeDefaultLibrary(bundle: Bundle.module),
+           let vertexFn = prebuilt.makeFunction(name: "vertexShader"),
+           let fragmentFn = prebuilt.makeFunction(name: "fragmentShader") {
+            DLOG("Using precompiled default-library metallib")
+            applyBasicPipeline(vertexFunction: vertexFn,
+                               fragmentFunction: fragmentFn,
+                               label: "precompiled-default")
             return
         }
 
