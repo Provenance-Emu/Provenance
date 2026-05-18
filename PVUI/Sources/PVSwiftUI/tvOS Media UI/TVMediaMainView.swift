@@ -2526,6 +2526,10 @@ struct TVMediaHomeView: View {
     @State private var webServerURL: String?
 #endif
 
+#if os(iOS)
+    @StateObject private var gamepadManager = GamepadManager.shared
+#endif
+
     /// Check if we have any games at all
     private var hasAnyGames: Bool {
         if LaunchArgument.forceEmptyLibrary.isEnabled { return false }
@@ -2672,6 +2676,14 @@ struct TVMediaHomeView: View {
                     .padding(.trailing, 20)
                 }
             }
+            #if os(iOS)
+            .onReceive(NotificationCenter.default.publisher(for: TVMediaHomeView.scrollToSectionNotification)) { note in
+                guard let id = note.userInfo?["sectionID"] as? String else { return }
+                withAnimation(.easeOut(duration: 0.3)) {
+                    proxy.scrollTo(id, anchor: .top)
+                }
+            }
+            #endif
         }
         .task {
             await loadAllGames()
@@ -2684,7 +2696,64 @@ struct TVMediaHomeView: View {
             refreshWebServerURL()
         }
 #endif
+#if os(iOS)
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard gamepadManager.isControllerConnected else { return }
+            // Don't compete with the sidebar / alerts when they own input.
+            if focusCoordinator.isAlertPresented || focusCoordinator.isSidebarExpanded { return }
+            switch event {
+            case .verticalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                advanceHomeSection(forward: value < 0)
+            case .buttonB(let isPressed):
+                guard isPressed else { return }
+                focusCoordinator.openSidebar()
+            default:
+                // Horizontal nav + A are handled by each focused section's own
+                // subscriber (HomeContinueSection, future TVMediaShelf nav).
+                break
+            }
+        }
+#endif
     }
+
+#if os(iOS)
+    /// Ordered list of section anchor IDs in Home (top → favorites → system shelves).
+    private func homeSectionIDs() -> [String] {
+        var ids: [String] = ["home_top"]
+        if !model.favoriteGames(limit: 1).isEmpty {
+            ids.append("favorites")
+        }
+        for system in systemsWithGames {
+            ids.append("system_\(system.identifier)")
+        }
+        return ids
+    }
+
+    /// Move `currentSection` to the next/previous Home section and ask the
+    /// ScrollViewReader to scroll there. Used by the iOS controller d-pad.
+    private func advanceHomeSection(forward: Bool) {
+        let ids = homeSectionIDs()
+        guard !ids.isEmpty else { return }
+        let currentIndex = currentSection.flatMap { ids.firstIndex(of: $0) } ?? 0
+        let nextIndex = forward
+            ? min(currentIndex + 1, ids.count - 1)
+            : max(currentIndex - 1, 0)
+        guard nextIndex != currentIndex else { return }
+        let target = ids[nextIndex]
+        currentSection = target
+        NotificationCenter.default.post(
+            name: TVMediaHomeView.scrollToSectionNotification,
+            object: nil,
+            userInfo: ["sectionID": target]
+        )
+    }
+
+    /// Notification name carrying a target section ID. The ScrollViewReader
+    /// inside `body` listens for this and animates to the section so the
+    /// outer iOS gamepad handler doesn't need direct access to the proxy.
+    fileprivate static let scrollToSectionNotification = Notification.Name("TVMediaHomeView.scrollToSection")
+#endif
 
     private var loadingView: some View {
         VStack(spacing: 24) {
