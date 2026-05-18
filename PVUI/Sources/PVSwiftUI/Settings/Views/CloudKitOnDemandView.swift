@@ -615,7 +615,7 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                     } else if let error = viewModel.error {
-                        ErrorView(error: error, viewModel: viewModel)
+                        CloudKitErrorView(error: error, viewModel: viewModel)
 
                     } else if viewModel.records.isEmpty && !viewModel.isLoading { // Show empty state only when not loading
                         VStack(spacing: 14) {
@@ -875,7 +875,7 @@ private struct CloudKitRecordRow: View {
     }
 
 // MARK: - Error View
-private struct ErrorView: View {
+private struct CloudKitErrorView: View {
         let error: String
         let viewModel: CloudKitOnDemandViewModel
 
