@@ -409,6 +409,49 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         }
     }
 
+    /// The subdirectory name a libretro core looks for under the system dir
+    /// (`RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY` consumers). This deliberately
+    /// differs from ``systemDirectoryName`` for several systems because the
+    /// upstream libretro cores hard-code a specific lowercase / branded name.
+    ///
+    /// Examples: PPSSPP looks in `PPSSPP/`, flycast in `dc/`, dolphin in
+    /// `dolphin-emu/`, melonDS in `melonds/`, mupen64plus-next in
+    /// `Mupen64Plus-Next/`, FBNeo in `fbneo/`, MAME in `mame*`, hatari in
+    /// `hatari/`, VICE in `vice/`.
+    ///
+    /// Callers that resolve a system dir for a libretro core (thin-wrapper +
+    /// full RA wrapper) should prefer this property; user-facing display still
+    /// uses ``systemDirectoryName``. Falls back to `nil` for systems with no
+    /// libretro core or where the upstream looks in the BIOS root.
+    ///
+    /// - Note: Part of issue #3576 — paired with the legacy → RA-aligned
+    ///   migration utility.
+    public var retroArchSystemDirectoryName: String? {
+        switch self {
+        case .PSP:           return "PPSSPP"            // PPSSPP libretro
+        case .Dreamcast:     return "dc"                // flycast
+        case .GameCube:      return "dolphin-emu"       // dolphin
+        case .Wii:           return "dolphin-emu"       // dolphin
+        case .DS:            return "melonds"           // melonDS
+        case .N64:           return "Mupen64Plus-Next"  // mupen64plus-next
+        case .AtariST:       return "hatari"            // hatari
+        case .C64:           return "vice"              // vice_x64sc / vice_x64
+        case .MAME:          return "mame"              // MAME (Current)
+        case .CPS1:          return "fbneo"             // FinalBurnNeo
+        case .CPS2:          return "fbneo"
+        case .CPS3:          return "fbneo"
+        case .NeoGeo:        return "fbneo"
+        case .NeoGeoCD:      return "fbneo"
+        case .CDi:           return "same_cdi"          // same_cdi uses bios/ inside
+        case ._3DS:          return "citra"             // azahar / citra family
+        case .Saturn:        return "Saturn"            // mednafen_saturn / yabasanshiro use same name
+        case .PS2:           return "play"              // Play! (when run via libretro)
+        // Systems that don't currently have a libretro fork in our matrix or
+        // where the core reads from the BIOS dir directly (no subdir).
+        default:             return nil
+        }
+    }
+
     // Add Comparable implementation
     public static func < (lhs: SystemIdentifier, rhs: SystemIdentifier) -> Bool {
         lhs.fullName < rhs.fullName
