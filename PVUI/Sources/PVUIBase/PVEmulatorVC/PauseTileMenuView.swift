@@ -460,6 +460,13 @@ struct PauseTileMenuView: View {
             Defaults[.retroArchMIDIEnabled].toggle()
             rebuildSections()
 
+        // MARK: Light gun overlay toggle (iOS-only)
+        case "lightGun":
+            #if os(iOS) && !targetEnvironment(macCatalyst)
+            emulatorVC.toggleLightGun()
+            rebuildSections()
+            #endif
+
         // MARK: Skins submenu actions
         case "skins_pick_for_system":
             showingSystemSkinSelection = true

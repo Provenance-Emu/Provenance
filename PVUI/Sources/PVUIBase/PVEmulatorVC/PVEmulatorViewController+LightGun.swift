@@ -152,6 +152,70 @@ extension PVEmulatorViewController {
         }
     }
 
+    // MARK: - Show / Hide / Toggle
+
+    /// True when the light-gun touch layer is currently installed.
+    public var isLightGunVisible: Bool {
+        lightGunTouchView != nil
+    }
+
+    /// Force-install the light-gun overlay even when the core only *supports*
+    /// (rather than *requires*) a gun. Used by the pause-menu "Light Gun" tile
+    /// so users playing a Zapper-aware game can opt in.
+    public func showLightGun() {
+        guard let gunCore = core as? LightGunResponder, gunCore.gameSupportsLightGun else { return }
+        guard lightGunTouchView == nil else { return }
+
+        ILOG("[LightGun] User-requested install via pause menu")
+
+        let touchView = LightGunTouchView(frame: view.bounds)
+        touchView.lightGunResponder = gunCore
+        touchView.gameViewRef = gpuViewController.view
+        view.addSubview(touchView)
+        lightGunTouchView = touchView
+
+        if let trackpad = touchTrackpadView {
+            trackpad.isUserInteractionEnabled = false
+        }
+
+        if cursorHostingController == nil {
+            let overlay = MouseCursorOverlayView()
+            let host = UIHostingController(rootView: overlay)
+            host.view.backgroundColor = .clear
+            host.view.isOpaque = false
+            host.view.isUserInteractionEnabled = false
+            host.view.frame = view.bounds
+            addChild(host)
+            view.addSubview(host.view)
+            host.didMove(toParent: self)
+            cursorHostingController = host
+            lightGunOwnsCursorOverlay = true
+        }
+
+        let driver = GCMouseLightGunDriver()
+        driver.attach(to: gunCore)
+        gcMouseLightGunDriver = driver
+
+        refreshLightGunLayout()
+        bringVirtualInputOverlaysToFront()
+    }
+
+    /// Hide the light-gun overlay. Equivalent to `teardownLightGun()` but with
+    /// a name that matches the show/toggle convention.
+    public func hideLightGun() {
+        guard lightGunTouchView != nil else { return }
+        teardownLightGun()
+    }
+
+    /// Flip the light-gun overlay visibility from the pause-menu tile.
+    public func toggleLightGun() {
+        if isLightGunVisible {
+            hideLightGun()
+        } else {
+            showLightGun()
+        }
+    }
+
     // MARK: - Layout refresh
 
     /// Update the `LightGunTouchView` frame to match the current game viewport.

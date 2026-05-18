@@ -494,6 +494,26 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
 
+        // Light Gun overlay toggle — shown when the active core supports light
+        // gun input (NES with Zapper, SNES with Super Scope, PSX with GunCon,
+        // Saturn with Stunner, etc.). Auto-install is disabled in
+        // setupLightGunIfNeeded() to avoid a stray cursor on plain gamepad
+        // games; this tile is the explicit opt-in.
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        if let gunCore = emulatorVC.core as? LightGunResponder, gunCore.gameSupportsLightGun {
+            let isOn = emulatorVC.isLightGunVisible
+            controlsTiles.append(PauseMenuTile(
+                id: "lightGun",
+                icon: isOn ? "scope" : "scope",
+                label: String(localized: "Light Gun"),
+                badge: isOn ? "ON" : "OFF",
+                description: String(localized: "Show the touch-aim crosshair for Zapper / Super Scope / GunCon games."),
+                colorKey: isOn ? .green : .gray,
+                dismissOnTap: false
+            ))
+        }
+        #endif
+
         // MIDI device picker — shown when core supports MIDI (iOS only, not tvOS or macCatalyst).
         // Note: RetroMenuView+MIDIPicker uses `#if canImport(CoreMIDI) && !os(tvOS)` and therefore
         // includes macCatalyst. The tile menu intentionally excludes macCatalyst because the compact
