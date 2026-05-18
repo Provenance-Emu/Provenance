@@ -4,13 +4,15 @@
 //
 //  Adds PortDeviceConfigurable conformance to Mednafen so the iOS pause-menu
 //  "Port Devices" tile appears for systems that have multiple input device
-//  options (SNES Mouse / SuperScope, NES Zapper, PSX DualShock / Mouse,
-//  Saturn 3D Pad / Mouse / Stunner, etc.).
+//  options (SNES Mouse / SuperScope, NES Zapper, PSX DualShock / Mouse / GunCon,
+//  Saturn 3D Pad / Mouse / Stunner, PCE Mouse).
 //
-//  IMPORTANT: This is a scaffold. `setDeviceType` persists the user's choice
-//  to UserDefaults but does NOT yet round-trip into Mednafen's native input
-//  config (MDFNI_SetInput). That hookup needs C++ bridge work and a game
-//  restart to apply. Logging a warning until the bridge call is wired.
+//  `setDeviceType` persists the user's choice to a per-(md5, coreId, port)
+//  UserDefaults key. The native side is wired through
+//  MednafenGameCoreBridge+UserPortDevice.mm — at game load the bridge reads
+//  the stored value and translates it into the Mednafen device-name string
+//  passed to `game->SetInput(port, ...)`. Mid-game changes require a restart
+//  because Mednafen latches input devices during MDFNI_LoadGame.
 //
 
 import Foundation
@@ -38,7 +40,7 @@ extension MednafenGameCore: PortDeviceConfigurable {
 
     public func setDeviceType(_ deviceType: UInt, forPort port: Int) {
         UserDefaults.standard.set(Int(deviceType), forKey: Self.persistenceKey(forPort: port, core: self))
-        WLOG("[Mednafen.PortDevices] setDeviceType=\(deviceType) port=\(port) — persisted to UserDefaults; native MDFNI_SetInput hookup pending. Restart the game to apply.")
+        ILOG("[Mednafen.PortDevices] setDeviceType=\(deviceType) port=\(port) — persisted. Reload the game to apply (Mednafen latches input devices at MDFNI_LoadGame).")
     }
 
     // MARK: - Per-system topology

@@ -93,6 +93,14 @@ __attribute__((visibility("default")))
 
 @end
 
+@interface MednafenGameCoreBridge (UserPortDevice)
+/// Returns the Mednafen device-name string for `port`, honouring the pause-menu
+/// "Port Devices" tile choice persisted by MednafenGameCore+PortDevices.swift.
+/// Returns `defaultName` when no user override is stored or when the stored
+/// libretro device type has no equivalent on the current subsystem.
+- (NSString *)mednafenDeviceNameForPort:(NSInteger)port defaultDevice:(NSString *)defaultName;
+@end
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 @interface MednafenGameCoreBridge (Palette)
