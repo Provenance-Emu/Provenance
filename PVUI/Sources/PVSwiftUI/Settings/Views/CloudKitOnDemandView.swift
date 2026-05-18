@@ -11,6 +11,7 @@ import CloudKit
 import PVLibrary // Ensure PVLibrary is imported
 import RealmSwift // Needed for Realm lookups
 import PVLogging
+import PVUIBase // RetroTheme, RetroScanlineOverlay
 import Foundation // For ByteCountFormatter
 
 /// Represents a filter for CloudKit record types.
@@ -588,42 +589,84 @@ final class CloudKitOnDemandViewModel: ObservableObject {
 
         // MARK: - Body
         var body: some View {
-            Group { // Use Group to handle conditional content
-                if viewModel.isLoading && viewModel.records.isEmpty { // Show loading only on initial load
-                    ProgressView("Loading Records...")
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let error = viewModel.error {
-                    ErrorView(error: error, viewModel: viewModel)
+            ZStack {
+                // Retrowave background
+                Color.retroBlack.edgesIgnoringSafeArea(.all)
+                RetroTheme.RetroGridView()
+                    .edgesIgnoringSafeArea(.all)
+                    .opacity(0.18)
+                RetroScanlineOverlay()
+                    .opacity(0.05)
+                    .allowsHitTesting(false)
+                    .edgesIgnoringSafeArea(.all)
 
-                } else if viewModel.records.isEmpty && !viewModel.isLoading { // Show empty state only when not loading
-                    // Replacement for ContentUnavailableView (iOS 16 compatible)
-                    VStack(spacing: 16) {
-                        Image(systemName: "icloud.slash")
-                            .font(.largeTitle)
-                            .foregroundColor(.secondary)
-                        Text("No Cloud Records Found")
-                            .font(.headline)
-                        Text("No records were found in CloudKit for the \(viewModel.selectedScope == .private ? "Private" : "Shared") database. Ensure sync is enabled and has completed at least once.")
-                            .font(.callout)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                        Button("Refresh") {
-                            Task { await viewModel.refreshMetadata() }
+                Group { // Use Group to handle conditional content
+                    if viewModel.isLoading && viewModel.records.isEmpty { // Show loading only on initial load
+                        VStack(spacing: 14) {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .retroPink))
+                                .scaleEffect(1.5)
+                            Text("LOADING RECORDS…")
+                                .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                                .tracking(1.4)
+                                .foregroundColor(.retroPink)
+                                .shadow(color: .retroPink.opacity(0.5), radius: 4)
                         }
-                        .buttonStyle(.bordered)
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                } else {
-                    // Main content: List for iOS/tvOS
-                    RecordListView(
-                        records: filteredAndSortedRecords,
-                        viewModel: viewModel,
-                        onDeleteItems: deleteItems
-                    )
+                    } else if let error = viewModel.error {
+                        ErrorView(error: error, viewModel: viewModel)
+
+                    } else if viewModel.records.isEmpty && !viewModel.isLoading { // Show empty state only when not loading
+                        VStack(spacing: 14) {
+                            Image(systemName: "icloud.slash")
+                                .font(.system(size: 48, weight: .light))
+                                .foregroundStyle(
+                                    LinearGradient(colors: [.retroPurple, .retroPink],
+                                                   startPoint: .top, endPoint: .bottom)
+                                )
+                                .shadow(color: .retroPurple.opacity(0.5), radius: 6)
+                            Text("NO CLOUD RECORDS FOUND")
+                                .font(.system(size: 13, weight: .heavy))
+                                .tracking(1.4)
+                                .foregroundColor(.retroPink)
+                            Text("No records were found in CloudKit for the \(viewModel.selectedScope == .private ? "Private" : "Shared") database. Ensure sync is enabled and has completed at least once.")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.white.opacity(0.7))
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 24)
+                            Button {
+                                Task { await viewModel.refreshMetadata() }
+                            } label: {
+                                Text("REFRESH")
+                                    .font(.system(size: 12, weight: .heavy))
+                                    .tracking(1.2)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 22)
+                                    .padding(.vertical, 10)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                            .fill(LinearGradient(colors: [.retroPink, .retroPurple],
+                                                                 startPoint: .leading, endPoint: .trailing))
+                                    )
+                                    .shadow(color: .retroPink.opacity(0.5), radius: 6)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                    } else {
+                        // Main content: List for iOS/tvOS
+                        RecordListView(
+                            records: filteredAndSortedRecords,
+                            viewModel: viewModel,
+                            onDeleteItems: deleteItems
+                        )
+                    }
                 }
             }
+            .preferredColorScheme(.dark)
             .navigationTitle("On-Demand Downloads")
             .searchable(text: $searchText, prompt: "Search Records")
             .toolbar {
@@ -685,9 +728,13 @@ final class CloudKitOnDemandViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Row View
+}
 
-    struct CloudKitRecordRow: View {
+// MARK: - File-scope sub-views
+// Lifted out of `CloudKitOnDemandViewModel` to keep that class under the
+// SwiftLint `type_body_length` error threshold (600 lines).
+
+private struct CloudKitRecordRow: View {
         // Use the immutable ViewModel passed in. State changes are handled by the parent @StateObject.
         let record: CloudKitRecordViewModel
         let viewModel: CloudKitOnDemandViewModel // Pass ViewModel for activeOperations access
@@ -695,43 +742,39 @@ final class CloudKitOnDemandViewModel: ObservableObject {
         var onDelete: (CloudKitRecordViewModel) -> Void
 
         var body: some View {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(record.title).font(.headline)
-                    Text(record.subtitle).font(.subheadline).foregroundColor(.secondary)
+            HStack(spacing: 12) {
+                // Type icon
+                typeIcon
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(record.title)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                    Text(record.subtitle)
+                        .font(.system(size: 11, weight: .medium, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.55))
+                        .lineLimit(1)
                 }
+
                 Spacer()
 
-                // Status Indicator
-                let isDownloadable = CloudKitSchema.RecordType(rawValue: record.recordType) == .rom ||
-                                     CloudKitSchema.RecordType(rawValue: record.recordType) == .saveState ||
-                                     CloudKitSchema.RecordType(rawValue: record.recordType) == .bios
-
-                if viewModel.activeOperations[record.recordID.recordName] == true || record.isDownloading {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .scaleEffect(0.7) // Make spinner smaller
-                } else if record.isDownloaded {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.green)
-                } else if isDownloadable { // Only show download button if downloadable type
-                    // Download Button
-                    Button {
-                        onDownload(record)
-                    } label: {
-                        Image(systemName: "icloud.and.arrow.down")
-                    }
-                    #if !os(tvOS)
-                    .buttonStyle(.borderless)
-                    #endif
-                    .disabled(viewModel.activeOperations[record.recordID.recordName] == true)
-                } else {
-                    // Optionally show a different icon or nothing for non-downloadable types
-                    // For example, an empty space or a specific icon:
-                    // Image(systemName: "icloud.slash").foregroundColor(.gray)
-                    EmptyView() // Or just show nothing
-                }
+                statusIndicator
             }
+            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(Color.retroDarkBlue.opacity(0.45))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(colors: [.retroBlue.opacity(0.35), .retroPurple.opacity(0.3)],
+                                       startPoint: .leading, endPoint: .trailing),
+                        lineWidth: 1
+                    )
+            )
             .contentShape(Rectangle())
             .contextMenu {
                 Button(role: .destructive) {
@@ -742,36 +785,157 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                 .disabled(viewModel.activeOperations[record.recordID.recordName] == true)
             }
         }
+
+        // MARK: - Row helpers
+
+        private var typeIcon: some View {
+            let (symbol, accent) = typeAccent
+            return ZStack {
+                Circle()
+                    .fill(accent.opacity(0.18))
+                    .frame(width: 32, height: 32)
+                Circle()
+                    .strokeBorder(accent.opacity(0.6), lineWidth: 1)
+                    .frame(width: 32, height: 32)
+                Image(systemName: symbol)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(accent)
+                    .shadow(color: accent.opacity(0.5), radius: 3)
+            }
+        }
+
+        private var typeAccent: (String, Color) {
+            switch CloudKitSchema.RecordType(rawValue: record.recordType) {
+            case .rom: return ("gamecontroller.fill", .retroBlue)
+            case .saveState: return ("square.and.arrow.down.fill", .retroPurple)
+            case .bios: return ("cpu.fill", .retroPink)
+            case .file: return ("doc.fill", .retroGreen)
+            case .metadata: return ("info.circle.fill", .retroCyan)
+            case .none: return ("questionmark.circle.fill", .gray)
+            }
+        }
+
+        @ViewBuilder
+        private var statusIndicator: some View {
+            let isDownloadable = CloudKitSchema.RecordType(rawValue: record.recordType) == .rom ||
+                                 CloudKitSchema.RecordType(rawValue: record.recordType) == .saveState ||
+                                 CloudKitSchema.RecordType(rawValue: record.recordType) == .bios
+
+            if viewModel.activeOperations[record.recordID.recordName] == true || record.isDownloading {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .retroPink))
+                    .scaleEffect(0.75)
+            } else if record.isDownloaded {
+                HStack(spacing: 4) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 11, weight: .bold))
+                    Text("LOCAL")
+                        .font(.system(size: 9, weight: .heavy))
+                        .tracking(0.8)
+                }
+                .foregroundColor(.retroGreen)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule().fill(Color.retroGreen.opacity(0.12))
+                )
+                .overlay(
+                    Capsule().strokeBorder(Color.retroGreen.opacity(0.5), lineWidth: 1)
+                )
+                .shadow(color: .retroGreen.opacity(0.4), radius: 3)
+            } else if isDownloadable {
+                Button {
+                    onDownload(record)
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "icloud.and.arrow.down")
+                            .font(.system(size: 11, weight: .bold))
+                        Text("GET")
+                            .font(.system(size: 9, weight: .heavy))
+                            .tracking(0.8)
+                    }
+                    .foregroundColor(.retroBlue)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule().fill(Color.retroBlue.opacity(0.12))
+                    )
+                    .overlay(
+                        Capsule().strokeBorder(Color.retroBlue.opacity(0.5), lineWidth: 1)
+                    )
+                }
+                #if !os(tvOS)
+                .buttonStyle(.borderless)
+                #endif
+                .disabled(viewModel.activeOperations[record.recordID.recordName] == true)
+            } else {
+                EmptyView()
+            }
+        }
     }
 
-    // MARK: - Error View
-    private struct ErrorView: View {
+// MARK: - Error View
+private struct ErrorView: View {
         let error: String
         let viewModel: CloudKitOnDemandViewModel
 
         var body: some View {
-            VStack(spacing: 16) {
+            VStack(spacing: 14) {
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .font(.largeTitle)
-                    .foregroundColor(.red)
-                Text("Error Loading Records")
-                    .font(.headline)
+                    .font(.system(size: 48, weight: .semibold))
+                    .foregroundStyle(
+                        LinearGradient(colors: [.retroOrange, .retroPink],
+                                       startPoint: .top, endPoint: .bottom)
+                    )
+                    .shadow(color: .retroOrange.opacity(0.6), radius: 6)
+
+                Text("ERROR LOADING RECORDS")
+                    .font(.system(size: 13, weight: .heavy))
+                    .tracking(1.4)
+                    .foregroundColor(.retroOrange)
+                    .shadow(color: .retroOrange.opacity(0.5), radius: 3)
+
                 Text(error)
-                    .font(.callout)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.75))
                     .multilineTextAlignment(.center)
-                Button("Retry") {
+                    .padding(.horizontal, 24)
+                    .lineLimit(6)
+
+                Button {
                     Task { await viewModel.refreshMetadata() }
+                } label: {
+                    Text("RETRY")
+                        .font(.system(size: 12, weight: .heavy))
+                        .tracking(1.2)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 22)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(LinearGradient(colors: [.retroOrange, .retroPink],
+                                                     startPoint: .leading, endPoint: .trailing))
+                        )
+                        .shadow(color: .retroOrange.opacity(0.5), radius: 6)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.plain)
             }
-            .padding()
+            .padding(24)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(Color.black.opacity(0.7))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .strokeBorder(Color.retroOrange.opacity(0.45), lineWidth: 1)
+            )
+            .padding(24)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 
-    // MARK: - Record List View
-    private struct RecordListView: View {
+// MARK: - Record List View
+private struct RecordListView: View {
         let records: [CloudKitRecordViewModel]
         let viewModel: CloudKitOnDemandViewModel
         let onDeleteItems: (IndexSet) -> Void
@@ -790,11 +954,15 @@ final class CloudKitOnDemandViewModel: ObservableObject {
                             }
                         }
                     })
+                    .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
                 }
                 .onDelete(perform: onDeleteItems) // Swipe to delete
             }
-            .listStyle(.plain) // Adjust list style as needed
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(Color.clear)
             .refreshable { await viewModel.refreshMetadata() } // Pull-to-refresh for List
         }
     }
-}
