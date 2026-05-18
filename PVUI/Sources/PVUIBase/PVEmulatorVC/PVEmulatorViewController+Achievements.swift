@@ -225,18 +225,15 @@ public extension PVEmulatorViewController {
             ILOG("[CHEEVOS-DIAG] startSession SUCCESS gameId=\(manager.currentGameId ?? -1) winningHash=\(winningHash) existingUnlocks=\(response.unlocks?.count ?? 0)")
 
             // Post a status toast so the user sees the same "found match" feedback
-            // the RA full-wrapper publishes via its native message system. Includes
-            // game title + already-unlocked count for context.
-            let priorUnlocks = response.unlocks?.count ?? 0
+            // the RA full-wrapper publishes via its native message system. We
+            // intentionally don't surface response.unlocks.count here — the API
+            // returns the user's prior-session unlock list which is often
+            // confusing (e.g. shows 1 when the user hasn't actually earned
+            // anything on this account yet). The achievement overlay surfaces
+            // per-event unlock detail separately.
             await MainActor.run {
-                let message: String
-                if priorUnlocks > 0 {
-                    message = "RetroAchievements: \(gameTitle) — \(priorUnlocks) already unlocked"
-                } else {
-                    message = "RetroAchievements: tracking \(gameTitle)"
-                }
                 PVToastManager.shared.show(
-                    message,
+                    "RetroAchievements: tracking \(gameTitle)",
                     type: .success,
                     duration: 4.0,
                     icon: "trophy.fill"

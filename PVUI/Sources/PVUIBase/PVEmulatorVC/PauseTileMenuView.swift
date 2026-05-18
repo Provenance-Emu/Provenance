@@ -1218,6 +1218,13 @@ struct PauseTileMenuView: View {
                 .disableAutocorrection(true)
                 .font(.system(size: tvOSAdjusted(11, tvOS: 15), weight: .medium, design: .rounded))
                 .foregroundColor(.white)
+                // Exclude the search field from controller / focus-engine
+                // navigation. Without this, tvOS focus engine and iOS
+                // keyboard-driven focus latch onto the TextField on first
+                // d-pad press and never escape — user can't reach the tiles
+                // below it. Tapping the search bar with touch still works on
+                // iOS (touch hit-testing isn't gated by .focusable).
+                .focusable(false)
         }
         .padding(.horizontal, tvOSAdjusted(10, tvOS: 14))
         .padding(.vertical, tvOSAdjusted(6, tvOS: 10))
