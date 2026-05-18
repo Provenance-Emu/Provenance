@@ -364,3 +364,49 @@ public final class LightGunGameRegistry: @unchecked Sendable {
         _titlePatterns = patterns
     }
 }
+
+// MARK: - Objective-C Bridge
+
+/// ObjC-callable shim so ObjC++ core bridges (e.g. MednafenGameCoreBridge)
+/// can consult the registry without having to import Swift-only types.
+/// ``SystemIdentifier`` is a Swift string-enum and therefore not directly
+/// bridged to ObjC — callers pass the raw `com.provenance.<system>`
+/// identifier the bridge already exposes via its `systemIdentifier` property.
+@objc(PVLightGunGameRegistry)
+public final class LightGunGameRegistryObjC: NSObject {
+
+    /// Returns `true` if the loaded ROM is known to support a light gun
+    /// peripheral on the given system.
+    /// - Parameters:
+    ///   - systemIdentifier: Raw `com.provenance.*` identifier from the bridge.
+    ///   - md5: ROM MD5 (lowercased internally). May be `nil`.
+    ///   - title: ROM display title for keyword-pattern fallback. May be `nil`.
+    @objc(gameSupportsLightGunForSystemIdentifier:md5:title:)
+    public static func gameSupportsLightGun(
+        forSystemIdentifier systemIdentifier: String,
+        md5: String?,
+        title: String?
+    ) -> Bool {
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier) else {
+            return false
+        }
+        return LightGunGameRegistry.shared.gameSupportsLightGun(
+            systemIdentifier: sysID,
+            md5: md5,
+            title: title
+        )
+    }
+
+    /// Returns `true` if the system has any light-gun support at all
+    /// (always-on or conditional). Cheap pre-check before doing the
+    /// per-game lookup.
+    @objc(systemHasAnyLightGunSupport:)
+    public static func systemHasAnyLightGunSupport(
+        _ systemIdentifier: String
+    ) -> Bool {
+        guard let sysID = SystemIdentifier(rawValue: systemIdentifier) else {
+            return false
+        }
+        return LightGunGameRegistry.shared.systemHasAnyLightGunSupport(sysID)
+    }
+}

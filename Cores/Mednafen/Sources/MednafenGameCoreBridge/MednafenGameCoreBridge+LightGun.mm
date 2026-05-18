@@ -111,6 +111,10 @@ static inline void gc_write16(uint8_t *buf, int offset, int16_t value) {
 #pragma mark - LightGunResponder — capability
 
 - (BOOL)gameSupportsLightGun {
+    // Saturn + PSX: use the curated Mednafen-side lookup tables. These are
+    // tighter than the cross-core LightGunGameRegistry (serial-keyed for
+    // PSX, per-game player-count for Saturn) and feed downstream wiring
+    // (`_isLightGunGame`, `_lightGunPlayerCount`).
     if (self.systemType == MednaSystemSS) {
         return self->_isLightGunGame;
     }
@@ -121,7 +125,19 @@ static inline void gc_write16(uint8_t *buf, int offset, int16_t value) {
         }
         return [MednafenGameCoreOptions psxLightGunGames][serial] != nil;
     }
-    return NO;
+    // All other Mednafen subsystems (NES, FDS, SNES, MD/Genesis, SMS, etc.)
+    // defer to the cross-core LightGunGameRegistry so Duck Hunt / Hogan's
+    // Alley / Yoshi's Safari / Menacer titles surface the touch-lightgun
+    // pause-menu tile. Without this, those games would silently fall
+    // through to the default NO branch and the user would never see the
+    // overlay toggle.
+    NSString *sysID = [self valueForKey:@"systemIdentifier"];
+    if (sysID.length == 0) { return NO; }
+    NSString *md5 = [self valueForKey:@"romMD5"];
+    NSString *title = self->romName;
+    return [PVLightGunGameRegistry gameSupportsLightGunForSystemIdentifier:sysID
+                                                                       md5:md5
+                                                                     title:title];
 }
 
 - (BOOL)requiresLightGun {
