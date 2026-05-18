@@ -68,11 +68,14 @@ extension View {
     }
 
     /// Enables focus on iOS where needed; no-op on tvOS.
+    /// On iOS we also suppress the system blue focus ring — every view that uses
+    /// this modifier already draws its own retrowave focus styling, so the system
+    /// halo just doubles up.
     @ViewBuilder
     func tvMediaFocusable(_ enabled: Bool = true) -> some View {
         #if os(iOS)
         if #available(iOS 17.0, *) {
-            self.focusable(enabled)
+            self.focusable(enabled).focusEffectDisabled()
         } else {
             self
         }

@@ -297,9 +297,20 @@ struct TVMediaMainView: View {
                         router.dismissModal()
                     }
                 }
+                .onChange(of: showingImportsAlert) { presented in
+                    // Mirror the imports popover into the focus coordinator's alert
+                    // state so background gamepad subscribers (sidebar rail, root view,
+                    // destination handlers) skip events while it's up. Otherwise the
+                    // popover gets backstabbed by the sidebar's still-live handler.
+                    focusCoordinator.isAlertPresented = presented
+                }
                 #if os(iOS)
                 .onReceive(gamepadManager.eventPublisher) { event in
                     guard gamepadManager.isControllerConnected else { return }
+                    // When any retrowave alert/popover is showing, defer to its own
+                    // gamepad handler — we don't want the root to toggle the sidebar
+                    // or hijack inputs that belong to the modal.
+                    if focusCoordinator.isAlertPresented { return }
                     switch event {
                     case .menuToggle(let isPressed):
                         if isPressed { focusCoordinator.toggleSidebar() }
@@ -1322,6 +1333,7 @@ struct TVMediaLogsView: View {
         #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
             guard gamepadManager.isControllerConnected else { return }
+            if focusCoordinator.isAlertPresented || focusCoordinator.isSidebarExpanded { return }
             switch event {
             case .menuToggle(let isPressed), .start(let isPressed):
                 if isPressed {
@@ -1329,7 +1341,18 @@ struct TVMediaLogsView: View {
                 }
             case .buttonB(let isPressed):
                 if isPressed {
-                    focusCoordinator.openSidebar()
+                    if isFullscreen {
+                        isFullscreen = false
+                    } else {
+                        focusCoordinator.openSidebar()
+                    }
+                }
+            case .buttonPress(let isPressed):
+                // A toggles fullscreen log view.
+                if isPressed {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isFullscreen.toggle()
+                    }
                 }
             default:
                 break
@@ -3792,6 +3815,10 @@ struct TVMediaSearchView: View {
     @FocusState private var focusedRecentIndex: Int?
     @FocusState private var isRecentButtonFocused: Bool
 
+    #if os(iOS)
+    @StateObject private var gamepadManager = GamepadManager.shared
+    #endif
+
     private let maxRecentSearches = 8
     private let searchDebounceInterval: Duration = .milliseconds(300)
 
@@ -3860,6 +3887,60 @@ struct TVMediaSearchView: View {
             searchDebounceTask?.cancel()
             searchDebounceTask = nil
         }
+        #if os(iOS)
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard gamepadManager.isControllerConnected else { return }
+            // Defer to the sidebar when it owns focus, and to any retrowave alert.
+            if focusCoordinator.isAlertPresented || focusCoordinator.isSidebarExpanded {
+                return
+            }
+            switch event {
+            case .buttonPress(let isPressed):
+                guard isPressed else { return }
+                if let index = focusedRecentIndex, index < recentSearches.count {
+                    let query = recentSearches[index]
+                    text = query
+                    lastSearch = query
+                    focusedRecentIndex = nil
+                    Task { await performSearch() }
+                } else {
+                    isSearchFieldFocused = true
+                }
+            case .buttonB(let isPressed):
+                guard isPressed else { return }
+                if focusedRecentIndex != nil {
+                    focusedRecentIndex = nil
+                } else if !text.isEmpty {
+                    text = ""
+                    results = []
+                    lastSearch = ""
+                } else {
+                    focusCoordinator.openSidebar()
+                }
+            case .verticalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                if value > 0 {
+                    // Up: pop focus back to the search field.
+                    focusedRecentIndex = nil
+                    isSearchFieldFocused = true
+                } else if value < 0, !recentSearches.isEmpty {
+                    // Down: drop into recent searches.
+                    isSearchFieldFocused = false
+                    focusedRecentIndex = focusedRecentIndex.map { min($0, recentSearches.count - 1) } ?? 0
+                }
+            case .horizontalNavigation(let value, let isPressed):
+                guard isPressed, !recentSearches.isEmpty else { return }
+                let current = focusedRecentIndex ?? 0
+                let next = value > 0
+                    ? min(current + 1, recentSearches.count - 1)
+                    : max(current - 1, 0)
+                focusedRecentIndex = next
+                isSearchFieldFocused = false
+            default:
+                break
+            }
+        }
+        #endif
     }
 
     private var searchField: some View {

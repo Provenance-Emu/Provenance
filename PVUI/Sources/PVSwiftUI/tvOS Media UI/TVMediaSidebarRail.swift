@@ -92,16 +92,24 @@ struct TVMediaSidebarRail: View {
             #if os(iOS)
             .onReceive(gamepadManager.eventPublisher) { event in
                 guard gamepadManager.isControllerConnected else { return }
+                // Don't compete with retrowave alerts/popovers for controller
+                // input — when one is up it owns navigation. The previous code
+                // let A press while a popover was visible navigate the underlying
+                // (hidden) sidebar item AND select the popover row at the same time.
+                if focusCoordinator.isAlertPresented { return }
+                // Only handle navigation/activation when the sidebar is the
+                // active focus zone; otherwise destination handlers own input.
+                let sidebarHasFocus = focusCoordinator.isSidebarExpanded || focusedItem != nil
                 switch event {
                 case .menuToggle(let isPressed):
                     if isPressed {
                         focusCoordinator.toggleSidebar()
                     }
                 case .verticalNavigation(let value, let isPressed):
-                    guard isPressed else { return }
+                    guard isPressed, sidebarHasFocus else { return }
                     moveSidebarFocus(isNext: value < 0)
                 case .buttonPress(let isPressed):
-                    guard isPressed else { return }
+                    guard isPressed, sidebarHasFocus else { return }
                     activateFocusedSidebar()
                 case .buttonB(let isPressed):
                     guard isPressed else { return }
