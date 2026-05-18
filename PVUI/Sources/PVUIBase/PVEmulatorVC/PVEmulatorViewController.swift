@@ -866,30 +866,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         ILOG("Loading ROM: \(romURL.path)")
 
-        // ROM disk read (often 10–100 MB; N64/PSP/DS/Saturn payloads even larger)
-        // was happening on the main thread because createEmulator() inherits
-        // @MainActor isolation from PVEmulatorViewController. Sentry's mobile
-        // perf detector surfaced it as PROVENANCE-14W "File IO on Main Thread"
-        // (~60 slow frames, 2 frozen frames per launch on thermally throttled
-        // devices). Push the synchronous bridge/core load to a userInitiated
-        // detached task so the UI thread stays responsive while the file is
-        // read in.
-        let resolvedPath = romURL.path
-        nonisolated(unsafe) let coreRef = core
-        nonisolated(unsafe) let bridgeRef: EmulatorCoreIOInterface? = {
-            if let coreObj = core as? any ObjCBridgedCore,
-               let b = coreObj.bridge as? EmulatorCoreIOInterface {
-                return b
-            }
-            return nil
-        }()
-        try await Task.detached(priority: .userInitiated) {
-            if let bridgeRef {
-                try bridgeRef.loadFile(atPath: resolvedPath)
-            } else {
-                try coreRef.loadFile(atPath: resolvedPath)
-            }
-        }.value
+        // NOTE: this synchronous call used to be wrapped in Task.detached
+        // (to address PROVENANCE-14W "File IO on Main Thread") but that
+        // change stalled emulator boot on cores whose loadFile internally
+        // pins thread affinity (GL context creation, notifications observed
+        // with main-thread expectations, etc.). Keep it synchronous on
+        // @MainActor for now; revisit per-core once we can validate each
+        // bridge tolerates a background loadFile dispatch.
+        if let core = core as? any ObjCBridgedCore, let bridge = core.bridge as? EmulatorCoreIOInterface {
+            try bridge.loadFile(atPath: romURL.path)
+        } else {
+            try core.loadFile(atPath: romURL.path)
+        }
 
         // Route game view to an external display when one is already connected at launch,
         // the user has chosen dedicated mode, and the core reports supportsExternalDisplay == true.

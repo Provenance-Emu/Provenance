@@ -235,12 +235,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     // Add this property to the class
     private var customPipeline: MTLRenderPipelineState?
 
-    /// True while the off-main shader compile dispatched from viewDidLoad is in flight.
-    /// `draw(in:)` consults this so its self-heal path doesn't double-compile on the
-    /// main thread while the background task is already producing the pipelines.
-    /// (PROVENANCE-18N — async shader compile to unblock launch.)
-    private var isPreparingShaders: Bool = false
-
     /// Controls whether VSync is enabled (synchronizes rendering with display refresh rate)
     public var vsyncEnabled: Bool = true
 
@@ -418,24 +412,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Configure VSync settings
         updateVsyncSettings()
 
-        // Compile shaders + build the render pipeline off the main thread.
-        // `MTLDevice.makeLibrary(source:)` and `makeRenderPipelineState(...)` are
-        // documented as thread-safe and were the dominant cost of viewDidLoad
-        // (~700ms self-time, surfaced as PROVENANCE-18N). `draw(in:)` already
-        // tolerates a nil pipeline (MTKView paints `clearColor` until pipelines
-        // arrive); the `isPreparingShaders` flag stops its self-heal path from
-        // racing this work.
-        isPreparingShaders = true
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self = self else { return }
-            self.createBasicShaders()
-            if self.customPipeline == nil && self.blitPipeline == nil {
-                self.createBasicShadersWithDefaultLibrary()
-            }
-            DispatchQueue.main.async {
-                self.configureFilterRenderer(reason: "viewDidLoad", force: true)
-                self.isPreparingShaders = false
-            }
+        // NOTE: the async background-compile path (with isPreparingShaders gate
+        // in draw(in:)) caused emulator launches to stall — likely because the
+        // boot sequence implicitly depended on pipelines being ready before
+        // the first frame request or before skin overlays were attached.
+        // Keep synchronous for now; revisit with a pre-compiled .metallib.
+        createBasicShaders()
+
+        // If that didn't work, try the default library approach
+        if customPipeline == nil && blitPipeline == nil {
+            createBasicShadersWithDefaultLibrary()
         }
 
         // Add notification observers
@@ -466,7 +452,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         //        mtlView.layer.borderColor = UIColor.cyan.cgColor
 
         DLOG("Metal view controller view did load")
-        // configureFilterRenderer runs at the tail of the async shader build above.
+        configureFilterRenderer(reason: "viewDidLoad", force: true)
     }
 
     @objc private func emulatorCoreDidInitialize() {
@@ -1699,11 +1685,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         // Check if we have a valid pipeline
         if customPipeline == nil && blitPipeline == nil {
-            // Async build kicked off in viewDidLoad is still running — let MTKView
-            // paint its clearColor for the next frame instead of double-compiling.
-            if isPreparingShaders {
-                return
-            }
             DLOG("No valid pipeline available, trying to set up shaders directly")
             createBasicShaders()
 
