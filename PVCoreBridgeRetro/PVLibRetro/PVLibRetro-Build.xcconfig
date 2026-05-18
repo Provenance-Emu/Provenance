@@ -23,7 +23,13 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_RCHEEVOS=1
 // SPM builds get the include path automatically via the CRcheevos product;
 // the Xcode workspace path needs the search path explicitly. PVRcheevos is
 // a sibling SPM package; its public headers live under rcheevos/include.
-HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/../../PVRcheevos/rcheevos/include
+//
+// NOTE: $(SRCROOT) here is the consuming xcodeproj's source root (i.e.
+// `PVCoreBridgeRetro/` when this xcconfig is included from
+// PVCoreBridgeRetro.xcodeproj), NOT this xcconfig file's location. That's
+// why we go up only one level — `../PVRcheevos/...` — to reach the sibling
+// PVRcheevos package at the repo root.
+HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/../PVRcheevos/rcheevos/include
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_NETPLAY=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_NETWORK=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_CODEC_HW=1
