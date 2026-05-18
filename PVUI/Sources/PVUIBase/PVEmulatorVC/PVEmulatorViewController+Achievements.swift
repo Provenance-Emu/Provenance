@@ -158,6 +158,8 @@ public extension PVEmulatorViewController {
             // for the common case.
             let winningHash: String
             let response: StartSessionResponse
+            // Captured for toast posting on the main actor below.
+            let gameTitle = await MainActor.run { self.game?.title ?? "this game" }
             do {
                 response = try await manager.startSession(gameHash: fileMD5)
                 winningHash = fileMD5
@@ -167,6 +169,14 @@ public extension PVEmulatorViewController {
                       let nativeHash = RcheevosHash.compute(filePath: romPath),
                       nativeHash != fileMD5 else {
                     ILOG("RetroAchievements: no distinct rcheevos hash available, achievements unavailable.")
+                    await MainActor.run {
+                        PVToastManager.shared.show(
+                            "RetroAchievements: no match found for \(gameTitle)",
+                            type: .info,
+                            duration: 4.0,
+                            icon: "trophy"
+                        )
+                    }
                     return
                 }
                 do {
@@ -175,13 +185,37 @@ public extension PVEmulatorViewController {
                     ILOG("RetroAchievements: matched rcheevos native hash \(nativeHash)")
                 } catch AchievementSessionError.unknownGame {
                     ILOG("RetroAchievements: native hash \(nativeHash) also not in database, achievements unavailable.")
+                    await MainActor.run {
+                        PVToastManager.shared.show(
+                            "RetroAchievements: no match found for \(gameTitle)",
+                            type: .info,
+                            duration: 4.0,
+                            icon: "trophy"
+                        )
+                    }
                     return
                 } catch {
                     ELOG("RetroAchievements: session start failed (native hash): \(error.localizedDescription)")
+                    await MainActor.run {
+                        PVToastManager.shared.show(
+                            "RetroAchievements unavailable: \(error.localizedDescription)",
+                            type: .error,
+                            duration: 4.0,
+                            icon: "exclamationmark.triangle"
+                        )
+                    }
                     return
                 }
             } catch {
                 ELOG("RetroAchievements: session start failed: \(error.localizedDescription)")
+                await MainActor.run {
+                    PVToastManager.shared.show(
+                        "RetroAchievements unavailable: \(error.localizedDescription)",
+                        type: .error,
+                        duration: 4.0,
+                        icon: "exclamationmark.triangle"
+                    )
+                }
                 return
             }
 
@@ -189,6 +223,25 @@ public extension PVEmulatorViewController {
             // [CHEEVOS-DIAG] Mirror the success line under our diagnostic prefix so the tester
             // can grep [CHEEVOS-DIAG] alone and still see the winning hash + game id + unlocks.
             ILOG("[CHEEVOS-DIAG] startSession SUCCESS gameId=\(manager.currentGameId ?? -1) winningHash=\(winningHash) existingUnlocks=\(response.unlocks?.count ?? 0)")
+
+            // Post a status toast so the user sees the same "found match" feedback
+            // the RA full-wrapper publishes via its native message system. Includes
+            // game title + already-unlocked count for context.
+            let priorUnlocks = response.unlocks?.count ?? 0
+            await MainActor.run {
+                let message: String
+                if priorUnlocks > 0 {
+                    message = "RetroAchievements: \(gameTitle) — \(priorUnlocks) already unlocked"
+                } else {
+                    message = "RetroAchievements: tracking \(gameTitle)"
+                }
+                PVToastManager.shared.show(
+                    message,
+                    type: .success,
+                    duration: 4.0,
+                    icon: "trophy.fill"
+                )
+            }
 
             // Session confirmed active — verify stopAchievements() hasn't run since
             // we kicked off this Task. If it has, tear down the session we just
