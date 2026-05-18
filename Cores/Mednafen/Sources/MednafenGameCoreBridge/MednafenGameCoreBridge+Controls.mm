@@ -1074,11 +1074,15 @@
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
 
-        GCDualSenseGamepad *dualSense = [gamepad isKindOfClass:[GCDualSenseGamepad class]] ? gamepad : nil;
-        GCDualShockGamepad *dualShock = [gamepad isKindOfClass:[GCDualShockGamepad class]] ? gamepad : nil;
-        GCXboxGamepad *xbox = [gamepad isKindOfClass:[GCXboxGamepad class]] ? gamepad : nil;
-        GCControllerButtonInput *selectButton = dualSense ? dualSense.touchpadButton : dualShock ? dualShock.touchpadButton : nil;
-        GCControllerButtonInput *startButton = gamepad.buttonOptions ? gamepad.buttonOptions : (xbox ? xbox.buttonMenu : nil);
+        // Centralised Start/Select resolution: PS5 Options→Start, Create→Select;
+        // PS4 Options→Start, touchpad/Share→Select; Xbox Menu→Start, View→Select;
+        // Switch Pro +→Start, -→Select; generic MFi single-button → Start only.
+        // Plus shareLike (PS Share/Create, Xbox Share, Switch Capture) as an extra
+        // Select fallback for NES where the center button is a natural fit.
+        GCControllerButtonInput *startButton = nil;
+        GCControllerButtonInput *selectButton = nil;
+        GCControllerButtonInput *shareLike = nil;
+        PVResolveStartSelectShareButtons(controller, &startButton, &selectButton, &shareLike);
 
         switch (buttonID) {
             case PVNESButtonUp:
@@ -1094,16 +1098,11 @@
             case PVNESButtonA:
                 return [[gamepad buttonB] isPressed]?:[[gamepad buttonX] isPressed];
             case PVNESButtonSelect:
-                if (selectButton && [selectButton isPressed]) {
-                    return YES;
-                } else if (xbox && xbox.buttonShare && [xbox.buttonShare isPressed]) {
-                    return YES;
-                }
+                if (selectButton && [selectButton isPressed]) { return YES; }
+                if (shareLike && [shareLike isPressed]) { return YES; }
                 return [[gamepad leftShoulder] isPressed]?:[[gamepad leftTrigger] isPressed];
             case PVNESButtonStart:
-                if (startButton && [startButton isPressed]) {
-                    return YES;
-                }
+                if (startButton && [startButton isPressed]) { return YES; }
                 return [[gamepad rightShoulder] isPressed]?:[[gamepad rightTrigger] isPressed];
             default:
                 break;
