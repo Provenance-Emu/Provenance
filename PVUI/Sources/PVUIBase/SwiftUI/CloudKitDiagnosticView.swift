@@ -16,194 +16,32 @@ import CloudKit
 import RealmSwift
 import PVRealm
 
-/// A view that directly queries CloudKit to diagnose sync issues
+/// A view that directly queries CloudKit to diagnose sync issues — retrowave restyle.
 public struct CloudKitDiagnosticView: View {
     @StateObject private var viewModel = CloudKitDiagnosticViewModel()
     @State private var showingActionSheet = false
     @State private var recordTypeToDelete: String? = nil
-    
+
     public init() {}
-    
+
     public var body: some View {
-        VStack(spacing: 0) {
-            // Header with actions
-            HStack {
-                Text("CloudKit Diagnostic")
-                    .font(.headline)
-                    .foregroundStyle(
-                        LinearGradient(
-                            gradient: Gradient(colors: [.retroPink, .retroPurple]),
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                
-                Spacer()
-                
-                if #available(tvOS 17.0, *) {
-                    Menu {
-                        Button(action: {
-                            Task {
-                                await viewModel.refreshAllRecords()
-                            }
-                        }) {
-                            Label("Refresh All Records", systemImage: "arrow.clockwise")
-                        }
-                        
-                        Button(action: {
-                            Task {
-                                await viewModel.checkSchemaStatus()
-                            }
-                        }) {
-                            Label("Check Schema Status", systemImage: "checklist")
-                        }
-                        
-                        Button(action: {
-                            showingActionSheet = true
-                        }) {
-                            Label("Delete All Records", systemImage: "trash")
-                                .foregroundColor(.red)
-                        }
-                    } label: {
-                        Label("Actions", systemImage: "ellipsis.circle")
-                            .foregroundColor(.retroBlue)
-                    }
-                } else {
-                    // Fallback on earlier versions
+        ZStack {
+            // Retro background layers
+            backgroundLayers
+
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 16) {
+                    headerBar
+                    statusPanel
+                    contentSection
+                    messagesSection
                 }
-            }
-            .padding()
-            .background(Color.retroDarkBlue.opacity(0.3))
-            
-            // Status section
-            VStack(alignment: .leading, spacing: 8) {
-                Text("CloudKit Status")
-                    .font(.headline)
-                    .foregroundColor(.retroPink)
-                
-                HStack {
-                    Text("Container:")
-                        .foregroundColor(.secondary)
-                    Text(viewModel.containerIdentifier)
-                        .fontWeight(.medium)
-                }
-                
-                HStack {
-                    Text("Account Status:")
-                        .foregroundColor(.secondary)
-                    Text(viewModel.accountStatus)
-                        .fontWeight(.medium)
-                        .foregroundColor(viewModel.accountStatusColor)
-                }
-                
-                HStack {
-                    Text("Schema Status:")
-                        .foregroundColor(.secondary)
-                    Text(viewModel.schemaStatus)
-                        .fontWeight(.medium)
-                        .foregroundColor(viewModel.schemaStatusColor)
-                }
-                
-                if !viewModel.recordCounts.isEmpty {
-                    Text("Record Counts:")
-                        .font(.headline)
-                        .foregroundColor(.retroPink)
-                        .padding(.top, 8)
-                    
-                    ForEach(viewModel.recordCounts.sorted(by: { $0.key < $1.key }), id: \.key) { type, count in
-                        HStack {
-                            Text(type)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            Text("\(count)")
-                                .fontWeight(.medium)
-                        }
-                    }
-                }
-            }
-            .padding()
-            .background(Color.retroDarkBlue.opacity(0.1))
-            .cornerRadius(8)
-            .padding(.horizontal)
-            .padding(.top)
-            
-            // Main content
-            if viewModel.isLoading {
-                VStack {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: .retroPink))
-                    Text("Querying CloudKit...")
-                        .foregroundColor(.secondary)
-                        .padding()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if viewModel.records.isEmpty {
-                VStack {
-                    Image(systemName: "icloud.slash")
-                        .font(.system(size: 50))
-                        .foregroundColor(.retroPurple.opacity(0.5))
-                        .padding()
-                    
-                    Text("No records found in CloudKit")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                    
-                    Button("Query CloudKit") {
-                        Task {
-                            await viewModel.refreshAllRecords()
-                        }
-                    }
-                    .padding()
-                    .background(Color.retroPink)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                    .padding(.top, 16)
-                }
-                .padding()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                List {
-                    ForEach(viewModel.recordTypeGroups.sorted(by: { $0.key < $1.key }), id: \.key) { recordType, records in
-                        SwiftUI.Section(header:
-                            HStack {
-                                Text(recordType)
-                                    .font(.headline)
-                                    .foregroundColor(.retroPink)
-                                Spacer()
-                                Text("\(records.count) records")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        ) {
-                            ForEach(records, id: \.recordID) { record in
-                                CloudKitRecordDetailRow(record: record)
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // Error message
-            if let errorMessage = viewModel.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.red.opacity(0.8))
-                    .cornerRadius(8)
-                    .padding()
-            }
-            
-            // Success message
-            if let successMessage = viewModel.successMessage {
-                Text(successMessage)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.green.opacity(0.8))
-                    .cornerRadius(8)
-                    .padding()
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
             }
         }
         .navigationTitle("CloudKit Diagnostic")
+        .preferredColorScheme(.dark)
         .onAppear {
             Task {
                 await viewModel.checkAccountStatus()
@@ -226,64 +64,403 @@ public struct CloudKitDiagnosticView: View {
             )
         }
     }
+
+    // MARK: - Background
+
+    private var backgroundLayers: some View {
+        ZStack {
+            Color.retroBlack.edgesIgnoringSafeArea(.all)
+            RetroTheme.RetroGridView()
+                .edgesIgnoringSafeArea(.all)
+                .opacity(0.22)
+            RetroScanlineOverlay()
+                .opacity(0.05)
+                .allowsHitTesting(false)
+                .edgesIgnoringSafeArea(.all)
+        }
+    }
+
+    // MARK: - Header
+
+    private var headerBar: some View {
+        HStack(alignment: .center, spacing: 10) {
+            // Pink section bar
+            Rectangle()
+                .fill(LinearGradient(colors: [.retroPink, .retroPurple], startPoint: .top, endPoint: .bottom))
+                .frame(width: 4, height: 22)
+                .shadow(color: .retroPink.opacity(0.7), radius: 4)
+
+            Text("CLOUDKIT DIAGNOSTIC")
+                .font(.system(size: 15, weight: .heavy))
+                .tracking(1.6)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.retroPink, .retroPurple, .retroBlue],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .shadow(color: .retroPink.opacity(0.4), radius: 4)
+
+            Spacer()
+
+            if #available(tvOS 17.0, *) {
+                Menu {
+                    Button(action: {
+                        Task { await viewModel.refreshAllRecords() }
+                    }) {
+                        Label("Refresh All Records", systemImage: "arrow.clockwise")
+                    }
+
+                    Button(action: {
+                        Task { await viewModel.checkSchemaStatus() }
+                    }) {
+                        Label("Check Schema Status", systemImage: "checklist")
+                    }
+
+                    Button(action: {
+                        showingActionSheet = true
+                    }) {
+                        Label("Delete All Records", systemImage: "trash")
+                            .foregroundColor(.red)
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "ellipsis.circle")
+                            .font(.system(size: 12, weight: .bold))
+                        Text("ACTIONS")
+                            .font(.system(size: 11, weight: .heavy))
+                            .tracking(0.8)
+                    }
+                    .foregroundColor(.retroBlue)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .fill(Color.retroBlue.opacity(0.12))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .strokeBorder(Color.retroBlue.opacity(0.4), lineWidth: 1)
+                    )
+                }
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(Color.retroDarkBlue.opacity(0.5))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(colors: [.retroPink.opacity(0.5), .retroBlue.opacity(0.4)],
+                                   startPoint: .leading, endPoint: .trailing),
+                    lineWidth: 1
+                )
+        )
+    }
+
+    // MARK: - Status panel
+
+    private var statusPanel: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionHeader("STATUS")
+
+            statusRow(label: "CONTAINER",
+                      value: viewModel.containerIdentifier,
+                      valueColor: .white)
+
+            statusRow(label: "ACCOUNT",
+                      value: viewModel.accountStatus,
+                      valueColor: viewModel.accountStatusColor)
+
+            statusRow(label: "SCHEMA",
+                      value: viewModel.schemaStatus,
+                      valueColor: viewModel.schemaStatusColor)
+
+            if !viewModel.recordCounts.isEmpty {
+                Rectangle()
+                    .fill(LinearGradient(colors: [.retroPurple.opacity(0.4), .retroPink.opacity(0.2)],
+                                         startPoint: .leading, endPoint: .trailing))
+                    .frame(height: 1)
+                    .padding(.vertical, 2)
+
+                Text("RECORD COUNTS")
+                    .font(.system(size: 11, weight: .heavy))
+                    .tracking(1.2)
+                    .foregroundColor(.retroPink)
+                    .padding(.top, 2)
+
+                ForEach(viewModel.recordCounts.sorted(by: { $0.key < $1.key }), id: \.key) { type, count in
+                    HStack {
+                        Text(type.uppercased())
+                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.75))
+                        Spacer()
+                        Text("\(count)")
+                            .font(.system(size: 13, weight: .bold, design: .monospaced))
+                            .foregroundColor(.retroBlue)
+                            .shadow(color: .retroBlue.opacity(0.4), radius: 3)
+                    }
+                }
+            }
+        }
+        .padding(14)
+        .background(panelBackground)
+    }
+
+    private func statusRow(label: String, value: String, valueColor: Color) -> some View {
+        HStack(alignment: .center) {
+            Text(label)
+                .font(.system(size: 11, weight: .heavy))
+                .tracking(1.0)
+                .foregroundColor(.white.opacity(0.55))
+                .frame(width: 100, alignment: .leading)
+            Text(value)
+                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                .foregroundColor(valueColor)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+            Spacer()
+        }
+    }
+
+    // MARK: - Content section
+
+    @ViewBuilder
+    private var contentSection: some View {
+        if viewModel.isLoading {
+            VStack(spacing: 12) {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .retroPink))
+                    .scaleEffect(1.4)
+                Text("QUERYING CLOUDKIT…")
+                    .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                    .tracking(1.2)
+                    .foregroundColor(.retroPink)
+                    .shadow(color: .retroPink.opacity(0.6), radius: 4)
+            }
+            .frame(maxWidth: .infinity, minHeight: 160)
+            .padding(20)
+            .background(panelBackground)
+        } else if viewModel.records.isEmpty {
+            VStack(spacing: 12) {
+                Image(systemName: "icloud.slash")
+                    .font(.system(size: 44, weight: .light))
+                    .foregroundStyle(
+                        LinearGradient(colors: [.retroPurple, .retroPink],
+                                       startPoint: .top, endPoint: .bottom)
+                    )
+                    .shadow(color: .retroPurple.opacity(0.6), radius: 6)
+
+                Text("NO RECORDS FOUND")
+                    .font(.system(size: 13, weight: .heavy))
+                    .tracking(1.4)
+                    .foregroundColor(.retroPink)
+
+                Button {
+                    Task { await viewModel.refreshAllRecords() }
+                } label: {
+                    Text("QUERY CLOUDKIT")
+                        .font(.system(size: 12, weight: .heavy))
+                        .tracking(1.2)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(LinearGradient(colors: [.retroPink, .retroPurple],
+                                                     startPoint: .leading, endPoint: .trailing))
+                        )
+                        .shadow(color: .retroPink.opacity(0.5), radius: 6)
+                }
+                .buttonStyle(.plain)
+            }
+            .frame(maxWidth: .infinity, minHeight: 200)
+            .padding(20)
+            .background(panelBackground)
+        } else {
+            VStack(alignment: .leading, spacing: 12) {
+                sectionHeader("RECORDS")
+
+                ForEach(viewModel.recordTypeGroups.sorted(by: { $0.key < $1.key }), id: \.key) { recordType, records in
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text(recordType.uppercased())
+                                .font(.system(size: 12, weight: .heavy))
+                                .tracking(1.2)
+                                .foregroundColor(.retroPink)
+                            Spacer()
+                            Text("\(records.count)")
+                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .foregroundColor(.retroBlue)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    Capsule().fill(Color.retroBlue.opacity(0.15))
+                                )
+                                .overlay(
+                                    Capsule().strokeBorder(Color.retroBlue.opacity(0.4), lineWidth: 1)
+                                )
+                        }
+                        ForEach(records, id: \.recordID) { record in
+                            CloudKitRecordDetailRow(record: record)
+                        }
+                    }
+                    .padding(12)
+                    .background(panelBackground)
+                }
+            }
+        }
+    }
+
+    // MARK: - Messages
+
+    @ViewBuilder
+    private var messagesSection: some View {
+        if let errorMessage = viewModel.errorMessage {
+            messageBanner(text: errorMessage,
+                          accent: .retroOrange,
+                          icon: "exclamationmark.triangle.fill")
+        }
+
+        if let successMessage = viewModel.successMessage {
+            messageBanner(text: successMessage,
+                          accent: .retroGreen,
+                          icon: "checkmark.circle.fill")
+        }
+    }
+
+    private func messageBanner(text: String, accent: Color, icon: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(accent)
+                .shadow(color: accent.opacity(0.6), radius: 4)
+            Text(text)
+                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                .foregroundColor(.white)
+            Spacer()
+        }
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(accent.opacity(0.12))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .strokeBorder(accent.opacity(0.5), lineWidth: 1)
+        )
+    }
+
+    // MARK: - Reusable bits
+
+    private func sectionHeader(_ title: String) -> some View {
+        HStack(spacing: 8) {
+            Rectangle()
+                .fill(LinearGradient(colors: [.retroPink, .retroPurple],
+                                     startPoint: .top, endPoint: .bottom))
+                .frame(width: 3, height: 16)
+                .shadow(color: .retroPink.opacity(0.7), radius: 3)
+            Text(title.uppercased())
+                .font(.system(size: 12, weight: .heavy))
+                .tracking(1.4)
+                .foregroundColor(.retroPink)
+        }
+    }
+
+    private var panelBackground: some View {
+        RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .fill(Color.black.opacity(0.7))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [Color.retroPurple.opacity(0.4), Color.retroPink.opacity(0.3)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+    }
 }
 
-/// Row displaying CloudKit record details
+/// Row displaying CloudKit record details — retrowave restyle.
 struct CloudKitRecordDetailRow: View {
     let record: CloudKitRecordDetail
     @State private var isExpanded = false
-    
+
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             Button(action: {
-                isExpanded.toggle()
-            }) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(record.recordName)
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                        
-                        Text("ID: \(record.recordID)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundColor(.retroBlue)
+                withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
+                    isExpanded.toggle()
                 }
+            }) {
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(record.recordName)
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+
+                        Text(record.recordID)
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.45))
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.retroBlue)
+                        .shadow(color: .retroBlue.opacity(0.5), radius: 3)
+                }
+                .padding(.vertical, 8)
+                .padding(.horizontal, 10)
             }
-            .buttonStyle(PlainButtonStyle())
-            
+            .buttonStyle(.plain)
+
             if isExpanded {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 6) {
                     ForEach(record.fields.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(key)
-                                .font(.caption)
+                            Text(key.uppercased())
+                                .font(.system(size: 10, weight: .heavy))
+                                .tracking(0.8)
                                 .foregroundColor(.retroPink)
-                            
                             Text(value)
-                                .font(.body)
-                                .foregroundColor(.primary)
+                                .font(.system(size: 12, design: .monospaced))
+                                .foregroundColor(.white.opacity(0.9))
+                                .textSelection(.enabled)
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 2)
                     }
                 }
-                .padding(.top, 8)
-                .padding(.leading, 16)
+                .padding(.horizontal, 14)
+                .padding(.bottom, 10)
+                .padding(.top, 4)
             }
         }
-        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color.retroDarkBlue.opacity(0.35))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .strokeBorder(Color.retroBlue.opacity(0.25), lineWidth: 1)
+        )
     }
 }
 
 /// View model for CloudKit diagnostic view
 class CloudKitDiagnosticViewModel: ObservableObject {
     // MARK: - Properties
-    
+
     @Published var records: [CloudKitRecordDetail] = []
     @Published var recordCounts: [String: Int] = [:]
     @Published var isLoading = false
@@ -293,49 +470,49 @@ class CloudKitDiagnosticViewModel: ObservableObject {
     @Published var accountStatusColor = Color.gray
     @Published var schemaStatus = "Unknown"
     @Published var schemaStatusColor = Color.gray
-    
+
     // CloudKit container
     private let container = CKContainer(identifier: iCloudConstants.containerIdentifier)
     private let privateDatabase: CKDatabase
-    
+
     var containerIdentifier: String {
         iCloudConstants.containerIdentifier
     }
-    
+
     var recordTypeGroups: [String: [CloudKitRecordDetail]] {
         Dictionary(grouping: records) { $0.recordType }
     }
-    
+
     // MARK: - Initialization
-    
+
     init() {
         privateDatabase = container.privateCloudDatabase
     }
-    
+
     // MARK: - Methods
-    
+
     /// Check the CloudKit account status
     func checkAccountStatus() async {
         do {
             let accountStatus = try await container.accountStatus()
-            
+
             await MainActor.run {
                 switch accountStatus {
                 case .available:
                     self.accountStatus = "Available"
-                    self.accountStatusColor = .green
+                    self.accountStatusColor = .retroGreen
                 case .noAccount:
                     self.accountStatus = "No iCloud Account"
-                    self.accountStatusColor = .red
+                    self.accountStatusColor = .retroOrange
                 case .restricted:
                     self.accountStatus = "Restricted"
-                    self.accountStatusColor = .orange
+                    self.accountStatusColor = .retroOrange
                 case .couldNotDetermine:
                     self.accountStatus = "Could Not Determine"
-                    self.accountStatusColor = .orange
+                    self.accountStatusColor = .retroOrange
                 case .temporarilyUnavailable:
                     self.accountStatus = "Temporarily Unavailable"
-                    self.accountStatusColor = .orange
+                    self.accountStatusColor = .retroOrange
                 @unknown default:
                     self.accountStatus = "Unknown (\(accountStatus.rawValue))"
                     self.accountStatusColor = .gray
@@ -344,12 +521,12 @@ class CloudKitDiagnosticViewModel: ObservableObject {
         } catch {
             await MainActor.run {
                 self.accountStatus = "Error: \(error.localizedDescription)"
-                self.accountStatusColor = .red
+                self.accountStatusColor = .retroOrange
                 self.errorMessage = "Failed to check account status: \(error.localizedDescription)"
             }
         }
     }
-    
+
     /// Check the CloudKit schema status
     func checkSchemaStatus() async {
         await MainActor.run {
@@ -357,19 +534,19 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             schemaStatus = "Checking..."
             schemaStatusColor = .gray
         }
-        
+
         do {
             // Try to initialize the schema
             let success = await CloudKitSchema.initializeSchema(in: privateDatabase)
-            
+
             await MainActor.run {
                 if success {
                     schemaStatus = "Initialized"
-                    schemaStatusColor = .green
+                    schemaStatusColor = .retroGreen
                     successMessage = "CloudKit schema initialized successfully"
                 } else {
                     schemaStatus = "Failed to Initialize"
-                    schemaStatusColor = .red
+                    schemaStatusColor = .retroOrange
                     errorMessage = "Failed to initialize CloudKit schema"
                 }
                 isLoading = false
@@ -377,13 +554,13 @@ class CloudKitDiagnosticViewModel: ObservableObject {
         } catch {
             await MainActor.run {
                 schemaStatus = "Error"
-                schemaStatusColor = .red
+                schemaStatusColor = .retroOrange
                 errorMessage = "Error checking schema status: \(error.localizedDescription)"
                 isLoading = false
             }
         }
     }
-    
+
     /// Refresh all records from CloudKit
     func refreshAllRecords() async {
         await MainActor.run {
@@ -391,19 +568,19 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             errorMessage = nil
             successMessage = nil
         }
-        
+
         do {
             var allRecords: [CloudKitRecordDetail] = []
             var counts: [String: Int] = [:]
-            
+
             // Query each record type (excluding Metadata until deployed to CloudKit)
             let deployedRecordTypes = CloudKitSchema.RecordType.allCases.filter { $0 != .metadata }
             for recordTypeRawValue in deployedRecordTypes.map({ $0.rawValue }) {
                 let query = CKQuery(recordType: recordTypeRawValue, predicate: NSPredicate(value: true))
                 let (matchResults, _) = try await privateDatabase.records(matching: query)
-                
+
                 var recordsForType: [CKRecord] = []
-                
+
                 // Iterate through the results (recordID, result)
                 for (_, result) in matchResults {
                     switch result {
@@ -414,33 +591,33 @@ class CloudKitDiagnosticViewModel: ObservableObject {
                         ELOG("Error fetching a specific record: \(error.localizedDescription)")
                     }
                 }
-                
+
                 // Process the records
                 for record in recordsForType {
                     // Attempt to get a meaningful name, falling back to recordID
-                    let displayName = record[CloudKitSchema.ROMFields.originalFilename] as? String ?? 
+                    let displayName = record[CloudKitSchema.ROMFields.originalFilename] as? String ??
                                       record[CloudKitSchema.SaveStateFields.filename] as? String ??
                                       record.recordID.recordName
-                    
+
                     let recordDetail = CloudKitRecordDetail(
                         recordID: record.recordID.recordName,
-                        recordName: displayName, 
+                        recordName: displayName,
                         recordType: recordTypeRawValue,
                         fields: recordFieldsToStringDictionary(record: record)
                     )
                     allRecords.append(recordDetail)
                 }
-                
+
                 // Update counts
                 counts[recordTypeRawValue] = recordsForType.count
             }
-            
+
             // Update UI on main thread
             await MainActor.run {
                 self.records = allRecords
                 self.recordCounts = counts
                 self.isLoading = false
-                
+
                 if allRecords.isEmpty {
                     self.successMessage = "No records found in CloudKit"
                 } else {
@@ -454,7 +631,7 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// Delete all records from CloudKit
     func deleteAllRecords() async {
         await MainActor.run {
@@ -462,16 +639,16 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             errorMessage = nil
             successMessage = nil
         }
-        
+
         do {
             var totalDeleted = 0
-            
+
             // Delete records for each record type (excluding Metadata until deployed to CloudKit)
             let deployedRecordTypes = CloudKitSchema.RecordType.allCases.filter { $0 != .metadata }
             for recordTypeRawValue in deployedRecordTypes.map({ $0.rawValue }) {
                 let query = CKQuery(recordType: recordTypeRawValue, predicate: NSPredicate(value: true))
                 let (results, _) = try await privateDatabase.records(matching: query)
-                
+
                 // Iterate through the results (recordID, result)
                 for (recordID, result) in results {
                     switch result {
@@ -488,10 +665,10 @@ class CloudKitDiagnosticViewModel: ObservableObject {
                     }
                 }
             }
-            
+
             // Refresh records after deletion
             await refreshAllRecords()
-            
+
             await MainActor.run {
                 self.successMessage = "Deleted \(totalDeleted) records from CloudKit"
             }
@@ -502,11 +679,11 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             }
         }
     }
-    
+
     /// Convert record fields to string dictionary for display
     private func recordFieldsToStringDictionary(record: CKRecord) -> [String: String] {
         var result: [String: String] = [:]
-        
+
         for key in record.allKeys() {
             if let value = record[key] {
                 if let stringValue = value as? String {
@@ -538,7 +715,7 @@ class CloudKitDiagnosticViewModel: ObservableObject {
                 }
             }
         }
-        
+
         return result
     }
 }
