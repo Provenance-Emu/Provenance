@@ -132,6 +132,10 @@ struct PauseTileMenuView: View {
     #if os(iOS)
     @State private var orientation: UIDeviceOrientation = UIDevice.current.orientation
     @StateObject private var gamepadManager = GamepadManager.shared
+    /// Live width of the floating tile panel (driven by GeometryReader in `body`).
+    /// Mirrors the `panelWidth` local in the layout so that controller nav helpers
+    /// can compute the actual column count per row without re-deriving from UIScreen.
+    @State private var currentPanelWidth: CGFloat = 0
     #endif
 
     private var isLandscape: Bool {
@@ -194,13 +198,6 @@ struct PauseTileMenuView: View {
         return nil
     }
 
-    /// Flattened list of enabled tile IDs in display order; used for controller traversal.
-    private func enabledTileIDsInOrder() -> [String] {
-        viewModel.sections.flatMap { section in
-            section.tiles.filter { $0.isEnabled }.map { $0.id }
-        }
-    }
-
     /// Returns the enabled tile object for an ID, if any.
     private func tile(forID id: String) -> PauseMenuTile? {
         for section in viewModel.sections {
@@ -211,18 +208,138 @@ struct PauseTileMenuView: View {
         return nil
     }
 
-    /// Moves the focused tile by `offset` positions through the enabled list (clamped).
-    private func moveFocus(by offset: Int) {
-        let ids = enabledTileIDsInOrder()
-        guard !ids.isEmpty else { return }
-        let currentIndex = focusedTileID.flatMap { ids.firstIndex(of: $0) } ?? -1
-        let nextIndex: Int
-        if currentIndex < 0 {
-            nextIndex = offset > 0 ? 0 : ids.count - 1
-        } else {
-            nextIndex = max(0, min(ids.count - 1, currentIndex + offset))
+    /// Grid coordinate for a tile within its section: (sectionIndex, row, col).
+    /// `row` and `col` are computed against `cols` (the live column count); rows
+    /// are full-width except the last, which may be partial.
+    private struct TileGridCoord: Equatable {
+        let sectionIndex: Int
+        let row: Int
+        let col: Int
+    }
+
+    /// Locates the grid coordinate for a tile ID, using `cols` as the row width.
+    /// Returns nil when the tile isn't part of the currently rendered grid.
+    private func gridCoord(forTileID id: String, cols: Int) -> TileGridCoord? {
+        guard cols > 0 else { return nil }
+        for (sectionIndex, section) in viewModel.sections.enumerated() {
+            if let idx = section.tiles.firstIndex(where: { $0.id == id }) {
+                return TileGridCoord(sectionIndex: sectionIndex, row: idx / cols, col: idx % cols)
+            }
         }
-        focusedTileID = ids[nextIndex]
+        return nil
+    }
+
+    /// Returns the tile ID at the given grid coordinate, walking past disabled
+    /// tiles to the nearest enabled tile in the same row/section.
+    /// Search order: requested col → leftward in row → rightward in row.
+    private func tileID(at coord: TileGridCoord, cols: Int) -> String? {
+        guard cols > 0,
+              coord.sectionIndex >= 0,
+              coord.sectionIndex < viewModel.sections.count else { return nil }
+        let tiles = viewModel.sections[coord.sectionIndex].tiles
+        let rowStart = coord.row * cols
+        guard rowStart < tiles.count else { return nil }
+        let rowEnd = min(rowStart + cols, tiles.count)
+        let rowTiles = Array(tiles[rowStart..<rowEnd])
+        let clampedCol = max(0, min(rowTiles.count - 1, coord.col))
+        // Try requested column first, then expand outward.
+        if rowTiles[clampedCol].isEnabled { return rowTiles[clampedCol].id }
+        for offset in 1..<rowTiles.count {
+            let left = clampedCol - offset
+            if left >= 0, rowTiles[left].isEnabled { return rowTiles[left].id }
+            let right = clampedCol + offset
+            if right < rowTiles.count, rowTiles[right].isEnabled { return rowTiles[right].id }
+        }
+        return nil
+    }
+
+    /// Row count for a section given the current column count.
+    private func rowCount(forSectionIndex sectionIndex: Int, cols: Int) -> Int {
+        guard cols > 0,
+              sectionIndex >= 0,
+              sectionIndex < viewModel.sections.count else { return 0 }
+        let n = viewModel.sections[sectionIndex].tiles.count
+        return (n + cols - 1) / cols
+    }
+
+    #if os(iOS)
+    /// Current column count, derived from the live panel width measured by
+    /// the GeometryReader in `body`. Falls back to 2 if width hasn't propagated
+    /// yet (e.g. first frame).
+    private func currentColumnCount() -> Int {
+        let width = currentPanelWidth > 0 ? currentPanelWidth : panelMaxWidth
+        return columnCount(for: width)
+    }
+    #endif
+
+    /// Moves focus horizontally within the current row. Clamps at row edges
+    /// (no wraparound to adjacent rows), matching platform convention.
+    private func moveFocus(deltaCol: Int, cols: Int) {
+        guard deltaCol != 0, cols > 0 else { return }
+        guard let id = focusedTileID else {
+            focusedTileID = firstEnabledTileID()
+            return
+        }
+        guard let coord = gridCoord(forTileID: id, cols: cols) else {
+            focusedTileID = firstEnabledTileID()
+            return
+        }
+        let tiles = viewModel.sections[coord.sectionIndex].tiles
+        let rowStart = coord.row * cols
+        let rowEnd = min(rowStart + cols, tiles.count)
+        let rowWidth = rowEnd - rowStart
+        let step = deltaCol > 0 ? 1 : -1
+        var col = coord.col + step
+        while col >= 0, col < rowWidth {
+            if tiles[rowStart + col].isEnabled {
+                focusedTileID = tiles[rowStart + col].id
+                return
+            }
+            col += step
+        }
+        // No enabled tile found in this row in that direction — stay put.
+    }
+
+    /// Moves focus vertically, first walking rows within the current section
+    /// then crossing into the adjacent section's nearest row while preserving
+    /// the column (snapped to the last column when the new row is shorter).
+    private func moveFocus(deltaRow: Int, cols: Int) {
+        guard deltaRow != 0, cols > 0 else { return }
+        guard let id = focusedTileID else {
+            focusedTileID = firstEnabledTileID()
+            return
+        }
+        guard let coord = gridCoord(forTileID: id, cols: cols) else {
+            focusedTileID = firstEnabledTileID()
+            return
+        }
+        let step = deltaRow > 0 ? 1 : -1
+        var sectionIndex = coord.sectionIndex
+        var row = coord.row + step
+        // Walk row-by-row (and section-by-section at boundaries) until an
+        // enabled tile is found or we run off the ends.
+        while sectionIndex >= 0, sectionIndex < viewModel.sections.count {
+            let rows = rowCount(forSectionIndex: sectionIndex, cols: cols)
+            if row < 0 {
+                // Step into previous section's last row.
+                sectionIndex -= 1
+                if sectionIndex < 0 { return }
+                row = max(0, rowCount(forSectionIndex: sectionIndex, cols: cols) - 1)
+                continue
+            }
+            if row >= rows {
+                // Step into next section's first row.
+                sectionIndex += 1
+                row = 0
+                continue
+            }
+            let candidate = TileGridCoord(sectionIndex: sectionIndex, row: row, col: coord.col)
+            if let nextID = tileID(at: candidate, cols: cols) {
+                focusedTileID = nextID
+                return
+            }
+            row += step
+        }
     }
 
     /// Activates the currently focused tile via the standard tile handler.
@@ -1354,6 +1471,11 @@ struct PauseTileMenuView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .shadow(color: .retroPurple.opacity(0.25), radius: 18, x: 0, y: 0)
                 .position(x: geo.size.width / 2, y: geo.size.height / 2)
+                #if os(iOS)
+                // Mirror the live panel width into @State so iOS controller
+                // navigation helpers can compute the active column count.
+                .task(id: panelWidth) { currentPanelWidth = panelWidth }
+                #endif
             }
         }
         .sheet(isPresented: $showingSaveStateBrowser) {
@@ -1667,13 +1789,16 @@ struct PauseTileMenuView: View {
         }
         .onReceive(gamepadManager.eventPublisher) { event in
             guard gamepadManager.isControllerConnected else { return }
+            let cols = currentColumnCount()
             switch event {
             case .horizontalNavigation(let value, let isPressed):
                 guard isPressed else { return }
-                moveFocus(by: value < 0 ? -1 : 1)
+                moveFocus(deltaCol: value < 0 ? -1 : 1, cols: cols)
             case .verticalNavigation(let value, let isPressed):
                 guard isPressed else { return }
-                moveFocus(by: value > 0 ? -1 : 1)
+                // Gamepad vertical: positive value = "up" semantically; we
+                // walk rows so positive value should move to the previous row.
+                moveFocus(deltaRow: value > 0 ? -1 : 1, cols: cols)
             case .buttonPress(let isPressed):
                 guard isPressed else { return }
                 activateFocusedTile()
