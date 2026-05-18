@@ -581,6 +581,15 @@ struct PauseTileMenuView: View {
         case "lightGun":
             #if os(iOS) && !targetEnvironment(macCatalyst)
             emulatorVC.toggleLightGun()
+            // Persist the user's choice via the registry's per-game override
+            // so the next launch of this ROM auto-installs (or doesn't) to
+            // match what they last set — no need to re-toggle every session.
+            if let md5 = emulatorVC.core.romMD5 {
+                LightGunGameRegistry.shared.setUserOverride(
+                    emulatorVC.isLightGunVisible,
+                    forMD5: md5
+                )
+            }
             rebuildSections()
             #endif
 
@@ -588,6 +597,14 @@ struct PauseTileMenuView: View {
         case "virtualMouse":
             #if os(iOS) && !targetEnvironment(macCatalyst)
             emulatorVC.toggleVirtualMouseManually()
+            // Mirror the Light Gun pattern — persist via MouseGameRegistry
+            // so the next launch matches what the user last picked.
+            if let md5 = emulatorVC.core.romMD5 {
+                MouseGameRegistry.shared.setUserOverride(
+                    emulatorVC.isVirtualMouseVisible,
+                    forMD5: md5
+                )
+            }
             rebuildSections()
             #endif
 
