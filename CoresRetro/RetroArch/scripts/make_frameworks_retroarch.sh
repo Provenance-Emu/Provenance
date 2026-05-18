@@ -434,12 +434,61 @@ rm -f "$_orphan_tmp"
 rm -f "$EXPECTED_FW_TMP"
 
 if [ "$FW_FILTER" -gt 0 ]; then
-    echo "MakeFrameworks: Created ${FW_COUNT} frameworks, skipped ${FW_SKIP} unchanged, filtered out ${FW_FILTER}, from ${DYLIB_COUNT} dylibs (${FW_FAIL} failed)"
+    echo "MakeFrameworks: Created ${FW_COUNT} frameworks from ${DYLIB_COUNT} dylibs (skipped ${FW_SKIP} unchanged, filtered ${FW_FILTER}, ${FW_FAIL} failed)."
 else
-    echo "MakeFrameworks: Created ${FW_COUNT} frameworks, skipped ${FW_SKIP} unchanged, from ${DYLIB_COUNT} dylibs (${FW_FAIL} failed)"
+    echo "MakeFrameworks: Created ${FW_COUNT} frameworks from ${DYLIB_COUNT} dylibs (skipped ${FW_SKIP} unchanged, ${FW_FAIL} failed)."
+fi
+
+# Final validation: confirm every produced framework has a Mach-O executable inside.
+# Strips frameworks that somehow ended up with a missing / non-binary executable
+# (e.g. lipo produced a 0-byte file, codesign mangled it). Counts deletions as a
+# fatal error if it brings the total to 0.
+PROD_VALIDATION_FAIL=0
+PROD_VALIDATION_OK=0
+for fwdir in "${OUTDIR}"/*.libretro.framework; do
+    [ -d "$fwdir" ] || continue
+    fwbase=$(basename "$fwdir" .framework)
+    bin="${fwdir}/${fwbase}"
+    # macOS uses Versions/A; resolve via symlink if present
+    if [ "$MF_PLATFORM_FAMILY" = "macOS" ] && [ -L "$bin" ]; then
+        :
+    fi
+    if [ ! -f "$bin" ] && [ ! -L "$bin" ]; then
+        echo "MakeFrameworks: ERROR — ${fwbase}.framework has no binary at ${bin} — removing" >&2
+        rm -rf "$fwdir"
+        PROD_VALIDATION_FAIL=$((PROD_VALIDATION_FAIL + 1))
+        continue
+    fi
+    FTYPE=$(file -b "$bin" 2>/dev/null)
+    case "$FTYPE" in
+        *Mach-O*|*"universal binary"*)
+            PROD_VALIDATION_OK=$((PROD_VALIDATION_OK + 1))
+            ;;
+        *)
+            echo "MakeFrameworks: ERROR — ${fwbase}.framework binary is not Mach-O (${FTYPE}) — removing" >&2
+            rm -rf "$fwdir"
+            PROD_VALIDATION_FAIL=$((PROD_VALIDATION_FAIL + 1))
+            ;;
+    esac
+done
+
+if [ "${PROD_VALIDATION_FAIL}" -gt 0 ]; then
+    echo "MakeFrameworks: WARNING — removed ${PROD_VALIDATION_FAIL} invalid framework(s) after validation" >&2
 fi
 
 FW_TOTAL=$((FW_COUNT + FW_SKIP))
+
+# Recount frameworks that survived final Mach-O validation. PROD_VALIDATION_OK reflects
+# the actual on-disk count after stripping zero-byte / non-Mach-O bundles, which is the
+# only number that matters at runtime.
+FW_ONDISK=$(find "$OUTDIR" -maxdepth 1 -type d -name "*.libretro.framework" 2>/dev/null | wc -l | tr -d ' ')
+
+echo "MakeFrameworks: ${FW_ONDISK} framework(s) on disk, ${PROD_VALIDATION_OK} Mach-O-validated."
+
+if [ "${FW_ONDISK}" -eq 0 ] && [ "${DYLIB_COUNT}" -gt 0 ]; then
+    echo "MakeFrameworks: ERROR — 0 frameworks remain after validation from ${DYLIB_COUNT} dylibs! All cores broken." >&2
+    exit 1
+fi
 
 if [ "${FW_TOTAL}" -eq 0 ] && [ "${DYLIB_COUNT}" -gt 0 ]; then
     echo "MakeFrameworks: ERROR — 0 frameworks created from ${DYLIB_COUNT} dylibs! All cores broken." >&2
