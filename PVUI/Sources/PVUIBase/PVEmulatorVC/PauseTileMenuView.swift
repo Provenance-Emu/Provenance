@@ -584,6 +584,13 @@ struct PauseTileMenuView: View {
             rebuildSections()
             #endif
 
+        // MARK: Virtual mouse overlay toggle (iOS-only)
+        case "virtualMouse":
+            #if os(iOS) && !targetEnvironment(macCatalyst)
+            emulatorVC.toggleVirtualMouseManually()
+            rebuildSections()
+            #endif
+
         // MARK: Skins submenu actions
         case "skins_pick_for_system":
             showingSystemSkinSelection = true

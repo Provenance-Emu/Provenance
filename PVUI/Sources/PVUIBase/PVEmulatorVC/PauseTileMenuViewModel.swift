@@ -514,6 +514,28 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         #endif
 
+        // Virtual Mouse overlay toggle — shown when the system has ANY mouse
+        // support (SNES Mouse, Dreamcast, PSX, PCE, etc.), even when the
+        // specific ROM isn't in MouseGameRegistry's static MD5/title list.
+        // Auto-install is per-game; this tile is the manual override so users
+        // can opt in on unrecognised titles.
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        if (emulatorVC.core as? MouseResponder) != nil,
+           let sysID = SystemIdentifier(rawValue: emulatorVC.core.systemIdentifier ?? ""),
+           MouseGameRegistry.shared.systemHasAnyMouseSupport(sysID) {
+            let isOn = emulatorVC.isVirtualMouseVisible
+            controlsTiles.append(PauseMenuTile(
+                id: "virtualMouse",
+                icon: "computermouse",
+                label: String(localized: "Virtual Mouse"),
+                badge: isOn ? "ON" : "OFF",
+                description: String(localized: "Show the touch trackpad for mouse-aware games like Mario Paint."),
+                colorKey: isOn ? .green : .gray,
+                dismissOnTap: false
+            ))
+        }
+        #endif
+
         // MIDI device picker — shown when core supports MIDI (iOS only, not tvOS or macCatalyst).
         // Note: RetroMenuView+MIDIPicker uses `#if canImport(CoreMIDI) && !os(tvOS)` and therefore
         // includes macCatalyst. The tile menu intentionally excludes macCatalyst because the compact
