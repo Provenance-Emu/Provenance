@@ -2222,22 +2222,32 @@ extension PVThinLibretroCore: LightGunResponder {
     /// property is queried before the game loads) we fall back to the registry
     /// which is seeded with the built-in baseline.
     public var gameSupportsLightGun: Bool {
-        // Dynamic: check what the loaded core actually declared.
+        let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "")
+
+        // 1. Dynamic capability: if the loaded core declared a lightgun device
+        //    on any port via SET_CONTROLLER_INFO, surface the system-level
+        //    capability so the legacy session registry stays primed (used by
+        //    SystemIdentifier.supportsLightGun callers that don't know the
+        //    current game). Do NOT short-circuit to true here — that's the
+        //    behaviour that made NES Bomberman paint a PC cursor.
         let detectedViaControllerInfo = controllerPortDescriptors.contains { port in
             port.contains { ($0.deviceType & LibretroDeviceType.deviceMask) == LibretroDeviceType.lightgun.rawValue }
         }
-        let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "")
-        if detectedViaControllerInfo {
-            // Cache the discovery in the session registry so that
-            // SystemIdentifier.supportsLightGun returns true for this system
-            // even when no core is loaded (in-memory, current session only).
-            if let id = sysID {
-                LightGunSystemRegistry.shared.register(system: id)
-            }
-            return true
+        if detectedViaControllerInfo, let id = sysID {
+            LightGunSystemRegistry.shared.register(system: id)
         }
-        // Fallback: consult the registry (built-in baseline + previous dynamic discoveries).
-        return sysID?.supportsLightGun ?? false
+
+        // 2. Per-game gating via LightGunGameRegistry — only return true when
+        //    THIS rom is a known gun title. Honours the user override too.
+        if let sysID {
+            return LightGunGameRegistry.shared.gameSupportsLightGun(
+                systemIdentifier: sysID,
+                md5: romMD5,
+                title: romTitleForLookup
+            )
+        }
+
+        return false
     }
 
     public var requiresLightGun: Bool {

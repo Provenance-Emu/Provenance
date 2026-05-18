@@ -66,19 +66,15 @@ extension PVEmulatorViewController {
     /// Install the `LightGunTouchView` when the active core supports light gun input.
     /// Safe to call multiple times — returns immediately if already installed.
     ///
-    /// Note: `gameSupportsLightGun` is system-wide on libretro cores (e.g. NES
-    /// returns true because the Zapper exists, regardless of which ROM is loaded),
-    /// so auto-installing the overlay was painting a cursor onto every NES game.
-    /// Until LightGunGameRegistry mirrors MouseGameRegistry with per-game gating,
-    /// require the user to explicitly opt in via the pause menu before we paint
-    /// the aim cursor over the game surface.
+    /// `gameSupportsLightGun` is now per-game via `LightGunGameRegistry` (commit
+    /// 8211a35ab1 + thin-libretro rewire), so the earlier temporary
+    /// `requiresLightGun`-only gate has been removed — auto-install fires the
+    /// moment a known Zapper / Super Scope / GunCon / Stunner / Light Phaser
+    /// title loads, and stays off for unrecognised ROMs on the same system.
     func setupLightGunIfNeeded() {
         guard let gunCore = core as? LightGunResponder,
               gunCore.gameSupportsLightGun else { return }
         guard lightGunTouchView == nil else { return }
-        // Auto-install only when the core hard-requires light gun (e.g. dedicated
-        // gun games) — otherwise wait for an explicit pause-menu toggle.
-        guard gunCore.requiresLightGun else { return }
 
         ILOG("[LightGun] Core supports light gun — installing touch gesture layer")
 
