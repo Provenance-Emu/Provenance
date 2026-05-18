@@ -77,6 +77,40 @@ public enum CaseControllerDetector {
                 "com.buppin.controller",
                 "com.litritt.ignited.buppin"
             ]
+        ),
+        PhysicalCaseLayout(
+            // Razer Kishi v2 — MFi extended gamepad connected via Lightning/USB-C.
+            // Per-system companion skins ship in Resources/DefaultSkins.
+            name: "Razer Kishi v2",
+            vendorNames: [
+                "Razer Kishi",
+                "Razer Kishi v2",
+                "Razer Kishi V2",
+                "Kishi v2"
+            ],
+            buttonCount: 12,
+            knownSkinIdentifiers: [
+                "com.provenance.defaultskins.razerkishi",
+                "com.razer.kishi",
+                "com.razer.kishi.v2",
+                "com.litritt.ignited.razerkishi"
+            ]
+        ),
+        PhysicalCaseLayout(
+            // Backbone One — MFi extended gamepad over Lightning/USB-C.
+            // Per-system companion skins ship in Resources/DefaultSkins.
+            name: "Backbone One",
+            vendorNames: [
+                "Backbone",
+                "Backbone One",
+                "Backbone One USB-C"
+            ],
+            buttonCount: 12,
+            knownSkinIdentifiers: [
+                "com.provenance.defaultskins.backbone",
+                "com.backbone.one",
+                "com.litritt.ignited.backbone"
+            ]
         )
     ]
 
@@ -122,16 +156,36 @@ public enum CaseControllerDetector {
     /// the flag controls *visibility* in the UI, not identification.
     public static func isCompanionSkinForKnownCase(_ skinIdentifier: String) -> Bool {
         if !casesCompatibleWithSkin(skinIdentifier).isEmpty { return true }
-        // Broad keyword match for skins that reference a known case but use non-standard identifiers
         let lowered = skinIdentifier.lowercased()
+        // Prefix match catches bundled per-system variants
+        // (e.g. `com.provenance.defaultskins.razerkishi.nes`,
+        // `com.provenance.defaultskins.backbone.snes`) without forcing every
+        // system suffix into knownLayouts above.
+        if companionSkinIdentifierPrefixes.contains(where: { lowered.hasPrefix($0) }) {
+            return true
+        }
+        // Broad keyword match for skins that reference a known case but use non-standard identifiers
         return caseKeywords.contains { lowered.contains($0) }
     }
 
-    /// Keywords that indicate a skin is designed for a physical phone case controller.
+    /// Reverse-DNS prefixes for skins that ship as hardware-controller companions.
+    /// Anything starting with one of these is treated as a case/companion skin and
+    /// subject to the auto-selection gate in `isAllowedInAutomaticSkinSelection`.
+    private static let companionSkinIdentifierPrefixes: [String] = [
+        "com.provenance.defaultskins.razerkishi",
+        "com.provenance.defaultskins.backbone",
+        "com.provenance.defaultskins.pockettaco",
+        "com.provenance.defaultskins.soolra",
+        "com.provenance.defaultskins.buppin"
+    ]
+
+    /// Keywords that indicate a skin is designed for a physical phone case / clamp-on controller.
     private static let caseKeywords: [String] = [
         "gamesir", "pocket-taco", "pockettaco", "pocket.taco",
         "soolra",
         "buppin",
+        "razerkishi", "razer-kishi", "razer.kishi",
+        "backbone"
     ]
 
     /// True when a connected `GCController` matches a known smart-case layout (GameSir, Soolra, …).
