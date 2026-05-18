@@ -28,6 +28,14 @@ struct TVMediaGameTileView: View {
     @Default(.obfuscateArtwork) private var obfuscateArtwork
     #if os(iOS)
     @StateObject private var gamepadManager = GamepadManager.shared
+    /// iOS-only: tracks hold-A duration on a focused tile so a long press
+    /// surfaces the context menu (matching tvOS focus-engine long-press
+    /// behaviour). A short tap on A still launches the game.
+    @State private var holdPressStart: Date?
+    @State private var holdMenuTask: Task<Void, Never>?
+    @State private var showContextSheet: Bool = false
+    /// Duration (seconds) that A must be held before the context menu fires.
+    private static let holdMenuThreshold: TimeInterval = 0.5
     #endif
 
     /// Base height for tiles - width adjusts based on artwork aspect ratio
@@ -197,8 +205,20 @@ struct TVMediaGameTileView: View {
         .onReceive(gamepadManager.eventPublisher) { event in
             guard gamepadManager.isControllerConnected else { return }
             guard isFocused else { return }
-            if case .buttonPress(let isPressed) = event, isPressed {
-                onPlay()
+            if case .buttonPress(let isPressed) = event {
+                handleControllerButtonPress(isPressed: isPressed)
+            }
+        }
+        .onChange(of: isFocused) { focused in
+            if !focused {
+                // Cancel any pending hold-menu if focus moves away mid-press
+                cancelHoldMenuTimer()
+                holdPressStart = nil
+            }
+        }
+        .sheet(isPresented: $showContextSheet) {
+            TVMediaContextMenuSheet(title: game.title) {
+                contextMenu()
             }
         }
         .saveStateDropTarget(gameId: game.md5Hash)
@@ -239,6 +259,49 @@ struct TVMediaGameTileView: View {
             )
             .animation(.easeOut(duration: 0.2), value: borderGlow)
     }
+
+    #if os(iOS)
+    // MARK: - Controller Hold-A Handling
+    //
+    // Mirrors tvOS focus-engine behaviour: short tap on A launches the game,
+    // a sustained press (>= ``holdMenuThreshold`` seconds) surfaces the same
+    // context menu that is exposed via long-press on touch.
+    //
+    // NOTE: Other shelves/grids that own focus state (TVMediaAllGamesGrid,
+    // TVMediaSearchResultsGrid, TVMediaShelf, etc.) all instantiate this tile,
+    // so adding hold-A here automatically covers every shelf without duplicating
+    // controller plumbing in each container.
+    private func handleControllerButtonPress(isPressed: Bool) {
+        if isPressed {
+            // Start hold timer; if it fires before release, present the menu
+            // and clear the press timestamp so the release becomes a no-op.
+            holdPressStart = Date()
+            cancelHoldMenuTimer()
+            holdMenuTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(Self.holdMenuThreshold * 1_000_000_000))
+                guard !Task.isCancelled else { return }
+                guard holdPressStart != nil else { return }
+                holdPressStart = nil
+                showContextSheet = true
+            }
+        } else {
+            // Release before threshold -> treat as a tap and launch the game.
+            cancelHoldMenuTimer()
+            if let start = holdPressStart {
+                let elapsed = Date().timeIntervalSince(start)
+                holdPressStart = nil
+                if elapsed < Self.holdMenuThreshold {
+                    onPlay()
+                }
+            }
+        }
+    }
+
+    private func cancelHoldMenuTimer() {
+        holdMenuTask?.cancel()
+        holdMenuTask = nil
+    }
+    #endif
 
     // MARK: - Artwork Loading
 
@@ -317,5 +380,53 @@ private extension View {
         }
     }
 }
+
+#if os(iOS)
+/// Retrowave-styled sheet that renders the same buttons as the SwiftUI
+/// `.contextMenu` long-press menu, used as the controller-hold-A fallback
+/// (SwiftUI does not allow programmatically triggering a real context menu).
+///
+/// We render `GameContextMenu` (a collection of SwiftUI `Button`/`Menu` views)
+/// inside a `List` so that all action labels — including the nested core
+/// picker submenu — show up natively. Styling matches the retrowave palette
+/// used elsewhere in the TVMedia UI.
+@available(iOS 17.0, *)
+struct TVMediaContextMenuSheet<Content: View>: View {
+    let title: String
+    @ViewBuilder let content: () -> Content
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                content()
+            }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(
+                ZStack {
+                    LinearGradient(
+                        colors: [Color.retroBlack, Color.retroBlack.opacity(0.92)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    RetroScanlineOverlay().opacity(0.04)
+                }
+                .ignoresSafeArea()
+            )
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { dismiss() }
+                        .foregroundStyle(Color.retroPink)
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
+}
+#endif
 
 #endif

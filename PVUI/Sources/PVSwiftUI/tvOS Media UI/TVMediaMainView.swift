@@ -3811,12 +3811,9 @@ struct TVMediaAllGamesGrid: View {
             case .verticalNavigation(let value, let isPressed):
                 guard isPressed else { return }
                 moveFocus(horizontal: 0, vertical: value < 0 ? 1 : -1, columnsPerRow: columnsPerRow)
-            case .buttonPress(let isPressed):
-                guard isPressed else { return }
-                if let id = focusedGameID,
-                   let game = games.first(where: { $0.id == id }) {
-                    sceneCoordinator.launchGame(game)
-                }
+            // NOTE: `.buttonPress` (A button) is handled by the focused
+            // ``TVMediaGameTileView`` itself so that hold-A can surface the
+            // context menu while a short tap still launches the game.
             case .buttonB(let isPressed):
                 guard isPressed else { return }
                 focusCoordinator.openSidebar()
@@ -5003,12 +5000,9 @@ struct TVMediaSearchResultsGrid: View {
             case .verticalNavigation(let value, let isPressed):
                 guard isPressed else { return }
                 moveFocus(horizontal: 0, vertical: value < 0 ? 1 : -1, columnsPerRow: columnsPerRow)
-            case .buttonPress(let isPressed):
-                guard isPressed else { return }
-                if let id = focusedGameID,
-                   let game = results.first(where: { $0.id == id }) {
-                    sceneCoordinator.launchGame(game)
-                }
+            // NOTE: `.buttonPress` (A button) is handled by the focused
+            // ``TVMediaGameTileView`` itself so that hold-A can surface the
+            // context menu while a short tap still launches the game.
             case .buttonB(let isPressed):
                 guard isPressed else { return }
                 focusCoordinator.openSidebar()
