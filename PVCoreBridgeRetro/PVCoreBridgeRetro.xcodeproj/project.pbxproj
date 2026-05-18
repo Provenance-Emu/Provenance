@@ -21,6 +21,7 @@
 		B322996E28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
 		B330D5452F7731A200440DFA /* PVThinLibretroCore+MIDI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B330D5442F7731A200440DFA /* PVThinLibretroCore+MIDI.swift */; };
 		B336F2E92F6E843C004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F2E82F6E843C004ABEE6 /* PVCheevos */; };
+		C0C0CAFE2F00000000000003 /* CRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE2F00000000000002 /* CRcheevos */; };
 		B341AD952E2BF5BE00B18E76 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B341AD942E2BF5BE00B18E76 /* PVSupport */; };
 		B342325B286EB4060033EFA5 /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6452867202D00B60497 /* dylib.c */; };
 		B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
@@ -942,6 +943,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B336F2E92F6E843C004ABEE6 /* PVCheevos in Frameworks */,
+				C0C0CAFE2F00000000000003 /* CRcheevos in Frameworks */,
 				B394D8102F6A86E200FAA916 /* PVJIT in Frameworks */,
 				B37E0C992F6219B5006084E5 /* MoltenVK in Frameworks */,
 				B341AD952E2BF5BE00B18E76 /* PVSupport in Frameworks */,
@@ -2982,6 +2984,7 @@
 				B394D80D2F6A86E200FAA916 /* JITManager */,
 				B394D80F2F6A86E200FAA916 /* PVJIT */,
 				B336F2E82F6E843C004ABEE6 /* PVCheevos */,
+				C0C0CAFE2F00000000000002 /* CRcheevos */,
 				B3D9A2C12F78C26F002F1DCB /* PVArchiving */,
 				B3D9A2C32F78C26F002F1DCB /* PVArchivingFormats */,
 				B3D9A2C62F78C4FE002F1DCB /* PVNetplay */,
@@ -3035,6 +3038,7 @@
 				B394D8092F6A86BF00FAA916 /* XCLocalSwiftPackageReference "../PVPrimitives" */,
 				B394D80C2F6A86E200FAA916 /* XCLocalSwiftPackageReference "../PVJIT" */,
 				B336F2E72F6E843C004ABEE6 /* XCLocalSwiftPackageReference "../PVCheevos" */,
+				C0C0CAFE2F00000000000001 /* XCLocalSwiftPackageReference "../PVRcheevos" */,
 				B3D9A2C02F78C26F002F1DCB /* XCLocalSwiftPackageReference "../PVArchiving" */,
 				B3D9A2C52F78C4FE002F1DCB /* XCLocalSwiftPackageReference "../PVNetplay" */,
 			);
@@ -3792,6 +3796,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVCheevos;
 		};
+		C0C0CAFE2F00000000000001 /* XCLocalSwiftPackageReference "../PVRcheevos" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVRcheevos;
+		};
 		B341AD932E2BF5BE00B18E76 /* XCLocalSwiftPackageReference "../PVSupport" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVSupport;
@@ -3842,6 +3850,11 @@
 		B336F2E82F6E843C004ABEE6 /* PVCheevos */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCheevos;
+		};
+		C0C0CAFE2F00000000000002 /* CRcheevos */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0C0CAFE2F00000000000001 /* XCLocalSwiftPackageReference "../PVRcheevos" */;
+			productName = CRcheevos;
 		};
 		B341AD942E2BF5BE00B18E76 /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
