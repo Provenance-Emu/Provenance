@@ -225,15 +225,27 @@ public extension PVEmulatorViewController {
             ILOG("[CHEEVOS-DIAG] startSession SUCCESS gameId=\(manager.currentGameId ?? -1) winningHash=\(winningHash) existingUnlocks=\(response.unlocks?.count ?? 0)")
 
             // Post a status toast so the user sees the same "found match" feedback
-            // the RA full-wrapper publishes via its native message system. We
-            // intentionally don't surface response.unlocks.count here — the API
-            // returns the user's prior-session unlock list which is often
-            // confusing (e.g. shows 1 when the user hasn't actually earned
-            // anything on this account yet). The achievement overlay surfaces
-            // per-event unlock detail separately.
+            // the RA full-wrapper publishes via its native message system.
+            //
+            // response.unlocks is the user's prior unlocks for this game on this
+            // account (per the RA dorequest StartSession API). Surface the count
+            // but phrase it as "already earned" so users don't read it as
+            // "achievements available". When the count is 0, omit it entirely —
+            // an unadorned "tracking" message is cleaner.
+            //
+            // NOTE: if you see a non-zero count on a game you've never played,
+            // the RA server may be returning a softcore / leaderboard placeholder
+            // that's tied to your account but not a real achievement unlock.
+            let priorUnlocks = response.unlocks?.count ?? 0
             await MainActor.run {
+                let message: String
+                if priorUnlocks > 0 {
+                    message = "RetroAchievements: tracking \(gameTitle) (\(priorUnlocks) already earned)"
+                } else {
+                    message = "RetroAchievements: tracking \(gameTitle)"
+                }
                 PVToastManager.shared.show(
-                    "RetroAchievements: tracking \(gameTitle)",
+                    message,
                     type: .success,
                     duration: 4.0,
                     icon: "trophy.fill"
