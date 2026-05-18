@@ -3563,6 +3563,7 @@
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
 					"\"$(SRCROOT)/Sources/retro\"",
 					"\"$(SRCROOT)/../MoltenVK/MoltenVK/include\"",
+					"\"$(SRCROOT)/../PVRcheevos/rcheevos/include\"",
 					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
@@ -3636,6 +3637,7 @@
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
 					"\"$(SRCROOT)/Sources/retro\"",
 					"\"$(SRCROOT)/../MoltenVK/MoltenVK/include\"",
+					"\"$(SRCROOT)/../PVRcheevos/rcheevos/include\"",
 					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
@@ -3707,6 +3709,7 @@
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
 					"\"$(SRCROOT)/Sources/retro\"",
 					"\"$(SRCROOT)/../MoltenVK/MoltenVK/include\"",
+					"\"$(SRCROOT)/../PVRcheevos/rcheevos/include\"",
 					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
