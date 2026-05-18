@@ -6095,22 +6095,76 @@ static bool thin_environment(unsigned cmd, void *data) {
         getFeatures(_vulkanPhysicalDevice, &supportedFeatures);
         ILOG(@"ThinFrontend: queried physical-device features (anisotropy=%d "
              @"independentBlend=%d fragmentStoresAndAtomics=%d shaderClipDistance=%d "
-             @"imageCubeArray=%d)",
+             @"imageCubeArray=%d wideLines=%d geometryShader=%d tessellationShader=%d)",
              supportedFeatures.samplerAnisotropy,
              supportedFeatures.independentBlend,
              supportedFeatures.fragmentStoresAndAtomics,
              supportedFeatures.shaderClipDistance,
-             supportedFeatures.imageCubeArray);
+             supportedFeatures.imageCubeArray,
+             supportedFeatures.wideLines,
+             supportedFeatures.geometryShader,
+             supportedFeatures.tessellationShader);
     } else {
         WLOG(@"ThinFrontend: vkGetPhysicalDeviceFeatures unavailable — passing {0} (may crash cores that assume feature availability)");
     }
 
+    /// Log device properties so we can confirm we negotiated against the
+    /// expected MoltenVK Metal-backed GPU. Useful when the core later
+    /// crashes — knowing apiVersion + deviceType narrows triage.
+    typedef void (*PFN_vkGetPhysicalDeviceProperties)(VkPhysicalDevice, VkPhysicalDeviceProperties *);
+    PFN_vkGetPhysicalDeviceProperties getProps = (PFN_vkGetPhysicalDeviceProperties)
+        realGetInstanceProcAddr(_vulkanInstance, "vkGetPhysicalDeviceProperties");
+    if (getProps && _vulkanPhysicalDevice) {
+        VkPhysicalDeviceProperties props = {0};
+        getProps(_vulkanPhysicalDevice, &props);
+        ILOG(@"ThinFrontend: physical-device '%s' apiVersion=%u.%u.%u deviceType=%d vendorID=0x%04x",
+             props.deviceName,
+             VK_VERSION_MAJOR(props.apiVersion),
+             VK_VERSION_MINOR(props.apiVersion),
+             VK_VERSION_PATCH(props.apiVersion),
+             (int)props.deviceType,
+             props.vendorID);
+    }
+
     /// The frontend requires VK_EXT_metal_objects to extract MTLTextures
-    /// from core-rendered VkImages for display on screen.
+    /// from core-rendered VkImages for display on screen. Verify it's
+    /// supported on this GPU before asking the core to enable it — if it
+    /// isn't, the core's create_device WILL fail with a non-descriptive
+    /// false, masking the real "extension missing" cause.
+    typedef VkResult (*PFN_vkEnumerateDeviceExtensionProperties)(
+        VkPhysicalDevice, const char *, uint32_t *, VkExtensionProperties *);
+    PFN_vkEnumerateDeviceExtensionProperties enumExts =
+        (PFN_vkEnumerateDeviceExtensionProperties)
+            realGetInstanceProcAddr(_vulkanInstance, "vkEnumerateDeviceExtensionProperties");
+    BOOL metalObjectsSupported = NO;
+    if (enumExts && _vulkanPhysicalDevice) {
+        uint32_t extCount = 0;
+        enumExts(_vulkanPhysicalDevice, NULL, &extCount, NULL);
+        if (extCount > 0) {
+            VkExtensionProperties *exts =
+                (VkExtensionProperties *)calloc(extCount, sizeof(VkExtensionProperties));
+            if (exts) {
+                enumExts(_vulkanPhysicalDevice, NULL, &extCount, exts);
+                for (uint32_t i = 0; i < extCount; i++) {
+                    if (strcmp(exts[i].extensionName, "VK_EXT_metal_objects") == 0) {
+                        metalObjectsSupported = YES;
+                        break;
+                    }
+                }
+                free(exts);
+            }
+        }
+    }
+    if (!metalObjectsSupported) {
+        WLOG(@"ThinFrontend: VK_EXT_metal_objects NOT in physical-device extension list — "
+             @"core create_device is likely to fail; MoltenVK should always advertise this");
+    }
+
     const char *requiredExtensions[] = { "VK_EXT_metal_objects" };
 
-    ILOG(@"ThinFrontend: invoking core create_device(instance=%p gpu=%p)",
-         (void *)_vulkanInstance, (void *)_vulkanPhysicalDevice);
+    ILOG(@"ThinFrontend: invoking core create_device(instance=%p gpu=%p metal_objects=%s)",
+         (void *)_vulkanInstance, (void *)_vulkanPhysicalDevice,
+         metalObjectsSupported ? "yes" : "MISSING");
 
     bool ok = _vulkanNegotiationInterface->create_device(
         &vkCtx,
@@ -6124,7 +6178,8 @@ static bool thin_environment(unsigned cmd, void *data) {
     );
 
     if (!ok || !vkCtx.device) {
-        WLOG(@"ThinFrontend: core create_device returned %s (device=%p) — falling back to frontend device",
+        WLOG(@"ThinFrontend: core create_device returned %s (device=%p) — falling back to frontend device. "
+             @"Common causes: required extension unavailable, queue family mismatch, core-internal Vulkan init failure",
              ok ? "true" : "false", (void *)vkCtx.device);
         return NO;
     }
@@ -6137,6 +6192,42 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     ILOG(@"ThinFrontend: core created VkDevice=%p queue=%p queueFamily=%u",
          (void *)_vulkanDevice, (void *)_vulkanQueue, _vulkanQueueFamilyIndex);
+
+    /// Verify the queue family the core chose actually supports both
+    /// graphics AND compute. Flycast in particular dispatches compute
+    /// shaders for some VRAM transfer paths — if the core picked a
+    /// transfer-only or graphics-only family, the first compute submit
+    /// produces a GPU page fault with an opaque "device lost" surface.
+    typedef void (*PFN_vkGetPhysicalDeviceQueueFamilyProperties)(
+        VkPhysicalDevice, uint32_t *, VkQueueFamilyProperties *);
+    PFN_vkGetPhysicalDeviceQueueFamilyProperties getQueueFamilies =
+        (PFN_vkGetPhysicalDeviceQueueFamilyProperties)
+            realGetInstanceProcAddr(_vulkanInstance, "vkGetPhysicalDeviceQueueFamilyProperties");
+    if (getQueueFamilies && _vulkanPhysicalDevice) {
+        uint32_t qCount = 0;
+        getQueueFamilies(_vulkanPhysicalDevice, &qCount, NULL);
+        if (qCount > 0 && _vulkanQueueFamilyIndex < qCount) {
+            VkQueueFamilyProperties *families =
+                (VkQueueFamilyProperties *)calloc(qCount, sizeof(VkQueueFamilyProperties));
+            if (families) {
+                getQueueFamilies(_vulkanPhysicalDevice, &qCount, families);
+                VkQueueFlags flags = families[_vulkanQueueFamilyIndex].queueFlags;
+                BOOL hasGraphics = (flags & VK_QUEUE_GRAPHICS_BIT) != 0;
+                BOOL hasCompute  = (flags & VK_QUEUE_COMPUTE_BIT) != 0;
+                ILOG(@"ThinFrontend: chosen queue family %u flags=0x%x graphics=%d compute=%d",
+                     _vulkanQueueFamilyIndex, flags, hasGraphics, hasCompute);
+                if (!hasGraphics || !hasCompute) {
+                    WLOG(@"ThinFrontend: queue family %u missing %s — cores that dispatch %s may crash on first submit",
+                         _vulkanQueueFamilyIndex,
+                         (!hasGraphics && !hasCompute) ? "graphics+compute" :
+                             (!hasGraphics ? "graphics" : "compute"),
+                         (!hasGraphics && !hasCompute) ? "either" :
+                             (!hasGraphics ? "draws" : "compute"));
+                }
+                free(families);
+            }
+        }
+    }
 
     // Load device-level function pointers so the rest of the frontend
     // (command submission, Metal interop, fences) works correctly with
