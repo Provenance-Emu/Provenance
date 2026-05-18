@@ -178,6 +178,15 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         // Apply per-core iOS-specific option defaults before the emulation loop starts.
         // These match what PVRetroArchCore+Options.swift sets for the full RA bridge.
         applyPlatformDefaults()
+        // Translate the user's Display Scaling preference into the per-core libretro
+        // options that gate widescreen / stretch / aspect overrides
+        // (mupen64plus-aspect, dolphin_aspect_ratio, ppsspp_stretch, etc.). Must run
+        // AFTER applyPlatformDefaults so the user's choice wins over any default we
+        // would seed for the same key, and BEFORE retro_load_game so the core sees
+        // the option at startup. Also start an observer so pause-menu changes
+        // propagate into the running core. See PVThinLibretroCore+Scaling.swift.
+        applyScalingModeToCoreOptions()
+        startScalingModeObservation()
         // Register a post-load hook so port device types are restored AFTER retro_load_game
         // (which triggers SET_CONTROLLER_INFO) but BEFORE the emulation loop thread starts,
         // avoiding a potential race condition with retro_set_controller_port_device.
@@ -251,6 +260,9 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             self.stopMIDIDestinationObservation()
         }
 #endif
+        // Cancel the scaling-mode observer so it can't fire against a
+        // tearing-down bridge after stopEmulation returns.
+        stopScalingModeObservation()
         super.stopEmulation()
     }
 
