@@ -6073,9 +6073,37 @@ static bool thin_environment(unsigned cmd, void *data) {
     PFN_vkGetInstanceProcAddr realGetInstanceProcAddr =
         (PFN_vkGetInstanceProcAddr)_vkGetInstanceProcAddr;
 
-    /// Zero-initialized features struct — cores dereference this pointer
-    /// unconditionally so passing NULL would crash.
-    VkPhysicalDeviceFeatures noFeatures = {0};
+    /// Query the physical device for ALL supported features and pass them
+    /// to the core. Previously we passed `{0}` (all features off), which
+    /// is the protocol-correct signal of "no feature requirements from
+    /// the frontend" — but cores like flycast treat the struct as a list
+    /// of features the frontend GUARANTEES are enabled and use them
+    /// unconditionally in their renderer. With all flags false, flycast's
+    /// shader pipeline writes to memory backed by disabled features
+    /// (e.g. `samplerAnisotropy`, `independentBlend`,
+    /// `fragmentStoresAndAtomics`) and the first vkQueueSubmit hits a
+    /// GPU page fault → device lost → app crash.
+    ///
+    /// Forwarding everything the GPU advertises lets the core enable
+    /// whichever subset it actually needs without us having to enumerate
+    /// each one.
+    VkPhysicalDeviceFeatures supportedFeatures = {0};
+    typedef void (*PFN_vkGetPhysicalDeviceFeatures)(VkPhysicalDevice, VkPhysicalDeviceFeatures *);
+    PFN_vkGetPhysicalDeviceFeatures getFeatures = (PFN_vkGetPhysicalDeviceFeatures)
+        realGetInstanceProcAddr(_vulkanInstance, "vkGetPhysicalDeviceFeatures");
+    if (getFeatures && _vulkanPhysicalDevice) {
+        getFeatures(_vulkanPhysicalDevice, &supportedFeatures);
+        ILOG(@"ThinFrontend: queried physical-device features (anisotropy=%d "
+             @"independentBlend=%d fragmentStoresAndAtomics=%d shaderClipDistance=%d "
+             @"imageCubeArray=%d)",
+             supportedFeatures.samplerAnisotropy,
+             supportedFeatures.independentBlend,
+             supportedFeatures.fragmentStoresAndAtomics,
+             supportedFeatures.shaderClipDistance,
+             supportedFeatures.imageCubeArray);
+    } else {
+        WLOG(@"ThinFrontend: vkGetPhysicalDeviceFeatures unavailable — passing {0} (may crash cores that assume feature availability)");
+    }
 
     /// The frontend requires VK_EXT_metal_objects to extract MTLTextures
     /// from core-rendered VkImages for display on screen.
@@ -6092,7 +6120,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         realGetInstanceProcAddr,
         requiredExtensions, 1,
         NULL, 0,                     // no required device layers from frontend
-        &noFeatures
+        &supportedFeatures
     );
 
     if (!ok || !vkCtx.device) {
