@@ -76,6 +76,13 @@ let package = Package(
                 .headerSearchPath("../libretro/retro/gfx/"),
                 .headerSearchPath("../libretro/retro/"),
                 .headerSearchPath("../../MoltenVK/MoltenVK/include"),
+                // PVThinLibretroFrontend.mm uses quote-form #include "rc_client.h"
+                // which clang resolves against the source file's own include
+                // search paths first. CRcheevos's `publicHeadersPath: "include"`
+                // exposes the headers to Swift modules but quote-form includes
+                // from .mm sources don't always resolve via the SPM dep graph,
+                // especially under Xcode workspace builds. Add the path explicitly.
+                .headerSearchPath("../../../PVRcheevos/rcheevos/include"),
                 .define("DEBUG", .when(configuration: .debug)),
                 .define("HAVE_RCHEEVOS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
