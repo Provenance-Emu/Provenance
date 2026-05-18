@@ -872,7 +872,11 @@ struct HomeContinueSection: SwiftUI.View {
                 // Only handle events when a controller is actually connected.
                 // Handling events while disconnected can create a hot loop of focus/page updates on iOS.
                 guard viewModel.isControllerConnected else { return }
-                
+                // Don't consume A / d-pad while a full-screen retrowave alert
+                // (core picker, save-state picker, etc.) is presented above
+                // the home view.
+                if GamepadManager.shared.isModalAlertPresented { return }
+
                 switch event {
                 case .buttonPress(let isPressed):
                     if isPressed {

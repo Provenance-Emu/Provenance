@@ -364,6 +364,12 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                 if AppState.shared.emulationUIState.core?.isOn == true {
                     return
                 }
+                // Ignore navigation input while a full-screen retrowave alert /
+                // picker (e.g. core selection, save-state picker, imports popover)
+                // is presented over the root view, so A / d-pad don't leak.
+                if GamepadManager.shared.isModalAlertPresented {
+                    return
+                }
                 switch event {
                 case .menuToggle(let isPressed):
                     if isPressed {

@@ -24,6 +24,14 @@ public class GamepadManager: ObservableObject {
     /// On tvOS, the Siri Remote is also a `GCController`, so this property
     /// excludes it to reflect true gamepad availability.
     @Published public private(set) var hasPhysicalGamepad: Bool = false
+    /// Tracks whether a full-screen retrowave alert / picker is currently presented
+    /// over the root UI. iOS gamepad subscribers (root view, home, sidebar, etc.)
+    /// should early-return when this is `true` so that A / d-pad presses don't
+    /// "leak" through to background views while a modal picker is up.
+    ///
+    /// tvOS has its own focus-coordinator gating; this flag is intentionally
+    /// usable on both platforms but only consulted by iOS subscribers today.
+    @Published public var isModalAlertPresented: Bool = false
     private var observers: [NSObjectProtocol] = []
     private let eventSubject = PassthroughSubject<GamepadEvent, Never>()
     

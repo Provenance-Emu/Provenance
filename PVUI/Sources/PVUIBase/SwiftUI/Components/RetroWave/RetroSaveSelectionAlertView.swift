@@ -284,9 +284,28 @@ public struct RetroSaveSelectionAlertView: View {
     #if os(tvOS)
     @FocusState private var focusedItemId: String?
     private let gridColumns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+    #elseif os(iOS)
+    /// Drives controller-nav focus on iOS. SwiftUI `@FocusState` is iOS 15+,
+    /// which is well below the iOS 17 minimum target.
+    @FocusState private var focusedItemId: String?
+    /// Gamepad input bridge for iOS controller navigation of the save picker.
+    @StateObject private var gamepadManager = GamepadManager.shared
+    private let gridColumns = [GridItem(.flexible()), GridItem(.flexible())]
     #else
     private let gridColumns = [GridItem(.flexible()), GridItem(.flexible())]
     #endif
+
+    // MARK: - Controller-nav focus IDs (iOS / tvOS)
+
+    /// Stable focus identifier for the prominent "Quick Continue" tile.
+    private static let quickContinueFocusID = "quick-continue"
+    /// Stable focus identifier for the "Start Fresh" action.
+    private static let startFreshFocusID = "start-fresh"
+    /// Stable focus identifier for the "Back" action (only present when
+    /// `showBackButton` is true).
+    private static let backFocusID = "back"
+    /// Stable focus identifier for the "Cancel" action.
+    private static let cancelFocusID = "cancel"
 
     public init(
         viewModel: RetroSaveSelectionViewModel,
@@ -325,10 +344,20 @@ public struct RetroSaveSelectionAlertView: View {
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 glowOpacity = 0.3
             }
-            #if os(tvOS)
+            #if os(tvOS) || os(iOS)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                focusedItemId = "quick-continue"
+                focusedItemId = initialFocusID
             }
+            #endif
+            #if os(iOS)
+            // Block sidebar / root / home gamepad subscribers from "leaking"
+            // A and d-pad input through to the views behind this picker.
+            GamepadManager.shared.isModalAlertPresented = true
+            #endif
+        }
+        .onDisappear {
+            #if os(iOS)
+            GamepadManager.shared.isModalAlertPresented = false
             #endif
         }
         #if os(tvOS)
@@ -342,6 +371,33 @@ public struct RetroSaveSelectionAlertView: View {
             }
         }
         #endif
+        #if os(iOS)
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard gamepadManager.isControllerConnected else { return }
+            switch event {
+            case .verticalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveSelectionVertical(value: value)
+            case .horizontalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveSelectionHorizontal(value: value)
+            case .buttonPress(let isPressed):
+                guard isPressed else { return }
+                activateFocusedItem()
+            case .buttonB(let isPressed):
+                guard isPressed else { return }
+                handleBackOrCancel()
+            default:
+                break
+            }
+        }
+        #endif
+    }
+
+    /// First item that should receive focus when the picker appears.
+    /// Prefers Quick Continue when there is a save; otherwise Start Fresh.
+    private var initialFocusID: String {
+        viewModel.mostRecentSave?.id ?? Self.startFreshFocusID
     }
 
     // MARK: - Header Section
@@ -378,11 +434,15 @@ public struct RetroSaveSelectionAlertView: View {
                 quickContinueButton(for: mostRecent)
             }
 
-            RetroAlertButton(title: "Start Fresh", style: .secondary) {
+            RetroAlertButton(
+                title: "Start Fresh",
+                style: .secondary,
+                isExternallyFocused: isExternallyFocused(Self.startFreshFocusID)
+            ) {
                 onStartFresh()
             }
-            #if os(tvOS)
-            .focused($focusedItemId, equals: "start-fresh")
+            #if os(tvOS) || os(iOS)
+            .focused($focusedItemId, equals: Self.startFreshFocusID)
             #endif
         }
         .padding(.horizontal, 20)
@@ -466,6 +526,9 @@ public struct RetroSaveSelectionAlertView: View {
             glowRadius: 8,
             showBorder: false
         )
+#elseif os(iOS)
+        .focused($focusedItemId, equals: save.id)
+        .overlay(controllerFocusRing(visible: focusedItemId == save.id, cornerRadius: 10))
 #endif
     }
 
@@ -560,6 +623,9 @@ public struct RetroSaveSelectionAlertView: View {
             glowRadius: 8,
             showBorder: false
         )
+        #elseif os(iOS)
+        .focused($focusedItemId, equals: save.id)
+        .overlay(controllerFocusRing(visible: focusedItemId == save.id, cornerRadius: 8))
         #endif
     }
 
@@ -644,19 +710,27 @@ public struct RetroSaveSelectionAlertView: View {
     private var footerSection: some View {
         HStack(spacing: 12) {
             if showBackButton {
-                RetroAlertButton(title: "Back", style: .secondary) {
+                RetroAlertButton(
+                    title: "Back",
+                    style: .secondary,
+                    isExternallyFocused: isExternallyFocused(Self.backFocusID)
+                ) {
                     onBack?()
                 }
-                #if os(tvOS)
-                .focused($focusedItemId, equals: "back")
+                #if os(tvOS) || os(iOS)
+                .focused($focusedItemId, equals: Self.backFocusID)
                 #endif
             }
 
-            RetroAlertButton(title: "Cancel", style: .cancel) {
+            RetroAlertButton(
+                title: "Cancel",
+                style: .cancel,
+                isExternallyFocused: isExternallyFocused(Self.cancelFocusID)
+            ) {
                 onCancel()
             }
-            #if os(tvOS)
-            .focused($focusedItemId, equals: "cancel")
+            #if os(tvOS) || os(iOS)
+            .focused($focusedItemId, equals: Self.cancelFocusID)
             #endif
         }
         .padding(.horizontal, 20)
@@ -676,6 +750,159 @@ public struct RetroSaveSelectionAlertView: View {
             }
         }
     }
+
+    /// Mirrors `focusedItemId` to a `RetroAlertButton`'s
+    /// `isExternallyFocused` so the button paints its retrowave highlight when
+    /// a controller drives focus. Returns `nil` on platforms that don't track
+    /// focus state, letting the button fall back to system focus.
+    private func isExternallyFocused(_ id: String) -> Bool? {
+        #if os(tvOS) || os(iOS)
+        return focusedItemId == id
+        #else
+        return nil
+        #endif
+    }
+
+    // MARK: - iOS Controller Navigation
+
+    #if os(iOS)
+    /// Ordered list of focus IDs as they appear top-to-bottom in the picker.
+    /// Used by d-pad vertical / grid navigation. Quick Continue (mostRecent)
+    /// is followed by the remaining saves grid (if any), then Start Fresh,
+    /// then Back (optional), then Cancel.
+    private var orderedFocusIDs: [String] {
+        var ids: [String] = []
+        if let mostRecent = viewModel.mostRecentSave {
+            ids.append(mostRecent.id)
+        }
+        if viewModel.saves.count > 1 {
+            ids.append(contentsOf: viewModel.saves.dropFirst().map { $0.id })
+        }
+        ids.append(Self.startFreshFocusID)
+        if showBackButton {
+            ids.append(Self.backFocusID)
+        }
+        ids.append(Self.cancelFocusID)
+        return ids
+    }
+
+    /// Number of grid columns used in the "other saves" section. Matches the
+    /// `gridColumns` definition above for iOS.
+    private var iosGridColumnCount: Int { 2 }
+
+    /// Index ranges inside `orderedFocusIDs` for the grid items so that
+    /// horizontal navigation can stay within a row.
+    private var gridIndexRange: Range<Int>? {
+        guard viewModel.saves.count > 1 else { return nil }
+        let start = viewModel.mostRecentSave == nil ? 0 : 1
+        let end = start + (viewModel.saves.count - 1)
+        return start..<end
+    }
+
+    /// Moves focus vertically through the picker. Quick Continue, grid rows,
+    /// Start Fresh, Back, and Cancel are all reachable via d-pad up/down.
+    private func moveSelectionVertical(value: Float) {
+        let ids = orderedFocusIDs
+        guard !ids.isEmpty else { return }
+        guard let current = focusedItemId, let idx = ids.firstIndex(of: current) else {
+            focusedItemId = ids.first
+            return
+        }
+        let isDown = value < 0
+        if let gridRange = gridIndexRange, gridRange.contains(idx) {
+            let stride = iosGridColumnCount
+            let next = isDown ? idx + stride : idx - stride
+            if gridRange.contains(next) {
+                focusedItemId = ids[next]
+                return
+            }
+            // Falling out of the grid: move to the next/previous non-grid item.
+            if isDown {
+                focusedItemId = ids[min(gridRange.upperBound, ids.count - 1)]
+            } else {
+                focusedItemId = ids[max(gridRange.lowerBound - 1, 0)]
+            }
+            return
+        }
+        let next = isDown ? idx + 1 : idx - 1
+        guard next >= 0, next < ids.count else { return }
+        focusedItemId = ids[next]
+    }
+
+    /// Horizontal navigation only matters inside the saves grid.
+    private func moveSelectionHorizontal(value: Float) {
+        guard let gridRange = gridIndexRange else { return }
+        let ids = orderedFocusIDs
+        guard let current = focusedItemId, let idx = ids.firstIndex(of: current),
+              gridRange.contains(idx) else { return }
+        let isRight = value > 0
+        let next = isRight ? idx + 1 : idx - 1
+        guard gridRange.contains(next) else { return }
+        // Stay in the same grid row.
+        let rowSize = iosGridColumnCount
+        let currentRow = (idx - gridRange.lowerBound) / rowSize
+        let nextRow = (next - gridRange.lowerBound) / rowSize
+        guard currentRow == nextRow else { return }
+        focusedItemId = ids[next]
+    }
+
+    /// Resolves the currently-focused tile to an action.
+    private func activateFocusedItem() {
+        guard let current = focusedItemId else {
+            // Default: trigger Quick Continue if available, else Start Fresh.
+            if let mostRecent = viewModel.mostRecentSave {
+                handleSaveSelection(mostRecent)
+            } else {
+                onStartFresh()
+            }
+            return
+        }
+        switch current {
+        case Self.startFreshFocusID:
+            onStartFresh()
+        case Self.backFocusID:
+            onBack?()
+        case Self.cancelFocusID:
+            onCancel()
+        default:
+            if let save = viewModel.saves.first(where: { $0.id == current }) {
+                handleSaveSelection(save)
+            }
+        }
+    }
+
+    /// B-button behavior: cancel an in-flight download, otherwise go Back
+    /// (when available) or Cancel.
+    private func handleBackOrCancel() {
+        if viewModel.isDownloading {
+            viewModel.cancelDownload()
+        } else if showBackButton {
+            onBack?()
+        } else {
+            onCancel()
+        }
+    }
+
+    /// Pink/blue gradient ring drawn around the currently focused tile when
+    /// a controller is connected. Mirrors the tvOS focus affordance without
+    /// relying on the system focus engine.
+    @ViewBuilder
+    private func controllerFocusRing(visible: Bool, cornerRadius: CGFloat) -> some View {
+        if visible && gamepadManager.isControllerConnected {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [.retroPink, .retroBlue],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 2
+                )
+                .shadow(color: .retroPink.opacity(0.7), radius: 6, x: 0, y: 0)
+                .allowsHitTesting(false)
+        }
+    }
+    #endif
 
     private var alertBackground: some View {
         ZStack {

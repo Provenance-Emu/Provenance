@@ -616,6 +616,12 @@ struct HomeView: SwiftUI.View {
                     DLOG("🎮 HomeView: Ignoring input - menu visible")
                     return
                 }
+                // Don't let HomeView consume A / d-pad while a full-screen
+                // retrowave alert (core picker, save-state picker, imports
+                // popover, etc.) is presented above it.
+                if GamepadManager.shared.isModalAlertPresented {
+                    return
+                }
 
                 DLOG("🎮 HomeView: Received event: \(event)")
 

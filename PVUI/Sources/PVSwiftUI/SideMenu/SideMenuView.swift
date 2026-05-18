@@ -138,6 +138,8 @@ SideMenuView: SwiftUI.View {
                 return viewModel.isMenuVisible
             }
             .sink { event in
+                // Suppress while a full-screen retrowave alert is on top.
+                if GamepadManager.shared.isModalAlertPresented { return }
                 switch event {
                 case .buttonPress(let isPressed):
                     if isPressed {
