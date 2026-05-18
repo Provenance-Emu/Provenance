@@ -19,6 +19,7 @@ import Foundation
 import PVCoreBridge
 import PVLogging
 import PVPrimitives
+import PVSystems
 
 extension MednafenGameCore: PortDeviceConfigurable {
 

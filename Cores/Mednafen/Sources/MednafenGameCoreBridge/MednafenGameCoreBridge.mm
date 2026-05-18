@@ -985,11 +985,11 @@ static void emulation_run(BOOL skipFrame) {
 
     if (self.systemType == MednaSystemPCE)
     {
-        // Port 0 honours the pause-menu Port Devices choice (gamepad / mouse).
-        // Ports 1-4 are the multitap slave slots — Mednafen only supports
-        // gamepads there, so leave them as-is.
-        const char *pceP0 = [[self mednafenDeviceNameForPort:0 defaultDevice:@"gamepad"] UTF8String];
-        game->SetInput(0, pceP0, (uint8_t *)inputBuffer[0]);
+        // NOTE: helper-based port-device wiring temporarily reverted to literal
+        // strings while we investigate why it broke touch-skin input for player 1
+        // even though port 0 was unaffected logically. Swift extension + helper
+        // file kept available for re-wire once root cause is understood.
+        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
         game->SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
         game->SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
@@ -1023,21 +1023,19 @@ static void emulation_run(BOOL skipFrame) {
             }
         } else {
             self->multiTapPlayerCount = 2;
-            // SNES port 2 (index 1) is where Mouse / SuperScope plug in — honour
-            // the pause-menu Port Devices choice. Port 1 stays as gamepad.
-            const char *snesP1 = [[self mednafenDeviceNameForPort:1 defaultDevice:@"gamepad"] UTF8String];
             game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
-            game->SetInput(1, snesP1, (uint8_t *)inputBuffer[1]);
+            game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
         }
     }
     else if (self.systemType == MednaSystemNES)
     {
         // Ports 0 and 1 are standard NES controller ports (players 1 and 2).
-        // Port 1 (index 1) hosts the Zapper when configured via pause-menu.
         // Ports 2 and 3 are the NES Four Score ports (players 3 and 4).
-        const char *nesP1 = [[self mednafenDeviceNameForPort:1 defaultDevice:@"gamepad"] UTF8String];
+        // NOTE: helper-based per-port wiring reverted while we investigate
+        // why it broke touch-skin input. Revisit alongside the Zapper-on-
+        // port-2 routing once root cause is found.
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
-        game->SetInput(1, nesP1, (uint8_t *)inputBuffer[1]);
+        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
         game->SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
         game->SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
     }
@@ -1090,13 +1088,8 @@ static void emulation_run(BOOL skipFrame) {
                 game->SetInput(0, "gun", (uint8_t *)inputBuffer[0]);
                 game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
             } else {
-                // Honour the pause-menu Port Devices choice for Saturn's two ports
-                // (gamepad / 3dpad / mouse / gun). Light-gun auto-detect above takes
-                // precedence to preserve existing Stunner game behaviour.
-                const char *ssP0 = [[self mednafenDeviceNameForPort:0 defaultDevice:@"gamepad"] UTF8String];
-                const char *ssP1 = [[self mednafenDeviceNameForPort:1 defaultDevice:@"gamepad"] UTF8String];
-                game->SetInput(0, ssP0, (uint8_t *)inputBuffer[0]);
-                game->SetInput(1, ssP1, (uint8_t *)inputBuffer[1]);
+                game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+                game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
             }
         }
     }
@@ -1125,14 +1118,9 @@ static void emulation_run(BOOL skipFrame) {
                 Mednafen::MDFN_en16lsb(&buf[3]+2, (uint16) 32767);
                 Mednafen::MDFN_en16lsb(&buf[3]+4, (uint16) 32767);
                 Mednafen::MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
-                // Ports 0 and 1 honour the pause-menu Port Devices choice
-                // (gamepad / dualshock / mouse / guncon). Multitap slots ≥ 2
-                // stay as dualshock since the tile only exposes the main pair.
-                NSString *defaultName = @"dualshock";
-                const char *deviceName = (i < 2)
-                    ? [[self mednafenDeviceNameForPort:(NSInteger)i defaultDevice:defaultName] UTF8String]
-                    : [defaultName UTF8String];
-                game->SetInput(i, deviceName, (uint8_t *)inputBuffer[i]);
+                // Helper-based per-port wiring reverted while investigating
+                // touch-input regression. Always dualshock for now.
+                game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
             }
         }
 
@@ -1171,11 +1159,9 @@ static void emulation_run(BOOL skipFrame) {
                 Mednafen::MDFN_en16lsb(&buf[3]+2, (uint16) 32767);
                 Mednafen::MDFN_en16lsb(&buf[3]+4, (uint16) 32767);
                 Mednafen::MDFN_en16lsb(&buf[3]+6, (uint16) 32767);
-                NSString *defaultName = @"dualshock";
-                const char *deviceName = (i < 2)
-                    ? [[self mednafenDeviceNameForPort:(NSInteger)i defaultDevice:defaultName] UTF8String]
-                    : [defaultName UTF8String];
-                game->SetInput(i, deviceName, (uint8_t *)inputBuffer[i]);
+                // Helper-based per-port wiring reverted while investigating
+                // touch-input regression. Always dualshock for now.
+                game->SetInput(i, "dualshock", (uint8_t *)inputBuffer[i]);
             }
         } else {
             // Explicitly disable multi-tap for non-multi-tap games to prevent bleed from prior loads
