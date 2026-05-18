@@ -26,4 +26,21 @@ public final class PVSystemDirectoryHelper: NSObject {
         guard let identifier else { return nil }
         return SystemIdentifier(rawValue: identifier)?.systemDirectoryName
     }
+
+    /// Returns the subdirectory name a libretro core looks for via
+    /// `RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY` (e.g.
+    /// `"com.provenance.psp"` → `"PPSSPP"`, `"com.provenance.dreamcast"` →
+    /// `"dc"`). This differs from ``systemDirectoryName(forIdentifier:)``
+    /// for systems whose upstream libretro fork hard-codes a specific
+    /// lowercase / branded name. Used by thin-wrapper + RA full-wrapper
+    /// callers that need the directory the core actually scans.
+    ///
+    /// Returns `nil` for systems without a libretro fork in our matrix or
+    /// when the core reads from the BIOS root.
+    ///
+    /// Delegates to `SystemIdentifier.retroArchSystemDirectoryName`.
+    @objc public static func retroArchSystemDirectoryName(forIdentifier identifier: String?) -> String? {
+        guard let identifier else { return nil }
+        return SystemIdentifier(rawValue: identifier)?.retroArchSystemDirectoryName
+    }
 }
