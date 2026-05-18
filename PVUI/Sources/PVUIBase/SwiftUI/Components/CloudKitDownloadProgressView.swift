@@ -11,7 +11,7 @@ import Combine
 import PVLibrary
 import PVUIBase
 
-/// SwiftUI view for displaying CloudKit download progress with cancel option
+/// SwiftUI view for displaying CloudKit download progress with cancel option — retrowave restyle.
 public struct CloudKitDownloadProgressView: View {
     let gameMD5: String
     let gameTitle: String
@@ -24,6 +24,7 @@ public struct CloudKitDownloadProgressView: View {
     @State private var hasError: Bool = false
     @State private var errorMessage: String = ""
     @State private var cancellables = Set<AnyCancellable>()
+    @State private var glowPulse: Bool = false
 
     public init(
         gameMD5: String,
@@ -38,118 +39,248 @@ public struct CloudKitDownloadProgressView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 20) {
-            // Game title
-            Text(gameTitle)
-                .font(.headline)
-                .foregroundColor(.primary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
+        VStack(spacing: 22) {
+            header
 
-            // Progress indicator
-            if hasError {
-                VStack(spacing: 12) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .font(.system(size: 48))
-                        .foregroundColor(.red)
-
-                    Text("Download Failed")
-                        .font(.title2)
-                        .foregroundColor(.red)
-
-                    Text(errorMessage)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                }
-            } else if isCompleted {
-                VStack(spacing: 12) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 48))
-                        .foregroundColor(.green)
-
-                    Text("Download Complete")
-                        .font(.title2)
-                        .foregroundColor(.green)
-                }
-            } else {
-                VStack(spacing: 16) {
-                    // Progress circle
-                    ZStack {
-                        Circle()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 8)
-                            .frame(width: 80, height: 80)
-
-                        Circle()
-                            .trim(from: 0, to: downloadProgress)
-                            .stroke(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.blue, .purple]),
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                style: StrokeStyle(lineWidth: 8, lineCap: .round)
-                            )
-                            .frame(width: 80, height: 80)
-                            .rotationEffect(.degrees(-90))
-                            .animation(.easeInOut(duration: 0.3), value: downloadProgress)
-
-                        Text("\(Int(downloadProgress * 100))%")
-                            .font(.caption)
-                            .fontWeight(.bold)
-                    }
-
-                    Text("Downloading from iCloud...")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-            }
-
-            // Action buttons
-            HStack(spacing: 20) {
-                if isCompleted {
-                    Button("Continue") {
-                        onComplete()
-                    }
-                    .buttonStyle(.borderedProminent)
-                } else if hasError {
-                    Button("Retry") {
-                        // Reset error state and retry
-                        hasError = false
-                        errorMessage = ""
-                        downloadProgress = 0.0
-                        // The download queue should handle retry logic
-                    }
-                    .buttonStyle(.borderedProminent)
-
-                    Button("Exit") {
-                        // Cancel any active download and exit emulator scene
-                        CloudKitDownloadQueue.shared.cancelDownload(md5: gameMD5)
-                        onCancel()
-                    }
-                    .buttonStyle(.bordered)
+            // Status content
+            Group {
+                if hasError {
+                    errorState
+                } else if isCompleted {
+                    completedState
                 } else {
-                    Button("Cancel") {
-                        // Cancel the download
-                        CloudKitDownloadQueue.shared.cancelDownload(md5: gameMD5)
-                        onCancel()
-                    }
-                    .buttonStyle(.bordered)
+                    inProgressState
                 }
             }
-            .padding(.top)
+            .frame(maxWidth: .infinity)
+
+            actionButtons
         }
-        .padding()
-        .background(backgroundColorForPlatform)
-        .cornerRadius(12)
-        .shadow(radius: 10)
+        .padding(22)
+        .background(panelBackground)
+        .shadow(color: .retroPink.opacity(glowPulse ? 0.6 : 0.3),
+                radius: glowPulse ? 16 : 8)
         .onAppear {
             monitorDownloadProgress()
+            withAnimation(.easeInOut(duration: 1.8).repeatForever(autoreverses: true)) {
+                glowPulse = true
+            }
         }
     }
 
-        /// Monitor download progress for this specific game
+    // MARK: - Header
+
+    private var header: some View {
+        VStack(spacing: 6) {
+            HStack(spacing: 8) {
+                Rectangle()
+                    .fill(LinearGradient(colors: [.retroPink, .retroPurple],
+                                         startPoint: .top, endPoint: .bottom))
+                    .frame(width: 3, height: 14)
+                    .shadow(color: .retroPink.opacity(0.7), radius: 3)
+
+                Text("ICLOUD DOWNLOAD")
+                    .font(.system(size: 11, weight: .heavy))
+                    .tracking(1.6)
+                    .foregroundColor(.retroPink)
+                    .shadow(color: .retroPink.opacity(0.5), radius: 3)
+            }
+
+            Text(gameTitle)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(
+                    LinearGradient(colors: [.white, .retroBlue.opacity(0.9)],
+                                   startPoint: .top, endPoint: .bottom)
+                )
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 8)
+                .lineLimit(3)
+        }
+    }
+
+    // MARK: - States
+
+    private var inProgressState: some View {
+        VStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .stroke(Color.white.opacity(0.08), lineWidth: 8)
+                    .frame(width: 100, height: 100)
+
+                Circle()
+                    .trim(from: 0, to: downloadProgress)
+                    .stroke(
+                        LinearGradient(
+                            colors: [.retroPink, .retroPurple, .retroBlue],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        style: StrokeStyle(lineWidth: 8, lineCap: .round)
+                    )
+                    .frame(width: 100, height: 100)
+                    .rotationEffect(.degrees(-90))
+                    .shadow(color: .retroPink.opacity(0.55), radius: 6)
+                    .animation(.easeInOut(duration: 0.3), value: downloadProgress)
+
+                VStack(spacing: 2) {
+                    Text("\(Int(downloadProgress * 100))")
+                        .font(.system(size: 28, weight: .heavy, design: .monospaced))
+                        .foregroundColor(.white)
+                    Text("%")
+                        .font(.system(size: 12, weight: .heavy, design: .monospaced))
+                        .foregroundColor(.retroBlue)
+                        .tracking(1.2)
+                }
+            }
+
+            Text("DOWNLOADING FROM ICLOUD…")
+                .font(.system(size: 11, weight: .heavy, design: .monospaced))
+                .tracking(1.4)
+                .foregroundColor(.retroBlue)
+                .shadow(color: .retroBlue.opacity(0.5), radius: 3)
+        }
+    }
+
+    private var completedState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 56, weight: .bold))
+                .foregroundStyle(
+                    LinearGradient(colors: [.retroGreen, .retroBlue],
+                                   startPoint: .top, endPoint: .bottom)
+                )
+                .shadow(color: .retroGreen.opacity(0.6), radius: 8)
+
+            Text("DOWNLOAD COMPLETE")
+                .font(.system(size: 14, weight: .heavy))
+                .tracking(1.4)
+                .foregroundColor(.retroGreen)
+                .shadow(color: .retroGreen.opacity(0.5), radius: 3)
+        }
+    }
+
+    private var errorState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 50, weight: .semibold))
+                .foregroundStyle(
+                    LinearGradient(colors: [.retroOrange, .retroPink],
+                                   startPoint: .top, endPoint: .bottom)
+                )
+                .shadow(color: .retroOrange.opacity(0.6), radius: 8)
+
+            Text("DOWNLOAD FAILED")
+                .font(.system(size: 14, weight: .heavy))
+                .tracking(1.4)
+                .foregroundColor(.retroOrange)
+                .shadow(color: .retroOrange.opacity(0.5), radius: 3)
+
+            Text(errorMessage)
+                .font(.system(size: 11, design: .monospaced))
+                .foregroundColor(.white.opacity(0.75))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 8)
+                .lineLimit(4)
+        }
+    }
+
+    // MARK: - Buttons
+
+    private var actionButtons: some View {
+        HStack(spacing: 14) {
+            if isCompleted {
+                neonButton(title: "CONTINUE",
+                           accent: .retroGreen,
+                           filled: true) {
+                    onComplete()
+                }
+            } else if hasError {
+                neonButton(title: "RETRY",
+                           accent: .retroBlue,
+                           filled: true) {
+                    hasError = false
+                    errorMessage = ""
+                    downloadProgress = 0.0
+                    // The download queue should handle retry logic
+                }
+
+                neonButton(title: "EXIT",
+                           accent: .retroOrange,
+                           filled: false) {
+                    CloudKitDownloadQueue.shared.cancelDownload(md5: gameMD5)
+                    onCancel()
+                }
+            } else {
+                neonButton(title: "CANCEL",
+                           accent: .retroPink,
+                           filled: false) {
+                    CloudKitDownloadQueue.shared.cancelDownload(md5: gameMD5)
+                    onCancel()
+                }
+            }
+        }
+    }
+
+    private func neonButton(title: String,
+                            accent: Color,
+                            filled: Bool,
+                            action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 12, weight: .heavy))
+                .tracking(1.2)
+                .foregroundColor(filled ? .white : accent)
+                .padding(.horizontal, 18)
+                .padding(.vertical, 10)
+                .frame(minWidth: 100)
+                .background(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(filled
+                              ? AnyShapeStyle(LinearGradient(colors: [accent, accent.opacity(0.7)],
+                                                             startPoint: .leading,
+                                                             endPoint: .trailing))
+                              : AnyShapeStyle(accent.opacity(0.12)))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .strokeBorder(accent.opacity(filled ? 0.8 : 0.5), lineWidth: 1.5)
+                )
+                .shadow(color: accent.opacity(filled ? 0.5 : 0.25), radius: 5)
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Background
+
+    private var panelBackground: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color.retroBlack.opacity(0.92))
+
+            // subtle grid for retrowave feel
+            RetroTheme.RetroGridView()
+                .opacity(0.10)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+            // scanlines
+            RetroScanlineOverlay()
+                .opacity(0.05)
+                .allowsHitTesting(false)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(
+                    LinearGradient(colors: [.retroPink.opacity(0.6),
+                                            .retroPurple.opacity(0.5),
+                                            .retroBlue.opacity(0.6)],
+                                   startPoint: .topLeading,
+                                   endPoint: .bottomTrailing),
+                    lineWidth: 1.5
+                )
+        }
+    }
+
+    /// Monitor download progress for this specific game
     private func monitorDownloadProgress() {
         // Monitor active downloads for progress updates
         progressTracker.$activeDownloads
@@ -205,14 +336,5 @@ public struct CloudKitDownloadProgressView: View {
                 }
             }
             .store(in: &cancellables)
-    }
-
-    /// Platform-appropriate background color
-    private var backgroundColorForPlatform: Color {
-        #if os(tvOS)
-        return Color.black.opacity(0.8)
-        #else
-        return Color(.systemBackground)
-        #endif
     }
 }
