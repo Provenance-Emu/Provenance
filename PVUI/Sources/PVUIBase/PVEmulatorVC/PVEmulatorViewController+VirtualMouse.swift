@@ -79,9 +79,24 @@ extension PVEmulatorViewController {
     func setupVirtualMouseIfNeeded() {
         guard let mouseCore = core as? MouseResponder,
               mouseCore.gameSupportsMouse else { return }
+        installVirtualMouseInfrastructure(mouseCore: mouseCore, manualOverride: false)
+    }
+
+    /// User-initiated install via the pause-menu Virtual Mouse tile. Bypasses
+    /// the `gameSupportsMouse` registry check so users can opt in on titles
+    /// the static MD5/title list doesn't cover, as long as the *system* has
+    /// any mouse support (SNES Mouse, Dreamcast Maple, PSX Mouse, etc.).
+    func setupVirtualMouseManually() {
+        guard let mouseCore = core as? MouseResponder else { return }
+        installVirtualMouseInfrastructure(mouseCore: mouseCore, manualOverride: true)
+    }
+
+    /// Shared installer used by both the auto-detect path and the manual
+    /// pause-menu tile. Idempotent — returns immediately if already installed.
+    private func installVirtualMouseInfrastructure(mouseCore: MouseResponder, manualOverride: Bool) {
         guard cursorHostingController == nil else { return }
 
-        ILOG("[VirtualMouse] Core supports mouse — installing cursor overlay and trackpad")
+        ILOG("[VirtualMouse] Installing cursor overlay and trackpad (manualOverride=\(manualOverride))")
 
         /// Frame is managed by `refreshVirtualMouseLayout()` — no autoresizingMask
         /// so the trackpad stays confined to the game viewport, not the full view.
@@ -142,6 +157,25 @@ extension PVEmulatorViewController {
         guard coreSupportsVirtualMouse, !isVirtualMouseVisible else { return }
         setupVirtualMouseIfNeeded()
         // State is updated inside setupVirtualMouseIfNeeded() when the overlay installs.
+    }
+
+    /// Manual show invoked from the pause-menu Virtual Mouse tile. Skips the
+    /// per-game `gameSupportsMouse` gate so users can opt in on titles outside
+    /// the static registry, but still requires the active core to conform to
+    /// `MouseResponder`.
+    public func showVirtualMouseManually() {
+        guard (core as? MouseResponder) != nil, !isVirtualMouseVisible else { return }
+        setupVirtualMouseManually()
+    }
+
+    /// Pause-menu toggle. Mirrors `toggleVirtualMouse()` but uses the manual
+    /// install path so it works even when the auto-detect would refuse.
+    public func toggleVirtualMouseManually() {
+        if isVirtualMouseVisible {
+            hideVirtualMouse()
+        } else {
+            showVirtualMouseManually()
+        }
     }
 
     /// Hide the virtual mouse cursor and trackpad.

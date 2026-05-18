@@ -3160,6 +3160,96 @@ struct TVMediaSystemCard: View {
                         .opacity(glowIntensity)
                 }
 
+                #if os(iOS)
+                // iOS cards are only 200–260pt wide, so an icon-on-left + chevron-on-right
+                // layout leaves the system name with ~40–100pt of width and forces
+                // ellipsis truncation. Stack vertically: icon on top, name + count
+                // centred underneath using the full card width.
+                VStack(alignment: .center, spacing: 12) {
+                    ZStack {
+                        if isFocused {
+                            Circle()
+                                .fill(
+                                    RadialGradient(
+                                        colors: [Color.retroPink.opacity(0.35), .clear],
+                                        center: .center,
+                                        startRadius: 0,
+                                        endRadius: 50
+                                    )
+                                )
+                                .frame(width: 100, height: 100)
+                                .blur(radius: 6)
+                        }
+
+                        if let icon {
+                            icon
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: isFocused ?
+                                            [.white, Color.retroBlue.opacity(0.85)] :
+                                            [.white.opacity(0.7), .white.opacity(0.5)],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                                .frame(width: 64, height: 64)
+                                .shadow(color: isFocused ? Color.retroPink.opacity(0.7) : .clear, radius: 12)
+                        } else {
+                            Image(systemName: "gamecontroller")
+                                .font(.system(size: 40, weight: .light))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: isFocused ?
+                                            [.white, Color.retroBlue.opacity(0.8)] :
+                                            [.white.opacity(0.4), .white.opacity(0.3)],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                )
+                                .shadow(color: isFocused ? Color.retroPink.opacity(0.6) : .clear, radius: 10)
+                        }
+                    }
+                    .frame(height: 80)
+
+                    Text(system.name.uppercased())
+                        .font(.system(size: 15, weight: .bold, design: .default))
+                        .tracking(0.6)
+                        .foregroundStyle(isFocused ? .white : .white.opacity(0.9))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.7)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity)
+                        .shadow(color: isFocused ? Color.retroPink.opacity(0.5) : .clear, radius: 6)
+
+                    HStack(spacing: 6) {
+                        Text(verbatim: "\(gameCount)")
+                            .font(.system(size: 14, weight: .semibold, design: .monospaced))
+                            .foregroundStyle(isFocused ? Color.retroBlue : .white.opacity(0.6))
+                        Text("tv_media.games", bundle: .module)
+                            .font(.system(size: 10, weight: .medium, design: .default))
+                            .tracking(1)
+                            .foregroundStyle(.white.opacity(0.45))
+                    }
+
+                    if !system.manufacturer.isEmpty || system.releaseYear > 0 {
+                        Text(systemMetadataFull(system).uppercased())
+                            .font(.system(size: 10, weight: .medium, design: .default))
+                            .tracking(0.6)
+                            .foregroundStyle(.white.opacity(0.35))
+                            .lineLimit(1)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                .padding(.vertical, 18)
+                .padding(.horizontal, 14)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .background(cardBackground)
+                .overlay(cardBorder)
+                #else
                 VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 20) {
                         // System icon container
@@ -3267,6 +3357,7 @@ struct TVMediaSystemCard: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(cardBackground)
                 .overlay(cardBorder)
+                #endif
             }
         }
         .buttonStyle(TVMediaSystemCardButtonStyle(isFocused: isFocused))
