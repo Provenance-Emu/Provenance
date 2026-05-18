@@ -103,15 +103,19 @@ extern GCController *touch_controller;
             [touch_controller.extendedGamepad.rightThumbstickButton setValue:pressed?1:0];
             break;
         case(PVMAMEButtonSelect):
-            // Select maps to RetroPad Select via buttonOptions only.
-            // Coin (Insert Coin) is now a dedicated button — see PVMAMEButtonCoin below.
+            // RetroArch's mfi_joypad driver maps buttonOptions → RETRO_DEVICE_ID_JOYPAD_SELECT.
+            // The MAME libretro core treats JOYPAD_SELECT as Insert Coin, so Select and Coin
+            // share the same wire by hardware convention (MAME has no separate "Select" pin).
             [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
             break;
         case(PVMAMEButtonCoin):
-            // buttonHome is mapped to JOYPAD_SELECT in RetroArch's cocoa input driver,
-            // which MAME treats as Insert Coin. This de-overloads Select from Coin so
-            // hardware that distinguishes the two can drive each independently.
-            [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];
+            // FIX: The previous mapping routed Coin to buttonHome, which RetroArch's
+            // mfi_joypad driver maps to RARCH_FIRST_CUSTOM_BIND — a button the MAME
+            // core never binds. Result: pressing the Coin tile was a silent no-op
+            // (only the Select tile actually inserted coins).
+            // Route to buttonOptions so the press becomes JOYPAD_SELECT, which MAME
+            // treats as Insert Coin.
+            [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
             break;
         case(PVMAMEButtonStart):
             [touch_controller.extendedGamepad.buttonMenu setValue:pressed?1:0];
