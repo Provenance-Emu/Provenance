@@ -86,13 +86,25 @@ public extension DeltaSkinManager {
         }
     }
 
-    /// Get the default skin for a system (first available)
+    /// Get the default skin for a system (first available, sorted deterministically).
     /// - Parameter system: The system identifier
     /// - Returns: The default skin, or nil if none available
+    ///
+    /// `skins(for:)` ordering varies because the underlying availableSkins cache is
+    /// merged concurrently with SkinCatalogService refreshes — that meant the
+    /// "default" silently shifted every relaunch/resume when the user hadn't
+    /// explicitly chosen a skin. Sort by name (case-insensitive, locale-aware)
+    /// then by identifier so the fallback is stable across sessions.
     func defaultSkin(for system: SystemIdentifier) async throws -> (any DeltaSkinProtocol)? {
         ILOG("skins: defaultSkin(for: \(system.rawValue)) called")
         let systemSkins = try await skins(for: system)
-        if let skin = systemSkins.first(where: { CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier) }) {
+        let sorted = systemSkins.sorted { lhs, rhs in
+            let lhsName = lhs.name.lowercased()
+            let rhsName = rhs.name.lowercased()
+            if lhsName != rhsName { return lhsName < rhsName }
+            return lhs.identifier < rhs.identifier
+        }
+        if let skin = sorted.first(where: { CaseControllerDetector.isAllowedInAutomaticSkinSelection($0.identifier) }) {
             ILOG("skins: Found default skin '\(skin.name)' for system \(system.rawValue)")
             return skin
         } else {
