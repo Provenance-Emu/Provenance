@@ -14,7 +14,11 @@ private extension JSButton {
     var buttonTag: PVWSButton {
         get {
             guard let mapped = PVWSButton(rawValue: tag) else {
-                assertionFailure("Unexpected JSButton tag \(tag) for WonderSwan controller; defaulting to .x1")
+                // Tile menu / save-state / auxiliary JSButtons inside buttonGroup carry tags
+                // outside this system\'s enum range (e.g. menu button tag 301 from PauseTileMenu).
+                // Don\'t crash — log and degrade to the safe default so performReconnection() can
+                // iterate every subview without taking down the app.
+                ELOG("WonderSwanController: unknown JSButton tag \(tag) — defaulting to .x1 (likely an auxiliary button, not an emulator input)")
                 return .x1
             }
             return mapped

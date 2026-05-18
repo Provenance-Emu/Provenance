@@ -15,6 +15,7 @@
 //
 
 import Foundation
+import PVSystems
 
 // MARK: - LightGunGamesProvider
 

@@ -14,7 +14,11 @@ private extension JSButton {
     var buttonTag: PVSG1000Button {
         get {
             guard let mapped = PVSG1000Button(rawValue: tag) else {
-                assertionFailure("Unexpected JSButton tag \(tag) for SG-1000 controller; defaulting to .b")
+                // Tile menu / save-state / auxiliary JSButtons inside buttonGroup carry tags
+                // outside this system\'s enum range (e.g. menu button tag 301 from PauseTileMenu).
+                // Don\'t crash — log and degrade to the safe default so performReconnection() can
+                // iterate every subview without taking down the app.
+                ELOG("SG-1000Controller: unknown JSButton tag \(tag) — defaulting to .b (likely an auxiliary button, not an emulator input)")
                 return .b
             }
             return mapped

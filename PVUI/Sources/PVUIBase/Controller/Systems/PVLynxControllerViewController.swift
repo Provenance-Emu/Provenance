@@ -14,7 +14,11 @@ private extension JSButton {
     var buttonTag: PVLynxButton {
         get {
             guard let mapped = PVLynxButton(rawValue: tag) else {
-                assertionFailure("Unexpected JSButton tag \(tag) for Lynx controller; defaulting to .up")
+                // Tile menu / save-state / auxiliary JSButtons inside buttonGroup carry tags
+                // outside this system\'s enum range (e.g. menu button tag 301 from PauseTileMenu).
+                // Don\'t crash — log and degrade to the safe default so performReconnection() can
+                // iterate every subview without taking down the app.
+                ELOG("PVLynxController: unknown JSButton tag \(tag) — defaulting to .up (likely an auxiliary button, not an emulator input)")
                 return .up
             }
             return mapped

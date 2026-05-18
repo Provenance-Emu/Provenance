@@ -14,7 +14,11 @@ private extension JSButton {
     var buttonTag: PVGenesisButton {
         get {
             guard let mapped = PVGenesisButton(rawValue: tag) else {
-                assertionFailure("Unexpected JSButton tag \(tag) for Genesis controller; defaulting to .b")
+                // Tile menu / save-state / auxiliary JSButtons inside buttonGroup carry tags
+                // outside this system\'s enum range (e.g. menu button tag 301 from PauseTileMenu).
+                // Don\'t crash — log and degrade to the safe default so performReconnection() can
+                // iterate every subview without taking down the app.
+                ELOG("PVGenesisController: unknown JSButton tag \(tag) — defaulting to .b (likely an auxiliary button, not an emulator input)")
                 return .b
             }
             return mapped

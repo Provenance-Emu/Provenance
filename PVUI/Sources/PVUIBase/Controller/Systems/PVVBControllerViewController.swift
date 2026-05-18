@@ -13,7 +13,11 @@ private extension JSButton {
     var buttonTag: PVVBButton {
         get {
             guard let mapped = PVVBButton(rawValue: tag) else {
-                assertionFailure("Unexpected JSButton tag \(tag) for Virtual Boy controller; defaulting to .leftUp")
+                // Tile menu / save-state / auxiliary JSButtons inside buttonGroup carry tags
+                // outside this system\'s enum range (e.g. menu button tag 301 from PauseTileMenu).
+                // Don\'t crash — log and degrade to the safe default so performReconnection() can
+                // iterate every subview without taking down the app.
+                ELOG("Virtual BoyController: unknown JSButton tag \(tag) — defaulting to .leftUp (likely an auxiliary button, not an emulator input)")
                 return .leftUp
             }
             return mapped

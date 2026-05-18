@@ -16,7 +16,11 @@ private extension JSButton {
     var buttonTag: PVN64Button {
         get {
             guard let mapped = PVN64Button(rawValue: tag) else {
-                assertionFailure("Unexpected JSButton tag \(tag) for N64 controller; defaulting to .dPadUp")
+                // Tile menu / save-state / auxiliary JSButtons inside buttonGroup carry tags
+                // outside this system\'s enum range (e.g. menu button tag 301 from PauseTileMenu).
+                // Don\'t crash — log and degrade to the safe default so performReconnection() can
+                // iterate every subview without taking down the app.
+                ELOG("N64Controller: unknown JSButton tag \(tag) — defaulting to .dPadUp (likely an auxiliary button, not an emulator input)")
                 return .dPadUp
             }
             return mapped

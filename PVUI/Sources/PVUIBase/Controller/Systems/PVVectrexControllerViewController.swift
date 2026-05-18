@@ -13,7 +13,11 @@ private extension JSButton {
     var buttonTag: PVVectrexButton {
         get {
             guard let mapped = PVVectrexButton(rawValue: tag) else {
-                assertionFailure("Unexpected JSButton tag \(tag) for Vectrex controller; defaulting to .analogUp")
+                // Tile menu / save-state / auxiliary JSButtons inside buttonGroup carry tags
+                // outside this system\'s enum range (e.g. menu button tag 301 from PauseTileMenu).
+                // Don\'t crash — log and degrade to the safe default so performReconnection() can
+                // iterate every subview without taking down the app.
+                ELOG("PVVectrexController: unknown JSButton tag \(tag) — defaulting to .analogUp (likely an auxiliary button, not an emulator input)")
                 return .analogUp
             }
             return mapped
