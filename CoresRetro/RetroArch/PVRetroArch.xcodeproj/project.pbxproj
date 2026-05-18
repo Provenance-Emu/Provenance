@@ -1403,7 +1403,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#${SRCROOT}/scripts/code-sign-test-cores.sh\necho \"Begin: Generate Frameworks\"\nsh \"${SRCROOT}\"/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"\necho \"End: Generate Frameworks\"\n";
+			shellScript = "set -e\n# Type a script or drag a script file from your workspace to insert its path.\n#${SRCROOT}/scripts/code-sign-test-cores.sh\necho \"Begin: Generate Frameworks\"\nsh \"${SRCROOT}\"/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"\necho \"End: Generate Frameworks\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

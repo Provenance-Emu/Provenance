@@ -10066,7 +10066,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Begin: Generate Frameworks\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch\necho \"End: Generate Frameworks\"\n";
+			shellScript = "set -e\necho \"Begin: Generate Frameworks\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch\necho \"End: Generate Frameworks\"\n";
 		};
 		B3A60E872CB770C8001D99C2 /* Script: Generate Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10084,7 +10084,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Begin: Generate Frameworks\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch\necho \"End: Generate Frameworks\"\n";
+			shellScript = "set -e\necho \"Begin: Generate Frameworks\"\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch\necho \"End: Generate Frameworks\"\n";
 		};
 		B3CC2E0D2CBC0D4F00D90EB1 /* Script: Generate Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10102,7 +10102,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Begin: Generate Frameworks\"\nif [ \"${PLATFORM_NAME}\" = \"appletvos\" ]; then\n  FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore-tv.txt\"\nelse\n  FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore.txt\"\nfi\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch \"$FILTER\"\necho \"End: Generate Frameworks\"\n";
+			shellScript = "set -e\necho \"Begin: Generate Frameworks\"\nif [ \"${PLATFORM_NAME}\" = \"appletvos\" ]; then\n  FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore-tv.txt\"\nelse\n  FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore.txt\"\nfi\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch \"$FILTER\"\necho \"End: Generate Frameworks\"\n";
 		};
 		B3CC2E0E2CBC0D7700D90EB1 /* Script: Get RetroArch Modules */ = {
 			isa = PBXShellScriptBuildPhase;

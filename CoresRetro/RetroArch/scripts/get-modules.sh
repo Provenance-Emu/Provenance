@@ -150,7 +150,7 @@ if [ -n "${PINNED_DATE}" ]; then
 	# Test one URL — if it 404s, the whole date is bad.
 	TEST_URL=$(grep -v '^#' "${MODULE_LIST}" | head -1 | sed "s|/latest/|/${PINNED_DATE}/|g")
 	if [ -n "${TEST_URL}" ]; then
-		HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' --head "${TEST_URL}" 2>/dev/null)
+		HTTP_CODE=$(curl -s -L -o /dev/null -w '%{http_code}' --head "${TEST_URL}" 2>/dev/null)
 		if [ "${HTTP_CODE}" = "404" ] || [ "${HTTP_CODE}" = "000" ]; then
 			echo "GetModule: ERROR — pinned_date ${PINNED_DATE} returned HTTP ${HTTP_CODE} from buildbot." >&2
 			echo "GetModule: ERROR — Buildbot may not serve dated snapshots for this platform. Falling back to latest." >&2
@@ -381,15 +381,44 @@ if (( TIMESTAMP > LAST_TIMESTAMP )); then
 	rm -f "${CORES_ARCHIVE_DIR}/"*.zip
 	cd "${CORES_ARCHIVE_DIR}"
 
+	# Early sentinel check: before committing to the full download list, fetch the
+	# first non-comment URL and confirm it returns a real zip (PK\x03\x04 magic).
+	# This catches buildbot URL pattern breakage (path layout changes, broken
+	# pinned_date snapshots, DNS/TLS issues) before we spend minutes downloading
+	# 128 HTML error pages. We skip-only on validation failure, never on net errors,
+	# so a transient single-URL hiccup doesn't block the rest of the run.
+	SENTINEL_URL=$(grep -v '^[[:space:]]*#' "${EFFECTIVE_MODULE_LIST}" | grep -v '^[[:space:]]*$' | head -1)
+	if [ -n "${SENTINEL_URL}" ]; then
+		SENTINEL_TMP=$(mktemp "${TMPDIR:-/tmp}/sentinel.XXXXXX.zip")
+		if curl --fail -L --silent --show-error -o "${SENTINEL_TMP}" "${SENTINEL_URL}" 2>/dev/null; then
+			SENTINEL_MAGIC=$(xxd -l 4 -p "${SENTINEL_TMP}" 2>/dev/null)
+			if [ "${SENTINEL_MAGIC}" != "504b0304" ]; then
+				echo "GetModule: ERROR — sentinel URL did not return a valid zip (magic=${SENTINEL_MAGIC:-empty})" >&2
+				echo "GetModule: ERROR — URL: ${SENTINEL_URL}" >&2
+				echo "GetModule: ERROR — Buildbot URL pattern may be broken." >&2
+				echo "GetModule: ERROR — Check cores.yml pinned_date or buildbot path layout (apple/ios-arm64, apple/tvos-arm64)." >&2
+				rm -f "${SENTINEL_TMP}"
+				exit 1
+			fi
+			rm -f "${SENTINEL_TMP}"
+			echo "GetModule: sentinel URL validated ($(basename "${SENTINEL_URL}") returns a real zip)"
+		else
+			# Transient single-URL failure — let the full loop run and rely on threshold.
+			echo "GetModule: WARNING — sentinel URL fetch failed (network/transient?); continuing with full download and threshold check" >&2
+			rm -f "${SENTINEL_TMP}"
+		fi
+	fi
+
 	# Download with --fail so curl returns non-zero on HTTP errors (404, 500, etc.)
-	# instead of saving error HTML as if it were a valid zip.
+	# instead of saving error HTML as if it were a valid zip. -L follows redirects
+	# (buildbot occasionally 30x's to a CDN edge).
 	DOWNLOAD_FAIL=0
 	DOWNLOAD_OK=0
 	while IFS= read -r url; do
 		# Skip comments and blank lines
 		case "$url" in \#*|"") continue ;; esac
 		FILENAME=$(basename "$url")
-		if curl --fail --silent --show-error -o "${FILENAME}" "${url}"; then
+		if curl --fail -L --silent --show-error -o "${FILENAME}" "${url}"; then
 			DOWNLOAD_OK=$((DOWNLOAD_OK + 1))
 		else
 			echo "GetModule: FAILED to download ${FILENAME} (HTTP error)" >&2
@@ -398,7 +427,7 @@ if (( TIMESTAMP > LAST_TIMESTAMP )); then
 		fi
 	done < "${EFFECTIVE_MODULE_LIST}"
 
-	echo "GetModule: Downloaded ${DOWNLOAD_OK}/${EXPECTED_COUNT} cores (${DOWNLOAD_FAIL} failed)"
+	echo "GetModule: Downloaded ${DOWNLOAD_OK}/${EXPECTED_COUNT} cores successfully, ${DOWNLOAD_FAIL} failed."
 
 	# Threshold check: fail the build if fewer than 80% of expected cores downloaded.
 	# This catches network failures, bad pins, and stale buildbot URLs early.
@@ -485,7 +514,7 @@ elif [ "${EXPECTED_COUNT}" -gt 0 ] && [ "${DYLIB_COUNT}" -lt $(( EXPECTED_COUNT 
 	echo "GetModule: WARNING — only ${DYLIB_COUNT}/${EXPECTED_COUNT} dylibs present (below 80% threshold). Some cores may be missing." >&2
 fi
 
-echo "GetModule: Completed (${VALID_ZIPS} valid zips, ${DYLIB_COUNT} dylibs)"
+echo "GetModule: Completed — ${VALID_ZIPS} valid zips, ${DYLIB_COUNT} dylibs (expected ~${EXPECTED_COUNT})"
 
 # Record the active platform so the fast-path check above can skip extraction
 # on subsequent same-platform builds without re-purging or re-extracting.
