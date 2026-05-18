@@ -2872,7 +2872,16 @@ public class DeltaSkinInputHandler: ObservableObject {
                 controller.buttonReleased(rightShoulderButton2)
             }
             if let buttonGroup = controller.buttonGroup {
-                for case let button as JSButton in buttonGroup.subviews {
+                // Skip JSButtons whose `tag` falls outside any system button
+                // enum range (max ~30 cases in PVNESButton/PVSNESButton/etc.).
+                // Tags like 301 come from auxiliary controls (menu / save /
+                // turbo) that got reparented into the button group. Including
+                // them used to crash with `assertionFailure` in the system-
+                // specific buttonTag getter; we now just log + skip so the
+                // dispatch never hits the unknown-tag path.
+                let maxSystemButtonTag = 50
+                for case let button as JSButton in buttonGroup.subviews
+                    where button.tag >= 0 && button.tag < maxSystemButtonTag {
                     controller.buttonReleased(button)
                 }
             }
