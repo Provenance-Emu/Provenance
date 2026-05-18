@@ -86,6 +86,15 @@ public struct SmartCoreSelectionView: View {
     @FocusState private var focusedItemId: String?
     #endif
 
+    #if os(iOS)
+    /// Gamepad input bridge so iOS controller users can navigate the
+    /// retrowave core picker with d-pad / A / B.
+    @StateObject private var gamepadManager = GamepadManager.shared
+    #endif
+
+    /// Stable focus identifier for the Cancel button.
+    private static let cancelFocusID = "__retro_core_picker_cancel__"
+
     // MARK: - Init
 
     public init(
@@ -170,10 +179,39 @@ public struct SmartCoreSelectionView: View {
                 #if os(tvOS) || os(iOS)
                 focusedItemId = items.first?.id
                 #endif
+                #if os(iOS)
+                // Block sidebar / root / home gamepad subscribers from
+                // "leaking" A and d-pad input through to the views behind
+                // the picker.
+                GamepadManager.shared.isModalAlertPresented = true
+                #endif
+            }
+            .onDisappear {
+                #if os(iOS)
+                GamepadManager.shared.isModalAlertPresented = false
+                #endif
             }
             .tvOSDisableFocusEffect()
         }
         .tvOSDisableFocusEffect()
+        #if os(iOS)
+        .onReceive(gamepadManager.eventPublisher) { event in
+            guard isPresented, gamepadManager.isControllerConnected else { return }
+            switch event {
+            case .verticalNavigation(let value, let isPressed):
+                guard isPressed else { return }
+                moveSelection(value: value)
+            case .buttonPress(let isPressed):
+                guard isPressed else { return }
+                activateFocusedItem()
+            case .buttonB(let isPressed):
+                guard isPressed else { return }
+                dismiss()
+            default:
+                break
+            }
+        }
+        #endif
     }
 
     // MARK: - Subviews
@@ -182,9 +220,13 @@ public struct SmartCoreSelectionView: View {
     @ViewBuilder
     private func coreSelectionRow(for item: SmartCoreSelectionItem) -> some View {
         #if os(tvOS) || os(iOS)
-        coreSelectionCard(for: item, isItemFocused: focusedItemId == item.id)
+        let isFocused = focusedItemId == item.id
+        coreSelectionCard(for: item, isItemFocused: isFocused)
             .focused($focusedItemId, equals: item.id)
             .tvOSDisableFocusEffect()
+            #if os(iOS)
+            .overlay(controllerFocusRing(visible: isFocused, cornerRadius: 12))
+            #endif
         #else
         coreSelectionCard(for: item, isItemFocused: false)
         #endif
@@ -234,6 +276,12 @@ public struct SmartCoreSelectionView: View {
         }
         .buttonStyle(TVMediaCardButtonStyle())
         .tvOSDisableFocusEffect()
+        #if os(tvOS) || os(iOS)
+        .focused($focusedItemId, equals: Self.cancelFocusID)
+        #endif
+        #if os(iOS)
+        .overlay(controllerFocusRing(visible: focusedItemId == Self.cancelFocusID, cornerRadius: 10))
+        #endif
     }
 
     // MARK: - Helpers
@@ -242,6 +290,58 @@ public struct SmartCoreSelectionView: View {
         isPresented = false
         onCancel()
     }
+
+    // MARK: - iOS Controller Navigation
+
+    #if os(iOS)
+    /// Moves vertical d-pad focus through the core list and Cancel button.
+    private func moveSelection(value: Float) {
+        let ids = items.map(\.id) + [Self.cancelFocusID]
+        guard !ids.isEmpty else { return }
+        guard let current = focusedItemId, let idx = ids.firstIndex(of: current) else {
+            focusedItemId = ids.first
+            return
+        }
+        let isDown = value < 0
+        let next = isDown ? idx + 1 : idx - 1
+        guard next >= 0, next < ids.count else { return }
+        focusedItemId = ids[next]
+    }
+
+    /// Activates the focused row or Cancel button on A press.
+    private func activateFocusedItem() {
+        guard let current = focusedItemId else {
+            if let first = items.first { onSelect(first.id) }
+            return
+        }
+        if current == Self.cancelFocusID {
+            dismiss()
+            return
+        }
+        if items.contains(where: { $0.id == current }) {
+            onSelect(current)
+        }
+    }
+
+    /// Retrowave gradient ring shown around the focused tile when a
+    /// controller is driving navigation.
+    @ViewBuilder
+    private func controllerFocusRing(visible: Bool, cornerRadius: CGFloat) -> some View {
+        if visible && gamepadManager.isControllerConnected {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [.retroPink, .retroBlue],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 2
+                )
+                .shadow(color: .retroPink.opacity(0.7), radius: 6, x: 0, y: 0)
+                .allowsHitTesting(false)
+        }
+    }
+    #endif
 }
 
 // MARK: - CoreSelectionCard
