@@ -117,43 +117,50 @@ extension PVThinLibretroCore {
         for mode: ScalingMode,
         coreIdentifier: String
     ) -> [(String, String)] {
-        let stretch = (mode == .stretch)
+        // Only override when the user has explicitly selected stretch.
+        // For .aspectFit / .aspectFill / .integerScale / .nativeResolution the
+        // renderer handles aspect at the MTKView frame level — we must NOT
+        // force `widescreen_hack=disabled` (or similar) here because that
+        // changes the core's framebuffer geometry vs whatever it negotiated
+        // with our render delegate. flycast specifically crashes on first
+        // frame with a Vulkan GPU page fault when we force the option away
+        // from its native default (the IOSurface texture we pass back to it
+        // ends up sized for the old aspect; flycast writes to the new one).
+        // See PROVENANCE-XX investigation 2026-05-18.
+        guard mode == .stretch else { return [] }
         var pairs: [(String, String)] = []
 
         if coreIdentifier.contains("mupen") {
             // mupen64plus-aspect: "4:3" | "16:9" | "Stretch"
-            pairs.append(("mupen64plus-aspect", stretch ? "Stretch" : "4:3"))
+            pairs.append(("mupen64plus-aspect", "Stretch"))
         }
         if coreIdentifier.contains("dolphin") {
             // dolphin_aspect_ratio: "Auto" | "Force 4:3" | "Force 16:9" | "Stretch"
-            pairs.append(("dolphin_aspect_ratio", stretch ? "Stretch" : "Auto"))
+            pairs.append(("dolphin_aspect_ratio", "Stretch"))
         }
         if coreIdentifier.contains("ppsspp") {
             // ppsspp_stretch: "enabled" | "disabled"
-            pairs.append(("ppsspp_stretch", stretch ? "enabled" : "disabled"))
+            pairs.append(("ppsspp_stretch", "enabled"))
         }
         if coreIdentifier.contains("flycast") {
             // flycast_widescreen_hack: "disabled" | "enabled"
-            pairs.append(("flycast_widescreen_hack", stretch ? "enabled" : "disabled"))
+            pairs.append(("flycast_widescreen_hack", "enabled"))
         }
         if coreIdentifier.contains("duckstation") {
             // duckstation_GPU.WidescreenHack: "false" | "true"
-            pairs.append(("duckstation_GPU.WidescreenHack", stretch ? "true" : "false"))
+            pairs.append(("duckstation_GPU.WidescreenHack", "true"))
         }
         if coreIdentifier.contains("beetle_psx") || coreIdentifier.contains("psx_hw") {
             // beetle_psx_widescreen_hack: "disabled" | "enabled"
-            pairs.append(("beetle_psx_widescreen_hack", stretch ? "enabled" : "disabled"))
-        }
-        if coreIdentifier.contains("genesis_plus_gx") || coreIdentifier.contains("genplusgx") {
-            // genesis_plus_gx_aspect_ratio: "auto" | "NTSC PAR" | "PAL PAR"
-            // The core has no true stretch mode — "auto" leaves the renderer in
-            // charge of stretching via MTKView frame sizing.
-            pairs.append(("genesis_plus_gx_aspect_ratio", "auto"))
+            pairs.append(("beetle_psx_widescreen_hack", "enabled"))
         }
         if coreIdentifier.contains("gearcoleco") {
             // gearcoleco_aspect_ratio: "1:1 PAR" | "4:3 DAR" | "16:9 DAR"
-            pairs.append(("gearcoleco_aspect_ratio", stretch ? "16:9 DAR" : "4:3 DAR"))
+            pairs.append(("gearcoleco_aspect_ratio", "16:9 DAR"))
         }
+        // Note: genesis_plus_gx had no stretch-mode option to set; removed
+        // the unconditional `"auto"` push so we don't clobber the user's
+        // own choice when scalingMode != .stretch.
         return pairs
     }
 
