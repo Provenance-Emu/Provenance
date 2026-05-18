@@ -18,6 +18,12 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES31=1
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_CHEEVOS=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_RCHEEVOS=1
+
+// HAVE_RCHEEVOS gates `#include "rc_client.h"` in PVThinLibretroFrontend.mm.
+// SPM builds get the include path automatically via the CRcheevos product;
+// the Xcode workspace path needs the search path explicitly. PVRcheevos is
+// a sibling SPM package; its public headers live under rcheevos/include.
+HEADER_SEARCH_PATHS = $(inherited) $(SRCROOT)/../../PVRcheevos/rcheevos/include
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_NETPLAY=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_NETWORK=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_CODEC_HW=1
