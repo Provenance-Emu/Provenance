@@ -404,9 +404,21 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
             if bytesCopied < bytesRequested {
                 self.context.bufferUnderrunCount += 1
                 DLOG("Buffer underrun detected: \(self.context.bufferUnderrunCount)")
+                // Zero-fill the rest of the buffer. Reporting a short
+                // mDataByteSize causes AVAudioEngine to treat the boundary
+                // as a silence transition — same click-source the DSP
+                // engine fix at DSPGameAudioEngine.swift addressed.
+                if let dst = inputData.pointee.mBuffers.mData,
+                   bytesCopied < bytesRequested {
+                    memset(dst.advanced(by: bytesCopied),
+                           0,
+                           bytesRequested - bytesCopied)
+                }
             }
 
-            inputData.pointee.mBuffers.mDataByteSize = UInt32(bytesCopied)
+            // Always report the full requested size — short reports
+            // make AVAudioEngine inject a discontinuity.
+            inputData.pointee.mBuffers.mDataByteSize = UInt32(bytesRequested)
             inputData.pointee.mBuffers.mNumberChannels = sd.mChannelsPerFrame
 
             return noErr
