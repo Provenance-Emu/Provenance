@@ -1435,6 +1435,37 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
       RARCH_WARN("[MetalHW] vkGetMTLTextureMVK returned nil for frame.\n");
       return;
    }
+
+   /* Defensive validation: libretro Vulkan cores (flycast et al.) may
+    * surface a VkImage whose backing MTLTexture is briefly unusable
+    * during an extent change — see the deferred-deletion path in
+    * flycast/core/rend/vulkan/vk_context_lr.cpp::beginFrame (commit
+    * d0584b865 upstream). When the game transitions from the boot logo
+    * into its own framebuffer size, MoltenVK has a single-frame window
+    * where vkGetMTLTextureMVK returns a not-yet-laid-out texture
+    * (0×0 dimensions or a pixel format the filter renderer can't
+    * sample). Sampling such a texture in the filter encoder crashes
+    * the GPU on iPad with a RenderPass validator trip or silent
+    * device-lost. Skip the frame and let the core re-present with a
+    * settled texture next time. */
+   if (hwTex.width == 0 || hwTex.height == 0)
+   {
+      RARCH_WARN("[MetalHW] hwTex has zero dimension (%lux%lu) — skipping frame\n",
+                 (unsigned long)hwTex.width, (unsigned long)hwTex.height);
+      return;
+   }
+   const MTLPixelFormat fmt = hwTex.pixelFormat;
+   const BOOL fmtOK = (fmt == MTLPixelFormatRGBA8Unorm ||
+                       fmt == MTLPixelFormatBGRA8Unorm ||
+                       fmt == MTLPixelFormatRGBA8Unorm_sRGB ||
+                       fmt == MTLPixelFormatBGRA8Unorm_sRGB);
+   if (!fmtOK)
+   {
+      RARCH_WARN("[MetalHW] hwTex has unsupported pixelFormat=%lu — skipping frame\n",
+                 (unsigned long)fmt);
+      return;
+   }
+
    _hw.currentMTLTexture = hwTex;
    RARCH_DBG("[MetalHW] acquired MTLTexture %lux%lu fmt=%lu from VkImage=%p\n",
              (unsigned long)hwTex.width, (unsigned long)hwTex.height,
@@ -1470,7 +1501,7 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
                 sourceSize.width, sourceSize.height,
                 drawableSize.width, drawableSize.height,
                 _layer.drawableSize.width, _layer.drawableSize.height,
-                (void *)destTex);
+                (__bridge void *)destTex);
       [_context resetRenderViewport:kFullscreenViewport];
       filterApplied = [_pvFilterRenderer encodeWith:rce
                                             texture:hwTex

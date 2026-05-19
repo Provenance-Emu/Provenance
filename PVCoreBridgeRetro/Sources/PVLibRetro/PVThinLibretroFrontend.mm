@@ -6557,6 +6557,29 @@ static bool thin_environment(unsigned cmd, void *data) {
         WLOG(@"ThinFrontend: notifyRenderDelegateOfVulkanFrame — no MTLTexture (image=%p)", (void *)_vulkanCurrentVkImage);
         return;
     }
+    // Defensive validation: see the matching block in metal.m::_drawCoreHW.
+    // flycast's lr context defers attachment deletion across an extent
+    // change and immediately creates a new attachment at the new size.
+    // For one frame the freshly-bound MTLTexture can come back with
+    // 0×0 dims or a pixel format the renderer can't sample — drawing
+    // into it crashes the GPU. Skip the frame and let the core
+    // re-present next time with a settled texture.
+    if ([mtlTexture width] == 0 || [mtlTexture height] == 0) {
+        WLOG(@"ThinFrontend: skipping Vulkan frame — MTLTexture has zero dimension (%lux%lu, image=%p)",
+             (unsigned long)[mtlTexture width], (unsigned long)[mtlTexture height],
+             (void *)_vulkanCurrentVkImage);
+        return;
+    }
+    const MTLPixelFormat _vkFmt = [mtlTexture pixelFormat];
+    const BOOL _vkFmtOK = (_vkFmt == MTLPixelFormatRGBA8Unorm ||
+                           _vkFmt == MTLPixelFormatBGRA8Unorm ||
+                           _vkFmt == MTLPixelFormatRGBA8Unorm_sRGB ||
+                           _vkFmt == MTLPixelFormatBGRA8Unorm_sRGB);
+    if (!_vkFmtOK) {
+        WLOG(@"ThinFrontend: skipping Vulkan frame — MTLTexture unsupported pixelFormat=%lu (image=%p)",
+             (unsigned long)_vkFmt, (void *)_vulkanCurrentVkImage);
+        return;
+    }
     // Track dimension transitions across frames so a resolution change is
     // visible in the log as a single line, not buried in the 5-frame /
     // every-300-frame sampling below.
