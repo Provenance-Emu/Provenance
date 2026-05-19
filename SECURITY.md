@@ -17,7 +17,7 @@ Use one of the following private channels:
 
 - **GitHub Private Vulnerability Reporting** — preferred.
   [Open a private report here](https://github.com/Provenance-Emu/Provenance/security/advisories/new).
-- **Email** — `mail@joemattiello.com` with subject prefix `[security]`.
+- **Email** — `git@joemattiello.com` with subject prefix `[security]`.
 
 Please include:
 
