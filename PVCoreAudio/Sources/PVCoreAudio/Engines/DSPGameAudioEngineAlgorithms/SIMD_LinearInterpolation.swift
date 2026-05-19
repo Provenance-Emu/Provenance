@@ -38,6 +38,17 @@ private final class DSPInterpolationScratch {
     /// 32 KB covers up to 4096 source frames at 4 bytes/frame with headroom.
     var rawBuffer    = [UInt8](repeating: 0, count: 32_768)
 
+    /// Fractional sample position carried across render-block boundaries.
+    /// Without this, the resampler restarts at index 0 every block, which produces a
+    /// phase discontinuity (audible click) at every block boundary.
+    var phase: Double = 0
+
+    /// Source-sample tail carried across render-block boundaries so that the FIR
+    /// anti-alias filter has valid history at the head of the next block.
+    /// Stored as deinterleaved Float channels at the post-scale amplitude.
+    var prevTailLeft:  [Float] = []
+    var prevTailRight: [Float] = []
+
     func ensureCapacity(_ count: Int) {
         if leftChannel.count  < count { leftChannel  = [Float](repeating: 0, count: count) }
         if rightChannel.count < count { rightChannel = [Float](repeating: 0, count: count) }
@@ -110,6 +121,15 @@ extension DSPGameAudioEngine {
         vDSP_sve(filterCoeff, 1, &filterSum, vDSP_Length(filterSize))
         vDSP_vsdiv(filterCoeff, 1, &filterSum, &filterCoeff, 1, vDSP_Length(filterSize))
 
+        // History size we need to retain between blocks so the FIR has valid taps at the
+        // head of the next block. We need (filterSize - 1) samples of source history.
+        let historyFrames = filterSize - 1
+
+        // Number of pad samples appended to the end of each block so vDSP_conv has a
+        // full filter window without reading uninitialised scratch memory. The convolution
+        // reads (N + filterSize - 1) samples to produce N outputs; we pad with zeros.
+        let convPad = filterSize - 1
+
         // ── Render block (called on real-time audio thread) ──────────────────────────────────
         return { pcmBuffer in
             let targetFrameCount = Int(pcmBuffer.frameCapacity)
@@ -139,18 +159,36 @@ extension DSPGameAudioEngine {
             }
 
             let sourceFrames = bytesRead / sourceBytesPerFrame
-            let outputFrames = min(
+
+            // After prepending the per-channel history we have this many "usable" samples
+            // for the resampler. We subtract `historyFrames` from the effective sample
+            // count when computing the available output range because indices 0..<historyFrames
+            // in the filtered buffer correspond to a transient where the FIR has not yet
+            // seen all of its taps' worth of history (those samples were already emitted
+            // from the previous block via the carried tail). The resampler index starts at
+            // `historyFrames + scratch.phase` and walks by `rateRatio` per output sample.
+
+            let totalSourceFrames = sourceFrames + historyFrames
+            // Safety margin: -1 so linear interpolation never reads past the last sample.
+            let phase = scratch.phase
+            let usableSpan = Double(totalSourceFrames - 1) - (Double(historyFrames) + phase)
+            let outputFrames = max(0, min(
                 targetFrameCount,
-                Int(Double(sourceFrames - 1) / rateRatio)   // -1 for interpolation boundary safety
-            )
+                Int(floor(usableSpan / rateRatio))
+            ))
 
             guard outputFrames > 0 else {
                 pcmBuffer.frameLength = 0
                 return 0
             }
 
-            let capacity = max(sourceFrames + filterSize, outputFrames)
+            // Allocate channels large enough to hold history + new samples + zero pad for FIR.
+            let capacity = max(totalSourceFrames + convPad, outputFrames)
             scratch.ensureCapacity(capacity)
+
+            // Ensure the carried tail arrays exist with the right size.
+            if scratch.prevTailLeft.count  != historyFrames { scratch.prevTailLeft  = [Float](repeating: 0, count: historyFrames) }
+            if scratch.prevTailRight.count != historyFrames { scratch.prevTailRight = [Float](repeating: 0, count: historyFrames) }
 
             // ── 16-bit path ───────────────────────────────────────────────────────────────────
             if sourceBitDepth == 16 {
@@ -167,36 +205,83 @@ extension DSPGameAudioEngine {
                                   let filteredRightBase = filteredRightPtr.baseAddress
                             else { return }
 
+                            // Prepend carried history so the FIR has valid taps at the head.
+                            scratch.prevTailLeft.withUnsafeBufferPointer { tailL in
+                                if let base = tailL.baseAddress {
+                                    vDSP_mmov(base, leftBase, vDSP_Length(historyFrames), 1, 1, 1)
+                                }
+                            }
+                            scratch.prevTailRight.withUnsafeBufferPointer { tailR in
+                                if let base = tailR.baseAddress {
+                                    vDSP_mmov(base, rightBase, vDSP_Length(historyFrames), 1, 1, 1)
+                                }
+                            }
+
                             // Convert Int16 → Float, deinterleaving channels via stride
                             var scale = Float(0.9 / 32768.0)
                             if sourceChannels == 2 {
-                                vDSP_vflt16(input,                  2, leftBase,  1, vDSP_Length(sourceFrames16))
-                                vDSP_vflt16(input.advanced(by: 1),  2, rightBase, 1, vDSP_Length(sourceFrames16))
+                                vDSP_vflt16(input,                  2, leftBase  + historyFrames, 1, vDSP_Length(sourceFrames16))
+                                vDSP_vflt16(input.advanced(by: 1),  2, rightBase + historyFrames, 1, vDSP_Length(sourceFrames16))
                             } else {
-                                vDSP_vflt16(input, 1, leftBase, 1, vDSP_Length(sourceFrames16))
-                                vDSP_mmov(leftBase, rightBase, vDSP_Length(sourceFrames16), 1, 1, 1)
+                                vDSP_vflt16(input, 1, leftBase + historyFrames, 1, vDSP_Length(sourceFrames16))
+                                vDSP_mmov(leftBase + historyFrames, rightBase + historyFrames, vDSP_Length(sourceFrames16), 1, 1, 1)
                             }
-                            vDSP_vsmul(leftBase,  1, &scale, leftBase,  1, vDSP_Length(sourceFrames16))
-                            vDSP_vsmul(rightBase, 1, &scale, rightBase, 1, vDSP_Length(sourceFrames16))
+                            vDSP_vsmul(leftBase  + historyFrames, 1, &scale, leftBase  + historyFrames, 1, vDSP_Length(sourceFrames16))
+                            vDSP_vsmul(rightBase + historyFrames, 1, &scale, rightBase + historyFrames, 1, vDSP_Length(sourceFrames16))
 
-                            // Anti-alias filter: 64-tap Kaiser-windowed sinc convolution
+                            // Zero-pad the convolution tail so vDSP_conv does not read
+                            // stale samples past the end of the populated region.
+                            let totalSF = sourceFrames16 + historyFrames
+                            memset(leftBase  + totalSF, 0, convPad * MemoryLayout<Float>.size)
+                            memset(rightBase + totalSF, 0, convPad * MemoryLayout<Float>.size)
+
+                            // Anti-alias filter: 64-tap Kaiser-windowed sinc convolution.
+                            // Produces totalSF outputs from totalSF + convPad inputs.
                             vDSP_conv(leftBase,  1, filterCoeff, 1, filteredLeftBase,  1,
-                                      vDSP_Length(sourceFrames16), vDSP_Length(filterSize))
+                                      vDSP_Length(totalSF), vDSP_Length(filterSize))
                             vDSP_conv(rightBase, 1, filterCoeff, 1, filteredRightBase, 1,
-                                      vDSP_Length(sourceFrames16), vDSP_Length(filterSize))
+                                      vDSP_Length(totalSF), vDSP_Length(filterSize))
 
-                            // Resample: build fractional index ramp, then gather+interpolate
+                            // Resample: build fractional index ramp, then gather+interpolate.
+                            // Start at (historyFrames + scratch.phase) so we resume exactly
+                            // where the last block stopped — no phase discontinuity.
                             guard let outLeft  = pcmBuffer.floatChannelData?[0],
                                   let outRight = pcmBuffer.floatChannelData?[1] else { return }
                             scratch.indexBuffer.withUnsafeMutableBufferPointer { idxPtr in
                                 guard let idxBase = idxPtr.baseAddress else { return }
-                                var start = Float(0);  var step = Float(rateRatio)
+                                var start = Float(Double(historyFrames) + phase)
+                                var step  = Float(rateRatio)
                                 vDSP_vramp(&start, &step, idxBase, 1, vDSP_Length(outputFrames))
                                 vDSP_vlint(filteredLeftBase,  idxBase, 1, outLeft,  1,
-                                           vDSP_Length(outputFrames), vDSP_Length(sourceFrames16))
+                                           vDSP_Length(outputFrames), vDSP_Length(totalSF))
                                 vDSP_vlint(filteredRightBase, idxBase, 1, outRight, 1,
-                                           vDSP_Length(outputFrames), vDSP_Length(sourceFrames16))
+                                           vDSP_Length(outputFrames), vDSP_Length(totalSF))
                             }
+
+                            // Carry tail (last `historyFrames` source samples) for next block.
+                            let tailStart = totalSF - historyFrames
+                            scratch.prevTailLeft.withUnsafeMutableBufferPointer { dst in
+                                if let dstBase = dst.baseAddress {
+                                    vDSP_mmov(leftBase + tailStart, dstBase, vDSP_Length(historyFrames), 1, 1, 1)
+                                }
+                            }
+                            scratch.prevTailRight.withUnsafeMutableBufferPointer { dst in
+                                if let dstBase = dst.baseAddress {
+                                    vDSP_mmov(rightBase + tailStart, dstBase, vDSP_Length(historyFrames), 1, 1, 1)
+                                }
+                            }
+
+                            // Update phase for the next block.
+                            //
+                            // Next block's [0, historyFrames) will be filled with this block's
+                            // last `historyFrames` source samples (positions [tailStart, totalSF)
+                            // == [sourceFrames16, sourceFrames16 + historyFrames) in this block's
+                            // coordinate system). So the absolute position where the next block
+                            // should resume is `historyFrames + phase + outputFrames * rateRatio`
+                            // in this block, which in next block coordinates equals
+                            // `historyFrames + (phase + outputFrames * rateRatio - sourceFrames16)`.
+                            scratch.phase = phase + Double(outputFrames) * rateRatio - Double(sourceFrames16)
+                            if scratch.phase < 0 { scratch.phase = 0 }       // safety clamp
                         }}}}
                     }
                 }
@@ -206,7 +291,7 @@ extension DSPGameAudioEngine {
                 scratch.rawBuffer.withUnsafeMutableBytes { rawPtr in
                     rawPtr.baseAddress!.withMemoryRebound(to: Int8.self, capacity: bytesRead) { input in
                         let sourceFrames8 = bytesRead / sourceChannels
-                        let cap8 = max(sourceFrames8 + filterSize, outputFrames)
+                        let cap8 = max(sourceFrames8 + historyFrames + convPad, outputFrames)
                         scratch.ensureCapacity(cap8)
 
                         scratch.leftChannel.withUnsafeMutableBufferPointer  { leftPtr in
@@ -219,36 +304,70 @@ extension DSPGameAudioEngine {
                                   let filteredRightBase = filteredRightPtr.baseAddress
                             else { return }
 
+                            // Prepend carried history
+                            scratch.prevTailLeft.withUnsafeBufferPointer { tailL in
+                                if let base = tailL.baseAddress {
+                                    vDSP_mmov(base, leftBase, vDSP_Length(historyFrames), 1, 1, 1)
+                                }
+                            }
+                            scratch.prevTailRight.withUnsafeBufferPointer { tailR in
+                                if let base = tailR.baseAddress {
+                                    vDSP_mmov(base, rightBase, vDSP_Length(historyFrames), 1, 1, 1)
+                                }
+                            }
+
                             // Convert Int8 → Float, deinterleaving via stride (matches 16-bit pattern)
                             var scale = Float(0.9 / 128.0)
                             if sourceChannels == 2 {
-                                vDSP_vflt8(input,                 2, leftBase,  1, vDSP_Length(sourceFrames8))
-                                vDSP_vflt8(input.advanced(by: 1), 2, rightBase, 1, vDSP_Length(sourceFrames8))
+                                vDSP_vflt8(input,                 2, leftBase  + historyFrames, 1, vDSP_Length(sourceFrames8))
+                                vDSP_vflt8(input.advanced(by: 1), 2, rightBase + historyFrames, 1, vDSP_Length(sourceFrames8))
                             } else {
-                                vDSP_vflt8(input, 1, leftBase, 1, vDSP_Length(sourceFrames8))
-                                vDSP_mmov(leftBase, rightBase, vDSP_Length(sourceFrames8), 1, 1, 1)
+                                vDSP_vflt8(input, 1, leftBase + historyFrames, 1, vDSP_Length(sourceFrames8))
+                                vDSP_mmov(leftBase + historyFrames, rightBase + historyFrames, vDSP_Length(sourceFrames8), 1, 1, 1)
                             }
-                            vDSP_vsmul(leftBase,  1, &scale, leftBase,  1, vDSP_Length(sourceFrames8))
-                            vDSP_vsmul(rightBase, 1, &scale, rightBase, 1, vDSP_Length(sourceFrames8))
+                            vDSP_vsmul(leftBase  + historyFrames, 1, &scale, leftBase  + historyFrames, 1, vDSP_Length(sourceFrames8))
+                            vDSP_vsmul(rightBase + historyFrames, 1, &scale, rightBase + historyFrames, 1, vDSP_Length(sourceFrames8))
+
+                            // Zero-pad the convolution tail
+                            let totalSF = sourceFrames8 + historyFrames
+                            memset(leftBase  + totalSF, 0, convPad * MemoryLayout<Float>.size)
+                            memset(rightBase + totalSF, 0, convPad * MemoryLayout<Float>.size)
 
                             // Anti-alias filter
                             vDSP_conv(leftBase,  1, filterCoeff, 1, filteredLeftBase,  1,
-                                      vDSP_Length(sourceFrames8), vDSP_Length(filterSize))
+                                      vDSP_Length(totalSF), vDSP_Length(filterSize))
                             vDSP_conv(rightBase, 1, filterCoeff, 1, filteredRightBase, 1,
-                                      vDSP_Length(sourceFrames8), vDSP_Length(filterSize))
+                                      vDSP_Length(totalSF), vDSP_Length(filterSize))
 
                             // Resample
                             guard let outLeft  = pcmBuffer.floatChannelData?[0],
                                   let outRight = pcmBuffer.floatChannelData?[1] else { return }
                             scratch.indexBuffer.withUnsafeMutableBufferPointer { idxPtr in
                                 guard let idxBase = idxPtr.baseAddress else { return }
-                                var start = Float(0);  var step = Float(rateRatio)
+                                var start = Float(Double(historyFrames) + phase)
+                                var step  = Float(rateRatio)
                                 vDSP_vramp(&start, &step, idxBase, 1, vDSP_Length(outputFrames))
                                 vDSP_vlint(filteredLeftBase,  idxBase, 1, outLeft,  1,
-                                           vDSP_Length(outputFrames), vDSP_Length(sourceFrames8))
+                                           vDSP_Length(outputFrames), vDSP_Length(totalSF))
                                 vDSP_vlint(filteredRightBase, idxBase, 1, outRight, 1,
-                                           vDSP_Length(outputFrames), vDSP_Length(sourceFrames8))
+                                           vDSP_Length(outputFrames), vDSP_Length(totalSF))
                             }
+
+                            // Carry tail
+                            let tailStart = totalSF - historyFrames
+                            scratch.prevTailLeft.withUnsafeMutableBufferPointer { dst in
+                                if let dstBase = dst.baseAddress {
+                                    vDSP_mmov(leftBase + tailStart, dstBase, vDSP_Length(historyFrames), 1, 1, 1)
+                                }
+                            }
+                            scratch.prevTailRight.withUnsafeMutableBufferPointer { dst in
+                                if let dstBase = dst.baseAddress {
+                                    vDSP_mmov(rightBase + tailStart, dstBase, vDSP_Length(historyFrames), 1, 1, 1)
+                                }
+                            }
+
+                            scratch.phase = phase + Double(outputFrames) * rateRatio - Double(sourceFrames8)
+                            if scratch.phase < 0 { scratch.phase = 0 }
                         }}}}
                     }
                 }

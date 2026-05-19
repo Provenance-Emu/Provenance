@@ -119,8 +119,18 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
         /// Create source node
         let renderBlock: AVAudioSourceNodeRenderBlock = { isSilence, timestamp, frameCount, audioBufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
+            let requestedFrames = Int(frameCount)
+            let outBytesPerChannel = requestedFrames * MemoryLayout<Float>.size
 
             guard let pcmBuffer = self.obtainPCMBuffer(format: format, frameCapacity: frameCount) else {
+                // Zero-fill the requested buffer rather than reporting a short fill,
+                // which AVAudioSourceNode interprets as an explicit silent block.
+                for i in 0..<min(ablPointer.count, 2) {
+                    if let dest = ablPointer[i].mData {
+                        memset(dest, 0, outBytesPerChannel)
+                    }
+                    ablPointer[i].mDataByteSize = UInt32(outBytesPerChannel)
+                }
                 isSilence.pointee = true
                 return noErr
             }
@@ -129,20 +139,31 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
             let framesProduced = Int(pcmBuffer.frameLength)
 
             if bytesCopied == 0 || framesProduced == 0 {
+                // Full silence — zero-fill the entire output buffer to avoid clicks.
+                for i in 0..<min(ablPointer.count, 2) {
+                    if let dest = ablPointer[i].mData {
+                        memset(dest, 0, outBytesPerChannel)
+                    }
+                    ablPointer[i].mDataByteSize = UInt32(outBytesPerChannel)
+                }
                 isSilence.pointee = true
-                ablPointer[0].mDataByteSize = 0
-                ablPointer[1].mDataByteSize = 0
                 return noErr
             }
 
-            /// Copy only the valid frames to output buffers
-            for i in 0..<2 {
-                let source = pcmBuffer.floatChannelData?[i]
-                let dest = ablPointer[i].mData?.assumingMemoryBound(to: Float.self)
+            /// Copy valid frames to output buffers and pad any tail with silence so the
+            /// AU always receives exactly `frameCount` frames. Returning short here would
+            /// produce audible clicks at the tail of partial-fill blocks.
+            for i in 0..<min(ablPointer.count, 2) {
+                guard let source = pcmBuffer.floatChannelData?[i],
+                      let dest = ablPointer[i].mData?.assumingMemoryBound(to: Float.self) else { continue }
                 let count = framesProduced
 
-                vDSP_mmov(source!, dest!, vDSP_Length(count), 1, 1, 1)
-                ablPointer[i].mDataByteSize = UInt32(count * 4)
+                vDSP_mmov(source, dest, vDSP_Length(count), 1, 1, 1)
+                if count < requestedFrames {
+                    // Pad tail with zeros — avoids garbage samples being played.
+                    memset(dest.advanced(by: count), 0, (requestedFrames - count) * MemoryLayout<Float>.size)
+                }
+                ablPointer[i].mDataByteSize = UInt32(outBytesPerChannel)
             }
 
             // Capture audio data for visualization (vDSP channel average, no scalar loop)
@@ -271,13 +292,18 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
 
         switch reason {
         case .newDeviceAvailable, .oldDeviceUnavailable:
-            do {
-                try configureAudioSession()
-                try startAudio()
-                updateOutputVolume() // Update volume based on new route
-            } catch {
-                handleAudioError(error)
-            }
+            // Note: `configureAudioSession()` and `startAudio()` swallow errors internally
+            // (neither is `throws`). The previous do/try/catch was dead code.
+            //
+            // TODO(audio-glitch-audit): On route change we currently call startAudio()
+            // again without first stopping/pausing the running engine. AVAudioEngine
+            // tolerates this but it has been observed to emit a brief click when
+            // hot-swapping between speaker and headphones. If runtime profiling
+            // confirms a click here, gate this on `isRunning` and call `stopAudio()`
+            // before re-configuring.
+            configureAudioSession()
+            startAudio()
+            updateOutputVolume() // Update volume based on new route
         default:
             break
         }
@@ -287,24 +313,15 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
     private func handleAudioError(_ error: Error) {
         ELOG("Audio error occurred: \(error.localizedDescription)")
 
-        do {
-            stopAudio()
-            Thread.sleep(forTimeInterval: 0.1)
+        stopAudio()
+        Thread.sleep(forTimeInterval: 0.1)
 
-            #if !os(macOS)
-            try configureAudioSession()
-            #endif
+        #if !os(macOS)
+        configureAudioSession()
+        #endif
 
-            try startAudio()
-            DLOG("Successfully recovered from audio error")
-        } catch {
-            ELOG("Failed to recover from audio error: \(error.localizedDescription)")
-            NotificationCenter.default.post(
-                name: NSNotification.Name("AudioEngineErrorNotification"),
-                object: self,
-                userInfo: ["error": error]
-            )
-        }
+        startAudio()
+        DLOG("Audio error recovery path executed")
     }
 
     /// Captures audio data for visualization
