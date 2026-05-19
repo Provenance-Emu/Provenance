@@ -983,9 +983,24 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             lastScreenBounds = screenBounds
             lastNativeScaleEnabled = nativeScaleEnabled
 
+            // BUG (since 73a63bc06b, 2025-09-09): the original code had
+            //     scale = screenBounds.size.width / screenBounds.size.width
+            // which is always 1.0. That forced drawableSize to be set in
+            // POINTS instead of pixels, so on retina iPad (UIScreen.main.scale
+            // == 2.0) the drawable was sized at 1366×1024 instead of
+            // 2732×2048 — and MTKView's autoResizeDrawable goes false the
+            // moment you set drawableSize explicitly, so the drawable
+            // stayed pinned at 1x for the rest of the session. Cores that
+            // render at high internal resolution (flycast in particular)
+            // got a too-small drawable to present into, which on iPad
+            // surfaced as a flycast boot failure (visible since the rest
+            // of the Metal stack got reworked for Vulkan→Metal interop).
+            //
+            // Use UIScreen.main.scale so retina devices actually get
+            // retina drawables.
             let scale: CGFloat
             if screenBounds.size.width > 0 && screenBounds.size.height > 0 {
-                scale = screenBounds.size.width / screenBounds.size.width
+                scale = UIScreen.main.scale
             } else {
                 scale = 1.0
             }
