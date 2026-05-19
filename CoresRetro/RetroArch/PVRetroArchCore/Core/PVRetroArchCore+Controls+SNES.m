@@ -44,26 +44,29 @@ extern GCController *touch_controller;
 }
 
 - (void)handleSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player pressed:(BOOL)pressed {
-    static float xAxis=0;
-    static float yAxis=0;
+    // Per-direction held state (see PVRetroArchCore+Controls+NES.m for rationale —
+    // cached float axes leak diagonal magnitude across release events). SOCD
+    // applied: opposing directions cancel; diagonals get full 1.0 magnitude.
+    static bool dpadUp = false, dpadDown = false, dpadLeft = false, dpadRight = false;
 
     switch (button) {
         case(PVSNESButtonUp):
-            yAxis=pressed?(!xAxis?1.0:0.5):0;
-            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
-            break;
         case(PVSNESButtonDown):
-            yAxis=pressed?(!xAxis?-1.0:-0.5):0;
-            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
-            break;
         case(PVSNESButtonLeft):
-            xAxis=pressed?(!yAxis?-1.0:-0.5):0;
-            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
+        case(PVSNESButtonRight): {
+            switch (button) {
+                case PVSNESButtonUp:    dpadUp = pressed; break;
+                case PVSNESButtonDown:  dpadDown = pressed; break;
+                case PVSNESButtonLeft:  dpadLeft = pressed; break;
+                case PVSNESButtonRight: dpadRight = pressed; break;
+                default: break;
+            }
+            float x = 0.0f, y = 0.0f;
+            if (dpadLeft != dpadRight) x = dpadRight ? 1.0f : -1.0f;
+            if (dpadUp   != dpadDown)  y = dpadUp    ? 1.0f : -1.0f;
+            [touch_controller.extendedGamepad.dpad setValueForXAxis:x yAxis:y];
             break;
-        case(PVSNESButtonRight):
-            xAxis=pressed?(!yAxis?1.0:0.5):0;
-            [touch_controller.extendedGamepad.dpad setValueForXAxis:xAxis yAxis:yAxis];
-            break;
+        }
         case(PVSNESButtonA):
             [touch_controller.extendedGamepad.buttonB setValue:pressed?1:0];
             break;

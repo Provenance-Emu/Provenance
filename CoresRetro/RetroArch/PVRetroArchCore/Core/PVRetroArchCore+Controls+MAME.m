@@ -97,9 +97,18 @@ extern GCController *touch_controller;
             [touch_controller.extendedGamepad.rightTrigger setValue:pressed?1:0];
             break;
         case(PVMAMEButtonL3):
+            // TODO(tvos-tester-18may-mame): L3 inside the MAME libretro core defaults to
+            // UI_CANCEL / "Service" — pressing alone (or L1+L2 / R1+R2 combos on some
+            // MAME builds) opens the in-game MAME UI menu. Fix requires either an RA
+            // input remap to nul L3/R3 for MAME systems specifically, or a core-option
+            // override that disables the L3/R3 UI hotkeys (mame2003-plus exposes one;
+            // mame_current does not). Out of scope for surgical Coin fix.
             [touch_controller.extendedGamepad.leftThumbstickButton setValue:pressed?1:0];
             break;
         case(PVMAMEButtonR3):
+            // TODO(tvos-tester-18may-mame): R3 inside the MAME libretro core defaults to
+            // UI_SELECT — pressing it opens the MAME service / in-game options menu.
+            // Same fix path as L3 above.
             [touch_controller.extendedGamepad.rightThumbstickButton setValue:pressed?1:0];
             break;
         case(PVMAMEButtonSelect):

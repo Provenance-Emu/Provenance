@@ -1655,6 +1655,14 @@ extension PVThinLibretroCore: PVMAMESystemResponderClient {
             // Service/test button is a hardware momentary input, not a standard joypad button.
             // Arcade cores handle it via a dedicated service-input path; no joypad mapping needed.
             return nil
+        case .coin:
+            // MAME / FBNeo / FBA / MAME 2003-Plus / MAME 2010 / MAME Current all wire
+            // Insert Coin to RETRO_DEVICE_ID_JOYPAD_SELECT (libretro arcade convention —
+            // hardware has no separate "Select" pin, so the same line is coin).
+            // Without this case the pause-menu Coin button and DeltaSkin "coin" cell
+            // were silent no-ops on the thin libretro wrapper (matches the thick-wrapper
+            // mapping at PVRetroArchCore+Controls+MAME.m:111-119).
+            return .select
         case .analogMode, .leftAnalog, .rightAnalog, .count:
             return nil
         @unknown default:
