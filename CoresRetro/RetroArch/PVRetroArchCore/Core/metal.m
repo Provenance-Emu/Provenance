@@ -1233,15 +1233,23 @@ static void PVMetalDriverRunOnMainThread(dispatch_block_t block)
       id<MTLTexture> destTex = _context.nextDrawable.texture;
       CGSize drawableSize = destTex ? CGSizeMake(destTex.width, destTex.height) : _layer.drawableSize;
       CGSize sourceSize = _frameView.size;
-      // Set fullscreen viewport for filter rendering
-      [_context resetRenderViewport:kFullscreenViewport];
+      /*
+       * Let the filter renderer set its viewport from `drawableSize`
+       * (sourced from `destTex` — the actual color attachment) rather
+       * than via `resetRenderViewport:kFullscreenViewport`, which uses
+       * `_viewport.full_width/full_height`. `_viewport.full_*` is set
+       * on `drawableSizeWillChange` and can lag the actual
+       * `nextDrawable.texture` size during iPad adaptive-resize windows
+       * (Stage Manager, Split View, ProMotion). Mismatch would trip
+       * `_MTLDebugValidateRenderPassDescriptorAndTrackAttachments`.
+       */
       filterApplied = [_pvFilterRenderer encodeWith:rce
                                             texture:currentTexture
                                        drawableSize:drawableSize
                                          sourceSize:sourceSize
                                          screenType:ScreenTypeObjCCrt
                                    smoothingEnabled:PVSettingsWrapper.imageSmoothing
-                                        setViewport:NO];
+                                        setViewport:YES];
    }
 
    if (!filterApplied && (_frameView.drawState & ViewDrawStateEncoder) != 0)
@@ -1497,19 +1505,36 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
       id<MTLTexture> destTex = _context.nextDrawable.texture;
       CGSize drawableSize = destTex ? CGSizeMake(destTex.width, destTex.height) : _layer.drawableSize;
       CGSize sourceSize   = CGSizeMake(hwTex.width, hwTex.height);
-      RARCH_DBG("[MetalHW] encode src=%.0fx%.0f dest=%.0fx%.0f layerDrawable=%.0fx%.0f destTex=%p\n",
+      RARCH_DBG("[MetalHW] encode src=%.0fx%.0f dest=%.0fx%.0f layerDrawable=%.0fx%.0f vp.full=%ux%u destTex=%p\n",
                 sourceSize.width, sourceSize.height,
                 drawableSize.width, drawableSize.height,
                 _layer.drawableSize.width, _layer.drawableSize.height,
+                _viewport ? _viewport->full_width  : 0,
+                _viewport ? _viewport->full_height : 0,
                 (__bridge void *)destTex);
-      [_context resetRenderViewport:kFullscreenViewport];
+      /*
+       * Let the filter renderer set its OWN viewport derived from
+       * `drawableSize` (sourced from `destTex` — the actual color
+       * attachment). Do NOT call `resetRenderViewport:kFullscreenViewport`
+       * here — that uses `_viewport.full_width/full_height`, which is
+       * written on `drawableSizeWillChange` and can lag the actual
+       * `nextDrawable.texture` size during iPad adaptive-resize windows
+       * (Stage Manager, Split View, ProMotion clamps). If `_viewport.full_*`
+       * is larger than `destTex.{width,height}`, the validator trips
+       * `_MTLDebugValidateRenderPassDescriptorAndTrackAttachments`:
+       *   renderTargetWidth (N) must be <= minimum attachment width (M)
+       * which is the deterministic flycast-iPad crash at game-start
+       * (boot logo renders at the old extent, game's first real frame
+       * arrives via `set_image` at a new extent before drawableSize
+       * settles).
+       */
       filterApplied = [_pvFilterRenderer encodeWith:rce
                                             texture:hwTex
                                        drawableSize:drawableSize
                                          sourceSize:sourceSize
                                          screenType:ScreenTypeObjCCrt
                                    smoothingEnabled:PVSettingsWrapper.imageSmoothing
-                                        setViewport:NO];
+                                        setViewport:YES];
       RARCH_DBG("[MetalHW] encode complete filterApplied=%d\n", filterApplied);
    }
 
