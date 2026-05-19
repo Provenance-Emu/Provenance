@@ -43,6 +43,15 @@ extension Defaults.Keys {
     @available(*, deprecated, renamed: "scalingMode", message: "Use Defaults[.scalingMode] == .integerScale")
     static let integerScaleEnabled = Key<Bool>("integerScaleEnabled", default: false)
 
+    /// Whether the user has explicitly chosen a value for `scalingMode` in
+    /// settings UI. Used to gate per-system default substitution: when this
+    /// is `false` (the user has never touched the picker), the renderer is
+    /// free to substitute a system-appropriate default (e.g. `.stretch` for
+    /// dual-screen DS so it fills the screen instead of letterboxing the
+    /// portrait framebuffer). Once the user picks any value, this flips to
+    /// `true` and the explicit choice is honored everywhere.
+    static let userExplicitlySetScalingMode = Key<Bool>("userExplicitlySetScalingMode", default: false)
+
     /// How the game is presented when an external display (HDMI / USB-C / AirPlay) is connected.
     /// Defaults to `.systemMirror` so that the device behaves identically to previous versions
     /// unless the user opts into dedicated mode.

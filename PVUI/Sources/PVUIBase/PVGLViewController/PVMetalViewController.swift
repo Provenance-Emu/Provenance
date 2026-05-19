@@ -17,6 +17,7 @@ import PVLogging
 import PVSettings
 import PVFeatureFlags
 import PVShaders
+import PVSystems
 import simd
 
 private struct SimpleCRTUniforms {
@@ -178,6 +179,32 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// Cached feature flag — read once at init; unlikely to change during emulation.
     private lazy var scalingModeRendererEnabled: Bool = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
 
+    /// The scaling mode the renderer should use right now. Honors the user's
+    /// explicit choice when they've made one (`Defaults[.userExplicitlySetScalingMode]`)
+    /// and otherwise substitutes the running system's per-system default
+    /// (e.g. `.stretch` for Nintendo DS so dual-screen titles fill the screen).
+    /// Falls back to the global `Defaults[.scalingMode]` when no system match.
+    fileprivate func effectiveScalingMode() -> ScalingMode {
+        if Defaults[.userExplicitlySetScalingMode] {
+            return Defaults[.scalingMode]
+        }
+        // `emulatorCore?.systemIdentifier` is `String??` (weak optional →
+        // optional property); unwrap both layers via `flatMap` before
+        // resolving the SystemIdentifier enum.
+        let sysIdRaw = emulatorCore.flatMap { $0.systemIdentifier } ?? ""
+        if let sysID = SystemIdentifier(rawValue: sysIdRaw), sysID != .Unknown {
+            let systemDefault = sysID.defaultScalingMode
+            // If the system has no opinion (returns the global `.aspectFit`
+            // default), fall through to whatever the user has stored — which
+            // is still `.aspectFit` for fresh installs but lets future
+            // migrations seed a different global value without us masking it.
+            if systemDefault != .aspectFit {
+                return systemDefault
+            }
+        }
+        return Defaults[.scalingMode]
+    }
+
     // MARK: Internal properties
 
     var  device: MTLDevice? = nil
@@ -280,17 +307,17 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         renderSettings.metalFilterMode = Defaults[.metalFilterMode]
         renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-        renderSettings.scalingMode = Defaults[.scalingMode]
+        renderSettings.scalingMode = effectiveScalingMode()
 
         filterObservationTask = Task { [weak self] in
-            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .scalingMode]) {
+            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .scalingMode, .userExplicitlySetScalingMode]) {
                 await MainActor.run {
                     guard let self else { return }
                     let oldScaling = self.renderSettings.scalingMode
                     self.renderSettings.metalFilterMode = Defaults[.metalFilterMode]
                     self.renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                     self.renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-                    self.renderSettings.scalingMode = Defaults[.scalingMode]
+                    self.renderSettings.scalingMode = self.effectiveScalingMode()
                     self.configureFilterRenderer(reason: "defaultsUpdate", force: true)
                     // Scaling mode changes the calculated view frame — kick a
                     // re-layout so the change is visible immediately without

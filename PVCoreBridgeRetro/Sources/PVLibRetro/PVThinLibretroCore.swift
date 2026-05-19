@@ -311,14 +311,38 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     private func applyPlatformDefaults() {
         let coreId = (coreIdentifier ?? "").lowercased()
 
-        // MelonDS: enable touch mode for DS
+        // MelonDS: enable touch mode for DS. On tvOS there is no touchscreen
+        // and the user can't easily swap to the bottom screen, so flip the
+        // default layout from upstream's "Top/Bottom" (256×384 portrait
+        // framebuffer — letterboxed to slivers on a 16:9 TV) to "Left/Right"
+        // (512×192 widescreen-ish framebuffer) which fills more of the
+        // screen. The upstream key + value strings come from melonDS
+        // libretro core_options (see Cores/melonDS/melonDS/src/libretro/
+        // libretro.cpp ~line 185 and 322).
         if coreId.contains("melonds") {
             setDefaultOption("melonds_touch_mode", value: "Touch")
+            #if os(tvOS)
+            setDefaultOption("melonds_screen_layout", value: "Left/Right")
+            // The melonds_ds fork (rsn8887 / kivutar) uses the same option
+            // names with a `melondsds_` prefix. Setting both is harmless if
+            // only one core is loaded — setDefaultOption() is a no-op when
+            // the key isn't registered.
+            setDefaultOption("melondsds_screen_layout", value: "Left/Right")
+            setDefaultOption("melondsds_touch_mode", value: "Touch")
+            #endif
         }
 
-        // DeSmuME: enable touch mode for DS
+        // DeSmuME: enable touch mode for DS. Same rationale as melonDS —
+        // upstream default `desmume_screens_layout` is "top/bottom"; on tvOS
+        // switch to "left/right" so the framebuffer is landscape-friendly.
+        // Option key + lowercase value strings verified against
+        // Cores/Desmume2015/desmume2015/desmume/src/libretro/libretro.cpp
+        // (lines 701 / 1051) — desmume and desmume2015 share the same keys.
         if coreId.contains("desmume") {
             setDefaultOption("desmume_pointer_type", value: "touch")
+            #if os(tvOS)
+            setDefaultOption("desmume_screens_layout", value: "left/right")
+            #endif
         }
 
         // DOSBox Pure: use mouse pad mode + enable MIDI

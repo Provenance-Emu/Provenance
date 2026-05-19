@@ -1875,7 +1875,19 @@ private struct VideoSection: View {
                             icon: .sfSymbol("square.stack.3d.up"),
                             showChevron: false)
             }
-            Picker(selection: $scalingMode) {
+            // Wrap `scalingMode` so that the moment the user picks anything
+            // we flip `userExplicitlySetScalingMode` to true. After that,
+            // per-system defaults (e.g. `.stretch` for DS on tvOS) stop
+            // substituting and the user's choice wins everywhere.
+            Picker(selection: Binding(
+                get: { scalingMode },
+                set: { newValue in
+                    scalingMode = newValue
+                    if !Defaults[.userExplicitlySetScalingMode] {
+                        Defaults[.userExplicitlySetScalingMode] = true
+                    }
+                }
+            )) {
                 ForEach(ScalingMode.allCases, id: \.self) { mode in
                     Label(mode.displayName, systemImage: mode.symbolName)
                         .tag(mode)
