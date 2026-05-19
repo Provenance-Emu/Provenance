@@ -1222,7 +1222,16 @@ static void PVMetalDriverRunOnMainThread(dispatch_block_t block)
    BOOL filterApplied = NO;
    if (_pvFilterRenderer && currentTexture)
    {
-      CGSize drawableSize = _layer.drawableSize;
+      // Use the actual texture dimensions of the drawable we're about to
+      // render into rather than _layer.drawableSize. On iPad during a
+      // safe-area / skin / split-screen resize, _layer.drawableSize updates
+      // BEFORE the next acquired drawable swaps to the new pixel dimensions,
+      // so for one frame the layer reports the new size (e.g. 2732×1944)
+      // while the actual color attachment is still the prior drawable at
+      // the old size (e.g. 2092×1568). Setting the viewport to the layer's
+      // size in that window trips the Metal render-pass validator.
+      id<MTLTexture> destTex = _context.nextDrawable.texture;
+      CGSize drawableSize = destTex ? CGSizeMake(destTex.width, destTex.height) : _layer.drawableSize;
       CGSize sourceSize = _frameView.size;
       // Set fullscreen viewport for filter rendering
       [_context resetRenderViewport:kFullscreenViewport];
@@ -1433,7 +1442,14 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
    BOOL filterApplied = NO;
    if (_pvFilterRenderer)
    {
-      CGSize drawableSize = _layer.drawableSize;
+      // Mirror the SW filter path defensive clamp — read the actual texture
+      // dimensions of the drawable being rendered into so the viewport
+      // matches the attachment even during a one-frame resize race. This
+      // is the hot path for flycast on iPad and was the deterministic
+      // crash site after commit 44aac15cb5 added the Vulkan→Metal HW
+      // filter encode per frame.
+      id<MTLTexture> destTex = _context.nextDrawable.texture;
+      CGSize drawableSize = destTex ? CGSizeMake(destTex.width, destTex.height) : _layer.drawableSize;
       CGSize sourceSize   = CGSizeMake(hwTex.width, hwTex.height);
       [_context resetRenderViewport:kFullscreenViewport];
       filterApplied = [_pvFilterRenderer encodeWith:rce
@@ -1566,12 +1582,23 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
 
 - (void)mtkView:(MTKView *)view drawableSizeWillChange:(CGSize)size
 {
-#ifdef HAVE_COCOATOUCH
-    CGFloat scale = [[UIScreen mainScreen] scale];
-    [self setViewportWidth:(unsigned int)view.bounds.size.width*scale height:(unsigned int)view.bounds.size.height*scale forceFull:NO allowRotate:YES];
-#else
-   [self setViewportWidth:(unsigned int)size.width height:(unsigned int)size.height forceFull:NO allowRotate:YES];
-#endif
+   // Use the authoritative pixel size Metal hands us. The previous iOS branch
+   // computed `view.bounds × UIScreen.scale`, which on iPad disagrees with
+   // the actual drawable whenever safe area / skin chrome / split-screen
+   // composition changes. The resulting viewport (e.g. 2732×1944 on iPad Pro
+   // 12.9") could exceed the smallest attachment (e.g. drawable at 2092×1568),
+   // tripping `_MTLDebugValidateRenderPassDescriptorAndTrackAttachments`:
+   //     renderTargetWidth (2732) must be <= minimum attachment width (2092)
+   // The latent race went deterministic after commit 44aac15cb5 (Mar 28 2026)
+   // added the Vulkan→Metal HW filter path that runs this viewport setup
+   // every frame, so flycast on iPad started insta-crashing even with
+   // historical dylibs that had never crashed before.
+   //
+   // Fall back to view.drawableSize defensively if Metal hands us a zero
+   // size (shouldn't happen, but match the macOS branch's contract).
+   const CGFloat w = size.width  > 0 ? size.width  : view.drawableSize.width;
+   const CGFloat h = size.height > 0 ? size.height : view.drawableSize.height;
+   [self setViewportWidth:(unsigned int)w height:(unsigned int)h forceFull:NO allowRotate:YES];
 }
 
 - (void)drawInMTKView:(MTKView *)view { }
