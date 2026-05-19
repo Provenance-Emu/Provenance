@@ -87,6 +87,19 @@ extension DSPGameAudioEngine {
         let scratch = DSPInterpolationScratch()
 
         // Cache format information
+        //
+        // TODO(audio-glitch-audit-r2): `sourceRate`, `targetRate`, `rateRatio`, and the
+        // computed `filterCoeff` are captured by the closure at engine setup time and
+        // never re-computed. If the emulator core changes its output rate mid-stream
+        // (e.g. DS sample-rate switch, some Saturn modes) or the AVAudioSession output
+        // rate changes (route change to AirPods Pro 48k → external DAC 44.1k), the
+        // resampler runs with a stale ratio → cumulative phase drift and aliasing.
+        // Verify: log `gameCore.audioSampleRate(forBuffer: 0)` and
+        // `AVAudioSession.sharedInstance().sampleRate` inside the render block once per
+        // ~1 s and compare to the cached values. If they ever diverge, this is a real
+        // bug. Fix would be to recompute filter coefficients lazily when divergence is
+        // detected (cannot allocate on the audio thread → pre-compute a small table or
+        // post a notification to the engine to call `updateSourceNode()`).
         let sourceChannels       = Int(gameCore.channelCount(forBuffer: 0))
         let sourceBitDepth       = gameCore.audioBitDepth
         let sourceRate           = gameCore.audioSampleRate(forBuffer: 0)
@@ -169,9 +182,22 @@ extension DSPGameAudioEngine {
             // `historyFrames + scratch.phase` and walks by `rateRatio` per output sample.
 
             let totalSourceFrames = sourceFrames + historyFrames
-            // Safety margin: -1 so linear interpolation never reads past the last sample.
+            // Filtered output indices in [0, sourceFrames) are computed from a fully-populated
+            // FIR window (carried history + real audio). Indices in [sourceFrames, totalSourceFrames)
+            // are CONTAMINATED by the zero-pad tail — the filter window crosses the real/zero
+            // boundary and produces a smeared, edge-ringing output. The NEXT block computes
+            // the equivalent source positions from REAL continuation samples (the carried
+            // history), so reading any contaminated index here produces a value that does NOT
+            // match the next block's value at the same source position → boundary click.
+            //
+            // Constraint: vDSP_vlint reads filtered[floor(idx)] and filtered[floor(idx)+1].
+            // Both must be uncontaminated, so floor(idx) + 1 <= sourceFrames - 1.
+            // Resampler index for output i is `historyFrames + phase + i * rateRatio`.
+            //   (outputFrames - 1) * rateRatio < (sourceFrames - 1) - historyFrames - phase
             let phase = scratch.phase
-            let usableSpan = Double(totalSourceFrames - 1) - (Double(historyFrames) + phase)
+            // NOTE: This caps the max safe index at sourceFrames - 1 (not totalSourceFrames - 1)
+            // to keep the linear-interp pair inside the uncontaminated filtered region.
+            let usableSpan = Double(sourceFrames - 1) - (Double(historyFrames) + phase)
             let outputFrames = max(0, min(
                 targetFrameCount,
                 Int(floor(usableSpan / rateRatio))
@@ -280,8 +306,17 @@ extension DSPGameAudioEngine {
                             // should resume is `historyFrames + phase + outputFrames * rateRatio`
                             // in this block, which in next block coordinates equals
                             // `historyFrames + (phase + outputFrames * rateRatio - sourceFrames16)`.
+                            // NOTE: phase can legitimately go negative when the consumer (output)
+                            // rate exceeds the producer's contribution this block — the next block
+                            // is expected to re-read into the carried history region (which holds
+                            // the last `historyFrames` source samples). Negative phase is valid
+                            // down to `-historyFrames`; outside that window the historic carry
+                            // is insufficient and we clamp (rare; only when output far exceeds
+                            // available source — buffer underrun territory).
                             scratch.phase = phase + Double(outputFrames) * rateRatio - Double(sourceFrames16)
-                            if scratch.phase < 0 { scratch.phase = 0 }       // safety clamp
+                            if scratch.phase < -Double(historyFrames) {
+                                scratch.phase = -Double(historyFrames)
+                            }
                         }}}}
                     }
                 }
@@ -366,8 +401,12 @@ extension DSPGameAudioEngine {
                                 }
                             }
 
+                            // See 16-bit path for rationale: negative phase is legitimate down to
+                            // -historyFrames (next block reads into carried history).
                             scratch.phase = phase + Double(outputFrames) * rateRatio - Double(sourceFrames8)
-                            if scratch.phase < 0 { scratch.phase = 0 }
+                            if scratch.phase < -Double(historyFrames) {
+                                scratch.phase = -Double(historyFrames)
+                            }
                         }}}}
                     }
                 }

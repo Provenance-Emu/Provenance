@@ -166,9 +166,22 @@ final public class DSPGameAudioEngine: AudioEngineProtocol {
                 ablPointer[i].mDataByteSize = UInt32(outBytesPerChannel)
             }
 
-            // Capture audio data for visualization (vDSP channel average, no scalar loop)
+            // TODO(audio-glitch-audit-r2): The visualization lock is acquired on the real-time
+            // audio thread and shared with the UI thread in `getWaveformData`. If the UI
+            // happens to hold this lock when the render block runs, the audio thread will
+            // BLOCK on a non-RT-safe primitive → buffer underrun click. `OSAllocatedUnfairLock`
+            // is fast in the uncontended case but is NOT real-time safe under contention.
+            //
+            // A safer pattern is a lock-free double/triple buffer or a per-frame "latest"
+            // snapshot updated by the audio thread and copied by the UI thread without
+            // mutual exclusion. For now we attempt the lock and SKIP visualization if
+            // contended, rather than blocking the audio thread.
+            //
+            // Verify: profile with Instruments "Audio" → "Real-time Thread" template while
+            // the in-game visualizer is on screen. If render-block stalls correlate with
+            // UI updates of the waveform, this is the cause.
             if let leftChannel = pcmBuffer.floatChannelData?[0], let rightChannel = pcmBuffer.floatChannelData?[1] {
-                self.audioBufferLock.withLock {
+                _ = self.audioBufferLock.withLockIfAvailable { _ in
                     let count = min(Int(pcmBuffer.frameLength), self.audioBufferForVisualization.count)
                     var half: Float = 0.5
                     vDSP_vadd(leftChannel, 1, rightChannel, 1, &self.audioBufferForVisualization, 1, vDSP_Length(count))
