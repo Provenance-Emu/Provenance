@@ -4617,7 +4617,15 @@ static bool thin_environment(unsigned cmd, void *data) {
             // Reallocate video buffer if max dimensions grew
             BOOL needsRealloc = (geo->max_width  > _rawAVInfo.geometry.max_width ||
                                  geo->max_height > _rawAVInfo.geometry.max_height);
+            const uint32_t prevBaseW = _rawAVInfo.geometry.base_width;
+            const uint32_t prevBaseH = _rawAVInfo.geometry.base_height;
+            const uint32_t prevMaxW  = _rawAVInfo.geometry.max_width;
+            const uint32_t prevMaxH  = _rawAVInfo.geometry.max_height;
             _rawAVInfo.geometry = *geo;
+            DLOG(@"ThinEnv SET_GEOMETRY transition base %ux%u → %ux%u | max %ux%u → %ux%u | needsRealloc=%d",
+                 prevBaseW, prevBaseH, geo->base_width, geo->base_height,
+                 prevMaxW, prevMaxH, geo->max_width, geo->max_height,
+                 needsRealloc);
             ILOG(@"ThinEnv SET_GEOMETRY %ux%u (max %ux%u) aspect=%.3f",
                  geo->base_width, geo->base_height,
                  geo->max_width, geo->max_height, geo->aspect_ratio);
@@ -6541,10 +6549,27 @@ static bool thin_environment(unsigned cmd, void *data) {
 /// render delegate so it can blit the frame to the display.
 - (void)notifyRenderDelegateOfVulkanFrame:(const struct retro_vulkan_image *)image {
     (void)image; // VkImage is already stored in _vulkanCurrentVkImage
+    DLOG(@"ThinFrontend: notifyRenderDelegateOfVulkanFrame ENTER image=%p stored=%p",
+         (void *)(image ? image->create_info.image : VK_NULL_HANDLE),
+         (void *)_vulkanCurrentVkImage);
     id<MTLTexture> mtlTexture = [self getMTLTextureForVkImage:_vulkanCurrentVkImage];
     if (!mtlTexture) {
         WLOG(@"ThinFrontend: notifyRenderDelegateOfVulkanFrame — no MTLTexture (image=%p)", (void *)_vulkanCurrentVkImage);
         return;
+    }
+    // Track dimension transitions across frames so a resolution change is
+    // visible in the log as a single line, not buried in the 5-frame /
+    // every-300-frame sampling below.
+    static NSUInteger _lastNotifyW = 0, _lastNotifyH = 0;
+    NSUInteger curW = (NSUInteger)[mtlTexture width];
+    NSUInteger curH = (NSUInteger)[mtlTexture height];
+    if (curW != _lastNotifyW || curH != _lastNotifyH) {
+        DLOG(@"ThinFrontend: Vulkan frame dimensions CHANGED %lux%lu → %lux%lu (VkImage=%p)",
+             (unsigned long)_lastNotifyW, (unsigned long)_lastNotifyH,
+             (unsigned long)curW, (unsigned long)curH,
+             (void *)_vulkanCurrentVkImage);
+        _lastNotifyW = curW;
+        _lastNotifyH = curH;
     }
     static uint32_t _vkFrameNotifyCount = 0;
     if (_vkFrameNotifyCount < 5 || (_vkFrameNotifyCount % 300 == 0)) {

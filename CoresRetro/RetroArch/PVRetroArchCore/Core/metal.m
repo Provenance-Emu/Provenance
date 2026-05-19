@@ -1387,7 +1387,16 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
 - (void)_drawCoreHW
 {
    if (!_hw.image || _hw.image->create_info.image == VK_NULL_HANDLE)
+   {
+      RARCH_DBG("[MetalHW] _drawCoreHW skip (image=%p)\n",
+                _hw.image ? (void *)_hw.image->create_info.image : NULL);
       return;
+   }
+
+   RARCH_DBG("[MetalHW] _drawCoreHW enter image=%p cmd_count=%u signal_sem=%p\n",
+             (void *)_hw.image->create_info.image,
+             _hw.num_cmd,
+             (void *)(uintptr_t)_hw.signal_semaphore);
 
    /* Submit any command buffers the core handed us via set_command_buffers. */
    if (_hw.num_cmd > 0)
@@ -1405,14 +1414,16 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
       }
 
       metal_hw_lock_queue((__bridge void *)self);
-      vkQueueSubmit(_vkCtx.context.queue, 1, &submit_info, VK_NULL_HANDLE);
+      VkResult vr = vkQueueSubmit(_vkCtx.context.queue, 1, &submit_info, VK_NULL_HANDLE);
       metal_hw_unlock_queue((__bridge void *)self);
+      RARCH_DBG("[MetalHW] vkQueueSubmit result=%d\n", vr);
       _hw.num_cmd          = 0;
       _hw.signal_semaphore = VK_NULL_HANDLE;
    }
 
    /* Wait for all GPU work to complete so the MTLTexture is safe to read. */
    vkQueueWaitIdle(_vkCtx.context.queue);
+   RARCH_DBG("[MetalHW] vkQueueWaitIdle returned\n");
 
    /* Retrieve the MTLTexture backing the rendered VkImage via MoltenVK. */
    id<MTLTexture> hwTex = nil;
@@ -1425,6 +1436,10 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
       return;
    }
    _hw.currentMTLTexture = hwTex;
+   RARCH_DBG("[MetalHW] acquired MTLTexture %lux%lu fmt=%lu from VkImage=%p\n",
+             (unsigned long)hwTex.width, (unsigned long)hwTex.height,
+             (unsigned long)hwTex.pixelFormat,
+             (void *)_hw.image->create_info.image);
 
    id<MTLRenderCommandEncoder> rce = _context.rce;
    if (!rce)
@@ -1451,6 +1466,11 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
       id<MTLTexture> destTex = _context.nextDrawable.texture;
       CGSize drawableSize = destTex ? CGSizeMake(destTex.width, destTex.height) : _layer.drawableSize;
       CGSize sourceSize   = CGSizeMake(hwTex.width, hwTex.height);
+      RARCH_DBG("[MetalHW] encode src=%.0fx%.0f dest=%.0fx%.0f layerDrawable=%.0fx%.0f destTex=%p\n",
+                sourceSize.width, sourceSize.height,
+                drawableSize.width, drawableSize.height,
+                _layer.drawableSize.width, _layer.drawableSize.height,
+                (void *)destTex);
       [_context resetRenderViewport:kFullscreenViewport];
       filterApplied = [_pvFilterRenderer encodeWith:rce
                                             texture:hwTex
@@ -1459,6 +1479,7 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
                                          screenType:ScreenTypeObjCCrt
                                    smoothingEnabled:PVSettingsWrapper.imageSmoothing
                                         setViewport:NO];
+      RARCH_DBG("[MetalHW] encode complete filterApplied=%d\n", filterApplied);
    }
 
    if (!filterApplied)
@@ -1598,6 +1619,12 @@ static void metal_hw_set_signal_semaphore(void *handle, VkSemaphore semaphore)
    // size (shouldn't happen, but match the macOS branch's contract).
    const CGFloat w = size.width  > 0 ? size.width  : view.drawableSize.width;
    const CGFloat h = size.height > 0 ? size.height : view.drawableSize.height;
+   RARCH_DBG("[Metal] drawableSizeWillChange size=%.0fx%.0f bounds=%.0fx%.0f drawable=%.0fx%.0f scale=%.2f -> viewport=%ux%u\n",
+             size.width, size.height,
+             view.bounds.size.width, view.bounds.size.height,
+             view.drawableSize.width, view.drawableSize.height,
+             view.contentScaleFactor,
+             (unsigned)w, (unsigned)h);
    [self setViewportWidth:(unsigned int)w height:(unsigned int)h forceFull:NO allowRotate:YES];
 }
 
