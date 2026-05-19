@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+@import PVCoreBridge;   // PVControllerMappingStore — shared remap source of truth
 #import "./cocoa_common.h"
 #import <objc/message.h>
 
@@ -808,40 +809,12 @@ static bool is_virtual_touch_controller(GCController *controller) {
                 }
             }
 
-            // Resolve PVRemappableController button swaps. PVRemappableController
-            // (PVUI/Sources/PVUIBase/Controller/PVRemappableController.swift)
-            // installs the user/Joy-Con-auto-fix swaps on each physical button's
-            // valueChangedHandler, but the pressedChangedHandler closures below
-            // run independently — without consulting the saved mapping the user's
-            // A↔B swap (Joy-Con, manual remap) never reaches libretro. Read the
-            // mapping dict it writes to UserDefaults under `PVControllerMappings_<vendor>`
-            // and resolve each source identifier to its destination *once* per
-            // bindControls invocation; the resolved virtual button is then
-            // captured by each per-button block.
+            // Resolve PVRemappableController button swaps via the shared
+            // ``PVControllerMappingStore`` (PVCoreBridge). The thin libretro
+            // wrapper and PVRemappableController both read/write the same
+            // store, so a remap installed in the UI flows through to libretro
+            // here without any UserDefaults parsing in this file.
             //
-            // The Swift thin wrapper does the same thing in PVThinLibretroCore+Controls.swift
-            // (commit 629b9e737d). When ButtonIdentifier/ButtonMapping move to a
-            // shared lower-tier module both consumers will collapse into one call.
-            NSDictionary<NSString *, NSString *> *remap = ({
-                NSString *vendor = controller.vendorName ?: @"unknown";
-                NSData *data = [[NSUserDefaults standardUserDefaults]
-                                dataForKey:[NSString stringWithFormat:@"PVControllerMappings_%@", vendor]];
-                NSMutableDictionary *result = [NSMutableDictionary dictionary];
-                if (data) {
-                    id parsed = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
-                    if ([parsed isKindOfClass:[NSDictionary class]]) {
-                        for (NSString *key in (NSDictionary *)parsed) {
-                            NSDictionary *mapping = [(NSDictionary *)parsed objectForKey:key];
-                            NSString *destId = [mapping isKindOfClass:[NSDictionary class]]
-                                ? [mapping objectForKey:@"destinationId"] : nil;
-                            if ([destId isKindOfClass:[NSString class]]) {
-                                result[key] = destId;
-                            }
-                        }
-                    }
-                }
-                [result copy];
-            });
             // Map a source `ButtonIdentifier` raw value (the physical control
             // the user is pressing) to the VIRTUAL destination button on
             // touch_controller — the one libretro reads each frame. e.g.
@@ -850,7 +823,9 @@ static bool is_virtual_touch_controller(GCController *controller) {
             // is stored.
             GCControllerButtonInput * (^resolveVirtual)(NSString *) =
                 ^GCControllerButtonInput *(NSString *sourceId) {
-                    NSString *effective = remap[sourceId] ?: sourceId;
+                    NSString *effective = [PVControllerMappingStore
+                                           destinationIdentifierForSource:sourceId
+                                           controller:controller];
                     GCExtendedGamepad *virt = strongTarget.extendedGamepad;
                     if ([effective isEqualToString:@"buttonA"])               return virt.buttonA;
                     if ([effective isEqualToString:@"buttonB"])               return virt.buttonB;

@@ -1,54 +1,14 @@
 import GameController
 import Foundation
+import PVCoreBridge   // ButtonIdentifier, ButtonMapping, ControllerMappingStore
 import PVLogging
 import PVSettings
 
-/// Identifies which button on a controller
-public enum ButtonIdentifier: String, Codable, CaseIterable {
-    // Standard buttons
-    case buttonA
-    case buttonB
-    case buttonX
-    case buttonY
-    case leftShoulder
-    case rightShoulder
-    case leftTrigger
-    case rightTrigger
-    case dpadUp
-    case dpadDown
-    case dpadLeft
-    case dpadRight
-    case menu
-    case options
-    case home
-
-    // Extended inputs
-    case leftThumbstickButton
-    case rightThumbstickButton
-    case share
-
-    // DualSense specific
-    case touchpad
-    case touchpadButton
-    case micButton
-    case createButton
-
-    // Xbox specific
-    case paddleOne
-    case paddleTwo
-    case paddleThree
-    case paddleFour
-    case shareButton
-
-    // Switch Pro specific
-    case capture
-    case plusButton
-    case minusButton
-    case leftSL
-    case leftSR
-    case rightSL
-    case rightSR
-}
+// Note: ``ButtonIdentifier`` and ``ButtonMapping`` were originally defined in
+// this file. They now live in `PVCoreBridge/Features/ControllerMapping.swift`
+// so that lower-tier consumers (thin libretro frontend, thick RA wrapper)
+// can read the same mappings the UI writes without duplicating the model.
+// This file keeps the GCController handler-install glue.
 
 /// Represents special controller features
 public enum ControllerFeature {
@@ -70,18 +30,7 @@ public enum AdaptiveTriggerMode {
     case weapon
 }
 
-/// Represents a button mapping configuration
-public struct ButtonMapping: Codable, Equatable {
-    /// The original button input
-    public let sourceId: ButtonIdentifier
-    /// The button to map to
-    public let destinationId: ButtonIdentifier
-
-    public init(source: ButtonIdentifier, destination: ButtonIdentifier) {
-        self.sourceId = source
-        self.destinationId = destination
-    }
-}
+// `ButtonMapping` is now defined in PVCoreBridge — see file header.
 
 /// A wrapper around GCController that supports button remapping and special features
 public final class PVRemappableController: NSObject {
@@ -638,23 +587,26 @@ extension PVRemappableController {
 
 // MARK: - Persistence
 extension PVRemappableController {
-    /// Save current mappings to UserDefaults
-    public func saveMappings() {
-        do {
-            let mappingsData = try JSONEncoder().encode(buttonMappings)
-            UserDefaults.standard.set(mappingsData, forKey: "PVControllerMappings_\(wrappedController.vendorName ?? "unknown")")
-        } catch {
-            ELOG("Failed to encode controller mappings for '\(wrappedController.vendorName ?? "unknown")': \(error)")
-        }
+    /// Vendor key used by ``ControllerMappingStore``. Public so the
+    /// Profiles + UI extensions can share it without copying the
+    /// fallback string.
+    public var mappingVendorKey: String {
+        wrappedController.vendorName ?? "unknown"
     }
 
-    /// Load saved mappings from UserDefaults
+    /// Save current mappings via ``ControllerMappingStore``. The store
+    /// holds the single source of truth — the lower-tier libretro
+    /// wrappers read from it directly.
+    public func saveMappings() {
+        ControllerMappingStore.shared.setMappings(buttonMappings,
+                                                  forVendor: mappingVendorKey)
+    }
+
+    /// Reload mappings from ``ControllerMappingStore``. Used by the
+    /// profile-import path and by the legacy `loadSavedMappings(for:)`
+    /// entry point on PVControllerManager.
     public func loadMappings() {
-        guard let mappingsData = UserDefaults.standard.data(forKey: "PVControllerMappings_\(wrappedController.vendorName ?? "unknown")"),
-              let loadedMappings = try? JSONDecoder().decode([ButtonIdentifier: ButtonMapping].self, from: mappingsData) else {
-            return
-        }
-        buttonMappings = loadedMappings
+        buttonMappings = ControllerMappingStore.shared.mappings(forVendor: mappingVendorKey)
     }
 }
 

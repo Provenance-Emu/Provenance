@@ -82,107 +82,59 @@ private let kAnalogAxisX: UInt32      = 0
 private let kAnalogAxisY: UInt32      = 1
 private let kAnalogMax: Int16         = 0x7FFF
 
-// MARK: - Controller remap resolution
-//
-// PVRemappableController (PVUIBase) installs user/Joy-Con-auto-fix button swaps
-// by replacing each `GCControllerButtonInput.valueChangedHandler`. The thin
-// wrapper polls `pad.buttonA.isPressed` directly each frame, so a user's A↔B
-// swap NEVER reaches libretro — the press goes to RetroJoypad.b (NES A), not
-// .a (NES B). PVRemappableController is in PVUIBase which sits ABOVE this
-// module in the dependency graph, so we can't import it; instead, we read
-// the saved-mappings dictionary it writes to UserDefaults under
-// `PVControllerMappings_<vendorName>`.
-//
-// Cache invalidation: PVRemappableController writes through saveMappings()
-// which calls UserDefaults.set — we observe `UserDefaults.didChangeNotification`
-// and drop the cache so the next poll re-reads.
-
-private enum RemapStore {
-    /// vendor → [source-button-id : destination-button-id]. Both keys/values
-    /// match `ButtonIdentifier` raw values (see PVRemappableController.swift).
-    static var cache: [String: [String: String]] = [:]
-    static let cacheLock = NSLock()
-    static var observerInstalled = false
-
-    static func mapping(forVendor vendor: String) -> [String: String] {
-        cacheLock.lock(); defer { cacheLock.unlock() }
-        installObserverIfNeeded_locked()
-        if let cached = cache[vendor] { return cached }
-        var result: [String: String] = [:]
-        if let data = UserDefaults.standard.data(forKey: "PVControllerMappings_\(vendor)"),
-           let raw = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-            for (key, value) in raw {
-                if let mapping = value as? [String: Any],
-                   let destId = mapping["destinationId"] as? String {
-                    result[key] = destId
-                }
-            }
-        }
-        cache[vendor] = result
-        return result
-    }
-
-    private static func installObserverIfNeeded_locked() {
-        guard !observerInstalled else { return }
-        observerInstalled = true
-        NotificationCenter.default.addObserver(
-            forName: UserDefaults.didChangeNotification,
-            object: UserDefaults.standard,
-            queue: nil
-        ) { _ in
-            cacheLock.lock(); cache.removeAll(); cacheLock.unlock()
-        }
-    }
-}
-
 // MARK: - GCController polling for physical controllers
 
 extension PVThinLibretroCore {
 
     /// Read a logical button's pressed state honouring the user's remap. If
-    /// the user has mapped `buttonA → buttonB`, querying `"buttonA"` reads
+    /// the user has mapped `buttonA → buttonB`, querying `.buttonA` reads
     /// physical buttonB. Identity when no mapping is stored.
+    ///
+    /// Resolution goes through ``ControllerMappingStore`` (PVCoreBridge) —
+    /// PVRemappableController writes there and the thick libretro wrapper
+    /// reads from the same store.
     fileprivate func remappedPressed(
-        _ source: String,
+        _ source: ButtonIdentifier,
         on pad: GCExtendedGamepad,
         controller: GCController
     ) -> Bool {
-        let vendor = controller.vendorName ?? "unknown"
-        let mapping = RemapStore.mapping(forVendor: vendor)
-        let effective = mapping[source] ?? source
+        let effective = ControllerMappingStore.shared.destination(
+            forSource: source,
+            vendor: controller.vendorName ?? "unknown"
+        )
         return Self.physicalPressed(effective, on: pad)
     }
 
-    /// Look up the physical button on the gamepad by its `ButtonIdentifier`
-    /// raw value. Returns false for identifiers the thin wrapper doesn't
-    /// surface (touchpadButton, paddleN, etc.) since those have no libretro
+    /// Look up the physical button on the gamepad by its `ButtonIdentifier`.
+    /// Returns false for identifiers the thin wrapper doesn't surface
+    /// (touchpadButton, paddleN, etc.) since those have no libretro
     /// JOYPAD equivalent.
     private static func physicalPressed(
-        _ identifier: String,
+        _ identifier: ButtonIdentifier,
         on pad: GCExtendedGamepad
     ) -> Bool {
         switch identifier {
-        case "buttonA":              return pad.buttonA.isPressed
-        case "buttonB":              return pad.buttonB.isPressed
-        case "buttonX":              return pad.buttonX.isPressed
-        case "buttonY":              return pad.buttonY.isPressed
-        case "leftShoulder":         return pad.leftShoulder.isPressed
-        case "rightShoulder":        return pad.rightShoulder.isPressed
-        case "leftTrigger":          return pad.leftTrigger.isPressed
-        case "rightTrigger":         return pad.rightTrigger.isPressed
-        case "dpadUp":               return pad.dpad.up.isPressed
-        case "dpadDown":             return pad.dpad.down.isPressed
-        case "dpadLeft":             return pad.dpad.left.isPressed
-        case "dpadRight":            return pad.dpad.right.isPressed
-        case "menu":                 return pad.buttonMenu.isPressed
+        case .buttonA:              return pad.buttonA.isPressed
+        case .buttonB:              return pad.buttonB.isPressed
+        case .buttonX:              return pad.buttonX.isPressed
+        case .buttonY:              return pad.buttonY.isPressed
+        case .leftShoulder:         return pad.leftShoulder.isPressed
+        case .rightShoulder:        return pad.rightShoulder.isPressed
+        case .leftTrigger:          return pad.leftTrigger.isPressed
+        case .rightTrigger:         return pad.rightTrigger.isPressed
+        case .dpadUp:               return pad.dpad.up.isPressed
+        case .dpadDown:             return pad.dpad.down.isPressed
+        case .dpadLeft:             return pad.dpad.left.isPressed
+        case .dpadRight:            return pad.dpad.right.isPressed
+        case .menu:                 return pad.buttonMenu.isPressed
         // DualSense Create / DS4 Share / Xbox Share / generic Options all
         // surface through `buttonOptions` — match every ButtonIdentifier
         // that could legitimately resolve to it.
-        case "options", "share", "createButton", "shareButton":
+        case .options, .share, .createButton, .shareButton:
             return pad.buttonOptions?.isPressed ?? false
-        case "leftThumbstickButton":  return pad.leftThumbstickButton?.isPressed ?? false
-        case "rightThumbstickButton": return pad.rightThumbstickButton?.isPressed ?? false
-        default: return false
+        case .leftThumbstickButton:  return pad.leftThumbstickButton?.isPressed ?? false
+        case .rightThumbstickButton: return pad.rightThumbstickButton?.isPressed ?? false
+        default:                     return false
         }
     }
 
@@ -209,19 +161,19 @@ extension PVThinLibretroCore {
             // D-pad — left thumbstick fallback unchanged (analog → digital
             // synthesis isn't subject to button remapping).
             _bridge.setButton(RetroJoypad.up.rawValue,
-                              pressed: remappedPressed("dpadUp", on: pad, controller: physicalController)
+                              pressed: remappedPressed(.dpadUp, on: pad, controller: physicalController)
                                     || pad.leftThumbstick.up.value > 0.5,
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.down.rawValue,
-                              pressed: remappedPressed("dpadDown", on: pad, controller: physicalController)
+                              pressed: remappedPressed(.dpadDown, on: pad, controller: physicalController)
                                     || pad.leftThumbstick.down.value > 0.5,
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.left.rawValue,
-                              pressed: remappedPressed("dpadLeft", on: pad, controller: physicalController)
+                              pressed: remappedPressed(.dpadLeft, on: pad, controller: physicalController)
                                     || pad.leftThumbstick.left.value > 0.5,
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.right.rawValue,
-                              pressed: remappedPressed("dpadRight", on: pad, controller: physicalController)
+                              pressed: remappedPressed(.dpadRight, on: pad, controller: physicalController)
                                     || pad.leftThumbstick.right.value > 0.5,
                               forPlayer: player)
             // Face buttons — libretro buttonA↔buttonB convention is intentionally
@@ -229,49 +181,49 @@ extension PVThinLibretroCore {
             // MFi uses Xbox); remap is applied to the MFi-side identifier so
             // user mappings stack correctly on top.
             _bridge.setButton(RetroJoypad.b.rawValue,
-                              pressed: remappedPressed("buttonA", on: pad, controller: physicalController),
+                              pressed: remappedPressed(.buttonA, on: pad, controller: physicalController),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.a.rawValue,
-                              pressed: remappedPressed("buttonB", on: pad, controller: physicalController),
+                              pressed: remappedPressed(.buttonB, on: pad, controller: physicalController),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.y.rawValue,
-                              pressed: remappedPressed("buttonX", on: pad, controller: physicalController),
+                              pressed: remappedPressed(.buttonX, on: pad, controller: physicalController),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.x.rawValue,
-                              pressed: remappedPressed("buttonY", on: pad, controller: physicalController),
+                              pressed: remappedPressed(.buttonY, on: pad, controller: physicalController),
                               forPlayer: player)
             // Shoulders & triggers
             _bridge.setButton(RetroJoypad.l.rawValue,
-                              pressed: remappedPressed("leftShoulder", on: pad, controller: physicalController),
+                              pressed: remappedPressed(.leftShoulder, on: pad, controller: physicalController),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.r.rawValue,
-                              pressed: remappedPressed("rightShoulder", on: pad, controller: physicalController),
+                              pressed: remappedPressed(.rightShoulder, on: pad, controller: physicalController),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.l2.rawValue,
-                              pressed: remappedPressed("leftTrigger", on: pad, controller: physicalController),
+                              pressed: remappedPressed(.leftTrigger, on: pad, controller: physicalController),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.r2.rawValue,
-                              pressed: remappedPressed("rightTrigger", on: pad, controller: physicalController),
+                              pressed: remappedPressed(.rightTrigger, on: pad, controller: physicalController),
                               forPlayer: player)
             // Thumbstick clicks
             if pad.leftThumbstickButton != nil {
                 _bridge.setButton(RetroJoypad.l3.rawValue,
-                                  pressed: remappedPressed("leftThumbstickButton", on: pad, controller: physicalController),
+                                  pressed: remappedPressed(.leftThumbstickButton, on: pad, controller: physicalController),
                                   forPlayer: player)
             }
             if pad.rightThumbstickButton != nil {
                 _bridge.setButton(RetroJoypad.r3.rawValue,
-                                  pressed: remappedPressed("rightThumbstickButton", on: pad, controller: physicalController),
+                                  pressed: remappedPressed(.rightThumbstickButton, on: pad, controller: physicalController),
                                   forPlayer: player)
             }
             // Start / Select
             _bridge.setButton(RetroJoypad.start.rawValue,
-                              pressed: remappedPressed("menu", on: pad, controller: physicalController),
+                              pressed: remappedPressed(.menu, on: pad, controller: physicalController),
                               forPlayer: player)
 
             if pad.buttonOptions != nil {
                 _bridge.setButton(RetroJoypad.select.rawValue,
-                                  pressed: remappedPressed("options", on: pad, controller: physicalController),
+                                  pressed: remappedPressed(.options, on: pad, controller: physicalController),
                                   forPlayer: player)
             }
             // Analog sticks
