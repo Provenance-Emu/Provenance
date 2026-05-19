@@ -596,6 +596,18 @@ public extension GameLaunchingViewController {
         } else if let userSelection = game.userPreferredCoreID ?? game.system?.userPreferredCoreID,
            let preferredCore = cores.first(where: { $0.identifier == userSelection }) {
             // Check for user's preferred core
+            // TODO(tvos-tester-18may): native Snes9x (com.provenance.core.snes9x) insta-crashes
+            // on tvOS when set as the system default but works when picked ad-hoc per launch.
+            // Both paths funnel through `presentEMU` with the same `PVCore`, so the divergence
+            // is likely either: (a) the ad-hoc UI path dismisses the SwiftUI hosting VC before
+            // `presentEMU` runs while the default path does not — and `present(emulatorVC)` on
+            // top of a lingering presentation context can deadlock/crash on tvOS; or (b) the
+            // ad-hoc path triggers some core-warmup side effect (Realm thaw, CloudKit sync,
+            // first-launch Core.plist scan) that the default path skips. Capture a crash log
+            // from a real Apple TV with Snes9x set as default and `selectedCore.identifier ==
+            // com.provenance.core.snes9x` to confirm. Note: snes9x_2010 / snes9x_2002 are RA
+            // wrapper cores (PVRetroArchCoreCore subclasses) — they share the same
+            // `setPauseEmulation`-gated lifecycle path that may be missing on the native core.
             selectedCore = preferredCore
         } else if needsCoreSelection {
             selectedCore = nil

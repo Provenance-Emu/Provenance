@@ -1213,7 +1213,13 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.jaguar</string>
-				<string>com.provenance.jaguarcd</string>
+				<!-- TODO(tvos-tester-18may): virtualjaguar libretro does NOT support Jaguar CD
+				     content (.cue/.iso/.m3u); upstream supported_extensions = "j64|jag|rom|abs|cof|bin|prg"
+				     (see libretro-super/dist/info/virtualjaguar_libretro.info). Advertising
+				     com.provenance.jaguarcd here caused insta-crashes on tvOS when the user
+				     launched a Jaguar CD ROM and the core rejected the file. Re-enable only
+				     when a Jaguar CD-capable core (e.g. mame/MESS or a future VJ fork) is wired up. -->
+				<!-- <string>com.provenance.jaguarcd</string> -->
 			</array>
 		</dict>
 		<dict>

@@ -49,6 +49,9 @@ extension PVAtari800: EmulatorCoreInfoPlistProvider {
     static var defaultPlist: EmulatorCoreInfoPlist { EmulatorCoreInfoPlist.init(
         identifier: "com.provenance.atari800",
         principleClass: "PVAtari800Swift.ATR800GameCore", // ATR800GameCore?
+        // TODO(tvos-tester-18may): see Core.plist — flip "com.provenance.8bit" to
+        // canonical "com.provenance.atari8bit" once PVAtari800 Swift wrapper conforms to
+        // PVA8SystemResponderClient (and forwards keyboard + mouse selectors to the bridge).
         supportedSystems: ["com.provenance.5200", "com.provenance.8bit"],
         projectName: "Atari 800",
         projectURL: "https://atari800.github.io",

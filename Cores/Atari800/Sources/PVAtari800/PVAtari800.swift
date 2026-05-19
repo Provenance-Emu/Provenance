@@ -44,16 +44,28 @@ extension PVAtari800: PV5200SystemResponderClient {
     public func didPush(_ button: PVCoreBridge.PV5200Button, forPlayer player: Int) {
         (bridge as! PV5200SystemResponderClient).didPush(button, forPlayer: player)
     }
-    
+
     public func didRelease(_ button: PVCoreBridge.PV5200Button, forPlayer player: Int) {
         (bridge as! PV5200SystemResponderClient).didRelease(button, forPlayer: player)
     }
-    
+
     public func didMoveJoystick(_ button: PVCoreBridge.PV5200Button, withValue value: CGFloat, forPlayer player: Int) {
         (bridge as! PV5200SystemResponderClient).didMoveJoystick(button, withValue: value, forPlayer: player)
     }
-    
+
     public func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
         (bridge as! PV5200SystemResponderClient).didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)
     }
 }
+
+// TODO(tvos-tester-18may): The underlying `PVAtari800Bridge` ObjC class implements both
+// PVA8SystemResponderClient and PV5200SystemResponderClient (see PVAtari800Bridge.h),
+// but the Swift `PVAtari800` wrapper only declares PV5200SystemResponderClient conformance.
+// As a result, when an Atari 8-bit ROM is launched with the native Atari800 core,
+// `PVCoreFactory.controllerViewController(forSystem:)` hits the `fatalError("Core doesn't
+// implement PVA8SystemResponderClient")` branch (PVCoreFactory.swift:184). The matching
+// Core.plist mismatch (`com.provenance.8bit` vs the canonical `com.provenance.atari8bit`)
+// has been fixed in this commit so that the core is correctly associated with the system.
+// Adding `PVA8SystemResponderClient` conformance here requires also satisfying its
+// KeyboardResponder + MouseResponder requirements — too broad a change to land surgically
+// without a runtime smoke test on a real Atari 8-bit ROM.
