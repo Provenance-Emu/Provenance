@@ -307,7 +307,26 @@ extension PVThinLibretroCore {
                                     || responder(.start, playerIndex),
                               forPlayer: player)
 
-            if pad.buttonOptions != nil {
+            // Arcade-system gotcha: the hardware controller's Options /
+            // Menu / Share button is what users press to open the PV pause
+            // menu. On non-arcade systems we forward it to JOYPAD_SELECT
+            // (the libretro convention for "Select"). But on MAME / CPS1-3
+            // / NeoGeo / NeoGeoCD, JOYPAD_SELECT is hardwired to **Insert
+            // Coin** by the core — so the same button press opens the
+            // pause menu AND inserts a coin every time. Tester report:
+            // "if you open the menu enough times, once in awhile it will
+            //  also register a coin".
+            //
+            // Suppress the hardware → JOYPAD_SELECT path on arcade systems.
+            // The touch-skin Coin tile still works because it goes through
+            // the responder mask (commit 2106fcb99e), which we OR in below.
+            if suppressL3R3 {
+                // Arcade: only fire JOYPAD_SELECT from the responder mask
+                // (touch-skin Coin tile), never from the hardware button.
+                _bridge.setButton(RetroJoypad.select.rawValue,
+                                  pressed: responder(.select, playerIndex),
+                                  forPlayer: player)
+            } else if pad.buttonOptions != nil {
                 _bridge.setButton(RetroJoypad.select.rawValue,
                                   pressed: remappedPressed(.options, on: pad, controller: physicalController)
                                         || responder(.select, playerIndex),
