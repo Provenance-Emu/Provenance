@@ -989,6 +989,26 @@ static void thin_vulkan_set_image(void *handle, const struct retro_vulkan_image 
     // until retro_video_refresh_t returns.
     bridge->_vulkanCurrentVkImage = image->create_info.image;
     bridge->_vulkanHasCurrentImage = YES;
+    // First-3-frames-only breadcrumb: record the VkImage extent the core
+    // is handing us. If iPad/flycast hands us an extent that exceeds the
+    // bridge's IOSurface-backed CAMetalLayer drawable, the next
+    // vkQueueSubmit can page-fault on the implicit copy/blit. Frequent
+    // enough at boot to capture in Console.app, gated past frame 3 so it
+    // doesn't drown the running log.
+    static uint32_t _vkSetImageCount = 0;
+    if (_vkSetImageCount++ < 3) {
+        ILOG(@"ThinFrontend: thin_vulkan_set_image #%u VkImage=%p extent=%ux%u layers=%u mips=%u format=%d layout=%d wait_sems=%u src_qfam=%u",
+             _vkSetImageCount,
+             (void *)image->create_info.image,
+             image->create_info.extent.width,
+             image->create_info.extent.height,
+             image->create_info.arrayLayers,
+             image->create_info.mipLevels,
+             (int)image->create_info.format,
+             (int)image->image_layout,
+             num_semaphores,
+             src_queue_family);
+    }
     // Store wait semaphores for use as pWaitSemaphores in async-compute path.
     // Cap at 8; the libretro Vulkan interface rarely provides more than 1.
     // Note: these are NOT used in set_command_buffers mode (libretro_vulkan.h spec).
@@ -6462,7 +6482,22 @@ static bool thin_environment(unsigned cmd, void *data) {
     os_unfair_lock_unlock(&_vulkanQueueLock);
 
     if (result != VK_SUCCESS) {
-        ELOG(@"ThinFrontend: vkQueueSubmit failed (result=%d)", result);
+        // Decode the most common failure codes so the Console.app log line
+        // tells us at a glance whether we hit DEVICE_LOST (page fault on a
+        // previous submit), OUT_OF_DEVICE_MEMORY (VRAM exhaustion — likely
+        // if a core sets an internal resolution larger than its heap
+        // budget), or something more obscure. Numeric codes are from the
+        // Vulkan spec (negative = error).
+        const char *codeStr;
+        switch ((int)result) {
+            case  -4: codeStr = "VK_ERROR_DEVICE_LOST";          break;
+            case  -2: codeStr = "VK_ERROR_OUT_OF_DEVICE_MEMORY"; break;
+            case  -1: codeStr = "VK_ERROR_OUT_OF_HOST_MEMORY";   break;
+            case -13: codeStr = "VK_ERROR_VALIDATION_FAILED";    break;
+            default:  codeStr = "(see VkResult)";                break;
+        }
+        ELOG(@"ThinFrontend: vkQueueSubmit failed result=%d (%s) cmdBufCount=%u VkImage=%p — next core frame may crash on its own waitForFences",
+             (int)result, codeStr, count, (void *)_vulkanCurrentVkImage);
         return;
     }
 

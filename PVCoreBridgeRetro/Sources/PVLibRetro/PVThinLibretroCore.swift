@@ -22,6 +22,9 @@ import PVSystems
 import GameController
 import CoreHaptics
 #endif
+#if canImport(UIKit)
+import UIKit
+#endif
 
 public extension Notification.Name {
     /// Posted (on main) when the active thin-libretro core reports new AV info via
@@ -355,7 +358,31 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         // (PVThinLibretroFrontend.mm ~line 2587) for iOS VRAM-fault-handler
         // safety; we don't repeat it here.
         if coreId.contains("flycast") || coreId.contains("reicast") {
-            setDefaultOption("reicast_internal_resolution", value: "1920x1440")
+            // iPad regression (2026-05-19): on iPad, flycast-jitless crashes
+            // before the Sega logo with `IOGPUMetalError: Caused GPU Address
+            // Fault Error` → `vk::DeviceLostError` thrown from inside the
+            // core's own `vk::Device::waitForFences`. Reproduces on first
+            // frame with `reicast_internal_resolution=1920x1440`; iPhone
+            // does NOT crash at the same setting. The hypothesis is iPad's
+            // higher physical-pixel framebuffer pressure (Retina + 3× internal
+            // scale + per-triangle alpha sort) pushes a flycast Vulkan
+            // allocation past a heap boundary on Apple A12X/M-series GPUs.
+            // Drop iPad to 1280×960 (2× upscale) by default until we have
+            // a root-cause fix. iPhone keeps 1920×1440. Users can override
+            // either via core options.
+            //
+            // tvOS targets a 4K-class screen; keep the higher resolution
+            // since the Apple TV box uses an A12/A15 in a thermally
+            // unconstrained enclosure and we have not seen this crash there.
+            let flycastResolution: String = {
+                #if os(iOS) && !targetEnvironment(macCatalyst)
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    return "1280x960"
+                }
+                #endif
+                return "1920x1440"
+            }()
+            setDefaultOption("reicast_internal_resolution", value: flycastResolution)
             setDefaultOption("reicast_delay_frame_swapping", value: "disabled")
             setDefaultOption("reicast_alpha_sorting", value: "per-triangle")
         }
