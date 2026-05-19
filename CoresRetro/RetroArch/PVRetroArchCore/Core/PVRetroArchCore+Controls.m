@@ -808,50 +808,120 @@ static bool is_virtual_touch_controller(GCController *controller) {
                 }
             }
 
-            // TODO(tvos-tester-18may-ra-nes): Hardware controller forwarding here uses
-            // identity bindings (buttonA→buttonA, etc.), but PVRemappableController stores
-            // user-configured swaps (e.g. A↔B for Joy-Con) and applies them via
-            // GCControllerButtonInput.valueChangedHandler on the PHYSICAL controller. The
-            // pressedChangedHandler closures we install below run independently of those
-            // value handlers, so user remaps never reach the libretro core. To fix, the
-            // forwarder needs to resolve the destination button via the PVRemappableController
-            // for this `controller` before calling setValue: on the virtual target.
-            /// Fallback: use valueChangedHandler to catch Options/Menu when pressedChangedHandler fails
+            // Resolve PVRemappableController button swaps. PVRemappableController
+            // (PVUI/Sources/PVUIBase/Controller/PVRemappableController.swift)
+            // installs the user/Joy-Con-auto-fix swaps on each physical button's
+            // valueChangedHandler, but the pressedChangedHandler closures below
+            // run independently — without consulting the saved mapping the user's
+            // A↔B swap (Joy-Con, manual remap) never reaches libretro. Read the
+            // mapping dict it writes to UserDefaults under `PVControllerMappings_<vendor>`
+            // and resolve each source identifier to its destination *once* per
+            // bindControls invocation; the resolved virtual button is then
+            // captured by each per-button block.
+            //
+            // The Swift thin wrapper does the same thing in PVThinLibretroCore+Controls.swift
+            // (commit 629b9e737d). When ButtonIdentifier/ButtonMapping move to a
+            // shared lower-tier module both consumers will collapse into one call.
+            NSDictionary<NSString *, NSString *> *remap = ({
+                NSString *vendor = controller.vendorName ?: @"unknown";
+                NSData *data = [[NSUserDefaults standardUserDefaults]
+                                dataForKey:[NSString stringWithFormat:@"PVControllerMappings_%@", vendor]];
+                NSMutableDictionary *result = [NSMutableDictionary dictionary];
+                if (data) {
+                    id parsed = [NSJSONSerialization JSONObjectWithData:data options:0 error:NULL];
+                    if ([parsed isKindOfClass:[NSDictionary class]]) {
+                        for (NSString *key in (NSDictionary *)parsed) {
+                            NSDictionary *mapping = [(NSDictionary *)parsed objectForKey:key];
+                            NSString *destId = [mapping isKindOfClass:[NSDictionary class]]
+                                ? [mapping objectForKey:@"destinationId"] : nil;
+                            if ([destId isKindOfClass:[NSString class]]) {
+                                result[key] = destId;
+                            }
+                        }
+                    }
+                }
+                [result copy];
+            });
+            // Map a source `ButtonIdentifier` raw value (the physical control
+            // the user is pressing) to the VIRTUAL destination button on
+            // touch_controller — the one libretro reads each frame. e.g.
+            // user mapping `buttonA → buttonB` means a physical buttonA
+            // press should drive virtual buttonB; identity when no mapping
+            // is stored.
+            GCControllerButtonInput * (^resolveVirtual)(NSString *) =
+                ^GCControllerButtonInput *(NSString *sourceId) {
+                    NSString *effective = remap[sourceId] ?: sourceId;
+                    GCExtendedGamepad *virt = strongTarget.extendedGamepad;
+                    if ([effective isEqualToString:@"buttonA"])               return virt.buttonA;
+                    if ([effective isEqualToString:@"buttonB"])               return virt.buttonB;
+                    if ([effective isEqualToString:@"buttonX"])               return virt.buttonX;
+                    if ([effective isEqualToString:@"buttonY"])               return virt.buttonY;
+                    if ([effective isEqualToString:@"leftShoulder"])          return virt.leftShoulder;
+                    if ([effective isEqualToString:@"rightShoulder"])         return virt.rightShoulder;
+                    if ([effective isEqualToString:@"leftTrigger"])           return virt.leftTrigger;
+                    if ([effective isEqualToString:@"rightTrigger"])          return virt.rightTrigger;
+                    if ([effective isEqualToString:@"menu"])                  return virt.buttonMenu;
+                    if ([effective isEqualToString:@"options"]
+                        || [effective isEqualToString:@"share"]
+                        || [effective isEqualToString:@"createButton"]
+                        || [effective isEqualToString:@"shareButton"])        return virt.buttonOptions;
+                    if ([effective isEqualToString:@"leftThumbstickButton"])  return virt.leftThumbstickButton;
+                    if ([effective isEqualToString:@"rightThumbstickButton"]) return virt.rightThumbstickButton;
+                    return nil;
+                };
+            /// Fallback: use valueChangedHandler to catch Options/Menu when pressedChangedHandler fails.
+            /// Also routes through the remap resolver so a swap that re-targets
+            /// menu/options reaches the virtual destination consistently with
+            /// the pressedChangedHandler path above.
             GCExtendedGamepadValueChangedHandler previousHandler = controller.extendedGamepad.valueChangedHandler;
             controller.extendedGamepad.valueChangedHandler = ^(GCExtendedGamepad *gamepad, GCControllerElement *element) {
                 if (element == gamepad.buttonOptions && gamepad.buttonOptions) {
-                    [strongTarget.extendedGamepad.buttonOptions setValue:gamepad.buttonOptions.value];
+                    GCControllerButtonInput *dest = resolveVirtual(@"options") ?: strongTarget.extendedGamepad.buttonOptions;
+                    [dest setValue:gamepad.buttonOptions.value];
                 } else if (element == gamepad.buttonMenu && gamepad.buttonMenu) {
-                    [strongTarget.extendedGamepad.buttonMenu setValue:gamepad.buttonMenu.value];
+                    GCControllerButtonInput *dest = resolveVirtual(@"menu") ?: strongTarget.extendedGamepad.buttonMenu;
+                    [dest setValue:gamepad.buttonMenu.value];
                 }
                 if (previousHandler) {
                     previousHandler(gamepad, element);
                 }
             };
 
+            // Resolve the destination virtual button ONCE per bind (cheap
+            // string comparisons inside the block; the captured reference
+            // never changes mid-game) so per-press handler code stays a
+            // single setValue: call.
+            GCControllerButtonInput *virtA      = resolveVirtual(@"buttonA")       ?: strongTarget.extendedGamepad.buttonA;
+            GCControllerButtonInput *virtB      = resolveVirtual(@"buttonB")       ?: strongTarget.extendedGamepad.buttonB;
+            GCControllerButtonInput *virtX      = resolveVirtual(@"buttonX")       ?: strongTarget.extendedGamepad.buttonX;
+            GCControllerButtonInput *virtY      = resolveVirtual(@"buttonY")       ?: strongTarget.extendedGamepad.buttonY;
+            GCControllerButtonInput *virtLS     = resolveVirtual(@"leftShoulder")  ?: strongTarget.extendedGamepad.leftShoulder;
+            GCControllerButtonInput *virtRS     = resolveVirtual(@"rightShoulder") ?: strongTarget.extendedGamepad.rightShoulder;
+            GCControllerButtonInput *virtLT     = resolveVirtual(@"leftTrigger")   ?: strongTarget.extendedGamepad.leftTrigger;
+            GCControllerButtonInput *virtRT     = resolveVirtual(@"rightTrigger")  ?: strongTarget.extendedGamepad.rightTrigger;
             controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.buttonA setValue:value];
+                [virtA setValue:value];
             };
             controller.extendedGamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.buttonB setValue:value];
+                [virtB setValue:value];
             };
             controller.extendedGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.buttonX setValue:value];
+                [virtX setValue:value];
             };
             controller.extendedGamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.buttonY setValue:value];
+                [virtY setValue:value];
             };
             controller.extendedGamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.leftShoulder setValue:value];
+                [virtLS setValue:value];
             };
             controller.extendedGamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.rightShoulder setValue:value];
+                [virtRS setValue:value];
             };
             controller.extendedGamepad.leftTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.leftTrigger setValue:value];
+                [virtLT setValue:value];
             };
             controller.extendedGamepad.rightTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.rightTrigger setValue:value];
+                [virtRT setValue:value];
             };
             controller.extendedGamepad.dpad.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
                 [strongTarget.extendedGamepad.dpad setValueForXAxis:xValue yAxis:yValue];
@@ -862,19 +932,23 @@ static bool is_virtual_touch_controller(GCController *controller) {
             controller.extendedGamepad.rightThumbstick.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
                 [strongTarget.extendedGamepad.rightThumbstick setValueForXAxis:xValue yAxis:yValue];
             };
+            GCControllerButtonInput *virtL3      = resolveVirtual(@"leftThumbstickButton")  ?: strongTarget.extendedGamepad.leftThumbstickButton;
+            GCControllerButtonInput *virtR3      = resolveVirtual(@"rightThumbstickButton") ?: strongTarget.extendedGamepad.rightThumbstickButton;
+            GCControllerButtonInput *virtOpts    = resolveVirtual(@"options")               ?: strongTarget.extendedGamepad.buttonOptions;
+            GCControllerButtonInput *virtMenu    = resolveVirtual(@"menu")                  ?: strongTarget.extendedGamepad.buttonMenu;
             controller.extendedGamepad.leftThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.leftThumbstickButton setValue:value];
+                [virtL3 setValue:value];
             };
             controller.extendedGamepad.rightThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.rightThumbstickButton setValue:value];
+                [virtR3 setValue:value];
             };
             controller.extendedGamepad.buttonOptions.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.buttonOptions setValue:value];
+                [virtOpts setValue:value];
             };
             #if defined(__IPHONE_13_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0
             /// buttonMenu maps to START in RetroArch (RETRO_DEVICE_ID_JOYPAD_START)
             controller.extendedGamepad.buttonMenu.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [strongTarget.extendedGamepad.buttonMenu setValue:value];
+                [virtMenu setValue:value];
             };
             #endif
             #if defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
