@@ -436,7 +436,9 @@ struct CloudKitRecordDetailRow: View {
                             Text(value)
                                 .font(.system(size: 12, design: .monospaced))
                                 .foregroundColor(.white.opacity(0.9))
+                            #if !os(tvOS)
                                 .textSelection(.enabled)
+                            #endif
                         }
                         .padding(.vertical, 2)
                     }

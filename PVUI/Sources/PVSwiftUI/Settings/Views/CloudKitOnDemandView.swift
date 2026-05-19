@@ -956,12 +956,16 @@ private struct RecordListView: View {
                     })
                     .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
                     .listRowBackground(Color.clear)
+                    #if !os(tvOS)
                     .listRowSeparator(.hidden)
+                    #endif
                 }
                 .onDelete(perform: onDeleteItems) // Swipe to delete
             }
             .listStyle(.plain)
+#if !os(tvOS)
             .scrollContentBackground(.hidden)
+#endif
             .background(Color.clear)
             .refreshable { await viewModel.refreshMetadata() } // Pull-to-refresh for List
         }
