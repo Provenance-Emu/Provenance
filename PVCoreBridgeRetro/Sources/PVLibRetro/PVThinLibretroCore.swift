@@ -102,6 +102,27 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     struct N64CButtonState { var up = false; var down = false; var left = false; var right = false }
     var _n64CButtons: [Int: N64CButtonState] = [:]
 
+    // MARK: - Responder-asserted joypad mask
+    /// Bits asserted by the responder protocol path (DeltaSkin on-screen buttons,
+    /// TurboManager auto-fire, and any other `didPush`/`didRelease` source). The
+    /// per-frame `pollControllers()` writes physical-controller state directly into
+    /// `_bridge`'s joypad bitmask using `setButton(false)` when a physical button is
+    /// up — which would CLOBBER a press asserted by the responder a few ms earlier
+    /// on the main thread.
+    ///
+    /// Concretely this breaks TurboManager (#tester-turbo-thin-wrapper): TurboManager
+    /// fires `didPush`/`didRelease` at ~10Hz from the main run-loop, but the 60Hz
+    /// emulation-thread poll then overwrites the same bit with the physical pad's
+    /// (un-pressed) state.
+    ///
+    /// Fix: track responder-asserted bits per player here, and OR this mask in
+    /// during `pollControllers()` so a responder-asserted bit survives a physical
+    /// poll cycle. Cleared on `didRelease`.
+    ///
+    /// Locked because writes come from the main thread (responder/TurboManager) and
+    /// reads come from the emulation thread (`pollControllers`).
+    @nonobjc let _responderJoypadMaskLock = OSAllocatedUnfairLock<[UInt16]>(initialState: [0, 0, 0, 0])
+
     // MARK: - Mouse / pointer input state
     /// Previous normalized cursor position (0–1 range) used to compute per-event deltas
     /// for RETRO_DEVICE_MOUSE systems. Updated by `mouseMoved(atPoint:)`.
@@ -263,6 +284,11 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         // Cancel the scaling-mode observer so it can't fire against a
         // tearing-down bridge after stopEmulation returns.
         stopScalingModeObservation()
+        // Clear any responder-asserted joypad bits so a stuck on-screen / turbo
+        // press doesn't leak into the next emulation session through our mask.
+        _responderJoypadMaskLock.withLock { mask in
+            for i in 0..<mask.count { mask[i] = 0 }
+        }
         super.stopEmulation()
     }
 

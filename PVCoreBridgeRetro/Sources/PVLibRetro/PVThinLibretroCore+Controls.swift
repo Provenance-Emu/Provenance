@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import os
 import PVCoreBridge
 import PVLogging
 import PVSystems
@@ -166,6 +167,18 @@ extension PVThinLibretroCore {
     /// Without this, physical controllers have no effect in the thin wrapper
     /// (only DeltaSkin on-screen buttons would work via the responder protocols).
     @objc public func pollControllers() {
+        // Snapshot responder-asserted joypad mask for this poll cycle. OR'd into
+        // every per-button `setButton(...)` below so on-screen / turbo presses
+        // asserted via the responder protocol aren't clobbered by physical-pad
+        // poll writes. See `_responderJoypadMaskLock` doc on PVThinLibretroCore.
+        let responderMask = _responderJoypadMaskLock.withLock { $0 }
+
+        /// True if `btn` is currently asserted by the responder path for `player`.
+        func responder(_ btn: RetroJoypad, _ player: Int) -> Bool {
+            guard player >= 0 && player < responderMask.count else { return false }
+            return (responderMask[player] & UInt16(1 << btn.rawValue)) != 0
+        }
+
         for playerIndex in 0..<4 {
             let controller: GCController?
             switch playerIndex {
@@ -175,7 +188,19 @@ extension PVThinLibretroCore {
             case 3: controller = controller4
             default: controller = nil
             }
-            guard let pad = controller?.extendedGamepad, let physicalController = controller else { continue }
+            guard let pad = controller?.extendedGamepad, let physicalController = controller else {
+                // No physical pad for this slot — but the responder mask may still
+                // be asserting bits (on-screen skin, TurboManager). Re-assert those
+                // bits in the bridge so they survive any earlier clear from a
+                // previous frame's physical poll on a now-disconnected pad.
+                if playerIndex < responderMask.count, responderMask[playerIndex] != 0 {
+                    let m = responderMask[playerIndex]
+                    for bit in 0..<16 where (m & UInt16(1 << bit)) != 0 {
+                        _bridge.setButton(UInt32(bit), pressed: true, forPlayer: UInt32(playerIndex))
+                    }
+                }
+                continue
+            }
 
             let player = UInt32(playerIndex)
             // Each button read goes through `remappedPressed` so the user's
@@ -183,83 +208,112 @@ extension PVThinLibretroCore {
             // remaps) actually reach libretro. Identity when no remap exists.
             // D-pad — left thumbstick fallback unchanged (analog → digital
             // synthesis isn't subject to button remapping).
+            // Each per-button write OR-s in the responder-asserted bit so
+            // skin presses / TurboManager auto-fire survive a physical poll cycle.
             _bridge.setButton(RetroJoypad.up.rawValue,
                               pressed: remappedPressed(.dpadUp, on: pad, controller: physicalController)
-                                    || pad.leftThumbstick.up.value > 0.5,
+                                    || pad.leftThumbstick.up.value > 0.5
+                                    || responder(.up, playerIndex),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.down.rawValue,
                               pressed: remappedPressed(.dpadDown, on: pad, controller: physicalController)
-                                    || pad.leftThumbstick.down.value > 0.5,
+                                    || pad.leftThumbstick.down.value > 0.5
+                                    || responder(.down, playerIndex),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.left.rawValue,
                               pressed: remappedPressed(.dpadLeft, on: pad, controller: physicalController)
-                                    || pad.leftThumbstick.left.value > 0.5,
+                                    || pad.leftThumbstick.left.value > 0.5
+                                    || responder(.left, playerIndex),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.right.rawValue,
                               pressed: remappedPressed(.dpadRight, on: pad, controller: physicalController)
-                                    || pad.leftThumbstick.right.value > 0.5,
+                                    || pad.leftThumbstick.right.value > 0.5
+                                    || responder(.right, playerIndex),
                               forPlayer: player)
             // Face buttons — libretro buttonA↔buttonB convention is intentionally
             // already swapped relative to MFi here (libretro uses Nintendo layout,
             // MFi uses Xbox); remap is applied to the MFi-side identifier so
             // user mappings stack correctly on top.
             _bridge.setButton(RetroJoypad.b.rawValue,
-                              pressed: remappedPressed(.buttonA, on: pad, controller: physicalController),
+                              pressed: remappedPressed(.buttonA, on: pad, controller: physicalController)
+                                    || responder(.b, playerIndex),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.a.rawValue,
-                              pressed: remappedPressed(.buttonB, on: pad, controller: physicalController),
+                              pressed: remappedPressed(.buttonB, on: pad, controller: physicalController)
+                                    || responder(.a, playerIndex),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.y.rawValue,
-                              pressed: remappedPressed(.buttonX, on: pad, controller: physicalController),
+                              pressed: remappedPressed(.buttonX, on: pad, controller: physicalController)
+                                    || responder(.y, playerIndex),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.x.rawValue,
-                              pressed: remappedPressed(.buttonY, on: pad, controller: physicalController),
+                              pressed: remappedPressed(.buttonY, on: pad, controller: physicalController)
+                                    || responder(.x, playerIndex),
                               forPlayer: player)
             // Shoulders & triggers
             _bridge.setButton(RetroJoypad.l.rawValue,
-                              pressed: remappedPressed(.leftShoulder, on: pad, controller: physicalController),
+                              pressed: remappedPressed(.leftShoulder, on: pad, controller: physicalController)
+                                    || responder(.l, playerIndex),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.r.rawValue,
-                              pressed: remappedPressed(.rightShoulder, on: pad, controller: physicalController),
+                              pressed: remappedPressed(.rightShoulder, on: pad, controller: physicalController)
+                                    || responder(.r, playerIndex),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.l2.rawValue,
-                              pressed: remappedPressed(.leftTrigger, on: pad, controller: physicalController),
+                              pressed: remappedPressed(.leftTrigger, on: pad, controller: physicalController)
+                                    || responder(.l2, playerIndex),
                               forPlayer: player)
             _bridge.setButton(RetroJoypad.r2.rawValue,
-                              pressed: remappedPressed(.rightTrigger, on: pad, controller: physicalController),
+                              pressed: remappedPressed(.rightTrigger, on: pad, controller: physicalController)
+                                    || responder(.r2, playerIndex),
                               forPlayer: player)
             // Thumbstick clicks — suppressed for arcade systems whose libretro
             // cores hard-bind L3/R3 to the MAME Service / UI menu (see
             // SystemIdentifier.suppressLibretroL3R3 above). Force-clear the bit
             // in case an earlier frame (or a different system) set it.
             let suppressL3R3 = SystemIdentifier(rawValue: systemIdentifier ?? "")?.suppressLibretroL3R3 ?? false
+            // Combine both fixes: (a) for arcade systems whose libretro core
+            // hard-binds L3/R3 to the Service / UI menu, suppress L3/R3
+            // entirely — even DeltaSkin/touch presses via the responder mask
+            // (we don't want a player to accidentally fire the service menu
+            // from the on-screen tile either); (b) for everything else, OR
+            // the responder bit with the physical pad so turbo and other
+            // main-thread presses survive the per-frame poll overwrite.
             if pad.leftThumbstickButton != nil {
-                let l3Pressed = !suppressL3R3
-                    && remappedPressed(.leftThumbstickButton, on: pad, controller: physicalController)
-                _bridge.setButton(RetroJoypad.l3.rawValue,
-                                  pressed: l3Pressed,
-                                  forPlayer: player)
+                let l3Pressed = !suppressL3R3 && (
+                    remappedPressed(.leftThumbstickButton, on: pad, controller: physicalController)
+                    || responder(.l3, playerIndex)
+                )
+                _bridge.setButton(RetroJoypad.l3.rawValue, pressed: l3Pressed, forPlayer: player)
             } else if suppressL3R3 {
                 _bridge.setButton(RetroJoypad.l3.rawValue, pressed: false, forPlayer: player)
+            } else if responder(.l3, playerIndex) {
+                _bridge.setButton(RetroJoypad.l3.rawValue, pressed: true, forPlayer: player)
             }
             if pad.rightThumbstickButton != nil {
-                let r3Pressed = !suppressL3R3
-                    && remappedPressed(.rightThumbstickButton, on: pad, controller: physicalController)
-                _bridge.setButton(RetroJoypad.r3.rawValue,
-                                  pressed: r3Pressed,
-                                  forPlayer: player)
+                let r3Pressed = !suppressL3R3 && (
+                    remappedPressed(.rightThumbstickButton, on: pad, controller: physicalController)
+                    || responder(.r3, playerIndex)
+                )
+                _bridge.setButton(RetroJoypad.r3.rawValue, pressed: r3Pressed, forPlayer: player)
             } else if suppressL3R3 {
                 _bridge.setButton(RetroJoypad.r3.rawValue, pressed: false, forPlayer: player)
+            } else if responder(.r3, playerIndex) {
+                _bridge.setButton(RetroJoypad.r3.rawValue, pressed: true, forPlayer: player)
             }
             // Start / Select
             _bridge.setButton(RetroJoypad.start.rawValue,
-                              pressed: remappedPressed(.menu, on: pad, controller: physicalController),
+                              pressed: remappedPressed(.menu, on: pad, controller: physicalController)
+                                    || responder(.start, playerIndex),
                               forPlayer: player)
 
             if pad.buttonOptions != nil {
                 _bridge.setButton(RetroJoypad.select.rawValue,
-                                  pressed: remappedPressed(.options, on: pad, controller: physicalController),
+                                  pressed: remappedPressed(.options, on: pad, controller: physicalController)
+                                        || responder(.select, playerIndex),
                                   forPlayer: player)
+            } else if responder(.select, playerIndex) {
+                _bridge.setButton(RetroJoypad.select.rawValue, pressed: true, forPlayer: player)
             }
             // Analog sticks
             let lx = Int16(pad.leftThumbstick.xAxis.value * Float(kAnalogMax))
@@ -347,14 +401,31 @@ extension PVThinLibretroCore {
 extension PVThinLibretroCore {
 
     /// Press a libretro joypad button.
+    /// Also records the bit in `_responderJoypadMask` so a concurrent
+    /// `pollControllers()` on the emulation thread can't clobber it (see field
+    /// doc on `PVThinLibretroCore._responderJoypadMaskLock`). This is what makes
+    /// TurboManager auto-fire and on-screen-only skin presses survive physical
+    /// controller polling.
     fileprivate func pressButton(_ btn: RetroJoypad, forPlayer player: Int) {
         ILOG("ThinCore INPUT: pressButton \(btn) (id=\(btn.rawValue)) player=\(player) bridge=\(_bridge)")
+        if player >= 0 && player < 4 {
+            _responderJoypadMaskLock.withLock { mask in
+                mask[player] |= UInt16(1 << btn.rawValue)
+            }
+        }
         _bridge.setButton(btn.rawValue, pressed: true, forPlayer: UInt32(player))
     }
 
     /// Release a libretro joypad button.
+    /// Clears the bit in `_responderJoypadMask` so the next `pollControllers()`
+    /// reflects the un-pressed state.
     fileprivate func releaseButton(_ btn: RetroJoypad, forPlayer player: Int) {
         DLOG("ThinCore INPUT: releaseButton \(btn) (id=\(btn.rawValue)) player=\(player)")
+        if player >= 0 && player < 4 {
+            _responderJoypadMaskLock.withLock { mask in
+                mask[player] &= ~UInt16(1 << btn.rawValue)
+            }
+        }
         _bridge.setButton(btn.rawValue, pressed: false, forPlayer: UInt32(player))
     }
 
