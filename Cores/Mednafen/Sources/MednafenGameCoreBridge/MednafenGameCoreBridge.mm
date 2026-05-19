@@ -829,6 +829,48 @@ static void emulation_run(BOOL skipFrame) {
     BOOL ssUsePort2 = NO;
     int ssMaxPlayers = 2;
 
+    // NES/SNES light-gun pre-load detection. Consulted from the post-load SetInput
+    // block to wire port 1 as "zapper" / "superscope" instead of "gamepad" so the
+    // LightGun pause-menu tile drives the actual emulator-side peripheral.
+    // Mednafen-side `gameSupportsLightGun` falls through to LightGunGameRegistry
+    // for these systems — see MednafenGameCoreBridge+LightGun.mm.
+    //
+    // SNES Super Scope is only implemented by the legacy `snes` module
+    // (bSNES-derived). `snes_faust` has no Super Scope driver upstream — guard
+    // the SNES branch on the active mednafenCoreModule.
+    BOOL nesIsZapperGame = NO;
+    BOOL snesIsScopeGame = NO;
+    if (self.systemType == MednaSystemNES || self.systemType == MednaSystemSNES) {
+        NSString *sysID = [self valueForKey:@"systemIdentifier"];
+        NSString *md5 = [self valueForKey:@"romMD5"];
+        NSString *title = self->romName;
+        BOOL gunGame = (sysID.length > 0) &&
+            [PVLightGunGameRegistry gameSupportsLightGunForSystemIdentifier:sysID
+                                                                        md5:md5
+                                                                      title:title];
+        if (gunGame) {
+            if (self.systemType == MednaSystemNES) {
+                nesIsZapperGame = YES;
+                self->_isLightGunGame = YES;
+                self->_lightGunPlayerCount = 1;
+                ILOG(@"Mednafen NES pre-load: Zapper game detected (sysID=%@ md5=%@ title=%@)",
+                     sysID, md5, title);
+            } else { // SNES
+                if ([self->mednafenCoreModule isEqualToString:@"snes_faust"]) {
+                    WLOG(@"Mednafen SNES pre-load: Super Scope game '%@' detected but snes_faust module "
+                         @"has no Super Scope driver — gun input will be ignored. Disable snesFast to "
+                         @"enable Super Scope.", title);
+                } else {
+                    snesIsScopeGame = YES;
+                    self->_isLightGunGame = YES;
+                    self->_lightGunPlayerCount = 1;
+                    ILOG(@"Mednafen SNES pre-load: Super Scope game detected (sysID=%@ md5=%@ title=%@)",
+                         sysID, md5, title);
+                }
+            }
+        }
+    }
+
     // Apply multitap settings BEFORE MDFNI_LoadGame so the core initialises with the
     // correct port configuration. Both snes/snes_faust and ss read/cache multitap settings
     // during their load/init paths — setting them afterwards is too late.
@@ -1021,6 +1063,18 @@ static void emulation_run(BOOL skipFrame) {
             for (int i = 0; i < 5; i++) {
                 game->SetInput(i, "gamepad", (uint8_t *)inputBuffer[i]);
             }
+        } else if (snesIsScopeGame) {
+            // Super Scope game on the legacy `snes` module. Port 0 stays as the
+            // standard player-1 gamepad (menu navigation, two-player titles like
+            // Yoshi's Safari) and port 1 hosts the Super Scope.
+            // String literal is intentional — see commit 313aa94b57; passing a
+            // dynamically-built NSString.UTF8String here broke touch input.
+            self->multiTapPlayerCount = 2;
+            memset(inputBuffer[1], 0, 9 * sizeof(uint32_t));
+            [self resetLightGunState];
+            game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+            game->SetInput(1, "superscope", (uint8_t *)inputBuffer[1]);
+            ILOG(@"Mednafen SNES SetInput: port 0 gamepad, port 1 superscope");
         } else {
             self->multiTapPlayerCount = 2;
             game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
@@ -1034,10 +1088,28 @@ static void emulation_run(BOOL skipFrame) {
         // NOTE: helper-based per-port wiring reverted while we investigate
         // why it broke touch-skin input. Revisit alongside the Zapper-on-
         // port-2 routing once root cause is found.
-        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
-        game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
-        game->SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
-        game->SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
+        if (nesIsZapperGame) {
+            // The NES Zapper traditionally plugs into the player-2 controller
+            // port (port 1). Player 1 keeps a gamepad so the user can press
+            // Start on Duck Hunt / Hogan's Alley to begin a game.
+            // String literal is intentional — see commit 313aa94b57.
+            memset(inputBuffer[1], 0, 9 * sizeof(uint32_t));
+            [self resetLightGunState];
+            game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+            game->SetInput(1, "zapper",  (uint8_t *)inputBuffer[1]);
+            // Ports 2 and 3 remain wired even though Four Score and Zapper
+            // are mutually exclusive on real hardware — Mednafen tolerates
+            // the extra SetInput calls and stale gamepad state on an unused
+            // port is harmless.
+            game->SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
+            game->SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
+            ILOG(@"Mednafen NES SetInput: port 0 gamepad, port 1 zapper");
+        } else {
+            game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+            game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
+            game->SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
+            game->SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
+        }
     }
     else if (self.systemType == MednaSystemSS) {
         BOOL hasM3u = [path.pathExtension.lowercaseString isEqualToString:@"m3u"];
