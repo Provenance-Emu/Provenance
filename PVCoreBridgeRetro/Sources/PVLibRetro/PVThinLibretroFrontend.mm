@@ -997,14 +997,23 @@ static void thin_vulkan_set_image(void *handle, const struct retro_vulkan_image 
     // doesn't drown the running log.
     static uint32_t _vkSetImageCount = 0;
     if (_vkSetImageCount++ < 3) {
-        ILOG(@"ThinFrontend: thin_vulkan_set_image #%u VkImage=%p extent=%ux%u layers=%u mips=%u format=%d layout=%d wait_sems=%u src_qfam=%u",
+        // Note: `image->create_info` is `VkImageViewCreateInfo`, NOT
+        // `VkImageCreateInfo` — it carries the view's format / viewType /
+        // subresourceRange, not the underlying image's extent. Log what
+        // we have; for actual extent we'd need MoltenVK's getMTLTexture
+        // path (which `notifyRenderDelegateOfVulkanFrame` already logs).
+        ILOG(@"ThinFrontend: thin_vulkan_set_image #%u VkImage=%p view_format=%d viewType=%d "
+             @"aspect=0x%x baseMip=%u mipCount=%u baseLayer=%u layerCount=%u "
+             @"layout=%d wait_sems=%u src_qfam=%u",
              _vkSetImageCount,
              (void *)image->create_info.image,
-             image->create_info.extent.width,
-             image->create_info.extent.height,
-             image->create_info.arrayLayers,
-             image->create_info.mipLevels,
              (int)image->create_info.format,
+             (int)image->create_info.viewType,
+             image->create_info.subresourceRange.aspectMask,
+             image->create_info.subresourceRange.baseMipLevel,
+             image->create_info.subresourceRange.levelCount,
+             image->create_info.subresourceRange.baseArrayLayer,
+             image->create_info.subresourceRange.layerCount,
              (int)image->image_layout,
              num_semaphores,
              src_queue_family);
