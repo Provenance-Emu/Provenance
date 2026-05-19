@@ -335,6 +335,31 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             seedPSPFlash0Assets()
         }
 
+        // Flycast (Dreamcast): the libretro core's stock default for
+        // `reicast_internal_resolution` is "640x480" (Native 1x) — fine for
+        // a CRT but looks pixelated/half-size on retina iPhone and iPad
+        // displays where everything else renders at 2× or higher. Bump to
+        // 1920×1440 (3× upscale, HD) as a sensible retina baseline. Users
+        // who need more (iPad Pro can drive 2560×1920 / 4×) or less (older
+        // iPhones at 60fps thermal cap) can change in core options. Note
+        // the libretro key prefix is `reicast_*`, not `flycast_*` — see
+        // `shell/libretro/libretro_core_option_defines.h::CORE_OPTION_NAME`
+        // in the upstream flycast tree.
+        //
+        // Also disable `delay_frame_swapping` — the option is meant to
+        // hide a one-frame swap stall on power-constrained desktops, but
+        // on iOS its CPU cost outweighs the latency win and the visual
+        // benefit is invisible on a 60–120Hz mobile display.
+        //
+        // `threaded_rendering=disabled` is enforced elsewhere
+        // (PVThinLibretroFrontend.mm ~line 2587) for iOS VRAM-fault-handler
+        // safety; we don't repeat it here.
+        if coreId.contains("flycast") || coreId.contains("reicast") {
+            setDefaultOption("reicast_internal_resolution", value: "1920x1440")
+            setDefaultOption("reicast_delay_frame_swapping", value: "disabled")
+            setDefaultOption("reicast_alpha_sorting", value: "per-triangle")
+        }
+
         // For cores that need system files from the libretro buildbot,
         // migrate from the legacy RetroArch/system/ directory first (if it exists),
         // then download anything still missing from the buildbot.
