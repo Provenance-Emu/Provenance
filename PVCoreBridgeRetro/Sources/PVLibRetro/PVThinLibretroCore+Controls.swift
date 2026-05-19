@@ -50,6 +50,29 @@ private extension SystemIdentifier {
         .Atari8bit, .EP128, .TIC80, .ZXSpectrum,
     ]
 
+    // MARK: Arcade — suppress L3/R3 → libretro JOYPAD_L3/R3
+    //
+    // The libretro MAME / FBNeo / FBA / mame2003-plus / mame2010 / mame_current
+    // cores hard-code their internal "UI Select" / "UI Cancel" / "Service" hotkeys
+    // to JOYPAD_L3 and JOYPAD_R3 (and on some builds the L1+L2 / R1+R2 combo).
+    // The hotkey config lives inside the dlopened upstream MAME dylib at
+    // `CoresRetro/RetroArch/modules/mame*_libretro_tvos.dylib` and is not
+    // overridable via a core option in current builds.
+    //
+    // Because the thin libretro wrapper is our own frontend, we suppress the
+    // bits before they reach the core: `pollControllers()` skips reporting
+    // L3/R3 for arcade systems, and `mameMap()` returns `nil` for the on-screen
+    // DeltaSkin L3/R3 cells. The right-stick / left-stick clicks become inert
+    // in arcade games (no public-domain arcade game needs an L3/R3 button
+    // anyway — only the MAME service overlay does).
+    //
+    // tvos-tester report 2026-05-18: pressing R3 (right-stick click) on
+    // MAME / CPS2 / CPS3 / FBNeo cores opened the MAME Service menu.
+    var suppressLibretroL3R3: Bool { Self.arcadeServiceHotkeySystems.contains(self) }
+
+    private static let arcadeServiceHotkeySystems: Set<SystemIdentifier> = [
+        .MAME, .CPS1, .CPS2, .CPS3, .NeoGeo, .NeoGeoCD
+    ]
 }
 // Note: supportsLightGun / requiresLightGun are public properties on SystemIdentifier
 // defined in PVCoreBridge/Controls+SystemIdentifier.swift — no local override needed.
@@ -205,16 +228,28 @@ extension PVThinLibretroCore {
             _bridge.setButton(RetroJoypad.r2.rawValue,
                               pressed: remappedPressed(.rightTrigger, on: pad, controller: physicalController),
                               forPlayer: player)
-            // Thumbstick clicks
+            // Thumbstick clicks — suppressed for arcade systems whose libretro
+            // cores hard-bind L3/R3 to the MAME Service / UI menu (see
+            // SystemIdentifier.suppressLibretroL3R3 above). Force-clear the bit
+            // in case an earlier frame (or a different system) set it.
+            let suppressL3R3 = SystemIdentifier(rawValue: systemIdentifier ?? "")?.suppressLibretroL3R3 ?? false
             if pad.leftThumbstickButton != nil {
+                let l3Pressed = !suppressL3R3
+                    && remappedPressed(.leftThumbstickButton, on: pad, controller: physicalController)
                 _bridge.setButton(RetroJoypad.l3.rawValue,
-                                  pressed: remappedPressed(.leftThumbstickButton, on: pad, controller: physicalController),
+                                  pressed: l3Pressed,
                                   forPlayer: player)
+            } else if suppressL3R3 {
+                _bridge.setButton(RetroJoypad.l3.rawValue, pressed: false, forPlayer: player)
             }
             if pad.rightThumbstickButton != nil {
+                let r3Pressed = !suppressL3R3
+                    && remappedPressed(.rightThumbstickButton, on: pad, controller: physicalController)
                 _bridge.setButton(RetroJoypad.r3.rawValue,
-                                  pressed: remappedPressed(.rightThumbstickButton, on: pad, controller: physicalController),
+                                  pressed: r3Pressed,
                                   forPlayer: player)
+            } else if suppressL3R3 {
+                _bridge.setButton(RetroJoypad.r3.rawValue, pressed: false, forPlayer: player)
             }
             // Start / Select
             _bridge.setButton(RetroJoypad.start.rawValue,
@@ -1733,10 +1768,20 @@ extension PVThinLibretroCore: PVMAMESystemResponderClient {
         case .square:   return .y
         case .l1:       return .l
         case .l2:       return .l2
-        case .l3:       return .l3
+        case .l3:
+            // The MAME / FBNeo libretro cores hard-bind JOYPAD_L3 to UI_CANCEL /
+            // service hotkey. We never want DeltaSkin "L3" or a physical
+            // left-stick click to summon the MAME service menu — drop the
+            // mapping. Mirrors the GCController-side suppression in
+            // pollControllers() so both input paths are consistent.
+            // (tvos-tester 2026-05-18)
+            return nil
         case .r1:       return .r
         case .r2:       return .r2
-        case .r3:       return .r3
+        case .r3:
+            // JOYPAD_R3 → UI_SELECT / "Service" inside the MAME cores. Drop.
+            // (tvos-tester 2026-05-18)
+            return nil
         case .start:    return .start
         case .select:   return .select
         case .leftAnalogUp:    return .up

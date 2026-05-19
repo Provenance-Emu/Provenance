@@ -97,19 +97,22 @@ extern GCController *touch_controller;
             [touch_controller.extendedGamepad.rightTrigger setValue:pressed?1:0];
             break;
         case(PVMAMEButtonL3):
-            // TODO(tvos-tester-18may-mame): L3 inside the MAME libretro core defaults to
-            // UI_CANCEL / "Service" — pressing alone (or L1+L2 / R1+R2 combos on some
-            // MAME builds) opens the in-game MAME UI menu. Fix requires either an RA
-            // input remap to nul L3/R3 for MAME systems specifically, or a core-option
-            // override that disables the L3/R3 UI hotkeys (mame2003-plus exposes one;
-            // mame_current does not). Out of scope for surgical Coin fix.
-            [touch_controller.extendedGamepad.leftThumbstickButton setValue:pressed?1:0];
+            // DeltaSkin "L3" cell → drop entirely. The MAME / FBNeo libretro
+            // cores hard-bind JOYPAD_L3 to UI_CANCEL / "Service" hotkey, so
+            // letting a screen tap trigger it would summon the in-game MAME
+            // service overlay. The thin libretro wrapper applies the same
+            // suppression for both DeltaSkin and physical L3 — see
+            // `PVThinLibretroCore+Controls.swift` (`suppressLibretroL3R3`).
+            //
+            // NOTE: For physical thumbstick clicks on the thick wrapper, RA's
+            // mfi_joypad driver still feeds L3/R3 into the libretro core. A
+            // complete thick-wrapper fix needs an RA input remap (input_remap_*
+            // config) — out of scope for this surgical change which fixes the
+            // thin wrapper (default for tvOS) and on-screen taps.
             break;
         case(PVMAMEButtonR3):
-            // TODO(tvos-tester-18may-mame): R3 inside the MAME libretro core defaults to
-            // UI_SELECT — pressing it opens the MAME service / in-game options menu.
-            // Same fix path as L3 above.
-            [touch_controller.extendedGamepad.rightThumbstickButton setValue:pressed?1:0];
+            // DeltaSkin "R3" cell → drop. JOYPAD_R3 = UI_SELECT/"Service" in MAME.
+            // See L3 comment above for physical-pad caveat on thick wrapper.
             break;
         case(PVMAMEButtonSelect):
             // RetroArch's mfi_joypad driver maps buttonOptions → RETRO_DEVICE_ID_JOYPAD_SELECT.
