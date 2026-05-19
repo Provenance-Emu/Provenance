@@ -96,11 +96,25 @@ public class MelonDSOptions: NSObject, CoreOptions {
         defaultValue: true
     )
 
+    /// Default DS screen layout.
+    /// On tvOS the device is always in landscape and there is no user-facing
+    /// rotation, so a vertically-stacked Top/Bottom layout produces a tall
+    /// portrait framebuffer that gets letterboxed on the TV (the "DS stuck in
+    /// portrait" tester report). Default to Left/Right (index 2) on tvOS so the
+    /// two DS screens sit side-by-side and fill the landscape display.
+    private static let screenLayoutDefault: Int = {
+        #if os(tvOS)
+        return 2 // Left/Right
+        #else
+        return 0 // Top/Bottom
+        #endif
+    }()
+
     private static let screenLayoutOption = CoreOption.enumeration(
         .init(title: Keys.screenLayout,
               description: "Arrange the two DS screens."),
         values: enumValues(from: screenLayoutChoices),
-        defaultValue: 0
+        defaultValue: screenLayoutDefault
     )
 
     private static let screenGapOption = CoreOption.range(
