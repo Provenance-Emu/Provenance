@@ -808,6 +808,14 @@ static bool is_virtual_touch_controller(GCController *controller) {
                 }
             }
 
+            // TODO(tvos-tester-18may-ra-nes): Hardware controller forwarding here uses
+            // identity bindings (buttonA→buttonA, etc.), but PVRemappableController stores
+            // user-configured swaps (e.g. A↔B for Joy-Con) and applies them via
+            // GCControllerButtonInput.valueChangedHandler on the PHYSICAL controller. The
+            // pressedChangedHandler closures we install below run independently of those
+            // value handlers, so user remaps never reach the libretro core. To fix, the
+            // forwarder needs to resolve the destination button via the PVRemappableController
+            // for this `controller` before calling setValue: on the virtual target.
             /// Fallback: use valueChangedHandler to catch Options/Menu when pressedChangedHandler fails
             GCExtendedGamepadValueChangedHandler previousHandler = controller.extendedGamepad.valueChangedHandler;
             controller.extendedGamepad.valueChangedHandler = ^(GCExtendedGamepad *gamepad, GCControllerElement *element) {
