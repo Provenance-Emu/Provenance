@@ -106,6 +106,14 @@ extern int g_gs_preference;
     self.skipLayout = true;
     self.extractArchive = false;
 
+    // Clear any "core threw an exception" flag left over from a prior
+    // failed game / core instance. Without this, a user who hit a core
+    // crash and returned to the library would see every subsequent
+    // game-launch short-circuit out of runloop_iterate before doing any
+    // work. Defined in PVRetroArchCore+ExceptionTrampoline.mm.
+    extern void pv_safe_runloop_reset_throw_flag(void);
+    pv_safe_runloop_reset_throw_flag();
+
     /// [PPSSPP-DIAG] Capture entry to loadFileAtPath when the system is PSP.
     /// This is the last Provenance-side hook before RetroArch starts its
     /// load pipeline (which eventually calls retro_load_game).

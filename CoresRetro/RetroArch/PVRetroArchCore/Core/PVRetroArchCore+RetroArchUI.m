@@ -2399,7 +2399,18 @@ static void rarch_draw_observer(CFRunLoopObserverRef observer,
    }
 
    uint32_t runloop_flags;
-   int          ret   = runloop_iterate();
+   // Route through PVRetroArchCore+ExceptionTrampoline.mm so a C++
+   // exception thrown from inside the dlopened libretro core (most
+   // commonly `vk::DeviceLostError` from a core's own Vulkan-HPP
+   // layer on iOS GPU pressure) is caught at the dylib boundary
+   // instead of propagating up to `_objc_terminate` → `abort` and
+   // killing the entire app.
+   //
+   // pv_safe_runloop_iterate returns -1 on a caught exception, same
+   // as runloop_iterate's "exit loop" signal, so the existing path
+   // handles core-death the same way it handles a clean exit.
+   extern int pv_safe_runloop_iterate(void);
+   int          ret   = pv_safe_runloop_iterate();
    if (ret == -1) {
 	   command_event(CMD_EVENT_MENU_SAVE_CURRENT_CONFIG, NULL);
        ILOG(@"exit loop\n");
