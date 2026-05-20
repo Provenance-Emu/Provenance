@@ -110,4 +110,74 @@ bool pv_safe_runloop_did_throw(void) {
 
 }  // extern "C"
 
+// MARK: - Global terminate handler
+//
+// The try/catch in `pv_safe_runloop_iterate` only catches exceptions thrown
+// on the runloop thread. Libretro cores can spawn internal worker threads
+// (flycast's threaded renderer is the typical case); when one of those
+// threads throws an uncaught C++ exception it bypasses our trampoline and
+// goes straight to `_objc_terminate → abort`.
+//
+// Install a `std::set_terminate` handler at first-load time so we at least:
+//   1. log the exception type/`what()` to os_log + Console.app
+//   2. post the `PVRetroArchCoreDidThrowNotification` so the UI can show
+//      the "core stopped working" panel before the OS reaps the process
+//   3. give the notification ~250 ms to deliver before re-aborting
+//
+// Returning from a `std::terminate` handler without calling `std::abort()`
+// is undefined behaviour, but at least we get a clean breadcrumb before
+// the inevitable kill.
+
+namespace {
+
+std::terminate_handler g_previousTerminateHandler = nullptr;
+
+[[noreturn]] void pv_terminate_handler() {
+    // What was being thrown when terminate was called.
+    NSString *reason = @"unhandled exception (no current_exception)";
+    if (auto eptr = std::current_exception()) {
+        try {
+            std::rethrow_exception(eptr);
+        } catch (const std::exception &e) {
+            reason = [NSString stringWithUTF8String:e.what()];
+        } catch (const std::string &s) {
+            reason = [NSString stringWithUTF8String:s.c_str()];
+        } catch (const char *s) {
+            reason = [NSString stringWithUTF8String:s];
+        } catch (...) {
+            reason = @"unknown C++ exception";
+        }
+    }
+
+    NSLog(@"[PV-TERMINATE] unhandled exception: %@ — posting crash "
+          @"notification before abort", reason);
+
+    // Best-effort: try to deliver the notification synchronously on a
+    // dispatch_async to main, then sleep briefly so the main thread
+    // gets a chance to drain. We're already past the point of no
+    // return; this is purely a telemetry/UX nicety.
+    @autoreleasepool {
+        postCoreDidThrowNotificationOnce(reason);
+    }
+    // Give the main runloop ~250 ms to receive the post + present the
+    // alert. Anything thrown again in that window is the previous
+    // handler's problem.
+    usleep(250 * 1000);
+
+    if (g_previousTerminateHandler) {
+        g_previousTerminateHandler();
+    }
+    std::abort();
+}
+
+}  // namespace
+
+extern "C" void pv_safe_install_terminate_handler(void) {
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        g_previousTerminateHandler = std::set_terminate(pv_terminate_handler);
+        NSLog(@"[PV-TERMINATE] installed global std::terminate handler");
+    });
+}
+
 NS_ASSUME_NONNULL_END

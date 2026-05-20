@@ -114,6 +114,12 @@ extern int g_gs_preference;
     // work.
     pv_safe_runloop_reset_throw_flag();
 
+    // Install the global std::terminate handler so an exception thrown
+    // on a core-internal thread (e.g. flycast's render thread) at
+    // least posts a crash notification before the OS reaps the
+    // process. Idempotent.
+    pv_safe_install_terminate_handler();
+
     /// [PPSSPP-DIAG] Capture entry to loadFileAtPath when the system is PSP.
     /// This is the last Provenance-side hook before RetroArch starts its
     /// load pipeline (which eventually calls retro_load_game).

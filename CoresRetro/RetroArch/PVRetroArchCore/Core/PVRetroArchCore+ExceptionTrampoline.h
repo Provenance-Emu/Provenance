@@ -41,6 +41,13 @@ void pv_safe_runloop_reset_throw_flag(void);
 /// skip frame presentation / input forwarding when the core is dead.
 bool pv_safe_runloop_did_throw(void);
 
+/// Install a `std::set_terminate` handler that catches exceptions on
+/// ANY thread (not just the runloop thread `pv_safe_runloop_iterate`
+/// covers). Idempotent — safe to call from each game load. Logs the
+/// exception via os_log and posts
+/// `PVRetroArchCoreDidThrowNotification` before the inevitable abort.
+void pv_safe_install_terminate_handler(void);
+
 #ifdef __cplusplus
 }
 #endif
