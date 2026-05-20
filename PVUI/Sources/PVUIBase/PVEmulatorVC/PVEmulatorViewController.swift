@@ -649,7 +649,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             // Stop the emulation loop / audio first so the bridge isn't
             // trying to drive a dead core in the background while the
             // user reads the alert.
-            self.core?.setPauseEmulation(true)
+            self.core.setPauseEmulation(true)
             self.hideBootHUDIfNeeded()
 
             // Surface a toast for users who want to keep playing other
@@ -664,7 +664,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
             // Build the alert.
             let title = "Core Stopped Working"
-            let coreName = (self.core?.coreIdentifier as String?) ?? "the emulator core"
+            let coreName = (self.core.coreIdentifier as String?) ?? "the emulator core"
             let message = """
                 \(coreName) hit an unrecoverable error and had to be stopped.
 
