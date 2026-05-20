@@ -2607,27 +2607,12 @@ static bool thin_environment(unsigned cmd, void *data) {
     ILOG(@"ThinFrontend: retro_init done (%.2fs)", CACurrentMediaTime() - _tInit0);
     _coreDeinited = NO;
 
-#if TARGET_OS_IOS || TARGET_OS_TV
-    // Flycast's VRAM texture cache uses mprotect() to track writes. The SH4
-    // interpreter triggers EXC_BAD_ACCESS when writing to protected pages;
-    // a POSIX signal handler (fault_handler) normally catches this. With
-    // threaded rendering the emu thread's signal handler calls VramLockedWrite
-    // which takes a std::mutex — UB inside a signal handler and prone to
-    // deadlock. Disabling threaded rendering keeps everything on the
-    // retro_run thread, avoiding the cross-thread signal/mutex hazard.
-    // Also prevents lldb from intercepting Mach exceptions during debugging.
-    {
-        NSString *coreName = _rawSystemInfo.library_name
-            ? [NSString stringWithUTF8String:_rawSystemInfo.library_name] : @"";
-        if ([coreName.lowercaseString containsString:@"flycast"]) {
-            os_unfair_lock_lock(&_optionsLock);
-            _coreOptions[@"reicast_threaded_rendering"] = @"disabled";
-            _coreOptionsDirty = YES;
-            os_unfair_lock_unlock(&_optionsLock);
-            ILOG(@"ThinFrontend: forced reicast_threaded_rendering=disabled (iOS VRAM fault handler safety)");
-        }
-    }
-#endif
+    // NOTE: flycast's threaded renderer is a known hazard on iOS — its
+    // VRAM signal handler can deadlock against the renderer thread's
+    // std::mutex. We previously forced reicast_threaded_rendering=disabled
+    // here, but the performance cost outweighed the safety win. The
+    // exception trampoline + std::set_terminate handler will catch most
+    // resulting throws; the rest are accepted as a known limitation.
 
     // NOTE: Do NOT call retro_get_system_av_info before retro_load_game.
     // The libretro API requires content to be loaded first; many cores
