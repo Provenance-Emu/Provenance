@@ -118,6 +118,30 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 - The top-level `Package.swift` is minimal (legacy SPM support for PVLibrary only); the real build system is the Xcode workspace
 - Build variants (Lite/Standard/XL) differ in which cores are included; see `CoresRetro/RetroArch/Scripts/` for core lists per target
 
+### Build & toolchain gotchas
+
+- **RetroArch submodule edits need two commits.** The RA fork at `CoresRetro/RetroArch/RetroArch/` is a real git submodule. To ship a change: (1) `cd` into the submodule, commit on a `Provenance/<feature>` branch, push to the `Provenance` remote; (2) `cd` back to the parent, `git add CoresRetro/RetroArch/RetroArch && git commit` to bump the pointer. Skipping (2) leaves develop pointing at the old SHA.
+- **PVRetroArch.xcodeproj is not file-system-synced for source files.** Only the `scripts/` folder is in a `PBXFileSystemSynchronizedRootGroup`. New `.mm`/`.m`/`.h` files under `CoresRetro/RetroArch/PVRetroArchCore/Core/` MUST be added explicitly to `project.pbxproj` in 4 spots: PBXBuildFile, PBXFileReference, group children, Sources build phase. Use `C0C0CAFE...`-prefixed UUIDs.
+- **`gh issue list` has no `--sort` flag.** Use `gh issue list --search "sort:created-desc"` or `gh issue list --json number,title,createdAt --jq '.'` for sorted/filtered queries.
+
+### Debugging emulator cores
+
+- **flycast cannot be debugged with Xcode attached.** It installs `signal(SIGSEGV, ...)` for VRAM lazy-mapping; Xcode catches SIGSEGV and pauses, breaking the core. Use Console.app (filter `Process = Provenance`) for live logs OR `iOS Settings → Privacy & Security → Analytics → Analytics Data` for `.ips` crash files post-mortem.
+- **Sentry's `enableCrashHandler` is disabled** at `SentryBootstrapTask.swift:48` because its SIGSEGV handler conflicts with flycast's MMU path. Do NOT re-enable it. Crash telemetry flows through MetricKit instead.
+- **iPad MoltenVK surface_caps lie.** On iPadOS 26 with Stage Manager / adaptive scaling, `VkSurfaceCapabilitiesKHR.currentExtent` / `minImageExtent` / `maxImageExtent` ALL report `view.bounds × contentScaleFactor`, NOT the actual `CAMetalLayer.drawableSize`. They can differ (e.g. 2732×2048 vs 2092×1568). The authoritative source for iOS Vulkan is `metalLayer.drawableSize`. Never clamp against MoltenVK surface caps on iOS — see the iOS-gated branch in `gfx/common/vulkan_common.c::vulkan_create_swapchain`.
+- **libretro core option key prefixes don't always match the core name.** flycast's options are `reicast_*` (per `CORE_OPTION_NAME` in `shell/libretro/libretro_core_option_defines.h`). Always grep the core's `libretro_core_options.h` before guessing key names.
+
+### Code conventions
+
+- **Notification names — no magic strings.** Declare `FOUNDATION_EXPORT NSNotificationName const FooBarNotification;` in an ObjC `.h`, define in the matching `.mm`, mirror via `Notification.Name` extension in Swift referencing the same string. Posters reference the const; observers reference `Notification.Name.fooBar`. Single string literal lives in one `.mm` — never at a call site.
+- **Email in public-facing files / comments:** use `git@joemattiello.com` (SECURITY.md, README, GitHub issue comments, anything that ships publicly).
+
+### Subagent worktree rules
+
+- Subagents in `isolation: worktree` MUST stay on their own branch — never `git reset` / `rebase` / `push` / touch `develop`. Their commits get cherry-picked onto develop afterward.
+- Always include "DO NOT git reset / rebase / push / touch develop" in subagent prompts. Without it, parallel agents have historically collided (one agent ran `git reset HEAD~1` and dropped another agent's commit).
+- After an agent reports completion: cherry-pick from the agent's branch onto develop in the MAIN worktree's `Provenance/` directory. Shell can land in the agent's worktree if you're not careful — verify `pwd` and `git branch --show-current` before each cherry-pick.
+
 ## Agent Development Guidelines
 
 ### Quick Validation Commands
