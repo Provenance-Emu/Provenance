@@ -7,6 +7,7 @@ module libprosystem {
     header "../ProSystem/core/Memory.h"
     header "../ProSystem/core/Palette.h"
     header "../ProSystem/core/Pokey.h"
+    header "../ProSystem/core/ProSystem.h"
     header "../ProSystem/core/Sound.h"
     header "../ProSystem/core/Tia.h"
     export *

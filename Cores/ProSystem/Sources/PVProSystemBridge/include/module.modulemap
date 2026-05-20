@@ -1,4 +1,5 @@
 module PVProSystemBridge {
     header "../PVProSystemCoreBridge.h"
+    header "../PVProSystemCoreBridge+LightGun.h"
     export *
 }
