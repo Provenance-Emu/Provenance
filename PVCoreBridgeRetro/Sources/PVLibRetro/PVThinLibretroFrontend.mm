@@ -66,6 +66,7 @@
 #include <os/lock.h>
 #include <string.h>
 #include <dirent.h>
+#include <exception>
 #include <sys/stat.h>
 #include <mach/mach_time.h>
 #import <objc/message.h>
@@ -467,6 +468,11 @@ typedef struct PVThinLibretroSymbols {
     // Core options
     NSMutableDictionary<NSString *, NSString *> *_coreOptions;
     BOOL _coreOptionsDirty;
+    /// Set to YES after `retro_run` throws an uncatchable C++ exception
+    /// (typically `vk::DeviceLostError` from a libretro core's own Vulkan
+    /// stack). Subsequent `runFrame` calls become no-ops so we don't keep
+    /// re-entering a known-bad core every emulation tick.
+    BOOL _coreDidThrow;
     os_unfair_lock _optionsLock;
 
     // Structured option metadata (for CoreOptional UI support)
@@ -3021,6 +3027,9 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 - (void)runFrame {
     if (!_sym.retro_run && !_isBlockingCore) return;
+    // Short-circuit if the core threw an uncatchable exception on a
+    // previous frame. Reloading the core resets the flag.
+    if (_coreDidThrow) return;
 
     if (_isBlockingCore) {
         // Signal core to advance one tick, then wait for the next frame.
@@ -3128,7 +3137,55 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
 #endif
 
-    _sym.retro_run();
+    // Wrap retro_run in a C++ try/catch so an unhandled exception thrown
+    // from inside the dlopened core (most commonly flycast-jitless's own
+    // `vk::DeviceLostError` from `vk::Device::waitForFences` on iPad when
+    // its GPU work hits a budget limit) doesn't propagate up through
+    // `__cxa_throw` → `_objc_terminate` → `abort`. iOS uses a single
+    // system-shared `libc++abi.dylib`, so the catch crosses dylib
+    // boundaries cleanly.
+    //
+    // When we catch, mark the core as dead, post a notification the
+    // emulator VC can listen for to show "core crashed — return to
+    // library" UI, and return without invoking the rest of the frame
+    // pipeline. Without this, ONE bad frame inside the core terminates
+    // the entire app.
+    @try {
+        try {
+            _sym.retro_run();
+        } catch (const std::exception &e) {
+            WLOG(@"ThinFrontend: core threw std::exception in retro_run: %s — marking core dead",
+                 e.what());
+            _coreDidThrow = YES;
+            [self notifyCoreDeadWithReason:[NSString stringWithUTF8String:e.what()]];
+        } catch (...) {
+            WLOG(@"ThinFrontend: core threw unknown C++ exception in retro_run — marking core dead");
+            _coreDidThrow = YES;
+            [self notifyCoreDeadWithReason:@"unknown C++ exception"];
+        }
+    } @catch (NSException *exc) {
+        WLOG(@"ThinFrontend: core threw NSException in retro_run: %@ — marking core dead",
+             exc);
+        _coreDidThrow = YES;
+        [self notifyCoreDeadWithReason:exc.reason ?: @"NSException"];
+    }
+}
+
+/// Called from runFrame's @catch / catch handlers when the core throws an
+/// uncatchable exception. Posts a notification the emulator VC observes;
+/// also flips an internal flag so subsequent runFrame calls become no-ops
+/// until the core is reloaded.
+- (void)notifyCoreDeadWithReason:(NSString *)reason {
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        NSDictionary *info = @{ @"reason": reason ?: @"" };
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter]
+             postNotificationName:@"PVThinLibretroFrontendCoreDidThrow"
+             object:self
+             userInfo:info];
+        });
+    });
 }
 
 // ---------------------------------------------------------------------------

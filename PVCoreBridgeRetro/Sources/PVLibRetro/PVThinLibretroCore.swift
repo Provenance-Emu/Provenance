@@ -362,51 +362,43 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             seedPSPFlash0Assets()
         }
 
-        // Flycast (Dreamcast): the libretro core's stock default for
-        // `reicast_internal_resolution` is "640x480" (Native 1x) — fine for
-        // a CRT but looks pixelated/half-size on retina iPhone and iPad
-        // displays where everything else renders at 2× or higher. Bump to
-        // 1920×1440 (3× upscale, HD) as a sensible retina baseline. Users
-        // who need more (iPad Pro can drive 2560×1920 / 4×) or less (older
-        // iPhones at 60fps thermal cap) can change in core options. Note
-        // the libretro key prefix is `reicast_*`, not `flycast_*` — see
-        // `shell/libretro/libretro_core_option_defines.h::CORE_OPTION_NAME`
-        // in the upstream flycast tree.
+        // Flycast (Dreamcast): default to NATIVE 1× across all iOS / tvOS
+        // platforms.
         //
-        // Also disable `delay_frame_swapping` — the option is meant to
-        // hide a one-frame swap stall on power-constrained desktops, but
-        // on iOS its CPU cost outweighs the latency win and the visual
-        // benefit is invisible on a 60–120Hz mobile display.
+        // Why 1× instead of the retina-baseline upscale we ship for
+        // other cores: flycast on iOS runs JITless (`flycast-jitless`)
+        // because the App Store / iOS doesn't allow WX-protected JIT
+        // pages for sideloaded apps. The interpreter path is *much*
+        // slower than the JIT path, so any default >1× makes flycast
+        // chug below 60fps for most users AND pushes Vulkan resource
+        // allocations large enough to trip the `vk::DeviceLostError`
+        // crash we hit on iPad + iPhone with higher defaults (see
+        // crash log 2026-05-19: `IOGPUMetalError: Caused GPU Address
+        // Fault Error` → `vk::DeviceLostError` thrown from inside the
+        // core's own `vk::Device::waitForFences`).
+        //
+        // Native 1× = Dreamcast hardware resolution (640×480 + variants).
+        // Users with newer iPads / Apple Silicon Macs who want the
+        // upscale can bump it via Core Options. The TestFlight survey
+        // suggested most users hadn't even discovered the option until
+        // we told them about it — they were on the upstream "640x480"
+        // libretro default anyway and didn't notice.
+        //
+        // `reicast_delay_frame_swapping=disabled` stays — bad on
+        // mobile regardless of resolution.
+        // `reicast_alpha_sorting=per-triangle` stays — JITless flycast
+        // is CPU-bound, not pixel-fill-bound, so per-triangle alpha
+        // sort isn't the dominant cost.
         //
         // `threaded_rendering=disabled` is enforced elsewhere
-        // (PVThinLibretroFrontend.mm ~line 2587) for iOS VRAM-fault-handler
-        // safety; we don't repeat it here.
+        // (PVThinLibretroFrontend.mm ~line 2587) for iOS VRAM-fault-
+        // handler safety; we don't repeat it here.
+        //
+        // Note: libretro option key prefix is `reicast_*`, not
+        // `flycast_*` (CORE_OPTION_NAME defined in upstream's
+        // `shell/libretro/libretro_core_option_defines.h`).
         if coreId.contains("flycast") || coreId.contains("reicast") {
-            // iPad regression (2026-05-19): on iPad, flycast-jitless crashes
-            // before the Sega logo with `IOGPUMetalError: Caused GPU Address
-            // Fault Error` → `vk::DeviceLostError` thrown from inside the
-            // core's own `vk::Device::waitForFences`. Reproduces on first
-            // frame with `reicast_internal_resolution=1920x1440`; iPhone
-            // does NOT crash at the same setting. The hypothesis is iPad's
-            // higher physical-pixel framebuffer pressure (Retina + 3× internal
-            // scale + per-triangle alpha sort) pushes a flycast Vulkan
-            // allocation past a heap boundary on Apple A12X/M-series GPUs.
-            // Drop iPad to 1280×960 (2× upscale) by default until we have
-            // a root-cause fix. iPhone keeps 1920×1440. Users can override
-            // either via core options.
-            //
-            // tvOS targets a 4K-class screen; keep the higher resolution
-            // since the Apple TV box uses an A12/A15 in a thermally
-            // unconstrained enclosure and we have not seen this crash there.
-            let flycastResolution: String = {
-                #if os(iOS) && !targetEnvironment(macCatalyst)
-                if UIDevice.current.userInterfaceIdiom == .pad {
-                    return "1280x960"
-                }
-                #endif
-                return "1920x1440"
-            }()
-            setDefaultOption("reicast_internal_resolution", value: flycastResolution)
+            setDefaultOption("reicast_internal_resolution", value: "640x480")
             setDefaultOption("reicast_delay_frame_swapping", value: "disabled")
             setDefaultOption("reicast_alpha_sorting", value: "per-triangle")
         }
