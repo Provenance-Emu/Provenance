@@ -180,6 +180,16 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 @protocol DiscSwappable;
 @protocol EmulatorCoreViewportPositioning;
 
+/// Posted on the main queue when the dlopened libretro core throws an
+/// unhandled C++ exception (most commonly `vk::DeviceLostError` from a
+/// Vulkan-HPP core) and the `runFrame` try/catch boundary catches it
+/// before `_objc_terminate` aborts the process. `userInfo[@"reason"]`
+/// carries the `what()` / NSException reason string, if available.
+///
+/// Swift consumers should use `Notification.Name.pvThinLibretroFrontendCoreDidThrow`
+/// from the extension defined in `PVThinLibretroCore.swift`.
+FOUNDATION_EXPORT NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification;
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 @interface PVThinLibretroFrontend : PVCoreObjCBridge <ObjCBridgedCoreBridge>

@@ -10,6 +10,7 @@
 #import "PVRetroArchCoreBridge+Audio.h"
 #import "PVRetroArchCoreBridge+Video.h"
 #import "PVRetroArchCoreBridge+BIOSAtariST.h"
+#import "PVRetroArchCore+ExceptionTrampoline.h"
 #import <PVRetroArch/PVRetroArch-Swift.h>
 
 #import <Foundation/Foundation.h>
@@ -110,8 +111,7 @@ extern int g_gs_preference;
     // failed game / core instance. Without this, a user who hit a core
     // crash and returned to the library would see every subsequent
     // game-launch short-circuit out of runloop_iterate before doing any
-    // work. Defined in PVRetroArchCore+ExceptionTrampoline.mm.
-    extern void pv_safe_runloop_reset_throw_flag(void);
+    // work.
     pv_safe_runloop_reset_throw_flag();
 
     /// [PPSSPP-DIAG] Capture entry to loadFileAtPath when the system is PSP.

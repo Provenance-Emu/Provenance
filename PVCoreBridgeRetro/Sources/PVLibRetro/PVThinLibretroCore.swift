@@ -32,6 +32,24 @@ public extension Notification.Name {
     /// cache aspect-ratio data derived from the core should invalidate on receipt
     /// so the next layout pass re-reads the core's current geometry.
     static let PVThinLibretroCoreAVInfoDidUpdate = Notification.Name("PVThinLibretroCoreAVInfoDidUpdate")
+
+    /// Posted (on main) by `PVThinLibretroFrontend.runFrame`'s try/catch
+    /// boundary when the dlopened libretro core throws an unhandled C++ /
+    /// `NSException` (typically `vk::DeviceLostError` from a Vulkan-HPP
+    /// core that hit a GPU budget limit). `userInfo["reason"]` carries
+    /// the `what()` / `NSException.reason` string. Backs the ObjC
+    /// `PVThinLibretroFrontendCoreDidThrowNotification` constant defined
+    /// in `PVThinLibretroFrontend.h` — same string, single source of truth.
+    static let pvThinLibretroFrontendCoreDidThrow =
+        Notification.Name("PVThinLibretroFrontendCoreDidThrow")
+
+    /// Posted (on main) by the thick RetroArch wrapper's exception
+    /// trampoline (`PVRetroArchCore+ExceptionTrampoline.mm`) when
+    /// `runloop_iterate()` catches an unhandled core throw. Same
+    /// `userInfo["reason"]` payload as the thin-wrapper variant. Backs
+    /// the ObjC `PVRetroArchCoreDidThrowNotification` constant.
+    static let pvRetroArchCoreDidThrow =
+        Notification.Name("PVRetroArchCoreDidThrowNotification")
 }
 
 /// Internal to keep `PVEmulatorCore` out of the generated

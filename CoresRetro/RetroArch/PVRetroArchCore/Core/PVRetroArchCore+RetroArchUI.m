@@ -11,6 +11,7 @@
 #import "PVRetroArchCoreBridge+Video.h"
 #import "PVRetroArchCoreBridge+Archive.h"
 #import "PVRetroArchCoreBridge+BIOSAtariST.h"
+#import "PVRetroArchCore+ExceptionTrampoline.h"
 #import <PVRetroArch/PVRetroArch-Swift.h>
 #import <Foundation/Foundation.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
@@ -2404,12 +2405,8 @@ static void rarch_draw_observer(CFRunLoopObserverRef observer,
    // commonly `vk::DeviceLostError` from a core's own Vulkan-HPP
    // layer on iOS GPU pressure) is caught at the dylib boundary
    // instead of propagating up to `_objc_terminate` → `abort` and
-   // killing the entire app.
-   //
-   // pv_safe_runloop_iterate returns -1 on a caught exception, same
-   // as runloop_iterate's "exit loop" signal, so the existing path
-   // handles core-death the same way it handles a clean exit.
-   extern int pv_safe_runloop_iterate(void);
+   // killing the entire app. See PVRetroArchCore+ExceptionTrampoline.h
+   // for the API. -1 here matches runloop_iterate's "exit loop" return.
    int          ret   = pv_safe_runloop_iterate();
    if (ret == -1) {
 	   command_event(CMD_EVENT_MENU_SAVE_CURRENT_CONFIG, NULL);

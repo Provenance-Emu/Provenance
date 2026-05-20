@@ -303,6 +303,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// that can crash RetroArch's runloop during teardown.
     private var isQuitting: Bool = false
 
+    /// Dedup guard for the core-crashed alert. Either the thin or thick
+    /// wrapper trampoline can post the throw notification — and a runaway
+    /// core that throws every frame would otherwise spam alerts.
+    private var hasShownCoreDidThrowAlert: Bool = false
+
     /// Tracks the currently presented pause-menu container so we can dismiss it reliably,
     /// even if additional controllers are presented on top during the menu flow.
     weak var menuPresentationViewController: UIViewController?
@@ -557,6 +562,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // so the user isn't left staring at a blank emulator window.
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleCoreFailedToStart(_:)), name: Notification.Name("PVEmulatorCoreDidFailToStart"), object: nil)
 
+        // Posted by the thin libretro wrapper (PVThinLibretroFrontend.mm) or
+        // the thick RA wrapper trampoline (PVRetroArchCore+ExceptionTrampoline.mm)
+        // when the dlopened core throws an unhandled C++ exception (most
+        // commonly `vk::DeviceLostError` from flycast on iPad GPU pressure,
+        // but every C++-internal libretro core can rethrow similarly). Both
+        // notification names point to the same handler. Names defined in
+        // `Notification.Name` extension in `PVThinLibretroCore.swift`.
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(PVEmulatorViewController.handleCoreDidThrow(_:)),
+                                               name: .pvThinLibretroFrontendCoreDidThrow,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(PVEmulatorViewController.handleCoreDidThrow(_:)),
+                                               name: .pvRetroArchCoreDidThrow,
+                                               object: nil)
+
         #if !os(macOS)
         registerAudioRouteChangeObserver()
         #endif
@@ -601,6 +622,107 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                     SceneCoordinator.shared.closeEmulator()
                 }
             }
+        }
+    }
+
+    /// Handles `PVThinLibretroFrontendCoreDidThrow` /
+    /// `PVRetroArchCoreDidThrowNotification` — posted when a libretro core
+    /// throws an unhandled C++ exception (typically `vk::DeviceLostError`
+    /// from flycast / parallel_n64 / beetle_psx_hw / any Vulkan-HPP core
+    /// that hits a GPU resource limit). The exception trampolines
+    /// (PVThinLibretroFrontend.mm + PVRetroArchCore+ExceptionTrampoline.mm)
+    /// catch the throw at the dylib boundary so the app survives; this
+    /// handler tells the user what happened and gracefully closes the
+    /// emulator instead of leaving them on a frozen frame.
+    @objc func handleCoreDidThrow(_ note: Notification) {
+        // Dedup — both wrappers can post if the same core somehow lives
+        // across both code paths, and the thin wrapper posts via
+        // dispatch_once but the thick wrapper uses an atomic so a race
+        // could double-fire. Once is enough; subsequent calls no-op.
+        guard !hasShownCoreDidThrowAlert else { return }
+        hasShownCoreDidThrowAlert = true
+
+        let reason = (note.userInfo?["reason"] as? String) ?? "an unhandled error"
+        ELOG("Core threw uncaught exception: \(reason)")
+
+        Task { @MainActor in
+            // Stop the emulation loop / audio first so the bridge isn't
+            // trying to drive a dead core in the background while the
+            // user reads the alert.
+            self.core?.setPauseEmulation(true)
+            self.hideBootHUDIfNeeded()
+
+            // Surface a toast for users who want to keep playing other
+            // cores — keeps a record in the status feed without forcing
+            // a modal interruption.
+            StatusMessageManager.shared.addMessage(
+                .init(message: "Core crashed: \(reason)",
+                      type: .error,
+                      duration: 6.0,
+                      category: "core-crash")
+            )
+
+            // Build the alert.
+            let title = "Core Stopped Working"
+            let coreName = (self.core?.coreIdentifier as String?) ?? "the emulator core"
+            let message = """
+                \(coreName) hit an unrecoverable error and had to be stopped.
+
+                Reason: \(reason)
+
+                Your game can't continue. Return to the library to try a \
+                different core or game.
+                """
+
+            let alert = UIAlertController(title: title,
+                                          message: message,
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Return to Library",
+                                          style: .default,
+                                          handler: { _ in
+                self.dismissAndCloseEmulator()
+            }))
+            #if !os(tvOS)
+            // tvOS: only one button — the remote's Menu / Back already
+            // dismisses. iOS / iPad: also offer a "Copy Error" so
+            // testers can paste into Discord / GitHub without having
+            // to retype.
+            alert.addAction(UIAlertAction(title: "Copy Error",
+                                          style: .default,
+                                          handler: { _ in
+                UIPasteboard.general.string =
+                    "Core: \(coreName)\nReason: \(reason)"
+                self.dismissAndCloseEmulator()
+            }))
+            #endif
+
+            // If anything else is already presented (smart-picker, save-
+            // state browser, etc.), dismiss it first so the alert isn't
+            // hidden under another modal.
+            if let presented = self.presentedViewController {
+                presented.dismiss(animated: false) {
+                    self.present(alert, animated: true)
+                }
+            } else {
+                self.present(alert, animated: true)
+            }
+        }
+    }
+
+    /// Common teardown after the core-crash alert is acknowledged. Mirrors
+    /// `handleCoreFailedToStart` so the dismiss sequence behaves the same
+    /// whether the core died at load time or mid-game.
+    private func dismissAndCloseEmulator() {
+        if let presented = self.presentedViewController {
+            presented.dismiss(animated: false) {
+                SceneCoordinator.shared.closeEmulator()
+            }
+        } else if self.presentingViewController != nil {
+            self.dismiss(animated: true) {
+                SceneCoordinator.shared.closeEmulator()
+            }
+        } else {
+            SceneCoordinator.shared.closeEmulator()
         }
     }
 

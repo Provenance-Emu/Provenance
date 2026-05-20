@@ -24,6 +24,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PVRetroArchCore+ExceptionTrampoline.h"
 #include <exception>
 #include <stdexcept>
 #include <string>
@@ -34,11 +35,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Notification name posted on main when the thick wrapper catches an
-/// unhandled exception from the running core. The emulator VC observes
-/// this to show a "core crashed — return to library" UI instead of
-/// silently spinning on a dead core.
-NSString * const PVRetroArchCoreDidThrowNotification =
+// Definition of the notification-name constant declared in the header.
+NSNotificationName const PVRetroArchCoreDidThrowNotification =
     @"PVRetroArchCoreDidThrowNotification";
 
 namespace {

@@ -3181,12 +3181,19 @@ static bool thin_environment(unsigned cmd, void *data) {
         NSDictionary *info = @{ @"reason": reason ?: @"" };
         dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter]
-             postNotificationName:@"PVThinLibretroFrontendCoreDidThrow"
+             postNotificationName:PVThinLibretroFrontendCoreDidThrowNotification
              object:self
              userInfo:info];
         });
     });
 }
+
+// Definition of the notification-name constant declared in
+// PVThinLibretroFrontend.h. Centralized so consumers (Swift /
+// PVEmulatorViewController, ObjC posters) reference one symbol
+// instead of duplicating a magic string at every call site.
+NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
+    @"PVThinLibretroFrontendCoreDidThrow";
 
 // ---------------------------------------------------------------------------
 // MARK: - State / Cheats
