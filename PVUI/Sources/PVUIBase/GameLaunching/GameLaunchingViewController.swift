@@ -598,16 +598,22 @@ public extension GameLaunchingViewController {
             // Check for user's preferred core
             // TODO(tvos-tester-18may): native Snes9x (com.provenance.core.snes9x) insta-crashes
             // on tvOS when set as the system default but works when picked ad-hoc per launch.
-            // Both paths funnel through `presentEMU` with the same `PVCore`, so the divergence
-            // is likely either: (a) the ad-hoc UI path dismisses the SwiftUI hosting VC before
-            // `presentEMU` runs while the default path does not — and `present(emulatorVC)` on
-            // top of a lingering presentation context can deadlock/crash on tvOS; or (b) the
-            // ad-hoc path triggers some core-warmup side effect (Realm thaw, CloudKit sync,
-            // first-launch Core.plist scan) that the default path skips. Capture a crash log
-            // from a real Apple TV with Snes9x set as default and `selectedCore.identifier ==
-            // com.provenance.core.snes9x` to confirm. Note: snes9x_2010 / snes9x_2002 are RA
-            // wrapper cores (PVRetroArchCoreCore subclasses) — they share the same
-            // `setPauseEmulation`-gated lifecycle path that may be missing on the native core.
+            // Investigation 2026-05-20 ruled out the "lingering hostingVC" hypothesis: the
+            // default-core path returns early at line ~796 before any hosting VC is ever
+            // created (the no-saves case calls `dismissAndResume` synchronously while
+            // `flowState.hostingVC` is still nil). The ad-hoc path animates a dismiss before
+            // `presentEMU`; the default path goes straight to present with no delay.
+            // Both paths converge on `presentEMU(withCore: snes9x, ...)` with the same Realm-
+            // resolved PVCore. SNES9x has no first-launch warmup, no thin-wrapper swap, no
+            // dynamic framework load — the bridge init is plain.
+            // Remaining (unverified) suspects:
+            //   - some early lifecycle assertion in PVSNES9xEmulatorCore that the ad-hoc
+            //     path's ~250 ms dismiss animation happens to mask
+            //   - some side effect of `CoreRecommendationEngine.recommendations(...)`
+            //     (loads core capability manifest off the main actor) that the default path
+            //     skips
+            // Cannot fix without a real crash log: reproduce on Apple TV with Snes9x set as
+            // default, capture the .ips from Settings → Privacy → Analytics, and re-open.
             selectedCore = preferredCore
         } else if needsCoreSelection {
             selectedCore = nil
