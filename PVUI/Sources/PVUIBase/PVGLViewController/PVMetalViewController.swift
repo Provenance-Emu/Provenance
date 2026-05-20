@@ -15,7 +15,6 @@ import PVSupport
 import PVEmulatorCore
 import PVLogging
 import PVSettings
-import PVFeatureFlags
 import PVShaders
 import PVSystems
 import simd
@@ -175,9 +174,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     var frameCount: UInt = 0
 
     var renderSettings: RenderSettings = .init()
-
-    /// Cached feature flag — read once at init; unlikely to change during emulation.
-    private lazy var scalingModeRendererEnabled: Bool = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
 
     /// The scaling mode the renderer should use right now. Honors the user's
     /// explicit choice when they've made one (`Defaults[.userExplicitlySetScalingMode]`)
@@ -846,11 +842,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             var width: CGFloat = 0
 
             let scalingMode = renderSettings.scalingMode
-            let useNewScalingRenderer = scalingModeRendererEnabled
 
             /// Calculate dimensions in points first
-            if useNewScalingRenderer {
-                switch scalingMode {
+            switch scalingMode {
                 case .stretch:
                     // Fill the entire parent view — no aspect ratio preserved
                     width = parentSize.width
@@ -914,32 +908,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                             width = height * ratio
                         }
                     }
-                }
-            } else {
-                // Legacy layout: honours the old integerScaleEnabled / nativeScaleEnabled booleans.
-                if parentSize.width > parentSize.height {
-                    if Defaults[.integerScaleEnabled] {
-                        height = floor(parentSize.height / effectiveSize.height) * effectiveSize.height
-                    } else {
-                        height = parentSize.height
-                    }
-                    width = height * ratio
-                    if width > parentSize.width {
-                        width = parentSize.width
-                        height = width / ratio
-                    }
-                } else {
-                    if Defaults[.integerScaleEnabled] {
-                        width = floor(parentSize.width / effectiveSize.width) * effectiveSize.width
-                    } else {
-                        width = parentSize.width
-                    }
-                    height = width / ratio
-                    if height > parentSize.height {
-                        height = parentSize.height
-                        width = height * ratio
-                    }
-                }
             }
 
             DLOG("Calculated dimensions: \(width)x\(height) with ratio: \(ratio) mode: \(scalingMode)")
@@ -964,7 +932,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                                    abs(view.frame.height - frame.height) > 0.5
 
             if viewFrameChanged {
-                if (useNewScalingRenderer ? scalingMode.requiresNativeScaleFactor : Defaults[.nativeScaleEnabled]) {
+                if scalingMode.requiresNativeScaleFactor {
                     let scale = UIScreen.main.scale
 
                     /// Apply frame to main view without triggering additional layout
@@ -1002,9 +970,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Metal render only supports native scale on iOS/tvOS
         #if !(os(macOS) || targetEnvironment(macCatalyst))
         let screenBounds = UIScreen.main.bounds
-        let nativeScaleEnabled = scalingModeRendererEnabled
-            ? Defaults[.scalingMode] == .nativeResolution
-            : Defaults[.nativeScaleEnabled]
+        let nativeScaleEnabled = Defaults[.scalingMode] == .nativeResolution
 
         if lastScreenBounds != screenBounds || lastNativeScaleEnabled != nativeScaleEnabled {
             lastScreenBounds = screenBounds
@@ -2168,9 +2134,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 #if os(iOS) || os(tvOS)
         let screenBounds = UIScreen.main.bounds
         let screenScale = UIScreen.main.scale
-        let useNativeScale = scalingModeRendererEnabled
-            ? Defaults[.scalingMode] == .nativeResolution
-            : Defaults[.nativeScaleEnabled]
+        let useNativeScale = Defaults[.scalingMode] == .nativeResolution
 #else
         let screenBounds = view.bounds
         let screenScale = view.window?.screen?.backingScaleFactor ?? 1.0
@@ -3541,10 +3505,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 metalView.clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
                 configureMetalLayer(for: metalView)
 
-                let _nativeResolutionActive = scalingModeRendererEnabled
-                    ? Defaults[.scalingMode] == .nativeResolution
-                    : Defaults[.nativeScaleEnabled]
-                if _nativeResolutionActive {
+                if Defaults[.scalingMode] == .nativeResolution {
                     let scale = UIScreen.main.scale
                     if scale != 1.0 {
                         metalView.layer.contentsScale = scale

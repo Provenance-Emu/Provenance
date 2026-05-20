@@ -33,7 +33,6 @@ import MetalKit
 import PVLogging
 import Defaults
 import PVSettings
-import PVFeatureFlags
 import PVUIObjC
 
 internal let SHADER_DIR = "GLES"
@@ -158,9 +157,6 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
     var texture: GLuint = 0
 
     var renderSettings = RenderSettings()
-
-    /// Cached feature flag — read once at init; unlikely to change during emulation.
-    private lazy var scalingModeRendererEnabled: Bool = PVFeatureFlags.shared.isEnabled(.scalingModeRenderer)
 
 #if USE_METAL
     var glContext: CIContext?
@@ -352,9 +348,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             break
         }
 
-        if (scalingModeRendererEnabled
-                ? Defaults[.scalingMode] == .nativeResolution
-                : Defaults[.nativeScaleEnabled]) {
+        if Defaults[.scalingMode] == .nativeResolution {
             let scale = UIScreen.main.scale
             if scale != 1 {
                 view.layer.contentsScale = scale
@@ -482,10 +476,8 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             var width: CGFloat = 0
 
             let scalingMode = renderSettings.scalingMode
-            let useNewScalingRenderer = scalingModeRendererEnabled
 
-            if useNewScalingRenderer {
-                switch scalingMode {
+            switch scalingMode {
                 case .stretch:
                     width = parentSize.width
                     height = parentSize.height
@@ -544,26 +536,6 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                             width = height * ratio
                         }
                     }
-                }
-            } else {
-                // Legacy layout: honours the old integerScaleEnabled / nativeScaleEnabled booleans.
-                if parentSize.width > parentSize.height {
-                    height = Defaults[.integerScaleEnabled] ?
-                        floor(parentSize.height / aspectSize.height) * aspectSize.height : parentSize.height
-                    width = height * ratio
-                    if width > parentSize.width {
-                        width = parentSize.width
-                        height = width / ratio
-                    }
-                } else {
-                    width = Defaults[.integerScaleEnabled] ?
-                        floor(parentSize.width / aspectSize.width) * aspectSize.width : parentSize.width
-                    height = width / ratio
-                    if height > parentSize.height {
-                        height = parentSize.height
-                        width = height * ratio
-                    }
-                }
             }
 
             var origin = CGPoint(x: (parentSize.width - width) / 2, y: 0)
