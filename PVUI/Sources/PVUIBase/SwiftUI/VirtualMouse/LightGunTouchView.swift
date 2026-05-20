@@ -97,10 +97,16 @@ public final class LightGunTouchView: UIView {
         isUserInteractionEnabled = true
         isMultipleTouchEnabled = true
 
+        // Pencil sends its own trigger directly via touchesBegan/Ended, so finger-only
+        // gesture recognizers must ignore pencil to avoid double-firing the trigger or
+        // mapping a stylus stroke to start/auxA/reload.
+        let fingerOnly: [NSNumber] = [NSNumber(value: UITouch.TouchType.direct.rawValue)]
+
         // Two-finger tap → offscreen reload
         let twoFinger = UITapGestureRecognizer(target: self, action: #selector(handleTwoFingerTap(_:)))
         twoFinger.numberOfTapsRequired = 1
         twoFinger.numberOfTouchesRequired = 2
+        twoFinger.allowedTouchTypes = fingerOnly
         addGestureRecognizer(twoFinger)
         twoFingerTapRecognizer = twoFinger
 
@@ -108,6 +114,7 @@ public final class LightGunTouchView: UIView {
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap(_:)))
         doubleTap.numberOfTapsRequired = 2
         doubleTap.numberOfTouchesRequired = 1
+        doubleTap.allowedTouchTypes = fingerOnly
         addGestureRecognizer(doubleTap)
         doubleTapRecognizer = doubleTap
 
@@ -115,6 +122,7 @@ public final class LightGunTouchView: UIView {
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         longPress.minimumPressDuration = 0.5
         longPress.numberOfTouchesRequired = 1
+        longPress.allowedTouchTypes = fingerOnly
         addGestureRecognizer(longPress)
         longPressRecognizer = longPress
 
@@ -156,13 +164,21 @@ public final class LightGunTouchView: UIView {
         let offscreen = isOffscreen(touch.location(in: self))
         lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
         postAimPositionNotification(normalised)
+
+        // Pencil tip-press is already a precise, intentional trigger — no need to wait
+        // for the finger tap/double-tap disambiguation window. Fire trigger immediately.
+        if touch.type == .pencil {
+            lightGunResponder?.lightGunTriggerDown()
+        }
     }
 
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = trackedTouch, touches.contains(touch) else { return }
 
         // Promote to drag once the finger moves past the threshold.
-        if !touchHasDragged, let began = touchBeganLocation {
+        // Skipped for pencil: stylus aim is inherently precise and the trigger is
+        // already held down, so there is no tap-vs-drag ambiguity to resolve.
+        if touch.type != .pencil, !touchHasDragged, let began = touchBeganLocation {
             let loc = touch.location(in: self)
             let dx = loc.x - began.x
             let dy = loc.y - began.y
@@ -183,6 +199,17 @@ public final class LightGunTouchView: UIView {
             trackedTouch = nil
             touchBeganLocation = nil
             touchHasDragged = false
+        }
+
+        // Pencil: pair the immediate trigger-down from touchesBegan with trigger-up
+        // here. Skip the delayed-tap workflow (no double-tap heuristic for stylus).
+        if touch.type == .pencil {
+            let normalised = normalisedPoint(for: touch.location(in: self))
+            let offscreen = isOffscreen(touch.location(in: self))
+            lightGunResponder?.lightGunMovedToPoint(normalised, isOffscreen: offscreen)
+            postAimPositionNotification(normalised)
+            lightGunResponder?.lightGunTriggerUp()
+            return
         }
 
         let duration = touch.timestamp - touchBeganTime
@@ -209,6 +236,11 @@ public final class LightGunTouchView: UIView {
     }
 
     public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // Pencil held trigger down immediately in touchesBegan — release it on cancel
+        // so a cancelled stroke doesn't leave the gun stuck in the "firing" state.
+        if let touch = trackedTouch, touch.type == .pencil {
+            lightGunResponder?.lightGunTriggerUp()
+        }
         pendingSingleTapTrigger?.cancel()
         pendingSingleTapTrigger = nil
         trackedTouch = nil

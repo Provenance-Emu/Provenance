@@ -115,22 +115,33 @@ public final class TouchTrackpadView: UIView {
         // Multi-touch required for 2/3-finger gestures.
         isMultipleTouchEnabled = true
 
+        // Pencil drives the cursor directly (always single-touch, always direct mapping),
+        // so finger-only multi-touch and long-press recognizers must ignore stylus input.
+        let fingerOnly: [NSNumber] = [NSNumber(value: UITouch.TouchType.direct.rawValue)]
+
         // 2-finger tap → right click
         let twoFingerTap = UITapGestureRecognizer(target: self, action: #selector(handleTwoFingerTap(_:)))
         twoFingerTap.numberOfTapsRequired = 1
         twoFingerTap.numberOfTouchesRequired = 2
+        twoFingerTap.allowedTouchTypes = fingerOnly
         addGestureRecognizer(twoFingerTap)
 
         // 3-finger tap → middle click
         let threeFingerTap = UITapGestureRecognizer(target: self, action: #selector(handleThreeFingerTap(_:)))
         threeFingerTap.numberOfTapsRequired = 1
         threeFingerTap.numberOfTouchesRequired = 3
+        threeFingerTap.allowedTouchTypes = fingerOnly
         addGestureRecognizer(threeFingerTap)
 #endif
 
         // Long-press → right click (single-finger fallback)
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         longPress.minimumPressDuration = 0.5
+#if !os(tvOS)
+        // Pencil long-press should NOT map to right-click — it's just the user holding the
+        // stylus down while aiming/drawing.
+        longPress.allowedTouchTypes = [NSNumber(value: UITouch.TouchType.direct.rawValue)]
+#endif
         addGestureRecognizer(longPress)
 
         // NOTE: single-finger tap (left click) is handled manually in touchesEnded
@@ -190,6 +201,18 @@ public final class TouchTrackpadView: UIView {
         touchBeganTime = touch.timestamp
         touchHasDragged = false
 
+#if !os(tvOS)
+        // Pencil acts as a 1:1 stylus pointer regardless of trackpad mode: tip-down is
+        // an immediate leftMouseDown at the exact touch point, no tap/drag heuristics.
+        if touch.type == .pencil {
+            let normalised = normalisedPoint(for: touch.location(in: self))
+            updateCursor(to: normalised, notify: true)
+            NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
+            mouseResponder?.leftMouseDown(atPoint: normalised)
+            return
+        }
+#endif
+
         if mode == .direct {
             let normalised = normalisedPoint(for: touch.location(in: self))
             updateCursor(to: normalised, notify: true)
@@ -200,6 +223,16 @@ public final class TouchTrackpadView: UIView {
 
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = trackedTouch, touches.contains(touch) else { return }
+
+#if !os(tvOS)
+        // Pencil: skip drag heuristics and relative-delta accumulation — stylus moves
+        // map directly to the touched location for precise pointing.
+        if touch.type == .pencil {
+            let normalised = normalisedPoint(for: touch.location(in: self))
+            updateCursor(to: normalised, notify: true)
+            return
+        }
+#endif
 
         // Mark as dragged once the finger travels beyond the tap threshold.
         if !touchHasDragged, let began = touchBeganLocation {
@@ -238,6 +271,17 @@ public final class TouchTrackpadView: UIView {
             touchHasDragged = false
         }
 
+#if !os(tvOS)
+        // Pencil: pair the leftMouseDown from touchesBegan with leftMouseUp at the
+        // final touched location, bypassing the finger tap-duration discrimination.
+        if touch.type == .pencil {
+            let normalised = normalisedPoint(for: touch.location(in: self))
+            updateCursor(to: normalised, notify: true)
+            mouseResponder?.leftMouseUp()
+            return
+        }
+#endif
+
         // Fire a left click only when the finger didn't drag and the touch was short.
         let duration = touch.timestamp - touchBeganTime
         if !touchHasDragged && duration < tapMaxDuration {
@@ -252,6 +296,13 @@ public final class TouchTrackpadView: UIView {
     }
 
     public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+#if !os(tvOS)
+        // Pencil held leftMouseDown immediately in touchesBegan — release it on cancel
+        // so an interrupted stroke doesn't leave the virtual mouse button stuck down.
+        if let touch = trackedTouch, touch.type == .pencil {
+            mouseResponder?.leftMouseUp()
+        }
+#endif
         trackedTouch = nil
         previousTouchLocation = nil
         touchBeganLocation = nil
