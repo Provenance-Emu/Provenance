@@ -48,6 +48,34 @@ public final class PVRemappableController: NSObject {
     private var gyroHandler: ((Float, Float, Float) -> Void)?
     private var accelerometerHandler: ((Float, Float, Float) -> Void)?
 
+    // MARK: - Touchpad → MouseResponder delta accumulation
+    //
+    // DualSense / DS4 `touchpadPrimary` is a `GCControllerDirectionPad` that
+    // reports the active touch position as (x, y) in [-1, 1]. When the finger
+    // lifts, the pad snaps back to (0, 0). We treat the per-sample change
+    // (Δx, Δy) as mouse delta and forward it to the currently-presented
+    // emulator core if (and only if) that core conforms to MouseResponder
+    // and reports `gameSupportsMouse == true`. The touchpad click button is
+    // mirrored as a left mouse down/up so it behaves like a one-button mouse.
+
+    /// Last sampled touchpad position. Used to compute deltas without
+    /// requiring the touchpad to expose absolute coordinates.
+    private var lastTouchpadX: Float = 0
+    private var lastTouchpadY: Float = 0
+    /// Whether the previous sample was an active touch (non-zero on either axis).
+    /// Used to suppress the snap-back delta when the finger releases and the
+    /// pad value resets to (0, 0).
+    private var touchpadWasActive: Bool = false
+    /// Tracks whether we synthesised a `leftMouseDown` for the current touchpad
+    /// click so we can pair it with exactly one `leftMouseUp` on release.
+    private var touchpadMouseLeftDown: Bool = false
+
+    /// Sensitivity multiplier applied to touchpad-derived mouse deltas. The
+    /// pad reports normalized [-1, 1] coordinates so even small finger motions
+    /// produce small fractional deltas; this scales them up to feel like a
+    /// real mouse without making the cursor jittery.
+    private static let touchpadMouseSensitivity: CGFloat = 1.5
+
     /// Initialize with a GCController to wrap
     public init(wrapping controller: GCController) {
         self.wrappedController = controller
@@ -104,10 +132,16 @@ public final class PVRemappableController: NSObject {
                 if pressed {
                     self?.handleSpecialButton(.touchpadButton)
                 }
+                // Mirror the click as a left-mouse press for cores that
+                // implement MouseResponder. handleSpecialButton handles
+                // remappings; this delivers the click *also* as a mouse
+                // event so a finger tap on the pad acts like a left click.
+                self?.forwardTouchpadButtonAsMouseClick(pressed: pressed)
             }
 
             dualSense.touchpadPrimary.valueChangedHandler = { [weak self] (pad: GCControllerDirectionPad, x: Float, y: Float) in
                 self?.touchpadHandler?(x, y)
+                self?.forwardTouchpadMotionAsMouseDelta(x: x, y: y)
             }
 
             // Microphone button — posts a notification so the emulator VC can toggle audio mute.
@@ -133,10 +167,12 @@ public final class PVRemappableController: NSObject {
             if pressed {
                 self?.handleSpecialButton(.touchpadButton)
             }
+            self?.forwardTouchpadButtonAsMouseClick(pressed: pressed)
         }
 
         dualShock.touchpadPrimary.valueChangedHandler = { [weak self] (_, x, y) in
             self?.touchpadHandler?(x, y)
+            self?.forwardTouchpadMotionAsMouseDelta(x: x, y: y)
         }
 
         // Note: DS4 buttonOptions (Share button) is handled by the remapping pipeline in
@@ -151,6 +187,92 @@ public final class PVRemappableController: NSObject {
             NotificationCenter.default.post(name: .PVControllerMicButtonToggleMute, object: wrappedController)
         default:
             break
+        }
+    }
+
+    // MARK: - Touchpad → MouseResponder bridge
+
+    /// Resolve the currently-presented emulator core's `MouseResponder` view,
+    /// gated on `gameSupportsMouse`. Returns `nil` if no core is active, the
+    /// core doesn't conform to `MouseResponder`, or the game/system isn't
+    /// mouse-capable. Walks through `AppState.shared.emulationUIState.core`
+    /// to avoid coupling this controller wrapper to a specific view controller.
+    private func currentMouseCore() -> MouseResponder? {
+        guard let core = AppState.shared.emulationUIState.core as? MouseResponder,
+              core.gameSupportsMouse else {
+            return nil
+        }
+        return core
+    }
+
+    /// Forward an active touchpad sample as a relative mouse delta.
+    ///
+    /// `GCControllerDirectionPad` reports absolute pad coordinates in [-1, 1]
+    /// while the finger is touching; the value snaps back to (0, 0) on
+    /// release. We diff successive samples so the result behaves like a
+    /// mouse delta. The transition from inactive→active and active→inactive
+    /// is treated as a "set baseline" rather than a real movement to avoid
+    /// teleporting the cursor when the finger lands or lifts.
+    private func forwardTouchpadMotionAsMouseDelta(x: Float, y: Float) {
+        // Determine whether this sample represents an active touch.
+        // GameController reports (0, 0) when no finger is on the pad.
+        let isActive = (x != 0 || y != 0)
+        let previousX = lastTouchpadX
+        let previousY = lastTouchpadY
+        let previousWasActive = touchpadWasActive
+
+        // Always update tracking state before any early-return.
+        lastTouchpadX = x
+        lastTouchpadY = y
+        touchpadWasActive = isActive
+
+        // Only emit deltas while the touch is continuously active.
+        // Skip the first sample after touchdown (baseline) and the
+        // snap-back sample on release.
+        guard isActive, previousWasActive else { return }
+
+        let dx = CGFloat(x - previousX) * Self.touchpadMouseSensitivity
+        let dy = CGFloat(y - previousY) * Self.touchpadMouseSensitivity
+        // GameController's pad Y axis is +up; mouse coordinates are +down.
+        // Invert Y so dragging up on the pad moves the cursor up.
+        let point = CGPoint(x: dx, y: -dy)
+
+        // EmulationUIState is @MainActor-isolated, and most MouseResponder
+        // cores expect to be driven from the main thread. Hop there before
+        // touching the singleton or the core.
+        DispatchQueue.main.async { [weak self] in
+            guard let self, let mouseCore = self.currentMouseCore() else { return }
+            mouseCore.mouseMoved(atPoint: point)
+        }
+    }
+
+    /// Forward the physical touchpad click as a left mouse button press/release.
+    /// Always paired (down → up); guards against duplicate down events if
+    /// `pressed` is reported multiple times.
+    private func forwardTouchpadButtonAsMouseClick(pressed: Bool) {
+        let capturedX = lastTouchpadX
+        let capturedY = lastTouchpadY
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            guard let mouseCore = self.currentMouseCore() else {
+                // If we held a synthesised down but lost the core, drop the
+                // tracking flag so the next click starts cleanly.
+                self.touchpadMouseLeftDown = false
+                return
+            }
+            if pressed {
+                guard !self.touchpadMouseLeftDown else { return }
+                self.touchpadMouseLeftDown = true
+                // The touchpad click doesn't carry its own position; pass the
+                // current touch point and let the responder apply it relative
+                // to its tracked cursor.
+                let point = CGPoint(x: CGFloat(capturedX), y: CGFloat(-capturedY))
+                mouseCore.leftMouseDown(atPoint: point)
+            } else {
+                guard self.touchpadMouseLeftDown else { return }
+                self.touchpadMouseLeftDown = false
+                mouseCore.leftMouseUp()
+            }
         }
     }
 
