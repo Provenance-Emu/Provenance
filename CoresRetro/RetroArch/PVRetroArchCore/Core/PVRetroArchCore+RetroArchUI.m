@@ -1613,7 +1613,7 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     /// Update RetroArch viewport to match container size
     settings_t *settings = config_get_ptr();
     if (settings) {
-        settings->bools.video_scale_integer = PVSettingsWrapper.integerScaleEnabled; // This could come from PVSettigns?
+        settings->bools.video_scale_integer = PVSettingsWrapper.useIntegerScale;
         settings->bools.video_force_aspect = false;
         settings->uints.video_aspect_ratio_idx = ASPECT_RATIO_CORE;
         command_event(CMD_EVENT_VIDEO_SET_ASPECT_RATIO, NULL);

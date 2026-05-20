@@ -972,6 +972,22 @@ public final class PVSettingsWrapper: NSObject {
         get { Defaults[.integerScaleEnabled] }
         set { Defaults[.integerScaleEnabled] = newValue }}
 
+    /// True when the user's selected scaling mode applies integer snapping.
+    /// ObjC bridges (Mupen64Plus, RetroArch wrapper) gate integer-multiple
+    /// framebuffer sizing on this so the new ScalingMode picker actually
+    /// reaches cores whose framebuffer geometry is decided in ObjC.
+    @objc
+    public static var useIntegerScale: Bool {
+        Defaults[.scalingMode] == .integerScale
+    }
+
+    /// True when the user's selected scaling mode is native-resolution
+    /// (1:1 pixels). ObjC bridges read this to drop legacy upscale paths.
+    @objc
+    public static var useNativeResolution: Bool {
+        Defaults[.scalingMode] == .nativeResolution
+    }
+
     @objc
     public static var vsyncEnabled: Bool {
         get { Defaults[.vsyncEnabled] }

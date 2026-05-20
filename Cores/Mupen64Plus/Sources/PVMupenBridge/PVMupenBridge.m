@@ -213,7 +213,7 @@ static char *MupenGetGBCartRAM(void *cb_data, int controller_num) {
         CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
         float widthScale = size.width / WIDTHf;
         float heightScale = size.height / HEIGHTf;
-        if (PVSettingsWrapper.integerScaleEnabled) {
+        if (PVSettingsWrapper.useIntegerScale) {
             widthScale = floor(widthScale);
             heightScale = floor(heightScale);
         }
