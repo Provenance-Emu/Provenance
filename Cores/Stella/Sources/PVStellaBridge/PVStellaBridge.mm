@@ -42,6 +42,7 @@
 #import "PVStellaBridge.h"
 
 #include <atomic>
+#import <CommonCrypto/CommonDigest.h>
 
 // ---------------------------------------------------------------------------
 // MARK: - RetroAchievements rc_client (HAVE_RCHEEVOS)
@@ -199,6 +200,17 @@ static void pvstella_event_handler(const rc_client_event_t *event, rc_client_t *
     float _pendingMouseDX;
     float _pendingMouseDY;
     BOOL  _mouseButtonLeft;
+
+    // Light gun (XG-1) absolute aim state. The libretro lightgun device uses a
+    // signed-16-bit range of [-0x8000, 0x7FFF] for `SCREEN_X` / `SCREEN_Y`.
+    // We store the latest normalised aim (0…1) here and convert in the input
+    // state callback. Off-screen reload is tracked separately.
+    // Both sides guarded by @synchronized(self).
+    int16_t _lightGunScreenX;
+    int16_t _lightGunScreenY;
+    BOOL    _lightGunIsOffscreen;
+    BOOL    _lightGunTrigger;
+    BOOL    _isStellaLightGunGame;
 }
 @property (nonatomic, strong) NSMutableArray<NSString*>* cheats;
 @property (readwrite, nonatomic, copy) PVStellaBridgeOptionHandler optionHandler;
@@ -259,6 +271,54 @@ static void pvstella_login_callback(int result, const char * __unused error_mess
     rc_client_begin_load_game(client, hash.UTF8String, pvstella_load_callback, loadCtx);
 }
 #endif // HAVE_RCHEEVOS
+
+// ---------------------------------------------------------------------------
+// MARK: - Light Gun (XG-1) ROM detection
+// ---------------------------------------------------------------------------
+//
+// MD5s sourced from Stella's upstream `stella.pro` cartridge database
+// (`Cart.Note "Uses the Light Gun Controller (left only)"`). Only the
+// shipping/prototype carts that actually use the XG-1 are listed — paddle and
+// keyboard controller carts are intentionally excluded.
+static NSString * const kStellaLightGunMD5s[] = {
+    @"8da51e0c4b6b46f7619425119c7d018e", // Sentinel (1991) (Atari) — CX26183
+    @"10c47acca2ecd212b900ad3cf6942dbb", // Shooting Arcade (03-07-1989) (Atari) (Prototype) [screen 5]
+    @"15c11ab6e4502b2010b18366133fc322", // Shooting Arcade (09-19-1989) (Atari) (Prototype)
+    @"557e893616648c37a27aab5a47acbf10", // Shooting Arcade (01-16-1990) (Atari) (Prototype) (PAL)
+    @"5d7293f1892b66c014e8d222e06f6165", // Shooting Arcade (03-07-1989) (Atari) (Prototype) [screen 2]
+    @"b2ab209976354ad4a0e1676fc1fe5a82", // Shooting Arcade (03-07-1989) (Atari) (Prototype) [screen 4]
+    @"c5bf03028b2e8f4950ec8835c6811d47", // Shooting Arcade (03-07-1989) (Atari) (Prototype) [screen 3]
+    @"f0ef9a1e5d4027a157636d7f19952bb5", // Shooting Arcade (03-07-1989) (Atari) (Prototype) [screen 6]
+    @"fb978f1c053e8061cc37a726639f43f7", // Shooting Arcade (03-07-1989) (Atari) (Prototype)
+    @"1d67c50baff2df771c32e2f915879176", // Shooting Arcade (09-19-1989) (Atari) (Prototype) [screen 5]
+    @"660c378803503a443556525ddda08648", // Shooting Arcade (09-19-1989) (Atari) (Prototype) [screen 6]
+    @"83531415b25531b47d23cf205961e51f", // Shooting Arcade (09-19-1989) (Atari) (Prototype) [screen 3]
+    @"b018c51949fcf78b76b3bac7d3bcb1ae", // Shooting Arcade (09-19-1989) (Atari) (Prototype) [screen 4]
+    @"be7011581614ffb0c38f79f99ae67b4f", // Shooting Arcade (09-19-1989) (Atari) (Prototype) [screen 2]
+};
+static const NSUInteger kStellaLightGunMD5Count = sizeof(kStellaLightGunMD5s) / sizeof(kStellaLightGunMD5s[0]);
+
+static NSString *pvstella_md5_for_rom(const void *bytes, size_t length) {
+    if (!bytes || length == 0) { return @""; }
+    unsigned char digest[CC_MD5_DIGEST_LENGTH];
+    CC_MD5(bytes, (CC_LONG)length, digest);
+    char hex[CC_MD5_DIGEST_LENGTH * 2 + 1];
+    for (int i = 0; i < CC_MD5_DIGEST_LENGTH; ++i) {
+        snprintf(hex + (i * 2), 3, "%02x", digest[i]);
+    }
+    return [NSString stringWithUTF8String:hex];
+}
+
+static BOOL pvstella_is_lightgun_md5(NSString *md5) {
+    if (md5.length != CC_MD5_DIGEST_LENGTH * 2) { return NO; }
+    NSString *normalised = [md5 lowercaseString];
+    for (NSUInteger i = 0; i < kStellaLightGunMD5Count; ++i) {
+        if ([normalised isEqualToString:kStellaLightGunMD5s[i]]) {
+            return YES;
+        }
+    }
+    return NO;
+}
 
 static __weak PVStellaBridge *_current;
 
@@ -349,6 +409,39 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
     else if (port == 1 && device == RETRO_DEVICE_JOYPAD)
     {
         value = strongCurrent->_pad[1][_id];
+    }
+    else if (port == 0 && device == RETRO_DEVICE_LIGHTGUN)
+    {
+        // Stella libretro reads SCREEN_X / SCREEN_Y as signed 16-bit values
+        // centred on 0 and scales to the visible image rect (see
+        // `update_input()` in src/os/libretro/libretro.cxx). It also reads
+        // TRIGGER (and uses it for both left/right mouse buttons inside the
+        // Stella event system) and IS_OFFSCREEN.
+        @synchronized(strongCurrent) {
+            switch (_id) {
+                case RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X:
+                    value = strongCurrent->_lightGunScreenX;
+                    break;
+                case RETRO_DEVICE_ID_LIGHTGUN_SCREEN_Y:
+                    value = strongCurrent->_lightGunScreenY;
+                    break;
+                case RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN:
+                    value = strongCurrent->_lightGunIsOffscreen ? 1 : 0;
+                    break;
+                case RETRO_DEVICE_ID_LIGHTGUN_TRIGGER:
+                    // While "aiming off-screen", treat the trigger as released
+                    // so that the host driver's "reload" gesture (offscreen +
+                    // fire) is the only way to register an off-screen shot.
+                    value = (strongCurrent->_lightGunTrigger && !strongCurrent->_lightGunIsOffscreen) ? 1 : 0;
+                    break;
+                case RETRO_DEVICE_ID_LIGHTGUN_RELOAD:
+                    // Forced off-screen shot — fire while aimed off-screen.
+                    value = (strongCurrent->_lightGunTrigger && strongCurrent->_lightGunIsOffscreen) ? 1 : 0;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
     else if (port == 0 && device == RETRO_DEVICE_MOUSE)
     {
@@ -504,6 +597,12 @@ static void writeSaveFile(const char* path, int type) {
         _pendingMouseDX = 0.0f;
         _pendingMouseDY = 0.0f;
         _mouseButtonLeft = NO;
+        // Light gun starts centred, off-screen, trigger released.
+        _lightGunScreenX = 0;
+        _lightGunScreenY = 0;
+        _lightGunIsOffscreen = NO;
+        _lightGunTrigger = NO;
+        _isStellaLightGunGame = NO;
         _achievementsActive.store(false);
         _loaded.store(false);
     }
@@ -527,6 +626,12 @@ static void writeSaveFile(const char* path, int type) {
     // executeFrame skips retro_run() instead of touching state we are about
     // to tear down.
     _loaded.store(false);
+    // Clear light-gun session state so the next ROM load starts clean.
+    @synchronized(self) {
+        _isStellaLightGunGame = NO;
+        _lightGunTrigger      = NO;
+        _lightGunIsOffscreen  = NO;
+    }
 
 #if HAVE_RCHEEVOS
     if (_rcClient) {
@@ -638,6 +743,11 @@ static void writeSaveFile(const char* path, int type) {
         // monitor too — retro_run()'s video_callback writes into _videoBuffer,
         // so a free/alloc outside the lock would race the emulation thread.
         memset(_pad, 0, sizeof(int16_t) * NUMBER_OF_PADS * NUMBER_OF_PAD_INPUTS);
+        _isStellaLightGunGame = NO;
+        _lightGunTrigger      = NO;
+        _lightGunIsOffscreen  = NO;
+        _lightGunScreenX      = 0;
+        _lightGunScreenY      = 0;
         if(self->_videoBuffer) {
             free(self->_videoBuffer);
         }
@@ -684,6 +794,18 @@ static void writeSaveFile(const char* path, int type) {
                 self->region = RETRO_REGION_PAL;
             } else {
                 self->region = RETRO_REGION_NTSC;
+            }
+
+            // Detect known light-gun (XG-1) carts and switch port 0 to the
+            // libretro lightgun device so Stella loads
+            // `Controller::Type::Lightgun` for the left port. Must happen
+            // BEFORE the prime retro_run() so the first frame already routes
+            // through the lightgun input path.
+            NSString *md5 = pvstella_md5_for_rom(data, size);
+            _isStellaLightGunGame = pvstella_is_lightgun_md5(md5);
+            if (_isStellaLightGunGame) {
+                retro_set_controller_port_device(0, RETRO_DEVICE_LIGHTGUN);
+                ILOG(@"[Stella] Detected light-gun game (MD5 %@); switching port 0 to RETRO_DEVICE_LIGHTGUN.", md5);
             }
 
             retro_run();
@@ -1178,6 +1300,46 @@ static void writeSaveFile(const char* path, int type) {
 - (void)setMouseButtonLeft:(BOOL)pressed {
     @synchronized(self) {
         _mouseButtonLeft = pressed;
+    }
+}
+
+@end
+
+// MARK: - Light Gun (XG-1)
+
+@implementation PVStellaBridge (LightGun)
+
+- (BOOL)isStellaLightGunGame {
+    // Read of a primitive BOOL is atomic on Apple architectures; the value is
+    // only mutated synchronously from loadFileAtPath: while no observer can
+    // race against it. No lock required.
+    return _isStellaLightGunGame;
+}
+
+- (void)setLightGunNormalisedX:(CGFloat)nx y:(CGFloat)ny isOffscreen:(BOOL)isOffscreen {
+    // Convert normalised 0…1 coords to libretro's signed-16-bit screen space.
+    // Centre is 0; left/top edges are -0x8000; right/bottom edges are 0x7FFF.
+    CGFloat cx = nx;
+    CGFloat cy = ny;
+    if (cx < 0.0) cx = 0.0; else if (cx > 1.0) cx = 1.0;
+    if (cy < 0.0) cy = 0.0; else if (cy > 1.0) cy = 1.0;
+    int32_t sx = (int32_t)(cx * (CGFloat)0xFFFF) - 0x8000;
+    int32_t sy = (int32_t)(cy * (CGFloat)0xFFFF) - 0x8000;
+    if (sx >  0x7FFF) sx =  0x7FFF;
+    if (sx < -0x8000) sx = -0x8000;
+    if (sy >  0x7FFF) sy =  0x7FFF;
+    if (sy < -0x8000) sy = -0x8000;
+
+    @synchronized(self) {
+        _lightGunScreenX     = (int16_t)sx;
+        _lightGunScreenY     = (int16_t)sy;
+        _lightGunIsOffscreen = isOffscreen;
+    }
+}
+
+- (void)setLightGunTrigger:(BOOL)pressed {
+    @synchronized(self) {
+        _lightGunTrigger = pressed;
     }
 }
 

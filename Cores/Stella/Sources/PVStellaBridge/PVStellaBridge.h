@@ -140,4 +140,34 @@ typedef id _Nullable (^PVStellaBridgeOptionHandler)(NSString * _Nonnull option);
 - (void)resetCheatCodes;
 @end
 
+// MARK: - Light Gun (Atari 2600 XG-1 / Light Rifle)
+//
+// The Stella libretro core supports `RETRO_DEVICE_LIGHTGUN` and routes the
+// absolute screen X/Y plus trigger into Stella's `Controller::Type::Lightgun`
+// (see `Cores/Stella/Sources/libstella/stella/src/os/libretro/libretro.cxx`
+// inside the `update_input()` switch). To activate the lightgun controller we
+// call `retro_set_controller_port_device(0, RETRO_DEVICE_LIGHTGUN)` after a
+// known-lightgun ROM is loaded.
+//
+// All state setters here are thread-safe. The main thread writes aim/trigger
+// state; the emulation thread reads it from `input_state_callback` during
+// `retro_run()`. Both sides are guarded by `@synchronized(self)`.
+@interface PVStellaBridge (LightGun)
+
+/// `YES` once the bridge has identified the currently-loaded ROM as a known
+/// 2600 light-gun cart (Sentinel, Shooting Arcade prototypes, etc.) and has
+/// switched port 0 to `RETRO_DEVICE_LIGHTGUN`. Updated synchronously from
+/// `loadFileAtPath:` after `retro_load_game` succeeds.
+@property (nonatomic, readonly) BOOL isStellaLightGunGame;
+
+/// Update the absolute aim position in normalised screen coordinates (0…1).
+/// Off-screen aim is encoded as a sentinel that maps to
+/// `RETRO_DEVICE_ID_LIGHTGUN_IS_OFFSCREEN` on the libretro side.
+- (void)setLightGunNormalisedX:(CGFloat)nx y:(CGFloat)ny isOffscreen:(BOOL)isOffscreen;
+
+/// Update the trigger button state.
+- (void)setLightGunTrigger:(BOOL)pressed;
+
+@end
+
 NS_HEADER_AUDIT_END(nullability, sendability)
