@@ -83,6 +83,22 @@ Cores depend on `PVEmulatorCore`, `PVCoreBridge`, `PVSupport`, `PVObjCUtils`, an
 
 RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro`.
 
+**Core taxonomy — not every `Cores/PV*` directory is an active shipping core.**
+- **Active native PV* cores** (custom forks or long-supported legacy we
+  actively extend): Mupen, snes9x, Stella, Mednafen, Jaguar, Dolphin,
+  FCEU, ProSystem, Genesis-Plus-GX, Flycast, and similar.
+- **Placeholder PV* targets** (in the workspace as scaffolding but NOT
+  actively used in the shipping app): DuckStation, BeetlePSX, and
+  similar — these duplicate libretro cores we now serve via the thin
+  wrapper (`PVCoreBridgeRetro/.../PVThinLibretroCore`) against upstream
+  libretro buildbot dylibs. Don't extend these PV* shells; the thin
+  wrapper is the supported path.
+- **Rule of thumb:** if a libretro buildbot dylib already serves the
+  core and the thin wrapper handles it, fix the thin wrapper (or the
+  upstream dylib via Provenance fork), not the placeholder PV* shell.
+  The whole point of the thin wrapper is to make those cores feel
+  basically native without per-core PV* maintenance.
+
 ### App Targets
 - **Provenance/** — Main iOS app
 - **ProvenanceTV/** — tvOS-specific app target
