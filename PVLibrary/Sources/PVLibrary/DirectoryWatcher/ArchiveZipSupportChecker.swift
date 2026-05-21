@@ -10,6 +10,7 @@ import PVLogging
 import PVSystems
 import PVLookup
 import PVPrimitives
+import PVArchiving
 
 /// Feature flag to enable/disable zip-as-ROM support checking
 /// Set to false to disable this feature if bugs are found
@@ -42,6 +43,18 @@ public actor ArchiveZipSupportChecker {
 
         // Only check zip files for now (can be extended to other archive types)
         guard fileExtension == "zip" else {
+            return (false, nil)
+        }
+
+        // If the zip contains a CD image, it's never a MAME / arcade ROM —
+        // those are always sets of small binary chip dumps, never single
+        // optical-disc images. Reject up front so e.g. Dreamcast arcade ports
+        // (`Crazy Taxi.zip` containing `Crazy Taxi.cdi`) don't get mismatched
+        // to MAME via the libretro DB filename lookup. The extraction path
+        // will then surface the inner `.cdi` / `.gdi` / `.iso` and route it
+        // to the correct system on the second pass.
+        if containsCDImageContent(archiveURL) {
+            ILOG("Archive \(archiveURL.lastPathComponent) contains a CD-image entry — skipping zip-as-ROM classification, will extract")
             return (false, nil)
         }
 
@@ -123,6 +136,35 @@ public actor ArchiveZipSupportChecker {
         }
 
         return (false, nil)
+    }
+
+    /// File extensions that, if present inside a zip, mean the zip is a CD /
+    /// optical-disc bundle — never a MAME / CPS arcade ROM. Includes Dreamcast
+    /// (`cdi` / `gdi`), Saturn (`ccd`), PSX (`bin` / `cue` / `chd` / `img`),
+    /// PSP (`pbp` / `cso`), and generic disc formats. Any hit aborts the
+    /// zip-as-ROM classification so the importer falls through to extraction.
+    private static let cdImageEntryExtensions: Set<String> = [
+        "cdi", "gdi", "iso", "chd", "ccd", "img", "nrg",
+        "mds", "toc", "bin", "cue", "pbp", "cso", "ecm"
+    ]
+
+    /// Peek inside the zip and return `true` if any entry's extension matches
+    /// `cdImageEntryExtensions`. Failure to enumerate (corrupt archive, etc.)
+    /// returns `false` so the caller falls through to existing logic — we
+    /// only want to *reject* a zip-as-ROM claim when we have positive evidence
+    /// of CD content, never to falsely reject when listing fails.
+    private nonisolated func containsCDImageContent(_ archiveURL: URL) -> Bool {
+        do {
+            let entries = try ArchiveManager.shared.listEntries(at: archiveURL)
+            return entries.contains { entry in
+                guard !entry.isDirectory else { return false }
+                let ext = (entry.name as NSString).pathExtension.lowercased()
+                return Self.cdImageEntryExtensions.contains(ext)
+            }
+        } catch {
+            VLOG("ArchiveZipSupportChecker: could not list entries for \(archiveURL.lastPathComponent) (\(error.localizedDescription)) — proceeding with filename-based check")
+            return false
+        }
     }
 
     /// Checks if a folder should be treated as a MAME ROM set.
