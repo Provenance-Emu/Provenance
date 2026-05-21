@@ -197,6 +197,7 @@ public final class PVRemappableController: NSObject {
     /// core doesn't conform to `MouseResponder`, or the game/system isn't
     /// mouse-capable. Walks through `AppState.shared.emulationUIState.core`
     /// to avoid coupling this controller wrapper to a specific view controller.
+    @MainActor
     private func currentMouseCore() -> MouseResponder? {
         guard let core = AppState.shared.emulationUIState.core as? MouseResponder,
               core.gameSupportsMouse else {
@@ -240,7 +241,7 @@ public final class PVRemappableController: NSObject {
         // EmulationUIState is @MainActor-isolated, and most MouseResponder
         // cores expect to be driven from the main thread. Hop there before
         // touching the singleton or the core.
-        DispatchQueue.main.async { [weak self] in
+        Task { @MainActor [weak self] in
             guard let self, let mouseCore = self.currentMouseCore() else { return }
             mouseCore.mouseMoved(atPoint: point)
         }
@@ -252,7 +253,7 @@ public final class PVRemappableController: NSObject {
     private func forwardTouchpadButtonAsMouseClick(pressed: Bool) {
         let capturedX = lastTouchpadX
         let capturedY = lastTouchpadY
-        DispatchQueue.main.async { [weak self] in
+        Task { @MainActor [weak self] in
             guard let self else { return }
             guard let mouseCore = self.currentMouseCore() else {
                 // If we held a synthesised down but lost the core, drop the
