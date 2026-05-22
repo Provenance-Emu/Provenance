@@ -3185,14 +3185,25 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 // ---------------------------------------------------------------------------
 
 - (nullable NSData *)saveState {
-    if (!_sym.retro_serialize_size || !_sym.retro_serialize) return nil;
-    size_t size = _sym.retro_serialize_size();
-    if (size == 0) return nil;
-    NSMutableData *data = [NSMutableData dataWithLength:size];
-    if (!_sym.retro_serialize(data.mutableBytes, size)) {
-        ELOG(@"ThinFrontend: retro_serialize failed");
+    if (!_sym.retro_serialize_size || !_sym.retro_serialize) {
+        ELOG(@"[SAVE-DIAG] ThinFrontend: core lacks retro_serialize_size or retro_serialize symbol — core does not support save states");
         return nil;
     }
+    size_t size = _sym.retro_serialize_size();
+    ILOG(@"[SAVE-DIAG] ThinFrontend: retro_serialize_size() = %zu bytes", size);
+    if (size == 0) {
+        // Mupen64Plus-Next reports 0 mid-frame or before the first retro_run()
+        // has landed; some cores also report 0 when serialization is disabled
+        // via SERIALIZATION_QUIRKS. Either way, no save is possible.
+        ELOG(@"[SAVE-DIAG] ThinFrontend: retro_serialize_size() returned 0 — no save state binary can be produced (core may need a frame to render first, or serialization quirks disabled it)");
+        return nil;
+    }
+    NSMutableData *data = [NSMutableData dataWithLength:size];
+    if (!_sym.retro_serialize(data.mutableBytes, size)) {
+        ELOG(@"[SAVE-DIAG] ThinFrontend: retro_serialize(buffer=%p, size=%zu) returned false — core refused to serialize", data.mutableBytes, size);
+        return nil;
+    }
+    ILOG(@"[SAVE-DIAG] ThinFrontend: retro_serialize SUCCESS, %zu bytes captured", size);
     return data;
 }
 
@@ -3224,8 +3235,10 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 #pragma clang diagnostic ignored "-Wdeprecated-implementations"
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError **)error {
+    ILOG(@"[SAVE-DIAG] ThinFrontend: saveStateToFileAtPath ENTER path=%@", fileName);
     NSData *data = [self saveState];
     if (!data) {
+        ELOG(@"[SAVE-DIAG] ThinFrontend: saveState returned nil — see prior [SAVE-DIAG] log for cause");
         if (error) {
             *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                          code:PVEmulatorCoreErrorCodeCouldNotSaveState
@@ -3233,11 +3246,29 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
         }
         return NO;
     }
+    // Defensive: ensure parent directory exists so atomic write won't fail on
+    // a fresh per-game folder. NSData writeToFile:atomically: silently returns
+    // NO if the parent dir is missing.
+    NSString *parentDir = [fileName stringByDeletingLastPathComponent];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:parentDir]) {
+        NSError *mkdirErr = nil;
+        if (![[NSFileManager defaultManager] createDirectoryAtPath:parentDir
+                                       withIntermediateDirectories:YES
+                                                        attributes:nil
+                                                             error:&mkdirErr]) {
+            ELOG(@"[SAVE-DIAG] ThinFrontend: createDirectory failed for %@: %@", parentDir, mkdirErr.localizedDescription);
+        }
+    }
     BOOL written = [data writeToFile:fileName atomically:YES];
-    if (!written && error) {
-        *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
-                                     code:PVEmulatorCoreErrorCodeCouldNotSaveState
-                                 userInfo:@{NSLocalizedDescriptionKey: @"Failed to write save state file"}];
+    if (!written) {
+        ELOG(@"[SAVE-DIAG] ThinFrontend: NSData writeToFile FAILED for %@ (size=%zu bytes)", fileName, (size_t)data.length);
+        if (error) {
+            *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                                         code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                     userInfo:@{NSLocalizedDescriptionKey: @"Failed to write save state file"}];
+        }
+    } else {
+        ILOG(@"[SAVE-DIAG] ThinFrontend: wrote %zu bytes to %@", (size_t)data.length, fileName);
     }
     return written;
 }

@@ -99,6 +99,18 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
   The whole point of the thin wrapper is to make those cores feel
   basically native without per-core PV* maintenance.
 
+**Wrapper platform defaults — patch the right file:**
+- **tvOS** ships the THIN libretro wrapper
+  (`PVCoreBridgeRetro/Sources/PVLibRetro/PVThinLibretroFrontend.mm`
+  + `PVThinLibretroCore*.swift`). dlopen + function pointers against
+  the libretro buildbot dylibs; no full RetroArch runtime.
+- **iOS** still defaults to the THICK RetroArch wrapper
+  (`CoresRetro/RetroArch/PVRetroArchCore/`). Full RA in-process.
+- When a tvOS user reports a bug in a libretro core, the patch
+  belongs in the thin wrapper. The thick wrapper compiles on tvOS
+  but is inactive. Same symbol may exist in both files; the active
+  one depends on platform.
+
 ### App Targets
 - **Provenance/** — Main iOS app
 - **ProvenanceTV/** — tvOS-specific app target
