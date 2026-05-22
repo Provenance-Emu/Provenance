@@ -9,13 +9,7 @@
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.5200</string>
-		<!-- TODO(tvos-tester-18may): canonical system identifier is "com.provenance.atari8bit"
-		     (see PVPrimitives/Sources/PVSystems/SystemIdentifier.swift), but switching to
-		     that exposes a fatalError in PVCoreFactory.controllerViewController(forSystem:)
-		     because the Swift PVAtari800 class does not (yet) declare conformance to
-		     PVA8SystemResponderClient. The ObjC PVAtari800Bridge does conform — once the
-		     Swift wrapper forwards PVA8 + KeyboardResponder + MouseResponder, flip this. -->
-		<string>com.provenance.8bit</string>
+		<string>com.provenance.atari8bit</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>Atari 800</string>

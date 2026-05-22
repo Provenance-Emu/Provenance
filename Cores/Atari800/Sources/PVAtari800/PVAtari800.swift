@@ -31,13 +31,6 @@ public final class PVAtari800: PVEmulatorCore, @unchecked Sendable {
             tickAchievements()
         }
     }
-
-#if canImport(GameController)
-    @MainActor
-    public var mouseMovedHandler: GCExtendedGamepadValueChangedHandler? = nil
-    @MainActor
-    public var keyChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
-#endif
 }
 
 extension PVAtari800: PV5200SystemResponderClient {
@@ -58,14 +51,89 @@ extension PVAtari800: PV5200SystemResponderClient {
     }
 }
 
-// TODO(tvos-tester-18may): The underlying `PVAtari800Bridge` ObjC class implements both
-// PVA8SystemResponderClient and PV5200SystemResponderClient (see PVAtari800Bridge.h),
-// but the Swift `PVAtari800` wrapper only declares PV5200SystemResponderClient conformance.
-// As a result, when an Atari 8-bit ROM is launched with the native Atari800 core,
-// `PVCoreFactory.controllerViewController(forSystem:)` hits the `fatalError("Core doesn't
-// implement PVA8SystemResponderClient")` branch (PVCoreFactory.swift:184). The matching
-// Core.plist mismatch (`com.provenance.8bit` vs the canonical `com.provenance.atari8bit`)
-// has been fixed in this commit so that the core is correctly associated with the system.
-// Adding `PVA8SystemResponderClient` conformance here requires also satisfying its
-// KeyboardResponder + MouseResponder requirements — too broad a change to land surgically
-// without a runtime smoke test on a real Atari 8-bit ROM.
+// MARK: - PVA8SystemResponderClient
+//
+// The underlying ObjC `PVAtari800Bridge` already implements every requirement of
+// `PVA8SystemResponderClient` (button + keyboard + mouse). The Swift wrapper needs to
+// explicitly declare conformance and forward each method to the bridge so that
+// `PVCoreFactory.controllerViewController(forSystem:)` (case `.Atari8bit`) succeeds
+// instead of hitting `fatalError("Core doesn't implement PVA8SystemResponderClient")`.
+// Follows the same pattern as `PVDosBoxCore` / `PVSNES9xEmulatorCore`.
+extension PVAtari800: PVA8SystemResponderClient {
+
+    // MARK: Button input
+    public func didPush(_ button: PVCoreBridge.PVA8Button, forPlayer player: Int) {
+        (bridge as! PVA8SystemResponderClient).didPush(button, forPlayer: player)
+    }
+
+    public func didRelease(_ button: PVCoreBridge.PVA8Button, forPlayer player: Int) {
+        (bridge as! PVA8SystemResponderClient).didRelease(button, forPlayer: player)
+    }
+
+    // MARK: KeyboardResponder
+    public var gameSupportsKeyboard: Bool {
+        (bridge as! PVA8SystemResponderClient).gameSupportsKeyboard
+    }
+
+    public var requiresKeyboard: Bool {
+        (bridge as! PVA8SystemResponderClient).requiresKeyboard
+    }
+
+    public func keyDown(_ key: GCKeyCode) {
+        (bridge as! PVA8SystemResponderClient).keyDown(key)
+    }
+
+    public func keyUp(_ key: GCKeyCode) {
+        (bridge as! PVA8SystemResponderClient).keyUp(key)
+    }
+
+    // MARK: MouseResponder
+    public var gameSupportsMouse: Bool {
+        (bridge as! PVA8SystemResponderClient).gameSupportsMouse
+    }
+
+    public var requiresMouse: Bool {
+        (bridge as! PVA8SystemResponderClient).requiresMouse
+    }
+
+    public func didScroll(_ cursor: GCDeviceCursor) {
+        (bridge as! PVA8SystemResponderClient).didScroll(cursor)
+    }
+
+    public var mouseMovedHandler: GCMouseMoved? {
+        (bridge as! PVA8SystemResponderClient).mouseMovedHandler
+    }
+
+    public func mouseMoved(at point: CGPoint) {
+        (bridge as! PVA8SystemResponderClient).mouseMoved(at: point)
+    }
+
+    public func leftMouseDown(at point: CGPoint) {
+        (bridge as! PVA8SystemResponderClient).leftMouseDown(at: point)
+    }
+
+    public func leftMouseUp() {
+        (bridge as! PVA8SystemResponderClient).leftMouseUp()
+    }
+
+    public func rightMouseDown(at point: CGPoint) {
+        (bridge as! PVA8SystemResponderClient).rightMouseDown(at: point)
+    }
+
+    public func rightMouseUp() {
+        (bridge as! PVA8SystemResponderClient).rightMouseUp()
+    }
+
+    // MARK: MouseResponder (legacy `atPoint:` selectors)
+    public func mouseMoved(atPoint point: CGPoint) {
+        (bridge as! PVA8SystemResponderClient).mouseMoved(atPoint: point)
+    }
+
+    public func leftMouseDown(atPoint point: CGPoint) {
+        (bridge as! PVA8SystemResponderClient).leftMouseDown(atPoint: point)
+    }
+
+    public func rightMouseDown(atPoint point: CGPoint) {
+        (bridge as! PVA8SystemResponderClient).rightMouseDown(atPoint: point)
+    }
+}
