@@ -2562,7 +2562,7 @@ extension PVEmulatorViewController {
         let deltaOrientation = orientation.deltaSkinOrientation
 
         // Try to find first available skin that can actually render
-        let allowCaseSkins = PVFeatureFlagsManager.shared.caseCompanionSkins && CaseControllerDetector.isKnownPhysicalCaseControllerConnected
+        let allowCaseSkins = Defaults[.caseCompanionSkins] && CaseControllerDetector.isKnownPhysicalCaseControllerConnected
         for fallbackSkin in availableSkins {
             // Skip the failed skin
             if fallbackSkin.identifier == failedSkin.identifier {
@@ -2657,7 +2657,7 @@ extension PVEmulatorViewController {
         let availableSkins = try await DeltaSkinManager.shared.skins(for: systemId)
 
         // Try to find first available skin that supports this orientation
-        let allowCaseSkinsOrientation = PVFeatureFlagsManager.shared.caseCompanionSkins && CaseControllerDetector.isKnownPhysicalCaseControllerConnected
+        let allowCaseSkinsOrientation = Defaults[.caseCompanionSkins] && CaseControllerDetector.isKnownPhysicalCaseControllerConnected
         for fallbackSkin in availableSkins {
             // Skip the requested skin
             if fallbackSkin.identifier == skin.identifier {

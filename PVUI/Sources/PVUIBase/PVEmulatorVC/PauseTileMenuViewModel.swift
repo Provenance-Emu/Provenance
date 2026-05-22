@@ -180,7 +180,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         // Broadcast — feature-flagged, iOS + tvOS
         var recordingTiles: [PauseMenuTile] = []
         #if os(iOS) || os(tvOS)
-        if featureFlags.liveBroadcast || featureFlags.liveBroadcast {
+        if Defaults[.liveBroadcast] {
             let isBcast = emulatorVC.isBroadcasting
             recordingTiles.append(PauseMenuTile(
                 id: "broadcast",
@@ -330,7 +330,7 @@ final class PauseTileMenuViewModel: ObservableObject {
             dismissOnTap: false
         ))
 
-        if (featureFlags.netplayEnabled || featureFlags.netplayEnabled) && Self.coreSupportsNetplay(emulatorVC) {
+        if Defaults[.netplayEnabled] && Self.coreSupportsNetplay(emulatorVC) {
             gameTiles.append(PauseMenuTile(
                 id: "networkPlay",
                 icon: "antenna.radiowaves.left.and.right",
@@ -459,7 +459,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         // Showing it for all N64 games is misleading — most games don't use the Transfer Pak.
         let gameTitle = emulatorVC.game?.title ?? ""
         if let transferCore = emulatorVC.core as? TransferPakSupport,
-           featureFlags.mupenTransferPak || featureFlags.mupenTransferPak,
+           Defaults[.mupenTransferPak],
            transferCore.transferPakSlotCount > 0 {
             // Count configured slots in one pass; reuse for both the visibility guard and
             // the badge label to avoid calling transferPakROM(forPort:) more than once per slot.

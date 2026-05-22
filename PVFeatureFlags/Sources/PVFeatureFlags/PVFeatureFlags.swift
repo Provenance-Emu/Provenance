@@ -32,24 +32,9 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// destination button from a list, the user presses a physical button on their controller.
     /// Disabled by default while the feature is being developed.
     case tapToRemapUI = "tapToRemapUI"
-    /// Enables the Transfer Pak configuration UI for Mupen64Plus cores.
-    /// The Transfer Pak lets a GB/GBC cartridge be mounted in an N64 controller port
-    /// so N64 games (e.g. Pokémon Stadium) can read and write the GB save data.
-    /// Disabled by default; enable in Settings > Advanced > Feature Flags.
-    case mupenTransferPak = "mupenTransferPak"
-    /// Enables native SwiftUI netplay lobby, room browser, and in-game HUD for
-    /// RetroArch-backed cores and (in future phases) native cores like Dolphin and PPSSPP.
-    /// RetroArch is compiled with HAVE_NETPLAY so sessions are technically possible
-    /// via the RA menu; this flag gates the native Provenance UI on top.
-    /// Disabled by default while Phase 1-3 UI stabilises.
-    case netplayEnabled = "netplayEnabled"
-    /// Enables the new Swift-native Hummingbird-based HTTP/WebDAV web file server
-    /// in place of the vendored 2015 Objective-C GCDWebServer. When enabled, traffic
     /// Always-on ReplayKit clip buffering: keeps a rolling recording buffer so users
     /// can save recent gameplay clips at any time. Disabled until the feature is stable.
     case clipBuffering = "clipBuffering"
-    /// ReplayKit live broadcast (Go Live) button in the pause menu. Disabled until stable.
-    case liveBroadcast = "liveBroadcast"
     /// Companion Controller overlay — lets the device act as a secondary controller
     /// for systems that have non-standard input peripherals (trackball, numpad, Atari 5200 stick).
     /// Disabled by default while the DSU integration is still in progress.
@@ -75,21 +60,10 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// iOS only (tvOS lacks DragGesture). Disabled by default; enable in
     /// Settings > Advanced > Feature Flags.
     case skinButtonReposition = "skinButtonReposition"
-    /// Enables case-companion skins (Buppin, GameSir Pocket Taco, Soolra, etc.)
-    /// in the skin browser and automatic skin selection. When disabled, companion skins
-    /// are hidden from the selection UI and excluded from automatic skin resolution.
-    /// Disabled by default while the feature is under development.
-    case caseCompanionSkins = "caseCompanionSkins"
     /// Shows the AirPlay route-picker button in the pause menu (both tile and retro-menu styles).
     /// Currently only audio AirPlay is supported; video mirroring to Apple TV is not yet
     /// implemented. Disabled by default until full video AirPlay support lands.
     case airPlayMenu = "airPlayMenu"
-    /// Enables explicit SRAM/battery save import and export actions in the game context menu.
-    /// "Export Battery Save" copies `.sav`/`.srm`/`.ram` files to the share sheet (iOS) or
-    /// Caches/Exports (tvOS). "Import Battery Save" (iOS only) accepts raw battery save
-    /// files and `.zip` archives via the document picker, replacing the current battery save.
-    /// Enabled by default; disable via Settings > Advanced > Feature Flags if regressions appear.
-    case sramImportExport = "sramImportExport"
 }
 
 /// Enum representing supported OS platforms for feature flag filtering
@@ -195,26 +169,9 @@ public struct FeatureFlag: Codable, Sendable {
         description: "Tap-to-remap UX: press a physical controller button to select the remapping destination instead of choosing from a list. Disabled by default during development."
     )
 
-    public static let mupenTransferPak = FeatureFlag(
-        enabled: false,
-        description: "Enables Transfer Pak configuration UI for Mupen64Plus N64 cores. Allows mounting a GB/GBC ROM into a virtual Transfer Pak for games like Pokémon Stadium. Disabled by default."
-    )
-
-    public static let netplayEnabled = FeatureFlag(
-        enabled: false,
-        minVersion: "3.1.0",
-        allowedAppTypes: ["standard", "lite", "standard.appstore", "lite.appstore"],
-        description: "Enables native SwiftUI netplay UI for RetroArch cores. LAN room discovery via Bonjour, host/join controls, and in-game HUD. Disabled by default during Phase 1-3 development."
-    )
-
     public static let clipBuffering = FeatureFlag(
         enabled: false,
         description: "Always-on ReplayKit clip buffering. Keeps a rolling recording buffer so users can save recent gameplay clips. Disabled until stable."
-    )
-
-    public static let liveBroadcast = FeatureFlag(
-        enabled: false,
-        description: "ReplayKit Go Live broadcast button in the pause menu. Disabled until stable."
     )
 
     public static let companionController = FeatureFlag(
@@ -238,27 +195,9 @@ public struct FeatureFlag: Codable, Sendable {
         description: "Drag-to-reposition button layout editor for custom skins. Shows an 'Edit Layout' toolbar over the skin; users drag buttons to reposition them. Offsets persist per skin in UserDefaults. iOS only. Disabled by default — enable in Settings > Advanced > Feature Flags."
     )
 
-    public static let caseCompanionSkins = FeatureFlag(
-        enabled: false,
-        allowedPlatforms: ["ios"],
-        description: "Case-companion skins for phone-case controllers (Buppin, GameSir Pocket Taco, Soolra). Shows companion skins in the skin browser and includes them in automatic skin selection. iOS only. Disabled by default while under development."
-    )
-
     public static let airPlayMenu = FeatureFlag(
         enabled: false,
         description: "AirPlay route-picker button in the pause menu. Only audio AirPlay is currently supported; disabled by default until video AirPlay to Apple TV is implemented."
-    )
-
-    public static let sramImportExport = FeatureFlag(
-        enabled: false,
-        allowedAppTypes: [
-            "standard",
-            "lite",
-            "standard.appstore",
-            "lite.appstore"
-        ],
-        allowedPlatforms: ["ios"],
-        description: "Explicit SRAM/battery save import and export in the game context menu. Export shares .sav/.srm/.ram files; import opens a document picker. iOS only (tvOS syncs saves via iCloud)."
     )
 }
 
@@ -660,17 +599,12 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var contentlessCores: Bool { featureStates[.contentlessCores] ?? false }
     public var dynamicLibretroScanner: Bool { featureStates[.dynamicLibretroScanner] ?? false }
     public var tapToRemapUI: Bool { featureStates[.tapToRemapUI] ?? false }
-    public var mupenTransferPak: Bool { featureStates[.mupenTransferPak] ?? false }
-    public var netplayEnabled: Bool { featureStates[.netplayEnabled] ?? false }
     public var clipBuffering: Bool { featureStates[.clipBuffering] ?? false }
-    public var liveBroadcast: Bool { featureStates[.liveBroadcast] ?? false }
     public var companionController: Bool { featureStates[.companionController] ?? false }
     public var smartCoreSelection: Bool { featureStates[.smartCoreSelection] ?? false }
     public var lightGunCrosshair: Bool { featureStates[.lightGunCrosshair] ?? false }
     public var skinButtonReposition: Bool { featureStates[.skinButtonReposition] ?? false }
-    public var caseCompanionSkins: Bool { featureStates[.caseCompanionSkins] ?? false }
     public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
-    public var sramImportExport: Bool { featureStates[.sramImportExport] ?? true }
 
     // MARK: - Feature Queries
 

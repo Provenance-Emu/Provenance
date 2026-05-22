@@ -50,7 +50,7 @@ public final class CaseControllerSkinCoordinator {
     /// Begin observing `PVPhysicalCaseDidConnect` notifications.
     /// No-op when the `caseCompanionSkins` feature flag is off.
     public func start() {
-        guard PVFeatureFlagsManager.shared.caseCompanionSkins else { return }
+        guard Defaults[.caseCompanionSkins] else { return }
         guard observerToken == nil else { return }
         observerToken = NotificationCenter.default.addObserver(
             forName: .PVPhysicalCaseDidConnect,

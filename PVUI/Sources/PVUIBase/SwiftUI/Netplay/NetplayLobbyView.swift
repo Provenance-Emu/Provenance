@@ -12,6 +12,7 @@ import PVNetplay
 import PVFeatureFlags
 #if canImport(GameKit)
 import GameKit
+import PVSettings
 #endif
 
 /// The top-level netplay entry view shown from the pause menu or game library.
@@ -37,7 +38,7 @@ public struct NetplayLobbyView: View {
     @State private var showGameCenter = false
 
     private var isNetplayEnabled: Bool {
-        PVFeatureFlagsManager.shared.netplayEnabled
+        Defaults[.netplayEnabled]
     }
 
     @Environment(\.dismiss) private var dismiss

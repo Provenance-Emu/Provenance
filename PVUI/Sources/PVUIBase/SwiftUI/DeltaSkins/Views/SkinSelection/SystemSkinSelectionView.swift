@@ -6,6 +6,7 @@ import PVFeatureFlags
 import UniformTypeIdentifiers
 #if canImport(SafariServices)
 import SafariServices
+import PVSettings
 #endif
 
 /// View for selecting a skin for a specific system with retrowave styling
@@ -120,7 +121,7 @@ public struct SystemSkinSelectionView: View {
 #if os(tvOS)
         []
 #else
-        guard PVFeatureFlagsManager.shared.caseCompanionSkins else { return [] }
+        guard Defaults[.caseCompanionSkins] else { return [] }
         return filteredSkinsForCurrentOrientation.filter { $0.isCaseControllerSkin }
 #endif
     }

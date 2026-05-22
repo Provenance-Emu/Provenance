@@ -2,6 +2,7 @@ import Foundation
 import GameController
 import PVLogging
 import PVFeatureFlags
+import PVSettings
 
 /// Identifies physical iPhone cases with built-in controller buttons.
 ///
@@ -248,7 +249,7 @@ public enum CaseControllerDetector {
         // with the live controller mapping. Suppress.
         guard !isNonCaseExternalControllerConnected else { return false }
 
-        return PVFeatureFlags.shared.isEnabled(.caseCompanionSkins) && isKnownPhysicalCaseControllerConnected
+        return Defaults[.caseCompanionSkins] && isKnownPhysicalCaseControllerConnected
     }
 
     /// Returns the first ``PhysicalCaseLayout`` compatible with `skinIdentifier`,

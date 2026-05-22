@@ -128,7 +128,7 @@ struct PVFeatureFlagsTests {
             configuration: config, appType: .standardAppStore, buildNumber: "101", appVersion: "3.1.0"
         )
         appStoreFlags.clearDebugOverrides()
-        #expect(appStoreFlags.isEnabled(.netplayEnabled) == false)
+        #expect(appStoreFlags.isEnabled("netplayEnabled") == false)
 
         // contentlessCores allows all 4 app types but enabled: false in JSON
         let liteFlags = PVFeatureFlags(
@@ -146,7 +146,7 @@ struct PVFeatureFlagsTests {
             configuration: config, appType: .standard, buildNumber: "101", appVersion: "2.0.0"
         )
         oldFlags.clearDebugOverrides()
-        #expect(oldFlags.isEnabled(.netplayEnabled) == false)
+        #expect(oldFlags.isEnabled("netplayEnabled") == false)
     }
 
     @Test func testBuildNumberRestriction() throws {

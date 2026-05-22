@@ -907,6 +907,34 @@ public extension Defaults.Keys {
     static let iCloudSyncMode = Key<iCloudSyncMode>("iCloudSyncMode", default: .cloudKit)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)
 
+    // MARK: - Promoted from FeatureFlags
+    // These were previously gated by PVFeatureFlags entries; promoted to
+    // first-class user toggles so they're discoverable in Advanced Settings
+    // and don't depend on the FeatureFlags JSON / remote-config plumbing.
+
+    /// Explicit SRAM/battery save import/export buttons in the game context menu.
+    /// Defaults to true (matches the previous FeatureFlag default).
+    static let sramImportExport = Key<Bool>("sramImportExport", default: true)
+
+    /// Auto-loads phone-case companion DeltaSkins when a known case
+    /// controller (Backbone, Kishi, PocketTaco, etc.) is connected. Defaults
+    /// false; user must opt in via Advanced Settings.
+    static let caseCompanionSkins = Key<Bool>("caseCompanionSkins", default: false)
+
+    /// ReplayKit live broadcast / cast button in the pause menu.
+    /// Early support — broadcast quality + reconnect handling iterating.
+    static let liveBroadcast = Key<Bool>("liveBroadcast", default: false)
+
+    /// Native SwiftUI netplay lobby, host/join UI, and per-core netplay
+    /// callbacks. Works fully against RetroArch cores + mGBA link-cable;
+    /// native cores other than mGBA have stub conformances.
+    static let netplayEnabled = Key<Bool>("netplayEnabled", default: false)
+
+    /// Mupen64Plus Transfer Pak slot UI — assign a Game Boy ROM to a
+    /// controller port for Pokémon Stadium / Mario Golf integration.
+    /// Works on native PVMupen + thin libretro wrapper; ~20-game registry.
+    static let mupenTransferPak = Key<Bool>("mupenTransferPak", default: false)
+
 #if os(tvOS)
     static let iCloudSync = Key<Bool>("iCloudSync", default: true)
     static let tvOSThemes = Key<Bool>("tvOSThemes", default: false)

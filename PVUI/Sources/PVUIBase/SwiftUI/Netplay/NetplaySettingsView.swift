@@ -10,6 +10,7 @@
 import SwiftUI
 import PVNetplay
 import PVFeatureFlags
+import PVSettings
 
 /// Persistent keys for netplay user defaults.
 /// Declared `internal` (not `private`) so sibling views in the same module
@@ -47,7 +48,7 @@ public struct NetplaySettingsView: View {
     @AppStorage(NetplayDefaultsKey.allowSpectators) private var allowSpectators: Bool = true
 
     private var isNetplayEnabled: Bool {
-        PVFeatureFlagsManager.shared.netplayEnabled
+        Defaults[.netplayEnabled]
     }
 
     /// Port clamped to valid range (0 = OS-assigned, 1–65535 = explicit).

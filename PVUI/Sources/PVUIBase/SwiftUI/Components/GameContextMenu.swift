@@ -16,6 +16,7 @@ import PVRealm
 import PVLogging
 import PVFeatureFlags
 import PVPrimitives
+import PVSettings
 
 #if canImport(PVAppIntents)
 import PVAppIntents
@@ -90,7 +91,7 @@ public struct GameContextMenu: View {
                 // support the Transfer Pak accessory (e.g. Pokémon Stadium, Mario Tennis).
                 // Showing the option for all N64 games is confusing because most titles
                 // never use the Transfer Pak.
-                if featureFlags.mupenTransferPak,
+                if Defaults[.mupenTransferPak],
                    game.systemIdentifier == SystemIdentifier.N64.rawValue,
                    TransferPakCompatibleGames.isKnownTransferPakGame(game.title) {
                     Button {
@@ -174,7 +175,7 @@ public struct GameContextMenu: View {
                     Label("Export Saves", systemImage: "square.and.arrow.up")
                 }
                 .disabled(!hasSaveStates && !hasBatterySaves)
-                if featureFlags.sramImportExport {
+                if Defaults[.sramImportExport] {
                     if hasBatterySaves {
                         Button {
                             contextMenuDelegate?.gameContextMenu(self, didRequestExportSRAMFor: game)
@@ -227,7 +228,7 @@ public struct GameContextMenu: View {
                         resetCorePreferences(forGame: game)
                     } label: { Label("Reset Core Preferences", systemImage: "arrow.counterclockwise") }
                 }
-                if featureFlags.netplayEnabled && availableCores.contains(where: { $0.principleClass.contains("RetroArch") }) {
+                if Defaults[.netplayEnabled] && availableCores.contains(where: { $0.principleClass.contains("RetroArch") }) {
                     Button {
                         contextMenuDelegate?.gameContextMenu(self, didRequestNetworkPlayFor: game)
                     } label: { Label("Network Play", systemImage: "antenna.radiowaves.left.and.right") }

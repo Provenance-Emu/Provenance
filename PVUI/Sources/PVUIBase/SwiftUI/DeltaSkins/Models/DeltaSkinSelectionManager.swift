@@ -3,6 +3,7 @@ import Combine
 import SwiftUI
 import PVLogging
 import PVFeatureFlags
+import PVSettings
 
 /// Centralized manager for all skin selection logic
 /// Handles session, game, and system preferences in one place
@@ -315,7 +316,7 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         ILOG("skins: Effective skin '\(skin.name)' doesn't support \(orientation.rawValue), finding fallback")
 
         // Try to find first available skin that supports this orientation
-        let allowCaseSkins = PVFeatureFlags.shared.isEnabled(.caseCompanionSkins) && CaseControllerDetector.isKnownPhysicalCaseControllerConnected
+        let allowCaseSkins = Defaults[.caseCompanionSkins] && CaseControllerDetector.isKnownPhysicalCaseControllerConnected
         for fallbackSkin in availableSkins {
             // Skip the current skin
             if fallbackSkin.identifier == skinId {

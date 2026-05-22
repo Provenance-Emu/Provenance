@@ -775,7 +775,7 @@ struct RetroMenuView: View {
 #endif
 
 #if os(iOS) || os(tvOS)
-            if PVFeatureFlagsManager.shared.liveBroadcast {
+            if Defaults[.liveBroadcast] {
                 broadcastButton
             }
             if PVFeatureFlagsManager.shared.clipBuffering {
@@ -2787,7 +2787,7 @@ struct RetroMenuView: View {
 #if os(tvOS)
         []
 #else
-        guard PVFeatureFlagsManager.shared.caseCompanionSkins else { return [] }
+        guard Defaults[.caseCompanionSkins] else { return [] }
         return retroSkinPickerSkinsForOrientation.filter { CaseControllerDetector.isCompanionSkinForKnownCase($0.identifier) }
 #endif
     }
