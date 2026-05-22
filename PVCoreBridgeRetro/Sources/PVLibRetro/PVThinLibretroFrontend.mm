@@ -7072,6 +7072,13 @@ static void pvthin_rcheevos_load_callback(int result, const char *error_message,
              summary.num_unlocked_achievements);
     } else {
         WLOG(@"[CHEEVOS-DIAG] load_game FAILED (%d): %s", result, error_message ?: "<no message>");
+        // Surface the failure to UI so the user sees a toast instead of
+        // silent "cheevos not tracking" (audit Section J.1). The Swift
+        // wrapper bridges this into RetroAchievementsOSDDelegate.
+        if (bridge.sessionLoadFailedBlock) {
+            NSString *msg = error_message ? @(error_message) : nil;
+            bridge.sessionLoadFailedBlock((int32_t)result, msg);
+        }
     }
     [bridge _pvthin_setAchievementsActive:success];
     if (completion) { completion(success); }
@@ -7094,6 +7101,13 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
 
     if (result != RC_OK) {
         WLOG(@"ThinFrontend: rcheevos login failed (%d): %s", result, error_message ?: "<no message>");
+        // Surface login failures to UI alongside load failures — both block
+        // the session from starting, both were previously silent. The user
+        // sees one categorised toast either way (audit Section J.1).
+        if (bridge.sessionLoadFailedBlock) {
+            NSString *msg = error_message ? @(error_message) : nil;
+            bridge.sessionLoadFailedBlock((int32_t)result, msg);
+        }
         [bridge _pvthin_setAchievementsActive:NO];
         if (completion) { completion(NO); }
         return;

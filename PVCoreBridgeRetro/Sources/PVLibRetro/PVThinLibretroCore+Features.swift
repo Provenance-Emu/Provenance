@@ -240,6 +240,13 @@ extension PVThinLibretroCore: CoreRetroAchievements {
             )
             delegate.leaderboardSubmitted(notif)
         }
+        _bridge.sessionLoadFailedBlock = { [weak self] rcResult, message in
+            // Audit Section J.1: surface server / login / unknown-game
+            // failures to the UI so the user knows why cheevos aren't
+            // tracking. The OSD layer is responsible for categorising
+            // the rcResult into a user-friendly toast.
+            self?._achievementsDelegate?.sessionLoadFailed(rcResult: rcResult, message: message)
+        }
     }
 
     // MARK: - Private

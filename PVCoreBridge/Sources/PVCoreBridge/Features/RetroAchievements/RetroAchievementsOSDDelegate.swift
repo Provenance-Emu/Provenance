@@ -44,6 +44,17 @@ public protocol RetroAchievementsOSDDelegate: AnyObject {
 
     /// A leaderboard score was submitted.
     func leaderboardSubmitted(_ notification: AchievementLeaderboardNotification)
+
+    /// rcheevos failed to load the game's achievement set for this session.
+    /// Common causes (use `rcResult` to discriminate — values from `rc_error.h`):
+    ///   `RC_NO_GAME_LOADED` / similar → the title isn't in the RA database
+    ///   `RC_NO_RESPONSE` / 5xx → server / network failure
+    ///   `RC_INVALID_CREDENTIALS` → user's saved login is stale
+    /// Implementors should surface a categorised toast (network vs unknown
+    /// game vs auth) so the user can tell why achievements aren't tracking.
+    /// Previously these failures were logged only; the cheevos audit
+    /// (Section J.1) flagged this as a HIGH-severity silent-failure gap.
+    func sessionLoadFailed(rcResult: Int32, message: String?)
 }
 
 // MARK: - Default no-op implementations
@@ -56,4 +67,5 @@ public extension RetroAchievementsOSDDelegate {
     func leaderboardStarted(_ notification: AchievementLeaderboardNotification) {}
     func leaderboardFailed(leaderboardID: UInt32) {}
     func leaderboardSubmitted(_ notification: AchievementLeaderboardNotification) {}
+    func sessionLoadFailed(rcResult: Int32, message: String?) {}
 }

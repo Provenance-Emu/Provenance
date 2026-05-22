@@ -1,5 +1,5 @@
 {
-  "originHash" : "8c3d27b3140dfbf6eac6950c7f8af56e377269496c8ef363d98eba8b77775be7",
+  "originHash" : "0d731bb61597240d1f6ddebb2040881d453bf05a0945c965db16a85c3fb956b7",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -43,15 +43,6 @@
       "location" : "https://github.com/SideStore/SideKit.git",
       "state" : {
         "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
-      }
-    },
-    {
-      "identity" : "swcompression",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/JoeMatt/SWCompression.git",
-      "state" : {
-        "revision" : "6ab39d1a3d9db303947ea5408925c48b9367204f",
-        "version" : "1.0.0"
       }
     },
     {

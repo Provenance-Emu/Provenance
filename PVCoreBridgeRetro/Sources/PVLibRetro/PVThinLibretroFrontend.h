@@ -566,6 +566,15 @@ FOUNDATION_EXPORT NSNotificationName const PVThinLibretroFrontendCoreDidThrowNot
 @property (nonatomic, copy, nullable) void (^leaderboardSubmittedBlock)(uint32_t leaderboardID,
     NSString *title, NSString *desc, NSString *scoreText);
 
+/// Block invoked when rcheevos fails to load the game's achievement set
+/// or fails to log in for the session. The Swift core converts this to
+/// `RetroAchievementsOSDDelegate.sessionLoadFailed(rcResult:message:)`
+/// so the UI can surface a categorised toast (network vs unknown game
+/// vs auth). Without this, load failures were log-only — the user had no
+/// way to tell why their cheevos weren't tracking (audit Section J.1).
+@property (nonatomic, copy, nullable) void (^sessionLoadFailedBlock)(int32_t rcResult,
+    NSString * _Nullable message);
+
 // MARK: Light gun input
 
 /// Set the light gun aim position and button states.
