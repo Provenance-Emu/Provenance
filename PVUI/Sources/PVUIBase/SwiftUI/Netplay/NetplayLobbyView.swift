@@ -10,9 +10,10 @@
 import SwiftUI
 import PVNetplay
 import PVFeatureFlags
+import PVSettings
+import Defaults
 #if canImport(GameKit)
 import GameKit
-import PVSettings
 #endif
 
 /// The top-level netplay entry view shown from the pause menu or game library.
@@ -183,8 +184,7 @@ public struct NetplayLobbyView: View {
     /// Shows "Disabled" when the feature flag is off, "Available" when on.
     /// Core-specific capability detection is deferred to a later phase.
     private var coreNetplaySupportBadge: some View {
-        let featureManager = PVFeatureFlagsManager.shared
-        let isEnabled = featureManager.netplayEnabled
+        let isEnabled = Defaults[.netplayEnabled]
         return HStack(spacing: 6) {
             Image(systemName: isEnabled ? "checkmark.circle.fill" : "xmark.circle.fill")
                 .foregroundStyle(isEnabled ? .green : .secondary)
