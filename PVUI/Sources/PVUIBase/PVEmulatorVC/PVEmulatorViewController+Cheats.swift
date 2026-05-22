@@ -99,6 +99,27 @@ extension PVEmulatorViewController {
 
         DLOG("Succeeded applying cheat: \(normalizedCode) \(type) \(enabled)")
 
+        // Cheevos H.1 guard: if the user enabled a cheat while running in
+        // RetroAchievements hardcore mode, auto-downgrade to softcore so
+        // their session doesn't keep posting fake hardcore unlocks. This is
+        // the RA-standard behaviour (rcheevos community / RetroArch both do
+        // it). Softcore unlocks still register; the user just loses hardcore
+        // credit until they restart the game with cheats disabled.
+        if enabled, let cheevosCore = core as? CoreRetroAchievements, cheevosCore.hardcoreMode {
+            WLOG("[CHEEVOS-DIAG] Auto-disabling hardcore: cheat enabled while session was hardcore")
+            cheevosCore.hardcoreMode = false
+            // Surface a toast so the user knows their hardcore session was
+            // downgraded — silent invalidation would be worse than fake
+            // unlocks, since they wouldn't know to restart for a real attempt.
+            await MainActor.run {
+                self.presentMessage(
+                    "RetroAchievements hardcore mode was disabled because a cheat was activated. Achievements will still register as softcore.",
+                    title: "Hardcore Disabled",
+                    source: self.view
+                )
+            }
+        }
+
         // Persist to Realm
         let realm: Realm
         do {

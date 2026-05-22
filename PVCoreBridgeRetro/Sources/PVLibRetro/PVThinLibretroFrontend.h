@@ -566,6 +566,14 @@ FOUNDATION_EXPORT NSNotificationName const PVThinLibretroFrontendCoreDidThrowNot
 @property (nonatomic, copy, nullable) void (^leaderboardSubmittedBlock)(uint32_t leaderboardID,
     NSString *title, NSString *desc, NSString *scoreText);
 
+/// Toggle rcheevos hardcore mode on the live session. The initial value
+/// was passed via `loadAchievements:hardcore:`; this lets the UI flip it
+/// without restarting the session (used by the cheat-enable guard so a
+/// user enabling a cheat in hardcore is auto-downgraded to softcore
+/// instead of continuing to earn fake hardcore unlocks — cheevos audit
+/// Section H.1).
+- (void)setHardcoreEnabled:(BOOL)hardcore;
+
 /// Block invoked when rcheevos fails to load the game's achievement set
 /// or fails to log in for the session. The Swift core converts this to
 /// `RetroAchievementsOSDDelegate.sessionLoadFailed(rcResult:message:)`

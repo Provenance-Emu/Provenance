@@ -198,7 +198,13 @@ extension PVThinLibretroCore: CoreRetroAchievements {
 
     public var hardcoreMode: Bool {
         get { _hardcoreMode }
-        set { _hardcoreMode = newValue }
+        set {
+            _hardcoreMode = newValue
+            // Propagate to the running rc_client so the change takes effect
+            // mid-session (e.g. cheat-enable guard at audit Section H.1).
+            // Without this the Swift flag and rcheevos state diverged.
+            _bridge.setHardcoreEnabled(newValue)
+        }
     }
 
     // MARK: - Frontend block wiring

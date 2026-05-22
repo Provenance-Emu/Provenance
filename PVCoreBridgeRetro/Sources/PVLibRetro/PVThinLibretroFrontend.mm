@@ -7231,6 +7231,16 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
 #endif
 }
 
+- (void)setHardcoreEnabled:(BOOL)hardcore {
+#if HAVE_RCHEEVOS
+    _rcHardcore = hardcore;
+    if (_rcClient) {
+        rc_client_set_hardcore_enabled(_rcClient, hardcore ? 1 : 0);
+        ILOG(@"[CHEEVOS-DIAG] ThinFrontend: hardcore=%d (live update)", (int)hardcore);
+    }
+#endif
+}
+
 - (void)loadAchievementsForGameHash:(NSString *)gameHash
                            hardcore:(BOOL)hardcore
                          completion:(void (^)(BOOL))completion {
