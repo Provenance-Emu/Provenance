@@ -3211,7 +3211,15 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 }
 
 - (BOOL)loadState:(NSData *)stateData {
-    if (!_sym.retro_unserialize || !stateData || stateData.length == 0) return NO;
+    ILOG(@"[SAVE-DIAG] ThinFrontend: loadState ENTER size=%zu", (size_t)(stateData ? stateData.length : 0));
+    if (!_sym.retro_unserialize) {
+        ELOG(@"[SAVE-DIAG] ThinFrontend: loadState FAIL — core lacks retro_unserialize symbol");
+        return NO;
+    }
+    if (!stateData || stateData.length == 0) {
+        ELOG(@"[SAVE-DIAG] ThinFrontend: loadState FAIL — nil or empty stateData");
+        return NO;
+    }
 
     // Validate size against what the core expects. A size mismatch usually means
     // the save state came from a different core version or a different wrapper
@@ -3219,17 +3227,19 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     // handle version differences gracefully) but warn about it.
     if (_sym.retro_serialize_size) {
         size_t expectedSize = _sym.retro_serialize_size();
+        ILOG(@"[SAVE-DIAG] ThinFrontend: retro_serialize_size() = %zu (file has %zu)", expectedSize, (size_t)stateData.length);
         if (expectedSize > 0 && stateData.length != expectedSize) {
-            WLOG(@"ThinFrontend: save state size mismatch — file: %zu, core expects: %zu",
+            WLOG(@"[SAVE-DIAG] ThinFrontend: save state size mismatch — file: %zu, core expects: %zu (loading anyway, may fail or partially restore)",
                  (size_t)stateData.length, expectedSize);
         }
     }
 
     BOOL success = _sym.retro_unserialize(stateData.bytes, stateData.length);
     if (!success) {
-        ELOG(@"ThinFrontend: retro_unserialize failed — save state may be from incompatible core version");
+        ELOG(@"[SAVE-DIAG] ThinFrontend: retro_unserialize FAILED — save state may be from incompatible core version or corrupt");
         return NO;
     }
+    ILOG(@"[SAVE-DIAG] ThinFrontend: retro_unserialize SUCCESS");
 
     // Flush rcheevos trigger history after a successful state load. Without
     // this, loading a save from frame 100 and playing forward can re-fire
@@ -3300,8 +3310,11 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 
 /// `EmulatorCoreSavesSerializer` / `ObjCBridgedCoreBridge` expect this selector; keep `loadStateFromFileAtPath:` as a legacy alias.
 - (BOOL)loadStateToFileAtPath:(NSString *)fileName error:(NSError **)error {
+    ILOG(@"[SAVE-DIAG] ThinFrontend: loadStateToFileAtPath ENTER path=%@", fileName);
     NSData *data = [NSData dataWithContentsOfFile:fileName];
     if (!data) {
+        BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:fileName];
+        ELOG(@"[SAVE-DIAG] ThinFrontend: NSData dataWithContentsOfFile returned nil for %@ (fileExists=%d)", fileName, exists);
         if (error) {
             *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                          code:PVEmulatorCoreErrorCodeCouldNotLoadState
@@ -3310,6 +3323,7 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
         }
         return NO;
     }
+    ILOG(@"[SAVE-DIAG] ThinFrontend: read %zu bytes from %@", (size_t)data.length, fileName);
     BOOL success = [self loadState:data];
     if (!success && error) {
         *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
