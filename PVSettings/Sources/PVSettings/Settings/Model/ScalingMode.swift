@@ -27,15 +27,17 @@ import Defaults
 /// libretro cores report geometry via `retro_game_geometry.aspect_ratio` (float ≤ 0 means
 /// use `base_width/base_height`). The renderer updates on `RETRO_ENVIRONMENT_SET_GEOMETRY (37)`
 /// or `RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO (33)`. For per-core aspect ratio overrides
-/// the relevant core options keys are:
-/// - **Mupen64Plus**: `mupen64plus-aspect` → `4:3`, `16:9`, `stretch`
-/// - **Dolphin**: `dolphin_aspect_ratio` → `auto`, `force_43`, `force_169`, `stretch`
-/// - **PPSSPP**: `ppsspp_stretch` → `false/true`
-/// - **Flycast**: `flycast_widescreen_hack` → `disabled/enabled`
-/// - **DuckStation**: `duckstation_GPU.WidescreenHack` → `false/true`
-/// - **Gearcoleco**: `gearcoleco_aspect_ratio` → `1:1 PAR`, `4:3 DAR`, `16:9 DAR`
-/// - **Genesis Plus GX**: `genesis_plus_gx_aspect_ratio` → `auto`, `NTSC`, `PAL`
-/// - **Mednafen/Beetle PSX**: `beetle_psx_widescreen_hack` → `disabled/enabled`
+/// the relevant core options keys are (verified against upstream sources):
+/// - **Mupen64Plus**: `mupen64plus-aspect` → `4:3`, `16:9`, `16:9 adjusted`
+/// - **Dolphin**: `dolphin_aspect_ratio` → `"0"` Auto, `"1"` Force Wide, `"2"` Force Standard,
+///   `"3"` Stretch, `"4"` Custom, `"5"` Custom Stretch, `"6"` Raw;
+///   `dolphin_widescreen_hack` → `disabled/enabled`
+/// - **PPSSPP**: has no widescreen option (PSP is natively 480×272 ~16:9)
+/// - **Flycast**: `reicast_widescreen_hack` → `disabled/enabled` (NB: prefix is `reicast_`, not `flycast_`)
+/// - **DuckStation/Swanstation**: `swanstation_GPU_WidescreenHack` → `true/false`; `swanstation_Display_AspectRatio` → `4:3`, `16:9`, `19:9`, `20:9`, `Custom`, `Auto`, `Native`
+/// - **Gearcoleco**: `gearcoleco_aspect_ratio` → `1:1 PAR`, `4:3 DAR`, `16:9 DAR`, `16:10 DAR`
+/// - **Genesis Plus GX**: `genesis_plus_gx_aspect_ratio` → `auto`, `NTSC PAR`, `PAL PAR` (no widescreen)
+/// - **Beetle PSX HW**: `beetle_psx_hw_widescreen_hack` → `disabled/enabled` (software variant: `beetle_psx_widescreen_hack`)
 /// These are passed as `RETRO_ENVIRONMENT_GET_VARIABLE` options and can be set via
 /// `RETRO_ENVIRONMENT_SET_VARIABLES` callbacks before `retro_load_game`.
 public enum ScalingMode: String, Codable, Equatable, Hashable,

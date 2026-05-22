@@ -16,9 +16,10 @@
 //
 //  But several libretro cores expose their OWN aspect-ratio toggle as a
 //  core option (`mupen64plus-aspect`, `dolphin_aspect_ratio`,
-//  `ppsspp_stretch`, `flycast_widescreen_hack`, etc.). The full RetroArch
-//  wrapper translates the user's preference into these options
-//  implicitly via RA's `video_aspect_ratio_idx = ASPECT_RATIO_CORE` flow.
+//  `reicast_widescreen_hack`, `swanstation_GPU_WidescreenHack`, etc.).
+//  The full RetroArch wrapper translates the user's preference into these
+//  options implicitly via RA's `video_aspect_ratio_idx = ASPECT_RATIO_CORE`
+//  flow.
 //  The thin wrapper does not run RA, so without this translation the
 //  user's "Stretch" / "Aspect Fit" pause-menu choice silently no-ops for
 //  cores that gate widescreen behind a core option.
@@ -131,31 +132,62 @@ extension PVThinLibretroCore {
         var pairs: [(String, String)] = []
 
         if coreIdentifier.contains("mupen") {
-            // mupen64plus-aspect: "4:3" | "16:9" | "Stretch"
-            pairs.append(("mupen64plus-aspect", "Stretch"))
+            // mupen64plus-aspect (upstream mupen64plus-libretro-nx, libretro/libretro_core_options.h):
+            //   "4:3" | "16:9" | "16:9 adjusted"
+            // "16:9 adjusted" renders a TRUE widescreen FOV (calculated from the
+            // selected 16:9 internal resolution) rather than stretching the 4:3
+            // framebuffer. That's a better result on Provenance because our
+            // renderer's .stretch fills the screen regardless — picking
+            // "16:9 adjusted" means the user sees expanded geometry, not
+            // distorted 4:3. Note: the previous value "Stretch" was rejected
+            // by mupen as not in the enum, so the core silently kept its 4:3
+            // default (root cause of the tester report).
+            pairs.append(("mupen64plus-aspect", "16:9 adjusted"))
         }
         if coreIdentifier.contains("dolphin") {
-            // dolphin_aspect_ratio: "Auto" | "Force 4:3" | "Force 16:9" | "Stretch"
-            pairs.append(("dolphin_aspect_ratio", "Stretch"))
+            // dolphin_aspect_ratio (libretro/dolphin Source/Core/DolphinLibretro/Common/Options.cpp):
+            //   "0" Auto | "1" Force Wide | "2" Force Standard | "3" Stretch |
+            //   "4" Custom | "5" Custom Stretch | "6" Raw
+            // dolphin_widescreen_hack: "disabled" | "enabled" — expands the
+            //   game's FOV so the rendered framebuffer is true 16:9 instead
+            //   of a stretched 4:3 image. Setting both gives the best result.
+            // The previous value "Stretch" was rejected (key expects numeric
+            // string), so the option no-op'd.
+            pairs.append(("dolphin_aspect_ratio", "1"))
+            pairs.append(("dolphin_widescreen_hack", "enabled"))
         }
-        if coreIdentifier.contains("ppsspp") {
-            // ppsspp_stretch: "enabled" | "disabled"
-            pairs.append(("ppsspp_stretch", "enabled"))
+        // PPSSPP intentionally has no widescreen / stretch core option —
+        // the PSP framebuffer is natively 480×272 (~16:9). The renderer's
+        // .stretch handles the (minor) fill-to-screen.
+        if coreIdentifier.contains("flycast") || coreIdentifier.contains("reicast") {
+            // Flycast's libretro option prefix is `reicast_*`, NOT `flycast_*`
+            // (CORE_OPTION_NAME defined in shell/libretro/libretro_core_option_defines.h).
+            // The previous `flycast_widescreen_hack` was rejected by the core,
+            // so widescreen never engaged.
+            pairs.append(("reicast_widescreen_hack", "enabled"))
         }
-        if coreIdentifier.contains("flycast") {
-            // flycast_widescreen_hack: "disabled" | "enabled"
-            pairs.append(("flycast_widescreen_hack", "enabled"))
+        if coreIdentifier.contains("duckstation") || coreIdentifier.contains("swanstation") {
+            // The DuckStation libretro fork is `swanstation` (libretro/swanstation,
+            // src/libretro/libretro_core_options.h). Keys use UNDERSCORES, not dots:
+            //   swanstation_GPU_WidescreenHack: "true" | "false"
+            //   swanstation_Display_AspectRatio: "4:3" | "16:9" | "19:9" | "20:9" | "Custom" | "Auto" | "Native"
+            // The previous `duckstation_GPU.WidescreenHack` (with dot) didn't
+            // match any option the core registers, so widescreen never engaged.
+            pairs.append(("swanstation_GPU_WidescreenHack", "true"))
+            pairs.append(("swanstation_Display_AspectRatio", "16:9"))
         }
-        if coreIdentifier.contains("duckstation") {
-            // duckstation_GPU.WidescreenHack: "false" | "true"
-            pairs.append(("duckstation_GPU.WidescreenHack", "true"))
-        }
-        if coreIdentifier.contains("beetle_psx") || coreIdentifier.contains("psx_hw") {
-            // beetle_psx_widescreen_hack: "disabled" | "enabled"
+        if coreIdentifier.contains("psx_hw") || coreIdentifier.contains("mednafen_psx_hw") {
+            // Beetle PSX HW: key prefix is `beetle_psx_hw_` (see
+            // BeetlePSX/beetle-psx/libretro_options.h: `BEETLE_OPT(_o) ("beetle_psx_hw_" # _o)`
+            // when built with HAVE_HW). The previous `beetle_psx_widescreen_hack`
+            // was for the SOFTWARE core only.
+            pairs.append(("beetle_psx_hw_widescreen_hack", "enabled"))
+        } else if coreIdentifier.contains("beetle_psx") || coreIdentifier.contains("mednafen_psx") {
+            // Beetle PSX (software renderer) — no `_hw_` infix.
             pairs.append(("beetle_psx_widescreen_hack", "enabled"))
         }
         if coreIdentifier.contains("gearcoleco") {
-            // gearcoleco_aspect_ratio: "1:1 PAR" | "4:3 DAR" | "16:9 DAR"
+            // gearcoleco_aspect_ratio: "1:1 PAR" | "4:3 DAR" | "16:9 DAR" | "16:10 DAR"
             pairs.append(("gearcoleco_aspect_ratio", "16:9 DAR"))
         }
         // Note: genesis_plus_gx had no stretch-mode option to set; removed
