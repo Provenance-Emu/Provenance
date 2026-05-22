@@ -27,7 +27,11 @@ NSString *autoLoadStatefileName;
 #pragma mark - Methods
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError **)error {
+	ILOG(@"[SAVE-DIAG] saveStateToFileAtPath ENTER core=%@ path=%@ isInitialized=%d",
+	     self.coreIdentifier, fileName, _isInitialized);
+
 	if (!_isInitialized) {
+		ELOG(@"[SAVE-DIAG] FAIL: core not initialized");
 		if (error) {
 			NSDictionary *userInfo = @{
 				NSLocalizedDescriptionKey: @"Failed to save state.",
@@ -42,6 +46,7 @@ NSString *autoLoadStatefileName;
 	}
 
 	if (!core_info_current_supports_savestate()) {
+		ELOG(@"[SAVE-DIAG] FAIL: core_info_current_supports_savestate() == false for %@", self.coreIdentifier);
 		if (error) {
 			NSDictionary *userInfo = @{
 				NSLocalizedDescriptionKey: @"Failed to save state.",
@@ -55,8 +60,38 @@ NSString *autoLoadStatefileName;
 		return NO;
 	}
 
+	// Log serialize size up front — Mupen64Plus-Next has historically reported
+	// 0 mid-frame or before the first retro_run() landed; that path makes
+	// content_save_state() bail with no file written. The .jpg thumbnail
+	// Provenance writes BEFORE this call remains as a ghost.
+	size_t serSize = core_serialize_size();
+	ILOG(@"[SAVE-DIAG] core_serialize_size() = %zu bytes", serSize);
+	if (serSize == 0) {
+		ELOG(@"[SAVE-DIAG] FAIL: core_serialize_size() returned 0 — save state binary cannot be written");
+	}
+
+	// Verify destination directory exists before asking RA to write. RA's
+	// task_save_handler silently bails inside intfstream_open_file() when
+	// the parent directory is missing — no error logged on the RA side.
+	NSString *parentDir = [fileName stringByDeletingLastPathComponent];
+	BOOL parentIsDir = NO;
+	BOOL parentExists = [[NSFileManager defaultManager] fileExistsAtPath:parentDir isDirectory:&parentIsDir];
+	ILOG(@"[SAVE-DIAG] parent dir=%@ exists=%d isDir=%d", parentDir, parentExists, parentIsDir);
+	if (!parentExists || !parentIsDir) {
+		WLOG(@"[SAVE-DIAG] parent dir missing — creating %@", parentDir);
+		NSError *mkdirErr = nil;
+		if (![[NSFileManager defaultManager] createDirectoryAtPath:parentDir
+		                              withIntermediateDirectories:YES
+		                                               attributes:nil
+		                                                    error:&mkdirErr]) {
+			ELOG(@"[SAVE-DIAG] FAIL: createDirectory failed: %@", mkdirErr.localizedDescription);
+		}
+	}
+
 	bool queued = content_save_state(fileName.UTF8String, true);
+	ILOG(@"[SAVE-DIAG] content_save_state queued=%d", queued);
 	if (!queued) {
+		ELOG(@"[SAVE-DIAG] FAIL: content_save_state returned false — task could not be queued (another blocking task active, or serialize_size==0)");
 		if (error) {
 			NSDictionary *userInfo = @{
 				NSLocalizedDescriptionKey: @"Failed to save state.",
@@ -73,6 +108,10 @@ NSString *autoLoadStatefileName;
 	content_wait_for_save_state_task();
 
 	if (![[NSFileManager defaultManager] fileExistsAtPath:fileName]) {
+		ELOG(@"[SAVE-DIAG] FAIL: file not present after content_wait_for_save_state_task — RA's task_save_handler silently dropped the write. Check upstream RA logs for [State] messages.");
+		// Surface what IS in the parent dir so a stale ghost / wrong path is obvious from logs.
+		NSArray<NSString *> *dirContents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:parentDir error:nil];
+		ILOG(@"[SAVE-DIAG] parent dir contents at failure: %@", dirContents);
 		if (error) {
 			NSDictionary *userInfo = @{
 				NSLocalizedDescriptionKey: @"Failed to save state.",
@@ -84,6 +123,17 @@ NSString *autoLoadStatefileName;
 									  userInfo:userInfo];
 		}
 		return NO;
+	}
+
+	// Confirm the file actually contains the expected payload (non-zero, roughly
+	// matches serialize_size). A zero-byte .svs would still pass the existence
+	// check but be useless to load — log loudly so we catch that case too.
+	NSError *attrErr = nil;
+	NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfItemAtPath:fileName error:&attrErr];
+	uint64_t fileSize = [attrs[NSFileSize] unsignedLongLongValue];
+	ILOG(@"[SAVE-DIAG] SUCCESS: wrote %llu bytes to %@ (serialize_size was %zu)", fileSize, fileName, serSize);
+	if (fileSize == 0) {
+		WLOG(@"[SAVE-DIAG] WARNING: 0-byte save state written — load will fail");
 	}
 
 	return YES;

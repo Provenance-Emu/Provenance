@@ -318,6 +318,16 @@ public extension PVEmualatorControllerProtocol {
         let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svs", isDirectory: false)
         let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
 
+        /// Save state on main thread since it interacts with core.
+        /// Run the binary state write BEFORE the .jpg thumbnail write —
+        /// otherwise a failed save (e.g. RA wrapper's task_save_handler
+        /// silently dropping the write) leaves an orphan thumbnail on disk
+        /// that the pause-menu picker shows as a "save state" with no
+        /// loadable backing file. Throw early so callers see the real error
+        /// and the user gets no ghost row.
+        try await core.saveState(toFileAtPath: saveURL.path)
+        DLOG("Succeeded saving state, auto: \(auto)")
+
         var imageFile: PVImageFile?
         #if os(tvOS)
         var localTopShelfImageURL: URL?
@@ -342,10 +352,6 @@ public extension PVEmualatorControllerProtocol {
                 }
             }
         }
-
-        /// Save state on main thread since it interacts with core
-        try await core.saveState(toFileAtPath: saveURL.path)
-        DLOG("Succeeded saving state, auto: \(auto)")
 
         /// Register the save state in the database via the abstracted persistence service.
         /// This defaults to the Realm-backed RomDatabase today and can be swapped for
