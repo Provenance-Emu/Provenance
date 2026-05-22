@@ -114,6 +114,11 @@ public final class RcheevosSession: @unchecked Sendable {
     private var client: OpaquePointer?
     private var regions: [RcheevosRegion] = []
     private var isGameLoaded = false
+    /// Track the token we last successfully logged in with so we can detect
+    /// a Settings re-login (user changed credentials) and force a fresh
+    /// rc_client login instead of trusting the stale internal user_info.
+    /// Cheevos audit Section C.1.
+    private var lastLoginToken: String?
 
     // MARK: Event closures
     //
@@ -185,8 +190,17 @@ public final class RcheevosSession: @unchecked Sendable {
             throw RcheevosSessionError.noCredentials
         }
 
-        if rc_client_get_user_info(client) == nil {
+        // Re-login when EITHER the rc_client has no cached user (fresh
+        // session) OR the stored token has changed since we last logged in
+        // (user went into Settings, logged out, logged back in — possibly as
+        // a different account). Without the token-change check, the stale
+        // user_info inside rc_client survives the credential swap and every
+        // subsequent API call silently fails server-side (audit C.1).
+        let needsLogin = rc_client_get_user_info(client) == nil
+            || lastLoginToken != token
+        if needsLogin {
             try await beginLogin(username: username, token: token)
+            lastLoginToken = token
         }
         try await beginLoadGame(hash: gameHash)
         isGameLoaded = true
