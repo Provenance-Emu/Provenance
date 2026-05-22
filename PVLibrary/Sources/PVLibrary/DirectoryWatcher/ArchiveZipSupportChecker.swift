@@ -11,6 +11,7 @@ import PVSystems
 import PVLookup
 import PVPrimitives
 import PVArchiving
+import PVFileSystem
 
 /// Feature flag to enable/disable zip-as-ROM support checking
 /// Set to false to disable this feature if bugs are found
@@ -138,15 +139,26 @@ public actor ArchiveZipSupportChecker {
         return (false, nil)
     }
 
-    /// File extensions that, if present inside a zip, mean the zip is a CD /
-    /// optical-disc bundle — never a MAME / CPS arcade ROM. Includes Dreamcast
-    /// (`cdi` / `gdi`), Saturn (`ccd`), PSX (`bin` / `cue` / `chd` / `img`),
-    /// PSP (`pbp` / `cso`), and generic disc formats. Any hit aborts the
-    /// zip-as-ROM classification so the importer falls through to extraction.
-    private static let cdImageEntryExtensions: Set<String> = [
-        "cdi", "gdi", "iso", "chd", "ccd", "img", "nrg",
-        "mds", "toc", "bin", "cue", "pbp", "cso", "ecm"
+    /// Extra rare optical-image extensions not covered by
+    /// `Extensions.discImageExtensions` ∪ `Extensions.playlistExtensions`
+    /// ∪ `Extensions.bin`. Adding these is enough to recognise the few
+    /// remaining CD formats users occasionally drop (PSP packed format,
+    /// compressed isos, Nero / Alcohol images). The full set used by
+    /// `containsCDImageContent` is composed from the global enum plus these.
+    private static let extraCDLikeEntryExtensions: Set<String> = [
+        "nrg", "mds", "toc", "pbp", "cso", "ecm"
     ]
+
+    /// Composite "this zip is a CD bundle, not a MAME ROM" set, derived from
+    /// the global `Extensions` enum so adding a new disc format in
+    /// `PVFileSystem/Extensions.swift` (e.g. a new Dreamcast variant) is
+    /// picked up here automatically without a parallel hand-edit.
+    private static let cdImageEntryExtensions: Set<String> = {
+        Extensions.discImageExtensions
+            .union(Extensions.playlistExtensions)
+            .union([Extensions.bin.rawValue])
+            .union(extraCDLikeEntryExtensions)
+    }()
 
     /// Peek inside the zip and return `true` if any entry's extension matches
     /// `cdImageEntryExtensions`. Failure to enumerate (corrupt archive, etc.)

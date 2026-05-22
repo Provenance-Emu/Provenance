@@ -42,6 +42,8 @@ public enum Extensions: String, CaseIterable {
     case img = "img"
     case iso = "iso"
     case chd = "chd"
+    case cdi = "cdi"   // Dreamcast / Philips CD-i image
+    case gdi = "gdi"   // Dreamcast Gigabyte Disc image
 
     // Skins
     case deltaSkin = "deltaskin"
@@ -76,7 +78,7 @@ public enum Extensions: String, CaseIterable {
         .tar, .bz2, .bzip2, .lzh, .lha, .xz, .zst, .zstd, .lzma
     ]
     private static let _artworkExtensions: Set<Extensions> = [.png, .jpg, .jpeg]
-    private static let _discImageExtensions: Set<Extensions> = [.ccd, .img, .iso, .chd]
+    private static let _discImageExtensions: Set<Extensions> = [.ccd, .img, .iso, .chd, .cdi, .gdi]
     private static let _playlistExtensions: Set<Extensions> = [.m3u, .cue]
     private static let _specialExtensions: Set<Extensions> = [.svs, .mcr, .plist, .ccd, .sub, .bin]
     private static let _cdSupplementaryExtensions: Set<Extensions> = [.sbi, .sub]
