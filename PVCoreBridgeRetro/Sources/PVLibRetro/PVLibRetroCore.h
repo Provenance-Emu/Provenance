@@ -37,7 +37,6 @@
 typedef struct retro_core_t retro_core_t;
 
 @protocol ObjCBridgedCoreBridge;
-@protocol TouchPadResponder;
 @class PVLibRetroCoreBridge;
 static __weak PVLibRetroCoreBridge * _Nonnull _current;
 
@@ -46,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 __attribute__((weak_import))
-@interface PVLibRetroCoreBridge: PVCoreObjCBridge  <ObjCBridgedCoreBridge, TouchPadResponder> {
+@interface PVLibRetroCoreBridge: PVCoreObjCBridge  <ObjCBridgedCoreBridge> {
 #pragma clang diagnostic pop
 @public
     unsigned short pitch_shift;
@@ -74,13 +73,11 @@ __attribute__((weak_import))
 @property (nonatomic, readonly) CGFloat videoHeight;
 @property (nonatomic, retain, nullable) NSString * romPath;
 
-#if !TARGET_OS_WATCH
-@property (nonatomic, readonly, nullable) GCControllerButtonTouchedChangedHandler touchedChangedHandler;
-@property (nonatomic, readonly, nullable) GCControllerButtonValueChangedHandler pressedChangedHandler;
-@property (nonatomic, readonly, nullable) GCControllerButtonValueChangedHandler valueChangedHandler;
-#endif
+/// Gate flag for the bridge's libretro-pointer touch routing (used by
+/// `sendEvent:` to decide whether to forward UITouch events into the core).
+/// Not part of any controller-touchpad protocol — kept after the
+/// TouchPadResponder deletion because it has a separate consumer.
 @property (nonatomic, assign) BOOL touchpadEnabled;
-@property (nonatomic, readonly) BOOL gameSupportsTouchpad;
 
 // MARK: - Netpacket interface (env 78)
 

@@ -1762,9 +1762,10 @@ static bool environment_callback(unsigned cmd, void *data) {
             if ([strongCurrent conformsToProtocol:@protocol(MouseResponder)]) {
                 features  |= 1 << RETRO_DEVICE_MOUSE;
             }
-            if ([strongCurrent conformsToProtocol:@protocol(TouchPadResponder)]) {
-                features  |= 1 << RETRO_DEVICE_POINTER;
-            }
+            // PVLibRetroCoreBridge always supports RETRO_DEVICE_POINTER via
+            // its sendEvent:/handleTouchEvent: path (gated at runtime by the
+            // `touchpadEnabled` instance flag, not by a controller protocol).
+            features  |= 1 << RETRO_DEVICE_POINTER;
 
             *(uint64_t *)data = features;
             return true;
@@ -3124,24 +3125,6 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     return nil;
 }
 #endif
-
-#if !TARGET_OS_WATCH
-- (GCControllerButtonTouchedChangedHandler)touchedChangedHandler {
-    return nil;
-}
-
-- (GCControllerButtonValueChangedHandler)pressedChangedHandler {
-    return nil;
-}
-
-- (GCControllerButtonValueChangedHandler)valueChangedHandler {
-    return nil;
-}
-#endif
-
-- (BOOL)gameSupportsTouchpad {
-    return self.touchpadEnabled;
-}
 
 - (void *)getVariable:(const char *)variable {
     ELOG(@"This should be done in sub class: %s", variable);

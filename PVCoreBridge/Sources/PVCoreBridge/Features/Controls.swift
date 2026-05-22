@@ -113,21 +113,6 @@ import UIKit
 }
 
 
-@objc public enum Touchpad: Int {
-	case primary
-	case secondary
-}
-
-@objc public protocol TouchPadResponder {
-#if canImport(GameController)
-	var touchedChangedHandler: GCControllerButtonTouchedChangedHandler? { get }
-	var pressedChangedHandler: GCControllerButtonValueChangedHandler? { get }
-	var valueChangedHandler: GCControllerButtonValueChangedHandler? { get }
-#endif
-
-	var gameSupportsTouchpad: Bool { get }
-}
-
 //@objc extension PVEmulatorCore: ResponderClient {}
 
 public protocol EmulatorCoreButton: JSButtonConvertible, CaseIterable, RawRepresentable where RawValue == Int {

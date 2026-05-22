@@ -82,7 +82,6 @@ typedef enum PVWSButton : NSInteger PVWSButton;
 @protocol KeyboardResponder;
 @protocol MouseResponder;
 @protocol LightGunResponder;
-@protocol TouchPadResponder;
 @protocol MIDIResponder;
 
 // MARK: - Core Protocols
