@@ -795,9 +795,12 @@ typedef struct PVThinLibretroSymbols {
 // rcheevos memory-read helper. Resolves a rcheevos virtual address through the
 // libretro memory-map descriptors (env 36) when published, falling back to a
 // flat read against `RETRO_MEMORY_SYSTEM_RAM` for cores that omit the map.
-- (void)_pvthin_readMemoryAt:(uint32_t)address
-                        into:(uint8_t *)buffer
-                      length:(uint32_t)length;
+// Returns the number of bytes actually serviced from a real region. If 0,
+// the trampoline must report failure to rcheevos so it doesn't evaluate
+// achievements against junk memory (cheevos audit Section B.1).
+- (uint32_t)_pvthin_readMemoryAt:(uint32_t)address
+                            into:(uint8_t *)buffer
+                          length:(uint32_t)length;
 
 @end
 
@@ -6883,11 +6886,14 @@ static uint32_t pvthin_rcheevos_read_memory(uint32_t address, uint8_t *buffer,
                                             uint32_t num_bytes, rc_client_t *client) {
     PVThinLibretroFrontend *bridge = (__bridge PVThinLibretroFrontend *)rc_client_get_userdata(client);
     if (!bridge || num_bytes == 0) {
-        if (buffer) { memset(buffer, 0xFF, num_bytes); }
-        return num_bytes;
+        // No bridge / zero-length probe — rcheevos treats this as failure.
+        return 0;
     }
-    [bridge _pvthin_readMemoryAt:address into:buffer length:num_bytes];
-    return num_bytes;
+    // Return the count of bytes actually backed by a real memory region.
+    // 0 means rcheevos must not interpret the buffer as game state — the
+    // prior implementation returned num_bytes unconditionally and let the
+    // 0xFF sentinel leak in as "valid" game memory (cheevos audit B.1).
+    return [bridge _pvthin_readMemoryAt:address into:buffer length:num_bytes];
 }
 
 /// rc_client HTTP server-call trampoline. NSURLSession completes off-thread —
@@ -7117,10 +7123,21 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
     _rcAchievementsActive.store((bool)active);
 }
 
-- (void)_pvthin_readMemoryAt:(uint32_t)address
-                        into:(uint8_t *)buffer
-                      length:(uint32_t)length {
-    if (!buffer || length == 0) { return; }
+- (uint32_t)_pvthin_readMemoryAt:(uint32_t)address
+                            into:(uint8_t *)buffer
+                          length:(uint32_t)length {
+    if (!buffer || length == 0) { return 0; }
+
+    // Track per-byte whether a real region serviced the read. Bytes that
+    // remain unserviced get the documented 0xFF sentinel — but we ONLY
+    // report success for bytes actually backed by core memory. Returning
+    // num_bytes unconditionally (the old behaviour) caused rcheevos to
+    // evaluate achievements against the 0xFF fill when no region matched,
+    // triggering false unlocks (cheevos audit Section B.1).
+    // Heap-allocate the per-byte service bitmap so we don't blow the
+    // emu-thread stack on large achievement memcheck reads.
+    uint8_t *serviced = (uint8_t *)calloc(length, sizeof(uint8_t));
+    if (!serviced) { return 0; }
     memset(buffer, 0xFF, length);
 
     // Fast path: walk the libretro memory-map descriptors if the core
@@ -7128,8 +7145,8 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
     // only way achievements work on systems whose rcheevos address space
     // doesn't start at 0 (SNES WRAM at 0x7E0000, Genesis work-RAM at
     // 0xFF0000, Saturn LWRAM/HWRAM at 0x00200000/0x06000000, …).
+    BOOL servicedAnyFromDescriptors = NO;
     if (_memoryMapDescriptors && _memoryMapCount > 0) {
-        BOOL servicedAny = NO;
         for (uint32_t i = 0; i < length; ++i) {
             uint64_t addr = (uint64_t)address + i;
             for (unsigned d = 0; d < _memoryMapCount; ++d) {
@@ -7147,37 +7164,49 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
                     uint64_t physical = (masked - start) + (uint64_t)desc->offset;
                     if (physical >= len) { continue; }
                     buffer[i] = ((uint8_t *)desc->ptr)[physical];
-                    servicedAny = YES;
+                    serviced[i] = YES;
+                    servicedAnyFromDescriptors = YES;
                     break;
                 } else {
                     // Simple [start, start + len) range.
                     if (addr < start || addr >= start + len) { continue; }
                     uint64_t physical = (addr - start) + (uint64_t)desc->offset;
                     buffer[i] = ((uint8_t *)desc->ptr)[physical];
-                    servicedAny = YES;
+                    serviced[i] = YES;
+                    servicedAnyFromDescriptors = YES;
                     break;
                 }
             }
         }
-        if (servicedAny) { return; }
-        // Fall through to the SYSTEM_RAM fallback if no descriptor matched —
-        // some cores publish descriptors only for ancillary regions while
-        // still expecting SYSTEM_RAM for the main bus.
     }
 
     // Fallback for cores that don't publish a memory map (or whose descriptors
     // didn't cover this request). Treat `address` as a flat offset into
     // SYSTEM_RAM. This matches the legacy behaviour and works for the systems
     // where rcheevos uses a zero-based address space (NES, PSX MainRAM, etc.).
-    size_t ramSize = 0;
-    uint8_t *ram = (uint8_t *)[self memoryDataForID:RETRO_MEMORY_SYSTEM_RAM size:&ramSize];
-    if (!ram || ramSize == 0) { return; }
-    for (uint32_t i = 0; i < length; ++i) {
-        uint64_t addr = (uint64_t)address + i;
-        if (addr < (uint64_t)ramSize) {
-            buffer[i] = ram[addr];
+    // Apply only to bytes the descriptor walk left unserviced — preserves
+    // the precedence where a published descriptor wins for the bytes it owns.
+    if (!servicedAnyFromDescriptors) {
+        size_t ramSize = 0;
+        uint8_t *ram = (uint8_t *)[self memoryDataForID:RETRO_MEMORY_SYSTEM_RAM size:&ramSize];
+        if (ram && ramSize > 0) {
+            for (uint32_t i = 0; i < length; ++i) {
+                if (serviced[i]) { continue; }
+                uint64_t addr = (uint64_t)address + i;
+                if (addr < (uint64_t)ramSize) {
+                    buffer[i] = ram[addr];
+                    serviced[i] = YES;
+                }
+            }
         }
     }
+
+    uint32_t servicedCount = 0;
+    for (uint32_t i = 0; i < length; ++i) {
+        if (serviced[i]) { ++servicedCount; }
+    }
+    free(serviced);
+    return servicedCount;
 }
 
 - (void)tickAchievements {
