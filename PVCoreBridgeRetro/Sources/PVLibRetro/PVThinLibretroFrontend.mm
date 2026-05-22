@@ -3225,8 +3225,22 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     BOOL success = _sym.retro_unserialize(stateData.bytes, stateData.length);
     if (!success) {
         ELOG(@"ThinFrontend: retro_unserialize failed — save state may be from incompatible core version");
+        return NO;
     }
-    return success;
+
+    // Flush rcheevos trigger history after a successful state load. Without
+    // this, loading a save from frame 100 and playing forward can re-fire
+    // achievements that already unlocked in the current session, posting
+    // duplicate unlocks to the RA server (cheevos audit Section G.1).
+    // The thick RetroArch wrapper does this implicitly via RA's
+    // `rcheevos_reset_game` → `rc_client_reset` (cheevos.c:648); the thin
+    // wrapper owns its own rc_client lifecycle so the call has to live here.
+    if (_rcClient) {
+        rc_client_reset(_rcClient);
+        ILOG(@"[CHEEVOS-DIAG] ThinFrontend: rc_client_reset after state load");
+    }
+
+    return YES;
 }
 
 // MARK: - File-based save states (compatible with PVRetroArch save files)
