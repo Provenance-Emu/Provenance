@@ -20,6 +20,15 @@ internal struct AdvancedTogglesView: View {
     @Default(.mainUIMode) var mainUIMode
     @Default(.useModernWebServer) var useModernWebServer
 
+    // Promoted from PVFeatureFlags 2026-05-22 (commits 908087274c / 72a567288b).
+    // Surfaced here so users can find and toggle them without depending on
+    // the Feature Flags JSON or remote-config plumbing.
+    @Default(.sramImportExport) var sramImportExport
+    @Default(.caseCompanionSkins) var caseCompanionSkins
+    @Default(.liveBroadcast) var liveBroadcast
+    @Default(.netplayEnabled) var netplayEnabled
+    @Default(.mupenTransferPak) var mupenTransferPak
+
     /// Check if the app is from the App Store
     let isAppStore: Bool = {
         guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
@@ -95,6 +104,51 @@ internal struct AdvancedTogglesView: View {
                                 icon: .sfSymbol("network"),
                                 showChevron: false)
                 }
+
+                // Beta-promoted toggles. Each was a PVFeatureFlag entry until
+                // 2026-05-22; promoted to first-class user settings so they're
+                // discoverable. All default OFF except sramImportExport.
+                #if os(iOS)
+                PremiumThemedToggle(isOn: $sramImportExport) {
+                    SettingsRow(title: "SRAM Import / Export",
+                                subtitle: "Show explicit battery-save import and export actions in the game context menu. iOS only — tvOS syncs saves via iCloud.",
+                                icon: .sfSymbol("square.and.arrow.up.on.square"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
+
+                PremiumThemedToggle(isOn: $caseCompanionSkins) {
+                    SettingsRow(title: "Case Companion Skins",
+                                subtitle: "Auto-load phone-case companion DeltaSkins when a known case controller is connected (Backbone, Kishi, PocketTaco, Soolra, etc.).",
+                                icon: .sfSymbol("rectangle.on.rectangle.angled"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
+                #endif
+
+                PremiumThemedToggle(isOn: $liveBroadcast) {
+                    SettingsRow(title: "Live Broadcast",
+                                subtitle: "ReplayKit Go Live button in the pause menu. Cast gameplay to Twitch / Facebook / other ReplayKit-compatible services. Early — quality and reconnect handling still iterating.",
+                                icon: .sfSymbol("dot.radiowaves.left.and.right"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
+
+                PremiumThemedToggle(isOn: $netplayEnabled) {
+                    SettingsRow(title: "Netplay",
+                                subtitle: "Native lobby and host / join UI for RetroArch cores. mGBA link-cable also works. Other native cores have stub conformances and don't connect yet.",
+                                icon: .sfSymbol("wifi"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
+
+                PremiumThemedToggle(isOn: $mupenTransferPak) {
+                    SettingsRow(title: "N64 Transfer Pak",
+                                subtitle: "Assign a Game Boy ROM to a Mupen64Plus controller port for Pokémon Stadium / Mario Golf integration. Works on native and RetroArch N64 cores.",
+                                icon: .sfSymbol("gamecontroller.fill"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
             }
         }
     }
