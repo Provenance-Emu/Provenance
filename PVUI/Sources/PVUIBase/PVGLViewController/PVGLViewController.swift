@@ -13,6 +13,7 @@ import PVSupport
 import QuartzCore
 import ReplayKit
 import PVEmulatorCore
+import PVSystems
 #if USE_OPENGL
 import OpenGL
 import AppKit
@@ -158,6 +159,28 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 
     var renderSettings = RenderSettings()
 
+    /// The scaling mode the renderer should use right now. Honors the user's
+    /// explicit choice when they've made one (`Defaults[.userExplicitlySetScalingMode]`)
+    /// and otherwise substitutes the running system's per-system default
+    /// (e.g. `.stretch` for Nintendo DS so dual-screen titles fill the screen).
+    /// Falls back to the global `Defaults[.scalingMode]` when no system match.
+    /// Mirrors PVMetalViewController.effectiveScalingMode() so GL and Metal
+    /// cores render identically on the same system before the user has made
+    /// a settings choice.
+    fileprivate func effectiveScalingMode() -> ScalingMode {
+        if Defaults[.userExplicitlySetScalingMode] {
+            return Defaults[.scalingMode]
+        }
+        let sysIdRaw = emulatorCore.flatMap { $0.systemIdentifier } ?? ""
+        if let sysID = SystemIdentifier(rawValue: sysIdRaw), sysID != .Unknown {
+            let systemDefault = sysID.defaultScalingMode
+            if systemDefault != .aspectFit {
+                return systemDefault
+            }
+        }
+        return Defaults[.scalingMode]
+    }
+
 #if USE_METAL
     var glContext: CIContext?
     var alternateThreadGLContext: CIContext?
@@ -197,17 +220,20 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         renderSettings.metalFilterMode = Defaults[.metalFilterMode]
         renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
         renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-        renderSettings.scalingMode = Defaults[.scalingMode]
+        renderSettings.scalingMode = effectiveScalingMode()
 
         Task { [weak self] in
-            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .scalingMode]) {
+            // Observe userExplicitlySetScalingMode too — flipping it switches
+            // between the per-system default and the global Defaults[.scalingMode]
+            // (e.g. DS goes from .stretch back to whatever the user picked).
+            for await _ in Defaults.updates([.metalFilterMode, .openGLFilterMode, .imageSmoothing, .scalingMode, .userExplicitlySetScalingMode]) {
                 await MainActor.run {
                     guard let self else { return }
                     let oldScaling = self.renderSettings.scalingMode
                     self.renderSettings.metalFilterMode = Defaults[.metalFilterMode]
                     self.renderSettings.openGLFilterMode = Defaults[.openGLFilterMode]
                     self.renderSettings.smoothingEnabled = Defaults[.imageSmoothing]
-                    self.renderSettings.scalingMode = Defaults[.scalingMode]
+                    self.renderSettings.scalingMode = self.effectiveScalingMode()
                     // Scaling mode changes the calculated view frame — kick a
                     // re-layout so the change is visible immediately. Filter /
                     // smoothing changes don't need this.
@@ -348,7 +374,7 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             break
         }
 
-        if Defaults[.scalingMode] == .nativeResolution {
+        if effectiveScalingMode() == .nativeResolution {
             let scale = UIScreen.main.scale
             if scale != 1 {
                 view.layer.contentsScale = scale
