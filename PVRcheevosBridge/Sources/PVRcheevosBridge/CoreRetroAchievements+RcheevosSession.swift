@@ -58,6 +58,15 @@ private final class RcheevosBridgeAdapter: @unchecked Sendable {
     // Intentionally not synchronised — racy reads here are fine for logging.
     var tickCount: UInt64 = 0
     var firstRegionsLogged: Bool = false
+
+    // B.3 lazy region retry: cores that wire memory after the first frame
+    // (e.g. FCEU exposing RAM[] only once FCEUI_LoadGame completes) would
+    // previously lose achievements forever because rcheevosRegions() was
+    // empty at prepareAchievements() time. We now remember the hash and
+    // re-attempt from tickAchievements() once regions become available.
+    var pendingGameHash: String?
+    var retryInFlight: Bool = false
+    var lastRegionRetryTick: UInt64 = 0
 }
 
 private nonisolated(unsafe) var adapterKey: UInt8 = 0
@@ -94,10 +103,16 @@ public extension CoreRetroAchievements where Self: NSObject {
         // [CHEEVOS-DIAG] Log region count immediately so we know if the core actually exposed memory.
         ILOG("[CHEEVOS-DIAG] prepareAchievements regions.count=\(regions.count) for core=\(type(of: self))")
         guard !regions.isEmpty else {
-            ILOG("RetroAchievements: core returned no regions, achievements off.")
-            ILOG("[CHEEVOS-DIAG] prepareAchievements EXIT (no regions) core=\(type(of: self))")
+            // B.3: stash the hash so tickAchievements() can retry once regions appear.
+            // Cores like FCEU expose RAM[] only after FCEUI_LoadGame finishes, which
+            // can race with this call. Without the retry, achievements stay off forever.
+            rcheevosBridgeAdapter.pendingGameHash = gameHash
+            ILOG("RetroAchievements: core returned no regions yet — will retry per-frame until regions appear.")
+            ILOG("[CHEEVOS-DIAG] prepareAchievements DEFERRED (no regions, retry armed) core=\(type(of: self)) hash=\(gameHash)")
             return
         }
+        // Regions present — clear any pending retry from a prior call.
+        rcheevosBridgeAdapter.pendingGameHash = nil
 
         let adapter = rcheevosBridgeAdapter
         adapter.session?.unload()
@@ -137,6 +152,9 @@ public extension CoreRetroAchievements where Self: NSObject {
         let adapter = rcheevosBridgeAdapter
         adapter.session?.unload()
         adapter.session = nil
+        // B.3: clear any pending retry so a stopped game doesn't auto-resume.
+        adapter.pendingGameHash = nil
+        adapter.retryInFlight = false
     }
 
     func tickAchievements() {
@@ -151,6 +169,29 @@ public extension CoreRetroAchievements where Self: NSObject {
         if adapter.tickCount % 600 == 0 {
             let isLoaded = adapter.session?.isLoaded ?? false
             ILOG("[CHEEVOS-DIAG] tickAchievements heartbeat core=\(type(of: self)) ticks=\(adapter.tickCount) achievementsActive=\(achievementsActive) session.isLoaded=\(isLoaded) hardcore=\(adapter.hardcoreMode) delegate=\(adapter.delegate != nil ? "set" : "nil")")
+        }
+
+        // B.3: lazy-retry prepareAchievements when regions weren't ready yet.
+        // Only enter the slow path when (a) a hash is pending, (b) no session
+        // is live, (c) we aren't already retrying, and (d) at least 60 frames
+        // have passed since the last poll (≈1 s at 60 fps — bounded cost even
+        // when the core never exposes memory).
+        if adapter.pendingGameHash != nil,
+           adapter.session == nil,
+           !adapter.retryInFlight,
+           adapter.tickCount &- adapter.lastRegionRetryTick >= 60 {
+            adapter.lastRegionRetryTick = adapter.tickCount
+            let regions = rcheevosRegions()
+            if !regions.isEmpty {
+                guard let hash = adapter.pendingGameHash else { return }
+                adapter.retryInFlight = true
+                ILOG("[CHEEVOS-DIAG] tickAchievements regions now available — retrying prepareAchievements core=\(type(of: self)) hash=\(hash) regions=\(regions.count)")
+                Task { [weak self] in
+                    guard let self else { return }
+                    await self.prepareAchievements(gameHash: hash)
+                    self.rcheevosBridgeAdapter.retryInFlight = false
+                }
+            }
         }
     }
 
