@@ -97,6 +97,16 @@ public class PVOptionsViewController<T: RawRepresentable & CaseIterable & Custom
         selectedOption = option
         Defaults[key] = option
 
+        // Picking a value in the UIKit settings UI counts as an explicit user
+        // choice for ScalingMode — gate the per-system default substitution in
+        // PVMetalViewController.effectiveScalingMode() so the user's pick wins.
+        // Mirrors the SwiftUI Settings path; without this, iPad / Catalyst
+        // users would lose their selection on the next launch when the system
+        // has a non-default scaling.
+        if T.self == ScalingMode.self {
+            Defaults[.userExplicitlySetScalingMode] = true
+        }
+
         // Reload the table to update the checkmark
         tableView.reloadData()
 

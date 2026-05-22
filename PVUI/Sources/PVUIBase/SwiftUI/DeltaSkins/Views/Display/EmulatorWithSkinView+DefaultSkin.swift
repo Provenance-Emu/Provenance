@@ -384,6 +384,19 @@ struct DefaultControllerSkinView: View {
                 cachedAspectRatio = nil
                 lastAspectSize = .zero
             }
+            // Pause-menu scaling-mode changes must re-layout the default skin
+            // for native cores and the thick RetroArch wrapper too — those
+            // never post `PVThinLibretroCoreAVInfoDidUpdate`. Without this,
+            // switching scaling on a native core leaves the game-area frame
+            // stale until the next geometry change or rotation.
+            .onChange(of: Defaults[.scalingMode]) { _, _ in
+                cachedAspectRatio = nil
+                lastAspectSize = .zero
+            }
+            .onChange(of: Defaults[.userExplicitlySetScalingMode]) { _, _ in
+                cachedAspectRatio = nil
+                lastAspectSize = .zero
+            }
             .background(
                 Group {
                     if validSize {
