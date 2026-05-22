@@ -230,24 +230,41 @@ public final class RcheevosSession: @unchecked Sendable {
         buffer: UnsafeMutablePointer<UInt8>,
         numBytes: UInt32
     ) -> UInt32 {
-        for region in regions where region.contains(address: address) {
-            let offset = address &- region.rcAddress
-            let remaining = region.size &- offset
-            let readable = min(numBytes, remaining)
-            let basePtr = region.base.assumingMemoryBound(to: UInt8.self)
-            switch region.byteSwapMode {
-            case .off:
-                memcpy(buffer, basePtr.advanced(by: Int(offset)), Int(readable))
-            case .word16:
-                // Saturn Work RAM: bytes within each 16-bit word are swapped
-                // on little-endian hosts. Logical offset k maps to physical k^1.
-                for i in 0..<readable {
-                    buffer[Int(i)] = basePtr[Int((offset &+ i) ^ 1)]
+        // Walk regions byte-by-byte so achievements that span region
+        // boundaries (e.g. a 4-byte value straddling WRAM and SRAM on
+        // a system with separate exposed regions) get fully serviced
+        // instead of returning only the prefix from the first region
+        // (cheevos audit Section B.2). Per-byte is fine — rcheevos
+        // typically reads 1-4 bytes per call so the inner loop is
+        // bounded; the outer region scan is O(regions) which is also
+        // small (most systems publish < 5 regions).
+        var totalRead: UInt32 = 0
+        while totalRead < numBytes {
+            let currentAddress = address &+ totalRead
+            var serviced = false
+            for region in regions where region.contains(address: currentAddress) {
+                let offset = currentAddress &- region.rcAddress
+                let remaining = region.size &- offset
+                let chunk = min(numBytes &- totalRead, remaining)
+                let basePtr = region.base.assumingMemoryBound(to: UInt8.self)
+                let dst = buffer.advanced(by: Int(totalRead))
+                switch region.byteSwapMode {
+                case .off:
+                    memcpy(dst, basePtr.advanced(by: Int(offset)), Int(chunk))
+                case .word16:
+                    // Saturn Work RAM: bytes within each 16-bit word are swapped
+                    // on little-endian hosts. Logical offset k maps to physical k^1.
+                    for i in 0..<chunk {
+                        dst[Int(i)] = basePtr[Int((offset &+ i) ^ 1)]
+                    }
                 }
+                totalRead &+= chunk
+                serviced = true
+                break
             }
-            return readable
+            if !serviced { break } // No region covers currentAddress — give up.
         }
-        return 0
+        return totalRead
     }
 
     fileprivate func performServerRequest(
