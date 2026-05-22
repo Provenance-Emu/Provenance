@@ -420,6 +420,21 @@ struct PauseTileMenuView: View {
         #if !os(tvOS)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         #endif
+        // Scaling tile group — IDs are "scaling_<ScalingMode.rawValue>".
+        // Handle here so the dispatcher stays one switch.
+        if tile.id.hasPrefix(PauseTileMenuViewModel.scalingTilePrefix) {
+            let token = String(tile.id.dropFirst(PauseTileMenuViewModel.scalingTilePrefix.count))
+            if let mode = ScalingMode(rawValue: token) {
+                Defaults[.scalingMode] = mode
+                // Picking a mode here counts as an explicit user choice, same
+                // as the Settings picker — keeps the renderer's per-system
+                // default substitution from clobbering the pick.
+                Defaults[.userExplicitlySetScalingMode] = true
+                rebuildSections()
+            }
+            return
+        }
+
         switch tile.id {
         case "resume":
             requestPauseMenuClose()
