@@ -454,6 +454,11 @@ typedef struct PVThinLibretroSymbols {
     /// load-game completion path and cleared by unloadAchievements so the
     /// per-frame `rc_client_do_frame` call is gated on a confirmed session.
     std::atomic<bool> _rcAchievementsActive;
+    /// Queue of unlock notifications that fired before the Swift core wired
+    /// `achievementTriggeredBlock`. Flushed in the custom setter so a player
+    /// who unlocks early (e.g. first-frame trigger) still sees the toast.
+    /// Cheevos audit Section F.1.
+    NSMutableArray<NSDictionary *> *_pendingUnlocks;
 
     // AV info & system info
     struct retro_system_info _rawSystemInfo;
@@ -801,6 +806,15 @@ typedef struct PVThinLibretroSymbols {
 - (uint32_t)_pvthin_readMemoryAt:(uint32_t)address
                             into:(uint8_t *)buffer
                           length:(uint32_t)length;
+
+// Enqueue an unlock notification when achievementTriggeredBlock isn't wired
+// yet — drained by the custom setter (cheevos audit Section F.1).
+- (void)_pvthin_enqueuePendingUnlockWithID:(uint32_t)achievementID
+                                     title:(NSString *)title
+                                      desc:(NSString *)desc
+                                    points:(uint32_t)points
+                                  badgeURL:(nullable NSURL *)badgeURL
+                                  hardcore:(BOOL)hardcore;
 
 @end
 
@@ -7017,7 +7031,16 @@ static void pvthin_rcheevos_event_handler(const rc_client_event_t *event, rc_cli
             if (bridge.achievementTriggeredBlock) {
                 bridge.achievementTriggeredBlock(ach->id, title, desc, ach->points, badge, hardcore);
             } else {
-                WLOG(@"[CHEEVOS-DIAG] TRIGGERED dropped — achievementTriggeredBlock is nil; OSD toast will not appear.");
+                // OSD wiring not in place yet (early-boot trigger). Queue the
+                // unlock so the toast still shows once the Swift core sets
+                // achievementTriggeredBlock — see flushPendingUnlocks (audit F.1).
+                WLOG(@"[CHEEVOS-DIAG] TRIGGERED queued — achievementTriggeredBlock is nil; will replay on wire-up.");
+                [bridge _pvthin_enqueuePendingUnlockWithID:ach->id
+                                                     title:title
+                                                      desc:desc
+                                                    points:ach->points
+                                                  badgeURL:badge
+                                                  hardcore:hardcore];
             }
             break;
         }
@@ -7253,6 +7276,66 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
         ILOG(@"[CHEEVOS-DIAG] ThinFrontend: hardcore=%d (live update)", (int)hardcore);
     }
 #endif
+}
+
+#pragma mark - Pending-unlock queue (cheevos audit F.1)
+
+- (void)_pvthin_enqueuePendingUnlockWithID:(uint32_t)achievementID
+                                     title:(NSString *)title
+                                      desc:(NSString *)desc
+                                    points:(uint32_t)points
+                                  badgeURL:(nullable NSURL *)badgeURL
+                                  hardcore:(BOOL)hardcore {
+    @synchronized(self) {
+        if (!_pendingUnlocks) {
+            _pendingUnlocks = [NSMutableArray array];
+        }
+        // Defensive cap so a runaway core / replay session doesn't grow the
+        // queue unbounded. 256 is well above any realistic per-session unlock
+        // burst — RA's largest game sets cap around 100.
+        if (_pendingUnlocks.count >= 256) {
+            WLOG(@"[CHEEVOS-DIAG] pending-unlock queue full (%zu) — dropping oldest", (size_t)_pendingUnlocks.count);
+            [_pendingUnlocks removeObjectAtIndex:0];
+        }
+        NSDictionary *entry = @{
+            @"id":       @(achievementID),
+            @"title":    title ?: @"",
+            @"desc":     desc ?: @"",
+            @"points":   @(points),
+            @"badge":    badgeURL ?: [NSNull null],
+            @"hardcore": @(hardcore)
+        };
+        [_pendingUnlocks addObject:entry];
+    }
+}
+
+/// Custom setter that drains the pending-unlock queue when the Swift core
+/// wires its block. Without this, unlocks that fired before wire-up would
+/// be lost (per audit F.1).
+- (void)setAchievementTriggeredBlock:(void (^)(uint32_t, NSString *, NSString *,
+                                               uint32_t, NSURL * _Nullable, BOOL))block {
+    // Standard @synthesize-style storage; we don't have an ivar declared for
+    // the property because @property auto-synthesizes one.  Use the same name.
+    _achievementTriggeredBlock = [block copy];
+    if (!block) { return; }
+
+    NSArray<NSDictionary *> *drained;
+    @synchronized(self) {
+        drained = _pendingUnlocks;
+        _pendingUnlocks = nil;
+    }
+    if (drained.count == 0) { return; }
+    ILOG(@"[CHEEVOS-DIAG] flushing %lu pending unlock(s) to newly-wired block", (unsigned long)drained.count);
+    for (NSDictionary *entry in drained) {
+        id badge = entry[@"badge"];
+        NSURL *badgeURL = (badge == [NSNull null]) ? nil : (NSURL *)badge;
+        block(((NSNumber *)entry[@"id"]).unsignedIntValue,
+              entry[@"title"],
+              entry[@"desc"],
+              ((NSNumber *)entry[@"points"]).unsignedIntValue,
+              badgeURL,
+              ((NSNumber *)entry[@"hardcore"]).boolValue);
+    }
 }
 
 - (void)loadAchievementsForGameHash:(NSString *)gameHash
