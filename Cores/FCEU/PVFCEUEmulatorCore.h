@@ -49,6 +49,16 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 - (void)internalSwapDisc:(NSUInteger)discNumber;
 
+# pragma mark - RetroAchievements
+/// Pointer to FCEUX's `RAM[0x800]` — the 2 KiB internal NES RAM mapped at
+/// CPU address 0x0000 (mirrored four times across 0x0000-0x1FFF). The
+/// rcheevos NES memory map exposes this block at the same base address,
+/// so the Swift `+RetroAchievements` extension can register it as a
+/// single `RcheevosRegion(rcAddress: 0x0000, base: RAM, size: 0x800)`.
+@property (nonatomic, readonly, nullable) void *systemRAMPtr;
+/// Size in bytes of the WRAM block exposed via @c systemRAMPtr (2 KiB).
+@property (nonatomic, readonly) NSUInteger systemRAMSize;
+
 @end
 
 @interface PVFCEUEmulatorCoreBridge (Cheats)

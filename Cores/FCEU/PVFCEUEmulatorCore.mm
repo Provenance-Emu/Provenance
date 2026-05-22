@@ -686,6 +686,21 @@ void FCEUD_Message(const char *s)
 }
 #endif
 
+#pragma mark - RetroAchievements
+
+// FCEUX exposes the 2 KiB internal NES RAM as `extern uint8 RAM[]` in
+// `fceux/src/fceu.h`. The Swift `+RetroAchievements` extension reads this
+// pointer and registers it as a single RcheevosRegion at NES bus address
+// 0x0000. Cartridge SRAM (0x6000-0x7FFF) is per-cart and not exposed here
+// yet — most NES achievements live in the internal RAM block.
+- (void *)systemRAMPtr {
+    return RAM;
+}
+
+- (NSUInteger)systemRAMSize {
+    return 0x800;
+}
+
 @end
 
 #pragma mark - Cheats
