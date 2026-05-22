@@ -90,11 +90,6 @@ public enum PVFeature: String, CaseIterable, Sendable {
     /// files and `.zip` archives via the document picker, replacing the current battery save.
     /// Enabled by default; disable via Settings > Advanced > Feature Flags if regressions appear.
     case sramImportExport = "sramImportExport"
-    /// Enables the Ecosystem Integration section in Settings → Library → Import from Another Emulator.
-    /// Shows detected ecosystem apps (XeniOS, MeloNX, MeloCafe) and allows launching games directly
-    /// into those apps via deep links, and querying their game libraries.
-    /// Disabled by default while the feature is being validated against each app's current URL scheme.
-    case thirdPartyEcosystemIntegration = "thirdPartyEcosystemIntegration"
 }
 
 /// Enum representing supported OS platforms for feature flag filtering
@@ -676,7 +671,6 @@ public final class PVFeatureFlags: @unchecked Sendable {
     public var caseCompanionSkins: Bool { featureStates[.caseCompanionSkins] ?? false }
     public var airPlayMenu: Bool { featureStates[.airPlayMenu] ?? false }
     public var sramImportExport: Bool { featureStates[.sramImportExport] ?? true }
-    public var thirdPartyEcosystemIntegration: Bool { featureStates[.thirdPartyEcosystemIntegration] ?? true }
 
     // MARK: - Feature Queries
 

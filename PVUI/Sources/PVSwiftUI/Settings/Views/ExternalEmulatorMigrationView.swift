@@ -67,8 +67,9 @@ extension KnownEmulator: @retroactive Identifiable {
 /// export guide for each one. Because iOS sandboxing prevents direct
 /// file access, the flow is fully manual/instructional.
 ///
-/// The Ecosystem Integration section (XeniOS, MeloNX, MeloCafe) is gated
-/// behind the `thirdPartyEcosystemIntegration` feature flag and hidden by default.
+/// The Ecosystem Integration section (XeniOS, MeloNX, MeloCafe) is always
+/// shown on iOS now — the previous `thirdPartyEcosystemIntegration`
+/// feature flag was removed.
 public struct ExternalEmulatorMigrationView: View {
     @State private var installedEmulators: [KnownEmulator] = []
     @State private var selectedEmulator: KnownEmulator?
@@ -95,9 +96,11 @@ public struct ExternalEmulatorMigrationView: View {
                     manualImportSection
 
                     #if !os(tvOS)
-                    if featureFlags.thirdPartyEcosystemIntegration {
-                        ecosystemSection
-                    }
+                    // Ecosystem integration was previously gated by the
+                    // `thirdPartyEcosystemIntegration` feature flag, which was
+                    // removed once the URL schemes for XeniOS / MeloNX / MeloCafe
+                    // were validated. The section is always shown on iOS now.
+                    ecosystemSection
                     #endif
                 }
                 .padding(.horizontal, 16)

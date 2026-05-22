@@ -8,8 +8,10 @@
 //  Shows available ecosystem apps (XeniOS, MeloNX, MeloCafe) and provides
 //  launch buttons for cross-app game integration.
 //
-//  This view is iOS-only and gated behind the `thirdPartyEcosystemIntegration`
-//  feature flag. It must not be instantiated on tvOS.
+//  This view is iOS-only. The `thirdPartyEcosystemIntegration` feature
+//  flag was removed once the URL schemes for the supported ecosystem
+//  apps were validated; the feature is now always-on on iOS. It must
+//  not be instantiated on tvOS.
 //
 
 #if !os(tvOS)
@@ -20,9 +22,7 @@ import PVUIBase
 // MARK: - EcosystemIntegrationView
 
 /// Displays installed ecosystem apps and explains cross-app game launching.
-///
-/// Gated behind `thirdPartyEcosystemIntegration` feature flag (disabled by default).
-/// Navigate to this view from `ExternalEmulatorMigrationView` when the flag is active.
+/// Navigate to this view from `ExternalEmulatorMigrationView`.
 public struct EcosystemIntegrationView: View {
     @State private var installedApps: [EcosystemApp] = []
     @Environment(\.dismiss) private var dismiss
