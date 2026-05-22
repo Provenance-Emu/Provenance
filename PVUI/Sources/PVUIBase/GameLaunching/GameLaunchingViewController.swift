@@ -759,21 +759,22 @@ public extension GameLaunchingViewController {
                         }
                     }
 
-                    // Always use the smart tile-based picker. Strip recommendation
-                    // metadata (rank, capabilities, tips, summary) when the
-                    // coreRecommendations flag is off.
-                    let showRecommendations = PVFeatureFlags.shared.isEnabled(.coreRecommendations)
+                    // Smart tile-based picker stays — but recommendation metadata
+                    // (rank badges, capability chips, tips, summaries) is suppressed
+                    // unconditionally. The 2026-05-22 audit found the underlying
+                    // CoreCapabilities.json incomplete (~30 of 50+ cores documented,
+                    // quality ranks hand-tuned not empirical), so badging cores as
+                    // "Recommended" actively misled users. The engine still runs to
+                    // produce save-count sorting; only the metadata is dropped.
+                    // Re-enable per-recommendation once the manifest is audited end
+                    // to end and we have a data-driven quality-rank source.
                     let smartItems = recommendations.compactMap { rec -> SmartCoreSelectionItem? in
                         guard let core = cores.first(where: { $0.identifier == rec.coreIdentifier }) else { return nil }
-                        if showRecommendations {
-                            return SmartCoreSelectionItem(recommendation: rec, coreName: core.projectName)
-                        } else {
-                            return SmartCoreSelectionItem(
-                                id: rec.coreIdentifier,
-                                coreName: core.projectName,
-                                saveCount: rec.saveCount
-                            )
-                        }
+                        return SmartCoreSelectionItem(
+                            id: rec.coreIdentifier,
+                            coreName: core.projectName,
+                            saveCount: rec.saveCount
+                        )
                     }
                     let system = game.system
                     let coreSelectionView = SmartCoreSelectionHostingView(

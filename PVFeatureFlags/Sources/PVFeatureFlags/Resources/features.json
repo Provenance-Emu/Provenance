@@ -40,10 +40,6 @@
             "enabled": false,
             "description": "Companion Controller overlay — use this device as a secondary controller for systems with non-standard input peripherals (trackball, numpad, Atari 5200). Disabled until DSU integration is complete — enable in Settings > Advanced > Feature Flags."
         },
-        "smartCoreSelection": {
-            "enabled": false,
-            "description": "Enriched core selection UI with capability badges, quality rankings, and per-game recommendations when multiple cores are available. Disabled until core capability data is fully audited — enable in Settings > Advanced > Feature Flags."
-        },
         "skinButtonReposition": {
             "enabled": false,
             "allowedPlatforms": ["ios"],
