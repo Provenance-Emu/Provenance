@@ -33,11 +33,20 @@ private struct AchievementToast: Identifiable, Equatable {
 // MARK: - Overlay ViewModel
 
 @MainActor
+@MainActor
 public final class AchievementOverlayViewModel: ObservableObject {
     @Published fileprivate var toasts: [AchievementToast] = []
     @Published fileprivate var challengeIndicators: [UInt32: URL?] = [:]
 
     func enqueue(unlock: AchievementUnlockNotification) {
+        // Compiler-enforced MainActor isolation on the class ensures every
+        // caller has hopped before mutating @Published state. The cheevos
+        // audit (Section F.3) flagged the previous unprotected path as a
+        // race vector — model mutations from a non-main context could land
+        // mid-render and either crash UIHostingController layout or visibly
+        // drop the toast. The eager-init of overlayViewModel on the
+        // controller means unlocks queued before the view's window-attach
+        // simply sit in `toasts` until SwiftUI renders.
         let toast = AchievementToast(
             title: unlock.title,
             description: unlock.description,
