@@ -614,8 +614,17 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             metalVC.mtlView.frame = metalVC.view.bounds
         }
 
-        let scale = metalVC.renderSettings.nativeScaleEnabled ?
-            (metalVC.view.window?.screen.scale ?? UIScreen.main.scale) : 1.0
+        // ALWAYS use the device's native scale for DeltaSkin-hosted drawables.
+        // The legacy conditional (use 1.0 unless .nativeResolution) was tied
+        // to the non-DeltaSkin layout, where view size was already screen-
+        // sized in points. Under DeltaSkin the view frame is fixed by the
+        // skin's game area in POINTS — if we then size the drawable in points
+        // too, the core's framebuffer renders at half the pixel density on
+        // retina (visible as a small 1:1 thumbnail inside the skin window
+        // for .aspectFit / .integerScale / .stretch / .aspectFill modes).
+        // Sample selection / aspect math runs in the renderer against the
+        // full-resolution drawable.
+        let scale = metalVC.view.window?.screen.scale ?? UIScreen.main.scale
         let drawableSize = CGSize(width: convertedFrame.width * scale, height: convertedFrame.height * scale)
 
         metalVC.mtlView.drawableSize = drawableSize
