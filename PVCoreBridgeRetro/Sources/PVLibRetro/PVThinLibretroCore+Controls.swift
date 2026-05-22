@@ -1076,22 +1076,52 @@ extension PVThinLibretroCore: PVSaturnSystemResponderClient {
         releaseButton(saturnMap(button), forPlayer: player)
     }
 
+    /// Map PVSaturnButton to the libretro RETRO_DEVICE_ID_JOYPAD_* the
+    /// Beetle Saturn (mednafen-saturn / beetle-saturn-libretro) core expects.
+    ///
+    /// Per `input.cpp` in beetle-saturn-libretro the canonical
+    /// descriptor for the standard Saturn pad is:
+    /// ```
+    /// Saturn A     → JOYPAD_B   (id 0)
+    /// Saturn B     → JOYPAD_A   (id 8)
+    /// Saturn C     → JOYPAD_R   (id 11)
+    /// Saturn X     → JOYPAD_Y   (id 1)
+    /// Saturn Y     → JOYPAD_X   (id 9)
+    /// Saturn Z     → JOYPAD_L   (id 10)
+    /// Saturn L     → JOYPAD_L2  (id 12)
+    /// Saturn R     → JOYPAD_R2  (id 13)
+    /// Saturn Start → JOYPAD_START (id 3)
+    /// ```
+    /// Prior to 2026-05-22 this map used the **Genesis 6-button** layout
+    /// (A→Y, B→B, C→A, X→L, Y→X, Z→R), which scrambles face buttons on
+    /// the Beetle Saturn core: on-screen Saturn-A fired Saturn-X, etc.
+    /// Also `.leftAnalog` was returning `.start`, which would have sent a
+    /// stray Start press if any caller ever pushed `.leftAnalog` through
+    /// `pressButton` (in practice it only flows through `didMoveJoystick`,
+    /// but the wrong fallback was still latent).
     private func saturnMap(_ button: PVSaturnButton) -> RetroJoypad {
         switch button {
         case .up:         return .up
         case .down:       return .down
         case .left:       return .left
         case .right:      return .right
-        case .a:          return .y
-        case .b:          return .b
-        case .c:          return .a
-        case .x:          return .l
-        case .y:          return .x
-        case .z:          return .r
-        case .l:          return .l2
-        case .r:          return .r2
+        case .a:          return .b       // Saturn A → JOYPAD_B
+        case .b:          return .a       // Saturn B → JOYPAD_A
+        case .c:          return .r       // Saturn C → JOYPAD_R
+        case .x:          return .y       // Saturn X → JOYPAD_Y
+        case .y:          return .x       // Saturn Y → JOYPAD_X
+        case .z:          return .l       // Saturn Z → JOYPAD_L
+        case .l:          return .l2      // Saturn L (analog trigger) → JOYPAD_L2
+        case .r:          return .r2      // Saturn R (analog trigger) → JOYPAD_R2
         case .start:      return .start
-        case .leftAnalog: return .start  // no direct mapping, fallback
+        // .leftAnalog has no JOYPAD slot — analog motion is forwarded via
+        // setAnalog() in didMoveJoystick, not via press/release. Return a
+        // harmless value that is NOT .start (the prior buggy fallback) and
+        // not a real face button so a stray press path won't fire anything
+        // visible. .b is shared with Saturn-A and we never expect this case
+        // to fire in practice (no skin / responder pushes .leftAnalog as a
+        // discrete button), so any tiny collision is acceptable.
+        case .leftAnalog: return .b
         case .count:      return .b
         @unknown default: return .b
         }
