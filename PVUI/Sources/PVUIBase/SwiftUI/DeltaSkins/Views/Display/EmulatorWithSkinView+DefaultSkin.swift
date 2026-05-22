@@ -389,13 +389,25 @@ struct DefaultControllerSkinView: View {
             // never post `PVThinLibretroCoreAVInfoDidUpdate`. Without this,
             // switching scaling on a native core leaves the game-area frame
             // stale until the next geometry change or rotation.
+            //
+            // Also re-push the last broadcasted viewport so the renderer
+            // (thick RA wrapper in particular) re-runs its scaling decision
+            // — `applyRenderViewFrameInTouchView` reads `useIntegerScale`
+            // and sets `video_scale_integer` only when it fires, so a
+            // settings-only change wouldn't otherwise reach the core.
             .onChange(of: Defaults[.scalingMode]) { _, _ in
                 cachedAspectRatio = nil
                 lastAspectSize = .zero
+                if let frame = lastBroadcastedViewport {
+                    viewportBridge?.notifyFrameUpdated(frame)
+                }
             }
             .onChange(of: Defaults[.userExplicitlySetScalingMode]) { _, _ in
                 cachedAspectRatio = nil
                 lastAspectSize = .zero
+                if let frame = lastBroadcastedViewport {
+                    viewportBridge?.notifyFrameUpdated(frame)
+                }
             }
             .background(
                 Group {
