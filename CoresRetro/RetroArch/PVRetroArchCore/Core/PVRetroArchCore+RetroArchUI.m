@@ -391,14 +391,14 @@ int argc =  1;
         _current=self;
         firstLoad=true;
 
-        // TODO(tvos-tester-18may): PPSSPP RA wrapper insta-crashes on tvOS launch
-        // (native PVPPSSPP + OpenGL is fine, so this is wrapper-specific). PPSSPP
-        // requires GLES3/Vulkan; the wrapper currently sets `alwaysUseMetal = true`
-        // in loadFileAtPath (PVRetroArchCoreBridge.mm:105) which may conflict with
-        // PPSSPP's gfx backend negotiation. The existing [PPSSPP-DIAG] logging will
-        // pinpoint whether the crash is in startEmulation → setupEmulation/setOptionValues
-        // or later inside rarch_main → video_driver_init when Vulkan/GLES is requested.
-        // Repro on a real Apple TV + capture the device console to localise.
+        // PPSSPP RA wrapper insta-crash on tvOS 26+ was rooted in
+        // `alwaysUseMetal = true` (set in setupEmulation) vs the prior
+        // OpenGL ES fallback forcing `gsPreference = 1` — the host renderer
+        // and inner video driver disagreed. Fixed at PVRetroArchCore+Options.swift
+        // by keeping Vulkan on 26+ and only disabling `ppsspp_fast_memory` to
+        // dodge the actual vm_remap failure. Leave the [PPSSPP-DIAG] logs
+        // for one more cycle so the next tester can confirm the path on real
+        // hardware.
 
         /// [PPSSPP-DIAG] startEmulation entry — useful to confirm we make it
         /// past loadFileAtPath and into the emulation kickoff. If logs stop

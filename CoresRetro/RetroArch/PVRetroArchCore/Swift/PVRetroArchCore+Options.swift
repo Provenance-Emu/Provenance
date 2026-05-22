@@ -629,12 +629,22 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 ILOG("[PPSSPP-DIAG] parseOptions PSP branch entry: systemIdentifier=\(self.systemIdentifier ?? "<nil>") coreIdentifier=\(self.coreIdentifier) osVersion=\(diagOSVersion)")
 
                 /// PPSSPP fast-memory + Vulkan worked on older iOS/tvOS builds, but
-                /// iOS/tvOS 26+ can fail MemoryMap_Setup with vm_remap errors.
-                /// Keep fast path on older OSes and apply a stability fallback on 26+.
+                /// iOS/tvOS 26+ can fail PPSSPP's MemoryMap_Setup with vm_remap
+                /// errors when fast_memory is on. Disable fast_memory on 26+ —
+                /// the vm_remap failure is the *only* 26+ regression; the gfx
+                /// pipeline itself is fine on Vulkan.
+                ///
+                /// Earlier fallback also forced `gsPreference = 1` (OpenGL ES)
+                /// on 26+, but the wrapper sets `alwaysUseMetal = true` in
+                /// `setupEmulation` UNCONDITIONALLY. That left
+                /// `PVEmulatorViewController` hosting a Metal renderer over a
+                /// GLKView-backed RA surface — a class mismatch that crashes
+                /// on the first frame present. Keep Vulkan-via-MoltenVK so
+                /// renderer host and inner video driver stay consistent.
                 #if os(iOS) || os(tvOS)
                 if #available(iOS 26, tvOS 26, *) {
-                    self.gsPreference = 1 // OpenGL ES fallback on 26+
-                    ILOG("PPSSPP fallback: iOS/tvOS 26+ detected, forcing OpenGL ES and disabling fast memory to avoid MemoryMap vm_remap boot failures")
+                    self.gsPreference = 2 // Stay on Vulkan; matches alwaysUseMetal=true host.
+                    ILOG("PPSSPP config: iOS/tvOS 26+ detected, keeping Vulkan but disabling fast_memory to avoid MemoryMap vm_remap boot failures")
                     ILOG("[PPSSPP-DIAG] writing option: ppsspp_fast_memory = \"disabled\"")
                     optionValues += "ppsspp_fast_memory = \"disabled\"\n";
                 } else {
