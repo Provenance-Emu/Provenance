@@ -26,6 +26,7 @@
  */
 
 @import Foundation;
+@import CoreGraphics;
 @import PVStellaCPP;
 @import PVCoreObjCBridge;
 
