@@ -29,7 +29,7 @@ extension PVStellaGameCore: LightGunResponder {
     /// this in after `loadFileAtPath:` by MD5-matching against the upstream
     /// Stella cartridge database.
     public var gameSupportsLightGun: Bool {
-        return (bridge as? PVStellaBridge)?.isStellaLightGunGame ?? false
+        return _bridge.isStellaLightGunGame
     }
 
     /// The XG-1 was never required to play any 2600 cart — every supported
@@ -38,15 +38,15 @@ extension PVStellaGameCore: LightGunResponder {
     public var requiresLightGun: Bool { false }
 
     public func lightGunMovedToPoint(_ point: CGPoint, isOffscreen: Bool) {
-        (bridge as? PVStellaBridge)?.setLightGunNormalisedX(point.x, y: point.y, isOffscreen: isOffscreen)
+        _bridge.setLightGunNormalisedX(point.x, y: point.y, isOffscreen: isOffscreen)
     }
 
     public func lightGunTriggerDown() {
-        (bridge as? PVStellaBridge)?.setLightGunTrigger(true)
+        _bridge.setLightGunTrigger(true)
     }
 
     public func lightGunTriggerUp() {
-        (bridge as? PVStellaBridge)?.setLightGunTrigger(false)
+        _bridge.setLightGunTrigger(false)
     }
 
     // The XG-1 has a single trigger, no aux/start/select buttons. The
