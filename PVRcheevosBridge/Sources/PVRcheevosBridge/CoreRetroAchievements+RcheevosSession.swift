@@ -50,6 +50,15 @@ public extension CoreRetroAchievements where Self: NSObject {
 /// - lifecycle / delegate access happens on main
 /// - `RC_NO_THREADS=1` means rcheevos itself does not need locking
 /// so a plain `@unchecked Sendable` class is sufficient.
+/// Swift 6 sendability shim: the Task spawned from `tickAchievements()`
+/// runs on the cooperative pool; `Self: NSObject` is not Sendable, so we
+/// wrap the core reference in this `@unchecked Sendable` box. The actual
+/// thread-safety story is unchanged — `prepareAchievements` does its own
+/// actor hops and the adapter we touch is itself `@unchecked Sendable`.
+private struct _SendableCoreRef: @unchecked Sendable {
+    let value: NSObject
+}
+
 private final class RcheevosBridgeAdapter: @unchecked Sendable {
     var session: RcheevosSession?
     weak var delegate: (any RetroAchievementsOSDDelegate)?
@@ -186,10 +195,12 @@ public extension CoreRetroAchievements where Self: NSObject {
                 guard let hash = adapter.pendingGameHash else { return }
                 adapter.retryInFlight = true
                 ILOG("[CHEEVOS-DIAG] tickAchievements regions now available — retrying prepareAchievements core=\(type(of: self)) hash=\(hash) regions=\(regions.count)")
-                Task { [weak self] in
-                    guard let self else { return }
-                    await self.prepareAchievements(gameHash: hash)
-                    self.rcheevosBridgeAdapter.retryInFlight = false
+                let coreRef = _SendableCoreRef(value: self)
+                Task {
+                    if let core = coreRef.value as? (any CoreRetroAchievements) {
+                        await core.prepareAchievements(gameHash: hash)
+                    }
+                    coreRef.value.rcheevosBridgeAdapter.retryInFlight = false
                 }
             }
         }
