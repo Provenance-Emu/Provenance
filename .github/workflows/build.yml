@@ -112,6 +112,21 @@ jobs:
           restore-keys: |
             submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-
 
+      # actions/cache restores the cached paths OVER the freshly-checked-out
+      # source tree. For parent-repo-tracked files that live inside the cached
+      # dirs (e.g. Cores/Stella/Sources/PVStellaBridge/*.h, Cores/ProSystem/
+      # Sources/PVProSystemBridge/*.h), this means a stale cached copy can
+      # silently shadow a newer commit. Force-restore parent-repo files from
+      # the git index so any cached non-submodule files are overwritten back
+      # to the current commit's state. Submodule worktrees are NOT in the
+      # parent's index, so this leaves them untouched — they'll be brought
+      # into sync by `git submodule update --init` in the next step.
+      - name: Restore parent-repo files inside cached paths
+        run: |
+          git checkout HEAD -- Cores CoresRetro Dependencies PVRcheevos 2>/dev/null || true
+          # Report any files that were actually overwritten — diagnostic only.
+          echo "Parent-repo tracked files re-checked-out from index."
+
       - name: Initialize submodules
         run: |
           if [ "${{ steps.cache-submodules.outputs.cache-hit }}" = "true" ]; then
