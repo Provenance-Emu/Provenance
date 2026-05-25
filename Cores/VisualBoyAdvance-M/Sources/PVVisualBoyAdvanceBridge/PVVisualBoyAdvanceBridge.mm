@@ -852,11 +852,38 @@ bool systemReadJoypads() {
     [fileManager copyItemAtURL:saveFileToMigrate toURL:backupSaveFile error:nil];
 
     // Step 1
-    // Run the CPU for 500 cycles to try and determine the save type
-    // Seems high but save types for some games cannot be determined until 300+ cycles (e.g. Golden Sun)
+    // Prefer the vba-over.ini override (cpuSaveType) when it is set — this is
+    // authoritative for known games (especially Pokemon FLASH 128K carts that
+    // do not touch save memory at startup, where cycle-based detection returns 0
+    // and the migration would mis-classify the save as SRAM and truncate it).
+    // _cpuSaveType comes from vba-over.ini saveType= (see loadOverrides:).
+    // Mapping (GBA.cpp::CPUReset switch cpuSaveType):
+    //   1 EEPROM -> saveType=3, 2 SRAM -> saveType=1, 3 FLASH -> saveType=2,
+    //   4 EEPROM+Sensor -> saveType=3, 5 NONE -> saveType=5
     self->_migratingSave = YES;
 
-    for (int i = 0; i < 500; i++) { vba.emuMain(vba.emuCount); }
+    if (self->_cpuSaveType != 0) {
+        switch (self->_cpuSaveType) {
+            case 1: saveType = 3; break;                       // EEPROM
+            case 2: saveType = 1; break;                       // SRAM
+            case 3:
+                saveType = 2;                                  // FLASH
+                if (self->_flashSize == 0x10000 || self->_flashSize == 0x20000) {
+                    flashSize = (int)self->_flashSize;
+                }
+                break;
+            case 4: saveType = 3; break;                       // EEPROM + Sensor
+            case 5: saveType = 5; break;                       // NONE
+            default: break;
+        }
+        DLOG(@"VBA migrate: using vba-over.ini override cpuSaveType=%d -> saveType=%d flashSize=%d",
+             (int)self->_cpuSaveType, saveType, flashSize);
+    } else {
+        // No override — fall back to running the CPU for 500 cycles to try and
+        // determine the save type. Seems high but save types for some games
+        // cannot be determined until 300+ cycles (e.g. Golden Sun).
+        for (int i = 0; i < 500; i++) { vba.emuMain(vba.emuCount); }
+    }
 
     // Step 2
     // If VBA did not determine the save type while cycling the CPU, fall back to lookup by the GBA Cart Backup ID. Sometimes VBA cannot determine save types until certain points in game when memory is accessed. This routine, adapted from Util.cpp, is rarely used as cycling the CPU is usually enough.
@@ -954,7 +981,18 @@ bool systemReadJoypads() {
         saveFileSize = 131072;
     }
     // 139KB to 66KB  - remove the last 73728 bytes
+    // GUARD: If the vba-over.ini override declares this cart is FLASH 128K
+    // (flashSize=0x20000), refuse to truncate to 64K — doing so would destroy
+    // 64KB of save data (this was the cause of Pokemon "save failed" reports
+    // when the cart was mis-detected as FLASH 64K). Leave the original .sav
+    // alone in that case so it can still be loaded as 128K.
     else if (saveType == 2 && flashSize == 65536 && saveFileSize == 139264) {
+        if (self->_flashSize == 0x20000) {
+            DLOG(@"VBA migrate: refusing to truncate 139KB save to 64K — vba-over.ini says cart is FLASH 128K. Leaving .sav intact.");
+            CPUReset();
+            self->_migratingSave = NO;
+            return;
+        }
         saveFileData[65536] = 0;
         saveFileSize = 65536;
     }
