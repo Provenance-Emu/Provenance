@@ -61,6 +61,28 @@ __attribute__((visibility("default")))
 /// Size in bytes of the exposed RAM (64 KiB).
 @property (nonatomic, readonly) NSUInteger systemRAMSize;
 
+// MARK: Light Gun (XG-1)
+// Declarations inlined into main interface — the (LightGun) category in
+// PVProSystemCoreBridge+LightGun.h was silently elided during Swift module
+// synthesis (same issue Stella's bridge hit). Implementations remain in
+// PVProSystemCoreBridge+LightGun.mm and resolve at link time.
+
+/// `YES` when the loaded cartridge declares lightgun support in its header
+/// (`cartridge_controller[0] & CARTRIDGE_CONTROLLER_LIGHTGUN`) or when its
+/// MD5 matches one of the five known commercial 7800 lightgun titles.
+@property (nonatomic, readonly) BOOL isLightGunEnabled;
+
+/// Headerless MD5 of the currently loaded cartridge, or `nil` if no cart is
+/// loaded. Used by the Swift wrapper to gate `gameSupportsLightGun` per-game.
+@property (nonatomic, readonly, nullable, copy) NSString *cartridgeMD5;
+
+/// Update the lightgun aim using normalised [0, 1] screen coordinates.
+- (void)lightGunMoveNormalized:(CGPoint)normalisedPoint isOffscreen:(BOOL)isOffscreen;
+
+/// Trigger press / release.
+- (void)lightGunTriggerPressed;
+- (void)lightGunTriggerReleased;
+
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)
