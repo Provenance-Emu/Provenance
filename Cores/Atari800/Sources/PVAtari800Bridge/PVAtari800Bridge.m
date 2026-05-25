@@ -339,6 +339,26 @@ static const NSInteger kMaxPlayers = 4;
 }
 
 - (void)stopEmulation {
+    // Battery / NVRAM persistence: intentionally not wired.
+    //
+    // The native atari800 core has no separate "battery save" API. After auditing
+    // the upstream source (Cores/Atari800/Sources/libatari800/atari800-src):
+    //   * `CARTRIDGE_StateSave` / `CARTRIDGE_StateRead` are part of the full save
+    //     state stream (already wired via `StateSav_SaveAtariState` /
+    //     `StateSav_ReadAtariState` below), NOT a standalone cart-RAM file.
+    //   * Flash carts (CARTRIDGE_MEGA_4096, CARTRIDGE_ATMAX_*) have no write-back
+    //     path in upstream — `RemoveCart` just `free()`s the in-memory image.
+    //   * 5200 cart-side RAM (used by a handful of RealSports prototypes) is not
+    //     implemented in this build.
+    //   * `.atr` disk-image writes happen in-place via `fwrite` to the open FILE*
+    //     when the drive is mounted SIO_READ_WRITE (see sio.c:SIO_WriteSector).
+    //     `Atari800_Exit(false)` calls `SIO_Exit()` which dismounts each disk and
+    //     closes the FILE*, flushing any pending OS-level buffers automatically.
+    //   * Cassette writes are flushed by `CASSETTE_Exit()`, also invoked from
+    //     `Atari800_Exit`.
+    // No `RETRO_MEMORY_SAVE_RAM` equivalent exists because this is the native
+    // atari800 source, not the libretro port. So `batterySavesPath` is unused
+    // for this core by design.
     Atari800_Exit(false);
     atomic_store(&s_pendingKeyCode, AKEY_NONE);
     atomic_store(&s_shiftPressCount, 0);
