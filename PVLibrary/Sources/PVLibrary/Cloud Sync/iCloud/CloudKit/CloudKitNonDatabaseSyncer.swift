@@ -42,6 +42,25 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
 
     public static func defaultDirectories() -> Set<String> {
         var defaults: Set<String> = [
+            // `Battery States` recursively covers:
+            //   - Per-rom battery dirs:          Battery States/<romName>/...
+            //   - Dolphin user dir (GC memcards,
+            //     Wii NAND, configs):            Battery States/DolphinData/...
+            //     (Cores/Dolphin/PVDolphinCore/Core/PVDolphinCore.mm sets
+            //      user_dir to `[batterySavesPath]/../DolphinData`, which POSIX
+            //      resolves to Battery States/DolphinData.)
+            //   - Azahar (3DS) user dir incl.
+            //     the virtual SDMC tree:         Battery States/AzaharData/...
+            //     (Cores/Citra/PVAzaharCore/Core/PVAzaharCoreBridge.mm uses
+            //      the same `../AzaharData` pattern.)
+            //   - PPSSPP memstick + PSP/SAVEDATA: Battery States/<romName>/saves/PSP/SAVEDATA/...
+            //     (Cores/PPSSPP/PVPPSSPPCore/Core/PVPPSSPPCore.mm sets
+            //      g_Config.memStickDirectory = `[batterySavesPath]/saves/`.)
+            // No per-core entries are needed for native save data — the
+            // recursive enumerator in getAllFiles(in:) picks up the full
+            // subtree. Download path round-trips correctly as long as the
+            // copy step creates intermediate directories (see downloadFile
+            // and processRemoteRecordUpdate below).
             "Battery States",
             "Screenshots",
             // Cheat metadata (.svc.json files) live in Documents/Cheats/<romName>/
@@ -482,7 +501,13 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
             let fileURL = directoryURL.appendingPathComponent(relativePath)
 
             do {
-                try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                // Create the file's PARENT dir (not just the top-level managed
+                // directory). Nested relative paths like
+                // `DolphinData/GC/Card A.USA.raw` or
+                // `<rom>/saves/PSP/SAVEDATA/<title>/data/...` require the full
+                // intermediate hierarchy to exist before copyItem succeeds.
+                let parentURL = fileURL.deletingLastPathComponent()
+                try FileManager.default.createDirectory(at: parentURL, withIntermediateDirectories: true, attributes: nil)
 
                 if FileManager.default.fileExists(atPath: fileURL.path) {
                     try await FileManager.default.removeItem(at: fileURL)
@@ -538,7 +563,11 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
                 let fileURL = directoryURL.appendingPathComponent(relativePath)
 
                 if let assetURL = fileAsset.fileURL {
-                    try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                    // Create the file's PARENT dir (not just the top-level
+                    // managed directory). See downloadFile(for:) above for
+                    // the nested-path rationale.
+                    let parentURL = fileURL.deletingLastPathComponent()
+                    try FileManager.default.createDirectory(at: parentURL, withIntermediateDirectories: true, attributes: nil)
 
                     if FileManager.default.fileExists(atPath: fileURL.path) {
                         try await FileManager.default.removeItem(at: fileURL)
