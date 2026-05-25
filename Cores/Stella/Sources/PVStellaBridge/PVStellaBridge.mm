@@ -1212,6 +1212,45 @@ static void writeSaveFile(const char* path, int type) {
     return NO;
 }
 
+#pragma mark - Light Gun (XG-1)
+// Methods inlined into main @implementation (declarations moved into main
+// @interface) — previously a (LightGun) category which was silently elided
+// during Swift module synthesis on iOS / tvOS device builds.
+
+- (BOOL)isStellaLightGunGame {
+    // Read of a primitive BOOL is atomic on Apple architectures; the value is
+    // only mutated synchronously from loadFileAtPath: while no observer can
+    // race against it. No lock required.
+    return _isStellaLightGunGame;
+}
+
+- (void)setLightGunNormalisedX:(CGFloat)nx y:(CGFloat)ny isOffscreen:(BOOL)isOffscreen {
+    // Convert normalised 0…1 coords to libretro's signed-16-bit screen space.
+    // Centre is 0; left/top edges are -0x8000; right/bottom edges are 0x7FFF.
+    CGFloat cx = nx;
+    CGFloat cy = ny;
+    if (cx < 0.0) cx = 0.0; else if (cx > 1.0) cx = 1.0;
+    if (cy < 0.0) cy = 0.0; else if (cy > 1.0) cy = 1.0;
+    int32_t sx = (int32_t)(cx * (CGFloat)0xFFFF) - 0x8000;
+    int32_t sy = (int32_t)(cy * (CGFloat)0xFFFF) - 0x8000;
+    if (sx >  0x7FFF) sx =  0x7FFF;
+    if (sx < -0x8000) sx = -0x8000;
+    if (sy >  0x7FFF) sy =  0x7FFF;
+    if (sy < -0x8000) sy = -0x8000;
+
+    @synchronized(self) {
+        _lightGunScreenX     = (int16_t)sx;
+        _lightGunScreenY     = (int16_t)sy;
+        _lightGunIsOffscreen = isOffscreen;
+    }
+}
+
+- (void)setLightGunTrigger:(BOOL)pressed {
+    @synchronized(self) {
+        _lightGunTrigger = pressed;
+    }
+}
+
 @end
 
 #pragma mark - Cheats
@@ -1305,42 +1344,3 @@ static void writeSaveFile(const char* path, int type) {
 
 @end
 
-// MARK: - Light Gun (XG-1)
-
-@implementation PVStellaBridge (LightGun)
-
-- (BOOL)isStellaLightGunGame {
-    // Read of a primitive BOOL is atomic on Apple architectures; the value is
-    // only mutated synchronously from loadFileAtPath: while no observer can
-    // race against it. No lock required.
-    return _isStellaLightGunGame;
-}
-
-- (void)setLightGunNormalisedX:(CGFloat)nx y:(CGFloat)ny isOffscreen:(BOOL)isOffscreen {
-    // Convert normalised 0…1 coords to libretro's signed-16-bit screen space.
-    // Centre is 0; left/top edges are -0x8000; right/bottom edges are 0x7FFF.
-    CGFloat cx = nx;
-    CGFloat cy = ny;
-    if (cx < 0.0) cx = 0.0; else if (cx > 1.0) cx = 1.0;
-    if (cy < 0.0) cy = 0.0; else if (cy > 1.0) cy = 1.0;
-    int32_t sx = (int32_t)(cx * (CGFloat)0xFFFF) - 0x8000;
-    int32_t sy = (int32_t)(cy * (CGFloat)0xFFFF) - 0x8000;
-    if (sx >  0x7FFF) sx =  0x7FFF;
-    if (sx < -0x8000) sx = -0x8000;
-    if (sy >  0x7FFF) sy =  0x7FFF;
-    if (sy < -0x8000) sy = -0x8000;
-
-    @synchronized(self) {
-        _lightGunScreenX     = (int16_t)sx;
-        _lightGunScreenY     = (int16_t)sy;
-        _lightGunIsOffscreen = isOffscreen;
-    }
-}
-
-- (void)setLightGunTrigger:(BOOL)pressed {
-    @synchronized(self) {
-        _lightGunTrigger = pressed;
-    }
-}
-
-@end

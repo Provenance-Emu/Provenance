@@ -88,6 +88,16 @@ typedef id _Nullable (^PVStellaBridgeOptionHandler)(NSString * _Nonnull option);
 // MARK: Save States
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *)) __attribute__((noescape)) block;
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *)) __attribute__((noescape)) block;
+
+// MARK: Light Gun (Atari 2600 XG-1)
+// Inlined into main interface — previously a (LightGun) category, but the
+// category was silently elided during Swift module synthesis on iOS / tvOS
+// device builds despite being structurally identical to the working
+// (Cheats) / (Trackball) categories. Moving methods to the primary
+// interface sidesteps whatever SwiftPM-via-Xcode edge case was at play.
+- (BOOL)isStellaLightGunGame;
+- (void)setLightGunNormalisedX:(CGFloat)nx y:(CGFloat)ny isOffscreen:(BOOL)isOffscreen;
+- (void)setLightGunTrigger:(BOOL)pressed;
 @end
 
 @interface PVStellaBridge (PV2600SystemResponderClient) <PV2600SystemResponderClient>
@@ -139,14 +149,6 @@ typedef id _Nullable (^PVStellaBridgeOptionHandler)(NSString * _Nonnull option);
 @interface PVStellaBridge (Cheats)
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError **)error;
 - (void)resetCheatCodes;
-@end
-
-// Light gun (Atari 2600 XG-1 / Light Rifle). Stella's libretro core supports
-// RETRO_DEVICE_LIGHTGUN. State setters are thread-safe via @synchronized(self).
-@interface PVStellaBridge (LightGun)
-- (BOOL)isStellaLightGunGame;
-- (void)setLightGunNormalisedX:(CGFloat)nx y:(CGFloat)ny isOffscreen:(BOOL)isOffscreen;
-- (void)setLightGunTrigger:(BOOL)pressed;
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)
