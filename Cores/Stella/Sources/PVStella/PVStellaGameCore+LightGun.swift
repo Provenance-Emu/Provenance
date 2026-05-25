@@ -29,7 +29,7 @@ extension PVStellaGameCore: LightGunResponder {
     /// this in after `loadFileAtPath:` by MD5-matching against the upstream
     /// Stella cartridge database.
     public var gameSupportsLightGun: Bool {
-        return _bridge.isStellaLightGunGame
+        return _bridge.isStellaLightGunGame()
     }
 
     /// The XG-1 was never required to play any 2600 cart — every supported
