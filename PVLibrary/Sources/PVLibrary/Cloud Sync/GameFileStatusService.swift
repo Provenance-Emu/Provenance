@@ -233,7 +233,7 @@ public final class GameFileStatusService: @unchecked Sendable {
         if let inflight = await refreshGate.current() {
             return await inflight.value
         }
-        let task = Task<RefreshResult, Never> { [weak self] in
+        let task = Task<RefreshResult, Never>(priority: .utility) { [weak self] in
             guard let self else { return RefreshResult() }
             let result = await self.runRefreshAllStatuses()
             await self.refreshGate.set(nil)

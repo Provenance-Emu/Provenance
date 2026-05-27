@@ -336,34 +336,42 @@ public final class FileLocationResolver: @unchecked Sendable {
     }
 
     private func enumerateRelativePaths(base: URL, subdirectory: String?) -> Set<String> {
-        // `enumerator(atPath:)` yields path strings already relative to the
-        // root we passed in — no `/var` ↔ `/private/var` symlink games, no
-        // absolute-path surgery. The enumerator's `fileAttributes` already
-        // contains the file type, so we don't need a separate `stat()` per
-        // entry.
-        let scanPath: String
+        // Use the URL-based enumerator with prefetched resource keys.
+        // Unlike `enumerator(atPath:)` whose `.fileAttributes` triggers a
+        // per-file stat() syscall, the URL variant uses getdirentriesattr
+        // to batch-fetch requested properties during directory traversal —
+        // orders of magnitude faster for large ROM libraries (Sentry
+        // PROVENANCE-12S / 17C / 160: MXCPUException from per-file stat).
+        let scanURL: URL
         if let sub = subdirectory {
-            scanPath = base.appendingPathComponent(sub).path
+            scanURL = base.appendingPathComponent(sub)
         } else {
-            scanPath = base.path
+            scanURL = base
         }
 
-        guard let enumerator = FileManager.default.enumerator(atPath: scanPath) else {
-            WLOG("FileLocationResolver: failed to enumerate \(scanPath)")
+        let keys: [URLResourceKey] = [.isRegularFileKey]
+        guard let enumerator = FileManager.default.enumerator(
+            at: scanURL,
+            includingPropertiesForKeys: keys,
+            options: [.skipsHiddenFiles, .skipsPackageDescendants]
+        ) else {
+            WLOG("FileLocationResolver: failed to enumerate \(scanURL.path)")
             return []
         }
 
-        // If the caller passed a subdirectory, prepend it so the returned
-        // paths are relative to `base`, not to `base/sub`.
-        let prefix: String = subdirectory.map { $0.hasSuffix("/") ? $0 : $0 + "/" } ?? ""
+        let basePath = base.standardizedFileURL.path
+        let basePrefix = basePath.hasSuffix("/") ? basePath : basePath + "/"
 
         var index = Set<String>()
-        while let relativePath = enumerator.nextObject() as? String {
-            if relativePath.hasPrefix(".") { continue } // hidden files
-            guard let attrs = enumerator.fileAttributes,
-                  let type = attrs[.type] as? FileAttributeType,
-                  type == .typeRegular else { continue }
-            index.insert(prefix + relativePath)
+        for case let fileURL as URL in enumerator {
+            guard let resourceValues = try? fileURL.resourceValues(forKeys: Set(keys)),
+                  resourceValues.isRegularFile == true else { continue }
+            let fullPath = fileURL.standardizedFileURL.path
+            guard fullPath.hasPrefix(basePrefix) else { continue }
+            let relativePath = String(fullPath.dropFirst(basePrefix.count))
+            if !relativePath.isEmpty {
+                index.insert(relativePath)
+            }
         }
 
         return index
