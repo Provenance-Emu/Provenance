@@ -3086,8 +3086,8 @@ extension PVEmulatorViewController {
 
         ILOG("[INPUT-DIAG] appWillResignActive: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController)), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.superview=\(controllerViewController?.view.superview != nil), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
 
-        // Re-arm the one-shot touch diagnostic for JSButton/JSDPad/MultiTouch
-        InputDiagnostics.hasLoggedFirstTouchSinceResume = false
+        // Re-arm the one-shot touch diagnostics for all input pipeline layers
+        InputDiagnostics.resetAll()
 
         /// Safety check: ensure view controller is in a valid state before attempting auto-save
         guard isViewLoaded,
