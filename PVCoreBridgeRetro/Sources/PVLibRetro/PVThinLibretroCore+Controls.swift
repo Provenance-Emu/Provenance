@@ -663,6 +663,7 @@ extension PVThinLibretroCore: PV2600SystemResponderClient {
         case .reset:      return .start
         case .select:     return .select
         case .colorBW:    return .r3
+        case .color:      return .l3
         case .count:      return .b
         @unknown default: return .b
         }

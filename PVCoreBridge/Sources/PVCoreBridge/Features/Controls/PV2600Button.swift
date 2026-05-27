@@ -21,6 +21,7 @@
     case reset
     case select
     case colorBW
+    case color
     case count
 
     public init(_ value: String) {
@@ -36,7 +37,8 @@
             case "rightdiffb": self = .rightDiffB
             case "reset", "start": self = .reset
             case "select": self = .select
-            case "colorbw", "color", "bw", "tvtype": self = .colorBW
+            case "colorbw", "bw", "tvtype": self = .colorBW
+            case "color": self = .color
             case "count": self = .count
             default: self = .fire1
         }
@@ -68,6 +70,8 @@
                 return "select"
             case .colorBW:
                 return "colorbw"
+            case .color:
+                return "color"
             case .count:
                 return "count"
         }
@@ -97,7 +101,7 @@ extension PV2600Button: HardwareSwitchProvider {
                 id: "color_bw",
                 title: "TV TYPE",
                 offPosition: HardwareSwitchPosition(label: "BW", buttonId: "colorbw"),
-                onPosition:  HardwareSwitchPosition(label: "CLR", buttonId: "colorbw"),
+                onPosition:  HardwareSwitchPosition(label: "CLR", buttonId: "color"),
                 defaultState: true
             )
         ]

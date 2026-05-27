@@ -65,7 +65,9 @@ const NSUInteger A2600EmulatorValues[] = {
     RETRO_DEVICE_ID_JOYPAD_R,
     RETRO_DEVICE_ID_JOYPAD_R2,
     RETRO_DEVICE_ID_JOYPAD_START,
-    RETRO_DEVICE_ID_JOYPAD_SELECT
+    RETRO_DEVICE_ID_JOYPAD_SELECT,
+    RETRO_DEVICE_ID_JOYPAD_R3,     // colorBW (ConsoleBlackWhite)
+    RETRO_DEVICE_ID_JOYPAD_L3      // color   (ConsoleColor)
 };
 
 #define NUMBER_OF_PADS 2
