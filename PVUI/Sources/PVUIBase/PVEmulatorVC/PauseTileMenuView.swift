@@ -1184,6 +1184,7 @@ struct PauseTileMenuView: View {
         case .gray:   return .gray
         case .teal:   return Color(red: 0.0, green: 0.8, blue: 0.75)
         case .red:    return Color(red: 0.95, green: 0.2, blue: 0.25)
+        case .indigo: return Color(red: 0.35, green: 0.18, blue: 0.92)
         }
     }
 

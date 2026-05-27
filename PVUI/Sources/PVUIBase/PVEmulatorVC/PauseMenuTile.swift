@@ -89,7 +89,7 @@ public struct PauseMenuTileLongPressOption: Identifiable, Equatable, Hashable, S
 
 /// Semantic color keys for tile accents, matching the retrowave palette.
 public enum PauseMenuTileColor: String, Sendable {
-    case green, orange, blue, purple, pink, cyan, yellow, gray, teal, red
+    case green, orange, blue, purple, pink, cyan, yellow, gray, teal, red, indigo
 }
 
 // MARK: - Tile Section
