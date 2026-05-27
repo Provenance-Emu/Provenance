@@ -348,6 +348,13 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
             /// Snapshot for the value handler so the `@Sendable` closure does not capture the mutable `values` buffer.
             let enumValuesForValueHandler = values
 
+            /// Which index in the values array represents "on/enabled/true"?
+            /// Defaults to 1 (the common ["disabled","enabled"] order). For
+            /// ["enabled","disabled"] order this flips to 0. Non-bool options
+            /// ignore this — the handler branches on newValue's runtime type.
+            let onKeywords: Set<String> = ["enabled", "on", "true"]
+            let enabledIndex: Int = (values.count == 2 && onKeywords.contains(values[0].title.lowercased())) ? 0 : 1
+
             /// Create a value handler closure that will update the RetroArch option
             let valueHandler: @Sendable (OptionValueRepresentable) -> Void = { newValue in
                 var valIdx: size_t = 0
@@ -359,8 +366,9 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                         // For enumeration values, use the integer directly
                         core_option_manager_set_val(optionsPtr, valIdx, size_t(intValue), true)
                     } else if let boolValue = newValue as? Bool {
-                        // For boolean values, convert to 0/1
-                        core_option_manager_set_val(optionsPtr, valIdx, boolValue ? 1 : 0, true)
+                        // Map Bool → the correct option index for this value order
+                        let idx = boolValue ? enabledIndex : (1 - enabledIndex)
+                        core_option_manager_set_val(optionsPtr, valIdx, size_t(idx), true)
                     } else if let stringValue = newValue as? String {
                         // For string values, find the matching option
                         for (idx, value) in enumValuesForValueHandler.enumerated() {
@@ -373,16 +381,17 @@ extension PVRetroArchCoreBridge: CoreOptional, SubCoreOptional {
                 }
             }
 
-            /// Create appropriate option type based on values
-            if values.count == 2
-                &&
-                // We probably don't need this check because RA treats
-                // options with 2 values as bools already
-               (values[1].title.lowercased() == "enabled" || values[1].title.lowercased() == "on" || values[1].title.lowercased() == "true") &&
-               (values[0].title.lowercased() == "disabled" || values[0].title.lowercased() == "off" || values[0].title.lowercased() == "false")
-            {
-                /// This is likely a boolean option
-                coreOption = .bool(display, defaultValue: Int(option.default_index) == 0, valueHandler: valueHandler)
+            /// Detect bool options in either order: ["disabled","enabled"]
+            /// or ["enabled","disabled"]. enabledIndex (computed above) already
+            /// knows which slot is "on".
+            let offKeywords: Set<String> = ["disabled", "off", "false"]
+            let isBoolOption = values.count == 2
+                && (onKeywords.contains(values[0].title.lowercased()) || onKeywords.contains(values[1].title.lowercased()))
+                && (offKeywords.contains(values[0].title.lowercased()) || offKeywords.contains(values[1].title.lowercased()))
+
+            if isBoolOption {
+                let defaultIsOn = Int(option.default_index) == enabledIndex
+                coreOption = .bool(display, defaultValue: defaultIsOn, valueHandler: valueHandler)
             } else if values.count > 0 {
                 /// This is an enumeration option
                 coreOption = .enumeration(display, values: values, defaultValue: Int(option.default_index), valueHandler: valueHandler)
