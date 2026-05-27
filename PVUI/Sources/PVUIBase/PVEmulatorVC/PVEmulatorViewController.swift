@@ -3239,7 +3239,7 @@ extension PVEmulatorViewController {
     /// hierarchy and ensures every layer that carries OSD controls is
     /// interactive. Logs diagnostic state so we can see exactly what was
     /// broken if the bug persists.
-    fileprivate func ensureOSDTouchesEnabled() {
+    func ensureOSDTouchesEnabled() {
         // Controller overlay (built-in OSD or DeltaSkin hosting VC)
         if let cvc = controllerViewController {
             let cvcView = cvc.view
