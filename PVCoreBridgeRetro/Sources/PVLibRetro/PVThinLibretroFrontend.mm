@@ -3552,6 +3552,26 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 }
 
 // ---------------------------------------------------------------------------
+// MARK: - Game speed / fast-forward
+// ---------------------------------------------------------------------------
+
+- (void)setGameSpeed:(GameSpeed)gameSpeed {
+    [super setGameSpeed:gameSpeed];
+
+    BOOL isFastForward = (gameSpeed == GameSpeedFast || gameSpeed == GameSpeedVeryFast);
+    _speedMultiplier = isFastForward ? (gameSpeed == GameSpeedVeryFast ? 5.0 : 2.0)
+                     : (gameSpeed == GameSpeedSlow ? 0.5 : gameSpeed == GameSpeedVerySlow ? 0.25 : 1.0);
+
+    // Mute audio during fast-forward to prevent the ring buffer from
+    // filling and blocking the emulation thread. During slow-mo the
+    // buffer drains faster than it fills, so audio stays on.
+    _audioPaused = isFastForward;
+
+    ILOG(@"ThinFrontend: gameSpeed=%d → speedMultiplier=%.1f audioPaused=%d",
+         (int)gameSpeed, _speedMultiplier, _audioPaused);
+}
+
+// ---------------------------------------------------------------------------
 // MARK: - Core options
 // ---------------------------------------------------------------------------
 
