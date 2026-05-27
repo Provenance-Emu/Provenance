@@ -64,8 +64,8 @@ public enum CoreOption: Sendable {
 		case let .rangef(_, _, defaultValue, _):
 			return defaultValue
         case let .multi(_, values, _):
-            return values.filter { $0.isDefault }.map { $0.title }
-//            return values.first { $0.isDefault }?.title
+            let def = values.first { $0.isDefault }
+            return def?.description ?? def?.title
 		case let .enumeration(_, _, defaultValue, _):
 			return defaultValue
         case let .string(_, defaultValue, _):
