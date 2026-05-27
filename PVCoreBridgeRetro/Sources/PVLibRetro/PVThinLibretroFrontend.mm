@@ -5536,6 +5536,12 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
         return false;
     }
 
+    // Make the GL context current immediately so cores that issue GL calls
+    // during retro_load_game (e.g. PPSSPP) don't hang waiting for a context.
+    // The per-frame re-current logic in runFrame (line ~3132) handles
+    // displacement, so this is safe even if another thread touches EAGL.
+    [EAGLContext setCurrentContext:_glContext];
+
     ILOG(@"ThinFrontend: HW render context created (GLES%u) — context_reset will fire after FBO setup",
          api == kEAGLRenderingAPIOpenGLES2 ? 2 : 3);
 

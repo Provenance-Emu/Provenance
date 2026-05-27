@@ -36,11 +36,7 @@ public extension PVCore {
         if className.contains("RetroArch") || className.contains("LibRetro") || className == "PVRetroArchCoreBridge" {
             let pvRetroArchCoreExists = NSClassFromString(className) != nil
             let userWantsLegacy = Defaults[.useLegacyRetroArchWrapper]
-            // PPSSPP hangs during retro_load_game in the thin wrapper (GL
-            // context not current yet). Force legacy wrapper until fixed.
-            let coreId = identifier.lowercased()
-            let needsLegacy = coreId.contains("ppsspp")
-            let useLegacy = (userWantsLegacy || needsLegacy) && pvRetroArchCoreExists
+            let useLegacy = userWantsLegacy && pvRetroArchCoreExists
             ILOG("ThinLibretro: userWantsLegacy=\(userWantsLegacy), legacyClassExists=\(pvRetroArchCoreExists), useLegacy=\(useLegacy) (probed=\(className))")
             if !useLegacy {
                 Self.ensurePVCoreBridgeRetroLoaded()
