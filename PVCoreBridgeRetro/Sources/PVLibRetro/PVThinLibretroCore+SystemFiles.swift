@@ -329,6 +329,11 @@ extension PVThinLibretroCore {
         if coreID.contains("melonds") {
             return ["melonDS"]
         }
+        // Saturn — some RetroArch installs place Saturn BIOS in a Saturn/ subdir.
+        if coreID.contains("mednafen_saturn") || coreID.contains("beetle_saturn")
+            || coreID.contains("yabasanshiro") || coreID.contains("yabause") {
+            return ["Saturn"]
+        }
         return []
     }
 
@@ -361,6 +366,11 @@ extension PVThinLibretroCore {
         if coreID.contains("melonds") {
             return ["bios7.bin", "bios9.bin", "firmware.bin",
                     "dsi_bios7.bin", "dsi_bios9.bin", "dsi_firmware.bin", "dsi_nand.bin"]
+        }
+        // Saturn — mednafen_saturn and yabasanshiro expect BIOS at the system root.
+        if coreID.contains("mednafen_saturn") || coreID.contains("beetle_saturn")
+            || coreID.contains("yabasanshiro") || coreID.contains("yabause") {
+            return ["sega_101.bin", "mpr-17933.bin"]
         }
         return []
     }

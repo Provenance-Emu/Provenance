@@ -2321,6 +2321,71 @@ static bool thin_environment(unsigned cmd, void *data) {
     return systemDir;
 }
 
+/// Copy BIOS files from the core's `BIOSPath` into the system-specific directory
+/// so that libretro cores can find them. This mirrors the thick wrapper's
+/// `syncResources:to:` step that runs before `retro_load_game`.
+///
+/// Skips the copy when the system directory IS the BIOS path (no dedicated
+/// `systemDirectoryName` for this system — `_systemSpecificDirectory` already
+/// returned `BIOSPath` directly). Existing destination files are never overwritten.
+- (void)_syncBIOSResources {
+    NSString *biosDir = self.BIOSPath ?: _biosPath;
+    if (!biosDir || biosDir.length == 0) {
+        DLOG(@"ThinFrontend: _syncBIOSResources — no BIOSPath, skipping");
+        return;
+    }
+
+    NSString *systemDir = [self _systemSpecificDirectory];
+    if (!systemDir || systemDir.length == 0) {
+        DLOG(@"ThinFrontend: _syncBIOSResources — no system dir, skipping");
+        return;
+    }
+
+    // Resolve symlinks so the comparison is reliable.
+    NSString *resolvedBIOS = biosDir.stringByResolvingSymlinksInPath;
+    NSString *resolvedSys  = systemDir.stringByResolvingSymlinksInPath;
+    if ([resolvedBIOS isEqualToString:resolvedSys]) {
+        DLOG(@"ThinFrontend: _syncBIOSResources — systemDir == BIOSPath, nothing to sync");
+        return;
+    }
+
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:biosDir]) {
+        DLOG(@"ThinFrontend: _syncBIOSResources — BIOSPath does not exist: %@", biosDir);
+        return;
+    }
+
+    NSError *listError = nil;
+    NSArray<NSString *> *files = [fm contentsOfDirectoryAtPath:biosDir error:&listError];
+    if (listError || !files) {
+        ELOG(@"ThinFrontend: _syncBIOSResources — could not list BIOSPath: %@",
+             listError.localizedDescription);
+        return;
+    }
+
+    NSUInteger copied = 0;
+    for (NSString *file in files) {
+        NSString *src = [biosDir stringByAppendingPathComponent:file];
+        NSString *dst = [systemDir stringByAppendingPathComponent:file];
+        if ([fm fileExistsAtPath:dst]) {
+            continue;  // never overwrite existing files
+        }
+        NSError *copyError = nil;
+        [fm copyItemAtPath:src toPath:dst error:&copyError];
+        if (copyError) {
+            WLOG(@"ThinFrontend: _syncBIOSResources — failed to copy %@: %@",
+                 file, copyError.localizedDescription);
+        } else {
+            ILOG(@"ThinFrontend: _syncBIOSResources — copied %@ → %@", file, systemDir.lastPathComponent);
+            copied++;
+        }
+    }
+    if (copied > 0) {
+        ILOG(@"ThinFrontend: _syncBIOSResources — synced %lu file(s) from BIOSPath → %@",
+             (unsigned long)copied, systemDir.lastPathComponent);
+    }
+}
+
 // MARK: - MIDI routing (class-level, called from Swift MIDIDeviceManager observation)
 
 /// Update the cached list of MIDI output destination endpoint refs.
@@ -2636,6 +2701,12 @@ static bool thin_environment(unsigned cmd, void *data) {
     // (e.g. mGBA) store per-game state in globals that are NULL until
     // retro_load_game, so calling retro_get_system_av_info early causes
     // a NULL-pointer dereference crash.
+
+    // Sync BIOS files from the core's BIOSPath (where Provenance stores
+    // user-imported BIOS files, e.g. <docs>/BIOS/com.provenance.saturn/)
+    // into the system-specific directory (e.g. <docs>/System/Saturn/)
+    // so that libretro cores can find them at runtime.
+    [self _syncBIOSResources];
 
     // Load content
     struct retro_game_info gameInfo = {0};
