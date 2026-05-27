@@ -484,7 +484,7 @@ extension PVThinLibretroCore {
     /// Set analog stick axis value (CGFloat -1..1 range mapped to libretro int16).
     func setAnalog(stick: UInt32, axisX: CGFloat, axisY: CGFloat, forPlayer player: Int) {
         let x = Int16(max(-1.0, min(1.0, axisX)) * CGFloat(kAnalogMax))
-        let y = Int16(max(-1.0, min(1.0, axisY)) * CGFloat(kAnalogMax))
+        let y = Int16(max(-1.0, min(1.0, -axisY)) * CGFloat(kAnalogMax))
         _bridge.setAnalogIndex(stick, axis: kAnalogAxisX, value: x, forPlayer: UInt32(player))
         _bridge.setAnalogIndex(stick, axis: kAnalogAxisY, value: y, forPlayer: UInt32(player))
     }
@@ -858,7 +858,7 @@ extension PVThinLibretroCore: PVN64SystemResponderClient {
         }
         _n64CButtons[player] = state
         let x: CGFloat = (state.right ? 1 : 0) - (state.left ? 1 : 0)
-        let y: CGFloat = (state.down ? 1 : 0) - (state.up ? 1 : 0)
+        let y: CGFloat = (state.up ? 1 : 0) - (state.down ? 1 : 0)
         setAnalog(stick: kAnalogRightStick, axisX: x, axisY: y, forPlayer: player)
         return true
     }
