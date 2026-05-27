@@ -953,7 +953,15 @@ struct PauseTileMenuView: View {
         let wasFastForwarding = emulatorVC.core.gameSpeed == .fast || emulatorVC.core.gameSpeed == .veryFast
         emulatorVC.setGameSpeedRespectingAchievements(speed)
         let isFastForwarding = emulatorVC.core.gameSpeed == .fast || emulatorVC.core.gameSpeed == .veryFast
-        if emulatorVC.core.coreIdentifier?.contains("libretro") == true, wasFastForwarding != isFastForwarding {
+        // The thick RetroArch wrapper needs a hardware "togglefastforward"
+        // input event to flip RA's internal fast-forward state (separate from
+        // the bridge's framerateMultiplier). The thin wrapper handles speed
+        // entirely through setGameSpeed: → _speedMultiplier, so sending the
+        // hardware input would be a no-op at best or interfere at worst.
+        let isThinWrapper = NSStringFromClass(type(of: emulatorVC.core)).contains("ThinLibretro")
+        if !isThinWrapper,
+           emulatorVC.core.coreIdentifier?.contains("libretro") == true,
+           wasFastForwarding != isFastForwarding {
             dispatchHardwareButton("togglefastforward")
         }
         rebuildSections()
