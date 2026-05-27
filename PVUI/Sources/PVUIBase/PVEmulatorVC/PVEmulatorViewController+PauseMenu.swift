@@ -115,7 +115,13 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
 
     /// Common cleanup code after menu dismissal
     private func cleanupAfterMenuDismissal() {
-        if isShowingMenu && !AppState.shared.emulationUIState.isInBackground {
+        // Previously gated on `!isInBackground`, which skipped the entire
+        // cleanup when the system auto-dismissed the menu VC while the app
+        // was backgrounded. On foreground return, controllerUserInteraction
+        // was still true (menu mode) and isShowingMenu was stuck — blocking
+        // all touch/controller input. Removed the background guard so the
+        // cleanup always runs when the presentation controller fires.
+        if isShowingMenu {
             DLOG("Cleaning up after menu dismissal")
 
             // First disable controller input

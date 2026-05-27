@@ -3173,6 +3173,16 @@ extension PVEmulatorViewController {
         }
         #endif
 
+        // Stuck-state fix: if isShowingMenu is true but no menu VC is actually
+        // presented, reset the flag and restore controller input. This catches
+        // the case where the system auto-dismissed the menu VC while the app
+        // was backgrounded and cleanupAfterMenuDismissal didn't fully run.
+        if isShowingMenu && menuPresentationViewController == nil && presentedViewController == nil {
+            ILOG("appDidBecomeActive: isShowingMenu stuck true with no menu VC — resetting")
+            enableControllerInput(false)
+            isShowingMenu = false
+        }
+
         /// Match pause state to the actual menu visibility instead of always forcing
         /// pause. This prevents returning from transient ReplayKit UI in a permanently
         /// paused-looking state with no visible pause menu.
