@@ -111,8 +111,8 @@ public class DeltaSkinInputHandler: ObservableObject {
         ILOG("🔘 buttonPressed: \(buttonId) core=\(emulatorCore != nil ? String(describing: type(of: emulatorCore!)) : "nil") sysId=\(emulatorCore?.systemIdentifier ?? "nil")")
 
         // One-shot diagnostic: log the first DeltaSkin button press after each resume
-        if !InputDiagnostics.hasLoggedFirstTouchSinceResume {
-            InputDiagnostics.hasLoggedFirstTouchSinceResume = true
+        if !InputDiagnostics.hasLoggedDeltaSkinPress {
+            InputDiagnostics.hasLoggedDeltaSkinPress = true
             ILOG("[INPUT-DIAG] DeltaSkinInputHandler.buttonPressed: first press post-resume, buttonId=\(buttonId), emulatorCore=\(emulatorCore != nil ? String(describing: type(of: emulatorCore!)) : "nil"), controllerVC=\(controllerVC != nil), emulatorController=\(emulatorController != nil)")
         }
 

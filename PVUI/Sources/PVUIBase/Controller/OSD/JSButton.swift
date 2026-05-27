@@ -210,8 +210,8 @@ public final class JSButton: MovableButtonView {
         }
 
         // One-shot diagnostic: log the first OSD button touch after each resume
-        if !InputDiagnostics.hasLoggedFirstTouchSinceResume {
-            InputDiagnostics.hasLoggedFirstTouchSinceResume = true
+        if !InputDiagnostics.hasLoggedJSButton {
+            InputDiagnostics.hasLoggedJSButton = true
             ILOG("[INPUT-DIAG] JSButton.touchesBegan: first touch post-resume, button=\(titleLabel?.text ?? "?"), delegate=\(delegate != nil), userInteraction=\(isUserInteractionEnabled), window=\(window != nil)")
         }
 

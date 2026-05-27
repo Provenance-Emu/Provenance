@@ -223,8 +223,8 @@ public final class JSDPad: MovableButtonView {
 		}
 
         // One-shot diagnostic: log the first OSD d-pad touch after each resume
-        if !InputDiagnostics.hasLoggedFirstTouchSinceResume {
-            InputDiagnostics.hasLoggedFirstTouchSinceResume = true
+        if !InputDiagnostics.hasLoggedJSDPad {
+            InputDiagnostics.hasLoggedJSDPad = true
             ILOG("[INPUT-DIAG] JSDPad.touchesBegan: first touch post-resume, delegate=\(delegate != nil), userInteraction=\(isUserInteractionEnabled), window=\(window != nil), analogMode=\(analogMode)")
         }
 
