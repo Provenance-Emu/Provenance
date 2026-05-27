@@ -1654,6 +1654,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     @inlinable
     func draw(in view: MTKView) {
+        // Guard against drawing while backgrounded or transitioning.
+        // [CAMetalLayer nextDrawable] blocks indefinitely when the app is
+        // not fully active — drawables are reclaimed by the system during
+        // background. The CA transaction observer can fire draw(in:) before
+        // UIApplication.didBecomeActiveNotification, so checking isPaused
+        // alone is insufficient. This was the root cause of the permanent
+        // main-thread hang after background/resume.
+        #if !os(macOS)
+        if UIApplication.shared.applicationState != .active {
+            return
+        }
+        #endif
         guard let emulatorCore = emulatorCore, !isPaused else {
             return
         }
