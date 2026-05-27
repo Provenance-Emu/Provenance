@@ -3061,6 +3061,7 @@ extension PVEmulatorViewController {
         if !core.isOn {
             return
         }
+        ILOG("[INPUT-DIAG] appWillEnterForeground: isShowingMenu=\(isShowingMenu), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
         Task.detached { @MainActor in
             self.playTimeTracker?.updateLastPlayedTime()
         }
@@ -3081,6 +3082,7 @@ extension PVEmulatorViewController {
         if !core.isOn {
             return
         }
+        ILOG("[INPUT-DIAG] appWillResignActive: isShowingMenu=\(isShowingMenu), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), skinContainer.userInteraction=\(skinContainerView?.isUserInteractionEnabled ?? false), skinHostingControllers=\(skinHostingControllers.count)")
 
         /// Safety check: ensure view controller is in a valid state before attempting auto-save
         guard isViewLoaded,
@@ -3183,11 +3185,15 @@ extension PVEmulatorViewController {
             isShowingMenu = false
         }
 
+        // Comprehensive state dump for touch-pipeline debugging
+        ILOG("[INPUT-DIAG] appDidBecomeActive: isShowingMenu=\(isShowingMenu), presentedVC=\(presentedViewController != nil ? String(describing: type(of: presentedViewController!)) : "nil"), menuPresentationVC=\(menuPresentationViewController != nil)")
+        ILOG("[INPUT-DIAG] appDidBecomeActive: view.userInteraction=\(view.isUserInteractionEnabled), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
+        ILOG("[INPUT-DIAG] appDidBecomeActive: skinContainer.userInteraction=\(skinContainerView?.isUserInteractionEnabled ?? false), skinContainer.hidden=\(skinContainerView?.isHidden ?? true), skinHostingControllers=\(skinHostingControllers.count), sharedInputHandler=\(sharedInputHandler != nil)")
+        for (i, hc) in skinHostingControllers.enumerated() {
+            ILOG("[INPUT-DIAG] appDidBecomeActive: skinHostingController[\(i)]: view.userInteraction=\(hc.view.isUserInteractionEnabled), view.window=\(hc.view.window != nil), view.hidden=\(hc.view.isHidden)")
+        }
+
         // Defensive: ensure the OSD touch overlay is interactive after resume.
-        // Background/resume can break the responder chain even when the menu
-        // state is correct — the controller VC's view or the skin hosting
-        // controller may lose touch routing. Walk the relevant views and
-        // force isUserInteractionEnabled + bring to front.
         if !isShowingMenu {
             ensureOSDTouchesEnabled()
         }
