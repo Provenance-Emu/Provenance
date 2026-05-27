@@ -263,6 +263,9 @@ extension PVEmulatorViewController {
                         guard let self else { return }
                         self.finalizeSkinAfterLoad()
                         self.applyViewportFromCurrentSkin()
+                        // Re-check controller visibility after skin finalization
+                        // (finalizeSkinAfterLoad sets skinContainer.isHidden = false)
+                        self.updateOnScreenControlsVisibility()
                         self.subscribeSkinLoadPause()
                     }
                     .store(in: &self.skinCancellables)

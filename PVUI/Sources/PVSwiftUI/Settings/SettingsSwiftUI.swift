@@ -2424,6 +2424,7 @@ private struct OnScreenControllerSection: View {
     @Default(.missingButtonsAlwaysOn) var missingButtonsAlwaysOn
     @Default(.onscreenJoypad) var onscreenJoypad
     @Default(.onscreenJoypadWithKeyboard) var onscreenJoypadWithKeyboard
+    @Default(.hideOnScreenControlsWithController) var hideOnScreenControlsWithController
 #if !os(tvOS)
     @Default(.movableButtons) var movableButtons
 #endif
@@ -2447,6 +2448,11 @@ private struct OnScreenControllerSection: View {
                                          Image(systemName: "sun.max")
                                              .foregroundColor(RetroTheme.retroBlue)
                                      })
+            }
+            ThemedToggle(isOn: $hideOnScreenControlsWithController) {
+                SettingsRow(title: "Auto-Hide with Controller",
+                            subtitle: "Hide on-screen controls when a physical game controller is connected.",
+                            icon: .sfSymbol("gamecontroller"))
             }
             ThemedToggle(isOn: $buttonTints) {
                 SettingsRow(title: "Button Colors",

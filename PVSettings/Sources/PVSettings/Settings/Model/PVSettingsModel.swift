@@ -235,6 +235,11 @@ public extension Defaults.Keys {
     /// held down until tapped again. Useful for auto-run in platformers.
     static let stickyButtonsEnabled = Key<Bool>("stickyButtonsEnabled", default: false)
 
+    /// When enabled, on-screen touch controls (both legacy OSD and DeltaSkin overlays)
+    /// are automatically hidden when a physical game controller (MFi, DualShock, etc.)
+    /// is connected, and shown again when all controllers disconnect.
+    static let hideOnScreenControlsWithController = Key<Bool>("hideOnScreenControlsWithController", default: true)
+
 #if os(tvOS)
     /// Multiplier applied to Siri Remote touch-surface pan deltas when driving mouse input.
     /// Range 0.1 – 5.0; default is 1.0 (1:1 pixel mapping).

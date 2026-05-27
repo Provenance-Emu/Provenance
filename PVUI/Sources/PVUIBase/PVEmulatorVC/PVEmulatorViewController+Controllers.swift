@@ -46,6 +46,7 @@ extension PVEmulatorViewController {
 
     @objc func controllerDidConnect(_ note: Notification?) {
         hideOrShowMenuButton()
+        updateOnScreenControlsVisibility()
         /// Rebind pause handlers for the freshly connected controller. Deferred by
         /// one runloop tick so the core's own `controllerDidConnect` observer runs
         /// first (cores typically install their own `pressedChangedHandler` on the
@@ -62,6 +63,50 @@ extension PVEmulatorViewController {
 
     @objc func controllerDidDisconnect(_: Notification?) {
         hideOrShowMenuButton()
+        updateOnScreenControlsVisibility()
+    }
+
+    // MARK: - Auto-hide on-screen controls when a physical controller is connected
+
+    /// Hides or shows the on-screen touch controls (both legacy OSD and DeltaSkin
+    /// overlays) based on whether a real physical controller is connected.
+    ///
+    /// Gated by the `hideOnScreenControlsWithController` user preference.
+    /// No-ops on tvOS and macCatalyst where on-screen touch controls are not used.
+    func updateOnScreenControlsVisibility() {
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        guard Defaults[.hideOnScreenControlsWithController] else {
+            // User disabled auto-hide — ensure overlays are visible
+            setOnScreenControlsHidden(false)
+            return
+        }
+
+        // Check for real physical controllers (exclude snapshots and keyboard-only)
+        let hasRealController = PVControllerManager.shared.controllers.contains { controller in
+            !controller.isSnapshot && (controller.extendedGamepad != nil || controller.microGamepad != nil)
+        }
+
+        setOnScreenControlsHidden(hasRealController)
+        #endif
+    }
+
+    /// Sets the hidden state of both on-screen control paths.
+    ///
+    /// - Parameter hidden: `true` to hide on-screen controls, `false` to show them.
+    private func setOnScreenControlsHidden(_ hidden: Bool) {
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        // DeltaSkin overlay
+        if isDeltaSkinEnabled {
+            skinContainerView?.isHidden = hidden
+            DLOG("On-screen controls (DeltaSkin): \(hidden ? "hidden" : "visible")")
+        }
+
+        // Legacy OSD overlay
+        if let controllerView = controllerViewController?.view, controllerView.superview != nil {
+            controllerView.isHidden = hidden
+            DLOG("On-screen controls (OSD): \(hidden ? "hidden" : "visible")")
+        }
+        #endif
     }
 
     @objc func handleControllerManagerControllerReassigned(_: Notification?) {
@@ -75,6 +120,7 @@ extension PVEmulatorViewController {
         core.controller8 = PVControllerManager.shared.player8
 
         hideOrShowMenuButton()
+        updateOnScreenControlsVisibility()
         #if os(tvOS) && canImport(SteamController)
         PVControllerManager.shared.setSteamControllersMode(core.isRunning ? .gameController : .keyboardAndMouse)
         #endif

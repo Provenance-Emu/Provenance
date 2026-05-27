@@ -1073,6 +1073,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
         hideOrShowMenuButton()
+        // Hide on-screen controls if a physical controller is already connected at launch
+        updateOnScreenControlsVisibility()
 
         convertOldSaveStatesToNewIfNeeded()
 
@@ -1640,14 +1642,21 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
         /// CRITICAL: Ensure skin container stays visible and on top after layout
-        /// This prevents the GPU view from covering the skin container on iPad
+        /// This prevents the GPU view from covering the skin container on iPad.
+        /// When auto-hide is active and a physical controller is connected, the
+        /// container stays hidden — only z-order and geometry are maintained.
         if isDeltaSkinEnabled, let skinContainer = skinContainerView {
             skinContainer.frame = view.bounds
             if let hostView = skinContainer.subviews.first {
                 hostView.frame = skinContainer.bounds
             }
-            skinContainer.isHidden = false
-            skinContainer.alpha = 1.0
+            // Respect auto-hide: only force-show if no physical controller is hiding the overlay
+            let shouldAutoHide = Defaults[.hideOnScreenControlsWithController]
+                && PVControllerManager.shared.controllers.contains { !$0.isSnapshot && ($0.extendedGamepad != nil || $0.microGamepad != nil) }
+            if !shouldAutoHide {
+                skinContainer.isHidden = false
+                skinContainer.alpha = 1.0
+            }
             if let gpuView = gpuViewController.view, gpuView.superview == view {
                 view.insertSubview(gpuView, belowSubview: skinContainer)
             }
