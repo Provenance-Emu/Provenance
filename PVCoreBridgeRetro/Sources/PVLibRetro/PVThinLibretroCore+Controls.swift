@@ -22,6 +22,9 @@ import os
 import PVCoreBridge
 import PVLogging
 import PVSystems
+#if canImport(UIKit)
+import UIKit
+#endif
 #if canImport(GameController)
 import GameController
 #endif
@@ -162,11 +165,41 @@ extension PVThinLibretroCore {
         }
     }
 
+    /// One-shot diagnostic flag for logging the first pollControllers call after resume.
+    /// Reset to `false` by `UIApplication.didBecomeActiveNotification`.
+    private static var _hasLoggedFirstPollSinceResume = false
+    #if canImport(UIKit)
+    /// Observation token for didBecomeActive — re-arms the one-shot poll diagnostic.
+    private static var _resumeObserver: NSObjectProtocol?
+
+    /// Installs a one-time observer to re-arm the poll diagnostic on app resume.
+    private static func installResumeObserverIfNeeded() {
+        guard _resumeObserver == nil else { return }
+        _resumeObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil, queue: .main
+        ) { _ in
+            _hasLoggedFirstPollSinceResume = false
+        }
+    }
+    #else
+    private static func installResumeObserverIfNeeded() {}
+    #endif
+
     /// Poll physical GCController state each frame and update the joypad bitmask.
     /// Called from the emulation thread via `thin_input_poll`.
     /// Without this, physical controllers have no effect in the thin wrapper
     /// (only DeltaSkin on-screen buttons would work via the responder protocols).
     @objc public func pollControllers() {
+        // One-shot diagnostic: log the first poll after each resume to confirm
+        // the inputPollBlock is still wired and the core is alive.
+        PVThinLibretroCore.installResumeObserverIfNeeded()
+        if !PVThinLibretroCore._hasLoggedFirstPollSinceResume {
+            PVThinLibretroCore._hasLoggedFirstPollSinceResume = true
+            let bridgeAlive = _bridge.inputPollBlock != nil
+            ILOG("[INPUT-DIAG] pollControllers: first poll post-resume, inputPollBlock=\(bridgeAlive ? "valid" : "nil"), core.isRunning=\(isRunning), touchViewController=\(touchViewController != nil)")
+        }
+
         // Snapshot responder-asserted joypad mask for this poll cycle. OR'd into
         // every per-button `setButton(...)` below so on-screen / turbo presses
         // asserted via the responder protocol aren't clobbered by physical-pad

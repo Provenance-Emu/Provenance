@@ -110,6 +110,12 @@ public class DeltaSkinInputHandler: ObservableObject {
     func buttonPressed(_ buttonId: String) {
         ILOG("🔘 buttonPressed: \(buttonId) core=\(emulatorCore != nil ? String(describing: type(of: emulatorCore!)) : "nil") sysId=\(emulatorCore?.systemIdentifier ?? "nil")")
 
+        // One-shot diagnostic: log the first DeltaSkin button press after each resume
+        if !InputDiagnostics.hasLoggedFirstTouchSinceResume {
+            InputDiagnostics.hasLoggedFirstTouchSinceResume = true
+            ILOG("[INPUT-DIAG] DeltaSkinInputHandler.buttonPressed: first press post-resume, buttonId=\(buttonId), emulatorCore=\(emulatorCore != nil ? String(describing: type(of: emulatorCore!)) : "nil"), controllerVC=\(controllerVC != nil), emulatorController=\(emulatorController != nil)")
+        }
+
         // Check for special commands first (do not auto-unpause here)
         let lowercasedId = buttonId.lowercased()
 

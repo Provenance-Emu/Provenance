@@ -3061,7 +3061,7 @@ extension PVEmulatorViewController {
         if !core.isOn {
             return
         }
-        ILOG("[INPUT-DIAG] appWillEnterForeground: isShowingMenu=\(isShowingMenu), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
+        ILOG("[INPUT-DIAG] appWillEnterForeground: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController)), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.superview=\(controllerViewController?.view.superview != nil), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
         Task.detached { @MainActor in
             self.playTimeTracker?.updateLastPlayedTime()
         }
@@ -3083,6 +3083,11 @@ extension PVEmulatorViewController {
             return
         }
         ILOG("[INPUT-DIAG] appWillResignActive: isShowingMenu=\(isShowingMenu), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), skinContainer.userInteraction=\(skinContainerView?.isUserInteractionEnabled ?? false), skinHostingControllers=\(skinHostingControllers.count)")
+
+        ILOG("[INPUT-DIAG] appWillResignActive: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController)), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.superview=\(controllerViewController?.view.superview != nil), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
+
+        // Re-arm the one-shot touch diagnostic for JSButton/JSDPad/MultiTouch
+        InputDiagnostics.hasLoggedFirstTouchSinceResume = false
 
         /// Safety check: ensure view controller is in a valid state before attempting auto-save
         guard isViewLoaded,
@@ -3149,6 +3154,24 @@ extension PVEmulatorViewController {
     @objc func appDidBecomeActive(_: Notification?) {
         if !core.isOn {
             return
+        }
+
+        // Comprehensive diagnostic dump for touch-pipeline debugging after resume
+        let gestureCount = view.gestureRecognizers?.count ?? 0
+        let skinHostCount = skinHostingControllers.count
+        let controllerCount = PVControllerManager.shared.controllers.count
+        let inputHandlerNil = sharedInputHandler == nil
+        ILOG("[INPUT-DIAG] appDidBecomeActive: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController)), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.superview=\(controllerViewController?.view.superview != nil), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
+        ILOG("[INPUT-DIAG] appDidBecomeActive: view.userInteraction=\(view.isUserInteractionEnabled), gestureRecognizers=\(gestureCount), sharedInputHandler=\(inputHandlerNil ? "nil" : "valid"), skinHostingControllers=\(skinHostCount), GCControllers=\(controllerCount)")
+        // Log skin container state
+        if let skinContainer = skinContainerView {
+            ILOG("[INPUT-DIAG] appDidBecomeActive: skinContainer.userInteraction=\(skinContainer.isUserInteractionEnabled), skinContainer.hidden=\(skinContainer.isHidden), skinContainer.superview=\(skinContainer.superview != nil), skinContainer.window=\(skinContainer.window != nil)")
+        } else {
+            ILOG("[INPUT-DIAG] appDidBecomeActive: skinContainerView=nil")
+        }
+        // Log skin hosting controllers state
+        for (i, hc) in skinHostingControllers.enumerated() {
+            ILOG("[INPUT-DIAG] appDidBecomeActive: skinHostingController[\(i)]: view.userInteraction=\(hc.view.isUserInteractionEnabled), view.superview=\(hc.view.superview != nil), view.window=\(hc.view.window != nil), view.hidden=\(hc.view.isHidden)")
         }
 
         #if os(tvOS)
@@ -3250,6 +3273,13 @@ extension PVEmulatorViewController {
         enableControllerInput(false)
 
         DLOG("ensureOSDTouchesEnabled: controllerVC=\(controllerViewController != nil), presentedVC=\(presentedViewController != nil), isShowingMenu=\(isShowingMenu)")
+
+        // Comprehensive view-hierarchy dump to trace where touches might be blocked
+        ILOG("[INPUT-DIAG] ensureOSDTouchesEnabled: view hierarchy dump (subview count=\(view.subviews.count)):")
+        for (i, subview) in view.subviews.enumerated() {
+            let className = NSStringFromClass(type(of: subview))
+            ILOG("[INPUT-DIAG]   subview[\(i)]: \(className), userInteraction=\(subview.isUserInteractionEnabled), hidden=\(subview.isHidden), alpha=\(subview.alpha), frame=\(subview.frame)")
+        }
     }
 
     fileprivate func startAudio() throws {

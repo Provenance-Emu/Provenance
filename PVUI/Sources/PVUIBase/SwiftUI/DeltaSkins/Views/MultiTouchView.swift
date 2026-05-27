@@ -80,6 +80,11 @@ public struct MultiTouchView: UIViewRepresentable {
         }
 
         override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            // One-shot diagnostic: log the first DeltaSkin multi-touch after each resume
+            if !InputDiagnostics.hasLoggedFirstTouchSinceResume {
+                InputDiagnostics.hasLoggedFirstTouchSinceResume = true
+                ILOG("[INPUT-DIAG] MultiTouchView.touchesBegan: first touch post-resume, touchHandler=\(touchHandler != nil), userInteraction=\(isUserInteractionEnabled), window=\(window != nil), isEditMode=\(isEditMode), frame=\(frame)")
+            }
             handleTouches(.began, touches: touches)
         }
 

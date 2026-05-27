@@ -1012,6 +1012,8 @@ struct SettingsRow: View {
     var icon: SettingsIcon? = nil
     /// Controls the trailing chevron on tvOS. Set `false` for non-navigation rows (toggles, sliders, static info).
     var showChevron: Bool = true
+    /// Maximum subtitle lines; `nil` uses the default of 5 so longer helper text is not truncated on iOS.
+    var subtitleLineLimit: Int? = nil
 
     @State private var isHovered = false
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -1041,6 +1043,10 @@ struct SettingsRow: View {
         #else
         return 5
         #endif
+    }
+
+    private var effectiveSubtitleLineLimit: Int {
+        subtitleLineLimit ?? 5
     }
 
     var body: some View {
@@ -1117,13 +1123,13 @@ struct SettingsRow: View {
                         #if os(tvOS)
                         .font(.system(size: 15))
                         .foregroundStyle(isFocused ? .white.opacity(0.8) : Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.7))
-                        .lineLimit(3)
                         #else
                         .font(.caption)
                         .foregroundColor(Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.8))
-                        .lineLimit(2)
                         #endif
+                        .lineLimit(effectiveSubtitleLineLimit)
                         .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
 
@@ -1562,12 +1568,6 @@ private struct SavesSection: View {
                         icon: .sfSymbol("autostartstop"),
                         showChevron: false)
         }
-        ThemedToggle(isOn: $timedAutoSaves) {
-            SettingsRow(title: "Timed Auto Saves",
-                        subtitle: "Periodically create save states while you play.",
-                        icon: .sfSymbol("clock.badge"),
-                        showChevron: false)
-        }
         ThemedToggle(isOn: $autoLoadSaves) {
             SettingsRow(title: "Auto Load Saves",
                         subtitle: "Automatically load the last save of a game if one exists. Disables the load prompt.",
@@ -1578,6 +1578,12 @@ private struct SavesSection: View {
             SettingsRow(title: "Ask to Load Saves",
                         subtitle: "Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active.",
                         icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"),
+                        showChevron: false)
+        }
+        ThemedToggle(isOn: $timedAutoSaves) {
+            SettingsRow(title: "Timed Auto Saves",
+                        subtitle: "Periodically create save states while you play.",
+                        icon: .sfSymbol("clock.badge"),
                         showChevron: false)
         }
     }

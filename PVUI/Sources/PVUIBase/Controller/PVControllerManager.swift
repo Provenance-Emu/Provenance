@@ -693,6 +693,7 @@ public final class PVControllerManager: NSObject, ObservableObject {
 
     var controllerUserInteractionEnabled: Bool = false {
         didSet {
+            ILOG("[INPUT-DIAG] controllerUserInteractionEnabled changed: \(oldValue) -> \(controllerUserInteractionEnabled)")
             /// Prevent redundant sets from corrupting savedValueChangedHandlers.
             /// Setting false→false would restore nil and destroy game input handlers.
             guard oldValue != controllerUserInteractionEnabled else { return }
