@@ -423,7 +423,7 @@ struct PauseTileMenuView: View {
         // Disc swap long-press options — IDs are "disc_<number>".
         if tile.id.hasPrefix("disc_") {
             if let discNum = UInt(tile.id.dropFirst(5)),
-               let discCore = emulatorVC.core as? (PVEmulatorCore & DiscSwappable) {
+               let discCore = emulatorVC.core as? DiscSwappable {
                 discCore.swapDisc(number: discNum)
                 rebuildSections()
             }

@@ -1,5 +1,26 @@
 # TODO.md
 
+ACTIVELU WORKING ON BY JOE
+
+- [ ] deafult skins / skins hide option when using external controller (like the uikit controller had)
+- [ ] Thin wrapper, console toggles (like atari's bw/color toggles), not working (not working for most or all cores really but doing the thin wraper would cover most)
+- [ ] Jaguar thin wrapper with skins make sure number pad works
+- [ ] Jaguar native PVJaguar update to latest libretro/virtualjaguar-libretro develop branch
+- [ ] Thin wrapper, works with Saturn
+- [ ] thin wrapper works with PPSSPP
+- [ ] thin wrapper works with m3y's multi disc etc
+- [ ] "Select controller skin" previews missing for skins for sone reason
+- [ ] thin wrapper *and in theory all other cores* live change their stretch / scale setting during emulation
+- [ ] backgrounding / foregrounding not freezing
+- [ ] if a core crashes and we show a toaster message, the toaster floats to the top of the main library UI since we close the emulation scene, so the user can't read the error message
+- [ ] Thin wrapper n64 mupen-next has inverted joystick in skins (and maybe other controllers?)
+- [ ] on demand download for games etc shouldn't time-out if the download is making progress
+- [ ] 2 flycast boots in a row crashes (this is probalby in the flycast code though)
+- [ ] if the on screen keyboard is active, and minimized, we still can't tap buttons behind it that aren't covered, it seems to cover the whole screen area still for touches, aso would be nice to able to drag the minimized keyboard into a different spot vertically since it is in a weird spot by default
+- [ ] *bonus* thin wrapper touch mouse almost working, tested mario paint, but how do we use the controller? slot 1 becomes the mouse, not sure if tapping to click or right click is working, but i can't get past menu since i can't press controller which i guess the skin should be able to be assigned to player 2 instead (maybe we always need a quick way to change the skins/osd's player index, since some games on old consoles have features you need to press buttons on p2 port even in 1 player games)
+- [ ] *bonus* Wold3D loading, almost kind of works. the text in the library says we can auto download the files, but that's only with fat wrapper, we'd need to add that for thin wrapper somehow into the ui or remove that text or give better instructions, also it's ambigous where and what files go, maybe we shoudl add to wiki as well (would need a wiki page if not already) or a pop out larger blurb?
+
+
 <!-- AGENTS: Keep this file current. Check off items when done, add new items as discovered. -->
 
 ## tvOS Tester Sprint Checklist (May 8-9 2026)
@@ -32,7 +53,6 @@ Run all three in one session. Filter on each prefix in turn or use `CHEEVOS-DIAG
 - NES turbo / clockwise rotation working only on Nestopia — feature-gap, not bug. Separate epic.
 - DS portrait window on tvOS — explicitly deferred per maintainer.
 - Per-core widescreen hacks (`flycast_widescreen_hack`, `beetle_psx_widescreen_hack`, `dolphin_aspect_ratio`) — separate epic once the basic aspect_ratio fix is verified.
-- Beetle Saturn no-draw / crash — separate from button mapping; will be revisited.
 
 ---
 

@@ -203,14 +203,14 @@ static NSString *_systemName;
 
 -(void)stopHaptic {
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH && !TARGET_OS_VISION
-    if (!NSThread.isMainThread) {
-        MAKEWEAK(self);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            MAKESTRONG_RETURN_IF_NIL(self);
-            [strongself stopHaptic];
-        });
-        return;
-    }
+//    if (!NSThread.isMainThread) {
+//        MAKEWEAK(self);
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            MAKESTRONG_RETURN_IF_NIL(self);
+//            [strongself stopHaptic];
+//        });
+//        return;
+//    }
     self.rumbleGenerator = nil;
 #endif
 }
