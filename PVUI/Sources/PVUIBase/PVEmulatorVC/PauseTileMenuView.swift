@@ -420,17 +420,11 @@ struct PauseTileMenuView: View {
         #if !os(tvOS)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         #endif
-        // Scaling tile group — IDs are "scaling_<ScalingMode.rawValue>".
-        // Handle here so the dispatcher stays one switch.
+        // Scaling long-press options — IDs are "scaling_<ScalingMode.rawValue>".
         if tile.id.hasPrefix(PauseTileMenuViewModel.scalingTilePrefix) {
             let token = String(tile.id.dropFirst(PauseTileMenuViewModel.scalingTilePrefix.count))
             if let mode = ScalingMode(rawValue: token) {
-                Defaults[.scalingMode] = mode
-                // Picking a mode here counts as an explicit user choice, same
-                // as the Settings picker — keeps the renderer's per-system
-                // default substitution from clobbering the pick.
-                Defaults[.userExplicitlySetScalingMode] = true
-                rebuildSections()
+                applyScalingMode(mode)
             }
             return
         }
@@ -535,6 +529,11 @@ struct PauseTileMenuView: View {
             rebuildSections()
         case "mouseSensitivity":
             cycleMouseSensitivity()
+        case "scalingCycle":
+            let modes = ScalingMode.allCases
+            let current = Defaults[.scalingMode]
+            let idx = modes.firstIndex(of: current) ?? 0
+            applyScalingMode(modes[(idx + 1) % modes.count])
         case "fastForwardToggle":
             let isFastForwarding = emulatorVC.core.gameSpeed == .fast || emulatorVC.core.gameSpeed == .veryFast
             applyGameSpeed(isFastForwarding ? .normal : .fast)
@@ -946,6 +945,12 @@ struct PauseTileMenuView: View {
             }
         }
         return false
+    }
+
+    private func applyScalingMode(_ mode: ScalingMode) {
+        Defaults[.scalingMode] = mode
+        Defaults[.userExplicitlySetScalingMode] = true
+        rebuildSections()
     }
 
     /// Applies game-speed changes and mirrors fast-forward toggling for libretro cores.

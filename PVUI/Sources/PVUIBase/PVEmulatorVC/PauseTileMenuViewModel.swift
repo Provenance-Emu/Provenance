@@ -367,20 +367,9 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
 
-        // ── SCALING — root-level first group so the user can change the
-        // global video scaling without diving into Settings. Gated on
-        // systems that actually render video (skip Music, etc.). The
-        // tap handler writes Defaults[.scalingMode] + flips
-        // userExplicitlySetScalingMode so the renderer's
-        // effectiveScalingMode() honours the choice on this and future
-        // launches.
+        // ── SCALING — single tile with long-press picker, added to gameTiles
         if Self.coreSupportsVideoScaling(emulatorVC: emulatorVC) {
-            let scalingTiles = Self.scalingModeTiles()
-            built.append(PauseMenuTileSection(
-                id: "scaling",
-                title: String(localized: "SCALING"),
-                tiles: scalingTiles
-            ))
+            gameTiles.append(Self.scalingModeTile())
         }
 
         built.append(PauseMenuTileSection(id: "game", title: String(localized: "GAME"), tiles: gameTiles))
@@ -721,7 +710,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         switch route {
         case .root:
             // Peer sections on the root grid (like STATES); CONTROLS is not a MENU drill-in.
-            let rootSectionOrder = ["game", "scaling", "statesData", "settingsData", "controlsData", "quickSettingsData", "menu", "displayData"]
+            let rootSectionOrder = ["game", "statesData", "settingsData", "controlsData", "quickSettingsData", "menu", "displayData"]
             let byID = Dictionary(uniqueKeysWithValues: rootSections.map { ($0.id, $0) })
             return rootSectionOrder.compactMap { byID[$0] }
         case .states:
@@ -914,20 +903,25 @@ final class PauseTileMenuViewModel: ObservableObject {
     /// with a green accent + ★ badge. The renderer reads `Defaults[.scalingMode]`
     /// live (observed in PVMetalViewController / PVGLViewController), so the tap
     /// handler only needs to write the default + flip the explicit-set gate.
-    static func scalingModeTiles() -> [PauseMenuTile] {
+    static func scalingModeTile() -> PauseMenuTile {
         let current = Defaults[.scalingMode]
-        return ScalingMode.allCases.map { mode in
-            let isActive = mode == current
-            return PauseMenuTile(
+        let lpOptions = ScalingMode.allCases.map { mode in
+            PauseMenuTileLongPressOption(
                 id: "\(scalingTilePrefix)\(mode.rawValue)",
-                icon: mode.symbolName,
-                label: mode.displayName,
-                badge: isActive ? "★" : nil,
-                description: mode.subtitle,
-                colorKey: isActive ? .green : .gray,
-                dismissOnTap: false
+                title: mode.displayName,
+                isSelected: mode == current
             )
         }
+        return PauseMenuTile(
+            id: "scalingCycle",
+            icon: current.symbolName,
+            label: String(localized: "Scaling"),
+            badge: current.displayName,
+            description: current.subtitle,
+            colorKey: .cyan,
+            dismissOnTap: false,
+            longPressOptions: lpOptions
+        )
     }
 
     /// Predicate: the active core renders video (so global scaling settings
