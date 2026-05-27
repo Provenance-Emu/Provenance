@@ -13,7 +13,7 @@ Provenance is a multi-platform emulator frontend for iOS/tvOS supporting 60+ ret
 - Ruby + Bundler (for fastlane)
 - `make setup` to install all dependencies
 
-- Mininimum targets: iOS 17+, tvOS 17+ mandatory, Linux, macOS, VisionOS, watchOS equivlant release versions when applicable
+- Minimum targets: iOS 17+, tvOS 17+ mandatory, Linux, macOS, visionOS, watchOS equivalent release versions when applicable
 
 ### Code Signing
 Copy `CodeSigning.xcconfig.sample` to `CodeSigning.xcconfig` and fill in your developer account details.
@@ -35,7 +35,7 @@ Build from Xcode: open `Provenance.xcworkspace` and select a scheme. Start with 
 - **Provenance-Lite (AppStore)** — lightweight, fewer cores
 - **Provenance (AppStore)** — standard release
 - **Provenance-XL (Release)** — includes more RetroArch and native cores, not really used but should be kept updated regardless
-- Each is a multi-platfor target for iOS, tvOS and macOS Catalyst, and macOS where available. iOS and tvOS are our primary focus with possible future other Apple platform support
+- Each is a multi-platform target for iOS, tvOS and macOS Catalyst, and macOS where available. iOS and tvOS are our primary focus with possible future other Apple platform support
 
 ### CI
 GitHub Actions (`.github/workflows/build.yml`) builds all target variants on push/PR to `develop` and `master`.
@@ -69,7 +69,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVQuicklookSupport** — iOS and macOS Quicklook api support code
 - **PVRcheevos** — RetroAchievements C client integration
 - **PVSettings** — User preferences
-- **PVShaders** — Metal shdader manager support
+- **PVShaders** — Metal shader manager support
 - **PVSupport** — Shared utilities
 - **PVThemes** — UI Theming Support
 - **PVUI** — SwiftUI-based shared UI components
