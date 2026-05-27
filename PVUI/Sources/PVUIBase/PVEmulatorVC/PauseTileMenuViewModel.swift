@@ -721,7 +721,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         switch route {
         case .root:
             // Peer sections on the root grid (like STATES); CONTROLS is not a MENU drill-in.
-            let rootSectionOrder = ["game", "statesData", "settingsData", "controlsData", "quickSettingsData", "menu", "displayData"]
+            let rootSectionOrder = ["game", "scaling", "statesData", "settingsData", "controlsData", "quickSettingsData", "menu", "displayData"]
             let byID = Dictionary(uniqueKeysWithValues: rootSections.map { ($0.id, $0) })
             return rootSectionOrder.compactMap { byID[$0] }
         case .states:
