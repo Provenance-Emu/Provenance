@@ -152,6 +152,10 @@ extension PVEmulatorViewController: UIAdaptivePresentationControllerDelegate {
             // Setting isShowingMenu to false will handle resuming the emulation
             isShowingMenu = false
 
+            // Force-restore OSD touch handling — background/resume can break
+            // the responder chain even when menu state is correctly reset.
+            ensureOSDTouchesEnabled()
+
             // Restore indicator overlay visibility
             restoreIndicatorOverlay()
         }

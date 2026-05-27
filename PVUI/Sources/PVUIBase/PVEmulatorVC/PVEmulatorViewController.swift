@@ -3183,6 +3183,15 @@ extension PVEmulatorViewController {
             isShowingMenu = false
         }
 
+        // Defensive: ensure the OSD touch overlay is interactive after resume.
+        // Background/resume can break the responder chain even when the menu
+        // state is correct — the controller VC's view or the skin hosting
+        // controller may lose touch routing. Walk the relevant views and
+        // force isUserInteractionEnabled + bring to front.
+        if !isShowingMenu {
+            ensureOSDTouchesEnabled()
+        }
+
         /// Match pause state to the actual menu visibility instead of always forcing
         /// pause. This prevents returning from transient ReplayKit UI in a permanently
         /// paused-looking state with no visible pause menu.
@@ -3195,6 +3204,46 @@ extension PVEmulatorViewController {
         } catch {
             ELOG("\(error.localizedDescription)")
         }
+    }
+
+    /// Nuclear touch-restoration after background resume. Walks the view
+    /// hierarchy and ensures every layer that carries OSD controls is
+    /// interactive. Logs diagnostic state so we can see exactly what was
+    /// broken if the bug persists.
+    private func ensureOSDTouchesEnabled() {
+        // Controller overlay (built-in OSD or DeltaSkin hosting VC)
+        if let cvc = controllerViewController {
+            let cvcView = cvc.view
+            let wasDisabled = cvcView?.isUserInteractionEnabled == false
+            cvcView?.isUserInteractionEnabled = true
+            if wasDisabled {
+                ILOG("ensureOSDTouchesEnabled: controllerVC view was disabled — re-enabled")
+            }
+            // Ensure it's in front of the GPU view
+            if let cvcSuper = cvcView?.superview, let cv = cvcView {
+                cvcSuper.bringSubviewToFront(cv)
+            }
+        }
+
+        // The main view itself
+        if !view.isUserInteractionEnabled {
+            ILOG("ensureOSDTouchesEnabled: main view was disabled — re-enabled")
+            view.isUserInteractionEnabled = true
+        }
+
+        // Walk immediate subviews looking for stuck interaction state
+        for subview in view.subviews {
+            let className = NSStringFromClass(type(of: subview))
+            if !subview.isUserInteractionEnabled && (className.contains("Hosting") || className.contains("Controller") || className.contains("Touch")) {
+                ILOG("ensureOSDTouchesEnabled: re-enabled \(className) (was disabled)")
+                subview.isUserInteractionEnabled = true
+            }
+        }
+
+        // Ensure controller input routing is in game mode
+        enableControllerInput(false)
+
+        DLOG("ensureOSDTouchesEnabled: controllerVC=\(controllerViewController != nil), presentedVC=\(presentedViewController != nil), isShowingMenu=\(isShowingMenu)")
     }
 
     fileprivate func startAudio() throws {
