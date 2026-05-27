@@ -413,13 +413,18 @@ static NSString *_systemName;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
+    // Set _isRunning BEFORE acquiring @synchronized so the emulation loop
+    // (which also holds @synchronized(self) around executeFrame) sees the
+    // change on its next iteration and releases the lock. Without this,
+    // the main thread starves waiting for @synchronized while the emu loop
+    // tight-loops at 60fps — producing a permanent main-thread hang that
+    // blocks UIKit touches and app-lifecycle notifications.
+    _isRunning = !flag;
     @synchronized (self) {
         if (flag) {
             [self stopHaptic];
-            self.isRunning = NO;
         } else {
             [self startHaptic];
-            self.isRunning = YES;
         }
     }
 }
