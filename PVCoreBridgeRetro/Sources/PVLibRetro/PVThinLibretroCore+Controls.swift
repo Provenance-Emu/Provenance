@@ -1722,10 +1722,39 @@ extension PVThinLibretroCore: PVNeoGeoPocketSystemResponderClient {
 
 extension PVThinLibretroCore: PVJaguarSystemResponderClient {
     public func didPush(jaguarButton button: PVJaguarButton, forPlayer player: Int) {
+        if let kbKey = jaguarNumpadKey(button) {
+            _bridge.setKeyState(kbKey, pressed: true)
+        }
         pressButton(jaguarMap(button), forPlayer: player)
     }
     public func didRelease(jaguarButton button: PVJaguarButton, forPlayer player: Int) {
+        if let kbKey = jaguarNumpadKey(button) {
+            _bridge.setKeyState(kbKey, pressed: false)
+        }
         releaseButton(jaguarMap(button), forPlayer: player)
+    }
+
+    // The upstream virtualjaguar-libretro core reads numpad buttons via
+    // RETRO_DEVICE_KEYBOARD (RETROK_0–9, RETROK_MINUS, RETROK_EQUALS),
+    // NOT via joypad buttons. Buttons 0–6 accept both joypad OR keyboard,
+    // but buttons 7–9/asterisk/pound are keyboard-ONLY (libretro.c:528–537).
+    // Dispatch all numpad presses as keyboard events so the full keypad works.
+    private func jaguarNumpadKey(_ button: PVJaguarButton) -> UInt32? {
+        switch button {
+        case .button0:  return 48  // RETROK_0
+        case .button1:  return 49  // RETROK_1
+        case .button2:  return 50  // RETROK_2
+        case .button3:  return 51  // RETROK_3
+        case .button4:  return 52  // RETROK_4
+        case .button5:  return 53  // RETROK_5
+        case .button6:  return 54  // RETROK_6
+        case .button7:  return 55  // RETROK_7
+        case .button8:  return 56  // RETROK_8
+        case .button9:  return 57  // RETROK_9
+        case .asterisk: return 45  // RETROK_MINUS (maps to * on Jaguar pad)
+        case .pound:    return 61  // RETROK_EQUALS (maps to # on Jaguar pad)
+        default:        return nil
+        }
     }
 
     private func jaguarMap(_ button: PVJaguarButton) -> RetroJoypad {
@@ -1739,16 +1768,16 @@ extension PVThinLibretroCore: PVJaguarSystemResponderClient {
         case .c:        return .y
         case .pause:    return .start
         case .option:   return .select
-        case .button1:  return .x
-        case .button2:  return .l
-        case .button3:  return .r
-        case .button4:  return .l2
-        case .button5:  return .r2
-        case .button6:  return .l3
-        case .button7:  return .r3
-        case .button8:  return .select
-        case .button9:  return .start
-        case .button0:  return .select
+        case .button0:  return .x
+        case .button1:  return .l
+        case .button2:  return .r
+        case .button3:  return .l2
+        case .button4:  return .r2
+        case .button5:  return .l3
+        case .button6:  return .r3
+        case .button7:  return .r3  // joypad fallback (keyboard is primary)
+        case .button8:  return .r3
+        case .button9:  return .r3
         case .asterisk: return .select
         case .pound:    return .start
         case .count:    return .b
