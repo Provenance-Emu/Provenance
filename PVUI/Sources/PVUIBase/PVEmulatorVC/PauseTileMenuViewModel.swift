@@ -156,6 +156,29 @@ final class PauseTileMenuViewModel: ObservableObject {
                 colorKey: .purple
             ))
         }
+        // Disc swap — only for multi-disc games (PSX, Saturn, Sega CD, etc.)
+        if let discCore = emulatorVC.core as? (PVEmulatorCore & DiscSwappable),
+           discCore.currentGameSupportsMultipleDiscs, discCore.numberOfDiscs > 1 {
+            let discCount = discCore.numberOfDiscs
+            let lpOptions = (1...discCount).map { i in
+                PauseMenuTileLongPressOption(
+                    id: "disc_\(i)",
+                    title: "Disc \(i)",
+                    isSelected: false
+                )
+            }
+            gameTiles.append(PauseMenuTile(
+                id: "discSwap",
+                icon: "opticaldisc",
+                label: String(localized: "Change Disc"),
+                badge: "\(discCount) discs",
+                description: String(localized: "Eject and swap to a different disc."),
+                colorKey: .indigo,
+                dismissOnTap: false,
+                longPressOptions: lpOptions
+            ))
+        }
+
         gameTiles.append(Self.fastForwardToggleTile(core: emulatorVC.core))
         gameTiles.append(Self.gameSpeedTile(core: emulatorVC.core))
 

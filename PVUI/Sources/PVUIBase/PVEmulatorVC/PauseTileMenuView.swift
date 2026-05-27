@@ -420,6 +420,16 @@ struct PauseTileMenuView: View {
         #if !os(tvOS)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         #endif
+        // Disc swap long-press options — IDs are "disc_<number>".
+        if tile.id.hasPrefix("disc_") {
+            if let discNum = UInt(tile.id.dropFirst(5)),
+               let discCore = emulatorVC.core as? (PVEmulatorCore & DiscSwappable) {
+                discCore.swapDisc(number: discNum)
+                rebuildSections()
+            }
+            return
+        }
+
         // Scaling long-press options — IDs are "scaling_<ScalingMode.rawValue>".
         if tile.id.hasPrefix(PauseTileMenuViewModel.scalingTilePrefix) {
             let token = String(tile.id.dropFirst(PauseTileMenuViewModel.scalingTilePrefix.count))
@@ -529,6 +539,8 @@ struct PauseTileMenuView: View {
             rebuildSections()
         case "mouseSensitivity":
             cycleMouseSensitivity()
+        case "discSwap":
+            emulatorVC.showSwapDiscsMenu()
         case "scalingCycle":
             let modes = ScalingMode.allCases
             let current = Defaults[.scalingMode]

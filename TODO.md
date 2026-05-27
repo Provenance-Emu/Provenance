@@ -29,7 +29,6 @@ Run all three in one session. Filter on each prefix in turn or use `CHEEVOS-DIAG
 - tvOS CI build fails on `GetModule: FAILED to download parallel_n64_libretro_tvos.dylib.zip` (HTTP 404). Buildbot dylib infra issue. iOS CI passes. Local tvOS builds work — this is a remote-download regression upstream of our changes.
 
 ### Deferred (not in this sprint)
-- "Open In" UX bug — confirmed not in codebase. Need a screenshot from tester to know what menu item they actually saw.
 - NES turbo / clockwise rotation working only on Nestopia — feature-gap, not bug. Separate epic.
 - DS portrait window on tvOS — explicitly deferred per maintainer.
 - Per-core widescreen hacks (`flycast_widescreen_hack`, `beetle_psx_widescreen_hack`, `dolphin_aspect_ratio`) — separate epic once the basic aspect_ratio fix is verified.
