@@ -605,23 +605,30 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
         Task { @MainActor in
-            StatusMessageManager.shared.addMessage(
-                .init(message: displayMessage, type: .error, duration: 8.0, category: "core-load-error")
-            )
             self.hideBootHUDIfNeeded()
-            // Give the toaster a moment to render before tearing down the scene.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                if let presented = self.presentedViewController {
-                    presented.dismiss(animated: false) {
-                        SceneCoordinator.shared.closeEmulator()
-                    }
-                } else if self.presentingViewController != nil {
-                    self.dismiss(animated: true) {
-                        SceneCoordinator.shared.closeEmulator()
-                    }
-                } else {
-                    SceneCoordinator.shared.closeEmulator()
+
+            // Show a blocking alert so the user can read the error before
+            // the emulator scene is torn down. A toast was previously used
+            // here but it floated to the library view when the emulator
+            // dismissed before the user could read it.
+            let title = isBiosError ? "Missing System File" : "Failed to Start"
+            let alert = UIAlertController(title: title,
+                                          message: displayMessage,
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Return to Library",
+                                          style: .default,
+                                          handler: { _ in
+                self.dismissAndCloseEmulator()
+            }))
+
+            // If anything else is already presented, dismiss it first so
+            // the alert isn't hidden under another modal.
+            if let presented = self.presentedViewController {
+                presented.dismiss(animated: false) {
+                    self.present(alert, animated: true)
                 }
+            } else {
+                self.present(alert, animated: true)
             }
         }
     }
@@ -652,16 +659,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             // user reads the alert.
             self.core.setPauseEmulation(true)
             self.hideBootHUDIfNeeded()
-
-            // Surface a toast for users who want to keep playing other
-            // cores — keeps a record in the status feed without forcing
-            // a modal interruption.
-            StatusMessageManager.shared.addMessage(
-                .init(message: "Core crashed: \(reason)",
-                      type: .error,
-                      duration: 6.0,
-                      category: "core-crash")
-            )
 
             // Build the alert.
             let title = "Core Stopped Working"
