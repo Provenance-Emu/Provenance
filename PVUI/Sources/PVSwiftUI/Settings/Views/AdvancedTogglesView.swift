@@ -19,6 +19,7 @@ internal struct AdvancedTogglesView: View {
     @Default(.useMetal) var useMetalRenderer
     @Default(.mainUIMode) var mainUIMode
     @Default(.useModernWebServer) var useModernWebServer
+    @Default(.useLegacyRetroArchWrapper) var useLegacyRetroArchWrapper
 
     // Promoted from PVFeatureFlags 2026-05-22 (commits 908087274c / 72a567288b).
     // Surfaced here so users can find and toggle them without depending on
@@ -104,6 +105,16 @@ internal struct AdvancedTogglesView: View {
                                 icon: .sfSymbol("network"),
                                 showChevron: false)
                 }
+
+                #if os(iOS)
+                PremiumThemedToggle(isOn: $useLegacyRetroArchWrapper) {
+                    SettingsRow(title: "Use Legacy RetroArch Wrapper",
+                                subtitle: "Revert to the full in-process RetroArch runtime for libretro cores. The default lightweight wrapper has better scaling, lower memory use, and the same core compatibility. Enable this only if you experience a regression with a specific core.",
+                                icon: .sfSymbol("arrow.uturn.backward.circle"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
+                #endif
 
                 // Beta-promoted toggles. Each was a PVFeatureFlag entry until
                 // 2026-05-22; promoted to first-class user settings so they're

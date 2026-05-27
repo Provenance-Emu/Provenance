@@ -12,7 +12,8 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVRealm
 import PVLogging
-import PVFeatureFlags
+import PVSettings
+import Defaults
 
 // extension PVSystem {
 //    var responderClassType : AnyClass {
@@ -28,29 +29,22 @@ public extension PVCore {
     public func createInstance(forSystem system: PVSystem) -> PVEmulatorCore? {
         var className = self.principleClass
 
-        // When the thin libretro wrapper feature flag is enabled, swap RetroArch
-        // bridge classes for PVThinLibretroCore so we can test the thin wrapper
-        // with existing ROM/core associations without removing the RA backend.
+        // Thin libretro wrapper is the default on all platforms. The legacy
+        // full-RetroArch in-process wrapper is available as an opt-in escape
+        // hatch via Settings > Advanced > "Use Legacy RetroArch Wrapper".
         ILOG("createInstance: principleClass=\(className) for \(identifier)")
         if className.contains("RetroArch") || className.contains("LibRetro") || className == "PVRetroArchCoreBridge" {
-            let featureEnabled = PVFeatureFlags.shared.isEnabled(.dynamicLibretroScanner)
-            // The Swift class is exposed to the ObjC runtime as `PVRetroArch.PVRetroArchCoreCore`
-            // (module-prefixed), so the previous `NSClassFromString("PVRetroArchCore")` always
-            // returned nil and unconditionally forced the thin wrapper. Probe the actual
-            // principleClass we were asked to load instead — if it resolves, the legacy wrapper
-            // is available and we should only swap when the feature flag explicitly says so.
             let pvRetroArchCoreExists = NSClassFromString(className) != nil
-            ILOG("ThinLibretro: featureEnabled=\(featureEnabled), legacyClassExists=\(pvRetroArchCoreExists) (probed=\(className))")
-            if featureEnabled || !pvRetroArchCoreExists {
-                // Force-load PVCoreBridgeRetro framework so the ObjC runtime has
-                // PVThinLibretroCore registered. Frameworks are lazily loaded and
-                // the class won't be visible until the framework is in memory.
+            let userWantsLegacy = Defaults[.useLegacyRetroArchWrapper]
+            let useLegacy = userWantsLegacy && pvRetroArchCoreExists
+            ILOG("ThinLibretro: userWantsLegacy=\(userWantsLegacy), legacyClassExists=\(pvRetroArchCoreExists), useLegacy=\(useLegacy) (probed=\(className))")
+            if !useLegacy {
                 Self.ensurePVCoreBridgeRetroLoaded()
                 if NSClassFromString("PVThinLibretroCore") != nil {
                     ILOG("ThinLibretro: swapping \(className) → PVThinLibretroCore for \(identifier)")
                     className = "PVThinLibretroCore"
                 } else {
-                    WLOG("ThinLibretro: PVThinLibretroCore class not found even after loading framework")
+                    WLOG("ThinLibretro: PVThinLibretroCore class not found even after loading framework — falling back to legacy")
                 }
             }
         }

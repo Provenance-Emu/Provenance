@@ -679,6 +679,15 @@ public extension Defaults.Keys {
     /// Surfaced in Settings > Advanced.
     static let useModernWebServer = Key<Bool>("useModernWebServer", default: false)
 
+    /// When `true`, libretro cores on iOS use the legacy full-RetroArch
+    /// in-process wrapper instead of the lightweight thin libretro frontend.
+    /// The thin wrapper is now the default on all platforms — it has correct
+    /// ScalingMode integration, lighter memory footprint, and feature parity
+    /// for the vast majority of cores. This toggle exists as an escape hatch
+    /// for users who hit a thin-wrapper-specific regression.
+    /// tvOS always uses the thin wrapper regardless of this setting.
+    static let useLegacyRetroArchWrapper = Key<Bool>("useLegacyRetroArchWrapper", default: false)
+
     /// One-shot flag for the iOS local-network permission onboarding sheet.
     /// `true` once the user has acknowledged the explainer (regardless of whether
     /// they ultimately allowed local network access in the system alert).
