@@ -8,6 +8,7 @@
 //
 
 import PVSupport
+import PVLogging
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -206,6 +207,12 @@ public final class JSButton: MovableButtonView {
             // DLOG("Touch in move mode - delegating to super")
             super.touchesBegan(touches, with: event)
             return
+        }
+
+        // One-shot diagnostic: log the first OSD button touch after each resume
+        if !InputDiagnostics.hasLoggedFirstTouchSinceResume {
+            InputDiagnostics.hasLoggedFirstTouchSinceResume = true
+            ILOG("[INPUT-DIAG] JSButton.touchesBegan: first touch post-resume, button=\(titleLabel?.text ?? "?"), delegate=\(delegate != nil), userInteraction=\(isUserInteractionEnabled), window=\(window != nil)")
         }
 
         // DLOG("Normal button touch began")
