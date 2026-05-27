@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/tsolomko/BitByteData",
         "state": {
           "branch": null,
-          "revision": "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
-          "version": "2.0.4"
+          "revision": "e1a5443be67daf0833cbb5f4fa3a06a265ca3105",
+          "version": "2.1.0"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/hummingbird-project/hummingbird.git",
         "state": {
           "branch": null,
-          "revision": "d1ce7bbd2f1b17f22031ca4c0daeb39eff07a92e",
-          "version": "2.21.1"
+          "revision": "2f407402799c2217df69b01582f3a44856fef012",
+          "version": "2.24.0"
         }
       },
       {
@@ -159,8 +159,8 @@
         "repositoryURL": "https://github.com/krzyzanowskim/OpenSSL",
         "state": {
           "branch": null,
-          "revision": "e7d34385da795aaaeb2212e38c7401e5c333f792",
-          "version": "3.6.1"
+          "revision": "fdc9231384f37f053dffe058fd6dfc6c5072dae5",
+          "version": "3.6.2000"
         }
       },
       {
@@ -231,8 +231,8 @@
         "repositoryURL": "https://github.com/getsentry/sentry-cocoa",
         "state": {
           "branch": null,
-          "revision": "16cd512711375fa73f25ae5e373f596bdf4251ae",
-          "version": "8.58.0"
+          "revision": "cf44aa8cb4147f39e698c1f28be0b6b2c89f79d2",
+          "version": "8.58.2"
         }
       },
       {
@@ -285,8 +285,8 @@
         "repositoryURL": "https://github.com/apple/swift-asn1.git",
         "state": {
           "branch": null,
-          "revision": "9f542610331815e29cc3821d3b6f488db8715517",
-          "version": "1.6.0"
+          "revision": "eb50cbd14606a9161cbc5d452f18797c90ef0bab",
+          "version": "1.7.0"
         }
       },
       {
@@ -294,8 +294,8 @@
         "repositoryURL": "https://github.com/apple/swift-async-algorithms",
         "state": {
           "branch": null,
-          "revision": "9d349bcc328ac3c31ce40e746b5882742a0d1272",
-          "version": "1.1.3"
+          "revision": "d0b4a06d0f173a2f3be27d3ea21b3c3aa18db440",
+          "version": "1.1.4"
         }
       },
       {
@@ -312,8 +312,8 @@
         "repositoryURL": "https://github.com/apple/swift-certificates.git",
         "state": {
           "branch": null,
-          "revision": "24ccdeeeed4dfaae7955fcac9dbf5489ed4f1a25",
-          "version": "1.18.0"
+          "revision": "bde8ca32a096825dfce37467137c903418c1893d",
+          "version": "1.19.1"
         }
       },
       {
@@ -330,8 +330,8 @@
         "repositoryURL": "https://github.com/apple/swift-collections.git",
         "state": {
           "branch": null,
-          "revision": "6675bc0ff86e61436e615df6fc5174e043e57924",
-          "version": "1.4.1"
+          "revision": "fea17c02d767f46b23070fdfdacc28a03a39232a",
+          "version": "1.5.1"
         }
       },
       {
@@ -366,8 +366,8 @@
         "repositoryURL": "https://github.com/apple/swift-http-structured-headers.git",
         "state": {
           "branch": null,
-          "revision": "76d7627bd88b47bf5a0f8497dd244885960dde0b",
-          "version": "1.6.0"
+          "revision": "933538faa42c432d385f02e07df0ace7c5ecfc47",
+          "version": "1.7.0"
         }
       },
       {
@@ -384,8 +384,8 @@
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {
           "branch": null,
-          "revision": "8c0f217f01000dd30f60d6e536569ad4e74291f9",
-          "version": "1.11.0"
+          "revision": "7dc6101ae4dbe95cd3bc9cebad3b7cf8e49a7a63",
+          "version": "1.13.0"
         }
       },
       {
@@ -402,8 +402,8 @@
         "repositoryURL": "https://github.com/apple/swift-metrics.git",
         "state": {
           "branch": null,
-          "revision": "f17c111cec972c2a4922cef38cf64f76f7e87886",
-          "version": "2.8.0"
+          "revision": "087e8074afa97040c3b870c8664fe5482fb87cc4",
+          "version": "2.11.0"
         }
       },
       {
@@ -411,8 +411,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio.git",
         "state": {
           "branch": null,
-          "revision": "558f24a4647193b5a0e2104031b71c55d31ff83a",
-          "version": "2.97.1"
+          "revision": "57c0a08a331aaea9f5d7a932ad94ef43be942a95",
+          "version": "2.100.0"
         }
       },
       {
@@ -420,8 +420,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-extras.git",
         "state": {
           "branch": null,
-          "revision": "abcf5312eb8ed2fb11916078aef7c46b06f20813",
-          "version": "1.33.0"
+          "revision": "d2eeec0339074034f11a040a74aa2a341a2c4506",
+          "version": "1.34.1"
         }
       },
       {
@@ -429,8 +429,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-http2.git",
         "state": {
           "branch": null,
-          "revision": "6d8d596f0a9bfebb925733003731fe2d749b7e02",
-          "version": "1.42.0"
+          "revision": "61d1b44f6e4e118792be1cff88ee2bc0267c6f9a",
+          "version": "1.44.0"
         }
       },
       {
@@ -438,8 +438,8 @@
         "repositoryURL": "https://github.com/apple/swift-nio-ssl.git",
         "state": {
           "branch": null,
-          "revision": "df9c3406028e3297246e6e7081977a167318b692",
-          "version": "2.36.1"
+          "revision": "3f337058ccd7243c4cac7911477d8ad4c598d4da",
+          "version": "2.37.0"
         }
       },
       {
@@ -465,8 +465,8 @@
         "repositoryURL": "https://github.com/apple/swift-openapi-runtime",
         "state": {
           "branch": null,
-          "revision": "f039fa6d6338aab5164f3d1be16281524c9a8f89",
-          "version": "1.11.0"
+          "revision": "3d3a8457661daf7fb260ceeb9f0e24e5204ba5fb",
+          "version": "1.12.0"
         }
       },
       {
@@ -492,8 +492,8 @@
         "repositoryURL": "https://github.com/swiftlang/swift-syntax",
         "state": {
           "branch": null,
-          "revision": "2b59c0c741e9184ab057fd22950b491076d42e91",
-          "version": "603.0.0"
+          "revision": "9de99a78f099e59caf2b2beec65a4c45d54b2081",
+          "version": "603.0.1"
         }
       },
       {
@@ -537,8 +537,8 @@
         "repositoryURL": "https://github.com/mtgto/Unrar.swift.git",
         "state": {
           "branch": null,
-          "revision": "3449a14f6302d92b505245149a51dc1a4f1681c3",
-          "version": "0.5.2"
+          "revision": "0db01d94579e13bb3d316b8d385c5c370b5929b4",
+          "version": "0.5.3"
         }
       },
       {
