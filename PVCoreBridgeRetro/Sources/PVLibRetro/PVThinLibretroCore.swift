@@ -417,18 +417,18 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         migrateRetroArchSystemDirectoryIfNeeded()
         downloadBuildBotSystemFilesIfNeeded()
 
-        // Mupen64Plus-Next: use angrylion RDP, default pak1 to "memory" so games
-        // that store saves on the Controller Pak (MK4, Tony Hawk Pro Skater,
-        // Body Harvest, Hexen, etc.) work out of the box. Upstream libretro
-        // default IS "memory"; we previously forced "rumble" here because the
-        // libretro mupen64plus-next core only fires its rumble callback when
-        // pak type is PLUGIN_RAW ("rumble"), but that broke any game that
-        // expects a Controller Pak for saves. Saves are more critical than
-        // rumble for unknown ROMs — users who want rumble can switch via the
-        // pause-menu Core Options. Apply Transfer Pak slots after.
+        // Mupen64Plus-Next: use angrylion RDP, default pak1 to "rumble" to match
+        // the thick wrapper (PVRetroArchCore+Options.swift). In the RetroArch
+        // buildbot dylib that BOTH wrappers dlopen at runtime, pak type "rumble"
+        // (PLUGIN_RAW) is the raw-intercept mode: the core tells the game the pak
+        // is "raw" and marshals BOTH message types, so Controller-Pak saves AND
+        // rumble work together. (Our Cores/Mupen64Plus-NX submodule has this raw
+        // path stubbed out — RawData hardcoded to 0 — but that source only feeds
+        // the native PV build, not the dylib the thin wrapper runs.) Users can
+        // still override per game via pause-menu Core Options. Transfer Pak after.
         if coreId.contains("mupen") {
             setDefaultOption("mupen64plus-rdp-plugin", value: "angrylion")
-            setDefaultOption("mupen64plus-pak1", value: "memory")
+            setDefaultOption("mupen64plus-pak1", value: "rumble")
             // Re-apply Transfer Pak slots populated by TransferPakStore before this call.
             // reapplyTransferPakSlots() sets pak types for all configured ports and writes
             // the global mupen64plus-transfer-pak-path exactly once (lowest port wins),
