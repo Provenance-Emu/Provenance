@@ -4,6 +4,7 @@ import PVEmulatorCore
 import PVLibrary
 import PVLogging
 import PVCoreBridge
+import PVSettings
 import PVUIBase
 import ObjectiveC
 
@@ -510,6 +511,141 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         )
     }
 
+    // MARK: - Scaling Mode Within Skin Container
+
+    /// Adjusts a skin-provided container rect based on the current scaling mode
+    /// and game aspect ratio. When skins are active, the skin defines the screen
+    /// area but the user's chosen scaling mode controls how the game content
+    /// fits within that area.
+    ///
+    /// - Parameter container: The skin's screen rect (in view coordinates).
+    /// - Returns: The adjusted frame for the GPU view within the container.
+    internal func adjustFrameForScalingMode(_ container: CGRect) -> CGRect {
+        // Only apply scaling mode adjustments when the user has explicitly
+        // chosen a mode. Otherwise, preserve the skin's original behavior
+        // (stretch-to-fill the screen area) to avoid surprising existing users.
+        guard Defaults[.userExplicitlySetScalingMode] else { return container }
+
+        let scalingMode = Defaults[.scalingMode]
+
+        // Stretch: use the container as-is (game fills entire skin screen area)
+        guard scalingMode != .stretch else { return container }
+
+        // Compute game aspect ratio from the core
+        let screenRect = core.screenRect
+        let bufferSize = core.bufferSize
+        let isScreenRectValid = screenRect.width > 10 && screenRect.height > 10
+        let effectiveRect = isScreenRectValid
+            ? screenRect
+            : CGRect(x: 0, y: 0, width: bufferSize.width, height: bufferSize.height)
+
+        guard !effectiveRect.isEmpty else { return container }
+
+        let safeWidth = max(effectiveRect.width, 1)
+        let safeHeight = max(effectiveRect.height, 1)
+        var ratio = safeWidth / safeHeight
+
+        // Prefer the core-reported display aspect when available
+        let aspectSize = core.aspectSize
+        if aspectSize.width > 0 && aspectSize.height > 0 {
+            var aspectRatio = aspectSize.width / max(0.01, aspectSize.height)
+            if aspectRatio < 0.5 || aspectRatio > 3.0 {
+                let inverted = aspectSize.height / max(0.01, aspectSize.width)
+                if inverted >= 0.5 && inverted <= 3.0 {
+                    aspectRatio = inverted
+                }
+            }
+            if aspectRatio >= 0.5 && aspectRatio <= 3.0 {
+                ratio = aspectRatio
+            }
+        }
+
+        let containerW = container.width
+        let containerH = container.height
+        var width: CGFloat = 0
+        var height: CGFloat = 0
+
+        switch scalingMode {
+        case .stretch:
+            // Already handled above, but keep for completeness
+            return container
+
+        case .aspectFit:
+            // Largest game-aspect rect inscribed in container (centered)
+            if containerW / containerH > ratio {
+                height = containerH
+                width = height * ratio
+            } else {
+                width = containerW
+                height = width / ratio
+            }
+
+        case .aspectFill:
+            // Smallest game-aspect rect covering container (centered, will be clipped)
+            if containerW / containerH > ratio {
+                width = containerW
+                height = width / ratio
+            } else {
+                height = containerH
+                width = height * ratio
+            }
+
+        case .integerScale:
+            // Snap to largest integer multiple that fits in the container
+            let scaleX = floor(containerW / effectiveRect.width)
+            let scaleY = floor(containerH / effectiveRect.height)
+            let intScale = max(1, min(scaleX, scaleY))
+            width = effectiveRect.width * intScale
+            height = effectiveRect.height * intScale
+
+        case .nativeResolution:
+            // 1:1 pixel mapping -- use core's native output dimensions
+            width = effectiveRect.width
+            height = effectiveRect.height
+        }
+
+        // Center within container
+        let x = container.origin.x + (containerW - width) / 2
+        let y = container.origin.y + (containerH - height) / 2
+        return CGRect(x: x, y: y, width: width, height: height)
+    }
+
+    /// Called when the user changes the scaling mode while a DeltaSkin is active.
+    /// Forces re-application of the skin's game screen frame with the new
+    /// scaling mode, bypassing the frame-dedup logic that would otherwise
+    /// short-circuit the update (the skin container hasn't changed, only the
+    /// scaling within it has).
+    internal func reapplyScalingModeForSkin() {
+        guard isDeltaSkinEnabled else { return }
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in self?.reapplyScalingModeForSkin() }
+            return
+        }
+
+        // Use currentTargetFrame (the skin's container rect) if available
+        guard let containerFrame = currentTargetFrame, isValidFrame(containerFrame) else {
+            // Fall back to recalculating from skin
+            applyViewportFromCurrentSkin()
+            return
+        }
+
+        // Handle Metal cores (most common)
+        if let metalVC = gpuViewController as? PVMetalViewController {
+            applyFrameToMetal(containerFrame, metalVC: metalVC)
+            #if !os(tvOS)
+            refreshVirtualMouseLayout()
+            #endif
+        } else if !(core.bridge is EmulatorCoreViewportPositioning),
+                  let gameScreenView = gpuViewController.view {
+            // Handle GL cores
+            applyFrameToGL(containerFrame, gameScreenView: gameScreenView)
+            #if !os(tvOS)
+            refreshVirtualMouseLayout()
+            #endif
+        }
+        // RetroArch cores handle scaling internally via the viewport bridge
+    }
+
     // MARK: - Frame Application (Simplified)
 
     /// Apply frame to GPU view - single, clear application path
@@ -604,13 +740,19 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             DLOG("🎮 SKIN: No skin container/hosting view, using frame as-is: \(frame)")
         }
 
-        (metalVC as PVGPUViewController).customFrame = convertedFrame
+        // Apply the user's chosen scaling mode within the skin's screen container.
+        // The skin defines the game screen area, and the scaling mode controls
+        // how the game content fits within that area.
+        let scaledFrame = adjustFrameForScalingMode(convertedFrame)
+        DLOG("🎮 SKIN: Scaling mode \(Defaults[.scalingMode]) adjusted frame: \(convertedFrame) -> \(scaledFrame)")
+
+        (metalVC as PVGPUViewController).customFrame = scaledFrame
 
         metalVC.view.autoresizingMask = []
         metalVC.mtlView.autoresizingMask = []
 
         UIView.performWithoutAnimation {
-            metalVC.view.frame = convertedFrame
+            metalVC.view.frame = scaledFrame
             metalVC.mtlView.frame = metalVC.view.bounds
         }
 
@@ -625,7 +767,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // Sample selection / aspect math runs in the renderer against the
         // full-resolution drawable.
         let scale = metalVC.view.window?.screen.scale ?? UIScreen.main.scale
-        let drawableSize = CGSize(width: convertedFrame.width * scale, height: convertedFrame.height * scale)
+        let drawableSize = CGSize(width: scaledFrame.width * scale, height: scaledFrame.height * scale)
 
         metalVC.mtlView.drawableSize = drawableSize
         metalVC.mtlView.contentScaleFactor = scale
@@ -650,11 +792,14 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             convertedFrame = frame
         }
 
-        (gpuViewController as PVGPUViewController).customFrame = convertedFrame
+        // Apply scaling mode within the skin's screen container
+        let scaledFrame = adjustFrameForScalingMode(convertedFrame)
+
+        (gpuViewController as PVGPUViewController).customFrame = scaledFrame
         gameScreenView.autoresizingMask = []
 
         UIView.performWithoutAnimation {
-            gameScreenView.frame = convertedFrame
+            gameScreenView.frame = scaledFrame
         }
 
         gameScreenView.isHidden = false

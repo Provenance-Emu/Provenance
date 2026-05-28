@@ -321,8 +321,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     // recompute lives in viewDidLayoutSubviews. Filter / smoothing
                     // changes don't need this; only re-layout when scaling moved.
                     if oldScaling != self.renderSettings.scalingMode {
-                        self.view.setNeedsLayout()
-                        self.view.layoutIfNeeded()
+                        // When DeltaSkins are active, viewDidLayoutSubviews
+                        // early-returns before the scaling-mode switch, so
+                        // setNeedsLayout() is a no-op. Instead, tell the
+                        // parent emulator VC to re-apply the skin viewport
+                        // with the new scaling mode.
+                        if let emulatorVC = self.parent as? PVEmulatorViewController,
+                           emulatorVC.isDeltaSkinEnabled {
+                            emulatorVC.reapplyScalingModeForSkin()
+                        } else {
+                            self.view.setNeedsLayout()
+                            self.view.layoutIfNeeded()
+                        }
                     }
                 }
             }
