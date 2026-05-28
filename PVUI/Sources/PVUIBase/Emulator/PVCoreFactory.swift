@@ -36,8 +36,14 @@ public extension PVCore {
         if className.contains("RetroArch") || className.contains("LibRetro") || className == "PVRetroArchCoreBridge" {
             let pvRetroArchCoreExists = NSClassFromString(className) != nil
             let userWantsLegacy = Defaults[.useLegacyRetroArchWrapper]
-            let useLegacy = userWantsLegacy && pvRetroArchCoreExists
-            ILOG("ThinLibretro: userWantsLegacy=\(userWantsLegacy), legacyClassExists=\(pvRetroArchCoreExists), useLegacy=\(useLegacy) (probed=\(className))")
+            // PPSSPP hangs on boot in the thin wrapper: its GLES path spawns an
+            // emu thread and runs a GPU-init pump whose GL-context/FBO ordering
+            // doesn't line up with the thin wrapper's deferred context_reset.
+            // The thick wrapper boots PPSSPP correctly, so force it there until
+            // the thin GL ordering is diagnosed with runtime evidence.
+            let isPPSSPP = identifier.lowercased().contains("ppsspp")
+            let useLegacy = (userWantsLegacy || isPPSSPP) && pvRetroArchCoreExists
+            ILOG("ThinLibretro: userWantsLegacy=\(userWantsLegacy), isPPSSPP=\(isPPSSPP), legacyClassExists=\(pvRetroArchCoreExists), useLegacy=\(useLegacy) (probed=\(className))")
             if !useLegacy {
                 Self.ensurePVCoreBridgeRetroLoaded()
                 if NSClassFromString("PVThinLibretroCore") != nil {

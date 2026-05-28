@@ -106,7 +106,7 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
   (`PVCoreBridgeRetro/Sources/PVLibRetro/PVThinLibretroFrontend.mm`
   + `PVThinLibretroCore*.swift`). dlopen + function pointers against
   the libretro buildbot dylibs; no full RetroArch runtime.
-- **PPSSPP** now uses the thin wrapper (GL context is eagerly activated in `setupHardwareRenderCallback:`). Previously force-routed to thick wrapper.
+- **PPSSPP** is force-routed to the thick wrapper (`PVCoreFactory.swift`). Its GLES path spawns an emu thread + GPU-init pump whose GL-context/FBO ordering doesn't line up with the thin wrapper's deferred `context_reset`; thin still hangs on boot. `setupHardwareRenderCallback:` eagerly makes `_glContext` current (helps other HW cores) but that alone doesn't fix PPSSPP. Needs runtime trace of the boot hang to resolve thin.
 - The thick RetroArch wrapper (`CoresRetro/RetroArch/PVRetroArchCore/`) is available as an opt-in escape hatch via `Defaults[.useLegacyRetroArchWrapper]` in Settings > Advanced.
 - **Thin wrapper gaps:** deferred Vulkan context setup (GL is now eagerly activated; Vulkan still deferred). BIOS files synced from `BIOSPath` into system directory before `retro_load_game`. `ScalingMode` integration works (via `PVMetalViewController` + DeltaSkin skin container). Fast-forward wired (`setGameSpeed:` override syncs `_speedMultiplier` + `_audioPaused`).
 
