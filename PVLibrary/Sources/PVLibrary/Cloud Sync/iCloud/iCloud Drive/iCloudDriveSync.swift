@@ -631,7 +631,17 @@ public enum iCloudDriveSync {
         return false
     }
 
-    /// Copy a large file in chunks to avoid timeouts
+    /// Maximum time a chunked copy may go without transferring any bytes before
+    /// it is considered stalled. This is an *inactivity* timeout: it resets every
+    /// time data arrives, so a slow-but-progressing transfer is never killed.
+    private static let chunkedCopyStallTimeout: TimeInterval = 60.0
+
+    /// Copy a file in chunks with stall detection.
+    ///
+    /// Unlike an absolute deadline, this only fails when **no bytes have arrived
+    /// for `chunkedCopyStallTimeout` seconds** — a transfer that keeps making
+    /// progress (however slowly) will run to completion. Cancellation is honoured
+    /// per chunk via `Task.isCancelled`.
     private static func copyLargeFileInChunks(from sourceFile: URL, to destFile: URL) async throws -> Bool {
         let fileManager = FileManager.default
         let chunkSize = 1024 * 1024 // 1MB chunks
@@ -673,6 +683,9 @@ public enum iCloudDriveSync {
         var buffer = [UInt8](repeating: 0, count: chunkSize)
         var totalBytesRead: UInt64 = 0
         var lastProgressUpdate = Date()
+        // Tracks the last moment any bytes were transferred. Resets on every
+        // successful chunk so the stall timeout only fires on a true stall.
+        var lastByteActivity = Date()
 
         while totalBytesRead < fileSize {
             let bytesRead = inputStream.read(&buffer, maxLength: chunkSize)
@@ -681,7 +694,17 @@ public enum iCloudDriveSync {
                 if inputStream.streamError != nil {
                     throw inputStream.streamError!
                 }
-                break
+                // No bytes available right now. If we've been waiting too long
+                // without any progress, treat it as a stall; otherwise yield
+                // briefly and keep waiting for more data to arrive.
+                if Date().timeIntervalSince(lastByteActivity) >= chunkedCopyStallTimeout {
+                    throw TimeoutError()
+                }
+                if Task.isCancelled {
+                    throw CancellationError()
+                }
+                try? await Task.sleep(nanoseconds: 250_000_000) // 0.25s
+                continue
             }
 
             let bytesWritten = outputStream.write(buffer, maxLength: bytesRead)
@@ -693,6 +716,8 @@ public enum iCloudDriveSync {
             }
 
             totalBytesRead += UInt64(bytesRead)
+            // Bytes moved — reset the inactivity timer.
+            lastByteActivity = Date()
 
             // Update progress every second
             if Date().timeIntervalSince(lastProgressUpdate) >= 1.0 {
@@ -741,18 +766,12 @@ public enum iCloudDriveSync {
         for (sourceFile, destFile) in filesToRetry {
             DLOG("Retrying file: \(sourceFile.lastPathComponent)")
 
-            // Use a more aggressive approach for retries - direct copy with longer timeout
+            // Retry using the stall-aware chunked copy. There is no absolute
+            // deadline — a transfer that keeps making progress runs to
+            // completion and only a true stall (no bytes for
+            // `chunkedCopyStallTimeout`) fails it.
             do {
-                // Use a longer timeout for retries
-                let copyTask = Task {
-                    try FileManager.default.copyItem(at: sourceFile, to: destFile)
-                }
-
-                // Wait with an even longer timeout for retries
-                let retryTimeout: UInt64 = 300_000_000_000 // 5 minutes
-                try await withTimeout(timeout: retryTimeout) {
-                    try await copyTask.value
-                }
+                _ = try await copyLargeFileInChunks(from: sourceFile, to: destFile)
 
                 DLOG("✅ Successfully copied file on retry: \(sourceFile.lastPathComponent)")
                 successCount += 1
@@ -1559,22 +1578,26 @@ public enum iCloudDriveSync {
 
         // Move file from iCloud to local
         do {
-            // For very small files (< 1MB), use setUbiquitous method
-            // For medium files (1-10MB), use regular copy
-            // For large files (> 10MB), use chunked copy
-            if fileSize < 1_000_000 { // Less than 1 MB
-                // Use a timeout for the move operation (only for smaller files)
-                let moveTask = Task {
-                    try fileManager.setUbiquitous(false, itemAt: sourceFile, destinationURL: destFile)
-                }
+            // All sizes use the progress-aware chunked copy. It enforces an
+            // *inactivity* (stall) timeout only — a transfer that keeps making
+            // progress, however slowly, runs to completion and is never killed by
+            // an absolute deadline. (A sub-chunk file is simply one read + EOF, so
+            // the overhead for small files is negligible.)
+            DLOG("File detected (\(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))), using chunked file transfer")
+            do {
+                let success = try await copyLargeFileInChunks(from: sourceFile, to: destFile)
 
-                // Wait for the move with a timeout
-                let timeout: UInt64 = 60_000_000_000 // 60 seconds for small files
-                do {
-                    try await withTimeout(timeout: timeout) {
-                        try await moveTask.value
+                if success {
+                    DLOG("✅ Successfully copied file in chunks: \(sourceFile.lastPathComponent)")
+
+                    // Remove the source file after successful copy
+                    do {
+                        try await fileManager.removeItem(at: sourceFile)
+                        DLOG("Removed source file after chunked copying: \(sourceFile.path)")
+                    } catch {
+                        CloudSyncManager.syncLog.event(.delete, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error removing source file after chunked copying: \(error)")
+                        // Still return true since the file was copied successfully
                     }
-                    DLOG("✅ Successfully moved file from iCloud to local: \(sourceFile.lastPathComponent)")
 
                     // Remove file from recovery tracking set (thread-safe)
                     Task.detached(priority: .high) {
@@ -1582,112 +1605,45 @@ public enum iCloudDriveSync {
                     }
 
                     // Log success
-                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .ok, detail: "Successfully moved file from iCloud")
+                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .ok, detail: "Successfully copied file from iCloud")
+
+                    // Post notification that file was recovered
+                    NotificationCenter.default.post(
+                        name: iCloudDriveSync.iCloudFileDownloaded,
+                        object: nil,
+                        userInfo: ["fileURL": destFile]
+                    )
 
                     return true
-                } catch is TimeoutError {
-                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Timeout moving file")
-                    // Cancel the task
-                    moveTask.cancel()
-
-                    // Post notification with timeout error
-                    Task { @MainActor in
-                        NotificationCenter.default.post(
-                            name: iCloudDriveSync.iCloudFileRecoveryProgress,
-                            object: nil,
-                            userInfo: [
-                                "current": filesProcessed,
-                                "total": totalFilesToMove,
-                                "message": "Timeout moving file, trying copy method: \(sourceFile.lastPathComponent)",
-                                "timestamp": Date()
-                            ]
-                        )
-                    }
-                    // Fall through to try copying instead
-                } catch {
-                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error moving file from iCloud to local: \(error)")
-
-                    // Post notification with error
-                    Task { @MainActor in
-                        NotificationCenter.default.post(
-                            name: iCloudDriveSync.iCloudFileRecoveryError,
-                            object: nil,
-                            userInfo: [
-                                "error": "Error moving file: \(error.localizedDescription)",
-                                "path": sourceFile.path,
-                                "timestamp": Date()
-                            ]
-                        )
-                    }
-                    // Fall through to try copying instead
                 }
-            } else if fileSize > 10_000_000 { // Greater than 10 MB - use chunked copy
-                DLOG("Large file detected (\(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))), using chunked file transfer")
-                do {
-                    // Use chunked file transfer for large files
-                    let success = try await copyLargeFileInChunks(from: sourceFile, to: destFile)
+            } catch {
+                CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error during chunked file transfer: \(error)")
 
-                    if success {
-                        DLOG("✅ Successfully copied large file in chunks: \(sourceFile.lastPathComponent)")
-
-                        // Remove the source file after successful copy
-                        do {
-                            try await fileManager.removeItem(at: sourceFile)
-                            DLOG("Removed source file after chunked copying: \(sourceFile.path)")
-                        } catch {
-                            CloudSyncManager.syncLog.event(.delete, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error removing source file after chunked copying: \(error)")
-                            // Still return true since the file was copied successfully
-                        }
-
-                        // Remove file from recovery tracking set (thread-safe)
-                        Task.detached(priority: .high) {
-                            await filesBeingRecovered.remove(sourceFile.path)
-                        }
-
-                        // Log success
-                        CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .ok, detail: "Successfully copied large file from iCloud")
-
-                        return true
-                    }
-                } catch {
-                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Error during chunked file transfer: \(error)")
-
-                    // Post notification with error
-                    Task { @MainActor in
-                        NotificationCenter.default.post(
-                            name: iCloudDriveSync.iCloudFileRecoveryError,
-                            object: nil,
-                            userInfo: [
-                                "error": "Error during chunked file transfer: \(error.localizedDescription)",
-                                "path": sourceFile.path,
-                                "timestamp": Date()
-                            ]
-                        )
-                    }
-
-                    // Fall through to try regular copy as a last resort
+                // Post notification with error
+                Task { @MainActor in
+                    NotificationCenter.default.post(
+                        name: iCloudDriveSync.iCloudFileRecoveryError,
+                        object: nil,
+                        userInfo: [
+                            "error": "Error during chunked file transfer: \(error.localizedDescription)",
+                            "path": sourceFile.path,
+                            "timestamp": Date()
+                        ]
+                    )
                 }
-            } else {
-                // Medium-sized files (1-10MB) - use regular copy directly
-                DLOG("Medium-sized file detected (\(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file))), using regular copy method")
-                // Fall through to regular copy method below
+
+                // Fall through to try the copy + recovery handling below.
             }
 
-            // Try regular copying as fallback or for medium-sized files
+            // Final stall-aware chunked copy as a last resort if the attempt
+            // above did not return success.
             do {
                 DLOG("Attempting to copy file: \(sourceFile.lastPathComponent)")
 
-                // Use a timeout for the copy operation
-                let copyTask = Task {
-                    try fileManager.copyItem(at: sourceFile, to: destFile)
-                }
-
-                // Wait for the copy with a timeout - adjust based on file size
-                let copyTimeout: UInt64 = min(UInt64(fileSize / 50000) + 30_000_000_000, 180_000_000_000) // 30-180 seconds based on file size
+                // Use the stall-aware chunked copy so a progressing transfer is
+                // never aborted by an absolute deadline.
                 do {
-                    try await withTimeout(timeout: copyTimeout) {
-                        try await copyTask.value
-                    }
+                    _ = try await copyLargeFileInChunks(from: sourceFile, to: destFile)
                     DLOG("✅ Successfully copied file from iCloud to local: \(sourceFile.lastPathComponent)")
 
                     // Remove file from recovery tracking set (thread-safe)
@@ -1716,9 +1672,8 @@ public enum iCloudDriveSync {
                         return true
                     }
                 } catch is TimeoutError {
-                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Timeout copying file")
-                    // Cancel the task
-                    copyTask.cancel()
+                    // Stalled: no bytes transferred for `chunkedCopyStallTimeout`.
+                    CloudSyncManager.syncLog.event(.download, item: "icloud-drive/\(sourceFile.lastPathComponent)", status: .failed, detail: "Stalled copying file (no progress)")
 
                     // Post notification with timeout error
                     Task { @MainActor in
