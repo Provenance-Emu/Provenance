@@ -5,18 +5,21 @@ ACTIVELU WORKING ON BY JOE
 - [X] deafult skins / skins hide option when using external controller (like the uikit controller had) (#65ad1604cb)
 - [X] Thin wrapper, console toggles (like atari's bw/color toggles) — TV TYPE Color/BW toggle fixed (#3347c96647), full system already wired
 - [X] Jaguar thin wrapper with skins make sure number pad works (#13aec6b8cb, prior session)
-- [ ] Jaguar native PVJaguar update to latest libretro/virtualjaguar-libretro develop branch
-- [X] Thin wrapper, works with Saturn — BIOS sync step added (#c6fea87ddd), needs runtime verification
-- [X] thin wrapper works with PPSSPP — GL context eagerly activated (#7d24e1b2a2), needs runtime verification
+- [X] Jaguar native PVJaguar update to latest libretro/virtualjaguar-libretro develop branch (done by Joe)
+- [~] Thin wrapper, works with Saturn — BIOS sync added (#c6fea87ddd), BOOTS now w/ beetle+yabause. Backup RAM "system memory not ready" FIXED (#55ae973743, save dir created before load). REMAINING: region defaults to Japan (Auto Detect is core default; retest now BIOS loads; no per-system region pref in Provenance yet)
+- [ ] thin wrapper works with PPSSPP — GL setCurrentContext (#7d24e1b2a2) NOT sufficient, still hangs on boot (thin only). REAL root cause: thin wrapper defers context_reset+FBO to first runFrame, but PPSSPP runs its GPU-init pump INSIDE retro_run before any frame. FIX: fire context_reset + create FBO right after retro_load_game (not deferred). Single _glContext on run thread is enough; emu thread doesn't issue GL.
 - [X] thin wrapper works with m3y's multi disc etc — disc swap tile added (#7096b76e4f, prior session)
 - [ ] "Select controller skin" previews missing for skins for sone reason — code looks correct, needs runtime debugging
 - [X] thin wrapper *and in theory all other cores* live change their stretch / scale setting during emulation (#17ccb0b349)
-- [X] backgrounding / foregrounding not freezing (#3abe31a1e7, prior session)
+- [ ] backgrounding / foregrounding STILL deadlocks — Metal drawable fix (#3abe31a1e7) was insufficient. NEW symptom: emulator video+audio keep running (render thread fine), but MAIN thread locks — rotation never relayouts, SwiftUI/UIKit frozen. Something on main thread blocks on resume.
 - [X] if a core crashes and we show a toaster message, the toaster floats to the top of the main library UI since we close the emulation scene, so the user can't read the error message (#21776f9389)
 - [X] Thin wrapper n64 mupen-next has inverted joystick in skins (and maybe other controllers?) — affects ALL analog cores, fixed (#f164848638)
-- [ ] on demand download for games etc shouldn't time-out if the download is making progress
+- [ ] PCE/TurboGrafx-16 RUN button doesn't work in thin wrapper with beetle_pce / beetle_pce_fast cores (works with supergrafx core in PCE mode). Likely button mapping diff per core.
+- [ ] N64 GoldenEye rumble in thin wrapper — NOT a hybrid-pak issue. NO true hybrid memory+rumble raw mode exists: core's address-routing "raw intercept" code is DEAD (RawData hardcoded 0 in mupen64plus-libretro-nx). PLUGIN_RAW="rumble"=rumble-only. Thick "worked" only because those games save to EEPROM (cart-resident, pak-independent). Thin defaults pak1="memory" (saves work, no rumble for EEPROM games). DECISION NEEDED: keep memory / switch to rumble / per-game override map / revive dead core path (needs custom dylib build).
+- [ ] Region not set correctly for thin wrapper systems (Saturn games boot Japanese; multi-region games should respect a region setting)
+- [X] on demand download for games etc shouldn't time-out if the download is making progress — iCloud Drive path now uses inactivity/stall timeout (#8de51631f3). NOTE: CloudKit on-demand path already used correct CKOperation defaults; if timeouts persist confirm which iCloudSyncMode.
 - [ ] 2 flycast boots in a row crashes — confirmed upstream bug: `#ifdef __APPLE__` in flycast `retro_deinit` skips `emu.term()`, stale pointers crash on 2nd boot. Needs flycast fork fix + dylib rebuild.
-- [ ] if the on screen keyboard is active, and minimized, we still can't tap buttons behind it that aren't covered, it seems to cover the whole screen area still for touches, aso would be nice to able to drag the minimized keyboard into a different spot vertically since it is in a weird spot by default
+- [X] if the on screen keyboard is active, and minimized, we still can't tap buttons behind it... + draggable — FIXED (#88a8b939da): hitTest now gated to visible sheet frame (touches pass through elsewhere); handle bar drags keyboard vertically.
 - [ ] *bonus* thin wrapper touch mouse almost working, tested mario paint, but how do we use the controller? slot 1 becomes the mouse, not sure if tapping to click or right click is working, but i can't get past menu since i can't press controller which i guess the skin should be able to be assigned to player 2 instead (maybe we always need a quick way to change the skins/osd's player index, since some games on old consoles have features you need to press buttons on p2 port even in 1 player games)
 - [ ] *bonus* Wold3D loading, almost kind of works. the text in the library says we can auto download the files, but that's only with fat wrapper, we'd need to add that for thin wrapper somehow into the ui or remove that text or give better instructions, also it's ambigous where and what files go, maybe we shoudl add to wiki as well (would need a wiki page if not already) or a pop out larger blurb?
 
