@@ -17,6 +17,7 @@ import os
 import PVCoreBridge
 import PVEmulatorCore
 import PVLogging
+import PVSettings   // @_exported re-exports Defaults — gives us Defaults[...]
 import PVSystems
 #if canImport(GameController) && canImport(CoreHaptics)
 import GameController
@@ -474,6 +475,18 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         if coreId.contains("psx_hw") || coreId.contains("beetle_psx") {
             setDefaultOption("beetle_psx_hw_renderer", value: "hardware")
             setDefaultOption("beetle_psx_hw_renderer_software_fb", value: "enabled")
+        }
+
+        // Sega Saturn (Beetle Saturn): apply the user's preferred region so
+        // multi-region games don't default to Japan. Force-set (not default-only)
+        // so the global Settings choice is authoritative on every launch.
+        // yabasanshiro has no region core option (region is internal), so this
+        // only affects Beetle Saturn. Option key/values verified against
+        // libretro/beetle-saturn-libretro libretro_core_options.h.
+        if coreId.contains("beetle_saturn") || coreId.contains("mednafen_saturn") {
+            let region = Defaults[.systemRegion]
+            _bridge.setCoreOption("beetle_saturn_region", value: region.beetleSaturnRegionValue)
+            ILOG("ThinLibretro: Saturn region → \(region.beetleSaturnRegionValue) (pref=\(region.rawValue))")
         }
     }
 

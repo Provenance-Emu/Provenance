@@ -949,6 +949,12 @@ public extension Defaults.Keys {
     /// Works on native PVMupen + thin libretro wrapper; ~20-game registry.
     static let mupenTransferPak = Key<Bool>("mupenTransferPak", default: false)
 
+    /// Preferred console region for region-aware thin-wrapper cores (currently
+    /// Sega Saturn / Beetle Saturn via `beetle_saturn_region`). `.auto` lets the
+    /// core auto-detect from the disc; explicit values force a region so
+    /// multi-region games don't default to Japan.
+    static let systemRegion = Key<SystemRegionPreference>("systemRegion", default: .auto)
+
 #if os(tvOS)
     static let iCloudSync = Key<Bool>("iCloudSync", default: true)
     static let tvOSThemes = Key<Bool>("tvOSThemes", default: false)

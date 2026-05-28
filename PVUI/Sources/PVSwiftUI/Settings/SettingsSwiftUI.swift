@@ -1860,6 +1860,7 @@ private struct VideoSection: View {
     @Default(.showFPSCount) var showFPSCount
     @Default(.scalingMode) var scalingMode
     @Default(.vsyncEnabled) var vsyncEnabled
+    @Default(.systemRegion) var systemRegion
 
     var body: some View {
         Section(header: Text("settings.section.video", bundle: .module)) {
@@ -1902,6 +1903,22 @@ private struct VideoSection: View {
                 SettingsRow(title: "Scaling Mode",
                             subtitle: scalingMode.subtitle,
                             icon: .sfSymbol(scalingMode.symbolName),
+                            showChevron: false)
+            }
+            #if os(tvOS)
+            .pickerStyle(.automatic)
+            #else
+            .pickerStyle(.navigationLink)
+            #endif
+            Picker(selection: $systemRegion) {
+                ForEach(SystemRegionPreference.allCases, id: \.self) { region in
+                    Label(region.displayName, systemImage: region.symbolName)
+                        .tag(region)
+                }
+            } label: {
+                SettingsRow(title: "System Region",
+                            subtitle: "Force a console region for region-aware cores (Sega Saturn). Auto detects from the disc; set a region so multi-region games don't default to Japan.",
+                            icon: .sfSymbol(systemRegion.symbolName),
                             showChevron: false)
             }
             #if os(tvOS)
