@@ -2708,6 +2708,25 @@ static bool thin_environment(unsigned cmd, void *data) {
     // so that libretro cores can find them at runtime.
     [self _syncBIOSResources];
 
+    // Ensure the save directory exists before retro_load_game. Saturn cores
+    // (Beetle Saturn, yabasanshiro) write their backup/internal RAM file
+    // straight into the save dir during load; if the directory is missing the
+    // file create fails and the Saturn BIOS reports "system memory is not ready
+    // for use". GET_SAVE_DIRECTORY also creates it, but some cores resolve the
+    // path before content load or bypass the env call, so do it here too.
+    NSString *saveDirToEnsure = self.batterySavesPath ?: _savePath;
+    if (saveDirToEnsure.length > 0) {
+        NSError *saveDirErr = nil;
+        [[NSFileManager defaultManager] createDirectoryAtPath:saveDirToEnsure
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:&saveDirErr];
+        if (saveDirErr) {
+            WLOG(@"ThinFrontend: could not create save dir %@: %@",
+                 saveDirToEnsure, saveDirErr.localizedDescription);
+        }
+    }
+
     // Load content
     struct retro_game_info gameInfo = {0};
     NSData *romData = nil;
@@ -4657,6 +4676,16 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
         case RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY: {
             NSString *saveDir = self.batterySavesPath ?: _savePath;
             if (!saveDir) return false;
+            // Ensure the directory exists. Some cores (e.g. Beetle Saturn,
+            // yabasanshiro) write their backup/internal RAM file directly into
+            // the save directory during retro_load_game via a raw fopen. If the
+            // directory doesn't exist yet, that create fails silently, the
+            // backup RAM is never persisted/formatted on disk, and the Saturn
+            // BIOS reports "system memory is not ready for use, please clear…".
+            [[NSFileManager defaultManager] createDirectoryAtPath:saveDir
+                                      withIntermediateDirectories:YES
+                                                       attributes:nil
+                                                            error:NULL];
             if (_saveDirCString) free(_saveDirCString);
             _saveDirCString = strdup(saveDir.UTF8String);
             if (data) *(const char **)data = _saveDirCString;
