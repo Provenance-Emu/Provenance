@@ -14,6 +14,7 @@
 #if !os(tvOS)
 import UIKit
 import SwiftUI
+import Combine
 import GameController
 import PVCoreBridge
 import PVLogging
@@ -27,6 +28,7 @@ private enum AssociatedKeys {
     static var keyboardViewModel: UInt8 = 0
     static var keyboardHiddenByHW: UInt8 = 0
     static var hwKeyboardObservers: UInt8 = 0
+    static var keyboardFrameCancellable: UInt8 = 0
 }
 
 // MARK: - PVEmulatorViewController + VirtualKeyboard
@@ -94,6 +96,16 @@ extension PVEmulatorViewController {
         }
         set {
             objc_setAssociatedObject(self, &AssociatedKeys.hwKeyboardObservers,
+                                     newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+
+    /// Combine subscription that forwards the keyboard view model's published
+    /// visible-sheet frame into the passthrough container for hit-test gating.
+    private var keyboardFrameCancellable: AnyCancellable? {
+        get { objc_getAssociatedObject(self, &AssociatedKeys.keyboardFrameCancellable) as? AnyCancellable }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.keyboardFrameCancellable,
                                      newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
@@ -266,6 +278,15 @@ extension PVEmulatorViewController {
         virtualKeyboardHostingVC = hostingVC
         virtualKeyboardContainer = container
         keyboardHiddenByHardware = false
+
+        // Forward the SwiftUI-published visible-sheet frame into the container so
+        // its hitTest only captures touches over the actually-visible keyboard.
+        keyboardFrameCancellable = viewModel.$keyboardFrame
+            .receive(on: RunLoop.main)
+            .sink { [weak container] frame in
+                container?.visibleKeyboardFrame = frame
+            }
+
         ILOG("[VirtualKeyboard] Keyboard overlay shown (layout: \(layout), opacity: \(opacity), animated: \(animated))")
 
         // Update the type-safe state so all observers (SwiftUI and UIKit) stay in sync.
@@ -278,6 +299,9 @@ extension PVEmulatorViewController {
 
         // Release all held/modifier keys so the emulator doesn't see stuck keys
         virtualKeyboardViewModel?.releaseAllKeys()
+
+        keyboardFrameCancellable?.cancel()
+        keyboardFrameCancellable = nil
 
         let containerToRemove = virtualKeyboardContainer
         let cleanup = {
@@ -441,15 +465,26 @@ extension PVEmulatorViewController: VirtualKeyboardDelegate {
 
 // MARK: - Passthrough container
 
-/// A UIView that passes through touches on its background (empty areas)
-/// to views below, while still allowing touches on its subviews (the keyboard).
-/// This lets the collapsed keyboard handle sit atop the game without blocking
-/// touch input to the emulator or skin buttons.
+/// A UIView that passes through touches outside the visible keyboard sheet to
+/// views below, while still allowing touches on the keyboard itself.
+///
+/// The hosting controller's view fills this container edge-to-edge, so a naive
+/// `hit === self` check never passes (the hit is always the hosting view). Instead
+/// we gate hit-testing to `visibleKeyboardFrame`, which the SwiftUI view publishes
+/// (via a preference key → view model → here) as the actual on-screen bounds of
+/// the visible sheet — collapsed handle or full keyboard. Touches outside that
+/// rect fall through to the game / skin / on-screen controls below.
 final class KeyboardPassthroughView: UIView {
+    /// The frame of the visible keyboard sheet, in this view's coordinate space.
+    /// When `.zero` (not yet measured) the view passes all touches through.
+    var visibleKeyboardFrame: CGRect = .zero
+
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        let hit = super.hitTest(point, with: event)
-        // If the hit is this container itself (not a subview), pass through
-        return hit === self ? nil : hit
+        // Until the SwiftUI view reports its frame, don't steal any touches.
+        guard !visibleKeyboardFrame.isEmpty else { return nil }
+        // Only capture touches that land within the visible keyboard sheet.
+        guard visibleKeyboardFrame.contains(point) else { return nil }
+        return super.hitTest(point, with: event)
     }
 }
 

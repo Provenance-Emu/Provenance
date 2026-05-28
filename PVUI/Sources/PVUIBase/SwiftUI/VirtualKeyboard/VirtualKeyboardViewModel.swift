@@ -42,6 +42,36 @@ public final class VirtualKeyboardViewModel: ObservableObject {
     /// User-triggered toggles (skin button, pause menu) start expanded (`startExpanded: true`).
     @Published public var isCollapsed: Bool = true
 
+    /// The on-screen frame of the visible keyboard sheet, in the coordinate space
+    /// of the hosting container view. Updated by the SwiftUI view via a preference
+    /// key. The passthrough container uses this to gate hit-testing so touches
+    /// outside the visible sheet fall through to the game/controls below.
+    @Published public var keyboardFrame: CGRect = .zero
+
+    /// Vertical offset (in points) applied to the keyboard sheet so the user can
+    /// drag the (collapsed or expanded) keyboard up/down to reposition it.
+    /// Negative moves the sheet up from its default bottom-anchored position.
+    @Published public var verticalOffset: CGFloat = 0
+
+    /// Clamp a proposed vertical offset to keep the sheet on-screen.
+    /// - Parameters:
+    ///   - proposed: The candidate offset.
+    ///   - sheetHeight: The current height of the visible sheet.
+    ///   - containerHeight: The height of the available container area.
+    ///   - topInset: The top safe-area inset to avoid (status bar / notch).
+    /// - Returns: An offset clamped to `[minOffset, 0]` (0 == default bottom position).
+    public static func clampVerticalOffset(
+        _ proposed: CGFloat,
+        sheetHeight: CGFloat,
+        containerHeight: CGFloat,
+        topInset: CGFloat
+    ) -> CGFloat {
+        // The sheet is bottom-anchored; a negative offset lifts it. The most it can
+        // be lifted is until its top reaches the top inset.
+        let minOffset = min(0, -(containerHeight - sheetHeight - topInset))
+        return max(minOffset, min(0, proposed))
+    }
+
     /// Keys currently held down (by HID code).
     @Published public private(set) var heldKeys: Set<GCKeyCode> = []
 

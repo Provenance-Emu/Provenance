@@ -216,6 +216,11 @@ public struct VirtualKeyboardView: View {
 
     private let haptic = UIImpactFeedbackGenerator(style: .light)
 
+    /// Live drag translation while the user is repositioning the sheet.
+    @GestureState private var dragTranslation: CGFloat = 0
+
+    private static let dragCoordinateSpace = "VirtualKeyboardContainer"
+
     private var isLandscape: Bool {
         hSizeClass == .regular && vSizeClass == .compact
     }
@@ -232,7 +237,18 @@ public struct VirtualKeyboardView: View {
                 Spacer()
                 keyboardSheet(in: geometry)
             }
+            // Reposition via bottom padding (a real layout change) rather than
+            // `.offset`, so the reported sheet frame matches its visual position
+            // and hit-testing stays accurate. `verticalOffset` is non-positive
+            // (negative == lift); negating it yields upward bottom padding.
+            .padding(.bottom, max(0, -(viewModel.verticalOffset + dragTranslation)))
             .ignoresSafeArea(.keyboard)
+            .coordinateSpace(name: Self.dragCoordinateSpace)
+            // Report the visible sheet's frame (already includes the offset) so the
+            // passthrough container can gate hit-testing to just the visible area.
+            .onPreferenceChange(KeyboardFramePreferenceKey.self) { frame in
+                viewModel.keyboardFrame = frame
+            }
         }
     }
 
@@ -240,7 +256,7 @@ public struct VirtualKeyboardView: View {
 
     private func keyboardSheet(in geometry: GeometryProxy) -> some View {
         VStack(spacing: 0) {
-            collapseHandleBar
+            collapseHandleBar(in: geometry)
             if !viewModel.isCollapsed {
                 closeButtonRow
                 layoutPickerToolbar
@@ -255,6 +271,16 @@ public struct VirtualKeyboardView: View {
                         .strokeBorder(Color.white.opacity(0.18), lineWidth: 0.5)
                 )
         )
+        // Publish the visible sheet's frame (in the container coordinate space) so
+        // the passthrough container can pass through touches outside of it.
+        .background(
+            GeometryReader { sheetGeo in
+                Color.clear.preference(
+                    key: KeyboardFramePreferenceKey.self,
+                    value: sheetGeo.frame(in: .named(Self.dragCoordinateSpace))
+                )
+            }
+        )
         .padding(.horizontal, 4)
         .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ? 0 : 4)
         .animation(.easeInOut(duration: 0.2), value: viewModel.isCollapsed)
@@ -263,9 +289,10 @@ public struct VirtualKeyboardView: View {
     // MARK: - Collapse handle bar
     //
     // Tapping the handle (or the "−" chevron) toggles collapsed ↔ expanded.
+    // Dragging the handle vertically repositions the whole sheet.
     // A dedicated X button in the toolbar is the only way to fully dismiss.
 
-    private var collapseHandleBar: some View {
+    private func collapseHandleBar(in geometry: GeometryProxy) -> some View {
         Button(action: {
             haptic.impactOccurred()
             viewModel.isCollapsed.toggle()
@@ -284,9 +311,10 @@ public struct VirtualKeyboardView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        // Swipe-down on the handle bar collapses the keyboard.
-        // Scoped here (not the full view) so key presses are never intercepted.
-        .simultaneousGesture(swipeDownCollapse)
+        // Drag the handle vertically to reposition the sheet; a fast downward
+        // flick while expanded collapses it. Scoped to the handle (not the full
+        // view) so key presses are never intercepted.
+        .simultaneousGesture(repositionDrag(in: geometry))
     }
 
     // MARK: - Close button (dismiss entirely)
@@ -367,16 +395,46 @@ public struct VirtualKeyboardView: View {
         return max(24, (usable / totalFactors) * key.widthMultiplier)
     }
 
-    // MARK: - Swipe-down collapses; does NOT dismiss
+    // MARK: - Reposition drag (vertical) + swipe-down collapse
 
-    private var swipeDownCollapse: some Gesture {
-        DragGesture(minimumDistance: 30)
+    /// A vertical drag on the handle bar that repositions the sheet live and,
+    /// on a fast downward flick while expanded, collapses it instead.
+    /// Never dismisses the keyboard.
+    private func repositionDrag(in geometry: GeometryProxy) -> some Gesture {
+        DragGesture(minimumDistance: 8)
+            .updating($dragTranslation) { value, state, _ in
+                state = value.translation.height
+            }
             .onEnded { value in
-                if value.translation.height > 40 {
+                let height = value.translation.height
+                // A clear downward flick while expanded collapses the sheet
+                // (preserves the previous swipe-down-to-collapse behaviour).
+                if !viewModel.isCollapsed, height > 60 {
                     haptic.impactOccurred()
                     viewModel.isCollapsed = true
+                    return
                 }
+                // Otherwise commit the new position, clamped on-screen.
+                let proposed = viewModel.verticalOffset + height
+                viewModel.verticalOffset = VirtualKeyboardViewModel.clampVerticalOffset(
+                    proposed,
+                    sheetHeight: viewModel.keyboardFrame.height,
+                    containerHeight: geometry.size.height,
+                    topInset: geometry.safeAreaInsets.top
+                )
             }
+    }
+}
+
+// MARK: - Keyboard frame preference key (iOS)
+
+/// Propagates the visible keyboard sheet's frame up to the container view so
+/// the passthrough container can gate hit-testing to the visible area only.
+struct KeyboardFramePreferenceKey: PreferenceKey {
+    static var defaultValue: CGRect = .zero
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        let next = nextValue()
+        if next != .zero { value = next }
     }
 }
 
