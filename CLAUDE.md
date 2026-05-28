@@ -106,9 +106,9 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
   (`PVCoreBridgeRetro/Sources/PVLibRetro/PVThinLibretroFrontend.mm`
   + `PVThinLibretroCore*.swift`). dlopen + function pointers against
   the libretro buildbot dylibs; no full RetroArch runtime.
-- **PPSSPP** is force-routed to the thick wrapper (GL context needed during `retro_load_game` before thin wrapper's deferred setup). See `PVCoreFactory.swift`.
+- **PPSSPP** now uses the thin wrapper (GL context is eagerly activated in `setupHardwareRenderCallback:`). Previously force-routed to thick wrapper.
 - The thick RetroArch wrapper (`CoresRetro/RetroArch/PVRetroArchCore/`) is available as an opt-in escape hatch via `Defaults[.useLegacyRetroArchWrapper]` in Settings > Advanced.
-- **Thin wrapper gaps:** deferred GL/Vulkan context setup (not current during `retro_load_game` — breaks cores that do GL in load). `ScalingMode` integration works (via `PVMetalViewController`). Fast-forward wired (`setGameSpeed:` override syncs `_speedMultiplier` + `_audioPaused`).
+- **Thin wrapper gaps:** deferred Vulkan context setup (GL is now eagerly activated; Vulkan still deferred). BIOS files synced from `BIOSPath` into system directory before `retro_load_game`. `ScalingMode` integration works (via `PVMetalViewController` + DeltaSkin skin container). Fast-forward wired (`setGameSpeed:` override syncs `_speedMultiplier` + `_audioPaused`).
 
 ### App Targets
 - **Provenance/** — Main iOS app

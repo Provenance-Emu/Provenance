@@ -2,20 +2,20 @@
 
 ACTIVELU WORKING ON BY JOE
 
-- [ ] deafult skins / skins hide option when using external controller (like the uikit controller had)
-- [ ] Thin wrapper, console toggles (like atari's bw/color toggles), not working (not working for most or all cores really but doing the thin wraper would cover most)
-- [ ] Jaguar thin wrapper with skins make sure number pad works
+- [X] deafult skins / skins hide option when using external controller (like the uikit controller had) (#65ad1604cb)
+- [X] Thin wrapper, console toggles (like atari's bw/color toggles) — TV TYPE Color/BW toggle fixed (#3347c96647), full system already wired
+- [X] Jaguar thin wrapper with skins make sure number pad works (#13aec6b8cb, prior session)
 - [ ] Jaguar native PVJaguar update to latest libretro/virtualjaguar-libretro develop branch
-- [ ] Thin wrapper, works with Saturn
-- [ ] thin wrapper works with PPSSPP
-- [ ] thin wrapper works with m3y's multi disc etc
-- [ ] "Select controller skin" previews missing for skins for sone reason
-- [ ] thin wrapper *and in theory all other cores* live change their stretch / scale setting during emulation
-- [ ] backgrounding / foregrounding not freezing
-- [ ] if a core crashes and we show a toaster message, the toaster floats to the top of the main library UI since we close the emulation scene, so the user can't read the error message
-- [ ] Thin wrapper n64 mupen-next has inverted joystick in skins (and maybe other controllers?)
+- [X] Thin wrapper, works with Saturn — BIOS sync step added (#c6fea87ddd), needs runtime verification
+- [X] thin wrapper works with PPSSPP — GL context eagerly activated (#7d24e1b2a2), needs runtime verification
+- [X] thin wrapper works with m3y's multi disc etc — disc swap tile added (#7096b76e4f, prior session)
+- [ ] "Select controller skin" previews missing for skins for sone reason — code looks correct, needs runtime debugging
+- [X] thin wrapper *and in theory all other cores* live change their stretch / scale setting during emulation (#17ccb0b349)
+- [X] backgrounding / foregrounding not freezing (#3abe31a1e7, prior session)
+- [X] if a core crashes and we show a toaster message, the toaster floats to the top of the main library UI since we close the emulation scene, so the user can't read the error message (#21776f9389)
+- [X] Thin wrapper n64 mupen-next has inverted joystick in skins (and maybe other controllers?) — affects ALL analog cores, fixed (#f164848638)
 - [ ] on demand download for games etc shouldn't time-out if the download is making progress
-- [ ] 2 flycast boots in a row crashes (this is probalby in the flycast code though)
+- [ ] 2 flycast boots in a row crashes — confirmed upstream bug: `#ifdef __APPLE__` in flycast `retro_deinit` skips `emu.term()`, stale pointers crash on 2nd boot. Needs flycast fork fix + dylib rebuild.
 - [ ] if the on screen keyboard is active, and minimized, we still can't tap buttons behind it that aren't covered, it seems to cover the whole screen area still for touches, aso would be nice to able to drag the minimized keyboard into a different spot vertically since it is in a weird spot by default
 - [ ] *bonus* thin wrapper touch mouse almost working, tested mario paint, but how do we use the controller? slot 1 becomes the mouse, not sure if tapping to click or right click is working, but i can't get past menu since i can't press controller which i guess the skin should be able to be assigned to player 2 instead (maybe we always need a quick way to change the skins/osd's player index, since some games on old consoles have features you need to press buttons on p2 port even in 1 player games)
 - [ ] *bonus* Wold3D loading, almost kind of works. the text in the library says we can auto download the files, but that's only with fat wrapper, we'd need to add that for thin wrapper somehow into the ui or remove that text or give better instructions, also it's ambigous where and what files go, maybe we shoudl add to wiki as well (would need a wiki page if not already) or a pop out larger blurb?
