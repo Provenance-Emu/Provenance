@@ -57,15 +57,9 @@ import PVUIBase
 import OpenGL
 #else
 import OpenGLES
-import OpenGLES.EAGL
-import OpenGLES.EAGLDrawable
-import OpenGLES.EAGLIOSurface
-import OpenGLES.ES3
-import OpenGLES.gltypes
 #endif
 
-fileprivate let BUFFER_COUNT: UInt = 3
-
+private let BUFFER_COUNT: UInt = 3
 
 // MARK: - EffectFilterShaderError
 enum EffectFilterShaderError: Error {
@@ -149,7 +143,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     weak var emulatorCore: PVEmulatorCore?
 
     // Custom filter properties
-    private var ciContext: CIContext? = nil
+    private var ciContext: CIContext?
 
 #if !os(visionOS)
     var mtlView: MTKView!
@@ -160,7 +154,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     //    var timeSinceLastDraw: TimeInterval = 0
     //    var framesPerSecond: Double = 0
 #endif
-
 
     // MARK: Internal
 
@@ -203,18 +196,18 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     // MARK: Internal properties
 
-    var  device: MTLDevice? = nil
-    var  commandQueue: MTLCommandQueue? = nil
-    var  blitPipeline: MTLRenderPipelineState? = nil
+    var  device: MTLDevice?
+    var  commandQueue: MTLCommandQueue?
+    var  blitPipeline: MTLRenderPipelineState?
 
-    var  pointSampler: MTLSamplerState? = nil
-    var  linearSampler: MTLSamplerState? = nil
+    var  pointSampler: MTLSamplerState?
+    var  linearSampler: MTLSamplerState?
     private let metalFilterRenderer = PVMetalFilterRenderer()
     private var filterRendererPixelFormat: MTLPixelFormat?
     private var filterRendererFlipY: Bool = false
 
-    var  inputTexture: MTLTexture? = nil
-    var  previousCommandBuffer: MTLCommandBuffer? = nil // used for scheduling with OpenGL context
+    var  inputTexture: MTLTexture?
+    var  previousCommandBuffer: MTLCommandBuffer? // used for scheduling with OpenGL context
 
 #if !os(macOS) && !targetEnvironment(macCatalyst)
     var  glContext: EAGLContext?
@@ -338,7 +331,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             }
         }
     }
-
 
     deinit {
         filterObservationTask?.cancel()
@@ -1051,7 +1043,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         #endif
     }
 
-
     func updateInputTexture() throws {
         guard let emulatorCore = emulatorCore else {
             throw MetalViewControllerError.emulatorCoreIsNil
@@ -1221,7 +1212,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         case GL_RGB8, GL_RGBA8:
             return 8 * typeWidth
         default:
-            break;
+            break
         }
 
         assertionFailure("Unknown GL pixelFormat %x. Add me: \(pixelFormat)")
@@ -1284,7 +1275,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         return UInt(componentSize * componentsPerPixel)
     }
-
 
     func getMTLPixelFormat(from pixelFormat: GLenum, type pixelType: GLenum) -> MTLPixelFormat {
         return getMTLPixelFormatNeo(from: pixelFormat, type: pixelType)
@@ -1360,53 +1350,40 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
            pixelType == GLenum(GL_UNSIGNED_BYTE) ||
             pixelType == GLenum(0x8367) {
             return .bgra8Unorm
-        }
-        else if pixelFormat == GLenum(GL_BGRA),
+        } else if pixelFormat == GLenum(GL_BGRA),
                 pixelType == GLenum(GL_UNSIGNED_BYTE) {
             return .bgra8Unorm
-        }
-        else if pixelFormat == GLenum(GL_BGRA),
+        } else if pixelFormat == GLenum(GL_BGRA),
                 pixelType == GLenum(GL_UNSIGNED_INT) {
             return .bgra8Unorm_srgb
-        }
-        else if pixelFormat == GLenum(GL_BGRA),
+        } else if pixelFormat == GLenum(GL_BGRA),
                 pixelType == GLenum(GL_FLOAT_32_UNSIGNED_INT_24_8_REV) {
             return .bgra8Unorm_srgb
-        }
-        else if pixelFormat == GLenum(GL_RGBA),
+        } else if pixelFormat == GLenum(GL_RGBA),
                 pixelType == GLenum(GL_UNSIGNED_BYTE) {
             return .rgba8Unorm
-        }
-        else if pixelFormat == GLenum(GL_RGBA),
+        } else if pixelFormat == GLenum(GL_RGBA),
                 pixelType == GLenum(GL_BYTE) {
             return .rgba8Snorm
-        }
-        else if pixelFormat == GLenum(GL_RGB),
+        } else if pixelFormat == GLenum(GL_RGB),
                 pixelType == GLenum(GL_UNSIGNED_BYTE) {
             return .rgba8Unorm
-        }
-        else if pixelFormat == GLenum(GL_RGB),
+        } else if pixelFormat == GLenum(GL_RGB),
                 pixelType == GLenum(GL_UNSIGNED_SHORT) {
             return .rgba16Uint
-        }
-        else if pixelFormat == GLenum(GL_RGB),
+        } else if pixelFormat == GLenum(GL_RGB),
                 pixelType == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
             return .b5g6r5Unorm
-        }
-        else if pixelFormat == GLenum(GL_RGB),
+        } else if pixelFormat == GLenum(GL_RGB),
                 pixelType == GLenum(GL_UNSIGNED_INT) {
             return .rgba16Unorm
-        }
-        else if pixelType == GLenum(GL_UNSIGNED_SHORT_8_8_APPLE) {
+        } else if pixelType == GLenum(GL_UNSIGNED_SHORT_8_8_APPLE) {
             return .rgba16Unorm
-        }
-        else if pixelType == GLenum(GL_UNSIGNED_SHORT_5_5_5_1) {
+        } else if pixelType == GLenum(GL_UNSIGNED_SHORT_5_5_5_1) {
             return .a1bgr5Unorm
-        }
-        else if pixelType == GLenum(GL_UNSIGNED_SHORT_4_4_4_4) {
+        } else if pixelType == GLenum(GL_UNSIGNED_SHORT_4_4_4_4) {
             return .abgr4Unorm
-        }
-        else if pixelFormat == GLenum(GL_RGBA8) {
+        } else if pixelFormat == GLenum(GL_RGBA8) {
             if pixelType == GLenum(GL_UNSIGNED_BYTE) {
                 return .rgba8Unorm
             } else if pixelType == GLenum(GL_UNSIGNED_SHORT) {
@@ -1417,7 +1394,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 #if !targetEnvironment(macCatalyst) && !os(macOS)
         if pixelFormat == GLenum(GL_RGB565) {
-            return .b5g6r5Unorm //.rgba16Unorm
+            return .b5g6r5Unorm // .rgba16Unorm
         }
 #else
         if pixelFormat == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
@@ -1609,7 +1586,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                                           smoothingEnabled: renderSettings.smoothingEnabled)
     }
 
-
     class func shader(withContents contents: String, type: GLenum) -> GLuint {
         let source = (contents as NSString).utf8String
 
@@ -1669,7 +1645,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         return program
     }
-
 
     // MARK: - MTKViewDelegate
 
@@ -1916,8 +1891,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 let vertices: [Float] = [
                     -1.0, -1.0, 0.0, 0.0, 0.0,
                      1.0, -1.0, 0.0, 1.0, 0.0,
-                    -1.0,  1.0, 0.0, 0.0, 1.0,
-                     1.0,  1.0, 0.0, 1.0, 1.0
+                    -1.0, 1.0, 0.0, 0.0, 1.0,
+                     1.0, 1.0, 0.0, 1.0, 1.0
                 ]
 
                 if let vertexBuffer = self.device?.makeBuffer(bytes: vertices,
@@ -3059,7 +3034,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     /// Toggle VSync on/off
     public func toggleVSync() {
-        vsyncEnabled = !vsyncEnabled
+        vsyncEnabled.toggle()
         ILOG("VSync \(vsyncEnabled ? "enabled" : "disabled")")
         updateVsyncSettings()
     }
@@ -3367,7 +3342,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // Layout will happen naturally when the view controller handles orientation change
 //        view.setNeedsLayout()
 //        view.layoutIfNeeded()
-
 
         // Vulkan cores manage their own inputTexture via didRenderFrameWithMTLTexture —
         // recreating it from screenRect here would produce a wrong-sized texture.
