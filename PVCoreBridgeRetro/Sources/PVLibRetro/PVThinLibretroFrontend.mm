@@ -5590,6 +5590,31 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 
         return YES;
     }
+
+    // PPSSPP's CreateGraphicsContext probes the GL backend FIRST and only selects
+    // its Vulkan backend if the frontend REJECTS the GL hw-render context. On GLES
+    // the core hardcodes useEmuThread=true (upstream libretro.cpp:
+    // `useEmuThread = ctx->GetGPUCore() == GPUCORE_GLES`) and spawns its own internal
+    // render thread that never holds a current EAGLContext, so it can't see our FBO
+    // (EAGL current-context is per-thread) → boot hang. Reject GL for PSP so the core
+    // falls through to Vulkan, which the thin wrapper fully supports
+    // (GPUCORE_VULKAN → useEmuThread=false, no orphan thread). Scoped to PSP ONLY:
+    // other GL HW cores (Mupen64, ParaLLEl-N64, Beetle PSX HW) rely on the GLES path
+    // below. Gated on HAVE_VULKAN so that without a Vulkan fallback we keep GL rather
+    // than leaving PSP with no renderer. Rejected at the TOP, before any GL/EAGL
+    // state is created, so the core's subsequent SET_HW_RENDER(VULKAN) runs clean.
+    {
+        static NSString * const PVPSPSystemIdentifier = @"com.provenance.psp";
+        BOOL isGLContext = hwCb->context_type == RETRO_HW_CONTEXT_OPENGLES2
+                        || hwCb->context_type == RETRO_HW_CONTEXT_OPENGLES3
+                        || hwCb->context_type == RETRO_HW_CONTEXT_OPENGLES_VERSION
+                        || hwCb->context_type == RETRO_HW_CONTEXT_OPENGL
+                        || hwCb->context_type == RETRO_HW_CONTEXT_OPENGL_CORE;
+        if (isGLContext && [self.systemIdentifier isEqualToString:PVPSPSystemIdentifier]) {
+            ILOG(@"ThinFrontend: rejecting GL HW context (type %d) for PSP so PPSSPP selects its Vulkan backend (avoids GLES useEmuThread boot hang)", (int)hwCb->context_type);
+            return NO;
+        }
+    }
 #endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
