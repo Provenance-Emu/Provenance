@@ -2914,10 +2914,20 @@ public class DeltaSkinInputHandler: ObservableObject {
 //            core.setPauseEmulation(false)
 //        }
 
-        // Restore normal game speed
-        if core.gameSpeed != .normal {
-            DLOG("Resetting game speed to normal from \(core.gameSpeed)")
-            core.gameSpeed = .normal
+        // Restore game speed ONLY when a hold-to-fast-forward / hold-to-slow gesture was
+        // interrupted — i.e. a held DeltaSkin speed button whose touch-up was swallowed by
+        // the menu or a skin change (previousGameSpeed is non-nil while a hold is in flight).
+        // In that case restore the pre-hold speed and clear the marker. When NO hold is
+        // pending, a non-normal speed is a DELIBERATE choice (e.g. the pause menu's
+        // fast-forward toggle), and this reconnect fires every time the pause menu closes —
+        // so clobbering it to .normal here is exactly the bug that reset fast-forward on
+        // resume. Leave a deliberate speed untouched.
+        if let preHoldSpeed = previousGameSpeed {
+            if core.gameSpeed != preHoldSpeed {
+                DLOG("Reconnect: restoring pre-hold game speed \(preHoldSpeed) (was \(core.gameSpeed))")
+                core.gameSpeed = preHoldSpeed
+            }
+            previousGameSpeed = nil
         }
 
         // Reset the core's input state by sending dummy button releases if the core supports it
