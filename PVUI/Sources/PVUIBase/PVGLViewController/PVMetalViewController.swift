@@ -585,6 +585,27 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// Restores MTKView driving once the app is active again (after `didEnterBackground` pause). Using `didBecomeActive` avoids unpausing while `applicationState` is still `.inactive`, which matches GPU recovery gating.
     @objc private func handleAppDidBecomeActiveForMetal() {
         ILOG("[FREEZE] handleAppDidBecomeActiveForMetal fired; applicationState=\(UIApplication.shared.applicationState.rawValue), controllerPaused=\(isPaused)", category: .freeze)
+
+        // Proactively reset the CAMetalLayer drawable pool BEFORE re-enabling drawing.
+        // After a background cycle, drawables presented while the layer was off-screen
+        // stay stuck in CoreAnimation's presentation queue and are never reclaimed, so
+        // the first (synchronous CA-commit) draw on resume blocks the main thread in
+        // nextDrawable. The reactive self-heal in directRender can't help here because
+        // a blocked nextDrawable never returns nil to trigger it. Perturbing
+        // `drawableSize` forces the layer to discard the stuck pool and allocate a
+        // fresh one; also (re)assert the nextDrawable timeout so a still-pressured pool
+        // times out rather than wedging.
+        if let layer = mtlView?.layer as? CAMetalLayer {
+            layer.allowsNextDrawableTimeout = true
+            let size = layer.drawableSize
+            if size.width > 1, size.height > 1 {
+                layer.drawableSize = CGSize(width: size.width - 1, height: size.height - 1)
+                layer.drawableSize = size
+                ILOG("[FREEZE] resume: reset drawable pool via drawableSize toggle (\(size.width)x\(size.height)) + asserted nextDrawable timeout", category: .freeze)
+            }
+            consecutiveNilDrawables = 0
+        }
+
         if !isPaused {
             mtlView?.isPaused = false
         }
@@ -2528,6 +2549,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             recoverFromGPUError()
             return
         }
+        // Guarantee nextDrawable can NEVER block the main thread indefinitely. The
+        // background/resume freeze is main wedged in `currentDrawable → nextDrawable`
+        // (confirmed via Thread-1 backtrace) with zero nil-drawable logs — i.e. the
+        // wait was NOT timing out, so the timeout wasn't live on this layer (it can be
+        // lost if `configureMetalLayer`'s `as? CAMetalLayer` ran before the layer
+        // existed, or MTKView reset it). Asserting it at the call site forces
+        // nextDrawable to return nil under pressure instead of blocking forever; the
+        // nil path below + the resume pool-reset then recover.
+        (view.layer as? CAMetalLayer)?.allowsNextDrawableTimeout = true
         guard let drawable = view.currentDrawable else {
             // `nextDrawable` timed out (allowsNextDrawableTimeout) or the pool is
             // exhausted. After a background/resume cycle the CAMetalLayer drawable
