@@ -2748,6 +2748,55 @@ static bool thin_environment(unsigned cmd, void *data) {
         gameInfo.size = romData.length;
     }
 
+    // For fullpath cores (e.g. PPSSPP) the core opens the file ITSELF by path, so
+    // we never read it above — meaning an empty/unmaterialized file slips through and
+    // the core boots nothing ("[BOOT] File is empty" → runaway CPU → crash). Validate
+    // it here. The common cause is an iCloud-dataless placeholder (the ROM isn't
+    // downloaded locally); memory-loaded cores avoid this because dataWithContentsOfFile
+    // forces the download. So force materialization, then fail gracefully if still empty.
+    if (_rawSystemInfo.need_fullpath) {
+        NSFileManager *fm = [NSFileManager defaultManager];
+        NSURL *romURL = [NSURL fileURLWithPath:romPath];
+
+        NSNumber *isUbiquitous = nil;
+        [romURL getResourceValue:&isUbiquitous forKey:NSURLIsUbiquitousItemKey error:nil];
+        NSString *dlStatus = nil;
+        [romURL getResourceValue:&dlStatus forKey:NSURLUbiquitousItemDownloadingStatusKey error:nil];
+        unsigned long long sz = [[fm attributesOfItemAtPath:romPath error:nil][NSFileSize] unsignedLongLongValue];
+        ILOG(@"ThinFrontend: fullpath content %@ — size=%llu ubiquitous=%@ dlStatus=%@",
+             romPath, sz, isUbiquitous, dlStatus);
+
+        BOOL needsDownload = isUbiquitous.boolValue &&
+            dlStatus && ![dlStatus isEqualToString:NSURLUbiquitousItemDownloadingStatusCurrent];
+        if (needsDownload || sz == 0) {
+            ILOG(@"ThinFrontend: content not materialized — requesting iCloud download for %@", romPath);
+            [fm startDownloadingUbiquitousItemAtPath:romPath error:nil];
+            // Block the LOAD phase (not the frame loop) up to 30s for materialization.
+            CFTimeInterval t0 = CACurrentMediaTime();
+            while (CACurrentMediaTime() - t0 < 30.0) {
+                [NSThread sleepForTimeInterval:0.25];
+                [romURL removeCachedResourceValueForKey:NSURLUbiquitousItemDownloadingStatusKey];
+                dlStatus = nil;
+                [romURL getResourceValue:&dlStatus forKey:NSURLUbiquitousItemDownloadingStatusKey error:nil];
+                sz = [[fm attributesOfItemAtPath:romPath error:nil][NSFileSize] unsignedLongLongValue];
+                if (sz > 0 && (!dlStatus || [dlStatus isEqualToString:NSURLUbiquitousItemDownloadingStatusCurrent])) break;
+            }
+            ILOG(@"ThinFrontend: after download wait — size=%llu dlStatus=%@", sz, dlStatus);
+        }
+
+        if (sz == 0 || ![fm fileExistsAtPath:romPath]) {
+            ELOG(@"ThinFrontend: content file empty/unavailable at %@ — aborting load (avoids core boot-from-empty crash)", romPath);
+            if (error) {
+                *error = [NSError errorWithDomain:@"PVThinLibretroFrontend" code:6
+                    userInfo:@{NSLocalizedDescriptionKey:
+                        @"Game file is empty or not downloaded. If it's in iCloud, make sure it's fully downloaded, then try again."}];
+            }
+            _sym.retro_deinit();
+            _thinCurrentTLS = nil;
+            return NO;
+        }
+    }
+
     gameInfo.path = romPath.UTF8String;
 
     // Detect blocking cores (those that run their own loop inside retro_load_game).
