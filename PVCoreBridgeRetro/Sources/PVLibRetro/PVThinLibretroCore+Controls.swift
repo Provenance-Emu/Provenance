@@ -2140,31 +2140,91 @@ extension PVThinLibretroCore: PVVectrexSystemResponderClient {
 
 extension PVThinLibretroCore: PVOdyssey2SystemResponderClient {
     public func didPush(_ button: PVOdyssey2Button, forPlayer player: Int) {
-        pressButton(odyssey2Map(button), forPlayer: player)
+        // Dispatch Odyssey2 keyboard digits as RETRO_DEVICE_KEYBOARD events.
+        // o2em reads 0–9 via input_state_cb(0, RETRO_DEVICE_KEYBOARD, 0, RETROK_0..9)
+        // and ORs them with joypad shoulder buttons (JOYPAD_X/L/R/L2/R2/L3/R3).
+        // Sending key0 as JOYPAD_SELECT would toggle o2em's virtual keyboard (vkb_show),
+        // which wraps ALL joystick + action reads in `if (!vkb_show)` — one press of the
+        // on-screen "0" key silences the D-pad and action button for the rest of the session.
+        // Keyboard dispatch avoids that landmine and matches how the Jaguar numpad works.
+        if let kbKey = o2emKeyboardKey(button) {
+            _bridge.setKeyState(kbKey, pressed: true)
+        }
+        if let joyBtn = odyssey2Map(button) {
+            pressButton(joyBtn, forPlayer: player)
+        }
     }
     public func didRelease(_ button: PVOdyssey2Button, forPlayer player: Int) {
-        releaseButton(odyssey2Map(button), forPlayer: player)
+        if let kbKey = o2emKeyboardKey(button) {
+            _bridge.setKeyState(kbKey, pressed: false)
+        }
+        if let joyBtn = odyssey2Map(button) {
+            releaseButton(joyBtn, forPlayer: player)
+        }
     }
 
-    private func odyssey2Map(_ button: PVOdyssey2Button) -> RetroJoypad {
+    // MARK: o2em keyboard dispatch for Odyssey2 number pad
+    //
+    // The upstream o2em libretro core reads the Odyssey2 keyboard via
+    // RETRO_DEVICE_KEYBOARD (RETROK_0..9, RETROK_a..z, etc.) and additionally
+    // ORs some digit keys with joypad shoulder buttons (key1↔JOYPAD_L, etc.)
+    // for convenience.  We always dispatch the canonical keyboard path so every
+    // digit works even if the joypad shoulder mapping drifts in future dylib updates.
+    // Keys 0–9 map to RETROK_0 (48)..RETROK_9 (57).
+    private func o2emKeyboardKey(_ button: PVOdyssey2Button) -> UInt32? {
+        switch button {
+        case .key0: return 48  // RETROK_0
+        case .key1: return 49  // RETROK_1
+        case .key2: return 50  // RETROK_2
+        case .key3: return 51  // RETROK_3
+        case .key4: return 52  // RETROK_4
+        case .key5: return 53  // RETROK_5
+        case .key6: return 54  // RETROK_6
+        case .key7: return 55  // RETROK_7
+        case .key8: return 56  // RETROK_8
+        case .key9: return 57  // RETROK_9
+        default:    return nil
+        }
+    }
+
+    // MARK: Joypad mapping (directional + action only)
+    //
+    // o2em joypad layout (libretro.c ~1420):
+    //   JOYPAD_UP/DOWN/LEFT/RIGHT → directional movement
+    //   JOYPAD_B (id=0)           → action button
+    //   JOYPAD_X (id=9)           → digit 0 (secondary, keyboard is primary)
+    //   JOYPAD_L (id=10)          → digit 1
+    //   JOYPAD_R (id=11)          → digit 2
+    //   JOYPAD_L2 (id=12)         → digit 3
+    //   JOYPAD_R2 (id=13)         → digit 4
+    //   JOYPAD_L3 (id=14)         → digit 5
+    //   JOYPAD_R3 (id=15)         → digit 6
+    //   (digits 7–9 are keyboard-only in o2em)
+    //
+    // Returns nil for buttons dispatched via keyboard only (7–9) so no spurious
+    // joypad bits are set.  JOYPAD_SELECT is intentionally NOT mapped to any
+    // Odyssey2 button — it would toggle the o2em virtual keyboard (vkb_show)
+    // and silently block all joypad + action input.
+    private func odyssey2Map(_ button: PVOdyssey2Button) -> RetroJoypad? {
         switch button {
         case .up:     return .up
         case .down:   return .down
         case .left:   return .left
         case .right:  return .right
         case .action: return .b
-        case .key0:   return .select
-        case .key1:   return .x
-        case .key2:   return .y
-        case .key3:   return .l
-        case .key4:   return .r
-        case .key5:   return .l2
-        case .key6:   return .r2
-        case .key7:   return .l3
-        case .key8:   return .r3
-        case .key9:   return .start
-        case .count:  return .b
-        @unknown default: return .b
+        // Digits also have a secondary joypad mapping for keys 0–6 (keyboard is primary).
+        case .key0:   return .x    // JOYPAD_X  = 9
+        case .key1:   return .l    // JOYPAD_L  = 10
+        case .key2:   return .r    // JOYPAD_R  = 11
+        case .key3:   return .l2   // JOYPAD_L2 = 12
+        case .key4:   return .r2   // JOYPAD_R2 = 13
+        case .key5:   return .l3   // JOYPAD_L3 = 14
+        case .key6:   return .r3   // JOYPAD_R3 = 15
+        // Keys 7–9: keyboard-only in o2em; no joypad fallback.
+        case .key7, .key8, .key9:
+            return nil
+        case .count:  return nil
+        @unknown default: return nil
         }
     }
 }
