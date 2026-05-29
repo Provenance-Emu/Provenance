@@ -478,6 +478,19 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         )
 
 #if canImport(UIKit) && !os(visionOS)
+        // willResignActive is the EARLIEST transition signal and, unlike
+        // didEnterBackground, also fires for .inactive-only transitions
+        // (app-switcher peek, Control Center, notification shade). Pausing here
+        // can prevent the wedged-drawable-pool freeze entirely: we stop presenting
+        // while the layer is still on-screen, so the last presented drawable
+        // displays + recycles normally instead of getting stranded in
+        // CoreAnimation's presentation queue as the layer goes off-screen.
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppWillResignActiveForMetal),
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleAppDidEnterBackgroundForMetal),
@@ -518,26 +531,45 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
 #if canImport(UIKit) && !os(visionOS)
+    /// Fires at the EARLIEST app-transition signal. Unlike `didEnterBackground`,
+    /// `willResignActive` also fires for .inactive-only transitions (app-switcher
+    /// peek, Control Center, notification shade), where `didEnterBackground` never
+    /// runs. Pausing here can PREVENT the wedged-pool freeze: we stop presenting
+    /// while the layer is still on-screen, so the last presented drawable displays
+    /// and recycles normally instead of getting stranded in CoreAnimation's
+    /// presentation queue as the layer goes off-screen.
+    @objc private func handleAppWillResignActiveForMetal() {
+        ILOG("[FREEZE] handleAppWillResignActiveForMetal fired; applicationState=\(UIApplication.shared.applicationState.rawValue)")
+        pauseMetalAndReleasePinnedDrawables()
+    }
+
     /// Stops the display link so in-flight Metal work is not fighting iOS GPU policy while backgrounded (avoids timeout cascades).
     @objc private func handleAppDidEnterBackgroundForMetal() {
         ILOG("[FREEZE] handleAppDidEnterBackgroundForMetal fired; applicationState=\(UIApplication.shared.applicationState.rawValue)")
+        pauseMetalAndReleasePinnedDrawables()
+    }
+
+    /// Pauses the MTKView display link and drops the app's references to the last
+    /// presented drawable. Shared by `willResignActive` (earliest signal; covers
+    /// .inactive-only transitions) and `didEnterBackground`. Idempotent.
+    private func pauseMetalAndReleasePinnedDrawables() {
         mtlView?.isPaused = true
 
-        // Release the single CAMetalDrawable the app pins across the background
-        // transition. Both the committed `previousCommandBuffer` (a backgrounded
-        // buffer never completes, so it never releases its presented drawable) and
-        // the cached render-pass descriptor's color attachment alias the same last
-        // drawable. While backgrounded CoreAnimation stops recycling presented
-        // drawables, so holding even one app-side reference can keep the 3-deep
-        // swap chain fully drained — on resume `nextDrawable` then times out (~1s)
-        // every display-link tick and the main thread spins at ~1fps ("frozen").
-        // Drop these references (do NOT wait on them — that is the line ~2225
-        // `waitUntilCompleted` wedge) so the pool refills once CA resumes recycling.
-        // Precedent: the GPU-recovery path already nils `previousCommandBuffer`.
-        // `previousCommandBuffer` is also read on the alternate render thread under
-        // `frontBufferLock` (didRenderFrameOnAlternateThread), so nil it under the
-        // same lock to avoid an ARC reference race if the emu loop is still mid-frame
-        // (pausing the MTKView stops the display link, not the emulation thread).
+        // Release the single CAMetalDrawable the app pins across the transition.
+        // Both the committed `previousCommandBuffer` (a backgrounded buffer never
+        // completes, so it never releases its presented drawable) and the cached
+        // render-pass descriptor's color attachment alias the same last drawable.
+        // While off-screen CoreAnimation stops recycling presented drawables, so
+        // holding even one app-side reference can keep the 3-deep swap chain fully
+        // drained — on resume `nextDrawable` then times out (~1s) every draw and the
+        // main thread spins at ~1fps ("frozen"). Drop these references (do NOT wait
+        // on them — that is the line ~2225 `waitUntilCompleted` wedge) so the pool
+        // refills once CA resumes recycling. Precedent: the GPU-recovery path already
+        // nils `previousCommandBuffer`. `previousCommandBuffer` is also read on the
+        // alternate render thread under `frontBufferLock`
+        // (didRenderFrameOnAlternateThread), so nil it under the same lock to avoid
+        // an ARC reference race if the emu loop is still mid-frame (pausing the
+        // MTKView stops the display link, not the emulation thread).
         if let emulatorCore = emulatorCore {
             emulatorCore.frontBufferLock.withLock {
                 previousCommandBuffer = nil
