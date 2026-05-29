@@ -6190,6 +6190,20 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
         .apiVersion = bestApiVersion,
     };
 
+    // Enable the instance extensions Vulkan HW-render cores need. Without them the
+    // core cannot resolve VK_KHR_surface functions (vkGetPhysicalDeviceSurfaceSupportKHR,
+    // vkGetPhysicalDeviceSurfaceCapabilitiesKHR, …) → those proc-addresses come back
+    // NULL → the core's create_device → ReinitSurface → ChooseQueue calls a null
+    // pointer → EXC_BAD_ACCESS at 0x0 (PPSSPP's VulkanContext::ChooseQueue). Also enable
+    // get_physical_device_properties2 so the core can load vkGetPhysicalDeviceFeatures2/
+    // Properties2 even though the app's VkApplicationInfo apiVersion is 1.0. MoltenVK
+    // supports all three (see its reported extension list at instance creation).
+    static const char *kInstanceExtensions[] = {
+        "VK_KHR_surface",
+        "VK_EXT_metal_surface",
+        "VK_KHR_get_physical_device_properties2",
+    };
+
     VkInstanceCreateInfo createInfo = {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pNext = NULL,
@@ -6197,8 +6211,8 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
         .pApplicationInfo = coreAppInfo ? coreAppInfo : &defaultAppInfo,
         .enabledLayerCount = 0,
         .ppEnabledLayerNames = NULL,
-        .enabledExtensionCount = 0,
-        .ppEnabledExtensionNames = NULL,
+        .enabledExtensionCount = (uint32_t)(sizeof(kInstanceExtensions) / sizeof(kInstanceExtensions[0])),
+        .ppEnabledExtensionNames = kInstanceExtensions,
     };
 
     VkResult result = _vkCreateInstance(&createInfo, NULL, &_vulkanInstance);
