@@ -519,6 +519,49 @@ typedef struct PVThinLibretroSymbols {
     /// while a HW FBO is already live. The FBO is rebuilt on the next runFrame call
     /// so that context_reset fires on the emulation thread.
     BOOL _hwFBONeedsRebuild;
+
+    // --- Threaded-core (own render thread) GLES support ---
+    //
+    // Some libretro cores spawn their OWN render thread and call the HW-render
+    // callbacks (get_current_framebuffer / get_proc_address) from THAT thread,
+    // not from the emulation thread that drives retro_run. The motivating case
+    // is PPSSPP on GLES, which hardcodes useEmuThread=true upstream
+    // (libretro/libretro.cpp: `useEmuThread = ctx->GetGPUCore()==GPUCORE_GLES`)
+    // and runs its GLRenderManager render step off-thread; other GLES cores may
+    // do the same. EAGL "current context" is per-thread, so that foreign thread
+    // has no current GL context and (because FBOs are NOT shared across contexts
+    // in a sharegroup) no usable FBO unless we provision one lazily.
+    //
+    // We detect this purely by THREAD IDENTITY inside the callbacks — no per-core
+    // hardcoding — so the working non-threaded cores (Mupen64, ParaLLEl-N64,
+    // Beetle PSX HW-GL) are completely unaffected: their callbacks always run on
+    // the emu thread and take the existing path.
+
+    /// pthread of the emulation thread (the thread that ran setupHardwareContextFBO
+    /// and drives retro_run). Captured at FBO-setup time. The HW callbacks compare
+    /// against this to distinguish "called from the emu thread" (existing path) vs
+    /// "called from the core's own render thread" (needs its own context + FBO).
+    pthread_t _emuThreadHandle;
+    BOOL _emuThreadHandleValid;
+
+    /// Set YES once a HW callback fires from a thread that is NOT the emu thread.
+    /// While set, runFrame STOPS re-currenting _glContext on the emu thread (the
+    /// core's render thread now owns rendering into our shared color texture), so
+    /// the same EAGLContext is never made current on two threads at once.
+    /// Non-threaded cores never set this — their per-frame re-current is unchanged.
+    BOOL _coreOwnsRenderThread;
+
+    /// Dedicated GL context for the core's own render thread, created lazily in the
+    /// HW callback on first foreign-thread invocation. Shares _glContext's sharegroup
+    /// so it sees the same _emuColorTex / _emuDepthRB (textures & renderbuffers ARE
+    /// shared across a sharegroup; FBOs are NOT, hence the separate FBO below).
+    EAGLContext *_coreThreadGLContext;
+
+    /// FBO owned by _coreThreadGLContext, wrapping the SHARED _emuColorTex /
+    /// _emuDepthRB. Returned from get_current_framebuffer when called on the core's
+    /// render thread. Rebuilt when the shared color texture id changes (resize).
+    GLuint _coreThreadFBO;
+    GLuint _coreThreadFBOColorTex; // _emuColorTex value the _coreThreadFBO was built against
 #endif
 
     // Vulkan state (when using MoltenVK via dlopen)
@@ -783,6 +826,13 @@ typedef struct PVThinLibretroSymbols {
 - (void)_parseCoreOptionsV2:(const struct retro_core_options_v2 *)opts;
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 - (uintptr_t)currentEmuFBO;
+/// Returns the framebuffer the core should render into, resolving by calling
+/// thread: emu thread → _emuFBO; the core's own render thread → a lazily-created
+/// per-thread FBO wrapping the shared color texture. See implementation.
+- (uintptr_t)hwFramebufferForCallingThread;
+/// If the calling thread is NOT the emu thread and has no current EAGLContext,
+/// lazily creates+makes-current a sharegroup context for it. No-op otherwise.
+- (void)ensureGLContextCurrentOnCallingThread;
 #endif
 
 // Peripheral interface helpers
@@ -829,6 +879,22 @@ typedef struct PVThinLibretroSymbols {
 /// __unsafe_unretained. This is safe because the frontend instance outlives
 /// its emulation thread — the instance is retained by the view controller.
 static __thread __unsafe_unretained PVThinLibretroFrontend *_thinCurrentTLS = nil;
+
+/// Non-thread-local fallback to the active frontend instance.
+///
+/// `_thinCurrentTLS` is `__thread`, so it is only non-nil on the emulation
+/// thread that set it. Cores that spawn their OWN render thread (e.g. PPSSPP on
+/// GLES) call the HW-render callbacks from that foreign thread, where
+/// `_thinCurrentTLS` is nil — the callbacks would otherwise no-op and the core
+/// would get framebuffer 0 / NULL proc addresses → black screen or boot hang.
+///
+/// Set alongside `_thinCurrentTLS = self` when emulation starts and cleared on
+/// teardown. Only ONE core ever runs at a time in this process, so a single
+/// global is sufficient and unambiguous. The HW callbacks resolve the instance
+/// as `_thinCurrentTLS ?: s_thinHWActive` — TLS still wins on the emu thread (so
+/// nothing about the existing path changes), and the global rescues foreign
+/// render threads.
+static __unsafe_unretained PVThinLibretroFrontend *s_thinHWActive = nil;
 
 // ---------------------------------------------------------------------------
 // MARK: - Static C callbacks (bridge → ObjC instance)
@@ -954,16 +1020,27 @@ static void thin_core_log(enum retro_log_level level, const char *fmt, ...) {
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 /// hw_get_current_framebuffer — called from the core to get the FBO to render into.
+///
+/// May be invoked from the emulation thread (non-threaded cores: TLS hit) OR from
+/// the core's own render thread (threaded cores: TLS is nil, rescued by the global
+/// fallback). The ObjC helper -hwFramebufferForCallingThread handles both: on the
+/// emu thread it returns the existing _emuFBO; on a foreign thread it lazily makes
+/// a sharegroup context current and returns a per-thread FBO wrapping the shared
+/// color texture.
 static uintptr_t thin_hw_get_current_framebuffer(void) {
-    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    PVThinLibretroFrontend *self = _thinCurrentTLS ?: s_thinHWActive;
     if (!self) return 0;
-    return [self currentEmuFBO];
+    return [self hwFramebufferForCallingThread];
 }
 #endif
 
 /// hw_get_proc_address — called from the core to resolve GL/Vulkan symbols.
+/// Uses the global fallback so threaded cores (whose render thread has no TLS)
+/// still resolve symbols. For the GLES path we ALSO ensure the calling thread has
+/// a current GL context before resolving, so a core that resolves+calls GL on its
+/// own render thread sees a valid context.
 static retro_proc_address_t thin_hw_get_proc_address(const char *sym) {
-    PVThinLibretroFrontend *self = _thinCurrentTLS;
+    PVThinLibretroFrontend *self = _thinCurrentTLS ?: s_thinHWActive;
 #if HAVE_VULKAN
     if (self && self->_hwRenderCallback.context_type == RETRO_HW_CONTEXT_VULKAN) {
         // For Vulkan cores, resolve through the Vulkan function pointers
@@ -981,6 +1058,15 @@ static retro_proc_address_t thin_hw_get_proc_address(const char *sym) {
         }
         DLOG(@"ThinFrontend: Vulkan symbol not found: %s", sym);
         return NULL;
+    }
+#endif
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+    // GLES path: a core may resolve a symbol on its own render thread and call it
+    // immediately. Ensure that thread has a current sharegroup context first, so
+    // the resolved GL function operates on a valid context. No-op on the emu thread
+    // (it already holds _glContext) and for non-GL cores (no _hwRenderRequested).
+    if (self) {
+        [self ensureGLContextCurrentOnCallingThread];
     }
 #endif
     (void)self;
@@ -2430,6 +2516,141 @@ static bool thin_environment(unsigned cmd, void *data) {
 - (uintptr_t)currentEmuFBO {
     return (uintptr_t)_emuFBO;
 }
+
+/// Is the calling thread the emulation thread that built the FBO / drives retro_run?
+/// Returns YES if we have not yet captured the emu thread (the safe default — keeps
+/// the existing single-threaded path for cores that call the callbacks before the
+/// first FBO setup) or if the current pthread equals the captured emu thread.
+- (BOOL)callingThreadIsEmuThread {
+    if (!_emuThreadHandleValid) {
+        return YES;
+    }
+    return pthread_equal(pthread_self(), _emuThreadHandle) != 0;
+}
+
+/// Lazily provision a GL context for the core's OWN render thread.
+///
+/// EAGL current-context is per-thread. When the core spawns its own render thread
+/// and calls the HW callbacks from it, that thread has no current context, so all
+/// its GL calls silently no-op. Here we detect "foreign thread, no current context"
+/// and make a dedicated sharegroup context current on it. We DON'T reuse _glContext:
+/// a single EAGLContext can be current on only one thread at a time, and the emu
+/// thread may still hold _glContext — so the foreign thread gets its own context in
+/// the same sharegroup (textures/renderbuffers, incl. our IOSurface-backed color
+/// texture, are shared; FBOs are not — handled in -hwFramebufferForCallingThread).
+- (void)ensureGLContextCurrentOnCallingThread {
+    if (!_hwRenderRequested || !_glContext) {
+        return; // not a GLES HW core, or context not set up yet
+    }
+    if ([self callingThreadIsEmuThread]) {
+        return; // emu thread already manages _glContext via runFrame
+    }
+    if ([EAGLContext currentContext] != nil) {
+        return; // this thread already has some context current; respect it
+    }
+
+    // First time we've seen the core drive GL from its own thread.
+    if (!_coreOwnsRenderThread) {
+        _coreOwnsRenderThread = YES;
+        ILOG(@"[GLES] core render thread detected (tid=%p) — switching to per-thread GL context ownership; emu-thread re-current disabled",
+             (void *)pthread_self());
+    }
+
+    if (!_coreThreadGLContext) {
+        _coreThreadGLContext = [[EAGLContext alloc] initWithAPI:_glContext.API
+                                                     sharegroup:_glContext.sharegroup];
+        if (!_coreThreadGLContext) {
+            ELOG(@"[GLES] failed to create per-render-thread sharegroup context (tid=%p)",
+                 (void *)pthread_self());
+            return;
+        }
+    }
+    if (![EAGLContext setCurrentContext:_coreThreadGLContext]) {
+        ELOG(@"[GLES] failed to make per-render-thread context current (tid=%p)",
+             (void *)pthread_self());
+        return;
+    }
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    ILOG(@"[GLES] made per-render-thread GL context current (tid=%p ctx=%p)",
+         (void *)pthread_self(), (void *)_coreThreadGLContext);
+}
+
+/// Framebuffer resolver, dispatched by thread identity (see thin_hw_get_current_framebuffer).
+///
+/// Emu thread (non-threaded cores — the working path): return _emuFBO unchanged.
+///
+/// Core's own render thread (threaded cores): ensure that thread has a current
+/// sharegroup context, then return a per-thread FBO that wraps the SAME shared
+/// _emuColorTex / _emuDepthRB. FBOs are not shared across contexts in a sharegroup,
+/// so we must create one against the foreign thread's context; but it attaches the
+/// shared color texture, so the core renders into the same IOSurface the Metal
+/// presenter blits — zero extra copy.
+- (uintptr_t)hwFramebufferForCallingThread {
+    if ([self callingThreadIsEmuThread]) {
+        return (uintptr_t)_emuFBO;
+    }
+
+    // Foreign render thread.
+    [self ensureGLContextCurrentOnCallingThread];
+    if (!_coreThreadGLContext || [EAGLContext currentContext] != _coreThreadGLContext) {
+        // Couldn't set up a per-thread context. Fall back to _emuFBO. NOTE: FBO
+        // names are NOT shared across a sharegroup, so this name is only valid in
+        // _glContext; it's meaningless in whatever foreign context is current here.
+        // In practice this branch shouldn't trigger — per the libretro HW-render
+        // contract the frontend owns the GL context, so the core doesn't bring its
+        // own. Returning _emuFBO (vs 0) is the least-bad option if it ever does.
+        WLOG(@"[GLES] hwFramebufferForCallingThread: no per-thread context (tid=%p) — returning emu FBO %u",
+             (void *)pthread_self(), _emuFBO);
+        return (uintptr_t)_emuFBO;
+    }
+
+    // Cross-thread IOSurface coherency: cores query the framebuffer once per frame
+    // (libretro contract) BEFORE rendering the new frame, which means this call also
+    // lands right AFTER the core finished issuing the previous frame's GL into our
+    // shared color texture. Flush here — on the core's render thread, with its
+    // context current — so those writes reach the IOSurface before the Metal
+    // presenter (a different thread) samples it. Without a flush/fence, GL writes
+    // from this thread aren't guaranteed visible to the presenter → tearing / stale
+    // frames. glFlush (not glFinish) keeps it cheap; the presenter runs ~a frame
+    // behind so a full sync isn't required.
+    if (_coreThreadFBO != 0) {
+        glFlush();
+    }
+    if (_emuColorTex == 0) {
+        return (uintptr_t)0; // FBO setup hasn't produced a color texture yet
+    }
+
+    // (Re)build the per-thread FBO if missing or if the shared color texture changed
+    // (resize tears down and recreates _emuColorTex).
+    if (_coreThreadFBO == 0 || _coreThreadFBOColorTex != _emuColorTex) {
+        if (_coreThreadFBO != 0) {
+            glDeleteFramebuffers(1, &_coreThreadFBO);
+            _coreThreadFBO = 0;
+        }
+        glGenFramebuffers(1, &_coreThreadFBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, _coreThreadFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, _emuColorTex, 0);
+        if (_emuDepthRB != 0) {
+            GLenum attach = _hwRenderCallback.stencil ? GL_DEPTH_STENCIL_ATTACHMENT
+                                                      : GL_DEPTH_ATTACHMENT;
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, attach, GL_RENDERBUFFER, _emuDepthRB);
+        }
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (status != GL_FRAMEBUFFER_COMPLETE) {
+            ELOG(@"[GLES] per-thread FBO incomplete (status=0x%04x tid=%p) — returning emu FBO %u",
+                 status, (void *)pthread_self(), _emuFBO);
+            glDeleteFramebuffers(1, &_coreThreadFBO);
+            _coreThreadFBO = 0;
+            return (uintptr_t)_emuFBO;
+        }
+        _coreThreadFBOColorTex = _emuColorTex;
+        glViewport(0, 0, (GLsizei)_fboWidth, (GLsizei)_fboHeight);
+        ILOG(@"[GLES] built per-render-thread FBO %u wrapping shared color tex %u (%ux%u, tid=%p)",
+             _coreThreadFBO, _emuColorTex, _fboWidth, _fboHeight, (void *)pthread_self());
+    }
+    return (uintptr_t)_coreThreadFBO;
+}
 #endif
 
 - (instancetype)init {
@@ -2690,6 +2911,9 @@ static bool thin_environment(unsigned cmd, void *data) {
 
     // Install TLS pointer for C callbacks
     _thinCurrentTLS = self;
+    // Install the non-thread-local fallback so HW-render callbacks invoked from a
+    // core's OWN render thread (where _thinCurrentTLS is nil) can still resolve us.
+    s_thinHWActive = self;
     _romPath = [romPath copy];
 
     // Wire callbacks before retro_init
@@ -3164,6 +3388,12 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
     [self teardownHardwareContext];
     _thinCurrentTLS = nil;
+    // Clear the non-thread-local fallback so a lingering core render thread can't
+    // resolve a torn-down instance. Guarded so we never stomp a different frontend
+    // that may have become active (defensive — only one runs at a time in practice).
+    if (s_thinHWActive == self) {
+        s_thinHWActive = nil;
+    }
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
@@ -3285,7 +3515,15 @@ static bool thin_environment(unsigned cmd, void *data) {
     //     `hw_get_current_framebuffer()` every frame (or that rebind FBO 0
     //     mid-frame for a screen blit) end up rendering into our IOSurface
     //     instead of a stale framebuffer.
-    if (_hwRenderRequested && _glContext && _emuFBO) {
+    //
+    // EXCEPTION — threaded cores: once a HW callback has fired from the core's own
+    // render thread (_coreOwnsRenderThread), that thread owns the GL context that
+    // renders into our shared color texture. Re-currenting _glContext here on the
+    // emu thread would (a) make the SAME context current on two threads if the core
+    // ever reused it and (b) fight the core's own per-frame FBO binding. So skip the
+    // re-current entirely for those cores — the core's thread sets up its own context
+    // + FBO via the HW callbacks.
+    if (_hwRenderRequested && _glContext && _emuFBO && !_coreOwnsRenderThread) {
         if ([EAGLContext currentContext] != _glContext) {
             [EAGLContext setCurrentContext:_glContext];
         }
@@ -5764,6 +6002,15 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
     if (!_glContext || !_hwRenderRequested) return;
 
+    // Capture the emulation thread's identity. This method runs on the emu thread
+    // (called from runFrame), with _glContext current. The HW callbacks compare
+    // pthread_self() against this handle to decide whether they're being invoked
+    // from the emu thread (existing single-context path) or from the core's own
+    // render thread (needs a per-thread context + FBO). Captured here rather than
+    // at start so it reflects the thread that actually owns the GL context.
+    _emuThreadHandle = pthread_self();
+    _emuThreadHandleValid = YES;
+
     // --- Step 1: obtain (or create) the shared IOSurface ---
     //
     // Preferred path: ask the render delegate (PVMetalViewController) to create
@@ -7117,6 +7364,17 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     if (_ioSurface) { CFRelease(_ioSurface); _ioSurface = NULL; }
     _glContext      = nil;
     _glShareContext = nil;
+    // Per-render-thread GL objects (threaded cores only). The FBO was created on
+    // the core's render thread's context (_coreThreadGLContext); that thread has
+    // exited by now and we can't safely make its context current here to glDelete
+    // the FBO name. Releasing the EAGLContext (ARC) tears down the sharegroup
+    // reference; the orphaned FBO name is reclaimed when the sharegroup is freed.
+    // Just reset our tracking state so the next session rebuilds cleanly.
+    _coreThreadFBO = 0;
+    _coreThreadFBOColorTex = 0;
+    _coreThreadGLContext = nil;
+    _coreOwnsRenderThread = NO;
+    _emuThreadHandleValid = NO;
     _renderDelegateStarted = NO;
     _fboWidth  = 0;
     _fboHeight = 0;
