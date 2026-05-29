@@ -587,6 +587,16 @@ typedef struct PVThinLibretroSymbols {
     /// YES when Vulkan context creation has been deferred until after
     /// retro_load_game returns (to allow the negotiation interface to arrive).
     BOOL _vulkanContextDeferred;
+    /// YES while we are synchronously inside the (non-blocking) core's
+    /// retro_load_game. The negotiation interface arrives during the core's
+    /// graphics-context Init, which runs inside retro_load_game; firing
+    /// context_reset then would be re-entrant before the core finished assigning
+    /// its global graphics-context pointer (PPSSPP's free context_reset() derefs
+    /// Libretro::ctx → null deref crash). So we defer instead while this is set.
+    BOOL _inRetroLoadGame;
+    /// Set when context_reset was deferred during the re-entrant negotiation path;
+    /// fired by fireDeferredVulkanContextResetIfNeeded once retro_load_game returns.
+    BOOL _vulkanContextResetPending;
     /// Queue family index reported by the core's create_device callback
     /// (or 0 when the frontend created the device).
     uint32_t _vulkanQueueFamilyIndex;
@@ -3118,7 +3128,16 @@ static bool thin_environment(unsigned cmd, void *data) {
         }
         ILOG(@"ThinFrontend: calling retro_load_game (need_fullpath=%d, romSize=%zu)",
              _rawSystemInfo.need_fullpath, (size_t)romData.length);
+        // Mark the re-entrant window: any context_reset requested during this call
+        // (via the Vulkan negotiation path) is deferred until load returns, because
+        // the core hasn't assigned its global graphics-context pointer yet.
+#if HAVE_VULKAN
+        _inRetroLoadGame = YES;
+#endif
         loaded = _sym.retro_load_game(&gameInfo);
+#if HAVE_VULKAN
+        _inRetroLoadGame = NO;
+#endif
         ILOG(@"ThinFrontend: retro_load_game returned %d (%.2fs)",
              loaded, CACurrentMediaTime() - _tLoad0);
         if (diagThinIsPPSSPP) {
@@ -3167,6 +3186,11 @@ static bool thin_environment(unsigned cmd, void *data) {
             return NO;
         }
     }
+
+    // retro_load_game has returned, so the core's global graphics-context pointer is
+    // now assigned. Fire any context_reset we deferred during the re-entrant
+    // negotiation path (PPSSPP). No-op for cores that fired it inline.
+    [self fireDeferredVulkanContextResetIfNeeded];
 #endif
 
     // Refresh AV info after load (core may change geometry)
@@ -6242,11 +6266,39 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
          (void *)_vulkanDevice, (void *)_vulkanQueue, _vulkanCoreOwnsDevice);
 
     if (_hwRenderCallback.context_reset) {
-        ILOG(@"[VK] context_reset firing — device=%p queue=%p qfam=%u coreOwnsDevice=%d metalInterop(export=%p mvk=%p)",
-             (void *)_vulkanDevice, (void *)_vulkanQueue, _vulkanQueueFamilyIndex,
-             _vulkanCoreOwnsDevice, (void *)_vkExportMetalObjectsEXT, (void *)_vkGetMTLTextureMVK);
+        if (_inRetroLoadGame) {
+            // Re-entrant: the negotiation interface arrived during the core's
+            // graphics-context Init, which runs inside retro_load_game. PPSSPP's free
+            // context_reset() trampoline derefs the global Libretro::ctx, which the
+            // core assigns only AFTER CreateGraphicsContext()/retro_load_game returns
+            // (see LibretroGraphicsContext.cpp:23 + libretro.cpp:1260). Firing it now
+            // would deref null → crash at context_reset+12. Defer; startWithROMPath
+            // fires it via fireDeferredVulkanContextResetIfNeeded once load returns.
+            _vulkanContextResetPending = YES;
+            ILOG(@"[VK] context_reset deferred until after retro_load_game returns "
+                 @"(re-entrant negotiation path — core graphics-context global not yet assigned)");
+        } else {
+            ILOG(@"[VK] context_reset firing — device=%p queue=%p qfam=%u coreOwnsDevice=%d metalInterop(export=%p mvk=%p)",
+                 (void *)_vulkanDevice, (void *)_vulkanQueue, _vulkanQueueFamilyIndex,
+                 _vulkanCoreOwnsDevice, (void *)_vkExportMetalObjectsEXT, (void *)_vkGetMTLTextureMVK);
+            _hwRenderCallback.context_reset();
+            ILOG(@"[VK] context_reset completed");
+        }
+    }
+}
+
+/// Fire a context_reset that was deferred because it would otherwise have run
+/// re-entrantly inside the core's retro_load_game (before the core assigned its
+/// global graphics-context pointer). Called once retro_load_game has returned, on
+/// the same thread that called it. Safe no-op when nothing is pending.
+- (void)fireDeferredVulkanContextResetIfNeeded {
+    if (!_vulkanContextResetPending) return;
+    _vulkanContextResetPending = NO;
+    if (_hwRenderCallback.context_reset) {
+        ILOG(@"[VK] firing deferred context_reset (post retro_load_game) — device=%p queue=%p qfam=%u",
+             (void *)_vulkanDevice, (void *)_vulkanQueue, _vulkanQueueFamilyIndex);
         _hwRenderCallback.context_reset();
-        ILOG(@"[VK] context_reset completed");
+        ILOG(@"[VK] deferred context_reset completed");
     }
 }
 
