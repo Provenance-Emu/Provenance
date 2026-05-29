@@ -5534,13 +5534,25 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 
         // ---- Preferred HW render ----
         case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER: {
-            // Prefer GLES3 in the thin wrapper. The thin wrapper runs on the UI
-            // thread via CADisplayLink — Vulkan command buffer submission races
-            // with Metal presentation on the same thread, causing crashes in
-            // cores like Beetle PSX HW. OpenGL ES works correctly (proven by
-            // Mupen64/ParaLLEl). Cores that only support Vulkan can still
-            // request it via SET_HW_RENDER and the Vulkan path remains available.
-            if (data) *(unsigned *)data = RETRO_HW_CONTEXT_OPENGLES3;
+            // Prefer GLES3 in the thin wrapper generally. The thin wrapper runs on the
+            // UI thread via CADisplayLink — Vulkan command buffer submission races with
+            // Metal presentation on the same thread, causing crashes in cores like
+            // Beetle PSX HW. OpenGL ES works correctly (proven by Mupen64/ParaLLEl).
+            unsigned pref = RETRO_HW_CONTEXT_OPENGLES3;
+#if HAVE_VULKAN
+            // EXCEPTION — PSP/PPSSPP: on GLES, PPSSPP hardcodes useEmuThread=true and
+            // renders on its OWN thread with no current EAGLContext → boot hang; and it
+            // honors this preferred value: with OPENGLES3 it tries ONLY GL and (since
+            // preferred != DUMMY/VULKAN) never tries Vulkan → falls to the Software
+            // backend (black screen / crash for 3D titles). Prefer VULKAN for PSP — the
+            // proven thick-wrapper path via MoltenVK — so PPSSPP selects
+            // LibretroVulkanContext (useEmuThread=false) and skips GL entirely.
+            static NSString * const PVPSPSystemIdentifier = @"com.provenance.psp";
+            if ([self.systemIdentifier isEqualToString:PVPSPSystemIdentifier]) {
+                pref = RETRO_HW_CONTEXT_VULKAN;
+            }
+#endif
+            if (data) *(unsigned *)data = pref;
             return true;
         }
 
