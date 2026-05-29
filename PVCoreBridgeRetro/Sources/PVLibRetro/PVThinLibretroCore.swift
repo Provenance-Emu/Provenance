@@ -430,9 +430,12 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         // For cores that need system files from the libretro buildbot,
         // migrate from the legacy RetroArch/system/ directory first (if it exists),
         // then download anything still missing from the buildbot.
-        // Both operations are idempotent and the download is async (non-blocking).
+        // The migration is idempotent; the download is fully non-blocking
+        // (fired off the actor so emulation boots immediately — see
+        // ThinSystemFileManifest / ThinSystemFileProvisioner).
         migrateRetroArchSystemDirectoryIfNeeded()
-        downloadBuildBotSystemFilesIfNeeded()
+        provisionThinSystemFilesIfNeeded()
+        downloadLegacyBuildBotSystemFilesIfNeeded()
 
         // Mupen64Plus-Next: use angrylion RDP, default pak1 to "rumble" to match
         // the thick wrapper (PVRetroArchCore+Options.swift). In the RetroArch
