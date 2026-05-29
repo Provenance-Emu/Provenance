@@ -60,7 +60,10 @@ struct MainView: View {
 
                 // Unified toast overlay — PVToastManager.post(...) works from
                 // anywhere (library, emulator, settings, background actors).
-                PVToastStackView(position: .top)
+                // Bottom-anchored (stacked upward) so toasts don't collide with the
+                // status bar / clock; matches the in-emulator toast position. The
+                // .bottomCenter edge padding clears the home indicator.
+                PVToastStackView(position: .bottomCenter)
                     .allowsHitTesting(false)
             }
         }
