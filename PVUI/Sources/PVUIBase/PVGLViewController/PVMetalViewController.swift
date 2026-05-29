@@ -539,13 +539,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// and recycles normally instead of getting stranded in CoreAnimation's
     /// presentation queue as the layer goes off-screen.
     @objc private func handleAppWillResignActiveForMetal() {
-        ILOG("[FREEZE] handleAppWillResignActiveForMetal fired; applicationState=\(UIApplication.shared.applicationState.rawValue)")
+        ILOG("[FREEZE] handleAppWillResignActiveForMetal fired; applicationState=\(UIApplication.shared.applicationState.rawValue)", category: .freeze)
         pauseMetalAndReleasePinnedDrawables()
     }
 
     /// Stops the display link so in-flight Metal work is not fighting iOS GPU policy while backgrounded (avoids timeout cascades).
     @objc private func handleAppDidEnterBackgroundForMetal() {
-        ILOG("[FREEZE] handleAppDidEnterBackgroundForMetal fired; applicationState=\(UIApplication.shared.applicationState.rawValue)")
+        ILOG("[FREEZE] handleAppDidEnterBackgroundForMetal fired; applicationState=\(UIApplication.shared.applicationState.rawValue)", category: .freeze)
         pauseMetalAndReleasePinnedDrawables()
     }
 
@@ -584,7 +584,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     /// Restores MTKView driving once the app is active again (after `didEnterBackground` pause). Using `didBecomeActive` avoids unpausing while `applicationState` is still `.inactive`, which matches GPU recovery gating.
     @objc private func handleAppDidBecomeActiveForMetal() {
-        ILOG("[FREEZE] handleAppDidBecomeActiveForMetal fired; applicationState=\(UIApplication.shared.applicationState.rawValue), controllerPaused=\(isPaused)")
+        ILOG("[FREEZE] handleAppDidBecomeActiveForMetal fired; applicationState=\(UIApplication.shared.applicationState.rawValue), controllerPaused=\(isPaused)", category: .freeze)
         if !isPaused {
             mtlView?.isPaused = false
         }
@@ -2528,14 +2528,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             // every CA-commit-driven draw then blocks ~1s on nextDrawable and the
             // main thread appears frozen. Detect the wedge and reset the pool.
             consecutiveNilDrawables += 1
-            ILOG("[FREEZE] directRender: no Metal drawable (consecutive nil = \(consecutiveNilDrawables))")
+            ILOG("[FREEZE] directRender: no Metal drawable (consecutive nil = \(consecutiveNilDrawables))", category: .freeze)
             if consecutiveNilDrawables >= wedgedPoolNilThreshold {
                 DispatchQueue.main.async { [weak self] in self?.resetDrawablePoolIfWedged() }
             }
             return
         }
         if consecutiveNilDrawables > 0 {
-            ILOG("[FREEZE] directRender: drawable acquired after \(consecutiveNilDrawables) consecutive nil(s)")
+            ILOG("[FREEZE] directRender: drawable acquired after \(consecutiveNilDrawables) consecutive nil(s)", category: .freeze)
             consecutiveNilDrawables = 0
         }
 
@@ -3636,7 +3636,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         guard consecutiveNilDrawables >= wedgedPoolNilThreshold, let mtlView = mtlView else { return }
         let size = mtlView.drawableSize
         guard size.width > 1, size.height > 1 else { return }
-        ILOG("[FREEZE] Drawable pool wedged after \(consecutiveNilDrawables) nil(s); resetting pool via drawableSize toggle (\(size.width)x\(size.height))")
+        ILOG("[FREEZE] Drawable pool wedged after \(consecutiveNilDrawables) nil(s); resetting pool via drawableSize toggle (\(size.width)x\(size.height))", category: .freeze)
         let wasAutoResize = mtlView.autoResizeDrawable
         mtlView.autoResizeDrawable = false
         mtlView.drawableSize = CGSize(width: size.width - 1, height: size.height - 1)

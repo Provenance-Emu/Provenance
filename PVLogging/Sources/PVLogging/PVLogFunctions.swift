@@ -56,6 +56,10 @@ extension os.Logger: @retroactive Sendable {
 
     /// All logs related to the game library.
     public static let library = Logger(subsystem: provenanceSubsystem, category: "library")
+
+    /// Background/resume freeze + drawable-pool diagnostics. Filter in Console with
+    /// `subsystem:com.provenance-emu.provenance category:freeze`.
+    public static let freeze = Logger(subsystem: provenanceSubsystem, category: "freeze")
 }
 
 #else
@@ -113,6 +117,10 @@ public struct PVLogCategory: Sendable {
 
     /// All logs related to the game library.
     public static let library = PVLogCategory(subsystem: provenanceSubsystem, category: "library")
+
+    /// Background/resume freeze + drawable-pool diagnostics. Filter in Console with
+    /// `subsystem:com.provenance-emu.provenance category:freeze`.
+    public static let freeze = PVLogCategory(subsystem: provenanceSubsystem, category: "freeze")
 }
 #endif
 
