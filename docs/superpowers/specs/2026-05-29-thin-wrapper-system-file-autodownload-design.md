@@ -1,7 +1,7 @@
 # Thin-Wrapper System-File Auto-Download — Design
 
 **Date:** 2026-05-29
-**Status:** Approved (design); URLs pending user
+**Status:** Approved (design); URLs + zip utility confirmed — ready to implement
 **Module:** `PVCoreBridgeRetro` (thin libretro wrapper)
 
 ## Purpose
@@ -110,8 +110,27 @@ the warning. No modal, no gameplay block.
   files appear → relaunch is silent; airplane-mode launch → warning toast, core
   still runs.
 
-## Open input (blocking implementation)
+## Confirmed inputs (2026-05-29)
 
-- **Exact source URLs / archive names** for PPSSPP, EcWolf, PrBoom on the
-  libretro assets host (or the user's host). User will provide.
-- Confirm the app's zip-extraction utility to reuse (identified during planning).
+- **Host:** `https://buildbot.libretro.com/assets/system/<Name>.zip` (all are
+  ZIP archives → `.archive` kind; names URL-encode spaces/parens). Full list the
+  user provided (we ship a subset — only cores the thin wrapper actually serves):
+  `PPSSPP.zip`, `ECWolf.zip`, `PrBoom.zip`, `blueMSX.zip`,
+  `FinalBurn%20Neo%20%28hiscore%29.zip`, `MAME%202003-Plus.zip`, `MAME%202003.zip`,
+  `XRick%20%28Rick%20Dangerous%29.zip`, `ScummVM.zip`,
+  `NXEngine%20%28Cave%20Story%29.zip`, `LRPS2.zip`, `Dolphin.zip`,
+  `DirkSimple.zip`, `Dinothawr.zip`. Initial manifest: PPSSPP, ECWolf, PrBoom.
+- **Zip utility:** reuse `ArchiveManager` / `ArchiveExtractor`
+  (`PVArchiving`, `extract(at:to:progress:)`). PVCoreBridgeRetro already depends
+  on PVArchiving? — verify the package dep during implementation; add if missing.
+- **Sentinel (revised):** rather than per-core internal file knowledge, write a
+  per-core version stamp file (e.g. `<systemDir>/.pv_assets_<core>.stamp`) after
+  a successful provision; presence of the stamp = "provisioned, skip." Matches
+  the thick wrapper's asset-stamp pattern and works uniformly for any archive.
+
+## Status note
+The debugger-gated `fast_memory` fix (commit 78dca2f4b5) means PSP likely boots
++ runs WITHOUT these assets (they are fonts/UI, "preferred not required"). So
+this auto-download is polish, not a boot fix — implement after the current
+build's freeze/PSP/haptics results are validated, to avoid stacking untested
+changes.
