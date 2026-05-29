@@ -1534,11 +1534,16 @@ static int64_t thin_vfs_seek(struct retro_vfs_file_handle *stream, int64_t offse
              stream->path ?: "?", (long long)offset, whence, errno);
         return -1;
     }
-    off_t pos = ftello(stream->fp);
     if (whence == SEEK_END && offset == 0) {
-        ILOG(@"[VFS-DIAG] seek END->%lld path=%s", (long long)pos, stream->path ?: "?");
+        ILOG(@"[VFS-DIAG] seek END ok (pos=%lld) path=%s", (long long)ftello(stream->fp), stream->path ?: "?");
     }
-    return (int64_t)pos;
+    // libretro VFS contract: seek returns 0 on SUCCESS, -1 on error — NOT the new
+    // position (RetroArch's reference impl returns `fseeko(...)`). Returning the
+    // position (non-zero) made PPSSPP's File::GetFileSize treat the seek as a
+    // failure (`if (Fseek(...) != 0) return 0;`) → filesize_=0 → "ReadAt from
+    // 0-sized file" → boot-from-empty crash. This also affects any other fullpath
+    // core that sizes content via seek (PrBoom, ECWolf, MAME, …).
+    return 0;
 }
 
 static int64_t thin_vfs_read(struct retro_vfs_file_handle *stream, void *s, uint64_t len) {
