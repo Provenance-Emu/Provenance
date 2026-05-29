@@ -3095,6 +3095,25 @@ extension PVEmulatorViewController {
         if !core.isOn {
             return
         }
+
+        // Pause emulation FIRST — before the view-state guard below — so the core
+        // stops on EVERY resign-active (Control Center / app switcher / background),
+        // including the FIRST one right after launch when the view may not yet be
+        // fully in the hierarchy (the guard was skipping the pause then → "first
+        // background didn't pause, the rest did"). The guard only needs to protect
+        // autosave + showMenu, which require a valid view. Skip during a ReplayKit
+        // transition (it transiently resigns active while recording; pausing then
+        // would wedge the recording session).
+        #if os(iOS)
+        let rkActive = PVRecordingManager.shared.isPreparingRecording
+                    || PVRecordingManager.shared.isRecording
+        #else
+        let rkActive = false
+        #endif
+        if !rkActive {
+            core.setPauseEmulation(true)
+        }
+
         ILOG("[INPUT-DIAG] appWillResignActive: isShowingMenu=\(isShowingMenu), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), skinContainer.userInteraction=\(skinContainerView?.isUserInteractionEnabled ?? false), skinHostingControllers=\(skinHostingControllers.count)")
 
         ILOG("[INPUT-DIAG] appWillResignActive: isShowingMenu=\(isShowingMenu), presentedVC=\(String(describing: presentedViewController)), menuPresentationVC=\(String(describing: menuPresentationViewController)), controllerVC=\(controllerViewController != nil), controllerVC.view.userInteraction=\(controllerViewController?.view.isUserInteractionEnabled ?? false), controllerVC.view.superview=\(controllerViewController?.view.superview != nil), controllerVC.view.window=\(controllerViewController?.view.window != nil)")
@@ -3153,13 +3172,9 @@ extension PVEmulatorViewController {
             }
         }
         gameAudio.pauseAudio()
-        // Pause emulation DIRECTLY here, not only as a side effect of showMenu.
-        // showMenu races the Control Center / app-switcher system transition and can
-        // fail to present (leaving the game RUNNING while "backgrounded" — the
-        // reported bug). Pausing the core here guarantees it stops regardless of the
-        // menu; appDidBecomeActive resumes it via setPauseEmulation(isShowingMenu)
-        // when no menu is up. Reached only after the ReplayKit guard above.
-        core.setPauseEmulation(true)
+        // Emulation is already paused above (before the view-state guard) so it stops
+        // on the first background too. showMenu still presents the pause UI;
+        // appDidBecomeActive resumes via setPauseEmulation(isShowingMenu).
         #if os(tvOS)
         /// On tvOS the PS/home button triggers Control Center, which fires resign-active
         /// while the system UI is taking over the foreground. Calling `showMenu` here
