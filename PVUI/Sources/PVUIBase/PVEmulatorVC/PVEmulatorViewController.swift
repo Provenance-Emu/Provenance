@@ -3073,7 +3073,14 @@ extension PVEmulatorViewController {
         }
     }
 
-    @objc func appDidEnterBackground(_: Notification?) {}
+    @objc func appDidEnterBackground(_: Notification?) {
+        // Backstop: guarantee emulation + audio are paused on full background even if
+        // the resign-active path was skipped or raced. appDidBecomeActive resumes via
+        // setPauseEmulation(isShowingMenu) when no pause menu is up.
+        guard core.isOn else { return }
+        core.setPauseEmulation(true)
+        gameAudio.pauseAudio()
+    }
 
     /// Flush battery saves when the app is about to be terminated.
     /// Cores write SRAM/battery data during stopEmulation, so we call it here
@@ -3146,6 +3153,13 @@ extension PVEmulatorViewController {
             }
         }
         gameAudio.pauseAudio()
+        // Pause emulation DIRECTLY here, not only as a side effect of showMenu.
+        // showMenu races the Control Center / app-switcher system transition and can
+        // fail to present (leaving the game RUNNING while "backgrounded" — the
+        // reported bug). Pausing the core here guarantees it stops regardless of the
+        // menu; appDidBecomeActive resumes it via setPauseEmulation(isShowingMenu)
+        // when no menu is up. Reached only after the ReplayKit guard above.
+        core.setPauseEmulation(true)
         #if os(tvOS)
         /// On tvOS the PS/home button triggers Control Center, which fires resign-active
         /// while the system UI is taking over the foreground. Calling `showMenu` here
