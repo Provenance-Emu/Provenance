@@ -1080,6 +1080,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         try gameAudio.setupAudioGraph(for: core)
         try startAudio()
+        // Snapshot the sample rate the audio graph was just built with. For the thin
+        // libretro wrapper the core hasn't loaded the ROM yet (retro_load_game runs in
+        // core.startEmulation() below), so audioSampleRate is still the 44100 fallback
+        // here — the real rate (e.g. o2em 42240/35200 Hz) only becomes known after the
+        // core starts. We rebuild the graph after startEmulation if the rate changed so
+        // the AVAudioSourceNode matches the core's true output rate (otherwise the
+        // producer/consumer rate mismatch causes chronic underruns — the "bassy
+        // square-wave" glitch). No-op for native/thick cores whose rate is already
+        // correct here (rate unchanged → no rebuild).
+        let audioGraphSampleRate = core.audioSampleRate
 
         /// Pause all background services during gameplay via the central registry
         BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
@@ -1093,6 +1103,22 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         await applyPersistedTransferPakIfNeeded()
 
         core.startEmulation()
+
+        // Rebuild the audio graph if the core's real sample rate differs from what the
+        // graph was built with before the ROM loaded (thin libretro wrapper case — see
+        // the snapshot comment above). updateSourceNode() rebuilds the source node from
+        // the now-correct live rate; for cores whose rate was already known this is a
+        // no-op (rate unchanged → skip).
+        let postStartSampleRate = core.audioSampleRate
+        if abs(postStartSampleRate - audioGraphSampleRate) > 1.0 {
+            ILOG("Audio: core sample rate changed after start (\(audioGraphSampleRate) → \(postStartSampleRate) Hz) — rebuilding audio graph")
+            do {
+                try gameAudio.setupAudioGraph(for: core)
+                try startAudio()
+            } catch {
+                ELOG("Audio: failed to rebuild audio graph at corrected sample rate: \(error.localizedDescription)")
+            }
+        }
 
         // Start Live Activity (Dynamic Island / lock screen) for this gameplay session.
         startLiveActivityIfNeeded()

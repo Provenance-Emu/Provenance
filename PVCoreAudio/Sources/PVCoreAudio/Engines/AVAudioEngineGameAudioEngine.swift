@@ -384,6 +384,8 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
             return
         }
 
+        ILOG("Audio: building source node @ \(sd.mSampleRate) Hz, \(sd.mChannelsPerFrame) ch, \(sd.mBitsPerChannel)-bit")
+
         src = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, inputData in
             guard let self = self else { return noErr }
 
