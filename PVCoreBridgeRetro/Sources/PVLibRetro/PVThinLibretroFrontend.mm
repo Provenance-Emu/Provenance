@@ -7032,7 +7032,7 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
         static uint32_t _vkHandoffCount = 0;
         if (_vkHandoffCount < 5 || (_vkHandoffCount % 300 == 0)) {
             ILOG(@"[VK] handoff (copy) frame #%u tex=%p %lux%lu fmt=%lu thread=%@",
-                 _vkHandoffCount, (void *)mtlTexture,
+                 _vkHandoffCount, (__bridge void *)mtlTexture,
                  (unsigned long)[mtlTexture width], (unsigned long)[mtlTexture height],
                  (unsigned long)[mtlTexture pixelFormat],
                  [NSThread isMainThread] ? @"MAIN(!)" : @"emu");
