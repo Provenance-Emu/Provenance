@@ -365,7 +365,16 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             setDefaultOption("ppsspp_internal_resolution", value: "1920x1088")
             setDefaultOption("ppsspp_texture_scaling_level", value: "5x")
             setDefaultOption("ppsspp_ignore_bad_memory_access", value: "enabled")
-            setDefaultOption("ppsspp_fast_memory", value: "enabled")
+            // fast_memory uses a vm_remap-based guest memory map that fails
+            // PPSSPP's MemoryMap_Setup on iOS/tvOS 26+ → the interpreter then
+            // dereferences a bad host base (EXC_BAD_ACCESS in Memory::Read_U32,
+            // with [MEMMAP] "Invalid access" climbing toward 0x10000). The thick
+            // wrapper disables it on 26+ for exactly this reason; mirror that.
+            if #available(iOS 26, tvOS 26, *) {
+                setDefaultOption("ppsspp_fast_memory", value: "disabled")
+            } else {
+                setDefaultOption("ppsspp_fast_memory", value: "enabled")
+            }
             // Seed PSP flash0/font files into System/PSP/ — re-seeds on every launch for tvOS cache recovery.
             seedPSPFlash0Assets()
         }
