@@ -563,7 +563,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// presented drawable. Shared by `willResignActive` (earliest signal; covers
     /// .inactive-only transitions) and `didEnterBackground`. Idempotent.
     private func pauseMetalAndReleasePinnedDrawables() {
-        mtlView?.isPaused = true
+        // Do NOT set `mtlView.isPaused = true` here. That explicit toggle (added by
+        // bb46652050) is the background/resume FREEZE regression: pausing then
+        // unpausing the MTKView routes the first post-resume frame through the
+        // synchronous CA-commit layout path while the layer's surface backing isn't
+        // restored, so nextDrawable blocks on surface acquisition (a wait
+        // allowsNextDrawableTimeout doesn't cover) and wedges the main thread.
+        // At the 3.3.0 baseline there was no toggle and no freeze: iOS auto-pauses the
+        // CADisplayLink while backgrounded, and `draw(in:)`'s `applicationState != .active`
+        // guard blocks any backgrounded draw. We only release pinned drawables here.
 
         // Release the single CAMetalDrawable the app pins across the transition.
         // Both the committed `previousCommandBuffer` (a backgrounded buffer never
@@ -622,14 +630,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         // by bb46652050's explicit unpause — surface-acquisition wait wedges main and
         // allowsNextDrawableTimeout doesn't cover it). By the time this clears the
         // surface is restored and the display link drives draws cleanly.
+        // Do NOT explicitly unpause the MTKView here (see pauseMetalAndReleasePinnedDrawables):
+        // the explicit unpause is the regression that routes the first post-resume frame
+        // through the synchronous CA path. iOS resumes the CADisplayLink itself once the
+        // app is active and the surface is restored. The settle-window gate below stays as
+        // a belt-and-suspenders skip for any synchronous CA-commit draw that races the
+        // surface restore.
         suppressDrawUntilResumeSettled = true
-        if !isPaused {
-            mtlView?.isPaused = false
-        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
             guard let self = self else { return }
             self.suppressDrawUntilResumeSettled = false
-            self.mtlView?.setNeedsDisplay()
             ILOG("[FREEZE] resume settle window elapsed — drawing re-enabled", category: .freeze)
         }
     }
@@ -2316,17 +2326,17 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                         // it looks like "the game runs but the UI is frozen." Pausing the
                         // MTKView is safe without the wait — Metal manages any in-flight
                         // command buffer on its own.
-                        ILOG("[FREEZE] isPaused→true: pausing MTKView without main-thread GPU wait (removed waitUntilCompleted wedge)", category: .freeze)
-                        self.mtlView?.isPaused = true
+                        // Do NOT pause the MTKView. Rendering while the controller is
+                        // paused is already suppressed by draw(in:)'s `!isPaused` guard.
+                        // Explicitly toggling mtlView.isPaused here (and setNeedsDisplay on
+                        // unpause) is part of the background/resume freeze: it routes the
+                        // first post-resume frame onto the synchronous CA-commit path where
+                        // nextDrawable wedges on surface acquisition. Keep the MTKView
+                        // display-link-driven; iOS pauses the link while backgrounded.
+                        ILOG("[FREEZE] controller isPaused→true (draw guard suppresses frames; MTKView left running)", category: .freeze)
                     } else {
-                        // When unpausing, reset the frame count and request a redraw through the proper channels
                         self.frameCount = 0
-                        DLOG("Setting MTKView isPaused = false and requesting redraw")
-                        self.mtlView?.isPaused = false
-
-                        // Request a redraw through proper CADisplayLink/timer mechanisms
-                        // instead of directly calling draw()
-                        self.mtlView?.setNeedsDisplay()
+                        ILOG("[FREEZE] controller isPaused→false (display link drives redraw)", category: .freeze)
                     }
                 }
             } else {
