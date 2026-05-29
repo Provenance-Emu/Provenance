@@ -2252,7 +2252,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             guard oldValue != isPaused else { return }
 
             // Log state change for debugging
-            ILOG("Metal view isPaused changing from \(oldValue) to \(isPaused)")
+            ILOG("[FREEZE] controller isPaused changing from \(oldValue) to \(isPaused)", category: .freeze)
 
 #if !os(visionOS)
             // Set the MTKView's paused state, but only if we have a stable view
@@ -2262,9 +2262,17 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                     guard let self = self else { return }
 
                     if isPaused {
-                        // When pausing, wait for any pending renders to complete first
-                        self.previousCommandBuffer?.waitUntilCompleted()
-                        DLOG("Setting MTKView isPaused = true after waiting for command buffer")
+                        // Do NOT waitUntilCompleted() here. This block runs on the MAIN
+                        // queue, and a committed `previousCommandBuffer` whose presented
+                        // drawable never completes — e.g. presented as the CAMetalLayer
+                        // went off-screen during a background/resume transition — blocks
+                        // the main thread FOREVER. That is the background/resume freeze:
+                        // `isPaused` flips true ~1s after resume, this wait wedges the
+                        // main runloop, and the emulation + audio threads keep running so
+                        // it looks like "the game runs but the UI is frozen." Pausing the
+                        // MTKView is safe without the wait — Metal manages any in-flight
+                        // command buffer on its own.
+                        ILOG("[FREEZE] isPaused→true: pausing MTKView without main-thread GPU wait (removed waitUntilCompleted wedge)", category: .freeze)
                         self.mtlView?.isPaused = true
                     } else {
                         // When unpausing, reset the frame count and request a redraw through the proper channels
