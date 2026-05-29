@@ -69,7 +69,35 @@ import MetalKit
     /// Called from the emulation thread when a Vulkan core has finished rendering
     /// a frame. The texture is backed by MoltenVK's internal Metal resources.
     /// The receiver should blit or display this texture on the next draw call.
+    ///
+    /// - Warning: The passed texture aliases the core's *live* VkImage. The
+    ///   receiver MUST NOT retain it past the call and MUST NOT sample it on
+    ///   another thread — the core may recycle the VkImage on its next frame.
+    ///   For Vulkan cores prefer `didRenderVulkanFrameWithMTLTexture(_:)`, which
+    ///   defines an explicit copy-and-decouple contract that is safe across the
+    ///   emulation/main-thread boundary.
     @objc optional func didRenderFrameWithMTLTexture(_ texture: MTLTexture)
+
+    /// Called from the **emulation thread** when a Vulkan (MoltenVK) core has
+    /// finished a frame and its `vkQueueSubmit` has been waited on (the VkImage
+    /// is GPU-coherent and safe to read on this thread *right now*).
+    ///
+    /// The supplied `texture` aliases the core's live VkImage. Unlike
+    /// `didRenderFrameWithMTLTexture(_:)`, the implementation of this method MUST,
+    /// before returning:
+    ///   1. Copy `texture` into a presenter-owned private `MTLTexture` via a Metal
+    ///      blit on the emulation thread.
+    ///   2. Wait for that blit to complete on the GPU (`waitUntilCompleted`) so the
+    ///      core may safely recycle/realloc its VkImage on the next frame — this is
+    ///      the GPU-side backpressure that prevents a use-after-free of the VkImage
+    ///      while Metal is still sampling it on the main thread.
+    ///   3. Publish the private copy as the texture the main-thread `draw(in:)`
+    ///      path samples, under the same `frontBufferLock` used by the OpenGL path.
+    ///
+    /// This mirrors the proven OpenGL `didRenderFrameOnAlternateThread()` handshake
+    /// (blit the live HW surface into a private texture under `frontBufferLock`,
+    /// then signal `frontBufferCondition`) for the Vulkan→Metal interop path.
+    @objc optional func didRenderVulkanFrameWithMTLTexture(_ texture: MTLTexture)
 }
 
 //public extension PVRenderDelegate {

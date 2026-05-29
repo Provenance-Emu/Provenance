@@ -1083,6 +1083,12 @@ static void thin_vulkan_set_command_buffers(void *handle, uint32_t num_cmd,
     memcpy(bridge->_vulkanPendingCmdBufs, cmd, count * sizeof(VkCommandBuffer));
     bridge->_vulkanPendingCmdBufCount = count;
     os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
+    static uint32_t _vkSetCmdBufCount = 0;
+    if (_vkSetCmdBufCount++ < 5) {
+        ILOG(@"[VK] set_command_buffers #%u num_cmd=%u (stored=%u) thread=%@",
+             _vkSetCmdBufCount, num_cmd, count,
+             [NSThread isMainThread] ? @"MAIN(!)" : @"other");
+    }
 }
 
 static void thin_vulkan_wait_sync_index(void *handle) {
@@ -5974,9 +5980,11 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
          (void *)_vulkanDevice, (void *)_vulkanQueue, _vulkanCoreOwnsDevice);
 
     if (_hwRenderCallback.context_reset) {
-        ILOG(@"ThinFrontend: firing deferred Vulkan context_reset");
+        ILOG(@"[VK] context_reset firing — device=%p queue=%p qfam=%u coreOwnsDevice=%d metalInterop(export=%p mvk=%p)",
+             (void *)_vulkanDevice, (void *)_vulkanQueue, _vulkanQueueFamilyIndex,
+             _vulkanCoreOwnsDevice, (void *)_vkExportMetalObjectsEXT, (void *)_vkGetMTLTextureMVK);
         _hwRenderCallback.context_reset();
-        ILOG(@"ThinFrontend: deferred Vulkan context_reset completed");
+        ILOG(@"[VK] context_reset completed");
     }
 }
 
@@ -6820,6 +6828,13 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     };
 
     VkResult result = _vkQueueSubmit(_vulkanQueue, 1, &submitInfo, frameFence);
+    static uint32_t _vkSubmitCount = 0;
+    if (_vkSubmitCount < 5 || (_vkSubmitCount % 300 == 0)) {
+        ILOG(@"[VK] vkQueueSubmit #%u result=%d cmdBufs=%u signalSem=%d fence=%p thread=%@",
+             _vkSubmitCount, (int)result, count, (signalSem != VK_NULL_HANDLE),
+             (void *)frameFence, [NSThread isMainThread] ? @"MAIN(!)" : @"emu");
+    }
+    _vkSubmitCount++;
 
     // Wait for GPU completion before extracting the MTLTexture.
     // Per-frame fence (preferred): waits only on this specific submission, leaving other
@@ -6998,9 +7013,40 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 
     id renderDelegate = self.renderDelegate;
 
-    // Preferred: PVRenderDelegateMetal (direct Metal texture handoff)
+    // Hand off the VkImage-backed MTLTexture to the Metal presenter.
+    //
+    // This method runs on the EMULATION thread (inside retro_run →
+    // video_refresh), while the presenter's draw(in:) runs on the MAIN/UI
+    // thread. The VkImage we just exported is the core's *live* image — the
+    // core may recycle/realloc it on its very next frame. If the main thread
+    // samples it while the core overwrites it, we get a GPU use-after-free
+    // (the crash mode for Beetle PSX HW / PPSSPP).
+    //
+    // Preferred path: didRenderVulkanFrameWithMTLTexture: copies the live
+    // VkImage into a presenter-owned private texture on THIS (emu) thread and
+    // blocks on GPU completion before returning — so by the time we yield back
+    // to the core, the read of the VkImage is done and the core may recycle it
+    // freely. This mirrors the OpenGL didRenderFrameOnAlternateThread handshake.
+    if ([renderDelegate conformsToProtocol:@protocol(PVRenderDelegateMetal)]
+        && [renderDelegate respondsToSelector:@selector(didRenderVulkanFrameWithMTLTexture:)]) {
+        static uint32_t _vkHandoffCount = 0;
+        if (_vkHandoffCount < 5 || (_vkHandoffCount % 300 == 0)) {
+            ILOG(@"[VK] handoff (copy) frame #%u tex=%p %lux%lu fmt=%lu thread=%@",
+                 _vkHandoffCount, (void *)mtlTexture,
+                 (unsigned long)[mtlTexture width], (unsigned long)[mtlTexture height],
+                 (unsigned long)[mtlTexture pixelFormat],
+                 [NSThread isMainThread] ? @"MAIN(!)" : @"emu");
+        }
+        _vkHandoffCount++;
+        [(id<PVRenderDelegateMetal>)renderDelegate didRenderVulkanFrameWithMTLTexture:mtlTexture];
+        return;
+    }
+
+    // Legacy fallback: zero-copy direct handoff. Only safe for cores that do
+    // not recycle their VkImage between frames; retained for back-compat.
     if ([renderDelegate conformsToProtocol:@protocol(PVRenderDelegateMetal)]
         && [renderDelegate respondsToSelector:@selector(didRenderFrameWithMTLTexture:)]) {
+        WLOG(@"[VK] handoff (legacy zero-copy) — presenter lacks didRenderVulkanFrameWithMTLTexture:; VkImage recycle race possible");
         [(id<PVRenderDelegateMetal>)renderDelegate didRenderFrameWithMTLTexture:mtlTexture];
         return;
     }

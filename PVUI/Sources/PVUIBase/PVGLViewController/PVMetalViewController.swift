@@ -225,6 +225,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// the display link drives draws normally.
     private var suppressDrawUntilResumeSettled = false
 
+    /// Private double-buffered copy targets for Vulkan (MoltenVK) frames.
+    /// `didRenderVulkanFrameWithMTLTexture(_:)` blits the core's live VkImage into
+    /// one of these on the emulation thread (decoupling the core's recyclable
+    /// VkImage from main-thread Metal sampling). Two textures are kept so the
+    /// presenter can sample slot A on the main thread while the emu thread fills
+    /// slot B for the next frame, avoiding a same-texture read/write hazard.
+    private var vulkanCopyTextures: [MTLTexture?] = [nil, nil]
+    /// Index of the slot the next Vulkan frame copy will be written into.
+    private var vulkanCopyWriteIndex: Int = 0
+
 #if !os(macOS) && !targetEnvironment(macCatalyst)
     var  glContext: EAGLContext?
     var  alternateThreadGLContext: EAGLContext?
@@ -364,6 +374,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         if let backingIOSurface = backingIOSurface {
             IOSurfaceDecrementUseCount(backingIOSurface)
         }
+
+        // Release Vulkan frame copy targets so a new game/context starts fresh
+        // (they are reallocated on the first didRenderVulkanFrameWithMTLTexture call).
+        vulkanCopyTextures = [nil, nil]
+        vulkanCopyWriteIndex = 0
 
         // Clean up cached resources
         cachedFlipYBuffer = nil
@@ -2584,21 +2599,28 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
         guard let device = device,
               let commandQueue = commandQueue,
-              let inputTexture = inputTexture,
               let emulatorCore = emulatorCore else {
             ELOG("Missing required resources for direct rendering")
             // Call the recovery method when resources are missing
             recoverFromGPUError()
             return
         }
-        // Guarantee nextDrawable can NEVER block the main thread indefinitely. The
-        // background/resume freeze is main wedged in `currentDrawable → nextDrawable`
-        // (confirmed via Thread-1 backtrace) with zero nil-drawable logs — i.e. the
-        // wait was NOT timing out, so the timeout wasn't live on this layer (it can be
-        // lost if `configureMetalLayer`'s `as? CAMetalLayer` ran before the layer
-        // existed, or MTKView reset it). Asserting it at the call site forces
-        // nextDrawable to return nil under pressure instead of blocking forever; the
-        // nil path below + the resume pool-reset then recover.
+        // Snapshot the input texture under frontBufferLock so we read the latest
+        // copy published by the emulation thread (Vulkan: didRenderVulkanFrameWithMTLTexture;
+        // software cores: updateTextureFromCore). For Vulkan this snapshot is a
+        // presenter-owned private copy whose GPU read already completed, so it is
+        // safe to sample here even as the core renders its next frame.
+        guard let inputTexture = emulatorCore.frontBufferLock.withLock({ self.inputTexture }) else {
+            ELOG("Missing input texture for direct rendering")
+            recoverFromGPUError()
+            return
+        }
+        // Freeze fix: guarantee nextDrawable can NEVER block the main thread
+        // indefinitely. The background/resume freeze was main wedged in
+        // `currentDrawable → nextDrawable` with the timeout not live on the layer.
+        // Asserting it at the call site forces nextDrawable to return nil under
+        // pressure instead of blocking forever; the nil path below + the resume
+        // pool-reset then recover.
         (view.layer as? CAMetalLayer)?.allowsNextDrawableTimeout = true
         guard let drawable = view.currentDrawable else {
             // `nextDrawable` timed out (allowsNextDrawableTimeout) or the pool is
@@ -2641,9 +2663,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         // Check if input texture dimensions match effective dimensions.
         // HW-render cores (Vulkan, OpenGL) manage inputTexture via
-        // didRenderFrameWithMTLTexture: / didRenderFrameOnAlternateThread — don't
+        // didRenderVulkanFrameWithMTLTexture: / didRenderFrameOnAlternateThread — don't
         // overwrite their texture with an empty one sized from screenRect.
-        let isHWRendering = emulatorCore.rendersToOpenGL
+        // NOTE: Must include Vulkan here; otherwise a Vulkan core whose copy
+        // texture extent differs from screenRect would have its frame clobbered
+        // by an empty software texture via updateInputTexture() below.
+        let isHWRendering = emulatorCore.rendersToOpenGL || emulatorCore.rendersToVulkan
         let textureMatchesEffective = inputTexture.width == Int(effectiveScreenRect.width) &&
         inputTexture.height == Int(effectiveScreenRect.height)
 
@@ -3796,11 +3821,18 @@ extension PVMetalViewController: PVRenderDelegateIOSurface {
 /// finished writing the VkImage before this method is invoked. set_image may arrive
 /// before or after set_command_buffers depending on the core.
 extension PVMetalViewController: PVRenderDelegateMetal {
-    /// Zero-copy Vulkan frame delivery: the MoltenVK MTLTexture that backs the
-    /// VkImage is used directly as inputTexture. Triple-buffer fences guarantee
-    /// the core won't overwrite this image until 2 frames later, by which time
-    /// our Metal present has completed. This eliminates one GPU blit per frame.
-    func didRenderFrameWithMTLTexture(_ texture: MTLTexture) {
+    /// Zero-copy Vulkan frame delivery (LEGACY / fallback): the MoltenVK MTLTexture
+    /// that backs the VkImage is used directly as `inputTexture`.
+    ///
+    /// - Warning: This path is NOT safe for cores that recycle/realloc their VkImage
+    ///   between frames (e.g. Beetle PSX HW, PPSSPP). The frontend's triple-buffer
+    ///   fences only serialize the emulation thread's own GPU submissions — they do
+    ///   NOT gate this presenter's main-thread `draw(in:)` sampling, so the core can
+    ///   overwrite the VkImage while Metal is mid-sample (GPU use-after-free).
+    ///   `PVThinLibretroFrontend` now calls `didRenderVulkanFrameWithMTLTexture(_:)`
+    ///   instead; this method is retained only for back-compat with any caller that
+    ///   does not yet route through the copy path.
+    @objc func didRenderFrameWithMTLTexture(_ texture: MTLTexture) {
         backingMTLTexture = texture
 
         emulatorCore?.frontBufferLock.withLock {
@@ -3810,6 +3842,115 @@ extension PVMetalViewController: PVRenderDelegateMetal {
         emulatorCore?.frontBufferCondition.withLock {
             emulatorCore?.isFrontBufferReady = true
             emulatorCore?.frontBufferCondition.signal()
+        }
+    }
+
+    /// Safe Vulkan frame delivery: copy the core's live VkImage-backed MTLTexture
+    /// into a presenter-owned private texture on the **emulation thread**, then
+    /// publish that private copy for the main-thread `draw(in:)` path to sample.
+    ///
+    /// This mirrors the OpenGL `didRenderFrameOnAlternateThread()` handshake (blit
+    /// the live HW surface into a private texture under `frontBufferLock`, then
+    /// signal `frontBufferCondition`). The key difference from the zero-copy path is
+    /// the `waitUntilCompleted()` on the blit: it guarantees the GPU has finished
+    /// reading the core's VkImage before we return, so the core may freely recycle
+    /// or reallocate that VkImage on its next frame without racing Metal's present.
+    @objc func didRenderVulkanFrameWithMTLTexture(_ texture: MTLTexture) {
+        guard let emulatorCore = emulatorCore else { return }
+
+        let srcWidth = texture.width
+        let srcHeight = texture.height
+        guard srcWidth > 0, srcHeight > 0 else {
+            WLOG("[VK] didRenderVulkanFrame: source texture has zero dimension (\(srcWidth)x\(srcHeight)) — skipping frame")
+            // Never leave the emu thread blocked: signal so the run loop proceeds.
+            emulatorCore.frontBufferCondition.withLock {
+                emulatorCore.frontBufferCondition.signal()
+            }
+            return
+        }
+
+        // ---- Copy WITHOUT holding frontBufferLock ----
+        // The destination slot is emu-private (the main thread only ever samples
+        // the already-published `inputTexture`, never the slot we write here), and
+        // the alloc + blit + GPU completion wait must NOT hold frontBufferLock —
+        // otherwise the emu loop would hold that lock across a GPU wait every frame
+        // and starve the main thread's directRender snapshot (the emu-loop-starves-
+        // main-thread gotcha). With 2 slots, write[w] and the published slot are
+        // always distinct, so no lock is needed for the copy itself.
+        guard let device = self.device, let commandQueue = self.commandQueue else {
+            ELOG("[VK] didRenderVulkanFrame: device/commandQueue nil — cannot copy frame")
+            emulatorCore.frontBufferCondition.withLock { emulatorCore.frontBufferCondition.signal() }
+            return
+        }
+
+        let writeIndex = self.vulkanCopyWriteIndex
+
+        // Allocate (or reallocate on size/format change) the destination copy for
+        // the slot we're about to write. Private, shader-readable, matching format.
+        var dest = self.vulkanCopyTextures[writeIndex]
+        if dest == nil
+            || dest?.width != srcWidth
+            || dest?.height != srcHeight
+            || dest?.pixelFormat != texture.pixelFormat {
+            let descriptor = MTLTextureDescriptor.texture2DDescriptor(
+                pixelFormat: texture.pixelFormat,
+                width: srcWidth,
+                height: srcHeight,
+                mipmapped: false)
+            descriptor.usage = [.shaderRead, .renderTarget]
+            descriptor.storageMode = .private
+            guard let newDest = device.makeTexture(descriptor: descriptor) else {
+                ELOG("[VK] didRenderVulkanFrame: failed to allocate copy texture \(srcWidth)x\(srcHeight) fmt=\(texture.pixelFormat.rawValue)")
+                emulatorCore.frontBufferCondition.withLock { emulatorCore.frontBufferCondition.signal() }
+                return
+            }
+            dest = newDest
+            self.vulkanCopyTextures[writeIndex] = newDest
+            ILOG("[VK] didRenderVulkanFrame: allocated copy slot \(writeIndex) \(srcWidth)x\(srcHeight) fmt=\(texture.pixelFormat.rawValue)")
+        }
+
+        guard let destTexture = dest,
+              let commandBuffer = commandQueue.makeCommandBuffer(),
+              let blit = commandBuffer.makeBlitCommandEncoder() else {
+            ELOG("[VK] didRenderVulkanFrame: failed to create blit command buffer")
+            emulatorCore.frontBufferCondition.withLock { emulatorCore.frontBufferCondition.signal() }
+            return
+        }
+
+        blit.copy(from: texture,
+                  sourceSlice: 0, sourceLevel: 0,
+                  sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
+                  sourceSize: MTLSize(width: srcWidth, height: srcHeight, depth: 1),
+                  to: destTexture,
+                  destinationSlice: 0, destinationLevel: 0,
+                  destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        blit.endEncoding()
+        commandBuffer.commit()
+        // Backpressure: block the emulation thread until the GPU has finished
+        // reading the core's VkImage. After this returns the core may recycle it.
+        // (Metal cannot hazard-track the core's VkImage against the core's *next*
+        // Vulkan write, so a CPU-side completion wait is required here — unlike the
+        // OpenGL path which only needs waitUntilScheduled on a hazard-tracked surface.)
+        commandBuffer.waitUntilCompleted()
+
+        if let error = commandBuffer.error {
+            ELOG("[VK] didRenderVulkanFrame: blit GPU error: \(error)")
+            emulatorCore.frontBufferCondition.withLock { emulatorCore.frontBufferCondition.signal() }
+            return
+        }
+
+        // ---- Publish under frontBufferLock (pointer assignment only) ----
+        emulatorCore.frontBufferLock.withLock {
+            self.inputTexture = destTexture
+            self.vulkanCopyWriteIndex = (writeIndex + 1) % self.vulkanCopyTextures.count
+        }
+
+        VLOG("[VK] didRenderVulkanFrame: published copy slot \(writeIndex) \(srcWidth)x\(srcHeight)")
+
+        // Signal the presenter that a fresh frame is ready.
+        emulatorCore.frontBufferCondition.withLock {
+            emulatorCore.isFrontBufferReady = true
+            emulatorCore.frontBufferCondition.signal()
         }
     }
 }
