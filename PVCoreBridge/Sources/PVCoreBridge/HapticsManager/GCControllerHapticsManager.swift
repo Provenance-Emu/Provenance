@@ -70,9 +70,12 @@ public final class GCControllerHapticsManager {
     /// independent `rumbleDeviceEnabled` pref.
     private var deviceHapticEngine: CHHapticEngine?
 
-    /// Cached `rumbleEnabled && rumbleDeviceEnabled` so the device path doesn't read
-    /// UserDefaults per rumble. Independent of the controller-motor toggle.
-    private var _deviceRumbleEnabled: Bool = true
+    /// Cached device-body intensity multiplier, gated on `rumbleEnabled &&
+    /// rumbleDeviceEnabled` and scaled by `controllerHapticIntensity`. Independent
+    /// of the controller-MOTOR toggle (`rumbleControllerEnabled`) and of
+    /// `_cachedIntensityMultiplier`, so disabling controller motors does not silence
+    /// the device body and vice-versa. 0 when device rumble is disabled.
+    private var _cachedDeviceIntensityMultiplier: Float = 1.0
     #endif
 
     /// Per-system haptic tuning profile. Defaults to `.generic` until a core sets it.
@@ -248,10 +251,13 @@ public final class GCControllerHapticsManager {
         // `hapticFeedback` controls on-screen button feedback and must not silence game rumble.
         let rumbleEnabled = UserDefaults.standard.object(forKey: "rumbleEnabled") as? Bool ?? true
         #if os(iOS) && !targetEnvironment(macCatalyst)
-        // The device-body taptic has its OWN toggle, independent of the controller-motor
-        // one, so a user can keep the (old thin) motor-only feel by disabling it.
+        // The device-body taptic is INDEPENDENT of the controller-motor toggle: it is
+        // gated only on the master `rumbleEnabled` + its own `rumbleDeviceEnabled`,
+        // scaled by the shared `controllerHapticIntensity`. So disabling controller
+        // motors does not silence the device body (and vice-versa).
         let deviceEnabled = UserDefaults.standard.object(forKey: "rumbleDeviceEnabled") as? Bool ?? true
-        _deviceRumbleEnabled = rumbleEnabled && deviceEnabled
+        let deviceStored = UserDefaults.standard.object(forKey: "controllerHapticIntensity") as? Double ?? 1.0
+        _cachedDeviceIntensityMultiplier = (rumbleEnabled && deviceEnabled) ? Float(max(0.0, min(1.0, deviceStored))) : 0
         #endif
         let controllerEnabled = UserDefaults.standard.object(forKey: "rumbleControllerEnabled") as? Bool ?? true
         guard rumbleEnabled && controllerEnabled else {
@@ -465,7 +471,15 @@ public final class GCControllerHapticsManager {
         }
 
         let intensity = max(0, min(1, intensityMultiplier))
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        let deviceIntensity = max(0, min(1, _cachedDeviceIntensityMultiplier))
+        // Bail only when BOTH the controller motor and the device body are silent —
+        // otherwise a device-only configuration (controller motors off) would never
+        // reach the device block below.
+        guard intensity > 0 || deviceIntensity > 0 else { return }
+        #else
         guard intensity > 0 else { return }
+        #endif
 
         let controllerType = detectControllerType(controller)
         switch controllerType {
@@ -499,8 +513,8 @@ public final class GCControllerHapticsManager {
         // user prefs — unlike the thick wrapper's bespoke path, which bypassed them.
         // iOS-only: tvOS/Catalyst have no device taptic.
         #if os(iOS) && !targetEnvironment(macCatalyst)
-        if player == 0, _deviceRumbleEnabled {
-            playDeviceBodyEvent(intensity: max(scaledLow, scaledHigh) * intensity,
+        if player == 0, deviceIntensity > 0 {
+            playDeviceBodyEvent(intensity: max(scaledLow, scaledHigh) * deviceIntensity,
                                 sharpness: systemProfile.sharpness,
                                 duration: continuousDuration)
         }
