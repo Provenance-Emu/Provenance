@@ -196,8 +196,6 @@ static bool should_apply_shoulder_mapping(GCController *controller) {
 #if TARGET_OS_IOS && !TARGET_OS_TV
 #define IPHONE_RUMBLE_AVAIL API_AVAILABLE(ios(14.0))
 static CHHapticEngine *deviceHapticEngine IPHONE_RUMBLE_AVAIL;
-static id<CHHapticPatternPlayer> deviceWeakPlayer IPHONE_RUMBLE_AVAIL;
-static id<CHHapticPatternPlayer> deviceStrongPlayer IPHONE_RUMBLE_AVAIL;
 #define MFI_RUMBLE_AVAIL API_AVAILABLE(ios(14.0), tvos(14.0))
 #define MFI_WEAK_RUMBLE 0.5f
 static unsigned mfi_rumble_gain[MAX_MFI_CONTROLLERS];
@@ -341,60 +339,11 @@ static void apple_gamecontroller_device_haptics_setup(void) IPHONE_RUMBLE_AVAIL
     [deviceHapticEngine startAndReturnError:&error];
 }
 
-static id<CHHapticPatternPlayer> apple_gamecontroller_device_haptics_create_player(float intensity) IPHONE_RUMBLE_AVAIL
-{
-    NSError *error;
-    if (!CHHapticEngine.capabilitiesForHardware.supportsHaptics)
-        return nil;
-    apple_gamecontroller_device_haptics_setup();
-    if (!deviceHapticEngine)
-        return nil;
-
-    CHHapticEventParameter *intense;
-    CHHapticEvent *event;
-    CHHapticPattern *pattern;
-    NSError *patternError;
-    CHHapticEventParameter *sharp;
-
-    intense = [[CHHapticEventParameter alloc]
-               initWithParameterID:CHHapticEventParameterIDHapticIntensity
-               value:intensity];
-    sharp   = [[CHHapticEventParameter alloc]
-               initWithParameterID:CHHapticEventParameterIDHapticSharpness
-               value:1.0];
-    event   = [[CHHapticEvent alloc]
-               initWithEventType:CHHapticEventTypeHapticContinuous
-               parameters:[NSArray arrayWithObjects:intense, sharp, nil]
-               relativeTime:0
-               duration:GCHapticDurationInfinite];
-    pattern = [[CHHapticPattern alloc]
-               initWithEvents:[NSArray arrayWithObject:event]
-               parameters:[[NSArray alloc] init]
-               error:&patternError];
-
-    if (patternError)
-        return nil;
-
-    id<CHHapticPatternPlayer> player = [deviceHapticEngine createPlayerWithPattern:pattern error:&error];
-    if (error)
-        return nil;
-    [player stopAtTime:0 error:&error];
-    return player;
-}
-
-static id<CHHapticPatternPlayer> apple_gamecontroller_device_haptics_strong_player(void) IPHONE_RUMBLE_AVAIL
-{
-    if (!deviceStrongPlayer)
-        deviceStrongPlayer = apple_gamecontroller_device_haptics_create_player(1.0f);
-    return deviceStrongPlayer;
-}
-
-static id<CHHapticPatternPlayer> apple_gamecontroller_device_haptics_weak_player(void) IPHONE_RUMBLE_AVAIL
-{
-    if (!deviceWeakPlayer)
-        deviceWeakPlayer = apple_gamecontroller_device_haptics_create_player(0.7f);
-    return deviceWeakPlayer;
-}
+// The bespoke device-body haptic players (create/strong/weak) were removed:
+// device-body vibration is now driven by the unified GCControllerHapticsManager
+// (see apple_gamecontroller_joypad_set_rumble → pv_retroarch_rumble_via_helper),
+// which honors the per-system profile + user prefs for both wrappers.
+// apple_gamecontroller_device_haptics_setup() is retained — still used during init.
 
 static void apple_gamecontroller_joypad_setup_haptics(GCController *controller) MFI_RUMBLE_AVAIL
 {
@@ -1633,34 +1582,13 @@ static bool apple_gamecontroller_joypad_set_rumble(unsigned pad,
 #if TARGET_OS_IOS && !TARGET_OS_TV
     if (@available(iOS 14, *))
     {
-        settings_t *settings            = config_get_ptr();
-        bool enable_device_vibration    = settings->bools.enable_device_vibration;
-
-        if (enable_device_vibration && pad == 0)
-        {
-            NSError *error;
-            id<CHHapticPatternPlayer> player = (type == RETRO_RUMBLE_STRONG ?
-                                                apple_gamecontroller_device_haptics_strong_player() :
-                                                apple_gamecontroller_device_haptics_weak_player());
-            if (player)
-            {
-                if (strength == 0)
-                    [player stopAtTime:0 error:&error];
-                else
-                {
-                    float str = (float)strength / 65535.0f;
-                    unsigned gain = (pad < MAX_MFI_CONTROLLERS) ? mfi_rumble_gain[pad] : 100;
-                    str *= (float)gain / 100.0f;
-                    CHHapticDynamicParameter *param = [[CHHapticDynamicParameter alloc]
-                       initWithParameterID:CHHapticDynamicParameterIDHapticIntensityControl
-                                                       value:str
-                                                       relativeTime:0];
-                    [player sendParameters:[NSArray arrayWithObject:param] atTime:0 error:&error];
-                    if (!error)
-                        [player startAtTime:0 error:&error];
-                }
-            }
-        }
+        // Device-body vibration is now driven by the unified
+        // GCControllerHapticsManager (via pv_retroarch_rumble_via_helper below),
+        // which fires the device Taptic Engine ALONGSIDE the controller motor while
+        // honoring the per-system rumble profile + user prefs (rumbleEnabled /
+        // rumbleDeviceEnabled / controllerHapticIntensity). The old bespoke
+        // enable_device_vibration path was removed to avoid a double buzz now that
+        // the manager drives the device body for BOTH wrappers (thin + thick).
 
         // Prefer the unified GCControllerHapticsManager pipeline (timing-based
         // burst classification, per-system profiles, tvOS support).

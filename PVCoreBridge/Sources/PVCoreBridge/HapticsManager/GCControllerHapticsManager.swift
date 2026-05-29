@@ -63,6 +63,18 @@ public final class GCControllerHapticsManager {
     /// Maps player index → (locality → engine).
     private var engineMap: [Int: [GCHapticsLocality: CHHapticEngine]] = [:]
 
+    #if os(iOS) && !targetEnvironment(macCatalyst)
+    /// Device-body Taptic engine, fired ALONGSIDE the controller motor (player 0) to
+    /// match the thick wrapper's richer feel. Created lazily and reused; the device
+    /// body has no taptic on tvOS/Catalyst, so this is iOS-only. Gated by the
+    /// independent `rumbleDeviceEnabled` pref.
+    private var deviceHapticEngine: CHHapticEngine?
+
+    /// Cached `rumbleEnabled && rumbleDeviceEnabled` so the device path doesn't read
+    /// UserDefaults per rumble. Independent of the controller-motor toggle.
+    private var _deviceRumbleEnabled: Bool = true
+    #endif
+
     /// Per-system haptic tuning profile. Defaults to `.generic` until a core sets it.
     private var systemProfile: RumbleSystemProfile = .generic
 
@@ -235,6 +247,12 @@ public final class GCControllerHapticsManager {
         // Gate controller rumble on the dedicated Tier 4 toggles only.
         // `hapticFeedback` controls on-screen button feedback and must not silence game rumble.
         let rumbleEnabled = UserDefaults.standard.object(forKey: "rumbleEnabled") as? Bool ?? true
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        // The device-body taptic has its OWN toggle, independent of the controller-motor
+        // one, so a user can keep the (old thin) motor-only feel by disabling it.
+        let deviceEnabled = UserDefaults.standard.object(forKey: "rumbleDeviceEnabled") as? Bool ?? true
+        _deviceRumbleEnabled = rumbleEnabled && deviceEnabled
+        #endif
         let controllerEnabled = UserDefaults.standard.object(forKey: "rumbleControllerEnabled") as? Bool ?? true
         guard rumbleEnabled && controllerEnabled else {
             _cachedIntensityMultiplier = 0
@@ -475,6 +493,19 @@ public final class GCControllerHapticsManager {
                               sharpness: systemProfile.sharpness)
         }
 
+        // Device-body taptic, fired ALONGSIDE the controller motor (player 0 only,
+        // matching the thick wrapper) for the richer feel users expect from N64 etc.
+        // Routed through the central manager so it honors the per-system profile +
+        // user prefs — unlike the thick wrapper's bespoke path, which bypassed them.
+        // iOS-only: tvOS/Catalyst have no device taptic.
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        if player == 0, _deviceRumbleEnabled {
+            playDeviceBodyEvent(intensity: max(scaledLow, scaledHigh) * intensity,
+                                sharpness: systemProfile.sharpness,
+                                duration: continuousDuration)
+        }
+        #endif
+
         // For finite one-shot rumbles that don't call stopRumble(), the CHHapticEngine
         // stops automatically after `duration` seconds — but rumbleStartTimes[player]
         // would remain set indefinitely, causing the next burst to be misclassified.
@@ -527,6 +558,14 @@ public final class GCControllerHapticsManager {
         let fallbackIntensity = playerLastFallbackIntensity.removeValue(forKey: player)
         #else
         playerLastFallbackIntensity.removeValue(forKey: player)
+        #endif
+
+        // Stop the device-body taptic (player 0) on burst end, regardless of whether
+        // controller engines exist.
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        if player == 0 {
+            deviceHapticEngine?.stop(completionHandler: nil)
+        }
         #endif
 
         guard let engines = engineMap[player], !engines.isEmpty else {
@@ -656,6 +695,10 @@ public final class GCControllerHapticsManager {
                 engine.stop(completionHandler: nil)
             }
         }
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        // Device-body engine restarts lazily via playDeviceBodyEvent() on the next rumble.
+        deviceHapticEngine?.stop(completionHandler: nil)
+        #endif
         VLOG("[GCHaptics] All engines stopped (app backgrounded)")
     }
 
@@ -792,6 +835,45 @@ public final class GCControllerHapticsManager {
             ELOG("[GCHaptics] Failed to play haptic event: \(error)")
         }
     }
+
+    #if os(iOS) && !targetEnvironment(macCatalyst)
+    /// Fires a continuous haptic on the DEVICE BODY's Taptic Engine, mirroring
+    /// `playEvent` but on a lazily-created, reused device engine. Played alongside
+    /// the controller motor (player 0) to match the thick wrapper's feel. Created on
+    /// first use; `stopRumble`/`stopAllEngines` stop it. Safe no-op when the device
+    /// has no haptics hardware. Failures are isolated (logged, never thrown).
+    private func playDeviceBodyEvent(intensity: Float, sharpness: Float, duration: TimeInterval) {
+        guard intensity > 0 else { return }
+        guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
+        do {
+            if deviceHapticEngine == nil {
+                deviceHapticEngine = try CHHapticEngine()
+                deviceHapticEngine?.isAutoShutdownEnabled = true
+            }
+            guard let engine = deviceHapticEngine else { return }
+            try engine.start()
+
+            let clampedIntensity = max(0.01, min(1.0, intensity))
+            let clampedSharpness = max(0.0, min(1.0, sharpness))
+            let clampedDuration = max(0.05, duration)
+
+            let event = CHHapticEvent(
+                eventType: .hapticContinuous,
+                parameters: [
+                    CHHapticEventParameter(parameterID: .hapticIntensity, value: clampedIntensity),
+                    CHHapticEventParameter(parameterID: .hapticSharpness, value: clampedSharpness)
+                ],
+                relativeTime: 0,
+                duration: clampedDuration
+            )
+            let pattern = try CHHapticPattern(events: [event], parameters: [])
+            let player = try engine.makePlayer(with: pattern)
+            try player.start(atTime: CHHapticTimeImmediate)
+        } catch {
+            ELOG("[GCHaptics] Failed to play device-body haptic: \(error)")
+        }
+    }
+    #endif
 
     // MARK: - Controller Notifications
 
