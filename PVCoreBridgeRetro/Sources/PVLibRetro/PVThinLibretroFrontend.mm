@@ -2770,7 +2770,7 @@ static bool thin_environment(unsigned cmd, void *data) {
             dlStatus && ![dlStatus isEqualToString:NSURLUbiquitousItemDownloadingStatusCurrent];
         if (needsDownload || sz == 0) {
             ILOG(@"ThinFrontend: content not materialized — requesting iCloud download for %@", romPath);
-            [fm startDownloadingUbiquitousItemAtPath:romPath error:nil];
+            [fm startDownloadingUbiquitousItemAtURL:romURL error:nil];
             // Block the LOAD phase (not the frame loop) up to 30s for materialization.
             CFTimeInterval t0 = CACurrentMediaTime();
             while (CACurrentMediaTime() - t0 < 30.0) {
