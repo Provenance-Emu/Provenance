@@ -591,6 +591,21 @@ typedef struct PVThinLibretroSymbols {
     /// (or 0 when the frontend created the device).
     uint32_t _vulkanQueueFamilyIndex;
 
+    /// Private throwaway CAMetalLayer + the VkSurfaceKHR created from it, handed to
+    /// the core's create_device. The libretro Vulkan contract (and PPSSPP in
+    /// particular) require a NON-null VkSurfaceKHR: PPSSPP's create_device →
+    /// VulkanContext::ReinitSurface → ChooseQueue queries it with the UNWRAPPED
+    /// vkGetPhysicalDeviceSurfaceFormatsKHR (its own vkCreate*SurfaceKHR is hooked to
+    /// return this stored surface, but the format query hits MoltenVK directly) —
+    /// VK_NULL_HANDLE → MoltenVK derefs a null MVKSurface → crash. We render offscreen
+    /// (the core's "swapchain" is faked → set_image → our copy pool; it never
+    /// presents), so this surface exists only to satisfy queue/format negotiation.
+    /// Both must outlive create_device (the core's vkDestroySurfaceKHR is a no-op and
+    /// it may ReinitSurface again on resolution change), so we hold them to teardown.
+    /// The layer is never attached to a view — MoltenVK freely mutates it.
+    CAMetalLayer *_vulkanSurfaceLayer;
+    VkSurfaceKHR _vulkanCoreSurface;
+
     // Per-frame Vulkan state set by the core callbacks
     VkSemaphore _vulkanSignalSemaphore;        // set by thin_vulkan_set_signal_semaphore
     VkImage _vulkanCurrentVkImage;             // set by thin_vulkan_set_image (VkImage only; no pNext copy)
@@ -2572,7 +2587,7 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     ILOG(@"[GLES] made per-render-thread GL context current (tid=%p ctx=%p)",
-         (void *)pthread_self(), (void *)_coreThreadGLContext);
+         (void *)pthread_self(), (__bridge void *)_coreThreadGLContext);
 }
 
 /// Framebuffer resolver, dispatched by thread identity (see thin_hw_get_current_framebuffer).
@@ -6486,6 +6501,20 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 }
 
 - (void)destroyVulkanInstance {
+    // Destroy the private core surface BEFORE the instance that owns it. The core's
+    // own vkDestroySurfaceKHR is a no-op (it never frees what we passed), so we own
+    // teardown here. Resolve the entry point dynamically (bundled vulkan.h is v17).
+    if (_vulkanCoreSurface != VK_NULL_HANDLE && _vulkanInstance && _vkGetInstanceProcAddr) {
+        typedef void (*PFN_pvDestroySurfaceKHR)(VkInstance, VkSurfaceKHR, const void *);
+        PFN_pvDestroySurfaceKHR destroySurface = (PFN_pvDestroySurfaceKHR)
+            _vkGetInstanceProcAddr(_vulkanInstance, "vkDestroySurfaceKHR");
+        if (destroySurface) {
+            destroySurface(_vulkanInstance, _vulkanCoreSurface, NULL);
+        }
+        _vulkanCoreSurface = VK_NULL_HANDLE;
+    }
+    _vulkanSurfaceLayer = nil;
+
     if (_vulkanInstance && _vkDestroyInstance) {
         _vkDestroyInstance(_vulkanInstance, NULL);
         _vulkanInstance = NULL;
@@ -6816,15 +6845,61 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 
     const char *requiredExtensions[] = { "VK_EXT_metal_objects" };
 
-    ILOG(@"ThinFrontend: invoking core create_device(instance=%p gpu=%p metal_objects=%s)",
+    /// Create the VkSurfaceKHR the core's create_device needs (see the
+    /// _vulkanCoreSurface ivar doc). We pass a REAL Metal surface built from a
+    /// private throwaway CAMetalLayer — mirroring RetroArch's proven path — rather
+    /// than VK_NULL_HANDLE (PPSSPP asserts/crashes on null) or a headless surface
+    /// (MoltenVK's headless format list is implementation-defined and may be empty,
+    /// which would just move the crash to the next line). The bundled vulkan.h is
+    /// VK_HEADER_VERSION 17, which predates VK_EXT_metal_surface, so define the
+    /// (ABI-stable) struct + enum locally and resolve the entry point dynamically.
+    if (_vulkanCoreSurface == VK_NULL_HANDLE) {
+        enum { PV_VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT = 1000217000 };
+        typedef struct {
+            VkStructureType sType;
+            const void *pNext;
+            uint32_t flags;          // VkMetalSurfaceCreateFlagsEXT (reserved, 0)
+            const void *pLayer;      // const CAMetalLayer *
+        } PVVkMetalSurfaceCreateInfoEXT;
+        typedef VkResult (*PFN_pvCreateMetalSurfaceEXT)(
+            VkInstance, const PVVkMetalSurfaceCreateInfoEXT *, const void *, VkSurfaceKHR *);
+        PFN_pvCreateMetalSurfaceEXT createMetalSurface = (PFN_pvCreateMetalSurfaceEXT)
+            realGetInstanceProcAddr(_vulkanInstance, "vkCreateMetalSurfaceEXT");
+        if (createMetalSurface) {
+            if (!_vulkanSurfaceLayer) {
+                _vulkanSurfaceLayer = [CAMetalLayer layer];   // private; never attached to a view
+            }
+            PVVkMetalSurfaceCreateInfoEXT metalInfo = {
+                .sType = (VkStructureType)PV_VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT,
+                .pNext = NULL,
+                .flags = 0,
+                .pLayer = (__bridge const void *)_vulkanSurfaceLayer,
+            };
+            VkSurfaceKHR surface = VK_NULL_HANDLE;
+            VkResult sres = createMetalSurface(_vulkanInstance, &metalInfo, NULL, &surface);
+            if (sres == VK_SUCCESS && surface != VK_NULL_HANDLE) {
+                _vulkanCoreSurface = surface;
+                ILOG(@"ThinFrontend: created private Metal VkSurfaceKHR=%p for core "
+                     @"queue/format negotiation (offscreen — never presented)", (void *)surface);
+            } else {
+                WLOG(@"ThinFrontend: vkCreateMetalSurfaceEXT failed (result=%d) — passing "
+                     @"VK_NULL_HANDLE; cores that require a surface (PPSSPP) will crash", sres);
+            }
+        } else {
+            WLOG(@"ThinFrontend: vkCreateMetalSurfaceEXT unavailable — passing VK_NULL_HANDLE "
+                 @"(PPSSPP will crash in ChooseQueue)");
+        }
+    }
+
+    ILOG(@"ThinFrontend: invoking core create_device(instance=%p gpu=%p metal_objects=%s surface=%p)",
          (void *)_vulkanInstance, (void *)_vulkanPhysicalDevice,
-         metalObjectsSupported ? "yes" : "MISSING");
+         metalObjectsSupported ? "yes" : "MISSING", (void *)_vulkanCoreSurface);
 
     bool ok = _vulkanNegotiationInterface->create_device(
         &vkCtx,
         _vulkanInstance,
         _vulkanPhysicalDevice,
-        VK_NULL_HANDLE,              // no surface — headless
+        _vulkanCoreSurface,          // real Metal surface (offscreen); core queries but never presents
         realGetInstanceProcAddr,
         requiredExtensions, 1,
         NULL, 0,                     // no required device layers from frontend
