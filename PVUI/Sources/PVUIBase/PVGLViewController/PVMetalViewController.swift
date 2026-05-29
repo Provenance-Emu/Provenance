@@ -215,6 +215,16 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// After this many consecutive nil drawables, reset the pool (see `resetDrawablePoolIfWedged`).
     private let wedgedPoolNilThreshold = 3
 
+    /// Set briefly on resume to suppress drawing while the CAMetalLayer's surface
+    /// backing is being restored. The explicit MTKView unpause on `didBecomeActive`
+    /// (introduced by bb46652050) routes the first post-resume frame through the
+    /// synchronous CA-commit layout path, where `nextDrawable` blocks on SURFACE
+    /// ACQUISITION — a wait `allowsNextDrawableTimeout` does NOT cover, so it hangs
+    /// the main thread forever. Skipping draws for one short settle window keeps that
+    /// wait off the main thread; by the time it clears, the surface is restored and
+    /// the display link drives draws normally.
+    private var suppressDrawUntilResumeSettled = false
+
 #if !os(macOS) && !targetEnvironment(macCatalyst)
     var  glContext: EAGLContext?
     var  alternateThreadGLContext: EAGLContext?
@@ -606,8 +616,21 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             consecutiveNilDrawables = 0
         }
 
+        // Suppress drawing for one short settle window so the first post-resume frame
+        // does NOT acquire a drawable on the synchronous CA-commit path while the
+        // layer's surface backing is still being restored (the regression introduced
+        // by bb46652050's explicit unpause — surface-acquisition wait wedges main and
+        // allowsNextDrawableTimeout doesn't cover it). By the time this clears the
+        // surface is restored and the display link drives draws cleanly.
+        suppressDrawUntilResumeSettled = true
         if !isPaused {
             mtlView?.isPaused = false
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+            guard let self = self else { return }
+            self.suppressDrawUntilResumeSettled = false
+            self.mtlView?.setNeedsDisplay()
+            ILOG("[FREEZE] resume settle window elapsed — drawing re-enabled", category: .freeze)
         }
     }
 #endif
@@ -2540,6 +2563,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     private func directRender(in view: MTKView) {
+        // During the brief resume settle window, skip drawing entirely so the
+        // first post-resume frame never calls `currentDrawable` while the layer's
+        // surface backing is still being restored — that nextDrawable wait blocks on
+        // surface acquisition (not pool pressure), which allowsNextDrawableTimeout
+        // does NOT cover, and on the synchronous CA-commit path it wedges the main
+        // thread. See `suppressDrawUntilResumeSettled` (bb46652050 regression).
+        if suppressDrawUntilResumeSettled {
+            return
+        }
         guard let device = device,
               let commandQueue = commandQueue,
               let inputTexture = inputTexture,
