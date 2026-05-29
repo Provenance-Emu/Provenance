@@ -629,8 +629,20 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
-        // Handle Metal cores (most common)
-        if let metalVC = gpuViewController as? PVMetalViewController {
+        // PPSSPP is a viewport core hosted INSIDE a PVMetalViewController but it does
+        // NOT scale internally. It must be checked BEFORE the Metal branch — otherwise
+        // `applyFrameToMetal` wins and applies a no-op frame to PPSSPP's own overlaid
+        // view, leaving the scaling change to only appear after a device rotation. This
+        // mirrors `applyFrameToGPUView`, which also checks the viewport bridge first.
+        if coreLetterboxesInternally,
+           let viewport = core.bridge as? EmulatorCoreViewportPositioning,
+           let gameScreenView = gpuViewController.view {
+            applyFrameToRetroArch(containerFrame, gameScreenView: gameScreenView, viewport: viewport)
+            #if !os(tvOS)
+            refreshVirtualMouseLayout()
+            #endif
+        } else if let metalVC = gpuViewController as? PVMetalViewController {
+            // Handle Metal cores (most common)
             applyFrameToMetal(containerFrame, metalVC: metalVC)
             #if !os(tvOS)
             refreshVirtualMouseLayout()
@@ -643,7 +655,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             refreshVirtualMouseLayout()
             #endif
         }
-        // RetroArch cores handle scaling internally via the viewport bridge
+        // Real RetroArch cores handle scaling internally via the viewport bridge
     }
 
     // MARK: - Frame Application (Simplified)
@@ -690,6 +702,15 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         #endif
     }
 
+    /// PPSSPP conforms to `EmulatorCoreViewportPositioning` but, unlike thin/thick
+    /// RetroArch, does NOT apply the app's `ScalingMode` itself — it aspect-fits its
+    /// native PSP framebuffer into whatever view rect it is given. So PPSSPP needs the
+    /// scaling mode pre-applied to its frame, whereas real RetroArch cores must keep
+    /// the raw container rect (they scale internally; double-applying shrinks them).
+    private var coreLetterboxesInternally: Bool {
+        core.coreIdentifier?.lowercased().contains("ppsspp") == true
+    }
+
     /// Apply frame to RetroArch core
     private func applyFrameToRetroArch(_ frame: CGRect, gameScreenView: UIView, viewport: EmulatorCoreViewportPositioning) {
         guard !isBridgeShuttingDownForViewport(viewport) else { return }
@@ -700,8 +721,12 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             mtkView.layoutIfNeeded()
         }
 
+        // PPSSPP letterboxes internally, so pre-apply the scaling mode here. Real
+        // RetroArch cores keep the raw container rect (they scale internally).
+        let frameForCore = coreLetterboxesInternally ? adjustFrameForScalingMode(frame) : frame
+
         // Convert to MTKView coordinates
-        let finalFrame = (mtkView != view) ? view.convert(frame, to: mtkView) : frame
+        let finalFrame = (mtkView != view) ? view.convert(frameForCore, to: mtkView) : frameForCore
 
         guard isValidFrame(finalFrame) else {
             ELOG("🎮 SKIN: Invalid frame after conversion: \(finalFrame)")

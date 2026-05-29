@@ -523,6 +523,32 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     /// Stops the display link so in-flight Metal work is not fighting iOS GPU policy while backgrounded (avoids timeout cascades).
     @objc private func handleAppDidEnterBackgroundForMetal() {
         mtlView?.isPaused = true
+
+        // Release the single CAMetalDrawable the app pins across the background
+        // transition. Both the committed `previousCommandBuffer` (a backgrounded
+        // buffer never completes, so it never releases its presented drawable) and
+        // the cached render-pass descriptor's color attachment alias the same last
+        // drawable. While backgrounded CoreAnimation stops recycling presented
+        // drawables, so holding even one app-side reference can keep the 3-deep
+        // swap chain fully drained — on resume `nextDrawable` then times out (~1s)
+        // every display-link tick and the main thread spins at ~1fps ("frozen").
+        // Drop these references (do NOT wait on them — that is the line ~2225
+        // `waitUntilCompleted` wedge) so the pool refills once CA resumes recycling.
+        // Precedent: the GPU-recovery path already nils `previousCommandBuffer`.
+        // `previousCommandBuffer` is also read on the alternate render thread under
+        // `frontBufferLock` (didRenderFrameOnAlternateThread), so nil it under the
+        // same lock to avoid an ARC reference race if the emu loop is still mid-frame
+        // (pausing the MTKView stops the display link, not the emulation thread).
+        if let emulatorCore = emulatorCore {
+            emulatorCore.frontBufferLock.withLock {
+                previousCommandBuffer = nil
+            }
+        } else {
+            previousCommandBuffer = nil
+        }
+        // `renderPassDescriptor` is only mutated on the main thread (directRender), so
+        // clearing its cached drawable texture here needs no lock.
+        renderPassDescriptor?.colorAttachments[0].texture = nil
     }
 
     /// Restores MTKView driving once the app is active again (after `didEnterBackground` pause). Using `didBecomeActive` avoids unpausing while `applicationState` is still `.inactive`, which matches GPU recovery gating.
@@ -1180,7 +1206,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 return 4 * typeWidth
             }
             //    #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-        case GL_RGB565, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, GL_RGB:
+        case GL_RGB565, GL_RGB, GL_UNSIGNED_SHORT_5_6_5:
             //    #else
             //          case GL_UNSIGNED_SHORT_5_6_5, GL_RGB:
             //    #endif
