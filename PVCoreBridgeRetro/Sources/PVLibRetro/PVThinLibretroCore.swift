@@ -18,6 +18,7 @@ import PVCoreBridge
 import PVEmulatorCore
 import PVLogging
 import PVSettings   // @_exported re-exports Defaults — gives us Defaults[...]
+import PVSupport    // DebuggerDetector
 import PVSystems
 #if canImport(GameController) && canImport(CoreHaptics)
 import GameController
@@ -365,15 +366,21 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             setDefaultOption("ppsspp_internal_resolution", value: "1920x1088")
             setDefaultOption("ppsspp_texture_scaling_level", value: "5x")
             setDefaultOption("ppsspp_ignore_bad_memory_access", value: "enabled")
-            // fast_memory uses a vm_remap-based guest memory map that fails
-            // PPSSPP's MemoryMap_Setup on iOS/tvOS 26+ → the interpreter then
-            // dereferences a bad host base (EXC_BAD_ACCESS in Memory::Read_U32,
-            // with [MEMMAP] "Invalid access" climbing toward 0x10000). The thick
-            // wrapper disables it on 26+ for exactly this reason; mirror that.
-            if #available(iOS 26, tvOS 26, *) {
-                setDefaultOption("ppsspp_fast_memory", value: "disabled")
-            } else {
-                setDefaultOption("ppsspp_fast_memory", value: "enabled")
+            // fast_memory maps the PSP RAM into a large contiguous host VA region and
+            // dereferences guest pointers DIRECTLY, catching stray accesses with a
+            // SIGSEGV/SIGBUS handler. The `com.apple.developer.kernel.extended-virtual-
+            // addressing` entitlement (present) lets that reservation succeed, so it runs
+            // fine in production (same as native PVPPSSPP / Dolphin). But an attached
+            // DEBUGGER traps that handled fault — surfacing as EXC_BAD_ACCESS in
+            // Memory::Read_U32 — exactly like flycast's SIGSEGV/VRAM path. So enable
+            // fast_memory normally (perf) and disable it ONLY when a debugger is attached,
+            // so the core stays debuggable. Run detached (TestFlight / home screen) to get
+            // the fast path. If a real (non-debugger) failure surfaces on some OS/device,
+            // re-add an OS/device gate here.
+            let fastMemoryDisabled = DebuggerDetector.isAttached
+            setDefaultOption("ppsspp_fast_memory", value: fastMemoryDisabled ? "disabled" : "enabled")
+            if fastMemoryDisabled {
+                ILOG("PPSSPP: debugger attached → fast_memory disabled (avoids trapped SIGSEGV); run detached for the fast path")
             }
             // Seed PSP flash0/font files into System/PSP/ — re-seeds on every launch for tvOS cache recovery.
             seedPSPFlash0Assets()
