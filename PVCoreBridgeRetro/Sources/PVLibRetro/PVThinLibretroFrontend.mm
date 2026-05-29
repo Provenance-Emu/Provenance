@@ -1502,11 +1502,11 @@ static int64_t thin_vfs_size(struct retro_vfs_file_handle *stream) {
     }
     off_t sz = ftello(stream->fp);
     fseeko(stream->fp, cur, SEEK_SET);
-    if (sz < 0) {
-        ILOG(@"[VFS-DIAG] size: ftello FAIL path=%s errno=%d", stream->path ?: "?", errno);
-    } else if (sz >= 100*1024) {
-        ILOG(@"[VFS-DIAG] size: path=%s sz=%lld", stream->path ?: "?", (long long)sz);
-    }
+    // Log EVERY call (incl. a silent 0 return) — a 0 here is what makes PPSSPP
+    // report "ReadAt from 0-sized file". cur/sz/fp let us spot a bad handle or a
+    // position-at-EOF state.
+    ILOG(@"[VFS-DIAG] size() path=%s fp=%p cur=%lld sz=%lld errno=%d",
+         stream->path ?: "?", stream->fp, (long long)cur, (long long)sz, errno);
     return (int64_t)sz;
 }
 
@@ -1543,7 +1543,13 @@ static int64_t thin_vfs_seek(struct retro_vfs_file_handle *stream, int64_t offse
 
 static int64_t thin_vfs_read(struct retro_vfs_file_handle *stream, void *s, uint64_t len) {
     if (!stream || !s) return -1;
-    return (int64_t)fread(s, 1, (size_t)len, stream->fp);
+    int64_t n = (int64_t)fread(s, 1, (size_t)len, stream->fp);
+    if (n == 0 && len > 0) {
+        ILOG(@"[VFS-DIAG] read() ZERO path=%s fp=%p len=%llu pos=%lld feof=%d ferror=%d",
+             stream->path ?: "?", stream->fp, (unsigned long long)len,
+             (long long)ftello(stream->fp), feof(stream->fp), ferror(stream->fp));
+    }
+    return n;
 }
 
 static int64_t thin_vfs_write(struct retro_vfs_file_handle *stream, const void *s, uint64_t len) {
