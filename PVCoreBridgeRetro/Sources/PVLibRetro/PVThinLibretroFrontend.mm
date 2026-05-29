@@ -6518,11 +6518,26 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
         "VK_KHR_get_physical_device_properties2",
     };
 
+    // Use the core's app info when provided, but NEVER below bestApiVersion. Cores
+    // (PPSSPP, Flycast) often request apiVersion 1.0, which makes MoltenVK create a
+    // 1.0 instance — then vkGetDeviceProcAddr returns NULL for the 1.1-promoted
+    // functions (vkGetBufferMemoryRequirements2, vkBindBufferMemory2, …). The core's
+    // VMA allocator calls those unconditionally → null call → crash in vmaCreateBuffer.
+    // Bumping the instance apiVersion to what MoltenVK actually supports (1.2.x) makes
+    // those proc-addresses resolve. We only ever raise it, never lower the core's ask.
+    VkApplicationInfo effectiveAppInfo = coreAppInfo ? *coreAppInfo : defaultAppInfo;
+    if (effectiveAppInfo.apiVersion < bestApiVersion) {
+        ILOG(@"ThinFrontend: raising instance apiVersion 0x%08x → 0x%08x so 1.1-promoted "
+             @"functions resolve (core requested below MoltenVK's supported version)",
+             effectiveAppInfo.apiVersion, bestApiVersion);
+        effectiveAppInfo.apiVersion = bestApiVersion;
+    }
+
     VkInstanceCreateInfo createInfo = {
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
         .pNext = NULL,
         .flags = 0,
-        .pApplicationInfo = coreAppInfo ? coreAppInfo : &defaultAppInfo,
+        .pApplicationInfo = &effectiveAppInfo,
         .enabledLayerCount = 0,
         .ppEnabledLayerNames = NULL,
         .enabledExtensionCount = (uint32_t)(sizeof(kInstanceExtensions) / sizeof(kInstanceExtensions[0])),
