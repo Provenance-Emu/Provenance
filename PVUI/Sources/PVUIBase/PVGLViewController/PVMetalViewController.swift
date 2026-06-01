@@ -911,6 +911,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
         if isDeltaSkinEnabled {
             DLOG("DeltaSkin enabled - skipping auto frame calculation, waiting for skin frame")
+            // SKIN-LAYOUT-DIAG: one-line snapshot so a single device run shows whether the
+            // GPU view is stuck full-screen (invalid customFrame → "keep current" spills past
+            // the skin cutout) or a wrong-sized rectangle (customFrame set from unsettled
+            // bounds/safeArea). Compare customFrame vs view.bounds vs parent safeAreaInsets.
+            // Diagnoses the "resize wrong until I rotate" thin-wrapper report (May 31).
+            ILOG("SKIN-LAYOUT-DIAG: validCustomFrame=\(isValidCustomFrame) useCustom=\(useCustomPositioning) customFrame=\(customFrame)")
+            ILOG("SKIN-LAYOUT-DIAG: mtlView=\(mtlView.frame) parentBounds=\(parent?.view.bounds ?? .zero) parentSafeArea=\(parent?.view.safeAreaInsets ?? .zero)")
             // If we have a valid custom frame set, use it; otherwise keep current frame
             if isValidCustomFrame {
                 mtlView.frame = customFrame
