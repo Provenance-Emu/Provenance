@@ -7,22 +7,28 @@ ACTIVELU WORKING ON BY JOE
 - [X] Jaguar thin wrapper with skins make sure number pad works (#13aec6b8cb, prior session)
 - [X] Jaguar native PVJaguar update to latest libretro/virtualjaguar-libretro develop branch (done by Joe)
 - [X] Thin wrapper, works with Saturn — BIOS sync added (#c6fea87ddd), BOOTS now w/ beetle+yabause. Backup RAM "system memory not ready" FIXED (#55ae973743). Region now user-selectable via Settings > Video > System Region (beetle_saturn_region).
-- [~] thin wrapper works with PPSSPP — RE-ROUTED to thick wrapper for release (works there). Thin still hangs: retro_load_game registers HW ctx + PSP_InitStart (libretro.cpp:1260,1285); real GL init pump is in retro_run/PSP_InitUpdate (:1428); GLES sets useEmuThread=true → spawns emu thread. Two agents disagree on which thread issues GL; setCurrentContext (#7d24e1b2a2) didn't fix it. NEEDS runtime all-thread stack trace of the boot hang to resolve thin properly.
+- [~] thin wrapper works with PPSSPP — SHIPPING THIN (Vulkan). No longer force-routed to thick (#2f09fd7802 reverted that). PSP is thin-by-default; ~10 thin-Vulkan fixes landed (#592faadf59 instance exts → #7718853649 Metal VkSurfaceKHR → #7388f57eca defer context_reset → #efc4ddb119 apiVersion bump; GLES-own-thread #6414412e15). Vulkan boot walls cleared in-simulator; NEEDS device test to confirm it boots+renders detached (vm_remap fastmem fails under debugger only). Keep iterating — want PSP on thin Vulkan (or whatever's best for PPSSPP) for release.
 - [X] thin wrapper works with m3y's multi disc etc — disc swap tile added (#7096b76e4f, prior session)
-- [ ] "Select controller skin" previews missing for skins for sone reason — code looks correct, needs runtime debugging
+- [ ] "Select controller skin" previews missing for skins for sone reason — code looks correct, needs runtime debugging. DEFERRED post-release (cosmetic; picker still functional, just no thumbnail).
 - [X] thin wrapper *and in theory all other cores* live change their stretch / scale setting during emulation (#17ccb0b349)
-- [ ] backgrounding / foregrounding STILL deadlocks — Metal drawable fix (#3abe31a1e7) was insufficient. NEW symptom: emulator video+audio keep running (render thread fine), but MAIN thread locks — rotation never relayouts, SwiftUI/UIKit frozen. Something on main thread blocks on resume.
+- [~] backgrounding / foregrounding STILL deadlocks — Metal drawable fix (#3abe31a1e7) was insufficient. NEW symptom: emulator video+audio keep running (render thread fine), but MAIN thread locks — rotation never relayouts, SwiftUI/UIKit frozen. Something on main thread blocks on resume. UPDATE (May 31): a large batch of Metal/freeze fixes landed since (#774b93077c pause render loop on willResignActive, #1ff0bbff31 self-heal wedged drawable pool, #d59f7b65d5 remove waitUntilCompleted-on-main, #97aea7b8a2 gate first post-resume frame off sync CA-commit, #bdd24bdc22 nextDrawable timeout + pool reset, #ecab000a47 stop toggling isPaused, #48ebea5bc3 / #1de102cb0d pause core before view-state guard). May already be fixed/much-improved — TOP priority to confirm on device (play → background → return → rotate).
 - [X] if a core crashes and we show a toaster message, the toaster floats to the top of the main library UI since we close the emulation scene, so the user can't read the error message (#21776f9389)
 - [X] Thin wrapper n64 mupen-next has inverted joystick in skins (and maybe other controllers?) — affects ALL analog cores, fixed (#f164848638)
-- [ ] PCE/TurboGrafx-16 RUN button doesn't work in thin wrapper with beetle_pce / beetle_pce_fast cores (works with supergrafx core in PCE mode). Likely button mapping diff per core.
+- [ ] PCE/TurboGrafx-16 RUN button doesn't work in thin wrapper with beetle_pce / beetle_pce_fast cores (works with supergrafx core in PCE mode). NOTE (May 31): upstream source for ALL three cores (beetle-pce, beetle-pce-fast, beetle-supergrafx) maps RUN → `RETRO_DEVICE_ID_JOYPAD_START` (id 3) via identical `map[]` arrays — which is exactly what the thin wrapper already sends (`pceMap: .run → .start`). So our mapping is NOT wrong; supergrafx working with the same mapping points to a stale/divergent beetle_pce buildbot dylib or a pad-mode default. Do NOT blindly remap (would break supergrafx). Resolve with a runtime trace: press RUN and read the existing `ThinFrontend: input_state BITMASK` log (PVThinLibretroFrontend.mm:4406) — if it shows bit 3 set (0x0008) the wrapper is correct and the dylib is at fault.
 - [X] N64 GoldenEye rumble in thin wrapper — FIXED: set thin pak1="rumble" to match thick. In the RetroArch buildbot dylib (run by BOTH wrappers) pak1="rumble"/PLUGIN_RAW is the raw-intercept HYBRID mode (marshals both memory-pak saves AND rumble). The submodule source has this path stubbed (RawData=0) — wrong source to read; the dylib has it live.
 - [X] Region not set correctly for thin wrapper systems — added global "System Region" setting (Settings > Video; Auto/Japan/N.America/Europe). Thin wrapper force-applies it to beetle_saturn_region (key+values verified vs libretro/beetle-saturn-libretro source). yabasanshiro has NO region option (internal/NTSC-fixed), so it's unaffected. Extensible to other region-aware cores.
 - [X] on demand download for games etc shouldn't time-out if the download is making progress — iCloud Drive path now uses inactivity/stall timeout (#8de51631f3). NOTE: CloudKit on-demand path already used correct CKOperation defaults; if timeouts persist confirm which iCloudSyncMode.
-- [ ] 2 flycast boots in a row crashes — confirmed upstream bug: `#ifdef __APPLE__` in flycast `retro_deinit` skips `emu.term()`, stale pointers crash on 2nd boot. Needs flycast fork fix + dylib rebuild.
+- [X] 2 flycast boots in a row crashes — FIXED by Joe. Upstream bug was `#ifdef __APPLE__` in flycast `retro_deinit` skipping `emu.term()` (stale pointers crashed on 2nd boot); fork fixed + dylib rebuilt.
 - [X] if the on screen keyboard is active, and minimized, we still can't tap buttons behind it... + draggable — FIXED (#88a8b939da): hitTest now gated to visible sheet frame (touches pass through elsewhere); handle bar drags keyboard vertically.
 - [ ] *bonus* thin wrapper touch mouse almost working, tested mario paint, but how do we use the controller? slot 1 becomes the mouse, not sure if tapping to click or right click is working, but i can't get past menu since i can't press controller which i guess the skin should be able to be assigned to player 2 instead (maybe we always need a quick way to change the skins/osd's player index, since some games on old consoles have features you need to press buttons on p2 port even in 1 player games)
 - [ ] *bonus* Wold3D loading, almost kind of works. the text in the library says we can auto download the files, but that's only with fat wrapper, we'd need to add that for thin wrapper somehow into the ui or remove that text or give better instructions, also it's ambigous where and what files go, maybe we shoudl add to wiki as well (would need a wiki page if not already) or a pop out larger blurb?
 
+
+### Recently fixed (May 29–31, on develop, pending device verification)
+- [X] Tile pause-menu fast-forward reset on menu close (#ac36b8bfb0) — DeltaSkin reconnect no longer clobbers a deliberate speed change.
+- [X] Odyssey2 (o2em) thin wrapper: no input — key0 was mapped to JOYPAD_SELECT which toggles o2em's virtual keyboard and gates the whole pad; now digits dispatch as RETROK_0..9 (+ secondary joypad 0–6), SELECT never mapped (#09d0b7e164).
+- [X] Thin-wrapper audio at wrong sample rate (bassy/glitchy) — thin defers retro_load_game to startEmulation, so the audio graph was built at the 44100 fallback before the core's real rate was known; now rebuilds after start if the rate changed (#cb40fef061). Thin-wrapper-wide fix (o2em 42240/35200 Hz was worst case).
+- [X] Promote internal PVFeatureFlags to Advanced toggles (tapToRemapUI, companionController, lightGunCrosshair, skinButtonReposition, airPlayMenu) — off-by-default user settings, "PLUS"-badged (see Advanced Settings). NOTE: PLUS badge is cosmetic; no isPatron enforcement wired yet.
 
 <!-- AGENTS: Keep this file current. Check off items when done, add new items as discovered. -->
 
@@ -171,8 +177,8 @@ Run all three in one session. Filter on each prefix in turn or use `CHEEVOS-DIAG
       - [ ] Touch mouse/keyboard blocks rest of touches
       - [ ] Tapping the "toggle controller buttons visible" button, the other controller buttons ignore the alpha settings and also doesn't hide joysticks (is that a setting though?)
 - [X] `RetroSaveSelectionAlertView.swift` sometimes when downloading a cloud save, it doesn't boot after download, tapping again boots though (#334b463ec8)
-- [ ] RetroArch and Menu buttons showing when using thin wrapper
-- [ ] tvOS test removing PVRetroArchCore from build
+- [ ] RetroArch and Menu buttons showing when using thin wrapper — mostly guarded already; never runtime-reproduced. Verify on device, likely no-op.
+- [X] tvOS test removing PVRetroArchCore from build — DONE. ProvenanceTV / ProvenanceTV-Lite schemes have 0 PVRetroArch refs; `PVCoreFactory` forces thin whenever the thick class is absent (so tvOS can't load thick even if the setting is on). This also moots the 3 tvOS RetroArch MFi controller bugs below (they were thick-RA-only).
 - [ ] Thin wrapper (tvOS only needed for release)
       - [X] N64 mupen video squashed
       - [X] N64 mupen rumble no worky --
@@ -210,10 +216,10 @@ Run all three in one session. Filter on each prefix in turn or use `CHEEVOS-DIAG
 - [X] Context Menu 'Games'
 - [X] Settings UI
 - [X] Pause menu fixes
-- [ ] RetroArch MFi controller issues:
-    - [ ] Controller 1 presses both P1 and P2
-    - [ ] Controller 1 share button shows RetroArch menu (should be pause)
-    - [ ] Controller 1 options (start) presses P2 start only
+- [X] RetroArch MFi controller issues — MOOT on tvOS: thick PVRetroArchCore is no longer in the tvOS build (see Release Blockers), so these thick-RA-only bugs can't occur. Re-open only if reproduced on the thin wrapper.
+    - [X] Controller 1 presses both P1 and P2 (thick-RA only)
+    - [X] Controller 1 share button shows RetroArch menu (thick-RA only)
+    - [X] Controller 1 options (start) presses P2 start only (thick-RA only)
 - [ ] Storage/space warning improvements
 
 ## Core Updates
