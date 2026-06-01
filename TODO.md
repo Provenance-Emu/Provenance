@@ -28,7 +28,7 @@ ACTIVELU WORKING ON BY JOE
 - [X] Tile pause-menu fast-forward reset on menu close (#ac36b8bfb0) — DeltaSkin reconnect no longer clobbers a deliberate speed change.
 - [X] Odyssey2 (o2em) thin wrapper: no input — key0 was mapped to JOYPAD_SELECT which toggles o2em's virtual keyboard and gates the whole pad; now digits dispatch as RETROK_0..9 (+ secondary joypad 0–6), SELECT never mapped (#09d0b7e164).
 - [X] Thin-wrapper audio at wrong sample rate (bassy/glitchy) — thin defers retro_load_game to startEmulation, so the audio graph was built at the 44100 fallback before the core's real rate was known; now rebuilds after start if the rate changed (#cb40fef061). Thin-wrapper-wide fix (o2em 42240/35200 Hz was worst case).
-- [X] Promote internal PVFeatureFlags to Advanced toggles (tapToRemapUI, companionController, lightGunCrosshair, skinButtonReposition, airPlayMenu) — off-by-default user settings, "PLUS"-badged (see Advanced Settings). NOTE: PLUS badge is cosmetic; no isPatron enforcement wired yet.
+- [X] Promote internal PVFeatureFlags to Advanced toggles (tapToRemapUI, companionController, lightGunCrosshair, skinButtonReposition, airPlayMenu) — off-by-default user settings, "PLUS"-gated via FreemiumKit `PremiumThemedToggle`. Gating is REAL (locked branch `.disabled(true)`s the toggle): free on sideload/dev (ProvenanceApp.swift:95-103 overrides `purchasedTier` when `!isAppStore`), Plus-locked on the App Store. Keyed on StoreKit IAP, not Patreon.
 
 <!-- AGENTS: Keep this file current. Check off items when done, add new items as discovered. -->
 
