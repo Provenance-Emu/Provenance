@@ -108,11 +108,23 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     internal var receivedScreenFrames: [String: CGRect] = [:]
 
     // Rotation handling state
-    private var isHandlingRotation: Bool = false
+    // `isHandlingRotation` is internal so the layout-settle recompute
+    // (recomputeSkinViewportIfLayoutChanged, in the DeltaSkinScreen extension)
+    // can skip itself during a rotation and let the rotation path own the layout.
+    var isHandlingRotation: Bool = false
     private var pendingRotationWorkItem: DispatchWorkItem?
 
     // Viewport application state to prevent layout loops
     var isApplyingViewport: Bool = false
+
+    /// The view bounds / safe-area insets the skin viewport was last computed
+    /// against. `recomputeSkinViewportIfLayoutChanged()` recomputes the GPU
+    /// viewport only when these actually change on a layout-settle, fixing the
+    /// "render stuck full-screen / wrong size until I rotate" bug without churning
+    /// the hot `viewDidLayoutSubviews` path. Seeded to sentinels so the first real
+    /// layout pass runs.
+    var lastViewportLayoutBounds: CGRect = .null
+    var lastViewportLayoutSafeArea: UIEdgeInsets = UIEdgeInsets(top: -1, left: -1, bottom: -1, right: -1)
 
     // Keep track of whether we've positioned the GPU view
     static var hasPositionedGPUView = false
@@ -1687,6 +1699,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 view.insertSubview(gpuView, belowSubview: skinContainer)
             }
             view.bringSubviewToFront(skinContainer)
+        }
+
+        // Now that the layout has settled to its real bounds/safe-area, recompute the
+        // skin viewport if it changed. Fixes the render view being stuck full-screen
+        // (ignoring the skin cutout) or wrong-sized until a rotation forced a recompute.
+        // No-op when geometry is unchanged or while a rotation is in flight.
+        if isDeltaSkinEnabled {
+            recomputeSkinViewportIfLayoutChanged()
         }
 
         #if !os(tvOS)

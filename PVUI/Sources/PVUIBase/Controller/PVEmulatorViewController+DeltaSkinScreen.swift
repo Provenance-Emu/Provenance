@@ -311,6 +311,66 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         }
     }
 
+    /// Recompute the skin viewport when the view's bounds / safe-area insets have
+    /// actually changed since the viewport was last computed.
+    ///
+    /// Fixes the "emulator render is stuck full-screen (ignoring the skin cutout) or
+    /// wrong-sized until I rotate" bug: the viewport is otherwise computed once during
+    /// racy fixed-delay async setup passes — from `view.bounds` / `view.safeAreaInsets`
+    /// that may not be settled yet — and is only invalidated/recomputed by a rotation
+    /// (`minimalRelayout`). This recomputes deterministically once the layout settles,
+    /// using `calculateFrameFromSkin()` (which reads the *current* bounds/safe-area).
+    ///
+    /// Safe for the hot `viewDidLayoutSubviews` path:
+    /// - Gated on an ACTUAL bounds/safe-area change, so repeated passes with identical
+    ///   geometry early-return (applying the GPU *subview* frame does not change the
+    ///   parent's bounds/safe-area, so this can't loop).
+    /// - Skipped entirely while a rotation is in flight (`isHandlingRotation`) so the
+    ///   rotation path keeps sole ownership of layout during the transition.
+    /// - Records geometry only after a valid frame is produced, so it keeps retrying
+    ///   on later passes if the skin isn't loaded yet.
+    internal func recomputeSkinViewportIfLayoutChanged() {
+        guard Thread.isMainThread else { return }
+        guard isDeltaSkinEnabled, currentSkin != nil else { return }
+        guard !isHandlingRotation else { return }
+        guard !isApplyingViewport else { return }
+        guard !isBridgeShuttingDownForViewport() else { return }
+        guard !core.supportsDualScreens else { return } // dual-screen has its own path
+
+        let bounds = view.bounds
+        let safeArea = view.safeAreaInsets
+        guard bounds.width > 0 && bounds.height > 0 else { return }
+
+        // No geometry change since the last successful compute → nothing to do.
+        if bounds == lastViewportLayoutBounds && safeArea == lastViewportLayoutSafeArea {
+            return
+        }
+
+        // Compute the correct frame from the now-settled bounds/safe-area. If the skin
+        // isn't ready yet the calculation returns nil/invalid — leave the existing
+        // async/notification path to handle it and retry on a later layout pass.
+        guard let freshFrame = calculateFrameFromSkin(), isValidFrame(freshFrame) else { return }
+
+        // We have a valid frame for this geometry — record it so identical passes no-op.
+        lastViewportLayoutBounds = bounds
+        lastViewportLayoutSafeArea = safeArea
+
+        // Only act if the applied frame is actually stale (full-screen spill or wrong
+        // size). applyFrameToGPUView has its own 0.5px guard too, but short-circuit here.
+        if let gpuView = gpuViewController.view,
+           abs(gpuView.frame.origin.x - freshFrame.origin.x) < 1.0,
+           abs(gpuView.frame.origin.y - freshFrame.origin.y) < 1.0,
+           abs(gpuView.frame.width  - freshFrame.width)  < 1.0,
+           abs(gpuView.frame.height - freshFrame.height) < 1.0 {
+            return
+        }
+
+        ILOG("SKIN-LAYOUT-DIAG: recompute on layout-settle → \(freshFrame) (bounds=\(bounds) safeArea=\(safeArea))")
+        currentTargetFrame = freshFrame
+        lastAppliedViewportFrame = nil
+        applyFrameToGPUView(freshFrame)
+    }
+
     /// Check if current skin is a default skin
     private var isDefaultSkin: Bool {
         guard let skin = currentSkin else { return true }
