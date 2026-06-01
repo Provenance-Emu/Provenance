@@ -29,6 +29,7 @@ ACTIVELU WORKING ON BY JOE
 - [X] Odyssey2 (o2em) thin wrapper: no input — key0 was mapped to JOYPAD_SELECT which toggles o2em's virtual keyboard and gates the whole pad; now digits dispatch as RETROK_0..9 (+ secondary joypad 0–6), SELECT never mapped (#09d0b7e164).
 - [X] Thin-wrapper audio at wrong sample rate (bassy/glitchy) — thin defers retro_load_game to startEmulation, so the audio graph was built at the 44100 fallback before the core's real rate was known; now rebuilds after start if the rate changed (#cb40fef061). Thin-wrapper-wide fix (o2em 42240/35200 Hz was worst case).
 - [X] Promote internal PVFeatureFlags to Advanced toggles (tapToRemapUI, companionController, lightGunCrosshair, skinButtonReposition, airPlayMenu) — off-by-default user settings, "PLUS"-gated via FreemiumKit `PremiumThemedToggle`. Gating is REAL (locked branch `.disabled(true)`s the toggle): free on sideload/dev (ProvenanceApp.swift:95-103 overrides `purchasedTier` when `!isAppStore`), Plus-locked on the App Store. Keyed on StoreKit IAP, not Patreon.
+- [X] Skin render view stuck full-screen / wrong-size until rotation (thin wrapper, e.g. pcsx_rearmed) — viewport was computed once from unsettled bounds/safe-area during racy async setup and only re-derived on rotation. Now `recomputeSkinViewportIfLayoutChanged()` re-derives it on the layout-settle (#a63e1622f1, diag #b78629d6b2). NEEDS device smoke-test: launch + rotation, one thin + one native core.
 
 <!-- AGENTS: Keep this file current. Check off items when done, add new items as discovered. -->
 
