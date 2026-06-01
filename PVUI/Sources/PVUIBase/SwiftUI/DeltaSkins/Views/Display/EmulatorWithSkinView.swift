@@ -9,6 +9,7 @@ import ObjectiveC
 import PVLogging
 import RealmSwift
 import Defaults
+import PVSettings
 
 /// A SwiftUI view that displays a custom skin for the emulator
 struct EmulatorWithSkinView: View {
@@ -160,7 +161,7 @@ struct EmulatorWithSkinView: View {
                 }
 
                 // Light gun crosshair overlay (gated by feature flag)
-                if coreSupportsLightGun && PVFeatureFlagsManager.shared.lightGunCrosshair {
+                if coreSupportsLightGun && Defaults[.lightGunCrosshair] {
                     LightGunCrosshairView()
                         .allowsHitTesting(false)
                 }
@@ -174,7 +175,7 @@ struct EmulatorWithSkinView: View {
                 // is enabled, a skin is active AND supports the current traits. iOS only; tvOS
                 // lacks DragGesture so edit mode is unsupported there.
                 #if !os(tvOS)
-                if PVFeatureFlagsManager.shared.skinButtonReposition,
+                if Defaults[.skinButtonReposition],
                    let activeSkin = skinLoader.selectedSkin, activeSkin.supports(createSkinTraits()) {
                     VStack {
                         HStack {

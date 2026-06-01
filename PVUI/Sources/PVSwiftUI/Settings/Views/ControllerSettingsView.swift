@@ -12,7 +12,6 @@ import GameController
 import PVThemes
 import PVLibrary
 import PVRealm
-import PVFeatureFlags
 import PVSettings
 import MarkdownView
 #if canImport(PVUI_IOS)
@@ -771,8 +770,7 @@ struct ButtonRemappingView: View {
     @State private var showSaveProfileError = false
     @State private var saveProfileErrorMessage = ""
 
-    // Tap-to-remap (feature-flagged)
-    @Environment(\.featureFlags) private var featureFlags
+    // Tap-to-remap (promoted to Defaults[.tapToRemapUI])
     @State private var tapToRemapMode = false
     @State private var showingTapToRemap = false
 
@@ -856,7 +854,7 @@ struct ButtonRemappingView: View {
                 HStack {
                     Text("Button Mappings")
                     Spacer()
-                    if featureFlags.tapToRemapUI {
+                    if Defaults[.tapToRemapUI] {
                         Button(action: { tapToRemapMode.toggle() }) {
                             Label(tapToRemapMode ? "Press Mode" : "List Mode",
                                   systemImage: tapToRemapMode ? "gamecontroller.fill" : "list.bullet")

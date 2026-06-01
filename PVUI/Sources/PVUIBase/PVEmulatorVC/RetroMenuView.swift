@@ -650,7 +650,7 @@ struct RetroMenuView: View {
                 }
             }
 
-            if PVFeatureFlagsManager.shared.companionController {
+            if Defaults[.companionController] {
                 menuButton(
                     title: String(localized: "COMPANION CONTROLLER"),
                     icon: "iphone.and.arrow.forward",
@@ -1206,7 +1206,7 @@ struct RetroMenuView: View {
 
             #if os(iOS) || targetEnvironment(macCatalyst)
             // AirPlay — hidden until video AirPlay is implemented; audio-only for now
-            if PVFeatureFlagsManager.shared.airPlayMenu {
+            if Defaults[.airPlayMenu] {
                 airPlaySection
             }
             #endif

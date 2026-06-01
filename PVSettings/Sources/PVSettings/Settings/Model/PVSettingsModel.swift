@@ -949,6 +949,31 @@ public extension Defaults.Keys {
     /// Works on native PVMupen + thin libretro wrapper; ~20-game registry.
     static let mupenTransferPak = Key<Bool>("mupenTransferPak", default: false)
 
+    // MARK: - Promoted from FeatureFlags (2026-05-31)
+    // Second wave of promotions. Each was an internal PVFeature enum case with
+    // no user-visible toggle; surfaced in Advanced Settings (off by default) so
+    // they can ship "available but disabled" for this release. The PVFeature
+    // enum cases remain for the Feature Flags debug/remote-config path; the
+    // consumers now read these Defaults keys instead.
+
+    /// Tap-to-remap controller UI (in-development button remap flow).
+    static let tapToRemapUI = Key<Bool>("tapToRemapUI", default: false)
+
+    /// Companion-controller overlay (trackball / numpad / DSU peripherals) in
+    /// the pause menu. DSU integration still incomplete.
+    static let companionController = Key<Bool>("companionController", default: false)
+
+    /// Light-gun crosshair overlay for lightgun-capable cores. Style is
+    /// configured separately via `lightGunCrosshairStyle`.
+    static let lightGunCrosshair = Key<Bool>("lightGunCrosshair", default: false)
+
+    /// Drag-to-reposition on-screen skin buttons (layout editor). iOS only.
+    static let skinButtonReposition = Key<Bool>("skinButtonReposition", default: false)
+
+    /// AirPlay audio route-picker button in the pause menu. Audio only —
+    /// video AirPlay not yet implemented.
+    static let airPlayMenu = Key<Bool>("airPlayMenu", default: false)
+
     /// Preferred console region for region-aware thin-wrapper cores (currently
     /// Sega Saturn / Beetle Saturn via `beetle_saturn_region`). `.auto` lets the
     /// core auto-detect from the disc; explicit values force a region so

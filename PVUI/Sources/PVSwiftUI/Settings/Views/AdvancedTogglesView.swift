@@ -30,6 +30,14 @@ internal struct AdvancedTogglesView: View {
     @Default(.netplayEnabled) var netplayEnabled
     @Default(.mupenTransferPak) var mupenTransferPak
 
+    // Promoted from PVFeatureFlags 2026-05-31. Internal/experimental features
+    // surfaced as off-by-default toggles so they ship "available but disabled."
+    @Default(.tapToRemapUI) var tapToRemapUI
+    @Default(.companionController) var companionController
+    @Default(.lightGunCrosshair) var lightGunCrosshair
+    @Default(.skinButtonReposition) var skinButtonReposition
+    @Default(.airPlayMenu) var airPlayMenu
+
     /// Check if the app is from the App Store
     let isAppStore: Bool = {
         guard let appType = Bundle.main.infoDictionary?["PVAppType"] as? String else { return false }
@@ -157,6 +165,50 @@ internal struct AdvancedTogglesView: View {
                     SettingsRow(title: "N64 Transfer Pak",
                                 subtitle: "Assign a Game Boy ROM to a Mupen64Plus controller port for Pokémon Stadium / Mario Golf integration. Works on native and RetroArch N64 cores.",
                                 icon: .sfSymbol("gamecontroller.fill"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
+
+                // Experimental toggles promoted from PVFeatureFlags 2026-05-31.
+                // All default OFF — features are in-development / incomplete.
+                PremiumThemedToggle(isOn: $tapToRemapUI) {
+                    SettingsRow(title: "Tap to Remap (Beta)",
+                                subtitle: "In-development tap-to-remap controller UI. Lets you reassign buttons by tapping them; still rough.",
+                                icon: .sfSymbol("arrow.triangle.swap"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
+
+                PremiumThemedToggle(isOn: $companionController) {
+                    SettingsRow(title: "Companion Controller (Beta)",
+                                subtitle: "Show a companion-controller overlay (trackball / numpad / DSU peripherals) in the pause menu. DSU integration is incomplete.",
+                                icon: .sfSymbol("dpad"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
+
+                PremiumThemedToggle(isOn: $lightGunCrosshair) {
+                    SettingsRow(title: "Light Gun Crosshair",
+                                subtitle: "Show an on-screen crosshair overlay for light-gun-capable cores. Configure the style in Mouse / Light Gun settings.",
+                                icon: .sfSymbol("scope"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
+
+                #if os(iOS)
+                PremiumThemedToggle(isOn: $skinButtonReposition) {
+                    SettingsRow(title: "Reposition Skin Buttons (Beta)",
+                                subtitle: "Drag-to-reposition on-screen skin buttons in a layout editor. iOS only; still experimental.",
+                                icon: .sfSymbol("hand.draw"),
+                                showChevron: false)
+                }
+                .padding(.vertical, 4)
+                #endif
+
+                PremiumThemedToggle(isOn: $airPlayMenu) {
+                    SettingsRow(title: "AirPlay Audio Menu",
+                                subtitle: "Show an AirPlay audio route-picker button in the pause menu. Audio only — video AirPlay is not yet implemented.",
+                                icon: .sfSymbol("airplayaudio"),
                                 showChevron: false)
                 }
                 .padding(.vertical, 4)

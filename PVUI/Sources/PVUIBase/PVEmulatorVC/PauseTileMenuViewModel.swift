@@ -329,7 +329,7 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         // AirPlay — iOS / Catalyst only; hidden until video AirPlay is implemented
         #if os(iOS) || targetEnvironment(macCatalyst)
-        if featureFlags.airPlayMenu || featureFlags.airPlayMenu {
+        if Defaults[.airPlayMenu] {
             settingsTiles.append(PauseMenuTile(
                 id: "airPlay",
                 icon: "airplayaudio",
@@ -365,7 +365,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
 
         #if os(iOS) || targetEnvironment(macCatalyst)
-        if featureFlags.companionController || featureFlags.companionController {
+        if Defaults[.companionController] {
             controlsTiles.append(PauseMenuTile(
                 id: "companionController",
                 icon: "iphone.and.arrow.forward",
