@@ -830,7 +830,7 @@ extension PVEmulatorViewController {
         }
 
         DLOG("Trying to position GPU view with frame: \(frame)")
-        applyFrameToGPUView(frame)
+        applyFrameToGPUView(frame, reason: "debug-tryFramePositioning")
 
         // Update the debug overlay with success message
         if let frameOverlay = view.subviews.first(where: { $0.tag == 9999 }),
@@ -883,7 +883,7 @@ extension PVEmulatorViewController {
         createDebugFrameOverlay(frame: calculatedFrame)
 
         // Apply the frame to the GPU view
-        applyFrameToGPUView(calculatedFrame)
+        applyFrameToGPUView(calculatedFrame, reason: "debug-resetToCalculated")
 
         // Show success message
         if let frameOverlay = view.subviews.first(where: { $0.tag == 9999 }) {

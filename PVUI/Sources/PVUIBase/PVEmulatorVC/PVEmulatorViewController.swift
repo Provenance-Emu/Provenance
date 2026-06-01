@@ -2239,7 +2239,7 @@ extension PVEmulatorViewController {
             DLOG("DeltaSkin enabled - skipping repositionGameScreen, using DeltaSkin viewport system")
             // Just ensure we apply any pending frame from DeltaSkin system
             if let targetFrame = currentTargetFrame {
-                applyFrameToGPUView(targetFrame)
+                applyFrameToGPUView(targetFrame, reason: "repositionGameScreen")
             }
             return
         }
@@ -3026,7 +3026,7 @@ extension PVEmulatorViewController {
             if isDefaultSkin {
                 if let frame = self.currentTargetFrame {
                     // Frame received via protocol - apply it
-                    self.applyFrameToGPUView(frame)
+                    self.applyFrameToGPUView(frame, reason: "rotation-async0.4-default")
                 } else {
                     DLOG("🎮 SKIN: Default skin - no frame received after rotation, protocol callback may be delayed")
                     // Don't use fallback for default skins - let the protocol system handle it
@@ -3041,11 +3041,11 @@ extension PVEmulatorViewController {
                     DLOG("🎮 SKIN: No frame received for non-RetroArch core, calculating fallback")
                     if let calculatedFrame = self.currentSkinViewportFrame() {
                         self.currentTargetFrame = calculatedFrame
-                        self.applyFrameToGPUView(calculatedFrame)
+                        self.applyFrameToGPUView(calculatedFrame, reason: "rotation-async0.4-calc")
                     }
-                } else {
+                } else if let frame = self.currentTargetFrame {
                     // Apply the frame we have
-                    self.applyFrameToGPUView(self.currentTargetFrame!)
+                    self.applyFrameToGPUView(frame, reason: "rotation-async0.4-existing")
                 }
             }
 

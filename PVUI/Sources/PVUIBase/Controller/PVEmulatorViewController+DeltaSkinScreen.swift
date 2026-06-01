@@ -48,7 +48,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
         // Validate and apply frame using existing validation logic
         guard validateAndStoreFrame(frame) else { return }
-        applyFrameToGPUView(frame)
+        applyFrameToGPUView(frame, reason: "delegate-frameDidUpdate")
     }
 
     /// Check if skin supports current device
@@ -122,7 +122,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         guard validateAndStoreFrame(frame) else { return }
 
         // Apply frame immediately
-        applyFrameToGPUView(frame)
+        applyFrameToGPUView(frame, reason: "notif-frame")
     }
 
     /// Validate frame and store if valid - returns true if frame should be applied
@@ -141,7 +141,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             // Use initial frame if available
             if let initial = initialCorrectFrame {
                 ILOG("🎮 SKIN: Using initial correct frame instead")
-                applyFrameToGPUView(initial)
+                applyFrameToGPUView(initial, reason: "validate-too-small-fallback")
             }
             return false
         }
@@ -212,7 +212,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                     // Frame already correctly applied, no need to re-apply
                     return
                 }
-                applyFrameToGPUView(frame)
+                applyFrameToGPUView(frame, reason: "viewport-default-immediate")
                 return
             }
 
@@ -222,7 +222,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                 guard let self = self else { return }
                 guard !self.isBridgeShuttingDownForViewport() else { return }
                 if let frame = self.currentTargetFrame, self.isValidFrame(frame) {
-                    self.applyFrameToGPUView(frame)
+                    self.applyFrameToGPUView(frame, reason: "viewport-default-async0.15")
                 } else {
                     // Only reset if we truly don't have a frame (e.g., during initial boot)
                     // Don't reset if frame was already applied successfully
@@ -238,7 +238,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
         // For non-default skins, use notification frame if available (preferred - most accurate)
         if let frame = currentTargetFrame, isValidFrame(frame) {
-            applyFrameToGPUView(frame)
+            applyFrameToGPUView(frame, reason: "viewport-nondefault-cached")
             return
         }
 
@@ -259,7 +259,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             // But also try immediate calculation as fallback for initial load
             if let immediateFrame = calculateFrameFromSkin(), isValidFrame(immediateFrame) {
                 currentTargetFrame = immediateFrame
-                applyFrameToGPUView(immediateFrame)
+                applyFrameToGPUView(immediateFrame, reason: "viewport-defined-immediate")
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
@@ -274,16 +274,16 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                            abs(frame.width - recalculatedFrame.width) > 10 ||
                            abs(frame.height - recalculatedFrame.height) > 10 {
                             self.currentTargetFrame = recalculatedFrame
-                            self.applyFrameToGPUView(recalculatedFrame)
+                            self.applyFrameToGPUView(recalculatedFrame, reason: "viewport-defined-async0.3-recalc")
                         }
                     } else {
-                        self.applyFrameToGPUView(frame)
+                        self.applyFrameToGPUView(frame, reason: "viewport-defined-async0.3-existing")
                     }
                 } else {
                     // If still no frame after waiting, use fallback
                     if let frame = self.calculateFrameFromSkin(), self.isValidFrame(frame) {
                         self.currentTargetFrame = frame
-                        self.applyFrameToGPUView(frame)
+                        self.applyFrameToGPUView(frame, reason: "viewport-defined-async0.3-fallback")
                     } else {
                         self.resetGPUViewPosition()
                     }
@@ -295,7 +295,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // For simple skins without defined screen areas, calculate frame immediately
         if let frame = calculateFrameFromSkin(), isValidFrame(frame) {
             currentTargetFrame = frame
-            applyFrameToGPUView(frame)
+            applyFrameToGPUView(frame, reason: "viewport-simple-immediate")
         } else {
             // If calculation fails, try again after a short delay (for initial load timing issues)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
@@ -303,7 +303,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                 guard !self.isBridgeShuttingDownForViewport() else { return }
                 if let frame = self.calculateFrameFromSkin(), self.isValidFrame(frame) {
                     self.currentTargetFrame = frame
-                    self.applyFrameToGPUView(frame)
+                    self.applyFrameToGPUView(frame, reason: "viewport-simple-async0.1")
                 } else {
                     self.resetGPUViewPosition()
                 }
@@ -365,10 +365,9 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
-        ILOG("SKIN-LAYOUT-DIAG: recompute on layout-settle → \(freshFrame) (bounds=\(bounds) safeArea=\(safeArea))")
         currentTargetFrame = freshFrame
         lastAppliedViewportFrame = nil
-        applyFrameToGPUView(freshFrame)
+        applyFrameToGPUView(freshFrame, reason: "recompute-layout-settle")
     }
 
     /// Check if current skin is a default skin
@@ -697,20 +696,20 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         if coreLetterboxesInternally,
            let viewport = core.bridge as? EmulatorCoreViewportPositioning,
            let gameScreenView = gpuViewController.view {
-            applyFrameToRetroArch(containerFrame, gameScreenView: gameScreenView, viewport: viewport)
+            applyFrameToRetroArch(containerFrame, gameScreenView: gameScreenView, viewport: viewport, reason: "reapply-scaling")
             #if !os(tvOS)
             refreshVirtualMouseLayout()
             #endif
         } else if let metalVC = gpuViewController as? PVMetalViewController {
             // Handle Metal cores (most common)
-            applyFrameToMetal(containerFrame, metalVC: metalVC)
+            applyFrameToMetal(containerFrame, metalVC: metalVC, reason: "reapply-scaling")
             #if !os(tvOS)
             refreshVirtualMouseLayout()
             #endif
         } else if !(core.bridge is EmulatorCoreViewportPositioning),
                   let gameScreenView = gpuViewController.view {
             // Handle GL cores
-            applyFrameToGL(containerFrame, gameScreenView: gameScreenView)
+            applyFrameToGL(containerFrame, gameScreenView: gameScreenView, reason: "reapply-scaling")
             #if !os(tvOS)
             refreshVirtualMouseLayout()
             #endif
@@ -720,8 +719,23 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
     // MARK: - Frame Application (Simplified)
 
+    /// TEMP DIAGNOSTIC (skin-layout finickiness, May 31 2026): dump the full state at
+    /// every viewport-apply site so a single Console.app capture pinpoints which path
+    /// applies the sticking frame and what core geometry / safe-area it saw at that
+    /// instant. The bugs are path-multiplicity + last-writer-wins stickiness, not the
+    /// per-path math, so the discriminator is *which* path wins and with *what* inputs.
+    /// Uses ILOG (not DLOG) so it survives in Console.app per the flycast debugging note.
+    /// Remove once the launch / scaling-mode layout bugs are root-caused on-device.
+    internal func logViewportApply(_ path: String, frame: CGRect, drawableSize: CGSize? = nil) {
+        let ds = drawableSize.map { "\(Int($0.width))x\(Int($0.height))" } ?? "n/a"
+        let geom = "core.screenRect=\(core.screenRect) bufferSize=\(core.bufferSize) aspectSize=\(core.aspectSize)"
+        let layout = "bounds=\(view.bounds) safeArea=\(view.safeAreaInsets)"
+        let scaling = "scalingMode=\(Defaults[.scalingMode]) explicitSet=\(Defaults[.userExplicitlySetScalingMode])"
+        ILOG("SKIN-LAYOUT-DIAG[\(path)]: applied=\(frame) drawable=\(ds) | \(geom) | \(layout) | \(scaling)")
+    }
+
     /// Apply frame to GPU view - single, clear application path
-    internal func applyFrameToGPUView(_ frame: CGRect) {
+    internal func applyFrameToGPUView(_ frame: CGRect, reason: String = "?") {
         guard !isBridgeShuttingDownForViewport() else { return }
         guard let gameScreenView = gpuViewController.view else { return }
         guard isValidFrame(frame) else {
@@ -739,7 +753,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
         // Handle RetroArch cores
         if let viewport = core.bridge as? EmulatorCoreViewportPositioning {
-            applyFrameToRetroArch(frame, gameScreenView: gameScreenView, viewport: viewport)
+            applyFrameToRetroArch(frame, gameScreenView: gameScreenView, viewport: viewport, reason: reason)
             #if !os(tvOS)
             refreshVirtualMouseLayout()
             #endif
@@ -748,7 +762,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
         // Handle Metal cores
         if let metalVC = gpuViewController as? PVMetalViewController {
-            applyFrameToMetal(frame, metalVC: metalVC)
+            applyFrameToMetal(frame, metalVC: metalVC, reason: reason)
             #if !os(tvOS)
             refreshVirtualMouseLayout()
             #endif
@@ -756,7 +770,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         }
 
         // Handle GL cores
-        applyFrameToGL(frame, gameScreenView: gameScreenView)
+        applyFrameToGL(frame, gameScreenView: gameScreenView, reason: reason)
         #if !os(tvOS)
         refreshVirtualMouseLayout()
         #endif
@@ -772,7 +786,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     }
 
     /// Apply frame to RetroArch core
-    private func applyFrameToRetroArch(_ frame: CGRect, gameScreenView: UIView, viewport: EmulatorCoreViewportPositioning) {
+    private func applyFrameToRetroArch(_ frame: CGRect, gameScreenView: UIView, viewport: EmulatorCoreViewportPositioning, reason: String = "?") {
         guard !isBridgeShuttingDownForViewport(viewport) else { return }
         let mtkView = gameScreenView.superview ?? gameScreenView
 
@@ -795,11 +809,12 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
         viewport.setUseCustomRenderViewLayout(true)
         viewport.applyRenderViewFrameInTouchView(finalFrame)
+        logViewportApply("RA:\(reason)", frame: finalFrame)
         ensureGPUViewVisibilityAndZOrder()
     }
 
     /// Apply frame to Metal core
-    private func applyFrameToMetal(_ frame: CGRect, metalVC: PVMetalViewController) {
+    private func applyFrameToMetal(_ frame: CGRect, metalVC: PVMetalViewController, reason: String = "?") {
         ILOG("🎮 SKIN: Applying frame to Metal: \(frame)")
 
         // CRITICAL: Set custom positioning BEFORE setting frames
@@ -859,13 +874,13 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         metalVC.view.isHidden = false
         metalVC.mtlView.isHidden = false
 
-        ILOG("🎮 SKIN: Metal frame applied - useCustomPositioning: \(metalVC.useCustomPositioning), customFrame: \(metalVC.customFrame)")
+        logViewportApply("Metal:\(reason)", frame: scaledFrame, drawableSize: drawableSize)
 
         ensureGPUViewVisibilityAndZOrder()
     }
 
     /// Apply frame to GL core
-    private func applyFrameToGL(_ frame: CGRect, gameScreenView: UIView) {
+    private func applyFrameToGL(_ frame: CGRect, gameScreenView: UIView, reason: String = "?") {
         (gpuViewController as PVGPUViewController).useCustomPositioning = true
 
         // Convert frame from SwiftUI container coordinate system to self.view coordinate system
@@ -888,6 +903,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         }
 
         gameScreenView.isHidden = false
+        logViewportApply("GL:\(reason)", frame: scaledFrame)
         ensureGPUViewVisibilityAndZOrder()
     }
 
@@ -948,7 +964,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     @objc private func resetToInitialCorrectFrame() {
         guard let frame = initialCorrectFrame else { return }
         currentTargetFrame = frame
-        applyFrameToGPUView(frame)
+        applyFrameToGPUView(frame, reason: "reset-initial-correct")
     }
 }
 
