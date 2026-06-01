@@ -99,26 +99,9 @@ extension PVEmulatorViewController {
 
         DLOG("Succeeded applying cheat: \(normalizedCode) \(type) \(enabled)")
 
-        // Cheevos H.1 guard: if the user enabled a cheat while running in
-        // RetroAchievements hardcore mode, auto-downgrade to softcore so
-        // their session doesn't keep posting fake hardcore unlocks. This is
-        // the RA-standard behaviour (rcheevos community / RetroArch both do
-        // it). Softcore unlocks still register; the user just loses hardcore
-        // credit until they restart the game with cheats disabled.
-        if enabled, let cheevosCore = core as? CoreRetroAchievements, cheevosCore.hardcoreMode {
-            WLOG("[CHEEVOS-DIAG] Auto-disabling hardcore: cheat enabled while session was hardcore")
-            cheevosCore.hardcoreMode = false
-            // Surface a toast so the user knows their hardcore session was
-            // downgraded — silent invalidation would be worse than fake
-            // unlocks, since they wouldn't know to restart for a real attempt.
-            await MainActor.run {
-                self.presentMessage(
-                    "RetroAchievements hardcore mode was disabled because a cheat was activated. Achievements will still register as softcore.",
-                    title: "Hardcore Disabled",
-                    source: self.view
-                )
-            }
-        }
+        // Cheevos H.1 guard (see downgradeHardcoreForCheatIfNeeded). Shared
+        // with the toggle-existing-cheat path so neither can bypass it.
+        downgradeHardcoreForCheatIfNeeded(cheatEnabled: enabled)
 
         // Persist to Realm
         let realm: Realm
@@ -169,6 +152,28 @@ extension PVEmulatorViewController {
         }
     }
 
+    /// Cheevos H.1 guard: enabling a cheat while in RetroAchievements hardcore
+    /// mode must auto-downgrade to softcore (RA-standard — rcheevos community /
+    /// RetroArch both do this), so the session stops posting fake hardcore
+    /// unlocks. Shared by the new-cheat (`setCheatState`) and toggle-existing-
+    /// cheat (`cheatsViewControllerUpdateState`) paths so neither bypasses it.
+    /// Softcore unlocks still register; the user just loses hardcore credit
+    /// until they restart with cheats disabled. Call on the main thread.
+    func downgradeHardcoreForCheatIfNeeded(cheatEnabled enabled: Bool) {
+        guard enabled,
+              let cheevosCore = core as? CoreRetroAchievements,
+              cheevosCore.hardcoreMode else { return }
+        WLOG("[CHEEVOS-DIAG] Auto-disabling hardcore: cheat enabled while session was hardcore")
+        cheevosCore.hardcoreMode = false
+        // Surface a toast — silent invalidation is worse than fake unlocks
+        // since the user wouldn't know to restart for a legitimate attempt.
+        presentMessage(
+            "RetroAchievements hardcore mode was disabled because a cheat was activated. Achievements will still register as softcore.",
+            title: "Hardcore Disabled",
+            source: view
+        )
+    }
+
     /// Legacy completion-based wrapper for callers that haven't migrated to async.
     @MainActor
     func setCheatState(
@@ -196,9 +201,13 @@ extension PVEmulatorViewController {
         }
         let cheatCode = cheat.code ?? ""
         let cheatType = cheat.type ?? ""
+        let cheatEnabled = cheat.enabled
         if gameWithCheat.setCheat(code: cheatCode, type: cheatType, codeType: cheat.codeType,
-                                  cheatIndex: cheatIndex, enabled: cheat.enabled) {
-            ILOG("Succeeded applying cheat: \(cheatCode) \(cheatType) \(cheat.enabled)")
+                                  cheatIndex: cheatIndex, enabled: cheatEnabled) {
+            ILOG("Succeeded applying cheat: \(cheatCode) \(cheatType) \(cheatEnabled)")
+            // Cheevos H.1 guard: toggling an existing cheat ON in hardcore mode
+            // must also downgrade to softcore (this path previously bypassed it).
+            downgradeHardcoreForCheatIfNeeded(cheatEnabled: cheatEnabled)
             completion(.success)
         } else {
             let error = NSError(domain: "com.provenance-emu.cheats", code: 0,
