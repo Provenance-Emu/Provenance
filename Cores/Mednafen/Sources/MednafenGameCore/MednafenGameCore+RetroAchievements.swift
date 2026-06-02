@@ -71,14 +71,18 @@ extension MednafenGameCore: CoreRetroAchievements {
             ]
 
         case .PCE, .PCECD, .SGFX:
+            // Flat rcheevos PCE System RAM is 0x000000 (consoleinfo.c:779/786);
+            // 0x1F0000 is the real bus address (col 3) rc_client never queries,
+            // so PCE cheevos were dead. (CD RAM / Super System Card / CD save RAM
+            // regions are a separate device-validated follow-up.)
             if MednafenGameCoreOptions.mednafen_pceFast {
                 guard let ptr = mdfn_pce_fast_baseram_ptr() else { return [] }
-                return [RcheevosRegion(rcAddress: 0x1F0000,
+                return [RcheevosRegion(rcAddress: 0x000000,
                                        base: UnsafeMutableRawPointer(ptr),
                                        size: UInt32(mdfn_pce_fast_baseram_size()))]
             } else {
                 guard let ptr = mdfn_pce_baseram_ptr() else { return [] }
-                return [RcheevosRegion(rcAddress: 0x1F0000,
+                return [RcheevosRegion(rcAddress: 0x000000,
                                        base: UnsafeMutableRawPointer(ptr),
                                        size: UInt32(mdfn_pce_baseram_size()))]
             }
