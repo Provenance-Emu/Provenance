@@ -930,8 +930,12 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
 
     /// Restore saved device type selections (called after core loads).
     func restorePortDeviceTypes() {
+        // Always apply at least port 0 even when the core never sent SET_CONTROLLER_INFO
+        // (controllerPortInfo.count == 0). RetroArch always pushes a device per port at
+        // init; cores like Opera/3DO don't poll input until retro_set_controller_port_device
+        // is called, so skipping this leaves controls dead at boot until a menu toggle.
         // Clamp to thinMaxPlayers — _portDeviceTypes[] only has 4 entries.
-        let portCount = min(_bridge.controllerPortInfo.count, thinMaxPlayers)
+        let portCount = max(1, min(_bridge.controllerPortInfo.count, thinMaxPlayers))
         for port in 0..<portCount {
             let key = portDevicePersistenceKey(port: port)
             if UserDefaults.standard.object(forKey: key) != nil {
@@ -950,6 +954,15 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
                     // This runs AFTER retro_load_game so the core's SET_CONTROLLER_INFO has fired.
                     _bridge.setControllerPortDevice(UInt32(defaultDevice), forPort: UInt32(port))
                     ILOG("ThinLibretroCore: applied platform default device=\(defaultDevice) on port \(port)")
+                } else {
+                    // No saved pref and no platform default: still push the tracked device
+                    // (RETRO_DEVICE_JOYPAD by default, set in init) so the core is explicitly
+                    // told its port device at boot. Without this, cores like 3DO/Opera don't
+                    // poll input until a menu port-device toggle re-applies it — dead controls
+                    // at boot until the user toggles or restarts the core.
+                    let fallback = UInt(_bridge.currentDeviceType(forPort: UInt32(port)))
+                    _bridge.setControllerPortDevice(UInt32(fallback), forPort: UInt32(port))
+                    ILOG("ThinLibretroCore: applied tracked default device=\(fallback) on port \(port)")
                 }
             }
         }
