@@ -44,7 +44,18 @@ public struct ZipBackend: ArchiveExtractorBackend, ArchiveListingBackend, Archiv
 
                         for (i, entry) in fileEntries.enumerated() {
                             try autoreleasepool {
-                                let fullPath = destination.appendingPathComponent(entry.info.name)
+                                // Sanitize the entry name to prevent zip-slip / path
+                                // traversal: strip `..`/`.` components and reject any
+                                // path that resolves outside the destination dir
+                                // (mirrors RarBackend). A malicious archive could
+                                // otherwise overwrite BIOS/save/config files.
+                                let sanitized = entry.info.name
+                                    .components(separatedBy: "/")
+                                    .filter { !$0.isEmpty && $0 != ".." && $0 != "." }
+                                    .joined(separator: "/")
+                                guard !sanitized.isEmpty else { return }
+                                let fullPath = destination.appendingPathComponent(sanitized)
+                                guard fullPath.path.hasPrefix(destination.path) else { return }
                                 try FileManager.default.createDirectory(
                                     at: fullPath.deletingLastPathComponent(),
                                     withIntermediateDirectories: true
