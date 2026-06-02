@@ -114,6 +114,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     var isHandlingRotation: Bool = false
     private var pendingRotationWorkItem: DispatchWorkItem?
 
+    /// The in-flight background auto-save (retro_serialize) started on resign-active.
+    /// appDidBecomeActive awaits this before unpausing the core, so retro_serialize
+    /// cannot race the resumed retro_run (they share no lock). Awaiting the Task —
+    /// rather than locking the 60fps emu loop — avoids the @synchronized main-thread
+    /// starvation pitfall. Main-thread only (lifecycle notifications).
+    private var pendingAutoSaveTask: Task<Void, Never>?
+
     // Viewport application state to prevent layout loops
     var isApplyingViewport: Bool = false
 
@@ -3194,7 +3201,7 @@ extension PVEmulatorViewController {
         }
         #endif
 
-        Task { [weak self] in
+        pendingAutoSaveTask = Task { [weak self] in
             guard let self = self else { return }
             if Defaults[.autoSave], self.core.supportsSaveStates {
                 // Skip auto-save when ReplayKit is setting up a recording session.
@@ -3311,10 +3318,32 @@ extension PVEmulatorViewController {
         /// Match pause state to the actual menu visibility instead of always forcing
         /// pause. This prevents returning from transient ReplayKit UI in a permanently
         /// paused-looking state with no visible pause menu.
-        core.setPauseEmulation(isShowingMenu)
+        ///
+        /// BUT defer the unpause until any in-flight background auto-save finishes:
+        /// the emulator is already paused from resign-active, and unpausing now would
+        /// let the resumed retro_run race the auto-save's retro_serialize (no shared
+        /// lock → corrupt core state). Await the auto-save Task (lock-free, so no
+        /// @synchronized main-thread starvation); the core stays paused meanwhile.
+        let shouldStayPaused = isShowingMenu
+        if let pendingAutoSave = pendingAutoSaveTask {
+            Task { @MainActor [weak self] in
+                await pendingAutoSave.value
+                self?.core.setPauseEmulation(shouldStayPaused)
+            }
+        } else {
+            core.setPauseEmulation(shouldStayPaused)
+        }
 
         do {
-            // TODO: Test if we need to recreate the audio graph
+            // Resume audio. The engine was only PAUSED on background (pauseAudio →
+            // engine.pause()), not torn down — so the graph does NOT need recreating
+            // here: setupAudioGraph just refreshes the gameCore ref and re-posts the
+            // sample rate, and startAudio() restarts the existing engine. (The
+            // source-node rebuild inside startAudio is redundant on a plain resume but
+            // harmless — resolves the old "test if we need to recreate the graph" TODO.)
+            // Possible future tweak: skip startAudio while `isShowingMenu` so the engine
+            // doesn't run behind a paused menu — verify the menu-dismiss path restarts
+            // audio before gating, to avoid leaving audio dead after closing the menu.
             try gameAudio.setupAudioGraph(for: core)
             try startAudio()
         } catch {
