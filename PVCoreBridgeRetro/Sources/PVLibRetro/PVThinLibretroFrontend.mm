@@ -122,6 +122,12 @@ static bool pv_retro_rumble_callback(unsigned port, enum retro_rumble_effect eff
 
 #if HAVE_RCHEEVOS
 #include "rc_client.h"
+// rc_libretro.h lives in rcheevos/src (not the public include/ dir CRcheevos
+// exposes), and the SPM cSettings header path doesn't reach this .mm's
+// quote-includes under the Xcode workspace build. Quote-includes resolve
+// relative to this file first, so reference it by relative path. Its own
+// sub-includes (libretro.h, rc_consoles.h) resolve via the existing search paths.
+#include "../../../PVRcheevos/rcheevos/src/rc_libretro.h"
 #endif
 
 // ---------------------------------------------------------------------------
@@ -449,11 +455,18 @@ typedef struct PVThinLibretroSymbols {
     /// Read by Swift via the achievementsActive accessor; written by
     /// loadAchievementsForGameHash:hardcore:completion:.
     BOOL _rcHardcore;
+    /// Flat<->bus memory map built by rc_libretro_memory_init at game-load so
+    /// rc_client's FLAT reads resolve correctly for multi-region consoles
+    /// (SNES/Genesis/Saturn/GBA). Replaces the hand-rolled bus-address walk.
+    rc_libretro_memory_regions_t _rcLibretroRegions;
 #endif
     /// Atomic guard read every frame inside tickAchievements. Set by the
     /// load-game completion path and cleared by unloadAchievements so the
     /// per-frame `rc_client_do_frame` call is gated on a confirmed session.
     std::atomic<bool> _rcAchievementsActive;
+    /// True once _rcLibretroRegions is built; gates the rc_libretro read path
+    /// (falls back to the legacy descriptor walk when false).
+    std::atomic<bool> _rcMemoryRegionsReady;
     /// Queue of unlock notifications that fired before the Swift core wired
     /// `achievementTriggeredBlock`. Flushed in the custom setter so a player
     /// who unlocks early (e.g. first-frame trigger) still sees the toast.
@@ -881,6 +894,8 @@ typedef struct PVThinLibretroSymbols {
 - (uint32_t)_pvthin_readMemoryAt:(uint32_t)address
                             into:(uint8_t *)buffer
                           length:(uint32_t)length;
+/// Builds the flat<->bus rc_libretro memory map for the loaded console.
+- (void)_pvthin_buildRcheevosMemoryRegionsForConsole:(uint32_t)consoleID;
 
 // Enqueue an unlock notification when achievementTriggeredBlock isn't wired
 // yet — drained by the custom setter (cheevos audit Section F.1).
@@ -7593,6 +7608,23 @@ static void pvthin_rcheevos_log_message(const char *message, const rc_client_t *
 /// that never publish a memory map. Reads after `retro_unload_game` (during
 /// teardown) return the documented 0xFF fill, matching the contract of
 /// `rc_client_read_memory_func_t`.
+// Bridge pointer valid ONLY for the synchronous duration of a
+// rc_libretro_memory_init() call (get_core_memory_info is invoked inline).
+static __weak PVThinLibretroFrontend *s_rcInitBridge = nil;
+
+/// rcheevos callback: hand it a core memory block by RETRO_MEMORY_* id so it can
+/// build flat regions for memory the retro_memory_map descriptors don't cover.
+static void pvthin_rcheevos_get_core_memory(uint32_t id, rc_libretro_core_memory_info_t *info) {
+    info->data = NULL;
+    info->size = 0;
+    PVThinLibretroFrontend *b = s_rcInitBridge;
+    if (!b) { return; }
+    size_t sz = 0;
+    void *p = [b memoryDataForID:(unsigned)id size:&sz];
+    info->data = (uint8_t *)p;
+    info->size = sz;
+}
+
 static uint32_t pvthin_rcheevos_read_memory(uint32_t address, uint8_t *buffer,
                                             uint32_t num_bytes, rc_client_t *client) {
     PVThinLibretroFrontend *bridge = (__bridge PVThinLibretroFrontend *)rc_client_get_userdata(client);
@@ -7782,6 +7814,9 @@ static void pvthin_rcheevos_load_callback(int result, const char *error_message,
     if (success) {
         const rc_client_game_t *game = rc_client_get_game_info(client);
         uint32_t gameID = game ? game->id : 0;
+        // Build the flat<->bus rc_libretro memory map for this console so rc_client's
+        // FLAT reads resolve correctly (replaces the legacy bus-address walk).
+        [bridge _pvthin_buildRcheevosMemoryRegionsForConsole:(game ? game->console_id : 0)];
         rc_client_user_game_summary_t summary = {};
         rc_client_get_user_game_summary(client, &summary);
         ILOG(@"[CHEEVOS-DIAG] load_game SUCCESS gameID=%u core=%u/%u unlocked(soft=%u/hard=%u)",
@@ -7853,14 +7888,51 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
     return _rcAchievementsActive.load();
 }
 
+- (void)_pvthin_buildRcheevosMemoryRegionsForConsole:(uint32_t)consoleID {
+#if HAVE_RCHEEVOS
+    _rcMemoryRegionsReady.store(false);
+    rc_libretro_memory_destroy(&_rcLibretroRegions);
+    struct retro_memory_map mmap;
+    mmap.descriptors = _memoryMapDescriptors;
+    mmap.num_descriptors = _memoryMapCount;
+    s_rcInitBridge = self;
+    int ok = rc_libretro_memory_init(&_rcLibretroRegions, &mmap,
+                                     pvthin_rcheevos_get_core_memory, consoleID);
+    s_rcInitBridge = nil;
+    if (ok && _rcLibretroRegions.count > 0) {
+        _rcMemoryRegionsReady.store(true);
+        ILOG(@"[CHEEVOS-DIAG] rc_libretro_memory_init OK console=%u regions=%u", consoleID, _rcLibretroRegions.count);
+    } else {
+        ILOG(@"[CHEEVOS-DIAG] rc_libretro init produced no regions (console=%u) — using legacy walk", consoleID);
+    }
+#endif
+}
+
 - (void)_pvthin_setAchievementsActive:(BOOL)active {
     _rcAchievementsActive.store((bool)active);
+#if HAVE_RCHEEVOS
+    if (!active) {
+        _rcMemoryRegionsReady.store(false);
+        rc_libretro_memory_destroy(&_rcLibretroRegions);
+    }
+#endif
 }
 
 - (uint32_t)_pvthin_readMemoryAt:(uint32_t)address
                             into:(uint8_t *)buffer
                           length:(uint32_t)length {
     if (!buffer || length == 0) { return 0; }
+
+#if HAVE_RCHEEVOS
+    // Preferred path: rc_libretro builds a correct FLAT->pointer map from the core's
+    // retro_memory_map + the console's rcheevos region table, so rc_client's FLAT
+    // addresses resolve correctly for multi-region consoles (SNES/Genesis/Saturn/GBA).
+    // Falls back to the legacy descriptor walk below when the map wasn't built.
+    if (_rcMemoryRegionsReady.load()) {
+        memset(buffer, 0xFF, length);
+        return rc_libretro_memory_read(&_rcLibretroRegions, address, buffer, length);
+    }
+#endif
 
     // Track per-byte whether a real region serviced the read. Bytes that
     // remain unserviced get the documented 0xFF sentinel — but we ONLY

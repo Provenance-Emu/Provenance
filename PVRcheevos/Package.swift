@@ -35,6 +35,8 @@ let rcheevosSources: [String] = [
     "src/rc_compat.c",
     "src/rc_util.c",
     "src/rc_version.c",
+    // libretro memory-map helper (flat<->bus address translation for thin wrapper)
+    "src/rc_libretro.c",
     // REST API helpers (in rapi/ subdirectory)
     "src/rapi/rc_api_common.c",
     "src/rapi/rc_api_editor.c",
@@ -98,6 +100,8 @@ let package = Package(
             publicHeadersPath: "include",
             cSettings: [
                 .headerSearchPath("include"),
+                // rc_libretro.c includes "libretro.h", which rcheevos vendors under test/.
+                .headerSearchPath("test"),
                 // RC_NO_THREADS removes rcheevos's internal mutex entirely.
                 // This is safe for Mednafen (single emulator thread) but means any
                 // core that calls doFrame from a different thread than loginAndLoadGame

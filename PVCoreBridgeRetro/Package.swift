@@ -83,6 +83,8 @@ let package = Package(
                 // from .mm sources don't always resolve via the SPM dep graph,
                 // especially under Xcode workspace builds. Add the path explicitly.
                 .headerSearchPath("../../../PVRcheevos/rcheevos/include"),
+                // rc_libretro.h is a semi-private header under src/ (not include/).
+                .headerSearchPath("../../../PVRcheevos/rcheevos/src"),
                 .define("DEBUG", .when(configuration: .debug)),
                 .define("HAVE_RCHEEVOS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
