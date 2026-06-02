@@ -10,6 +10,7 @@ import PVFileSystem
 import PVSupport
 import RealmSwift
 import PVPrimitives
+import PVHashing  // calculateMD5Async for same-name/different-content collision check
 
 protocol GameImporterFileServicing {
     func moveImportItem(toAppropriateSubfolder queueItem: ImportQueueItem) async throws
@@ -306,6 +307,29 @@ class GameImporterFileService : GameImporterFileServicing {
             return
         }
 
+        // A file already exists at the destination path. Only treat it as a duplicate
+        // (and delete the incoming source below) when the CONTENT is byte-identical.
+        // A same-name / different-content file is a DIFFERENT ROM — deleting the source
+        // there silently loses the user's new file (data-loss blocker). In that case,
+        // import the new file under a unique deduped name instead.
+        if FileManager.default.fileExists(atPath: expectedPath.path),
+           await !Self.filesAreByteIdentical(queueItem.url, expectedPath) {
+            let uniqueDest = Self.uniqueDestination(for: expectedPath)
+            WLOG("ROM name collision with DIFFERENT content for \(fileName); importing as \(uniqueDest.lastPathComponent) to avoid data loss")
+            do {
+                queueItem.destinationUrl = try await moveFile(queueItem.url, toExplicitDestination: uniqueDest)
+                if !queueItem.childQueueItems.isEmpty {
+                    try await moveChildImports(forQueueItem: queueItem, to: destinationFolder)
+                }
+                if !queueItem.resolvedAssociatedFileURLs.isEmpty {
+                    try await moveAssociatedFiles(forQueueItem: queueItem, to: destinationFolder)
+                }
+                return
+            } catch {
+                throw GameImporterError.failedToMoveROM(error)
+            }
+        }
+
         // If the file already exists at the destination, handle it specially
         if FileManager.default.fileExists(atPath: expectedPath.path) {
             ILOG("ROM file \(fileName) already exists at destination, skipping move and using existing file")
@@ -493,6 +517,42 @@ class GameImporterFileService : GameImporterFileServicing {
                 // If it's a different error, rethrow it
                 throw error
             }
+        }
+    }
+
+    /// Returns `true` only when both files are byte-identical (same size AND same raw MD5).
+    /// Conservative: returns `false` on any read failure so an inconclusive comparison never
+    /// authorizes deleting the user's incoming source file. Raw MD5 (offset 0) — exact file
+    /// identity, NOT ROM-identity (header-skipping), since we are deciding whether deleting
+    /// the source is safe.
+    private static func filesAreByteIdentical(_ a: URL, _ b: URL) async -> Bool {
+        let fm = FileManager.default
+        guard let sizeA = (try? fm.attributesOfItem(atPath: a.path)[.size]) as? NSNumber,
+              let sizeB = (try? fm.attributesOfItem(atPath: b.path)[.size]) as? NSNumber,
+              sizeA == sizeB else {
+            return false
+        }
+        guard let md5A = try? await calculateMD5Async(of: a),
+              let md5B = try? await calculateMD5Async(of: b) else {
+            return false
+        }
+        return md5A == md5B
+    }
+
+    /// Returns a non-colliding destination URL by appending `_1`, `_2`, … before the
+    /// extension until a free path is found in the same directory.
+    private static func uniqueDestination(for url: URL) -> URL {
+        let fm = FileManager.default
+        guard fm.fileExists(atPath: url.path) else { return url }
+        let dir = url.deletingLastPathComponent()
+        let ext = url.pathExtension
+        let stem = url.deletingPathExtension().lastPathComponent
+        var n = 1
+        while true {
+            let name = ext.isEmpty ? "\(stem)_\(n)" : "\(stem)_\(n).\(ext)"
+            let candidate = dir.appendingPathComponent(name)
+            if !fm.fileExists(atPath: candidate.path) { return candidate }
+            n += 1
         }
     }
 
