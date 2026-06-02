@@ -613,8 +613,24 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         let emulationState = appState?.emulationUIState
         emulationState?.isInBackground = true
         pauseCore()
-        Task {
-            try await self.saveCoreState()
+        // Hold a background-task assertion so the async save chain (serialize -> write ->
+        // Realm register) can finish before iOS suspends the app; without it the autosave
+        // can be lost. Mirrors the CloudKit pattern. @MainActor keeps bgTaskID race-free.
+        var bgTaskID: UIBackgroundTaskIdentifier = .invalid
+        bgTaskID = application.beginBackgroundTask(withName: "PVSaveCoreState") {
+            application.endBackgroundTask(bgTaskID)
+            bgTaskID = .invalid
+        }
+        Task { @MainActor in
+            do {
+                try await self.saveCoreState()
+            } catch {
+                ELOG("Autosave on resign-active failed: \(error.localizedDescription)")
+            }
+            if bgTaskID != .invalid {
+                application.endBackgroundTask(bgTaskID)
+                bgTaskID = .invalid
+            }
         }
     }
 

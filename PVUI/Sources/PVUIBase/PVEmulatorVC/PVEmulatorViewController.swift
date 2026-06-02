@@ -1777,8 +1777,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         await stopNetplayBridge()
         #endif
 
-        // Tear down RetroAchievements session before stopping the core.
-        stopAchievements()
+        // RetroAchievements teardown moved below (after core.stopEmulation joins the
+        // emu loop) so the per-frame tick can't race rc_client_destroy — see quit tail.
 
         // Remove indicator overlay
         removeIndicatorOverlay()
@@ -1794,6 +1794,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         endLiveActivity()
 
         core.stopEmulation()
+
+        // Safe now: stopEmulation() joined the emu loop, so no frame can tick
+        // rc_client_do_frame while we destroy the rc_client (rcheevos is
+        // RC_NO_THREADS=1 — a concurrent tick during teardown is a use-after-free).
+        stopAchievements()
+
         gpuViewController.dismiss(animated: false)
         if let view = controllerViewController?.view {
             for subview in view.subviews {
