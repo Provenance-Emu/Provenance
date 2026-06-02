@@ -476,4 +476,23 @@ extension PVEmulatorViewController: RetroAchievementsOSDDelegate {
     public func leaderboardStarted(_ notification: AchievementLeaderboardNotification) {}
     public func leaderboardFailed(leaderboardID: UInt32) {}
     public func leaderboardSubmitted(_ notification: AchievementLeaderboardNotification) {}
+
+    /// Surface a RetroAchievements session load/login failure instead of failing
+    /// silently (audit J.1/#26). Both System B (CoreRetroAchievements+RcheevosSession)
+    /// and the thin wrapper (PVThinLibretroCore+Features) dispatch here; previously
+    /// this hit the no-op protocol default so the user saw nothing when achievements
+    /// failed to load server-side. Always logs; shows a non-blocking alert at boot
+    /// (gated on the toasts-enabled preference so users who disabled the cheevos UI
+    /// are not interrupted).
+    public func sessionLoadFailed(rcResult: Int32, message: String?) {
+        let detail = message ?? "Unknown error"
+        WLOG("RetroAchievements session load failed (rc=\(rcResult)): \(detail)")
+        guard Defaults[.retroAchievementsToastsEnabled] else { return }
+        #if canImport(UIKit)
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            self.presentError("RetroAchievements could not load for this game: \(detail)", source: self.view)
+        }
+        #endif
+    }
 }
