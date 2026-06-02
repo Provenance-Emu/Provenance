@@ -215,6 +215,11 @@ extension PVEmulatorViewController {
     /// Hides and detaches the face-cam overlay. Safe to call even if no overlay is active.
     public func hideCameraOverlay() {
         cameraOverlayView?.detach()
+        // Also remove from the hierarchy and drop our reference — otherwise the
+        // full-screen overlay view stays retained (by the superview + this property)
+        // after recording stops, leaking one overlay per recording session.
+        cameraOverlayView?.removeFromSuperview()
+        cameraOverlayView = nil
     }
 #endif
 
