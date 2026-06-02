@@ -19,7 +19,9 @@ struct MainView: View {
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
     
 #if os(iOS)
-    @StateObject private var gamepadManager = GamepadManager.shared
+    // Singleton — use @ObservedObject, not @StateObject (@StateObject implies this
+    // view creates and owns the instance's lifetime, which is wrong for a .shared).
+    @ObservedObject private var gamepadManager = GamepadManager.shared
     @State private var effectiveUseTVMedia: Bool = false
     @State private var disconnectTask: Task<Void, Never>?
 #endif
