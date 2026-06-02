@@ -6,9 +6,10 @@
 //  the shared PVRcheevosBridge default impl.
 //
 //  Memory map:
-//    snes9x exposes 128 KiB of WRAM via `Memory.RAM`. We expose it at
-//    rcheevos address 0x7E0000 to match the SNES Bus-A WRAM bank
-//    convention used by the rcheevos memory map for the SNES system.
+//    snes9x exposes 128 KiB of WRAM via `Memory.RAM`. rcheevos addresses the
+//    SNES System RAM at FLAT address 0x000000 (consoleinfo.c column 1). The
+//    0x7E0000 SNES Bus-A WRAM bank is the *real* address (column 3), which
+//    rc_client does NOT use — RcheevosRegion.rcAddress must be the flat value.
 //
 
 import Foundation
@@ -33,10 +34,10 @@ extension PVSNES9xEmulatorCore: CoreRetroAchievements {
             return []
         }
         // [CHEEVOS-DIAG] First-call dump of region details (log every call — cheap and bounded).
-        ILOG("[CHEEVOS-DIAG] SNES9x rcheevosRegions rcAddress=0x7E0000 base=\(String(format: "%p", Int(bitPattern: ptr))) size=\(byteCount)")
+        ILOG("[CHEEVOS-DIAG] SNES9x rcheevosRegions rcAddress=0x000000 base=\(String(format: "%p", Int(bitPattern: ptr))) size=\(byteCount)")
         return [
             RcheevosRegion(
-                rcAddress: 0x7E0000,
+                rcAddress: 0x000000,
                 base: ptr,
                 size: byteCount)
         ]

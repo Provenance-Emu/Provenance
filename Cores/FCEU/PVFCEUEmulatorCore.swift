@@ -32,6 +32,19 @@ open class PVFCEUEmulatorCore: PVEmulatorCore, @unchecked Sendable {
 
     /// Hardcore mode flag.
     var _hardcoreMode: Bool = false
+
+    // MARK: - RetroAchievements per-frame tick
+    // The shared `tickAchievements()` (CoreRetroAchievements+RcheevosSession) is a
+    // Swift protocol-extension method, so it is NOT reachable from the ObjC
+    // `executeFrame` in the .mm bridge. Drive it from this Swift override, mirroring
+    // PVSNESEmulatorCore. Without it, FCEU loads the rc_client session (prepareAchievements
+    // is called) but `rc_client_do_frame` never runs, so NES achievements never evaluate.
+    public override func executeFrame() {
+        super.executeFrame()
+        if achievementsActive {
+            tickAchievements()
+        }
+    }
 }
 
 extension PVFCEUEmulatorCore: GameWithCheat {

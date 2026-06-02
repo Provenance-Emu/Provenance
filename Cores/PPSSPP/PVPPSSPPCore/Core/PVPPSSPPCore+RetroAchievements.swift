@@ -6,9 +6,11 @@
 //  PVRcheevosBridge default impl.
 //
 //  Memory map:
-//    PSP main RAM lives at PSP virtual address 0x08000000 (32 MiB on retail
-//    PSP, 64 MiB on PSP-2000). rcheevos's PSP memory map mirrors this — the
-//    region is exposed at rcheevos address 0x08000000.
+//    PSP main RAM lives at PSP virtual address 0x08000000, but rcheevos
+//    addresses the PSP RAM at FLAT address 0x00000000 (consoleinfo.c column 1:
+//    Kernel RAM 0x0 / System RAM 0x800000; 0x08000000 is the *real* bus address
+//    in column 3, which rc_client does NOT use). systemRAMPtr already points at
+//    the base of PSP RAM, so flat offset indexes directly into it.
 //
 
 import Foundation
@@ -24,7 +26,7 @@ extension PVPPSSPPCore: CoreRetroAchievements {
         guard byteCount > 0 else { return [] }
         return [
             RcheevosRegion(
-                rcAddress: 0x08000000,
+                rcAddress: 0x00000000,
                 base: ptr,
                 size: byteCount)
         ]
