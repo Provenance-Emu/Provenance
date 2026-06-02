@@ -34,16 +34,17 @@ open class PVFCEUEmulatorCore: PVEmulatorCore, @unchecked Sendable {
     var _hardcoreMode: Bool = false
 
     // MARK: - RetroAchievements per-frame tick
-    // The shared `tickAchievements()` (CoreRetroAchievements+RcheevosSession) is a
-    // Swift protocol-extension method, so it is NOT reachable from the ObjC
-    // `executeFrame` in the .mm bridge. Drive it from this Swift override, mirroring
-    // PVSNESEmulatorCore. Without it, FCEU loads the rc_client session (prepareAchievements
-    // is called) but `rc_client_do_frame` never runs, so NES achievements never evaluate.
+    // The shared tick (CoreRetroAchievements+RcheevosSession, a `where Self: NSObject`
+    // extension in PVRcheevosBridge) is unreachable from the ObjC `executeFrame` in the
+    // .mm bridge, so without this NES loads the rc_client session (prepareAchievements
+    // runs) but `rc_client_do_frame` never ticks → achievements never evaluate.
+    // Routed through the existential so it resolves with only PVCoreBridge in scope
+    // (FCEU's core target doesn't import PVRcheevosBridge); dispatch hits the real
+    // NSObject witness, not the protocol's no-op default.
     public override func executeFrame() {
         super.executeFrame()
-        if achievementsActive {
-            tickAchievements()
-        }
+        guard let achievements = self as? (any CoreRetroAchievements), achievements.achievementsActive else { return }
+        achievements.tickAchievements()
     }
 }
 

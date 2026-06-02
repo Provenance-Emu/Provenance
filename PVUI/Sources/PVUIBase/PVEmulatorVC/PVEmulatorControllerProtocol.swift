@@ -211,6 +211,17 @@ public extension PVEmualatorControllerProtocol {
             throw SaveStateError.saveStatesUnsupportedByCore
         }
 
+        // RetroAchievements hardcore mode disallows save-state loads. quickload()
+        // bypasses loadSaveState()'s guard (it calls core.loadState directly), so
+        // replicate the integrity check here or hardcore unlocks become exploitable.
+        // Routed through the existential so it needs only the protocol in scope and
+        // dispatches to the real NSObject witness (not the no-op default).
+        if let achievements = core as? (any CoreRetroAchievements),
+           achievements.hardcoreMode, achievements.achievementsActive {
+            WLOG("QuickLoad blocked: RetroAchievements hardcore mode is active.")
+            throw SaveStateError.ineligibleError
+        }
+
         // Get the most recent save state (manual or auto)
         let saveStates = game.saveStates.sorted(byKeyPath: "date", ascending: false)
 

@@ -45,6 +45,12 @@ private final class StartToken: NSObject, @unchecked Sendable {
 internal let hardcoreFastForwardBlockedMessage =
     "Fast-forward is disabled in RetroAchievements Hardcore Mode."
 
+/// User-facing message shown when a slow-motion request is rejected because of
+/// RetroAchievements Hardcore Mode (slow-motion is an unfair advantage, blocked
+/// symmetrically with fast-forward — matching RetroArch hardcore behaviour).
+internal let hardcoreSlowMotionBlockedMessage =
+    "Slow-motion is disabled in RetroAchievements Hardcore Mode."
+
 public extension PVEmulatorViewController {
 
     // MARK: - Associated-object accessors
@@ -335,12 +341,23 @@ public extension PVEmulatorViewController {
     /// `.veryFast` are rejected and a user-facing error alert is presented, consistent
     /// with the OSD button and Delta skin button guards.
     @MainActor func setGameSpeedRespectingAchievements(_ speed: GameSpeed) {
-        if achievementsBlocksFastForward(), speed == .fast || speed == .veryFast {
-            ILOG("Ignoring request to set fast game speed while RetroAchievements hardcore mode is active.")
-            #if canImport(UIKit)
-            presentError(hardcoreFastForwardBlockedMessage, source: view)
-            #endif
-            return
+        // Hardcore mode blocks BOTH fast-forward and slow-motion (any non-normal
+        // speed is an unfair advantage). The predicate is "hardcore + active".
+        if achievementsBlocksFastForward() {
+            if speed == .fast || speed == .veryFast {
+                ILOG("Ignoring request to set fast game speed while RetroAchievements hardcore mode is active.")
+                #if canImport(UIKit)
+                presentError(hardcoreFastForwardBlockedMessage, source: view)
+                #endif
+                return
+            }
+            if speed == .slow {
+                ILOG("Ignoring request to set slow game speed while RetroAchievements hardcore mode is active.")
+                #if canImport(UIKit)
+                presentError(hardcoreSlowMotionBlockedMessage, source: view)
+                #endif
+                return
+            }
         }
         core.gameSpeed = speed
         (controllerViewController as? OSDFastForwardObserver)?.syncFastForwardDisplay()
