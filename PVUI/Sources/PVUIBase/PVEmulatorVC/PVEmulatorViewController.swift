@@ -1125,6 +1125,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         if abs(postStartSampleRate - audioGraphSampleRate) > 1.0 {
             ILOG("Audio: core sample rate changed after start (\(audioGraphSampleRate) → \(postStartSampleRate) Hz) — rebuilding audio graph")
             do {
+                // Stop the engine BEFORE rebuilding: startAudio()→updateSourceNode()
+                // detaches/attaches/reconnects nodes, and mutating a *running*
+                // AVAudioEngine graph (the engine was started at first startAudio())
+                // risks an internal assertion. Mirrors reloadEffectsChainIfRunning(),
+                // which also stops before mutating the graph.
+                gameAudio.stopAudio()
                 try gameAudio.setupAudioGraph(for: core)
                 try startAudio()
             } catch {
