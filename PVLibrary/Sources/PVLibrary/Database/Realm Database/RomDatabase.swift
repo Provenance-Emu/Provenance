@@ -121,9 +121,21 @@ public final class RealmConfiguration {
                 var counter = 0
                 var deletions = 0
                 migration.enumerateObjects(ofType: PVGame.className()) { oldObject, newObject in
-                    let romPath = oldObject!["romPath"] as! String
-                    let systemID = oldObject!["systemIdentifier"] as! String
-                    let system = SystemIdentifier(rawValue: systemID)!
+                    // Guard-bind instead of force-unwrapping: a malformed/legacy entry
+                    // (missing romPath/systemIdentifier, or an unknown system id) would
+                    // otherwise hard-crash the app on launch during this migration. Drop
+                    // the unmigratable entry instead — consistent with the delete-on-bad-
+                    // entry handling below.
+                    guard let oldObject = oldObject,
+                          let romPath = oldObject["romPath"] as? String,
+                          let systemID = oldObject["systemIdentifier"] as? String,
+                          let system = SystemIdentifier(rawValue: systemID) else {
+                        if let oldObject = oldObject {
+                            migration.delete(oldObject)
+                            deletions += 1
+                        }
+                        return
+                    }
 
                     var offset: UInt = 0
                     if system == .SNES {
@@ -134,10 +146,8 @@ public final class RealmConfiguration {
                     let fm = FileManager.default
                     if !fm.fileExists(atPath: fullPath.path) {
                         ELOG("Cannot find file at path: \(fullPath). Deleting entry")
-                        if let oldObject = oldObject {
-                            migration.delete(oldObject)
-                            deletions += 1
-                        }
+                        migration.delete(oldObject)
+                        deletions += 1
                         return
                     }
 
@@ -146,10 +156,8 @@ public final class RealmConfiguration {
                         counter += 1
                     } else {
                         ELOG("Couldn't get md5 for \(fullPath.path). Removing entry")
-                        if let oldObject = oldObject {
-                            migration.delete(oldObject)
-                            deletions += 1
-                        }
+                        migration.delete(oldObject)
+                        deletions += 1
                     }
 
                     newObject!["importDate"] = Date()
