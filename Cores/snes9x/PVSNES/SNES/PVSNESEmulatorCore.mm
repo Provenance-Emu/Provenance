@@ -1185,4 +1185,15 @@ static void FinalizeSamplesAudioCallback(void *) {
     return 0x20000; // 128 KiB SNES WRAM
 }
 
+- (void *)cartridgeSRAMPtr {
+    return Memory.SRAM;
+}
+
+- (NSUInteger)cartridgeSRAMSize {
+    // Memory.SRAMSize is the ROM-header SRAM size CODE, not bytes (memmap.h:90).
+    // Actual bytes = (1 << (code + 3)) * 128, matching snes9x's own SRAM sizing
+    // (memmap.cpp:1960). 0 when the cart has no battery-backed save.
+    return Memory.SRAMSize ? (NSUInteger)((1u << (Memory.SRAMSize + 3)) * 128u) : 0;
+}
+
 @end

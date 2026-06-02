@@ -35,11 +35,20 @@ extension PVSNES9xEmulatorCore: CoreRetroAchievements {
         }
         // [CHEEVOS-DIAG] First-call dump of region details (log every call — cheap and bounded).
         ILOG("[CHEEVOS-DIAG] SNES9x rcheevosRegions rcAddress=0x000000 base=\(String(format: "%p", Int(bitPattern: ptr))) size=\(byteCount)")
-        return [
+        var regions = [
             RcheevosRegion(
                 rcAddress: 0x000000,
                 base: ptr,
                 size: byteCount)
         ]
+        // Cartridge battery SRAM at flat rcheevos address 0x020000 (consoleinfo.c:891)
+        // — needed for save-/progress-based achievements. Only when the cart has SRAM.
+        if let sram = snesBridge?.cartridgeSRAMPtr {
+            let sramSize = UInt32(snesBridge?.cartridgeSRAMSize ?? 0)
+            if sramSize > 0 {
+                regions.append(RcheevosRegion(rcAddress: 0x020000, base: sram, size: sramSize))
+            }
+        }
+        return regions
     }
 }

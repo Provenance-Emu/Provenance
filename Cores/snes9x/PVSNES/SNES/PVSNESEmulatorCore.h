@@ -93,6 +93,13 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 /// Size in bytes of the WRAM block exposed via @c systemRAMPtr (128 KiB).
 @property (nonatomic, readonly) NSUInteger systemRAMSize;
 
+/// Pointer to the cartridge battery-backed SRAM (`Memory.SRAM`), mapped at flat
+/// rcheevos address 0x020000.  Pair with @c cartridgeSRAMSize (0 when no SRAM).
+@property (nonatomic, readonly, nullable) void *cartridgeSRAMPtr;
+/// Size in BYTES of the cartridge SRAM. Computed from the ROM-header SRAM size
+/// code (Memory.SRAMSize is a code, not bytes); 0 when the cart has no battery save.
+@property (nonatomic, readonly) NSUInteger cartridgeSRAMSize;
+
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)
