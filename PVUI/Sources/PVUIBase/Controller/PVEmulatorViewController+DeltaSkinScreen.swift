@@ -440,7 +440,18 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                                     scaledSize: scaledSize)
 
         // Get screen frame from skin
-        if let screenFrame = getScreenFrame(from: skin, traits: traits, mappingSize: mappingSize) {
+        let screenFrame = getScreenFrame(from: skin, traits: traits, mappingSize: mappingSize)
+
+        // TEMP DIAGNOSTIC (portrait flycast/skin sizing, Jun 2 2026): dump the
+        // intermediates so we can see whether the portrait "too small + too low"
+        // comes from scaling to the SAFE area (scaledSize/scale) vs offsetting by
+        // safeInsets.top. Compare a portrait line against a landscape line. Remove
+        // once the portrait skin-frame bug is root-caused.
+        let calcInputs = "orient=\(orientation.rawValue) display=\(traits.displayType.rawValue) mapping=\(mappingSize) bounds=\(view.bounds.size) safeInsets=\(safeInsets)"
+        let calcOutputs = "safeSize=\(safeSize) scale=\(scale) scaledSize=\(scaledSize) offset=\(offset) screenFrame(norm)=\(screenFrame.map { "\($0)" } ?? "nil")"
+        ILOG("SKIN-CALC-DIAG: \(calcInputs) | \(calcOutputs)")
+
+        if let screenFrame {
             // Convert normalized screen frame to view coordinates
             // screenFrame is normalized (0-1) relative to mappingSize
             // Position is relative to where the scaled skin is positioned (offset)
