@@ -193,8 +193,8 @@ public actor ImportQueueActor {
                 return true
             }
             // Check MD5 if available
-            if let existingMd5 = existing.md5?.uppercased(),
-               let itemMd5 = item.md5?.uppercased(),
+            if let existingMd5 = existing.cachedMD5?.uppercased(),
+               let itemMd5 = item.cachedMD5?.uppercased(),
                existingMd5 == itemMd5 {
                 return true
             }
@@ -838,8 +838,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                     return true
                 }
                 // Check MD5 if available
-                if let existingMd5 = existing.md5?.uppercased(),
-                   let itemMd5 = item.md5?.uppercased(),
+                if let existingMd5 = existing.cachedMD5?.uppercased(),
+                   let itemMd5 = item.cachedMD5?.uppercased(),
                    existingMd5 == itemMd5 {
                     return true
                 }
@@ -925,8 +925,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                     return true
                 }
                 // Check MD5 if available
-                if let existingMd5 = existing.md5?.uppercased(),
-                   let itemMd5 = item.md5?.uppercased(),
+                if let existingMd5 = existing.cachedMD5?.uppercased(),
+                   let itemMd5 = item.cachedMD5?.uppercased(),
                    existingMd5 == itemMd5 {
                     return true
                 }
@@ -3451,8 +3451,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 return true
             }
 
-            if let eMd5 = existing.md5?.uppercased(),
-               let newMd5 = queueItem.md5?.uppercased(),
+            if let eMd5 = existing.cachedMD5?.uppercased(),
+               let newMd5 = queueItem.cachedMD5?.uppercased(),
                eMd5 == newMd5
             {
                 return true
@@ -3689,8 +3689,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
 
                 // Check MD5 if available
-                if let existingMd5 = existing.md5?.uppercased(),
-                   let newMd5 = newItem.md5?.uppercased(),
+                if let existingMd5 = existing.cachedMD5?.uppercased(),
+                   let newMd5 = newItem.cachedMD5?.uppercased(),
                    existingMd5 == newMd5 {
                     return true
                 }
@@ -3725,8 +3725,8 @@ public final class GameImporter: GameImporting, ObservableObject {
                 }
 
                 // Check MD5 if available
-                if let existingMd5 = existing.md5?.uppercased(),
-                   let newMd5 = newItem.md5?.uppercased(),
+                if let existingMd5 = existing.cachedMD5?.uppercased(),
+                   let newMd5 = newItem.cachedMD5?.uppercased(),
                    existingMd5 == newMd5 {
                     return true
                 }

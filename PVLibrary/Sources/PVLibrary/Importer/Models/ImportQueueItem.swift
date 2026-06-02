@@ -232,6 +232,16 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
         }
     }
 
+    /// The MD5 ONLY if it has already been computed — never triggers the blocking
+    /// full-file hash that `md5` does. Use this from actor-isolated / latency-
+    /// sensitive code (e.g. ImportQueueActor dedup): reading `md5` there blocks the
+    /// actor on a multi-GB disk hash, serializing the whole queue. A nil result
+    /// means "not hashed yet" — callers should fall back to URL/filename dedup and
+    /// let MD5 dedup happen on the later async import pass.
+    public var cachedMD5: String? {
+        cache.md5
+    }
+
     /// Non-blocking async variant that computes MD5 off the main thread
     public func md5Async() async -> String? {
         if let cached = cache.md5 {
