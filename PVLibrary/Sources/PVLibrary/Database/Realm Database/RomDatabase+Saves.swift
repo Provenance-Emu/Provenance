@@ -295,7 +295,11 @@ public extension RomDatabase {
             }
             for url in directoryContents {
                 let file = url.lastPathComponent.lowercased()
+                // Skip 0-byte / empty orphans — importing them creates a broken
+                // save-state entry that fails on load (matches the loader's non-empty guard).
+                let fileSize = ((try? fileManager.attributesOfItem(atPath: url.path))?[.size] as? NSNumber)?.int64Value ?? 0
                 if (fileManager.fileExists(atPath: url.path) &&
+                    fileSize > 0 &&
                     file.contains("svs") &&
                     !file.contains("json") &&
                     !file.contains("jpg") &&
