@@ -1006,14 +1006,18 @@ static void writeSaveFile(const char* path, int type)
         return NO;
     }
 
-    int serial_size = 678514;
+    // Use the core's CURRENT serialize size, not a hardcoded literal — the save
+    // path writes retro_serialize_size() bytes, and that size can differ (e.g.
+    // Genesis vs 32X mode, or a dylib update), so a fixed 678514 would wrongly
+    // reject valid states or accept mismatched ones.
+    size_t serial_size = retro_serialize_size();
     if(serial_size != [data length]) {
         if (error) {
             NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                  code:PVEmulatorCoreErrorCodeStateHasWrongSize
                                              userInfo:@{
                 NSLocalizedDescriptionKey : @"Save state has wrong file size.",
-                NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The size of the file %@ does not have the right size, %d expected, got: %ld.", fileName, serial_size, [data length]],
+                NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The size of the file %@ does not have the right size, %zu expected, got: %ld.", fileName, serial_size, [data length]],
             }];
 
             *error = newError;
