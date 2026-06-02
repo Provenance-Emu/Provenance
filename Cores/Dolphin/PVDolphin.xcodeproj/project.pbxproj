@@ -694,7 +694,6 @@
 		93CB27C9297CE56E006A940B /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
 		93CB27CB297CE59B006A940B /* libMoltenVK_Dolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Dolphin.dylib; path = lib/libMoltenVK_Dolphin.dylib; sourceTree = "<group>"; };
 		93CB27CF297CE5DF006A940B /* VulkanLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VulkanLoader.cpp; sourceTree = "<group>"; };
-		B3082DB62E274BB1009DFE5D /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "dolphin-ios/build-iphoneos-/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
 		B30E98FE2C6EF18400C1431E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -730,9 +729,6 @@
 		B3B295EF2E26F11D00FCBD5D /* SDLTest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = SDLTest.xcodeproj; sourceTree = "<group>"; };
 		B3B2960E2E26F11D00FCBD5D /* Demos.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Demos.xcodeproj; sourceTree = "<group>"; };
 		B3B2B0372E26F11D00FCBD5D /* DolphiniOS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = DolphiniOS.xcodeproj; sourceTree = "<group>"; };
-		B3B898F42E2D4FF5002EF9EE /* libdolphin-ios.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libdolphin-ios.a"; path = "dolphin-ios/build-iphoneos-/Source/iOS/Library/libdolphin-ios.a"; sourceTree = "<group>"; };
-		B3B898F62E2D5072002EF9EE /* libcore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcore.a; path = "dolphin-ios/build-iphoneos-/Source/Core/Core/libcore.a"; sourceTree = "<group>"; };
-		B3B898F82E2D50A2002EF9EE /* libuicommon.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libuicommon.a; path = "dolphin-ios/build-iphoneos-/Source/Core/UICommon/libuicommon.a"; sourceTree = "<group>"; };
 		B3B898FA2E2D5962002EF9EE /* libdolphin-tvos.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libdolphin-tvos.a"; path = "dolphin-ios/build-appletvos-/Source/iOS/Library/libdolphin-tvos.a"; sourceTree = "<group>"; };
 		B3B898FC2E2D59F6002EF9EE /* build_dolphin_core.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build_dolphin_core.sh; sourceTree = "<group>"; };
 		B3B898FD2E2D70D9002EF9EE /* PVDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVDolphin.xcframework; path = build/xcframework/PVDolphin.xcframework; sourceTree = "<group>"; };
@@ -1001,10 +997,6 @@
 				B37113852E70AC94006C1ED7 /* PVlibDolphin.xcframework */,
 				B3B898FD2E2D70D9002EF9EE /* PVDolphin.xcframework */,
 				B3B898FA2E2D5962002EF9EE /* libdolphin-tvos.a */,
-				B3B898F82E2D50A2002EF9EE /* libuicommon.a */,
-				B3B898F62E2D5072002EF9EE /* libcore.a */,
-				B3B898F42E2D4FF5002EF9EE /* libdolphin-ios.a */,
-				B3082DB62E274BB1009DFE5D /* libdolphin.dylib */,
 				B372F34D2E2CAFF700B6B563 /* libdolphin.dylib */,
 				B372F3562E2CB6C300B6B563 /* libdolphin.dylib */,
 				B30E98FE2C6EF18400C1431E /* OpenGL.framework */,
@@ -1802,6 +1794,7 @@
 		};
 		B3DE9E412E2D7333008E97F6 /* build_dolphin_core */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -1817,7 +1810,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -euo pipefail\n\n# Path to the builder script\nSCRIPT=\"$PROJECT_DIR/dolphin-ios/BuildiOSXCFramework.py\"\n\n# Map Xcode's PLATFORM_NAME to the builder's platform keys\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)\n    platform=\"OS64\"              # iOS device (arm64)\n    ;;\n  iphonesimulator)\n    platform=\"SIMULATORARM64\"    # iOS Simulator (arm64)\n    ;;\n  appletvos)\n    platform=\"TVOS\"              # tvOS device (arm64)\n    ;;\n  appletvsimulator)\n    platform=\"SIMULATOR_TVOS\"    # tvOS Simulator (arm64)\n    ;;\n  macosx)\n    # Detect Mac Catalyst builds\n    if [[ \"${SUPPORTS_MACCATALYST:-}\" == \"YES\" || \"${EFFECTIVE_PLATFORM_NAME:-}\" == \"-maccatalyst\" ]]; then\n      platform=\"MAC_CATALYST\"    # Mac Catalyst (arm64)\n    else\n      echo \"Error: macOS (non-Catalyst) is not supported by this script.\"\n      exit 1\n    fi\n    ;;\n  *)\n    echo \"Error: Unsupported PLATFORM_NAME: ${PLATFORM_NAME}\"\n    exit 1\n    ;;\nesac\n\necho \"Building PVlibDolphin for platform: ${platform} (CONFIGURATION=${CONFIGURATION})\"\n\n# Run the builder for just the active platform\n# exec /usr/bin/python3 \"${SCRIPT}\" -p \"${platform}\" -v\n";
+			shellScript = "set -euo pipefail\n\n# Path to the builder script\nSCRIPT=\"$PROJECT_DIR/dolphin-ios/BuildiOSXCFramework.py\"\n\n# Map Xcode's PLATFORM_NAME to the builder's platform keys\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)\n    platform=\"OS64\"              # iOS device (arm64)\n    ;;\n  iphonesimulator)\n    platform=\"SIMULATORARM64\"    # iOS Simulator (arm64)\n    ;;\n  appletvos)\n    platform=\"TVOS\"              # tvOS device (arm64)\n    ;;\n  appletvsimulator)\n    platform=\"SIMULATOR_TVOS\"    # tvOS Simulator (arm64)\n    ;;\n  macosx)\n    # Detect Mac Catalyst builds\n    if [[ \"${SUPPORTS_MACCATALYST:-}\" == \"YES\" || \"${EFFECTIVE_PLATFORM_NAME:-}\" == \"-maccatalyst\" ]]; then\n      platform=\"MAC_CATALYST\"    # Mac Catalyst (arm64)\n    else\n      echo \"Error: macOS (non-Catalyst) is not supported by this script.\"\n      exit 1\n    fi\n    ;;\n  *)\n    echo \"Error: Unsupported PLATFORM_NAME: ${PLATFORM_NAME}\"\n    exit 1\n    ;;\nesac\n\necho \"Building PVlibDolphin for platform: ${platform} (CONFIGURATION=${CONFIGURATION})\"\n\n# Run the builder for just the active platform\nexec /usr/bin/python3 \"${SCRIPT}\" -p \"${platform}\" -v\n";
 		};
 		B3DE9E432E2D7367008E97F6 /* Setup Python */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2071,11 +2064,7 @@
 					"\"$(SRCROOT)/lib/$(CONFIGURATION)-$(PLATFORM_NAME)\"",
 					"\"$(SRCROOT)/lib/$(CONFIGURATION)\"",
 					"$(PROJECT_DIR)/lib",
-					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/iOS/Library",
-					"$(PROJECT_DIR)/dolphin-ios/build-appletvos-/Source/iOS/Library",
 					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-Release/Source/iOS/Library",
-					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/Core/Core",
-					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/Core/UICommon",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2268,11 +2257,7 @@
 					"\"$(SRCROOT)/lib/$(CONFIGURATION)-$(PLATFORM_NAME)\"",
 					"\"$(SRCROOT)/lib/$(CONFIGURATION)\"",
 					"$(PROJECT_DIR)/lib",
-					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/iOS/Library",
-					"$(PROJECT_DIR)/dolphin-ios/build-appletvos-/Source/iOS/Library",
 					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-Release/Source/iOS/Library",
-					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/Core/Core",
-					"$(PROJECT_DIR)/dolphin-ios/build-iphoneos-/Source/Core/UICommon",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
