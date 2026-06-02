@@ -247,6 +247,16 @@ public extension PVEmualatorControllerProtocol {
             throw SaveStateError.saveStateFileNotFound
         }
 
+        // Force-pause around the load. retro_unserialize() racing retro_run() on the
+        // 60fps emu thread corrupts core state (libretro cores aren't thread-safe with
+        // their own step/serialize entry points, and thin-wrapper executeFrame/loadState
+        // share no lock — this is the default path on iOS+tvOS). loadSaveState() pauses
+        // for exactly this reason; quickload bypassed it. Restore prior state on every
+        // exit path via defer.
+        let wasPausedBeforeLoad = core.isEmulationPaused
+        if !wasPausedBeforeLoad { core.setPauseEmulation(true) }
+        defer { core.setPauseEmulation(wasPausedBeforeLoad) }
+
         try await core.loadState(fromFileAtPath: saveStateURL.path)
         DLOG("Successfully loaded save state")
 
