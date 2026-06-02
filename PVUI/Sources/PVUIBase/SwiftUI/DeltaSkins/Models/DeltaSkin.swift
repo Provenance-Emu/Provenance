@@ -339,6 +339,94 @@ public struct DeltaSkin: DeltaSkinProtocol {
     private static var imageCache: [String: UIImage] = [:]
     private static let imageCacheQueue = DispatchQueue(label: "com.provenance.deltaskin.imagecache", attributes: .concurrent)
 
+    // MARK: - Disk cache (rasterized PDF/SVG skin assets)
+    // Persistent tier under the in-memory cache so the expensive PDF/SVG rasterization
+    // (UIGraphicsImageRenderer at UIScreen scale) doesn't repeat on every cold launch —
+    // that re-rasterization is the multi-second skin-load cost. Disk I/O happens OUTSIDE
+    // imageCacheQueue (that queue guards only the in-memory dict).
+
+    /// On-disk PNG cache dir. Re-created on access since the OS may purge Library/Caches.
+    private static var diskCacheDirectory: URL? {
+        guard let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else { return nil }
+        let dir = caches.appendingPathComponent("DeltaSkinImageCache", isDirectory: true)
+        if !FileManager.default.fileExists(atPath: dir.path) {
+            try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        }
+        return dir
+    }
+
+    /// Stable (NOT seed-randomized) FNV-1a hash for cache filenames. Swift's `hashValue`
+    /// is per-launch seeded and would make the disk cache never hit across launches.
+    private static func stableHash(_ string: String) -> String {
+        var hash: UInt64 = 0xcbf2_9ce4_8422_2325
+        for byte in string.utf8 {
+            hash ^= UInt64(byte)
+            hash = hash &* 0x100_0000_01b3
+        }
+        return String(format: "%016llx", hash)
+    }
+
+    /// Content-aware disk-cache filename: skin id + asset + traits + size + screen scale +
+    /// the skin file's mod-date (so updating a skin invalidates stale rasters).
+    private func diskCacheURL(assetName: String, traits: DeltaSkinTraits, renderSize: CGSize?) -> URL? {
+        guard let dir = Self.diskCacheDirectory else { return nil }
+        let modStamp = ((try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate)
+            .map { String(Int($0.timeIntervalSince1970)) } ?? "0"
+        let sizeStamp = renderSize.map { "\(Int($0.width))x\(Int($0.height))" } ?? "native"
+        let raw = "\(identifier)|\(assetName)|\(traits.device.rawValue)|\(traits.displayType.rawValue)|\(traits.orientation.rawValue)|\(sizeStamp)|@\(UIScreen.main.scale)|\(modStamp)"
+        return dir.appendingPathComponent(Self.stableHash(raw)).appendingPathExtension("png")
+    }
+
+    /// Load a rasterized image from disk at UIScreen scale (pngData stored pixels = points×scale).
+    private func loadFromDiskCache(_ url: URL?) -> UIImage? {
+        guard let url, let data = try? Data(contentsOf: url) else { return nil }
+        return UIImage(data: data, scale: UIScreen.main.scale)
+    }
+
+    /// Write a rasterized image to disk as PNG (atomic, best-effort). Triggers a one-shot prune.
+    private static func writeToDiskCache(_ image: UIImage, to url: URL?) {
+        guard let url, let png = image.pngData() else { return }
+        try? png.write(to: url, options: .atomic)
+        pruneDiskCacheOnce()
+    }
+
+    private static var didPruneDiskCache = false
+    private static let diskPruneQueue = DispatchQueue(label: "com.provenance.deltaskin.diskprune", qos: .utility)
+
+    /// Prune the disk cache once per launch (background): drop entries older than 30 days,
+    /// then evict oldest until under 100 MB.
+    private static func pruneDiskCacheOnce() {
+        diskPruneQueue.async {
+            guard !didPruneDiskCache else { return }
+            didPruneDiskCache = true
+            guard let dir = diskCacheDirectory else { return }
+            let maxBytes: UInt64 = 100 * 1024 * 1024
+            let maxAge: TimeInterval = 30 * 24 * 60 * 60
+            let keys: [URLResourceKey] = [.contentModificationDateKey, .fileSizeKey]
+            guard let urls = try? FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: keys) else { return }
+            let now = Date()
+            var entries: [(url: URL, date: Date, size: UInt64)] = []
+            for u in urls {
+                let v = try? u.resourceValues(forKeys: Set(keys))
+                let date = v?.contentModificationDate ?? .distantPast
+                let size = UInt64(v?.fileSize ?? 0)
+                if now.timeIntervalSince(date) > maxAge {
+                    try? FileManager.default.removeItem(at: u)
+                } else {
+                    entries.append((u, date, size))
+                }
+            }
+            var total = entries.reduce(UInt64(0)) { $0 + $1.size }
+            if total > maxBytes {
+                for e in entries.sorted(by: { $0.date < $1.date }) {
+                    if total <= maxBytes { break }
+                    try? FileManager.default.removeItem(at: e.url)
+                    total = total >= e.size ? total - e.size : 0
+                }
+            }
+        }
+    }
+
     /// Loads the primary skin artwork for the given traits; decoded rasters are memoized in an in-memory LRU cache on this type. Prefer calling from an `async` context so PDF/PNG work can run without blocking synchronous UI callbacks.
     public func image(for traits: DeltaSkinTraits) async throws -> UIImage {
         ILOG("skins: image(for:) called - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")
@@ -372,11 +460,26 @@ public struct DeltaSkin: DeltaSkinProtocol {
 
             ILOG("skins: Attempting to load image asset: \(name)")
             do {
-                let data = try loadAssetData(name)
                 let lower = name.lowercased()
+                let isVectorAsset = lower.hasSuffix(".pdf") || lower.hasSuffix(".svg")
+                let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
+                // Disk-cache tier (PDF/SVG only): a hit skips the slow rasterize entirely.
+                let diskURL: URL? = isVectorAsset ? diskCacheURL(assetName: name, traits: traits, renderSize: renderSize) : nil
+                if isVectorAsset, let diskImage = loadFromDiskCache(diskURL) {
+                    ILOG("skins: Disk-cache hit for \(name)")
+                    Self.imageCacheQueue.async(flags: .barrier) {
+                        Self.imageCache[cacheKey] = diskImage
+                        if Self.imageCache.count > 50 {
+                            let keysToRemove = Array(Self.imageCache.keys.prefix(10))
+                            keysToRemove.forEach { Self.imageCache.removeValue(forKey: $0) }
+                        }
+                    }
+                    return diskImage
+                }
+
+                let data = try loadAssetData(name)
                 let decodedImage: UIImage?
                 if lower.hasSuffix(".pdf") {
-                    let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
                     // Always preserve transparency for PDF skin assets — `translucent` controls
                     // runtime overlay opacity, not PDF alpha-channel rendering.
                     decodedImage = UIImage(pdfData: data, preserveTransparency: true, size: renderSize)
@@ -385,7 +488,6 @@ public struct DeltaSkin: DeltaSkinProtocol {
                         continue
                     }
                 } else if lower.hasSuffix(".svg") {
-                    let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
                     decodedImage = UIImage(svgData: data, size: renderSize)
                     if decodedImage == nil {
                         lastError = DeltaSkinError.invalidSVG
@@ -399,9 +501,10 @@ public struct DeltaSkin: DeltaSkinProtocol {
                     }
                 }
 
-                // Cache the decoded image
+                // Cache the decoded image (disk first so future launches skip the rasterize, then memory)
                 if let imageToCache = decodedImage {
                     ILOG("skins: Successfully loaded and decoded image: \(name), size: \(imageToCache.size)")
+                    if isVectorAsset { Self.writeToDiskCache(imageToCache, to: diskURL) }
                     Self.imageCacheQueue.async(flags: .barrier) {
                         Self.imageCache[cacheKey] = imageToCache
                         // Limit cache size to ~50MB (approximately 50 images)
