@@ -5,11 +5,12 @@
 //  Conformance of PVTGBDualCore (Game Boy / Game Boy Color) to
 //  CoreRetroAchievements via the shared PVRcheevosBridge default impl.
 //
-//  Memory map:
-//    Work RAM (libretro RETRO_MEMORY_SYSTEM_RAM) is exposed at rcheevos
-//    address 0xC000 (DMG: 8 KiB; GBC: 32 KiB across the swappable banks).
-//    Video RAM (libretro RETRO_MEMORY_VIDEO_RAM) is exposed at 0x8000
-//    (DMG: 8 KiB; GBC: 16 KiB across both VRAM banks).
+//  Memory map (flat rcheevos GB/GBC addresses — consoleinfo.c):
+//    Work RAM at 0xC000, clamped to the 8 KiB flat window (0xC000-0xDFFF). GBC's
+//      32 KiB buffer must NOT be exposed as one block here or it overruns into
+//      Echo/IO/HRAM (false reads); banks 2-7 belong at flat 0x10000 (TODO device).
+//    Video RAM at 0x8000, clamped to 8 KiB — the rcheevos GB/GBC map has no second
+//      VRAM bank, and 0x4000 overruns into SAVE_RAM (0xA000) corrupting reads.
 //
 
 import Foundation
@@ -23,7 +24,9 @@ extension PVTGBDualCore: CoreRetroAchievements {
     public func rcheevosRegions() -> [RcheevosRegion] {
         var regions: [RcheevosRegion] = []
         if let wramPtr = _bridge.wramBasePtr {
-            let wramSize = UInt32(_bridge.wramSize)
+            // Clamp to the 8 KiB flat window (0xC000-0xDFFF) so GBC's 32 KiB buffer
+            // does not overrun into Echo/IO/HRAM and produce false reads.
+            let wramSize = min(UInt32(_bridge.wramSize), 0x2000)
             if wramSize > 0 {
                 regions.append(RcheevosRegion(
                     rcAddress: 0xC000,
@@ -32,7 +35,9 @@ extension PVTGBDualCore: CoreRetroAchievements {
             }
         }
         if let vramPtr = _bridge.vramBasePtr {
-            let vramSize = UInt32(_bridge.vramSize)
+            // Single 8 KiB VRAM window at 0x8000; clamp so a GBC 0x4000 size does
+            // not overrun into SAVE_RAM (0xA000-0xBFFF).
+            let vramSize = min(UInt32(_bridge.vramSize), 0x2000)
             if vramSize > 0 {
                 regions.append(RcheevosRegion(
                     rcAddress: 0x8000,
