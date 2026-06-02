@@ -151,6 +151,11 @@ public extension CoreRetroAchievements where Self: NSObject {
             // [CHEEVOS-DIAG] loginAndLoad threw — log the type so we can see no-creds vs unknown-game vs network.
             ILOG("[CHEEVOS-DIAG] loginAndLoad FAIL gameHash=\(gameHash) error=\(error) localized=\(error.localizedDescription)")
             WLOG("RetroAchievements: \(error.localizedDescription)")
+            // J.1: surface the failure to the OSD like the thin wrapper does — the
+            // native path previously swallowed rc_client login/load failures (toast
+            // never shown). Snapshot the message (error isn't Sendable).
+            let message = error.localizedDescription
+            await MainActor.run { adapter.delegate?.sessionLoadFailed(rcResult: 0, message: message) }
         }
 
         // [CHEEVOS-DIAG] One-shot post-load summary.
