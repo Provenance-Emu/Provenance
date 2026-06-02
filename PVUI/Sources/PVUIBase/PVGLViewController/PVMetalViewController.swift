@@ -1664,7 +1664,13 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        let targetPixelFormat = override ?? mtlView.currentDrawable?.texture.pixelFormat ?? mtlView.colorPixelFormat
+        // Use the layer's declared format, NOT currentDrawable — reading
+        // currentDrawable here lazily triggers CAMetalLayer.nextDrawable on the
+        // main thread (this runs from the Defaults.updates stream on setting
+        // changes and at core init), which can stall ~1s if the drawable pool is
+        // wedged mid-resume. The drawable's texture pixelFormat always equals
+        // colorPixelFormat (.bgra8Unorm), so the read bought nothing.
+        let targetPixelFormat = override ?? mtlView.colorPixelFormat
         /// Flip only for OpenGL-origin textures (bottom-left). Vulkan and software
         /// cores both use top-left origin and should not be flipped.
         let flipY = (emulatorCore?.rendersToOpenGL ?? false) && !(emulatorCore?.rendersToVulkan ?? false)
