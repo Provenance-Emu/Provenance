@@ -704,13 +704,16 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
-        // PPSSPP is a viewport core hosted INSIDE a PVMetalViewController but it does
-        // NOT scale internally. It must be checked BEFORE the Metal branch — otherwise
-        // `applyFrameToMetal` wins and applies a no-op frame to PPSSPP's own overlaid
-        // view, leaving the scaling change to only appear after a device rotation. This
-        // mirrors `applyFrameToGPUView`, which also checks the viewport bridge first.
-        if coreLetterboxesInternally,
-           let viewport = core.bridge as? EmulatorCoreViewportPositioning,
+        // Route ANY viewport-positioning core (thin/thick RetroArch incl. flycast,
+        // and PPSSPP) through the RetroArch path FIRST — mirroring the boot path
+        // (applyFrameToGPUView checks the viewport bridge first). Previously this was
+        // gated to `coreLetterboxesInternally` (PPSSPP only), so on a scaling-mode
+        // TOGGLE flycast fell through to the Metal branch and got a different frame
+        // than at boot → portrait layout corrupted on toggle. applyFrameToRetroArch
+        // still pre-applies the scaling mode only for PPSSPP (coreLetterboxesInternally);
+        // real RetroArch cores like flycast keep the raw container rect (they scale
+        // internally), exactly as on boot.
+        if let viewport = core.bridge as? EmulatorCoreViewportPositioning,
            let gameScreenView = gpuViewController.view {
             applyFrameToRetroArch(containerFrame, gameScreenView: gameScreenView, viewport: viewport, reason: "reapply-scaling")
             #if !os(tvOS)
