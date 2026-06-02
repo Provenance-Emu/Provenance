@@ -1,4 +1,48 @@
 import Foundation
+import Security
+
+/// Minimal Keychain accessor for a single string value keyed by account, under a
+/// fixed service. Used to store the RetroAchievements password securely instead of
+/// base64-in-UserDefaults (which is trivially decodable from an unencrypted backup).
+private enum RAKeychain {
+    static let service = "org.provenance-emu.retroachievements"
+
+    static func set(_ value: String?, account: String) {
+        let base: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account
+        ]
+        SecItemDelete(base as CFDictionary)
+        guard let value, let data = value.data(using: .utf8) else { return }
+        var add = base
+        add[kSecValueData as String] = data
+        add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
+        SecItemAdd(add as CFDictionary, nil)
+    }
+
+    static func get(account: String) -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        var result: AnyObject?
+        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+              let data = result as? Data else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
+    static func delete(account: String) {
+        SecItemDelete([
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account
+        ] as CFDictionary)
+    }
+}
 
 /// Manages secure storage of RetroAchievements credentials
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
@@ -15,13 +59,21 @@ public final class RetroCredentialsManager: @unchecked Sendable {
     private init() {}
 
     private func loadCredentialsLocked() -> (username: String, password: String)? {
-        guard let username = userDefaults.string(forKey: usernameKey),
-              let encodedPassword = userDefaults.string(forKey: passwordKey),
-              let passwordData = Data(base64Encoded: encodedPassword),
-              let password = String(data: passwordData, encoding: .utf8) else {
-            return nil
+        guard let username = userDefaults.string(forKey: usernameKey) else { return nil }
+        // Preferred: Keychain.
+        if let password = RAKeychain.get(account: passwordKey) {
+            return (username: username, password: password)
         }
-        return (username: username, password: password)
+        // One-time migration of the legacy base64-in-UserDefaults password → Keychain,
+        // so existing users aren't logged out by the switch.
+        if let encodedPassword = userDefaults.string(forKey: passwordKey),
+           let passwordData = Data(base64Encoded: encodedPassword),
+           let password = String(data: passwordData, encoding: .utf8) {
+            RAKeychain.set(password, account: passwordKey)
+            userDefaults.removeObject(forKey: passwordKey)
+            return (username: username, password: password)
+        }
+        return nil
     }
 
     private func loadSessionTokenLocked() -> String? {
@@ -40,9 +92,10 @@ public final class RetroCredentialsManager: @unchecked Sendable {
     public func saveCredentials(username: String, password: String) {
         queue.async {
             self.userDefaults.set(username, forKey: self.usernameKey)
-            // Simple encoding for password (in production, use Keychain)
-            let encodedPassword = Data(password.utf8).base64EncodedString()
-            self.userDefaults.set(encodedPassword, forKey: self.passwordKey)
+            // Password goes to the Keychain now (was base64-in-UserDefaults, which is
+            // trivially decodable). Drop any legacy UserDefaults copy.
+            RAKeychain.set(password, account: self.passwordKey)
+            self.userDefaults.removeObject(forKey: self.passwordKey)
         }
     }
 
@@ -101,6 +154,7 @@ public final class RetroCredentialsManager: @unchecked Sendable {
     public func clearAll() {
         queue.async {
             self.userDefaults.removeObject(forKey: self.usernameKey)
+            RAKeychain.delete(account: self.passwordKey)
             self.userDefaults.removeObject(forKey: self.passwordKey)
             self.userDefaults.removeObject(forKey: self.tokenKey)
             self.userDefaults.removeObject(forKey: self.userProfileKey)
