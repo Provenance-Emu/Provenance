@@ -555,8 +555,21 @@ extension ProvenanceApp {
             return
         }
 
-        // Handle ROM files as before
-        let destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
+        // Handle ROM files as before. Derive a unique destination so re-sharing a
+        // file with the same name doesn't throw and silently drop the import.
+        var destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
+        if FileManager.default.fileExists(atPath: destinationPath.path) {
+            let dir = destinationPath.deletingLastPathComponent()
+            let ext = destinationPath.pathExtension
+            let base = destinationPath.deletingPathExtension().lastPathComponent
+            var index = 1
+            while index < 10_000 {
+                let name = ext.isEmpty ? "\(base)-\(index)" : "\(base)-\(index).\(ext)"
+                let candidate = dir.appendingPathComponent(name, isDirectory: false)
+                if !FileManager.default.fileExists(atPath: candidate.path) { destinationPath = candidate; break }
+                index += 1
+            }
+        }
         var secureDocument = false
         do {
             defer {

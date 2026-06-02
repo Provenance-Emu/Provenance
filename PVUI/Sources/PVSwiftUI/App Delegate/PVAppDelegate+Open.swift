@@ -165,7 +165,11 @@ extension PVAppDelegate {
         ILOG("PVAppDelegate: handle fileURL url: \(url.description), options: \(options.description)")
 
         let filename = url.lastPathComponent
-        let destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
+        // If a file with this name already exists at the destination, copy/move
+        // would throw and the incoming file would be silently dropped (common
+        // when re-sharing the same ROM). Derive a unique name instead.
+        let destinationPath = Self.uniqueImportDestination(
+            Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false))
         var secureDocument = false
         do {
             defer {
@@ -189,6 +193,24 @@ extension PVAppDelegate {
         }
 
         return true
+    }
+
+    /// Return `candidate` if no file exists there, otherwise append `-1`, `-2`, …
+    /// before the extension until the path is free. Prevents silently dropping an
+    /// incoming file when one with the same name already exists at the import dir.
+    static func uniqueImportDestination(_ candidate: URL) -> URL {
+        guard FileManager.default.fileExists(atPath: candidate.path) else { return candidate }
+        let dir = candidate.deletingLastPathComponent()
+        let ext = candidate.pathExtension
+        let base = candidate.deletingPathExtension().lastPathComponent
+        var index = 1
+        while index < 10_000 {
+            let name = ext.isEmpty ? "\(base)-\(index)" : "\(base)-\(index).\(ext)"
+            let url = dir.appendingPathComponent(name, isDirectory: false)
+            if !FileManager.default.fileExists(atPath: url.path) { return url }
+            index += 1
+        }
+        return candidate
     }
 
     public func handle(appURL url: URL,  options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
