@@ -10,6 +10,7 @@ import Foundation
 import PVCoreBridge
 import PVEmulatorCore
 import PVCoreObjCBridge
+import PVLogging
 
 @objc
 @objcMembers
@@ -41,9 +42,22 @@ open class PVFCEUEmulatorCore: PVEmulatorCore, @unchecked Sendable {
     // Routed through the existential so it resolves with only PVCoreBridge in scope
     // (FCEU's core target doesn't import PVRcheevosBridge); dispatch hits the real
     // NSObject witness, not the protocol's no-op default.
+    // [CHEEVOS-DIAG] Frame counters mirror PVSNESEmulatorCore so a simulator run can
+    // confirm the tick actually fires (the existential dispatches to the real
+    // `where Self: NSObject` witness, not the no-op default) without needing a device.
+    nonisolated(unsafe) private static var diagFrameCount: UInt64 = 0
+    nonisolated(unsafe) private static var diagInactiveFrameCount: UInt64 = 0
+
     public override func executeFrame() {
         super.executeFrame()
-        guard let achievements = self as? (any CoreRetroAchievements), achievements.achievementsActive else { return }
+        Self.diagFrameCount &+= 1
+        guard let achievements = self as? (any CoreRetroAchievements), achievements.achievementsActive else {
+            Self.diagInactiveFrameCount &+= 1
+            if Self.diagInactiveFrameCount % 600 == 0 {
+                ILOG("[CHEEVOS-DIAG] FCEU executeFrame achievementsActive=false totalFrames=\(Self.diagFrameCount) inactiveFrames=\(Self.diagInactiveFrameCount)")
+            }
+            return
+        }
         achievements.tickAchievements()
     }
 }

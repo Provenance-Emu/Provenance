@@ -214,10 +214,19 @@ public extension PVEmualatorControllerProtocol {
         // RetroAchievements hardcore mode disallows save-state loads. quickload()
         // bypasses loadSaveState()'s guard (it calls core.loadState directly), so
         // replicate the integrity check here or hardcore unlocks become exploitable.
-        // Routed through the existential so it needs only the protocol in scope and
-        // dispatches to the real NSObject witness (not the no-op default).
-        if let achievements = core as? (any CoreRetroAchievements),
-           achievements.hardcoreMode, achievements.achievementsActive {
+        // Prefer the view controller's full guard — it adds the
+        // `achievementSessionManager != nil` fallback that thin/RetroArch cores need
+        // (they report achievementsActive==false but still have a live session). Fall
+        // back to a core-level check for any other conformer.
+        let hardcoreBlocksLoad: Bool
+        if let vc = self as? PVEmulatorViewController {
+            hardcoreBlocksLoad = vc.achievementsBlocksSaveStateLoad()
+        } else if let achievements = core as? (any CoreRetroAchievements) {
+            hardcoreBlocksLoad = achievements.hardcoreMode && achievements.achievementsActive
+        } else {
+            hardcoreBlocksLoad = false
+        }
+        if hardcoreBlocksLoad {
             WLOG("QuickLoad blocked: RetroAchievements hardcore mode is active.")
             throw SaveStateError.ineligibleError
         }
