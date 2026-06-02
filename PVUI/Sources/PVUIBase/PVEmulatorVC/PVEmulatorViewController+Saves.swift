@@ -74,8 +74,10 @@ public extension PVEmulatorViewController {
             return false
         }
 
-        // Validate the save file exists before prompting the user
-        if let url = state.file?.url, !FileManager.default.fileExists(atPath: url.path) {
+        // Validate the save file exists AND is non-empty before prompting — a 0-byte
+        // file passes fileExists but fails/garbages on load.
+        if let url = state.file?.url,
+           (((try? FileManager.default.attributesOfItem(atPath: url.path))?[.size] as? NSNumber)?.int64Value ?? 0) == 0 {
             let message =
                 """
                 Save State is not valid
@@ -132,7 +134,7 @@ public extension PVEmulatorViewController {
         }
 
         guard let stateURL = RomDatabase.sharedInstance.realm.object(ofType: PVSaveState.self, forPrimaryKey: saveStateID)?.file?.url,
-              FileManager.default.fileExists(atPath: stateURL.path) else {
+              (((try? FileManager.default.attributesOfItem(atPath: stateURL.path))?[.size] as? NSNumber)?.int64Value ?? 0) > 0 else {
             return false
         }
 
