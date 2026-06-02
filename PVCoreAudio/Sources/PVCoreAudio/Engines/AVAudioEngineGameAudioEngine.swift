@@ -65,6 +65,10 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
     private var effectsChainObserverTask: Task<Void, Never>?
     /// Task observing Defaults changes for the AU filters master toggle; cancelled in deinit.
     private var effectsEnabledObserverTask: Task<Void, Never>?
+    /// Task observing the respectMuteSwitch setting; cancelled in deinit. Stored so it
+    /// is cancelled when the engine deinits — otherwise it leaks an orphaned
+    /// Defaults.updates subscription per engine instance (one per game launch).
+    private var respectMuteSwitchObserverTask: Task<Void, Never>?
 
     /// Delegate for audio sample rate changes
     public weak var delegate: PVAudioDelegate?
@@ -83,7 +87,7 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
         }
 
         // Observe changes to respectMuteSwitch setting
-        Task {
+        respectMuteSwitchObserverTask = Task {
             for await newValue in Defaults.updates(Defaults.Keys.respectMuteSwitch) {
                 await MainActor.run { [weak self] in
                     self?.updateOutputVolume()
@@ -124,6 +128,8 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
         effectsChainObserverTask = nil
         effectsEnabledObserverTask?.cancel()
         effectsEnabledObserverTask = nil
+        respectMuteSwitchObserverTask?.cancel()
+        respectMuteSwitchObserverTask = nil
         muteSwitchMonitor.stopMonitoring()
         stopAudio()
         #if !os(macOS)
