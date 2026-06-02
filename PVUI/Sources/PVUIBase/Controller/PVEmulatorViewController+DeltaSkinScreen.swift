@@ -650,17 +650,22 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             }
 
         case .integerScale:
-            // Snap to largest integer multiple that fits in the container
-            let scaleX = floor(containerW / effectiveRect.width)
-            let scaleY = floor(containerH / effectiveRect.height)
-            let intScale = max(1, min(scaleX, scaleY))
-            width = effectiveRect.width * intScale
-            height = effectiveRect.height * intScale
+            // `effectiveRect` (safeWidth/safeHeight) is the core framebuffer in
+            // PIXELS; `container` is in view POINTS. Compare in the same space via
+            // the screen scale, then express the result back in points. Without the
+            // conversion, floor(180pt / 256px) = 0 → clamped to 1 → a 256pt frame
+            // that overflows the skin cutout ("integer scale blows up too large").
+            let screenScale = gpuViewController.view.window?.screen.scale ?? UIScreen.main.scale
+            let intScale = max(1, floor(min(containerW * screenScale / safeWidth,
+                                            containerH * screenScale / safeHeight)))
+            width = safeWidth * intScale / screenScale
+            height = safeHeight * intScale / screenScale
 
         case .nativeResolution:
-            // 1:1 pixel mapping -- use core's native output dimensions
-            width = effectiveRect.width
-            height = effectiveRect.height
+            // 1:1 pixel mapping: the core's native PIXEL dims expressed in POINTS.
+            let screenScale = gpuViewController.view.window?.screen.scale ?? UIScreen.main.scale
+            width = safeWidth / screenScale
+            height = safeHeight / screenScale
         }
 
         // Center within container
