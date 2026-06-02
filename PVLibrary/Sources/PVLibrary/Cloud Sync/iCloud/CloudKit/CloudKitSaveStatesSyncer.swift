@@ -1390,10 +1390,15 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         do {
             // Try primary database first
             var record: CKRecord?
+            // Distinguish "definitively absent everywhere" (.unknownItem) from a
+            // transient/fetch error. We must only delete the local save when the
+            // record was genuinely deleted remotely — deleting on a transient
+            // network / rate-limit / badContainer failure is silent data loss.
+            var sawInconclusiveError = false
             do {
                 record = try await privateDatabase.record(for: recordID)
             } catch let error as CKError where error.code == .unknownItem {
-                // Try fallback containers
+                // Primary says absent — check fallback containers before concluding.
                 for fallbackDB in fallbackDatabases {
                     do {
                         record = try await fallbackDB.record(for: recordID)
@@ -1401,14 +1406,24 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
                             DLOG("Found save state record in fallback container: \(recordID.recordName)")
                             break
                         }
-                    } catch { continue }
+                    } catch let fallbackError as CKError where fallbackError.code == .unknownItem {
+                        continue // definitively absent in this fallback too
+                    } catch {
+                        // Cannot conclude the record was deleted — don't risk deleting a
+                        // save that still exists. Treat as inconclusive.
+                        sawInconclusiveError = true
+                    }
                 }
             }
+            // (primary errors other than .unknownItem propagate to the outer catch.)
 
             if let record {
                 await processCloudRecord(record)
                 await setNewCloudFilesAvailable()
+            } else if sawInconclusiveError {
+                DLOG("handleRemoteSaveStateChange: inconclusive fetch (transient error) for \(recordID.recordName) — keeping local save; a later sync will reconcile")
             } else {
+                // Definitively absent in primary + all fallbacks → deleted remotely.
                 await deleteLocalSaveState(recordID: recordID)
             }
         } catch {
