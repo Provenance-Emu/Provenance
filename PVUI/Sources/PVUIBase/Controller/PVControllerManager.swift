@@ -507,11 +507,15 @@ public final class PVControllerManager: NSObject, ObservableObject {
             setController(nil, toPlayer: currentIndex)
         }
 
-        #if TARGET_OS_TV
-            // check if controller is iCade, otherwise crash
-            if !((controller is PViCadeController) && controller?.microGamepad) {
-                controller?.microGamepad?.allowsRotation = true
-                controller?.microGamepad?.reportsAbsoluteDpadValues = true
+        // NOTE: was `#if TARGET_OS_TV` — a C macro that is never defined for Swift,
+        // so this Siri Remote / micro-gamepad setup was silently dead (and wouldn't
+        // have compiled). Use the Swift condition and a compiling guard.
+        #if os(tvOS)
+            // Enable rotation + absolute D-pad for micro gamepads (Siri Remote),
+            // except iCade controllers.
+            if !(controller is PViCadeController), let micro = controller?.microGamepad {
+                micro.allowsRotation = true
+                micro.reportsAbsoluteDpadValues = true
             }
         #endif
         controller?.playerIndex = GCControllerPlayerIndex(rawValue: player - 1)!
