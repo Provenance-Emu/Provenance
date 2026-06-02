@@ -25,7 +25,14 @@ func extractCompressedStream(
     if let entries = try? TarContainer.open(container: data) {
         for (i, item) in entries.enumerated() where item.info.type != .directory {
             try autoreleasepool {
-                let fullPath = destination.appendingPathComponent(item.info.name)
+                // Zip-slip guard: strip `..`/`.` and reject escapes (mirrors RarBackend).
+                let sanitized = item.info.name
+                    .components(separatedBy: "/")
+                    .filter { !$0.isEmpty && $0 != ".." && $0 != "." }
+                    .joined(separator: "/")
+                guard !sanitized.isEmpty else { return }
+                let fullPath = destination.appendingPathComponent(sanitized)
+                guard fullPath.path.hasPrefix(destination.path) else { return }
                 try FileManager.default.createDirectory(at: fullPath.deletingLastPathComponent(), withIntermediateDirectories: true)
                 if let itemData = item.data {
                     try itemData.write(to: fullPath, options: [.atomic, .noFileProtection])
