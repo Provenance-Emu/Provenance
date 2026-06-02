@@ -25,6 +25,9 @@ public extension SystemIdentifier {
         case .Intellivision: return 92
         case .Lynx: return 79
         case .MAME: return 41  // Arcade Games
+        // Arcade platforms served by flycast. No distinct libretrodb platform ID wired,
+        // so reuse the Arcade/MAME id (worst case: a missed metadata match — harmless).
+        case .NAOMI, .NAOMI2, .Atomiswave: return 41
         case .MSX2: return 63
         case .MSX: return 36
         case .MasterSystem: return 83  // Master System - Mark III
@@ -259,6 +262,9 @@ extension SystemIdentifier {
         // Sega Systems
         //case .PICO:          return "Sega - PICO"
         case .Dreamcast:     return "Sega - Dreamcast"
+        case .NAOMI:         return "Sega - Naomi"
+        case .NAOMI2:        return "Sega - Naomi 2"
+        case .Atomiswave:    return "Sammy - Atomiswave"
         case .GameGear:      return "Sega - Game Gear"
         case .Genesis:       return "Sega - Mega Drive - Genesis"
         case .MasterSystem:  return "Sega - Master System - Mark III"

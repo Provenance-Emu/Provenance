@@ -18,6 +18,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     case AtariJaguar = "com.provenance.jaguar"
     case AtariJaguarCD = "com.provenance.jaguarcd"
     case AtariST = "com.provenance.atarist"
+    // swiftlint:disable:next identifier_name
+    case Atomiswave = "com.provenance.atomiswave"
     case C64 = "com.provenance.c64"
     case CDi = "com.provenance.cdi"
     case ColecoVision = "com.provenance.colecovision"
@@ -46,6 +48,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     case MSX2 = "com.provenance.msx2"
     case Music = "com.provenance.music"
     case N64 = "com.provenance.n64"
+    case NAOMI = "com.provenance.naomi"
+    case NAOMI2 = "com.provenance.naomi2"
     case NeoGeo = "com.provenance.neogeo"
     case NeoGeoCD = "com.provenance.neogeocd"
     case NES = "com.provenance.nes"
@@ -97,6 +101,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .AtariJaguar: false
         case .AtariJaguarCD: true
         case .AtariST: true
+        case .Atomiswave: true
         case .C64: true
         case .CDi: true
         case .CPS1, .CPS2, .CPS3: true
@@ -123,6 +128,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .MSX2: true
         case .Music: true
         case .N64: false
+        case .NAOMI: true
+        case .NAOMI2: true
         case .NeoGeo: false
         case .NeoGeoCD: false
         case .NES: false
@@ -218,8 +225,10 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
             return "Atari"
         case .NES, .SNES, .N64, .GameCube, .GB, .GBC, .GBA, .VirtualBoy, .PokemonMini, .FDS, .DS, ._3DS, .Wii:
             return "Nintendo"
-        case .Genesis, .SegaCD, .MasterSystem, .GameGear, .Saturn, .Dreamcast, .SG1000, .Sega32X:
+        case .Genesis, .SegaCD, .MasterSystem, .GameGear, .Saturn, .Dreamcast, .SG1000, .Sega32X, .NAOMI, .NAOMI2:
             return "Sega"
+        case .Atomiswave:
+            return "Sammy"
         case .PSX, .PSP, .PS2, .PS3:
             return "Sony"
         case .PC98, .PCE, .PCFX, .PCECD, .SGFX:
@@ -278,12 +287,15 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .AtariJaguar:   return "Jaguar"
         case .AtariJaguarCD: return "Jaguar CD"
         case .AtariST:       return "ST"
+        case .Atomiswave:    return "Atomiswave"
         case .Atari8bit:     return "8-bit"
         case .Lynx:          return "Lynx"
         case .CDi:           return "CD-i"
         case .NES:           return "Nintendo Entertainment System"
         case .SNES:          return "Super Nintendo Entertainment System"
         case .N64:           return "Nintendo 64"
+        case .NAOMI:         return "NAOMI"
+        case .NAOMI2:        return "NAOMI 2"
         case .GameCube:      return "GameCube"
         case .GB:            return "Game Boy"
         case .GBC:           return "Game Boy Color"
