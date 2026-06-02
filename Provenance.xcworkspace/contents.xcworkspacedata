@@ -50,30 +50,8 @@
       <FileRef
          location = "group:PVCoreBridgeRetro/PVCoreBridgeRetro.xcodeproj">
       </FileRef>
-      <Group
-         location = "container:"
-         name = "Broken">
-         <FileRef
-            location = "group:Cores/NP2Kai/PVNP2Kai.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/hatari/PVHatari.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/FinalBurnNeo/PVFBNeo.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/SameDuck/PVSameDuck.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/TIC80/PVTIC80.xcodeproj">
-         </FileRef>
-      </Group>
       <FileRef
          location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/blueMSX/PVblueMSX.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Desmume2015/PVDesmume2015.xcodeproj">

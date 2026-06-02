@@ -56,9 +56,6 @@
 [submodule "Cores/ProSystem/Sources/libprosystem/ProSystem1_3"]
 	path = Cores/ProSystem/Sources/libprosystem/ProSystem1_3
 	url = https://github.com/Provenance-Emu/ProSystem1_3.git
-[submodule "Cores/FinalBurnNeo/FBNeo"]
-	path = Cores/FinalBurnNeo/FBNeo
-	url = https://github.com/Provenance-Emu/FBNeo.git
 [submodule "Cores/FCEU/fceux"]
 	path = Cores/FCEU/fceux
 	url = https://github.com/Provenance-Emu/fceux.git
@@ -77,9 +74,6 @@
 [submodule "Cores/ep128emu/ep128emu-core"]
 	path = Cores/ep128emu/ep128emu-core
 	url = https://github.com/Provenance-Emu/ep128emu-core.git
-[submodule "Cores/hatari/hatari"]
-	path = Cores/hatari/hatari
-	url = https://github.com/Provenance-Emu/hatari.git
 [submodule "Cores/fmsx/fmsx-libretro"]
 	path = Cores/fmsx/fmsx-libretro
 	url = https://github.com/Provenance-Emu/fmsx-libretro.git
@@ -110,12 +104,6 @@
 [submodule "Cores/Stella/Sources/libstella/stella"]
 	path = Cores/Stella/Sources/libstella/stella
 	url = https://github.com/Provenance-Emu/stella.git
-[submodule "Cores/SameDuck/SameBoy"]
-	path = Cores/SameDuck/SameBoy
-	url = https://github.com/Provenance-Emu/SameBoy.git
-[submodule "Cores/blueMSX/blueMSX-libretro"]
-	path = Cores/blueMSX/blueMSX-libretro
-	url = https://github.com/Provenance-Emu/blueMSX-libretro.git
 [submodule "Cores/fuse/fuse-libretro"]
 	path = Cores/fuse/fuse-libretro
 	url = https://github.com/Provenance-Emu/fuse-libretro.git
@@ -131,9 +119,6 @@
 [submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4"]
 	path = Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4
 	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
-[submodule "Cores/TIC80/TIC-80"]
-	path = Cores/TIC80/TIC-80
-	url = https://github.com/Provenance-Emu/TIC-80.git
 [submodule "CoresRetro/RetroArch/RetroArch"]
         path = CoresRetro/RetroArch/RetroArch
         url = https://github.com/Provenance-Emu/RetroArch.git
@@ -146,10 +131,6 @@
 [submodule "Cores/DosBox/dosbox"]
 	path = Cores/DosBox/dosbox
 	url = https://github.com/schellingb/dosbox-pure.git
-[submodule "Cores/NP2Kai/libretro-np2kai"]
-	path = Cores/NP2Kai/libretro-np2kai
-	url = https://github.com/Provenance-Emu/NP2kai-1.git
-	branch = provenance-patches
 [submodule "Cores/snes9x/libretro-snes9x"]
 	path = Cores/snes9x/libretro-snes9x
 	url = https://github.com/libretro/snes9x.git

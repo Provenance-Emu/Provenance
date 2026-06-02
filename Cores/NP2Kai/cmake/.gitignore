@@ -1,6 +1,0 @@
-*
-!.gitignore
-!Makefile.libretro
-
-!Makefile.libretro.TV
-!statsave.c
