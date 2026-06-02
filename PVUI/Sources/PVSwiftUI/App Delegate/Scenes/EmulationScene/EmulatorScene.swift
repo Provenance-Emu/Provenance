@@ -525,9 +525,9 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
         } else {
             alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak self] _ in
                 ILOG("EmulatorContainerViewController: User dismissed error alert, returning to main scene")
-                /// Reset state and close emulator immediately
-                AppState.shared.emulationUIState.reset()
-                SceneCoordinator.shared.closeEmulator()
+                // Tear down the hosted emulator (stops core/audio/timers + detaches the
+                // child VC). Error paths otherwise skip quit() and leak the core+VC+Metal view.
+                self?.tearDownEmulatorAndClose(optionallySave: false)
             }))
         }
 
@@ -647,6 +647,31 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
         } catch {
             ELOG("EmulatorContainerViewController: Failed to load emulator: \(error.localizedDescription)")
             displayAndLogError(withTitle: "Error", message: "Failed to load emulator: \(error.localizedDescription)", customActions: nil)
+        }
+    }
+
+    /// Properly tears down the hosted emulator on ANY close path and returns to the
+    /// main scene. Error/crash paths historically called `closeEmulator()` directly,
+    /// which only nulls AppState — the child `PVEmulatorViewController` (with its still
+    /// running core, audio, and CADisplayLink/Timer) stayed attached and was never
+    /// released, leaking a full emulator instance per core-throw. `quit()` stops the
+    /// core/audio/timers/observers (breaking the timer→self retain cycle); we then
+    /// detach the child VC and close. Idempotent (drops the strong ref up front).
+    @MainActor
+    private func tearDownEmulatorAndClose(optionallySave: Bool) {
+        guard let evc = emulatorViewController else {
+            AppState.shared.emulationUIState.reset()
+            SceneCoordinator.shared.closeEmulator()
+            return
+        }
+        emulatorViewController = nil
+        Task { @MainActor in
+            await evc.quit(optionallySave: optionallySave)
+            evc.willMove(toParent: nil)
+            evc.view.removeFromSuperview()
+            evc.removeFromParent()
+            AppState.shared.emulationUIState.reset()
+            SceneCoordinator.shared.closeEmulator()
         }
     }
 
