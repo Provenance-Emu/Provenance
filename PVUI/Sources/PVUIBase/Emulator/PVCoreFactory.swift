@@ -113,7 +113,9 @@ public final class PVCoreFactory: NSObject {
                 fatalError("Core doesn't implement PVSG1000SystemResponderClient")
             }
             break;
-        case .Dreamcast:
+        case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2:
+            // NAOMI / Atomiswave / NAOMI 2 are Sega arcade boards served by the same
+            // flycast core and reuse the Dreamcast controls + responder protocol.
             if let core = core as? PVDreamcastSystemResponderClient {
                 return PVDreamcastControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {

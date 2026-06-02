@@ -55,7 +55,7 @@ public extension SystemIdentifier {
         case .ColecoVision: return PVColecoVisionButton.self
         case .DOS: return PVDOSButton.self
         case .DOOM: return PVDoomButton.self
-        case .Dreamcast: return PVDreamcastButton.self
+        case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2: return PVDreamcastButton.self
         case .DS: return PVDSButton.self
         case .EP128: return PVEP128Button.self
         case .FDS: return PVNESButton.self

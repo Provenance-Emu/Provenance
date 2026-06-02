@@ -46,7 +46,7 @@ extension SystemIdentifier {
         case .GameGear:      return "gamegear"
         case .SG1000:        return "sg1000"
         case .Saturn:        return "saturn"
-        case .Dreamcast:     return "dreamcast"
+        case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2:     return "dreamcast"
 
         // Sony
         case .PSX:           return "psx"
@@ -137,7 +137,7 @@ extension SystemIdentifier {
         case .GameGear:      return "Game Gear"
         case .SG1000:        return "SG-1000"
         case .Saturn:        return "Saturn"
-        case .Dreamcast:     return "Dreamcast"
+        case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2:     return "Dreamcast"
 
         // Sony
         case .PSX:           return "PlayStation"

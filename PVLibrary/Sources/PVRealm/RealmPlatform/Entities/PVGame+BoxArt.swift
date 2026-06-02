@@ -139,7 +139,7 @@ public extension PVGame {
             return .square
 
         // Arcade — no retail box, use square flyer art
-        case .CPS1, .CPS2, .CPS3, .MAME:
+        case .CPS1, .CPS2, .CPS3, .MAME, .NAOMI, .NAOMI2, .Atomiswave:
             return .square
 
         default:

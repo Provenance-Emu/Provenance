@@ -322,7 +322,7 @@ public extension DeltaSkinManager {
             return "ss"
         case .SG1000:
             return "sg1000"
-        case .Dreamcast:
+        case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2:
             return "dc"
 
         // Sony

@@ -827,7 +827,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .PSP: self = .psp
         case ._3DS: self = .threeDS
         case .PokemonMini: self = .pokemonMini
-        case .Dreamcast: self = .dreamcast
+        case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2: self = .dreamcast
         case .PCE: self = .pce
         case .PCECD: self = .pcecd
         case .PCFX: self = .pcfx

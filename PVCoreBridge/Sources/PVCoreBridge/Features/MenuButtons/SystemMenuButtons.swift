@@ -74,7 +74,7 @@ public func systemMenuButtons(for system: SystemIdentifier) -> [SystemMenuButton
         return [start, sound]
 
     // Start-only consoles (analog/digital but only one menu button)
-    case .N64, .Saturn, .Dreamcast, .GameCube:
+    case .N64, .Saturn, .Dreamcast, .GameCube, .NAOMI, .Atomiswave, .NAOMI2:
         return [start]
 
     // Genesis family — Start + Mode

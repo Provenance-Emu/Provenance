@@ -95,7 +95,7 @@ public extension SystemIdentifier {
             return PVDSSystemResponderClient.self
         case .PSP:
             return PVPSPSystemResponderClient.self
-        case .Dreamcast:
+        case .Dreamcast, .NAOMI, .NAOMI2, .Atomiswave:
             return PVDreamcastSystemResponderClient.self
         case .Wii:
             return PVWiiSystemResponderClient.self

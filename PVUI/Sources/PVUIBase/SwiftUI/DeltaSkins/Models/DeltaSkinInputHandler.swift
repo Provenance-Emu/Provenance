@@ -967,8 +967,9 @@ public class DeltaSkinInputHandler: ObservableObject {
                     DLOG("Forwarded joystick event via PVPS2SystemResponderClient: button=\(button.stringValue), x=\(x), y=\(y)")
                     return
                 }
-            case .Dreamcast:
-                // Dreamcast has a left analog stick
+            case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2:
+                // Dreamcast + Sega arcade (NAOMI/Atomiswave/NAOMI2) reuse the Dreamcast
+                // responder; left analog stick.
                 if isLeftStick, let responder = core as? PVDreamcastSystemResponderClient {
                     responder.didMoveJoystick(.leftAnalog, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
                     DLOG("Forwarded joystick event via PVDreamcastSystemResponderClient: button=leftAnalog, x=\(x), y=\(y)")
@@ -1167,7 +1168,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 let b = PVSaturnButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
-        case .Dreamcast:
+        case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2:
             if let r = core as? PVDreamcastSystemResponderClient {
                 let b = PVDreamcastButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
@@ -1942,7 +1943,7 @@ public class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
-        case .Dreamcast:
+        case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2:
             if let r = core as? PVDreamcastSystemResponderClient {
                 let b = PVDreamcastButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
@@ -2407,8 +2408,8 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["r", "r1"].contains(s) { return "r" }
             if ["start"].contains(s) { return s }
             return s
-        case .Dreamcast:
-            /// Dreamcast button normalization - supports: up, down, left, right, a, b, x, y, l, r, start
+        case .Dreamcast, .NAOMI, .Atomiswave, .NAOMI2:
+            /// Dreamcast (+ Sega arcade) button normalization - supports: up, down, left, right, a, b, x, y, l, r, start
             if ["up", "down", "left", "right"].contains(s) { return s }
             if ["a", "b", "x", "y"].contains(s) { return s }
             if ["l", "l1"].contains(s) { return "l" }

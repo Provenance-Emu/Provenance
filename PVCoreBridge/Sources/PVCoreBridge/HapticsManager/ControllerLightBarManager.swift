@@ -306,7 +306,7 @@ private extension SystemIdentifier {
         // Sega — blue / orange / cyan / yellow
         case .Genesis, .MasterSystem, .SegaCD, .Sega32X, .SG1000:
             return .segaBlue
-        case .Dreamcast:
+        case .Dreamcast, .NAOMI, .NAOMI2, .Atomiswave:
             return .dreamcastOrange
         case .GameGear:
             return Color(red: 0.00, green: 0.65, blue: 0.90)

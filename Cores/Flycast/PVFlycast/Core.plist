@@ -2,27 +2,30 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>PVCopyright</key>
+	<string>Copyright © 2018-2024 Flycast Contributors</string>
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.flycast</string>
-	<key>PVPrincipleClass</key>
-	<string>PVFlycast.PVFlycastCore</string>
-	<key>PVSupportedSystems</key>
-	<array>
-		<string>com.provenance.dreamcast</string>
-	</array>
-	<key>PVProjectName</key>
-	<string>Flycast</string>
-	<key>PVProjectURL</key>
-	<string>https://github.com/flyinghead/flycast</string>
-	<key>PVProjectVersion</key>
-	<string>5.0</string>
 	<key>PVJITRequirement</key>
 	<string>optional</string>
 	<key>PVLicenseName</key>
 	<string>GPL-2.0-only</string>
 	<key>PVLicenseURL</key>
 	<string>https://github.com/flyinghead/flycast/blob/HEAD/LICENSE</string>
-	<key>PVCopyright</key>
-	<string>Copyright © 2018-2024 Flycast Contributors</string>
+	<key>PVPrincipleClass</key>
+	<string>PVFlycast.PVFlycastCore</string>
+	<key>PVProjectName</key>
+	<string>Flycast</string>
+	<key>PVProjectURL</key>
+	<string>https://github.com/flyinghead/flycast</string>
+	<key>PVProjectVersion</key>
+	<string>5.0</string>
+	<key>PVSupportedSystems</key>
+	<array>
+		<string>com.provenance.dreamcast</string>
+		<string>com.provenance.naomi</string>
+		<string>com.provenance.atomiswave</string>
+		<string>com.provenance.naomi2</string>
+	</array>
 </dict>
 </plist>
