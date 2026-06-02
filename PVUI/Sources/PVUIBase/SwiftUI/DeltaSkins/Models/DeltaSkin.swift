@@ -533,11 +533,19 @@ public struct DeltaSkin: DeltaSkinProtocol {
         }
 
         do {
-            let assetData = try loadAssetData(fallbackName)
             let lower = fallbackName.lowercased()
+            let fbIsVector = lower.hasSuffix(".pdf") || lower.hasSuffix(".svg")
+            let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
+            // Disk-cache tier (PDF/SVG only): a hit skips the slow rasterize.
+            let fbDiskURL: URL? = fbIsVector ? diskCacheURL(assetName: fallbackName, traits: traits, renderSize: renderSize) : nil
+            if fbIsVector, let diskImage = loadFromDiskCache(fbDiskURL) {
+                Self.imageCacheQueue.async(flags: .barrier) { Self.imageCache[fallbackCacheKey] = diskImage }
+                return diskImage
+            }
+
+            let assetData = try loadAssetData(fallbackName)
             let decodedImage: UIImage?
             if lower.hasSuffix(".pdf") {
-                let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
                 // Always preserve transparency for PDF skin assets — `translucent` controls
                 // runtime overlay opacity, not PDF alpha-channel rendering.
                 decodedImage = UIImage(pdfData: assetData, preserveTransparency: true, size: renderSize)
@@ -545,7 +553,6 @@ public struct DeltaSkin: DeltaSkinProtocol {
                     throw DeltaSkinError.invalidPDF
                 }
             } else if lower.hasSuffix(".svg") {
-                let renderSize: CGSize? = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : nil
                 decodedImage = UIImage(svgData: assetData, size: renderSize)
                 guard decodedImage != nil else {
                     throw DeltaSkinError.invalidSVG
@@ -557,8 +564,9 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 }
             }
 
-            // Cache the decoded image
+            // Cache the decoded image (disk + memory)
             if let imageToCache = decodedImage {
+                if fbIsVector { Self.writeToDiskCache(imageToCache, to: fbDiskURL) }
                 Self.imageCacheQueue.async(flags: .barrier) {
                     Self.imageCache[fallbackCacheKey] = imageToCache
                     // Limit cache size
@@ -596,6 +604,19 @@ public struct DeltaSkin: DeltaSkinProtocol {
             return cachedImage
         }
 
+        // Disk-cache tier (PDF thumbsticks only; PNGs go through imageWithAlpha() and are cheap).
+        let tsDiskURL: URL? = {
+            guard named.hasSuffix(".pdf"), let dir = Self.diskCacheDirectory else { return nil }
+            let modStamp = ((try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate)
+                .map { String(Int($0.timeIntervalSince1970)) } ?? "0"
+            let raw = "\(identifier)|thumbstick|\(named)|@\(UIScreen.main.scale)|\(modStamp)"
+            return dir.appendingPathComponent(Self.stableHash(raw)).appendingPathExtension("png")
+        }()
+        if let diskImage = loadFromDiskCache(tsDiskURL) {
+            Self.thumbstickCacheQueue.async(flags: .barrier) { Self.thumbstickImageCache[cacheKey] = diskImage }
+            return diskImage
+        }
+
         // Load the asset data
         let assetData = try loadAssetData(named)
 
@@ -614,8 +635,9 @@ public struct DeltaSkin: DeltaSkinProtocol {
             }
         }
 
-        // Cache the decoded image
+        // Cache the decoded image (disk + memory)
         if let imageToCache = decodedImage {
+            if named.hasSuffix(".pdf") { Self.writeToDiskCache(imageToCache, to: tsDiskURL) }
             Self.thumbstickCacheQueue.async(flags: .barrier) {
                 Self.thumbstickImageCache[cacheKey] = imageToCache
                 // Limit cache size to ~20MB (approximately 40 thumbstick images)
