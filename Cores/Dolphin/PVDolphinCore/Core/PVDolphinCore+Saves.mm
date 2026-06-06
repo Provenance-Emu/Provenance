@@ -64,7 +64,22 @@ std::mutex ProvenanceHostThreadLock::s_host_mutex;
 
     @try {
         ProvenanceHostThreadLock guard;
-        State::SaveAs(Core::System::GetInstance(), [path UTF8String], true);
+        auto& system = Core::System::GetInstance();
+        // Diagnostic trail for the "saves are finicky" reports: log core state going in and
+        // whether the file actually landed — SaveAs(wait=true) blocks through RunOnCPUThread,
+        // which handles Paused via PauseAndLock, so a miss here is either the init gate above
+        // or the file never being written.
+        ILOG(@"💾 SaveState -> %@ (core state=%d)", path, (int)Core::GetState(system));
+        State::SaveAs(system, [path UTF8String], true);
+        const bool exists = [[NSFileManager defaultManager] fileExistsAtPath:path];
+        ILOG(@"💾 SaveState done: fileExists=%d", exists);
+        if (!exists) {
+            if (error) {
+                *error = [NSError errorWithDomain:@"PVDolphinCore" code:1005
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Save state file was not written"}];
+            }
+            return NO;
+        }
         return YES;
     } @catch (NSException *exception) {
         if (error) {
@@ -85,8 +100,19 @@ std::mutex ProvenanceHostThreadLock::s_host_mutex;
     }
 
     @try {
+        if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+            ILOG(@"💾 LoadState MISSING file: %@", path);
+            if (error) {
+                *error = [NSError errorWithDomain:@"PVDolphinCore" code:1006
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Save state file does not exist"}];
+            }
+            return NO;
+        }
         ProvenanceHostThreadLock guard;
-        State::LoadAs(Core::System::GetInstance(), [path UTF8String]);
+        auto& system = Core::System::GetInstance();
+        ILOG(@"💾 LoadState <- %@ (core state=%d)", path, (int)Core::GetState(system));
+        State::LoadAs(system, [path UTF8String]);
+        ILOG(@"💾 LoadState done");
         return YES;
     } @catch (NSException *exception) {
         if (error) {

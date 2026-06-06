@@ -900,6 +900,30 @@ static void ResetDolphinStaticState() {
     [super setPauseEmulation:flag];
 }
 
+- (void)setGameSpeed:(GameSpeed)gameSpeed {
+    [super setGameSpeed:gameSpeed];
+    // The superclass only adjusts framerateMultiplier — the FRONTEND's loop pacing — which does
+    // nothing for Dolphin: it runs its own EmuThread and throttles internally via
+    // MAIN_EMULATION_SPEED. Drive the real throttle on the CurrentRun layer (session-scoped, so
+    // it never pollutes the persisted base config) and mirror the superclass's multipliers.
+    if (!_isInitialized)
+        return;
+    float speed;
+    switch (gameSpeed) {
+        case GameSpeedVerySlow: speed = 0.25f; break;
+        case GameSpeedSlow:     speed = 0.5f;  break;
+        case GameSpeedFast:     speed = 2.0f;  break;
+        case GameSpeedVeryFast: speed = 0.0f;  break;  // unthrottled — run as fast as the core can
+        case GameSpeedNormal:
+        default:
+            // Back to the user's configured speed limit (mirrors setOptionValues' mapping).
+            speed = (self.speedLimit == 0) ? 0.0f : (self.speedLimit / 100.0f);
+            break;
+    }
+    Config::SetCurrent(Config::MAIN_EMULATION_SPEED, speed);
+    NSLog(@"🎮 Game speed -> %ld (MAIN_EMULATION_SPEED=%.2f)", (long)gameSpeed, speed);
+}
+
 - (void)stopEmulation {
     [super stopEmulation];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
