@@ -1222,21 +1222,24 @@ static void ResetDolphinStaticState() {
     }
 }
 -(void)processOption:(NSString *)key value:(NSString*)value {
-    typedef void (^Process)();
-    NSDictionary *actions = @{
-        @MAP_MULTIPLAYER:
-        ^{
-            self.multiPlayer = [value isEqualToString:@"true"];
-            [self setupControllers];
-        },
-        @"Audio Volume":
-        ^{
-            [self setOptionValues];
-        },
-    };
-    Process action=[actions objectForKey:key];
-    if (action)
-        action();
+    // Re-read ALL options into the bridge properties, then re-apply them to Dolphin Config.
+    // This used to special-case exactly two keys (Multiplayer, Audio Volume) and silently DROP
+    // every other change — nothing applied until the next game boot. (The volume path was also
+    // stale: it re-applied without re-parsing.) Dolphin's config-changed callbacks pick up
+    // live-applicable settings (FPS counter, graphics hacks, scale, ...) immediately;
+    // requiresRestart options still land in config and take effect at next boot, as labeled.
+    // Layer::Set is change-detecting, so unchanged keys don't spam OnConfigChanged.
+    // Guard on a live core: with no game running, Dolphin's config layers may not exist yet
+    // (boot applies options itself), and Config::SetBase would touch uninitialized state.
+    if (!Core::IsRunning(Core::System::GetInstance()))
+        return;
+    [self parseOptions];
+    [self setOptionValues];
+
+    if ([key isEqualToString:@MAP_MULTIPLAYER]) {
+        self.multiPlayer = [value isEqualToString:@"true"];
+        [self setupControllers];  // port count changed — regenerate pad config
+    }
 }
 
 @end
