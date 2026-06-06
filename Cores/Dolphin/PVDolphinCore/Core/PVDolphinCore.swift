@@ -112,7 +112,7 @@ extension PVDolphinCore: GameWithCheat {
 extension PVDolphinCore: CoreActions {
     enum Actions {
         static var toggleVBISkip: CoreAction {
-            let currentValue = PVDolphinCoreOptions.viSkip
+            let currentValue = PVDolphinCoreOptions.viSkipMode != 0
             return CoreAction(
                 title: currentValue ? "Disable VBI Skip" : "Enable VBI Skip",
                 requiresReset: false,
@@ -193,9 +193,11 @@ extension PVDolphinCore: CoreActions {
     public func selected(action: CoreAction) {
         switch action.title {
         case Actions.toggleVBISkip.title, "Enable VBI Skip", "Disable VBI Skip":
-            let currentValue = PVDolphinCoreOptions.viSkip
-            PVDolphinCore.setValue(!currentValue, forOption: PVDolphinCoreOptions.viSkipOption)
-            ILOG("VBI Skip toggled to: \(!currentValue)")
+            // Tri-state under the hood: toggle between Off(0) and Auto(2) — bounded catch-up,
+            // never the legacy always-On mode (it can pin and starve vblank IRQs on the jitless core).
+            let currentlyOn = PVDolphinCoreOptions.viSkipMode != 0
+            PVDolphinCore.setValue(currentlyOn ? 0 : 2, forOption: PVDolphinCoreOptions.viSkipModeOption)
+            ILOG("VBI Skip toggled to: \(currentlyOn ? "Off" : "Auto")")
 
         case Actions.vbiFrequency25.title:
             PVDolphinCore.setValue(true, forOption: PVDolphinCoreOptions.enableVBIOverrideOption)

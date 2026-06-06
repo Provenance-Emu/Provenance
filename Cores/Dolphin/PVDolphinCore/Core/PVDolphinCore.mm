@@ -393,8 +393,13 @@ static void ResetDolphinStaticState() {
     // Vertex Rounding
     Config::SetBase(Config::GFX_HACK_VERTEX_ROUNDING, self.vertexRounding);
 
-    // VI Skip
-    Config::SetBase(Config::GFX_HACK_VI_SKIP, self.viSkip);
+    // VI Skip — mirror the iCube re-baseline: the legacy bool stays OFF; the tri-state mode is
+    // what the runtime actually reads (CoreTimingManager::GetVISkip supersedes the bool). Auto is
+    // bounded catch-up; legacy On can pin permanently and starve vblank IRQs on the lean CIR.
+    Config::SetBase(Config::GFX_HACK_VI_SKIP, false);
+    Config::SetBase(Config::GFX_HACK_VI_SKIP_MODE,
+                    self.viSkipMode == 0 ? TriState::Off :
+                    (self.viSkipMode == 1 ? TriState::On : TriState::Auto));
 
     // === SHADER SETTINGS ===
 
@@ -461,6 +466,12 @@ static void ResetDolphinStaticState() {
         Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JITARM64);
         NSLog(@"🚀 CPU Core: JITARM64 (Maximum Performance)");
 #endif
+    } else if (effectiveCpuType == 3) {
+        // CachedInterpreterIR (enum value 6 on the re-baseline core). static_cast because the
+        // current submodule's PowerPC::CPUCore enum predates it; on such cores Dolphin's engine
+        // selection falls back to CachedInterpreter for unknown values — safe both ways.
+        Config::SetBase(Config::MAIN_CPU_CORE, static_cast<PowerPC::CPUCore>(6));
+        NSLog(@"⚡ CPU Core: Cached Interpreter (IR)");
     }
 
     // CPU Overclock
@@ -529,6 +540,25 @@ static void ResetDolphinStaticState() {
 
     // Fast-Forward CTR Idle Loops (better performance without JIT)
     Config::SetBase(Config::MAIN_FAST_FORWARD_CTR_IDLE, self.fastForwardCTRIdle);
+
+    // iCube CIR measured-neutral A/B cuts + diagnostics. Written via inline Config::Info so this
+    // compiles against cores that predate the re-baseline (no extern MAIN_CIR_* symbols needed);
+    // the inline Location {Main,"Core",key} is identical to the real flag's, so on a re-baseline
+    // core these drive the same ini keys, and on older cores they're inert ini entries.
+    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRSpecializedFpLs"}, false},
+                    self.cirSpecializedFpLs);
+    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRSpecializedPsq"}, false},
+                    self.cirSpecializedPsq);
+    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRPsqFastpath"}, false},
+                    self.cirPsqFastpath);
+    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRCacheLoopFF"}, false},
+                    self.cirCacheLoopFF);
+    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRPsNeon"}, false},
+                    self.cirPsNeon);
+    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRCacheLoopFFValidate"}, false},
+                    self.cirCacheLoopFFValidate);
+    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "StallMetrics"}, true},
+                    self.stallMetrics);
 
     // GPU Sync with CPU - user-configurable (disabled by default for performance)
     Config::SetBase(Config::MAIN_SYNC_GPU, self.syncGPU);

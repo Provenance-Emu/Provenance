@@ -232,12 +232,16 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         defaultValue: false)
     }()
 
-    static var viSkipOption: CoreOption = {
-        .bool(.init(
-            title: "VI Skip",
-            description: "Skips VI updates for performance. May cause issues in some games.",
-            requiresRestart: false),
-        defaultValue: true)
+    static var viSkipModeOption: CoreOption = {
+        .enumeration(.init(title: "VI Skip",
+                          description: "Drops video-interface updates to catch up when the CPU lags. Auto is bounded (safe on the jitless core); On can starve vblank IRQs and lock up CPU-heavy titles.",
+                          requiresRestart: false),
+                    values: [
+                        .init(title: "Off", description: "Never skip", value: 0),
+                        .init(title: "On", description: "Always skip (legacy, can lock up)", value: 1),
+                        .init(title: "Auto (Recommended)", description: "Bounded catch-up", value: 2)
+                    ],
+                    defaultValue: 2)
     }()
 
     // MARK: - Shader Settings
@@ -308,7 +312,8 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 		  values: [
 			.init(title: "Interpreter", description: "Interpreter (Slowest, Most Compatible)", value: 0),
 			.init(title: "Cached Interpreter", description: "Cached Interpreter (Good Performance)", value: 1),
-			.init(title: "JIT Recompiler", description: "JIT (Fastest, auto-fallback if unavailable)", value: 2)
+			.init(title: "JIT Recompiler", description: "JIT (Fastest, auto-fallback if unavailable)", value: 2),
+			.init(title: "Cached Interpreter (IR)", description: "Experimental IR-lowering engine. Falls back to Cached Interpreter on cores without it.", value: 3)
 		  ],
 		  defaultValue: 1)
 	}()
@@ -337,9 +342,9 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     static var dualCoreOption: CoreOption = {
         .bool(.init(
             title: "Dual Core",
-            description: "Enables dual-core emulation for significantly better performance. Recommended for all modern devices.",
+            description: "Run CPU and GPU on separate threads. Faster when stable, but deadlocks most games on the jitless Cached Interpreter — leave OFF unless a specific game needs it.",
             requiresRestart: true),
-        defaultValue: true)
+        defaultValue: false)
     }()
 
     static var idleSkippingOption: CoreOption = {
@@ -612,6 +617,70 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             requiresRestart: false),
         defaultValue: false)
     }()
+
+    // MARK: - Advanced CPU (Cached Interpreter) — iCube re-baseline knobs
+    // The proven wins (specialized integer ops, PIC load/store, micro-op fusion, block linking)
+    // default ON inside the core and are intentionally not exposed here. These are the
+    // measured-neutral cuts, surfaced default-OFF for on-device A/B. They are inert (harmless)
+    // on cores that predate the re-baseline.
+
+    static var cirSpecializedFpLsOption: CoreOption = {
+        .bool(.init(
+            title: "CIR: FP Load/Store Specialization",
+            description: "Direct-dispatch floating-point load/stores in the Cached Interpreter. Measured-neutral; exposed for A/B testing.",
+            requiresRestart: true),
+        defaultValue: false)
+    }()
+
+    static var cirSpecializedPsqOption: CoreOption = {
+        .bool(.init(
+            title: "CIR: Paired-Single Load/Store Specialization",
+            description: "Direct-dispatch quantized paired-single load/stores. Measured-neutral; exposed for A/B testing.",
+            requiresRestart: true),
+        defaultValue: false)
+    }()
+
+    static var cirPsqFastpathOption: CoreOption = {
+        .bool(.init(
+            title: "CIR: Paired-Single Fast Path",
+            description: "Float fast path inside the paired-single quantized handlers. Measured-neutral; exposed for A/B testing.",
+            requiresRestart: true),
+        defaultValue: false)
+    }()
+
+    static var cirCacheLoopFFOption: CoreOption = {
+        .bool(.init(
+            title: "CIR: Cache-Loop Fast-Forward",
+            description: "Fast-forwards dcbf/dcbi/dcbst counter loops. Measured-neutral; exposed for A/B testing.",
+            requiresRestart: true),
+        defaultValue: false)
+    }()
+
+    static var cirPsNeonOption: CoreOption = {
+        .bool(.init(
+            title: "CIR: NEON Paired-Single Math",
+            description: "SIMD paired-single arithmetic on ARM64. Measured-neutral; exposed for A/B testing.",
+            requiresRestart: true),
+        defaultValue: false)
+    }()
+
+    // MARK: - Diagnostics
+
+    static var stallMetricsOption: CoreOption = {
+        .bool(.init(
+            title: "Stall Metrics",
+            description: "Per-site stall/wasted-time instrumentation (where the CPU thread waits). Low overhead; feeds the perf report.",
+            requiresRestart: true),
+        defaultValue: true)
+    }()
+
+    static var cirCacheLoopFFValidateOption: CoreOption = {
+        .bool(.init(
+            title: "CIR: Cache-Loop Validate (slow)",
+            description: "Double-run correctness check for Cache-Loop Fast-Forward. Debug only — very slow.",
+            requiresRestart: true),
+        defaultValue: false)
+    }()
 	public static var options: [CoreOption] {
 		var options = [CoreOption]()
 
@@ -686,7 +755,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
             disableBoundingBoxOption,
             saveTextureCacheToStateOption,
             vertexRoundingOption,
-            viSkipOption
+            viSkipModeOption
         ]
         let hacksGroup: CoreOption = .group(.init(title: "Graphics Hacks",
                                                 description: "Advanced graphics hacks for performance and compatibility. Change with caution."),
@@ -700,7 +769,24 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
                                                   description: "GameCube and Wii system settings"),
                                             subOptions: systemOptions)
 
-		options.append(contentsOf: [graphicsGroup, enhancementGroup, hacksGroup, aaGroup, shaderGroup, cpuGroup, audioGroup, systemGroup])
+        // Advanced CPU (CIR) Group — measured-neutral A/B knobs, default off
+        let cirOptions: [CoreOption] = [
+            cirSpecializedFpLsOption, cirSpecializedPsqOption, cirPsqFastpathOption,
+            cirCacheLoopFFOption, cirPsNeonOption
+        ]
+        let cirGroup: CoreOption = .group(.init(title: "Advanced CPU (CIR)",
+                                               description: "Cached Interpreter A/B knobs from the iCube re-baseline. Measured-neutral on-device; leave off unless testing."),
+                                         subOptions: cirOptions)
+
+        // Diagnostics Group
+        let diagnosticsOptions: [CoreOption] = [
+            stallMetricsOption, cirCacheLoopFFValidateOption
+        ]
+        let diagnosticsGroup: CoreOption = .group(.init(title: "Diagnostics",
+                                                       description: "Performance instrumentation and validation tools"),
+                                                 subOptions: diagnosticsOptions)
+
+		options.append(contentsOf: [graphicsGroup, enhancementGroup, hacksGroup, aaGroup, shaderGroup, cpuGroup, cirGroup, audioGroup, systemGroup, diagnosticsGroup])
 		return options
 	}
 }
@@ -786,8 +872,8 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     @objc static var vertexRounding: Bool {
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.vertexRoundingOption).asBool
     }
-    @objc static var viSkip: Bool {
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.viSkipOption).asBool
+    @objc static var viSkipMode: Int {
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.viSkipModeOption).asInt ?? 2
     }
 
     // MARK: - Shader Settings
@@ -863,6 +949,27 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     }
     @objc static var fastForwardCTRIdle: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.fastForwardCTRIdleOption).asBool
+    }
+    @objc static var cirSpecializedFpLs: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirSpecializedFpLsOption).asBool
+    }
+    @objc static var cirSpecializedPsq: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirSpecializedPsqOption).asBool
+    }
+    @objc static var cirPsqFastpath: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirPsqFastpathOption).asBool
+    }
+    @objc static var cirCacheLoopFF: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirCacheLoopFFOption).asBool
+    }
+    @objc static var cirPsNeon: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirPsNeonOption).asBool
+    }
+    @objc static var stallMetrics: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.stallMetricsOption).asBool
+    }
+    @objc static var cirCacheLoopFFValidate: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirCacheLoopFFValidateOption).asBool
     }
     @objc static var dspHLE: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.dspHLEOption).asBool
@@ -952,6 +1059,25 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         self.pixelLighting = PVDolphinCoreOptions.pixelLighting
         self.forceTrueColor = PVDolphinCoreOptions.forceTrueColor
 
+        // Graphics Hacks — these were NEVER plumbed before (UI-only options): the bridge
+        // properties stayed at ObjC default false/0, so the .mm wrote the SLOW path into
+        // Dolphin Config regardless of settings (EFB copies to RAM, no immediate XFB, no GPU
+        // texture decoding, Safe texture cache). Wiring them is itself a perf fix.
+        self.skipEFBAccessFromCPU = PVDolphinCoreOptions.skipEFBAccessFromCPU
+        self.ignoreFormatChanges = PVDolphinCoreOptions.ignoreFormatChanges
+        self.storeEFBCopiesToTextureOnly = PVDolphinCoreOptions.storeEFBCopiesToTextureOnly
+        self.deferEFBCopies = PVDolphinCoreOptions.deferEFBCopies
+        self.textureCacheAccuracy = NSNumber(value: PVDolphinCoreOptions.textureCacheAccuracy).int8Value
+        self.storeXFBCopiesToTextureOnly = PVDolphinCoreOptions.storeXFBCopiesToTextureOnly
+        self.immediateXFB = PVDolphinCoreOptions.immediateXFB
+        self.skipDuplicateXFBs = PVDolphinCoreOptions.skipDuplicateXFBs
+        self.gpuTextureDecoding = PVDolphinCoreOptions.gpuTextureDecoding
+        self.fastDepthCalculation = PVDolphinCoreOptions.fastDepthCalculation
+        self.disableBoundingBox = PVDolphinCoreOptions.disableBoundingBox
+        self.saveTextureCacheToState = PVDolphinCoreOptions.saveTextureCacheToState
+        self.vertexRounding = PVDolphinCoreOptions.vertexRounding
+        self.viSkipMode = NSNumber(value: PVDolphinCoreOptions.viSkipMode).int8Value
+
         // Shader Settings
         self.shaderCompilationMode = NSNumber(value: PVDolphinCoreOptions.shaderCompilationMode).int8Value
         self.waitForShaders = PVDolphinCoreOptions.waitForShaders
@@ -983,6 +1109,13 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         self.dcbzHack = PVDolphinCoreOptions.dcbzHack
         self.relaxedIdleDetection = PVDolphinCoreOptions.relaxedIdleDetection
         self.fastForwardCTRIdle = PVDolphinCoreOptions.fastForwardCTRIdle
+        self.cirSpecializedFpLs = PVDolphinCoreOptions.cirSpecializedFpLs
+        self.cirSpecializedPsq = PVDolphinCoreOptions.cirSpecializedPsq
+        self.cirPsqFastpath = PVDolphinCoreOptions.cirPsqFastpath
+        self.cirCacheLoopFF = PVDolphinCoreOptions.cirCacheLoopFF
+        self.cirPsNeon = PVDolphinCoreOptions.cirPsNeon
+        self.stallMetrics = PVDolphinCoreOptions.stallMetrics
+        self.cirCacheLoopFFValidate = PVDolphinCoreOptions.cirCacheLoopFFValidate
         self.dspHLE = PVDolphinCoreOptions.dspHLE
         self.dspThread = PVDolphinCoreOptions.dspThread
         self.syncGPU = PVDolphinCoreOptions.syncGPU

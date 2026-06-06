@@ -90,7 +90,7 @@
 @property (nonatomic, assign) bool disableBoundingBox;
 @property (nonatomic, assign) bool saveTextureCacheToState;
 @property (nonatomic, assign) bool vertexRounding;
-@property (nonatomic, assign) bool viSkip;
+@property (nonatomic, assign) int8_t viSkipMode;  // 0=Off 1=On(legacy) 2=Auto(bounded)
 
 // Shader Settings
 @property (nonatomic, assign) int8_t shaderCompilationMode;
@@ -120,6 +120,18 @@
 @property (nonatomic, assign) bool dcbzHack;
 @property (nonatomic, assign) bool relaxedIdleDetection;
 @property (nonatomic, assign) bool fastForwardCTRIdle;
+// CachedInterpreter (CIR) optimization knobs — iCube re-baseline. The proven wins
+// (specialized integer ops, PIC load/store, micro-op fusion, block linking) default ON in
+// the core itself and are intentionally NOT exposed here. These are the measured-neutral
+// cuts, surfaced default-OFF for on-device A/B. Inert on cores without the MAIN_CIR_* keys.
+@property (nonatomic, assign) bool cirSpecializedFpLs;
+@property (nonatomic, assign) bool cirSpecializedPsq;
+@property (nonatomic, assign) bool cirPsqFastpath;
+@property (nonatomic, assign) bool cirCacheLoopFF;
+@property (nonatomic, assign) bool cirPsNeon;
+// Diagnostics
+@property (nonatomic, assign) bool stallMetrics;
+@property (nonatomic, assign) bool cirCacheLoopFFValidate;
 @property (nonatomic, assign) bool dspHLE;
 @property (nonatomic, assign) bool dspThread;
 @property (nonatomic, assign) bool syncGPU;
