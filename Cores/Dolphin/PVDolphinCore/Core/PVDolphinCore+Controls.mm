@@ -307,6 +307,9 @@ s8 joyx[4], joyy[4];
                                                object:nil
     ];
 	    [self initControllBuffers];
+    // Pick up the per-system controller layout variant chosen in Settings before the
+    // config inis are generated (the host-side apply call is still unwired upstream).
+    [self loadPersistedControllerVariant];
     [self writeWiiIniFile];
     [self writeGCIniFile];
     ciface::iOS::StateManager::GetInstance()->Init();
@@ -1063,6 +1066,55 @@ s8 joyx[4], joyy[4];
 }
 
 // Required ini file for the Button Manager WiiMote is at 4-8 port
+#pragma mark - Controller layout variants (ConsoleVariantConfigurable)
+
+// Selected Wiimote extension + GameCube SI device. Defaults match the historical hardcoded
+// behavior (Nunchuk / standard pad). Boot-time value loads from the per-system persisted
+// Settings-picker choice; runtime changes arrive via applyControllerVariant: (forwarded from
+// PVDolphinCore's ConsoleVariantConfigurable conformance). The host-side call-site for variant
+// changes is still pending upstream, so the boot-time read is what keeps the picker honest.
+static NSString *s_wiimoteExtension = @"Nunchuk";
+static SerialInterface::SIDevices s_gcSIDevice = SerialInterface::SIDEVICE_GC_CONTROLLER;
+
+- (void)setControllerVariantValues:(NSString *)variantID {
+    if ([variantID isEqualToString:@"wii-wiimote"])               s_wiimoteExtension = @"None";
+    else if ([variantID isEqualToString:@"wii-wiimote-nunchuck"]) s_wiimoteExtension = @"Nunchuk";
+    else if ([variantID hasPrefix:@"wii-classic"])                s_wiimoteExtension = @"Classic";
+    else if ([variantID isEqualToString:@"gc-standard"])  s_gcSIDevice = SerialInterface::SIDEVICE_GC_CONTROLLER;
+    else if ([variantID isEqualToString:@"gc-bongos"])    s_gcSIDevice = SerialInterface::SIDEVICE_GC_TARUKONGA;
+    else if ([variantID isEqualToString:@"gc-keyboard"])  s_gcSIDevice = SerialInterface::SIDEVICE_GC_KEYBOARD;
+    else { ILOG(@"🎮 Unknown controller variant id: %@", variantID); return; }
+    ILOG(@"🎮 Controller variant set: %@ (wii ext=%@, gc dev=%d)", variantID, s_wiimoteExtension, (int)s_gcSIDevice);
+}
+
+- (void)loadPersistedControllerVariant {
+    // ControllerLayoutSettings (PVSettings/Defaults) persists [systemID: variantID] as a plain
+    // plist dictionary under this key; an absent key/entry means "system default".
+    NSDictionary *map = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"controllerLayoutVariantsBySystem"];
+    NSString *variantID = [map isKindOfClass:[NSDictionary class]] ? map[[self systemIdentifier]] : nil;
+    if ([variantID isKindOfClass:[NSString class]])
+        [self setControllerVariantValues:variantID];
+}
+
+- (void)applyControllerVariant:(NSString *)variantID {
+    [self setControllerVariantValues:variantID];
+    // Live-apply: regenerate the inis, then hot-swap on a running core.
+    [self writeWiiIniFile];
+    [self writeGCIniFile];
+    auto& system = Core::System::GetInstance();
+    if (Core::IsRunning(system)) {
+        if ([variantID hasPrefix:@"wii"]) {
+            Wiimote::LoadConfig();  // re-reads WiimoteNew.ini -> applies the new Extension
+        } else if ([variantID hasPrefix:@"gc"]) {
+            const int ports = self.multiPlayer ? 4 : 1;
+            for (int port = 0; port < ports; port++) {
+                Config::SetBase(Config::GetInfoForSIDevice(port), s_gcSIDevice);
+                system.GetSerialInterface().ChangeDevice(s_gcSIDevice, port);
+            }
+        }
+    }
+}
+
 -(void) writeWiiIniFile {
 	NSString *fileName = [NSString stringWithFormat:@"%@/../DolphinData/Config/WiimoteNew.ini",
 						  self.batterySavesPath];
@@ -1085,6 +1137,12 @@ s8 joyx[4], joyy[4];
         }
     } else {
         content = [content stringByAppendingString:[self getWiiTouchpadConfig:1 wiiMotePort:4 source:1]];
+    }
+    // Apply the selected Wiimote extension (controller layout variant) across all generated
+    // [WiimoteN] sections — the config templates hardcode Nunchuk.
+    if (![s_wiimoteExtension isEqualToString:@"Nunchuk"]) {
+        content = [content stringByReplacingOccurrencesOfString:@"Extension = Nunchuk"
+                                                     withString:[NSString stringWithFormat:@"Extension = %@", s_wiimoteExtension]];
     }
     ILOG(@"Config File: %s\n%s\n", fileName.UTF8String, content.UTF8String);
     ILOG(@"🎮 Writing Wii config with iOS device source");
@@ -1315,12 +1373,14 @@ s8 joyx[4], joyy[4];
                 controller = self.controller4;
             }
             content = [content stringByAppendingString:[self getGCTouchConfig:port gcPort:(port - 1) source:1]];
-                    Config::SetBase(Config::GetInfoForSIDevice(port - 1), SerialInterface::SIDEVICE_GC_CONTROLLER);
-        Core::System::GetInstance().GetSerialInterface().ChangeDevice(SerialInterface::SIDEVICE_GC_CONTROLLER, port - 1);
+            // SI device honors the controller layout variant (standard pad / Bongos / keyboard).
+            Config::SetBase(Config::GetInfoForSIDevice(port - 1), s_gcSIDevice);
+            Core::System::GetInstance().GetSerialInterface().ChangeDevice(s_gcSIDevice, port - 1);
             port += 1;
         }
     } else {
         content = [self getGCTouchConfig:1 gcPort:0 source:1];
+        Config::SetBase(Config::GetInfoForSIDevice(0), s_gcSIDevice);
     }
     ILOG(@"Config File: %s\n%s\n", fileName.UTF8String, content.UTF8String);
     ILOG(@"🎮 Writing GC config with iOS device source");

@@ -162,6 +162,10 @@
 - (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;
 - (void) gamepadEventIrRecenter:(int)action;
 - (BOOL) setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
+/// Apply a controller layout variant (ConsoleVariantConfigurable). Accepts
+/// ControllerLayoutVariant ids: wii-wiimote / wii-wiimote-nunchuck / wii-classic[-pro],
+/// gc-standard / gc-bongos / gc-keyboard. Regenerates config inis and hot-swaps when running.
+- (void) applyControllerVariant:(NSString *)variantID;
 - (void) resetCheatCodes;
 -(void)controllerConnected:(NSNotification *)notification;
 -(void)controllerDisconnected:(NSNotification *)notification;

@@ -73,6 +73,16 @@ extension PVDolphinCore: CoreOptional {
     }
 }
 
+extension PVDolphinCore: ConsoleVariantConfigurable {
+    /// Settings-picker variant changes land here; the bridge regenerates its config inis and
+    /// hot-swaps on a running core. Boot-time application is handled bridge-side (it reads the
+    /// persisted per-system choice during controller setup), so this conformance only needs to
+    /// cover live changes once the host call-site lands upstream.
+    public func applyControllerLayoutVariant(_ variantID: String) {
+        _bridge.applyControllerVariant(variantID)
+    }
+}
+
 extension PVDolphinCore: GameWithCheat {
     @objc public func setCheat(
         code: String,

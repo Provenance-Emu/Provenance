@@ -83,6 +83,26 @@ public extension ControllerLayoutVariant {
         sfSymbol: "gamecontroller.fill"
     )
 
+    // MARK: GameCube
+    static let gcStandard = ControllerLayoutVariant(
+        id: "gc-standard",
+        displayName: "Standard Controller",
+        description: "Standard GameCube controller (also covers WaveBird).",
+        sfSymbol: "gamecontroller"
+    )
+    static let gcBongos = ControllerLayoutVariant(
+        id: "gc-bongos",
+        displayName: "DK Bongos",
+        description: "DK Bongos for Donkey Konga and Donkey Kong Jungle Beat.",
+        sfSymbol: "circle.grid.2x1"
+    )
+    static let gcKeyboard = ControllerLayoutVariant(
+        id: "gc-keyboard",
+        displayName: "Keyboard",
+        description: "GameCube keyboard controller for Phantasy Star Online.",
+        sfSymbol: "keyboard"
+    )
+
     // MARK: Atari 5200
     static let atari5200Joystick = ControllerLayoutVariant(
         id: "5200-joystick",
@@ -124,6 +144,8 @@ public extension SystemIdentifier {
             return [.genesis3Button, .genesis6Button]
         case .Wii:
             return [.wiiWiimote, .wiiWiimoteNunchuck, .wiiClassicController, .wiiClassicControllerPro]
+        case .GameCube:
+            return [.gcStandard, .gcBongos, .gcKeyboard]
         case .Atari5200:
             return [.atari5200Joystick, .atari5200JoystickOnly]
         case .NES:
