@@ -490,12 +490,13 @@ static void ResetDolphinStaticState() {
     // Idle Skipping
     Config::SetBase(Config::MAIN_SYNC_ON_SKIP_IDLE, self.idleSkipping);
 
-    // Fast Memory
-    if (self.fastMemory) {
-        Config::SetBase(Config::MAIN_FASTMEM, self.fastMemory);
-        if (can_enable_fastmem) {
-            // Fastmem behavior is automatically determined by the system in modern Dolphin
-        }
+    // Fast Memory — mirror iCube: write BOTH fastmem and the arena, gated on actual device
+    // availability (jitless devices must land false/false; the old code never wrote false and
+    // never touched the arena, leaving stale ini values to disagree with the device).
+    {
+        const bool fastmem = self.fastMemory && can_enable_fastmem;
+        Config::SetBase(Config::MAIN_FASTMEM, fastmem);
+        Config::SetBase(Config::MAIN_FASTMEM_ARENA, fastmem);
     }
 
     // Cheats
