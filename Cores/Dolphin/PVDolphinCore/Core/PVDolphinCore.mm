@@ -328,8 +328,13 @@ static void ResetDolphinStaticState() {
     // V-Sync
     Config::SetBase(Config::GFX_VSYNC, self.vsync);
 
-    // Anisotropic Filtering
-    Config::SetBaseOrCurrent(Config::GFX_ENHANCE_MAX_ANISOTROPY, static_cast<int>(self.anisotropicFiltering));
+    // Anisotropic Filtering — 2509 changed GFX_ENHANCE_MAX_ANISOTROPY from Info<int> to the
+    // scoped AnisotropicFilteringMode, and shifted semantics: Default is now -1 (was 0), with
+    // Force2x..Force16x = 1..4 unchanged. Map our option's 0 ("Default") accordingly.
+    Config::SetBaseOrCurrent(Config::GFX_ENHANCE_MAX_ANISOTROPY,
+                             self.anisotropicFiltering == 0
+                                 ? AnisotropicFilteringMode::Default
+                                 : static_cast<AnisotropicFilteringMode>(self.anisotropicFiltering));
 
     // Texture Filtering
     Config::SetBase(Config::GFX_ENHANCE_FORCE_TEXTURE_FILTERING, self.isBilinear ? TextureFilteringMode::Linear : TextureFilteringMode::Default);
