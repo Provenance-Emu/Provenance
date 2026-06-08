@@ -272,6 +272,9 @@ public extension PVSystem {
             case .Quake2: return .poster
             case .Wolf3D: return .poster
             case .NeoGeoCD: return .poster
+            case .Atomiswave: return .poster
+            case .NAOMI: return .poster
+            case .NAOMI2: return .poster
             }
         }
     #endif

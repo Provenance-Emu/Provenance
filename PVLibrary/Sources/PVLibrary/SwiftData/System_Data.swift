@@ -177,6 +177,9 @@ public extension System_Data {
         case .RetroArch: return .poster
         case .Wolf3D: return .poster
         case .NeoGeoCD: return .poster
+        case .Atomiswave: return .poster
+        case .NAOMI: return .poster
+        case .NAOMI2: return .poster
         }
     }
     #endif
