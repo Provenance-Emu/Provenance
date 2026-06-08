@@ -7,8 +7,10 @@ DOL_CORE_BUILD_TARGET="Release"
 REPO_ROOT_DIR="$(pwd)/dolphin-ios"
 XCFRAMEWORK_DIR="$(pwd)/build/xcframework"
 FRAMEWORK_NAME="PVlibDolphin"
-IPHONEOS_DEPLOYMENT_TARGET="16.4"
-TVOS_DEPLOYMENT_TARGET="16.4"
+# 17.0 floor (matches the Release configs) so the A12 ISA baseline below is safe — A12 is the
+# iOS-17 minimum device (iPhone XS). Pre-A12 devices (A11/iOS 16) would SIGILL on the v8.3 ISA.
+IPHONEOS_DEPLOYMENT_TARGET="17.0"
+TVOS_DEPLOYMENT_TARGET="17.0"
 
 # Global variables for parallel build tracking
 BUILD_PIDS=()
@@ -113,12 +115,13 @@ build_platform() {
 
     # Define base optimization flags (universal for all architectures)
     OPTIMIZATION_FLAGS=""
-    OPTIMIZATION_FLAGS="$OPTIMIZATION_FLAGS -ffast-math"                    # Fast floating-point math optimizations
+    # -ffast-math REMOVED (FP-correctness): an emulator core needs exact IEEE-754 math; fast-math
+    # corrupts Gekko FP + projection/depth -> distorted geometry & see-through walls.
     OPTIMIZATION_FLAGS="$OPTIMIZATION_FLAGS -fno-strict-aliasing"           # Allow more aggressive pointer optimizations
     OPTIMIZATION_FLAGS="$OPTIMIZATION_FLAGS -ftree-vectorize"               # Enable tree vectorization
     OPTIMIZATION_FLAGS="$OPTIMIZATION_FLAGS -flto=thin"                     # Thin Link Time Optimization
     OPTIMIZATION_FLAGS="$OPTIMIZATION_FLAGS -fomit-frame-pointer"           # Omit frame pointer for better performance
-    OPTIMIZATION_FLAGS="$OPTIMIZATION_FLAGS -funsafe-math-optimizations"    # Unsafe math optimizations for speed
+    # -funsafe-math-optimizations REMOVED (FP-correctness): breaks the exact IEEE math the emulator needs
     OPTIMIZATION_FLAGS="$OPTIMIZATION_FLAGS -fvectorize"                    # Enable vectorization
     # Remove unsupported flags that cause warnings:
     # -frename-registers (not supported by clang)
@@ -161,13 +164,22 @@ build_platform() {
 
     # Clear any existing architecture flags to prevent conflicts
     # Set base optimization flags (non-architecture specific)
-    BASE_OPTIMIZATION_FLAGS="-ffast-math -fno-strict-aliasing -ftree-vectorize -flto=thin -fomit-frame-pointer -funsafe-math-optimizations -fvectorize -w"
+    # NOTE: -ffast-math / -funsafe-math-optimizations removed (FP-correctness — see above).
+    BASE_OPTIMIZATION_FLAGS="-fno-strict-aliasing -ftree-vectorize -flto=thin -fomit-frame-pointer -fvectorize -w"
     
     # Add curl fixes to base optimization flags
     BASE_OPTIMIZATION_FLAGS="$BASE_OPTIMIZATION_FLAGS $CURL_FIXES"
     
-    # Create separate architecture flags for each target
-    ARM64_FLAGS="-mcpu=apple-a10 -mtune=apple-a15 -march=armv8-a+simd+crc+crypto"
+    # Create separate architecture flags for each target.
+    # Per-platform ISA floor (iOS/tvOS 17+):
+    #   iOS (A12 floor, iPhone XS) -> ARMv8.3-A: -mcpu=apple-a12 unlocks +lse (single-instruction
+    #     atomics vs ldxr/stxr retry loops), +rcpc, +fullfp16, +complxnum, +pauth. Tuned for a15.
+    #   tvOS (A8 floor, Apple TV HD, still on tvOS 17) -> ARMv8.0-A only; A8 SIGILLs on v8.1+ atomics.
+    if [[ "$platform" == *TVOS* ]]; then
+        ARM64_FLAGS="-march=armv8-a+simd+crypto -mtune=apple-a15"
+    else
+        ARM64_FLAGS="-mcpu=apple-a12 -mtune=apple-a15"
+    fi
     X86_64_FLAGS="-march=x86-64-v3 -mtune=haswell"
     
     # Set platform-specific architecture flags based on actual architecture

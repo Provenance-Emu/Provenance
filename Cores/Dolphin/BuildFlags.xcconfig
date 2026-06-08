@@ -12,7 +12,7 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATIONS=1
 GCC_PREPROCESSOR_DEFINITIONS[arch=arm64] = $(inherited) _ARCH_64=1 _M_ARM_64=1 IPHONEOS=1
 OTHER_CFLAGS = $(inherited) -fno-operator-names
 OTHER_CFLAGS = $(inherited) -fno-rtti
-OTHER_CFLAGS = $(inherited) -ffast-math
+// -ffast-math REMOVED (FP-correctness): corrupts emulator FP -> distorted geometry / see-through depth
 OTHER_CFLAGS = $(inherited) -ftree-vectorize
 OTHER_CFLAGS = $(inherited) -fno-strict-aliasing
 OTHER_CFLAGS = $(inherited) -frename-registers
