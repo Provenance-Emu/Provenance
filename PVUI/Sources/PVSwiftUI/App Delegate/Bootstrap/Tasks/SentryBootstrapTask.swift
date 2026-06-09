@@ -54,53 +54,14 @@ struct SentryBootstrapTask: BootstrapTask {
             options.enableMetricKitRawPayload = true
             #endif
 
-            // Suppress MXCPUException warnings ONLY when the sample is
-            // inside an emulator session. Apple kicks these out whenever
-            // an app sustains >90s CPU in a ~160s wall window (~56%); the
-            // emulator is *supposed* to do that at 60fps so reports
-            // sampled inside libretro / Dolphin / Mednafen / etc. are
-            // non-actionable noise that Sentry's top-frame grouping
-            // shatters into 4-5 separate "issues" per real event.
-            //
-            // Reports sampled outside the emulator (UI thread spinning,
-            // background processing, importer thrashing, etc.) ARE
-            // actionable — those flow through unchanged.
-            //
-            // Heuristic: scan the stacktrace for any frame matching a
-            // known-emulator pattern. Generic enough to catch all our
-            // cores (native + thin/thick libretro) without enumerating
-            // every dylib symbol.
+            // Only auto-capture client HTTP failures (4xx). Transient third-party
+            // 5xx (TheGamesDB CDN, GitHub releases) are external noise (PROVENANCE-17Y).
+            options.failedRequestStatusCodes = [HttpStatusCodeRange(min: 400, max: 499)]
+
+            // Drop MetricKit / HTTP noise that is expected or non-actionable — see SentryEventFilter.
             options.beforeSend = { event in
-                guard let mechanismType = event.exceptions?.first?.mechanism?.type,
-                      mechanismType == "mx_cpu_exception" else {
-                    return event   // not a CPU report, always keep
-                }
-                let frames = event.exceptions?.first?.stacktrace?.frames ?? []
-                let inEmulator = frames.contains { frame in
-                    guard let fn = frame.function else { return false }
-                    // Match common emulator-thread frames so we drop CPU
-                    // reports that originated inside a running game,
-                    // regardless of which core (native or RA wrapper).
-                    return fn.contains("retro_")
-                        || fn.contains("CachedInterpreter")
-                        || fn.contains("JitBaseBlockCache")
-                        || fn.contains("Fifo::FifoManager")
-                        || fn.contains("CommandProcessor::")
-                        || fn.contains("VertexManagerBase")
-                        || fn.contains("PixelShaderManager")
-                        || fn.contains("PowerPC::")
-                        || fn.contains("FramebufferManager::Refresh")
-                        || fn.contains("Mixer::MixerFifo")
-                        || fn.contains("PrecisionTimer::SleepUntil")
-                        || fn.contains("PVCoreObjCBridge startEmulation")
-                        || fn.contains("PVThinLibretroCore")
-                        || fn.contains("Mednafen::")
-                        || fn.contains("MDFN_")
-                        || fn.contains("PPSSPP")
-                        || fn.contains("Flycast")
-                        || fn.contains("dolphin")
-                }
-                return inEmulator ? nil : event
+                let snapshot = SentryEventSnapshot.fromSentryEvent(event)
+                return SentryEventFilter.shouldReport(snapshot) ? event : nil
             }
 
             // App hang detection (separate from signal-based crash handler)
