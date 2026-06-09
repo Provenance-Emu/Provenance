@@ -28,6 +28,9 @@ import Network
 #if canImport(UIKit)
 import UIKit
 #endif
+#if os(macOS) && canImport(AppKit)
+import AppKit
+#endif
 #if canImport(CoreImage)
 import CoreImage
 #endif
@@ -713,9 +716,50 @@ private extension PVModernWebServer {
         context: some RequestContext,
         uploadDirectory: URL
     ) async throws -> Response {
-        // Cap at 256 MB — reduces DoS/OOM risk on device. Large ROM transfers
-        // should use WebDAV PUT (streaming) once that is fully implemented (Phase 2).
-        let body = try await request.body.collect(upTo: 256 * 1_024 * 1_024) // 256 MB cap
+        guard let contentType = request.headers[.contentType] else {
+            return Response(status: .unsupportedMediaType)
+        }
+        if exceedsMaxUploadContentLength(request) {
+            return Self.jsonError(status: .contentTooLarge, message: "Upload exceeds maximum size")
+        }
+
+        if let streamed = try? await StreamingMultipartUpload.streamSingleFilePart(
+            body: request.body,
+            contentType: String(contentType),
+            uploadDirectory: uploadDirectory,
+            resolvePath: { [weak self] name, dir in
+                self?.resolvedPath(name, withinDirectory: dir)
+            },
+            onStarted: { [weak self] destination, _ in
+                guard let self else { return }
+                NotificationCenter.default.post(
+                    name: .pvWebServerFileUploadStarted,
+                    object: self,
+                    userInfo: ["path": destination.path, "fileSize": 0]
+                )
+            }
+        ) {
+            return completeUploadedFile(
+                destination: streamed.destination,
+                sanitizedName: streamed.sanitizedFilename,
+                fileSize: Int(streamed.bytesWritten)
+            )
+        }
+
+        return try await handleUploadBuffered(
+            request: request,
+            uploadDirectory: uploadDirectory,
+            contentType: String(contentType)
+        )
+    }
+
+    /// Fallback path: buffer up to 256 MB then parse multipart (legacy single-request compatibility).
+    func handleUploadBuffered(
+        request: Request,
+        uploadDirectory: URL,
+        contentType: String
+    ) async throws -> Response {
+        let body = try await request.body.collect(upTo: 256 * 1_024 * 1_024)
         guard let bodyData = body.withUnsafeReadableBytes({ ptr -> Data? in
             guard !ptr.isEmpty else { return nil }
             return Data(ptr)
@@ -723,12 +767,7 @@ private extension PVModernWebServer {
             return Response(status: .badRequest)
         }
 
-        // Parse a simple multipart/form-data body to extract the filename + contents.
-        // For a full implementation, use a dedicated multipart parser library.
-        guard
-            let contentType = request.headers[.contentType],
-            let boundary = multipartBoundary(from: String(contentType))
-        else {
+        guard let boundary = multipartBoundary(from: contentType) else {
             return Response(status: .unsupportedMediaType)
         }
 
@@ -737,7 +776,6 @@ private extension PVModernWebServer {
 
         for part in parts {
             guard let filename = part.filename, !filename.isEmpty else { continue }
-            // Sanitize: strip path components to just the filename, block hidden files
             let sanitizedName = URL(fileURLWithPath: filename).lastPathComponent
             guard !sanitizedName.isEmpty, !sanitizedName.hasPrefix(".") else { continue }
             guard let dest = resolvedPath(sanitizedName, withinDirectory: uploadDirectory) else { continue }
@@ -745,7 +783,6 @@ private extension PVModernWebServer {
             let fileData = part.data
             let fileSize = fileData.count
 
-            // Fire upload-started notification BEFORE writing to disk
             NotificationCenter.default.post(
                 name: .pvWebServerFileUploadStarted,
                 object: self,
@@ -755,18 +792,8 @@ private extension PVModernWebServer {
             do {
                 try fileData.write(to: dest)
                 savedFiles.append(sanitizedName)
-
-                NotificationCenter.default.post(
-                    name: .pvWebServerFileUploadCompleted,
-                    object: self,
-                    userInfo: ["filePath": dest.path, "fileSize": fileSize]
-                )
-                NotificationCenter.default.post(
-                    name: .pvWebServerUploadCompleted,
-                    object: self,
-                    userInfo: ["fileName": dest.path, "fileSize": fileSize]
-                )
-                self.sseBroadcast(
+                postUploadCompletedNotifications(path: dest.path, fileSize: fileSize)
+                sseBroadcast(
                     type: "upload",
                     path: dest.path,
                     extra: ["size": String(fileSize)]
@@ -798,6 +825,71 @@ private extension PVModernWebServer {
             body: .init(byteBuffer: ByteBuffer(string: responseBody))
         )
     }
+
+    func completeUploadedFile(destination: URL, sanitizedName: String, fileSize: Int) -> Response {
+        postUploadCompletedNotifications(path: destination.path, fileSize: fileSize)
+        sseBroadcast(
+            type: "upload",
+            path: destination.path,
+            extra: ["size": String(fileSize)]
+        )
+
+        let responseBody: String
+        if let jsonData = try? JSONSerialization.data(withJSONObject: ["uploaded": 1]),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+            responseBody = jsonString
+        } else {
+            responseBody = "{\"uploaded\":1}"
+        }
+
+        return Response(
+            status: .ok,
+            headers: [.contentType: "application/json"],
+            body: .init(byteBuffer: ByteBuffer(string: responseBody))
+        )
+    }
+
+    func postUploadCompletedNotifications(path: String, fileSize: Int) {
+        NotificationCenter.default.post(
+            name: .pvWebServerFileUploadCompleted,
+            object: self,
+            userInfo: ["filePath": path, "fileSize": fileSize]
+        )
+        NotificationCenter.default.post(
+            name: .pvWebServerUploadCompleted,
+            object: self,
+            userInfo: ["fileName": path, "fileSize": fileSize]
+        )
+    }
+
+    func exceedsMaxUploadContentLength(_ request: Request) -> Bool {
+        guard let lengthHeader = request.headers[.contentLength],
+              let length = Int64(lengthHeader) else {
+            return false
+        }
+        return length > WebServerIO.maxUploadBytes
+    }
+
+    /// Streams a raw HTTP body to `destination` using a serial disk writer (WebDAV PUT).
+    func streamRequestBodyToFile(_ request: Request, destination: URL) async throws -> Int64 {
+        let writer = try SerialFileWriter(destination: destination)
+        var coalesced = Data()
+        coalesced.reserveCapacity(WebServerIO.readChunkSize)
+
+        for try await buffer in request.body {
+            let chunk = buffer.withUnsafeReadableBytes { Data($0) }
+            guard !chunk.isEmpty else { continue }
+            coalesced.append(chunk)
+            if coalesced.count >= WebServerIO.readChunkSize {
+                await writer.append(coalesced)
+                coalesced.removeAll(keepingCapacity: true)
+            }
+        }
+        if !coalesced.isEmpty {
+            await writer.append(coalesced)
+        }
+        return try await writer.finalize()
+    }
 }
 
 // MARK: - WebDAV HTTP field/method constants
@@ -809,6 +901,10 @@ private extension PVModernWebServer {
 private let kWebDAVFieldNameDAV: HTTPField.Name? = HTTPField.Name("DAV")
 /// Standard "Allow" HTTP header. Valid HTTP token — init always succeeds.
 private let kWebDAVFieldNameAllow: HTTPField.Name? = HTTPField.Name("Allow")
+/// WebDAV `Destination` header for COPY/MOVE.
+private let kWebDAVFieldNameDestination: HTTPField.Name? = HTTPField.Name("Destination")
+/// WebDAV `Overwrite` header for COPY/MOVE.
+private let kWebDAVFieldNameOverwrite: HTTPField.Name? = HTTPField.Name("Overwrite")
 
 // MARK: - WebDAV Server
 
@@ -842,7 +938,11 @@ private extension PVModernWebServer {
     ) async throws -> Bool {
         let app = Application(
             router: router,
-            configuration: .init(address: .hostname("0.0.0.0", port: port))
+            server: .http1(configuration: .init(additionalChannelHandlers: TCPNoDelayChannelHandler.make())),
+            configuration: .init(
+                address: .hostname("0.0.0.0", port: port),
+                serverName: "Provenance"
+            )
         )
 
         // Track early failure via a shared box: the Hummingbird Task writes
@@ -918,12 +1018,12 @@ private extension PVModernWebServer {
     func buildWebDAVRouter(uploadDirectory: URL) -> Router<BasicRequestContext> {
         let router = Router()
 
-        // OPTIONS — advertise WebDAV class 1 support
+        // OPTIONS — advertise WebDAV class 1 support (anonymous/guest writes allowed)
         router.on("/**", method: .options) { _, _ -> Response in
             var headers = HTTPFields()
             if let dav = kWebDAVFieldNameDAV   { headers[dav]   = "1" }
             if let allow = kWebDAVFieldNameAllow {
-                headers[allow] = "OPTIONS, GET, HEAD, PUT, DELETE, PROPFIND, MKCOL"
+                headers[allow] = "OPTIONS, GET, HEAD, PUT, DELETE, PROPFIND, MKCOL, COPY, MOVE"
             }
             return Response(status: .ok, headers: headers)
         }
@@ -944,43 +1044,52 @@ private extension PVModernWebServer {
         // sendfile response once Hummingbird's file-serving middleware is integrated.
         router.get("/**") { [weak self] _, context -> Response in
             let path = context.parameters.get("**") ?? ""
-            guard let self,
-                  let target = self.resolvedPath(path, withinDirectory: uploadDirectory),
-                  let data = try? Data(contentsOf: target) else {
-                return Response(status: .notFound)
-            }
-            return Response(
-                status: .ok,
-                headers: [.contentType: "application/octet-stream"],
-                body: .init(byteBuffer: ByteBuffer(bytes: data))
-            )
+            guard let self else { return Response(status: .internalServerError) }
+            return self.fileDownloadResponse(path: path, uploadDirectory: uploadDirectory)
         }
 
-        // PUT — file upload
+        // HEAD — metadata only (Finder compatibility)
+        router.on("/**", method: .head) { [weak self] _, context -> Response in
+            let path = context.parameters.get("**") ?? ""
+            guard let self else { return Response(status: .internalServerError) }
+            return self.fileHeadResponse(path: path, uploadDirectory: uploadDirectory)
+        }
+
+        // PUT — streaming file upload
         router.put("/**") { [weak self] request, context -> Response in
             let path = context.parameters.get("**") ?? ""
             guard let self,
                   let target = self.resolvedPath(path, withinDirectory: uploadDirectory) else {
                 return Response(status: .forbidden)
             }
-            // Same 256 MB cap as the HTTP uploader — Phase 2 will replace this
-            // with a streaming write to avoid buffering large files in memory.
-            let body = try await request.body.collect(upTo: 256 * 1_024 * 1_024)
-            let data = body.withUnsafeReadableBytes { ptr in Data(ptr) }
-            try data.write(to: target)
+            if self.exceedsMaxUploadContentLength(request) {
+                return Response(status: .contentTooLarge)
+            }
 
-            let fileSize = data.count
             NotificationCenter.default.post(
-                name: .pvWebServerFileUploadCompleted,
+                name: .pvWebServerFileUploadStarted,
                 object: self,
-                userInfo: ["filePath": target.path, "fileSize": fileSize]
+                userInfo: ["path": target.path, "fileSize": 0]
             )
-            NotificationCenter.default.post(
-                name: .pvWebServerUploadCompleted,
-                object: self,
-                userInfo: ["fileName": target.path, "fileSize": fileSize]
-            )
-            return Response(status: .created)
+
+            do {
+                let bytesWritten = try await self.streamRequestBodyToFile(request, destination: target)
+                let fileSize = Int(bytesWritten)
+                self.postUploadCompletedNotifications(path: target.path, fileSize: fileSize)
+                self.sseBroadcast(
+                    type: "upload",
+                    path: target.path,
+                    extra: ["size": String(fileSize)]
+                )
+                return Response(status: .created)
+            } catch {
+                NotificationCenter.default.post(
+                    name: .pvWebServerFileUploadFailed,
+                    object: self,
+                    userInfo: ["filePath": target.path, "error": error]
+                )
+                return Response(status: .internalServerError)
+            }
         }
 
         // DELETE — remove file
@@ -997,6 +1106,7 @@ private extension PVModernWebServer {
                     object: self,
                     userInfo: ["filePath": target.path]
                 )
+                self.sseBroadcast(type: "delete", path: target.path)
                 return Response(status: .noContent)
             } catch {
                 return Response(status: .notFound)
@@ -1015,13 +1125,165 @@ private extension PVModernWebServer {
             }
             do {
                 try FileManager.default.createDirectory(at: target, withIntermediateDirectories: true)
+                self.sseBroadcast(type: "folder", path: target.path)
                 return Response(status: .created)
             } catch {
                 return Response(status: .methodNotAllowed)
             }
         }
 
+        // COPY — duplicate item (Finder / macOS WebDAV clients)
+        guard let copyMethod = HTTPRequest.Method("COPY") else {
+            preconditionFailure("COPY must be a valid HTTP method token")
+        }
+        router.on("/**", method: copyMethod) { [weak self] request, context -> Response in
+            guard let self else { return Response(status: .internalServerError) }
+            return self.handleWebDAVCopy(request: request, context: context, uploadDirectory: uploadDirectory, isMove: false)
+        }
+
+        // MOVE — rename/move item
+        guard let moveMethod = HTTPRequest.Method("MOVE") else {
+            preconditionFailure("MOVE must be a valid HTTP method token")
+        }
+        router.on("/**", method: moveMethod) { [weak self] request, context -> Response in
+            guard let self else { return Response(status: .internalServerError) }
+            return self.handleWebDAVCopy(request: request, context: context, uploadDirectory: uploadDirectory, isMove: true)
+        }
+
         return router
+    }
+
+    func fileDownloadResponse(path: String, uploadDirectory: URL) -> Response {
+        guard let target = resolvedPath(path, withinDirectory: uploadDirectory),
+              let data = try? Data(contentsOf: target) else {
+            return Response(status: .notFound)
+        }
+        return Response(
+            status: .ok,
+            headers: [.contentType: "application/octet-stream"],
+            body: .init(byteBuffer: ByteBuffer(bytes: data))
+        )
+    }
+
+    func fileHeadResponse(path: String, uploadDirectory: URL) -> Response {
+        guard let target = resolvedPath(path, withinDirectory: uploadDirectory) else {
+            return Response(status: .forbidden)
+        }
+        var isDir: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: target.path, isDirectory: &isDir) else {
+            return Response(status: .notFound)
+        }
+        let attrs = try? target.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
+        var headers: HTTPFields = [.contentType: "application/octet-stream"]
+        if let size = attrs?.fileSize {
+            headers[.contentLength] = String(size)
+        }
+        if let modified = attrs?.contentModificationDate,
+           let lastModified = HTTPField.Name("Last-Modified") {
+            let fmt = DateFormatter()
+            fmt.locale = Locale(identifier: "en_US_POSIX")
+            fmt.dateFormat = "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
+            fmt.timeZone = TimeZone(abbreviation: "GMT")
+            headers[lastModified] = fmt.string(from: modified)
+        }
+        return Response(status: .ok, headers: headers, body: .init())
+    }
+
+    func handleWebDAVCopy(
+        request: Request,
+        context: some RequestContext,
+        uploadDirectory: URL,
+        isMove: Bool
+    ) -> Response {
+        let srcRelative = context.parameters.get("**") ?? ""
+        guard let src = resolvedPath(srcRelative, withinDirectory: uploadDirectory) else {
+            return Response(status: .forbidden)
+        }
+        guard FileManager.default.fileExists(atPath: src.path) else {
+            return Response(status: .notFound)
+        }
+
+        guard let destinationField = kWebDAVFieldNameDestination,
+              let destinationHeader = request.headers[destinationField] else {
+            return Response(status: .badRequest)
+        }
+        guard let dstRelative = webDAVRelativeDestination(from: String(destinationHeader), request: request) else {
+            return Response(status: .badRequest)
+        }
+        guard let dst = resolvedPath(dstRelative, withinDirectory: uploadDirectory) else {
+            return Response(status: .forbidden)
+        }
+
+        let dstName = dst.lastPathComponent
+        if dstName.hasPrefix(".") {
+            return Response(status: .forbidden)
+        }
+
+        let parent = dst.deletingLastPathComponent()
+        var parentIsDir: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: parent.path, isDirectory: &parentIsDir), parentIsDir.boolValue else {
+            return Response(status: .conflict)
+        }
+
+        let overwriteRaw: String = {
+            guard let field = kWebDAVFieldNameOverwrite,
+                  let value = request.headers[field] else {
+                return "T"
+            }
+            return String(value)
+        }()
+        let exists = FileManager.default.fileExists(atPath: dst.path)
+        if exists {
+            let overwrite = overwriteRaw.uppercased()
+            if isMove {
+                if overwrite != "T" { return Response(status: .preconditionFailed) }
+            } else if overwrite == "F" {
+                return Response(status: .preconditionFailed)
+            }
+        }
+
+        do {
+            if exists {
+                try FileManager.default.removeItem(at: dst)
+            }
+            if isMove {
+                try FileManager.default.moveItem(at: src, to: dst)
+                NotificationCenter.default.post(
+                    name: .pvWebServerFileMoved,
+                    object: self,
+                    userInfo: ["fromPath": src.path, "toPath": dst.path]
+                )
+                sseBroadcast(
+                    type: "rename",
+                    path: dst.path,
+                    extra: ["from": relativeBrowsePath(for: src.path)]
+                )
+            } else {
+                try FileManager.default.copyItem(at: src, to: dst)
+                sseBroadcast(type: "upload", path: dst.path)
+            }
+            return Response(status: isMove ? .noContent : .created)
+        } catch {
+            return Response(status: .forbidden)
+        }
+    }
+
+    /// Parses the WebDAV `Destination` header into a path relative to the upload root.
+    func webDAVRelativeDestination(from header: String, request: Request) -> String? {
+        var value = header.trimmingCharacters(in: .whitespaces)
+        if let authority = request.head.authority, let range = value.range(of: authority) {
+            value = String(value[range.upperBound...])
+        } else if let hostField = HTTPField.Name("Host"),
+                  let host = request.headers[hostField],
+                  let range = value.range(of: String(host)) {
+            value = String(value[range.upperBound...])
+        }
+        if let url = URL(string: value), url.scheme != nil {
+            value = url.path
+        }
+        value = value.removingPercentEncoding ?? value
+        while value.hasPrefix("/") { value.removeFirst() }
+        return value.isEmpty ? nil : value
     }
 
     func handlePROPFIND(request: Request, context: some RequestContext, uploadDirectory: URL) -> Response {
@@ -1061,34 +1323,26 @@ private extension PVModernWebServer {
     }
 
     func propfindResponse(for url: URL, baseURL: URL) -> String {
-        let attrs = try? url.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey, .isDirectoryKey])
+        let attrs = try? url.resourceValues(forKeys: [
+            .fileSizeKey,
+            .contentModificationDateKey,
+            .creationDateKey,
+            .isDirectoryKey
+        ])
         let isDir = attrs?.isDirectory ?? false
-        let size  = attrs?.fileSize ?? 0
-        let mtime = (attrs?.contentModificationDate).map {
-            let fmt = DateFormatter()
-            fmt.locale = Locale(identifier: "en_US_POSIX")
-            fmt.dateFormat = "EEE, dd MMM yyyy HH:mm:ss 'GMT'"
-            fmt.timeZone = TimeZone(abbreviation: "GMT")
-            return fmt.string(from: $0)
-        } ?? ""
-        let href  = "/" + (url.path.hasPrefix(baseURL.path)
+        let size = attrs?.fileSize ?? 0
+        let modified = attrs?.contentModificationDate
+        let created = attrs?.creationDate
+        let href = "/" + (url.path.hasPrefix(baseURL.path)
             ? String(url.path.dropFirst(baseURL.path.count)).trimmingCharacters(in: CharacterSet(charactersIn: "/"))
             : url.lastPathComponent)
-        let resourceType = isDir ? "<D:collection/>" : ""
-
-        return """
-            <D:response>
-                <D:href>\(href.xmlEscaped)</D:href>
-                <D:propstat>
-                    <D:prop>
-                        <D:resourcetype>\(resourceType)</D:resourcetype>
-                        <D:getcontentlength>\(size)</D:getcontentlength>
-                        <D:getlastmodified>\(mtime)</D:getlastmodified>
-                    </D:prop>
-                    <D:status>HTTP/1.1 200 OK</D:status>
-                </D:propstat>
-            </D:response>
-        """
+        return WebDAVPropertyBuilder.propfindResponseBlock(
+            href: href,
+            isDirectory: isDir,
+            size: size,
+            modified: modified,
+            created: created
+        )
     }
 }
 
@@ -1113,12 +1367,7 @@ private extension PVModernWebServer {
     /// Returns the resolved URL only if it remains within `baseDir`.
     /// Returns `nil` if the path would escape the base directory (path traversal).
     func resolvedPath(_ rawPath: String, withinDirectory baseDir: URL) -> URL? {
-        let resolved = baseDir.appendingPathComponent(rawPath).standardized
-        let basePath = baseDir.standardized.path
-        guard resolved.path == basePath || resolved.path.hasPrefix(basePath + "/") else {
-            return nil
-        }
-        return resolved
+        WebServerPathSafety.resolvedPath(rawPath, withinDirectory: baseDir)
     }
 
     func currentIPAddress() -> String? {
@@ -1861,35 +2110,94 @@ private extension PVModernWebServer {
             document.getElementById('file-input').addEventListener('change', e => uploadFiles(e.target.files));
 
             async function uploadFiles(files) {
-              if (!files || !files.length) return;
+              enqueueUploads(Array.from(files || []), currentPath || DEFAULT_UPLOAD_PATH);
+            }
+
+            const MAX_CONCURRENT_UPLOADS = 3;
+            const LIST_REFRESH_MS = 2500;
+            let pendingUploads = [];
+            let activeUploadCount = 0;
+            let uploadBatchTotal = 0;
+            let uploadBatchDone = 0;
+            let listRefreshTimer = null;
+
+            function scheduleRefreshFileList() {
+              const targetPath = currentPath || DEFAULT_UPLOAD_PATH;
+              if (listRefreshTimer) clearTimeout(listRefreshTimer);
+              listRefreshTimer = setTimeout(() => {
+                listRefreshTimer = null;
+                loadFiles(targetPath);
+              }, LIST_REFRESH_MS);
+            }
+
+            function updateUploadProgressUI() {
               const bar = document.getElementById('progress-bar');
               const fill = document.getElementById('progress-fill');
               const status = document.getElementById('status');
+              if (!bar || !fill || !status) return;
+              const active = activeUploadCount + pendingUploads.length;
+              if (active === 0 && uploadBatchTotal === 0) {
+                setTimeout(() => {
+                  if (activeUploadCount === 0 && pendingUploads.length === 0) {
+                    bar.style.display = 'none';
+                    fill.style.width = '0%';
+                    status.textContent = '';
+                  }
+                }, 3000);
+                return;
+              }
               bar.style.display = 'block';
-              const targetPath = currentPath || DEFAULT_UPLOAD_PATH;
-              for (let i = 0; i < files.length; i++) {
-                const f = files[i];
-                status.textContent = 'Uploading ' + f.name + ' (' + (i+1) + '/' + files.length + ')…';
-                fill.style.width = (i / files.length * 100) + '%';
-                const fd = new FormData();
-                fd.append('files[]', f, f.name);
-                const xhr = new XMLHttpRequest();
-                await new Promise(resolve => {
-                  xhr.upload.onprogress = e => {
-                    if (e.lengthComputable) fill.style.width = ((i + e.loaded/e.total) / files.length * 100) + '%';
-                  };
-                  xhr.onload = resolve;
-                  xhr.onerror = resolve;
-                  xhr.open('POST', '/upload?path=' + encodeURIComponent(targetPath));
-                  xhr.send(fd);
+              const pct = uploadBatchTotal > 0 ? (uploadBatchDone / uploadBatchTotal) * 100 : 0;
+              fill.style.width = pct + '%';
+              status.textContent = 'Uploading… ' + uploadBatchDone + '/' + uploadBatchTotal
+                + (pendingUploads.length ? ' (' + pendingUploads.length + ' queued)' : '');
+            }
+
+            function enqueueUploads(fileList, targetPath) {
+              if (!fileList || !fileList.length) return;
+              noteLocalOp();
+              for (let i = 0; i < fileList.length; i++) {
+                pendingUploads.push({ file: fileList[i], targetPath: targetPath });
+              }
+              uploadBatchTotal += fileList.length;
+              document.getElementById('progress-bar').style.display = 'block';
+              updateUploadProgressUI();
+              pumpUploadQueue();
+            }
+
+            function pumpUploadQueue() {
+              while (activeUploadCount < MAX_CONCURRENT_UPLOADS && pendingUploads.length > 0) {
+                const job = pendingUploads.shift();
+                activeUploadCount++;
+                uploadOneFile(job.file, job.targetPath).finally(() => {
+                  activeUploadCount--;
+                  uploadBatchDone++;
+                  updateUploadProgressUI();
+                  if ((currentPath || DEFAULT_UPLOAD_PATH) === job.targetPath) {
+                    scheduleRefreshFileList();
+                  }
+                  if (pendingUploads.length === 0 && activeUploadCount === 0) {
+                    uploadBatchTotal = 0;
+                    uploadBatchDone = 0;
+                    loadFiles();
+                    refreshStats();
+                    toast('Upload batch complete → ' + job.targetPath, 'success');
+                  }
+                  pumpUploadQueue();
                 });
               }
-              fill.style.width = '100%';
-              status.textContent = 'Done — ' + files.length + ' file(s) uploaded to ' + targetPath + '/';
-              toast('Uploaded ' + files.length + ' file' + (files.length === 1 ? '' : 's') + ' → ' + targetPath, 'success');
-              setTimeout(() => { bar.style.display = 'none'; fill.style.width = '0%'; status.textContent = ''; }, 3000);
-              loadFiles();
-              refreshStats();
+            }
+
+            function uploadOneFile(file, targetPath) {
+              return new Promise(resolve => {
+                const fd = new FormData();
+                fd.append('files[]', file, file.name);
+                const xhr = new XMLHttpRequest();
+                xhr.onload = () => resolve();
+                xhr.onerror = () => resolve();
+                xhr.open('POST', '/upload?path=' + encodeURIComponent(targetPath));
+                xhr.send(fd);
+              });
             }
 
             // ----- Dashboard stats -----
@@ -2073,17 +2381,5 @@ final class SSEHub: @unchecked Sendable {
     var subscriberCount: Int {
         lock.lock(); defer { lock.unlock() }
         return subscribers.count
-    }
-}
-
-// MARK: - String+XML
-
-private extension String {
-    var xmlEscaped: String {
-        self
-            .replacingOccurrences(of: "&", with: "&amp;")
-            .replacingOccurrences(of: "<", with: "&lt;")
-            .replacingOccurrences(of: ">", with: "&gt;")
-            .replacingOccurrences(of: "\"", with: "&quot;")
     }
 }

@@ -32,9 +32,11 @@ class PVWebServerTests: XCTestCase {
     func testManagerSetModernServerEnabled() async {
         let manager = PVWebServerManager(useModernServer: false)
         await manager.setModernServerEnabled(true)
-        XCTAssertTrue(await manager.useModernServer)
+        let enabledAfterTrue = await manager.useModernServer
+        XCTAssertTrue(enabledAfterTrue)
         await manager.setModernServerEnabled(false)
-        XCTAssertFalse(await manager.useModernServer)
+        let enabledAfterFalse = await manager.useModernServer
+        XCTAssertFalse(enabledAfterFalse)
     }
 
     // MARK: - PVModernWebServer unit tests
@@ -66,26 +68,26 @@ class PVWebServerTests: XCTestCase {
     // MARK: - Notification name constants
 
     func testNotificationNamesMatchLegacyConstants() {
-        XCTAssertEqual(Notification.Name.pvWebServerFileUploadStarted.rawValue,
+        XCTAssertEqual(Notification.Name("PVWebServerFileUploadStartedNotification").rawValue,
                        "PVWebServerFileUploadStartedNotification")
-        XCTAssertEqual(Notification.Name.pvWebServerFileUploadProgress.rawValue,
+        XCTAssertEqual(Notification.Name("PVWebServerFileUploadProgressNotification").rawValue,
                        "PVWebServerFileUploadProgressNotification")
-        XCTAssertEqual(Notification.Name.pvWebServerFileUploadCompleted.rawValue,
+        XCTAssertEqual(Notification.Name("PVWebServerFileUploadCompletedNotification").rawValue,
                        "PVWebServerFileUploadCompletedNotification")
-        XCTAssertEqual(Notification.Name.pvWebServerFileUploadFailed.rawValue,
+        XCTAssertEqual(Notification.Name("PVWebServerFileUploadFailedNotification").rawValue,
                        "PVWebServerFileUploadFailedNotification")
-        XCTAssertEqual(Notification.Name.pvWebServerUploadProgress.rawValue,
+        XCTAssertEqual(Notification.Name("WebServerUploadProgress").rawValue,
                        "WebServerUploadProgress")
-        XCTAssertEqual(Notification.Name.pvWebServerUploadCompleted.rawValue,
+        XCTAssertEqual(Notification.Name("WebServerUploadCompleted").rawValue,
                        "WebServerUploadCompleted")
-        XCTAssertEqual(Notification.Name.pvWebServerStatusChanged.rawValue,
+        XCTAssertEqual(Notification.Name("WebServerStatusChanged").rawValue,
                        "WebServerStatusChanged")
     }
 
     func testFileLifecycleNotificationNamesExist() {
-        XCTAssertEqual(Notification.Name.pvWebServerFileDeleted.rawValue,
+        XCTAssertEqual(Notification.Name("PVWebServerFileDeletedNotification").rawValue,
                        "PVWebServerFileDeletedNotification")
-        XCTAssertEqual(Notification.Name.pvWebServerFileMoved.rawValue,
+        XCTAssertEqual(Notification.Name("PVWebServerFileMovedNotification").rawValue,
                        "PVWebServerFileMovedNotification")
     }
 
@@ -110,7 +112,7 @@ class PVWebServerTests: XCTestCase {
         let expectation = XCTestExpectation(description: "pvWebServerFileDeleted fires")
 
         let token = NotificationCenter.default.addObserver(
-            forName: .pvWebServerFileDeleted, object: nil, queue: nil
+            forName: Notification.Name("PVWebServerFileDeletedNotification"), object: nil, queue: nil
         ) { note in
             receivedPath = note.userInfo?["filePath"] as? String
             expectation.fulfill()
@@ -120,7 +122,7 @@ class PVWebServerTests: XCTestCase {
         // Simulate what the DELETE route handler does:
         try FileManager.default.removeItem(at: testFile)
         NotificationCenter.default.post(
-            name: .pvWebServerFileDeleted,
+            name: Notification.Name("PVWebServerFileDeletedNotification"),
             object: server,
             userInfo: ["filePath": testFile.path]
         )
@@ -143,7 +145,7 @@ class PVWebServerTests: XCTestCase {
             .store(in: &cancellables)
 
         NotificationCenter.default.post(
-            name: .pvWebServerFileDeleted,
+            name: Notification.Name("PVWebServerFileDeletedNotification"),
             object: nil,
             userInfo: ["filePath": "/some/test.rom"]
         )
@@ -166,7 +168,7 @@ class PVWebServerTests: XCTestCase {
             .store(in: &cancellables)
 
         NotificationCenter.default.post(
-            name: .pvWebServerFileMoved,
+            name: Notification.Name("PVWebServerFileMovedNotification"),
             object: nil,
             userInfo: ["fromPath": "/old/a.rom", "toPath": "/new/a.rom"]
         )
