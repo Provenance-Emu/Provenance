@@ -213,6 +213,43 @@ extension PVAppDelegate {
         return candidate
     }
 
+    /// Ecosystem callbacks: a queried app answering with its game list
+    /// (`provenance://<source>?games=…`) or a user-approved ROM transfer offer
+    /// (`provenance://<source>?fetch=…`). Returns false when the URL is
+    /// neither, so the caller's invalid-host path still logs.
+    func handleEcosystemCallback(_ url: URL) -> Bool {
+        if let (source, games) = EcosystemCallbackParser.parse(url: url) {
+            ILOG("Ecosystem: received \(games.count) games from \(source.displayName)")
+            NotificationCenter.default.post(
+                name: .ecosystemGamesReceived,
+                object: nil,
+                userInfo: ["source": source.rawValue, "games": games]
+            )
+            return true
+        }
+        if let (source, payload) = EcosystemFetchParser.parse(url: url) {
+            ILOG("Ecosystem: fetch offer from \(source.displayName) for '\(payload.name)'")
+            Task {
+                do {
+                    let container = try await EcosystemFetchService.shared.download(payload)
+                    NotificationCenter.default.post(
+                        name: .ecosystemFetchCompleted,
+                        object: nil,
+                        userInfo: [
+                            "source": source.rawValue,
+                            "name": payload.name,
+                            "path": container.path
+                        ]
+                    )
+                } catch {
+                    ELOG("Ecosystem: fetch of '\(payload.name)' failed: \(error)")
+                }
+            }
+            return true
+        }
+        return false
+    }
+
     public func handle(appURL url: URL,  options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         ILOG("PVAppDelegate: handle appURL url: \(url.description), options: \(options.description)")
 
@@ -235,6 +272,9 @@ extension PVAppDelegate {
         }
 
         guard let action = AppURLKeys(rawValue: components.host ?? "") else {
+            // Not a first-party action — the host may be an ecosystem app's
+            // scheme answering us (provenance://<source>?games=… | ?fetch=…).
+            if handleEcosystemCallback(url) { return true }
             ELOG("Invalid host/action: \(components.host ?? "nil")")
             return false
         }

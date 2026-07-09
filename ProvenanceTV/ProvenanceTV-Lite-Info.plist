@@ -203,6 +203,7 @@
 	<string>public.app-category.games</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>ifly</string>
 		<string>provenance</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>

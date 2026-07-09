@@ -25,6 +25,9 @@ import PVUIBase
 /// Navigate to this view from `ExternalEmulatorMigrationView`.
 public struct EcosystemIntegrationView: View {
     @State private var installedApps: [EcosystemApp] = []
+    /// iFly's library, as answered to a gameInfo query (md5-identified).
+    @State private var iflyGames: [EcosystemGameScheme] = []
+    @State private var lastImportedName: String?
     @Environment(\.dismiss) private var dismiss
 
     public init() {}
@@ -44,6 +47,8 @@ public struct EcosystemIntegrationView: View {
                         installedSection
                     }
 
+                    iflyLibrarySection
+
                     allAppsSection
 
                     featureFlagNoteBox
@@ -57,7 +62,83 @@ public struct EcosystemIntegrationView: View {
         .task {
             await detectInstalledApps()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .ecosystemGamesReceived)) { note in
+            guard note.userInfo?["source"] as? String == EcosystemApp.ifly.rawValue,
+                  let games = note.userInfo?["games"] as? [EcosystemGameScheme] else { return }
+            iflyGames = games
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .ecosystemFetchCompleted)) { note in
+            lastImportedName = note.userInfo?["name"] as? String
+        }
         .settingsSubpageTracking()
+    }
+
+    // MARK: - iFly library (browse + import)
+
+    @ViewBuilder
+    private var iflyLibrarySection: some View {
+        if installedApps.contains(where: { $0 == .ifly }) {
+            VStack(alignment: .leading, spacing: 12) {
+                sectionHeader(
+                    title: Text("iFly Library"),
+                    icon: "arrow.down.app",
+                    color: .retroBlue
+                )
+
+                Button {
+                    guard let url = EcosystemApp.ifly.gameInfoQueryURL() else { return }
+                    UIApplication.shared.open(url)
+                } label: {
+                    Label(
+                        iflyGames.isEmpty ? "Browse iFly's Games" : "Refresh List",
+                        systemImage: "arrow.triangle.2.circlepath"
+                    )
+                    .font(.subheadline.weight(.semibold))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                }
+                .buttonStyle(.borderedProminent)
+
+                if let lastImportedName {
+                    Label("\u{201C}\(lastImportedName)\u{201D} downloaded — importing to your library.",
+                          systemImage: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.green)
+                }
+
+                ForEach(iflyGames) { game in
+                    HStack(spacing: 10) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(game.titleName)
+                                .font(.subheadline.weight(.semibold))
+                                .lineLimit(1)
+                            if let developer = game.developer {
+                                Text(developer)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        Spacer()
+                        Button("Play") {
+                            EcosystemApp.ifly.openGame(titleID: game.titleId)
+                        }
+                        .font(.caption.weight(.semibold))
+                        .buttonStyle(.bordered)
+                        Button("Import") {
+                            guard let url = EcosystemApp.ifly.requestGameURL(titleID: game.titleId)
+                            else { return }
+                            UIApplication.shared.open(url)
+                        }
+                        .font(.caption.weight(.semibold))
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(Color.white.opacity(0.05))
+                    .cornerRadius(10)
+                }
+            }
+        }
     }
 
     // MARK: - Header
@@ -267,6 +348,7 @@ private struct EcosystemAppRowView: View {
         case .xenios:   return NSLocalizedString("ecosystem.app.xenios.description", bundle: .module, comment: "")
         case .melonx:   return NSLocalizedString("ecosystem.app.melonx.description", bundle: .module, comment: "")
         case .meloCafe: return NSLocalizedString("ecosystem.app.melocafe.description", bundle: .module, comment: "")
+        case .ifly:     return "Dreamcast, Naomi, and Atomiswave emulator by the Provenance team. Supports browsing its library and importing games directly."
         }
     }
 

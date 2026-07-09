@@ -277,6 +277,7 @@
 	<string>public.app-category.games</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>ifly</string>
 		<string>atariemulator</string>
 		<string>consolesapp</string>
 		<string>delta</string>

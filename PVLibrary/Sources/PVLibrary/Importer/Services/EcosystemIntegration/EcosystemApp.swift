@@ -41,6 +41,14 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
     /// TODO: URL scheme and bundle ID not yet confirmed from public sources.
     case meloCafe = "melocafe"
 
+    /// iFly EMU — Dreamcast/Naomi/Atomiswave emulator by the same developer.
+    /// URL scheme: `ifly`. Game IDs are the ROM's md5 (lowercased hex) — the
+    /// identity both apps share. Beyond the standard gameInfo/launch flow,
+    /// iFly supports user-confirmed ROM transfer: `ifly://requestGame?md5=…&
+    /// scheme=provenance` answers `provenance://ifly?fetch=<payload>` (see
+    /// EcosystemFetchService).
+    case ifly = "ifly"
+
     // MARK: - Display
 
     /// User-facing display name.
@@ -49,6 +57,7 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
         case .xenios:   return "XeniOS"
         case .melonx:   return "MeloNX"
         case .meloCafe: return "MeloCafe"
+        case .ifly:     return "iFly EMU"
         }
     }
 
@@ -58,6 +67,7 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
         case .xenios:   return "Xbox 360"
         case .melonx:   return "Nintendo Switch"
         case .meloCafe: return "Wii U"
+        case .ifly:     return "Dreamcast · Naomi · Atomiswave"
         }
     }
 
@@ -67,6 +77,7 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
         case .xenios:   return "gamecontroller.fill"
         case .melonx:   return "switch.2"
         case .meloCafe: return "tv.fill"
+        case .ifly:     return "circle.circle"
         }
     }
 
@@ -119,7 +130,18 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
         case .meloCafe:
             // TODO: confirm MeloCafe launch URL format
             return URL(string: "\(urlScheme)://launch?id=\(titleID)")
+        case .ifly:
+            // ifly://open?md5=<md5>
+            return URL(string: "\(urlScheme)://open?md5=\(titleID)")
         }
+    }
+
+    /// iFly only: user-confirmed ROM transfer. iFly prompts its user, then
+    /// answers `<callbackScheme>://ifly?fetch=<payload>` (EcosystemFetchService
+    /// downloads the file set into the import directory).
+    public func requestGameURL(titleID: String, callbackScheme: String = "provenance") -> URL? {
+        guard self == .ifly else { return nil }
+        return URL(string: "\(urlScheme)://requestGame?md5=\(titleID)&scheme=\(callbackScheme)")
     }
 
     // MARK: - Launch in App
