@@ -31,7 +31,9 @@ struct ArtworkRetryMetadata: Sendable {
 }
 
 /// Tunables for artwork retry throttling (PROVENANCE-1AW / disk-write MetricKit noise).
-private enum ArtworkRetryLimits {
+/// Internal, not private: ArtworkSearchQueue+Retry.swift (separate file) reads
+/// these too — `private` broke the PVLibrary build.
+enum ArtworkRetryLimits {
     /// Maximum artwork file retries per `retryFailedArtworkDownloads` invocation.
     static let maxRetriesPerCall = 5
     /// Bytes of artwork data written per `processPendingSearches` session.
