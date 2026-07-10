@@ -370,6 +370,12 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         // Restore critical user preferences from iCloud KVS (survives reinstalls)
         iCloudSettingsSync.setup()
 
+        // Mirror Plus into the shared same-team keychain so iFly can honor it
+        // (publishes now + a delayed pass for StoreKit's async entitlement load).
+        Task { @MainActor in
+            CrossAppEntitlementPublisher.publishPlusStateAtLaunch()
+        }
+
         RealmConfiguration.setDefaultRealmConfig()
 
         // Register MetricKit subscriber to capture hang / crash diagnostics passively
@@ -640,7 +646,13 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         pauseCore()
     }
 
-    public func applicationWillEnterForeground(_: UIApplication) {}
+    public func applicationWillEnterForeground(_: UIApplication) {
+        // Re-mirror Plus → shared keychain (purchase/restore may have happened
+        // since launch; FreemiumKit exposes no purchase hook to ride).
+        Task { @MainActor in
+            CrossAppEntitlementPublisher.publishPlusState()
+        }
+    }
 
     // TODO: Move to ProvenanceApp
     public func applicationDidBecomeActive(_ application: UIApplication) {

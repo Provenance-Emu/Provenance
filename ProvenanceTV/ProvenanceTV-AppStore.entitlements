@@ -52,6 +52,9 @@
 	<array>
 		<string>$(AppIdentifierPrefix)org.provenance-emu.provenance</string>
 		<string>$(AppIdentifierPrefix)org.provenance-emu</string>
+		<!-- Shared with sibling apps (iFly): cross-app entitlement bridge —
+		     Plus unlocks iFly Pro. See PVUIBase/Support/CrossAppEntitlementPublisher.swift -->
+		<string>$(AppIdentifierPrefix)com.joemattiello.shared</string>
 	</array>
 </dict>
 </plist>
