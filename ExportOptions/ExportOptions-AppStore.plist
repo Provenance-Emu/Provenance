@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- destination=upload makes `xcodebuild -exportArchive` BOTH export and upload to
+	     App Store Connect (TestFlight) in one step — no separate altool/pilot call. -->
+	<key>destination</key>
+	<string>upload</string>
+	<key>method</key>
+	<string>app-store</string>
+	<key>signingStyle</key>
+	<string>automatic</string>
+	<key>teamID</key>
+	<string>S32Z3HMYVQ</string>
+	<key>iCloudContainerEnvironment</key>
+	<string>Production</string>
+	<key>uploadSymbols</key>
+	<true/>
+	<!-- false: the CLI ignores this anyway and would upload the literal xcconfig build
+	     number. release.sh forces a unique epoch build number instead, so keep it off. -->
+	<key>manageAppVersionAndBuildNumber</key>
+	<false/>
+</dict>
+</plist>

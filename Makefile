@@ -4,7 +4,8 @@ SHELL := /bin/bash
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
 	test-all test-spm test-cheatdb test-scripts \
-	lint audit-localization bump-build bump-minor bump-major spm-validate
+	lint audit-localization bump-build bump-minor bump-major spm-validate \
+	testflight testflight-tvos testflight-all release release-dry release-tag
 
 RUBY := $(shell command -v ruby 2>/dev/null)
 HOMEBREW := $(shell command -v brew 2>/dev/null)
@@ -361,13 +362,38 @@ bump-major:
 set-version: | _var_VERSION
 	Scripts/bump-version.sh --set-marketing $(VERSION)
 
+## -- Release / TestFlight --
+# Wraps Scripts/release.sh. Build number auto-bumps to an epoch timestamp inside the
+# script, injected into Build.xcconfig and restored on exit — no commit, no manual bump.
+# TestFlight needs ASC_API_KEY_ID, ASC_API_ISSUER_ID, ASC_API_KEY_PATH in the environment.
+
+## Archive + auto-bump build + upload iOS to TestFlight
+testflight:
+	Scripts/release.sh --channel testflight --platform ios
+
+## Archive + auto-bump build + upload tvOS to TestFlight
+testflight-tvos:
+	Scripts/release.sh --channel testflight --platform tvos
+
+## Archive + upload both iOS and tvOS to TestFlight
+testflight-all:
+	Scripts/release.sh --channel testflight --platform all
+
+## Build + publish all channels (TestFlight + GitHub release)
+release:
+	Scripts/release.sh --channel all
+
+## Print release actions without executing (dry-run)
+release-dry:
+	Scripts/release.sh --channel all --dry-run
+
 ## -- Aliases --
 
 ## Alias: validate standalone SPM modules
 spm-validate: test-spm
 
-## tag and release to github
-release: | _var_VERSION
+## tag and release to github (legacy fastlane/tag flow; see `release` for TestFlight)
+release-tag: | _var_VERSION
 	@if ! git diff --quiet HEAD; then \
 		( $(call _error,refusing to release with uncommitted changes) ; exit 1 ); \
 	fi
