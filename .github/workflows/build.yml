@@ -326,13 +326,36 @@ jobs:
         if: failure()
         run: |
           if [ -f /tmp/xcodebuild.log ]; then
-            echo "::group::Build errors"
-            grep -A2 "error:" /tmp/xcodebuild.log | tail -200
+            # ": error:" (not bare "error:") — ObjC selector names like
+            # loadStateToFileAtPath:error: appear inside -Wincomplete-implementation
+            # warnings and flood a bare "error:" grep with non-errors.
+            echo "::group::Compiler/linker diagnostics"
+            grep -E ": (fatal )?error:" /tmp/xcodebuild.log | tail -100 || echo "(no ': error:' compiler diagnostics found)"
+            echo "::endgroup::"
+            # Run Script phase failures (e.g. "Script: Generate Frameworks" exiting
+            # non-zero) only surface in this xcodebuild summary block — they never
+            # produce an "error:" line of their own.
+            echo "::group::Failed build commands"
+            grep -A15 "The following build commands failed:" /tmp/xcodebuild.log || echo "(no 'build commands failed' summary found)"
+            echo "::endgroup::"
+            echo "::group::Last 100 lines of raw log"
+            tail -100 /tmp/xcodebuild.log
             echo "::endgroup::"
             echo "::group::Build warnings (last 50)"
-            grep "warning:" /tmp/xcodebuild.log | tail -50
+            grep "warning:" /tmp/xcodebuild.log | tail -50 || true
             echo "::endgroup::"
+          else
+            echo "::warning::/tmp/xcodebuild.log not found — build may have failed before xcodebuild ran"
           fi
+
+      - name: Upload xcodebuild log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "xcodebuild-log-${{ matrix.IPA_NAME }}"
+          path: /tmp/xcodebuild.log
+          retention-days: 3
+          if-no-files-found: warn
 
       - name: Fakesign app
         continue-on-error: true
