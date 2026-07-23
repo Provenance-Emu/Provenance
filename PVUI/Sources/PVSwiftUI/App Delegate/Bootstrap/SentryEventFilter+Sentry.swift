@@ -18,9 +18,9 @@ extension SentryEventSnapshot {
         let frames: [SentryEventFrame] = (exception?.stacktrace?.frames ?? []).map { frame in
             SentryEventFrame(
                 function: frame.function,
-                filename: frame.filename,
+                filename: frame.fileName,
                 package: frame.package,
-                inApp: frame.inApp
+                inApp: frame.inApp?.boolValue ?? false
             )
         }
 
@@ -35,13 +35,27 @@ extension SentryEventSnapshot {
             mechanismType: mechanismType,
             exceptionValue: exception?.value,
             exceptionType: exception?.type,
-            level: event.level.rawValue,
+            level: levelString(event.level),
             transaction: event.transaction,
             requestURL: event.request?.url,
             title: nil,
             tags: tags,
             frames: frames
         )
+    }
+
+    /// Maps `SentryLevel` (a `UInt`-backed ObjC enum) to the sentry.io string
+    /// convention that `SentryEventFilter` matches against (e.g. `"info"`).
+    private static func levelString(_ level: SentryLevel) -> String {
+        switch level {
+        case .none: return "none"
+        case .debug: return "debug"
+        case .info: return "info"
+        case .warning: return "warning"
+        case .error: return "error"
+        case .fatal: return "fatal"
+        @unknown default: return "unknown"
+        }
     }
 }
 #endif
