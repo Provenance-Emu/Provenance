@@ -352,7 +352,7 @@ test_integration_success() {
 
     local exit_code=0
     SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
-        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+        GETMODULES_MIN_DYLIB_SIZE=0 bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
 
     assert_exit "integration: success exit code" 0 "${exit_code}"
 
@@ -375,7 +375,7 @@ test_integration_all_downloads_fail() {
 
     local exit_code=0
     SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
-        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+        GETMODULES_MIN_DYLIB_SIZE=0 bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
 
     if [ "${exit_code}" -ne 0 ]; then
         pass "integration: all-fail exits non-zero (exit_code=${exit_code})"
@@ -402,7 +402,7 @@ test_active_platform_written_after_extraction() {
 
     set +e
     SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
-        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1
+        GETMODULES_MIN_DYLIB_SIZE=0 bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1
     local exit_code=$?
     set -e
     if [ "${exit_code}" -eq 0 ]; then
@@ -457,7 +457,7 @@ UNZIPEOF
 
     local output exit_code=0
     output=$(SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
-        bash "${SCRIPTS_DIR}/get-modules.sh" 2>&1) || exit_code=$?
+        GETMODULES_MIN_DYLIB_SIZE=0 bash "${SCRIPTS_DIR}/get-modules.sh" 2>&1) || exit_code=$?
 
     assert_exit "fastpath: exits 0" 0 "${exit_code}"
     assert_contains "fastpath: logs skipping message" "${output}" "skipping extraction"
@@ -484,7 +484,7 @@ test_platform_switch_purges_old_dylibs() {
 
     local exit_code=0
     SRCROOT="${workdir}" PLATFORM_NAME="appletvos" \
-        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+        GETMODULES_MIN_DYLIB_SIZE=0 bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
 
     assert_exit "platform switch: exits 0" 0 "${exit_code}"
     assert_file_not_exists "platform switch: ios dylib 1 purged" \
@@ -550,7 +550,7 @@ UNZIPEOF
 
     local exit_code=0
     SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
-        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+        GETMODULES_MIN_DYLIB_SIZE=0 bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
 
     assert_exit "no-sentinel: exits 0" 0 "${exit_code}"
     assert_file_exists "no-sentinel: unzip was called (fast-path not taken)" "${flag_file}"
@@ -593,7 +593,7 @@ test_platform_switch_back_reuses_cached_dylibs() {
 
     local exit_code=0
     SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
-        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+        GETMODULES_MIN_DYLIB_SIZE=0 bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
 
     assert_exit "switch back: exits 0" 0 "${exit_code}"
     # tvOS dylibs should have been purged when we switched back to iOS
@@ -672,7 +672,7 @@ UNZIPEOF
 
     local exit_code=0
     SRCROOT="${workdir}" PLATFORM_NAME="appletvos" \
-        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+        GETMODULES_MIN_DYLIB_SIZE=0 bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
 
     assert_exit "neutral switch: exits 0" 0 "${exit_code}"
     # Neutral dylib was removed before extraction and re-created by mock unzip
@@ -708,9 +708,75 @@ UNZIPEOF
 }
 
 # ---------------------------------------------------------------------------
+# Tests: post-extraction dylib validation (size floor + Mach-O check)
+# ---------------------------------------------------------------------------
+
+test_non_macho_dylib_removed_after_extraction() {
+    # Extraction produces dylibs that file(1) does not identify as Mach-O →
+    # validation removes them all → 0 dylibs → exit 1 + timestamp cleared.
+    local workdir
+    workdir=$(_setup_integration_srcroot "dylib_not_macho")
+
+    printf 'http://example.com/core1_libretro.dylib.zip\n' \
+        > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+
+    make_mock_curl_success
+    make_mock_xxd_zip_valid
+    make_mock_unzip "${workdir}/CoresRetro/RetroArch/modules" "ios"
+    make_mock_file_corrupt   # file(1) reports "HTML document text"
+
+    local exit_code=0
+    SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
+        GETMODULES_MIN_DYLIB_SIZE=0 bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+
+    make_mock_file_macho   # restore default for subsequent tests
+
+    if [ "${exit_code}" -ne 0 ]; then
+        pass "non-Mach-O dylib: script exits non-zero (exit_code=${exit_code})"
+    else
+        fail "non-Mach-O dylib: script should exit non-zero after removing all dylibs"
+    fi
+    assert_file_not_exists "non-Mach-O dylib: invalid dylib removed" \
+        "${workdir}/CoresRetro/RetroArch/modules/core1_libretro_ios.dylib"
+    assert_file_not_exists "non-Mach-O dylib: timestamp cleared for re-download" \
+        "${workdir}/CoresRetro/RetroArch/modules_compressed/iOS/timestamp.txt"
+}
+
+test_undersized_dylib_removed_after_extraction() {
+    # Mock unzip writes 4-byte stubs; with the default 4096-byte size floor
+    # (GETMODULES_MIN_DYLIB_SIZE unset) they must be removed even though the
+    # mocked file(1) claims Mach-O.
+    local workdir
+    workdir=$(_setup_integration_srcroot "dylib_undersized")
+
+    printf 'http://example.com/core1_libretro.dylib.zip\n' \
+        > "${workdir}/CoresRetro/RetroArch/scripts/urls.txt"
+
+    make_mock_curl_success
+    make_mock_xxd_zip_valid
+    make_mock_unzip "${workdir}/CoresRetro/RetroArch/modules" "ios"
+
+    local exit_code=0
+    SRCROOT="${workdir}" PLATFORM_NAME="iphoneos" \
+        bash "${SCRIPTS_DIR}/get-modules.sh" >/dev/null 2>&1 || exit_code=$?
+
+    if [ "${exit_code}" -ne 0 ]; then
+        pass "undersized dylib: script exits non-zero (exit_code=${exit_code})"
+    else
+        fail "undersized dylib: script should exit non-zero after removing all dylibs"
+    fi
+    assert_file_not_exists "undersized dylib: truncated dylib removed" \
+        "${workdir}/CoresRetro/RetroArch/modules/core1_libretro_ios.dylib"
+}
+
+# ---------------------------------------------------------------------------
 # Run all tests
 # ---------------------------------------------------------------------------
 setup_test_root
+# Default file(1) mock: report Mach-O so the post-extraction dylib validation
+# accepts the tiny stub dylibs the mock unzip produces. Tests that exercise the
+# validation itself override this (and restore it) locally.
+make_mock_file_macho
 echo "=== get-modules.sh validation tests ==="
 
 run_test "Valid zip passes validation" test_valid_zip_passes_validation
@@ -741,6 +807,9 @@ run_test "Platform fast-path: does not skip when sentinel is absent (first run)"
 run_test "Platform switch: iOS→tvOS purges ios dylibs" test_platform_switch_purges_old_dylibs
 run_test "Platform switch-back: tvOS→iOS purges tvos dylibs, reuses cached ios zips" test_platform_switch_back_reuses_cached_dylibs
 run_test "Platform switch: neutral dylibs replaced on platform change" test_platform_switch_replaces_neutral_dylibs
+
+run_test "Dylib validation: non-Mach-O dylib removed after extraction" test_non_macho_dylib_removed_after_extraction
+run_test "Dylib validation: undersized dylib removed (default size floor)" test_undersized_dylib_removed_after_extraction
 
 teardown_test_root
 print_summary

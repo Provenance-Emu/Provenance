@@ -150,7 +150,10 @@ if [ -n "${PINNED_DATE}" ]; then
 	# Test one URL — if it 404s, the whole date is bad.
 	TEST_URL=$(grep -v '^#' "${MODULE_LIST}" | head -1 | sed "s|/latest/|/${PINNED_DATE}/|g")
 	if [ -n "${TEST_URL}" ]; then
-		HTTP_CODE=$(curl -s -L -o /dev/null -w '%{http_code}' --head "${TEST_URL}" 2>/dev/null)
+		# --retry-all-errors: buildbot's nightly rotation window (~02:00 UTC) briefly
+		# 404s / drops connections while latest/ symlinks churn; a transient failure
+		# here would wrongly clear the pin and fall back to (churning) latest.
+		HTTP_CODE=$(curl -s -L --retry 3 --retry-delay 10 --retry-all-errors -o /dev/null -w '%{http_code}' --head "${TEST_URL}" 2>/dev/null)
 		if [ "${HTTP_CODE}" = "404" ] || [ "${HTTP_CODE}" = "000" ]; then
 			echo "GetModule: ERROR — pinned_date ${PINNED_DATE} returned HTTP ${HTTP_CODE} from buildbot." >&2
 			echo "GetModule: ERROR — Buildbot may not serve dated snapshots for this platform. Falling back to latest." >&2
@@ -390,7 +393,7 @@ if (( TIMESTAMP > LAST_TIMESTAMP )); then
 	SENTINEL_URL=$(grep -v '^[[:space:]]*#' "${EFFECTIVE_MODULE_LIST}" | grep -v '^[[:space:]]*$' | head -1)
 	if [ -n "${SENTINEL_URL}" ]; then
 		SENTINEL_TMP=$(mktemp "${TMPDIR:-/tmp}/sentinel.XXXXXX.zip")
-		if curl --fail -L --silent --show-error -o "${SENTINEL_TMP}" "${SENTINEL_URL}" 2>/dev/null; then
+		if curl --fail -L --silent --show-error --retry 3 --retry-delay 10 --retry-all-errors -o "${SENTINEL_TMP}" "${SENTINEL_URL}" 2>/dev/null; then
 			SENTINEL_MAGIC=$(xxd -l 4 -p "${SENTINEL_TMP}" 2>/dev/null)
 			if [ "${SENTINEL_MAGIC}" != "504b0304" ]; then
 				echo "GetModule: ERROR — sentinel URL did not return a valid zip (magic=${SENTINEL_MAGIC:-empty})" >&2
@@ -411,14 +414,17 @@ if (( TIMESTAMP > LAST_TIMESTAMP )); then
 
 	# Download with --fail so curl returns non-zero on HTTP errors (404, 500, etc.)
 	# instead of saving error HTML as if it were a valid zip. -L follows redirects
-	# (buildbot occasionally 30x's to a CDN edge).
+	# (buildbot occasionally 30x's to a CDN edge). --retry-all-errors retries even
+	# on 404s because buildbot's nightly rotation (~02:00 UTC) transiently 404s
+	# individual URLs while latest/ symlinks are re-pointed (both CI jobs failed
+	# this way on 2026-07-23; all URLs were healthy minutes later).
 	DOWNLOAD_FAIL=0
 	DOWNLOAD_OK=0
 	while IFS= read -r url; do
 		# Skip comments and blank lines
 		case "$url" in \#*|"") continue ;; esac
 		FILENAME=$(basename "$url")
-		if curl --fail -L --silent --show-error -o "${FILENAME}" "${url}"; then
+		if curl --fail -L --silent --show-error --retry 3 --retry-delay 10 --retry-all-errors -o "${FILENAME}" "${url}"; then
 			DOWNLOAD_OK=$((DOWNLOAD_OK + 1))
 		else
 			echo "GetModule: FAILED to download ${FILENAME} (HTTP error)" >&2
@@ -498,6 +504,44 @@ elif [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
 	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} "${UNZIP_EXCLUDE_ARGS[@]}" -d "${CORES_DIR}/" ';'
 else
 	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -n {} "${UNZIP_EXCLUDE_ARGS[@]}" -d "${CORES_DIR}/" ';'
+fi
+
+# Sanity-check extracted dylibs: each must be non-trivial in size and a real
+# Mach-O object (mirrors the framework validation in make_frameworks_retroarch.sh,
+# see 58693478b2). Catches truncated downloads and corrupt extractions that still
+# had a valid zip header. Downloaded offenders are removed (and the timestamp
+# cleared so the next build re-downloads); locally-built dylibs are never deleted.
+# Size floor is overridable for tests (fixtures are tiny stub files).
+MIN_DYLIB_SIZE="${GETMODULES_MIN_DYLIB_SIZE:-4096}"
+DYLIB_VALIDATION_FAIL=0
+DYLIB_VALIDATION_OK=0
+for dylib in "${CORES_DIR}/"*.dylib; do
+	[ -f "$dylib" ] || continue
+	base=$(basename "$dylib")
+	DSIZE=$(wc -c < "$dylib" | tr -d ' ')
+	FTYPE=$(file -b "$dylib" 2>/dev/null)
+	if [ "${DSIZE:-0}" -ge "${MIN_DYLIB_SIZE}" ]; then
+		case "$FTYPE" in
+			*Mach-O*|*"universal binary"*)
+				DYLIB_VALIDATION_OK=$((DYLIB_VALIDATION_OK + 1))
+				continue
+				;;
+		esac
+	fi
+	if is_local_dylib "$base"; then
+		echo "GetModule: WARNING — locally-built ${base} failed validation (size=${DSIZE}, type=${FTYPE:-unknown}) — keeping (never delete local builds)" >&2
+	else
+		echo "GetModule: INVALID dylib ${base} (size=${DSIZE}, type=${FTYPE:-unknown}) — removing" >&2
+		rm -f "$dylib"
+		DYLIB_VALIDATION_FAIL=$((DYLIB_VALIDATION_FAIL + 1))
+	fi
+done
+unset base
+
+if [ "${DYLIB_VALIDATION_FAIL}" -gt 0 ]; then
+	echo "GetModule: WARNING — removed ${DYLIB_VALIDATION_FAIL} invalid dylib(s) after extraction (${DYLIB_VALIDATION_OK} passed Mach-O validation)" >&2
+	# Force re-download next build so the removed cores come back.
+	rm -f "${CORES_ARCHIVE_DIR}/timestamp.txt"
 fi
 
 # Final validation: count dylibs and warn if suspiciously low
