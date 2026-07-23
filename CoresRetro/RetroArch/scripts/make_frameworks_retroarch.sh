@@ -33,6 +33,15 @@ CODE_SIGN_IDENTITY_FOR_ITEMS="${EXPANDED_CODE_SIGN_IDENTITY:-}"
 if [ -z "${CODE_SIGN_IDENTITY_FOR_ITEMS}" ] ; then
     CODE_SIGN_IDENTITY_FOR_ITEMS="${CODE_SIGN_IDENTITY:-}"
 fi
+# No identity resolved (CI runs with CODE_SIGNING_ALLOWED=NO and an empty
+# keychain; Xcode expands the identity to "") → fall back to ad-hoc signing.
+# `codesign --sign ""` fails with "no identity found", which broke every
+# framework in CI archives ("0 frameworks created from 99 dylibs").
+# Ad-hoc matches CI's AD_HOC_CODE_SIGNING_ALLOWED=YES; App Store export
+# re-signs everything with the real identity later anyway.
+if [ -z "${CODE_SIGN_IDENTITY_FOR_ITEMS}" ] || [ "${CODE_SIGNING_ALLOWED:-YES}" = "NO" ]; then
+    CODE_SIGN_IDENTITY_FOR_ITEMS="-"
+fi
 
 echo "Identity:"
 echo "${CODE_SIGN_IDENTITY_FOR_ITEMS}"
