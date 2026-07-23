@@ -62,6 +62,12 @@ let package = Package(
         /// Upstream DimaRU/PackageBuildInfo — vendored at ../External/PackageBuildInfo (Swift tool; git stderr discarded).
 //        .package(url: "https://github.com/JoeMatt/PackageBuildInfo", branch: "master"),
         .package(path: "../External/PackageBuildInfo"),
+        /// Sentry crash reporting. Declared here so the `#if canImport(Sentry)` blocks in
+        /// `PVSwiftUI/App Delegate/Bootstrap/` compile against the real SDK in EVERY
+        /// configuration — previously the module was only visible in CI archive builds
+        /// (via the app target's package ref), letting broken code ship for weeks.
+        /// URL + version intentionally match Provenance.xcodeproj's XCRemoteSwiftPackageReference.
+        .package(url: "https://github.com/getsentry/sentry-cocoa", .upToNextMajor(from: "8.43.0")),
         /// FreemiumKit
         .package(url: "https://github.com/FlineDev/FreemiumKit.git", from: "1.19.0"),
         /// SwiftUIKit
@@ -280,6 +286,9 @@ let package = Package(
                 .byNameItem(name: "SwipeCellSUI", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 .byNameItem(name: "DateRangePicker", condition: .when(platforms: [.iOS, .macCatalyst, .watchOS])),
                 "PVOpticalDiscReader",
+                /// Same static `Sentry` product the app targets link — SPM dedupes it in the
+                /// unified workspace graph, so no duplicate linkage.
+                .product(name: "Sentry", package: "sentry-cocoa")
             ],
             resources: [
                 .copy("Resources/whats-new.json"),
