@@ -471,6 +471,7 @@
 		B396AE632C719E3B00DF1EBD /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = B396AE622C719E3B00DF1EBD /* PVObjCUtils */; };
 		B396AE662C719E4600DF1EBD /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B396AE652C719E4600DF1EBD /* PVSettings */; };
 		B396AE692C719E5A00DF1EBD /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B396AE682C719E5A00DF1EBD /* PVPlists */; };
+		C0C0CAFE090200000000000E /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE090200000000000D /* PVPrimitives */; };
 		B3AAB425207379230097D86F /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
 		B3AFCF7A2977A6EA00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF792977A6EA00A01010 /* PVLogging */; };
@@ -3277,6 +3278,7 @@
 				B333519F207B01230036A448 /* libgb.a in Frameworks */,
 				B30E9ACC2C6FADDA00C1431E /* PVEmulatorCore in Frameworks */,
 				B396AE692C719E5A00DF1EBD /* PVPlists in Frameworks */,
+				C0C0CAFE090200000000000E /* PVPrimitives in Frameworks */,
 				B33350AE207B00080036A448 /* libnes.a in Frameworks */,
 				B3C0793F2C75477A006F109B /* MednafenGameCoreC.framework in Frameworks */,
 				B333509C207AFF3F0036A448 /* libvirtualboy.a in Frameworks */,
@@ -7086,6 +7088,7 @@
 				B396AE622C719E3B00DF1EBD /* PVObjCUtils */,
 				B396AE652C719E4600DF1EBD /* PVSettings */,
 				B396AE682C719E5A00DF1EBD /* PVPlists */,
+				C0C0CAFE090200000000000D /* PVPrimitives */,
 			);
 			productName = PVMednafen;
 			productReference = B340E4621E08887600AD0E8B /* MednafenGameCore.framework */;
@@ -7350,6 +7353,7 @@
 				B396AE612C719E3B00DF1EBD /* XCLocalSwiftPackageReference "../../PVObjCUtils" */,
 				B396AE642C719E4600DF1EBD /* XCLocalSwiftPackageReference "../../PVSettings" */,
 				B396AE672C719E5A00DF1EBD /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				C0C0CAFE090200000000000C /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
@@ -11889,6 +11893,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPlists;
 		};
+		C0C0CAFE090200000000000C /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPrimitives;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -11915,6 +11923,10 @@
 		B396AE682C719E5A00DF1EBD /* PVPlists */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVPlists;
+		};
+		C0C0CAFE090200000000000D /* PVPrimitives */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPrimitives;
 		};
 		B3AFCF792977A6EA00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;

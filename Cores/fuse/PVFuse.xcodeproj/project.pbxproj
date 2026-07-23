@@ -28,7 +28,7 @@
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
+		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B37022C92872554300B3F6DA /* PVFuseCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVFuseCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -64,6 +64,7 @@
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3E2AA7A2CB66BD300E2636D /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA792CB66BD300E2636D /* PVCoreObjCBridge */; };
 		B3E2AA7D2CB66C1600E2636D /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3E2AA7C2CB66C1600E2636D /* PVPlists */; };
+		C0C0CAFE090700000000000E /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE090700000000000D /* PVPrimitives */; };
 		B3EBB1FD2872B1A000EAEB37 /* libFuse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libFuse.a */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
 /* End PBXBuildFile section */
 
@@ -1271,6 +1272,7 @@
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3E2AA7D2CB66C1600E2636D /* PVPlists in Frameworks */,
+				C0C0CAFE090700000000000E /* PVPrimitives in Frameworks */,
 				B30E99EF2C6F057400C1431E /* PVCoreBridge in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
@@ -3453,6 +3455,7 @@
 				B30E99ED2C6F057400C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 				B3E2AA782CB66BD300E2636D /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B3E2AA7B2CB66C1600E2636D /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				C0C0CAFE090700000000000C /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -4037,6 +4040,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPlists;
 		};
+		C0C0CAFE090700000000000C /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPrimitives;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -4055,6 +4062,10 @@
 		B3E2AA7C2CB66C1600E2636D /* PVPlists */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVPlists;
+		};
+		C0C0CAFE090700000000000D /* PVPrimitives */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPrimitives;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

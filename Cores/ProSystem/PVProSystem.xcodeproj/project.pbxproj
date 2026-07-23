@@ -39,6 +39,7 @@
 		B3E79A582C93C1AD007D86A6 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3E79A572C93C1AD007D86A6 /* PVCoreObjCBridge */; };
 		B3E79A592C93C1B1007D86A6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E79A4A2C93C01A007D86A6 /* Foundation.framework */; };
 		B3E79A5C2C93C388007D86A6 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3E79A5B2C93C388007D86A6 /* PVPlists */; };
+		C0C0CAFE090500000000000E /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE090500000000000D /* PVPrimitives */; };
 		B3FE6CCD2C93D56700792419 /* PVProSystemBridge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E79A322C93BE4F007D86A6 /* PVProSystemBridge.framework */; };
 		B3FE6CCE2C93D56700792419 /* PVProSystemBridge.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E79A322C93BE4F007D86A6 /* PVProSystemBridge.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -191,6 +192,7 @@
 				B3E79A582C93C1AD007D86A6 /* PVCoreObjCBridge in Frameworks */,
 				B3FE6CCD2C93D56700792419 /* PVProSystemBridge.framework in Frameworks */,
 				B3E79A5C2C93C388007D86A6 /* PVPlists in Frameworks */,
+				C0C0CAFE090500000000000E /* PVPrimitives in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +416,7 @@
 				B3E79A552C93C1AD007D86A6 /* PVCoreBridge */,
 				B3E79A572C93C1AD007D86A6 /* PVCoreObjCBridge */,
 				B3E79A5B2C93C388007D86A6 /* PVPlists */,
+				C0C0CAFE090500000000000D /* PVPrimitives */,
 			);
 			productName = PVProSystem;
 			productReference = B3E799FC2C93AE93007D86A6 /* PVProSystem.framework */;
@@ -511,6 +514,7 @@
 				B30E9AE82C6FB2A600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B3E79A462C93BFB8007D86A6 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 				B3E79A5A2C93C388007D86A6 /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				C0C0CAFE090500000000000C /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 				B3FE6BE72C93CEB400792419 /* XCRemoteSwiftPackageReference "SwiftGenPlugin" */,
 			);
 			projectDirPath = "";
@@ -1479,6 +1483,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVPlists;
 		};
+		C0C0CAFE090500000000000C /* XCLocalSwiftPackageReference "../../PVPrimitives" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPrimitives;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -1525,6 +1533,10 @@
 		B3E79A5B2C93C388007D86A6 /* PVPlists */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVPlists;
+		};
+		C0C0CAFE090500000000000D /* PVPrimitives */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPrimitives;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
