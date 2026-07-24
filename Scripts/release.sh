@@ -169,6 +169,7 @@ do_archive() {
             -destination "$destination"
             -configuration Release
             -archivePath "$archive"
+            -scmProvider system
             -skipPackagePluginValidation
             -skipMacroValidation
             MARKETING_VERSION="$VERSION"
