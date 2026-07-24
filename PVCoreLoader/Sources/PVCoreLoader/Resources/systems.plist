@@ -5716,12 +5716,12 @@
 		<key>PVScreenType</key>
 		<string>CRT</string>
 		<key>PVSupported</key>
-		<false/>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
-			<string>iso</string>
 			<string>cue</string>
-			<string>m3u</string>
+			<string>iso</string>
+			<string>cdi</string>
 		</array>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.jaguarcd</string>
@@ -5729,6 +5729,8 @@
 		<string>Atari Jaguar CD</string>
 		<key>PVSystemShortName</key>
 		<string>Jaguar CD</string>
+		<key>PVUsesCDs</key>
+		<true/>
 	</dict>
 	<dict>
 		<key>PVBit</key>
