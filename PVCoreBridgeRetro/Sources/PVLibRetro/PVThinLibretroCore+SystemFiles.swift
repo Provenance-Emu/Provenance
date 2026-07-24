@@ -8,9 +8,7 @@
 //  Provides two complementary mechanisms for populating system files that
 //  libretro cores need at runtime:
 //
-//  1. **Libretro buildbot provisioning** — kicks off a non-blocking
-//     `ThinSystemFileProvisioner` (see ThinSystemFileManifest /
-//     ThinSystemFileProvisioner) that downloads zip packages from
+//  1. **Libretro buildbot download** — downloads zip packages from
 //     https://buildbot.libretro.com/assets/system/ when required system
 //     files are missing.  Downloads are asynchronous; emulation starts
 //     immediately and the files are available on the next launch.
@@ -26,15 +24,7 @@ import Foundation
 import PVLogging
 import PVArchiving
 
-// MARK: - Legacy Libretro Buildbot System File Definitions
-//
-// The newer `ThinSystemFileManifest` / `ThinSystemFileProvisioner` (stamp-based,
-// non-blocking, with toasts) owns PPSSPP / EcWolf / PrBoom. The cores below need
-// archives that extract into a `<core>/` SUBDIRECTORY (not the system-dir root),
-// which the new `ThinSystemAsset` model doesn't yet express, so they continue to
-// use this legacy real-file-sentinel download path until the new manifest grows a
-// destination-subdir field. PPSSPP / EcWolf / PrBoom are deliberately absent here
-// to avoid a double-download collision with the new provisioner.
+// MARK: - Libretro Buildbot System File Definitions
 
 /// Describes a zip package of system files available from the libretro buildbot.
 struct LibretroSystemFilePackage {
@@ -54,51 +44,70 @@ struct LibretroSystemFilePackage {
     }
 }
 
-/// Buildbot base URL and per-core package catalogue (legacy subdir-extracting cores).
+/// Buildbot base URL and per-core package catalogue.
 enum LibretroBuildbot {
     static let systemBaseURL = "https://buildbot.libretro.com/assets/system"
 
     /// Returns the zip packages that must be present for a given core ID.
     /// `coreID` should already be lowercased by the caller.
-    /// NOTE: PPSSPP / EcWolf / PrBoom are intentionally omitted — they are served
-    /// by `ThinSystemFileManifest` / `ThinSystemFileProvisioner`.
     static func packages(forCoreID coreID: String) -> [LibretroSystemFilePackage] {
         var result: [LibretroSystemFilePackage] = []
 
+        // PrBoom — doom engine needs prboom.wad
+        if coreID.contains("prboom") {
+            result.append(LibretroSystemFilePackage(
+                url: URL(string: "\(systemBaseURL)/prboom.zip")!,
+                sentinelFile: "prboom.wad"
+            ))
+        }
+
+        // ECWolf — Wolf3D engine needs ecwolf.pk3
+        if coreID.contains("ecwolf") {
+            result.append(LibretroSystemFilePackage(
+                url: URL(string: "\(systemBaseURL)/ecwolf.zip")!,
+                sentinelFile: "ecwolf.pk3"
+            ))
+        }
+
         // MSX / BlueMSX — needs MSX BIOS ROM set
         if coreID.contains("fmsx") || coreID.contains("bluemsx") {
-            if let url = URL(string: "\(systemBaseURL)/MSX.zip") {
-                result.append(LibretroSystemFilePackage(
-                    url: url, sentinelFile: "MSX.ROM", subdirectory: "MSX"))
-            }
+            result.append(LibretroSystemFilePackage(
+                url: URL(string: "\(systemBaseURL)/MSX.zip")!,
+                sentinelFile: "MSX.ROM",
+                subdirectory: "MSX"
+            ))
         }
 
         // FBNeo / FBAlpha — NeoGeo BIOS for arcade emulation
         if coreID.contains("fbneo") || coreID.contains("fbalpha") {
-            if let url = URL(string: "\(systemBaseURL)/fbalpha2012_neogeo.zip") {
-                result.append(LibretroSystemFilePackage(
-                    url: url, sentinelFile: "neogeo.zip", subdirectory: "fbneo"))
-            }
+            result.append(LibretroSystemFilePackage(
+                url: URL(string: "\(systemBaseURL)/fbalpha2012_neogeo.zip")!,
+                sentinelFile: "neogeo.zip",
+                subdirectory: "fbneo"
+            ))
         }
 
         // MAME — machine data / artwork / BIOS pack
         if coreID.contains("mame2003") {
-            if let url = URL(string: "\(systemBaseURL)/mame2003-plus.zip") {
-                result.append(LibretroSystemFilePackage(
-                    url: url, sentinelFile: "mame2003-plus", subdirectory: "mame2003-plus"))
-            }
+            result.append(LibretroSystemFilePackage(
+                url: URL(string: "\(systemBaseURL)/mame2003-plus.zip")!,
+                sentinelFile: "mame2003-plus",
+                subdirectory: "mame2003-plus"
+            ))
         } else if coreID.contains("mame") {
-            if let url = URL(string: "\(systemBaseURL)/mame.zip") {
-                result.append(LibretroSystemFilePackage(
-                    url: url, sentinelFile: "mame", subdirectory: "mame"))
-            }
+            result.append(LibretroSystemFilePackage(
+                url: URL(string: "\(systemBaseURL)/mame.zip")!,
+                sentinelFile: "mame",
+                subdirectory: "mame"
+            ))
         }
 
         // Rick Dangerous — game data pack
         if coreID.contains("rick_dangerous") || coreID == "rick" {
-            if let url = URL(string: "\(systemBaseURL)/rick.zip") {
-                result.append(LibretroSystemFilePackage(url: url, sentinelFile: "rick.pak"))
-            }
+            result.append(LibretroSystemFilePackage(
+                url: URL(string: "\(systemBaseURL)/rick.zip")!,
+                sentinelFile: "rick.pak"
+            ))
         }
 
         return result
@@ -146,38 +155,14 @@ extension PVThinLibretroCore {
         return docs
     }
 
-    // MARK: - Buildbot system file provisioning
+    // MARK: - Buildbot system file download
 
-    /// Kick off (non-blocking) provisioning of any missing buildbot system
-    /// assets for the current core. Returns immediately — the actual download +
-    /// extraction run on a detached task via `ThinSystemFileProvisioner`, so
-    /// emulation boots without waiting on the network.
+    /// Download any missing system-file packages from the libretro buildbot.
     ///
-    /// Called from `applyPlatformDefaults()` during core startup. The
-    /// provisioner is idempotent (per-core stamp sentinel) and resilient
-    /// (per-asset failures are isolated, logged, and surfaced as warning toasts).
-    func provisionThinSystemFilesIfNeeded() {
-        guard let coreID = coreIdentifier, !coreID.isEmpty else { return }
-        // No registered assets → don't even spin up a task.
-        guard ThinSystemFileManifest.entry(forCoreID: coreID) != nil else { return }
-        guard let sysDir = thinSystemFilesDirectory else {
-            WLOG("ThinCore[SystemFiles]: cannot provision — system dir unavailable for \(coreID)")
-            return
-        }
-
-        ILOG("ThinCore[SystemFiles]: scheduling system-file provision for \(coreID) → \(sysDir)")
-        Task.detached(priority: .utility) {
-            let provisioner = ThinSystemFileProvisioner()
-            await provisioner.provision(coreId: coreID, systemDirectory: sysDir)
-        }
-    }
-
-    // MARK: - Legacy subdir-extracting buildbot download
-
-    /// Download any missing legacy system-file packages (subdir-extracting cores
-    /// that the new `ThinSystemFileProvisioner` doesn't yet cover: MSX, FBNeo,
-    /// MAME, XRick). Real-file sentinel, async, non-blocking.
-    func downloadLegacyBuildBotSystemFilesIfNeeded() {
+    /// Called from `applyPlatformDefaults()` during core startup.  Downloads run
+    /// asynchronously — emulation is not blocked.  Files will be present on the
+    /// next game launch.
+    func downloadBuildBotSystemFilesIfNeeded() {
         guard let coreID = coreIdentifier?.lowercased(), !coreID.isEmpty else { return }
 
         let packages = LibretroBuildbot.packages(forCoreID: coreID)
@@ -205,12 +190,12 @@ extension PVThinLibretroCore {
             }
 
             ILOG("ThinCore[SystemFiles]: fetching \(package.url.lastPathComponent) for \(coreID)")
-            downloadAndExtractLegacyPackage(from: package.url, toDirectory: targetDir)
+            downloadAndExtractPackage(from: package.url, toDirectory: targetDir)
         }
     }
 
     /// Asynchronously download a zip from `url` and extract it into `destDir`.
-    private func downloadAndExtractLegacyPackage(from url: URL, toDirectory destDir: String) {
+    private func downloadAndExtractPackage(from url: URL, toDirectory destDir: String) {
         let downloadTask = URLSession.shared.downloadTask(with: url) { tempURL, _, error in
             if let error = error {
                 ELOG("ThinCore[SystemFiles]: download error (\(url.lastPathComponent)): \(error.localizedDescription)")
@@ -231,7 +216,7 @@ extension PVThinLibretroCore {
             }
 
             do {
-                try ArchiveManager.shared.unzipFile(at: tempURL, to: URL(fileURLWithPath: destDir))
+                try Self.unzipFile(at: tempURL, to: URL(fileURLWithPath: destDir))
                 ILOG("ThinCore[SystemFiles]: extracted \(url.lastPathComponent) → \(destDir)")
             } catch {
                 ELOG("ThinCore[SystemFiles]: extraction failed for \(url.lastPathComponent): \(error.localizedDescription)")
@@ -388,5 +373,9 @@ extension PVThinLibretroCore {
             return ["sega_101.bin", "mpr-17933.bin"]
         }
         return []
+    }
+
+    private static func unzipFile(at sourceURL: URL, to destinationURL: URL) throws {
+        try ArchiveManager.shared.unzipFile(at: sourceURL, to: destinationURL)
     }
 }

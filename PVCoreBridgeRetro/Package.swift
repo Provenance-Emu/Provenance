@@ -190,8 +190,7 @@ let package = Package(
                     "libretro",
                     "PVCoreBridge",
                     "PVCoreObjCBridge",
-                    "PVEmulatorCore",
-                    "PVArchiving"
+                    "PVEmulatorCore"
                 ])
     ],
     swiftLanguageModes: [.v5, .v6],
