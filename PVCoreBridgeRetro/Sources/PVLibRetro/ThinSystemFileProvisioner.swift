@@ -100,7 +100,7 @@ actor ThinSystemFileProvisioner {
 
         // First missing asset → announce the download (success is silent).
         postToast("Downloading \(entry.assets[0].displayName) system files…",
-                  type: PVOSDTypeInfo)
+                  type: .info)
 
         var allSucceeded = true
         for asset in entry.assets {
@@ -114,7 +114,7 @@ actor ThinSystemFileProvisioner {
         } else {
             // Leave the stamp unwritten so the next launch retries.
             postToast("Couldn't fetch \(entry.assets[0].displayName) system files — some features may be missing",
-                      type: PVOSDTypeWarning)
+                      type: .warning)
         }
     }
 

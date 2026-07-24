@@ -46,6 +46,8 @@
 		B3D991C92F788AF2002F1DCB /* PVLibRetroRumbleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D991C82F788AF2002F1DCB /* PVLibRetroRumbleHelper.swift */; };
 		B3D991CB2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D991CA2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift */; };
 		B3D9A2B52F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */; };
+		5196423C2AAF54885A86FD71 /* ThinSystemFileManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9913381D03FEA56743F3544E /* ThinSystemFileManifest.swift */; };
+		F82AB6D2330706FBAC5E3BA6 /* ThinSystemFileProvisioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB7BACA77D3CEFB8691823A /* ThinSystemFileProvisioner.swift */; };
 		B3D9A2B72F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D9A2B62F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift */; };
 		B3D9A2C22F78C26F002F1DCB /* PVArchiving in Frameworks */ = {isa = PBXBuildFile; productRef = B3D9A2C12F78C26F002F1DCB /* PVArchiving */; };
 		B3D9A2C42F78C26F002F1DCB /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B3D9A2C32F78C26F002F1DCB /* PVArchivingFormats */; };
@@ -909,6 +911,8 @@
 		B3D991C82F788AF2002F1DCB /* PVLibRetroRumbleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLibRetroRumbleHelper.swift; sourceTree = "<group>"; };
 		B3D991CA2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SystemIdentifier+ObjCBridge.swift"; sourceTree = "<group>"; };
 		B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+SystemFiles.swift"; sourceTree = "<group>"; };
+		9913381D03FEA56743F3544E /* ThinSystemFileManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinSystemFileManifest.swift; sourceTree = "<group>"; };
+		0AB7BACA77D3CEFB8691823A /* ThinSystemFileProvisioner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinSystemFileProvisioner.swift; sourceTree = "<group>"; };
 		B3D9A2B62F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+Netplay.swift"; sourceTree = "<group>"; };
 		B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLibRetroGLESCore.h; sourceTree = "<group>"; };
 		B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLibRetroGLESCore.m; sourceTree = "<group>"; };
@@ -2871,6 +2875,8 @@
 				B3D991C62F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift */,
 				C0C0CAFE00000002 /* PVThinLibretroCore+Scaling.swift */,
 				B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */,
+				9913381D03FEA56743F3544E /* ThinSystemFileManifest.swift */,
+				0AB7BACA77D3CEFB8691823A /* ThinSystemFileProvisioner.swift */,
 				B4F1A2B3C4D5E60011223341 /* PVThinLibretroFrontend.h */,
 				B4F1A2B3C4D5E60011223342 /* PVThinLibretroFrontend.mm */,
 				B3D991CA2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift */,
@@ -3118,6 +3124,8 @@
 				C0C0CAFE00000001 /* PVThinLibretroCore+Scaling.swift in Sources */,
 				B4F1A2B3C4D5E6001122334B /* PVLibRetro+JIT.swift in Sources */,
 				B3D9A2B52F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift in Sources */,
+				5196423C2AAF54885A86FD71 /* ThinSystemFileManifest.swift in Sources */,
+				F82AB6D2330706FBAC5E3BA6 /* ThinSystemFileProvisioner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
