@@ -42,10 +42,13 @@ EXPORT_DIR="$PROJECT_DIR/build/export"
 WORKSPACE="$PROJECT_DIR/Provenance.xcworkspace"
 RELEASES_REPO="${RELEASES_REPO:-Provenance-Emu/Provenance}"
 
-# Per-platform AppStore schemes (Provenance uses separate schemes, not one multiplatform
-# scheme like iFly). iOS and tvOS therefore differ in BOTH scheme and destination.
-IOS_SCHEME="Provenance (AppStore)"
-TVOS_SCHEME="ProvenanceTV (AppStore)"
+# Single multiplatform AppStore scheme for ALL platforms — the app target is
+# cross-platform (iOS + tvOS), so iOS and tvOS archive from the same scheme and
+# differ only in -destination (this matches CI, which uses one scheme for both).
+# The old "ProvenanceTV (AppStore)" scheme has no archive action configured.
+APPSTORE_SCHEME="Provenance (AppStore)"
+IOS_SCHEME="$APPSTORE_SCHEME"
+TVOS_SCHEME="$APPSTORE_SCHEME"
 
 # ── Parse arguments ─────────────────────────────────────────────────────────────
 VERSION=""
