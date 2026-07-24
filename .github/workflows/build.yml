@@ -564,9 +564,14 @@ jobs:
           SHA="${{ github.sha }}"
           SHORT_SHA="${SHA:0:7}"
 
-          # Create or update the alpha tag
+          # Create or update the alpha tag.
+          # NOTE: use -F (typed field) for force so it serialises as a JSON
+          # boolean; -f always sends a string ("true"), which the refs API
+          # rejects with 422 "For 'properties/force', \"true\" is not a
+          # boolean", causing the PATCH to fail and the POST fallback to then
+          # 422 with "Reference already exists" — failing the whole job.
           gh api repos/$REPO/git/refs/tags/$TAG \
-            -X PATCH -f sha="$SHA" -f force=true 2>/dev/null || \
+            -X PATCH -f sha="$SHA" -F force=true 2>/dev/null || \
           gh api repos/$REPO/git/refs \
             -X POST -f ref="refs/tags/$TAG" -f sha="$SHA"
 
