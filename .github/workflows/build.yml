@@ -579,7 +579,11 @@ jobs:
           gh release delete $TAG --repo $REPO --yes 2>/dev/null || true
 
           # Collect IPA files
-          find artifacts -name "*.ipa" -exec mv {} . \;
+          # -type f: the IPA artifacts are named "…(BUILD).ipa", so
+          # download-artifact@v4 creates DIRECTORIES ending in .ipa. Without
+          # -type f, find matches those dirs and `mv`s one mid-traversal,
+          # breaking find (exit!=0 → bash -e fails the job). Match files only.
+          find artifacts -type f -name "*.ipa" -exec mv {} . \;
 
           # Create new pre-release with IPAs
           gh release create $TAG \
