@@ -9,20 +9,29 @@
 //
 //    access group: $(AppIdentifierPrefix)com.joemattiello.shared
 //    service:      "com.joemattiello.shared.entitlements"
-//    account:      "provenance.plus"  → value "active" while Plus is owned
+//    account:      "provenance.plus"
+//    value (v1 JSON): {"v":1,"period":"monthly|yearly|lifetime",
+//                      "status":"active","expiresAt":<unix secs, absent=lifetime>,
+//                      "updatedAt":<unix secs>}
+//      A lapsed monthly/yearly Plus MUST NOT grant iFly Pro forever, so we
+//      publish the StoreKit expiry; iFly self-expires it (+7d grace) even if
+//      Provenance is never reopened. Legacy readers still accept the bare
+//      string "active" (treated as lifetime); we fall back to it only if JSON
+//      encoding fails.
 //
 //  Requires the `keychain-access-groups` entitlement to include the shared
 //  group (added to the -AppStore entitlements alongside this file). Writes
 //  are best-effort: a keychain failure only costs the cross-app perk.
 //
-//  Plus itself is FreemiumKit-managed (no purchase hooks exposed in-repo),
-//  so this mirrors `FreemiumKit.shared.purchasedTier` at launch (twice — the
-//  second pass catches StoreKit's async entitlement load) and on every
-//  foreground.
+//  Whether Plus is owned comes from FreemiumKit (`purchasedTier`); the
+//  period/expiry in the payload come from StoreKit `currentEntitlements`.
+//  Mirrored at launch (twice — the second pass catches StoreKit's async
+//  entitlement load) and on every foreground.
 //
 
 import Foundation
 import Security
+import StoreKit
 #if canImport(FreemiumKit)
 import FreemiumKit
 #endif
@@ -43,7 +52,7 @@ public enum CrossAppEntitlementPublisher {
         let active = false
         #endif
         if active {
-            write(activeValue)
+            Task { await writeActivePlusMirror() }
         } else {
             delete()
         }
@@ -58,6 +67,58 @@ public enum CrossAppEntitlementPublisher {
             try? await Task.sleep(nanoseconds: 8_000_000_000)
             publishPlusState()
         }
+    }
+
+    // MARK: - v1 mirror payload
+
+    /// v1 status payload iFly decodes (JSON, dates = unix seconds). Field
+    /// names/types mirror iFly's `CrossAppEntitlement.Mirror` exactly.
+    private struct Mirror: Encodable {
+        var v: Int = 1
+        var period: String?          // "monthly" | "yearly" | "lifetime"
+        var status: String           // "active" | "grace" | "expired"
+        var expiresAt: Date?         // nil = lifetime / none
+        var updatedAt: Date = Date()
+    }
+
+    /// Encode the owned Plus entitlement as v1 JSON and write it. Period and
+    /// expiry come from StoreKit so a lapsed subscription self-expires on the
+    /// reader side even if Provenance is never reopened.
+    private static func writeActivePlusMirror() async {
+        let entitlement = await currentPlusEntitlement()
+        let mirror = Mirror(period: entitlement?.period,
+                            status: "active",
+                            expiresAt: entitlement?.expiresAt)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .secondsSince1970
+        if let data = try? encoder.encode(mirror),
+           let json = String(data: data, encoding: .utf8) {
+            write(json)
+        } else {
+            write(activeValue)   // degraded v0 fallback (reader treats as lifetime)
+        }
+    }
+
+    /// The active Provenance Plus entitlement from StoreKit, if any: its period
+    /// and expiry (nil expiry = lifetime, or FreemiumKit-only state with no
+    /// matching StoreKit transaction — e.g. a promotional/dev grant).
+    private static func currentPlusEntitlement() async -> (period: String?, expiresAt: Date?)? {
+        for await result in StoreKit.Transaction.currentEntitlements {
+            guard case .verified(let transaction) = result,
+                  transaction.productID.hasPrefix("provenance.plus") else { continue }
+            return (period(forProductID: transaction.productID), transaction.expirationDate)
+        }
+        return nil
+    }
+
+    /// Derive the subscription period from the product identifier, e.g.
+    /// `provenance.plus.monthly1`, `provenance.plus.annually.lite1`,
+    /// `provenance.plus.lifetime1`.
+    private static func period(forProductID id: String) -> String? {
+        if id.contains("lifetime") { return "lifetime" }
+        if id.contains("monthly") { return "monthly" }
+        if id.contains("annually") || id.contains("yearly") { return "yearly" }
+        return nil
     }
 
     // MARK: - Keychain plumbing (mirrors iFly's CrossAppEntitlement)
