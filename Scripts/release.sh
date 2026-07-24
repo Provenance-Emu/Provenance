@@ -195,15 +195,47 @@ should_platform tvos && do_archive tvOS "$TVOS_SCHEME" "generic/platform=tvOS" "
 # ExportOptions-AppStore.plist has destination=upload, so this single step BOTH
 # exports and uploads to App Store Connect — there's no separate altool step. iOS and
 # tvOS are separate platforms under the same app record, so each gets its own upload.
+# Resolve the App Store Connect API key to a file path xcodebuild can read.
+# Prefer ASC_API_KEY_PATH; else materialise ASC_API_KEY_CONTENT (base64 or raw
+# .p8) to a temp file. Echoes the path; errors if no key / id / issuer is set.
+# Without this, `xcodebuild -exportArchive` (destination=upload) falls back to
+# Xcode's signed-in accounts and dies with "Failed to Use Accounts" in CLI.
+_asc_key_path=""
+resolve_asc_key() {
+    [[ -n "$_asc_key_path" ]] && { echo "$_asc_key_path"; return 0; }
+    [[ -n "${ASC_API_KEY_ID:-}" ]]   || err "ASC_API_KEY_ID is not set (App Store Connect API key ID)"
+    [[ -n "${ASC_API_ISSUER_ID:-}" ]] || err "ASC_API_ISSUER_ID is not set (App Store Connect issuer ID)"
+    if [[ -n "${ASC_API_KEY_PATH:-}" ]]; then
+        [[ -f "$ASC_API_KEY_PATH" ]] || err "ASC_API_KEY_PATH does not exist: $ASC_API_KEY_PATH"
+        _asc_key_path="$ASC_API_KEY_PATH"
+    elif [[ -n "${ASC_API_KEY_CONTENT:-}" ]]; then
+        _asc_key_path="$(mktemp -t "AuthKey_${ASC_API_KEY_ID}").p8"
+        # Accept either base64-encoded or raw PEM .p8 content.
+        if printf '%s' "$ASC_API_KEY_CONTENT" | grep -q "BEGIN PRIVATE KEY"; then
+            printf '%s' "$ASC_API_KEY_CONTENT" > "$_asc_key_path"
+        else
+            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "$_asc_key_path" 2>/dev/null \
+                || err "ASC_API_KEY_CONTENT is neither a valid .p8 nor base64"
+        fi
+    else
+        err "No App Store Connect API key: set ASC_API_KEY_PATH or ASC_API_KEY_CONTENT"
+    fi
+    echo "$_asc_key_path"
+}
+
 do_appstore_upload() {
     local label="$1" archive="$2" exportdir="$3"
     log "Exporting + uploading $label to TestFlight (App Store)..."
     info "Build number $BUILD_NUMBER (forced — CLI export won't auto-increment)."
+    local keypath; keypath="$(resolve_asc_key)"
     run mkdir -p "$exportdir"
     run xcodebuild -exportArchive \
         -archivePath "$archive" \
         -exportPath "$exportdir" \
         -exportOptionsPlist "$EXPORT_OPTIONS_APPSTORE" \
+        -authenticationKeyPath "$keypath" \
+        -authenticationKeyID "$ASC_API_KEY_ID" \
+        -authenticationKeyIssuerID "$ASC_API_ISSUER_ID" \
         MARKETING_VERSION="$VERSION" \
         CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
 }
