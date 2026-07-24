@@ -208,6 +208,11 @@ resolve_asc_key() {
     if [[ -n "${ASC_API_KEY_PATH:-}" ]]; then
         [[ -f "$ASC_API_KEY_PATH" ]] || err "ASC_API_KEY_PATH does not exist: $ASC_API_KEY_PATH"
         _asc_key_path="$ASC_API_KEY_PATH"
+    elif [[ -f "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_API_KEY_ID}.p8" ]]; then
+        # xcodebuild's standard key location — set only ASC_API_KEY_ID + ISSUER.
+        _asc_key_path="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_API_KEY_ID}.p8"
+    elif [[ -f "$HOME/private_keys/AuthKey_${ASC_API_KEY_ID}.p8" ]]; then
+        _asc_key_path="$HOME/private_keys/AuthKey_${ASC_API_KEY_ID}.p8"
     elif [[ -n "${ASC_API_KEY_CONTENT:-}" ]]; then
         _asc_key_path="$(mktemp -t "AuthKey_${ASC_API_KEY_ID}").p8"
         # Accept either base64-encoded or raw PEM .p8 content.
