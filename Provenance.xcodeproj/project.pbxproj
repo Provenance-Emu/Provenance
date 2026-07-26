@@ -9839,13 +9839,11 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 				"$(SRCROOT)/Provenance/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9880,13 +9878,11 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 				"$(SRCROOT)/Provenance/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9997,13 +9993,11 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 				"$(SRCROOT)/Provenance/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10037,13 +10031,11 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 				"$(SRCROOT)/Provenance/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10151,13 +10143,11 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/${INFOPLIST_FILE}",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Set bundle version";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 				"$(SRCROOT)/Spotlight/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10174,13 +10164,11 @@
 			inputPaths = (
 				"${PROJECT_DIR}/${INFOPLIST_FILE}",
 				"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh",
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Set bundle version";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 				"${SRCROOT}/TopShelf/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10197,13 +10185,11 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 				"$(SRCROOT)/Provenance/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10220,13 +10206,11 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 				"$(SRCROOT)/Provenance/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10258,13 +10242,11 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
 				"$(SRCROOT)/ProvenanceCompanion/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
