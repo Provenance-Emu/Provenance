@@ -28,11 +28,16 @@ struct ThinSystemFileManifestTests {
         #expect(ThinSystemFileManifest.entry(forCoreID: "prboom_libretro")?.stampKey == "prboom")
     }
 
-    /// `mame2003` is more specific than `mame` and must win even though both
-    /// substrings are present in the id.
-    @Test func lookup_mame2003_beatsPlainMame() {
-        #expect(ThinSystemFileManifest.entry(forCoreID: "mame2003_plus_libretro")?.stampKey == "mame2003-plus")
-        #expect(ThinSystemFileManifest.entry(forCoreID: "mame2010_libretro")?.stampKey == "mame2003")
+    /// MAME / FinalBurn Neo / XRick assets exist on the buildbot but are
+    /// deliberately NOT in this manifest: their archives extract into a
+    /// `<core>/` subdir, which `ThinSystemAsset` does not model yet, so they
+    /// stay on the legacy `LibretroBuildbot` path. Pin that boundary — adding
+    /// one here without a destination-subdir field would misplace the files.
+    @Test func subdirExtractingCores_areNotManifestServed() {
+        #expect(ThinSystemFileManifest.entry(forCoreID: "mame2003_plus_libretro") == nil)
+        #expect(ThinSystemFileManifest.entry(forCoreID: "mame2010_libretro") == nil)
+        #expect(ThinSystemFileManifest.entry(forCoreID: "fbneo_libretro") == nil)
+        #expect(ThinSystemFileManifest.entry(forCoreID: "xrick_libretro") == nil)
     }
 
     @Test func lookup_unknownCore_returnsNil() {
@@ -46,11 +51,16 @@ struct ThinSystemFileManifestTests {
                 == "https://buildbot.libretro.com/assets/system/PPSSPP.zip")
     }
 
-    @Test func encodedAssetNames_areValidURLs() {
-        // FinalBurn Neo / MAME / XRick names contain encoded spaces + parens —
-        // they must still resolve to non-empty asset lists (URL init succeeded).
-        #expect(ThinSystemFileManifest.entry(forCoreID: "fbneo_libretro")?.assets.isEmpty == false)
-        #expect(ThinSystemFileManifest.entry(forCoreID: "xrick_libretro")?.assets.isEmpty == false)
+    /// `asset(_:displayName:)` silently drops the asset when `URL(string:)`
+    /// fails, so an empty list means a malformed (e.g. unencoded) file name.
+    /// Every registered entry must yield exactly one well-formed buildbot URL.
+    @Test func everyEntry_hasAWellFormedBuildbotAsset() {
+        for entry in ThinSystemFileManifest.entries {
+            #expect(entry.assets.count == 1,
+                    "entry '\(entry.stampKey)' lost its asset to a malformed URL")
+            #expect(entry.assets.first?.sourceURL.absoluteString
+                        .hasPrefix(ThinSystemFileManifest.systemBaseURL) == true)
+        }
     }
 
     @Test func stampFileName_format() {
