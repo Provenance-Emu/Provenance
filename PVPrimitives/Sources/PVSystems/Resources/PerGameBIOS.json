@@ -1,0 +1,1335 @@
+{
+  "version": 1,
+  "biosFiles": [
+    {
+      "id": "airlbios",
+      "filenames": [
+        "airlbios.zip",
+        "airlbios.7z"
+      ],
+      "description": "Airline Pilots BIOS (Sega NAOMI)",
+      "md5": null,
+      "size": null,
+      "installSystem": "com.provenance.naomi"
+    },
+    {
+      "id": "awbios",
+      "filenames": [
+        "awbios.zip",
+        "awbios.7z"
+      ],
+      "description": "Sammy Atomiswave BIOS",
+      "md5": null,
+      "size": null,
+      "installSystem": "com.provenance.atomiswave"
+    },
+    {
+      "id": "f355bios",
+      "filenames": [
+        "f355bios.zip",
+        "f355bios.7z"
+      ],
+      "description": "Ferrari F355 Challenge BIOS (Sega NAOMI, twin/deluxe)",
+      "md5": null,
+      "size": null,
+      "installSystem": "com.provenance.naomi"
+    },
+    {
+      "id": "f355dlx",
+      "filenames": [
+        "f355dlx.zip",
+        "f355dlx.7z"
+      ],
+      "description": "Ferrari F355 Challenge BIOS (Sega NAOMI, deluxe)",
+      "md5": null,
+      "size": null,
+      "installSystem": "com.provenance.naomi"
+    },
+    {
+      "id": "hod2bios",
+      "filenames": [
+        "hod2bios.zip",
+        "hod2bios.7z"
+      ],
+      "description": "The House of the Dead 2 BIOS (Sega NAOMI)",
+      "md5": null,
+      "size": null,
+      "installSystem": "com.provenance.naomi"
+    },
+    {
+      "id": "naomi",
+      "filenames": [
+        "naomi.zip",
+        "naomi.7z"
+      ],
+      "description": "Sega NAOMI BIOS",
+      "md5": null,
+      "size": null,
+      "installSystem": "com.provenance.naomi"
+    },
+    {
+      "id": "naomi2",
+      "filenames": [
+        "naomi2.zip",
+        "naomi2.7z"
+      ],
+      "description": "Sega NAOMI 2 BIOS",
+      "md5": null,
+      "size": null,
+      "installSystem": "com.provenance.naomi2"
+    }
+  ],
+  "groups": [
+    {
+      "id": "flycast-arcade",
+      "description": "Per-title BIOS sets for the Sega NAOMI / NAOMI 2 / Sammy Atomiswave arcade boards emulated by flycast. flycast resolves these with a single file_exists at \"<system dir>/dc/<name>.zip\" (falling back to \".7z\") \u2014 see shell/libretro/oslib.cpp findNaomiBios and the game_dir construction in shell/libretro/libretro.cpp.",
+      "systems": [
+        "com.provenance.naomi",
+        "com.provenance.naomi2",
+        "com.provenance.atomiswave"
+      ],
+      "source": "flycast core/hw/naomi/naomi_roms.cpp @ 92a10ba0f0a5ca0d1ec9498962002f4cdcc8e7f6 - transcribed from the `bios` field of the Game[] table. Titles are the table's `description` field. Games whose `bios` field is NULL fall back to flycast's default \"naomi\" BIOS and are deliberately NOT listed here (that is derived behaviour, not sourced data). MD5s and sizes are intentionally null: they are not present in naomi_roms.cpp and were not guessed.",
+      "entries": [
+        {
+          "romSet": "kick4csh",
+          "title": "Kick '4' Cash (Export)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "alpilot",
+          "title": "Airline Pilots (World, Rev B)",
+          "bios": [
+            "airlbios"
+          ]
+        },
+        {
+          "romSet": "alpilotj",
+          "title": "Airline Pilots (Japan, Rev A)",
+          "bios": [
+            "airlbios"
+          ]
+        },
+        {
+          "romSet": "f355",
+          "title": "Ferrari F355 Challenge (deluxe, no link)",
+          "bios": [
+            "f355dlx"
+          ]
+        },
+        {
+          "romSet": "f355twin",
+          "title": "Ferrari F355 Challenge (twin/deluxe)",
+          "bios": [
+            "f355bios"
+          ]
+        },
+        {
+          "romSet": "f355twinp",
+          "title": "Ferrari F355 Challenge (twin/deluxe, preview)",
+          "bios": [
+            "f355bios"
+          ]
+        },
+        {
+          "romSet": "f355twn2",
+          "title": "Ferrari F355 Challenge 2 - International Course Edition (twin/deluxe)",
+          "bios": [
+            "f355bios"
+          ]
+        },
+        {
+          "romSet": "hotd2",
+          "title": "The House of the Dead 2 (USA)",
+          "bios": [
+            "hod2bios"
+          ]
+        },
+        {
+          "romSet": "hotd2o",
+          "title": "The House of the Dead 2",
+          "bios": [
+            "hod2bios"
+          ]
+        },
+        {
+          "romSet": "hotd2e",
+          "title": "The House of the Dead 2 (Export)",
+          "bios": [
+            "hod2bios"
+          ]
+        },
+        {
+          "romSet": "hotd2p",
+          "title": "The House of the Dead 2 (prototype)",
+          "bios": [
+            "hod2bios"
+          ]
+        },
+        {
+          "romSet": "ausfache",
+          "title": "Akatsuki Blitzkampf Ausf. Achse",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "asndynmt",
+          "title": "Asian Dynamite / Dynamite Deka EX",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "asndynmto",
+          "title": "Asian Dynamite / Dynamite Deka EX (older)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "illvelo",
+          "title": "Illvelo (Illmatic Envelope)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "manicpnc",
+          "title": "Manic Panic Ghosts!",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "mamonoro",
+          "title": "Mamoru-kun wa Norowarete Shimatta!",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "mbaa",
+          "title": "Melty Blood Actress Again (Ver. A, Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "mbaao",
+          "title": "Melty Blood Actress Again",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "mushi2eo",
+          "title": "Mushiking The King Of Beetles - Mushiking II / III / III+ (World, Ver. 1.001)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "mushik2e",
+          "title": "Mushiking The King Of Beetles - Mushiking II / III / III+ (World, Ver. 2.001)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "mushik4e",
+          "title": "Mushiking The King Of Beetles - Mushiking IV / V / VI (World)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "mushi2k61",
+          "title": "Mushiking The King Of Beetles 2006 First (Japan)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "mushi2k62",
+          "title": "Mushiking The King Of Beetles 2006 Second (Japan)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "pokasuka",
+          "title": "Pokasuka Ghost!",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "radirgyn",
+          "title": "Radirgy Noa",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "rhytngk",
+          "title": "Rhythm Tengoku",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "sl2007",
+          "title": "Shooting Love 2007",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "zunou",
+          "title": "Touch De Zunou (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "shorsepr",
+          "title": "Star Horse Progress Returns (satellite)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "azumanga",
+          "title": "Azumanga Daioh Puzzle Bobble",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "bdrdown",
+          "title": "Border Down",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "cfield",
+          "title": "Chaos Field",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "chocomk",
+          "title": "Musapey's Choco Marker (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "cleoftp",
+          "title": "Cleopatra Fortune Plus",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "confmiss",
+          "title": "Confidential Mission",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "cvsgd",
+          "title": "Capcom vs. SNK Millennium Fight 2000 Pro (Japan)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "cvs2",
+          "title": "Capcom vs. SNK 2 Mark Of The Millennium 2001 (USA)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "cvs2mf",
+          "title": "Capcom vs. SNK 2 Millionaire Fighting 2001 (Japan, Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "dragntr",
+          "title": "Dragon Treasure (Rev B)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "dragntra",
+          "title": "Dragon Treasure (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "dragntr2",
+          "title": "Dragon Treasure 2 (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "dragntr3",
+          "title": "Dragon Treasure 3 (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "dygolf",
+          "title": "Virtua Golf / Dynamic Golf",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "ggxx",
+          "title": "Guilty Gear XX",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "ggxxac",
+          "title": "Guilty Gear XX Accent Core",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "ggxxrl",
+          "title": "Guilty Gear XX #Reload (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "ggxxrlo",
+          "title": "Guilty Gear XX #Reload",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "ggxxsla",
+          "title": "Guilty Gear XX Slash (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "gundmgd",
+          "title": "Mobile Suit Gundam: Federation vs. Zeon",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "gundmxgd",
+          "title": "Mobile Suit Gundam: Federation vs. Zeon DX",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "ikaruga",
+          "title": "Ikaruga",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "jingystm",
+          "title": "Jingi Storm - The Arcade",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "karous",
+          "title": "Karous",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "keyboard",
+          "title": "La Keyboard",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "kurucham",
+          "title": "Kurukuru Chameleon",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "lupinsho",
+          "title": "Lupin The Third - The Shooting (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "lupinshoo",
+          "title": "Lupin The Third - The Shooting",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "luptype",
+          "title": "Lupin The Third - The Typing",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "meltyb",
+          "title": "Melty Blood Act Cadenza (Ver. B2)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "meltybld",
+          "title": "Melty Blood Act Cadenza (Ver. A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "meltyblo",
+          "title": "Melty Blood Act Cadenza",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "meltybo",
+          "title": "Melty Blood Act Cadenza (Ver. B)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "moeru",
+          "title": "Moeru Casinyo",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "mok",
+          "title": "The Maze of the Kings",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "monkeyba",
+          "title": "Monkey Ball",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "psyvar2",
+          "title": "Psyvariar 2 - The Will To Fabricate",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "puyofev",
+          "title": "Puyo Pop Fever (World)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "puyofevj",
+          "title": "Puyo Puyo Fever (Japan)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "puyofevp",
+          "title": "Puyo Puyo Fever (Prototype)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "quizqgd",
+          "title": "Quiz Keitai Q mode",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "radirgy",
+          "title": "Radirgy (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "radirgyo",
+          "title": "Radirgy",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "senko",
+          "title": "Senko no Ronde (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "senkoo",
+          "title": "Senko no Ronde",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "senkosp",
+          "title": "Senko no Ronde Special",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "sfz3ugd",
+          "title": "Street Fighter Zero 3 Upper",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "shaktam",
+          "title": "Shakatto Tambourine (Rev B)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "shaktamb",
+          "title": "Shakatto Tambourine Cho Powerup Chu (2K1 AUT)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "shaktmsp",
+          "title": "Shakatto Tambourine Motto Norinori Shinkyoku Tsuika (2K1 SPR)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "shikgam2",
+          "title": "Shikigami no Shiro II / The Castle of Shikigami II",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "slashout",
+          "title": "Slashout",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "spkrbtl",
+          "title": "Spikers Battle",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "sprtjam",
+          "title": "Sports Jam",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "ss2005",
+          "title": "Super Shanghai 2005 (Rev A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "ss2005o",
+          "title": "Super Shanghai 2005",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "starseek",
+          "title": "Doki Doki Idol Star Seeker",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "takoron",
+          "title": "Noukone Puzzle Takoron",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "tetkiwam",
+          "title": "Tetris Kiwamemichi",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "trgheart",
+          "title": "Trigger Heart Exelica (Ver. A)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "trghearto",
+          "title": "Trigger Heart Exelica",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "trizeal",
+          "title": "Trizeal",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "undefeat",
+          "title": "Under Defeat",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "usagiym",
+          "title": "Usagi - Yamashiro Mahjong Hen",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "vathlete",
+          "title": "Virtua Athletics / Virtua Athlete",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "vtennis2",
+          "title": "Virtua Tennis 2 / Power Smash 2",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "vtennisg",
+          "title": "Virtua Tennis / Power Smash",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "wsbbgd",
+          "title": "World Series Baseball / Super Major League",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "mj1",
+          "title": "Sega Yonin Uchi Mahjong MJ (Update Disc Ver.1.008, Japan) (CDP-10002B)",
+          "bios": [
+            "naomi"
+          ]
+        },
+        {
+          "romSet": "anmlbskt",
+          "title": "Animal Basket",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "anmlbskta",
+          "title": "Animal Basket (19 Jan 2005)",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "basschal",
+          "title": "Sega Bass Fishing Challenge (Ver. A)",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "basschalo",
+          "title": "Sega Bass Fishing Challenge",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "blokpong",
+          "title": "Block Pong-Pong",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "claychal",
+          "title": "Sega Clay Challenge",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "demofist",
+          "title": "Demolish Fist",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "dirtypig",
+          "title": "Dirty Pigskin Football",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "dolphin",
+          "title": "Dolphin Blue",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "fotns",
+          "title": "Fist Of The North Star",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "ftspeed",
+          "title": "Faster Than Speed",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "ggisuka",
+          "title": "Guilty Gear Isuka",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "ggx15",
+          "title": "Guilty Gear X ver. 1.5",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "kofnw",
+          "title": "The King of Fighters Neowave",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "kofnwj",
+          "title": "The King of Fighters Neowave (Japan)",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "kofxi",
+          "title": "The King of Fighters XI",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "kov7sprt",
+          "title": "Knights of Valour - The Seven Spirits",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "maxspeed",
+          "title": "Maximum Speed",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "mslug6",
+          "title": "Metal Slug 6",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "ngbc",
+          "title": "NeoGeo Battle Coliseum",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "ngbcj",
+          "title": "NeoGeo Battle Coliseum (Japan)",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "rangrmsn",
+          "title": "Ranger Mission",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "rumblef",
+          "title": "The Rumble Fish",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "rumblefp",
+          "title": "The Rumble Fish (prototype)",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "rumblef2",
+          "title": "The Rumble Fish 2",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "rumblf2p",
+          "title": "The Rumble Fish 2 (prototype)",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "salmankt",
+          "title": "Net Select: Salaryman Kintaro",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "samsptk",
+          "title": "Samurai Shodown VI",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "sprtshot",
+          "title": "Sports Shooting USA",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "sushibar",
+          "title": "Sushi Bar",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "vfurlong",
+          "title": "Net Select Horse Racing: Victory Furlong",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "waidrive",
+          "title": "WaiWai Drive",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "xtrmhunt",
+          "title": "Extreme Hunting",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "xtrmhnt2",
+          "title": "Extreme Hunting 2",
+          "bios": [
+            "awbios"
+          ]
+        },
+        {
+          "romSet": "vstrik3co",
+          "title": "Virtua Striker 3 (World)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vstrik3c",
+          "title": "Virtua Striker 3 (World, Rev B)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "wldrider",
+          "title": "Wild Riders",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4cart",
+          "title": "Virtua Fighter 4 (World)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "kingrt66",
+          "title": "The King of Route 66 (Rev A)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "kingrt66p",
+          "title": "The King of Route 66 (prototype)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "soulsurf",
+          "title": "Soul Surfer (Rev A)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4evoct",
+          "title": "Virtua Fighter 4 Evolution (World)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubkrto",
+          "title": "Club Kart: European Session",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubkrta",
+          "title": "Club Kart: European Session (Rev A)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubkrtc",
+          "title": "Club Kart: European Session (Rev C)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubkrt",
+          "title": "Club Kart: European Session (Rev D)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubkprz",
+          "title": "Club Kart Prize (Rev A)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubkpzb",
+          "title": "Club Kart Prize (Ver. B)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubk2k3",
+          "title": "Club Kart: European Session (2003, Rev A)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubk2kp",
+          "title": "Club Kart: European Session (2003, prototype, set 1)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubk2kpa",
+          "title": "Club Kart: European Session (2003, prototype, set 2)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "sgdrvsim",
+          "title": "Sega Driving Simulator",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vstrik3",
+          "title": "Virtua Striker 3",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4o",
+          "title": "Virtua Fighter 4",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4b",
+          "title": "Virtua Fighter 4 (Rev B)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4",
+          "title": "Virtua Fighter 4 (Ver. C)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "beachspi",
+          "title": "Beach Spikers",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initd",
+          "title": "Initial D Arcade Stage (Japan, Rev B)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initdo",
+          "title": "Initial D Arcade Stage (Japan)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4evo",
+          "title": "Virtua Fighter 4 Evolution (Japan, Ver. B)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4evob",
+          "title": "Virtua Fighter 4 Evolution (Japan, Ver. B, GDS-0024B)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4evoa",
+          "title": "Virtua Fighter 4 Evolution (Japan)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initdexp",
+          "title": "Initial D Arcade Stage (Export, Rev A)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initdexpo",
+          "title": "Initial D Arcade Stage (Export)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initdv2j",
+          "title": "Initial D Arcade Stage 2 (Japan, Rev B)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initdv2jo",
+          "title": "Initial D Arcade Stage 2 (Japan)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initdv2ja",
+          "title": "Initial D Arcade Stage 2 (Japan, Rev A)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initdv2e",
+          "title": "Initial D Arcade Stage 2 (Export)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubkcyco",
+          "title": "Club Kart for Cycraft",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "clubkcyc",
+          "title": "Club Kart for Cycraft (Rev A)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initdv3j",
+          "title": "Initial D Arcade Stage 3 (Japan, Rev C)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initdv3jb",
+          "title": "Initial D Arcade Stage 3 (Japan, Rev B)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "initdv3e",
+          "title": "Initial D Arcade Stage 3 (Export)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4tuned",
+          "title": "Virtua Fighter 4 Final Tuned (Ver. B)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4tunedd",
+          "title": "Virtua Fighter 4 Final Tuned (Ver. A)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "vf4tuneda",
+          "title": "Virtua Fighter 4 Final Tuned (Rev A)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "inidv3cy",
+          "title": "Initial D Arcade Stage 3 Cycraft Edition (Rev B)",
+          "bios": [
+            "naomi2"
+          ]
+        },
+        {
+          "romSet": "inidv3ca",
+          "title": "Initial D Arcade Stage 3 Cycraft Edition (Rev A)",
+          "bios": [
+            "naomi2"
+          ]
+        }
+      ]
+    }
+  ]
+}

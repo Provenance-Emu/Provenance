@@ -79,6 +79,27 @@ public extension GameLaunchingViewController {
         }
 
         try await biosCheck(system: system)
+        try perGameBIOSCheck(game: game)
+    }
+
+    /// Verify BIOS files required by *this specific game* rather than by its
+    /// whole system (arcade ROM sets such as House of the Dead 2 or Ferrari
+    /// F355, which flycast loads from a per-title BIOS archive).
+    ///
+    /// Deliberately not folded into `biosCheck(system:)`: that method returns
+    /// early unless `system.requiresBIOS`, and the arcade systems that need
+    /// this are all declared `PVRequiresBIOS = false`.
+    ///
+    /// Without this the core throws deep inside `retro_load_game` and the user
+    /// gets a black screen with no explanation.
+    @MainActor
+    private func perGameBIOSCheck(game: PVGame) throws {
+        let missing = PerGameBIOS.missingRequirements(forGame: game)
+            .filter { !$0.optional }
+        guard !missing.isEmpty else { return }
+
+        WLOG("Per-game BIOS missing for \(game.title): \(missing.map(\.canonicalFilename).joined(separator: ", "))")
+        throw GameLaunchingError.missingBIOSes(PerGameBIOS.describe(missing))
     }
 
     @MainActor func openSaveState(withID objectId: String) async {
@@ -382,6 +403,7 @@ public extension GameLaunchingViewController {
         }
 
         try await biosCheck(system: system)
+        try perGameBIOSCheck(game: game)
     }
 
     // MARK: - Private
@@ -464,6 +486,13 @@ public extension GameLaunchingViewController {
                 }
             }
         }
+
+        /// BIOS files required by this specific title rather than by the whole
+        /// system (see `PerGameBIOSSupport.swift`). Not covered by the loop
+        /// above because those arcade systems are `PVRequiresBIOS = false`.
+        missingBIOSFiles += PerGameBIOS.missingRequirements(forGame: game)
+            .filter { !$0.optional }
+            .map(\.canonicalFilename)
 
         // If everything is fine, proceed without prompt
         if hasAvailableCores && missingBIOSFiles.isEmpty {

@@ -250,6 +250,11 @@ public extension PVEmulatorConfiguration {
         await plists.asyncForEach { plist in
             await processSystemPlist(plist, using: decoder)
         }
+
+        /// Register BIOS files that individual games need (arcade ROM sets, etc.).
+        /// Runs after the systems exist so the records can be attached to them.
+        /// See `PerGameBIOSSupport.swift`.
+        PerGameBIOS.registerBIOSRecords()
     }
     
     /// Print a list of systems for debug use

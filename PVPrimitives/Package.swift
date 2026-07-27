@@ -43,7 +43,11 @@ let package = Package(
         // MARK: ------------ Systems ------------
         .target(
             name: "PVSystems",
-            dependencies: ["PVSupport", "PVLogging", "PVHashing"]
+            dependencies: ["PVSupport", "PVLogging", "PVHashing"],
+            resources: [
+                /// Per-game BIOS manifest (see `PerGameBIOSManifest.swift`).
+                .process("Resources")
+            ]
         ),
         // MARK: ------------ Tests ------------
         .testTarget(
