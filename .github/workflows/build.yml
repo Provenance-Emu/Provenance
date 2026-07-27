@@ -101,7 +101,12 @@ jobs:
 
     runs-on: 'macos-26'
     continue-on-error: ${{ matrix.optional || false }}
-    timeout-minutes: 120
+    # The archive step alone has measured 104 min on a cold Xcode build, and
+    # since DerivedData is no longer cached (see the Cache SPM step) cold is
+    # now the steady state, not an outlier. 120 left almost no margin and a
+    # green iOS archive was reported "cancelled" when post-job work crossed
+    # the wall. 180 keeps a real buffer without masking a genuine hang.
+    timeout-minutes: 180
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -228,13 +233,23 @@ jobs:
           date +%s > "$ARCHIVE_DIR/timestamp.txt"
           echo "RetroArch modules restored from cache"
 
-      - name: Cache SPM and Xcode DerivedData
+      # NOTE: ~/Library/Developer/Xcode/DerivedData is deliberately NOT cached.
+      # The key embeds github.sha, so every push writes a brand-new multi-GB
+      # entry per job (iOS + tvOS). Together with the ~5 GB submodules cache
+      # that blows past the 10 GB per-repo limit, so these entries were always
+      # evicted before the next run could restore them: verified misses on all
+      # three keys (including the bare `-spm-xcode-` prefix) on a run whose
+      # predecessor had saved successfully 3.5h earlier. The cache was
+      # write-only — it cost 3-6 min of upload per job and never once hit, and
+      # on 2026-07-25 that upload overran timeout-minutes and marked a
+      # successful iOS archive as "cancelled". Caching the small SPM dirs still
+      # pays off; DerivedData does not. Xcode builds are cold either way.
+      - name: Cache SPM
         uses: actions/cache@v4
         with:
           path: |
             .build
             ~/Library/Caches/org.swift.swiftpm
-            ~/Library/Developer/Xcode/DerivedData
           key: ${{ runner.os }}-spm-xcode-${{ hashFiles('**/Package.resolved') }}-${{ hashFiles('**/*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ hashFiles('.gitmodules') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-spm-xcode-${{ hashFiles('**/Package.resolved') }}-${{ hashFiles('**/*.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}-${{ hashFiles('.gitmodules') }}-
