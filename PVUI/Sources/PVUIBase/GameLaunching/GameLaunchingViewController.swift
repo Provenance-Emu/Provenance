@@ -435,7 +435,10 @@ public extension GameLaunchingViewController {
         }
 
         try await biosCheck(system: system)
-        try perGameBIOSCheck(game: game)
+        // `perGameBIOSCheck` is @MainActor because it reads a thread-confined
+        // Realm PVGame. `doLoad` is not actor-isolated (unlike `canLoad`), so
+        // hop explicitly instead of relaxing the check's isolation.
+        try await MainActor.run { try perGameBIOSCheck(game: game) }
     }
 
     // MARK: - Private
