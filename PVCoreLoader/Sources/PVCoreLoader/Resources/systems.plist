@@ -3869,7 +3869,7 @@
 				<key>Name</key>
 				<string>naomi.zip</string>
 				<key>Optional</key>
-				<true/>
+				<false/>
 				<key>Size</key>
 				<integer>0</integer>
 			</dict>
@@ -4017,7 +4017,7 @@
 				<key>Name</key>
 				<string>awbios.zip</string>
 				<key>Optional</key>
-				<true/>
+				<false/>
 				<key>Size</key>
 				<integer>0</integer>
 			</dict>
@@ -4163,9 +4163,9 @@
 				<key>MD5</key>
 				<string></string>
 				<key>Name</key>
-				<string>naomi.zip</string>
+				<string>naomi2.zip</string>
 				<key>Optional</key>
-				<true/>
+				<false/>
 				<key>Size</key>
 				<integer>0</integer>
 			</dict>
