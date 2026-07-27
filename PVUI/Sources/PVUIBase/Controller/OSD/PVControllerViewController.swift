@@ -1864,7 +1864,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         #if canImport(FreemiumKit)
         // Non-AppStore builds (dev / TestFlight / sideloaded) are treated as premium.
         if AppState.shared.isAppStore {
-            guard FreemiumKit.shared.purchasedTier != nil else {
+            guard PlusEntitlement.isUnlocked else {
                 // Recording is a Plus feature; direct the user to the pause menu where
                 // the paywall is presented via PaidFeatureView.
                 let alert = UIAlertController(

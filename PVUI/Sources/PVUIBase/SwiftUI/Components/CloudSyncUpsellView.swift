@@ -10,9 +10,6 @@ import Defaults
 import PVSettings
 import PVThemes
 import PVUIBase
-#if canImport(FreemiumKit)
-import FreemiumKit
-#endif
 
 public struct CloudSyncUpsellView: View {
     @ObservedObject private var themeManager = ThemeManager.shared
@@ -30,8 +27,8 @@ public struct CloudSyncUpsellView: View {
     @State private var showPremiumLossAlert = false
 
     public init(hasCachedCloudData: Bool = false,
-         onOpenSettings: @escaping () -> Void,
-         onUpgrade: (() -> Void)? = nil) {
+                onOpenSettings: @escaping () -> Void,
+                onUpgrade: (() -> Void)? = nil) {
         self.hasCachedCloudData = hasCachedCloudData
         self.onOpenSettings = onOpenSettings
         self.onUpgrade = onUpgrade
@@ -41,7 +38,7 @@ public struct CloudSyncUpsellView: View {
     private var isPremium: Bool {
         // Treat self-built, sideloaded, and TestFlight builds as premium.
         if !AppState.shared.isInstalledFromAppStore { return true }
-        return FreemiumKit.shared.purchasedTier != nil
+        return PlusEntitlement.isUnlocked
     }
     #else
     private var isPremium: Bool { true }

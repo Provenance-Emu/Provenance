@@ -10,9 +10,6 @@ import Foundation
 import SwiftUI
 import Defaults
 import PVSettings
-#if canImport(FreemiumKit)
-import FreemiumKit
-#endif
 
 /// Manages showing the support nag screen at appropriate intervals
 public struct SupportNagManager {
@@ -41,9 +38,9 @@ public struct SupportNagManager {
         launchCount += 1
         Defaults[.gameLaunchCount] = launchCount
 
-        // Don't show nag if user already has Provenance Plus
+        // Don't show nag if user already has Provenance Plus (incl. via iFly Pro)
         #if canImport(FreemiumKit)
-        if FreemiumKit.shared.purchasedTier != nil {
+        if PlusEntitlement.isUnlocked {
             return false
         }
         #endif
@@ -79,7 +76,7 @@ public struct SupportNagManager {
 
     /// Record that the user dismissed the nag screen
     public static func recordDismissal() {
-        Defaults[.nagDismissCount] = Defaults[.nagDismissCount] + 1
+        Defaults[.nagDismissCount] += 1
     }
 
     /// Get the current game launch count
