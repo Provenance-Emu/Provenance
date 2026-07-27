@@ -2,7 +2,15 @@
 // https://help.apple.com/xcode/#/dev745c5c974
 
 MARKETING_VERSION = 3.4.0
-CURRENT_PROJECT_VERSION = 2910
+// Local build number. CI ignores this and overrides CURRENT_PROJECT_VERSION
+// with $(git rev-list --count HEAD) (.github/workflows/build.yml), so this
+// value only affects local builds. It had drifted to 2910 while CI shipped
+// ~9950, which meant a locally archived upload would be rejected by App Store
+// Connect as a lower build number than one already shipped. Bumped to the
+// commit count so local matches CI; it drifts behind as commits land, which is
+// harmless — only monotonic increase matters. Re-bump with:
+//   git rev-list --count HEAD
+CURRENT_PROJECT_VERSION = 9951
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) NONJAILBROKEN=1
