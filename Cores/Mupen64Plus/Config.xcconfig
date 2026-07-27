@@ -57,6 +57,10 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*] = $(inherited) 3DMath.cpp  RSP_LoadMa
 // tvOS Simulator
 GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) OS_IOS GLESX USE_GLES=1 NEON=1 SDL_VIDEO_OPENGL_ES2=1
 OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited) -DOS_IOS 
-EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
-INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.c
+// The simulator builds arm64 + x86_64; the NEON sources can't compile on the
+// x86_64 slice, so drop them and let the scalar variants build — same split
+// the iphonesimulator targets use. (This used to exclude every source and
+// re-include a nonexistent PVDebug.c, which produced a binary-less framework
+// and made the tvOS Simulator link fail with "framework not found".)
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*] = $(inherited) 3DMathNeon.cpp gSPNeon.cpp RSP_LoadMatrixNeon.cpp CRC_OPT_NEON.cpp
 
