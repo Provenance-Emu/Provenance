@@ -836,8 +836,12 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .Atari2600: self = .atari2600
         case .Atari5200: self = .atari5200
         case .Atari7800: self = .atari7800
-        case .AtariJaguar: self = .jaguar
-        case .AtariJaguarCD: self = .jaguarcd
+        // Jaguar CD is a peripheral on a Jaguar — identical controller (including
+        // the numeric keypad), so it reuses Jaguar skins rather than requiring a
+        // separate `jaguarcd` skin that essentially no author ships. Same reason
+        // NeoGeo CD maps to `.neogeo` below. The `.jaguarcd` case still exists and
+        // is reachable by explicit identifier for anyone who does author one.
+        case .AtariJaguar, .AtariJaguarCD: self = .jaguar
         case .Lynx: self = .lynx
         case .Atari8bit: self = .atari8bit
         case .AtariST: self = .atarist
