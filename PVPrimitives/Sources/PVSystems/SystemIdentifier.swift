@@ -400,7 +400,11 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
         case .DS:            return "NDS"
         case ._3DS:          return "3DS"
         case .PS2:           return "PS2"
-        case .Dreamcast:     return "DC"
+        // Dreamcast + the Sega arcade boards all run on flycast, which has ONE
+        // hardcoded BIOS convention (<system dir>/dc/), so they deliberately
+        // share a single system directory. This also means naomi.zip is stored
+        // once even though both NAOMI and NAOMI 2 need it.
+        case .Dreamcast, .NAOMI, .NAOMI2, .Atomiswave: return "DC"
         case .Saturn:        return "Saturn"
         case .N64:           return "N64"
         case .GameCube:      return "GC"
@@ -441,7 +445,9 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     public var retroArchSystemDirectoryName: String? {
         switch self {
         case .PSP:           return "PPSSPP"            // PPSSPP libretro
-        case .Dreamcast:     return "dc"                // flycast
+        // flycast: Dreamcast boot ROM and the arcade BIOS zips (naomi.zip /
+        // awbios.zip) are all read from the core's "dc" subdirectory.
+        case .Dreamcast, .NAOMI, .NAOMI2, .Atomiswave: return "dc"
         case .GameCube:      return "dolphin-emu"       // dolphin
         case .Wii:           return "dolphin-emu"       // dolphin
         case .DS:            return "melonds"           // melonDS

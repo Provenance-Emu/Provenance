@@ -186,6 +186,12 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.dreamcast</string>
+				<!-- Sega arcade boards on the same flycast core: NAOMI, NAOMI 2 and
+				     Sammy Atomiswave. They reuse the Dreamcast responder/skins; BIOS
+				     (naomi.zip / awbios.zip) is looked up at <system dir>/dc/. -->
+				<string>com.provenance.naomi</string>
+				<string>com.provenance.naomi2</string>
+				<string>com.provenance.atomiswave</string>
 			</array>
 		</dict>
 		<dict>
@@ -210,6 +216,12 @@
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.dreamcast</string>
+				<!-- Sega arcade boards on the same flycast core: NAOMI, NAOMI 2 and
+				     Sammy Atomiswave. They reuse the Dreamcast responder/skins; BIOS
+				     (naomi.zip / awbios.zip) is looked up at <system dir>/dc/. -->
+				<string>com.provenance.naomi</string>
+				<string>com.provenance.naomi2</string>
+				<string>com.provenance.atomiswave</string>
 			</array>
 		</dict>
 		<dict>

@@ -1089,6 +1089,10 @@ extension PVThinLibretroCore: PVDreamcastSystemResponderClient {
         case .l:      return .l2
         case .r:      return .r2
         case .start:  return .start
+        // Arcade coin/credit (NAOMI / NAOMI 2 / Atomiswave). The Dreamcast pad
+        // has no Select, so SELECT is free and is what libretro arcade cores
+        // conventionally use to insert a coin.
+        case .coin:   return .select
         case .analogUp, .analogDown, .analogLeft, .analogRight, .leftAnalog:
             return nil
         case .count:  return nil

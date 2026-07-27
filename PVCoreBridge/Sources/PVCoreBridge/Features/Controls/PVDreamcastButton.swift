@@ -26,6 +26,11 @@
     case analogLeft
     case analogRight
     case leftAnalog
+    /// Arcade-only: NAOMI / NAOMI 2 / Atomiswave run on the same core and share
+    /// this button set, but need a coin/credit input that the Dreamcast pad has
+    /// no equivalent for. Harmless for Dreamcast itself (never emitted).
+    /// Declared before `count` so `count` stays the last case.
+    case coin
     case count
 
     public init(_ value: String) {
@@ -46,6 +51,7 @@
             case "analogleft", "analog-left": self = .analogLeft
             case "analogright", "analog-right": self = .analogRight
             case "leftanalog", "left-analog": self = .leftAnalog
+            case "coin", "insertcoin", "insert_coin", "insert coin", "credit": self = .coin
             case "count": self = .count
             default: self = .up
         }
@@ -85,6 +91,8 @@
                 return "analogRight"
             case .leftAnalog:
                 return "leftAnalog"
+            case .coin:
+                return "coin"
             case .count:
                 return "count"
         }

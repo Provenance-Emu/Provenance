@@ -2506,21 +2506,49 @@ static bool thin_environment(unsigned cmd, void *data) {
         return;
     }
 
+    // Destination list: the system dir itself, plus the subdirectory the core
+    // actually scans when it declares one. flycast, for example, resolves its
+    // BIOS with a single file_exists at "<system dir>/dc/<name>" (see
+    // shell/libretro/oslib.cpp findNaomiBios + libretro.cpp game_dir), so a
+    // copy landing only in the system-dir root is never found. Copying to both
+    // is additive — cores that read from the root are unaffected.
+    NSMutableArray<NSString *> *destDirs = [NSMutableArray arrayWithObject:systemDir];
+    NSString *coreSubdir = [PVSystemDirectoryHelper
+                            retroArchSystemDirectoryNameForIdentifier:self.systemIdentifier];
+    if (coreSubdir.length > 0) {
+        NSString *nested = [systemDir stringByAppendingPathComponent:coreSubdir];
+        if (![nested.stringByResolvingSymlinksInPath isEqualToString:resolvedSys]) {
+            NSError *mkdirError = nil;
+            [fm createDirectoryAtPath:nested
+          withIntermediateDirectories:YES
+                           attributes:nil
+                                error:&mkdirError];
+            if (mkdirError) {
+                WLOG(@"ThinFrontend: _syncBIOSResources — could not create core subdir %@: %@",
+                     nested, mkdirError.localizedDescription);
+            } else {
+                [destDirs addObject:nested];
+            }
+        }
+    }
+
     NSUInteger copied = 0;
     for (NSString *file in files) {
         NSString *src = [biosDir stringByAppendingPathComponent:file];
-        NSString *dst = [systemDir stringByAppendingPathComponent:file];
-        if ([fm fileExistsAtPath:dst]) {
-            continue;  // never overwrite existing files
-        }
-        NSError *copyError = nil;
-        [fm copyItemAtPath:src toPath:dst error:&copyError];
-        if (copyError) {
-            WLOG(@"ThinFrontend: _syncBIOSResources — failed to copy %@: %@",
-                 file, copyError.localizedDescription);
-        } else {
-            ILOG(@"ThinFrontend: _syncBIOSResources — copied %@ → %@", file, systemDir.lastPathComponent);
-            copied++;
+        for (NSString *destDir in destDirs) {
+            NSString *dst = [destDir stringByAppendingPathComponent:file];
+            if ([fm fileExistsAtPath:dst]) {
+                continue;  // never overwrite existing files
+            }
+            NSError *copyError = nil;
+            [fm copyItemAtPath:src toPath:dst error:&copyError];
+            if (copyError) {
+                WLOG(@"ThinFrontend: _syncBIOSResources — failed to copy %@ → %@: %@",
+                     file, destDir.lastPathComponent, copyError.localizedDescription);
+            } else {
+                ILOG(@"ThinFrontend: _syncBIOSResources — copied %@ → %@", file, destDir.lastPathComponent);
+                copied++;
+            }
         }
     }
     if (copied > 0) {

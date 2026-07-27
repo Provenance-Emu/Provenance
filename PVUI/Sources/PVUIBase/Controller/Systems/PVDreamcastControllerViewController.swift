@@ -41,6 +41,11 @@ class PVDreamcastControllerViewController: PVControllerViewController<PVDreamcas
                 button.buttonTag = .x
             case "y":
                 button.buttonTag = .y
+            // Arcade boards (NAOMI / NAOMI 2 / Atomiswave) run on this same
+            // controller, but are coin-op: honor a Coin button when the layout
+            // or skin supplies one. Dreamcast layouts simply never include it.
+            case "coin", "insert coin", "credit", "🪙":
+                button.buttonTag = .coin
             default:
                 break
             }

@@ -74,8 +74,15 @@ public func systemMenuButtons(for system: SystemIdentifier) -> [SystemMenuButton
         return [start, sound]
 
     // Start-only consoles (analog/digital but only one menu button)
-    case .N64, .Saturn, .Dreamcast, .GameCube, .NAOMI, .Atomiswave, .NAOMI2:
+    case .N64, .Saturn, .Dreamcast, .GameCube:
         return [start]
+
+    // Sega arcade boards (flycast). They share Dreamcast's button set, but are
+    // coin-op hardware, so they default to an arcade menu set including Coin.
+    // `PVDreamcastButton` gained a `.coin` case for exactly this (the wrapper
+    // maps it to SELECT, which the Dreamcast pad never uses).
+    case .NAOMI, .NAOMI2, .Atomiswave:
+        return [start, coin]
 
     // Genesis family — Start + Mode
     case .Genesis, .SegaCD, .GameGear, .Sega32X:

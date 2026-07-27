@@ -2678,9 +2678,13 @@ public class DeltaSkinInputHandler: ObservableObject {
         // 32X uses "mode" directly, so don't convert it to "select" for 32X
         if system != .Sega32X && ["mode", "option"].contains(s) { return "select" }
         /// Systems that use "l" and "r" directly (not "l1"/"r1"): VirtualBoy, 3DO, N64, Saturn, Dreamcast, GBA, DS, SNES
-        /// Don't convert them to "l1"/"r1" in common handling
+        /// Don't convert them to "l1"/"r1" in common handling.
+        /// NAOMI / NAOMI 2 / Atomiswave share Dreamcast's button enum and skins,
+        /// so they must follow Dreamcast here — otherwise a Dreamcast skin's
+        /// "l"/"r" cells get rewritten and only work by accident.
         if system != .VirtualBoy && system != ._3DO && system != .N64 && system != .Saturn &&
-           system != .Dreamcast && system != .GBA && system != .DS && system != .SNES {
+           system != .Dreamcast && system != .GBA && system != .DS && system != .SNES &&
+           system != .NAOMI && system != .NAOMI2 && system != .Atomiswave {
             if ["l", "lb", "lshoulder", "shoulderleft"].contains(s) { return "l1" }
             if ["r", "rb", "rshoulder", "shoulderright"].contains(s) { return "r1" }
         }
