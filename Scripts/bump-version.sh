@@ -50,8 +50,8 @@ if [[ ! -f "$XCCONFIG" ]]; then
     exit 1
 fi
 
-CURRENT_MARKETING=$(grep -E '^MARKETING_VERSION\s*=' "$XCCONFIG" | sed 's/.*=\s*//' | tr -d '[:space:]')
-CURRENT_BUILD=$(grep -E '^CURRENT_PROJECT_VERSION\s*=' "$XCCONFIG" | sed 's/.*=\s*//' | tr -d '[:space:]')
+CURRENT_MARKETING=$(grep -E '^MARKETING_VERSION[[:space:]]*=' "$XCCONFIG" | sed 's/.*=[[:space:]]*//' | tr -d '[:space:]')
+CURRENT_BUILD=$(grep -E '^CURRENT_PROJECT_VERSION[[:space:]]*=' "$XCCONFIG" | sed 's/.*=[[:space:]]*//' | tr -d '[:space:]')
 
 if [[ -z "$CURRENT_MARKETING" ]]; then
     echo "Error: MARKETING_VERSION not found in $XCCONFIG" >&2
@@ -97,8 +97,8 @@ if [[ "$DRY_RUN" == "true" ]]; then
 fi
 
 # ── Write changes (BSD sed compatible) ───────────────────────────────────────
-sed -i '' "s/^MARKETING_VERSION\s*=.*/MARKETING_VERSION = $NEW_MARKETING/" "$XCCONFIG"
-sed -i '' "s/^CURRENT_PROJECT_VERSION\s*=.*/CURRENT_PROJECT_VERSION = $NEW_BUILD/" "$XCCONFIG"
+sed -i '' "s/^MARKETING_VERSION[[:space:]]*=.*/MARKETING_VERSION = $NEW_MARKETING/" "$XCCONFIG"
+sed -i '' "s/^CURRENT_PROJECT_VERSION[[:space:]]*=.*/CURRENT_PROJECT_VERSION = $NEW_BUILD/" "$XCCONFIG"
 
 echo "Updated $XCCONFIG"
 

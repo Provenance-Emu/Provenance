@@ -95,7 +95,7 @@ case "$CHANNEL" in testflight|github|all) ;; *) err "Unknown --channel: $CHANNEL
 
 # ── Resolve version and build number ─────────────────────────────────────────────
 if [[ -z "$VERSION" ]]; then
-    VERSION=$(grep -E '^MARKETING_VERSION\s*=' "$XCCONFIG" | sed 's/.*=\s*//' | tr -d '[:space:]')
+    VERSION=$(grep -E '^MARKETING_VERSION[[:space:]]*=' "$XCCONFIG" | sed 's/.*=[[:space:]]*//' | tr -d '[:space:]')
 fi
 if [[ -z "$VERSION" ]]; then
     err "MARKETING_VERSION not found in $XCCONFIG"
@@ -137,7 +137,7 @@ inject_build_number() {
     # uncommitted edits — a blanket `git checkout` here would silently wipe them.
     cp "$XCCONFIG" "$XCCONFIG_BAK"
     # BSD sed (macOS): -i '' for in-place, matching Scripts/bump-version.sh.
-    sed -i '' "s/^CURRENT_PROJECT_VERSION\s*=.*/CURRENT_PROJECT_VERSION = ${BUILD_NUMBER}/" "$XCCONFIG"
+    sed -i '' "s/^CURRENT_PROJECT_VERSION[[:space:]]*=.*/CURRENT_PROJECT_VERSION = ${BUILD_NUMBER}/" "$XCCONFIG"
 }
 
 restore_build_number() {
