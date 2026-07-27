@@ -678,6 +678,27 @@ public class SceneCoordinator: ObservableObject {
             }
         }
 
+        /// BIOS files required by this specific title rather than by the whole
+        /// system (arcade ROM sets — see `PerGameBIOSSupport.swift`). Not covered
+        /// by the loop above: those systems are all `PVRequiresBIOS = false`, and
+        /// the files are registered as optional so they can't gate every game.
+        for requirement in PerGameBIOS.missingRequirements(forGame: game) where !requirement.optional {
+            let filename = requirement.canonicalFilename
+            guard Defaults[.iCloudSync] else {
+                missingBIOSFiles.append(filename)
+                continue
+            }
+            await MainActor.run {
+                syncStatusManager.update(statusMessage: "Downloading BIOS: \(filename)...")
+            }
+            let downloaded = await tryDownloadBIOSFromCloud(filename: filename,
+                                                            expectedMD5: requirement.expectedMD5 ?? "",
+                                                            system: system)
+            if !downloaded {
+                missingBIOSFiles.append(filename)
+            }
+        }
+
         let canProceed = hasAvailableCores && missingBIOSFiles.isEmpty
 
         return PreDownloadValidation(
