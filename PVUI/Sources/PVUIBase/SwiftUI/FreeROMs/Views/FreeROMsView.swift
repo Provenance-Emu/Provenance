@@ -7,6 +7,9 @@ public struct FreeROMsView: View {
     private static let unsupportedSystems: Set<SystemIdentifier> = [
         //        ._3DS,        // Not supported yet
         .Dreamcast,
+        .NAOMI,       // Arcade boards — no free ROM sets
+        .NAOMI2,
+        .Atomiswave,
         .MAME,
         .PS2,         // Not supported yet
         .PS3,         // Not supported yet

@@ -15,12 +15,20 @@ import Foundation
 
 // swiftlint:disable identifier_name line_length number_separator type_body_length
 public enum CorePlist {
-  public static let pvCoreIdentifier: String = "com.provenance.core.EP128Emu"
+  // NOTE: hand-maintained. There is no swiftgen.yml or SwiftGen build phase in
+  // Cores/Flycast, so this file does NOT regenerate — keep it in sync with
+  // Cores/Flycast/PVFlycast/Core.plist by hand.
+  public static let pvCoreIdentifier: String = "com.provenance.core.flycast"
   public static let pvPrincipleClass: String = "PVFlycast.PVFlycastEmuCore"
   public static let pvProjectName: String = "Flycast"
-  public static let pvProjectURL: String = ""
-  public static let pvProjectVersion: String = ""
-  public static let pvSupportedSystems: [String] = ["com.provenance.dreamcast"]
+  public static let pvProjectURL: String = "https://github.com/flyinghead/flycast"
+  public static let pvProjectVersion: String = "5.0"
+  public static let pvSupportedSystems: [String] = [
+    "com.provenance.dreamcast",
+    "com.provenance.naomi",
+    "com.provenance.naomi2",
+    "com.provenance.atomiswave"
+  ]
 
   #if canImport(PVCoreBridge)
     public static var corePlist: EmulatorCoreInfoPlist {

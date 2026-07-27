@@ -993,7 +993,10 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
         // Planet Ring, etc.) switch port 0 to RETRO_DEVICE_MOUSE so touch/pointer events reach
         // the Maple bus mouse peripheral. For all other games force RETRO_DEVICE_JOYPAD, which
         // overrides any Flycast core-option that might enable mouse by default.
-        if sysID == .Dreamcast && port == 0 {
+        // NAOMI / NAOMI 2 / Atomiswave run on the same core and need the same
+        // port-0 forcing, or flycast can silently bring up mouse input on an
+        // arcade game.
+        if (sysID == .Dreamcast || sysID == .NAOMI || sysID == .NAOMI2 || sysID == .Atomiswave) && port == 0 {
             if MouseGameRegistry.shared.gameSupportsMouse(
                 systemIdentifier: sysID,
                 md5: romMD5,

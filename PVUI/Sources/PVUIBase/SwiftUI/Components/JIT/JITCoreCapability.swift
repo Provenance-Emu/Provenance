@@ -82,7 +82,7 @@ public enum JITCoreCapability: CaseIterable {
         case .dolphin:  return ["gamecube", "wii"]
         case .ppsspp:   return ["psp"]
         case .azahar:   return ["3ds"]
-        case .flycast:  return ["dreamcast"]
+        case .flycast:  return ["dreamcast", "naomi", "naomi2", "atomiswave"]
         case .mupen:    return ["n64"]
         // Use ".ps2" to avoid matching "cps2" (com.provenance.cps2)
         case .pcsx2:    return [".ps2"]

@@ -31,6 +31,11 @@ extension SystemIdentifier {
             return s
         }
         if let cid = coreIdentifier?.lowercased() {
+            // flycast serves Dreamcast AND the Sega arcade boards (NAOMI,
+            // NAOMI 2, Atomiswave), so the core id alone is ambiguous. The
+            // game's own / linked PVSystem is checked above and wins, so this
+            // is only a last-resort guess; Dreamcast is the overwhelmingly
+            // common case and arcade boards have effectively no cheat sets.
             if cid.contains("flycast") {
                 return .Dreamcast
             }
