@@ -39,4 +39,8 @@ group :test do
 end
 
 plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
-eval_gemfile(plugins_path) if File.exist?(plugins_path)
+# NOTE: Dependabot only supports an uninterpolated string literal as the
+# eval_gemfile argument; passing `plugins_path` aborts its file fetcher.
+# Bundler resolves the relative path against this Gemfile's own directory,
+# so this is equivalent to eval_gemfile(plugins_path).
+eval_gemfile('fastlane/Pluginfile') if File.exist?(plugins_path)
