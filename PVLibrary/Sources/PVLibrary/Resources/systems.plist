@@ -1460,6 +1460,16 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
+					<dict>
+						<key>PVControlFrame</key>
+						<string>{{0,0},{48,48}}</string>
+						<key>PVControlTint</key>
+						<string>#ffbe2c</string>
+						<key>PVControlTitle</key>
+						<string>Coin</string>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+					</dict>
 				</array>
 			</dict>
 			<dict>
@@ -1623,6 +1633,16 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
+					<dict>
+						<key>PVControlFrame</key>
+						<string>{{0,0},{48,48}}</string>
+						<key>PVControlTint</key>
+						<string>#ffbe2c</string>
+						<key>PVControlTitle</key>
+						<string>Coin</string>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+					</dict>
 				</array>
 			</dict>
 			<dict>
@@ -1783,6 +1803,16 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
+					<dict>
+						<key>PVControlFrame</key>
+						<string>{{0,0},{48,48}}</string>
+						<key>PVControlTint</key>
+						<string>#ffbe2c</string>
+						<key>PVControlTitle</key>
+						<string>Coin</string>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+					</dict>
 				</array>
 			</dict>
 			<dict>
@@ -1940,6 +1970,16 @@
 						<string>#fe6af4</string>
 						<key>PVControlTitle</key>
 						<string>□</string>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+					</dict>
+					<dict>
+						<key>PVControlFrame</key>
+						<string>{{0,0},{48,48}}</string>
+						<key>PVControlTint</key>
+						<string>#ffbe2c</string>
+						<key>PVControlTitle</key>
+						<string>Coin</string>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
@@ -3942,6 +3982,16 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
+					<dict>
+						<key>PVControlFrame</key>
+						<string>{{0,0},{48,48}}</string>
+						<key>PVControlTint</key>
+						<string>#ffbe2c</string>
+						<key>PVControlTitle</key>
+						<string>Coin</string>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+					</dict>
 				</array>
 			</dict>
 			<dict>
@@ -4080,6 +4130,16 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>
+					<dict>
+						<key>PVControlFrame</key>
+						<string>{{0,0},{48,48}}</string>
+						<key>PVControlTint</key>
+						<string>#ffbe2c</string>
+						<key>PVControlTitle</key>
+						<string>Coin</string>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+					</dict>
 				</array>
 			</dict>
 			<dict>
@@ -4215,6 +4275,16 @@
 						<string>#eeb944</string>
 						<key>PVControlTitle</key>
 						<string>X</string>
+						<key>PVControlType</key>
+						<string>PVButton</string>
+					</dict>
+					<dict>
+						<key>PVControlFrame</key>
+						<string>{{0,0},{48,48}}</string>
+						<key>PVControlTint</key>
+						<string>#ffbe2c</string>
+						<key>PVControlTitle</key>
+						<string>Coin</string>
 						<key>PVControlType</key>
 						<string>PVButton</string>
 					</dict>

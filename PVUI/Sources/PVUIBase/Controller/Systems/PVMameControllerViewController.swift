@@ -25,13 +25,10 @@ private extension JSButton {
     }
 }
 
-// TODO(tvos-tester-18may-mame): systems.plist PVControlLayout for com.provenance.mame /
-// com.provenance.cps1 / com.provenance.cps2 / com.provenance.cps3 does NOT surface a
-// dedicated "Coin" (PVControlTitle = "Coin") PVButton in the layout array. Today users
-// see "CBDC" on the select position (which doubles as coin via .select -> JOYPAD_SELECT)
-// but there is no labelled Coin button on the touch skin. Adding a PVButton with
-// PVControlTitle "Coin" to each of those four systems' PVControlLayout would pick up
-// the .coin tagging in layoutViews() below (see PVMameControllerViewController.swift:49).
+// systems.plist now ships a dedicated "Coin" (PVControlTitle = "Coin") PVButton inside the
+// PVButtonGroup for com.provenance.mame / cps1 / cps2 / cps3, which the .coin tagging in
+// layoutViews() below picks up. "CBDC" remains on the select position (.select ->
+// JOYPAD_SELECT); Coin is a separate, labelled input.
 final class PVMAMEControllerViewController: PVControllerViewController<PVMAMESystemResponderClient> {
     override func layoutViews() {
         leftAnalogButton?.buttonTag = .l3
