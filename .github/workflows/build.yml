@@ -76,17 +76,24 @@ jobs:
             IPA_NAME: "Provenance-tvOS"
             optional: true
 
-          # Lite targets — uncomment if needed for fast-fail validation
-          # - target: "Provenance-Lite-iOS"
-          #   sdk: iphoneos
-          #   scheme: "Provenance-Lite (AppStore) (Release)"
-          #   APP_NAME: "Provenance Lite"
-          #   IPA_NAME: "Provenance-Lite-iOS"
-          # - target: "Provenance-Lite-tvOS"
-          #   sdk: appletvos
-          #   scheme: "Provenance-Lite (AppStore) (Release)"
-          #   APP_NAME: "Provenance Lite"
-          #   IPA_NAME: "Provenance-Lite-tvOS"
+          # Lite targets. Kept enabled so Lite-only breakage fails fast: while
+          # these were commented out, Lite was unbuildable for ~4 months (the
+          # embedded extensions' bundle ids stopped matching Lite's parent id)
+          # and nothing caught it.
+          - target: "Provenance-Lite-iOS"
+            sdk: iphoneos
+            destination: "generic/platform=iOS"
+            scheme: "Provenance-Lite (AppStore) (Release)"
+            APP_NAME: "Provenance Lite"
+            IPA_NAME: "Provenance-Lite-iOS"
+
+          - target: "Provenance-Lite-tvOS"
+            sdk: appletvos
+            destination: "generic/platform=tvOS"
+            scheme: "Provenance-Lite (AppStore) (Release)"
+            APP_NAME: "Provenance Lite"
+            IPA_NAME: "Provenance-Lite-tvOS"
+            optional: true
 
     runs-on: 'macos-26'
     continue-on-error: ${{ matrix.optional || false }}
