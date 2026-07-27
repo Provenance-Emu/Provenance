@@ -686,7 +686,6 @@
 		B3DD02042F20031900000000 /* NowPlayingStandByWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01042F20031900000000 /* NowPlayingStandByWidget.swift */; };
 		B3DD02052F20031900000000 /* WidgetSharedDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD01052F20031900000000 /* WidgetSharedDefaults.swift */; };
 		B3DD04002F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B3DD04012F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3DD04022F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B355E0382920AC1A00E4C858 /* WidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3DD06002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05002F20031900000001 /* Widgets/RecentlyPlayedWidget.swift */; };
 		B3DD06012F20031900000001 /* Widgets/FavoritesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DD05012F20031900000001 /* Widgets/FavoritesWidget.swift */; };
@@ -914,7 +913,6 @@
 		BF7274B82A9B8A4C7CC1BD86 /* libc.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EF2BE7F9690066D4B6 /* libc.tbd */; };
 		C0C0CA0100000001 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CA0100000002 /* Sentry */; };
 		C0C0CA0100000003 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CA0100000004 /* Sentry */; };
-		C0C0CAFE3595000000000013 /* ROM File ProviderUI.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C0C0DE0100000004 /* ProvenanceOpticalDriveDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000002 /* ProvenanceOpticalDriveDriver.swift */; };
 		C0C0DE0100000005 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
 		C0C0DE010000000F /* ProvenanceOpticalDriveDriver.dext in Embed DriverKit Extensions */ = {isa = PBXBuildFile; fileRef = C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -1401,8 +1399,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B3DD04012F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
-				C0C0CAFE3595000000000013 /* ROM File ProviderUI.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
