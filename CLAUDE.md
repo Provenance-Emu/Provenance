@@ -42,6 +42,14 @@ GitHub Actions (`.github/workflows/build.yml`) builds all target variants on pus
 
 - **CI cache can shadow source changes.** `actions/cache@v4` caches `Cores/`, `CoresRetro/`, `Dependencies/`, `PVRcheevos/` for submodule speed. A post-restore step runs `git checkout HEAD -- Cores CoresRetro Dependencies PVRcheevos` to un-shadow parent-repo-tracked files. If a CI build ignores your source changes, check that this step ran successfully.
 
+- **xcbeautify hides Run Script output — don't debug CI from the console log.** The build pipes through `2>&1 | tee /tmp/xcodebuild.log | xcbeautify`, and xcbeautify filters out Run Script phase output. `GetModule:` / `MakeFrameworks:` lines therefore never appear in `gh run view` or `gh api .../jobs/<id>/logs`, even when the script ran fine — an empty grep means "filtered", not "never ran". Those lines exist only in the raw log, which is uploaded on failure as artifact `xcodebuild-log-<IPA_NAME>` (3-day retention):
+
+  ```bash
+  gh run download <run-id> -n xcodebuild-log-Provenance-iOS
+  ```
+
+  The failure-report step also prints, in order: `: error:` diagnostics, the `The following build commands failed:` block, and the last 100 raw lines. It greps `": (fatal )?error:"` with a **leading colon** on purpose — a bare `"error:"` also matches ObjC selectors like `loadStateToFileAtPath:error:` inside `-Wincomplete-implementation` warnings, which floods the report and buries the real errors. Run Script failures (e.g. "Generate Frameworks" exiting non-zero) produce no `error:` line at all and surface *only* in the `build commands failed` block.
+
 ## Architecture
 
 ### Module Structure
