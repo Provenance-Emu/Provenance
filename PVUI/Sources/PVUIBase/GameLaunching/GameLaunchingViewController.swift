@@ -102,6 +102,38 @@ public extension GameLaunchingViewController {
         throw GameLaunchingError.missingBIOSes(PerGameBIOS.describe(missing))
     }
 
+    /// Show the "Missing BIOS files" alert, telling the user exactly which
+    /// folder the files belong in.
+    @MainActor
+    func presentMissingBIOSError(_ missingBIOSes: [String], forGame game: PVGame) {
+        guard let system = game.system else {
+            displayAndLogError(withTitle: "Missing BIOS files", message: missingBIOSes.joined(separator: "\n"), customActions: nil)
+            return
+        }
+
+        // Create the missing BIOS directory to help the user out
+        PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
+
+        let missingFilesString = missingBIOSes.joined(separator: "\n")
+        // Use platform-aware path (Documents on iOS, Caches on tvOS)
+        let rootDirName = RelativeRoot.platformDefault == .caches ? "Caches" : "Documents"
+        let relativeBiosPath = "\(rootDirName)/BIOS/\(system.identifier)/"
+
+        let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
+        let cancelAction = UIAlertAction(title: "Close", style: .destructive)
+#if os(iOS)
+        let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
+            Task { @MainActor in
+                guard let url = URL(string: WIKI_BIOS_URL) else { return }
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        })
+        displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction, cancelAction])
+#else
+        displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [cancelAction])
+#endif
+    }
+
     @MainActor func openSaveState(withID objectId: String) async {
         let realm = RomDatabase.sharedInstance
         if let object = realm.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: objectId) {
@@ -1262,27 +1294,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                 )
             }
         } catch let GameLaunchingError.missingBIOSes(missingBIOSes) {
-            // Create missing BIOS directory to help user out
-            PVEmulatorConfiguration.createBIOSDirectory(forSystemIdentifier: system.enumValue)
-
-            let missingFilesString = missingBIOSes.joined(separator: "\n")
-            // Use platform-aware path (Documents on iOS, Caches on tvOS)
-            let rootDirName = RelativeRoot.platformDefault == .caches ? "Caches" : "Documents"
-            let relativeBiosPath = "\(rootDirName)/BIOS/\(system.identifier)/"
-
-            let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
-#if os(iOS)
-            let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
-                Task {@MainActor in
-                    UIApplication.shared.open(URL(string: WIKI_BIOS_URL)!, options: [:], completionHandler: nil)
-                }
-            })
-            let cancelAction =  UIAlertAction(title: "Close", style: .destructive)
-            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction, cancelAction])
-#else
-            let cancelAction =  UIAlertAction(title: "Close", style: .destructive)
-            displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [cancelAction])
-#endif
+            presentMissingBIOSError(missingBIOSes, forGame: game)
         } catch GameLaunchingError.systemNotFound {
             displayAndLogError(withTitle: "Core not found", message: "No Core was found to run system '\(system.name)'.")
         } catch let GameLaunchingError.generic(message) {
@@ -1353,6 +1365,21 @@ extension GameLaunchingViewController where Self: UIViewController {
     func presentCoreSelection(forGame game: PVGame, sender: Any?) {
         guard let system = game.system else {
             ELOG("No system for game \(game.title)")
+            return
+        }
+
+        /// This path calls `presentEMU` directly rather than going through
+        /// `load(_:sender:core:saveState:)`, so it never reaches `canLoad`.
+        /// Re-run the per-game BIOS gate here or the "Choose core…" menu becomes
+        /// a way to launch straight into a black screen. (System-level BIOS is
+        /// still checked inside `presentEMU`'s own path via `load`.)
+        do {
+            try perGameBIOSCheck(game: game)
+        } catch let GameLaunchingError.missingBIOSes(missing) {
+            presentMissingBIOSError(missing, forGame: game)
+            return
+        } catch {
+            ELOG("Per-game BIOS check failed: \(error.localizedDescription)")
             return
         }
 

@@ -20,6 +20,7 @@
 //
 
 import Foundation
+import PVLogging
 
 // MARK: - Manifest DTO
 
@@ -313,10 +314,14 @@ public extension PerGameBIOSResolver {
     ///
     /// Falling back to ``empty`` is deliberate: a malformed manifest must
     /// degrade to "no per-game BIOS is required" rather than break launching.
+    /// Logged loudly, because the symptom of a missing resource bundle is
+    /// "the per-game BIOS gate silently does nothing" — indistinguishable from
+    /// "no game needed one".
     static let bundled: PerGameBIOSResolver = {
         do {
             return try loadBundled()
         } catch {
+            ELOG("PerGameBIOS: manifest unavailable, per-game BIOS checks disabled — \(error)")
             return .empty
         }
     }()
