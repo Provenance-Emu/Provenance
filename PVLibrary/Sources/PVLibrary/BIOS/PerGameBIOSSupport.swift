@@ -129,6 +129,11 @@ public enum PerGameBIOS {
                     try fileManager.copyItem(at: source, to: target)
                     copied += 1
                     ILOG("PerGameBIOS: staged \(filename) → BIOS/\(systemID)")
+                } catch CocoaError.fileWriteFileExists {
+                    /// Another launch path staged the same file between the check
+                    /// above and this copy. Both callers wanted the file there, so
+                    /// this is success, not failure.
+                    copied += 1
                 } catch {
                     WLOG("PerGameBIOS: could not stage \(filename): \(error.localizedDescription)")
                 }
@@ -162,14 +167,22 @@ public enum PerGameBIOS {
 
     /// Convenience overload for a Realm `PVGame`.
     ///
-    /// Reads `romPath` rather than the `PVFile` so this stays cheap and does
-    /// not touch the file system for the name.
+    /// Only reads `@Persisted` scalars, so it is safe on a frozen game — which
+    /// is what the SceneCoordinator launch path hands over (`root_load` calls
+    /// `game.freeze()` before `launchGame`). Falls back to the `PVFile` name if
+    /// `romPath` is empty.
     public static func missingRequirements(forGame game: PVGame) -> [PerGameBIOSRequirement] {
         guard !game.isInvalidated else { return [] }
         let systemID = game.systemIdentifier
         guard !systemID.isEmpty else { return [] }
+
+        let romFilename = game.romPath.isEmpty ? (game.file?.fileName ?? "") : game.romPath
+        guard !romFilename.isEmpty || !game.md5Hash.isEmpty else {
+            DLOG("PerGameBIOS: \(game.title) has no ROM filename or MD5 to match on")
+            return []
+        }
         return missingRequirements(forSystemIdentifier: systemID,
-                                   romFilename: game.romPath,
+                                   romFilename: romFilename,
                                    md5: game.md5Hash)
     }
 
