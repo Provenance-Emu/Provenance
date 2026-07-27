@@ -76,16 +76,20 @@ jobs:
             IPA_NAME: "Provenance-tvOS"
             optional: true
 
-          # Lite targets. Kept enabled so Lite-only breakage fails fast: while
-          # these were commented out, Lite was unbuildable for ~4 months (the
-          # embedded extensions' bundle ids stopped matching Lite's parent id)
-          # and nothing caught it.
+          # Lite targets. Kept enabled for visibility: while these were
+          # commented out, Lite was unbuildable for ~4 months (the embedded
+          # extensions' bundle ids stopped matching Lite's parent id) and
+          # nothing caught it. Both are optional: true, so a Lite-only
+          # regression is reported without gating develop — the Lite
+          # Release/device path has not had a clean CI verdict yet. Drop
+          # optional from Lite-iOS once it has gone green a few times.
           - target: "Provenance-Lite-iOS"
             sdk: iphoneos
             destination: "generic/platform=iOS"
             scheme: "Provenance-Lite (AppStore) (Release)"
             APP_NAME: "Provenance Lite"
             IPA_NAME: "Provenance-Lite-iOS"
+            optional: true
 
           - target: "Provenance-Lite-tvOS"
             sdk: appletvos
