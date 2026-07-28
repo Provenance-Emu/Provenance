@@ -32,7 +32,8 @@
 //      Ownership comes from FreemiumKit (`purchasedTier`); the period/expiry in
 //      the payload come from StoreKit `currentEntitlements`. Mirrored at launch
 //      (twice — the second pass catches StoreKit's async entitlement load) and
-//      on every foreground.
+//      on every foreground. Deletes are deferred until that load settles so a
+//      short launch can't clear a real owner's mirror.
 //    * `CrossAppEntitlementReader` — reads `ifly.pro` and, when it grants,
 //      unlocks Provenance Plus via FreemiumKit's tier override so every
 //      existing Plus gate (`PaidFeatureView`, `PaidStatusView`, `purchasedTier`
@@ -151,7 +152,8 @@ public enum CrossAppEntitlementPublisher {
         let tierOwned = false
         #endif
         let siblingGranted = CrossAppEntitlementReader.didGrantPlusFromSibling
-        Task { await mirrorPlusState(tierOwned: tierOwned, siblingGranted: siblingGranted) }
+        let allowClear = storeKitSettled
+        Task { await mirrorPlusState(tierOwned: tierOwned, siblingGranted: siblingGranted, allowClear: allowClear) }
     }
 
     /// Launch-time convenience: publish now, then once more after StoreKit's
@@ -161,6 +163,7 @@ public enum CrossAppEntitlementPublisher {
         publishPlusState()
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: storeKitSettleDelay)
+            storeKitSettled = true
             publishPlusState()
         }
     }
@@ -168,6 +171,16 @@ public enum CrossAppEntitlementPublisher {
     /// How long to wait for StoreKit's async `currentEntitlements` load before
     /// the catch-up publish pass.
     private static let storeKitSettleDelay: UInt64 = 8_000_000_000
+
+    /// Flipped by the delayed launch pass once FreemiumKit/StoreKit have had
+    /// time to load. Until then `mirrorPlusState` must never DELETE the shared
+    /// item: `purchasedTier` is nil while StoreKit is still loading, so a
+    /// launch shorter than the settle delay would clear a real owner's mirror
+    /// and silently break the sibling crossover until the next long run.
+    /// Writes are always allowed — a positive ownership signal is trustworthy
+    /// at any time.
+    @MainActor
+    private static var storeKitSettled = false
 
     // MARK: - v1 mirror payload
 
@@ -192,17 +205,22 @@ public enum CrossAppEntitlementPublisher {
     /// does not. We deliberately do NOT gate on the grant latch alone: at
     /// launch `purchasedTier` is nil until StoreKit finishes loading, so a user
     /// who owns both would otherwise never publish their real Plus.
-    private static func mirrorPlusState(tierOwned: Bool, siblingGranted: Bool) async {
+    ///
+    /// `allowClear` gates the delete paths on StoreKit having settled (see
+    /// `storeKitSettled`): a "not owned" verdict computed before the async
+    /// entitlement load finishes is not evidence of non-ownership, so acting
+    /// on it would poison a valid mirror. Positive publishes are never gated.
+    private static func mirrorPlusState(tierOwned: Bool, siblingGranted: Bool, allowClear: Bool) async {
         // Cheap path for free users: nothing can make `owned` true below, so
         // don't spin up a StoreKit entitlement query on every foreground.
         guard tierOwned || siblingGranted else {
-            SharedEntitlementKeychain.delete(account: account)
+            if allowClear { SharedEntitlementKeychain.delete(account: account) }
             return
         }
         let entitlement = await currentPlusEntitlement()
         let owned = siblingGranted ? (entitlement != nil) : tierOwned
         guard owned else {
-            SharedEntitlementKeychain.delete(account: account)
+            if allowClear { SharedEntitlementKeychain.delete(account: account) }
             return
         }
         let mirror = Mirror(period: entitlement?.period,
