@@ -68,13 +68,19 @@ jobs:
             APP_NAME: "Provenance"
             IPA_NAME: "Provenance-iOS"
 
+          # tvOS is a shipping platform (sideloadable now, App Store launch
+          # imminent), so it gates develop like iOS — it is NOT optional.
+          # If this job starts failing on 'unexpected service error: The Xcode
+          # build system has crashed' with zero compiler diagnostics, that is a
+          # known runner-side flake, not your change: re-run the job. Do not
+          # re-add optional to paper over it, or a real tvOS regression will
+          # ship unnoticed.
           - target: "Provenance-tvOS"
             sdk: appletvos
             destination: "generic/platform=tvOS"
             scheme: "Provenance (AppStore) (Release)"
             APP_NAME: "Provenance"
             IPA_NAME: "Provenance-tvOS"
-            optional: true
 
           # Lite is deliberately NOT built here. It is not a shipping variant —
           # it exists as a smaller/faster local build for ad-hoc testing, and
