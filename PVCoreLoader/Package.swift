@@ -17,7 +17,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "PVCoreLoader",
-            targets: ["PVCoreLoader"]),
+            targets: ["PVCoreLoader"])
     ],
     dependencies: [
         .package(path: "../PVCoreBridge/"),
@@ -36,12 +36,9 @@ let package = Package(
         .package(path: "../Cores/Stella/"),
         .package(path: "../Cores/TGBDual/"),
         .package(path: "../Cores/VirtualJaguar/"),
-        .package(path: "../Cores/VisualBoyAdvance-M/"),
+        .package(path: "../Cores/VisualBoyAdvance-M/")
 
         // MARK: Plugins
-
-        // SwiftGenPlugin
-        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", from: "1.1.3"),
 
         // swift-macro-toolkit
         // https://github.com/stackotter/swift-macro-toolkit
@@ -77,7 +74,7 @@ let package = Package(
                 .product(name: "PVFeatureFlags", package: "PVFeatureFlags"),
                 "PVEmulatorCore",
                 "PVLogging",
-                "PVSupport",
+                "PVSupport"
 
 //                .product(name: "PVAtari800-Dynamic", package: "Atari800"),
 //                .product(name: "PVPicoDrive-Dynamic", package: "PicoDrive"),
@@ -88,12 +85,8 @@ let package = Package(
 //                .product(name: "PVVisualBoyAdvance-Dynamic", package: "VisualBoyAdvance-M")
             ],
             resources: [
-                .process("Resources/systems.plist"),
                 .process("Resources/CoreCapabilities.json"),
                 .copy("Resources/RetroArchCore.plist")
-            ],
-            plugins: [
-                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin"),
             ]
         ),
 

@@ -7,13 +7,13 @@ Provenance used to carry two copies of ``systems.plist``:
   ``GameImporter.initCorePlists()`` loads it via ``Bundle.module`` and feeds it to
   ``PVEmulatorConfiguration.updateSystems(fromPlists:)``, which is what actually
   populates Realm and therefore every on-screen control layout.
-* ``PVCoreLoader/Sources/PVCoreLoader/Resources/systems.plist`` — a dead copy.
-  It was only ever surfaced through the SwiftGen-generated ``PlistFiles.items``
-  behind ``CoreLoader.systemsPlist()``, which had no callers anywhere in the repo.
+* ``PVCoreLoader/Sources/PVCoreLoader/Resources/systems.plist`` — a dead copy, since
+  deleted. It was only ever surfaced through the SwiftGen-generated
+  ``PlistFiles.items`` behind ``CoreLoader.systemsPlist()``, which had no callers
+  anywhere in the repo, so it never influenced runtime behaviour.
 
-If the dead copy no longer exists this script is a no-op success, so it is safe to
-keep wired into CI after the duplicate is removed. While the duplicate exists the
-script fails (exit 1) on any divergence so the two cannot silently drift again.
+This script exists as a regression guard: it is a no-op success while the duplicate
+is absent, and fails (exit 1) the moment a diverging second copy reappears.
 
 Usage:
     Scripts/diff_systems_plists.py [--strict] [--repo-root PATH]

@@ -16,7 +16,6 @@ import PVLogging
 import PVPlists
 
 public enum CoreLoaderError: Error {
-    case systemsDotPlistNotFound
     case noCoresFound
 }
 
@@ -24,8 +23,6 @@ public final class CoreLoader: Sendable {
 
     public static let shared: CoreLoader = .init()
     private init() {}
-
-    fileprivate let ThisBundle: Bundle = Bundle.module
 
     /// Thread-safe storage wrapping the cached core plists array.
     /// `OSAllocatedUnfairLock` eliminates bare lock/unlock pairs and the associated
@@ -276,19 +273,6 @@ public final class CoreLoader: Sendable {
             ELOG("Failed to load Core.plist from \(bundlePath.lastPathComponent): \(error)")
             return nil
         }
-    }
-
-//    public func parseSystemsPlist() throws(CoreLoaderError) -> [URL] {
-//        guard let systemsPlist = ThisBundle.url(forResource: "systems", withExtension: "plist") else {
-//            assertionFailure("Missing systems.plist")
-//            throw CoreLoaderError.systemsDotPlistNotFound
-//        }
-//
-//        return [systemsPlist]
-//    }
-
-    static public func systemsPlist() ->  [[String: Any]] {
-        return PlistFiles.items
     }
 
     /// True when any loaded plist still declares libretro sub-cores (e.g. PVRetroArch `PVCores` with `*.libretro.framework` identifiers).
