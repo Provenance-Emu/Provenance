@@ -76,28 +76,17 @@ jobs:
             IPA_NAME: "Provenance-tvOS"
             optional: true
 
-          # Lite targets. Kept enabled for visibility: while these were
-          # commented out, Lite was unbuildable for ~4 months (the embedded
-          # extensions' bundle ids stopped matching Lite's parent id) and
-          # nothing caught it. Both are optional: true, so a Lite-only
-          # regression is reported without gating develop — the Lite
-          # Release/device path has not had a clean CI verdict yet. Drop
-          # optional from Lite-iOS once it has gone green a few times.
-          - target: "Provenance-Lite-iOS"
-            sdk: iphoneos
-            destination: "generic/platform=iOS"
-            scheme: "Provenance-Lite (AppStore) (Release)"
-            APP_NAME: "Provenance Lite"
-            IPA_NAME: "Provenance-Lite-iOS"
-            optional: true
-
-          - target: "Provenance-Lite-tvOS"
-            sdk: appletvos
-            destination: "generic/platform=tvOS"
-            scheme: "Provenance-Lite (AppStore) (Release)"
-            APP_NAME: "Provenance Lite"
-            IPA_NAME: "Provenance-Lite-tvOS"
-            optional: true
+          # Lite is deliberately NOT built here. It is not a shipping variant —
+          # it exists as a smaller/faster local build for ad-hoc testing, and
+          # the standard iOS + tvOS archives above cover release validation.
+          # Building it doubled CI cost for a target nobody releases.
+          #
+          # Caveat if you re-add it: Lite silently rotted for ~4 months the last
+          # time it was out of CI (its embedded extensions' bundle ids stopped
+          # matching Lite's parent id, fixed in 813b563904). So if you reach for
+          # a Lite build and it fails, suspect drift since this was removed
+          # rather than something you just changed. `make` / Xcode still build
+          # the "Provenance-Lite (AppStore)" scheme on demand.
 
     runs-on: 'macos-26'
     continue-on-error: ${{ matrix.optional || false }}
