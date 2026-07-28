@@ -302,7 +302,7 @@ update-core-licenses:
 ## Generate systems markdown tables from systems.plist
 generate-systems-docs:
 	$(info Generating systems documentation…)
-	python3 Scripts/systems.py
+	python3 Scripts/systems.py PVLibrary/Sources/PVLibrary/Resources/systems.plist
 
 ## -- Testing --
 
