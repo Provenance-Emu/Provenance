@@ -6105,7 +6105,6 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>
-			<string>iso</string>
 			<string>cdi</string>
 		</array>
 		<key>PVSystemIdentifier</key>

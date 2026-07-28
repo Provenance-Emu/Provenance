@@ -39,8 +39,13 @@ state. The core is now force-paused during quickload. Worth hammering.
 
 Jaguar CD is enabled for the first time, marked beta. It uses a custom
 Virtual Jaguar build with high-level emulation, so most games boot without
-the Jaguar CD BIOS. Supported disc formats: CUE, ISO, CDI. CHD is not
-supported. Compressed (zip/7z) images are handled by the importer.
+the Jaguar CD BIOS. Supported disc formats: BIN/CUE and CDI. Compressed
+(zip/7z) images are handled by the importer.
+
+ISO and CHD are deliberately not supported. Real retail Jaguar CD discs are
+multi-session, which those formats do not carry — they only work from special
+rip settings, and every test of them failed. If you have an ISO or CHD rip,
+re-rip as BIN/CUE or CDI.
 
 Also fixed since the first Jaguar CD build: the numeric keypad was missing
 from the on-screen controls (it is there now, same 12 keys as cartridge

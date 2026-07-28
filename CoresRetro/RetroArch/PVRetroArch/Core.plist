@@ -1229,7 +1229,9 @@
 				     support and advertises supported_extensions "…|cue|cdi|iso", so it
 				     accepts CD content and boots most titles without the CD BIOS. This
 				     resolves the earlier tvOS insta-crash (the old upstream core rejected
-				     CD files). Disc formats routed via systems.plist: cue, iso, cdi. -->
+				     CD files). Disc formats routed via systems.plist: cue, cdi.
+				     ISO/CHD are excluded on purpose — retail Jaguar CD discs are
+				     multi-session, which those formats don't carry. -->
 				<string>com.provenance.jaguarcd</string>
 			</array>
 		</dict>
