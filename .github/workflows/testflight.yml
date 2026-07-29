@@ -1,0 +1,158 @@
+name: TestFlight
+
+# Signed App Store Connect uploads. Deliberately SEPARATE from build.yml:
+#   - build.yml produces UNSIGNED archives (CODE_SIGNING_ALLOWED=NO + ldid
+#     fakesign) for the sideload/alpha release. TestFlight needs real signing,
+#     so the two cannot share a job.
+#   - a separate workflow means a TestFlight failure never blocks the alpha
+#     release, and it gets its own concurrency group so pushes don't cancel
+#     an in-flight upload.
+#
+# NOT on every develop push on purpose: each run consumes an App Store Connect
+# build number and processing slot, and develop moves fast. Trigger it
+# explicitly, or uncomment the schedule below for a nightly.
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform(s) to archive and upload'
+        required: true
+        default: 'all'
+        type: choice
+        options: [all, ios, tvos]
+      version:
+        description: 'Override marketing version (blank = read Build.xcconfig)'
+        required: false
+        type: string
+  push:
+    tags:
+      - 'v*'
+  # schedule:
+  #   - cron: '0 9 * * *'   # 09:00 UTC nightly
+
+concurrency:
+  group: testflight-${{ github.ref }}
+  cancel-in-progress: false   # never cancel a half-finished upload
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+  XCODE_VERSION: '26.3'
+  SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY: ${{ github.workspace }}
+
+jobs:
+  testflight:
+    name: Archive and upload to TestFlight
+    runs-on: 'macos-26'
+    # Matches build.yml: a cold archive has measured >100 min, and this job
+    # archives BOTH platforms when platform=all.
+    timeout-minutes: 300
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 0
+
+      - name: Cache submodules
+        id: cache-submodules
+        uses: actions/cache@v4
+        with:
+          path: |
+            .git/modules
+            Cores
+            CoresRetro
+            Dependencies
+            PVRcheevos
+          key: submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-${{ github.sha }}
+          restore-keys: |
+            submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-
+
+      # actions/cache restores over the checkout, so parent-repo-tracked files
+      # inside those dirs can be shadowed by a stale cached copy. Same guard
+      # build.yml uses.
+      - name: Restore parent-repo files inside cached paths
+        run: git checkout HEAD -- Cores CoresRetro Dependencies PVRcheevos 2>/dev/null || true
+
+      - name: Initialize submodules
+        run: |
+          if [ "${{ steps.cache-submodules.outputs.cache-hit }}" = "true" ]; then
+            git submodule sync --recursive
+            git submodule update --init --recursive --jobs 4
+          else
+            git submodule deinit --all -f 2>/dev/null || true
+            git submodule update --init --recursive --depth 1 --jobs 4
+          fi
+
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Install tooling
+        run: brew install xcbeautify 2>/dev/null || true
+
+      # Automatic signing needs a distribution certificate in a keychain. The
+      # PROFILES are fetched by -allowProvisioningUpdates using the ASC API key
+      # (release.sh passes it to the archive step), so only the cert is imported
+      # here — no .mobileprovision juggling.
+      - name: Import signing certificate
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "${BUILD_CERTIFICATE_BASE64}" ]; then
+            echo "::error::BUILD_CERTIFICATE_BASE64 secret is not set — cannot sign."
+            exit 1
+          fi
+          CERT_PATH="$RUNNER_TEMP/dist.p12"
+          KEYCHAIN="$RUNNER_TEMP/signing.keychain-db"
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o "$CERT_PATH"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$CERT_PATH" -P "$P12_PASSWORD" -A \
+            -t cert -f pkcs12 -k "$KEYCHAIN"
+          # Let codesign use the key without an interactive prompt.
+          security set-key-partition-list -S apple-tool:,apple:,codesign: \
+            -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" >/dev/null
+          # Prepend to the search list so xcodebuild finds the identity.
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          rm -f "$CERT_PATH"
+          echo "Signing identities available:"
+          security find-identity -v -p codesigning "$KEYCHAIN"
+
+      - name: Archive and upload
+        env:
+          ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_API_ISSUER_ID: ${{ secrets.ASC_API_ISSUER_ID }}
+          # Base64-encoded .p8 — release.sh materialises it to a temp file.
+          ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+        run: |
+          set -o pipefail
+          ARGS=(--channel testflight --platform "${{ inputs.platform || 'all' }}")
+          if [ -n "${{ inputs.version }}" ]; then
+            ARGS+=(--version "${{ inputs.version }}")
+          fi
+          # Build number: release.sh defaults to epoch seconds, which is unique
+          # and strictly increasing, so App Store Connect never rejects a
+          # redundant binary. Left as the default deliberately.
+          ./Scripts/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | xcbeautify
+
+      # Same rationale as build.yml: xcbeautify hides Run Script phase output,
+      # so the raw log is the only place some failures appear.
+      - name: Upload raw log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testflight-log
+          path: /tmp/testflight.log
+          retention-days: 3
+
+      - name: Clean up keychain
+        if: always()
+        run: |
+          security list-keychains -d user -s $(security list-keychains -d user | tr -d '"' | grep -v signing.keychain-db) || true
+          security delete-keychain "$RUNNER_TEMP/signing.keychain-db" 2>/dev/null || true

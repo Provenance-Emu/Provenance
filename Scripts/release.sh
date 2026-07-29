@@ -161,40 +161,10 @@ fi
 IOS_ARCHIVE="$ARCHIVES_DIR/Provenance-iOS.xcarchive"
 TVOS_ARCHIVE="$ARCHIVES_DIR/Provenance-tvOS.xcarchive"
 
-do_archive() {
-    local label="$1" scheme="$2" destination="$3" archive="$4"
-    if ! $NO_BUILD; then
-        log "Archiving $label ($scheme)..."
-        run mkdir -p "$ARCHIVES_DIR"
-        local cmd=(xcodebuild archive
-            -workspace "$WORKSPACE"
-            -scheme "$scheme"
-            -destination "$destination"
-            -configuration Release
-            -archivePath "$archive"
-            -scmProvider system
-            -skipPackagePluginValidation
-            -skipMacroValidation
-            MARKETING_VERSION="$VERSION"
-            CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
-            CODE_SIGN_STYLE=Automatic)
-        if $DRY_RUN; then
-            echo "  [dry-run] ${cmd[*]}"
-        else
-            # Pipe through xcbeautify when available; fall back to raw xcodebuild.
-            "${cmd[@]}" | xcbeautify 2>/dev/null || "${cmd[@]}"
-        fi
-    fi
-    $DRY_RUN || [[ -d "$archive" ]] || err "Archive not found: $archive (run without --no-build)"
-}
-
-should_platform ios  && do_archive iOS  "$IOS_SCHEME"  "generic/platform=iOS"  "$IOS_ARCHIVE"
-should_platform tvos && do_archive tvOS "$TVOS_SCHEME" "generic/platform=tvOS" "$TVOS_ARCHIVE"
-
-# ── Export App Store IPA + upload to TestFlight (per platform) ─────────────────────
-# ExportOptions-AppStore.plist has destination=upload, so this single step BOTH
-# exports and uploads to App Store Connect — there's no separate altool step. iOS and
-# tvOS are separate platforms under the same app record, so each gets its own upload.
+# ── App Store Connect API key ──────────────────────────────────────────────────────
+# Defined before do_archive because BOTH the archive (for -allowProvisioningUpdates
+# in CI) and the export/upload step need it.
+#
 # Resolve the App Store Connect API key to a file path xcodebuild can read.
 # Prefer ASC_API_KEY_PATH; else materialise ASC_API_KEY_CONTENT (base64 or raw
 # .p8) to a temp file. Echoes the path; errors if no key / id / issuer is set.
@@ -227,6 +197,49 @@ resolve_asc_key() {
     fi
     echo "$_asc_key_path"
 }
+
+do_archive() {
+    local label="$1" scheme="$2" destination="$3" archive="$4"
+    if ! $NO_BUILD; then
+        log "Archiving $label ($scheme)..."
+        run mkdir -p "$ARCHIVES_DIR"
+        local cmd=(xcodebuild archive
+            -workspace "$WORKSPACE"
+            -scheme "$scheme"
+            -destination "$destination"
+            -configuration Release
+            -archivePath "$archive"
+            -scmProvider system
+            -skipPackagePluginValidation
+            -skipMacroValidation
+            MARKETING_VERSION="$VERSION"
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER"
+            CODE_SIGN_STYLE=Automatic)
+        # Headless/CI: automatic signing has no Xcode account to consult, so
+        # -allowProvisioningUpdates can only create/download profiles when the
+        # App Store Connect API key is passed here too (the export step gets it
+        # separately). Locally these vars are usually unset and Xcode uses the
+        # signed-in account, so only add the flags when a key is available.
+        if [[ -n "${ASC_API_KEY_ID:-}" && -n "${ASC_API_ISSUER_ID:-}" ]]; then
+            local archive_key; archive_key="$(resolve_asc_key)"
+            cmd+=(-allowProvisioningUpdates
+                  -authenticationKeyPath "$archive_key"
+                  -authenticationKeyID "$ASC_API_KEY_ID"
+                  -authenticationKeyIssuerID "$ASC_API_ISSUER_ID")
+        fi
+        if $DRY_RUN; then
+            echo "  [dry-run] ${cmd[*]}"
+        else
+            # Pipe through xcbeautify when available; fall back to raw xcodebuild.
+            "${cmd[@]}" | xcbeautify 2>/dev/null || "${cmd[@]}"
+        fi
+    fi
+    $DRY_RUN || [[ -d "$archive" ]] || err "Archive not found: $archive (run without --no-build)"
+}
+
+should_platform ios  && do_archive iOS  "$IOS_SCHEME"  "generic/platform=iOS"  "$IOS_ARCHIVE"
+should_platform tvos && do_archive tvOS "$TVOS_SCHEME" "generic/platform=tvOS" "$TVOS_ARCHIVE"
+
 
 do_appstore_upload() {
     local label="$1" archive="$2" exportdir="$3"
