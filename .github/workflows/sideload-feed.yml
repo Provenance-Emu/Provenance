@@ -1,17 +1,36 @@
 name: Update Sideload Feed
 
-# Regenerates AltStore + SideStore JSON source files and commits them
-# to the docs/ folder whenever a release or alpha build is published.
+# Regenerates the AltStore/SideStore JSON source files and commits them to the
+# provenance-emu.github.io repo whenever a release or alpha build is published.
 #
 # The JSON files are hosted at:
-#   https://provenance-emu.com/altstore-source.json
-#   https://provenance-emu.com/sidestore-source.json
+#   https://provenance-emu.com/apps.json             <- canonical; what /altstore
+#                                                       and /sidestore deep-link to
+#   https://provenance-emu.com/altstore-source.json  <- alias
+#   https://provenance-emu.com/sidestore-source.json <- alias
+#
+# They MUST be written into the pages repo's static/ directory. That repo is a
+# Hugo site whose gh-pages.yml deploys ./public, and Hugo only copies static/
+# into public/ — a file committed at the repo root is never published and 404s.
 #
 # Stable releases appear as "Provenance" (com.provenance-emu.provenance).
 # Alpha builds appear as "Provenance Alpha" (com.provenance-emu.provenance.alpha)
 # — a SEPARATE app entry so AltStore/SideStore shows them as two distinct apps.
+# build.yml gives alpha builds that bundle ID via ALPHA_BUNDLE_SUFFIX, so the
+# two install side by side.
 #
-# Only the latest 3 alpha versions are kept in the feed.
+# Versioning note: per the AltStore source spec, `version` must equal the IPA's
+# CFBundleShortVersionString and `buildVersion` its CFBundleVersion, exactly.
+# build.yml stamps alpha with MARKETING_VERSION (a plain "3.4.0", NOT suffixed)
+# and CURRENT_PROJECT_VERSION=$(git rev-list --count HEAD). So the alpha entry
+# carries version=3.4.0 + buildVersion=<commit count>; the commit count is what
+# actually increments between alpha builds and drives update detection. Putting
+# the sha/date in `version` instead makes it a semver PRE-RELEASE, which sorts
+# BELOW the installed 3.4.0 — AltStore then never offers the update. The pretty
+# string lives in `marketingVersion`, which is display-only and unconstrained.
+#
+# AltStore and SideStore are iOS-only, so only the iOS IPA is emitted. The tvOS
+# IPA stays on the GitHub release for manual sideloading.
 
 on:
   release:
@@ -45,140 +64,131 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          set -e
-
-          REPO_URL="https://github.com/${REPO}"
-          RAW_BASE="https://github.com/${REPO}/releases/download"
+          set -euo pipefail
 
           # ── Fetch all non-draft releases (stable + pre-release) ───────────
           ALL_RELEASES=$(gh api "repos/${REPO}/releases?per_page=50" \
-            --jq '[.[] | select(.draft == false)]' 2>/dev/null || echo "[]")
+            --jq '[.[] | select(.draft == false)]')
 
           STABLE_RELEASES=$(echo "$ALL_RELEASES" | \
-            jq '[.[] | select(.prerelease == false and (.tag_name | test("^[0-9]+\\.[0-9]+\\.[0-9]+$")))]')
+            jq '[.[] | select(.prerelease == false and (.tag_name | test("^v?[0-9]+\\.[0-9]+\\.[0-9]+$")))]')
 
-          # Get all alpha-tagged releases (there is usually only one rolling release,
-          # but we also look for any with alpha in the tag for historical ones)
-          ALPHA_RELEASES=$(echo "$ALL_RELEASES" | \
-            jq '[.[] | select(.tag_name == "alpha" or (.tag_name | test("^alpha-")))]')
+          # ── Stable versions ──────────────────────────────────────────────
+          # One entry per release, iOS IPA only. Sizes come straight from the
+          # asset JSON: `curl -sI` on a browser_download_url without -L only
+          # sees GitHub's 302 and reports no content-length.
+          #
+          # buildVersion is deliberately omitted for stable. Tagged releases are
+          # cut by Scripts/release.sh, which stamps epoch-derived build numbers
+          # that `git rev-list --count` cannot reproduce — a wrong buildVersion
+          # is worse than none, and distinct semver versions are already enough
+          # for AltStore to order stable releases.
+          #
+          # minOSVersion is omitted for the same reason. AltStore HIDES versions
+          # whose minOSVersion the device cannot meet, and the back catalogue
+          # here reaches down to 2.0.0, which shipped long before the iOS 17
+          # floor. Stamping today's floor onto every historical entry would hide
+          # the only installable builds from exactly the old devices that need
+          # them. We have no per-release floor to publish, so we publish none —
+          # which is also what the served feed did before this generator.
+          STABLE_VERSIONS=$(echo "$STABLE_RELEASES" | jq '[
+            .[] | . as $rel |
+            ([$rel.assets[] | select(.name | test("iOS\\.ipa$"; "i"))] | first) as $ios |
+            select($ios != null) |
+            {
+              version: ($rel.tag_name | ltrimstr("v")),
+              date: (($rel.published_at // $rel.created_at) | .[0:10]),
+              localizedDescription: (($rel.body // "") | gsub("\r"; "") | .[0:2800]),
+              downloadURL: $ios.browser_download_url,
+              size: $ios.size
+            }
+          ]')
 
-          # ── Helper: extract version entries from a release ──────────────
-          # Returns a JSON array of AltStore version objects
-          build_version_entries() {
-            local release_json="$1"
-            local channel="$2"  # "stable" or "alpha"
-
-            TAG=$(echo "$release_json" | jq -r '.tag_name')
-            BODY=$(echo "$release_json" | jq -r '.body // ""')
-            DATE=$(echo "$release_json" | jq -r '.published_at // .created_at')
-            DATE_SHORT=$(echo "$DATE" | cut -c1-10)
-            SHA=$(echo "$release_json" | jq -r '.target_commitish // ""')
-            SHORT_SHA="${SHA:0:7}"
-
-            # Find iOS and tvOS IPAs in release assets
-            IOS_URL=$(echo "$release_json" | \
-              jq -r '.assets[] | select(.name | test("iOS\\.ipa$|ios\\.ipa$|-iOS\\.ipa$")) | .browser_download_url' \
-              | head -1)
-            TVOS_URL=$(echo "$release_json" | \
-              jq -r '.assets[] | select(.name | test("tvOS\\.ipa$|tvos\\.ipa$|-tvOS\\.ipa$")) | .browser_download_url' \
-              | head -1)
-
-            # Truncate changelog for JSON (AltStore has a 3000-char limit)
-            CHANGELOG=$(echo "$BODY" | sed 's/\r//g' | head -c 2800 || echo "")
-
-            # Version string
-            if [ "$channel" = "alpha" ]; then
-              # Use date + short SHA for alpha versioning: e.g. "3.3.1-alpha.20260315.abc1234"
-              MARKETING_VER=$(grep 'MARKETING_VERSION' Build.xcconfig 2>/dev/null | cut -d'=' -f2 | xargs || echo "0.0.0")
-              DISPLAY_VERSION="${MARKETING_VER}-alpha.${DATE_SHORT//-/}.${SHORT_SHA}"
-              BUILD=$(date +%Y%m%d)
-            else
-              DISPLAY_VERSION="$TAG"
-              BUILD=$(echo "$TAG" | tr -d '.')
-            fi
-
-            # Emit entries for each IPA found
-            ENTRIES="["
-            FIRST=true
-
-            if [ -n "$IOS_URL" ]; then
-              SIZE=$(curl -sI "$IOS_URL" | grep -i content-length | awk '{print $2}' | tr -d '\r' || echo "0")
-              [ "$FIRST" = "true" ] && FIRST=false || ENTRIES="${ENTRIES},"
-              ENTRIES="${ENTRIES}$(jq -n \
-                --arg version "$DISPLAY_VERSION" \
-                --arg date "$DATE_SHORT" \
-                --arg url "$IOS_URL" \
-                --arg size "$SIZE" \
-                --arg changelog "$CHANGELOG" \
-                '{
-                  version: $version,
-                  date: $date,
-                  localizedDescription: $changelog,
-                  downloadURL: $url,
-                  size: ($size | tonumber? // 0),
-                  minOSVersion: "17.0"
-                }')"
-            fi
-
-            if [ -n "$TVOS_URL" ]; then
-              SIZE=$(curl -sI "$TVOS_URL" | grep -i content-length | awk '{print $2}' | tr -d '\r' || echo "0")
-              [ "$FIRST" = "true" ] && FIRST=false || ENTRIES="${ENTRIES},"
-              ENTRIES="${ENTRIES}$(jq -n \
-                --arg version "$DISPLAY_VERSION" \
-                --arg date "$DATE_SHORT" \
-                --arg url "$TVOS_URL" \
-                --arg size "$SIZE" \
-                --arg changelog "$CHANGELOG" \
-                '{
-                  version: $version,
-                  date: $date,
-                  localizedDescription: $changelog,
-                  downloadURL: $url,
-                  size: ($size | tonumber? // 0),
-                  minOSVersion: "17.0"
-                }')"
-            fi
-
-            ENTRIES="${ENTRIES}]"
-            echo "$ENTRIES"
-          }
-
-          # ── Build STABLE versions array ─────────────────────────────────
-          STABLE_VERSIONS="[]"
-          while IFS= read -r release; do
-            [ -z "$release" ] && continue
-            ENTRY=$(build_version_entries "$release" "stable")
-            if [ "$ENTRY" != "[]" ]; then
-              STABLE_VERSIONS=$(echo "$STABLE_VERSIONS" | jq ". + $ENTRY")
-            fi
-          done < <(echo "$STABLE_RELEASES" | jq -c '.[]')
-
-          # ── Build ALPHA versions array (limit to latest 3) ──────────────
+          # ── Alpha version ────────────────────────────────────────────────
+          # `alpha` is a single rolling tag, so the feed carries exactly one
+          # entry; a history of alphas would need distinct buildVersions we no
+          # longer have IPAs for anyway.
+          ALPHA_REL=$(echo "$ALL_RELEASES" | jq '(map(select(.tag_name == "alpha")) | first) // null')
           ALPHA_VERSIONS="[]"
-          ALPHA_COUNT=0
-          while IFS= read -r release; do
-            [ -z "$release" ] && continue
-            [ "$ALPHA_COUNT" -ge 3 ] && break
-            ENTRY=$(build_version_entries "$release" "alpha")
-            if [ "$ENTRY" != "[]" ]; then
-              ALPHA_VERSIONS=$(echo "$ALPHA_VERSIONS" | jq ". + $ENTRY")
-              ALPHA_COUNT=$((ALPHA_COUNT + 1))
+
+          if [ "$ALPHA_REL" != "null" ]; then
+            # .target_commitish on a rolling release is the BRANCH NAME
+            # ("develop"), not a sha — resolving the ref is what actually yields
+            # the commit. /commits/<ref> handles annotated tags in one call.
+            # Every lookup below is guarded: under `set -e` an unguarded failure
+            # (e.g. grep finding nothing) aborts the step instead of falling
+            # through to the warning, which would take the STABLE feed down too.
+            ALPHA_SHA=$(gh api "repos/${REPO}/commits/alpha" --jq '.sha' 2>/dev/null || echo "")
+            ALPHA_SHORT_SHA="${ALPHA_SHA:0:7}"
+
+            # Read MARKETING_VERSION from the exact commit that was built, so
+            # `version` matches the IPA even if develop has moved on since.
+            ALPHA_MARKETING=""
+            if [ -n "$ALPHA_SHA" ]; then
+              ALPHA_MARKETING=$(gh api "repos/${REPO}/contents/Build.xcconfig?ref=${ALPHA_SHA}" \
+                --jq '.content' 2>/dev/null | base64 -d 2>/dev/null \
+                | grep '^MARKETING_VERSION' | cut -d'=' -f2 | xargs || echo "")
             fi
-          done < <(echo "$ALPHA_RELEASES" | jq -c '.[]')
 
-          LATEST_STABLE_VERSION=$(echo "$STABLE_RELEASES" | jq -r 'first.tag_name // "3.3.0"')
-          TODAY=$(date -u +"%Y-%m-%d")
+            # Mirrors build.yml's BUILD_NUMBER=$(git rev-list --count HEAD).
+            ALPHA_BUILD=""
+            if [ -n "$ALPHA_SHA" ]; then
+              git fetch --quiet origin "$ALPHA_SHA" 2>/dev/null || true
+              ALPHA_BUILD=$(git rev-list --count "$ALPHA_SHA" 2>/dev/null || echo "")
+            fi
 
-          # ── AltStore source JSON ────────────────────────────────────────
-          # Two separate app entries: stable and alpha
+            if [ -z "$ALPHA_MARKETING" ] || [ -z "$ALPHA_BUILD" ]; then
+              echo "::warning::Could not resolve alpha version (marketing='${ALPHA_MARKETING}' build='${ALPHA_BUILD}') — skipping alpha entry."
+            else
+              ALPHA_VERSIONS=$(echo "$ALPHA_REL" | jq \
+                --arg version "$ALPHA_MARKETING" \
+                --arg build "$ALPHA_BUILD" \
+                --arg sha "$ALPHA_SHORT_SHA" '
+                . as $rel |
+                ([$rel.assets[] | select(.name | test("iOS\\.ipa$"; "i"))] | first) as $ios |
+                if $ios == null then [] else
+                  (($rel.published_at // $rel.created_at) | .[0:10]) as $date |
+                  [{
+                    version: $version,
+                    buildVersion: $build,
+                    marketingVersion: ($version + "-alpha." + ($date | gsub("-"; "")) + "." + $sha),
+                    date: $date,
+                    localizedDescription: (($rel.body // "") | gsub("\r"; "") | .[0:2800]),
+                    downloadURL: $ios.browser_download_url,
+                    size: $ios.size,
+                    minOSVersion: "17.0"
+                  }]
+                end')
+            fi
+          fi
+
+          # ── News (carried over from the retired pages-repo generator) ─────
+          NEWS=$(echo "$STABLE_RELEASES" | jq '[
+            .[0:3][] | {
+              title: (.name // .tag_name),
+              identifier: ("release-" + (.tag_name | ltrimstr("v"))),
+              caption: (
+                (.body // "") | gsub("\r"; "") | gsub("#{1,6}\\s*"; "") |
+                split("\n") | map(select(length > 0)) | .[0:2] | join(" ") |
+                if length > 200 then .[0:197] + "..." else . end
+              ),
+              date: (.published_at // .created_at),
+              tintColor: "8A2BE2",
+              url: .html_url,
+              appID: "com.provenance-emu.provenance",
+              notify: false
+            }
+          ]')
+
+          # ── Assemble the feed ────────────────────────────────────────────
           jq -n \
-            --arg today "$TODAY" \
             --argjson stable_versions "$STABLE_VERSIONS" \
             --argjson alpha_versions "$ALPHA_VERSIONS" \
+            --argjson news "$NEWS" \
             '{
               name: "Provenance Emulator",
               identifier: "com.provenance-emu.provenance.altstore",
-              sourceURL: "https://provenance-emu.com/altstore-source.json",
+              sourceURL: "https://provenance-emu.com/apps.json",
               apps: [
                 {
                   name: "Provenance",
@@ -225,21 +235,29 @@ jobs:
                   }
                 }
               ],
-              news: []
-            }' > /tmp/altstore-source.json
+              news: $news
+            }' > /tmp/feed-base.json
 
-          # ── SideStore source JSON (same schema, different sourceURL) ────
-          jq '.identifier = "com.provenance-emu.provenance.sidestore" |
-              .sourceURL = "https://provenance-emu.com/sidestore-source.json"' \
-            /tmp/altstore-source.json > /tmp/sidestore-source.json
+          # Each file's sourceURL must equal the URL it is served from, or the
+          # store silently refreshes from the wrong (or missing) location.
+          # apps.json keeps the original identifier: it is the URL every user
+          # who added the source from the website already has installed.
+          BASE="https://provenance-emu.com"
+          jq --arg u "$BASE/apps.json" '.sourceURL = $u' \
+            /tmp/feed-base.json > /tmp/apps.json
+          jq --arg u "$BASE/altstore-source.json" '.sourceURL = $u' \
+            /tmp/feed-base.json > /tmp/altstore-source.json
+          jq --arg u "$BASE/sidestore-source.json" \
+            '.identifier = "com.provenance-emu.provenance.sidestore" | .sourceURL = $u' \
+            /tmp/feed-base.json > /tmp/sidestore-source.json
 
-          # Validate JSON
-          jq empty /tmp/altstore-source.json && echo "altstore-source.json is valid JSON"
-          jq empty /tmp/sidestore-source.json && echo "sidestore-source.json is valid JSON"
+          for f in apps altstore-source sidestore-source; do
+            jq empty "/tmp/${f}.json" && echo "${f}.json is valid JSON"
+          done
 
           STABLE_COUNT=$(echo "$STABLE_VERSIONS" | jq 'length')
           ALPHA_COUNT=$(echo "$ALPHA_VERSIONS" | jq 'length')
-          echo "Generated feed: ${STABLE_COUNT} stable entries, ${ALPHA_COUNT} alpha entries (max 3)."
+          echo "Generated feed: ${STABLE_COUNT} stable entries, ${ALPHA_COUNT} alpha entries."
           echo "stable_count=${STABLE_COUNT}" >> "$GITHUB_OUTPUT"
           echo "alpha_count=${ALPHA_COUNT}" >> "$GITHUB_OUTPUT"
 
@@ -247,7 +265,8 @@ jobs:
         env:
           DEPLOY_KEY: ${{ secrets.PAGES_DEPLOY_KEY }}
         run: |
-          # Set up SSH with deploy key
+          set -euo pipefail
+
           mkdir -p ~/.ssh
           echo "$DEPLOY_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
@@ -255,27 +274,34 @@ jobs:
 
           export GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no"
 
-          # Clone the pages repo
           git clone git@github.com:Provenance-Emu/provenance-emu.github.io.git /tmp/pages-repo
 
-          # Copy generated feeds
-          cp /tmp/altstore-source.json /tmp/pages-repo/altstore-source.json
-          cp /tmp/sidestore-source.json /tmp/pages-repo/sidestore-source.json
+          # static/ — NOT the repo root. Hugo publishes ./public, into which it
+          # copies static/; anything at the root is left out of the build.
+          cp /tmp/apps.json             /tmp/pages-repo/static/apps.json
+          cp /tmp/altstore-source.json  /tmp/pages-repo/static/altstore-source.json
+          cp /tmp/sidestore-source.json /tmp/pages-repo/static/sidestore-source.json
 
           cd /tmp/pages-repo
+
+          # Remove the root copies this workflow used to write, which were never
+          # served and only shadow the real ones during local greps.
+          git rm --quiet --ignore-unmatch altstore-source.json sidestore-source.json
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add altstore-source.json sidestore-source.json
+          git add static/apps.json static/altstore-source.json static/sidestore-source.json
 
           if git diff --cached --quiet; then
             echo "No changes to feed — skipping commit."
           else
-            git commit -m "chore: update AltStore/SideStore JSON feed [skip ci]"
+            # NO [skip ci] here. gh-pages.yml triggers on push to main, and
+            # GitHub honours skip directives on push events — tagging the commit
+            # would suppress the Pages rebuild and the feed would never deploy.
+            git commit -m "chore: update AltStore/SideStore JSON feed"
             git push origin HEAD
             echo "Feed updated and pushed to provenance-emu.github.io"
           fi
 
-          # Cleanup
           rm -f ~/.ssh/deploy_key

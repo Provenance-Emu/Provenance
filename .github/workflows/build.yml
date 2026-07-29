@@ -168,12 +168,17 @@ jobs:
       - name: Set Alpha Build Overrides
         if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
         run: |
-          SHORT_SHA="${GITHUB_SHA:0:7}"
-          ALPHA_DATE=$(date -u +"%Y%m%d")
           echo "IS_ALPHA=true" >> $GITHUB_ENV
           echo "ALPHA_BUNDLE_SUFFIX=.alpha" >> $GITHUB_ENV
           echo "ALPHA_DISPLAY_NAME_SUFFIX= Alpha" >> $GITHUB_ENV
-          echo "ALPHA_VERSION_SUFFIX=-alpha.${ALPHA_DATE}.${SHORT_SHA}" >> $GITHUB_ENV
+          # MARKETING_VERSION is deliberately NOT suffixed for alpha builds.
+          # A "3.4.0-alpha.<date>.<sha>" CFBundleShortVersionString is a semver
+          # PRE-RELEASE, which sorts BELOW the plain 3.4.0 an updating user
+          # already has installed — AltStore would stop offering alpha updates.
+          # Alpha builds are distinguished by CURRENT_PROJECT_VERSION (the
+          # commit count) instead, which sideload-feed.yml publishes as the
+          # feed's buildVersion. The pretty string is derived there, for
+          # display only, as marketingVersion.
 
       - name: Set Stable Build Overrides
         if: github.event_name != 'push' || github.ref != 'refs/heads/develop'
@@ -181,7 +186,6 @@ jobs:
           echo "IS_ALPHA=false" >> $GITHUB_ENV
           echo "ALPHA_BUNDLE_SUFFIX=" >> $GITHUB_ENV
           echo "ALPHA_DISPLAY_NAME_SUFFIX=" >> $GITHUB_ENV
-          echo "ALPHA_VERSION_SUFFIX=" >> $GITHUB_ENV
 
       # Cache RetroArch prebuilt libretro dylibs (~1.4 GB uncompressed).
       # These are downloaded from the libretro buildbot during the Xcode build
@@ -571,7 +575,10 @@ jobs:
 
           ---
           These builds are unsigned and intended for sideloading via AltStore/SideStore.
-          Install the **Provenance Alpha** app (separate from stable) using the [sideload feed](https://provenance-emu.com/altstore-source.json).
+          Install the **Provenance Alpha** app (separate from stable) by adding the
+          [sideload feed](https://provenance-emu.com/apps.json) — or tap
+          [Add to AltStore](https://provenance-emu.com/altstore) /
+          [Add to SideStore](https://provenance-emu.com/sidestore) on your device to add it directly.
 
           > This release is automatically updated on every successful develop push.
           FOOTEREOF
@@ -653,7 +660,7 @@ jobs:
           2. Go to **Sources** (or **Browse** > **Sources**)
           3. Tap **Add Source** and enter:
              \`\`\`
-             https://provenance-emu.com/altstore-source.json
+             https://provenance-emu.com/apps.json
              \`\`\`
           4. You will see **two** apps: **Provenance** (stable) and **Provenance Alpha** (latest dev builds)
           5. Install either or both -- they use separate bundle IDs so both can be installed simultaneously
