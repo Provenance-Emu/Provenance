@@ -149,6 +149,33 @@ restore_build_number() {
 }
 trap restore_build_number EXIT
 
+# Ctrl-C / SIGTERM: kill any xcodebuild we spawned, then let the EXIT trap
+# restore the xcconfig. Without this, interrupting a run left the injected
+# epoch build number in Build.xcconfig plus an orphaned .release-bak, and an
+# orphaned xcodebuild holding the build system.
+#
+# CAVEAT: bash cannot run a trap while a foreground child is still running, so
+# if xcodebuild has wedged and is IGNORING SIGINT (classic after sleep/wake
+# mid-build) this handler never fires — mashing Ctrl-C will do nothing. In that
+# case: `pkill -9 xcodebuild; pkill -9 -f XCBBuildService`, then re-run (the
+# self-heal below restores the xcconfig).
+on_interrupt() {
+    warn "Interrupted — terminating xcodebuild and restoring $(basename "$XCCONFIG")"
+    pkill -9 -P $$ xcodebuild 2>/dev/null || true
+    exit 130
+}
+trap on_interrupt INT TERM
+
+# Self-heal: a previous run killed hard (SIGKILL, or a wedged xcodebuild that
+# never released the terminal) leaves the backup behind and the injected build
+# number in the xcconfig. Restore it before injecting a new one, otherwise the
+# backup gets overwritten with an already-poisoned file and the real value is
+# lost permanently.
+if [[ -f "$XCCONFIG_BAK" ]]; then
+    warn "Found leftover $(basename "$XCCONFIG_BAK") from an interrupted run — restoring it first"
+    mv -f "$XCCONFIG_BAK" "$XCCONFIG"
+fi
+
 # Dry-run must not mutate the working tree at all (no inject, nothing to restore).
 $DRY_RUN || inject_build_number
 
