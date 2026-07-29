@@ -67,8 +67,33 @@ jobs:
           set -euo pipefail
 
           # ── Fetch all non-draft releases (stable + pre-release) ───────────
-          ALL_RELEASES=$(gh api "repos/${REPO}/releases?per_page=50" \
-            --jq '[.[] | select(.draft == false)]')
+          # The entire feed is built from this one call, and the job runs
+          # unattended on every develop build, so retry a transient 5xx or
+          # secondary rate-limit rather than losing a publish to it.
+          #
+          # Then REFUSE to continue on an empty result. This replaced an
+          # `|| echo "[]"` fallback, which was actively harmful: an empty array
+          # generates a structurally valid feed with zero versions, which the
+          # stores read as "this app has no releases" — silently emptying the
+          # listing instead of leaving the last good feed in place. Failing the
+          # job leaves the previously published JSON untouched.
+          ALL_RELEASES=""
+          for attempt in 1 2 3 4; do
+            if ALL_RELEASES=$(gh api "repos/${REPO}/releases?per_page=50" \
+                 --jq '[.[] | select(.draft == false)]'); then
+              break
+            fi
+            ALL_RELEASES=""
+            if [ "$attempt" -lt 4 ]; then
+              echo "gh api failed (attempt ${attempt}/4) — retrying in $((attempt * 5))s"
+              sleep $((attempt * 5))
+            fi
+          done
+
+          if [ -z "$ALL_RELEASES" ] || [ "$(echo "$ALL_RELEASES" | jq 'length')" -eq 0 ]; then
+            echo "::error::Could not fetch a non-empty release list after 4 attempts — refusing to publish an empty feed."
+            exit 1
+          fi
 
           STABLE_RELEASES=$(echo "$ALL_RELEASES" | \
             jq '[.[] | select(.prerelease == false and (.tag_name | test("^v?[0-9]+\\.[0-9]+\\.[0-9]+$")))]')
@@ -278,6 +303,10 @@ jobs:
 
           # static/ — NOT the repo root. Hugo publishes ./public, into which it
           # copies static/; anything at the root is left out of the build.
+          # mkdir -p is belt-and-braces: static/ has ~174 tracked files today so
+          # the clone always creates it, but a cp into a missing directory fails
+          # with a bare ENOENT that reads like a permissions problem.
+          mkdir -p /tmp/pages-repo/static
           cp /tmp/apps.json             /tmp/pages-repo/static/apps.json
           cp /tmp/altstore-source.json  /tmp/pages-repo/static/altstore-source.json
           cp /tmp/sidestore-source.json /tmp/pages-repo/static/sidestore-source.json
