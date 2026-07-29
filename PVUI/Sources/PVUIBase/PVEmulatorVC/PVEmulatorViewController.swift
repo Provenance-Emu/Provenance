@@ -1075,6 +1075,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Do not show legacy controller overlay when DeltaSkins are enabled
         if !isDeltaSkinEnabled {
             addControllerOverlay()
+            /// Apply auto-hide for a controller that was ALREADY connected before this
+            /// view controller existed. `updateOnScreenControlsVisibility()` is otherwise
+            /// only driven by connect/disconnect/reassign notifications, none of which
+            /// fire when the controller was paired before the game launched — so the OSD
+            /// stayed visible for the whole session (issue #3630). Must run after
+            /// `addControllerOverlay()`: `setOnScreenControlsHidden` no-ops while the
+            /// overlay's view has no superview.
+            ///
+            /// The DeltaSkin path has its own equivalent call in the `onSkinLoaded`
+            /// handler, which is why only the legacy overlay was affected.
+            updateOnScreenControlsVisibility()
         }
         initMenuButton()
         // Install cursor overlay + touch trackpad for mouse-supporting cores, then wire
