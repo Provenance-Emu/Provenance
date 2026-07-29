@@ -136,10 +136,23 @@ jobs:
           if [ -n "${{ inputs.version }}" ]; then
             ARGS+=(--version "${{ inputs.version }}")
           fi
+          # xcbeautify is installed with `|| true` because it is purely cosmetic —
+          # the authoritative output is the raw log captured by tee. Piping into
+          # it unconditionally under `set -o pipefail` meant a Homebrew hiccup
+          # (or a runner image without it) failed the whole upload with
+          # "xcbeautify: command not found" instead of a real build error. Fall
+          # back to cat so only genuine failures fail this job.
+          FORMATTER=cat
+          if command -v xcbeautify >/dev/null 2>&1; then
+            FORMATTER=xcbeautify
+          else
+            echo "::warning::xcbeautify unavailable — using unformatted output (raw log is unaffected)"
+          fi
+
           # Build number: release.sh defaults to epoch seconds, which is unique
           # and strictly increasing, so App Store Connect never rejects a
           # redundant binary. Left as the default deliberately.
-          ./Scripts/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | xcbeautify
+          ./Scripts/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | "$FORMATTER"
 
       # Same rationale as build.yml: xcbeautify hides Run Script phase output,
       # so the raw log is the only place some failures appear.

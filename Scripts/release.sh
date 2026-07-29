@@ -136,18 +136,38 @@ inject_build_number() {
     # Back up the EXACT current file (not HEAD) so restore preserves any unrelated
     # uncommitted edits — a blanket `git checkout` here would silently wipe them.
     cp "$XCCONFIG" "$XCCONFIG_BAK"
+    _injected=true
     # BSD sed (macOS): -i '' for in-place, matching Scripts/bump-version.sh.
     sed -i '' "s/^CURRENT_PROJECT_VERSION[[:space:]]*=.*/CURRENT_PROJECT_VERSION = ${BUILD_NUMBER}/" "$XCCONFIG"
 }
 
+# Whether THIS run injected a build number (and therefore owns the backup).
+# Restoring must be conditional on this, not merely on the backup existing: a
+# leftover backup from a previously killed run is NOT ours, and a --dry-run that
+# restored it would both mutate the working tree and consume the one chance the
+# next real run had to self-heal.
+_injected=false
+
 restore_build_number() {
     # Restore the pre-inject file so the build number isn't left in the working tree.
-    # `return 0` so this EXIT-trap never sets a nonzero exit code when there's no backup
-    # (e.g. dry-run, which skips injection) — the trap's status becomes the script's.
+    # `return 0` so this EXIT-trap never sets a nonzero exit code — the trap's
+    # status becomes the script's.
+    $_injected || return 0
     [[ -f "$XCCONFIG_BAK" ]] && mv -f "$XCCONFIG_BAK" "$XCCONFIG"
     return 0
 }
-trap restore_build_number EXIT
+
+# Set by resolve_asc_key only when it had to materialise ASC_API_KEY_CONTENT.
+# A key we wrote ourselves must not outlive the run; a key the user pointed us
+# at via ASC_API_KEY_PATH is theirs and is left alone.
+_asc_key_tmpdir=""
+
+cleanup() {
+    restore_build_number
+    [[ -n "$_asc_key_tmpdir" && -d "$_asc_key_tmpdir" ]] && rm -rf "$_asc_key_tmpdir"
+    return 0
+}
+trap cleanup EXIT
 
 # Ctrl-C / SIGTERM: kill any xcodebuild we spawned, then let the EXIT trap
 # restore the xcconfig. Without this, interrupting a run left the injected
@@ -171,9 +191,17 @@ trap on_interrupt INT TERM
 # number in the xcconfig. Restore it before injecting a new one, otherwise the
 # backup gets overwritten with an already-poisoned file and the real value is
 # lost permanently.
+#
+# Gated on dry-run: `mv` here is a working-tree mutation, and --dry-run promises
+# not to make any. It also CONSUMES the backup, so a dry-run would silently use
+# up the one chance the next real run had to self-heal. Report and leave it.
 if [[ -f "$XCCONFIG_BAK" ]]; then
-    warn "Found leftover $(basename "$XCCONFIG_BAK") from an interrupted run — restoring it first"
-    mv -f "$XCCONFIG_BAK" "$XCCONFIG"
+    if $DRY_RUN; then
+        warn "Found leftover $(basename "$XCCONFIG_BAK") from an interrupted run — leaving it untouched (--dry-run); the next real run will restore it"
+    else
+        warn "Found leftover $(basename "$XCCONFIG_BAK") from an interrupted run — restoring it first"
+        mv -f "$XCCONFIG_BAK" "$XCCONFIG"
+    fi
 fi
 
 # Dry-run must not mutate the working tree at all (no inject, nothing to restore).
@@ -198,8 +226,17 @@ TVOS_ARCHIVE="$ARCHIVES_DIR/Provenance-tvOS.xcarchive"
 # Without this, `xcodebuild -exportArchive` (destination=upload) falls back to
 # Xcode's signed-in accounts and dies with "Failed to Use Accounts" in CLI.
 _asc_key_path=""
+# Sets the GLOBAL _asc_key_path; callers read that, they do not capture stdout.
+#
+# This used to `echo` the path, and both call sites used
+# `key="$(resolve_asc_key)"` — a command-substitution SUBSHELL. Every global the
+# function assigned was therefore written in a child process and lost on return,
+# which broke it two ways: the `_asc_key_path` memo never persisted, so the key
+# was re-materialised from ASC_API_KEY_CONTENT on EVERY call (once per platform
+# during archive, again at export), and the temp-dir bookkeeping the EXIT trap
+# needs never reached the parent, so each of those copies leaked.
 resolve_asc_key() {
-    [[ -n "$_asc_key_path" ]] && { echo "$_asc_key_path"; return 0; }
+    [[ -n "$_asc_key_path" ]] && return 0
     [[ -n "${ASC_API_KEY_ID:-}" ]]   || err "ASC_API_KEY_ID is not set (App Store Connect API key ID)"
     [[ -n "${ASC_API_ISSUER_ID:-}" ]] || err "ASC_API_ISSUER_ID is not set (App Store Connect issuer ID)"
     if [[ -n "${ASC_API_KEY_PATH:-}" ]]; then
@@ -211,18 +248,30 @@ resolve_asc_key() {
     elif [[ -f "$HOME/private_keys/AuthKey_${ASC_API_KEY_ID}.p8" ]]; then
         _asc_key_path="$HOME/private_keys/AuthKey_${ASC_API_KEY_ID}.p8"
     elif [[ -n "${ASC_API_KEY_CONTENT:-}" ]]; then
-        _asc_key_path="$(mktemp -t "AuthKey_${ASC_API_KEY_ID}").p8"
+        # Materialise into a 0700 temp DIRECTORY, not a temp file.
+        #
+        # This was `_asc_key_path="$(mktemp -t "AuthKey_${ID}").p8"`, which is a
+        # trap: mktemp creates its file and returns that path, then `.p8` is
+        # appended to the STRING. So the key was written to a path mktemp never
+        # created — meaning it was created by the shell redirect at the default
+        # umask, i.e. 0644 WORLD-READABLE, in a shared temp dir, while mktemp's
+        # actual 0600 file was left behind empty. That is an App Store Connect
+        # signing key readable by every user on the machine.
+        #
+        # mktemp -d is 0700, so the key inside it is unreachable by other users
+        # regardless of umask; the umask 077 keeps the file itself 0600 too.
+        _asc_key_tmpdir="$(mktemp -d -t provenance-asc)"
+        _asc_key_path="$_asc_key_tmpdir/AuthKey_${ASC_API_KEY_ID}.p8"
         # Accept either base64-encoded or raw PEM .p8 content.
         if printf '%s' "$ASC_API_KEY_CONTENT" | grep -q "BEGIN PRIVATE KEY"; then
-            printf '%s' "$ASC_API_KEY_CONTENT" > "$_asc_key_path"
+            ( umask 077; printf '%s' "$ASC_API_KEY_CONTENT" > "$_asc_key_path" )
         else
-            printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "$_asc_key_path" 2>/dev/null \
+            ( umask 077; printf '%s' "$ASC_API_KEY_CONTENT" | base64 --decode > "$_asc_key_path" ) 2>/dev/null \
                 || err "ASC_API_KEY_CONTENT is neither a valid .p8 nor base64"
         fi
     else
         err "No App Store Connect API key: set ASC_API_KEY_PATH or ASC_API_KEY_CONTENT"
     fi
-    echo "$_asc_key_path"
 }
 
 do_archive() {
@@ -248,7 +297,7 @@ do_archive() {
         # separately). Locally these vars are usually unset and Xcode uses the
         # signed-in account, so only add the flags when a key is available.
         if [[ -n "${ASC_API_KEY_ID:-}" && -n "${ASC_API_ISSUER_ID:-}" ]]; then
-            local archive_key; archive_key="$(resolve_asc_key)"
+            local archive_key; resolve_asc_key; archive_key="$_asc_key_path"
             cmd+=(-allowProvisioningUpdates
                   -authenticationKeyPath "$archive_key"
                   -authenticationKeyID "$ASC_API_KEY_ID"
@@ -272,7 +321,7 @@ do_appstore_upload() {
     local label="$1" archive="$2" exportdir="$3"
     log "Exporting + uploading $label to TestFlight (App Store)..."
     info "Build number $BUILD_NUMBER (forced — CLI export won't auto-increment)."
-    local keypath; keypath="$(resolve_asc_key)"
+    local keypath; resolve_asc_key; keypath="$_asc_key_path"
     run mkdir -p "$exportdir"
     run xcodebuild -exportArchive \
         -archivePath "$archive" \
