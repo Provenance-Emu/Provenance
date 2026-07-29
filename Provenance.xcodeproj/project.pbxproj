@@ -9834,7 +9834,7 @@
 			);
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
@@ -9873,7 +9873,7 @@
 			);
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
@@ -9988,7 +9988,7 @@
 			);
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
@@ -10026,7 +10026,7 @@
 			);
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
@@ -10138,7 +10138,7 @@
 			);
 			inputPaths = (
 				"$(PROJECT_DIR)/${INFOPLIST_FILE}",
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Set bundle version";
@@ -10159,7 +10159,7 @@
 			);
 			inputPaths = (
 				"${PROJECT_DIR}/${INFOPLIST_FILE}",
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 				"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Set bundle version";
@@ -10180,7 +10180,7 @@
 			);
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
@@ -10201,7 +10201,7 @@
 			);
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
@@ -10237,7 +10237,7 @@
 			);
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
-				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
 				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";

@@ -19,13 +19,21 @@ PLISTBUDDY="/usr/libexec/PlistBuddy"
 # and shipped builds carried an empty GitBranch/GitDate/GitTag and a hardcoded
 # stale Revision. Writing the built copy (not the source) keeps git clean.
 #
+# Use TARGET_BUILD_DIR, NOT BUILT_PRODUCTS_DIR. They are the same for a normal
+# build, but in an ARCHIVE (DEPLOYMENT_LOCATION=YES) the product is assembled
+# under TARGET_BUILD_DIR (.../InstallationBuildProductsLocation/Applications)
+# while BUILT_PRODUCTS_DIR points at .../BuildProductsPath/<config>-<sdk>, where
+# no Info.plist exists. Reading BUILT_PRODUCTS_DIR made every archive fail with
+# "Info.plist not found ... must run after 'Process Info.plist'".
+#
 # NOTE: this path must NOT be declared in the build phase's outputPaths — the
 # processed Info.plist is already produced by ProcessInfoPlistFile, and naming
-# it as a second producer creates a dependency cycle.
-plistPath="${BUILT_PRODUCTS_DIR}/${INFOPLIST_PATH}"
+# it as a second producer creates a dependency cycle. Declaring it as an INPUT
+# is correct and is what orders this phase after ProcessInfoPlistFile.
+plistPath="${TARGET_BUILD_DIR:-${BUILT_PRODUCTS_DIR}}/${INFOPLIST_PATH}"
 
-if [[ -z "${BUILT_PRODUCTS_DIR}" || -z "${INFOPLIST_PATH}" ]]; then
-    echo "error: BUILT_PRODUCTS_DIR/INFOPLIST_PATH unset; run this from an Xcode build phase" 1>&2
+if [[ ( -z "${TARGET_BUILD_DIR}" && -z "${BUILT_PRODUCTS_DIR}" ) || -z "${INFOPLIST_PATH}" ]]; then
+    echo "error: TARGET_BUILD_DIR/INFOPLIST_PATH unset; run this from an Xcode build phase" 1>&2
     exit 1
 fi
 
