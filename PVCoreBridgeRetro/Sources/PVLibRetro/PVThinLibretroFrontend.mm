@@ -5022,9 +5022,31 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     switch (cmd) {
 
         // ---- Rotation ----
+        //
+        // Report rotation as UNSUPPORTED. The return value of this callback is a
+        // contract: `true` means "the frontend will rotate the framebuffer for
+        // you", and cores probe it before deciding who owns the rotation.
+        //
+        // The thin wrapper has no display-side rotation (no equivalent of the
+        // thick wrapper's `video_driver_set_rotation`), so answering `true` was
+        // a lie that actively broke vertical arcade games. mame2003-plus, for
+        // example, probes with `environ_cb(SET_ROTATION, &mode)` in
+        // `mame2003_video_init_orientation()`: on `true` it cancels its own
+        // internal rotation but still sets `video_hw_transpose`, so it reports
+        // TRANSPOSED (portrait) geometry while emitting an UNROTATED (landscape)
+        // buffer. The result was Donkey Kong et al. drawn sideways and stretched
+        // to fill a portrait viewport (issue #3632).
+        //
+        // Returning `false` makes the core rotate internally, which keeps its
+        // reported geometry and its pixels in the same orientation. This matches
+        // the thick RetroArch wrapper's behaviour when `video_allow_rotate` is
+        // off (see `runloop.c`, RETRO_ENVIRONMENT_SET_ROTATION).
+        //
+        // Cores that ignore the return value and rely on frontend rotation are
+        // no worse off than before — they were never being rotated either way.
         case RETRO_ENVIRONMENT_SET_ROTATION:
-            DLOG(@"ThinEnv SET_ROTATION %u", *(unsigned *)data);
-            return true;
+            ILOG(@"ThinEnv SET_ROTATION %u — declining; core will rotate internally", data ? *(unsigned *)data : 0);
+            return false;
 
         // ---- Pixel format ----
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
