@@ -169,7 +169,13 @@ jobs:
   smoke-build:
     name: Build (Provenance-CI Simulator)
     runs-on: macos-26
-    timeout-minutes: 30
+    # 30 was not enough for a COLD build and created a trap: hitting the timeout
+    # kills the job before "Post Cache DerivedData" runs, so the cache is never
+    # saved, so the next run is cold too and times out again — it can never warm
+    # itself. The macos-15 -> macos-26 move invalidated the previously warm cache,
+    # which is what exposed this. 60 buys one cold build (measured: cut off at
+    # 27.8 min still building) to seed the cache; warm runs should be far under.
+    timeout-minutes: 60
     if: |
       !contains(github.event.pull_request.labels.*.name, 'build-ipa') &&
       github.event.inputs.triggered_by != 'rebase'
@@ -268,13 +274,24 @@ jobs:
       #
       # Only the .zip is cached — that is all Package.swift copies. The uncompressed
       # 138 MB .sqlite is a generation byproduct and is decompressed at runtime.
-      # No `if: cache-hit` guard: the script already no-ops when a valid zip is present,
-      # so letting it always run self-heals a cache entry that restored empty.
+      #
+      # No `if: cache-hit` guard on the generate step below. To be precise about what
+      # that does and does not buy: actions/cache does NOT re-save an entry on a hit,
+      # so this cannot repair a bad cache entry — it only guarantees the WORKSPACE has
+      # a usable zip for this run, whatever the cache restored. That is the point; the
+      # script already no-ops in ~0s when a valid zip is present, so it is pure upside.
+      #
+      # Key hashes only the real generation inputs: the python generator and the
+      # wrapper that drives it (the wrapper owns the clone URL and output path, so a
+      # change there can change the output). NOT Scripts/systems.py — despite
+      # update-catalogs.yml gating its cheatdb job on that file, generate_cheatdb.py
+      # neither imports nor invokes it, so including it would only bust the cache and
+      # force a needless regeneration.
       - name: Cache libretro cheat database
         uses: actions/cache@v4
         with:
           path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'Scripts/systems.py') }}
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
 
       - name: Generate libretro cheat database if missing
         run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
