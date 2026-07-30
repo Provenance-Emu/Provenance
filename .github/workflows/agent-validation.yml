@@ -106,7 +106,7 @@ jobs:
   # Job 2: SPM Build/Test for leaf modules (~5-10 min)
   spm-test:
     name: SPM Test (${{ matrix.module }})
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 15
     strategy:
       fail-fast: false
@@ -146,7 +146,7 @@ jobs:
 
       - name: Select Xcode
         if: steps.check.outputs.changed == 'true'
-        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
 
       - name: Build module
         if: steps.check.outputs.changed == 'true'
@@ -168,7 +168,7 @@ jobs:
   # so compilation is unchanged. Saves 30 min × N PRs on every develop advance.
   smoke-build:
     name: Build (Provenance-CI Simulator)
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 30
     if: |
       !contains(github.event.pull_request.labels.*.name, 'build-ipa') &&
@@ -181,20 +181,70 @@ jobs:
           fetch-depth: 1
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
 
-      # These Core dirs are top-level git submodules, empty with submodules: false.
+      # These dirs are top-level git submodules, empty with submodules: false.
       # xcodebuild resolves ALL XCLocalSwiftPackageReference entries in the workspace
       # (not just those in the CI scheme), so their Package.swift files must exist.
       # ZipArchive uses a custom commit not pushed to the public remote; fall back to
       # cloning the public repo (compatible Package.swift, same SSZipArchive structure).
+      #
+      # The list has TWO sources, and missing either fails resolution with
+      # "the package manifest at '<path>/Package.swift' cannot be accessed":
+      #   1. XCLocalSwiftPackageReference entries in Provenance.xcodeproj that are
+      #      submodules — Cores/4DO, Bliss, CrabEMU, VirtualJaguar.
+      #   2. TRANSITIVE `.package(path:)` deps of the local packages. These are easy
+      #      to miss because nothing in the workspace names them: PVLibrary and
+      #      PVArchiving pull in Dependencies/SWCompression, PVThemes pulls in
+      #      Dependencies/HexColors, CoresRetro pulls in Dependencies/ZipArchive.
+      #
+      # xcodebuild reports only the FIRST missing manifest, so a partial list looks
+      # like a single missing entry when it is several — this list was short by both
+      # SWCompression and HexColors while only SWCompression appeared in the log.
+      # Recompute group 2 from a fully-checked-out tree with:
+      #
+      #   git config -f .gitmodules --get-regexp '\.path$' | awk '{print $2}' | sort -u > /tmp/s
+      #   git ls-files '*Package.swift' | grep -v '^Dependencies/' | while read p; do
+      #     grep -hE '^[[:space:]]*\.package\(.*path:' "$p" | grep -v '^[[:space:]]*//' \
+      #       | sed -E 's/.*path:[[:space:]]*"([^"]+)".*/\1/' | while read r; do
+      #         (cd "$(dirname "$p")" && cd "$r" 2>/dev/null && pwd)
+      #       done
+      #   done | sed "s|^$PWD/||" | sort -u | comm -12 /tmp/s -
+      #
+      #   3. Submodules used as a TARGET'S SOURCE DIRECTORY (`.target(path:)`), which
+      #      fail differently — "target 'X' ... is empty" or "invalid custom path" —
+      #      and are NOT found by the command above. Swap `.package\(.*path:` for
+      #      `\.(target|systemLibrary|binaryTarget)\(` to enumerate them.
+      #
+      #      Only three are actually resolved by the CI scheme: PVRcheevos/rcheevos
+      #      (target CRcheevos), Cores/Mednafen/ThirdParty/libchdr (target zstd — its
+      #      deps/ is vendored, not nested submodules, so libchdr alone is enough),
+      #      and VirtualJaguar's NESTED Sources/virtualjaguar-libretro (target
+      #      libretro-common), which is why VirtualJaguar needs --recursive.
+      #
+      #      The scan also turns up gliden64, rsp/cxd4, rsp/hle, potator, libretro-vecx
+      #      and SNESticle. Those are deliberately NOT listed: SwiftPM reports every
+      #      invalid target path at once and named none of them, so their packages
+      #      aren't in the resolved graph. Three of them (gliden64, libretro-vecx,
+      #      SNESticle) have pinned commits that no longer exist on their remotes, so
+      #      adding them speculatively would REPLACE a passing build with a fetch
+      #      failure. If they ever do surface, they need ZipArchive's clone-the-public-
+      #      remote treatment, not a plain init.
       - name: Init required Core submodules (shallow)
         run: |
           git submodule update --init --depth 1 \
             Cores/4DO \
             Cores/Bliss \
             Cores/CrabEMU \
-            Cores/VirtualJaguar
+            Dependencies/HexColors \
+            Dependencies/SWCompression \
+            Cores/Mednafen/ThirdParty/libchdr \
+            PVRcheevos/rcheevos
+
+          # VirtualJaguar's libretro-common target reads its sources from a nested
+          # submodule, so a non-recursive init leaves the target empty. It has exactly
+          # one nested submodule and it is fetchable, so --recursive is cheap here.
+          git submodule update --init --depth 1 --recursive Cores/VirtualJaguar
 
           # ZipArchive: custom commit not available on public remote — clone public instead
           if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
