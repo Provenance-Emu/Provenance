@@ -211,20 +211,40 @@ jobs:
       #       done
       #   done | sed "s|^$PWD/||" | sort -u | comm -12 /tmp/s -
       #
-      # Note it only finds `.package(path:)` DEPENDENCIES. Submodules referenced as a
-      # target's source dir (`.target(path: "ThirdParty/libchdr")` in Cores/Mednafen,
-      # rsp/cxd4 in Mupen64Plus, potator, PVRcheevos/rcheevos) are a separate class —
-      # they surface as "Source files for target X should be located under", not as a
-      # missing manifest. Add them here too if that error appears.
+      #   3. Submodules used as a TARGET'S SOURCE DIRECTORY (`.target(path:)`), which
+      #      fail differently — "target 'X' ... is empty" or "invalid custom path" —
+      #      and are NOT found by the command above. Swap `.package\(.*path:` for
+      #      `\.(target|systemLibrary|binaryTarget)\(` to enumerate them.
+      #
+      #      Only three are actually resolved by the CI scheme: PVRcheevos/rcheevos
+      #      (target CRcheevos), Cores/Mednafen/ThirdParty/libchdr (target zstd — its
+      #      deps/ is vendored, not nested submodules, so libchdr alone is enough),
+      #      and VirtualJaguar's NESTED Sources/virtualjaguar-libretro (target
+      #      libretro-common), which is why VirtualJaguar needs --recursive.
+      #
+      #      The scan also turns up gliden64, rsp/cxd4, rsp/hle, potator, libretro-vecx
+      #      and SNESticle. Those are deliberately NOT listed: SwiftPM reports every
+      #      invalid target path at once and named none of them, so their packages
+      #      aren't in the resolved graph. Three of them (gliden64, libretro-vecx,
+      #      SNESticle) have pinned commits that no longer exist on their remotes, so
+      #      adding them speculatively would REPLACE a passing build with a fetch
+      #      failure. If they ever do surface, they need ZipArchive's clone-the-public-
+      #      remote treatment, not a plain init.
       - name: Init required Core submodules (shallow)
         run: |
           git submodule update --init --depth 1 \
             Cores/4DO \
             Cores/Bliss \
             Cores/CrabEMU \
-            Cores/VirtualJaguar \
             Dependencies/HexColors \
-            Dependencies/SWCompression
+            Dependencies/SWCompression \
+            Cores/Mednafen/ThirdParty/libchdr \
+            PVRcheevos/rcheevos
+
+          # VirtualJaguar's libretro-common target reads its sources from a nested
+          # submodule, so a non-recursive init leaves the target empty. It has exactly
+          # one nested submodule and it is fetchable, so --recursive is cheap here.
+          git submodule update --init --depth 1 --recursive Cores/VirtualJaguar
 
           # ZipArchive: custom commit not available on public remote — clone public instead
           if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
