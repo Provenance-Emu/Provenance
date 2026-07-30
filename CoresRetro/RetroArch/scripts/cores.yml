@@ -229,6 +229,25 @@ cores:
     enabled: true
     filename: "flycast_libretro.dylib"
 
+  - name: flycast-jitless
+    # Dreamcast / NAOMI / NAOMI 2 / Atomiswave — the App-Store-legal Flycast.
+    # iOS and tvOS do not permit WX JIT pages outside a debug entitlement, so the
+    # JIT build above is PVAppStoreDisabled and this interpreter build is what
+    # ships (Core.plist: flycast-jitless.libretro.framework, "Flycast JIT-less
+    # (Provenance Beta)", PVAppStoreDisabled=False).
+    #
+    # local: true — this is a custom Provenance build, NOT on the libretro
+    # buildbot, so it is commented out of the url lists and get-modules.sh will
+    # neither download nor prune it. The dylib must be placed in modules/ by hand.
+    # It was missing from this file entirely, which meant the prune step saw an
+    # unlisted, unprotected dylib and deleted it.
+    ios: true
+    tvos: true
+    appstore: true
+    enabled: true
+    filename: "flycast-jitless_libretro.dylib"
+    local: true
+
   - name: fmsx
     # MSX — buildbot uses fmsx_libretro_ios.dylib / fmsx_libretro_tvos.dylib (no neutral zip)
     ios: true

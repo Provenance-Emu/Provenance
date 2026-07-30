@@ -26,6 +26,7 @@ $(SRCROOT)/CoresRetro/RetroArch/modules/fbalpha2012_neogeo_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/fbneo_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/fceumm_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/flycast_libretro.dylib
+$(SRCROOT)/CoresRetro/RetroArch/modules/flycast-jitless_libretro.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/fmsx_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/freechaf_libretro_ios.dylib
 $(SRCROOT)/CoresRetro/RetroArch/modules/freeintv_libretro_ios.dylib
