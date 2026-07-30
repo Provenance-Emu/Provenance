@@ -253,6 +253,32 @@ jobs:
             git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
           fi
 
+      # PVLookup declares .copy("Resources/libretro_cheats.sqlite.zip"), but that file
+      # is gitignored (~33 MB, see Resources/.gitignore) and generated from
+      # libretro-database. Without it the build dies at
+      #   error: lstat(.../libretro_cheats.sqlite.zip): No such file or directory
+      # before compiling anything. generate_cheatdb_if_needed.sh exists precisely as a
+      # pre-build step for CI — it was just never wired in here.
+      #
+      # Cached because generating it means a shallow clone of libretro-database plus a
+      # python pass. The key is the hash of OUR generator, not upstream's contents:
+      # this is a compile smoke test, so it only needs a structurally valid zip, and a
+      # database lagging libretro-database by a few days is fine. Keeping the real one
+      # fresh is update-catalogs.yml's job (weekly, via PR).
+      #
+      # Only the .zip is cached — that is all Package.swift copies. The uncompressed
+      # 138 MB .sqlite is a generation byproduct and is decompressed at runtime.
+      # No `if: cache-hit` guard: the script already no-ops when a valid zip is present,
+      # so letting it always run self-heals a cache entry that restored empty.
+      - name: Cache libretro cheat database
+        uses: actions/cache@v4
+        with:
+          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'Scripts/systems.py') }}
+
+      - name: Generate libretro cheat database if missing
+        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
+
       - name: Cache DerivedData
         uses: actions/cache@v4
         with:
