@@ -183,18 +183,48 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_16.2.app
 
-      # These Core dirs are top-level git submodules, empty with submodules: false.
+      # These dirs are top-level git submodules, empty with submodules: false.
       # xcodebuild resolves ALL XCLocalSwiftPackageReference entries in the workspace
       # (not just those in the CI scheme), so their Package.swift files must exist.
       # ZipArchive uses a custom commit not pushed to the public remote; fall back to
       # cloning the public repo (compatible Package.swift, same SSZipArchive structure).
+      #
+      # The list has TWO sources, and missing either fails resolution with
+      # "the package manifest at '<path>/Package.swift' cannot be accessed":
+      #   1. XCLocalSwiftPackageReference entries in Provenance.xcodeproj that are
+      #      submodules — Cores/4DO, Bliss, CrabEMU, VirtualJaguar.
+      #   2. TRANSITIVE `.package(path:)` deps of the local packages. These are easy
+      #      to miss because nothing in the workspace names them: PVLibrary and
+      #      PVArchiving pull in Dependencies/SWCompression, PVThemes pulls in
+      #      Dependencies/HexColors, CoresRetro pulls in Dependencies/ZipArchive.
+      #
+      # xcodebuild reports only the FIRST missing manifest, so a partial list looks
+      # like a single missing entry when it is several — this list was short by both
+      # SWCompression and HexColors while only SWCompression appeared in the log.
+      # Recompute group 2 from a fully-checked-out tree with:
+      #
+      #   git config -f .gitmodules --get-regexp '\.path$' | awk '{print $2}' | sort -u > /tmp/s
+      #   git ls-files '*Package.swift' | grep -v '^Dependencies/' | while read p; do
+      #     grep -hE '^[[:space:]]*\.package\(.*path:' "$p" | grep -v '^[[:space:]]*//' \
+      #       | sed -E 's/.*path:[[:space:]]*"([^"]+)".*/\1/' | while read r; do
+      #         (cd "$(dirname "$p")" && cd "$r" 2>/dev/null && pwd)
+      #       done
+      #   done | sed "s|^$PWD/||" | sort -u | comm -12 /tmp/s -
+      #
+      # Note it only finds `.package(path:)` DEPENDENCIES. Submodules referenced as a
+      # target's source dir (`.target(path: "ThirdParty/libchdr")` in Cores/Mednafen,
+      # rsp/cxd4 in Mupen64Plus, potator, PVRcheevos/rcheevos) are a separate class —
+      # they surface as "Source files for target X should be located under", not as a
+      # missing manifest. Add them here too if that error appears.
       - name: Init required Core submodules (shallow)
         run: |
           git submodule update --init --depth 1 \
             Cores/4DO \
             Cores/Bliss \
             Cores/CrabEMU \
-            Cores/VirtualJaguar
+            Cores/VirtualJaguar \
+            Dependencies/HexColors \
+            Dependencies/SWCompression
 
           # ZipArchive: custom commit not available on public remote — clone public instead
           if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
