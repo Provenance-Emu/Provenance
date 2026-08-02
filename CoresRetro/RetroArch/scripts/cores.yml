@@ -231,18 +231,28 @@ cores:
 
   - name: flycast-jitless
     # Dreamcast / NAOMI / NAOMI 2 / Atomiswave — the App-Store-legal Flycast.
-    # iOS and tvOS do not permit WX JIT pages outside a debug entitlement, so the
-    # JIT build above is PVAppStoreDisabled and this interpreter build is what
-    # ships (Core.plist: flycast-jitless.libretro.framework, "Flycast JIT-less
+    # iOS does not permit WX JIT pages outside a debug entitlement, so the JIT
+    # build above is PVAppStoreDisabled and this interpreter build is what ships
+    # (Core.plist: flycast-jitless.libretro.framework, "Flycast JIT-less
     # (Provenance Beta)", PVAppStoreDisabled=False).
     #
-    # local: true — this is a custom Provenance build, NOT on the libretro
-    # buildbot, so it is commented out of the url lists and get-modules.sh will
-    # neither download nor prune it. The dylib must be placed in modules/ by hand.
-    # It was missing from this file entirely, which meant the prune step saw an
-    # unlisted, unprotected dylib and deleted it.
+    # local: true — a custom Provenance build, NOT on the libretro buildbot, so it
+    # is commented out of the url lists and get-modules.sh will neither download
+    # nor overwrite it. The dylib is placed in modules/ by hand (or via
+    # scripts/local-dylibs.sh). Note get-modules.sh ALSO protects it by filename
+    # via LOCAL_DYLIB_PATTERNS=("*-jitless*"), so this entry is not what saves it
+    # from the prune step — what it fixes is the core being absent from the
+    # generated xcfilelists, i.e. declared in Core.plist but never in the build
+    # manifest.
+    #
+    # tvos: false — the dylib we ship is iOS-only (otool: LC_BUILD_VERSION
+    # platform 2, arm64). `filename` is platform-neutral, so tvos: true would put
+    # that iOS binary into the tvOS xcfilelists and fail the tvOS build at link
+    # time. Flip to true only alongside a tvOS-built dylib, which needs a
+    # per-platform filename split (ios_filename / tvos_filename) since one neutral
+    # name cannot carry both slices.
     ios: true
-    tvos: true
+    tvos: false
     appstore: true
     enabled: true
     filename: "flycast-jitless_libretro.dylib"
