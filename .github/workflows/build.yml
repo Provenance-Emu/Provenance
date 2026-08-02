@@ -154,6 +154,28 @@ jobs:
           fi
           echo "Submodule init complete."
 
+      # Cores marked `local: true` in cores.yml are custom Provenance builds that do
+      # not exist on the libretro buildbot, so get-modules.sh deliberately never
+      # downloads them. Nothing else fetched them either, and the failure mode is
+      # SILENT: make_frameworks_retroarch.sh iterates the dylibs that are present in
+      # modules/, so an absent one is simply never packaged — no error, no warning,
+      # just a core missing from the IPA. virtualjaguar (Jaguar) has been affected.
+      #
+      # Not hard-failing when DYLIBS_TOKEN is unset, because that would break every
+      # build the moment this lands. A named warning is still strictly better than
+      # today's silence: it says exactly which cores the artifact will lack.
+      # GITHUB_TOKEN cannot read another private repo, hence a dedicated PAT.
+      - name: Fetch locally-built core dylibs
+        env:
+          GH_TOKEN: ${{ secrets.DYLIBS_TOKEN }}
+        run: |
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::warning::DYLIBS_TOKEN not set — skipping locally-built cores. This IPA will be MISSING:"
+            ./CoresRetro/RetroArch/scripts/local-dylibs.sh list || true
+            exit 0
+          fi
+          ./CoresRetro/RetroArch/scripts/local-dylibs.sh fetch
+
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
