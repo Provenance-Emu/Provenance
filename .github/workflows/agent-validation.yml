@@ -103,22 +103,79 @@ jobs:
           done < changed_files.txt
           exit $LINT_FAILED
 
-  # Job 2: SPM Build/Test for leaf modules (~5-10 min)
+  # Job 2a: decide which SPM modules actually changed — on UBUNTU, not macOS.
+  #
+  # This job exists to stop burning macOS runners on no-ops. The matrix below spawns
+  # one job per module, and each was booting a macOS runner purely to run
+  # `gh pr diff` and discover it had nothing to do. Seven macOS runners per PR,
+  # nearly all idle: with a few PRs open that alone saturated the pool and left
+  # smoke-build queueing behind work that was never going to compile anything.
+  # Deciding what changed is a git diff — it does not need macOS.
+  #
+  # Emits a JSON array consumed by `fromJSON` below. An empty array means the matrix
+  # job produces no jobs at all, which is the point.
+  spm-changed:
+    name: Detect changed SPM modules
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      modules: ${{ steps.detect.outputs.modules }}
+    steps:
+      - name: Detect
+        id: detect
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -uo pipefail
+          ALL="PVLogging PVSettings PVHashing PVPlists PVFeatureFlags PVObjCUtils PVCheevos"
+
+          json_all() {
+            local out="" m
+            for m in $ALL; do out="${out}\"${m}\","; done
+            echo "[${out%,}]"
+          }
+
+          PR_NUMBER="${{ github.event.pull_request.number || github.event.inputs.pr_number }}"
+
+          # No PR context (manual dispatch): test everything, matching prior behaviour.
+          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "0" ]; then
+            echo "modules=$(json_all)" >> "$GITHUB_OUTPUT"
+            echo "No PR number — running all modules"
+            exit 0
+          fi
+
+          # A failed API call must NOT silently yield an empty matrix, which would
+          # look identical to "nothing to test" and skip real coverage. Fall back to
+          # running everything.
+          if ! FILES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only 2>/dev/null); then
+            echo "::warning::gh pr diff failed — running all modules"
+            echo "modules=$(json_all)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SELECTED=""
+          for m in $ALL; do
+            if printf '%s\n' "$FILES" | grep -q "^${m}/"; then
+              SELECTED="${SELECTED}\"${m}\","
+            fi
+          done
+          SELECTED="[${SELECTED%,}]"
+
+          echo "modules=$SELECTED" >> "$GITHUB_OUTPUT"
+          echo "Changed modules: $SELECTED"
+
+  # Job 2b: SPM Build/Test — only for modules that actually changed.
   spm-test:
     name: SPM Test (${{ matrix.module }})
+    needs: spm-changed
+    if: needs.spm-changed.outputs.modules != '[]'
     runs-on: macos-26
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        module:
-          - PVLogging
-          - PVSettings
-          - PVHashing
-          - PVPlists
-          - PVFeatureFlags
-          - PVObjCUtils
-          - PVCheevos
+        module: ${{ fromJSON(needs.spm-changed.outputs.modules) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -126,36 +183,15 @@ jobs:
           submodules: false
           fetch-depth: 1
 
-      - name: Check if module changed
-        id: check
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          PR_NUMBER="${{ github.event.pull_request.number || github.event.inputs.pr_number }}"
-          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "0" ]; then
-            # No PR number — run all modules unconditionally
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
-            CHANGED=$(gh pr diff "$PR_NUMBER" --name-only | grep -c "^${{ matrix.module }}/" || echo "0")
-            if [ "${CHANGED:-0}" -gt 0 ]; then
-              echo "changed=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "changed=false" >> "$GITHUB_OUTPUT"
-            fi
-          fi
-
       - name: Select Xcode
-        if: steps.check.outputs.changed == 'true'
         run: sudo xcode-select -s /Applications/Xcode_26.3.app
 
       - name: Build module
-        if: steps.check.outputs.changed == 'true'
         run: |
           cd ${{ matrix.module }}
           swift build 2>&1 | tail -20
 
       - name: Test module
-        if: steps.check.outputs.changed == 'true'
         run: |
           cd ${{ matrix.module }}
           swift test 2>&1 | tail -40
