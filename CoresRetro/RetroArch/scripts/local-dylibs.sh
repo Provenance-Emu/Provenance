@@ -42,6 +42,12 @@ command -v gh >/dev/null 2>&1 || die "gh CLI is required"
 [ -f "$CORES_YML" ] || die "cores.yml not found at $CORES_YML"
 mkdir -p "$MODULES_DIR"
 
+# Defaults for ios/tvos are "true", matching CoreEntry.__init__ in
+# Scripts/generate_core_lists.py (default=True) — a core omitting the flags is
+# built for both platforms. Safe only because the explicit `ios: false` /
+# `tvos: false` rules below set them back; an earlier attempt at this default
+# WITHOUT those rules made every core tvos=true and broke the build.
+#
 # Parse cores.yml for `local: true` entries, emitting
 #   "<name>|<filename>|<ios_filename>|<tvos_filename>|<ios>|<tvos>"
 # Separator is "|", NOT tab: tab is IFS *whitespace*, so bash collapses runs of it
