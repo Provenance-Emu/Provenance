@@ -57,7 +57,7 @@ local_cores() {
             name = $0
             sub(/^[[:space:]]*-[[:space:]]*name:[[:space:]]*/, "", name)
             gsub(/["\047]/, "", name)
-            islocal = 0; fname = ""; iosf = ""; tvosf = ""; ios = "false"; tvos = "false"
+            islocal = 0; fname = ""; iosf = ""; tvosf = ""; ios = "true"; tvos = "true"
             next
         }
         /^[[:space:]]*local:[[:space:]]*true/  { islocal = 1 }
