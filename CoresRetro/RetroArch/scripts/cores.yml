@@ -258,7 +258,13 @@ cores:
     # per-platform filename split (ios_filename / tvos_filename) since one neutral
     # name cannot carry both slices.
     ios: true
-    tvos: false
+    # tvOS shares the SAME iOS-built dylib — no separate tvOS build exists or is
+    # needed. The Mach-O says platform 2 (iOS), but this loads fine on tvOS and is
+    # device-tested there via the App Store scheme in Xcode (JM, Aug 2026);
+    # Dreamcast is the premier tvOS core, so it must ship. If a future tvOS-specific
+    # build is ever wanted, add a tvos_filename override + upload that asset, and
+    # local-dylibs.sh / generate_core_lists.py already handle the split.
+    tvos: true
     appstore: true
     enabled: true
     filename: "flycast-jitless_libretro.dylib"
