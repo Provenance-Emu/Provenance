@@ -222,12 +222,18 @@ cores:
     appstore: true
     enabled: true
   - name: flycast
-    # Dreamcast
+    # Dreamcast / NAOMI / NAOMI 2 / Atomiswave — the libretro buildbot build.
+    # On iOS this is effectively JIT-only: it does ship an interpreter fallback,
+    # but it is too slow to be usable, which is the reason the flycast-jitless
+    # fork below exists. JIT needs WX pages that the App Store does not permit,
+    # so Core.plist marks flycast.libretro.framework PVAppStoreDisabled=true and
+    # this must match it — same rule dolphin already follows.
     ios: true
     tvos: true
-    appstore: true
+    appstore: false
     enabled: true
     filename: "flycast_libretro.dylib"
+    appstore_excluded_reason: "JIT-only in practice on iOS; the bundled interpreter is too slow to ship. App Store builds use flycast-jitless instead"
 
   - name: flycast-jitless
     # Dreamcast / NAOMI / NAOMI 2 / Atomiswave — the App-Store-legal Flycast.
