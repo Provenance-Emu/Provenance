@@ -10090,7 +10090,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\necho \"Begin: Generate Frameworks\"\nif [ \"${PLATFORM_NAME}\" = \"appletvos\" ]; then\n  FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore-tv.txt\"\nelse\n  FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore.txt\"\nfi\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch \"$FILTER\"\necho \"End: Generate Frameworks\"\n";
+			shellScript = "set -e\necho \"Begin: Generate Frameworks\"\n# PV_ALPHA_SIDELOAD=YES embeds the full sideload set (no appstore filter) — see\n# the Get RetroArch Modules phase. Both phases must agree or frameworks are\n# generated for dylibs that were never downloaded (or vice versa).\ncase \"${PLATFORM_NAME}\" in\n  appletvos|appletvsimulator) TV=1 ;;\n  *) TV=0 ;;\nesac\nif [ \"${PV_ALPHA_SIDELOAD}\" = \"YES\" ]; then\n  if [ \"$TV\" = \"1\" ]; then\n    FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-tv.txt\"\n  else\n    FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls.txt\"\n  fi\nelse\n  if [ \"$TV\" = \"1\" ]; then\n    FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore-tv.txt\"\n  else\n    FILTER=\"${SRCROOT}/CoresRetro/RetroArch/scripts/urls-appstore.txt\"\n  fi\nfi\nsh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh \"${SRCROOT}\"/CoresRetro/RetroArch \"$FILTER\"\necho \"End: Generate Frameworks\"\n";
 		};
 		B3CC2E0E2CBC0D7700D90EB1 /* Script: Get RetroArch Modules */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10109,7 +10109,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\" -appstore\n";
+			shellScript = "# PV_ALPHA_SIDELOAD=YES (CI alpha builds) fetches the FULL sideload module set\n# instead of the App-Store-restricted one. Sideload users can run JIT cores, so\n# alpha IPAs must not inherit App Store exclusions. Default (unset) keeps the\n# appstore set for real ASC/TestFlight archives.\nif [ \"${PV_ALPHA_SIDELOAD}\" = \"YES\" ]; then\n  /bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\"\nelse\n  /bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\" -appstore\nfi\n";
 		};
 		B3E31E2A21562154005FF394 /* Fastlane setup code signing */ = {
 			isa = PBXShellScriptBuildPhase;
