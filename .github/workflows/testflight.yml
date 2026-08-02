@@ -96,24 +96,33 @@ jobs:
       # PROFILES are fetched by -allowProvisioningUpdates using the ASC API key
       # (release.sh passes it to the archive step), so only the cert is imported
       # here — no .mobileprovision juggling.
+      # Secret names match what this repo ALREADY has (CERT_P12 / P12_PASS), rather
+      # than inventing BUILD_CERTIFICATE_BASE64 / P12_PASSWORD, which were never set
+      # and would have failed the first real run for no reason.
+      #
+      # KEYCHAIN_PASSWORD is deliberately NOT a secret. It only ever protects a
+      # throwaway keychain created and deleted inside this one job, so a stored
+      # secret bought nothing and was a third thing to configure. Generated per-run
+      # instead, which is also stronger than a fixed reused value.
       - name: Import signing certificate
         env:
-          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+          CERT_P12: ${{ secrets.CERT_P12 }}
+          P12_PASS: ${{ secrets.P12_PASS }}
         run: |
           set -euo pipefail
-          if [ -z "${BUILD_CERTIFICATE_BASE64}" ]; then
-            echo "::error::BUILD_CERTIFICATE_BASE64 secret is not set — cannot sign."
+          if [ -z "${CERT_P12}" ]; then
+            echo "::error::CERT_P12 secret is not set — cannot sign."
             exit 1
           fi
+          KEYCHAIN_PASSWORD="$(openssl rand -base64 24)"
+          echo "::add-mask::$KEYCHAIN_PASSWORD"
           CERT_PATH="$RUNNER_TEMP/dist.p12"
           KEYCHAIN="$RUNNER_TEMP/signing.keychain-db"
-          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode -o "$CERT_PATH"
+          echo -n "$CERT_P12" | base64 --decode -o "$CERT_PATH"
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
           security set-keychain-settings -lut 21600 "$KEYCHAIN"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
-          security import "$CERT_PATH" -P "$P12_PASSWORD" -A \
+          security import "$CERT_PATH" -P "$P12_PASS" -A \
             -t cert -f pkcs12 -k "$KEYCHAIN"
           # Let codesign use the key without an interactive prompt.
           security set-key-partition-list -S apple-tool:,apple:,codesign: \
