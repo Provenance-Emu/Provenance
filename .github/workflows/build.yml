@@ -322,8 +322,15 @@ jobs:
             if [ -f "$plist" ]; then
               /usr/libexec/PlistBuddy -c "Add :CFBundleDisplayName string 'Provenance Alpha'" "$plist" 2>/dev/null || \
               /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName 'Provenance Alpha'" "$plist" 2>/dev/null || true
-              /usr/libexec/PlistBuddy -c "Set :PVAppType standard" "$plist" && echo "  $plist: PVAppType -> standard" || \
-                echo "::warning::could not set PVAppType in $plist"
+              # Delete-then-Add, not Set: PlistBuddy's Set fails when the key is
+              # absent, and this key is load-bearing — a miss leaves the IPA
+              # reporting standard.appstore, so sideload users silently get every
+              # App Store gate. Delete tolerates a missing key, Add always creates
+              # it, and a failure here is fatal rather than a warning we scroll past.
+              /usr/libexec/PlistBuddy -c "Delete :PVAppType" "$plist" 2>/dev/null || true
+              /usr/libexec/PlistBuddy -c "Add :PVAppType string standard" "$plist" \
+                || { echo "::error::failed to set PVAppType in $plist — refusing to ship an alpha that enforces App Store rules"; exit 1; }
+              echo "  $plist: PVAppType -> $(/usr/libexec/PlistBuddy -c 'Print :PVAppType' "$plist")"
             else
               echo "::warning::expected plist not found: $plist"
             fi
