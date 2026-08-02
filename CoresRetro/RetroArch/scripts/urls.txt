@@ -26,6 +26,7 @@ https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fbalpha2012_neogeo_
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fbneo_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fceumm_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/flycast_libretro.dylib.zip
+#https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/flycast-jitless_libretro.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/fmsx_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/freechaf_libretro_ios.dylib.zip
 https://buildbot.libretro.com/nightly/apple/ios-arm64/latest/freeintv_libretro_ios.dylib.zip
