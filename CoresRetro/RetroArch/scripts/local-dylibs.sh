@@ -61,8 +61,10 @@ local_cores() {
             next
         }
         /^[[:space:]]*local:[[:space:]]*true/  { islocal = 1 }
-        /^[[:space:]]*ios:[[:space:]]*true/    { ios = "true" }
-        /^[[:space:]]*tvos:[[:space:]]*true/   { tvos = "true" }
+        /^[[:space:]]*ios:[[:space:]]*true/     { ios = "true" }
+        /^[[:space:]]*ios:[[:space:]]*false/    { ios = "false" }
+        /^[[:space:]]*tvos:[[:space:]]*true/    { tvos = "true" }
+        /^[[:space:]]*tvos:[[:space:]]*false/   { tvos = "false" }
         /^[[:space:]]*filename:[[:space:]]*/ {
             fname = $0; sub(/^[[:space:]]*filename:[[:space:]]*/, "", fname); gsub(/["\047]/, "", fname)
         }
