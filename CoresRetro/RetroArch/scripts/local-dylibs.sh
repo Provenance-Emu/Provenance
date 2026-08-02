@@ -42,44 +42,67 @@ command -v gh >/dev/null 2>&1 || die "gh CLI is required"
 [ -f "$CORES_YML" ] || die "cores.yml not found at $CORES_YML"
 mkdir -p "$MODULES_DIR"
 
-# Parse cores.yml for `local: true` entries, emitting "<name>\t<filename-or-empty>".
+# Parse cores.yml for `local: true` entries, emitting
+#   "<name>|<filename>|<ios_filename>|<tvos_filename>|<ios>|<tvos>"
+# Separator is "|", NOT tab: tab is IFS *whitespace*, so bash collapses runs of it
+# into one delimiter and silently drops empty fields — which shifts every value left
+# when a core omits `filename`.
 # Deliberately not using a YAML library: this script has to run on a bare CI runner
 # and on a fresh clone, where PyYAML may not be installed.
 local_cores() {
     awk '
+        function flush() { if (name != "" && islocal) print name "|" fname "|" iosf "|" tvosf "|" ios "|" tvos }
         /^[[:space:]]*-[[:space:]]*name:[[:space:]]*/ {
-            if (name != "" && islocal) print name "\t" fname
+            flush()
             name = $0
             sub(/^[[:space:]]*-[[:space:]]*name:[[:space:]]*/, "", name)
             gsub(/["\047]/, "", name)
-            islocal = 0; fname = ""
+            islocal = 0; fname = ""; iosf = ""; tvosf = ""; ios = "false"; tvos = "false"
             next
         }
-        /^[[:space:]]*local:[[:space:]]*true/ { islocal = 1 }
+        /^[[:space:]]*local:[[:space:]]*true/  { islocal = 1 }
+        /^[[:space:]]*ios:[[:space:]]*true/    { ios = "true" }
+        /^[[:space:]]*tvos:[[:space:]]*true/   { tvos = "true" }
         /^[[:space:]]*filename:[[:space:]]*/ {
-            fname = $0
-            sub(/^[[:space:]]*filename:[[:space:]]*/, "", fname)
-            gsub(/["\047]/, "", fname)
+            fname = $0; sub(/^[[:space:]]*filename:[[:space:]]*/, "", fname); gsub(/["\047]/, "", fname)
         }
-        END { if (name != "" && islocal) print name "\t" fname }
+        /^[[:space:]]*ios_filename:[[:space:]]*/ {
+            iosf = $0; sub(/^[[:space:]]*ios_filename:[[:space:]]*/, "", iosf); gsub(/["\047]/, "", iosf)
+        }
+        /^[[:space:]]*tvos_filename:[[:space:]]*/ {
+            tvosf = $0; sub(/^[[:space:]]*tvos_filename:[[:space:]]*/, "", tvosf); gsub(/["\047]/, "", tvosf)
+        }
+        END { flush() }
     ' "$CORES_YML"
 }
 
-# A core may ship one platform-neutral dylib (filename: set) or the _ios/_tvos pair.
+# Mirrors CoreEntry.ios_filename()/tvos_filename() in Scripts/generate_core_lists.py:
+# per-platform override wins, then the neutral `filename`, then the default
+# <name>_libretro_<platform>.dylib. Keep in step with that file — a mismatch here
+# means uploading under a name the build never looks for.
+#
+# Also respects the ios/tvos flags, so a core disabled on a platform is not reported
+# missing (and does not fail `fetch`) for a dylib nothing will ever consume.
 dylibs_for() {
-    local name="$1" fname="$2"
-    if [ -n "$fname" ]; then
-        echo "$fname"
-    else
-        echo "${name}_libretro_ios.dylib"
-        echo "${name}_libretro_tvos.dylib"
+    local name="$1" fname="$2" iosf="$3" tvosf="$4" ios="$5" tvos="$6"
+    local ios_name tvos_name
+    ios_name="${iosf:-${fname:-${name}_libretro_ios.dylib}}"
+    tvos_name="${tvosf:-${fname:-${name}_libretro_tvos.dylib}}"
+    [ "$ios" = "true" ] && echo "$ios_name"
+    # A neutral filename means iOS and tvOS share a NAME, not a file — the buildbot
+    # ships genuinely different per-platform binaries under it. So only emit the tvOS
+    # entry when it differs, otherwise a single-file core is listed twice.
+    if [ "$tvos" = "true" ] && [ "$tvos_name" != "$ios_name" ]; then
+        echo "$tvos_name"
+    elif [ "$tvos" = "true" ] && [ "$ios" != "true" ]; then
+        echo "$tvos_name"
     fi
 }
 
 selected_cores() {
     if [ "$#" -gt 0 ]; then
         for want in "$@"; do
-            local row; row=$(local_cores | awk -F'\t' -v w="$want" '$1==w')
+            local row; row=$(local_cores | awk -F'|' -v w="$want" '$1==w')
             [ -n "$row" ] || die "'$want' is not a local: true core in cores.yml"
             echo "$row"
         done
@@ -99,7 +122,7 @@ ensure_release() {
 
 cmd_list() {
     echo "local: true cores in cores.yml  (store: $DYLIBS_REPO @ $DYLIBS_TAG)"
-    while IFS=$'\t' read -r name fname; do
+    while IFS='|' read -r name fname iosf tvosf ios tvos; do
         [ -n "$name" ] || continue
         while read -r d; do
             [ -n "$d" ] || continue
@@ -108,14 +131,14 @@ cmd_list() {
             else
                 printf "  %-40s MISSING\n" "$d"
             fi
-        done < <(dylibs_for "$name" "$fname")
+        done < <(dylibs_for "$name" "$fname" "$iosf" "$tvosf" "$ios" "$tvos")
     done < <(local_cores)
 }
 
 cmd_upload() {
     ensure_release
     local n=0
-    while IFS=$'\t' read -r name fname; do
+    while IFS='|' read -r name fname iosf tvosf ios tvos; do
         [ -n "$name" ] || continue
         while read -r d; do
             [ -n "$d" ] || continue
@@ -132,14 +155,14 @@ cmd_upload() {
             gh release upload "$DYLIBS_TAG" "$tmp/$d.zip" --repo "$DYLIBS_REPO" --clobber
             rm -rf "$tmp"
             n=$((n + 1))
-        done < <(dylibs_for "$name" "$fname")
+        done < <(dylibs_for "$name" "$fname" "$iosf" "$tvosf" "$ios" "$tvos")
     done < <(selected_cores "$@")
     echo "uploaded $n dylib(s) to $DYLIBS_REPO @ $DYLIBS_TAG"
 }
 
 cmd_fetch() {
     local n=0 missing=0
-    while IFS=$'\t' read -r name fname; do
+    while IFS='|' read -r name fname iosf tvosf ios tvos; do
         [ -n "$name" ] || continue
         while read -r d; do
             [ -n "$d" ] || continue
@@ -154,7 +177,7 @@ cmd_fetch() {
                 missing=$((missing + 1))
             fi
             rm -rf "$tmp"
-        done < <(dylibs_for "$name" "$fname")
+        done < <(dylibs_for "$name" "$fname" "$iosf" "$tvosf" "$ios" "$tvos")
     done < <(selected_cores "$@")
     # Not ${missing:+...}: that expands whenever the var is non-EMPTY, and "0" is
     # non-empty, so a clean run reported "0 missing".
