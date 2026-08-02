@@ -258,22 +258,16 @@ cores:
     # per-platform filename split (ios_filename / tvos_filename) since one neutral
     # name cannot carry both slices.
     ios: true
-    # tvos stays false until a tvOS-built jitless dylib exists. The iOS one cannot
-    # stand in: it is Mach-O platform 2 (iOS) and tvOS wants platform 3, which is
-    # also why the buildbot publishes separate ios-arm64 / tvos-arm64 builds for
-    # every core. A neutral `filename` means the two platforms share a NAME, not a
-    # file — get-modules.sh extracts a different per-platform binary into it from
-    # modules_compressed/<platform>/.
-    #
-    # tvos_filename below is scaffolding, inert while tvos is false. Once a tvOS
-    # build is uploaded via local-dylibs.sh, flipping tvos to true is the only
-    # change needed — the name is already wired through the generator and the
-    # store script.
-    tvos: false
+    # tvOS shares the SAME iOS-built dylib — no separate tvOS build exists or is
+    # needed. The Mach-O says platform 2 (iOS), but this loads fine on tvOS and is
+    # device-tested there via the App Store scheme in Xcode (JM, Aug 2026);
+    # Dreamcast is the premier tvOS core, so it must ship. If a future tvOS-specific
+    # build is ever wanted, add a tvos_filename override + upload that asset, and
+    # local-dylibs.sh / generate_core_lists.py already handle the split.
+    tvos: true
     appstore: true
     enabled: true
     filename: "flycast-jitless_libretro.dylib"
-    tvos_filename: "flycast-jitless_libretro_tvos.dylib"
     local: true
 
   - name: fmsx
