@@ -1,4 +1,10 @@
 SHELL := /bin/bash
+
+# Local secrets/config: .env is gitignored; .env.sample documents every key.
+# `-include` so a missing .env is fine (CI passes real env/secrets instead).
+# `export` makes the values visible to recipes (release.sh, fastlane, etc.).
+-include .env
+export
 .PHONY: help ios update tvos lite ci \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
