@@ -1,0 +1,23 @@
+Provenance macht dein Apple TV zur Retro-Spielkonsole. Spiele deine Lieblings-Klassiker aus über 60 Retro-Spielsystemen auf dem großen Bildschirm – alles in einer App.
+
+FÜR DEN GROSSEN BILDSCHIRM
+• Natives tvOS-Interface für Siri Remote und Gamepads
+• Gamepad-Unterstützung: MFi, Xbox, PlayStation und eigene Belegung
+• Mehrere Gamepads verbinden für lokalen Mehrspieler-Spaß auf dem Sofa
+• Deine ganze Bibliothek auf dem TV, mit Cover und Metadaten
+
+UNTERSTÜTZTE SYSTEME
+• Nintendo: NES, SNES, Nintendo 64, Game Boy, GBC, Game Boy Advance
+• Sega: Master System, Mega Drive/Genesis, Game Gear, Saturn, 32X, CD, Dreamcast
+• Sony: PlayStation
+• Atari: 2600, 5200, 7800, Lynx, Jaguar, Jaguar CD
+• Neo Geo, Neo Geo Pocket, WonderSwan, PC Engine/TurboGrafx-16
+• Arcade (MAME), DOS und vieles mehr!
+
+HIGHLIGHTS
+• Speicherstände – jederzeit speichern und laden
+• Integrierte Cheat-Datenbank mit Codes für Hunderte von Spielen
+• RetroAchievements – Erfolge freischalten und in Bestenlisten antreten
+• iCloud-Sync – Bibliothek, Spielstände und BIOS-Dateien von iPhone und iPad auf dein Apple TV (Provenance Plus)
+
+Importiere deine eigenen ROM- und BIOS-Dateien, um loszulegen. Provenance ist Open Source und Community-getrieben.

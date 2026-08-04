@@ -1,1 +1,9 @@
-錯誤修正和效能改進。介面更新，手把支援增強。
+Provenance 3.4 新增兩大遊戲系統，以及更多功能。
+
+• 支援世嘉 Dreamcast — 全新 Flycast 核心，無需 JIT
+• 支援雅達利 Jaguar CD — 全新 VirtualJaguar 核心，內建 HLE BIOS，大多數遊戲無需 BIOS 檔案即可啟動
+• 手把外觀 — 依系統自訂螢幕控制介面，並可匯入 DeltaSkin 外觀
+• 金手指資料庫 — 內建數百款遊戲的作弊碼
+• RetroAchievements — 解鎖成就，在排行榜上一較高下
+• iCloud 同步 — 遊戲庫、存檔和 BIOS 檔案在 iPhone、iPad 和 Apple TV 之間同步（Provenance Plus）
+• 一般錯誤修正與效能改進

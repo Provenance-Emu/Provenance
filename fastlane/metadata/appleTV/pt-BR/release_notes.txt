@@ -1,0 +1,12 @@
+O Provenance chega à Apple TV.
+
+Esta é a primeira versão do Provenance para tvOS: o emulador retrô multi-sistema, agora na tela grande.
+
+• Jogue títulos de mais de 60 sistemas retrô na sua Apple TV
+• Nintendo, Sega, Sony, Atari, Neo Geo, PC Engine, arcade (MAME), DOS e mais
+• Sega Dreamcast com um novo núcleo baseado no Flycast, e Atari Jaguar CD com BIOS HLE
+• Suporte a controles: MFi, Xbox, PlayStation e mapeamento personalizado
+• Estados de salvamento, banco de dados de trapaças integrado e RetroAchievements
+• A sincronização iCloud traz sua biblioteca, estados de salvamento e arquivos BIOS do iPhone e do iPad (Provenance Plus)
+
+Importe seus próprios arquivos ROM e BIOS para começar.

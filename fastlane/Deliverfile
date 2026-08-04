@@ -1,0 +1,41 @@
+# Deliverfile — App Store Connect metadata + screenshot delivery.
+#
+#   bundle exec fastlane deliver --platform ios     # iPhone/iPad listing
+#   bundle exec fastlane deliver --platform appletvos  # Apple TV listing
+#
+# Auth uses the SAME App Store Connect API key as Scripts/release.sh, so if
+# TestFlight uploads work, this works:
+#   ASC_API_KEY_ID, ASC_API_ISSUER_ID, ASC_API_KEY_PATH (or ASC_API_KEY_CONTENT)
+# See Fastfile+Publish for the api_key wiring.
+#
+# Metadata is tracked in git (fastlane/metadata/**). Screenshots are NOT —
+# they are large derived artifacts stored in the media release store; run
+# Scripts/media-assets.sh fetch before delivering. See fastlane/screenshots/README.md.
+
+app_identifier "org.provenance-emu.provenance"
+
+# Text metadata lives in fastlane/metadata/<locale>/ (iOS) and
+# fastlane/metadata/appleTV/<locale>/ (tvOS) — deliver picks the right tree
+# from --platform.
+metadata_path "./fastlane/metadata"
+screenshots_path "./fastlane/screenshots"
+
+# NEVER upload a binary from here — binaries go through Scripts/release.sh /
+# the TestFlight workflow. deliver is metadata + screenshots only.
+skip_binary_upload true
+
+# Submission is a deliberate, human decision. deliver only stages the data.
+submit_for_review false
+automatic_release false
+
+# Screenshots are regenerated wholesale each release; clear the old set so a
+# renamed/removed shot cannot linger in the listing.
+overwrite_screenshots true
+
+# Fail loudly rather than silently shipping a listing with missing localizations.
+force false
+
+# Precheck catches Guideline 2.3.x metadata rejections (mentions of other
+# platforms, placeholder text) before a human reviewer does.
+run_precheck_before_submit true
+precheck_include_in_app_purchases false

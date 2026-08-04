@@ -133,3 +133,8 @@ build
 memory-bank/
 Package.resolved
 __pycache__
+
+# App Store screenshots: large derived artifacts, stored in the media release
+# store rather than git. See fastlane/screenshots/README.md.
+/fastlane/screenshots/**/*.png
+/fastlane/screenshots/**/*.jpg

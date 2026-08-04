@@ -1,1 +1,9 @@
-Corrección de errores y mejoras de rendimiento. Interfaz actualizada y mejor soporte para mandos.
+Provenance 3.4 añade dos sistemas nuevos y mucho más.
+
+• Compatibilidad con Sega Dreamcast — nuevo núcleo basado en Flycast, sin necesidad de JIT
+• Compatibilidad con Atari Jaguar CD — nuevo núcleo basado en VirtualJaguar con BIOS HLE: la mayoría de los juegos arrancan sin archivo BIOS
+• Skins de control — personaliza los controles en pantalla por sistema e importa tus propias skins DeltaSkin
+• Base de datos de trucos — códigos integrados para cientos de juegos
+• RetroAchievements — consigue logros y compite en las clasificaciones
+• Sincronización iCloud — tu biblioteca, estados de guardado y archivos BIOS te acompañan entre iPhone, iPad y Apple TV (Provenance Plus)
+• Correcciones de errores y mejoras de rendimiento

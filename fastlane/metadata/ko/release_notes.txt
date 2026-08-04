@@ -1,1 +1,9 @@
-버그 수정 및 성능 개선. UI 업데이트 및 향상된 컨트롤러 지원.
+Provenance 3.4에서 두 가지 시스템이 새로 추가되었습니다.
+
+• 세가 드림캐스트 지원 — Flycast 기반의 새 코어, JIT 불필요
+• 아타리 Jaguar CD 지원 — HLE BIOS를 갖춘 VirtualJaguar 기반의 새 코어로, 대부분의 게임이 BIOS 파일 없이 실행됩니다
+• 컨트롤러 스킨 — 시스템별로 화면 조작부를 꾸미고 DeltaSkin 스킨을 가져올 수 있습니다
+• 치트 데이터베이스 — 수백 개 게임의 치트 코드 내장
+• RetroAchievements — 업적을 획득하고 리더보드에서 경쟁하세요
+• iCloud 동기화 — 라이브러리, 저장 상태, BIOS 파일이 iPhone, iPad, Apple TV 간에 이어집니다 (Provenance Plus)
+• 여러 버그 수정 및 성능 개선

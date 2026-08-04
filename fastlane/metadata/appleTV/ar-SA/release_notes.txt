@@ -1,0 +1,12 @@
+‏Provenance يصل إلى Apple TV.
+
+هذا هو الإصدار الأول من Provenance لنظام tvOS — المحاكي الكلاسيكي متعدد الأنظمة، الآن على الشاشة الكبيرة.
+
+• العب ألعابًا من أكثر من 60 نظامًا كلاسيكيًا على Apple TV
+• Nintendo, Sega, Sony, Atari, Neo Geo, PC Engine, الألعاب الإلكترونية (MAME), DOS والمزيد
+• دعم Sega Dreamcast عبر نواة جديدة مبنية على Flycast، ودعم Atari Jaguar CD مع BIOS بتقنية HLE
+• دعم وحدات التحكم: MFi, Xbox, PlayStation وتخصيص الأزرار
+• حالات الحفظ وقاعدة بيانات الغش المدمجة وRetroAchievements
+• تنقل مزامنة iCloud مكتبتك وحالات الحفظ وملفات BIOS من iPhone وiPad (Provenance Plus)
+
+استورد ملفات ROM وBIOS الخاصة بك للبدء.

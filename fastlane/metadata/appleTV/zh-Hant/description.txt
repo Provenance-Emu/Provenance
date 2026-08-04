@@ -1,0 +1,23 @@
+Provenance 讓您的 Apple TV 化身復古遊戲主機。在大螢幕上暢玩 60 多個復古遊戲系統的經典遊戲，全部集於一個應用程式之中。
+
+為大螢幕打造
+• 專為 Siri Remote 和遊戲手把設計的原生 tvOS 介面
+• 手把支援：MFi、Xbox、PlayStation 及自訂按鍵對應
+• 連接多支手把，在客廳沙發上同樂
+• 在電視上瀏覽完整遊戲庫，附封面圖和元資料
+
+支援的系統
+• Nintendo：NES、SNES、Nintendo 64、Game Boy、GBC、Game Boy Advance
+• Sega：Master System、Mega Drive/Genesis、Game Gear、Saturn、32X、CD、Dreamcast
+• Sony：PlayStation
+• Atari：2600、5200、7800、Lynx、Jaguar、Jaguar CD
+• Neo Geo、Neo Geo Pocket、WonderSwan、PC Engine/TurboGrafx-16
+• 街機（MAME）、DOS 等更多系統！
+
+主要功能
+• 存檔狀態 — 隨時儲存和載入遊戲進度
+• 內建金手指資料庫，收錄數百款遊戲的作弊碼
+• RetroAchievements — 解鎖成就，在排行榜上一較高下
+• iCloud 同步 — 遊戲庫、存檔和 BIOS 檔案從 iPhone、iPad 同步到您的 Apple TV（Provenance Plus）
+
+匯入您自己的 ROM 和 BIOS 檔案即可開始遊戲。Provenance 是開源且由社群驅動的專案。

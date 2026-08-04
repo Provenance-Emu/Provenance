@@ -1,0 +1,23 @@
+ProvenanceはApple TVをレトロゲーム機に変えるアプリです。60以上のレトロゲームシステムのお気に入りのクラシックゲームを、大画面で、1つのアプリでお楽しみください。
+
+大画面のために
+• Siri Remoteとゲームコントローラーに最適化されたネイティブtvOSインターフェース
+• コントローラー対応: MFi、Xbox、PlayStation、カスタムマッピング
+• コントローラーを複数接続すれば、リビングでみんなと対戦できます
+• アートワークとメタデータ付きのライブラリをテレビの大画面で
+
+対応システム
+• Nintendo: NES、SNES、Nintendo 64、ゲームボーイ、GBC、ゲームボーイアドバンス
+• Sega: マスターシステム、メガドライブ/Genesis、ゲームギア、サターン、32X、CD、ドリームキャスト
+• Sony: PlayStation
+• Atari: 2600、5200、7800、Lynx、Jaguar、Jaguar CD
+• Neo Geo、Neo Geo Pocket、ワンダースワン、PCエンジン/TurboGrafx-16
+• アーケード (MAME)、DOSなど
+
+主な機能
+• セーブステート — いつでも進行状況を保存・読み込み
+• 数百タイトルのチートコードを収録した内蔵チートデータベース
+• RetroAchievements — 実績を獲得してリーダーボードで競えます
+• iCloud同期 — ライブラリ、セーブステート、BIOSファイルをiPhoneやiPadからApple TVへ（Provenance Plus）
+
+独自のROMとBIOSファイルをインポートして始めましょう。Provenanceはオープンソースでコミュニティ主導のアプリです。

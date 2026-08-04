@@ -1,1 +1,9 @@
-Bugfixes en prestatieverbeteringen. Bijgewerkte UI en verbeterde controllerondersteuning.
+Provenance 3.4 voegt twee nieuwe systemen toe, en nog veel meer.
+
+• Sega Dreamcast — nieuwe core op basis van Flycast, geen JIT nodig
+• Atari Jaguar CD — nieuwe core op basis van VirtualJaguar met HLE-BIOS: de meeste games starten zonder BIOS-bestand
+• Controller-skins — pas de schermbediening per systeem aan en importeer je eigen DeltaSkin-skins
+• Cheatdatabase — ingebouwde cheatcodes voor honderden games
+• RetroAchievements — verdien prestaties en strijd mee in de ranglijsten
+• iCloud-synchronisatie — je bibliotheek, sla-statussen en BIOS-bestanden gaan mee tussen iPhone, iPad en Apple TV (Provenance Plus)
+• Algemene bugfixes en prestatieverbeteringen

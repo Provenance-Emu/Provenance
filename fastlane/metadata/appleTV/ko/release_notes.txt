@@ -1,0 +1,12 @@
+Provenance가 Apple TV에 찾아왔습니다.
+
+tvOS용 Provenance의 첫 번째 릴리스입니다. 멀티 시스템 레트로 에뮬레이터를 이제 큰 화면에서 즐기세요.
+
+• 60개 이상의 레트로 시스템 게임을 Apple TV에서 플레이
+• Nintendo, Sega, Sony, Atari, Neo Geo, PC 엔진, 아케이드 (MAME), DOS 등
+• Flycast 기반의 새 코어로 구현한 세가 드림캐스트, HLE BIOS를 갖춘 아타리 Jaguar CD
+• 컨트롤러 지원: MFi, Xbox, 플레이스테이션, 사용자 정의 매핑
+• 저장 상태, 내장 치트 데이터베이스, RetroAchievements
+• iCloud 동기화로 라이브러리, 저장 상태, BIOS 파일을 iPhone과 iPad에서 그대로 이어받습니다 (Provenance Plus)
+
+나만의 ROM 및 BIOS 파일을 가져와 시작하세요.

@@ -1,0 +1,1 @@
+emulator,retro,games,arcade,console,controller,bank,SNES,NES,N64,GBA,Sega,PlayStation

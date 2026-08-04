@@ -1,0 +1,23 @@
+يحوّل Provenance جهاز Apple TV إلى وحدة ألعاب كلاسيكية. العب ألعابك الكلاسيكية المفضلة من أكثر من 60 نظام ألعاب قديم على الشاشة الكبيرة، كل ذلك في تطبيق واحد.
+
+مصمم للشاشة الكبيرة
+• واجهة tvOS أصلية مصممة لجهاز Siri Remote ووحدات التحكم بالألعاب
+• دعم وحدات التحكم: MFi, Xbox, PlayStation وتخصيص الأزرار
+• وصّل أكثر من وحدة تحكم واستمتع باللعب الجماعي في غرفة المعيشة
+• تصفّح مكتبتك كاملة على التلفزيون، بأغلفة وبيانات وصفية
+
+الأنظمة المدعومة
+• Nintendo: NES, SNES, Nintendo 64, Game Boy, GBC, Game Boy Advance
+• Sega: Master System, Mega Drive/Genesis, Game Gear, Saturn, 32X, CD, Dreamcast
+• Sony: PlayStation
+• Atari: 2600, 5200, 7800, Lynx, Jaguar, Jaguar CD
+• Neo Geo, Neo Geo Pocket, WonderSwan, PC Engine/TurboGrafx-16
+• الألعاب الإلكترونية (MAME), DOS والمزيد!
+
+الميزات الرئيسية
+• حالات الحفظ — احفظ تقدمك واستعده في أي وقت
+• قاعدة بيانات غش مدمجة برموز لمئات الألعاب
+• RetroAchievements — احصد الإنجازات ونافس في لوحات المتصدرين
+• مزامنة iCloud — مكتبتك وحالات الحفظ وملفات BIOS تنتقل من iPhone وiPad إلى Apple TV (Provenance Plus)
+
+استورد ملفات ROM وBIOS الخاصة بك للبدء. Provenance مفتوح المصدر ومدعوم من المجتمع.

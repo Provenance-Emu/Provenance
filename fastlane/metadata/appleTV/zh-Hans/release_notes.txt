@@ -1,0 +1,12 @@
+Provenance 登陆 Apple TV。
+
+这是 Provenance 的首个 tvOS 版本 —— 多系统复古模拟器，现已登上大屏幕。
+
+• 在 Apple TV 上畅玩 60 多个复古系统的游戏
+• Nintendo、Sega、Sony、Atari、Neo Geo、PC Engine、街机（MAME）、DOS 等
+• 通过全新 Flycast 内核支持世嘉 Dreamcast，并支持内置 HLE BIOS 的雅达利 Jaguar CD
+• 手柄支持：MFi、Xbox、PlayStation 及自定义按键映射
+• 存档状态、内置金手指数据库和 RetroAchievements
+• iCloud 同步可将游戏库、存档和 BIOS 文件从 iPhone、iPad 带过来（Provenance Plus）
+
+导入您自己的 ROM 和 BIOS 文件即可开始游戏。
