@@ -2248,8 +2248,20 @@ struct PauseTileMenuView: View {
                 r.didPush(.select, forPlayer: player)
                 fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
             case "coin":
+                // `isShowingMenu` fully pauses the core, so `retro_run()` never
+                // executes and the coin press/release never gets sampled by the
+                // libretro core. Coin has no physical-controller equivalent, so
+                // this tile is the only way to trigger it — briefly resume via
+                // the same authoritative toggle so a frame runs, then re-pause.
+                // The menu itself stays open throughout.
+                emulatorVC.isShowingMenu = false
                 r.didPush(.coin, forPlayer: player)
-                fireMomentaryRelease { r.didRelease(.coin, forPlayer: player) }
+                fireMomentaryRelease(after: 0.15) {
+                    r.didRelease(.coin, forPlayer: player)
+                    if emulatorVC.menuPresentationViewController != nil {
+                        emulatorVC.isShowingMenu = true
+                    }
+                }
             default: break
             }
         case .NeoGeo, .NeoGeoCD:
