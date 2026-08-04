@@ -373,4 +373,17 @@ public enum PlusEntitlement {
         return false
         #endif
     }
+
+    /// True once StoreKit entitlements have actually loaded (or the grant
+    /// latch already says Plus). `isUnlocked` is false during the async
+    /// StoreKit load window on cold launch, so destructive "not premium"
+    /// decisions (e.g. force-disabling iCloud sync) MUST wait for this or
+    /// they punish real subscribers.
+    public static var isSettled: Bool {
+        #if canImport(FreemiumKit)
+        return FreemiumKit.shared.purchasesLoaded || isUnlocked
+        #else
+        return true
+        #endif
+    }
 }

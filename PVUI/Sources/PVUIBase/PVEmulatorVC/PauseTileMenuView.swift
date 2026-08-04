@@ -70,6 +70,7 @@ struct PauseTileMenuView: View {
     @State private var showingSkinCatalog = false
     @State private var showingButtonEffectPicker = false
     @State private var showingButtonSoundPicker = false
+    @State private var showingPlusPaywall = false
     @State private var showingLogViewer = false
     @State private var showingRetroArchSettings = false
     @State private var showingAppSettings = false
@@ -411,6 +412,16 @@ struct PauseTileMenuView: View {
 
     // MARK: - Tile action dispatcher
 
+    /// Recording/broadcast/clip are Plus features on App Store builds.
+    /// Non-AppStore builds (dev / TestFlight / sideloaded) are treated as premium.
+    private var recordingRequiresPlus: Bool {
+        #if canImport(FreemiumKit)
+        return AppState.shared.isAppStore && !PlusEntitlement.isUnlocked
+        #else
+        return false
+        #endif
+    }
+
     private func handle(_ tile: PauseMenuTile) {
         guard tile.isEnabled else { return }
         if let destination = tile.destinationRoute {
@@ -662,8 +673,16 @@ struct PauseTileMenuView: View {
             #endif
 
         // MARK: Recording / broadcast / clip
+        // Recording, broadcasting, and clip export are Provenance Plus
+        // features on App Store builds (matches the HUD record button gate
+        // in PVControllerViewController). Stop actions stay ungated so a
+        // lapsed subscriber can always end an in-progress session.
         case "recording":
             #if os(iOS)
+            if recordingRequiresPlus, !emulatorVC.isRecording {
+                showingPlusPaywall = true
+                return
+            }
             if emulatorVC.isRecording {
                 dismissForSubSheetThen { self.emulatorVC.stopScreenRecording() }
             } else {
@@ -672,6 +691,10 @@ struct PauseTileMenuView: View {
             #endif
         case "broadcast":
             #if os(iOS) || os(tvOS)
+            if recordingRequiresPlus, !emulatorVC.isBroadcasting {
+                showingPlusPaywall = true
+                return
+            }
             if emulatorVC.isBroadcasting {
                 dismissForSubSheetThen { self.emulatorVC.stopBroadcast() }
             } else {
@@ -680,6 +703,10 @@ struct PauseTileMenuView: View {
             #endif
         case "saveClip":
             #if os(iOS) || os(tvOS)
+            if recordingRequiresPlus {
+                showingPlusPaywall = true
+                return
+            }
             dismissAction(true)
             emulatorVC.saveClip()
             #endif
@@ -1565,6 +1592,9 @@ struct PauseTileMenuView: View {
                 showingScreenshotBrowser = false
             }
         }
+        #if canImport(FreemiumKit)
+        .paywall(isPresented: $showingPlusPaywall)
+        #endif
         .sheet(isPresented: $showingControllerProfiles) {
             InSessionProfilePickerView(emulatorVC: emulatorVC) {
                 showingControllerProfiles = false

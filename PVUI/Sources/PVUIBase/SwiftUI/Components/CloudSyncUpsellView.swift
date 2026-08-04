@@ -122,6 +122,13 @@ public struct CloudSyncUpsellView: View {
         .shadow(color: .retroPink.opacity(0.35), radius: 6, x: 0, y: 0)
         .onAppear {
             guard !isTvOS else { return }
+            #if canImport(FreemiumKit)
+            // On App Store builds, isPremium is false until StoreKit's async
+            // entitlement load settles. Skip the premium-state bookkeeping
+            // (which force-disables iCloud sync) until then, or a real
+            // subscriber cold-launching into an empty library loses sync.
+            guard !AppState.shared.isInstalledFromAppStore || PlusEntitlement.isSettled else { return }
+            #endif
             let lastPremium = UserDefaults.standard.bool(forKey: Self.premiumStateKey)
             if lastPremium != isPremium {
                 UserDefaults.standard.set(isPremium, forKey: Self.premiumStateKey)
