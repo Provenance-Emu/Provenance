@@ -84,6 +84,25 @@ jobs:
             git submodule update --init --recursive --depth 1 --jobs 4
           fi
 
+      # Cores marked `local: true` in cores.yml (flycast-jitless, virtualjaguar)
+      # live in the private provenance-dylibs release store, not on the libretro
+      # buildbot. Without this step the archive only contains them if the
+      # Actions cache happens to restore a modules/ dir from a prior build.yml
+      # run — on a cache miss the store IPA silently ships WITHOUT them.
+      # Unlike build.yml (warns and continues for alpha builds), a missing
+      # token here is a hard failure: an App Store upload missing headline
+      # cores is worse than a failed run.
+      - name: Fetch locally-built core dylibs
+        env:
+          GH_TOKEN: ${{ secrets.DYLIBS_TOKEN }}
+        run: |
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::error::DYLIBS_TOKEN not set — the store IPA would be missing:"
+            ./CoresRetro/RetroArch/scripts/local-dylibs.sh list || true
+            exit 1
+          fi
+          ./CoresRetro/RetroArch/scripts/local-dylibs.sh fetch
+
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
