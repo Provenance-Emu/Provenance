@@ -52,33 +52,10 @@ final class RetroLogImportTests: XCTestCase {
         XCTAssertEqual(Set(ids).count, ids.count, "line IDs must be unique for ForEach")
     }
 
-    // MARK: - Level parsing
-
-    func testLevelTagsAreParsed() throws {
-        let text = """
-        [12:00:00.000] [ERROR] boom
-        [12:00:00.001] [WARNING] careful
-        [12:00:00.002] [INFO] hello
-        [12:00:00.003] [DEBUG] details
-        [12:00:00.004] [VERBOSE] noise
-        """
-        let url = try write(text, to: "levels.log")
-        let vm = RetroLogViewModel()
-
-        try vm.importLog(from: url)
-
-        let levels = vm.importedSession?.lines.map(\.level) ?? []
-        XCTAssertEqual(levels, [.error, .warning, .info, .debug, .verbose])
-    }
-
-    func testUntaggedLineHasNoLevel() throws {
-        let url = try write("just a bare line", to: "bare.log")
-        let vm = RetroLogViewModel()
-
-        try vm.importLog(from: url)
-
-        XCTAssertNil(vm.importedSession?.lines.first?.level)
-    }
+    // NOTE: `[LEVEL]` tag parsing, line splitting, blank-line and CRLF handling
+    // are covered by `LogFileParsingTests` in PVLogging, which runs in CI's SPM
+    // matrix. This suite covers only what needs the view model: file/ZIP
+    // ingestion and session lifecycle.
 
     // MARK: - Filtering & lifecycle
 

@@ -264,12 +264,9 @@ public final class RetroLogViewModel: ObservableObject {
     // MARK: - Import
 
     /// A single line of an imported log file.
-    public struct ImportedLogLine: Identifiable, Equatable {
-        public let id: Int
-        public let text: String
-        /// Parsed level, when the line carries a recognisable `[LEVEL]` tag.
-        public let level: LogLevel?
-    }
+    /// The parsing itself lives in `PVLogging.LogFileParsing` so it can be
+    /// unit-tested without a full workspace build.
+    public typealias ImportedLogLine = LogFileParsing.ParsedLine
 
     /// A log session read from a file, displayed instead of the live session.
     public struct ImportedLogSession: Equatable {
@@ -311,10 +308,7 @@ public final class RetroLogViewModel: ObservableObject {
             text = contents
         }
 
-        let lines = text
-            .components(separatedBy: .newlines)
-            .enumerated()
-            .map { ImportedLogLine(id: $0.offset, text: $0.element, level: Self.level(in: $0.element)) }
+        let lines = LogFileParsing.parseLines(text)
 
         importedSession = ImportedLogSession(name: url.lastPathComponent, lines: lines)
     }
@@ -364,17 +358,6 @@ public final class RetroLogViewModel: ObservableObject {
 
         guard !sections.isEmpty else { throw LogImportError.noLogsInArchive }
         return sections.joined(separator: "\n\n")
-    }
-
-    /// Best-effort parse of a `[LEVEL]` tag so imported lines keep their colour coding.
-    private static func level(in line: String) -> LogLevel? {
-        let upper = line.uppercased()
-        if upper.contains("[ERROR]") { return .error }
-        if upper.contains("[WARNING]") { return .warning }
-        if upper.contains("[INFO]") { return .info }
-        if upper.contains("[DEBUG]") { return .debug }
-        if upper.contains("[VERBOSE]") { return .verbose }
-        return nil
     }
 }
 
