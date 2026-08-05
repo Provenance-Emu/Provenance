@@ -2251,15 +2251,20 @@ struct PauseTileMenuView: View {
                 // `isShowingMenu` fully pauses the core, so `retro_run()` never
                 // executes and the coin press/release never gets sampled by the
                 // libretro core. Coin has no physical-controller equivalent, so
-                // this tile is the only way to trigger it — briefly resume via
-                // the same authoritative toggle so a frame runs, then re-pause.
+                // this tile is the only way to trigger it — briefly resume the
+                // core directly so a frame runs, then re-pause. We deliberately
+                // do NOT toggle `isShowingMenu` here: `cleanupAfterMenuDismissal()`
+                // is gated on `isShowingMenu == true`, so flipping it false during
+                // this window would make a concurrent menu dismissal silently skip
+                // cleanup (input re-enable, overlay restore) and leave the VC stuck.
                 // The menu itself stays open throughout.
-                emulatorVC.isShowingMenu = false
+                guard emulatorVC.core.isOn else { return }
+                emulatorVC.core.setPauseEmulation(false)
                 r.didPush(.coin, forPlayer: player)
                 fireMomentaryRelease(after: 0.15) {
                     r.didRelease(.coin, forPlayer: player)
                     if emulatorVC.menuPresentationViewController != nil {
-                        emulatorVC.isShowingMenu = true
+                        emulatorVC.core.setPauseEmulation(true)
                     }
                 }
             default: break
