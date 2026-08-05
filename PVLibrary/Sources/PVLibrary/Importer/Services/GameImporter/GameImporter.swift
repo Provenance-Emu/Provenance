@@ -440,6 +440,19 @@ public final class GameImporter: GameImporting, ObservableObject {
     private var processingStartTime: Date?
     private var autoRestartAvailableAt: Date?
     private var lastPreprocessedQueueGeneration: UInt64?
+    /// Reserves the right to spawn the processing task, guarded by `processingTaskLock`.
+    ///
+    /// `startProcessingSafely` used to check `currentProcessingTask` in one lock
+    /// acquisition and assign it in a LATER one, with several `await`s in between.
+    /// Every concurrent caller passed the "no existing task" check before anyone
+    /// stored a task, so a 371-file drop spawned 243 concurrent `processQueue`
+    /// loops (verified by log counts on 2026-08-05). Each loop snapshotted the
+    /// queue and re-processed items another loop had already imported — the
+    /// visible symptom was thousands of "couldn't be moved because the former
+    /// doesn't exist" failures for files that had ALREADY imported successfully.
+    /// This flag is set in the SAME lock acquisition as the check and cleared when
+    /// the real task is stored (or on any bail-out path), closing the window.
+    private var processingStartReserved = false
 
     // Actor to manage the import queue with thread safety
     public let importQueueActor: ImportQueueActor
@@ -1001,31 +1014,22 @@ public final class GameImporter: GameImporting, ObservableObject {
         await importQueueActor.removeImports(at: offsets)
     }
 
-    // Public method to manually start processing if needed
+    // Public method to manually start processing if needed.
+    //
+    // Despite the historical "BEGIN button" name, this is called PROGRAMMATICALLY all
+    // over the app (PVGameLibraryUpdatesController on new-file events, library views on
+    // appear, iCloud syncer, …) — 112 calls were logged during a single 371-file import.
+    // It used to force-kill the current processing task before restarting. While task
+    // cancellation was broken that kill was a silent no-op; once the processing loops
+    // started honoring Task.isCancelled, every call aborted a HEALTHY in-flight import
+    // mid-item (observed as spurious "Unable to verify file integrity" failures — the
+    // cancelled MD5 read returned nil). Safe-start semantics are correct for every
+    // caller: no-op while a task is running, start when idle. Genuine hangs are the
+    // 600s timeout watchdog's job, and users can pause/resume for manual control.
     public func startProcessing() {
         Task {
-            ILOG("GameImporter: startProcessing() called (manual BEGIN button)")
-
-            // Force kill any stuck tasks first
-            processingTaskLock.withLock {
-                if let existingTask = currentProcessingTask {
-                    let isRunning = !existingTask.isCancelled
-                    ILOG("GameImporter: BEGIN button - killing existing task (running: \(isRunning))")
-                    existingTask.cancel()
-                    currentProcessingTask = nil
-                    currentTimeoutTask?.cancel()
-                    currentTimeoutTask = nil
-                    processingStartTime = nil
-                }
-            }
-
-            // Reset state to idle so we can start fresh
-            await MainActor.run {
-                self.processingState = .idle
-            }
-
-            // Now start processing
-            await startProcessingSafely(trigger: "manual-begin")
+            ILOG("GameImporter: startProcessing() called")
+            await startProcessingSafely(trigger: "public-start")
         }
     }
 
@@ -1045,10 +1049,6 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Check if we have an active task
         let hasActiveTask = hasActiveProcessingTask()
 
-        // Also check if we have queued items - if we do and task seems stuck, kill it
-        let queueSnapshot = await importQueueActor.getQueue()
-        let queuedItems = queueSnapshot.filter { $0.status == .queued }
-
         if !hasActiveTask {
             await MainActor.run {
                 self.processingState = .idle
@@ -1058,34 +1058,18 @@ public final class GameImporter: GameImporting, ObservableObject {
             return .idle
         }
 
-        // If we have queued items but task has been running for a while, check if it's stuck
-        if !queuedItems.isEmpty {
-            let startTime = processingTaskLock.withLock { processingStartTime }
-
-            if let startTime = startTime {
-                let elapsed = Date().timeIntervalSince(startTime)
-                // If task has been running for more than 30 seconds with queued items, it's probably stuck
-                if elapsed > 30 {
-                    ILOG("GameImporter: Detected stuck processing task (running for \(String(format: "%.1f", elapsed))s with \(queuedItems.count) queued items) - killing and restarting")
-
-                    // Kill the stuck task
-                    processingTaskLock.withLock {
-                        currentProcessingTask?.cancel()
-                        currentProcessingTask = nil
-                        currentTimeoutTask?.cancel()
-                        currentTimeoutTask = nil
-                        processingStartTime = nil
-                    }
-
-                    await MainActor.run {
-                        self.processingState = .idle
-                    }
-
-                    return .idle
-                }
-            }
-        }
-
+        // NOTE: there used to be a second heuristic here — "running >30s with queued
+        // items ⇒ stuck ⇒ kill and restart". That condition is trivially true for the
+        // whole duration of any large import (a few hundred files takes minutes), so
+        // every auto-start trigger arriving after the 30s mark killed a HEALTHY task
+        // and spawned a replacement. Together with its 10s sibling in
+        // startProcessingSafely it was the engine of the duplicate-processing storm
+        // (dozens of concurrent processQueue loops re-importing each other's items).
+        // Both heuristics were symptom patches for the pre-2026-08 MD5 semaphore
+        // deadlock; with that fixed at the root, elapsed-time-with-queued-items is
+        // not evidence of anything. Genuine hangs are covered by the 600s
+        // processingTimeoutDuration watchdog (whose cancellation now works — the
+        // processing loops honor Task.isCancelled).
         return state
     }
 
@@ -1144,40 +1128,35 @@ public final class GameImporter: GameImporting, ObservableObject {
             return
         }
 
-        // Check queue before checking task status
-        let queueSnapshot = await importQueueActor.getQueue()
-        let queuedCount = queueSnapshot.filter { $0.status == .queued }.count
-
-        // Use lock ONLY for checking/setting task reference - release before async operations
+        // Atomically check AND reserve in a single lock acquisition. The reservation
+        // (`processingStartReserved`) is what prevents two concurrent callers from both
+        // passing this check during the awaits below — see the property's doc comment.
         let shouldStart: Bool = processingTaskLock.withLock {
-            // Double-check we don't already have a processing task
+            if processingStartReserved {
+                ILOG("GameImporter: Another caller is already starting processing")
+                return false
+            }
+
+            // Double-check we don't already have a processing task.
+            // NOTE: there used to be a "running >10s with queued items ⇒ stuck ⇒ kill
+            // and restart" heuristic here (sibling of the removed 30s one in
+            // normalizedProcessingState). That condition holds for the entire duration
+            // of any large import, so it killed healthy tasks on every auto-start
+            // trigger — the duplicate-processing storm. Genuine hangs are the 600s
+            // watchdog's job.
             if let existingTask = currentProcessingTask {
                 let isRunning = !existingTask.isCancelled
                 ILOG("GameImporter: Existing processing task found (running: \(isRunning))")
 
-                // Check if task is actually making progress
-                if let startTime = processingStartTime {
-                    let elapsed = Date().timeIntervalSince(startTime)
-
-                    // If task has been running for more than 10 seconds with queued items, it's stuck
-                    if elapsed > 10 && queuedCount > 0 {
-                        ILOG("GameImporter: Task appears stuck (running \(String(format: "%.1f", elapsed))s with \(queuedCount) queued) - killing it")
-                        existingTask.cancel()
-                        currentProcessingTask = nil
-                        currentTimeoutTask?.cancel()
-                        currentTimeoutTask = nil
-                        processingStartTime = nil
-                        return true
-                    }
-                }
-
                 if !isRunning {
                     // Task exists but is cancelled/completed - clear it
                     currentProcessingTask = nil
+                    processingStartReserved = true
                     return true
                 }
                 return false
             }
+            processingStartReserved = true
             return true
         }
 
@@ -1209,6 +1188,7 @@ public final class GameImporter: GameImporting, ObservableObject {
                     self.currentTimeoutTask?.cancel()
                     self.currentTimeoutTask = nil
                     self.processingStartTime = nil
+                    self.processingStartReserved = false
                 }
 
                 Task { [weak self] in
@@ -1238,11 +1218,14 @@ public final class GameImporter: GameImporting, ObservableObject {
             await self.handleProcessingTimeout()
         }
 
-        // Store task references while holding lock (minimal lock scope)
+        // Store task references while holding lock (minimal lock scope).
+        // Clearing the reservation here (not earlier) keeps the window closed for
+        // the whole check → store span.
         processingTaskLock.withLock {
             currentProcessingTask = processingTask
             currentTimeoutTask = timeoutTask
             processingStartTime = startTime
+            processingStartReserved = false
         }
     }
 
@@ -1308,6 +1291,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         let maxRetries = 10 // Prevent infinite loops
 
         while retryCount < maxRetries {
+            if Task.isCancelled {
+                ILOG("GameImporter: preProcessQueue() cancelled, exiting")
+                return
+            }
             retryCount += 1
             if retryCount > 1 {
                 ILOG("GameImporter: preProcessQueue() retry #\(retryCount)")
@@ -1332,20 +1319,43 @@ public final class GameImporter: GameImporting, ObservableObject {
                 let processorCount = max(ProcessInfo.processInfo.activeProcessorCount, 2)
                 let chunkSize = max(workQueue.count / processorCount, 16)
 
-                await withTaskGroup(of: Void.self) { group in
+                // Each child task classifies its own chunk into a LOCAL array and
+                // returns it; the results are merged below on this task. Mutating the
+                // captured `workQueue` from concurrent children (as this used to do)
+                // is a data race on the array's storage — unsynchronised concurrent
+                // writes plus copy-on-write reallocation. It was previously masked by
+                // the cooperative-pool deadlock in `determineImportType`; with that
+                // fixed, this loop actually runs to completion, so the race is live.
+                let classifiedChunks = await withTaskGroup(
+                    of: (offset: Int, types: [ImportQueueItem.FileType?]).self
+                ) { group in
                     for chunkStart in stride(from: 0, to: workQueue.count, by: chunkSize) {
                         let chunkEnd = min(chunkStart + chunkSize, workQueue.count)
+                        let chunk = Array(workQueue[chunkStart..<chunkEnd])
                         group.addTask { [self] in
-                            for i in chunkStart..<chunkEnd {
-                                let currentType = workQueue[i].fileType
+                            let types: [ImportQueueItem.FileType?] = chunk.map { item in
+                                let currentType = item.fileType
                                 if currentType == .skin || currentType == .artwork || currentType == .bios {
-                                    continue
+                                    return nil // leave the existing classification untouched
                                 }
-                                workQueue[i].fileType = self.determineImportType(workQueue[i])
+                                return self.determineImportType(item)
                             }
+                            return (offset: chunkStart, types: types)
                         }
                     }
-                    await group.waitForAll()
+
+                    var collected: [(offset: Int, types: [ImportQueueItem.FileType?])] = []
+                    for await result in group {
+                        collected.append(result)
+                    }
+                    return collected
+                }
+
+                for chunk in classifiedChunks {
+                    for (indexInChunk, type) in chunk.types.enumerated() {
+                        guard let type else { continue }
+                        workQueue[chunk.offset + indexInChunk].fileType = type
+                    }
                 }
             } else {
         for i in 0..<workQueue.count {
@@ -2167,8 +2177,19 @@ public final class GameImporter: GameImporting, ObservableObject {
         let semaphore = AsyncSemaphore(value: maxConcurrentImports)
         var processedCount = 0
 
-        // Process queue in a loop until empty or paused
+        // Process queue in a loop until empty, paused, or cancelled
         while true {
+            // Honor cancellation: the stuck-task killers and timeout watchdog cancel
+            // superseded processing tasks, but this loop used to ignore that —
+            // `try? await Task.sleep` swallows the CancellationError, so "killed"
+            // loops kept running forever and re-processed items the replacement
+            // loop had already imported (the source of the mass "couldn't be moved
+            // because the former doesn't exist" failures).
+            if Task.isCancelled {
+                ILOG("GameImportQueue - processing task cancelled, exiting loop")
+                break
+            }
+
             // Check if paused
             if await checkIfPaused() {
                 ILOG("GameImportQueue - processing paused")
@@ -2193,8 +2214,10 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Prioritize groups: small files first, CD-ROMs last
         let prioritizedGroups = prioritizeImportGroups(groupedItems)
 
-            // Process all groups
-        await withTaskGroup(of: Void.self) { group in
+            // Process all groups. Each child task returns its own count; summing the
+            // results avoids the data race of `processedCount += 1` from up to
+            // `maxConcurrentImports` concurrent children.
+            processedCount += await withTaskGroup(of: Int.self) { group in
             for fileGroup in prioritizedGroups {
                 if await checkIfPaused() {
                     break
@@ -2204,17 +2227,24 @@ public final class GameImporter: GameImporting, ObservableObject {
 
                     group.addTask { [weak self] in
                         defer { Task { await semaphore.signal() } }
-                        guard let self else { return }
+                        guard let self else { return 0 }
 
+                        var groupProcessed = 0
                     for item in fileGroup {
+                            if Task.isCancelled { break }
                             if await self.checkIfPaused() { break }
                         await self.processItem(item)
-                            processedCount += 1
+                            groupProcessed += 1
                     }
+                        return groupProcessed
                 }
             }
 
-            await group.waitForAll()
+                var total = 0
+                for await groupProcessed in group {
+                    total += groupProcessed
+                }
+                return total
         }
 
             // Small delay to allow new items to be added
@@ -4316,17 +4346,25 @@ public final class GameImporter: GameImporting, ObservableObject {
     }
 
     /// Safely cleans up failed import files with proper error handling
+    /// Called when an import fails. Deliberately does NOT delete anything.
+    ///
+    /// This used to `removeItem` the file when it was in /Imports/ — which destroyed
+    /// the user's only copy whenever classification failed for a perfectly good file:
+    /// a valid CHIP-8 zip whose name collided with a MAME title was deleted after
+    /// "unsupported"; any ROM the lookup couldn't match hit `noSystemMatched` → gone.
+    /// (Its other call site passes the DESTINATION after a DB-import failure, where
+    /// deleting would drop a successfully-moved ROM the moment a transient DB error
+    /// occurred — only the /Imports/ guard prevented that.)
+    ///
+    /// Failed imports now leave the file in place: the queue records the `.failure`
+    /// status, the user can retry after a fix, and the only safe deletion — a
+    /// byte-identical duplicate — is handled where content is actually compared,
+    /// in GameImporterFileService.
     private func cleanupFailedImportFile(_ fileURL: URL) async {
         guard fileURL.path.contains("/Imports/") && FileManager.default.fileExists(atPath: fileURL.path) else {
-            return // Only clean up files in imports directory that actually exist
+            return
         }
-
-        do {
-            try await FileManager.default.removeItem(at: fileURL)
-            ILOG("Cleaned up failed import file: \(fileURL.path)")
-        } catch {
-            ELOG("Failed to clean up import file \(fileURL.path): \(error.localizedDescription)")
-        }
+        ILOG("Keeping failed import file in Imports for user retry: \(fileURL.lastPathComponent)")
     }
 }
 
