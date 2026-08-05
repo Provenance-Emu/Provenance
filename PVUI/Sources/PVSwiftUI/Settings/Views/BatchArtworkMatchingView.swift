@@ -84,17 +84,9 @@ public struct BatchArtworkMatchingView: View {
 
                 // Filter controls
                 filterControls
-                    .tvOSSettingsHorizontalPadding()
-                    #if !os(tvOS)
-                    .padding(.horizontal)
-                    #endif
 
                 // Action buttons
                 actionButtons
-                    .tvOSSettingsHorizontalPadding()
-                    #if !os(tvOS)
-                    .padding(.horizontal)
-                    #endif
 
                 // Content area
                 if isLoading {
@@ -112,6 +104,10 @@ public struct BatchArtworkMatchingView: View {
                     selectionActionBar
                 }
             }
+            .tvOSSettingsHorizontalPadding()
+            #if !os(tvOS)
+            .padding(.horizontal)
+            #endif
             .padding(.bottom, 20)
         }
         .navigationTitle("Batch Artwork Matcher")

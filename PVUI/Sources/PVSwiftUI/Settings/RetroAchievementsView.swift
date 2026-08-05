@@ -97,8 +97,12 @@ public struct RetroAchievementsView: View {
                         loginFormView
                     }
                 }
-                .padding()
                 .tvOSSettingsHorizontalPadding()
+                #if !os(tvOS)
+                .padding()
+                #else
+                .padding(.vertical)
+                #endif
             }
         }
         .navigationTitle("RetroAchievements")

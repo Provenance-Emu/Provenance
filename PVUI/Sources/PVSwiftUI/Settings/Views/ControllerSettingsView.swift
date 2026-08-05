@@ -443,7 +443,7 @@ struct ControllerSettingsView: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background { RetroSettingsBackground() }
-        .padding(.horizontal, 80)
+        .tvOSSettingsHorizontalPadding()
         #else
         .listStyle(.insetGrouped)
         #endif
