@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 import Combine
 import PVLogging
+import ZIPFoundation
 
 /// ViewModel for RetroLogView
 public final class RetroLogViewModel: ObservableObject {
@@ -38,6 +39,10 @@ public final class RetroLogViewModel: ObservableObject {
 
     /// Current sort order for logs
     @Published public var sortOrder: SortOrder = .newestFirst
+
+    /// A log session imported from a file, shown in place of the live logs.
+    /// `nil` means the live session is being displayed.
+    @Published public var importedSession: ImportedLogSession?
 
     // MARK: - Private Properties
 
@@ -246,6 +251,118 @@ public final class RetroLogViewModel: ObservableObject {
             try? fm.removeItem(at: tempDir)
             return nil
         }
+    }
+
+    // MARK: - Import
+
+    /// A single line of an imported log file.
+    public struct ImportedLogLine: Identifiable, Equatable {
+        public let id: Int
+        public let text: String
+        /// Parsed level, when the line carries a recognisable `[LEVEL]` tag.
+        public let level: LogLevel?
+    }
+
+    /// A log session read from a file, displayed instead of the live session.
+    public struct ImportedLogSession: Equatable {
+        /// File name the session was read from, shown in the banner.
+        public let name: String
+        public let lines: [ImportedLogLine]
+    }
+
+    /// Errors surfaced to the user when importing a log file fails.
+    public enum LogImportError: LocalizedError {
+        case unreadable
+        case noLogsInArchive
+
+        public var errorDescription: String? {
+            switch self {
+            case .unreadable:
+                return "That file could not be read as text."
+            case .noLogsInArchive:
+                return "No log files were found inside that archive."
+            }
+        }
+    }
+
+    /// File extensions accepted by the log importer.
+    public static let importableExtensions: Set<String> = ["txt", "log", "zip"]
+
+    /// Reads a log file (plain text or an exported `.zip` bundle) and displays it
+    /// in place of the live logs.
+    public func importLog(from url: URL) throws {
+        let scoped = url.startAccessingSecurityScopedResource()
+        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+
+        let text: String
+        if url.pathExtension.lowercased() == "zip" {
+            text = try Self.text(fromArchiveAt: url)
+        } else {
+            guard let contents = try? String(contentsOf: url, encoding: .utf8) else {
+                throw LogImportError.unreadable
+            }
+            text = contents
+        }
+
+        let lines = text
+            .components(separatedBy: .newlines)
+            .enumerated()
+            .map { ImportedLogLine(id: $0.offset, text: $0.element, level: Self.level(in: $0.element)) }
+
+        importedSession = ImportedLogSession(name: url.lastPathComponent, lines: lines)
+    }
+
+    /// Returns to the live log session.
+    public func closeImportedSession() {
+        importedSession = nil
+    }
+
+    /// Imported lines after applying the current search filter.
+    public var displayedImportedLines: [ImportedLogLine] {
+        guard let session = importedSession else { return [] }
+        guard !searchText.isEmpty else { return session.lines }
+        return session.lines.filter { $0.text.localizedCaseInsensitiveContains(searchText) }
+    }
+
+    /// Concatenates every text log found inside an exported ZIP bundle.
+    private static func text(fromArchiveAt url: URL) throws -> String {
+        guard let archive = Archive(url: url, accessMode: .read) else {
+            throw LogImportError.unreadable
+        }
+
+        /// `device_info.txt` first so the header reads at the top, then the rest alphabetically.
+        let textEntries = archive
+            .filter { ["txt", "log"].contains(($0.path as NSString).pathExtension.lowercased()) }
+            .sorted { lhs, rhs in
+                if lhs.path.hasSuffix("device_info.txt") != rhs.path.hasSuffix("device_info.txt") {
+                    return lhs.path.hasSuffix("device_info.txt")
+                }
+                return lhs.path < rhs.path
+            }
+
+        guard !textEntries.isEmpty else { throw LogImportError.noLogsInArchive }
+
+        var sections: [String] = []
+        for entry in textEntries {
+            var data = Data()
+            guard (try? archive.extract(entry, consumer: { data.append($0) })) != nil,
+                  let contents = String(data: data, encoding: .utf8) else { continue }
+            sections.append("=== \(entry.path) ===\n\(contents)")
+        }
+
+        guard !sections.isEmpty else { throw LogImportError.noLogsInArchive }
+        return sections.joined(separator: "\n\n")
+    }
+
+    /// Best-effort parse of a `[LEVEL]` tag so imported lines keep their colour coding.
+    private static func level(in line: String) -> LogLevel? {
+        let upper = line.uppercased()
+        if upper.contains("[ERROR]") { return .error }
+        if upper.contains("[WARNING]") { return .warning }
+        if upper.contains("[INFO]") { return .info }
+        if upper.contains("[DEBUG]") { return .debug }
+        if upper.contains("[VERBOSE]") { return .verbose }
+        return nil
     }
 }
 
