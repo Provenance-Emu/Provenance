@@ -331,16 +331,18 @@ public struct RetroLogView: View {
                 }) {
                     Image(systemName: "doc.on.doc")
                         .font(.system(size: 12))
-                        .foregroundColor((viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue)
+                        .foregroundColor((viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue)
                         .padding(6)
                         .background(
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder((viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue, lineWidth: 1)
+                                .strokeBorder((viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue, lineWidth: 1)
                         )
                 }
-                .disabled(viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty)
+                .disabled(viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty)
 
-                // Export / share button
+                // Export / share button — exports the live session, so it is
+                // disabled while an imported file is on screen to avoid
+                // silently sharing different logs than the ones displayed.
                 Button(action: {
                     showingExportSheet = true
                 }) {
@@ -353,6 +355,7 @@ public struct RetroLogView: View {
                                 .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
                         )
                 }
+                .disabled(viewModel.importedSession != nil)
 
                 // Import log button
                 Button(action: {
@@ -367,6 +370,8 @@ public struct RetroLogView: View {
                                 .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
                         )
                 }
+                .accessibilityLabel("Import Log File")
+                .accessibilityHint("Open a saved log file to view it in place of the live logs")
 
                 // Clear logs button
                 Button(action: {
@@ -531,6 +536,9 @@ public struct RetroLogView: View {
 
     // Helper function to manage auto-scrolling behavior
     private func handleAutoScroll(scrollView: ScrollViewProxy) {
+        // An imported session is static and uses integer line IDs, so live-log
+        // UUID targets aren't in the list. Leave the reader's scroll alone.
+        guard viewModel.importedSession == nil else { return }
         if viewModel.autoScroll {
             if viewModel.sortOrder == .newestFirst {
                 // Scroll to the top-most item (newest)
@@ -776,7 +784,9 @@ extension RetroLogView {
             .font(.system(size: 11, design: .monospaced))
             .foregroundColor(line.level.map { viewModel.logLevelColor($0) } ?? .white.opacity(0.85))
             .frame(maxWidth: .infinity, alignment: .leading)
+            #if !os(tvOS)
             .textSelection(.enabled)
+            #endif
             .padding(.vertical, 1)
     }
 }

@@ -73,8 +73,16 @@ public final class RetroLogViewModel: ObservableObject {
     }
 
 #if !os(tvOS)
-    /// Copies the currently filtered and sorted logs to the clipboard.
+    /// Copies whatever is currently on screen to the clipboard — the imported
+    /// session when one is open, otherwise the filtered live logs.
     public func copyFilteredLogsToClipboard() {
+        if importedSession != nil {
+            let lines = displayedImportedLines
+            guard !lines.isEmpty else { return }
+            UIPasteboard.general.string = lines.map(\.text).joined(separator: "\n")
+            return
+        }
+
         guard !displayedLogs.isEmpty else { return }
 
         let logTexts = displayedLogs.map { log -> String in
@@ -285,11 +293,10 @@ public final class RetroLogViewModel: ObservableObject {
         }
     }
 
-    /// File extensions accepted by the log importer.
-    public static let importableExtensions: Set<String> = ["txt", "log", "zip"]
-
     /// Reads a log file (plain text or an exported `.zip` bundle) and displays it
     /// in place of the live logs.
+    /// Main-actor bound because it publishes `importedSession`.
+    @MainActor
     public func importLog(from url: URL) throws {
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
@@ -315,6 +322,11 @@ public final class RetroLogViewModel: ObservableObject {
     /// Returns to the live log session.
     public func closeImportedSession() {
         importedSession = nil
+    }
+
+    /// Whether there is nothing on screen to copy — accounts for an open import.
+    public var copyableLinesAreEmpty: Bool {
+        importedSession != nil ? displayedImportedLines.isEmpty : displayedLogs.isEmpty
     }
 
     /// Imported lines after applying the current search filter.
