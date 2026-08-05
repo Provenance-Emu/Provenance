@@ -186,13 +186,18 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode_26.3.app
 
+      # `set -o pipefail` is required: the default shell here is `bash -e`
+      # (no pipefail), so piping into `tail` masked the real exit status and
+      # these steps reported success even when the build or tests failed.
       - name: Build module
         run: |
+          set -o pipefail
           cd ${{ matrix.module }}
           swift build 2>&1 | tail -20
 
       - name: Test module
         run: |
+          set -o pipefail
           cd ${{ matrix.module }}
           swift test 2>&1 | tail -40
 
