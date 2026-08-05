@@ -1078,6 +1078,14 @@ fileprivate extension DirectoryWatcher {
     /// Watch a file
     private func watchFile(at path: URL) {
         Task {
+            // Cheap early-out before opening any descriptor. This is best-effort —
+            // concurrent watchFile calls can still both pass it, which is why
+            // addWatcher below is the authoritative, atomic gate.
+            if await watcherManager.isWatching(path) {
+                VLOG("Already watching file, skipping duplicate watch: \(path.lastPathComponent)")
+                return
+            }
+
             ILOG("Starting to watch file: \(path.lastPathComponent)")
 
             // Get initial file attributes
@@ -1109,10 +1117,18 @@ fileprivate extension DirectoryWatcher {
             )
 
             source.resume()
-            await watcherManager.addWatcher(source,
-                                          for: path,
-                                          initialSize: initialSize,
-                                          modificationDate: initialModDate)
+            let added = await watcherManager.addWatcher(source,
+                                                        for: path,
+                                                        initialSize: initialSize,
+                                                        modificationDate: initialModDate)
+            guard added else {
+                // Another watcher won the race for this path. Cancel OUR source so its
+                // cancel handler closes OUR descriptor — dropping it without cancel is
+                // exactly the fd leak that exhausted the process during large imports.
+                VLOG("Duplicate watcher for \(path.lastPathComponent) — cancelling redundant source")
+                source.cancel()
+                return
+            }
 
             // Start monitoring file changes
             await monitorFileChanges(for: path)
@@ -1381,16 +1397,30 @@ private actor FileWatcherManager: Sendable {
         self.serialQueue = DispatchQueue(label: label)
     }
 
+    /// Registers a watcher for `path`, refusing duplicates.
+    ///
+    /// Returns `false` when an ACTIVE watcher already exists — the caller must then
+    /// cancel its just-created source so the cancel handler closes the descriptor.
+    /// This used to be `fileStatuses[path] = status` unconditionally: rapid directory
+    /// events race the `isWatchingFile` pre-check (it's separated from `watchFile` by
+    /// awaits), so several sources were created for one file and the displaced ones
+    /// were silently dropped WITHOUT cancel — leaking one open fd each. During a
+    /// 392-file import that exhausted the process fd table (mktemp → errno 24 EMFILE)
+    /// and broke unrelated zip extraction.
     func addWatcher(_ source: DispatchSourceFileSystemObject,
-                   for path: URL,
-                   initialSize: Int64,
-                   modificationDate: Date) {
+                    for path: URL,
+                    initialSize: Int64,
+                    modificationDate: Date) -> Bool {
+        if let existing = fileStatuses[path], !existing.watcher.isCancelled {
+            return false
+        }
         let status = FileStatus(
             watcher: source,
             size: initialSize,
             modificationDate: modificationDate
         )
         fileStatuses[path] = status
+        return true
     }
 
     func removeWatcher(for path: URL) {
