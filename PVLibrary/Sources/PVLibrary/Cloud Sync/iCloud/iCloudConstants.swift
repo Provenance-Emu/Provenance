@@ -46,10 +46,11 @@ public enum iCloudConstants {
     /// - iOS / tvOS device: parses `embedded.mobileprovision` when present (sideloaded /
     ///   AdHoc / TestFlight). App Store builds strip the provisioning profile, so absence
     ///   of the file is treated as "entitlement present" (App Store validation guarantees it).
-    /// - Simulator: uses `FileManager.ubiquityIdentityToken`, which is nil without the
-    ///   ubiquity entitlement. Simulator builds carry no `embedded.mobileprovision` *and*
-    ///   may carry no entitlements at all, so nothing may be assumed here — and the
-    ///   macOS `SecTask*` path is unavailable (that header ships only in the macOS SDK).
+    /// - Simulator: reads the entitlements blob the linker embeds in `__TEXT,__entitlements`.
+    ///   Simulator builds aren't code-signed like device builds and carry no
+    ///   `embedded.mobileprovision`, so neither the macOS `SecTask*` path (that header ships
+    ///   only in the macOS SDK) nor the device profile path applies — and they may carry no
+    ///   entitlements at all, so nothing may be assumed here.
     public static let isCloudKitEntitlementPresent: Bool = {
         #if targetEnvironment(simulator)
         // `NSUbiquitousContainers` is an Info.plist *declaration*, not an entitlement.
@@ -90,12 +91,17 @@ public enum iCloudConstants {
     /// live in a Mach-O section rather than a signature — which is why the macOS
     /// `SecTask*` path and the device `embedded.mobileprovision` path both miss them.
     private static func _embeddedEntitlementContainers() -> [String]? {
-        guard let header = _dyld_get_image_header(0) else { return nil }
+        // Validate the magic before interpreting the header as 64-bit, matching
+        // `mainExecutableMachHeader64()` in PVJIT/CodeSignatureUtils.swift. Rebinding
+        // blind would be undefined behaviour if the image were ever not 64-bit.
+        guard let machHeader = _dyld_get_image_header(0) else { return nil }
+        let rawHeader = UnsafeRawPointer(machHeader)
+        guard rawHeader.load(as: UInt32.self) == MH_MAGIC_64 else { return nil }
+        let header = rawHeader.assumingMemoryBound(to: mach_header_64.self)
+
         var size: UInt = 0
-        let sectionPointer = header.withMemoryRebound(to: mach_header_64.self, capacity: 1) { pointer in
-            getsectiondata(pointer, "__TEXT", "__entitlements", &size)
-        }
-        guard let sectionPointer, size > 0 else { return nil }
+        guard let sectionPointer = getsectiondata(header, "__TEXT", "__entitlements", &size),
+              size > 0 else { return nil }
 
         let data = Data(bytes: sectionPointer, count: Int(size))
         guard let plist = try? PropertyListSerialization.propertyList(from: data, format: nil),
