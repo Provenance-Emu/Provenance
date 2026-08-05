@@ -9,6 +9,9 @@
 import SwiftUI
 import PVThemes
 import PVLogging
+#if !os(tvOS)
+import UniformTypeIdentifiers
+#endif
 
 /// A retrowave-styled log viewer component
 public struct RetroLogView: View {
@@ -25,6 +28,14 @@ public struct RetroLogView: View {
 
     /// Controls presentation of the export options sheet
     @State private var showingExportSheet = false
+
+    #if !os(tvOS)
+    /// Controls presentation of the log file importer
+    @State private var showingImporter = false
+
+    /// Message shown when importing a log file fails
+    @State private var importErrorMessage: String?
+    #endif
 
     #if os(tvOS)
     /// Focus states for header buttons
@@ -59,13 +70,25 @@ public struct RetroLogView: View {
             // Header with controls
             headerView
 
+            // Banner shown while viewing a log imported from a file
+            if let session = viewModel.importedSession {
+                importedSessionBanner(name: session.name)
+            }
+
             // Log list
             ScrollViewReader { scrollView in
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 0) {
-                        ForEach(viewModel.displayedLogs) { log in
-                            logEntryRow(log)
-                                .id(log.id)
+                        if viewModel.importedSession != nil {
+                            ForEach(viewModel.displayedImportedLines) { line in
+                                importedLineRow(line)
+                                    .id(line.id)
+                            }
+                        } else {
+                            ForEach(viewModel.displayedLogs) { log in
+                                logEntryRow(log)
+                                    .id(log.id)
+                            }
                         }
 
                         // Invisible view at the bottom for auto-scrolling
@@ -110,6 +133,40 @@ public struct RetroLogView: View {
         .sheet(isPresented: $showingExportSheet) {
             LogExportSheet(viewModel: viewModel)
         }
+        #if !os(tvOS)
+        .fileImporter(
+            isPresented: $showingImporter,
+            allowedContentTypes: Self.importableContentTypes,
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case .success(let urls):
+                guard let url = urls.first else { return }
+                // Parsing happens off-main inside importLog; awaiting here keeps
+                // the picker callback from blocking on file I/O.
+                Task {
+                    do {
+                        try await viewModel.importLog(from: url)
+                    } catch {
+                        importErrorMessage = error.localizedDescription
+                    }
+                }
+            case .failure(let error):
+                importErrorMessage = error.localizedDescription
+            }
+        }
+        .alert(
+            "Import Failed",
+            isPresented: Binding(
+                get: { importErrorMessage != nil },
+                set: { if !$0 { importErrorMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) { importErrorMessage = nil }
+        } message: {
+            Text(importErrorMessage ?? "")
+        }
+        #endif
     }
 
     // MARK: - Subviews
@@ -278,16 +335,18 @@ public struct RetroLogView: View {
                 }) {
                     Image(systemName: "doc.on.doc")
                         .font(.system(size: 12))
-                        .foregroundColor((viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue)
+                        .foregroundColor((viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue)
                         .padding(6)
                         .background(
                             RoundedRectangle(cornerRadius: 4)
-                                .strokeBorder((viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue, lineWidth: 1)
+                                .strokeBorder((viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty) ? RetroTheme.retroPink.opacity(0.3) : RetroTheme.retroBlue, lineWidth: 1)
                         )
                 }
-                .disabled(viewModel.searchText.isEmpty || viewModel.displayedLogs.isEmpty)
+                .disabled(viewModel.searchText.isEmpty || viewModel.copyableLinesAreEmpty)
 
-                // Export / share button
+                // Export / share button — exports the live session, so it is
+                // disabled while an imported file is on screen to avoid
+                // silently sharing different logs than the ones displayed.
                 Button(action: {
                     showingExportSheet = true
                 }) {
@@ -300,6 +359,23 @@ public struct RetroLogView: View {
                                 .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
                         )
                 }
+                .disabled(viewModel.importedSession != nil)
+
+                // Import log button
+                Button(action: {
+                    showingImporter = true
+                }) {
+                    Image(systemName: "square.and.arrow.down")
+                        .font(.system(size: 12))
+                        .foregroundColor(RetroTheme.retroBlue)
+                        .padding(6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                        )
+                }
+                .accessibilityLabel("Import Log File")
+                .accessibilityHint("Open a saved log file to view it in place of the live logs")
 
                 // Clear logs button
                 Button(action: {
@@ -314,6 +390,7 @@ public struct RetroLogView: View {
                                 .strokeBorder(RetroTheme.retroPink.opacity(0.7), lineWidth: 1)
                         )
                 }
+                .disabled(viewModel.importedSession != nil)
 
                 Spacer()
 
@@ -463,6 +540,9 @@ public struct RetroLogView: View {
 
     // Helper function to manage auto-scrolling behavior
     private func handleAutoScroll(scrollView: ScrollViewProxy) {
+        // An imported session is static and uses integer line IDs, so live-log
+        // UUID targets aren't in the list. Leave the reader's scroll alone.
+        guard viewModel.importedSession == nil else { return }
         if viewModel.autoScroll {
             if viewModel.sortOrder == .newestFirst {
                 // Scroll to the top-most item (newest)
@@ -646,6 +726,72 @@ public struct RetroLogView: View {
             }
             #endif // !os(tvOS)
         }
+    }
+}
+
+// MARK: - Imported Session UI
+
+extension RetroLogView {
+    #if !os(tvOS)
+    /// Content types the log importer accepts: plain text, `.log`, and exported `.zip` bundles.
+    static var importableContentTypes: [UTType] {
+        var types: [UTType] = [.plainText, .zip]
+        if let logType = UTType(filenameExtension: "log") {
+            types.append(logType)
+        }
+        return types
+    }
+    #endif
+
+    /// Banner indicating the view is showing an imported session rather than live logs.
+    func importedSessionBanner(name: String) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "doc.text.magnifyingglass")
+                .font(.system(size: 12))
+                .foregroundColor(RetroTheme.retroPink)
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text("VIEWING IMPORTED SESSION")
+                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .foregroundColor(RetroTheme.retroPink)
+                Text(name)
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.8))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+
+            Spacer()
+
+            Button {
+                viewModel.closeImportedSession()
+            } label: {
+                Text("LIVE LOGS")
+                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .foregroundColor(RetroTheme.retroBlue)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        RoundedRectangle(cornerRadius: 4)
+                            .strokeBorder(RetroTheme.retroBlue, lineWidth: 1)
+                    )
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background(RetroTheme.retroPink.opacity(0.12))
+    }
+
+    /// Row for a single line of an imported log file.
+    func importedLineRow(_ line: RetroLogViewModel.ImportedLogLine) -> some View {
+        Text(line.text.isEmpty ? " " : line.text)
+            .font(.system(size: 11, design: .monospaced))
+            .foregroundColor(line.level.map { viewModel.logLevelColor($0) } ?? .white.opacity(0.85))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            #if !os(tvOS)
+            .textSelection(.enabled)
+            #endif
+            .padding(.vertical, 1)
     }
 }
 

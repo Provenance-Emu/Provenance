@@ -199,6 +199,7 @@ let package = Package(
             dependencies: [
                 "PVUIBase",
                 "PVCoreBridge",
+                "PVLogging",
             ]
         ),
 
