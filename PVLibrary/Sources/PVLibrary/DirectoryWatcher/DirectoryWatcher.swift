@@ -1116,7 +1116,8 @@ fileprivate extension DirectoryWatcher {
                 }
             )
 
-            source.resume()
+            // Register BEFORE resuming: a resumed-then-rejected source could deliver
+            // events (spurious handleFileChange) in the window before cancellation.
             let added = await watcherManager.addWatcher(source,
                                                         for: path,
                                                         initialSize: initialSize,
@@ -1125,10 +1126,15 @@ fileprivate extension DirectoryWatcher {
                 // Another watcher won the race for this path. Cancel OUR source so its
                 // cancel handler closes OUR descriptor — dropping it without cancel is
                 // exactly the fd leak that exhausted the process during large imports.
+                // Order matters: a suspended source never fires its cancel handler, so
+                // cancel first (no events can be delivered post-cancel), THEN resume
+                // to let the cancel handler run and close the fd.
                 VLOG("Duplicate watcher for \(path.lastPathComponent) — cancelling redundant source")
                 source.cancel()
+                source.resume()
                 return
             }
+            source.resume()
 
             // Start monitoring file changes
             await monitorFileChanges(for: path)

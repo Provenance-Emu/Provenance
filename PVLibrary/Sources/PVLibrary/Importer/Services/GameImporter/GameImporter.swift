@@ -1178,9 +1178,20 @@ public final class GameImporter: GameImporting, ObservableObject {
         // Record processing start time and create tasks (lock released, safe to do async work)
         let startTime = Date()
 
+        // Gate the worker on the creator having stored the task references. A fast
+        // completion (empty queue) could otherwise run the defer BEFORE
+        // currentProcessingTask was assigned below; the creator then stored an
+        // already-completed task, which hasActiveProcessingTask treats as active
+        // forever (isCancelled == false) — wedging auto-start until the 600s watchdog.
+        let refsStored = AsyncSemaphore(value: 1)
+        await refsStored.wait() // take the sole permit; released after refs are stored
+
         // Create and store the processing task
         let processingTask = Task.detached { [weak self] in
             guard let self = self else { return }
+
+            await refsStored.wait() // creator signals once refs are stored
+            await refsStored.signal() // restore for any future waiter (none today)
 
             defer {
                 // Clean up task references when done
@@ -1228,6 +1239,9 @@ public final class GameImporter: GameImporting, ObservableObject {
             processingStartTime = startTime
             processingStartReserved = false
         }
+
+        // Refs are visible; release the worker (see refsStored gate above).
+        await refsStored.signal()
     }
 
     /// Handles timeout recovery when processing task hangs
@@ -2220,11 +2234,26 @@ public final class GameImporter: GameImporting, ObservableObject {
             // `maxConcurrentImports` concurrent children.
             processedCount += await withTaskGroup(of: Int.self) { group in
             for fileGroup in prioritizedGroups {
+                // Stop SPAWNING on cancellation too, not just on pause. Without this,
+                // a cancelled parent that wakes from semaphore.wait() (a child signals
+                // on completion) would keep enqueueing processItem work alongside any
+                // replacement loop — the duplicate-import overlap this PR eliminates.
+                // Children check Task.isCancelled per item; this stops new children.
+                if Task.isCancelled {
+                    break
+                }
                 if await checkIfPaused() {
                     break
                 }
 
                     await semaphore.wait()
+
+                    if Task.isCancelled {
+                        // Woke from a potentially long semaphore park after cancel:
+                        // give the permit back and stop spawning.
+                        await semaphore.signal()
+                        break
+                    }
 
                     group.addTask { [weak self] in
                         defer { Task { await semaphore.signal() } }
