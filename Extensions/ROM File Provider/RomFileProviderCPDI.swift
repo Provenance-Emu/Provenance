@@ -146,10 +146,13 @@ enum RomFileProviderLibrary {
     }
 
     /// Distinct games that have at least one locally present save state, sorted by title.
-    static func saveStateGameFolders() -> [Game] {
+    ///
+    /// Accepts an already-loaded `entries` snapshot (e.g. a caller's per-enumeration cache) so
+    /// listing the **Save States** folder doesn't re-scan Realm on top of the caller's own scan.
+    static func saveStateGameFolders(from entries: [SaveStateEntry] = loadAllSaveStateEntries()) -> [Game] {
         var seen = Set<String>()
         var games: [Game] = []
-        for entry in loadAllSaveStateEntries() where !seen.contains(entry.game.md5) {
+        for entry in entries where !seen.contains(entry.game.md5) {
             seen.insert(entry.game.md5)
             games.append(entry.game)
         }
@@ -183,21 +186,26 @@ enum RomFileProviderLibrary {
     }
 
     /// Distinct games that have at least one locally present screenshot, sorted by title.
-    static func screenshotGameFolders() -> [Game] {
+    ///
+    /// Accepts an already-loaded `entries` snapshot (e.g. a caller's per-enumeration cache) and
+    /// does a single filtered Realm fetch for titles, instead of the full-library scan +
+    /// per-screenshot filesystem check the no-argument path performs.
+    static func screenshotGameFolders(from entries: [ScreenshotEntry] = loadAllScreenshotEntries()) -> [Game] {
+        var md5s: [String] = []
         var seen = Set<String>()
-        var games: [Game] = []
-        for pvGame in realm.objects(PVGame.self) {
-            guard !pvGame.isInvalidated else { continue }
-            let md5 = pvGame.md5Hash
+        for entry in entries {
+            let md5 = entry.gameMD5.uppercased()
             guard !seen.contains(md5) else { continue }
-            let hasShots = pvGame.screenShots.contains { pvImg in
-                !pvImg.isInvalidated && pvImg.url.map { FileManager.default.fileExists(atPath: $0.path) } == true
-            }
-            if hasShots {
-                seen.insert(md5)
-                games.append(pvGame.asDomain())
-            }
+            seen.insert(md5)
+            md5s.append(md5)
         }
+        guard !md5s.isEmpty else { return [] }
+        let games = realm.objects(PVGame.self)
+            .filter("md5Hash IN %@", md5s)
+            .compactMap { pvGame -> Game? in
+                guard !pvGame.isInvalidated else { return nil }
+                return pvGame.asDomain()
+            }
         return games.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
     }
 }

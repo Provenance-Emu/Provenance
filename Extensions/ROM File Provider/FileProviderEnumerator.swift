@@ -107,6 +107,20 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
         return entries
     }
 
+    /// Distinct games with a locally present save state, reusing the per-enumeration cache so
+    /// listing the **Save States** category doesn't re-scan Realm on top of the `ss-game:<md5>`
+    /// folder enumeration, which also reads `loadSaveStateEntriesIfNeeded()`.
+    private func saveStateGameFoldersFromCache() -> [Game] {
+        RomFileProviderLibrary.saveStateGameFolders(from: loadSaveStateEntriesIfNeeded())
+    }
+
+    /// Distinct games with a locally present screenshot, reusing the per-enumeration cache so
+    /// listing the **Screenshots** category doesn't re-scan Realm on top of the `sc-game:<md5>`
+    /// folder enumeration, which also reads `loadScreenshotEntriesIfNeeded()`.
+    private func screenshotGameFoldersFromCache() -> [Game] {
+        RomFileProviderLibrary.screenshotGameFolders(from: loadScreenshotEntriesIfNeeded())
+    }
+
     // MARK: - buildItems
 
     private func buildItems(offset: Int, limit: Int) throws -> ([FileProviderItem], Int) {
@@ -259,12 +273,12 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
             return pageSlice(items: items, offset: offset, limit: limit)
         case .saveStates:
             let parent = NSFileProviderItemIdentifier(cat.rawIdentifier)
-            let games = RomFileProviderLibrary.saveStateGameFolders()
+            let games = saveStateGameFoldersFromCache()
             let folders = games.map { FileProviderItem(saveStateGameFolder: $0, parentItemIdentifier: parent) }
             return pageSlice(items: folders, offset: offset, limit: limit)
         case .screenshots:
             let parent = NSFileProviderItemIdentifier(cat.rawIdentifier)
-            let games = RomFileProviderLibrary.screenshotGameFolders()
+            let games = screenshotGameFoldersFromCache()
             let folders = games.map { FileProviderItem(screenshotGameFolder: $0, parentItemIdentifier: parent) }
             return pageSlice(items: folders, offset: offset, limit: limit)
         }
