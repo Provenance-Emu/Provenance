@@ -33,16 +33,21 @@ public class SyncProviderFactory {
         DLOG("iCloudSync=\(iCloudSyncEnabled), iCloudSyncMode=\(syncMode.description)")
         
 #if os(tvOS)
-        // Get the container identifier from the bundle
-        let containerIdentifier = iCloudConstants.containerIdentifier
-        let container = CKContainer(identifier: containerIdentifier)
+        // Use the entitlement-gated container: `CKContainer(identifier:)` traps when the
+        // container isn't entitled, so constructing it directly crashes unentitled builds.
+        guard let container = iCloudConstants.container else {
+            WLOG("CloudKit container unavailable (no entitlement) — falling back to iCloud Documents syncer")
+            return iCloudContainerSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+        }
         return CloudKitSyncer(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
 #else
         // Return the appropriate syncer based on the mode
         if syncMode.isCloudKit {
-            // Get the container identifier from the bundle
-            let containerIdentifier = iCloudConstants.containerIdentifier
-            let container = CKContainer(identifier: containerIdentifier)
+            // Entitlement-gated: see the tvOS branch above.
+            guard let container = iCloudConstants.container else {
+                WLOG("CloudKit container unavailable (no entitlement) — falling back to iCloud Documents syncer")
+                return iCloudContainerSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+            }
             DLOG("Creating CloudKit syncer based on iCloudSyncMode=\(syncMode.description)")
             return CloudKitSyncer(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
         } else {

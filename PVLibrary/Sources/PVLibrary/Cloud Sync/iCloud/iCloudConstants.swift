@@ -41,21 +41,28 @@ public enum iCloudConstants {
     /// - iOS / tvOS device: parses `embedded.mobileprovision` when present (sideloaded /
     ///   AdHoc / TestFlight). App Store builds strip the provisioning profile, so absence
     ///   of the file is treated as "entitlement present" (App Store validation guarantees it).
-    /// - Simulator: reads the live code signature via `SecTaskCopyValueForEntitlement`.
-    ///   Simulator builds carry no `embedded.mobileprovision`, and may carry no
-    ///   entitlements at all, so nothing may be assumed here.
+    /// - Simulator: uses `FileManager.ubiquityIdentityToken`, which is nil without the
+    ///   ubiquity entitlement. Simulator builds carry no `embedded.mobileprovision` *and*
+    ///   may carry no entitlements at all, so nothing may be assumed here — and the
+    ///   macOS `SecTask*` path is unavailable (that header ships only in the macOS SDK).
     public static let isCloudKitEntitlementPresent: Bool = {
         #if targetEnvironment(simulator)
         // `NSUbiquitousContainers` is an Info.plist *declaration*, not an entitlement.
         // It is always present in this bundle, so keying off it returned true even for
         // simulator builds signed without entitlements (CI's CODE_SIGNING_ALLOWED=NO,
         // ad-hoc re-signs, screenshot automation). `CKContainer(identifier:)` then traps
-        // on first access and the app dies at launch. Read the real code signature instead
-        // — the same source CloudKit itself validates against.
-        guard let task = SecTaskCreateFromSelf(nil),
-              let value = SecTaskCopyValueForEntitlement(task, "com.apple.developer.icloud-container-identifiers" as CFString, nil),
-              let containers = value as? [String] else { return false }
-        return !containers.isEmpty
+        // on first access and the app dies at launch.
+        //
+        // The code signature can't be read here the way the macOS branch does it:
+        // `SecTask.h` ships in the macOS SDK only, so `SecTaskCreateFromSelf` /
+        // `SecTaskCopyValueForEntitlement` don't exist for iOS/tvOS simulator targets.
+        //
+        // `ubiquityIdentityToken` is nil unless the process actually holds the ubiquity
+        // entitlement, is a plain Foundation API available on every platform, and — unlike
+        // `CKContainer(identifier:)` — returns rather than trapping. An entitled simulator
+        // build with a signed-in account still gets CloudKit; an unentitled one degrades
+        // to sync-disabled instead of crashing at launch.
+        return FileManager.default.ubiquityIdentityToken != nil
         #elseif os(macOS) || targetEnvironment(macCatalyst)
         guard let task = SecTaskCreateFromSelf(nil) else { return false }
         let key = "com.apple.developer.icloud-container-identifiers" as CFString
