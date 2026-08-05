@@ -10,6 +10,11 @@ import CloudKit
 #if os(macOS) || targetEnvironment(macCatalyst)
 import Security
 #endif
+#if targetEnvironment(simulator)
+/// For `_dyld_get_image_header` / `getsectiondata` — used to read the entitlements
+/// blob the linker embeds in simulator builds.
+import MachO
+#endif
 import PVLogging
 
 public enum iCloudConstants {
@@ -41,14 +46,29 @@ public enum iCloudConstants {
     /// - iOS / tvOS device: parses `embedded.mobileprovision` when present (sideloaded /
     ///   AdHoc / TestFlight). App Store builds strip the provisioning profile, so absence
     ///   of the file is treated as "entitlement present" (App Store validation guarantees it).
-    /// - Simulator: always returns true (simulator entitlements are always present).
+    /// - Simulator: reads the entitlements blob the linker embeds in `__TEXT,__entitlements`.
+    ///   Simulator builds aren't code-signed like device builds and carry no
+    ///   `embedded.mobileprovision`, so neither the macOS `SecTask*` path (that header ships
+    ///   only in the macOS SDK) nor the device profile path applies — and they may carry no
+    ///   entitlements at all, so nothing may be assumed here.
     public static let isCloudKitEntitlementPresent: Bool = {
         #if targetEnvironment(simulator)
-        // Simulator: only claim entitlement is present if Info.plist declares CloudKit containers
-        if let containers = Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject], !containers.isEmpty {
-            return true
-        }
-        return false
+        // `NSUbiquitousContainers` is an Info.plist *declaration*, not an entitlement.
+        // It is always present in this bundle, so keying off it returned true even for
+        // simulator builds signed without entitlements (CI's CODE_SIGNING_ALLOWED=NO,
+        // ad-hoc re-signs, screenshot automation). `CKContainer(identifier:)` then traps
+        // on first access and the app dies at launch.
+        //
+        // Neither of the obvious proxies is correct here:
+        //  - `SecTaskCopyValueForEntitlement` (used by the macOS branch below) doesn't
+        //    exist for simulator targets — `SecTask.h` ships in the macOS SDK only.
+        //  - `FileManager.ubiquityIdentityToken` reflects the *ubiquity* entitlement and
+        //    account state, not `com.apple.developer.icloud-container-identifiers`, so a
+        //    build holding one but not the other would still trap.
+        //
+        // Read the entitlements the linker embeds in `__TEXT,__entitlements` for
+        // simulator builds — the actual list CloudKit validates against.
+        return _embeddedEntitlementContainers()?.isEmpty == false
         #elseif os(macOS) || targetEnvironment(macCatalyst)
         guard let task = SecTaskCreateFromSelf(nil) else { return false }
         let key = "com.apple.developer.icloud-container-identifiers" as CFString
@@ -61,6 +81,37 @@ public enum iCloudConstants {
         return _cloudKitEntitlementFromProvisioningProfile() ?? true
         #endif
     }()
+
+#if targetEnvironment(simulator)
+    /// Returns the CloudKit container identifiers from the entitlements blob the linker
+    /// embeds in `__TEXT,__entitlements` for simulator builds, or `nil` when the section
+    /// is absent (i.e. the build carries no entitlements at all).
+    ///
+    /// Simulator apps aren't code-signed the way device builds are, so the entitlements
+    /// live in a Mach-O section rather than a signature — which is why the macOS
+    /// `SecTask*` path and the device `embedded.mobileprovision` path both miss them.
+    private static func _embeddedEntitlementContainers() -> [String]? {
+        // Validate the magic before interpreting the header as 64-bit, matching
+        // `mainExecutableMachHeader64()` in PVJIT/CodeSignatureUtils.swift. Rebinding
+        // blind would be undefined behaviour if the image were ever not 64-bit.
+        guard let machHeader = _dyld_get_image_header(0) else { return nil }
+        let rawHeader = UnsafeRawPointer(machHeader)
+        guard rawHeader.load(as: UInt32.self) == MH_MAGIC_64 else { return nil }
+        let header = rawHeader.assumingMemoryBound(to: mach_header_64.self)
+
+        var size: UInt = 0
+        guard let sectionPointer = getsectiondata(header, "__TEXT", "__entitlements", &size),
+              size > 0 else { return nil }
+
+        let data = Data(bytes: sectionPointer, count: Int(size))
+        guard let plist = try? PropertyListSerialization.propertyList(from: data, format: nil),
+              let entitlements = plist as? [String: Any],
+              let containers = entitlements["com.apple.developer.icloud-container-identifiers"] as? [String] else {
+            return nil
+        }
+        return containers
+    }
+#endif
 
     /// Parses the `embedded.mobileprovision` PKCS#7 blob to check for the CloudKit
     /// container entitlement. Returns `nil` when no provisioning profile is embedded
