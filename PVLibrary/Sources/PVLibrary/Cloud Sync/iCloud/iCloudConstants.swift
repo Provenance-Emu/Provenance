@@ -10,6 +10,11 @@ import CloudKit
 #if os(macOS) || targetEnvironment(macCatalyst)
 import Security
 #endif
+#if targetEnvironment(simulator)
+/// For `_dyld_get_image_header` / `getsectiondata` — used to read the entitlements
+/// blob the linker embeds in simulator builds.
+import MachO
+#endif
 import PVLogging
 
 public enum iCloudConstants {
@@ -53,16 +58,16 @@ public enum iCloudConstants {
         // ad-hoc re-signs, screenshot automation). `CKContainer(identifier:)` then traps
         // on first access and the app dies at launch.
         //
-        // The code signature can't be read here the way the macOS branch does it:
-        // `SecTask.h` ships in the macOS SDK only, so `SecTaskCreateFromSelf` /
-        // `SecTaskCopyValueForEntitlement` don't exist for iOS/tvOS simulator targets.
+        // Neither of the obvious proxies is correct here:
+        //  - `SecTaskCopyValueForEntitlement` (used by the macOS branch below) doesn't
+        //    exist for simulator targets — `SecTask.h` ships in the macOS SDK only.
+        //  - `FileManager.ubiquityIdentityToken` reflects the *ubiquity* entitlement and
+        //    account state, not `com.apple.developer.icloud-container-identifiers`, so a
+        //    build holding one but not the other would still trap.
         //
-        // `ubiquityIdentityToken` is nil unless the process actually holds the ubiquity
-        // entitlement, is a plain Foundation API available on every platform, and — unlike
-        // `CKContainer(identifier:)` — returns rather than trapping. An entitled simulator
-        // build with a signed-in account still gets CloudKit; an unentitled one degrades
-        // to sync-disabled instead of crashing at launch.
-        return FileManager.default.ubiquityIdentityToken != nil
+        // Read the entitlements the linker embeds in `__TEXT,__entitlements` for
+        // simulator builds — the actual list CloudKit validates against.
+        return _embeddedEntitlementContainers()?.isEmpty == false
         #elseif os(macOS) || targetEnvironment(macCatalyst)
         guard let task = SecTaskCreateFromSelf(nil) else { return false }
         let key = "com.apple.developer.icloud-container-identifiers" as CFString
@@ -75,6 +80,32 @@ public enum iCloudConstants {
         return _cloudKitEntitlementFromProvisioningProfile() ?? true
         #endif
     }()
+
+#if targetEnvironment(simulator)
+    /// Returns the CloudKit container identifiers from the entitlements blob the linker
+    /// embeds in `__TEXT,__entitlements` for simulator builds, or `nil` when the section
+    /// is absent (i.e. the build carries no entitlements at all).
+    ///
+    /// Simulator apps aren't code-signed the way device builds are, so the entitlements
+    /// live in a Mach-O section rather than a signature — which is why the macOS
+    /// `SecTask*` path and the device `embedded.mobileprovision` path both miss them.
+    private static func _embeddedEntitlementContainers() -> [String]? {
+        guard let header = _dyld_get_image_header(0) else { return nil }
+        var size: UInt = 0
+        let sectionPointer = header.withMemoryRebound(to: mach_header_64.self, capacity: 1) { pointer in
+            getsectiondata(pointer, "__TEXT", "__entitlements", &size)
+        }
+        guard let sectionPointer, size > 0 else { return nil }
+
+        let data = Data(bytes: sectionPointer, count: Int(size))
+        guard let plist = try? PropertyListSerialization.propertyList(from: data, format: nil),
+              let entitlements = plist as? [String: Any],
+              let containers = entitlements["com.apple.developer.icloud-container-identifiers"] as? [String] else {
+            return nil
+        }
+        return containers
+    }
+#endif
 
     /// Parses the `embedded.mobileprovision` PKCS#7 blob to check for the CloudKit
     /// container entitlement. Returns `nil` when no provisioning profile is embedded
