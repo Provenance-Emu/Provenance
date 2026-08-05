@@ -41,14 +41,21 @@ public enum iCloudConstants {
     /// - iOS / tvOS device: parses `embedded.mobileprovision` when present (sideloaded /
     ///   AdHoc / TestFlight). App Store builds strip the provisioning profile, so absence
     ///   of the file is treated as "entitlement present" (App Store validation guarantees it).
-    /// - Simulator: always returns true (simulator entitlements are always present).
+    /// - Simulator: reads the live code signature via `SecTaskCopyValueForEntitlement`.
+    ///   Simulator builds carry no `embedded.mobileprovision`, and may carry no
+    ///   entitlements at all, so nothing may be assumed here.
     public static let isCloudKitEntitlementPresent: Bool = {
         #if targetEnvironment(simulator)
-        // Simulator: only claim entitlement is present if Info.plist declares CloudKit containers
-        if let containers = Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject], !containers.isEmpty {
-            return true
-        }
-        return false
+        // `NSUbiquitousContainers` is an Info.plist *declaration*, not an entitlement.
+        // It is always present in this bundle, so keying off it returned true even for
+        // simulator builds signed without entitlements (CI's CODE_SIGNING_ALLOWED=NO,
+        // ad-hoc re-signs, screenshot automation). `CKContainer(identifier:)` then traps
+        // on first access and the app dies at launch. Read the real code signature instead
+        // — the same source CloudKit itself validates against.
+        guard let task = SecTaskCreateFromSelf(nil),
+              let value = SecTaskCopyValueForEntitlement(task, "com.apple.developer.icloud-container-identifiers" as CFString, nil),
+              let containers = value as? [String] else { return false }
+        return !containers.isEmpty
         #elseif os(macOS) || targetEnvironment(macCatalyst)
         guard let task = SecTaskCreateFromSelf(nil) else { return false }
         let key = "com.apple.developer.icloud-container-identifiers" as CFString
