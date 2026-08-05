@@ -208,8 +208,12 @@ public struct CloudSyncStatusView: View {
     private func checkCloudKitAvailability() {
         // Entitlement-gated: `CKContainer(identifier:)` traps when the container
         // isn't entitled, so constructing it directly crashes unentitled builds.
+        // Report the terminal state rather than returning silently — bailing out
+        // left the view stuck on its initial "Checking sync status..." forever.
         guard let container = iCloudConstants.container else {
-            WLOG("CloudKit container unavailable (no entitlement) — skipping availability check")
+            WLOG("CloudKit container unavailable (no entitlement)")
+            isAvailable = false
+            syncStatus = "CloudKit unavailable (no iCloud entitlement)"
             return
         }
         

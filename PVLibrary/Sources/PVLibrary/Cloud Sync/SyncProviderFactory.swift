@@ -19,12 +19,15 @@ public class SyncProviderFactory {
     ///   - directories: Directories to sync
     ///   - notificationCenter: Notification center to use
     ///   - errorHandler: Error handler to use
-    /// - Returns: A sync provider
+    /// - Returns: A sync provider, or `nil` when no provider is valid for this platform
+    ///   and entitlement state — on tvOS that means CloudKit is the only supported mode
+    ///   (`iCloudSyncMode.iCloudDrive` is `#if !os(tvOS)`), so an unentitled build has no
+    ///   fallback to offer.
     public static func createSyncProvider(
         for directories: Set<String>,
         notificationCenter: NotificationCenter = .default,
         errorHandler: CloudSyncErrorHandler
-    ) -> SyncProvider {
+    ) -> SyncProvider? {
         // Get the current iCloud sync mode and check if sync is enabled
         let syncMode = Defaults[.iCloudSyncMode]
         let iCloudSyncEnabled = Defaults[.iCloudSync]
@@ -36,8 +39,12 @@ public class SyncProviderFactory {
         // Use the entitlement-gated container: `CKContainer(identifier:)` traps when the
         // container isn't entitled, so constructing it directly crashes unentitled builds.
         guard let container = iCloudConstants.container else {
-            WLOG("CloudKit container unavailable (no entitlement) — falling back to iCloud Documents syncer")
-            return iCloudContainerSyncer(directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
+            // No iCloud Drive fallback exists on tvOS — `iCloudSyncMode.iCloudDrive` is
+            // compiled out there and its own subtitle says "Not supported on tvOS" — so
+            // returning the Documents syncer would hand back a provider the platform
+            // declares invalid. Report "no provider" instead.
+            WLOG("CloudKit container unavailable (no entitlement) — sync disabled (tvOS has no iCloud Drive fallback)")
+            return nil
         }
         return CloudKitSyncer(container: container, directories: directories, notificationCenter: notificationCenter, errorHandler: errorHandler)
 #else

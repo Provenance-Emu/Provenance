@@ -125,7 +125,13 @@ public enum iCloudConstants {
         guard let raw = String(data: data, encoding: .ascii),
               let plistStart = raw.range(of: "<?xml"),
               let plistEnd   = raw.range(of: "</plist>") else { return nil }
-        let plistSlice = String(raw[plistStart.lowerBound ..< plistEnd.upperBound]) + "</plist>"
+        // `plistEnd.upperBound` is already past the closing tag, so the slice ends with
+        // `</plist>`. Appending another produced `</plist></plist>` — malformed XML that
+        // failed to parse, returning nil, which the caller's `?? true` then read as
+        // "App Store build, assume entitled". The device entitlement check therefore
+        // never actually worked: sideloaded builds without the CloudKit entitlement fell
+        // through to `true` and trapped in `CKContainer(identifier:)`.
+        let plistSlice = String(raw[plistStart.lowerBound ..< plistEnd.upperBound])
         guard let plistData = plistSlice.data(using: .utf8),
               let plist = try? PropertyListSerialization.propertyList(from: plistData, format: nil) as? [String: Any],
               let entitlements = plist["Entitlements"] as? [String: Any] else { return nil }
