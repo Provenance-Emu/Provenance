@@ -363,6 +363,7 @@ public protocol GameImporting {
 }
 
 //@Observable
+// swiftlint:disable:next type_body_length
 public final class GameImporter: GameImporting, ObservableObject {
 
     /// Publisher that emits the current import queue whenever it changes
