@@ -6213,7 +6213,6 @@
 		<string>CRT</string>
 		<key>PVSupportedExtensions</key>
 		<array>
-			<string>32X</string>
 			<string>32x</string>
 		</array>
 		<key>PVSystemIdentifier</key>
@@ -6868,9 +6867,7 @@
 			<string>com</string>
 			<string>bat</string>
 			<string>conf</string>
-			<string>CONF</string>
 			<string>cfg</string>
-			<string>CFG</string>
 			<string>img</string>
 			<string>zip</string>
 			<string>dosz</string>
@@ -8961,39 +8958,24 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>d98</string>
-			<string>D98</string>
 			<string>zip</string>
-			<string>ZIP</string>
 			<string>rar</string>
-			<string>RAR</string>
 			<string>lzh</string>
-			<string>LZH</string>
 			<string>98d</string>
-			<string>98D</string>
 			<string>fdi</string>
-			<string>FDI</string>
 			<string>fdd</string>
-			<string>FDD</string>
 			<string>2hd</string>
-			<string>2HD</string>
 			<string>tfd</string>
 			<string>d88</string>
-			<string>D88</string>
 			<string>hdm</string>
-			<string>HDM</string>
-			<string>88D</string>
 			<string>88d</string>
 			<string>xdf</string>
 			<string>dup</string>
 			<string>cmd</string>
-			<string>CMD</string>
 			<string>hdi</string>
-			<string>HDI</string>
 			<string>thd</string>
 			<string>nhd</string>
-			<string>NHD</string>
 			<string>hdd</string>
-			<string>HDD</string>
 			<string>hdn</string>
 		</array>
 		<key>PVSystemIdentifier</key>
@@ -9152,7 +9134,6 @@
 		<array>
 			<string>opt</string>
 			<string>cfg</string>
-			<string>CFG</string>
 		</array>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.retroarch</string>
@@ -9576,7 +9557,6 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>wl6</string>
-			<string>WL6</string>
 			<string>n3d</string>
 			<string>sod</string>
 			<string>sdm</string>
@@ -9739,7 +9719,6 @@
 			<string>wad</string>
 			<string>iwad</string>
 			<string>pwad</string>
-			<string>WAD</string>
 		</array>
 		<key>PVSystemIdentifier</key>
 		<string>com.provenance.doom</string>
