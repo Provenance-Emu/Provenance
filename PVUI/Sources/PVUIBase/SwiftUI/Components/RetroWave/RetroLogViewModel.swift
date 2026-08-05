@@ -72,7 +72,10 @@ public final class RetroLogViewModel: ObservableObject {
         PVLogPublisher.shared.clearLogs()
     }
 
-#if !os(tvOS)
+// `UIPasteboard` is UIKit-only, but PVUIBase also declares native macOS and
+// watchOS support where UIKit doesn't exist, so gate on the framework rather
+// than just excluding tvOS.
+#if !os(tvOS) && canImport(UIKit)
     /// Copies whatever is currently on screen to the clipboard — the imported
     /// session when one is open, otherwise the filtered live logs.
     public func copyFilteredLogsToClipboard() {
@@ -279,6 +282,7 @@ public final class RetroLogViewModel: ObservableObject {
     public enum LogImportError: LocalizedError {
         case unreadable
         case noLogsInArchive
+        case tooLarge
 
         public var errorDescription: String? {
             switch self {
@@ -286,31 +290,51 @@ public final class RetroLogViewModel: ObservableObject {
                 return "That file could not be read as text."
             case .noLogsInArchive:
                 return "No log files were found inside that archive."
+            case .tooLarge:
+                return "That log is too large to open (limit \(RetroLogViewModel.maxImportBytes / 1_048_576) MB)."
             }
         }
     }
 
+    /// Upper bound on how much log text will be read into memory.
+    ///
+    /// The file is user-chosen, but a very large log — or a highly compressed
+    /// archive — would otherwise be expanded unbounded into `Data`, `String`,
+    /// and finally an array of line objects.
+    public static let maxImportBytes = 64 * 1_048_576  // 64 MB
+
     /// Reads a log file (plain text or an exported `.zip` bundle) and displays it
     /// in place of the live logs.
-    /// Main-actor bound because it publishes `importedSession`.
+    ///
+    /// File I/O, ZIP extraction and parsing all run off the main actor; only the
+    /// final publish of `importedSession` hops back, so importing a large log
+    /// never blocks rendering or input.
     @MainActor
-    public func importLog(from url: URL) throws {
+    public func importLog(from url: URL) async throws {
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
 
-        let text: String
-        if url.pathExtension.lowercased() == "zip" {
-            text = try Self.text(fromArchiveAt: url)
-        } else {
-            guard let contents = try? String(contentsOf: url, encoding: .utf8) else {
-                throw LogImportError.unreadable
-            }
-            text = contents
+        let name = url.lastPathComponent
+        let isArchive = url.pathExtension.lowercased() == "zip"
+
+        let lines = try await Task.detached(priority: .userInitiated) { () throws -> [ImportedLogLine] in
+            let text = isArchive
+                ? try Self.text(fromArchiveAt: url)
+                : try Self.text(fromPlainFileAt: url)
+            return LogFileParsing.parseLines(text)
+        }.value
+
+        importedSession = ImportedLogSession(name: name, lines: lines)
+    }
+
+    /// Reads a plain-text log, refusing anything past `maxImportBytes`.
+    private static func text(fromPlainFileAt url: URL) throws -> String {
+        let size = (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+        guard size <= maxImportBytes else { throw LogImportError.tooLarge }
+        guard let contents = try? String(contentsOf: url, encoding: .utf8) else {
+            throw LogImportError.unreadable
         }
-
-        let lines = LogFileParsing.parseLines(text)
-
-        importedSession = ImportedLogSession(name: url.lastPathComponent, lines: lines)
+        return contents
     }
 
     /// Returns to the live log session.
@@ -349,10 +373,16 @@ public final class RetroLogViewModel: ObservableObject {
         guard !textEntries.isEmpty else { throw LogImportError.noLogsInArchive }
 
         var sections: [String] = []
+        var budget = maxImportBytes
         for entry in textEntries {
+            // Check the declared size before extracting so a highly-compressed
+            // entry can't expand past the budget on its way into memory.
+            // `uncompressedSize` is UInt64; compare in that domain.
+            guard entry.uncompressedSize <= UInt64(budget) else { throw LogImportError.tooLarge }
             var data = Data()
             guard (try? archive.extract(entry, consumer: { data.append($0) })) != nil,
                   let contents = String(data: data, encoding: .utf8) else { continue }
+            budget -= min(budget, data.count)
             sections.append("=== \(entry.path) ===\n\(contents)")
         }
 

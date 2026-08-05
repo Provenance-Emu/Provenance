@@ -142,10 +142,14 @@ public struct RetroLogView: View {
             switch result {
             case .success(let urls):
                 guard let url = urls.first else { return }
-                do {
-                    try viewModel.importLog(from: url)
-                } catch {
-                    importErrorMessage = error.localizedDescription
+                // Parsing happens off-main inside importLog; awaiting here keeps
+                // the picker callback from blocking on file I/O.
+                Task {
+                    do {
+                        try await viewModel.importLog(from: url)
+                    } catch {
+                        importErrorMessage = error.localizedDescription
+                    }
                 }
             case .failure(let error):
                 importErrorMessage = error.localizedDescription

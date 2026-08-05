@@ -29,11 +29,11 @@ final class RetroLogImportTests: XCTestCase {
 
     // MARK: - Plain text
 
-    func testImportPlainTextPopulatesSessionAndName() throws {
+    func testImportPlainTextPopulatesSessionAndName() async throws {
         let url = try write("line one\nline two\nline three", to: "sample.log")
         let vm = RetroLogViewModel()
 
-        try vm.importLog(from: url)
+        try await vm.importLog(from: url)
 
         XCTAssertNotNil(vm.importedSession)
         XCTAssertEqual(vm.importedSession?.name, "sample.log")
@@ -41,11 +41,11 @@ final class RetroLogImportTests: XCTestCase {
         XCTAssertEqual(vm.importedSession?.lines.first?.text, "line one")
     }
 
-    func testImportedLineIDsAreUniqueAndOrdered() throws {
+    func testImportedLineIDsAreUniqueAndOrdered() async throws {
         let url = try write("a\nb\nc\nd", to: "ids.txt")
         let vm = RetroLogViewModel()
 
-        try vm.importLog(from: url)
+        try await vm.importLog(from: url)
 
         let ids = vm.importedSession?.lines.map(\.id) ?? []
         XCTAssertEqual(ids, [0, 1, 2, 3])
@@ -59,10 +59,10 @@ final class RetroLogImportTests: XCTestCase {
 
     // MARK: - Filtering & lifecycle
 
-    func testSearchFiltersImportedLines() throws {
+    func testSearchFiltersImportedLines() async throws {
         let url = try write("alpha\nbravo\ncharlie", to: "filter.log")
         let vm = RetroLogViewModel()
-        try vm.importLog(from: url)
+        try await vm.importLog(from: url)
 
         vm.searchText = "brav"
 
@@ -70,20 +70,20 @@ final class RetroLogImportTests: XCTestCase {
         XCTAssertEqual(vm.displayedImportedLines.first?.text, "bravo")
     }
 
-    func testSearchIsCaseInsensitive() throws {
+    func testSearchIsCaseInsensitive() async throws {
         let url = try write("AlphaBeta", to: "case.log")
         let vm = RetroLogViewModel()
-        try vm.importLog(from: url)
+        try await vm.importLog(from: url)
 
         vm.searchText = "alphabeta"
 
         XCTAssertEqual(vm.displayedImportedLines.count, 1)
     }
 
-    func testCloseImportedSessionReturnsToLive() throws {
+    func testCloseImportedSessionReturnsToLive() async throws {
         let url = try write("x", to: "close.log")
         let vm = RetroLogViewModel()
-        try vm.importLog(from: url)
+        try await vm.importLog(from: url)
         XCTAssertNotNil(vm.importedSession)
 
         vm.closeImportedSession()
@@ -92,10 +92,10 @@ final class RetroLogImportTests: XCTestCase {
         XCTAssertTrue(vm.displayedImportedLines.isEmpty)
     }
 
-    func testCopyableLinesReflectImportedSession() throws {
+    func testCopyableLinesReflectImportedSession() async throws {
         let url = try write("only line", to: "copy.log")
         let vm = RetroLogViewModel()
-        try vm.importLog(from: url)
+        try await vm.importLog(from: url)
 
         XCTAssertFalse(vm.copyableLinesAreEmpty)
 
@@ -105,7 +105,7 @@ final class RetroLogImportTests: XCTestCase {
 
     // MARK: - ZIP bundles
 
-    func testImportZipConcatenatesTextEntriesWithDeviceInfoFirst() throws {
+    func testImportZipConcatenatesTextEntriesWithDeviceInfoFirst() async throws {
         let staging = tempDir.appendingPathComponent("bundle")
         try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
         try "APP LOG BODY".write(to: staging.appendingPathComponent("app_logs.txt"),
@@ -132,11 +132,39 @@ final class RetroLogImportTests: XCTestCase {
         XCTAssertLessThan(headerIdx, bodyIdx, "device_info.txt should be ordered first")
     }
 
-    func testImportUnreadableFileThrows() throws {
+    func testOversizedPlainFileIsRejected() async throws {
+        // One byte past the cap must be refused rather than read into memory.
+        let url = tempDir.appendingPathComponent("huge.log")
+        let size = RetroLogViewModel.maxImportBytes + 1
+        // Sparse write: set the file length without materialising the bytes.
+        FileManager.default.createFile(atPath: url.path, contents: nil)
+        let handle = try FileHandle(forWritingTo: url)
+        try handle.truncate(atOffset: UInt64(size))
+        try handle.close()
+
+        let vm = RetroLogViewModel()
+        do {
+            try await vm.importLog(from: url)
+            XCTFail("expected an oversized log to be rejected")
+        } catch {
+            guard let importError = error as? RetroLogViewModel.LogImportError,
+                  case .tooLarge = importError else {
+                return XCTFail("expected .tooLarge, got \(error)")
+            }
+        }
+        XCTAssertNil(vm.importedSession)
+    }
+
+    func testImportUnreadableFileThrows() async throws {
         let url = tempDir.appendingPathComponent("does-not-exist.log")
         let vm = RetroLogViewModel()
 
-        XCTAssertThrowsError(try vm.importLog(from: url))
+        do {
+            try await vm.importLog(from: url)
+            XCTFail("expected import of a missing file to throw")
+        } catch {
+            // expected
+        }
         XCTAssertNil(vm.importedSession, "a failed import must not replace the live session")
     }
 
