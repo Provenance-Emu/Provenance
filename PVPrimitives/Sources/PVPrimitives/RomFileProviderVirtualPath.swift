@@ -226,7 +226,7 @@ public enum RomFileProviderVirtualPath {
         guard let colonIndex = rest.lastIndex(of: ":") else { return nil }
         let md5 = String(rest[..<colonIndex]).uppercased()
         let indexStr = String(rest[rest.index(after: colonIndex)...])
-        guard !md5.isEmpty, let index = Int(indexStr) else { return nil }
+        guard !md5.isEmpty, let index = Int(indexStr), index >= 0 else { return nil }
         return (md5, index)
     }
 

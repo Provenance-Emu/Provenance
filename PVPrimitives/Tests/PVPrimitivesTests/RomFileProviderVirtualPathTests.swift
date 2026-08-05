@@ -124,6 +124,12 @@ struct RomFileProviderVirtualPathTests {
         #expect(parsed?.index == 0)
     }
 
+    @Test func parseScreenshotID_rejectsNegativeIndex() {
+        let md5 = String(repeating: "E", count: 32)
+        let raw = "\(RomFileProviderVirtualPath.screenshotItemPrefix)\(md5):-1"
+        #expect(RomFileProviderVirtualPath.parseScreenshotID(from: raw) == nil)
+    }
+
     // MARK: - Root categories
 
     @Test func rootCategory_saveStatesAndScreenshots_present() {
