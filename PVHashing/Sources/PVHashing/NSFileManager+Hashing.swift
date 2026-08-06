@@ -19,6 +19,14 @@ public extension Notification.Name {
     static let fileRecoveryStatusResponse = Notification.Name("fileRecoveryStatusResponse")
 }
 
+// `MD5Provider` refines `Sendable`, so conforming `FileManager` to it here is a
+// retroactive Sendable conformance — which Swift 6 rejects outside the type's own
+// source file. `@unchecked` is the compiler-directed escape hatch and is sound in
+// practice: `FileManager` is documented as thread-safe for these read-only file
+// operations, and `md5ForFile` holds no shared mutable state.
+// Only diagnosed on the CI toolchain (Xcode 16); Xcode 26 accepts it silently.
+extension FileManager: @unchecked @retroactive Sendable {}
+
 extension FileManager: MD5Provider {
     public func md5ForFile(at url: URL, fromOffset offset: UInt = 0) -> String? {
         #if LEGACY_MD5
