@@ -96,7 +96,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ github.token }}
+          # REBASE_PAT (a PAT or GitHub App token with contents:write) is what makes
+          # CI actually re-run. Pushes authenticated with GITHUB_TOKEN deliberately do
+          # NOT fire pull_request/push events — GitHub's loop-prevention rule — so a
+          # rebased PR keeps whatever check results it had before the rebase, or none
+          # at all. `gh pr view` then reports no failures and the merge box looks green
+          # even though nothing was built against the rebased code.
+          # Falls back to github.token so the rebase still happens without the secret;
+          # the warning in push_and_retrigger explains the consequence.
+          token: ${{ secrets.REBASE_PAT || github.token }}
 
       - name: Configure git identity
         run: |
@@ -130,6 +138,7 @@ jobs:
         if: steps.fetch.outputs.fetched == 'true' && steps.check.outputs.skip == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
+          REBASE_PAT: ${{ secrets.REBASE_PAT }}
           REPO: ${{ github.repository }}
         run: |
           branch="${{ matrix.pr.branch }}"
@@ -154,6 +163,15 @@ jobs:
 
           push_and_retrigger() {
             if git push --force-with-lease origin "$branch"; then
+              if [ -z "${REBASE_PAT:-}" ]; then
+                # Without a PAT the push above was made as GITHUB_TOKEN, so no
+                # pull_request:synchronize fired and NO pr-attached checks will run.
+                # The workflow_dispatch below does run, but dispatch runs are not
+                # associated with the PR, so they never appear in statusCheckRollup or
+                # the merge box: the PR reads "green" while nothing has been built.
+                # Set the REBASE_PAT secret to fix this properly.
+                echo "::warning title=PR checks will not re-run::Rebased #${pr_num} using GITHUB_TOKEN; PR-attached checks cannot re-run. Its green status is STALE — do not merge on it. Set the REBASE_PAT secret to restore real CI on rebase."
+              fi
               # Re-trigger CI — GITHUB_TOKEN pushes don't fire pull_request/push events.
               # Pass triggered_by=rebase so agent-validation skips the 30-min smoke build:
               # a clean rebase replays the same PR commits, so compilation is unchanged.
