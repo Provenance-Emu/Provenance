@@ -21,6 +21,11 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 TARGET_MODULE="${1:-}"
 
+# NOTE: increment with `VAR=$((VAR + 1))`, never `((VAR++))`.
+# Under `set -e` (line 2), `((VAR++))` is fatal the FIRST time it runs: post-increment
+# evaluates to the OLD value, so with VAR=0 the arithmetic command's result is zero,
+# which bash reports as exit status 1 — killing the script. This silently limited the
+# script to the first module that passed, then exited 1 as if validation had failed.
 PASSED=0
 FAILED=0
 SKIPPED=0
@@ -36,13 +41,13 @@ build_and_test() {
 
     if [[ ! -d "$module_dir" ]]; then
         log "SKIP: ${module} — directory not found"
-        ((SKIPPED++))
+        SKIPPED=$((SKIPPED + 1))
         return 0
     fi
 
     if [[ ! -f "${module_dir}/Package.swift" ]]; then
         log "SKIP: ${module} — no Package.swift"
-        ((SKIPPED++))
+        SKIPPED=$((SKIPPED + 1))
         return 0
     fi
 
@@ -50,7 +55,7 @@ build_and_test() {
     if ! (cd "$module_dir" && swift build 2>&1 | tail -5); then
         log "FAIL: ${module} build failed"
         FAILURES+=("${module} (build)")
-        ((FAILED++))
+        FAILED=$((FAILED + 1))
         return 1
     fi
 
@@ -58,16 +63,16 @@ build_and_test() {
     # Some modules may not have tests yet — that's OK
     if (cd "$module_dir" && swift test 2>&1 | tail -10); then
         log "PASS: ${module}"
-        ((PASSED++))
+        PASSED=$((PASSED + 1))
     else
         # Check if failure is due to no tests vs actual test failure
         if (cd "$module_dir" && swift test 2>&1 | grep -q "no tests found"); then
             log "PASS: ${module} (no tests, build OK)"
-            ((PASSED++))
+            PASSED=$((PASSED + 1))
         else
             log "FAIL: ${module} tests failed"
             FAILURES+=("${module} (test)")
-            ((FAILED++))
+            FAILED=$((FAILED + 1))
         fi
     fi
 }
