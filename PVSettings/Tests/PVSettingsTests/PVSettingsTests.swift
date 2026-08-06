@@ -563,7 +563,10 @@ struct MetalFilterModeOptionTests {
     @Test("None parses from rawValue")
     func noneParseFromRawValue() {
         let parsed = MetalFilterModeOption(rawValue: "None")
-        #expect(parsed == .none)
+        // `parsed` is Optional, so a bare `.none` resolves to `Optional.none` (nil)
+        // rather than `MetalFilterModeOption.none` — the comparison could never
+        // succeed. Name the type explicitly.
+        #expect(parsed == MetalFilterModeOption.none)
     }
 
     @Test("Auto parses from rawValue")
@@ -1479,7 +1482,7 @@ struct ExternalDisplayModeTests {
 
 // MARK: - ControllerLayoutSettings Tests
 
-@Suite("ControllerLayoutSettings")
+@Suite("ControllerLayoutSettings", .serialized)
 struct ControllerLayoutSettingsTests {
 
     @Test("Default is empty dictionary")
@@ -1603,14 +1606,17 @@ struct CoreLanguageSettingTests {
 
 // MARK: - Light Gun Settings Tests
 
-@Suite("Light Gun Settings")
+@Suite("Light Gun Settings", .serialized)
 struct LightGunSettingsTests {
 
     // MARK: - LightGunCrosshairStyle
 
-    @Test("LightGunCrosshairStyle has three cases")
+    @Test("LightGunCrosshairStyle has the expected cases")
     func crosshairStyleCaseCount() {
-        #expect(LightGunCrosshairStyle.allCases.count == 3)
+        // Assert the exact set, not just the count: a count-only check silently
+        // passes when a case is renamed, and it went stale when `reticle` was
+        // added (the test still expected 3).
+        #expect(Set(LightGunCrosshairStyle.allCases) == Set([.off, .dot, .crosshair, .reticle]))
     }
 
     @Test("LightGunCrosshairStyle rawValues are stable")
@@ -1777,7 +1783,7 @@ struct LightGunSettingsTests {
 
 // MARK: - ScalingMode Tests
 
-@Suite("ScalingMode")
+@Suite("ScalingMode", .serialized)
 struct ScalingModeTests {
 
     @Test("scalingMode default is aspectFit")
@@ -1840,34 +1846,40 @@ struct ScalingModeTests {
 
     @Test("migration — maps integerScaleEnabled=true to .integerScale")
     func migrationIntegerScale() {
-        let ud = UserDefaults(suiteName: "test.scalingmode.integer")!
+        let suite = "test.scalingmode.integer"
+        let ud = UserDefaults(suiteName: suite)!
         ud.removeObject(forKey: "scalingMode")
         ud.set(true, forKey: "integerScaleEnabled")
         ud.set(false, forKey: "nativeScaleEnabled")
-        migrateScalingModeIfNeeded(userDefaults: ud)
-        #expect(ud.string(forKey: "scalingMode") == ScalingMode.integerScale.rawValue)
-        ud.removePersistentDomain(forName: "test.scalingmode.integer")
+        migrateScalingModeIfNeeded(userDefaults: ud, domainName: suite)
+        // Assert against the suite's OWN persisted values: string(forKey:) resolves
+        // through the process-wide registration domain, where Defaults registers
+        // scalingMode's default.
+        #expect(ud.persistentDomain(forName: suite)?["scalingMode"] as? String == ScalingMode.integerScale.rawValue)
+        ud.removePersistentDomain(forName: suite)
     }
 
     @Test("migration — maps nativeScaleEnabled=true to .nativeResolution")
     func migrationNativeResolution() {
-        let ud = UserDefaults(suiteName: "test.scalingmode.native")!
+        let suite = "test.scalingmode.native"
+        let ud = UserDefaults(suiteName: suite)!
         ud.removeObject(forKey: "scalingMode")
         ud.set(false, forKey: "integerScaleEnabled")
         ud.set(true, forKey: "nativeScaleEnabled")
-        migrateScalingModeIfNeeded(userDefaults: ud)
-        #expect(ud.string(forKey: "scalingMode") == ScalingMode.nativeResolution.rawValue)
-        ud.removePersistentDomain(forName: "test.scalingmode.native")
+        migrateScalingModeIfNeeded(userDefaults: ud, domainName: suite)
+        #expect(ud.persistentDomain(forName: suite)?["scalingMode"] as? String == ScalingMode.nativeResolution.rawValue)
+        ud.removePersistentDomain(forName: suite)
     }
 
     @Test("migration — both false does NOT write to UserDefaults (stays at default)")
     func migrationBothFalseSkipsWrite() {
-        let ud = UserDefaults(suiteName: "test.scalingmode.default")!
+        let suite = "test.scalingmode.default"
+        let ud = UserDefaults(suiteName: suite)!
         ud.removeObject(forKey: "scalingMode")
         ud.set(false, forKey: "integerScaleEnabled")
         ud.set(false, forKey: "nativeScaleEnabled")
-        migrateScalingModeIfNeeded(userDefaults: ud)
-        #expect(ud.object(forKey: "scalingMode") == nil)
-        ud.removePersistentDomain(forName: "test.scalingmode.default")
+        migrateScalingModeIfNeeded(userDefaults: ud, domainName: suite)
+        #expect(ud.persistentDomain(forName: suite)?["scalingMode"] == nil)
+        ud.removePersistentDomain(forName: suite)
     }
 }

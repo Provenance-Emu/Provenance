@@ -889,9 +889,27 @@ internal func makeMigratingBoolKey(_ primaryKey: String, legacyKey: String, defa
 /// - `integerScaleEnabled = true` maps to `.integerScale` (takes precedence).
 /// - `nativeScaleEnabled = true` maps to `.nativeResolution`.
 /// - Both false (or not set) maps to the default `.aspectFit`.
-internal func migrateScalingModeIfNeeded(userDefaults: UserDefaults = .standard) {
+/// Migrates the legacy `integerScaleEnabled` / `nativeScaleEnabled` booleans to the
+/// unified `scalingMode` key, but only when the user has never chosen a scaling mode.
+///
+/// - Parameters:
+///   - userDefaults: Store to migrate.
+///   - domainName: Persistent domain to inspect for an explicitly-set value. Defaults to
+///     the app's own domain; tests pass their suite name.
+///
+/// IMPORTANT: "has the user set a value?" must be answered against the PERSISTENT domain,
+/// not `object(forKey:)`. `Defaults` registers every declared Key's default value into the
+/// process-wide registration domain (Defaults.swift:140 `suite.register(defaults:)`), and
+/// `object(forKey:)` resolves through that domain — so it returned "aspectFit" even for a
+/// store where nothing had ever been written. The previous
+/// `guard userDefaults.object(forKey: scalingKey) == nil` was therefore ALWAYS false and
+/// this migration never ran for anyone: users upgrading with `integerScaleEnabled = true`
+/// silently lost the setting.
+internal func migrateScalingModeIfNeeded(userDefaults: UserDefaults = .standard,
+                                         domainName: String = Bundle.main.bundleIdentifier ?? "") {
     let scalingKey = "scalingMode"
-    guard userDefaults.object(forKey: scalingKey) == nil else { return }
+    let explicitlySetByUser = userDefaults.persistentDomain(forName: domainName)?[scalingKey] != nil
+    guard !explicitlySetByUser else { return }
 
     let integerScale = userDefaults.bool(forKey: "integerScaleEnabled")
     let nativeScale  = userDefaults.bool(forKey: "nativeScaleEnabled")
