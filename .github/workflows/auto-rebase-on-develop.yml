@@ -102,16 +102,17 @@ jobs:
           # rebased PR keeps whatever check results it had before the rebase, or none
           # at all. `gh pr view` then reports no failures and the merge box looks green
           # even though nothing was built against the rebased code.
-          # Order: REBASE_PAT (preferred, scope it to this repo) -> AUTOSQUASH_TOKEN
-          # (a pre-existing PAT, previously used by the now-disabled autosquash
-          # workflow) -> github.token. The last is the status-quo behaviour and keeps
-          # rebasing working without any secret; the warning in push_and_retrigger
-          # explains what is lost.
+          # Falls back to github.token so rebasing still works without the secret;
+          # the warning in push_and_retrigger explains what is lost.
           #
-          # If AUTOSQUASH_TOKEN has expired the push fails loudly ("Push rejected")
-          # and the job exits non-zero, which is preferable to today's silent staleness
-          # — but it does stop auto-rebase until a working token is supplied.
-          token: ${{ secrets.REBASE_PAT || secrets.AUTOSQUASH_TOKEN || github.token }}
+          # Do NOT add other existing secrets to this chain. `secrets.A || secrets.B`
+          # only falls through when A is UNDEFINED — an expired-but-present secret is
+          # still selected, and checkout then dies with
+          # "fatal: could not read Username for 'https://github.com'". That is exactly
+          # what happened when AUTOSQUASH_TOKEN (a dead 2020 secret, referenced only by
+          # the disabled autosquash workflow) was tried here: every rebase job failed at
+          # checkout. Verified in run 31070105483.
+          token: ${{ secrets.REBASE_PAT || github.token }}
 
       - name: Configure git identity
         run: |
@@ -146,7 +147,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REBASE_PAT: ${{ secrets.REBASE_PAT }}
-          AUTOSQUASH_TOKEN: ${{ secrets.AUTOSQUASH_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
           branch="${{ matrix.pr.branch }}"
@@ -171,7 +171,7 @@ jobs:
 
           push_and_retrigger() {
             if git push --force-with-lease origin "$branch"; then
-              if [ -z "${REBASE_PAT:-}" ] && [ -z "${AUTOSQUASH_TOKEN:-}" ]; then
+              if [ -z "${REBASE_PAT:-}" ]; then
                 # Without a PAT the push above was made as GITHUB_TOKEN, so no
                 # pull_request:synchronize fired and NO pr-attached checks will run.
                 # The workflow_dispatch below does run, but dispatch runs are not
