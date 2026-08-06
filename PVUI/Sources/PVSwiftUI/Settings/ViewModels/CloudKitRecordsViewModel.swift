@@ -56,6 +56,7 @@ public struct CloudKitRecordItem: Identifiable, Equatable {
 
 /// View model for CloudKit Records Management
 @MainActor
+// swiftlint:disable:next type_body_length
 public class CloudKitRecordsViewModel: ObservableObject {
     // MARK: - Published Properties
 
@@ -176,6 +177,16 @@ public class CloudKitRecordsViewModel: ObservableObject {
             return
         }
 
+        guard isCloudKitAvailable else {
+            // Without this the parallel fetches below each throw CloudKitUnavailableError,
+            // every task returns nil, and the UI renders zeroes — indistinguishable from
+            // "iCloud is empty". Say what actually happened instead.
+            reportCloudKitUnavailable()
+            isLoading = false
+            loadingProgress = ""
+            return
+        }
+
         isLoading = true
         errorMessage = nil
         loadingProgress = "Fetching record counts..."
@@ -244,6 +255,12 @@ public class CloudKitRecordsViewModel: ObservableObject {
 
     /// Quick refresh - counts only, no size calculation (much faster)
     public func quickRefreshCounts() async {
+        guard isCloudKitAvailable else {
+            // Same reasoning as refreshStats: don't render zeroes as if iCloud were empty.
+            reportCloudKitUnavailable()
+            isLoading = false
+            return
+        }
         isLoading = true
         errorMessage = nil
         loadingProgress = "Quick counting records..."
