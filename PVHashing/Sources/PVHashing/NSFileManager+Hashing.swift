@@ -84,8 +84,16 @@ func calculateMD5(of fileURL: URL, startingAt offset: UInt64 = 0) -> AnyPublishe
 }
 
 /// Helper function to perform a single MD5 calculation attempt.
+///
+/// The hashing runs on the calling thread. It used to hop to
+/// `DispatchQueue.global(.utility).async`, which captured the non-Sendable `promise`
+/// closure inside a `@Sendable` block — an error under strict concurrency (it fails the
+/// build on the CI toolchain). The hop bought nothing: the only caller wraps this in
+/// `Deferred { Future { … } }`, so the work already runs at subscribe time on whatever
+/// thread the subscriber chose, and `calculateMD5(of:)` composes `.receive(on:)` for
+/// delivery.
 private func calculateMD5Attempt(fileURL: URL, offset: UInt64, promise: @escaping (Result<String, Error>) -> Void) {
-    DispatchQueue.global(qos: .utility).async { // Perform file IO on a background thread
+    autoreleasepool {
         do {
             let fileHandle = try FileHandle(forReadingFrom: fileURL)
             defer { fileHandle.closeFile() }
