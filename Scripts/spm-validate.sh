@@ -60,13 +60,18 @@ build_and_test() {
     fi
 
     log "TEST: ${module}..."
+    # --no-parallel: several modules' tests share process-global state (notably
+    # PVSettings, whose 223 tests all read/write UserDefaults.standard via Defaults).
+    # Swift Testing runs suites concurrently by default, which made those flake
+    # non-deterministically; `.serialized` only orders tests WITHIN a suite, not across
+    # them. These suites run in ~0.04s, so serial execution costs nothing.
     # Some modules may not have tests yet — that's OK
-    if (cd "$module_dir" && swift test 2>&1 | tail -10); then
+    if (cd "$module_dir" && swift test --no-parallel 2>&1 | tail -10); then
         log "PASS: ${module}"
         PASSED=$((PASSED + 1))
     else
         # Check if failure is due to no tests vs actual test failure
-        if (cd "$module_dir" && swift test 2>&1 | grep -q "no tests found"); then
+        if (cd "$module_dir" && swift test --no-parallel 2>&1 | grep -q "no tests found"); then
             log "PASS: ${module} (no tests, build OK)"
             PASSED=$((PASSED + 1))
         else

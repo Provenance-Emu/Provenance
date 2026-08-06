@@ -199,7 +199,10 @@ jobs:
         run: |
           set -o pipefail
           cd ${{ matrix.module }}
-          swift test 2>&1 | tail -40
+          # --no-parallel: PVSettings (and other Defaults-backed suites) share
+          # process-global UserDefaults; Swift Testing's default concurrent suite
+          # execution made them flake. See Scripts/spm-validate.sh for detail.
+          swift test --no-parallel 2>&1 | tail -40
 
   # Job 3: Fast CI simulator build — validates that code compiles
   # Uses Provenance-CI target (no emulator cores) for fastest possible build
