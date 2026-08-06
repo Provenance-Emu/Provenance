@@ -4,6 +4,9 @@
 
 import Foundation
 import SwiftUI
+// UIKit is unavailable on macOS; PVJIT declares .macOS(.v14) so the manifest can
+// participate in the package graph, but these UIKit screens are iOS/tvOS-only.
+#if canImport(UIKit)
 import UIKit
 import JITManager
 
@@ -68,3 +71,4 @@ final class JitFailedJailbreakScreenViewController: UIHostingController<AnyView>
         fatalError("init(coder:) has not been implemented")
     }
 }
+#endif

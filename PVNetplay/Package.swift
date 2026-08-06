@@ -5,7 +5,7 @@ let package = Package(
     name: "PVNetplay",
     platforms: [
         .iOS(.v17),
-        .macOS(.v13),
+        .macOS(.v14),
         .tvOS(.v17),
         .visionOS(.v1),
         .macCatalyst(.v17)

@@ -6,7 +6,8 @@ let package = Package(
     name: "PVJIT",
     platforms: [
         .iOS(.v17),
-        .tvOS(.v17)
+        .tvOS(.v17),
+        .macOS(.v14)
     ],
     products: [
         .library(

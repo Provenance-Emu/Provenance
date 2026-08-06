@@ -7,7 +7,7 @@ let package = Package(
     name: "PVFeatureFlags",
     platforms: [
         .iOS(.v17),
-        .macOS(.v13),
+        .macOS(.v14),
         .tvOS(.v17),
         .watchOS(.v9),
         .visionOS(.v1),
