@@ -328,7 +328,7 @@ let package = Package(
                 .copy("__Snapshots__")
             ],
             plugins: [
-                .plugin(name: "PrefirePlugin", package: "Prefire")
+                .plugin(name: "PrefireTestsPlugin", package: "Prefire")
             ]
         ),
 
