@@ -207,7 +207,10 @@ public actor LibretroCheatDatabase {
         var results: [LibretroCheatEntry] = []
         var skippedRows = 0
 
-        for row in stmt {
+        // failableNext() instead of `for row in stmt`: the Sequence conformance's
+        // next() is `try! failableNext()`, so a mid-iteration SQLite error would
+        // SIGTRAP rather than throw. See PVSQLiteDatabase for the proven crash.
+        while let row = try stmt.failableNext() {
             guard
                 let cheatID = row[0] as? Int64,
                 let cheatName = row[1] as? String,
