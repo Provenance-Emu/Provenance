@@ -129,33 +129,21 @@ if ! $DRY_RUN && ! $NO_BUILD; then
     fi
 fi
 
-# ── Build number injection ────────────────────────────────────────────────────────
+# ── Build number ──────────────────────────────────────────────────────────────────
+# Build.xcconfig is deliberately NOT modified.
+#
+# Every xcodebuild invocation below already passes CURRENT_PROJECT_VERSION as a
+# command-line build-setting override, which outranks the xcconfig, and the
+# Info.plist resolves CFBundleVersion from that build setting (see
+# Scripts/set_bundle_build_number.sh). Editing the file was redundant.
+#
+# It was also unsafe: the edit had to be undone by an EXIT trap, and a trap
+# cannot run when the script is SIGKILLed or when a wedged xcodebuild swallows
+# the interrupt. That left a tracked file dirty — carrying an epoch build number
+# like 1785899074 instead of the commit count — plus an orphaned .release-bak,
+# until someone happened to run this script again. A file that is never written
+# cannot be left dirty, so the failure mode is gone rather than mitigated.
 XCCONFIG_BAK="$XCCONFIG.release-bak"
-inject_build_number() {
-    log "Setting build number $BUILD_NUMBER in $(basename "$XCCONFIG")"
-    # Back up the EXACT current file (not HEAD) so restore preserves any unrelated
-    # uncommitted edits — a blanket `git checkout` here would silently wipe them.
-    cp "$XCCONFIG" "$XCCONFIG_BAK"
-    _injected=true
-    # BSD sed (macOS): -i '' for in-place, matching Scripts/bump-version.sh.
-    sed -i '' "s/^CURRENT_PROJECT_VERSION[[:space:]]*=.*/CURRENT_PROJECT_VERSION = ${BUILD_NUMBER}/" "$XCCONFIG"
-}
-
-# Whether THIS run injected a build number (and therefore owns the backup).
-# Restoring must be conditional on this, not merely on the backup existing: a
-# leftover backup from a previously killed run is NOT ours, and a --dry-run that
-# restored it would both mutate the working tree and consume the one chance the
-# next real run had to self-heal.
-_injected=false
-
-restore_build_number() {
-    # Restore the pre-inject file so the build number isn't left in the working tree.
-    # `return 0` so this EXIT-trap never sets a nonzero exit code — the trap's
-    # status becomes the script's.
-    $_injected || return 0
-    [[ -f "$XCCONFIG_BAK" ]] && mv -f "$XCCONFIG_BAK" "$XCCONFIG"
-    return 0
-}
 
 # Set by resolve_asc_key only when it had to materialise ASC_API_KEY_CONTENT.
 # A key we wrote ourselves must not outlive the run; a key the user pointed us
@@ -163,49 +151,44 @@ restore_build_number() {
 _asc_key_tmpdir=""
 
 cleanup() {
-    restore_build_number
+    # Nothing to restore: this script no longer edits Build.xcconfig.
+    # `return 0` so this EXIT-trap never sets a nonzero exit code — the trap's
+    # status becomes the script's.
     [[ -n "$_asc_key_tmpdir" && -d "$_asc_key_tmpdir" ]] && rm -rf "$_asc_key_tmpdir"
     return 0
 }
 trap cleanup EXIT
 
-# Ctrl-C / SIGTERM: kill any xcodebuild we spawned, then let the EXIT trap
-# restore the xcconfig. Without this, interrupting a run left the injected
-# epoch build number in Build.xcconfig plus an orphaned .release-bak, and an
-# orphaned xcodebuild holding the build system.
+# Ctrl-C / SIGTERM: kill any xcodebuild we spawned so it doesn't outlive us
+# holding the build system.
 #
 # CAVEAT: bash cannot run a trap while a foreground child is still running, so
 # if xcodebuild has wedged and is IGNORING SIGINT (classic after sleep/wake
 # mid-build) this handler never fires — mashing Ctrl-C will do nothing. In that
-# case: `pkill -9 xcodebuild; pkill -9 -f XCBBuildService`, then re-run (the
-# self-heal below restores the xcconfig).
+# case: `pkill -9 xcodebuild; pkill -9 -f XCBBuildService`, then re-run.
+# The working tree is unaffected either way now that Build.xcconfig is untouched.
 on_interrupt() {
-    warn "Interrupted — terminating xcodebuild and restoring $(basename "$XCCONFIG")"
+    warn "Interrupted — terminating xcodebuild"
     pkill -9 -P $$ xcodebuild 2>/dev/null || true
     exit 130
 }
 trap on_interrupt INT TERM
 
-# Self-heal: a previous run killed hard (SIGKILL, or a wedged xcodebuild that
-# never released the terminal) leaves the backup behind and the injected build
-# number in the xcconfig. Restore it before injecting a new one, otherwise the
-# backup gets overwritten with an already-poisoned file and the real value is
-# lost permanently.
+# Self-heal for backups left by older versions of this script, which did edit
+# Build.xcconfig and could die before restoring it. Kept so an existing stray
+# .release-bak (and the epoch build number it was meant to undo) still gets
+# cleaned up rather than lingering forever now that nothing else writes it.
 #
 # Gated on dry-run: `mv` here is a working-tree mutation, and --dry-run promises
-# not to make any. It also CONSUMES the backup, so a dry-run would silently use
-# up the one chance the next real run had to self-heal. Report and leave it.
+# not to make any. Report and leave it.
 if [[ -f "$XCCONFIG_BAK" ]]; then
     if $DRY_RUN; then
-        warn "Found leftover $(basename "$XCCONFIG_BAK") from an interrupted run — leaving it untouched (--dry-run); the next real run will restore it"
+        warn "Found leftover $(basename "$XCCONFIG_BAK") from an older run — leaving it untouched (--dry-run); the next real run will restore it"
     else
-        warn "Found leftover $(basename "$XCCONFIG_BAK") from an interrupted run — restoring it first"
+        warn "Found leftover $(basename "$XCCONFIG_BAK") from an older run — restoring $(basename "$XCCONFIG") from it"
         mv -f "$XCCONFIG_BAK" "$XCCONFIG"
     fi
 fi
-
-# Dry-run must not mutate the working tree at all (no inject, nothing to restore).
-$DRY_RUN || inject_build_number
 
 # ── Preconditions ──────────────────────────────────────────────────────────────
 if [[ ! -d "$WORKSPACE" ]]; then
