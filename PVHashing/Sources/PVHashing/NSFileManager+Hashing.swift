@@ -80,12 +80,28 @@ func calculateMD5(of fileURL: URL, startingAt offset: UInt64 = 0) -> AnyPublishe
         }
     }
     .retry(2) // Retry 2 times after the initial attempt (total 3 attempts) for upstream failures
+    // Hashing runs synchronously inside the Future (see calculateMD5Attempt), so the
+    // work would otherwise execute on whatever thread subscribed — blocking it for the
+    // duration of a full-file read. `subscribe(on:)` moves that off the caller. This is
+    // the Sendable-safe equivalent of the dispatch that used to live inside
+    // calculateMD5Attempt, which captured the non-Sendable `promise` in a @Sendable
+    // closure and failed strict-concurrency builds.
+    .subscribe(on: DispatchQueue.global(qos: .utility))
     .eraseToAnyPublisher()
 }
 
 /// Helper function to perform a single MD5 calculation attempt.
+///
+/// Runs synchronously on whatever thread the enclosing `Future` is subscribed on.
+/// It used to hop to `DispatchQueue.global(.utility).async` internally, which captured
+/// the non-Sendable `promise` closure inside a `@Sendable` block — an error under strict
+/// concurrency that fails the build on the CI toolchain (Xcode 16).
+///
+/// Callers must therefore not subscribe on a thread they care about: `calculateMD5(of:)`
+/// applies `.subscribe(on: DispatchQueue.global(qos: .utility))` to preserve the
+/// off-thread execution the internal dispatch used to provide.
 private func calculateMD5Attempt(fileURL: URL, offset: UInt64, promise: @escaping (Result<String, Error>) -> Void) {
-    DispatchQueue.global(qos: .utility).async { // Perform file IO on a background thread
+    autoreleasepool {
         do {
             let fileHandle = try FileHandle(forReadingFrom: fileURL)
             defer { fileHandle.closeFile() }
