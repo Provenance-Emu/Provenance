@@ -884,14 +884,40 @@ internal func makeMigratingBoolKey(_ primaryKey: String, legacyKey: String, defa
 
 // MARK: ScalingMode Migration
 
-/// Migrates the legacy `nativeScaleEnabled` and `integerScaleEnabled` boolean flags
-/// to the unified `scalingMode` key on first access.
+/// Migrates the legacy `nativeScaleEnabled` / `integerScaleEnabled` boolean flags to
+/// the unified `scalingMode` key on first access, but only when the user has never
+/// chosen a scaling mode.
 /// - `integerScaleEnabled = true` maps to `.integerScale` (takes precedence).
 /// - `nativeScaleEnabled = true` maps to `.nativeResolution`.
 /// - Both false (or not set) maps to the default `.aspectFit`.
-internal func migrateScalingModeIfNeeded(userDefaults: UserDefaults = .standard) {
+///
+/// - Parameters:
+///   - userDefaults: Store to migrate.
+///   - domainName: When non-nil, "has the user chosen a mode?" is answered against that
+///     PERSISTENT domain instead of `object(forKey:)`. Tests pass their suite name.
+///
+/// Why the parameter exists: `object(forKey:)` also resolves the process-wide
+/// registration domain, into which `Defaults` registers every declared Key's default
+/// value. In production that is harmless — the only caller runs inside the lazy
+/// initialiser of `Defaults.Keys.scalingMode`, i.e. BEFORE that key registers anything,
+/// so the lookup correctly sees nil. But a test calling this directly, after any other
+/// test has touched `Defaults[.scalingMode]`, always sees the registered default and the
+/// migration is skipped. Passing a domain name makes the check independent of that.
+///
+/// The default (nil) preserves the original production behaviour exactly: deriving a
+/// domain name from `Bundle.main.bundleIdentifier` risked querying the wrong (or empty)
+/// domain, which would report "user has not chosen" and let the migration overwrite a
+/// real preference.
+internal func migrateScalingModeIfNeeded(userDefaults: UserDefaults = .standard,
+                                         domainName: String? = nil) {
     let scalingKey = "scalingMode"
-    guard userDefaults.object(forKey: scalingKey) == nil else { return }
+    let explicitlySetByUser: Bool = {
+        if let domainName {
+            return userDefaults.persistentDomain(forName: domainName)?[scalingKey] != nil
+        }
+        return userDefaults.object(forKey: scalingKey) != nil
+    }()
+    guard !explicitlySetByUser else { return }
 
     let integerScale = userDefaults.bool(forKey: "integerScaleEnabled")
     let nativeScale  = userDefaults.bool(forKey: "nativeScaleEnabled")
