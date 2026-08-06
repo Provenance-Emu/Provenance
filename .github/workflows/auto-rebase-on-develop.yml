@@ -178,7 +178,11 @@ jobs:
                 # associated with the PR, so they never appear in statusCheckRollup or
                 # the merge box: the PR reads "green" while nothing has been built.
                 # Set the REBASE_PAT secret to fix this properly.
-                echo "::warning title=PR checks will not re-run::Rebased #${pr_num} using GITHUB_TOKEN; PR-attached checks cannot re-run. Its green status is STALE — do not merge on it. Set the REBASE_PAT secret to restore real CI on rebase."
+                warn_msg="Rebased #${pr_num} using GITHUB_TOKEN; PR-attached checks"
+                warn_msg="${warn_msg} cannot re-run. Its green status is STALE — do not"
+                warn_msg="${warn_msg} merge on it. Set the REBASE_PAT secret to restore"
+                warn_msg="${warn_msg} real CI on rebase."
+                echo "::warning title=PR checks will not re-run::${warn_msg}"
               fi
               # Re-trigger CI — GITHUB_TOKEN pushes don't fire pull_request/push events.
               # Pass triggered_by=rebase so agent-validation skips the 30-min smoke build:
