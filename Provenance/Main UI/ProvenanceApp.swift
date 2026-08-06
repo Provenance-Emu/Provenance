@@ -25,28 +25,21 @@ struct ProvenanceApp: App {
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var sceneCoordinator = SceneCoordinator.shared
 
-    /// Handles the spotlight indexing background task identifier
-    @State private var spotlightBackgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-
-    init() {
-        // Register for Spotlight background processing
-        registerSpotlightBackgroundTask()
-    }
-
-    /// Register a background task for Spotlight indexing
-    private func registerSpotlightBackgroundTask() {
-        // Register a background task identifier for Spotlight indexing
-        var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-        backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "SpotlightIndexing") {
-            WLOG("Spotlight indexing background task expired")
-            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-        }
-
-        // Store the background task identifier for later use
-        spotlightBackgroundTaskIdentifier = backgroundTaskIdentifier
-
-        ILOG("Registered background task for Spotlight indexing with identifier: \(backgroundTaskIdentifier)")
-    }
+    // NOTE: there used to be a `registerSpotlightBackgroundTask()` here, called from
+    // `init()`, that took a `beginBackgroundTask(withName: "SpotlightIndexing")`
+    // assertion at LAUNCH and never released it — the only `endBackgroundTask` was in
+    // the expiration handler, and every call that would have ended it normally lives
+    // commented-out inside `forceSpotlightReindexing()` (itself an empty stub now).
+    //
+    // The effect: from launch onward the app permanently claimed background execution
+    // for work that no longer exists. Every time it was backgrounded it burned its
+    // background allowance doing nothing until iOS expired the assertion, and an app
+    // that always appears to be running in the background is a prime jetsam target —
+    // a direct contributor to unexplained "the app force quit itself" reports.
+    //
+    // A background assertion must wrap actual work and be ended on EVERY exit path.
+    // If Spotlight indexing is re-enabled, take the assertion inside that operation
+    // and end it in a `defer`.
 
     var body: some Scene {
         WindowGroup(id: "main") {
