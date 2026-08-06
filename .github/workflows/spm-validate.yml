@@ -36,7 +36,15 @@ jobs:
           submodules: recursive
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_16.app/Contents/Developer
+        # Must match agent-validation.yml (Xcode_26.3). This job was the only one left
+        # on Xcode 16, and the mismatch actively broke it:
+        #   * PVSettings cannot build at all — its pinned Defaults 9.0.8 declares
+        #     swift-tools-version 6.2.0, which Xcode 16's Swift 6.0 refuses to parse.
+        #   * PVPlists/PVHashing failed on strict-concurrency diagnostics that only
+        #     Xcode 16 emits, so they were invisible to every developer locally.
+        # Those PVHashing fixes are worth keeping on their own merits, but they were
+        # forced by a stale toolchain rather than by a real defect.
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
 
       - name: Validate modules
         run: |
