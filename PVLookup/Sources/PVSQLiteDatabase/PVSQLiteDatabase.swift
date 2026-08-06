@@ -58,7 +58,15 @@ extension PVSQLiteDatabase: SQLQueryable {
             _ = stmt.bind(bindings)
         }
 
-        for row in stmt {
+        // Iterate with failableNext() rather than `for row in stmt`: the Sequence
+        // conformance funnels through SQLite.swift's `FailableIterator.next()`, which
+        // is `try! failableNext()` — so ANY SQLite error mid-iteration (locked/busy
+        // database, interrupt) crashed the app with SIGTRAP instead of throwing.
+        // Observed in the wild once the game importer was fixed: concurrent artwork
+        // lookups during a large import trapped inside OpenVGDB.searchDatabase and
+        // took the whole app down. This loop surfaces the same error through our
+        // existing `throws` signature, which every call site already handles.
+        while let row = try stmt.failableNext() {
             var dict = SQLQueryDict()
             for (index, name) in stmt.columnNames.enumerated() {
                 dict[name] = row[index] as AnyObject

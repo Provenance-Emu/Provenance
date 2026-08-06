@@ -18,20 +18,32 @@ class GameImporterTests: XCTestCase {
         var m3uFileContentsResult: [String] = []
         var binFileExistsResult: [URL:Bool] = [:]
         
-        func findAssociatedBinFileNames(for cueFileItem: ImportQueueItem) throws -> [String] {
+        /// Names of files the mock cue sheet "references".
+        /// Renamed from `findAssociatedBinFileNames` to track `CDFileHandling`,
+        /// which changed in 2b6096d3b5 (2025-05-11). The mock was never updated,
+        /// so this whole test target stopped compiling — and since PVLibrary
+        /// can't `swift test` (macOS platform-version mismatch), CI never caught it.
+        func parseCueSheet(cueFileURL: URL) throws -> [String] {
             return binFilesResult
         }
-        
+
         func candidateBinUrls(for binFileNames: [String], in directories: [URL]) -> [URL] {
             return binUrlsResult
         }
-        
-        func readM3UFileContents(from url: URL) throws -> [String] {
+
+        /// Renamed from `readM3UFileContents` for the same reason as `parseCueSheet`.
+        func parseM3U(from url: URL) throws -> [String] {
             return m3uFileContentsResult
         }
-        
+
         func fileExistsAtPath(_ path: URL) -> Bool {
             return binFileExistsResult[path] ?? false
+        }
+
+        /// Records cue files the importer asked to rewrite, so tests can assert on it.
+        private(set) var cleanedCueFiles: [URL] = []
+        func cleanCueFile(at url: URL) throws {
+            cleanedCueFiles.append(url)
         }
     }
     

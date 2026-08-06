@@ -14,7 +14,10 @@ private actor DatabaseConnection {
 
         let stmt = try db.prepare(query)
         var results: [LibretroDBROMMetadata] = []
-        for row in stmt {
+        // failableNext() instead of `for row in stmt`: the Sequence conformance's
+        // next() is `try! failableNext()`, so a mid-iteration SQLite error would
+        // SIGTRAP rather than throw. See PVSQLiteDatabase for the proven crash.
+        while let row = try stmt.failableNext() {
             var dict: [String: Any] = [:]
             for (index, name) in stmt.columnNames.enumerated() {
                 dict[name] = row[index]

@@ -107,7 +107,11 @@ public final class libretrodb: ROMMetadataProvider, @unchecked Sendable {
 
             let stmt = try db.prepare(query)
             var results: [LibretroDBROMMetadata] = []
-            for row in stmt {
+            // `for row in stmt` goes through SQLite.swift's FailableIterator.next(),
+            // which is `try! failableNext()` — a mid-iteration SQLite error (locked/busy
+            // database, interrupt) would SIGTRAP the whole app instead of throwing.
+            // Same crash proven in PVSQLiteDatabase during concurrent imports.
+            while let row = try stmt.failableNext() {
                 var dict: [String: Any] = [:]
                 for (index, name) in stmt.columnNames.enumerated() {
                     dict[name] = row[index]

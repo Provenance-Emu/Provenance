@@ -131,28 +131,40 @@ private func calculateMD5Attempt(fileURL: URL, offset: UInt64, promise: @escapin
     }
 }
 
+/// Computes the MD5 of a file on the **calling thread**.
+///
+/// This must never hand the work to another thread and wait for it. It used to
+/// wrap the Combine pipeline above: it blocked the caller on a `DispatchSemaphore`
+/// while the hashing was dispatched to `DispatchQueue.global(.utility)` and the
+/// completion hopped again to `.userInitiated`. Callers on the Swift cooperative
+/// pool — notably `GameImporter.preProcessQueue`'s `withTaskGroup`, via
+/// `isBIOS` → `ImportQueueItem.md5` — parked every worker thread in
+/// `semaphore_wait_trap`, leaving nothing to run the continuation that would
+/// signal the semaphore. That deadlocked the importer permanently (proven by a
+/// stack sample of the hung app on 2026-08-05: 10 threads, identical stack).
+///
+/// Hashing directly on the caller keeps the same blocking duration and the exact
+/// same result, but makes the deadlock structurally impossible: no second thread
+/// is required for this call to finish.
 func calculateMD5Synchronously(of fileURL: URL, startingAt offset: UInt64 = 0) throws -> String {
-    let semaphore = DispatchSemaphore(value: 0)
     var md5Hash: String = ""
     var returnedError: Error?
 
-    // The publisher now handles retries internally
-    let subscription = calculateMD5(of: fileURL, startingAt: offset)
-        .receive(on: DispatchQueue.global(qos: .userInitiated)) // Ensure completion/value are handled off the main thread if caller is main
-        .sink(receiveCompletion: { completion in
-            switch completion {
-            case .finished:
-                break // Success handled in receiveValue
-            case .failure(let error):
-                returnedError = error
-            }
-            semaphore.signal()
-        }, receiveValue: { hash in
-            md5Hash = hash
-        })
-
-    semaphore.wait()
-    subscription.cancel() // Clean up subscription
+    // Mirrors the previous pipeline's `.retry(2)`: three attempts total, with a
+    // 1 second pause before retrying, and only for retryable errors.
+    let maxAttempts = 3
+    for attempt in 1...maxAttempts {
+        do {
+            md5Hash = try _computeMD5(of: fileURL, startingAt: offset)
+            returnedError = nil
+            break
+        } catch {
+            VLOG("calculateMD5 attempt \(attempt) failed for \(fileURL.lastPathComponent): \(error.localizedDescription)")
+            returnedError = error
+            guard attempt < maxAttempts, isRetryableError(error as NSError) else { break }
+            Thread.sleep(forTimeInterval: 1)
+        }
+    }
 
     if let error = returnedError {
         // Log the final error after retries (if any) have failed

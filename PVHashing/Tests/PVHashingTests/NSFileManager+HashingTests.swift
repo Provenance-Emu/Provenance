@@ -39,26 +39,37 @@ class ChecksumTests: XCTestCase {
     func testCalculateMD5Asynchronously() throws {
         let expectation = XCTestExpectation(description: "Calculate MD5 asynchronously")
 
-        _ = calculateMD5(of: testFileURL)
+        // The cancellable must be retained for the duration of the wait: discarding
+        // it (`_ = ...sink`) cancels the subscription immediately, so the value never
+        // arrives and this test times out unconditionally — which is exactly how it
+        // sat broken on develop, unnoticed because CI only tests changed modules.
+        let subscription = calculateMD5(of: testFileURL)
             .sink(receiveCompletion: { completion in
                 switch completion {
                 case .finished:
                     break
                 case .failure(let error):
+                    // Fulfil here too: without it a failure surfaces as a 5s timeout
+                    // whose message hides the actual error.
                     XCTFail("Failed with error: \(error)")
+                    expectation.fulfill()
                 }
             }, receiveValue: { md5Hash in
-                XCTAssertEqual(md5Hash, "746308829575e17c3331bbcb00c0898b")
+                // The hashing APIs return UPPERCASE hex (see calculateMD5Attempt and
+                // the async-await tests below asserting the same hash uppercased).
+                XCTAssertEqual(md5Hash, "746308829575E17C3331BBCB00C0898B")
                 expectation.fulfill()
             })
 
         wait(for: [expectation], timeout: 5.0)
+        subscription.cancel()
     }
     #endif
 
     func testCalculateMD5Synchronously() {
-        // This hash corresponds to "Hello, world!" with MD5
-        let expectedHash = "746308829575e17c3331bbcb00c0898b"
+        // MD5 of the test file — the API contract is UPPERCASE hex, matching
+        // testCalculateMD5WithAsyncAwait / testURLMD5Async above this same hash.
+        let expectedHash = "746308829575E17C3331BBCB00C0898B"
         do {
             let md5Hash = try calculateMD5Synchronously(of: testFileURL)
             XCTAssertEqual(md5Hash, expectedHash, "The MD5 hash did not match the expected value.")
