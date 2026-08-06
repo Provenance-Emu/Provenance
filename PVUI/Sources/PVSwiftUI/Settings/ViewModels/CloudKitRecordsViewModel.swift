@@ -56,6 +56,7 @@ public struct CloudKitRecordItem: Identifiable, Equatable {
 
 /// View model for CloudKit Records Management
 @MainActor
+// swiftlint:disable:next type_body_length
 public class CloudKitRecordsViewModel: ObservableObject {
     // MARK: - Published Properties
 
@@ -85,8 +86,27 @@ public class CloudKitRecordsViewModel: ObservableObject {
 
     // MARK: - Private Properties
 
-    private let container: CKContainer
-    private let database: CKDatabase
+    // Optional on purpose: `CKContainer(identifier:)` TRAPS (does not throw) when the
+    // container is missing from the process entitlements, so building it eagerly crashed
+    // the app as soon as this screen opened on a build without the CloudKit entitlement
+    // (notably sideloads signed with a different team). `iCloudConstants.container` is the
+    // entitlement-gated accessor and yields nil rather than trapping.
+    private let container: CKContainer?
+    private let database: CKDatabase?
+
+    /// False when the app has no CloudKit entitlement — the UI can explain instead of
+    /// offering actions that cannot work.
+    public var isCloudKitAvailable: Bool { container != nil }
+
+    /// Surfaces a clear message instead of silently doing nothing when unentitled.
+    private func reportCloudKitUnavailable() {
+        errorMessage = "iCloud is not available in this build (no CloudKit entitlement)."
+    }
+
+    /// Thrown by the `throws` helpers when CloudKit isn't entitled.
+    struct CloudKitUnavailableError: LocalizedError {
+        var errorDescription: String? { "iCloud is not available in this build." }
+    }
     private var queryCursor: CKQueryOperation.Cursor?
     private var lastStatsRefresh: Date?
     private let statsRefreshInterval: TimeInterval = 60  // Minimum seconds between auto-refreshes
@@ -127,8 +147,8 @@ public class CloudKitRecordsViewModel: ObservableObject {
     // MARK: - Initialization
 
     public init() {
-        self.container = CKContainer(identifier: iCloudConstants.containerIdentifier)
-        self.database = container.privateCloudDatabase
+        self.container = iCloudConstants.container
+        self.database = container?.privateCloudDatabase
 
         // Initialize stats with zero counts
         recordTypeStats = recordTypes.map { type in
@@ -154,6 +174,16 @@ public class CloudKitRecordsViewModel: ObservableObject {
         if !forceRefresh, let lastRefresh = lastStatsRefresh,
            Date().timeIntervalSince(lastRefresh) < statsRefreshInterval {
             DLOG("Skipping stats refresh - last refresh was \(Int(Date().timeIntervalSince(lastRefresh)))s ago")
+            return
+        }
+
+        guard isCloudKitAvailable else {
+            // Without this the parallel fetches below each throw CloudKitUnavailableError,
+            // every task returns nil, and the UI renders zeroes — indistinguishable from
+            // "iCloud is empty". Say what actually happened instead.
+            reportCloudKitUnavailable()
+            isLoading = false
+            loadingProgress = ""
             return
         }
 
@@ -225,6 +255,12 @@ public class CloudKitRecordsViewModel: ObservableObject {
 
     /// Quick refresh - counts only, no size calculation (much faster)
     public func quickRefreshCounts() async {
+        guard isCloudKitAvailable else {
+            // Same reasoning as refreshStats: don't render zeroes as if iCloud were empty.
+            reportCloudKitUnavailable()
+            isLoading = false
+            return
+        }
         isLoading = true
         errorMessage = nil
         loadingProgress = "Quick counting records..."
@@ -299,6 +335,7 @@ public class CloudKitRecordsViewModel: ObservableObject {
 
     /// Delete a single record
     public func deleteRecord(_ record: CloudKitRecordItem) async -> Bool {
+        guard let database else { reportCloudKitUnavailable(); return false }
         isDeletingRecords = true
         errorMessage = nil
 
@@ -340,6 +377,7 @@ public class CloudKitRecordsViewModel: ObservableObject {
 
     /// Delete selected records
     public func deleteSelectedRecords() async -> Int {
+        guard let database else { reportCloudKitUnavailable(); return 0 }
         guard !selectedRecordIDs.isEmpty else { return 0 }
 
         isDeletingRecords = true
@@ -389,6 +427,7 @@ public class CloudKitRecordsViewModel: ObservableObject {
     /// Fire-and-forget delete - starts deletion in background, returns immediately
     /// This is the fastest option - doesn't wait for completion
     public func nukeAllRecords(ofType recordType: String) {
+        guard let database else { reportCloudKitUnavailable(); return }
         // Update UI immediately
         if let index = recordTypeStats.firstIndex(where: { $0.recordType == recordType }) {
             recordTypeStats[index].count = 0
@@ -404,7 +443,7 @@ public class CloudKitRecordsViewModel: ObservableObject {
         successMessage = "Delete started - records are being removed in background"
 
         // Fire and forget - run deletion in background task
-        Task.detached(priority: .utility) { [weak self] in
+        Task.detached(priority: .utility) { [weak self, database] in
             guard let self = self else { return }
             var totalDeleted = 0
             var cursor: CKQueryOperation.Cursor? = nil
@@ -415,14 +454,14 @@ public class CloudKitRecordsViewModel: ObservableObject {
                     let result: (matchResults: [(CKRecord.ID, Result<CKRecord, Error>)], queryCursor: CKQueryOperation.Cursor?)
 
                     if let existingCursor = cursor {
-                        result = try await self.database.records(
+                        result = try await database.records(
                             continuingMatchFrom: existingCursor,
                             desiredKeys: [],
                             resultsLimit: 400  // Max CloudKit allows per operation
                         )
                     } else {
                         let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
-                        result = try await self.database.records(
+                        result = try await database.records(
                             matching: query,
                             desiredKeys: [],
                             resultsLimit: 400
@@ -436,7 +475,7 @@ public class CloudKitRecordsViewModel: ObservableObject {
 
                     if !recordIDs.isEmpty {
                         // Batch delete - up to 400 at once
-                        _ = try? await self.database.modifyRecords(
+                        _ = try? await database.modifyRecords(
                             saving: [],
                             deleting: recordIDs,
                             savePolicy: .allKeys
@@ -472,6 +511,7 @@ public class CloudKitRecordsViewModel: ObservableObject {
 
     /// Delete all records of a specific type (deletes in batches as fetched for speed)
     public func deleteAllRecords(ofType recordType: String) async -> Int {
+        guard let database else { reportCloudKitUnavailable(); return 0 }
         isDeletingRecords = true
         errorMessage = nil
         loadingProgress = "Deleting \(recordType) records..."
@@ -621,6 +661,7 @@ public class CloudKitRecordsViewModel: ObservableObject {
     }
 
     private func fetchStatsForRecordType(_ recordType: String) async throws -> (count: Int, totalSize: Int64, lastModified: Date?) {
+        guard let database else { throw CloudKitUnavailableError() }
         var count = 0
         var totalSize: Int64 = 0
         var lastModified: Date? = nil
@@ -677,6 +718,7 @@ public class CloudKitRecordsViewModel: ObservableObject {
 
     /// Quick count-only fetch (faster, no size calculation)
     private func fetchCountForRecordType(_ recordType: String) async throws -> Int {
+        guard let database else { throw CloudKitUnavailableError() }
         var count = 0
         var cursor: CKQueryOperation.Cursor? = nil
 
@@ -714,6 +756,7 @@ public class CloudKitRecordsViewModel: ObservableObject {
     }
 
     private func fetchRecords(ofType recordType: String, cursor: CKQueryOperation.Cursor?) async throws -> (records: [CloudKitRecordItem], cursor: CKQueryOperation.Cursor?) {
+        guard let database else { throw CloudKitUnavailableError() }
         var items: [CloudKitRecordItem] = []
 
         let result: ([CKRecord.ID: Result<CKRecord, Error>], CKQueryOperation.Cursor?)

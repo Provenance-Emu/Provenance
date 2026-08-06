@@ -473,9 +473,19 @@ class CloudKitDiagnosticViewModel: ObservableObject {
     @Published var schemaStatus = "Unknown"
     @Published var schemaStatusColor = Color.gray
 
-    // CloudKit container
-    private let container = CKContainer(identifier: iCloudConstants.containerIdentifier)
-    private let privateDatabase: CKDatabase
+    // CloudKit container.
+    //
+    // Optional on purpose: `CKContainer(identifier:)` TRAPS (it does not throw) when the
+    // container is absent from the process's entitlements, so constructing it eagerly
+    // crashed the app the moment this screen opened on a build without the CloudKit
+    // entitlement — notably sideloads signed with a different team. `iCloudConstants.container`
+    // is the entitlement-gated accessor and returns nil instead of trapping.
+    private let container: CKContainer?
+    private let privateDatabase: CKDatabase?
+
+    /// False when the app has no CloudKit entitlement; the UI shows an explanation
+    /// instead of offering actions that cannot work.
+    var isCloudKitAvailable: Bool { container != nil }
 
     var containerIdentifier: String {
         iCloudConstants.containerIdentifier
@@ -488,13 +498,28 @@ class CloudKitDiagnosticViewModel: ObservableObject {
     // MARK: - Initialization
 
     init() {
-        privateDatabase = container.privateCloudDatabase
+        container = iCloudConstants.container
+        privateDatabase = container?.privateCloudDatabase
+    }
+
+    /// Sets the user-visible status used when CloudKit isn't entitled.
+    @MainActor
+    private func reportCloudKitUnavailable() {
+        accountStatus = "Unavailable (no CloudKit entitlement)"
+        accountStatusColor = .retroOrange
+        schemaStatus = "Unavailable"
+        schemaStatusColor = .retroOrange
+        isLoading = false
     }
 
     // MARK: - Methods
 
     /// Check the CloudKit account status
     func checkAccountStatus() async {
+        guard let container else {
+            await reportCloudKitUnavailable()
+            return
+        }
         do {
             let accountStatus = try await container.accountStatus()
 
@@ -537,6 +562,11 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             schemaStatusColor = .gray
         }
 
+        guard let privateDatabase else {
+            await reportCloudKitUnavailable()
+            return
+        }
+
         do {
             // Try to initialize the schema
             let success = await CloudKitSchema.initializeSchema(in: privateDatabase)
@@ -569,6 +599,11 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             isLoading = true
             errorMessage = nil
             successMessage = nil
+        }
+
+        guard let privateDatabase else {
+            await reportCloudKitUnavailable()
+            return
         }
 
         do {
@@ -640,6 +675,11 @@ class CloudKitDiagnosticViewModel: ObservableObject {
             isLoading = true
             errorMessage = nil
             successMessage = nil
+        }
+
+        guard let privateDatabase else {
+            await reportCloudKitUnavailable()
+            return
         }
 
         do {
