@@ -455,6 +455,17 @@ public final class GameImporter: GameImporting, ObservableObject {
     /// the real task is stored (or on any bail-out path), closing the window.
     private var processingStartReserved = false
 
+    /// Identifies the processing run that currently owns `currentProcessingTask`,
+    /// `currentTimeoutTask` and `processingStartTime`.
+    ///
+    /// A cancelled run can take arbitrarily long to unwind (it only observes
+    /// cancellation at the next loop boundary), so a replacement run may already have
+    /// stored ITS references by the time the old run's cleanup finally executes.
+    /// Without this token the stale cleanup would clear the new run's task pointer and
+    /// cancel the new run's watchdog — wedging auto-restart and disabling the hang
+    /// detector. Cleanup is therefore only performed when the token still matches.
+    private var currentRunToken: UUID?
+
     // Actor to manage the import queue with thread safety
     public let importQueueActor: ImportQueueActor
 
@@ -1150,8 +1161,15 @@ public final class GameImporter: GameImporting, ObservableObject {
                 ILOG("GameImporter: Existing processing task found (running: \(isRunning))")
 
                 if !isRunning {
-                    // Task exists but is cancelled/completed - clear it
+                    // Task exists but is cancelled/completed — clear it, AND tear down
+                    // its watchdog. Leaving the old timeout task alive let it fire
+                    // later and cancel the healthy run we're about to start, aborting
+                    // an import mid-flight for no reason.
                     currentProcessingTask = nil
+                    currentTimeoutTask?.cancel()
+                    currentTimeoutTask = nil
+                    processingStartTime = nil
+                    currentRunToken = nil
                     processingStartReserved = true
                     return true
                 }
@@ -1186,6 +1204,9 @@ public final class GameImporter: GameImporting, ObservableObject {
         let refsStored = AsyncSemaphore(value: 1)
         await refsStored.wait() // take the sole permit; released after refs are stored
 
+        // Identifies THIS run for the duration of its lifetime (see currentRunToken).
+        let runToken = UUID()
+
         // Create and store the processing task
         let processingTask = Task.detached { [weak self] in
             guard let self = self else { return }
@@ -1194,13 +1215,23 @@ public final class GameImporter: GameImporting, ObservableObject {
             await refsStored.signal() // restore for any future waiter (none today)
 
             defer {
-                // Clean up task references when done
+                // Clean up task references when done — but ONLY if this run still owns
+                // them. A cancelled run unwinds lazily (cancellation is observed at the
+                // next loop boundary), so a replacement run may already have installed
+                // its own task and watchdog; clearing those here would wedge auto-restart
+                // and silently disable the hang detector for the run that is actually
+                // working.
                 self.processingTaskLock.withLock {
+                    guard self.currentRunToken == runToken else {
+                        ILOG("GameImporter: Skipping cleanup — a newer processing run owns the task refs")
+                        return
+                    }
                     self.currentProcessingTask = nil
                     self.currentTimeoutTask?.cancel()
                     self.currentTimeoutTask = nil
                     self.processingStartTime = nil
                     self.processingStartReserved = false
+                    self.currentRunToken = nil
                 }
 
                 Task { [weak self] in
@@ -1237,6 +1268,7 @@ public final class GameImporter: GameImporting, ObservableObject {
             currentProcessingTask = processingTask
             currentTimeoutTask = timeoutTask
             processingStartTime = startTime
+            currentRunToken = runToken
             processingStartReserved = false
         }
 
@@ -1254,6 +1286,10 @@ public final class GameImporter: GameImporting, ObservableObject {
             currentProcessingTask = nil
             currentTimeoutTask = nil
             processingStartTime = nil
+            // Release ownership so the cancelled run's lazy cleanup becomes a no-op
+            // rather than clobbering the replacement run scheduled below.
+            currentRunToken = nil
+            processingStartReserved = false
             return elapsed
         }
 
@@ -4427,6 +4463,10 @@ extension GameImporter: PausableService {
                 currentTimeoutTask?.cancel()
                 currentTimeoutTask = nil
                 processingStartTime = nil
+                // See currentRunToken: drop ownership so the cancelled run's cleanup
+                // can't clobber a run started after resume.
+                currentRunToken = nil
+                processingStartReserved = false
             }
 
             workQueue.cancelAllOperations()

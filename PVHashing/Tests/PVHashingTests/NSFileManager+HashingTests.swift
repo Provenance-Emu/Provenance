@@ -49,7 +49,10 @@ class ChecksumTests: XCTestCase {
                 case .finished:
                     break
                 case .failure(let error):
+                    // Fulfil here too: without it a failure surfaces as a 5s timeout
+                    // whose message hides the actual error.
                     XCTFail("Failed with error: \(error)")
+                    expectation.fulfill()
                 }
             }, receiveValue: { md5Hash in
                 // The hashing APIs return UPPERCASE hex (see calculateMD5Attempt and
