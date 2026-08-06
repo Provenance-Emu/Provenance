@@ -884,13 +884,12 @@ internal func makeMigratingBoolKey(_ primaryKey: String, legacyKey: String, defa
 
 // MARK: ScalingMode Migration
 
-/// Migrates the legacy `nativeScaleEnabled` and `integerScaleEnabled` boolean flags
-/// to the unified `scalingMode` key on first access.
+/// Migrates the legacy `nativeScaleEnabled` / `integerScaleEnabled` boolean flags to
+/// the unified `scalingMode` key on first access, but only when the user has never
+/// chosen a scaling mode.
 /// - `integerScaleEnabled = true` maps to `.integerScale` (takes precedence).
 /// - `nativeScaleEnabled = true` maps to `.nativeResolution`.
 /// - Both false (or not set) maps to the default `.aspectFit`.
-/// Migrates the legacy `integerScaleEnabled` / `nativeScaleEnabled` booleans to the
-/// unified `scalingMode` key, but only when the user has never chosen a scaling mode.
 ///
 /// - Parameters:
 ///   - userDefaults: Store to migrate.
