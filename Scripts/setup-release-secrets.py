@@ -207,8 +207,8 @@ def create_item_from_template(payload: dict) -> None:
     finally:
         try:
             os.remove(path)
-        except OSError:
-            pass
+        except OSError as exc:
+            warn(f"Could not remove temporary template file {path}: {exc}")
 
 
 def reference_resolves(ref: str) -> bool:
