@@ -11,7 +11,21 @@ export
 	update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
 	test-all test-spm test-cheatdb test-scripts \
 	lint audit-localization bump-build bump-minor bump-major spm-validate \
-	testflight testflight-tvos testflight-all release release-dry release-tag
+	testflight testflight-tvos testflight-all release release-dry release-tag \
+	_release-preflight
+
+# --- 1Password secret resolution -------------------------------------------
+# .env may hold `op://` REFERENCES rather than values (see
+# Scripts/setup-release-secrets.py). `-include .env` above would then export the
+# literal string "op://..." into release.sh, which fails in a confusing way.
+# When references are present, run release.sh under `op run`, which resolves them
+# into the child process environment only — never to disk, and masked in output.
+ENV_HAS_OP_REFS := $(shell test -f .env && grep -qE '^[A-Za-z_][A-Za-z0-9_]*=op://' .env && echo 1)
+ifeq ($(ENV_HAS_OP_REFS),1)
+RELEASE_RUNNER := op run --env-file=.env --
+else
+RELEASE_RUNNER :=
+endif
 
 RUBY := $(shell command -v ruby 2>/dev/null)
 HOMEBREW := $(shell command -v brew 2>/dev/null)
@@ -52,6 +66,22 @@ _tag: | _var_VERSION
 	make --no-print-directory -B README.md
 	git commit -am "Tagging release $(VERSION)"
 	git tag -a $(VERSION) $(if $(NOTES),-m '$(NOTES)',-m $(VERSION))
+# Fails fast with actionable guidance when .env uses op:// references but the
+# 1Password CLI is unavailable or locked — otherwise release.sh would run with
+# unresolved reference strings and fail late, after a full archive build.
+.PHONY: _release-preflight
+_release-preflight:
+ifeq ($(ENV_HAS_OP_REFS),1)
+	@command -v op >/dev/null 2>&1 || { \
+		echo "error: .env uses op:// references but the 1Password CLI is not installed."; \
+		echo "       brew install 1password-cli"; exit 1; }
+	@# Deliberately NOT gating on `op whoami`: it exits non-zero in make's
+	@# non-interactive subshell even when signed in, because it cannot surface the
+	@# biometric prompt without a TTY. `op run` handles unlocking itself and
+	@# reports its own auth errors clearly, so let it be the authority.
+	@echo "==> Resolving secrets from 1Password (op run)"
+endif
+
 .PHONY: _tag
 
 _push: | _var_VERSION
@@ -374,24 +404,24 @@ set-version: | _var_VERSION
 # TestFlight needs ASC_API_KEY_ID, ASC_API_ISSUER_ID, ASC_API_KEY_PATH in the environment.
 
 ## Archive + auto-bump build + upload iOS to TestFlight
-testflight:
-	Scripts/release.sh --channel testflight --platform ios
+testflight: _release-preflight
+	$(RELEASE_RUNNER) Scripts/release.sh --channel testflight --platform ios
 
 ## Archive + auto-bump build + upload tvOS to TestFlight
-testflight-tvos:
-	Scripts/release.sh --channel testflight --platform tvos
+testflight-tvos: _release-preflight
+	$(RELEASE_RUNNER) Scripts/release.sh --channel testflight --platform tvos
 
 ## Archive + upload both iOS and tvOS to TestFlight
-testflight-all:
-	Scripts/release.sh --channel testflight --platform all
+testflight-all: _release-preflight
+	$(RELEASE_RUNNER) Scripts/release.sh --channel testflight --platform all
 
 ## Build + publish all channels (TestFlight + GitHub release)
 release:
-	Scripts/release.sh --channel all
+	$(RELEASE_RUNNER) Scripts/release.sh --channel all
 
 ## Print release actions without executing (dry-run)
 release-dry:
-	Scripts/release.sh --channel all --dry-run
+	$(RELEASE_RUNNER) Scripts/release.sh --channel all --dry-run
 
 ## -- Aliases --
 
