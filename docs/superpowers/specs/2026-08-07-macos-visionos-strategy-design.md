@@ -133,9 +133,11 @@ Rationale in one line each:
    `GCKeyboard.createController()` bridge and relax `shouldUseTVMediaUI`
    (`MainView.swift:186`) so hardware-keyboard-without-gamepad (i.e., every Mac) can opt into
    the TVMedia controller-navigable UI. Add a Settings toggle ("Controller-style navigation").
-2. **Menu bar.** Implement `UIMenuBuilder` (`buildMenu(with:)`) on the main scene: File (Open
-   ROM…, Import…), Game (Save/Load State, Pause, Screenshot, Cheats), View (UI mode, scale),
-   Window. Wire the existing NotificationCenter/`SceneCoordinator` actions.
+2. **Menu bar.** Add SwiftUI `.commands` to the main `WindowGroup` (the app is SwiftUI
+   lifecycle; `.commands` surfaces as the Mac menu bar and the iPad keyboard-discoverability
+   HUD with far less code than `UIMenuBuilder` — reserve `UIMenuBuilder` for later if default
+   menu replacement/removal is ever needed). Wire the existing NotificationCenter /
+   `SceneCoordinator` actions.
 3. **Keyboard shortcuts parity.** Port the legacy `UIKeyCommand` set
    (`PVGameLibraryViewController.swift:1814+`) to the SwiftUI library via `.commands` on the
    main `WindowGroup`; finish the ⌘L Load State stub in `EmulatorScene.swift`.
@@ -158,9 +160,26 @@ Rationale in one line each:
    macOS); menu bar natively via SwiftUI `.commands`.
 5. **JIT:** short-circuit `JitAcquisitionUtils`/`DOLJitManager` to "available" on macOS;
    entitlements already present.
-6. **CI:** add a `generic/platform=macOS` lane; start with a Lite-style core list and grow.
+6. **CI + release automation are in-scope from day one, not an afterthought** *(added
+   2026-08-07 per maintainer direction)*: extend `.github/workflows/build.yml`'s matrix with a
+   `generic/platform=macOS` entry alongside iOS/tvOS; extend `Scripts/release.sh`, the
+   `Makefile` (`make testflight-all` / `make release-all`), and `fastlane` so the native Mac
+   build archives, notarizes, and publishes in the **same release train** as iOS/tvOS — one
+   version number, one changelog, simultaneous ship. The sideload/alpha feed gains a macOS
+   artifact entry (same `version`/`buildVersion`-must-match rule as the IPA feed).
 7. Explicit non-goals for v1: Catalyst, x86_64, DriverKit revival, App Store submission
    (notarized direct distribution first — fits the existing sideload/alpha feed).
+
+### Phase 2+ direction — Mac as ROM/library server *(added 2026-08-07)*
+
+Once the native Mac app exists, it becomes the natural always-on library host: PVWebServer
+already ships HTTP + WebDAV servers (GCDWebServer today, new Swift server + planned REST API),
+so a Mac build can serve ROMs, BIOS, and save states to iOS/tvOS clients on the LAN — a
+first-party alternative to CloudKit sync for large libraries, and a reason the Mac app earns
+its keep beyond playing games. Not specced here; gets its own brainstorm/spec when Phase 2
+lands. Design consequence for Phase 2 now: keep PVWebServer fully enabled in the Mac target
+(don't strip it as "mobile-only"), and prefer server-friendly choices (background operation,
+LSUIElement-style headless mode is a candidate) when they're free.
 
 ### Phase 3 (optional, post-Mac) — visionOS
 - Keep compatibility mode as the supported story; mention it in docs.
