@@ -80,6 +80,11 @@ ifeq ($(ENV_HAS_OP_REFS),1)
 	@# biometric prompt without a TTY. `op run` handles unlocking itself and
 	@# reports its own auth errors clearly, so let it be the authority.
 	@echo "==> Resolving secrets from 1Password (op run)"
+	@# Authenticate against App Store Connect BEFORE the archive. xcodebuild only
+	@# authenticates at UPLOAD, so a bad issuer ID or revoked key otherwise costs a
+	@# full 30+ minute build before failing with "No Accounts with App Store Connect
+	@# Access". This round-trips in seconds via notarytool.
+	@$(RELEASE_RUNNER) python3 Scripts/setup-release-secrets.py --preflight
 endif
 
 .PHONY: _tag

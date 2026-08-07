@@ -517,6 +517,197 @@ def push_pat_to_github() -> None:
         warn("Secret was set but did not appear in the listing; check manually.")
 
 
+# ------------------------------------------------------------ credential check
+
+def verify_asc_credentials() -> None:
+    """Authenticate against App Store Connect BEFORE anything expensive runs.
+
+    `xcodebuild -exportArchive` only authenticates at UPLOAD — i.e. after a full
+    archive build. A bad issuer ID or a revoked key therefore costs 30+ minutes
+    before surfacing as "No Accounts with App Store Connect Access". notarytool
+    accepts the same ASC API credentials and round-trips in seconds, so use it as
+    a cheap proxy for "will the upload authenticate?".
+
+    Reads the same env vars release.sh does, so it must be invoked the same way:
+        op run --env-file=.env -- python3 Scripts/setup-release-secrets.py --verify
+    """
+    step("Verifying App Store Connect credentials")
+
+    key_id = os.environ.get("ASC_API_KEY_ID", "").strip()
+    issuer = os.environ.get("ASC_API_ISSUER_ID", "").strip()
+    key_path = os.environ.get("ASC_API_KEY_PATH", "").strip()
+    key_content = os.environ.get("ASC_API_KEY_CONTENT", "")
+
+    missing = [n for n, v in (("ASC_API_KEY_ID", key_id),
+                              ("ASC_API_ISSUER_ID", issuer)) if not v]
+    if missing:
+        raise SetupError(
+            "Missing " + ", ".join(missing) + " in the environment.\n"
+            "    Run this under `op run --env-file=.env --` so the references resolve,\n"
+            "    or re-run this script without --verify to (re)create them."
+        )
+    if v_looks_like_ref(key_id) or v_looks_like_ref(issuer):
+        raise SetupError(
+            "Credentials are still unresolved op:// reference strings.\n"
+            "    Invoke under: op run --env-file=.env -- …"
+        )
+    if not UUID_RE.match(issuer):
+        warn("ASC_API_ISSUER_ID is not a UUID — App Store Connect will reject it.")
+
+    ok(f"Key ID {key_id}")
+
+    tmp_key: Path | None = None
+    try:
+        if not key_path or not Path(key_path).exists():
+            if not key_content.strip():
+                raise SetupError("Neither ASC_API_KEY_PATH nor ASC_API_KEY_CONTENT is usable.")
+            fd, tmp = tempfile.mkstemp(suffix=".p8")
+            os.fchmod(fd, 0o600)
+            with os.fdopen(fd, "w") as handle:
+                handle.write(key_content)
+            tmp_key = Path(tmp)
+            key_path = str(tmp_key)
+
+        proc = run(["xcrun", "notarytool", "history",
+                    "--key", key_path, "--key-id", key_id, "--issuer", issuer],
+                   check=False)
+        combined = f"{proc.stdout}\n{proc.stderr}"
+        if proc.returncode == 0:
+            ok("App Store Connect accepted these credentials")
+            return
+
+        lowered = combined.lower()
+        if "unauthorized" in lowered or "authentication" in lowered or "401" in lowered:
+            raise SetupError(
+                "App Store Connect REJECTED these credentials.\n"
+                f"    Key ID: {key_id}\n"
+                "    Most likely causes, in order:\n"
+                "      1. Issuer ID is wrong — copy it again from App Store Connect →\n"
+                "         Users and Access → Integrations → App Store Connect API.\n"
+                "      2. The key has been revoked. Confirm it is still listed as Active.\n"
+                "      3. The .p8 does not belong to this Key ID.\n"
+                "      4. The key lacks a role that can upload builds (App Manager or Admin).\n"
+                "    Fix with: python3 Scripts/setup-release-secrets.py --asc"
+            )
+        raise SetupError(
+            "Could not verify credentials (notarytool exited "
+            f"{proc.returncode}):\n    {combined.strip()[:400]}"
+        )
+    finally:
+        if tmp_key is not None:
+            try:
+                tmp_key.unlink()
+            except OSError:
+                pass
+
+
+def v_looks_like_ref(value: str) -> bool:
+    return value.startswith("op://")
+
+
+# ------------------------------------------------------------- full preflight
+
+def _check_disk_space(min_gb: int = 25) -> tuple[bool, str]:
+    """Archives plus DerivedData for a ~3 GB app need real headroom.
+
+    Running out mid-archive wastes the whole build and leaves a partial
+    DerivedData that often has to be deleted by hand.
+    """
+    st = os.statvfs(str(Path.home()))
+    free_gb = (st.f_bavail * st.f_frsize) / (1024 ** 3)
+    if free_gb < min_gb:
+        return False, (f"Only {free_gb:.1f} GB free; archives need ~{min_gb} GB. "
+                       "Clear DerivedData or free space first.")
+    return True, f"{free_gb:.0f} GB free"
+
+
+def _check_xcode() -> tuple[bool, str]:
+    proc = run(["xcode-select", "-p"], check=False)
+    if proc.returncode != 0:
+        return False, "xcode-select is not configured (xcode-select --install?)"
+    path = proc.stdout.strip()
+    ver = run(["xcodebuild", "-version"], check=False)
+    if ver.returncode != 0:
+        return False, f"xcodebuild unusable at {path}: {(ver.stderr or '').strip()[:120]}"
+    first = (ver.stdout or "").splitlines()[0] if ver.stdout else "?"
+    return True, f"{first} ({path})"
+
+
+def _check_signing_identities() -> tuple[bool, str]:
+    """An expired/absent distribution cert fails at EXPORT, after the archive."""
+    proc = run(["security", "find-identity", "-v", "-p", "codesigning"], check=False)
+    if proc.returncode != 0:
+        return False, "could not query the keychain for signing identities"
+    out = proc.stdout or ""
+    distribution = [ln for ln in out.splitlines()
+                    if "Apple Distribution" in ln or "iPhone Distribution" in ln]
+    if not distribution:
+        return False, ("no Apple Distribution certificate in the keychain — "
+                       "export will fail after the archive completes")
+    return True, f"{len(distribution)} distribution identity(ies)"
+
+
+def _check_codesigning_xcconfig() -> tuple[bool, str]:
+    cfg = Path(__file__).resolve().parent.parent / "CodeSigning.xcconfig"
+    if not cfg.exists():
+        return False, ("CodeSigning.xcconfig missing — copy CodeSigning.xcconfig.sample "
+                       "and fill in your team details")
+    return True, "CodeSigning.xcconfig present"
+
+
+def _check_submodules() -> tuple[bool, str]:
+    """`-` prefix means uninitialised; those break the build late and confusingly."""
+    proc = run(["git", "submodule", "status"], check=False)
+    if proc.returncode != 0:
+        return True, "skipped (not a git checkout?)"
+    uninit = [ln.split()[1] for ln in (proc.stdout or "").splitlines()
+              if ln.startswith("-")]
+    if uninit:
+        preview = ", ".join(uninit[:3]) + ("…" if len(uninit) > 3 else "")
+        return False, (f"{len(uninit)} uninitialised submodule(s): {preview}\n"
+                       "        git submodule update --init --recursive")
+    return True, "all submodules initialised"
+
+
+def full_preflight() -> None:
+    """Every cheap check that would otherwise fail late in a 30+ minute build."""
+    step("Release preflight")
+
+    checks = [
+        ("Xcode", _check_xcode),
+        ("Disk space", _check_disk_space),
+        ("Signing identities", _check_signing_identities),
+        ("Code signing config", _check_codesigning_xcconfig),
+        ("Submodules", _check_submodules),
+    ]
+
+    failures: list[str] = []
+    for label, fn in checks:
+        try:
+            passed, detail = fn()
+        except Exception as exc:  # a broken check must not mask the others
+            passed, detail = False, f"check raised {type(exc).__name__}: {exc}"
+        if passed:
+            ok(f"{label}: {detail}")
+        else:
+            print(f"  \033[31m✗\033[0m {label}: {detail}")
+            failures.append(label)
+
+    # Credentials last: it is the slowest of the cheap checks (a network round trip).
+    try:
+        verify_asc_credentials()
+    except SetupError as exc:
+        print(f"  \033[31m✗\033[0m Credentials:\n    {exc}")
+        failures.append("App Store Connect credentials")
+
+    if failures:
+        raise SetupError(
+            f"{len(failures)} preflight check(s) failed: " + ", ".join(failures) + "\n"
+            "    Fixing these now avoids discovering them after a full archive build."
+        )
+    step("Preflight passed — safe to build")
+
+
 # ---------------------------------------------------------------------- main
 
 def main() -> int:
@@ -526,7 +717,29 @@ def main() -> int:
                         help="App Store Connect credentials only")
     parser.add_argument("--pat", action="store_true",
                         help="GitHub REBASE_PAT only")
+    parser.add_argument("--preflight", action="store_true",
+                        help="Run every pre-build check (tools, disk, signing, "
+                             "submodules, credentials) then exit")
+    parser.add_argument("--verify", action="store_true",
+                        help="Only check that ASC credentials authenticate (fast; "
+                             "run under `op run --env-file=.env --`)")
     args = parser.parse_args()
+
+    if args.preflight:
+        try:
+            full_preflight()
+        except SetupError as exc:
+            print(f"\n\033[31m✗ {exc}\033[0m", file=sys.stderr)
+            return 1
+        return 0
+
+    if args.verify:
+        try:
+            verify_asc_credentials()
+        except SetupError as exc:
+            print(f"\n\033[31m✗ {exc}\033[0m", file=sys.stderr)
+            return 1
+        return 0
 
     do_asc = args.asc or not (args.asc or args.pat)
     do_pat = args.pat or not (args.asc or args.pat)
