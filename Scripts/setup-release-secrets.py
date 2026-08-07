@@ -460,8 +460,8 @@ def setup_pat() -> None:
     info("  Permissions → Contents: Read and write, Pull requests: Read")
 
     if confirm("Open the token creation page?", default=False):
-        run(["open", "https://github.com/settings/personal-access-tokens/new"],
-            check=False)
+        import webbrowser
+        webbrowser.open("https://github.com/settings/personal-access-tokens/new", new=2)
 
     existing_id = ensure_single_item(PAT_ITEM_TITLE)
     if existing_id:
