@@ -633,26 +633,71 @@ def _check_xcode() -> tuple[bool, str]:
     return True, f"{first} ({path})"
 
 
+def _discover_team_ids() -> tuple[list[str], str]:
+    """Effective DEVELOPMENT_TEAM(s), from xcconfig if present else the pbxproj.
+
+    CodeSigning.xcconfig is OPTIONAL: the project already carries a
+    DEVELOPMENT_TEAM for its normal contributors, and the xcconfig only exists to
+    override it. Demanding the file was wrong — what matters is that *some* team
+    resolves, and that the keychain holds a matching distribution certificate.
+    """
+    root = Path(__file__).resolve().parent.parent
+    cfg = root / "CodeSigning.xcconfig"
+    if cfg.exists():
+        for line in cfg.read_text().splitlines():
+            line = line.strip()
+            if line.startswith("DEVELOPMENT_TEAM"):
+                value = line.split("=", 1)[-1].strip()
+                if value:
+                    return [value], "CodeSigning.xcconfig"
+
+    teams: list[str] = []
+    for proj in root.glob("*.xcodeproj/project.pbxproj"):
+        for match in re.finditer(r"DEVELOPMENT_TEAM = ([A-Z0-9]{8,12});", proj.read_text()):
+            team = match.group(1)
+            if team not in teams:
+                teams.append(team)
+    return teams, "project.pbxproj"
+
+
+def _check_signing_config() -> tuple[bool, str]:
+    teams, source = _discover_team_ids()
+    if not teams:
+        return False, ("no DEVELOPMENT_TEAM found in CodeSigning.xcconfig or the "
+                       "project — copy CodeSigning.xcconfig.sample and fill it in")
+    return True, f"team {', '.join(teams)} (from {source})"
+
+
 def _check_signing_identities() -> tuple[bool, str]:
-    """An expired/absent distribution cert fails at EXPORT, after the archive."""
+    """An expired/absent distribution cert fails at EXPORT, after the archive.
+
+    Also cross-checks that an identity exists for the team the project actually
+    builds with — having *a* distribution cert for a different team is a failure
+    that otherwise only surfaces at export time.
+    """
     proc = run(["security", "find-identity", "-v", "-p", "codesigning"], check=False)
     if proc.returncode != 0:
         return False, "could not query the keychain for signing identities"
-    out = proc.stdout or ""
-    distribution = [ln for ln in out.splitlines()
-                    if "Apple Distribution" in ln or "iPhone Distribution" in ln]
-    if not distribution:
+
+    lines = [ln for ln in (proc.stdout or "").splitlines()
+             if "Apple Distribution" in ln or "iPhone Distribution" in ln]
+    if not lines:
         return False, ("no Apple Distribution certificate in the keychain — "
                        "export will fail after the archive completes")
-    return True, f"{len(distribution)} distribution identity(ies)"
 
+    keychain_teams = set(re.findall(r"\(([A-Z0-9]{8,12})\)", "\n".join(lines)))
+    project_teams, _ = _discover_team_ids()
 
-def _check_codesigning_xcconfig() -> tuple[bool, str]:
-    cfg = Path(__file__).resolve().parent.parent / "CodeSigning.xcconfig"
-    if not cfg.exists():
-        return False, ("CodeSigning.xcconfig missing — copy CodeSigning.xcconfig.sample "
-                       "and fill in your team details")
-    return True, "CodeSigning.xcconfig present"
+    if project_teams and keychain_teams:
+        matched = [t for t in project_teams if t in keychain_teams]
+        if not matched:
+            return False, (
+                f"{len(lines)} distribution identity(ies) present, but none for the "
+                f"project's team ({', '.join(project_teams)}). "
+                f"Keychain has: {', '.join(sorted(keychain_teams))}"
+            )
+        return True, f"{len(lines)} identity(ies), matching team {matched[0]}"
+    return True, f"{len(lines)} distribution identity(ies)"
 
 
 def _check_submodules() -> tuple[bool, str]:
@@ -677,7 +722,7 @@ def full_preflight() -> None:
         ("Xcode", _check_xcode),
         ("Disk space", _check_disk_space),
         ("Signing identities", _check_signing_identities),
-        ("Code signing config", _check_codesigning_xcconfig),
+        ("Signing config", _check_signing_config),
         ("Submodules", _check_submodules),
     ]
 
