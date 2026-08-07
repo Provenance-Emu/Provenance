@@ -353,8 +353,8 @@ def setup_asc() -> None:
         info("The Issuer ID is a UUID from App Store Connect →")
         info("Users and Access → Integrations → App Store Connect API.")
         if confirm("Open that page in your browser?", default=False):
-            run(["open", "https://appstoreconnect.apple.com/access/integrations/api"],
-                check=False)
+            import webbrowser
+            webbrowser.open("https://appstoreconnect.apple.com/access/integrations/api", new=2)
 
         issuer = prompt_secret("Issuer ID")
         if not UUID_RE.match(issuer):
