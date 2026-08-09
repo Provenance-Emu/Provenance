@@ -11,7 +11,6 @@ import PVSystems
 import PVLookup
 import PVPrimitives
 import PVArchiving
-import PVFileSystem
 
 /// Feature flag to enable/disable zip-as-ROM support checking
 /// Set to false to disable this feature if bugs are found
@@ -139,40 +138,21 @@ public actor ArchiveZipSupportChecker {
         return (false, nil)
     }
 
-    /// Extra rare optical-image extensions not covered by
-    /// `Extensions.discImageExtensions` ∪ `Extensions.playlistExtensions`
-    /// ∪ `Extensions.bin`. Adding these is enough to recognise the few
-    /// remaining CD formats users occasionally drop (PSP packed format,
-    /// compressed isos, Nero / Alcohol images). The full set used by
-    /// `containsCDImageContent` is composed from the global enum plus these.
-    private static let extraCDLikeEntryExtensions: Set<String> = [
-        "nrg", "mds", "toc", "pbp", "cso", "ecm"
-    ]
-
-    /// Composite "this zip is a CD bundle, not a MAME ROM" set, derived from
-    /// the global `Extensions` enum so adding a new disc format in
-    /// `PVFileSystem/Extensions.swift` (e.g. a new Dreamcast variant) is
-    /// picked up here automatically without a parallel hand-edit.
-    private static let cdImageEntryExtensions: Set<String> = {
-        Extensions.discImageExtensions
-            .union(Extensions.playlistExtensions)
-            .union([Extensions.bin.rawValue])
-            .union(extraCDLikeEntryExtensions)
-    }()
-
-    /// Peek inside the zip and return `true` if any entry's extension matches
-    /// `cdImageEntryExtensions`. Failure to enumerate (corrupt archive, etc.)
+    /// Peek inside the zip and ask `ArchiveContentClassifier` whether the entries
+    /// describe an optical disc. Failure to enumerate (corrupt archive, etc.)
     /// returns `false` so the caller falls through to existing logic — we
     /// only want to *reject* a zip-as-ROM claim when we have positive evidence
     /// of CD content, never to falsely reject when listing fails.
+    ///
+    /// The classification rules deliberately live in `PVArchivingFormats`: this
+    /// check previously composed its own set from `Extensions.discImageExtensions`
+    /// plus `Extensions.bin`, which misread every arcade romset built from `.bin`
+    /// chip dumps (`dkong.zip` and friends) as a CD bundle and extracted it.
+    /// `ArchiveContentClassifier` is pure and unit-tested against those cases.
     private nonisolated func containsCDImageContent(_ archiveURL: URL) -> Bool {
         do {
             let entries = try ArchiveManager.shared.listEntries(at: archiveURL)
-            return entries.contains { entry in
-                guard !entry.isDirectory else { return false }
-                let ext = (entry.name as NSString).pathExtension.lowercased()
-                return Self.cdImageEntryExtensions.contains(ext)
-            }
+            return ArchiveContentClassifier.looksLikeOpticalDiscBundle(entries: entries)
         } catch {
             VLOG("ArchiveZipSupportChecker: could not list entries for \(archiveURL.lastPathComponent) (\(error.localizedDescription)) — proceeding with filename-based check")
             return false

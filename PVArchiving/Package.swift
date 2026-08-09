@@ -53,6 +53,15 @@ let package = Package(
             dependencies: ["PVArchiving"],
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
+
+        // Tests for the types-only target. Kept separate from PVArchivingTests
+        // so they inherit PVArchivingFormats' zero third-party dependencies and
+        // stay runnable via a plain `swift test`.
+        .testTarget(
+            name: "PVArchivingFormatsTests",
+            dependencies: ["PVArchivingFormats"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        )
     ],
     cLanguageStandard: .gnu17,
     cxxLanguageStandard: .gnucxx20
