@@ -9,6 +9,9 @@ on:
       - 'PVHashing/**'
       - 'PVSettings/**'
       - 'PVFeatureFlags/**'
+      - 'PVArchiving/**'
+      - 'Dependencies/LzhArchive/**'
+      - 'Scripts/spm-validate.sh'
   pull_request:
     branches: [develop, master]
     paths:
@@ -17,6 +20,9 @@ on:
       - 'PVHashing/**'
       - 'PVSettings/**'
       - 'PVFeatureFlags/**'
+      - 'PVArchiving/**'
+      - 'Dependencies/LzhArchive/**'
+      - 'Scripts/spm-validate.sh'
   workflow_dispatch:
     inputs:
       module:

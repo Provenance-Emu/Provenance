@@ -8,13 +8,19 @@ set -euo pipefail
 # Leaf modules are those that can `swift build && swift test` on macOS
 # without the full Xcode workspace.
 
-# Tier 0-2 leaf modules that support standalone SPM build
+# Leaf modules that support standalone SPM build. Mostly tier 0-2; the operative
+# criterion is `swift build && swift test` on macOS without the Xcode workspace.
 LEAF_MODULES=(
     "PVLogging"
     "PVPlists"
     "PVHashing"
     "PVSettings"
     "PVFeatureFlags"
+    # Pulls third-party compression backends and ../Dependencies/{SWCompression,LzhArchive},
+    # so it needs `submodules: recursive` at checkout. Its tests could not link until the
+    # stray `-Wl,-segalign,4000` was dropped from the lhasa target (swiftc has no `-Wl,`
+    # passthrough) — see the note in Dependencies/LzhArchive/Package.swift.
+    "PVArchiving"
 )
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"

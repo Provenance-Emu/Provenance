@@ -57,12 +57,25 @@ let package = Package(
                 .headerSearchPath("./lib/public"),
                 .headerSearchPath("./src")
 
-            ],
-            linkerSettings: [
-                .unsafeFlags([
-                    "-Wl,-segalign,4000"
-                ])
             ]
+            // NOTE: do not re-add `linkerSettings: [.unsafeFlags(["-Wl,-segalign,4000"])]`.
+            //
+            // It was copy-pasted onto this target in 1ddb793b2a from RetroArch's own
+            // build flags (where the same line sat commented out on the emulator-core
+            // target) and carried over verbatim by 3b6dd0129a. lhasa is a pure LHA
+            // decompressor — no mprotect, no JIT, no page-alignment requirement — and
+            // `-segalign` sets Mach-O *segment* alignment, which is decided when a final
+            // image is linked. On a static-library target it can only propagate to
+            // consumers' link lines, never do anything useful here.
+            //
+            // That propagation broke `swift test`: SwiftPM feeds these flags to the
+            // driver linking the product, and when the product contains Swift that
+            // driver is swiftc, which has no `-Wl,` passthrough and errors with
+            // "unknown argument". (clang accepts it, which is why the Xcode app build
+            // and plain `swift build` were unaffected — static libs never link.)
+            // RetroArch's own `-segalign` settings in PVRetroArch.xcodeproj are
+            // untouched; if a target genuinely needs this, it belongs on the final
+            // image, expressed as `-Xlinker -segalign -Xlinker 4000`.
         ),
     ],
     swiftLanguageModes: [.v5, .v6],
