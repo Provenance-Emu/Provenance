@@ -947,6 +947,9 @@ public extension Defaults.Keys {
     /// When enabled, a connected hardware keyboard activates the controller-style
     /// (TV-media) navigation UI on iOS/macOS-Designed-for-iPad, even with no gamepad attached.
     static let controllerStyleNavigation = Key<Bool>("controllerStyleNavigation", default: false)
+    /// Keyboard→virtual-controller bindings, action rawValue → GCKeyCode rawValues.
+    /// Empty dict means "use the built-in standard map".
+    static let keyboardControllerBindings = Key<[String: [Int]]>("keyboardControllerBindings", default: [:])
     static let iCloudSyncMode = Key<iCloudSyncMode>("iCloudSyncMode", default: .cloudKit)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)
 
