@@ -19,6 +19,18 @@ public enum GamepadEvent {
 public class GamepadManager: ObservableObject {
     public static let shared = GamepadManager()
 
+    /// True when the app should behave like a desktop: keyboard is player 1,
+    /// no on-screen touch controls, keyboard HUD available.
+    /// Mac ("Designed for iPad") always; iPad opts in via Settings > Controller.
+    ///
+    /// `ProcessInfo.processInfo.isiOSAppOnMac` is the only runtime hook available in this
+    /// codebase for detecting Mac — compile-time `os(macOS)` / `targetEnvironment(macCatalyst)`
+    /// are both false for a Designed-for-iPad binary. This predicate governs in-game input
+    /// only; it must NOT be consulted by library/TV-media UI selection.
+    public static var isDesktopInputMode: Bool {
+        ProcessInfo.processInfo.isiOSAppOnMac || Defaults[.controllerStyleNavigation]
+    }
+
     @Published public private(set) var isControllerConnected: Bool = false
     /// Whether at least one physical (non-remote) game controller is connected.
     /// On tvOS, the Siri Remote is also a `GCController`, so this property
@@ -158,14 +170,15 @@ public class GamepadManager: ObservableObject {
     /// Attach navigation handlers to PVControllerManager's virtual keyboard controller.
     /// Virtual controllers never post GCControllerDidConnect, so connectGamepad() misses them.
     ///
-    /// Gated on `Defaults[.controllerStyleNavigation]`: keyboard-driven TVMedia/root-view
-    /// navigation is strictly opt-in, so a Magic Keyboard user who never enabled the
-    /// setting must not have keystrokes routed into `eventSubject` at all. Not `private`
-    /// so `PVControllerManager.rebuildKeyboardController()` (same module) can re-attach
-    /// handlers to the freshly rebuilt virtual controller after a key rebind — see its
-    /// doc comment for why that call is necessary.
+    /// Gated on `isDesktopInputMode`: Mac ("Designed for iPad") always wants keyboard-driven
+    /// navigation since there's no touch surface to fall back on; iPad remains strictly
+    /// opt-in via `Defaults[.controllerStyleNavigation]`, so a Magic Keyboard user who never
+    /// enabled the setting must not have keystrokes routed into `eventSubject` at all. Not
+    /// `private` so `PVControllerManager.rebuildKeyboardController()` (same module) can
+    /// re-attach handlers to the freshly rebuilt virtual controller after a key rebind — see
+    /// its doc comment for why that call is necessary.
     func connectKeyboardControllerIfAvailable() {
-        guard Defaults[.controllerStyleNavigation] else { return }
+        guard Self.isDesktopInputMode else { return }
         MainActor.assumeIsolated {
             guard let keyboardController = PVControllerManager.shared.keyboardController else { return }
             DLOG("[GamepadManager] Attaching navigation handlers to keyboard controller")
