@@ -944,6 +944,9 @@ public extension Defaults.Keys {
 #else
     static let mainUIMode = Key<MainUIMode>("mainUIMode", default: .paged)
 #endif
+    /// When enabled, a connected hardware keyboard activates the controller-style
+    /// (TV-media) navigation UI on iOS/macOS-Designed-for-iPad, even with no gamepad attached.
+    static let controllerStyleNavigation = Key<Bool>("controllerStyleNavigation", default: false)
     static let iCloudSyncMode = Key<iCloudSyncMode>("iCloudSyncMode", default: .cloudKit)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)
 
