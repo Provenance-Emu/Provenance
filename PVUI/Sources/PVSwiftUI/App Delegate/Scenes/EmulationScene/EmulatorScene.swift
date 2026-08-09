@@ -71,114 +71,23 @@ public struct EmulatorScene: Scene {
         }
 #if !os(tvOS)
         .handlesExternalEvents(matching: ["emulator"])
-        .commands {
-            // Add any menu commands specific to the emulator scene
-            CommandGroup(replacing: .appInfo) {
-                Button("About Provenance Emulator") {
-                    // Show about dialog
-                }
-            }
-
-            CommandMenu("Game") {
-                Button("Show Menu") {
-                    // `showMenu(_:)` is defined on the concrete `PVEmulatorViewController`
-                    // (PVEmulatorViewController+PauseMenu.swift), not on the
-                    // `PVEmualatorControllerProtocol` existential — downcast to reach it,
-                    // same pattern as "Load Last Save State" below.
-                    if let emulator = appState.emulationUIState.emulator as? PVEmulatorViewController {
-                        emulator.showMenu(nil)
-                    }
-                }
-                // NOT ⌘M — that's Minimize on macOS.
-                .keyboardShortcut("m", modifiers: [.command, .shift])
-
-                Button("Toggle Keyboard HUD") {
-                    // Desktop-only overlay (Phase B, macOS desktop input design):
-                    // shows currently-held keyboard-controller actions and, while
-                    // pinned, lets the player click a binding to rebind it.
-                    // `toggleKeyboardHUDPinned()` no-ops outside desktop input mode.
-                    if let emulator = appState.emulationUIState.emulator as? PVEmulatorViewController {
-                        emulator.toggleKeyboardHUDPinned()
-                    }
-                }
-                .keyboardShortcut("k", modifiers: [.command, .shift])
-            }
-
-            CommandMenu("Emulation") {
-                Button("Pause/Resume") {
-                    if let core = appState.emulationUIState.core {
-                        core.setPauseEmulation(!core.isOn)
-                    }
-                }
-                .keyboardShortcut("p", modifiers: .command)
-
-                Button("Take Screenshot") {
-                    if let emulator = appState.emulationUIState.emulator {
-                        _ = emulator.captureScreenshot()
-                    }
-                }
-                .keyboardShortcut("s", modifiers: [.command, .shift])
-
-                Button("Save State") {
-                    if let emulator = appState.emulationUIState.emulator {
-                        Task {
-                            try? await emulator.createNewSaveState(auto: false, screenshot: emulator.captureScreenshot())
-                        }
-                    }
-                }
-                .keyboardShortcut("s", modifiers: .command)
-
-                Button("Load Last Save State") {
-                    // `loadSaveState(_:)` is defined on the concrete `PVEmulatorViewController`
-                    // (PVEmulatorViewController+Saves.swift), not on the
-                    // `PVEmualatorControllerProtocol` existential — downcast to reach it,
-                    // same concrete type this file already stores into `emulationUIState.emulator`.
-                    guard let emulator = appState.emulationUIState.emulator as? PVEmulatorViewController,
-                          let game = appState.emulationUIState.currentGame,
-                          !game.isInvalidated else { return }
-
-                    // Resolve a live PVGame reference: thaw if frozen, else re-fetch
-                    // from Realm by md5Hash, else fall back to the object as-is.
-                    // Matches GameLaunchingViewController.swift's established pattern —
-                    // a frozen object's thaw() can return nil if its source Realm is gone.
-                    let realm = RomDatabase.sharedInstance.realm
-                    let liveGame: PVGame?
-                    if game.isFrozen {
-                        liveGame = game.thaw()
-                    } else if let gameFromRealm = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
-                        liveGame = gameFromRealm
-                    } else {
-                        liveGame = game
-                    }
-
-                    guard let liveGame, !liveGame.isInvalidated,
-                          let state = liveGame.saveStates
-                        .sorted(byKeyPath: "date", ascending: false)
-                        .first else { return }
-                    Task { @MainActor in
-                        _ = await emulator.loadSaveState(state)
-                    }
-                }
-                .keyboardShortcut("l", modifiers: .command)
-
-                Divider()
-
-                Button("Quit Emulation") {
-                    if let emulator = appState.emulationUIState.emulator {
-                        Task {
-                            await emulator.quit(optionallySave: true) {
-                                // After quitting, return to the main scene
-                                SceneCoordinator.shared.closeEmulator()
-                            }
-                        }
-                    } else {
-                        // If there's no emulator, just close the scene
-                        SceneCoordinator.shared.closeEmulator()
-                    }
-                }
-                .keyboardShortcut("q", modifiers: [.command, .shift])
-            }
-        }
+        // NOTE: no `.commands` here.
+        //
+        // This scene used to declare "Game" and "Emulation" command menus. They have
+        // moved wholesale into the UIKit menu bar — `PVAppDelegate.buildMenu(with:)`
+        // → `PVMenuBarBuilder`, with the actions implemented on
+        // `PVEmulatorViewController` (see PVEmulatorViewController+MenuBar.swift).
+        //
+        // Reasons, all of which were live bugs here:
+        //   • Scene-scoped commands meant ⌘, (declared on the main scene) did nothing
+        //     while a game ran, and these items stayed enabled in the library.
+        //   • "Pause/Resume" toggled against `core.isOn` — which means "the core is up
+        //     at all", not "unpaused" — so it only ever resumed.
+        //   • "Take Screenshot" discarded `captureScreenshot()`'s result and saved
+        //     nothing; the menu bar now calls `takeScreenshot()`, which writes it.
+        //   • "Load Last Save State" re-derived a live PVGame from a frozen AppState
+        //     copy; the view controller already holds a live one.
+        // The empty "About Provenance Emulator" item was dead and is gone.
 #endif
     }
 }
