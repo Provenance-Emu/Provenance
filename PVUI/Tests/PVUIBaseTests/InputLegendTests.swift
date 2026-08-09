@@ -182,6 +182,10 @@ struct InputLegendTests {
         #expect(!controls.contains("Left Stick"))   // no PVJoyPad in the layout
         #expect(!controls.contains("L1"))           // no shoulder entries
         #expect(!controls.contains("Select"))       // no PVSelectButton
+        // No PVButtonGroup either, so there are no face buttons to name.
+        // Apple II is the real system in this shape.
+        #expect(!controls.contains("A"))
+        #expect(!legend.hasGenericFaceNames)
     }
 
     @Test("Unbound actions produce no row")

@@ -213,6 +213,14 @@ public enum InputLegendBuilder {
         /// Set when a face-button row had to fall back to a generic gamepad
         /// name, so the view can say which vocabulary it's speaking.
         var hasGenericFaceRow = false
+        /// Whether the system declares face buttons at all. Apple II doesn't,
+        /// and inventing four unexplained A/B/X/Y rows for a machine with no
+        /// action buttons would be the least useful thing this file could do.
+        /// Systems that ship a group but no resolvable diamond (home computers
+        /// with a "1"/"2" fire pair, PC Engine, Genesis, …) still get the
+        /// generic rows — pressing gamepad A really does do something there —
+        /// plus the caveat naming the vocabulary.
+        let hasFaceButtonGroup = layout.contains { $0.PVControlType == LayoutKeys.ButtonGroup }
 
         /// Combined row for a directional control: one line listing every key
         /// bound to the four directions, rather than four near-identical lines.
@@ -234,7 +242,8 @@ public enum InputLegendBuilder {
             // console) — drop the row rather than imply a button that isn't
             // there.
             let systemName = systemNames[action]
-            guard let controlLabel = systemName ?? genericFallback(for: action) else { return }
+            let fallback = hasFaceButtonGroup ? genericFallback(for: action) : nil
+            guard let controlLabel = systemName ?? fallback else { return }
             guard let input = inputLabel(action) else { return }
             if systemName == nil { hasGenericFaceRow = true }
             let gamepadName = action.displayName
@@ -256,6 +265,8 @@ public enum InputLegendBuilder {
          .l1, .r1, .l2, .r2, .l3, .r3,
          .start, .select].forEach(appendButton)
 
+        // `hasGenericFaceRow` can only be set when a group existed, since
+        // that's the only case a generic fallback is offered.
         return InputLegend(rows: rows, hasGenericFaceNames: hasGenericFaceRow)
     }
 
