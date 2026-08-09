@@ -294,9 +294,14 @@ jobs:
       # The staleness scanner parses workflow YAML by hand, so a regression in
       # it fails *silently* — it just stops finding crons and the report goes
       # green. No other workflow runs these tests, so they run here, next to
-      # the only consumer, and go red rather than letting Check 6 report on a
-      # scanner nobody verified.
+      # the only consumer.
+      #
+      # Deliberately NOT continue-on-error: a scanner that fails its own tests
+      # is not a monitor, and the job should go red. Check 6 below is gated on
+      # this passing, so the report renders "check did not report" for
+      # staleness rather than a verdict from an unverified scanner.
       - name: Check 6a — self-test the staleness scanner
+        id: staleness_selftest
         if: always()
         run: python3 .github/scripts/test_scheduled_workflow_staleness.py
 
@@ -305,8 +310,10 @@ jobs:
         # Independent of checks 1-5: those run under `set -e`, and without
         # always() a failure there would skip this step entirely, dropping
         # staleness from a report that is otherwise built to survive a
-        # partial run.
-        if: always()
+        # partial run. The one thing it *does* depend on is its own self-test
+        # — skipping here writes no output, which the report step renders as
+        # "check did not report" instead of trusting a broken scanner.
+        if: always() && steps.staleness_selftest.outcome == 'success'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}

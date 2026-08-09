@@ -271,8 +271,13 @@ class MainDirectoryGuards(unittest.TestCase):
                 stdout=out,
             )
         self.assertEqual(code, 0)
-        self.assertIn("no scheduled workflows found", out.getvalue())
-        self.assertNotIn("✅", out.getvalue())
+        # Assert on the summary line specifically — a per-entry line elsewhere
+        # in stdout must not be able to pass or fail this by accident.
+        status_line = next(
+            line for line in out.getvalue().splitlines() if line.startswith("status:")
+        )
+        self.assertIn("no scheduled workflows found", status_line)
+        self.assertNotIn("✅", status_line)
 
     def test_missing_repo_exits_2(self):
         self.assertEqual(_run_main(["--repo", ""], env={"REPO": ""}), 2)
