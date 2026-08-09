@@ -436,29 +436,53 @@ public final class PVControllerManager: NSObject, ObservableObject {
         }
     }
 
+    /// Creates and connects the virtual keyboard-backed controller.
+    ///
+    /// Deliberately posts NO touch-control UI notifications — those describe a *hardware*
+    /// change and belong to `handleKeyboardConnect`. Settings-triggered rebuilds share this
+    /// so they don't churn the on-screen controls.
+    /// - Returns: `true` if a controller was created and connected.
+    @MainActor
+    @discardableResult
+    private func buildKeyboardController() -> Bool {
+        if PVControllerManager.shared.skipKeyBinding {
+            return false
+        }
+        guard let controller = GCKeyboard.coalesced?.createController() else {
+            return false
+        }
+        keyboardController = controller
+        PVControllerManager.shared.connectController(controller)
+        return true
+    }
+
+    /// Tears down the virtual keyboard-backed controller. Posts no UI notifications,
+    /// for the same reason as `buildKeyboardController()`.
+    /// - Returns: `true` if a controller was present and disconnected.
+    @MainActor
+    @discardableResult
+    private func teardownKeyboardController() -> Bool {
+        guard let controller = keyboardController else {
+            return false
+        }
+        keyboardController = nil
+        PVControllerManager.shared.disconnectController(controller)
+        return true
+    }
+
     @MainActor
     @objc func handleKeyboardConnect(_ note: Notification?) {
-//        #if !targetEnvironment(simulator)
-        ILOG("Keyboard Connected\n");
-        if (PVControllerManager.shared.skipKeyBinding) {
-            return
+        ILOG("Keyboard Connected")
+        if buildKeyboardController() {
+            NotificationCenter.default.post(name: Notification.Name("HideTouchControls"), object: nil)
         }
-        if let controller = GCKeyboard.coalesced?.createController() {
-
-            keyboardController = controller
-            PVControllerManager.shared.connectController(controller);
-            NotificationCenter.default.post(name:Notification.Name("HideTouchControls"), object:nil)
-        }
-//        #endif
     }
 
     @MainActor
     @objc func handleKeyboardDisconnect(_ note: Notification?) {
-        ILOG("Keyboard Disconnected\n");
-        if let controller = keyboardController {
-            keyboardController = nil
-            PVControllerManager.shared.disconnectController(controller)
-            NotificationCenter.default.post(name:Notification.Name("ShowTouchControls"), object:nil)
+        ILOG("Keyboard Disconnected")
+        if teardownKeyboardController() {
+            NotificationCenter.default.post(name: Notification.Name("ShowTouchControls"), object: nil)
         }
     }
 
@@ -478,10 +502,17 @@ public final class PVControllerManager: NSObject, ObservableObject {
     /// specifically care about genuine hardware changes, not a settings-triggered rebuild.
     /// `connectKeyboardControllerIfAvailable()` itself no-ops when the user hasn't opted
     /// into controller-style navigation, so this is safe to call unconditionally.
+    ///
+    /// It uses the notification-free `teardownKeyboardController()`/`buildKeyboardController()`
+    /// rather than the `handleKeyboard…` hardware handlers: those post `ShowTouchControls`
+    /// then `HideTouchControls` back-to-back, which would churn the on-screen controls'
+    /// visibility on every rebind. Worse, when `skipKeyBinding` is set the connect half
+    /// returns early without re-posting `HideTouchControls`, which would strand the touch
+    /// controls visible after a settings change.
     @MainActor
     public func rebuildKeyboardController() {
-        handleKeyboardDisconnect(nil)
-        handleKeyboardConnect(nil)
+        teardownKeyboardController()
+        buildKeyboardController()
         GamepadManager.shared.connectKeyboardControllerIfAvailable()
     }
 
