@@ -98,7 +98,14 @@ extension PVEmulatorViewController {
         let hasKeyboard = GCKeyboard.coalesced?.keyboardInput != nil
         let hasController = GCController.controllers().contains { $0.extendedGamepad != nil }
         guard hasKeyboard || hasController else { return }
-        guard keyboardHUDHostingVC == nil else { return }
+
+        if let viewModel = keyboardHUDViewModelStorage, keyboardHUDHostingVC != nil {
+            // Already installed. The one thing still worth doing is retrying
+            // the launch legend, in case the first attempt ran before the
+            // game's system metadata was resolvable.
+            showLaunchLegendIfReady(viewModel)
+            return
+        }
 
         let viewModel = KeyboardHUDViewModel()
         keyboardHUDViewModelStorage = viewModel
@@ -131,12 +138,31 @@ extension PVEmulatorViewController {
 
         keyboardHUDHostingVC = hostingVC
         viewModel.startObserving()
-
-        if !didShowLaunchLegend {
-            didShowLaunchLegend = true
-            viewModel.showLaunchLegend()
-        }
+        showLaunchLegendIfReady(viewModel)
         ILOG("[InputLegend] Installed (keyboard: \(hasKeyboard), controller: \(hasController))")
+    }
+
+    /// Shows the at-launch legend, once per game, but only once the game's
+    /// system metadata is actually resolvable.
+    ///
+    /// `setupKeyboardHUDIfNeeded()` first runs from `viewDidLoad`, which is
+    /// early enough that `game.system` can still be nil (the VC logs "Nil
+    /// system for …" on that path, and `self.game` is re-hydrated from Realm
+    /// later during async ROM resolution). Latching "already shown" on such a
+    /// pass would freeze a degenerate legend — no system name, and only the
+    /// generic face rows, since every other row needs a layout entry — for the
+    /// whole session, because the `viewDidAppear` re-entry would then short
+    /// out on the already-installed check. So the flag is only set once there
+    /// is real data to show, and the later pass gets another go.
+    private func showLaunchLegendIfReady(_ viewModel: KeyboardHUDViewModel) {
+        guard !didShowLaunchLegend else { return }
+        guard game?.system?.systemIdentifier != nil else {
+            DLOG("[InputLegend] System metadata not ready yet — deferring launch legend")
+            return
+        }
+        configureInputLegend(viewModel)
+        didShowLaunchLegend = true
+        viewModel.showLaunchLegend()
     }
 
     /// Feeds the legend the real mapping data for the running game.

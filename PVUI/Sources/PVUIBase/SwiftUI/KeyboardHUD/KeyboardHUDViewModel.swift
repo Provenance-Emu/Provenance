@@ -274,6 +274,12 @@ public final class KeyboardHUDViewModel: ObservableObject {
         scheduleFadeOut(after: Self.launchLegendDuration)
     }
 
+    /// Swap to the compact "what you just pressed" strip. Only ever reached
+    /// from `poll()`, i.e. only when a keyboard is attached — for a
+    /// gamepad-only player `isShowingFullLegend` stays `true` after the launch
+    /// legend fades, which is deliberate: the Game menu's toggle then brings
+    /// the full legend back rather than an empty strip. Don't "fix" that by
+    /// resetting the flag on fade-out.
     private func revealTransientStrip() {
         isShowingFullLegend = false
         isVisible = true
