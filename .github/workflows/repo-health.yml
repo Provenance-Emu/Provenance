@@ -293,6 +293,11 @@ jobs:
       # over five months without a single alert.
       - name: Check 6 — stale scheduled workflows
         id: staleness
+        # Independent of checks 1-5: those run under `set -e`, and without
+        # always() a failure there would skip this step entirely, dropping
+        # staleness from a report that is otherwise built to survive a
+        # partial run.
+        if: always()
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}

@@ -225,7 +225,15 @@ def extract_cron_expressions(text: str) -> list[str]:
                 schedule_indent = indent
             continue
 
-        if indent <= schedule_indent:
+        # A sequence item may sit at the SAME indentation as the key that owns
+        # it — this is valid YAML and a common style:
+        #     on:
+        #       schedule:
+        #       - cron: '0 4 * * 0'
+        # Only a non-list-item key at or above `schedule:` ends the block.
+        # Treating indent alone as the terminator silently dropped every cron
+        # written that way, making such a workflow invisible to this check.
+        if indent <= schedule_indent and not stripped.startswith("- "):
             in_schedule = False
             if re.match(r"^schedule\s*:", stripped):
                 in_schedule = True
