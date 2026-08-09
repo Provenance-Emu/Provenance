@@ -63,6 +63,14 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
+          # Required. `cache: pip` hashes a dependency manifest to build its
+          # cache key, and its default glob is `**/requirements.txt` /
+          # `**/pyproject.toml` — neither of which matches
+          # `requirements-scraper.txt`. Without this the step hard-errors with
+          # "No file ... matched to [**/requirements.txt or **/pyproject.toml]"
+          # before installing anything, which is what killed every scheduled
+          # run of this job since at least 2026-03-08.
+          cache-dependency-path: 'Scripts/requirements-scraper.txt'
 
       - name: Install dependencies
         run: pip install -r Scripts/requirements-scraper.txt
