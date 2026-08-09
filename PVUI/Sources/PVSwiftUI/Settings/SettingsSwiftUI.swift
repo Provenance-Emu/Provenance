@@ -1987,6 +1987,7 @@ private struct ControllerSection: View {
     @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
     @Default(.analogDeadzone) var analogDeadzone
     @Default(.coreDeadzoneMode) var coreDeadzoneMode
+    @Default(.controllerStyleNavigation) var controllerStyleNavigation
 
     var body: some View {
         Group {
@@ -2027,6 +2028,14 @@ private struct ControllerSection: View {
                                 icon: .sfSymbol("pause.rectangle"),
                                 showChevron: false)
                 }
+                #if !os(tvOS)
+                ThemedToggle(isOn: $controllerStyleNavigation) {
+                    SettingsRow(title: "Controller-Style Navigation",
+                                subtitle: "Use the TV-style, keyboard/controller-driven library UI when a hardware keyboard is connected.",
+                                icon: .sfSymbol("keyboard"),
+                                showChevron: false)
+                }
+                #endif
                 NavigationLink(destination: MouseInputSettingsView()) {
                     SettingsRow(title: "Mouse Input",
                                 subtitle: "Configure input source and sensitivity for mouse emulation",
