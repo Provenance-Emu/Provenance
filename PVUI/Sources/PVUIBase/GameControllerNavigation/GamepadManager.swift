@@ -136,10 +136,17 @@ public class GamepadManager: ObservableObject {
     }
 
     /// Recomputes `isNavigationInputAvailable` from its three inputs. Must be called any
-    /// time `isControllerConnected`, `isKeyboardConnected`, or
-    /// `Defaults[.controllerStyleNavigation]` changes.
+    /// time `isControllerConnected`, `isKeyboardConnected`, or `isDesktopInputMode`'s
+    /// inputs (`isiOSAppOnMac`, `Defaults[.controllerStyleNavigation]`) change.
+    ///
+    /// Keys off `isDesktopInputMode` rather than the raw `controllerStyleNavigation`
+    /// default: on Mac desktop mode is active via `isiOSAppOnMac` even with that toggle
+    /// off, and reading the raw default there left this `false` — so every view gating on
+    /// `isNavigationInputAvailable` (RetroWave alerts, core/save pickers, TVMedia) would
+    /// discard keyboard input on Mac by default, the same failure this flag exists to fix.
+    /// Off Mac the two are equivalent, so this is a no-op for iOS and tvOS.
     private func updateNavigationInputAvailability() {
-        isNavigationInputAvailable = isControllerConnected || (Defaults[.controllerStyleNavigation] && isKeyboardConnected)
+        isNavigationInputAvailable = isControllerConnected || (Self.isDesktopInputMode && isKeyboardConnected)
     }
 
     /// React to the user flipping Settings > Controllers > "Controller-Style Navigation"
