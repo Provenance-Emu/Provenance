@@ -349,10 +349,11 @@ jobs:
                   --base develop \
                   --head "$PR_BRANCH" \
                   --title "chore(changelog): absorb ${absorbed_count} pending fragment(s)" \
-                  --body "$(printf '%s\n\n%s\n\n%s' \
+                  --body "$(printf '%s\n\n%s\n\n%s\n\n%s' \
                     "Absorbs \`.changelog/*.md\` fragments into \`CHANGELOG.md\`." \
                     "Absorbed: ${absorbed:-none}" \
-                    "Opened automatically by [consolidate-changelog.yml](../actions/workflows/consolidate-changelog.yml). Safe to merge as-is; the consolidation script is idempotent.")"); then
+                    "⚠️ Do not hand-edit the \`${PR_BRANCH}\` branch. It is rebuilt and force-pushed on every run, so any manual commit on it is silently discarded. Fix the fragment in \`.changelog/\` on develop instead, or edit \`CHANGELOG.md\` after this merges." \
+                    "Opened automatically by [consolidate-changelog.yml](../actions/workflows/consolidate-changelog.yml). The consolidation script is idempotent, so this can be merged as-is.")"); then
               echo "::error::Could not open the changelog consolidation pull request."
               exit 1
             fi
