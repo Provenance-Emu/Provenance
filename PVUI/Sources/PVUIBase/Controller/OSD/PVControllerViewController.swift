@@ -362,6 +362,61 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         #endif
     }
 
+#if os(iOS)
+    /// Container view used for this VC's root view in desktop input mode. See
+    /// `loadView()` below for why plain `UIView` hit-testing is a problem here.
+    ///
+    /// Default `UIView.hitTest` returns *itself* for any point inside its bounds that no
+    /// subview claims. In desktop input mode (Mac idiom, or iPad opted into
+    /// controller-style navigation — `GamepadManager.isDesktopInputMode`)
+    /// `setupTouchControls()` deliberately lays out no D-pad/buttons, but this VC is
+    /// still added as a full-screen child by `PVEmulatorViewController.addControllerOverlay()`
+    /// because it also hosts real, still-relevant subviews added elsewhere in this file —
+    /// the volume HUD (`volume`, wired in `viewDidLoad`), quick-action buttons
+    /// (`setupQuickActionButtons()`), and the hardware switch overlay
+    /// (`addHardwareSwitchOverlayIfNeeded()`). Left as a plain `UIView`, that empty
+    /// full-screen container swallows mouse clicks meant for the game/skin underneath.
+    ///
+    /// Disabling `isUserInteractionEnabled` instead would also disable those live
+    /// subviews. Overriding `point(inside:)` instead would short-circuit `hitTest`
+    /// before it even tests subviews (UIKit skips subview hit-testing entirely once
+    /// `point(inside:)` returns false), breaking them too. Deferring to the default
+    /// `hitTest` — which already tests subviews first — and only swapping a
+    /// "hit is myself" result for `nil` avoids both problems: subviews keep normal
+    /// hit-testing, only clicks on genuinely empty area fall through to whatever is
+    /// behind this VC's view.
+    private final class PassthroughHitTestView: UIView {
+        override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+            let hitView = super.hitTest(point, with: event)
+            return hitView === self ? nil : hitView
+        }
+    }
+
+    /// Swap in `PassthroughHitTestView` only for desktop input mode — see its doc
+    /// comment. Touch-mode iOS/iPad behavior is unaffected (`super.loadView()` still
+    /// creates a normal `UIView`), including the 3-finger triple-tap move-mode gesture
+    /// recognizer attached directly to `view` in `viewDidLoad`, which relies on `self`
+    /// being a valid hit-test result and would stop firing under the passthrough view.
+    ///
+    /// Mirrors what `super.loadView()` gives every other root view controller view:
+    /// full-screen frame plus a flexible autoresizing mask. `didMove(toParent:)` only
+    /// syncs `view.frame` to the superview's bounds once, right after this VC is added
+    /// as a child — with no autoresizing mask a later window resize (routine on Mac)
+    /// would leave this view's bounds stale, which would make the quick-action buttons
+    /// and hardware-switch overlay it hosts unclickable outside the stale bounds and
+    /// stop `viewDidLayoutSubviews`-driven repositioning from firing. `UIScreen.main`
+    /// is only a starting size — the flexible mask is what keeps it correct afterward.
+    override open func loadView() {
+        guard GamepadManager.isDesktopInputMode else {
+            super.loadView()
+            return
+        }
+        let passthroughView = PassthroughHitTestView(frame: UIScreen.main.bounds)
+        passthroughView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view = passthroughView
+    }
+#endif
+
     override public func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerViewController.controllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
