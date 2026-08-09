@@ -91,6 +91,17 @@ public struct EmulatorScene: Scene {
                 }
                 // NOT ⌘M — that's Minimize on macOS.
                 .keyboardShortcut("m", modifiers: [.command, .shift])
+
+                Button("Toggle Keyboard HUD") {
+                    // Desktop-only overlay (Phase B, macOS desktop input design):
+                    // shows currently-held keyboard-controller actions and, while
+                    // pinned, lets the player click a binding to rebind it.
+                    // `toggleKeyboardHUDPinned()` no-ops outside desktop input mode.
+                    if let emulator = appState.emulationUIState.emulator as? PVEmulatorViewController {
+                        emulator.toggleKeyboardHUDPinned()
+                    }
+                }
+                .keyboardShortcut("k", modifiers: [.command, .shift])
             }
 
             CommandMenu("Emulation") {

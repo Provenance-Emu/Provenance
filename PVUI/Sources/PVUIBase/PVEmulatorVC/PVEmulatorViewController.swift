@@ -1094,6 +1094,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // also calls it via showVirtualMouse when the core supports mouse.
         setupVirtualMouseIfNeeded()
         setupVirtualInputOverlaysIfNeeded()
+        setupKeyboardHUDIfNeeded()
         setupLightGunIfNeeded()
         #endif
 
@@ -1298,6 +1299,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // now that the view hierarchy is fully laid out.
         refreshVirtualMouseLayout()
         refreshLightGunLayout()
+        // `showMenu(_:)` presents the pause menu with `.overFullScreen`, which
+        // (per UIKit's normal present/dismiss pairing) drives a
+        // viewWillDisappear/viewDidAppear cycle on this VC even though it's
+        // never actually removed from the hierarchy — and `teardownKeyboardHUD()`
+        // runs unconditionally in `viewWillDisappear`. Re-installing here
+        // (idempotent — no-ops if already installed) is what brings the HUD
+        // back after the pause menu closes instead of leaving it permanently
+        // torn down after the first ⇧⌘M.
+        setupKeyboardHUDIfNeeded()
         #endif
 
         #if os(iOS)
@@ -1346,6 +1356,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         destroyAutosaveTimer()
         #if !os(tvOS)
         removeVirtualInputOverlays()
+        teardownKeyboardHUD()
         teardownLightGun()
         #endif
         #if os(tvOS)
