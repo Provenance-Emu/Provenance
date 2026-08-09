@@ -25,6 +25,11 @@ jobs:
       REPO: ${{ github.repository }}
 
     steps:
+      # Needed by Check 6, which reads .github/workflows/*.yml to discover
+      # which workflows have a `schedule:` trigger.
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Run health checks
         id: health
         run: |
@@ -218,25 +223,51 @@ jobs:
           fi
 
           # ── Check 5: Workflow failure rate (last 24h) ─────────────────────────
+          # Catches workflows that fail *often*. By construction it cannot catch
+          # a workflow that fails rarely-but-always — a weekly cron produces at
+          # most one failure per 24h window and can never cross the threshold
+          # below. That blind spot is Check 6's job.
           echo ""
           echo "--- Check 5: Workflow failure rate ---"
 
           check5_status="✅ OK"
           check5_detail=""
+          noisy_count=0
 
-          for workflow in agent-validation.yml ai-review.yml claude-code.yml auto-rebase-on-develop.yml; do
-            failures=$(gh run list --workflow="$workflow" --repo "$REPO" --limit 50 \
-              --json conclusion,createdAt \
-              --jq "now as \$now | [.[] | select(.conclusion == \"failure\" and (\$now - (.createdAt | fromdateiso8601)) < 86400)] | length" \
+          # Discover workflows instead of hardcoding a watch list, so anything
+          # added later is covered automatically. Previously this iterated four
+          # named files and every other workflow in the repo was unmonitored.
+          all_workflows=$(gh api "repos/$REPO/actions/workflows" --paginate \
+            --jq '.workflows[] | select(.state == "active") | .path' \
+            2>/dev/null | sed 's|.*/||' | sort -u)
+
+          if [ -z "$all_workflows" ]; then
+            check5_status="⚠️ Could not enumerate workflows"
+          fi
+
+          for workflow in $all_workflows; do
+            # --status failure filters server-side, so `--limit` counts failures
+            # rather than a mix of runs, and in-progress runs (whose conclusion
+            # is null) can never be miscounted as failures.
+            failures=$(gh run list --workflow="$workflow" --repo "$REPO" \
+              --status failure --limit 100 \
+              --json createdAt \
+              --jq "now as \$now | [.[] | select((\$now - (.createdAt | fromdateiso8601)) < 86400)] | length" \
               2>/dev/null || echo "0")
-            echo "  $workflow: $failures failure(s) in 24h"
+            echo "  $workflow: ${failures:-0} failure(s) in 24h"
             if [ "${failures:-0}" -gt 3 ]; then
               check5_status="⚠️ High failure rate"
               check5_detail="$check5_detail $workflow: ${failures}/24h"
-            else
-              check5_detail="$check5_detail $workflow: ${failures:-0}/24h"
+              noisy_count=$((noisy_count + 1))
             fi
           done
+
+          # Only offenders go in the detail column — listing every workflow in
+          # the repo would swamp the report table.
+          workflow_total=$(echo "$all_workflows" | grep -c . || echo "0")
+          if [ "$noisy_count" -eq 0 ] && [ -n "$all_workflows" ]; then
+            check5_detail="${workflow_total} workflows checked, none over 3 failures/24h"
+          fi
 
           # ── Write outputs for report step ─────────────────────────────────────
           {
@@ -253,7 +284,51 @@ jobs:
             echo "check5_detail=$check5_detail"
           } >> "$GITHUB_OUTPUT"
 
+      # ── Check 6: Stale scheduled workflows ──────────────────────────────────
+      # Orthogonal to Check 5's failure *rate*: this asks when each scheduled
+      # workflow's schedule last actually succeeded, and alerts when that is
+      # older than a multiple of its own cron interval. This is the check that
+      # catches a low-frequency job failing 100% of the time — the failure mode
+      # that let update-catalogs.yml rot through 23 consecutive scheduled runs
+      # over five months without a single alert.
+      # The staleness scanner parses workflow YAML by hand, so a regression in
+      # it fails *silently* — it just stops finding crons and the report goes
+      # green. No other workflow runs these tests, so they run here, next to
+      # the only consumer.
+      #
+      # Deliberately NOT continue-on-error: a scanner that fails its own tests
+      # is not a monitor, and the job should go red. Check 6 below is gated on
+      # this passing, so the report renders "check did not report" for
+      # staleness rather than a verdict from an unverified scanner.
+      - name: Check 6a — self-test the staleness scanner
+        id: staleness_selftest
+        if: always()
+        run: python3 .github/scripts/test_scheduled_workflow_staleness.py
+
+      - name: Check 6 — stale scheduled workflows
+        id: staleness
+        # Independent of checks 1-5: those run under `set -e`, and without
+        # always() a failure there would skip this step entirely, dropping
+        # staleness from a report that is otherwise built to survive a
+        # partial run. The one thing it *does* depend on is its own self-test
+        # — skipping here writes no output, which the report step renders as
+        # "check did not report" instead of trusting a broken scanner.
+        if: always() && steps.staleness_selftest.outcome == 'success'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "--- Check 6: Stale scheduled workflows ---"
+          python3 .github/scripts/scheduled-workflow-staleness.py \
+            --repo "$REPO" \
+            --workflows-dir .github/workflows \
+            --format github
+
       - name: Post health report to pinned issue
+        # Runs even if an earlier check step failed, so a partial report still
+        # reaches the issue instead of the whole report vanishing.
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
           TIMESTAMP: ${{ steps.health.outputs.timestamp }}
@@ -267,7 +342,20 @@ jobs:
           CHECK4_DETAIL: ${{ steps.health.outputs.check4_detail }}
           CHECK5_STATUS: ${{ steps.health.outputs.check5_status }}
           CHECK5_DETAIL: ${{ steps.health.outputs.check5_detail }}
+          CHECK6_STATUS: ${{ steps.staleness.outputs.check6_status }}
+          CHECK6_DETAIL: ${{ steps.staleness.outputs.check6_detail }}
         run: |
+          # A check step that died leaves its output empty. Render that as an
+          # explicit "did not run" rather than a blank cell, which reads as OK.
+          for n in 1 2 3 4 5 6; do
+            var="CHECK${n}_STATUS"
+            if [ -z "${!var}" ]; then
+              printf -v "$var" '%s' '❓ check did not report'
+            fi
+          done
+
+          TIMESTAMP="${TIMESTAMP:-$(date -u '+%Y-%m-%d %H:%M UTC')}"
+
           # Build report body
           {
             echo '<!-- automation-health-report -->'
@@ -280,30 +368,64 @@ jobs:
             echo "| Rebase conflicts | ${CHECK3_STATUS} | ${CHECK3_DETAIL} |"
             echo "| Orphaned agent-work | ${CHECK4_STATUS} | ${CHECK4_DETAIL} |"
             echo "| Workflow failures (24h) | ${CHECK5_STATUS} | ${CHECK5_DETAIL} |"
+            echo "| Stale scheduled workflows | ${CHECK6_STATUS} | ${CHECK6_DETAIL} |"
             echo ''
             echo '---'
             echo '*Auto-generated every 4h by [repo-health.yml](../actions/workflows/repo-health.yml). Trigger manually via [Actions tab](../actions/workflows/repo-health.yml).*'
           } > /tmp/health_report.md
 
-          # Find or create the pinned Automation Health issue
+          # Find or create the pinned Automation Health issue.
+          #
+          # This block used to swallow every failure with `2>/dev/null || echo ""`
+          # and then print "posted to issue #unknown" while exiting green — so
+          # the report was never actually posted anywhere, and the monitor
+          # reported SUCCESS every 4h for five months while findings piled up
+          # in a log nobody reads. Failures here are now fatal and loud: if the
+          # report cannot reach the issue, this workflow is not monitoring
+          # anything and must go red.
           HEALTH_ISSUE=$(gh issue list --repo "$REPO" \
             --search "Automation Health Monitor in:title" \
             --state open --limit 1 \
-            --json number --jq '.[0].number' 2>/dev/null || echo "")
+            --json number --jq '.[0].number // empty')
 
           if [ -z "$HEALTH_ISSUE" ]; then
-            echo "Creating Automation Health issue..."
-            HEALTH_ISSUE=$(gh issue create \
-              --repo "$REPO" \
-              --title "Automation Health Monitor" \
-              --label "automation,monitoring" \
-              --body-file /tmp/health_report.md \
-              --jq '.number' 2>/dev/null || echo "")
-            echo "Created issue #$HEALTH_ISSUE"
+            echo "No open Automation Health issue found — creating one."
+            # `gh issue create` prints the issue URL on stdout; it has no --jq
+            # flag (passing one made the whole command fail). Take the trailing
+            # path component as the issue number.
+            if ! ISSUE_URL=$(gh issue create \
+                  --repo "$REPO" \
+                  --title "Automation Health Monitor" \
+                  --body-file /tmp/health_report.md); then
+              echo "::error::Failed to create the Automation Health issue — health report has nowhere to go."
+              exit 1
+            fi
+            HEALTH_ISSUE="${ISSUE_URL##*/}"
+            echo "Created issue #$HEALTH_ISSUE ($ISSUE_URL)"
+
+            # Labels are applied AFTER creation, one at a time, and are never
+            # fatal. `--label` on a label that does not exist in the repo fails
+            # the create outright; issue existence must not depend on repo
+            # label configuration.
+            for wanted in automation monitoring; do
+              gh issue edit "$HEALTH_ISSUE" --repo "$REPO" --add-label "$wanted" >/dev/null 2>&1 \
+                || echo "::notice::Label '$wanted' not applied (create it in the repo to categorise this issue)."
+            done
           else
             echo "Updating issue #$HEALTH_ISSUE..."
-            gh issue edit "$HEALTH_ISSUE" --repo "$REPO" \
-              --body-file /tmp/health_report.md 2>/dev/null || true
+            if ! gh issue edit "$HEALTH_ISSUE" --repo "$REPO" \
+                  --body-file /tmp/health_report.md; then
+              echo "::error::Failed to update issue #$HEALTH_ISSUE with the health report."
+              exit 1
+            fi
           fi
 
-          echo "Health report posted to issue #${HEALTH_ISSUE:-unknown}"
+          # Guard against a parse surprise leaving a non-numeric value behind.
+          case "$HEALTH_ISSUE" in
+            ''|*[!0-9]*)
+              echo "::error::Could not determine the health issue number (got '${HEALTH_ISSUE}')."
+              exit 1
+              ;;
+          esac
+
+          echo "Health report posted to issue #${HEALTH_ISSUE}"
