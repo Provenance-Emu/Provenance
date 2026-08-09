@@ -42,6 +42,10 @@ public struct KeyboardMappingView: View {
             }
             SwiftUI.Section {
                 Button("Reset All to Defaults", role: .destructive) {
+                    // Abort any in-progress capture BEFORE tearing down the virtual
+                    // controller — otherwise the capture closure keeps a dangling
+                    // reference to the pre-reset controller (see abortCaptureForHardwareChange).
+                    endCapture()
                     map = .standard
                     map.save()
                     rebuildKeyboardController()
@@ -50,6 +54,18 @@ public struct KeyboardMappingView: View {
         }
         .navigationTitle("Keyboard Mapping")
         .onDisappear { endCapture() }
+        // The virtual controller (and its keyChangedHandler) is rebuilt by
+        // PVControllerManager whenever the physical keyboard set changes — a real
+        // disconnect, or a second keyboard connecting without an intervening disconnect
+        // (handleKeyboardConnect reassigns `keyboardController` unconditionally). Either
+        // event means any handler we saved before capture began is now stale; abort
+        // instead of restoring it. See abortCaptureForHardwareChange for details.
+        .onReceive(NotificationCenter.default.publisher(for: .GCKeyboardDidDisconnect)) { _ in
+            abortCaptureForHardwareChange()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .GCKeyboardDidConnect)) { _ in
+            abortCaptureForHardwareChange()
+        }
     }
 
     private func keyNames(for action: KeyboardControllerAction) -> String {
@@ -68,8 +84,11 @@ public struct KeyboardMappingView: View {
     }
 
     private func beginCapture(for action: KeyboardControllerAction) {
-        guard let keyboardInput = GCKeyboard.coalesced?.keyboardInput else { return }
+        // Unconditionally end any prior capture first (cheap/idempotent when nothing was
+        // capturing) so a stale capture never survives past the point a new one starts,
+        // even if `keyboardInput` below turns out nil (e.g. keyboard vanished between taps).
         endCapture()
+        guard let keyboardInput = GCKeyboard.coalesced?.keyboardInput else { return }
         capturingAction = action
         savedKeyHandler = keyboardInput.keyChangedHandler
         keyboardInput.keyChangedHandler = { _, _, keyCode, pressed in
@@ -87,11 +106,31 @@ public struct KeyboardMappingView: View {
         }
     }
 
+    /// Ends capture normally: the keyboard hardware hasn't changed since capture began, so
+    /// whatever handler we saved beforehand is still the correct thing to restore.
     private func endCapture() {
         if let saved = savedKeyHandler {
             GCKeyboard.coalesced?.keyboardInput?.keyChangedHandler = saved
             savedKeyHandler = nil
         }
+        capturingAction = nil
+    }
+
+    /// Aborts an in-progress capture because the keyboard hardware changed underneath us —
+    /// disconnected, or a second keyboard connected without an intervening disconnect.
+    /// PVControllerManager has already replaced or torn down `keyChangedHandler` itself in
+    /// response (see PVControllerManager.handleKeyboardConnect/handleKeyboardDisconnect), so
+    /// `savedKeyHandler` — bound to the now-gone-or-superseded virtual controller — must be
+    /// discarded rather than written back. Writing it back would silently kill keyboard
+    /// input app-wide: the restored closure captures a `gamepad` from a `GCController`
+    /// PVControllerManager no longer tracks, so every subsequent keystroke would drive an
+    /// orphaned controller nothing observes. The connect/disconnect cycle that triggered
+    /// this installs a correct fresh handler on its own; nothing further to do here beyond
+    /// clearing our own local capture state (which also fixes the row UI staying stuck on
+    /// "Press a key…").
+    private func abortCaptureForHardwareChange() {
+        guard capturingAction != nil else { return }
+        savedKeyHandler = nil
         capturingAction = nil
     }
 
