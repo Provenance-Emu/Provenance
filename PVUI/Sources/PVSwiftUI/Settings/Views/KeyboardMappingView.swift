@@ -97,8 +97,7 @@ public struct KeyboardMappingView: View {
 
     /// Recreate the virtual keyboard controller so the new bindings take effect.
     private func rebuildKeyboardController() {
-        PVControllerManager.shared.handleKeyboardDisconnect(nil)
-        PVControllerManager.shared.handleKeyboardConnect(nil)
+        PVControllerManager.shared.rebuildKeyboardController()
     }
 }
 #endif

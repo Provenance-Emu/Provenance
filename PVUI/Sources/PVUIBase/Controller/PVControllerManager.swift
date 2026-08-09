@@ -462,6 +462,14 @@ public final class PVControllerManager: NSObject, ObservableObject {
         }
     }
 
+    /// Rebuilds the virtual keyboard-backed GCController so freshly saved
+    /// key bindings take effect immediately.
+    @MainActor
+    public func rebuildKeyboardController() {
+        handleKeyboardDisconnect(nil)
+        handleKeyboardConnect(nil)
+    }
+
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "kICadeControllerSettingKey" {
             Task.detached {
