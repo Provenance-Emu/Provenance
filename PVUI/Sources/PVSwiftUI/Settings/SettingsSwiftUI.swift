@@ -2044,6 +2044,13 @@ private struct ControllerSection: View {
                 #if os(tvOS)
                 .retroFocusButtonStyle(showBorder: false)
                 #endif
+                #if !os(tvOS)
+                NavigationLink(destination: KeyboardMappingView()) {
+                    SettingsRow(title: "Keyboard Mapping",
+                                subtitle: "Remap keyboard keys to controller buttons.",
+                                icon: .sfSymbol("keyboard.badge.ellipsis"))
+                }
+                #endif
             }
 
             HapticsRumbleSection()
