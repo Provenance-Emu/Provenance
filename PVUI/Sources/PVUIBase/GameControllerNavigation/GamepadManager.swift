@@ -24,6 +24,10 @@ public class GamepadManager: ObservableObject {
     /// On tvOS, the Siri Remote is also a `GCController`, so this property
     /// excludes it to reflect true gamepad availability.
     @Published public private(set) var hasPhysicalGamepad: Bool = false
+    /// Whether a hardware keyboard is attached (GCKeyboard). Keyboard-only desktops
+    /// (Mac "Designed for iPad", iPad with keyboard) use this to enable
+    /// controller-style navigation without a physical gamepad.
+    @Published public private(set) var isKeyboardConnected: Bool = false
     /// Tracks whether a full-screen retrowave alert / picker is currently presented
     /// over the root UI. iOS gamepad subscribers (root view, home, sidebar, etc.)
     /// should early-return when this is `true` so that A / d-pad presses don't
@@ -43,6 +47,7 @@ public class GamepadManager: ObservableObject {
         setupNotifications()
         isControllerConnected = GCController.controllers().isEmpty == false
         hasPhysicalGamepad = GCController.controllers().contains { !$0.isRemote }
+        isKeyboardConnected = GCKeyboard.coalesced != nil
     }
     
     private func setupNotifications() {
@@ -66,11 +71,46 @@ public class GamepadManager: ObservableObject {
             self?.hasPhysicalGamepad = GCController.controllers().contains { !$0.isRemote }
         }
         
+        let keyboardConnectObserver = NotificationCenter.default.addObserver(
+            forName: .GCKeyboardDidConnect,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.isKeyboardConnected = true
+            // PVControllerManager creates the virtual keyboard controller from the same
+            // notification; hop the run loop so it exists before we attach handlers.
+            DispatchQueue.main.async { self?.connectKeyboardControllerIfAvailable() }
+        }
+
+        let keyboardDisconnectObserver = NotificationCenter.default.addObserver(
+            forName: .GCKeyboardDidDisconnect,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.isKeyboardConnected = GCKeyboard.coalesced != nil
+        }
+
         observers.append(connectObserver)
         observers.append(disconnectObserver)
-        
+        observers.append(keyboardConnectObserver)
+        observers.append(keyboardDisconnectObserver)
+
         // Connect to any already-connected gamepad
         connectGamepad()
+
+        // Connect to an already-attached keyboard (covers launch-time connection).
+        connectKeyboardControllerIfAvailable()
+    }
+
+    /// Attach navigation handlers to PVControllerManager's virtual keyboard controller.
+    /// Virtual controllers never post GCControllerDidConnect, so connectGamepad() misses them.
+    private func connectKeyboardControllerIfAvailable() {
+        MainActor.assumeIsolated {
+            guard let keyboardController = PVControllerManager.shared.keyboardController else { return }
+            DLOG("[GamepadManager] Attaching navigation handlers to keyboard controller")
+            setupBasicControls(keyboardController)
+            setupMenuToggleHandlers(keyboardController)
+        }
     }
     
     private func connectGamepad() {

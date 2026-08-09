@@ -958,6 +958,11 @@ public extension GCKeyboard {
 
         controller.setValue(self.vendorName ?? "Keyboard", forKey: "vendorName")
 
+        // Previous values for diffing so element-level handlers (GamepadManager)
+        // only fire on actual changes. setValue does not invoke handlers itself.
+        var prevDpad: (x: Float, y: Float) = (0, 0)
+        var prevButtons: [String: Bool] = [:]
+
         keyboard.keyChangedHandler = {(keyboard, button, key, pressed) -> Void in
             //print("\(button) \(key) \(pressed)")
 
@@ -1001,6 +1006,25 @@ public extension GCKeyboard {
             // L3, R3
             gamepad.leftThumbstickButton?.setValue(isPressed(.keyX) ? 1.0 : 0.0)
             gamepad.rightThumbstickButton?.setValue(isPressed(.keyC) ? 1.0 : 0.0)
+
+            // Fire element-level handlers on change (GamepadManager navigation).
+            if prevDpad.x != dpad_x || prevDpad.y != dpad_y {
+                prevDpad = (dpad_x, dpad_y)
+                gamepad.dpad.valueChangedHandler?(gamepad.dpad, dpad_x, dpad_y)
+            }
+            func dispatchButton(_ name: String, _ element: GCControllerButtonInput?, _ pressedNow: Bool) {
+                guard let element, prevButtons[name] != pressedNow else { return }
+                prevButtons[name] = pressedNow
+                element.pressedChangedHandler?(element, pressedNow ? 1.0 : 0.0, pressedNow)
+                element.valueChangedHandler?(element, pressedNow ? 1.0 : 0.0, pressedNow)
+            }
+            dispatchButton("a", gamepad.buttonA, isPressed(.spacebar) || isPressed(.returnOrEnter))
+            dispatchButton("b", gamepad.buttonB, isPressed(.keyF) || isPressed(.escape))
+            dispatchButton("menu", gamepad.buttonMenu, isPressed(.graveAccentAndTilde))
+            dispatchButton("options", gamepad.buttonOptions, isPressed(.one) || isPressed(.keyU))
+            dispatchButton("l1", gamepad.leftShoulder, isPressed(.tab) || isPressed(.capsLock))
+            dispatchButton("r1", gamepad.rightShoulder, isPressed(.keyR))
+            dispatchButton("l2", gamepad.leftTrigger, isPressed(.leftShift))
 
             // the system does not call this handler in setValue, so call it with the dpad
             gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
