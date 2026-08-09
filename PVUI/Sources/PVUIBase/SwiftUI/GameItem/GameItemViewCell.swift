@@ -232,6 +232,9 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                 .shadow(color: glowIntensity > 0 ? glowColor.opacity(0.5 * glowIntensity) : .clear,
                         radius: glowIntensity > 0 ? 10 : 0,
                         x: 0, y: 0)
+            #if os(iOS)
+                .hoverEffect(.lift)
+            #endif
             #if !os(tvOS)
                 .onHover { hovering in
                     /// Only animate if the view is visible

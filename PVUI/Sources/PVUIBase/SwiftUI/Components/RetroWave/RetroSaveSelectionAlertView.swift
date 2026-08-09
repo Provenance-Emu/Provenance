@@ -373,7 +373,7 @@ public struct RetroSaveSelectionAlertView: View {
         #endif
         #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isControllerConnected else { return }
+            guard gamepadManager.isNavigationInputAvailable else { return }
             switch event {
             case .verticalNavigation(let value, let isPressed):
                 guard isPressed else { return }
@@ -888,7 +888,7 @@ public struct RetroSaveSelectionAlertView: View {
     /// relying on the system focus engine.
     @ViewBuilder
     private func controllerFocusRing(visible: Bool, cornerRadius: CGFloat) -> some View {
-        if visible && gamepadManager.isControllerConnected {
+        if visible && gamepadManager.isNavigationInputAvailable {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .strokeBorder(
                     LinearGradient(

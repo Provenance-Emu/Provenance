@@ -12,6 +12,7 @@ import PVLibrary
 import PVUIBase
 import PVSwiftUI
 import PVThemes
+import PVSettings
 
 struct MainView: View {
     @EnvironmentObject private var appState: AppState
@@ -24,6 +25,7 @@ struct MainView: View {
     @ObservedObject private var gamepadManager = GamepadManager.shared
     @State private var effectiveUseTVMedia: Bool = false
     @State private var disconnectTask: Task<Void, Never>?
+    @Default(.controllerStyleNavigation) private var controllerStyleNavigation
 #endif
     
     var body: some View {
@@ -187,10 +189,11 @@ struct MainView: View {
     }
     
     private func shouldUseTVMediaUI(isLandscape: Bool) -> Bool {
-        guard isLandscape, gamepadManager.isControllerConnected else { return false }
-        if #available(iOS 18.0, *) {
-            return true
-        }
+        guard #available(iOS 18.0, *) else { return false }
+        if isLandscape, gamepadManager.isControllerConnected { return true }
+        // Keyboard-only desktops (Mac "Designed for iPad", iPad w/ keyboard): opt-in via
+        // Settings > Controllers. No landscape requirement — desktop windows are arbitrary.
+        if controllerStyleNavigation, gamepadManager.isKeyboardConnected { return true }
         return false
     }
 #else

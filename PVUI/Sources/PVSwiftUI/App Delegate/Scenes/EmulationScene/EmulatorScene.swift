@@ -103,8 +103,36 @@ public struct EmulatorScene: Scene {
                 }
                 .keyboardShortcut("s", modifiers: .command)
 
-                Button("Load State") {
-                    // Show load state UI
+                Button("Load Last Save State") {
+                    // `loadSaveState(_:)` is defined on the concrete `PVEmulatorViewController`
+                    // (PVEmulatorViewController+Saves.swift), not on the
+                    // `PVEmualatorControllerProtocol` existential — downcast to reach it,
+                    // same concrete type this file already stores into `emulationUIState.emulator`.
+                    guard let emulator = appState.emulationUIState.emulator as? PVEmulatorViewController,
+                          let game = appState.emulationUIState.currentGame,
+                          !game.isInvalidated else { return }
+
+                    // Resolve a live PVGame reference: thaw if frozen, else re-fetch
+                    // from Realm by md5Hash, else fall back to the object as-is.
+                    // Matches GameLaunchingViewController.swift's established pattern —
+                    // a frozen object's thaw() can return nil if its source Realm is gone.
+                    let realm = RomDatabase.sharedInstance.realm
+                    let liveGame: PVGame?
+                    if game.isFrozen {
+                        liveGame = game.thaw()
+                    } else if let gameFromRealm = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) {
+                        liveGame = gameFromRealm
+                    } else {
+                        liveGame = game
+                    }
+
+                    guard let liveGame, !liveGame.isInvalidated,
+                          let state = liveGame.saveStates
+                        .sorted(byKeyPath: "date", ascending: false)
+                        .first else { return }
+                    Task { @MainActor in
+                        _ = await emulator.loadSaveState(state)
+                    }
                 }
                 .keyboardShortcut("l", modifiers: .command)
 

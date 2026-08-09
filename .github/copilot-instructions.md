@@ -177,9 +177,9 @@ Task { @MainActor in
 - **tvOS 17+** — minimum deployment target
 
 ### Aspirational Targets (compile where possible, especially non-UI code)
-- **macOS 14+** (Sonoma) — Catalyst and native Mac support; use `#if os(macOS)` guards
+- **macOS 14+** (Sonoma) — Designed for iPad today; native target planned; Catalyst not supported
 - **watchOS 10+** — limited scope; non-UI utility code only
-- **visionOS 1+** — spatial computing; UI guards required with `#if os(visionOS)`
+- **visionOS 1+** — Aspirational — package declarations + #if os(visionOS) guards only; no app target
 
 ### Unit Test Platform
 - **Linux** — Tier 0–2 modules should compile on Linux for CI unit tests via `swift test`

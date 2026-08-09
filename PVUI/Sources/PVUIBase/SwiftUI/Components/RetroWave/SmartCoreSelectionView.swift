@@ -196,7 +196,7 @@ public struct SmartCoreSelectionView: View {
         .tvOSDisableFocusEffect()
         #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
-            guard isPresented, gamepadManager.isControllerConnected else { return }
+            guard isPresented, gamepadManager.isNavigationInputAvailable else { return }
             switch event {
             case .verticalNavigation(let value, let isPressed):
                 guard isPressed else { return }
@@ -327,7 +327,7 @@ public struct SmartCoreSelectionView: View {
     /// controller is driving navigation.
     @ViewBuilder
     private func controllerFocusRing(visible: Bool, cornerRadius: CGFloat) -> some View {
-        if visible && gamepadManager.isControllerConnected {
+        if visible && gamepadManager.isNavigationInputAvailable {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .strokeBorder(
                     LinearGradient(

@@ -436,30 +436,84 @@ public final class PVControllerManager: NSObject, ObservableObject {
         }
     }
 
+    /// Creates and connects the virtual keyboard-backed controller.
+    ///
+    /// Deliberately posts NO touch-control UI notifications — those describe a *hardware*
+    /// change and belong to `handleKeyboardConnect`. Settings-triggered rebuilds share this
+    /// so they don't churn the on-screen controls.
+    /// - Returns: `true` if a controller was created and connected.
+    @MainActor
+    @discardableResult
+    private func buildKeyboardController() -> Bool {
+        if PVControllerManager.shared.skipKeyBinding {
+            return false
+        }
+        guard let controller = GCKeyboard.coalesced?.createController() else {
+            return false
+        }
+        keyboardController = controller
+        PVControllerManager.shared.connectController(controller)
+        return true
+    }
+
+    /// Tears down the virtual keyboard-backed controller. Posts no UI notifications,
+    /// for the same reason as `buildKeyboardController()`.
+    /// - Returns: `true` if a controller was present and disconnected.
+    @MainActor
+    @discardableResult
+    private func teardownKeyboardController() -> Bool {
+        guard let controller = keyboardController else {
+            return false
+        }
+        keyboardController = nil
+        PVControllerManager.shared.disconnectController(controller)
+        return true
+    }
+
     @MainActor
     @objc func handleKeyboardConnect(_ note: Notification?) {
-//        #if !targetEnvironment(simulator)
-        ILOG("Keyboard Connected\n");
-        if (PVControllerManager.shared.skipKeyBinding) {
-            return
+        ILOG("Keyboard Connected")
+        if buildKeyboardController() {
+            NotificationCenter.default.post(name: Notification.Name("HideTouchControls"), object: nil)
         }
-        if let controller = GCKeyboard.coalesced?.createController() {
-
-            keyboardController = controller
-            PVControllerManager.shared.connectController(controller);
-            NotificationCenter.default.post(name:Notification.Name("HideTouchControls"), object:nil)
-        }
-//        #endif
     }
 
     @MainActor
     @objc func handleKeyboardDisconnect(_ note: Notification?) {
-        ILOG("Keyboard Disconnected\n");
-        if let controller = keyboardController {
-            keyboardController = nil
-            PVControllerManager.shared.disconnectController(controller)
-            NotificationCenter.default.post(name:Notification.Name("ShowTouchControls"), object:nil)
+        ILOG("Keyboard Disconnected")
+        if teardownKeyboardController() {
+            NotificationCenter.default.post(name: Notification.Name("ShowTouchControls"), object: nil)
         }
+    }
+
+    /// Rebuilds the virtual keyboard-backed GCController so freshly saved
+    /// key bindings take effect immediately.
+    ///
+    /// `handleKeyboardDisconnect`/`handleKeyboardConnect` talk directly to the GameController
+    /// APIs and deliberately do NOT post `.GCKeyboardDidConnect` (see their call sites in
+    /// `setupNotifications`, which post real hardware-change notifications separately).
+    /// `GamepadManager` only attaches its navigation handlers to the virtual keyboard
+    /// controller from its own init or from that notification, so without this explicit
+    /// re-attach the freshly rebuilt controller would have no navigation handlers at all —
+    /// arrow keys/Space would stop driving the TVMedia UI until an app relaunch or a real
+    /// keyboard unplug/replug. Re-attaching directly (rather than posting
+    /// `.GCKeyboardDidConnect`) also avoids falsely notifying other observers of that
+    /// notification — e.g. `KeyboardMappingView.abortCaptureForHardwareChange` — which
+    /// specifically care about genuine hardware changes, not a settings-triggered rebuild.
+    /// `connectKeyboardControllerIfAvailable()` itself no-ops when the user hasn't opted
+    /// into controller-style navigation, so this is safe to call unconditionally.
+    ///
+    /// It uses the notification-free `teardownKeyboardController()`/`buildKeyboardController()`
+    /// rather than the `handleKeyboard…` hardware handlers: those post `ShowTouchControls`
+    /// then `HideTouchControls` back-to-back, which would churn the on-screen controls'
+    /// visibility on every rebind. Worse, when `skipKeyBinding` is set the connect half
+    /// returns early without re-posting `HideTouchControls`, which would strand the touch
+    /// controls visible after a settings change.
+    @MainActor
+    public func rebuildKeyboardController() {
+        teardownKeyboardController()
+        buildKeyboardController()
+        GamepadManager.shared.connectKeyboardControllerIfAvailable()
     }
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
@@ -945,6 +999,7 @@ extension ControllerButtonPressTableView {
 // [LSHIFT:L2]                              [V:R2]                     [UP]
 //                       [SPACE:A]                             [LEFT] [DOWN] [RIGHT]
 //
+// Defaults are defined in KeyboardControllerMap.standard; users can remap in Settings.
 @available(iOS 14.0, tvOS 14.0, *)
 public extension GCKeyboard {
     @MainActor
@@ -958,6 +1013,11 @@ public extension GCKeyboard {
 
         controller.setValue(self.vendorName ?? "Keyboard", forKey: "vendorName")
 
+        // Previous values for diffing so element-level handlers (GamepadManager)
+        // only fire on actual changes. setValue does not invoke handlers itself.
+        var prevDpad: (x: Float, y: Float) = (0, 0)
+        var prevButtons: [String: Bool] = [:]
+
         keyboard.keyChangedHandler = {(keyboard, button, key, pressed) -> Void in
             //print("\(button) \(key) \(pressed)")
 
@@ -965,57 +1025,90 @@ public extension GCKeyboard {
                 return keyboard.button(forKeyCode:code)?.isPressed ?? false
             }
 
+            let map = KeyboardControllerMap.current
+            func actionPressed(_ action: KeyboardControllerAction) -> Bool {
+                map.keys(for: action).contains { isPressed($0) }
+            }
+
             // DPAD
-            let dpad_x:Float = isPressed(.rightArrow) ? 1.0 : isPressed(.leftArrow) ? -1.0 : 0.0
-            let dpad_y:Float = isPressed(.upArrow)    ? 1.0 : isPressed(.downArrow) ? -1.0 : 0.0
+            let dpad_x: Float = actionPressed(.dpadRight) ? 1.0 : actionPressed(.dpadLeft) ? -1.0 : 0.0
+            let dpad_y: Float = actionPressed(.dpadUp) ? 1.0 : actionPressed(.dpadDown) ? -1.0 : 0.0
             gamepad.dpad.setValueForXAxis(dpad_x, yAxis:dpad_y)
 
             // WASD
-            let left_x:Float = isPressed(.keyD) ? 1.0 : isPressed(.keyA) ? -1.0 : 0.0
-            let left_y:Float = isPressed(.keyW) ? 1.0 : isPressed(.keyS) ? -1.0 : 0.0
+            let left_x: Float = actionPressed(.leftStickRight) ? 1.0 : actionPressed(.leftStickLeft) ? -1.0 : 0.0
+            let left_y: Float = actionPressed(.leftStickUp) ? 1.0 : actionPressed(.leftStickDown) ? -1.0 : 0.0
             gamepad.leftThumbstick.setValueForXAxis(left_x, yAxis:left_y)
 
             // =[], || L;OK
-            let right_x:Float = (isPressed(.closeBracket) || isPressed(.semicolon)) ? 1.0 : (isPressed(.openBracket) || isPressed(.keyK)) ? -1.0 : 0.0
-            let right_y:Float = (isPressed(.equalSign) || isPressed(.keyO)) ? 1.0 : (isPressed(.hyphen) || isPressed(.keyL)) ? -1.0 : 0.0
+            let right_x: Float = actionPressed(.rightStickRight) ? 1.0 : actionPressed(.rightStickLeft) ? -1.0 : 0.0
+            let right_y: Float = actionPressed(.rightStickUp) ? 1.0 : actionPressed(.rightStickDown) ? -1.0 : 0.0
             gamepad.rightThumbstick.setValueForXAxis(right_x, yAxis:right_y)
 
             // ABXY
-            gamepad.buttonA.setValue(isPressed(.spacebar) || isPressed(.returnOrEnter) ? 1.0 : 0.0)
-            gamepad.buttonB.setValue(isPressed(.keyF) || isPressed(.escape) ? 1.0 : 0.0)
-            gamepad.buttonX.setValue(isPressed(.keyQ) ? 1.0 : 0.0)
-            gamepad.buttonY.setValue(isPressed(.keyE) ? 1.0 : 0.0)
+            gamepad.buttonA.setValue(actionPressed(.buttonA) ? 1.0 : 0.0)
+            gamepad.buttonB.setValue(actionPressed(.buttonB) ? 1.0 : 0.0)
+            gamepad.buttonX.setValue(actionPressed(.buttonX) ? 1.0 : 0.0)
+            gamepad.buttonY.setValue(actionPressed(.buttonY) ? 1.0 : 0.0)
 
             // L1, L2
-            gamepad.leftShoulder.setValue(isPressed(.tab) || isPressed(.capsLock) ? 1.0 : 0.0)
-            gamepad.leftTrigger.setValue(isPressed(.leftShift) ? 1.0 : 0.0)
+            gamepad.leftShoulder.setValue(actionPressed(.l1) ? 1.0 : 0.0)
+            gamepad.leftTrigger.setValue(actionPressed(.l2) ? 1.0 : 0.0)
 
             // R1, R2
-            gamepad.rightShoulder.setValue(isPressed(.keyR) ? 1.0 : 0.0)
-            gamepad.rightTrigger.setValue(isPressed(.keyV) ? 1.0 : 0.0)
+            gamepad.rightShoulder.setValue(actionPressed(.r1) ? 1.0 : 0.0)
+            gamepad.rightTrigger.setValue(actionPressed(.r2) ? 1.0 : 0.0)
 
             // MENU, OPTIONS
-            gamepad.buttonMenu.setValue(isPressed(.graveAccentAndTilde) ? 1.0 : 0.0)
-            gamepad.buttonOptions?.setValue((isPressed(.one) || isPressed(.keyU)) ? 1.0 : 0.0)
+            gamepad.buttonMenu.setValue(actionPressed(.menu) ? 1.0 : 0.0)
+            gamepad.buttonOptions?.setValue(actionPressed(.options) ? 1.0 : 0.0)
 
             // L3, R3
-            gamepad.leftThumbstickButton?.setValue(isPressed(.keyX) ? 1.0 : 0.0)
-            gamepad.rightThumbstickButton?.setValue(isPressed(.keyC) ? 1.0 : 0.0)
+            gamepad.leftThumbstickButton?.setValue(actionPressed(.l3) ? 1.0 : 0.0)
+            gamepad.rightThumbstickButton?.setValue(actionPressed(.r3) ? 1.0 : 0.0)
+
+            // Fire element-level handlers on change (GamepadManager navigation).
+            if prevDpad.x != dpad_x || prevDpad.y != dpad_y {
+                prevDpad = (dpad_x, dpad_y)
+                gamepad.dpad.valueChangedHandler?(gamepad.dpad, dpad_x, dpad_y)
+            }
+            // NOTE: the set of `dispatchButton(...)` calls below must cover exactly the
+            // elements GamepadManager.setupBasicControls/setupMenuToggleHandlers observes
+            // (buttonA, buttonB, buttonMenu, buttonOptions, leftShoulder, rightShoulder,
+            // leftTrigger) — if a future GamepadManager handler is added for another
+            // element, add a matching dispatchButton call here or that handler will be
+            // silently dead for iCade/virtual-controller input.
+            func dispatchButton(_ name: String, _ element: GCControllerButtonInput?, _ pressedNow: Bool) {
+                // `?? false` treats "no prior state" as "unpressed" so the first
+                // keyChangedHandler invocation doesn't spuriously dispatch `pressed: false`
+                // for every button not involved in that keystroke (nil != false is true).
+                guard let element, (prevButtons[name] ?? false) != pressedNow else { return }
+                prevButtons[name] = pressedNow
+                element.pressedChangedHandler?(element, pressedNow ? 1.0 : 0.0, pressedNow)
+                element.valueChangedHandler?(element, pressedNow ? 1.0 : 0.0, pressedNow)
+            }
+            dispatchButton("a", gamepad.buttonA, actionPressed(.buttonA))
+            dispatchButton("b", gamepad.buttonB, actionPressed(.buttonB))
+            dispatchButton("menu", gamepad.buttonMenu, actionPressed(.menu))
+            dispatchButton("options", gamepad.buttonOptions, actionPressed(.options))
+            dispatchButton("l1", gamepad.leftShoulder, actionPressed(.l1))
+            dispatchButton("r1", gamepad.rightShoulder, actionPressed(.r1))
+            dispatchButton("l2", gamepad.leftTrigger, actionPressed(.l2))
 
             // the system does not call this handler in setValue, so call it with the dpad
             gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
 
             // Bind / to select, rightShift to start
             if let emulator = emulationUIState.emulator, let core = emulationUIState.core, EmulationState.shared.stateSubject.value.isOn, core.isRunning {
-                if (isPressed(.slash)) {
-                    print("Select Pressed\n")
+                if actionPressed(.select) {
+                    DLOG("Keyboard: Select pressed")
                     emulator.controllerViewController?.pressSelect(forPlayer: 0)
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { () -> Void in
                         emulator.controllerViewController?.releaseSelect(forPlayer: 0)
                     })
                 }
-                if (isPressed(.rightShift)) {
-                    print("Start Pressed\n")
+                if actionPressed(.start) {
+                    DLOG("Keyboard: Start pressed")
                     emulator.controllerViewController?.pressStart(forPlayer: 0)
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { () -> Void in
                         emulator.controllerViewController?.releaseStart(forPlayer: 0)

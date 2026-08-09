@@ -48,4 +48,12 @@ public extension Notification.Name {
     static let archiveExtractionProgress = Notification.Name("ArchiveExtractionProgress")
     static let archiveExtractionCompleted = Notification.Name("ArchiveExtractionCompleted")
     static let archiveExtractionFailed = Notification.Name("ArchiveExtractionFailed")
+
+    /// Cross-mode "open Settings" request (Mac ⌘, menu command, deep links, etc.).
+    /// NOTE: several pre-existing posters/observers still use the raw string literal
+    /// "PVShowSettings" directly (SceneCoordinator, HomeView, PVRootViewController,
+    /// NoConsolesView, ConsoleGamesView) — this constant was added alongside the
+    /// macOS-desktop-polish work and is only used at the sites that branch touched.
+    /// Migrating the pre-existing sites is a separate, out-of-scope cleanup.
+    static let pvShowSettings = Notification.Name("PVShowSettings")
 }

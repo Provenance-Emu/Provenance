@@ -91,7 +91,14 @@ final class SystemIconLoader: ObservableObject {
     }
 }
 
+// Pre-existing debt, not introduced here: this struct body was already 646 lines on develop
+// (46 over the 600 limit). CI only lints files a PR touches, so the violation stayed dormant
+// until this branch edited the file. Splitting a ~5,000-line tvOS view is its own change with
+// its own review and build cycle, so it is suppressed here rather than half-done in an
+// unrelated PR. Tracked in docs/superpowers/plans/2026-08-07-macos-desktop-polish-SMOKE-CHECKLIST.md
+// under follow-up tickets. Remove this disable when the file is split.
 @available(tvOS 16.0, iOS 17.0, *)
+// swiftlint:disable:next type_body_length
 struct TVMediaMainView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var themeManager: ThemeManager
@@ -158,6 +165,18 @@ struct TVMediaMainView: View {
             modalContent: { modal in modalContent(for: modal) },
             renameAlertContent: { renameAlertContent }
         )
+#if !os(tvOS)
+        // tvOS's default UI is this same TVMediaMainView, and TVMediaRouter.navigate(to:)
+        // resets navigationPath + return destinations — on tvOS that would jump to Settings
+        // and discard the back-stack any time PVShowSettings fires (e.g. the cloud-sync
+        // "Open Settings" alert), which previously was inert there. Keep this observer
+        // iOS/macOS-only until that tvOS navigation behavior change is deliberately reviewed.
+        .onReceive(NotificationCenter.default.publisher(for: .pvShowSettings)) { _ in
+            // This view runs on iOS too (controller-style UI, see Task 9), so it must
+            // honor PVShowSettings even though tvOS itself has no menu bar.
+            router.navigate(to: .settings)
+        }
+#endif
 #if os(iOS)
         // This shared view is compiled for both iOS and tvOS.
         // romDropTarget() is iOS-only (onDrop is unavailable on tvOS).
@@ -306,7 +325,7 @@ struct TVMediaMainView: View {
                 }
                 #if os(iOS)
                 .onReceive(gamepadManager.eventPublisher) { event in
-                    guard gamepadManager.isControllerConnected else { return }
+                    guard gamepadManager.isNavigationInputAvailable else { return }
                     // When any retrowave alert/popover is showing, defer to its own
                     // gamepad handler — we don't want the root to toggle the sidebar
                     // or hijack inputs that belong to the modal.
@@ -1332,7 +1351,7 @@ struct TVMediaLogsView: View {
         }
         #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isControllerConnected else { return }
+            guard gamepadManager.isNavigationInputAvailable else { return }
             if focusCoordinator.isAlertPresented || focusCoordinator.isSidebarExpanded { return }
             switch event {
             case .menuToggle(let isPressed), .start(let isPressed):
@@ -2095,7 +2114,7 @@ struct TVMediaSavesView: View {
         }
         #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isControllerConnected, !filteredSaves.isEmpty else { return }
+            guard gamepadManager.isNavigationInputAvailable, !filteredSaves.isEmpty else { return }
             switch event {
             case .horizontalNavigation(let value, let isPressed):
                 guard isPressed else { return }
@@ -2698,7 +2717,7 @@ struct TVMediaHomeView: View {
 #endif
 #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isControllerConnected else { return }
+            guard gamepadManager.isNavigationInputAvailable else { return }
             // Don't compete with the sidebar / alerts when they own input.
             if focusCoordinator.isAlertPresented || focusCoordinator.isSidebarExpanded { return }
             switch event {
@@ -3056,7 +3075,7 @@ struct TVMediaSystemsView: View {
         }
         #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isControllerConnected else { return }
+            guard gamepadManager.isNavigationInputAvailable else { return }
             switch event {
             case .menuToggle(let isPressed):
                 if isPressed {
@@ -3894,7 +3913,7 @@ struct TVMediaAllGamesGrid: View {
         }
         #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isControllerConnected else { return }
+            guard gamepadManager.isNavigationInputAvailable else { return }
             switch event {
             case .horizontalNavigation(let value, let isPressed):
                 guard isPressed else { return }
@@ -4046,7 +4065,7 @@ struct TVMediaSearchView: View {
         }
         #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isControllerConnected else { return }
+            guard gamepadManager.isNavigationInputAvailable else { return }
             // Defer to the sidebar when it owns focus, and to any retrowave alert.
             if focusCoordinator.isAlertPresented || focusCoordinator.isSidebarExpanded {
                 return
@@ -5083,7 +5102,7 @@ struct TVMediaSearchResultsGrid: View {
         }
         #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isControllerConnected else { return }
+            guard gamepadManager.isNavigationInputAvailable else { return }
             switch event {
             case .horizontalNavigation(let value, let isPressed):
                 guard isPressed else { return }

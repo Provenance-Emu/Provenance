@@ -37,6 +37,7 @@ public struct RetroMainView: View {
     @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
 
     @State private var selectedTab: Int = 0
+    private let settingsTabIndex = 2
     @State private var showDynamicIslandEffects: Bool = true
 
     // Timer for occasional special effects
@@ -189,6 +190,17 @@ public struct RetroMainView: View {
                 selectedTab = 0
             }
         }
+#if !os(tvOS)
+        // Keep this iOS/macOS-only alongside TVMediaMainView's identical guard — see the
+        // comment there for why a tvOS PVShowSettings observer is deferred to a separate review.
+        .onReceive(NotificationCenter.default.publisher(for: .pvShowSettings)) { _ in
+            // Switch to the Settings tab when Settings is requested (e.g. Mac menu-bar
+            // Cmd+, or other cross-mode posters of PVShowSettings).
+            if selectedTab != settingsTabIndex {
+                selectedTab = settingsTabIndex
+            }
+        }
+#endif
         .onDisappear {
             // Clean up timer when view disappears
             effectTimer?.cancel()

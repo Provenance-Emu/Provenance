@@ -13,7 +13,7 @@ Provenance is a multi-platform emulator frontend for iOS/tvOS supporting 60+ ret
 - Ruby + Bundler (for fastlane)
 - `make setup` to install all dependencies
 
-- Minimum targets: iOS 17+, tvOS 17+ mandatory, Linux, macOS, visionOS, watchOS equivalent release versions when applicable
+- Minimum targets: iOS 17+, tvOS 17+ mandatory. macOS today = "Designed for iPad" (the iOS binary on Apple Silicon); a native macOS target is planned (see docs/superpowers/specs/2026-08-07-macos-visionos-strategy-design.md). Mac Catalyst is NOT supported. visionOS/watchOS/Linux: SPM packages declare them — keep code compiling with guards, but no app ships for them.
 
 ### Code Signing
 Copy `CodeSigning.xcconfig.sample` to `CodeSigning.xcconfig` and fill in your developer account details.
@@ -238,7 +238,7 @@ When modifying bridge files, ensure all controller types are handled (Extended, 
 
 ### Minimum Deployment Targets
 
-Provenance targets **iOS 17+, tvOS 17+, macOS 14+ (Catalyst), visionOS 1+**. All new code MUST be written against these minimum versions — do **not** add availability guards or fallbacks for APIs available since iOS 17 or earlier.
+Provenance ships for **iOS 17+ and tvOS 17+**. The PV* packages also declare **macOS 14+ and visionOS 1+** so keep code compiling for them with platform guards, but no Catalyst/native-mac/visionOS app target ships today (native macOS is planned — see the 2026-08-07 macOS strategy spec). All new code MUST be written against these minimum versions — do **not** add availability guards or fallbacks for APIs available since iOS 17 or earlier.
 
 **Prefer modern Swift/SwiftUI APIs** when the minimum deployment target supports them:
 
@@ -307,7 +307,7 @@ Agents MUST run these checks before creating a PR. Do NOT skip any step.
 
 8. **Thread safety** — If reading a property from a background queue that's written from main, snapshot it into a local `let` first. Don't use `@Published` properties across threads without synchronization.
 
-9. **Multi-platform compilation** — Provenance builds for **iOS, tvOS, macOS (Catalyst), and visionOS**. All new code MUST compile on all platforms. Agents must mentally verify every changed file compiles for at least iOS AND tvOS before creating a PR.
+9. **Multi-platform compilation** — Provenance ships for **iOS and tvOS**; the PV* packages additionally declare **macOS and visionOS**, so guarded code must keep compiling for them. All new code MUST compile on all declared platforms. Agents must mentally verify every changed file compiles for at least iOS AND tvOS before creating a PR.
 
    **Platform guard patterns:**
    - `#if os(iOS)` / `#if os(tvOS)` — OS-specific code

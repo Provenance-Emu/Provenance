@@ -555,50 +555,85 @@ def verify_asc_credentials() -> None:
         warn("ASC_API_ISSUER_ID is not a UUID — App Store Connect will reject it.")
 
     ok(f"Key ID {key_id}")
+    # Partially masked: enough to spot a paste error, not enough to be useful
+    # alone (the issuer ID is inert without the .p8).
+    if len(issuer) >= 12:
+        info(f"Issuer  {issuer[:8]}…{issuer[-4:]}  (compare with App Store Connect)")
 
-    tmp_key: Path | None = None
-    try:
-        if not key_path or not Path(key_path).exists():
-            if not key_content.strip():
-                raise SetupError("Neither ASC_API_KEY_PATH nor ASC_API_KEY_CONTENT is usable.")
-            fd, tmp = tempfile.mkstemp(suffix=".p8")
-            os.fchmod(fd, 0o600)
-            with os.fdopen(fd, "w") as handle:
-                handle.write(key_content)
-            tmp_key = Path(tmp)
-            key_path = str(tmp_key)
-
-        proc = run(["xcrun", "notarytool", "history",
-                    "--key", key_path, "--key-id", key_id, "--issuer", issuer],
-                   check=False)
-        combined = f"{proc.stdout}\n{proc.stderr}"
-        if proc.returncode == 0:
-            ok("App Store Connect accepted these credentials")
-            return
-
-        lowered = combined.lower()
-        if "unauthorized" in lowered or "authentication" in lowered or "401" in lowered:
+    key_text = ""
+    if key_path and Path(key_path).exists():
+        # read_text() raises OSError on a permissions/encoding problem. Surface it as a
+        # SetupError with the path so the user can act, rather than a bare traceback.
+        try:
+            key_text = Path(key_path).read_text()
+        except OSError as exc:
             raise SetupError(
-                "App Store Connect REJECTED these credentials.\n"
-                f"    Key ID: {key_id}\n"
-                "    Most likely causes, in order:\n"
-                "      1. Issuer ID is wrong — copy it again from App Store Connect →\n"
-                "         Users and Access → Integrations → App Store Connect API.\n"
-                "      2. The key has been revoked. Confirm it is still listed as Active.\n"
-                "      3. The .p8 does not belong to this Key ID.\n"
-                "      4. The key lacks a role that can upload builds (App Manager or Admin).\n"
-                "    Fix with: python3 Scripts/setup-release-secrets.py --asc"
-            )
+                f"ASC_API_KEY_PATH exists but could not be read: {key_path} ({exc})"
+            ) from exc
+    elif key_content.strip():
+        key_text = key_content
+    else:
+        raise SetupError("Neither ASC_API_KEY_PATH nor ASC_API_KEY_CONTENT is usable.")
+
+    # Call the App Store Connect API directly — the same auth path
+    # `xcodebuild -exportArchive` uses. An earlier version of this check shelled
+    # out to `xcrun notarytool`, which was wrong: notarization is a DIFFERENT
+    # entitlement from TestFlight upload, so a key that is perfectly valid for
+    # uploading builds can still be rejected by notarytool. That produced a false
+    # failure on a key confirmed Active with full access.
+    try:
+        import jwt  # PyJWT
+    except ImportError as exc:
         raise SetupError(
-            "Could not verify credentials (notarytool exited "
-            f"{proc.returncode}):\n    {combined.strip()[:400]}"
+            "PyJWT is required to verify credentials.\n"
+            "    pip3 install pyjwt cryptography"
+        ) from exc
+
+    import time
+    import urllib.error
+    import urllib.request
+
+    now = int(time.time())
+    try:
+        token = jwt.encode(
+            {"iss": issuer, "iat": now, "exp": now + 300, "aud": "appstoreconnect-v1"},
+            key_text,
+            algorithm="ES256",
+            headers={"kid": key_id, "typ": "JWT"},
         )
-    finally:
-        if tmp_key is not None:
-            try:
-                tmp_key.unlink()
-            except OSError:
-                pass
+    except Exception as exc:
+        raise SetupError(
+            f"Could not sign a token with this key: {exc}\n"
+            "    That usually means the .p8 contents are malformed, or the file does\n"
+            f"    not correspond to Key ID {key_id}."
+        ) from exc
+
+    request = urllib.request.Request(
+        "https://api.appstoreconnect.apple.com/v1/apps?limit=1",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            payload = json.loads(response.read().decode())
+        count = len(payload.get("data", []))
+        ok(f"App Store Connect accepted these credentials ({count} app(s) visible)")
+        return
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode(errors="replace")[:300]
+        if exc.code in (401, 403):
+            raise SetupError(
+                f"App Store Connect rejected these credentials (HTTP {exc.code}).\n"
+                f"    Key ID: {key_id}\n"
+                f"    Issuer: {issuer[:8]}…{issuer[-4:]}\n"
+                "    Since the key is Active with full access, the most likely cause is\n"
+                "    an ISSUER ID that belongs to a different App Store Connect account,\n"
+                "    or a .p8 that is not the one for this Key ID.\n"
+                f"    API said: {body}\n"
+                "    Fix with: python3 Scripts/setup-release-secrets.py --asc"
+            ) from exc
+        raise SetupError(f"App Store Connect returned HTTP {exc.code}: {body}") from exc
+    except urllib.error.URLError as exc:
+        raise SetupError(f"Could not reach App Store Connect: {exc.reason}") from exc
 
 
 def v_looks_like_ref(value: str) -> bool:
@@ -682,8 +717,15 @@ def _check_signing_identities() -> tuple[bool, str]:
     lines = [ln for ln in (proc.stdout or "").splitlines()
              if "Apple Distribution" in ln or "iPhone Distribution" in ln]
     if not lines:
-        return False, ("no Apple Distribution certificate in the keychain — "
-                       "export will fail after the archive completes")
+        # NOT a hard failure. With Xcode-managed (automatic) signing the
+        # distribution certificate is fetched at archive/export time and need
+        # never be in the local keychain — this repo's archive demonstrably
+        # reaches the upload step without one. Report it, do not block.
+        other = [ln.split('"')[1] for ln in (proc.stdout or "").splitlines()
+                 if '"' in ln]
+        summary = "; ".join(other[:3]) if other else "none"
+        return True, ("no Apple Distribution cert in the keychain (fine if Xcode "
+                      f"manages signing). Present: {summary}")
 
     keychain_teams = set(re.findall(r"\(([A-Z0-9]{8,12})\)", "\n".join(lines)))
     project_teams, _ = _discover_team_ids()

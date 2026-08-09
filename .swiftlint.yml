@@ -46,7 +46,6 @@ included:
   - "Provenance Mini Watch App"
   - "Provenance Mini Watch AppTests"
   - "Provenance Mini Watch AppUITests"
-  - "Provenance VR"
   - ProvenanceTV
   # PV* Swift Package modules
   - PVAudio
