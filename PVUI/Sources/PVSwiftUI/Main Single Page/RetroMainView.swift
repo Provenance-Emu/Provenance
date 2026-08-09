@@ -37,6 +37,7 @@ public struct RetroMainView: View {
     @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
 
     @State private var selectedTab: Int = 0
+    private let settingsTabIndex = 2
     @State private var showDynamicIslandEffects: Bool = true
 
     // Timer for occasional special effects
@@ -187,6 +188,13 @@ public struct RetroMainView: View {
             // Switch to the Games tab when a search action arrives at runtime.
             if case .search = action, selectedTab != 0 {
                 selectedTab = 0
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("PVShowSettings"))) { _ in
+            // Switch to the Settings tab when Settings is requested (e.g. Mac menu-bar
+            // Cmd+, or other cross-mode posters of PVShowSettings).
+            if selectedTab != settingsTabIndex {
+                selectedTab = settingsTabIndex
             }
         }
         .onDisappear {

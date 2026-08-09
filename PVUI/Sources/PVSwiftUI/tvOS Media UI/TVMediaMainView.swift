@@ -158,6 +158,11 @@ struct TVMediaMainView: View {
             modalContent: { modal in modalContent(for: modal) },
             renameAlertContent: { renameAlertContent }
         )
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("PVShowSettings"))) { _ in
+            // This view runs on iOS too (controller-style UI, see Task 9), so it must
+            // honor PVShowSettings even though tvOS itself has no menu bar.
+            router.navigate(to: .settings)
+        }
 #if os(iOS)
         // This shared view is compiled for both iOS and tvOS.
         // romDropTarget() is iOS-only (onDrop is unavailable on tvOS).

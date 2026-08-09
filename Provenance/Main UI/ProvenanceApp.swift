@@ -245,6 +245,16 @@ struct ProvenanceApp: App {
             // Handle scene phase changes for import pausing
             appState.handleScenePhaseChange(newPhase)
         }
+#if !os(tvOS)
+        .commands {
+            CommandGroup(replacing: .appSettings) {
+                Button("Settings…") {
+                    NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
+                }
+                .keyboardShortcut(",", modifiers: .command)
+            }
+        }
+#endif
 
         // Add the emulator scene
         EmulatorScene()
