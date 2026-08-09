@@ -2,8 +2,8 @@ name: Consolidate Changelog Fragments
 
 # Merges .changelog/NNNN.md fragment files into CHANGELOG.md [Unreleased].
 #
-# Runs automatically when a PR merges to develop (so the fragment is absorbed
-# immediately) and weekly on Mondays alongside update-changelog.yml.
+# Runs automatically when fragments land on develop (so they are absorbed
+# immediately) and weekly on Mondays as a backstop.
 # Can also be triggered manually to absorb any pending fragments.
 #
 # Design goals
@@ -19,9 +19,16 @@ name: Consolidate Changelog Fragments
 # bypass allowances, so a direct push is not possible.
 
 on:
-  pull_request:
-    types: [closed]
+  # Triggered by the push to develop rather than by `pull_request: [closed]`.
+  # On a pull_request event from a fork the GITHUB_TOKEN is read-only, so the
+  # branch push and PR creation below could not run; a push event always has a
+  # writable token. It also catches fragments landed by a direct push to
+  # develop (which the repo admin can do), and matches how the other
+  # post-merge workflows here are wired.
+  push:
     branches: [develop]
+    paths:
+      - '.changelog/**'
   schedule:
     # Every Monday at 07:30 UTC (30 min after update-changelog.yml)
     - cron: '30 7 * * 1'
@@ -36,10 +43,6 @@ permissions:
 jobs:
   consolidate:
     name: Absorb fragments into CHANGELOG.md
-    # For PR events: only when the PR was actually merged (not just closed).
-    if: |
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -353,7 +356,7 @@ jobs:
                     "Absorbs \`.changelog/*.md\` fragments into \`CHANGELOG.md\`." \
                     "Absorbed: ${absorbed:-none}" \
                     "⚠️ Do not hand-edit the \`${PR_BRANCH}\` branch. It is rebuilt and force-pushed on every run, so any manual commit on it is silently discarded. Fix the fragment in \`.changelog/\` on develop instead, or edit \`CHANGELOG.md\` after this merges." \
-                    "Opened automatically by [consolidate-changelog.yml](../actions/workflows/consolidate-changelog.yml). The consolidation script is idempotent, so this can be merged as-is.")"); then
+                    "Opened automatically by [consolidate-changelog.yml](${GITHUB_SERVER_URL}/${REPO}/actions/workflows/consolidate-changelog.yml). The consolidation script is idempotent, so this can be merged as-is.")"); then
               echo "::error::Could not open the changelog consolidation pull request."
               exit 1
             fi
