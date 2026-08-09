@@ -245,16 +245,12 @@ struct ProvenanceApp: App {
             // Handle scene phase changes for import pausing
             appState.handleScenePhaseChange(newPhase)
         }
-#if !os(tvOS)
-        .commands {
-            CommandGroup(replacing: .appSettings) {
-                Button("Settings…") {
-                    NotificationCenter.default.post(name: .pvShowSettings, object: nil)
-                }
-                .keyboardShortcut(",", modifiers: .command)
-            }
-        }
-#endif
+        // NOTE: no `.commands` here. The menu bar is built in UIKit —
+        // `PVAppDelegate.buildMenu(with:)` → `PVMenuBarBuilder` — so that menu items
+        // validate against the key window's responder chain (emulator-only items
+        // disable themselves in the library) and so ⌘, resolves in EVERY scene
+        // rather than only whichever scene SwiftUI decided owned the command.
+        // See PVUIBase/Menus/PVMenuBarActions.swift.
 
         // Add the emulator scene
         EmulatorScene()
