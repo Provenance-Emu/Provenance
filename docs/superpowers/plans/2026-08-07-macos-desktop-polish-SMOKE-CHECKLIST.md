@@ -1,7 +1,7 @@
 # macOS Desktop Polish — Manual Smoke Checklist
 
 Branch: `feature/macos-desktop-polish` (14 commits off `develop`)
-Automated status: iOS **BUILD SUCCEEDED**, tvOS **BUILD SUCCEEDED**, 0 errors, all 10 changed files
+Automated status: iOS **BUILD SUCCEEDED**, tvOS **BUILD SUCCEEDED**, 0 errors, all changed files
 verified as freshly compiled on both platforms. Every task passed an independent code review.
 
 **Everything below is runtime behavior that a build cannot prove.** None of it has been executed.
@@ -74,6 +74,42 @@ reproduces most of it.
 
 22. On tvOS: Settings screens show **no** new rows (both new controls are `#if !os(tvOS)`), and library
     navigation with the Siri Remote is unchanged.
+
+## Added after the final whole-branch review (these caught real bugs — run them)
+
+23. **C1 regression guard.** Keyboard + no gamepad, toggle ON: not just the library grid, but every
+    modal opened from it must accept keyboard input — the **core picker**, **save-state picker**,
+    **rename** dialog, and the **Imports** sheet. The original fix missed these six sites; the library
+    was navigable while every dialog silently swallowed input.
+24. **C2 regression guard.** With keyboard navigation working, open *Keyboard Mapping*, rebind a key
+    (and separately hit *Reset All to Defaults*), leave Settings, and confirm **arrow keys / Space
+    still navigate the library**. Before the fix, any rebind killed navigation until app relaunch.
+    Step 14 does not cover this — it only checks the rebind took effect in-game.
+25. **I1 regression guard.** iPad + Magic Keyboard, toggle **OFF**: type in the library search field
+    and navigate normally. Space must NOT launch a game, Esc must NOT go back, Tab must NOT page.
+    Then flip the toggle ON and OFF at runtime and confirm the bridge attaches/detaches without an
+    app restart.
+26. **tvOS**, `.tvosMedia` mode: drill into a system's games, trigger the cloud-sync "Open Settings"
+    alert, and confirm the back-stack behaves. Both new observers are now `#if !os(tvOS)`, so this
+    should behave exactly as it did before the branch.
+
+## Follow-up tickets (identified in review, deliberately NOT fixed on this branch)
+
+- **`HomeContinueSection.swift:874`** still hard-gates on `isControllerConnected`, so on **iOS 17**
+  (where `MainView` never switches to the TVMedia UI) a keyboard user lands in Home with the Continue
+  section swallowing keyboard events. iOS 18+ is the desktop target, so this is not a blocker.
+- **`PauseTileMenuView.swift:1893`** — same gate in the in-game pause menu; keyboard navigation of the
+  pause menu is dead. Out of scope for this branch.
+- **`GamepadManager` `Defaults.publisher` fires an `.initial` emission**, so a detach runs once at
+  launch even with the toggle off, nil-ing per-button handlers `PVRemappableController` had installed.
+  Verified inert (gameplay dispatch uses the profile-level handler), but `options: []` would be tidier.
+- **`rebuildKeyboardController()` can clobber an SDL core's live `keyChangedHandler`** (Flycast/Dolphin)
+  if the user rebinds from the pause menu's Settings while that core is paused in the background.
+- **`TVMediaMainView.swift` exceeds the 600-line `type_body_length` lint limit** (pre-existing, 649→651).
+- **Pause-menu pointer polish** — spec Phase 1 promised `.hoverEffect` on game tiles *and* pause-menu
+  tiles; only game tiles shipped.
+- Pre-existing `handleKeyboardConnect` issues: the `skipKeyBinding` connect/disconnect asymmetry, and
+  unconditional `keyboardController` reassignment orphaning the prior virtual controller.
 
 ## Known deferred items (recorded, not bugs to file)
 
