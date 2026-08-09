@@ -25,10 +25,19 @@ private extension JSButton {
     }
 }
 
-// systems.plist now ships a dedicated "Coin" (PVControlTitle = "Coin") PVButton inside the
+// systems.plist ships a dedicated "Coin" (PVControlTitle = "Coin") PVButton inside the
 // PVButtonGroup for com.provenance.mame / cps1 / cps2 / cps3, which the .coin tagging in
-// layoutViews() below picks up. "CBDC" remains on the select position (.select ->
-// JOYPAD_SELECT); Coin is a separate, labelled input.
+// layoutViews() below picks up.
+//
+// The select position is ALSO labelled "Coin" (it read "CBDC" until it was corrected —
+// a typo, not a term of art). That is not a duplicate label by accident: on arcade
+// hardware there is no separate Select pin, so both `.select` and `.coin` resolve to
+// RETRO_DEVICE_ID_JOYPAD_SELECT (see PVThinLibretroCore+Controls.swift). Both buttons
+// genuinely insert a credit. com.provenance.neogeo ships no grouped Coin button, so its
+// select position is the only coin input.
+//
+// Note the title match below only walks `buttonGroup` subviews; the select button is
+// tagged by position at the end of layoutViews(), so renaming its title cannot re-tag it.
 final class PVMAMEControllerViewController: PVControllerViewController<PVMAMESystemResponderClient> {
     override func layoutViews() {
         leftAnalogButton?.buttonTag = .l3
