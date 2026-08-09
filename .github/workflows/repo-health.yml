@@ -291,6 +291,15 @@ jobs:
       # catches a low-frequency job failing 100% of the time — the failure mode
       # that let update-catalogs.yml rot through 23 consecutive scheduled runs
       # over five months without a single alert.
+      # The staleness scanner parses workflow YAML by hand, so a regression in
+      # it fails *silently* — it just stops finding crons and the report goes
+      # green. No other workflow runs these tests, so they run here, next to
+      # the only consumer, and go red rather than letting Check 6 report on a
+      # scanner nobody verified.
+      - name: Check 6a — self-test the staleness scanner
+        if: always()
+        run: python3 .github/scripts/test_scheduled_workflow_staleness.py
+
       - name: Check 6 — stale scheduled workflows
         id: staleness
         # Independent of checks 1-5: those run under `set -e`, and without
