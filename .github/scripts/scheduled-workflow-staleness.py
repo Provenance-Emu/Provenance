@@ -256,25 +256,37 @@ def extract_cron_expressions(text: str) -> list[str]:
     return crons
 
 
-def discover_scheduled_workflows(workflows_dir: Path) -> list[tuple[str, list[str]]]:
-    """[(filename, [cron, ...])] for every workflow with a real `schedule:`.
+def workflow_files(workflows_dir: Path) -> list[Path]:
+    """Every workflow file at the top level of `workflows_dir`.
 
-    Only the top level of the directory is scanned — `.github/workflows/disabled/`
-    is not executed by GitHub and must not be monitored.
+    Only the top level is scanned — `.github/workflows/disabled/` is not
+    executed by GitHub and must not be monitored.
+    """
+    return [p for p in sorted(workflows_dir.glob("*.y*ml")) if p.is_file()]
+
+
+def discover_scheduled_workflows(
+    workflows_dir: Path,
+) -> tuple[list[tuple[str, list[str]]], list[tuple[str, str]]]:
+    """([(filename, [cron, ...])], [(filename, reason)]) for the workflow dir.
+
+    The second element lists files that could not be read. An unreadable file
+    is a workflow this check is *blind to*, not a workflow that is fine, so it
+    is returned for the caller to surface as a `warn` rather than dropped into
+    stderr where a green summary line would paper over it.
     """
     found: list[tuple[str, list[str]]] = []
-    for path in sorted(workflows_dir.glob("*.y*ml")):
-        if not path.is_file():
-            continue
+    unreadable: list[tuple[str, str]] = []
+    for path in workflow_files(workflows_dir):
         try:
             text = path.read_text(encoding="utf-8")
         except OSError as exc:
-            print(f"::warning::cannot read {path}: {exc}", file=sys.stderr)
+            unreadable.append((path.name, f"cannot read workflow file: {exc}"))
             continue
         crons = extract_cron_expressions(text)
         if crons:
             found.append((path.name, crons))
-    return found
+    return found, unreadable
 
 
 # ── GitHub queries ────────────────────────────────────────────────────────
@@ -354,7 +366,11 @@ def evaluate(repo: str, workflows_dir: Path, now: dt.datetime) -> list[dict]:
     states = workflow_states(repo)
     results: list[dict] = []
 
-    for filename, crons in discover_scheduled_workflows(workflows_dir):
+    scheduled, unreadable = discover_scheduled_workflows(workflows_dir)
+    for filename, reason in unreadable:
+        results.append({"workflow": filename, "level": "warn", "detail": reason})
+
+    for filename, crons in scheduled:
         try:
             interval = min(CronSchedule(c).interval_seconds() for c in crons)
         except CronError as exc:
@@ -435,6 +451,18 @@ def main() -> int:
         print(f"error: --workflows-dir {workflows_dir} is not a directory", file=sys.stderr)
         return 2
 
+    # A directory that exists but holds no workflow files is the same blindness
+    # wearing a different hat: a sparse/partial checkout, or a path that points
+    # at the wrong directory. Nothing was scanned, so there is no result to
+    # report — say so instead of scoring an empty scan as a pass.
+    if not workflow_files(workflows_dir):
+        print(
+            f"error: --workflows-dir {workflows_dir} contains no workflow files "
+            "(*.yml / *.yaml) — nothing was scanned",
+            file=sys.stderr,
+        )
+        return 2
+
     now = (
         dt.datetime.fromisoformat(args.now.replace("Z", "+00:00"))
         if args.now
@@ -464,6 +492,13 @@ def main() -> int:
     elif warn:
         status = f"⚠️ {len(warn)} unparseable"
         detail = "; ".join(f"{e['workflow']} — {e['detail']}" for e in warn)
+    elif not results:
+        # The directory held workflow files but not one of them declares a
+        # `schedule:`. Given this check exists because scheduled jobs rot
+        # silently, "nothing to report" is far more likely to be a scanner
+        # regression than a true absence — never dress it up as a green tick.
+        status = "⚠️ no scheduled workflows found"
+        detail = f"scanned {workflows_dir} but found no workflow with a schedule: block"
     else:
         status = f"✅ {len(results)} scheduled OK"
         detail = ""
