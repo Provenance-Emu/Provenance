@@ -1002,6 +1002,25 @@ static void thin_netpacket_poll_receive(void) {
 /// `retro_load_game` returns false.
 static char s_lastBiosHint[512] = {0};
 
+/// Most recent core error line of ANY kind. `s_lastBiosHint` only matches the
+/// BIOS/system-file heuristic, so failures that name a different cause — e.g.
+/// mame2003-plus's "Game driver not found for <name>!" or "Content path is not
+/// valid", the only error exits in its `retro_load_game` — were logged but never
+/// surfaced, leaving the user with a bare "retro_load_game failed". Keep this as
+/// the fallback so every core-reported failure reaches the dialog.
+static char s_lastCoreError[512] = {0};
+
+/// Copy `msg` into `dst`, NUL-terminating and trimming trailing newlines so the
+/// text is fit for display in an alert.
+static void thin_capture_core_error(char *dst, size_t dstSize, const char *msg) {
+    strncpy(dst, msg, dstSize - 1);
+    dst[dstSize - 1] = '\0';
+    size_t len = strlen(dst);
+    while (len > 0 && (dst[len - 1] == '\n' || dst[len - 1] == '\r')) {
+        dst[--len] = '\0';
+    }
+}
+
 /// libretro logging bridge.
 static void thin_core_log(enum retro_log_level level, const char *fmt, ...) {
     // Throttle repeated error messages (e.g. Z_Malloc failure loops)
@@ -1016,6 +1035,11 @@ static void thin_core_log(enum retro_log_level level, const char *fmt, ...) {
     va_end(args);
 
     if (level == RETRO_LOG_ERROR) {
+        // Capture BEFORE the throttle below, which early-returns on a repeat
+        // within 2s — a core that emits its fatal line twice would otherwise
+        // never have it recorded.
+        thin_capture_core_error(s_lastCoreError, sizeof(s_lastCoreError), buf);
+
         uint64_t now = (uint64_t)(CACurrentMediaTime() * 1000); // ms
         if (strncmp(buf, s_lastErrorMsg, sizeof(s_lastErrorMsg) - 1) == 0
             && (now - s_lastErrorTime) < 2000) {
@@ -1039,12 +1063,7 @@ static void thin_core_log(enum retro_log_level level, const char *fmt, ...) {
         // Trim trailing newline for cleaner display.
         if (strstr(buf, "BIOS") || strstr(buf, "bios")
             || strstr(buf, "Cannot open") || strstr(buf, "system file")) {
-            strncpy(s_lastBiosHint, buf, sizeof(s_lastBiosHint) - 1);
-            s_lastBiosHint[sizeof(s_lastBiosHint) - 1] = '\0';
-            size_t len = strlen(s_lastBiosHint);
-            while (len > 0 && (s_lastBiosHint[len - 1] == '\n' || s_lastBiosHint[len - 1] == '\r')) {
-                s_lastBiosHint[--len] = '\0';
-            }
+            thin_capture_core_error(s_lastBiosHint, sizeof(s_lastBiosHint), buf);
         }
     }
 
@@ -2973,9 +2992,10 @@ static bool thin_environment(unsigned cmd, void *data) {
     ILOG(@"ThinFrontend: startWithROMPath[%@] begin path=%@",
          self.coreIdentifier ?: @"?", romPath.lastPathComponent);
 
-    // Clear any BIOS hint captured from a previous load attempt so a fresh
-    // failure surfaces only the current attempt's hint (if any).
+    // Clear any hint / error captured from a previous load attempt so a fresh
+    // failure surfaces only the current attempt's diagnostics (if any).
     s_lastBiosHint[0] = '\0';
+    s_lastCoreError[0] = '\0';
 
     // Install TLS pointer for C callbacks
     _thinCurrentTLS = self;
@@ -3192,9 +3212,14 @@ static bool thin_environment(unsigned cmd, void *data) {
     if (!loaded) {
         ELOG(@"ThinFrontend: retro_load_game returned false");
         if (error) {
-            NSString *hint = (s_lastBiosHint[0] != '\0')
-                ? [NSString stringWithUTF8String:s_lastBiosHint]
-                : nil;
+            // Prefer the BIOS/system-file hint (it names an actionable missing
+            // file); otherwise fall back to whatever the core last reported, so
+            // the dialog always carries the core's own reason instead of a bare
+            // "retro_load_game failed".
+            const char *reason = (s_lastBiosHint[0] != '\0') ? s_lastBiosHint
+                               : (s_lastCoreError[0] != '\0') ? s_lastCoreError
+                               : NULL;
+            NSString *hint = reason ? [NSString stringWithUTF8String:reason] : nil;
             NSString *desc = hint
                 ? [NSString stringWithFormat:@"retro_load_game failed: %@", hint]
                 : @"retro_load_game failed";
