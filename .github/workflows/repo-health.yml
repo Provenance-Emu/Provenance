@@ -327,9 +327,9 @@ jobs:
           # A check step that died leaves its output empty. Render that as an
           # explicit "did not run" rather than a blank cell, which reads as OK.
           for n in 1 2 3 4 5 6; do
-            eval "current=\${CHECK${n}_STATUS}"
-            if [ -z "$current" ]; then
-              eval "CHECK${n}_STATUS='❓ check did not report'"
+            var="CHECK${n}_STATUS"
+            if [ -z "${!var}" ]; then
+              printf -v "$var" '%s' '❓ check did not report'
             fi
           done
 
