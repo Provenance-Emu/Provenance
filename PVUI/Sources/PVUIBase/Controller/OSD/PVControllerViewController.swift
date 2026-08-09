@@ -44,6 +44,12 @@ let volume = SubtleVolume(style: .roundedLine)
 let volumeHeight: CGFloat = 3
 #endif
 
+// PRE-EXISTING type_body_length violation: this class was already ~1659 lines on
+// `develop` before this PR (SwiftLint only lints files a PR touches, so it never
+// tripped CI until this PR happened to touch this file). Splitting it into smaller
+// types is a separate, larger change, out of scope here. Remove this disable once
+// that split happens.
+// swiftlint:disable:next type_body_length
 open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC, OSDRecordingObserver, OSDFastForwardObserver {
 
     public func layoutViews() {}

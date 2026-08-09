@@ -66,6 +66,12 @@ typealias PVEmulatorViewControllerRootClass = UIViewController
 #endif
 
 public
+// PRE-EXISTING type_body_length violation: this class was already ~1248 lines on
+// `develop` before this PR (SwiftLint only lints files a PR touches, so it never
+// tripped CI until this PR happened to touch this file). Splitting it into smaller
+// types is a separate, larger change, out of scope here. Remove this disable once
+// that split happens.
+// swiftlint:disable:next type_body_length
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmualatorControllerProtocol, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
     public let core: PVEmulatorCore
     @ThreadSafe

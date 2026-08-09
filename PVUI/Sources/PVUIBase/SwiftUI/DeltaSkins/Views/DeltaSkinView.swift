@@ -56,6 +56,12 @@ private struct TouchLocationInfo: Identifiable {
 }
 
 /// Core view for rendering a DeltaSkin with test patterns and interactive elements
+// PRE-EXISTING type_body_length violation: this struct was already ~1824 lines on
+// `develop` before this PR (SwiftLint only lints files a PR touches, so it never
+// tripped CI until this PR happened to touch this file). Splitting it into smaller
+// types is a separate, larger change, out of scope here. Remove this disable once
+// that split happens.
+// swiftlint:disable:next type_body_length
 public struct DeltaSkinView: View {
     let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
