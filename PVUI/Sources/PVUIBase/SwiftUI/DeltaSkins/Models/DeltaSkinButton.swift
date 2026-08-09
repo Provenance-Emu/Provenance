@@ -54,7 +54,10 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     /// Input actions this button triggers
     public let input: DeltaSkinInput
 
-    /// Frame for the button (in relative 0-1 coordinates)
+    /// Frame for the button, in skin mapping-space points (i.e. the coordinate space of
+    /// `DeltaSkin.mappingSize`, NOT normalized 0-1 coordinates). Scaled to view size via
+    /// `DeltaSkinView.calculateButtonTransform`; `extendedEdges` and hit-testing operate in
+    /// this same space.
     public let frame: CGRect
 
     /// Extended touch area around the button, in the same unit (skin mapping-space points) as `frame`.
@@ -84,7 +87,7 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     /// - Parameters:
     ///   - id: Unique identifier for this button
     ///   - input: Input actions this button triggers
-    ///   - frame: Frame for the button (in relative 0-1 coordinates)
+    ///   - frame: Frame for the button, in skin mapping-space points (not relative 0-1 coordinates)
     ///   - extendedEdges: Optional extended touch areas around the button
     ///   - haptic: Optional per-button haptic feedback configuration
     ///   - states: Optional per-button visual states

@@ -73,10 +73,34 @@ public final class KeyboardHUDViewModel: ObservableObject {
     private var pollTimer: Timer?
     private var fadeOutWorkItem: DispatchWorkItem?
     private var savedKeyHandler: GCKeyboardValueChangedHandler?
+    /// The keyboard `savedKeyHandler` was captured from. Weak: if the hardware
+    /// goes away this naturally becomes nil, which already fails the identity
+    /// check in `endCapture()`. Used to detect "the keyboard changed under us"
+    /// even in the race window before `abortCaptureForHardwareChange` runs —
+    /// see `endCapture()`.
+    private weak var capturedKeyboardInput: GCKeyboardInput?
     private var hardwareObservers: Set<AnyCancellable> = []
 
     public init() {
         observeHardwareKeyboardChanges()
+    }
+
+    deinit {
+        // `deinit` on a `@MainActor` class is itself nonisolated and cannot
+        // call actor-isolated methods like `stopObserving()`/`endCapture()`
+        // (confirmed: the compiler rejects it), so cleanup here is limited to
+        // plain Foundation APIs that aren't actor-isolated. This only guards
+        // the path where the owning view controller is torn down WITHOUT
+        // calling `stopObserving()` — otherwise the repeating poll timer
+        // would keep firing forever (its closure captures `self` weakly, so
+        // it doesn't even keep this object alive, just wastes cycles).
+        // An in-progress rebind capture doesn't need attention here: the
+        // `keyChangedHandler` closure installed in `beginCapture` captures
+        // `self` weakly too and already self-heals on the next keypress via
+        // `PVControllerManager.shared.rebuildKeyboardController()` when
+        // `self` is gone.
+        pollTimer?.invalidate()
+        fadeOutWorkItem?.cancel()
     }
 
     // MARK: - Lifecycle
@@ -196,6 +220,7 @@ public final class KeyboardHUDViewModel: ObservableObject {
         endCapture()
         guard let keyboardInput = GCKeyboard.coalesced?.keyboardInput else { return }
         capturingAction = action
+        capturedKeyboardInput = keyboardInput
         savedKeyHandler = keyboardInput.keyChangedHandler
         keyboardInput.keyChangedHandler = { [weak self] _, _, keyCode, pressed in
             guard pressed else { return }
@@ -226,15 +251,56 @@ public final class KeyboardHUDViewModel: ObservableObject {
         }
     }
 
-    /// Ends capture normally: the keyboard hardware hasn't changed since
-    /// capture began, so the handler saved beforehand is still correct to
-    /// restore.
+    /// Ends capture (normal completion, a new capture starting, or an owning
+    /// view controller tearing down via `stopObserving()`). Restores the
+    /// handler saved in `beginCapture` — but ONLY if the keyboard we captured
+    /// from ("same keyboard" = pointer identity via `===` on the
+    /// `GCKeyboardInput` instance, tracked in `capturedKeyboardInput`) is
+    /// still what `GCKeyboard.coalesced?.keyboardInput` currently resolves
+    /// to.
+    ///
+    /// Hardware changes are normally already caught by
+    /// `abortCaptureForHardwareChange`, which clears `savedKeyHandler`
+    /// without restoring it. But that runs off a Combine pipeline with
+    /// `.receive(on: DispatchQueue.main)`, which dispatches asynchronously
+    /// even when already on the main queue/thread — so there is a window
+    /// where the hardware has changed (disconnect, or a second keyboard
+    /// connecting without an intervening disconnect) but the abort hasn't
+    /// been processed yet. If some other MainActor call — most notably
+    /// `stopObserving()` tearing down the owning view controller — reaches
+    /// `endCapture()` inside that window, restoring the saved handler would
+    /// write a closure belonging to a dead/superseded keyboard onto whatever
+    /// keyboard is current now: the exact class of bug that previously
+    /// killed keyboard input app-wide. The identity check below closes that
+    /// window regardless of ordering.
     public func endCapture() {
-        if let saved = savedKeyHandler {
-            GCKeyboard.coalesced?.keyboardInput?.keyChangedHandler = saved
+        defer {
             savedKeyHandler = nil
+            capturingAction = nil
+            capturedKeyboardInput = nil
         }
-        capturingAction = nil
+        guard let saved = savedKeyHandler else { return }
+        guard let current = GCKeyboard.coalesced?.keyboardInput,
+              current === capturedKeyboardInput else {
+            // Declining to restore is the safe default (see doc above) — but our
+            // OWN capture closure (installed in `beginCapture`) may still be sitting
+            // in `keyChangedHandler` on whatever keyboard is current now, e.g. if
+            // this identity check false-negatives because `GCKeyboard.coalesced`
+            // doesn't guarantee returning the same `GCKeyboardInput` instance across
+            // calls even when the underlying hardware hasn't changed. Left alone,
+            // that capture closure would swallow (and rebind on) the next keypress
+            // instead of forwarding it as gameplay input. Reinstalling
+            // PVControllerManager's real handler is idempotent — a no-op if a fresh
+            // handler is already there (e.g. the genuine-hardware-change case, where
+            // `abortCaptureForHardwareChange`'s own notification handler already did
+            // this) — so it's safe to call unconditionally whenever a keyboard is
+            // still present.
+            if GCKeyboard.coalesced?.keyboardInput != nil {
+                PVControllerManager.shared.rebuildKeyboardController()
+            }
+            return
+        }
+        current.keyChangedHandler = saved
     }
 
     /// Aborts an in-progress capture because the keyboard hardware changed
@@ -250,6 +316,7 @@ public final class KeyboardHUDViewModel: ObservableObject {
         guard capturingAction != nil else { return }
         savedKeyHandler = nil
         capturingAction = nil
+        capturedKeyboardInput = nil
     }
 
     private func observeHardwareKeyboardChanges() {
