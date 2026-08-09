@@ -79,6 +79,20 @@ public struct EmulatorScene: Scene {
                 }
             }
 
+            CommandMenu("Game") {
+                Button("Show Menu") {
+                    // `showMenu(_:)` is defined on the concrete `PVEmulatorViewController`
+                    // (PVEmulatorViewController+PauseMenu.swift), not on the
+                    // `PVEmualatorControllerProtocol` existential — downcast to reach it,
+                    // same pattern as "Load Last Save State" below.
+                    if let emulator = appState.emulationUIState.emulator as? PVEmulatorViewController {
+                        emulator.showMenu(nil)
+                    }
+                }
+                // NOT ⌘M — that's Minimize on macOS.
+                .keyboardShortcut("m", modifiers: [.command, .shift])
+            }
+
             CommandMenu("Emulation") {
                 Button("Pause/Resume") {
                     if let core = appState.emulationUIState.core {

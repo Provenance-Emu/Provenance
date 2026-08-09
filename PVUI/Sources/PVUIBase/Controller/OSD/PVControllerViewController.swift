@@ -646,6 +646,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     func setupTouchControls() { }
 #else
     func setupTouchControls() {
+        // Mac ("Designed for iPad") and iPad-opted-in desktop input mode: no touch surface,
+        // keyboard/gamepad drive input instead. No-op rather than deleting the compile-time
+        // `#if os(iOS)` guard, which still matters for non-iOS platforms.
+        if GamepadManager.isDesktopInputMode { return }
         if inMoveMode { return }
         prelayoutSettings()
 
@@ -1558,6 +1562,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     // MARK: - Toggle Button Setup
 
     private func setupToggleButton() {
+        // On Mac/desktop-input-mode there are no on-screen touch controls (setupTouchControls()
+        // no-ops) for this to show/hide — creating it would leave a stray, non-functional
+        // toggle affordance floating over the game.
+        guard !GamepadManager.isDesktopInputMode else { return }
         guard toggleButton == nil else { return }
         let btn = MenuButton(type: .custom)
         btn.setImage(UIImage(systemName: "chevron.down.circle"), for: .normal)
