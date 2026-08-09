@@ -32,6 +32,39 @@ import UniformTypeIdentifiers
 import FreemiumKit
 #endif
 
+// MARK: - Panel metrics
+
+/// Sizing constants for the floating pause panel.
+///
+/// The `desktop*` values apply only when the iOS binary runs on Apple Silicon
+/// ("Designed for iPad", `ProcessInfo.processInfo.isiOSAppOnMac`). Mac Catalyst is
+/// not supported and must never be used to detect this.
+enum PauseTilePanelMetrics {
+    /// Total horizontal breathing room kept between the panel and the window edge.
+    static let horizontalInset: CGFloat = 32
+
+    /// Fraction of the window width the panel occupies on macOS.
+    ///
+    /// 0.55 keeps the paused game visible on either side of the panel (the overlay
+    /// is deliberately a floating panel, not a full-screen sheet) while still
+    /// filling enough of a desktop window to not read as a phone-sized column.
+    static let desktopWidthFraction: CGFloat = 0.55
+
+    /// Floor for the macOS panel width.
+    ///
+    /// 560pt matches the existing iPad landscape maximum, so the desktop panel is
+    /// never narrower than what a tablet already shows, and it still yields the
+    /// familiar 5-column grid in a small window.
+    static let desktopMinWidth: CGFloat = 560
+
+    /// Ceiling for the macOS panel width.
+    ///
+    /// 1100pt is where the 8-column grid tops out at ~129pt cells. Past that the
+    /// grid stops gaining columns and the panel would just stretch, which looks
+    /// absurd on a 5K/6K display, so the panel stays centered instead.
+    static let desktopMaxWidth: CGFloat = 1100
+}
+
 // MARK: - PauseTileMenuView
 
 // swiftlint:disable type_body_length
@@ -265,11 +298,21 @@ struct PauseTileMenuView: View {
 
     #if os(iOS)
     /// Current column count, derived from the live panel width measured by
-    /// the GeometryReader in `body`. Falls back to 2 if width hasn't propagated
-    /// yet (e.g. first frame).
+    /// the GeometryReader in `body`. Falls back to `fallbackPanelWidth` if the
+    /// width hasn't propagated yet (e.g. first frame).
     private func currentColumnCount() -> Int {
-        let width = currentPanelWidth > 0 ? currentPanelWidth : panelMaxWidth
+        let width = currentPanelWidth > 0 ? currentPanelWidth : fallbackPanelWidth
         return columnCount(for: width)
+    }
+
+    /// Panel width assumed before the GeometryReader has propagated a real value.
+    ///
+    /// Must agree with `panelWidth(forAvailableWidth:)`, otherwise keyboard/controller
+    /// focus moves against a different column count than the grid actually renders
+    /// and lands on the wrong cell. On a Mac the old `panelMaxWidth` fallback was the
+    /// 420pt portrait value (3 columns) while the panel drew 6-8.
+    private var fallbackPanelWidth: CGFloat {
+        ProcessInfo.processInfo.isiOSAppOnMac ? PauseTilePanelMetrics.desktopMinWidth : panelMaxWidth
     }
     #endif
 
@@ -1094,10 +1137,19 @@ struct PauseTileMenuView: View {
     // MARK: - Layout helpers
 
     /// Column count driven by available horizontal space.
+    ///
+    /// The breakpoints above `PauseTilePanelMetrics.desktopMinWidth` are only ever
+    /// reached on macOS ("Designed for iPad" on Apple Silicon) — iPhone/iPad cap the
+    /// panel at 560pt (landscape) / 420pt (portrait) and tvOS returns early — so
+    /// adding them cannot change handheld layout. They keep each grid cell in the
+    /// ~100-135pt range instead of ballooning to 200pt+ on a wide desktop panel.
     private func columnCount(for width: CGFloat) -> Int {
         #if os(tvOS)
         return 6
         #else
+        if width >= 1000 { return 8 }
+        if width >= 800 { return 7 }
+        if width >= 650 { return 6 }
         if width >= 500 { return 5 }
         if width >= 400 { return 4 }
         if width >= 280 { return 3 }
@@ -1111,6 +1163,31 @@ struct PauseTileMenuView: View {
         #else
         return isLandscape ? 560 : 420
         #endif
+    }
+
+    /// Width of the floating pause panel for the currently available layout width.
+    ///
+    /// - On iPhone/iPad/tvOS this is the historical behaviour: the smaller of the
+    ///   available width (minus the edge inset) and `panelMaxWidth`.
+    /// - On macOS the panel scales with the *window* instead, clamped between
+    ///   `desktopMinWidth` and `desktopMaxWidth`. `UIDevice.current.orientation` is
+    ///   `.unknown` on a Mac, so `isLandscape` is false there and the old code fell
+    ///   through to the 420pt portrait width regardless of how wide the window was.
+    ///
+    /// Callers must pass the live `GeometryReader` width so the panel re-derives on
+    /// every window resize rather than caching a value from first layout.
+    private func panelWidth(forAvailableWidth availableWidth: CGFloat) -> CGFloat {
+        let insetWidth = availableWidth - PauseTilePanelMetrics.horizontalInset
+        #if os(iOS)
+        if ProcessInfo.processInfo.isiOSAppOnMac {
+            let scaled = availableWidth * PauseTilePanelMetrics.desktopWidthFraction
+            let clamped = min(max(scaled, PauseTilePanelMetrics.desktopMinWidth),
+                              PauseTilePanelMetrics.desktopMaxWidth)
+            // Never exceed the window — the user can shrink it below `desktopMinWidth`.
+            return min(insetWidth, clamped)
+        }
+        #endif
+        return min(insetWidth, panelMaxWidth)
     }
 
     // MARK: - Tile view
@@ -1482,8 +1559,10 @@ struct PauseTileMenuView: View {
                     .ignoresSafeArea()
                     .onTapGesture { requestPauseMenuClose() }
 
-                // Floating tile panel
-                let panelWidth = min(geo.size.width - 32, panelMaxWidth)
+                // Floating grid panel. Derived from the live GeometryReader width on
+                // every layout pass so macOS window resizes re-flow the panel and its
+                // column count instead of keeping a width cached at first layout.
+                let panelWidth = self.panelWidth(forAvailableWidth: geo.size.width)
                 let cols = columnCount(for: panelWidth)
                 let spacing: CGFloat = tvOSAdjusted(6, tvOS: 12)
                 let sections = viewModel.sections
