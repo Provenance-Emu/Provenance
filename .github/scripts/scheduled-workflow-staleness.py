@@ -271,13 +271,19 @@ def discover_scheduled_workflows(workflows_dir: Path) -> list[tuple[str, list[st
 
 # ── GitHub queries ────────────────────────────────────────────────────────
 
+class GhError(RuntimeError):
+    """A `gh` invocation failed. Never conflate this with "no data" — a
+    silently-empty result here would make e.g. `has_any_run()` return False
+    and the caller report a false-green "no runs yet" instead of surfacing
+    that the check couldn't query Actions at all (auth/rate-limit/etc)."""
+
+
 def _gh(args: list[str]) -> str:
     result = subprocess.run(
         ["gh", *args], capture_output=True, text=True, check=False
     )
     if result.returncode != 0:
-        print(f"::warning::gh {' '.join(args)} failed: {result.stderr.strip()}", file=sys.stderr)
-        return ""
+        raise GhError(f"gh {' '.join(args)} failed: {result.stderr.strip()}")
     return result.stdout.strip()
 
 
@@ -413,13 +419,29 @@ def main() -> int:
         print("error: --repo (or $REPO) is required", file=sys.stderr)
         return 2
 
+    workflows_dir = Path(args.workflows_dir)
+    if not workflows_dir.is_dir():
+        # An empty scan reads identically to "nothing is scheduled", which
+        # would render as a false-green "0 scheduled OK". A wrong path or a
+        # checkout that never happened is an internal error, not a result.
+        print(f"error: --workflows-dir {workflows_dir} is not a directory", file=sys.stderr)
+        return 2
+
     now = (
         dt.datetime.fromisoformat(args.now.replace("Z", "+00:00"))
         if args.now
         else dt.datetime.now(dt.timezone.utc)
     )
 
-    results = evaluate(args.repo, Path(args.workflows_dir), now)
+    try:
+        results = evaluate(args.repo, workflows_dir, now)
+    except GhError as exc:
+        # Propagated from _gh(): a `gh` call failed outright (auth,
+        # rate-limit, network). Abort rather than let the caller mistake a
+        # missing GITHUB_OUTPUT write for "check did not report" — see the
+        # module docstring: exits non-zero only on internal error.
+        print(f"::error::{exc}", file=sys.stderr)
+        return 1
 
     icon = {"ok": "✅", "stale": "🚨", "warn": "⚠️", "info": "ℹ️"}
     for entry in results:
