@@ -84,17 +84,17 @@ extension PVEmulatorViewController {
         return forwarded.isEmpty ? nil : forwarded
     }
 
-    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+    override public func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         guard let forwarded = filterForwardablePresses(presses, with: event) else { return }
         super.pressesBegan(forwarded, with: event)
     }
 
-    override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+    override public func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         guard let forwarded = filterForwardablePresses(presses, with: event) else { return }
         super.pressesEnded(forwarded, with: event)
     }
 
-    override func pressesCancelled(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+    override public func pressesCancelled(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         guard let forwarded = filterForwardablePresses(presses, with: event) else { return }
         super.pressesCancelled(forwarded, with: event)
     }
