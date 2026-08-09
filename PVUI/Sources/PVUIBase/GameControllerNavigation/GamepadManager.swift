@@ -152,13 +152,21 @@ public class GamepadManager: ObservableObject {
     /// Settings toggle today, but not structurally guaranteed — e.g. iCloud KV sync),
     /// and `connectKeyboardControllerIfAvailable()`/`disconnectKeyboardControllerHandlers()`
     /// both hard-trap via `MainActor.assumeIsolated` rather than degrade gracefully off-main.
+    ///
+    /// Branches on `isDesktopInputMode`, NOT the raw `controllerStyleNavigation` default:
+    /// on Mac ("Designed for iPad") `isDesktopInputMode` is true via `isiOSAppOnMac`
+    /// regardless of this setting, so switching branches on the raw default alone would
+    /// detach keyboard navigation the moment a Mac user toggled the (iPad-only-meaningful)
+    /// setting off, even though desktop mode itself never turned off. On iPad, where
+    /// `isiOSAppOnMac` is always false, `isDesktopInputMode` reduces to exactly the raw
+    /// default, so the opt-in attach/detach behavior there is unchanged.
     private func observeControllerStyleNavigationSetting() {
         Defaults.publisher(.controllerStyleNavigation)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self else { return }
                 self.updateNavigationInputAvailability()
-                if Defaults[.controllerStyleNavigation] {
+                if Self.isDesktopInputMode {
                     self.connectKeyboardControllerIfAvailable()
                 } else {
                     self.disconnectKeyboardControllerHandlers()
