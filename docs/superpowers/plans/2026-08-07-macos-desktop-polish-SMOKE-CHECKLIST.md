@@ -1,6 +1,6 @@
 # macOS Desktop Polish — Manual Smoke Checklist
 
-Branch: `feature/macos-desktop-polish` (14 commits off `develop`)
+Branch: `feature/macos-desktop-polish` (17 commits off `develop`)
 Automated status: iOS **BUILD SUCCEEDED**, tvOS **BUILD SUCCEEDED**, 0 errors, all changed files
 verified as freshly compiled on both platforms. Every task passed an independent code review.
 
@@ -113,7 +113,7 @@ reproduces most of it.
 
 ## Known deferred items (recorded, not bugs to file)
 
-- `.hoverEffect(.lift)` block indentation is inconsistent with its neighbors (cosmetic).
+- (resolved in the final fix wave) `.hoverEffect(.lift)` block indentation.
 - ⌘L / Save State / Pause menu items stay enabled and no-op when unavailable, matching the four
   pre-existing buttons in that same menu. Disabling them needs `@Observable` plumbing.
 - Pre-existing: `handleKeyboardConnect` consults a `skipKeyBinding` guard that
