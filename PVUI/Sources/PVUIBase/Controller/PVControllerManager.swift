@@ -1070,14 +1070,14 @@ public extension GCKeyboard {
             // Bind / to select, rightShift to start
             if let emulator = emulationUIState.emulator, let core = emulationUIState.core, EmulationState.shared.stateSubject.value.isOn, core.isRunning {
                 if actionPressed(.select) {
-                    print("Select Pressed\n")
+                    DLOG("Keyboard: Select pressed")
                     emulator.controllerViewController?.pressSelect(forPlayer: 0)
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { () -> Void in
                         emulator.controllerViewController?.releaseSelect(forPlayer: 0)
                     })
                 }
                 if actionPressed(.start) {
-                    print("Start Pressed\n")
+                    DLOG("Keyboard: Start pressed")
                     emulator.controllerViewController?.pressStart(forPlayer: 0)
                     DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5, execute: { () -> Void in
                         emulator.controllerViewController?.releaseStart(forPlayer: 0)

@@ -12,7 +12,8 @@ import PVUIBase
 import PVThemes
 
 /// Lists every keyboard-controller action with its bound keys; tap a row then press
-/// a key to rebind. iOS/Catalyst-style desktop feature; excluded from tvOS.
+/// a key to rebind. Desktop-oriented feature for iOS and "Designed for iPad" on Mac;
+/// excluded from tvOS.
 #if !os(tvOS)
 public struct KeyboardMappingView: View {
     @ObservedObject private var themeManager = ThemeManager.shared

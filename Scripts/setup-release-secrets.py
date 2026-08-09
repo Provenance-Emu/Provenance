@@ -562,7 +562,14 @@ def verify_asc_credentials() -> None:
 
     key_text = ""
     if key_path and Path(key_path).exists():
-        key_text = Path(key_path).read_text()
+        # read_text() raises OSError on a permissions/encoding problem. Surface it as a
+        # SetupError with the path so the user can act, rather than a bare traceback.
+        try:
+            key_text = Path(key_path).read_text()
+        except OSError as exc:
+            raise SetupError(
+                f"ASC_API_KEY_PATH exists but could not be read: {key_path} ({exc})"
+            ) from exc
     elif key_content.strip():
         key_text = key_content
     else:
