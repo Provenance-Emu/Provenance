@@ -68,6 +68,29 @@ public protocol PVMenuBarActions {
     @objc optional func pvMenuToggleKeyboardHUD(_ sender: Any?)
 }
 
+// MARK: - App-wide fallback
+
+public extension UIApplication {
+    /// ⌘, for every scene that isn't a running game.
+    ///
+    /// Lives on `UIApplication` rather than on the app delegate on purpose. Menu
+    /// validation walks the responder chain from the key window's first responder;
+    /// `UIApplication` is unconditionally in that chain, whereas reaching the app
+    /// delegate additionally depends on it being a `UIResponder` that UIKit wired up
+    /// — which is not something a SwiftUI-lifecycle app should be betting ⌘, on.
+    ///
+    /// While a game is running `PVEmulatorViewController.pvMenuShowSettings(_:)`
+    /// sits nearer the first responder and wins, presenting Settings over the
+    /// emulator. Everywhere else this posts `PVShowSettings`, which the main-UI
+    /// roots observe (`RetroMainView` in single-page mode, `PVRootViewController`
+    /// in paged mode, `TVMediaMainView` on tvOS) to show Settings. Selecting a
+    /// destination the app is already showing is a no-op, so repeated ⌘, cannot
+    /// stack duplicate Settings screens.
+    @objc func pvMenuShowSettings(_ sender: Any?) {
+        NotificationCenter.default.post(name: .pvShowSettings, object: nil)
+    }
+}
+
 // MARK: - Builder
 
 /// Builds Provenance's main menu. Call from `UIResponder.buildMenu(with:)` on the
