@@ -190,13 +190,17 @@ public struct RetroMainView: View {
                 selectedTab = 0
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("PVShowSettings"))) { _ in
+#if !os(tvOS)
+        // Keep this iOS/macOS-only alongside TVMediaMainView's identical guard — see the
+        // comment there for why a tvOS PVShowSettings observer is deferred to a separate review.
+        .onReceive(NotificationCenter.default.publisher(for: .pvShowSettings)) { _ in
             // Switch to the Settings tab when Settings is requested (e.g. Mac menu-bar
             // Cmd+, or other cross-mode posters of PVShowSettings).
             if selectedTab != settingsTabIndex {
                 selectedTab = settingsTabIndex
             }
         }
+#endif
         .onDisappear {
             // Clean up timer when view disappears
             effectTimer?.cancel()

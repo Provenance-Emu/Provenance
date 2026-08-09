@@ -464,10 +464,25 @@ public final class PVControllerManager: NSObject, ObservableObject {
 
     /// Rebuilds the virtual keyboard-backed GCController so freshly saved
     /// key bindings take effect immediately.
+    ///
+    /// `handleKeyboardDisconnect`/`handleKeyboardConnect` talk directly to the GameController
+    /// APIs and deliberately do NOT post `.GCKeyboardDidConnect` (see their call sites in
+    /// `setupNotifications`, which post real hardware-change notifications separately).
+    /// `GamepadManager` only attaches its navigation handlers to the virtual keyboard
+    /// controller from its own init or from that notification, so without this explicit
+    /// re-attach the freshly rebuilt controller would have no navigation handlers at all —
+    /// arrow keys/Space would stop driving the TVMedia UI until an app relaunch or a real
+    /// keyboard unplug/replug. Re-attaching directly (rather than posting
+    /// `.GCKeyboardDidConnect`) also avoids falsely notifying other observers of that
+    /// notification — e.g. `KeyboardMappingView.abortCaptureForHardwareChange` — which
+    /// specifically care about genuine hardware changes, not a settings-triggered rebuild.
+    /// `connectKeyboardControllerIfAvailable()` itself no-ops when the user hasn't opted
+    /// into controller-style navigation, so this is safe to call unconditionally.
     @MainActor
     public func rebuildKeyboardController() {
         handleKeyboardDisconnect(nil)
         handleKeyboardConnect(nil)
+        GamepadManager.shared.connectKeyboardControllerIfAvailable()
     }
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
@@ -1026,6 +1041,12 @@ public extension GCKeyboard {
                 prevDpad = (dpad_x, dpad_y)
                 gamepad.dpad.valueChangedHandler?(gamepad.dpad, dpad_x, dpad_y)
             }
+            // NOTE: the set of `dispatchButton(...)` calls below must cover exactly the
+            // elements GamepadManager.setupBasicControls/setupMenuToggleHandlers observes
+            // (buttonA, buttonB, buttonMenu, buttonOptions, leftShoulder, rightShoulder,
+            // leftTrigger) — if a future GamepadManager handler is added for another
+            // element, add a matching dispatchButton call here or that handler will be
+            // silently dead for iCade/virtual-controller input.
             func dispatchButton(_ name: String, _ element: GCControllerButtonInput?, _ pressedNow: Bool) {
                 // `?? false` treats "no prior state" as "unpressed" so the first
                 // keyChangedHandler invocation doesn't spuriously dispatch `pressed: false`

@@ -91,7 +91,7 @@ struct TVMediaSidebarRail: View {
             }
             #if os(iOS)
             .onReceive(gamepadManager.eventPublisher) { event in
-                guard gamepadManager.isControllerConnected else { return }
+                guard gamepadManager.isNavigationInputAvailable else { return }
                 // Don't compete with retrowave alerts/popovers for controller
                 // input — when one is up it owns navigation. The previous code
                 // let A press while a popover was visible navigate the underlying

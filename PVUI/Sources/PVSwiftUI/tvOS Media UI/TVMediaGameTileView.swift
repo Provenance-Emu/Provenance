@@ -203,7 +203,7 @@ struct TVMediaGameTileView: View {
         }
         #if os(iOS)
         .onReceive(gamepadManager.eventPublisher) { event in
-            guard gamepadManager.isControllerConnected else { return }
+            guard gamepadManager.isNavigationInputAvailable else { return }
             guard isFocused else { return }
             if case .buttonPress(let isPressed) = event {
                 handleControllerButtonPress(isPressed: isPressed)

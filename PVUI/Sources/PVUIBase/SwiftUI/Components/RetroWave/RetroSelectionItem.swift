@@ -191,7 +191,7 @@ public struct RetroSelectionAlertView: View {
             #endif
             #if os(iOS)
             .onReceive(gamepadManager.eventPublisher) { event in
-                guard isPresented, gamepadManager.isControllerConnected else { return }
+                guard isPresented, gamepadManager.isNavigationInputAvailable else { return }
                 switch event {
                 case .verticalNavigation(let value, let isPressed):
                     guard isPressed else { return }

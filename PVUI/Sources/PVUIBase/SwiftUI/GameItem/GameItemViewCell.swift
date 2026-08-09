@@ -233,7 +233,7 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
                         radius: glowIntensity > 0 ? 10 : 0,
                         x: 0, y: 0)
             #if os(iOS)
-            .hoverEffect(.lift)
+                .hoverEffect(.lift)
             #endif
             #if !os(tvOS)
                 .onHover { hovering in

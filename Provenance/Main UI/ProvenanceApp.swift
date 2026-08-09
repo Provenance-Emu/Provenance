@@ -249,7 +249,7 @@ struct ProvenanceApp: App {
         .commands {
             CommandGroup(replacing: .appSettings) {
                 Button("Settings…") {
-                    NotificationCenter.default.post(name: NSNotification.Name("PVShowSettings"), object: nil)
+                    NotificationCenter.default.post(name: .pvShowSettings, object: nil)
                 }
                 .keyboardShortcut(",", modifiers: .command)
             }

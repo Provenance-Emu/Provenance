@@ -944,7 +944,7 @@ public struct RetroAlertStateView: View {
                 }
             }
             .onReceive(gamepadManager.eventPublisher) { event in
-                guard alertState.isPresented, gamepadManager.isControllerConnected else { return }
+                guard alertState.isPresented, gamepadManager.isNavigationInputAvailable else { return }
                 switch event {
                 case .verticalNavigation(let value, let isPressed):
                     guard isPressed else { return }

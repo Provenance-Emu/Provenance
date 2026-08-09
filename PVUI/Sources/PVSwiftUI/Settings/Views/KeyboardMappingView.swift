@@ -60,10 +60,10 @@ public struct KeyboardMappingView: View {
         // (handleKeyboardConnect reassigns `keyboardController` unconditionally). Either
         // event means any handler we saved before capture began is now stale; abort
         // instead of restoring it. See abortCaptureForHardwareChange for details.
-        .onReceive(NotificationCenter.default.publisher(for: .GCKeyboardDidDisconnect)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .GCKeyboardDidDisconnect).receive(on: DispatchQueue.main)) { _ in
             abortCaptureForHardwareChange()
         }
-        .onReceive(NotificationCenter.default.publisher(for: .GCKeyboardDidConnect)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .GCKeyboardDidConnect).receive(on: DispatchQueue.main)) { _ in
             abortCaptureForHardwareChange()
         }
     }
