@@ -57,7 +57,12 @@ public struct DeltaSkinButton: Identifiable, Codable, Equatable {
     /// Frame for the button (in relative 0-1 coordinates)
     public let frame: CGRect
 
-    /// Extended touch areas around the button
+    /// Extended touch area around the button, in the same unit (skin mapping-space points) as `frame`.
+    /// - Note: Each edge value is how far the *hit-testable* area extends BEYOND that edge of
+    ///   `frame` — this is an outward expansion amount, not a `UIEdgeInsets`-style inward content
+    ///   inset. e.g. `extendedEdges.left == 10` grows the tappable area 10pt to the left of
+    ///   `frame.minX`. Applied by `DeltaSkinView`'s hit-testing; falls back to a default margin
+    ///   when `nil`.
     public let extendedEdges: UIEdgeInsets?
 
     /// Optional per-button haptic feedback configuration
@@ -250,7 +255,8 @@ public struct DeltaSkinButtonGroup: Codable, Equatable {
     /// All button mappings in this group
     public let buttons: [DeltaSkinButton]
 
-    /// Extended touch areas for the entire group
+    /// Extended touch areas for the entire group. Same outward-expansion convention as
+    /// `DeltaSkinButton.extendedEdges`.
     public let extendedEdges: UIEdgeInsets?
 
     /// Whether buttons should be translucent
@@ -268,7 +274,8 @@ public struct DeltaSkinButtonMapping: Identifiable {
     /// Input identifiers associated with this button
     public let inputs: [String]
 
-    /// Extended edges for touch area
+    /// Extended edges for touch area. Same outward-expansion convention as
+    /// `DeltaSkinButton.extendedEdges`.
     public let extendedEdges: UIEdgeInsets?
 
     /// Creates a button mapping
