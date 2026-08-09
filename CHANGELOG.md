@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
      When a release ships, rename [Unreleased] to the version number and date,
      then add a fresh [Unreleased] section at the top. -->
 
-## [Unreleased] — 3.4.0 (in development, March 2026)
+## [Unreleased] — 3.4.0 (in development)
 
 ### Added
 - **Log Import** — the retrowave log viewer can now import a previously exported `.txt`/`.log` file or `.zip` bundle and display it in place of live logs, with a banner to return to live logs. (#3645)
