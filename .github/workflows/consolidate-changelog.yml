@@ -13,6 +13,10 @@ name: Consolidate Changelog Fragments
 # • Entries are sorted (newest PR first within each section), deduplicated.
 # • Multi-line entries (indented continuation) are preserved correctly.
 # • The script is idempotent: running twice produces the same result.
+#
+# The result is delivered as a pull request against develop, reusing a single
+# long-lived branch. develop is protected and github-actions[bot] is not in its
+# bypass allowances, so a direct push is not possible.
 
 on:
   pull_request:
@@ -25,7 +29,9 @@ on:
 
 permissions:
   contents: write
-  pull-requests: read
+  # write (not read) so the job can open the consolidation pull request —
+  # develop is protected and cannot be pushed to directly.
+  pull-requests: write
 
 jobs:
   consolidate:
@@ -269,6 +275,13 @@ jobs:
 
       - name: Commit consolidated changelog
         if: steps.check.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          # Single long-lived branch, reused every run, so repeated
+          # consolidations update one pull request instead of opening a new one
+          # after every merge to develop.
+          PR_BRANCH: chore/changelog-consolidation
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -283,25 +296,65 @@ jobs:
           fi
 
           # Build a compact summary of which PRs were absorbed
+          # `paste -sd ', '` treats ", " as a *cyclic* delimiter list and emits
+          # "#1,#2 #3,#4". Join on a single comma and space it afterwards. The
+          # explicit "-" is required by BSD paste and accepted by GNU, so this
+          # line behaves identically on a runner and on a maintainer's Mac.
           absorbed=$(git diff --cached --name-only \
             | grep '^\.changelog/' \
             | grep -v 'README' \
             | sed 's|\.changelog/||; s|\.md||' \
             | sort -n \
             | sed 's/^/#/' \
-            | paste -sd ', ')
+            | paste -sd ',' - \
+            | sed 's/,/, /g')
 
-          msg="chore(changelog): absorb fragments${absorbed:+ ($absorbed)}"
+          absorbed_count=$(git diff --cached --name-only \
+            | grep -c '^\.changelog/[^/]*\.md$' || true)
 
-          git commit -m "$(printf '%s\n\nCo-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>' "$msg")"
+          # Keep the subject short and put the PR list in the body. With the
+          # backlog that accumulated while this workflow could not push, the
+          # inline form reached 1701 characters — unusable as a subject line.
+          msg="chore(changelog): absorb ${absorbed_count} fragment(s)"
 
-          # Push with retry in case of a race with auto-rebase
-          for attempt in 1 2 3; do
-            git pull --rebase origin develop 2>/dev/null || true
-            if git push origin develop; then
-              echo "Pushed successfully."
-              break
+          git commit -m "$msg" \
+            -m "Absorbed: ${absorbed:-none}" \
+            -m "Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+
+          # develop is a protected branch ("Changes must be made through a pull
+          # request") and github-actions[bot] is NOT in its bypass allowances —
+          # only the user JoeMatt is. A direct `git push origin develop` can
+          # therefore never succeed here, which is why this workflow absorbed
+          # nothing for five months while reporting green: the old retry loop
+          # broke on success and fell through on exhaustion, so an exhausted
+          # loop was indistinguishable from a successful push.
+          #
+          # Route the result through a pull request instead, which is the only
+          # path into develop that exists.
+          git push --force origin "HEAD:refs/heads/${PR_BRANCH}" || {
+            echo "::error::Could not push the consolidated changelog to ${PR_BRANCH}."
+            exit 1
+          }
+          echo "Pushed consolidation to ${PR_BRANCH}."
+
+          existing=$(gh pr list --repo "$REPO" --head "$PR_BRANCH" --state open \
+            --json number --jq '.[0].number // empty')
+
+          if [ -n "$existing" ]; then
+            # The force-push above already updated the PR's head.
+            echo "Updated existing PR #${existing}."
+            echo "PR: $(gh pr view "$existing" --repo "$REPO" --json url --jq .url)"
+          else
+            if ! pr_url=$(gh pr create --repo "$REPO" \
+                  --base develop \
+                  --head "$PR_BRANCH" \
+                  --title "chore(changelog): absorb ${absorbed_count} pending fragment(s)" \
+                  --body "$(printf '%s\n\n%s\n\n%s' \
+                    "Absorbs \`.changelog/*.md\` fragments into \`CHANGELOG.md\`." \
+                    "Absorbed: ${absorbed:-none}" \
+                    "Opened automatically by [consolidate-changelog.yml](../actions/workflows/consolidate-changelog.yml). Safe to merge as-is; the consolidation script is idempotent.")"); then
+              echo "::error::Could not open the changelog consolidation pull request."
+              exit 1
             fi
-            echo "Push attempt $attempt failed, retrying..."
-            sleep $((attempt * 3))
-          done
+            echo "Opened $pr_url"
+          fi

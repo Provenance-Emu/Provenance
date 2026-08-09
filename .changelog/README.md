@@ -11,7 +11,11 @@ When a PR merges to `develop`, the `consolidate-changelog.yml` workflow:
 4. Inserts entries into the right section of `CHANGELOG.md`
 5. Sorts by PR number (newest first within each section), deduplicates
 6. Deletes the processed fragment files
-7. Commits the result directly to `develop`
+7. Opens (or updates) a pull request against `develop` with the result
+
+`develop` is a protected branch, so the consolidation lands through a normal
+pull request rather than a direct push. The workflow reuses one long-lived
+branch, so you will see a single open changelog PR rather than one per merge.
 
 ## File naming
 
