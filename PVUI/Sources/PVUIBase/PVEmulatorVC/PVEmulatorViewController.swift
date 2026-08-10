@@ -624,7 +624,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             || lower.contains("cannot open")
         let displayMessage: String
         if isBiosError {
-            displayMessage = "Missing system file. \(reason). Check the BIOS folder for this system."
+            let biosMessage = "Missing system file. \(reason). Check the BIOS folder for this system."
+#if os(iOS)
+            displayMessage = biosMessage + "\n\n" + BIOSGuideLink.messageHint
+#else
+            displayMessage = biosMessage
+#endif
         } else {
             displayMessage = "Failed to start: \(reason)"
         }
@@ -640,6 +645,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             let alert = UIAlertController(title: title,
                                           message: displayMessage,
                                           preferredStyle: .alert)
+#if os(iOS)
+            // Missing-BIOS messages name the exact files but give the user no way
+            // to act on that; the guide explains where to get and put them.
+            // Tapping it dismisses the alert, so it also returns to the library —
+            // otherwise the user comes back from Safari to a dead emulator screen.
+            if isBiosError {
+                alert.addAction(BIOSGuideLink.alertAction(then: {
+                    self.dismissAndCloseEmulator()
+                }))
+            }
+#endif
             alert.addAction(UIAlertAction(title: "Return to Library",
                                           style: .default,
                                           handler: { _ in

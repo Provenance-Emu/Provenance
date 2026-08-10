@@ -30,8 +30,6 @@ import PVAppIntents
 import FreemiumKit
 #endif
 
-private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
-
 /// Helper class to hold mutable state for the unified launch flow
 private final class LaunchFlowState: @unchecked Sendable {
     var hasResumed = false
@@ -122,12 +120,7 @@ public extension GameLaunchingViewController {
         let message = "\(system.shortName) requires BIOS files to run games. Ensure the following files are inside \(relativeBiosPath)\n\(missingFilesString)"
         let cancelAction = UIAlertAction(title: "Close", style: .destructive)
 #if os(iOS)
-        let guideAction = UIAlertAction(title: "Guide", style: .default, handler: { _ in
-            Task { @MainActor in
-                guard let url = URL(string: WIKI_BIOS_URL) else { return }
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            }
-        })
+        let guideAction = BIOSGuideLink.alertAction()
         displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [guideAction, cancelAction])
 #else
         displayAndLogError(withTitle: "Missing BIOS files", message: message, customActions: [cancelAction])

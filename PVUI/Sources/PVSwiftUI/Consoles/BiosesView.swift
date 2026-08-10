@@ -15,6 +15,9 @@ import PVUIBase
 struct BiosesView: View {
     @ObservedRealmObject var console: PVSystem
     @ObservedObject private var themeManager = ThemeManager.shared
+#if os(iOS)
+    @Environment(\.openURL) private var openURL
+#endif
 
     /// State to track if the BIOS section is expanded
     @State private var isExpanded: Bool = false
@@ -29,6 +32,14 @@ struct BiosesView: View {
     private enum Constants {
         static let tabHeight: CGFloat = 30
         static let dragThreshold: CGFloat = 50
+#if os(iOS)
+        /// Height of the "BIOS Guide" link row appended below the BIOS list.
+        /// Must be included in `calculateContentHeight()` or the container clips it.
+        static let guideRowHeight: CGFloat = 36
+#else
+        /// tvOS has no browser, so no guide row is rendered.
+        static let guideRowHeight: CGFloat = 0
+#endif
     }
 
     /// Only show view if there are BIOSes
@@ -163,9 +174,45 @@ struct BiosesView: View {
 
                 RetroDividerView()
             }
+
+#if os(iOS)
+            biosGuideLink
+#endif
         }
         .padding(.vertical, 8)
     }
+
+#if os(iOS)
+    /// Persistent link to the BIOS wiki page, for users who come looking here
+    /// *before* they ever hit a launch-time "missing BIOS" alert.
+    /// The enclosing panel's `.onTapGesture` only toggles expansion; a real
+    /// `Button` takes priority over it, so the link stays tappable.
+    private var biosGuideLink: some View {
+        Button {
+            openURL(BIOSGuideLink.url)
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "book.fill")
+                Text(BIOSGuideLink.actionTitle)
+                Image(systemName: "arrow.up.right.square")
+                    .font(.system(size: 10, weight: .semibold))
+            }
+            .font(.system(size: 12, weight: .bold))
+            .foregroundStyle(
+                LinearGradient(
+                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2)
+            .frame(maxWidth: .infinity)
+            .frame(height: Constants.guideRowHeight)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+#endif
 
     /// Calculate the height needed for the content based on number of BIOS entries
     private func calculateContentHeight() -> CGFloat {
@@ -176,9 +223,10 @@ struct BiosesView: View {
 
         /// Calculate total height based on number of BIOS entries
         /// Each entry has a row and a divider, plus one extra divider at the top
+        /// and (on iOS) the trailing "BIOS Guide" link row.
         return CGFloat(console.bioses.count) * rowHeight +
                CGFloat(console.bioses.count + 1) * dividerHeight +
-               padding
+               padding + Constants.guideRowHeight
     }
 }
 

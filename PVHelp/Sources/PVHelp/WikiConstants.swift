@@ -28,5 +28,8 @@ public enum WikiConstants {
         public static let controllersGuide = "info/controllers-and-controls/README.md"
         public static let cheatsGuide = "info/cheats.md"
         public static let faq = "faqs.md"
+        /// Canonical "what BIOS files do I need and where do they go" guide.
+        /// Referenced by every surface that reports missing BIOS files.
+        public static let biosRequirements = "installation-and-usage/bios-requirements.md"
     }
 }
