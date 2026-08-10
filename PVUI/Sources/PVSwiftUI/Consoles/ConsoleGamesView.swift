@@ -89,6 +89,13 @@ struct ConsoleGamesView: SwiftUI.View {
     let isActiveTab: Bool
 
 #if os(iOS)
+    /// `isActiveTab` mirrored into `@State`.
+    ///
+    /// The Combine sink captures a *copy* of this `View` struct, so reading the stored
+    /// `let isActiveTab` from inside it would return whatever it was when the
+    /// subscription was created. `@State` is reference-backed, so reading through this
+    /// box always sees the live value.
+    @State private var isActiveTabState: Bool = false
     /// Subscription to `GamepadManager`'s unified gamepad + keyboard event stream.
     @State private var gamepadCancellable: AnyCancellable?
     /// Timestamp of the current confirm-button press, used to distinguish a tap
@@ -962,16 +969,22 @@ struct ConsoleGamesView: SwiftUI.View {
                 /// Keyboard / controller navigation of the library grid. iOS-only —
                 /// tvOS uses the system focus engine.
                 .onAppear {
-                    if isActiveTab { setupGamepadHandling() }
+                    /// Subscribe unconditionally and let `shouldHandleNavigationEvents`
+                    /// filter on `isActiveTabState`. Subscribing only when active would
+                    /// leave the tab permanently dead if `onAppear` happened to run
+                    /// before `delegate.selectedTab` settled and `isActiveTab` then
+                    /// never *changed* to fire `onChange`.
+                    isActiveTabState = isActiveTab
+                    setupGamepadHandling()
                 }
                 .onDisappear { tearDownGamepadHandling() }
                 .onChange(of: isActiveTab) { nowActive in
-                    if nowActive {
-                        setupGamepadHandling()
-                    } else {
-                        /// Swiping to another console tab must not leave a subscription,
-                        /// a pending hold timer, or a stale focus ring behind.
-                        tearDownGamepadHandling()
+                    isActiveTabState = nowActive
+                    if !nowActive {
+                        /// Swiping to another console tab must not leave a pending hold
+                        /// timer or a stale focus ring behind.
+                        cancelHoldMenuTimer()
+                        holdPressStart = nil
                         clearNavigationFocus()
                     }
                 }
@@ -1296,12 +1309,10 @@ struct ConsoleGamesView: SwiftUI.View {
 
     /// Whether this instance should act on an incoming navigation event.
     ///
-    /// Deliberately does *not* consult `isActiveTab`: the Combine sink captures a copy
-    /// of this `View` struct, and `isActiveTab` is a plain stored `let`, so reading it
-    /// here would return whatever it was when the subscription was created. Tab activity
-    /// is handled by subscribing/unsubscribing instead (see `onChange(of: isActiveTab)`),
-    /// which always runs against a freshly-built view value.
+    /// Reads `isActiveTabState` rather than the stored `isActiveTab` — see that
+    /// property for why the captured struct copy cannot be trusted here.
     private var shouldHandleNavigationEvents: Bool {
+        guard isActiveTabState else { return false }
         guard GamepadManager.shared.isNavigationInputAvailable else { return false }
         /// Don't consume input while the side menu or a full-screen retrowave alert
         /// (core picker, save-state picker, …) is presented above the library.
