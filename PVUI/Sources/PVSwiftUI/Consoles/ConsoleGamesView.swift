@@ -335,6 +335,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
                 /// Add padding at bottom to account for BiosesView if needed
                 .padding(.bottom, gamesViewModel.hasBioses ? 120 : 44)
+                .desktopLibraryContentColumn()
                 .onChange(of: gamesViewModel.focusedSection) { newSection in
                     if let section = newSection {
                         withAnimation {
@@ -350,6 +351,7 @@ struct ConsoleGamesView: SwiftUI.View {
                 if !gamesViewModel.searchText.isEmpty {
                     VStack {
                         searchResultsView()
+                            .desktopLibraryContentColumn()
                     }
                     .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
                 }
@@ -427,28 +429,32 @@ struct ConsoleGamesView: SwiftUI.View {
 
                 VStack(spacing: 4) {
 
-                    displayOptionsView()
-                        .allowsHitTesting(true)
+                    // Non-scrolling header bands, grouped so one `desktopLibraryContentColumn()`
+                    // clamps them all. The group keeps the outer stack's 4pt spacing inside and
+                    // out, so it is layout-identical off-Mac, where the modifier is identity.
+                    VStack(spacing: 4) {
+                        displayOptionsView()
+                            .allowsHitTesting(true)
 
-                    importProgressView
+                        importProgressView
 
-                    unsupportedSystemBanner
+                        unsupportedSystemBanner
 
-                    contentlessSetupGuide
+                        contentlessSetupGuide
 
-                    ConsoleSystemInstructionView(systemIdentifier: console.identifier)
+                        ConsoleSystemInstructionView(systemIdentifier: console.identifier)
 
-                    cloudSyncBanner
+                        cloudSyncBanner
+                    }
+                    .desktopLibraryContentColumn()
 
+                    // NOT clamped: the scroll view stays full-window so the pointer can scroll
+                    // from the gutters. Its content is clamped inside `gamesScrollView` instead.
                     gamesScrollView
 
                     biosesView
+                        .desktopLibraryContentColumn()
                 }
-                // Identity off-Mac. On a desktop window it clamps + centers the whole console
-                // page (toolbar, banners, shelves, grid, BIOS drawer) into one content column
-                // so the sections stop stretching edge to edge. The RetroWave background is a
-                // sibling in the ZStack, so it stays full-bleed.
-                .desktopLibraryContentColumn()
                 // Normalize-Titles preview sheet
                 .sheet(isPresented: $gamesViewModel.showNormalizeTitlePreview) {
                     normalizeTitleSheet
