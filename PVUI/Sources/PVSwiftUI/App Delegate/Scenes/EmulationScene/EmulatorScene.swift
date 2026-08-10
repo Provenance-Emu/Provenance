@@ -641,7 +641,7 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
         switch error {
         case .missingBIOSes(let missingBIOSes):
             let biosList = missingBIOSes.joined(separator: ", ")
-            let message = """
+            let baseMessage = """
             This game requires BIOS files that are not currently installed:
 
             \(biosList)
@@ -652,9 +652,27 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
             3. Place BIOS files in the BIOS folder
             4. Restart Provenance to detect the new BIOS files
 
-            Note: BIOS files are copyrighted firmware. You must legally obtain them from hardware you own. Check the Provenance wiki for more information.
+            Note: BIOS files are copyrighted firmware. You must legally obtain them from hardware you own.
             """
-            displayAndLogError(withTitle: "Missing BIOS Files", message: message, customActions: nil)
+#if os(iOS)
+            // Passing `customActions` suppresses the auto-added OK button, so the
+            // dismiss action must perform the teardown itself — otherwise the core,
+            // audio, timers and child VC leak (see `displayAndLogError` below).
+            let closeAction = UIAlertAction(title: "Close", style: .destructive, handler: { [weak self] _ in
+                ILOG("EmulatorContainerViewController: User dismissed missing BIOS alert, returning to main scene")
+                self?.tearDownEmulatorAndClose(optionallySave: false)
+            })
+            // The guide action dismisses the alert too, so it performs the same
+            // teardown rather than stranding the user on a dead emulator screen.
+            let guideAction = BIOSGuideLink.alertAction(then: { [weak self] in
+                self?.tearDownEmulatorAndClose(optionallySave: false)
+            })
+            displayAndLogError(withTitle: "Missing BIOS Files",
+                               message: baseMessage + "\n\n" + BIOSGuideLink.messageHint,
+                               customActions: [guideAction, closeAction])
+#else
+            displayAndLogError(withTitle: "Missing BIOS Files", message: baseMessage, customActions: nil)
+#endif
         case .systemNotFound:
             displayAndLogError(
                 withTitle: "System Not Found",

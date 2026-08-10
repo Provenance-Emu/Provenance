@@ -493,6 +493,12 @@ public class SceneCoordinator: ObservableObject {
             // Show error and stay in main scene - don't launch emulator
             var errorTitle = "Cannot Launch Game"
             var errorMessage = ""
+#if os(iOS)
+            /// Populated only for the missing-BIOS case, which is the one error here
+            /// the user can actually fix by following a guide.
+            var guideButtonTitle: String?
+            var guideAction: (() -> Void)?
+#endif
 
             if !validation.hasAvailableCores {
                 errorTitle = "No Compatible Core"
@@ -510,10 +516,22 @@ public class SceneCoordinator: ObservableObject {
                 let rootDirName = RelativeRoot.platformDefault == .caches ? "Caches" : "Documents"
                 let biosPath = "\(rootDirName)/BIOS/\(system.identifier)/"
                 errorMessage = "\(system.name) requires BIOS files to run games.\n\nMissing files:\n• \(missingFiles)\n\nPlease add these files to:\n\(biosPath)"
+#if os(iOS)
+                errorMessage += "\n\n\(BIOSGuideLink.messageHint)"
+                guideButtonTitle = BIOSGuideLink.actionTitle
+                guideAction = { Task { @MainActor in BIOSGuideLink.open() } }
+#endif
             }
 
             WLOG("SceneCoordinator: Cannot launch game - \(errorTitle)")
+#if os(iOS)
+            showGameLaunchError(title: errorTitle,
+                                message: errorMessage,
+                                actionButtonTitle: guideButtonTitle,
+                                action: guideAction)
+#else
             showGameLaunchError(title: errorTitle, message: errorMessage)
+#endif
             return
         }
 
@@ -1253,16 +1271,39 @@ public class SceneCoordinator: ObservableObject {
         cont.resume()
     }
 
-    /// Show error alert for game launch failures and return to main scene
-    private func showGameLaunchError(title: String, message: String) {
+    /// Show error alert for game launch failures and return to main scene.
+    ///
+    /// `actionButtonTitle`/`action` let a caller attach one recovery affordance
+    /// (e.g. "BIOS Guide") without every error path having to know about the
+    /// alert plumbing.
+    private func showGameLaunchError(title: String,
+                                     message: String,
+                                     actionButtonTitle: String? = nil,
+                                     action: (() -> Void)? = nil) {
         // Ensure we're on the main scene
         openMainScene()
 
         // Show RetroWave styled alert
+        guard let actionButtonTitle else {
+            alertState.show(
+                title: title,
+                message: message,
+                type: .error
+            )
+            return
+        }
+
+        // The RetroWave alert's *secondary* slot is its cancel/back slot — gamepad B
+        // (`dismissFromCancel`) and tvOS Menu (`onExitCommand`) both invoke
+        // `onSecondaryAction`. So the actionable button has to be primary, with the
+        // plain dismiss as secondary; swapping them would fire the action on cancel.
         alertState.show(
             title: title,
             message: message,
-            type: .error
+            type: .error,
+            primaryButtonTitle: actionButtonTitle,
+            primaryAction: action,
+            secondaryButtonTitle: "Close"
         )
     }
 
