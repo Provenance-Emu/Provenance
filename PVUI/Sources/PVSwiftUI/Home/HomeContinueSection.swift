@@ -214,8 +214,26 @@ class ContinuesSectionViewModel: ObservableObject {
     @Published var currentPage: Int = 0
     @Published var selectedItemId: String?
     @Published var hasFocus: Bool = false
-    @Published var isControllerConnected: Bool = GamepadManager.shared.isControllerConnected
-    
+    /// Mirrors `GamepadManager.isNavigationInputAvailable`, so the Continue banner
+    /// participates in keyboard navigation on desktop (Mac "Designed for iPad" has no
+    /// connected `GCController`, only a keyboard) as well as with a real gamepad.
+    ///
+    /// Previously this was a one-shot snapshot of `isControllerConnected` taken at view
+    /// model init, so it never became `true` for a controller connected after launch
+    /// either. It is now kept in sync via Combine.
+    @Published var isNavigationInputAvailable: Bool = GamepadManager.shared.isNavigationInputAvailable
+
+    private var navigationAvailabilityCancellable: AnyCancellable?
+
+    init() {
+        navigationAvailabilityCancellable = GamepadManager.shared.$isNavigationInputAvailable
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] available in
+                guard let self, self.isNavigationInputAvailable != available else { return }
+                self.isNavigationInputAvailable = available
+            }
+    }
+
     // Reduce @Published properties to minimize re-renders
     var currentItem: ContinueItemModel?
     var totalSaveStatesCount: Int = 0
@@ -740,7 +758,7 @@ struct HomeContinueSection: SwiftUI.View {
             syncSelectionState()
         }
         .onChange(of: viewModel.currentPage) { newPage in
-            if viewModel.isControllerConnected {
+            if viewModel.isNavigationInputAvailable {
                 handlePageChange(newPage)
             }
             syncSelectionState()
@@ -871,7 +889,7 @@ struct HomeContinueSection: SwiftUI.View {
             .sink { event in
                 // Only handle events when a controller is actually connected.
                 // Handling events while disconnected can create a hot loop of focus/page updates on iOS.
-                guard viewModel.isControllerConnected else { return }
+                guard viewModel.isNavigationInputAvailable else { return }
                 // Don't consume A / d-pad while a full-screen retrowave alert
                 // (core picker, save-state picker, etc.) is presented above
                 // the home view.
@@ -1058,7 +1076,7 @@ private struct SaveStatesGridView: View {
                             }
                         }
                     },
-                    isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isControllerConnected,
+                    isFocused: (parentFocusedSection == .recentSaveStates && parentFocusedItem == saveState.id) && viewModel.isNavigationInputAvailable,
                     rootDelegate: rootDelegate
                 )
                 .id(saveState.id) // Stable identity for better performance

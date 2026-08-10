@@ -8,6 +8,20 @@
 /// Gamepad navigation
 extension ConsoleGamesView {
 
+    /// Number of columns the *drawn* all-games section actually uses.
+    ///
+    /// Derived from the same `itemsPerRow` value that builds `columns` for the
+    /// `LazyVGrid`, so vertical navigation can never desync from the rendered grid.
+    /// Two adjustments on top of it:
+    /// * list mode (`viewGamesAsGrid == false`) renders one item per row, so up/down
+    ///   must step by 1 rather than by the grid scale;
+    /// * `itemsPerRow` can return `0` on the simulator branch, and the navigation
+    ///   math uses `%` / integer division, so it is clamped to at least 1.
+    private var navigationColumnCount: Int {
+        guard viewModel.viewGamesAsGrid else { return 1 }
+        return max(1, itemsPerRow)
+    }
+
     private var recentSaveStateIdsForNavigation: [String] {
         let realm = RomDatabase.sharedInstance.realm
         let results = realm.objects(PVSaveState.self)
@@ -23,6 +37,24 @@ extension ConsoleGamesView {
             (showRecentGames && !recentlyPlayedModels.isEmpty) ? .recentlyPlayedGames : nil,
             !allGamesModels.isEmpty ? .allGames : nil
         ].compactMap { $0 }
+    }
+
+    /// The `GameCellModel` currently focused, if the focused section is a game section.
+    /// `nil` for `.recentSaveStates` (those are save states, not games) and `.mostPlayed`
+    /// (not rendered by this view).
+    internal var focusedGameModel: GameCellModel? {
+        guard let section = gamesViewModel.focusedSection,
+              let itemId = gamesViewModel.focusedItemInSection else { return nil }
+        switch section {
+        case .favorites:
+            return favoritesModels.first(where: { $0.id == itemId })
+        case .recentlyPlayedGames:
+            return recentlyPlayedModels.first(where: { $0.id == itemId })
+        case .allGames:
+            return allGamesModels.first(where: { $0.id == itemId })
+        case .recentSaveStates, .mostPlayed:
+            return nil
+        }
     }
 
     internal func handleButtonPress() {
@@ -42,36 +74,59 @@ extension ConsoleGamesView {
                     SceneCoordinator.shared.launchSaveState(saveState.freeze(), core: saveState.core?.freeze())
                 }
             }
-        case .favorites:
-            if let model = favoritesModels.first(where: { $0.id == itemId }) {
-                launchGame(md5: model.md5)
-            }
-        case .recentlyPlayedGames:
-            if let model = recentlyPlayedModels.first(where: { $0.id == itemId }) {
-                launchGame(md5: model.md5)
-            }
-        case .allGames:
-            if let model = allGamesModels.first(where: { $0.id == itemId }) {
-                launchGame(md5: model.md5)
+        case .favorites, .recentlyPlayedGames, .allGames:
+            /// Route through the exact same closure the tap/click path uses so that
+            /// multi-select mode toggles selection instead of launching the game.
+            if let model = focusedGameModel {
+                gameAction(for: model.md5)()
             }
         case .mostPlayed:
             break
         }
     }
 
+    /// Escape / B — step out of grid navigation entirely so the focus ring clears.
+    internal func clearNavigationFocus() {
+        guard gamesViewModel.focusedSection != nil || gamesViewModel.focusedItemInSection != nil else { return }
+        Task {
+            await gamesViewModel.updateFocus(section: nil, item: nil)
+        }
+    }
+
+    /// Place focus on the first item of the first available section. Used when a
+    /// navigation key arrives before anything is focused.
+    internal func seedInitialFocusIfNeeded() {
+        guard gamesViewModel.focusedSection == nil else { return }
+        guard let firstSection = availableSections.first else { return }
+        Task {
+            await gamesViewModel.updateFocus(
+                section: firstSection,
+                item: getFirstItemInSection(firstSection)
+            )
+        }
+    }
+
     internal func handleVerticalNavigation(_ yValue: Float) {
         guard let currentSection = gamesViewModel.focusedSection else {
-            // No section focused, select first section and item
-            Task {
-                await gamesViewModel.updateFocus(
-                    section: availableSections.first,
-                    item: getFirstItemInSection(availableSections.first!)
-                )
-            }
+            // No section focused, select first section and item.
+            // (`seedInitialFocusIfNeeded` no-ops on an empty library rather than
+            // force-unwrapping `availableSections.first`.)
+            seedInitialFocusIfNeeded()
             return
         }
 
-        if isMovingToNewSection(currentSection: currentSection, direction: yValue) {
+        /// `.allGames` is the only multi-row section, so it must get first refusal on
+        /// vertical input: `handleVerticalNavigationWithinSection` moves a row at a time
+        /// and *already* hands off to the adjacent section once it runs out of rows.
+        ///
+        /// Without this exclusion `isMovingToNewSection` reported `true` for every Up
+        /// press in the grid (there is always a shelf above it), so Up jumped straight
+        /// out of the grid instead of moving up one row — Down worked because
+        /// `.allGames` is last and the same check returned `false`. That asymmetry made
+        /// multi-row grid navigation impossible whenever any shelf was visible.
+        let sectionOwnsVerticalMovement = (currentSection == .allGames)
+
+        if !sectionOwnsVerticalMovement, isMovingToNewSection(currentSection: currentSection, direction: yValue) {
             // Moving to a new section
             if let nextSection = getNextSection(from: currentSection, direction: yValue) {
                 DLOG("Moving from section \(currentSection) to \(nextSection)")
@@ -101,7 +156,10 @@ extension ConsoleGamesView {
     }
 
     internal func handleHorizontalNavigation(_ xValue: Float) {
-        guard let section = gamesViewModel.focusedSection else { return }
+        guard let section = gamesViewModel.focusedSection else {
+            seedInitialFocusIfNeeded()
+            return
+        }
 
         if xValue < 0 && isOnFirstItemInSection(section) {
             // At start of section, try to move to previous section
@@ -193,10 +251,11 @@ extension ConsoleGamesView {
     private func handleVerticalNavigationWithinSection(_ section: HomeSectionType, direction: Float) {
         switch section {
         case .allGames:
+            let columnCount = navigationColumnCount
             if let currentIndex = allGamesModels.firstIndex(where: { $0.id == gamesViewModel.focusedItemInSection }) {
                 if direction > 0 {
                     // Moving up
-                    let newIndex = currentIndex - Int(gameLibraryScale)
+                    let newIndex = currentIndex - columnCount
                     if newIndex >= 0 {
                         Task {
                             await gamesViewModel.updateFocus(section: section, item: allGamesModels[newIndex].id)
@@ -206,9 +265,9 @@ extension ConsoleGamesView {
                         if let nextSection = getNextSection(from: section, direction: direction) {
                             if nextSection == .allGames {
                                 // If next section is the same section, wrap to bottom
-                                let totalRows = (allGamesModels.count + Int(gameLibraryScale) - 1) / Int(gameLibraryScale)
-                                let currentColumn = currentIndex % Int(gameLibraryScale)
-                                let lastRowIndex = min(allGamesModels.count - 1, ((totalRows - 1) * Int(gameLibraryScale)) + currentColumn)
+                                let totalRows = (allGamesModels.count + columnCount - 1) / columnCount
+                                let currentColumn = currentIndex % columnCount
+                                let lastRowIndex = min(allGamesModels.count - 1, ((totalRows - 1) * columnCount) + currentColumn)
                                 Task {
                                     await gamesViewModel.updateFocus(section: section, item: allGamesModels[lastRowIndex].id)
                                 }
@@ -225,7 +284,7 @@ extension ConsoleGamesView {
                     }
                 } else {
                     // Moving down
-                    let newIndex = currentIndex + Int(gameLibraryScale)
+                    let newIndex = currentIndex + columnCount
                     if newIndex < allGamesModels.count {
                         Task {
                             await gamesViewModel.updateFocus(section: section, item: allGamesModels[newIndex].id)
@@ -238,7 +297,7 @@ extension ConsoleGamesView {
                                 Task {
                                     await gamesViewModel.updateFocus(
                                         section: section,
-                                        item: allGamesModels[currentIndex % Int(gameLibraryScale)].id
+                                        item: allGamesModels[currentIndex % columnCount].id
                                     )
                                 }
                             } else {

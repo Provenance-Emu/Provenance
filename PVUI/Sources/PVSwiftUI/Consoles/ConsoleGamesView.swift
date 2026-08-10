@@ -40,6 +40,32 @@ struct GameSkinSelectionState: Identifiable {
     }
 }
 
+#if os(iOS)
+/// Target of the keyboard/controller "hold for menu" action — the focused game whose
+/// context menu should be surfaced in a sheet.
+struct GameKeyboardMenuState: Identifiable {
+    let id: String
+    let game: PVGame
+
+    init(game: PVGame) {
+        self.id = game.id
+        self.game = game
+    }
+}
+
+/// Tunables for keyboard / controller driven navigation of the game library.
+enum ConsoleGamesKeyboardNavigation {
+    /// Duration the confirm button (Enter / Space / gamepad A) must be held before the
+    /// context menu is surfaced instead of the game being launched. Matches
+    /// `TVMediaGameTileView.holdMenuThreshold` so both grids feel identical.
+    static let holdMenuThreshold: TimeInterval = 0.5
+
+    static var holdMenuThresholdNanoseconds: UInt64 {
+        UInt64(holdMenuThreshold * 1_000_000_000)
+    }
+}
+#endif
+
 struct ConsoleGamesView: SwiftUI.View {
 
     @StateObject internal var gamesViewModel: ConsoleGamesViewModel
@@ -55,6 +81,24 @@ struct ConsoleGamesView: SwiftUI.View {
     @Default(.showSearchbar) var showSearchbar: Bool
     @Default(.unsupportedCores) var unsupportedCores: Bool
     @Default(.iCloudSync) var iCloudSyncEnabled: Bool
+
+    /// `true` when this console's tab is the one the user is actually looking at.
+    /// `TabView(.page)` keeps neighbouring tabs alive, so several `ConsoleGamesView`
+    /// instances are subscribed to the gamepad/keyboard event stream at once — without
+    /// this gate every arrow key would move focus in three grids simultaneously.
+    let isActiveTab: Bool
+
+#if os(iOS)
+    /// Subscription to `GamepadManager`'s unified gamepad + keyboard event stream.
+    @State private var gamepadCancellable: AnyCancellable?
+    /// Timestamp of the current confirm-button press, used to distinguish a tap
+    /// (launch) from a hold (context menu).
+    @State private var holdPressStart: Date?
+    /// Pending "hold long enough and the menu opens" task.
+    @State private var holdMenuTask: Task<Void, Never>?
+    /// Focused game whose context menu is being shown via the hold gesture.
+    @State private var keyboardMenuState: GameKeyboardMenuState?
+#endif
 
     // Modal state for log viewer and system status
     @State private var showLogViewer = false
@@ -81,6 +125,7 @@ struct ConsoleGamesView: SwiftUI.View {
         console: PVSystem,
         viewModel: PVRootViewModel,
         rootDelegate: PVRootDelegate? = nil,
+        isActiveTab: Bool = true,
         showGameInfo: @escaping (String) -> Void
     ) {
         self.gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
@@ -88,6 +133,7 @@ struct ConsoleGamesView: SwiftUI.View {
         self.console = console
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
+        self.isActiveTab = isActiveTab
         self.showGameInfo = showGameInfo
 
         // Only observe save-states for the recent-saves badge; everything else is
@@ -912,6 +958,33 @@ struct ConsoleGamesView: SwiftUI.View {
                 .onChange(of: viewModel.sortGamesAscending) { newValue in
                     gamesViewModel.sortAscending = newValue
                 }
+#if os(iOS)
+                /// Keyboard / controller navigation of the library grid. iOS-only —
+                /// tvOS uses the system focus engine.
+                .onAppear {
+                    if isActiveTab { setupGamepadHandling() }
+                }
+                .onDisappear { tearDownGamepadHandling() }
+                .onChange(of: isActiveTab) { nowActive in
+                    if nowActive {
+                        setupGamepadHandling()
+                    } else {
+                        /// Swiping to another console tab must not leave a subscription,
+                        /// a pending hold timer, or a stale focus ring behind.
+                        tearDownGamepadHandling()
+                        clearNavigationFocus()
+                    }
+                }
+                .sheet(item: $keyboardMenuState) { state in
+                    TVMediaContextMenuSheet(title: state.game.title) {
+                        GameContextMenu(
+                            game: state.game,
+                            rootDelegate: rootDelegate,
+                            contextMenuDelegate: self
+                        )
+                    }
+                }
+#endif
 
             // Multi-select batch-action toolbar — overlays at the bottom in select mode
             multiSelectToolbar
@@ -1174,18 +1247,121 @@ struct ConsoleGamesView: SwiftUI.View {
         }
     }
 
-    private func showOptionsMenu(for gameId: String) {
-        let realm = try! Realm()
-        // Implement context menu showing logic here
-        // This would show the same menu as the long-press context menu
-        if let game = realm.objects(PVGame.self).filter("id == %@", gameId).first {
-            GameContextMenu(
-                game: game,
-                rootDelegate: rootDelegate,
-                contextMenuDelegate: self
-            )
+#if os(iOS)
+    // MARK: - Keyboard / Controller Navigation
+    //
+    // tvOS is deliberately excluded from this whole block: the system focus engine
+    // already owns focus there (`GameItemView` uses `.buttonStyle(.card)` and the
+    // native focus effects), and running a second, parallel focus model on top of it
+    // would fight the engine. Everything below is iOS-only, and additionally gated on
+    // `GamepadManager.isNavigationInputAvailable` so touch-only iPhone/iPad users never
+    // see a focus ring or have keys intercepted.
+
+    /// Subscribe to the unified gamepad + keyboard event stream.
+    ///
+    /// `GamepadManager` already translates hardware-keyboard input into the same
+    /// `GamepadEvent`s a controller emits (arrow keys → d-pad, Enter/Space → A,
+    /// Esc/F → B — see `KeyboardControllerMap`), so wiring the existing navigation
+    /// handlers to this publisher is all that keyboard support requires. Before this,
+    /// `ConsoleGamesView+GamepadNavigation.swift` existed but nothing ever called it.
+    private func setupGamepadHandling() {
+        gamepadCancellable?.cancel()
+        gamepadCancellable = GamepadManager.shared.eventPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { event in
+                guard shouldHandleNavigationEvents else { return }
+
+                switch event {
+                case .buttonPress(let isPressed):
+                    handleConfirmButton(isPressed: isPressed)
+                case .buttonB(let isPressed):
+                    /// Escape / B steps out of grid navigation.
+                    if isPressed { clearNavigationFocus() }
+                case .verticalNavigation(let value, let isPressed):
+                    if isPressed { handleVerticalNavigation(value) }
+                case .horizontalNavigation(let value, let isPressed):
+                    if isPressed, !continueSectionOwnsInput { handleHorizontalNavigation(value) }
+                default:
+                    break
+                }
+            }
+    }
+
+    private func tearDownGamepadHandling() {
+        gamepadCancellable?.cancel()
+        gamepadCancellable = nil
+        cancelHoldMenuTimer()
+        holdPressStart = nil
+    }
+
+    /// Whether this instance should act on an incoming navigation event.
+    ///
+    /// Deliberately does *not* consult `isActiveTab`: the Combine sink captures a copy
+    /// of this `View` struct, and `isActiveTab` is a plain stored `let`, so reading it
+    /// here would return whatever it was when the subscription was created. Tab activity
+    /// is handled by subscribing/unsubscribing instead (see `onChange(of: isActiveTab)`),
+    /// which always runs against a freshly-built view value.
+    private var shouldHandleNavigationEvents: Bool {
+        guard GamepadManager.shared.isNavigationInputAvailable else { return false }
+        /// Don't consume input while the side menu or a full-screen retrowave alert
+        /// (core picker, save-state picker, …) is presented above the library.
+        guard !viewModel.isMenuVisible else { return false }
+        guard !GamepadManager.shared.isModalAlertPresented else { return false }
+        /// Any sheet we own is modal over the grid.
+        guard keyboardMenuState == nil else { return false }
+        return true
+    }
+
+    /// `HomeContinueSection` owns confirm/left-right for the Continue-Playing banner
+    /// (it also drives its own paging). Let it handle those so a single key press
+    /// doesn't advance the carousel twice or launch a save state twice.
+    private var continueSectionOwnsInput: Bool {
+        gamesViewModel.focusedSection == .recentSaveStates && showRecentSaveStates && hasRecentSaveStates
+    }
+
+    /// Tap vs hold on the confirm button: a short press launches (or toggles selection
+    /// in multi-select mode) via the same action the tap/click path uses; holding past
+    /// ``ConsoleGamesKeyboardNavigation/holdMenuThreshold`` opens the context menu.
+    private func handleConfirmButton(isPressed: Bool) {
+        guard !continueSectionOwnsInput else { return }
+
+        if isPressed {
+            holdPressStart = Date()
+            cancelHoldMenuTimer()
+            guard let model = focusedGameModel else { return }
+            holdMenuTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: ConsoleGamesKeyboardNavigation.holdMenuThresholdNanoseconds)
+                guard !Task.isCancelled, holdPressStart != nil else { return }
+                holdPressStart = nil
+                showOptionsMenu(for: model)
+            }
+        } else {
+            cancelHoldMenuTimer()
+            guard let start = holdPressStart else { return }
+            holdPressStart = nil
+            if Date().timeIntervalSince(start) < ConsoleGamesKeyboardNavigation.holdMenuThreshold {
+                handleButtonPress()
+            }
         }
     }
+
+    private func cancelHoldMenuTimer() {
+        holdMenuTask?.cancel()
+        holdMenuTask = nil
+    }
+
+    /// Surface the same actions as the long-press / right-click `contextMenu` for
+    /// `model`.
+    ///
+    /// SwiftUI has no API to open a `contextMenu` programmatically on iOS, so the
+    /// honest equivalent is to render the identical `GameContextMenu` content inside a
+    /// sheet — the approach already used for hold-A on the TVMedia grid (see
+    /// `TVMediaContextMenuSheet`, which this reuses verbatim).
+    private func showOptionsMenu(for model: GameCellModel) {
+        guard let game = liveGame(for: model), !game.isInvalidated else { return }
+        keyboardMenuState = GameKeyboardMenuState(game: game)
+    }
+#endif
 
     @ViewBuilder
     private func makeGameMoreInfoView(for game: PVGame) -> some View {

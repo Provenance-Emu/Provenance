@@ -396,6 +396,10 @@ struct ConsolesWrapperView: SwiftUI.View {
                         console: liveConsole,
                         viewModel: viewModel,
                         rootDelegate: rootDelegate,
+                        /// `TabView(.page)` keeps neighbouring tabs alive and subscribed
+                        /// to the gamepad/keyboard stream — tell each instance whether it
+                        /// is the one on screen so only it consumes navigation input.
+                        isActiveTab: delegate.selectedTab == console.identifier,
                         showGameInfo: showGameInfo
                     )
                     .id(console.identifier) // Keep ConsoleGamesView instance stable

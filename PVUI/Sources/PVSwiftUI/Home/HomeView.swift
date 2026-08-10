@@ -880,8 +880,11 @@ struct HomeView: SwiftUI.View {
            let currentIndex = items.firstIndex(of: currentItem) {
 
             if currentSection == .allGames {
-                // Grid navigation
-                let itemsPerRow = 4
+                // Grid navigation. Derive the step from the same `itemsPerRow` the
+                // `LazyVGrid` in `showGamesGrid` uses — a hardcoded guess desyncs focus
+                // from the drawn grid the moment the user changes the library zoom.
+                // In list mode there is exactly one item per row.
+                let itemsPerRow = viewModel.viewGamesAsGrid ? self.itemsPerRow : 1
                 if yValue > 0 { // Moving up
                     let newIndex = currentIndex - itemsPerRow
                     if newIndex >= 0 {
