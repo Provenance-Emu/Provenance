@@ -444,6 +444,11 @@ struct ConsoleGamesView: SwiftUI.View {
 
                     biosesView
                 }
+                // Identity off-Mac. On a desktop window it clamps + centers the whole console
+                // page (toolbar, banners, shelves, grid, BIOS drawer) into one content column
+                // so the sections stop stretching edge to edge. The RetroWave background is a
+                // sibling in the ZStack, so it stays full-bleed.
+                .desktopLibraryContentColumn()
                 // Normalize-Titles preview sheet
                 .sheet(isPresented: $gamesViewModel.showNormalizeTitlePreview) {
                     normalizeTitleSheet
