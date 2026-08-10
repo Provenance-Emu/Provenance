@@ -81,6 +81,23 @@ struct GamesDisplayOptionsView: SwiftUI.View {
         themeManager.currentPalette.defaultTintColor.swiftUIColor ?? .retroCyan
     }
 
+    /// Ceiling for the control strip's height.
+    ///
+    /// On touch the strip is pinned to the icon height, which is right for a phone-width
+    /// toolbar. In a desktop window that same 22pt strip reads as a thin empty band, so it
+    /// relaxes to `DesktopLibraryMetrics.toolbarMinHeight`. Runtime-gated: iPhone / iPad /
+    /// tvOS keep the exact previous height.
+    private var stripMaxHeight: CGFloat {
+        DesktopLibraryMetrics.isDesktop ? DesktopLibraryMetrics.toolbarMinHeight : iconSize
+    }
+
+    /// Floor for the control strip's height, so the desktop strip actually occupies its
+    /// taller row instead of collapsing back to the icons' intrinsic height.
+    /// `nil` on touch, which is exactly the previous (unconstrained-minimum) behaviour.
+    private var stripMinHeight: CGFloat? {
+        DesktopLibraryMetrics.isDesktop ? DesktopLibraryMetrics.toolbarMinHeight : nil
+    }
+
     var canZoomIn: Bool {
         gameLibraryScale > 1
     }
@@ -99,7 +116,7 @@ struct GamesDisplayOptionsView: SwiftUI.View {
             // Core controls (kept separate as requested)
             coreControlsGroup
         }
-        .frame(maxWidth: .infinity, maxHeight: iconSize)
+        .frame(maxWidth: .infinity, minHeight: stripMinHeight, maxHeight: stripMaxHeight)
         .clipped() // Prevent overflow
     }
 

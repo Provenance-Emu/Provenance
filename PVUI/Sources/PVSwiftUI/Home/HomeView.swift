@@ -170,7 +170,11 @@ struct HomeView: SwiftUI.View {
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             VStack(spacing: 0) {
+                // `desktopLibraryContentColumn()` is identity off-Mac; on a desktop window it
+                // clamps + centers each band so the toolbar, import panel and scroll content
+                // all share one content column instead of stretching edge to edge.
                 displayOptionsView()
+                    .desktopLibraryContentColumn()
 
                 // Import Progress View
                 ImportProgressView(
@@ -182,6 +186,7 @@ struct HomeView: SwiftUI.View {
                         }
                     }
                 )
+                .desktopLibraryContentColumn()
 
                 ScrollView {
                     ScrollViewReader { proxy in
@@ -189,7 +194,9 @@ struct HomeView: SwiftUI.View {
                             // Search bar inside scroll — no auto-hide, just scrolls with content
                             if allGames.count > 8 && showSearchbar {
                                 PVSearchBar(text: $searchText)
-                                    .padding(.horizontal, 16)
+                                    // Desktop aligns the field to the same gutter as the
+                                    // shelves and grid; touch keeps its wider 16pt inset.
+                                    .padding(.horizontal, DesktopLibraryMetrics.isDesktop ? DesktopLibraryMetrics.columnGutter : 16)
                                     .padding(.bottom, 8)
                             }
                             if bootupStateManager.isBootupCompleted && isLibraryCompletelyEmpty {
@@ -215,6 +222,7 @@ struct HomeView: SwiftUI.View {
                                     .id("section_allgames")
                             }
                         }
+                        .desktopLibraryContentColumn()
                         .onChange(of: focusedItemInSection) { newValue in
                             if let id = newValue {
                                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -229,6 +237,7 @@ struct HomeView: SwiftUI.View {
                         if !searchText.isEmpty {
                             ScrollView {
                                 searchResultsView()
+                                    .desktopLibraryContentColumn()
                             }
                             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
                         }
