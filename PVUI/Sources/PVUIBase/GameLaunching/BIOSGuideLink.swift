@@ -46,16 +46,23 @@ public enum BIOSGuideLink {
 
     /// A `.default` alert action that opens the BIOS guide.
     ///
-    /// - Parameter completion: Run after the guide is opened. A `UIAlertController`
+    /// - Parameter completion: Run BEFORE the guide is opened. A `UIAlertController`
     ///   dismisses on *any* action, so surfaces presented over a live emulator must
     ///   pass the same teardown their close button performs — otherwise tapping the
     ///   guide leaves the user on a dead emulator screen with the core still running.
+    ///
+    ///   Ordering is deliberate: the teardown runs to completion while the app is
+    ///   still foreground, and only then does `open()` send it to the background.
+    ///   Opening first would overlap emulator teardown with backgrounding, which is
+    ///   the setup for two hazards this codebase has already hit — `nextDrawable`
+    ///   blocking forever once Metal reclaims drawables in the background, and
+    ///   main-thread starvation against the emulation loop's `@synchronized(self)`.
     @MainActor
     public static func alertAction(then completion: (@MainActor () -> Void)? = nil) -> UIAlertAction {
         UIAlertAction(title: actionTitle, style: .default, handler: { _ in
             Task { @MainActor in
-                open()
                 completion?()
+                open()
             }
         })
     }
