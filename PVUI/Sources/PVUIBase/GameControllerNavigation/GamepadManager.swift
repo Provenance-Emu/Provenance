@@ -19,6 +19,18 @@ public enum GamepadEvent {
 public class GamepadManager: ObservableObject {
     public static let shared = GamepadManager()
 
+    /// True when the app should behave like a desktop: keyboard is player 1,
+    /// no on-screen touch controls, keyboard HUD available.
+    /// Mac ("Designed for iPad") always; iPad opts in via Settings > Controller.
+    ///
+    /// `ProcessInfo.processInfo.isiOSAppOnMac` is the only runtime hook available in this
+    /// codebase for detecting Mac — compile-time `os(macOS)` / `targetEnvironment(macCatalyst)`
+    /// are both false for a Designed-for-iPad binary. This predicate governs in-game input
+    /// only; it must NOT be consulted by library/TV-media UI selection.
+    public static var isDesktopInputMode: Bool {
+        ProcessInfo.processInfo.isiOSAppOnMac || Defaults[.controllerStyleNavigation]
+    }
+
     @Published public private(set) var isControllerConnected: Bool = false
     /// Whether at least one physical (non-remote) game controller is connected.
     /// On tvOS, the Siri Remote is also a `GCController`, so this property
@@ -124,10 +136,17 @@ public class GamepadManager: ObservableObject {
     }
 
     /// Recomputes `isNavigationInputAvailable` from its three inputs. Must be called any
-    /// time `isControllerConnected`, `isKeyboardConnected`, or
-    /// `Defaults[.controllerStyleNavigation]` changes.
+    /// time `isControllerConnected`, `isKeyboardConnected`, or `isDesktopInputMode`'s
+    /// inputs (`isiOSAppOnMac`, `Defaults[.controllerStyleNavigation]`) change.
+    ///
+    /// Keys off `isDesktopInputMode` rather than the raw `controllerStyleNavigation`
+    /// default: on Mac desktop mode is active via `isiOSAppOnMac` even with that toggle
+    /// off, and reading the raw default there left this `false` — so every view gating on
+    /// `isNavigationInputAvailable` (RetroWave alerts, core/save pickers, TVMedia) would
+    /// discard keyboard input on Mac by default, the same failure this flag exists to fix.
+    /// Off Mac the two are equivalent, so this is a no-op for iOS and tvOS.
     private func updateNavigationInputAvailability() {
-        isNavigationInputAvailable = isControllerConnected || (Defaults[.controllerStyleNavigation] && isKeyboardConnected)
+        isNavigationInputAvailable = isControllerConnected || (Self.isDesktopInputMode && isKeyboardConnected)
     }
 
     /// React to the user flipping Settings > Controllers > "Controller-Style Navigation"
@@ -140,13 +159,21 @@ public class GamepadManager: ObservableObject {
     /// Settings toggle today, but not structurally guaranteed — e.g. iCloud KV sync),
     /// and `connectKeyboardControllerIfAvailable()`/`disconnectKeyboardControllerHandlers()`
     /// both hard-trap via `MainActor.assumeIsolated` rather than degrade gracefully off-main.
+    ///
+    /// Branches on `isDesktopInputMode`, NOT the raw `controllerStyleNavigation` default:
+    /// on Mac ("Designed for iPad") `isDesktopInputMode` is true via `isiOSAppOnMac`
+    /// regardless of this setting, so switching branches on the raw default alone would
+    /// detach keyboard navigation the moment a Mac user toggled the (iPad-only-meaningful)
+    /// setting off, even though desktop mode itself never turned off. On iPad, where
+    /// `isiOSAppOnMac` is always false, `isDesktopInputMode` reduces to exactly the raw
+    /// default, so the opt-in attach/detach behavior there is unchanged.
     private func observeControllerStyleNavigationSetting() {
         Defaults.publisher(.controllerStyleNavigation)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self else { return }
                 self.updateNavigationInputAvailability()
-                if Defaults[.controllerStyleNavigation] {
+                if Self.isDesktopInputMode {
                     self.connectKeyboardControllerIfAvailable()
                 } else {
                     self.disconnectKeyboardControllerHandlers()
@@ -158,14 +185,15 @@ public class GamepadManager: ObservableObject {
     /// Attach navigation handlers to PVControllerManager's virtual keyboard controller.
     /// Virtual controllers never post GCControllerDidConnect, so connectGamepad() misses them.
     ///
-    /// Gated on `Defaults[.controllerStyleNavigation]`: keyboard-driven TVMedia/root-view
-    /// navigation is strictly opt-in, so a Magic Keyboard user who never enabled the
-    /// setting must not have keystrokes routed into `eventSubject` at all. Not `private`
-    /// so `PVControllerManager.rebuildKeyboardController()` (same module) can re-attach
-    /// handlers to the freshly rebuilt virtual controller after a key rebind — see its
-    /// doc comment for why that call is necessary.
+    /// Gated on `isDesktopInputMode`: Mac ("Designed for iPad") always wants keyboard-driven
+    /// navigation since there's no touch surface to fall back on; iPad remains strictly
+    /// opt-in via `Defaults[.controllerStyleNavigation]`, so a Magic Keyboard user who never
+    /// enabled the setting must not have keystrokes routed into `eventSubject` at all. Not
+    /// `private` so `PVControllerManager.rebuildKeyboardController()` (same module) can
+    /// re-attach handlers to the freshly rebuilt virtual controller after a key rebind — see
+    /// its doc comment for why that call is necessary.
     func connectKeyboardControllerIfAvailable() {
-        guard Defaults[.controllerStyleNavigation] else { return }
+        guard Self.isDesktopInputMode else { return }
         MainActor.assumeIsolated {
             guard let keyboardController = PVControllerManager.shared.keyboardController else { return }
             DLOG("[GamepadManager] Attaching navigation handlers to keyboard controller")

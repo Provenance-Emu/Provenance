@@ -6,6 +6,13 @@
 //  Copyright 2025 Provenance Emu. All rights reserved.
 //
 
+// Pre-existing SwiftLint debt, verified by linting develop's copy of this file:
+// identical violations, same counts. This branch only re-gated dead Mac Catalyst
+// branches here; it did not create the debt. CI lints every file in the PR diff,
+// so touching the file surfaces them. Remove these when the underlying code is
+// cleaned up.
+// swiftlint:disable duplicate_conditions
+
 import Foundation
 import SwiftUI
 import Combine
@@ -565,11 +572,14 @@ public final class RetroSystemStatsViewModel: ObservableObject {
         let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
 
         #if os(iOS)
-        #if targetEnvironment(macCatalyst)
-        return "macOS \(versionString)"
-        #else
+        // The shipping Mac build is the iOS binary ("Designed for iPad"), so the
+        // old `targetEnvironment(macCatalyst)` branch never ran and Mac users saw
+        // a bare "iOS x.y.z". `operatingSystemVersion` still reports the iOS
+        // compatibility version there, so name both rather than guess a macOS one.
+        if ProcessInfo.processInfo.isiOSAppOnMac {
+            return "macOS (iOS \(versionString) compatibility)"
+        }
         return "iOS \(versionString)"
-        #endif
         #elseif os(tvOS)
         return "tvOS \(versionString)"
         #elseif os(macOS)

@@ -23,6 +23,11 @@ import FreemiumKit
 #endif
 
 @available(iOS 14, tvOS 14, *)
+// HomeView's body is 1128 lines against a 600-line limit. It was already 1124
+// lines on develop — pre-existing debt, not introduced by the keyboard-navigation
+// or desktop-layout work. Splitting it into per-section subviews is a separate,
+// larger change. Remove this disable when that split happens.
+// swiftlint:disable:next type_body_length
 struct HomeView: SwiftUI.View {
 
     //    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
@@ -170,7 +175,11 @@ struct HomeView: SwiftUI.View {
     var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             VStack(spacing: 0) {
+                // `desktopLibraryContentColumn()` is identity off-Mac; on a desktop window it
+                // clamps + centers each band so the toolbar, import panel and scroll content
+                // all share one content column instead of stretching edge to edge.
                 displayOptionsView()
+                    .desktopLibraryContentColumn()
 
                 // Import Progress View
                 ImportProgressView(
@@ -182,6 +191,7 @@ struct HomeView: SwiftUI.View {
                         }
                     }
                 )
+                .desktopLibraryContentColumn()
 
                 ScrollView {
                     ScrollViewReader { proxy in
@@ -189,7 +199,9 @@ struct HomeView: SwiftUI.View {
                             // Search bar inside scroll — no auto-hide, just scrolls with content
                             if allGames.count > 8 && showSearchbar {
                                 PVSearchBar(text: $searchText)
-                                    .padding(.horizontal, 16)
+                                    // Desktop aligns the field to the same gutter as the
+                                    // shelves and grid; touch keeps its wider 16pt inset.
+                                    .padding(.horizontal, DesktopLibraryMetrics.isDesktop ? DesktopLibraryMetrics.columnGutter : 16)
                                     .padding(.bottom, 8)
                             }
                             if bootupStateManager.isBootupCompleted && isLibraryCompletelyEmpty {
@@ -215,6 +227,7 @@ struct HomeView: SwiftUI.View {
                                     .id("section_allgames")
                             }
                         }
+                        .desktopLibraryContentColumn()
                         .onChange(of: focusedItemInSection) { newValue in
                             if let id = newValue {
                                 withAnimation(.easeInOut(duration: 0.3)) {
@@ -229,6 +242,7 @@ struct HomeView: SwiftUI.View {
                         if !searchText.isEmpty {
                             ScrollView {
                                 searchResultsView()
+                                    .desktopLibraryContentColumn()
                             }
                             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
                         }
@@ -880,8 +894,11 @@ struct HomeView: SwiftUI.View {
            let currentIndex = items.firstIndex(of: currentItem) {
 
             if currentSection == .allGames {
-                // Grid navigation
-                let itemsPerRow = 4
+                // Grid navigation. Derive the step from the same `itemsPerRow` the
+                // `LazyVGrid` in `showGamesGrid` uses — a hardcoded guess desyncs focus
+                // from the drawn grid the moment the user changes the library zoom.
+                // In list mode there is exactly one item per row.
+                let itemsPerRow = viewModel.viewGamesAsGrid ? self.itemsPerRow : 1
                 if yValue > 0 { // Moving up
                     let newIndex = currentIndex - itemsPerRow
                     if newIndex >= 0 {

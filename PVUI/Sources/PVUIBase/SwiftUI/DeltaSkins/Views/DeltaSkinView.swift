@@ -1,6 +1,7 @@
 import SwiftUI
 import AudioToolbox
 import AVFoundation  // Add this for audio buffer types
+import GameController
 import PVLogging
 import PVEmulatorCore
 #if canImport(UIKit)
@@ -55,6 +56,12 @@ private struct TouchLocationInfo: Identifiable {
 }
 
 /// Core view for rendering a DeltaSkin with test patterns and interactive elements
+// PRE-EXISTING type_body_length violation: this struct was already ~1824 lines on
+// `develop` before this PR (SwiftLint only lints files a PR touches, so it never
+// tripped CI until this PR happened to touch this file). Splitting it into smaller
+// types is a separate, larger change, out of scope here. Remove this disable once
+// that split happens.
+// swiftlint:disable:next type_body_length
 public struct DeltaSkinView: View {
     let skin: any DeltaSkinProtocol
     let traits: DeltaSkinTraits
@@ -102,6 +109,25 @@ public struct DeltaSkinView: View {
 
     // Single set of sound IDs without left/right variants
     internal static let buttonSounds: [String: PCMBuffer] = createButtonSounds()
+
+    // MARK: - Hit-test margins
+
+    /// Default extra hit-area margin (skin mapping-space points) added around a button's
+    /// authored `frame` for touch input, used only when the skin does not declare its own
+    /// `extendedEdges`. Matches the finger-sized default hit tests have always used here.
+    private static let defaultTouchHitTestInset: CGFloat = 20
+
+    /// Default hit-area margin used instead of `defaultTouchHitTestInset` when input is
+    /// pointer-driven (see `isPointerInputActive`). A mouse/trackpad cursor is precise, but
+    /// skins are authored assuming finger-sized touch targets, so buttons can render smaller
+    /// than a cursor can comfortably click; this compensates without requiring skin authors to
+    /// add `extendedEdges` themselves.
+    private static let defaultPointerHitTestInset: CGFloat = 32
+
+    /// Extra margin (points) added around thumbstick regions so a touch that starts there is
+    /// captured by the thumbstick's own drag gesture instead of the general multitouch button
+    /// overlay.
+    private static let thumbstickIgnoredRectMargin: CGFloat = 12
 
     // Track multiple active buttons - using Identifiable wrapper for stable ForEach IDs
     @State private var activeButtons: [ActiveButtonInfo] = []
@@ -1020,12 +1046,11 @@ public struct DeltaSkinView: View {
     private func thumbstickIgnoredRects(in geometry: GeometryProxy) -> [CGRect] {
         guard let buttons = skin.buttons(for: traits), let mappingSize = skin.mappingSize(for: traits) else { return [] }
         // Use the same transform used for button hit testing to ensure coordinates match overlay space
-        let margin: CGFloat = 12
         return buttons.compactMap { button in
             guard isThumbstick(button) else { return nil }
             let effective = buttonWithEffectiveFrame(button)
             let scaled = transformFrame(effective.frame, in: geometry, mappingSize: mappingSize)
-            return scaled.insetBy(dx: -margin, dy: -margin)
+            return scaled.insetBy(dx: -Self.thumbstickIgnoredRectMargin, dy: -Self.thumbstickIgnoredRectMargin)
         }
     }
 
@@ -1325,7 +1350,7 @@ public struct DeltaSkinView: View {
 
                 if let button = existingButton {
                     let effective = buttonWithEffectiveFrame(button)
-                    let hitFrame = effective.frame.insetBy(dx: -20, dy: -20)
+                    let hitFrame = hitTestFrame(for: effective)
                     let scaledFrame = CGRect(
                         x: hitFrame.minX * buttonScaleX + xOffset,
                         y: yOffset + (hitFrame.minY * buttonScaleY),
@@ -1377,7 +1402,7 @@ public struct DeltaSkinView: View {
                 }
             } else {
                 // For regular buttons, use standard hit area with extension
-                let hitFrame = effective.frame.insetBy(dx: -20, dy: -20)
+                let hitFrame = hitTestFrame(for: effective)
                 let scaledFrame = CGRect(
                     x: hitFrame.minX * buttonScaleX + xOffset,
                     y: yOffset + (hitFrame.minY * buttonScaleY),
@@ -1595,6 +1620,41 @@ public struct DeltaSkinView: View {
             width: button.frame.width,
             height: button.frame.height
         ))
+    }
+
+    /// True when a physical mouse or trackpad is currently connected. `GCMouse` reports both —
+    /// including the trackpad built into a Magic Keyboard case — so this is the realistic signal
+    /// for "input on this device is likely to arrive as a precise pointer click, not a finger
+    /// touch." Note the beneficiary is **iPad with a trackpad/mouse**, not Mac: on Mac
+    /// (`isiOSAppOnMac`) this skin is hidden entirely under `GamepadManager.isDesktopInputMode`,
+    /// so a Mac-specific check here would never fire. `ProcessInfo.isiOSAppOnMac` was considered
+    /// and rejected for that reason.
+    private var isPointerInputActive: Bool {
+        GCMouse.current != nil
+    }
+
+    /// Default hit-area margin to use when a button has no authored `extendedEdges`, chosen
+    /// based on whether input is currently pointer-driven.
+    private var defaultHitTestInset: CGFloat {
+        isPointerInputActive ? Self.defaultPointerHitTestInset : Self.defaultTouchHitTestInset
+    }
+
+    /// Expands `button.frame` to its effective hit-test rectangle, in the same skin
+    /// mapping-space unit as `frame` (caller is responsible for scaling into view space).
+    /// Honors the skin-authored `extendedEdges` (outward expansion per edge — see
+    /// `DeltaSkinButton.extendedEdges`) when present; otherwise falls back to
+    /// `defaultHitTestInset` applied uniformly on all sides.
+    private func hitTestFrame(for button: DeltaSkinButton) -> CGRect {
+        if let edges = button.extendedEdges {
+            return CGRect(
+                x: button.frame.minX - edges.left,
+                y: button.frame.minY - edges.top,
+                width: button.frame.width + edges.left + edges.right,
+                height: button.frame.height + edges.top + edges.bottom
+            )
+        }
+        let inset = defaultHitTestInset
+        return button.frame.insetBy(dx: -inset, dy: -inset)
     }
 
     private func transformFrame(_ frame: CGRect, in geometry: GeometryProxy, mappingSize: CGSize) -> CGRect {
@@ -1895,7 +1955,7 @@ public struct DeltaSkinView: View {
 
         return buttons.first { button in
             let effective = buttonWithEffectiveFrame(button)
-            let hitFrame = effective.frame.insetBy(dx: -20, dy: -20)
+            let hitFrame = hitTestFrame(for: effective)
             let scaledFrame = transformFrame(hitFrame, in: geometry, mappingSize: mappingSize)
             return scaledFrame.contains(point)
         }

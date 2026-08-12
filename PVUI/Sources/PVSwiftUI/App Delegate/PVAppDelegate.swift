@@ -470,6 +470,19 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         PauseMenuViewRegistry.registerAppSettingsView { dismissAction in
             let conflictsController = AppState.shared.libraryUpdatesController
                 ?? PVGameLibraryUpdatesController(gameImporter: GameImporter.shared)
+            /// The registry hands this view to arbitrary presenters, so it must carry its
+            /// own environment rather than rely on inheriting one.
+            ///
+            /// It previously injected nothing and only survived because the pause menu
+            /// presents it with `.sheet` from inside `PVGameMenuOverlay`'s hierarchy,
+            /// which wraps its content in `.environmentObject(FreemiumKit.shared)` —
+            /// SwiftUI sheets inherit the presenter's environment. Any UIKit presenter
+            /// (a `UIHostingController`, e.g. the ⌘, menu-bar action) gets a fresh,
+            /// empty environment, so `PaidFeatureView` hit its `EnvironmentObject`
+            /// fatalError as soon as settings appeared over a running game.
+            ///
+            /// Same set as `PVRootViewController.didTapSettings()`, which is the
+            /// established working path for presenting settings from UIKit.
             return AnyView(
                 NavigationStack {
                     PVSettingsView(
@@ -478,6 +491,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
                         dismissAction: { dismissAction?() }
                     )
                 }
+                .environmentObject(conflictsController)
+#if canImport(FreemiumKit)
+                .environmentObject(FreemiumKit.shared)
+#endif
+                .environmentObject(SettingsNavigator.shared)
             )
         }
 

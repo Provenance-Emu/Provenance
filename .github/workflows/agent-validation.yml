@@ -128,7 +128,14 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           set -uo pipefail
-          ALL="PVLogging PVSettings PVHashing PVPlists PVFeatureFlags PVObjCUtils PVCheevos"
+          # Modules that build AND test standalone with `swift build` / `swift test`.
+          # A module only belongs here if it does not need the Xcode workspace.
+          #
+          # PVLibrary is deliberately NOT listed: it cannot `swift build` standalone —
+          # its realm-core dependency fails to compile under the Xcode 26 toolchain
+          # ("'is_pod' cannot be specialized" in s2/util/math/vector3-inl.h). Adding it
+          # would fail every PR that touches it. It needs the workspace build instead.
+          ALL="PVLogging PVSettings PVHashing PVPlists PVFeatureFlags PVObjCUtils PVCheevos PVHelp"
 
           json_all() {
             local out="" m

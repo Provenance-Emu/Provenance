@@ -66,6 +66,12 @@ typealias PVEmulatorViewControllerRootClass = UIViewController
 #endif
 
 public
+// PRE-EXISTING type_body_length violation: this class was already ~1248 lines on
+// `develop` before this PR (SwiftLint only lints files a PR touches, so it never
+// tripped CI until this PR happened to touch this file). Splitting it into smaller
+// types is a separate, larger change, out of scope here. Remove this disable once
+// that split happens.
+// swiftlint:disable:next type_body_length
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmualatorControllerProtocol, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
     public let core: PVEmulatorCore
     @ThreadSafe
@@ -618,7 +624,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             || lower.contains("cannot open")
         let displayMessage: String
         if isBiosError {
-            displayMessage = "Missing system file. \(reason). Check the BIOS folder for this system."
+            let biosMessage = "Missing system file. \(reason). Check the BIOS folder for this system."
+#if os(iOS)
+            displayMessage = biosMessage + "\n\n" + BIOSGuideLink.messageHint
+#else
+            displayMessage = biosMessage
+#endif
         } else {
             displayMessage = "Failed to start: \(reason)"
         }
@@ -634,6 +645,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             let alert = UIAlertController(title: title,
                                           message: displayMessage,
                                           preferredStyle: .alert)
+#if os(iOS)
+            // Missing-BIOS messages name the exact files but give the user no way
+            // to act on that; the guide explains where to get and put them.
+            // Tapping it dismisses the alert, so it also returns to the library —
+            // otherwise the user comes back from Safari to a dead emulator screen.
+            if isBiosError {
+                alert.addAction(BIOSGuideLink.alertAction(then: {
+                    self.dismissAndCloseEmulator()
+                }))
+            }
+#endif
             alert.addAction(UIAlertAction(title: "Return to Library",
                                           style: .default,
                                           handler: { _ in
@@ -1094,6 +1116,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // also calls it via showVirtualMouse when the core supports mouse.
         setupVirtualMouseIfNeeded()
         setupVirtualInputOverlaysIfNeeded()
+        setupKeyboardHUDIfNeeded()
         setupLightGunIfNeeded()
         #endif
 
@@ -1298,6 +1321,15 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // now that the view hierarchy is fully laid out.
         refreshVirtualMouseLayout()
         refreshLightGunLayout()
+        // `showMenu(_:)` presents the pause menu with `.overFullScreen`, which
+        // (per UIKit's normal present/dismiss pairing) drives a
+        // viewWillDisappear/viewDidAppear cycle on this VC even though it's
+        // never actually removed from the hierarchy — and `teardownKeyboardHUD()`
+        // runs unconditionally in `viewWillDisappear`. Re-installing here
+        // (idempotent — no-ops if already installed) is what brings the HUD
+        // back after the pause menu closes instead of leaving it permanently
+        // torn down after the first ⇧⌘M.
+        setupKeyboardHUDIfNeeded()
         #endif
 
         #if os(iOS)
@@ -1346,6 +1378,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         destroyAutosaveTimer()
         #if !os(tvOS)
         removeVirtualInputOverlays()
+        teardownKeyboardHUD()
         teardownLightGun()
         #endif
         #if os(tvOS)

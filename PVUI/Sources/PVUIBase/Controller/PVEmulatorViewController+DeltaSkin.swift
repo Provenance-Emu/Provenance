@@ -16,6 +16,9 @@ extension PVEmulatorViewController {
         #if os(tvOS) || os(macOS) || targetEnvironment(macCatalyst)
         return false
         #else
+        // Mac ("Designed for iPad") and iPad-opted-in desktop input mode have no touch
+        // surface for the skin to render on; keyboard/gamepad drive input instead.
+        guard !GamepadManager.isDesktopInputMode else { return false }
         return Defaults[.skinMode] != .off && core.supportsSkins
         #endif
 //        return true

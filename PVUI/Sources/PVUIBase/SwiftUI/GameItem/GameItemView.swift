@@ -82,8 +82,12 @@ public struct GameItemView: SwiftUI.View {
         cachedDiscCount > 1
     }
 
+    /// Gate the focus ring on *any* navigation input being available, not just a
+    /// physical gamepad. On Mac ("Designed for iPad") the keyboard drives navigation
+    /// and `isControllerConnected` is `false`, so keying off it left keyboard users
+    /// moving an invisible focus around the grid.
     private var shouldShowFocus: Bool {
-        gamepadManager.isControllerConnected && isFocused
+        gamepadManager.isNavigationInputAvailable && isFocused
     }
 
     public var body: some SwiftUI.View {
@@ -240,8 +244,9 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
         self.action = action
     }
 
+    /// See `GameItemView.shouldShowFocus` — keyboard-only desktops must render the ring too.
     private var shouldShowFocus: Bool {
-        gamepadManager.isControllerConnected && isFocused
+        gamepadManager.isNavigationInputAvailable && isFocused
     }
 
     private var shouldShowDiscIndicator: Bool {

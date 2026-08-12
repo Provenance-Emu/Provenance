@@ -178,11 +178,7 @@ public class SwiftUIImportOptionsPresenter: PVImportOptionsPresenter {
     }
 
     private func showWebServerErrorAlert(from viewController: UIViewController, sourceView: UIView?, barButtonItem: UIBarButtonItem?) {
-#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
-        let message = "Check your network connection or settings and free up ports: 8080, 8081."
-#else
-        let message = "Check your network connection or settings and free up ports: 80, 81."
-#endif
+        let message = "Check your network connection or settings and free up ports: \(PVWebServerPorts.userFacingList)."
         let alert = UIAlertController(
             title: "Unable to start web server!",
             message: message,
