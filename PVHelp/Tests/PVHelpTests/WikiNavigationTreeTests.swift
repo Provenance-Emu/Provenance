@@ -140,4 +140,51 @@ final class WikiNavigationTreeTests: XCTestCase {
         XCTAssertEqual(decoded.sections.count, tree.sections.count)
         XCTAssertEqual(decoded.sections[1].items[0].children.count, 1)
     }
+
+    // MARK: - App Store filter over-blocking regressions
+
+    /// `installing-provenance` was a substring keyword, so it blocked every page in
+    /// that directory — including the App Store install page itself. App Store builds
+    /// hid their own installation instructions.
+    func testAppStorePageIsNotBlockedByItsDirectory() {
+        let markdown = """
+        ## Getting Started
+
+        * [App Store](installation-and-usage/installing-provenance/app-store.md)
+        * [Sideloading](installation-and-usage/installing-provenance/sideloading.md)
+        """
+
+        let tree = WikiNavigationTree.parse(markdown: markdown)
+        XCTAssertEqual(tree.sections.count, 1)
+        XCTAssertEqual(tree.sections[0].items.map(\.title), ["App Store"])
+    }
+
+    /// The `ipa` keyword was matched as a substring, so it also matched "ipad" and
+    /// "participate" — hiding every iPad page in the wiki.
+    func testShortKeywordOnlyMatchesWholePathComponent() {
+        let markdown = """
+        ## Help
+
+        * [iPad Setup](help/ipad-setup.md)
+        * [Participate](info/participate.md)
+        * [IPA Install](installation-and-usage/ipa/install.md)
+        """
+
+        let tree = WikiNavigationTree.parse(markdown: markdown)
+        XCTAssertEqual(tree.sections[0].items.map(\.title), ["iPad Setup", "Participate"])
+    }
+
+    /// `blockedPaths` is compared against `path.lowercased()`, so an entry containing
+    /// uppercase characters could never match. The README entry shipped as "README.md".
+    func testBlockedPathMatchesRegardlessOfSourceCasing() {
+        let markdown = """
+        ## Getting Started
+
+        * [Overview](installation-and-usage/installing-provenance/README.md)
+        * [App Store](installation-and-usage/installing-provenance/app-store.md)
+        """
+
+        let tree = WikiNavigationTree.parse(markdown: markdown)
+        XCTAssertEqual(tree.sections[0].items.map(\.title), ["App Store"])
+    }
 }

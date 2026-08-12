@@ -37,8 +37,10 @@ public struct WikiNavigationTree: Codable, Sendable {
     /// App Store guidelines (sideloading instructions, external payment
     /// references, UDID provisioning, virtualisation for dev-signing, etc.).
     private static let blockedPaths: Set<String> = [
-        // Installing Provenance section (sideloading instructions)
-        "installation-and-usage/installing-provenance/README.md",
+        // Installing Provenance section (sideloading instructions).
+        // Lowercase: `isBlocked` compares against `path.lowercased()`, so an entry
+        // with uppercase characters can never match.
+        "installation-and-usage/installing-provenance/readme.md",
         "installation-and-usage/installing-provenance/sideloading.md",
         "installation-and-usage/installing-provenance/building-from-source.md",
         "installation-and-usage/installing-provenance/advanced.md",
@@ -49,16 +51,36 @@ public struct WikiNavigationTree: Codable, Sendable {
     ]
 
     /// Keywords in page paths that signal App Store-unsafe content.
+    ///
+    /// Matched as substrings, so every entry here must be long and distinctive
+    /// enough that it cannot appear inside an innocent word. `installing-provenance`
+    /// used to live here and blocked the entire directory — including
+    /// `app-store.md`, the page explaining how to install *from the App Store*, so
+    /// App Store builds hid their own install instructions. The unsafe pages in that
+    /// directory are each listed in `blockedPaths` above, so the keyword was both
+    /// redundant and harmful.
     private static let blockedKeywords: [String] = [
         "sideload", "jailbreak", "altstore", "signing-service",
-        "installing-provenance", "ipa", "testflight",
-        "developer-account", "provisioning",
+        "testflight", "developer-account", "provisioning"
     ]
+
+    /// Short keywords that are only meaningful as a whole path component.
+    ///
+    /// `ipa` cannot be a substring rule: it matches `ipad` and `participate`, which
+    /// would have hidden every iPad page in the wiki.
+    private static let blockedPathComponents: Set<String> = [
+        "ipa"
+    ]
+
+    /// Characters that separate meaningful components of a wiki path.
+    private static let pathComponentSeparators = CharacterSet(charactersIn: "/-_.")
 
     private static func isBlocked(path: String) -> Bool {
         let lower = path.lowercased()
         if blockedPaths.contains(lower) { return true }
-        return blockedKeywords.contains(where: { lower.contains($0) })
+        if blockedKeywords.contains(where: { lower.contains($0) }) { return true }
+        let components = lower.components(separatedBy: pathComponentSeparators)
+        return components.contains(where: { blockedPathComponents.contains($0) })
     }
 
     /// Recursively strip blocked items from a list of nav items.
