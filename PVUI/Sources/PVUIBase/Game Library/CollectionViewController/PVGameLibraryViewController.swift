@@ -854,21 +854,24 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
                 return
             }
             let url = URL(string: ipURL)!
-#if targetEnvironment(macCatalyst)
-            UIApplication.shared.open(url, options: [:]) { completed in
-                ILOG("Completed: \(completed ? "Yes":"No")")
+            // Mac ("Designed for iPad"): open the uploader in the user's real
+            // browser so it lives in its own window they can arrange beside
+            // Finder and drag ROMs into. Was the Mac Catalyst branch — Catalyst
+            // never ships, so `isiOSAppOnMac` is the runtime equivalent.
+            if ProcessInfo.processInfo.isiOSAppOnMac {
+                UIApplication.shared.open(url, options: [:]) { completed in
+                    ILOG("Opened web uploader in the system browser: \(completed ? "Yes" : "No")")
+                }
+            } else {
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = false
+                let safariVC = SFSafariViewController(url: url, configuration: config)
+                safariVC.delegate = self
+                self.present(safariVC, animated: true)
             }
-#else
-            let config = SFSafariViewController.Configuration()
-            config.entersReaderIfAvailable = false
-            let safariVC = SFSafariViewController(url: url, configuration: config)
-            safariVC.delegate = self
-            self.present(safariVC, animated: true) { () -> Void in }
-#endif // targetEnvironment(macCatalyst)
         }
     }
 
-#if !targetEnvironment(macCatalyst)
     public func safariViewController(_: SFSafariViewController, didCompleteInitialLoad _: Bool) {
         // Load finished
     }
@@ -879,7 +882,6 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         navigationController?.popViewController(animated: true)
         Task { await PVWebServerManager.shared.stop() }
     }
-#endif // !targetEnvironment(macCatalyst)
 #endif // os(iOS)
 
     @IBAction func conflictsButtonTapped(_: Any) {
@@ -963,11 +965,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
 
     /// Presents the standard “unable to start” alert (ports differ by platform).
     private func presentWebServerStartFailureAlert() {
-#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
-        let message = "Check your network connection or settings and free up ports: 8080, 8081."
-#else
-        let message = "Check your network connection or settings and free up ports: 80, 81."
-#endif
+        let message = "Check your network connection or settings and free up ports: \(PVWebServerPorts.userFacingList)."
         let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
         alert.preferredContentSize = CGSize(width: 300, height: 150)
         alert.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem

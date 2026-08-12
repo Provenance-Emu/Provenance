@@ -178,11 +178,7 @@ extension PVRootViewController: PVMenuDelegate {
                 if ok {
                     self.showServerActiveAlert(sender: self.view, barButtonItem: self.navigationItem.rightBarButtonItem)
                 } else {
-#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
-                    let message = "Check your network connection or settings and free up ports: 8080, 8081."
-#else
-                    let message = "Check your network connection or settings and free up ports: 80, 81."
-#endif
+                    let message = "Check your network connection or settings and free up ports: \(PVWebServerPorts.userFacingList)."
                     let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
                     alert.preferredContentSize = CGSize(width: 300, height: 150)
                     alert.popoverPresentationController?.barButtonItem = self.navigationItem.rightBarButtonItem
@@ -193,11 +189,7 @@ extension PVRootViewController: PVMenuDelegate {
                     self.present(alert, animated: true) { () -> Void in }
                 }
             } catch {
-#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
-                let message = "Check your network connection or settings and free up ports: 8080, 8081."
-#else
-                let message = "Check your network connection or settings and free up ports: 80, 81."
-#endif
+                let message = "Check your network connection or settings and free up ports: \(PVWebServerPorts.userFacingList)."
                 let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
                 alert.preferredContentSize = CGSize(width: 300, height: 150)
                 alert.popoverPresentationController?.barButtonItem = self.navigationItem.rightBarButtonItem

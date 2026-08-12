@@ -150,6 +150,13 @@ public extension EmulatorCoreRumbleDataSource {
 
     @MainActor func rumblePhone() {
 #if os(iOS) && !targetEnvironment(macCatalyst)
+        // A Mac has no device body to buzz. The `!targetEnvironment(macCatalyst)`
+        // guard above used to exclude desktop, but the shipping Mac build is the
+        // iOS binary ("Designed for iPad"), where that guard is true — so without
+        // this check `_feedbackSupportLevel` reads 0 and we fall through to
+        // `AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)`, which on a Mac
+        // is at best wasted work and at worst an audible alert on every rumble.
+        guard !ProcessInfo.processInfo.isiOSAppOnMac else { return }
         let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
         if deviceHasHaptic {
             let generator = UIImpactFeedbackGenerator(style: .medium)

@@ -80,16 +80,25 @@ extension PVMenuDelegate where Self: WebServerDelegateViewController {
                 return
             }
             let url = URL(string: ipURL)!
-#if targetEnvironment(macCatalyst)
-            UIApplication.shared.open(url, options: [:]) { completed in
-                ILOG("Completed: \(completed ? "Yes":"No")")
+#if canImport(SafariServices) && !os(tvOS)
+            // On a Mac ("Designed for iPad") hand the uploader off to the real
+            // browser: it becomes its own window the user can park next to
+            // Finder and drag ROMs into, which is the whole point of the
+            // uploader on a desktop. A modal SFSafariViewController sheet
+            // covers the app and can't be arranged alongside anything.
+            // This was the Mac Catalyst branch; Catalyst never ships, so
+            // `isiOSAppOnMac` is the runtime equivalent.
+            if ProcessInfo.processInfo.isiOSAppOnMac {
+                UIApplication.shared.open(url, options: [:]) { completed in
+                    ILOG("Opened web uploader in the system browser: \(completed ? "Yes" : "No")")
+                }
+            } else {
+                let config = SFSafariViewController.Configuration()
+                config.entersReaderIfAvailable = false
+                let safariVC = SFSafariViewController(url: url, configuration: config)
+                safariVC.delegate = self
+                self.present(safariVC, animated: true)
             }
-#elseif canImport(SafariServices) && !os(tvOS)
-            let config = SFSafariViewController.Configuration()
-            config.entersReaderIfAvailable = false
-            let safariVC = SFSafariViewController(url: url, configuration: config)
-            safariVC.delegate = self
-            self.present(safariVC, animated: true) { () -> Void in }
 #endif
         }
     }
