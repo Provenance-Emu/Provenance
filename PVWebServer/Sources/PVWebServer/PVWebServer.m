@@ -30,19 +30,35 @@ NSString* const PVWebServerStatusChangedNotification = @"WebServerStatusChanged"
 #import "GCDWebDAVServer.h"
 #import "GCDWebServerMultiPartFormRequest.h"
 
-// Set start port based on target type
-// Simulator can't open ports below 1024
-#if TARGET_IPHONE_SIMULATOR || TARGET_OS_MACCATALYST || TARGET_OS_OSX
-NSUInteger webUploadPort = kDefaultPort;
-#else
-NSUInteger webUploadPort = 80;
-#endif
+// Ports below 1024 are root-only on BSD-derived hosts (Simulator, macOS); iOS
+// and tvOS hardware let any process bind them, so devices get the pretty pair.
+// Macros, not `static const`: these initialise file-scope globals below, which
+// in C requires a constant expression.
+#define PVWebServerDesktopUploadPort ((NSUInteger)8080)
+#define PVWebServerDesktopWebDavPort ((NSUInteger)8081)
+#define PVWebServerDeviceUploadPort  ((NSUInteger)80)
+#define PVWebServerDeviceWebDavPort  ((NSUInteger)81)
 
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_MACCATALYST || TARGET_OS_OSX
-NSUInteger webDavPort = 8081;
+NSUInteger webUploadPort = PVWebServerDesktopUploadPort;
+NSUInteger webDavPort = PVWebServerDesktopWebDavPort;
 #else
-NSUInteger webDavPort = 81;
+NSUInteger webUploadPort = PVWebServerDeviceUploadPort;
+NSUInteger webDavPort = PVWebServerDeviceWebDavPort;
 #endif
+
+/// The shipping Mac build is the iOS binary running as "Designed for iPad", NOT
+/// Mac Catalyst — `TARGET_OS_MACCATALYST` and `TARGET_OS_OSX` are both 0 there,
+/// so the compile-time branch above hands a Mac the device ports and every
+/// `startWithOptions:` fails to bind. `isiOSAppOnMac` is the only runtime signal
+/// that distinguishes it; keep this in sync with Swift's `PVWebServerPorts`.
+__attribute__((constructor))
+static void PVWebServerAdjustPortsForDesktopHost(void) {
+    if (NSProcessInfo.processInfo.isiOSAppOnMac) {
+        webUploadPort = PVWebServerDesktopUploadPort;
+        webDavPort = PVWebServerDesktopWebDavPort;
+    }
+}
 
 @interface PVWebServer ()
 
@@ -628,7 +644,7 @@ NSUInteger webDavPort = 81;
 -(NSString *)URLString {
 	NSString *ipAddress = self.bonjourSeverURL.host ?: self.IPAddress;
 
-    if(webUploadPort != 80) {
+    if(webUploadPort != PVWebServerDeviceUploadPort) {
         ipAddress = [ipAddress stringByAppendingFormat:@":%i", webUploadPort];
     }
 

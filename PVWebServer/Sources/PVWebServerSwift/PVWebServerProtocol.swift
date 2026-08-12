@@ -40,6 +40,48 @@ public extension Notification.Name {
     static let pvWebServerFileMoved   = Notification.Name("PVWebServerFileMovedNotification")
 }
 
+// MARK: - Ports
+
+/// Single source of truth for which ports the web servers bind on this device.
+///
+/// iOS lets any process bind low ports, so on real hardware we use the pretty
+/// `80`/`81` pair and the URL is just `http://<ip>/`. Simulator and macOS both
+/// inherit the BSD rule that ports below 1024 are root-only, so they need the
+/// high pair.
+///
+/// The shipping Mac build is the **iOS binary running as "Designed for iPad"**,
+/// not Mac Catalyst — `targetEnvironment(macCatalyst)` is false there, so the
+/// old compile-time Catalyst check never fired and the Mac tried to bind 80/81
+/// and failed. `ProcessInfo.isiOSAppOnMac` is the only runtime hook that sees it.
+public enum PVWebServerPorts {
+
+    /// HTTP file-uploader port used where low ports are unavailable.
+    public static let desktopUpload = 8080
+    /// WebDAV port used where low ports are unavailable.
+    public static let desktopWebDAV = 8081
+    /// HTTP file-uploader port used on iOS/tvOS hardware.
+    public static let deviceUpload = 80
+    /// WebDAV port used on iOS/tvOS hardware.
+    public static let deviceWebDAV = 81
+
+    /// `true` when the host reserves ports below 1024 for root.
+    public static var usesHighPorts: Bool {
+#if targetEnvironment(simulator) || os(macOS) || targetEnvironment(macCatalyst)
+        return true
+#else
+        return ProcessInfo.processInfo.isiOSAppOnMac
+#endif
+    }
+
+    /// HTTP file-uploader port for this device.
+    public static var upload: Int { usesHighPorts ? desktopUpload : deviceUpload }
+    /// WebDAV port for this device.
+    public static var webDAV: Int { usesHighPorts ? desktopWebDAV : deviceWebDAV }
+
+    /// Comma-separated port list for user-facing "couldn't start" copy.
+    public static var userFacingList: String { "\(upload), \(webDAV)" }
+}
+
 // MARK: - PVWebServerProtocol
 
 /// Abstracts over the legacy GCDWebServer and the modern Hummingbird server.

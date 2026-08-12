@@ -176,10 +176,15 @@ public final class RetroLogViewModel: ObservableObject {
 #if os(iOS)
         info += "Device: \(UIDevice.current.model)\n"
         info += "OS: \(UIDevice.current.systemName) \(UIDevice.current.systemVersion)\n"
+        // "Designed for iPad" on a Mac reports Device: iPad / OS: iPadOS, which
+        // hides the real host from every log a Mac user sends us. The old
+        // `targetEnvironment(macCatalyst)` arm was unreachable (Catalyst implies
+        // `os(iOS)`, so this `#elseif` could never be taken) and never shipped.
+        if ProcessInfo.processInfo.isiOSAppOnMac {
+            info += "Host: macOS (iOS app on Mac)\n"
+        }
 #elseif os(tvOS)
         info += "Platform: tvOS\n"
-#elseif targetEnvironment(macCatalyst)
-        info += "Platform: macOS (Catalyst)\n"
 #endif
         info += "Displayed Log Count: \(displayedLogs.count) (total in session: \(logs.count))\n"
         return info

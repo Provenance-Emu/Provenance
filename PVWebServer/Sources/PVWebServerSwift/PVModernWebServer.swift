@@ -52,9 +52,11 @@ public final class PVModernWebServer: @unchecked Sendable {
 
     // MARK: Configuration
 
-    /// HTTP file-uploader port (80 on-device, 8080 in simulator / Catalyst).
+    /// HTTP file-uploader port — see `PVWebServerPorts` (80 on iOS/tvOS hardware,
+    /// 8080 in the Simulator and on macOS, which reserves low ports for root).
     public let httpPort: Int
-    /// WebDAV port (81 on-device, 8081 in simulator / Catalyst).
+    /// WebDAV port — see `PVWebServerPorts` (81 on iOS/tvOS hardware, 8081 in the
+    /// Simulator and on macOS).
     public let webDAVPort: Int
     /// Default destination for `POST /upload` when no `path` query parameter
     /// is supplied. Defaults to `<browseRoot>/Imports`.
@@ -87,20 +89,11 @@ public final class PVModernWebServer: @unchecked Sendable {
                 browseRoot: URL? = nil,
                 httpPort: Int? = nil,
                 webDAVPort: Int? = nil) {
-        // Match the legacy GCDWebServer defaults: pretty 80/81 on real
-        // hardware (iOS/tvOS device) so the URL is just `http://<ip>/`,
-        // and 8080/8081 on Simulator + macOS Catalyst where binding
-        // privileged-style low ports causes friction with the host OS.
-        let isSimulatorOrCatalyst: Bool = {
-#if targetEnvironment(simulator) || targetEnvironment(macCatalyst)
-            return true
-#else
-            return false
-#endif
-        }()
-
-        self.httpPort   = httpPort   ?? (isSimulatorOrCatalyst ? 8080 : 80)
-        self.webDAVPort = webDAVPort ?? (isSimulatorOrCatalyst ? 8081 : 81)
+        // Match the legacy GCDWebServer defaults — see `PVWebServerPorts`, which
+        // also covers "Designed for iPad" on a Mac (where low ports are root-only
+        // but no compile-time platform flag reveals it).
+        self.httpPort   = httpPort   ?? PVWebServerPorts.upload
+        self.webDAVPort = webDAVPort ?? PVWebServerPorts.webDAV
 
         let resolvedBrowseRoot: URL = {
             if let browseRoot { return browseRoot }
