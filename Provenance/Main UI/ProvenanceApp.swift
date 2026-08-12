@@ -131,8 +131,7 @@ struct ProvenanceApp: App {
                     if url.isFileURL {
                         ILOG("ProvenanceApp: Handling file URL")
                         return handle(fileURL: url)
-                    }
-                    else if let scheme = url.scheme, scheme.lowercased() == PVAppURLKey {
+                    } else if let scheme = url.scheme, scheme.lowercased() == PVAppURLKey {
                         ILOG("ProvenanceApp: Handling app URL with scheme: \(scheme)")
 
                         // Prefer save state id if present (TopShelf "Recent Saves")
@@ -291,7 +290,6 @@ extension UIApplication {
         originalSendEvent(event)
     }
 }
-
 
 // MARK: - URL Handling
 extension ProvenanceApp {
@@ -926,7 +924,7 @@ extension ProvenanceApp {
                 openEmulatorSceneWhenReady()
             }
         }
-        #endif //!tvOS
+        #endif // !tvOS
     }
 }
 
