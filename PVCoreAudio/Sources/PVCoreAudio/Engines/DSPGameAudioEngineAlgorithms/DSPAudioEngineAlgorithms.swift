@@ -30,7 +30,10 @@ extension DSPAudioEngineAlgorithms: Defaults.Serializable {}
 
 public
 extension Defaults.Keys {
+    /// - Note: Uses the closure `default:` overload so the `swift_once` block never calls
+    ///   `UserDefaults.register(defaults:)` — see the rationale on `Defaults.Keys.auEffectsChain`
+    ///   in `AUFilters/AUFilterSettings.swift`.
     static let audioEngineDSPAlgorithm =
     Key<DSPAudioEngineAlgorithms>("audioEngineDSPAlgorithm",
-                                  default: DSPAudioEngineAlgorithms.`default`)
+                                  default: { DSPAudioEngineAlgorithms.`default` })
 }

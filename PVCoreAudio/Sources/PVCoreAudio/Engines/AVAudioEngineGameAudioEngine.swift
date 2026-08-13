@@ -32,10 +32,11 @@ private final class AudioEngineContext {
 
 @available(macOS 11.0, iOS 14.0, *)
 final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterableAudioEngine {
-    private lazy var engine: AVAudioEngine = {
-        let engine = AVAudioEngine()
-        return engine
-    }()
+    /// Non-lazy on purpose. An instance `lazy var` is not thread-safe (no once token),
+    /// and this property is reached from the mute-switch `notify` callback as well as
+    /// from the main thread, so a lazy initializer could race and produce two engines.
+    /// `AVAudioEngine()` is cheap — it touches no hardware until `prepare()`/`start()`.
+    private let engine = AVAudioEngine()
 
     private var src: AVAudioSourceNode?
     private weak var gameCore: EmulatorCoreAudioDataSource!
@@ -81,14 +82,39 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
     }
 
     public init() {
+        // Resolve every settings key this engine observes HERE, on the thread that
+        // creates the engine, and capture the resulting `Key` objects into the observer
+        // tasks below. In practice that thread is main: `PVEmulatorViewController.gameAudio`
+        // is a lazy var on a UIViewController subclass, so it is `@MainActor`-isolated.
+        // (`respectMuteSwitch` is a PVSettings key that still registers a default; its
+        // first touch was already happening on this same thread via
+        // `configureAudioSession()` below, so hoisting it here changes nothing.)
+        //
+        // Previously each `Task` evaluated `Defaults.Keys.<key>` itself, which made two
+        // cooperative-pool threads race the main thread to run the key's `swift_once`
+        // initializer moments before `startAudio()` → `updateSourceNode()` read the same
+        // keys. Whoever lost the race parked in `_dispatch_once_wait`. Resolving the keys
+        // first means the once tokens are already `DONE` before any concurrent work
+        // exists, so the main thread never waits on another thread's in-flight once.
+        //
+        // The keys themselves are also non-registering (see `AUFilterSettings.swift`), so
+        // neither half of that old deadlock can recur.
+        let respectMuteSwitchKey = Defaults.Keys.respectMuteSwitch
+        let effectsChainKey = Defaults.Keys.auEffectsChain
+        let effectsEnabledKey = Defaults.Keys.auFiltersEnabled
+
         configureAudioSession()
-        muteSwitchMonitor.startMonitoring { [weak self] isMuted in
-            self?.updateOutputVolume()
+        muteSwitchMonitor.startMonitoring { [weak self] _ in
+            // `notify_register_dispatch` delivers on a global concurrent queue.
+            // `updateOutputVolume()` mutates `engine.mainMixerNode`, and AVAudioEngine is
+            // not thread-safe, so hop to the thread that owns the graph. `async`, never
+            // `sync`: the notify queue must never block on main.
+            Self.onMain { self?.updateOutputVolume() }
         }
 
         // Observe changes to respectMuteSwitch setting
         respectMuteSwitchObserverTask = Task {
-            for await newValue in Defaults.updates(Defaults.Keys.respectMuteSwitch) {
+            for await _ in Defaults.updates(respectMuteSwitchKey) {
                 await MainActor.run { [weak self] in
                     self?.updateOutputVolume()
                 }
@@ -97,7 +123,7 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
 
         // Observe AU effects chain changes and reload when running.
         effectsChainObserverTask = Task {
-            for await _ in Defaults.updates(Defaults.Keys.auEffectsChain) {
+            for await _ in Defaults.updates(effectsChainKey) {
                 await MainActor.run { [weak self] in
                     self?.reloadEffectsChainIfRunning()
                 }
@@ -106,7 +132,7 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
 
         // Observe the master effects toggle separately so toggling it also reloads the chain.
         effectsEnabledObserverTask = Task {
-            for await _ in Defaults.updates(Defaults.Keys.auFiltersEnabled) {
+            for await _ in Defaults.updates(effectsEnabledKey) {
                 await MainActor.run { [weak self] in
                     self?.reloadEffectsChainIfRunning()
                 }
@@ -135,6 +161,20 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
         #if !os(macOS)
         NotificationCenter.default.removeObserver(self)
         #endif
+    }
+
+    /// Runs `work` on the main thread, which owns this engine's `AVAudioEngine` graph.
+    ///
+    /// Executes inline when already on main so main-thread callers keep their current
+    /// ordering; otherwise dispatches **asynchronously**. Never `sync` — a background
+    /// poster (route change, mute-switch `notify` callback) must never block waiting on
+    /// the main thread, which is exactly how the launch deadlock was shaped.
+    private static func onMain(_ work: @escaping () -> Void) {
+        if Thread.isMainThread {
+            work()
+        } else {
+            DispatchQueue.main.async(execute: work)
+        }
     }
 
     private func configureAudioSession() {
@@ -187,12 +227,22 @@ final public class AVAudioEngineGameAudioEngine: AudioEngineProtocol, AUFilterab
 
         switch reason {
         case .newDeviceAvailable, .oldDeviceUnavailable:
+            // Route-change notifications are delivered on whatever thread AVAudioSession
+            // posts from (a media-services callback thread), because this observer is
+            // registered with the selector API and no queue. `startAudio()` runs
+            // `updateSourceNode()`, which detaches/attaches/connects nodes — AVAudioEngine
+            // is not thread-safe and every other mutation of this graph happens on main,
+            // so marshal this one there too rather than racing the graph.
+            //
             // Neither call below throws — both swallow errors internally.
             // startAudio() itself guards against a nil gameCore (the typical
             // case when this fires during emulator teardown).
-            configureAudioSession()
-            startAudio()
-            updateOutputVolume() // Update volume based on new route
+            Self.onMain { [weak self] in
+                guard let self else { return }
+                self.configureAudioSession()
+                self.startAudio()
+                self.updateOutputVolume() // Update volume based on new route
+            }
         default:
             break
         }

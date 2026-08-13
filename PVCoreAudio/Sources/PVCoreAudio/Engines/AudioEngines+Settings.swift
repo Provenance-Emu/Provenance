@@ -13,8 +13,11 @@ extension AudioEngines: Defaults.Serializable {}
 
 public
 extension Defaults.Keys {
+    /// - Note: Uses the closure `default:` overload so the `swift_once` block never calls
+    ///   `UserDefaults.register(defaults:)` — see the rationale on `Defaults.Keys.auEffectsChain`
+    ///   in `AUFilters/AUFilterSettings.swift`.
     static let audioEngine = Key<AudioEngines>("audioEngine",
-                                               default: AudioEngines.`default`)
+                                               default: { AudioEngines.`default` })
 }
 
 // MARK: Audio Settings

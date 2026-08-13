@@ -12,15 +12,45 @@ import PVSettings
 
 // MARK: - Defaults Keys
 
+/// # Why these keys use the closure (`default:` getter) initializer
+///
+/// `Defaults.Key.init(_:default:suite:iCloud:)` — the *value* overload — ends in
+/// `UserDefaults.register(defaults:)`, which posts `UserDefaults.didChangeNotification`.
+/// Block-based observers registered with an `OperationQueue` (this app has several on
+/// that notification, e.g. `ControllerLightBarManager` / `GCControllerHapticsManager`,
+/// both `queue: .main`) are delivered by wrapping the block in an `NSOperation` and
+/// **blocking the posting thread** until the operation finishes
+/// (`_CFXNotificationPost` → `-[NSOperation waitUntilFinished]`).
+///
+/// Swift runs a `static let` initializer under `swift_once`. Combining the two means
+/// the first touch of one of these keys *from a background thread* parks that thread
+/// **while it owns the once token**, waiting on the main queue. If the main thread then
+/// reads the same key it blocks in `_dispatch_once_wait` — and the main queue can never
+/// drain, so the token is never released. That is a hard deadlock; it shipped as an
+/// `0x8BADF00D` watchdog kill on game launch (main thread in
+/// `AVAudioEngineGameAudioEngine.updateSourceNode()` waiting on the `auEffectsChain`
+/// and `auFiltersEnabled` tokens, both owned by parked cooperative-pool threads).
+///
+/// The closure overload is documented to *not* write the default into `UserDefaults`,
+/// so the once block becomes pure: it allocates the `Key` and returns. There is nothing
+/// left inside it that can block, so it can never be held by a parked thread.
+///
+/// Reads are unaffected: `Defaults[key]` is `suite._get(name) ?? key.defaultValue`, and
+/// `Defaults.updates(_:)` falls back to `key.defaultValue` the same way, so an
+/// unregistered key still resolves to the default until the user stores a value.
+///
+/// - Important: Every `Defaults.Key` declared in PVCoreAudio uses this form. Audio keys
+///   are read from the emulation/audio threads and from `notify`/route-change callbacks,
+///   so none of them may register from a background thread.
 public extension Defaults.Keys {
     /// Whether the AU effects chain post-processor is enabled.
-    static let auFiltersEnabled = Key<Bool>("auFiltersEnabled", default: false)
+    static let auFiltersEnabled = Key<Bool>("auFiltersEnabled", default: { false })
 
     /// The active effects chain applied to emulator audio output.
-    static let auEffectsChain = Key<AUEffectsChain>("auEffectsChain", default: .empty)
+    static let auEffectsChain = Key<AUEffectsChain>("auEffectsChain", default: { .empty })
 
     /// User-saved effects chain presets.
-    static let auEffectsPresets = Key<[AUEffectsPreset]>("auEffectsPresets", default: [])
+    static let auEffectsPresets = Key<[AUEffectsPreset]>("auEffectsPresets", default: { [] })
 }
 
 // MARK: - Built-in Presets
