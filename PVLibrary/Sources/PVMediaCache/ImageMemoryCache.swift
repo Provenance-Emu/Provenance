@@ -81,10 +81,6 @@ public final class ImageMemoryCache: @unchecked Sendable {
         cache.setObject(image, forKey: key as NSString, cost: ArtworkDownsampler.decodedByteCost(of: image))
     }
 
-    public func removeImage(forKey key: String) {
-        cache.removeObject(forKey: key as NSString)
-    }
-
     public func removeAll() {
         cache.removeAllObjects()
     }
@@ -102,7 +98,14 @@ public enum ImageCacheBudget {
     public static let saveStateThumbnails = 16 * megabyte
 
     /// Generated "missing artwork" placeholders.
-    public static let missingArtwork = 24 * megabyte
+    ///
+    /// Larger than the other budgets because one entry exists per game title
+    /// and each is a `MissingArtworkGenerator.renderPixelHeight`-tall bitmap
+    /// (~1.6-4.2 MB depending on aspect ratio), so this holds roughly 12-29 of
+    /// them. A memory miss still hits the on-disk PNG cache rather than
+    /// re-running the generator, so the failure mode is a disk read, not a
+    /// synchronous main-thread render.
+    public static let missingArtwork = 48 * megabyte
 
     /// Controller-skin preview renders.
     public static let skinPreviews = 24 * megabyte

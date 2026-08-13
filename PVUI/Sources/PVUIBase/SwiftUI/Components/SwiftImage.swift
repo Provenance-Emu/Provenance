@@ -82,13 +82,17 @@ public class MissingArtworkCacheManager {
         }
 
         // If not in memory, check disk cache.
+        //
         // Decode through `ArtworkDownsampler` rather than `SwiftImage(data:)`:
-        // the on-disk PNG is a full placeholder bitmap, and reloading it at
-        // source resolution is the path that lands in "Image IO" memory.
+        // reloading the PNG at its source resolution is the path that lands in
+        // "Image IO" memory. The cap is `MissingArtworkGenerator.renderPixelHeight`
+        // — the same size `generate` produces — so an entry is identical whether
+        // it came from the generator or from disk, and PNGs left over from the
+        // old 1800px render scale are normalised down on first reload.
         let fileURL = diskURL(for: key)
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
         guard let image = autoreleasepool(invoking: {
-            ArtworkDownsampler.image(atPath: fileURL.path, target: .thumbnail)
+            ArtworkDownsampler.image(atPath: fileURL.path, maxPixelSize: MissingArtworkGenerator.renderPixelHeight)
         }) else { return nil }
 
         // Store in memory cache for faster access next time

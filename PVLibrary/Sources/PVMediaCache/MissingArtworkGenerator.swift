@@ -108,22 +108,32 @@ public enum RetroStyle {
 /// no theme or user-defaults coupling so it can be used from app extensions.
 public enum MissingArtworkGenerator {
 
-    /// Backing-store scale for the rendered placeholder.
+    /// Long-edge pixel height of a rendered placeholder.
     ///
-    /// This used to be `0.0` ("native display scale"), which on a 3x iPhone
-    /// rendered `PVThumbnailMaxResolution` (600pt) as an **1800px** bitmap —
-    /// ~9 MB decoded, per game title, in a cache with no byte budget.
-    /// Placeholders are procedural test patterns plus a title, so 2x over the
-    /// 600pt canvas (1200px) is already well above the largest presentation and
-    /// cuts the bitmap cost 2.25x. tvOS renders at 1x natively, so pinning it
-    /// there avoids *inflating* tvOS.
-    static let renderScale: CGFloat = {
+    /// The canvas is always `PVThumbnailMaxResolution` *points*; only the
+    /// backing-store scale changes, so the drawn proportions (font sizes,
+    /// scanline spacing) are identical to before — just fewer pixels.
+    ///
+    /// This used to be rendered at scale `0.0` ("native display scale"), which
+    /// on a 3x iPhone produced an **1800px** bitmap — ~9 MB decoded, per game
+    /// title, in a cache with no byte budget at all. 768px still comfortably
+    /// exceeds the largest presentation (a `PVRowHeight` shelf cell needs
+    /// 450px; the game-info hero card needs ~700px) while costing ~2 MB
+    /// instead of ~9 MB. tvOS renders at 1x natively, so it keeps 600px rather
+    /// than being *inflated*.
+    public static let renderPixelHeight: Int = {
         #if os(tvOS)
-        return 1.0
+        return Int(PVThumbnailMaxResolution)
         #else
-        return 2.0
+        return 768
         #endif
     }()
+
+    /// Backing-store scale that yields `renderPixelHeight` from the fixed
+    /// `PVThumbnailMaxResolution`-point canvas.
+    static var renderScale: CGFloat {
+        CGFloat(renderPixelHeight) / CGFloat(PVThumbnailMaxResolution)
+    }
 
     /// Render a placeholder image. This is a pure function — callers are
     /// responsible for any in-memory caching they wish to layer on top.

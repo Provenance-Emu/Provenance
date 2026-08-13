@@ -30,11 +30,6 @@ actor ImageCache {
         evictIfNeeded()
     }
 
-    func removeAll() {
-        cache.removeAll()
-        accessOrder.removeAll()
-    }
-
     private func touch(_ url: URL) {
         accessOrder.removeAll { $0 == url }
         accessOrder.append(url)

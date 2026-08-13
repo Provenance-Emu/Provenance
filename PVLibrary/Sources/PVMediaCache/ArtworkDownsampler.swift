@@ -141,26 +141,11 @@ public enum ArtworkDownsampler {
     ///
     /// - Parameters:
     ///   - pointSize: The size the image will be drawn at, in points.
-    ///   - scale: Display scale. Pass the view's `displayScale`; defaults to
-    ///     `defaultDisplayScale`, which is deliberately conservative so this can
-    ///     be called off the main thread without touching `UIScreen`.
-    public static func image(atPath path: String, fitting pointSize: CGSize, scale: CGFloat = defaultDisplayScale) -> PlatformImage? {
+    ///   - scale: Display scale — pass the view's `displayScale`.
+    public static func image(atPath path: String, fitting pointSize: CGSize, scale: CGFloat) -> PlatformImage? {
         let maxDimension = max(pointSize.width, pointSize.height) * scale
         return image(atPath: path, maxPixelSize: Int(maxDimension.rounded(.up)))
     }
-
-    /// Display scale assumed when a caller cannot supply one.
-    ///
-    /// tvOS renders at 1x. On iOS, 3x is the worst case, and assuming it means a
-    /// thumbnail is never *under*-sampled — it costs at most 2.25x the 2x budget,
-    /// which is still two orders of magnitude below a full-resolution decode.
-    public static let defaultDisplayScale: CGFloat = {
-        #if os(tvOS)
-        return 1.0
-        #else
-        return 3.0
-        #endif
-    }()
 
     /// Decode in-memory image data at no more than `maxPixelSize` on its longest edge.
     public static func image(data: Data, maxPixelSize: Int) -> PlatformImage? {

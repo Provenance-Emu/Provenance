@@ -394,6 +394,17 @@ public final class PVMediaCache: NSObject, Sendable {
         }
     }
 
+    /// Decode a cached file, downsampling when a target is supplied.
+    ///
+    /// Declared outside the `#if os(macOS)` fence below because the legacy
+    /// completion-handler overload at the bottom of this file is also outside it.
+    static func decodeImage(atPath path: String, target: ArtworkDownsampleTarget?) -> UIImage? {
+        guard let target else {
+            return UIImage(contentsOfFile: path)
+        }
+        return ArtworkDownsampler.image(atPath: path, target: target)
+    }
+
     #if os(macOS)
     @discardableResult
     public func image(forKey key: String, completion: ((_ key: String, _ image: NSImage?) -> Void)? = nil) -> BlockOperation? {
@@ -613,14 +624,6 @@ public final class PVMediaCache: NSObject, Sendable {
         try? FileManager.default.setAttributes([.modificationDate: Date()], ofItemAtPath: cachePath)
 
         return image
-    }
-
-    /// Decode a cached file, downsampling when a target is supplied.
-    static func decodeImage(atPath path: String, target: ArtworkDownsampleTarget?) -> UIImage? {
-        guard let target else {
-            return UIImage(contentsOfFile: path)
-        }
-        return ArtworkDownsampler.image(atPath: path, target: target)
     }
 
     /// Preload multiple images into the cache with improved batching.

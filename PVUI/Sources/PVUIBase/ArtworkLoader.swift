@@ -200,10 +200,17 @@ public class ArtworkLoader: ObservableObject {
         }
     }
 
-    /// Cancel loading for a specific game
+    /// Cancel loading for a specific game.
+    ///
+    /// `loadingTasks` is keyed by game ID *and* decode budget, so every budget
+    /// must be cleared — indexing by the bare game ID would silently match
+    /// nothing and leak the entry.
     public func cancelLoading(for gameId: String) {
-        loadingTasks[gameId]?.cancel()
-        loadingTasks[gameId] = nil
+        for target in ArtworkDownsampleTarget.allCases {
+            let key = Self.loadingTaskKey(gameId: gameId, target: target)
+            loadingTasks[key]?.cancel()
+            loadingTasks[key] = nil
+        }
     }
 
     // MARK: - Local Artwork File URL Resolution

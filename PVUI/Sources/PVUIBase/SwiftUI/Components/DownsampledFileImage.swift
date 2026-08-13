@@ -66,10 +66,6 @@ public final class FileThumbnailCache: @unchecked Sendable {
         let longest = max(pointSize.width, pointSize.height) * scale
         return Int(max(longest, 1).rounded(.up))
     }
-
-    public func removeAll() {
-        cache.removeAll()
-    }
 }
 
 /// Draws an on-disk image downsampled to the frame it occupies.
