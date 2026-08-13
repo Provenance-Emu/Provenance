@@ -42,10 +42,7 @@ struct BackupRestoreView: View {
 
     var body: some View {
         ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
-            RetroGrid()
-                .edgesIgnoringSafeArea(.all)
-                .opacity(0.3)
+            RetroSettingsBackground()
 
             ScrollView {
                 VStack(spacing: 24) {
@@ -55,9 +52,8 @@ struct BackupRestoreView: View {
                     restoreSectionView
                     infoView
                 }
-                #if os(tvOS)
-                .padding(.horizontal, 80)
-                #else
+                .tvOSSettingsHorizontalPadding()
+                #if !os(tvOS)
                 .padding(.horizontal)
                 #endif
                 .padding(.bottom, 40)
@@ -117,13 +113,13 @@ struct BackupRestoreView: View {
             #endif
         }
         #if !os(tvOS)
-        .onChange(of: coordinator.backupState) { state in
+        .onChange(of: coordinator.backupState) { _, state in
             if state == .done, coordinator.backupURL != nil {
                 showShareSheet = true
             }
         }
         #endif
-        .onChange(of: coordinator.restoreState) { state in
+        .onChange(of: coordinator.restoreState) { _, state in
             switch state {
             case .done(let restored):
                 // Release security-scoped access now that restore has finished
@@ -310,57 +306,31 @@ struct BackupRestoreView: View {
     }
 
     private var createBackupButton: some View {
-        Button(action: startBackup) {
-            HStack {
-                Image(systemName: "arrow.up.doc.fill")
-                Text("Create Backup")
-                    .fontWeight(.semibold)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(
-                LinearGradient(
-                    gradient: Gradient(colors: [.retroPink, .retroPurple]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .foregroundColor(.white)
-            .cornerRadius(10)
-        }
+        RetroSettingsActionButton(
+            title: "Create Backup",
+            icon: "arrow.up.doc.fill",
+            color: .retroPink,
+            action: startBackup
+        )
         .disabled(selectedContents.isEmpty)
     }
 
     private var restoreButton: some View {
-        Button(action: {
-            #if !os(tvOS)
-            showFileImporter = true
-            #else
-            startTVOSRestore()
-            #endif
-        }) {
-            HStack {
-                Image(systemName: "arrow.down.doc.fill")
-                #if os(tvOS)
-                Text("Restore from Documents")
-                    .fontWeight(.semibold)
-                #else
-                Text("Choose Backup File")
-                    .fontWeight(.semibold)
-                #endif
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
-            .background(
-                LinearGradient(
-                    gradient: Gradient(colors: [.retroBlue, .retroPurple]),
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
-            .foregroundColor(.white)
-            .cornerRadius(10)
-        }
+        #if os(tvOS)
+        RetroSettingsActionButton(
+            title: "Restore from Documents",
+            icon: "arrow.down.doc.fill",
+            color: .retroBlue,
+            action: startTVOSRestore
+        )
+        #else
+        RetroSettingsActionButton(
+            title: "Choose Backup File",
+            icon: "arrow.down.doc.fill",
+            color: .retroBlue,
+            action: { showFileImporter = true }
+        )
+        #endif
     }
 
     private var infoView: some View {
@@ -388,21 +358,6 @@ struct BackupRestoreView: View {
     }
 
     #if os(tvOS)
-    private func moveTVOSBackup(from tempURL: URL) {
-        let dest = URL.documentsPath.appendingPathComponent(tempURL.lastPathComponent)
-        do {
-            if FileManager.default.fileExists(atPath: dest.path) {
-                try FileManager.default.removeItem(at: dest)
-            }
-            try FileManager.default.moveItem(at: tempURL, to: dest)
-            alertMessage = "Backup saved to Documents: \(dest.lastPathComponent)"
-            showAlert = true
-        } catch {
-            // State update handled via coordinator.backupState observer
-            ELOG("BackupRestoreView: could not move tvOS backup: \(error)")
-        }
-    }
-
     private func startTVOSRestore() {
         let docs = URL.documentsPath
         let fm = FileManager.default

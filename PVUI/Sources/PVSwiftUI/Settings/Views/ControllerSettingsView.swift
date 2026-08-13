@@ -197,18 +197,18 @@ struct ControllerSettingsView: View {
                             }
                         }
                         #if os(tvOS)
-                        .buttonStyle(.card)
-                        .retroThemedFocus(cornerRadius: 12)
+                        .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
                         #endif
                     }
                 } header: {
+                    #if os(tvOS)
+                    RetroSettingsSectionHeader(icon: "slider.horizontal.3", title: "Button Remapping")
+                    #else
                     HStack {
                         Image(systemName: "slider.horizontal.3")
                         Text("Button Remapping")
                     }
                     .font(.headline)
-                    #if os(tvOS)
-                    .foregroundColor(.retroPink)
                     #endif
                 } footer: {
                     Text("Customize button mappings for each connected controller.")
@@ -289,20 +289,20 @@ struct ControllerSettingsView: View {
                         #endif
                     }
                     #if os(tvOS)
-                    .buttonStyle(.card)
-                    .retroThemedFocus(cornerRadius: 12)
+                    .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 12)
                     #else
                     .buttonStyle(.plain)
                     #endif
                 }
             } header: {
+                #if os(tvOS)
+                RetroSettingsSectionHeader(icon: "gamecontroller.fill", title: "Controller Assignments")
+                #else
                 HStack {
                     Image(systemName: "gamecontroller.fill")
                     Text("Controller Assignments")
                 }
                 .font(.headline)
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
                 #endif
             } footer: {
                 VStack(alignment: .leading, spacing: 8) {
@@ -346,13 +346,14 @@ struct ControllerSettingsView: View {
                         )
                     }
                 } header: {
+                    #if os(tvOS)
+                    RetroSettingsSectionHeader(icon: "person.2.fill", title: "Preferred Player Slots")
+                    #else
                     HStack {
                         Image(systemName: "person.2.fill")
                         Text("Preferred Player Slots")
                     }
                     .font(.headline)
-                    #if os(tvOS)
-                    .foregroundColor(.retroPink)
                     #endif
                 } footer: {
                     VStack(alignment: .leading, spacing: 4) {
@@ -397,16 +398,17 @@ struct ControllerSettingsView: View {
                     .foregroundColor(.red)
                 }
                 #if os(tvOS)
-                .buttonStyle(.card)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 10, primaryColor: .red, secondaryColor: .retroPink)
                 #endif
             } header: {
+                #if os(tvOS)
+                RetroSettingsSectionHeader(icon: "gearshape.2", title: "Preferences")
+                #else
                 HStack {
                     Image(systemName: "gearshape.2")
                     Text("Preferences")
                 }
                 .font(.headline)
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
                 #endif
             } footer: {
                 Text("Clears all saved controller-to-player slot assignments and reverts to automatic assignment.")
@@ -426,31 +428,23 @@ struct ControllerSettingsView: View {
                     Label("Full Controller Wiki", systemImage: "books.vertical.fill")
                 }
             } header: {
+                #if os(tvOS)
+                RetroSettingsSectionHeader(icon: "questionmark.circle", title: "Help & Guides")
+                #else
                 HStack {
                     Image(systemName: "questionmark.circle")
                     Text("Help & Guides")
                 }
                 .font(.headline)
-                #if os(tvOS)
-                .foregroundColor(.retroPink)
                 #endif
             }
         }
         #if os(tvOS)
         .listStyle(.plain)
-        .background(
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.black,
-                    RetroTheme.retroPurple.opacity(0.1),
-                    RetroTheme.retroPink.opacity(0.05)
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
+        .scrollContentBackground(.hidden)
+        .background { RetroSettingsBackground() }
+        .tvOSSettingsHorizontalPadding()
         #else
-//        .scrollContentBackground(.hidden)
         .listStyle(.insetGrouped)
         #endif
         .navigationTitle("Controller Settings")

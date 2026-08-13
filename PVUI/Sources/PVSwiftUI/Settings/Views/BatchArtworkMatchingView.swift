@@ -49,6 +49,7 @@ public struct BatchArtworkMatchingView: View {
     @State private var searchProgress: Double = 0
     @State private var currentSearchTitle: String = ""
     @State private var errorMessage: String?
+    @State private var showErrorAlert = false
 
     // Game and artwork data
     @State private var gamesNeedingArtwork: [PVGame] = []
@@ -58,7 +59,6 @@ public struct BatchArtworkMatchingView: View {
 
     // Animation states for retrowave effects
     @State private var glowOpacity: Double = 0.7
-    @State private var scanlineOffset: CGFloat = 0
 
     // MARK: - Body
 
@@ -84,11 +84,9 @@ public struct BatchArtworkMatchingView: View {
 
                 // Filter controls
                 filterControls
-                    .padding(.horizontal)
 
                 // Action buttons
                 actionButtons
-                    .padding(.horizontal)
 
                 // Content area
                 if isLoading {
@@ -106,6 +104,10 @@ public struct BatchArtworkMatchingView: View {
                     selectionActionBar
                 }
             }
+            .tvOSSettingsHorizontalPadding()
+            #if !os(tvOS)
+            .padding(.horizontal)
+            #endif
             .padding(.bottom, 20)
         }
         .navigationTitle("Batch Artwork Matcher")
@@ -129,10 +131,11 @@ public struct BatchArtworkMatchingView: View {
         .uiKitAlert(
             "Error",
             message: errorMessage ?? "",
-            isPresented: .constant(errorMessage != nil),
+            isPresented: $showErrorAlert,
             preferredContentSize: CGSize(width: 500, height: 300)
         ) {
             UIAlertAction(title: "OK", style: .default) { _ in
+                showErrorAlert = false
                 errorMessage = nil
             }
         }
@@ -253,8 +256,7 @@ public struct BatchArtworkMatchingView: View {
                 )
             }
             #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus(cornerRadius: 8)
+            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 8)
             #else
             .buttonStyle(PlainButtonStyle())
             #endif
@@ -290,8 +292,7 @@ public struct BatchArtworkMatchingView: View {
                     )
                 }
                 #if os(tvOS)
-                .buttonStyle(.card)
-                .retroThemedFocus(cornerRadius: 8)
+                .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 8, primaryColor: .retroPink, secondaryColor: .retroPurple)
                 #else
                 .buttonStyle(PlainButtonStyle())
                 #endif
@@ -310,6 +311,7 @@ public struct BatchArtworkMatchingView: View {
                     Text("REFRESH")
                         .font(.system(size: 14, weight: .bold))
                 }
+                .foregroundColor(.white)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .background(
@@ -328,8 +330,7 @@ public struct BatchArtworkMatchingView: View {
                 )
             }
             #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus(cornerRadius: 8)
+            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 8, primaryColor: .retroPurple, secondaryColor: .retroPink)
             #else
             .buttonStyle(PlainButtonStyle())
             #endif
@@ -444,8 +445,7 @@ public struct BatchArtworkMatchingView: View {
                     )
             }
             #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus()
+            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2, cornerRadius: 20)
             #else
             .buttonStyle(.plain)
             #endif
@@ -472,8 +472,7 @@ public struct BatchArtworkMatchingView: View {
                     )
             }
             #if os(tvOS)
-            .buttonStyle(.card)
-            .retroThemedFocus()
+            .retroFocusButtonStyle(focusScale: 1.04, focusBorderWidth: 2.5, cornerRadius: 20, primaryColor: .retroPink, secondaryColor: .retroPurple)
             #else
             .buttonStyle(.plain)
             #endif
@@ -512,6 +511,7 @@ public struct BatchArtworkMatchingView: View {
         } catch {
             ELOG("Error loading games: \(error)")
             errorMessage = "Error loading games: \(error.localizedDescription)"
+            showErrorAlert = true
         }
     }
 
@@ -581,6 +581,7 @@ public struct BatchArtworkMatchingView: View {
         } catch {
             ELOG("Error searching for artwork: \(error)")
             errorMessage = "Error searching for artwork: \(error.localizedDescription)"
+            showErrorAlert = true
             if clearExisting {
                 // Show partial failure info from an interrupted initial scan.
                 failedGames = newFailures
@@ -670,6 +671,7 @@ public struct BatchArtworkMatchingView: View {
         } catch {
             ELOG("Error applying artwork: \(error)")
             errorMessage = "Error applying artwork: \(error.localizedDescription)"
+            showErrorAlert = true
         }
     }
 }
