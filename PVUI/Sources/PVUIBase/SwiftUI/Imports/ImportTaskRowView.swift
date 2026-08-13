@@ -33,7 +33,10 @@ func iconNameForStatus(_ status: ImportQueueItem.ImportStatus) -> String {
 
 // Individual Import Task Row View
 struct ImportTaskRowView: View {
-    let item: ImportQueueItem
+    /// Observed, not `let`: `ImportQueueItem.status` mutates in place during
+    /// import (`.queued` → `.processing` → `.extracting` → …) and a plain
+    /// `let` binding never re-renders for it.
+    @ObservedObject var item: ImportQueueItem
 #if !os(tvOS)
     @State private var isNavigatingToSystemSelection = false
 #endif
@@ -195,7 +198,9 @@ struct ImportTaskRowView: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 6) {
-                if item.status == .processing {
+                // `.extracting` is long-running for large archives — it needs the
+                // spinner just as much as `.processing`, otherwise the row looks frozen.
+                if item.status == .processing || item.status == .extracting {
                     ProgressView()
                         .progressViewStyle(.circular)
                         .frame(width: 40, height: 40, alignment: .center)

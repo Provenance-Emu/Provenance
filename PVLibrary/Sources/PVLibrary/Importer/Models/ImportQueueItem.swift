@@ -184,6 +184,31 @@ public class ImportQueueItem: Identifiable, ObservableObject, Sendable {
             if case .failure = status {
                 updateSystems()
             }
+            publishStatusChange()
+        }
+    }
+
+    /// Notify SwiftUI observers that `status` changed.
+    ///
+    /// Without this, in-place status mutation published nothing: the only thing
+    /// that reached the UI was reassignment of `GameImporter.queue`, whose last
+    /// emission happens while the item is still `.queued`. A long `.extracting`
+    /// phase therefore rendered as a frozen "Queued" row.
+    ///
+    /// This is a manual `objectWillChange.send()` rather than `@Published`
+    /// because `status` is written from non-main contexts too (e.g.
+    /// `GameImporter.findAndProcessFileInQueue`, `requeue()`, the
+    /// `userChosenSystem` didSet). `@Published` would publish straight from
+    /// those threads and trip SwiftUI's "publishing changes from background
+    /// threads" trap; hopping to the main actor keeps the publish legal
+    /// wherever the write originates.
+    private func publishStatusChange() {
+        if Thread.isMainThread {
+            objectWillChange.send()
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                self?.objectWillChange.send()
+            }
         }
     }
 
