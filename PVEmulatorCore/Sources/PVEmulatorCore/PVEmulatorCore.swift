@@ -131,6 +131,25 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     @objc dynamic open var isFrontBufferReady: Bool
     { get { bridge.isFrontBufferReady } set { bridge.isFrontBufferReady = newValue } }
 
+    /// `true` from `startEmulation()` until an asynchronously-booting bridge
+    /// reports its outcome via `emulationDidStart()` / `emulationDidFailToStart()`.
+    ///
+    /// `isRunning` can no longer serve as the "don't start twice" guard for those
+    /// bridges — it stays `false` for the whole (multi-second) boot — so this flag
+    /// covers the window instead. Always `false` for synchronous bridges.
+    public internal(set) var isBootPending: Bool = false
+
+    /// Invoked on the main thread exactly once per `startEmulation()`, after the
+    /// core is actually running (`success == true`) or its boot failed.
+    ///
+    /// Synchronous bridges call it from inside `startEmulation()`, so the callback
+    /// order is unchanged for them. Cleared before being invoked, so it never
+    /// outlives the start it was installed for.
+    ///
+    /// On failure the user-facing error is driven by the bridge's own
+    /// `PVEmulatorCoreDidFailToStart` notification, which carries the `NSError`.
+    public var startEmulationCompletion: (@MainActor (_ success: Bool) -> Void)?
+
     @objc dynamic open var gameSpeed: PVCoreBridge.GameSpeed = .normal
     { didSet { bridge.gameSpeed = gameSpeed }}
 

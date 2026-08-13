@@ -55,4 +55,16 @@ import Foundation
     @objc func setPauseEmulation(_ flag: Bool)
 
     @objc optional func emulationLoopThread()
+
+    /// `true` when `startEmulation()` returns *before* the core has finished
+    /// booting, and the bridge will report the outcome later on the main thread.
+    ///
+    /// Not implementing this (the default for every bridge) reads as `nil` and is
+    /// treated as `false`, i.e. the historical fully-synchronous contract — so
+    /// adding this requirement cannot change the behaviour of any existing core.
+    ///
+    /// Only `PVThinLibretroFrontend` opts in today: `retro_init` +
+    /// `retro_load_game` are seconds of work for disc-based cores and used to run
+    /// on the main thread, wedging it past FrontBoard's 5 s terminate window.
+    @objc optional var startsEmulationAsynchronously: Bool { get }
 }

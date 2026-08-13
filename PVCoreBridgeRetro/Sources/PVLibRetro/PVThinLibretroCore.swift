@@ -267,6 +267,24 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             return
         }
 
+        // The frontend boots the core (retro_init + retro_load_game) on its own
+        // thread so a slow load — seconds, for a disc-based core like flycast —
+        // can't wedge the main run loop past FrontBoard's 5s terminate window.
+        // It calls back here on the MAIN THREAD when the boot resolves; only then
+        // does the core count as running. Until then `isRunning` stays false, so
+        // the emulator VC's boot HUD stays up and a failed boot leaves a retry
+        // possible instead of a silent no-op.
+        _bridge.startCompletionBlock = { [weak self] success, _ in
+            guard let self else { return }
+            MainActor.assumeIsolated {
+                if success {
+                    self.emulationDidStart()
+                } else {
+                    self.emulationDidFailToStart()
+                }
+            }
+        }
+
         ILOG("ThinCore: startEmulation — inputPollBlock wired, sysId=\(systemIdentifier ?? "nil")")
         super.startEmulation()
     }

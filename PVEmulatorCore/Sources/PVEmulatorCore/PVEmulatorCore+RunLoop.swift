@@ -57,6 +57,11 @@ import PVLogging
     @MainActor
     @objc open func stopEmulation() {
         stopHaptic()
+        // Abandon any in-flight asynchronous boot: the bridge defers its own
+        // teardown until the core is quiescent, and whoever installed the
+        // completion (the emulator view controller) is going away.
+        isBootPending = false
+        startEmulationCompletion = nil
         shouldStop = true
         isRunning = false
 
@@ -92,7 +97,7 @@ import PVLogging
             return
         }
 
-        guard !isRunning else {
+        guard !isRunning, !isBootPending else {
             WLOG("Already running")
             return
         }
@@ -110,6 +115,18 @@ import PVLogging
 
 #warning("TODO: Should remove the else clause?")
         if let objcBridge = self as? (any ObjCBridgedCore), let bridge = objcBridge.bridge as? EmulatorCoreRunLoop {
+            if bridge.startsEmulationAsynchronously == true {
+                /// The bridge boots the core on its own thread and calls
+                /// `emulationDidStart()` / `emulationDidFailToStart()` back on main.
+                /// Deliberately do NOT fall through to `markEmulationRunning()`: a
+                /// core that failed to boot must not report `isRunning`/`isOn`, or
+                /// the `guard !isRunning` above would turn a retry into a silent
+                /// no-op and the boot HUD (driven by `isRunning`) would hide over a
+                /// black screen.
+                isBootPending = true
+                bridge.startEmulation()
+                return
+            }
             bridge.startEmulation()
         } else {
             if !skipEmulationLoop {
@@ -135,6 +152,16 @@ import PVLogging
             }
         }
 
+        markEmulationRunning()
+    }
+
+    /// Flip the core into the running state and notify `startEmulationCompletion`.
+    ///
+    /// Extracted from `startEmulation()` so the asynchronous-boot path can reach
+    /// the exact same state transition from its completion instead of running it
+    /// speculatively before the core has loaded.
+    @MainActor
+    open func markEmulationRunning() {
         isRunning = true
         shouldStop = false
         isOn = true
@@ -148,6 +175,32 @@ import PVLogging
                 state.isOn = true
             }
         }
+        let completion = startEmulationCompletion
+        startEmulationCompletion = nil
+        completion?(true)
+    }
+
+    /// Called by an asynchronously-booting bridge, on the main thread, once the
+    /// core has finished `retro_init` + `retro_load_game` successfully and its
+    /// emulation loop thread is running.
+    @MainActor
+    open func emulationDidStart() {
+        isBootPending = false
+        markEmulationRunning()
+    }
+
+    /// Called by an asynchronously-booting bridge, on the main thread, when the
+    /// boot failed. The core has already torn itself down, and the bridge has
+    /// already posted `PVEmulatorCoreDidFailToStart` with the underlying error.
+    ///
+    /// `isRunning` is left `false` on purpose so a retry is not swallowed by the
+    /// `guard !isRunning` in `startEmulation()`.
+    @MainActor
+    open func emulationDidFailToStart() {
+        isBootPending = false
+        let completion = startEmulationCompletion
+        startEmulationCompletion = nil
+        completion?(false)
     }
 
     @MainActor
