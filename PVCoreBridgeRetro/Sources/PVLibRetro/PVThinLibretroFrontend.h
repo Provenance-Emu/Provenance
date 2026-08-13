@@ -365,6 +365,26 @@ FOUNDATION_EXPORT NSNotificationName const PVThinLibretroFrontendCoreDidThrowNot
 /// (e.g. restoring per-port controller device type selections before the core starts running).
 @property (nonatomic, copy, nullable) dispatch_block_t afterROMLoadBlock;
 
+/// `YES` — `-startEmulation` returns before the core has finished booting.
+///
+/// Satisfies the optional `startsEmulationAsynchronously` requirement of
+/// `EmulatorCoreRunLoop`, which tells `PVEmulatorCore.startEmulation()` not to
+/// mark the core running/on until the boot actually succeeds.
+@property (nonatomic, readonly) BOOL startsEmulationAsynchronously;
+
+/// `YES` between `-startEmulation` and its completion. Main-thread only.
+@property (nonatomic, readonly) BOOL bootInFlight;
+
+/// Invoked on the MAIN THREAD exactly once per `-startEmulation`, after the
+/// asynchronous boot finishes. Cleared before it is called, so a retry may
+/// install a fresh block.
+///
+/// On `success == NO` the core has already been torn down (`retro_deinit` ran
+/// via `-_abortStartAfterRetroInitUnloadingGame:`) and
+/// `PVEmulatorCoreDidFailToStart` has already been posted; `error` carries the
+/// reason. Not called at all when `-stopEmulation` aborted the boot.
+@property (nonatomic, copy, nullable) void (^startCompletionBlock)(BOOL success, NSError *_Nullable error);
+
 // MARK: Controller port info
 
 /// Maximum number of controller ports the thin frontend tracks (matches THIN_MAX_PLAYERS).

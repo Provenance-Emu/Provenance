@@ -843,6 +843,22 @@ typedef struct PVThinLibretroSymbols {
     // Guard against double retro_deinit (dealloc can re-enter stopEmulation)
     BOOL _coreDeinited;
 
+    // ---- Asynchronous boot (see -startEmulation) ----
+    /// Retained for its lifetime so the boot thread object isn't collected while
+    /// `startWithROMPath:` is still executing on it.
+    NSThread *_bootThread;
+    /// YES between `-startEmulation` spawning `_bootThread` and the boot
+    /// completion running on the main thread. Read/written on the MAIN THREAD
+    /// ONLY (`-startEmulation` and `-stopEmulation` are both `@MainActor` in
+    /// Swift, and the completion hops to main before touching it), so it needs
+    /// no lock.
+    BOOL _bootInFlight;
+    /// Set by `-stopEmulation` when teardown is requested while `_bootInFlight`.
+    /// The boot completion performs the teardown instead — calling `retro_deinit`
+    /// concurrently with an in-flight `retro_load_game` would crash inside the
+    /// core. Main-thread only, same as `_bootInFlight`.
+    BOOL _startAborted;
+
     // ---- Netpacket interface (env 78) ----
     struct retro_netpacket_callback *_netpacketCallback;
     BOOL _netpacketSessionActive;
@@ -3483,6 +3499,19 @@ static const NSTimeInterval kThinBlockingLoadWaitOffMainThread = 10.0;
 }
 
 - (void)stopEmulation {
+    // Guard: the boot thread may still be inside retro_load_game. Calling
+    // retro_deinit / retro_unload_game against a core that is mid-load crashes
+    // inside the dylib, and we must NOT block the main thread waiting for the
+    // boot to finish (that is the exact wedge this whole path exists to avoid).
+    // Flag it instead — `-_finishBootWithSuccess:error:` runs the teardown as
+    // soon as the core is quiescent. `NSThread` retains its target, so the
+    // instance is guaranteed to outlive the boot: `-dealloc` (which also calls
+    // this method) cannot be reached while `_bootInFlight` is YES.
+    if (_bootInFlight) {
+        ILOG(@"ThinFrontend: stopEmulation during boot — deferring teardown to boot completion");
+        _startAborted = YES;
+        return;
+    }
     // Guard: retro_deinit must only be called once. dealloc also calls stopEmulation,
     // which can re-enter after the core has already been torn down → crash.
     if (_coreDeinited) {
@@ -4334,25 +4363,106 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     return [self loadCoreAtPath:corePath error:error];
 }
 
+- (BOOL)startsEmulationAsynchronously {
+    return YES;
+}
+
+- (BOOL)bootInFlight {
+    return _bootInFlight;
+}
+
+/// Kick the core boot off the main thread and return immediately.
+///
+/// `retro_init` + `retro_load_game` are seconds of work for a disc-based core
+/// (flycast loads the Dreamcast BIOS, provisions VMUs and builds its render
+/// pipeline). Running that inline here wedged the main run loop: this method is
+/// reached from `PVEmulatorCore.startEmulation()`, which is `@MainActor`, so a
+/// suspend/terminate request arriving mid-load went unanswered and FrontBoard
+/// killed the app with `0x8BADF00D` ("failed to terminate gracefully after
+/// 5.0s"). See the `kThin*WaitMainThread` budgets above — those bounded two
+/// specific waits, but the bulk of the time is inside the core itself and can't
+/// be bounded from out here.
+///
+/// What stays on main: nothing that the libretro contract pins there actually
+/// is. `SET_HW_RENDER` fires from *inside* `retro_load_game`, so the EAGL
+/// context is now created on the boot thread — but it is never *used* there:
+/// `setupHardwareContextFBOWidth:height:` and every GL call in `runFrame` run on
+/// the emulation thread and re-`setCurrentContext:` first, and
+/// `teardownHardwareContext` does the same before its `glDelete*` calls. The
+/// render delegate is only ever touched from those emulation-thread paths. No
+/// UIView / CALayer attached to a hierarchy is created during boot.
+///
+/// A dedicated `NSThread` is used rather than a global `dispatch_queue` on
+/// purpose: the boot thread exits when boot finishes, so it cannot hand a
+/// pooled worker thread back to libdispatch with a stale current `EAGLContext`.
 - (void)startEmulation {
-    NSError *error = nil;
-    if (![self startWithROMPath:self.romPath error:&error]) {
+    if (_bootInFlight) {
+        WLOG(@"ThinFrontend: startEmulation ignored — a boot is already in flight");
+        return;
+    }
+    _bootInFlight = YES;
+    _startAborted = NO;
+    _bootThread = [[NSThread alloc] initWithTarget:self
+                                          selector:@selector(_bootThreadMain:)
+                                            object:self.romPath];
+    _bootThread.name = @"PVThinLibretro-Boot";
+    _bootThread.qualityOfService = NSQualityOfServiceUserInitiated;
+    [_bootThread start];
+}
+
+/// Body of `_bootThread`. Runs `startWithROMPath:` to completion, then hands the
+/// result back to the main thread. `NSThread` retains its target for the
+/// thread's lifetime, so `self` cannot be deallocated underneath this.
+- (void)_bootThreadMain:(NSString *)romPath {
+    @autoreleasepool {
+        NSError *error = nil;
+        BOOL ok = [self startWithROMPath:romPath error:&error];
+        NSError *capturedError = error;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self _finishBootWithSuccess:ok error:capturedError];
+        });
+    }
+}
+
+/// Main-thread tail of the asynchronous boot.
+- (void)_finishBootWithSuccess:(BOOL)success error:(NSError *)error {
+    _bootInFlight = NO;
+    _bootThread = nil;
+
+    if (_startAborted) {
+        // `-stopEmulation` was called while the core was still loading and
+        // deferred the teardown to us. The core is quiescent now (nothing is
+        // inside `retro_load_game` and the emulation loop was never started),
+        // so it is safe to run the real teardown. On the failure path
+        // `startWithROMPath:` already routed through
+        // `-_abortStartAfterRetroInitUnloadingGame:`, which sets
+        // `_coreDeinited`, so `-stopEmulation` correctly no-ops there.
+        ILOG(@"ThinFrontend: boot finished after a teardown request — tearing down now");
+        _startAborted = NO;
+        [self stopEmulation];
+        self.startCompletionBlock = nil;
+        return;
+    }
+
+    if (!success) {
         ELOG(@"ThinFrontend: startWithROMPath failed: %@", error);
-        // Surface the failure to the UI layer (PVEmulatorViewController observes this
-        // notification and presents a toaster + dismisses). Posted on main so the
-        // observer can update UI state directly.
+        // Surface the failure to the UI layer (PVEmulatorViewController observes
+        // this notification and presents an alert with a "Return to Library"
+        // action). Already on main, so the observer can update UI directly.
         NSDictionary *info = error
             ? @{ @"error": error,
                  @"coreIdentifier": self.coreIdentifier ?: @"" }
             : @{ @"coreIdentifier": self.coreIdentifier ?: @"" };
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter]
-                postNotificationName:@"PVEmulatorCoreDidFailToStart"
-                              object:nil
-                            userInfo:info];
-        });
+        [[NSNotificationCenter defaultCenter]
+            postNotificationName:@"PVEmulatorCoreDidFailToStart"
+                          object:nil
+                        userInfo:info];
+        void (^completion)(BOOL, NSError *) = self.startCompletionBlock;
+        self.startCompletionBlock = nil;
+        if (completion) { completion(NO, error); }
         return;
     }
+
     [self _allocateVideoBuffer];
     // _frameInterval ivar read by PVCoreObjCBridge emulation loop timing
     _frameInterval = (_rawAVInfo.timing.fps > 0.0) ? _rawAVInfo.timing.fps : 60.0;
@@ -4361,7 +4471,14 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     if (self.afterROMLoadBlock) {
         self.afterROMLoadBlock();
     }
+    // Spawns the emulation loop thread. Until this line runs no thread holds
+    // `@synchronized(self)`, which is why the boot can never contend with the
+    // 60 fps emulation loop.
     [super startEmulation];
+
+    void (^completion)(BOOL, NSError *) = self.startCompletionBlock;
+    self.startCompletionBlock = nil;
+    if (completion) { completion(YES, nil); }
 }
 
 // ---------------------------------------------------------------------------
