@@ -1140,14 +1140,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         try gameAudio.setupAudioGraph(for: core)
         try startAudio()
         // Snapshot the sample rate the audio graph was just built with. For the thin
-        // libretro wrapper the core hasn't loaded the ROM yet (retro_load_game runs in
-        // core.startEmulation() below), so audioSampleRate is still the 44100 fallback
-        // here — the real rate (e.g. o2em 42240/35200 Hz) only becomes known after the
-        // core starts. We rebuild the graph after startEmulation if the rate changed so
-        // the AVAudioSourceNode matches the core's true output rate (otherwise the
-        // producer/consumer rate mismatch causes chronic underruns — the "bassy
-        // square-wave" glitch). No-op for native/thick cores whose rate is already
-        // correct here (rate unchanged → no rebuild).
+        // libretro wrapper the core hasn't loaded the ROM yet (retro_load_game runs on
+        // the wrapper's boot thread, kicked off by core.startEmulation() below), so
+        // audioSampleRate is still the 44100 fallback here — the real rate (e.g. o2em
+        // 42240/35200 Hz) only becomes known once the core has booted. finishEmulatorStart
+        // rebuilds the graph if the rate changed so the AVAudioSourceNode matches the
+        // core's true output rate (otherwise the producer/consumer rate mismatch causes
+        // chronic underruns — the "bassy square-wave" glitch). No-op for native/thick
+        // cores whose rate is already correct here (rate unchanged → no rebuild).
         let audioGraphSampleRate = core.audioSampleRate
 
         /// Pause all background services during gameplay via the central registry
@@ -1161,8 +1161,32 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Apply any persisted Transfer Pak slot selections for this game before the core starts.
         await applyPersistedTransferPakIfNeeded()
 
+        // Everything that depends on the core actually being loaded — the real
+        // sample rate, the memory map, capability flags — lives in
+        // `finishEmulatorStart`. It runs from `startEmulationCompletion`, which
+        // synchronous cores fire from inside `startEmulation()` (unchanged
+        // ordering) and the thin libretro wrapper fires on the main thread once
+        // its off-main boot finishes. Reading those values inline here would give
+        // the pre-load fallbacks for the thin wrapper — e.g. it would silently
+        // undo the o2em audio-rate fix below.
+        //
+        // Nothing after this point may assume the core is running. The boot HUD
+        // (hidden by the `core.isRunning` observer) covers the gap, and a failed
+        // boot is surfaced by `handleCoreFailedToStart`.
+        core.startEmulationCompletion = { [weak self] success in
+            guard let self, success else { return }
+            self.finishEmulatorStart(audioGraphSampleRate: audioGraphSampleRate)
+        }
         core.startEmulation()
+    }
 
+    /// Post-boot setup: everything that must not run until the core has finished
+    /// loading the ROM. Invoked on the main thread from `startEmulationCompletion`.
+    ///
+    /// - Parameter audioGraphSampleRate: the rate the audio graph was built with
+    ///   before the core started, used to detect whether it needs rebuilding.
+    @MainActor
+    private func finishEmulatorStart(audioGraphSampleRate: Double) {
         // Rebuild the audio graph if the core's real sample rate differs from what the
         // graph was built with before the ROM loaded (thin libretro wrapper case — see
         // the snapshot comment above). updateSourceNode() rebuilds the source node from
