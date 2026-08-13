@@ -18,8 +18,8 @@ import PVCoreBridgeRetro
 // to the melonDS run-loop thread (main thread). PVMelonDSCore+PVNetplayCapable
 // dispatches via MainActor.run to preserve this invariant.
 public final class PVMelonDSCore: PVEmulatorCore, @unchecked Sendable {
-    /// Dual-screen skin layouts are not yet supported; disable until implemented.
-    public override var supportsSkins: Bool { false }
+    /// Metal sub-rectangle dual-screen rendering is now implemented.
+    public override var supportsSkins: Bool { true }
 
     public override var supportsDualScreens: Bool { true }
 
