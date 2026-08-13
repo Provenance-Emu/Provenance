@@ -284,4 +284,24 @@ typedef unsigned int   u32;
     [self didReleaseDSButton:(PVDSButton)button forPlayer:player];
 }
 
+#pragma mark - DS Touchscreen
+
+- (void)touchScreenAtPoint:(CGPoint)point {
+    // Normalize to 0.0-1.0 for the libretro pointer state used by RETRO_DEVICE_POINTER,
+    // matching PVThinLibretroCore (treating the resolution as 256x192)
+    CGFloat normalizedX = point.x / 256.0;
+    CGFloat normalizedY = point.y / 192.0;
+    [self setMousePosition:CGPointMake(normalizedX, normalizedY)];
+    // Only transition to pressed on touch-down; avoid re-sending press notifications on move updates.
+    if (!ndsTouchActive) {
+        ndsTouchActive = YES;
+        [self setLeftMouseButtonPressed:YES];
+    }
+}
+
+- (void)releaseScreenTouch {
+    ndsTouchActive = NO;
+    [self setLeftMouseButtonPressed:NO];
+}
+
 @end

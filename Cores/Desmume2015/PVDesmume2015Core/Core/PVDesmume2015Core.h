@@ -24,6 +24,7 @@ __attribute__((visibility("default")))
     uint8_t padData[4][14]; //[PVDSButton.count];
 @public
     dispatch_queue_t _callbackQueue;
+    BOOL ndsTouchActive; // tracks whether stylus is currently down to avoid spamming PVMouseButtonDidPress
 }
 
 @end
