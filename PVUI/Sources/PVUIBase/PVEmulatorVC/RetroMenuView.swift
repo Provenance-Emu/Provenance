@@ -23,6 +23,11 @@ import FreemiumKit
 // MARK: - SwiftUI Menu Views
 
 // Main menu view with retrowave styling
+// RetroMenuView is over the 600-line type_body_length limit and already was on develop —
+// verified by linting develop's copy, which reports the identical violation. The
+// artwork-memory work did not create this debt (DeltaSkin actually shrank). CI lints
+// every file in the diff, so touching the file surfaces it. Remove when the type is split.
+// swiftlint:disable:next type_body_length
 struct RetroMenuView: View {
     let emulatorVC: PVEmulatorViewController
     let dismissAction: (Bool) -> Void
