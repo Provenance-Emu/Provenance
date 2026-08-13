@@ -2979,6 +2979,91 @@ static bool thin_environment(unsigned cmd, void *data) {
 // MARK: - Core lifecycle
 // ---------------------------------------------------------------------------
 
+/// Wall-clock budgets for the two blocking waits inside `startWithROMPath:`.
+///
+/// `startWithROMPath:` runs synchronously inside `-[PVThinLibretroFrontend
+/// startEmulation]`, which `PVEmulatorCore.startEmulation()` (`@MainActor`)
+/// invokes on the MAIN THREAD. Every wait in here therefore blocks the main
+/// run loop, and FrontBoard kills the app with `0x8BADF00D` ("failed to
+/// terminate gracefully after 5.0s") if a suspend/terminate request lands
+/// while we are stuck. The waits used to be a flat 30 s (iCloud) and 10 s
+/// (blocking core) — both are unconditional watchdog kills on main.
+///
+/// The budget is therefore chosen per calling thread: an off-main caller keeps
+/// the generous timeout, a main-thread caller always answers the system well
+/// inside the 5 s window and surfaces a retryable NSError instead. For the
+/// iCloud case that is close to free — `PVEmulatorViewController.createEmulator()`
+/// already rejects un-materialised iCloud placeholders before the core is ever
+/// started, so this wait is a second line of defence, not the primary one.
+static const NSTimeInterval kThinICloudWaitMainThread       = 2.0;
+static const NSTimeInterval kThinICloudWaitOffMainThread    = 30.0;
+static const NSTimeInterval kThinICloudWaitPollInterval     = 0.1;
+static const NSTimeInterval kThinBlockingLoadWaitMainThread    = 4.0;
+static const NSTimeInterval kThinBlockingLoadWaitOffMainThread = 10.0;
+
+/// Tear down a core that has been `retro_init`ed but whose content load failed.
+///
+/// Every early exit in `startWithROMPath:` used to call `_sym.retro_deinit()`
+/// directly WITHOUT setting `_coreDeinited`. The subsequent `-stopEmulation`
+/// (from the view controller's teardown, or from `-dealloc`) then saw
+/// `_coreDeinited == NO` and ran the FULL teardown a second time —
+/// `context_destroy`, `retro_unload_game` and `retro_deinit` against a core
+/// that is already deinitialised. For flycast that second pass executes inside
+/// the dylib on the main thread, which is both a crash and a main-thread-wedge
+/// hazard. Routing every abort through here makes the `_coreDeinited` guard in
+/// `-stopEmulation` do its job.
+///
+/// @param unloadGame `YES` only when `retro_load_game` actually succeeded and we
+///        are aborting afterwards (the Vulkan-context path). `NO` on every path
+///        where no content is loaded, and on the blocking-core timeout where
+///        `retro_load_game` is still executing on `_blockingCoreThread`.
+- (void)_abortStartAfterRetroInitUnloadingGame:(BOOL)unloadGame {
+    if (_coreDeinited) { return; }
+    _audioPaused = YES;
+    // Deliberately do NOT invoke `context_destroy` here, unlike -stopEmulation.
+    // That teardown runs after a session where `context_reset` actually fired;
+    // on an aborted load it may never have (see `_vulkanContextDeferred` and the
+    // deferred-reset path below), and calling destroy without a prior reset is
+    // out of libretro contract — for some cores a null deref inside the dylib.
+    // Clearing the pointer keeps `teardownHardwareContext` (called below) from
+    // calling it either: `retro_deinit` releases the core's resources, and
+    // teardown then releases only OURS.
+    _hwRenderCallback.context_destroy = NULL;
+    if (unloadGame && _sym.retro_unload_game) {
+        _sym.retro_unload_game();
+    }
+    if (_sym.retro_deinit) {
+        _sym.retro_deinit();
+    }
+    _coreDeinited = YES;
+    // Release anything the environment callbacks allocated during the failed
+    // load. -stopEmulation normally frees these, but it now early-returns on
+    // `_coreDeinited`, so they would leak for the lifetime of the process.
+    if (_netpacketCallback) {
+        free(_netpacketCallback);
+        _netpacketCallback = NULL;
+    }
+    if (_memoryMapDescriptors) {
+        free(_memoryMapDescriptors);
+        _memoryMapDescriptors = NULL;
+        _memoryMapCount = 0;
+    }
+    if (_videoBufferData) {
+        free(_videoBufferData);
+        _videoBufferData = NULL;
+    }
+    // `context_destroy` is already NULL, so this releases only OUR GL/Vulkan
+    // objects and can no longer call back into the deinitialised core.
+    [self teardownHardwareContext];
+    _thinCurrentTLS = nil;
+    if (s_thinHWActive == self) {
+        s_thinHWActive = nil;
+    }
+    // Deliberately NOT done here: `saveBatterySaveData`. Flushing SRAM after a
+    // failed load would overwrite a good save file with whatever the core left
+    // in memory.
+}
+
 - (BOOL)startWithROMPath:(NSString *)romPath error:(NSError **)error {
     if (!_dylibHandle) {
         if (error) {
@@ -3069,8 +3154,7 @@ static bool thin_environment(unsigned cmd, void *data) {
                                              code:4
                                          userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Cannot read ROM: %@", romPath]}];
             }
-            _sym.retro_deinit();
-            _thinCurrentTLS = nil;
+            [self _abortStartAfterRetroInitUnloadingGame:NO];
             return NO;
         }
         gameInfo.data = romData.bytes;
@@ -3100,10 +3184,15 @@ static bool thin_environment(unsigned cmd, void *data) {
         if (needsDownload || sz == 0) {
             ILOG(@"ThinFrontend: content not materialized — requesting iCloud download for %@", romPath);
             [fm startDownloadingUbiquitousItemAtURL:romURL error:nil];
-            // Block the LOAD phase (not the frame loop) up to 30s for materialization.
+            // Wait for materialization, but NEVER long enough on the main thread to
+            // miss a suspend/terminate request (0x8BADF00D). The download keeps
+            // running in the background after we bail, so a retry usually succeeds.
+            const NSTimeInterval waitBudget = [NSThread isMainThread]
+                ? kThinICloudWaitMainThread
+                : kThinICloudWaitOffMainThread;
             CFTimeInterval t0 = CACurrentMediaTime();
-            while (CACurrentMediaTime() - t0 < 30.0) {
-                [NSThread sleepForTimeInterval:0.25];
+            while (CACurrentMediaTime() - t0 < waitBudget) {
+                [NSThread sleepForTimeInterval:kThinICloudWaitPollInterval];
                 [romURL removeCachedResourceValueForKey:NSURLUbiquitousItemDownloadingStatusKey];
                 dlStatus = nil;
                 [romURL getResourceValue:&dlStatus forKey:NSURLUbiquitousItemDownloadingStatusKey error:nil];
@@ -3120,8 +3209,7 @@ static bool thin_environment(unsigned cmd, void *data) {
                     userInfo:@{NSLocalizedDescriptionKey:
                         @"Game file is empty or not downloaded. If it's in iCloud, make sure it's fully downloaded, then try again."}];
             }
-            _sym.retro_deinit();
-            _thinCurrentTLS = nil;
+            [self _abortStartAfterRetroInitUnloadingGame:NO];
             return NO;
         }
     }
@@ -3158,9 +3246,13 @@ static bool thin_environment(unsigned cmd, void *data) {
         _blockingCoreThread.name = @"PVThinLibretro-BlockingCore";
         [_blockingCoreThread start];
 
-        // Wait for the first video_refresh call (= first frame produced) with a
-        // generous timeout. If the core fails to init it won't signal at all.
-        const long timeoutNs = (long)(10.0 * NSEC_PER_SEC);
+        // Wait for the first video_refresh call (= first frame produced). On the
+        // main thread the budget must stay inside the FrontBoard 5 s terminate
+        // window — a 10 s block there is an unconditional 0x8BADF00D kill.
+        const NSTimeInterval blockingBudget = [NSThread isMainThread]
+            ? kThinBlockingLoadWaitMainThread
+            : kThinBlockingLoadWaitOffMainThread;
+        const long timeoutNs = (long)(blockingBudget * NSEC_PER_SEC);
         long waitResult = dispatch_semaphore_wait(_blockingFrameReady,
                                                    dispatch_time(DISPATCH_TIME_NOW, timeoutNs));
         if (waitResult != 0) {
@@ -3170,8 +3262,15 @@ static bool thin_environment(unsigned cmd, void *data) {
                                              code:5
                                          userInfo:@{NSLocalizedDescriptionKey: @"retro_load_game timed out (blocking core)"}];
             }
-            _sym.retro_deinit();
-            _thinCurrentTLS = nil;
+            // The core thread is NOT joined here: a core that timed out never
+            // reached video_refresh, so it is still inside retro_load_game rather
+            // than parked on _blockingCoreTick, and joining would add another
+            // unbounded main-thread wait. It is also deliberately NOT signalled —
+            // that would only bank a semaphore count that lets it run concurrently
+            // with retro_deinit. (`-stopEmulation`'s 3 s join is skipped for this
+            // instance now that `_coreDeinited` is set: the trade is no join, but
+            // also no second retro_deinit on an already-deinitialised core.)
+            [self _abortStartAfterRetroInitUnloadingGame:NO];
             return NO;
         }
         loaded = YES;  // if we got a frame, load succeeded
@@ -3232,8 +3331,7 @@ static bool thin_environment(unsigned cmd, void *data) {
                                          code:5
                                      userInfo:info];
         }
-        _sym.retro_deinit();
-        _thinCurrentTLS = nil;
+        [self _abortStartAfterRetroInitUnloadingGame:NO];
         return NO;
     }
 
@@ -3249,8 +3347,9 @@ static bool thin_environment(unsigned cmd, void *data) {
                                              code:6
                                          userInfo:@{NSLocalizedDescriptionKey: @"Vulkan context setup failed"}];
             }
-            _sym.retro_deinit();
-            _thinCurrentTLS = nil;
+            // retro_load_game succeeded on this path, so the content must be
+            // unloaded before retro_deinit.
+            [self _abortStartAfterRetroInitUnloadingGame:YES];
             return NO;
         }
     }
