@@ -398,6 +398,67 @@ struct ZipRoundTripTests {
         #expect(progressValues.last == 1.0)
     }
 
+    /// Thread-safe collector: `extract`'s progress callback fires from the
+    /// extraction thread, not the test's.
+    private final class ProgressRecorder: @unchecked Sendable {
+        private let lock = NSLock()
+        private var storage: [Double] = []
+
+        func record(_ value: Double) {
+            lock.lock()
+            storage.append(value)
+            lock.unlock()
+        }
+
+        var values: [Double] {
+            lock.lock()
+            defer { lock.unlock() }
+            return storage
+        }
+    }
+
+    @Test("ZipBackend.extract streams files with monotonic progress")
+    func backendStreamingExtraction() async throws {
+        let fm = FileManager.default
+        let sourceDir = fm.temporaryDirectory.appendingPathComponent("ZipStream_\(UUID().uuidString)")
+        let nestedDir = sourceDir.appendingPathComponent("sub")
+        let zipFile = fm.temporaryDirectory.appendingPathComponent("stream_\(UUID().uuidString).zip")
+        let extractDir = fm.temporaryDirectory.appendingPathComponent("ZipStreamOut_\(UUID().uuidString)")
+        defer {
+            try? fm.removeItem(at: sourceDir)
+            try? fm.removeItem(at: zipFile)
+            try? fm.removeItem(at: extractDir)
+        }
+
+        try fm.createDirectory(at: nestedDir, withIntermediateDirectories: true)
+        try Data("one".utf8).write(to: sourceDir.appendingPathComponent("one.txt"))
+        try Data("two".utf8).write(to: nestedDir.appendingPathComponent("two.txt"))
+
+        try ArchiveManager.shared.createZipArchive(at: zipFile, from: sourceDir)
+
+        let recorder = ProgressRecorder()
+        var yielded: [URL] = []
+        for try await url in ZipBackend().extract(at: zipFile, to: extractDir, progress: { recorder.record($0) }) {
+            yielded.append(url)
+        }
+
+        // Only real files are yielded — the `sub/` directory entry must not appear.
+        #expect(yielded.count == 2)
+        for url in yielded {
+            #expect(url.path.hasPrefix(extractDir.path))
+            #expect(fm.fileExists(atPath: url.path))
+        }
+        #expect(try String(contentsOf: extractDir.appendingPathComponent("one.txt"), encoding: .utf8) == "one")
+        let nestedOut = extractDir.appendingPathComponent("sub").appendingPathComponent("two.txt")
+        #expect(try String(contentsOf: nestedOut, encoding: .utf8) == "two")
+
+        let values = recorder.values
+        #expect(!values.isEmpty)
+        #expect(values == values.sorted())
+        #expect(values.allSatisfy { $0 >= 0 && $0 <= 1 })
+        #expect(values.last == 1.0)
+    }
+
     @Test("format auto-detection works for zip")
     func autoDetect() throws {
         let fm = FileManager.default
