@@ -25,6 +25,13 @@ typealias UIImage = NSImage
 #endif
 // import UIKit
 
+/// Encoding parameters for the inline artwork thumbnail attached to Spotlight items.
+private enum SpotlightArtworkThumbnail {
+    /// Longest edge, in pixels. Spotlight results render far smaller than this.
+    static let maxPixelSize = 300
+    static let jpegCompressionQuality: CGFloat = 0.9
+}
+
 /// HTTPS base paths for ``NSUserActivity/webpageURL`` (custom URL schemes are rejected). Must match `applinks:provenance-emu.com` and the host’s `apple-app-site-association`.
 private enum ProvenanceUserActivityWebLink {
     /// Public game page by ROM MD5 — keep in sync with provenance-emu.com routing and AASA `paths`.
@@ -107,24 +114,21 @@ public extension PVGame {
         // Embed inline thumbnail data only when we have a local file.
         // When pathOfCachedImage returns a remote URL (fallback for uncached artwork),
         // .path gives the URL path component (e.g. "/art.jpg"), NOT a filesystem path,
-        // so UIImage(contentsOfFile:) would fail. Spotlight will use thumbnailURL instead.
-        // scaledImage(withMaxResolution:) and jpegData(compressionQuality:) are UIKit-only;
-        // on macOS (AppKit) we skip inline thumbnail data and rely on thumbnailURL.
+        // so decoding would fail. Spotlight will use thumbnailURL instead.
+        // jpegData(compressionQuality:) is UIKit-only; on macOS (AppKit) we skip
+        // inline thumbnail data and rely on thumbnailURL.
+        //
+        // This decodes *directly* at the thumbnail size. The previous form
+        // decoded the full-resolution cover and then resized it, which paid the
+        // whole decode cost — the exact thing that inflates resident image
+        // memory while indexing an entire library.
         #if canImport(UIKit)
-        if let cachedImageURL = cachedImageURL,
-           cachedImageURL.isFileURL,
-           let image = UIImage(contentsOfFile: cachedImageURL.path) {
-            // Try to get a high-quality thumbnail
-#if canImport(UIKit)
-            if let scaledImage = image.scaledImage(withMaxResolution: 300) {
-                contentSet.thumbnailData = scaledImage.jpegData(compressionQuality: 0.9)
-            } else {
-                contentSet.thumbnailData = image.jpegData(compressionQuality: 0.8)
+        if let cachedImageURL = cachedImageURL, cachedImageURL.isFileURL {
+            contentSet.thumbnailData = autoreleasepool {
+                ArtworkDownsampler
+                    .image(atPath: cachedImageURL.path, maxPixelSize: SpotlightArtworkThumbnail.maxPixelSize)?
+                    .jpegData(compressionQuality: SpotlightArtworkThumbnail.jpegCompressionQuality)
             }
-#else
-            // On non-UIKit platforms, use the original image without scaling
-            contentSet.thumbnailData = image.jpegData(compressionQuality: 0.8)
-#endif
         }
         #endif
 

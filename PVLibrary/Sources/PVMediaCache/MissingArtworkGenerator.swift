@@ -108,6 +108,23 @@ public enum RetroStyle {
 /// no theme or user-defaults coupling so it can be used from app extensions.
 public enum MissingArtworkGenerator {
 
+    /// Backing-store scale for the rendered placeholder.
+    ///
+    /// This used to be `0.0` ("native display scale"), which on a 3x iPhone
+    /// rendered `PVThumbnailMaxResolution` (600pt) as an **1800px** bitmap —
+    /// ~9 MB decoded, per game title, in a cache with no byte budget.
+    /// Placeholders are procedural test patterns plus a title, so 2x over the
+    /// 600pt canvas (1200px) is already well above the largest presentation and
+    /// cuts the bitmap cost 2.25x. tvOS renders at 1x natively, so pinning it
+    /// there avoids *inflating* tvOS.
+    static let renderScale: CGFloat = {
+        #if os(tvOS)
+        return 1.0
+        #else
+        return 2.0
+        #endif
+    }()
+
     /// Render a placeholder image. This is a pure function — callers are
     /// responsible for any in-memory caching they wish to layer on top.
     public static func generate(
@@ -121,7 +138,7 @@ public enum MissingArtworkGenerator {
         let width: CGFloat = max(1, height * ratio)
         let size = CGSize(width: width, height: height)
 
-        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
+        UIGraphicsBeginImageContextWithOptions(size, false, renderScale)
         defer { UIGraphicsEndImageContext() }
 
         guard let context = UIGraphicsGetCurrentContext() else { return UIImage() }

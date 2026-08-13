@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVLogging
+import PVMediaCache
 
 /// Preview cell for a skin with rubber-like design.
 ///
@@ -288,23 +289,25 @@ struct SkinPreviewCell: View {
 
 /// Process-wide thumbnail cache shared between ``SkinPreviewCell`` and
 /// ``SkinSelectionPreviewCell`` so the same skin image is never decoded twice.
+///
+/// Backed by ``ImageMemoryCache``: the previous plain `Dictionary` was capped
+/// at 100 entries by *count* with no byte budget, trimmed arbitrary entries
+/// (`Dictionary.keys` is unordered, so `prefix(20)` was not LRU), and was never
+/// purged on memory pressure — despite holding full-size skin renders.
 final class SkinPreviewThumbnailCache: @unchecked Sendable {
     static let shared = SkinPreviewThumbnailCache()
 
-    private var cache: [String: UIImage] = [:]
-    private let queue = DispatchQueue(label: "com.provenance.skinpreview.cache", attributes: .concurrent)
+    private let cache = ImageMemoryCache(
+        name: "SkinPreviewThumbnailCache",
+        totalCostLimit: ImageCacheBudget.skinPreviews,
+        countLimit: ImageCacheBudget.defaultCountLimit
+    )
 
     func thumbnail(forKey key: String) -> UIImage? {
-        queue.sync { cache[key] }
+        cache.image(forKey: key)
     }
 
     func store(_ image: UIImage, forKey key: String) {
-        queue.async(flags: .barrier) { [self] in
-            cache[key] = image
-            if cache.count > 100 {
-                let keysToRemove = Array(cache.keys.prefix(20))
-                for k in keysToRemove { cache.removeValue(forKey: k) }
-            }
-        }
+        cache.setImage(image, forKey: key)
     }
 }

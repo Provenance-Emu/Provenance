@@ -7,61 +7,32 @@
 
 import SwiftUI
 import UIKit
+import PVUIBase
 
-/// High-performance cached async image view for HomeContinueItemView
-/// Implements memory caching and async loading to prevent UI blocking
-actor ImageCache {
-    static let shared = ImageCache()
-    
-    private var cache: [String: UIImage] = [:]
-    private var loadingTasks: [String: Task<UIImage?, Never>] = [:]
-    
-    private init() {}
-    
-    func image(for key: String) -> UIImage? {
-        return cache[key]
-    }
-    
-    func setImage(_ image: UIImage, for key: String) {
-        cache[key] = image
-        
-        // Clean up cache if it gets too large (keep last 50 images)
-        if cache.count > 50 {
-            let keysToRemove = Array(cache.keys.prefix(cache.count - 40))
-            for key in keysToRemove {
-                cache.removeValue(forKey: key)
-            }
-        }
-    }
-    
-    func loadImage(from url: URL) async -> UIImage? {
-        let key = url.path
-        
-        // Return cached image if available
-        if let cachedImage = cache[key] {
-            return cachedImage
-        }
-        
-        // Check if already loading
-        if let existingTask = loadingTasks[key] {
-            return await existingTask.value
-        }
-        
-        // Create new loading task
-        let task = Task<UIImage?, Never> {
-            guard let image = UIImage(contentsOfFile: url.path) else {
-                return nil
-            }
-            
-            await setImage(image, for: key)
-            return image
-        }
-        
-        loadingTasks[key] = task
-        let result = await task.value
-        loadingTasks.removeValue(forKey: key)
-        
-        return result
+/// Sizing policy for save-state screenshot thumbnails.
+///
+/// Save-state screenshots are captured at full device resolution and stored
+/// without downscaling, so a single one decodes to ~12 MB. These views draw
+/// them at 44-48pt in list rows and inside a Continue card — decoding at the
+/// source resolution was the single largest contributor to resident
+/// "Image IO" memory on the Home screen.
+private enum ScreenshotThumbnailSizing {
+
+    /// Screenshots are drawn `.fill` in a frame that is wider than it is tall.
+    /// Allow for a 16:9 landscape source plus headroom for cards that stretch
+    /// to the container width.
+    static let aspectAllowance: CGFloat = 2.5
+
+    /// Hard ceiling on the decoded long edge. Even the largest Continue card
+    /// never needs more, and it keeps one entry under ~2.5 MB decoded.
+    static let maxPixelSizeCeiling: CGFloat = 1024
+
+    /// Floor, so a tiny row still gets a legible thumbnail on a 3x display.
+    static let minPixelSize: CGFloat = 128
+
+    static func maxPixelSize(height: CGFloat, zoomFactor: CGFloat, scale: CGFloat) -> Int {
+        let target = height * zoomFactor * aspectAllowance * scale
+        return Int(min(max(target, minPixelSize), maxPixelSizeCeiling).rounded(.up))
     }
 }
 
@@ -70,10 +41,20 @@ struct CachedAsyncImageView: View {
     let fallbackImage: UIImage
     let height: CGFloat
     let zoomFactor: CGFloat
-    
+
+    @Environment(\.displayScale) private var displayScale
     @State private var loadedImage: UIImage?
     @State private var isLoading = false
-    
+
+    /// Decode budget for this presentation, derived from the frame it draws in.
+    private var maxPixelSize: Int {
+        ScreenshotThumbnailSizing.maxPixelSize(
+            height: height,
+            zoomFactor: zoomFactor,
+            scale: displayScale
+        )
+    }
+
     var body: some View {
         Group {
             if let image = loadedImage {
@@ -104,25 +85,26 @@ struct CachedAsyncImageView: View {
             }
         }
     }
-    
+
     private func loadImageIfNeeded() async {
         guard let url = url else { return }
-        
+        let budget = maxPixelSize
+
         // Check cache first
-        if let cachedImage = await ImageCache.shared.image(for: url.path) {
+        if let cachedImage = FileThumbnailCache.shared.cachedImage(atPath: url.path, maxPixelSize: budget) {
             await MainActor.run {
                 self.loadedImage = cachedImage
             }
             return
         }
-        
+
         await MainActor.run {
             isLoading = true
         }
-        
-        // Load asynchronously
-        let image = await ImageCache.shared.loadImage(from: url)
-        
+
+        // Load asynchronously — decoded off the main actor and downsampled.
+        let image = await FileThumbnailCache.shared.image(atPath: url.path, maxPixelSize: budget)
+
         await MainActor.run {
             self.loadedImage = image
             self.isLoading = false

@@ -32,8 +32,7 @@ public class ArtworkLoader: ObservableObject {
         // or UUID-based game IDs. Clear both lookup caches to be safe.
         for id in gameIds {
             clearLocalURLCache(forGameId: id)
-            loadingTasks[id]?.cancel()
-            loadingTasks[id] = nil
+            cancelLoading(for: id)
         }
         artworkBecameAvailable.send(gameIds)
     }
@@ -91,13 +90,17 @@ public class ArtworkLoader: ObservableObject {
     ///   - gameTitle: The game title for logging
     ///   - priority: The priority of the loading operation
     ///   - isVisible: Whether the game item is currently visible
+    ///   - downsampleTarget: Decode budget. Defaults to `.thumbnail` because
+    ///     every caller here feeds a grid cell or shelf carousel; pass
+    ///     `.detail` for full-screen presentations.
     /// - Returns: The loaded artwork image, if available
     public func loadArtwork(
         gameId: String,
         artworkURL: String,
         gameTitle: String,
         priority: TaskPriority = .medium,
-        isVisible: Bool = true
+        isVisible: Bool = true,
+        downsampleTarget: ArtworkDownsampleTarget = .thumbnail
     ) async -> UIImage? {
         // If game has no artwork URL, return nil early
         guard !artworkURL.isEmpty else {
@@ -107,8 +110,12 @@ public class ArtworkLoader: ObservableObject {
         // Track this game ID as recently accessed
         updateRecentlyAccessed(gameId: gameId)
 
+        // De-duplicate per (game, decode budget) — a grid thumbnail request must
+        // not be satisfied by an in-flight detail-sized load, or vice versa.
+        let taskKey = Self.loadingTaskKey(gameId: gameId, target: downsampleTarget)
+
         // If there's already a task loading this artwork, join it
-        if let existingTask = loadingTasks[gameId] {
+        if let existingTask = loadingTasks[taskKey] {
             do {
                 return try await existingTask.value
             } catch {
@@ -124,29 +131,34 @@ public class ArtworkLoader: ObservableObject {
             // Run the actual disk I/O off the MainActor to avoid blocking UI
             let image = try await Task.detached(priority: priority) {
                 try Task.checkCancellation()
-                return await PVMediaCache.shareInstance().image(forKey: artworkURL)
+                return await PVMediaCache.shareInstance().image(forKey: artworkURL, downsampleTo: downsampleTarget)
             }.value
 
             return image
         }
 
         // Store the task
-        loadingTasks[gameId] = loadingTask
+        loadingTasks[taskKey] = loadingTask
 
         do {
             // Wait for the task to complete
             let result = try await loadingTask.value
 
             // Remove the task from the dictionary
-            loadingTasks[gameId] = nil
+            loadingTasks[taskKey] = nil
 
             return result
         } catch {
             // Remove the task from the dictionary on error
-            loadingTasks[gameId] = nil
+            loadingTasks[taskKey] = nil
             DLOG("Error loading artwork for \(gameTitle): \(error.localizedDescription)")
             return nil
         }
+    }
+
+    /// Key for the in-flight-load dictionary: one entry per game *and* decode budget.
+    private static func loadingTaskKey(gameId: String, target: ArtworkDownsampleTarget) -> String {
+        "\(gameId)@\(target.rawValue)"
     }
 
     /// Legacy method for backward compatibility - extracts values on main thread

@@ -3415,6 +3415,16 @@ private struct SkinDocumentPicker: UIViewControllerRepresentable {
 }
 #endif
 
+/// Fixed thumbnail frames used by the pause-menu browsers. These double as the
+/// decode budget for `DownsampledFileImage`, so they must match the `.frame`
+/// they are drawn in.
+enum RetroMenuThumbnailSize {
+    /// Screenshot browser row.
+    static let screenshotRow = CGSize(width: 96, height: 72)
+    /// Save-state row.
+    static let saveStateRow = CGSize(width: 72, height: 54)
+}
+
 // MARK: - Pause-menu screenshot browser
 
 /// Screenshot gallery presented as a sheet from the pause menu.
@@ -3504,19 +3514,14 @@ struct PauseMenuScreenshotBrowserView: View {
     @ViewBuilder
     private func screenshotRow(_ shot: PVImageFile) -> some View {
         HStack(spacing: 12) {
-            // Thumbnail
-            Group {
-                if let url = shot.url, let img = UIImage(contentsOfFile: url.path) {
-                    Image(uiImage: img)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                } else {
-                    Image(systemName: "photo")
-                        .font(.system(size: 22))
-                        .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
-                }
+            // Thumbnail — downsampled at decode time. Screenshots are full
+            // device resolution (~12 MB decoded); this row draws them at 96x72.
+            DownsampledFileImage(url: shot.url, pointSize: RetroMenuThumbnailSize.screenshotRow) {
+                Image(systemName: "photo")
+                    .font(.system(size: 22))
+                    .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
             }
-            .frame(width: 96, height: 72)
+            .frame(width: RetroMenuThumbnailSize.screenshotRow.width, height: RetroMenuThumbnailSize.screenshotRow.height)
             .clipped()
             .clipShape(RoundedRectangle(cornerRadius: 6))
             .overlay(
@@ -3700,18 +3705,14 @@ struct PauseMenuSaveStateBrowserView: View {
 
     @ViewBuilder
     private func thumbnailView(for state: PVSaveState) -> some View {
-        Group {
-            if let imageURL = state.image?.url, let uiImage = UIImage(contentsOfFile: imageURL.path) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } else {
-                Image(systemName: "gamecontroller.fill")
-                    .font(.system(size: 22))
-                    .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
-            }
+        /// Downsampled at decode time — save-state images are full device
+        /// resolution and this draws them at 72x54.
+        DownsampledFileImage(url: state.image?.url, pointSize: RetroMenuThumbnailSize.saveStateRow) {
+            Image(systemName: "gamecontroller.fill")
+                .font(.system(size: 22))
+                .foregroundColor(palette.defaultTintColor.swiftUIColor.opacity(0.4))
         }
-        .frame(width: 72, height: 54)
+        .frame(width: RetroMenuThumbnailSize.saveStateRow.width, height: RetroMenuThumbnailSize.saveStateRow.height)
         .clipped()
         .clipShape(RoundedRectangle(cornerRadius: 6))
         .overlay(

@@ -336,7 +336,7 @@ public final class PVMediaCache: NSObject, Sendable {
         let cachePath = self.cachePath.appendingPathComponent(keyHash, isDirectory: false)
 
         Task { @MainActor in
-            memCache.removeObject(forKey: keyHash as NSString)
+            removeAllMemCacheVariants(keyHash: keyHash)
 
             if FileManager.default.fileExists(atPath: cachePath.path) {
                 do {
@@ -364,6 +364,33 @@ public final class PVMediaCache: NSObject, Sendable {
                 ILOG("Cache emptied")
                 NotificationCenter.default.post(name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
             }
+        }
+    }
+
+    // MARK: - Memory cache keys
+
+    /// Memory-cache key for a decode variant of `keyHash`.
+    ///
+    /// Full-resolution decodes keep the bare hash so existing entries stay
+    /// valid; downsampled variants get a suffix so a grid thumbnail can never
+    /// be served to a full-screen hero (or vice versa).
+    static func memCacheKey(keyHash: String, target: ArtworkDownsampleTarget?) -> String {
+        guard let target else { return keyHash }
+        return "\(keyHash)@\(target.rawValue)"
+    }
+
+    /// Every memory-cache key that can exist for a given disk entry.
+    /// Used when invalidating so no stale variant survives an artwork change.
+    static func allMemCacheKeys(keyHash: String) -> [String] {
+        [memCacheKey(keyHash: keyHash, target: nil)]
+            + ArtworkDownsampleTarget.allCases.map { memCacheKey(keyHash: keyHash, target: $0) }
+    }
+
+    /// Remove every decode variant of `keyHash` from the memory cache.
+    @MainActor
+    static func removeAllMemCacheVariants(keyHash: String) {
+        for cacheKey in allMemCacheKeys(keyHash: keyHash) {
+            memCache.removeObject(forKey: cacheKey as NSString)
         }
     }
 
@@ -404,13 +431,14 @@ public final class PVMediaCache: NSObject, Sendable {
     public typealias ImageFetchCompletion = @Sendable (_ key: String, _ image: UIImage?) -> Void
 
     /// Store in memory cache with cost calculation
-    @MainActor private func storeInMemoryCache(image: UIImage, forKey keyHash: String) {
-        /// Calculate approximate memory cost based on image dimensions and bit depth
-        let bytesPerPixel = 4 // Assuming RGBA
-        let cost = Int(image.size.width * image.size.height) * bytesPerPixel
+    @MainActor private func storeInMemoryCache(image: UIImage, forKey keyHash: String, target: ArtworkDownsampleTarget? = nil) {
+        /// Cost is the *decoded* byte size so `totalCostLimit` reflects real
+        /// resident memory rather than a point-size approximation.
+        let cost = ArtworkDownsampler.decodedByteCost(of: image)
+        let cacheKey = Self.memCacheKey(keyHash: keyHash, target: target)
 
-        PVMediaCache.memCache.setObject(image, forKey: keyHash as NSString, cost: cost)
-        recentlyAccessedKeys.access(keyHash)
+        PVMediaCache.memCache.setObject(image, forKey: cacheKey as NSString, cost: cost)
+        recentlyAccessedKeys.access(cacheKey)
         DLOG("Image added to memory cache with cost: \(cost)")
     }
 
@@ -524,8 +552,25 @@ public final class PVMediaCache: NSObject, Sendable {
         }.value
     }
 
-    /// Async version of image fetching with improved caching
+    /// Async version of image fetching with improved caching.
+    ///
+    /// Decodes at the source resolution. Only use this when the caller genuinely
+    /// needs the full-size bitmap (writing artwork back to disk, controller-skin
+    /// assets, export). For anything that is *displayed*, prefer
+    /// `image(forKey:downsampleTo:)` — a full-resolution cover costs several
+    /// megabytes of resident "Image IO" memory no matter how small it is drawn.
     public func image(forKey key: String) async -> UIImage? {
+        await image(forKey: key, downsampleTo: nil)
+    }
+
+    /// Async image fetch that decodes at a bounded pixel size.
+    ///
+    /// - Parameters:
+    ///   - key: The artwork cache key (usually a URL string).
+    ///   - target: Decode budget, or `nil` for the full source resolution.
+    ///     Each target is cached separately, so a grid thumbnail never
+    ///     substitutes for a detail hero.
+    public func image(forKey key: String, downsampleTo target: ArtworkDownsampleTarget?) async -> UIImage? {
         guard !key.isEmpty else {
             DLOG("Error: Key was empty")
             return nil
@@ -535,12 +580,13 @@ public final class PVMediaCache: NSObject, Sendable {
         let keyHash = key.md5Hash
         let cacheDir = PVMediaCache.cachePath
         let cachePath = cacheDir.appendingPathComponent(keyHash, isDirectory: false).path
+        let cacheKey = Self.memCacheKey(keyHash: keyHash, target: target)
 
         // Check memory cache first
         if let cachedImage = await MainActor.run(body: {
             /// Update access tracking
-            recentlyAccessedKeys.access(keyHash)
-            return PVMediaCache.memCache.object(forKey: keyHash as NSString)
+            recentlyAccessedKeys.access(cacheKey)
+            return PVMediaCache.memCache.object(forKey: cacheKey as NSString)
         }) {
             DLOG("Image found in memory cache")
             return cachedImage
@@ -553,14 +599,14 @@ public final class PVMediaCache: NSObject, Sendable {
         }
 
         DLOG("Attempting to load image from disk")
-        guard let image = UIImage(contentsOfFile: cachePath) else {
+        guard let image = Self.decodeImage(atPath: cachePath, target: target) else {
             DLOG("Failed to load image from disk")
             return nil
         }
 
         // Store in memory cache with cost calculation
         await MainActor.run {
-            storeInMemoryCache(image: image, forKey: keyHash)
+            storeInMemoryCache(image: image, forKey: keyHash, target: target)
         }
 
         // Update file modification date to track LRU on disk
@@ -569,8 +615,20 @@ public final class PVMediaCache: NSObject, Sendable {
         return image
     }
 
-    /// Preload multiple images into the cache with improved batching
-    public func preloadImages(forKeys keys: [String]) async {
+    /// Decode a cached file, downsampling when a target is supplied.
+    static func decodeImage(atPath path: String, target: ArtworkDownsampleTarget?) -> UIImage? {
+        guard let target else {
+            return UIImage(contentsOfFile: path)
+        }
+        return ArtworkDownsampler.image(atPath: path, target: target)
+    }
+
+    /// Preload multiple images into the cache with improved batching.
+    ///
+    /// Always decodes at the `.thumbnail` budget — preloading exists to warm the
+    /// library grid, and warming it with full-resolution bitmaps is what pushed
+    /// resident "Image IO" memory past the jetsam limit.
+    public func preloadImages(forKeys keys: [String], downsampleTo target: ArtworkDownsampleTarget = .thumbnail) async {
         /// Deduplicate keys
         let uniqueKeys = Array(Set(keys))
 
@@ -582,8 +640,8 @@ public final class PVMediaCache: NSObject, Sendable {
 
         /// First check which images are already in memory cache
         for key in uniqueKeys {
-            let keyHash = key.md5Hash
-            if Thread.isMainThread, PVMediaCache.memCache.object(forKey: keyHash as NSString) != nil {
+            let cacheKey = Self.memCacheKey(keyHash: key.md5Hash, target: target)
+            if Thread.isMainThread, PVMediaCache.memCache.object(forKey: cacheKey as NSString) != nil {
                 loadedKeys.insert(key)
             }
         }
@@ -605,15 +663,20 @@ public final class PVMediaCache: NSObject, Sendable {
                         let cachePath = PVMediaCache.cachePath.appendingPathComponent(keyHash, isDirectory: false).path
 
                         if FileManager.default.fileExists(atPath: cachePath) {
-                            /// If on disk, just load it into memory cache
-                            if let image = UIImage(contentsOfFile: cachePath) {
+                            /// If on disk, just load it into memory cache.
+                            /// `autoreleasepool` bounds the transient CG buffers so a
+                            /// batch does not accumulate them until the task exits.
+                            let image = autoreleasepool {
+                                Self.decodeImage(atPath: cachePath, target: target)
+                            }
+                            if let image {
                                 await MainActor.run {
-                                    self.storeInMemoryCache(image: image, forKey: keyHash)
+                                    self.storeInMemoryCache(image: image, forKey: keyHash, target: target)
                                 }
                             }
                         } else {
                             /// Otherwise load from network
-                            _ = await self.image(forKey: key)
+                            _ = await self.image(forKey: key, downsampleTo: target)
                         }
                     }
                 }
@@ -652,7 +715,9 @@ public final class PVMediaCache: NSObject, Sendable {
 
         let keyHash = key.md5Hash
         Task { @MainActor in
-            PVMediaCache.memCache.removeObject(forKey: keyHash as NSString)
+            /// Clear every decode variant, not just the full-resolution entry,
+            /// or the grid keeps showing a stale thumbnail after new artwork lands.
+            PVMediaCache.removeAllMemCacheVariants(keyHash: keyHash)
         }
 
         // Also remove from disk if needed
@@ -795,14 +860,18 @@ public final class PVMediaCache: NSObject, Sendable {
                 var corruptedCount = 0
 
                 for fileURL in contents {
-                    /// Skip directories
-                    var isDirectory: ObjCBool = false
-                    if fileManager.fileExists(atPath: fileURL.path, isDirectory: &isDirectory), isDirectory.boolValue {
-                        continue
-                    }
+                    /// `autoreleasepool` per file so a large cache directory does
+                    /// not accumulate every file's transient buffers before the
+                    /// loop ends.
+                    autoreleasepool {
+                        /// Skip directories
+                        var isDirectory: ObjCBool = false
+                        if fileManager.fileExists(atPath: fileURL.path, isDirectory: &isDirectory), isDirectory.boolValue {
+                            return
+                        }
 
-                    /// Check if file is a valid image
-                    if !self.isValidImageFile(at: fileURL) {
+                        /// Check if file is a valid image
+                        guard !self.isValidImageFile(at: fileURL) else { return }
                         do {
                             try fileManager.removeItem(at: fileURL)
                             corruptedCount += 1
@@ -822,23 +891,26 @@ public final class PVMediaCache: NSObject, Sendable {
         }
     }
 
-    /// Check if a file is a valid image
+    /// Check if a file is a valid image.
+    ///
+    /// Reads only the container header via `CGImageSource` — it never allocates
+    /// a pixel buffer. The previous `UIImage(data:)` form decoded every file in
+    /// the cache directory during maintenance.
     private func isValidImageFile(at url: URL) -> Bool {
-        guard let data = try? Data(contentsOf: url, options: .alwaysMapped) else {
-            return false
-        }
-
-        #if canImport(UIKit)
-        return UIImage(data: data) != nil
-        #else
-        return NSImage(data: data) != nil
-        #endif
+        ArtworkDownsampler.isDecodableImage(atPath: url.path)
     }
 
     /// Legacy completion handler version that internally uses the async version
     /// Optimized to avoid unnecessary operations for cached images
     @discardableResult
     public func image(forKey key: String, completion: ImageFetchCompletion? = nil) -> BlockOperation? {
+        image(forKey: key, downsampleTo: nil, completion: completion)
+    }
+
+    /// Legacy completion handler version with an explicit decode budget.
+    /// - Parameter target: Decode budget, or `nil` for the full source resolution.
+    @discardableResult
+    public func image(forKey key: String, downsampleTo target: ArtworkDownsampleTarget?, completion: ImageFetchCompletion? = nil) -> BlockOperation? {
         guard !key.isEmpty else {
             DLOG("Error: Key was empty")
             completion?(key, nil)
@@ -846,9 +918,10 @@ public final class PVMediaCache: NSObject, Sendable {
         }
 
         let keyHash = key.md5Hash
+        let cacheKey = Self.memCacheKey(keyHash: keyHash, target: target)
 
         /// Check memory cache first to avoid creating an operation
-        if let cachedImage = Thread.isMainThread ? PVMediaCache.memCache.object(forKey: keyHash as NSString) : nil {
+        if let cachedImage = Thread.isMainThread ? PVMediaCache.memCache.object(forKey: cacheKey as NSString) : nil {
             DLOG("Image found in memory cache (sync)")
             completion?(key, cachedImage)
             return nil
@@ -863,7 +936,7 @@ public final class PVMediaCache: NSObject, Sendable {
             let operation = BlockOperation { [weak self] in
                 guard let self = self else { return }
 
-                guard let image = UIImage(contentsOfFile: cachePath) else {
+                guard let image = autoreleasepool(invoking: { Self.decodeImage(atPath: cachePath, target: target) }) else {
                     DLOG("Failed to load image from disk")
                     DispatchQueue.main.async {
                         completion?(key, nil)
@@ -873,7 +946,7 @@ public final class PVMediaCache: NSObject, Sendable {
 
                 /// Store in memory cache
                 Task { @MainActor in
-                    self.storeInMemoryCache(image: image, forKey: keyHash)
+                    self.storeInMemoryCache(image: image, forKey: keyHash, target: target)
                 }
 
                 DispatchQueue.main.async {
@@ -890,7 +963,7 @@ public final class PVMediaCache: NSObject, Sendable {
             guard let self = self else { return }
 
             Task {
-                let image = await self.image(forKey: key)
+                let image = await self.image(forKey: key, downsampleTo: target)
                 await MainActor.run {
                     completion?(key, image)
                 }

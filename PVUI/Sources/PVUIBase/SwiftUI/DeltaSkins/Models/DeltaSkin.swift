@@ -1,6 +1,7 @@
 import UIKit
 import ZIPFoundation
 import PVLogging
+import PVMediaCache
 
 /// Represents a decoded DeltaSkin file
 public struct DeltaSkin: DeltaSkinProtocol {
@@ -335,15 +336,24 @@ public struct DeltaSkin: DeltaSkinProtocol {
         return result
     }
 
-    /// Cache for decoded images keyed by skin identifier + traits + asset filename
-    private static var imageCache: [String: UIImage] = [:]
-    private static let imageCacheQueue = DispatchQueue(label: "com.provenance.deltaskin.imagecache", attributes: .concurrent)
+    /// Cache for decoded images keyed by skin identifier + traits + asset filename.
+    ///
+    /// Skin assets are rendered full-screen and drive hit-testing geometry, so
+    /// they must stay at full resolution — but the cache itself needs a byte
+    /// budget. It was previously a plain `Dictionary` capped at 50 entries by
+    /// count, trimmed via `keys.prefix(10)` (unordered, so not FIFO despite the
+    /// comment) and never purged on memory pressure.
+    private static let imageCache = ImageMemoryCache(
+        name: "DeltaSkinImageCache",
+        totalCostLimit: ImageCacheBudget.skinAssets,
+        countLimit: ImageCacheBudget.defaultCountLimit
+    )
 
     // MARK: - Disk cache (rasterized PDF/SVG skin assets)
     // Persistent tier under the in-memory cache so the expensive PDF/SVG rasterization
     // (UIGraphicsImageRenderer at UIScreen scale) doesn't repeat on every cold launch —
-    // that re-rasterization is the multi-second skin-load cost. Disk I/O happens OUTSIDE
-    // imageCacheQueue (that queue guards only the in-memory dict).
+    // that re-rasterization is the multi-second skin-load cost. Disk I/O happens outside
+    // `imageCache`, which holds only the in-memory tier.
 
     /// On-disk PNG cache dir. Re-created on access since the OS may purge Library/Caches.
     private static var diskCacheDirectory: URL? {
@@ -453,7 +463,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         for name in candidates {
             // Check cache first
             let cacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(name)"
-            if let cachedImage = Self.imageCacheQueue.sync(execute: { Self.imageCache[cacheKey] }) {
+            if let cachedImage = Self.imageCache.image(forKey: cacheKey) {
                 ILOG("skins: Found cached image: \(name)")
                 return cachedImage
             }
@@ -467,13 +477,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 let diskURL: URL? = isVectorAsset ? diskCacheURL(assetName: name, traits: traits, renderSize: renderSize) : nil
                 if isVectorAsset, let diskImage = loadFromDiskCache(diskURL) {
                     ILOG("skins: Disk-cache hit for \(name)")
-                    Self.imageCacheQueue.async(flags: .barrier) {
-                        Self.imageCache[cacheKey] = diskImage
-                        if Self.imageCache.count > 50 {
-                            let keysToRemove = Array(Self.imageCache.keys.prefix(10))
-                            keysToRemove.forEach { Self.imageCache.removeValue(forKey: $0) }
-                        }
-                    }
+                    Self.imageCache.setImage(diskImage, forKey: cacheKey)
                     return diskImage
                 }
 
@@ -505,15 +509,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
                 if let imageToCache = decodedImage {
                     ILOG("skins: Successfully loaded and decoded image: \(name), size: \(imageToCache.size)")
                     if isVectorAsset { Self.writeToDiskCache(imageToCache, to: diskURL) }
-                    Self.imageCacheQueue.async(flags: .barrier) {
-                        Self.imageCache[cacheKey] = imageToCache
-                        // Limit cache size to ~50MB (approximately 50 images)
-                        if Self.imageCache.count > 50 {
-                            // Remove oldest entries (simple FIFO, in production could use LRU)
-                            let keysToRemove = Array(Self.imageCache.keys.prefix(10))
-                            keysToRemove.forEach { Self.imageCache.removeValue(forKey: $0) }
-                        }
-                    }
+                    Self.imageCache.setImage(imageToCache, forKey: cacheKey)
                     return imageToCache
                 }
             } catch {
@@ -528,7 +524,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
         // Fallback: try the original filename property (legacy behavior)
         let fallbackName = rep.assets.filename
         let fallbackCacheKey = "\(identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)-\(fallbackName)"
-        if let cachedImage = Self.imageCacheQueue.sync(execute: { Self.imageCache[fallbackCacheKey] }) {
+        if let cachedImage = Self.imageCache.image(forKey: fallbackCacheKey) {
             return cachedImage
         }
 
@@ -539,7 +535,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             // Disk-cache tier (PDF/SVG only): a hit skips the slow rasterize.
             let fbDiskURL: URL? = fbIsVector ? diskCacheURL(assetName: fallbackName, traits: traits, renderSize: renderSize) : nil
             if fbIsVector, let diskImage = loadFromDiskCache(fbDiskURL) {
-                Self.imageCacheQueue.async(flags: .barrier) { Self.imageCache[fallbackCacheKey] = diskImage }
+                Self.imageCache.setImage(diskImage, forKey: fallbackCacheKey)
                 return diskImage
             }
 
@@ -567,14 +563,7 @@ public struct DeltaSkin: DeltaSkinProtocol {
             // Cache the decoded image (disk + memory)
             if let imageToCache = decodedImage {
                 if fbIsVector { Self.writeToDiskCache(imageToCache, to: fbDiskURL) }
-                Self.imageCacheQueue.async(flags: .barrier) {
-                    Self.imageCache[fallbackCacheKey] = imageToCache
-                    // Limit cache size
-                    if Self.imageCache.count > 50 {
-                        let keysToRemove = Array(Self.imageCache.keys.prefix(10))
-                        keysToRemove.forEach { Self.imageCache.removeValue(forKey: $0) }
-                    }
-                }
+                Self.imageCache.setImage(imageToCache, forKey: fallbackCacheKey)
                 return imageToCache
             }
 

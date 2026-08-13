@@ -32,8 +32,10 @@ public extension PVMediaCache {
             for indexPath in newIndexPaths {
                 guard let key = keyProvider(indexPath), !key.isEmpty else { continue }
 
-                /// Create and store the operation
-                let operation = mediaCache.image(forKey: key) { [weak self] _, _ in
+                /// Create and store the operation.
+                /// Prefetch warms collection-view cells, so decode at the
+                /// thumbnail budget — never at the source resolution.
+                let operation = mediaCache.image(forKey: key, downsampleTo: .thumbnail) { [weak self] _, _ in
                     /// Remove the operation when complete
                     DispatchQueue.main.async {
                         self?.prefetchOperations.removeValue(forKey: indexPath)

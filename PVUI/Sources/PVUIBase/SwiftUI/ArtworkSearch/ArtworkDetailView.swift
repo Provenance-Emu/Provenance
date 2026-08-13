@@ -2,6 +2,7 @@ import SwiftUI
 import PVLookup
 import PVLookupTypes
 import PVSystems
+import PVMediaCache
 
 struct ArtworkDetailView: View {
     let artworks: [ArtworkMetadata]
@@ -308,7 +309,9 @@ struct ArtworkDetailView: View {
             }
 
             let (data, _) = try await URLSession.shared.data(from: artwork.url)
-            if let uiImage = UIImage(data: data) {
+            /// Downsample at decode time — these are candidate covers shown in a
+            /// preview grid, and search results can be very large scans.
+            if let uiImage = ArtworkDownsampler.image(data: data, maxPixelSize: ArtworkDownsampleTarget.detail.maxPixelSize) {
                 let image = Image(uiImage: uiImage)
                 previewImages[artwork.url] = image
                 await imageCache.setImage(image, for: artwork.url)

@@ -12,12 +12,20 @@ import PVPrimitives
 import PVSupport
 import RealmSwift
 import UniformTypeIdentifiers
+import PVMediaCache
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)
 import AppKit
 typealias UIImage = NSImage
 #endif
+
+/// Encoding parameters for Spotlight thumbnail payloads.
+enum SpotlightThumbnail {
+    /// Spotlight renders these small; 0.8 keeps the payload well under the
+    /// attribute-set size guidance without a visible quality drop.
+    static let jpegCompressionQuality: CGFloat = 0.8
+}
 
 /// Helper class for Spotlight operations
 public class SpotlightHelper {
@@ -190,12 +198,15 @@ public class SpotlightHelper {
             attributeSet.contentCreationDate = frozenSaveState.date
             attributeSet.contentModificationDate = frozenSaveState.date
             
-            // Add screenshot thumbnail if available
+            // Add screenshot thumbnail if available.
+            // Downsample at decode time: save-state screenshots are full device
+            // resolution (~12 MB decoded) and Spotlight only shows a thumbnail.
             if let imageURL = frozenSaveState.image?.url {
                 attributeSet.thumbnailURL = imageURL
-                if let imageData = try? Data(contentsOf: imageURL),
-                   let image = UIImage(data: imageData) {
-                    attributeSet.thumbnailData = image.jpegData(compressionQuality: 0.8)
+                attributeSet.thumbnailData = autoreleasepool {
+                    ArtworkDownsampler
+                        .image(atPath: imageURL.path, target: .thumbnail)?
+                        .jpegData(compressionQuality: SpotlightThumbnail.jpegCompressionQuality)
                 }
             }
 

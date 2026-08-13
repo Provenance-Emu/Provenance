@@ -23,8 +23,22 @@ public class MissingArtworkCacheManager {
     /// Shared instance for the cache manager
     public static let shared = MissingArtworkCacheManager()
 
-    /// In-memory cache for quick access
-    private let memoryCache = NSCache<NSString, SwiftImage>()
+    /// In-memory cache for quick access.
+    ///
+    /// Previously a bare `NSCache` with `countLimit = 200` and **no**
+    /// `totalCostLimit`, whose `setObject` calls supplied no cost — so no byte
+    /// budget was ever applied. Each entry is a full placeholder bitmap
+    /// (several MB), keyed per game title, giving a ceiling well over a
+    /// gigabyte. `ImageMemoryCache` costs entries by decoded byte size and
+    /// purges on memory warnings.
+    private let memoryCache = ImageMemoryCache(
+        name: "MissingArtworkCache",
+        totalCostLimit: ImageCacheBudget.missingArtwork,
+        countLimit: MissingArtworkCacheManager.maxMemoryCachedImages
+    )
+
+    /// Entry-count guard. `totalCostLimit` is the real bound.
+    private static let maxMemoryCachedImages = 200
 
     /// URL for the disk cache directory
     private let diskCacheURL: URL
@@ -33,9 +47,6 @@ public class MissingArtworkCacheManager {
     private let maxDiskCachedImages = 500
 
     private init() {
-        // Set up memory cache limits - increased for better hit rates
-        memoryCache.countLimit = 200
-
         // Create disk cache directory in the caches folder
         let cachesDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         diskCacheURL = cachesDirectory.appendingPathComponent("MissingArtworkCache", isDirectory: true)
@@ -63,39 +74,42 @@ public class MissingArtworkCacheManager {
 
     /// Get an image from cache (memory or disk)
     public func getImage(gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat, isDarkTheme: Bool) -> SwiftImage? {
-        let key = cacheKey(gameTitle: gameTitle, ratio: ratio, pattern: pattern, minFontSize: minFontSize, isDarkTheme: isDarkTheme) as NSString
+        let key = cacheKey(gameTitle: gameTitle, ratio: ratio, pattern: pattern, minFontSize: minFontSize, isDarkTheme: isDarkTheme)
 
         // Check memory cache first
-        if let cachedImage = memoryCache.object(forKey: key) {
+        if let cachedImage = memoryCache.image(forKey: key) {
             return cachedImage
         }
 
-        // If not in memory, check disk cache
-        let fileURL = diskURL(for: key as String)
-        if FileManager.default.fileExists(atPath: fileURL.path) {
-            /// Use background queue for disk reads to avoid blocking main thread
-            if let data = try? Data(contentsOf: fileURL),
-               let image = SwiftImage(data: data) {
-                // Store in memory cache for faster access next time
-                memoryCache.setObject(image, forKey: key)
-                return image
-            }
-        }
+        // If not in memory, check disk cache.
+        // Decode through `ArtworkDownsampler` rather than `SwiftImage(data:)`:
+        // the on-disk PNG is a full placeholder bitmap, and reloading it at
+        // source resolution is the path that lands in "Image IO" memory.
+        let fileURL = diskURL(for: key)
+        guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
+        guard let image = autoreleasepool(invoking: {
+            ArtworkDownsampler.image(atPath: fileURL.path, target: .thumbnail)
+        }) else { return nil }
 
-        return nil
+        // Store in memory cache for faster access next time
+        memoryCache.setImage(image, forKey: key)
+        return image
     }
 
     /// Store an image in both memory and disk cache
     public func storeImage(_ image: SwiftImage, gameTitle: String, ratio: CGFloat, pattern: RetroTestPattern, minFontSize: CGFloat, isDarkTheme: Bool) {
-        let key = cacheKey(gameTitle: gameTitle, ratio: ratio, pattern: pattern, minFontSize: minFontSize, isDarkTheme: isDarkTheme) as NSString
+        let key = cacheKey(gameTitle: gameTitle, ratio: ratio, pattern: pattern, minFontSize: minFontSize, isDarkTheme: isDarkTheme)
 
         // Store in memory cache
-        memoryCache.setObject(image, forKey: key)
+        memoryCache.setImage(image, forKey: key)
 
         // Store in disk cache — capture image strongly so it survives until write completes
-        let fileURL = diskURL(for: key as String)
+        let fileURL = diskURL(for: key)
         Task.detached {
-            if let data = image.pngData() {
+            /// `pngData()` on a multi-megapixel bitmap allocates a second copy;
+            /// bound it so the encode buffer is released immediately.
+            let data = autoreleasepool { image.pngData() }
+            if let data {
                 try? data.write(to: fileURL)
             }
         }
@@ -149,7 +163,7 @@ public class MissingArtworkCacheManager {
     /// Clear all caches (memory and disk)
     public func clearAllCaches() {
         // Clear memory cache
-        memoryCache.removeAllObjects()
+        memoryCache.removeAll()
 
         // Clear disk cache
         do {
@@ -176,40 +190,42 @@ public class MissingArtworkCacheManager {
     ) {
         Task.detached(priority: .utility) {
             for game in games {
-                /// Check if already cached
-                if self.getImage(
-                    gameTitle: game.title,
-                    ratio: game.ratio,
-                    pattern: pattern,
-                    minFontSize: minFontSize,
-                    isDarkTheme: isDarkTheme
-                ) != nil {
-                    continue
+                /// One pool per iteration — generating a placeholder allocates a
+                /// multi-megapixel bitmap plus its PNG encode buffer, and without
+                /// a pool the whole batch accumulates before the loop exits.
+                autoreleasepool {
+                    /// Check if already cached
+                    if self.getImage(
+                        gameTitle: game.title,
+                        ratio: game.ratio,
+                        pattern: pattern,
+                        minFontSize: minFontSize,
+                        isDarkTheme: isDarkTheme
+                    ) != nil {
+                        return
+                    }
+
+                    /// Generate and cache
+                    let image = SwiftImage.missingArtworkImage(
+                        gameTitle: game.title,
+                        ratio: game.ratio,
+                        pattern: pattern,
+                        minFontSize: minFontSize
+                    )
+
+                    self.storeImage(
+                        image,
+                        gameTitle: game.title,
+                        ratio: game.ratio,
+                        pattern: pattern,
+                        minFontSize: minFontSize,
+                        isDarkTheme: isDarkTheme
+                    )
                 }
-
-                /// Generate and cache
-                let image = SwiftImage.missingArtworkImage(
-                    gameTitle: game.title,
-                    ratio: game.ratio,
-                    pattern: pattern,
-                    minFontSize: minFontSize
-                )
-
-                self.storeImage(
-                    image,
-                    gameTitle: game.title,
-                    ratio: game.ratio,
-                    pattern: pattern,
-                    minFontSize: minFontSize,
-                    isDarkTheme: isDarkTheme
-                )
             }
         }
     }
 }
-
-// Add a cache for missing artwork images
-private let missingArtworkCache = NSCache<NSString, SwiftImage>()
 
 public extension Defaults.Keys {
     // Missing artwork style setting

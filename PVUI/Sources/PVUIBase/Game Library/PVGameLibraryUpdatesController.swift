@@ -518,26 +518,31 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
             // Process each game
             for frozenGame in frozenGames {
 
-                // Create the searchable item
-                let attributeSet = frozenGame.spotlightContentSet
+                /// `spotlightContentSet` decodes the game's artwork and re-encodes
+                /// it as thumbnail data. Without a pool, a full library's worth of
+                /// those transient bitmaps accumulates before the loop exits.
+                let item = autoreleasepool { () -> CSSearchableItem in
+                    // Create the searchable item
+                    let attributeSet = frozenGame.spotlightContentSet
 
-                // Add keywords for better searchability
-                if var keywords = attributeSet.keywords as? [String] {
-                    if let systemName = frozenGame.system?.name, !keywords.contains(systemName) {
-                        keywords.append(systemName)
+                    // Add keywords for better searchability
+                    if var keywords = attributeSet.keywords as? [String] {
+                        if let systemName = frozenGame.system?.name, !keywords.contains(systemName) {
+                            keywords.append(systemName)
+                        }
+                        if let manufacturer = frozenGame.system?.manufacturer, !keywords.contains(manufacturer) {
+                            keywords.append(manufacturer)
+                        }
+                        attributeSet.keywords = keywords
                     }
-                    if let manufacturer = frozenGame.system?.manufacturer, !keywords.contains(manufacturer) {
-                        keywords.append(manufacturer)
-                    }
-                    attributeSet.keywords = keywords
+
+                    // Create the searchable item
+                    return CSSearchableItem(
+                        uniqueIdentifier: "org.provenance-emu.game.\(frozenGame.md5Hash)",
+                        domainIdentifier: "org.provenance-emu.games",
+                        attributeSet: attributeSet
+                    )
                 }
-
-                // Create the searchable item
-                let item = CSSearchableItem(
-                    uniqueIdentifier: "org.provenance-emu.game.\(frozenGame.md5Hash)",
-                    domainIdentifier: "org.provenance-emu.games",
-                    attributeSet: attributeSet
-                )
 
                 pendingItems.append(item)
 

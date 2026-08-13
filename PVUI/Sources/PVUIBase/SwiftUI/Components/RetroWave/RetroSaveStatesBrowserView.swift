@@ -56,7 +56,14 @@ public final class RetroSaveStatesStore: ObservableObject {
     /// Tracks whether the cached recent items for a system were built with autosave deduplication enabled.
     private var recentDedupFlags: [String: Bool] = [:]
 
-    private let imageCache = NSCache<NSString, UIImage>()
+    /// Entries here are already downsampled, so per-item cost is small — but the
+    /// bare `NSCache` had neither a count nor a cost limit and was never purged
+    /// on memory pressure.
+    private let imageCache = ImageMemoryCache(
+        name: "RetroSaveStateThumbnailCache",
+        totalCostLimit: ImageCacheBudget.saveStateThumbnails,
+        countLimit: ImageCacheBudget.defaultCountLimit
+    )
     private let workQueue = DispatchQueue(label: "org.provenance.retrowave.savestates", qos: .userInitiated)
 
     private init() {}
@@ -223,8 +230,8 @@ public final class RetroSaveStatesStore: ObservableObject {
 
     /// Fetches and caches a thumbnail for the given item
     public func thumbnail(for item: RetroSaveStateItem, targetSize: CGSize) async -> UIImage? {
-        let cacheKey = NSString(string: "\(item.id)-\(Int(targetSize.width))x\(Int(targetSize.height))")
-        if let cached = imageCache.object(forKey: cacheKey) {
+        let cacheKey = "\(item.id)-\(Int(targetSize.width))x\(Int(targetSize.height))"
+        if let cached = imageCache.image(forKey: cacheKey) {
             return cached
         }
 
@@ -240,7 +247,7 @@ public final class RetroSaveStatesStore: ObservableObject {
                 let scale = UIScreen.main.scale
                 let downsampled = localURL.flatMap { self.downsampleImage(at: $0, to: targetSize, scale: scale) }
                 if let downsampled {
-                    self.imageCache.setObject(downsampled, forKey: cacheKey)
+                    self.imageCache.setImage(downsampled, forKey: cacheKey)
                 }
                 continuation.resume(returning: downsampled)
             }
@@ -379,20 +386,10 @@ public final class RetroSaveStatesStore: ObservableObject {
         )
     }
 
+    /// Delegates to the shared `ArtworkDownsampler` so there is exactly one
+    /// decode-time downsampling implementation in the app.
     private func downsampleImage(at url: URL, to pointSize: CGSize, scale: CGFloat) -> UIImage? {
-        let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
-        guard let source = CGImageSourceCreateWithURL(url as CFURL, sourceOptions) else { return nil }
-
-        let maxDimension = max(pointSize.width, pointSize.height) * scale
-        let downsampleOptions = [
-            kCGImageSourceCreateThumbnailFromImageAlways: true,
-            kCGImageSourceShouldCacheImmediately: false,
-            kCGImageSourceCreateThumbnailWithTransform: true,
-            kCGImageSourceThumbnailMaxPixelSize: maxDimension
-        ] as CFDictionary
-
-        guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, downsampleOptions) else { return nil }
-        return UIImage(cgImage: cgImage)
+        ArtworkDownsampler.image(atPath: url.path, fitting: pointSize, scale: scale)
     }
 
     /// Ensure the file exists locally; if it's a ubiquitous item, trigger download.
