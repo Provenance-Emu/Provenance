@@ -528,7 +528,13 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         let safeHeight = max(0, viewSize.height - safeInsets.top - safeInsets.bottom)
         let safeSize = CGSize(width: safeWidth, height: safeHeight)
 
-        // Calculate scale using safe area dimensions - consistent for all orientations
+        // Calculate scale using safe area dimensions - consistent for all orientations.
+        // NOTE: the renderer scales a skin that declares NO screens/screenGroups against
+        // the loaded image's own size rather than `mappingSize`
+        // (`DeltaSkinView.calculateLayout`, effectiveImageSize). We have no synchronous
+        // access to that image here, so a `gameScreenFrame`-only legacy skin (VB, GameGear
+        // class) can get a transient frame anchored to a slightly different box than was
+        // drawn — corrected as soon as the renderer broadcasts, so it shows as a flicker.
         let scale = calculateScale(viewSize: safeSize, mappingSize: mappingSize)
         let scaledSize = CGSize(width: mappingSize.width * scale, height: mappingSize.height * scale)
 
@@ -553,10 +559,17 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             // The screen rect is normalised (0-1) against `mappingSize`, i.e. it is a
             // position *inside the skin image*. It must therefore be anchored to where
             // the skin image was actually drawn, not to the centred fallback rect.
-            let skinOrigin = skinImageOrigin(for: traits,
-                                             viewSize: viewSize,
-                                             safeInsets: safeInsets,
-                                             scaledSize: scaledSize)
+            //
+            // Default skins are the exception: there is no skin image, and
+            // `defaultControllerSkin()` / `calculateDefaultViewport` centre the game area
+            // in the safe area. Anchoring their (synthesised) screen rect to the bottom
+            // would move the default-skin game screen down in iPhone portrait.
+            let skinOrigin = isDefaultSkin
+                ? offset
+                : skinImageOrigin(for: traits,
+                                  viewSize: viewSize,
+                                  safeInsets: safeInsets,
+                                  scaledSize: scaledSize)
             return CGRect(
                 x: skinOrigin.x + screenFrame.minX * scaledSize.width,
                 y: skinOrigin.y + screenFrame.minY * scaledSize.height,

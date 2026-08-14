@@ -341,6 +341,13 @@ struct EmulatorWithSkinView: View {
 
         // Calculate aspect ratio from core's aspectSize or bufferSize/screenRect
         let aspectRatio: CGFloat? = {
+            // Establish a SwiftUI dependency on the AV-info revision so that bumping it
+            // when the core reports its real geometry actually re-evaluates this closure.
+            // `coreInstance.aspectSize` is not observable, so without this read the
+            // recomputation would be skipped and the 4:3 fallback would stick. Deliberately
+            // NOT an `.id(...)` modifier — that corrupts SwiftUI's attribute graph here
+            // (see the note above `skinContentView`'s creation of `DeltaSkinView`).
+            _ = coreAVInfoRevision
             let aspectSize = coreInstance.aspectSize
             let bufferSize = coreInstance.bufferSize
             let screenRect = coreInstance.screenRect
