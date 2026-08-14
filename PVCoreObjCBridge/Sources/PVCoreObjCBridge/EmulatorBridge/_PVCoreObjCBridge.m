@@ -393,6 +393,15 @@ static NSString *_systemName;
             } else {
                 [self setIsFrontBufferReady:YES];
             }
+        } else {
+            // Spawning the emulation loop is a ONE-SHOT: nothing else in the
+            // process ever creates that thread, so a core that reaches here with
+            // `isRunning` already YES silently never advances a frame. That used
+            // to be unreachable — the caller is `@MainActor` and the whole boot
+            // was synchronous — but a bridge that boots asynchronously leaves the
+            // main thread free to flip `isRunning` (via `setPauseEmulation(_:)`)
+            // before this runs. Log it rather than freeze silently.
+            WLOG(@"startEmulation ignored — isRunning was already YES; the emulation loop thread will NOT be spawned");
         }
     }
 }

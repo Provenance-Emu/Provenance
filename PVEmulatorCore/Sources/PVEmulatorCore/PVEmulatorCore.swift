@@ -139,6 +139,24 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     /// covers the window instead. Always `false` for synchronous bridges.
     public internal(set) var isBootPending: Bool = false
 
+    /// Pause state requested while `isBootPending` was `true`, applied once the
+    /// core is actually running.
+    ///
+    /// `isRunning` and `skipEmulationLoop` are pure pass-throughs to the bridge
+    /// (see above), and `-[PVCoreObjCBridge startEmulation]` decides whether to
+    /// spawn the emulation-loop thread by reading BOTH of them — once. While the
+    /// boot was synchronous nothing could run on the main thread between the
+    /// start request and that read, so the decision was always taken against the
+    /// state the caller asked for. An asynchronous boot leaves the main thread
+    /// free for the whole load, and any `setPauseEmulation(_:)` landing in that
+    /// window would flip one of those flags and make the one-shot spawn no-op —
+    /// leaving a core that never advances and no code path that can revive it.
+    ///
+    /// So requests arriving during the boot are recorded here instead and
+    /// replayed from `emulationDidStart()`, which restores the old invariant
+    /// without blocking the main thread. Always `nil` for synchronous bridges.
+    internal var pendingPauseWhileBooting: Bool?
+
     /// Invoked on the main thread exactly once per `startEmulation()`, after the
     /// core is actually running (`success == true`) or its boot failed.
     ///

@@ -4471,6 +4471,20 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     if (self.afterROMLoadBlock) {
         self.afterROMLoadBlock();
     }
+    // `-[PVCoreObjCBridge startEmulation]` spawns the emulation-loop thread only
+    // if `isRunning` and `skipEmulationLoop` are BOTH false when it runs, and it
+    // is the only thing in the process that ever spawns it — a stale YES on
+    // either flag turns the spawn into a silent no-op, after which the core never
+    // advances past whatever `retro_load_game` produced and no code path is left
+    // that can revive it. The main thread has been free for this whole boot, so
+    // clear the one flag we can reach from here rather than trusting that nothing
+    // wrote to it. (`isRunning` is `readonly` outside PVCoreObjCBridge itself;
+    // it is covered instead by `PVEmulatorCore.setPauseEmulation(_:)` deferring
+    // while `isBootPending`, which is also what keeps a mid-boot pause from
+    // setting `skipEmulationLoop`. This is the second line of defence.) The thin
+    // frontend has no self-driven loop, so `skipEmulationLoop` is never
+    // legitimately YES for it.
+    self.skipEmulationLoop = NO;
     // Spawns the emulation loop thread. Until this line runs no thread holds
     // `@synchronized(self)`, which is why the boot can never contend with the
     // 60 fps emulation loop.

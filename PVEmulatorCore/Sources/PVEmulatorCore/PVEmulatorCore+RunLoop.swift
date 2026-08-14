@@ -15,6 +15,19 @@ import PVLogging
 
     @MainActor
     @objc open func setPauseEmulation(_ flag: Bool) {
+        /// A bridge that boots asynchronously has not spawned its emulation-loop
+        /// thread yet, and `-[PVCoreObjCBridge startEmulation]` will only ever
+        /// spawn it if `isRunning` and `skipEmulationLoop` are both false when it
+        /// runs. Writing either of them here — both are pass-throughs to the
+        /// bridge — would silently cancel that one-shot spawn and leave a core
+        /// that renders whatever `retro_load_game` produced and then never
+        /// advances again. Record the request and replay it once the core is
+        /// running. No-op for synchronous bridges: `isBootPending` is never true
+        /// for them.
+        guard !isBootPending else {
+            pendingPauseWhileBooting = flag
+            return
+        }
         if flag {
             stopHaptic()
             skipEmulationLoop = true
@@ -61,6 +74,7 @@ import PVLogging
         // teardown until the core is quiescent, and whoever installed the
         // completion (the emulator view controller) is going away.
         isBootPending = false
+        pendingPauseWhileBooting = nil
         startEmulationCompletion = nil
         shouldStop = true
         isRunning = false
@@ -187,6 +201,13 @@ import PVLogging
     open func emulationDidStart() {
         isBootPending = false
         markEmulationRunning()
+        /// Replay a pause/resume that arrived while the core was still booting.
+        /// Applied AFTER `markEmulationRunning()` so the emulation-loop thread
+        /// already exists — the ordering the synchronous path got for free.
+        if let deferredPause = pendingPauseWhileBooting {
+            pendingPauseWhileBooting = nil
+            setPauseEmulation(deferredPause)
+        }
     }
 
     /// Called by an asynchronously-booting bridge, on the main thread, when the
@@ -198,6 +219,7 @@ import PVLogging
     @MainActor
     open func emulationDidFailToStart() {
         isBootPending = false
+        pendingPauseWhileBooting = nil
         let completion = startEmulationCompletion
         startEmulationCompletion = nil
         completion?(false)
