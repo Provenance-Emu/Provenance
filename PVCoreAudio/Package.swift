@@ -59,7 +59,8 @@ let package = Package(
             name: "PVCoreAudioTests",
             dependencies: [
                 "PVCoreAudio",
-                "Defaults"
+                "Defaults",
+                .product(name: "PVAudio", package: "PVAudio")
             ]
         )
     ],
