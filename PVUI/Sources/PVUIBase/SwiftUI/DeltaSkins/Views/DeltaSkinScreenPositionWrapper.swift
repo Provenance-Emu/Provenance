@@ -5,6 +5,17 @@ import PVEmulatorCore
 import UIKit
 #endif
 
+public extension Notification.Name {
+    /// Asks `DeltaSkinScreenPositionWrapper` to recompute the game-screen rect from the
+    /// skin's *current* layout and re-broadcast it through `viewportFrameDidUpdate`.
+    ///
+    /// The wrapper is the only code that knows where the skin image was actually drawn
+    /// (it shares `DeltaSkinView.SkinLayout` with the renderer), so anything in UIKit that
+    /// notices the geometry has changed — rotation, layout-settle — should ask for a fresh
+    /// broadcast instead of re-deriving the rect with its own copy of the layout maths.
+    static let deltaSkinForceRecalculate = Notification.Name("DeltaSkinForceRecalculate")
+}
+
 /// Calculates and broadcasts screen position for skins
 struct DeltaSkinScreenPositionWrapper: View {
     let skin: any DeltaSkinProtocol
@@ -596,7 +607,7 @@ struct DeltaSkinScreenPositionWrapper: View {
                     calculateScreenFrameImmediate()
                 }
             }
-            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("DeltaSkinForceRecalculate"))) { _ in
+            .onReceive(NotificationCenter.default.publisher(for: .deltaSkinForceRecalculate)) { _ in
                 // Force recalculation when requested - use same immediate path
                 DLOG("🎮 SKIN: Forcing frame recalculation after rotation")
                 // Clear last broadcast frame to ensure frame is broadcast even if value is same

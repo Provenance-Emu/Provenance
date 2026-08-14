@@ -31,6 +31,10 @@ struct EmulatorWithSkinView: View {
     @StateObject private var skinLoader = DeltaSkinLoader()
     @State private var skinRenderComplete = false
 
+    /// Bumped whenever the core reports fresh AV info, purely to invalidate the body so
+    /// the game aspect ratio is recomputed from the core's now-known geometry.
+    @State private var coreAVInfoRevision: Int = 0
+
     // State for orientation
     #if os(iOS)
     @State private var currentOrientation: UIDeviceOrientation = UIDevice.current.orientation
@@ -304,6 +308,22 @@ struct EmulatorWithSkinView: View {
             .onChange(of: metalFilterMode) { _ in
                 // Same for metalFilterMode - state changes propagate naturally
                 ILOG("skins: metalFilterMode changed to: \(metalFilterMode.rawValue)")
+            }
+            // The thin libretro wrapper only knows its real geometry/aspect once the core
+            // has booted (`retro_get_system_av_info` runs on the wrapper's boot thread), so
+            // `skinContentView`'s `aspectRatio` — which drives `maintainAspectRatio` fitting
+            // inside a skin's declared screen area — is computed from the 640x480 fallback on
+            // first render. Bumping state re-evaluates the body with the real aspect; the
+            // force-recalculate then makes `DeltaSkinScreenPositionWrapper` re-broadcast
+            // (neither its `size` nor its `layout` changed, so nothing else would wake it).
+            // The default-skin path has its own observer; this covers custom skins.
+            .onReceive(NotificationCenter.default.publisher(
+                for: Notification.Name("PVThinLibretroCoreAVInfoDidUpdate")
+            )) { _ in
+                coreAVInfoRevision &+= 1
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: .deltaSkinForceRecalculate, object: nil)
+                }
             }
             .environment(\.debugSkinMappings, showDebugOverlay)
         }

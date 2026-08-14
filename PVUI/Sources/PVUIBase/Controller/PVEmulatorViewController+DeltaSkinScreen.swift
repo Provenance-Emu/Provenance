@@ -152,6 +152,11 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             ILOG("🎮 SKIN: Stored initial correct frame: \(frame)")
         }
 
+        // Every caller of this method is a broadcast from the SwiftUI skin renderer
+        // (protocol delegate or the legacy notification), so the frame we're about to
+        // store is authoritative — see `skinRendererProvidedViewportFrame`.
+        skinRendererProvidedViewportFrame = true
+
         // Skip if unchanged - but always store after rotation to ensure frame is available
         // Check if we're in the middle of a rotation (currentTargetFrame was recently cleared)
         let isAfterRotation = currentTargetFrame == nil
@@ -242,23 +247,15 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
-        // Calculate traits for checking screen area definitions
-        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-        let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
-        let traits = DeltaSkinTraits(device: device, displayType: .standard, orientation: orientation, gameIdentifier: game?.title)
-
         // Check if skin has defined screen areas (screens, screenGroups, or gameScreenFrame)
         // For these skins, wait for protocol delegate callback instead of using fallback calculation
-        let hasDefinedScreenArea = currentSkin?.screens(for: traits) != nil ||
-                                  currentSkin?.screenGroups(for: traits) != nil ||
-                                  hasGameScreenFrame(currentSkin, traits: traits)
-
-        if hasDefinedScreenArea {
+        if skinDeclaresScreenArea {
             // Wait for protocol delegate callback - don't use fallback calculation
             // The protocol delegate (viewportFrameDidUpdate) will be called shortly after rotation
             // But also try immediate calculation as fallback for initial load
             if let immediateFrame = calculateFrameFromSkin(), isValidFrame(immediateFrame) {
                 currentTargetFrame = immediateFrame
+                skinRendererProvidedViewportFrame = false
                 applyFrameToGPUView(immediateFrame, reason: "viewport-defined-immediate")
             }
 
@@ -266,6 +263,15 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                 guard let self = self else { return }
                 guard !self.isBridgeShuttingDownForViewport() else { return }
                 if let frame = self.currentTargetFrame, self.isValidFrame(frame) {
+                    // A frame broadcast by the skin renderer is authoritative — it was
+                    // derived from the very `SkinLayout` that positioned the skin image,
+                    // so it is the only rect guaranteed to land in the skin's cutout.
+                    // Re-deriving it here would replace it with this controller's
+                    // independent approximation and push the render view off the cutout.
+                    if self.skinRendererProvidedViewportFrame {
+                        self.applyFrameToGPUView(frame, reason: "viewport-defined-async0.3-renderer")
+                        return
+                    }
                     // Verify frame is still correct, recalculate if needed
                     if let recalculatedFrame = self.calculateFrameFromSkin(), self.isValidFrame(recalculatedFrame) {
                         // Only update if significantly different (more than 10 pixels)
@@ -318,8 +324,14 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// wrong-sized until I rotate" bug: the viewport is otherwise computed once during
     /// racy fixed-delay async setup passes — from `view.bounds` / `view.safeAreaInsets`
     /// that may not be settled yet — and is only invalidated/recomputed by a rotation
-    /// (`minimalRelayout`). This recomputes deterministically once the layout settles,
-    /// using `calculateFrameFromSkin()` (which reads the *current* bounds/safe-area).
+    /// (`minimalRelayout`). This recomputes deterministically once the layout settles.
+    ///
+    /// Which recompute runs depends on who owns the layout for the active skin:
+    /// - Skin declares a screen area → ask the SwiftUI renderer to recompute and
+    ///   re-broadcast (`requestSkinRendererViewportRecalculation`). It is the only code
+    ///   that knows where the skin image landed.
+    /// - No declared screen area → `calculateFrameFromSkin()` (reads the *current*
+    ///   bounds/safe-area) as before.
     ///
     /// Safe for the hot `viewDidLayoutSubviews` path:
     /// - Gated on an ACTUAL bounds/safe-area change, so repeated passes with identical
@@ -346,6 +358,19 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
+        // Skins that declare their own screen area are positioned by the SwiftUI renderer,
+        // which is the only code that knows where the skin image was actually drawn. Ask it
+        // to recompute against the settled geometry and re-broadcast, rather than applying
+        // `calculateFrameFromSkin()` — that approximation resolves the skin representation
+        // and the vertical anchor independently of the renderer, so making it the last
+        // writer is what leaves the render view mis-sized/off the skin's cutout.
+        if !isDefaultSkin, skinDeclaresScreenArea {
+            lastViewportLayoutBounds = bounds
+            lastViewportLayoutSafeArea = safeArea
+            requestSkinRendererViewportRecalculation(reason: "layout-settle")
+            return
+        }
+
         // Compute the correct frame from the now-settled bounds/safe-area. If the skin
         // isn't ready yet the calculation returns nil/invalid — leave the existing
         // async/notification path to handle it and retry on a later layout pass.
@@ -368,6 +393,89 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         currentTargetFrame = freshFrame
         lastAppliedViewportFrame = nil
         applyFrameToGPUView(freshFrame, reason: "recompute-layout-settle")
+    }
+
+    /// How long to wait for the skin renderer to answer a
+    /// `deltaSkinForceRecalculate` request before falling back to a locally
+    /// computed frame. Matches the post-rotation wait in `minimalRelayout()`,
+    /// which uses the same notification → broadcast → delegate round-trip.
+    private static let skinRendererRecalculationTimeout: TimeInterval = 0.35
+
+    /// `true` when the active skin declares where the game screen goes (a `screens`
+    /// array, a screen group, or a `gameScreenFrame`). Those skins are laid out by the
+    /// SwiftUI renderer; skins without a declared area fall back to this controller's
+    /// own calculation.
+    ///
+    /// Uses the same traits the renderer draws with, so both sides agree on *which*
+    /// representation of the skin is being asked about.
+    private var skinDeclaresScreenArea: Bool {
+        guard let skin = currentSkin else { return false }
+        let traits = skinRenderTraits()
+        return skin.screens(for: traits) != nil ||
+               skin.screenGroups(for: traits) != nil ||
+               hasGameScreenFrame(skin, traits: traits)
+    }
+
+    /// Ask the SwiftUI skin renderer to recompute the game-screen rect against the
+    /// current geometry and re-broadcast it through `viewportFrameDidUpdate`.
+    ///
+    /// A safety net re-applies the last known good frame (or, failing that, the local
+    /// approximation) if no broadcast arrives — the renderer can be mid-load, or its
+    /// hosting view may not have been laid out yet. `applyFrameToGPUView` no-ops when
+    /// the frame is already applied, so the safety net is free in the common case.
+    private func requestSkinRendererViewportRecalculation(reason: String) {
+        NotificationCenter.default.post(name: .deltaSkinForceRecalculate, object: nil)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.skinRendererRecalculationTimeout) { [weak self] in
+            guard let self = self else { return }
+            guard self.isDeltaSkinEnabled, self.currentSkin != nil else { return }
+            guard !self.isBridgeShuttingDownForViewport() else { return }
+            guard !self.isHandlingRotation else { return }
+
+            if let frame = self.currentTargetFrame, self.isValidFrame(frame) {
+                self.applyFrameToGPUView(frame, reason: "renderer-recalc-\(reason)")
+                return
+            }
+
+            if let frame = self.calculateFrameFromSkin(), self.isValidFrame(frame) {
+                self.currentTargetFrame = frame
+                self.skinRendererProvidedViewportFrame = false
+                self.applyFrameToGPUView(frame, reason: "renderer-recalc-fallback-\(reason)")
+                return
+            }
+
+            // Nothing produced a frame — the skin probably hasn't finished loading. Drop the
+            // recorded geometry so the next layout pass tries again instead of no-op'ing.
+            self.lastViewportLayoutBounds = .null
+        }
+    }
+
+    /// The traits the SwiftUI skin renderer is drawing the active skin with.
+    ///
+    /// Must stay in step with `EmulatorWithSkinView.createSkinTraits()`: a skin can ship
+    /// different `mappingSize`/`screens` for its `standard` and `edgeToEdge`
+    /// representations (and per-game overrides keyed off `gameIdentifier`), so resolving
+    /// a *different* representation here yields a game-screen rect that belongs to a
+    /// skin body that was never drawn — wrong position and wrong size.
+    ///
+    /// Orientation is derived from the settled view bounds rather than
+    /// `UIDevice.current.orientation` so it can't report a transient/face-up value.
+    private func skinRenderTraits() -> DeltaSkinTraits {
+        #if os(tvOS)
+        let device: DeltaSkinDevice = .tv
+        #else
+        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
+        #endif
+        let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
+        // A non-zero bottom safe-area inset means a home-indicator device, which is what
+        // the renderer keys `edgeToEdge` off. Prefer the window's inset (what the renderer
+        // reads) and fall back to our own for detached/preview hierarchies.
+        let bottomInset = view.window?.safeAreaInsets.bottom ?? view.safeAreaInsets.bottom
+        let displayType: DeltaSkinDisplayType = bottomInset > 0 ? .edgeToEdge : .standard
+        return DeltaSkinTraits(device: device,
+                               displayType: displayType,
+                               orientation: orientation,
+                               gameIdentifier: game?.title)
     }
 
     /// Check if current skin is a default skin
@@ -400,25 +508,16 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         guard let skin = currentSkin else { return nil }
         guard view.bounds.width > 0 && view.bounds.height > 0 else { return nil }
 
-        let device: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-        let orientation: DeltaSkinOrientation = view.bounds.width > view.bounds.height ? .landscape : .portrait
-
-        // Try multiple display types to find a supported configuration
-        let displayTypes: [DeltaSkinDisplayType] = [.standard, .edgeToEdge]
-        var mappingSize: CGSize?
-        var traits: DeltaSkinTraits?
-
-        for displayType in displayTypes {
-            let testTraits = DeltaSkinTraits(device: device, displayType: displayType, orientation: orientation)
-            if let size = skin.mappingSize(for: testTraits) {
-                mappingSize = size
-                traits = testTraits
-                break
-            }
-        }
-
-        guard let mappingSize = mappingSize, let traits = traits else {
-            DLOG("🎮 SKIN: No mapping size found for device \(device.rawValue), orientation \(orientation.rawValue)")
+        // Resolve the SAME representation the renderer is drawing. The previous
+        // `[.standard, .edgeToEdge]` probe could never pick `.edgeToEdge`:
+        // `DeltaSkin.resolveOrientationReps` already falls back `.standard` → `.edgeToEdge`,
+        // so `mappingSize(for: .standard)` is non-nil whenever the skin has *any*
+        // representation and the loop always stopped on the first iteration. For a skin
+        // shipping both representations that silently laid the game screen out against the
+        // standard body while the renderer drew the edge-to-edge one.
+        let traits = skinRenderTraits()
+        guard let mappingSize = skin.mappingSize(for: traits) else {
+            DLOG("🎮 SKIN: No mapping size found for device \(traits.device.rawValue), orientation \(traits.orientation.rawValue)")
             return nil
         }
 
@@ -442,22 +541,25 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // Get screen frame from skin
         let screenFrame = getScreenFrame(from: skin, traits: traits, mappingSize: mappingSize)
 
-        // TEMP DIAGNOSTIC (portrait flycast/skin sizing, Jun 2 2026): dump the
-        // intermediates so we can see whether the portrait "too small + too low"
-        // comes from scaling to the SAFE area (scaledSize/scale) vs offsetting by
-        // safeInsets.top. Compare a portrait line against a landscape line. Remove
-        // once the portrait skin-frame bug is root-caused.
-        let calcInputs = "orient=\(orientation.rawValue) display=\(traits.displayType.rawValue) mapping=\(mappingSize) bounds=\(view.bounds.size) safeInsets=\(safeInsets)"
+        // Diagnostic for on-device skin-layout triage: one line per calculation with all
+        // the intermediates, so a Console.app capture shows exactly which rect this
+        // fallback produced and from which representation. Uses ILOG (not DLOG) so it
+        // survives in release logs — see the flycast debugging note in CLAUDE.md.
+        let calcInputs = "orient=\(traits.orientation.rawValue) display=\(traits.displayType.rawValue) mapping=\(mappingSize) bounds=\(view.bounds.size) safeInsets=\(safeInsets)"
         let calcOutputs = "safeSize=\(safeSize) scale=\(scale) scaledSize=\(scaledSize) offset=\(offset) screenFrame(norm)=\(screenFrame.map { "\($0)" } ?? "nil")"
         ILOG("SKIN-CALC-DIAG: \(calcInputs) | \(calcOutputs)")
 
         if let screenFrame {
-            // Convert normalized screen frame to view coordinates
-            // screenFrame is normalized (0-1) relative to mappingSize
-            // Position is relative to where the scaled skin is positioned (offset)
+            // The screen rect is normalised (0-1) against `mappingSize`, i.e. it is a
+            // position *inside the skin image*. It must therefore be anchored to where
+            // the skin image was actually drawn, not to the centred fallback rect.
+            let skinOrigin = skinImageOrigin(for: traits,
+                                             viewSize: viewSize,
+                                             safeInsets: safeInsets,
+                                             scaledSize: scaledSize)
             return CGRect(
-                x: offset.x + screenFrame.minX * scaledSize.width,
-                y: offset.y + screenFrame.minY * scaledSize.height,
+                x: skinOrigin.x + screenFrame.minX * scaledSize.width,
+                y: skinOrigin.y + screenFrame.minY * scaledSize.height,
                 width: screenFrame.width * scaledSize.width,
                 height: screenFrame.height * scaledSize.height
             )
@@ -492,6 +594,34 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // Center vertically in safe area for all orientations
         // Screen frame position within skin will be handled by screenFrame.minY
         let y = safeInsets.top + (safeHeight - scaledSize.height) / 2
+
+        return CGPoint(x: x, y: y)
+    }
+
+    /// The top-left corner, in view coordinates, of where the skin image is drawn.
+    ///
+    /// Mirrors `DeltaSkinView.calculateLayout(for:)` — the renderer centres the skin
+    /// horizontally in the safe area but, on **iPhone portrait**, anchors it to the
+    /// bottom of the screen (just above the home indicator) instead of centring it
+    /// vertically. Anchoring a skin-relative screen rect to the centred rect instead
+    /// puts the render view at a different height than the cutout it is supposed to
+    /// fill, which is exactly the "screen sits off the skin's screen area, clipped by
+    /// the skin body" symptom in portrait.
+    private func skinImageOrigin(for traits: DeltaSkinTraits,
+                                 viewSize: CGSize,
+                                 safeInsets: UIEdgeInsets,
+                                 scaledSize: CGSize) -> CGPoint {
+        let safeWidth = max(0, viewSize.width - safeInsets.left - safeInsets.right)
+        let safeHeight = max(0, viewSize.height - safeInsets.top - safeInsets.bottom)
+
+        let x = safeInsets.left + (safeWidth - scaledSize.width) / 2
+
+        let y: CGFloat
+        if traits.device == .iphone && traits.orientation == .portrait {
+            y = viewSize.height - scaledSize.height - safeInsets.bottom
+        } else {
+            y = safeInsets.top + (safeHeight - scaledSize.height) / 2
+        }
 
         return CGPoint(x: x, y: y)
     }
@@ -840,10 +970,13 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // This ensures viewDidLayoutSubviews respects the custom frame
         (metalVC as PVGPUViewController).useCustomPositioning = true
 
-        // Convert frame from SwiftUI coordinate system to self.view coordinate system
-        // The frame is calculated relative to the SwiftUI GeometryReader, which is inside the hosting view
-        // The hosting view fills the skin container, which fills self.view
-        // So we need to convert: GeometryReader -> hosting view -> skin container -> self.view
+        // Frames broadcast by the skin renderer are already in `self.view` coordinates:
+        // the skin's GeometryReader spans the full container (the renderer adds safe-area
+        // insets back explicitly rather than being laid out inside them), and the hosting
+        // view / skin container / self.view are all coincident. This conversion is
+        // therefore an identity today — it is kept only so the frame still lands correctly
+        // if the skin container ever stops filling `self.view`. Do NOT read it as evidence
+        // that the renderer works in some other space.
         let convertedFrame: CGRect
         if let skinContainer = skinContainerView, let hostingView = skinContainer.subviews.first {
             // The frame is in GeometryReader coordinates (which matches hosting view if it fills)

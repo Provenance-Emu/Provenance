@@ -87,6 +87,17 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     // Store the current target frame for positioning
     var currentTargetFrame: CGRect?
 
+    /// `true` when `currentTargetFrame` was broadcast by the SwiftUI skin renderer
+    /// (`DeltaSkinScreenPositionWrapper`) rather than derived by this controller's own
+    /// `calculateFrameFromSkin()` approximation.
+    ///
+    /// The renderer's frame is authoritative for skins that declare a screen area: it is
+    /// computed from the same `SkinLayout` that positioned the skin image, so it always
+    /// lands inside the skin's cutout. This controller's approximation resolves the skin
+    /// representation and the vertical anchor independently, so it can disagree — and
+    /// must never overwrite a renderer-provided frame.
+    var skinRendererProvidedViewportFrame: Bool = false
+
     /// Cache the last applied viewport to avoid redundant layout work
     var lastAppliedViewportFrame: CGRect?
 
@@ -3078,6 +3089,7 @@ extension PVEmulatorViewController {
         // The color bars notification will provide the new frame
         self.currentTargetFrame = nil
         self.lastAppliedViewportFrame = nil
+        self.skinRendererProvidedViewportFrame = false
 
         // Use the new viewport system to recalculate position
         self.applyViewportFromCurrentSkin()
@@ -3102,7 +3114,7 @@ extension PVEmulatorViewController {
         }
 
         // Force SwiftUI to recalculate frame after rotation
-        NotificationCenter.default.post(name: NSNotification.Name("DeltaSkinForceRecalculate"), object: nil)
+        NotificationCenter.default.post(name: .deltaSkinForceRecalculate, object: nil)
 
         // For RetroArch, re-apply internal render view frame to keep it visible
         // Wait a bit for viewport to be recalculated
