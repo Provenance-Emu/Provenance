@@ -24,6 +24,13 @@ import PVLogging
         /// advances again. Record the request and replay it once the core is
         /// running. No-op for synchronous bridges: `isBootPending` is never true
         /// for them.
+        /// Every pause transition is logged. A core that has visibly stopped
+        /// advancing is either paused or has no emulation-loop thread, and those
+        /// two look identical on screen; a `pause → true` with no matching
+        /// `pause → false` distinguishes a stranded pause (a resume that was
+        /// dropped by whoever asked for the pause) from a swallowed spawn. Once
+        /// per menu/skin transition, so nowhere near the frame path.
+        ILOG("Core pause → \(flag) (isBootPending: \(isBootPending), isRunning: \(isRunning))")
         guard !isBootPending else {
             pendingPauseWhileBooting = flag
             return

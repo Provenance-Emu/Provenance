@@ -4484,6 +4484,13 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     // setting `skipEmulationLoop`. This is the second line of defence.) The thin
     // frontend has no self-driven loop, so `skipEmulationLoop` is never
     // legitimately YES for it.
+    //
+    // Logged BEFORE the reset on purpose: these two values are the only evidence
+    // that the spawn was about to be swallowed, and once the reset lands the
+    // symptom disappears without ever naming itself. A non-zero pair here is the
+    // signature of the race described above.
+    ILOG(@"ThinFrontend: boot completion — entry isRunning=%d skipEmulationLoop=%d",
+         self.isRunning, self.skipEmulationLoop);
     self.skipEmulationLoop = NO;
     // Spawns the emulation loop thread. Until this line runs no thread holds
     // `@synchronized(self)`, which is why the boot can never contend with the
