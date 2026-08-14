@@ -57,7 +57,10 @@ let package = Package(
         // MARK: SwiftPM tests
         .testTarget(
             name: "PVCoreAudioTests",
-            dependencies: ["PVCoreAudio"]
+            dependencies: [
+                "PVCoreAudio",
+                "Defaults"
+            ]
         )
     ],
     swiftLanguageModes: [.v5],

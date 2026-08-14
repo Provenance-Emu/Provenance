@@ -6,6 +6,7 @@
 //
 
 @testable import PVCoreAudio
+import Defaults
 import XCTest
 
 final class AUFilterTests: XCTestCase {
@@ -56,11 +57,25 @@ final class AUFilterTests: XCTestCase {
         XCTAssertTrue(AUEffectsChain.empty.activeNodes.isEmpty)
     }
 
-    func testChainWithDisabledMasterHasNoActiveEffects() {
-        let node = AUEffectNode(effectType: .reverb)
-        let chain = AUEffectsChain(nodes: [node], isEnabled: false)
-        XCTAssertFalse(chain.hasActiveEffects)
-        XCTAssertTrue(chain.activeNodes.isEmpty)
+    /// The master on/off switch is `Defaults[.auFiltersEnabled]`, **not** a flag on the chain.
+    /// The production gate is
+    /// `Defaults[.auFiltersEnabled] && chain.nodes.contains(where: \.isEnabled)`
+    /// in `AVAudioEngineGameAudioEngine.updateSourceNode()`, so `hasActiveEffects` /
+    /// `activeNodes` describe the chain *only* and must never consult the master toggle —
+    /// if they did, the engine would be double-gating on it.
+    ///
+    /// This replaces the older `testChainWithDisabledMasterHasNoActiveEffects`, which passed a
+    /// master flag to `AUEffectsChain.init` back when the chain owned one.
+    func testChainActiveEffectsDoNotConsultTheGlobalToggle() {
+        XCTAssertFalse(Defaults[.auFiltersEnabled], "The master toggle must ship off by default")
+
+        var node = AUEffectNode(effectType: .reverb)
+        node.isEnabled = true
+        let chain = AUEffectsChain(nodes: [node])
+
+        XCTAssertTrue(chain.hasActiveEffects,
+                      "hasActiveEffects reports the chain's own nodes, independent of the master toggle")
+        XCTAssertEqual(chain.activeNodes.count, 1)
     }
 
     func testChainActiveNodesFiltersDisabledNodes() {
@@ -69,7 +84,7 @@ final class AUFilterTests: XCTestCase {
         var disabledNode = AUEffectNode(effectType: .delay)
         disabledNode.isEnabled = false
 
-        let chain = AUEffectsChain(nodes: [enabledNode, disabledNode], isEnabled: true)
+        let chain = AUEffectsChain(nodes: [enabledNode, disabledNode])
         XCTAssertEqual(chain.activeNodes.count, 1)
         XCTAssertEqual(chain.activeNodes.first?.effectType, .reverb)
     }
@@ -96,20 +111,26 @@ final class AUFilterTests: XCTestCase {
     func testChainCodableRoundTrip() throws {
         var node = AUEffectNode(effectType: .delay)
         node.parameters[AUEffectParameterKey.delayTime] = 0.5
-        let chain = AUEffectsChain(nodes: [node], isEnabled: true)
+        var bypassed = AUEffectNode(effectType: .reverb)
+        bypassed.isEnabled = false
+        let chain = AUEffectsChain(nodes: [node, bypassed])
 
         let data = try JSONEncoder().encode(chain)
         let decoded = try JSONDecoder().decode(AUEffectsChain.self, from: data)
 
-        XCTAssertEqual(decoded.isEnabled, chain.isEnabled)
-        XCTAssertEqual(decoded.nodes.count, 1)
+        XCTAssertEqual(decoded.nodes.count, 2)
         XCTAssertEqual(decoded.nodes.first?.effectType, .delay)
         XCTAssertEqual(decoded.nodes.first?.parameters[AUEffectParameterKey.delayTime], 0.5)
+        // Enable/bypass state lives per node now that the chain has no flag of its own,
+        // so that is where the round-trip has to be checked.
+        XCTAssertEqual(decoded.nodes.first?.isEnabled, true)
+        XCTAssertEqual(decoded.nodes.last?.isEnabled, false)
+        XCTAssertEqual(decoded.activeNodes.count, 1)
     }
 
     func testPresetCodableRoundTrip() throws {
         let reverb = AUEffectNode(effectType: .reverb)
-        let chain = AUEffectsChain(nodes: [reverb], isEnabled: true)
+        let chain = AUEffectsChain(nodes: [reverb])
         let preset = AUEffectsPreset(name: "Test Preset", chain: chain)
 
         let data = try JSONEncoder().encode(preset)
