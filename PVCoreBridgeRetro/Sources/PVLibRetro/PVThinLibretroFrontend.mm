@@ -839,6 +839,16 @@ typedef struct PVThinLibretroSymbols {
     NSData *_blockingROMData;                  // keeps ROM data bytes alive on heap
     NSString *_blockingROMPath;                // keeps romPath NSString alive so .path ptr is valid
     NSThread *_blockingCoreThread;             // retained reference to blocking core thread
+    /// YES between `-runFrame` signalling `_blockingCoreTick` and it observing
+    /// the resulting `_blockingFrameReady`. The wait is bounded (see
+    /// `kThinBlockingFrameWait`), so a slow frame makes `-runFrame` return and
+    /// come back later; without this flag each retry would signal the tick
+    /// again, banking counts that let the core run further and further ahead of
+    /// the frames we actually consume. Emulation thread only.
+    BOOL _blockingTickOutstanding;
+    /// Set once `_blockingCoreThread` is observed finished, so the "core stopped
+    /// producing frames" diagnostic is logged exactly once instead of per frame.
+    BOOL _blockingCoreExitLogged;
 
     // Guard against double retro_deinit (dealloc can re-enter stopEmulation)
     BOOL _coreDeinited;
@@ -3017,6 +3027,19 @@ static const NSTimeInterval kThinICloudWaitPollInterval     = 0.1;
 static const NSTimeInterval kThinBlockingLoadWaitMainThread    = 4.0;
 static const NSTimeInterval kThinBlockingLoadWaitOffMainThread = 10.0;
 
+/// Per-frame budget for `-runFrame`'s wait on a blocking core's next frame.
+///
+/// This is NOT a "give the core longer to finish" timeout — it is the maximum
+/// time the emulation thread may hold `@synchronized(self)`. That lock is the
+/// same one `-[PVCoreObjCBridge setPauseEmulation:]` and
+/// `-setAchievementTriggeredBlock:` take ON THE MAIN THREAD, so a wait of
+/// `DISPATCH_TIME_FOREVER` under it turns any stall on the core's own thread
+/// into a whole-app hang. Expiring costs nothing: no extra tick is banked (see
+/// `_blockingTickOutstanding`), the lock is released so main can make progress,
+/// and the next loop iteration resumes the wait — the frame is picked up
+/// whenever it actually arrives.
+static const NSTimeInterval kThinBlockingFrameWait = 0.010;
+
 /// Tear down a core that has been `retro_init`ed but whose content load failed.
 ///
 /// Every early exit in `startWithROMPath:` used to call `_sym.retro_deinit()`
@@ -3271,6 +3294,9 @@ static const NSTimeInterval kThinBlockingLoadWaitOffMainThread = 10.0;
         ILOG(@"ThinFrontend: blocking core detected (%@) — running on background thread", self.coreIdentifier);
         _blockingFrameReady = dispatch_semaphore_create(0);
         _blockingCoreTick   = dispatch_semaphore_create(0);
+        // Fresh handshake ledger — this instance may be booting a second game.
+        _blockingTickOutstanding = NO;
+        _blockingCoreExitLogged  = NO;
         // Keep data/path alive for the core thread's entire lifetime.
         // _blockingROMPath retains the NSString so the UTF8String pointer in
         // _blockingGameInfo.path remains valid after startWithROMPath: returns.
@@ -3677,9 +3703,36 @@ static const NSTimeInterval kThinBlockingLoadWaitOffMainThread = 10.0;
     if (_coreDidThrow) return;
 
     if (_isBlockingCore) {
-        // Signal core to advance one tick, then wait for the next frame.
-        dispatch_semaphore_signal(_blockingCoreTick);
-        dispatch_semaphore_wait(_blockingFrameReady, DISPATCH_TIME_FOREVER);
+        // A blocking core's frames come from `_blockingCoreThread`, and the ONLY
+        // signaller of `_blockingFrameReady` is `thin_video_refresh` running on
+        // it. Once that thread finishes — `retro_load_game` returned, so the
+        // core is done producing — nothing can ever signal again, and waiting
+        // here would park the emulation thread forever WHILE IT HOLDS
+        // `@synchronized(self)`. The main thread takes that same lock (pause,
+        // achievement-block wiring), so that park is a whole-app hang, not just
+        // a frozen picture. Stop pumping instead.
+        if (!_blockingCoreThread || _blockingCoreThread.isFinished) {
+            if (!_blockingCoreExitLogged) {
+                _blockingCoreExitLogged = YES;
+                ELOG(@"ThinFrontend: blocking core stopped producing frames "
+                     @"(retro_load_game returned) — halting the frame pump");
+            }
+            return;
+        }
+        // At most one tick may be outstanding: a bounded wait that expires must
+        // NOT re-signal, or the core banks counts and runs ahead of us.
+        if (!_blockingTickOutstanding) {
+            dispatch_semaphore_signal(_blockingCoreTick);
+            _blockingTickOutstanding = YES;
+        }
+        // Bounded on purpose — see kThinBlockingFrameWait. Expiry just releases
+        // the lock and retries next iteration; the tick stays outstanding.
+        const long waitResult = dispatch_semaphore_wait(
+            _blockingFrameReady,
+            dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kThinBlockingFrameWait * NSEC_PER_SEC)));
+        if (waitResult == 0) {
+            _blockingTickOutstanding = NO;
+        }
         return;
     }
 
