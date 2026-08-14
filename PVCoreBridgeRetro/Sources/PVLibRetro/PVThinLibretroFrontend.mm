@@ -3235,14 +3235,36 @@ static const NSTimeInterval kThinBlockingLoadWaitOffMainThread = 10.0;
     // Detect blocking cores (those that run their own loop inside retro_load_game).
     // These cores never return from retro_load_game; instead they call video_refresh
     // internally. We run them on a background thread and use semaphores to sync.
+    //
+    // The list is EMPTY, and adding to it needs evidence from the core's own
+    // `libretro.c` — not from the symptom. prboom was listed here from
+    // 6550882ad3 on the premise that it "runs its own game loop inside
+    // retro_load_game and never returns". It does not: upstream
+    // libretro-prboom's `retro_load_game` ends with
+    //
+    //     // Run few cycles to finish init.
+    //     for (i = 0; i < 3; i++)
+    //       D_DoomLoop();
+    //
+    // and then RETURNS, and the core exports an ordinary per-frame `retro_run`
+    // that calls `D_DoomLoop()` once. Those 3 init cycles each render a frame,
+    // which is what made it look like a self-driving core.
+    //
+    // Treating it as blocking is what broke DOOM: the first init frame parked
+    // the core inside `video_refresh` on `_blockingCoreTick`, the emulation loop
+    // ticked out the remaining two, `retro_load_game` returned, the core thread
+    // exited — and `-runFrame`'s blocking branch never calls `retro_run`, so the
+    // game showed 3 frames of its opening and then could never advance. Worse,
+    // the branch used to wait on `_blockingFrameReady` forever while holding
+    // `@synchronized(self)`, so the next main-thread pause request hung the whole
+    // app. A core with a real `retro_run` must use the ordinary path.
     static NSSet<NSString *> *blockingCoreLibNames = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        blockingCoreLibNames = [NSSet setWithObjects:@"prboom", nil];
+        blockingCoreLibNames = [NSSet set];
     });
     NSString *dylibLastComponent = [[self.coreIdentifier componentsSeparatedByString:@"."] firstObject] ?: @"";
-    _isBlockingCore = [blockingCoreLibNames containsObject:dylibLastComponent] ||
-                      [[self _resolvedCoreDylibPath].lastPathComponent.lowercaseString containsString:@"prboom"];
+    _isBlockingCore = [blockingCoreLibNames containsObject:dylibLastComponent];
 
     bool loaded = NO;
     if (_isBlockingCore) {
