@@ -96,8 +96,9 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
         while start < total {
             let end = min(start + IndexRequestHandler.indexBatchSize, total)
             autoreleasepool {
-                /// Freeze only this slice — never the whole table.
-                let batch = games[start..<end].map { $0.freeze() }
+                /// Freeze only this slice — never the whole table. The explicit
+                /// type pins `Sequence.map` on the `Results` slice.
+                let batch: [PVGame] = games[start..<end].map { $0.freeze() }
                 runMarker.checkpoint("reindex-all[\(end)/\(total)]")
                 indexGames(batch)
             }
@@ -124,12 +125,9 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
     public override init() {
         super.init()
 
-        /// Marked before any Realm access: `RomDatabase.sharedInstance` can die
-        /// here under memory pressure, and that is precisely the failure we want
-        /// recorded. Cleared via `defer` so a clean init leaves nothing behind.
-        runMarker.begin(phase: "init")
-        defer { runMarker.finish() }
-
+        /// No run marker here: `init` no longer opens Realm (see below), so
+        /// there is nothing left that can die. The marker brackets the reindex
+        /// entry points, which are where the memory-heavy work now lives.
         if useMockData {
             // Initialize mock driver
             ILOG("Spotlight: Using mock data driver for testing")
