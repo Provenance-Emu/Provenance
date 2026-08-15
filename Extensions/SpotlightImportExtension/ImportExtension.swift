@@ -28,43 +28,55 @@ enum ImportExtensionError: Error {
 /// Note: CSImportExtension.update(_:forFileAt:) is synchronous, so we cannot use
 /// Swift actors for Realm access here. Instead, we create thread-local Realm instances
 /// with explicit configuration and freeze objects before use.
+///
+/// This extension is **read-only** with respect to the database: it hashes the file
+/// Spotlight hands it and looks the MD5 up in `PVGame` / `PVSaveState` to populate
+/// `CSSearchableItemAttributeSet`. It never writes. It therefore opens the shared
+/// App Group database with `RealmConfiguration.readOnlyConfig` — see that property
+/// for why running the app's `migrationBlock` from a jetsam-prone extension process
+/// is a database-corruption risk for the *main app*.
 class ImportExtension: CSImportExtension {
-    
+
     /// Domain identifier for all Provenance items
     private let domainIdentifier = "org.provenance-emu.games"
-    
+
     /// Flag to track if Realm configuration has been set
     private static var realmConfigured = false
-    
+
     override init() {
         super.init()
-        
+
         // Set Realm configuration synchronously BEFORE any database access
         // This must happen before update(_:forFileAt:) is called
         Self.configureRealmIfNeeded()
-        
+
         ILOG("SpotlightImport: Initializing Import Extension")
     }
-    
-    /// Configure Realm with the app group configuration
+
+    /// Configure Realm with the read-only app group configuration
     /// This is idempotent and safe to call multiple times
     private static func configureRealmIfNeeded() {
         guard !realmConfigured else { return }
-        
-        RealmConfiguration.setDefaultRealmConfig()
+
+        // Read-only + migration-free. Never `setDefaultRealmConfig()`: that config
+        // carries the app's migration block, opens read/write, and relocates the
+        // legacy database as a side effect of being evaluated.
+        RealmConfiguration.setDefaultReadOnlyRealmConfig()
         realmConfigured = true
-        ILOG("SpotlightImport: Realm configuration set")
+        ILOG("SpotlightImport: Read-only Realm configuration set")
     }
-    
-    /// Create a properly configured Realm instance for the current thread
-    /// - Returns: A configured Realm instance
-    /// - Throws: RealmError if the database cannot be opened
+
+    /// Create a properly configured read-only Realm instance for the current thread
+    /// - Returns: A read-only Realm instance
+    /// - Throws: When the database file is missing (the app has never launched) or
+    ///           its on-disk schema predates the app's `schemaVersion` — a read-only
+    ///           Realm cannot migrate. Callers fall back to basic file attributes.
     private func createRealm() throws -> Realm {
         // Ensure configuration is set (defensive check)
         Self.configureRealmIfNeeded()
-        
+
         // Use explicit configuration for clarity and safety
-        let config = RealmConfiguration.realmConfig
+        let config = RealmConfiguration.readOnlyConfig
         return try Realm(configuration: config)
     }
     
