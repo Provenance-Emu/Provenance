@@ -47,10 +47,17 @@ public final class ServiceProvider: TVTopShelfContentProvider {
         var seen = Set<String>()
 
         func addSection(_ list: LibrarySnapshotList, title: String) {
-            let games = snapshot.games(list, limit: Self.maxGamesPerSection)
-                .filter { !$0.id.isEmpty && seen.insert($0.id).inserted }
-            guard !games.isEmpty else { return }
-            let collection = TVTopShelfItemCollection(items: games.map(Self.topShelfItem(for:)))
+            // De-duplicate as we go and stop at the cap, so a section that
+            // overlaps an earlier one still fills up from the rest of its list,
+            // and games never reached are not marked as already shown.
+            var items: [TVTopShelfSectionedItem] = []
+            for game in snapshot.games(list) where !game.id.isEmpty {
+                guard items.count < Self.maxGamesPerSection else { break }
+                guard seen.insert(game.id).inserted else { continue }
+                items.append(Self.topShelfItem(for: game))
+            }
+            guard !items.isEmpty else { return }
+            let collection = TVTopShelfItemCollection(items: items)
             collection.title = title
             sections.append(collection)
         }

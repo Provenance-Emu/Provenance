@@ -153,16 +153,27 @@ class MockTopShelfDataDriver: TopShelfDataDriver {
     }
 }
 
-/// Real implementation of TopShelfDataDriver that uses shared RomDatabase
+/// Realm-backed implementation of `TopShelfDataDriver`.
 class RealmTopShelfDataDriver: TopShelfDataDriver {
     private let logger = OSLog(subsystem: "org.provenance-emu.provenance.topshelf", category: "RealmDriver")
 
     /// Collection of error messages for debugging
     private(set) var errorMessages: [String] = []
 
-    /// Initialize the driver using the shared RomDatabase configuration
+    /// Opens a Realm on the current thread.
+    ///
+    /// Deliberately *not* `RomDatabase.sharedInstance` / `RomDatabase.realm`:
+    /// both force-try (`RomDatabase.swift` `try! RomDatabase()` and
+    /// `try! Realm(configuration:)`), so an unreadable, mid-migration or
+    /// memory-pressured database crashed this extension outright instead of
+    /// surfacing through the callers' `catch`, which was previously dead code.
+    private func openRealm() throws -> Realm {
+        try Realm(configuration: RealmConfiguration.realmConfig)
+    }
+
+    /// Initialize the driver using PVLibrary's shared Realm configuration
     func initialize() async throws {
-        os_log("Starting Realm database initialization using shared RomDatabase", log: logger, type: .debug)
+        os_log("Starting Realm database initialization", log: logger, type: .debug)
 
         // Check if app groups are supported
         guard RealmConfiguration.supportsAppGroups else {
@@ -198,10 +209,9 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
         RealmConfiguration.setDefaultRealmConfig()
         os_log("Set default Realm configuration from PVLibrary", log: logger, type: .debug)
 
-        // Verify database is accessible using RomDatabase.sharedInstance
+        // Verify the database is readable before reporting success.
         do {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
+            let realm = try openRealm()
             let gameCount = realm.objects(PVGame.self).count
             os_log("Successfully connected to shared Realm database. Found %d games", log: logger, type: .debug, gameCount)
 
@@ -218,11 +228,10 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
         }
     }
 
-    /// Get recently played games using shared RomDatabase
+    /// Get recently played games
     func getRecentlyPlayedGames(limit: Int) async -> [PVGame] {
         do {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
+            let realm = try openRealm()
 
             let recentlyPlayedGames = realm.objects(PVRecentGame.self)
                 .sorted(byKeyPath: "lastPlayedDate", ascending: false)
@@ -244,11 +253,10 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
         }
     }
 
-    /// Get recent save states using shared RomDatabase
+    /// Get recent save states
     func getRecentSaveStates(limit: Int) async -> [PVSaveState] {
         do {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
+            let realm = try openRealm()
 
             /// Get save states with lastOpened dates first (most recent first)
             let withLastOpened = realm.objects(PVSaveState.self)
@@ -279,11 +287,10 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
         }
     }
 
-    /// Get favorite games using shared RomDatabase
+    /// Get favorite games
     func getFavoriteGames(limit: Int) async -> [PVGame] {
         do {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
+            let realm = try openRealm()
 
             let favoriteGames = realm.objects(PVGame.self)
                 .filter("isFavorite == true")
@@ -303,11 +310,10 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
         }
     }
 
-    /// Get recently added games using shared RomDatabase
+    /// Get recently added games
     func getRecentlyAddedGames(limit: Int) async -> [PVGame] {
         do {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
+            let realm = try openRealm()
 
             let gameCount = realm.objects(PVGame.self).count
             os_log("Total games in database: %d", log: logger, type: .debug, gameCount)
@@ -337,11 +343,10 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
         }
     }
 
-    /// Get a game by ID using shared RomDatabase
+    /// Get a game by ID
     func getGame(byID id: String) async -> PVGame? {
         do {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
+            let realm = try openRealm()
 
             // Get the game and freeze it for thread safety
             if let game = realm.object(ofType: PVGame.self, forPrimaryKey: id) {
