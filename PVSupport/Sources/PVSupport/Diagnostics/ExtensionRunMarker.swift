@@ -136,6 +136,11 @@ public struct ExtensionRunRecord: Codable, Equatable, Sendable {
 ///
 /// Extensions are killed rather than deallocated, so `finish()` must be called
 /// from the completion handler that signals the work is done — never `deinit`.
+///
+/// There is one marker file per extension, so two overlapping invocations in the
+/// same process share it and the first `finish()` clears the marker for both.
+/// That biases towards **under**-reporting, never towards false positives, which
+/// is the safe direction for a diagnostic: a reported termination is always real.
 public final class ExtensionRunMarker {
     /// Subdirectory of the App Group container holding one file per extension.
     static let directoryName = "Diagnostics/ExtensionRuns"

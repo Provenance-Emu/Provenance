@@ -79,7 +79,10 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
     /// between batches instead of accumulating for the whole run.
     private func indexAllGamesInBatches() throws {
         let realm = try openRealm()
-        let games = realm.objects(PVGame.self)
+        /// Sorted by primary key so the batch windows are stable. An unsorted
+        /// `Results` has no defined order, which would make paging by index
+        /// liable to skip or repeat rows.
+        let games = realm.objects(PVGame.self).sorted(byKeyPath: "md5Hash", ascending: true)
         let total = games.count
 
         guard total > 0 else {
@@ -87,16 +90,16 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
             return
         }
 
-        ILOG("Spotlight: Found \(total) games to index (batches of \(Self.indexBatchSize))")
+        ILOG("Spotlight: Found \(total) games to index (batches of \(IndexRequestHandler.indexBatchSize))")
 
         var start = 0
         while start < total {
-            let end = min(start + Self.indexBatchSize, total)
+            let end = min(start + IndexRequestHandler.indexBatchSize, total)
             autoreleasepool {
                 /// Freeze only this slice — never the whole table.
                 let batch = games[start..<end].map { $0.freeze() }
                 runMarker.checkpoint("reindex-all[\(end)/\(total)]")
-                indexGames(Array(batch))
+                indexGames(batch)
             }
             start = end
         }
