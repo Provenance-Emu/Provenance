@@ -34,8 +34,11 @@ private enum GameArtGalleryTimeline {
 
     /// Number of games in one timeline pass.
     ///
-    /// Entries carry only an artwork *path*, so this no longer scales resident memory —
-    /// it only bounds how far ahead the rotation is scheduled.
+    /// Entries carry only an artwork *path*, so this no longer multiplies the encoded
+    /// bytes held in the timeline. It does still multiply decode work: WidgetKit renders
+    /// every entry in one burst, so peak decoded memory is `entryCount × the budget the
+    /// view asks for` — which is why `GameArtGalleryView` does not take the `hero`
+    /// budget the way other single-cover widgets do.
     static let entryCount = 12
 
     /// Fallback refresh when the library has no games to show.
@@ -108,12 +111,19 @@ struct GameArtGalleryView: View {
         .widgetURL(PVLibraryScreenURL)
     }
 
-    /// The gallery draws one cover full-bleed, so it gets the full `hero` budget.
+    /// The gallery draws one cover full-bleed, but unlike the other single-cover widgets
+    /// it does *not* take the `hero` budget: WidgetKit renders all
+    /// `GameArtGalleryTimeline.entryCount` entries in one burst, so the cost of this
+    /// decode is paid `entryCount` times over.
+    ///
+    /// `gridCell` (768) is the smallest budget that still covers a `.systemSmall` panel
+    /// with no upscale — 170pt × 3 × 1.5 ≈ 765 — and holds the pass to
+    /// 12 × 768 × 576 × 4 B ≈ 21 MB instead of ≈37 MB at `hero`.
     private var artworkImage: UIImage? {
         guard let path = entry.game?.artworkPath else { return nil }
         return WidgetSharedDefaults.artworkImage(
             forRelativePath: path,
-            maxPixelSize: WidgetArtworkPixelBudget.hero
+            maxPixelSize: WidgetArtworkPixelBudget.gridCell
         )
     }
 

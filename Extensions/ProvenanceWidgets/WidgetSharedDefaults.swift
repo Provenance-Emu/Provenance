@@ -287,11 +287,14 @@ enum WidgetArtworkPixelBudget {
     /// → 168 × 3 × 1.5 = 756 → 768.
     static let gridCell = 768
 
-    /// A single cover filling the whole widget: the StandBy art gallery, the StandBy
-    /// full-bleed background, and the `.systemSmall` hero cards.
+    /// A single cover filling the whole widget, rendered **once per timeline**: the
+    /// StandBy Now Playing background and the `.systemSmall` hero cards.
     ///
     /// `.systemSmall` interior is ≈154pt → 154 × 3 × 1.5 ≈ 693, and StandBy enlarges a
     /// small widget to roughly a 330pt square → ≈ 990. 1024 covers both.
+    ///
+    /// Not for a full-bleed cover in a *multi-entry* timeline — WidgetKit renders every
+    /// entry in one burst, so the cost multiplies. See `GameArtGalleryView.artworkImage`.
     ///
     /// Deliberately a *cap*: Favorites `.systemMedium` holding exactly one favorite
     /// stretches a cover across the full 344pt width, which would ask for ≈1548px.
