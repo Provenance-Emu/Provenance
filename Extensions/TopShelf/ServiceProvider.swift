@@ -4,264 +4,156 @@
 //  Created by David Muzi on 2015-12-15.
 //  Copyright © 2015 James Addyman. All rights reserved.
 //
+//  Reads the App Group *library snapshot* written by the host app — it never
+//  opens the Realm database.
+//
+//  Why: there is no extension→host-app IPC on tvOS, and Top Shelf is queried
+//  precisely when Provenance is not running.  The previous implementation
+//  called `RomDatabase.sharedInstance` (which force-tries `RomDatabase()` and
+//  `Realm(configuration:)`), so an unreadable, mid-migration, or
+//  memory-pressured database crashed the extension instead of degrading.
+//  `LibrarySnapshotReader` cannot trap: every failure path yields empty.
+//
 import Foundation
-import PVLibrary
-import PVSupport
-import RealmSwift
+import PVLibrarySnapshot
 import TVServices
-
-/** Enabling Top Shelf
-
- 1. Enable App Groups on the TopShelf target, and specify an App Group ID
- Provenance Project -> TopShelf Target -> Capabilities Section -> App Groups
- 2. Enable App Groups on the Provenance TV target, using the same App Group ID
- 3. Define the value for `PVAppGroupId` in `PVAppConstants.m` to that App Group ID
-
- */
 
 @objc(ServiceProvider)
 public final class ServiceProvider: TVTopShelfContentProvider {
-    /// Collection of error messages for debugging
-    private var errorMessages: [String] = []
-    
-    /// Maximum number of games to show in each section
-    private let maxGamesPerSection = 10
-    
-    /// Flag indicating if Realm was successfully initialized
-    private var realmInitialized = false
+    /// Maximum number of games to show in each section.
+    private static let maxGamesPerSection = 10
 
-    public override init() {
-        super.init()
-        print("TopShelf: ServiceProvider initializing")
-        print("TopShelf: App Group ID: \(PVAppGroupId)")
+    /// Deep link that simply opens the app, used for the empty state.
+    private static let openAppURLString = "provenance://"
 
-        // Try to initialize Realm
-        setupRealm()
-    }
+    /// Deep-link template for launching a specific game.
+    /// Mirrors `PVAppURLKey` + `PVGameControllerKey` + `PVGameMD5Key` in PVLibrary;
+    /// duplicated here so this extension does not link PVLibrary at all.
+    private static let openGameURLPrefix = "provenance://open?md5="
 
-    private func setupRealm() {
-        print("TopShelf: Checking if app groups are supported")
-        print("TopShelf: RealmConfiguration.supportsAppGroups = \(RealmConfiguration.supportsAppGroups)")
+    private let snapshot = LibrarySnapshotReader()
 
-        if let container = RealmConfiguration.appGroupContainer {
-            print("TopShelf: App group container exists at: \(container.path)")
-        } else {
-            print("TopShelf: App group container is nil")
-            errorMessages.append("App group container is nil")
-            return
-        }
-
-        if let path = RealmConfiguration.appGroupPath {
-            print("TopShelf: App group path exists at: \(path.path)")
-        } else {
-            print("TopShelf: App group path is nil")
-            errorMessages.append("App group path is nil")
-            return
-        }
-
-        // Make sure we're using app groups
-        guard RealmConfiguration.supportsAppGroups,
-              let appGroupPath = RealmConfiguration.appGroupPath else {
-            let message = "App doesn't support groups. Check \(PVAppGroupId) is a valid group id"
-            print("TopShelf: \(message)")
-            errorMessages.append(message)
-            return
-        }
-
-        print("TopShelf: Setting up Realm with app group path: \(appGroupPath.path)")
-
-        // Check if the Realm file exists
-        let realmFilename = "default.realm"
-        let realmURL = appGroupPath.appendingPathComponent(realmFilename, isDirectory: false)
-        let fileManager = FileManager.default
-
-        if fileManager.fileExists(atPath: realmURL.path) {
-            print("TopShelf: Realm database file exists at: \(realmURL.path)")
-        } else {
-            let message = "Realm database file does NOT exist at: \(realmURL.path)"
-            print("TopShelf: \(message)")
-            errorMessages.append(message)
-            return
-        }
-
-        // Set the default Realm configuration using PVLibrary's shared configuration
-        print("TopShelf: Setting default Realm configuration")
-        RealmConfiguration.setDefaultRealmConfig()
-
-        // Verify database is accessible using RomDatabase.sharedInstance
-        do {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
-            realm.refresh()
-            let gameCount = realm.objects(PVGame.self).count
-            print("TopShelf: Successfully initialized Realm. Found \(gameCount) games")
-            
-            if gameCount == 0 {
-                errorMessages.append("No games found in database")
-            }
-            
-            realmInitialized = true
-        } catch {
-            let errorMessage = "Failed to initialize Realm: \(error.localizedDescription)"
-            print("TopShelf: \(errorMessage)")
-            errorMessages.append(errorMessage)
-        }
-    }
-
-    // MARK: - TVTopShelfContentProvider protocol
+    // MARK: - TVTopShelfContentProvider
 
     public override func loadTopShelfContent() async -> (any TVTopShelfContent)? {
-        print("TopShelf: loadTopShelfContent requested")
-        
-        // If Realm wasn't initialized, show debug content
-        guard realmInitialized else {
-            print("TopShelf: Realm not initialized, showing debug content")
-            return createDebugContent()
+        guard snapshot.isAvailable else {
+            return emptyStateContent()
         }
-        
-        // Create sections for different types of games
+
         var sections: [TVTopShelfItemCollection<TVTopShelfSectionedItem>] = []
-        
-        // Add recently played games section
-        if let recentlyPlayedSection = createRecentlyPlayedSection() {
-            sections.append(recentlyPlayedSection)
-            print("TopShelf: Added recently played section")
+        /// Games already shown in an earlier section.  On a fresh library the
+        /// host app backfills "recently played" from import order, which would
+        /// otherwise make the last section a duplicate of the first.
+        var seen = Set<String>()
+
+        func addSection(_ list: LibrarySnapshotList, title: String) {
+            let games = snapshot.games(list, limit: Self.maxGamesPerSection)
+                .filter { !$0.id.isEmpty && seen.insert($0.id).inserted }
+            guard !games.isEmpty else { return }
+            let collection = TVTopShelfItemCollection(items: games.map(Self.topShelfItem(for:)))
+            collection.title = title
+            sections.append(collection)
         }
-        
-        // Add favorites section
-        if let favoritesSection = createFavoriteSection() {
-            sections.append(favoritesSection)
-            print("TopShelf: Added favorites section")
-        }
-        
-        // Add recently added games section
-        if let recentlyAddedSection = createRecentlyAddedSection() {
-            sections.append(recentlyAddedSection)
-            print("TopShelf: Added recently added section")
-        }
-        
-        // If no sections were created, show debug content
-        if sections.isEmpty {
-            print("TopShelf: No sections created, showing debug content")
-            return createDebugContent()
-        }
-        
+
+        addSection(.recentlyPlayed, title: Self.sectionTitleRecentlyPlayed)
+        addSection(.favorites, title: Self.sectionTitleFavorites)
+        addSection(.recentlyAdded, title: Self.sectionTitleRecentlyAdded)
+
+        guard !sections.isEmpty else { return emptyStateContent() }
         return TVTopShelfSectionedContent(sections: sections)
     }
 
-    // MARK: - Section Creation
-    
-    private func createRecentlyPlayedSection() -> TVTopShelfItemCollection<TVTopShelfSectionedItem>? {
-        do {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
-            
-            let recentlyPlayedGames = realm.objects(PVRecentGame.self)
-                .sorted(byKeyPath: "lastPlayedDate", ascending: false)
-                .prefix(maxGamesPerSection)
-            
-            let items = recentlyPlayedGames.compactMap { recentGame -> TVTopShelfSectionedItem? in
-                guard let game = recentGame.game else { return nil }
-                return game.topShelfItem()
-            }
-            
-            if items.isEmpty {
-                print("TopShelf: No recently played games found")
-                return nil
-            }
-            
-            let collection = TVTopShelfItemCollection<TVTopShelfSectionedItem>(items: Array(items))
-            collection.title = "Recently Played"
-            return collection
-        } catch {
-            print("TopShelf: Error creating recently played section: \(error)")
-            return nil
+    // MARK: - Item construction
+
+    private static func topShelfItem(for game: LibrarySnapshotGame) -> TVTopShelfSectionedItem {
+        let item = TVTopShelfSectionedItem(identifier: game.id)
+        item.title = game.systemName.isEmpty ? game.title : "\(game.title) (\(game.systemName))"
+        switch LibraryArtworkShape.shape(forSystemIdentifier: game.systemIdentifier) {
+        case .square: item.imageShape = .square
+        case .wide: item.imageShape = .hdtv
         }
-    }
-    
-    private func createFavoriteSection() -> TVTopShelfItemCollection<TVTopShelfSectionedItem>? {
-        do {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
-            
-            let favoriteGames = realm.objects(PVGame.self)
-                .filter("isFavorite == true")
-                .sorted(byKeyPath: "title", ascending: true)
-                .prefix(maxGamesPerSection)
-            
-            let items = favoriteGames.map { $0.topShelfItem() }
-            
-            if items.isEmpty {
-                print("TopShelf: No favorite games found")
-                return nil
-            }
-            
-            let collection = TVTopShelfItemCollection<TVTopShelfSectionedItem>(items: Array(items))
-            collection.title = "Favorites"
-            return collection
-        } catch {
-            print("TopShelf: Error creating favorites section: \(error)")
-            return nil
+
+        // `bestArtworkURL` prefers the App Group cache and falls back to the
+        // remote artwork URL, matching the previous Realm-backed behaviour.
+        if let artworkURL = game.bestArtworkURL {
+            item.setImageURL(artworkURL, for: .screenScale1x)
+            item.setImageURL(artworkURL, for: .screenScale2x)
         }
-    }
-    
-    private func createRecentlyAddedSection() -> TVTopShelfItemCollection<TVTopShelfSectionedItem>? {
-        do {
-            let database = RomDatabase.sharedInstance
-            let realm = database.realm
-            
-            let recentlyAddedGames = realm.objects(PVGame.self)
-                .sorted(byKeyPath: "importDate", ascending: false)
-                .prefix(maxGamesPerSection)
-            
-            let items = recentlyAddedGames.map { $0.topShelfItem() }
-            
-            if items.isEmpty {
-                print("TopShelf: No recently added games found")
-                return nil
-            }
-            
-            let collection = TVTopShelfItemCollection<TVTopShelfSectionedItem>(items: Array(items))
-            collection.title = "Recently Added"
-            return collection
-        } catch {
-            print("TopShelf: Error creating recently added section: \(error)")
-            return nil
+
+        if let url = URL(string: Self.openGameURLPrefix + game.id) {
+            item.playAction = TVTopShelfAction(url: url)
+            item.displayAction = TVTopShelfAction(url: url)
         }
+
+        return item
     }
 
-    // MARK: - Debug Content
+    // MARK: - Empty state
 
-    private func createDebugContent() -> TVTopShelfContent {
-        var items: [TVTopShelfSectionedItem] = []
-
-        let debugItem = TVTopShelfSectionedItem(identifier: "debug_basic")
-        debugItem.title = "Provenance TopShelf"
-        debugItem.imageShape = .square
-        
-        // Add a deep link to open the app
-        if let url = URL(string: "provenance://") {
-            debugItem.playAction = TVTopShelfAction(url: url)
-        }
-        items.append(debugItem)
-
-        // Add app group info
-        let appGroupItem = TVTopShelfSectionedItem(identifier: "debug_appgroup")
-        appGroupItem.title = "App Group: \(PVAppGroupId)"
-        appGroupItem.imageShape = .square
-        items.append(appGroupItem)
-
-        // Add any error messages
-        for (index, message) in errorMessages.enumerated() {
-            let errorItem = TVTopShelfSectionedItem(identifier: "error_\(index)")
-            errorItem.title = "Error: \(message)"
-            errorItem.imageShape = .square
-            items.append(errorItem)
+    /// Shown when the host app has never written a snapshot (first launch,
+    /// missing App Group entitlement, or a snapshot from a newer build).
+    /// Deliberately *not* diagnostic text — that would ship to users.
+    private func emptyStateContent() -> (any TVTopShelfContent)? {
+        let item = TVTopShelfSectionedItem(identifier: "provenance.openApp")
+        item.title = Self.emptyStateTitle
+        item.imageShape = .square
+        if let url = URL(string: Self.openAppURLString) {
+            item.playAction = TVTopShelfAction(url: url)
+            item.displayAction = TVTopShelfAction(url: url)
         }
 
-        let debugSection = TVTopShelfItemCollection(items: items)
-        debugSection.title = "Provenance TopShelf Debug"
-
-        return TVTopShelfSectionedContent(sections: [debugSection])
+        var items = [item]
+#if DEBUG
+        items.append(contentsOf: debugDiagnosticItems())
+#endif
+        let section = TVTopShelfItemCollection(items: items)
+        section.title = Self.emptyStateSectionTitle
+        return TVTopShelfSectionedContent(sections: [section])
     }
+
+#if DEBUG
+    private func debugDiagnosticItems() -> [TVTopShelfSectionedItem] {
+        var messages: [String] = ["App Group: \(LibrarySnapshotAppGroup.identifier)"]
+        if LibrarySnapshotAppGroup.defaults == nil {
+            messages.append("App Group UserDefaults suite unavailable")
+        }
+        if !snapshot.isSchemaSupported {
+            messages.append("Snapshot schema v\(snapshot.schemaVersion) is newer than this build")
+        }
+        if let updatedAt = snapshot.updatedAt {
+            messages.append("Snapshot written \(updatedAt)")
+        } else {
+            messages.append("Snapshot never written")
+        }
+        return messages.enumerated().map { index, message in
+            let item = TVTopShelfSectionedItem(identifier: "provenance.debug.\(index)")
+            item.title = message
+            item.imageShape = .square
+            return item
+        }
+    }
+#endif
+
+    // MARK: - Localized strings
+
+    private static let sectionTitleRecentlyPlayed = NSLocalizedString(
+        "topshelf.section.recently-played", value: "Recently Played",
+        comment: "Top Shelf section heading for recently played games"
+    )
+    private static let sectionTitleFavorites = NSLocalizedString(
+        "topshelf.section.favorites", value: "Favorites",
+        comment: "Top Shelf section heading for favorite games"
+    )
+    private static let sectionTitleRecentlyAdded = NSLocalizedString(
+        "topshelf.section.recently-added", value: "Recently Added",
+        comment: "Top Shelf section heading for recently imported games"
+    )
+    private static let emptyStateTitle = NSLocalizedString(
+        "topshelf.empty.open-app", value: "Open Provenance",
+        comment: "Top Shelf item shown when no game library data is available yet"
+    )
+    private static let emptyStateSectionTitle = NSLocalizedString(
+        "topshelf.empty.section", value: "Provenance",
+        comment: "Top Shelf section heading for the empty state"
+    )
 }

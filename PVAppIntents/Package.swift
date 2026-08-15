@@ -16,6 +16,14 @@ let package = Package(
         .library(
             name: "PVAppIntents",
             targets: ["PVAppIntents"]
+        ),
+        /// Read side of the App Group library snapshot. Dependency-free and
+        /// UI-framework-free so *any* app extension (Top Shelf, Spotlight,
+        /// Thumbnail, Widgets) can link it and read library data without
+        /// opening Realm.
+        .library(
+            name: "PVLibrarySnapshot",
+            targets: ["PVLibrarySnapshot"]
         )
     ],
     dependencies: [
@@ -26,12 +34,16 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "PVAppIntents",
+            name: "PVLibrarySnapshot",
             dependencies: []
+        ),
+        .target(
+            name: "PVAppIntents",
+            dependencies: ["PVLibrarySnapshot"]
         ),
         .testTarget(
             name: "PVAppIntentsTests",
-            dependencies: ["PVAppIntents"]
+            dependencies: ["PVAppIntents", "PVLibrarySnapshot"]
         )
     ],
     swiftLanguageModes: [.v5, .v6],

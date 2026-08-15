@@ -48,90 +48,98 @@ public extension WidgetDataWriter {
         var recentGames: [WidgetGameData] = Array(
             database.all(PVRecentGame.self)
                 .sorted(byKeyPath: "lastPlayedDate", ascending: false)
-                .prefix(24)
+                .prefix(LibrarySnapshotSchema.maxRecentGames)
         ).compactMap { recent in
             guard let game = recent.game, !game.isInvalidated, !game.contentless else { return nil }
-            return WidgetGameData(
-                id: game.md5Hash,
-                title: game.title,
-                systemName: game.system?.shortName ?? game.system?.name ?? "",
-                systemIdentifier: game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
-                artworkPath: widgetArtworkPath(for: game),
-                lastPlayedDate: WidgetPlayActivityTimestamp.best(
-                    recentLastPlayed: recent.lastPlayedDate,
-                    gameLastPlayed: game.lastPlayed,
-                    importDate: game.importDate
-                )
-            )
+            // PVRecentGame carries its own timestamp, which can be newer than PVGame.lastPlayed.
+            return game.asSnapshotGame(lastPlayedOverride: recent.lastPlayedDate)
         }
 
         // Fall back to recently imported games when no games have been played yet.
+        // NOTE: this makes "Recently Played" and "Recently Added" identical on a
+        // fresh library — Top Shelf de-duplicates across sections for that reason.
         if recentGames.isEmpty {
             recentGames = Array(
                 realGames.sorted(byKeyPath: "importDate", ascending: false)
-                    .prefix(12)
-            ).map { game in
-                WidgetGameData(
-                    id: game.md5Hash,
-                    title: game.title,
-                    systemName: game.system?.shortName ?? game.system?.name ?? "",
-                    systemIdentifier: game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
-                    artworkPath: widgetArtworkPath(for: game),
-                    lastPlayedDate: WidgetPlayActivityTimestamp.best(
-                        recentLastPlayed: nil,
-                        gameLastPlayed: game.lastPlayed,
-                        importDate: game.importDate
-                    )
-                )
-            }
+                    .prefix(LibrarySnapshotSchema.maxGalleryGames)
+            ).map { $0.asSnapshotGame }
         }
 
         // Favorites: up to 16 to cover the systemExtraLarge 4×4 grid.
         let favorites: [WidgetGameData] = Array(
             realGames.filter("isFavorite == true")
                 .sorted(byKeyPath: "title", ascending: true)
-                .prefix(16)
-        ).map {
-            WidgetGameData(id: $0.md5Hash, title: $0.title,
-                           systemName: $0.system?.shortName ?? "",
-                           systemIdentifier: $0.systemIdentifier.isEmpty ? nil : $0.systemIdentifier,
-                           artworkPath: widgetArtworkPath(for: $0))
-        }
+                .prefix(LibrarySnapshotSchema.maxFavoriteGames)
+        ).map { $0.asSnapshotGame }
+
+        // Recently added: import-date order, consumed by the tvOS Top Shelf.
+        let recentlyAdded: [WidgetGameData] = Array(
+            realGames.sorted(byKeyPath: "importDate", ascending: false)
+                .prefix(LibrarySnapshotSchema.maxRecentlyAddedGames)
+        ).map { $0.asSnapshotGame }
 
         // Gallery: sample up to 12 *unique* games for the art-rotation widget.
-        let galleryCount = min(12, totalCount)
+        let galleryCount = min(LibrarySnapshotSchema.maxGalleryGames, totalCount)
         let gallery: [WidgetGameData]
         if totalCount <= galleryCount {
-            gallery = Array(realGames.prefix(galleryCount)).map {
-                WidgetGameData(id: $0.md5Hash, title: $0.title,
-                               systemName: $0.system?.shortName ?? "",
-                               systemIdentifier: $0.systemIdentifier.isEmpty ? nil : $0.systemIdentifier,
-                               artworkPath: widgetArtworkPath(for: $0))
-            }
+            gallery = Array(realGames.prefix(galleryCount)).map { $0.asSnapshotGame }
         } else {
             // Sample without replacement using unique random indices.
             var indices = Set<Int>(minimumCapacity: galleryCount)
             while indices.count < galleryCount {
                 indices.insert(Int.random(in: 0..<totalCount))
             }
-            gallery = indices.sorted().map { idx in
-                let g = realGames[idx]
-                return WidgetGameData(id: g.md5Hash, title: g.title,
-                                     systemName: g.system?.shortName ?? "",
-                                     systemIdentifier: g.systemIdentifier.isEmpty ? nil : g.systemIdentifier,
-                                     artworkPath: widgetArtworkPath(for: g))
-            }
+            gallery = indices.sorted().map { realGames[$0].asSnapshotGame }
         }
 
         writeGameData(
             recentGames: recentGames,
             galleryGames: gallery,
             favoriteGames: favorites,
+            recentlyAddedGames: recentlyAdded,
             totalCount: totalCount,
             systemCount: systemCount,
             totalPlayTimeSeconds: totalPlayTime,
             favoritesCount: favoritesCount
         )
+    }
+}
+
+// MARK: - PVGame → snapshot projection
+
+private extension PVGame {
+    /// Projects the Realm object into the value-type snapshot entry read by
+    /// extensions.  Must be called on the thread that owns the Realm.
+    var asSnapshotGame: WidgetGameData { asSnapshotGame(lastPlayedOverride: nil) }
+
+    /// - Parameter lastPlayedOverride: `PVRecentGame.lastPlayedDate`, which can
+    ///   be newer than `PVGame.lastPlayed`.
+    func asSnapshotGame(lastPlayedOverride: Date?) -> WidgetGameData {
+        WidgetGameData(
+            id: md5Hash,
+            title: title,
+            systemName: system?.shortName ?? system?.name ?? "",
+            systemIdentifier: systemIdentifier.isEmpty ? nil : systemIdentifier,
+            artworkPath: widgetArtworkPath(for: self),
+            lastPlayedDate: WidgetPlayActivityTimestamp.best(
+                recentLastPlayed: lastPlayedOverride,
+                gameLastPlayed: lastPlayed,
+                importDate: importDate
+            ),
+            remoteArtworkURL: remoteArtworkURLString
+        )
+    }
+
+    /// The http(s) artwork URL, used by Top Shelf when nothing is cached in the
+    /// App Group container.  Empty local-cache keys (`PVMediaCache` hashes) are
+    /// not URLs, so only absolute web URLs are surfaced.
+    var remoteArtworkURLString: String? {
+        let key = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
+        guard !key.isEmpty,
+              let components = URLComponents(string: key),
+              let scheme = components.scheme?.lowercased(),
+              scheme == "http" || scheme == "https" else { return nil }
+        return key
     }
 }
 

@@ -18,6 +18,7 @@
 //
 
 import Foundation
+import PVLibrarySnapshot
 
 /// The App Group identifier for this build.
 ///
@@ -27,19 +28,11 @@ import Foundation
 ///
 /// All code within PVAppIntents must use this constant — never inline the
 /// string literal `"group.org.provenance-emu.provenance"` directly.
-internal let pvAppGroupID: String = {
-    let raw = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
-    // Guard against unexpanded Xcode build-variable placeholders (e.g. "$(APP_GROUP_IDENTIFIER)")
-    // which appear when a target's Info.plist is evaluated outside of an Xcode build.
-    guard let raw, !raw.isEmpty, !raw.contains("$(") else {
-        return "group.org.provenance-emu.provenance"
-    }
-    return raw
-}()
+internal let pvAppGroupID: String = LibrarySnapshotAppGroup.identifier
 
 /// Convenience: opens the App Group `UserDefaults` suite, or `nil` if unavailable.
 internal var pvAppGroupDefaults: UserDefaults? {
-    UserDefaults(suiteName: pvAppGroupID)
+    LibrarySnapshotAppGroup.defaults
 }
 
 /// Returns true when the host app has an active emulation session.
