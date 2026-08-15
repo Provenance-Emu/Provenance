@@ -408,6 +408,11 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         }
         #endif
 
+        // Report app-extension invocations that were killed since we last ran.
+        // Deliberately NOT gated on MetricKit — it is unavailable on tvOS, where
+        // TopShelf is the extension most likely to be jetsammed.
+        reportPendingExtensionTerminations()
+
         // Attempt JIT acquisition as early as possible so that cores queried later
         // see the correct `DOLJitManager.acquired` state.  This is safe in App Store
         // builds — it only reads CS_DEBUGGED / entitlements; it never shows UI or
