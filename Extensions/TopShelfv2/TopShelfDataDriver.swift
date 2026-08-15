@@ -160,15 +160,25 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
     /// Collection of error messages for debugging
     private(set) var errorMessages: [String] = []
 
-    /// Opens a Realm on the current thread.
+    /// Opens the shared database **read-only** on the current thread.
+    ///
+    /// Uses `RealmConfiguration.readOnlyConfig`, never `realmConfig`: this is an
+    /// app extension, it is jetsammed aggressively, and it shares the App Group
+    /// database file with the main app. Running the app's `migrationBlock` (or any
+    /// write) here risks leaving the *app's* database in an indeterminate state if
+    /// we are killed mid-flight. Top Shelf only ever reads.
     ///
     /// Deliberately *not* `RomDatabase.sharedInstance` / `RomDatabase.realm`:
     /// both force-try (`RomDatabase.swift` `try! RomDatabase()` and
     /// `try! Realm(configuration:)`), so an unreadable, mid-migration or
     /// memory-pressured database crashed this extension outright instead of
     /// surfacing through the callers' `catch`, which was previously dead code.
+    ///
+    /// Throws when the file is missing (app never launched) or when the on-disk
+    /// schema predates the app's `schemaVersion` — a read-only Realm cannot
+    /// migrate. Both are transient; callers degrade to an empty section.
     private func openRealm() throws -> Realm {
-        try Realm(configuration: RealmConfiguration.realmConfig)
+        try Realm(configuration: RealmConfiguration.readOnlyConfig)
     }
 
     /// Initialize the driver using PVLibrary's shared Realm configuration
@@ -192,22 +202,25 @@ class RealmTopShelfDataDriver: TopShelfDataDriver {
 
         if let appGroupPath = RealmConfiguration.appGroupPath {
             os_log("App group path: %{public}@", log: logger, type: .debug, appGroupPath.path)
-
-            // Check if Realm file exists
-            let realmURL = appGroupPath.appendingPathComponent("default.realm", isDirectory: false)
-            if FileManager.default.fileExists(atPath: realmURL.path) {
-                os_log("Realm database file exists at: %{public}@", log: logger, type: .debug, realmURL.path)
-            } else {
-                let warning = "Realm database file does not exist at: \(realmURL.path)"
-                os_log("%{public}@", log: logger, type: .error, warning)
-                errorMessages.append(warning)
-                throw NSError(domain: "TopShelfDataDriver", code: 2, userInfo: [NSLocalizedDescriptionKey: warning])
-            }
         }
 
-        // Set the default Realm configuration using PVLibrary's shared configuration
-        RealmConfiguration.setDefaultRealmConfig()
-        os_log("Set default Realm configuration from PVLibrary", log: logger, type: .debug)
+        // Check if Realm file exists. It legitimately may not: extensions can run
+        // before the main app has ever been launched post-install.
+        let realmURL = RealmConfiguration.realmFileURL
+        if RealmConfiguration.realmFileExists {
+            os_log("Realm database file exists at: %{public}@", log: logger, type: .debug, realmURL.path)
+        } else {
+            let warning = "Realm database file does not exist at: \(realmURL.path)"
+            os_log("%{public}@", log: logger, type: .error, warning)
+            errorMessages.append(warning)
+            throw NSError(domain: "TopShelfDataDriver", code: 2, userInfo: [NSLocalizedDescriptionKey: warning])
+        }
+
+        // Install the migration-free, read-only configuration as this process'
+        // default so no incidental Realm open in linked PVLibrary code can start a
+        // migration or a write against the app's shared database.
+        RealmConfiguration.setDefaultReadOnlyRealmConfig()
+        os_log("Set default read-only Realm configuration from PVLibrary", log: logger, type: .debug)
 
         // Verify the database is readable before reporting success.
         do {
