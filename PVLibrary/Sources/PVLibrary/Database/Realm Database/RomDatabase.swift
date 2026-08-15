@@ -341,11 +341,11 @@ public final class RealmConfiguration {
 
 public extension RealmConfiguration {
     /// Filename of the Realm database, shared by the app and its extensions.
-    private static let realmFilename = "default.realm"
+    internal static let realmFilename = "default.realm"
 
     /// Legacy, pre-App-Group location of the database (this process' own Documents
     /// directory). Only the main app ever relocates away from here.
-    private static var legacyRealmFileURL: URL {
+    internal static var legacyRealmFileURL: URL {
         URL.documentsPath.appendingPathComponent(realmFilename, isDirectory: false)
     }
 
@@ -456,7 +456,7 @@ public extension RealmConfiguration {
     /// `readOnlyConfig` and invoked only from `realmConfig`'s initializer, which is
     /// the app's read/write path. Because `realmConfig` is a lazily-initialized
     /// `static var`, this still runs at most once per process, exactly as before.
-    private static func relocateLegacyDatabaseIfNeeded() {
+    internal static func relocateLegacyDatabaseIfNeeded() {
         let nonGroupPath = legacyRealmFileURL
 
         guard RealmConfiguration.supportsAppGroups, let appGroupPath = RealmConfiguration.appGroupPath else {
