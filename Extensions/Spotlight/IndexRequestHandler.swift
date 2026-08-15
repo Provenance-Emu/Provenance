@@ -25,38 +25,86 @@ public enum SpotlightError: Error {
 public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
     /// Domain identifier for all Provenance items
     private let domainIdentifier = "org.provenance-emu.games"
-    
+
+    /// Records that an indexing pass started so the host app can detect this
+    /// process being jetsammed mid-index. Spotlight index extensions run under a
+    /// memory ceiling of tens of MB and the kill is a SIGKILL, so nothing
+    /// in-process can report it — see `ExtensionRunMarker`.
+    private let runMarker = ExtensionRunMarker(extensionName: IndexRequestHandler.markerName)
+
+    /// Extension name used for the marker file and the Sentry tag value.
+    private static let markerName = "Spotlight"
+
     /// Flag to use mock data instead of real data
     private let useMockData = false
     
     /// Mock data driver for testing
     private var mockDriver: MockSpotlightDataDriver?
     
-    /// Safe database access methods using shared RomDatabase instance
+    /// Opens the shared library Realm, propagating a failure instead of trapping.
+    ///
+    /// `RomDatabase.sharedInstance.realm` is a non-throwing property implemented
+    /// as `try! Realm(configuration:)`. In an extension running against a hard
+    /// memory ceiling, a failed open is therefore a hard crash rather than the
+    /// graceful degradation the surrounding `do/catch` blocks implied. Opening
+    /// the same configuration with `try` keeps the identical database while
+    /// letting the caller report and recover.
+    private func openRealm() throws -> Realm {
+        try Realm(configuration: RealmConfiguration.realmConfig)
+    }
+
+    /// Safe database access methods using the shared library configuration
     private func getGame(byMD5 md5: String) throws -> PVGame? {
-        // Always use the shared RomDatabase instance to prevent corruption
-        let database = RomDatabase.sharedInstance
-        let realm = database.realm
-        
+        let realm = try openRealm()
+
         // Get the game and freeze it so it can be used across threads
         return realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())?.freeze()
     }
-    
-    /// Get all games using shared database instance
-    private func getAllGames() throws -> [PVGame] {
-        // Use the shared RomDatabase instance to access Realm safely
-        let database = RomDatabase.sharedInstance
-        let realm = database.realm
-        
-        // Get all games and freeze them for thread safety
-        return realm.objects(PVGame.self).map { $0.freeze() }
+
+    /// How many games are turned into `CSSearchableItem`s at a time.
+    ///
+    /// A Spotlight index extension runs under a memory ceiling of tens of MB.
+    /// The previous implementation materialised **every** `PVGame` into a frozen
+    /// array and built one `CSSearchableItem` per game before submitting any of
+    /// them, so peak memory scaled with library size — a large library would get
+    /// the extension jetsammed before it indexed anything. Batching keeps peak
+    /// memory flat regardless of how many games the user has.
+    private static let indexBatchSize = 50
+
+    /// Index the whole library in bounded batches.
+    ///
+    /// Realm `Results` are lazy, so slicing them only faults in the objects for
+    /// the current batch; each batch is wrapped in an `autoreleasepool` so the
+    /// Objective-C `CSSearchableItem` / attribute-set objects are released
+    /// between batches instead of accumulating for the whole run.
+    private func indexAllGamesInBatches() throws {
+        let realm = try openRealm()
+        let games = realm.objects(PVGame.self)
+        let total = games.count
+
+        guard total > 0 else {
+            WLOG("Spotlight: No games found to index")
+            return
+        }
+
+        ILOG("Spotlight: Found \(total) games to index (batches of \(Self.indexBatchSize))")
+
+        var start = 0
+        while start < total {
+            let end = min(start + Self.indexBatchSize, total)
+            autoreleasepool {
+                /// Freeze only this slice — never the whole table.
+                let batch = games[start..<end].map { $0.freeze() }
+                runMarker.checkpoint("reindex-all[\(end)/\(total)]")
+                indexGames(Array(batch))
+            }
+            start = end
+        }
     }
-    
+
     /// Get games matching specific identifiers
     private func getGames(withIdentifiers identifiers: [String]) throws -> [PVGame] {
-        // Use the shared RomDatabase instance to access Realm safely
-        let database = RomDatabase.sharedInstance
-        let realm = database.realm
+        let realm = try openRealm()
 
         // Identifiers are in the format "org.provenance-emu.game.MD5HASH" — extract just the MD5
         let md5Hashes = identifiers.compactMap { id -> String? in
@@ -72,7 +120,13 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
     
     public override init() {
         super.init()
-        
+
+        /// Marked before any Realm access: `RomDatabase.sharedInstance` can die
+        /// here under memory pressure, and that is precisely the failure we want
+        /// recorded. Cleared via `defer` so a clean init leaves nothing behind.
+        runMarker.begin(phase: "init")
+        defer { runMarker.finish() }
+
         if useMockData {
             // Initialize mock driver
             ILOG("Spotlight: Using mock data driver for testing")
@@ -86,17 +140,17 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 }
             }
         } else {
-            // Ensure RomDatabase is properly initialized
-            // The shared instance will handle all configuration automatically
-            do {
-                // Verify the shared database is accessible
-                let database = RomDatabase.sharedInstance
-                let _ = database.realm // This will initialize if needed
-                ILOG("Spotlight: Successfully connected to shared Realm database")
-            } catch {
-                ELOG("Spotlight: Failed to connect to shared Realm database: \(error)")
-            }
-            ILOG("Spotlight: Using shared RomDatabase instance")
+            /// Deliberately does NOT touch `RomDatabase.sharedInstance` here.
+            ///
+            /// The previous code opened the full Realm in `init()` wrapped in a
+            /// `do/catch`, but `RomDatabase.realm` is a non-throwing property, so
+            /// the `catch` was unreachable dead code — a Realm open failure was
+            /// always a hard crash, never the graceful degradation it looked
+            /// like. Opening it eagerly also paid the memory cost on every
+            /// invocation, including the many that only need `fileURL(for:)`.
+            /// The database is now opened lazily by whichever entry point
+            /// actually needs it.
+            ILOG("Spotlight: Ready (Realm opened lazily per request)")
         }
     }
     
@@ -120,17 +174,15 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
             
             acknowledgementHandler()
         } else if RealmConfiguration.supportsAppGroups {
+            /// Full-library reindex is the heaviest thing this extension does and
+            /// the most likely point of a memory-limit kill.
+            runMarker.begin(phase: "reindex-all")
             Task {
+                /// Cleared in the acknowledgement path, not `deinit` — extensions
+                /// are killed rather than deallocated.
+                defer { runMarker.finish() }
                 do {
-                    // Get all games using the shared RomDatabase instance
-                    let allGames = try getAllGames()
-
-                    if allGames.isEmpty {
-                        WLOG("Spotlight: No games found to index")
-                    } else {
-                        ILOG("Spotlight: Found \(allGames.count) games to index")
-                        indexGames(allGames)
-                    }
+                    try indexAllGamesInBatches()
                 } catch {
                     ELOG("Spotlight: Error getting games: \(error)")
                 }
@@ -164,11 +216,13 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
             
             acknowledgementHandler()
         } else if RealmConfiguration.supportsAppGroups {
+            runMarker.begin(phase: "reindex-identifiers")
             Task {
+                defer { runMarker.finish() }
                 do {
                     // Get specific games using the shared RomDatabase instance
                     let games = try getGames(withIdentifiers: identifiers)
-                    
+
                     if games.isEmpty {
                         WLOG("Spotlight: No matching games found for identifiers")
                     } else {
@@ -178,7 +232,7 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 } catch {
                     ELOG("Spotlight: Error getting games with identifiers: \(error)")
                 }
-                
+
                 // Always call the acknowledgement handler
                 acknowledgementHandler()
             }
@@ -249,14 +303,14 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                     throw SpotlightError.appGroupsNotSupported
                 }
                 
-                // This is a synchronous method, so we need to use a fully synchronous approach
-                // Get the Realm configuration directly
-                // let config = RealmConfiguration.realmConfig
-                
-                // Create a new Realm instance directly
-                let realm = try Realm()
+                // Synchronous method — open the shared library Realm directly.
+                // Previously this used a bare `try Realm()`, which resolves to
+                // `Realm.Configuration.defaultConfiguration`; nothing in this
+                // extension ever calls `setDefaultRealmConfig()`, so that opened
+                // an empty per-extension database instead of the App Group one.
+                let realm = try openRealm()
                 let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
-                
+
                 // Only return a local file URL — remote URLs would trigger a
                 // synchronous network request inside the extension which is
                 // disallowed and causes timeouts.
@@ -298,7 +352,9 @@ public final class IndexRequestHandler: CSIndexExtensionRequestHandler {
                 // Make sure the items can appear in Siri suggestions
                 attributeSet.domainIdentifier = self.domainIdentifier
                 
-                ILOG("Spotlight: Created searchable item for \(game.title)")
+                /// Per-game logging at info level buffers one entry per game in a
+                /// memory-capped process — debug level keeps it off the hot path.
+                DLOG("Spotlight: Created searchable item for \(game.title)")
                 return CSSearchableItem(uniqueIdentifier: uniqueIdentifier, domainIdentifier: self.domainIdentifier, attributeSet: attributeSet)
             } else {
                 WLOG("Spotlight: Skipping game with empty md5Hash: \(game.title)")
