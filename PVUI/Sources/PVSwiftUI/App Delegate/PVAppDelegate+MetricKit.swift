@@ -13,6 +13,10 @@
 import Foundation
 import PVLogging
 
+#if canImport(Sentry)
+import Sentry
+#endif
+
 #if canImport(MetricKit) && !os(tvOS)
 import MetricKit
 
@@ -42,13 +46,71 @@ extension PVAppDelegate: MXMetricManagerSubscriber {
     public func didReceive(_ payloads: [MXMetricPayload]) {
         let log = Self.metricLog
         for payload in payloads {
+            logPayloadIdentity(payload, log: log)
+
             if let launch = payload.applicationLaunchMetrics {
                 log.info("Launch metrics: timeToFirstDraw=\(launch.histogrammedTimeToFirstDraw)")
             }
             if let timeMetrics = payload.applicationTimeMetrics {
                 log.info("App time: cumulative=\(timeMetrics.cumulativeForegroundTime)")
             }
+            if let memory = payload.memoryMetrics {
+                log.info("Memory: peak=\(memory.peakMemoryUsage) avgSuspended=\(memory.averageSuspendedMemory.averageMeasurement)")
+            }
+            logExitMetrics(payload, log: log)
         }
+    }
+
+    // MARK: - Payload Identity
+
+    /// Log which *process* a payload describes.
+    ///
+    /// Apple documents `MXMetaData.pid` / `.bundleIdentifier` as "of the process",
+    /// which is the only way to tell a host-app payload from an app-extension one.
+    /// We log it rather than assume: if extension bundle IDs show up here, MetricKit
+    /// already covers extension terminations and no in-extension SDK is needed.
+    private func logPayloadIdentity(_ payload: MXMetricPayload, log: PVLogChannel) {
+        var identity = "pid=\(payload.metaData.pid) build=\(payload.metaData.applicationBuildVersion)"
+        if #available(iOS 26.0, macOS 26.0, *) {
+            identity += " bundleID=\(payload.metaData.bundleIdentifier)"
+        }
+        log.info("Payload identity: \(identity) window=\(payload.timeStampBegin)…\(payload.timeStampEnd)")
+    }
+
+    // MARK: - Exit Metrics (jetsam / 0xdead10cc)
+
+    /// Report `MXAppExitMetric`, the only first-party source of jetsam and
+    /// `0xdead10cc` counts. These are SIGKILL terminations, so no in-process
+    /// crash handler — Sentry's included — can ever see them.
+    private func logExitMetrics(_ payload: MXMetricPayload, log: PVLogChannel) {
+        guard let exitMetrics = payload.applicationExitMetrics else { return }
+        let summary = AppExitSummary(exitMetrics)
+
+        log.info("Exit metrics: \(summary.summaryLine)")
+
+        guard summary.hasAbnormalExits else { return }
+
+        log.event(.error, item: "app-exit", status: .failed, detail: summary.summaryLine)
+        reportExitSummaryToSentry(summary, payload: payload)
+    }
+
+    /// Forward abnormal-exit counts to Sentry as a tagged event so jetsam and
+    /// `0xdead10cc` are filterable in the dashboard, not just in a device log file.
+    private func reportExitSummaryToSentry(_ summary: AppExitSummary, payload: MXMetricPayload) {
+#if canImport(Sentry)
+        let event = Event(level: .warning)
+        event.message = SentryMessage(formatted: "MetricKit app exits: \(summary.dominantClass)")
+        event.tags = summary.sentryTags
+        event.context = [
+            "app_exit": [
+                "foreground": summary.foreground.summaryLine,
+                "background": summary.background.summaryLine,
+                "window_begin": "\(payload.timeStampBegin)",
+                "window_end": "\(payload.timeStampEnd)"
+            ]
+        ]
+        SentrySDK.capture(event: event)
+#endif
     }
 
     public func didReceive(_ payloads: [MXDiagnosticPayload]) {
