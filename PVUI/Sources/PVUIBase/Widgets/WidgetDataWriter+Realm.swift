@@ -15,6 +15,7 @@
 
 #if canImport(PVAppIntents)
 import PVAppIntents
+import PVLibrarySnapshot
 import PVLibrary
 import PVFileSystem
 import PVSettings
@@ -48,7 +49,7 @@ public extension WidgetDataWriter {
         var recentGames: [WidgetGameData] = Array(
             database.all(PVRecentGame.self)
                 .sorted(byKeyPath: "lastPlayedDate", ascending: false)
-                .prefix(LibrarySnapshotSchema.maxRecentGames)
+                .prefix(LibrarySnapshotSchema.recentGamesScanDepth)
         ).compactMap { recent in
             guard let game = recent.game, !game.isInvalidated, !game.contentless else { return nil }
             // PVRecentGame carries its own timestamp, which can be newer than PVGame.lastPlayed.
@@ -61,7 +62,7 @@ public extension WidgetDataWriter {
         if recentGames.isEmpty {
             recentGames = Array(
                 realGames.sorted(byKeyPath: "importDate", ascending: false)
-                    .prefix(LibrarySnapshotSchema.maxGalleryGames)
+                    .prefix(LibrarySnapshotSchema.maxRecentGames)
             ).map { $0.asSnapshotGame }
         }
 

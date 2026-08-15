@@ -69,7 +69,12 @@ public enum LibrarySnapshotSchema {
     // are the design, not an accident.
 
     /// Maximum recently-played entries persisted.
-    public static let maxRecentGames = 24
+    public static let maxRecentGames = 12
+
+    /// How many `PVRecentGame` rows the host app scans to build the recents
+    /// list. Larger than `maxRecentGames` because rows whose game was deleted
+    /// or is contentless are dropped during projection.
+    public static let recentGamesScanDepth = 24
     /// Maximum gallery entries persisted.
     public static let maxGalleryGames = 12
     /// Maximum favorites persisted (covers the `systemExtraLarge` 4×4 grid).

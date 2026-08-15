@@ -41,9 +41,9 @@ public final class ServiceProvider: TVTopShelfContentProvider {
         }
 
         var sections: [TVTopShelfItemCollection<TVTopShelfSectionedItem>] = []
-        /// Games already shown in an earlier section.  On a fresh library the
-        /// host app backfills "recently played" from import order, which would
-        /// otherwise make the last section a duplicate of the first.
+        // Games already shown in an earlier section.  On a fresh library the
+        // host app backfills "recently played" from import order, which would
+        // otherwise make the last section a duplicate of the first.
         var seen = Set<String>()
 
         func addSection(_ list: LibrarySnapshotList, title: String) {

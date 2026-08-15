@@ -33,6 +33,14 @@ public enum WidgetSharedDefaults {
         return raw
     }
 
+    /// **These keys are a local mirror.** The canonical declarations live in
+    /// `PVAppIntents/Sources/PVLibrarySnapshot/LibrarySnapshotKeys.swift`, which
+    /// also carries the schema version, the `recentlyAddedGames` list, and a
+    /// non-trapping reader (`LibrarySnapshotReader`).
+    ///
+    /// TODO: link `PVLibrarySnapshot` into the ProvenanceWidgets target and
+    /// delete this mirror along with `WidgetGameEntry`/`WidgetNowPlayingEntry`,
+    /// which duplicate `LibrarySnapshotGame`/`LibrarySnapshotNowPlaying`.
     public enum Keys {
         /// JSON-encoded array of `WidgetGameData` written by the host app; widgets decode this into `[WidgetGameEntry]` for recent games.
         static let recentGames = "widget.recentGames"

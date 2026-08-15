@@ -138,6 +138,7 @@ let package = Package(
                 .product(name: "PVPrimitives", package: "PVPrimitives"),
                 "PVLogging",
                 .product(name: "PVAppIntents", package: "PVAppIntents", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
+                .product(name: "PVLibrarySnapshot", package: "PVAppIntents"),
                 .product(name: "PVLiveActivities", package: "PVLiveActivities", condition: .when(platforms: [.iOS])),
                 .product(name: "PVNetplay", package: "PVNetplay", condition: .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst, .visionOS])),
                 "PVSettings",

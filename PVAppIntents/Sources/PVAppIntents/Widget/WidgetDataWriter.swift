@@ -104,7 +104,7 @@ public final class WidgetDataWriter: Sendable {
             defaults.set(data, forKey: key)
         }
 
-        write(recentGames, limit: LibrarySnapshotSchema.maxGalleryGames, key: Key.recentGames)
+        write(recentGames, limit: LibrarySnapshotSchema.maxRecentGames, key: Key.recentGames)
         write(galleryGames, limit: LibrarySnapshotSchema.maxGalleryGames, key: Key.galleryGames)
         write(favoriteGames, limit: LibrarySnapshotSchema.maxFavoriteGames, key: Key.favoriteGames)
         write(recentlyAddedGames, limit: LibrarySnapshotSchema.maxRecentlyAddedGames, key: Key.recentlyAddedGames)
@@ -151,11 +151,13 @@ public final class WidgetDataWriter: Sendable {
         // Derive recents: sort snapshot by last-played date descending.
         let recents = all
             .sorted { ($0.lastPlayedDate ?? .distantPast) > ($1.lastPlayedDate ?? .distantPast) }
-            .prefix(12)
+            .prefix(LibrarySnapshotSchema.maxRecentGames)
             .map { $0.asWidgetGameData }
 
-        // Gallery: sample up to 12 random games from the same snapshot (no intra-gallery duplicates; may overlap with recents).
-        let gallery = all.shuffled().prefix(12).map { $0.asWidgetGameData }
+        // Gallery: random sample from the same store snapshot (no intra-gallery duplicates; may overlap with recents).
+        let gallery = all.shuffled()
+            .prefix(LibrarySnapshotSchema.maxGalleryGames)
+            .map { $0.asWidgetGameData }
 
         writeGameData(recentGames: recents, galleryGames: gallery, totalCount: totalCount)
     }
