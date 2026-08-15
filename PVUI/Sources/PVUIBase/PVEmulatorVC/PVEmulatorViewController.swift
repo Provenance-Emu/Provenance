@@ -1137,6 +1137,36 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         setupLightGunIfNeeded()
         #endif
 
+        /// Guarantee self-hosting cores have a host view controller before they start.
+        ///
+        /// EmuThree, Dolphin and Azahar build their own UIKit hierarchy inside
+        /// `-setupView`, which is `if (self.touchViewController) { … }` with **no
+        /// else**. `setupView` is also what forces the core's view controller to
+        /// load, and that view load is the only thing that ever boots the emulator.
+        /// So a nil host doesn't degrade rendering — the core silently never starts
+        /// at all: no view, no crash, no log.
+        ///
+        /// The sole assignment used to live in `addControllerOverlay()`, which is
+        /// compiled `#if os(iOS)` and skipped entirely when DeltaSkins are enabled.
+        /// On tvOS always, and on every skinned iOS session, those cores got no host
+        /// and never booted.
+        ///
+        /// Scoped deliberately:
+        /// * A **fallback**, not an override — when the legacy overlay is installed
+        ///   it stays the host, leaving that path byte-for-byte unchanged.
+        /// * libretro and ppsspp are **excluded**. They don't gate view creation on
+        ///   this (RetroArch attaches via `gpuViewController`; PPSSPP uses it only
+        ///   for optional Auto Layout constraints in `refreshScreenSize`), so handing
+        ///   them a newly non-nil host would re-attach CocoaView or activate
+        ///   constraints that are dormant today. They already get an explicit `self`
+        ///   from `addControllerOverlay()` on the path where that is wanted.
+        let coreID = core.coreIdentifier ?? ""
+        let managesOwnHosting = coreID.contains("libretro") || coreID.contains("ppsspp")
+        if core.touchViewController == nil, !managesOwnHosting {
+            core.touchViewController = self
+            ILOG("No controller-overlay host for \(coreID); hosting core views on the emulator VC")
+        }
+
         configureFPSCounterPreferenceObservationIfNeeded()
         Task { @MainActor in
             self.applyFPSCounterVisibilityPreference(Defaults[.showFPSCount])
