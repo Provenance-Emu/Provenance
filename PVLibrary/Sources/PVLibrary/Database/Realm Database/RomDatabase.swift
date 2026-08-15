@@ -74,44 +74,10 @@ public final class RealmConfiguration {
     }
 
     public static var realmConfig: Realm.Configuration = {
-        let realmFilename = "default.realm"
-        let nonGroupPath = URL.documentsPath.appendingPathComponent(realmFilename, isDirectory: false)
-
-        var realmURL: URL = nonGroupPath
-        if RealmConfiguration.supportsAppGroups, let appGroupPath = RealmConfiguration.appGroupPath {
-            ILOG("AppGroups: Supported")
-            realmURL = appGroupPath.appendingPathComponent(realmFilename, isDirectory: false)
-
-            let fm = FileManager.default
-            let groupPathExists = fm.fileExists(atPath: realmURL.path)
-            let nonGroupPathExists = fm.fileExists(atPath: nonGroupPath.path)
-
-            if nonGroupPathExists && !groupPathExists {
-                // Only move non-group database if group path doesn't have one
-                do {
-                    ILOG("Found realm database at non-group path location. Moving to group path location.")
-                    try fm.moveItem(at: nonGroupPath, to: realmURL)
-                    ILOG("Moved old database to group path location.")
-                } catch {
-                    ELOG("Failed to move old database to new group path: \(error.localizedDescription)")
-                }
-            } else if nonGroupPathExists && groupPathExists {
-                // Both exist - keep the group path database (it's the real one), delete the non-group one
-                WLOG("Found realm database at BOTH locations. Keeping group path database, removing non-group copy.")
-                do {
-                    try fm.removeItem(at: nonGroupPath)
-                    ILOG("Removed stale non-group database.")
-                } catch {
-                    ELOG("Failed to remove stale non-group database: \(error.localizedDescription)")
-                }
-            } else if groupPathExists {
-                ILOG("Using existing realm database at group path location.")
-            } else {
-                ILOG("No existing realm database found. Will create new one at group path.")
-            }
-        } else {
-            ILOG("AppGroups: Not Supported")
-        }
+        // Read/write, app-only path: relocate any legacy non-App-Group database
+        // before resolving the active URL.
+        RealmConfiguration.relocateLegacyDatabaseIfNeeded()
+        let realmURL = RealmConfiguration.realmFileURL
 
         let migrationBlock: MigrationBlock = { migration, oldSchemaVersion in
             if oldSchemaVersion < 2 {
@@ -364,26 +330,171 @@ public final class RealmConfiguration {
                 ILOG("LAUNCH: realm compaction check — total: \(totalBytes) bytes, used: \(usedBytes) bytes (\(String(format: "%.1f", usedFraction * 100))%), compacting: \(shouldCompact)")
                 return shouldCompact
             },
-            objectTypes: [
-                PVBIOS.self,
-                PVCheats.self,
-                PVControllerMapping.self,
-                PVControllerProfile.self,
-                PVCore.self,
-                PVGame.self,
-                PVLibrary.self,
-                PVPatch.self,
-                PVRecentGame.self,
-                PVSaveState.self,
-                PVSystem.self,
-                PVUser.self,
-                PVFile.self,
-                PVImageFile.self
-            ]
+            objectTypes: RealmConfiguration.realmObjectTypes
         )
 
         return config
     }()
+}
+
+// MARK: - Extension-safe, migration-free access
+
+public extension RealmConfiguration {
+    /// Filename of the Realm database, shared by the app and its extensions.
+    private static let realmFilename = "default.realm"
+
+    /// Legacy, pre-App-Group location of the database (this process' own Documents
+    /// directory). Only the main app ever relocates away from here.
+    private static var legacyRealmFileURL: URL {
+        URL.documentsPath.appendingPathComponent(realmFilename, isDirectory: false)
+    }
+
+    /// The on-disk location of the shared Realm database.
+    ///
+    /// **This property is side-effect free**: computing it never creates, moves or
+    /// deletes the database. The legacy-location relocation that used to be baked
+    /// into `realmConfig`'s initializer lives in `relocateLegacyDatabaseIfNeeded()`,
+    /// which only the app's read/write `realmConfig` invokes.
+    ///
+    /// - Note: `FileManager.containerURL(forSecurityApplicationGroupIdentifier:)`
+    ///         may materialize the App Group *container directory* itself. It never
+    ///         touches `default.realm`.
+    public static var realmFileURL: URL {
+        if RealmConfiguration.supportsAppGroups, let appGroupPath = RealmConfiguration.appGroupPath {
+            return appGroupPath.appendingPathComponent(realmFilename, isDirectory: false)
+        }
+        return legacyRealmFileURL
+    }
+
+    /// `true` when the shared database file exists on disk.
+    ///
+    /// Extensions can run before the main app has ever launched (fresh install, or
+    /// right after an OS restore), in which case there is no database to read.
+    public static var realmFileExists: Bool {
+        FileManager.default.fileExists(atPath: realmFileURL.path)
+    }
+
+    /// Every Realm object type persisted in the Provenance database.
+    ///
+    /// Shared by the app's read/write `realmConfig` and the extension-facing
+    /// `readOnlyConfig` so the two schemas can never drift. Declaring it explicitly
+    /// also stops the effective schema from depending on which modules a particular
+    /// extension target happens to link.
+    public static let realmObjectTypes: [ObjectBase.Type] = [
+        PVBIOS.self,
+        PVCheats.self,
+        PVControllerMapping.self,
+        PVControllerProfile.self,
+        PVCore.self,
+        PVGame.self,
+        PVLibrary.self,
+        PVPatch.self,
+        PVRecentGame.self,
+        PVSaveState.self,
+        PVSystem.self,
+        PVUser.self,
+        PVFile.self,
+        PVImageFile.self
+    ]
+
+    /// Migration-free, **read-only** configuration for app extension processes.
+    ///
+    /// ## Why extensions must use this
+    ///
+    /// `realmConfig` carries the app's full `migrationBlock` and opens the database
+    /// read/write. App extensions (Top Shelf, the Spotlight import extension, Quick
+    /// Look, …) are jetsammed aggressively — often under a few tens of megabytes of
+    /// footprint — and they share the *same* App Group database file as the main
+    /// app. If an extension is killed part-way through a schema migration or a write
+    /// transaction, the damage is not scoped to the extension: the main app inherits
+    /// an indeterminate database. That is a data-loss / corruption class of bug, and
+    /// it is entirely avoidable because no extension in this project needs to write.
+    ///
+    /// This configuration therefore:
+    /// - points at the same App Group file (`realmFileURL`),
+    /// - opens `readOnly`, so no write transaction and no compaction can ever start,
+    /// - has **no** `migrationBlock`, so no schema upgrade can ever start,
+    /// - and triggers no filesystem mutation merely by being computed.
+    ///
+    /// ## Failure modes (callers must handle both)
+    ///
+    /// A read-only Realm cannot migrate a file. Opening therefore **throws** when:
+    /// - the file does not exist yet (app never launched post-install — see
+    ///   `realmFileExists`), or
+    /// - the app has bumped `schemaVersion` but has not yet launched to migrate the
+    ///   file, so the on-disk schema does not match.
+    ///
+    /// Both are transient and expected. Always open inside `do`/`catch` and degrade
+    /// to empty results — never `try!`.
+    public static var readOnlyConfig: Realm.Configuration {
+        Realm.Configuration(
+            fileURL: realmFileURL,
+            inMemoryIdentifier: nil,
+            encryptionKey: nil,
+            readOnly: true,
+            schemaVersion: schemaVersion,
+            migrationBlock: nil,
+            deleteRealmIfMigrationNeeded: false,
+            shouldCompactOnLaunch: nil,
+            objectTypes: realmObjectTypes
+        )
+    }
+
+    /// Installs `readOnlyConfig` as the process-wide default.
+    ///
+    /// Extensions should call this instead of `setDefaultRealmConfig()` so that any
+    /// incidental `Realm()` open inside linked PVLibrary code also lands on the
+    /// migration-free, read-only path. See `readOnlyConfig` for the rationale.
+    public static func setDefaultReadOnlyRealmConfig() {
+        Realm.Configuration.defaultConfiguration = RealmConfiguration.readOnlyConfig
+    }
+
+    /// Moves (or removes) a pre-App-Group database so the App Group copy is
+    /// authoritative.
+    ///
+    /// **Mutates the filesystem.** Deliberately kept out of `realmFileURL` /
+    /// `readOnlyConfig` and invoked only from `realmConfig`'s initializer, which is
+    /// the app's read/write path. Because `realmConfig` is a lazily-initialized
+    /// `static var`, this still runs at most once per process, exactly as before.
+    private static func relocateLegacyDatabaseIfNeeded() {
+        let nonGroupPath = legacyRealmFileURL
+
+        guard RealmConfiguration.supportsAppGroups, let appGroupPath = RealmConfiguration.appGroupPath else {
+            ILOG("AppGroups: Not Supported")
+            return
+        }
+
+        ILOG("AppGroups: Supported")
+        let realmURL = appGroupPath.appendingPathComponent(realmFilename, isDirectory: false)
+
+        let fm = FileManager.default
+        let groupPathExists = fm.fileExists(atPath: realmURL.path)
+        let nonGroupPathExists = fm.fileExists(atPath: nonGroupPath.path)
+
+        if nonGroupPathExists && !groupPathExists {
+            // Only move non-group database if group path doesn't have one
+            do {
+                ILOG("Found realm database at non-group path location. Moving to group path location.")
+                try fm.moveItem(at: nonGroupPath, to: realmURL)
+                ILOG("Moved old database to group path location.")
+            } catch {
+                ELOG("Failed to move old database to new group path: \(error.localizedDescription)")
+            }
+        } else if nonGroupPathExists && groupPathExists {
+            // Both exist - keep the group path database (it's the real one), delete the non-group one
+            WLOG("Found realm database at BOTH locations. Keeping group path database, removing non-group copy.")
+            do {
+                try fm.removeItem(at: nonGroupPath)
+                ILOG("Removed stale non-group database.")
+            } catch {
+                ELOG("Failed to remove stale non-group database: \(error.localizedDescription)")
+            }
+        } else if groupPathExists {
+            ILOG("Using existing realm database at group path location.")
+        } else {
+            ILOG("No existing realm database found. Will create new one at group path.")
+        }
+    }
 }
 
 internal final class WeakWrapper: NSObject {
