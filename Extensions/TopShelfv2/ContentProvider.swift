@@ -23,7 +23,12 @@ class ContentProvider: TVTopShelfContentProvider {
     /// Maximum number of games to show in each section
     private let maxGamesPerSection = 10
 
-    /// Collection of error messages for debugging
+    /// Maximum number of error messages retained for display. Bounded so a repeatedly
+    /// failing extension can't grow this array for the lifetime of the process.
+    private let maxErrorMessages = 5
+
+    /// Collection of genuine failures, surfaced to the user by `createErrorContent()`.
+    /// Only `recordError(_:)` writes here — routine logging must not.
     private var errorMessages: [String] = []
 
     /// Toggle between mock and real data (set to true for development/testing)
@@ -80,14 +85,14 @@ class ContentProvider: TVTopShelfContentProvider {
                         logMessage("Realm data driver initialized and working successfully")
                     } else {
                         // Real database initialized but returned no data
+                        // An empty library is a normal state, not a failure — log it only,
+                        // so the user gets the friendly "open the app" row instead of an error.
                         logMessage("Realm driver initialized but returned no data")
-                        errorMessages.append("Realm database contains no games")
                         dataDriver = realmDriver // Still use the real driver to show empty state
                     }
                 }
             } catch {
-                logMessage("Failed to initialize data driver: \(error.localizedDescription)")
-                errorMessages.append("Failed to initialize data: \(error.localizedDescription)")
+                recordError("Failed to initialize data: \(error.localizedDescription)")
             }
         }
     }
@@ -107,18 +112,14 @@ class ContentProvider: TVTopShelfContentProvider {
 
         // Check if the data driver was successfully initialized
         guard let dataDriver = dataDriver else {
-            logMessage("No valid data driver after initialization")
+            recordError("No valid data driver after initialization")
             return createErrorContent()
         }
 
-        // Check for error messages from the data driver
-        if let realmDriver = dataDriver as? RealmTopShelfDataDriver, !realmDriver.errorMessages.isEmpty {
-            // Add data driver error messages to our error messages
+        // Merge in error messages from the data driver — `recordError` dedupes and caps
+        if let realmDriver = dataDriver as? RealmTopShelfDataDriver {
             for message in realmDriver.errorMessages {
-                if !errorMessages.contains(message) {
-                    errorMessages.append(message)
-                    logMessage("Data driver error: \(message)")
-                }
+                recordError(message)
             }
         }
 
@@ -151,6 +152,8 @@ class ContentProvider: TVTopShelfContentProvider {
 
         // Check if we have any sections
         if sections.isEmpty {
+            // Usually just an empty library — log it, and let `createErrorContent()` show
+            // the friendly deep-link row alongside any real failures already recorded.
             logMessage("No sections were created")
             return createErrorContent()
         }
@@ -251,20 +254,18 @@ class ContentProvider: TVTopShelfContentProvider {
 
     /// Creates error content for debugging
     private func createErrorContent() -> (any TVTopShelfContent)? {
-        // Create a section for error messages
-        var errorItems: [TVTopShelfSectionedItem] = []
+        // Always lead with the deep-link item: it is the only actionable row in this section,
+        // and an empty library is a more common reason to land here than an actual fault.
+        var items: [TVTopShelfSectionedItem] = [
+            createErrorItem("No content available. Please open the app to add games.")
+        ]
 
-        // Add each error message as an item
+        // Follow with any recorded failures
         for message in errorMessages {
             let item = TVTopShelfSectionedItem(identifier: "error_\(UUID().uuidString)")
             item.title = "Error: " + message
-            errorItems.append(item)
+            items.append(item)
         }
-
-        // If no error messages, add a generic one
-        let items: [TVTopShelfSectionedItem] = errorItems.isEmpty ?
-            [createErrorItem("No content available. Please open the app to add games.")] :
-            errorItems
 
         // Create a section with the error items
         let section = TVTopShelfItemCollection<TVTopShelfSectionedItem>(items: items)
@@ -290,12 +291,21 @@ class ContentProvider: TVTopShelfContentProvider {
 
     // MARK: - Logging
 
-    /// Logs a message to the system log and writes it to the log file
-    private func logMessage(_ message: String) {
-        // Log to system log
-        os_log("%{public}@", log: logger, type: .debug, message)
+    /// Timestamp formatter for the on-disk log. Hoisted out of `logMessage(_:)`, which
+    /// previously rebuilt one on every write attempt.
+    private static let logDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter
+    }()
 
-        // Also write to a file in the shared container
+    /// Destination of the on-disk log, resolved once per process. `static` so the search
+    /// over app groups and candidate paths happens a single time, thread-safely, instead
+    /// of on every log line.
+    private static let logFileURL: URL? = resolveLogFileURL()
+
+    /// Finds the first writable log location across the candidate app groups.
+    private static func resolveLogFileURL() -> URL? {
         let fileManager = FileManager.default
 
         // Try multiple app group IDs to ensure we can write somewhere
@@ -305,68 +315,83 @@ class ContentProvider: TVTopShelfContentProvider {
             "group.org.provenance-emu"
         ]
 
-        var logCreated = false
-
         for appGroupID in appGroupIDs {
-            guard !appGroupID.isEmpty else { continue }
+            guard !appGroupID.isEmpty,
+                  let containerURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
+                continue
+            }
 
-            if let containerURL = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) {
-                // Try writing to multiple locations to ensure at least one works
-                let possibleLocations = [
-                    containerURL.appendingPathComponent("topshelf_log.txt"),
-                    containerURL.appendingPathComponent("Library/topshelf_log.txt"),
-                    containerURL.appendingPathComponent("Caches/topshelf_log.txt"),
-                    containerURL.appendingPathComponent("Documents/topshelf_log.txt")
-                ]
+            let possibleLocations = [
+                containerURL.appendingPathComponent("topshelf_log.txt"),
+                containerURL.appendingPathComponent("Library/topshelf_log.txt"),
+                containerURL.appendingPathComponent("Caches/topshelf_log.txt"),
+                containerURL.appendingPathComponent("Documents/topshelf_log.txt")
+            ]
 
-                for logFileURL in possibleLocations {
-                    // Create parent directory if needed
-                    let parentDir = logFileURL.deletingLastPathComponent()
-                    if !fileManager.fileExists(atPath: parentDir.path) {
-                        do {
-                            try fileManager.createDirectory(at: parentDir, withIntermediateDirectories: true)
-                        } catch {
-                            continue // Try next location
-                        }
-                    }
-
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                    let timestamp = dateFormatter.string(from: Date())
-
-                    let logMessage = "\(timestamp): \(message)\n"
-
+            for logFileURL in possibleLocations {
+                // Create parent directory if needed
+                let parentDir = logFileURL.deletingLastPathComponent()
+                if !fileManager.fileExists(atPath: parentDir.path) {
                     do {
-                        if fileManager.fileExists(atPath: logFileURL.path) {
-                            // Append to existing file
-                            if let fileHandle = try? FileHandle(forWritingTo: logFileURL) {
-                                defer { fileHandle.closeFile() }
-                                fileHandle.seekToEndOfFile()
-                                if let data = logMessage.data(using: .utf8) {
-                                    fileHandle.write(data)
-                                    logCreated = true
-                                    break
-                                }
-                            }
-                        } else {
-                            // Create new file
-                            try logMessage.write(to: logFileURL, atomically: true, encoding: .utf8)
-                            logCreated = true
-                            break
-                        }
+                        try fileManager.createDirectory(at: parentDir, withIntermediateDirectories: true)
                     } catch {
-                        // Try next location
-                        continue
+                        continue // Try next location
                     }
                 }
 
-                if logCreated {
-                    break // Successfully wrote to a log file
+                if fileManager.fileExists(atPath: logFileURL.path) {
+                    if fileManager.isWritableFile(atPath: logFileURL.path) {
+                        return logFileURL
+                    }
+                } else if fileManager.createFile(atPath: logFileURL.path, contents: nil) {
+                    return logFileURL
                 }
             }
         }
 
-        // Add the message to the error messages array for display in the UI
+        return nil
+    }
+
+    /// Logs a message to the system log and appends it to the log file.
+    /// This is diagnostics only — it never affects what the user sees on the Top Shelf.
+    /// Use `recordError(_:)` for failures that should be surfaced.
+    private func logMessage(_ message: String) {
+        // Log to system log
+        os_log("%{public}@", log: logger, type: .debug, message)
+
+        // Also append to the shared-container log. The file handle is opened and closed
+        // within this call, so none is ever held across suspension.
+        guard let logFileURL = Self.logFileURL,
+              let fileHandle = try? FileHandle(forWritingTo: logFileURL) else {
+            return
+        }
+
+        defer { try? fileHandle.close() }
+
+        let data = Data("\(Self.logDateFormatter.string(from: Date())): \(message)\n".utf8)
+
+        do {
+            try fileHandle.seekToEnd()
+            try fileHandle.write(contentsOf: data)
+        } catch {
+            os_log("Failed to append to TopShelf log: %{public}@",
+                   log: logger, type: .error, error.localizedDescription)
+        }
+    }
+
+    /// Records a genuine failure: logs it *and* retains it for display in the Top Shelf
+    /// error section. Every message here becomes a user-visible "Error: …" row, so only
+    /// call it from real failure paths. Routine progress goes to `logMessage(_:)`.
+    private func recordError(_ message: String) {
+        // Always log, even when the display list is full or already holds this message —
+        // the log file is the forensic trail and should stay complete.
+        logMessage(message)
+
+        guard errorMessages.count < maxErrorMessages,
+              !errorMessages.contains(message) else {
+            return
+        }
+
         errorMessages.append(message)
     }
 }
