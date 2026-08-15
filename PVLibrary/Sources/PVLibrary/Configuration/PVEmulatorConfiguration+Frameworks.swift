@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CryptoKit
 import PVSupport
 import RealmSwift
 import PVLogging
@@ -17,6 +18,66 @@ import PVRealm
 #if canImport(UIKit)
 import UIKit
 #endif
+
+// MARK: - Systems plist change detection
+
+/// Detects whether a systems plist has already been applied to Realm.
+///
+/// `updateExistingSystems` re-writes ~20 properties (plus the supported-extension
+/// list and per-BIOS records) for all 73 systems on EVERY launch, even when not a
+/// single value changed. Besides the write cost itself, each write produces Realm
+/// changeset entries that churn the `@ObservedResults(PVSystem.self)` observers in
+/// the UI during boot.
+///
+/// Skipping that pass must never prevent a shipped plist fix from reaching an
+/// existing install, so the fingerprint deliberately combines:
+///
+/// 1. A SHA-256 of the plist's raw bytes — any content change re-applies.
+/// 2. The app version and build — any new binary re-applies, which covers changes
+///    to `setPropertiesTo` itself (the mapping code can change while the plist
+///    does not).
+///
+/// This mirrors ``CorePlistResultCache``'s version/build fingerprint idiom, with
+/// the content hash added because the systems plist is a single known resource.
+enum SystemsPlistFingerprint {
+
+    /// `UserDefaults` key prefix; the plist's filename is appended so multiple
+    /// plists each get their own stamp.
+    private static let defaultsKeyPrefix = "PVSystemsPlistFingerprint."
+
+    private static func defaultsKey(for url: URL) -> String {
+        defaultsKeyPrefix + url.lastPathComponent
+    }
+
+    /// Version + build of the running binary, used to force re-application after
+    /// any app update.
+    private static var appVersionFingerprint: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        return "\(version)-\(build)"
+    }
+
+    /// Combined content + binary fingerprint for `data`.
+    private static func fingerprint(for data: Data) -> String {
+        let digest = SHA256.hash(data: data)
+        let contentHash = digest.map { String(format: "%02x", $0) }.joined()
+        return "\(contentHash)-\(appVersionFingerprint)"
+    }
+
+    /// Whether `data` matches the fingerprint stored for `url` on a previous run.
+    static func matchesStoredFingerprint(for url: URL, data: Data) -> Bool {
+        guard let stored = UserDefaults.standard.string(forKey: defaultsKey(for: url)) else {
+            return false
+        }
+        return stored == fingerprint(for: data)
+    }
+
+    /// Records the fingerprint of `data` so the next launch can skip re-application.
+    static func storeFingerprint(for url: URL, data: Data) {
+        UserDefaults.standard.set(fingerprint(for: data), forKey: defaultsKey(for: url))
+    }
+}
 
 // MARK: - System Scanner
 
@@ -274,21 +335,24 @@ public extension PVEmulatorConfiguration {
     
     private static func processSystemPlist(_ plist: URL, using decoder: PropertyListDecoder) async {
         do {
-            let systems = try loadSystemEntries(from: plist, using: decoder)
-            await updateSystemEntries(systems)
+            let data = try Data(contentsOf: plist)
+            let systems = try decoder.decode([SystemPlistEntry].self, from: data)
+            /// Re-applying every property of every system is only needed when the
+            /// shipped plist (or the code that maps it) actually changed. See
+            /// ``SystemsPlistFingerprint``.
+            let alreadyApplied = SystemsPlistFingerprint.matchesStoredFingerprint(for: plist, data: data)
+            await updateSystemEntries(systems, skippingExistingUpdates: alreadyApplied)
+            if !alreadyApplied {
+                SystemsPlistFingerprint.storeFingerprint(for: plist, data: data)
+            }
         } catch {
             handlePlistError(error, for: plist)
         }
     }
-    
-    private static func loadSystemEntries(from url: URL, using decoder: PropertyListDecoder) throws -> [SystemPlistEntry] {
-        let data = try Data(contentsOf: url)
-        return try decoder.decode([SystemPlistEntry].self, from: data)
-    }
-    
-    private static func updateSystemEntries(_ systems: [SystemPlistEntry]?) async {
+
+    private static func updateSystemEntries(_ systems: [SystemPlistEntry]?, skippingExistingUpdates: Bool) async {
         guard let systems = systems else { return }
-        
+
         /// Create mapping of existing systems to their plist entries
         let database = RomDatabase.sharedInstance
         let systemMappings = systems.compactMap { system -> (PVSystem, SystemPlistEntry)? in
@@ -298,15 +362,24 @@ public extension PVEmulatorConfiguration {
             }
             return nil
         }
-        
-        /// Process updates and creations separately
-        await updateExistingSystems(systemMappings, using: database)
-        
+
+        /// Process updates and creations separately.
+        ///
+        /// Only the *update* pass is skippable. `createNewSystems` below must always
+        /// run: a system absent from Realm (fresh install, reset library, or a
+        /// partially-failed earlier run) has to be created regardless of the
+        /// fingerprint, and it applies the full property set on creation.
+        if skippingExistingUpdates {
+            ILOG("PVEmulatorConfiguration: systems.plist unchanged since last apply — skipping property re-write for \(systemMappings.count) existing systems")
+        } else {
+            await updateExistingSystems(systemMappings, using: database)
+        }
+
         /// Find systems that need to be created
         let newSystems = systems.filter { system in
             database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) == nil
         }
-        
+
         await createNewSystems(from: newSystems, using: database)
     }
 

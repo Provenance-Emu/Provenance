@@ -82,8 +82,12 @@ public final class BootstrapOrchestrator: Sendable {
                     group.addTask {
                         ILOG("BootstrapOrchestrator: Starting '\(task.name)'")
                         do {
-                            try await withBootstrapTaskTimeout(seconds: timeout) {
-                                try await task.execute()
+                            // Measured centrally so every registered task is profiled
+                            // without editing the tasks themselves.
+                            try await PVLaunchProfiler.measure("bootstrap.\(task.name)") {
+                                try await withBootstrapTaskTimeout(seconds: timeout) {
+                                    try await task.execute()
+                                }
                             }
                             ILOG("BootstrapOrchestrator: Completed '\(task.name)'")
                             // Only return provisions on success so that dependents are

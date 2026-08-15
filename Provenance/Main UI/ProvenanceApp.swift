@@ -25,6 +25,25 @@ struct ProvenanceApp: App {
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var sceneCoordinator = SceneCoordinator.shared
 
+#if canImport(WhatsNewKit)
+    /// Built once, when SwiftUI instantiates the `App`.
+    ///
+    /// This used to be constructed inline inside `body`, which meant that every
+    /// `body` re-evaluation — and `body` re-evaluates on each `AppState` publish,
+    /// which the boot sequence does repeatedly while the splash is up — rebuilt an
+    /// `NSUbiquitousKeyValueWhatsNewVersionStore` (an iCloud key-value store touch)
+    /// and re-decoded `whats-new.json`, all on the main thread during launch.
+    private let whatsNewEnvironment = WhatsNewEnvironment(
+        // Specify in which way the presented WhatsNew Versions are stored.
+        // In default the `UserDefaultsWhatsNewVersionStore` is used.
+        versionStore: NSUbiquitousKeyValueWhatsNewVersionStore(),
+        whatsNewCollection: WhatsNewLoader.loadAll(
+            primaryActionBackground: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+            primaryActionForeground: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white
+        )
+    )
+#endif
+
     // NOTE: there used to be a `registerSpotlightBackgroundTask()` here, called from
     // `init()`, that took a `beginBackgroundTask(withName: "SpotlightIndexing")`
     // assertion at LAUNCH and never released it — the only `endBackgroundTask` was in
@@ -59,21 +78,7 @@ struct ProvenanceApp: App {
                 .environmentObject(FreemiumKit.shared)
 #endif
 #if canImport(WhatsNewKit)
-                .environment(
-                    \.whatsNew,
-                     WhatsNewEnvironment(
-                        // Specify in which way the presented WhatsNew Versions are stored.
-                        // In default the `UserDefaultsWhatsNewVersionStore` is used.
-                        versionStore:
-                            //                             InMemoryWhatsNewVersionStore(),
-                        NSUbiquitousKeyValueWhatsNewVersionStore(),
-                        // UserDefaultsWhatsNewVersionStore(),
-                        whatsNewCollection: WhatsNewLoader.loadAll(
-                            primaryActionBackground: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
-                            primaryActionForeground: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white
-                        )
-                     )
-                )
+                .environment(\.whatsNew, whatsNewEnvironment)
 #endif
                 .onAppear {
                     ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")

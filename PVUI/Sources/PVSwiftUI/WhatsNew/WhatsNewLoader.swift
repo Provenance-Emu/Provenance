@@ -59,10 +59,15 @@ public enum WhatsNewLoader {
     ///   - primaryActionBackground: Background color of the "Continue" button.
     ///   - primaryActionForeground: Foreground/text color of the "Continue" button.
     /// - Returns: Array of `WhatsNew` values in JSON order (oldest → newest).
-    public static func loadAll(
-        primaryActionBackground: Color = .accentColor,
-        primaryActionForeground: Color = .white
-    ) -> [WhatsNew] {
+    /// Decoded once per process, on first access.
+    ///
+    /// `loadAll` is called from `ProvenanceApp.body`, which SwiftUI re-evaluates
+    /// every time the observed `AppState` publishes — and the boot sequence
+    /// publishes progress repeatedly while the splash is up. Without this cache
+    /// the bundle read plus `JSONDecoder` ran on the main thread once per
+    /// re-evaluation, throughout the launch window. The colour-dependent mapping
+    /// below stays per-call so a theme change is still reflected.
+    private static let decodedEntries: [WhatsNewJSONEntry] = {
         guard let url = Bundle.module.url(forResource: "whats-new", withExtension: "json") else {
             ELOG("WhatsNewLoader: whats-new.json not found in PVUI bundle")
             return []
@@ -73,15 +78,19 @@ public enum WhatsNewLoader {
             return []
         }
 
-        let entries: [WhatsNewJSONEntry]
         do {
-            entries = try JSONDecoder().decode([WhatsNewJSONEntry].self, from: data)
+            return try JSONDecoder().decode([WhatsNewJSONEntry].self, from: data)
         } catch {
             ELOG("WhatsNewLoader: JSON decode error — \(error)")
             return []
         }
+    }()
 
-        return entries.compactMap { entry in
+    public static func loadAll(
+        primaryActionBackground: Color = .accentColor,
+        primaryActionForeground: Color = .white
+    ) -> [WhatsNew] {
+        return decodedEntries.compactMap { entry in
             let features: [WhatsNew.Feature] = entry.features.map { f in
                 WhatsNew.Feature(
                     image: .init(systemName: f.symbolName, foregroundColor: color(from: f.symbolColor)),

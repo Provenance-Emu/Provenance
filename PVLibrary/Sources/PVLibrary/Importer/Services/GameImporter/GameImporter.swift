@@ -666,10 +666,18 @@ public final class GameImporter: GameImporting, ObservableObject {
             return
         }
 
-        // Create default directories synchronously — must complete before UI
-        // renders to avoid race conditions with Realm access timing.
+        // Directory creation must still COMPLETE before boot finishes (later steps
+        // and the UI assume these paths exist), so this is still awaited here and
+        // the ordering is unchanged. It just no longer runs ON the main actor:
+        // it is ~80 `fileExists` + `createDirectory` syscalls (7 fixed roots plus
+        // one per system), which stalled the main thread while the boot splash
+        // was up. Reading the identifiers out of Realm stays on main because Realm
+        // objects are thread-confined; `createDefaultDirectories` is static and
+        // takes plain `String`s precisely so it can run off-actor.
         let systemIDs = Array(PVSystem.all.map { $0.identifier })
-        GameImporter.createDefaultDirectories(fm: FileManager.default, systemIdentifiers: systemIDs)
+        await Task.detached(priority: .userInitiated) {
+            GameImporter.createDefaultDirectories(fm: FileManager.default, systemIdentifiers: systemIDs)
+        }.value
 
         /// Builds a [systemIdentifier: romsDirectoryURL] map from Realm.
         /// Uses a simple synchronous iteration instead of the heavier

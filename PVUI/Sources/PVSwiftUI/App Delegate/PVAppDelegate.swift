@@ -365,10 +365,15 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     private var autoLockTask: Task<Void, Never>?
 
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Establish the launch-timeline origin before any other work, so every
+        // `LAUNCH:` log line's `t+` column is measured from the same point.
+        PVLaunchProfiler.markProcessStart()
         ILOG("PVAppDelegate: Application did finish launching")
 
         // Restore critical user preferences from iCloud KVS (survives reinstalls)
-        iCloudSettingsSync.setup()
+        PVLaunchProfiler.measure("launch.iCloudSettingsSync") {
+            iCloudSettingsSync.setup()
+        }
 
         // Cross-app entitlements over the shared same-team keychain. Honor an
         // active iFly Pro first (it may unlock Plus), then mirror our own Plus
@@ -378,7 +383,9 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             CrossAppEntitlementPublisher.publishPlusStateAtLaunch()
         }
 
-        RealmConfiguration.setDefaultRealmConfig()
+        PVLaunchProfiler.measure("launch.setDefaultRealmConfig") {
+            RealmConfiguration.setDefaultRealmConfig()
+        }
 
         // Register MetricKit subscriber to capture hang / crash diagnostics passively
         #if !os(tvOS)
@@ -457,10 +464,14 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             .with(iCloudBootstrapTask())
             .with(WebServerBootstrapTask(delegate: self))
 
-        await orchestrator.run()
+        await PVLaunchProfiler.measure("launch.bootstrapOrchestrator") {
+            await orchestrator.run()
+        }
 
         // Apply any pending RetroArch config migrations (partial key updates)
-        await RetroArchConfigMigrator.applyPendingMigrations()
+        await PVLaunchProfiler.measure("launch.retroArchConfigMigrations") {
+            await RetroArchConfigMigrator.applyPendingMigrations()
+        }
 
         // Register the RetroArch quick-settings view so the pause menu can show it
         // (PVUIBase can't import PVSwiftUI directly, so we use a static registry)

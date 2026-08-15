@@ -448,6 +448,18 @@ public class AppState: ObservableObject {
         gameImporter?.pause()
     }
 
+    /// Tracks a bootup sequence that has been started but has not yet finished.
+    ///
+    /// ``isInitialized`` is only set at the very END of ``finalizeBootup()``, so it
+    /// cannot guard re-entry *during* boot. `startBootupSequence()` is driven by
+    /// `.onChange(of: scenePhase)` transitions to `.active`, which fire more than
+    /// once in ordinary use — most obviously when the user backgrounds the app while
+    /// the boot splash is still up and then returns. Without this flag each such
+    /// transition spawned a second, concurrent boot pipeline: duplicate Realm init,
+    /// duplicate core scan and duplicate library load all racing the first, which
+    /// makes an already-slow cold launch dramatically slower.
+    private var isBootupInProgress = false
+
     /// Method to start the bootup sequence
     public func startBootupSequence() {
         ILOG("AppState: Starting bootup sequence")
@@ -455,14 +467,25 @@ public class AppState: ObservableObject {
             ILOG("AppState: Already initialized, skipping bootup sequence")
             return
         }
+        if isBootupInProgress {
+            ILOG("AppState: Bootup already in progress, skipping duplicate bootup sequence")
+            return
+        }
+        isBootupInProgress = true
         Task {
+            // Cleared on EVERY exit path (including the error returns below) so the
+            // `RetroErrorView` retry button can start a fresh sequence.
+            defer { isBootupInProgress = false }
+
             // Phase 1: Realm database init — hard 60 s cap.
             // Library init is intentionally NOT included here; it has its own
             // per-phase timeouts in initializeLibrary() and can legitimately
             // take longer than 60 s on first launch (e.g. libretro core probing).
             do {
-                try await withTimeout(seconds: 60) {
-                    await self.initializeDatabase()
+                try await PVLaunchProfiler.measure("boot.1.database") {
+                    try await withTimeout(seconds: 60) {
+                        await self.initializeDatabase()
+                    }
                 }
             } catch {
                 ELOG("AppState: Database initialization timed out or failed: \(error)")
@@ -471,10 +494,15 @@ public class AppState: ObservableObject {
             }
             guard !bootupStateManager.currentState.isErrorState else { return }
             // Phase 2: Core scanning — system definitions + dynamic libretro probe.
-            await scanCores()
+            await PVLaunchProfiler.measure("boot.2.scanCores") {
+                await scanCores()
+            }
             guard !bootupStateManager.currentState.isErrorState else { return }
             // Phase 3: Library init — importer, game library, ROM cache.
-            await initializeLibrary()
+            await PVLaunchProfiler.measure("boot.3.library") {
+                await initializeLibrary()
+            }
+            PVLaunchProfiler.milestone("boot.complete")
         }
     }
 
@@ -548,8 +576,10 @@ public class AppState: ObservableObject {
         ILOG("AppState: Starting GameImporter.shared.initSystems()")
         bootupStateManager.updateTaskProgress("Initializing game importer…", fraction: 0.57)
         do {
-            try await withTimeout(seconds: 20) {
-                await self.bootWorker.initializeImporter()
+            try await PVLaunchProfiler.measure("boot.3a.initSystems") {
+                try await withTimeout(seconds: 20) {
+                    await self.bootWorker.initializeImporter()
+                }
             }
             ILOG("AppState: GameImporter.shared.initSystems() completed")
         } catch let error as TimeoutError {
@@ -581,8 +611,10 @@ public class AppState: ObservableObject {
         ILOG("AppState: Reloading RomDatabase cache (non-forced, skips if already warm)")
         bootupStateManager.updateTaskProgress("Reloading ROM database cache…", fraction: 0.80)
         do {
-            try await withTimeout(seconds: 30) {
-                await self.bootWorker.reloadRomCache()
+            try await PVLaunchProfiler.measure("boot.3b.reloadRomCache") {
+                try await withTimeout(seconds: 30) {
+                    await self.bootWorker.reloadRomCache()
+                }
             }
             ILOG("AppState: RomDatabase cache reloaded")
         } catch let error as TimeoutError {
