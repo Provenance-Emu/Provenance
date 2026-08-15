@@ -23,27 +23,35 @@ struct GameArtGalleryEntry: TimelineEntry {
     let date: Date
     let game: WidgetGameEntry?
     let gameCount: Int
-    /// Pre-loaded artwork bytes; nil when no game is available or artwork is missing.
-    /// Populated by the timeline provider to avoid synchronous disk I/O during view rendering.
-    let artworkImageData: Data?
 }
 
 // MARK: - Timeline Provider
 
+/// Rotation cadence and depth for the gallery timeline.
+private enum GameArtGalleryTimeline {
+    /// Minutes each game stays on screen before the next entry becomes current.
+    static let rotationIntervalMinutes = 5
+
+    /// Number of games in one timeline pass.
+    ///
+    /// Entries carry only an artwork *path*, so this no longer scales resident memory —
+    /// it only bounds how far ahead the rotation is scheduled.
+    static let entryCount = 12
+
+    /// Fallback refresh when the library has no games to show.
+    static let emptyLibraryRefreshMinutes = 30
+}
+
 struct GameArtGalleryProvider: TimelineProvider {
     func placeholder(in context: Context) -> GameArtGalleryEntry {
-        GameArtGalleryEntry(date: Date(), game: nil, gameCount: 0, artworkImageData: nil)
+        GameArtGalleryEntry(date: Date(), game: nil, gameCount: 0)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (GameArtGalleryEntry) -> Void) {
-        let games = WidgetSharedDefaults.loadGalleryGames()
-        let game = games.first
-        let imageData = game?.artworkPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
         let entry = GameArtGalleryEntry(
             date: Date(),
-            game: game,
-            gameCount: WidgetSharedDefaults.loadGameCount(),
-            artworkImageData: imageData
+            game: WidgetSharedDefaults.loadGalleryGames().first,
+            gameCount: WidgetSharedDefaults.loadGameCount()
         )
         completion(entry)
     }
@@ -54,31 +62,32 @@ struct GameArtGalleryProvider: TimelineProvider {
         let now = Date()
 
         guard !games.isEmpty else {
-            let entry = GameArtGalleryEntry(date: now, game: nil, gameCount: gameCount, artworkImageData: nil)
-            let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: now) ?? now
+            let entry = GameArtGalleryEntry(date: now, game: nil, gameCount: gameCount)
+            let nextUpdate = Calendar.current.date(
+                byAdding: .minute,
+                value: GameArtGalleryTimeline.emptyLibraryRefreshMinutes,
+                to: now
+            ) ?? now
             completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
             return
         }
 
-        // Rotate through gallery games, one every 5 minutes.
-        // Image data is pre-loaded here so view rendering avoids synchronous disk I/O.
-        var entries: [GameArtGalleryEntry] = []
-        let rotationInterval = 5 // minutes
-
-        for (index, game) in games.prefix(12).enumerated() {
+        // Rotate through gallery games. Entries hold an identifier and an artwork path,
+        // never image bytes: WidgetKit keeps the whole timeline resident while it renders,
+        // so a `Data` payload here would be multiplied by `entryCount`.
+        let entries = games.prefix(GameArtGalleryTimeline.entryCount).enumerated().map { index, game in
             let entryDate = Calendar.current.date(
                 byAdding: .minute,
-                value: index * rotationInterval,
+                value: index * GameArtGalleryTimeline.rotationIntervalMinutes,
                 to: now
             ) ?? now
-            let imageData = game.artworkPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
-            entries.append(GameArtGalleryEntry(date: entryDate, game: game, gameCount: gameCount, artworkImageData: imageData))
+            return GameArtGalleryEntry(date: entryDate, game: game, gameCount: gameCount)
         }
 
         // Loop back: after the last game, start over from the first
         let loopDate = Calendar.current.date(
             byAdding: .minute,
-            value: entries.count * rotationInterval,
+            value: entries.count * GameArtGalleryTimeline.rotationIntervalMinutes,
             to: now
         ) ?? now
         completion(Timeline(entries: entries, policy: .after(loopDate)))
@@ -99,9 +108,18 @@ struct GameArtGalleryView: View {
         .widgetURL(PVLibraryScreenURL)
     }
 
+    /// The gallery draws one cover full-bleed, so it gets the full `hero` budget.
+    private var artworkImage: UIImage? {
+        guard let path = entry.game?.artworkPath else { return nil }
+        return WidgetSharedDefaults.artworkImage(
+            forRelativePath: path,
+            maxPixelSize: WidgetArtworkPixelBudget.hero
+        )
+    }
+
     @ViewBuilder
     private var artworkBackground: some View {
-        if let data = entry.artworkImageData, let uiImage = UIImage(data: data) {
+        if let uiImage = artworkImage {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
@@ -172,8 +190,7 @@ struct GameArtGalleryWidget: Widget {
             systemName: "NES",
             artworkPath: nil
         ),
-        gameCount: 42,
-        artworkImageData: nil
+        gameCount: 42
     )
 }
 #endif

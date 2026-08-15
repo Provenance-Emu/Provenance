@@ -18,6 +18,7 @@
 import ActivityKit
 import PVLiveActivities
 import SwiftUI
+import UIKit
 import WidgetKit
 
 // MARK: - Widget declaration
@@ -161,20 +162,21 @@ private struct GameLockScreenLiveActivityView: View {
 private struct GameArtworkThumbnail: View {
     let artworkPath: String?
 
+    /// Largest presentation is the 56pt Lock Screen cover, so the inline thumbnail
+    /// budget covers every surface here (Dynamic Island uses 16–52pt).
+    private var artworkImage: UIImage? {
+        guard let artworkPath else { return nil }
+        return WidgetSharedDefaults.artworkImage(
+            forRelativePath: artworkPath,
+            maxPixelSize: WidgetArtworkPixelBudget.inlineThumbnail
+        )
+    }
+
     var body: some View {
-        if let path = artworkPath,
-           let containerURL = FileManager.default.containerURL(
-               forSecurityApplicationGroupIdentifier: pvWidgetAppGroupID
-           ) {
-            let fileURL = containerURL.appendingPathComponent(path)
-            if let data = try? Data(contentsOf: fileURL),
-               let uiImage = UIImage(data: data) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } else {
-                fallbackIcon
-            }
+        if let uiImage = artworkImage {
+            Image(uiImage: uiImage)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
         } else {
             fallbackIcon
         }
@@ -233,18 +235,6 @@ private struct StatusPill: View {
             Capsule().fill((isPaused ? Color.orange : Color.green).opacity(0.15))
         )
     }
-}
-
-// MARK: - App Group ID (widget-local copy)
-
-/// Local copy of the App Group identifier used to resolve artwork paths.
-/// Must stay in sync with `PVAppIntents/AppGroupID.swift` and `WidgetSharedDefaults.appGroupID`.
-private var pvWidgetAppGroupID: String {
-    let raw = Bundle.main.infoDictionary?["APP_GROUP_IDENTIFIER"] as? String
-    guard let raw, !raw.isEmpty, !raw.contains("$(") else {
-        return "group.org.provenance-emu.provenance"
-    }
-    return raw
 }
 
 // MARK: - Preview

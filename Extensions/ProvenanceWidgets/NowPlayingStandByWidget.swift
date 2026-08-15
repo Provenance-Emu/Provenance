@@ -23,52 +23,71 @@ struct NowPlayingStandByEntry: TimelineEntry {
     let date: Date
     let nowPlaying: WidgetNowPlayingEntry?
     let fallbackGame: WidgetGameEntry?
-    /// Pre-loaded album art bytes for the now-playing track. Nil when unavailable.
-    /// Populated by the timeline provider to avoid synchronous disk I/O during view rendering.
-    let albumArtImageData: Data?
-    /// Pre-loaded artwork bytes for the fallback game (shown when nothing is playing).
-    /// Populated by the timeline provider to avoid synchronous disk I/O during view rendering.
-    let fallbackArtworkImageData: Data?
+
+    /// Full-bleed album art for the StandBy background.
+    ///
+    /// Decoded on demand from `WidgetNowPlayingEntry.albumArtPath` at the `hero` budget.
+    var albumArtBackgroundImage: UIImage? {
+        guard let path = nowPlaying?.albumArtPath else { return nil }
+        return WidgetSharedDefaults.artworkImage(
+            forRelativePath: path,
+            maxPixelSize: WidgetArtworkPixelBudget.hero
+        )
+    }
+
+    /// The same album art again for the 60pt inset thumbnail.
+    ///
+    /// A separate, much smaller decode on purpose: reusing the full-bleed bitmap for a
+    /// 60pt square would keep a `hero`-sized image alive for a thumbnail's worth of
+    /// pixels.
+    var albumArtThumbnailImage: UIImage? {
+        guard let path = nowPlaying?.albumArtPath else { return nil }
+        return WidgetSharedDefaults.artworkImage(
+            forRelativePath: path,
+            maxPixelSize: WidgetArtworkPixelBudget.inlineThumbnail
+        )
+    }
+
+    /// Box art for the most recent game, shown full-bleed when nothing is playing.
+    var fallbackArtworkImage: UIImage? {
+        guard let path = fallbackGame?.artworkPath else { return nil }
+        return WidgetSharedDefaults.artworkImage(
+            forRelativePath: path,
+            maxPixelSize: WidgetArtworkPixelBudget.hero
+        )
+    }
 }
 
 // MARK: - Timeline Provider
 
 struct NowPlayingStandByProvider: TimelineProvider {
+    /// Fallback refresh cadence, in minutes. Now-playing changes push an immediate
+    /// reload via `WidgetDataWriter`.
+    private static let refreshIntervalMinutes = 10
+
     func placeholder(in context: Context) -> NowPlayingStandByEntry {
-        NowPlayingStandByEntry(date: Date(), nowPlaying: nil, fallbackGame: nil, albumArtImageData: nil, fallbackArtworkImageData: nil)
+        NowPlayingStandByEntry(date: Date(), nowPlaying: nil, fallbackGame: nil)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (NowPlayingStandByEntry) -> Void) {
-        let nowPlaying = WidgetSharedDefaults.loadNowPlaying()
-        let fallbackGame = WidgetSharedDefaults.loadRecentGames().first
-        let albumArtData = nowPlaying?.albumArtPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
-        let fallbackData = fallbackGame?.artworkPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
-        let entry = NowPlayingStandByEntry(
-            date: Date(),
-            nowPlaying: nowPlaying,
-            fallbackGame: fallbackGame,
-            albumArtImageData: albumArtData,
-            fallbackArtworkImageData: fallbackData
-        )
-        completion(entry)
+        completion(currentEntry())
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NowPlayingStandByEntry>) -> Void) {
-        let nowPlaying = WidgetSharedDefaults.loadNowPlaying()
-        let fallbackGame = WidgetSharedDefaults.loadRecentGames().first
-        let albumArtData = nowPlaying?.albumArtPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
-        let fallbackData = fallbackGame?.artworkPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
-        let entry = NowPlayingStandByEntry(
+        let nextUpdate = Calendar.current.date(
+            byAdding: .minute,
+            value: Self.refreshIntervalMinutes,
+            to: Date()
+        ) ?? Date()
+        completion(Timeline(entries: [currentEntry()], policy: .after(nextUpdate)))
+    }
+
+    private func currentEntry() -> NowPlayingStandByEntry {
+        NowPlayingStandByEntry(
             date: Date(),
-            nowPlaying: nowPlaying,
-            fallbackGame: fallbackGame,
-            albumArtImageData: albumArtData,
-            fallbackArtworkImageData: fallbackData
+            nowPlaying: WidgetSharedDefaults.loadNowPlaying(),
+            fallbackGame: WidgetSharedDefaults.loadRecentGames().first
         )
-        // Use a 10-minute fallback refresh; immediate updates use WidgetCenter.reloadAllTimelines()
-        // via WidgetDataWriter when now-playing changes.
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 10, to: Date()) ?? Date()
-        completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
 }
 
@@ -88,13 +107,13 @@ struct NowPlayingStandByView: View {
 
     @ViewBuilder
     private var artworkBackground: some View {
-        if let data = entry.albumArtImageData, let uiImage = UIImage(data: data) {
+        if let uiImage = entry.albumArtBackgroundImage {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .clipped()
                 .overlay(.black.opacity(0.45))
-        } else if let data = entry.fallbackArtworkImageData, let uiImage = UIImage(data: data) {
+        } else if let uiImage = entry.fallbackArtworkImage {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
@@ -118,7 +137,7 @@ struct NowPlayingStandByView: View {
 
     @ViewBuilder
     private var albumArtThumbnail: some View {
-        if let data = entry.albumArtImageData, let uiImage = UIImage(data: data) {
+        if let uiImage = entry.albumArtThumbnailImage {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
@@ -197,10 +216,8 @@ struct NowPlayingStandByWidget: Widget {
             artistName: "Mahito Yokota",
             albumTitle: "Super Mario Galaxy"
         ),
-        fallbackGame: nil,
-        albumArtImageData: nil,
-        fallbackArtworkImageData: nil
+        fallbackGame: nil
     )
-    NowPlayingStandByEntry(date: Date(), nowPlaying: nil, fallbackGame: nil, albumArtImageData: nil, fallbackArtworkImageData: nil)
+    NowPlayingStandByEntry(date: Date(), nowPlaying: nil, fallbackGame: nil)
 }
 #endif

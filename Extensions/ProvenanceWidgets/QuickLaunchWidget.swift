@@ -18,45 +18,49 @@ struct QuickLaunchEntry: TimelineEntry {
     let date: Date
     let game: WidgetGameEntry?
     let gameCount: Int
-    /// Pre-loaded artwork bytes for the most-recently-played game. Nil when unavailable.
-    /// Populated by the timeline provider to avoid synchronous disk I/O during view rendering.
-    let artworkImageData: Data?
+
+    /// Accessory-sized artwork for the most-recently-played game, decoded on demand.
+    ///
+    /// The entry stores the game's artwork *path*, not its bytes — see
+    /// `WidgetGameEntry.artworkPath`.
+    var artworkImage: UIImage? {
+        guard let path = game?.artworkPath else { return nil }
+        return WidgetSharedDefaults.artworkImage(
+            forRelativePath: path,
+            maxPixelSize: WidgetArtworkPixelBudget.accessory
+        )
+    }
 }
 
 // MARK: - Timeline Provider
 
 struct QuickLaunchProvider: TimelineProvider {
+    /// Fallback refresh cadence, in minutes.
+    private static let refreshIntervalMinutes = 30
+
     func placeholder(in context: Context) -> QuickLaunchEntry {
-        QuickLaunchEntry(date: Date(), game: nil, gameCount: 0, artworkImageData: nil)
+        QuickLaunchEntry(date: Date(), game: nil, gameCount: 0)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (QuickLaunchEntry) -> Void) {
-        let games = WidgetSharedDefaults.loadRecentGames()
-        let game = games.first
-        let imageData = game?.artworkPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
-        let entry = QuickLaunchEntry(
-            date: Date(),
-            game: game,
-            gameCount: WidgetSharedDefaults.loadGameCount(),
-            artworkImageData: imageData
-        )
-        completion(entry)
+        completion(currentEntry())
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<QuickLaunchEntry>) -> Void) {
-        let games = WidgetSharedDefaults.loadRecentGames()
-        let game = games.first
-        let imageData = game?.artworkPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
-        let entry = QuickLaunchEntry(
+        let nextUpdate = Calendar.current.date(
+            byAdding: .minute,
+            value: Self.refreshIntervalMinutes,
+            to: Date()
+        ) ?? Date()
+        completion(Timeline(entries: [currentEntry()], policy: .after(nextUpdate)))
+    }
+
+    private func currentEntry() -> QuickLaunchEntry {
+        QuickLaunchEntry(
             date: Date(),
-            game: game,
-            gameCount: WidgetSharedDefaults.loadGameCount(),
-            artworkImageData: imageData
+            game: WidgetSharedDefaults.loadRecentGames().first,
+            gameCount: WidgetSharedDefaults.loadGameCount()
         )
-        // Refresh every 30 minutes
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 30, to: Date()) ?? Date()
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        completion(timeline)
     }
 }
 
@@ -67,7 +71,7 @@ struct QuickLaunchCircularView: View {
 
     var body: some View {
         ZStack {
-            if let data = entry.artworkImageData, let uiImage = UIImage(data: data) {
+            if let uiImage = entry.artworkImage {
                 Image(uiImage: uiImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -92,7 +96,7 @@ struct QuickLaunchRectangularView: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            if let data = entry.artworkImageData, let uiImage = UIImage(data: data) {
+            if let uiImage = entry.artworkImage {
                 Image(uiImage: uiImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -238,8 +242,7 @@ private extension Date {
             artworkPath: nil,
             lastPlayedDate: Date(timeIntervalSinceNow: -7200)
         ),
-        gameCount: 42,
-        artworkImageData: nil
+        gameCount: 42
     )
 }
 #endif

@@ -18,44 +18,49 @@ struct NowPlayingEntry: TimelineEntry {
     let date: Date
     let nowPlaying: WidgetNowPlayingEntry?
     let gameCount: Int
-    /// Pre-loaded album art bytes; nil when no track is playing or artwork is unavailable.
-    /// Populated by the timeline provider to avoid synchronous disk I/O during view rendering.
-    let albumArtImageData: Data?
+
+    /// Accessory-sized album art, decoded on demand from
+    /// `WidgetNowPlayingEntry.albumArtPath` rather than carried as bytes in the entry.
+    var albumArtImage: UIImage? {
+        guard let path = nowPlaying?.albumArtPath else { return nil }
+        return WidgetSharedDefaults.artworkImage(
+            forRelativePath: path,
+            maxPixelSize: WidgetArtworkPixelBudget.accessory
+        )
+    }
 }
 
 // MARK: - Timeline Provider
 
 struct NowPlayingProvider: TimelineProvider {
+    /// Fallback refresh cadence, in minutes. Immediate updates arrive via
+    /// `WidgetCenter.reloadAllTimelines()` from `WidgetDataWriter`, so frequent polling
+    /// would only waste background budget.
+    private static let refreshIntervalMinutes = 60
+
     func placeholder(in context: Context) -> NowPlayingEntry {
-        NowPlayingEntry(date: Date(), nowPlaying: nil, gameCount: 0, albumArtImageData: nil)
+        NowPlayingEntry(date: Date(), nowPlaying: nil, gameCount: 0)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (NowPlayingEntry) -> Void) {
-        let nowPlaying = WidgetSharedDefaults.loadNowPlaying()
-        let imageData = nowPlaying?.albumArtPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
-        let entry = NowPlayingEntry(
-            date: Date(),
-            nowPlaying: nowPlaying,
-            gameCount: WidgetSharedDefaults.loadGameCount(),
-            albumArtImageData: imageData
-        )
-        completion(entry)
+        completion(currentEntry())
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<NowPlayingEntry>) -> Void) {
-        let nowPlaying = WidgetSharedDefaults.loadNowPlaying()
-        let imageData = nowPlaying?.albumArtPath.flatMap { WidgetSharedDefaults.artworkData(forRelativePath: $0) }
-        let entry = NowPlayingEntry(
+        let nextUpdate = Calendar.current.date(
+            byAdding: .minute,
+            value: Self.refreshIntervalMinutes,
+            to: Date()
+        ) ?? Date()
+        completion(Timeline(entries: [currentEntry()], policy: .after(nextUpdate)))
+    }
+
+    private func currentEntry() -> NowPlayingEntry {
+        NowPlayingEntry(
             date: Date(),
-            nowPlaying: nowPlaying,
-            gameCount: WidgetSharedDefaults.loadGameCount(),
-            albumArtImageData: imageData
+            nowPlaying: WidgetSharedDefaults.loadNowPlaying(),
+            gameCount: WidgetSharedDefaults.loadGameCount()
         )
-        // Use a 60-minute fallback refresh; immediate updates use WidgetCenter.reloadAllTimelines()
-        // via WidgetDataWriter, so frequent polling is unnecessary and wastes background budget.
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 60, to: Date()) ?? Date()
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        completion(timeline)
     }
 }
 
@@ -147,7 +152,7 @@ struct NowPlayingRectangularView: View {
 
     @ViewBuilder
     private var albumArtView: some View {
-        if let data = entry.albumArtImageData, let uiImage = UIImage(data: data) {
+        if let uiImage = entry.albumArtImage {
             Image(uiImage: uiImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
@@ -214,9 +219,8 @@ struct NowPlayingWidget: Widget {
             artistName: "Koji Kondo",
             albumTitle: "Super Mario 64"
         ),
-        gameCount: 42,
-        albumArtImageData: nil
+        gameCount: 42
     )
-    NowPlayingEntry(date: Date(), nowPlaying: nil, gameCount: 42, albumArtImageData: nil)
+    NowPlayingEntry(date: Date(), nowPlaying: nil, gameCount: 42)
 }
 #endif

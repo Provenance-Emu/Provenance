@@ -8,6 +8,9 @@
 
 #if os(iOS)
 import Foundation
+import CoreGraphics
+import ImageIO
+import UIKit
 import PVLibrary
 
 // MARK: - Shared UserDefaults Keys
@@ -78,13 +81,14 @@ public struct WidgetGameEntry: Codable, Identifiable {
     /// Reverse-DNS system id (e.g. `com.provenance.snes`) when present in shared JSON; drives per-system SF Symbols in widgets.
     public let systemIdentifier: String?
     /// Relative path inside the App Group container where box art is cached.
+    ///
+    /// Deliberately a path and **not** image bytes: WidgetKit keeps every entry of a
+    /// timeline resident (and archives them) while it renders, so a `Data` payload here
+    /// is multiplied by the entry count. Views resolve the path through
+    /// `WidgetSharedDefaults.artworkImage(forRelativePath:maxPixelSize:)`, which decodes
+    /// straight into the pixel budget it is drawn at.
     public let artworkPath: String?
     public let lastPlayedDate: Date?
-
-    // MARK: Not Codable — populated by timeline providers before passing to views.
-    /// Raw artwork bytes loaded from `artworkPath` at timeline-provider time.
-    /// Never nil-checks needed in views; just display `GameArtworkView(artworkData: entry.artworkData)`.
-    public var artworkData: Data?
 
     // MARK: Derived helpers (not stored)
 
@@ -114,12 +118,6 @@ public struct WidgetGameEntry: Codable, Identifiable {
         self.systemIdentifier = systemIdentifier
         self.artworkPath = artworkPath
         self.lastPlayedDate = lastPlayedDate
-        self.artworkData = nil
-    }
-
-    // MARK: Codable — exclude artworkData from JSON
-    enum CodingKeys: String, CodingKey {
-        case id, title, systemName, systemIdentifier, artworkPath, lastPlayedDate
     }
 }
 
@@ -215,30 +213,9 @@ extension WidgetSharedDefaults {
             .appendingPathComponent(path)
     }
 
-    /// Loads raw image bytes for the given relative artwork path.
-    ///
-    /// Returns `nil` — without blocking — when the file is an iCloud ubiquity
-    /// placeholder that has not yet been downloaded locally.  Views will show the
-    /// `GameArtworkView` placeholder until the next widget timeline refresh after
-    /// the file is available.
-    ///
-    /// Call this in a timeline provider (not in a view body) to keep disk I/O
-    /// out of the rendering path.
-    static func artworkData(forRelativePath path: String) -> Data? {
-        guard let url = artworkURL(forRelativePath: path) else { return nil }
-        // Skip iCloud placeholder files that would block waiting for a network download.
-        if url.isUbiquitousPlaceholder { return nil }
-        return try? Data(contentsOf: url)
-    }
-
-    /// Returns up to `limit` recently-played games with `artworkData` pre-loaded.
-    static func loadRecentGamesWithArtwork(limit: Int = 12) -> [WidgetGameEntry] {
-        loadGames(loadRecentGames(), limit: limit)
-    }
-
-    /// Returns up to `limit` gallery games with `artworkData` pre-loaded.
-    static func loadGalleryGamesWithArtwork(limit: Int = 12) -> [WidgetGameEntry] {
-        loadGames(loadGalleryGames(), limit: limit)
+    /// Returns up to `limit` recently-played games.
+    static func loadRecentGames(limit: Int) -> [WidgetGameEntry] {
+        Array(loadRecentGames().prefix(limit))
     }
 
     static func loadFavoriteGames() -> [WidgetGameEntry] {
@@ -248,21 +225,9 @@ extension WidgetSharedDefaults {
         return (try? decoder.decode([WidgetGameEntry].self, from: data)) ?? []
     }
 
-    static func loadFavoriteGamesWithArtwork(limit: Int = 12) -> [WidgetGameEntry] {
-        loadGames(loadFavoriteGames(), limit: limit)
-    }
-
-    // MARK: - Private
-
-    /// Truncates `games` to `limit` entries and pre-populates `artworkData` from disk.
-    private static func loadGames(_ games: [WidgetGameEntry], limit: Int) -> [WidgetGameEntry] {
-        var result = Array(games.prefix(limit))
-        for index in result.indices {
-            if let path = result[index].artworkPath {
-                result[index].artworkData = artworkData(forRelativePath: path)
-            }
-        }
-        return result
+    /// Returns up to `limit` favorite games.
+    static func loadFavoriteGames(limit: Int) -> [WidgetGameEntry] {
+        Array(loadFavoriteGames().prefix(limit))
     }
 
     static func loadLibraryStats() -> WidgetLibraryStats {
@@ -275,6 +240,140 @@ extension WidgetSharedDefaults {
             totalPlayTimeSeconds: defaults.integer(forKey: Keys.totalPlayTime),
             favoritesCount: defaults.integer(forKey: Keys.favoritesCount)
         )
+    }
+}
+
+// MARK: - Artwork decode budgets
+
+/// Maximum pixel size (longest edge) to decode cover art at, per presentation.
+///
+/// **How these are derived.** Every value is `drawnPointSize × 3 × 1.5`:
+/// * `× 3` — worst-case `@3x` iPhone display scale. Widgets render into the host
+///   device's scale, and iPhone is the densest place these widgets appear.
+/// * `× 1.5` — the box-art aspect factor. `scaledToFill` of a 3:4 cover into a box
+///   that is wider than it is tall scales by `boxWidth / coverWidth`, so the cover's
+///   *long* edge is drawn at `boxWidth × 1.5`. Sizing off the box width alone would
+///   under-decode by a third.
+///
+/// `CGImageSourceCreateThumbnailAtIndex` never upscales, so a budget larger than the
+/// source file is free — typical cover scans (~1000×1500) come back untouched at the
+/// `hero` budget. Only a budget *below* the drawn size costs visible quality.
+enum WidgetArtworkPixelBudget {
+
+    /// Lock Screen accessory art: `accessoryCircular`, and the 40pt thumbnail in
+    /// `accessoryRectangular` / `NowPlayingRectangularView`.
+    /// 40pt × 3 × 1.5 = 180 → 192.
+    static let accessory = 192
+
+    /// Inset thumbnails up to 60pt: the StandBy Now Playing album thumbnail (60pt) and
+    /// the Live Activity / Dynamic Island cover (16–56pt).
+    /// 60pt × 3 × 1.5 = 270 → 288.
+    static let inlineThumbnail = 288
+
+    /// Cells in a dense grid — 5 or more covers rendered at once
+    /// (Favorites `.systemLarge` 4×2, Favorites `.systemExtraLarge` 4×4,
+    /// RecentlyPlayed `.systemExtraLarge`).
+    ///
+    /// Densest cell is Favorites `.systemLarge`: `(364 − 24 − 30) / 4 ≈ 77pt`
+    /// → 77 × 3 × 1.5 ≈ 349. Largest is Favorites `.systemExtraLarge` on iPad
+    /// (`@2x`): `(715 − 28 − 36) / 4 ≈ 163pt` → 163 × 2 × 1.5 ≈ 489. 512 covers both
+    /// with no upscale, at 512 × 384 × 4 B ≈ 786 KB decoded per cover.
+    static let denseGridCell = 512
+
+    /// Cells in a sparse grid — 2 to 4 covers rendered at once
+    /// (Favorites `.systemMedium`, RecentlyPlayed `.systemMedium` / `.systemLarge`).
+    ///
+    /// Largest such cell is Favorites `.systemMedium` 2-up: `(364 − 20 − 8) / 2 = 168pt`
+    /// → 168 × 3 × 1.5 = 756 → 768.
+    static let gridCell = 768
+
+    /// A single cover filling the whole widget: the StandBy art gallery, the StandBy
+    /// full-bleed background, and the `.systemSmall` hero cards.
+    ///
+    /// `.systemSmall` interior is ≈154pt → 154 × 3 × 1.5 ≈ 693, and StandBy enlarges a
+    /// small widget to roughly a 330pt square → ≈ 990. 1024 covers both.
+    ///
+    /// Deliberately a *cap*: Favorites `.systemMedium` holding exactly one favorite
+    /// stretches a cover across the full 344pt width, which would ask for ≈1548px.
+    /// That layout crops the cover to a ~2.3:1 letterbox anyway, so the 1.5× upscale is
+    /// accepted rather than paying 1152 × 1548 × 4 B ≈ 7 MB for one image.
+    static let hero = 1024
+
+    /// Budget for a system-family widget that draws `artworkCount` covers at once.
+    ///
+    /// Keyed on the count rather than the family because peak memory is
+    /// `count × budget`: a lone cover can afford the full `hero` budget, a 4×4 grid
+    /// cannot.
+    static func budget(forSimultaneousArtworkCount artworkCount: Int) -> Int {
+        switch artworkCount {
+        case ...1: return hero
+        case 2...4: return gridCell
+        default: return denseGridCell
+        }
+    }
+}
+
+// MARK: - Artwork decoding
+
+extension WidgetSharedDefaults {
+
+    /// Options for `CGImageSourceCreateWithURL`.
+    ///
+    /// `kCGImageSourceShouldCache: false` stops the *source* from retaining a
+    /// full-resolution decode next to the thumbnail we actually asked for.
+    private static let artworkSourceOptions: CFDictionary = [
+        kCGImageSourceShouldCache: false
+    ] as CFDictionary
+
+    /// Thumbnail options for a given pixel budget.
+    ///
+    /// * `FromImageAlways` — ignore the (usually tiny) embedded EXIF thumbnail.
+    /// * `WithTransform` — honour EXIF orientation so rotated art is not flipped.
+    /// * `ShouldCacheImmediately` — decode now, on the timeline/render thread, rather
+    ///   than lazily at first draw.
+    private static func artworkThumbnailOptions(maxPixelSize: Int) -> CFDictionary {
+        [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
+        ] as CFDictionary
+    }
+
+    /// Decodes App Group artwork *directly* at no more than `maxPixelSize` on its
+    /// longest edge.
+    ///
+    /// A widget extension has the tightest memory budget on iOS, and `UIImage(data:)`
+    /// decodes at the source resolution no matter how small the image is drawn — a
+    /// 1500×2000 cover costs ~12 MB whether it lands in a 40pt accessory circle or a
+    /// full-bleed StandBy panel. `CGImageSourceCreateThumbnailAtIndex` decodes into the
+    /// requested budget instead, so the full-resolution bitmap never exists. Resizing
+    /// after the fact does not help: it still pays the full decode first.
+    ///
+    /// This mirrors `ArtworkDownsampler` in `PVMediaCache` (the canonical
+    /// implementation, same ImageIO option set) rather than importing it: `PVMediaCache`
+    /// pulls in RxSwift/RxCocoa/RxRealm/Realm, which is not weight this extension should
+    /// carry for two ImageIO calls, and its `ArtworkDownsampleTarget` budgets are sized
+    /// for in-app grids, not widget families.
+    ///
+    /// Reading through `CGImageSourceCreateWithURL` also memory-maps the file, so unlike
+    /// `Data(contentsOf:)` the encoded bytes are never resident in full either.
+    ///
+    /// - Returns: `nil` when the path is unresolvable, undecodable, or is an iCloud
+    ///   ubiquity placeholder that has not been downloaded yet — reading one of those
+    ///   would block on a network fetch. Callers show their placeholder until a later
+    ///   timeline refresh finds the file present.
+    static func artworkImage(forRelativePath path: String, maxPixelSize: Int) -> UIImage? {
+        guard let url = artworkURL(forRelativePath: path) else { return nil }
+        if url.isUbiquitousPlaceholder { return nil }
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, artworkSourceOptions),
+              let cgImage = CGImageSourceCreateThumbnailAtIndex(
+                  source,
+                  0,
+                  artworkThumbnailOptions(maxPixelSize: maxPixelSize)
+              )
+        else { return nil }
+        return UIImage(cgImage: cgImage, scale: 1, orientation: .up)
     }
 }
 

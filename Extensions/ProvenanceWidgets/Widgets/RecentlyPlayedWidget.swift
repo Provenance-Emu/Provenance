@@ -30,17 +30,22 @@ struct RecentlyPlayedProvider: TimelineProvider {
         .placeholder
     }
 
+    /// Fallback refresh cadence, in minutes.
+    private static let refreshIntervalMinutes = 15
+
     func getSnapshot(in context: Context, completion: @escaping (RecentlyPlayedEntry) -> Void) {
-        let limit = gameLimit(for: context.family)
-        let games = WidgetSharedDefaults.loadRecentGamesWithArtwork(limit: limit)
+        let games = WidgetSharedDefaults.loadRecentGames(limit: gameLimit(for: context.family))
         completion(RecentlyPlayedEntry(date: Date(), games: games, isPlaceholder: context.isPreview && games.isEmpty))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<RecentlyPlayedEntry>) -> Void) {
-        let limit = gameLimit(for: context.family)
-        let games = WidgetSharedDefaults.loadRecentGamesWithArtwork(limit: limit)
+        let games = WidgetSharedDefaults.loadRecentGames(limit: gameLimit(for: context.family))
         let entry = RecentlyPlayedEntry(date: Date(), games: games, isPlaceholder: false)
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
+        let nextUpdate = Calendar.current.date(
+            byAdding: .minute,
+            value: Self.refreshIntervalMinutes,
+            to: Date()
+        ) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
 
@@ -221,8 +226,13 @@ struct RecentlyPlayedWidgetView: View {
     private func smallHeroCard(game: WidgetGameEntry) -> some View {
         let m = layoutMetrics
         return ZStack(alignment: .bottomLeading) {
-            GameArtworkView(artworkData: game.artworkData, cornerRadius: m.heroArtworkCornerRadius)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            // One cover filling the widget, so it earns the full hero budget.
+            GameArtworkView(
+                artworkPath: game.artworkPath,
+                maxPixelSize: WidgetArtworkPixelBudget.hero,
+                cornerRadius: m.heroArtworkCornerRadius
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             LinearGradient(
                 colors: [
                     RetroWaveWidgetPalette.retroBlack.opacity(0.1),
@@ -279,13 +289,15 @@ struct RecentlyPlayedWidgetView: View {
         let columns = RecentlyPlayedGridColumnSpec.columnCount(for: gridFamily, itemCount: games.count)
         let m = layoutMetrics
         let spacing = m.rowSpacing
+        // Peak decoded memory is `count × budget`, so the budget shrinks as the grid fills.
+        let artworkPixelSize = WidgetArtworkPixelBudget.budget(forSimultaneousArtworkCount: games.count)
 
         return LazyVGrid(
             columns: Array(repeating: GridItem(.flexible(), spacing: spacing), count: columns),
             spacing: spacing
         ) {
             ForEach(games) { game in
-                recentlyPlayedGridCell(game: game)
+                recentlyPlayedGridCell(game: game, artworkPixelSize: artworkPixelSize)
             }
         }
         .padding(m.contentPadding)
@@ -295,13 +307,17 @@ struct RecentlyPlayedWidgetView: View {
 
     /// Single grid cell: square artwork on top, title and metadata below; artwork fills the cell width.
     @ViewBuilder
-    private func recentlyPlayedGridCell(game: WidgetGameEntry) -> some View {
+    private func recentlyPlayedGridCell(game: WidgetGameEntry, artworkPixelSize: Int) -> some View {
         let m = layoutMetrics
         let inner = VStack(alignment: .leading, spacing: 5) {
-            GameArtworkView(artworkData: game.artworkData, cornerRadius: m.artworkCornerRadius)
-                .aspectRatio(1, contentMode: .fill)
-                .frame(maxWidth: .infinity)
-                .clipped()
+            GameArtworkView(
+                artworkPath: game.artworkPath,
+                maxPixelSize: artworkPixelSize,
+                cornerRadius: m.artworkCornerRadius
+            )
+            .aspectRatio(1, contentMode: .fill)
+            .frame(maxWidth: .infinity)
+            .clipped()
             Text(game.title)
                 .font(m.listTitleFont)
                 .foregroundStyle(RetroWaveWidgetTypography.titleForeground)

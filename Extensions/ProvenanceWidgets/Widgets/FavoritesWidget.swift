@@ -87,17 +87,22 @@ struct FavoritesProvider: TimelineProvider {
         .placeholder
     }
 
+    /// Fallback refresh cadence, in minutes.
+    private static let refreshIntervalMinutes = 15
+
     func getSnapshot(in context: Context, completion: @escaping (FavoritesEntry) -> Void) {
-        let limit = gameLimit(for: context.family)
-        let games = WidgetSharedDefaults.loadFavoriteGamesWithArtwork(limit: limit)
+        let games = WidgetSharedDefaults.loadFavoriteGames(limit: gameLimit(for: context.family))
         completion(FavoritesEntry(date: Date(), games: games, isPlaceholder: context.isPreview && games.isEmpty))
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<FavoritesEntry>) -> Void) {
-        let limit = gameLimit(for: context.family)
-        let games = WidgetSharedDefaults.loadFavoriteGamesWithArtwork(limit: limit)
+        let games = WidgetSharedDefaults.loadFavoriteGames(limit: gameLimit(for: context.family))
         let entry = FavoritesEntry(date: Date(), games: games, isPlaceholder: false)
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date()
+        let nextUpdate = Calendar.current.date(
+            byAdding: .minute,
+            value: Self.refreshIntervalMinutes,
+            to: Date()
+        ) ?? Date()
         completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
 
@@ -238,7 +243,8 @@ struct FavoritesWidgetView: View {
     private var smallView: some View {
         Group {
             if let game = displayGames.first {
-                gameButton(game)
+                // One cover filling the widget, so it earns the full hero budget.
+                gameButton(game, artworkPixelSize: WidgetArtworkPixelBudget.hero)
             }
         }
         .padding(layoutMetrics.contentPadding)
@@ -251,6 +257,8 @@ struct FavoritesWidgetView: View {
         let spec = FavoritesGridLayoutSpec.spec(family: family, itemCount: games.count)
         let spacing = layoutMetrics.gridSpacing
         let padding = layoutMetrics.contentPadding
+        // Peak decoded memory is `count × budget`, so the budget shrinks as the grid fills.
+        let artworkPixelSize = WidgetArtworkPixelBudget.budget(forSimultaneousArtworkCount: games.count)
 
         return GeometryReader { geo in
             let cellW = (geo.size.width - 2 * padding - CGFloat(spec.columns - 1) * spacing) / CGFloat(spec.columns)
@@ -261,7 +269,7 @@ struct FavoritesWidgetView: View {
                 spacing: spacing
             ) {
                 ForEach(games) { game in
-                    gameButton(game)
+                    gameButton(game, artworkPixelSize: artworkPixelSize)
                         .frame(width: cellW, height: cellH)
                 }
             }
@@ -271,7 +279,7 @@ struct FavoritesWidgetView: View {
 
     // MARK: Game cell
 
-    private func gameButton(_ game: WidgetGameEntry) -> some View {
+    private func gameButton(_ game: WidgetGameEntry, artworkPixelSize: Int) -> some View {
         let metrics = layoutMetrics
         return Group {
             if game.md5Hash.isEmpty {
@@ -285,7 +293,11 @@ struct FavoritesWidgetView: View {
                 }
             } else if let url = game.launchURL {
                 Link(destination: url) {
-                    GameArtworkView(artworkData: game.artworkData, cornerRadius: metrics.tileCornerRadius)
+                    GameArtworkView(
+                        artworkPath: game.artworkPath,
+                        maxPixelSize: artworkPixelSize,
+                        cornerRadius: metrics.tileCornerRadius
+                    )
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .overlay(alignment: .topLeading) {
                             if Self.shouldShowSystemOverlay(for: game) {

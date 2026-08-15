@@ -11,15 +11,28 @@ import SwiftUI
 import UIKit
 
 /// Displays box art for a game or falls back to a system-icon placeholder.
-/// Pass `artworkData` as pre-loaded bytes from the timeline provider;
-/// no disk I/O is performed during rendering.
+///
+/// Takes an App Group–relative *path* plus the pixel budget it will be drawn at, and
+/// decodes straight into that budget. It deliberately does not take pre-loaded `Data`:
+/// WidgetKit renders every entry of a timeline in one burst right after `getTimeline`
+/// returns, so pre-loading in the provider does not move the work off the render path —
+/// it only forces every cover in the timeline to stay resident at once, at full
+/// resolution. Decoding here keeps one bounded bitmap alive at a time.
 struct GameArtworkView: View {
-    let artworkData: Data?
+    let artworkPath: String?
+    /// Maximum pixels on the artwork's longest edge — see `WidgetArtworkPixelBudget`.
+    let maxPixelSize: Int
     let cornerRadius: CGFloat
 
-    init(artworkData: Data?, cornerRadius: CGFloat = 8) {
-        self.artworkData = artworkData
+    init(artworkPath: String?, maxPixelSize: Int, cornerRadius: CGFloat = 8) {
+        self.artworkPath = artworkPath
+        self.maxPixelSize = maxPixelSize
         self.cornerRadius = cornerRadius
+    }
+
+    private var artworkImage: UIImage? {
+        guard let artworkPath else { return nil }
+        return WidgetSharedDefaults.artworkImage(forRelativePath: artworkPath, maxPixelSize: maxPixelSize)
     }
 
     var body: some View {
@@ -29,7 +42,7 @@ struct GameArtworkView: View {
         // clipShape rounds the corners.
         Color.clear
             .overlay {
-                if let data = artworkData, let uiImage = UIImage(data: data) {
+                if let uiImage = artworkImage {
                     Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFill()
