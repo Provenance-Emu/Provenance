@@ -308,14 +308,22 @@ public extension PVEmulatorConfiguration {
         typealias SystemPlistEntries = [SystemPlistEntry]
         let decoder = PropertyListDecoder()
         
-        await plists.asyncForEach { plist in
-            await processSystemPlist(plist, using: decoder)
+        /// Measured separately from the enclosing `boot.2.scanCores` phase so the
+        /// effect of the ``SystemsPlistFingerprint`` gate is visible on device:
+        /// a first launch (or first launch after an update) pays the full
+        /// property re-write, every launch after that should be near-zero.
+        await PVLaunchProfiler.measure("boot.2a.updateSystems") {
+            await plists.asyncForEach { plist in
+                await processSystemPlist(plist, using: decoder)
+            }
         }
 
         /// Register BIOS files that individual games need (arcade ROM sets, etc.).
         /// Runs after the systems exist so the records can be attached to them.
         /// See `PerGameBIOSSupport.swift`.
-        PerGameBIOS.registerBIOSRecords()
+        await PVLaunchProfiler.measure("boot.2b.registerBIOSRecords") {
+            PerGameBIOS.registerBIOSRecords()
+        }
     }
     
     /// Print a list of systems for debug use
@@ -341,8 +349,12 @@ public extension PVEmulatorConfiguration {
             /// shipped plist (or the code that maps it) actually changed. See
             /// ``SystemsPlistFingerprint``.
             let alreadyApplied = SystemsPlistFingerprint.matchesStoredFingerprint(for: plist, data: data)
-            await updateSystemEntries(systems, skippingExistingUpdates: alreadyApplied)
-            if !alreadyApplied {
+            let applied = await updateSystemEntries(systems, skippingExistingUpdates: alreadyApplied)
+            /// Only stamp the fingerprint when the writes actually succeeded. The write
+            /// helpers swallow their errors and return normally, so stamping
+            /// unconditionally would let a single transient Realm failure permanently
+            /// suppress re-application until the next app build.
+            if !alreadyApplied && applied {
                 SystemsPlistFingerprint.storeFingerprint(for: plist, data: data)
             }
         } catch {
@@ -350,8 +362,12 @@ public extension PVEmulatorConfiguration {
         }
     }
 
-    private static func updateSystemEntries(_ systems: [SystemPlistEntry]?, skippingExistingUpdates: Bool) async {
-        guard let systems = systems else { return }
+    /// - Returns: `true` when every write that ran completed successfully, so the
+    ///   caller may record a fingerprint. `false` if any write failed and the plist
+    ///   must therefore be re-applied on the next launch.
+    @discardableResult
+    private static func updateSystemEntries(_ systems: [SystemPlistEntry]?, skippingExistingUpdates: Bool) async -> Bool {
+        guard let systems = systems else { return false }
 
         /// Create mapping of existing systems to their plist entries
         let database = RomDatabase.sharedInstance
@@ -369,10 +385,11 @@ public extension PVEmulatorConfiguration {
         /// run: a system absent from Realm (fresh install, reset library, or a
         /// partially-failed earlier run) has to be created regardless of the
         /// fingerprint, and it applies the full property set on creation.
+        var allWritesSucceeded = true
         if skippingExistingUpdates {
             ILOG("PVEmulatorConfiguration: systems.plist unchanged since last apply — skipping property re-write for \(systemMappings.count) existing systems")
         } else {
-            await updateExistingSystems(systemMappings, using: database)
+            allWritesSucceeded = await updateExistingSystems(systemMappings, using: database)
         }
 
         /// Find systems that need to be created
@@ -380,10 +397,13 @@ public extension PVEmulatorConfiguration {
             database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) == nil
         }
 
-        await createNewSystems(from: newSystems, using: database)
+        let created = await createNewSystems(from: newSystems, using: database)
+        return allWritesSucceeded && created
     }
 
-    private static func updateExistingSystems(_ systemMappings: [(PVSystem, SystemPlistEntry)], using database: RomDatabase = .sharedInstance) async {
+    /// - Returns: `true` if the write transaction committed.
+    @discardableResult
+    private static func updateExistingSystems(_ systemMappings: [(PVSystem, SystemPlistEntry)], using database: RomDatabase = .sharedInstance) async -> Bool {
         do {
             RomDatabase.refresh()
             try database.writeTransaction {
@@ -392,12 +412,16 @@ public extension PVEmulatorConfiguration {
                 }
                 VLOG("Updated \(systemMappings.count) systems")
             }
+            return true
         } catch {
             ELOG("Failed to update systems: \(error)")
+            return false
         }
     }
 
-    private static func createNewSystems(from systems: [SystemPlistEntry], using database: RomDatabase) async {
+    /// - Returns: `true` if the new systems were added (or there were none to add).
+    @discardableResult
+    private static func createNewSystems(from systems: [SystemPlistEntry], using database: RomDatabase) async -> Bool {
         RomDatabase.refresh()
         let newSystems: [PVSystem] = systems.map { system in
             let newSystem = PVSystem()
@@ -405,12 +429,14 @@ public extension PVEmulatorConfiguration {
             setPropertiesTo(pvSystem: newSystem, fromSystemPlistEntry: system)
             return newSystem
         }
-        
+
         do {
             try database.add(newSystems, update: true)
             DLOG("Added \(newSystems.count) new systems")
+            return true
         } catch {
             ELOG("Failed to create new systems: \(error)")
+            return false
         }
     }
 

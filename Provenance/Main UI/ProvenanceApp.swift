@@ -25,25 +25,6 @@ struct ProvenanceApp: App {
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var sceneCoordinator = SceneCoordinator.shared
 
-#if canImport(WhatsNewKit)
-    /// Built once, when SwiftUI instantiates the `App`.
-    ///
-    /// This used to be constructed inline inside `body`, which meant that every
-    /// `body` re-evaluation — and `body` re-evaluates on each `AppState` publish,
-    /// which the boot sequence does repeatedly while the splash is up — rebuilt an
-    /// `NSUbiquitousKeyValueWhatsNewVersionStore` (an iCloud key-value store touch)
-    /// and re-decoded `whats-new.json`, all on the main thread during launch.
-    private let whatsNewEnvironment = WhatsNewEnvironment(
-        // Specify in which way the presented WhatsNew Versions are stored.
-        // In default the `UserDefaultsWhatsNewVersionStore` is used.
-        versionStore: NSUbiquitousKeyValueWhatsNewVersionStore(),
-        whatsNewCollection: WhatsNewLoader.loadAll(
-            primaryActionBackground: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
-            primaryActionForeground: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white
-        )
-    )
-#endif
-
     // NOTE: there used to be a `registerSpotlightBackgroundTask()` here, called from
     // `init()`, that took a `beginBackgroundTask(withName: "SpotlightIndexing")`
     // assertion at LAUNCH and never released it — the only `endBackgroundTask` was in
@@ -78,7 +59,27 @@ struct ProvenanceApp: App {
                 .environmentObject(FreemiumKit.shared)
 #endif
 #if canImport(WhatsNewKit)
-                .environment(\.whatsNew, whatsNewEnvironment)
+                // NOTE: this is deliberately built inline on each `body` evaluation
+                // rather than hoisted to a stored property. `ThemeManager.currentPalette`
+                // starts at the default palette and only becomes the user's saved theme
+                // once `ThemeBootstrapTask` runs, which happens asynchronously AFTER the
+                // App struct is constructed — so capturing these colors once at
+                // construction time would permanently freeze the sheet on the default
+                // theme. The expensive part (reading and decoding whats-new.json) is
+                // cached inside `WhatsNewLoader`; what remains here is a cheap store
+                // touch plus struct mapping.
+                .environment(
+                    \.whatsNew,
+                     WhatsNewEnvironment(
+                        // Specify in which way the presented WhatsNew Versions are stored.
+                        // In default the `UserDefaultsWhatsNewVersionStore` is used.
+                        versionStore: NSUbiquitousKeyValueWhatsNewVersionStore(),
+                        whatsNewCollection: WhatsNewLoader.loadAll(
+                            primaryActionBackground: ThemeManager.shared.currentPalette.switchON?.swiftUIColor ?? .accentColor,
+                            primaryActionForeground: ThemeManager.shared.currentPalette.switchThumb?.swiftUIColor ?? .white
+                        )
+                     )
+                )
 #endif
                 .onAppear {
                     ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")

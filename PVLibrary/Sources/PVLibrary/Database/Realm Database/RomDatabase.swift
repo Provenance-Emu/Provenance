@@ -353,7 +353,16 @@ public final class RealmConfiguration {
 
                 // Compact if the file is over 20MB in size and less than 60% 'used'
                 let twentyMB = 20 * 1024 * 1024
-                return (totalBytes > twentyMB) && (Double(usedBytes) / Double(totalBytes)) < 0.6
+                let shouldCompact = (totalBytes > twentyMB) && (Double(usedBytes) / Double(totalBytes)) < 0.6
+                // Logged because compaction rewrites the WHOLE realm file and is a
+                // prime suspect for slow cold launches on large libraries. The
+                // criterion is a persistent property of the file, so it can fire on
+                // consecutive launches. Search Console.app for `LAUNCH: realm compaction`
+                // alongside the `boot.1.database` duration to tell compaction apart
+                // from migration and plain file open.
+                let usedFraction = totalBytes > 0 ? Double(usedBytes) / Double(totalBytes) : 0
+                ILOG("LAUNCH: realm compaction check — total: \(totalBytes) bytes, used: \(usedBytes) bytes (\(String(format: "%.1f", usedFraction * 100))%), compacting: \(shouldCompact)")
+                return shouldCompact
             },
             objectTypes: [
                 PVBIOS.self,

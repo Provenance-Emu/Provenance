@@ -371,7 +371,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
         ILOG("PVAppDelegate: Application did finish launching")
 
         // Restore critical user preferences from iCloud KVS (survives reinstalls)
-        PVLaunchProfiler.measure("launch.iCloudSettingsSync") {
+        PVLaunchProfiler.measureSync("launch.iCloudSettingsSync") {
             iCloudSettingsSync.setup()
         }
 
@@ -383,7 +383,7 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             CrossAppEntitlementPublisher.publishPlusStateAtLaunch()
         }
 
-        PVLaunchProfiler.measure("launch.setDefaultRealmConfig") {
+        PVLaunchProfiler.measureSync("launch.setDefaultRealmConfig") {
             RealmConfiguration.setDefaultRealmConfig()
         }
 

@@ -141,12 +141,17 @@ public enum PVLaunchProfiler {
 
     /// Measures a synchronous phase, emitting a signpost interval and a log line.
     ///
+    /// Deliberately named differently from the async ``measure(_:_:)`` rather than
+    /// overloading it: two overloads differing only in the async-ness of the
+    /// closure are an easy source of ambiguous-call errors at sync/async
+    /// boundaries, which is exactly where launch code lives.
+    ///
     /// - Parameters:
     ///   - label: Human-readable phase name, used in the log line.
     ///   - body: The work to measure.
     /// - Returns: Whatever `body` returns.
     @discardableResult
-    public static func measure<T>(
+    public static func measureSync<T>(
         _ label: String,
         _ body: () throws -> T
     ) rethrows -> T {
