@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "lastUpdated": "2026-08-09T04:57:42.442855+00:00",
+  "lastUpdated": "2026-08-16T04:15:42.450637+00:00",
   "skins": [
     {
       "id": "3957312ad9e7c59e",
@@ -26501,6 +26501,246 @@
       "rating": null,
       "lastUpdated": null,
       "fileSize": 1404100,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "532a07e2b3cbb234",
+      "name": "iDS Blaze",
+      "author": "LitRitt",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/LitRitt/iDS/Blaze/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 1388607,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "d07877b0a303cce7",
+      "name": "iDS Charcoal",
+      "author": "LitRitt",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/LitRitt/iDS/Charcoal/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 304265,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "6a2cb955c85e5d84",
+      "name": "iDS Cherry",
+      "author": "LitRitt",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/LitRitt/iDS/Cherry/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 881076,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "54cf8aa4eb54d916",
+      "name": "iDS Delta",
+      "author": "LitRitt",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/LitRitt/iDS/Delta/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 773829,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "4513c82500655ee0",
+      "name": "iDS Honeycomb",
+      "author": "LitRitt",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/LitRitt/iDS/Honeycomb/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 2572733,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "1f33c4dc961361a9",
+      "name": "iDS Lime",
+      "author": "LitRitt",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/LitRitt/iDS/Lime/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 1210027,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "f35d542a78b79c62",
+      "name": "iDS Smoke",
+      "author": "LitRitt",
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/LitRitt/iDS/Smoke/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 3942200,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "39b876b2984edfa1",
+      "name": "skin",
+      "author": null,
+      "systems": [
+        "gbc"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.gbc",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/Hosted/GBC/Sunrise/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 209756,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "b762ad59f4cdd506",
+      "name": "skin",
+      "author": null,
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/Hosted/NDS/FSLS/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 345047,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "e46ff83f19c751bb",
+      "name": "skin",
+      "author": null,
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/Hosted/NDS/Llamaroid/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 67709,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "5fb4d26c63188408",
+      "name": "skin",
+      "author": null,
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/Hosted/NDS/NTR/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 19593,
+      "source": "litritt-emuskins"
+    },
+    {
+      "id": "4d038b638e2257ee",
+      "name": "skin",
+      "author": null,
+      "systems": [
+        "nds"
+      ],
+      "gameTypeIdentifier": "com.rileytestut.delta.game.ds",
+      "version": null,
+      "downloadURL": "https://raw.githubusercontent.com/LitRitt/emuskins.litritt.com/main/Skins/Hosted/NDS/TouchDS/skin.deltaskin",
+      "thumbnailURL": null,
+      "screenshotURLs": [],
+      "tags": [],
+      "deviceSupport": [],
+      "downloadCount": null,
+      "rating": null,
+      "lastUpdated": null,
+      "fileSize": 137099,
       "source": "litritt-emuskins"
     }
   ]
