@@ -74,7 +74,17 @@ public struct RetroSaveSelectionItem: Identifiable {
         let relativeDate = Self.relativeDate(from: saveState.date)
         self.subtitle = "\(saveState.core?.projectName ?? "Unknown") • \(relativeDate)"
 
-        self.isDownloaded = saveState.isDownloaded
+        /// Disk is authoritative, not the persisted flag. `isDownloaded` is a
+        /// Realm column maintained by `GameFileStatusService`; when it lagged,
+        /// a save whose file was sitting locally rendered as cloud-only and
+        /// re-triggered a download on tap — the "says not available even though
+        /// it's local" report. Only fall back to the flag when there is no URL
+        /// to check.
+        if let localURL = saveState.file?.url {
+            self.isDownloaded = FileManager.default.fileExists(atPath: localURL.path)
+        } else {
+            self.isDownloaded = saveState.isDownloaded
+        }
         self.thumbnailURL = saveState.image?.url
         self.date = saveState.date
         self.isAutosave = saveState.isAutosave
@@ -201,12 +211,23 @@ public class RetroSaveSelectionViewModel: ObservableObject {
 
                 stopProgressPolling()
 
-                // Verify download completed by refreshing the save state
+                // Verify download completed by refreshing the save state.
+                //
+                // The file on disk is the authority here, NOT `isDownloaded`.
+                // That flag is a `@Persisted` Realm column written by
+                // `GameFileStatusService`, whose upgrade/downgrade passes race
+                // with this download; when it lagged, a save that had just
+                // downloaded successfully threw "File not available after
+                // download" and the user saw an error for a file sitting right
+                // there on disk. Gate on existence and repair the stale flag.
                 let updatedRealm = try await Realm()
                 if let updatedSaveState = updatedRealm.object(ofType: PVSaveState.self, forPrimaryKey: item.saveStateId),
-                   updatedSaveState.isDownloaded,
                    let fileURL = updatedSaveState.file?.url,
                    FileManager.default.fileExists(atPath: fileURL.path) {
+                    if !updatedSaveState.isDownloaded {
+                        WLOG("[SaveSelection] \(item.saveStateId) exists on disk but isDownloaded was false — repairing flag")
+                        try? updatedRealm.write { updatedSaveState.isDownloaded = true }
+                    }
                     ILOG("[SaveSelection] Download complete for: \(item.saveStateId)")
                     downloadProgress = 1.0
                     let refreshedItem = RetroSaveSelectionItem(from: updatedSaveState)
