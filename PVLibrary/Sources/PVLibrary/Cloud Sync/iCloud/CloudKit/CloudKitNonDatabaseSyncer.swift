@@ -22,7 +22,10 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
         static let relativePath = "relativePath"
         static let fileAsset = "fileAsset"
         static let modifiedDate = "modifiedDate"
-        // Add other field names used in this file if necessary
+        /// Needed by `downloadBatterySaves(forROMNamed:)`. This enum shadows the
+        /// base class's `Field`, so members are NOT inherited — anything used here
+        /// has to be declared here.
+        static let filename = "filename"
     }
 
     /// Initialize a new non-database file syncer
@@ -627,4 +630,111 @@ public class CloudKitNonDatabaseSyncer: CloudKitSyncer, NonDatabaseFileSyncing {
         if let asset = record["fileData"] as? CKAsset { return asset }
         return nil
     }
+
+    // MARK: - Targeted Battery-Save Download
+
+    /// Directory holding every game's battery/SRAM data.
+    ///
+    /// A constant rather than a literal at call sites because the same string is
+    /// both the CloudKit `directory` field value and the on-disk folder name
+    /// (`Paths.batterySavesPath`); if those two ever drift apart the fetch
+    /// silently returns nothing rather than failing loudly.
+    public static let batterySavesDirectoryName = "Battery States"
+
+    /// Safety bound on paging — a targeted fetch should never walk the whole
+    /// container looking for one game.
+    private static let batterySaveQueryPageLimit = 10
+    private static let batterySaveQueryPageSize = 200
+
+    /// Download only the battery-save files belonging to a single game.
+    ///
+    /// The wholesale non-database sync pulls every game's save data, which is far
+    /// too slow to sit in front of a launch. This queries just the
+    /// `Battery States` directory and keeps records whose stored path lives under
+    /// `<romName>/`.
+    ///
+    /// Matching is done on the records' own `relativePath` / `filename` fields
+    /// rather than on a derived record name: the naming scheme varies by producer
+    /// (see `extractFilename(fromRecordName:)`), and guessing it is exactly how a
+    /// targeted fetch ends up silently downloading nothing.
+    ///
+    /// - Parameter romName: the ROM's base name, e.g. `"Super Mario World"`.
+    /// - Returns: the number of files actually downloaded; 0 if none were missing.
+    public func downloadBatterySaves(forROMNamed romName: String) async -> Int {
+        guard !romName.isEmpty else { return 0 }
+        let prefix = "\(romName)/"
+
+        let matches: [CKRecord]
+        do {
+            matches = try await runOnQueue { [self] () -> [CKRecord] in
+                var found: [CKRecord] = []
+                let predicate = NSPredicate(format: "%K == %@",
+                                            Field.directory,
+                                            Self.batterySavesDirectoryName)
+                let query = CKQuery(recordType: RecordType.file, predicate: predicate)
+                var page = try await privateDatabase.records(matching: query,
+                                                             resultsLimit: Self.batterySaveQueryPageSize)
+                var pagesFetched = 1
+                while true {
+                    for (_, result) in page.matchResults {
+                        guard case .success(let record) = result else { continue }
+                        let relativePath = record[Field.relativePath] as? String ?? ""
+                        let filename = record[Field.filename] as? String ?? ""
+                        // Prefer relativePath; fall back to filename for older
+                        // records written before subdirectory structure was kept.
+                        if relativePath.hasPrefix(prefix)
+                            || (relativePath.isEmpty && filename.hasPrefix(prefix)) {
+                            found.append(record)
+                        }
+                    }
+                    /// Cooperative cancellation: the launch path races this query
+                    /// against a timeout, and a task group waits for every child.
+                    /// Without these checks that timeout cannot fire early.
+                    if Task.isCancelled { break }
+                    guard let cursor = page.queryCursor,
+                          pagesFetched < Self.batterySaveQueryPageLimit else { break }
+                    page = try await privateDatabase.records(continuingMatchFrom: cursor,
+                                                             resultsLimit: Self.batterySaveQueryPageSize)
+                    pagesFetched += 1
+                }
+                return found
+            }
+        } catch {
+            ELOG("[BATTERY ON-DEMAND] Query failed for \(romName): \(error.localizedDescription)")
+            return 0
+        }
+
+        guard !matches.isEmpty else {
+            DLOG("[BATTERY ON-DEMAND] No cloud battery saves found for \(romName)")
+            return 0
+        }
+
+        var downloaded = 0
+        for record in matches {
+            if Task.isCancelled {
+                DLOG("[BATTERY ON-DEMAND] Cancelled after \(downloaded) file(s) for \(romName)")
+                break
+            }
+            let relativePath = record[Field.relativePath] as? String
+                ?? (record[Field.filename] as? String ?? "")
+            guard !relativePath.isEmpty else { continue }
+            let localURL = URL.documentsPath
+                .appendingPathComponent(Self.batterySavesDirectoryName)
+                .appendingPathComponent(relativePath)
+            // Already materialised — nothing to do. Deliberately does not compare
+            // contents: the last-writer-wins merge belongs to the normal sync, not
+            // to a launch-time fetch that must stay fast.
+            if FileManager.default.fileExists(atPath: localURL.path) { continue }
+            do {
+                _ = try await downloadFileOnDemand(recordName: record.recordID.recordName)
+                downloaded += 1
+            } catch {
+                WLOG("[BATTERY ON-DEMAND] Failed \(relativePath): \(error.localizedDescription)")
+            }
+        }
+
+        ILOG("[BATTERY ON-DEMAND] \(downloaded)/\(matches.count) battery file(s) downloaded for \(romName)")
+        return downloaded
+    }
+
 }

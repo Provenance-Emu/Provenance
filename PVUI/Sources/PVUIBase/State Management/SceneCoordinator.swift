@@ -544,6 +544,13 @@ public class SceneCoordinator: ObservableObject {
         /// Rehydrate the game after async sync work so launch does not use stale/frozen snapshots.
         let gameForLaunch = refreshedGameForLaunch(from: game)
 
+        /// Pull this game's battery/SRAM data before the core starts. Cores read
+        /// their battery file at boot, so this has to happen before launch — but
+        /// it must never gate it. Applied on both the plain-game and save-state
+        /// launch paths, since a save-state launch needs the cartridge save just
+        /// as much.
+        await downloadBatterySavesIfNeeded(for: gameForLaunch)
+
         // Set the current game and core in EmulationUIState
         AppState.shared.emulationUIState.currentGame = gameForLaunch
         if let core = core {
@@ -643,6 +650,8 @@ public class SceneCoordinator: ObservableObject {
 
         // Check for missing BIOS files
         var missingBIOSFiles: [String] = []
+        /// Optional BIOS that are absent locally. Never affects `canProceed`.
+        var missingOptionalBIOS: [(filename: String, md5: String)] = []
 
         if system.requiresBIOS {
             // Snapshot BIOS entries to an Array to avoid iterating live Realm collections across awaits
@@ -663,11 +672,20 @@ public class SceneCoordinator: ObservableObject {
 
             // Check each required BIOS and try to download missing ones from CloudKit
             for bios in biosEntries {
-                if bios.optional { continue }
-
                 var expectedFilename = bios.expectedFilename
                 if expectedFilename.contains("|") {
                     expectedFilename = expectedFilename.components(separatedBy: "|")[0]
+                }
+
+                /// Optional BIOS are gathered rather than skipped outright. They must
+                /// never gate a launch, so they stay out of `missingBIOSFiles`, but
+                /// silently ignoring them meant a user with optional files sitting in
+                /// iCloud was never offered them. Handled after both loops.
+                if bios.optional {
+                    if !existingFiles.contains(expectedFilename.lowercased()) {
+                        missingOptionalBIOS.append((filename: expectedFilename, md5: bios.expectedMD5))
+                    }
+                    continue
                 }
 
                 if !existingFiles.contains(expectedFilename.lowercased()) {
@@ -723,6 +741,9 @@ public class SceneCoordinator: ObservableObject {
             }
         }
 
+        /// Offer optional BIOS (never blocks: `canProceed` ignores them entirely).
+        await handleMissingOptionalBIOS(missingOptionalBIOS, system: system)
+
         let canProceed = hasAvailableCores && missingBIOSFiles.isEmpty
 
         return PreDownloadValidation(
@@ -731,6 +752,154 @@ public class SceneCoordinator: ObservableObject {
             hasAvailableCores: hasAvailableCores,
             systemName: system.name
         )
+    }
+
+    /// Offer to fetch optional BIOS files that are missing locally.
+    ///
+    /// Optional BIOS are excluded from the required-BIOS preflight on purpose —
+    /// they must never prevent a game from booting. But the preflight used to
+    /// `continue` straight past them, so a user whose iCloud library held optional
+    /// files was never offered them at all. This closes that gap without ever
+    /// gating a launch:
+    ///
+    /// * System already opted in — download inline, best effort, result ignored.
+    /// * System previously declined — do nothing.
+    /// * Never asked — prompt, and let *this* launch proceed regardless.
+    ///
+    /// The prompt is deliberately non-blocking. Optional files aren't needed to
+    /// boot, and a modal awaited in the launch path is exactly what made the
+    /// required-BIOS flow stall for minutes in earlier tester reports (see the
+    /// comment on `tryDownloadBIOSFromCloud`). The answer takes effect from the
+    /// next launch of that system.
+    ///
+    /// - Parameters:
+    ///   - missing: Optional BIOS absent from the system's BIOS directory.
+    ///   - system: The system being launched.
+    @MainActor
+    private func handleMissingOptionalBIOS(_ missing: [(filename: String, md5: String)],
+                                           system: PVSystem) async {
+        guard !missing.isEmpty, Defaults[.iCloudSync] else { return }
+
+        /// Capture value types — this outlives the Realm object via the alert closures.
+        let systemID = system.identifier
+        let systemName = system.name
+
+        if Defaults[.optionalBIOSDeclinedSystems].contains(systemID) { return }
+
+        if Defaults[.optionalBIOSAutoDownloadSystems].contains(systemID) {
+            for item in missing {
+                let ok = await CloudSyncManager.shared.downloadSingleBIOS(
+                    filename: item.filename,
+                    expectedMD5: item.md5,
+                    systemIdentifier: systemID
+                )
+                ILOG("[BIOS OPTIONAL] \(ok ? "✓" : "✗") \(item.filename) for \(systemID)")
+            }
+            return
+        }
+
+        let names = missing.map(\.filename).prefix(3).joined(separator: ", ")
+        let more = missing.count > 3 ? " and \(missing.count - 3) more" : ""
+        let items = missing
+
+        alertState.show(
+            title: "Optional BIOS Available",
+            message: "\(systemName) has optional BIOS files in your iCloud library "
+                + "(\(names)\(more)).\n\nThey aren't needed to play, but some games "
+                + "are more accurate with them. Download in the background?",
+            type: .standard,
+            primaryButtonTitle: "Download",
+            primaryAction: {
+                Defaults[.optionalBIOSAutoDownloadSystems].insert(systemID)
+                Task.detached {
+                    for item in items {
+                        let ok = await CloudSyncManager.shared.downloadSingleBIOS(
+                            filename: item.filename,
+                            expectedMD5: item.md5,
+                            systemIdentifier: systemID
+                        )
+                        ILOG("[BIOS OPTIONAL] background \(ok ? "✓" : "✗") \(item.filename)")
+                    }
+                }
+            },
+            secondaryButtonTitle: "Not Now",
+            secondaryAction: {
+                /// Remembered so this isn't asked on every boot of the system. The
+                /// user can still get these via a full BIOS sync in Settings.
+                Defaults[.optionalBIOSDeclinedSystems].insert(systemID)
+            }
+        )
+    }
+
+    /// Seconds to wait for a game's battery saves before launching anyway.
+    ///
+    /// Deliberately short. Battery data is a nice-to-have at boot; a slow cloud
+    /// round trip must not reproduce the "launch UI hung for minutes" symptom that
+    /// forced the BIOS path off its full-sync fallback.
+    private static let batterySaveFetchTimeoutSeconds: UInt64 = 8
+
+    /// Restore this game's battery/SRAM data from CloudKit before the core boots.
+    ///
+    /// Never blocks or fails the launch: a missing battery file means the game
+    /// starts without its in-cartridge save, not that it cannot run. If the fetch
+    /// exceeds `batterySaveFetchTimeoutSeconds` it is abandoned and the launch
+    /// proceeds; the files are picked up by the next launch or the background sync.
+    private func downloadBatterySavesIfNeeded(for game: PVGame) async {
+        guard Defaults[.iCloudSync] else { return }
+        guard let romURL = game.file?.url else { return }
+        /// Matches `Paths.batterySavesPath(forROM:)`, which is what actually
+        /// determines the on-disk folder the core will read.
+        let romName = romURL.deletingPathExtension().lastPathComponent
+        guard !romName.isEmpty else { return }
+        let gameTitle = game.title
+
+        /// Cheap local short-circuit, and the most important guard here: if this
+        /// game already has battery data on disk, a launch-time fetch has nothing
+        /// useful to do and must not pay for a CloudKit query at all. Without
+        /// this, launching an already-local game ran a paged query across the
+        /// whole `Battery States` directory and visibly stalled the launch —
+        /// which then made every retry report "launch already in progress".
+        let localDirectory = Paths.batterySavesPath.appendingPathComponent(romName, isDirectory: true)
+        if let contents = try? FileManager.default.contentsOfDirectory(atPath: localDirectory.path),
+           !contents.isEmpty {
+            DLOG("[BATTERY ON-DEMAND] \(romName) already has local battery data — skipping cloud query")
+            return
+        }
+
+        /// Unstructured on purpose so the timeout below can abandon it.
+        let work = Task.detached { await CloudSyncManager.shared.downloadBatterySaves(forROMNamed: romName) }
+
+        await MainActor.run {
+            syncStatusManager.show(gameTitle: gameTitle,
+                                   statusMessage: "Restoring cloud saves...",
+                                   onCancel: { work.cancel() })
+        }
+
+        let downloaded: Int = await withTaskGroup(of: Int?.self) { group in
+            group.addTask { await work.value }
+            group.addTask {
+                try? await Task.sleep(nanoseconds: Self.batterySaveFetchTimeoutSeconds * 1_000_000_000)
+                /// Cancelling the real work is what makes this timeout mean
+                /// anything: a task group awaits EVERY child before it returns,
+                /// and cancellation is cooperative. The first version raced a
+                /// sleeper against the fetch and called `cancelAll()`, but the
+                /// syncer never checked `Task.isCancelled`, so the group still sat
+                /// waiting for the full query — the timeout was cosmetic and the
+                /// launch hung. `downloadBatterySaves` now checks cancellation
+                /// between pages and downloads.
+                work.cancel()
+                return nil
+            }
+            let winner = await group.next() ?? nil
+            group.cancelAll()
+            return winner ?? 0
+        }
+
+        await MainActor.run { syncStatusManager.hide() }
+
+        if downloaded > 0 {
+            ILOG("[BATTERY ON-DEMAND] Restored \(downloaded) battery-save file(s) for \(romName)")
+        }
     }
 
     /// Queue a BIOS download in the background and notify the user in library views
@@ -1180,6 +1349,13 @@ public class SceneCoordinator: ObservableObject {
 
         /// Rehydrate the game after async sync work so launch does not use stale/frozen snapshots.
         let gameForLaunch = refreshedGameForLaunch(from: game)
+
+        /// Pull this game's battery/SRAM data before the core starts. Cores read
+        /// their battery file at boot, so this has to happen before launch — but
+        /// it must never gate it. Applied on both the plain-game and save-state
+        /// launch paths, since a save-state launch needs the cartridge save just
+        /// as much.
+        await downloadBatterySavesIfNeeded(for: gameForLaunch)
 
         // Set the current game, save state, and core in EmulationUIState
         AppState.shared.emulationUIState.currentGame = gameForLaunch

@@ -1265,6 +1265,32 @@ public class CloudSyncManager {
         return false
     }
 
+    /// Download one game's battery/SRAM data from CloudKit.
+    ///
+    /// Takes the ROM's base name rather than a `PVGame` on purpose: the syncer
+    /// runs off the main actor and Realm objects are thread-confined, so passing
+    /// the model across would trip `verifyThread`. Same reasoning as
+    /// `downloadSingleBIOS`, which takes a system identifier string.
+    ///
+    /// - Returns: number of files downloaded; 0 when sync is off, the entitlement
+    ///   is absent, or nothing was missing.
+    public func downloadBatterySaves(forROMNamed romName: String) async -> Int {
+        guard Defaults[.iCloudSync] else {
+            DLOG("[BATTERY ON-DEMAND] Skipped for \(romName) — iCloud sync disabled")
+            return 0
+        }
+        guard let ckContainer = iCloudConstants.container else {
+            DLOG("[BATTERY ON-DEMAND] Skipped for \(romName) — CloudKit entitlement not present")
+            return 0
+        }
+        let syncer = CloudKitNonDatabaseSyncer(
+            container: ckContainer,
+            directories: [CloudKitNonDatabaseSyncer.batterySavesDirectoryName],
+            errorHandler: errorHandler
+        )
+        return await syncer.downloadBatterySaves(forROMNamed: romName)
+    }
+
     /// Kick off a fast metadata-only bootstrap for ROMs and save states
     private func startMetadataBootstrap(reason: String) {
         Task { @MainActor in

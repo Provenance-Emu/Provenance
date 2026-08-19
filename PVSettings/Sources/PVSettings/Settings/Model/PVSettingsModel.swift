@@ -1205,6 +1205,23 @@ public extension Defaults.Keys {
     static let jitOnboardingDismissedCategories = Key<Set<String>>("jitOnboardingDismissedCategories", default: [])
 }
 
+// MARK: - Optional BIOS On-Demand Download
+public extension Defaults.Keys {
+    /// System identifiers whose optional BIOS files the user agreed to fetch
+    /// from iCloud on demand.
+    ///
+    /// Optional BIOS are skipped by the required-BIOS preflight because they must
+    /// never gate a launch. Asking about them on every boot of the same system
+    /// would nag, so the answer is remembered per system. Two sets rather than one
+    /// dictionary so that "never asked" stays distinguishable from "asked and
+    /// declined" — a system in neither set is one we have not prompted for yet.
+    static let optionalBIOSAutoDownloadSystems = Key<Set<String>>("optionalBIOSAutoDownloadSystems", default: [])
+
+    /// System identifiers whose optional BIOS the user declined. See
+    /// ``optionalBIOSAutoDownloadSystems``.
+    static let optionalBIOSDeclinedSystems = Key<Set<String>>("optionalBIOSDeclinedSystems", default: [])
+}
+
 // MARK: - MIDI Settings
 public extension Defaults.Keys {
     /// CoreMIDI unique ID of the last selected MIDI input source.
