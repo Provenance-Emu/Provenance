@@ -996,13 +996,20 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         //        }
 
         // Check if file needs download and handle with improved UI
+        var didDownloadOnDemand = false
         if await needsCloudKitDownload(for: game) {
             do {
                 try await handleOnDemandDownload(for: game)
-                /// Refresh ROM path after download completes
-                romPathMaybe = game.file?.url
-                /// Handle archives again in case the downloaded asset was a zip
-                romPathMaybe = await handleArchives(atPath: romPathMaybe)
+                /// Deliberately do NOT read the path here. `game` is the object we
+                /// held before the download, so `game.file?.url` still describes the
+                /// pre-download state — and because a not-yet-downloaded `PVFile`
+                /// already carries a `partialPath`, that read returns a non-nil URL
+                /// pointing at a file that isn't there. The rehydrate block below
+                /// then skips its refresh (it only fills a *nil* path), the
+                /// `fileExists` guard fails, and the emulator dismisses instead of
+                /// booting — the "downloads fine but doesn't launch until I pick it
+                /// again" report. Resolution happens after rehydration instead.
+                didDownloadOnDemand = true
             } catch {
                 // Download was cancelled or failed - dismiss emulator and return
                 ELOG("Download cancelled or failed for \(game.title): \(error.localizedDescription)")
@@ -1019,6 +1026,23 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             if romPathMaybe == nil {
                 romPathMaybe = refreshedGame.file?.url
                 romPathMaybe = await handleArchives(atPath: romPathMaybe)
+            }
+        }
+
+        /// Re-resolve unconditionally after an on-demand download, using the now
+        /// rehydrated `game`. This runs after the block above so it sees the
+        /// refreshed Realm object rather than the stale one we started with.
+        if didDownloadOnDemand {
+            let resolved = resolvedROMURLAfterDownload()
+            ILOG("On-demand download finished for \(game.title) — re-resolved ROM path: \(resolved?.path ?? "nil")")
+            if resolved != nil {
+                romPathMaybe = await handleArchives(atPath: resolved)
+            } else {
+                /// Keep whatever the rehydrate block found rather than clobbering it
+                /// with nil — resolution failing here means we don't know where the
+                /// download landed, and the guards below report that far better than
+                /// a nil path would.
+                ELOG("On-demand download for \(game.title) completed but the ROM could not be resolved on disk")
             }
         }
 
@@ -1191,6 +1215,20 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // cores whose rate is already correct here (rate unchanged → no rebuild).
         let audioGraphSampleRate = core.audioSampleRate
 
+        // Same late-reporting problem as the sample rate above, for geometry.
+        // `viewDidLayoutSubviews` sizes the GPU view from `core.aspectSize`, but
+        // for the thin libretro wrapper `_rawAVInfo` is still zeroed here, so
+        // `aspectSize` returns its 256x240 fallback (ratio 1.067). The layout
+        // pass that runs during view setup therefore bakes in the fallback
+        // ratio, and nothing schedules another one when the real geometry
+        // arrives at the end of the off-main boot. iOS is accidentally rescued
+        // by the relayout on rotation; tvOS never rotates, so the game stays the
+        // wrong width for the whole session until the user cycles the scaling
+        // mode (which relayouts via the Defaults observer in
+        // PVMetalViewController) — the reported "aspect fit is too narrow until
+        // I toggle the video modes" on virtualjaguar.
+        let preStartAspectSize = core.aspectSize
+
         /// Pause all background services during gameplay via the central registry
         BackgroundServiceRegistry.shared.pauseAll(reason: .emulation)
 
@@ -1216,9 +1254,51 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // boot is surfaced by `handleCoreFailedToStart`.
         core.startEmulationCompletion = { [weak self] success in
             guard let self, success else { return }
-            self.finishEmulatorStart(audioGraphSampleRate: audioGraphSampleRate)
+            self.finishEmulatorStart(audioGraphSampleRate: audioGraphSampleRate,
+                                     preStartAspectSize: preStartAspectSize)
         }
         core.startEmulation()
+    }
+
+    /// Re-lay-out the GPU view when the core's display aspect only became known
+    /// after it booted.
+    ///
+    /// Cores that report geometry during `loadFile` (native / thick wrappers)
+    /// see no change here and this is a no-op. The thin libretro wrapper fills
+    /// `_rawAVInfo` at the end of its off-main boot, long after the layout pass
+    /// that sized the view, so for those the ratio moves from the 256x240
+    /// fallback to the core's real one and the view has to be recomputed.
+    ///
+    /// - Parameter previous: the aspect sampled immediately before `startEmulation()`.
+    @MainActor
+    private func applyPostStartAspectIfChanged(from previous: CGSize) {
+        /// Ratio, or nil when the size carries no usable aspect.
+        func ratio(_ size: CGSize) -> CGFloat? {
+            guard size.width > 0, size.height > 0 else { return nil }
+            return size.width / size.height
+        }
+
+        let current = core.aspectSize
+        guard let newRatio = ratio(current) else { return }
+        /// A core that reported nothing before but reports now is a change, so
+        /// only an unchanged *known* ratio short-circuits.
+        if let oldRatio = ratio(previous), abs(oldRatio - newRatio) <= 0.001 { return }
+
+        ILOG("Video: core aspect resolved after start (\(previous) → \(current)) — re-laying out GPU view")
+
+        /// Mirror the dispatch the scaling-mode observer in PVMetalViewController
+        /// uses: under DeltaSkins `viewDidLayoutSubviews` early-returns before the
+        /// scaling switch, so `setNeedsLayout()` alone would be a no-op there.
+        if isDeltaSkinEnabled {
+            reapplyScalingModeForSkin()
+        } else if gpuViewController.isViewLoaded {
+            /// `isViewLoaded` on purpose: RetroArch `skipLayout` cores manage
+            /// their own surfaces and never get the GPU view attached, and
+            /// touching `.view` here would force-load one that is deliberately
+            /// absent.
+            gpuViewController.view.setNeedsLayout()
+            gpuViewController.view.layoutIfNeeded()
+        }
     }
 
     /// Post-boot setup: everything that must not run until the core has finished
@@ -1226,8 +1306,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     ///
     /// - Parameter audioGraphSampleRate: the rate the audio graph was built with
     ///   before the core started, used to detect whether it needs rebuilding.
+    /// - Parameter preStartAspectSize: the display aspect the GPU view was laid
+    ///   out with before the core started, used to detect whether it moved.
     @MainActor
-    private func finishEmulatorStart(audioGraphSampleRate: Double) {
+    private func finishEmulatorStart(audioGraphSampleRate: Double,
+                                     preStartAspectSize: CGSize) {
+        // Re-lay-out the GPU view if the core's real display aspect differs from
+        // the one the pre-boot layout pass used. Gated on an actual change for
+        // the same reason the audio rebuild below is: an unconditional relayout
+        // here re-runs the skin viewport maths on every launch, which is the
+        // churn `recomputeSkinViewportIfLayoutChanged` was added to avoid.
+        applyPostStartAspectIfChanged(from: preStartAspectSize)
+
         // Rebuild the audio graph if the core's real sample rate differs from what the
         // graph was built with before the ROM loaded (thin libretro wrapper case — see
         // the snapshot comment above). updateSourceNode() rebuilds the source node from
@@ -1301,20 +1391,56 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     #if os(tvOS)
-    /// tvOS pause-menu input is now driven exclusively by `GCController.setupPauseHandler`
-    /// (buttonOptions on modern controllers, L3+R3 combo as fallback, and
-    /// `controllerPausedHandler` for the Siri Remote). The previous double-tap-on-menu
-    /// gesture and `findStartButton` fake-Start path have been removed: they raced the
-    /// GCController handlers, depended on a controller overlay that doesn't exist on tvOS,
-    /// and were not actually wired to anything that worked.
+    /// Consumes the tvOS Menu press so it opens the pause menu instead of
+    /// navigating back out of the emulator.
+    private var tvOSMenuPressRecognizer: UITapGestureRecognizer?
+
+    /// Intercept the Menu press at the UIKit level.
+    ///
+    /// On tvOS BOTH the Siri Remote's Menu/back button AND a gamepad's Circle/B
+    /// map to `UIPress.PressType.menu`. UIKit routes that to back-navigation
+    /// unless a responder consumes it, which dismissed the emulator to a black
+    /// screen mid-game.
+    ///
+    /// This used to be handled here and was removed in 8b47aeb02a on the theory
+    /// that `GCController.setupPauseHandler` covered it. It does not: for the
+    /// Siri Remote that path falls through to `controllerPausedHandler`
+    /// (deprecated, and unreliable on modern tvOS — the device log shows it
+    /// binding but never firing), and for extended gamepads it binds
+    /// buttonOptions/L3+R3, never Circle. So nothing consumed `.menu` and UIKit's
+    /// default won.
+    ///
+    /// Kept as a gesture recognizer rather than a `pressesBegan` override because
+    /// it must keep working while cores install their own input handling, and
+    /// because it can be re-added above later recognizers after a modal — see
+    /// `resetTVOSMenuGestures`. Idempotent: safe to call from both `viewDidAppear`
+    /// and the post-boot path.
     private func setupTVOSMenuGestures() {
-        // Intentionally empty — kept for symmetry with the previous viewDidAppear flow.
+        guard tvOSMenuPressRecognizer == nil else { return }
+        let recognizer = UITapGestureRecognizer(target: self,
+                                                action: #selector(handleTVOSMenuPress))
+        recognizer.allowedPressTypes = [NSNumber(value: UIPress.PressType.menu.rawValue)]
+        view.addGestureRecognizer(recognizer)
+        tvOSMenuPressRecognizer = recognizer
+        ILOG("tvOS: menu-press recognizer installed — Menu/Circle now opens the pause menu")
     }
 
-    /// No-op shim retained so existing callers (e.g. CoreOptions cleanup) compile.
-    /// We no longer manage UITapGestureRecognizers for the Siri Remote menu button.
+    @objc private func handleTVOSMenuPress() {
+        ILOG("tvOS: menu press consumed — opening pause menu")
+        NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
+    }
+
+    /// Re-install the recognizer after a modal.
+    ///
+    /// Presenting and dismissing a menu can leave the emulator view's recognizers
+    /// behind newly-added ones, so drop and re-add rather than assuming the
+    /// original is still effective.
     @objc func resetTVOSMenuGestures() {
-        // Intentionally empty.
+        if let existing = tvOSMenuPressRecognizer {
+            view.removeGestureRecognizer(existing)
+            tvOSMenuPressRecognizer = nil
+        }
+        setupTVOSMenuGestures()
     }
     #endif
 
@@ -1368,6 +1494,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     override public func viewDidAppear(_: Bool) {
         super.viewDidAppear(true)
+
+        #if os(tvOS)
+        /// Install before the core finishes booting. The post-boot call in
+        /// `finishEmulatorStart` runs only after an async core boot resolves,
+        /// which left a window where a Menu press still backed out of the game.
+        setupTVOSMenuGestures()
+        #endif
 
         /// Update safe area insets for cores that support it
         #if os(iOS)
@@ -1515,6 +1648,26 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             return nil
         }
         return RomDatabase.sharedInstance.game(withMD5: md5)
+    }
+
+    /// Resolve the ROM URL after an on-demand download completed.
+    ///
+    /// Uses `FileLocationResolver` first, deliberately: that is the same source
+    /// of truth `needsCloudKitDownload(for:)` consults to decide a download was
+    /// needed, and it checks every known storage location. `PVFile.url` is a
+    /// legacy path-repair getter that derives a URL from `partialPath` without
+    /// consulting the resolver, so the two can disagree about where a file
+    /// actually landed. Falling back to it keeps the pre-existing behaviour for
+    /// games whose `partialPath` is empty.
+    ///
+    /// - Returns: The best known on-disk URL, or `nil` if nothing resolved.
+    @MainActor
+    private func resolvedROMURLAfterDownload() -> URL? {
+        if let partialPath = game.file?.partialPath, !partialPath.isEmpty,
+           let resolved = FileLocationResolver.shared.resolve(partialPath).url {
+            return resolved
+        }
+        return game.file?.url
     }
 
     /// Check if a game needs CloudKit download
