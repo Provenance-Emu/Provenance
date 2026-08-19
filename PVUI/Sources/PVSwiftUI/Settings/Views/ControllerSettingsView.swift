@@ -441,7 +441,6 @@ struct ControllerSettingsView: View {
         }
         #if os(tvOS)
         .listStyle(.plain)
-        .scrollContentBackground(.hidden)
         .background { RetroSettingsBackground() }
         .tvOSSettingsHorizontalPadding()
         #else
