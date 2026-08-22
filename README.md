@@ -164,19 +164,19 @@ No ads, no tracking, no required account — free forever when sideloaded or bui
 </details>
 
 <details>
-<summary><strong>Sony — 2 systems</strong></summary>
+<summary><strong>Sony — 3 systems</strong></summary>
 <br>
 
 | System | Core(s) |
 |---|---|
 | PlayStation (PS1 / PSX) | DuckStation · PCSX-ReARMed · Mednafen |
-| PlayStation 2 ⚠️ | Play! *(experimental — requires JIT)* |
+| PlayStation 2 ⚠️ | Play! *(ships in the App Store build, but only playable with JIT — jailbroken devices or older OS versions that allow JIT for App Store installs; sideloaded/AltStore builds get JIT another way)* |
 | PlayStation Portable (PSP) | PPSSPP |
 
 </details>
 
 <details>
-<summary><strong>Atari — 6 systems</strong></summary>
+<summary><strong>Atari — 7 systems</strong></summary>
 <br>
 
 | System | Core(s) |
@@ -184,6 +184,7 @@ No ads, no tracking, no required account — free forever when sideloaded or bui
 | Atari 2600 | Stella |
 | Atari 5200 | Atari800 |
 | Atari 7800 | ProSystem |
+| Atari 8-bit (400 / 800 / XL / XE) | Atari800 |
 | Atari Lynx | Mednafen |
 | Atari Jaguar | Virtual Jaguar |
 | Atari ST | Hatari |
@@ -209,7 +210,7 @@ No ads, no tracking, no required account — free forever when sideloaded or bui
 | Magnavox Odyssey² | O2EM |
 | ZX Spectrum | Fuse |
 | MSX / MSX2 | blueMSX · fMSX |
-| Apple II | Atari800 |
+| Apple II ⚠️ | MAME *(experimental — hidden from the App Store build; available via sideloading/AltStore only)* |
 | IBM PC-DOS | DOSBox |
 | Watara Supervision | Potator |
 | Mega Duck | SameDuck |
