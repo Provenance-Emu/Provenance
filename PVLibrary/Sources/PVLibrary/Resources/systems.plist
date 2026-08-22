@@ -146,7 +146,7 @@
 		<key>PVScreenType</key>
 		<string>ColorLCD</string>
 		<key>PVSupported</key>
-		<false/>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>zip</string>
@@ -409,7 +409,7 @@
 		<key>PVScreenType</key>
 		<string>CRT</string>
 		<key>PVSupported</key>
-		<false/>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>zip</string>
@@ -3894,7 +3894,7 @@
 		<key>PVScreenType</key>
 		<string>CRT</string>
 		<key>PVSupported</key>
-		<false/>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>zip</string>
@@ -4816,7 +4816,7 @@
 		<key>PVScreenType</key>
 		<string>ColorLCD</string>
 		<key>PVSupported</key>
-		<false/>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>zip</string>
@@ -4978,7 +4978,7 @@
 		<key>PVScreenType</key>
 		<string>ColorLCD</string>
 		<key>PVSupported</key>
-		<false/>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>zip</string>
@@ -6768,7 +6768,7 @@
 		<key>PVScreenType</key>
 		<string>CRT</string>
 		<key>PVSupported</key>
-		<false/>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>st</string>
@@ -6860,7 +6860,7 @@
 		<key>PVScreenType</key>
 		<string>CRT</string>
 		<key>PVSupported</key>
-		<false/>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>exe</string>
@@ -7233,7 +7233,7 @@
 		<key>PVScreenType</key>
 		<string>CRT</string>
 		<key>PVSupported</key>
-		<false/>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cas</string>
@@ -7438,7 +7438,7 @@
 		<key>PVScreenType</key>
 		<string>CRT</string>
 		<key>PVSupported</key>
-		<false/>
+		<true/>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cas</string>
