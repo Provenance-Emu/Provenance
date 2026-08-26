@@ -3,32 +3,47 @@
 
 import PackageDescription
 
+/* This manifest used to be a verbatim copy of Cores/Stella/Package.swift --
+ * package "PVStella" with targets "PVStella", "PVStellaSwift", "PVStellaCPP"
+ * and "libstella". Those names belong to Cores/Stella, which IS registered as
+ * an XCLocalSwiftPackageReference in Provenance.xcodeproj, and SPM requires
+ * target and product names to be unique across the whole package graph.
+ *
+ * The names below match the directories that already exist under Sources/,
+ * which were laid out for this package but never wired up. `libvecx` and
+ * `PVVecXC` build; the core bridge does not yet -- Sources/PVVecX is a mixed
+ * ObjC++/Swift Xcode framework target (PVVecXCore.mm does
+ * `#import <PVVecX/PVVecX-Swift.h>`), and SPM cannot express a single
+ * mixed-language target. Splitting it is a source migration, not a manifest
+ * change; PVVecX.xcodeproj remains the build path until then.
+ */
 let package = Package(
-    name: "PVStella",
+    name: "PVCoreVecX",
     platforms: [
         .iOS(.v17),
         .tvOS(.v17),
         .watchOS(.v9),
-        .macOS(.v11),
+        .macOS(.v14),
         .macCatalyst(.v17),
         .visionOS(.v1)
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
-            name: "PVStella",
-            targets: ["PVStella", "PVStellaSwift"]),
+            name: "PVVecX",
+            targets: ["PVVecX", "PVVecXBridge"]),
         .library(
-            name: "PVStella-Dynamic",
+            name: "PVVecX-Dynamic",
             type: .dynamic,
-            targets: ["PVStella", "PVStellaSwift"]),
+            targets: ["PVVecX", "PVVecXBridge"]),
         .library(
-            name: "PVStella-Static",
+            name: "PVVecX-Static",
             type: .static,
-            targets: ["PVStella", "PVStellaSwift"]),
+            targets: ["PVVecX", "PVVecXBridge"]),
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVCoreObjCBridge"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVSupport"),
         .package(path: "../../PVAudio"),
@@ -36,28 +51,54 @@ let package = Package(
         .package(path: "../../PVObjCUtils")
     ],
     targets: [
+
+        // MARK: ------- Core (Swift) -------
+
         .target(
-            name: "PVStella",
+            name: "PVVecX",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVLogging",
+                "PVAudio",
                 "PVSupport",
-                "PVObjCUtils",
-                "PVStellaSwift",
-                "PVStellaCPP",
-                "libstella",
+                "PVVecXBridge",
+                "PVVecXC",
+                "libvecx",
             ],
+            path: "Sources/PVVecX",
+            exclude: Sources.bridge + ["include", "Resources/Info.plist", "Resources/PVVecX.h"],
+            sources: Sources.swift,
             resources: [
                 .process("Resources/Core.plist")
             ],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ]
+        ),
+
+        // MARK: ------- Core (ObjC++ bridge) -------
+
+        .target(
+            name: "PVVecXBridge",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVObjCUtils",
+                "PVVecXC",
+                "libvecx",
+            ],
+            path: "Sources/PVVecX",
+            exclude: Sources.swift + ["Resources"],
+            sources: Sources.bridge,
             publicHeadersPath: "include",
             cSettings: [
                 .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+                .define("HAS_GPU", to: "1"),
+                .headerSearchPath("../libvecx/libretro-vecx/libretro-common/include"),
             ],
             cxxSettings: [
                 .unsafeFlags([
@@ -65,220 +106,57 @@ let package = Package(
                     "-fcxx-modules"
                 ]),
                 .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
-            ],
-            swiftSettings: [
-                .interoperabilityMode(.Cxx)
+                .define("HAS_GPU", to: "1"),
+                .headerSearchPath("../libvecx/libretro-vecx/libretro-common/include"),
             ]
         ),
 
-        .target(
-            name: "PVStellaSwift",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVLogging",
-                "PVAudio",
-                "PVSupport",
-                "libstella",
-                "PVStellaCPP"
-            ],
-            cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
-            ],
-            cxxSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
-            ],
-            swiftSettings: [
-                .interoperabilityMode(.Cxx)
-            ]
-        ),
+        // MARK: ------- libretro shim -------
 
         .target(
-            name: "PVStellaCPP",
+            name: "PVVecXC",
             dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVLogging",
-                "PVAudio",
-                "PVSupport",
-                "libstella",
+                "libvecx",
             ],
+            path: "Sources/PVVecXC",
             publicHeadersPath: "./",
             cSettings: [
                 .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+                .headerSearchPath("../libvecx/libretro-vecx/libretro-common/include"),
             ],
             cxxSettings: [
                 .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+                .headerSearchPath("../libvecx/libretro-vecx/libretro-common/include"),
             ]
         ),
 
+        // MARK: ------- Emulator core -------
+
         .target(
-            name: "libstella",
-            exclude: [
-                "stella/debian/",
-                "stella/docs/",
-                "stella/test/",
-                "stella/src/debugger/",
-                "stella/src/emucore/exception",
-                "stella/src/emucore/OSystemStandalone.cxx",
-                "stella/src/lib/",
-                "stella/src/os/macos/",
-                "stella/src/os/unix/",
-                "stella/src/os/libretro/jni/",
-                "stella/src/os/windows/",
-                "stella/src/cheat/CheatCodeDialog.cxx",
-                "stella/src/common/EventHandlerSDL2.cxx",
-                "stella/src/common/FBBackendSDL2.cxx",
-                "stella/src/common/FBSurfaceSDL2.cxx",
-                "stella/src/common/HighScoresManager.cxx",
-                "stella/src/common/main.cxx",
-                "stella/src/common/PNGLibrary.cxx",
-                "stella/src/common/SoundSDL2.cxx",
-                "stella/src/common/ThreadDebugging.cxx",
-                "stella/src/common/audio/",
-                "stella/src/common/repository/sqlite/",
-                "stella/src/common/sdl_blitter/",
-                "stella/src/gui/",
-                "stella/src/tools/"
-            ],
+            name: "libvecx",
+            path: "Sources/libvecx",
+            sources: Sources.libvecx,
+            publicHeadersPath: "libretro-vecx/libretro-common/include",
             packageAccess: true,
             cSettings: [
-                .define("__VEC4_OPT"),
-                .define("__NEON_OPT"),
-                .define("LSB_FIRST", to: "1"),
-                .define("HAVE_MKDIR", to: "1"),
-                .define("SIZEOF_DOUBLE", to: "8"),
-                .define("PSS_STYLE", to: "1"),
-                .define("MPC_FIXED_POINT"),
-                .define("ARCH_X86"),
-                .define("WANT_STELLA_EMU", to: "1"),
-                .define("STDC_HEADERS", to: "1"),
-                .define("HAVE_INTTYPES", to: "1"),
-                .define("Keyboard", to: "StellaKeyboard"),
-                .define("_GLIBCXX_USE_CXX11_ABI", to: "1"),
-                .define("UNIX", to: "1"),
-                .define("DARWIN", to: "1"),
-                .define("MACOS_KEYS", to: "1"),
-                .define("SOUND_SUPPORT", to: "1"),
-                .define("JOYSTICK_SUPPORT"),
-                .define("CHEATCODE_SUPPORT"),
-                .define("ARM"),
-                .define("IOS"),
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
+                .define("STATIC_LINKING", to: "1"),
+                .define("FRONTEND_SUPPORTS_RGB565", to: "1"),
+                .define("HAVE_STRINGS", to: "1"),
+                .define("HAVE_STDINT_H", to: "1"),
+                .define("HAVE_INTTYPES_H", to: "1"),
                 .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("__LIB_RETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .define("TARGET_IPHONE", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
-                .define("NEON", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
-                .headerSearchPath("stella/src/common/"),
-                .headerSearchPath("stella/src/emucore/"),
-                .headerSearchPath("stella/src/emucore/common/"),
-                .headerSearchPath("stella/src/emucore/tia/"),
-                .headerSearchPath("stella/src/lib/"),
-                .headerSearchPath("stella/src/os/libretro/"),
-                .unsafeFlags([
-                    "-fno-strict-overflow",
-                    "-ffast-math",
-                    "-funroll-loops",
-                    "-fPIC",
-                    "-Wno-multichar",
-                    "-Wunused",
-                    "-fno-aligned-allocation"
-                ]),
-                .unsafeFlags([
-                    "-flto"
-                ], .when(configuration: .release))
-            ],
-            cxxSettings: [
-                .define("LSB_FIRST", to: "1"),
-                .define("HAVE_MKDIR", to: "1"),
-                .define("SIZEOF_DOUBLE", to: "8"),
-                .define("PSS_STYLE", to: "1"),
-                .define("MPC_FIXED_POINT"),
-                .define("ARCH_X86"),
-                .define("WANT_STELLA_EMU", to: "1"),
-                .define("STDC_HEADERS", to: "1"),
-                .define("HAVE_INTTYPES", to: "1"),
-                .define("Keyboard", to: "StellaKeyboard"),
-                .define("_GLIBCXX_USE_CXX11_ABI", to: "1"),
-                .define("UNIX", to: "1"),
-                .define("DARWIN", to: "1"),
-                .define("MACOS_KEYS", to: "1"),
-                .define("SOUND_SUPPORT", to: "1"),
-                .define("JOYSTICK_SUPPORT"),
-                .define("CHEATCODE_SUPPORT"),
-                .define("ARM"),
-                .define("IOS"),
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("__LIB_RETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .define("TARGET_IPHONE", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
-                .define("NEON", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
-                .headerSearchPath("stella/src/cheat/"),
-                .headerSearchPath("stella/src/common/"),
-                .headerSearchPath("stella/src/common/audio"),
-                .headerSearchPath("stella/src/common/repository"),
-                .headerSearchPath("stella/src/common/sdl_blitter"),
-                .headerSearchPath("stella/src/common/tv_filters"),
-                .headerSearchPath("stella/src/emucore/"),
-                .headerSearchPath("stella/src/emucore/common/"),
-                .headerSearchPath("stella/src/emucore/tia/"),
-                .headerSearchPath("stella/src/emucore/tia/frame-manager/"),
-                .headerSearchPath("stella/src/lib/"),
-                .headerSearchPath("stella/src/lib/httplib"),
-                .headerSearchPath("stella/src/lib/json"),
-                .headerSearchPath("stella/src/lib/libpng"),
-                .headerSearchPath("stella/src/lib/nanojpeg"),
-                .headerSearchPath("stella/src/lib/sqlite"),
-                .headerSearchPath("stella/src/lib/tinyexif"),
-                .headerSearchPath("stella/src/lib/zlib"),
-                .headerSearchPath("stella/src/os/libretro/"),
-                .unsafeFlags([
-                    "-Wno-multichar",
-                    "-Wunused",
-                    "-Woverloaded-virtual",
-                    "-Wnon-virtual-dtor",
-                ]),
-                .unsafeFlags([
-                    "-flto",
-                    "-fno-rtti",
-                    "-Wno-poison-system-directories"
-                ], .when(configuration: .release))
+                /* Xcode sets these unconditionally via BuildFlags.xcconfig,
+                 * which only ever builds this core for the iOS family. */
+                .define("IOS", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
+                .define("HAVE_OPENGLES", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
+                .define("HAVE_OPENGLES2", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
+                .define("HAS_GPU", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
+                .headerSearchPath("libretro-vecx"),
+                .headerSearchPath("libretro-vecx/libretro-common/include"),
             ]
         )
     ],
@@ -286,3 +164,34 @@ let package = Package(
     cLanguageStandard: .gnu99,
     cxxLanguageStandard: .gnucxx17
 )
+
+enum Sources {
+    /* Mirrors the `vecx-libretro` target in PVVecX.xcodeproj. */
+    static let libvecx: [String] = [
+        "libretro-vecx/e6809.c",
+        "libretro-vecx/e8910.c",
+        "libretro-vecx/vecx.c",
+        "libretro-vecx/libretro.c",
+        "libretro-vecx/libretro-common/glsm/glsm.c",
+        "libretro-vecx/libretro-common/glsym/glsym_es2.c",
+        "libretro-vecx/libretro-common/glsym/rglgen.c",
+    ]
+
+    /* Sources/PVVecX is a single mixed-language Xcode framework target; SPM
+     * needs it split by language across two targets over the same path. */
+    static let bridge: [String] = [
+        "PVVecXCore.mm",
+        "PVVecXCore+Audio.m",
+        "PVVecXCore+Controls.mm",
+        "PVVecXCore+Saves.m",
+        "PVVecXCore+Video.m",
+    ]
+
+    static let swift: [String] = [
+        "PVVecXCore.swift",
+        "PVVecXCore+CompanionController.swift",
+        "VecxOptions.swift",
+        "CorePlist.swift",
+        "CorePlist-Generated.swift",
+    ]
+}
