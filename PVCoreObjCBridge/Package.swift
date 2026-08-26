@@ -46,6 +46,7 @@ let package = Package(
                 "PVCoreBridge",
                 "PVObjCUtils",
                 "PVAudio",
+                .product(name: "RingBuffer", package: "PVAudio"),
                 "PVCoreAudio",
                 "PVSettings",
             ],

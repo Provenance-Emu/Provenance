@@ -8,6 +8,7 @@
 
 #import "_PVCoreObjCBridge.h"
 @import PVAudio;
+@import RingBuffer;
 @import PVCoreAudio;
 @import PVLogging;
 @import PVLoggingObjC;

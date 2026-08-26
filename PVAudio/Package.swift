@@ -22,6 +22,9 @@ let package = Package(
         .library(
             name: "PVAudio",
             targets: ["PVAudio"]),
+        .library(
+            name: "RingBuffer",
+            targets: ["RingBuffer"]),
          .library(
              name: "PVAudio-Dynamic",
              type: .dynamic,
