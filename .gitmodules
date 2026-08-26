@@ -13,6 +13,7 @@
 [submodule "Cores/VirtualJaguar"]
 	path = Cores/VirtualJaguar
 	url = https://github.com/Provenance-Emu/Core-VirtualJaguar.git
+	branch = feat/upstream-v351-and-options
 [submodule "Cores/Reicast/reicast-emulator"]
 	path = Cores/Reicast/reicast-emulator
 	url = https://github.com/Provenance-Emu/reicast-emulator.git
