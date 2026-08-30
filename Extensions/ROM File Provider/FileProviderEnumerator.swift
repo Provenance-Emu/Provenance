@@ -14,8 +14,11 @@ import PVPrimitives
 
 /// Enumerates items in the Provenance ROM library for the Files.app file provider.
 ///
-/// Root lists category folders (**Systems**, **Publishers**, **Years**, **Regions**, **Ratings**).
+/// Root lists category folders (**Systems**, **Publishers**, **Years**, **Regions**, **Ratings**,
+/// **Save States**, **Screenshots**).
 /// Canonical ROM files (`game:<md5>`) live only under **Systems**; other axes use symlink rows.
+/// Save states (`ss-game:<md5>` / `ss:<id>`) and screenshots (`sc-game:<md5>` / `sc:<md5>:<index>`)
+/// are enumerated read-only from their respective virtual folders.
 ///
 /// Realm access is centralized in ``RomFileProviderLibrary`` (CPDI snapshots, same App Group as Spotlight / Top Shelf).
 final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
@@ -27,6 +30,8 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
     private var cachedLocalSystemIDs: Set<String>?
     private var cachedCanonicalGames: [(game: Game, url: URL)]?
     private var cachedLocalRows: [RomFileProviderLibrary.LocalEntry]?
+    private var cachedSaveStateEntries: [RomFileProviderLibrary.SaveStateEntry]?
+    private var cachedScreenshotEntries: [RomFileProviderLibrary.ScreenshotEntry]?
 
     init(enumeratedItemIdentifier: NSFileProviderItemIdentifier) {
         self.enumeratedItemIdentifier = enumeratedItemIdentifier
@@ -86,6 +91,34 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
         let rows = RomFileProviderLibrary.loadAllLocalEntries()
         cachedLocalRows = rows
         return rows
+    }
+
+    private func loadSaveStateEntriesIfNeeded() -> [RomFileProviderLibrary.SaveStateEntry] {
+        if let cached = cachedSaveStateEntries { return cached }
+        let entries = RomFileProviderLibrary.loadAllSaveStateEntries()
+        cachedSaveStateEntries = entries
+        return entries
+    }
+
+    private func loadScreenshotEntriesIfNeeded() -> [RomFileProviderLibrary.ScreenshotEntry] {
+        if let cached = cachedScreenshotEntries { return cached }
+        let entries = RomFileProviderLibrary.loadAllScreenshotEntries()
+        cachedScreenshotEntries = entries
+        return entries
+    }
+
+    /// Distinct games with a locally present save state, reusing the per-enumeration cache so
+    /// listing the **Save States** category doesn't re-scan Realm on top of the `ss-game:<md5>`
+    /// folder enumeration, which also reads `loadSaveStateEntriesIfNeeded()`.
+    private func saveStateGameFoldersFromCache() -> [Game] {
+        RomFileProviderLibrary.saveStateGameFolders(from: loadSaveStateEntriesIfNeeded())
+    }
+
+    /// Distinct games with a locally present screenshot, reusing the per-enumeration cache so
+    /// listing the **Screenshots** category doesn't re-scan Realm on top of the `sc-game:<md5>`
+    /// folder enumeration, which also reads `loadScreenshotEntriesIfNeeded()`.
+    private func screenshotGameFoldersFromCache() -> [Game] {
+        RomFileProviderLibrary.screenshotGameFolders(from: loadScreenshotEntriesIfNeeded())
     }
 
     // MARK: - buildItems
@@ -156,6 +189,17 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
             return try buildSymlinkGameItems(rows: filtered, parentRaw: raw, parentIdentifier: enumeratedItemIdentifier, offset: offset, limit: limit)
         }
 
+        if let md5 = RomFileProviderVirtualPath.parseSaveStateGameMD5(from: raw) {
+            let entries = loadSaveStateEntriesIfNeeded().filter { $0.game.md5.uppercased() == md5 }
+                .sorted { $0.date > $1.date }
+            return buildSaveStateItems(entries: entries, parentIdentifier: enumeratedItemIdentifier, offset: offset, limit: limit)
+        }
+
+        if let md5 = RomFileProviderVirtualPath.parseScreenshotGameMD5(from: raw) {
+            let entries = loadScreenshotEntriesIfNeeded().filter { $0.gameMD5.uppercased() == md5 }
+            return buildScreenshotItems(entries: entries, parentIdentifier: enumeratedItemIdentifier, offset: offset, limit: limit)
+        }
+
         throw NSFileProviderError(.noSuchItem)
     }
 
@@ -166,7 +210,7 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
         return (Array(items[offset..<end]), total)
     }
 
-    private func buildCategoryContents(cat: RomFileProviderRootCategory, offset: Int, limit: Int) throws -> ([FileProviderItem], Int) {
+    private func buildCategoryContents(cat: RomFileProviderRootCategory, offset: Int, limit: Int) throws -> ([FileProviderItem], Int) { // swiftlint:disable:this cyclomatic_complexity
         switch cat {
         case .systems:
             return buildSystemFolderItems(offset: offset, limit: limit)
@@ -227,6 +271,16 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
                 )
             }
             return pageSlice(items: items, offset: offset, limit: limit)
+        case .saveStates:
+            let parent = NSFileProviderItemIdentifier(cat.rawIdentifier)
+            let games = saveStateGameFoldersFromCache()
+            let folders = games.map { FileProviderItem(saveStateGameFolder: $0, parentItemIdentifier: parent) }
+            return pageSlice(items: folders, offset: offset, limit: limit)
+        case .screenshots:
+            let parent = NSFileProviderItemIdentifier(cat.rawIdentifier)
+            let games = screenshotGameFoldersFromCache()
+            let folders = games.map { FileProviderItem(screenshotGameFolder: $0, parentItemIdentifier: parent) }
+            return pageSlice(items: folders, offset: offset, limit: limit)
         }
     }
 
@@ -294,6 +348,49 @@ final class FileProviderEnumerator: NSObject, NSFileProviderEnumerator {
             }
         }
         return pageSlice(items: children, offset: offset, limit: limit)
+    }
+
+    private func buildSaveStateItems(
+        entries: [RomFileProviderLibrary.SaveStateEntry],
+        parentIdentifier: NSFileProviderItemIdentifier,
+        offset: Int,
+        limit: Int
+    ) -> ([FileProviderItem], Int) {
+        let total = entries.count
+        guard offset < total else { return ([], total) }
+        let slice = entries[offset..<min(offset + limit, total)]
+        let items = slice.map { entry -> FileProviderItem in
+            FileProviderItem(
+                saveStateID: entry.id,
+                game: entry.game,
+                date: entry.date,
+                isAutosave: entry.isAutosave,
+                userDescription: entry.userDescription,
+                fileURL: entry.fileURL,
+                parentItemIdentifier: parentIdentifier
+            )
+        }
+        return (Array(items), total)
+    }
+
+    private func buildScreenshotItems(
+        entries: [RomFileProviderLibrary.ScreenshotEntry],
+        parentIdentifier: NSFileProviderItemIdentifier,
+        offset: Int,
+        limit: Int
+    ) -> ([FileProviderItem], Int) {
+        let total = entries.count
+        guard offset < total else { return ([], total) }
+        let slice = entries[offset..<min(offset + limit, total)]
+        let items = slice.map { entry -> FileProviderItem in
+            FileProviderItem(
+                screenshotGameMD5: entry.gameMD5,
+                index: entry.index,
+                imageURL: entry.imageURL,
+                parentItemIdentifier: parentIdentifier
+            )
+        }
+        return (Array(items), total)
     }
 
     private func buildSymlinkGameItems(

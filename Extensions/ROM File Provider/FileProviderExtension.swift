@@ -92,7 +92,69 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         request: NSFileProviderRequest,
         completionHandler: @escaping (URL?, NSFileProviderItem?, Error?) -> Void
     ) -> Progress {
-        guard let md5 = canonicalGameMD5(from: itemIdentifier.rawValue) else {
+        let raw = itemIdentifier.rawValue
+
+        // Save state file
+        if let ssID = RomFileProviderVirtualPath.parseSaveStateID(from: raw) {
+            let realm = RomFileProviderLibrary.realm
+            guard let pvSS = realm.object(ofType: PVSaveState.self, forPrimaryKey: ssID),
+                  !pvSS.isInvalidated,
+                  let pvGame = pvSS.game, !pvGame.isInvalidated,
+                  let pvFile = pvSS.file, let fileURL = pvFile.url,
+                  FileManager.default.fileExists(atPath: fileURL.path) else {
+                completionHandler(nil, nil, NSFileProviderError(.noSuchItem))
+                return Progress()
+            }
+            let md5 = pvGame.md5Hash
+            let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.saveStateGameFolderIdentifier(gameMD5: md5))
+            let item = FileProviderItem(
+                saveStateID: ssID,
+                game: pvGame.asDomain(),
+                date: pvSS.date,
+                isAutosave: pvSS.isAutosave,
+                userDescription: pvSS.userDescription,
+                fileURL: fileURL,
+                parentItemIdentifier: parent
+            )
+            ILOG("FileProvider: serving save state \(fileURL.lastPathComponent) for \(pvGame.title)")
+            completionHandler(fileURL, item, nil)
+            return Progress()
+        }
+
+        // Screenshot file
+        if let parsed = RomFileProviderVirtualPath.parseScreenshotID(from: raw) {
+            let realm = RomFileProviderLibrary.realm
+            guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: parsed.gameMD5),
+                  !pvGame.isInvalidated else {
+                completionHandler(nil, nil, NSFileProviderError(.noSuchItem))
+                return Progress()
+            }
+            let shots = Array(pvGame.screenShots)
+            guard parsed.index < shots.count else {
+                completionHandler(nil, nil, NSFileProviderError(.noSuchItem))
+                return Progress()
+            }
+            let pvImageFile = shots[parsed.index]
+            guard !pvImageFile.isInvalidated,
+                  let imageURL = pvImageFile.url,
+                  FileManager.default.fileExists(atPath: imageURL.path) else {
+                completionHandler(nil, nil, NSFileProviderError(.noSuchItem))
+                return Progress()
+            }
+            let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.screenshotGameFolderIdentifier(gameMD5: parsed.gameMD5))
+            let item = FileProviderItem(
+                screenshotGameMD5: parsed.gameMD5,
+                index: parsed.index,
+                imageURL: imageURL,
+                parentItemIdentifier: parent
+            )
+            ILOG("FileProvider: serving screenshot \(imageURL.lastPathComponent) for \(pvGame.title)")
+            completionHandler(imageURL, item, nil)
+            return Progress()
+        }
+
+        // ROM file
+        guard let md5 = canonicalGameMD5(from: raw) else {
             completionHandler(nil, nil, NSFileProviderError(.noSuchItem))
             return Progress()
         }
@@ -173,7 +235,16 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         request: NSFileProviderRequest,
         completionHandler: @escaping (NSFileProviderItem?, NSFileProviderItemFields, Bool, Error?) -> Void
     ) -> Progress {
-        guard let md5 = canonicalGameMD5(from: item.itemIdentifier.rawValue) else {
+        let raw = item.itemIdentifier.rawValue
+
+        // Save states and screenshots are read-only (no renames or content edits)
+        if RomFileProviderVirtualPath.parseSaveStateID(from: raw) != nil
+            || RomFileProviderVirtualPath.parseScreenshotID(from: raw) != nil {
+            completionHandler(nil, [], false, CocoaError(.featureUnsupported))
+            return Progress()
+        }
+
+        guard let md5 = canonicalGameMD5(from: raw) else {
             completionHandler(nil, [], false, CocoaError(.featureUnsupported))
             return Progress()
         }
@@ -245,7 +316,73 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         request: NSFileProviderRequest,
         completionHandler: @escaping (Error?) -> Void
     ) -> Progress {
-        guard let md5 = canonicalGameMD5(from: identifier.rawValue) else {
+        let raw = identifier.rawValue
+
+        // Delete save state
+        if let ssID = RomFileProviderVirtualPath.parseSaveStateID(from: raw) {
+            do {
+                let realm = RomFileProviderLibrary.realm
+                guard let pvSS = realm.object(ofType: PVSaveState.self, forPrimaryKey: ssID),
+                      !pvSS.isInvalidated else {
+                    completionHandler(nil)
+                    return Progress()
+                }
+                if let pvFile = pvSS.file, let fileURL = pvFile.url,
+                   FileManager.default.fileExists(atPath: fileURL.path) {
+                    try FileManager.default.removeItem(at: fileURL)
+                    ILOG("FileProvider: deleted save state file \(fileURL.lastPathComponent)")
+                }
+                let imageToDelete = pvSS.image
+                try realm.write {
+                    if let img = imageToDelete { realm.delete(img) }
+                    if let f = pvSS.file { realm.delete(f) }
+                    realm.delete(pvSS)
+                }
+                completionHandler(nil)
+            } catch {
+                ELOG("FileProvider: deleteItem (save state) error — \(error)")
+                completionHandler(error)
+            }
+            return Progress()
+        }
+
+        // Delete screenshot
+        if let parsed = RomFileProviderVirtualPath.parseScreenshotID(from: raw) {
+            do {
+                let realm = RomFileProviderLibrary.realm
+                guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: parsed.gameMD5),
+                      !pvGame.isInvalidated else {
+                    completionHandler(nil)
+                    return Progress()
+                }
+                let shots = Array(pvGame.screenShots)
+                guard parsed.index < shots.count else {
+                    completionHandler(nil)
+                    return Progress()
+                }
+                let pvImageFile = shots[parsed.index]
+                guard !pvImageFile.isInvalidated else {
+                    completionHandler(nil)
+                    return Progress()
+                }
+                if let imageURL = pvImageFile.url,
+                   FileManager.default.fileExists(atPath: imageURL.path) {
+                    try FileManager.default.removeItem(at: imageURL)
+                    ILOG("FileProvider: deleted screenshot \(imageURL.lastPathComponent)")
+                }
+                try realm.write {
+                    realm.delete(pvImageFile)
+                }
+                completionHandler(nil)
+            } catch {
+                ELOG("FileProvider: deleteItem (screenshot) error — \(error)")
+                completionHandler(error)
+            }
+            return Progress()
+        }
+
+        // Delete ROM game
+        guard let md5 = canonicalGameMD5(from: raw) else {
             completionHandler(CocoaError(.featureUnsupported))
             return Progress()
         }
@@ -295,8 +432,216 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
     ) throws -> NSFileProviderEnumerator {
         return FileProviderEnumerator(enumeratedItemIdentifier: containerItemIdentifier)
     }
+}
 
-    private func performImport(from sourceURL: URL, filename: String, systemID: String) throws -> FileProviderItem {
+// MARK: - Item Resolution
+
+private extension FileProviderExtension {
+
+    func resolveItem(for identifier: NSFileProviderItemIdentifier) -> FileProviderItem? {
+        if identifier == .rootContainer {
+            return FileProviderItem(root: ())
+        }
+
+        let raw = identifier.rawValue
+
+        if let cat = RomFileProviderRootCategory(rawValue: raw) {
+            return FileProviderItem(category: cat)
+        }
+
+        if raw.hasPrefix(FileProviderItem.systemIdentifierPrefix) {
+            return resolveSystemFolder(raw: raw)
+        }
+
+        if raw.hasPrefix(FileProviderItem.gameIdentifierPrefix) {
+            return resolveCanonicalGame(raw: raw)
+        }
+
+        if raw.hasPrefix(RomFileProviderVirtualPath.symlinkPrefix) {
+            return resolveSymlink(raw: raw)
+        }
+
+        if raw.hasPrefix(RomFileProviderVirtualPath.publisherAllGamesPrefix) {
+            let enc = String(raw.dropFirst(RomFileProviderVirtualPath.publisherAllGamesPrefix.count))
+            guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
+            let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.publisherFolderPrefix + enc)
+            return FileProviderItem(publisherAllGamesFolderGroupingKey: groupingKey, parentItemIdentifier: parent)
+        }
+
+        if raw.hasPrefix(RomFileProviderVirtualPath.publisherSystemPrefix) {
+            return resolvePublisherSystemFolder(raw: raw)
+        }
+
+        if raw.hasPrefix(RomFileProviderVirtualPath.publisherFolderPrefix) {
+            return resolvePublisherFolder(raw: raw)
+        }
+
+        if raw.hasPrefix("year:") {
+            let yearKey = String(raw.dropFirst("year:".count))
+            let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.years.rawIdentifier)
+            return FileProviderItem(yearFolder: yearKey, parentItemIdentifier: parent)
+        }
+
+        if raw.hasPrefix("region:") {
+            let enc = String(raw.dropFirst("region:".count))
+            guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
+            let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.regions.rawIdentifier)
+            let title = RomFileProviderLibrary.displayName(axis: .region, groupingKey: groupingKey)
+            return FileProviderItem(regionFolderGroupingKey: groupingKey, title: title, parentItemIdentifier: parent)
+        }
+
+        if raw.hasPrefix("rating:") {
+            let key = String(raw.dropFirst("rating:".count))
+            let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.ratings.rawIdentifier)
+            let title = RomFileProviderLibrary.ratingFolderLabel(forKey: key)
+            return FileProviderItem(ratingFolderKey: key, title: title, parentItemIdentifier: parent)
+        }
+
+        if let md5 = RomFileProviderVirtualPath.parseSaveStateGameMD5(from: raw) {
+            return resolveSaveStateGameFolder(md5: md5)
+        }
+
+        if let ssID = RomFileProviderVirtualPath.parseSaveStateID(from: raw) {
+            return resolveSaveStateItem(id: ssID)
+        }
+
+        if let md5 = RomFileProviderVirtualPath.parseScreenshotGameMD5(from: raw) {
+            return resolveScreenshotGameFolder(md5: md5)
+        }
+
+        if let parsed = RomFileProviderVirtualPath.parseScreenshotID(from: raw) {
+            return resolveScreenshotItem(gameMD5: parsed.gameMD5, index: parsed.index)
+        }
+
+        return nil
+    }
+
+    func resolveSystemFolder(raw: String) -> FileProviderItem? {
+        let sysID = String(raw.dropFirst(FileProviderItem.systemIdentifierPrefix.count))
+        let realm = RomFileProviderLibrary.realm
+        guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: sysID),
+              !pvSystem.isInvalidated else { return nil }
+        let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.systems.rawIdentifier)
+        return FileProviderItem(system: pvSystem.asDomain(), parentItemIdentifier: parent)
+    }
+
+    func resolveCanonicalGame(raw: String) -> FileProviderItem? {
+        let md5 = String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count)).uppercased()
+        let realm = RomFileProviderLibrary.realm
+        guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+              !pvGame.isInvalidated else { return nil }
+        return FileProviderItem(game: pvGame.asDomain(), romURL: pvGame.file?.url)
+    }
+
+    func resolveSymlink(raw: String) -> FileProviderItem? {
+        guard let parsed = RomFileProviderVirtualPath.parseSymlink(from: raw) else { return nil }
+        let realm = RomFileProviderLibrary.realm
+        guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: parsed.md5),
+              !pvGame.isInvalidated else { return nil }
+        let game = pvGame.asDomain()
+        let url = pvGame.file?.url
+        let parent = NSFileProviderItemIdentifier(parsed.parentItemRaw)
+        return FileProviderItem(
+            symlinkTo: game,
+            romURL: url,
+            symlinkRawId: raw,
+            targetGameMD5: parsed.md5,
+            parentItemIdentifier: parent
+        )
+    }
+
+    func resolvePublisherFolder(raw: String) -> FileProviderItem? {
+        let enc = String(raw.dropFirst(RomFileProviderVirtualPath.publisherFolderPrefix.count))
+        guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
+        let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.publishers.rawIdentifier)
+        let title = RomFileProviderLibrary.displayName(axis: .publisher, groupingKey: groupingKey)
+        return FileProviderItem(publisherFolderGroupingKey: groupingKey, title: title, parentItemIdentifier: parent)
+    }
+
+    func resolvePublisherSystemFolder(raw: String) -> FileProviderItem? {
+        let rest = String(raw.dropFirst(RomFileProviderVirtualPath.publisherSystemPrefix.count))
+        guard let colon = rest.firstIndex(of: ":") else { return nil }
+        let enc = String(rest[..<colon])
+        let systemId = String(rest[rest.index(after: colon)...])
+        guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
+        let realm = RomFileProviderLibrary.realm
+        guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: systemId),
+              !pvSystem.isInvalidated else { return nil }
+        let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.publisherFolderPrefix + enc)
+        return FileProviderItem(publisherSystemFolderGroupingKey: groupingKey, system: pvSystem.asDomain(), parentItemIdentifier: parent)
+    }
+
+    func resolveSaveStateGameFolder(md5: String) -> FileProviderItem? {
+        let realm = RomFileProviderLibrary.realm
+        guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+              !pvGame.isInvalidated else { return nil }
+        let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.saveStates.rawIdentifier)
+        return FileProviderItem(saveStateGameFolder: pvGame.asDomain(), parentItemIdentifier: parent)
+    }
+
+    func resolveSaveStateItem(id: String) -> FileProviderItem? {
+        let realm = RomFileProviderLibrary.realm
+        guard let pvSS = realm.object(ofType: PVSaveState.self, forPrimaryKey: id),
+              !pvSS.isInvalidated,
+              let pvGame = pvSS.game, !pvGame.isInvalidated else { return nil }
+        let fileURL: URL?
+        if let pvFile = pvSS.file, let url = pvFile.url,
+           FileManager.default.fileExists(atPath: url.path) {
+            fileURL = url
+        } else {
+            fileURL = nil
+        }
+        let md5 = pvGame.md5Hash
+        let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.saveStateGameFolderIdentifier(gameMD5: md5))
+        return FileProviderItem(
+            saveStateID: id,
+            game: pvGame.asDomain(),
+            date: pvSS.date,
+            isAutosave: pvSS.isAutosave,
+            userDescription: pvSS.userDescription,
+            fileURL: fileURL,
+            parentItemIdentifier: parent
+        )
+    }
+
+    func resolveScreenshotGameFolder(md5: String) -> FileProviderItem? {
+        let realm = RomFileProviderLibrary.realm
+        guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
+              !pvGame.isInvalidated else { return nil }
+        let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.screenshots.rawIdentifier)
+        return FileProviderItem(screenshotGameFolder: pvGame.asDomain(), parentItemIdentifier: parent)
+    }
+
+    func resolveScreenshotItem(gameMD5: String, index: Int) -> FileProviderItem? {
+        let realm = RomFileProviderLibrary.realm
+        guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5),
+              !pvGame.isInvalidated else { return nil }
+        let shots = Array(pvGame.screenShots)
+        guard index < shots.count else { return nil }
+        let pvImageFile = shots[index]
+        guard !pvImageFile.isInvalidated else { return nil }
+        let imageURL = pvImageFile.url.flatMap { FileManager.default.fileExists(atPath: $0.path) ? $0 : nil }
+        let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.screenshotGameFolderIdentifier(gameMD5: gameMD5))
+        return FileProviderItem(screenshotGameMD5: gameMD5, index: index, imageURL: imageURL, parentItemIdentifier: parent)
+    }
+
+    /// Resolves symlink or canonical `game:` raw value to uppercase MD5 primary key.
+    func canonicalGameMD5(from raw: String) -> String? {
+        if raw.hasPrefix(FileProviderItem.gameIdentifierPrefix) {
+            return String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count)).uppercased()
+        }
+        if raw.hasPrefix(RomFileProviderVirtualPath.symlinkPrefix) {
+            return RomFileProviderVirtualPath.parseSymlinkMD5(from: raw)
+        }
+        return nil
+    }
+}
+
+// MARK: - Import & File Utilities
+
+private extension FileProviderExtension {
+
+    func performImport(from sourceURL: URL, filename: String, systemID: String) throws -> FileProviderItem {
         let realm = RomFileProviderLibrary.realm
 
         guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: systemID),
@@ -367,7 +712,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         return FileProviderItem(game: game.asDomain(), romURL: destURL)
     }
 
-    private func sanitizedFilename(from rawFilename: String) -> String {
+    func sanitizedFilename(from rawFilename: String) -> String {
         var name = (rawFilename as NSString).lastPathComponent
         name = name
             .replacingOccurrences(of: "/", with: "-")
@@ -379,7 +724,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         return name.isEmpty ? "Untitled" : name
     }
 
-    private func uniqueDestinationURL(in directory: URL, for filename: String) -> URL {
+    func uniqueDestinationURL(in directory: URL, for filename: String) -> URL {
         let safeFilename = sanitizedFilename(from: filename)
         let candidate = directory.appendingPathComponent(safeFilename)
         guard FileManager.default.fileExists(atPath: candidate.path) else {
@@ -396,7 +741,7 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         }
     }
 
-    private func streamingMD5(for url: URL) -> String? {
+    func streamingMD5(for url: URL) -> String? {
         let chunkSize = 1024 * 1024
         guard let stream = InputStream(url: url) else { return nil }
         stream.open()
@@ -414,134 +759,6 @@ final class FileProviderExtension: NSObject, NSFileProviderReplicatedExtension {
         }
 
         return hasher.finalize().map { String(format: "%02X", $0) }.joined()
-    }
-
-    /// Resolves symlink or canonical `game:` raw value to uppercase MD5 primary key.
-    private func canonicalGameMD5(from raw: String) -> String? {
-        if raw.hasPrefix(FileProviderItem.gameIdentifierPrefix) {
-            return String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count)).uppercased()
-        }
-        if raw.hasPrefix(RomFileProviderVirtualPath.symlinkPrefix) {
-            return RomFileProviderVirtualPath.parseSymlinkMD5(from: raw)
-        }
-        return nil
-    }
-
-    private func resolveItem(for identifier: NSFileProviderItemIdentifier) -> FileProviderItem? {
-        if identifier == .rootContainer {
-            return FileProviderItem(root: ())
-        }
-
-        let raw = identifier.rawValue
-
-        if let cat = RomFileProviderRootCategory(rawValue: raw) {
-            return FileProviderItem(category: cat)
-        }
-
-        if raw.hasPrefix(FileProviderItem.systemIdentifierPrefix) {
-            return resolveSystemFolder(raw: raw)
-        }
-
-        if raw.hasPrefix(FileProviderItem.gameIdentifierPrefix) {
-            return resolveCanonicalGame(raw: raw)
-        }
-
-        if raw.hasPrefix(RomFileProviderVirtualPath.symlinkPrefix) {
-            return resolveSymlink(raw: raw)
-        }
-
-        if raw.hasPrefix(RomFileProviderVirtualPath.publisherAllGamesPrefix) {
-            let enc = String(raw.dropFirst(RomFileProviderVirtualPath.publisherAllGamesPrefix.count))
-            guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
-            let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.publisherFolderPrefix + enc)
-            return FileProviderItem(publisherAllGamesFolderGroupingKey: groupingKey, parentItemIdentifier: parent)
-        }
-
-        if raw.hasPrefix(RomFileProviderVirtualPath.publisherSystemPrefix) {
-            return resolvePublisherSystemFolder(raw: raw)
-        }
-
-        if raw.hasPrefix(RomFileProviderVirtualPath.publisherFolderPrefix) {
-            return resolvePublisherFolder(raw: raw)
-        }
-
-        if raw.hasPrefix("year:") {
-            let yearKey = String(raw.dropFirst("year:".count))
-            let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.years.rawIdentifier)
-            return FileProviderItem(yearFolder: yearKey, parentItemIdentifier: parent)
-        }
-
-        if raw.hasPrefix("region:") {
-            let enc = String(raw.dropFirst("region:".count))
-            guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
-            let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.regions.rawIdentifier)
-            let title = RomFileProviderLibrary.displayName(axis: .region, groupingKey: groupingKey)
-            return FileProviderItem(regionFolderGroupingKey: groupingKey, title: title, parentItemIdentifier: parent)
-        }
-
-        if raw.hasPrefix("rating:") {
-            let key = String(raw.dropFirst("rating:".count))
-            let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.ratings.rawIdentifier)
-            let title = RomFileProviderLibrary.ratingFolderLabel(forKey: key)
-            return FileProviderItem(ratingFolderKey: key, title: title, parentItemIdentifier: parent)
-        }
-
-        return nil
-    }
-
-    private func resolveSystemFolder(raw: String) -> FileProviderItem? {
-        let sysID = String(raw.dropFirst(FileProviderItem.systemIdentifierPrefix.count))
-        let realm = RomFileProviderLibrary.realm
-        guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: sysID),
-              !pvSystem.isInvalidated else { return nil }
-        let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.systems.rawIdentifier)
-        return FileProviderItem(system: pvSystem.asDomain(), parentItemIdentifier: parent)
-    }
-
-    private func resolveCanonicalGame(raw: String) -> FileProviderItem? {
-        let md5 = String(raw.dropFirst(FileProviderItem.gameIdentifierPrefix.count)).uppercased()
-        let realm = RomFileProviderLibrary.realm
-        guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: md5),
-              !pvGame.isInvalidated else { return nil }
-        return FileProviderItem(game: pvGame.asDomain(), romURL: pvGame.file?.url)
-    }
-
-    private func resolveSymlink(raw: String) -> FileProviderItem? {
-        guard let parsed = RomFileProviderVirtualPath.parseSymlink(from: raw) else { return nil }
-        let realm = RomFileProviderLibrary.realm
-        guard let pvGame = realm.object(ofType: PVGame.self, forPrimaryKey: parsed.md5),
-              !pvGame.isInvalidated else { return nil }
-        let game = pvGame.asDomain()
-        let url = pvGame.file?.url
-        let parent = NSFileProviderItemIdentifier(parsed.parentItemRaw)
-        return FileProviderItem(
-            symlinkTo: game,
-            romURL: url,
-            symlinkRawId: raw,
-            targetGameMD5: parsed.md5,
-            parentItemIdentifier: parent
-        )
-    }
-
-    private func resolvePublisherFolder(raw: String) -> FileProviderItem? {
-        let enc = String(raw.dropFirst(RomFileProviderVirtualPath.publisherFolderPrefix.count))
-        guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
-        let parent = NSFileProviderItemIdentifier(RomFileProviderRootCategory.publishers.rawIdentifier)
-        let title = RomFileProviderLibrary.displayName(axis: .publisher, groupingKey: groupingKey)
-        return FileProviderItem(publisherFolderGroupingKey: groupingKey, title: title, parentItemIdentifier: parent)
-    }
-
-    private func resolvePublisherSystemFolder(raw: String) -> FileProviderItem? {
-        let rest = String(raw.dropFirst(RomFileProviderVirtualPath.publisherSystemPrefix.count))
-        guard let colon = rest.firstIndex(of: ":") else { return nil }
-        let enc = String(rest[..<colon])
-        let systemId = String(rest[rest.index(after: colon)...])
-        guard let groupingKey = RomFileProviderVirtualPath.decodeSegment(enc) else { return nil }
-        let realm = RomFileProviderLibrary.realm
-        guard let pvSystem = realm.object(ofType: PVSystem.self, forPrimaryKey: systemId),
-              !pvSystem.isInvalidated else { return nil }
-        let parent = NSFileProviderItemIdentifier(RomFileProviderVirtualPath.publisherFolderPrefix + enc)
-        return FileProviderItem(publisherSystemFolderGroupingKey: groupingKey, system: pvSystem.asDomain(), parentItemIdentifier: parent)
     }
 }
 

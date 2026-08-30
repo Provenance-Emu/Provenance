@@ -5,7 +5,11 @@
 //  Identifier strings and encoding for the ROM File Provider virtual hierarchy.
 //
 
+#if canImport(CryptoKit)
 import CryptoKit
+#else
+import Crypto
+#endif
 import Foundation
 
 /// Root category folders under the file provider root (each maps to a stable `NSFileProviderItemIdentifier` raw value).
@@ -20,6 +24,10 @@ public enum RomFileProviderRootCategory: String, CaseIterable, Sendable {
     case regions = "cat:regions"
     /// `cat:ratings` — browse by user star rating.
     case ratings = "cat:ratings"
+    /// `cat:savestates` — browse save states grouped by game.
+    case saveStates = "cat:savestates"
+    /// `cat:screenshots` — browse screenshots grouped by game.
+    case screenshots = "cat:screenshots"
 
     /// Folder title shown in Files.app.
     public var folderDisplayName: String {
@@ -29,6 +37,8 @@ public enum RomFileProviderRootCategory: String, CaseIterable, Sendable {
         case .years: "Years"
         case .regions: "Regions"
         case .ratings: "Ratings"
+        case .saveStates: "Save States"
+        case .screenshots: "Screenshots"
         }
     }
 
@@ -43,6 +53,14 @@ public enum RomFileProviderVirtualPath {
     public static let publisherAllGamesPrefix = "puball:"
     public static let publisherSystemPrefix = "pubsys:"
     public static let symlinkPrefix = "sym:"
+    /// `ss-game:<md5>` — game sub-folder inside the Save States category.
+    public static let saveStateGameFolderPrefix = "ss-game:"
+    /// `ss:<id>` — individual save state file.
+    public static let saveStateItemPrefix = "ss:"
+    /// `sc-game:<md5>` — game sub-folder inside the Screenshots category.
+    public static let screenshotGameFolderPrefix = "sc-game:"
+    /// `sc:<md5>:<index>` — individual screenshot file.
+    public static let screenshotItemPrefix = "sc:"
 
     /// Normalized key used for grouping (lowercased trimmed, or a sentinel for missing values).
     public static let unknownGroupingKey = "__unknown__"
@@ -161,5 +179,61 @@ public enum RomFileProviderVirtualPath {
     public static func ratingValue(fromRatingFolderKey key: String) -> Int? {
         if key == "unrated" { return nil }
         return Int(key)
+    }
+
+    // MARK: - Save state identifiers
+
+    /// Raw id for a save-state game sub-folder: `ss-game:<gameMD5>`.
+    public static func saveStateGameFolderIdentifier(gameMD5: String) -> String {
+        "\(saveStateGameFolderPrefix)\(gameMD5.uppercased())"
+    }
+
+    /// Raw id for an individual save state item: `ss:<saveStateID>`.
+    public static func saveStateItemIdentifier(saveStateID: String) -> String {
+        "\(saveStateItemPrefix)\(saveStateID)"
+    }
+
+    /// Extracts the save-state UUID from a `ss:<id>` raw value; returns `nil` if the prefix is absent.
+    public static func parseSaveStateID(from raw: String) -> String? {
+        guard raw.hasPrefix(saveStateItemPrefix) else { return nil }
+        let id = String(raw.dropFirst(saveStateItemPrefix.count))
+        return id.isEmpty ? nil : id
+    }
+
+    /// Extracts the game MD5 from a `ss-game:<md5>` raw value; returns `nil` if the prefix is absent.
+    public static func parseSaveStateGameMD5(from raw: String) -> String? {
+        guard raw.hasPrefix(saveStateGameFolderPrefix) else { return nil }
+        let md5 = String(raw.dropFirst(saveStateGameFolderPrefix.count)).uppercased()
+        return md5.isEmpty ? nil : md5
+    }
+
+    // MARK: - Screenshot identifiers
+
+    /// Raw id for a screenshot game sub-folder: `sc-game:<gameMD5>`.
+    public static func screenshotGameFolderIdentifier(gameMD5: String) -> String {
+        "\(screenshotGameFolderPrefix)\(gameMD5.uppercased())"
+    }
+
+    /// Raw id for an individual screenshot item: `sc:<gameMD5>:<index>`.
+    public static func screenshotItemIdentifier(gameMD5: String, index: Int) -> String {
+        "\(screenshotItemPrefix)\(gameMD5.uppercased()):\(index)"
+    }
+
+    /// Parses a `sc:<gameMD5>:<index>` raw value into its components; returns `nil` on malformed input.
+    public static func parseScreenshotID(from raw: String) -> (gameMD5: String, index: Int)? {
+        guard raw.hasPrefix(screenshotItemPrefix) else { return nil }
+        let rest = String(raw.dropFirst(screenshotItemPrefix.count))
+        guard let colonIndex = rest.lastIndex(of: ":") else { return nil }
+        let md5 = String(rest[..<colonIndex]).uppercased()
+        let indexStr = String(rest[rest.index(after: colonIndex)...])
+        guard !md5.isEmpty, let index = Int(indexStr), index >= 0 else { return nil }
+        return (md5, index)
+    }
+
+    /// Extracts the game MD5 from a `sc-game:<md5>` raw value; returns `nil` if the prefix is absent.
+    public static func parseScreenshotGameMD5(from raw: String) -> String? {
+        guard raw.hasPrefix(screenshotGameFolderPrefix) else { return nil }
+        let md5 = String(raw.dropFirst(screenshotGameFolderPrefix.count)).uppercased()
+        return md5.isEmpty ? nil : md5
     }
 }
