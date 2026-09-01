@@ -21,6 +21,7 @@
 
 import Foundation
 import PVLogging
+import PVSettings
 
 // MARK: - GameHackingOrgLookup
 
@@ -49,6 +50,10 @@ public actor GameHackingOrgLookup {
     private static let maxMemoryCacheEntries = 50
     /// Minimum seconds between requests to be polite to the server.
     private static let minRequestInterval: TimeInterval = 1.0
+    /// Compile-time default proxy URL. Can be overridden via PVSettings `cheatProxyURL`.
+    /// Set to a non-empty string after deploying the Cloudflare Worker
+    /// (see `Scripts/cheat-proxy/README.md`).
+    static let defaultProxyURL: String = ""
 
     // MARK: - State
 
@@ -83,9 +88,26 @@ public actor GameHackingOrgLookup {
             return diskHit.entries
         }
 
-        // 3. Network fetch — never throws outward; always returns empty on failure.
+        // 3. Network fetch — try proxy first (if enabled), then fall back to direct scraping.
         DLOG("GameHackingOrgLookup: fetching online for title='\(title)' slug=\(systemSlug ?? "nil")")
-        let results = await fetchWithFallback(title: title, systemSlug: systemSlug)
+        let results: [CheatDatabaseEntry]
+
+        let proxyURL = resolvedProxyURL()
+        if !proxyURL.isEmpty, Defaults[.useCheatProxy] {
+            // fetchFromProxy returns nil when the proxy is unreachable or fails (caller should
+            // fallback to direct scraping), or a non-nil array when the proxy successfully
+            // responded — including an empty array meaning "no cheats found" (no fallback needed).
+            let proxyResults = await fetchFromProxy(title: title, systemSlug: systemSlug, proxyBaseURL: proxyURL)
+            if let proxyResults {
+                DLOG("GameHackingOrgLookup: proxy returned \(proxyResults.count) codes for '\(title)'")
+                results = proxyResults
+            } else {
+                DLOG("GameHackingOrgLookup: proxy failed/unreachable, falling back to direct scrape for '\(title)'")
+                results = await fetchWithFallback(title: title, systemSlug: systemSlug)
+            }
+        } else {
+            results = await fetchWithFallback(title: title, systemSlug: systemSlug)
+        }
 
         evictMemoryCacheIfNeeded()
         memoryCache[key] = (Date(), results)
@@ -95,7 +117,92 @@ public actor GameHackingOrgLookup {
         return results
     }
 
+    // MARK: - Proxy URL Resolution
+
+    /// Returns the effective proxy base URL, preferring the user-configured value over the compile-time default.
+    private func resolvedProxyURL() -> String {
+        let stored = Defaults[.cheatProxyURL].trimmingCharacters(in: .whitespacesAndNewlines)
+        if !stored.isEmpty { return stored }
+        return Self.defaultProxyURL
+    }
+
     // MARK: - Fetch Logic
+
+    /// Fetch cheat entries from the Provenance cheat proxy worker.
+    ///
+    /// The proxy endpoint is `GET <proxyBaseURL>/cheats?title=<title>&system=<slug>`.
+    ///
+    /// Returns:
+    /// - `nil` when the proxy is unreachable, returns a non-2xx status, or a network/decode
+    ///   error occurs — the caller should fall back to direct scraping.
+    /// - `[]` when the proxy successfully contacted upstream but found no cheats
+    ///   (signalled by `X-Proxy-Status: ok` in the response) — no fallback needed.
+    /// - `[entries]` when the proxy found results.
+    private func fetchFromProxy(title: String, systemSlug: String?, proxyBaseURL: String) async -> [CheatDatabaseEntry]? {
+        var components = URLComponents(string: proxyBaseURL.hasSuffix("/")
+            ? proxyBaseURL + "cheats"
+            : proxyBaseURL + "/cheats")
+        var queryItems = [URLQueryItem(name: "title", value: title)]
+        if let slug = systemSlug {
+            queryItems.append(URLQueryItem(name: "system", value: slug))
+        }
+        components?.queryItems = queryItems
+
+        guard let url = components?.url else {
+            WLOG("GameHackingOrgLookup: invalid proxy URL '\(proxyBaseURL)'")
+            return nil
+        }
+
+        do {
+            var request = URLRequest(url: url)
+            request.setValue("Provenance-Emu/1.0", forHTTPHeaderField: "User-Agent")
+            request.timeoutInterval = 10
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let http = response as? HTTPURLResponse,
+                  (200..<300).contains(http.statusCode) else {
+                WLOG("GameHackingOrgLookup: proxy non-200 for '\(title)'")
+                return nil
+            }
+
+            let raw = try JSONDecoder().decode([ProxyCheatEntry].self, from: data)
+            if raw.isEmpty {
+                // Only trust an empty result as "no cheats found" when the proxy confirms it
+                // successfully contacted upstream via X-Proxy-Status: ok.  Without this header
+                // the empty array may be a transient error — fall back to direct scraping.
+                let proxyStatus = http.value(forHTTPHeaderField: "X-Proxy-Status")
+                guard proxyStatus == "ok" else {
+                    DLOG("GameHackingOrgLookup: proxy returned empty without ok status for '\(title)' — falling back")
+                    return nil
+                }
+                return []
+            }
+
+            return raw.enumerated().map { index, entry in
+                CheatDatabaseEntry(
+                    id: Self.idOffset + index,
+                    cheatName: entry.name,
+                    cheatCode: entry.code,
+                    cheatDescription: nil,
+                    deviceName: "GameHacking.org",
+                    deviceFormat: nil,
+                    category: entry.category ?? "General",
+                    romTitle: title,
+                    systemName: systemSlug,
+                    isOnlineResult: true
+                )
+            }
+        } catch {
+            WLOG("GameHackingOrgLookup: proxy fetch error for '\(title)': \(error)")
+            return nil
+        }
+    }
+
+    /// JSON model returned by the cheat proxy worker.
+    private struct ProxyCheatEntry: Decodable {
+        let name: String
+        let code: String
+        let category: String?
+    }
 
     /// Try fetching with system filter first; fall back to no-system search on failure.
     private func fetchWithFallback(title: String, systemSlug: String?) async -> [CheatDatabaseEntry] {
