@@ -169,12 +169,10 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
     public func showMenu() {
         viewModel.isMenuVisible = true
-        self.sideNavigationController?.showLeftSide()
     }
 
     public func closeMenu() {
         viewModel.isMenuVisible = false
-        self.sideNavigationController?.closeSide()
     }
 
 //    #if os(iOS) || targetEnvironment(macCatalyst)
@@ -373,7 +371,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
                 switch event {
                 case .menuToggle(let isPressed):
                     if isPressed {
-                        if self.sideNavigationController?.visibleSideViewController == self.sideNavigationController?.left?.viewController {
+                        if self.viewModel.isMenuVisible {
                             self.closeMenu()
                         } else {
                             self.showMenu()
