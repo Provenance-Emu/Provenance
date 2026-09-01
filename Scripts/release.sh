@@ -289,8 +289,29 @@ do_archive() {
         if $DRY_RUN; then
             echo "  [dry-run] ${cmd[*]}"
         else
-            # Pipe through xcbeautify when available; fall back to raw xcodebuild.
-            "${cmd[@]}" | xcbeautify 2>/dev/null || "${cmd[@]}"
+            # Decide the formatter BEFORE building, never after.
+            #
+            # This was:
+            #     "${cmd[@]}" | xcbeautify 2>/dev/null || "${cmd[@]}"
+            # whose `||` was meant to mean "xcbeautify isn't installed, run raw".
+            # Under `set -o pipefail` it fires on ANY pipeline failure, so a
+            # genuine compile error re-ran the ENTIRE archive from scratch — you
+            # waited through a second full build (30-90 min) before seeing the
+            # diagnostic, and the retry's own failure is what finally surfaced.
+            # Probing for the binary up front expresses the actual intent and
+            # can never double-build.
+            local formatter=cat
+            if command -v xcbeautify >/dev/null 2>&1; then
+                formatter=xcbeautify
+            else
+                warn "xcbeautify not found — using unformatted output"
+            fi
+            # Tee the raw log: xcbeautify FILTERS OUT Run Script phase output, so
+            # a "Generate Frameworks" failure emits no `error:` line and is
+            # invisible in the formatted stream. Same rationale as build.yml.
+            local logfile="$ARCHIVES_DIR/xcodebuild-${label}.log"
+            info "Raw build log: $logfile"
+            "${cmd[@]}" 2>&1 | tee "$logfile" | "$formatter"
         fi
     fi
     $DRY_RUN || [[ -d "$archive" ]] || err "Archive not found: $archive (run without --no-build)"
