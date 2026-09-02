@@ -39,6 +39,14 @@ on:
     workflows: ["Build and Upload Provenance"]
     types: [completed]
     branches: [develop]
+  # Companion apps (iFly, iCube) live in their own repos and cannot trigger a
+  # workflow here directly. They POST a repository_dispatch after publishing a
+  # release so the combined feed picks the new build up immediately instead of
+  # waiting for the next Provenance build. Sending one needs a PAT with `repo`
+  # scope in THEIR repo (GITHUB_TOKEN cannot dispatch cross-repo) — see
+  # docs/sideload-feed.md.
+  repository_dispatch:
+    types: [companion-release]
   workflow_dispatch:
 
 permissions:
@@ -51,6 +59,7 @@ jobs:
     if: |
       github.event_name == 'release' ||
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'repository_dispatch' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     steps:
       - name: Checkout repository
@@ -77,18 +86,26 @@ jobs:
           # stores read as "this app has no releases" — silently emptying the
           # listing instead of leaving the last good feed in place. Failing the
           # job leaves the previously published JSON untouched.
-          ALL_RELEASES=""
-          for attempt in 1 2 3 4; do
-            if ALL_RELEASES=$(gh api "repos/${REPO}/releases?per_page=50" \
-                 --jq '[.[] | select(.draft == false)]'); then
-              break
-            fi
-            ALL_RELEASES=""
-            if [ "$attempt" -lt 4 ]; then
-              echo "gh api failed (attempt ${attempt}/4) — retrying in $((attempt * 5))s"
-              sleep $((attempt * 5))
-            fi
-          done
+          # Shared by this repo and the companion apps (iFly, iCube). Echoes a
+          # JSON array of non-draft releases, or nothing on persistent failure —
+          # callers decide whether that is fatal.
+          fetch_releases() {
+            local repo="$1" out=""
+            for attempt in 1 2 3 4; do
+              if out=$(gh api "repos/${repo}/releases?per_page=50" \
+                   --jq '[.[] | select(.draft == false)]'); then
+                printf '%s' "$out"; return 0
+              fi
+              out=""
+              if [ "$attempt" -lt 4 ]; then
+                echo "gh api ${repo} failed (attempt ${attempt}/4) — retrying in $((attempt * 5))s" >&2
+                sleep $((attempt * 5))
+              fi
+            done
+            return 1
+          }
+
+          ALL_RELEASES=$(fetch_releases "$REPO" || true)
 
           if [ -z "$ALL_RELEASES" ] || [ "$(echo "$ALL_RELEASES" | jq 'length')" -eq 0 ]; then
             echo "::error::Could not fetch a non-empty release list after 4 attempts — refusing to publish an empty feed."
@@ -235,6 +252,71 @@ jobs:
             fi
           fi
 
+          # ── Companion apps (iFly, iCube) ─────────────────────────────────
+          # One source URL should hand the user every app we ship, so the feed
+          # carries the sibling emulators too. AltStore keys apps by
+          # bundleIdentifier, so distinct bundle IDs coexist in one source with
+          # no collision.
+          #
+          # iFly's SOURCE repo is private, which does not matter here: only the
+          # download has to be public, and its pipeline already publishes IPAs
+          # to the public JoeMatt/iFly-releases (its RELEASES_REPO). We read
+          # release metadata from that public repo, never from the private one.
+          # GITHUB_TOKEN can read public repos, so no PAT is needed.
+          #
+          # Icons come from each product's own site rather than
+          # raw.githubusercontent, because the iFly source repo is private and
+          # its raw URLs would 401 for the stores.
+          #
+          # DEFENSIVE: a companion with no usable release yields an EMPTY array
+          # and its app entry is dropped entirely below. Emitting an entry with
+          # zero versions would make the stores show "no releases" for a real
+          # app; dropping it just means it is not listed yet. As of writing,
+          # JoeMatt/iFly-releases has no releases at all, so this path is live.
+          companion_versions() {
+            local repo="$1" releases
+            releases=$(fetch_releases "$repo" || true)
+            if [ -z "$releases" ]; then
+              echo "::warning::Could not read releases for ${repo} — omitting from feed"
+              echo '[]'; return 0
+            fi
+            # Asset picking is fussier than it looks. iCube's release carries
+            # THREE IPAs — iOS, tvOS, and iOS-TrollStore — and a naive
+            # `test("\\.ipa$")` grabs the TrollStore one, which installs by a
+            # completely different route and is wrong for AltStore/SideStore.
+            # So: exclude tvOS (no store support) and TrollStore (wrong
+            # installer), then prefer an extension-free build if one exists.
+            echo "$releases" | jq '[
+              .[] | . as $rel |
+              ([$rel.assets[]
+                | select(.name | test("\\.ipa$"; "i"))
+                | select(.name | test("tvOS"; "i") | not)
+                | select(.name | test("trollstore"; "i") | not)]) as $candidates |
+              (($candidates | map(select(.name | test("NoExtensions"; "i"))) | first)
+               // ($candidates | first)) as $ios |
+              select($ios != null) |
+              {
+                version: ($rel.tag_name | ltrimstr("v")),
+                date: (($rel.published_at // $rel.created_at) | .[0:10]),
+                localizedDescription: (
+                  (($rel.body // "") | gsub("\r"; ""))
+                  | split("\n")
+                  | map(select(test("^\\s*(\\|.*\\||[-*_]{3,})\\s*$") | not))
+                  | map(select(test("^\\s*```") | not))
+                  | map(sub("^\\s*#{1,6}\\s*"; ""))
+                  | map(sub("^\\s*>\\s?"; ""))
+                  | join("\n") | gsub("\n{3,}"; "\n\n") | .[0:2800]
+                ),
+                downloadURL: $ios.browser_download_url,
+                size: $ios.size
+              }
+            ]'
+          }
+
+          IFLY_VERSIONS=$(companion_versions "${IFLY_RELEASES_REPO:-JoeMatt/iFly-releases}")
+          ICUBE_VERSIONS=$(companion_versions "${ICUBE_RELEASES_REPO:-Provenance-Emu/iCube}")
+          echo "companion versions — iFly: $(echo "$IFLY_VERSIONS" | jq 'length'), iCube: $(echo "$ICUBE_VERSIONS" | jq 'length')"
+
           # ── News (carried over from the retired pages-repo generator) ─────
           NEWS=$(echo "$STABLE_RELEASES" | jq '[
             .[0:3][] | {
@@ -257,6 +339,8 @@ jobs:
           jq -n \
             --argjson stable_versions "$STABLE_VERSIONS" \
             --argjson alpha_versions "$ALPHA_VERSIONS" \
+            --argjson ifly_versions "$IFLY_VERSIONS" \
+            --argjson icube_versions "$ICUBE_VERSIONS" \
             --argjson news "$NEWS" \
             '{
               name: "Provenance Emulator",
@@ -306,8 +390,37 @@ jobs:
                       { name: "Camera", usageDescription: "Used to scan QR codes for importing game data." }
                     ]
                   }
+                },
+                {
+                  name: "iFly EMU",
+                  bundleIdentifier: "com.joemattiello.ifly",
+                  developerName: "Provenance-EMU",
+                  subtitle: "Sega Dreamcast, NAOMI & Atomiswave emulator",
+                  localizedDescription: "iFly EMU brings Dreamcast, NAOMI and Atomiswave emulation to iOS, built on flycast with a native interface, controller support, and high-resolution rendering.",
+                  iconURL: "https://ifly-emu.com/icon-1024.png",
+                  tintColor: "1E9BD8",
+                  screenshotURLs: [],
+                  versions: $ifly_versions
+                },
+                {
+                  name: "iCube",
+                  bundleIdentifier: "com.provenance-emu.icube",
+                  developerName: "Provenance-EMU",
+                  subtitle: "GameCube & Wii emulator for iOS",
+                  localizedDescription: "iCube is a GameCube and Wii emulator for iOS based on Dolphin, with native controller support, save states, and hardware-accelerated rendering.",
+                  iconURL: "https://icube-emu.com/icon-1024.png",
+                  tintColor: "5B8DEF",
+                  screenshotURLs: [],
+                  versions: $icube_versions
                 }
-              ],
+              ]
+              # Drop any app that has no usable version. An entry with an empty
+              # versions array makes AltStore/SideStore render a real app as
+              # "no releases available"; omitting it simply leaves it unlisted
+              # until its first IPA ships. Provenance stable/alpha always have
+              # versions by this point (the job aborts earlier otherwise), so in
+              # practice this only gates the companions.
+              | map(select((.versions | length) > 0)),
               news: $news
             }' > /tmp/feed-base.json
 
