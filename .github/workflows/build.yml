@@ -469,11 +469,50 @@ jobs:
           cp -pR "$APP_DIR/${{ matrix.APP_NAME }}.app" "Payload/${{ matrix.IPA_NAME }}.app"
           zip -r "${{ matrix.IPA_NAME }}.ipa" Payload
 
+          # ── Extension-free variant (iOS sideloading) ─────────────────────
+          # Every embedded .appex needs its OWN App ID, and a free Apple ID is
+          # capped at 10 App IDs per 7 days. The iOS app ships ~8 extensions
+          # (Widget, Spotlight x2, QuickLook, Thumbnail, ROM File Provider x2,
+          # Stickers), so a single AltStore/SideStore install burns almost the
+          # entire weekly quota and locks the user out. Stripping PlugIns
+          # takes that to ONE App ID.
+          #
+          # This deliberately REUSES the Payload we just zipped rather than
+          # archiving again -- it is a delete plus a zip, a couple of minutes,
+          # not another 90-minute build. Safe to do after fakesigning because
+          # we only remove files; nothing needs re-signing. These IPAs are
+          # unsigned anyway (ldid), and the real signing happens on-device at
+          # install time, which is exactly when App IDs get consumed.
+          #
+          # iOS only: AltStore and SideStore do not support tvOS, and the tvOS
+          # build's only extension is TopShelf (2 App IDs -> 1), so the variant
+          # would have no audience.
+          #
+          # Tradeoff for users: no widgets, no Spotlight indexing, no QuickLook
+          # previews, no stickers, and NO Files.app ROM provider -- importing
+          # goes through the built-in web server instead.
+          if [ "${{ matrix.sdk }}" = "iphoneos" ]; then
+            NOEXT="${{ matrix.IPA_NAME }}-NoExtensions"
+            echo "Stripping app extensions for $NOEXT.ipa"
+            for d in PlugIns Watch Extensions; do
+              target="Payload/${{ matrix.IPA_NAME }}.app/$d"
+              if [ -d "$target" ]; then
+                echo "  removing $d/: $(ls "$target" | tr '\n' ' ')"
+                rm -rf "$target"
+              fi
+            done
+            zip -qr "$NOEXT.ipa" Payload
+            echo "Built $NOEXT.ipa ($(du -h "$NOEXT.ipa" | cut -f1)) vs full $(du -h "${{ matrix.IPA_NAME }}.ipa" | cut -f1)"
+          fi
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: "${{ matrix.IPA_NAME }}-v${{ env.MARKETING_VERSION }}(${{ env.BUILD_NUMBER }}).ipa"
-          path: "${{ matrix.IPA_NAME }}.ipa"
+          # Glob, not a single path: iOS also produces
+          # <IPA_NAME>-NoExtensions.ipa, and the alpha release step attaches
+          # whatever *.ipa it finds under artifacts/.
+          path: "${{ matrix.IPA_NAME }}*.ipa"
           if-no-files-found: error
           retention-days: 90
 
@@ -628,6 +667,19 @@ jobs:
           [sideload feed](https://provenance-emu.com/apps.json) — or tap
           [Add to AltStore](https://provenance-emu.com/altstore) /
           [Add to SideStore](https://provenance-emu.com/sidestore) on your device to add it directly.
+
+          ### Which iOS IPA?
+
+          | File | App IDs used | Trade-off |
+          |---|---|---|
+          | \`Provenance-iOS-NoExtensions.ipa\` | **1** | No widgets, Spotlight, QuickLook, stickers, or Files.app ROM provider. Import ROMs via the built-in web server. |
+          | \`Provenance-iOS.ipa\` | **~9** | Everything included. |
+
+          A free Apple ID can register only **10 App IDs per 7 days**, and every
+          embedded extension consumes one — so the full build can use up almost
+          your entire weekly quota in a single install. **The sideload feed serves
+          the NoExtensions build** for that reason; grab the full IPA above if you
+          have a paid developer account or want the extensions.
 
           > This release is automatically updated on every successful develop push.
           FOOTEREOF

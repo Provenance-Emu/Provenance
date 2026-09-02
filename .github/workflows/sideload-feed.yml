@@ -185,7 +185,17 @@ jobs:
                 --arg build "$ALPHA_BUILD" \
                 --arg sha "$ALPHA_SHORT_SHA" '
                 . as $rel |
-                ([$rel.assets[] | select(.name | test("iOS\\.ipa$"; "i"))] | first) as $ios |
+                # Prefer the extension-free IPA for the sideload feed.
+                # Every embedded .appex consumes one of a free Apple ID's 10
+                # App IDs per 7 days, and the full build ships ~8 of them --
+                # enough that one install locks the user out for a week. The
+                # feed's audience IS free-account sideloaders, so they get the
+                # 1-App-ID variant by default; the full build with widgets,
+                # Spotlight and the Files provider stays on the GitHub release
+                # for anyone who wants it. Falls back to the full IPA for
+                # releases cut before this variant existed.
+                (([$rel.assets[] | select(.name | test("iOS-NoExtensions\\.ipa$"; "i"))] | first)
+                 // ([$rel.assets[] | select(.name | test("iOS\\.ipa$"; "i"))] | first)) as $ios |
                 if $ios == null then [] else
                   (($rel.published_at // $rel.created_at) | .[0:10]) as $date |
                   [{
