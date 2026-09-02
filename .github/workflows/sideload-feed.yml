@@ -203,10 +203,10 @@ jobs:
                 --arg sha "$ALPHA_SHORT_SHA" '
                 . as $rel |
                 # Prefer the extension-free IPA for the sideload feed.
-                # Every embedded .appex consumes one of a free Apple ID's 10
-                # App IDs per 7 days, and the full build ships ~8 of them --
+                # Every embedded .appex consumes one of the 10 App IDs a free
+                # Apple ID gets per 7 days, and the full build ships ~8 of them --
                 # enough that one install locks the user out for a week. The
-                # feed's audience IS free-account sideloaders, so they get the
+                # feed audience IS free-account sideloaders, so they get the
                 # 1-App-ID variant by default; the full build with widgets,
                 # Spotlight and the Files provider stays on the GitHub release
                 # for anyone who wants it. Falls back to the full IPA for
@@ -220,8 +220,8 @@ jobs:
                     buildVersion: $build,
                     marketingVersion: ($version + "-alpha." + ($date | gsub("-"; "")) + "." + $sha),
                     date: $date,
-                    # AltStore/SideStore render this as PLAIN TEXT in the app's
-                    # "what's new" panel -- they do not parse Markdown. Dumping
+                    # AltStore/SideStore render this as PLAIN TEXT in the app
+                    # what-is-new panel -- they do not parse Markdown. Dumping
                     # $rel.body verbatim (what this used to do) therefore showed
                     # a literal `|---|---|` table, a ``` fence, a > blockquote,
                     # and install instructions telling you to add the very
@@ -280,7 +280,7 @@ jobs:
               echo "::warning::Could not read releases for ${repo} — omitting from feed"
               echo '[]'; return 0
             fi
-            # Asset picking is fussier than it looks. iCube's release carries
+            # Asset picking is fussier than it looks. The iCube release carries
             # THREE IPAs — iOS, tvOS, and iOS-TrollStore — and a naive
             # `test("\\.ipa$")` grabs the TrollStore one, which installs by a
             # completely different route and is wrong for AltStore/SideStore.
