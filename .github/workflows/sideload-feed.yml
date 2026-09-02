@@ -123,7 +123,22 @@ jobs:
             {
               version: ($rel.tag_name | ltrimstr("v")),
               date: (($rel.published_at // $rel.created_at) | .[0:10]),
-              localizedDescription: (($rel.body // "") | gsub("\r"; "") | .[0:2800]),
+              # Same plain-text constraint as the alpha entry below: the store
+              # apps do not render Markdown. Stable bodies are hand-written
+              # changelogs rather than generated, so only strip the syntax that
+              # reads as garbage (heading hashes, table pipe-rows, blockquote
+              # markers, fences, horizontal rules) and keep the prose as-is.
+              localizedDescription: (
+                (($rel.body // "") | gsub("\r"; ""))
+                | split("\n")
+                | map(select(test("^\\s*(\\|.*\\||[-*_]{3,})\\s*$") | not))
+                | map(select(test("^\\s*```") | not))
+                | map(sub("^\\s*#{1,6}\\s*"; ""))
+                | map(sub("^\\s*>\\s?"; ""))
+                | join("\n")
+                | gsub("\n{3,}"; "\n\n")
+                | .[0:2800]
+              ),
               downloadURL: $ios.browser_download_url,
               size: $ios.size
             }
@@ -178,7 +193,30 @@ jobs:
                     buildVersion: $build,
                     marketingVersion: ($version + "-alpha." + ($date | gsub("-"; "")) + "." + $sha),
                     date: $date,
-                    localizedDescription: (($rel.body // "") | gsub("\r"; "") | .[0:2800]),
+                    # AltStore/SideStore render this as PLAIN TEXT in the app's
+                    # "what's new" panel -- they do not parse Markdown. Dumping
+                    # $rel.body verbatim (what this used to do) therefore showed
+                    # a literal `|---|---|` table, a ``` fence, a > blockquote,
+                    # and install instructions telling you to add the very
+                    # source you are already reading it in. Build the note
+                    # instead: header line, then the commit SUBJECTS with their
+                    # SHAs stripped, since the SHA is noise on a phone.
+                    localizedDescription: (
+                      (($rel.body // "") | gsub("\r"; "")) as $body |
+                      ($body | split("```")) as $parts |
+                      (if ($parts | length) > 1
+                       then ($parts[1] | split("\n")
+                             | map(select(length > 0))
+                             | map(sub("^[0-9a-f]{7,40}\\s+"; ""))
+                             | map("• " + .))
+                       else [] end) as $commits |
+                      ("Alpha build " + $sha + " · " + $date
+                       + (if ($commits | length) > 0
+                          then "\n\nChanges in this build:\n" + ($commits | join("\n"))
+                          else "" end)
+                       + "\n\nInstalls alongside the stable app. Built automatically from develop — expect rough edges.")
+                      | .[0:2800]
+                    ),
                     downloadURL: $ios.browser_download_url,
                     size: $ios.size,
                     minOSVersion: "17.0"
@@ -221,7 +259,7 @@ jobs:
                   developerName: "Provenance-EMU",
                   subtitle: "Multi-system retro emulator for iOS & tvOS",
                   localizedDescription: "Provenance supports 60+ retro gaming systems including NES, SNES, N64, Genesis, PlayStation, GBA, and many more. Features iCloud sync, controller skins, RetroAchievements, and a beautiful native UI.",
-                  iconURL: "https://raw.githubusercontent.com/Provenance-Emu/Provenance/develop/Provenance/Assets.xcassets/AppIcon.appiconset/appicon-1024.png",
+                  iconURL: "https://raw.githubusercontent.com/Provenance-Emu/Provenance/develop/Provenance/Resources/Assets.xcassets/AppIcon.appiconset/iTunesArtwork%402x.png",
                   tintColor: "8A2BE2",
                   screenshotURLs: [],
                   versions: $stable_versions,
@@ -243,7 +281,7 @@ jobs:
                   developerName: "Provenance-EMU",
                   subtitle: "Latest dev builds - test new features early",
                   localizedDescription: "Alpha builds of Provenance from the develop branch. These builds include the latest features and fixes but may contain bugs. Install alongside the stable version to test new features without losing your stable install.\n\nSupports 60+ retro gaming systems including NES, SNES, N64, Genesis, PlayStation, GBA, and many more.",
-                  iconURL: "https://raw.githubusercontent.com/Provenance-Emu/Provenance/develop/Provenance/Assets.xcassets/AppIcon.appiconset/appicon-1024.png",
+                  iconURL: "https://raw.githubusercontent.com/Provenance-Emu/Provenance/develop/Provenance/Resources/Assets.xcassets/AppIcon.appiconset/iTunesArtwork%402x.png",
                   tintColor: "FF6B35",
                   screenshotURLs: [],
                   versions: $alpha_versions,
