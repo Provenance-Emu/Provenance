@@ -253,69 +253,41 @@ jobs:
           fi
 
           # ── Companion apps (iFly, iCube) ─────────────────────────────────
-          # One source URL should hand the user every app we ship, so the feed
-          # carries the sibling emulators too. AltStore keys apps by
-          # bundleIdentifier, so distinct bundle IDs coexist in one source with
-          # no collision.
+          # MERGE each product's OWN AltStore feed rather than deriving an entry
+          # from its GitHub releases. Deriving was wrong in ways that mattered:
           #
-          # iFly's SOURCE repo is private, which does not matter here: only the
-          # download has to be public, and its pipeline already publishes IPAs
-          # to the public JoeMatt/iFly-releases (its RELEASES_REPO). We read
-          # release metadata from that public repo, never from the private one.
-          # GITHUB_TOKEN can read public repos, so no PAT is needed.
+          #   * iCube does not publish builds to GitHub releases at all — its
+          #     IPAs live on icube-emu.com/builds-versioned/. The newest release
+          #     here is 4.1.0beta5 (Sept 2025) while its own feed carries
+          #     1.0.0-beta9-ios (Aug 2026). We were advertising a year-old build.
+          #   * Bundle identifiers were guessed and BOTH were wrong
+          #     (com.provenance-emu.icube vs com.joemattiello.iCube;
+          #     com.joemattiello.ifly vs com.provenance.ifly). AltStore matches
+          #     installs on bundleIdentifier, so a wrong value breaks updates.
+          #   * Their feeds carry screenshots (5 and 8), real subtitles and tint
+          #     colours; a derived entry had none of that.
           #
-          # Icons come from each product's own site rather than
-          # raw.githubusercontent, because the iFly source repo is private and
-          # its raw URLs would 401 for the stores.
-          #
-          # DEFENSIVE: a companion with no usable release yields an EMPTY array
-          # and its app entry is dropped entirely below. Emitting an entry with
-          # zero versions would make the stores show "no releases" for a real
-          # app; dropping it just means it is not listed yet. As of writing,
-          # JoeMatt/iFly-releases has no releases at all, so this path is live.
-          companion_versions() {
-            local repo="$1" releases
-            releases=$(fetch_releases "$repo" || true)
-            if [ -z "$releases" ]; then
-              echo "::warning::Could not read releases for ${repo} — omitting from feed"
+          # The upstream feed is authoritative for its own app, so take its
+          # apps[] entries verbatim. A fetch failure or unparseable body yields
+          # an empty list and a warning — never a failed job, and never a
+          # silently emptied listing.
+          fetch_companion_apps() {
+            local url="$1" label="$2" body
+            if ! body=$(curl -fsSL --max-time 30 "$url" 2>/dev/null); then
+              echo "::warning::Could not fetch ${label} feed (${url}) — omitting from combined source" >&2
               echo '[]'; return 0
             fi
-            # Asset picking is fussier than it looks. The iCube release carries
-            # THREE IPAs — iOS, tvOS, and iOS-TrollStore — and a naive
-            # `test("\\.ipa$")` grabs the TrollStore one, which installs by a
-            # completely different route and is wrong for AltStore/SideStore.
-            # So: exclude tvOS (no store support) and TrollStore (wrong
-            # installer), then prefer an extension-free build if one exists.
-            echo "$releases" | jq '[
-              .[] | . as $rel |
-              ([$rel.assets[]
-                | select(.name | test("\\.ipa$"; "i"))
-                | select(.name | test("tvOS"; "i") | not)
-                | select(.name | test("trollstore"; "i") | not)]) as $candidates |
-              (($candidates | map(select(.name | test("NoExtensions"; "i"))) | first)
-               // ($candidates | first)) as $ios |
-              select($ios != null) |
-              {
-                version: ($rel.tag_name | ltrimstr("v")),
-                date: (($rel.published_at // $rel.created_at) | .[0:10]),
-                localizedDescription: (
-                  (($rel.body // "") | gsub("\r"; ""))
-                  | split("\n")
-                  | map(select(test("^\\s*(\\|.*\\||[-*_]{3,})\\s*$") | not))
-                  | map(select(test("^\\s*```") | not))
-                  | map(sub("^\\s*#{1,6}\\s*"; ""))
-                  | map(sub("^\\s*>\\s?"; ""))
-                  | join("\n") | gsub("\n{3,}"; "\n\n") | .[0:2800]
-                ),
-                downloadURL: $ios.browser_download_url,
-                size: $ios.size
-              }
-            ]'
+            if ! printf '%s' "$body" | jq -e '.apps' >/dev/null 2>&1; then
+              echo "::warning::${label} feed at ${url} has no .apps array — omitting" >&2
+              echo '[]'; return 0
+            fi
+            printf '%s' "$body" | jq -c '[.apps[]? | select((.versions // []) | length > 0)]'
           }
 
-          IFLY_VERSIONS=$(companion_versions "${IFLY_RELEASES_REPO:-JoeMatt/iFly-releases}")
-          ICUBE_VERSIONS=$(companion_versions "${ICUBE_RELEASES_REPO:-Provenance-Emu/iCube}")
-          echo "companion versions — iFly: $(echo "$IFLY_VERSIONS" | jq 'length'), iCube: $(echo "$ICUBE_VERSIONS" | jq 'length')"
+          IFLY_APPS=$(fetch_companion_apps "${IFLY_FEED_URL:-https://ifly-emu.com/api/altstore}" iFly)
+          ICUBE_APPS=$(fetch_companion_apps "${ICUBE_FEED_URL:-https://icube-emu.com/api/altstore}" iCube)
+          COMPANION_APPS=$(jq -c -n --argjson a "$IFLY_APPS" --argjson b "$ICUBE_APPS" '$a + $b')
+          echo "companion apps merged: $(printf '%s' "$COMPANION_APPS" | jq -r '[.[].name] | join(", ") | if . == "" then "(none)" else . end')"
 
           # ── News (carried over from the retired pages-repo generator) ─────
           NEWS=$(echo "$STABLE_RELEASES" | jq '[
@@ -339,8 +311,7 @@ jobs:
           jq -n \
             --argjson stable_versions "$STABLE_VERSIONS" \
             --argjson alpha_versions "$ALPHA_VERSIONS" \
-            --argjson ifly_versions "$IFLY_VERSIONS" \
-            --argjson icube_versions "$ICUBE_VERSIONS" \
+            --argjson companion_apps "$COMPANION_APPS" \
             --argjson news "$NEWS" \
             '{
               name: "Provenance Emulator",
@@ -390,38 +361,10 @@ jobs:
                       { name: "Camera", usageDescription: "Used to scan QR codes for importing game data." }
                     ]
                   }
-                },
-                {
-                  name: "iFly EMU",
-                  bundleIdentifier: "com.joemattiello.ifly",
-                  developerName: "Provenance-EMU",
-                  subtitle: "Sega Dreamcast, NAOMI & Atomiswave emulator",
-                  localizedDescription: "iFly EMU brings Dreamcast, NAOMI and Atomiswave emulation to iOS, built on flycast with a native interface, controller support, and high-resolution rendering.",
-                  iconURL: "https://ifly-emu.com/icon-1024.png",
-                  tintColor: "1E9BD8",
-                  screenshotURLs: [],
-                  versions: $ifly_versions
-                },
-                {
-                  name: "iCube",
-                  # MUST equal the IPA's CFBundleIdentifier or the stores
-                  # will not match installs/updates. iCube's
-                  # Config/BundleIdentifier.xcconfig composes
-                  # DOL_PBID_ORGANIZATION_IDENTIFIER (com.joemattiello) +
-                  # DOL_PBID_APP_NAME (iCube), and Release (Non-Jailbroken) —
-                  # the build this feed serves — is plain com.joemattiello.iCube.
-                  # (Note the capital C; TrollStore would be .iCube-ts, which
-                  # this feed deliberately does not serve.)
-                  bundleIdentifier: "com.joemattiello.iCube",
-                  developerName: "Provenance-EMU",
-                  subtitle: "GameCube & Wii emulator for iOS",
-                  localizedDescription: "iCube is a GameCube and Wii emulator for iOS based on Dolphin, with native controller support, save states, and hardware-accelerated rendering.",
-                  iconURL: "https://icube-emu.com/icon-1024.png",
-                  tintColor: "5B8DEF",
-                  screenshotURLs: [],
-                  versions: $icube_versions
                 }
               ]
+              # Upstream entries appended verbatim (see fetch_companion_apps).
+              + $companion_apps
               # Drop any app that has no usable version. An entry with an empty
               # versions array makes AltStore/SideStore render a real app as
               # "no releases available"; omitting it simply leaves it unlisted
