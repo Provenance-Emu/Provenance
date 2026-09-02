@@ -29,7 +29,7 @@
 [submodule "Cores/Dolphin/dolphin-ios"]
 	path = Cores/Dolphin/dolphin-ios
 	url = https://JoeMatt@github.com/Provenance-Emu/dolphin-ios-jitless.git
-	branch = feature/icube-testflight
+	branch = develop
 [submodule "Cores/DuckStation/duckstation"]
 	path = Cores/DuckStation/duckstation
 	url = https://github.com/Provenance-Emu/duckstation.git
