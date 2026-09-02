@@ -404,7 +404,15 @@ jobs:
                 },
                 {
                   name: "iCube",
-                  bundleIdentifier: "com.provenance-emu.icube",
+                  # MUST equal the IPA's CFBundleIdentifier or the stores
+                  # will not match installs/updates. iCube's
+                  # Config/BundleIdentifier.xcconfig composes
+                  # DOL_PBID_ORGANIZATION_IDENTIFIER (com.joemattiello) +
+                  # DOL_PBID_APP_NAME (iCube), and Release (Non-Jailbroken) —
+                  # the build this feed serves — is plain com.joemattiello.iCube.
+                  # (Note the capital C; TrollStore would be .iCube-ts, which
+                  # this feed deliberately does not serve.)
+                  bundleIdentifier: "com.joemattiello.iCube",
                   developerName: "Provenance-EMU",
                   subtitle: "GameCube & Wii emulator for iOS",
                   localizedDescription: "iCube is a GameCube and Wii emulator for iOS based on Dolphin, with native controller support, save states, and hardware-accelerated rendering.",
