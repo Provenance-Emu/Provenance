@@ -124,8 +124,18 @@ if ! $DRY_RUN && ! $NO_BUILD; then
     if [[ -n "$DIRTY" ]]; then
         warn "Working tree has uncommitted changes:"
         echo "$DIRTY"
-        read -rp "  Continue anyway? [y/N] " yn
-        [[ "${yn,,}" == y ]] || exit 1
+        # Non-interactive (CI) has no stdin to answer with: `read` fails
+        # immediately, leaving $yn empty, and the script exited 1 before doing
+        # any work. That made this unrunnable from Actions. A CI checkout is
+        # reproducible from its ref by construction, and the usual "dirt" there
+        # is submodule bookkeeping rather than edited sources, so warn loudly
+        # and continue instead of aborting.
+        if [[ ! -t 0 ]]; then
+            warn "Non-interactive shell — continuing despite the dirty tree."
+        else
+            read -rp "  Continue anyway? [y/N] " yn
+            [[ "${yn,,}" == y ]] || exit 1
+        fi
     fi
 fi
 
