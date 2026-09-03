@@ -317,7 +317,7 @@ jobs:
               name: "Provenance Emulator",
               identifier: "com.provenance-emu.provenance.altstore",
               sourceURL: "https://provenance-emu.com/apps.json",
-              apps: [
+              apps: ([
                 {
                   name: "Provenance",
                   bundleIdentifier: "com.provenance-emu.provenance",
@@ -371,7 +371,7 @@ jobs:
               # until its first IPA ships. Provenance stable/alpha always have
               # versions by this point (the job aborts earlier otherwise), so in
               # practice this only gates the companions.
-              | map(select((.versions | length) > 0)),
+              | map(select((.versions | length) > 0))),
               news: $news
             }' > /tmp/feed-base.json
 
