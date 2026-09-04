@@ -153,7 +153,7 @@ public struct ZipBackend: ArchiveExtractorBackend, ArchiveListingBackend, Archiv
                         withIntermediateDirectories: true
                     )
                     if let entryData = entry.data {
-                        try entryData.write(to: fullPath, options: [.atomic, .noFileProtection])
+                        try entryData.write(to: fullPath, options: [.noFileProtection])
                     }
                     onFile(fullPath)
                 }
