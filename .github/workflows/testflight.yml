@@ -9,8 +9,9 @@ name: TestFlight
 #     an in-flight upload.
 #
 # NOT on every develop push on purpose: each run consumes an App Store Connect
-# build number and processing slot, and develop moves fast. Trigger it
-# explicitly, or uncomment the schedule below for a nightly.
+# build number and processing slot, and develop moves fast. It runs nightly
+# instead, so TestFlight is never more than a day behind develop, and can be
+# triggered explicitly at any time.
 
 on:
   workflow_dispatch:
@@ -28,8 +29,13 @@ on:
   push:
     tags:
       - 'v*'
-  # schedule:
-  #   - cron: '0 9 * * *'   # 09:00 UTC nightly
+  # Nightly, so TestFlight is never more than a day stale without spending an
+  # App Store Connect build number on every develop push (see the note above).
+  # A scheduled run archives whatever develop points at when it fires; an
+  # unchanged tree still uploads, because the build number is epoch-derived and
+  # App Store Connect accepts it as a new build rather than a redundant one.
+  schedule:
+    - cron: '0 9 * * *'   # 09:00 UTC
 
 concurrency:
   group: testflight-${{ github.ref }}
