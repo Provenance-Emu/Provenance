@@ -111,6 +111,23 @@ jobs:
       - name: Install tooling
         run: brew install xcbeautify 2>/dev/null || true
 
+      # The archive embeds PVLookup's libretro cheat database. build.yml
+      # generates it before archiving; this workflow did not, so the first run
+      # that got past the git guard died 51 minutes in with
+      #   error: lstat(.../libretro_cheats.sqlite.zip): No such file or directory
+      # Same cache key as build.yml so the two share one entry.
+      - name: Cache libretro cheat database
+        id: cache-cheatdb
+        uses: actions/cache@v4
+        with:
+          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
+          key: cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+
+      - name: Generate libretro cheat database
+        if: steps.cache-cheatdb.outputs.cache-hit != 'true'
+        run: |
+          PVLookup/Scripts/generate_cheatdb_if_needed.sh
+
       # Automatic signing needs a distribution certificate in a keychain. The
       # PROFILES are fetched by -allowProvisioningUpdates using the ASC API key
       # (release.sh passes it to the archive step), so only the cert is imported
