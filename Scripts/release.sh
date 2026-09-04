@@ -337,10 +337,17 @@ do_appstore_upload() {
     info "Build number $BUILD_NUMBER (forced — CLI export won't auto-increment)."
     local keypath; resolve_asc_key; keypath="$_asc_key_path"
     run mkdir -p "$exportdir"
+    # -allowProvisioningUpdates is required here as well as on the archive, not
+    # just the API key. ExportOptions-AppStore.plist sets signingStyle=automatic,
+    # so export must resolve a profile per bundle id; without the flag xcodebuild
+    # only consults profiles already installed on the machine, and a fresh runner
+    # has none. That failed the upload after both archives had succeeded:
+    #   error: exportArchive No profiles for 'org.provenance-emu.provenance' were found
     run xcodebuild -exportArchive \
         -archivePath "$archive" \
         -exportPath "$exportdir" \
         -exportOptionsPlist "$EXPORT_OPTIONS_APPSTORE" \
+        -allowProvisioningUpdates \
         -authenticationKeyPath "$keypath" \
         -authenticationKeyID "$ASC_API_KEY_ID" \
         -authenticationKeyIssuerID "$ASC_API_ISSUER_ID" \
