@@ -47,11 +47,40 @@ env:
   SWIFT_PACKAGE_ALLOW_WRITING_TO_DIRECTORY: ${{ github.workspace }}
 
 jobs:
+  # Resolve which platforms this run should archive. A job-level `if` cannot see
+  # the matrix context, so the selection is computed here and fed to the matrix.
+  plan:
+    name: Select platforms
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.pick.outputs.matrix }}
+    steps:
+      - id: pick
+        run: |
+          case "${{ inputs.platform || (github.event_name == 'schedule' && 'ios' || 'all') }}" in
+            ios)  M='["ios"]' ;;
+            tvos) M='["tvos"]' ;;
+            *)    M='["ios","tvos"]' ;;
+          esac
+          echo "matrix=$M" >> "$GITHUB_OUTPUT"
+          echo "archiving: $M"
+
   testflight:
-    name: Archive and upload to TestFlight
+    name: Archive and upload to TestFlight (${{ matrix.platform }})
+    needs: plan
     runs-on: 'macos-26'
-    # Matches build.yml: a cold archive has measured >100 min, and this job
-    # archives BOTH platforms when platform=all.
+    # One platform per job. Previously a single job archived both in sequence,
+    # and the second one — tvOS — died at the very end with exit 65 and no
+    # diagnostic (run 33841167021), while iOS alone (33851969129) and tvOS alone
+    # (33942015860) both succeed. Two cold archives of 60+ cores in one job is
+    # the only condition under which it fails, so give each its own runner, the
+    # way build.yml already does with its iphoneos/appletvos matrix. Also halves
+    # wall clock, and a tvOS failure can no longer take a healthy iOS build with it.
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    # A single cold archive has measured >100 min.
     timeout-minutes: 300
     steps:
       - name: Checkout code
@@ -191,7 +220,7 @@ jobs:
           # archived and uploaded cleanly every time, and a nightly defaulting to
           # "all" would fail on tvOS and mask a healthy iOS build. An explicit
           # workflow_dispatch still honours whatever platform you pick.
-          ARGS=(--channel testflight --platform "${{ inputs.platform || (github.event_name == 'schedule' && 'ios' || 'all') }}")
+          ARGS=(--channel testflight --platform "${{ matrix.platform }}")
           if [ -n "${{ inputs.version }}" ]; then
             ARGS+=(--version "${{ inputs.version }}")
           fi
@@ -219,7 +248,8 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: testflight-log
+          # Per-platform: upload-artifact@v4 rejects two jobs uploading one name.
+          name: testflight-log-${{ matrix.platform }}
           path: /tmp/testflight.log
           retention-days: 3
 
