@@ -183,7 +183,15 @@ jobs:
           ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
         run: |
           set -o pipefail
-          ARGS=(--channel testflight --platform "${{ inputs.platform || 'all' }}")
+          # Scheduled runs are iOS-only until the tvOS archive is fixed. tvOS
+          # failed run 33841167021 with exit 65 and no diagnostic at all — no
+          # ": error:" line and no "build commands failed" block — dying in its
+          # final Generate/Validate Frameworks script phases. It archived fine in
+          # the run before on identical code, so it is intermittent. iOS has
+          # archived and uploaded cleanly every time, and a nightly defaulting to
+          # "all" would fail on tvOS and mask a healthy iOS build. An explicit
+          # workflow_dispatch still honours whatever platform you pick.
+          ARGS=(--channel testflight --platform "${{ inputs.platform || (github.event_name == 'schedule' && 'ios' || 'all') }}")
           if [ -n "${{ inputs.version }}" ]; then
             ARGS+=(--version "${{ inputs.version }}")
           fi
