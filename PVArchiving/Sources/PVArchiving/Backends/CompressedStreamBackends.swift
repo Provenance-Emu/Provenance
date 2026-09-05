@@ -35,7 +35,7 @@ func extractCompressedStream(
                 guard fullPath.path.hasPrefix(destination.path) else { return }
                 try FileManager.default.createDirectory(at: fullPath.deletingLastPathComponent(), withIntermediateDirectories: true)
                 if let itemData = item.data {
-                    try itemData.write(to: fullPath, options: [.atomic, .noFileProtection])
+                    try itemData.write(to: fullPath, options: [.noFileProtection])
                 }
                 yield(fullPath)
             }
@@ -44,7 +44,7 @@ func extractCompressedStream(
     } else {
         let name = originalURL.deletingPathExtension().lastPathComponent
         let fullPath = destination.appendingPathComponent(name)
-        try data.write(to: fullPath, options: [.atomic, .noFileProtection])
+        try data.write(to: fullPath, options: [.noFileProtection])
         yield(fullPath)
         progress(1.0)
     }
