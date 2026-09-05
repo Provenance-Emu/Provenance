@@ -1,1 +1,0 @@
-- Arcade on-screen Select button showed the placeholder label `CBDC`; it now reads **Coin**, matching what the input actually does (on arcade hardware there is no separate Select pin — the same line inserts a credit). Affects MAME, CPS1/2/3 and Neo Geo, and shows up on the on-screen controls, the default DeltaSkin and the in-game input legend.
