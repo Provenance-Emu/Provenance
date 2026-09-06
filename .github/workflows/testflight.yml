@@ -163,10 +163,23 @@ jobs:
         run: |
           PVLookup/Scripts/generate_cheatdb_if_needed.sh
 
-      # Automatic signing needs a distribution certificate in a keychain. The
+      # Automatic signing needs TWO identities in the keychain, not one. The
       # PROFILES are fetched by -allowProvisioningUpdates using the ASC API key
-      # (release.sh passes it to the archive step), so only the cert is imported
+      # (release.sh passes it to the archive step), so only certs are imported
       # here — no .mobileprovision juggling.
+      #
+      # Why two: `xcodebuild archive` signs the ARCHIVE with an Apple Development
+      # identity; only -exportArchive re-signs with Distribution. With just the
+      # distribution cert present, -allowProvisioningUpdates minted a fresh
+      # Development certificate on EVERY run, whose private key died with the
+      # runner. 19 of those corpses accumulated between Sept 2–5 2026 across this
+      # repo and iCube until Apple's per-account cap hit:
+      #   error: Choose a certificate to revoke. Your account has reached the
+      #          maximum number of certificates.
+      # DEV_CERT_P12 is a Development identity whose key we keep (minted with
+      # Scripts/asc_certs.py create), so xcodebuild reuses it instead of minting.
+      # Certificates are team-wide: the same .p12 is set on iCube.
+      #
       # Secret names match what this repo ALREADY has (CERT_P12 / P12_PASS), rather
       # than inventing BUILD_CERTIFICATE_BASE64 / P12_PASSWORD, which were never set
       # and would have failed the first real run for no reason.
@@ -175,34 +188,44 @@ jobs:
       # throwaway keychain created and deleted inside this one job, so a stored
       # secret bought nothing and was a third thing to configure. Generated per-run
       # instead, which is also stronger than a fixed reused value.
-      - name: Import signing certificate
+      - name: Import signing certificates
         env:
           CERT_P12: ${{ secrets.CERT_P12 }}
           P12_PASS: ${{ secrets.P12_PASS }}
+          DEV_CERT_P12: ${{ secrets.DEV_CERT_P12 }}
+          DEV_P12_PASS: ${{ secrets.DEV_P12_PASS }}
         run: |
           set -euo pipefail
-          if [ -z "${CERT_P12}" ]; then
-            echo "::error::CERT_P12 secret is not set — cannot sign."
-            exit 1
-          fi
+          for v in CERT_P12 DEV_CERT_P12; do
+            [ -n "${!v}" ] || { echo "::error::$v secret is not set — cannot sign. See Scripts/asc_certs.py."; exit 1; }
+          done
           KEYCHAIN_PASSWORD="$(openssl rand -base64 24)"
           echo "::add-mask::$KEYCHAIN_PASSWORD"
-          CERT_PATH="$RUNNER_TEMP/dist.p12"
           KEYCHAIN="$RUNNER_TEMP/signing.keychain-db"
-          echo -n "$CERT_P12" | base64 --decode -o "$CERT_PATH"
           security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
           security set-keychain-settings -lut 21600 "$KEYCHAIN"
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
-          security import "$CERT_PATH" -P "$P12_PASS" -A \
-            -t cert -f pkcs12 -k "$KEYCHAIN"
-          # Let codesign use the key without an interactive prompt.
+          import_p12() {  # $1 = base64 p12, $2 = password
+            local path="$RUNNER_TEMP/import.p12"
+            echo -n "$1" | base64 --decode -o "$path"
+            security import "$path" -P "$2" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+            rm -f "$path"
+          }
+          import_p12 "$CERT_P12" "$P12_PASS"
+          import_p12 "$DEV_CERT_P12" "$DEV_P12_PASS"
+          # Let codesign use the keys without an interactive prompt.
           security set-key-partition-list -S apple-tool:,apple:,codesign: \
             -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN" >/dev/null
-          # Prepend to the search list so xcodebuild finds the identity.
+          # Prepend to the search list so xcodebuild finds the identities.
           security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
-          rm -f "$CERT_PATH"
           echo "Signing identities available:"
           security find-identity -v -p codesigning "$KEYCHAIN"
+          # Both must be present, or the archive step silently mints a new
+          # Development cert and we are back to filling the account cap.
+          for want in "Apple Distribution" "Apple Development"; do
+            security find-identity -v -p codesigning "$KEYCHAIN" | grep -q "$want" \
+              || { echo "::error::no '$want' identity after import"; exit 1; }
+          done
 
       - name: Archive and upload
         env:
