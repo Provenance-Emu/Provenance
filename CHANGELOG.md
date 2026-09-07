@@ -65,8 +65,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Gambatte rcheevos integration** — Wire GB/GBC native RetroAchievements via the shared PVRcheevos SPM package (CRcheevos); enable HAVE_RCHEEVOS in PVGambatteBridge; implement full rc_client lifecycle with NSURLSession server call and credential-based login. (#3516)
 - **Multi-Select Mode** — Tap "Select" in the game library title bar to enter multi-select mode; game tiles show circle badges and a bottom toolbar tracks the selection count (#3514)
 - **mGBA RetroAchievements Integration** — Wires mGBA's native rcheevos support (`src/core/achievements.c`) to Provenance's achievement delegate system, exposing GBA EWRAM/IWRAM/SRAM and GB/GBC WRAM/VRAM memory regions, implementing hardcore mode save-state blocking, and enabling `achievementsActive` state tracking (#3513)
+- **DS Dual-Screen Metal Rendering** — Nintendo DS games with a DeltaSkin active now render both screens as GPU-side sub-rectangle blits in a single Metal render pass; the combined 256×384 DS framebuffer is split into top (rows 0–191) and bottom (rows 192–383) viewports that match the skin's screen layout, supporting portrait (stacked) and landscape (side-by-side) configurations (#3509)
 - **Per-Game Mouse Input Override** — New "Mouse Input" picker in the Game Info screen lets users override automatic mouse detection for individual games (Auto / Always On / Always Off). Only shown for systems that support mouse input. (#3507)
 - **Saturn Light Gun Support** — Mednafen Saturn core now implements `LightGunResponder` for the Sega Virtua Gun and Konami Stunner peripherals. Touch/mouse input is mapped to Mednafen's internal pointer-coordinate space; trigger, start, and off-screen reload buttons are fully wired. Supported games include Virtua Cop 1/2, House of the Dead, Area 51, Crypt Killer, Gunblade NY, and Die Hard Trilogy (#3504)
+- **DS Dual-Screen Touch Coordinate Translation** — Tapping the bottom-screen viewport in a Nintendo DS dual-screen skin now sends correctly translated hardware coordinates (0–255 x, 0–191 y) to the emulator core via `PVDSSystemResponderClient`. Supports touch began, moved, and ended for melonDS, DeSmuME 2015, and RetroArch DS cores in both portrait (stacked) and landscape (side-by-side) layouts (#3503)
 - **Console Layout Variant Selector** — Choose the controller layout for systems with multiple peripherals: Genesis 3-Button vs 6-Button Pad, Wii Wiimote / Wiimote+Nunchuck / Classic Controller / Classic Controller Pro, Atari 5200 Joystick+Keypad vs Joystick Only, NES Standard vs Zapper. Selection persists per system in Settings → Systems (#3501)
 - **Genesis Light Gun Support** — Implements `LightGunResponder` for Genesis Plus GX, enabling touch-screen and GCMouse aiming for Sega Menacer, Konami Justifiers, and Sega Light Phaser peripherals. Gun type is auto-detected from ROM CRC; no manual game list required (#3499)
 - **Light Gun Settings UI** — New "Light Gun" section in the Game Info screen for NES, SNES, Genesis, PlayStation, Saturn, MAME, Atari 2600, and any system registered via `LightGunSystemRegistry`. Per-game crosshair style (dot / crosshair / off), aim mode (auto / enabled / disabled), and sensitivity override with global fallback (#3497)
@@ -116,6 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dolphin Netplay Bridge** — `PVDolphinCore` now conforms to `PVNetplayCapable`, enabling GameCube and Wii network play sessions via Dolphin's built-in netplay subsystem (direct IP and traversal relay via `stun.dolphin-emu.org`) (#3385)
 - **CompanionControllerCapable protocol** — `PVCoreBridge` protocol enabling emulator cores to receive companion controller input events (`CompanionInputEvent`). Prerequisite for all per-core companion controller integrations (#2702–#2706) (#3382)
 - **Gambatte RetroAchievements integration** — wired GB/GBC WRAM and VRAM memory regions into `CoreRetroAchievements` so the achievement runtime can evaluate conditions; added `rc_client` lifecycle management (init on ROM load, `do_frame` each emulated frame, unload on stop) behind `HAVE_RCHEEVOS` compile flag ready for activation once the `PVRcheevos` package lands (#3379)
+- **DS Dual-Screen Skin Support (Phase 1)** — Enable Delta skin support for melonDS, desmume2015, and PVThinLibretroCore DS system; lays the groundwork for NDS dual-screen portrait/landscape layouts using DefaultDeltaSkin. Full per-screen sub-rectangle rendering requires the Metal work tracked in #3373. (#3377)
 - **RetroAchievements stubs — snes9x, VBA-M, Stella, FCEU, DuckStation** — `CoreRetroAchievements` conformance stubs for five more native cores, enabling achievement tracking once the shared rcheevos SPM target lands. (#3372)
 - **Light Gun Touch Gestures** — Single-finger tap fires the trigger, drag aims, two-finger tap triggers offscreen reload (PSX Guncon / SNES Super Scope), long press fires the AuxA button, and double tap fires the start button; gestures activate only when the running game supports a light gun peripheral (#3371)
 - **PSX GunCon Light Gun Support** — Mednafen PSX core now implements `LightGunResponder` for Namco GunCon games (Time Crisis, Point Blank, Lethal Enforcers, etc.); touch/mouse input is mapped to PSX screen space and wired to Mednafen's GunCon peripheral API including trigger, A/B aux buttons, and off-screen reload (#3367)
@@ -246,6 +249,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Staleness warning** — `get-modules.sh` now emits a build-time warning when `pinned_date` is more than 30 days old, prompting developers to run the update checker.
 
 ### Fixed
+- **Supported-systems documentation** — README no longer credits Apple II to the Atari800 core (it's MAME) and now flags it as absent from the App Store build; added the missing Atari 8-bit (400/800/XL/XE) entry; corrected the Sony and Atari section counts; clarified that PS2 ships in the App Store binary but only runs with JIT. (#3674)
 - **Insert Coin tile unresponsive in MAME/CPS1/CPS2/CPS3** — the pause menu fully paused the core, so the coin press/release both landed while `retro_run()` was never executing and the libretro core never sampled it. The tile now briefly resumes emulation to let the press register, then re-pauses. (#3644)
 - **Mouse Input Settings (tvOS)** — added `RetroSettingsBackground` so the view matches the retrowave styling of all other settings subpages. (#3599)
 - **PSP flash0/font auto-seeding** — Thin libretro wrapper now seeds PPSSPP font files from the app bundle into `System/PSP/font/` on every core launch, matching `PPSSPPGameCore.mm` behavior and fixing tvOS cache-purge recovery. (#3583)
@@ -505,6 +509,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ArtworkMatchingService** — Extracted shared artwork search fallback logic into a new actor used by both the import pipeline and the manual batch artwork matching UI, reducing duplicate code and keeping fallback behaviour consistent across the app (#3524)
 - **JIT entitlement removed from App Store builds** — `com.apple.developer.kernel.allow-jit` is not permitted in App Store submissions; removed from `Provenance.entitlements`, `Provenance-AppStore.entitlements`, and `Provenance-Mini.entitlements`. App Store users continue to use debugger-attach, TrollStore, StikDebug, AltJIT, or JitStreamer paths. The JB entitlement variant retains the entitlement for sideloaded/jailbroken installs. (#3521)
 - **Mupen64Plus iOS Patch Documentation** — Added `PATCHES.md` documenting all iOS/tvOS-specific modifications to the vendored Mupen64Plus source, including vidext, audio resampling, event loop stubs, and GLideN64 workarounds. Serves as a porting guide for future upstream updates (#3517)
+- **melonDS / DeSmuME skin support** — `supportsSkins` is now `true` for both DS cores, enabling DeltaSkin overlays and controller layouts when a compatible skin is installed (#3509)
 - **Localization (l10n)** — Replaced all hardcoded `Text("literal")` calls in `SettingsSwiftUI.swift`, `CloudSyncSettingsView.swift`, `TVMediaMainView.swift`, and `RetroMenuView.swift` with `Text("key", bundle: .module)` (or `Text(String(localized:))` for PVUIBase) and corresponding entries in `Localizable.strings`. Dynamic interpolated strings use `Text(verbatim:)` to avoid accidental translation. Adds ~120 new localization keys organized under `settings.*`, `cloud_sync.*`, `tv_media.*`, and `retro_menu.*` namespaces. Part of #2869. (#3508)
 - **iCade Arcade Cabinet guide** — Pairing instructions updated to clarify that 8BitDo controllers should use the matching 8BitDo profile rather than "Standard Controller" (#3488)
 - **PVCoreBridgeRetro Package.swift** — Added `MoltenVK-1.2.8` xcframework as an explicit SPM dependency so MoltenVK is bundled with the app and available to libretro cores that use Vulkan hardware rendering. (#3486)
@@ -578,109 +583,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   fix and rebase cycles
 - **GitHub Issue Relationships** — Agent instructions updated to wire sub-issues and
   blocked-by relationships via API when creating epics and sub-tasks
-
-### Skins
-- **Data-driven native resolution registry** — Replaced hardcoded Swift enum with a JSON-backed registry so new system resolutions can be added without source changes (#3153)
-- **Multi-theme skin variants** — Skins can declare named theme variants; users can select a per-skin theme persisted in UserDefaults (#3145)
-- **Skin catalog display name cleanup** — System badges and filter chips now show proper names like "Game Gear" instead of raw codes (#3100)
-- **Per-button haptic patterns** — Skin buttons in `info.json` can declare a `haptic` block with `style` (light/medium/heavy/soft/rigid) and `intensity` (0.0-1.0); falls back to the default feedback generator when absent (#3138, #3154)
-- **Animated skin backgrounds** — Orientation representations can declare a `backgroundAnimation` block (type: frames/apng/gif, frames, fps, loops); rendered beneath the game screen and pauses when backgrounded (#3139, #3154)
-- **Keyboard overlay rendering** — Skins that declare a `keyboardOverlay` config display a toggleable virtual keyboard during gameplay; supports QWERTY, compact, C64, ZX Spectrum, Amstrad CPC, and Atari ST layouts (#3142, #3154)
-- **PDF size-aware skin rendering** — PDFs now rasterise at the correct logical size x screen scale for crisp HiDPI output instead of an uncapped 4096 px default (#3137, #3148)
-- **Animated button sprites** — Skin buttons can declare a `states` block (Manic EMU format) with normal, pressed, and optional animated image references (#3137, #3148)
-
-### JIT Improvements
-- **Azahar / emuThreeDS automatic fallback** — Both cores reclassified to `.automaticWithFallback`; they auto-detect JIT and fall back to interpreter mode so launch is always safe (#3131)
-- **Extended JIT Detection** — Detects StikDebug, TrollStore, iOS 26 native JIT, jailbreak daemons, and Simulator as JIT sources (#3113)
-- **JIT Capability Matrix** — Each core declares its JIT requirement via `Core.plist`; `CoreLoader` populates a thread-safe registry at startup with no hardcoded identifier list (#3104)
-- **JIT status indicator** — In-game HUD pill shows active JIT source (e.g. "JIT - AltStore"); tap for compact status alert with differentiated messaging per core (#3103, #3156)
-- **JIT onboarding** — "How to Enable JIT" guide accessible from the status indicator when JIT is inactive (#3103, #3159)
-
-### Controller Input
-- **Smart Pak (Memory + Rumble)** — Virtual combo pak mode for Mupen64Plus that handles both persistent memory-pak saves and rumble simultaneously (#3110)
-- **Core deadzone coordination** — New `CoreDeadzoneCapable` protocol with universal deadzone setting (0-50%), per-core coordination modes, and compatibility catalog (#2828)
-- **Controller player-slot preferences** — Three assignment modes per controller: auto, preferred, and always; preferences persist and reapply on reconnect (#2773, #3111)
-
-### OSD and Notifications
-- **Audio mute warning** — Toast notification when device audio is muted or volume is zero (#3168)
-- **RetroArch msg_queue bridge** — RetroArch `msg_queue` OSD messages forwarded to PVToast for all 60+ RetroArch-based cores (#3157)
-- **PVToast in-game overlay** — Queue-based toast notification system with retrowave aesthetics, auto-dismiss, persistent toasts, and VoiceOver support (#2802, #3112)
-- **Core OSD bridging** — PPSSPP, Dolphin, Azahar, Mednafen, DuckStation, Mupen64Plus, melonDS, and VisualBoyAdvance-M OSD messages now surface as native PVToast notifications (#2805, #3151)
-
-### Spotlight and Siri
-- **Siri Suggestions** — `NSUserActivity.isEligibleForPrediction` enables proactive game suggestions in Siri (#2980)
-- **Per-game Spotlight indexing** — Games are indexed immediately on import and re-indexed when metadata or artwork updates, using proper registered Provenance UTIs (#2980, #3160)
-
-### Save States
-- **Save state browser** — Full-page "Save States" tab grouped by game with expand/collapse, screenshot thumbnails, core version info, and sorting (#2790)
-- **Per-game stacked autosaves** — Autosaves are visually grouped behind a single card with "+N" badge and filmstrip timeline on long-press (#2789)
-- **Save state version tracking** — Save states record the core version and identifier used to create them; version mismatch detection prompts before loading (#2952, #3081)
-- **Recent Saves deduplication** — Shows at most one autosave per game by default; "Show All Auto-Saves" toggle in Settings for power users (#2789, #3107)
-
-### Other Features
-- **Save & Quit crash** — Prevented `setPauseEmulation` during core teardown (#3200)
-- **Skin catalog install status** — Downloaded skins now show as installed in catalog browser (#3188)
-- **Cheats crash** — Fixed Realm thread-safety crashes in pause menu cheats and save states views (#3162)
-- **RetroArch msg_queue OSD bridge** — All RetroArch-based cores now surface OSD messages as native PVToast notifications (#3157)
-- **Pause menu SKINS tab redesign** — Reorganized with scope picker, always-visible skin selectors, and immediate application on pick (#3121)
-- **Mupen64Plus rumble** — Removed stray `register(nil)` call; added Taptic Engine fallback for touchscreen players (#3110)
-- **Save state core version propagation** — Mock driver and full propagation chain for `createdWithCoreVersion` (#3102)
-  ## UX Improvements
-- **Skin download visibility** — Skin catalog install deep link and unofficial label fixes (#3098)
-- **Netplay build flag** — `HAVE_NETPLAY` enabled in RetroArch build for 60+ cores (#3091)
-- **Save state load failure** — "Reset Game" option offered when save state load fails (#3082)
-- **Thin libretro frontend** — RetroArch-free libretro frontend using only `libretro.h`; foundation for running libretro buildbot dylibs without the full RetroArch binary (#3080)
-- **tvOS launch crash** — Added missing `BGTaskSchedulerPermittedIdentifiers` to tvOS Info.plist (#2489)
-- **Cheat code validator** — Per-format validation with hints for GameShark, Action Replay, and other formats (#2488)
-- **DuckStation cheat support** — GameShark cheat codes now work in DuckStation (#2485)
-- **mGBA cheat support** — Cheat codes wired up for the mGBA core (#2484)
-- **CPDI bootstrap system** — Refactored app startup into structured bootstrap with Firebase Crashlytics config fix (#2463)
-- **DosBox keyboard and mouse mapping** — Keyboard and mouse input support for DosBox core (#2457)
-- **PVFeatureFlags remote fetching** — Remote feature flag fetching with retry, caching, and fallback (#2454)
-- **Configurable CRT shader parameters** — User-adjustable CRT shader settings (#2451)
-  ## Bug Fixes
-- **Inline core picker with save counts** — Thin wrapper swap in PVCoreFactory with inline core picker showing save state counts per core
-- **Cheat code auto-lookup** — Bundled cheat database with online lookup from GameHacking.org and GeckoCodes for GC/Wii (#2455, #3073)
-- **BPS/UPS patcher tests** — Comprehensive unit test coverage for ROM patching (#2898, #3106)
-- **Save state crashes** — Fixed FBNeo, MAME, and other RetroArch core save state crashes (#1d33338)
-- **Cheats crash on toggle** — Fixed crash when toggling cheats from the pause menu (#0afafa4)
-- **Skin button transparency** — GameGear and legacy handheld skin screen fill now uses correct aspect ratios instead of leaving black bars (#3134, #3149)
-- **Screen filter JSON decoding** — CRT, scanline, sepia, and blur filters from skin `info.json` now apply at runtime instead of always being nil (#3135, #3150)
-- **Boot performance** — Core plist scan results cached to disk; core scanner made non-blocking; skin scan deferred to first use; Mach-O fast-path probe for libretro metadata (#3015, #3109, da9fef2, d5a0e61, 265ef4e, d00841d)
-- **Hatari TOS validation** — Multiple fixes for TOS boot: correct directory paths, byte-swap repair, ACSI boot option, per-core options file (#3112, #3127, #3144, #3152)
-- **Mupen64Plus bootup hang** — Fixed pause, rumble pak default, and bootup hang (#9bd8ee3)
-- **On-screen controller touch routing** — Fixed PassThroughView absorbing all touches and overlay blocking game button input (#3117, #3124, #3126, 7bf3f39)
-- **Pause menu button layout stability** — CORE tab and save-state buttons now rendered at fixed positions; unsupported items dimmed instead of removed (#2969, #3101)
-- **VecX hardware rendering** — Fixed blank square in hardware rendering mode by returning correct HW render dimensions for `screenRect` (#2984, #3123, #3116)
-- **Spotlight content types** — Removed invalid `contentType` strings that caused Spotlight to reject game entries (#2980, #3105)
-- **Save state double prompt** — Prevented double version-mismatch prompt on launch (#949ab0c)
-- **HUD overlay positioning** — Moved HUD controls to top strip so they never overlap skin buttons (#859579, 7f6ce09)
-- **PrBoom button mapping** — Corrected Doom button mapping and shoulder button order (#fe0e0d6)
-- **CrabEMU resolution** — Fixed bad resolution when nil at boot (#6f2f3f4)
-- **Save state Realm crash** — Fixed freeze() inside uncommitted write transaction; moved serialization after commit (#3181, #3193)
-- **Audio loop on pause** — Flush ring buffer when pausing to prevent stale audio looping (#3183, #3195)
-- **HomeView flickering** — Replaced 5 `@ObservedResults` with background ViewModel to stop cascading re-renders (#3184, #3196)
-- **Atari800 joystick crash** — Fixed infinite recursion in `didRelease:` and `didMoveJoystick:` (#3182, #3194)
-- **Shoulder button order** — L2/R2 now on outer edge matching real controller layout (#3180, #3192)
-- **JIT indicator** — Moved to bottom edge with auto-hide; only shows for cores that need JIT (#3186, #3198)
-- **Skin activation** — "Set as Active Skin" now activates directly instead of navigating to browser (#3189, #3200)
-- **Shader parameters in pause menu** — CRT shader parameters adjustable from the filter picker (#3185, #3197)
-- **Save state browser** — Added Realm refresh so newly created states appear immediately
-- **CI submodule fixes** — Fixed ZipArchive, desmume2015, NP2kai submodule checkout failures
-- **Companion Controller framework** — iOS companion device overlay infrastructure (#2697, #3190)
-  ## Core Updates
-- **Atari ST comprehensive improvements** — Video, mouse input, ST keyboard layout, TOS version handling, and boot reliability across multiple PRs (#3094, #3112, #3127, #3144, #3152)
-- **Cheat system short name audit** — Complete audit of cheat DB system mappings with forward-looking mappings for future systems (#3068, #3108)
-- **Inline core picker with save counts** — Core selection now shows save state counts per core for informed switching
-- **Contentless core setup guides** — Setup guidance for cores that need BIOS or other files before use
-- **Beta builds install guide** — Sideload feed and installation guidance for beta testers (#b94e2248)
-- **RetroMenuView button styling** — Improved visual hierarchy in the retro-style pause menu (#2969, #3121)
-- **Sub-task progress display** — Boot sequence now shows sub-task progress with fix for Realm timeout scope (#546d3ee)
-- **Screenshot browser** — New screenshot browser in pause menu with save-state UX improvements (#5d6ac25)
-  ## CI / Infrastructure
-- **Copilot + Claude review loop** — Agent context and auto-fix triggers for PR reviews (#b94e2248)
-- **CI optimization** — Concurrency groups, alpha releases, agent PR smoke builds (#7ca84d3, #95801f8)
-- **SPM validation script** — Agent validation CI for standalone module builds (#dcedb27)
 
 ## [3.0.6] - 2025-03-16
 
