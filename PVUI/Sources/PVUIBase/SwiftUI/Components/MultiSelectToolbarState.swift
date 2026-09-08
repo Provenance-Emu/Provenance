@@ -22,6 +22,8 @@ public final class MultiSelectToolbarState: ObservableObject {
     public var onOffload: (() -> Void)?
     public var onDownload: (() -> Void)?
     public var onDone: (() -> Void)?
+    public var onSelectAll: (() -> Void)?
+    public var onDeselectAll: (() -> Void)?
 
     private init() {}
 
@@ -43,6 +45,8 @@ public final class MultiSelectToolbarState: ObservableObject {
         onOffload = nil
         onDownload = nil
         onDone = nil
+        onSelectAll = nil
+        onDeselectAll = nil
     }
 
     public func updateCount(_ count: Int) {

@@ -119,3 +119,45 @@ public struct GameCellModel: Identifiable, Hashable {
 extension GameCellModel: GameItemPresentable {
     public var isInvalidated: Bool { false }
 }
+
+/// Pure, stable-ID selection state used by selection-state tests and reusable
+/// selection logic. IDs are normalized so Realm casing and duplicate visible
+/// cells cannot create duplicate logical selections.
+public struct ConsoleGameSelectionState: Equatable {
+    public private(set) var selectedIDs: Set<String> = []
+
+    public init(selectedIDs: Set<String> = []) {
+        self.selectedIDs = Set(selectedIDs.map(Self.normalize))
+    }
+
+    public mutating func toggle(id: String) {
+        let normalized = Self.normalize(id)
+        if !normalized.isEmpty {
+            if selectedIDs.contains(normalized) {
+                selectedIDs.remove(normalized)
+            } else {
+                selectedIDs.insert(normalized)
+            }
+        }
+    }
+
+    public mutating func selectAll(ids: some Sequence<String>) {
+        selectedIDs.formUnion(ids.map(Self.normalize).filter { !$0.isEmpty })
+    }
+
+    public mutating func deselectAll(ids: some Sequence<String>) {
+        selectedIDs.subtract(ids.map(Self.normalize))
+    }
+
+    public mutating func prune(to ids: some Sequence<String>) {
+        selectedIDs.formIntersection(Set(ids.map(Self.normalize)))
+    }
+
+    public mutating func clear() {
+        selectedIDs.removeAll()
+    }
+
+    private static func normalize(_ id: String) -> String {
+        id.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+    }
+}
