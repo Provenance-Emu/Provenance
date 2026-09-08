@@ -998,10 +998,11 @@ struct ConsoleGamesView: SwiftUI.View {
                     isActiveTabState = nowActive
                     if !nowActive {
                         /// Swiping to another console tab must not leave a pending hold
-                        /// timer or a stale focus ring behind.
+                        /// timer, stale focus ring, or hidden selection behind.
                         cancelHoldMenuTimer()
                         holdPressStart = nil
                         clearNavigationFocus()
+                        gamesViewModel.exitMultiSelectMode()
                     }
                 }
                 .sheet(item: $keyboardMenuState) { state in
@@ -1062,18 +1063,18 @@ struct ConsoleGamesView: SwiftUI.View {
     private func showGamesGrid(_ games: [PVGame]) -> some View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(games.filter { !$0.isInvalidated }, id: \.id) { game in
-                GameItemView(
-                    game: game,
-                    constrainHeight: false,
-                    sectionContext: .allGames,
-                    isFocused: focusBinding(
-                        itemId: game.id,
-                        section: .allGames,
-                        requiresValidityCheck: { !game.isInvalidated }
-                    )
-                ) {
-                    Task.detached { @MainActor in
-                        SceneCoordinator.shared.launchGame(game.freeze())
+                multiSelectOverlay(md5: game.md5Hash) {
+                    GameItemView(
+                        game: game,
+                        constrainHeight: false,
+                        sectionContext: .allGames,
+                        isFocused: focusBinding(
+                            itemId: game.id,
+                            section: .allGames,
+                            requiresValidityCheck: { !game.isInvalidated }
+                        )
+                    ) {
+                        gameAction(for: game.md5Hash)()
                     }
                 }
                 /// Use compound ID so view recreates when artwork URL changes
@@ -1175,19 +1176,19 @@ struct ConsoleGamesView: SwiftUI.View {
     private func showGamesList(_ games: [PVGame]) -> some View {
         LazyVStack(spacing: 0) {
             ForEach(games.filter { !$0.isInvalidated }, id: \.id) { game in
-                GameItemView(
-                    game: game,
-                    constrainHeight: true,
-                    viewType: .row,
-                    sectionContext: .allGames,
-                    isFocused: focusBinding(
-                        itemId: game.id,
-                        section: .allGames,
-                        requiresValidityCheck: { !game.isInvalidated }
-                    )
-                ) {
-                    Task.detached { @MainActor in
-                        SceneCoordinator.shared.launchGame(game.freeze())
+                multiSelectOverlay(md5: game.md5Hash) {
+                    GameItemView(
+                        game: game,
+                        constrainHeight: true,
+                        viewType: .row,
+                        sectionContext: .allGames,
+                        isFocused: focusBinding(
+                            itemId: game.id,
+                            section: .allGames,
+                            requiresValidityCheck: { !game.isInvalidated }
+                        )
+                    ) {
+                        gameAction(for: game.md5Hash)()
                     }
                 }
                 /// Use compound ID so view recreates when artwork URL changes
@@ -1469,14 +1470,16 @@ struct ConsoleGamesView: SwiftUI.View {
                         .padding()
                 } else {
                     ForEach(results, id: \.id) { game in
-                        GameItemPresentableView(
-                            game: game,
-                            constrainHeight: true,
-                            viewType: .row,
-                            sectionContext: .allGames,
-                            isFocused: focusBinding(itemId: game.id, section: .allGames)
-                        ) {
-                            launchGame(md5: game.md5)
+                        multiSelectOverlay(md5: game.md5) {
+                            GameItemPresentableView(
+                                game: game,
+                                constrainHeight: true,
+                                viewType: .row,
+                                sectionContext: .allGames,
+                                isFocused: focusBinding(itemId: game.id, section: .allGames)
+                            ) {
+                                gameAction(for: game.md5)()
+                            }
                         }
                         .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
                         .focusableIfAvailable()
@@ -1688,15 +1691,17 @@ extension ConsoleGamesView {
 
     @ViewBuilder
     private func gameItem(_ game: GameCellModel, section: HomeSectionType) -> some View {
-        GameItemPresentableView(
-            game: game,
+        multiSelectOverlay(md5: game.md5) {
+            GameItemPresentableView(
+                game: game,
                 constrainHeight: true,
                 shelfRowHeightScale: PVCompactShelfRowHeightScale,
                 viewType: .cell,
                 sectionContext: section,
                 isFocused: focusBinding(itemId: game.id, section: section)
-        ) {
-            launchGame(md5: game.md5)
+            ) {
+                gameAction(for: game.md5)()
+            }
         }
         .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
         .focusableIfAvailable()

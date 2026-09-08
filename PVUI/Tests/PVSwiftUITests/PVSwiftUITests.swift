@@ -137,3 +137,51 @@ struct ROMTitleNormalizerTests {
         #expect(result == "My Game")
     }
 }
+
+// MARK: - ConsoleGameSelectionState Tests
+
+@Suite("ConsoleGameSelectionState")
+struct ConsoleGameSelectionStateTests {
+
+    @Test("Toggling an ID selects it once and toggles it off")
+    func toggleIsStable() {
+        var state = ConsoleGameSelectionState()
+        state.toggle(id: "abc")
+        #expect(state.selectedIDs == ["ABC"])
+        state.toggle(id: "ABC")
+        #expect(state.selectedIDs.isEmpty)
+    }
+
+    @Test("Select all and deselect all only affect visible IDs")
+    func bulkSelectionUsesVisibleIDs() {
+        var state = ConsoleGameSelectionState()
+        state.toggle(id: "hidden")
+        state.selectAll(ids: ["one", "two", "one"])
+        #expect(state.selectedIDs == ["HIDDEN", "ONE", "TWO"])
+        state.deselectAll(ids: ["one", "two"])
+        #expect(state.selectedIDs == ["HIDDEN"])
+    }
+
+    @Test("Pruning removes deleted IDs while retaining games that remain")
+    func refreshPrunesRemovedGames() {
+        var state = ConsoleGameSelectionState()
+        state.selectAll(ids: ["keep", "remove"])
+        state.prune(to: ["KEEP", "other"])
+        #expect(state.selectedIDs == ["KEEP"])
+    }
+
+    @Test("Empty IDs are ignored by bulk selection")
+    func emptyIDsAreIgnored() {
+        var state = ConsoleGameSelectionState()
+        state.selectAll(ids: [" ", "valid", "\n"])
+        #expect(state.selectedIDs == ["VALID"])
+    }
+
+    @Test("Reset clears every selection")
+    func resetClearsSelection() {
+        var state = ConsoleGameSelectionState()
+        state.selectAll(ids: ["one", "two"])
+        state.clear()
+        #expect(state.selectedIDs.isEmpty)
+    }
+}

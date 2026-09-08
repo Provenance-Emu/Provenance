@@ -49,12 +49,15 @@ extension ConsoleGamesView {
         }
     }
 
+
     /// Wraps a game cell with a selection indicator overlay when multi-select is active.
     /// Selection checkmark is placed top-leading to avoid conflicting with the
     /// cloud sync indicator badge at top-trailing.
     @ViewBuilder
     func multiSelectOverlay(md5: String, @ViewBuilder content: () -> some View) -> some View {
-        let isSelected = gamesViewModel.selectedGameMD5s.contains(md5)
+        let normalizedID = md5.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let isSelected = gamesViewModel.selectedGameMD5s.contains(normalizedID)
+        let selectionLabel = isSelected ? "Selected" : "Not selected"
         ZStack(alignment: .topLeading) {
             content()
                 .overlay {
@@ -82,6 +85,13 @@ extension ConsoleGamesView {
             }
         }
         .contentShape(Rectangle())
+        .accessibilityElement(children: .contain)
+        .accessibilityValue(gamesViewModel.isMultiSelectMode ? selectionLabel : "")
+        .accessibilityAddTraits(gamesViewModel.isMultiSelectMode && isSelected ? .isSelected : [])
+        .accessibilityAction(named: Text(isSelected ? "Deselect" : "Select")) {
+            guard gamesViewModel.isMultiSelectMode else { return }
+            performSelectionToggle(md5: md5)
+        }
         .onTapGesture {
             if gamesViewModel.isMultiSelectMode {
                 performSelectionToggle(md5: md5)
@@ -123,6 +133,26 @@ extension ConsoleGamesView {
                     state.onDone = { [weak gamesViewModel] in
                         Task { @MainActor in
                             gamesViewModel?.exitMultiSelectMode()
+                        }
+                    }
+                    state.onSelectAll = { [weak gamesViewModel] in
+                        guard let gamesViewModel else { return }
+                        Task { @MainActor in
+                            let query = gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                            let visibleGames = gamesViewModel.allGamesModels.filter {
+                                query.isEmpty || $0.title.lowercased().contains(query)
+                            }
+                            gamesViewModel.selectAllVisible(visibleGames)
+                        }
+                    }
+                    state.onDeselectAll = { [weak gamesViewModel] in
+                        guard let gamesViewModel else { return }
+                        Task { @MainActor in
+                            let query = gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                            let visibleGames = gamesViewModel.allGamesModels.filter {
+                                query.isEmpty || $0.title.lowercased().contains(query)
+                            }
+                            gamesViewModel.deselectAllVisible(visibleGames)
                         }
                     }
                 } else {
