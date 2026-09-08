@@ -32,6 +32,7 @@ public struct RetroMultiSelectToolbar: View {
                 HStack(spacing: 14) {
                     selectionBadge
                     Spacer()
+                    selectAllButton
                     doneButton
                 }
 
@@ -143,6 +144,30 @@ public struct RetroMultiSelectToolbar: View {
             .foregroundColor(enabled ? color : .white.opacity(0.3))
         }
         .disabled(!enabled)
+    }
+
+    // MARK: - Select all button
+
+    private var selectAllButton: some View {
+        Menu {
+            Button("Select All Visible", action: { state.onSelectAll?() })
+            Button("Deselect All Visible", action: { state.onDeselectAll?() })
+        } label: {
+            Image(systemName: "checklist")
+                .font(.system(size: 15, weight: .semibold))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.retroBlue.opacity(0.15))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Color.retroBlue.opacity(0.6), lineWidth: 1)
+                        )
+                )
+                .foregroundColor(.retroBlue)
+        }
+        .accessibilityLabel("Selection actions")
     }
 
     // MARK: - Done button
