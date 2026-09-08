@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B300D3982DA096CA003A9ED4 /* PVVirtualJaguar in Frameworks */ = {isa = PBXBuildFile; productRef = B300D3972DA096CA003A9ED4 /* PVVirtualJaguar */; };
+		B300D3982DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B300D3972DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic */; };
+		B3F1D0012E1A0001000000A1 /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B300D3972DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B300D6392DA0A95E003A9ED4 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B300D6382DA0A95E003A9ED4 /* PVSettings */; };
 		B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36DFC3D2CF1975B00BAE9BE /* PVUI */; };
 		B37444812D444B09002306B0 /* GBC-Sunrise.deltaskin in Resources */ = {isa = PBXBuildFile; fileRef = B374447F2D444B09002306B0 /* GBC-Sunrise.deltaskin */; };
@@ -35,6 +36,20 @@
 			remoteInfo = UITesting;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B3F1D0022E1A0002000000A2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3F1D0012E1A0001000000A1 /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		B31531BB2D99C94E0022158D /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
@@ -101,7 +116,7 @@
 				B3C427D72D9392F000E367CF /* PVCoreLoader in Frameworks */,
 				B300D6392DA0A95E003A9ED4 /* PVSettings in Frameworks */,
 				B3C42D562D9398A200E367CF /* PVCoreMednafen in Frameworks */,
-				B300D3982DA096CA003A9ED4 /* PVVirtualJaguar in Frameworks */,
+				B300D3982DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic in Frameworks */,
 				B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -164,6 +179,7 @@
 				B36DFC0B2CF196D700BAE9BE /* Sources */,
 				B36DFC0C2CF196D700BAE9BE /* Frameworks */,
 				B36DFC0D2CF196D700BAE9BE /* Resources */,
+				B3F1D0022E1A0002000000A2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -180,7 +196,7 @@
 				B3C42D582D93999900E367CF /* PVSupport */,
 				B3A8C35E2D9B6187005A032F /* PVCrabEmu */,
 				B3A8C3C02D9B6385005A032F /* PVCoremGBA */,
-				B300D3972DA096CA003A9ED4 /* PVVirtualJaguar */,
+				B300D3972DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic */,
 				B300D6382DA0A95E003A9ED4 /* PVSettings */,
 			);
 			productName = UITesting;
@@ -698,9 +714,10 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B300D3972DA096CA003A9ED4 /* PVVirtualJaguar */ = {
+		B300D3972DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = PVVirtualJaguar;
+			package = B300D3962DA096CA003A9ED4 /* XCLocalSwiftPackageReference "../Cores/VirtualJaguar" */;
+			productName = "PVVirtualJaguar-Dynamic";
 		};
 		B300D6382DA0A95E003A9ED4 /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;
