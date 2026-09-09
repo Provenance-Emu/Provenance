@@ -286,60 +286,22 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 #endif
     }
 
-    /// Setup the side navigation
-    fileprivate func setupSideNavigation(mainViewController: UIViewController,
-                                         gameLibrary: PVGameLibrary<RealmDatabaseDriver>,
-                                         viewModel: PVRootViewModel,
-                                         rootViewController: PVRootViewController) -> SideNavigationController {
-        let sideNav = SideNavigationController(mainViewController: mainViewController)
-        let traits = UITraitCollection.current
-        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
-
-        /// Calculate width percentage based on device and size class
-        let widthPercentage: CGFloat = {
-            switch (isIpad, traits.horizontalSizeClass) {
-            case (true, .regular):   return 0.3  // iPad regular
-            case (true, .compact):   return 0.3  // iPad compact (rare but possible)
-            case (true, .unspecified), (true, _): return 0.3  // iPad fallback
-            case (false, .compact):  return 0.7  // iPhone portrait
-            case (false, .regular):  return 0.4  // iPhone landscape
-            case (false, .unspecified), (false, _): return 0.7  // iPhone fallback
-            }
-        }()
-
-        let overlayColor: UIColor = ThemeManager.shared.currentPalette.menuHeaderBackground
-
-        sideNav.leftSide(
-            viewController: SideMenuView.instantiate(gameLibrary: gameLibrary,
-                                                     viewModel: viewModel,
-                                                     delegate: rootViewController,
-                                                     rootDelegate: rootViewController),
-            options: .init(widthPercent: widthPercentage,
-                           animationDuration: 0.18,
-                           overlayColor: overlayColor,
-                           overlayOpacity: 0.1,
-                           shadowOpacity: 0.2)
+    /// Builds the SwiftUI-based side menu container that replaces `SideNavigationController`.
+    fileprivate func setupSwiftUISideMenu(mainViewController: UIViewController,
+                                          gameLibrary: PVGameLibrary<RealmDatabaseDriver>,
+                                          viewModel: PVRootViewModel,
+                                          rootViewController: PVRootViewController) -> PVSwiftUISideMenuContainer {
+        let sideMenuVC = SideMenuView.instantiate(
+            gameLibrary: gameLibrary,
+            viewModel: viewModel,
+            delegate: rootViewController,
+            rootDelegate: rootViewController
         )
-
-        /// Add trait collection observer to update width when orientation changes
-#if !os(tvOS)
-        NotificationCenter.default.addObserver(forName: UIApplication.didChangeStatusBarOrientationNotification, object: nil, queue: .main) { _ in
-            let newWidth: CGFloat = {
-                switch (isIpad, UITraitCollection.current.horizontalSizeClass) {
-                case (true, .regular):   return 0.3  // iPad regular
-                case (true, .compact):   return 0.3  // iPad compact (rare but possible)
-                case (true, .unspecified): return 0.3  // iPad fallback
-                case (false, .compact):  return 0.3  // iPhone portrait
-                case (false, .regular):  return 0.4  // iPhone landscape
-                case (false, .unspecified): return 0.3  // iPhone fallback
-                case (_, _):
-                    return 0.3
-                }
-            }()
-            sideNav.updateSideMenuWidth(percent: newWidth)
-        }
-#endif
-        return sideNav
+        return PVSwiftUISideMenuContainer(
+            mainViewController: mainViewController,
+            sideMenuViewController: sideMenuVC,
+            viewModel: viewModel
+        )
     }
 
     /// Setup JIT wait screen if needed — call after the root view controller is established.
@@ -770,15 +732,17 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             gameImporter: gameImporter,
             viewModel: viewModel)
         self.rootNavigationVC = rootViewController
-        let sideNavHostedNavigationController = PVRootViewNavigationController(rootViewController: rootViewController)
+        let mainNavController = PVRootViewNavigationController(rootViewController: rootViewController)
 
-        let sideNav = setupSideNavigation(mainViewController: sideNavHostedNavigationController,
-                                          gameLibrary: gameLibrary,
-                                          viewModel: viewModel,
-                                          rootViewController: rootViewController)
+        let container = setupSwiftUISideMenu(
+            mainViewController: mainNavController,
+            gameLibrary: gameLibrary,
+            viewModel: viewModel,
+            rootViewController: rootViewController
+        )
 
         _initLibraryNotificationHandlers()
-        return sideNav
+        return container
     }
 
     private func loadRocketSimConnect() {
