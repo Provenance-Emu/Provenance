@@ -44,6 +44,14 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         case regionFolder(groupingKey: String, title: String, parentItemIdentifier: NSFileProviderItemIdentifier)
         /// `rating:<key>` user-rating bucket.
         case ratingFolder(ratingKey: String, title: String, parentItemIdentifier: NSFileProviderItemIdentifier)
+        /// `ss-game:<md5>` — game sub-folder inside the Save States category.
+        case saveStateGameFolder(game: Game, parentItemIdentifier: NSFileProviderItemIdentifier)
+        /// `ss:<id>` — individual save state file.
+        case saveStateFile(id: String, game: Game, date: Date, isAutosave: Bool, userDescription: String?, fileURL: URL?, parentItemIdentifier: NSFileProviderItemIdentifier)
+        /// `sc-game:<md5>` — game sub-folder inside the Screenshots category.
+        case screenshotGameFolder(game: Game, parentItemIdentifier: NSFileProviderItemIdentifier)
+        /// `sc:<md5>:<index>` — individual screenshot file.
+        case screenshotFile(gameMD5: String, index: Int, imageURL: URL?, parentItemIdentifier: NSFileProviderItemIdentifier)
     }
 
     let kind: Kind
@@ -110,6 +118,26 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         super.init()
     }
 
+    init(saveStateGameFolder game: Game, parentItemIdentifier: NSFileProviderItemIdentifier) {
+        kind = .saveStateGameFolder(game: game, parentItemIdentifier: parentItemIdentifier)
+        super.init()
+    }
+
+    init(saveStateID id: String, game: Game, date: Date, isAutosave: Bool, userDescription: String?, fileURL: URL?, parentItemIdentifier: NSFileProviderItemIdentifier) {
+        kind = .saveStateFile(id: id, game: game, date: date, isAutosave: isAutosave, userDescription: userDescription, fileURL: fileURL, parentItemIdentifier: parentItemIdentifier)
+        super.init()
+    }
+
+    init(screenshotGameFolder game: Game, parentItemIdentifier: NSFileProviderItemIdentifier) {
+        kind = .screenshotGameFolder(game: game, parentItemIdentifier: parentItemIdentifier)
+        super.init()
+    }
+
+    init(screenshotGameMD5 gameMD5: String, index: Int, imageURL: URL?, parentItemIdentifier: NSFileProviderItemIdentifier) {
+        kind = .screenshotFile(gameMD5: gameMD5, index: index, imageURL: imageURL, parentItemIdentifier: parentItemIdentifier)
+        super.init()
+    }
+
     // MARK: - Identifier prefix constants
 
     /// Prefix used in `NSFileProviderItemIdentifier` raw values for system-folder items.
@@ -144,6 +172,14 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
             return NSFileProviderItemIdentifier("region:" + RomFileProviderVirtualPath.encodeSegment(groupingKey))
         case .ratingFolder(let ratingKey, _, _):
             return NSFileProviderItemIdentifier("rating:\(ratingKey)")
+        case .saveStateGameFolder(let game, _):
+            return NSFileProviderItemIdentifier(RomFileProviderVirtualPath.saveStateGameFolderIdentifier(gameMD5: game.md5))
+        case .saveStateFile(let id, _, _, _, _, _, _):
+            return NSFileProviderItemIdentifier(RomFileProviderVirtualPath.saveStateItemIdentifier(saveStateID: id))
+        case .screenshotGameFolder(let game, _):
+            return NSFileProviderItemIdentifier(RomFileProviderVirtualPath.screenshotGameFolderIdentifier(gameMD5: game.md5))
+        case .screenshotFile(let gameMD5, let index, _, _):
+            return NSFileProviderItemIdentifier(RomFileProviderVirtualPath.screenshotItemIdentifier(gameMD5: gameMD5, index: index))
         }
     }
 
@@ -170,6 +206,14 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         case .regionFolder(_, _, let parent):
             return parent
         case .ratingFolder(_, _, let parent):
+            return parent
+        case .saveStateGameFolder(_, let parent):
+            return parent
+        case .saveStateFile(_, _, _, _, _, _, let parent):
+            return parent
+        case .screenshotGameFolder(_, let parent):
+            return parent
+        case .screenshotFile(_, _, _, let parent):
             return parent
         }
     }
@@ -202,12 +246,28 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
             return sanitize(title)
         case .ratingFolder(_, let title, _):
             return sanitize(title)
+        case .saveStateGameFolder(let game, _):
+            return sanitize(game.title)
+        case .saveStateFile(let id, _, let date, let isAutosave, let userDescription, let fileURL, _):
+            if let name = fileURL?.lastPathComponent, !name.isEmpty { return sanitize(name) }
+            let label = isAutosave ? "Auto" : (userDescription ?? "")
+            let dateStr = FileProviderItem.saveStateDateFormatter.string(from: date)
+            let prefix = label.isEmpty ? dateStr : "\(label) \(dateStr)"
+            return sanitize("\(prefix) \(id.prefix(8)).pvs")
+        case .screenshotGameFolder(let game, _):
+            return sanitize(game.title)
+        case .screenshotFile(let gameMD5, let index, let imageURL, _):
+            if let name = imageURL?.lastPathComponent, !name.isEmpty { return sanitize(name) }
+            return sanitize("\(gameMD5.prefix(8))-\(index).png")
         }
     }
 
     var contentType: UTType {
         switch kind {
-        case .root, .categoryFolder, .systemFolder, .publisherFolder, .publisherAllGamesFolder, .publisherSystemFolder, .yearFolder, .regionFolder, .ratingFolder:
+        case .root, .categoryFolder, .systemFolder,
+             .publisherFolder, .publisherAllGamesFolder, .publisherSystemFolder,
+             .yearFolder, .regionFolder, .ratingFolder,
+             .saveStateGameFolder, .screenshotGameFolder:
             return .folder
         case .gameFile(let game, let romURL), .symlinkToGame(let game, let romURL, _, _, _):
             let ext = romURL?.pathExtension ?? ""
@@ -216,17 +276,29 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
             if !fileNameExt.isEmpty { return ROMContentType.contentType(forExtension: fileNameExt) }
             let displayExt = (filename as NSString).pathExtension
             return ROMContentType.contentType(forExtension: displayExt)
+        case .saveStateFile(_, _, _, _, _, let fileURL, _):
+            if let ext = fileURL?.pathExtension, !ext.isEmpty {
+                return UTType(filenameExtension: ext) ?? .data
+            }
+            return .data
+        case .screenshotFile(_, _, let imageURL, _):
+            if let ext = imageURL?.pathExtension, !ext.isEmpty {
+                return UTType(filenameExtension: ext) ?? .png
+            }
+            return .png
         }
     }
 
     var capabilities: NSFileProviderItemCapabilities {
         switch kind {
-        case .root, .categoryFolder, .publisherFolder, .publisherAllGamesFolder, .publisherSystemFolder, .yearFolder, .regionFolder, .ratingFolder:
+        case .root, .categoryFolder, .publisherFolder, .publisherAllGamesFolder, .publisherSystemFolder, .yearFolder, .regionFolder, .ratingFolder, .saveStateGameFolder, .screenshotGameFolder:
             return [.allowsReading, .allowsContentEnumerating]
         case .systemFolder:
             return [.allowsReading, .allowsContentEnumerating, .allowsAddingSubItems]
         case .gameFile, .symlinkToGame:
             return [.allowsReading, .allowsDeleting, .allowsRenaming]
+        case .saveStateFile, .screenshotFile:
+            return [.allowsReading, .allowsDeleting]
         }
     }
 
@@ -270,6 +342,21 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         case .ratingFolder(let key, let title, _):
             let tag = Data("rating|\(key)|\(title)".utf8)
             return NSFileProviderItemVersion(contentVersion: tag, metadataVersion: tag)
+        case .saveStateGameFolder(let game, _):
+            let tag = Data("ss-game|\(game.md5)".utf8)
+            return NSFileProviderItemVersion(contentVersion: tag, metadataVersion: tag)
+        case .saveStateFile(let id, _, let date, _, _, _, _):
+            let contentTag = Data(id.utf8)
+            let metaTag = Data("\(id)|\(date.timeIntervalSinceReferenceDate)".utf8)
+            return NSFileProviderItemVersion(contentVersion: contentTag, metadataVersion: metaTag)
+        case .screenshotGameFolder(let game, _):
+            let tag = Data("sc-game|\(game.md5)".utf8)
+            return NSFileProviderItemVersion(contentVersion: tag, metadataVersion: tag)
+        case .screenshotFile(let gameMD5, let index, let imageURL, _):
+            let contentTag = Data("\(gameMD5):\(index)".utf8)
+            let path = imageURL?.path ?? ""
+            let metaTag = Data("\(gameMD5):\(index)|\(path)".utf8)
+            return NSFileProviderItemVersion(contentVersion: contentTag, metadataVersion: metaTag)
         }
     }
 
@@ -277,6 +364,16 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         switch kind {
         case .gameFile(let game, _), .symlinkToGame(let game, _, _, _, _):
             return game.file.size > 0 ? NSNumber(value: game.file.size) : nil
+        case .saveStateFile(_, _, _, _, _, let fileURL, _):
+            guard let url = fileURL,
+                  let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
+                  let size = attrs[.size] as? Int, size > 0 else { return nil }
+            return NSNumber(value: size)
+        case .screenshotFile(_, _, let imageURL, _):
+            guard let url = imageURL,
+                  let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
+                  let size = attrs[.size] as? Int, size > 0 else { return nil }
+            return NSNumber(value: size)
         default:
             return nil
         }
@@ -286,6 +383,12 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         switch kind {
         case .gameFile, .symlinkToGame:
             return _contentModificationDate
+        case .saveStateFile(_, _, let date, _, _, _, _):
+            return date
+        case .screenshotFile(_, _, let imageURL, _):
+            guard let url = imageURL else { return nil }
+            let attrs = try? FileManager.default.attributesOfItem(atPath: url.path)
+            return attrs?[.modificationDate] as? Date
         default:
             return nil
         }
@@ -316,6 +419,15 @@ final class FileProviderItem: NSObject, NSFileProviderItem {
         guard let romURL = romURL else { return nil }
         let attributes = try? FileManager.default.attributesOfItem(atPath: romURL.path)
         return attributes?[.modificationDate] as? Date
+    }()
+
+    /// Shared formatter for save state filenames — created once (DateFormatter is expensive).
+    private static let saveStateDateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(secondsFromGMT: 0)
+        f.dateFormat = "yyyy-MM-dd HH-mm-ss"
+        return f
     }()
 
     /// Sanitizes a raw name for safe use as a file provider filename.

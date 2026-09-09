@@ -115,4 +115,97 @@ enum RomFileProviderLibrary {
         entries.sorted { $0.game.title.localizedCaseInsensitiveCompare($1.game.title) == .orderedAscending }
     }
 
+    // MARK: - Save States
+
+    /// Immutable snapshot of a single save state for use past the Realm persistence boundary.
+    struct SaveStateEntry {
+        let id: String
+        let game: Game
+        let date: Date
+        let isAutosave: Bool
+        let userDescription: String?
+        let fileURL: URL?
+    }
+
+    /// Returns all locally present save states (with an on-disk `.file`) as CPDI snapshots.
+    static func loadAllSaveStateEntries() -> [SaveStateEntry] {
+        realm.objects(PVSaveState.self).compactMap { pvSS -> SaveStateEntry? in
+            guard !pvSS.isInvalidated,
+                  let pvGame = pvSS.game, !pvGame.isInvalidated,
+                  let pvFile = pvSS.file, let fileURL = pvFile.url,
+                  FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
+            return SaveStateEntry(
+                id: pvSS.id,
+                game: pvGame.asDomain(),
+                date: pvSS.date,
+                isAutosave: pvSS.isAutosave,
+                userDescription: pvSS.userDescription,
+                fileURL: fileURL
+            )
+        }
+    }
+
+    /// Distinct games that have at least one locally present save state, sorted by title.
+    ///
+    /// Accepts an already-loaded `entries` snapshot (e.g. a caller's per-enumeration cache) so
+    /// listing the **Save States** folder doesn't re-scan Realm on top of the caller's own scan.
+    static func saveStateGameFolders(from entries: [SaveStateEntry] = loadAllSaveStateEntries()) -> [Game] {
+        var seen = Set<String>()
+        var games: [Game] = []
+        for entry in entries where !seen.contains(entry.game.md5) {
+            seen.insert(entry.game.md5)
+            games.append(entry.game)
+        }
+        return games.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+    }
+
+    // MARK: - Screenshots
+
+    /// Immutable snapshot of a single screenshot for use past the Realm persistence boundary.
+    struct ScreenshotEntry {
+        let gameMD5: String
+        let index: Int
+        let imageURL: URL
+    }
+
+    /// Returns all locally present screenshots as CPDI snapshots.
+    static func loadAllScreenshotEntries() -> [ScreenshotEntry] {
+        var entries: [ScreenshotEntry] = []
+        for pvGame in realm.objects(PVGame.self) {
+            guard !pvGame.isInvalidated else { continue }
+            let md5 = pvGame.md5Hash
+            let shots = Array(pvGame.screenShots)
+            for (index, pvImageFile) in shots.enumerated() {
+                guard !pvImageFile.isInvalidated,
+                      let url = pvImageFile.url,
+                      FileManager.default.fileExists(atPath: url.path) else { continue }
+                entries.append(ScreenshotEntry(gameMD5: md5, index: index, imageURL: url))
+            }
+        }
+        return entries
+    }
+
+    /// Distinct games that have at least one locally present screenshot, sorted by title.
+    ///
+    /// Accepts an already-loaded `entries` snapshot (e.g. a caller's per-enumeration cache) and
+    /// does a single filtered Realm fetch for titles, instead of the full-library scan +
+    /// per-screenshot filesystem check the no-argument path performs.
+    static func screenshotGameFolders(from entries: [ScreenshotEntry] = loadAllScreenshotEntries()) -> [Game] {
+        var md5s: [String] = []
+        var seen = Set<String>()
+        for entry in entries {
+            let md5 = entry.gameMD5.uppercased()
+            guard !seen.contains(md5) else { continue }
+            seen.insert(md5)
+            md5s.append(md5)
+        }
+        guard !md5s.isEmpty else { return [] }
+        let games = realm.objects(PVGame.self)
+            .filter("md5Hash IN %@", md5s)
+            .compactMap { pvGame -> Game? in
+                guard !pvGame.isInvalidated else { return nil }
+                return pvGame.asDomain()
+            }
+        return games.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+    }
 }
