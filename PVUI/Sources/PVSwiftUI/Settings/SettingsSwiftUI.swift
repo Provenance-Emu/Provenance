@@ -2448,6 +2448,7 @@ private struct TestRumbleButton: View {
 #if !os(tvOS)
 private struct OnScreenControllerSection: View {
     @Default(.controllerOpacity) var controllerOpacity
+    @Default(.controllerScale) var controllerScale
     @Default(.buttonTints) var buttonTints
     @Default(.allRightShoulders) var allRightShoulders
     @Default(.buttonVibration) var buttonVibration
@@ -2479,6 +2480,24 @@ private struct OnScreenControllerSection: View {
                                      },
                                      trailingIcon: {
                                          Image(systemName: "sun.max")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     })
+            }
+            HStack {
+                Text("Controller Scale")
+                RetroWaveSlider<Double>(value: $controllerScale,
+                                     in: 0.5...2.0,
+                                     step: 0.05,
+                                     onEditingChanged: { _ in },
+                                     label: { Text("Scales on-screen controls and adjusts the game viewport so nothing clips or overlaps.") },
+                                     minimumValueLabel: { Text("") },
+                                     maximumValueLabel: { Text("") },
+                                     leadingIcon: {
+                                         Image(systemName: "minus.magnifyingglass")
+                                             .foregroundColor(RetroTheme.retroBlue)
+                                     },
+                                     trailingIcon: {
+                                         Image(systemName: "plus.magnifyingglass")
                                              .foregroundColor(RetroTheme.retroBlue)
                                      })
             }

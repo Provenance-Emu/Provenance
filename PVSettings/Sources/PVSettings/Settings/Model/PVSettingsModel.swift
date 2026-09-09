@@ -146,6 +146,9 @@ public extension Defaults.Keys {
     static let allRightShoulders = Key<Bool>("allRightShoulders", default: false)
 #endif
     static let controllerOpacity = Key<Double>("controllerOpacity", default: 0.8)
+    /// Scale multiplier for the on-screen controller overlay.
+    /// Range: 0.5 (half size) – 2.0 (double size). Default 1.0 (normal size).
+    static let controllerScale = Key<Double>("controllerScale", default: 1.0)
 
     static let pauseButtonIsMenuButton = Key<Bool>("pauseButtonIsMenuButton", default: false)
     static let hapticFeedback = Key<Bool>("hapticFeedback", default: true)
