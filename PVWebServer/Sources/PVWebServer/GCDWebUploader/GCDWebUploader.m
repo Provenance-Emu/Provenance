@@ -218,7 +218,17 @@ NS_ASSUME_NONNULL_END
     return [[path stringByStandardizingPath] hasPrefix:_uploadDirectory];
 }
 
+// Extensions that are never listed, downloaded, uploaded or moved to through this
+// server, regardless of `allowedFileExtensions` (which is nil by default, i.e.
+// "allow everything"). RetroArch writes RetroAchievements credentials in cleartext
+// to a `.cfg` file under the same document root this server publishes.
+// Must match implementation in GCDWebDAVServer.
+static NSString* const kGCDWebUploaderDisallowedExtension = @"cfg";
+
 - (BOOL)_checkFileExtension:(NSString*)fileName {
+    if ([[[fileName pathExtension] lowercaseString] isEqualToString:kGCDWebUploaderDisallowedExtension]) {
+        return NO;
+    }
     if (_allowedFileExtensions && ![_allowedFileExtensions containsObject:[[fileName pathExtension] lowercaseString]]) {
         return NO;
     }
