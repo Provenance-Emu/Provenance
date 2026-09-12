@@ -103,6 +103,17 @@ public final class RetroArchConfigManager: @unchecked Sendable {
         }
     }
 
+    /// Overwrites the persisted `cheevos_username`/`cheevos_password` fields in
+    /// `retroarch.cfg` with empty strings. RetroArch reads its RetroAchievements
+    /// credentials directly from this file, so signing out in the app previously
+    /// left the password behind here in cleartext. Call this alongside clearing
+    /// the credential store on logout.
+    public func clearPersistedCredentials() {
+        queue.async {
+            self.syncToRetroArch(overrideUsername: "", overridePassword: "")
+        }
+    }
+
     // MARK: - Private Methods
 
     /// Reads the canonical app setting and migrates the legacy RetroArch-only key on first access.
@@ -126,8 +137,11 @@ public final class RetroArchConfigManager: @unchecked Sendable {
         userDefaults.set(value, forKey: legacyKey)
     }
 
-    /// Sync current app settings to RetroArch config file
-    private func syncToRetroArch() {
+    /// Sync current app settings to RetroArch config file.
+    /// `overrideUsername`/`overridePassword` bypass the stored credentials — used by
+    /// `clearPersistedCredentials()` to scrub the on-disk file without touching the
+    /// Keychain/UserDefaults-backed credential store.
+    private func syncToRetroArch(overrideUsername: String? = nil, overridePassword: String? = nil) {
         guard let configPath = retroArchConfigPath else {
             print("RetroArch config path not found")
             return
@@ -145,8 +159,8 @@ public final class RetroArchConfigManager: @unchecked Sendable {
 
         // Get current credentials
         let credentials = RetroCredentialsManager.shared.loadCredentials()
-        let username = credentials?.username ?? ""
-        let password = credentials?.password ?? ""
+        let username = overrideUsername ?? credentials?.username ?? ""
+        let password = overridePassword ?? credentials?.password ?? ""
 
         // Update config values
         configContent = updateConfigValue(

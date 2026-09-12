@@ -203,6 +203,10 @@ public actor RetroAchievementsClient: Sendable {
     public func logout() {
         currentSession = nil
         credentialsManager.clearAll()
+        // credentialsManager.clearAll() only clears the Keychain/UserDefaults store;
+        // RetroArch reads its own copy of the password from retroarch.cfg, which
+        // otherwise keeps the plaintext value after sign-out.
+        RetroArchConfigManager.shared.clearPersistedCredentials()
     }
 
     // MARK: - Session-Based Gaming (RetroArch-style)
