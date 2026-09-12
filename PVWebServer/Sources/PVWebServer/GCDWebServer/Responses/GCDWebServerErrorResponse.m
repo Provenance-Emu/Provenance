@@ -70,7 +70,14 @@
 }
 
 static inline NSString* _EscapeHTMLString(NSString* string) {
-  return [string stringByReplacingOccurrencesOfString:@"\"" withString:@"&quot;"];
+  // "&" must be escaped first, otherwise the "&" introduced by the other
+  // replacements below would themselves get escaped a second time.
+  NSString* escaped = [string stringByReplacingOccurrencesOfString:@"&" withString:@"&amp;"];
+  escaped = [escaped stringByReplacingOccurrencesOfString:@"<" withString:@"&lt;"];
+  escaped = [escaped stringByReplacingOccurrencesOfString:@">" withString:@"&gt;"];
+  escaped = [escaped stringByReplacingOccurrencesOfString:@"\"" withString:@"&quot;"];
+  escaped = [escaped stringByReplacingOccurrencesOfString:@"'" withString:@"&#39;"];
+  return escaped;
 }
 
 - (instancetype)initWithStatusCode:(NSInteger)statusCode underlyingError:(NSError*)underlyingError messageFormat:(NSString*)format arguments:(va_list)arguments {
