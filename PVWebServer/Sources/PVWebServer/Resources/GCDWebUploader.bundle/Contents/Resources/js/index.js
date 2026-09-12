@@ -121,13 +121,13 @@ function _reload(path) {
         var components = path.split("/").slice(1, -1);
         for (var i = 0; i < components.length - 1; ++i) {
           var subpath = "/" + components.slice(0, i + 1).join("/") + "/";
-          $("#path").append('<li data-path="' + subpath + '"><a>' + components[i] + '</a></li>');
+          $("#path").append('<li data-path="' + tmpl.encode(subpath) + '"><a>' + tmpl.encode(components[i]) + '</a></li>');
         }
         $("#path > li").click(function(event) {
           _reload($(this).data("path"));
           event.preventDefault();
         });
-        $("#path").append('<li class="active">' + components[components.length - 1] + '</li>');
+        $("#path").append('<li class="active">' + tmpl.encode(components[components.length - 1]) + '</li>');
       }
       _path = path;
     }
