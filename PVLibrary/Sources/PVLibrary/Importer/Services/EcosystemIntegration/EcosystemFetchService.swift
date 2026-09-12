@@ -88,11 +88,26 @@ public actor EcosystemFetchService {
         let wanted = manifest.files.filter { $0.kind == "gameFile" }
         guard !wanted.isEmpty else { throw FetchError.badManifest }
 
+        // `md5` comes from the remote manifest and is used verbatim below to name the
+        // container directory. Require it to actually look like a hex digest before
+        // using it as a path component, so it can't smuggle "/" or "..".
+        guard payload.md5.prefix(8).allSatisfy({ $0.isHexDigit }) else {
+            throw FetchError.badManifest
+        }
+
         let containerName = "iFly-\(String(payload.md5.prefix(8)))"
         let container = Paths.romsImportPath.appendingPathComponent(containerName, isDirectory: true)
+        let containerPath = container.standardizedFileURL.path
 
         for (index, entry) in wanted.enumerated() {
             let destination = container.appendingPathComponent(entry.relativePath)
+            // `relativePath` also comes from the remote manifest with no component
+            // filtering; confirm the resolved destination is still inside the
+            // container before creating directories or writing to it.
+            let destinationPath = destination.standardizedFileURL.path
+            guard destinationPath == containerPath || destinationPath.hasPrefix(containerPath + "/") else {
+                throw FetchError.badManifest
+            }
             try FileManager.default.createDirectory(
                 at: destination.deletingLastPathComponent(),
                 withIntermediateDirectories: true
