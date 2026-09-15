@@ -1,0 +1,72 @@
+name: TestFlight distribute
+description: >-
+  Wait for an uploaded TestFlight build to finish processing, add it to the
+  app's external beta groups (the public links) and submit it for Beta App
+  Review. Uploading alone only reaches Internal groups. Shared by Provenance,
+  iCube and iFly:
+    uses: Provenance-Emu/Provenance/.github/actions/testflight-distribute@develop
+
+inputs:
+  api-key-id:
+    description: App Store Connect API key id
+    required: true
+  api-issuer-id:
+    description: App Store Connect API issuer id
+    required: true
+  api-key-content:
+    description: The .p8 private key, raw PEM or base64
+    required: true
+  bundle-id:
+    description: App bundle identifier
+    required: true
+  build-number:
+    description: CFBundleVersion the archive was uploaded with
+    required: true
+  platform:
+    description: IOS, TV_OS, MAC_OS or VISION_OS
+    required: false
+    default: IOS
+  groups:
+    description: >-
+      Comma-separated beta group names. Empty = every external group that has
+      a public link enabled.
+    required: false
+    default: ""
+  whats-new:
+    description: '"What to Test" text for the build'
+    required: false
+    default: ""
+  timeout-minutes:
+    description: How long to wait for App Store Connect processing
+    required: false
+    default: "60"
+  submit-for-review:
+    description: Submit the build for Beta App Review (needed for external groups)
+    required: false
+    default: "true"
+  dry-run:
+    description: Print the plan without changing anything
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Install PyJWT
+      shell: bash
+      run: python3 -m pip install --quiet --disable-pip-version-check "PyJWT[crypto]>=2.8"
+    - name: Distribute build
+      shell: bash
+      env:
+        ASC_API_KEY_ID: ${{ inputs.api-key-id }}
+        ASC_API_ISSUER_ID: ${{ inputs.api-issuer-id }}
+        ASC_API_KEY_CONTENT: ${{ inputs.api-key-content }}
+        BUNDLE_ID: ${{ inputs.bundle-id }}
+        BUILD_NUMBER: ${{ inputs.build-number }}
+        PLATFORM: ${{ inputs.platform }}
+        GROUPS: ${{ inputs.groups }}
+        WHATS_NEW: ${{ inputs.whats-new }}
+        TIMEOUT_MINUTES: ${{ inputs.timeout-minutes }}
+        SUBMIT_FOR_REVIEW: ${{ inputs.submit-for-review }}
+        DRY_RUN: ${{ inputs.dry-run }}
+      run: python3 "${{ github.action_path }}/distribute.py"

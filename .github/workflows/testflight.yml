@@ -228,6 +228,7 @@ jobs:
           done
 
       - name: Archive and upload
+        id: archive
         env:
           ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
           ASC_API_ISSUER_ID: ${{ secrets.ASC_API_ISSUER_ID }}
@@ -260,10 +261,31 @@ jobs:
             echo "::warning::xcbeautify unavailable — using unformatted output (raw log is unaffected)"
           fi
 
-          # Build number: release.sh defaults to epoch seconds, which is unique
-          # and strictly increasing, so App Store Connect never rejects a
-          # redundant binary. Left as the default deliberately.
+          # Build number: epoch seconds, unique and strictly increasing, so App
+          # Store Connect never rejects a redundant binary (release.sh's own
+          # default). Chosen here rather than inside release.sh so the
+          # distribute step below can find the build in App Store Connect.
+          BUILD=$(date +%s)
+          echo "build=$BUILD" >> "$GITHUB_OUTPUT"
+          ARGS+=(--build "$BUILD")
           ./Scripts/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | "$FORMATTER"
+
+      # Uploading only reaches the internal groups. Without this the public
+      # TestFlight links kept serving whichever build was last assigned by hand
+      # (the Public group sat on an 2026-08-18 build while nightlies piled up
+      # in Provenance Internal). Waits for processing, adds the build to every
+      # external group with a public link, submits for Beta App Review.
+      - name: Distribute to external TestFlight groups
+        if: success()
+        uses: ./.github/actions/testflight-distribute
+        with:
+          api-key-id: ${{ secrets.ASC_API_KEY_ID }}
+          api-issuer-id: ${{ secrets.ASC_API_ISSUER_ID }}
+          api-key-content: ${{ secrets.ASC_API_KEY_CONTENT }}
+          bundle-id: org.provenance-emu.provenance
+          build-number: ${{ steps.archive.outputs.build }}
+          platform: ${{ matrix.platform == 'tvos' && 'TV_OS' || 'IOS' }}
+          whats-new: "Nightly build ${{ steps.archive.outputs.build }} from ${{ github.ref_name }} @ ${{ github.sha }}."
 
       # Same rationale as build.yml: xcbeautify hides Run Script phase output,
       # so the raw log is the only place some failures appear.
