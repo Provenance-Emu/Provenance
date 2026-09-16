@@ -213,6 +213,17 @@ jobs:
         run: |
           set -o pipefail
           cd ${{ matrix.module }}
+          # Some matrix entries are build-only: PVObjCUtils ships ObjC sources and
+          # declares no test target, so `swift test` exits non-zero there with
+          # "error: no tests found; create a target in the 'Tests' directory". That
+          # is not a failure of the module, but it had been failing this job on every
+          # PR touching PVObjCUtils. Keep the build validation, skip the test run.
+          # (PVObjCUtils/Tests does contain an orphaned 2018 file with no test cases
+          # and no Package.swift reference, which is why the directory looks wired up.)
+          if ! grep -q "testTarget" Package.swift; then
+            echo "::notice::${{ matrix.module }} declares no test target - build-only, skipping swift test."
+            exit 0
+          fi
           # --no-parallel: PVSettings (and other Defaults-backed suites) share
           # process-global UserDefaults; Swift Testing's default concurrent suite
           # execution made them flake. See Scripts/spm-validate.sh for detail.
