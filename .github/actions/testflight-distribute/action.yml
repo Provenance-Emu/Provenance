@@ -54,7 +54,11 @@ runs:
   steps:
     - name: Install PyJWT
       shell: bash
-      run: python3 -m pip install --quiet --disable-pip-version-check "PyJWT[crypto]>=2.8"
+      # In a venv: the macOS runner image's Homebrew Python became PEP 668 "externally managed"
+      # (2026-09-16), so a bare `pip install` is refused and the step failed both platforms.
+      run: |
+        python3 -m venv "$RUNNER_TEMP/testflight-distribute-venv"
+        "$RUNNER_TEMP/testflight-distribute-venv/bin/python" -m pip install --quiet --disable-pip-version-check "PyJWT[crypto]>=2.8"
     - name: Distribute build
       shell: bash
       env:
@@ -69,4 +73,4 @@ runs:
         TIMEOUT_MINUTES: ${{ inputs.timeout-minutes }}
         SUBMIT_FOR_REVIEW: ${{ inputs.submit-for-review }}
         DRY_RUN: ${{ inputs.dry-run }}
-      run: python3 "${{ github.action_path }}/distribute.py"
+      run: "$RUNNER_TEMP/testflight-distribute-venv/bin/python" "${{ github.action_path }}/distribute.py"
