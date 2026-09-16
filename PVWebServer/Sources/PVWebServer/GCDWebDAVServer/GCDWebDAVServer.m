@@ -372,8 +372,27 @@ static inline BOOL _IsMacFinder(GCDWebServerRequest* request) {
     return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_Conflict message:@"Invalid destination \"%@\"", dstRelativePath];
   }
 
+  // Whether the transferred item is a directory is a property of the SOURCE.
+  // `isDirectory` above describes the DESTINATION'S PARENT and is necessarily YES
+  // once that check passes, so the `_checkFileExtension:` arm of the destination
+  // test below could never fire. Read it from the source instead.
+  BOOL srcIsDirectory = NO;
+  if (![[NSFileManager defaultManager] fileExistsAtPath:srcAbsolutePath isDirectory:&srcIsDirectory]) {
+    return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", srcRelativePath];
+  }
+
+  // Validate the SOURCE name, not only the destination. Checking the destination
+  // alone let a client rename an item out of the policy it was subject to, e.g.
+  // MOVE /.hidden -> /plain.txt (or a barred extension to an allowed one) and then
+  // GET the result, which defeats both `_allowHiddenItems` and any
+  // `allowedFileExtensions` policy. Diverges from upstream GCDWebServer.
+  NSString* srcName = [srcAbsolutePath lastPathComponent];
+  if ((!_allowHiddenItems && [srcName hasPrefix:@"."]) || (!srcIsDirectory && ![self _checkFileExtension:srcName])) {
+    return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_Forbidden message:@"%@ item name \"%@\" is not allowed", isMove ? @"Moving" : @"Copying", srcName];
+  }
+
   NSString* itemName = [dstAbsolutePath lastPathComponent];
-  if ((!_allowHiddenItems && [itemName hasPrefix:@"."]) || (!isDirectory && ![self _checkFileExtension:itemName])) {
+  if ((!_allowHiddenItems && [itemName hasPrefix:@"."]) || (!srcIsDirectory && ![self _checkFileExtension:itemName])) {
     return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_Forbidden message:@"%@ to item name \"%@\" is not allowed", isMove ? @"Moving" : @"Copying", itemName];
   }
 

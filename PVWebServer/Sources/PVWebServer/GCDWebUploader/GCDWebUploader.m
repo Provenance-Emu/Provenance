@@ -356,6 +356,17 @@ NS_ASSUME_NONNULL_END
         return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_NotFound message:@"\"%@\" does not exist", newRelativePath];
     }
 
+    // Validate the SOURCE name, not only the destination. Checking the destination
+    // alone let a client rename an item out of the policy it was subject to, e.g.
+    // rename ".hidden" to "plain.txt" (or a barred extension to an allowed one) and
+    // then download it, defeating both `_allowHiddenItems` and any
+    // `allowedFileExtensions` policy. Diverges from upstream GCDWebServer.
+    // Must match the equivalent check in GCDWebDAVServer's performCOPY:isMove:.
+    NSString* oldItemName = [oldAbsolutePath lastPathComponent];
+    if ((!_allowHiddenItems && [oldItemName hasPrefix:@"."]) || (!isDirectory && ![self _checkFileExtension:oldItemName])) {
+        return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_Forbidden message:@"Moving item name \"%@\" is not allowed", oldItemName];
+    }
+
     NSString* itemName = [newAbsolutePath lastPathComponent];
     if ((!_allowHiddenItems && [itemName hasPrefix:@"."]) || (!isDirectory && ![self _checkFileExtension:itemName])) {
         return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_Forbidden message:@"Moving to item name \"%@\" is not allowed", itemName];
