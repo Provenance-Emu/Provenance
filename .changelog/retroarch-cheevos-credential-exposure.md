@@ -1,2 +1,2 @@
 ### Fixed
-- **RetroArch Config No Longer Served Over LAN — The web uploader and WebDAV server no longer serve .cfg files, and signing out of RetroAchievements now clears the credentials stored in retroarch.cfg**
+- **RetroAchievements Password No Longer Written to Disk — Provenance now stores the revocable session token in `retroarch.cfg` instead of your password, matching what RetroArch itself does. Existing configs are scrubbed on launch, and signing out clears the token**

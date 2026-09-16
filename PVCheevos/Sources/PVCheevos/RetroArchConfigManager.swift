@@ -21,9 +21,15 @@ public final class RetroArchConfigManager: @unchecked Sendable {
     private let retroArchKeys = (
         username: "cheevos_username",
         password: "cheevos_password",
+        token: "cheevos_token",
         enable: "cheevos_enable",
         hardcore: "cheevos_hardcore_mode_enable"
     )
+
+    /// RetroArch stores the RetroAchievements token in a `char[32]` buffer
+    /// (`configuration.h`), so anything longer is silently truncated on its side
+    /// and authentication then fails with no visible cause.
+    static let maxRetroArchTokenLength = 31
 
     private init() {}
 
@@ -103,15 +109,83 @@ public final class RetroArchConfigManager: @unchecked Sendable {
         }
     }
 
-    /// Overwrites the persisted `cheevos_username`/`cheevos_password` fields in
-    /// `retroarch.cfg` with empty strings. RetroArch reads its RetroAchievements
-    /// credentials directly from this file, so signing out in the app previously
-    /// left the password behind here in cleartext. Call this alongside clearing
-    /// the credential store on logout.
+    /// Blanks `cheevos_username`, `cheevos_token` and `cheevos_password` in
+    /// `retroarch.cfg`. Call this alongside clearing the credential store on logout.
+    ///
+    /// The scrub is expressed explicitly rather than relying on
+    /// `RetroCredentialsManager.clearAll()` having already emptied the store:
+    /// that runs on `com.pvcheevos.credentials` while this runs on
+    /// `com.pvcheevos.retroarch`, and correctness across two independent serial
+    /// queues should not rest on FIFO reasoning about their interleaving.
     public func clearPersistedCredentials() {
         queue.async {
-            self.syncToRetroArch(overrideUsername: "", overridePassword: "")
+            self.syncToRetroArch(scrub: true)
         }
+    }
+
+    /// Rewrites `retroarch.cfg` onto the token scheme if it still carries a
+    /// cleartext `cheevos_password` written by an older build.
+    ///
+    /// A no-op when the file is absent or the password field is already empty,
+    /// so it is cheap to call unconditionally on launch.
+    public func migratePersistedPasswordToToken() {
+        queue.async {
+            guard let configPath = self.retroArchConfigPath,
+                  FileManager.default.fileExists(atPath: configPath.path),
+                  let contents = try? String(contentsOf: configPath),
+                  let existing = self.parseConfigValue(from: contents, key: self.retroArchKeys.password),
+                  !existing.isEmpty else {
+                return
+            }
+            self.syncToRetroArch()
+        }
+    }
+
+    // MARK: - Credential Fields
+
+    /// The RetroAchievements fields written into `retroarch.cfg`.
+    struct RetroArchCredentialFields: Equatable {
+        let username: String
+        let token: String
+        /// Always empty. See `retroArchCredentialFields(scrub:)`.
+        let password: String
+    }
+
+    /// Computes the RetroAchievements credential fields to persist to `retroarch.cfg`.
+    ///
+    /// RetroArch itself never keeps the password on disk. On a successful login it
+    /// copies the token into `cheevos_token` and immediately blanks
+    /// `cheevos_password` — literally `/* store the token, clear the password */` in
+    /// `cheevos/cheevos.c` — then authenticates from the token, falling back to
+    /// username plus password only when no token is present.
+    ///
+    /// We mirror that, so `password` is **always** empty here, including when no
+    /// token is available yet. The alternative, writing the password as a fallback,
+    /// puts a reusable secret into a file the app publishes over unauthenticated LAN
+    /// HTTP and WebDAV. A missing token produces a visible authentication failure;
+    /// a persisted password produces a silent credential leak.
+    ///
+    /// - Parameter scrub: when `true`, every field is blanked, for logout.
+    func retroArchCredentialFields(scrub: Bool = false) -> RetroArchCredentialFields {
+        guard !scrub else {
+            return RetroArchCredentialFields(username: "", token: "", password: "")
+        }
+
+        let credentials = RetroCredentialsManager.shared.loadCredentials()
+        var token = RetroCredentialsManager.shared.loadSessionToken() ?? ""
+
+        if token.count > Self.maxRetroArchTokenLength {
+            print("RetroAchievements token is \(token.count) chars, over "
+                + "RetroArch's \(Self.maxRetroArchTokenLength)-char limit; it "
+                + "would be truncated and rejected. Writing an empty token instead.")
+            token = ""
+        }
+
+        return RetroArchCredentialFields(
+            username: credentials?.username ?? "",
+            token: token,
+            password: ""
+        )
     }
 
     // MARK: - Private Methods
@@ -138,10 +212,9 @@ public final class RetroArchConfigManager: @unchecked Sendable {
     }
 
     /// Sync current app settings to RetroArch config file.
-    /// `overrideUsername`/`overridePassword` bypass the stored credentials — used by
-    /// `clearPersistedCredentials()` to scrub the on-disk file without touching the
-    /// Keychain/UserDefaults-backed credential store.
-    private func syncToRetroArch(overrideUsername: String? = nil, overridePassword: String? = nil) {
+    /// - Parameter scrub: blank every credential field instead of writing the
+    ///   stored ones, without touching the Keychain/UserDefaults credential store.
+    private func syncToRetroArch(scrub: Bool = false) {
         guard let configPath = retroArchConfigPath else {
             print("RetroArch config path not found")
             return
@@ -157,22 +230,27 @@ public final class RetroArchConfigManager: @unchecked Sendable {
             configContent = (try? String(contentsOf: configPath)) ?? ""
         }
 
-        // Get current credentials
-        let credentials = RetroCredentialsManager.shared.loadCredentials()
-        let username = overrideUsername ?? credentials?.username ?? ""
-        let password = overridePassword ?? credentials?.password ?? ""
+        // Get the fields to persist. `password` is always empty — see
+        // `retroArchCredentialFields(scrub:)` for why we mirror RetroArch here.
+        let fields = retroArchCredentialFields(scrub: scrub)
 
         // Update config values
         configContent = updateConfigValue(
             in: configContent,
             key: retroArchKeys.username,
-            value: username
+            value: fields.username
+        )
+
+        configContent = updateConfigValue(
+            in: configContent,
+            key: retroArchKeys.token,
+            value: fields.token
         )
 
         configContent = updateConfigValue(
             in: configContent,
             key: retroArchKeys.password,
-            value: password
+            value: fields.password
         )
 
         configContent = updateConfigValue(

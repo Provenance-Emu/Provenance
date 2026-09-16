@@ -31,6 +31,13 @@ public actor RetroAchievementsClient: Sendable {
     /// attempts to refresh the profile from the web API.
     @MainActor
     public func restoreSession() async {
+        // Older builds persisted the RetroAchievements password in cleartext into
+        // retroarch.cfg, which the in-app web uploader and WebDAV server publish.
+        // Run unconditionally and before the branches below: the users still
+        // holding that password are precisely the ones with no valid session, who
+        // reach neither restore path. No-op once the file is clean.
+        RetroArchConfigManager.shared.migratePersistedPasswordToToken()
+
         if let token = credentialsManager.loadSessionToken(),
            let profile = credentialsManager.loadUserProfile() {
             let credentials = RetroCredentials.token(username: profile.user, token: token)
@@ -203,9 +210,8 @@ public actor RetroAchievementsClient: Sendable {
     public func logout() {
         currentSession = nil
         credentialsManager.clearAll()
-        // credentialsManager.clearAll() only clears the Keychain/UserDefaults store;
-        // RetroArch reads its own copy of the password from retroarch.cfg, which
-        // otherwise keeps the plaintext value after sign-out.
+        // clearAll() only clears the Keychain/UserDefaults store. RetroArch keeps its
+        // own copy of the session token in retroarch.cfg, so scrub that too.
         RetroArchConfigManager.shared.clearPersistedCredentials()
     }
 

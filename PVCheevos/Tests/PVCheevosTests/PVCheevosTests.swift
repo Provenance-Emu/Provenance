@@ -74,6 +74,64 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
     }
 }
 
+@Suite("RetroArch credential persistence", .serialized)
+struct RetroArchCredentialFieldsTests {
+
+    /// The whole point of the token scheme: a reusable secret must never reach
+    /// retroarch.cfg, which the in-app web uploader and WebDAV server publish
+    /// over unauthenticated LAN HTTP.
+    @Test("Never writes a password into retroarch.cfg")
+    func omitsPassword() {
+        RetroCredentialsManager.shared.saveCredentials(username: "tester", password: "hunter2")
+        RetroCredentialsManager.shared.saveSessionToken("ABC123TOKEN")
+        defer { RetroCredentialsManager.shared.clearAll() }
+
+        let fields = RetroArchConfigManager.shared.retroArchCredentialFields()
+
+        #expect(fields.password.isEmpty)
+        #expect(fields.token == "ABC123TOKEN")
+        #expect(fields.username == "tester")
+    }
+
+    /// No token is an authentication failure, not a licence to fall back to the
+    /// password — the fallback is what leaked the credential in the first place.
+    @Test("Still writes no password when no token is available")
+    func omitsPasswordWithoutToken() {
+        RetroCredentialsManager.shared.clearAll()
+        RetroCredentialsManager.shared.saveCredentials(username: "tester", password: "hunter2")
+        defer { RetroCredentialsManager.shared.clearAll() }
+
+        let fields = RetroArchConfigManager.shared.retroArchCredentialFields()
+
+        #expect(fields.password.isEmpty)
+        #expect(fields.token.isEmpty)
+    }
+
+    /// A token longer than RetroArch's char[32] would be truncated on its side and
+    /// rejected, so drop it rather than write something that cannot work.
+    @Test("Drops a token that exceeds the RetroArch buffer")
+    func dropsOverlongToken() {
+        let overlong = String(repeating: "A", count: RetroArchConfigManager.maxRetroArchTokenLength + 1)
+        RetroCredentialsManager.shared.saveSessionToken(overlong)
+        defer { RetroCredentialsManager.shared.clearAll() }
+
+        #expect(RetroArchConfigManager.shared.retroArchCredentialFields().token.isEmpty)
+    }
+
+    @Test("Scrub blanks every credential field")
+    func scrubBlanksEverything() {
+        RetroCredentialsManager.shared.saveCredentials(username: "tester", password: "hunter2")
+        RetroCredentialsManager.shared.saveSessionToken("ABC123TOKEN")
+        defer { RetroCredentialsManager.shared.clearAll() }
+
+        let fields = RetroArchConfigManager.shared.retroArchCredentialFields(scrub: true)
+
+        #expect(fields.username.isEmpty)
+        #expect(fields.token.isEmpty)
+        #expect(fields.password.isEmpty)
+    }
+}
+
 @Suite("RetroArchConfigManager", .serialized)
 // No @available here: the swift-testing macros reject an explicit availability
 // attribute on the decorated declaration, and PVCheevos already has an iOS 17 /
