@@ -110,11 +110,36 @@ class ConsoleGamesViewModel: ObservableObject {
     /// Toggle a game in/out of the selection set.
     @MainActor
     func toggleSelection(md5: String) {
-        if selectedGameMD5s.contains(md5) {
-            selectedGameMD5s.remove(md5)
+        let normalizedID = normalizedSelectionID(md5)
+        guard !normalizedID.isEmpty else { return }
+        if selectedGameMD5s.contains(normalizedID) {
+            selectedGameMD5s.remove(normalizedID)
         } else {
-            selectedGameMD5s.insert(md5)
+            selectedGameMD5s.insert(normalizedID)
         }
+    }
+
+    /// Select all currently visible games. Duplicate or empty IDs are ignored.
+    @MainActor
+    func selectAllVisible(_ games: [GameCellModel]) {
+        let normalizedIDs = games.compactMap { game -> String? in
+            let id = normalizedSelectionID(game.md5)
+            return id.isEmpty ? nil : id
+        }
+        selectedGameMD5s.formUnion(normalizedIDs)
+    }
+
+    /// Deselect only currently visible games, preserving selections for non-visible games.
+    @MainActor
+    func deselectAllVisible(_ games: [GameCellModel]) {
+        let normalizedIDs = games.map { normalizedSelectionID($0.md5) }
+        selectedGameMD5s.subtract(normalizedIDs)
+    }
+
+    /// Clear selection when a filter changes so hidden games cannot remain selected.
+    @MainActor
+    func clearSelectionForFilterChange() {
+        selectedGameMD5s.removeAll()
     }
 
     /// Enter multi-select mode; clears any previous selection.
@@ -131,8 +156,22 @@ class ConsoleGamesViewModel: ObservableObject {
         selectedGameMD5s = []
     }
 
+    @MainActor
+    private func normalizedSelectionID(_ id: String) -> String {
+        id.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+    }
+
     // Properties that were @State in the View, now @Published in ViewModel
     @Published var searchText: String = "" {
+        willSet {
+            let oldQuery = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            let newQuery = newValue.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            if oldQuery != newQuery, isMultiSelectMode, !selectedGameMD5s.isEmpty {
+                Task { @MainActor in
+                    self.clearSelectionForFilterChange()
+                }
+            }
+        }
         didSet {
             // Debounce search updates to reduce filtering overhead
             searchDebounceTimer?.invalidate()
@@ -364,6 +403,9 @@ private extension ConsoleGamesViewModel {
                             let snapshot = collection.freeze()
                             self.rebuildGameModels(from: snapshot)
                         case .error(let error):
+                            Task { @MainActor in
+                                self.selectedGameMD5s.removeAll()
+                            }
                             ELOG("ConsoleGamesViewModel: error observing PVGame: \(error.localizedDescription)")
                         }
                     }
@@ -419,6 +461,8 @@ private extension ConsoleGamesViewModel {
             self.allGamesModels = self.sorted(all)
             self.favoritesModels = self.sorted(favs)
             self.recentlyPlayedModels = recents
+            let visibleIDs = Set(all.map { self.normalizedSelectionID($0.md5) })
+            self.selectedGameMD5s.formIntersection(visibleIDs)
         }
         }
     }
