@@ -75,7 +75,9 @@ class MockURLSession: URLSessionProtocol, @unchecked Sendable {
 }
 
 @Suite("RetroArchConfigManager", .serialized)
-@available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
+// No @available here: the swift-testing macros reject an explicit availability
+// attribute on the decorated declaration, and PVCheevos already has an iOS 17 /
+// tvOS 17 / macOS 14 package minimum, so the old iOS 15 annotation was vestigial.
 struct RetroArchConfigManagerTests {
     /// Canonical shared-app key used by gameplay and settings.
     private let enabledKey = "retroAchievementsEnabled"
