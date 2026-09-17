@@ -15,6 +15,24 @@ import PVLogging
 import FreemiumKit
 #endif
 
+/// Menu delegate for the standalone Settings screen (TV Media and single-page UIs).
+///
+/// Library actions (Scan ROMs, Update Metadata, Reset Library) use the default
+/// `PVMenuDelegate` implementations, which post the notifications `PVAppDelegate`
+/// observes. `PVSettingsView` never invokes the side-menu navigation callbacks,
+/// so those are intentionally no-ops (#3672).
+private final class SettingsLibraryMenuDelegate: PVMenuDelegate {
+    static let shared = SettingsLibraryMenuDelegate()
+
+    func didTapImports() {}
+    func didTapSettings() {}
+    func didTapHome() {}
+    func didTapAddGames() {}
+    func didTapConsole(with consoleId: String) {}
+    func didTapCollection(with collection: Int) {}
+    func closeMenu() {}
+}
+
 struct SettingsWrapperView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var themeManager: ThemeManager
@@ -34,7 +52,9 @@ struct SettingsWrapperView: View {
     @StateObject private var conflictsController = PVGameLibraryUpdatesController(
         gameImporter: GameImporter.shared
     )
-    private let menuDelegate = MockPVMenuDelegate()
+    /// `PVSettingsViewModel` holds its delegate weakly, so it must outlive this
+    /// (frequently re-created) view struct — hence the shared instance.
+    private let menuDelegate = SettingsLibraryMenuDelegate.shared
 
     #if os(tvOS)
     init(canPop: Binding<Bool> = .constant(false)) {
