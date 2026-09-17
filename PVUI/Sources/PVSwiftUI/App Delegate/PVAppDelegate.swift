@@ -107,10 +107,24 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
     }
 
     private var cancellables = Set<AnyCancellable>()
+    @MainActor private var libraryNotificationHandlersInstalled = false
+
+    /// Registers the Scan ROMs / Update Metadata / Reset Library observers if no UI
+    /// mode has done so yet. Only `setupUIKitInterface` and `setupSwiftUIInterface`
+    /// used to register them, so in the TV Media and single-page UIs those
+    /// notifications were posted with nobody listening (#3672).
+    @MainActor
+    public func installLibraryNotificationHandlersIfNeeded() {
+        guard !libraryNotificationHandlersInstalled else { return }
+        _initLibraryNotificationHandlers()
+    }
+
     @MainActor
     func _initLibraryNotificationHandlers() {
         ILOG("Initializing library notification handlers")
         cancellables.forEach { $0.cancel() }
+        cancellables.removeAll()
+        libraryNotificationHandlersInstalled = true
 
         /// Reimport the library
         NotificationCenter.default.publisher(for: .PVReimportLibrary)

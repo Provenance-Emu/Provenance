@@ -403,8 +403,23 @@ struct TVMediaMainView: View {
             if featureFlagsManager.featureStates[.inAppFreeROMs] ?? false {
                 items.append(RetroSelectionItem(id: "freeROMs", title: "Free ROMs", subtitle: "Browse open-source and public domain ROMs"))
             }
+            items.append(RetroSelectionItem(id: "rescanROMs", title: "Rescan ROM Folders", subtitle: "Find ROMs copied into system folders"))
             items.append(RetroSelectionItem(id: "romInstructions", title: "How to Add ROMs", subtitle: "Web server, CloudKit, and more"))
             return items
+        }
+
+        /// Picks up ROMs dropped straight into `ROMs/<system>/` (e.g. over WebDAV) that
+        /// bypassed the Imports folder watcher. New games reach the shelves through
+        /// `TVMediaLibraryModel`'s Realm observer; progress shows in the import toaster.
+        private func rescanROMDirectories() {
+            guard let updatesController = appState.libraryUpdatesController else {
+                WLOG("TVMedia: libraryUpdatesController unavailable, cannot rescan ROM folders")
+                return
+            }
+            PVToastManager.post("Scanning ROM folders…", icon: "arrow.clockwise")
+            Task.detached(priority: .utility) {
+                await updatesController.importROMDirectories()
+            }
         }
 
         private var layoutWithImportsAlert: some View {
@@ -420,6 +435,8 @@ struct TVMediaMainView: View {
                             router.activeModal = .importQueue
                         case "freeROMs":
                             router.activeModal = .freeROMs
+                        case "rescanROMs":
+                            rescanROMDirectories()
                         case "romInstructions":
                             router.activeModal = .romInstructions
                         default:

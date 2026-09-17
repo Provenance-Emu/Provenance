@@ -73,6 +73,7 @@ struct MainView: View {
         }
         .onAppear {
             ILOG("MainView: Appeared")
+            appDelegate.installLibraryNotificationHandlersIfNeeded()
         }
         .edgesIgnoringSafeArea(.all)
         // Pre-launch Transfer Pak setup sheet — covers all UI modes (RetroMainView,

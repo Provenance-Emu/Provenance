@@ -359,10 +359,20 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
         }
     }
 
+    @MainActor private var isScanningROMDirectories = false
+
     /// auto scans ROM directories and adds to the import queue
     /// Uses incremental scanning to only check files modified since last scan
     @MainActor
     public func importROMDirectories() async {
+        // Boot, Settings and the TV Media rescan button can all trigger this; two
+        // overlapping scans would queue the same files twice.
+        guard !isScanningROMDirectories else {
+            ILOG("PVGameLibrary: ROM directory scan already running, skipping")
+            return
+        }
+        isScanningROMDirectories = true
+        defer { isScanningROMDirectories = false }
         ILOG("PVGameLibrary: Starting Import")
 
         // Scan for BIOS files first
