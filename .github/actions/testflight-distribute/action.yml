@@ -73,4 +73,8 @@ runs:
         TIMEOUT_MINUTES: ${{ inputs.timeout-minutes }}
         SUBMIT_FOR_REVIEW: ${{ inputs.submit-for-review }}
         DRY_RUN: ${{ inputs.dry-run }}
-      run: "$RUNNER_TEMP/testflight-distribute-venv/bin/python" "${{ github.action_path }}/distribute.py"
+      # Block scalar on purpose: a plain scalar starting with a double quote is parsed as a
+      # quoted YAML string that ends at the second quote, and the runner then refuses the
+      # whole action manifest ("did not find expected key"), so builds stay Internal-only.
+      run: |
+        "$RUNNER_TEMP/testflight-distribute-venv/bin/python" "${{ github.action_path }}/distribute.py"
