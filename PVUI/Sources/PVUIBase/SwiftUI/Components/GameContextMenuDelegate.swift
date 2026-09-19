@@ -33,6 +33,7 @@ public protocol GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestExportSRAMFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestImportSRAMFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestImportSaveFor game: PVGame)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDeleteFor game: PVGame)
 }
 
 /// Default implementations for GameContextMenuDelegate
@@ -116,5 +117,9 @@ public extension GameContextMenuDelegate {
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestImportSaveFor game: PVGame) {
         DLOG("Default implementation: didRequestImportSaveFor not implemented")
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDeleteFor game: PVGame) {
+        DLOG("Default implementation: didRequestDeleteFor not implemented")
     }
 }

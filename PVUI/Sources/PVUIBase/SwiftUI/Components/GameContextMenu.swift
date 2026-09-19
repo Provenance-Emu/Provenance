@@ -272,13 +272,21 @@ public struct GameContextMenu: View {
                 if #available(iOS 15, tvOS 15, macOS 12, *), !game.contentless {
                     Button(role: .destructive) {
                         Task.detached { @MainActor in
-                            rootDelegate?.attemptToDelete(game: game, deleteSaves: false)
+                            if let rootDelegate {
+                                rootDelegate.attemptToDelete(game: game, deleteSaves: false)
+                            } else {
+                                contextMenuDelegate?.gameContextMenu(self, didRequestDeleteFor: game)
+                            }
                         }
                     } label: { Label("Delete", systemImage: "trash") }
                 } else if !game.contentless {
                     Button {
                         Task.detached { @MainActor in
-                            rootDelegate?.attemptToDelete(game: game, deleteSaves: false)
+                            if let rootDelegate {
+                                rootDelegate.attemptToDelete(game: game, deleteSaves: false)
+                            } else {
+                                contextMenuDelegate?.gameContextMenu(self, didRequestDeleteFor: game)
+                            }
                         }
                     } label: { Label("Delete", systemImage: "trash") }
                 }
