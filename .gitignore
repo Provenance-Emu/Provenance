@@ -137,4 +137,7 @@ __pycache__
 # App Store screenshots: large derived artifacts, stored in the media release
 # store rather than git. See fastlane/screenshots/README.md.
 /fastlane/screenshots/**/*.png
+# snapshot result bundles + HTML report (fastlane screenshots lane)
+/fastlane/screenshots/test_output/
+/fastlane/screenshots/screenshots.html
 /fastlane/screenshots/**/*.jpg

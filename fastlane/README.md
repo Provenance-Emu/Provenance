@@ -163,6 +163,24 @@ Updates the bundle id and app name if a beta build
 
 Resets the bundle id and app name after build
 
+### ios screenshots
+
+```sh
+[bundle exec] fastlane ios screenshots
+```
+
+Capture App Store screenshots (iPhone, iPad; Apple TV with include_tvos:true) via the Provenance-Screenshots scheme
+
+Options: ios_version (e.g. 26.5), derived_data_path, devices (comma separated), include_tvos, skip_ios
+
+### ios verify_screenshots
+
+```sh
+[bundle exec] fastlane ios verify_screenshots
+```
+
+Verify screenshot output exists and is non-empty
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

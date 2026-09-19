@@ -807,6 +807,9 @@ public struct PVSettingsView: View {
         case .cloudSync:
             showCloudSync = true
             settingsNavigator.navigate(to: .none)
+        case .tab(let tab):
+            selectedTab = tab.rawValue
+            settingsNavigator.navigate(to: .none)
         case .none:
             break
         }

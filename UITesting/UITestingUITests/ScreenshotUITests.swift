@@ -2,14 +2,20 @@
 //  ScreenshotUITests.swift
 //  UITestingUITests
 //
-//  Captures App Store screenshots by navigating to key screens via
-//  provenance:// deep links and the ScreenNavigator system.
+//  Captures App Store screenshots by launching the UITesting app in
+//  `-SCREENSHOT_MODE` and pointing it at a screen via a
+//  `-deepLink provenance://screen/<path>` launch argument. The app replays the
+//  deep link through NavigationRouter / ScreenNavigator once bootup completes,
+//  and PVRootViewController performs the navigation.
+//
+//  Launching per screen (instead of opening the URL from Safari) works on tvOS,
+//  where there is no browser, and never depends on the Safari UI.
 //
 //  Run via:
 //    fastlane screenshots
 //  or:
 //    xcodebuild test -workspace Provenance.xcworkspace \
-//      -scheme UITesting -destination "platform=iOS Simulator,name=iPhone 16 Pro"
+//      -scheme Provenance-Screenshots -destination "platform=iOS Simulator,name=iPhone 17 Pro Max"
 //
 
 import XCTest
@@ -18,14 +24,14 @@ final class ScreenshotUITests: XCTestCase {
 
     var app: XCUIApplication!
 
+    /// How long to wait for the app to boot (first launch scans systems and builds the mock library).
+    private let bootTimeout: TimeInterval = 180
+    /// Settle time after navigation so transitions and artwork finish rendering.
+    private let settleSeconds: UInt32 = 3
+
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
-        // Enable screenshot mode to skip core loading / bootup sequence overhead
-        app.launchArguments += ["-SCREENSHOT_MODE", "1"]
-        app.launch()
-        // Allow splash/bootup animation to settle
-        sleep(3)
     }
 
     override func tearDownWithError() throws {
@@ -36,7 +42,7 @@ final class ScreenshotUITests: XCTestCase {
 
     @MainActor
     func testScreenshot_Library() throws {
-        navigateTo(screen: "library")
+        launch(screen: "library")
         takeScreenshot(named: "01_Library")
     }
 
@@ -44,19 +50,19 @@ final class ScreenshotUITests: XCTestCase {
 
     @MainActor
     func testScreenshot_Settings() throws {
-        navigateTo(screen: "settings")
+        launch(screen: "settings")
         takeScreenshot(named: "02_Settings")
     }
 
     @MainActor
     func testScreenshot_Settings_Video() throws {
-        navigateTo(screen: "settings/video")
+        launch(screen: "settings/video")
         takeScreenshot(named: "03_Settings_Video")
     }
 
     @MainActor
     func testScreenshot_Settings_Controller() throws {
-        navigateTo(screen: "settings/controller")
+        launch(screen: "settings/controller")
         takeScreenshot(named: "04_Settings_Controller")
     }
 
@@ -64,27 +70,45 @@ final class ScreenshotUITests: XCTestCase {
 
     @MainActor
     func testScreenshot_SystemBrowser_NES() throws {
-        navigateTo(screen: "system/com.provenance.nes")
+        launch(screen: "system/com.provenance.nes")
         takeScreenshot(named: "05_SystemBrowser_NES")
     }
 
     @MainActor
     func testScreenshot_SystemBrowser_SNES() throws {
-        navigateTo(screen: "system/com.provenance.snes")
+        launch(screen: "system/com.provenance.snes")
         takeScreenshot(named: "06_SystemBrowser_SNES")
     }
 
     // MARK: - Helpers
 
-    /// Open a provenance://screen/<path> deep link and wait for the UI to settle.
-    private func navigateTo(screen path: String) {
+    /// Launch the app in screenshot mode targeting `provenance://screen/<path>`,
+    /// then wait until bootup has finished and the main UI is on screen.
+    private func launch(screen path: String) {
         let urlString = "provenance://screen/\(path)"
-        guard let url = URL(string: urlString) else {
-            XCTFail("Invalid URL string: \(urlString)")
-            return
+        app.launchArguments = [
+            "-SCREENSHOT_MODE", "1",
+            "-useMockLibrary",
+            "-deepLink", urlString,
+        ]
+        app.launch()
+
+        let mainContent = app.otherElements["screenshot.mainContent"]
+        let bootup = app.otherElements["screenshot.bootup"]
+        let deadline = Date().addingTimeInterval(bootTimeout)
+        var ready = false
+        while Date() < deadline {
+            let bootScreenGone = !bootup.exists && !app.staticTexts["PROVENANCE"].exists
+            if mainContent.exists || (app.state == .runningForeground && bootScreenGone) {
+                ready = true
+                break
+            }
+            sleep(1)
         }
-        app.open(url)
-        sleep(1)
+        XCTAssertTrue(ready, "App did not finish booting within \(Int(bootTimeout))s for \(urlString)")
+
+        // Allow the deep-link navigation and transitions to settle.
+        sleep(settleSeconds)
     }
 
     /// Save a screenshot as an XCTAttachment with a given name for fastlane snapshot.
@@ -94,48 +118,5 @@ final class ScreenshotUITests: XCTestCase {
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
-    }
-}
-
-// MARK: - XCUIApplication convenience
-
-private extension XCUIApplication {
-    func open(_ url: URL) {
-#if os(tvOS)
-        // tvOS does not have Safari. Deep links must be triggered by re-launching
-        // the app with the URL as a launch argument, or handled another way.
-        // For now, activate the app so screenshots still run against the default state.
-        self.activate()
-        sleep(1)
-#else
-        // Use Safari as a proxy to open the URL scheme, then return to the app.
-        let safari = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
-        safari.activate()
-        safari.launch()
-        let addressBar = safari.textFields["Address"]
-        if addressBar.waitForExistence(timeout: 5) {
-            addressBar.tap()
-            addressBar.clearAndEnterText(text: url.absoluteString)
-            safari.keyboards.buttons["Go"].tap()
-            // Allow the deep link to resolve and the app to reopen
-            sleep(2)
-        }
-        // Return to the test app
-        self.activate()
-        sleep(1)
-#endif
-    }
-}
-
-private extension XCUIElement {
-    func clearAndEnterText(text: String) {
-        guard let stringValue = self.value as? String else {
-            typeText(text)
-            return
-        }
-        let deleteCount = stringValue.count
-        let deleteString = String(repeating: XCUIKeyboardKey.delete.rawValue, count: deleteCount)
-        typeText(deleteString)
-        typeText(text)
     }
 }

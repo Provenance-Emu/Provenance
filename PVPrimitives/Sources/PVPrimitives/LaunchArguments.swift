@@ -30,6 +30,14 @@ public enum LaunchArgument: String, CaseIterable {
 
     /// Populates the library with mock games when empty (simulator/UITesting)
     case useMockLibrary = "-useMockLibrary"
+
+    /// App Store screenshot capture mode (UITesting / fastlane snapshot).
+    /// Implies `useMockLibrary`, skips splash hold and background importer work.
+    case screenshotMode = "-SCREENSHOT_MODE"
+
+    /// Deep link to open once the app has finished booting, e.g.
+    /// `-deepLink provenance://screen/settings/video`. Read via `LaunchArgument.deepLinkURL`.
+    case deepLink = "-deepLink"
     
     /// The raw argument string including the dash prefix
     public var argument: String { rawValue }
@@ -51,5 +59,22 @@ public enum LaunchArgument: String, CaseIterable {
     /// Returns all currently enabled launch arguments
     public static var enabledArguments: [LaunchArgument] {
         allCases.filter { $0.isEnabled }
+    }
+
+    /// The argument immediately following this flag, if present (e.g. `-deepLink <url>`).
+    public var value: String? {
+        #if DEBUG
+        let args = ProcessInfo.processInfo.arguments
+        guard let index = args.firstIndex(of: rawValue), args.indices.contains(index + 1) else { return nil }
+        return args[index + 1]
+        #else
+        return nil
+        #endif
+    }
+
+    /// URL passed via `-deepLink <url>`, if any.
+    public static var deepLinkURL: URL? {
+        guard let raw = LaunchArgument.deepLink.value else { return nil }
+        return URL(string: raw)
     }
 }

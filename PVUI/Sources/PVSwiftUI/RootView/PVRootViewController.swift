@@ -127,6 +127,8 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
 
         // Listen for app open actions
         setupAppOpenActionObserver()
+
+        setupDeepLinkNavigationObservers()
     }
 
     public override func viewWillAppear(_ animated: Bool) {
@@ -670,6 +672,70 @@ extension PVRootViewController {
     @objc private func handleShowSettings() {
         // Handle the PVShowSettings notification by calling didTapSettings
         didTapSettings()
+    }
+
+    // MARK: - Deep-link navigation (provenance://screen/...)
+
+    /// Wire `ScreenNavigator` and `LibraryNavigator` into the paged root UI so
+    /// `provenance://screen/<path>` deep links (UITests, automation, Siri) actually
+    /// move the UI. Both navigators hold their last value, so a link that arrives
+    /// before this controller exists is replayed on subscription.
+    private func setupDeepLinkNavigationObservers() {
+        ScreenNavigator.shared.$destination
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] destination in
+                guard let self, let destination else { return }
+                self.handle(screenDestination: destination)
+                ScreenNavigator.shared.clear()
+            }
+            .store(in: &cancellables)
+
+        LibraryNavigator.shared.$pendingAction
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] action in
+                guard let self, case .console(let systemID) = action else { return }
+                self.dismissPresentedThen { self.didTapConsole(with: systemID) }
+                LibraryNavigator.shared.clearPendingAction()
+            }
+            .store(in: &cancellables)
+    }
+
+    private func handle(screenDestination destination: ScreenDestination) {
+        ILOG("PVRootViewController: handling deep-link destination \(destination)")
+        switch destination {
+        case .library:
+            dismissPresentedThen { self.didTapHome() }
+        case .settingsRoot:
+            showSettings(tab: nil)
+        case .settingsVideo, .settingsAudio:
+            showSettings(tab: .emulation)
+        case .settingsController:
+            showSettings(tab: .controller)
+        case .settingsAdvanced:
+            showSettings(tab: .advanced)
+        case .systemBrowser(let systemID):
+            dismissPresentedThen { self.didTapConsole(with: systemID) }
+        case .gameDetail(let md5):
+            LibraryNavigator.shared.navigate(toGame: md5)
+        case .snapshot:
+            break
+        }
+    }
+
+    private func showSettings(tab: SettingsTab?) {
+        if let tab {
+            SettingsNavigator.shared.navigate(to: .tab(tab))
+        }
+        dismissPresentedThen { self.didTapSettings() }
+    }
+
+    /// Dismiss anything modally presented (e.g. an open settings sheet) before running `action`.
+    private func dismissPresentedThen(_ action: @escaping () -> Void) {
+        if presentedViewController != nil {
+            dismiss(animated: false) { action() }
+        } else {
+            action()
+        }
     }
 
     private func setupHUDObserver(hud: RetroProgressHUD) {

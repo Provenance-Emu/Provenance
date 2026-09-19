@@ -1,25 +1,145 @@
-desc 'Capture App Store screenshots using fastlane snapshot'
+# App Store screenshot capture.
+#
+# Drives the Provenance-Screenshots scheme (UITesting.app + ScreenshotUITests).
+# ScreenshotUITests launches the app once per screen in -SCREENSHOT_MODE with a
+# `-deepLink provenance://screen/<path>` argument and saves an XCTAttachment.
+#
+# snapshot is used to build/run per device, but its collector only picks up
+# files written by SnapshotHelper.swift (which we don't use) and it refuses to
+# mix iOS and tvOS devices in one call. So each device runs in its own snapshot
+# call with `result_bundle: true`, and the lane exports the XCTAttachment PNGs
+# from that .xcresult with `xcrun xcresulttool export attachments`.
+#
+# Output layout (matches deliver / fastlane/screenshots/README.md):
+#   fastlane/screenshots/en-US/<Device>-<name>.png          iPhone + iPad
+#   fastlane/screenshots/appleTV/en-US/<Device>-<name>.png  Apple TV
+
+# Lane Ruby code runs with the fastlane/ folder as cwd, so use absolute paths.
+SCREENSHOTS_DIR = File.join(File.expand_path("..", FastlaneCore::FastlaneFolder.path), "fastlane", "screenshots")
+SCREENSHOT_LANGUAGE = "en-US"
+SCREENSHOT_SCHEME = "Provenance-Screenshots"
+SCREENSHOT_IOS_DEVICES = ["iPhone 17 Pro Max", "iPad Pro 13-inch (M4)"]
+SCREENSHOT_TVOS_DEVICES = ["Apple TV 4K (3rd generation)"]
+SCREENSHOT_TEST_CLASS = "UITestingUITests/ScreenshotUITests"
+
+desc 'Capture App Store screenshots (iPhone, iPad; Apple TV with include_tvos:true) via the Provenance-Screenshots scheme'
+desc 'Options: ios_version (e.g. 26.5), derived_data_path, devices (comma separated), include_tvos, skip_ios'
 lane :screenshots do |options|
-  # Ensure Snapfile is configured correctly before running
-  snapshot(
-    workspace: "Provenance.xcworkspace",
-    scheme: options[:scheme] || "Provenance-Screenshots",
-    output_directory: "./fastlane/screenshots",
-    clear_previous_screenshots: true,
-    stop_after_first_error: false,
-    reinstall_app: true,
-    erase_simulator: false,
-    override_status_bar: true,
-    override_status_bar_arguments: "--time 9:41 --dataNetwork wifi --wifiBars 3 --batteryState charged --batteryLevel 100"
-  )
+  derived_data_path = options[:derived_data_path] ||
+    File.expand_path("~/Library/Developer/Xcode/DerivedData/#{SCREENSHOT_SCHEME}")
+  requested = options[:devices]&.split(",")&.map(&:strip)
+
+  ios_devices = requested ? requested & SCREENSHOT_IOS_DEVICES : SCREENSHOT_IOS_DEVICES
+  tvos_devices = requested ? requested & SCREENSHOT_TVOS_DEVICES : SCREENSHOT_TVOS_DEVICES
+  ios_devices = [] if options[:skip_ios]
+  # Apple TV is opt-in: the UITesting target does not compile for tvOS yet
+  # (TestEmulatorScene uses iOS-only .commands / .keyboardShortcut / .statusBar APIs).
+  tvos_devices = [] unless options[:include_tvos]
+
+  # Clear previous output for the platforms we are about to capture.
+  FileUtils.rm_f(Dir.glob(File.join(SCREENSHOTS_DIR, SCREENSHOT_LANGUAGE, "*.png"))) unless ios_devices.empty?
+  FileUtils.rm_f(Dir.glob(File.join(SCREENSHOTS_DIR, "appleTV", SCREENSHOT_LANGUAGE, "*.png"))) unless tvos_devices.empty?
+
+  errors = []
+  ios_devices.each do |device|
+    errors += capture_screenshots(device: device, platform_dir: SCREENSHOT_LANGUAGE,
+                                  derived_data_path: derived_data_path, ios_version: options[:ios_version])
+  end
+  tvos_devices.each do |device|
+    errors += capture_screenshots(device: device, platform_dir: File.join("appleTV", SCREENSHOT_LANGUAGE),
+                                  derived_data_path: derived_data_path, ios_version: nil)
+  end
+
+  UI.user_error!("Screenshot capture failed:\n  #{errors.join("\n  ")}") unless errors.empty?
+  verify_screenshots
 end
 
 desc 'Verify screenshot output exists and is non-empty'
 lane :verify_screenshots do
-  screenshots_dir = "./fastlane/screenshots"
-  unless Dir.exist?(screenshots_dir) && !Dir.glob("#{screenshots_dir}/**/*.png").empty?
-    UI.user_error!("No screenshots found in #{screenshots_dir}. Run 'fastlane screenshots' first.")
+  pngs = Dir.glob("#{SCREENSHOTS_DIR}/**/*.png")
+  UI.user_error!("No screenshots found in #{SCREENSHOTS_DIR}. Run 'fastlane screenshots' first.") if pngs.empty?
+  UI.success("Found #{pngs.count} screenshots in #{SCREENSHOTS_DIR}")
+end
+
+# Run ScreenshotUITests on one simulator and export its XCTAttachment PNGs.
+# Returns an array of error strings (empty on success).
+def capture_screenshots(device:, platform_dir:, derived_data_path:, ios_version:)
+  errors = []
+  destination = File.join(SCREENSHOTS_DIR, platform_dir)
+  # snapshot writes the bundle here when result_bundle is true (see
+  # Snapshot::TestCommandGeneratorBase#resolve_result_bundle_path).
+  result_bundle = File.join(SCREENSHOTS_DIR, "test_output", SCREENSHOT_LANGUAGE, SCREENSHOT_SCHEME) + ".xcresult"
+  FileUtils.rm_rf(result_bundle)
+
+  UI.header("Screenshots: #{device}")
+  begin
+    snapshot(
+      workspace: "Provenance.xcworkspace",
+      scheme: SCREENSHOT_SCHEME,
+      devices: [device],
+      languages: [SCREENSHOT_LANGUAGE],
+      ios_version: ios_version,
+      # Bundle id of UITesting.app (needed by reinstall_app; avoids an interactive prompt).
+      app_identifier: "com.joemattiello.UITesting",
+      derived_data_path: derived_data_path,
+      output_directory: SCREENSHOTS_DIR,
+      result_bundle: true,
+      only_testing: [SCREENSHOT_TEST_CLASS],
+      # Screenshots are XCTAttachments, not SnapshotHelper files.
+      skip_helper_version_check: true,
+      clear_previous_screenshots: false,
+      # snapshot's own collector finds nothing (no SnapshotHelper) and would otherwise re-run the tests.
+      number_of_retries: 0,
+      stop_after_first_error: false,
+      reinstall_app: true,
+      erase_simulator: false,
+      override_status_bar: true,
+      override_status_bar_arguments: "--time 9:41 --dataNetwork wifi --wifiBars 3 --batteryState charged --batteryLevel 100"
+    )
+  rescue StandardError => e
+    # snapshot 2.222 raises when its own collector finds nothing; the attachments
+    # in the result bundle are still valid, so keep going and report at the end
+    # only if the export also fails.
+    UI.important("snapshot reported: #{e.message}")
   end
-  count = Dir.glob("#{screenshots_dir}/**/*.png").count
-  UI.success("Found #{count} screenshots in #{screenshots_dir}")
+
+  exported = export_screenshot_attachments(result_bundle: result_bundle, device: device, destination: destination)
+  errors << "#{device}: no screenshots exported from #{result_bundle}" if exported.zero?
+  errors
+end
+
+# Export XCTAttachment PNGs from an .xcresult into `destination` as "<device>-<name>.png".
+# Returns the number of files written.
+def export_screenshot_attachments(result_bundle:, device:, destination:)
+  unless File.directory?(result_bundle)
+    UI.error("Result bundle not found: #{result_bundle}")
+    return 0
+  end
+
+  export_dir = Dir.mktmpdir("screenshots-#{device.delete(' ')}")
+  sh("xcrun xcresulttool export attachments --path '#{result_bundle}' --output-path '#{export_dir}'", log: false)
+  manifest_path = File.join(export_dir, "manifest.json")
+  unless File.exist?(manifest_path)
+    UI.error("xcresulttool produced no manifest for #{device}")
+    return 0
+  end
+
+  FileUtils.mkdir_p(destination)
+  count = 0
+  JSON.parse(File.read(manifest_path)).each do |test|
+    next unless test["testIdentifier"].to_s.start_with?(SCREENSHOT_TEST_CLASS.split("/").last)
+    (test["attachments"] || []).each do |attachment|
+      source = File.join(export_dir, attachment["exportedFileName"])
+      next unless File.exist?(source) && source.end_with?(".png")
+      # "01_Library_0_<UUID>.png" -> "01_Library"
+      name = attachment["suggestedHumanReadableName"].to_s.sub(/_\d+_[0-9A-Fa-f-]{36}\.png\z/, "").sub(/\.png\z/, "")
+      target = File.join(destination, "#{device}-#{name}.png")
+      FileUtils.cp(source, target)
+      UI.success("Exported #{target}")
+      count += 1
+    end
+  end
+  count
+ensure
+  FileUtils.rm_rf(export_dir) if export_dir
 end

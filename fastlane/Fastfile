@@ -64,7 +64,9 @@ platform :ios do
   end
 
   before_all do
-    git_pull(only_tags: true)
+    # Set FASTLANE_SKIP_GIT_PULL=1 to run lanes offline or when local tags
+    # diverge from the remote (git refuses to clobber existing tags).
+    git_pull(only_tags: true) unless ENV['FASTLANE_SKIP_GIT_PULL']
   end
 
   # after_all do

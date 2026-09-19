@@ -1,9 +1,6 @@
-# A list of devices you want to take the screenshots from
-devices([
-  "iPhone 17 Pro Max",
-  "iPad Pro 13-inch (M4)",
-  "Apple TV 4K (3rd generation)"
-])
+# Devices are set per-call by the `screenshots` lane (Fastfile+Screenshots):
+# snapshot cannot mix iOS and tvOS devices in one run, so the lane invokes it
+# once per device (iPhone 17 Pro Max, iPad Pro 13-inch (M4), Apple TV 4K).
 
 languages([
   "en-US"
@@ -22,7 +19,8 @@ clear_previous_screenshots true
 # Choose which project/workspace to use
 workspace "./Provenance.xcworkspace"
 
-# Test runner configuration
+# Test runner configuration. ScreenshotUITests sets its own launch arguments
+# (-SCREENSHOT_MODE, -useMockLibrary, -deepLink <url>) on every launch.
 launch_arguments(["-SCREENSHOT_MODE", "1"])
 
 # For more information about all available options run

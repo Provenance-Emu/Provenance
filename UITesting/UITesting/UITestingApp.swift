@@ -214,7 +214,9 @@ struct UITestingApp: SwiftUI.App {
     /// Triggered on simulator or when `-useMockLibrary` launch argument is set.
     private func populateMockLibraryIfNeeded() {
         #if DEBUG
-        let shouldPopulate = LaunchArgument.useMockLibrary.isEnabled || AppState.shared.isSimulator
+        let shouldPopulate = LaunchArgument.useMockLibrary.isEnabled
+            || LaunchArgument.screenshotMode.isEnabled
+            || AppState.shared.isSimulator
         guard shouldPopulate else { return }
 
         guard let realm = try? Realm() else {
@@ -279,12 +281,47 @@ struct UITestingApp: SwiftUI.App {
         #endif
     }
 
+    // MARK: - Deep links (provenance://screen/...)
+
+    /// Route a `provenance://` URL the same way the main app does: library-level
+    /// routes go through `NavigationRouter` (registered `RouteProvider`s such as
+    /// `LibraryNavigator.routeProvider`), everything else falls back to `ScreenNavigator`.
+    /// `PVRootViewController` observes both and performs the actual navigation.
+    @discardableResult
+    private func handle(deepLink url: URL) -> Bool {
+        ILOG("UITestingApp: handling deep link \(url.absoluteString)")
+        guard url.scheme?.lowercased() == ProvenanceDeepLink.scheme else {
+            WLOG("UITestingApp: ignoring non-provenance URL \(url.absoluteString)")
+            return false
+        }
+        // Make sure the library route provider is registered before routing.
+        _ = LibraryNavigator.shared
+        if NavigationRouter.shared.handle(url: url) { return true }
+        return ScreenNavigator.shared.handle(url: url)
+    }
+
+    /// Replay a `-deepLink <url>` launch argument once bootup has completed.
+    /// Used by ScreenshotUITests, which relaunch the app per screen (works on tvOS
+    /// where there is no Safari to open custom URL schemes from).
+    private func handleLaunchArgumentDeepLinkIfNeeded() {
+        guard !UITestingApp.didHandleLaunchDeepLink, let url = LaunchArgument.deepLinkURL else { return }
+        UITestingApp.didHandleLaunchDeepLink = true
+        ILOG("UITestingApp: replaying launch-argument deep link \(url.absoluteString)")
+        handle(deepLink: url)
+    }
+    private static var didHandleLaunchDeepLink = false
+
     var body: some Scene {
         // Main window group for the UI
         WindowGroup(id: "main") {
             ContentView()
                 .id(viewRefreshTrigger) // Force view refresh when this changes
+                #if !os(tvOS)
                 .handlesExternalEvents(preferring: ["main"], allowing: ["main"])
+                #endif
+                .onOpenURL { url in
+                    handle(deepLink: url)
+                }
                 .preferredColorScheme(ThemeManager.shared.currentPalette.dark ? .dark : .light)
                 .environmentObject(appState)
                 .environmentObject(ThemeManager.shared)
@@ -317,6 +354,8 @@ struct UITestingApp: SwiftUI.App {
                         populateMockLibraryIfNeeded()
                         // Cancel the timer when bootup completes
                         bootupRefreshTimer.upstream.connect().cancel()
+                        // Screenshot/automation: navigate to the requested screen
+                        handleLaunchArgumentDeepLinkIfNeeded()
 
                         // Schedule multiple refreshes with different delays
 //                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -437,6 +476,7 @@ extension UIApplication {
     }
 }
 
+#if !os(tvOS)
 /// A dedicated UIViewControllerRepresentable for controlling home indicator visibility
 struct HomeIndicatorController: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
@@ -475,3 +515,4 @@ struct HomeIndicatorController: UIViewControllerRepresentable {
         }
     }
 }
+#endif

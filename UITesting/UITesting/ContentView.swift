@@ -10,6 +10,7 @@ import PVSwiftUI
 import PVUIBase
 import PVThemes
 import PVLogging
+import PVPrimitives
 
 struct ContentView: View {
     @EnvironmentObject var appState: AppState
@@ -25,8 +26,9 @@ struct ContentView: View {
         ILOG("ContentView: init() called, current bootup state: \(AppState.shared.bootupStateManager.currentState.localizedDescription)")
     }
 
-    // State to track delayed transition
-    @State private var showCompletedContent: Bool = false
+    // State to track delayed transition.
+    // In screenshot mode there is no splash hold: show content as soon as bootup completes.
+    @State private var showCompletedContent: Bool = LaunchArgument.screenshotMode.isEnabled
     
     
     var bootupView: some View {
@@ -38,9 +40,11 @@ struct ContentView: View {
                 .transition(.opacity)
                 .animation(.easeInOut, value: appState.bootupStateManager.currentState)
                 .hideHomeIndicator()
+                .accessibilityIdentifier("screenshot.bootup")
                 .onAppear {
-                    // Schedule transition after 2 seconds
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    // Schedule transition after 2 seconds (immediately in screenshot mode)
+                    let delay: TimeInterval = LaunchArgument.screenshotMode.isEnabled ? 0 : 2.0
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                         withAnimation {
                             showCompletedContent = true
                         }
@@ -85,6 +89,16 @@ struct ContentView: View {
                                 .environmentObject(appDelegate)
                                 .environmentObject(ThemeManager.shared)
                                 .edgesIgnoringSafeArea(.all)
+                            #if os(tvOS)
+                        case .tvosMedia:
+                            // TVMediaMainView is internal to PVSwiftUI; fall back to the
+                            // single-page UI. (UITesting does not yet build for tvOS anyway:
+                            // TestEmulatorScene uses iOS-only commands/keyboard-shortcut APIs.)
+                            RetroMainView()
+                                .environmentObject(appDelegate)
+                                .environmentObject(ThemeManager.shared)
+                                .edgesIgnoringSafeArea(.all)
+                            #endif
                         case .uikit:
                             UIKitHostedProvenanceMainView(appDelegate: appDelegate)
                                 .environmentObject(appDelegate)
@@ -97,6 +111,9 @@ struct ContentView: View {
                     .transition(.opacity)
                     .animation(.easeInOut, value: sceneCoordinator.currentScene)
                     .hideHomeIndicator()
+                    // Marker for UITests: bootup finished and the main UI is on screen.
+                    .accessibilityElement(children: .contain)
+                    .accessibilityIdentifier("screenshot.mainContent")
                 }
             } else if case .completed = bootupState, !showCompletedContent {
                 // Show bootup view for 1 second before transitioning
