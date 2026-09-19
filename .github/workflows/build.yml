@@ -150,7 +150,22 @@ jobs:
             # .git file pointers (the worktrees exist but .git/modules/ doesn't).
             # Deinit clears these so update --init can re-clone cleanly.
             git submodule deinit --all -f 2>/dev/null || true
-            git submodule update --init --recursive --depth 1 --jobs 4
+            # `--depth 1 --jobs 4` races on .git/shallow ("shallow file has changed
+            # since we read it"), which aborts the fetch mid-flight and then reports
+            # the gitlink as unreachable — that is how Dolphin's Externals/SDL/SDL
+            # pin (the release-3.4.12 tag commit, only reachable by direct SHA
+            # fetch) started failing every develop build. Retry serially rather
+            # than failing the whole build.
+            if ! git submodule update --init --recursive --depth 1 --jobs 4; then
+              echo "::warning::Shallow submodule init failed — retrying serially"
+              if ! git submodule update --init --recursive --jobs 1; then
+                # Last resort: a shallow clone stays shallow on refetch, so wipe
+                # them and clone with full history.
+                echo "::warning::Retry failed — re-cloning submodules with full history"
+                git submodule deinit --all -f 2>/dev/null || true
+                git submodule update --init --recursive --jobs 4
+              fi
+            fi
           fi
           echo "Submodule init complete."
 
