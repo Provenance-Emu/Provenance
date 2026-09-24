@@ -26,6 +26,11 @@
 extern bool _isInitialized;
 
 // Thread safety helper class similar to Android's HostThreadLock
+/// Upper bound on how long a save state may take to reach disk. Dolphin states
+/// are tens of MB and compress on a background thread; this only bounds the
+/// failure path, a normal save returns as soon as the file stops growing.
+static const NSTimeInterval kPVSaveStateWriteTimeout = 10.0;
+
 class ProvenanceHostThreadLock {
 public:
     ProvenanceHostThreadLock() : m_lock(s_host_mutex) {
@@ -44,6 +49,41 @@ private:
 };
 
 std::mutex ProvenanceHostThreadLock::s_host_mutex;
+
+/// Blocks until a save state actually lands on disk, or `timeout` elapses.
+///
+/// Upstream made Save/Load non-blocking for the caller (dolphin 2322437f96, which
+/// also dropped SaveAs's `wait` argument): SaveAs schedules the state capture on
+/// the CPU thread and the compress-and-dump thread writes the file afterwards. A
+/// bare fileExistsAtPath check right after the call therefore reports a false
+/// failure for a save that is merely still in flight.
+///
+/// Waits for the size to stop growing, not just for the file to appear, so a
+/// partially written state is never reported as a successful save.
+static BOOL PVWaitForSaveStateFile(NSString *path, NSTimeInterval timeout) {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    const NSTimeInterval pollInterval = 0.02;
+    NSTimeInterval waited = 0;
+    unsigned long long lastSize = 0;
+    BOOL sawFile = NO;
+
+    while (waited < timeout) {
+        NSDictionary<NSFileAttributeKey, id> *attributes =
+            [fileManager attributesOfItemAtPath:path error:nil];
+        if (attributes != nil) {
+            const unsigned long long size = [attributes fileSize];
+            if (sawFile && size > 0 && size == lastSize) {
+                return YES;
+            }
+            sawFile = YES;
+            lastSize = size;
+        }
+        usleep((useconds_t)(pollInterval * USEC_PER_SEC));
+        waited += pollInterval;
+    }
+
+    return sawFile && lastSize > 0;
+}
 
 @implementation PVDolphinCoreBridge (Saves)
 #pragma mark - Properties
@@ -65,13 +105,13 @@ std::mutex ProvenanceHostThreadLock::s_host_mutex;
     @try {
         ProvenanceHostThreadLock guard;
         auto& system = Core::System::GetInstance();
-        // Diagnostic trail for the "saves are finicky" reports: log core state going in and
-        // whether the file actually landed — SaveAs(wait=true) blocks through RunOnCPUThread,
-        // which handles Paused via PauseAndLock, so a miss here is either the init gate above
-        // or the file never being written.
+        // Diagnostic trail for the "saves are finicky" reports: log core state going
+        // in and whether the file actually landed. SaveAs returns before the state is
+        // written (see PVWaitForSaveStateFile), so a miss here is either the init gate
+        // above or the file never being written at all.
         ILOG(@"💾 SaveState -> %@ (core state=%d)", path, (int)Core::GetState(system));
-        State::SaveAs(system, [path UTF8String], true);
-        const bool exists = [[NSFileManager defaultManager] fileExistsAtPath:path];
+        State::SaveAs(system, [path UTF8String]);
+        const bool exists = PVWaitForSaveStateFile(path, kPVSaveStateWriteTimeout);
         ILOG(@"💾 SaveState done: fileExists=%d", exists);
         if (!exists) {
             if (error) {

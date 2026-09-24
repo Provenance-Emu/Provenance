@@ -16,7 +16,12 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <fstream>
+#include <ios>
+#include <iosfwd>
+#include <istream>
 #include <map>
+#include <ostream>
 #include <memory>
 #include <mutex>
 #include <optional>
