@@ -729,13 +729,33 @@ jobs:
           # breaking find (exit!=0 → bash -e fails the job). Match files only.
           find artifacts -type f -name "*.ipa" -exec mv {} . \;
 
+          # Manifest of the cores actually inside the IPAs, so a core that failed
+          # to build is visible from the release page (#3672 follow-up ask).
+          if ls *.ipa >/dev/null 2>&1; then
+            python3 Scripts/ci-core-manifest.py --out core-manifest.md *.ipa \
+              || echo "::warning::Could not generate the core manifest"
+          fi
+
+          if [ -f core-manifest.md ]; then
+            {
+              echo
+              echo "<details><summary><b>Embedded cores</b> (per-IPA sizes)</summary>"
+              echo
+              # Drop the document title; the <summary> above already names it.
+              tail -n +2 core-manifest.md
+              echo
+              echo "</details>"
+            } >> /tmp/release_notes.md
+          fi
+
           # Create new pre-release with IPAs
           gh release create $TAG \
             --repo $REPO \
             --title "Provenance Alpha ($SHORT_SHA)" \
             --notes-file /tmp/release_notes.md \
             --prerelease \
-            *.ipa 2>/dev/null || echo "::warning::No IPA files to attach"
+            *.ipa $([ -f core-manifest.md ] && echo core-manifest.md) 2>/dev/null \
+            || echo "::warning::No IPA files to attach"
 
       - name: Update Build Status Issue
         env:
