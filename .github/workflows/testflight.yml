@@ -110,14 +110,7 @@ jobs:
         run: git checkout HEAD -- Cores CoresRetro Dependencies PVRcheevos 2>/dev/null || true
 
       - name: Initialize submodules
-        run: |
-          if [ "${{ steps.cache-submodules.outputs.cache-hit }}" = "true" ]; then
-            git submodule sync --recursive
-            git submodule update --init --recursive --jobs 4
-          else
-            git submodule deinit --all -f 2>/dev/null || true
-            git submodule update --init --recursive --depth 1 --jobs 4
-          fi
+        run: ./Scripts/ci-init-submodules.sh "${{ steps.cache-submodules.outputs.cache-hit }}"
 
       # Cores marked `local: true` in cores.yml (flycast-jitless, virtualjaguar)
       # live in the private provenance-dylibs release store, not on the libretro
