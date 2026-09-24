@@ -4,21 +4,21 @@
 //
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Looks up PVGame and PVSaveState records from the shared App Group Realm
-//  database by ROM filename or save-state file path.
+//  Looks up game and save-state metadata from the App Group library index
+//  by ROM filename or save-state file path.
 //
 
 import Foundation
-import PVLibrary
-import RealmSwift
+import PVLibrarySnapshot
 
 // MARK: - GamePreviewDataSource protocol
 
 /// Abstraction over the game database for QuickLook and Thumbnail extensions.
 ///
-/// The default implementation (`RealmGamePreviewDataSource`) reads from the shared
-/// App Group Realm database. When SwiftData support is added, provide a new conforming
-/// type without touching `PreviewProvider`, `GameMetadataCard`, or any other caller.
+/// The default implementation (`SnapshotGamePreviewDataSource`) reads from the
+/// App Group library index written by the host app. When SwiftData support is
+/// added, provide a new conforming type without touching `PreviewProvider`,
+/// `GameMetadataCard`, or any other caller.
 ///
 /// Inject a mock in tests:
 /// ```swift
@@ -35,7 +35,7 @@ public protocol GamePreviewDataSource: Sendable {
 
 /// Public façade for game-preview data lookups.
 ///
-/// Uses `dataSource` for all queries, defaulting to `RealmGamePreviewDataSource`.
+/// Uses `dataSource` for all queries, defaulting to `SnapshotGamePreviewDataSource`.
 /// All methods are safe to call from extension processes (QuickLook, Thumbnail, etc.).
 ///
 /// Usage:
@@ -47,7 +47,7 @@ public protocol GamePreviewDataSource: Sendable {
 public struct ROMGameLookup {
 
     /// The data source used for all lookups.  Override in tests.
-    public static var dataSource: any GamePreviewDataSource = RealmGamePreviewDataSource()
+    public static var dataSource: any GamePreviewDataSource = SnapshotGamePreviewDataSource()
 
     public static func lookup(forROMFilename romFilename: String) -> GameInfo? {
         dataSource.game(forROMFilename: romFilename)
@@ -64,7 +64,7 @@ public struct ROMGameLookup {
     /// iCloud evicts locally-stored files and replaces them with hidden placeholder
     /// files named `.<OriginalName>.<ext>.icloud`.  QuickLook is invoked with the
     /// placeholder URL, so we strip the `.icloud` suffix (and the leading `.`)
-    /// to recover the original filename for Realm lookups — no download required.
+    /// to recover the original filename for lookups — no download required.
     ///
     /// Examples:
     /// - `SuperMario64.n64`        → `SuperMario64.n64`   (unchanged)
@@ -90,136 +90,49 @@ public struct ROMGameLookup {
     }
 }
 
-// MARK: - RealmGamePreviewDataSource
+// MARK: - SnapshotGamePreviewDataSource
 
-/// Reads from the shared App Group Realm database in **read-only** mode.
-///
-/// `RealmConfiguration.setDefaultRealmConfig()` is intentionally NOT used —
-/// it opens the database with write access and a migration block, both unsafe
-/// from extension processes sharing the live Realm with the running main app.
-/// Schema version is derived from PVLibrary's `schemaVersion` constant so it
-/// stays in sync automatically.
-public struct RealmGamePreviewDataSource: GamePreviewDataSource {
+/// Reads the App Group library index written by the host app
+/// (`WidgetDataWriter.writeLibraryIndex`). No database is opened in the
+/// extension process; a missing or stale index simply yields `nil`.
+public struct SnapshotGamePreviewDataSource: GamePreviewDataSource {
+    private let reader: LibraryIndexReader
 
-    public init() {}
+    public init(reader: LibraryIndexReader = LibraryIndexReader()) {
+        self.reader = reader
+    }
 
     public func game(forROMFilename filename: String) -> GameInfo? {
-        guard !filename.isEmpty else { return nil }
-        do {
-            guard let realm = try openReadOnlyGroupRealm() else { return nil }
-            guard let game = findGame(in: realm, forFilename: filename) else {
-                DLOG("[PVQuickLookSupport] No game found for: \(filename)")
-                return nil
-            }
-            return gameInfo(from: game)
-        } catch {
-            ELOG("[PVQuickLookSupport] Realm lookup failed for \(filename): \(error.localizedDescription)")
+        guard !filename.isEmpty, let entry = reader.game(forROMFilename: filename) else {
+            QuickLookLog.debug("No index entry for \(filename)")
             return nil
         }
+        return GameInfo(
+            title: entry.title.isEmpty ? derivedTitle(from: entry.filename) : entry.title,
+            systemName: entry.systemName,
+            systemIdentifier: entry.systemIdentifier,
+            developer: entry.developer,
+            publishDate: entry.publishDate,
+            genre: entry.genre,
+            gameDescription: entry.gameDescription,
+            playCount: entry.playCount,
+            isFavorite: entry.isFavorite,
+            artworkURLKey: entry.artworkKey
+        )
     }
 
     public func saveStateImageURL(forPath path: String) -> URL? {
         guard !path.isEmpty else { return nil }
-        do {
-            guard let realm = try openReadOnlyGroupRealm() else { return nil }
-            let filename = (path as NSString).lastPathComponent
-            let saveStates = realm.objects(PVSaveState.self)
-                .filter("file.partialPath ENDSWITH %@", filename)
-            guard let saveState = saveStates.first,
-                  let imageFile = saveState.image,
-                  let imageURL = imageFile.url,
-                  FileManager.default.fileExists(atPath: imageURL.path) else {
-                return nil
-            }
-            return imageURL
-        } catch {
-            ELOG("[PVQuickLookSupport] Realm save-state lookup failed: \(error.localizedDescription)")
-            return nil
-        }
+        let filename = (path as NSString).lastPathComponent
+        guard let url = reader.saveStateImageURL(forFilename: filename),
+              FileManager.default.fileExists(atPath: url.path) else { return nil }
+        return url
     }
 
-    // MARK: - Private helpers
-
-    private func findGame(in realm: Realm, forFilename filename: String) -> PVGame? {
-        let bySuffix = realm.objects(PVGame.self)
-            .filter("romPath ENDSWITH %@", "/" + filename)
-        if let game = bySuffix.first { return game }
-        return realm.objects(PVGame.self)
-            .filter("romPath == %@", filename)
-            .first
-    }
-
-    private func gameInfo(from game: PVGame) -> GameInfo {
-        let artworkKey = game.artworkURL
-        return GameInfo(
-            title: game.title.isEmpty ? derivedTitle(from: game.romPath) : game.title,
-            systemName: game.system?.name ?? game.systemShortName,
-            systemIdentifier: game.systemIdentifier,
-            developer: emptyToNil(game.developer),
-            publishDate: emptyToNil(game.publishDate),
-            genre: emptyToNil(game.genres),
-            gameDescription: game.gameDescription,
-            playCount: game.playCount,
-            isFavorite: game.isFavorite,
-            artworkURLKey: artworkKey.isEmpty ? nil : artworkKey
-        )
-    }
-
-    private func derivedTitle(from romPath: String) -> String {
-        let base = (romPath as NSString).lastPathComponent
-        let noExt = (base as NSString).deletingPathExtension
+    private func derivedTitle(from filename: String) -> String {
+        let noExt = (filename as NSString).deletingPathExtension
         return noExt
             .replacingOccurrences(of: "_", with: " ")
             .replacingOccurrences(of: "-", with: " ")
-    }
-
-    private func emptyToNil(_ value: String?) -> String? {
-        value.flatMap { $0.isEmpty ? nil : $0 }
-    }
-}
-
-// MARK: - Extension-safe Realm open
-
-/// Opens the shared App Group Realm in read-only mode.
-///
-/// Uses the App Group container identified by `PVAppGroupId`. Returns `nil`
-/// when the container is unavailable or the Realm file does not exist yet.
-/// The database is opened read-only so the extension process never triggers
-/// a migration or writes to the live database.
-private func openReadOnlyGroupRealm() throws -> Realm? {
-    // Build the ordered list of candidate Realm URLs to try.
-    var candidates: [URL] = []
-
-    if let groupURL = FileManager.default
-        .containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId),
-       FileManager.default.isReadableFile(atPath: groupURL.path) {
-#if os(tvOS)
-        // On tvOS the App Group documents path maps to Library/Caches/.
-        candidates.append(groupURL.appendingPathComponent("Library/Caches/default.realm", isDirectory: false))
-#else
-        candidates.append(groupURL.appendingPathComponent("default.realm", isDirectory: false))
-#endif
-    } else {
-        WLOG("[PVQuickLookSupport] App Group container unavailable for: \(PVAppGroupId)")
-        return nil
-    }
-
-    // Find the first candidate that actually exists on disk.
-    guard let realmURL = candidates.first(where: { FileManager.default.fileExists(atPath: $0.path) }) else {
-        WLOG("[PVQuickLookSupport] Realm database not found. Checked: \(candidates.map(\.path))")
-        return nil
-    }
-
-    DLOG("[PVQuickLookSupport] Opening Realm read-only at \(realmURL.path) (schemaVersion=\(schemaVersion))")
-    let config = Realm.Configuration(
-        fileURL: realmURL,
-        readOnly: true,
-        schemaVersion: schemaVersion
-    )
-    do {
-        return try Realm(configuration: config)
-    } catch {
-        ELOG("[PVQuickLookSupport] Failed to open Realm at \(realmURL.path): \(error.localizedDescription)")
-        throw error
     }
 }

@@ -11,30 +11,23 @@ let package = Package(
         .visionOS(.v1)
     ],
     products: [
-        .library(
-            name: "PVQuickLookSupport",
-            targets: ["PVQuickLookSupport"]
-        )
+        .library(name: "PVQuickLookSupport", targets: ["PVQuickLookSupport"])
     ],
     dependencies: [
-        .package(path: "../PVLibrary"),
-        .package(path: "../PVHashing"),
-        .package(url: "https://github.com/realm/realm-swift.git", from: "20.0.0"),
+        // Realm-free on purpose: this links into QLThumbnailProvider / QLPreviewProvider
+        // processes. Library data comes from the App Group index written by the host.
+        .package(path: "../PVAppIntents"),
     ],
     targets: [
-        // MARK: - PVQuickLookSupport
         .target(
             name: "PVQuickLookSupport",
             dependencies: [
-                "PVLibrary",
-                "PVHashing",
-                .product(name: "RealmSwift", package: "realm-swift"),
+                .product(name: "PVLibrarySnapshot", package: "PVAppIntents"),
             ]
         ),
-        // MARK: - Tests
         .testTarget(
             name: "PVQuickLookSupportTests",
-            dependencies: ["PVQuickLookSupport"]
+            dependencies: ["PVQuickLookSupport", .product(name: "PVLibrarySnapshot", package: "PVAppIntents")]
         ),
     ],
     swiftLanguageModes: [.v5],
