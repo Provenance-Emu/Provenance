@@ -7,10 +7,44 @@
 # testflight.yml did not, so TestFlight failed every day for a week on a race the
 # other workflow already recovered from. Keep the recovery in one place.
 #
+# The failure modes this exists to survive, all observed on this repo:
+#
+#   * `--depth 1 --jobs 4` races on .git/shallow ("shallow file has changed since
+#     we read it"), aborting the fetch and then reporting the gitlink as
+#     unreachable — Dolphin's Externals/SDL/SDL pin (a release tag commit, only
+#     reachable by direct SHA fetch) failed every build this way.
+#   * An aborted pass leaves submodules registered with an EMPTY worktree. A plain
+#     `git submodule update` sees the recorded SHA and skips the checkout, so
+#     --force is required to recover.
+#   * A third-party host has an outage mid-clone (gitlab.com returned HTTP 500 for
+#     Dolphin's bzip2 dependency). Nothing here can fix that, but the build must
+#     fail HERE, naming the submodule, instead of proceeding and dying six minutes
+#     later inside SwiftPM ("Cores/VirtualJaguar/Package.swift doesn't exist").
+#
+# Correctness therefore comes from VERIFYING the tree after each attempt rather
+# than from the exit code of `git submodule update`: a partial failure can still
+# exit 0, and the last-resort attempt's failure used to be swallowed entirely.
+#
 # Usage: ci-init-submodules.sh <cache-hit>   # "true" when the cache restored
 set -uo pipefail
 
 cache_hit="${1:-false}"
+
+# Paths git reports as not checked out ('-' prefix in submodule status).
+uninitialized_submodules() {
+    git submodule status --recursive 2>/dev/null | awk '/^-/ { print $2 }'
+}
+
+report_and_exit() {
+    local missing="$1"
+    echo "::error::Submodules are still not checked out after 3 attempts. The most" \
+         "likely cause is an upstream host outage — check the log above for a" \
+         "'fatal: unable to access' line naming the remote."
+    while IFS= read -r sub; do
+        [ -n "$sub" ] && echo "::error::  not initialized: $sub"
+    done <<< "$missing"
+    exit 1
+}
 
 if [ "$cache_hit" = "true" ]; then
     echo "Submodule cache hit — syncing URLs and fetching updated refs..."
@@ -22,33 +56,30 @@ else
     # pointers (the worktrees exist but .git/modules/ doesn't). Deinit clears
     # these so update --init can re-clone cleanly.
     git submodule deinit --all -f 2>/dev/null || true
-
-    # `--depth 1 --jobs 4` races on .git/shallow ("shallow file has changed since
-    # we read it"), which aborts the fetch mid-flight and then reports the gitlink
-    # as unreachable — that is how Dolphin's Externals/SDL/SDL pin (a release tag
-    # commit, only reachable by direct SHA fetch) started failing every build.
-    if ! git submodule update --init --recursive --depth 1 --jobs 4; then
-        # --force matters: the aborted first pass leaves some submodules registered
-        # with an EMPTY worktree, and a plain update sees the recorded SHA and skips
-        # the checkout (symptom: "Cores/VirtualJaguar/Package.swift doesn't exist").
-        echo "::warning::Shallow submodule init failed — retrying serially"
-        if ! git submodule update --init --recursive --force --jobs 1; then
-            # Last resort: a shallow clone stays shallow on refetch, so wipe them
-            # and clone with full history.
-            echo "::warning::Retry failed — re-cloning submodules with full history"
-            git submodule deinit --all -f 2>/dev/null || true
-            git submodule update --init --recursive --force --jobs 4
-        fi
-    fi
+    git submodule update --init --recursive --depth 1 --jobs 4
 fi
 
-# An empty worktree here surfaces much later as a confusing SwiftPM error ("the
-# package manifest at .../Package.swift cannot be accessed"), so name the actual
-# culprit while the submodule step is still on screen.
-git config --file .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}' | while read -r sub; do
-    if [ -d "$sub" ] && [ -z "$(ls -A "$sub" 2>/dev/null)" ]; then
-        echo "::warning::Submodule worktree is empty after init: $sub"
-    fi
-done
+missing="$(uninitialized_submodules)"
+
+if [ -n "$missing" ]; then
+    # Serial and forced: fixes the .git/shallow race and checks out worktrees the
+    # aborted pass left empty. The sleep is for transient upstream 5xx responses.
+    echo "::warning::Submodule init incomplete — retrying serially in 15s"
+    sleep 15
+    git submodule update --init --recursive --force --jobs 1
+    missing="$(uninitialized_submodules)"
+fi
+
+if [ -n "$missing" ]; then
+    # Last resort: a shallow clone stays shallow on refetch, so wipe and re-clone
+    # with full history.
+    echo "::warning::Retry incomplete — re-cloning with full history in 45s"
+    sleep 45
+    git submodule deinit --all -f 2>/dev/null || true
+    git submodule update --init --recursive --force --jobs 4
+    missing="$(uninitialized_submodules)"
+fi
+
+[ -n "$missing" ] && report_and_exit "$missing"
 
 echo "Submodule init complete."
