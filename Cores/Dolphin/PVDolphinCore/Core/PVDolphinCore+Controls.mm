@@ -1108,8 +1108,9 @@ static SerialInterface::SIDevices s_gcSIDevice = SerialInterface::SIDEVICE_GC_CO
         } else if ([variantID hasPrefix:@"gc"]) {
             const int ports = self.multiPlayer ? 4 : 1;
             for (int port = 0; port < ports; port++) {
+                // SerialInterfaceManager::UpdateDevices() re-reads this config on every SI poll
+                // (ChangeDevice was removed from the core in 200e26c98a), so setting it is enough.
                 Config::SetBase(Config::GetInfoForSIDevice(port), s_gcSIDevice);
-                system.GetSerialInterface().ChangeDevice(s_gcSIDevice, port);
             }
         }
     }
@@ -1375,7 +1376,6 @@ static SerialInterface::SIDevices s_gcSIDevice = SerialInterface::SIDEVICE_GC_CO
             content = [content stringByAppendingString:[self getGCTouchConfig:port gcPort:(port - 1) source:1]];
             // SI device honors the controller layout variant (standard pad / Bongos / keyboard).
             Config::SetBase(Config::GetInfoForSIDevice(port - 1), s_gcSIDevice);
-            Core::System::GetInstance().GetSerialInterface().ChangeDevice(s_gcSIDevice, port - 1);
             port += 1;
         }
     } else {

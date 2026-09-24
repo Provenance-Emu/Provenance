@@ -702,7 +702,7 @@ static void ResetDolphinStaticState() {
     // Configure logging to output to iOS console AFTER parsing options
     if (self.enableLogging) {
         NSLog(@"🐬 Dolphin Debug Logging ENABLED (user setting: %s)", self.enableLogging ? "true" : "false");
-        Common::Log::LogManager::GetInstance()->SetLogLevel(Common::Log::LogLevel::LINFO);
+        Common::Log::LogManager::GetInstance()->SetConfigLogLevel(Common::Log::LogLevel::LINFO);
         Common::Log::LogManager::GetInstance()->SetEnable(Common::Log::LogType::OSREPORT, true);
         Common::Log::LogManager::GetInstance()->SetEnable(Common::Log::LogType::CORE, true);
         Common::Log::LogManager::GetInstance()->SetEnable(Common::Log::LogType::BOOT, true);
@@ -712,7 +712,7 @@ static void ResetDolphinStaticState() {
         Common::Log::LogManager::GetInstance()->EnableListener(Common::Log::LogListener::CONSOLE_LISTENER, true);
     } else {
         NSLog(@"🐬 Dolphin Debug Logging DISABLED (user setting: %s)", self.enableLogging ? "true" : "false");
-        Common::Log::LogManager::GetInstance()->SetLogLevel(Common::Log::LogLevel::LERROR);
+        Common::Log::LogManager::GetInstance()->SetConfigLogLevel(Common::Log::LogLevel::LERROR);
         Common::Log::LogManager::GetInstance()->EnableListener(Common::Log::LogListener::CONSOLE_LISTENER, false);
     }
 
@@ -1295,8 +1295,6 @@ void Host_Message(HostMessageID id)
         s_have_wm_user_stop = true;
         if (Core::IsRunning(Core::System::GetInstance()))
             Core::QueueHostJob([](Core::System& system) { Core::Stop(system); });
-    } else if (id == HostMessageID::WMUserCreate) {
-        NSLog(@"User Create Called %i\n", (int)id);
     }
 }
 
