@@ -143,7 +143,7 @@ jobs:
           if [ "${{ steps.cache-submodules.outputs.cache-hit }}" = "true" ]; then
             echo "Submodule cache hit — syncing URLs and fetching updated refs..."
             git submodule sync --recursive
-            git submodule update --init --recursive --jobs 4
+            git submodule update --init --recursive --force --jobs 4
           else
             echo "Submodule cache miss — cleaning stale submodule refs and doing full clone..."
             # restore-keys may have loaded partial cache content with dangling
@@ -157,16 +157,28 @@ jobs:
             # fetch) started failing every develop build. Retry serially rather
             # than failing the whole build.
             if ! git submodule update --init --recursive --depth 1 --jobs 4; then
+              # --force matters: the aborted first pass leaves some submodules
+              # registered with an EMPTY worktree, and a plain update considers
+              # them already at the right SHA, so it never checks the files out
+              # (symptom: "Cores/VirtualJaguar/Package.swift doesn't exist").
               echo "::warning::Shallow submodule init failed — retrying serially"
-              if ! git submodule update --init --recursive --jobs 1; then
+              if ! git submodule update --init --recursive --force --jobs 1; then
                 # Last resort: a shallow clone stays shallow on refetch, so wipe
                 # them and clone with full history.
                 echo "::warning::Retry failed — re-cloning submodules with full history"
                 git submodule deinit --all -f 2>/dev/null || true
-                git submodule update --init --recursive --jobs 4
+                git submodule update --init --recursive --force --jobs 4
               fi
             fi
           fi
+          # An empty worktree here surfaces much later as a confusing SwiftPM error
+          # ("the package manifest at .../Package.swift cannot be accessed"), so name
+          # the actual culprit while the submodule step is still on screen.
+          git config --file .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}' | while read -r sub; do
+            if [ -d "$sub" ] && [ -z "$(ls -A "$sub" 2>/dev/null)" ]; then
+              echo "::warning::Submodule worktree is empty after init: $sub"
+            fi
+          done
           echo "Submodule init complete."
 
       # Cores marked `local: true` in cores.yml are custom Provenance builds that do
