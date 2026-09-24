@@ -19,7 +19,7 @@ import PVQuickLookSupport
 class ThumbnailProvider: QLThumbnailProvider {
 
     /// CPDI driver — swap this property to change the persistence backend.
-    private lazy var artworkDriver: ThumbnailArtworkDriver = RealmThumbnailArtworkDriver()
+    private lazy var artworkDriver: ThumbnailArtworkDriver = SnapshotThumbnailArtworkDriver()
 
     override func provideThumbnail(for request: QLFileThumbnailRequest, _ handler: @escaping (QLThumbnailReply?, Error?) -> Void) {
         let fileURL = request.fileURL

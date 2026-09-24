@@ -10,19 +10,15 @@ import QuickLook
 import UniformTypeIdentifiers
 import PVQuickLookSupport
 
-// NOTE: This file is ready for use once the QuickLookPreview Xcode build target is created (#3310).
-// To enable: set QLIsDataBasedPreview = true and NSExtensionPrincipalClass = PreviewProvider in Info.plist,
-// then remove NSExtensionMainStoryboard.
-
 class PreviewProvider: QLPreviewProvider, QLPreviewingController {
 
     func providePreview(for request: QLFilePreviewRequest) async throws -> QLPreviewReply {
         let fileURL = request.fileURL
         // For iCloud placeholder files the URL contains the .icloud suffix — strip it
-        // so Realm lookups succeed without requiring the file to be downloaded.
+        // so App Group library index lookups succeed without requiring the file to be downloaded.
         let filename = ROMGameLookup.realFilename(from: fileURL)
 
-        // Look up game metadata from the shared Realm database.
+        // Look up game metadata from the App Group library index.
         let gameInfo = ROMGameLookup.lookup(forROMFilename: filename)
 
         // Resolve artwork — raw bytes so the HTML card can embed it as base64.

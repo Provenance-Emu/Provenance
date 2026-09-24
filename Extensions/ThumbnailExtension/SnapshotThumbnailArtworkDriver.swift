@@ -1,10 +1,10 @@
 //
-//  RealmThumbnailArtworkDriver.swift
+//  SnapshotThumbnailArtworkDriver.swift
 //  ThumbnailExtension
 //
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Realm-backed implementation of ThumbnailArtworkDriver.
+//  Index-backed implementation of ThumbnailArtworkDriver.
 //  Delegates all lookup and cache resolution to the shared PVQuickLookSupport
 //  module so logic is not duplicated between ThumbnailExtension and
 //  QuickLookPreview.
@@ -13,11 +13,11 @@
 import Foundation
 import PVQuickLookSupport
 
-/// Realm-backed `ThumbnailArtworkDriver`.
+/// Index-backed `ThumbnailArtworkDriver`.
 ///
 /// Delegates to `ROMGameLookup` and `ArtworkResolver` from `PVQuickLookSupport`
 /// so both extensions share a single implementation of the lookup logic.
-final class RealmThumbnailArtworkDriver: ThumbnailArtworkDriver {
+final class SnapshotThumbnailArtworkDriver: ThumbnailArtworkDriver {
 
     // MARK: - ThumbnailArtworkDriver
 
