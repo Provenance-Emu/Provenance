@@ -90,7 +90,6 @@ included:
   - Extensions/SpotlightImportExtension
   - Extensions/ThumbnailExtension
   - Extensions/TopShelf
-  - Extensions/TopShelfv2
 
 excluded:
   - Carthage
