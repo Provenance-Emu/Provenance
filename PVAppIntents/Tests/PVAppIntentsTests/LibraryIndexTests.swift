@@ -7,7 +7,7 @@ final class LibraryIndexTests: XCTestCase {
     override func setUp() {
         super.setUp()
         container = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
-        try! FileManager.default.createDirectory(at: container, withIntermediateDirectories: true)
+        try! FileManager.default.createDirectory(at: container, withIntermediateDirectories: true) // swiftlint:disable:this force_try
     }
 
     override func tearDown() {

@@ -89,14 +89,16 @@ public struct LibraryIndexWriter {
     }
 }
 
-/// Decodes lazily and once per instance. Create one per extension request.
-public final class LibraryIndexReader: @unchecked Sendable {
+/// Decodes both files once at init. Create one per extension request.
+public final class LibraryIndexReader: Sendable {
     private let containerURL: URL?
-    private lazy var games: [String: LibraryIndexGame] = load(LibraryIndexPaths.games) ?? [:]
-    private lazy var saves: [String: String] = load(LibraryIndexPaths.saveStates) ?? [:]
+    private let games: [String: LibraryIndexGame]
+    private let saves: [String: String]
 
     public init(containerURL: URL? = LibrarySnapshotAppGroup.containerURL) {
         self.containerURL = containerURL
+        self.games = Self.load(LibraryIndexPaths.games, containerURL: containerURL) ?? [:]
+        self.saves = Self.load(LibraryIndexPaths.saveStates, containerURL: containerURL) ?? [:]
     }
 
     public func game(forROMFilename filename: String) -> LibraryIndexGame? {
@@ -109,7 +111,7 @@ public final class LibraryIndexReader: @unchecked Sendable {
         return containerURL.appendingPathComponent(rel)
     }
 
-    private func load<T: Decodable>(_ relativePath: String) -> T? {
+    private static func load<T: Decodable>(_ relativePath: String, containerURL: URL?) -> T? {
         guard let containerURL,
               let data = try? Data(contentsOf: containerURL.appendingPathComponent(relativePath)) else { return nil }
         return try? JSONDecoder().decode(T.self, from: data)
