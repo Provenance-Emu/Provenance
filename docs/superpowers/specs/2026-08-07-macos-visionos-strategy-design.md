@@ -126,7 +126,8 @@ Rationale in one line each:
   anyway).
 - Reconcile docs: CLAUDE.md's "macOS 14+ (Catalyst), visionOS 1+" claim vs. reality.
 - Delete or archive the orphaned `Provenance VR` package, `ThumbnailExtensionMacOS` (until a mac
-  host exists), and the stale TopShelf v1-style dead targets encountered along the way.
+  host exists), (the direct-Realm TopShelfv2 target was removed on 2026-09-23; the snapshot-based
+  Extensions/TopShelf is the shipping Top Shelf).
 
 ### Phase 1 — "Great on a Mac (and iPad) today": Designed-for-iPad polish (medium)
 1. **Keyboard-driven controller UI.** Feed `GamepadManager` from the existing

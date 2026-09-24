@@ -445,7 +445,7 @@
 		B377ECA92CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B377ECC92CB3533C00E9B750 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC82CB3533C00E9B750 /* PVVecX.framework */; platformFilters = (ios, tvos, ); };
 		B377ECCA2CB3533C00E9B750 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC82CB3533C00E9B750 /* PVVecX.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B379CA022F00C7BB00C3D7A7 /* TopShelfv2.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B379CA022F00C7BB00C3D7A7 /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B37CCD312E2FF36A00ABFCF5 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CCD302E2FF36A00ABFCF5 /* PVDolphin.framework */; };
 		B37CCD322E2FF36A00ABFCF5 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CCD302E2FF36A00ABFCF5 /* PVDolphin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE669293F23C20010B746 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
@@ -502,14 +502,6 @@
 		B396209C2C66E1F30094F6F0 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B396209B2C66E1F30094F6F0 /* PVSupport */; };
 		B396209E2C66E1FC0094F6F0 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B396209D2C66E1FC0094F6F0 /* PVLogging */; };
 		B39620A02C66E20B0094F6F0 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B396209F2C66E20B0094F6F0 /* PVCoreBridge */; };
-		B39B10AD2DAF3D16004EEF79 /* TVServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39B10AC2DAF3D16004EEF79 /* TVServices.framework */; };
-		B39B10BC2DAF3FF8004EEF79 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10BB2DAF3FF8004EEF79 /* Defaults */; };
-		B39B10BE2DAF4000004EEF79 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10BD2DAF4000004EEF79 /* PVLibrary */; };
-		B3CAFE012F11A0010050C0DE /* PVMediaCache in Frameworks */ = {isa = PBXBuildFile; productRef = B3CAFE002F11A0010050C0DE /* PVMediaCache */; };
-		B39B10C02DAF4005004EEF79 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10BF2DAF4005004EEF79 /* PVSupport */; };
-		B39B10C22DAF400D004EEF79 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10C12DAF400D004EEF79 /* PVLogging */; };
-		B39B10C42DAF4015004EEF79 /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10C32DAF4015004EEF79 /* PVAudio */; };
-		B39B10C62DAF402B004EEF79 /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B39B10C52DAF402B004EEF79 /* PVFeatureFlags */; };
 		B39B53882C66E7A900C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53872C66E7A900C220C6 /* PVSettings */; };
 		B39B538A2C66E7BA00C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53892C66E7BA00C220C6 /* PVSettings */; };
 		B39B54E42DAF722B004EEF79 /* SpotlightMockDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39B54E32DAF722B004EEF79 /* SpotlightMockDriver.swift */; };
@@ -629,8 +621,6 @@
 		B3AFCF982977A80C00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF972977A80C00A01010 /* PVLogging */; };
 		B3B521E52F78DABC008244D1 /* PVArchiving in Frameworks */ = {isa = PBXBuildFile; productRef = B3B521E42F78DABC008244D1 /* PVArchiving */; };
 		B3B521E72F78DABC008244D1 /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B3B521E62F78DABC008244D1 /* PVArchivingFormats */; };
-		B3B521E92F78DB07008244D1 /* PVArchiving in Frameworks */ = {isa = PBXBuildFile; productRef = B3B521E82F78DB07008244D1 /* PVArchiving */; };
-		B3B521EB2F78DB07008244D1 /* PVArchivingFormats in Frameworks */ = {isa = PBXBuildFile; productRef = B3B521EA2F78DB07008244D1 /* PVArchivingFormats */; };
 		B3B925A22C6141BC006317EC /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; };
 		B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3BB798D2F6E9CC800938AB1 /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3BB798C2F6E9CC800938AB1 /* PVGME.framework */; };
@@ -1026,8 +1016,8 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B39B10AA2DAF3D16004EEF79;
-			remoteInfo = TopShelfv2;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
 		};
 		B383226326ED9F080029D12F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1361,7 +1351,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B3BD3A1C2D729007000FBB11 /* Provenance Stickers.appex in Embed Foundation Extensions */,
-				B379CA022F00C7BB00C3D7A7 /* TopShelfv2.appex in Embed Foundation Extensions */,
+				B379CA022F00C7BB00C3D7A7 /* TopShelf.appex in Embed Foundation Extensions */,
 				B30D49C42E3809C10073B038 /* Spotlight.appex in Embed Foundation Extensions */,
 				B30D49C72E3809C10073B038 /* SpotlightImportExtension.appex in Embed Foundation Extensions */,
 				B3DD04002F20031900000000 /* WidgetExtension.appex in Embed Foundation Extensions */,
@@ -2102,8 +2092,6 @@
 		B399119226C0F41300E54426 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B399119326C0F41300E54426 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelfv2.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		B39B10AC2DAF3D16004EEF79 /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
 		B39B54E32DAF722B004EEF79 /* SpotlightMockDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotlightMockDriver.swift; sourceTree = "<group>"; };
 		B39C4B5E2BF09AD300F199BB /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39C4B652BF09F0400F199BB /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = Cores/PPSSPP/lib/libMoltenVK.dylib; sourceTree = "<group>"; };
@@ -2526,13 +2514,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B39B10B92DAF3D16004EEF79 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = B39B10AA2DAF3D16004EEF79 /* TopShelfv2 */;
-		};
 		B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -2966,7 +2947,6 @@
 		B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch AppUITests"; sourceTree = "<group>"; };
 		C0C0CAFE0501000000000002 /* ProvenanceUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ProvenanceUITests; sourceTree = "<group>"; };
 		B39436502CCDEC9D004D5DFB /* Main UI */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Main UI"; sourceTree = "<group>"; };
-		B39B10AE2DAF3D16004EEF79 /* TopShelfv2 */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B39B10B92DAF3D16004EEF79 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TopShelfv2; sourceTree = "<group>"; };
 		B3BE9FA62C7987B1006D989E /* ROM File Provider */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File Provider"; sourceTree = "<group>"; };
 		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Provenance Stickers"; sourceTree = "<group>"; };
 		B3FD95D52D613D2B00397643 /* Dependencies */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3FD984A2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD987B2D615C9400397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984B2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD986A2D615C7700397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984C2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98592D615C5100397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984D2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98912D615CF000397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984E2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98A22D615D1300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, B3FD984F2D614E3E00397643 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3FD98C12D615D3300397643 /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Dependencies; sourceTree = "<group>"; };
@@ -3402,23 +3382,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B39B10A82DAF3D16004EEF79 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B39B10C02DAF4005004EEF79 /* PVSupport in Frameworks */,
-				B39B10BE2DAF4000004EEF79 /* PVLibrary in Frameworks */,
-				B3CAFE012F11A0010050C0DE /* PVMediaCache in Frameworks */,
-				B39B10BC2DAF3FF8004EEF79 /* Defaults in Frameworks */,
-				B39B10C42DAF4015004EEF79 /* PVAudio in Frameworks */,
-				B3B521E92F78DB07008244D1 /* PVArchiving in Frameworks */,
-				B39B10AD2DAF3D16004EEF79 /* TVServices.framework in Frameworks */,
-				B39B10C62DAF402B004EEF79 /* PVFeatureFlags in Frameworks */,
-				B3B521EB2F78DB07008244D1 /* PVArchivingFormats in Frameworks */,
-				B39B10C22DAF400D004EEF79 /* PVLogging in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3BE9FA12C7987B1006D989E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3823,7 +3786,6 @@
 				B3BE9FA42C7987B1006D989E /* ROM File Provider.appex */,
 				B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */,
 				B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */,
-				B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */,
 				C0C0CAFE00000000000000AA /* Provenance Companion.app */,
 				C0C0CAFE1000000000000009 /* ProvenanceCompanionTests.xctest */,
 				C0C0DE0100000001 /* ProvenanceOpticalDriveDriver.dext */,
@@ -4235,7 +4197,6 @@
 				B3EEED5F2920AEB6008E2603 /* DeviceActivity.framework */,
 				B3EEED892920B006008E2603 /* DriverKit.framework */,
 				B3EEED9F2920B099008E2603 /* Quartz.framework */,
-				B39B10AC2DAF3D16004EEF79 /* TVServices.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -5169,7 +5130,6 @@
 				B355E0122920AA9D00E4C858 /* SpotlightImportExtension */,
 				B355E0012920AA2600E4C858 /* ThumbnailExtension */,
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
-				B39B10AE2DAF3D16004EEF79 /* TopShelfv2 */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -7527,37 +7487,6 @@
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B39B10AA2DAF3D16004EEF79 /* TopShelfv2 */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B39B10B52DAF3D16004EEF79 /* Build configuration list for PBXNativeTarget "TopShelfv2" */;
-			buildPhases = (
-				B39B10A72DAF3D16004EEF79 /* Sources */,
-				B39B10A82DAF3D16004EEF79 /* Frameworks */,
-				B39B10A92DAF3D16004EEF79 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				B39B10AE2DAF3D16004EEF79 /* TopShelfv2 */,
-			);
-			name = TopShelfv2;
-			packageProductDependencies = (
-				B39B10BB2DAF3FF8004EEF79 /* Defaults */,
-				B39B10BD2DAF4000004EEF79 /* PVLibrary */,
-				B3CAFE002F11A0010050C0DE /* PVMediaCache */,
-				B39B10BF2DAF4005004EEF79 /* PVSupport */,
-				B39B10C12DAF400D004EEF79 /* PVLogging */,
-				B39B10C32DAF4015004EEF79 /* PVAudio */,
-				B39B10C52DAF402B004EEF79 /* PVFeatureFlags */,
-				B3B521E82F78DB07008244D1 /* PVArchiving */,
-				B3B521EA2F78DB07008244D1 /* PVArchivingFormats */,
-			);
-			productName = TopShelfv2;
-			productReference = B39B10AB2DAF3D16004EEF79 /* TopShelfv2.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 		B3BE9FA32C7987B1006D989E /* ROM File Provider */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B3BE9FC22C7987B2006D989E /* Build configuration list for PBXNativeTarget "ROM File Provider" */;
@@ -7967,9 +7896,6 @@
 					};
 					B383225D26ED9C530029D12F = {
 						CreatedOnToolsVersion = 13.0;
-					};
-					B39B10AA2DAF3D16004EEF79 = {
-						CreatedOnToolsVersion = 16.2;
 					};
 					B3B29D4D21561F0600903290 = {
 						CreatedOnToolsVersion = 10.0;
@@ -9495,7 +9421,6 @@
 				B3E21D6A203211BE009939D3 /* Spotlight */,
 				B355E0102920AA9700E4C858 /* SpotlightImportExtension */,
 				BE9FDCB61C210B9E0046DF0E /* TopShelf */,
-				B39B10AA2DAF3D16004EEF79 /* TopShelfv2 */,
 				B355DFFD2920AA2000E4C858 /* ThumbnailExtension */,
 				B3CC2200000000010000000A /* QuickLookPreview */,
 				B3EEEDB22920B0D4008E2603 /* ThumbnailExtensionMacOS */,
@@ -9680,13 +9605,6 @@
 				B39FAC2B2D5E7F630065B66B /* SYSTEMS.md in Resources */,
 				B3AED2FC2BE355C3003A9290 /* Provenance.storyboard in Resources */,
 				B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B39B10A92DAF3D16004EEF79 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10391,13 +10309,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B39B10A72DAF3D16004EEF79 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B3BE9FA02C7987B1006D989E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10595,7 +10506,7 @@
 			platformFilters = (
 				tvos,
 			);
-			target = B39B10AA2DAF3D16004EEF79 /* TopShelfv2 */;
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
 			targetProxy = B379CA032F00C7BB00C3D7A7 /* PBXContainerItemProxy */;
 		};
 		B383226426ED9F080029D12F /* PBXTargetDependency */ = {
@@ -13794,146 +13705,6 @@
 			};
 			name = Archive;
 		};
-		B39B10B62DAF3D16004EEF79 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Extensions/TopShelfv2/TopShelf.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/TopShelfv2/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TopShelf;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Provenance Emu. All rights reserved.";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.0;
-			};
-			name = Debug;
-		};
-		B39B10B72DAF3D16004EEF79 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Extensions/TopShelfv2/TopShelf.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/TopShelfv2/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TopShelf;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Provenance Emu. All rights reserved.";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.0;
-			};
-			name = Release;
-		};
-		B39B10B82DAF3D16004EEF79 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Extensions/TopShelfv2/TopShelf.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S32Z3HMYVQ;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/TopShelfv2/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TopShelf;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Provenance Emu. All rights reserved.";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(TOPSHELF_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 17.0;
-			};
-			name = Archive;
-		};
 		B3B29D4F21561F0600903290 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -15832,16 +15603,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B39B10B52DAF3D16004EEF79 /* Build configuration list for PBXNativeTarget "TopShelfv2" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B39B10B62DAF3D16004EEF79 /* Debug */,
-				B39B10B72DAF3D16004EEF79 /* Release */,
-				B39B10B82DAF3D16004EEF79 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		B3B29D4E21561F0600903290 /* Build configuration list for PBXAggregateTarget "Setup Code-Signing" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -17147,41 +16908,6 @@
 			package = B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */;
 			productName = PVCoreBridge;
 		};
-		B39B10BB2DAF3FF8004EEF79 /* Defaults */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */;
-			productName = Defaults;
-		};
-		B39B10BD2DAF4000004EEF79 /* PVLibrary */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
-			productName = PVLibrary;
-		};
-		B3CAFE002F11A0010050C0DE /* PVMediaCache */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
-			productName = PVMediaCache;
-		};
-		B39B10BF2DAF4005004EEF79 /* PVSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */;
-			productName = PVSupport;
-		};
-		B39B10C12DAF400D004EEF79 /* PVLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B34E4F482C11796B001559E8 /* XCLocalSwiftPackageReference "PVLogging" */;
-			productName = PVLogging;
-		};
-		B39B10C32DAF4015004EEF79 /* PVAudio */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B35B177D2CCCDFC7007059CA /* XCLocalSwiftPackageReference "PVAudio" */;
-			productName = PVAudio;
-		};
-		B39B10C52DAF402B004EEF79 /* PVFeatureFlags */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3E77F822D1F57E6004A3AD2 /* XCLocalSwiftPackageReference "PVFeatureFlags" */;
-			productName = PVFeatureFlags;
-		};
 		B39B53872C66E7A900C220C6 /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSettings;
@@ -17308,16 +17034,6 @@
 		};
 		B3B521E62F78DABC008244D1 /* PVArchivingFormats */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = PVArchivingFormats;
-		};
-		B3B521E82F78DB07008244D1 /* PVArchiving */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */;
-			productName = PVArchiving;
-		};
-		B3B521EA2F78DB07008244D1 /* PVArchivingFormats */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */;
 			productName = PVArchivingFormats;
 		};
 		B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */ = {
