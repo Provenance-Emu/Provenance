@@ -1262,8 +1262,10 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
         let frozen = game.isFrozen ? game : game.freeze()
         let gameTitle = frozen.title
         let gameMD5 = frozen.md5Hash
-        let title = "Delete \(gameTitle)?"
-        let message = "Any save states and battery saves will also be deleted, are you sure?"
+        // Same localized copy the paged UI uses. Do NOT promise that saves are
+        // deleted: this passes deleteSaves: false, matching attemptToDelete.
+        let title = Bundle.module.localized("DeleteGameTitle")
+        let message = Bundle.module.localized("DeleteGameBody", gameTitle)
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { _ in
