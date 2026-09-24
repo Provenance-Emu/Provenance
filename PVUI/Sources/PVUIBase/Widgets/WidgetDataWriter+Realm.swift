@@ -103,6 +103,75 @@ public extension WidgetDataWriter {
             totalPlayTimeSeconds: totalPlayTime,
             favoritesCount: favoritesCount
         )
+
+        writeLibraryIndex()
+    }
+}
+
+// MARK: - Library index (Quick Look extensions)
+
+/// Holds the throttle state for `writeLibraryIndex(force:)`.
+///
+/// `WidgetDataWriter` is `Sendable` (a plain final class), so a mutable
+/// `static var` on it would be flagged as unsynchronized global mutable
+/// state. `writeLibraryIndex` is `@MainActor`-only, so isolating the
+/// throttle state to `@MainActor` here keeps the same 30s-throttle
+/// semantics without introducing a lock.
+@MainActor
+private enum LibraryIndexThrottle {
+    static let interval: TimeInterval = 30
+    static var lastWrite: Date = .distantPast
+}
+
+public extension WidgetDataWriter {
+    /// Writes the full library index the Quick Look extensions read. Throttled
+    /// because it walks every game; `force` bypasses the throttle (import done).
+    @MainActor
+    func writeLibraryIndex(force: Bool = false) {
+        let now = Date()
+        guard force || now.timeIntervalSince(LibraryIndexThrottle.lastWrite) >= LibraryIndexThrottle.interval else { return }
+        LibraryIndexThrottle.lastWrite = now
+
+        let database = RomDatabase.sharedInstance
+        let games: [LibraryIndexGame] = database.all(PVGame.self)
+            .filter("contentless == false")
+            .map { game in
+                let key = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
+                // Side effect on purpose: copies local-only art into the group container.
+                _ = widgetArtworkPath(for: game)
+                return LibraryIndexGame(
+                    filename: (game.romPath as NSString).lastPathComponent,
+                    title: game.title,
+                    systemName: game.system?.name ?? game.systemShortName,
+                    systemIdentifier: game.systemIdentifier.isEmpty ? nil : game.systemIdentifier,
+                    developer: emptyToNil(game.developer),
+                    publishDate: emptyToNil(game.publishDate),
+                    genre: emptyToNil(game.genres),
+                    gameDescription: emptyToNil(game.gameDescription),
+                    playCount: game.playCount,
+                    isFavorite: game.isFavorite,
+                    artworkKey: key.isEmpty ? nil : key)
+            }
+
+        let container = LibrarySnapshotAppGroup.containerURL
+        let saves: [LibraryIndexSaveState] = database.all(PVSaveState.self).compactMap { state in
+            guard let file = state.file, !file.partialPath.isEmpty,
+                  let imageURL = state.image?.url,
+                  let container,
+                  imageURL.path.hasPrefix(container.path) else { return nil }
+            let rel = String(imageURL.path.dropFirst(container.path.count + 1))
+            return LibraryIndexSaveState(filename: (file.partialPath as NSString).lastPathComponent, imageRelativePath: rel)
+        }
+
+        let writer = LibraryIndexWriter(containerURL: container)
+        DispatchQueue.global(qos: .utility).async {
+            let ok = writer.write(games: games, saveStates: saves)
+            DLOG("[WidgetDataWriter] library index write \(ok ? "ok" : "skipped") (\(games.count) games, \(saves.count) saves)")
+        }
+    }
+
+    private func emptyToNil(_ value: String?) -> String? {
+        value.flatMap { $0.isEmpty ? nil : $0 }
     }
 }
 
@@ -156,7 +225,7 @@ private extension PVGame {
 ///
 /// Returns `nil` when the artwork key is empty, the App Group container is
 /// unavailable, or the file cannot be found in either location.
-private func widgetArtworkPath(for game: PVGame) -> String? {
+func widgetArtworkPath(for game: PVGame) -> String? {
     let artworkKey = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
     guard !artworkKey.isEmpty else { return nil }
 

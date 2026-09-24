@@ -129,6 +129,7 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
 #if canImport(PVAppIntents)
                 // Refresh widgets after library import so new games appear immediately.
                 WidgetDataWriter.shared.writeFromRealm()
+                WidgetDataWriter.shared.writeLibraryIndex(force: true)
 #endif
             }
         }
