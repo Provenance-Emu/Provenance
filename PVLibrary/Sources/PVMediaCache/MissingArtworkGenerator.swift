@@ -3,7 +3,7 @@
 //  PVMediaCache
 //
 //  Created to share the retrowave "missing artwork" placeholder across PVUIBase
-//  and lightweight app extensions (e.g. TopShelfv2) without requiring the
+//  and lightweight app extensions (e.g. TopShelf) without requiring the
 //  PVThemes / PVSettings / Defaults dependency surface of PVUIBase.
 //
 

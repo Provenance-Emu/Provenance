@@ -33,8 +33,11 @@ public extension WidgetDataWriter {
     ///
     /// Debouncing is handled inside `WidgetDataWriter`; rapid successive calls
     /// (e.g. during a batch import) coalesce into a single widget reload.
+    ///
+    /// - Parameter forceIndex: Passed through to `writeLibraryIndex(force:)` to
+    ///   bypass its 30s throttle (e.g. right after an import finishes).
     @MainActor
-    func writeFromRealm() {
+    func writeFromRealm(forceIndex: Bool = false) {
         let database = RomDatabase.sharedInstance
         let allGames = database.all(PVGame.self)
         /// Exclude contentless pseudo-games (cores with no ROM) from widget data
@@ -104,7 +107,7 @@ public extension WidgetDataWriter {
             favoritesCount: favoritesCount
         )
 
-        writeLibraryIndex()
+        writeLibraryIndex(force: forceIndex)
     }
 }
 
@@ -126,6 +129,12 @@ private enum LibraryIndexThrottle {
 public extension WidgetDataWriter {
     /// Writes the full library index the Quick Look extensions read. Throttled
     /// because it walks every game; `force` bypasses the throttle (import done).
+    ///
+    /// Only reads Realm fields into value types on the main actor — the
+    /// filesystem work (artwork mirroring, save-state path relativisation) is
+    /// deferred to the background `DispatchQueue` below so a large library
+    /// doesn't block the main thread with hundreds of `fileExists`/`copyItem`
+    /// calls.
     @MainActor
     func writeLibraryIndex(force: Bool = false) {
         let now = Date()
@@ -136,10 +145,7 @@ public extension WidgetDataWriter {
         let games: [LibraryIndexGame] = database.all(PVGame.self)
             .filter("contentless == false")
             .map { game in
-                let key = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
-                // Side effect on purpose: copies local-only art into the group container.
-                _ = widgetArtworkPath(for: game)
-                return LibraryIndexGame(
+                LibraryIndexGame(
                     filename: (game.romPath as NSString).lastPathComponent,
                     title: game.title,
                     systemName: game.system?.name ?? game.systemShortName,
@@ -150,23 +156,46 @@ public extension WidgetDataWriter {
                     gameDescription: emptyToNil(game.gameDescription),
                     playCount: game.playCount,
                     isFavorite: game.isFavorite,
-                    artworkKey: key.isEmpty ? nil : key)
+                    artworkKey: artworkKey(for: game))
             }
 
+        // Raw artwork keys to mirror into the App Group container. The mirroring
+        // itself (hash → fileExists → copyItem) is Realm-free filesystem work,
+        // done in the background closure below.
+        let artworkKeysToMirror: [String] = games.compactMap(\.artworkKey)
+
         let container = LibrarySnapshotAppGroup.containerURL
-        let saves: [LibraryIndexSaveState] = database.all(PVSaveState.self).compactMap { state in
-            guard let file = state.file, !file.partialPath.isEmpty,
-                  let imageURL = state.image?.url,
-                  let container,
-                  imageURL.path.hasPrefix(container.path) else { return nil }
-            let rel = String(imageURL.path.dropFirst(container.path.count + 1))
-            return LibraryIndexSaveState(filename: (file.partialPath as NSString).lastPathComponent, imageRelativePath: rel)
+        let localDocuments = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+
+        // Capture only plain values from each save state on the main actor.
+        // `state.image?.url` is a Realm-object read and must happen here; the
+        // container-prefix relativisation (string work, no I/O) moves to the
+        // background closure.
+        let saveStateEntries: [(filename: String, imageURL: URL?)] = database.all(PVSaveState.self).compactMap { state in
+            guard let file = state.file, !file.partialPath.isEmpty else { return nil }
+            return (filename: (file.partialPath as NSString).lastPathComponent, imageURL: state.image?.url)
         }
 
         let writer = LibraryIndexWriter(containerURL: container)
         DispatchQueue.global(qos: .utility).async {
+            // Mirror local-only artwork into the App Group container so the
+            // extensions can find it (side effect only — the index stores the
+            // raw key, which `ArtworkResolver` hashes on read).
+            for key in artworkKeysToMirror {
+                _ = mirrorArtworkIntoGroup(key: key, containerURL: container, localDocuments: localDocuments)
+            }
+
+            let saves: [LibraryIndexSaveState] = saveStateEntries.compactMap { entry in
+                guard let imageURL = entry.imageURL,
+                      let container,
+                      imageURL.path.hasPrefix(container.path) else { return nil }
+                let rel = String(imageURL.path.dropFirst(container.path.count + 1))
+                return LibraryIndexSaveState(filename: entry.filename, imageRelativePath: rel)
+            }
+            let skippedSaveCount = saveStateEntries.count - saves.count
+
             let ok = writer.write(games: games, saveStates: saves)
-            DLOG("[WidgetDataWriter] library index write \(ok ? "ok" : "skipped") (\(games.count) games, \(saves.count) saves)")
+            DLOG("[WidgetDataWriter] library index write \(ok ? "ok" : "skipped") (\(games.count) games, \(saves.count) saves, \(skippedSaveCount) skipped outside group container)")
         }
     }
 
@@ -215,32 +244,43 @@ private extension PVGame {
 
 // MARK: - Artwork path resolution
 
-/// Resolves a `PVGame`'s artwork to a relative path inside the App Group container,
-/// suitable for `WidgetGameData.artworkPath`.
+/// Returns the raw `PVMediaCache` key for a game's artwork (the custom URL if set,
+/// otherwise the original URL), or `nil` when neither is present.
+///
+/// Realm-object read only — no filesystem I/O. Must be called on the thread that
+/// owns the Realm object (the main actor).
+func artworkKey(for game: PVGame) -> String? {
+    let key = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
+    return key.isEmpty ? nil : key
+}
+
+/// Mirrors a cached artwork file — identified by its raw `PVMediaCache` key — into
+/// the App Group container so widget/extension processes can read it, copying it
+/// from the local app sandbox on first call if needed.
+///
+/// Realm-free: takes only plain values, so it is safe to call off the main actor
+/// (e.g. from a background queue while indexing hundreds of games).
 ///
 /// Always targets the App Group container (the only location widget extensions can
 /// read), regardless of whether the main app's `useAppGroups` setting is enabled.
-/// If the artwork exists in the local app sandbox but not yet in the App Group
-/// container, it is copied on first call so subsequent widget refreshes find it.
 ///
-/// Returns `nil` when the artwork key is empty, the App Group container is
-/// unavailable, or the file cannot be found in either location.
-func widgetArtworkPath(for game: PVGame) -> String? {
-    let artworkKey = game.customArtworkURL.isEmpty ? game.originalArtworkURL : game.customArtworkURL
-    guard !artworkKey.isEmpty else { return nil }
+/// - Parameters:
+///   - key: The raw artwork key, as returned by `artworkKey(for:)`.
+///   - containerURL: The App Group container root (e.g. `LibrarySnapshotAppGroup.containerURL`).
+///   - localDocuments: The local app Documents directory, used as a fallback source
+///     when the artwork hasn't been mirrored into the App Group container yet.
+/// - Returns: The path relative to `containerURL`, or `nil` when the key is empty,
+///   `containerURL` is unavailable, or the file cannot be found in either location.
+@discardableResult
+func mirrorArtworkIntoGroup(key: String, containerURL: URL?, localDocuments: URL?) -> String? {
+    guard !key.isEmpty, let containerURL else { return nil }
 
     // Mirror PVMediaCache key derivation: MD5 hex digest of the URL string.
-    let keyHash = Insecure.MD5.hash(data: Data(artworkKey.utf8))
+    let keyHash = Insecure.MD5.hash(data: Data(key.utf8))
         .map { String(format: "%02x", $0) }.joined()
     let relPath = "Documents/PVCache/\(keyHash)"
 
-    // PVAppGroupId is the canonical constant (PVLibrary/PVFileSystem/Paths.swift).
-    guard let container = FileManager.default
-        .containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId) else {
-        return nil
-    }
-
-    let appGroupFile = container.appendingPathComponent(relPath)
+    let appGroupFile = containerURL.appendingPathComponent(relPath)
 
     // Fast path: file already in App Group container.
     if FileManager.default.fileExists(atPath: appGroupFile.path) {
@@ -249,8 +289,8 @@ func widgetArtworkPath(for game: PVGame) -> String? {
 
     // Slow path: file is in the local app Documents sandbox (useAppGroups == false).
     // Copy it to the App Group container so the widget extension can read it.
-    if let localDocs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-        let localFile = localDocs.appendingPathComponent("PVCache/\(keyHash)")
+    if let localDocuments {
+        let localFile = localDocuments.appendingPathComponent("PVCache/\(keyHash)")
         if FileManager.default.fileExists(atPath: localFile.path) {
             let dir = appGroupFile.deletingLastPathComponent()
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -260,5 +300,22 @@ func widgetArtworkPath(for game: PVGame) -> String? {
     }
 
     return nil
+}
+
+/// Resolves a `PVGame`'s artwork to a relative path inside the App Group container,
+/// suitable for `WidgetGameData.artworkPath`. Thin wrapper around `artworkKey(for:)`
+/// + `mirrorArtworkIntoGroup(key:containerURL:localDocuments:)` used by
+/// `writeFromRealm()`'s bounded (~100 game) snapshot arrays, where doing the
+/// filesystem work inline on the main actor is acceptable.
+///
+/// Returns `nil` when the artwork key is empty, the App Group container is
+/// unavailable, or the file cannot be found in either location.
+func widgetArtworkPath(for game: PVGame) -> String? {
+    guard let key = artworkKey(for: game) else { return nil }
+    // PVAppGroupId is the canonical constant (PVLibrary/PVFileSystem/Paths.swift).
+    let container = FileManager.default
+        .containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
+    let localDocs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    return mirrorArtworkIntoGroup(key: key, containerURL: container, localDocuments: localDocs)
 }
 #endif

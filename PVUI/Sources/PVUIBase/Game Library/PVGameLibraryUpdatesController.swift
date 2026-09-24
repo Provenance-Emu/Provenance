@@ -127,9 +127,9 @@ public final class PVGameLibraryUpdatesController: ObservableObject {
                 await self?.hudCoordinator.updateHUD(.hidden)
                 DLOG("HUD state updated for import completion")
 #if canImport(PVAppIntents)
-                // Refresh widgets after library import so new games appear immediately.
-                WidgetDataWriter.shared.writeFromRealm()
-                WidgetDataWriter.shared.writeLibraryIndex(force: true)
+                // Refresh widgets after library import so new games appear immediately;
+                // force the library index write since import just changed the library.
+                WidgetDataWriter.shared.writeFromRealm(forceIndex: true)
 #endif
             }
         }

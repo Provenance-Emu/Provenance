@@ -6,8 +6,8 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 //  Uses the CPDI (ThumbnailArtworkDriver) abstraction so the persistence
-//  layer (Realm today, SwiftData in future) can be swapped without touching
-//  QL thumbnail logic.
+//  layer (App Group library index today, SwiftData in future) can be
+//  swapped without touching QL thumbnail logic.
 //
 
 import UIKit
@@ -24,11 +24,13 @@ class ThumbnailProvider: QLThumbnailProvider {
     override func provideThumbnail(for request: QLFileThumbnailRequest, _ handler: @escaping (QLThumbnailReply?, Error?) -> Void) {
         let fileURL = request.fileURL
         // For iCloud placeholder files the URL contains the .icloud suffix — strip it
-        // to recover the real filename so Realm lookups succeed without downloading the file.
+        // to recover the real filename so App Group library index lookups succeed
+        // without downloading the file.
         let effectiveFilename = ROMGameLookup.realFilename(from: fileURL)
 
         // Reconstruct an effective path that replaces the iCloud placeholder filename
-        // with the real filename, preserving the directory so Realm path queries work.
+        // with the real filename, preserving the directory so App Group library index
+        // path queries work.
         let effectivePath = fileURL.deletingLastPathComponent()
             .appendingPathComponent(effectiveFilename).path
 

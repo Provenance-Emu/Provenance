@@ -60,7 +60,7 @@ public enum LibraryIndexPaths {
     public static let saveStates = directory + "/savestates-by-filename.json"
 }
 
-public struct LibraryIndexWriter {
+public struct LibraryIndexWriter: Sendable {
     private let containerURL: URL?
 
     public init(containerURL: URL? = LibrarySnapshotAppGroup.containerURL) {

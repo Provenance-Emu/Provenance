@@ -4,13 +4,14 @@
 //
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Lightweight value type carrying metadata for a game looked up from Realm.
+//  Lightweight value type carrying metadata for a game looked up from the
+//  App Group library index (see PVLibrarySnapshot.LibraryIndexReader).
 //  No Realm objects are stored — only plain Foundation types.
 //
 
 import Foundation
 
-/// Metadata for a ROM game, extracted from the shared Realm database.
+/// Metadata for a ROM game, extracted from the App Group library index.
 ///
 /// All stored properties are plain value types — no Realm objects are retained.
 /// This struct is `Sendable` and safe to pass across threads.
@@ -18,8 +19,8 @@ public struct GameInfo: Sendable {
 
     /// Display title of the game.
     /// This value is supplied by the caller and may be empty when no title is available.
-    /// `ROMGameLookup.gameInfo(from:)` normalises empty titles before creating a `GameInfo`,
-    /// but callers constructing `GameInfo` directly are responsible for providing a non-empty value.
+    /// Callers constructing `GameInfo` are responsible for providing a non-empty value
+    /// when one is available.
     public let title: String
 
     /// Human-readable system name (e.g. "Super Nintendo").  `nil` when unknown.
