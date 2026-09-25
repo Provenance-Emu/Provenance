@@ -73,9 +73,13 @@ public actor EcosystemFetchService {
 
     /// Downloads the payload's game files. Returns the directory the files
     /// landed in (inside the import path — the watcher takes it from there).
+    ///
+    /// - Parameter source: Which ecosystem app offered the payload — names the
+    ///   import container so files from different sources never collide.
     @discardableResult
     public func download(
         _ payload: EcosystemFetchPayload,
+        from source: EcosystemApp,
         progress: (@Sendable (Int, Int) -> Void)? = nil
     ) async throws -> URL {
         guard let (base, manifest) = try await firstReachableManifest(payload) else {
@@ -95,7 +99,7 @@ public actor EcosystemFetchService {
             throw FetchError.badManifest
         }
 
-        let containerName = "iFly-\(String(payload.md5.prefix(8)))"
+        let containerName = "\(source.displayName)-\(String(payload.md5.prefix(8)))"
         let container = Paths.romsImportPath.appendingPathComponent(containerName, isDirectory: true)
         let containerPath = container.standardizedFileURL.path
 

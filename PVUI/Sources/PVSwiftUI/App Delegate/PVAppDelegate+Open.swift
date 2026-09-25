@@ -231,7 +231,7 @@ extension PVAppDelegate {
             ILOG("Ecosystem: fetch offer from \(source.displayName) for '\(payload.name)'")
             Task {
                 do {
-                    let container = try await EcosystemFetchService.shared.download(payload)
+                    let container = try await EcosystemFetchService.shared.download(payload, from: source)
                     NotificationCenter.default.post(
                         name: .ecosystemFetchCompleted,
                         object: nil,
