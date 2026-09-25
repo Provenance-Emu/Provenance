@@ -83,9 +83,6 @@ struct ConsolesWrapperView: SwiftUI.View {
     @ObservedResults(PVSystem.self) private var consoles: Results<PVSystem>
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    /// Observe the sync status manager for download progress overlay
-    @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
-
     /// Track if view is currently visible
     @State private var isVisible: Bool = false
 
@@ -195,19 +192,10 @@ struct ConsolesWrapperView: SwiftUI.View {
                 }
             }
 
-            // Sync status overlay for cloud downloads
-            if syncStatusManager.isVisible {
-                GameSyncStatusView(
-                    gameTitle: syncStatusManager.gameTitle,
-                    statusMessage: syncStatusManager.statusMessage,
-                    downloadProgress: syncStatusManager.downloadProgress,
-                    isComplete: syncStatusManager.isComplete,
-                    hasError: syncStatusManager.hasError,
-                    onCancel: syncStatusManager.onCancel
-                )
-                .transition(.opacity)
-                .animation(.easeInOut, value: syncStatusManager.isVisible)
-            }
+            // Sync status overlay for cloud downloads now lives in MainView's
+            // top-level ZStack — this view gets opacity-zeroed out while the
+            // emulator is active, which made the overlay disappear the moment a
+            // game launched instead of staying visible over the emulator.
 
             // RetroWave styled alert overlay
             RetroAlertStateView(alertState: SceneCoordinator.shared.alertState)

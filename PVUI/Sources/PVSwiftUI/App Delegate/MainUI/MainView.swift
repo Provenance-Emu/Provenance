@@ -18,7 +18,15 @@ struct MainView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var appDelegate: PVAppDelegate
     @EnvironmentObject private var sceneCoordinator: SceneCoordinator
-    
+
+    // Grabbed directly (not via sceneCoordinator) so this view re-renders on the
+    // manager's own @Published changes — nesting an ObservableObject inside
+    // another doesn't forward change notifications. This used to be observed the
+    // same way by RetroMainView / ConsolesWrapperView / TVMediaMainView, each
+    // rendering its own copy of the overlay below; that's now centralized here
+    // (see the ZStack usage below for why).
+    @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
+
 #if os(iOS)
     // Singleton — use @ObservedObject, not @StateObject (@StateObject implies this
     // view creates and owns the instance's lifetime, which is wrong for a .shared).
@@ -61,6 +69,35 @@ struct MainView: View {
 
                 // Multi-select toolbar (paged mode) — above tab bar / content
                 RetroMultiSelectToolbar()
+
+                // Sync status overlay for game launch and cloud downloads (BIOS,
+                // ROM streaming, and the battery-save restore kicked off by
+                // SceneCoordinator.downloadBatterySavesIfNeeded). Lives here, above
+                // both the library content and emulatorView, specifically so it
+                // stays visible across the scene switch: the library views above
+                // are opacity-zeroed while the emulator is active, so an overlay
+                // that only they rendered would vanish the instant a game launched.
+                // That vanishing act didn't matter while this overlay always
+                // *blocked* the launch (the scene never switched until it was
+                // done), but now that the battery-save restore runs in the
+                // background after the emulator has already opened (see
+                // downloadBatterySavesIfNeeded), it needs to stay visible while
+                // gameplay is showing underneath. This is the single place it
+                // renders; the per-screen copies in RetroMainView /
+                // ConsolesWrapperView / TVMediaMainView were removed so it isn't
+                // shown twice while still in the library.
+                if syncStatusManager.isVisible {
+                    GameSyncStatusView(
+                        gameTitle: syncStatusManager.gameTitle,
+                        statusMessage: syncStatusManager.statusMessage,
+                        downloadProgress: syncStatusManager.downloadProgress,
+                        isComplete: syncStatusManager.isComplete,
+                        hasError: syncStatusManager.hasError,
+                        onCancel: syncStatusManager.onCancel
+                    )
+                    .transition(.opacity)
+                    .animation(.easeInOut, value: syncStatusManager.isVisible)
+                }
 
                 // Unified toast overlay — PVToastManager.post(...) works from
                 // anywhere (library, emulator, settings, background actors).

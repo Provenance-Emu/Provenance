@@ -33,9 +33,6 @@ public struct RetroMainView: View {
     // Document picker manager as an environment object
     @StateObject private var documentPickerManager = DocumentPickerManager.shared
 
-    /// Observe the sync status manager directly for proper SwiftUI updates
-    @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
-
     @State private var selectedTab: Int = 0
     private let settingsTabIndex = 2
     @State private var showDynamicIslandEffects: Bool = true
@@ -152,19 +149,10 @@ public struct RetroMainView: View {
             // so it is not obscured by the tab bar.
             RetroMultiSelectToolbar()
 
-            // Sync status overlay for game launch and cloud downloads
-            if syncStatusManager.isVisible {
-                GameSyncStatusView(
-                    gameTitle: syncStatusManager.gameTitle,
-                    statusMessage: syncStatusManager.statusMessage,
-                    downloadProgress: syncStatusManager.downloadProgress,
-                    isComplete: syncStatusManager.isComplete,
-                    hasError: syncStatusManager.hasError,
-                    onCancel: syncStatusManager.onCancel
-                )
-                .transition(.opacity)
-                .animation(.easeInOut, value: syncStatusManager.isVisible)
-            }
+            // Sync status overlay for game launch and cloud downloads now lives in
+            // MainView's top-level ZStack — this view gets opacity-zeroed out while
+            // the emulator is active, which made the overlay disappear the moment
+            // a game launched instead of staying visible over the emulator.
 
             // RetroWave styled alert overlay
             RetroAlertStateView(alertState: SceneCoordinator.shared.alertState)

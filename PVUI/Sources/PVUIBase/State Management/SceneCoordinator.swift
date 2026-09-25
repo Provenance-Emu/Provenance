@@ -28,6 +28,22 @@ extension DeltaSkinManager: SkinImporterServicing {
 
 }
 
+/// Thread-safe "resume exactly once" guard for `SceneCoordinator.firstToFinish`.
+/// Both racing tasks there can finish at nearly the same instant, and a
+/// `CheckedContinuation` traps if `resume` is called more than once.
+private final class RaceGuard: @unchecked Sendable {
+    private let lock = NSLock()
+    private var didResume = false
+
+    func tryResume() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        guard !didResume else { return false }
+        didResume = true
+        return true
+    }
+}
+
 /// Coordinator for managing scene transitions in the app
 @MainActor
 // SceneCoordinator's class body is far over the 600-line limit, and already was
@@ -47,6 +63,14 @@ public class SceneCoordinator: ObservableObject {
     /// Cancel this task to abort an in-progress launch (e.g. when the user taps Cancel).
     private var activeLaunchTask: Task<Void, Never>?
     private var launchTimeoutTask: Task<Void, Never>?
+
+    /// Set while a battery-save restore kicked off by `downloadBatterySavesIfNeeded`
+    /// is still running after the launch itself has already finished (the restore
+    /// never gates the launch — see that method). Guards the `syncStatusManager.hide()`
+    /// in the launch tasks' `defer` blocks below so they don't yank the "Restoring
+    /// cloud saves..." status out from under a fetch that's still genuinely in
+    /// progress; the restore hides it itself once it resolves.
+    private var activeBatterySaveRestore: Task<Void, Never>?
 
     // Cancellables for observation
     private var cancellables = Set<AnyCancellable>()
@@ -196,7 +220,13 @@ public class SceneCoordinator: ObservableObject {
         activeLaunchTask = Task { @MainActor [weak self] in
             defer {
                 self?.activeLaunchTask = nil
-                self?.syncStatusManager.hide()
+                // A battery-save restore kicked off during this launch never gates
+                // it (see downloadBatterySavesIfNeeded) and may still be running
+                // now that the launch task itself is done — don't hide its status
+                // out from under it; it hides itself when it resolves.
+                if self?.activeBatterySaveRestore == nil {
+                    self?.syncStatusManager.hide()
+                }
             }
             await self?.launchGameWithValidation(game)
         }
@@ -224,7 +254,13 @@ public class SceneCoordinator: ObservableObject {
         activeLaunchTask = Task { @MainActor [weak self] in
             defer {
                 self?.activeLaunchTask = nil
-                self?.syncStatusManager.hide()
+                // A battery-save restore kicked off during this launch never gates
+                // it (see downloadBatterySavesIfNeeded) and may still be running
+                // now that the launch task itself is done — don't hide its status
+                // out from under it; it hides itself when it resolves.
+                if self?.activeBatterySaveRestore == nil {
+                    self?.syncStatusManager.hide()
+                }
             }
             await self?.launchSaveStateWithValidation(saveState, game: game, core: core)
         }
@@ -243,7 +279,13 @@ public class SceneCoordinator: ObservableObject {
         activeLaunchTask = Task { @MainActor [weak self] in
             defer {
                 self?.activeLaunchTask = nil
-                self?.syncStatusManager.hide()
+                // A battery-save restore kicked off during this launch never gates
+                // it (see downloadBatterySavesIfNeeded) and may still be running
+                // now that the launch task itself is done — don't hide its status
+                // out from under it; it hides itself when it resolves.
+                if self?.activeBatterySaveRestore == nil {
+                    self?.syncStatusManager.hide()
+                }
             }
             await self?.launchGameWithValidation(game, core: core)
         }
@@ -831,19 +873,38 @@ public class SceneCoordinator: ObservableObject {
         )
     }
 
-    /// Seconds to wait for a game's battery saves before launching anyway.
-    ///
-    /// Deliberately short. Battery data is a nice-to-have at boot; a slow cloud
-    /// round trip must not reproduce the "launch UI hung for minutes" symptom that
-    /// forced the BIOS path off its full-sync fallback.
+    /// Seconds to let a game's battery-save restore run in the background before
+    /// it's abandoned. Purely a resource bound now — see `downloadBatterySavesIfNeeded`,
+    /// which never makes the launch wait on this at all.
     private static let batterySaveFetchTimeoutSeconds: UInt64 = 8
 
-    /// Restore this game's battery/SRAM data from CloudKit before the core boots.
+    /// Restore this game's battery/SRAM data from CloudKit in the background.
     ///
-    /// Never blocks or fails the launch: a missing battery file means the game
-    /// starts without its in-cartridge save, not that it cannot run. If the fetch
-    /// exceeds `batterySaveFetchTimeoutSeconds` it is abandoned and the launch
-    /// proceeds; the files are picked up by the next launch or the background sync.
+    /// Never gates the launch: this kicks the restore off and returns immediately,
+    /// so the caller proceeds straight to `openEmulatorScene()` without waiting.
+    /// A missing battery file at boot just means the game starts without its
+    /// in-cartridge save, not that it cannot run — exactly the "start fresh, and
+    /// let the cloud save catch up" behavior this exists for. The restore keeps
+    /// running and streams its own progress into `syncStatusManager` (see
+    /// `MainView`'s top-level overlay, which stays visible across the scene
+    /// switch) until it resolves, is cancelled, or hits
+    /// `batterySaveFetchTimeoutSeconds`.
+    ///
+    /// Previously this function itself awaited the fetch, raced against the
+    /// timeout with `withTaskGroup`. That was broken two ways:
+    ///  1. `withTaskGroup` is structured concurrency — it cannot return until
+    ///     EVERY child task finishes, including a cancelled one. Cancelling the
+    ///     real fetch on timeout only asks it to stop; the group still sat
+    ///     waiting for it to actually finish, so the nominal 8s bound was
+    ///     cosmetic. The real wait was however long the CloudKit query took,
+    ///     which a cold container or bad network can push well past 8s.
+    ///  2. Even a working timeout still blocked the launch UI on every game with
+    ///     no local battery data whenever iCloud sync was on — the exact
+    ///     "stuck on syncing cloud saves" symptom, just with a shorter fuse.
+    /// `firstToFinish` below fixes (1) by racing with a bare continuation instead
+    /// of a task group, so it returns the instant either side resumes without
+    /// waiting for the loser. This function fixes (2) by never awaiting that
+    /// race from the launch path in the first place.
     private func downloadBatterySavesIfNeeded(for game: PVGame) async {
         guard Defaults[.iCloudSync] else { return }
         guard let romURL = game.file?.url else { return }
@@ -866,39 +927,74 @@ public class SceneCoordinator: ObservableObject {
             return
         }
 
-        /// Unstructured on purpose so the timeout below can abandon it.
+        /// Unstructured on purpose: this must outlive `downloadBatterySavesIfNeeded`,
+        /// which returns right away, and must not inherit cancellation from the
+        /// launch task (the launch is never cancelled to abort this anymore).
         let work = Task.detached { await CloudSyncManager.shared.downloadBatterySaves(forROMNamed: romName) }
 
-        await MainActor.run {
-            syncStatusManager.show(gameTitle: gameTitle,
-                                   statusMessage: "Restoring cloud saves...",
-                                   onCancel: { work.cancel() })
-        }
+        syncStatusManager.show(gameTitle: gameTitle,
+                               statusMessage: "Restoring cloud saves...",
+                               onCancel: { [weak self] in
+                                   work.cancel()
+                                   self?.syncStatusManager.hide()
+                                   self?.activeBatterySaveRestore = nil
+                               })
 
-        let downloaded: Int = await withTaskGroup(of: Int?.self) { group in
-            group.addTask { await work.value }
-            group.addTask {
-                try? await Task.sleep(nanoseconds: Self.batterySaveFetchTimeoutSeconds * 1_000_000_000)
-                /// Cancelling the real work is what makes this timeout mean
-                /// anything: a task group awaits EVERY child before it returns,
-                /// and cancellation is cooperative. The first version raced a
-                /// sleeper against the fetch and called `cancelAll()`, but the
-                /// syncer never checked `Task.isCancelled`, so the group still sat
-                /// waiting for the full query — the timeout was cosmetic and the
-                /// launch hung. `downloadBatterySaves` now checks cancellation
-                /// between pages and downloads.
+        activeBatterySaveRestore = Task { @MainActor [weak self] in
+            let downloaded = await Self.firstToFinish(
+                { await work.value },
+                timeoutSeconds: Self.batterySaveFetchTimeoutSeconds
+            )
+
+            if let downloaded {
+                if downloaded > 0 {
+                    ILOG("[BATTERY ON-DEMAND] Restored \(downloaded) battery-save file(s) for \(romName)")
+                }
+            } else {
+                WLOG("[BATTERY ON-DEMAND] Restore for \(romName) exceeded \(Self.batterySaveFetchTimeoutSeconds)s — abandoned")
+                /// Abandoning means "stop caring about the result," not "stop the
+                /// task": cancel it so it can't place a file on disk after we've
+                /// already moved on (the core may have booted fresh in the
+                /// meantime, and a battery write on exit would otherwise race a
+                /// late download landing here).
                 work.cancel()
-                return nil
             }
-            let winner = await group.next() ?? nil
-            group.cancelAll()
-            return winner ?? 0
+
+            self?.syncStatusManager.hide()
+            self?.activeBatterySaveRestore = nil
         }
+    }
 
-        await MainActor.run { syncStatusManager.hide() }
-
-        if downloaded > 0 {
-            ILOG("[BATTERY ON-DEMAND] Restored \(downloaded) battery-save file(s) for \(romName)")
+    /// Races `operation` against a timeout and returns whichever finishes first.
+    ///
+    /// Unlike a `withTaskGroup`-based race, this never waits for the loser: a
+    /// task group is structured concurrency and must await every child task —
+    /// even a cancelled one — before it can return, which silently turns a
+    /// "timeout" into just another unbounded await. This resumes a bare
+    /// continuation instead, so the function returns the instant either side
+    /// resumes; an `operation` that outlives the timeout is left running
+    /// detached and its eventual result is discarded.
+    /// `nonisolated`: this touches no `SceneCoordinator` state, and must not be
+    /// MainActor-bound — the whole point is racing two plain background tasks
+    /// without caring which thread they land on.
+    private nonisolated static func firstToFinish<T: Sendable>(
+        _ operation: @escaping @Sendable () async -> T,
+        timeoutSeconds: UInt64
+    ) async -> T? {
+        let raceGuard = RaceGuard()
+        return await withCheckedContinuation { (continuation: CheckedContinuation<T?, Never>) in
+            Task {
+                let result = await operation()
+                if raceGuard.tryResume() {
+                    continuation.resume(returning: result)
+                }
+            }
+            Task {
+                try? await Task.sleep(nanoseconds: timeoutSeconds * 1_000_000_000)
+                if raceGuard.tryResume() {
+                    continuation.resume(returning: nil)
+                }
+            }
         }
     }
 

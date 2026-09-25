@@ -114,7 +114,6 @@ struct TVMediaMainView: View {
     @StateObject private var gameActions = TVMediaGameActions()
     @State private var settingsCanPop: Bool = false
 
-    @ObservedObject private var syncStatusManager = SceneCoordinator.shared.syncStatusManager
     @ObservedObject private var alertState = SceneCoordinator.shared.alertState
 
     init() {}
@@ -692,18 +691,10 @@ struct TVMediaMainView: View {
             .padding(.bottom, 40)
         }
 
-        if syncStatusManager.isVisible {
-            GameSyncStatusView(
-                gameTitle: syncStatusManager.gameTitle,
-                statusMessage: syncStatusManager.statusMessage,
-                downloadProgress: syncStatusManager.downloadProgress,
-                isComplete: syncStatusManager.isComplete,
-                hasError: syncStatusManager.hasError,
-                onCancel: syncStatusManager.onCancel
-            )
-            .transition(.opacity)
-            .animation(.easeInOut, value: syncStatusManager.isVisible)
-        }
+        // Sync status overlay for game launch and cloud downloads now lives in
+        // MainView's top-level ZStack — this view gets opacity-zeroed out while
+        // the emulator is active, which made the overlay disappear the moment a
+        // game launched instead of staying visible over the emulator.
 
         // Alert overlay with focus capture
         TVMediaAlertOverlay(
