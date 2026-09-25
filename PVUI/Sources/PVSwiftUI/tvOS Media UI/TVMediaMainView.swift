@@ -1256,6 +1256,43 @@ final class TVMediaGameActions: ObservableObject, GameContextMenuDelegate {
         let menu = GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: self)
         menu.downloadGameFromCloud()
     }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestDeleteFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        let frozen = game.isFrozen ? game : game.freeze()
+        let gameTitle = frozen.title
+        let gameMD5 = frozen.md5Hash
+        // Same localized copy the paged UI uses. Do NOT promise that saves are
+        // deleted: this passes deleteSaves: false, matching attemptToDelete.
+        let title = Bundle.module.localized("DeleteGameTitle")
+        let message = Bundle.module.localized("DeleteGameBody", gameTitle)
+
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { _ in
+            let realm = RomDatabase.sharedInstance.realm
+            guard let liveGame = realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5)
+                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: gameMD5.uppercased()) else {
+                ELOG("Could not find game with MD5 \(gameMD5) to delete")
+                return
+            }
+            do {
+                try RomDatabase.sharedInstance.delete(game: liveGame, deleteSaves: false)
+                ILOG("Deleted game: \(gameTitle)")
+            } catch {
+                ELOG("Failed to delete game \(gameTitle): \(error.localizedDescription)")
+            }
+        })
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let viewController = windowScene.windows.first?.rootViewController {
+            var topVC = viewController
+            while let presented = topVC.presentedViewController {
+                topVC = presented
+            }
+            topVC.present(alert, animated: true)
+        }
+    }
 }
 
 struct TVMediaSaveBrowserContext: Identifiable {
