@@ -24,9 +24,16 @@ import PVUIBase
 /// Displays installed ecosystem apps and explains cross-app game launching.
 /// Navigate to this view from `ExternalEmulatorMigrationView`.
 public struct EcosystemIntegrationView: View {
+    /// Ecosystem apps whose library can be browsed and pulled from, beyond
+    /// the plain launch-by-id every app supports. Each answers a `gameInfo`
+    /// query and a user-confirmed `requestGame` transfer
+    /// (`EcosystemApp.requestGameURL` returns non-nil for exactly these).
+    private static let browsableApps: [EcosystemApp] = [.ifly, .icube]
+
     @State private var installedApps: [EcosystemApp] = []
-    /// iFly's library, as answered to a gameInfo query (md5-identified).
-    @State private var iflyGames: [EcosystemGameScheme] = []
+    /// Each browsable app's library, as answered to a gameInfo query
+    /// (identified by md5 for iFly, by disc game id for iCube).
+    @State private var browsedGames: [EcosystemApp: [EcosystemGameScheme]] = [:]
     @State private var lastImportedName: String?
     @Environment(\.dismiss) private var dismiss
 
@@ -47,7 +54,9 @@ public struct EcosystemIntegrationView: View {
                         installedSection
                     }
 
-                    iflyLibrarySection
+                    ForEach(Self.browsableApps, id: \.rawValue) { app in
+                        librarySection(for: app)
+                    }
 
                     allAppsSection
 
@@ -63,9 +72,10 @@ public struct EcosystemIntegrationView: View {
             await detectInstalledApps()
         }
         .onReceive(NotificationCenter.default.publisher(for: .ecosystemGamesReceived)) { note in
-            guard note.userInfo?["source"] as? String == EcosystemApp.ifly.rawValue,
+            guard let sourceRaw = note.userInfo?["source"] as? String,
+                  let source = EcosystemApp(rawValue: sourceRaw),
                   let games = note.userInfo?["games"] as? [EcosystemGameScheme] else { return }
-            iflyGames = games
+            browsedGames[source] = games
         }
         .onReceive(NotificationCenter.default.publisher(for: .ecosystemFetchCompleted)) { note in
             lastImportedName = note.userInfo?["name"] as? String
@@ -73,24 +83,29 @@ public struct EcosystemIntegrationView: View {
         .settingsSubpageTracking()
     }
 
-    // MARK: - iFly library (browse + import)
+    // MARK: - Browsable app library (browse + import)
 
+    /// One browsable app's library section — query its list, play, or start a
+    /// user-confirmed import. Shared by every app in `browsableApps` (iFly and
+    /// iCube today); each differs only in its `titleId` identity space and
+    /// display name, both already carried by `EcosystemApp`.
     @ViewBuilder
-    private var iflyLibrarySection: some View {
-        if installedApps.contains(where: { $0 == .ifly }) {
+    private func librarySection(for app: EcosystemApp) -> some View {
+        if installedApps.contains(app) {
+            let games = browsedGames[app] ?? []
             VStack(alignment: .leading, spacing: 12) {
                 sectionHeader(
-                    title: Text("iFly Library"),
+                    title: Text("\(app.displayName) Library"),
                     icon: "arrow.down.app",
                     color: .retroBlue
                 )
 
                 Button {
-                    guard let url = EcosystemApp.ifly.gameInfoQueryURL() else { return }
+                    guard let url = app.gameInfoQueryURL() else { return }
                     UIApplication.shared.open(url)
                 } label: {
                     Label(
-                        iflyGames.isEmpty ? "Browse iFly's Games" : "Refresh List",
+                        games.isEmpty ? "Browse \(app.displayName)'s Games" : "Refresh List",
                         systemImage: "arrow.triangle.2.circlepath"
                     )
                     .font(.subheadline.weight(.semibold))
@@ -106,7 +121,7 @@ public struct EcosystemIntegrationView: View {
                         .foregroundStyle(.green)
                 }
 
-                ForEach(iflyGames) { game in
+                ForEach(games) { game in
                     HStack(spacing: 10) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(game.titleName)
@@ -120,12 +135,12 @@ public struct EcosystemIntegrationView: View {
                         }
                         Spacer()
                         Button("Play") {
-                            EcosystemApp.ifly.openGame(titleID: game.titleId)
+                            app.openGame(titleID: game.titleId)
                         }
                         .font(.caption.weight(.semibold))
                         .buttonStyle(.bordered)
                         Button("Import") {
-                            guard let url = EcosystemApp.ifly.requestGameURL(titleID: game.titleId)
+                            guard let url = app.requestGameURL(titleID: game.titleId)
                             else { return }
                             UIApplication.shared.open(url)
                         }
@@ -349,6 +364,7 @@ private struct EcosystemAppRowView: View {
         case .melonx:   return NSLocalizedString("ecosystem.app.melonx.description", bundle: .module, comment: "")
         case .meloCafe: return NSLocalizedString("ecosystem.app.melocafe.description", bundle: .module, comment: "")
         case .ifly:     return "Dreamcast, Naomi, and Atomiswave emulator by the Provenance team. Supports browsing its library and importing games directly."
+        case .icube:    return "GameCube and Wii emulator by the Provenance team. Supports browsing its library and importing games directly."
         }
     }
 
