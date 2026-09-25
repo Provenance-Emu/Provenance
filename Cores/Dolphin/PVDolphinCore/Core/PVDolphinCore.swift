@@ -23,6 +23,11 @@ open class PVDolphinCore: PVEmulatorCore, @unchecked Sendable {
 
     open override var supportsSkins: Bool { false }
 
+    /// Dolphin plays audio through its own sound stream (Cubeb/OpenAL, selected in
+    /// `PVDolphinCore.mm` `setOptionValues`) and never writes to the core ring buffer that
+    /// Provenance's audio engine reads, so the visualizer would only ever receive silence.
+    open override var supportsAudioVisualizer: Bool { false }
+
     /// Dolphin detects JIT availability at startup and selects the appropriate
     /// execution back-end (JIT or Cached Interpreter) automatically.
     open override var jitRequirement: PVJITRequirement { .automaticWithFallback }
