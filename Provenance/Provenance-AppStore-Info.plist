@@ -235,6 +235,16 @@
 				<string>provenance</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>org.provenance-emu.provenance.ecosystem</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>provenance-ecosystem</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -281,6 +291,7 @@
 		<string>atariemulator</string>
 		<string>consolesapp</string>
 		<string>delta</string>
+		<string>dolphinios</string>
 		<string>manicemu</string>
 		<string>melocafe</string>
 		<string>ppsspp</string>

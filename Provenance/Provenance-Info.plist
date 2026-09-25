@@ -172,6 +172,19 @@
 				<string>provenance</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleURLName</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER).ecosystem</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- Ecosystem capability marker: a peer app (iFly, iCube) probes this,
+				     not the base "provenance" scheme, to tell an up-to-date build that
+				     understands ?fetch= from an old one that would silently ignore it. -->
+				<string>provenance-ecosystem</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -208,6 +221,7 @@
 		<string>atariemulator</string>
 		<string>consolesapp</string>
 		<string>delta</string>
+		<string>dolphinios</string>
 		<string>manicemu</string>
 		<string>melocafe</string>
 		<string>ppsspp</string>
