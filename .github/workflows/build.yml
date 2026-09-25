@@ -387,11 +387,19 @@ jobs:
         if: failure()
         run: |
           if [ -f /tmp/xcodebuild.log ]; then
-            # ": error:" (not bare "error:") — ObjC selector names like
-            # loadStateToFileAtPath:error: appear inside -Wincomplete-implementation
-            # warnings and flood a bare "error:" grep with non-errors.
+            # Two formats, both required:
+            #   ": error:"  — raw clang/ld diagnostics. Matched with the leading
+            #     colon because ObjC selectors like loadStateToFileAtPath:error:
+            #     appear inside -Wincomplete-implementation warnings and would
+            #     flood a bare "error:" grep with non-errors.
+            #   "^::error"  — xcbeautify rewrites diagnostics into GitHub
+            #     annotations, so when the build is piped through it the raw
+            #     ": error:" form never reaches the log. Missing this is why
+            #     failures looked like "exit 65 with no diagnostic at all" for
+            #     weeks, on both iOS and tvOS.
             echo "::group::Compiler/linker diagnostics"
-            grep -E ": (fatal )?error:" /tmp/xcodebuild.log | tail -100 || echo "(no ': error:' compiler diagnostics found)"
+            grep -E ": (fatal )?error:|^::error" /tmp/xcodebuild.log | tail -100 \
+              || echo "(no compiler diagnostics found)"
             echo "::endgroup::"
             # Run Script phase failures (e.g. "Script: Generate Frameworks" exiting
             # non-zero) only surface in this xcodebuild summary block — they never

@@ -229,11 +229,14 @@ jobs:
           ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
         run: |
           set -o pipefail
-          # Scheduled runs are iOS-only until the tvOS archive is fixed. tvOS
-          # failed run 33841167021 with exit 65 and no diagnostic at all — no
-          # ": error:" line and no "build commands failed" block — dying in its
-          # final Generate/Validate Frameworks script phases. It archived fine in
-          # the run before on identical code, so it is intermittent. iOS has
+          # Scheduled runs are iOS-only until the tvOS archive is verified. The
+          # "exit 65 with no diagnostic at all" this comment used to describe was a
+          # REPORTING gap, not an intermittent archive fault: xcbeautify rewrites
+          # diagnostics into ::error annotations, which the old greps did not match.
+          # Run 36047942385 failed on both platforms for an ordinary reason — two
+          # Dolphin bridge calls that the core bump had broken (fixed f7f80d524a).
+          # Re-check tvOS with a manual dispatch; if it archives green, this gate
+          # can go away. iOS has
           # archived and uploaded cleanly every time, and a nightly defaulting to
           # "all" would fail on tvOS and mask a healthy iOS build. An explicit
           # workflow_dispatch still honours whatever platform you pick.
@@ -279,6 +282,33 @@ jobs:
           build-number: ${{ steps.archive.outputs.build }}
           platform: ${{ matrix.platform == 'tvos' && 'TV_OS' || 'IOS' }}
           whats-new: "Nightly build ${{ steps.archive.outputs.build }} from ${{ github.ref_name }} @ ${{ github.sha }}."
+
+      # Print the diagnostics in the console too. Until this existed, a failed
+      # archive showed only "exit 65" and you had to download the artifact below to
+      # learn anything — which is how the iOS and tvOS jobs sat failing on an
+      # ordinary Dolphin compile error while looking like an inscrutable CI fault.
+      - name: Print build errors on failure
+        if: failure()
+        run: |
+          if [ -f /tmp/testflight.log ]; then
+            # Both formats: raw clang diagnostics (": error:", with the leading
+            # colon so ObjC selectors like ...:error: in warnings don't match) and
+            # the GitHub annotations xcbeautify rewrites them into ("^::error").
+            echo "::group::Compiler/linker diagnostics"
+            grep -E ": (fatal )?error:|^::error" /tmp/testflight.log | tail -100 \
+              || echo "(no compiler diagnostics found)"
+            echo "::endgroup::"
+            # Run Script phase failures surface only in this xcodebuild block.
+            echo "::group::Failed build commands"
+            grep -A15 "The following build commands failed:" /tmp/testflight.log \
+              || echo "(no 'build commands failed' summary found)"
+            echo "::endgroup::"
+            echo "::group::Last 100 lines of raw log"
+            tail -100 /tmp/testflight.log
+            echo "::endgroup::"
+          else
+            echo "::warning::/tmp/testflight.log not found — release.sh may have failed before xcodebuild ran"
+          fi
 
       # Same rationale as build.yml: xcbeautify hides Run Script phase output,
       # so the raw log is the only place some failures appear.
