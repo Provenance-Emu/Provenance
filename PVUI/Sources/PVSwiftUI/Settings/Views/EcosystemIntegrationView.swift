@@ -34,7 +34,7 @@ public struct EcosystemIntegrationView: View {
     /// Each browsable app's library, as answered to a gameInfo query
     /// (identified by md5 for iFly, by disc game id for iCube).
     @State private var browsedGames: [EcosystemApp: [EcosystemGameScheme]] = [:]
-    @State private var lastImportedName: String?
+    @State private var lastImportedName: [EcosystemApp: String] = [:]
     @Environment(\.dismiss) private var dismiss
 
     public init() {}
@@ -78,7 +78,9 @@ public struct EcosystemIntegrationView: View {
             browsedGames[source] = games
         }
         .onReceive(NotificationCenter.default.publisher(for: .ecosystemFetchCompleted)) { note in
-            lastImportedName = note.userInfo?["name"] as? String
+            guard let sourceRaw = note.userInfo?["source"] as? String,
+                  let source = EcosystemApp(rawValue: sourceRaw) else { return }
+            lastImportedName[source] = note.userInfo?["name"] as? String
         }
         .settingsSubpageTracking()
     }
@@ -114,8 +116,8 @@ public struct EcosystemIntegrationView: View {
                 }
                 .buttonStyle(.borderedProminent)
 
-                if let lastImportedName {
-                    Label("\u{201C}\(lastImportedName)\u{201D} downloaded — importing to your library.",
+                if let importedName = lastImportedName[app] {
+                    Label("\u{201C}\(importedName)\u{201D} downloaded — importing to your library.",
                           systemImage: "checkmark.circle.fill")
                         .font(.caption)
                         .foregroundStyle(.green)
