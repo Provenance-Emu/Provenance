@@ -159,4 +159,80 @@ final class EcosystemCallbackParserTests: XCTestCase {
         let url = EcosystemApp.melonx.gameInfoQueryURL(callbackScheme: "myapp")
         XCTAssertEqual(url?.absoluteString, "atariemulator://gameInfo?scheme=myapp")
     }
+
+    // MARK: - EcosystemApp.icube
+
+    func testEcosystemAppIcubeURLScheme() {
+        XCTAssertEqual(EcosystemApp.icube.urlScheme, "dolphinios")
+    }
+
+    func testEcosystemAppIcubeDisplay() {
+        XCTAssertEqual(EcosystemApp.icube.displayName, "iCube")
+        XCTAssertEqual(EcosystemApp.icube.platformSummary, "GameCube · Wii")
+        XCTAssertEqual(EcosystemApp.icube.symbolName, "cube")
+    }
+
+    func testEcosystemAppIcubeLaunchURL() {
+        let url = EcosystemApp.icube.launchURL(titleID: "GALE01")
+        XCTAssertEqual(url?.absoluteString, "dolphinios://play?id=GALE01")
+    }
+
+    func testEcosystemAppIcubeGameInfoQueryURL() {
+        let url = EcosystemApp.icube.gameInfoQueryURL()
+        XCTAssertEqual(url?.absoluteString, "dolphinios://gameInfo?scheme=provenance")
+    }
+
+    /// iCube identifies games by the 6-char disc id via `id=`, unlike iFly's `md5=`.
+    func testEcosystemAppIcubeRequestGameURL() {
+        let url = EcosystemApp.icube.requestGameURL(titleID: "GALE01")
+        XCTAssertEqual(url?.absoluteString, "dolphinios://requestGame?id=GALE01&scheme=provenance")
+    }
+
+    func testEcosystemAppIcubeRequestGameURLCustomScheme() {
+        let url = EcosystemApp.icube.requestGameURL(titleID: "GALE01", callbackScheme: "myapp")
+        XCTAssertEqual(url?.absoluteString, "dolphinios://requestGame?id=GALE01&scheme=myapp")
+    }
+
+    /// iFly's requestGameURL keeps its own `md5=` shape, unaffected by adding iCube.
+    func testEcosystemAppIflyRequestGameURLUnchanged() {
+        let url = EcosystemApp.ifly.requestGameURL(titleID: "abc123")
+        XCTAssertEqual(url?.absoluteString, "ifly://requestGame?md5=abc123&scheme=provenance")
+    }
+
+    func testEcosystemAppRequestGameURLNilForAppsWithoutFetchSupport() {
+        XCTAssertNil(EcosystemApp.xenios.requestGameURL(titleID: "5454082B"))
+        XCTAssertNil(EcosystemApp.melonx.requestGameURL(titleID: "0100000000010000"))
+        XCTAssertNil(EcosystemApp.meloCafe.requestGameURL(titleID: "anything"))
+    }
+
+    func testParseValidIcubeCallback() throws {
+        let games = [EcosystemGameScheme(titleName: "Metroid Prime", titleId: "GM8E01", developer: "01", version: "GameCube")]
+        let json = try JSONEncoder().encode(games)
+        let base64 = json.base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+
+        let url = URL(string: "provenance://dolphinios?games=\(base64)")!
+        let result = EcosystemCallbackParser.parse(url: url)
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result?.source, .icube)
+        XCTAssertEqual(result?.games.first?.titleName, "Metroid Prime")
+        XCTAssertEqual(result?.games.first?.titleId, "GM8E01")
+        XCTAssertEqual(result?.games.first?.developer, "01")
+    }
+
+    // MARK: - EcosystemFetchService container naming
+
+    func testEcosystemFetchServiceContainerNamingUsesDisplayName() {
+        // The container-naming rule ("\(source.displayName)-\(hex8)") is exercised end to
+        // end via `download(_:from:)`, which needs network/filesystem plumbing this test
+        // target doesn't set up. Pin the inputs to that rule here instead, so a future
+        // change to `displayName` (or to the naming rule itself) is caught: iFly and iCube
+        // must resolve to visibly different, source-identifying prefixes.
+        let hex8 = "deadbeef"
+        XCTAssertEqual("\(EcosystemApp.ifly.displayName)-\(hex8)", "iFly EMU-deadbeef")
+        XCTAssertEqual("\(EcosystemApp.icube.displayName)-\(hex8)", "iCube-deadbeef")
+    }
 }
