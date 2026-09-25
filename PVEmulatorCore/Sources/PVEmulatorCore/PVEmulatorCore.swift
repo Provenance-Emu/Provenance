@@ -319,7 +319,11 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
         return (bridge as? MouseResponder)?.requiresMouse ?? false
     }
 
-    /// Default skins off while we develop the feature
+    /// Whether the user-selected Metal screen filter (shader) can be applied to this core's video.
+    ///
+    /// Cores whose frames reach the shared `PVMetalViewController` render path support filters
+    /// by default. Cores that present to their own surface must return `false` unless they wire
+    /// the filter in themselves; the pause menu hides the screen-filter controls when `false`.
     @objc dynamic open var supportsFilters: Bool { true }
 
     /// Whether this core supports dual screens (e.g., 3DS, DS)

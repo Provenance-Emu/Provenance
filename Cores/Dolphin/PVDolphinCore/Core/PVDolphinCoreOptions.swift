@@ -25,16 +25,23 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 			defaultValue: 1)
 			}()
 
+    /// `gsOption` values; mirrored by `PVDolphinCoreBridge.gsPreference` for the running core.
+    enum GraphicsBackend: Int {
+        case vulkan = 0
+        case openGL = 1
+        case metal = 2
+    }
+
 	static var gsOption: CoreOption = {
 		 .enumeration(.init(title: "Graphics Backend",
 			   description: "Graphics API to use. Metal recommended on iOS.",
 			   requiresRestart: true),
 		  values: [
-			   .init(title: "Vulkan", description: "Vulkan", value: 0),
-			   .init(title: "OpenGL", description: "OpenGL", value: 1),
-			   .init(title: "Metal", description: "Metal (Recommended)", value: 2)
+			   .init(title: "Vulkan", description: "Vulkan", value: GraphicsBackend.vulkan.rawValue),
+			   .init(title: "OpenGL", description: "OpenGL", value: GraphicsBackend.openGL.rawValue),
+			   .init(title: "Metal", description: "Metal (Recommended)", value: GraphicsBackend.metal.rawValue)
 		  ],
-		  defaultValue: 2)
+		  defaultValue: GraphicsBackend.metal.rawValue)
 	}()
 
     static var aspectRatioOption: CoreOption = {

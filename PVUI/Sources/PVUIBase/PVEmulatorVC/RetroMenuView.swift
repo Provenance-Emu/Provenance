@@ -1157,55 +1157,57 @@ struct RetroMenuView: View {
             }
 
 
-                            // Screen filter selection
-            VStack(alignment: .leading, spacing: 4) {
-                Text(String(localized: "SCREEN FILTER"))
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
+            // Screen filter selection — only when the core's video reaches the Metal filter
+            if emulatorVC.core.supportsFilters {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(String(localized: "SCREEN FILTER"))
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor((palette.settingsCellTextDetail?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor).opacity(0.7))
 
-                Button(action: {
-                    // Show filter picker
-                    showingFilterPicker = true
-                }) {
-                    HStack {
-                        Text(selectedMetalFilter == .none ? "None" : selectedMetalFilter.description)
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
+                    Button(action: {
+                        // Show filter picker
+                        showingFilterPicker = true
+                    }) {
+                        HStack {
+                            Text(selectedMetalFilter == .none ? "None" : selectedMetalFilter.description)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor)
 
-                        Spacer()
+                            Spacer()
 
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(palette.defaultTintColor.swiftUIColor)
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(palette.defaultTintColor.swiftUIColor)
+                        }
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(
+                                    (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+                                        .opacity(palette.dark ? 0.6 : 0.9)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .strokeBorder(palette.defaultTintColor.swiftUIColor, lineWidth: 1)
+                                )
+                        )
                     }
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(
-                                (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
-                                    .opacity(palette.dark ? 0.6 : 0.9)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .strokeBorder(palette.defaultTintColor.swiftUIColor, lineWidth: 1)
-                            )
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
-                #if os(tvOS)
-                .fullScreenCover(isPresented: $showingFilterPicker, onDismiss: {
-                }) {
-                    filterPickerView
-                }
-                #else
-                .sheet(isPresented: $showingFilterPicker) {
-                    filterPickerView
-                }
-                #endif
-                .onAppear {
-                    syncSelectedFilterFromSettings()
-                }
-                .onChange(of: metalFilterMode) { _ in
-                    syncSelectedFilterFromSettings()
+                    .buttonStyle(PlainButtonStyle())
+                    #if os(tvOS)
+                    .fullScreenCover(isPresented: $showingFilterPicker, onDismiss: {
+                    }) {
+                        filterPickerView
+                    }
+                    #else
+                    .sheet(isPresented: $showingFilterPicker) {
+                        filterPickerView
+                    }
+                    #endif
+                    .onAppear {
+                        syncSelectedFilterFromSettings()
+                    }
+                    .onChange(of: metalFilterMode) { _ in
+                        syncSelectedFilterFromSettings()
+                    }
                 }
             }
 

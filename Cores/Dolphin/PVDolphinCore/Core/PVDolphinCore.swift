@@ -28,6 +28,14 @@ open class PVDolphinCore: PVEmulatorCore, @unchecked Sendable {
     /// Provenance's audio engine reads, so the visualizer would only ever receive silence.
     open override var supportsAudioVisualizer: Bool { false }
 
+    /// Dolphin presents to its own `CAMetalLayer`, so Provenance's `PVMetalViewController`
+    /// shader pass never sees its frames. Only Dolphin's Metal backend exposes a post-process
+    /// hook (`DolphinShaderPostProcessor`); the Vulkan and OpenGL backends cannot be filtered.
+    /// `gsPreference` is the backend the running core booted with.
+    open override var supportsFilters: Bool {
+        Int(_bridge.gsPreference) == PVDolphinCoreOptions.GraphicsBackend.metal.rawValue
+    }
+
     /// Dolphin detects JIT availability at startup and selects the appropriate
     /// execution back-end (JIT or Cached Interpreter) automatically.
     open override var jitRequirement: PVJITRequirement { .automaticWithFallback }

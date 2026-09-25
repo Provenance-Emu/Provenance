@@ -416,12 +416,16 @@ final class PauseTileMenuViewModel: ObservableObject {
                 dismissOnTap: false,
                 destinationRoute: .skins
             ),
-            Self.fpsCounterToggleTile(showFPSCount: showFPSCount),
-            Self.filterCycleTile(metalFilterMode: metalFilterMode)
+            Self.fpsCounterToggleTile(showFPSCount: showFPSCount)
         ]
+        // Screen filter (shader) controls only for cores whose video the Metal filter can reach.
+        let supportsFilters = emulatorVC.core.supportsFilters
+        if supportsFilters {
+            screenDisplayTiles.append(Self.filterCycleTile(metalFilterMode: metalFilterMode))
+        }
         // Shader parameters live under **SETTINGS** with other configuration tiles.
         let currentFilter = MetalFilterModeOption.parseCurrentFilter(from: metalFilterMode)
-        if currentFilter.hasEditableParameters {
+        if supportsFilters, currentFilter.hasEditableParameters {
             settingsTiles.append(PauseMenuTile(
                 id: "shaderSettings",
                 icon: "slider.horizontal.3",

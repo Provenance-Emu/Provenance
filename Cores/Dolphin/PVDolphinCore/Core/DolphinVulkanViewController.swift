@@ -24,14 +24,7 @@ import PVPrimitives
     /// Standalone CAMetalLayer for Vulkan/Metal rendering - NOT the view's backing layer
     private var renderLayer: CAMetalLayer!
     private var dev: MTLDevice!
-    private var filteredView: MTKView!
-    private var commandQueue: MTLCommandQueue?
-    private let metalFilterRenderer = PVMetalFilterRenderer()
-    private var blitter: MetalBlitter?
     private var filterObservationTask: Task<Void, Never>?
-    private var filterMode: MetalFilterModeOption = Defaults[.metalFilterMode]
-    private var smoothingEnabled: Bool = Defaults[.imageSmoothing]
-    private var currentFilterPixelFormat: MTLPixelFormat?
     private var isResuming: Bool = false
     /// Tracks whether the VM has been started - delays VM start until after first layout
     private var hasStartedVM: Bool = false
@@ -46,9 +39,6 @@ import PVPrimitives
 		self.dev = MTLCreateSystemDefaultDevice()!
 		ILOG("Metal device created: \(dev.name)")
 
-        commandQueue = dev.makeCommandQueue()
-        blitter = MetalBlitter(device: dev)
-
         /// Create a regular host view - NOT using layerClass for CAMetalLayer
         /// This matches the native DolphiniOS architecture
         renderHostView = UIView(frame: .zero)
@@ -61,7 +51,10 @@ import PVPrimitives
         /// This gives us full control over the layer's frame and drawableSize
         renderLayer = CAMetalLayer()
         renderLayer.device = dev
-        renderLayer.framebufferOnly = true
+        /// When shaders are on, Dolphin's Metal backend routes frames through
+        /// `DolphinShaderPostProcessor` and blits into the drawable (on its fallback and
+        /// shader toggle-off frames), which a framebuffer-only drawable does not allow.
+        renderLayer.framebufferOnly = !isMetalBackend
         renderLayer.allowsNextDrawableTimeout = false
         renderLayer.isOpaque = true
         renderLayer.presentsWithTransaction = false
@@ -74,15 +67,6 @@ import PVPrimitives
 
         /// Add the metal layer as a sublayer of the host view's layer
         renderHostView.layer.addSublayer(renderLayer)
-
-        filteredView = MTKView(frame: .zero, device: dev)
-        filteredView.translatesAutoresizingMaskIntoConstraints = false
-        filteredView.isUserInteractionEnabled = false
-        filteredView.isPaused = true
-        filteredView.enableSetNeedsDisplay = false
-        filteredView.framebufferOnly = true
-        filteredView.autoResizeDrawable = true
-        filteredView.colorPixelFormat = .bgra8Unorm
 
 		/// Add observers for app lifecycle to handle pause/resume more reliably
 		NotificationCenter.default.addObserver(
@@ -123,8 +107,6 @@ import PVPrimitives
         }
 
 		/// Clear Metal device reference
-        commandQueue = nil
-        blitter = nil
 		self.dev = nil
 		self.core = nil
 
@@ -136,8 +118,8 @@ import PVPrimitives
 		self.view = renderHostView
         super.viewDidLoad()
 
-        installFilteredView()
-        configureFilterRendererIfNeeded(reason: "viewDidLoad")
+        /// Sync before the VM starts (first layout) so the first frame already honours the filter.
+        syncShaderPostProcessing()
         startFilterPreferenceObservation()
 
         /// VM start is deferred to viewDidLayoutSubviews to ensure
@@ -308,12 +290,6 @@ import PVPrimitives
             ILOG("viewDidLayoutSubviews: view.bounds=\(viewBounds), drawableSize=\(newDrawableSize)")
         }
 
-        if let displayLayer = filteredView.layer as? CAMetalLayer {
-            filteredView.frame = viewBounds
-            filteredView.drawableSize = newDrawableSize
-            displayLayer.drawableSize = newDrawableSize
-        }
-
         /// Start VM on first layout when layer has correct dimensions for current orientation
         if !hasStartedVM {
             /// Verify we have valid dimensions before starting
@@ -344,188 +320,29 @@ import PVPrimitives
         }
 	}
 
-    private func installFilteredView() {
-        guard filteredView.superview == nil else { return }
-        renderHostView.addSubview(filteredView)
-        NSLayoutConstraint.activate([
-            filteredView.topAnchor.constraint(equalTo: renderHostView.topAnchor),
-            filteredView.bottomAnchor.constraint(equalTo: renderHostView.bottomAnchor),
-            filteredView.leadingAnchor.constraint(equalTo: renderHostView.leadingAnchor),
-            filteredView.trailingAnchor.constraint(equalTo: renderHostView.trailingAnchor)
-        ])
-        filteredView.backgroundColor = .black
+    /// Dolphin's post-process hook exists only in its Metal backend (`gsPreference`), which
+    /// this view controller also hosts; Vulkan ignores the routing flag.
+    private var isMetalBackend: Bool {
+        Int(core.gsPreference) == PVDolphinCoreOptions.GraphicsBackend.metal.rawValue
     }
 
     private func startFilterPreferenceObservation() {
-        if #available(iOS 15.0, tvOS 15.0, *) {
-            filterObservationTask = Task { [weak self] in
-                for await _ in Defaults.updates([.metalFilterMode, .imageSmoothing]) {
-                    await MainActor.run {
-                        self?.reloadFilterPreferences()
-                    }
+        filterObservationTask = Task { [weak self] in
+            for await _ in Defaults.updates([.metalFilterMode]) {
+                await MainActor.run {
+                    self?.syncShaderPostProcessing()
                 }
             }
         }
     }
 
+    /// Tells Dolphin's Metal backend whether to hand each frame to `DolphinShaderPostProcessor`.
+    /// Off when no filter is selected so the default path keeps rendering straight into the drawable.
     @MainActor
-    private func reloadFilterPreferences() {
-        filterMode = Defaults[.metalFilterMode]
-        smoothingEnabled = Defaults[.imageSmoothing]
-    }
-
-    private func configureFilterRendererIfNeeded(reason: String) {
-        configureFilterRendererIfNeeded(pixelFormat: filteredView.colorPixelFormat, reason: reason)
-    }
-
-    private func configureFilterRendererIfNeeded(pixelFormat: MTLPixelFormat, reason: String) {
-        guard let device = dev else { return }
-        guard currentFilterPixelFormat != pixelFormat else { return }
-        metalFilterRenderer.configure(device: device,
-                                      pixelFormat: pixelFormat,
-                                      flipYAxis: false)
-        currentFilterPixelFormat = pixelFormat
-        ILOG("Configured Metal filter renderer (\(reason))")
-    }
-
-    private func presentFilteredDrawable(baseDrawable: CAMetalDrawable,
-                                         timing: FilterPresentationTiming) {
-        guard
-            let displayLayer = filteredView.layer as? CAMetalLayer,
-            let displayDrawable = displayLayer.nextDrawable(),
-            let commandQueue = commandQueue,
-            let commandBuffer = commandQueue.makeCommandBuffer()
-        else {
-            presentBaseDrawable(baseDrawable, timing: timing)
-            return
-        }
-
-        let displayTexture = displayDrawable.texture
-        let sourceTexture = baseDrawable.texture
-
-        var filterApplied = false
-        if filterMode != .none {
-            configureFilterRendererIfNeeded(pixelFormat: displayTexture.pixelFormat, reason: "frame")
-            let descriptor = makeRenderPassDescriptor(for: displayTexture)
-            if let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) {
-                let drawableSize = CGSize(width: displayTexture.width, height: displayTexture.height)
-                let textureSourceSize = CGSize(width: max(sourceTexture.width, 1),
-                                               height: max(sourceTexture.height, 1))
-                let fallbackSize = core?.preferredDrawableSize ?? textureSourceSize
-                let sourceSize = (sourceTexture.width > 0 && sourceTexture.height > 0) ? textureSourceSize : fallbackSize
-                let screenType: ScreenTypeObjC = .crt
-                filterApplied = metalFilterRenderer.encode(with: encoder,
-                                                           texture: sourceTexture,
-                                                           drawableSize: drawableSize,
-                                                           sourceSize: sourceSize,
-                                                           screenType: screenType,
-                                                           smoothingEnabled: smoothingEnabled)
-                encoder.endEncoding()
-            }
-        }
-
-        if !filterApplied {
-            guard blitter?.encode(commandBuffer: commandBuffer,
-                                  destinationTexture: displayTexture,
-                                  sourceTexture: sourceTexture,
-                                  smoothing: smoothingEnabled,
-                                  flipY: false) == true else {
-                commandBuffer.commit()
-                presentBaseDrawable(baseDrawable, timing: timing)
-                return
-            }
-        }
-
-        schedulePresent(on: commandBuffer, drawable: displayDrawable, timing: timing)
-        commandBuffer.commit()
-        presentBaseDrawable(baseDrawable, timing: timing)
-    }
-
-    private func makeRenderPassDescriptor(for texture: MTLTexture) -> MTLRenderPassDescriptor {
-        let descriptor = MTLRenderPassDescriptor()
-        descriptor.colorAttachments[0].texture = texture
-        descriptor.colorAttachments[0].loadAction = .clear
-        descriptor.colorAttachments[0].storeAction = .store
-        descriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
-        return descriptor
-    }
-
-    private func schedulePresent(on commandBuffer: MTLCommandBuffer,
-                                 drawable: CAMetalDrawable,
-                                 timing: FilterPresentationTiming) {
-        switch timing {
-        case .immediate:
-            commandBuffer.present(drawable)
-        case .atTime(let time):
-            commandBuffer.present(drawable, atTime: time)
-        case .afterMinimumDuration(let duration):
-            commandBuffer.present(drawable, afterMinimumDuration: duration)
-        }
-    }
-
-    private func presentBaseDrawable(_ drawable: CAMetalDrawable,
-                                     timing: FilterPresentationTiming) {
-        switch timing {
-        case .immediate:
-            drawable.present()
-        case .atTime(let time):
-            drawable.present(at: time)
-        case .afterMinimumDuration(let duration):
-            drawable.present(afterMinimumDuration: duration)
-        }
-    }
-}
-
-@available(iOS 13.0, tvOS 13.0, *)
-fileprivate final class DolphinFilterHostingView: UIView {
-    private let deviceRef: MTLDevice
-    weak var filterDelegate: FilterDrawableDelegate? {
-        didSet {
-            interceptingLayer?.filterDelegate = filterDelegate
-        }
-    }
-
-    private var interceptingLayer: FilterInterceptingLayer? {
-        return layer as? FilterInterceptingLayer
-    }
-
-    override public class var layerClass: AnyClass { FilterInterceptingLayer.self }
-
-    init(frame: CGRect, device: MTLDevice) {
-        self.deviceRef = device
-        super.init(frame: frame)
-        guard let metalLayer = interceptingLayer else { return }
-        metalLayer.device = deviceRef
-        metalLayer.pixelFormat = .bgra8Unorm
-        metalLayer.isOpaque = true
-        metalLayer.framebufferOnly = true
-        metalLayer.presentsWithTransaction = false
-        metalLayer.allowsNextDrawableTimeout = false
-        metalLayer.maximumDrawableCount = 3
-        metalLayer.colorspace = CGColorSpaceCreateDeviceRGB()
-        let scale = UIScreen.main.scale
-        contentScaleFactor = scale
-        metalLayer.contentsScale = scale
-        /// Only set drawableSize if we have valid bounds
-        /// Otherwise defer to viewDidLayoutSubviews when bounds are available
-        if bounds.width > 0 && bounds.height > 0 {
-            metalLayer.drawableSize = CGSize(width: bounds.width * scale, height: bounds.height * scale)
-        }
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
-
-private extension PVDolphinCoreBridge {
-    var preferredDrawableSize: CGSize {
-        let factor = max(Int(resFactor), 1)
-        let baseWidth = max(Int(videoWidth), 1)
-        let baseHeight = max(Int(videoHeight), 1)
-        let width = max(CGFloat(baseWidth * factor), 1)
-        let height = max(CGFloat(baseHeight * factor), 1)
-        return CGSize(width: width, height: height)
+    private func syncShaderPostProcessing() {
+        let enabled = isMetalBackend && Defaults[.metalFilterMode] != .none
+        UserDefaults.standard.set(enabled, forKey: DolphinShaderPostProcessor.enabledDefaultsKey)
+        ILOG("Dolphin shader post-processing \(enabled ? "enabled" : "disabled")")
     }
 }
 
@@ -683,64 +500,89 @@ private extension PVDolphinCoreBridge {
 	}
 }
 
-extension DolphinVulkanViewController: FilterDrawableDelegate {
-    fileprivate func filterDrawable(baseDrawable: CAMetalDrawable, timing: FilterPresentationTiming) {
-        presentFilteredDrawable(baseDrawable: baseDrawable, timing: timing)
+/// Applies the user's Provenance Metal screen filter to Dolphin's output.
+///
+/// Dolphin presents to its own `CAMetalLayer`, bypassing `PVMetalViewController`. iCube's Metal
+/// backend (`Metal::Gfx::BindBackbuffer` / `PresentBackbuffer` in
+/// `dolphin-ios/Source/Core/VideoBackends/Metal/MTLGfx.mm`) instead renders into an offscreen
+/// target while `enabledDefaultsKey` is set in `UserDefaults.standard`, then looks this class up
+/// by its Objective-C name and calls `shared`, `configureWithDevice:` and
+/// `renderSource:commandBuffer:drawable:` on Dolphin's GPU thread before presenting the drawable.
+/// All state here is touched only on that thread.
+@objc(DOLShaderPostProcessor)
+final class DolphinShaderPostProcessor: NSObject {
+    /// `standardUserDefaults` key iCube's Metal backend reads to route frames through this class.
+    static let enabledDefaultsKey = "shader_enabled"
+    /// GameCube/Wii output CRT-era video, so an `auto` filter mode resolves to its CRT shader.
+    private static let screenType: ScreenTypeObjC = .crt
+
+    @objc static let shared = DolphinShaderPostProcessor()
+
+    private let filterRenderer = PVMetalFilterRenderer()
+    private var device: MTLDevice?
+    private var blitter: MetalBlitter?
+    private var configuredPixelFormat: MTLPixelFormat?
+
+    override private init() {
+        super.init()
     }
-}
 
-fileprivate enum FilterPresentationTiming {
-    case immediate
-    case atTime(CFTimeInterval)
-    case afterMinimumDuration(CFTimeInterval)
-}
+    @objc(configureWithDevice:)
+    func configure(with device: MTLDevice) {
+        guard self.device?.registryID != device.registryID else { return }
+        self.device = device
+        blitter = MetalBlitter(device: device)
+        configuredPixelFormat = nil
+    }
 
-fileprivate protocol FilterDrawableDelegate: AnyObject {
-    func filterDrawable(baseDrawable: CAMetalDrawable, timing: FilterPresentationTiming)
-}
-
-private final class FilterInterceptingLayer: CAMetalLayer {
-    weak var filterDelegate: FilterDrawableDelegate?
-
-    override func nextDrawable() -> CAMetalDrawable? {
-        guard let drawable = super.nextDrawable() else {
-            return nil
+    /// Encodes `source` into `drawable`'s texture on `commandBuffer`. Dolphin presents the drawable
+    /// right after this returns, so it must always be filled and must never be presented here.
+    @objc(renderSource:commandBuffer:drawable:)
+    func render(source: MTLTexture, commandBuffer: MTLCommandBuffer, drawable: CAMetalDrawable) {
+        let target = drawable.texture
+        let smoothing = Defaults[.imageSmoothing]
+        if encodeFilter(source: source, target: target, commandBuffer: commandBuffer, smoothing: smoothing) {
+            return
         }
-        guard let filterDelegate else {
-            return drawable
+        /// No shader resolved (e.g. `auto` maps CRT to none) or pipeline creation failed:
+        /// copy through with a render pass, since the drawable may be framebuffer-only.
+        let copied = blitter?.encode(commandBuffer: commandBuffer,
+                                     destinationTexture: target,
+                                     sourceTexture: source,
+                                     smoothing: smoothing,
+                                     flipY: false) ?? false
+        if !copied {
+            ELOG("Dolphin shader post-process: failed to copy frame into drawable")
         }
-        return FilterProxyDrawable(baseDrawable: drawable, delegate: filterDelegate)
-    }
-}
-
-private final class FilterProxyDrawable: NSObject, CAMetalDrawable {
-    private let baseDrawable: CAMetalDrawable
-    private weak var delegate: FilterDrawableDelegate?
-
-    init(baseDrawable: CAMetalDrawable, delegate: FilterDrawableDelegate) {
-        self.baseDrawable = baseDrawable
-        self.delegate = delegate
     }
 
-    var texture: MTLTexture { baseDrawable.texture }
-    var layer: CAMetalLayer { baseDrawable.layer }
-    var presentedTime: CFTimeInterval { baseDrawable.presentedTime }
-    var drawableID: Int { Int(baseDrawable.drawableID) }
+    private func encodeFilter(source: MTLTexture,
+                              target: MTLTexture,
+                              commandBuffer: MTLCommandBuffer,
+                              smoothing: Bool) -> Bool {
+        guard let device else { return false }
+        if configuredPixelFormat != target.pixelFormat {
+            /// Dolphin's Metal textures are top-left origin, like the drawable: no Y flip.
+            filterRenderer.configure(device: device, pixelFormat: target.pixelFormat, flipYAxis: false)
+            configuredPixelFormat = target.pixelFormat
+        }
 
-    func addPresentedHandler(_ block: @escaping MTLDrawablePresentedHandler) {
-        baseDrawable.addPresentedHandler(block)
-    }
-
-    func present() {
-        delegate?.filterDrawable(baseDrawable: baseDrawable, timing: .immediate)
-    }
-
-    func present(afterMinimumDuration duration: CFTimeInterval) {
-        delegate?.filterDrawable(baseDrawable: baseDrawable, timing: .afterMinimumDuration(duration))
-    }
-
-    func present(at presentationTime: CFTimeInterval) {
-        delegate?.filterDrawable(baseDrawable: baseDrawable, timing: .atTime(presentationTime))
+        let descriptor = MTLRenderPassDescriptor()
+        descriptor.colorAttachments[0].texture = target
+        descriptor.colorAttachments[0].loadAction = .clear
+        descriptor.colorAttachments[0].storeAction = .store
+        descriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 1)
+        guard let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor) else {
+            return false
+        }
+        let applied = filterRenderer.encode(with: encoder,
+                                            texture: source,
+                                            drawableSize: CGSize(width: target.width, height: target.height),
+                                            sourceSize: CGSize(width: source.width, height: source.height),
+                                            screenType: Self.screenType,
+                                            smoothingEnabled: smoothing)
+        encoder.endEncoding()
+        return applied
     }
 }
 
