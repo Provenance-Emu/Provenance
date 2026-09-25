@@ -84,7 +84,17 @@ public final class JSDPad: MovableButtonView {
     var joyPad2: Bool = false
     var scale:CGFloat = 1.0
 
-    lazy var centerPoint: CGPoint = CGPoint(x: bounds.midX, y: bounds.midY)
+    /// Live center of the view's current bounds. Deliberately NOT a `lazy var`:
+    /// `setupTouchControls()`/`adjustJoystick()` reposition and resize joysticks
+    /// across several layout passes (and `loadSavedPosition()` can rescale
+    /// `bounds` again later for a custom-scaled control). A cached `lazy var`
+    /// here would freeze at whatever bounds existed on first access — often a
+    /// stale pre-layout size — leaving `draw(_:)` render the circle at the
+    /// wrong center/radius until a touch happened to call `setNeedsDisplay()`
+    /// via `analogPoint`'s didSet. That was the "joystick doesn't render until
+    /// touched" bug: computing this live, plus recentering on `layoutSubviews()`
+    /// below, fixes it without needing user interaction first.
+    var centerPoint: CGPoint { CGPoint(x: bounds.midX, y: bounds.midY) }
     lazy var analogPoint: CGPoint = centerPoint {
         didSet {
             let radius: CGFloat = (frame.size.width - 10)/12
@@ -173,10 +183,30 @@ public final class JSDPad: MovableButtonView {
         tintColor = .white
         clipsToBounds = false
         isOpaque = false
+        // `draw(_:)` renders content that depends entirely on `bounds` (circle radius,
+        // center, thumb position). Without `.redraw`, UIKit just stretches the existing
+        // rendered bitmap when bounds changes instead of calling `draw(_:)` again —
+        // see the `centerPoint` doc comment above for how that combined with a stale
+        // cached center to leave the joystick unrendered until the first touch.
+        contentMode = .redraw
 //        guard analogMode else {
 //            return
 //        }
         addSubview(dPadImageView)
+    }
+
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        // Recenter the analog thumb whenever this view's bounds settle (initial
+        // layout, orientation change, or a custom-scale/position load) so the
+        // joystick always reflects its current geometry without requiring a touch
+        // first. Safe to do unconditionally: touch handling always writes
+        // `analogPoint` directly and doesn't rely on this running mid-drag, since
+        // dragging the stick never changes the view's own frame/bounds.
+        if analogMode {
+            analogPoint = centerPoint
+            setNeedsDisplay()
+        }
     }
 
     func direction(for point: CGPoint) -> JSDPadDirection {

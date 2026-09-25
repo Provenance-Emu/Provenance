@@ -39,6 +39,13 @@ private typealias Keys = SystemDictionaryKeys.ControllerLayoutKeys
 private let kDPadTopMargin: CGFloat = 48.0
 private let gripControl = false
 
+/// Gesture that enters/exits "drag to reposition" move mode. Was 3 taps with 3
+/// simultaneous fingers — reliably hard to land on a phone-sized screen. A 2-finger
+/// double-tap is still distinct from normal single-finger gameplay touches but is
+/// realistically triggerable.
+private let moveModeGestureTapsRequired = 2
+private let moveModeGestureTouchesRequired = 2
+
 #if os(iOS) && !targetEnvironment(macCatalyst)
 let volume = SubtleVolume(style: .roundedLine)
 let volumeHeight: CGFloat = 3
@@ -50,7 +57,7 @@ let volumeHeight: CGFloat = 3
 // types is a separate, larger change, out of scope here. Remove this disable once
 // that split happens.
 // swiftlint:disable:next type_body_length
-open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC, OSDRecordingObserver, OSDFastForwardObserver {
+open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC, OSDRecordingObserver, OSDFastForwardObserver, OSDControlsVisibilityObserver {
 
     public func layoutViews() {}
 
@@ -208,6 +215,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     #if os(iOS)
     private var recordButton: UIButton?
     private var recordPulseTimer: Timer?
+    /// How often the record button's "recording in progress" pulse repeats.
+    private static let recordPulseInterval: TimeInterval = 0.8
+    /// Duration of each fade half of the pulse (two of these run back-to-back per `recordPulseInterval`).
+    private static let recordPulseHalfDuration: TimeInterval = 0.4
     #endif
     #if !os(tvOS)
     private var keyboardToggleButton: UIButton?
@@ -219,6 +230,21 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     private var virtualInputCancellables: Set<AnyCancellable> = []
     #endif
     private var quickActionButtons: [UIButton] = []
+
+    #if os(iOS)
+    /// Invisible tap target spanning the top safe-area strip. Tapping it toggles
+    /// the quick-action button row (fast-forward/save/load/record/keyboard/mouse)
+    /// and, when revealing, restarts the auto-hide countdown.
+    private var quickActionBarTapZone: UIView?
+    private var quickActionBarAutoHideTimer: Timer?
+    private var quickActionBarVisible: Bool = true
+    /// How long the quick-action row stays visible after the last interaction before auto-hiding.
+    private static let quickActionBarAutoHideDelay: TimeInterval = 3.0
+    /// Height of the invisible top-edge strip that reveals the quick-action row on tap.
+    private static let quickActionBarTapZoneHeight: CGFloat = 60.0
+    /// Fade duration used when showing/hiding the quick-action row.
+    private static let quickActionBarFadeDuration: TimeInterval = 0.25
+    #endif
 
     private var shouldShowToggleButton: Bool {
         return !inMoveMode
@@ -255,6 +281,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
         #if os(iOS)
         stopRecordPulse()
+        quickActionBarAutoHideTimer?.invalidate()
         #endif
     }
 
@@ -263,6 +290,15 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
                 hideTouchControls(for: controller)
             }
+        } else {
+            // No physical controller: on-screen touch controls must be visible from
+            // launch. `buttonsVisible` otherwise stays at its `false` declaration
+            // default (see `setupTouchControls()`'s trailing hide-everything block),
+            // which is what left controls hidden at boot for every classic-OSD system
+            // (most visibly GameCube/Wii, since Dolphin has no DeltaSkin fallback yet
+            // and so is the one still exercising this path in practice).
+            buttonsVisible = true
+            updateToggleButtonAppearance()
         }
     }
 
@@ -301,7 +337,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
                 if moveLabel == nil {
                     moveLabel = UILabel(frame: CGRect(x: 0, y: 88, width: view.bounds.width, height: 44))
-                    moveLabel?.text = "Move Mode - Drag buttons to reposition\nTap with 3 fingers 3 times to exit."
+                    moveLabel?.text = "Move Mode - Drag buttons to reposition\nDouble-tap with 2 fingers to exit."
                     moveLabel?.numberOfLines = 2
                     moveLabel?.textAlignment = .center
                     moveLabel?.textColor = .white
@@ -432,8 +468,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if Defaults[.movableButtons] {
             let tripleTapGesture = UITapGestureRecognizer(target: self, action: #selector(PVControllerViewController.tripleTapRecognized(_:)))
 
-            tripleTapGesture.numberOfTapsRequired = 3
-            tripleTapGesture.numberOfTouchesRequired = 3
+            tripleTapGesture.numberOfTapsRequired = moveModeGestureTapsRequired
+            tripleTapGesture.numberOfTouchesRequired = moveModeGestureTouchesRequired
             view.addGestureRecognizer(tripleTapGesture)
         }
         if Defaults[.volumeHUD] {
@@ -460,6 +496,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         super.viewWillDisappear(animated)
         #if os(iOS)
         stopRecordPulse()
+        quickActionBarAutoHideTimer?.invalidate()
+        quickActionBarAutoHideTimer = nil
         #endif
     }
 
@@ -520,6 +558,13 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 hideTouchControls(for: controller)
             }
         } else {
+            // Keep `buttonsVisible` in sync with the manual unhide below — otherwise
+            // the NEXT `setupTouchControls()` call (e.g. on rotation, which resets
+            // `PVControllerManager.shared.hasLayout` and re-runs full layout) would
+            // hit the trailing "if !buttonsVisible { hide everything }" block and
+            // silently re-hide controls the user can currently see.
+            buttonsVisible = true
+            updateToggleButtonAppearance()
             for button in allButtons {
                 button.isHidden = false
                 button.alpha = CGFloat(Defaults[.controllerOpacity])
@@ -550,6 +595,13 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 hideTouchControls(for: controller)
             }
         } else {
+            // Keep `buttonsVisible` in sync with the manual unhide below — otherwise
+            // the NEXT `setupTouchControls()` call (e.g. on rotation, which resets
+            // `PVControllerManager.shared.hasLayout` and re-runs full layout) would
+            // hit the trailing "if !buttonsVisible { hide everything }" block and
+            // silently re-hide controls the user can currently see.
+            buttonsVisible = true
+            updateToggleButtonAppearance()
             for button in allButtons {
                 button.isHidden = false
                 button.alpha = CGFloat(Defaults[.controllerOpacity])
@@ -754,6 +806,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     dPad2.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
                     view.addSubview(dPad2)
                     if let movableButton = dPad2 as? MovableButtonView {
+                        movableButton.captureDefaultFrameIfNeeded()
                         movableButton.loadSavedPosition()
                     }
                 } else if let dPad = dPad {
@@ -770,6 +823,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     dPad.alpha = alpha
                     dPad.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
                     if let movableButton = dPad as? MovableButtonView {
+                        movableButton.captureDefaultFrameIfNeeded()
                         movableButton.loadSavedPosition()
                     }
                     view.addSubview(dPad)
@@ -788,9 +842,12 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 xPadding += 10
                 joyPadFrame.origin.y += joyPadFrame.height * joyPadScale + bottomPadding
                 joyPadFrame.origin.x += xPadding
-                if dPad != nil {
-                    let bounds = dPad!.frame
-                    joyPadFrame.origin.x = bounds.origin.x + bounds.width / 2 - controlSize.width / 2
+                if let dPad = dPad {
+                    // Anchor off the D-pad's stable default position, not its live (possibly
+                    // custom-moved) frame — otherwise dragging the D-pad would cascade into
+                    // repositioning the joystick's default spot on the next layout pass.
+                    let anchor = dPad.anchorFrame
+                    joyPadFrame.origin.x = anchor.origin.x + anchor.width / 2 - controlSize.width / 2
                 }
                 let joyPad: JSDPad = self.joyPad ?? JSDPad.JoyPad(frame: joyPadFrame, scale:joyPadScale)
                 if !joyPad.isCustomMoved {
@@ -805,6 +862,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 joyPad.alpha = alpha
                 joyPad.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
                 if let movableButton = joyPad as? MovableButtonView {
+                    movableButton.captureDefaultFrameIfNeeded()
                     movableButton.loadSavedPosition()
                 }
                 view.addSubview(joyPad)
@@ -825,6 +883,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                 joyPad2.autoresizingMask = [.flexibleTopMargin, .flexibleRightMargin]
                 view.addSubview(joyPad2)
                 if let movableButton = joyPad2 as? MovableButtonView {
+                    movableButton.captureDefaultFrameIfNeeded()
                     movableButton.loadSavedPosition()
                 }
             } else if controlType == Keys.ButtonGroup {
@@ -869,6 +928,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                     buttonGroup.addSubview(buttonOverlay)
                     buttonGroup.alpha = alpha
                     if let movableButton = buttonGroup as? MovableButtonView {
+                        movableButton.captureDefaultFrameIfNeeded()
                         movableButton.loadSavedPosition()
                     }
                     view.addSubview(buttonGroup)
@@ -981,21 +1041,28 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = view.safeAreaInsets.right + 10
         let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
-        var rightShoulderFrame: CGRect!
-        if buttonGroup != nil, !(buttonGroup?.isHidden)! {
-            rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: (buttonGroup?.frame.minY)!, width: controlSize.width, height: controlSize.height)
-            if dPad != nil, !(dPad?.isHidden)! {
-                rightShoulderFrame.origin.y = (dPad?.frame.minY)! < (buttonGroup?.frame.minY)! ? (dPad?.frame.minY)! : (buttonGroup?.frame.minY)!
+        var rightShoulderFrame: CGRect
+        // Anchor off `anchorFrame` (stable default position) rather than the live
+        // `frame` of buttonGroup/dPad/leftShoulderButton — those may have been
+        // custom-moved by the user, and anchoring off their LIVE position here
+        // would cascade a drag of one control into repositioning this one on the
+        // very next layout pass (e.g. right after exiting move mode).
+        if let buttonGroup, !buttonGroup.isHidden {
+            let buttonGroupAnchor = buttonGroup.anchorFrame
+            rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: buttonGroupAnchor.minY, width: controlSize.width, height: controlSize.height)
+            if let dPad, !dPad.isHidden {
+                let dPadAnchor = dPad.anchorFrame
+                rightShoulderFrame.origin.y = min(dPadAnchor.minY, buttonGroupAnchor.minY)
             }
             if Defaults[.allRightShoulders], (system.shortName == "GBA" || system.shortName == "VB") || system.shortName == "SNES" {
-                rightShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
+                rightShoulderFrame.origin.y += (buttonGroupAnchor.height / 2 - controlSize.height)
             }
         } else {
             rightShoulderFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
         }
         rightShoulderFrame.origin.y -= controlSize.height
-        if leftShoulderButton != nil {
-            rightShoulderFrame.origin.y = (leftShoulderButton?.frame)!.origin.y
+        if let leftShoulderButton {
+            rightShoulderFrame.origin.y = leftShoulderButton.anchorFrame.origin.y
         }
         if rightShoulderButton == nil {
             let rightShoulderButton = JSButton(frame: rightShoulderFrame, label: control.PVControlTitle)
@@ -1014,6 +1081,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             rightShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
             view.addSubview(rightShoulderButton)
             if let movableButton = rightShoulderButton as? MovableButtonView {
+                movableButton.captureDefaultFrameIfNeeded()
                 movableButton.loadSavedPosition()
             }
         } else {
@@ -1024,8 +1092,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
         if rightShoulderButton2 == nil, control.PVControlType == Keys.RightShoulderButton2 || control.PVControlTitle == "R2" {
             var rightShoulderFrame2 = rightShoulderFrame
-            rightShoulderFrame2!.origin.y -= controlSize.height
-            let rightShoulderButton2 = JSButton(frame: rightShoulderFrame2!, label: control.PVControlTitle)
+            rightShoulderFrame2.origin.y -= controlSize.height
+            let rightShoulderButton2 = JSButton(frame: rightShoulderFrame2, label: control.PVControlTitle)
             rightShoulderButton2.tag = ControlTag.rightShoulder2.rawValue
             if let tintColor = control.PVControlTint {
                 rightShoulderButton2.tintColor = UIColor(hex: tintColor)
@@ -1041,6 +1109,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             rightShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
             rightShoulderFrame.origin.y += controlSize.height
             if let movableButton = rightShoulderButton2 as? MovableButtonView {
+                movableButton.captureDefaultFrameIfNeeded()
                 movableButton.loadSavedPosition()
             }
             view.addSubview(rightShoulderButton2)
@@ -1048,8 +1117,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             if let rightShoulderButton2 = rightShoulderButton2 {
                 if rightShoulderButton2.isCustomMoved { return }
                 var rightShoulderFrame2 = rightShoulderFrame
-                rightShoulderFrame2!.origin.y -= controlSize.height
-                rightShoulderButton2.frame = rightShoulderFrame2!
+                rightShoulderFrame2.origin.y -= controlSize.height
+                rightShoulderButton2.frame = rightShoulderFrame2
             }
         }
     }
@@ -1058,10 +1127,12 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = view.safeAreaInsets.right + 10
         let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
-        var zTriggerFrame: CGRect!
+        var zTriggerFrame: CGRect
 
-        if rightShoulderButton != nil {
-            zTriggerFrame = CGRect(x: (rightShoulderButton?.frame.minX)! - controlSize.width, y: (rightShoulderButton?.frame.minY)!, width: controlSize.width, height: controlSize.height)
+        if let rightShoulderButton {
+            // Anchor off the stable default position — see `layoutRightShoulderButtons`.
+            let anchor = rightShoulderButton.anchorFrame
+            zTriggerFrame = CGRect(x: anchor.minX - controlSize.width, y: anchor.minY, width: controlSize.width, height: controlSize.height)
         } else {
             let x: CGFloat = view.frame.size.width - (controlSize.width * 2) - xPadding
             let y: CGFloat = view.frame.size.height - (controlSize.height * 2) - yPadding
@@ -1089,6 +1160,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             zTriggerButton.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
             view.addSubview(zTriggerButton)
             if let movableButton = zTriggerButton as? MovableButtonView {
+                movableButton.captureDefaultFrameIfNeeded()
                 movableButton.loadSavedPosition()
             }
         }
@@ -1097,22 +1169,25 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     func layoutLeftShoulderButtons(control: ControlLayoutEntry) {
         let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = view.safeAreaInsets.left + 10
-        var leftShoulderFrame: CGRect!
-        if dPad != nil {
-            leftShoulderFrame = CGRect(x: xPadding, y: (dPad?.frame.minY)!, width: controlSize.width, height: controlSize.height)
-            if buttonGroup != nil, !(buttonGroup?.isHidden)! {
-                leftShoulderFrame.origin.y = (dPad?.frame.minY)! < (buttonGroup?.frame.minY)! ? (dPad?.frame.minY)! : (buttonGroup?.frame.minY)!
+        var leftShoulderFrame: CGRect
+        // Anchor off `anchorFrame` (stable default position) — see the comment in
+        // `layoutRightShoulderButtons` for why the live frame would be wrong here.
+        if let dPad {
+            let dPadAnchor = dPad.anchorFrame
+            leftShoulderFrame = CGRect(x: xPadding, y: dPadAnchor.minY, width: controlSize.width, height: controlSize.height)
+            if let buttonGroup, !buttonGroup.isHidden {
+                leftShoulderFrame.origin.y = min(dPadAnchor.minY, buttonGroup.anchorFrame.minY)
             }
         } else {
             leftShoulderFrame = CGRect(x: xPadding, y: view.frame.size.height - (controlSize.height * 10), width: controlSize.width, height: controlSize.height)
         }
         if Defaults[.allRightShoulders] || alwaysRightAlign {
-            if zTriggerButton != nil {
-                leftShoulderFrame.origin.x = (zTriggerButton?.frame.origin.x)! - controlSize.width
-            } else if zTriggerButton == nil, rightShoulderButton != nil {
-                leftShoulderFrame.origin.x = (rightShoulderButton?.frame.origin.x)! - controlSize.width
-                if system.shortName == "GBA" || system.shortName == "VB" {
-                    leftShoulderFrame.origin.y += ((buttonGroup?.frame.height)! / 2 - controlSize.height)
+            if let zTriggerButton {
+                leftShoulderFrame.origin.x = zTriggerButton.anchorFrame.origin.x - controlSize.width
+            } else if let rightShoulderButton {
+                leftShoulderFrame.origin.x = rightShoulderButton.anchorFrame.origin.x - controlSize.width
+                if system.shortName == "GBA" || system.shortName == "VB", let buttonGroup {
+                    leftShoulderFrame.origin.y += (buttonGroup.anchorFrame.height / 2 - controlSize.height)
                 }
             }
         }
@@ -1134,6 +1209,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             leftShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
             view.addSubview(leftShoulderButton)
             if let movableButton = leftShoulderButton as? MovableButtonView {
+                movableButton.captureDefaultFrameIfNeeded()
                 movableButton.loadSavedPosition()
             }
         } else {
@@ -1143,8 +1219,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         }
         if leftShoulderButton2 == nil, control.PVControlType == Keys.LeftShoulderButton2 || control.PVControlTitle == "L2" {
             var leftShoulderFrame2 = leftShoulderFrame
-            leftShoulderFrame2!.origin.y -= controlSize.height
-            let leftShoulderButton2 = JSButton(frame: leftShoulderFrame2!, label: control.PVControlTitle)
+            leftShoulderFrame2.origin.y -= controlSize.height
+            let leftShoulderButton2 = JSButton(frame: leftShoulderFrame2, label: control.PVControlTitle)
             leftShoulderButton2.tag = ControlTag.leftShoulder2.rawValue
             if let tintColor = control.PVControlTint {
                 leftShoulderButton2.tintColor = UIColor(hex: tintColor)
@@ -1160,11 +1236,12 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             leftShoulderButton2.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
             view.addSubview(leftShoulderButton2)
             if let movableButton = leftShoulderButton2 as? MovableButtonView {
+                movableButton.captureDefaultFrameIfNeeded()
                 movableButton.loadSavedPosition()
             }
         } else {
-            if let leftShoulderButton2 = leftShoulderButton2, !leftShoulderButton2.isCustomMoved {
-                leftShoulderFrame.origin.y -= leftShoulderButton!.frame.size.height
+            if let leftShoulderButton2 = leftShoulderButton2, !leftShoulderButton2.isCustomMoved, let leftShoulderButton {
+                leftShoulderFrame.origin.y -= leftShoulderButton.anchorFrame.size.height
                 leftShoulderButton2.frame = leftShoulderFrame
             }
         }
@@ -1180,9 +1257,13 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         var selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
 
         if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
-            if dPad != nil, !(dPad?.isHidden)! {
-                selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 3), y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
-            } else if dPad != nil, (dPad?.isHidden)! {
+            if let dPad, !dPad.isHidden {
+                // Anchor off the stable default position — see `layoutRightShoulderButtons`.
+                let anchor = dPad.anchorFrame
+                let selectX = anchor.origin.x + anchor.size.width - (controlSize.width / 3)
+                let selectY = view.frame.height - yPadding - controlSize.height
+                selectFrame = CGRect(x: selectX, y: selectY, width: controlSize.width, height: controlSize.height)
+            } else if let dPad, dPad.isHidden {
                 selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
                 if gripControl {
                     selectFrame.origin.y = (UIScreen.main.bounds.height / 2)
@@ -1204,7 +1285,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if alwaysRightAlign {
             selectFrame.origin.x += 80
             if let dPad = dPad {
-                selectFrame.origin.x = dPad.frame.maxX + (xPadding * 2)
+                selectFrame.origin.x = dPad.anchorFrame.maxX + (xPadding * 2)
             }
         }
 
@@ -1229,6 +1310,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             selectButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(selectButton)
             if let movableButton = selectButton as? MovableButtonView {
+                movableButton.captureDefaultFrameIfNeeded()
                 movableButton.loadSavedPosition()
             }
         }
@@ -1243,20 +1325,24 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                                 width: controlSize.width,
                                 height: controlSize.height)
 
+        // Anchor off `anchorFrame` (stable default position) — see the comment in
+        // `layoutRightShoulderButtons` for why the live frame would be wrong here.
         if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
-            if let selectButton = selectButton {
-                startFrame = CGRect(x: selectButton.frame.maxX + spacing,
-                                    y: selectButton.frame.origin.y,
+            if let selectButton {
+                let anchor = selectButton.anchorFrame
+                startFrame = CGRect(x: anchor.maxX + spacing,
+                                    y: anchor.origin.y,
                                     width: controlSize.width,
                                     height: controlSize.height)
-            } else if let buttonGroup = buttonGroup {
+            } else if let buttonGroup {
                 if buttonGroup.isHidden {
                     startFrame = CGRect(x: (view.frame.size.width / 2) + controlSize.width + (spacing / 2), y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
                     if gripControl {
                         startFrame.origin.y = (UIScreen.main.bounds.height / 2)
                     }
                 } else {
-                    startFrame = CGRect(x: buttonGroup.frame.origin.x - controlSize.width + (controlSize.width / 3),
+                    let anchor = buttonGroup.anchorFrame
+                    startFrame = CGRect(x: anchor.origin.x - controlSize.width + (controlSize.width / 3),
                                         y: view.frame.height - yPadding - controlSize.height,
                                         width: controlSize.width,
                                         height: controlSize.height)
@@ -1270,8 +1356,8 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
                                 y: view.frame.height - yPadding - controlSize.height,
                                 width: controlSize.width,
                                 height: controlSize.height)
-            if selectButton != nil {
-                startFrame.origin.x = (selectButton?.frame.maxX)! + spacing
+            if let selectButton {
+                startFrame.origin.x = selectButton.anchorFrame.maxX + spacing
             }
         }
         if startFrame.maxY >= view.frame.size.height {
@@ -1298,6 +1384,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             startButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(startButton)
             if let movableButton = startButton as? MovableButtonView {
+                movableButton.captureDefaultFrameIfNeeded()
                 movableButton.loadSavedPosition()
             }
         }
@@ -1314,31 +1401,34 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             layoutIsLandscape = true
         }
 
+        // Anchor off `anchorFrame` (stable default position) — see the comment in
+        // `layoutRightShoulderButtons` for why the live frame would be wrong here.
         if !layoutIsLandscape {
-            if let selectButton = selectButton {
-                leftAnalogFrame = selectButton.frame.offsetBy(dx: 0, dy: controlSize.height + spacing / 2)
+            if let selectButton {
+                leftAnalogFrame = selectButton.anchorFrame.offsetBy(dx: 0, dy: controlSize.height + spacing / 2)
             }
         } else if buttonGroup?.isHidden ?? true, Defaults[.missingButtonsAlwaysOn] {
-            if let selectButton = selectButton {
-                leftAnalogFrame = selectButton.frame.offsetBy(dx: 0, dy: -(controlSize.height + spacing / 2))
+            if let selectButton {
+                leftAnalogFrame = selectButton.anchorFrame.offsetBy(dx: 0, dy: -(controlSize.height + spacing / 2))
                 var selectButtonFrame = selectButton.frame
                 swap(&leftAnalogFrame, &selectButtonFrame)
                 selectButton.frame = selectButtonFrame
             }
-        } else {
-            leftAnalogFrame = (selectButton?.frame.offsetBy(dx: controlSize.width + spacing, dy: 0))!
+        } else if let selectButton {
+            leftAnalogFrame = selectButton.anchorFrame.offsetBy(dx: controlSize.width + spacing, dy: 0)
         }
-        if dPad != nil, !(dPad?.isHidden)! {
-            leftAnalogFrame = CGRect(x: xPadding, y: (dPad?.frame.minY)!, width: controlSize.width, height: controlSize.height)
-            if buttonGroup != nil, !(buttonGroup?.isHidden)! {
-                leftAnalogFrame.origin.y = (dPad?.frame.minY)! < (buttonGroup?.frame.minY)! ? (dPad?.frame.minY)! : (buttonGroup?.frame.minY)!
+        if let dPad, !dPad.isHidden {
+            let dPadAnchor = dPad.anchorFrame
+            leftAnalogFrame = CGRect(x: xPadding, y: dPadAnchor.minY, width: controlSize.width, height: controlSize.height)
+            if let buttonGroup, !buttonGroup.isHidden {
+                leftAnalogFrame.origin.y = min(dPadAnchor.minY, buttonGroup.anchorFrame.minY)
             }
         }
         if Defaults[.allRightShoulders] || alwaysRightAlign {
-            if zTriggerButton != nil {
-                leftAnalogFrame.origin.x = (zTriggerButton?.frame.origin.x)! - controlSize.width
-            } else if zTriggerButton == nil, rightShoulderButton != nil {
-                leftAnalogFrame.origin.x = (rightShoulderButton?.frame.origin.x)! - controlSize.width
+            if let zTriggerButton {
+                leftAnalogFrame.origin.x = zTriggerButton.anchorFrame.origin.x - controlSize.width
+            } else if let rightShoulderButton {
+                leftAnalogFrame.origin.x = rightShoulderButton.anchorFrame.origin.x - controlSize.width
             }
         }
         leftAnalogFrame.origin.y -= controlSize.height * 3
@@ -1363,6 +1453,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             leftAnalogButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(leftAnalogButton)
             if let movableButton = leftAnalogButton as? MovableButtonView {
+                movableButton.captureDefaultFrameIfNeeded()
                 movableButton.loadSavedPosition()
             }
         }
@@ -1378,29 +1469,34 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
             layoutIsLandscape = true
         }
+        // Anchor off `anchorFrame` (stable default position) — see the comment in
+        // `layoutRightShoulderButtons` for why the live frame would be wrong here.
         if !layoutIsLandscape {
-            rightAnalogFrame = (startButton?.frame.offsetBy(dx: 0, dy: controlSize.height + spacing / 2))!
+            if let startButton {
+                rightAnalogFrame = startButton.anchorFrame.offsetBy(dx: 0, dy: controlSize.height + spacing / 2)
+            }
         } else if buttonGroup?.isHidden ?? true, Defaults[.missingButtonsAlwaysOn] {
             if let startButton = startButton {
-                rightAnalogFrame = startButton.frame.offsetBy(dx: 0, dy: -(controlSize.height + spacing / 2))
+                rightAnalogFrame = startButton.anchorFrame.offsetBy(dx: 0, dy: -(controlSize.height + spacing / 2))
                 var startButtonFrame = startButton.frame
                 swap(&rightAnalogFrame, &startButtonFrame)
                 startButton.frame = startButtonFrame
             } else {
                 ELOG("startButton is nil")
             }
-        } else {
-            rightAnalogFrame = (startButton?.frame.offsetBy(dx: -(controlSize.width + spacing), dy: 0))!
+        } else if let startButton {
+            rightAnalogFrame = startButton.anchorFrame.offsetBy(dx: -(controlSize.width + spacing), dy: 0)
         }
-        if buttonGroup != nil, !(buttonGroup?.isHidden)! {
-            rightAnalogFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: (buttonGroup?.frame.minY)!, width: controlSize.width, height: controlSize.height)
-            if dPad != nil, !(dPad?.isHidden)! {
-                rightAnalogFrame.origin.y = (dPad?.frame.minY)! < (buttonGroup?.frame.minY)! ? (dPad?.frame.minY)! : (buttonGroup?.frame.minY)!
+        if let buttonGroup, !buttonGroup.isHidden {
+            let buttonGroupAnchor = buttonGroup.anchorFrame
+            rightAnalogFrame = CGRect(x: view.frame.size.width - controlSize.width - xPadding, y: buttonGroupAnchor.minY, width: controlSize.width, height: controlSize.height)
+            if let dPad, !dPad.isHidden {
+                rightAnalogFrame.origin.y = min(dPad.anchorFrame.minY, buttonGroupAnchor.minY)
             }
         }
         rightAnalogFrame.origin.y -= controlSize.height * 3
-        if leftShoulderButton != nil, !(leftShoulderButton?.isHidden)! {
-            rightAnalogFrame.origin.y = (leftShoulderButton?.frame)!.origin.y - controlSize.height * 2
+        if let leftShoulderButton, !leftShoulderButton.isHidden {
+            rightAnalogFrame.origin.y = leftShoulderButton.anchorFrame.origin.y - controlSize.height * 2
         }
         if let rightAnalogButton = rightAnalogButton {
             if !rightAnalogButton.isCustomMoved {
@@ -1423,6 +1519,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             rightAnalogButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleRightMargin]
             view.addSubview(rightAnalogButton)
             if let movableButton = rightAnalogButton as? MovableButtonView {
+                movableButton.captureDefaultFrameIfNeeded()
                 movableButton.loadSavedPosition()
             }
         }
@@ -1492,7 +1589,9 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         } else {
             // portrait joystick settings
             if joystickOverDPad {
-                joyPadFrame.origin.y = (buttonGroup?.frame.minY)! - joyPadFrame.size.height
+                // `buttonGroup` may be custom-moved even though this guard only checked
+                // dPad/joyPad — anchor off its stable default position.
+                joyPadFrame.origin.y = (buttonGroup?.anchorFrame.minY ?? 0) - joyPadFrame.size.height
                 joyPadFrame.origin.x = dPad.frame.origin.x + spacing * 3
                 minY = joyPadFrame.origin.y
             } else {
@@ -1578,34 +1677,36 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             return
         }
         var joyPad2Frame = joyPad2.frame
-        if buttonGroup != nil {
+        // joyPad2's own guard above only checks `joyPad2.isCustomMoved` — buttonGroup/
+        // rightShoulder*/rightAnalog may independently be custom-moved, so anchor off
+        // their stable default positions rather than their live frames.
+        if let buttonGroup {
+            let buttonGroupAnchor = buttonGroup.anchorFrame
             let xPadding = CGFloat(10)
-            joyPad2Frame = CGRect(x: view.frame.size.width -  joyPad2.frame.width - xPadding, y: (buttonGroup?.frame.minY)!, width:  joyPad2.frame.width, height:  joyPad2.frame.height)
+            joyPad2Frame = CGRect(x: view.frame.size.width - joyPad2.frame.width - xPadding, y: buttonGroupAnchor.minY, width: joyPad2.frame.width, height: joyPad2.frame.height)
             joyPad2Frame.origin.y = joyPad.frame.origin.y
             if view.frame.width > view.frame.height {
                 if joystickOverDPad {
-                    joyPad2Frame.origin.x = (buttonGroup?.frame.minX)! - joyPad2Frame.size.width * joyPad2Scale
+                    joyPad2Frame.origin.x = buttonGroupAnchor.minX - joyPad2Frame.size.width * joyPad2Scale
                 } else {
-                    joyPad2Frame.origin.x = (buttonGroup?.frame.minX)! - joyPad2Frame.size.width * joyPad2Scale - spacing * 6
-                    if buttonGroup != nil, let buttonGroup = buttonGroup {
-                        var buttonGroupFrame = buttonGroup.frame
-                        buttonGroupFrame.origin.y = view.frame.height - buttonGroupFrame.size.height - joyPad2Frame.size.height * joyPad2Scale / 2 - spacing * 6
-                        if !(buttonGroup.isCustomMoved) { buttonGroup.frame = buttonGroupFrame }
-                    }
+                    joyPad2Frame.origin.x = buttonGroupAnchor.minX - joyPad2Frame.size.width * joyPad2Scale - spacing * 6
+                    var buttonGroupFrame = buttonGroup.frame
+                    buttonGroupFrame.origin.y = view.frame.height - buttonGroupFrame.size.height - joyPad2Frame.size.height * joyPad2Scale / 2 - spacing * 6
+                    if !buttonGroup.isCustomMoved { buttonGroup.frame = buttonGroupFrame }
                 }
                 if topRightJoyPad2 {
                     joyPad2Frame.origin.x = view.frame.width - joyPad2Frame.size.width
-                    var minY: CGFloat = (buttonGroup?.frame.minY)!
-                    if rightShoulderButton != nil { minY = (rightShoulderButton?.frame.minY)! }
-                    if rightShoulderButton2 != nil { minY = (rightShoulderButton2?.frame.minY)! }
-                    if rightAnalogButton != nil { minY = (rightAnalogButton?.frame.minY)! }
+                    var minY: CGFloat = buttonGroupAnchor.minY
+                    if let rightShoulderButton { minY = rightShoulderButton.anchorFrame.minY }
+                    if let rightShoulderButton2 { minY = rightShoulderButton2.anchorFrame.minY }
+                    if let rightAnalogButton { minY = rightAnalogButton.anchorFrame.minY }
                     joyPad2Frame.origin.y = minY - joyPad2Frame.size.height + spacing * 3
                 }
             } else {
                 if joystickOverDPad {
-                    joyPad2Frame.origin.x = (buttonGroup?.frame.minX)! + (buttonGroup?.frame.size.width)!/2 - (joyPad2Frame.size.width * joyPad2Scale) - spacing
+                    joyPad2Frame.origin.x = buttonGroupAnchor.minX + buttonGroupAnchor.size.width / 2 - (joyPad2Frame.size.width * joyPad2Scale) - spacing
                 } else {
-                    joyPad2Frame.origin.x = (buttonGroup?.frame.minX)! + (buttonGroup?.frame.size.width)!/2 - (joyPad2Frame.size.width * joyPad2Scale)
+                    joyPad2Frame.origin.x = buttonGroupAnchor.minX + buttonGroupAnchor.size.width / 2 - (joyPad2Frame.size.width * joyPad2Scale)
                 }
             }
         }
@@ -1740,8 +1841,79 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
         #if os(iOS)
         setupRecordButton(buttonSize: buttonSize, spacing: spacing, safeTop: safeTop, topInset: topInset)
+        setupQuickActionBarTapZone(height: Self.quickActionBarTapZoneHeight)
+        scheduleQuickActionBarAutoHide()
         #endif
     }
+
+    #if os(iOS)
+    /// Invisible strip across the top safe area that reveals/hides the quick-action
+    /// row on tap. Inserted BELOW the quick-action buttons in z-order (added first,
+    /// before any of them) so a tap that lands on an actual button is consumed by
+    /// that button, not by this zone.
+    private func setupQuickActionBarTapZone(height: CGFloat) {
+        guard quickActionBarTapZone == nil else { return }
+        let zone = UIView()
+        zone.backgroundColor = .clear
+        zone.translatesAutoresizingMaskIntoConstraints = false
+        view.insertSubview(zone, at: 0)
+        NSLayoutConstraint.activate([
+            zone.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            zone.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            zone.topAnchor.constraint(equalTo: view.topAnchor),
+            zone.heightAnchor.constraint(equalToConstant: height)
+        ])
+        let tap = UITapGestureRecognizer(target: self, action: #selector(quickActionBarTapZoneTapped))
+        zone.addGestureRecognizer(tap)
+        quickActionBarTapZone = zone
+    }
+
+    @objc private func quickActionBarTapZoneTapped() {
+        toggleQuickActionBar()
+    }
+
+    /// Resets the auto-hide countdown without changing current visibility. Wired to
+    /// every quick-action button's `.touchDown` so the row doesn't disappear out
+    /// from under an in-progress interaction.
+    @objc private func quickActionBarKeepAlive() {
+        guard quickActionBarVisible else { return }
+        scheduleQuickActionBarAutoHide()
+    }
+
+    private func toggleQuickActionBar() {
+        if quickActionBarVisible {
+            hideQuickActionBar()
+        } else {
+            showQuickActionBar()
+        }
+    }
+
+    private func showQuickActionBar() {
+        quickActionBarVisible = true
+        UIView.animate(withDuration: Self.quickActionBarFadeDuration) {
+            self.quickActionButtons.forEach { $0.alpha = 1.0 }
+        }
+        quickActionButtons.forEach { $0.isUserInteractionEnabled = true }
+        scheduleQuickActionBarAutoHide()
+    }
+
+    private func hideQuickActionBar() {
+        quickActionBarVisible = false
+        quickActionBarAutoHideTimer?.invalidate()
+        quickActionBarAutoHideTimer = nil
+        UIView.animate(withDuration: Self.quickActionBarFadeDuration) {
+            self.quickActionButtons.forEach { $0.alpha = 0.0 }
+        }
+        quickActionButtons.forEach { $0.isUserInteractionEnabled = false }
+    }
+
+    private func scheduleQuickActionBarAutoHide() {
+        quickActionBarAutoHideTimer?.invalidate()
+        quickActionBarAutoHideTimer = Timer.scheduledTimer(withTimeInterval: Self.quickActionBarAutoHideDelay, repeats: false) { [weak self] _ in
+            self?.hideQuickActionBar()
+        }
+    }
+    #endif
 
     #if os(iOS)
     private func setupRecordButton(buttonSize: CGFloat, spacing: CGFloat, safeTop: NSLayoutYAxisAnchor, topInset: CGFloat) {
@@ -1787,6 +1959,11 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         #if !os(tvOS)
         button.isPointerInteractionEnabled = true
         #endif
+        #if os(iOS)
+        // Any interaction with a quick-action button counts as activity, so the
+        // auto-hide countdown restarts instead of hiding the row mid-use.
+        button.addTarget(self, action: #selector(quickActionBarKeepAlive), for: .touchDown)
+        #endif
         return button
     }
 
@@ -1803,6 +1980,18 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             newFrame.origin.x = view.safeAreaInsets.left
         }
         dPad.frame = newFrame
+    }
+
+    // MARK: - OSDControlsVisibilityObserver
+
+    /// Whether the on-screen touch controls (D-pad, buttons, etc.) are currently
+    /// visible. Backs the pause menu's "Show/Hide Controls" row.
+    public var isOnScreenControlsVisible: Bool { buttonsVisible }
+
+    /// Toggles on-screen touch control visibility. Exposed so the pause menu can
+    /// drive the same toggle chevron button uses, without posting a notification.
+    public func toggleOnScreenControlsVisibility() {
+        toggleButtons()
     }
 
     @objc private func toggleButtons() {
@@ -1978,14 +2167,21 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     private func startRecordPulse() {
         stopRecordPulse()
-        recordPulseTimer = Timer.scheduledTimer(withTimeInterval: 0.8, repeats: true) { [weak self] _ in
+        recordPulseTimer = Timer.scheduledTimer(withTimeInterval: Self.recordPulseInterval, repeats: true) { [weak self] _ in
             guard let btn = self?.recordButton else { return }
-            UIView.animate(withDuration: 0.4, animations: {
+            // `.allowUserInteraction` is required here: without it, `UIView.animate`
+            // implicitly calls `UIApplication.beginIgnoringInteractionEvents()` for the
+            // duration of the animation. These two 0.4s animations run back-to-back with
+            // no gap for as long as recording is active, so omitting this option blocked
+            // ALL touches app-wide almost continuously — including the second tap on this
+            // same record button meant to stop recording, which is why "tap to stop" looked
+            // like it did nothing (root cause of the record-button stop bug).
+            UIView.animate(withDuration: Self.recordPulseHalfDuration, delay: 0, options: [.allowUserInteraction], animations: {
                 btn.alpha = 0.4
             }) { _ in
-                UIView.animate(withDuration: 0.4) {
+                UIView.animate(withDuration: Self.recordPulseHalfDuration, delay: 0, options: [.allowUserInteraction], animations: {
                     btn.alpha = 1.0
-                }
+                })
             }
         }
     }

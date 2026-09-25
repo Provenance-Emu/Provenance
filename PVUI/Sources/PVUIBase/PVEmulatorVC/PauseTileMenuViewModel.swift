@@ -458,6 +458,14 @@ final class PauseTileMenuViewModel: ObservableObject {
             controlsTiles.append(mouseTile)
         }
         #endif
+        // Classic UIKit OSD only — DeltaSkins have their own show/hide affordance,
+        // and `isOnScreenControlsVisible` is `nil` (so this tile is omitted) when
+        // a DeltaSkin is active. iOS-only since the touch overlay is iOS-only.
+        #if os(iOS)
+        if let controlsVisibilityTile = Self.controlsVisibilityToggleTile(emulatorVC: emulatorVC) {
+            controlsTiles.append(controlsVisibilityTile)
+        }
+        #endif
         if !settingsTiles.isEmpty {
             built.append(PauseMenuTileSection(id: "settingsData", title: String(localized: "SETTINGS"), tiles: settingsTiles))
         }
@@ -1031,6 +1039,26 @@ final class PauseTileMenuViewModel: ObservableObject {
             label: String(localized: "Mouse"),
             badge: isVisible ? "ON" : "OFF",
             description: String(localized: "Show or hide the on-screen virtual mouse."),
+            colorKey: isVisible ? .green : .gray,
+            dismissOnTap: false
+        )
+    }
+    #endif
+
+    #if os(iOS)
+    /// "Show/Hide Controls" row for the classic UIKit on-screen controller (bug fix:
+    /// the show-hidden-controls gesture was a hard-to-land 3-finger triple-tap with
+    /// no other way to reach it — this exposes the same toggle from the pause menu).
+    /// Returns `nil` when a DeltaSkin is active, since `isOnScreenControlsVisible`
+    /// is only meaningful for the classic OSD controller.
+    private static func controlsVisibilityToggleTile(emulatorVC: PVEmulatorViewController) -> PauseMenuTile? {
+        guard let isVisible = emulatorVC.isOnScreenControlsVisible else { return nil }
+        return PauseMenuTile(
+            id: "controlsVisibilityToggle",
+            icon: isVisible ? "eye.fill" : "eye.slash.fill",
+            label: String(localized: "Show/Hide Controls"),
+            badge: isVisible ? "ON" : "OFF",
+            description: String(localized: "Show or hide the on-screen touch controls."),
             colorKey: isVisible ? .green : .gray,
             dismissOnTap: false
         )

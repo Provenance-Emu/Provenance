@@ -109,6 +109,21 @@ extension PVEmulatorViewController {
         #endif
     }
 
+    /// Whether the classic on-screen touch controls are currently visible.
+    /// Backs the pause menu's "Show/Hide Controls" row; `nil` when the active
+    /// controller VC doesn't support visibility toggling (e.g. DeltaSkins, which
+    /// have their own show/hide mechanism).
+    public var isOnScreenControlsVisible: Bool? {
+        (controllerViewController as? OSDControlsVisibilityObserver)?.isOnScreenControlsVisible
+    }
+
+    /// Toggles the classic on-screen touch controls' visibility, routed through
+    /// `OSDControlsVisibilityObserver` rather than a notification so the call site
+    /// (the pause menu) is directly traceable to what it affects.
+    public func toggleOnScreenControlsVisibility() {
+        (controllerViewController as? OSDControlsVisibilityObserver)?.toggleOnScreenControlsVisibility()
+    }
+
     @objc func handleControllerManagerControllerReassigned(_: Notification?) {
         core.controller1 = PVControllerManager.shared.player1
         core.controller2 = PVControllerManager.shared.player2

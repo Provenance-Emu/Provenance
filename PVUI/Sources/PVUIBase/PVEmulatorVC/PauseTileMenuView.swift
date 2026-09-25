@@ -637,6 +637,11 @@ struct PauseTileMenuView: View {
             // Dismiss the menu so the user can interact with the mouse overlay.
             dismissAction(true)
             #endif
+        case "controlsVisibilityToggle":
+            #if os(iOS)
+            emulatorVC.toggleOnScreenControlsVisibility()
+            rebuildSections()
+            #endif
         case "jitStatus":
             break // read-only
 

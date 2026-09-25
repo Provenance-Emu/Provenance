@@ -655,6 +655,21 @@ struct RetroMenuView: View {
                 }
             }
 
+            // Classic UIKit OSD show/hide (bug fix: the show-hidden-controls gesture was
+            // a hard-to-land 3-finger triple-tap with no other way to reach it). `nil`
+            // when a DeltaSkin is active, since the toggle only applies to the classic OSD.
+            #if os(iOS)
+            if let controlsVisible = emulatorVC.isOnScreenControlsVisible {
+                menuButton(
+                    title: controlsVisible ? String(localized: "HIDE CONTROLS") : String(localized: "SHOW CONTROLS"),
+                    icon: controlsVisible ? "eye.fill" : "eye.slash.fill",
+                    color: .retroGreen
+                ) {
+                    emulatorVC.toggleOnScreenControlsVisibility()
+                }
+            }
+            #endif
+
             if Defaults[.companionController] {
                 menuButton(
                     title: String(localized: "COMPANION CONTROLLER"),

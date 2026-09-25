@@ -15,21 +15,28 @@ protocol Moveable: AnyObject {
     var currentScale: CGFloat { get }
     func didStartMoving()
     func didFinishMoving(velocity: CGPoint)
-    func canMoveToX(x: CGFloat) -> Bool
-    func canMoveToY(y: CGFloat) -> Bool
+    /// Clamps a candidate x-origin so the view is never dragged outside its superview.
+    func clampedX(for x: CGFloat) -> CGFloat
+    /// Clamps a candidate y-origin so the view is never dragged outside its superview.
+    func clampedY(for y: CGFloat) -> CGFloat
 }
 
 extension Moveable where Self: UIView {
-    func canMoveToX(x: CGFloat) -> Bool {
-        guard let superview = superview else { return false }
-        let diameter = bounds.size.width
-        return x >= 0 && (x + diameter) <= superview.bounds.width
+    /// Clamping (rather than the previous "reject the whole delta if it would
+    /// leave bounds" approach) means a fast drag that overshoots the edge still
+    /// lands exactly at the edge instead of stopping short, and a control that
+    /// starts partly out of bounds (e.g. after a screen-size change) can still be
+    /// dragged back in along the axis that's already valid.
+    func clampedX(for x: CGFloat) -> CGFloat {
+        guard let superview = superview else { return x }
+        let maxX = max(0, superview.bounds.width - bounds.width)
+        return min(max(0, x), maxX)
     }
 
-    func canMoveToY(y: CGFloat) -> Bool {
-        guard let superview = superview else { return false }
-        let diameter = bounds.size.height
-        return y >= 0 && (y + diameter) <= superview.bounds.height
+    func clampedY(for y: CGFloat) -> CGFloat {
+        guard let superview = superview else { return y }
+        let maxY = max(0, superview.bounds.height - bounds.height)
+        return min(max(0, y), maxY)
     }
 }
 
@@ -49,6 +56,11 @@ struct ButtonPosition: Codable {
 }
 
 public class MovableButtonView: UIView, Moveable {
+    /// Distance (points) from a superview edge within which a drag snaps flush to that edge on release.
+    static let edgeSnapDistance: CGFloat = 12
+    /// Extra clearance (points) added beyond the measured overlap when nudging apart two overlapping controls.
+    static let overlapNudgeDistance: CGFloat = 8
+
     public var isCustomMoved: Bool = false {
         didSet {
             ILOG("isCustomMoved changed to: \(isCustomMoved)")
@@ -61,6 +73,31 @@ public class MovableButtonView: UIView, Moveable {
     private var pinchGestureRecognizer: UIPinchGestureRecognizer?
     #endif
     private var initialBounds: CGRect?
+
+    /// The frame this control occupies under the current automatic layout, captured
+    /// once (before any saved/custom position is applied) via `captureDefaultFrameIfNeeded()`.
+    /// Sibling controls that anchor their own default position off THIS control (e.g. a
+    /// shoulder button positioned relative to the D-pad) should read `anchorFrame`
+    /// rather than `frame` — otherwise dragging this control would cascade into
+    /// repositioning every control anchored to it on the next layout pass.
+    private(set) var defaultFrame: CGRect?
+
+    /// Records `frame` as this control's stable default position, if not already recorded.
+    /// Call this once, right after creating the control with its algorithmic layout
+    /// frame and before `loadSavedPosition()` (which may mark it custom-moved).
+    func captureDefaultFrameIfNeeded() {
+        if defaultFrame == nil {
+            defaultFrame = frame
+        }
+    }
+
+    /// The frame other controls should read when anchoring their own position to this
+    /// one. Equal to `frame` unless the user has custom-moved this control, in which
+    /// case it falls back to the pristine `defaultFrame` so a drag never cascades into
+    /// repositioning siblings that anchor off this control.
+    var anchorFrame: CGRect {
+        isCustomMoved ? (defaultFrame ?? frame) : frame
+    }
 
     public private(set) var currentScale: CGFloat = 1.0 {
         didSet {
@@ -127,16 +164,14 @@ public class MovableButtonView: UIView, Moveable {
             let newY = frame.origin.y + translation.y
 
             var newFrame = frame
-            if canMoveToX(x: newX) {
-                newFrame.origin.x = newX
-            }
-            if canMoveToY(y: newY) {
-                newFrame.origin.y = newY
-            }
+            newFrame.origin.x = clampedX(for: newX)
+            newFrame.origin.y = clampedY(for: newY)
 
             frame = newFrame
 
         case .ended, .cancelled:
+            snapToEdgesIfNeeded()
+            resolveOverlapIfNeeded()
             didFinishMoving(velocity: velocity)
             moveStartTime = nil
 
@@ -145,6 +180,61 @@ public class MovableButtonView: UIView, Moveable {
         }
 
         gesture.setTranslation(.zero, in: superview)
+    }
+
+    /// Snaps this view flush against a superview edge when the drag ended within
+    /// `edgeSnapDistance` of it, so a control the user is clearly trying to dock to
+    /// an edge doesn't sit a few stray points off it.
+    private func snapToEdgesIfNeeded() {
+        guard let superview = superview else { return }
+        var newFrame = frame
+
+        if newFrame.minX <= Self.edgeSnapDistance {
+            newFrame.origin.x = 0
+        } else if superview.bounds.width - newFrame.maxX <= Self.edgeSnapDistance {
+            newFrame.origin.x = superview.bounds.width - newFrame.width
+        }
+
+        if newFrame.minY <= Self.edgeSnapDistance {
+            newFrame.origin.y = 0
+        } else if superview.bounds.height - newFrame.maxY <= Self.edgeSnapDistance {
+            newFrame.origin.y = superview.bounds.height - newFrame.height
+        }
+
+        frame = newFrame
+    }
+
+    /// Nudges this view away from any sibling `MovableButtonView` it now overlaps,
+    /// pushing along whichever axis has the shallower overlap so the move feels like
+    /// a small correction rather than a jump. Re-clamps to the superview afterward
+    /// since the nudge itself could push the view back out of bounds near an edge.
+    private func resolveOverlapIfNeeded() {
+        guard let superview = superview else { return }
+        let siblings = superview.subviews.compactMap { $0 as? MovableButtonView }.filter { $0 !== self }
+        var newFrame = frame
+
+        for sibling in siblings {
+            let overlap = newFrame.intersection(sibling.frame)
+            guard overlap.width > 0, overlap.height > 0 else { continue }
+
+            if overlap.width < overlap.height {
+                if newFrame.midX < sibling.frame.midX {
+                    newFrame.origin.x -= overlap.width + Self.overlapNudgeDistance
+                } else {
+                    newFrame.origin.x += overlap.width + Self.overlapNudgeDistance
+                }
+            } else {
+                if newFrame.midY < sibling.frame.midY {
+                    newFrame.origin.y -= overlap.height + Self.overlapNudgeDistance
+                } else {
+                    newFrame.origin.y += overlap.height + Self.overlapNudgeDistance
+                }
+            }
+        }
+
+        newFrame.origin.x = clampedX(for: newFrame.origin.x)
+        newFrame.origin.y = clampedY(for: newFrame.origin.y)
+        frame = newFrame
     }
 
 #if !os(tvOS)

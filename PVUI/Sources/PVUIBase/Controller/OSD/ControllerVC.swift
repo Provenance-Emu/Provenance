@@ -90,4 +90,17 @@ public extension ControllerVC {
     func syncFastForwardDisplay()
 }
 
+/// Optional protocol adopted by OSD controller VCs that support toggling the
+/// visibility of their on-screen touch controls (D-pad, buttons, etc.) from
+/// outside the view controller itself — e.g. the pause menu's "Show/Hide Controls"
+/// row. `PVEmulatorViewController` casts `controllerViewController` to this type
+/// rather than posting a notification, so the action is directly traceable and
+/// doesn't need a magic-string `Notification.Name`.
+@MainActor public protocol OSDControlsVisibilityObserver: AnyObject {
+    /// Whether the on-screen touch controls are currently visible.
+    var isOnScreenControlsVisible: Bool { get }
+    /// Toggles the visibility of the on-screen touch controls.
+    func toggleOnScreenControlsVisibility()
+}
+
 #endif
