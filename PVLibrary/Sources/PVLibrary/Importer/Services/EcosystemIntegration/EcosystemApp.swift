@@ -49,6 +49,14 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
     /// EcosystemFetchService).
     case ifly = "ifly"
 
+    /// iCube — GameCube/Wii emulator by the same developer.
+    /// URL scheme: `dolphinios`. Game IDs are the 6-character disc game id
+    /// (e.g. `GALE01`), not an md5. Beyond the standard gameInfo/launch flow,
+    /// iCube supports user-confirmed file transfer: `dolphinios://requestGame?
+    /// id=…&scheme=provenance` answers `provenance://dolphinios?fetch=<payload>`
+    /// (see EcosystemFetchService).
+    case icube = "dolphinios"
+
     // MARK: - Display
 
     /// User-facing display name.
@@ -58,6 +66,7 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
         case .melonx:   return "MeloNX"
         case .meloCafe: return "MeloCafe"
         case .ifly:     return "iFly EMU"
+        case .icube:    return "iCube"
         }
     }
 
@@ -68,6 +77,7 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
         case .melonx:   return "Nintendo Switch"
         case .meloCafe: return "Wii U"
         case .ifly:     return "Dreamcast · Naomi · Atomiswave"
+        case .icube:    return "GameCube · Wii"
         }
     }
 
@@ -78,6 +88,7 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
         case .melonx:   return "switch.2"
         case .meloCafe: return "tv.fill"
         case .ifly:     return "circle.circle"
+        case .icube:    return "cube"
         }
     }
 
@@ -133,15 +144,26 @@ public enum EcosystemApp: String, CaseIterable, Codable, Sendable {
         case .ifly:
             // ifly://open?md5=<md5>
             return URL(string: "\(urlScheme)://open?md5=\(titleID)")
+        case .icube:
+            // dolphinios://play?id=<gameID>
+            return URL(string: "\(urlScheme)://play?id=\(titleID)")
         }
     }
 
-    /// iFly only: user-confirmed ROM transfer. iFly prompts its user, then
-    /// answers `<callbackScheme>://ifly?fetch=<payload>` (EcosystemFetchService
-    /// downloads the file set into the import directory).
+    /// iFly and iCube only: user-confirmed file transfer. The target app
+    /// prompts its user, then answers `<callbackScheme>://<urlScheme>?fetch=
+    /// <payload>` (EcosystemFetchService downloads the file set into the
+    /// import directory). iFly identifies games by md5; iCube by its 6-char
+    /// disc game id — the query key differs accordingly.
     public func requestGameURL(titleID: String, callbackScheme: String = "provenance") -> URL? {
-        guard self == .ifly else { return nil }
-        return URL(string: "\(urlScheme)://requestGame?md5=\(titleID)&scheme=\(callbackScheme)")
+        switch self {
+        case .ifly:
+            return URL(string: "\(urlScheme)://requestGame?md5=\(titleID)&scheme=\(callbackScheme)")
+        case .icube:
+            return URL(string: "\(urlScheme)://requestGame?id=\(titleID)&scheme=\(callbackScheme)")
+        case .xenios, .melonx, .meloCafe:
+            return nil
+        }
     }
 
     // MARK: - Launch in App
