@@ -25,10 +25,8 @@
 # than from the exit code of `git submodule update`: a partial failure can still
 # exit 0, and the last-resort attempt's failure used to be swallowed entirely.
 #
-# Usage: ci-init-submodules.sh <cache-hit>   # "true" when the cache restored
+# Usage: ci-init-submodules.sh
 set -uo pipefail
-
-cache_hit="${1:-false}"
 
 # Paths git reports as not checked out ('-' prefix in submodule status).
 uninitialized_submodules() {
@@ -46,12 +44,21 @@ report_and_exit() {
     exit 1
 }
 
-if [ "$cache_hit" = "true" ]; then
-    echo "Submodule cache hit — syncing URLs and fetching updated refs..."
+# Whether the cache actually restored anything, decided from the filesystem
+# rather than from actions/cache's `cache-hit`. That output is only true for an
+# EXACT key match, and the key includes github.sha — so on every develop push it
+# said "miss" even though restore-keys had just restored ~5 GB of submodules. The
+# old miss path then deinited all of it and re-cloned from scratch, costing
+# several minutes a build and widening the window for an upstream outage to take
+# the build down.
+if [ -d .git/modules ] && [ -n "$(ls -A .git/modules 2>/dev/null)" ]; then
+    echo "Submodule cache restored — syncing URLs and updating in place..."
+    # sync matters whenever a submodule URL changes (e.g. bzip2 moving to the
+    # GitHub mirror): the cached .git/config still holds the old remote.
     git submodule sync --recursive
     git submodule update --init --recursive --force --jobs 4
 else
-    echo "Submodule cache miss — cleaning stale submodule refs and doing full clone..."
+    echo "No submodule cache — cloning shallow..."
     # restore-keys may have loaded partial cache content with dangling .git file
     # pointers (the worktrees exist but .git/modules/ doesn't). Deinit clears
     # these so update --init can re-clone cleanly.

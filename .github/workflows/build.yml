@@ -139,7 +139,7 @@ jobs:
           echo "Parent-repo tracked files re-checked-out from index."
 
       - name: Initialize submodules
-        run: ./Scripts/ci-init-submodules.sh "${{ steps.cache-submodules.outputs.cache-hit }}"
+        run: ./Scripts/ci-init-submodules.sh
 
       # Cores marked `local: true` in cores.yml are custom Provenance builds that do
       # not exist on the libretro buildbot, so get-modules.sh deliberately never
