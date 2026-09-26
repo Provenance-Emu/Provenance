@@ -1780,7 +1780,7 @@ struct DeltaSkinComponentTests {
     func loadsDSTestSkinFromBundle() throws {
         // Get the bundle path
         let bundle = Bundle.module
-        guard let skinURL = bundle.url(forResource: "DS-Test.deltaskin/info", withExtension: "json") else {
+        guard let skinURL = bundle.url(forResource: "info", withExtension: "json", subdirectory: "DS-Test.deltaskin") else {
             throw TestError("Could not find DS-Test.deltaskin in bundle")
         }
 

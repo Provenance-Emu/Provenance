@@ -72,7 +72,7 @@ struct JITContextualPromptManagerTests {
         withIsolatedPreferences {
             let result = manager.recommendation(
                 forGameMD5: "ps2md5_auto",
-                coreIdentifier: "ps2",
+                coreIdentifier: "com.provenance.core.play",
                 coreName: "Play!"
             )
             if case .showRequiredWarning = result {
