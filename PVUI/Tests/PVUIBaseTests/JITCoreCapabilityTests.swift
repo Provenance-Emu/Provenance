@@ -69,10 +69,10 @@ struct JITCoreCapabilityTests {
         #expect(JITCoreCapability.isJITRelevant("com.provenance.core.emuThree") == true)
     }
 
-    @Test("pcsx2 / ps2 / Play identifiers are JIT-relevant")
+    @Test("pcsx2 / Play identifiers are JIT-relevant; bare ps2 is not (it matches cps2)")
     func pcsx2IsJITRelevant() {
         #expect(JITCoreCapability.isJITRelevant("pcsx2") == true)
-        #expect(JITCoreCapability.isJITRelevant("ps2") == true)
+        #expect(JITCoreCapability.isJITRelevant("com.provenance.cps2") == false)
         #expect(JITCoreCapability.isJITRelevant("com.provenance.pcsx2") == true)
         #expect(JITCoreCapability.isJITRelevant("play") == true)
         #expect(JITCoreCapability.isJITRelevant("com.provenance.core.play") == true)
@@ -97,7 +97,7 @@ struct JITCoreCapabilityTests {
     @Test("only pcsx2/Play are JIT-required (crash without JIT); azahar/citra are optional")
     func jitRequiredCores() {
         // Play (PS2) maps to plist "required" / Swift .requiredOrCrash
-        #expect(JITCoreCapability.coreIsJITRequired("ps2") == true)
+        #expect(JITCoreCapability.coreIsJITRequired("play") == true)
         #expect(JITCoreCapability.coreIsJITRequired("pcsx2") == true)
         // Azahar/citra use .automaticWithFallback — plist "optional", not "required"
         #expect(JITCoreCapability.coreIsJITRequired("azahar") == false)
@@ -177,7 +177,7 @@ struct JITCoreCapabilityTests {
         #expect(JITCoreCapability.capability(for: "flycast") == .flycast)
         #expect(JITCoreCapability.capability(for: "mupen") == .mupen)
         #expect(JITCoreCapability.capability(for: "azahar") == .azahar)
-        #expect(JITCoreCapability.capability(for: "ps2") == .pcsx2)
+        #expect(JITCoreCapability.capability(for: "play") == .pcsx2)
         #expect(JITCoreCapability.capability(for: "snes9x") == nil)
     }
 

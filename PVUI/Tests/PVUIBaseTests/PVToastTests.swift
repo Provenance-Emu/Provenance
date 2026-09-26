@@ -222,10 +222,12 @@ struct PVToastManagerTests {
     func autoDismissAfterDuration() async throws {
         reset()
         PVToastManager.shared.show("Quick", type: .info, duration: 0.1)
-        #expect(PVToastManager.shared.toasts.count == 1)
+        #expect(PVToastManager.shared.toasts.contains { $0.message == "Quick" })
         // Wait for slightly longer than the 0.1 s duration
         try await Task.sleep(nanoseconds: 400_000_000) // 0.4 s
-        #expect(PVToastManager.shared.toasts.isEmpty)
+        // Other suites (e.g. controller assignment) can post to the shared manager
+        // concurrently, so check only this test's toast rather than an empty queue.
+        #expect(!PVToastManager.shared.toasts.contains { $0.message == "Quick" })
     }
 
     @Test("Zero-duration toast is dismissed immediately", .timeLimit(.minutes(1)))
@@ -234,7 +236,7 @@ struct PVToastManagerTests {
         PVToastManager.shared.show("Instant", type: .info, duration: 0)
         // Yield to let the queued dismiss Task execute
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 s
-        #expect(PVToastManager.shared.toasts.isEmpty)
+        #expect(!PVToastManager.shared.toasts.contains { $0.message == "Instant" })
     }
 
     @Test("Persistent toast is not auto-dismissed", .timeLimit(.minutes(1)))
@@ -242,8 +244,7 @@ struct PVToastManagerTests {
         reset()
         _ = PVToastManager.shared.showPersistent("Persistent", id: "p1", type: .jit)
         try await Task.sleep(nanoseconds: 300_000_000) // 0.3 s
-        #expect(PVToastManager.shared.toasts.count == 1)
-        #expect(PVToastManager.shared.toasts[0].id == "p1")
+        #expect(PVToastManager.shared.toasts.contains { $0.id == "p1" })
         reset()
     }
 
@@ -255,7 +256,7 @@ struct PVToastManagerTests {
         handle.dismiss()
         // dismiss() dispatches via Task { @MainActor in ... }; yield briefly
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 s
-        #expect(PVToastManager.shared.toasts.isEmpty)
+        #expect(!PVToastManager.shared.toasts.contains { $0.id == "h1" })
     }
 
     // MARK: - nonisolated fire-and-forget API
@@ -267,8 +268,7 @@ struct PVToastManagerTests {
         PVToastManager.post("Background toast", type: .info, duration: 60)
         // Yield to let the Task { @MainActor } execute
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 s
-        #expect(PVToastManager.shared.toasts.count == 1)
-        #expect(PVToastManager.shared.toasts[0].message == "Background toast")
+        #expect(PVToastManager.shared.toasts.contains { $0.message == "Background toast" })
     }
 
     @Test("PVToastManager.postPersistent() shows persistent toast from non-MainActor context", .timeLimit(.minutes(1)))
@@ -276,9 +276,8 @@ struct PVToastManagerTests {
         reset()
         PVToastManager.postPersistent("JIT active", id: "jit-bg", type: .jit)
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 s
-        #expect(PVToastManager.shared.toasts.count == 1)
-        #expect(PVToastManager.shared.toasts[0].isPersistent == true)
-        #expect(PVToastManager.shared.toasts[0].id == "jit-bg")
+        let jitToast = PVToastManager.shared.toasts.first { $0.id == "jit-bg" }
+        #expect(jitToast?.isPersistent == true)
         reset()
     }
 
@@ -290,6 +289,6 @@ struct PVToastManagerTests {
         // dismissAsync is nonisolated — callable from any context
         PVToastManager.shared.dismissAsync(id: "async-dismiss")
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 s
-        #expect(PVToastManager.shared.toasts.isEmpty)
+        #expect(!PVToastManager.shared.toasts.contains { $0.id == "async-dismiss" })
     }
 }

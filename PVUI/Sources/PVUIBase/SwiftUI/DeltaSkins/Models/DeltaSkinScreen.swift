@@ -156,13 +156,17 @@ public struct DeltaSkinScreen: Identifiable, Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        inputFrame = try container.decodeIfPresent(CGRect.self, forKey: .inputFrame)
-        let decoded = try container.decodeIfPresent(CGRect.self, forKey: .outputFrame)
+        inputFrame = try Self.decodeRect(container, forKey: .inputFrame)
+        let decoded = try Self.decodeRect(container, forKey: .outputFrame)
         rawOutputFrame = decoded
         outputFrame = decoded
         placement = try container.decode(DeltaSkinScreenPlacement.self, forKey: .placement)
         maintainAspectRatio = try container.decodeIfPresent(Bool.self, forKey: .maintainAspectRatio) ?? true
-        nativeResolution = try container.decodeIfPresent(CGSize.self, forKey: .nativeResolution)
+        if try container.contains(.nativeResolution) && !container.decodeNil(forKey: .nativeResolution) {
+            nativeResolution = try CGSize(fromDeltaSkin: container.superDecoder(forKey: .nativeResolution))
+        } else {
+            nativeResolution = nil
+        }
 
         // Decode the `filters` array as [DeltaSkin.FilterInfo] and construct CIFilter instances.
         // DeltaSkinScreenFilter handles parameter mapping (numbers, vectors, colors, etc.) and
@@ -178,14 +182,23 @@ public struct DeltaSkinScreen: Identifiable, Codable {
         }
     }
 
+    /// Skin JSON writes frames as `{"x","y","width","height"}`. Foundation's own
+    /// `CGRect: Codable` (array form) wins over PVUIBase's redeclared conformance,
+    /// so plain `decodeIfPresent(CGRect.self)` rejects skin JSON; go through the
+    /// DeltaSkin helpers, which accept both forms.
+    private static func decodeRect(_ container: KeyedDecodingContainer<CodingKeys>, forKey key: CodingKeys) throws -> CGRect? {
+        guard try container.contains(key) && !container.decodeNil(forKey: key) else { return nil }
+        return try CGRect(fromDeltaSkin: container.superDecoder(forKey: key))
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        try container.encodeIfPresent(inputFrame, forKey: .inputFrame)
-        try container.encodeIfPresent(outputFrame, forKey: .outputFrame)
+        try inputFrame?.encodeDeltaSkin(to: container.superEncoder(forKey: .inputFrame))
+        try outputFrame?.encodeDeltaSkin(to: container.superEncoder(forKey: .outputFrame))
         try container.encode(placement, forKey: .placement)
         try container.encode(maintainAspectRatio, forKey: .maintainAspectRatio)
-        try container.encodeIfPresent(nativeResolution, forKey: .nativeResolution)
+        try nativeResolution?.encodeDeltaSkin(to: container.superEncoder(forKey: .nativeResolution))
         // Re-encode the original FilterInfo specs so round-tripped skins remain valid.
         // Note: `filters` (CIFilter) is intentionally not encoded — `filterInfos` is the
         // canonical source of truth for serialisation. For programmatically-created instances
