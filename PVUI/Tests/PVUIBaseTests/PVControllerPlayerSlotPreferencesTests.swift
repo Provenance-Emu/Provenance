@@ -259,7 +259,7 @@ struct PVControllerPlayerSlotPreferencesTests {
         manager.setSlotMode(.preferred(1), for: controller1)
         manager.setSlotMode(.auto, for: controller2)
 
-        manager.assign([controller1, controller2])
+        [controller1, controller2].forEach { manager.assign($0) }
 
         let player1Controller = manager.controller(forPlayer: 1)
         let player2Controller = manager.controller(forPlayer: 2)
@@ -282,7 +282,7 @@ struct PVControllerPlayerSlotPreferencesTests {
         // Second controller prefers player 1, but that slot is already taken.
         manager.setSlotMode(.preferred(1), for: controller2)
 
-        manager.assign([controller1, controller2])
+        [controller1, controller2].forEach { manager.assign($0) }
 
         let player1Controller = manager.controller(forPlayer: 1)
         let player2Controller = manager.controller(forPlayer: 2)
@@ -303,11 +303,11 @@ struct PVControllerPlayerSlotPreferencesTests {
 
         // Start with a single auto-assigned controller on player 1.
         manager.setSlotMode(.auto, for: controller1)
-        manager.assign([controller1])
+        manager.assign(controller1)
 
         // Connect a second controller that must always occupy player 1.
         manager.setSlotMode(.always(1), for: controller2)
-        manager.assign([controller1, controller2])
+        [controller1, controller2].forEach { manager.assign($0) }
         manager.reapplyPreferences()
 
         let player1Controller = manager.controller(forPlayer: 1)
