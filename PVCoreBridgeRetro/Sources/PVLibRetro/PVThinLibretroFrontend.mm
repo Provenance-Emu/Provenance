@@ -2716,6 +2716,8 @@ static bool thin_environment(unsigned cmd, void *data) {
     NSString *tmpName = [NSString stringWithFormat:@".%@.%@.tmp", dst.lastPathComponent, NSUUID.UUID.UUIDString];
     NSString *tmp = [dst.stringByDeletingLastPathComponent stringByAppendingPathComponent:tmpName];
     if (![fm copyItemAtPath:src toPath:tmp error:error]) {
+        // A failed copy can leave a partial file; don't let those pile up across launches.
+        [fm removeItemAtPath:tmp error:nil];
         return NO;
     }
     if (![fm replaceItemAtURL:[NSURL fileURLWithPath:dst]
