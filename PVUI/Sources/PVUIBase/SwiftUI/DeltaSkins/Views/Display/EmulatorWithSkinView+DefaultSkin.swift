@@ -222,12 +222,13 @@ struct DefaultControllerSkinView: View {
     /// The incoming `scale` value is expected to be in the range 0.5–2.0, but since it comes from
     /// persisted Defaults, we defensively sanitize and clamp it to avoid NaN / non-finite layouts.
     private static func portraitControllerFraction(scale: Double) -> CGFloat {
-        // Normalize non-finite values (NaN / ±infinity) to a safe default of 1.0
-        let finiteScale = scale.isFinite ? scale : 1.0
-        // Clamp to the expected range from settings UI
-        let clampedScale = min(2.0, max(0.5, finiteScale))
+        min(0.70, max(0.20, 0.35 * sanitizedScale(scale)))
+    }
 
-        return min(0.70, max(0.20, 0.35 * CGFloat(clampedScale)))
+    /// `controllerScale` comes from persisted Defaults, so normalise non-finite values
+    /// to 1.0 and clamp to the settings range before it reaches layout or `scaleEffect`.
+    private static func sanitizedScale(_ scale: Double) -> CGFloat {
+        CGFloat(min(2.0, max(0.5, scale.isFinite ? scale : 1.0)))
     }
 
     var body: some View {
@@ -297,10 +298,17 @@ struct DefaultControllerSkinView: View {
 
                             // Controller area — scale content visually, clip overflow,
                             // and constrain hit-testing to the allocated frame area.
+                            // Lay the controls out in the unscaled area (size / scale), then
+                            // scale up from the bottom so they exactly fill the allocated area.
+                            // Scaling a full-size layout instead overflows the frame and
+                            // .clipped() cuts off the shoulder buttons and the side controls.
+                            let scale = DefaultControllerSkinView.sanitizedScale(controllerScale)
+                            let areaHeight = geometry.size.height * controllerFraction
                             dynamicControllerSkin
+                                .frame(width: geometry.size.width / scale, height: areaHeight / scale)
                                 .opacity(controllerOpacity)
-                                .scaleEffect(CGFloat(controllerScale), anchor: .bottom)
-                                .frame(maxHeight: geometry.size.height * controllerFraction)
+                                .scaleEffect(scale, anchor: .bottom)
+                                .frame(width: geometry.size.width, height: areaHeight, alignment: .bottom)
                                 .clipped()
                                 .contentShape(Rectangle())
                                 .onAppear {
