@@ -2,16 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>com.apple.developer.icloud-container-identifiers</key>
-	<array>
-		<string>$(ICLOUD_CONTAINER_IDENTIFIER)</string>
-	</array>
-	<key>com.apple.developer.icloud-services</key>
-	<array>
-		<string>CloudKit</string>
-	</array>
-	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
-	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
+	<!--
+	The snapshot-based Top Shelf reads the library from the app group only
+	(PVLibrarySnapshot), so it needs no iCloud entitlements. Do not add them
+	back: on tvOS, any bundle carrying com.apple.developer.icloud-services must
+	also carry aps-environment, and App Store Connect rejects the upload with
+	ITMS-90575 otherwise.
+	-->
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>$(APP_GROUP_IDENTIFIER)</string>
