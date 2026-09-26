@@ -245,6 +245,16 @@ void pv_perf_log(void) {
 /// frame 0 is guaranteed to have completed. This eliminates the GPU blit that
 /// was previously needed to snapshot each frame.
 #define THIN_VULKAN_SYNC_SLOTS 3
+/// Upper bound for every wait on a per-slot frame fence. A frame's GPU work
+/// finishes in milliseconds; a fence still unsignaled after this long belongs to a
+/// hung or lost device. Waiting forever there wedges the emu thread (and, when the
+/// wait used to happen under `_vulkanQueueLock`, the core's own queue submits), so
+/// we log and carry on instead.
+static const uint64_t kThinVulkanFenceTimeoutNs = 2ull * NSEC_PER_SEC;
+/// A zero timeout turns vkWaitForFences into a non-blocking status query. Used to
+/// check, under `_vulkanQueueLock`, whether a slot's previous submission retired
+/// before its fence is reset for reuse.
+static const uint64_t kThinVulkanFencePollTimeoutNs = 0;
 #endif
 
 // ---------------------------------------------------------------------------
@@ -600,6 +610,13 @@ typedef struct PVThinLibretroSymbols {
     /// YES when Vulkan context creation has been deferred until after
     /// retro_load_game returns (to allow the negotiation interface to arrive).
     BOOL _vulkanContextDeferred;
+    /// YES when finalizing the deferred Vulkan context failed during this load
+    /// (e.g. MoltenVK could not be loaded, or no VkDevice could be created).
+    /// finalizeVulkanContextDeferred clears `_vulkanContextDeferred` before it
+    /// tries, and the negotiation env call still returns true, so without this flag
+    /// startWithROMPath would report a successful load with no Vulkan device and no
+    /// context_reset. Reset at the start of every load.
+    BOOL _vulkanContextSetupFailed;
     /// YES while we are synchronously inside the (non-blocking) core's
     /// retro_load_game. The negotiation interface arrives during the core's
     /// graphics-context Init, which runs inside retro_load_game; firing
@@ -672,6 +689,14 @@ typedef struct PVThinLibretroSymbols {
     // The extra slot enables zero-copy: the core can render into slot N+1 while our
     // Metal presenter is still reading slot N, because slot N-1 is always fully retired.
     VkFence  _vulkanFrameFences[THIN_VULKAN_SYNC_SLOTS];
+    /// YES once a slot's fence has been handed to a vkQueueSubmit that SUCCEEDED
+    /// since the fence was last reset, i.e. it is guaranteed to signal eventually.
+    /// Cleared right before the fence is reset for a new submit, so a submit that
+    /// fails leaves it NO: that fence is reset and nothing will ever signal it, and
+    /// every wait skips it rather than blocking forever. (A fence freshly created
+    /// SIGNALED is left NO too; skipping the wait on it is harmless.) Written only
+    /// under `_vulkanQueueLock`.
+    BOOL     _vulkanFrameFenceArmed[THIN_VULKAN_SYNC_SLOTS];
     uint32_t _vulkanFrameIndex;
     // Fence lifecycle functions (use PFN_ typedefs for full type safety)
     PFN_vkCreateFence  _vkCreateFence;
@@ -1262,24 +1287,98 @@ static void thin_vulkan_set_command_buffers(void *handle, uint32_t num_cmd,
     }
 }
 
+/// Bounded wait on one per-slot frame fence, capped at kThinVulkanFenceTimeoutNs so
+/// it can never block forever, even when the caller holds `_vulkanQueueLock` (the
+/// post-submit waits do; wait_sync_index does not). vkWaitForFences needs no
+/// external synchronization; only vkResetFences does, and the submit paths reset
+/// under the lock. Returns YES only if the fence signaled. On timeout or error it
+/// logs and returns NO, so the caller moves on instead of wedging its thread.
+static BOOL thin_vulkan_wait_frame_fence(VkDevice device, PFN_vkWaitForFences waitForFences,
+                                         VkFence fence, uint32_t slot, const char *site) {
+    VkResult result = waitForFences(device, 1, &fence, VK_TRUE, kThinVulkanFenceTimeoutNs);
+    if (result == VK_SUCCESS) {
+        return YES;
+    }
+    if (result == VK_TIMEOUT) {
+        ELOG(@"ThinFrontend: %s: frame fence (slot %u) still unsignaled after %.1fs — "
+             @"GPU hung or device lost; continuing without it",
+             site, slot, (double)kThinVulkanFenceTimeoutNs / NSEC_PER_SEC);
+    } else {
+        ELOG(@"ThinFrontend: %s: vkWaitForFences (slot %u) failed (result=%d)",
+             site, slot, (int)result);
+    }
+    return NO;
+}
+
+/// Returns the fence to attach to this slot's vkQueueSubmit, reset and ready, or
+/// VK_NULL_HANDLE if the submit must go without one. Must be called with
+/// `_vulkanQueueLock` held, right before the submit, which must then set
+/// `_vulkanFrameFenceArmed[slot]` only if it succeeds.
+///
+/// `*outSlotBusy` is set to YES when fences exist but this slot's previous
+/// submission is still in flight (its earlier bounded wait timed out). Resetting a
+/// fence that pending work still owns is invalid, so it stays armed for that work
+/// and this frame's submit goes without a fence. The caller must then neither wait
+/// on the queue nor present the frame.
+static VkFence thin_vulkan_prepare_frame_fence_locked(PVThinLibretroFrontend *bridge,
+                                                      uint32_t slot, BOOL *outSlotBusy) {
+    *outSlotBusy = NO;
+    VkDevice device = bridge->_vulkanDevice;
+    if (!bridge->_vulkanFrameFences[0] || !bridge->_vkResetFences ||
+        !bridge->_vkWaitForFences || !device) {
+        return VK_NULL_HANDLE;
+    }
+    VkFence fence = bridge->_vulkanFrameFences[slot];
+    if (bridge->_vulkanFrameFenceArmed[slot]) {
+        // Non-blocking status query: safe to issue under the lock.
+        VkResult status = bridge->_vkWaitForFences(device, 1, &fence, VK_TRUE,
+                                                   kThinVulkanFencePollTimeoutNs);
+        if (status == VK_TIMEOUT) {
+            ELOG(@"ThinFrontend: frame fence (slot %u) still in flight from an earlier "
+                 @"timed-out submit — submitting this frame without a fence and dropping it",
+                 slot);
+            *outSlotBusy = YES;
+            return VK_NULL_HANDLE;
+        }
+    }
+    bridge->_vulkanFrameFenceArmed[slot] = NO;
+    bridge->_vkResetFences(device, 1, &fence);
+    return fence;
+}
+
 static void thin_vulkan_wait_sync_index(void *handle) {
     PVThinLibretroFrontend *bridge = thin_vulkan_bridge(handle);
     if (!bridge) return;
     // Wait for the previous submission on this slot to complete so the core can safely
     // reuse its per-frame resources (command pools, descriptor sets, etc.).
     // Prefer the per-frame fence (narrower than vkQueueWaitIdle which stalls the entire queue).
+    //
+    // Snapshot the slot under the lock but wait OUTSIDE it. PPSSPP calls this from its
+    // hooked vkAcquireNextImageKHR, and its hooked vkQueueSubmit/vkQueueWaitIdle take
+    // lock_queue (this same lock), so holding it across a GPU wait stalls the core's
+    // own submissions — permanently, if the fence never signals.
     os_unfair_lock_lock(&bridge->_vulkanQueueLock);
-    uint32_t slot = bridge->_vulkanFrameIndex;
+    const uint32_t slot = bridge->_vulkanFrameIndex;
     VkFence fence = bridge->_vulkanFrameFences[slot];
-    if (fence && bridge->_vkWaitForFences && bridge->_vulkanDevice) {
-        // UINT64_MAX = wait indefinitely; the fence is always signaled within one frame.
-        bridge->_vkWaitForFences(bridge->_vulkanDevice, 1, &fence, 1 /* VK_TRUE */, UINT64_MAX);
-        // Leave fence signaled — submitVulkanCommandBuffers resets it right before the next submit.
-    } else if (bridge->_vkQueueWaitIdle && bridge->_vulkanQueue) {
-        // Fallback: full-queue stall when fences are unavailable.
-        bridge->_vkQueueWaitIdle(bridge->_vulkanQueue);
+    VkDevice device = bridge->_vulkanDevice;
+    PFN_vkWaitForFences waitForFences = bridge->_vkWaitForFences;
+    if (!fence || !waitForFences || !device) {
+        // Fallback: full-queue stall when fences are unavailable. The queue needs
+        // external synchronization, so this one stays under the lock.
+        if (bridge->_vkQueueWaitIdle && bridge->_vulkanQueue) {
+            bridge->_vkQueueWaitIdle(bridge->_vulkanQueue);
+        }
+        os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
+        return;
     }
+    const BOOL armed = bridge->_vulkanFrameFenceArmed[slot];
     os_unfair_lock_unlock(&bridge->_vulkanQueueLock);
+
+    // Not armed = no successful submit since the fence was last reset (it was created
+    // signaled, or its submit failed and left it reset). Nothing will ever signal a
+    // reset fence, so waiting on it would hang forever.
+    if (!armed) return;
+    thin_vulkan_wait_frame_fence(device, waitForFences, fence, slot, "wait_sync_index");
 }
 
 static void thin_vulkan_lock_queue(void *handle) {
@@ -3120,6 +3219,9 @@ static const NSTimeInterval kThinBlockingFrameWait = 0.010;
     // failure surfaces only the current attempt's diagnostics (if any).
     s_lastBiosHint[0] = '\0';
     s_lastCoreError[0] = '\0';
+#if HAVE_VULKAN
+    _vulkanContextSetupFailed = NO;
+#endif
 
     // Install TLS pointer for C callbacks
     _thinCurrentTLS = self;
@@ -3405,17 +3507,31 @@ static const NSTimeInterval kThinBlockingFrameWait = 0.010;
     /// finalize now using the frontend-created device.
     if (_vulkanContextDeferred) {
         [self finalizeVulkanContextDeferred];
-        if (!_vulkanDevice) {
-            if (error) {
-                *error = [NSError errorWithDomain:@"PVThinLibretroFrontend"
-                                             code:6
-                                         userInfo:@{NSLocalizedDescriptionKey: @"Vulkan context setup failed"}];
-            }
-            // retro_load_game succeeded on this path, so the content must be
-            // unloaded before retro_deinit.
-            [self _abortStartAfterRetroInitUnloadingGame:YES];
-            return NO;
+    }
+    // Covers both finalize sites: the fallback just above, and the one inside the
+    // SET_HW_RENDER_CONTEXT_NEGOTIATION_INTERFACE env call during retro_load_game
+    // (PPSSPP's path). That env call still returns true on failure and clears
+    // `_vulkanContextDeferred`, so only this flag records that there is no Vulkan
+    // device and no context_reset. Carrying on would let the core's first retro_run
+    // reach its GPU init with no draw context (black screen, shutdown or crash).
+    if (_vulkanContextSetupFailed) {
+        ELOG(@"ThinFrontend: aborting load — the core requested a Vulkan HW context but "
+             @"Vulkan setup via MoltenVK failed (see the preceding ThinFrontend log lines "
+             @"for the failing step)");
+        if (error) {
+            *error = [NSError errorWithDomain:@"PVThinLibretroFrontend"
+                                         code:6
+                                     userInfo:@{
+                NSLocalizedDescriptionKey: @"Vulkan context setup failed",
+                NSLocalizedFailureReasonErrorKey:
+                    @"This core renders with Vulkan, but no Vulkan device could be created "
+                    @"through MoltenVK.",
+            }];
         }
+        // retro_load_game succeeded on this path, so the content must be
+        // unloaded before retro_deinit.
+        [self _abortStartAfterRetroInitUnloadingGame:YES];
+        return NO;
     }
 
     // retro_load_game has returned, so the core's global graphics-context pointer is
@@ -4656,15 +4772,18 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 
                 // Use the per-frame fence for narrow GPU sync (same strategy as
                 // submitVulkanCommandBuffers). Falls back to vkQueueWaitIdle only
-                // when fences are unavailable.
-                VkFence frameFence = (_vulkanFrameFences[0] && _vulkanDevice && _vkResetFences && _vkWaitForFences)
-                    ? _vulkanFrameFences[_vulkanFrameIndex]
-                    : VK_NULL_HANDLE;
-                if (frameFence) {
-                    _vkResetFences(_vulkanDevice, 1, &frameFence);
-                }
+                // when fences are unavailable. The fence is reset only here, right
+                // before the submit, and armed only if the submit succeeds.
+                const uint32_t slot = _vulkanFrameIndex;
+                VkFence frameFence = VK_NULL_HANDLE;
+                BOOL slotBusy = NO;
+                VkResult result = VK_SUCCESS;
+                // YES once the GPU is known to be done with the image (or there was
+                // no way to check, as before); the frame is presented only then.
+                BOOL frameComplete = NO;
 
                 if (_vkQueueSubmit && _vulkanQueue) {
+                    frameFence = thin_vulkan_prepare_frame_fence_locked(self, slot, &slotBusy);
                     VkSubmitInfo submitInfo = {
                         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
                         .waitSemaphoreCount = waitCount,
@@ -4675,25 +4794,45 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
                         .signalSemaphoreCount = (signalSem != VK_NULL_HANDLE) ? 1u : 0u,
                         .pSignalSemaphores = (signalSem != VK_NULL_HANDLE) ? &signalSem : NULL,
                     };
-                    VkResult result = _vkQueueSubmit(_vulkanQueue, 1, &submitInfo, frameFence);
+                    result = _vkQueueSubmit(_vulkanQueue, 1, &submitInfo, frameFence);
                     if (result != VK_SUCCESS) {
-                        ELOG(@"ThinFrontend: async-compute vkQueueSubmit failed (result=%d)", result);
-                        os_unfair_lock_unlock(&_vulkanQueueLock);
-                        return;
+                        // The fence was reset but never handed to the GPU; it stays
+                        // disarmed so wait_sync_index and later submits skip it.
+                        ELOG(@"ThinFrontend: async-compute vkQueueSubmit failed (result=%d) — "
+                             @"slot %u fence left disarmed, frame dropped", result, slot);
+                    } else if (frameFence) {
+                        _vulkanFrameFenceArmed[slot] = YES;
+                    } else if (!slotBusy) {
+                        // No fences on this device: full-queue stall (needs the queue lock).
+                        if (_vkQueueWaitIdle) {
+                            _vkQueueWaitIdle(_vulkanQueue);
+                        }
+                        frameComplete = YES;
                     }
-
-                    if (frameFence && _vulkanDevice && _vkWaitForFences) {
-                        _vkWaitForFences(_vulkanDevice, 1, &frameFence, 1, UINT64_MAX);
-                    } else if (_vkQueueWaitIdle) {
+                } else {
+                    if (_vkQueueWaitIdle && _vulkanQueue) {
                         _vkQueueWaitIdle(_vulkanQueue);
                     }
-                } else if (_vkQueueWaitIdle && _vulkanQueue) {
-                    _vkQueueWaitIdle(_vulkanQueue);
+                    frameComplete = YES;
                 }
 
-                _vulkanFrameIndex = (_vulkanFrameIndex + 1) % THIN_VULKAN_SYNC_SLOTS;
+                // This wait stays under the lock, as before: it keeps set_image (which
+                // takes the lock) from swapping _vulkanCurrentVkImage while we wait,
+                // so the image notified below is the one this fence covers. The
+                // bounded timeout keeps it from deadlocking.
+                if (result == VK_SUCCESS && frameFence) {
+                    frameComplete = thin_vulkan_wait_frame_fence(_vulkanDevice, _vkWaitForFences, frameFence,
+                                                                 slot, "async-compute video_refresh");
+                }
+
+                // Advance the slot whether or not the submit succeeded (as
+                // submitVulkanCommandBuffers does), so the index the core reads via
+                // get_sync_index never falls out of step with ours.
+                _vulkanFrameIndex = (slot + 1) % THIN_VULKAN_SYNC_SLOTS;
                 os_unfair_lock_unlock(&_vulkanQueueLock);
-                [self notifyRenderDelegateOfVulkanFrame:nil];
+                if (frameComplete) {
+                    [self notifyRenderDelegateOfVulkanFrame:nil];
+                }
             }
             return;
         }
@@ -6634,6 +6773,11 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     if (!deviceReady) {
         if (![self createVulkanDevice]) {
             ELOG(@"ThinFrontend: failed to create Vulkan device");
+            // createVulkanDevice can fail AFTER vkCreateDevice succeeded (missing
+            // device-level or queue-submit entry points), leaving _vulkanDevice set.
+            // Destroy it before its instance, and clear the handle so nothing treats
+            // the half-built context as usable. No-op when no device was created.
+            [self destroyVulkanDevice];
             [self destroyVulkanInstance];
             [self unloadMoltenVKLibrary];
             return NO;
@@ -6658,8 +6802,18 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
          (void *)_vulkanNegotiationInterface);
 
     if (![self setupVulkanContext]) {
-        ELOG(@"ThinFrontend: deferred Vulkan context setup failed");
+        // setupVulkanContext has already released whatever it built on its failure
+        // path (device, instance + private surface, MoltenVK handle). Record the
+        // failure so startWithROMPath aborts the load instead of reporting success.
+        ELOG(@"ThinFrontend: deferred Vulkan context setup failed (%s) — no VkDevice, "
+             @"context_reset will not fire; the load will be aborted",
+             _inRetroLoadGame ? "during retro_load_game negotiation" : "after retro_load_game");
+        _vulkanContextSetupFailed = YES;
         _hwRenderRequested = NO;
+        // Zeroing _hwRenderCallback (context_type included) means teardownHardwareContext
+        // skips its Vulkan branch on the abort path, so drop the core's negotiation
+        // interface pointer here instead of leaving it dangling past retro_deinit.
+        _vulkanNegotiationInterface = NULL;
         memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
         return;
     }
@@ -7524,6 +7678,7 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
             }
         }
     }
+    memset(_vulkanFrameFenceArmed, 0, sizeof(_vulkanFrameFenceArmed));
     _vulkanFrameIndex = 0;
     _vkCreateFence  = NULL;
     _vkDestroyFence = NULL;
@@ -7613,12 +7768,10 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 
     // Use the per-frame fence for this slot, resetting it right before submit so it
     // transitions SIGNALED→UNSIGNALED and will be re-signaled when the GPU finishes.
-    VkFence frameFence = (_vulkanFrameFences[0] && _vkResetFences && _vkWaitForFences)
-        ? _vulkanFrameFences[_vulkanFrameIndex]
-        : VK_NULL_HANDLE;
-    if (frameFence) {
-        _vkResetFences(_vulkanDevice, 1, &frameFence);
-    }
+    // It is armed only if the submit succeeds (see _vulkanFrameFenceArmed).
+    const uint32_t slot = _vulkanFrameIndex;
+    BOOL slotBusy = NO;
+    VkFence frameFence = thin_vulkan_prepare_frame_fence_locked(self, slot, &slotBusy);
 
     VkSubmitInfo submitInfo = {
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -7646,16 +7799,31 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     // queue work unaffected.  Falls back to vkQueueWaitIdle when fences are unavailable.
     // The fence is left SIGNALED after the wait; wait_sync_index reads it at the start
     // of the next iteration of this slot to confirm the slot is free.
+    // YES once the GPU is known to be done with the image (or there was no way to
+    // check, as before); the frame is presented only then.
+    // The fence wait stays under the lock, as before: it keeps set_image (which takes
+    // the lock) from swapping _vulkanCurrentVkImage while we wait, so the image
+    // notified below is the one this fence covers. The bounded timeout keeps it from
+    // deadlocking.
+    BOOL frameComplete = NO;
     if (result == VK_SUCCESS) {
-        if (frameFence && _vkWaitForFences) {
-            _vkWaitForFences(_vulkanDevice, 1, &frameFence, 1 /* VK_TRUE */, UINT64_MAX);
-        } else if (_vkQueueWaitIdle) {
-            _vkQueueWaitIdle(_vulkanQueue);
+        if (frameFence) {
+            _vulkanFrameFenceArmed[slot] = YES;
+            frameComplete = thin_vulkan_wait_frame_fence(_vulkanDevice, _vkWaitForFences, frameFence,
+                                                         slot, "submitVulkanCommandBuffers");
+        } else if (!slotBusy) {
+            // No fences on this device: full-queue stall (needs the queue lock).
+            if (_vkQueueWaitIdle) {
+                _vkQueueWaitIdle(_vulkanQueue);
+            }
+            frameComplete = YES;
         }
     }
 
-    // Advance the frame slot so the next frame uses the next buffer.
-    _vulkanFrameIndex = (_vulkanFrameIndex + 1) % THIN_VULKAN_SYNC_SLOTS;
+    // Advance the frame slot so the next frame uses the next buffer. This happens
+    // even when the submit failed, so the core's get_sync_index stays in step; the
+    // failed slot's fence stays disarmed and is never waited on.
+    _vulkanFrameIndex = (slot + 1) % THIN_VULKAN_SYNC_SLOTS;
     os_unfair_lock_unlock(&_vulkanQueueLock);
 
     if (result != VK_SUCCESS) {
@@ -7683,7 +7851,11 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     // set_command_buffers, so notification is deferred until after queue submission.
     if (_vulkanHasCurrentImage) {
         _vulkanHasCurrentImage = NO;
-        [self notifyRenderDelegateOfVulkanFrame:nil];
+        // A timed-out or skipped fence wait (already logged) drops the frame rather
+        // than exporting an image the GPU may still be writing.
+        if (frameComplete) {
+            [self notifyRenderDelegateOfVulkanFrame:nil];
+        }
     }
 }
 
