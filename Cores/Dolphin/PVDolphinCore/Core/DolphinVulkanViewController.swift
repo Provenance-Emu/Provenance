@@ -202,24 +202,35 @@ import PVPrimitives
 			return
 		}
 
-		isResuming = true
-		ILOG("DolphinVulkanViewController resumeRendering - forcing complete swapchain recreation")
-
-		/// Pause emulation briefly to avoid presenting mid-recreation
-		core.setPauseEmulation(true)
-
-        /// Get current state before manipulation
         let originalDrawableSize = renderLayer.drawableSize
-		var wasHidden = renderLayer.isHidden
-
 		guard originalDrawableSize.width > 0 && originalDrawableSize.height > 0 else {
 			ILOG("DolphinVulkanViewController resumeRendering - invalid drawable size, skipping")
-			isResuming = false
 			return
 		}
 
+        /// Metal rebuilds its surface from the layer's bounds, not its `drawableSize`
+        /// (`Metal::Gfx::SetupSurface` / `GetSurfaceInfo` in MTLGfx.mm), and writes `drawableSize`
+        /// back itself, so the Vulkan swapchain-rebuild dance below does nothing useful there. It
+        /// only hides the layer, lets Dolphin's GPU thread grab a 1x1 drawable mid-frame, and
+        /// toggles pause behind the pause menu's back. Flagging a resize is all Metal needs.
+        guard !isMetalBackend else {
+            ILOG("DolphinVulkanViewController resumeRendering - Metal: refreshing surface size only")
+            core.refreshScreenSize()
+            return
+        }
+
+		isResuming = true
+		ILOG("DolphinVulkanViewController resumeRendering - forcing complete swapchain recreation")
+
+        /// Pause emulation briefly to avoid presenting mid-recreation, then restore whatever the
+        /// user had: resuming unconditionally would unpause a game under an open pause menu.
+        let wasPaused = core.isEmulationPaused
+        if !wasPaused {
+            core.setPauseEmulation(true)
+        }
+
         renderLayer.removeAllAnimations()
-        wasHidden = renderLayer.isHidden
+        let wasHidden = renderLayer.isHidden
 
         /// Hide layer immediately to prevent any flickering
         renderLayer.isHidden = true
@@ -259,7 +270,9 @@ import PVPrimitives
 						guard let self = self else { return }
 						self.core.refreshScreenSize()
 						self.isResuming = false
-						self.core.setPauseEmulation(false)
+                        if !wasPaused {
+                            self.core.setPauseEmulation(false)
+                        }
 						ILOG("DolphinVulkanViewController resumeRendering - complete swapchain recreation finished")
 					}
 				}
@@ -272,6 +285,14 @@ import PVPrimitives
 
         let viewBounds = view.bounds
         let scale = UIScreen.main.scale
+
+        /// A transient zero-size layout (e.g. while the view leaves the window under a full-screen
+        /// presentation) must not reach the running core: Dolphin sizes its backbuffer from the
+        /// layer's bounds and would rebuild the surface at 0x0. Keep the last good surface.
+        guard viewBounds.width > 0, viewBounds.height > 0 else {
+            ILOG("viewDidLayoutSubviews: ignoring empty bounds \(viewBounds)")
+            return
+        }
 
         /// Update the standalone renderLayer to match view bounds and orientation
         /// This is critical for correct landscape rendering
@@ -292,12 +313,6 @@ import PVPrimitives
 
         /// Start VM on first layout when layer has correct dimensions for current orientation
         if !hasStartedVM {
-            /// Verify we have valid dimensions before starting
-            guard viewBounds.width > 0 && viewBounds.height > 0 else {
-                ILOG("viewDidLayoutSubviews: skipping VM start - invalid bounds")
-                return
-            }
-
             hasStartedVM = true
             ILOG("Starting VM after first layout with bounds: \(viewBounds), drawableSize: \(renderLayer.drawableSize)\n")
 
@@ -337,10 +352,11 @@ import PVPrimitives
     }
 
     /// Tells Dolphin's Metal backend whether to hand each frame to `DolphinShaderPostProcessor`.
-    /// Off when no filter is selected so the default path keeps rendering straight into the drawable.
+    /// Off unless a shader actually resolves for GameCube/Wii (`none`, or an `auto` mode whose CRT
+    /// slot is empty), so the default path keeps rendering straight into the drawable.
     @MainActor
     private func syncShaderPostProcessing() {
-        let enabled = isMetalBackend && Defaults[.metalFilterMode] != .none
+        let enabled = isMetalBackend && DolphinShaderPostProcessor.hasShaderToApply
         UserDefaults.standard.set(enabled, forKey: DolphinShaderPostProcessor.enabledDefaultsKey)
         ILOG("Dolphin shader post-processing \(enabled ? "enabled" : "disabled")")
     }
@@ -535,25 +551,59 @@ final class DolphinShaderPostProcessor: NSObject {
         configuredPixelFormat = nil
     }
 
+    /// Whether the user's filter setting resolves to a shader for GameCube/Wii output.
+    /// Read from Dolphin's GPU thread as well as the main thread; it only reads `Defaults`.
+    static var hasShaderToApply: Bool {
+        MetalShaderManager.shared.currentFilterShader(for: screenType) != nil
+    }
+
     /// Encodes `source` into `drawable`'s texture on `commandBuffer`. Dolphin presents the drawable
     /// right after this returns, so it must always be filled and must never be presented here.
     @objc(renderSource:commandBuffer:drawable:)
     func render(source: MTLTexture, commandBuffer: MTLCommandBuffer, drawable: CAMetalDrawable) {
         let target = drawable.texture
         let smoothing = Defaults[.imageSmoothing]
-        if encodeFilter(source: source, target: target, commandBuffer: commandBuffer, smoothing: smoothing) {
+        if Self.hasShaderToApply,
+           encodeFilter(source: source, target: target, commandBuffer: commandBuffer, smoothing: smoothing) {
             return
         }
-        /// No shader resolved (e.g. `auto` maps CRT to none) or pipeline creation failed:
-        /// copy through with a render pass, since the drawable may be framebuffer-only.
-        let copied = blitter?.encode(commandBuffer: commandBuffer,
-                                     destinationTexture: target,
-                                     sourceTexture: source,
-                                     smoothing: smoothing,
-                                     flipY: false) ?? false
-        if !copied {
+        /// No shader resolved (e.g. the filter was switched off mid-frame) or pipeline creation
+        /// failed: copy the frame through untouched so the drawable is never presented blank.
+        if copyThrough(source: source, target: target, commandBuffer: commandBuffer) {
+            return
+        }
+        let drawn = blitter?.encode(commandBuffer: commandBuffer,
+                                    destinationTexture: target,
+                                    sourceTexture: source,
+                                    smoothing: smoothing,
+                                    flipY: false) ?? false
+        if !drawn {
             ELOG("Dolphin shader post-process: failed to copy frame into drawable")
         }
+    }
+
+    /// Straight texture copy, as iCube's own post-processor does. Dolphin sizes its post source from
+    /// the drawable, so sizes and formats normally match; the Metal render layer is created
+    /// non-framebuffer-only, which a blit into the drawable requires.
+    private func copyThrough(source: MTLTexture, target: MTLTexture, commandBuffer: MTLCommandBuffer) -> Bool {
+        guard !target.isFramebufferOnly,
+              source.width == target.width,
+              source.height == target.height,
+              source.pixelFormat == target.pixelFormat,
+              let blit = commandBuffer.makeBlitCommandEncoder() else {
+            return false
+        }
+        blit.copy(from: source,
+                  sourceSlice: 0,
+                  sourceLevel: 0,
+                  sourceOrigin: MTLOrigin(x: 0, y: 0, z: 0),
+                  sourceSize: MTLSize(width: source.width, height: source.height, depth: 1),
+                  to: target,
+                  destinationSlice: 0,
+                  destinationLevel: 0,
+                  destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+        blit.endEncoding()
+        return true
     }
 
     private func encodeFilter(source: MTLTexture,
