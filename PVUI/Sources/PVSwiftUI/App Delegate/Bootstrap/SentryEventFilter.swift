@@ -31,6 +31,7 @@ public struct SentryEventSnapshot: Equatable, Sendable {
     public let level: String?
     public let transaction: String?
     public let requestURL: String?
+    public let requestMethod: String?
     public let title: String?
     public let tags: [String: String]
     public let frames: [SentryEventFrame]
@@ -42,6 +43,7 @@ public struct SentryEventSnapshot: Equatable, Sendable {
         level: String?,
         transaction: String?,
         requestURL: String?,
+        requestMethod: String? = nil,
         title: String?,
         tags: [String: String],
         frames: [SentryEventFrame]
@@ -52,6 +54,7 @@ public struct SentryEventSnapshot: Equatable, Sendable {
         self.level = level
         self.transaction = transaction
         self.requestURL = requestURL
+        self.requestMethod = requestMethod
         self.title = title
         self.tags = tags
         self.frames = frames
@@ -65,6 +68,7 @@ public enum SentryEventFilter {
     private static let externalArtworkCDNHostSuffixes: [String] = [
         "cdn.thegamesdb.net",
         "api.thegamesdb.net",
+        "thumbnails.libretro.com",
         "media.retroachievements.org",
         "retroachievements.org"
     ]
@@ -83,6 +87,13 @@ public enum SentryEventFilter {
 
     private static func shouldDropHTTPClientError(_ snapshot: SentryEventSnapshot) -> Bool {
         guard snapshot.mechanismType == "HTTPClientError" else { return false }
+
+        // HEAD requests are existence probes (e.g. `LibretroArtwork.validateURL`);
+        // a 404 is the expected "no artwork" answer, not a failure.
+        if snapshot.requestMethod?.uppercased() == "HEAD",
+           snapshot.exceptionValue?.contains("status code: 404") == true {
+            return true
+        }
 
         if let urlString = resolvedRequestURL(snapshot),
            isExternalArtworkCDNHost(urlString) {
@@ -118,9 +129,20 @@ public enum SentryEventFilter {
 
     // MARK: - MetricKit CPU (PROVENANCE-12S, PROVENANCE-1AT, PROVENANCE-1AV)
 
+    // Sustained CPU is inherent to emulation, so only a CPU exception that runs through
+    // non-emulator app code is actionable. MetricKit frames are unsymbolicated on device
+    // (`function` is nil, `package` is the binary name), so this cannot rely on function
+    // names: a stack of only system and emulator binaries is dropped (PROVENANCE-251).
     private static func shouldDropMetricKitCPUException(_ snapshot: SentryEventSnapshot) -> Bool {
         guard snapshot.mechanismType == "mx_cpu_exception" else { return false }
-        return framesIndicateEmulator(snapshot.frames)
+        if framesIndicateEmulator(snapshot.frames) { return true }
+        return !snapshot.frames.contains(where: isAppCode)
+    }
+
+    /// Sentry's `inApp` covers only the main executable, but most `PV*` modules ship as
+    /// dynamic frameworks whose binary name is the module name.
+    private static func isAppCode(_ frame: SentryEventFrame) -> Bool {
+        frame.inApp || frame.package?.hasPrefix("PV") == true
     }
 
     // MARK: - MetricKit disk write (PROVENANCE-1AW, PROVENANCE-13C)
@@ -246,7 +268,9 @@ public enum SentryEventFilter {
         let lower = package.lowercased()
         let patterns = [
             "libretro",
-            "pvcorebridgeretro",
+            "pvcorebridge",
+            "pvemulatorcore",
+            "pvcoreaudio",
             "flycast",
             "dolphin",
             "mednafen",

@@ -203,7 +203,7 @@ public final class RetroLogViewModel: ObservableObject {
     }
 
     /// Exports the currently displayed logs as a plain-text file in the temp directory.
-    /// - Returns: URL of the created `.txt` file, or `nil` on failure.
+    /// - Returns: URL of the created `.log` file (opens back in Provenance via `public.log`), or `nil` on failure.
     /// Must be called from the main actor to safely read `displayedLogs`.
     @MainActor
     public func exportLogsAsText(options: LogExportOptions = .init()) -> URL? {
@@ -218,7 +218,7 @@ public final class RetroLogViewModel: ObservableObject {
 
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
-        let filename = "provenance_logs_\(formatter.string(from: Date())).txt"
+        let filename = "provenance_logs_\(formatter.string(from: Date())).log"
         let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
 
         do {

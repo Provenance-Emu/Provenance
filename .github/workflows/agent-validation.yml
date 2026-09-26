@@ -120,6 +120,7 @@ jobs:
     timeout-minutes: 5
     outputs:
       modules: ${{ steps.detect.outputs.modules }}
+      pvui: ${{ steps.detect.outputs.pvui }}
     steps:
       - name: Detect
         id: detect
@@ -155,6 +156,7 @@ jobs:
           # No PR context (manual dispatch): test everything, matching prior behaviour.
           if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "0" ]; then
             echo "modules=$(json_all)" >> "$GITHUB_OUTPUT"
+            echo "pvui=true" >> "$GITHUB_OUTPUT"
             echo "No PR number — running all modules"
             exit 0
           fi
@@ -165,6 +167,7 @@ jobs:
           if ! FILES=$(gh pr diff "$PR_NUMBER" --repo "$REPO" --name-only 2>/dev/null); then
             echo "::warning::gh pr diff failed — running all modules"
             echo "modules=$(json_all)" >> "$GITHUB_OUTPUT"
+            echo "pvui=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -178,6 +181,14 @@ jobs:
 
           echo "modules=$SELECTED" >> "$GITHUB_OUTPUT"
           echo "Changed modules: $SELECTED"
+
+          # PVUI can't join the matrix above (it needs UIKit and PVLibrary, so no
+          # `swift build`); pvui-test runs its tests on a simulator instead.
+          if printf '%s\n' "$FILES" | grep -q "^PVUI/"; then
+            echo "pvui=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pvui=false" >> "$GITHUB_OUTPUT"
+          fi
 
   # Job 2b: SPM Build/Test — only for modules that actually changed.
   spm-test:
@@ -228,6 +239,110 @@ jobs:
           # process-global UserDefaults; Swift Testing's default concurrent suite
           # execution made them flake. See Scripts/spm-validate.sh for detail.
           swift test --no-parallel 2>&1 | tail -40
+
+  # Job 2c: PVUI unit tests (#3647). PVUI can't `swift build` standalone: it imports
+  # UIKit (no macOS build) and depends on PVLibrary, whose realm-core doesn't build
+  # under SwiftPM with Xcode 26 (see the ALL list above). Xcode's own package build
+  # handles both, so run the package's auto-generated scheme on an iOS simulator.
+  # Only PVUIBaseTests and PVSwiftUITests run: the snapshot suite needs recorded
+  # baselines, and the platform suites are placeholders.
+  pvui-test:
+    name: PVUI Tests (iOS Simulator)
+    needs: spm-changed
+    if: needs.spm-changed.outputs.pvui == 'true'
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
+
+      # Transitive `.package(path:)` / target-path submodules of PVUI's local deps.
+      # Same sources as smoke-build's list, minus the workspace-only Cores.
+      - name: Init required submodules (shallow)
+        run: |
+          git submodule update --init --depth 1 \
+            Dependencies/HexColors \
+            Dependencies/SWCompression \
+            Cores/Mednafen/ThirdParty/libchdr \
+            PVRcheevos/rcheevos
+          if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
+            rm -rf Dependencies/ZipArchive
+            git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
+          fi
+
+      - name: Cache libretro cheat database
+        uses: actions/cache@v4
+        with:
+          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+
+      - name: Generate libretro cheat database if missing
+        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
+
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-pvui-deriveddata-${{ hashFiles('**/Package.swift', '**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-pvui-deriveddata-
+
+      - name: Test PVUI
+        working-directory: PVUI
+        run: |
+          set -eo pipefail
+          # Simulator names change with each Xcode; take the first available iPhone.
+          udid=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+          if [ -z "$udid" ] || [ "$udid" = "null" ]; then
+            echo "::error::No available iPhone simulator"
+            exit 1
+          fi
+          # A scheme holding only the two suites. The auto-generated package scheme
+          # builds every target, and PVUI_TV's tvOS xibs/storyboards cannot compile
+          # for an iPhone destination. `.swiftpm` is gitignored, so write it here.
+          scheme=PVUI-UnitTests
+          mkdir -p .swiftpm/xcode/xcshareddata/xcschemes
+          {
+            echo '<?xml version="1.0" encoding="UTF-8"?>'
+            echo '<Scheme LastUpgradeVersion="2600" version="1.7">'
+            echo '  <BuildAction parallelizeBuildables="YES" buildImplicitDependencies="YES"/>'
+            echo '  <TestAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv="YES">'
+            echo '    <Testables>'
+            for t in PVUIBaseTests PVSwiftUITests; do
+              echo "      <TestableReference skipped=\"NO\"><BuildableReference BuildableIdentifier=\"primary\" BlueprintIdentifier=\"$t\" BuildableName=\"$t\" BlueprintName=\"$t\" ReferencedContainer=\"container:\"/></TestableReference>"
+            done
+            echo '    </Testables>'
+            echo '  </TestAction>'
+            echo '</Scheme>'
+          } > ".swiftpm/xcode/xcshareddata/xcschemes/$scheme.xcscheme"
+          xcodebuild test \
+            -scheme "$scheme" \
+            -destination "id=$udid" \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee /tmp/pvui-test.log | grep -E "(: (fatal )?error:|Test Suite|Test Case .* failed|✘|Executed|TEST (SUCCEEDED|FAILED))" | tail -150
+
+      # The summary grep above drops everything else, including why package
+      # resolution failed ("Could not resolve package dependencies:" + detail lines).
+      - name: Show PVUI test log tail
+        if: failure()
+        run: tail -60 /tmp/pvui-test.log || true
+
+      - name: Upload PVUI test log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pvui-test-log
+          path: /tmp/pvui-test.log
+          retention-days: 3
 
   # Job 3: Fast CI simulator build — validates that code compiles
   # Uses Provenance-CI target (no emulator cores) for fastest possible build

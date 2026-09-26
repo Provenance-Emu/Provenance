@@ -362,7 +362,15 @@ def update_plist(plist_path: Path, exported: list, imported: list):
 
     plist["UTExportedTypeDeclarations"] = exported
     plist["UTImportedTypeDeclarations"] = imported
-    plist["CFBundleDocumentTypes"] = build_document_types()
+    # Keep hand-maintained document types (e.g. "Log File", "RetroArch
+    # Configuration") and replace only the generated ones, as gen_uti.swift does.
+    generated = build_document_types()
+    generated_names = {entry["CFBundleTypeName"] for entry in generated}
+    kept = [
+        entry for entry in plist.get("CFBundleDocumentTypes", [])
+        if entry.get("CFBundleTypeName") not in generated_names
+    ]
+    plist["CFBundleDocumentTypes"] = kept + generated
 
     with open(plist_path, "wb") as f:
         plistlib.dump(plist, f, fmt=plistlib.FMT_XML, sort_keys=True)

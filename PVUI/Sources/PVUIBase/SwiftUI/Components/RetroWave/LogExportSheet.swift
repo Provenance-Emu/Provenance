@@ -27,7 +27,7 @@ public struct LogExportSheet: View {
     @State private var exportedURL: URL?
 
     public enum ExportFormat: String, CaseIterable {
-        case text = "Text File (.txt)"
+        case text = "Text File (.log)"
         case zip = "Zip Bundle (.zip)"
     }
 

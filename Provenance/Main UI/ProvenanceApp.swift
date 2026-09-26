@@ -25,6 +25,18 @@ struct ProvenanceApp: App {
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var sceneCoordinator = SceneCoordinator.shared
 
+#if !os(tvOS)
+    /// A `.log` file opened from another app, shown in the log viewer.
+    @State private var openedLogURL: URL?
+
+    private var isShowingOpenedLog: Binding<Bool> {
+        Binding(
+            get: { openedLogURL != nil },
+            set: { if !$0 { openedLogURL = nil } }
+        )
+    }
+#endif
+
     // NOTE: there used to be a `registerSpotlightBackgroundTask()` here, called from
     // `init()`, that took a `beginBackgroundTask(withName: "SpotlightIndexing")`
     // assertion at LAUNCH and never released it — the only `endBackgroundTask` was in
@@ -102,6 +114,15 @@ struct ProvenanceApp: App {
 #endif
                 }
             #if !os(tvOS)
+                .fullScreenCover(isPresented: isShowingOpenedLog) {
+                    if let url = openedLogURL {
+                        ZStack {
+                            Color.black.opacity(0.95).ignoresSafeArea()
+                            RetroLogView(importing: url, isFullscreen: isShowingOpenedLog)
+                                .padding()
+                        }
+                    }
+                }
                 .onContinueUserActivity(CSSearchableItemActionType) { userActivity in
                     handleSpotlightActivity(userActivity)
                 }
@@ -557,6 +578,16 @@ extension ProvenanceApp {
             }
             return
         }
+
+#if !os(tvOS)
+        // Log files (exported by Provenance or any other `.log`) open in the log viewer,
+        // never the ROM importer.
+        if fileExtension == "log" {
+            ILOG("ProvenanceApp: Opening log file: \(filename)")
+            openedLogURL = url
+            return
+        }
+#endif
 
         // Handle ROM files as before. Derive a unique destination so re-sharing a
         // file with the same name doesn't throw and silently drop the import.

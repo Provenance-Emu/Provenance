@@ -193,13 +193,13 @@ struct CoreOptionTileProviderTests {
 
     @Test("Empty options returns empty array (no coreSettings tile)")
     func emptyOptionsReturnsEmpty() {
-        let tiles = CoreOptionTileProvider.tiles(from: [], coreClass: EmptyCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: [], coreClass: EmptyCore.self, md5Scope: nil)
         #expect(tiles.isEmpty)
     }
 
     @Test("Bool options produce toggle tiles plus coreSettings tile")
     func boolOptionsProduceTilesAndSettings() {
-        let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self, md5Scope: nil)
         // 2 top-level booleans + 1 nested boolean in group + 1 coreSettings tile
         let boolTiles = tiles.filter { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) }
         let settingsTile = tiles.first(where: { $0.id == CoreOptionTileProvider.coreSettingsTileID })
@@ -209,7 +209,7 @@ struct CoreOptionTileProviderTests {
 
     @Test("Non-boolean options are not surfaced as toggle tiles")
     func rangeOptionNotSurfaced() {
-        let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self, md5Scope: nil)
         // The range option "Speed" should not appear as a tile
         let speedTile = tiles.first(where: { $0.label == "Speed" })
         #expect(speedTile == nil)
@@ -217,7 +217,7 @@ struct CoreOptionTileProviderTests {
 
     @Test("Core Settings tile has gearshape icon and blue color")
     func coreSettingsTileHasCorrectAppearance() {
-        let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self, md5Scope: nil)
         let settingsTile = tiles.first(where: { $0.id == CoreOptionTileProvider.coreSettingsTileID })
         #expect(settingsTile?.icon == "gearshape.fill")
         #expect(settingsTile?.colorKey == .blue)
@@ -225,7 +225,7 @@ struct CoreOptionTileProviderTests {
 
     @Test("Core Settings tile is always last")
     func coreSettingsTileIsLast() {
-        let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self, md5Scope: nil)
         #expect(tiles.last?.id == CoreOptionTileProvider.coreSettingsTileID)
     }
 
@@ -266,7 +266,7 @@ struct CoreOptionTileProviderTests {
 
     @Test("Grouped bool options are recursively extracted")
     func groupedOptionsAreExtracted() {
-        let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: MockCore.options, coreClass: MockCore.self, md5Scope: nil)
         // Find by label since tile IDs now include a positional index disambiguator.
         let debugTile = tiles.first(where: { $0.label == "Debug Mode" })
         #expect(debugTile != nil)
@@ -277,7 +277,7 @@ struct CoreOptionTileProviderTests {
         let options: [CoreOption] = [
             .bool(CoreOptionValueDisplay(title: "Flag"), defaultValue: false)
         ]
-        let tiles = CoreOptionTileProvider.tiles(from: options, coreClass: MockCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: options, coreClass: MockCore.self, md5Scope: nil)
         let boolTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
         #expect(boolTile?.dismissOnTap == false)
     }
@@ -290,7 +290,7 @@ struct CoreOptionTileProviderEnumTests {
 
     @Test("Enum option creates cycle tile with correct icon and color")
     func enumTileHasCorrectAppearance() {
-        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self, md5Scope: nil)
         let enumTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
         #expect(enumTile != nil)
         #expect(enumTile?.icon == "arrow.trianglehead.2.clockwise")
@@ -300,7 +300,7 @@ struct CoreOptionTileProviderEnumTests {
     @Test("Enum tile badge shows current value title")
     func enumTileBadgeShowsTitle() {
         // No stored value — falls back to defaultValue 0 → first enum entry "8-bit"
-        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self, md5Scope: nil)
         let enumTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
         // Badge should be the title of the matching value, not description
         #expect(enumTile?.badge == "8-bit")
@@ -308,7 +308,7 @@ struct CoreOptionTileProviderEnumTests {
 
     @Test("Enum tile longPressOptions count matches values")
     func enumTileLongPressOptionsCount() {
-        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self, md5Scope: nil)
         let enumTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
         // 3 enum values → 3 long-press options
         #expect(enumTile?.longPressOptions?.count == 3)
@@ -316,7 +316,7 @@ struct CoreOptionTileProviderEnumTests {
 
     @Test("Enum tile longPressOptions use value title not description")
     func enumTileLongPressOptionsTitles() {
-        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: EnumCore.options, coreClass: EnumCore.self, md5Scope: nil)
         let lp = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })?.longPressOptions
         let titles = lp?.map(\.title) ?? []
         // Should use .title ("8-bit", "16-bit", "32-bit"), not .description ("256 colors", etc.)
@@ -329,7 +329,7 @@ struct CoreOptionTileProviderEnumTests {
             Issue.record("Could not find 'Color Depth' option")
             return
         }
-        CoreOptionTileProvider.selectValue(titled: "16-bit", for: option, coreClass: EnumCore.self)
+        CoreOptionTileProvider.selectValue(titled: "16-bit", for: option, coreClass: EnumCore.self, md5Scope: nil)
         let stored: Int? = EnumCore.valueForOption(option)
         #expect(stored == 1)
         // Clean up
@@ -343,7 +343,7 @@ struct CoreOptionTileProviderEnumTests {
             return
         }
         // "256 colors" is the description of the first value, not its title — should not match
-        CoreOptionTileProvider.selectValue(titled: "256 colors", for: option, coreClass: EnumCore.self)
+        CoreOptionTileProvider.selectValue(titled: "256 colors", for: option, coreClass: EnumCore.self, md5Scope: nil)
         // Value should remain at default (0) since "256 colors" matches no .title
         let stored: Int? = EnumCore.valueForOption(option)
         // No match means value unchanged (nil stored → default 0)
@@ -359,7 +359,7 @@ struct CoreOptionTileProviderMultiTests {
 
     @Test("Multi option creates tile with list icon and purple color")
     func multiTileHasCorrectAppearance() {
-        let tiles = CoreOptionTileProvider.tiles(from: MultiCore.options, coreClass: MultiCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: MultiCore.options, coreClass: MultiCore.self, md5Scope: nil)
         let multiTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
         #expect(multiTile != nil)
         #expect(multiTile?.icon == "list.bullet.clipboard")
@@ -369,7 +369,7 @@ struct CoreOptionTileProviderMultiTests {
     @Test("Multi tile badge shows current value title")
     func multiTileBadgeShowsTitle() {
         UserDefaults.standard.removeObject(forKey: "MultiCore.System Region")
-        let tiles = CoreOptionTileProvider.tiles(from: MultiCore.options, coreClass: MultiCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: MultiCore.options, coreClass: MultiCore.self, md5Scope: nil)
         let multiTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
         // No stored value → first value "Auto"
         #expect(multiTile?.badge == "Auto")
@@ -377,7 +377,7 @@ struct CoreOptionTileProviderMultiTests {
 
     @Test("Multi tile longPressOptions count matches values")
     func multiTileLongPressOptionsCount() {
-        let tiles = CoreOptionTileProvider.tiles(from: MultiCore.options, coreClass: MultiCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: MultiCore.options, coreClass: MultiCore.self, md5Scope: nil)
         let multiTile = tiles.first(where: { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) })
         #expect(multiTile?.longPressOptions?.count == 3)
     }
@@ -389,7 +389,7 @@ struct CoreOptionTileProviderMultiTests {
             Issue.record("Could not find 'System Region' option")
             return
         }
-        CoreOptionTileProvider.cycleNextValue(for: option, coreClass: MultiCore.self)
+        CoreOptionTileProvider.cycleNextValue(for: option, coreClass: MultiCore.self, md5Scope: nil)
         // After cycling from default (index 0 "Auto"), should advance to index 1 "NTSC"
         let stored = UserDefaults.standard.string(forKey: "MultiCore.System Region")
         #expect(stored == "NTSC")
@@ -403,8 +403,8 @@ struct CoreOptionTileProviderMultiTests {
             return
         }
         // Set to last value "PAL"
-        CoreOptionTileProvider.selectValue(titled: "PAL", for: option, coreClass: MultiCore.self)
-        CoreOptionTileProvider.cycleNextValue(for: option, coreClass: MultiCore.self)
+        CoreOptionTileProvider.selectValue(titled: "PAL", for: option, coreClass: MultiCore.self, md5Scope: nil)
+        CoreOptionTileProvider.cycleNextValue(for: option, coreClass: MultiCore.self, md5Scope: nil)
         // Should wrap to first value "Auto"
         let stored = UserDefaults.standard.string(forKey: "MultiCore.System Region")
         #expect(stored == "Auto")
@@ -423,7 +423,7 @@ struct CoreOptionTileProviderDuplicateTitleTests {
 
     @Test("Two options with same title produce distinct tile IDs")
     func duplicateTitlesGetDistinctIDs() {
-        let tiles = CoreOptionTileProvider.tiles(from: DuplicateTitleCore.options, coreClass: DuplicateTitleCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: DuplicateTitleCore.options, coreClass: DuplicateTitleCore.self, md5Scope: nil)
         let optionTiles = tiles.filter { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) }
         #expect(optionTiles.count == 2)
         // IDs must be distinct even though display titles are identical.
@@ -432,7 +432,7 @@ struct CoreOptionTileProviderDuplicateTitleTests {
 
     @Test("optionIndexAndKey returns distinct indices for duplicate-titled tiles")
     func optionIndexAndKeyDistinguishesDuplicates() {
-        let tiles = CoreOptionTileProvider.tiles(from: DuplicateTitleCore.options, coreClass: DuplicateTitleCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: DuplicateTitleCore.options, coreClass: DuplicateTitleCore.self, md5Scope: nil)
         let optionTiles = tiles.filter { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) }
         guard optionTiles.count == 2 else {
             Issue.record("Expected 2 option tiles, got \(optionTiles.count)")
@@ -448,7 +448,7 @@ struct CoreOptionTileProviderDuplicateTitleTests {
 
     @Test("findOption(atIndex:) returns second option for index 1 even with duplicate title")
     func findOptionAtIndexSelectsCorrectOption() {
-        let tiles = CoreOptionTileProvider.tiles(from: DuplicateTitleCore.options, coreClass: DuplicateTitleCore.self)
+        let tiles = CoreOptionTileProvider.tiles(from: DuplicateTitleCore.options, coreClass: DuplicateTitleCore.self, md5Scope: nil)
         let optionTiles = tiles.filter { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) }
         guard optionTiles.count == 2 else {
             Issue.record("Expected 2 option tiles")

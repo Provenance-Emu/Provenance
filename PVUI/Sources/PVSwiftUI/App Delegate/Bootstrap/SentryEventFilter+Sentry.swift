@@ -38,6 +38,7 @@ extension SentryEventSnapshot {
             level: levelString(event.level),
             transaction: event.transaction,
             requestURL: event.request?.url,
+            requestMethod: event.request?.method,
             title: nil,
             tags: tags,
             frames: frames

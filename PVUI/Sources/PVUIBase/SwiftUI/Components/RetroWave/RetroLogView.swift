@@ -35,6 +35,9 @@ public struct RetroLogView: View {
 
     /// Message shown when importing a log file fails
     @State private var importErrorMessage: String?
+
+    /// A log file handed to the app from outside (Files, Mail, AirDrop), imported on appear
+    private var initialImportURL: URL? = nil
     #endif
 
     #if os(tvOS)
@@ -155,6 +158,7 @@ public struct RetroLogView: View {
                 importErrorMessage = error.localizedDescription
             }
         }
+        .task(id: initialImportURL) { await importInitialLog() }
         .alert(
             "Import Failed",
             isPresented: Binding(
@@ -733,6 +737,22 @@ public struct RetroLogView: View {
 
 extension RetroLogView {
     #if !os(tvOS)
+    /// Opens with `url` imported in place of the live logs.
+    public init(importing url: URL, isFullscreen: Binding<Bool> = .constant(false)) {
+        self._isFullscreen = isFullscreen
+        self.initialImportURL = url
+    }
+
+    /// Imports the log handed over by `init(importing:)`, if any.
+    func importInitialLog() async {
+        guard let url = initialImportURL else { return }
+        do {
+            try await viewModel.importLog(from: url)
+        } catch {
+            importErrorMessage = error.localizedDescription
+        }
+    }
+
     /// Content types the log importer accepts: plain text, `.log`, and exported `.zip` bundles.
     static var importableContentTypes: [UTType] {
         var types: [UTType] = [.plainText, .zip]
