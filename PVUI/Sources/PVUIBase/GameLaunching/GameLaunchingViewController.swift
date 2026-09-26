@@ -1304,6 +1304,12 @@ extension GameLaunchingViewController where Self: UIViewController {
     func openSaveState(_ saveState: PVSaveState) async {
 
         if let gameVC = presentedViewController as? PVEmualatorControllerProtocol {
+            // The emulator VC itself (a `GCEventViewController` on tvOS) is the view that
+            // actually owns controller focus while a game is running — `self` here is just
+            // the (already-dismissed-behind-it) view controller that presented it. Alerts
+            // MUST be presented on `presenter`, not `self`; see the load-failure branch below.
+            let presenter = (gameVC as? UIViewController) ?? self
+
             // Skip the version mismatch prompt if SceneCoordinator already confirmed
             // this save state during the pre-launch flow (prevents double-alert).
             let alreadyConfirmed: Bool
@@ -1319,7 +1325,6 @@ extension GameLaunchingViewController where Self: UIViewController {
                 // Enable UIKit controller interaction so MFi gamepads can navigate the alert
                 // on tvOS (GCEventViewController intercepts input while the game is running).
                 let pvCore = saveState.core
-                let presenter = (gameVC as? UIViewController) ?? self
                 gameVC.enableControllerInput(true)
                 let shouldLoad = await SaveStateVersionChecker.confirmLoad(
                     saveState: saveState,
@@ -1348,8 +1353,14 @@ extension GameLaunchingViewController where Self: UIViewController {
                 let reason = (error as NSError).localizedFailureReason
 
                 let msg = "Failed to load save state: \(description) \(reason ?? "")"
-                self.presentError(msg, source: self.view) {
+                // Present on the on-screen emulator VC and hand it controller input for the
+                // alert's lifetime, as the version-mismatch confirm above does. On tvOS only
+                // the emulator's GCEventViewController can route the remote to an alert;
+                // presenting on `self` left input flowing into the paused core underneath.
+                gameVC.enableControllerInput(true)
+                presenter.presentError(msg, source: presenter.view) {
                     gameVC.core.setPauseEmulation(false)
+                    gameVC.enableControllerInput(false)
                 }
             }
         } else {
