@@ -57,6 +57,24 @@ let volumeHeight: CGFloat = 3
 // types is a separate, larger change, out of scope here. Remove this disable once
 // that split happens.
 // swiftlint:disable:next type_body_length
+/// Tuning constants for the classic on-screen controller.
+///
+/// These live outside `PVControllerViewController` because that class is generic
+/// (`<T: ResponderClient>`) and Swift does not allow static stored properties in a
+/// generic type.
+private enum OSDTiming {
+    /// How often the record button's "recording in progress" pulse repeats.
+    static let recordPulseInterval: TimeInterval = 0.8
+    /// Duration of each fade half of the pulse (two run back-to-back per `recordPulseInterval`).
+    static let recordPulseHalfDuration: TimeInterval = 0.4
+    /// How long the quick-action row stays visible after the last interaction before auto-hiding.
+    static let quickActionBarAutoHideDelay: TimeInterval = 3.0
+    /// Height of the invisible top-edge strip that reveals the quick-action row on tap.
+    static let quickActionBarTapZoneHeight: CGFloat = 60.0
+    /// Fade duration used when showing/hiding the quick-action row.
+    static let quickActionBarFadeDuration: TimeInterval = 0.25
+}
+
 open class PVControllerViewController<T: ResponderClient> : UIViewController, ControllerVC, OSDRecordingObserver, OSDFastForwardObserver, OSDControlsVisibilityObserver {
 
     public func layoutViews() {}
@@ -215,10 +233,6 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     #if os(iOS)
     private var recordButton: UIButton?
     private var recordPulseTimer: Timer?
-    /// How often the record button's "recording in progress" pulse repeats.
-    private static let recordPulseInterval: TimeInterval = 0.8
-    /// Duration of each fade half of the pulse (two of these run back-to-back per `recordPulseInterval`).
-    private static let recordPulseHalfDuration: TimeInterval = 0.4
     #endif
     #if !os(tvOS)
     private var keyboardToggleButton: UIButton?
@@ -238,12 +252,6 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     private var quickActionBarTapZone: UIView?
     private var quickActionBarAutoHideTimer: Timer?
     private var quickActionBarVisible: Bool = true
-    /// How long the quick-action row stays visible after the last interaction before auto-hiding.
-    private static let quickActionBarAutoHideDelay: TimeInterval = 3.0
-    /// Height of the invisible top-edge strip that reveals the quick-action row on tap.
-    private static let quickActionBarTapZoneHeight: CGFloat = 60.0
-    /// Fade duration used when showing/hiding the quick-action row.
-    private static let quickActionBarFadeDuration: TimeInterval = 0.25
     #endif
 
     private var shouldShowToggleButton: Bool {
@@ -1841,7 +1849,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
         #if os(iOS)
         setupRecordButton(buttonSize: buttonSize, spacing: spacing, safeTop: safeTop, topInset: topInset)
-        setupQuickActionBarTapZone(height: Self.quickActionBarTapZoneHeight)
+        setupQuickActionBarTapZone(height: OSDTiming.quickActionBarTapZoneHeight)
         scheduleQuickActionBarAutoHide()
         #endif
     }
@@ -1890,7 +1898,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     private func showQuickActionBar() {
         quickActionBarVisible = true
-        UIView.animate(withDuration: Self.quickActionBarFadeDuration) {
+        UIView.animate(withDuration: OSDTiming.quickActionBarFadeDuration) {
             self.quickActionButtons.forEach { $0.alpha = 1.0 }
         }
         quickActionButtons.forEach { $0.isUserInteractionEnabled = true }
@@ -1901,7 +1909,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
         quickActionBarVisible = false
         quickActionBarAutoHideTimer?.invalidate()
         quickActionBarAutoHideTimer = nil
-        UIView.animate(withDuration: Self.quickActionBarFadeDuration) {
+        UIView.animate(withDuration: OSDTiming.quickActionBarFadeDuration) {
             self.quickActionButtons.forEach { $0.alpha = 0.0 }
         }
         quickActionButtons.forEach { $0.isUserInteractionEnabled = false }
@@ -1909,7 +1917,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     private func scheduleQuickActionBarAutoHide() {
         quickActionBarAutoHideTimer?.invalidate()
-        quickActionBarAutoHideTimer = Timer.scheduledTimer(withTimeInterval: Self.quickActionBarAutoHideDelay, repeats: false) { [weak self] _ in
+        quickActionBarAutoHideTimer = Timer.scheduledTimer(withTimeInterval: OSDTiming.quickActionBarAutoHideDelay, repeats: false) { [weak self] _ in
             self?.hideQuickActionBar()
         }
     }
@@ -2167,7 +2175,7 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
 
     private func startRecordPulse() {
         stopRecordPulse()
-        recordPulseTimer = Timer.scheduledTimer(withTimeInterval: Self.recordPulseInterval, repeats: true) { [weak self] _ in
+        recordPulseTimer = Timer.scheduledTimer(withTimeInterval: OSDTiming.recordPulseInterval, repeats: true) { [weak self] _ in
             guard let btn = self?.recordButton else { return }
             // `.allowUserInteraction` is required here: without it, `UIView.animate`
             // implicitly calls `UIApplication.beginIgnoringInteractionEvents()` for the
@@ -2176,10 +2184,10 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
             // ALL touches app-wide almost continuously — including the second tap on this
             // same record button meant to stop recording, which is why "tap to stop" looked
             // like it did nothing (root cause of the record-button stop bug).
-            UIView.animate(withDuration: Self.recordPulseHalfDuration, delay: 0, options: [.allowUserInteraction], animations: {
+            UIView.animate(withDuration: OSDTiming.recordPulseHalfDuration, delay: 0, options: [.allowUserInteraction], animations: {
                 btn.alpha = 0.4
             }) { _ in
-                UIView.animate(withDuration: Self.recordPulseHalfDuration, delay: 0, options: [.allowUserInteraction], animations: {
+                UIView.animate(withDuration: OSDTiming.recordPulseHalfDuration, delay: 0, options: [.allowUserInteraction], animations: {
                     btn.alpha = 1.0
                 })
             }
