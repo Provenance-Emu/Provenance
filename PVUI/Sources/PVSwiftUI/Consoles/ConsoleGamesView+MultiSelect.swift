@@ -88,9 +88,13 @@ extension ConsoleGamesView {
         .accessibilityElement(children: .contain)
         .accessibilityValue(gamesViewModel.isMultiSelectMode ? selectionLabel : "")
         .accessibilityAddTraits(gamesViewModel.isMultiSelectMode && isSelected ? .isSelected : [])
-        .accessibilityAction(named: Text(isSelected ? "Deselect" : "Select")) {
-            guard gamesViewModel.isMultiSelectMode else { return }
-            performSelectionToggle(md5: md5)
+        // Only offer Select/Deselect to VoiceOver while multi-select is active.
+        .accessibilityActions {
+            if gamesViewModel.isMultiSelectMode {
+                Button(isSelected ? "Deselect" : "Select") {
+                    performSelectionToggle(md5: md5)
+                }
+            }
         }
         .onTapGesture {
             if gamesViewModel.isMultiSelectMode {

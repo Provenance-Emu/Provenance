@@ -110,36 +110,25 @@ class ConsoleGamesViewModel: ObservableObject {
     /// Toggle a game in/out of the selection set.
     @MainActor
     func toggleSelection(md5: String) {
-        let normalizedID = normalizedSelectionID(md5)
-        guard !normalizedID.isEmpty else { return }
-        if selectedGameMD5s.contains(normalizedID) {
-            selectedGameMD5s.remove(normalizedID)
-        } else {
-            selectedGameMD5s.insert(normalizedID)
-        }
+        updateSelection { $0.toggle(id: md5) }
     }
 
     /// Select all currently visible games. Duplicate or empty IDs are ignored.
     @MainActor
     func selectAllVisible(_ games: [GameCellModel]) {
-        let normalizedIDs = games.compactMap { game -> String? in
-            let id = normalizedSelectionID(game.md5)
-            return id.isEmpty ? nil : id
-        }
-        selectedGameMD5s.formUnion(normalizedIDs)
+        updateSelection { $0.selectAll(ids: games.map(\.md5)) }
     }
 
     /// Deselect only currently visible games, preserving selections for non-visible games.
     @MainActor
     func deselectAllVisible(_ games: [GameCellModel]) {
-        let normalizedIDs = games.map { normalizedSelectionID($0.md5) }
-        selectedGameMD5s.subtract(normalizedIDs)
+        updateSelection { $0.deselectAll(ids: games.map(\.md5)) }
     }
 
     /// Clear selection when a filter changes so hidden games cannot remain selected.
     @MainActor
     func clearSelectionForFilterChange() {
-        selectedGameMD5s.removeAll()
+        updateSelection { $0.clear() }
     }
 
     /// Enter multi-select mode; clears any previous selection.
@@ -156,9 +145,13 @@ class ConsoleGamesViewModel: ObservableObject {
         selectedGameMD5s = []
     }
 
+    /// Applies a change through `ConsoleGameSelectionState`, which owns ID
+    /// normalisation, so the view model and its tests share one implementation.
     @MainActor
-    private func normalizedSelectionID(_ id: String) -> String {
-        id.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+    private func updateSelection(_ change: (inout ConsoleGameSelectionState) -> Void) {
+        var state = ConsoleGameSelectionState(selectedIDs: selectedGameMD5s)
+        change(&state)
+        selectedGameMD5s = state.selectedIDs
     }
 
     // Properties that were @State in the View, now @Published in ViewModel
@@ -404,7 +397,7 @@ private extension ConsoleGamesViewModel {
                             self.rebuildGameModels(from: snapshot)
                         case .error(let error):
                             Task { @MainActor in
-                                self.selectedGameMD5s.removeAll()
+                                self.updateSelection { $0.clear() }
                             }
                             ELOG("ConsoleGamesViewModel: error observing PVGame: \(error.localizedDescription)")
                         }
@@ -461,8 +454,7 @@ private extension ConsoleGamesViewModel {
             self.allGamesModels = self.sorted(all)
             self.favoritesModels = self.sorted(favs)
             self.recentlyPlayedModels = recents
-            let visibleIDs = Set(all.map { self.normalizedSelectionID($0.md5) })
-            self.selectedGameMD5s.formIntersection(visibleIDs)
+            self.updateSelection { $0.prune(to: all.map(\.md5)) }
         }
         }
     }
