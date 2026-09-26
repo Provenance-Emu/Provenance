@@ -367,7 +367,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing, SystemFi
 // MARK: - CloudKit Implementation
 
 /// BIOS syncer for all OSs  using CloudKit
-public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
+public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing { // swiftlint:disable:this type_body_length
 
     /// System subdirectory short names that contain user-placed firmware requiring CloudKit backup.
     ///

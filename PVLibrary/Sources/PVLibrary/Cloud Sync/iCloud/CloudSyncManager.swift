@@ -70,7 +70,7 @@ extension CloudSyncManager {
 
 /// Manager for cloud sync operations
 /// Handles initialization and coordination of sync providers
-public class CloudSyncManager {
+public class CloudSyncManager { // swiftlint:disable:this type_body_length
     // MARK: - Properties
 
     /// Shared instance. Disabled (no-op) when CloudKit entitlement is absent (e.g. sideloaded builds).
