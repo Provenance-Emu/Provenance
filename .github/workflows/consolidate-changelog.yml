@@ -105,7 +105,9 @@ jobs:
               """
               basename = os.path.basename(path)
               stem     = os.path.splitext(basename)[0]
-              pr_num   = int(stem) if stem.isdigit() else None
+              # `3664.md` and `3664-short-name.md` both belong to PR #3664.
+              pr_m     = re.match(r'(\d+)(?:-|$)', stem)
+              pr_num   = int(pr_m.group(1)) if pr_m else None
 
               sections: dict[str, list[list[str]]] = {}
               current_section: str | None = None
@@ -150,15 +152,18 @@ jobs:
               return -(pr if pr else 0)
 
           def dedup_entries(entries: list[list[str]]) -> list[list[str]]:
-              """Remove duplicate entries by PR number (keep first occurrence)."""
-              seen: set[int] = set()
+              """Remove exact duplicate entries (keep first occurrence).
+
+              Not by PR number: one PR often contributes several bullets, and
+              keying on the number silently dropped all but the first.
+              """
+              seen: set[str] = set()
               result: list[list[str]] = []
               for e in entries:
-                  pr = extract_pr_num(' '.join(e))
-                  if pr:
-                      if pr in seen:
-                          continue
-                      seen.add(pr)
+                  key = ' '.join(' '.join(e).split())
+                  if key in seen:
+                      continue
+                  seen.add(key)
                   result.append(e)
               return result
 
@@ -223,10 +228,24 @@ jobs:
 
           fragments = [parse_fragment(p) for p in fragment_paths]
 
+          # A fragment that yields no entries (e.g. bullets without a `### Section`
+          # header) would otherwise be deleted with nothing written — fail instead.
+          empty = [p for p, frag in zip(fragment_paths, fragments)
+                   if not any(frag['sections'].values())]
+          if empty:
+              print("::error::No entries parsed from:", *empty,
+                    "— every bullet must sit under a '### Section' header.", sep='\n  ')
+              sys.exit(1)
+
           # ── Merge ─────────────────────────────────────────────────────────────
 
-          # Collect all section names (existing + from fragments)
+          # Collect all section names (existing + from fragments). Existing
+          # sections outside SECTION_ORDER (Skins, Save States, …) must be kept,
+          # or the rebuild below deletes them.
           all_sections: list[str] = list(SECTION_ORDER)
+          for s in existing_sections:
+              if s not in all_sections:
+                  all_sections.append(s)
           for frag in fragments:
               for s in frag['sections']:
                   if s not in all_sections:
