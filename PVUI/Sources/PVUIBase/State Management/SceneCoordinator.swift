@@ -388,8 +388,9 @@ public class SceneCoordinator: ObservableObject {
             return false
         }()
 
-        /// Result of the pre-download check, when one ran. Reused for the final check so a
-        /// cloud-only game doesn't repeat the same CloudKit lookups for BIOS still missing.
+        /// Result of the pre-download check, when one ran. Reused (after a cheap on-disk
+        /// refresh) for the final check so a cloud-only game doesn't repeat the same
+        /// CloudKit lookups for BIOS still missing.
         var preDownloadValidation: PreDownloadValidation?
 
         if fileExistsLocally {
@@ -538,7 +539,7 @@ public class SceneCoordinator: ObservableObject {
         // ALWAYS validate BIOS and core requirements before launching (not just for cloud downloads)
         let validation: PreDownloadValidation
         if let preDownloadValidation {
-            validation = preDownloadValidation
+            validation = refreshingMissingBIOS(preDownloadValidation, system: system)
         } else {
             if system.requiresBIOS {
                 syncStatusManager.update(statusMessage: "Validating BIOS requirements...")
@@ -689,6 +690,20 @@ public class SceneCoordinator: ObservableObject {
 
             return messages.joined(separator: "\n\n")
         }
+    }
+
+    /// `validation` minus any missing BIOS that has since landed on disk — e.g. one whose
+    /// download outlived its launch timeout and finished during the ROM download. Only a
+    /// directory listing, so reusing a pre-download result stays cheap without going stale.
+    private func refreshingMissingBIOS(_ validation: PreDownloadValidation, system: PVSystem) -> PreDownloadValidation {
+        guard !validation.missingBIOSFiles.isEmpty else { return validation }
+        let present = Set(((try? FileManager.default.contentsOfDirectory(atPath: system.biosDirectory.path)) ?? [])
+            .map { $0.lowercased() })
+        let stillMissing = validation.missingBIOSFiles.filter { !present.contains($0.lowercased()) }
+        return PreDownloadValidation(canProceed: validation.hasAvailableCores && stillMissing.isEmpty,
+                                     missingBIOSFiles: stillMissing,
+                                     hasAvailableCores: validation.hasAvailableCores,
+                                     systemName: validation.systemName)
     }
 
     /// Validates requirements before downloading a cloud ROM
@@ -1213,8 +1228,9 @@ public class SceneCoordinator: ObservableObject {
             return false
         }()
 
-        /// Result of the pre-download check, when one ran. Reused for the final check so a
-        /// cloud-only game doesn't repeat the same CloudKit lookups for BIOS still missing.
+        /// Result of the pre-download check, when one ran. Reused (after a cheap on-disk
+        /// refresh) for the final check so a cloud-only game doesn't repeat the same
+        /// CloudKit lookups for BIOS still missing.
         var preDownloadValidation: PreDownloadValidation?
 
         if saveStateFileExistsLocally {
@@ -1338,7 +1354,7 @@ public class SceneCoordinator: ObservableObject {
         // Validate BIOS and core requirements
         let validation: PreDownloadValidation
         if let preDownloadValidation {
-            validation = preDownloadValidation
+            validation = refreshingMissingBIOS(preDownloadValidation, system: system)
         } else {
             if system.requiresBIOS {
                 syncStatusManager.update(statusMessage: "Validating BIOS requirements...")
