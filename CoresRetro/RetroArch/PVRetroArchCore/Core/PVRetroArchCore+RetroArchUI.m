@@ -1473,6 +1473,22 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
 
 //
 // Custom Viewport Positioning methods
+/// Stretch fills the viewport; every other mode keeps the core's aspect.
+/// Integer Scale snaps to whole multiples (always on for Hatari, see writeConfigFile).
+- (void)pv_applyScalingModeToSettings:(settings_t *)settings {
+    settings->bools.video_scale_integer = PVSettingsWrapper.useIntegerScale || [self pv_isHatariSystem];
+    settings->bools.video_force_aspect = false;
+    settings->uints.video_aspect_ratio_idx = PVSettingsWrapper.useStretchScale ? ASPECT_RATIO_FULL : ASPECT_RATIO_CORE;
+}
+
+- (void)applyScalingModeSetting {
+    if (self.isShuttingDownForViewportUpdates) { return; }
+    settings_t *settings = config_get_ptr();
+    if (!settings) { return; }
+    [self pv_applyScalingModeToSettings:settings];
+    command_event(CMD_EVENT_VIDEO_SET_ASPECT_RATIO, NULL);
+}
+
 - (void)applyRenderViewFrameInTouchView:(CGRect)frame {
     if (self.isShuttingDownForViewportUpdates) {
         WLOG(@"[RA] Skipping frame apply during shutdown");
@@ -1613,9 +1629,7 @@ static NSArray<NSString *> *forcedDefaultKeys(void) {
     /// Update RetroArch viewport to match container size
     settings_t *settings = config_get_ptr();
     if (settings) {
-        settings->bools.video_scale_integer = PVSettingsWrapper.useIntegerScale;
-        settings->bools.video_force_aspect = false;
-        settings->uints.video_aspect_ratio_idx = ASPECT_RATIO_CORE;
+        [self pv_applyScalingModeToSettings:settings];
         command_event(CMD_EVENT_VIDEO_SET_ASPECT_RATIO, NULL);
 
         unsigned int w = (unsigned)lrintf(pixelSize.width);

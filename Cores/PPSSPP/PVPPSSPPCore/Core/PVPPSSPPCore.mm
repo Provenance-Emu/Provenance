@@ -228,6 +228,14 @@
 }
 
 /* Config */
+/// PPSSPP fits its framebuffer into whatever rect it is given, so Stretch and
+/// Integer Scale have to be applied with its own display flags. It reads them
+/// every frame, so this also takes effect mid-game.
+- (void)applyDisplayScalingSetting {
+	g_Config.bDisplayStretch = self.stretchOption || PVSettingsWrapper.useStretchScale;
+	g_Config.bDisplayIntegerScale = PVSettingsWrapper.useIntegerScale;
+}
+
 - (void)setVolume {
 //    [self parseOptions];
     g_Config.iGlobalVolume = self.volume;
@@ -248,7 +256,7 @@
 	g_Config.iTexFiltering = self.tfOption;
 	g_Config.bFastMemory = self.fastMemory;
 	g_Config.iGPUBackend = self.gsPreference;
-	g_Config.bDisplayStretch = self.stretchOption;
+	[self applyDisplayScalingSetting];
     g_Config.iButtonPreference = self.buttonPref;
 	g_Config.bHardwareTransform = self.hardwareTransform;
 	// Note: Buffered rendering is always enabled and not configurable in PPSSPP

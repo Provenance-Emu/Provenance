@@ -131,6 +131,8 @@ NS_ASSUME_NONNULL_BEGIN
 // Viewport positioning API
 - (void)setUseCustomRenderViewLayout:(BOOL)enabled;
 - (void)applyRenderViewFrameInTouchView:(CGRect)frame;
+/// Maps the app's scaling mode onto RetroArch's integer-scale and aspect settings.
+- (void)applyScalingModeSetting;
 /*! @brief Block the calling thread until any in-flight emulation-thread
  *  observer callback has returned and the runloop has gone idle. Intended
  *  to be called from the main thread after toggling the pause flag, so

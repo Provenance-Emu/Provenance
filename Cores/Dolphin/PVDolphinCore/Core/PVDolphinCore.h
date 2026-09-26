@@ -197,6 +197,9 @@
 // JIT detection
 -(BOOL)checkJITAvailable;
 
+// Applies the Aspect Ratio option, or the app's Stretch scaling mode when it is Auto.
+-(void)applyAspectRatioSetting;
+
 @end
 extern __weak PVDolphinCoreBridge *_current;
 

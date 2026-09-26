@@ -103,6 +103,8 @@ typedef enum PVJaguarButton: NSInteger PVJaguarButton;
 - (void) gamepadEventIrRecenter:(int)action;
 - (BOOL) setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
 -(void) optionUpdated:(NSNotification *)notification;
+/// Maps the Stretch option and the app's scaling mode onto PPSSPP's display flags.
+- (void) applyDisplayScalingSetting;
 @end
 @interface CLLocationManager : NSObject
 @end

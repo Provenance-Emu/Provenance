@@ -110,6 +110,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     var skinLoadingCancellable: AnyCancellable?
     /// Observes the FPS counter preference and updates the in-game HUD live.
     private var showFPSCountCancellable: AnyCancellable?
+    var scalingModeCancellable: AnyCancellable?
 
     // Store the current skin for rotation handling
     var currentSkin: DeltaSkinProtocol?
@@ -1317,6 +1318,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // here re-runs the skin viewport maths on every launch, which is the
         // churn `recomputeSkinViewportIfLayoutChanged` was added to avoid.
         applyPostStartAspectIfChanged(from: preStartAspectSize)
+        forwardScalingModeToCoreIfNeeded()
 
         // Rebuild the audio graph if the core's real sample rate differs from what the
         // graph was built with before the ROM loaded (thin libretro wrapper case — see
@@ -2110,6 +2112,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         fpsTimer = nil
         showFPSCountCancellable?.cancel()
         showFPSCountCancellable = nil
+        scalingModeCancellable?.cancel()
+        scalingModeCancellable = nil
         if let themeDidChangeObserver {
             NotificationCenter.default.removeObserver(themeDidChangeObserver)
             self.themeDidChangeObserver = nil

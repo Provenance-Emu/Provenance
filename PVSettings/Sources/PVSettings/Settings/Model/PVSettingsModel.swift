@@ -1089,6 +1089,14 @@ public final class PVSettingsWrapper: NSObject {
         Defaults[.scalingMode] == .integerScale
     }
 
+    /// True when the user's selected scaling mode stretches to fill the screen.
+    /// Cores that size their own output (Dolphin, PPSSPP, RetroArch wrapper)
+    /// map this to their own stretch setting.
+    @objc
+    public static var useStretchScale: Bool {
+        Defaults[.scalingMode] == .stretch
+    }
+
     /// True when the user's selected scaling mode is native-resolution
     /// (1:1 pixels). ObjC bridges read this to drop legacy upscale paths.
     @objc
