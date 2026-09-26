@@ -304,17 +304,27 @@ jobs:
             echo "::error::No available iPhone simulator"
             exit 1
           fi
-          # Xcode names the generated scheme `PVUI-Package` for multi-product
-          # packages and after the product otherwise; accept either.
-          schemes=$(xcodebuild -list -json | jq -r '.workspace.schemes // .project.schemes | .[]')
-          scheme=$(printf '%s\n' "$schemes" | grep -x "PVUI-Package" || printf '%s\n' "$schemes" | grep -x "PVUI") \
-            || { echo "::error::No PVUI scheme in: $(echo $schemes)"; exit 1; }
-          echo "Schemes: $(echo $schemes)  → using $scheme"
+          # A scheme holding only the two suites. The auto-generated package scheme
+          # builds every target, and PVUI_TV's tvOS xibs/storyboards cannot compile
+          # for an iPhone destination. `.swiftpm` is gitignored, so write it here.
+          scheme=PVUI-UnitTests
+          mkdir -p .swiftpm/xcode/xcshareddata/xcschemes
+          {
+            echo '<?xml version="1.0" encoding="UTF-8"?>'
+            echo '<Scheme LastUpgradeVersion="2600" version="1.7">'
+            echo '  <BuildAction parallelizeBuildables="YES" buildImplicitDependencies="YES"/>'
+            echo '  <TestAction buildConfiguration="Debug" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB" shouldUseLaunchSchemeArgsEnv="YES">'
+            echo '    <Testables>'
+            for t in PVUIBaseTests PVSwiftUITests; do
+              echo "      <TestableReference skipped=\"NO\"><BuildableReference BuildableIdentifier=\"primary\" BlueprintIdentifier=\"$t\" BuildableName=\"$t\" BlueprintName=\"$t\" ReferencedContainer=\"container:\"/></TestableReference>"
+            done
+            echo '    </Testables>'
+            echo '  </TestAction>'
+            echo '</Scheme>'
+          } > ".swiftpm/xcode/xcshareddata/xcschemes/$scheme.xcscheme"
           xcodebuild test \
             -scheme "$scheme" \
             -destination "id=$udid" \
-            -only-testing:PVUIBaseTests \
-            -only-testing:PVSwiftUITests \
             -skipPackagePluginValidation \
             -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO \
