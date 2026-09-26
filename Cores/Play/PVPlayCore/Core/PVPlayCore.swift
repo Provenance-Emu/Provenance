@@ -24,6 +24,12 @@ open class PVPlayCore: PVEmulatorCore, @unchecked Sendable {
     /// garbage output without a JIT entitlement.
     open override var jitRequirement: PVJITRequirement { .requiredOrCrash }
 
+    /// This core draws into its own render surface and hands Provenance no frame
+    /// buffer (`videoBuffer` returns NULL), so the Metal screen-filter pass never
+    /// sees its output. Report no filter support so the pause menu hides shader
+    /// options that would otherwise do nothing.
+    open override var supportsFilters: Bool { false }
+
     /// Play! uses a custom CAMetalLayer/CAEAGLLayer GS renderer that is
     /// incompatible with the standard `PVMetalViewController` external-display
     /// path.  Override to `false` so dedicated mode is never activated for PS2.

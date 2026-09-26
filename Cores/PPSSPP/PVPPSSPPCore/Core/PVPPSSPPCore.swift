@@ -30,6 +30,12 @@ final class PVPPSSPPCore: PVEmulatorCore, @unchecked Sendable {
     /// PPSSPP uses JIT for full-speed PSP emulation; interpreter available as fallback.
     public override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
 
+    /// This core draws into its own render surface and hands Provenance no frame
+    /// buffer (`videoBuffer` returns NULL), so the Metal screen-filter pass never
+    /// sees its output. Report no filter support so the pause menu hides shader
+    /// options that would otherwise do nothing.
+    public override var supportsFilters: Bool { false }
+
     // PVEmulatorCoreBridged
     public lazy var _bridge: PVPPSSPPCoreBridge = .init()
 

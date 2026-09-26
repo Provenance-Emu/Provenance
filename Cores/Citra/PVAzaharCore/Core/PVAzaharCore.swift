@@ -26,6 +26,12 @@ public final class PVAzaharCore: PVEmulatorCore {
     /// interpreter mode when JIT cannot be acquired.  Launch is always safe.
     public override var jitRequirement: PVJITRequirement { .automaticWithFallback }
 
+    /// This core draws into its own render surface and hands Provenance no frame
+    /// buffer (`videoBuffer` returns NULL), so the Metal screen-filter pass never
+    /// sees its output. Report no filter support so the pause menu hides shader
+    /// options that would otherwise do nothing.
+    public override var supportsFilters: Bool { false }
+
     let _bridge: PVAzaharCoreBridge = .init()
     
     // MARK: Audio
