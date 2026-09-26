@@ -6,6 +6,9 @@ import PVCoreObjCBridge
 import PVEmulatorCore
 
 @objc
+// Already over the 600-line limit on develop; it is one declaration per Dolphin
+// option. Splitting it belongs in its own change.
+// swiftlint:disable:next type_body_length
 public class PVDolphinCoreOptions: NSObject, CoreOptions {
 
     // MARK: - Graphics Settings
