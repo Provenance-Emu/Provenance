@@ -37,7 +37,7 @@ public struct RetroLogView: View {
     @State private var importErrorMessage: String?
 
     /// A log file handed to the app from outside (Files, Mail, AirDrop), imported on appear
-    private var initialImportURL: URL?
+    private var initialImportURL: URL? = nil
     #endif
 
     #if os(tvOS)
