@@ -33,17 +33,18 @@ public class PVRetroArchCoreCore: PVEmulatorCore {
 
     public override var rendersToOpenGL: Bool { true }
     public override var isDoubleBuffered: Bool { true }
+    /// Systems whose cores render through their own path under this wrapper, out of
+    /// reach of Provenance's screen-filter pass, so shader options would do nothing.
+    private static let systemsWithoutFilterSupport: Set<SystemIdentifier> = [
+        .PS2, .GameCube, .Wii, .Vectrex, .PSP
+    ]
+
     public override var supportsFilters: Bool {
-        let unsupportedCores = [
-            "com.provenance.ps2",
-            "com.provenance.gamecube",
-            "com.provenance.wii",
-            "com.provenance.vectrex"
-        ]
         let sysName = EmulationState.shared.stateSubject.value.systemName
         DLOG("[RA] self.systemIdentifier: \(self.systemIdentifier ?? ""), systemName: \(sysName))")
-        return (!unsupportedCores.contains(self.systemIdentifier ?? "")
-                && !unsupportedCores.contains(sysName))
+        let candidates: [String?] = [self.systemIdentifier, sysName]
+        let systems = candidates.compactMap { $0.flatMap(SystemIdentifier.init(rawValue:)) }
+        return !systems.contains(where: Self.systemsWithoutFilterSupport.contains)
     }
     public override var supportsSkins: Bool {
         let unsupportedCores = [
