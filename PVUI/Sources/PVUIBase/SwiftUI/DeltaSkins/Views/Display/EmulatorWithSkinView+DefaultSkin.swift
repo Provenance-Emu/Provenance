@@ -18,6 +18,7 @@ import PVThemes
 import PVLogging
 import PVUIBase
 import PVSettings
+import Defaults
 
 // MARK: - Retrowave Styling Components
 
@@ -151,6 +152,10 @@ extension EmulatorWithSkinView {
 }
 
 // Separate view to handle the default controller skin with its own state
+// type_body_length: this view was already far over 600 lines on develop — pre-existing debt,
+// not introduced by the controller scale setting. Splitting it into per-layout subviews
+// is a separate, larger change. Remove this disable when that split happens.
+// swiftlint:disable:next type_body_length
 struct DefaultControllerSkinView: View {
     // Initial value from parent
     @State private var useJoystickInternal: Bool
@@ -178,6 +183,10 @@ struct DefaultControllerSkinView: View {
 
     // Bridge to protocol system (replaces notification system)
     @State private var viewportBridge: ViewportLayoutProviderBridge?
+
+    // User-configurable overlay scale and opacity
+    @Default(.controllerScale) private var controllerScale
+    @Default(.controllerOpacity) private var controllerOpacity
 
     init(useJoystick: Bool, inputHandler: DeltaSkinInputHandler, systemId: SystemIdentifier?, coreInstance: PVEmulatorCore) {
         self._useJoystickInternal = State(initialValue: useJoystick)
@@ -208,12 +217,28 @@ struct DefaultControllerSkinView: View {
         }
     }
 
+    /// Returns the fraction of the view height allocated to the controller overlay in portrait mode.
+    /// Extracted to ensure the SwiftUI layout and the viewport calculation always use the same value.
+    /// The incoming `scale` value is expected to be in the range 0.5–2.0, but since it comes from
+    /// persisted Defaults, we defensively sanitize and clamp it to avoid NaN / non-finite layouts.
+    private static func portraitControllerFraction(scale: Double) -> CGFloat {
+        min(0.70, max(0.20, 0.35 * sanitizedScale(scale)))
+    }
+
+    /// `controllerScale` comes from persisted Defaults, so normalise non-finite values
+    /// to 1.0 and clamp to the settings range before it reaches layout or `scaleEffect`.
+    private static func sanitizedScale(_ scale: Double) -> CGFloat {
+        CGFloat(min(2.0, max(0.5, scale.isFinite ? scale : 1.0)))
+    }
+
     var body: some View {
         // Load control layout data when view appears
         GeometryReader { geometry in
             // Guard against invalid geometry that could cause the view to disappear
             let validSize = geometry.size.width > 0 && geometry.size.height > 0
             let isLandscape = validSize && geometry.size.width > geometry.size.height
+            // Compute once so the background and controller layout always use the same fraction
+            let controllerFraction = DefaultControllerSkinView.portraitControllerFraction(scale: controllerScale)
 
             ZStack {
                 // Ensure view always renders even with invalid geometry
@@ -223,9 +248,9 @@ struct DefaultControllerSkinView: View {
                     if !isLandscape {
                         // Portrait mode - show background only in bottom controller area
                         VStack(spacing: 0) {
-                            // Spacer for screen area (top ~65%) - no background here
+                            // Spacer for screen area — mirrors the game-area spacer below
                             Spacer()
-                                .frame(maxHeight: geometry.size.height * 0.65)
+                                .frame(maxHeight: geometry.size.height * (1.0 - controllerFraction))
 
                             // Controller area background with gradual fade
                             ZStack {
@@ -245,14 +270,18 @@ struct DefaultControllerSkinView: View {
                                         )
                                     )
                             }
-                            .frame(maxHeight: geometry.size.height * 0.35)
+                            .opacity(controllerOpacity)
+                            .frame(maxHeight: geometry.size.height * controllerFraction)
                             .clipped()
                         }
                     }
 
                     if isLandscape {
-                        // Landscape layout - controls positioned at edges with safe area awareness
+                        // Landscape layout — scale is applied per-panel inside the skin
+                        // builder so each side anchors to its screen edge. No whole-view
+                        // scaleEffect here; that caused controls to clip off-screen.
                         dynamicLandscapeControllerSkin
+                            .opacity(controllerOpacity)
                             .onAppear {
                                 loadControlLayoutData()
                                 // Ensure input handler has the core set
@@ -260,17 +289,28 @@ struct DefaultControllerSkinView: View {
                             }
                             .edgesIgnoringSafeArea([]) // Respect safe areas for notch
                     } else {
-                        // Portrait layout - controls constrained to bottom area
-                        // Screen area is typically top ~65%, controller area is bottom ~35%
+                        // Portrait layout — height allocated proportional to controllerScale;
+                        // scaleEffect applied so buttons actually resize visually.
                         VStack(spacing: 0) {
-                            // Spacer to push controller to bottom area (top ~65% is screen area)
+                            // Game area — expands when controls shrink, contracts when they grow
                             Spacer()
-                                .frame(maxHeight: geometry.size.height * 0.65)
+                                .frame(maxHeight: geometry.size.height * (1.0 - controllerFraction))
 
-                            // Controller area - constrained to bottom portion
+                            // Controller area — scale content visually, clip overflow,
+                            // and constrain hit-testing to the allocated frame area.
+                            // Lay the controls out in the unscaled area (size / scale), then
+                            // scale up from the bottom so they exactly fill the allocated area.
+                            // Scaling a full-size layout instead overflows the frame and
+                            // .clipped() cuts off the shoulder buttons and the side controls.
+                            let scale = DefaultControllerSkinView.sanitizedScale(controllerScale)
+                            let areaHeight = geometry.size.height * controllerFraction
                             dynamicControllerSkin
-                                .frame(maxHeight: geometry.size.height * 0.35)
+                                .frame(width: geometry.size.width / scale, height: areaHeight / scale)
+                                .opacity(controllerOpacity)
+                                .scaleEffect(scale, anchor: .bottom)
+                                .frame(width: geometry.size.width, height: areaHeight, alignment: .bottom)
                                 .clipped()
+                                .contentShape(Rectangle())
                                 .onAppear {
                                     loadControlLayoutData()
                                     // Ensure input handler has the core set
@@ -434,6 +474,17 @@ struct DefaultControllerSkinView: View {
                     }
                 }
             )
+            .onChange(of: controllerScale) { _ in
+                // Re-emit viewport whenever the scale setting changes so the
+                // game render area immediately matches the new controller height.
+                guard geometry.size.width > 0 && geometry.size.height > 0 else { return }
+                let newIsLandscape = geometry.size.width > geometry.size.height
+                emitDefaultViewportIfNeeded(
+                    size: geometry.size,
+                    safeInsets: geometry.safeAreaInsets,
+                    isLandscape: newIsLandscape
+                )
+            }
         }
     }
 
@@ -487,7 +538,8 @@ struct DefaultControllerSkinView: View {
                 }
             }
 
-            // D-pad on the left side
+            // D-pad on the left side — scale anchored to leading so buttons grow
+            // toward the center, never past the left screen edge.
             VStack {
                 Spacer()
                 if useJoystickInternal {
@@ -497,11 +549,13 @@ struct DefaultControllerSkinView: View {
                 }
                 Spacer()
             }
+            .scaleEffect(CGFloat(controllerScale), anchor: .leading)
             .frame(width: 150)
             .padding(.leading, 80)
             .position(x: 150, y: geometry.size.height / 2)
 
-            // Action buttons on the right side
+            // Action buttons on the right side — scale anchored to trailing so buttons
+            // grow toward the center, never past the right screen edge.
             VStack {
                 Spacer()
                 VStack(spacing: 10) {
@@ -533,6 +587,7 @@ struct DefaultControllerSkinView: View {
                 }
                 Spacer()
             }
+            .scaleEffect(CGFloat(controllerScale), anchor: .trailing)
             .frame(width: 150)
             .position(x: geometry.size.width - 150, y: geometry.size.height / 2)
         }
@@ -707,11 +762,16 @@ struct DefaultControllerSkinView: View {
             return .zero
         }
 
+        // Scale the side reserve to match however large the per-panel scaleEffect
+        // makes the landscape controls.  Clamped so the game never disappears.
+        let controllerScaleVal = CGFloat(Defaults[.controllerScale])
+
         let frame: CGRect
         if isLandscape {
             if nativeScaleEnabled {
-                /// Native scale: Reserve space for controls on each edge, fit within available space
-                let sideReserve = max(180, min(240, safeWidth * 0.25))
+                /// Native scale: Reserve space for controls on each edge, scaled by controllerScale
+                let baseSideReserve = max(180, min(240, safeWidth * 0.25))
+                let sideReserve = max(80, min(safeWidth * 0.45, baseSideReserve * controllerScaleVal))
                 let availableWidth = max(0, safeWidth - (sideReserve * 2))
                 var width = availableWidth
                 var height = width / aspectRatio
@@ -726,10 +786,11 @@ struct DefaultControllerSkinView: View {
                 let originX = safeInsets.leading + (safeWidth - width) / 2
                 let originY = safeInsets.top + (safeHeight - height) / 2
                 frame = CGRect(x: originX, y: originY, width: width, height: height)
-                ILOG("🎮 SKIN: Default viewport (landscape, native scale): size=\(size), aspectRatio=\(aspectRatio), safeWidth=\(safeWidth), safeHeight=\(safeHeight), availableWidth=\(availableWidth), frame=\(frame)")
+                ILOG("🎮 SKIN: Default viewport (landscape, native scale): size=\(size), aspectRatio=\(aspectRatio), safeWidth=\(safeWidth), safeHeight=\(safeHeight), controllerScaleVal=\(controllerScaleVal), sideReserve=\(sideReserve), availableWidth=\(availableWidth), frame=\(frame)")
             } else {
                 /// Fullscreen scale: Use more of the available screen space, minimal control reserve
-                let sideReserve = max(120, min(160, safeWidth * 0.15))
+                let baseSideReserve = max(120, min(160, safeWidth * 0.15))
+                let sideReserve = max(60, min(safeWidth * 0.40, baseSideReserve * controllerScaleVal))
                 let availableWidth = max(0, safeWidth - (sideReserve * 2))
 
                 /// Scale to fill available width/height more aggressively
@@ -761,9 +822,11 @@ struct DefaultControllerSkinView: View {
                 ILOG("🎮 SKIN: Default viewport (landscape, fullscreen scale): size=\(size), aspectRatio=\(aspectRatio), safeWidth=\(safeWidth), safeHeight=\(safeHeight), availableWidth=\(availableWidth), frame=\(frame)")
             }
         } else {
-            /// Keep the screen in the upper portion, leaving room for controls
-            /// Reserve 35% for controller area, with some margin
-            let controllerHeight = safeHeight * 0.35
+            /// Keep the screen in the upper portion, leaving room for controls.
+            /// Mirror the same fraction used in the portrait layout view so the
+            /// game viewport exactly matches the space above the controller area.
+            let controllerFraction = DefaultControllerSkinView.portraitControllerFraction(scale: Double(controllerScaleVal))
+            let controllerHeight = safeHeight * controllerFraction
             /// Ensure minimum top safe area to avoid notch (at least 44pt for status bar/notch area)
             let minTopSafeArea: CGFloat = 44
             let effectiveTopSafeArea = max(safeInsets.top, minTopSafeArea)
@@ -1569,7 +1632,8 @@ struct DefaultControllerSkinView: View {
                     }
                 }
 
-                // D-pad positioned at left edge
+                // D-pad positioned at left edge — scale anchored to leading so buttons
+                // grow toward center, never off the left edge of the screen.
                 VStack {
                     Spacer()
                     HStack {
@@ -1595,6 +1659,9 @@ struct DefaultControllerSkinView: View {
                                 .buttonStyle(GameButtonStyle(pressAction: {}, releaseAction: {}))
                             }
                         }
+                        // Scale the control content toward the leading (left) edge so
+                        // it grows inward — never clips past the left screen boundary.
+                        .scaleEffect(CGFloat(controllerScale), anchor: .leading)
                         Spacer()
                     }
                     .padding(.leading, 80)
@@ -1602,7 +1669,8 @@ struct DefaultControllerSkinView: View {
                 }
                 .frame(width: geometry.size.width, alignment: .leading)
 
-                // Action buttons positioned at right edge using absolute positioning
+                // Action buttons positioned at right edge — scale anchored to trailing
+                // so buttons grow inward toward center, never off the right screen edge.
                 VStack {
                     Spacer()
                     // Find all button groups in the layout
@@ -1714,6 +1782,9 @@ struct DefaultControllerSkinView: View {
                     }
                     Spacer()
                 }
+                // Scale the right-panel content toward the trailing (right) edge so it
+                // grows inward — never clips past the right screen boundary.
+                .scaleEffect(CGFloat(controllerScale), anchor: .trailing)
                 .frame(width: 250) // Reduced width to prevent clipping
                 .position(x: geometry.size.width - 150, y: geometry.size.height / 2)
             }

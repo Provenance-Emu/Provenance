@@ -33,6 +33,9 @@ fileprivate var IsAppStore: Bool {
     Bundle.main.infoDictionary?["ALTDeviceID"] != nil
 }
 
+// type_body_length: this controller was already over the limit on develop — pre-existing
+// debt, not introduced by the controller scale row. Remove when it is split up.
+// swiftlint:disable:next type_body_length
 public final class PVSettingsViewController: QuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
     let reachability: Reachability = try! Reachability()
@@ -287,6 +290,7 @@ public final class PVSettingsViewController: QuickTableViewController {
                                                   valueLimits: (min: 0.0, max: 1.0),
                                                   valueImages: (.sfSymbol("sun.min"), .sfSymbol("sun.max")),
                                                   key: .controllerOpacity))
+        controllerRows.append(controllerScaleRow())
 
         controllerRows.append(contentsOf: [
             PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"),
@@ -746,6 +750,17 @@ public final class PVSettingsViewController: QuickTableViewController {
     }
 
 #if canImport(PVWebServer)
+#if os(iOS)
+    /// Global on-screen controller overlay scale (0.5×–2.0×).
+    private func controllerScaleRow() -> PVSettingsSliderRow<Double> {
+        PVSettingsSliderRow(text: NSLocalizedString("Scale", comment: "Scale"),
+                            detailText: .subtitle("Size of the on-screen controller overlay."),
+                            valueLimits: (min: 0.5, max: 2.0),
+                            valueImages: (.sfSymbol("minus.magnifyingglass"), .sfSymbol("plus.magnifyingglass")),
+                            key: .controllerScale)
+    }
+#endif
+
     func launchWebServerAction() {
         if reachability.connection == .wifi {
             Task { @MainActor [weak self] in
