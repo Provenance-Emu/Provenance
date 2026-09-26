@@ -131,7 +131,7 @@ final class RetroLogImportTests: XCTestCase {
         try zip(directory: staging, to: zipURL)
 
         let vm = RetroLogViewModel()
-        try vm.importLog(from: zipURL)
+        try await vm.importLog(from: zipURL)
 
         let joined = (vm.importedSession?.lines.map(\.text) ?? []).joined(separator: "\n")
         XCTAssertTrue(joined.contains("DEVICE HEADER"))
