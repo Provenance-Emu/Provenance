@@ -77,6 +77,10 @@ public class SceneCoordinator: ObservableObject {
 
     // Track BIOS downloads requested during preflight so we can notify when they finish
     private var pendingBIOSDownloads = Set<String>()
+
+    /// `systemID/filename` keys of optional BIOS already fetched (or attempted)
+    /// this session, so files that aren't in iCloud aren't re-queried every launch.
+    private var attemptedOptionalBIOS = Set<String>()
     private var completedBIOSDownloadsWhileInEmulator = [String]()
 
     // Sync status manager for showing progress during game launch
@@ -804,7 +808,7 @@ public class SceneCoordinator: ObservableObject {
     /// files was never offered them at all. This closes that gap without ever
     /// gating a launch:
     ///
-    /// * System already opted in — download inline, best effort, result ignored.
+    /// * System already opted in — download in the background, result ignored.
     /// * System previously declined — do nothing.
     /// * Never asked — prompt, and let *this* launch proceed regardless.
     ///
@@ -829,14 +833,7 @@ public class SceneCoordinator: ObservableObject {
         if Defaults[.optionalBIOSDeclinedSystems].contains(systemID) { return }
 
         if Defaults[.optionalBIOSAutoDownloadSystems].contains(systemID) {
-            for item in missing {
-                let ok = await CloudSyncManager.shared.downloadSingleBIOS(
-                    filename: item.filename,
-                    expectedMD5: item.md5,
-                    systemIdentifier: systemID
-                )
-                ILOG("[BIOS OPTIONAL] \(ok ? "✓" : "✗") \(item.filename) for \(systemID)")
-            }
+            startOptionalBIOSDownloads(missing, systemID: systemID)
             return
         }
 
@@ -851,18 +848,9 @@ public class SceneCoordinator: ObservableObject {
                 + "are more accurate with them. Download in the background?",
             type: .standard,
             primaryButtonTitle: "Download",
-            primaryAction: {
+            primaryAction: { [weak self] in
                 Defaults[.optionalBIOSAutoDownloadSystems].insert(systemID)
-                Task.detached {
-                    for item in items {
-                        let ok = await CloudSyncManager.shared.downloadSingleBIOS(
-                            filename: item.filename,
-                            expectedMD5: item.md5,
-                            systemIdentifier: systemID
-                        )
-                        ILOG("[BIOS OPTIONAL] background \(ok ? "✓" : "✗") \(item.filename)")
-                    }
-                }
+                self?.startOptionalBIOSDownloads(items, systemID: systemID)
             },
             secondaryButtonTitle: "Not Now",
             secondaryAction: {
@@ -871,6 +859,25 @@ public class SceneCoordinator: ObservableObject {
                 Defaults[.optionalBIOSDeclinedSystems].insert(systemID)
             }
         )
+    }
+
+    /// Fetch optional BIOS in the background. Never awaited by the launch path:
+    /// each file that isn't in iCloud costs several sequential CloudKit lookups,
+    /// which used to stall "Validating BIOS requirements..." on every launch.
+    private func startOptionalBIOSDownloads(_ missing: [(filename: String, md5: String)],
+                                            systemID: String) {
+        let pending = missing.filter { attemptedOptionalBIOS.insert("\(systemID)/\($0.filename)").inserted }
+        guard !pending.isEmpty else { return }
+        Task.detached(priority: .utility) {
+            for item in pending {
+                let ok = await CloudSyncManager.shared.downloadSingleBIOS(
+                    filename: item.filename,
+                    expectedMD5: item.md5,
+                    systemIdentifier: systemID
+                )
+                ILOG("[BIOS OPTIONAL] background \(ok ? "✓" : "✗") \(item.filename) for \(systemID)")
+            }
+        }
     }
 
     /// Seconds to let a game's battery-save restore run in the background before
