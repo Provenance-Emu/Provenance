@@ -467,23 +467,20 @@ public class SceneCoordinator: ObservableObject {
                 // download can legitimately take ~60s — anything tighter fires
                 // false "game not available" errors while the download is still
                 // making progress.
-                let isValid = await withTaskGroup(of: Bool.self) { group in
-                    group.addTask {
-                        await validator.ensureGameReady(game) { [weak self] progressMessage in
-                            Task { @MainActor in
-                                self?.syncStatusManager.update(statusMessage: progressMessage)
-                            }
-                            ILOG("Game sync progress: \(progressMessage)")
+                // `firstToFinish`, not a task group: a group waits for every child, so its
+                // "timeout" never fired while `ensureGameReady` was still downloading.
+                let readyResult = await Self.firstToFinish({ [weak self] in
+                    await validator.ensureGameReady(game) { progressMessage in
+                        Task { @MainActor in
+                            self?.syncStatusManager.update(statusMessage: progressMessage)
                         }
+                        ILOG("Game sync progress: \(progressMessage)")
                     }
-                    group.addTask {
-                        try? await Task.sleep(nanoseconds: 60_000_000_000)
-                        return false
-                    }
-                    let result = await group.next() ?? false
-                    group.cancelAll()
-                    return result
+                }, timeoutSeconds: Self.romDownloadTimeoutSeconds)
+                if readyResult == nil {
+                    WLOG("SceneCoordinator: game file not ready after \(Self.romDownloadTimeoutSeconds)s; download continues in the background")
                 }
+                let isValid = readyResult ?? false
 
                 guard !Task.isCancelled else {
                     ILOG("SceneCoordinator: Launch cancelled during sync validation")
@@ -1084,6 +1081,9 @@ public class SceneCoordinator: ObservableObject {
     /// How long a launch waits on one on-demand BIOS download before giving up on it.
     static let biosDownloadTimeoutSeconds: UInt64 = 15
 
+    /// How long a launch waits for a cloud-only game file to be downloaded and ready.
+    static let romDownloadTimeoutSeconds: UInt64 = 60
+
     /// Attempt to download a missing BIOS file from CloudKit on-demand (with timeout)
     /// - Parameters:
     ///   - filename: The expected BIOS filename
@@ -1294,23 +1294,20 @@ public class SceneCoordinator: ObservableObject {
                 // download can legitimately take ~60s — anything tighter fires
                 // false "game not available" errors while the download is still
                 // making progress.
-                let isValid = await withTaskGroup(of: Bool.self) { group in
-                    group.addTask {
-                        await validator.ensureGameReady(game) { [weak self] progressMessage in
-                            Task { @MainActor in
-                                self?.syncStatusManager.update(statusMessage: progressMessage)
-                            }
-                            ILOG("Game sync progress: \(progressMessage)")
+                // `firstToFinish`, not a task group: a group waits for every child, so its
+                // "timeout" never fired while `ensureGameReady` was still downloading.
+                let readyResult = await Self.firstToFinish({ [weak self] in
+                    await validator.ensureGameReady(game) { progressMessage in
+                        Task { @MainActor in
+                            self?.syncStatusManager.update(statusMessage: progressMessage)
                         }
+                        ILOG("Game sync progress: \(progressMessage)")
                     }
-                    group.addTask {
-                        try? await Task.sleep(nanoseconds: 60_000_000_000)
-                        return false
-                    }
-                    let result = await group.next() ?? false
-                    group.cancelAll()
-                    return result
+                }, timeoutSeconds: Self.romDownloadTimeoutSeconds)
+                if readyResult == nil {
+                    WLOG("SceneCoordinator: game file not ready after \(Self.romDownloadTimeoutSeconds)s; download continues in the background")
                 }
+                let isValid = readyResult ?? false
 
                 guard !Task.isCancelled else {
                     ILOG("SceneCoordinator: Save state launch cancelled during sync validation")
