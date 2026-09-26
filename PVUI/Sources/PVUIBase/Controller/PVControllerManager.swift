@@ -1098,6 +1098,13 @@ public extension GCKeyboard {
             // the system does not call this handler in setValue, so call it with the dpad
             gamepad.valueChangedHandler?(gamepad, gamepad.dpad)
 
+            // Cores that take typed keys opt in through `keyChangedHandler`; otherwise a
+            // hardware keyboard only ever reached them as a gamepad.
+            if let core = emulationUIState.core, EmulationState.shared.stateSubject.value.isOn, core.isRunning,
+               let forwardKey = (core as? KeyboardResponder)?.keyChangedHandler ?? nil {
+                forwardKey(keyboard, button, key, pressed)
+            }
+
             // Bind / to select, rightShift to start
             if let emulator = emulationUIState.emulator, let core = emulationUIState.core, EmulationState.shared.stateSubject.value.isOn, core.isRunning {
                 if actionPressed(.select) {

@@ -782,6 +782,10 @@ typedef struct PVThinLibretroSymbols {
     int16_t _mouseRelX;
     int16_t _mouseRelY;
     uint32_t _mouseButtons; // bit N = RETRO_DEVICE_ID_MOUSE_* button N
+    // Presses kept visible until the core has read them once: a touch tap sends
+    // down+up in the same instant, which a once-per-frame reader would never see.
+    uint32_t _mouseButtonsLatched;
+    uint32_t _mouseButtonsReported; // latched bits read since the last poll
 
     // Pointer (touch) state — normalized coordinates and pressed flag
     int16_t _pointerX;
@@ -2951,6 +2955,8 @@ static bool thin_environment(unsigned cmd, void *data) {
         _mouseRelX = 0;
         _mouseRelY = 0;
         _mouseButtons = 0;
+        _mouseButtonsLatched = 0;
+        _mouseButtonsReported = 0;
         _pointerX = 0;
         _pointerY = 0;
         _pointerPressed = false;
@@ -4928,6 +4934,9 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
 }
 
 - (void)_thinInputPoll {
+    // Latched mouse presses the core read last frame have done their job.
+    _mouseButtonsLatched &= ~_mouseButtonsReported;
+    _mouseButtonsReported = 0;
     static bool s_loggedPoll = false;
     if (!s_loggedPoll) {
         ILOG(@"ThinFrontend: _thinInputPoll called (delegate=%@, joypad[0]=0x%04X, inputPollBlock=%@)", self.frontendDelegate, _joypadState[0], self.inputPollBlock ? @"YES" : @"NO");
@@ -5007,26 +5016,13 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
                 _mouseRelY = 0; // consume delta after read
                 return dy;
             }
-            case RETRO_DEVICE_ID_MOUSE_LEFT:
-                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_LEFT)) ? 1 : 0;
-            case RETRO_DEVICE_ID_MOUSE_RIGHT:
-                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_RIGHT)) ? 1 : 0;
-            case RETRO_DEVICE_ID_MOUSE_MIDDLE:
-                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_MIDDLE)) ? 1 : 0;
-            case RETRO_DEVICE_ID_MOUSE_WHEELUP:
-                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_WHEELUP)) ? 1 : 0;
-            case RETRO_DEVICE_ID_MOUSE_WHEELDOWN:
-                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_WHEELDOWN)) ? 1 : 0;
-            case RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELUP:
-                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELUP)) ? 1 : 0;
-            case RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELDOWN:
-                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_HORIZ_WHEELDOWN)) ? 1 : 0;
-            case RETRO_DEVICE_ID_MOUSE_BUTTON_4:
-                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_BUTTON_4)) ? 1 : 0;
-            case RETRO_DEVICE_ID_MOUSE_BUTTON_5:
-                return (_mouseButtons & (1 << RETRO_DEVICE_ID_MOUSE_BUTTON_5)) ? 1 : 0;
-            default:
-                return 0;
+            default: {
+                // Button ids (LEFT, RIGHT, MIDDLE, wheels, BUTTON_4/5) are bit indices.
+                if (bid > 31) return 0;
+                const uint32_t bit = 1u << bid;
+                _mouseButtonsReported |= (_mouseButtonsLatched & bit);
+                return ((_mouseButtons | _mouseButtonsLatched) & bit) ? 1 : 0;
+            }
         }
     }
 
@@ -5107,6 +5103,8 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     _mouseRelX = 0;
     _mouseRelY = 0;
     _mouseButtons = 0;
+    _mouseButtonsLatched = 0;
+    _mouseButtonsReported = 0;
     _pointerX = 0;
     _pointerY = 0;
     _pointerPressed = false;
@@ -5145,6 +5143,7 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     if (button > 31) return;
     if (pressed) {
         _mouseButtons |= (1 << button);
+        _mouseButtonsLatched |= (1 << button);
     } else {
         _mouseButtons &= ~(1 << button);
     }
