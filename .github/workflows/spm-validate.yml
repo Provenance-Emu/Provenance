@@ -38,8 +38,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
+
+      - name: Fetch required submodules
+        # Only PVArchiving needs a submodule (Dependencies/SWCompression); every other
+        # leaf module resolves through in-repo paths or SPM URLs. Recursively cloning all
+        # cores took ~10 minutes and a network blip in any nested core (e.g. Dolphin's
+        # mgba) failed this job before a single module was built.
+        run: |
+          for attempt in 1 2 3; do
+            git submodule update --init --depth 1 Dependencies/SWCompression && exit 0
+            sleep $((attempt * 10))
+          done
+          exit 1
 
       - name: Select Xcode
         # Must match agent-validation.yml (Xcode_26.3). This job was the only one left

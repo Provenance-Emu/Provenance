@@ -17,8 +17,8 @@ LEAF_MODULES=(
     "PVSettings"
     "PVFeatureFlags"
     # Pulls third-party compression backends and ../Dependencies/{SWCompression,LzhArchive},
-    # so it needs `submodules: recursive` at checkout. Its tests could not link until the
-    # stray `-Wl,-segalign,4000` was dropped from the lhasa target (swiftc has no `-Wl,`
+    # so CI initialises the SWCompression submodule before this script. Its tests could not
+    # link until the stray `-Wl,-segalign,4000` was dropped from the lhasa target (swiftc has no `-Wl,`
     # passthrough) — see the note in Dependencies/LzhArchive/Package.swift.
     "PVArchiving"
 )
