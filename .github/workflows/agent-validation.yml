@@ -328,7 +328,7 @@ jobs:
             -skipPackagePluginValidation \
             -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO \
-            2>&1 | tee /tmp/pvui-test.log | grep -E "(error:|Test Suite|Test Case .* failed|✘|Executed|TEST (SUCCEEDED|FAILED))" | tail -150
+            2>&1 | tee /tmp/pvui-test.log | grep -E "(: (fatal )?error:|Test Suite|Test Case .* failed|✘|Executed|TEST (SUCCEEDED|FAILED))" | tail -150
 
       - name: Upload PVUI test log
         if: failure()

@@ -44,7 +44,7 @@ struct SkinSystemOverrideRegistryTests {
         return url
     }
 
-    private func writeRawSidecar(_ json: String, next to skinURL: URL) throws {
+    private func writeRawSidecar(_ json: String, next skinURL: URL) throws {
         let sidecarURL = SkinSystemOverrideRegistry.sidecarURL(for: skinURL)
         try json.data(using: .utf8)!.write(to: sidecarURL, options: .atomic)
     }
