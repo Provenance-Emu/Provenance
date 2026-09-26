@@ -1226,6 +1226,20 @@ public class CloudSyncManager {
 
         syncLog.event(.download, item: "bios/\(filename)", status: .inProgress, detail: "Starting targeted download")
 
+        await BIOSDownloadTracker.shared.begin(filename)
+        let downloaded = await fetchSingleBIOS(filename: filename,
+                                               expectedMD5: expectedMD5,
+                                               systemIdentifier: systemIdentifier,
+                                               container: ckContainer)
+        await BIOSDownloadTracker.shared.finish(filename, success: downloaded)
+        return downloaded
+    }
+
+    /// Record-ID guesses, then a filename query. Split out of `downloadSingleBIOS`
+    /// so every exit reports back to `BIOSDownloadTracker`.
+    private func fetchSingleBIOS(filename: String, expectedMD5: String, systemIdentifier: String,
+                                 container ckContainer: CKContainer) async -> Bool {
+        let syncLog = Self.syncLog
         let syncer = CloudKitBIOSSyncer(
             container: ckContainer,
             directories: ["BIOS", "System"],

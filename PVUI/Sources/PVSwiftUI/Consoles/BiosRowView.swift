@@ -14,6 +14,8 @@ import PVPrimitives
 import PVThemes
 import PVRealm
 import PVUIBase
+import Defaults
+import PVSettings
 
 extension BIOSStatus.State {
     var biosStatusImageName: String {
@@ -36,6 +38,44 @@ struct BiosRowView: SwiftUI.View {
     @State private var biosState: BIOSStatus.State? = nil
     @State private var showMD5Alert = false
     @ObservedObject private var themeManager = ThemeManager.shared
+    @ObservedObject private var downloadTracker = BIOSDownloadTracker.shared
+    @Default(.iCloudSync) private var iCloudSync
+
+    /// iCloud state shown in place of the local status while the file is absent locally.
+    private enum CloudState {
+        case available, downloading, failed
+
+        var title: String {
+            switch self {
+            case .available: return "In iCloud"
+            case .downloading: return "Downloading"
+            case .failed: return "Download failed"
+            }
+        }
+
+        var symbolName: String {
+            switch self {
+            case .available: return "icloud.and.arrow.down"
+            case .downloading: return "arrow.down.circle"
+            case .failed: return "arrow.clockwise.icloud"
+            }
+        }
+    }
+
+    /// `expectedFilename` can list alternatives separated by `|`; downloads use the first.
+    private var primaryFilename: String {
+        bios.expectedFilename.components(separatedBy: "|").first ?? bios.expectedFilename
+    }
+
+    private var cloudState: CloudState? {
+        guard iCloudSync, bios.file == nil else { return nil }
+        let inCloud = bios.cloudRecordID?.isEmpty == false
+        switch downloadTracker.status(for: primaryFilename) {
+        case .downloading: return .downloading
+        case .failed: return inCloud ? .failed : nil
+        case nil: return inCloud ? .available : nil
+        }
+    }
 
     /// Computed property to get the current BIOS state
     private var currentBiosState: BIOSStatus.State {
@@ -59,6 +99,46 @@ struct BiosRowView: SwiftUI.View {
         UIPasteboard.general.string = bios.expectedMD5
         showMD5Alert = true
         #endif
+    }
+
+    /// Fetch this BIOS from CloudKit; the directory watcher imports it and `bios.file` updates the row.
+    private func downloadFromCloud() {
+        let filename = primaryFilename
+        let md5 = bios.expectedMD5
+        guard let systemID = bios.system?.identifier else { return }
+        Task {
+            _ = await CloudSyncManager.shared.downloadSingleBIOS(filename: filename,
+                                                                 expectedMD5: md5,
+                                                                 systemIdentifier: systemID)
+        }
+    }
+
+    private func cloudBadge(_ state: CloudState) -> some SwiftUI.View {
+        let gradient = LinearGradient(gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
+                                      startPoint: .leading,
+                                      endPoint: .trailing)
+        return Button(action: downloadFromCloud) {
+            HStack(alignment: .center, spacing: 4) {
+                Text(state.title)
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(gradient)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(RoundedRectangle(cornerRadius: 4).stroke(gradient, lineWidth: 1))
+                if state == .downloading {
+                    ProgressView()
+                        .controlSize(.small)
+                } else {
+                    Image(systemName: state.symbolName)
+                        .foregroundStyle(gradient)
+                        .font(.system(size: 14, weight: .medium))
+                        .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .disabled(state == .downloading)
+        .accessibilityLabel("\(bios.descriptionText): \(state.title)")
     }
 
     /// Action to delete BIOS
@@ -107,51 +187,17 @@ struct BiosRowView: SwiftUI.View {
                 }
                 Spacer()
                 HStack(alignment: .center, spacing: 4) {
-                    switch biosState {
-                    case .match:
-                        // Retrowave-styled success indicator
-                        Text("Installed")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .stroke(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 1
-                                    )
-                            )
-                        
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .font(.system(size: 14, weight: .medium))
-                            .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2)
-                            
-                    case .missing:
-                        if bios.optional {
-                            // Retrowave-styled optional indicator
-                            Text("Optional")
+                    if let cloudState {
+                        cloudBadge(cloudState)
+                    } else {
+                        switch biosState {
+                        case .match:
+                            // Retrowave-styled success indicator
+                            Text("Installed")
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundStyle(
                                     LinearGradient(
-                                        gradient: Gradient(colors: [Color.gray, Color.white.opacity(0.7)]),
+                                        gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
                                         startPoint: .leading,
                                         endPoint: .trailing
                                     )
@@ -162,27 +208,135 @@ struct BiosRowView: SwiftUI.View {
                                     RoundedRectangle(cornerRadius: 4)
                                         .stroke(
                                             LinearGradient(
-                                                gradient: Gradient(colors: [Color.gray, Color.white.opacity(0.7)]),
+                                                gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
                                                 startPoint: .leading,
                                                 endPoint: .trailing
                                             ),
                                             lineWidth: 1
                                         )
                                 )
-                            
-                            Image(systemName: "info.circle")
+                        
+                            Image(systemName: "checkmark.circle.fill")
                                 .foregroundStyle(
                                     LinearGradient(
-                                        gradient: Gradient(colors: [Color.gray, Color.white.opacity(0.7)]),
+                                        gradient: Gradient(colors: [RetroTheme.retroBlue, RetroTheme.retroPurple]),
                                         startPoint: .leading,
                                         endPoint: .trailing
                                     )
                                 )
                                 .font(.system(size: 14, weight: .medium))
-                                .shadow(color: Color.gray.opacity(0.5), radius: 2)
-                        } else {
-                            // Retrowave-styled missing indicator
-                            Text("Missing")
+                                .shadow(color: RetroTheme.retroBlue.opacity(0.7), radius: 2)
+                            
+                        case .missing:
+                            if bios.optional {
+                                // Retrowave-styled optional indicator
+                                Text("Optional")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.gray, Color.white.opacity(0.7)]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .stroke(
+                                                LinearGradient(
+                                                    gradient: Gradient(colors: [Color.gray, Color.white.opacity(0.7)]),
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                ),
+                                                lineWidth: 1
+                                            )
+                                    )
+                            
+                                Image(systemName: "info.circle")
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [Color.gray, Color.white.opacity(0.7)]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .font(.system(size: 14, weight: .medium))
+                                    .shadow(color: Color.gray.opacity(0.5), radius: 2)
+                            } else {
+                                // Retrowave-styled missing indicator
+                                Text("Missing")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .stroke(
+                                                LinearGradient(
+                                                    gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
+                                                    startPoint: .leading,
+                                                    endPoint: .trailing
+                                                ),
+                                                lineWidth: 1
+                                            )
+                                    )
+                            
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundStyle(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .font(.system(size: 14, weight: .medium))
+                                    .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2)
+                            }
+                        case .mismatch(_):
+                            // Retrowave-styled mismatch indicator
+                            Text("Mismatch")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.yellow, Color.orange]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .stroke(
+                                            LinearGradient(
+                                                gradient: Gradient(colors: [Color.yellow, Color.orange]),
+                                                startPoint: .leading,
+                                                endPoint: .trailing
+                                            ),
+                                            lineWidth: 1
+                                        )
+                                )
+                        
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.yellow, Color.orange]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .font(.system(size: 14, weight: .medium))
+                                .shadow(color: Color.yellow.opacity(0.7), radius: 2)
+                        case .none:
+                            // Retrowave-styled loading indicator
+                            Text("Loading...")
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundStyle(
                                     LinearGradient(
@@ -191,21 +345,8 @@ struct BiosRowView: SwiftUI.View {
                                         endPoint: .trailing
                                     )
                                 )
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .stroke(
-                                            LinearGradient(
-                                                gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
-                                                startPoint: .leading,
-                                                endPoint: .trailing
-                                            ),
-                                            lineWidth: 1
-                                        )
-                                )
-                            
-                            Image(systemName: "exclamationmark.triangle.fill")
+                        
+                            Image(systemName: "hourglass")
                                 .foregroundStyle(
                                     LinearGradient(
                                         gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
@@ -216,63 +357,6 @@ struct BiosRowView: SwiftUI.View {
                                 .font(.system(size: 14, weight: .medium))
                                 .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2)
                         }
-                    case .mismatch(_):
-                        // Retrowave-styled mismatch indicator
-                        Text("Mismatch")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [Color.yellow, Color.orange]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .stroke(
-                                        LinearGradient(
-                                            gradient: Gradient(colors: [Color.yellow, Color.orange]),
-                                            startPoint: .leading,
-                                            endPoint: .trailing
-                                        ),
-                                        lineWidth: 1
-                                    )
-                            )
-                        
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [Color.yellow, Color.orange]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .font(.system(size: 14, weight: .medium))
-                            .shadow(color: Color.yellow.opacity(0.7), radius: 2)
-                    case .none:
-                        // Retrowave-styled loading indicator
-                        Text("Loading...")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                        
-                        Image(systemName: "hourglass")
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [RetroTheme.retroPink, Color.red]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .font(.system(size: 14, weight: .medium))
-                            .shadow(color: RetroTheme.retroPink.opacity(0.7), radius: 2)
                     }
                 }
                 .padding(.horizontal, 12)
@@ -301,6 +385,12 @@ struct BiosRowView: SwiftUI.View {
                     Label("Copy MD5", systemImage: "doc.on.doc")
                 }
 
+                if let cloudState, cloudState != .downloading {
+                    Button(action: downloadFromCloud) {
+                        Label("Download from iCloud", systemImage: CloudState.available.symbolName)
+                    }
+                }
+
                 if bios.file != nil {
                     Button(role: .destructive, action: deleteBIOS) {
                         Label("Delete BIOS", systemImage: "trash")
@@ -309,6 +399,11 @@ struct BiosRowView: SwiftUI.View {
             }
             #else
             .contextMenu {
+                if let cloudState, cloudState != .downloading {
+                    Button(action: downloadFromCloud) {
+                        Label("Download from iCloud", systemImage: CloudState.available.symbolName)
+                    }
+                }
                 if bios.file != nil {
                     Button(role: .destructive, action: deleteBIOS) {
                         Label("Delete BIOS", systemImage: "trash")
