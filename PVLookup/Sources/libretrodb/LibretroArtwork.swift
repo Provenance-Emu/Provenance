@@ -105,8 +105,8 @@ public struct LibretroArtwork {
         let decodedSystem = systemName.removingPercentEncoding ?? systemName
         let decodedGame = gameName.removingPercentEncoding ?? gameName
 
-        // Remove file extension using NSString method
-        let gameNameWithoutExt = (decodedGame as NSString).deletingPathExtension
+        // Remove file extension, then apply libretro's thumbnail filename rules
+        let gameNameWithoutExt = thumbnailFileName(for: (decodedGame as NSString).deletingPathExtension)
 
         // Build path without encoding first
         let path = "/\(decodedSystem)/\(folder)/\(gameNameWithoutExt).png"
@@ -122,6 +122,22 @@ public struct LibretroArtwork {
         #endif
 
         return components.url
+    }
+
+    /// Characters libretro replaces with `_` in thumbnail filenames.
+    private static let thumbnailReservedCharacters = CharacterSet(charactersIn: "&*/:`<>?\\|\"")
+
+    /// Maps a game name to libretro's thumbnail filename: reserved characters become `_`,
+    /// and a "(Track N)" tag is dropped because thumbnails are named per game, not per track.
+    internal static func thumbnailFileName(for name: String) -> String {
+        let withoutTrack = name.replacingOccurrences(
+            of: #"\s*\(Track \d+\)"#,
+            with: "",
+            options: .regularExpression
+        )
+        return String(withoutTrack.unicodeScalars.map {
+            thumbnailReservedCharacters.contains($0) ? "_" : Character($0)
+        })
     }
 
     /// Validates if a URL exists with caching
@@ -290,7 +306,7 @@ public struct LibretroArtwork {
         let folder = type.libretroDatabaseFolder
 
         // Build path without encoding first
-        let path = "/\(decodedSystem)/\(folder)/\(decodedGame).png"
+        let path = "/\(decodedSystem)/\(folder)/\(thumbnailFileName(for: decodedGame)).png"
 
         // Then encode the entire path
         return path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? path
