@@ -274,8 +274,10 @@ public extension GameLaunchingViewController {
                         canLoad = false
                     }
                 } else {
-                    // No MD5 matches - try to download from CloudKit on-demand
-                    let downloaded = await tryDownloadBIOSFromCloud(filename: expectedFilename, md5: currentEntry.expectedMD5, system: system)
+                    // No MD5 matches - try a targeted, time-limited CloudKit download
+                    let downloaded = await SceneCoordinator.shared.tryDownloadBIOSFromCloud(filename: expectedFilename,
+                                                                                         expectedMD5: currentEntry.expectedMD5,
+                                                                                         system: system)
                     if !downloaded {
                         missingBIOSES.append("\(expectedFilename) (MD5: \(currentEntry.expectedMD5))")
                         canLoad = false
@@ -299,64 +301,6 @@ public extension GameLaunchingViewController {
 
         if !canLoad {
             throw GameLaunchingError.missingBIOSes(missingBIOSES)
-        }
-    }
-
-    /// Attempt to download a missing BIOS file from CloudKit
-    /// - Parameters:
-    ///   - filename: The expected BIOS filename
-    ///   - md5: The expected MD5 hash
-    ///   - system: The system requiring the BIOS
-    /// - Returns: True if the BIOS was successfully downloaded
-    @MainActor
-    private func tryDownloadBIOSFromCloud(filename: String, md5: String, system: PVSystem) async -> Bool {
-        ILOG("[BIOS ON-DEMAND] Checking CloudKit for missing BIOS: \(filename)")
-
-        // Check if we have a PVBIOS entry with a cloudRecordID
-        let realm = RomDatabase.sharedInstance.realm
-        let biosEntry = realm.objects(PVBIOS.self).filter("expectedFilename == %@ OR expectedMD5 ==[c] %@", filename, md5).first
-
-        guard let bios = biosEntry else {
-            DLOG("[BIOS ON-DEMAND] No PVBIOS entry found for: \(filename)")
-            return false
-        }
-
-        // If no cloudRecordID, try to sync metadata first
-        if bios.cloudRecordID == nil || bios.cloudRecordID?.isEmpty == true {
-            ILOG("[BIOS ON-DEMAND] No cloudRecordID, triggering metadata sync for: \(filename)")
-            await CloudSyncManager.shared.forceBIOSDownload()
-
-            // Re-check after sync
-            RomDatabase.refresh()
-            guard let updatedBios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first,
-                  let recordID = updatedBios.cloudRecordID, !recordID.isEmpty else {
-                WLOG("[BIOS ON-DEMAND] Still no cloudRecordID after sync for: \(filename)")
-                return false
-            }
-        }
-
-        // Re-fetch the BIOS entry to get updated cloudRecordID
-        guard let updatedBios = realm.objects(PVBIOS.self).filter("expectedFilename == %@", filename).first,
-              let recordID = updatedBios.cloudRecordID, !recordID.isEmpty else {
-            return false
-        }
-
-        ILOG("[BIOS ON-DEMAND] Found cloudRecordID: \(recordID), downloading: \(filename)")
-
-        // Download the BIOS file
-        do {
-            // Use CloudSyncManager's forceBIOSDownload which handles the download
-            await CloudSyncManager.shared.forceBIOSDownload()
-
-            // Verify the file now exists
-            let biosPath = system.biosDirectory.appendingPathComponent(filename)
-            if FileManager.default.fileExists(atPath: biosPath.path) {
-                ILOG("[BIOS ON-DEMAND] ✓ Successfully downloaded BIOS: \(filename)")
-                return true
-            } else {
-                WLOG("[BIOS ON-DEMAND] Download completed but file not found at: \(biosPath.path)")
-                return false
-            }
         }
     }
 

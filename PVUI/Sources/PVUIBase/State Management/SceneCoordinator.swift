@@ -388,6 +388,10 @@ public class SceneCoordinator: ObservableObject {
             return false
         }()
 
+        /// Result of the pre-download check, when one ran. Reused for the final check so a
+        /// cloud-only game doesn't repeat the same CloudKit lookups for BIOS still missing.
+        var preDownloadValidation: PreDownloadValidation?
+
         if fileExistsLocally {
             ILOG("SceneCoordinator: Game file exists locally, skipping cloud validation: \(game.file?.url?.lastPathComponent ?? game.title)")
             // Still need to validate BIOS if required
@@ -411,6 +415,7 @@ public class SceneCoordinator: ObservableObject {
             )
 
             let validation = await validatePreDownloadRequirements(for: game, system: system)
+            preDownloadValidation = validation
 
             guard !Task.isCancelled else {
                 ILOG("SceneCoordinator: Launch cancelled during pre-download validation")
@@ -531,12 +536,15 @@ public class SceneCoordinator: ObservableObject {
         }
 
         // ALWAYS validate BIOS and core requirements before launching (not just for cloud downloads)
-        // Show status for BIOS validation if system requires BIOS
-        if system.requiresBIOS {
-            syncStatusManager.update(statusMessage: "Validating BIOS requirements...")
+        let validation: PreDownloadValidation
+        if let preDownloadValidation {
+            validation = preDownloadValidation
+        } else {
+            if system.requiresBIOS {
+                syncStatusManager.update(statusMessage: "Validating BIOS requirements...")
+            }
+            validation = await validatePreDownloadRequirements(for: game, system: system)
         }
-
-        let validation = await validatePreDownloadRequirements(for: game, system: system)
 
         // Hide sync status after validation
         syncStatusManager.hide()
@@ -984,7 +992,7 @@ public class SceneCoordinator: ObservableObject {
     /// `nonisolated`: this touches no `SceneCoordinator` state, and must not be
     /// MainActor-bound — the whole point is racing two plain background tasks
     /// without caring which thread they land on.
-    private nonisolated static func firstToFinish<T: Sendable>(
+    nonisolated static func firstToFinish<T: Sendable>(
         _ operation: @escaping @Sendable () async -> T,
         timeoutSeconds: UInt64
     ) async -> T? {
@@ -1058,6 +1066,9 @@ public class SceneCoordinator: ObservableObject {
         )
     }
 
+    /// How long a launch waits on one on-demand BIOS download before giving up on it.
+    static let biosDownloadTimeoutSeconds: UInt64 = 15
+
     /// Attempt to download a missing BIOS file from CloudKit on-demand (with timeout)
     /// - Parameters:
     ///   - filename: The expected BIOS filename
@@ -1082,35 +1093,25 @@ public class SceneCoordinator: ObservableObject {
         // CloudKit at all — the exact symptom in tester reports.
         // Background `BIOSSyncing` already handles the bulk case asynchronously,
         // so we no longer fall through to a synchronous full sync here.
-        let downloadTask = Task.detached { () -> Bool in
+        let result = await Self.firstToFinish({
             let ok = await CloudSyncManager.shared.downloadSingleBIOS(
                 filename: filename,
                 expectedMD5: expectedMD5,
                 systemIdentifier: systemIdentifier
             )
-            if ok && FileManager.default.fileExists(atPath: biosPath.path) {
-                ILOG("[BIOS ON-DEMAND] ✓ Fast download succeeded: \(filename)")
-                return true
-            }
+            return ok && FileManager.default.fileExists(atPath: biosPath.path)
+        }, timeoutSeconds: Self.biosDownloadTimeoutSeconds)
+
+        switch result {
+        case true?:
+            ILOG("[BIOS ON-DEMAND] ✓ Fast download succeeded: \(filename)")
+            return true
+        case false?:
             WLOG("[BIOS ON-DEMAND] Fast download miss for \(filename); not falling through to full sync.")
             return false
-        }
-
-        let timeoutTask = Task {
-            try await Task.sleep(nanoseconds: 15_000_000_000) // 15s — fast path only
-            downloadTask.cancel()
+        case nil:
+            // The download keeps going in the background; the launch no longer waits for it.
             WLOG("[BIOS ON-DEMAND] Download timed out for: \(filename)")
-        }
-
-        do {
-            let result = try await downloadTask.value
-            timeoutTask.cancel()
-            return result
-        } catch is CancellationError {
-            WLOG("[BIOS ON-DEMAND] Download was cancelled (timeout) for: \(filename)")
-            return false
-        } catch {
-            ELOG("[BIOS ON-DEMAND] Download failed for \(filename): \(error.localizedDescription)")
             return false
         }
     }
@@ -1212,6 +1213,10 @@ public class SceneCoordinator: ObservableObject {
             return false
         }()
 
+        /// Result of the pre-download check, when one ran. Reused for the final check so a
+        /// cloud-only game doesn't repeat the same CloudKit lookups for BIOS still missing.
+        var preDownloadValidation: PreDownloadValidation?
+
         if saveStateFileExistsLocally {
             ILOG("SceneCoordinator: Game file exists locally, skipping cloud validation for save state: \(game.file?.url?.lastPathComponent ?? game.title)")
             if system.requiresBIOS {
@@ -1233,6 +1238,7 @@ public class SceneCoordinator: ObservableObject {
             )
 
             let validation = await validatePreDownloadRequirements(for: game, system: system)
+            preDownloadValidation = validation
 
             guard !Task.isCancelled else {
                 ILOG("SceneCoordinator: Save state launch cancelled during pre-download validation")
@@ -1330,12 +1336,15 @@ public class SceneCoordinator: ObservableObject {
         }
 
         // Validate BIOS and core requirements
-        // Show status for BIOS validation if system requires BIOS
-        if system.requiresBIOS {
-            syncStatusManager.update(statusMessage: "Validating BIOS requirements...")
+        let validation: PreDownloadValidation
+        if let preDownloadValidation {
+            validation = preDownloadValidation
+        } else {
+            if system.requiresBIOS {
+                syncStatusManager.update(statusMessage: "Validating BIOS requirements...")
+            }
+            validation = await validatePreDownloadRequirements(for: game, system: system)
         }
-
-        let validation = await validatePreDownloadRequirements(for: game, system: system)
 
         if !validation.canProceed {
             var errorTitle = "Cannot Launch Save State"
