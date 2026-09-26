@@ -36,6 +36,9 @@ struct DeltaSkinNativeResolutionTests {
 
 /// Tests for DeltaSkin JSON decoding
 @Suite("DeltaSkin Decoding Tests")
+// Mostly inline skin JSON fixtures; already over the limit before these tests
+// were compiled in CI. Splitting it belongs in its own change.
+// swiftlint:disable:next type_body_length
 struct DeltaSkinDecodingTests {
 
     /// Test successful decoding of GBA skin
