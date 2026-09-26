@@ -2515,7 +2515,11 @@ static bool thin_environment(unsigned cmd, void *data) {
 ///
 /// Skips the copy when the system directory IS the BIOS path (no dedicated
 /// `systemDirectoryName` for this system — `_systemSpecificDirectory` already
-/// returned `BIOSPath` directly). Existing destination files are never overwritten.
+/// returned `BIOSPath` directly). An existing destination file is replaced only
+/// when both are regular files and the `BIOSPath` copy is newer — otherwise a
+/// stale copy (e.g. a hatari.cfg whose absolute TOS path predates a reinstall,
+/// or a replaced BIOS dump) would shadow the source forever. Files the core
+/// writes itself are newer than their source and are left alone.
 - (void)_syncBIOSResources {
     NSString *biosDir = self.BIOSPath ?: _biosPath;
     if (!biosDir || biosDir.length == 0) {
@@ -2583,7 +2587,15 @@ static bool thin_environment(unsigned cmd, void *data) {
         for (NSString *destDir in destDirs) {
             NSString *dst = [destDir stringByAppendingPathComponent:file];
             if ([fm fileExistsAtPath:dst]) {
-                continue;  // never overwrite existing files
+                if (![self _isBIOSFile:src newerThan:dst]) {
+                    continue;
+                }
+                NSError *removeError = nil;
+                if (![fm removeItemAtPath:dst error:&removeError]) {
+                    WLOG(@"ThinFrontend: _syncBIOSResources — could not replace stale %@ in %@: %@",
+                         file, destDir.lastPathComponent, removeError.localizedDescription);
+                    continue;
+                }
             }
             NSError *copyError = nil;
             [fm copyItemAtPath:src toPath:dst error:&copyError];
@@ -2600,6 +2612,20 @@ static bool thin_environment(unsigned cmd, void *data) {
         ILOG(@"ThinFrontend: _syncBIOSResources — synced %lu file(s) from BIOSPath → %@",
              (unsigned long)copied, systemDir.lastPathComponent);
     }
+}
+
+/// YES when both paths are regular files and *src* was modified after *dst*.
+- (BOOL)_isBIOSFile:(NSString *)src newerThan:(NSString *)dst {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSDictionary<NSFileAttributeKey, id> *srcAttrs = [fm attributesOfItemAtPath:src error:nil];
+    NSDictionary<NSFileAttributeKey, id> *dstAttrs = [fm attributesOfItemAtPath:dst error:nil];
+    if (![srcAttrs.fileType isEqualToString:NSFileTypeRegular] ||
+        ![dstAttrs.fileType isEqualToString:NSFileTypeRegular]) {
+        return NO;
+    }
+    NSDate *srcDate = srcAttrs.fileModificationDate;
+    NSDate *dstDate = dstAttrs.fileModificationDate;
+    return srcDate && dstDate && [srcDate compare:dstDate] == NSOrderedDescending;
 }
 
 // MARK: - MIDI routing (class-level, called from Swift MIDIDeviceManager observation)
