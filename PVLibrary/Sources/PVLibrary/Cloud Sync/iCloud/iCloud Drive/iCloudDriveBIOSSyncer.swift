@@ -367,7 +367,7 @@ public class iCloudDriveBIOSSyncer: iCloudContainerSyncer, BIOSSyncing, SystemFi
 // MARK: - CloudKit Implementation
 
 /// BIOS syncer for all OSs  using CloudKit
-public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
+public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing { // swiftlint:disable:this type_body_length
 
     /// System subdirectory short names that contain user-placed firmware requiring CloudKit backup.
     ///
@@ -920,10 +920,13 @@ public class CloudKitBIOSSyncer: CloudKitSyncer, BIOSSyncing {
 
             CloudSyncManager.syncLog.event(.download, item: "bios/\(info.expectedFilename)", status: .inProgress, detail: "Initiating download: recordID=\(recordID), systemID=\(info.systemIdentifier ?? "nil")")
 
+            await BIOSDownloadTracker.shared.begin(info.expectedFilename)
             do {
                 try await downloadBIOSFromCloudKit(recordID: recordID, filename: info.expectedFilename, systemIdentifier: info.systemIdentifier)
+                await BIOSDownloadTracker.shared.finish(info.expectedFilename, success: true)
                 CloudSyncManager.syncLog.event(.download, item: "bios/\(info.expectedFilename)", status: .ok, detail: "Successfully downloaded")
             } catch {
+                await BIOSDownloadTracker.shared.finish(info.expectedFilename, success: false)
                 CloudSyncManager.syncLog.event(.download, item: "bios/\(info.expectedFilename)", status: .failed, detail: "Failed to download BIOS: \(error.localizedDescription)")
                 if let ckError = error as? CKError {
                     CloudSyncManager.syncLog.event(.error, item: "bios/\(info.expectedFilename)", status: .failed, detail: "CKError code: \(ckError.code.rawValue), description: \(ckError.localizedDescription)")
