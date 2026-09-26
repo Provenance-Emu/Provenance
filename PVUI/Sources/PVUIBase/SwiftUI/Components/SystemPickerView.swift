@@ -71,58 +71,10 @@ public struct SystemPickerView: View {
 
     private func moveGame(to newSystem: PVSystem) {
         DLOG("Moving game '\(game.title)' to system: \(newSystem.name)")
-
         do {
-            guard let sourceURL = PVEmulatorConfiguration.path(forGame: game) else {
-                ELOG("Cannot move game with no path")
-                return
-            }
-            let destinationURL = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: newSystem.identifier)
-                .appendingPathComponent(sourceURL.lastPathComponent)
-
-            // Save old values for cache cleanup
-            let oldRomPath = game.romPath
-            let oldSystemIdentifier = game.systemIdentifier
-            let oldFileURL = game.file?.url
-            let oldRelatedFiles = Array(game.relatedFiles.compactMap { $0.url })
-
-            // Move the actual file first
-            try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
-            DLOG("Successfully moved game file to new system directory <\(destinationURL.path())>")
-
             let realm = try Realm(configuration: RealmConfiguration.realmConfig)
-            var updatedGame: PVGame?
-            try realm.write {
-                /// Thaw the PVGame for editing
-                let thawedGame = game.thaw()
-                thawedGame?.system = newSystem
-                DLOG("Updated game system to: \(newSystem.name)")
-                thawedGame?.systemIdentifier = newSystem.identifier
-                DLOG("Updated game systemIdentifier to: \(newSystem.identifier)")
-
-                // Update file path to new system directory
-                let fileName = sourceURL.lastPathComponent
-                let partialPath: String = (newSystem.identifier as NSString).appendingPathComponent(fileName)
-                thawedGame?.romPath = partialPath
-                DLOG("Updated game romPath to: \(partialPath)")
-
-                // Update PVFile to point to the new location
-                // Create a new PVFile with the destination URL, which will calculate the correct partialPath
-                let newFile = PVFile(withURL: destinationURL)
-                thawedGame?.file = newFile
-                thawedGame?.isDownloaded = true
-                DLOG("Updated PVFile to point to new location: \(newFile.partialPath)")
-
-                updatedGame = thawedGame
-            }
-
-            // Update cache: remove old entries and add new ones
-            if let game = updatedGame {
-                RomDatabase.removeGameFromCache(oldRomPath: oldRomPath, oldSystemIdentifier: oldSystemIdentifier, oldFileURL: oldFileURL, oldRelatedFiles: oldRelatedFiles)
-                RomDatabase.addGameToCache(game)
-                DLOG("Updated games cache after moving game to new system")
-            }
-
+            try GameSystemMover.move(game, to: newSystem, in: realm)
+            DLOG("Moved game '\(game.title)' to \(newSystem.name)")
         } catch {
             ELOG("Failed to move game to new system: \(error.localizedDescription)")
         }

@@ -372,60 +372,13 @@ public class RetroGameLibraryViewModel: ObservableObject {
 
     /// Move a game to a different system
     public func moveGame(_ game: PVGame, toSystem system: PVSystem) async {
-        // Get a reference to the Realm
         guard let realm = try? await Realm() else {
             ELOG("Failed to open Realm for moving game")
             return
         }
-
         do {
-            guard let sourceURL = PVEmulatorConfiguration.path(forGame: game) else {
-                ELOG("Cannot move game with no path")
-                return
-            }
-
-            let destinationURL = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system.identifier)
-                .appendingPathComponent(sourceURL.lastPathComponent)
-
-            // Save old values for cache cleanup
-            let oldRomPath = game.romPath
-            let oldSystemIdentifier = game.systemIdentifier
-            let oldFileURL = game.file?.url
-            let oldRelatedFiles = Array(game.relatedFiles.compactMap { $0.url })
-
-            // Move the actual file first
-            try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
-            DLOG("Successfully moved game file to new system directory: \(destinationURL.path)")
-
-            var updatedGame: PVGame?
-            try realm.write {
-                guard !game.isInvalidated else { return }
-
-                let thawedGame = game.thaw() ?? game
-                thawedGame.system = system
-                thawedGame.systemIdentifier = system.identifier
-
-                // Update file path to new system directory
-                let fileName = sourceURL.lastPathComponent
-                let partialPath: String = (system.identifier as NSString).appendingPathComponent(fileName)
-                thawedGame.romPath = partialPath
-                DLOG("Updated game romPath to: \(partialPath)")
-
-                // Update PVFile to point to the new location
-                let newFile = PVFile(withURL: destinationURL)
-                thawedGame.file = newFile
-                DLOG("Updated PVFile to point to new location: \(newFile.partialPath)")
-
-                DLOG("Successfully moved game \(thawedGame.title) to system \(system.name)")
-                updatedGame = thawedGame
-            }
-
-            // Update cache: remove old entries and add new ones
-            if let game = updatedGame {
-                RomDatabase.removeGameFromCache(oldRomPath: oldRomPath, oldSystemIdentifier: oldSystemIdentifier, oldFileURL: oldFileURL, oldRelatedFiles: oldRelatedFiles)
-                RomDatabase.addGameToCache(game)
-                DLOG("Updated games cache after moving game to new system")
-            }
+            try GameSystemMover.move(game, to: system, in: realm)
+            DLOG("Moved game \(game.title) to system \(system.name)")
         } catch {
             ELOG("Failed to move game: \(error)")
         }

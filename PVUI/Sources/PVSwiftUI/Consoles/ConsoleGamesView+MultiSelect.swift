@@ -49,12 +49,15 @@ extension ConsoleGamesView {
         }
     }
 
+
     /// Wraps a game cell with a selection indicator overlay when multi-select is active.
     /// Selection checkmark is placed top-leading to avoid conflicting with the
     /// cloud sync indicator badge at top-trailing.
     @ViewBuilder
     func multiSelectOverlay(md5: String, @ViewBuilder content: () -> some View) -> some View {
-        let isSelected = gamesViewModel.selectedGameMD5s.contains(md5)
+        let normalizedID = md5.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let isSelected = gamesViewModel.selectedGameMD5s.contains(normalizedID)
+        let selectionLabel = isSelected ? "Selected" : "Not selected"
         ZStack(alignment: .topLeading) {
             content()
                 .overlay {
@@ -82,6 +85,17 @@ extension ConsoleGamesView {
             }
         }
         .contentShape(Rectangle())
+        .accessibilityElement(children: .contain)
+        .accessibilityValue(gamesViewModel.isMultiSelectMode ? selectionLabel : "")
+        .accessibilityAddTraits(gamesViewModel.isMultiSelectMode && isSelected ? .isSelected : [])
+        // Only offer Select/Deselect to VoiceOver while multi-select is active.
+        .accessibilityActions {
+            if gamesViewModel.isMultiSelectMode {
+                Button(isSelected ? "Deselect" : "Select") {
+                    performSelectionToggle(md5: md5)
+                }
+            }
+        }
         .onTapGesture {
             if gamesViewModel.isMultiSelectMode {
                 performSelectionToggle(md5: md5)
@@ -125,6 +139,26 @@ extension ConsoleGamesView {
                             gamesViewModel?.exitMultiSelectMode()
                         }
                     }
+                    state.onSelectAll = { [weak gamesViewModel] in
+                        guard let gamesViewModel else { return }
+                        Task { @MainActor in
+                            let query = gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                            let visibleGames = gamesViewModel.allGamesModels.filter {
+                                query.isEmpty || $0.title.lowercased().contains(query)
+                            }
+                            gamesViewModel.selectAllVisible(visibleGames)
+                        }
+                    }
+                    state.onDeselectAll = { [weak gamesViewModel] in
+                        guard let gamesViewModel else { return }
+                        Task { @MainActor in
+                            let query = gamesViewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                            let visibleGames = gamesViewModel.allGamesModels.filter {
+                                query.isEmpty || $0.title.lowercased().contains(query)
+                            }
+                            gamesViewModel.deselectAllVisible(visibleGames)
+                        }
+                    }
                 } else {
                     state.deactivate()
                 }
@@ -133,6 +167,18 @@ extension ConsoleGamesView {
                 MultiSelectToolbarState.shared.updateCount(count)
                 updateCloudActionAvailability()
             }
+    }
+
+    /// The multi-select toolbar is drawn by `RetroMainView` and outlives this view.
+    /// Leaving the console list without tapping Done (another main tab, a pushed
+    /// screen) must not strand it on screen with its actions bound to this view model.
+    /// Sheets opened from the toolbar keep this view in place and are excluded.
+    func endMultiSelectOnDisappear() {
+        guard gamesViewModel.isMultiSelectMode,
+              !gamesViewModel.showBatchMoveToSystem,
+              !gamesViewModel.showNormalizeTitlePreview else { return }
+        gamesViewModel.exitMultiSelectMode()
+        MultiSelectToolbarState.shared.deactivate()
     }
 
     // MARK: - Cloud action availability
@@ -149,8 +195,7 @@ extension ConsoleGamesView {
         var hasOffloadable = false
         var hasDownloadable = false
         for md5 in gamesViewModel.selectedGameMD5s {
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            guard let game = selectedGame(md5: md5, in: realm) else { continue }
             if game.cloudRecordID != nil {
                 if game.isDownloaded { hasOffloadable = true }
                 else { hasDownloadable = true }
@@ -207,8 +252,7 @@ extension ConsoleGamesView {
         let selectedMD5s = gamesViewModel.selectedGameMD5s.sorted()
         let realm = RomDatabase.sharedInstance.realm
         let rows: [NormalizeTitlePreviewRow] = selectedMD5s.compactMap { md5 in
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+            guard let game = selectedGame(md5: md5, in: realm) else {
                 return nil
             }
             let proposed = ROMTitleNormalizer.normalize(game.title)
@@ -274,8 +318,7 @@ extension ConsoleGamesView {
         var deletedCount = 0
 
         for md5 in selectedMD5s {
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            guard let game = selectedGame(md5: md5, in: realm) else { continue }
             do {
                 try RomDatabase.sharedInstance.delete(game: game, deleteSaves: false)
                 deletedCount += 1
@@ -311,30 +354,13 @@ extension ConsoleGamesView {
         var failedTitles: [String] = []
 
         for md5 in selectedMD5s {
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            guard let game = selectedGame(md5: md5, in: realm) else { continue }
 
             // Skip games already on this system
             if game.systemIdentifier == system.identifier { continue }
 
             do {
-                guard let sourceURL = PVEmulatorConfiguration.path(forGame: game) else {
-                    failedTitles.append(game.title)
-                    continue
-                }
-                let destinationURL = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system.identifier)
-                    .appendingPathComponent(sourceURL.lastPathComponent)
-
-                try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
-
-                try realm.write {
-                    let thawedGame = game.thaw()
-                    thawedGame?.system = system
-                    thawedGame?.systemIdentifier = system.identifier
-                    // Update ROM path
-                    let newRelativePath = "\(system.identifier)/\(sourceURL.lastPathComponent)"
-                    thawedGame?.romPath = newRelativePath
-                }
+                try GameSystemMover.move(game, to: system, in: realm)
                 movedCount += 1
             } catch {
                 failedTitles.append(game.title)
@@ -357,6 +383,14 @@ extension ConsoleGamesView {
         }
     }
 
+    /// Looks a selected game up by MD5. Selection IDs are normalised to uppercase, but
+    /// records may store the hash in either case, so try the ID as given, then both cases.
+    private func selectedGame(md5: String, in realm: Realm) -> PVGame? {
+        realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+            ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
+            ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.lowercased())
+    }
+
     // MARK: - Batch Offload
 
     func performBatchOffload() {
@@ -369,8 +403,7 @@ extension ConsoleGamesView {
             var failedTitles: [String] = []
 
             for md5 in selectedMD5s {
-                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                        ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+                guard let game = selectedGame(md5: md5, in: realm) else { continue }
                 guard game.cloudRecordID != nil, game.isDownloaded else { continue }
 
                 do {
@@ -417,8 +450,7 @@ extension ConsoleGamesView {
         var gamesToDownload: [(recordID: String, md5: String, title: String)] = []
 
         for md5 in selectedMD5s {
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            guard let game = selectedGame(md5: md5, in: realm) else { continue }
             guard let recordID = game.cloudRecordID, !game.isDownloaded else { continue }
             gamesToDownload.append((recordID: recordID, md5: game.md5Hash, title: game.title))
         }
