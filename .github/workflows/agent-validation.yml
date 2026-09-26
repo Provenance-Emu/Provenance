@@ -330,6 +330,12 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             2>&1 | tee /tmp/pvui-test.log | grep -E "(: (fatal )?error:|Test Suite|Test Case .* failed|✘|Executed|TEST (SUCCEEDED|FAILED))" | tail -150
 
+      # The summary grep above drops everything else, including why package
+      # resolution failed ("Could not resolve package dependencies:" + detail lines).
+      - name: Show PVUI test log tail
+        if: failure()
+        run: tail -60 /tmp/pvui-test.log || true
+
       - name: Upload PVUI test log
         if: failure()
         uses: actions/upload-artifact@v4
