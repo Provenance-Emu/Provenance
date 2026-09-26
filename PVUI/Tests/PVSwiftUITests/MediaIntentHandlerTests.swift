@@ -18,7 +18,6 @@ import Intents
 
 // MARK: - Helpers
 
-@available(iOS 14.0, *)
 private func makeIntent(items: [INMediaItem]?) -> INPlayMediaIntent {
     INPlayMediaIntent(mediaItems: items,
                      mediaContainer: nil,
@@ -33,7 +32,6 @@ private func makeIntent(items: [INMediaItem]?) -> INPlayMediaIntent {
 // MARK: - Test suite
 
 @Suite("SiriKit INPlayMediaIntent Handler")
-@available(iOS 14.0, *)
 struct MediaIntentHandlerTests {
 
     // MARK: handle(intent:completion:) — guard paths
