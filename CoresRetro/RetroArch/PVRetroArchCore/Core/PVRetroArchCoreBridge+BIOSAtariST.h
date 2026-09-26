@@ -20,7 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// YES when the current system/core is Atari ST / Hatari.
 - (BOOL)pv_isHatariSystem;
 
-/// Validate and repair a TOS ROM file in-place.
+/// Validate a TOS ROM file and, only when PVHatariTOSByteRepair is enabled
+/// (off by default, see issue #2383), repair byte-swapped headers in-place.
 /// Returns YES if the file exists and is not a ZIP archive.
 /// Note: also returns YES when the load address is unrecognised and left
 /// untouched — the file is present but Hatari may still reject it if the
