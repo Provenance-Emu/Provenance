@@ -11,7 +11,7 @@ import PVThemes
 import SwiftUI
 
 /// Custom themed `UINavigationController` for the main center view
-/// that's embedded in the SideNavigationController
+/// that's embedded in the `PVSwiftUISideMenuContainer`
 public final class PVRootViewNavigationController: UINavigationController {
 
     /// Constants for styling
@@ -126,7 +126,7 @@ public final class PVRootViewNavigationController: UINavigationController {
     }
 
     private func updateAppearance() {
-        if parent is SideNavigationController {
+        if parent is PVSwiftUISideMenuContainer {
             applyCustomTheme()
         } else {
             resetToDefaultTheme()
@@ -221,10 +221,7 @@ public final class PVRootViewNavigationController: UINavigationController {
         }
     }
 
-    // Don't forget to remove the observer when it's no longer needed
     deinit {
-        if #unavailable(iOS 17.0, tvOS 17.0) {
-            NotificationCenter.default.removeObserver(self)
-        }
+        NotificationCenter.default.removeObserver(self)
     }
 }
