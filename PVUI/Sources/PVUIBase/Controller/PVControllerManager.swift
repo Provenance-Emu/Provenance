@@ -1148,7 +1148,14 @@ public extension PVControllerManager {
     /// A stable string identifier for a controller, used as a dictionary key for preferences.
     /// Uses ``GCController/vendorName`` when available, falling back to ``GCController/productCategory``.
     func controllerIdentifier(for controller: GCController) -> String {
-        return controller.vendorName ?? controller.productCategory
+        return Self.identifierProvider(controller)
+    }
+
+    /// How a controller is keyed for slot preferences. Identical physical controllers
+    /// intentionally share an ID so a preference follows the model across reconnects;
+    /// tests swap this out because synthetic controllers all report the same name.
+    nonisolated(unsafe) static var identifierProvider: (GCController) -> String = { controller in
+        controller.vendorName ?? controller.productCategory
     }
 
     // MARK: ControllerSlotMode API

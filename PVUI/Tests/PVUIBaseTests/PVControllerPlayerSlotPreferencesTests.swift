@@ -11,7 +11,7 @@ import GameController
 // NOTE: PVControllerManager is a @MainActor singleton; the tests run the
 // relevant logic on the main actor via Swift structured concurrency.
 
-@Suite("PVControllerManager — Player-Slot Preferences")
+@Suite("PVControllerManager — Player-Slot Preferences", .serialized)
 struct PVControllerPlayerSlotPreferencesTests {
 
     // MARK: Helpers
@@ -21,6 +21,22 @@ struct PVControllerPlayerSlotPreferencesTests {
         let c = GCController.withExtendedGamepad()
         PVControllerManager.shared.clearSlotMode(for: c)
         return c
+    }
+
+    /// Synthetic controllers all report the same name, so they would share one
+    /// slot preference. Give each its own ID for the duration of a test.
+    @MainActor
+    private func useDistinctControllerIDs() -> @MainActor () -> Void {
+        let original = PVControllerManager.identifierProvider
+        PVControllerManager.identifierProvider = { "test-\(ObjectIdentifier($0).hashValue)" }
+        return { PVControllerManager.identifierProvider = original }
+    }
+
+    /// The manager is a process-wide singleton, so slots can still hold controllers
+    /// from other tests (or the simulator). Empty them so assignment starts clean.
+    @MainActor
+    private func clearPlayerSlots(_ manager: PVControllerManager) {
+        for player in 1...8 { manager.setController(nil, toPlayer: player) }
     }
 
     /// Returns a closure that restores `Defaults[.controllerSlotModes]` to the
@@ -251,6 +267,9 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func assignPreferredClaimsFreeSlot() async throws {
         let manager = PVControllerManager.shared
+        let restoreIDs = useDistinctControllerIDs()
+        defer { restoreIDs() }
+        clearPlayerSlots(manager)
         let restore = snapshotSlotModes()
         defer { restore() }
         let controller1 = freshController()
@@ -272,6 +291,9 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func assignPreferredFallsBackWhenOccupied() async throws {
         let manager = PVControllerManager.shared
+        let restoreIDs = useDistinctControllerIDs()
+        defer { restoreIDs() }
+        clearPlayerSlots(manager)
         let restore = snapshotSlotModes()
         defer { restore() }
         let controller1 = freshController()
@@ -296,6 +318,9 @@ struct PVControllerPlayerSlotPreferencesTests {
     @MainActor
     func alwaysEvictsOccupantToNextFreeSlot() async throws {
         let manager = PVControllerManager.shared
+        let restoreIDs = useDistinctControllerIDs()
+        defer { restoreIDs() }
+        clearPlayerSlots(manager)
         let restore = snapshotSlotModes()
         defer { restore() }
         let controller1 = freshController()

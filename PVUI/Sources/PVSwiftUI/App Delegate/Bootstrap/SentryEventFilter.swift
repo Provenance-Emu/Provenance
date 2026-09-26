@@ -166,15 +166,19 @@ public enum SentryEventFilter {
             || snapshot.transaction?.contains("PVEmulatorViewController") == true
     }
 
-    /// Uses the same per-system extension registry as the importer (`systems.plist` → Realm cache).
+    /// Whether a lowercased file extension belongs to a known system. Uses the same
+    /// per-system registry as the importer (`systems.plist` → Realm cache). Tests
+    /// substitute a fixed list because the test host has no populated library.
+    nonisolated(unsafe) static var isKnownROMExtension: (String) -> Bool = { ext in
+        PVEmulatorConfiguration.systemsFromCache(forFileExtension: ext) != nil
+            || PVEmulatorConfiguration.systems(forFileExtension: ext) != nil
+    }
+
     private static func looksLikeROMFilename(_ value: String?) -> Bool {
         guard let value, !value.isEmpty else { return false }
         let ext = (value as NSString).pathExtension.lowercased()
         guard !ext.isEmpty else { return false }
-        if PVEmulatorConfiguration.systemsFromCache(forFileExtension: ext) != nil {
-            return true
-        }
-        return PVEmulatorConfiguration.systems(forFileExtension: ext) != nil
+        return isKnownROMExtension(ext)
     }
 
     private static func framesIndicateROMLoad(_ frames: [SentryEventFrame]) -> Bool {

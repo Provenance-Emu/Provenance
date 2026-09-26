@@ -168,6 +168,9 @@ public final class PVToastManager: ObservableObject {
         dismissTimers.values.forEach { $0.cancel() }
         dismissTimers.removeAll()
         pendingQueue.removeAll()
+        // Dismissed toasts no longer count against the rate limit; otherwise the
+        // next toasts after a full clear are queued behind ones nobody can see.
+        recentTimestamps.removeAll()
         drainTask?.cancel()
         drainTask = nil
         withAnimation { toasts.removeAll() }
