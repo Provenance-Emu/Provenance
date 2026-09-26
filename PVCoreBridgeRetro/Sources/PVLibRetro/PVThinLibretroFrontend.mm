@@ -2614,7 +2614,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 ///
 /// Skips the copy when the system directory IS the BIOS path (no dedicated
 /// `systemDirectoryName` for this system — `_systemSpecificDirectory` already
-/// returned `BIOSPath` directly). An existing destination file is replaced only
+/// returned `BIOSPath` directly). An existing destination file is replaced (atomically) only
 /// when both are regular files and the `BIOSPath` copy is newer — otherwise a
 /// stale copy (e.g. a hatari.cfg whose absolute TOS path predates a reinstall,
 /// or a replaced BIOS dump) would shadow the source forever. Files the core
@@ -2685,20 +2685,15 @@ static bool thin_environment(unsigned cmd, void *data) {
         NSString *src = [biosDir stringByAppendingPathComponent:file];
         for (NSString *destDir in destDirs) {
             NSString *dst = [destDir stringByAppendingPathComponent:file];
-            if ([fm fileExistsAtPath:dst]) {
-                if (![self _isBIOSFile:src newerThan:dst]) {
-                    continue;
-                }
-                NSError *removeError = nil;
-                if (![fm removeItemAtPath:dst error:&removeError]) {
-                    WLOG(@"ThinFrontend: _syncBIOSResources — could not replace stale %@ in %@: %@",
-                         file, destDir.lastPathComponent, removeError.localizedDescription);
-                    continue;
-                }
+            BOOL replacing = [fm fileExistsAtPath:dst];
+            if (replacing && ![self _isBIOSFile:src newerThan:dst]) {
+                continue;
             }
             NSError *copyError = nil;
-            [fm copyItemAtPath:src toPath:dst error:&copyError];
-            if (copyError) {
+            BOOL ok = replacing
+                ? [self _replaceBIOSFile:dst withCopyOf:src error:&copyError]
+                : [fm copyItemAtPath:src toPath:dst error:&copyError];
+            if (!ok) {
                 WLOG(@"ThinFrontend: _syncBIOSResources — failed to copy %@ → %@: %@",
                      file, destDir.lastPathComponent, copyError.localizedDescription);
             } else {
@@ -2711,6 +2706,28 @@ static bool thin_environment(unsigned cmd, void *data) {
         ILOG(@"ThinFrontend: _syncBIOSResources — synced %lu file(s) from BIOSPath → %@",
              (unsigned long)copied, systemDir.lastPathComponent);
     }
+}
+
+/// Copy *src* beside *dst*, then swap it in, so a failed copy leaves the old file in place.
+/// The new file keeps *src*'s metadata (including its modification date), so the next
+/// sync sees the two as current and doesn't copy again.
+- (BOOL)_replaceBIOSFile:(NSString *)dst withCopyOf:(NSString *)src error:(NSError **)error {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *tmpName = [NSString stringWithFormat:@".%@.%@.tmp", dst.lastPathComponent, NSUUID.UUID.UUIDString];
+    NSString *tmp = [dst.stringByDeletingLastPathComponent stringByAppendingPathComponent:tmpName];
+    if (![fm copyItemAtPath:src toPath:tmp error:error]) {
+        return NO;
+    }
+    if (![fm replaceItemAtURL:[NSURL fileURLWithPath:dst]
+                withItemAtURL:[NSURL fileURLWithPath:tmp]
+               backupItemName:nil
+                      options:NSFileManagerItemReplacementUsingNewMetadataOnly
+             resultingItemURL:nil
+                        error:error]) {
+        [fm removeItemAtPath:tmp error:nil];
+        return NO;
+    }
+    return YES;
 }
 
 /// YES when both paths are regular files and *src* was modified after *dst*.
