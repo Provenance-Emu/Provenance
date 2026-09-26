@@ -29,6 +29,18 @@ final class RetroLogImportTests: XCTestCase {
 
     // MARK: - Plain text
 
+    /// Text exports use `.log` so a shared log reopens in Provenance (`public.log`).
+    func testTextExportUsesLogExtensionAndReimports() async throws {
+        let vm = RetroLogViewModel()
+        let exported = try XCTUnwrap(vm.exportLogsAsText())
+        defer { try? FileManager.default.removeItem(at: exported) }
+
+        XCTAssertEqual(exported.pathExtension, "log")
+
+        try await vm.importLog(from: exported)
+        XCTAssertEqual(vm.importedSession?.name, exported.lastPathComponent)
+    }
+
     func testImportPlainTextPopulatesSessionAndName() async throws {
         let url = try write("line one\nline two\nline three", to: "sample.log")
         let vm = RetroLogViewModel()

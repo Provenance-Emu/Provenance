@@ -35,6 +35,9 @@ public struct RetroLogView: View {
 
     /// Message shown when importing a log file fails
     @State private var importErrorMessage: String?
+
+    /// A log file handed to the app from outside (Files, Mail, AirDrop), imported on appear
+    private var initialImportURL: URL?
     #endif
 
     #if os(tvOS)
@@ -62,6 +65,14 @@ public struct RetroLogView: View {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self._isFullscreen = isFullscreen
     }
+
+    #if !os(tvOS)
+    /// Opens with `url` imported in place of the live logs.
+    public init(importing url: URL, isFullscreen: Binding<Bool> = .constant(false)) {
+        self._isFullscreen = isFullscreen
+        self.initialImportURL = url
+    }
+    #endif
 
     // MARK: - Body
 
@@ -152,6 +163,14 @@ public struct RetroLogView: View {
                     }
                 }
             case .failure(let error):
+                importErrorMessage = error.localizedDescription
+            }
+        }
+        .task(id: initialImportURL) {
+            guard let url = initialImportURL else { return }
+            do {
+                try await viewModel.importLog(from: url)
+            } catch {
                 importErrorMessage = error.localizedDescription
             }
         }

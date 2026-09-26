@@ -22,6 +22,18 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeName</key>
+			<string>Log File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.log</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
 			<string>RetroArch Configuration</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
