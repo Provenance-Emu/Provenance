@@ -752,7 +752,7 @@ public final class PVSettingsViewController: QuickTableViewController {
 #if canImport(PVWebServer)
 #if os(iOS)
     /// Global on-screen controller overlay scale (0.5×–2.0×).
-    private func controllerScaleRow() -> PVSettingsSliderRow {
+    private func controllerScaleRow() -> PVSettingsSliderRow<Double> {
         PVSettingsSliderRow(text: NSLocalizedString("Scale", comment: "Scale"),
                             detailText: .subtitle("Size of the on-screen controller overlay."),
                             valueLimits: (min: 0.5, max: 2.0),
