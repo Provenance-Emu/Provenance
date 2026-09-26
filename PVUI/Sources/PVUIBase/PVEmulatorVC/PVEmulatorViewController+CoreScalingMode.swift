@@ -16,6 +16,7 @@ extension PVEmulatorViewController {
     func forwardScalingModeToCoreIfNeeded() {
         guard scalingModeCancellable == nil,
               let target = core.bridge as? EmulatorCoreScalingModeApplying else { return }
+        target.applyUserScalingMode()
         scalingModeCancellable = Defaults.publisher(.scalingMode)
             .receive(on: DispatchQueue.main)
             .sink { [weak target] _ in
