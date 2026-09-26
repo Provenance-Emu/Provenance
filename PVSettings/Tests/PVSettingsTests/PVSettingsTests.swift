@@ -1786,6 +1786,18 @@ struct LightGunSettingsTests {
 @Suite("ScalingMode", .serialized)
 struct ScalingModeTests {
 
+    /// ObjC cores (Dolphin, PPSSPP, the RetroArch wrapper) read the scaling mode
+    /// only through these flags, so each mode must set exactly the right one.
+    @Test("PVSettingsWrapper scaling flags match the mode", arguments: ScalingMode.allCases)
+    func wrapperFlagsMatchMode(mode: ScalingMode) {
+        defer { Defaults.reset(.scalingMode) }
+        Defaults[.scalingMode] = mode
+
+        #expect(PVSettingsWrapper.useStretchScale == (mode == .stretch))
+        #expect(PVSettingsWrapper.useIntegerScale == (mode == .integerScale))
+        #expect(PVSettingsWrapper.useNativeResolution == (mode == .nativeResolution))
+    }
+
     @Test("scalingMode default is aspectFit")
     func scalingModeDefault() {
         Defaults.reset(.scalingMode)

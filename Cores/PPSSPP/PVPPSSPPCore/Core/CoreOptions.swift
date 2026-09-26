@@ -366,3 +366,9 @@ extension PVPPSSPPCoreBridge: GameWithCheat {
 		];
 	}
 }
+
+extension PVPPSSPPCoreBridge: EmulatorCoreScalingModeApplying {
+    public func applyUserScalingMode() {
+        applyDisplayScalingSetting()
+    }
+}

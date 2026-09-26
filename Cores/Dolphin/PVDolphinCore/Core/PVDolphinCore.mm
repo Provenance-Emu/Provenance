@@ -14,6 +14,7 @@
 #import <PVDolphin/PVDolphin-Swift.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 @import PVEmulatorCore;
+@import PVSettings;
 
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
@@ -298,6 +299,21 @@ static void ResetDolphinStaticState() {
     return YES;
 }
 
+/// Dolphin sizes its own output, so the app's scaling mode can't be applied to its
+/// view frame. An explicit Aspect Ratio option wins; on Auto, follow the app's
+/// Stretch mode. Other modes have no Dolphin equivalent and keep Auto (aspect fit).
+- (AspectMode)effectiveAspectMode {
+    AspectMode mode = (AspectMode)self.aspectRatio;
+    if (mode == AspectMode::Auto && PVSettingsWrapper.useStretchScale) {
+        return AspectMode::Stretch;
+    }
+    return mode;
+}
+
+- (void)applyAspectRatioSetting {
+    Config::SetBaseOrCurrent(Config::GFX_ASPECT_RATIO, [self effectiveAspectMode]);
+}
+
 /* Config at dolphin-ios/Source/Core/Core/Config */
 - (void)setOptionValues {
     // TODO: Should we use `SetBaseIfUnspecified` here? @jmattiello
@@ -323,7 +339,7 @@ static void ResetDolphinStaticState() {
     }
 
     // Aspect Ratio
-    Config::SetBase(Config::GFX_ASPECT_RATIO, (AspectMode)self.aspectRatio);
+    Config::SetBase(Config::GFX_ASPECT_RATIO, [self effectiveAspectMode]);
 
     // V-Sync
     Config::SetBase(Config::GFX_VSYNC, self.vsync);

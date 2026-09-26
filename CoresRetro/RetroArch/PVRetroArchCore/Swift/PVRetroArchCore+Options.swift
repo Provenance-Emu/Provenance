@@ -1219,3 +1219,9 @@ extension PVRetroArchCoreCore {
         return Int(opt.index)
     }
 }
+
+extension PVRetroArchCoreBridge: EmulatorCoreScalingModeApplying {
+    public func applyUserScalingMode() {
+        applyScalingModeSetting()
+    }
+}

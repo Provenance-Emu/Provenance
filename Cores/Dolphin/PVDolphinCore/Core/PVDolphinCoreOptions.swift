@@ -6,6 +6,9 @@ import PVCoreObjCBridge
 import PVEmulatorCore
 
 @objc
+// Already over the 600-line limit on develop; it is one declaration per Dolphin
+// option. Splitting it belongs in its own change.
+// swiftlint:disable:next type_body_length
 public class PVDolphinCoreOptions: NSObject, CoreOptions {
 
     // MARK: - Graphics Settings
@@ -50,8 +53,9 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
                           requiresRestart: false),
                     values: [
                         .init(title: "Auto", description: "Auto", value: 0),
-                        .init(title: "Force 4:3", description: "Force 4:3", value: 1),
-                        .init(title: "Force 16:9", description: "Force 16:9", value: 2),
+                        // Values are Dolphin's AspectMode: ForceWide (16:9) = 1, ForceStandard (4:3) = 2.
+                        .init(title: "Force 4:3", description: "Force 4:3", value: 2),
+                        .init(title: "Force 16:9", description: "Force 16:9", value: 1),
                         .init(title: "Stretch to Window", description: "Stretch to Window", value: 3)
                     ],
                     defaultValue: 0)
@@ -1144,5 +1148,11 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         self.enableGyroMotionControls = PVDolphinCoreOptions.enableGyroMotionControls
         self.enableGyroIRCursor = PVDolphinCoreOptions.enableGyroIRCursor
         self.disableJoystickIRCursor = PVDolphinCoreOptions.disableJoystickIRCursor
+    }
+}
+
+extension PVDolphinCoreBridge: EmulatorCoreScalingModeApplying {
+    public func applyUserScalingMode() {
+        applyAspectRatioSetting()
     }
 }

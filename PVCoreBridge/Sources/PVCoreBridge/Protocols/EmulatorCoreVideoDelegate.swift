@@ -67,6 +67,15 @@ import PVPrimitives
     @objc optional func isShuttingDownForViewportUpdates() -> Bool
 }
 
+/// Cores that draw into their own view or size their own output, so the host's
+/// frame maths can't express the user's `ScalingMode`, apply it themselves by
+/// mapping it onto their renderer settings (e.g. a stretch or integer-scale flag).
+@objc public protocol EmulatorCoreScalingModeApplying {
+    /// Re-reads the user's scaling mode and applies it. Called on the main thread
+    /// once the core has started and again whenever the mode changes.
+    @objc func applyUserScalingMode()
+}
+
 //public extension EmulatorCoreVideoDelegate {
 //    var emulationFPS: Double { 0.0 }
 //    var renderFPS: Double { 0.0 }
