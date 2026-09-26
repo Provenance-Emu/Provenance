@@ -430,10 +430,11 @@ extension ConsoleGamesView {
     }
 
     /// Looks a selected game up by MD5. Selection IDs are normalised to uppercase, but
-    /// older records may be stored with lowercase hashes, so try the ID as given first.
+    /// records may store the hash in either case, so try the ID as given, then both cases.
     private func selectedGame(md5: String, in realm: Realm) -> PVGame? {
         realm.object(ofType: PVGame.self, forPrimaryKey: md5)
             ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
+            ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.lowercased())
     }
 
     // MARK: - Batch Offload
