@@ -993,7 +993,10 @@ struct ConsoleGamesView: SwiftUI.View {
                     isActiveTabState = isActiveTab
                     setupGamepadHandling()
                 }
-                .onDisappear { tearDownGamepadHandling() }
+                .onDisappear {
+                    tearDownGamepadHandling()
+                    endMultiSelectOnDisappear()
+                }
                 .onChange(of: isActiveTab) { nowActive in
                     isActiveTabState = nowActive
                     if !nowActive {

@@ -165,6 +165,18 @@ extension ConsoleGamesView {
             }
     }
 
+    /// The multi-select toolbar is drawn by `RetroMainView` and outlives this view.
+    /// Leaving the console list without tapping Done (another main tab, a pushed
+    /// screen) must not strand it on screen with its actions bound to this view model.
+    /// Sheets opened from the toolbar keep this view in place and are excluded.
+    func endMultiSelectOnDisappear() {
+        guard gamesViewModel.isMultiSelectMode,
+              !gamesViewModel.showBatchMoveToSystem,
+              !gamesViewModel.showNormalizeTitlePreview else { return }
+        gamesViewModel.exitMultiSelectMode()
+        MultiSelectToolbarState.shared.deactivate()
+    }
+
     // MARK: - Cloud action availability
 
     /// Updates the toolbar's offload/download button visibility based on selected games.
@@ -179,8 +191,7 @@ extension ConsoleGamesView {
         var hasOffloadable = false
         var hasDownloadable = false
         for md5 in gamesViewModel.selectedGameMD5s {
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            guard let game = selectedGame(md5: md5, in: realm) else { continue }
             if game.cloudRecordID != nil {
                 if game.isDownloaded { hasOffloadable = true }
                 else { hasDownloadable = true }
@@ -237,8 +248,7 @@ extension ConsoleGamesView {
         let selectedMD5s = gamesViewModel.selectedGameMD5s.sorted()
         let realm = RomDatabase.sharedInstance.realm
         let rows: [NormalizeTitlePreviewRow] = selectedMD5s.compactMap { md5 in
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else {
+            guard let game = selectedGame(md5: md5, in: realm) else {
                 return nil
             }
             let proposed = ROMTitleNormalizer.normalize(game.title)
@@ -304,8 +314,7 @@ extension ConsoleGamesView {
         var deletedCount = 0
 
         for md5 in selectedMD5s {
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            guard let game = selectedGame(md5: md5, in: realm) else { continue }
             do {
                 try RomDatabase.sharedInstance.delete(game: game, deleteSaves: false)
                 deletedCount += 1
@@ -341,30 +350,13 @@ extension ConsoleGamesView {
         var failedTitles: [String] = []
 
         for md5 in selectedMD5s {
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            guard let game = selectedGame(md5: md5, in: realm) else { continue }
 
             // Skip games already on this system
             if game.systemIdentifier == system.identifier { continue }
 
             do {
-                guard let sourceURL = PVEmulatorConfiguration.path(forGame: game) else {
-                    failedTitles.append(game.title)
-                    continue
-                }
-                let destinationURL = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system.identifier)
-                    .appendingPathComponent(sourceURL.lastPathComponent)
-
-                try FileManager.default.moveItem(at: sourceURL, to: destinationURL)
-
-                try realm.write {
-                    let thawedGame = game.thaw()
-                    thawedGame?.system = system
-                    thawedGame?.systemIdentifier = system.identifier
-                    // Update ROM path
-                    let newRelativePath = "\(system.identifier)/\(sourceURL.lastPathComponent)"
-                    thawedGame?.romPath = newRelativePath
-                }
+                try moveGame(game, to: system, in: realm)
                 movedCount += 1
             } catch {
                 failedTitles.append(game.title)
@@ -387,6 +379,59 @@ extension ConsoleGamesView {
         }
     }
 
+    /// Moves one game's primary file and its `relatedFiles` (cue/bin, other discs) into
+    /// `system`'s ROM directory, then repoints the record. Files move all-or-nothing, and
+    /// if the database write fails they are moved back, so the files and the record never
+    /// disagree about where the game lives.
+    private func moveGame(_ game: PVGame, to system: PVSystem, in realm: Realm) throws {
+        guard let sourceURL = PVEmulatorConfiguration.path(forGame: game) else {
+            throw CocoaError(.fileNoSuchFile)
+        }
+        let oldRomPath = game.romPath
+        let oldSystemIdentifier = game.systemIdentifier
+        let oldFileURL = game.file?.url
+        let oldRelatedFiles = Array(game.relatedFiles.compactMap { $0.url })
+
+        let destinationDirectory = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: system.identifier)
+        let move = BatchFileMove(files: [sourceURL] + oldRelatedFiles, into: destinationDirectory)
+        try move.perform()
+
+        do {
+            try realm.write {
+                guard let thawedGame = game.thaw() else { return }
+                thawedGame.system = system
+                thawedGame.systemIdentifier = system.identifier
+                thawedGame.romPath = (system.identifier as NSString).appendingPathComponent(sourceURL.lastPathComponent)
+                if let primary = move.pairs.first {
+                    thawedGame.file = PVFile(withURL: primary.destination)
+                }
+                let movedRelated = move.pairs.filter { oldRelatedFiles.contains($0.source) }
+                thawedGame.relatedFiles.removeAll()
+                thawedGame.relatedFiles.append(objectsIn: movedRelated.map { PVFile(withURL: $0.destination) })
+            }
+        } catch {
+            move.revert()
+            throw error
+        }
+
+        RomDatabase.removeGameFromCache(
+            oldRomPath: oldRomPath,
+            oldSystemIdentifier: oldSystemIdentifier,
+            oldFileURL: oldFileURL,
+            oldRelatedFiles: oldRelatedFiles
+        )
+        if let movedGame = game.thaw() {
+            RomDatabase.addGameToCache(movedGame)
+        }
+    }
+
+    /// Looks a selected game up by MD5. Selection IDs are normalised to uppercase, but
+    /// older records may be stored with lowercase hashes, so try the ID as given first.
+    private func selectedGame(md5: String, in realm: Realm) -> PVGame? {
+        realm.object(ofType: PVGame.self, forPrimaryKey: md5)
+            ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased())
+    }
+
     // MARK: - Batch Offload
 
     func performBatchOffload() {
@@ -399,8 +444,7 @@ extension ConsoleGamesView {
             var failedTitles: [String] = []
 
             for md5 in selectedMD5s {
-                guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                        ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+                guard let game = selectedGame(md5: md5, in: realm) else { continue }
                 guard game.cloudRecordID != nil, game.isDownloaded else { continue }
 
                 do {
@@ -447,8 +491,7 @@ extension ConsoleGamesView {
         var gamesToDownload: [(recordID: String, md5: String, title: String)] = []
 
         for md5 in selectedMD5s {
-            guard let game = realm.object(ofType: PVGame.self, forPrimaryKey: md5)
-                    ?? realm.object(ofType: PVGame.self, forPrimaryKey: md5.uppercased()) else { continue }
+            guard let game = selectedGame(md5: md5, in: realm) else { continue }
             guard let recordID = game.cloudRecordID, !game.isDownloaded else { continue }
             gamesToDownload.append((recordID: recordID, md5: game.md5Hash, title: game.title))
         }
