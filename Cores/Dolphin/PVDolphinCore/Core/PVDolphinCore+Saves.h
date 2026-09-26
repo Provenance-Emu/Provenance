@@ -12,15 +12,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PVDolphinCoreBridge (Saves)
 
-// Protocol-required synchronous methods
+// Synchronous save/load. Loading blocks until the state has been applied on the CPU
+// thread when called off the main thread; see PVDolphinCore+Saves.mm.
 - (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError **)error;
-- (BOOL)loadStateToFileAtPath:(NSString *)path error:(NSError **)error;
+- (BOOL)loadStateFromFileAtPath:(NSString *)path error:(NSError **)error;
 
-// Legacy methods for compatibility
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName;
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName;
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block;
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block;
+// Backs Swift's `loadState(fromFileAtPath:) async throws`. Overridden so the (possibly
+// multi-second) wait for boot + apply runs on the bridge's own serial queue instead of
+// whichever thread the caller happens to be on.
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(SaveStateCompletion)block;
 
 @end
 
