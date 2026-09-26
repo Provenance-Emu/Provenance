@@ -31,6 +31,7 @@ private func makeIntent(items: [INMediaItem]?) -> INPlayMediaIntent {
 
 // MARK: - Test suite
 
+@MainActor
 @Suite("SiriKit INPlayMediaIntent Handler")
 struct MediaIntentHandlerTests {
 
@@ -63,7 +64,7 @@ struct MediaIntentHandlerTests {
     @Test("handle: mediaItem with nil identifier and nil title → .failure")
     func handleBlankMediaItemReturnsFailure() async {
         let delegate = PVAppDelegate()
-        let blank = INMediaItem(identifier: nil, title: nil, type: .game, artwork: nil)
+        let blank = INMediaItem(identifier: nil, title: nil, type: .unknown, artwork: nil)
         let intent = makeIntent(items: [blank])
 
         let response: INPlayMediaIntentResponse = await withCheckedContinuation { cont in
@@ -78,7 +79,7 @@ struct MediaIntentHandlerTests {
         let delegate = PVAppDelegate()
         let item = INMediaItem(identifier: "DEADBEEFDEADBEEFDEADBEEFDEADBEEF",
                               title: nil,
-                              type: .game,
+                              type: .unknown,
                               artwork: nil)
         let intent = makeIntent(items: [item])
 
@@ -95,7 +96,7 @@ struct MediaIntentHandlerTests {
         let delegate = PVAppDelegate()
         let item = INMediaItem(identifier: nil,
                               title: "XYZZY_NONEXISTENT_GAME_12345",
-                              type: .game,
+                              type: .unknown,
                               artwork: nil)
         let intent = makeIntent(items: [item])
 
@@ -126,7 +127,7 @@ struct MediaIntentHandlerTests {
         let delegate = PVAppDelegate()
         let item = INMediaItem(identifier: "00000000000000000000000000000000",
                               title: nil,
-                              type: .game,
+                              type: .unknown,
                               artwork: nil)
         let intent = makeIntent(items: [item])
 
@@ -140,7 +141,7 @@ struct MediaIntentHandlerTests {
     @Test("resolveMediaItems: item with no identifier and no title → needsValue result")
     func resolveBlankItemReturnsNeedsValue() async {
         let delegate = PVAppDelegate()
-        let blank = INMediaItem(identifier: nil, title: nil, type: .game, artwork: nil)
+        let blank = INMediaItem(identifier: nil, title: nil, type: .unknown, artwork: nil)
         let intent = makeIntent(items: [blank])
 
         let results: [INPlayMediaMediaItemResolutionResult] = await withCheckedContinuation { cont in
