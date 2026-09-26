@@ -125,6 +125,7 @@
 		93FF382A2965FF9C00772659 /* PVRetroArch.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVRetroArch.mm */; };
 		AF3BC001029A000000000002 /* PVRetroArchCore+BIOS+AtariST.m in Sources */ = {isa = PBXBuildFile; fileRef = AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */; };
 		AF3BC001029A000000000004 /* PVRetroArchCoreBridge+BIOSAtariST.h in Headers */ = {isa = PBXBuildFile; fileRef = AF3BC001029A000000000003 /* PVRetroArchCoreBridge+BIOSAtariST.h */; };
+		C0C0CAFE7054000000000001 /* PVHatariTOSByteRepair.m in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE7054000000000002 /* PVHatariTOSByteRepair.m */; };
 		B3061F862F7768AC000F8839 /* PVRetroArchCore+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F822F7768AC000F8839 /* PVRetroArchCore+Cheats.swift */; };
 		B3061F872F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F832F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift */; };
 		B3061F882F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3061F842F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift */; };
@@ -448,6 +449,8 @@
 		A3D69792B9FCA4012C024F98 /* PVRetroArchOSD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVRetroArchOSD.h; sourceTree = "<group>"; };
 		AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+BIOS+AtariST.m"; sourceTree = "<group>"; };
 		AF3BC001029A000000000003 /* PVRetroArchCoreBridge+BIOSAtariST.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCoreBridge+BIOSAtariST.h"; sourceTree = "<group>"; };
+		C0C0CAFE7054000000000002 /* PVHatariTOSByteRepair.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVHatariTOSByteRepair.m; sourceTree = "<group>"; };
+		C0C0CAFE7054000000000003 /* PVHatariTOSByteRepair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVHatariTOSByteRepair.h; sourceTree = "<group>"; };
 		B3061F822F7768AC000F8839 /* PVRetroArchCore+Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+Cheats.swift"; sourceTree = "<group>"; };
 		B3061F832F7768AC000F8839 /* PVRetroArchCoreBridge+Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCoreBridge+Language.swift"; sourceTree = "<group>"; };
 		B3061F842F7768AC000F8839 /* PVRetroArchCoreCore+RetroAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCoreCore+RetroAchievements.swift"; sourceTree = "<group>"; };
@@ -940,6 +943,8 @@
 				C0C0CAFE2F00000000000003 /* PVRetroArchCore+ExceptionTrampoline.h */,
 				C0C0CAFE2F00000000000002 /* PVRetroArchCore+ExceptionTrampoline.mm */,
 				AF3BC001029A000000000001 /* PVRetroArchCore+BIOS+AtariST.m */,
+				C0C0CAFE7054000000000003 /* PVHatariTOSByteRepair.h */,
+				C0C0CAFE7054000000000002 /* PVHatariTOSByteRepair.m */,
 				9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */,
 				B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */,
 				93C372622A8B68000007671D /* PVRetroArchCore+Controls+3DO.m */,
@@ -1495,6 +1500,7 @@
 				93814F922AAAACAF00DEB9B9 /* PVRetroArchCore+Archive+MAME.m in Sources */,
 				93B3B1972A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m in Sources */,
 				AF3BC001029A000000000002 /* PVRetroArchCore+BIOS+AtariST.m in Sources */,
+				C0C0CAFE7054000000000001 /* PVHatariTOSByteRepair.m in Sources */,
 				93C3726A2A8B68000007671D /* PVRetroArchCore+Controls+N64.m in Sources */,
 				B3DD7A752ECE6D5E0022FF70 /* PVRetroArchCore+Controls+PCECD.m in Sources */,
 				B3EEFBB42D6807FB0080CA51 /* PVRetroArchCore+Controls+Jaguar.m in Sources */,
