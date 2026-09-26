@@ -285,7 +285,8 @@ struct CoreOptionTileProviderTests {
 
 // MARK: - Enumeration Tile Tests
 
-@Suite("CoreOptionTileProvider Enumeration Tile Tests")
+// Tests share one UserDefaults key, so they must not run concurrently.
+@Suite("CoreOptionTileProvider Enumeration Tile Tests", .serialized)
 struct CoreOptionTileProviderEnumTests {
 
     @Test("Enum option creates cycle tile with correct icon and color")
@@ -354,7 +355,8 @@ struct CoreOptionTileProviderEnumTests {
 
 // MARK: - Multi Tile Tests
 
-@Suite("CoreOptionTileProvider Multi Tile Tests")
+// Tests share one UserDefaults key, so they must not run concurrently.
+@Suite("CoreOptionTileProvider Multi Tile Tests", .serialized)
 struct CoreOptionTileProviderMultiTests {
 
     @Test("Multi option creates tile with list icon and purple color")

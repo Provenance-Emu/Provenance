@@ -201,6 +201,10 @@ let package = Package(
                 "PVUIBase",
                 "PVCoreBridge",
                 "PVLogging",
+            ],
+            resources: [
+                // Kept as a directory so tests can load `DS-Test.deltaskin/info.json`.
+                .copy("Resources/DS-Test.deltaskin")
             ]
         ),
 

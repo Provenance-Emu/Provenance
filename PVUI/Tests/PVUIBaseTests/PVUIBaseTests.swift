@@ -36,6 +36,9 @@ struct DeltaSkinNativeResolutionTests {
 
 /// Tests for DeltaSkin JSON decoding
 @Suite("DeltaSkin Decoding Tests")
+// Mostly inline skin JSON fixtures; already over the limit before these tests
+// were compiled in CI. Splitting it belongs in its own change.
+// swiftlint:disable:next type_body_length
 struct DeltaSkinDecodingTests {
 
     /// Test successful decoding of GBA skin
@@ -193,7 +196,7 @@ struct DeltaSkinDecodingTests {
         // Test basic properties
         #expect(info.name == "GBA Test Skin")
         #expect(info.identifier == "com.provenance.test.gba")
-        #expect(info.gameTypeIdentifier.rawValue == "com.rileytestut.delta.game.gba")
+        #expect(info.gameTypeIdentifier.deltaIdentifierString == "com.rileytestut.delta.game.gba")
         #expect(info.debug == false)
 
         // Test representations
@@ -204,7 +207,7 @@ struct DeltaSkinDecodingTests {
         #expect(standard != nil)
 
         // Test assets
-        if case .resizable(let filename) = standard?.assets {
+        if let filename = standard?.assets?.resizable {
             #expect(filename == "iphone_portrait.pdf")
         } else {
             throw TestError("Expected resizable PDF asset")
@@ -214,7 +217,7 @@ struct DeltaSkinDecodingTests {
         let screen = standard?.screens?.first
         #expect(screen != nil)
         #expect(screen?.inputFrame?.width == 240)
-        #expect(screen?.outputFrame.height == 276)
+        #expect(screen?.outputFrame?.height == 276)
     }
 
     /// Test successful decoding of GBC skin with PNG assets
@@ -476,13 +479,13 @@ struct DeltaSkinDecodingTests {
 
         // Test basic properties
         #expect(info.name == "GBC Sunrise by MessieJessy")
-        #expect(info.gameTypeIdentifier.rawValue == "com.rileytestut.delta.game.gbc")
+        #expect(info.gameTypeIdentifier.deltaIdentifierString == "com.rileytestut.delta.game.gbc")
 
         // Test PNG assets
         let portrait = info.representations[DeltaSkinDevice.iphone]?.standard?["portrait"]
         #expect(portrait != nil)
 
-        if case let .sized(small, medium, large) = portrait?.assets {
+        if let assets = portrait?.assets, let small = assets.small, let medium = assets.medium, let large = assets.large {
             #expect(small == "iphone-portrait.png")
             #expect(medium == "iphone-portrait.png")
             #expect(large == "iphone-portrait.png")
@@ -682,14 +685,14 @@ struct DeltaSkinDecodingTests {
         // Test basic properties
         #expect(info.name == "SNES Test Skin")
         #expect(info.identifier == "com.provenance.test.snes")
-        #expect(info.gameTypeIdentifier.rawValue == "com.rileytestut.delta.game.snes")
+        #expect(info.gameTypeIdentifier.deltaIdentifierString == "com.rileytestut.delta.game.snes")
         #expect(info.debug == false)
 
         // Test standard layout
         let standard = info.representations[DeltaSkinDevice.iphone]?.standard?["landscape"]
         #expect(standard != nil)
 
-        if case .resizable(let filename) = standard?.assets {
+        if let filename = standard?.assets?.resizable {
             #expect(filename == "iphone_landscape.pdf")
         } else {
             throw TestError("Expected resizable PDF asset")
@@ -699,14 +702,14 @@ struct DeltaSkinDecodingTests {
         #expect(standardScreen != nil)
         #expect(standardScreen?.inputFrame?.width == 256)
         #expect(standardScreen?.inputFrame?.height == 224)
-        #expect(standardScreen?.outputFrame.width == 796)
-        #expect(standardScreen?.outputFrame.height == 414)
+        #expect(standardScreen?.outputFrame?.width == 796)
+        #expect(standardScreen?.outputFrame?.height == 414)
 
         // Test edge-to-edge layout
         let edge = info.representations[DeltaSkinDevice.iphone]?.edgeToEdge?["landscape"]
         #expect(edge != nil)
 
-        if case .resizable(let filename) = edge?.assets {
+        if let filename = edge?.assets?.resizable {
             #expect(filename == "iphone_edge.pdf")
         } else {
             throw TestError("Expected resizable PDF asset")
@@ -714,8 +717,8 @@ struct DeltaSkinDecodingTests {
 
         let edgeScreen = edge?.screens?.first
         #expect(edgeScreen != nil)
-        #expect(edgeScreen?.outputFrame.width == 896)
-        #expect(edgeScreen?.outputFrame.height == 414)
+        #expect(edgeScreen?.outputFrame?.width == 896)
+        #expect(edgeScreen?.outputFrame?.height == 414)
 
         // Test mapping sizes
         #expect(standard?.mappingSize!.width == 896)
@@ -787,7 +790,7 @@ struct DeltaSkinDecodingTests {
         // Test basic properties
         #expect(info.name == "DS Test Skin")
         #expect(info.identifier == "com.provenance.test.ds")
-        #expect(info.gameTypeIdentifier.rawValue == "com.rileytestut.delta.game.ds")
+        #expect(info.gameTypeIdentifier.deltaIdentifierString == "com.rileytestut.delta.game.ds")
         #expect(info.debug == false)
 
         // Test iPhone edge-to-edge landscape layout
@@ -795,7 +798,7 @@ struct DeltaSkinDecodingTests {
         #expect(landscape != nil)
 
         // Test assets
-        if case .resizable(let filename) = landscape?.assets {
+        if let filename = landscape?.assets?.resizable {
             #expect(filename == "iphone_landscape.pdf")
         } else {
             throw TestError("Expected resizable PDF asset")
@@ -809,15 +812,15 @@ struct DeltaSkinDecodingTests {
         let topScreen = screens?.first
         #expect(topScreen?.inputFrame?.width == 256)
         #expect(topScreen?.inputFrame?.height == 192)
-        #expect(topScreen?.outputFrame.width == 535)
-        #expect(topScreen?.outputFrame.height == 400)
+        #expect(topScreen?.outputFrame?.width == 535)
+        #expect(topScreen?.outputFrame?.height == 400)
 
         // Test bottom screen (touch screen)
         let bottomScreen = screens?.last
         #expect(bottomScreen?.inputFrame?.minY == 192)  // Positioned below top screen in input
-        #expect(bottomScreen?.outputFrame.minX == 555)  // Positioned right of top screen in output
-        #expect(bottomScreen?.outputFrame.width == 341)
-        #expect(bottomScreen?.outputFrame.height == 256)
+        #expect(bottomScreen?.outputFrame?.minX == 555)  // Positioned right of top screen in output
+        #expect(bottomScreen?.outputFrame?.width == 341)
+        #expect(bottomScreen?.outputFrame?.height == 256)
 
         // Test mapping size
         #expect(landscape?.mappingSize!.width == 896)
@@ -890,7 +893,7 @@ struct DeltaSkinDecodingTests {
         // Test basic properties
         #expect(info.name == "N64 Test Skin")
         #expect(info.identifier == "com.provenance.test.n64")
-        #expect(info.gameTypeIdentifier.rawValue == "com.rileytestut.delta.game.n64")
+        #expect(info.gameTypeIdentifier.deltaIdentifierString == "com.rileytestut.delta.game.n64")
         #expect(info.debug == false)
 
         // Test iPhone landscape layout
@@ -898,7 +901,7 @@ struct DeltaSkinDecodingTests {
         #expect(landscape != nil)
 
         // Test assets
-        if case .resizable(let filename) = landscape?.assets {
+        if let filename = landscape?.assets?.resizable {
             #expect(filename == "iphone_landscape.pdf")
         } else {
             throw TestError("Expected resizable PDF asset")
@@ -909,8 +912,8 @@ struct DeltaSkinDecodingTests {
         #expect(screen != nil)
         #expect(screen?.inputFrame?.width == 320)
         #expect(screen?.inputFrame?.height == 240)
-        #expect(screen?.outputFrame.width == 796)
-        #expect(screen?.outputFrame.height == 414)
+        #expect(screen?.outputFrame?.width == 796)
+        #expect(screen?.outputFrame?.height == 414)
 
         // Test stretch filter
         let filter = screen?.filters?.first
@@ -1344,7 +1347,7 @@ struct DeltaSkinDecodingTests {
         #expect(portrait != nil)
 
         // Test assets
-        if case .resizable(let filename) = portrait?.assets {
+        if let filename = portrait?.assets?.resizable {
             #expect(filename == "iphone_portrait.pdf")
         } else {
             throw TestError("Expected resizable PDF asset")
@@ -1473,7 +1476,7 @@ struct DeltaSkinComponentTests {
         let screen = try decoder.decode(DeltaSkin.ScreenInfo.self, from: json.data(using: .utf8)!)
 
         #expect(screen.inputFrame?.minY == 192)
-        #expect(screen.outputFrame.minY == 576)
+        #expect(screen.outputFrame?.minY == 576)
     }
 
     /// Test decoding of CGSize from dictionary format
@@ -1512,7 +1515,7 @@ struct DeltaSkinComponentTests {
         let decoder = JSONDecoder()
         let assets = try decoder.decode(DeltaSkin.AssetRepresentation.self, from: json.data(using: .utf8)!)
 
-        if case .resizable(let filename) = assets {
+        if let filename = assets.resizable {
             #expect(filename == "ipad_portrait.pdf")
         } else {
             throw TestError("Expected resizable asset")
@@ -1777,7 +1780,7 @@ struct DeltaSkinComponentTests {
     func loadsDSTestSkinFromBundle() throws {
         // Get the bundle path
         let bundle = Bundle.module
-        guard let skinURL = bundle.url(forResource: "DS-Test.deltaskin/info", withExtension: "json") else {
+        guard let skinURL = bundle.url(forResource: "info", withExtension: "json", subdirectory: "DS-Test.deltaskin") else {
             throw TestError("Could not find DS-Test.deltaskin in bundle")
         }
 
@@ -1792,7 +1795,7 @@ struct DeltaSkinComponentTests {
             // Test basic properties
             #expect(info.name == "DS Test Skin")
             #expect(info.identifier == "com.provenance.test.ds")
-            #expect(info.gameTypeIdentifier.rawValue == "com.rileytestut.delta.game.ds")
+            #expect(info.gameTypeIdentifier.deltaIdentifierString == "com.rileytestut.delta.game.ds")
 
             // Test screen configuration
             let landscape = info.representations[DeltaSkinDevice.iphone]?.edgeToEdge?["landscape"]

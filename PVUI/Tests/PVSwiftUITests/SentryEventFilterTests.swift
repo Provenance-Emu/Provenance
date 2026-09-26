@@ -6,7 +6,7 @@
 import Testing
 @testable import PVSwiftUI
 
-@Suite("SentryEventFilter")
+@Suite("SentryEventFilter", .serialized)
 struct SentryEventFilterTests {
 
     @Test("Drops HTTPClientError for external artwork CDN 503")
@@ -191,6 +191,9 @@ struct SentryEventFilterTests {
 
     @Test("Drops intentional ROM loadFile IO on main thread")
     func dropsROMLoadFileIO() {
+        let lookup = SentryEventFilter.isKnownROMExtension
+        SentryEventFilter.isKnownROMExtension = { $0 == "z64" }
+        defer { SentryEventFilter.isKnownROMExtension = lookup }
         let snapshot = SentryEventSnapshot(
             mechanismType: nil,
             exceptionValue: "Legend of Zelda, The - Ocarina of Time (U) (V1.2) [!].z64",
