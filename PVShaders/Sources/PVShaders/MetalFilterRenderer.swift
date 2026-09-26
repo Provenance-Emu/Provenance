@@ -273,6 +273,20 @@ public final class PVMetalFilterRenderer: NSObject {
             )
             encoder.setFragmentBytes(&uniforms, length: MemoryLayout<UltronUniforms>.stride, index: 0)
 
+        case "Line Tron":
+            // Line Tron has no settings UI (its FilterOption case is commented out),
+            // so it was drawn with an unset buffer(0): zero width_scale turns the
+            // line mask into a hard step that blacks out half of every row.
+            var uniforms = LineTronUniforms(
+                sourceSize: sourceVector,
+                outputSize: outputVector,
+                widthScale: LineTronDefaults.widthScale,
+                lineTime: LineTronDefaults.lineTime,
+                falloff: LineTronDefaults.falloff,
+                strength: LineTronDefaults.strength
+            )
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout<LineTronUniforms>.stride, index: 0)
+
         case "VHS":
             var uniforms = VHSUniforms(
                 sourceSize: sourceVector,
@@ -367,6 +381,29 @@ private struct MegaTronUniforms {
     var trinitronCurve: Float
     var corner: Float
     var crtGamma: Float
+}
+
+/// Mirrors `LineTronUniforms` in lineTron.metal: two float4 then four floats
+/// (48 bytes). Field order and types must match exactly.
+private struct LineTronUniforms {
+    var sourceSize: SIMD4<Float>
+    var outputSize: SIMD4<Float>
+    var widthScale: Float
+    var lineTime: Float
+    var falloff: Float
+    var strength: Float
+}
+
+/// Line Tron has no user-facing settings, so these fixed values are what it uses.
+private enum LineTronDefaults {
+    /// Line width multiplier; 1.0 keeps a soft edge instead of a hard step.
+    static let widthScale: Float = 1.0
+    /// 0 disables the time-based fade (the shader skips it at 0).
+    static let lineTime: Float = 0.0
+    /// Fade rate; only used when `lineTime` is above 0.
+    static let falloff: Float = 1.0
+    /// How strongly the line mask darkens the image (0 = off, 1 = full).
+    static let strength: Float = 0.5
 }
 
 private struct UltronUniforms {
