@@ -83,6 +83,13 @@ public final class JITContextualPromptManager {
             return .proceed
         }
 
+        // 1b. Dolphin and Flycast ship JIT-less engines that run at full speed, so the
+        //     optional "Performance Mode" notice/prompt is noise. A build that genuinely
+        //     requires JIT is excluded by suppressesOptionalJITPrompt and still warns.
+        if JITCoreCapability.suppressesOptionalJITPrompt(coreIdentifier) {
+            return .proceed
+        }
+
         // 2. If JIT is already acquired, no action needed.
         #if canImport(JITManager)
         guard !DOLJitManager.acquired else { return .proceed }

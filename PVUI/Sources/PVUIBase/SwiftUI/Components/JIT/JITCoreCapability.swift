@@ -116,21 +116,41 @@ public enum JITCoreCapability: CaseIterable {
         }
     }
 
+    /// Whether this core's shipping build runs at full speed without JIT, so an
+    /// optional "Performance Mode" prompt before launch would only be noise.
+    ///
+    /// - `true`: Dolphin (GameCube/Wii) and Flycast (Dreamcast) now ship JIT-less
+    ///   engines (iCube's jitless core, the flycast-jitless interpreter build).
+    /// - `false`: everything else.
+    ///
+    /// This only suppresses OPTIONAL prompts. A build of these cores that genuinely
+    /// requires JIT (e.g. the native PVFlycast core, `.requiredOrCrash` on iOS/tvOS)
+    /// is caught by `coreIsJITRequired` first and still gets the blocking warning.
+    public var shipsFullSpeedWithoutJIT: Bool {
+        switch self {
+        case .dolphin, .flycast:
+            return true
+        case .azahar, .ppsspp, .mupen, .pcsx2:
+            return false
+        }
+    }
+
     /// Whether this core runs significantly worse without JIT and should show a
     /// one-time performance notice even when JIT cannot be acquired on the device.
     ///
-    /// - `true`: Dolphin (GameCube/Wii), Azahar (3DS), Flycast (Dreamcast) —
-    ///   JIT makes the difference between "barely playable" and a good experience.
-    ///   Users should be warned to set expectations, even if JIT is structurally
-    ///   unavailable (e.g. iOS 26 App Store build without the JIT entitlement).
-    /// - `false`: PPSSPP (interpreter fallback is acceptable), Mupen64Plus (cached
-    ///   interpreter is tolerable for many games). No notice shown when JIT unavailable.
-    ///   PS2 is excluded here because it is handled by `isJITRequired`.
+    /// - `true`: Azahar (3DS) — JIT makes the difference between "barely playable"
+    ///   and a good experience. Users should be warned to set expectations, even if
+    ///   JIT is structurally unavailable (e.g. iOS 26 App Store build without the JIT
+    ///   entitlement).
+    /// - `false`: Dolphin and Flycast (full speed without JIT — see
+    ///   `shipsFullSpeedWithoutJIT`), PPSSPP (interpreter fallback is acceptable),
+    ///   Mupen64Plus (cached interpreter is tolerable for many games). PS2 is excluded
+    ///   here because it is handled by `isJITRequired`.
     public var isPerformanceCritical: Bool {
         switch self {
-        case .dolphin, .azahar, .flycast:
+        case .azahar:
             return true
-        case .ppsspp, .mupen, .pcsx2:
+        case .dolphin, .flycast, .ppsspp, .mupen, .pcsx2:
             return false
         }
     }
@@ -201,6 +221,14 @@ public enum JITCoreCapability: CaseIterable {
     /// Uses `PVJITRequirementRegistry` as the primary source; falls back to keyword
     /// matching. Required cores (`coreIsJITRequired`) are excluded — they have a
     /// separate blocking warning.
+    /// Whether to skip the optional pre-launch JIT prompts for this core, because its
+    /// shipping build runs at full speed without JIT. Never true for a core that
+    /// requires JIT — those must keep their blocking warning.
+    public static func suppressesOptionalJITPrompt(_ coreIdentifier: String) -> Bool {
+        if coreIsJITRequired(coreIdentifier) { return false }
+        return capability(for: coreIdentifier)?.shipsFullSpeedWithoutJIT == true
+    }
+
     public static func isJITPerformanceCritical(_ coreIdentifier: String) -> Bool {
         // Required cores are handled separately.
         if coreIsJITRequired(coreIdentifier) { return false }
