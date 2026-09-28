@@ -1404,7 +1404,18 @@ extension PVThinLibretroCore: KeyboardResponder {
     }
 
 #if canImport(GameController)
-    public var keyChangedHandler: GCKeyboardValueChangedHandler? { nil }
+    /// Hardware-keyboard hook (see `GCKeyboard.createController`): keyboard systems
+    /// such as the Atari ST and DOS get the raw key as well as the gamepad mapping.
+    public var keyChangedHandler: GCKeyboardValueChangedHandler? {
+        guard gameSupportsKeyboard else { return nil }
+        return { [weak self] _, _, keyCode, pressed in
+            if pressed {
+                self?.keyDown(keyCode)
+            } else {
+                self?.keyUp(keyCode)
+            }
+        }
+    }
 
     @available(iOS 14.0, tvOS 14.0, *)
     public func keyDown(_ key: GCKeyCode) {
