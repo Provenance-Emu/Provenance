@@ -10,7 +10,8 @@
 /// - **touchpad** (default) — touch movement generates *relative* deltas that
 ///   accumulate a virtual cursor position, mirroring a laptop trackpad.
 ///   A single tap sends `leftMouseDown` + `leftMouseUp` at the current
-///   cursor position.  A long-press sends right-click.
+///   cursor position.  Tapping and then touching again straight away holds the
+///   left button until the finger lifts (drag).  A long-press sends right-click.
 ///
 /// - **direct** — each touch maps directly to a normalised screen position.
 ///   Useful for light-gun and pointer-device cores where 1:1 mapping is
@@ -38,7 +39,7 @@ import PVCoreBridge
 
 /// Transparent UIView that sits over the emulator surface and translates
 /// touch input into mouse events forwarded to the provided `MouseResponder`.
-public final class TouchTrackpadView: UIView {
+public final class TouchTrackpadView: UIView, UIGestureRecognizerDelegate {
 
     // MARK: Public configuration
 
@@ -96,6 +97,11 @@ public final class TouchTrackpadView: UIView {
     /// Maximum touch duration (seconds) that still counts as a tap.
     private let tapMaxDuration: TimeInterval = 0.45
 
+    /// Arms a drag when a touch follows a tap.
+    private var tapDrag = TapDragDetector()
+    /// True while a tap-then-drag touch holds the left button down.
+    private var isHoldingLeftButton = false
+
     // MARK: - Init
 
     public override init(frame: CGRect) {
@@ -137,6 +143,8 @@ public final class TouchTrackpadView: UIView {
         // Long-press → right click (single-finger fallback)
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         longPress.minimumPressDuration = 0.5
+        // Kept from firing during a drag: recognising would cancel the touch and drop the grab.
+        longPress.delegate = self
 #if !os(tvOS)
         // Pencil long-press should NOT map to right-click — it's just the user holding the
         // stylus down while aiming/drawing.
@@ -219,6 +227,12 @@ public final class TouchTrackpadView: UIView {
         } else {
             previousTouchLocation = touch.location(in: self)
         }
+
+        if tapDrag.touchBegan(at: touch.timestamp) {
+            isHoldingLeftButton = true
+            NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
+            mouseResponder?.leftMouseDown(atPoint: cursorPosition)
+        }
     }
 
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -282,6 +296,13 @@ public final class TouchTrackpadView: UIView {
         }
 #endif
 
+        // End of a tap-then-drag; without movement this completes a double-click.
+        if isHoldingLeftButton {
+            isHoldingLeftButton = false
+            mouseResponder?.leftMouseUp()
+            return
+        }
+
         // Fire a left click only when the finger didn't drag and the touch was short.
         let duration = touch.timestamp - touchBeganTime
         if !touchHasDragged && duration < tapMaxDuration {
@@ -292,6 +313,7 @@ public final class TouchTrackpadView: UIView {
             NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
             mouseResponder?.leftMouseDown(atPoint: cursorPosition)
             mouseResponder?.leftMouseUp()
+            tapDrag.tapEnded(at: touch.timestamp)
         }
     }
 
@@ -303,6 +325,10 @@ public final class TouchTrackpadView: UIView {
             mouseResponder?.leftMouseUp()
         }
 #endif
+        if isHoldingLeftButton {
+            isHoldingLeftButton = false
+            mouseResponder?.leftMouseUp()
+        }
         trackedTouch = nil
         previousTouchLocation = nil
         touchBeganLocation = nil
@@ -334,6 +360,13 @@ public final class TouchTrackpadView: UIView {
         NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
         mouseResponder?.rightMouseDown(atPoint: cursorPosition)
         mouseResponder?.rightMouseUp()
+    }
+
+    // MARK: - UIGestureRecognizerDelegate
+
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Holding still mid-drag must not turn into a right-click.
+        !(gestureRecognizer is UILongPressGestureRecognizer && isHoldingLeftButton)
     }
 
     // MARK: - Helpers
