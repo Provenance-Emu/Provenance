@@ -39,7 +39,7 @@ import PVCoreBridge
 
 /// Transparent UIView that sits over the emulator surface and translates
 /// touch input into mouse events forwarded to the provided `MouseResponder`.
-public final class TouchTrackpadView: UIView, UIGestureRecognizerDelegate {
+public final class TouchTrackpadView: UIView {
 
     // MARK: Public configuration
 
@@ -143,8 +143,6 @@ public final class TouchTrackpadView: UIView, UIGestureRecognizerDelegate {
         // Long-press → right click (single-finger fallback)
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(_:)))
         longPress.minimumPressDuration = 0.5
-        // Kept from firing during a drag: recognising would cancel the touch and drop the grab.
-        longPress.delegate = self
 #if !os(tvOS)
         // Pencil long-press should NOT map to right-click — it's just the user holding the
         // stylus down while aiming/drawing.
@@ -362,11 +360,13 @@ public final class TouchTrackpadView: UIView, UIGestureRecognizerDelegate {
         mouseResponder?.rightMouseUp()
     }
 
-    // MARK: - UIGestureRecognizerDelegate
+    // MARK: - Gesture gating
 
-    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        // Holding still mid-drag must not turn into a right-click.
-        !(gestureRecognizer is UILongPressGestureRecognizer && isHoldingLeftButton)
+    public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Holding still mid-drag must not become a right-click: the long-press would also
+        // cancel the touch and drop the grab.
+        if gestureRecognizer is UILongPressGestureRecognizer && isHoldingLeftButton { return false }
+        return super.gestureRecognizerShouldBegin(gestureRecognizer)
     }
 
     // MARK: - Helpers
