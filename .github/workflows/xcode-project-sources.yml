@@ -1,0 +1,55 @@
+name: Xcode Project Sources
+
+# Most workspace projects list their sources explicitly, so a new source file
+# that SwiftPM picks up can still be missing from the Xcode archive build — and
+# the full archive build does not run on agent or owner PRs. This catches that
+# in seconds: see Scripts/check_pbxproj_sources.py.
+
+on:
+  push:
+    branches: [develop, master]
+    paths:
+      - '**.swift'
+      - '**.m'
+      - '**.mm'
+      - '**.c'
+      - '**.cc'
+      - '**.cpp'
+      - '**.pbxproj'
+      - 'Provenance.xcworkspace/**'
+      - 'Scripts/check_pbxproj_sources.py'
+      - 'Scripts/test_check_pbxproj_sources.py'
+      - 'Scripts/pbxproj_sources_allowlist.txt'
+      - '.github/workflows/xcode-project-sources.yml'
+  pull_request:
+    branches: [develop, master]
+    paths:
+      - '**.swift'
+      - '**.m'
+      - '**.mm'
+      - '**.c'
+      - '**.cc'
+      - '**.cpp'
+      - '**.pbxproj'
+      - 'Provenance.xcworkspace/**'
+      - 'Scripts/check_pbxproj_sources.py'
+      - 'Scripts/test_check_pbxproj_sources.py'
+      - 'Scripts/pbxproj_sources_allowlist.txt'
+      - '.github/workflows/xcode-project-sources.yml'
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Unreferenced source files
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test the checker
+        run: python3 Scripts/test_check_pbxproj_sources.py
+
+      - name: Check Xcode projects reference their sources
+        run: python3 Scripts/check_pbxproj_sources.py
