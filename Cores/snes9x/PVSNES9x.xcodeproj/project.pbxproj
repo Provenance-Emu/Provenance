@@ -106,6 +106,7 @@
 		B3C9D54B1DEA84220068D057 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91117F75FA80031B1C9 /* CoreGraphics.framework */; };
 		B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA8E717F75F350031B1C9 /* Foundation.framework */; };
 		B3C9D5951DEA86B80068D057 /* PVSNESEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA91917F760390031B1C9 /* PVSNESEmulatorCore.mm */; };
+		C0C0CAFE0A05000000000002 /* PVSNESEmulatorCore+LightGun.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0A05000000000001 /* PVSNESEmulatorCore+LightGun.mm */; };
 		B3C9D5CE1DEA87930068D057 /* PVSNESEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA91817F760390031B1C9 /* PVSNESEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3D270DD2C967013004C0A92 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3D270DC2C967013004C0A92 /* PVPlists */; };
 		B3D271B12C96717E004C0A92 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D271AF2C96717E004C0A92 /* CoreOptions.swift */; };
@@ -147,6 +148,7 @@
 		1ACEA91417F75FAF0031B1C9 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		1ACEA91817F760390031B1C9 /* PVSNESEmulatorCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVSNESEmulatorCore.h; sourceTree = "<group>"; };
 		1ACEA91917F760390031B1C9 /* PVSNESEmulatorCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVSNESEmulatorCore.mm; sourceTree = "<group>"; };
+		C0C0CAFE0A05000000000001 /* PVSNESEmulatorCore+LightGun.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVSNESEmulatorCore+LightGun.mm"; sourceTree = "<group>"; };
 		1ACEA91B17F760390031B1C9 /* 65c816.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 65c816.h; sourceTree = "<group>"; };
 		1ACEA91D17F760390031B1C9 /* apu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = apu.cpp; sourceTree = "<group>"; };
 		1ACEA91E17F760390031B1C9 /* apu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apu.h; sourceTree = "<group>"; };
@@ -408,6 +410,7 @@
 			children = (
 				1ACEA91817F760390031B1C9 /* PVSNESEmulatorCore.h */,
 				1ACEA91917F760390031B1C9 /* PVSNESEmulatorCore.mm */,
+				C0C0CAFE0A05000000000001 /* PVSNESEmulatorCore+LightGun.mm */,
 				1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */,
 				B3D271AF2C96717E004C0A92 /* CoreOptions.swift */,
 				B3D271B02C96717E004C0A92 /* CorePlist.swift */,
@@ -916,6 +919,7 @@
 				C0C0CAFE0001000000000007 /* PVSNES9xEmulatorCore+RetroAchievements.swift in Sources */,
 				B3A478FF2C964D220052500A /* CorePlist-Generated.swift in Sources */,
 				B3C9D5951DEA86B80068D057 /* PVSNESEmulatorCore.mm in Sources */,
+				C0C0CAFE0A05000000000002 /* PVSNESEmulatorCore+LightGun.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
