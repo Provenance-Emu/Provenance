@@ -381,9 +381,15 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             #endif
         }
 
-        // DOSBox Pure: use mouse pad mode + enable MIDI
+        // DOSBox Pure: virtual mouse + enable MIDI. Its "pad" mode (the core's own iOS
+        // default) reads raw touches from the pointer device, which this wrapper only
+        // feeds for DS, and ignores the relative deltas Provenance's trackpad sends, so
+        // the DOS pointer didn't follow the trackpad. "virtual" takes those deltas.
         if coreId.contains("dosbox") {
-            setDefaultOption("dosbox_pure_mouse_input", value: "pad")
+            if _bridge.coreOptions[Self.dosMouseInputOption] == "pad" {
+                _bridge.setCoreOption(Self.dosMouseInputOption, value: "virtual")
+            }
+            setDefaultOption(Self.dosMouseInputOption, value: "virtual")
             setDefaultOption("dosbox_pure_midi", value: "enabled")
         }
 
@@ -771,6 +777,8 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         }
         return nil
     }
+
+    private static let dosMouseInputOption = "dosbox_pure_mouse_input"
 
     /// Set a core option only if it hasn't been set yet (preserves user overrides).
     private func setDefaultOption(_ key: String, value: String) {

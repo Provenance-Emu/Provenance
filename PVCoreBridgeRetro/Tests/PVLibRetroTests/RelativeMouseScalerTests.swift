@@ -7,6 +7,7 @@
 //
 
 import Testing
+import PVSystems
 @testable import PVLibRetro
 
 struct RelativeMouseScalerTests {
@@ -47,5 +48,38 @@ struct RelativeMouseScalerTests {
         let units = scaler.units(dx: 1000, dy: -1000, scaleX: 1000, scaleY: 1000)
         #expect(units.x == Int16.max)
         #expect(units.y == Int16.min)
+    }
+}
+
+struct RelativeMouseScaleTests {
+
+    @Test func atariSTUsesFrameSize() {
+        let scale = PVThinLibretroCore.relativeMouseScale(system: .AtariST, frameWidth: 640, frameHeight: 400)
+        #expect(scale.x == 640)
+        #expect(scale.y == 400)
+    }
+
+    @Test func atariSTWithoutGeometryFallsBack() {
+        let scale = PVThinLibretroCore.relativeMouseScale(system: .AtariST, frameWidth: 0, frameHeight: 0)
+        #expect(scale.x == PVThinLibretroCore.mouseScale)
+        #expect(scale.y == PVThinLibretroCore.mouseScale)
+    }
+
+    @Test func dosLowResCoversVirtualScreen() {
+        let scale = PVThinLibretroCore.relativeMouseScale(system: .DOS, frameWidth: 320, frameHeight: 200)
+        #expect(scale.x == PVThinLibretroCore.dosMinSweep.x)
+        #expect(scale.y == PVThinLibretroCore.dosMinSweep.y)
+    }
+
+    @Test func dosTallModeScalesVertically() {
+        let scale = PVThinLibretroCore.relativeMouseScale(system: .DOS, frameWidth: 640, frameHeight: 480)
+        #expect(scale.x == 640)
+        #expect(scale.y == 960)
+    }
+
+    @Test func otherSystemsKeepFixedScale() {
+        let scale = PVThinLibretroCore.relativeMouseScale(system: .DOOM, frameWidth: 320, frameHeight: 200)
+        #expect(scale.x == PVThinLibretroCore.mouseScale)
+        #expect(scale.y == PVThinLibretroCore.mouseScale)
     }
 }

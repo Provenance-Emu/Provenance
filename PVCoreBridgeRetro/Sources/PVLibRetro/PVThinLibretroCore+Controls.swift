@@ -1579,22 +1579,42 @@ extension PVThinLibretroCore: MouseResponder {
 
     /// Mouse units for a full normalised sweep when the core's own scale isn't known.
     /// Matches ST_MOUSE_SCALE in PVRetroArchCore+Controls+DOS.m.
-    private static let mouseScale: Double = 300.0
+    static let mouseScale: Double = 300.0
+    /// DOS INT 33h virtual screen (640 × 200) in DOSBox Pure mouse units, at 2 per line vertically.
+    static let dosMinSweep: (x: Double, y: Double) = (640, 400)
 
     /// Mouse units for a full sweep of the trackpad cursor on each axis.
     ///
-    /// Hatari reads deltas as frame pixels (dividing out its own zoom) and reports the
-    /// current frame as its base geometry, including after resolution switches. Scaling by
-    /// that frame lets a full sweep cross the whole ST screen in every resolution and keeps
-    /// the ST pointer under the trackpad cursor.
+    /// The trackpad cursor stops at the edges of its range, so a full sweep has to
+    /// reach every edge of the emulated screen.
+    ///
+    /// - **Atari ST**: Hatari reads deltas as frame pixels (dividing out its own zoom)
+    ///   and reports the current frame as its base geometry, including after resolution
+    ///   switches, so a full sweep crosses the ST screen exactly.
+    /// - **DOS**: DOSBox Pure moves the INT 33h pointer one unit per delta horizontally
+    ///   and half a unit vertically (the default 8:16 mickey ratio). That virtual screen
+    ///   is 640 wide and as tall as the mode's lines, so a sweep needs at least 640 × 400,
+    ///   more for taller or wider modes.
     private func relativeMouseScale() -> (x: Double, y: Double) {
-        if SystemIdentifier(rawValue: systemIdentifier ?? "") == .AtariST {
-            let avInfo = _bridge.avInfo
-            if avInfo.base_width > 0, avInfo.base_height > 0 {
-                return (Double(avInfo.base_width), Double(avInfo.base_height))
-            }
+        let avInfo = _bridge.avInfo
+        return Self.relativeMouseScale(
+            system: SystemIdentifier(rawValue: systemIdentifier ?? ""),
+            frameWidth: Double(avInfo.base_width),
+            frameHeight: Double(avInfo.base_height)
+        )
+    }
+
+    static func relativeMouseScale(
+        system: SystemIdentifier?, frameWidth width: Double, frameHeight height: Double
+    ) -> (x: Double, y: Double) {
+        switch system {
+        case .AtariST where width > 0 && height > 0:
+            return (width, height)
+        case .DOS:
+            return (max(Self.dosMinSweep.x, width), max(Self.dosMinSweep.y, 2 * height))
+        default:
+            return (Self.mouseScale, Self.mouseScale)
         }
-        return (Self.mouseScale, Self.mouseScale)
     }
 
     /// Forward mouse movement to the libretro core.
