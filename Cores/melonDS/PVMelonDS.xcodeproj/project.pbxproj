@@ -124,6 +124,7 @@
 		B3A1B0032F6AB000004A9956 /* PVMelonDSCore+Netplay.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A1B0002F6AB000004A9956 /* PVMelonDSCore+Netplay.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A1B0042F6AB000004A9956 /* PVMelonDSCore+Netplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A1B0012F6AB000004A9956 /* PVMelonDSCore+Netplay.mm */; };
 		B3A1B0052F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A1B0022F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift */; };
+		C0C0CAFE0A01000000000002 /* PVMelonDSCore+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0A01000000000001 /* PVMelonDSCore+Cheats.swift */; };
 		B3A1B0062F6AB000004A9956 /* PVNetplay in Frameworks */ = {isa = PBXBuildFile; productRef = B3A1B0082F6AB000004A9956 /* PVNetplay */; };
 		B3A483452F569C08004A995B /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = B3A483442F569C08004A995B /* PVPrimitives */; };
 		B3C7621520783162009950E4 /* PVMelonDS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVMelonDS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1622,6 +1623,7 @@
 		B3A1B0002F6AB000004A9956 /* PVMelonDSCore+Netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVMelonDSCore+Netplay.h"; sourceTree = "<group>"; };
 		B3A1B0012F6AB000004A9956 /* PVMelonDSCore+Netplay.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVMelonDSCore+Netplay.mm"; sourceTree = "<group>"; };
 		B3A1B0022F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVMelonDSCore+PVNetplayCapable.swift"; sourceTree = "<group>"; };
+		C0C0CAFE0A01000000000001 /* PVMelonDSCore+Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVMelonDSCore+Cheats.swift"; sourceTree = "<group>"; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVMelonDS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMelonDS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVMelonDS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMelonDS.h; sourceTree = "<group>"; };
@@ -5101,6 +5103,7 @@
 				B3A1B0002F6AB000004A9956 /* PVMelonDSCore+Netplay.h */,
 				B3A1B0012F6AB000004A9956 /* PVMelonDSCore+Netplay.mm */,
 				B3A1B0022F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift */,
+				C0C0CAFE0A01000000000001 /* PVMelonDSCore+Cheats.swift */,
 				B3F8E1132CB3CCEC00017D1B /* PVMelonDSCore.swift */,
 				B3DD7A722ECD364D0022FF70 /* PVMelonDSCoreOptions.swift */,
 				B3F8E1142CB3CCEC00017D1B /* CorePlist.swift */,
@@ -5529,6 +5532,7 @@
 				B3DD7A732ECD364D0022FF70 /* PVMelonDSCoreOptions.swift in Sources */,
 				B3A1B0042F6AB000004A9956 /* PVMelonDSCore+Netplay.mm in Sources */,
 				B3A1B0052F6AB000004A9956 /* PVMelonDSCore+PVNetplayCapable.swift in Sources */,
+				C0C0CAFE0A01000000000002 /* PVMelonDSCore+Cheats.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
