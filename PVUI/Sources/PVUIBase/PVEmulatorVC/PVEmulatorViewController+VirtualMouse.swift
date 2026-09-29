@@ -106,7 +106,11 @@ extension PVEmulatorViewController {
         view.addSubview(trackpad)
         touchTrackpadView = trackpad
 
-        let overlay = MouseCursorOverlayView()
+        /// Still installed when it draws nothing: `cursorHostingController` marks the
+        /// virtual mouse as on.
+        let overlay = MouseCursorOverlayView(
+            showsCursor: !MouseCursorOverlayView.systemDrawsOwnPointer(core.systemIdentifier)
+        )
         let host = UIHostingController(rootView: overlay)
         host.view.backgroundColor = .clear
         host.view.isOpaque = false
