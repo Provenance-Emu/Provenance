@@ -10,7 +10,9 @@
 /// - **touchpad** (default) — touch movement generates *relative* deltas that
 ///   accumulate a virtual cursor position, mirroring a laptop trackpad.
 ///   A single tap sends `leftMouseDown` + `leftMouseUp` at the current
-///   cursor position.  A long-press sends right-click.
+///   cursor position.  Tapping, then touching again straight away and moving,
+///   holds the left button until the finger lifts (drag).  A long-press sends
+///   right-click.
 ///
 /// - **direct** — each touch maps directly to a normalised screen position.
 ///   Useful for light-gun and pointer-device cores where 1:1 mapping is
@@ -95,6 +97,15 @@ public final class TouchTrackpadView: UIView {
     private let tapMovementThreshold: CGFloat = 10
     /// Maximum touch duration (seconds) that still counts as a tap.
     private let tapMaxDuration: TimeInterval = 0.45
+
+    /// Arms a drag when a touch follows a tap.
+    private var tapDrag = TapDragDetector()
+    /// A touch followed a tap: it grabs once it starts moving. Pressing any earlier would
+    /// turn the first finger of a two/three-finger tap into a left click the core has
+    /// already latched.
+    private var isGrabArmed = false
+    /// True while a tap-then-drag touch holds the left button down.
+    private var isHoldingLeftButton = false
 
     // MARK: - Init
 
@@ -195,7 +206,11 @@ public final class TouchTrackpadView: UIView {
 
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // Only track single-finger touches; multi-finger combos go to gesture recognizers.
-        guard trackedTouch == nil, touches.count == 1, let touch = touches.first else { return }
+        guard trackedTouch == nil, touches.count == 1, let touch = touches.first else {
+            // More fingers: a multi-finger gesture, not a drag.
+            isGrabArmed = false
+            return
+        }
         trackedTouch = touch
         touchBeganLocation = touch.location(in: self)
         touchBeganTime = touch.timestamp
@@ -219,6 +234,8 @@ public final class TouchTrackpadView: UIView {
         } else {
             previousTouchLocation = touch.location(in: self)
         }
+
+        isGrabArmed = tapDrag.touchBegan(at: touch.timestamp)
     }
 
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -241,6 +258,14 @@ public final class TouchTrackpadView: UIView {
             if (dx * dx + dy * dy) > (tapMovementThreshold * tapMovementThreshold) {
                 touchHasDragged = true
             }
+        }
+
+        // Press before this move is applied, so the drag starts where the cursor was.
+        if isGrabArmed && touchHasDragged {
+            isGrabArmed = false
+            isHoldingLeftButton = true
+            NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
+            mouseResponder?.leftMouseDown(atPoint: cursorPosition)
         }
 
         switch mode {
@@ -269,6 +294,7 @@ public final class TouchTrackpadView: UIView {
             previousTouchLocation = nil
             touchBeganLocation = nil
             touchHasDragged = false
+            isGrabArmed = false
         }
 
 #if !os(tvOS)
@@ -282,6 +308,14 @@ public final class TouchTrackpadView: UIView {
         }
 #endif
 
+        // End of a tap-then-drag. A second tap that never moved falls through to the
+        // click below, completing a double-click.
+        if isHoldingLeftButton {
+            isHoldingLeftButton = false
+            mouseResponder?.leftMouseUp()
+            return
+        }
+
         // Fire a left click only when the finger didn't drag and the touch was short.
         let duration = touch.timestamp - touchBeganTime
         if !touchHasDragged && duration < tapMaxDuration {
@@ -292,6 +326,7 @@ public final class TouchTrackpadView: UIView {
             NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
             mouseResponder?.leftMouseDown(atPoint: cursorPosition)
             mouseResponder?.leftMouseUp()
+            tapDrag.tapEnded(at: touch.timestamp)
         }
     }
 
@@ -303,6 +338,11 @@ public final class TouchTrackpadView: UIView {
             mouseResponder?.leftMouseUp()
         }
 #endif
+        if isHoldingLeftButton {
+            isHoldingLeftButton = false
+            mouseResponder?.leftMouseUp()
+        }
+        isGrabArmed = false
         trackedTouch = nil
         previousTouchLocation = nil
         touchBeganLocation = nil
@@ -334,6 +374,15 @@ public final class TouchTrackpadView: UIView {
         NotificationCenter.default.post(name: .PVMouseButtonDidPress, object: nil)
         mouseResponder?.rightMouseDown(atPoint: cursorPosition)
         mouseResponder?.rightMouseUp()
+    }
+
+    // MARK: - Gesture gating
+
+    public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        // Holding still before or during a drag must not become a right-click: the
+        // long-press would also cancel the touch and drop the grab.
+        if gestureRecognizer is UILongPressGestureRecognizer && (isGrabArmed || isHoldingLeftButton) { return false }
+        return super.gestureRecognizerShouldBegin(gestureRecognizer)
     }
 
     // MARK: - Helpers
