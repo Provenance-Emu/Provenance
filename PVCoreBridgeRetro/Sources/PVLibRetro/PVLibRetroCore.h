@@ -79,6 +79,10 @@ __attribute__((weak_import))
 /// TouchPadResponder deletion because it has a separate consumer.
 @property (nonatomic, assign) BOOL touchpadEnabled;
 
+/// RETRO_DEVICE_MOUSE units for a full sweep of the trackpad cursor on each axis.
+/// Defaults to 1000; cores whose mouse maps to screen pixels set their screen size.
+@property (nonatomic, assign) CGSize relativeMouseScale;
+
 // MARK: - Netpacket interface (env 78)
 
 /// Whether the loaded core registered a netpacket callback via env 78.

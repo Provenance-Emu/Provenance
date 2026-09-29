@@ -36,8 +36,14 @@
 {
 }
 
+/// MSX mouse software moves the pointer about a pixel per count, so a full trackpad
+/// sweep crosses the 256 × 212 MSX2 screen (192 lines on MSX1; the rest is clamped).
+static const CGFloat PVfMSXMouseSweepWidth = 256;
+static const CGFloat PVfMSXMouseSweepHeight = 212;
+
 - (instancetype)init {
 	if (self = [super init]) {
+		self.relativeMouseScale = CGSizeMake(PVfMSXMouseSweepWidth, PVfMSXMouseSweepHeight);
 	}
 
 	_current = self;
