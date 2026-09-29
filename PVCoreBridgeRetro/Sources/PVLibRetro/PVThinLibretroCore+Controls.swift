@@ -1582,6 +1582,8 @@ extension PVThinLibretroCore: MouseResponder {
     static let mouseScale: Double = 300.0
     /// DOS INT 33h virtual screen (640 × 200) in DOSBox Pure mouse units, at 2 per line vertically.
     static let dosMinSweep: (x: Double, y: Double) = (640, 400)
+    /// MSX mouse software moves about a pixel per count: the 256 × 212 MSX2 screen.
+    static let msxSweep: (x: Double, y: Double) = (256, 212)
 
     /// Mouse units for a full sweep of the trackpad cursor on each axis.
     ///
@@ -1594,6 +1596,8 @@ extension PVThinLibretroCore: MouseResponder {
     /// - **Amiga** (PUAE, which runs under the generic RetroArch system): deltas go straight
     ///   into UAE's mouse counters (`setmousestate`, then `puae_mouse_speed`), at least a pixel
     ///   of the reported frame per count, so scaling by that frame reaches every edge.
+    /// - **MSX** (blueMSX): counts go straight to the MSX mouse, which software moves about
+    ///   a pixel each, so a sweep is the 256 × 212 screen (`msxSweep`).
     /// - **DOS**: DOSBox Pure moves the INT 33h pointer one unit per delta horizontally
     ///   and half a unit vertically (the default 8:16 mickey ratio). That virtual screen
     ///   is 640 wide and as tall as the mode's lines, so a sweep needs at least 640 × 400,
@@ -1619,6 +1623,8 @@ extension PVThinLibretroCore: MouseResponder {
             return (width, height)
         case .DOS:
             return (max(Self.dosMinSweep.x, width), max(Self.dosMinSweep.y, 2 * height))
+        case .MSX, .MSX2:
+            return Self.msxSweep
         default:
             return (Self.mouseScale, Self.mouseScale)
         }
