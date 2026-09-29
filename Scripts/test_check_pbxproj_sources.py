@@ -67,6 +67,18 @@ class CheckProjectTests(unittest.TestCase):
         self.assertEqual(self.missing("A.swift", "README.md", "Package.swift"), [])
 
 
+class ProjectDirPathTests(unittest.TestCase):
+    def test_project_dir_path_moves_the_source_root(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pbxproj = os.path.join(tmp, "build", "Mod.xcodeproj", "project.pbxproj")
+            os.makedirs(os.path.dirname(pbxproj))
+            with open(pbxproj, "w", encoding="utf-8") as fh:
+                fh.write(PBXPROJ.replace("mainGroup = GR00;", 'mainGroup = GR00; projectDirPath = "../Mod";'))
+            src = os.path.join(tmp, "Mod", "Sources")
+            files = index_sources(os.path.join(src, n) for n in ("A.swift", "New.swift"))
+            self.assertEqual(check_project(pbxproj, files), [os.path.join(src, "New.swift")])
+
+
 class ParseTests(unittest.TestCase):
     def test_quoted_strings_comments_and_trailing_commas(self):
         value, _ = parse(list(tokenize('{ a = "x \\"y\\""; /* c */ b = (1, 2, ); // d\n}')))
