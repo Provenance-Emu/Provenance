@@ -45,6 +45,7 @@
 
 #import "PVSNESEmulatorCore.h"
 
+#include "snes9x.h" // port.h integer types (uint8, int16, ...) that controls.h needs
 #include "controls.h"
 
 // ── snes9x screen dimensions ─────────────────────────────────────────────────
