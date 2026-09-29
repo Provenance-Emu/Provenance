@@ -90,4 +90,12 @@ struct RelativeMouseScaleTests {
         #expect(scale.x == 720)
         #expect(scale.y == 568)
     }
+
+    @Test func msxUsesScreenSize() {
+        for system in [SystemIdentifier.MSX, .MSX2] {
+            let scale = PVThinLibretroCore.relativeMouseScale(system: system, coreIdentifier: nil, frameWidth: 272, frameHeight: 240)
+            #expect(scale.x == PVThinLibretroCore.msxSweep.x)
+            #expect(scale.y == PVThinLibretroCore.msxSweep.y)
+        }
+    }
 }
