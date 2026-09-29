@@ -120,11 +120,14 @@ cores:
     appstore: true
     enabled: true
   - name: bluemsx
-    # MSX / SVI / Coleco
+    # MSX / SVI / Coleco — Provenance fork (Provenance-Emu/blueMSX-libretro), which adds
+    # the MSX mouse. Built by the fork's "Apple dylibs" workflow and published with
+    # local-dylibs.sh; the buildbot build has no mouse support.
     ios: true
     tvos: true
     appstore: true
     enabled: true
+    local: true
   - name: bsnes_hd_beta
     # Super Nintendo (bsnes HD)
     ios: true
