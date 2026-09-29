@@ -64,15 +64,15 @@ public struct MouseCursorOverlayView: View {
     }
 
     /// Whether the emulated machine draws its own mouse pointer, as the Atari ST's GEM, DOS
-    /// mouse drivers and programs, and the Amiga's Intuition do. This overlay is positioned
-    /// from the trackpad rather than read back from the machine, so over such a system it
-    /// would be a second cursor drifting away from the real one.
+    /// mouse drivers and programs, MSX mouse software and the Amiga's Intuition do. This
+    /// overlay is positioned from the trackpad rather than read back from the machine, so
+    /// over such a system it would be a second cursor drifting away from the real one.
     ///
     /// The Amiga is matched by core (PUAE), since it runs under the generic RetroArch system.
     public static func systemDrawsOwnPointer(_ systemIdentifier: String?, coreIdentifier: String? = nil) -> Bool {
         if coreIdentifier?.lowercased().contains("puae") == true { return true }
         switch SystemIdentifier(rawValue: systemIdentifier ?? "") {
-        case .AtariST, .DOS: return true
+        case .AtariST, .DOS, .MSX, .MSX2: return true
         default: return false
         }
     }

@@ -42,6 +42,9 @@ extern void pv_libretro_midi_inject_byte(uint8_t byte);
 
 #define PV_PERF_MAX_COUNTERS 256
 
+/// Default RETRO_DEVICE_MOUSE units per full trackpad sweep (see `relativeMouseScale`).
+static const CGFloat PVLibRetroDefaultMouseScale = 1000.0;
+
 static double pv_legacy_perf_timebase_ratio = 0.0;
 
 static void pv_legacy_perf_ensure_timebase(void) {
@@ -2817,6 +2820,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
         pitch_shift = PITCH_SHIFT;
         _current = self;
         _touchpadEnabled = YES;
+        _relativeMouseScale = CGSizeMake(PVLibRetroDefaultMouseScale, PVLibRetroDefaultMouseScale);
 #if (TARGET_OS_IOS && !TARGET_OS_TV) || TARGET_OS_MACCATALYST
         // Enable battery monitoring once so env 77 (GET_DEVICE_POWER) can read
         // the current level without toggling the flag on every callback invocation.
@@ -3238,8 +3242,8 @@ unsigned retro_api_version(void)
                 // Accumulate relative delta for RETRO_DEVICE_MOUSE X/Y queries,
                 // mirroring the iOS/touch path in setMousePosition:.
                 if (lastMousePositionValid) {
-                    mouseDeltaX += (nx - lastMousePosition.x) * 1000.0f;
-                    mouseDeltaY += (ny - lastMousePosition.y) * 1000.0f;
+                    mouseDeltaX += (nx - lastMousePosition.x) * (float)_relativeMouseScale.width;
+                    mouseDeltaY += (ny - lastMousePosition.y) * (float)_relativeMouseScale.height;
                 }
                 lastMousePosition = CGPointMake(nx, ny);
                 lastMousePositionValid = YES;
@@ -3351,7 +3355,8 @@ unsigned retro_api_version(void)
                     int16_t dx;
                     @synchronized(self) {
                         dx = (int16_t)MAX((float)INT16_MIN, MIN((float)INT16_MAX, mouseDeltaX));
-                        mouseDeltaX = 0;
+                        // Keep the fraction: zeroing it dropped slow movement entirely.
+                        mouseDeltaX -= dx;
                     }
                     return dx;
                 }
@@ -3360,7 +3365,8 @@ unsigned retro_api_version(void)
                     int16_t dy;
                     @synchronized(self) {
                         dy = (int16_t)MAX((float)INT16_MIN, MIN((float)INT16_MAX, mouseDeltaY));
-                        mouseDeltaY = 0;
+                        // Keep the fraction: zeroing it dropped slow movement entirely.
+                        mouseDeltaY -= dy;
                     }
                     return dy;
                 }
@@ -3495,12 +3501,11 @@ static os_unfair_lock    sPendingKeyLock  = OS_UNFAIR_LOCK_INIT;
         // Update absolute position for RETRO_DEVICE_POINTER queries.
         currentTouchPosition.x = nx;
         currentTouchPosition.y = ny;
-        // Accumulate relative delta for RETRO_DEVICE_MOUSE X/Y queries.
-        // Scale factor: 1000 units per normalized unit gives responsive
-        // movement at typical DOS/retro resolutions.
+        // Accumulate relative delta for RETRO_DEVICE_MOUSE X/Y queries,
+        // `relativeMouseScale` units per full sweep.
         if (lastMousePositionValid) {
-            mouseDeltaX += (nx - lastMousePosition.x) * 1000.0f;
-            mouseDeltaY += (ny - lastMousePosition.y) * 1000.0f;
+            mouseDeltaX += (nx - lastMousePosition.x) * (float)_relativeMouseScale.width;
+            mouseDeltaY += (ny - lastMousePosition.y) * (float)_relativeMouseScale.height;
         }
         lastMousePosition = CGPointMake(nx, ny);
         lastMousePositionValid = YES;
