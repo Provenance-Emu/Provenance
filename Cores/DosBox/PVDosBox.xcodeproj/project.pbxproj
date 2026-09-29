@@ -165,6 +165,7 @@
 		B3DE9E562E2D892D008E97F6 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DE9E542E2D892D008E97F6 /* CorePlist.swift */; };
 		B3DE9E572E2D892D008E97F6 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DE9E552E2D892D008E97F6 /* CorePlist-Generated.swift */; };
 		B3DE9E582E2D892D008E97F6 /* PVDosBoxCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DE9E532E2D892D008E97F6 /* PVDosBoxCore.swift */; };
+		C0C0CAFE0A04000000000002 /* PVDosBoxCore+CompanionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0A04000000000001 /* PVDosBoxCore+CompanionController.swift */; };
 		B3E88CC42977B53F00C90E86 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CC32977B53F00C90E86 /* PVLogging */; };
 		B3EBB2032872B65700EAEB37 /* PVDosBoxCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDosBoxCore+Video.m */; };
 		B3F8E0FA2CB3C7E600017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8E0F92CB3C7E600017D1B /* PVPlists */; };
@@ -531,6 +532,7 @@
 		B3C76224207833DE009950E4 /* PVDosBoxCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDosBoxCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3DE9E532E2D892D008E97F6 /* PVDosBoxCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDosBoxCore.swift; sourceTree = "<group>"; };
+		C0C0CAFE0A04000000000001 /* PVDosBoxCore+CompanionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVDosBoxCore+CompanionController.swift"; sourceTree = "<group>"; };
 		B3DE9E542E2D892D008E97F6 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3DE9E552E2D892D008E97F6 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1062,6 +1064,7 @@
 			isa = PBXGroup;
 			children = (
 				B3DE9E532E2D892D008E97F6 /* PVDosBoxCore.swift */,
+				C0C0CAFE0A04000000000001 /* PVDosBoxCore+CompanionController.swift */,
 				B3DE9E542E2D892D008E97F6 /* CorePlist.swift */,
 				B3DE9E552E2D892D008E97F6 /* CorePlist-Generated.swift */,
 				93BC0502298AECE200BA5157 /* PVDebug.c */,
@@ -1537,6 +1540,7 @@
 				B3DE9E562E2D892D008E97F6 /* CorePlist.swift in Sources */,
 				B3DE9E572E2D892D008E97F6 /* CorePlist-Generated.swift in Sources */,
 				B3DE9E582E2D892D008E97F6 /* PVDosBoxCore.swift in Sources */,
+				C0C0CAFE0A04000000000002 /* PVDosBoxCore+CompanionController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
