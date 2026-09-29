@@ -30,6 +30,7 @@
 import SwiftUI
 import Combine
 import PVCoreBridge
+import PVSystems
 
 // Notification constants `PVMousePositionDidChange`, `PVMouseButtonDidPress`, and
 // `PVMousePositionKey` are defined in PVCoreBridge/GCMouseMouseResponderDriver.swift
@@ -50,19 +51,37 @@ public struct MouseCursorOverlayView: View {
     @State private var isHidden: Bool = true
 
     // MARK: Configuration
+    /// False over systems that draw their own pointer (see `systemDrawsOwnPointer`).
+    private let showsCursor: Bool
     private let cursorSize: CGFloat = 24
     private let idleTimeout: TimeInterval = 2.0
 
     // MARK: Private state
     @State private var hideTask: Task<Void, Never>? = nil
 
-    public init() {}
+    public init(showsCursor: Bool = true) {
+        self.showsCursor = showsCursor
+    }
+
+    /// Whether the emulated machine draws its own mouse pointer, as the Atari ST's GEM, DOS
+    /// mouse drivers and programs, and the Amiga's Intuition do. This overlay is positioned
+    /// from the trackpad rather than read back from the machine, so over such a system it
+    /// would be a second cursor drifting away from the real one.
+    ///
+    /// The Amiga is matched by core (PUAE), since it runs under the generic RetroArch system.
+    public static func systemDrawsOwnPointer(_ systemIdentifier: String?, coreIdentifier: String? = nil) -> Bool {
+        if coreIdentifier?.lowercased().contains("puae") == true { return true }
+        switch SystemIdentifier(rawValue: systemIdentifier ?? "") {
+        case .AtariST, .DOS: return true
+        default: return false
+        }
+    }
 
     // MARK: - Body
 
     public var body: some View {
         GeometryReader { geo in
-            if !isHidden {
+            if showsCursor && !isHidden {
                 CursorArrowShape()
                     .fill(Color.white)
                     .overlay(
