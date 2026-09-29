@@ -101,7 +101,12 @@ def check_project(pbxproj, files_by_dir):
     with open(pbxproj, encoding="utf-8") as fh:
         data, _ = parse(list(tokenize(fh.read())))
     objects = data["objects"]
-    project_dir = os.path.dirname(os.path.dirname(pbxproj))
+    root = objects[data["rootObject"]]
+    # SOURCE_ROOT is the directory holding the .xcodeproj, adjusted by the
+    # PBXProject's projectDirPath.
+    source_root = os.path.normpath(
+        os.path.join(os.path.dirname(os.path.dirname(pbxproj)), root.get("projectDirPath", ""))
+    )
 
     parent = {}
     for oid, obj in objects.items():
@@ -117,13 +122,13 @@ def check_project(pbxproj, files_by_dir):
         tree = obj.get("sourceTree", "<group>")
         path = obj.get("path", "")
         if tree == "SOURCE_ROOT":
-            result = os.path.normpath(os.path.join(project_dir, path))
+            result = os.path.normpath(os.path.join(source_root, path))
         elif tree == "<absolute>":
             result = None
         elif tree == "<group>":
             owner = parent.get(oid)
             if owner is None:
-                base = os.path.normpath(os.path.join(project_dir, obj.get("projectDirPath", "")))
+                base = source_root
             else:
                 base = resolve(owner)
             result = None if base is None else os.path.normpath(os.path.join(base, path))
@@ -132,7 +137,7 @@ def check_project(pbxproj, files_by_dir):
         resolved[oid] = result
         return result
 
-    main_group = objects[data["rootObject"]].get("mainGroup")
+    main_group = root.get("mainGroup")
     if main_group:
         parent.pop(main_group, None)
 
