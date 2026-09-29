@@ -65,6 +65,7 @@
 		B4F1A2B3C4D5E60011223349 /* PVThinLibretroCore+Features.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F1A2B3C4D5E6001122334A /* PVThinLibretroCore+Features.swift */; };
 		B4F1A2B3C4D5E6001122334B /* PVLibRetro+JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F1A2B3C4D5E6001122334C /* PVLibRetro+JIT.swift */; };
 		C0C0CAFE00000001 /* PVThinLibretroCore+Scaling.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE00000002 /* PVThinLibretroCore+Scaling.swift */; };
+		C0C0CAFE00000003 /* RelativeMouseScaler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE00000004 /* RelativeMouseScaler.swift */; };
 		C0C0CAFE2F00000000000003 /* CRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE2F00000000000002 /* CRcheevos */; };
 /* End PBXBuildFile section */
 
@@ -926,6 +927,7 @@
 		B4F1A2B3C4D5E6001122334A /* PVThinLibretroCore+Features.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+Features.swift"; sourceTree = "<group>"; };
 		B4F1A2B3C4D5E6001122334C /* PVLibRetro+JIT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVLibRetro+JIT.swift"; sourceTree = "<group>"; };
 		C0C0CAFE00000002 /* PVThinLibretroCore+Scaling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+Scaling.swift"; sourceTree = "<group>"; };
+		C0C0CAFE00000004 /* RelativeMouseScaler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelativeMouseScaler.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2874,6 +2876,7 @@
 				B3D9A2B62F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift */,
 				B3D991C62F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift */,
 				C0C0CAFE00000002 /* PVThinLibretroCore+Scaling.swift */,
+				C0C0CAFE00000004 /* RelativeMouseScaler.swift */,
 				B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */,
 				9913381D03FEA56743F3544E /* ThinSystemFileManifest.swift */,
 				0AB7BACA77D3CEFB8691823A /* ThinSystemFileProvisioner.swift */,
@@ -3122,6 +3125,7 @@
 				B4F1A2B3C4D5E60011223347 /* PVThinLibretroCore+Controls.swift in Sources */,
 				B4F1A2B3C4D5E60011223349 /* PVThinLibretroCore+Features.swift in Sources */,
 				C0C0CAFE00000001 /* PVThinLibretroCore+Scaling.swift in Sources */,
+				C0C0CAFE00000003 /* RelativeMouseScaler.swift in Sources */,
 				B4F1A2B3C4D5E6001122334B /* PVLibRetro+JIT.swift in Sources */,
 				B3D9A2B52F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift in Sources */,
 				5196423C2AAF54885A86FD71 /* ThinSystemFileManifest.swift in Sources */,
