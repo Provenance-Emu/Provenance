@@ -141,6 +141,8 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     var _mousePrevNorm: CGPoint = .init(x: 0.5, y: 0.5)
     /// Whether `_mousePrevNorm` has been set at least once since the last button release.
     var _mousePrevValid: Bool = false
+    /// Converts trackpad deltas to mouse units without dropping sub-unit movement.
+    var _mouseScaler = RelativeMouseScaler()
     /// Whether the DS touchscreen pointer is currently pressed (finger down).
     /// Used by `mouseMoved(atPoint:)` to maintain pressed state during drag.
     var _dsPointerPressed: Bool = false

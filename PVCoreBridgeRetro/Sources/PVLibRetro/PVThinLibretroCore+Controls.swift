@@ -1577,14 +1577,30 @@ extension PVThinLibretroCore: MouseResponder {
     public var mouseMovedHandler: GCMouseMoved? { nil }
 #endif
 
-    /// Scale factor: 1% (0.01) of screen normalised delta → this many mouse_rel units.
+    /// Mouse units for a full normalised sweep when the core's own scale isn't known.
     /// Matches ST_MOUSE_SCALE in PVRetroArchCore+Controls+DOS.m.
     private static let mouseScale: Double = 300.0
+
+    /// Mouse units for a full sweep of the trackpad cursor on each axis.
+    ///
+    /// Hatari reads deltas as frame pixels (dividing out its own zoom) and reports the
+    /// current frame as its base geometry, including after resolution switches. Scaling by
+    /// that frame lets a full sweep cross the whole ST screen in every resolution and keeps
+    /// the ST pointer under the trackpad cursor.
+    private func relativeMouseScale() -> (x: Double, y: Double) {
+        if SystemIdentifier(rawValue: systemIdentifier ?? "") == .AtariST {
+            let avInfo = _bridge.avInfo
+            if avInfo.base_width > 0, avInfo.base_height > 0 {
+                return (Double(avInfo.base_width), Double(avInfo.base_height))
+            }
+        }
+        return (Self.mouseScale, Self.mouseScale)
+    }
 
     /// Forward mouse movement to the libretro core.
     ///
     /// - **iOS**: `TouchTrackpadView` sends absolute normalised [0,1] positions.
-    ///   Per-event delta is computed from the previous sample and scaled by `mouseScale`.
+    ///   Per-event delta is computed from the previous sample and scaled by `relativeMouseScale()`.
     /// - **tvOS**: The virtual trackpad is not installed; the only caller is the Siri Remote
     ///   pan handler which sends per-event relative deltas. Forward them directly.
     /// - **DS** (both platforms): converts to the libretro [-0x7fff,0x7fff] range via
@@ -1620,10 +1636,11 @@ extension PVThinLibretroCore: MouseResponder {
             let dx = px - Double(_mousePrevNorm.x)
             let dy = py - Double(_mousePrevNorm.y)
             if dx != 0 || dy != 0 {
-                _bridge.setMouseDeltaX(
-                    Int16(clamping: Int(dx * Self.mouseScale)),
-                    deltaY: Int16(clamping: Int(dy * Self.mouseScale))
-                )
+                let scale = relativeMouseScale()
+                let units = _mouseScaler.units(dx: dx, dy: dy, scaleX: scale.x, scaleY: scale.y)
+                if units.x != 0 || units.y != 0 {
+                    _bridge.setMouseDeltaX(units.x, deltaY: units.y)
+                }
             }
         }
         _mousePrevNorm = CGPoint(x: px, y: py)
