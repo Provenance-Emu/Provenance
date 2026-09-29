@@ -91,6 +91,7 @@
 		B391F2F027C1715000730B53 /* quiz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B427C09C5B0012118D /* quiz.cpp */; };
 		B391F30427C172B600730B53 /* vidblit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB37C27C09C5B0012118D /* vidblit.cpp */; };
 		B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; };
+		C0C0CAFE0A02000000000002 /* PVFCEUEmulatorCore+RetroAchievements.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0A02000000000001 /* PVFCEUEmulatorCore+RetroAchievements.swift */; };
 		B3A476502C9410790052500A /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3A4764F2C9410790052500A /* PVCoreObjCBridge */; };
 		B3A476532C941BBB0052500A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A476512C941BBB0052500A /* CoreOptions.swift */; };
 		B3A476542C941BBB0052500A /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A476522C941BBB0052500A /* CorePlist.swift */; };
@@ -721,6 +722,7 @@
 		B391F2D627C1696A00730B53 /* liblzma.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = liblzma.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/liblzma.tbd; sourceTree = DEVELOPER_DIR; };
 		B391F2D827C16AC100730B53 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVFCEUEmulatorCore.swift; sourceTree = "<group>"; };
+		C0C0CAFE0A02000000000001 /* PVFCEUEmulatorCore+RetroAchievements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVFCEUEmulatorCore+RetroAchievements.swift"; sourceTree = "<group>"; };
 		B3A476512C941BBB0052500A /* CoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
 		B3A476522C941BBB0052500A /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B3A476552C941DDF0052500A /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
@@ -1983,6 +1985,7 @@
 				B3A476512C941BBB0052500A /* CoreOptions.swift */,
 				B3A476522C941BBB0052500A /* CorePlist.swift */,
 				B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */,
+				C0C0CAFE0A02000000000001 /* PVFCEUEmulatorCore+RetroAchievements.swift */,
 				B3A476552C941DDF0052500A /* CorePlist-Generated.swift */,
 				1A3A75041ABF125C002274A3 /* Supporting Files */,
 			);
@@ -3841,6 +3844,7 @@
 				B3A476562C941DDF0052500A /* CorePlist-Generated.swift in Sources */,
 				B3A476542C941BBB0052500A /* CorePlist.swift in Sources */,
 				B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */,
+				C0C0CAFE0A02000000000002 /* PVFCEUEmulatorCore+RetroAchievements.swift in Sources */,
 				B3A9F4931DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */,
 				B30614ED218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm in Sources */,
 			);
