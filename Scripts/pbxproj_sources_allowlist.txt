@@ -1,0 +1,42 @@
+# Source files missing from the Xcode project that sits beside them.
+# Some are deliberate (alternate copies, #included units); others may be
+# code that never ships. Checked by Scripts/check_pbxproj_sources.py;
+# remove a line once the file is added to its project or deleted.
+
+# Cores/Desmume2015/PVDesmume2015.xcodeproj/project.pbxproj
+Cores/Desmume2015/PVDesmume2015Core/Core/PVDesmume2015Core+Options.swift
+
+# Cores/Dolphin/PVDolphin.xcodeproj/project.pbxproj
+Cores/Debug/PVDebug.m
+
+# Cores/DosBox/PVDosBox.xcodeproj/project.pbxproj
+Cores/DosBox/PBDosBoxCore/Core/PVDosBoxCore+CompanionController.swift
+
+# Cores/DuckStation/PVDuckStation.xcodeproj/project.pbxproj
+Cores/DuckStation/PVDuckStation/PlayStationGameHacks.m
+Cores/DuckStation/PVDuckStation/cpu_recompiler_multiarch.cpp
+Cores/DuckStation/PVDuckStation/Source/DuckStationGameCore.mm
+Cores/DuckStation/PVDuckStation/Source/PVDuckStationCore+RetroAchievements.swift
+Cores/DuckStation/PVDuckStation/Source/cpu_recompiler_multiarch.cpp
+Cores/DuckStation/PVDuckStation/Source/xxh_dispatch.c
+
+# Cores/FCEU/PVFCEU.xcodeproj/project.pbxproj
+Cores/FCEU/PVFCEUEmulatorCore+RetroAchievements.swift
+Cores/FCEU/FCEU-2.2.3/lua-engine.cpp
+
+# Cores/Flycast/PVFlycast.xcodeproj/project.pbxproj
+Cores/Debug/PVDebug.c
+
+# Cores/Mupen64Plus/PVMupen64Plus.xcodeproj/project.pbxproj
+Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4/lto.c
+
+# Cores/VecX/PVVecX.xcodeproj/project.pbxproj
+Cores/VecX/Sources/PVVecX/PVVecXCore+CompanionController.swift
+
+# Cores/melonDS/PVMelonDS.xcodeproj/project.pbxproj
+Cores/melonDS/PVMelonDSCore/Core/PVMelonDSCore+Cheats.swift
+
+# Cores/snes9x/PVSNES9x.xcodeproj/project.pbxproj
+Cores/snes9x/PVSNES/SNES/PVSNESEmulatorCore+LightGun.mm
+Cores/snes9x/PVSNES/SNES/SNESCore/loadzip.cpp
+Cores/snes9x/PVSNES/SNES/SNESCore/statemanager.cpp
