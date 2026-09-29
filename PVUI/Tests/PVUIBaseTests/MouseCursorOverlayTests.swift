@@ -11,12 +11,13 @@ import PVSystems
 
 struct MouseCursorOverlayTests {
 
-    @Test func atariSTDrawsOwnPointer() {
+    @Test func systemsWithOwnPointerSkipTheOverlay() {
         #expect(MouseCursorOverlayView.systemDrawsOwnPointer(SystemIdentifier.AtariST.rawValue))
+        #expect(MouseCursorOverlayView.systemDrawsOwnPointer(SystemIdentifier.DOS.rawValue))
     }
 
     @Test func otherSystemsKeepTheOverlay() {
-        #expect(!MouseCursorOverlayView.systemDrawsOwnPointer(SystemIdentifier.DOS.rawValue))
+        #expect(!MouseCursorOverlayView.systemDrawsOwnPointer(SystemIdentifier.DOOM.rawValue))
         #expect(!MouseCursorOverlayView.systemDrawsOwnPointer(nil))
         #expect(!MouseCursorOverlayView.systemDrawsOwnPointer("not.a.system"))
     }

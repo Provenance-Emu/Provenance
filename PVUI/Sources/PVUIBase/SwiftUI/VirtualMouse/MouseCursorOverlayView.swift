@@ -63,11 +63,15 @@ public struct MouseCursorOverlayView: View {
         self.showsCursor = showsCursor
     }
 
-    /// Whether the emulated system draws its own mouse pointer, as the Atari ST's GEM does.
-    /// This overlay is positioned from the trackpad rather than read back from the machine,
-    /// so over such a system it would be a second cursor drifting away from the real one.
+    /// Whether the emulated system draws its own mouse pointer, as the Atari ST's GEM and
+    /// DOS mouse drivers and programs do. This overlay is positioned from the trackpad rather
+    /// than read back from the machine, so over such a system it would be a second cursor
+    /// drifting away from the real one.
     public static func systemDrawsOwnPointer(_ systemIdentifier: String?) -> Bool {
-        SystemIdentifier(rawValue: systemIdentifier ?? "") == .AtariST
+        switch SystemIdentifier(rawValue: systemIdentifier ?? "") {
+        case .AtariST, .DOS: return true
+        default: return false
+        }
     }
 
     // MARK: - Body
