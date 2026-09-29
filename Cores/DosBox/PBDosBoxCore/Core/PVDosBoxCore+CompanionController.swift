@@ -27,7 +27,7 @@ private final class MouseCursorState {
 }
 
 private enum AssociatedKeys {
-    static var mouseState: UInt8 = 0
+    nonisolated(unsafe) static var mouseState: UInt8 = 0
 }
 
 private extension PVDosBoxCore {

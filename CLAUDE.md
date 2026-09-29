@@ -157,6 +157,7 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 
 - **RetroArch submodule edits need two commits.** The RA fork at `CoresRetro/RetroArch/RetroArch/` is a real git submodule. To ship a change: (1) `cd` into the submodule, commit on a `Provenance/<feature>` branch, push to the `Provenance` remote; (2) `cd` back to the parent, `git add CoresRetro/RetroArch/RetroArch && git commit` to bump the pointer. Skipping (2) leaves develop pointing at the old SHA.
 - **PVRetroArch.xcodeproj is not file-system-synced for source files.** Only the `scripts/` folder is in a `PBXFileSystemSynchronizedRootGroup`. New `.mm`/`.m`/`.h` files under `CoresRetro/RetroArch/PVRetroArchCore/Core/` MUST be added explicitly to `project.pbxproj` in 4 spots: PBXBuildFile, PBXFileReference, group children, Sources build phase. Use `C0C0CAFE...`-prefixed UUIDs.
+- **Most workspace `.xcodeproj`s list sources explicitly** (e.g. `PVCoreBridgeRetro.xcodeproj`), so a new file compiles in SwiftPM yet breaks the archive build. `Scripts/check_pbxproj_sources.py` (CI: `xcode-project-sources.yml`) flags a source file sitting beside compiled ones that its project doesn't reference.
 - **`gh issue list` has no `--sort` flag.** Use `gh issue list --search "sort:created-desc"` or `gh issue list --json number,title,createdAt --jq '.'` for sorted/filtered queries.
 
 ### Metal rendering gotchas
