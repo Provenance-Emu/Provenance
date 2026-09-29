@@ -1591,6 +1591,9 @@ extension PVThinLibretroCore: MouseResponder {
     /// - **Atari ST**: Hatari reads deltas as frame pixels (dividing out its own zoom)
     ///   and reports the current frame as its base geometry, including after resolution
     ///   switches, so a full sweep crosses the ST screen exactly.
+    /// - **Amiga** (PUAE, which runs under the generic RetroArch system): deltas go straight
+    ///   into UAE's mouse counters (`setmousestate`, then `puae_mouse_speed`), at least a pixel
+    ///   of the reported frame per count, so scaling by that frame reaches every edge.
     /// - **DOS**: DOSBox Pure moves the INT 33h pointer one unit per delta horizontally
     ///   and half a unit vertically (the default 8:16 mickey ratio). That virtual screen
     ///   is 640 wide and as tall as the mode's lines, so a sweep needs at least 640 × 400,
@@ -1599,14 +1602,18 @@ extension PVThinLibretroCore: MouseResponder {
         let avInfo = _bridge.avInfo
         return Self.relativeMouseScale(
             system: SystemIdentifier(rawValue: systemIdentifier ?? ""),
+            coreIdentifier: coreIdentifier,
             frameWidth: Double(avInfo.base_width),
             frameHeight: Double(avInfo.base_height)
         )
     }
 
     static func relativeMouseScale(
-        system: SystemIdentifier?, frameWidth width: Double, frameHeight height: Double
+        system: SystemIdentifier?, coreIdentifier: String?, frameWidth width: Double, frameHeight height: Double
     ) -> (x: Double, y: Double) {
+        if isAmigaCore(coreIdentifier), width > 0, height > 0 {
+            return (width, height)
+        }
         switch system {
         case .AtariST where width > 0 && height > 0:
             return (width, height)
@@ -1615,6 +1622,11 @@ extension PVThinLibretroCore: MouseResponder {
         default:
             return (Self.mouseScale, Self.mouseScale)
         }
+    }
+
+    /// PUAE (and PUAE 2021) serve the Amiga; Provenance has no Amiga system of its own.
+    static func isAmigaCore(_ coreIdentifier: String?) -> Bool {
+        coreIdentifier?.lowercased().contains("puae") == true
     }
 
     /// Forward mouse movement to the libretro core.

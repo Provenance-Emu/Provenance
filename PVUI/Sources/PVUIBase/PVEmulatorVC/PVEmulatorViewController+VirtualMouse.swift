@@ -109,7 +109,9 @@ extension PVEmulatorViewController {
         /// Still installed when it draws nothing: `cursorHostingController` marks the
         /// virtual mouse as on.
         let overlay = MouseCursorOverlayView(
-            showsCursor: !MouseCursorOverlayView.systemDrawsOwnPointer(core.systemIdentifier)
+            showsCursor: !MouseCursorOverlayView.systemDrawsOwnPointer(
+                core.systemIdentifier, coreIdentifier: core.coreIdentifier
+            )
         )
         let host = UIHostingController(rootView: overlay)
         host.view.backgroundColor = .clear

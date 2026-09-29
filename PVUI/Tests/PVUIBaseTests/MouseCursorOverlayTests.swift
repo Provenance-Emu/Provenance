@@ -16,6 +16,15 @@ struct MouseCursorOverlayTests {
         #expect(MouseCursorOverlayView.systemDrawsOwnPointer(SystemIdentifier.DOS.rawValue))
     }
 
+    @Test func amigaIsMatchedByCore() {
+        #expect(MouseCursorOverlayView.systemDrawsOwnPointer(
+            SystemIdentifier.RetroArch.rawValue, coreIdentifier: "puae2021.libretro.framework"
+        ))
+        #expect(!MouseCursorOverlayView.systemDrawsOwnPointer(
+            SystemIdentifier.RetroArch.rawValue, coreIdentifier: "quicknes.libretro.framework"
+        ))
+    }
+
     @Test func otherSystemsKeepTheOverlay() {
         #expect(!MouseCursorOverlayView.systemDrawsOwnPointer(SystemIdentifier.DOOM.rawValue))
         #expect(!MouseCursorOverlayView.systemDrawsOwnPointer(nil))

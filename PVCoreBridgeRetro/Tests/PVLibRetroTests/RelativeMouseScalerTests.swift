@@ -54,32 +54,40 @@ struct RelativeMouseScalerTests {
 struct RelativeMouseScaleTests {
 
     @Test func atariSTUsesFrameSize() {
-        let scale = PVThinLibretroCore.relativeMouseScale(system: .AtariST, frameWidth: 640, frameHeight: 400)
+        let scale = PVThinLibretroCore.relativeMouseScale(system: .AtariST, coreIdentifier: nil, frameWidth: 640, frameHeight: 400)
         #expect(scale.x == 640)
         #expect(scale.y == 400)
     }
 
     @Test func atariSTWithoutGeometryFallsBack() {
-        let scale = PVThinLibretroCore.relativeMouseScale(system: .AtariST, frameWidth: 0, frameHeight: 0)
+        let scale = PVThinLibretroCore.relativeMouseScale(system: .AtariST, coreIdentifier: nil, frameWidth: 0, frameHeight: 0)
         #expect(scale.x == PVThinLibretroCore.mouseScale)
         #expect(scale.y == PVThinLibretroCore.mouseScale)
     }
 
     @Test func dosLowResCoversVirtualScreen() {
-        let scale = PVThinLibretroCore.relativeMouseScale(system: .DOS, frameWidth: 320, frameHeight: 200)
+        let scale = PVThinLibretroCore.relativeMouseScale(system: .DOS, coreIdentifier: nil, frameWidth: 320, frameHeight: 200)
         #expect(scale.x == PVThinLibretroCore.dosMinSweep.x)
         #expect(scale.y == PVThinLibretroCore.dosMinSweep.y)
     }
 
     @Test func dosTallModeScalesVertically() {
-        let scale = PVThinLibretroCore.relativeMouseScale(system: .DOS, frameWidth: 640, frameHeight: 480)
+        let scale = PVThinLibretroCore.relativeMouseScale(system: .DOS, coreIdentifier: nil, frameWidth: 640, frameHeight: 480)
         #expect(scale.x == 640)
         #expect(scale.y == 960)
     }
 
     @Test func otherSystemsKeepFixedScale() {
-        let scale = PVThinLibretroCore.relativeMouseScale(system: .DOOM, frameWidth: 320, frameHeight: 200)
+        let scale = PVThinLibretroCore.relativeMouseScale(system: .DOOM, coreIdentifier: nil, frameWidth: 320, frameHeight: 200)
         #expect(scale.x == PVThinLibretroCore.mouseScale)
         #expect(scale.y == PVThinLibretroCore.mouseScale)
+    }
+
+    @Test func amigaCoreUsesFrameSize() {
+        let scale = PVThinLibretroCore.relativeMouseScale(
+            system: .RetroArch, coreIdentifier: "puae.libretro.framework", frameWidth: 720, frameHeight: 568
+        )
+        #expect(scale.x == 720)
+        #expect(scale.y == 568)
     }
 }
