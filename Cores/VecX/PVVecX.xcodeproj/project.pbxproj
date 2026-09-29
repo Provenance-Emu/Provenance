@@ -25,6 +25,7 @@
 		B377ECC42CB3518900E9B750 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B377ECC32CB3518900E9B750 /* PVEmulatorCore */; };
 		B377ECC62CB3519300E9B750 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC52CB3519300E9B750 /* PVCoreBridgeRetro.framework */; };
 		B377ECCE2CB354B700E9B750 /* PVVecXCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B377ECCB2CB354B700E9B750 /* PVVecXCore.swift */; };
+		C0C0CAFE0A03000000000002 /* PVVecXCore+CompanionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE0A03000000000001 /* PVVecXCore+CompanionController.swift */; };
 		B377ECCF2CB354B700E9B750 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B377ECCC2CB354B700E9B750 /* CorePlist.swift */; };
 		B377ECD02CB354B700E9B750 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B377ECCD2CB354B700E9B750 /* CorePlist-Generated.swift */; };
 		B380C2592894E846007B76FD /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C19B2894D32900CF98C7 /* libretro.c */; };
@@ -105,6 +106,7 @@
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B377ECC52CB3519300E9B750 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B377ECCB2CB354B700E9B750 /* PVVecXCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVVecXCore.swift; sourceTree = "<group>"; };
+		C0C0CAFE0A03000000000001 /* PVVecXCore+CompanionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVVecXCore+CompanionController.swift"; sourceTree = "<group>"; };
 		B377ECCC2CB354B700E9B750 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		B377ECCD2CB354B700E9B750 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B380C2682894EB37007B76FD /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
@@ -236,6 +238,7 @@
 				B3447E96218B809200557ACE /* PVVecXCore+Controls.h */,
 				B3447E97218B809300557ACE /* PVVecXCore+Controls.mm */,
 				B377ECCB2CB354B700E9B750 /* PVVecXCore.swift */,
+				C0C0CAFE0A03000000000001 /* PVVecXCore+CompanionController.swift */,
 				B377ECCC2CB354B700E9B750 /* CorePlist.swift */,
 				B377ECCD2CB354B700E9B750 /* CorePlist-Generated.swift */,
 			);
@@ -634,6 +637,7 @@
 				B3C8A6612877D6B30037A946 /* PVVecXCore+Audio.m in Sources */,
 				B3EBB2032872B65700EAEB37 /* PVVecXCore+Video.m in Sources */,
 				B377ECCE2CB354B700E9B750 /* PVVecXCore.swift in Sources */,
+				C0C0CAFE0A03000000000002 /* PVVecXCore+CompanionController.swift in Sources */,
 				B377ECCF2CB354B700E9B750 /* CorePlist.swift in Sources */,
 				B3EDA1FB2D3F279800BA275D /* VecxOptions.swift in Sources */,
 				B377ECD02CB354B700E9B750 /* CorePlist-Generated.swift in Sources */,
