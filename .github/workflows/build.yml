@@ -161,6 +161,9 @@ jobs:
             echo "::warning::DYLIBS_TOKEN not set — skipping locally-built cores."
           fi
           MISSING=$(./CoresRetro/RetroArch/scripts/local-dylibs.sh list | awk '$2 == "MISSING" { print $1 }')
+          # Reported per build so alpha-release judges the IPAs from what they were
+          # actually built with, not from the store.
+          echo "${MISSING}" > "${RUNNER_TEMP}/missing-local-dylibs.txt"
           if [ -n "${MISSING}" ]; then
             echo "### ⚠️ Incomplete build: locally-built cores missing" >> "${GITHUB_STEP_SUMMARY}"
             for d in ${MISSING}; do
@@ -168,6 +171,13 @@ jobs:
               echo "- \`${d}\`" >> "${GITHUB_STEP_SUMMARY}"
             done
           fi
+
+      - name: Upload missing local dylib report
+        uses: actions/upload-artifact@v4
+        with:
+          name: missing-local-dylibs-${{ matrix.IPA_NAME }}
+          path: ${{ runner.temp }}/missing-local-dylibs.txt
+          retention-days: 3
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
@@ -599,15 +609,13 @@ jobs:
       # opened (assigned, so GitHub emails), then closed once nothing is missing.
       - name: Check locally-built core dylibs
         id: local_dylibs
-        env:
-          GH_TOKEN: ${{ secrets.DYLIBS_TOKEN }}
         run: |
-          if [ -z "${GH_TOKEN}" ]; then
-            MISSING="all of them (DYLIBS_TOKEN is not set)"
-          elif LIST=$(./CoresRetro/RetroArch/scripts/local-dylibs.sh missing); then
-            MISSING=$(echo "${LIST}" | paste -sd' ' -)
+          # Each build job uploads the local dylibs it lacked (see its fetch step).
+          REPORTS=$(find artifacts -type f -name missing-local-dylibs.txt)
+          if [ -z "${REPORTS}" ]; then
+            MISSING="unknown (no build reported its local dylibs)"
           else
-            MISSING="unknown (could not read the dylib store)"
+            MISSING=$(echo "${REPORTS}" | xargs cat | sed '/^$/d' | sort -u | paste -sd' ' -)
           fi
           echo "missing=${MISSING}" >> "${GITHUB_OUTPUT}"
 

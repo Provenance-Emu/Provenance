@@ -15,7 +15,6 @@
 #   ./local-dylibs.sh upload [core...]   # after building locally — push to the store
 #   ./local-dylibs.sh fetch  [core...]   # on a fresh clone / CI — pull into modules/
 #   ./local-dylibs.sh list               # what cores.yml marks local, and what is on disk
-#   ./local-dylibs.sh missing            # dylibs cores.yml expects that the store lacks
 #
 # With no core names, acts on every `local: true` core in cores.yml.
 #
@@ -200,26 +199,9 @@ cmd_fetch() {
     [ "$missing" -eq 0 ] || exit 1
 }
 
-# Prints one dylib per line that cores.yml expects but the store does not have.
-# Checks the release assets only (nothing is downloaded); exits 0 either way so CI
-# can decide what a gap means.
-cmd_missing() {
-    local assets
-    assets=$(gh release view "$DYLIBS_TAG" --repo "$DYLIBS_REPO" \
-        --json assets --jq '.assets[].name') || die "cannot read $DYLIBS_REPO @ $DYLIBS_TAG"
-    while IFS='|' read -r name fname iosf tvosf ios tvos; do
-        [ -n "$name" ] || continue
-        while read -r d; do
-            [ -n "$d" ] || continue
-            grep -qxF "$d.zip" <<<"$assets" || echo "$d"
-        done < <(dylibs_for "$name" "$fname" "$iosf" "$tvosf" "$ios" "$tvos")
-    done < <(local_cores)
-}
-
 case "${1:-}" in
     upload) shift; cmd_upload "$@" ;;
     fetch)  shift; cmd_fetch "$@" ;;
     list)   cmd_list ;;
-    missing) cmd_missing ;;
-    *)      sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
+    *)      sed -n '2,29p' "$0" | sed 's/^# \{0,1\}//'; exit 1 ;;
 esac
