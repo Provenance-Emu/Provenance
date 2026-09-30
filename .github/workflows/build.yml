@@ -143,25 +143,41 @@ jobs:
 
       # Cores marked `local: true` in cores.yml are custom Provenance builds that do
       # not exist on the libretro buildbot, so get-modules.sh deliberately never
-      # downloads them. Nothing else fetched them either, and the failure mode is
-      # SILENT: make_frameworks_retroarch.sh iterates the dylibs that are present in
-      # modules/, so an absent one is simply never packaged — no error, no warning,
-      # just a core missing from the IPA. virtualjaguar (Jaguar) has been affected.
+      # downloads them. If one is absent, make_frameworks_retroarch.sh simply never
+      # packages it: no build error, just a core missing from the IPA.
       #
-      # Not hard-failing when DYLIBS_TOKEN is unset, because that would break every
-      # build the moment this lands. A named warning is still strictly better than
-      # today's silence: it says exactly which cores the artifact will lack.
+      # A missing core does not stop the build (the rest of the IPA is still worth
+      # having), but it is never silent: each one is an error annotation and is listed
+      # in the run summary, and on develop the alpha-release job marks the release
+      # incomplete and opens a tracking issue. testflight.yml hard-fails instead.
       # GITHUB_TOKEN cannot read another private repo, hence a dedicated PAT.
       - name: Fetch locally-built core dylibs
         env:
           GH_TOKEN: ${{ secrets.DYLIBS_TOKEN }}
         run: |
-          if [ -z "${GH_TOKEN}" ]; then
-            echo "::warning::DYLIBS_TOKEN not set — skipping locally-built cores. This IPA will be MISSING:"
-            ./CoresRetro/RetroArch/scripts/local-dylibs.sh list || true
-            exit 0
+          if [ -n "${GH_TOKEN}" ]; then
+            ./CoresRetro/RetroArch/scripts/local-dylibs.sh fetch || true
+          else
+            echo "::warning::DYLIBS_TOKEN not set — skipping locally-built cores."
           fi
-          ./CoresRetro/RetroArch/scripts/local-dylibs.sh fetch
+          MISSING=$(./CoresRetro/RetroArch/scripts/local-dylibs.sh list | awk '$2 == "MISSING" { print $1 }')
+          # Reported per build so alpha-release judges the IPAs from what they were
+          # actually built with, not from the store.
+          echo "${MISSING}" > "${RUNNER_TEMP}/missing-local-dylibs.txt"
+          if [ -n "${MISSING}" ]; then
+            echo "### ⚠️ Incomplete build: locally-built cores missing" >> "${GITHUB_STEP_SUMMARY}"
+            for d in ${MISSING}; do
+              echo "::error title=Missing local core::${d} is not in modules/, so this IPA ships without it"
+              echo "- \`${d}\`" >> "${GITHUB_STEP_SUMMARY}"
+            done
+          fi
+
+      - name: Upload missing local dylib report
+        uses: actions/upload-artifact@v4
+        with:
+          name: missing-local-dylibs-${{ matrix.IPA_NAME }}
+          path: ${{ runner.temp }}/missing-local-dylibs.txt
+          retention-days: 3
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
@@ -588,11 +604,27 @@ jobs:
         with:
           path: artifacts
 
+      # The build job continues without a missing local core, so this is where the
+      # gap is surfaced: the release is marked incomplete and a tracking issue is
+      # opened (assigned, so GitHub emails), then closed once nothing is missing.
+      - name: Check locally-built core dylibs
+        id: local_dylibs
+        run: |
+          # Each build job uploads the local dylibs it lacked (see its fetch step).
+          REPORTS=$(find artifacts -type f -name missing-local-dylibs.txt)
+          if [ -z "${REPORTS}" ]; then
+            MISSING="unknown (no build reported its local dylibs)"
+          else
+            MISSING=$(echo "${REPORTS}" | xargs cat | sed '/^$/d' | sort -u | paste -sd' ' -)
+          fi
+          echo "missing=${MISSING}" >> "${GITHUB_OUTPUT}"
+
       - name: Build Release Notes
         id: release_notes
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
+          MISSING_LOCAL: ${{ steps.local_dylibs.outputs.missing }}
         run: |
           SHA="${{ github.sha }}"
           SHORT_SHA="${SHA:0:7}"
@@ -679,14 +711,27 @@ jobs:
           > This release is automatically updated on every successful develop push.
           FOOTEREOF
 
+          if [ -n "${MISSING_LOCAL}" ]; then
+            {
+              echo "> [!WARNING]"
+              echo "> **Incomplete build.** These locally-built cores are missing from the IPAs: ${MISSING_LOCAL}"
+              echo
+              cat /tmp/release_notes.md
+            } > /tmp/release_notes.tmp
+            mv /tmp/release_notes.tmp /tmp/release_notes.md
+          fi
+
       - name: Update alpha release
         env:
           GH_TOKEN: ${{ github.token }}
+          MISSING_LOCAL: ${{ steps.local_dylibs.outputs.missing }}
         run: |
           TAG="alpha"
           REPO="${{ github.repository }}"
           SHA="${{ github.sha }}"
           SHORT_SHA="${SHA:0:7}"
+          TITLE="Provenance Alpha (${SHORT_SHA})"
+          [ -z "${MISSING_LOCAL}" ] || TITLE="${TITLE} (incomplete)"
 
           # Create or update the alpha tag.
           # NOTE: use -F (typed field) for force so it serialises as a JSON
@@ -731,11 +776,23 @@ jobs:
           # Create new pre-release with IPAs
           gh release create $TAG \
             --repo $REPO \
-            --title "Provenance Alpha ($SHORT_SHA)" \
+            --title "$TITLE" \
             --notes-file /tmp/release_notes.md \
             --prerelease \
             *.ipa $([ -f core-manifest.md ] && echo core-manifest.md) 2>/dev/null \
             || echo "::warning::No IPA files to attach"
+
+      - name: Alert on missing locally-built cores
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ASSIGNEE: ${{ vars.LOCAL_DYLIB_ALERT_ASSIGNEE || 'JoeMatt' }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          MISSING_LOCAL: ${{ steps.local_dylibs.outputs.missing }}
+        run: |
+          ./Scripts/ci-local-dylib-alert.sh "Alpha \`${GITHUB_SHA:0:7}\`" "${MISSING_LOCAL}" \
+            "It was published anyway, marked incomplete."
 
       - name: Update Build Status Issue
         env:

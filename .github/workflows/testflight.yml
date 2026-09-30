@@ -82,6 +82,9 @@ jobs:
         platform: ${{ fromJSON(needs.plan.outputs.matrix) }}
     # A single cold archive has measured >100 min.
     timeout-minutes: 300
+    permissions:
+      contents: read
+      issues: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -112,24 +115,46 @@ jobs:
       - name: Initialize submodules
         run: ./Scripts/ci-init-submodules.sh
 
-      # Cores marked `local: true` in cores.yml (flycast-jitless, virtualjaguar)
-      # live in the private provenance-dylibs release store, not on the libretro
-      # buildbot. Without this step the archive only contains them if the
-      # Actions cache happens to restore a modules/ dir from a prior build.yml
-      # run — on a cache miss the store IPA silently ships WITHOUT them.
-      # Unlike build.yml (warns and continues for alpha builds), a missing
-      # token here is a hard failure: an App Store upload missing headline
-      # cores is worse than a failed run.
+      # Cores marked `local: true` in cores.yml live in the private
+      # provenance-dylibs release store, not on the libretro buildbot. Without
+      # this step the archive only contains them if the Actions cache happens to
+      # restore a modules/ dir from a prior build.yml run; on a cache miss the
+      # store IPA silently ships WITHOUT them.
+      # Unlike build.yml (which publishes an alpha marked incomplete), a missing
+      # core is a hard failure here: TestFlight builds go to external testers.
+      # Both raise the same alert, though (next step).
       - name: Fetch locally-built core dylibs
+        id: local_dylibs
         env:
           GH_TOKEN: ${{ secrets.DYLIBS_TOKEN }}
         run: |
-          if [ -z "${GH_TOKEN}" ]; then
-            echo "::error::DYLIBS_TOKEN not set — the store IPA would be missing:"
-            ./CoresRetro/RetroArch/scripts/local-dylibs.sh list || true
-            exit 1
+          if [ -n "${GH_TOKEN}" ]; then
+            ./CoresRetro/RetroArch/scripts/local-dylibs.sh fetch || true
+          else
+            echo "::error::DYLIBS_TOKEN not set — cannot fetch locally-built cores."
           fi
-          ./CoresRetro/RetroArch/scripts/local-dylibs.sh fetch
+          MISSING=$(./CoresRetro/RetroArch/scripts/local-dylibs.sh list | awk '$2 == "MISSING" { print $1 }')
+          echo "missing=$(echo "${MISSING}" | paste -sd' ' -)" >> "${GITHUB_OUTPUT}"
+          [ -n "${MISSING}" ] || exit 0
+          echo "### ⚠️ TestFlight upload stopped: locally-built cores missing" >> "${GITHUB_STEP_SUMMARY}"
+          for d in ${MISSING}; do
+            echo "::error title=Missing local core::${d} is not in modules/"
+            echo "- \`${d}\`" >> "${GITHUB_STEP_SUMMARY}"
+          done
+          exit 1
+
+      - name: Alert on missing locally-built cores
+        if: ${{ always() && steps.local_dylibs.outcome != 'skipped' }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ASSIGNEE: ${{ vars.LOCAL_DYLIB_ALERT_ASSIGNEE || 'JoeMatt' }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          MISSING_LOCAL: ${{ steps.local_dylibs.outputs.missing }}
+        run: |
+          ./Scripts/ci-local-dylib-alert.sh "TestFlight (${{ matrix.platform }}) \`${GITHUB_SHA:0:7}\`" \
+            "${MISSING_LOCAL}" "The upload was stopped."
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
