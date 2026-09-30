@@ -57,7 +57,7 @@ jobs:
     steps:
       - id: pick
         run: |
-          case "${{ inputs.platform || (github.event_name == 'schedule' && 'ios' || 'all') }}" in
+          case "${{ inputs.platform || 'all' }}" in
             ios)  M='["ios"]' ;;
             tvos) M='["tvos"]' ;;
             *)    M='["ios","tvos"]' ;;
@@ -254,17 +254,13 @@ jobs:
           ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
         run: |
           set -o pipefail
-          # Scheduled runs are iOS-only until the tvOS archive is verified. The
-          # "exit 65 with no diagnostic at all" this comment used to describe was a
-          # REPORTING gap, not an intermittent archive fault: xcbeautify rewrites
-          # diagnostics into ::error annotations, which the old greps did not match.
-          # Run 36047942385 failed on both platforms for an ordinary reason — two
-          # Dolphin bridge calls that the core bump had broken (fixed f7f80d524a).
-          # Re-check tvOS with a manual dispatch; if it archives green, this gate
-          # can go away. iOS has
-          # archived and uploaded cleanly every time, and a nightly defaulting to
-          # "all" would fail on tvOS and mask a healthy iOS build. An explicit
-          # workflow_dispatch still honours whatever platform you pick.
+          # Scheduled runs archive BOTH platforms. They were iOS-only for weeks
+          # while the tvOS build was broken, which left the public tvOS TestFlight
+          # stuck on a 2026-09-25 build. tvOS archives and uploads cleanly now: its
+          # last CI failure (run 36132573379) was App Store Connect silently
+          # rejecting the upload for ITMS-90575 (TopShelf iCloud entitlements, fixed
+          # 89f166dc1d), not an archive fault. fail-fast is off, so a tvOS failure
+          # cannot take a healthy iOS build down with it.
           ARGS=(--channel testflight --platform "${{ matrix.platform }}")
           if [ -n "${{ inputs.version }}" ]; then
             ARGS+=(--version "${{ inputs.version }}")
@@ -306,6 +302,11 @@ jobs:
           bundle-id: org.provenance-emu.provenance
           build-number: ${{ steps.archive.outputs.build }}
           platform: ${{ matrix.platform == 'tvos' && 'TV_OS' || 'IOS' }}
+          # App Store Connect processing has taken over an hour: build 1790759490
+          # became VALID after the default 60 min wait gave up, so it stayed
+          # internal-only. The archive takes ~2 h, so 120 still fits under the
+          # job's 300-minute timeout.
+          timeout-minutes: "120"
           whats-new: "Nightly build ${{ steps.archive.outputs.build }} from ${{ github.ref_name }} @ ${{ github.sha }}."
 
       # Print the diagnostics in the console too. Until this existed, a failed
