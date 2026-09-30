@@ -787,32 +787,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          MISSING_LOCAL: ${{ steps.local_dylibs.outputs.missing }}
           ASSIGNEE: ${{ vars.LOCAL_DYLIB_ALERT_ASSIGNEE || 'JoeMatt' }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          MISSING_LOCAL: ${{ steps.local_dylibs.outputs.missing }}
         run: |
-          LABEL="missing-local-dylibs"
-          SHORT_SHA="${GITHUB_SHA:0:7}"
-          OPEN=$(gh issue list --repo "${REPO}" --label "${LABEL}" --state open \
-            --json number --jq '.[0].number // empty' 2>/dev/null || true)
-          if [ -z "${MISSING_LOCAL}" ]; then
-            if [ -n "${OPEN}" ]; then
-              gh issue close "${OPEN}" --repo "${REPO}" \
-                --comment "Alpha \`${SHORT_SHA}\` has every locally-built core again ([CI run](${RUN_URL}))."
-            fi
-            exit 0
-          fi
-          BODY="Alpha \`${SHORT_SHA}\` shipped **without** these locally-built cores: ${MISSING_LOCAL}
-
-          They are \`local: true\` in \`CoresRetro/RetroArch/scripts/cores.yml\`, so the buildbot never supplies them. Publish them with \`CoresRetro/RetroArch/scripts/local-dylibs.sh upload <core>\`. This issue closes itself on the next complete alpha. ([CI run](${RUN_URL}))"
-          if [ -n "${OPEN}" ]; then
-            gh issue comment "${OPEN}" --repo "${REPO}" --body "${BODY}"
-          else
-            gh label create "${LABEL}" --repo "${REPO}" --force --color D93F0B \
-              --description "Alpha build shipped without a locally-built core"
-            gh issue create --repo "${REPO}" --title "Alpha build is missing locally-built cores" \
-              --label "${LABEL}" --assignee "${ASSIGNEE}" --body "${BODY}"
-          fi
+          ./Scripts/ci-local-dylib-alert.sh "Alpha \`${GITHUB_SHA:0:7}\`" "${MISSING_LOCAL}" \
+            "It was published anyway, marked incomplete."
 
       - name: Update Build Status Issue
         env:
