@@ -107,6 +107,7 @@
 [submodule "Cores/Stella/Sources/libstella/stella"]
 	path = Cores/Stella/Sources/libstella/stella
 	url = https://github.com/Provenance-Emu/stella.git
+	branch = Provenance-master
 [submodule "Cores/fuse/fuse-libretro"]
 	path = Cores/fuse/fuse-libretro
 	url = https://github.com/Provenance-Emu/fuse-libretro.git

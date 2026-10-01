@@ -98,7 +98,8 @@ extension PVStellaGameCore: CoreOptional {
             default: return "auto"
             }
         case .cropOverscan:
-            return Self.valueForOption(variable.coreOption).asBool
+            // The core compares against the strings "enabled"/"disabled".
+            return Self.valueForOption(variable.coreOption).asBool ? "enabled" : "disabled"
         default:
             WLOG("Unsupported variable <\(variable)>")
             return nil

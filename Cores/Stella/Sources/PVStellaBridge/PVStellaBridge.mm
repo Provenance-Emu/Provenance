@@ -44,6 +44,9 @@
 #include <atomic>
 #import <CommonCrypto/CommonDigest.h>
 
+// Atari 2600 RIOT RAM exposed to RetroAchievements (rcheevos addresses 0x00-0x7F).
+static constexpr size_t kStellaSystemRAMSize = 128;
+
 // ---------------------------------------------------------------------------
 // MARK: - RetroAchievements rc_client (HAVE_RCHEEVOS)
 // ---------------------------------------------------------------------------
@@ -52,9 +55,11 @@
 
 static uint32_t pvstella_read_memory(uint32_t address, uint8_t *buffer,
                                      uint32_t num_bytes, rc_client_t *client) {
-    (void)client;
-    uint8_t *ram = (uint8_t *)retro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
-    size_t ramSize = retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM);
+    // Read the bridge's RAM mirror, never the core directly: the core's RAM
+    // pointer is only valid while a game is loaded.
+    PVStellaBridge *bridge = (__bridge PVStellaBridge *)rc_client_get_userdata(client);
+    const uint8_t *ram = (const uint8_t *)bridge.stellaSystemRAMPtr;
+    size_t ramSize = bridge.stellaSystemRAMSize;
     for (uint32_t i = 0; i < num_bytes; ++i) {
         uint32_t addr = address + i;
         uint8_t value = 0xFF;
@@ -211,6 +216,13 @@ static void pvstella_event_handler(const rc_client_event_t *event, rc_client_t *
     BOOL    _lightGunIsOffscreen;
     BOOL    _lightGunTrigger;
     BOOL    _isStellaLightGunGame;
+
+    // Copy of the core's RIOT RAM, refreshed after every retro_run() and state
+    // load. Stella's libretro core returns a pointer into the live console,
+    // which does not exist before load and is freed by retro_unload_game();
+    // RetroAchievements may ask for the region outside that window and keeps
+    // the base pointer, so it gets this buffer, which lives as long as the bridge.
+    uint8_t _systemRAM[kStellaSystemRAMSize];
 }
 @property (nonatomic, strong) NSMutableArray<NSString*>* cheats;
 @property (readwrite, nonatomic, copy) PVStellaBridgeOptionHandler optionHandler;
@@ -691,6 +703,7 @@ static void writeSaveFile(const char* path, int type) {
     }
 #endif
     retro_run();
+    [self pvstella_syncSystemRAM];
     [self tickAchievements];
 }
 
@@ -702,6 +715,7 @@ static void writeSaveFile(const char* path, int type) {
     }
 #endif
     retro_run();
+    [self pvstella_syncSystemRAM];
     [self tickAchievements];
 }
 
@@ -748,6 +762,7 @@ static void writeSaveFile(const char* path, int type) {
         _lightGunIsOffscreen  = NO;
         _lightGunScreenX      = 0;
         _lightGunScreenY      = 0;
+        memset(_systemRAM, 0, sizeof(_systemRAM));
         if(self->_videoBuffer) {
             free(self->_videoBuffer);
         }
@@ -809,6 +824,7 @@ static void writeSaveFile(const char* path, int type) {
             }
 
             retro_run();
+            [self pvstella_syncSystemRAM];
 
             // Publish the loaded state only after retro_load_game and the
             // prime retro_run() have completed, and only while we still hold
@@ -939,11 +955,20 @@ static void writeSaveFile(const char* path, int type) {
 #pragma mark - RetroAchievements
 
 - (void *)stellaSystemRAMPtr {
-    return retro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
+    return _systemRAM;
 }
 
 - (NSUInteger)stellaSystemRAMSize {
-    return (NSUInteger)retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM);
+    return kStellaSystemRAMSize;
+}
+
+/// Copies the core's RIOT RAM into `_systemRAM`. Call only while a game is
+/// loaded, under the emulation monitor (Stella's RAM pointer is not valid otherwise).
+- (void)pvstella_syncSystemRAM {
+    const void *ram = retro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
+    if (ram && retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM) >= kStellaSystemRAMSize) {
+        memcpy(_systemRAM, ram, kStellaSystemRAMSize);
+    }
 }
 
 - (BOOL)achievementsActive {
@@ -1135,19 +1160,33 @@ static void writeSaveFile(const char* path, int type) {
 
 - (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {
     @synchronized(self) {
-        size_t serial_size = retro_serialize_size();
-        uint8_t *serial_data = (uint8_t *) malloc(serial_size);
-        
-        retro_serialize(serial_data, serial_size);
-        
-        NSError *error = nil;
+        size_t serial_size = _loaded.load() ? retro_serialize_size() : 0;
+        uint8_t *serial_data = serial_size ? (uint8_t *) malloc(serial_size) : NULL;
+
+        // Never write a state file from a buffer the core did not fill.
+        if (!serial_data || !retro_serialize(serial_data, serial_size)) {
+            free(serial_data);
+            if (error != NULL) {
+                *error = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+                                             code:PVEmulatorCoreErrorCodeCouldNotSaveState
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Failed to save state.",
+                                                    NSLocalizedFailureReasonErrorKey: @"Stella could not serialize the current state."}];
+            }
+            ELOG(@"Stella failed to serialize state (size %zu)", serial_size);
+            return NO;
+        }
+
+        NSError *writeError = nil;
         NSData *saveStateData = [NSData dataWithBytes:serial_data length:serial_size];
         free(serial_data);
         BOOL success = [saveStateData writeToFile:path
                                           options:NSDataWritingAtomic
-                                            error:&error];
+                                            error:&writeError];
         if (!success) {
-            ELOG(@"Error saving state: %@", [error localizedDescription]);
+            ELOG(@"Error saving state: %@", [writeError localizedDescription]);
+            if (error != NULL) {
+                *error = writeError;
+            }
             return NO;
         }
         
@@ -1163,7 +1202,7 @@ static void writeSaveFile(const char* path, int type) {
             if(error != NULL) {
                 NSDictionary *userInfo = @{
                                            NSLocalizedDescriptionKey: @"Failed to load save state.",
-                                           NSLocalizedFailureReasonErrorKey: @"Genesis failed to read savestate data.",
+                                           NSLocalizedFailureReasonErrorKey: @"Stella failed to read savestate data.",
                                            NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
                                            };
 
@@ -1176,12 +1215,14 @@ static void writeSaveFile(const char* path, int type) {
             return NO;
         }
         
-        if (!retro_unserialize([saveStateData bytes], [saveStateData length]))
+        // Stella has no console before a game is loaded; unserializing then would
+        // dereference it.
+        if (!_loaded.load() || !retro_unserialize([saveStateData bytes], [saveStateData length]))
         {
             if(error != NULL) {
                 NSDictionary *userInfo = @{
                     NSLocalizedDescriptionKey: @"Failed to load save state.",
-                    NSLocalizedFailureReasonErrorKey: @"Genesis failed to load savestate data.",
+                    NSLocalizedFailureReasonErrorKey: @"Stella failed to load savestate data. It may have been made by an older version of the core.",
                     NSLocalizedRecoverySuggestionErrorKey: @"Check that the path is correct and file exists."
                 };
 
@@ -1190,10 +1231,14 @@ static void writeSaveFile(const char* path, int type) {
                                                     userInfo:userInfo];
                 *error = newError;
             }
-            DLOG(@"Unable to load save state");
+            // Old Stella states (header "06070002state", app builds before the
+            // 8.0 core) are rejected by StateManager's header check here,
+            // before any console state is touched.
+            ELOG(@"Stella rejected the save state (incompatible or corrupt)");
             return NO;
         }
-        
+
+        [self pvstella_syncSystemRAM];
         return YES;
     }
 }
