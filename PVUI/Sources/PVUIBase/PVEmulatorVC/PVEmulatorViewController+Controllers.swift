@@ -10,6 +10,13 @@ import SteamController
 
 extension PVEmulatorViewController {
     @objc func handlePause(_ note: Notification?) {
+        /// Every pause source funnels through here, so this is the one place
+        /// that can stop a single press from toggling the menu open and shut.
+        let uptime = ProcessInfo.processInfo.systemUptime
+        guard pauseToggleCoalescer.shouldAccept(at: uptime) else {
+            ILOG("handlePause: duplicate PauseGame for the same press — ignored (isShowingMenu=\(isShowingMenu))")
+            return
+        }
         ILOG("handlePause: PauseGame notification received")
         self.controllerPauseButtonPressed(note)
     }

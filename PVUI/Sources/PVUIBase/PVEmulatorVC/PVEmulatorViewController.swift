@@ -322,6 +322,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     var secondaryWindow: UIWindow?
     var menuGestureRecognizer: UITapGestureRecognizer?
 
+    /// Drops the duplicate `PauseGame` signals one button press can produce.
+    var pauseToggleCoalescer = PauseToggleCoalescer()
+
     public var isShowingMenu: Bool = false {
         didSet {
             // Single authoritative pause toggle to avoid conflicting calls
@@ -1428,6 +1431,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     }
 
     @objc private func handleTVOSMenuPress() {
+        /// This recognizer lives on the emulator view, which is out of the
+        /// responder chain while the menu is presented, so a press reaching it
+        /// can only ever mean "open". Seeing the menu already up means another
+        /// pause source handled this same press first.
+        guard !isShowingMenu else {
+            ILOG("tvOS: menu press consumed — pause menu already showing, not toggling")
+            return
+        }
         ILOG("tvOS: menu press consumed — opening pause menu")
         NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
     }

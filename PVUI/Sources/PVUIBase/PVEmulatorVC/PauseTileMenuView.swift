@@ -133,6 +133,10 @@ struct PauseTileMenuView: View {
 
     @FocusState private var focusedTileID: String?
     @State private var routeStack: [PauseTileMenuRoute] = []
+    #if os(tvOS)
+    /// System uptime when the menu took focus; see `handleRemoteBackCommand`.
+    @State private var appearedUptime: TimeInterval = ProcessInfo.processInfo.systemUptime
+    #endif
 
     // MARK: Size class / orientation
 
@@ -434,6 +438,24 @@ struct PauseTileMenuView: View {
             requestPauseMenuClose()
         }
     }
+
+    #if os(tvOS)
+    /// Back / Play-Pause from the focus engine.
+    ///
+    /// The menu is presented on a button's press-down for GameController-driven
+    /// pause sources, and controller input is handed to UIKit at that moment —
+    /// so the release of that same press can arrive here as an exit command and
+    /// close the menu the instant it opens. Nobody backs out deliberately that
+    /// fast, so commands inside the coalescing window are dropped.
+    private func handleRemoteBackCommand() {
+        let sinceAppear = ProcessInfo.processInfo.systemUptime - appearedUptime
+        guard sinceAppear >= PauseToggleCoalescer.defaultWindow else {
+            ILOG("Pause menu: back command \(String(format: "%.2f", sinceAppear))s after appear — treated as the opening press, ignored")
+            return
+        }
+        handleBackCommand()
+    }
+    #endif
 
     /// Current header title for the active tile-menu route.
     private var routeTitle: String {
@@ -2003,6 +2025,7 @@ struct PauseTileMenuView: View {
         }
         #elseif os(tvOS)
         .onAppear {
+            appearedUptime = ProcessInfo.processInfo.systemUptime
             routeStack = initialRoute == .root ? [.root] : [.root, initialRoute]
             refreshControllerProfileState()
             initializeHardwareSwitchStatesIfNeeded()
@@ -2018,8 +2041,8 @@ struct PauseTileMenuView: View {
             guard newPhase == .active else { return }
             reattachTVOSFocusIfNeeded()
         }
-        .onExitCommand { handleBackCommand() }
-        .onPlayPauseCommand { handleBackCommand() }
+        .onExitCommand { handleRemoteBackCommand() }
+        .onPlayPauseCommand { handleRemoteBackCommand() }
         #endif
     }
 
