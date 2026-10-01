@@ -182,9 +182,12 @@ class ConsoleGamesViewModel: ObservableObject {
         }
     }
     @Published var isSearching: Bool = false
-    @Published var scrollOffset: CGFloat = 0
-    @Published var previousScrollOffset: CGFloat = 0
+    /// Deliberately not `@Published`: it changes on every scroll tick and nothing renders from it.
+    var previousScrollOffset: CGFloat = 0
     @Published var isSearchBarVisible: Bool = true
+    /// Whether this console has any save states. Drives the "Continue" section; published only when it flips,
+    /// so autosaves (which touch the save-state collection constantly) don't invalidate the screen.
+    @Published private(set) var hasSaveStates: Bool = false
 
     // MARK: - Snapshot models for rendering (no Realm objects in SwiftUI lists/grids)
     @Published var allGamesModels: [GameCellModel] = []
@@ -193,6 +196,11 @@ class ConsoleGamesViewModel: ObservableObject {
 
     @Published var sortAscending: Bool = true {
         didSet {
+            // Mirror the flag onto `modelsQueue` so background sorts never read the @Published value off-main.
+            let ascending = sortAscending
+            modelsQueue.async { [weak self] in
+                self?.queueSortAscending = ascending
+            }
             Task { @MainActor in
                 resortModelsOnMain()
             }
@@ -203,6 +211,10 @@ class ConsoleGamesViewModel: ObservableObject {
     private var modelsRealm: Realm?
     private var gamesToken: NotificationToken?
     private var recentToken: NotificationToken?
+    private var saveStatesToken: NotificationToken?
+
+    /// Sort direction as seen by `modelsQueue`; only touched on that queue.
+    private var queueSortAscending = true
 
     private var recentMD5Order: [String] = []
     private var modelsByMD5: [String: GameCellModel] = [:]
@@ -372,6 +384,7 @@ class ConsoleGamesViewModel: ObservableObject {
         searchDebounceTimer?.invalidate()
         gamesToken?.invalidate()
         recentToken?.invalidate()
+        saveStatesToken?.invalidate()
     }
 }
 
@@ -421,6 +434,23 @@ private extension ConsoleGamesViewModel {
                         }
                     }
                 }
+
+                let saveStates = realm.objects(PVSaveState.self)
+                    .filter("game.systemIdentifier == %@", self.consoleIdentifier)
+
+                self.saveStatesToken = saveStates.observe(on: self.modelsQueue) { [weak self] change in
+                    guard let self else { return }
+                    switch change {
+                    case .initial(let collection),
+                         .update(let collection, _, _, _):
+                        let hasAny = !collection.isEmpty
+                        Task { @MainActor in
+                            if self.hasSaveStates != hasAny { self.hasSaveStates = hasAny }
+                        }
+                    case .error(let error):
+                        ELOG("ConsoleGamesViewModel: error observing PVSaveState: \(error.localizedDescription)")
+                    }
+                }
             } catch {
                 ELOG("ConsoleGamesViewModel: failed to open Realm for models: \(error.localizedDescription)")
             }
@@ -450,11 +480,25 @@ private extension ConsoleGamesViewModel {
 
         modelsByMD5 = byMD5
 
+        // Sort here on the models queue; localizedCaseInsensitiveCompare over a large library is too slow for main.
+        let ascending = queueSortAscending
+        let sortedAll = Self.sorted(all, ascending: ascending)
+        let sortedFavs = Self.sorted(favs, ascending: ascending)
+        let md5s = all.map(\.md5)
+
         Task { @MainActor in
-            self.allGamesModels = self.sorted(all)
-            self.favoritesModels = self.sorted(favs)
-            self.recentlyPlayedModels = recents
-            self.updateSelection { $0.prune(to: all.map(\.md5)) }
+            var newAll = sortedAll
+            var newFavs = sortedFavs
+            if self.sortAscending != ascending {
+                // The user flipped the sort while this rebuild was in flight.
+                newAll = self.sorted(newAll)
+                newFavs = self.sorted(newFavs)
+            }
+            // Observed key paths include lastPlayed/playCount, so most changes rebuild identical lists; skip those publishes.
+            if self.allGamesModels != newAll { self.allGamesModels = newAll }
+            if self.favoritesModels != newFavs { self.favoritesModels = newFavs }
+            if self.recentlyPlayedModels != recents { self.recentlyPlayedModels = recents }
+            self.updateSelection { $0.prune(to: md5s) }
         }
         }
     }
@@ -470,7 +514,7 @@ private extension ConsoleGamesViewModel {
             let models = recentMD5Order.compactMap { modelsByMD5[$0] }
 
             Task { @MainActor in
-                self.recentlyPlayedModels = models
+                if self.recentlyPlayedModels != models { self.recentlyPlayedModels = models }
             }
         }
     }
@@ -483,8 +527,12 @@ private extension ConsoleGamesViewModel {
     }
 
     func sorted(_ models: [GameCellModel]) -> [GameCellModel] {
+        Self.sorted(models, ascending: sortAscending)
+    }
+
+    private static func sorted(_ models: [GameCellModel], ascending: Bool) -> [GameCellModel] {
         models.sorted { lhs, rhs in
-            if sortAscending {
+            if ascending {
                 return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
             } else {
                 return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedDescending

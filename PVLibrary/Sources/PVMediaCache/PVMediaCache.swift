@@ -106,18 +106,20 @@ public final class PVMediaCache: NSObject, Sendable {
     public static let targetCacheSize: UInt64 = 80 * 1024 * 1024 // 80MB
 
 #if canImport(UIKit)
-    @MainActor static let memCache: NSCache<NSString, UIImage> = {
+    /// `NSCache` is internally thread-safe; `nonisolated(unsafe)` lets `cachedImage(forKey:)` peek
+    /// synchronously from a view initializer instead of waiting on an async hop to the main actor.
+    nonisolated(unsafe) static let memCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
         /// Set reasonable memory limits to prevent excessive memory usage
-        cache.countLimit = 100 // Maximum number of images to keep in memory
-        cache.totalCostLimit = 50 * 1024 * 1024 // 50MB limit (approximate)
+        cache.countLimit = 400 // A large library shows more than 100 cells on one screen; cost is the real bound
+        cache.totalCostLimit = 50 * 1024 * 1024 // 50MB of decoded bytes (see `storeInMemoryCache`)
         return cache
     }()
     #else
     static let memCache: NSCache<NSString, NSImage> = {
         let cache = NSCache<NSString, NSImage>()
         /// Set reasonable memory limits to prevent excessive memory usage
-        cache.countLimit = 100 // Maximum number of images to keep in memory
+        cache.countLimit = 400 // Maximum number of images to keep in memory
         cache.totalCostLimit = 50 * 1024 * 1024 // 50MB limit (approximate)
         return cache
     }()
@@ -440,6 +442,13 @@ public final class PVMediaCache: NSObject, Sendable {
     }
     #else
     public typealias ImageFetchCompletion = @Sendable (_ key: String, _ image: UIImage?) -> Void
+
+    /// Synchronous, memory-only lookup. Never touches disk or decodes, so it is safe to call from a
+    /// view initializer to seed a cell with an image that is already resident and avoid a placeholder frame.
+    public static func cachedImage(forKey key: String, downsampleTo target: ArtworkDownsampleTarget?) -> UIImage? {
+        guard !key.isEmpty else { return nil }
+        return memCache.object(forKey: memCacheKey(keyHash: key.md5Hash, target: target) as NSString)
+    }
 
     /// Store in memory cache with cost calculation
     @MainActor private func storeInMemoryCache(image: UIImage, forKey keyHash: String, target: ArtworkDownsampleTarget? = nil) {

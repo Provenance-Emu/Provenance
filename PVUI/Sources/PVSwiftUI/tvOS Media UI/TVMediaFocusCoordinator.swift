@@ -115,12 +115,21 @@ final class TVMediaFocusCoordinator: ObservableObject {
     /// Whether an alert is currently presented
     @Published var isAlertPresented: Bool = false
 
+    /// Per-tile focus state lives in its own object: it changes on every focus move, and keeping it
+    /// out of this coordinator's `objectWillChange` stops the root view (content, sidebar, overlays)
+    /// from re-rendering each time a tile gains focus.
+    let contentFocus = TVMediaContentFocus()
+
     /// Track if content can scroll left (has more items to the left)
     /// Content views should update this as focus moves
-    @Published var contentCanScrollLeft: Bool = false
+    var contentCanScrollLeft: Bool {
+        contentFocus.contentCanScrollLeft
+    }
 
     /// ID of focused item in content for edge detection
-    @Published var focusedContentID: String?
+    var focusedContentID: String? {
+        contentFocus.focusedContentID
+    }
 
     /// Set of IDs that are at the left edge of their container
     private var leftEdgeItemIDs: Set<String> = []
@@ -129,8 +138,7 @@ final class TVMediaFocusCoordinator: ObservableObject {
 
     /// Called by content when an item gains focus
     func contentItemFocused(id: String, isAtLeftEdge: Bool) {
-        focusedContentID = id
-        contentCanScrollLeft = !isAtLeftEdge
+        contentFocus.update(id: id, canScrollLeft: !isAtLeftEdge)
 
         if isAtLeftEdge {
             leftEdgeItemIDs.insert(id)
@@ -201,8 +209,7 @@ final class TVMediaFocusCoordinator: ObservableObject {
     /// Clear all edge registrations (call when view changes)
     func clearEdgeRegistrations() {
         leftEdgeItemIDs.removeAll()
-        focusedContentID = nil
-        contentCanScrollLeft = false
+        contentFocus.update(id: nil, canScrollLeft: false)
     }
 
     // MARK: - Modal/Alert handling
@@ -252,6 +259,48 @@ final class TVMediaFocusCoordinator: ObservableObject {
         // At content - open sidebar
         openSidebar()
         return true
+    }
+}
+
+// MARK: - Content Focus State
+
+/// Which content tile is focused, observed only by the views that react to it.
+@available(tvOS 16.0, *)
+@MainActor
+final class TVMediaContentFocus: ObservableObject {
+    /// ID of focused item in content for edge detection
+    @Published private(set) var focusedContentID: String?
+
+    /// Not published: only read synchronously by `shouldNavigateToSidebar()`.
+    private(set) var contentCanScrollLeft: Bool = false
+
+    func update(id: String?, canScrollLeft: Bool) {
+        contentCanScrollLeft = canScrollLeft
+        // Skip redundant writes so re-syncing the same tile doesn't invalidate observers.
+        if focusedContentID != id {
+            focusedContentID = id
+        }
+    }
+}
+
+@available(tvOS 16.0, *)
+private struct FocusedContentChangeModifier: ViewModifier {
+    @ObservedObject var contentFocus: TVMediaContentFocus
+    let action: () -> Void
+
+    func body(content: Content) -> some View {
+        content.onChange(of: contentFocus.focusedContentID) { _ in action() }
+    }
+}
+
+@available(tvOS 16.0, *)
+extension View {
+    /// Runs `action` whenever the focused content tile changes. Observes only the small
+    /// focus object, so the coordinator's other state changes don't re-run this and
+    /// the modified view isn't re-rendered by focus moves.
+    @MainActor
+    func onFocusedContentChange(of coordinator: TVMediaFocusCoordinator, perform action: @escaping () -> Void) -> some View {
+        modifier(FocusedContentChangeModifier(contentFocus: coordinator.contentFocus, action: action))
     }
 }
 

@@ -23,8 +23,8 @@ struct HomeSection<Content: SwiftUI.View>: SwiftUI.View {
                 .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor.opacity(RetroPauseChrome.sectionTitleMutedOpacity))
                 .retroPauseSectionHeaderTypography()
                 .padding(.horizontal, 10)
-                .padding(.top, 20)
-                .padding(.bottom, 14)
+                .padding(.top, 8)
+                .padding(.bottom, 8)
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack {
                     content()

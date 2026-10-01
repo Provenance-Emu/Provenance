@@ -12,6 +12,9 @@ import PVThemes
 import PVSettings
 import Defaults
 
+/// Height `MarqueeText` reserves for its single line; the static title must match so the cell doesn't shift on focus.
+private let marqueeTitleHeight: CGFloat = 20
+
 /// A view that displays a game item in a cell layout
 struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     /// Implement Equatable to prevent unnecessary redraws.
@@ -41,7 +44,8 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
         lhs.artwork?.size == rhs.artwork?.size &&
         lhs.shelfRowHeightScale == rhs.shelfRowHeightScale &&
         lhs.constrainHeight == rhs.constrainHeight &&
-        lhs.viewType == rhs.viewType
+        lhs.viewType == rhs.viewType &&
+        lhs.isFocused == rhs.isFocused
     }
 
     /// Use plain property instead of @ObservedRealmObject for performance
@@ -53,6 +57,10 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
     /// Scales the fixed shelf height (`PVRowHeight`) when `constrainHeight` is true; favorites/recent shelves use `PVCompactShelfRowHeightScale`.
     var shelfRowHeightScale: CGFloat = 1.0
     var viewType: GameItemViewType
+    /// Controller/keyboard focus from the parent; together with the system focus environment and pointer hover,
+    /// this decides whether the title is allowed to scroll.
+    var isFocused: Bool = false
+    @Environment(\.isFocused) private var isSystemFocused
     /// Optional so the title `MarqueeText` only lays out once — after the
     /// real artwork width is measured. Previously this defaulted to
     /// `PVRowHeight`, which caused MarqueeText to set up its scrolling
@@ -248,6 +256,10 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
         }
     }
 
+    private var titleFont: Font {
+        .system(size: viewType.titleFontSize, weight: .bold, design: .monospaced)
+    }
+
     /// Cached text view
     @ViewBuilder
     private var textView: some View {
@@ -258,11 +270,24 @@ struct GameItemViewCell<Presentable: GameItemPresentable>: View, Equatable {
             // wrong width when the real measurement arrives, which causes
             // visible scroll hitches in LazyVGrid as cells recycle.
             if let textMaxWidth, textMaxWidth > 0 {
-                MarqueeText(text: game.title,
-                            font: .system(size: viewType.titleFontSize, weight: .bold, design: .monospaced),
-                            delay: 1.0,
-                            speed: 50.0,
-                            loop: true)
+                // A MarqueeText per cell costs two GeometryReaders, a Task and scene-phase
+                // observation, so only the cell the user is on gets one; the rest truncate.
+                Group {
+                    if isFocused || isSystemFocused || glowIntensity > 0 {
+                        MarqueeText(text: game.title,
+                                    font: titleFont,
+                                    delay: 1.0,
+                                    speed: 50.0,
+                                    loop: true)
+                    } else {
+                        Text(game.title)
+                            .font(titleFont)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .frame(height: marqueeTitleHeight)
+                    }
+                }
                 .foregroundColor(textColor)
                 .shadow(color: glowColor, radius: 3, x: 0, y: 0)
                 .frame(maxWidth: textMaxWidth, alignment: .leading)

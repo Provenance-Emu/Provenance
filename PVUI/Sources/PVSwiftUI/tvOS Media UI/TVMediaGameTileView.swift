@@ -10,11 +10,11 @@ import Defaults
 /// Premium game tile with divine RetroWave aesthetics
 /// Scales elegantly on focus with neon glow effects
 @available(tvOS 16.0, *)
-struct TVMediaGameTileView: View {
+struct TVMediaGameTileView<MenuContent: View>: View {
     let game: PVGame
     let titleFont: Font
     let onPlay: () -> Void
-    let contextMenu: () -> AnyView
+    let contextMenu: () -> MenuContent
     let isAtLeftEdge: Bool
     var focusCoordinator: TVMediaFocusCoordinator?
     let focusedGameID: FocusState<String?>.Binding?
@@ -35,7 +35,8 @@ struct TVMediaGameTileView: View {
     @State private var holdMenuTask: Task<Void, Never>?
     @State private var showContextSheet: Bool = false
     /// Duration (seconds) that A must be held before the context menu fires.
-    private static let holdMenuThreshold: TimeInterval = 0.5
+    /// Computed: a generic type can't have static stored properties.
+    private static var holdMenuThreshold: TimeInterval { 0.5 }
     #endif
 
     /// Base height for tiles - width adjusts based on artwork aspect ratio
@@ -67,7 +68,7 @@ struct TVMediaGameTileView: View {
         game: PVGame,
         titleFont: Font = .subheadline.weight(.semibold),
         onPlay: @escaping () -> Void,
-        contextMenu: @escaping () -> AnyView,
+        @ViewBuilder contextMenu: @escaping () -> MenuContent,
         isAtLeftEdge: Bool = false,
         focusCoordinator: TVMediaFocusCoordinator? = nil,
         focusedGameID: FocusState<String?>.Binding? = nil

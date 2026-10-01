@@ -82,8 +82,9 @@ public struct MarqueeText: View {
     @State private var isCalculatingWidth: Bool = false
     private let id = UUID()
 
-    /// Shared actor for text width calculations
-    private let widthCalculator = TextWidthCalculator()
+    /// One stateless calculator shared by every instance, instead of an actor allocated per view init.
+    private static let widthCalculator = TextWidthCalculator()
+    private var widthCalculator: TextWidthCalculator { Self.widthCalculator }
 
     /// Creates a marquee text view that scrolls when content is too long
     /// - Parameters:

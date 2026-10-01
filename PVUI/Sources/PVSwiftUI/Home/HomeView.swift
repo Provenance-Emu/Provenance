@@ -250,7 +250,7 @@ struct HomeView: SwiftUI.View {
                 )
             }
             .background(themeManager.currentPalette.gameLibraryBackground.swiftUIColor)
-            .padding(.bottom, 64)
+            .padding(.bottom, LibraryLayout.pageIndexClearance)
         }
         .background {
             RetroTheme.RetroBackgroundView()
@@ -769,9 +769,7 @@ struct HomeView: SwiftUI.View {
                 .romDragSource(gameMD5: model.md5)
 #endif
                 .contextMenu {
-                    if let live = liveGame(for: model) {
-                        GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
-                    }
+                    GameContextMenu(md5: model.md5, rootDelegate: rootDelegate, contextMenuDelegate: self)
                 }
                 #if os(iOS)
                 .saveStateDropTarget(gameId: model.md5)
@@ -811,9 +809,7 @@ struct HomeView: SwiftUI.View {
                 .romDragSource(gameMD5: model.md5)
 #endif
                 .contextMenu {
-                    if let live = liveGame(for: model) {
-                        GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
-                    }
+                    GameContextMenu(md5: model.md5, rootDelegate: rootDelegate, contextMenuDelegate: self)
                 }
                 #if os(iOS)
                 .saveStateDropTarget(gameId: model.md5)
@@ -1176,9 +1172,7 @@ struct HomeView: SwiftUI.View {
         .romDragSource(gameMD5: model.md5)
 #endif
         .contextMenu {
-            if let live = liveGame(for: model) {
-                GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
-            }
+            GameContextMenu(md5: model.md5, rootDelegate: rootDelegate, contextMenuDelegate: self)
         }
         #if os(iOS)
         .saveStateDropTarget(gameId: model.md5)
@@ -1345,9 +1339,7 @@ struct HomeView: SwiftUI.View {
                         }
                         .focusableIfAvailable()
                         .contextMenu {
-                            if let live = liveGame(for: model) {
-                                GameContextMenu(game: live, rootDelegate: rootDelegate, contextMenuDelegate: self)
-                            }
+                            GameContextMenu(md5: model.md5, rootDelegate: rootDelegate, contextMenuDelegate: self)
                         }
                         #if os(iOS)
                         .saveStateDropTarget(gameId: model.md5)

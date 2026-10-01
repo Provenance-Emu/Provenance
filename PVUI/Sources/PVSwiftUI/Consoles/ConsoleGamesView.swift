@@ -121,15 +121,6 @@ struct ConsoleGamesView: SwiftUI.View {
 
     let gamesForSystemPredicate: NSPredicate
 
-    /// Observed only for the recent-save-states badge check in `continueSection()`.
-    /// All game/recent/favorites data is served by `gamesViewModel` (background-queue observer)
-    /// to avoid hammering the main thread on every CloudKit write.
-    @ObservedResults(
-        PVSaveState.self,
-        filter: NSPredicate(value: true),
-        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
-    ) var recentSaveStates
-
     weak var rootDelegate: PVRootDelegate?
     var showGameInfo: (String) -> Void
 
@@ -147,14 +138,6 @@ struct ConsoleGamesView: SwiftUI.View {
         self.rootDelegate = rootDelegate
         self.isActiveTab = isActiveTab
         self.showGameInfo = showGameInfo
-
-        // Only observe save-states for the recent-saves badge; everything else is
-        // served by ConsoleGamesViewModel which uses a background-queue Realm observer.
-        _recentSaveStates = ObservedResults(
-            PVSaveState.self,
-            filter: NSPredicate(format: "game.systemIdentifier == %@", console.identifier),
-            sortDescriptor: SortDescriptor(keyPath: #keyPath(PVSaveState.date), ascending: false)
-        )
     }
 
     @State private var shouldShowImportProgress = false
@@ -172,7 +155,7 @@ struct ConsoleGamesView: SwiftUI.View {
     }
 
     private var hasRecentSaveStates: Bool {
-        !recentSaveStates.isEmpty
+        gamesViewModel.hasSaveStates
     }
 
     /// Resolve a live `PVGame` for actions / menus (on-demand).
@@ -298,18 +281,22 @@ struct ConsoleGamesView: SwiftUI.View {
                 // Detect scroll direction
                 let scrollingDown = offset < gamesViewModel.previousScrollOffset
 
-                // Hide search bar when scrolling down, show when scrolling up
+                // Hide search bar when scrolling down, show when scrolling up.
+                // Only assign on an actual flip so a steady scroll doesn't invalidate this view per tick.
                 if scrollingDown && offset < -10 {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        gamesViewModel.isSearchBarVisible = false
+                    if gamesViewModel.isSearchBarVisible {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            gamesViewModel.isSearchBarVisible = false
+                        }
                     }
                 } else if !scrollingDown && scrollDistance > 10 {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        gamesViewModel.isSearchBarVisible = true
+                    if !gamesViewModel.isSearchBarVisible {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            gamesViewModel.isSearchBarVisible = true
+                        }
                     }
                 }
 
-                gamesViewModel.scrollOffset = offset
                 gamesViewModel.previousScrollOffset = offset
             }
         ) {
@@ -338,8 +325,8 @@ struct ConsoleGamesView: SwiftUI.View {
                         .id("section_allgames")
                         .padding(.horizontal, 10)
                 }
-                /// Add padding at bottom to account for BiosesView if needed
-                .padding(.bottom, gamesViewModel.hasBioses ? 120 : 44)
+                /// Clear the page-dots index. BiosesView sits below the scroll view and insets itself.
+                .padding(.bottom, LibraryLayout.pageIndexClearance)
                 .desktopLibraryContentColumn()
                 .onChange(of: gamesViewModel.focusedSection) { newSection in
                     if let section = newSection {
@@ -1095,7 +1082,6 @@ struct ConsoleGamesView: SwiftUI.View {
 #endif
             }
         }
-        .padding(.horizontal, 10)
     }
 
     @ViewBuilder
@@ -1118,9 +1104,9 @@ struct ConsoleGamesView: SwiftUI.View {
                 .id(gameIdentityKey(id: model.id, artworkURL: model.trueArtworkURL))
                 .focusableIfAvailable()
                 .contextMenu {
-                    if !gamesViewModel.isMultiSelectMode, let live = liveGame(for: model) {
+                    if !gamesViewModel.isMultiSelectMode {
                         GameContextMenu(
-                            game: live,
+                            md5: model.md5,
                             rootDelegate: rootDelegate,
                             contextMenuDelegate: self
                         )
@@ -1131,7 +1117,6 @@ struct ConsoleGamesView: SwiftUI.View {
                 #endif
             }
         }
-        .padding(.horizontal, 10)
     }
 
     @ViewBuilder
@@ -1233,9 +1218,9 @@ struct ConsoleGamesView: SwiftUI.View {
                 .id(gameIdentityKey(id: model.id, artworkURL: model.trueArtworkURL))
                 .focusableIfAvailable()
                 .contextMenu {
-                    if !gamesViewModel.isMultiSelectMode, let live = liveGame(for: model) {
+                    if !gamesViewModel.isMultiSelectMode {
                         GameContextMenu(
-                            game: live,
+                            md5: model.md5,
                             rootDelegate: rootDelegate,
                             contextMenuDelegate: self
                         )
@@ -1487,13 +1472,11 @@ struct ConsoleGamesView: SwiftUI.View {
                         .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
                         .focusableIfAvailable()
                         .contextMenu {
-                            if let live = liveGame(for: game) {
-                                GameContextMenu(
-                                    game: live,
-                                    rootDelegate: rootDelegate,
-                                    contextMenuDelegate: self
-                                )
-                            }
+                            GameContextMenu(
+                                md5: game.md5,
+                                rootDelegate: rootDelegate,
+                                contextMenuDelegate: self
+                            )
                         }
                         #if os(iOS)
                         .romDragSource(gameMD5: game.md5)
@@ -1646,10 +1629,7 @@ extension ConsoleGamesView {
     private func titleBar() -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(console.name)
-                    .font(.headline)
-                    .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    .shadow(color: .retroPink.opacity(0.3), radius: 5, x: 0, y: 0)
+                // The console name is already shown by the page tab, so only the subtitle remains.
                 HStack {
                     Text(console.manufacturer)
                         .font(.system(.subheadline, design: .monospaced))
@@ -1684,7 +1664,7 @@ extension ConsoleGamesView {
             multiSelectToggleButton
 #endif
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 6)
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
         .retroPausePanelBackground(isDark: themeManager.currentPalette.dark)
@@ -1709,13 +1689,11 @@ extension ConsoleGamesView {
         .id(gameIdentityKey(id: game.id, artworkURL: game.trueArtworkURL))
         .focusableIfAvailable()
         .contextMenu {
-            if let live = liveGame(for: game) {
-                GameContextMenu(
-                    game: live,
-                    rootDelegate: rootDelegate,
-                    contextMenuDelegate: self
-                )
-            }
+            GameContextMenu(
+                md5: game.md5,
+                rootDelegate: rootDelegate,
+                contextMenuDelegate: self
+            )
         }
         #if os(iOS)
         .saveStateDropTarget(gameId: game.md5)

@@ -28,10 +28,71 @@ private struct CoreOptionEntry {
     let name: String
 }
 
-/// A SwiftUI context menu for game-related actions
+/// A SwiftUI context menu for game-related actions.
+///
+/// Construction is intentionally free: `.contextMenu { GameContextMenu(...) }` builds this
+/// value for every visible cell on every parent body pass. All Realm access (freeze / PK lookup),
+/// core filtering and file-existence checks live in `GameContextMenuItems`, whose body SwiftUI
+/// only evaluates when the menu is actually presented.
 public struct GameContextMenu: View {
-    // Use a frozen game to avoid Realm threading issues
+    private enum Source {
+        case game(PVGame)
+        case md5(String)
+    }
+
+    private let source: Source
+    weak var rootDelegate: PVRootDelegate?
+    var contextMenuDelegate: GameContextMenuDelegate?
+
+    public init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
+        self.source = .game(game)
+        self.rootDelegate = rootDelegate
+        self.contextMenuDelegate = contextMenuDelegate
+    }
+
+    /// Resolves the game by primary key only when the menu is shown, so list cells need no per-cell Realm lookup.
+    public init(md5: String, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
+        self.source = .md5(md5)
+        self.rootDelegate = rootDelegate
+        self.contextMenuDelegate = contextMenuDelegate
+    }
+
+    public var body: some View {
+        if let game = resolvedGame() {
+            GameContextMenuItems(game: game, menu: self)
+        }
+    }
+
+    /// A frozen copy of the game, safe to hold across threads. Main-thread Realm access for the md5 case.
+    private func resolvedGame() -> PVGame? {
+        switch source {
+        case .game(let game):
+            guard !game.isInvalidated else { return nil }
+            return game.isFrozen ? game : game.freeze()
+        case .md5(let md5):
+            let realm = RomDatabase.sharedInstance.realm
+            // Library hashes are stored upper-case but older models carried other casings.
+            for key in [md5, md5.uppercased(), md5.lowercased()] {
+                if let game = realm.object(ofType: PVGame.self, forPrimaryKey: key) {
+                    return game.freeze()
+                }
+            }
+            return nil
+        }
+    }
+
+    /// Download a game from CloudKit with progress tracking UI
+    public func downloadGameFromCloud() {
+        guard let game = resolvedGame() else { return }
+        GameContextMenuItems(game: game, menu: self).downloadGameFromCloud()
+    }
+}
+
+private struct GameContextMenuItems: View {
+    // Frozen game to avoid Realm threading issues
     let game: PVGame
+    /// The public wrapper, passed to delegate callbacks.
+    let menu: GameContextMenu
 
     // Cache computed properties
     @State private var availableCores: [PVCore] = []
@@ -41,29 +102,24 @@ public struct GameContextMenu: View {
     @State private var isDownloaded: Bool = true
     @Default(.iCloudSync) private var iCloudSyncEnabled
 
-    weak var rootDelegate: PVRootDelegate?
-    var contextMenuDelegate: GameContextMenuDelegate?
+    private var rootDelegate: PVRootDelegate? { menu.rootDelegate }
+    private var contextMenuDelegate: GameContextMenuDelegate? { menu.contextMenuDelegate }
 
     @State private var showArtworkSourceAlert = false
     @State private var gameToUpdateCover: PVGame?
     @Environment(\.featureFlags) private var featureFlags
 
-    public init(game: PVGame, rootDelegate: PVRootDelegate?, contextMenuDelegate: GameContextMenuDelegate?) {
-        // Ensure we're working with a frozen copy
-        self.game = game.isFrozen ? game : game.freeze()
-        self.rootDelegate = rootDelegate
-        self.contextMenuDelegate = contextMenuDelegate
+    init(game: PVGame, menu: GameContextMenu) {
+        self.game = game
+        self.menu = menu
 
-        // Use self.game (frozen) consistently to avoid Realm thread violations
-        let frozenGame = self.game
-
-        // Initialize computed properties
-        _availableCores = State(initialValue: frozenGame.system?.cores.toArray().filter {
+        // `game` is frozen by the caller.
+        _availableCores = State(initialValue: game.system?.cores.toArray().filter {
             !(AppState.shared.isAppStore && $0.appStoreDisabled)
         } ?? [])
         let fm = FileManager.default
         // Check that at least one save-state file actually exists on disk
-        let hasLocalSaveStates = frozenGame.saveStates.contains { saveState in
+        let hasLocalSaveStates = game.saveStates.contains { saveState in
             guard let fileURL = saveState.file?.url else { return false }
             return fm.fileExists(atPath: fileURL.path)
         }
@@ -71,17 +127,17 @@ public struct GameContextMenu: View {
         // hasBatterySaves is computed asynchronously in .task to avoid calling
         // Paths.batterySavesPath on the main thread (it may block on iCloud-backed storage).
         _hasBatterySaves = State(initialValue: false)
-        _hasCloudRecord = State(initialValue: frozenGame.cloudRecordID != nil)
-        _isDownloaded = State(initialValue: frozenGame.isDownloaded)
+        _hasCloudRecord = State(initialValue: game.cloudRecordID != nil)
+        _isDownloaded = State(initialValue: game.isDownloaded)
     }
 
-    public var body: some View {
+    var body: some View {
         Group {
             if !game.isInvalidated {
                 // Add multi-disc menu if game has related files
                 if Set(game.relatedFiles).count > 1 {
                     Button {
-                        contextMenuDelegate?.gameContextMenu(self, didRequestDiscSelectionFor: game)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestDiscSelectionFor: game)
                     } label: {
                         Label("Select Disc", systemImage: "opticaldisc")
                     }
@@ -95,7 +151,7 @@ public struct GameContextMenu: View {
                    game.systemIdentifier == SystemIdentifier.N64.rawValue,
                    TransferPakCompatibleGames.isKnownTransferPakGame(game.title) {
                     Button {
-                        contextMenuDelegate?.gameContextMenu(self, didRequestTransferPakConfigFor: game)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestTransferPakConfigFor: game)
                     } label: {
                         Label("Configure Transfer Pak", systemImage: "memorychip")
                     }
@@ -104,7 +160,7 @@ public struct GameContextMenu: View {
                 // N64 Controller Pak slot picker (Memory Pak, Rumble Pak, Transfer Pak, etc.)
                 if game.systemIdentifier == SystemIdentifier.N64.rawValue {
                     Button {
-                        contextMenuDelegate?.gameContextMenu(self, didRequestControllerPakSlotsFor: game)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestControllerPakSlotsFor: game)
                     } label: {
                         Label("Controller Pak Slots", systemImage: "gamecontroller.fill")
                     }
@@ -118,7 +174,7 @@ public struct GameContextMenu: View {
                             Button {
                                 Task { @MainActor in
                                     if let thawedGame = game.thaw() {
-                                        await rootDelegate?.root_load(thawedGame, sender: self, core: core, saveState: nil)
+                                        await rootDelegate?.root_load(thawedGame, sender: menu, core: core, saveState: nil)
                                     }
                                 }
                             } label: {
@@ -142,7 +198,7 @@ public struct GameContextMenu: View {
                 if coreEntries.count == 1 {
                     let entry = coreEntries[0]
                     Button {
-                        contextMenuDelegate?.gameContextMenu(self, didRequestCoreOptionsFor: game, coreClassName: entry.principleClassName, coreName: entry.name)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestCoreOptionsFor: game, coreClassName: entry.principleClassName, coreName: entry.name)
                     } label: {
                         Label("Core Options for This Game", systemImage: "slider.horizontal.3")
                     }
@@ -151,7 +207,7 @@ public struct GameContextMenu: View {
                         ForEach(coreEntries.indices, id: \.self) { i in
                             let entry = coreEntries[i]
                             Button {
-                                contextMenuDelegate?.gameContextMenu(self, didRequestCoreOptionsFor: game, coreClassName: entry.principleClassName, coreName: entry.name)
+                                contextMenuDelegate?.gameContextMenu(menu, didRequestCoreOptionsFor: game, coreClassName: entry.principleClassName, coreName: entry.name)
                             } label: {
                                 Label(entry.name, systemImage: "slider.horizontal.3")
                             }
@@ -161,16 +217,16 @@ public struct GameContextMenu: View {
                     }
                 }
                 Button {
-                    contextMenuDelegate?.gameContextMenu(self, didRequestShowGameInfoFor: game.md5Hash)
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestShowGameInfoFor: game.md5Hash)
                 } label: { Label("Game Info", systemImage: "info.circle") }
                 Button {
-                    contextMenuDelegate?.gameContextMenu(self, didRequestShowSaveStatesFor: game)
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestShowSaveStatesFor: game)
                 } label: {
                     Label("Manage Save States", systemImage: "clock.arrow.circlepath")
                 }
                 .disabled(!hasSaveStates)
                 Button {
-                    contextMenuDelegate?.gameContextMenu(self, didRequestExportSavesFor: game)
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestExportSavesFor: game)
                 } label: {
                     Label("Export Saves", systemImage: "square.and.arrow.up")
                 }
@@ -178,19 +234,19 @@ public struct GameContextMenu: View {
                 if Defaults[.sramImportExport] {
                     if hasBatterySaves {
                         Button {
-                            contextMenuDelegate?.gameContextMenu(self, didRequestExportSRAMFor: game)
+                            contextMenuDelegate?.gameContextMenu(menu, didRequestExportSRAMFor: game)
                         } label: {
                             Label("Export Battery Save", systemImage: "memorychip")
                         }
                     }
                     #if !os(tvOS)
                     Button {
-                        contextMenuDelegate?.gameContextMenu(self, didRequestImportSRAMFor: game)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestImportSRAMFor: game)
                     } label: {
                         Label("Import Battery Save", systemImage: "square.and.arrow.down")
                     }
                     Button {
-                        contextMenuDelegate?.gameContextMenu(self, didRequestImportSaveFor: game)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestImportSaveFor: game)
                     } label: {
                         Label("Import Save Bundle", systemImage: "archivebox.fill")
                     }
@@ -199,7 +255,7 @@ public struct GameContextMenu: View {
                 // Show download option for games available in CloudKit but not downloaded locally
                 if iCloudSyncEnabled && hasCloudRecord && !isDownloaded {
                     Button {
-                        contextMenuDelegate?.gameContextMenu(self, didRequestDownloadFromCloudFor: game)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestDownloadFromCloudFor: game)
                     } label: { Label("Download from Cloud", systemImage: "icloud.and.arrow.down") }
                 }
 
@@ -215,7 +271,7 @@ public struct GameContextMenu: View {
                     toggleFavorite()
                 } label: { Label("Favorite", systemImage: "heart") }
                 Button {
-                    contextMenuDelegate?.gameContextMenu(self, didRequestRenameFor: game)
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestRenameFor: game)
                 } label: { Label("Rename", systemImage: "rectangle.and.pencil.and.ellipsis") }
                 #if !os(tvOS)
                 Button {
@@ -230,22 +286,22 @@ public struct GameContextMenu: View {
                 }
                 if Defaults[.netplayEnabled] && availableCores.contains(where: { $0.principleClass.contains("RetroArch") }) {
                     Button {
-                        contextMenuDelegate?.gameContextMenu(self, didRequestNetworkPlayFor: game)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestNetworkPlayFor: game)
                     } label: { Label("Network Play", systemImage: "antenna.radiowaves.left.and.right") }
                 }
                 Divider()
     #if !os(tvOS)
                 Button {
-                    contextMenuDelegate?.gameContextMenu(self, didRequestSkinSelectionFor: game)
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestSkinSelectionFor: game)
                 } label: { Label("Controller Skin", systemImage: "gamecontroller") }
                 if hasPerGameSkin(for: game) {
                     Button {
-                        contextMenuDelegate?.gameContextMenu(self, didRequestResetSkinFor: game)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestResetSkinFor: game)
                     } label: { Label("Reset Game Skin", systemImage: "arrow.counterclockwise.circle") }
                 }
                 Button {
                     DLOG("GameContextMenu: Choose Cover button tapped")
-                    contextMenuDelegate?.gameContextMenu(self, didRequestChooseArtworkSourceFor: game)
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestChooseArtworkSourceFor: game)
                 } label: { Label("Choose Cover", systemImage: "book.closed") }
                 Button {
                     pasteArtwork(forGame: game)
@@ -254,7 +310,7 @@ public struct GameContextMenu: View {
                 /// tvOS: skip the source alert and go directly to online artwork search
                 Button {
                     DLOG("GameContextMenu: Choose Cover (tvOS) button tapped")
-                    contextMenuDelegate?.gameContextMenu(self, didRequestShowArtworkSearchFor: game)
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestShowArtworkSearchFor: game)
                 } label: { Label("Search Artwork Online", systemImage: "photo.artframe") }
     #endif
                 if game.customArtworkURL != "" {
@@ -266,7 +322,7 @@ public struct GameContextMenu: View {
                 if !game.contentless {
                     Button {
                         DLOG("GameContextMenu: Move to System button tapped")
-                        contextMenuDelegate?.gameContextMenu(self, didRequestMoveToSystemFor: game)
+                        contextMenuDelegate?.gameContextMenu(menu, didRequestMoveToSystemFor: game)
                     } label: { Label("Move to System", systemImage: "folder.fill.badge.plus") }
                 }
                 if #available(iOS 15, tvOS 15, macOS 12, *), !game.contentless {
@@ -275,7 +331,7 @@ public struct GameContextMenu: View {
                             if let rootDelegate {
                                 rootDelegate.attemptToDelete(game: game, deleteSaves: false)
                             } else {
-                                contextMenuDelegate?.gameContextMenu(self, didRequestDeleteFor: game)
+                                contextMenuDelegate?.gameContextMenu(menu, didRequestDeleteFor: game)
                             }
                         }
                     } label: { Label("Delete", systemImage: "trash") }
@@ -285,7 +341,7 @@ public struct GameContextMenu: View {
                             if let rootDelegate {
                                 rootDelegate.attemptToDelete(game: game, deleteSaves: false)
                             } else {
-                                contextMenuDelegate?.gameContextMenu(self, didRequestDeleteFor: game)
+                                contextMenuDelegate?.gameContextMenu(menu, didRequestDeleteFor: game)
                             }
                         }
                     } label: { Label("Delete", systemImage: "trash") }
@@ -310,10 +366,10 @@ public struct GameContextMenu: View {
             isPresented: $showArtworkSourceAlert,
             buttons: {
                 UIAlertAction(title: "Select from Photos", style: .default) { [contextMenuDelegate] _ in
-                    contextMenuDelegate?.gameContextMenu(self, didRequestShowImagePickerFor: game)
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestShowImagePickerFor: game)
                 }
                 UIAlertAction(title: "Search Online", style: .default) { [contextMenuDelegate] _ in
-                    contextMenuDelegate?.gameContextMenu(self, didRequestShowArtworkSearchFor: game)
+                    contextMenuDelegate?.gameContextMenu(menu, didRequestShowArtworkSearchFor: game)
                 }
                 UIAlertAction(title: "Cancel", style: .cancel)
             }
@@ -368,7 +424,7 @@ public struct GameContextMenu: View {
     }
 }
 
-extension GameContextMenu {
+extension GameContextMenuItems {
     /// Offload the game's primary ROM file from the device while keeping CloudKit record and metadata
     private func offloadGameFromDevice(_ game: PVGame) {
         Task {
@@ -401,7 +457,7 @@ extension GameContextMenu {
         }
     }
     /// Download a game from CloudKit with progress tracking UI
-    public func downloadGameFromCloud() {
+    func downloadGameFromCloud() {
         guard !game.isInvalidated, let recordID = game.cloudRecordID else { return }
 
         let gameTitle = game.title

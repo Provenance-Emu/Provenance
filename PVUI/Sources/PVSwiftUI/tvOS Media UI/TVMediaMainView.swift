@@ -2188,7 +2188,7 @@ struct TVMediaSavesView: View {
         .onChange(of: gridWidth) { _ in
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
         }
-        .onChange(of: focusCoordinator.focusedContentID) { _ in
+        .onFocusedContentChange(of: focusCoordinator) {
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
         }
     }
@@ -3929,15 +3929,14 @@ struct TVMediaAllGamesGrid: View {
         )
 
         LazyVGrid(columns: columns, spacing: 20) {
-            ForEach(games.indices, id: \.self) { index in
-                let game = games[index]
+            ForEach(Array(games.enumerated()), id: \.element.id) { index, game in
                 // First column in each row is at left edge
                 let isAtLeftEdge = index % columnsPerRow == 0
                 TVMediaGameTileView(
                     game: game,
                     titleFont: .headline.weight(.semibold),
                     onPlay: { sceneCoordinator.launchGame(game) },
-                    contextMenu: { AnyView(GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions)) },
+                    contextMenu: { GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions) },
                     isAtLeftEdge: isAtLeftEdge,
                     focusCoordinator: focusCoordinator,
                     focusedGameID: $focusedGameID
@@ -3948,7 +3947,7 @@ struct TVMediaAllGamesGrid: View {
         .onChange(of: gridWidth) { _ in
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
         }
-        .onChange(of: focusCoordinator.focusedContentID) { _ in
+        .onFocusedContentChange(of: focusCoordinator) {
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
         }
         .onAppear {
@@ -4857,13 +4856,12 @@ struct TVMediaShelf: View {
 
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: itemSpacing) {
-                    ForEach(items.indices, id: \.self) { index in
-                        let game = items[index]
+                    ForEach(Array(items.enumerated()), id: \.element.id) { index, game in
                         TVMediaGameTileView(
                             game: game,
                             titleFont: .callout.weight(.semibold),
                             onPlay: { sceneCoordinator.launchGame(game) },
-                            contextMenu: { AnyView(GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions)) },
+                            contextMenu: { GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions) },
                             isAtLeftEdge: index == 0,
                             focusCoordinator: focusCoordinator
                         )
@@ -4941,13 +4939,12 @@ struct TVMediaSystemShelfRow: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 24) {
                     let gamesArray = Array(games.prefix(30))
-                    ForEach(gamesArray.indices, id: \.self) { index in
-                        let game = gamesArray[index]
+                    ForEach(Array(gamesArray.enumerated()), id: \.element.id) { index, game in
                         TVMediaGameTileView(
                             game: game,
                             titleFont: .callout.weight(.semibold),
                             onPlay: { sceneCoordinator.launchGame(game) },
-                            contextMenu: { AnyView(GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions)) },
+                            contextMenu: { GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions) },
                             isAtLeftEdge: index == 0,
                             focusCoordinator: focusCoordinator
                         )
@@ -5118,14 +5115,13 @@ struct TVMediaSearchResultsGrid: View {
         )
 
         LazyVGrid(columns: columns, spacing: 20) {
-            ForEach(results.indices, id: \.self) { index in
-                let game = results[index]
+            ForEach(Array(results.enumerated()), id: \.element.id) { index, game in
                 let isAtLeftEdge = index % columnsPerRow == 0
                 TVMediaGameTileView(
                     game: game,
                     titleFont: .callout.weight(.semibold),
                     onPlay: { sceneCoordinator.launchGame(game) },
-                    contextMenu: { AnyView(GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions)) },
+                    contextMenu: { GameContextMenu(game: game, rootDelegate: nil, contextMenuDelegate: gameActions) },
                     isAtLeftEdge: isAtLeftEdge,
                     focusCoordinator: focusCoordinator,
                     focusedGameID: $focusedGameID
@@ -5137,7 +5133,7 @@ struct TVMediaSearchResultsGrid: View {
         .onChange(of: gridWidth) { _ in
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
         }
-        .onChange(of: focusCoordinator.focusedContentID) { _ in
+        .onFocusedContentChange(of: focusCoordinator) {
             syncFocusedEdgeState(columnsPerRow: columnsPerRow)
         }
         .onAppear {

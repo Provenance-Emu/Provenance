@@ -27,6 +27,12 @@ private enum CompactShelfDiscOverlay {
     }
 }
 
+/// Thumbnail already in the memory cache for `url`, if any. Synchronous so a recycled cell
+/// renders its artwork on the first frame instead of after an async load.
+private func residentArtwork(forURL url: String) -> SwiftImage? {
+    PVMediaCache.cachedImage(forKey: url, downsampleTo: .thumbnail)
+}
+
 @available(iOS 16, tvOS 16, *)
 public struct GameItemView: SwiftUI.View {
 
@@ -73,7 +79,8 @@ public struct GameItemView: SwiftUI.View {
         self._isFocused = isFocused
         self.themeManager = themeManager
         self.gamepadManager = gamepadManager
-        self.artwork = artwork
+        // Seed from the memory cache so a cell re-entering the screen never flashes the placeholder.
+        self._artwork = State(initialValue: artwork ?? residentArtwork(forURL: game.isInvalidated ? "" : game.trueArtworkURL))
         self.isVisible = isVisible
         self.action = action
     }
@@ -97,7 +104,7 @@ public struct GameItemView: SwiftUI.View {
             } label: {
                 switch viewType {
                 case .cell:
-                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale, viewType: viewType)
+                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale, viewType: viewType, isFocused: shouldShowFocus)
                         .overlay(alignment: .topTrailing) {
                             if shouldShowDiscIndicator {
                                 DiscIndicatorView(count: cachedDiscCount)
@@ -239,7 +246,8 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
         self._isFocused = isFocused
         self.themeManager = themeManager
         self.gamepadManager = gamepadManager
-        self.artwork = artwork
+        // Seed from the memory cache so a cell re-entering the screen never flashes the placeholder.
+        self._artwork = State(initialValue: artwork ?? residentArtwork(forURL: game.isInvalidated ? "" : game.trueArtworkURL))
         self.isVisible = isVisible
         self.action = action
     }
@@ -260,7 +268,7 @@ public struct GameItemPresentableView<Presentable: GameItemPresentable>: SwiftUI
             } label: {
                 switch viewType {
                 case .cell:
-                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale, viewType: viewType)
+                    GameItemViewCell(game: game, artwork: artwork, constrainHeight: constrainHeight, shelfRowHeightScale: shelfRowHeightScale, viewType: viewType, isFocused: shouldShowFocus)
                         .overlay(alignment: .topTrailing) {
                             if shouldShowDiscIndicator {
                                 DiscIndicatorView(count: game.discCount)
@@ -359,19 +367,20 @@ struct FocusEffectsModifier: ViewModifier {
         /// On tvOS, let the native focus system handle all focus effects
         content
         #else
-        if isFocused {
-            content
-                .scaleEffect(1.05)
-                .brightness(0.1)
-                .overlay(
+        // Same modifier chain for both states so focus changes animate in place
+        // instead of swapping the view's identity (which would reset @State below it).
+        content
+            .scaleEffect(isFocused ? 1.05 : 1.0)
+            .brightness(isFocused ? 0.1 : 0)
+            .overlay {
+                // Only the ring is conditional, so unfocused cells pay no shadow cost.
+                if isFocused {
                     RoundedRectangle(cornerRadius: RetroPauseChrome.radiusSM)
                         .stroke(focusAccent, lineWidth: 2)
                         .shadow(color: focusAccent.opacity(0.5), radius: 6)
-                )
-                .animation(.easeInOut(duration: 0.15), value: isFocused)
-        } else {
-            content
-        }
+                }
+            }
+            .animation(.easeInOut(duration: 0.15), value: isFocused)
         #endif
     }
 }
