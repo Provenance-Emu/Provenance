@@ -289,6 +289,13 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     /// If skins are supported
     @objc dynamic open var supportsSkins: Bool { true }
 
+    /// When `true`, a DeltaSkin is only used once the user has explicitly picked a
+    /// packaged skin for this game or system. Until then the classic on-screen
+    /// controller stays, even in "Always" skin mode, and no generated or
+    /// first-installed skin is applied automatically. For cores that gained skin
+    /// support after shipping, so existing players keep their controls.
+    @objc dynamic open var requiresExplicitSkinSelection: Bool { false }
+
     // MARK: Virtual Keyboard / Mouse
 
     /// Whether the loaded game/core supports a virtual keyboard overlay.

@@ -20,11 +20,12 @@
 @protocol PVWiiSystemResponderClient;
 @protocol PVGameCubeSystemResponderClient;
 @protocol ObjCBridgedCoreBridge;
+@protocol EmulatorCoreViewportPositioning;
 
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
-@interface PVDolphinCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVGameCubeSystemResponderClient, PVWiiSystemResponderClient>
+@interface PVDolphinCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVGameCubeSystemResponderClient, PVWiiSystemResponderClient, EmulatorCoreViewportPositioning>
 {
     uint8_t padData[4][74]; // [PVDreamcastButtonCount];
     int8_t xAxis[4];
@@ -199,6 +200,17 @@
 
 // Applies the Aspect Ratio option, or the app's Stretch scaling mode when it is Auto.
 -(void)applyAspectRatioSetting;
+
+// DeltaSkin viewport (EmulatorCoreViewportPositioning). Declared here, not in a category
+// header, so Swift module synthesis can't drop them.
+/// YES: the render view follows frames from `applyRenderViewFrameInTouchView:` instead of
+/// filling its host. NO: it fills its host again.
+- (void)setUseCustomRenderViewLayout:(BOOL)enabled;
+/// Positions the render view at `frame`, given in the coordinate space of the GPU view's
+/// superview. Frames that arrive before `setupView` are kept and applied once it runs.
+- (void)applyRenderViewFrameInTouchView:(CGRect)frame;
+/// YES once `stopEmulation` has started, so delayed skin viewport updates are dropped.
+- (BOOL)isShuttingDownForViewportUpdates;
 
 @end
 extern __weak PVDolphinCoreBridge *_current;

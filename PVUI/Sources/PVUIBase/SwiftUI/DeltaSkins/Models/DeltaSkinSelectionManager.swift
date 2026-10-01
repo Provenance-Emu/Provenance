@@ -172,6 +172,38 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         return effectiveSkinIdentifier(for: systemId, gameId: gameId, orientation: orientation)
     }
 
+    /// `true` when the user has picked a packaged `.deltaskin` (not the built-in controller)
+    /// for this system, or for the game under any of `gameIds`, in either orientation.
+    ///
+    /// Skin writers disagree on the game key (`PVGame.id` vs `md5Hash`/`crc`), so callers
+    /// pass every key a game may be stored under. Case-companion skins are ignored: the
+    /// physical-case coordinator writes those as session skins without the user picking them.
+    public func hasExplicitPackagedSkinSelection(for systemId: SystemIdentifier, gameIds: [String]) -> Bool {
+        let gameKeys = gameIds.filter { !$0.isEmpty }
+        let selections: [String?] = queue.sync {
+            [SkinOrientation.portrait, .landscape].map { orientation in
+                firstSelection(for: systemId, gameIds: gameKeys, orientation: orientation)
+            }
+        }
+        return selections.contains { selection in
+            guard let selection, selection != Self.builtInSkinPreferenceToken else { return false }
+            return !CaseControllerDetector.isCompanionSkinForKnownCase(selection)
+        }
+    }
+
+    /// First stored selection in ``effectiveSkinIdentifier(for:gameId:orientation:)``'s priority
+    /// order, checking every game key at each game level. Must be called on `queue`.
+    private func firstSelection(for systemId: SystemIdentifier, gameIds: [String], orientation: SkinOrientation) -> String? {
+        for gameId in gameIds {
+            if let skin = getSessionSkin(for: systemId, gameId: gameId, orientation: orientation) { return skin }
+        }
+        if let skin = getSessionSkin(for: systemId, gameId: nil, orientation: orientation) { return skin }
+        for gameId in gameIds {
+            if let skin = preferences.selectedSkinIdentifier(for: gameId, orientation: orientation) { return skin }
+        }
+        return preferences.selectedSkinIdentifier(for: systemId, orientation: orientation)
+    }
+
     /// `true` when the first non-empty selection in the same priority chain as ``effectiveSkinIdentifier(for:gameId:orientation:)`` is ``builtInSkinPreferenceToken``.
     /// Used to skip packaged `.deltaskin` fallbacks so the SwiftUI default controller stays active.
     public func prefersBuiltInControllerSkin(for systemId: SystemIdentifier, gameId: String?, orientation: SkinOrientation) -> Bool {

@@ -14,6 +14,7 @@
 #import <PVDolphin/PVDolphin-Swift.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 @import PVEmulatorCore;
+@import PVCoreBridge;
 @import PVSettings;
 
 #import <AudioToolbox/AudioToolbox.h>
@@ -233,6 +234,16 @@ static void ResetDolphinStaticState() {
     CGSize _dolphinCoreAspect;
     CGSize _dolphinCoreScreen;
     NSString *_romPath;
+
+    // DeltaSkin viewport state (EmulatorCoreViewportPositioning). Main thread only.
+    BOOL _useCustomRenderViewLayout;
+    /// Last skin frame, in the GPU view's superview coordinates. Kept so a frame sent
+    /// before `setupView` (PVUI lays the skin out before `startEmulation`) is not lost.
+    CGRect _pendingCustomFrame;
+    BOOL _isShuttingDownForViewport;
+    /// The full-screen constraints `setupView` pins the render view with. Deactivated when
+    /// a skin takes over the layout.
+    NSArray<NSLayoutConstraint *> *_renderViewConstraints;
 }
 
 - (instancetype)init {
@@ -901,6 +912,7 @@ static void ResetDolphinStaticState() {
 }
 
 - (void)startEmulation {
+    _isShuttingDownForViewport = NO;
     self.skipEmulationLoop = true;  // Dolphin handles its own emulation loop
     [self prepareAudio];
     [self setupEmulation];
@@ -941,6 +953,7 @@ static void ResetDolphinStaticState() {
 }
 
 - (void)stopEmulation {
+    _isShuttingDownForViewport = YES;
     [super stopEmulation];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -1181,10 +1194,13 @@ static void ResetDolphinStaticState() {
         [self.touchViewController.view sendSubviewToBack:m_view];
         [rootController.view setHidden:false];
         rootController.view.translatesAutoresizingMaskIntoConstraints = false;
-        [[rootController.view.topAnchor constraintEqualToAnchor:self.touchViewController.view.topAnchor] setActive:YES];
-        [[rootController.view.bottomAnchor constraintEqualToAnchor:self.touchViewController.view.bottomAnchor] setActive:YES];
-        [[rootController.view.leadingAnchor constraintEqualToAnchor:self.touchViewController.view.leadingAnchor] setActive:YES];
-        [[rootController.view.trailingAnchor constraintEqualToAnchor:self.touchViewController.view.trailingAnchor] setActive:YES];
+        _renderViewConstraints = @[
+            [rootController.view.topAnchor constraintEqualToAnchor:self.touchViewController.view.topAnchor],
+            [rootController.view.bottomAnchor constraintEqualToAnchor:self.touchViewController.view.bottomAnchor],
+            [rootController.view.leadingAnchor constraintEqualToAnchor:self.touchViewController.view.leadingAnchor],
+            [rootController.view.trailingAnchor constraintEqualToAnchor:self.touchViewController.view.trailingAnchor],
+        ];
+        [NSLayoutConstraint activateConstraints:_renderViewConstraints];
         self.touchViewController.view.userInteractionEnabled=true;
         self.touchViewController.view.autoresizesSubviews=true;
         self.touchViewController.view.userInteractionEnabled=true;
@@ -1236,22 +1252,197 @@ static void ResetDolphinStaticState() {
             mtlView.autoresizesSubviews=true;
             mtlView.clipsToBounds=true;
             [mtlView addSubview:m_view];
-            [m_view.topAnchor constraintEqualToAnchor:mtlView.topAnchor constant:0].active = true;
-            [m_view.leadingAnchor constraintEqualToAnchor:mtlView.leadingAnchor constant:0].active = true;
-            [m_view.trailingAnchor constraintEqualToAnchor:mtlView.trailingAnchor constant:0].active = true;
-            [m_view.bottomAnchor constraintEqualToAnchor:mtlView.bottomAnchor constant:0].active = true;
+            _renderViewConstraints = @[
+                [m_view.topAnchor constraintEqualToAnchor:mtlView.topAnchor constant:0],
+                [m_view.leadingAnchor constraintEqualToAnchor:mtlView.leadingAnchor constant:0],
+                [m_view.trailingAnchor constraintEqualToAnchor:mtlView.trailingAnchor constant:0],
+                [m_view.bottomAnchor constraintEqualToAnchor:mtlView.bottomAnchor constant:0],
+            ];
+            [NSLayoutConstraint activateConstraints:_renderViewConstraints];
         } else {
             gl_view_controller.view.autoresizesSubviews=true;
             gl_view_controller.view.clipsToBounds=true;
             [gl_view_controller.view addSubview:m_view];
-            [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.widthAnchor].active=true;
-            [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;
-            [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
-            [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
-            [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
-            [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
+            _renderViewConstraints = @[
+                [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.widthAnchor],
+                [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0],
+                [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0],
+                [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0],
+                [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0],
+                [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0],
+            ];
+            [NSLayoutConstraint activateConstraints:_renderViewConstraints];
         }
     }
+
+    // A skin can be laid out before the core starts. Move the render view into place now,
+    // before its first layout pass: the Vulkan/Metal view controller only boots the VM on a
+    // non-empty layout, so it must never see a zero-size frame.
+    if (_useCustomRenderViewLayout) {
+        [self layoutRenderViewForSkin];
+    }
+}
+
+#pragma mark - DeltaSkin viewport (EmulatorCoreViewportPositioning)
+
+static BOOL PVDolphinIsUsableFrame(CGRect frame) {
+    return !CGRectIsNull(frame) && !CGRectIsInfinite(frame) &&
+           std::isfinite(frame.origin.x) && std::isfinite(frame.origin.y) &&
+           std::isfinite(frame.size.width) && std::isfinite(frame.size.height) &&
+           frame.size.width > 0 && frame.size.height > 0;
+}
+
+/// Pixel-aligns `frame` so the drawable maps 1:1 onto screen pixels.
+static CGRect PVDolphinPixelAlignedFrame(CGRect frame, CGFloat scale) {
+    return CGRectMake(floor(frame.origin.x * scale) / scale,
+                      floor(frame.origin.y * scale) / scale,
+                      floor(frame.size.width * scale) / scale,
+                      floor(frame.size.height * scale) / scale);
+}
+
+/// The view a skinned render view lives in: the GPU view controller's Metal view (or its
+/// root view). Hosting there, rather than in `touchViewController.view`, is what keeps the
+/// game visible under a skin: the emulator VC re-stacks its GPU view directly below the
+/// skin, which would cover a sibling render view, and its skin-swap cleanup removes every
+/// other child view controller and subview.
+- (UIView *)renderViewHost {
+    UIViewController *renderVC = (UIViewController *)self.renderDelegate;
+    if (![renderVC isKindOfClass:[UIViewController class]]) {
+        return nil;
+    }
+    UIView *mtlView = [renderVC respondsToSelector:@selector(mtlView)] ? [(id)renderVC mtlView] : nil;
+    return mtlView ?: renderVC.view;
+}
+
+/// Moves the render view (and its view controller) into `host`, dropping the full-screen
+/// constraints `setupView` installed.
+- (void)attachRenderViewToHost:(UIView *)host {
+    if (_renderViewConstraints.count > 0) {
+        [NSLayoutConstraint deactivateConstraints:_renderViewConstraints];
+        _renderViewConstraints = nil;
+    }
+    m_view.translatesAutoresizingMaskIntoConstraints = YES;
+    if (m_view.superview == host) {
+        return;
+    }
+
+    UIViewController *renderVC = (UIViewController *)self.renderDelegate;
+    if (m_view_controller && m_view_controller.parentViewController != renderVC) {
+        [m_view_controller willMoveToParentViewController:nil];
+        [m_view removeFromSuperview];
+        [m_view_controller removeFromParentViewController];
+        [renderVC addChildViewController:m_view_controller];
+        [host addSubview:m_view];
+        [m_view_controller didMoveToParentViewController:renderVC];
+    } else {
+        [host addSubview:m_view];
+    }
+    ILOG(@"Dolphin: render view now hosted in %@", host);
+}
+
+/// Converts a frame from the GPU view's superview (the space PVUI's skin frames use) into
+/// `host` coordinates.
+- (CGRect)hostFrameForSkinFrame:(CGRect)frame inHost:(UIView *)host {
+    UIViewController *renderVC = (UIViewController *)self.renderDelegate;
+    UIView *reference = renderVC.view.superview ?: renderVC.view;
+    if (!reference || reference == host) {
+        return frame;
+    }
+    return [host convertRect:frame fromView:reference];
+}
+
+/// Places the render view at the pending skin frame, or fills its host until one arrives.
+- (void)layoutRenderViewForSkin {
+    if (!m_view) {
+        return;
+    }
+    UIView *host = [self renderViewHost];
+    if (!host) {
+        WLOG(@"Dolphin: no render host yet, keeping skin frame %@ pending", NSStringFromCGRect(_pendingCustomFrame));
+        return;
+    }
+    [self attachRenderViewToHost:host];
+
+    CGRect target;
+    if (PVDolphinIsUsableFrame(_pendingCustomFrame)) {
+        CGFloat scale = host.window.screen.scale ?: UIScreen.mainScreen.scale;
+        target = PVDolphinPixelAlignedFrame([self hostFrameForSkinFrame:_pendingCustomFrame inHost:host], scale);
+        m_view.autoresizingMask = UIViewAutoresizingNone;
+    } else {
+        target = host.bounds;
+        m_view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    }
+    if (!PVDolphinIsUsableFrame(target)) {
+        return;
+    }
+    [self setRenderViewFrame:target];
+}
+
+/// Applies `frame`. The Vulkan/Metal view controller resizes its layer and drawable, and
+/// tells Dolphin to rebuild the surface, in `viewDidLayoutSubviews` on the next layout pass
+/// (deliberately not forced here: the first pass is also what boots the VM). The GL view
+/// has no such hook, so it is refreshed once that pass has run.
+- (void)setRenderViewFrame:(CGRect)frame {
+    m_view.hidden = NO;
+    if (CGRectEqualToRect(m_view.frame, frame)) {
+        return;
+    }
+    m_view.frame = frame;
+    [m_view setNeedsLayout];
+    if (self.gsPreference == 1) {
+        __weak __typeof__(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf refreshScreenSize];
+        });
+    }
+    ILOG(@"Dolphin: render view frame -> %@", NSStringFromCGRect(frame));
+}
+
+- (void)setUseCustomRenderViewLayout:(BOOL)enabled {
+    if (_isShuttingDownForViewport) {
+        return;
+    }
+    BOOL wasEnabled = _useCustomRenderViewLayout;
+    _useCustomRenderViewLayout = enabled;
+    if (!m_view) {
+        // setupView reads the flag and the pending frame once the render view exists.
+        return;
+    }
+    if (enabled) {
+        if (!wasEnabled) {
+            [self layoutRenderViewForSkin];
+        }
+        return;
+    }
+
+    // Skin removed: fill the render host again. The view stays in the host (re-attached if
+    // a skin swap detached it), under the restored on-screen controller.
+    _pendingCustomFrame = CGRectZero;
+    UIView *host = [self renderViewHost];
+    if (!host) {
+        return;
+    }
+    [self attachRenderViewToHost:host];
+    m_view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self setRenderViewFrame:host.bounds];
+}
+
+- (void)applyRenderViewFrameInTouchView:(CGRect)frame {
+    if (_isShuttingDownForViewport) {
+        return;
+    }
+    if (!PVDolphinIsUsableFrame(frame)) {
+        WLOG(@"Dolphin: ignoring unusable skin frame %@", NSStringFromCGRect(frame));
+        return;
+    }
+    _pendingCustomFrame = frame;
+    if (_useCustomRenderViewLayout) {
+        [self layoutRenderViewForSkin];
+    }
+}
+
+- (BOOL)isShuttingDownForViewportUpdates {
+    return _isShuttingDownForViewport;
 }
 -(void)optionUpdated:(NSNotification *)notification {
     NSDictionary *info = notification.userInfo;

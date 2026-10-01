@@ -6,13 +6,17 @@ import PVPrimitives
 final class DeltaSkinSelectionManagerTests: XCTestCase {
     private let testSystem: SystemIdentifier = .NES
     private let testGameId = "pvui-delta-skin-selection-manager-tests-game"
+    /// Second key for the same game (pickers store games under `PVGame.id` or `md5Hash`).
+    private let testGameAltId = "pvui-delta-skin-selection-manager-tests-game-md5"
 
     /// Restores preferences and session overrides touched by these tests.
     private func cleanupSelectionState() {
         let manager = DeltaSkinSelectionManager.shared
         for orientation in SkinOrientation.allCases {
-            manager.setSkin(nil, for: testSystem, gameId: testGameId, orientation: orientation, scope: .session)
-            manager.setSkin(nil, for: testSystem, gameId: testGameId, orientation: orientation, scope: .game)
+            for gameId in [testGameId, testGameAltId] {
+                manager.setSkin(nil, for: testSystem, gameId: gameId, orientation: orientation, scope: .session)
+                manager.setSkin(nil, for: testSystem, gameId: gameId, orientation: orientation, scope: .game)
+            }
             manager.setSkin(nil, for: testSystem, gameId: nil, orientation: orientation, scope: .system)
         }
     }
@@ -87,5 +91,63 @@ final class DeltaSkinSelectionManagerTests: XCTestCase {
         defer { cleanupSelectionState() }
 
         XCTAssertFalse(manager.prefersBuiltInControllerSkin(for: testSystem, gameId: testGameId, orientation: .portrait))
+    }
+
+    // MARK: - hasExplicitPackagedSkinSelection
+
+    func testExplicitSelectionFalseWithoutAnySelection() {
+        defer { cleanupSelectionState() }
+        let gameIds = [testGameId, testGameAltId]
+        XCTAssertFalse(DeltaSkinSelectionManager.shared.hasExplicitPackagedSkinSelection(for: testSystem, gameIds: gameIds))
+    }
+
+    func testExplicitSelectionTrueForGameSkinInEitherOrientationOrKey() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        // Landscape-only pick, stored under the second game key.
+        manager.setSkin("com.example.gc-skin", for: testSystem, gameId: testGameAltId, orientation: .landscape, scope: .game)
+        XCTAssertTrue(manager.hasExplicitPackagedSkinSelection(for: testSystem, gameIds: [testGameId, testGameAltId]))
+        XCTAssertFalse(manager.hasExplicitPackagedSkinSelection(for: testSystem, gameIds: [testGameId]))
+    }
+
+    func testExplicitSelectionTrueForSystemSkin() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        manager.setSkin("com.example.gc-skin", for: testSystem, gameId: nil, orientation: .portrait, scope: .system)
+        XCTAssertTrue(manager.hasExplicitPackagedSkinSelection(for: testSystem, gameIds: [testGameId]))
+    }
+
+    func testExplicitSelectionFalseForBuiltInToken() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        for orientation in SkinOrientation.allCases {
+            manager.setSkin(DeltaSkinSelectionManager.builtInSkinPreferenceToken, for: testSystem, gameId: testGameId, orientation: orientation, scope: .game)
+        }
+        XCTAssertFalse(manager.hasExplicitPackagedSkinSelection(for: testSystem, gameIds: [testGameId]))
+    }
+
+    func testGameBuiltInTokenMasksSystemSkin() {
+        let manager = DeltaSkinSelectionManager.shared
+        let prefs = DeltaSkinPreferences.shared
+        defer { cleanupSelectionState() }
+
+        for orientation in SkinOrientation.allCases {
+            prefs.setSelectedSkin("com.example.gc-skin", for: testSystem, orientation: orientation)
+            manager.setSkin(DeltaSkinSelectionManager.builtInSkinPreferenceToken, for: testSystem, gameId: testGameId, orientation: orientation, scope: .game)
+        }
+        XCTAssertFalse(manager.hasExplicitPackagedSkinSelection(for: testSystem, gameIds: [testGameAltId, testGameId]))
+    }
+
+    func testCaseCompanionSessionSkinIsNotAnExplicitSelection() throws {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        let caseSkinId = try XCTUnwrap(CaseControllerDetector.knownLayouts.first?.knownSkinIdentifiers.first)
+        // What CaseControllerSkinCoordinator writes when a case is detected.
+        manager.setSkin(caseSkinId, for: testSystem, gameId: nil, orientation: .portrait, scope: .session)
+        XCTAssertFalse(manager.hasExplicitPackagedSkinSelection(for: testSystem, gameIds: [testGameId]))
     }
 }

@@ -19,9 +19,45 @@ extension PVEmulatorViewController {
         // Mac ("Designed for iPad") and iPad-opted-in desktop input mode have no touch
         // surface for the skin to render on; keyboard/gamepad drive input instead.
         guard !GamepadManager.isDesktopInputMode else { return false }
-        return Defaults[.skinMode] != .off && core.supportsSkins
+        guard Defaults[.skinMode] != .off && core.supportsSkins else { return false }
+        guard core.requiresExplicitSkinSelection else { return true }
+        return hasExplicitSkinSelectionForGame
         #endif
 //        return true
+    }
+
+    /// Whether the player has picked a packaged skin for this game or its system. Gates
+    /// skins for cores with `requiresExplicitSkinSelection`, which otherwise keep the
+    /// classic on-screen controller instead of an automatically chosen skin.
+    var hasExplicitSkinSelectionForGame: Bool {
+        guard let game, let systemId = game.system?.systemIdentifier else { return false }
+        // Skin pickers key game selections by `PVGame.id` (library / skin browser) or by
+        // `md5Hash` (in-game RetroMenu), so check both.
+        return DeltaSkinSelectionManager.shared.hasExplicitPackagedSkinSelection(for: systemId, gameIds: [game.id, game.md5Hash])
+    }
+
+    /// For cores with `requiresExplicitSkinSelection`: when the player clears their skin pick
+    /// from a picker that only stores the preference (e.g. the skin browser), swap back to the
+    /// classic controller rather than letting the skin view fall back to the generated one.
+    func observeExplicitSkinRemoval() {
+        guard core.requiresExplicitSkinSelection else { return }
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleSkinSelectionChangedForExplicitCore(_:)),
+            name: DeltaSkinSelectionManager.selectionChangedNotification,
+            object: nil
+        )
+    }
+
+    @objc private func handleSkinSelectionChangedForExplicitCore(_ notification: Notification) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.currentSkin != nil || self.skinContainerView != nil else { return }
+            guard !self.hasExplicitSkinSelectionForGame else { return }
+            Task { @MainActor in
+                // No-op when no skin is up, so a duplicate call from the menu path is harmless.
+                try? await self.resetToDefaultSkin()
+            }
+        }
     }
 
     /// Set up the DeltaSkin view if enabled in settings

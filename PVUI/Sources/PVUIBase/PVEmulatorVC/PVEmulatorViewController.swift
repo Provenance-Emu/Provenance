@@ -843,6 +843,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         // Set up Delta Skin
         setupDeltaSkinDirectly()
+        observeExplicitSkinRemoval()
 
         // Install toast overlay AFTER skin setup so it renders above all emulator views
         #if canImport(UIKit)
@@ -2212,8 +2213,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             gpuView.alpha = 1.0
             gpuView.isHidden = false
 
-            // If we have a stored target frame, ensure the GPU view is positioned there
-            if let targetFrame = currentTargetFrame {
+            // If we have a stored target frame, ensure the GPU view is positioned there.
+            // Viewport-positioning cores (PPSSPP, Dolphin) host their render view inside a
+            // full-screen GPU view and place it themselves; shrinking the GPU view to the
+            // skin frame would offset that render view a second time.
+            if let targetFrame = currentTargetFrame, !(core.bridge is EmulatorCoreViewportPositioning) {
                 UIView.animate(withDuration: 0.2) {
                     gpuView.frame = targetFrame
                 }
@@ -2694,6 +2698,15 @@ extension PVEmulatorViewController {
     public func resetToDefaultSkin() async throws {
         DLOG("Resetting to default skin")
 
+        // Cores that only use a skin the player picked fall back to the classic on-screen
+        // controller, never to the generated default skin.
+        if core.requiresExplicitSkinSelection {
+            await MainActor.run {
+                restoreClassicControlsAfterSkin()
+            }
+            return
+        }
+
         // Clean up any existing skin views and hosting controllers
         await MainActor.run {
             radicalCleanup()
@@ -2738,6 +2751,45 @@ extension PVEmulatorViewController {
                     object: nil
                 )
             }
+        }
+    }
+
+    /// Swaps an active skin back to the classic on-screen controller, for cores with
+    /// `requiresExplicitSkinSelection`.
+    ///
+    /// Does nothing while no skin is up, so a classic session stays untouched:
+    /// `radicalCleanup()` would remove the controller overlay, and with it the render view
+    /// of a self-hosting core (Dolphin) that lives inside that overlay.
+    private func restoreClassicControlsAfterSkin() {
+        guard currentSkin != nil || skinContainerView != nil else {
+            DLOG("skins: no skin active, keeping the classic controller")
+            return
+        }
+        ILOG("skins: skin removed, restoring the classic controller")
+
+        radicalCleanup()
+        currentSkin = nil
+
+        // Hand the core's render view back its full-screen layout (re-attaching it if
+        // the cleanup detached it).
+        (core.bridge as? EmulatorCoreViewportPositioning)?.setUseCustomRenderViewLayout(false)
+        gpuViewController.useCustomPositioning = false
+        if let gpuView = gpuViewController.view {
+            gpuView.frame = view.bounds
+            gpuView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        }
+
+        #if os(iOS) && !targetEnvironment(macCatalyst)
+        if let controllerView = controllerViewController?.view {
+            controllerView.frame = view.bounds
+            controllerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        }
+        addControllerOverlay()
+        updateOnScreenControlsVisibility()
+        #endif
+
+        if let menuButton {
+            view.bringSubviewToFront(menuButton)
         }
     }
 

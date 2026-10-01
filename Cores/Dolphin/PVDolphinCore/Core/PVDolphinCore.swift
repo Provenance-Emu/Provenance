@@ -21,7 +21,18 @@ open class PVDolphinCore: PVEmulatorCore, @unchecked Sendable {
 
     let _bridge: PVDolphinCoreBridge = .init()
 
+    /// GameCube / Wii DeltaSkins position Dolphin's render view through the bridge's
+    /// `EmulatorCoreViewportPositioning` conformance. Skins are a touch-screen feature, so
+    /// tvOS keeps reporting no skin support, exactly as before.
+    #if os(tvOS)
     open override var supportsSkins: Bool { false }
+    #else
+    open override var supportsSkins: Bool { true }
+    #endif
+
+    /// Skins arrived after GameCube / Wii shipped with the classic on-screen pad, so a skin
+    /// is only used once the player picks one.
+    open override var requiresExplicitSkinSelection: Bool { true }
 
     /// Dolphin plays audio through its own sound stream (Cubeb/OpenAL, selected in
     /// `PVDolphinCore.mm` `setOptionValues`) and never writes to the core ring buffer that
