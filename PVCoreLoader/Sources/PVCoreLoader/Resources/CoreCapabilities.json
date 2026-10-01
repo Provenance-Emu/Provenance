@@ -10,6 +10,13 @@
       "qualityRank": 100
     },
     {
+      "coreIdentifier": "mgba.libretro.framework",
+      "summary": "mGBA via the libretro wrapper. The most accurate GBA emulator in the App Store build.",
+      "capabilities": ["highAccuracy", "cheats", "rumble", "rewind", "runAhead"],
+      "notes": ["Recommended for GBA"],
+      "qualityRank": 100
+    },
+    {
       "coreIdentifier": "com.provenance.core.visualboyadvance",
       "summary": "Legacy GBA emulator. Fast, but lower accuracy than mGBA.",
       "capabilities": ["cheats", "highPerformance"],
