@@ -2329,7 +2329,9 @@ bool retro_load_game(const struct retro_game_info *info)
    md_ntsc  = calloc(1, sizeof(md_ntsc_t));
     
    init_bitmap();
-   config_default();
+   /* NOTE: config_default() is deliberately NOT called here. It runs once from
+    * retro_init(), so the frontend's user options (applied between retro_init()
+    * and retro_load_game()) are not clobbered back to defaults. */
 
    extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
    extract_name(g_rom_name, info->path, sizeof(g_rom_name));
@@ -2635,6 +2637,10 @@ void retro_init(void)
    struct retro_log_callback log;
    unsigned level                = 1;
    uint64_t serialization_quirks = RETRO_SERIALIZATION_QUIRK_PLATFORM_DEPENDENT;
+
+   /* Reset emulator settings to defaults BEFORE the frontend applies user options
+    * (the Provenance bridge calls retro_init -> readOptions -> retro_load_game). */
+   config_default();
 
    environ_cb(RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL, &level);
 
