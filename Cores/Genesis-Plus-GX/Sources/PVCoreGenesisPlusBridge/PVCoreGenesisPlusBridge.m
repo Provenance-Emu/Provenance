@@ -17,17 +17,9 @@
 @import libgenesisplus;
 #else
 #import <PVGenesis/PVGenesis-Swift.h>
-#include "types.h"
-#include "loadrom.h"
-#include "genesis.h"
-#include "system.h"
-#include "input.h"
-#include "io_ctrl.h"
+// shared.h pulls in osd.h before the hardware headers (cdd.h needs its cdStream type).
+#include "shared.h"
 #include "zlib.h"
-#include "osd.h"
-#ifdef HAVE_YM3438_CORE
-#include "ym3438.h"
-#endif
 #endif
 @import PVAudio;
 

@@ -125,7 +125,6 @@ let package = Package(
             .target(
                 name: "libgenesisplus",
                 exclude: [
-                    "genplusgx_source",
                     "other"
                 ],
                 sources: Sources.libgenesis,
@@ -168,34 +167,6 @@ let package = Package(
                 ]
             ),
         
-        //        .target(
-        //            name: "libgenesisplus-legacy",
-        //            path: "Sources/libgenesisplus",
-        //            exclude: [
-        //                "Genesis-Plus-GX/",
-        //                "other"
-        //            ],
-        //            sources: Sources.libgenesisplus-legacy,
-        //            publicHeadersPath: "include/genplusgx_source",
-        //            packageAccess: true,
-        //            cSettings: [
-        //                .define("NS_BLOCK_ASSERTIONS", to: "1"),
-        //                .define("LSB_FIRST"),
-        //                .define("HAVE_ZLIB"),
-        //                .define("USE_32BPP_RENDERING"),
-        //                .define("NDEBUG", .when(configuration: .release)),
-        //                .define("DHAVE_OVERCLOCK"),
-        //                .define("DHAVE_OPLL_CORE"),
-        //                .define("DHAVE_YM3438_CORE"),
-        //                .define("DZ80_OVERCLOCK_SHIFT", to: "20"),
-        //                .define("DM68K_OVERCLOCK_SHIFT", to: "20"),
-        //
-        //                .define("INLINE", to: "static inline"),
-        //                .define("USE_STRUCTS", to: "1"),
-        //                .define("__LIBRETRO__", to: "1"),
-        //                .define("__GCCUNIX__", to: "1")
-        //            ]
-        //        )
     ],
     swiftLanguageVersions: [.v5, .v6],
     cLanguageStandard: .gnu11,
@@ -258,60 +229,5 @@ enum Sources {
         "libretro/libretro.c",
         "libretro/scrc32.c",
     ].map { "Genesis-Plus-GX/\($0)"}
-    
-    static let libgenesisplus_legacy: [String] = [
-        "genplusgx_source/cart_hw/areplay.c",
-        "genplusgx_source/cart_hw/eeprom_93c.c",
-        "genplusgx_source/cart_hw/eeprom_i2c.c",
-        "genplusgx_source/cart_hw/eeprom_spi.c",
-        "genplusgx_source/cart_hw/ggenie.c",
-        "genplusgx_source/cart_hw/md_cart.c",
-        "genplusgx_source/cart_hw/sms_cart.c",
-        "genplusgx_source/cart_hw/sram.c",
-        "genplusgx_source/cart_hw/svp/ssp16.c",
-        "genplusgx_source/cart_hw/svp/svp.c",
-        "genplusgx_source/cd_hw/cd_cart.c",
-        "genplusgx_source/cd_hw/cdc.c",
-        "genplusgx_source/cd_hw/cdd.c",
-        "genplusgx_source/cd_hw/gfx.c",
-        "genplusgx_source/cd_hw/pcm.c",
-        "genplusgx_source/cd_hw/scd.c",
-        "genplusgx_source/genesis.c",
-        "genplusgx_source/input_hw/activator.c",
-        "genplusgx_source/input_hw/gamepad.c",
-        "genplusgx_source/input_hw/graphic_board.c",
-        "genplusgx_source/input_hw/input.c",
-        "genplusgx_source/input_hw/lightgun.c",
-        "genplusgx_source/input_hw/mouse.c",
-        "genplusgx_source/input_hw/paddle.c",
-        "genplusgx_source/input_hw/sportspad.c",
-        "genplusgx_source/input_hw/teamplayer.c",
-        "genplusgx_source/input_hw/terebi_oekaki.c",
-        "genplusgx_source/input_hw/xe_1ap.c",
-        "genplusgx_source/io_ctrl.c",
-        "genplusgx_source/loadrom.c",
-        "genplusgx_source/m68k/m68kcpu.c",
-        "genplusgx_source/m68k/s68kcpu.c",
-        "genplusgx_source/mem68k.c",
-        "genplusgx_source/membnk.c",
-        "genplusgx_source/memz80.c",
-        "genplusgx_source/ntsc/md_ntsc.c",
-        "genplusgx_source/ntsc/sms_ntsc.c",
-        "genplusgx_source/sound/blip_buf.c",
-        "genplusgx_source/sound/eq.c",
-        "genplusgx_source/sound/opll.c",
-        "genplusgx_source/sound/psg.c",
-        "genplusgx_source/sound/sound.c",
-        "genplusgx_source/sound/ym2413.c",
-        "genplusgx_source/sound/ym2612.c",
-        "genplusgx_source/sound/ym3438.c",
-        "genplusgx_source/state.c",
-        "genplusgx_source/system.c",
-        "genplusgx_source/vdp_ctrl.c",
-        "genplusgx_source/vdp_render.c",
-        "genplusgx_source/z80/z80.c",
-        "libretro/libretro.c",
-        "libretro/scrc32.c"
-    ]
 }
 

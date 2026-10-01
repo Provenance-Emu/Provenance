@@ -47,11 +47,12 @@
 #define strncasecmp _strnicmp
 #endif
 
+/* Provenance frontend glue: mirrors upstream libretro/osd.h (Genesis-Plus-GX
+ * 939ce4f) but uses plain stdio instead of libretro-common file streams. */
+#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <streams/file_stream.h>
-//#include <streams/file_stream_transforms.h>
 
 #define MAX_INPUTS 8
 #define MAX_KEYS 8
@@ -104,6 +105,8 @@ typedef struct
   uint8 mono;
   int16 psg_preamp;
   int16 fm_preamp;
+  int16 cdda_volume;
+  int16 pcm_volume;
   uint16 lp_range;
   int16 low_freq;
   int16 high_freq;
@@ -118,20 +121,31 @@ typedef struct
   uint8 addr_error;
   uint8 bios;
   uint8 lock_on;
+  uint8 add_on;
   uint8 overscan;
   uint8 aspect_ratio;
   uint8 ntsc;
   uint8 lcd;
   uint8 gg_extra;
+  uint8 left_border;
   uint8 render;
   t_input_config input[MAX_INPUTS];
   uint8 invert_mouse;
   uint8 gun_cursor;
   uint32 overclock;
   uint8 no_sprite_limit;
+  uint8 enhanced_vscroll;
+  uint8 enhanced_vscroll_limit;
+  uint8 cd_latency;
+#ifdef USE_PER_SOUND_CHANNELS_CONFIG
+  unsigned int psg_ch_volumes[4];
+  int32 md_ch_volumes[6];
+  signed int sms_fm_ch_volumes[9];
+#endif
 } t_config;
 
-t_config config; //extern t_config config;
+/* defined in libretro/libretro.c */
+extern t_config config;
 
 extern char GG_ROM[256];
 extern char AR_ROM[256];
@@ -152,14 +166,15 @@ extern void ROMCheatUpdate(void);
 
 extern int16 soundbuffer[3068];
 
+/* CD image I/O goes through stdio (libchdr's chd_open_file() also takes a FILE *) */
 #ifndef cdStream
-#define cdStream            RFILE
-#define cdStreamOpen(fname) rfopen(fname, "rb")
-#define cdStreamClose       rfclose
-#define cdStreamRead        rfread
-#define cdStreamSeek        rfseek
-#define cdStreamTell        rftell
-#define cdStreamGets        rfgets
+#define cdStream            FILE
+#define cdStreamOpen(fname) fopen(fname, "rb")
+#define cdStreamClose       fclose
+#define cdStreamRead        fread
+#define cdStreamSeek        fseek
+#define cdStreamTell        ftell
+#define cdStreamGets        fgets
 #endif
 
 #endif /* _OSD_H */

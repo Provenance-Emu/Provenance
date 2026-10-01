@@ -580,6 +580,8 @@ static void config_default(void)
    /* sound options */
    config.psg_preamp     = 150;
    config.fm_preamp      = 100;
+   config.cdda_volume    = 100;
+   config.pcm_volume     = 100;
    config.hq_fm          = 1; /* high-quality FM resampling (slower) */
    config.hq_psg         = 1; /* high-quality PSG resampling (slower) */
    config.filter         = 1; /* no filter */
@@ -609,11 +611,15 @@ static void config_default(void)
    config.addr_error     = 1;
    config.bios           = 0;
    config.lock_on        = 0;
+   config.add_on         = HW_ADDON_AUTO;
    config.lcd            = 0; /* 0.8 fixed point */
 #ifdef HAVE_OVERCLOCK
    config.overclock      = 100;
 #endif
    config.no_sprite_limit = 0;
+   config.enhanced_vscroll = 0;
+   config.enhanced_vscroll_limit = 8;
+   config.cd_latency     = 1; /* emulate CD drive access latency (upstream default) */
 
    /* video options */
    config.overscan = 0; /* 0 = no borders , 1 = vertical borders only, 2 = horizontal borders only, 3 = full borders */
@@ -622,6 +628,7 @@ static void config_default(void)
    config.ntsc     = 0;
    config.lcd      = 0;
    config.render   = 0;
+   config.left_border = 0;
 
    /* input options */
    input.system[0] = SYSTEM_GAMEPAD;
@@ -2479,22 +2486,31 @@ bool retro_load_game(const struct retro_game_info *info)
 
    if ((config.bios & 1) && !(system_bios & SYSTEM_MD))
    {
-      memset(boot_rom, 0xFF, 0x800);
+      /* Try to load Genesis BOOT ROM (2KB max) */
+      memset(boot_rom, 0xFF, sizeof(boot_rom));
       if (load_archive(MD_BIOS, boot_rom, 0x800, NULL) > 0)
       {
+         /* Check if BOOT ROM header is valid */
          if (!memcmp((char *)(boot_rom + 0x120),"GENESIS OS", 10))
          {
+            /* Mark Genesis BIOS as loaded */
             system_bios |= SYSTEM_MD;
-         }
 
 #ifdef LSB_FIRST
-         for (i=0; i<0x800; i+=2)
-         {
-            uint8 temp = boot_rom[i];
-            boot_rom[i] = boot_rom[i+1];
-            boot_rom[i+1] = temp;
-         }
+            /* Byteswap ROM */
+            for (i=0; i<0x800; i+=2)
+            {
+               uint8 temp = boot_rom[i];
+               boot_rom[i] = boot_rom[i+1];
+               boot_rom[i+1] = temp;
+            }
 #endif
+            /* Expand 2KB BOOT ROM to the 64KB bank the core now maps */
+            for (i=0x800; i<0x10000; i++)
+            {
+               boot_rom[i] = boot_rom[i&0x7ff];
+            }
+         }
       }
    }
 
