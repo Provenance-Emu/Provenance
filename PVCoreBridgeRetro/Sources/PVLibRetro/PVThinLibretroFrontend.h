@@ -365,6 +365,12 @@ FOUNDATION_EXPORT NSNotificationName const PVThinLibretroFrontendCoreDidThrowNot
 /// (e.g. restoring per-port controller device type selections before the core starts running).
 @property (nonatomic, copy, nullable) dispatch_block_t afterROMLoadBlock;
 
+/// Optional block invoked on the boot thread once `retro_init` has returned and
+/// before `retro_load_game` runs. By this point the core has declared its
+/// options (`coreOptionDefinitions` is populated) but has not read them yet, so
+/// this is the window for restoring saved option values.
+@property (nonatomic, copy, nullable) dispatch_block_t afterCoreInitBlock;
+
 /// `YES` — `-startEmulation` returns before the core has finished booting.
 ///
 /// Satisfies the optional `startsEmulationAsynchronously` requirement of

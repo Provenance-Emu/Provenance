@@ -162,6 +162,36 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
         return foundOption
     }
 
+    /// The value the user explicitly saved for `optionKey` — the per-game
+    /// override when `md5` has one, otherwise the core-wide value — or `nil`
+    /// when the option was never changed.
+    ///
+    /// Unlike `storedValueForOption` this never substitutes the option's
+    /// default, so callers can tell "left alone" from "set to the default".
+    static func explicitlyStoredValue(forOptionKey optionKey: String, md5: String?) -> Any? {
+        let className = "\(String(describing: Self.self))"
+        let defaults = UserDefaults.standard
+        if let md5, !md5.isEmpty,
+           let perGame = defaults.object(forKey: "\(className).\(md5).\(optionKey)") {
+            return perGame
+        }
+        return defaults.object(forKey: "\(className).\(optionKey)")
+    }
+
+    /// Forgets the value saved for `option` in one scope — this game's override
+    /// when `md5` is given, otherwise the core-wide value — so reads fall back
+    /// to the next scope out and finally to the option's default.
+    static func removeStoredValue(for option: CoreOption, md5: String?) {
+        let className = "\(String(describing: Self.self))"
+        let key: String
+        if let md5, !md5.isEmpty {
+            key = perGameKey(for: option, md5: md5)
+        } else {
+            key = "\(className).\(option.key)"
+        }
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+
     // MARK: - Per-game key helpers
 
     /// Builds the UserDefaults key for a per-game override: `<ClassName>.<md5>.<optionKey>`

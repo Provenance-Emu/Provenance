@@ -3295,6 +3295,12 @@ static const NSTimeInterval kThinBlockingFrameWait = 0.010;
     ILOG(@"ThinFrontend: retro_init done (%.2fs)", CACurrentMediaTime() - _tInit0);
     _coreDeinited = NO;
 
+    // Options are declared by now and unread until retro_load_game — see
+    // `afterCoreInitBlock`.
+    if (self.afterCoreInitBlock) {
+        self.afterCoreInitBlock();
+    }
+
     // NOTE: flycast's threaded renderer is a known hazard on iOS — its
     // VRAM signal handler can deadlock against the renderer thread's
     // std::mutex. We previously forced reicast_threaded_rendering=disabled

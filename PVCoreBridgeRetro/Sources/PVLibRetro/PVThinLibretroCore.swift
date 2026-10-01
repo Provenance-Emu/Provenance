@@ -151,6 +151,23 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     var _padTouchPrevY: Float = 0
     var _padTouchPrevValid: Bool = false
 
+    // MARK: - Core option state
+    /// `buildOptions()` result and the frontend state it was built from.
+    struct ThinOptionsCache {
+        let definitionCount: Int
+        let categoryCount: Int
+        let visibility: [String: NSNumber]
+        let options: [CoreOption]
+    }
+    var _optionsCache: ThinOptionsCache?
+    /// Option values `applyPlatformDefaults` seeds in place of the core's own
+    /// defaults. The options UI treats these as the default so "reset" and the
+    /// value shown for an untouched option match what the core actually runs.
+    var _platformDefaultOptions: [String: String] = [:]
+    /// Set when the boot that replayed saved options failed, so teardown leaves
+    /// the in-flight mark for the next launch to act on.
+    var _optionReplayBootFailed = false
+
     /// Set by `updateHatariTOSPath()` when TOS validation fails.
     /// Checked by `startEmulation()` to abort before `retro_load_game` crashes.
     private var _hatariTOSError: String?
@@ -235,6 +252,11 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         _bridge.afterROMLoadBlock = { [weak self] in
             self?.restorePortDeviceTypes()
         }
+        // The core declares its options during retro_init and reads them in
+        // retro_load_game, so saved values have to land between the two.
+        _bridge.afterCoreInitBlock = { [weak self] in
+            self?.applyPersistedCoreOptions()
+        }
         // Wire physical GCController polling into the emulation thread's input poll.
         //
         // Capture `myGeneration` so a stale poll fired by the libretro emu thread
@@ -281,7 +303,9 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             MainActor.assumeIsolated {
                 if success {
                     self.emulationDidStart()
+                    self.confirmPersistedCoreOptionsAfterProbation()
                 } else {
+                    self._optionReplayBootFailed = true
                     self.emulationDidFailToStart()
                 }
             }
@@ -323,6 +347,11 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         // Cancel the scaling-mode observer so it can't fire against a
         // tearing-down bridge after stopEmulation returns.
         stopScalingModeObservation()
+        // A core that is being stopped rather than dying has, by definition,
+        // survived its saved options — unless it never got through boot.
+        if !_optionReplayBootFailed {
+            clearOptionReplayGuard()
+        }
         // Clear any responder-asserted joypad bits so a stuck on-screen / turbo
         // press doesn't leak into the next emulation session through our mask.
         _responderJoypadMaskLock.withLock { mask in
@@ -782,6 +811,7 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
 
     /// Set a core option only if it hasn't been set yet (preserves user overrides).
     private func setDefaultOption(_ key: String, value: String) {
+        _platformDefaultOptions[key] = value
         if _bridge.coreOptions[key] == nil {
             _bridge.setCoreOption(key, value: value)
         }
@@ -789,6 +819,91 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
 }
 
 // MARK: - CoreOptional
+
+/// One libretro core option as declared by the core, decoded from the
+/// frontend's `coreOptionDefinitions` dictionaries.
+struct ThinCoreOptionDefinition: Sendable {
+    struct Choice: Sendable, Equatable {
+        /// What the core is given.
+        let value: String
+        /// What the user is shown. Often differs ("fast" vs "Enabled (Fast)").
+        let label: String
+    }
+
+    let key: String
+    let title: String
+    let info: String?
+    let categoryKey: String?
+    let defaultValue: String
+    let choices: [Choice]
+
+    private static let enabledValues: Set<String> = ["enabled", "on", "true", "yes", "1"]
+    private static let disabledValues: Set<String> = ["disabled", "off", "false", "no", "0"]
+
+    init?(_ dict: [String: Any]) {
+        guard let key = dict["key"] as? String, !key.isEmpty else { return nil }
+        self.key = key
+        self.title = (dict["desc"] as? String) ?? key
+        self.info = dict["info"] as? String
+        self.categoryKey = dict["category"] as? String
+        self.defaultValue = dict["default"] as? String ?? ""
+        let rawChoices = dict["values"] as? [[String: String]] ?? []
+        self.choices = rawChoices.compactMap { entry in
+            guard let value = entry["value"] else { return nil }
+            return Choice(value: value, label: entry["label"] ?? value)
+        }
+    }
+
+    init(key: String, title: String, info: String? = nil, categoryKey: String? = nil, defaultValue: String, choices: [Choice]) {
+        self.key = key
+        self.title = title
+        self.info = info
+        self.categoryKey = categoryKey
+        self.defaultValue = defaultValue
+        self.choices = choices
+    }
+
+    /// The raw on/off strings when this option is a two-state switch.
+    ///
+    /// Cores list the pair in either order — "disabled|enabled" is at least as
+    /// common as the reverse — so the roles are read from the words, not from
+    /// position.
+    var toggleValues: (on: String, off: String)? {
+        guard choices.count == 2 else { return nil }
+        let first = choices[0].value
+        let second = choices[1].value
+        if Self.enabledValues.contains(first.lowercased()), Self.disabledValues.contains(second.lowercased()) {
+            return (on: first, off: second)
+        }
+        if Self.disabledValues.contains(first.lowercased()), Self.enabledValues.contains(second.lowercased()) {
+            return (on: second, off: first)
+        }
+        return nil
+    }
+
+    /// Whether `rawValue` means "on" for a two-state option.
+    func isOn(_ rawValue: String) -> Bool {
+        Self.enabledValues.contains(rawValue.lowercased())
+    }
+
+    /// Translates what the options UI hands back or persisted — a switch
+    /// state, a choice's label, or a legacy choice index — into the string the
+    /// core expects. Returns `nil` for a value the core no longer offers.
+    func rawValue(forStored stored: Any) -> String? {
+        if let string = stored as? String {
+            if let byLabel = choices.first(where: { $0.label == string }) { return byLabel.value }
+            if let byValue = choices.first(where: { $0.value == string }) { return byValue.value }
+            return nil
+        }
+        if let toggle = toggleValues, let isOn = stored as? Bool {
+            return isOn ? toggle.on : toggle.off
+        }
+        if let index = stored as? Int, choices.indices.contains(index) {
+            return choices[index].value
+        }
+        return nil
+    }
+}
 
 extension PVThinLibretroCore: CoreOptional {
 
@@ -800,136 +915,172 @@ extension PVThinLibretroCore: CoreOptional {
     }
 
     /// Build CoreOption models from the bridge's structured option metadata.
-    /// Called by the options UI each time the screen appears, so it reflects
-    /// the latest state (including visibility changes).
+    ///
+    /// The options UI asks for this once per option it renders (every stored
+    /// value lookup that misses falls back to `options`), so the result is
+    /// cached until the core changes what it declares or shows.
     func buildOptions() -> [CoreOption] {
         let definitions = _bridge.coreOptionDefinitions
         let categories = _bridge.coreOptionCategories
         let visibility = _bridge.coreOptionVisibility
-        let currentValues = _bridge.coreOptions
-
-        // Filter out hidden options
-        let visibleDefs = definitions.filter { dict in
-            guard let key = dict["key"] as? String else { return false }
-            if let vis = visibility[key] {
-                return vis.boolValue
-            }
-            return true // visible by default
+        if let cache = _optionsCache,
+           cache.definitionCount == definitions.count,
+           cache.categoryCount == categories.count,
+           cache.visibility == visibility {
+            return cache.options
         }
 
-        // Build a category key -> [CoreOption] map
+        let visibleDefinitions = definitions
+            .compactMap(ThinCoreOptionDefinition.init)
+            .filter { visibility[$0.key]?.boolValue ?? true }
+
+        let categoryKeys = Set(categories.compactMap { $0["key"] as? String })
         var categorizedOptions: [String: [CoreOption]] = [:]
         var uncategorizedOptions: [CoreOption] = []
-
-        for dict in visibleDefs {
-            guard let option = coreOptionFromDictionary(dict, currentValues: currentValues) else {
-                continue
-            }
-            if let categoryKey = dict["category"] as? String {
+        for definition in visibleDefinitions {
+            let option = coreOption(from: definition)
+            /// An option naming a category the core never declared would
+            /// otherwise vanish from the UI entirely.
+            if let categoryKey = definition.categoryKey, categoryKeys.contains(categoryKey) {
                 categorizedOptions[categoryKey, default: []].append(option)
             } else {
                 uncategorizedOptions.append(option)
             }
         }
 
-        // Build category groups
         var result: [CoreOption] = []
-        for catDict in categories {
-            guard let catKey = catDict["key"] as? String,
-                  let subOptions = categorizedOptions[catKey],
+        for category in categories {
+            guard let categoryKey = category["key"] as? String,
+                  let subOptions = categorizedOptions[categoryKey],
                   !subOptions.isEmpty else {
                 continue
             }
-            let catDesc = (catDict["desc"] as? String) ?? catKey
-            let catInfo = catDict["info"] as? String
             let display = CoreOptionValueDisplay(
-                title: catDesc,
-                description: catInfo,
+                title: (category["desc"] as? String) ?? categoryKey,
+                description: category["info"] as? String,
                 requiresRestart: false
             )
             result.append(.group(display, subOptions: subOptions))
         }
-
-        // Append uncategorized options at the top level
         result.append(contentsOf: uncategorizedOptions)
 
-        DLOG("ThinLibretroCore: built \(result.count) top-level options (\(visibleDefs.count) visible of \(definitions.count) total)")
+        _optionsCache = ThinOptionsCache(
+            definitionCount: definitions.count,
+            categoryCount: categories.count,
+            visibility: visibility,
+            options: result
+        )
+        DLOG("ThinLibretroCore: built \(result.count) top-level options (\(visibleDefinitions.count) visible of \(definitions.count) total)")
         return result
     }
 
-    /// Convert a single NSDictionary option definition to a CoreOption.
-    private func coreOptionFromDictionary(
-        _ dict: [String: Any],
-        currentValues: [String: String]
-    ) -> CoreOption? {
-        guard let key = dict["key"] as? String,
-              let desc = dict["desc"] as? String else {
-            return nil
-        }
-        let info = dict["info"] as? String
-        let defaultValue = dict["default"] as? String ?? ""
-        let valuesArray = dict["values"] as? [[String: String]] ?? []
+    /// The value an option starts at on this platform: our own default when we
+    /// seed one (see `applyPlatformDefaults`), otherwise the core's.
+    private func effectiveDefault(for definition: ThinCoreOptionDefinition) -> String {
+        _platformDefaultOptions[definition.key] ?? definition.defaultValue
+    }
 
-        // desc = human-readable label (e.g. "Video Resolution")
-        // info = longer help text (e.g. "Set the internal rendering resolution")
-        // key = machine identifier (e.g. "flycast_video_resolution")
-        let displayTitle = desc
-        let descriptionText = info
-
-        // Detect boolean options (exactly two values: enabled/disabled or on/off etc.)
-        if valuesArray.count == 2 {
-            let v0 = valuesArray[0]["value"]?.lowercased() ?? ""
-            let v1 = valuesArray[1]["value"]?.lowercased() ?? ""
-            let boolPairs: Set<Set<String>> = [
-                ["enabled", "disabled"],
-                ["on", "off"],
-                ["true", "false"],
-                ["yes", "no"],
-                ["1", "0"]
-            ]
-            if boolPairs.contains(Set([v0, v1])) {
-                let enabledValues: Set<String> = ["enabled", "on", "true", "yes", "1"]
-                let defaultBool = enabledValues.contains(defaultValue.lowercased())
-                let display = CoreOptionValueDisplay(
-                    title: displayTitle,
-                    description: descriptionText,
-                    requiresRestart: false
-                )
-                let enabledStr = valuesArray[0]["value"] ?? "enabled"
-                let disabledStr = valuesArray[1]["value"] ?? "disabled"
-                let bridgeRef = _bridge
-                return .bool(display, defaultValue: defaultBool) { @Sendable newValue in
-                    let boolVal = (newValue as? Bool) ?? false
-                    let stringVal = boolVal ? enabledStr : disabledStr
-                    bridgeRef.setCoreOption(key, value: stringVal)
-                }
-            }
-        }
-
-        // Multi-value option (most common for libretro)
-        let multiValues: [CoreOptionMultiValue] = valuesArray.map { entry in
-            let val = entry["value"] ?? ""
-            let label = entry["label"] ?? val
-            let isDefault = (val == defaultValue)
-            // Show human label as title, raw value as description (for debugging)
-            return CoreOptionMultiValue(title: label, description: val, isDefault: isDefault)
-        }
-
+    /// Convert one option definition to a CoreOption.
+    ///
+    /// The libretro `key` is the storage identity; `desc` is only what the
+    /// user reads, and is neither stable across core versions nor unique.
+    private func coreOption(from definition: ThinCoreOptionDefinition) -> CoreOption {
         let display = CoreOptionValueDisplay(
-            title: key,
-            description: descriptionText,
-            requiresRestart: false
+            title: definition.title,
+            description: definition.info,
+            requiresRestart: false,
+            storageKey: definition.key
         )
-
+        let defaultValue = effectiveDefault(for: definition)
         let bridgeRef = _bridge
-        return .multi(display, values: multiValues) { @Sendable newValue in
-            if let strVal = newValue as? String {
-                bridgeRef.setCoreOption(key, value: strVal)
-            } else if let intVal = newValue as? Int, intVal < valuesArray.count {
-                let strVal = valuesArray[intVal]["value"] ?? ""
-                bridgeRef.setCoreOption(key, value: strVal)
+
+        if definition.toggleValues != nil {
+            return .bool(display, defaultValue: definition.isOn(defaultValue)) { @Sendable newValue in
+                guard let raw = definition.rawValue(forStored: newValue) else { return }
+                bridgeRef.setCoreOption(definition.key, value: raw)
             }
         }
+
+        /// `description` carries the raw value: it is what `CoreOption.defaultValue`
+        /// hands back for a reset, and `rawValue(forStored:)` accepts it as-is.
+        let values = definition.choices.map { choice in
+            CoreOptionMultiValue(title: choice.label, description: choice.value, isDefault: choice.value == defaultValue)
+        }
+        return .multi(display, values: values) { @Sendable newValue in
+            guard let raw = definition.rawValue(forStored: newValue) else { return }
+            bridgeRef.setCoreOption(definition.key, value: raw)
+        }
+    }
+
+    // MARK: Saved option replay
+
+    /// UserDefaults key marking a boot that is replaying saved options and has
+    /// not yet proven it can run with them.
+    private static let optionReplayGuardKey = "PVThinLibretroCore.optionReplayInFlight"
+
+    /// How long a core must run before a replayed set of options counts as safe.
+    private static let optionReplayProbation: TimeInterval = 5
+
+    /// Push the option values the user saved in the options UI into the core.
+    ///
+    /// The frontend only holds options in memory, so without this every launch
+    /// silently reverted to defaults while the UI went on showing the saved
+    /// values. Runs after `retro_init` — when the core has declared its options
+    /// — and before `retro_load_game`, where most cores read them.
+    ///
+    /// A saved value can be the reason a core dies on boot, and the options UI
+    /// only exists in-game. So a replay is marked in flight, and if the mark is
+    /// still there next launch the replay is skipped once: the game boots on
+    /// defaults and the user can get in to change or reset the option.
+    func applyPersistedCoreOptions() {
+        let md5 = Self.currentGameMD5
+        let coreId = (coreIdentifier ?? "").lowercased()
+        let defaults = UserDefaults.standard
+        let token = "\(coreId)|\(md5 ?? "")"
+
+        if defaults.string(forKey: Self.optionReplayGuardKey) == token {
+            defaults.removeObject(forKey: Self.optionReplayGuardKey)
+            WLOG("ThinCore: last launch of \(token) never finished booting with saved core options — skipping them this launch")
+            PVOSDNotification.postMessage(
+                "Saved core options weren't applied: the last launch didn't finish. Change or reset them in Core Options.",
+                type: .warning,
+                duration: 6
+            )
+            return
+        }
+
+        /// Options the display-scaling setting drives stay under its control;
+        /// a stale saved value must not undo the user's scaling choice.
+        let scalingManaged = Set(Self.coreOptionOverrides(for: Defaults[.scalingMode], coreIdentifier: coreId).map { $0.0 })
+
+        var applied = 0
+        for definition in _bridge.coreOptionDefinitions.compactMap(ThinCoreOptionDefinition.init) {
+            guard !scalingManaged.contains(definition.key),
+                  let stored = Self.explicitlyStoredValue(forOptionKey: definition.key, md5: md5),
+                  let raw = definition.rawValue(forStored: stored) else {
+                continue
+            }
+            _bridge.setCoreOption(definition.key, value: raw)
+            applied += 1
+        }
+
+        guard applied > 0 else { return }
+        defaults.set(token, forKey: Self.optionReplayGuardKey)
+        ILOG("ThinCore: replayed \(applied) saved core option(s) for \(token)")
+    }
+
+    /// Clear the in-flight mark once the core has run long enough to show the
+    /// replayed options didn't take it down.
+    func confirmPersistedCoreOptionsAfterProbation() {
+        let generation = myGeneration
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.optionReplayProbation) { [weak self] in
+            guard PVThinLibretroCore.currentGeneration == generation else { return }
+            self?.clearOptionReplayGuard()
+        }
+    }
+
+    func clearOptionReplayGuard() {
+        UserDefaults.standard.removeObject(forKey: Self.optionReplayGuardKey)
     }
 }
 
@@ -980,9 +1131,10 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
                 let saved = UInt(UserDefaults.standard.integer(forKey: key))
                 _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
             } else {
-                // Migration path: fall back to legacy per-game key (no core identifier)
-                let legacyKey = legacyPortDevicePersistenceKey(port: port)
-                if UserDefaults.standard.object(forKey: legacyKey) != nil {
+                // Migration path: fall back to the keys older builds wrote.
+                let legacyKey = legacyPortDevicePersistenceKeys(port: port)
+                    .first { UserDefaults.standard.object(forKey: $0) != nil }
+                if let legacyKey {
                     let saved = UInt(UserDefaults.standard.integer(forKey: legacyKey))
                     _bridge.setControllerPortDevice(UInt32(saved), forPort: UInt32(port))
                     // Re-save under the new per-core/per-game key so future lookups hit the new namespace.
@@ -1058,20 +1210,29 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
     private func portDevicePersistenceKey(port: Int) -> String {
         // Key format matches CoreOptions+Serialization convention: <ClassName>.<md5>.<key>
         let md5 = PVThinLibretroCore.currentGameMD5 ?? "global"
-        // Prefer the coreIdentifier from PVEmulatorCore if available; fall back to the dynamic type name.
-        let coreIdentifierComponent: String
-        if let identifier = (self as PVEmulatorCore).coreIdentifier, !identifier.isEmpty {
-            coreIdentifierComponent = identifier
-        } else {
-            coreIdentifierComponent = String(describing: type(of: self))
-        }
-        return "PVThinLibretroCore.\(md5).\(coreIdentifierComponent).portDeviceType.port\(port)"
+        return "PVThinLibretroCore.\(md5).\(portDeviceCoreIdentifierComponent).portDeviceType.port\(port)"
     }
 
-    /// Legacy per-port key used before core identifiers were included (per-game only).
-    /// Format: <ClassName>.<md5>.portDeviceType.port<port>
-    private func legacyPortDevicePersistenceKey(port: Int) -> String {
+    /// Prefer the coreIdentifier from PVEmulatorCore if available; fall back to the dynamic type name.
+    private var portDeviceCoreIdentifierComponent: String {
+        if let identifier = (self as PVEmulatorCore).coreIdentifier, !identifier.isEmpty {
+            return identifier
+        }
+        return String(describing: type(of: self))
+    }
+
+    /// Keys earlier builds saved a port's device under, newest first.
+    ///
+    /// - `<ClassName>.global.<coreIdentifier>.portDeviceType.port<port>` — written
+    ///   while `currentGameMD5` was always nil for this core, so every game of a
+    ///   core shared one entry.
+    /// - `<ClassName>.<md5>.portDeviceType.port<port>` — before core identifiers
+    ///   were included.
+    private func legacyPortDevicePersistenceKeys(port: Int) -> [String] {
         let md5 = PVThinLibretroCore.currentGameMD5 ?? "global"
-        return "PVThinLibretroCore.\(md5).portDeviceType.port\(port)"
+        return [
+            "PVThinLibretroCore.global.\(portDeviceCoreIdentifierComponent).portDeviceType.port\(port)",
+            "PVThinLibretroCore.\(md5).portDeviceType.port\(port)"
+        ]
     }
 }

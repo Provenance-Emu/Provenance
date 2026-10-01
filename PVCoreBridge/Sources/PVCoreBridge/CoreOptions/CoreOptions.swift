@@ -75,23 +75,23 @@ public enum CoreOption: Sendable {
         }
     }
 
-    public var key: String {
+    /// Title, description and storage identity shared by every case.
+    public var display: CoreOptionValueDisplay {
         switch self {
-        case .bool(let display, _, _):
-            return display.title
-        case .range(let display, _, _, _):
-            return display.title
-		case .rangef(let display, _, _, _):
-			return display.title
-        case .multi(let display, _, _):
-            return display.title
-        case .string(let display, _, _):
-            return display.title
-        case .group(let display, _):
-            return display.title
-		case .enumeration(let display, _, _, _):
-			return display.title
-		}
+        case .bool(let display, _, _),
+             .range(let display, _, _, _),
+             .rangef(let display, _, _, _),
+             .multi(let display, _, _),
+             .string(let display, _, _),
+             .group(let display, _),
+             .enumeration(let display, _, _, _):
+            return display
+        }
+    }
+
+    /// Key the option's value is persisted under.
+    public var key: String {
+        display.storageKey ?? display.title
     }
 
     func subOptionForKey(_ key: String) -> CoreOption? {

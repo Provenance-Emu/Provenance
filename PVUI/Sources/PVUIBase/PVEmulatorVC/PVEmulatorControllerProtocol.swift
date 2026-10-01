@@ -147,6 +147,9 @@ public extension PVEmualatorControllerProtocol {
         let md5Hash: String = game.md5Hash
         core.romMD5 = md5Hash
         core.romSerial = game.romSerial
+        /// Before `initialize()`: cores read their options while booting, and
+        /// per-game overrides are only found once the running game is known.
+        CoreOptionsContext.currentGameMD5 = md5Hash
 
         core.initialize()
     }

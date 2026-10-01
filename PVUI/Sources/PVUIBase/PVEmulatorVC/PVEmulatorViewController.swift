@@ -2135,6 +2135,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         view?.removeFromSuperview()
         removeFromParent()
         staticSelf = nil
+        CoreOptionsContext.currentGameMD5 = nil
 
         AppState.shared.emulationUIState.reset()
     }

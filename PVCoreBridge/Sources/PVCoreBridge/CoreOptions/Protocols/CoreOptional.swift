@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import PVPrimitives
 
 
@@ -55,9 +56,26 @@ public protocol SubCoreOptional: CoreOptional {
     static func options(forSubcoreIdentifier: String, systemName: String) -> [CoreOption]?
 }
 
+/// The game the emulator is currently running, for per-game option lookups.
+///
+/// Per-game overrides are written under `<ClassName>.<md5>.<optionKey>`, but a
+/// core reads its options with no MD5 in hand. Without a shared notion of "the
+/// running game" those overrides were stored and then never read back, so an
+/// option changed under "This Game" silently did nothing.
+public enum CoreOptionsContext {
+    private static let storage = OSAllocatedUnfairLock<String?>(initialState: nil)
+
+    /// MD5 of the running game, or `nil` when no game is loaded. Set before the
+    /// core is initialized so options read during boot see the overrides.
+    public static var currentGameMD5: String? {
+        get { storage.withLock { $0 } }
+        set { storage.withLock { $0 = newValue?.isEmpty == false ? newValue : nil } }
+    }
+}
+
 public extension CoreOptional {
-    /// Default implementation: no per-game MD5 override.
-    static var currentGameMD5: String? { nil }
+    /// Default implementation: the game the emulator is currently running.
+    static var currentGameMD5: String? { CoreOptionsContext.currentGameMD5 }
 
     /// Default: only `.auto` is available (no override supported).
     static var supportedAspectRatioOverrides: [AspectRatioOverride] { [.auto] }
