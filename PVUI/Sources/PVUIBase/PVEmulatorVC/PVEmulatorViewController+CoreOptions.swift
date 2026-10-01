@@ -23,7 +23,8 @@ extension PVEmulatorViewController {
         let coreOptionsView = CoreOptionsDetailView(
             coreClass: coreClass,
             title: "Core Options",
-            gameMD5: game.md5Hash.isEmpty ? nil : game.md5Hash
+            gameMD5: game.md5Hash.isEmpty ? nil : game.md5Hash,
+            onClose: { [weak self] in self?.dismissCoreOptions() }
         )
 
         let hostingController = UIHostingController(rootView: coreOptionsView)
@@ -33,12 +34,12 @@ extension PVEmulatorViewController {
         hostingController.navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .done,
             target: self,
-            action: #selector(dismissCoreOptionsAndResume)
+            action: #selector(dismissCoreOptions)
         )
         nav.isModalInPresentation = true
         present(nav, animated: true)
         #else
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissCoreOptionsAndResume))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissCoreOptions))
         tap.allowedPressTypes = [.menu]
         hostingController.view.addGestureRecognizer(tap)
         present(TVFullscreenController(rootViewController: nav), animated: true)
@@ -63,11 +64,16 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Dismisses core options.
-    /// Emulation pause state is handled by the menu system; we don't resume here
-    /// to prevent unpausing when navigating back to the pause menu.
-    @objc private func dismissCoreOptionsAndResume() {
-        presentedViewController?.dismiss(animated: true) { [weak self] in
+    /// Dismisses core options and returns to the pause menu it was opened from.
+    ///
+    /// The game is still paused at this point (the pause menu handed off to
+    /// this screen without resuming). Closing straight back to the game used
+    /// to leave it frozen with nothing on screen until the user opened and
+    /// closed the pause menu again; going back to the menu also lets them
+    /// resume, or carry on changing things, from where they were.
+    @objc func dismissCoreOptions() {
+        guard let presented = presentedViewController, !presented.isBeingDismissed else { return }
+        presented.dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
             self.enableControllerInput(false)
             #if os(tvOS)
@@ -75,6 +81,9 @@ extension PVEmulatorViewController {
             self.reestablishPauseHandlers()
             self.view.becomeFirstResponder()
             #endif
+            if self.core.isOn {
+                self.showMenu(nil)
+            }
         }
     }
 }

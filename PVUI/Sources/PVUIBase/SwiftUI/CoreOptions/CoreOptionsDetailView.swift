@@ -2,31 +2,978 @@ import SwiftUI
 import PVCoreBridge
 import PVLibrary
 import PVThemes
-import PVUIBase
 
-/// View model to manage core options state
-private class CoreOptionsState: ObservableObject {
-    @Published var selectedValues: [String: Any] = [:]
-    @Published var optionValues: [String: Any] = [:]
-    @Published var showResetConfirmation: Bool = false
-    @Published var showResetGameOverridesConfirmation: Bool = false
+// MARK: - Palette
 
-    func updateValue(_ value: Any, forKey key: String) {
-        selectedValues[key] = value
-        optionValues[key] = value
-        objectWillChange.send()
-    }
+/// The handful of theme colors the options list needs, resolved once by the
+/// screen so individual rows don't each subscribe to `ThemeManager`.
+private struct CoreOptionsPalette {
+    let background: Color
+    let cellBackground: Color
+    let title: Color
+    let detail: Color
+    let header: Color
+    let tint: Color
+    let isDark: Bool
 
-    func resetAllValues() {
-        selectedValues.removeAll()
-        optionValues.removeAll()
-        objectWillChange.send()
+    init(_ palette: any UXThemePalette) {
+        background = Color(palette.gameLibraryBackground)
+        cellBackground = (palette.settingsCellBackground?.swiftUIColor ?? Color(palette.gameLibraryBackground))
+            .opacity(palette.dark ? 0.6 : 0.9)
+        title = palette.settingsCellText?.swiftUIColor ?? palette.gameLibraryText.swiftUIColor
+        detail = (palette.settingsCellTextDetail?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor).opacity(0.8)
+        header = palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor
+        tint = palette.defaultTintColor.swiftUIColor
+        isDark = palette.dark
     }
 }
 
-// MARK: - tvOS Focusable Option Row
+// MARK: - Metrics
+
+private enum CoreOptionsMetrics {
+    static let sectionCornerRadius: CGFloat = 12
+    static let rowCornerRadius: CGFloat = 10
+    static let badgeCornerRadius: CGFloat = 4
+    /// Descriptions are clipped to this many lines until the row is focused.
+    static let collapsedDetailLineLimit = 3
+    /// Widest a choice's current value may grow before truncating, so a long
+    /// value can't squeeze out the option's title.
+    static let valueMaxWidth: CGFloat = 180
+}
+
+// MARK: - CoreOptionsDetailView
+
+/// Lists and edits a core's options: grouped by the core's own categories,
+/// collapsible, searchable, and — when opened in-game on iOS — fully drivable
+/// from a game controller.
+public struct CoreOptionsDetailView: View {
+    let coreClass: CoreOptional.Type
+    let title: String
+    /// MD5 hash of the current game. When non-nil a scope picker is shown and
+    /// writes/reads default to the per-game key.
+    let gameMD5: String?
+    /// Closes the screen. Supplied when the list is presented over a paused
+    /// game, which is also what turns controller navigation on: a controller is
+    /// the only input a player is guaranteed to have there.
+    let onClose: (() -> Void)?
+
+    @ObservedObject private var themeManager = ThemeManager.shared
+
+    /// Whether changes apply to this game only (true) or to the whole core.
+    /// Only meaningful when `gameMD5` is non-nil.
+    @AppStorage(CoreOptionsScope.perGameDefaultsKey) private var perGameScope = true
+    @State private var sections: [CoreOptionListSection] = []
+    @State private var collapsedSectionIDs: Set<String> = []
+    /// Bumped after every write. Rows read their values straight from storage,
+    /// so this is what tells SwiftUI those values moved.
+    @State private var revision = 0
+    @State private var showResetConfirmation = false
+    @State private var showResetGameOverridesConfirmation = false
+    #if !os(tvOS)
+    @State private var query = ""
+    /// Row or section header the controller is on.
+    @State private var focusedItemID: String?
+    @ObservedObject private var gamepadManager = GamepadManager.shared
+    @Environment(\.dismiss) private var dismiss
+    #endif
+
+    public init(coreClass: CoreOptional.Type, title: String, gameMD5: String? = nil, onClose: (() -> Void)? = nil) {
+        self.coreClass = coreClass
+        self.title = title
+        self.gameMD5 = gameMD5
+        self.onClose = onClose
+    }
+
+    /// The effective MD5 to use for reads/writes given the current scope selection.
+    private var effectiveMD5: String? {
+        guard let md5 = gameMD5, !md5.isEmpty, perGameScope else { return nil }
+        return md5
+    }
+
+    private var store: CoreOptionValueStore {
+        CoreOptionValueStore(coreClass: coreClass, md5: effectiveMD5)
+    }
+
+    private var palette: CoreOptionsPalette {
+        CoreOptionsPalette(themeManager.currentPalette)
+    }
+
+    private var hasGameScope: Bool {
+        gameMD5?.isEmpty == false
+    }
+
+    // MARK: - Body
+
+    public var body: some View {
+        content
+            .background(palette.background.ignoresSafeArea())
+            .navigationTitle(title)
+            .onAppear(perform: loadSections)
+            .uiKitAlert(
+                "Reset All Options",
+                message: resetAllMessage,
+                isPresented: $showResetConfirmation
+            ) {
+                UIAlertAction(title: "Reset", style: .destructive) { _ in
+                    resetAllOptions()
+                    showResetConfirmation = false
+                }
+                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    showResetConfirmation = false
+                }
+            }
+            .uiKitAlert(
+                "Reset Game Overrides",
+                message: "Remove all per-game option overrides for this title? "
+                    + "Core-global settings will be used instead.",
+                isPresented: $showResetGameOverridesConfirmation
+            ) {
+                UIAlertAction(title: "Reset", style: .destructive) { _ in
+                    resetGameOverrides()
+                    showResetGameOverridesConfirmation = false
+                }
+                UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                    showResetGameOverridesConfirmation = false
+                }
+            }
+    }
+
+    private var resetAllMessage: String {
+        guard hasGameScope else {
+            return "Are you sure you want to reset all options for \(title) to their default values?"
+        }
+        return "Reset all \(title) global defaults to factory values? "
+            + "This affects core-wide defaults; per-game overrides will remain unchanged."
+    }
+
+    // MARK: - Data
+
+    private func loadSections() {
+        let built = CoreOptionListLayout.sections(from: coreClass.options, generalTitle: String(localized: "General"))
+        /// The view reappears when a pushed choice list pops; only a changed
+        /// option set should disturb what the user had expanded.
+        guard built != sections else { return }
+        sections = built
+        collapsedSectionIDs = CoreOptionListLayout.initiallyCollapsedSectionIDs(for: built)
+    }
+
+    private func didChangeValue() {
+        revision &+= 1
+    }
+
+    private func toggleCollapsed(_ section: CoreOptionListSection) {
+        if collapsedSectionIDs.contains(section.id) {
+            collapsedSectionIDs.remove(section.id)
+        } else {
+            collapsedSectionIDs.insert(section.id)
+        }
+    }
+
+    private func resetAllOptions() {
+        let globalStore = CoreOptionValueStore(coreClass: coreClass, md5: nil)
+        for row in sections.flatMap(\.rows) {
+            globalStore.reset(row.option)
+        }
+        didChangeValue()
+    }
+
+    private func resetGameOverrides() {
+        guard let md5 = gameMD5, !md5.isEmpty else { return }
+        let gameStore = CoreOptionValueStore(coreClass: coreClass, md5: md5)
+        for row in sections.flatMap(\.rows) where gameStore.hasGameOverride(row.option) {
+            gameStore.reset(row.option)
+        }
+        didChangeValue()
+    }
+
+    // MARK: - Reset buttons
+
+    @ViewBuilder
+    private var resetButtons: some View {
+        if hasGameScope && perGameScope {
+            resetButton(title: "RESET GAME OVERRIDES", systemImage: "arrow.counterclockwise.circle", color: .orange) {
+                showResetGameOverridesConfirmation = true
+            }
+        } else {
+            resetButton(title: "RESET ALL OPTIONS", systemImage: "arrow.counterclockwise", color: .red) {
+                showResetConfirmation = true
+            }
+        }
+    }
+
+    private func resetButton(
+        title: LocalizedStringKey,
+        systemImage: String,
+        color: Color,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: systemImage)
+                .font(.subheadline.weight(.bold))
+                .foregroundColor(color)
+                .padding(.vertical, 12)
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: CoreOptionsMetrics.rowCornerRadius)
+                        .fill(color.opacity(0.1))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: CoreOptionsMetrics.rowCornerRadius)
+                                .strokeBorder(color.opacity(0.5), lineWidth: 1.5)
+                        )
+                )
+        }
+        #if os(tvOS)
+        .buttonStyle(TVMediaPlainButtonStyle())
+        .tvOSDisableFocusEffect()
+        #else
+        .buttonStyle(.plain)
+        #endif
+        .retroSettingsRowFocus(cornerRadius: CoreOptionsMetrics.rowCornerRadius)
+    }
+}
+
+// MARK: - Touch layout
+
+#if !os(tvOS)
+extension CoreOptionsDetailView {
+
+    private var isSearching: Bool {
+        !query.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    private var visibleSections: [CoreOptionListSection] {
+        CoreOptionListLayout.filter(sections, matching: query)
+    }
+
+    /// A search shows its matches no matter what was collapsed before it.
+    private func isCollapsed(_ section: CoreOptionListSection) -> Bool {
+        !isSearching && collapsedSectionIDs.contains(section.id)
+    }
+
+    private func headerID(_ section: CoreOptionListSection) -> String {
+        "header/\(section.id)"
+    }
+
+    /// Controller navigation is offered in-game, where there may be no touch
+    /// screen in reach, and only once a pad or keyboard is actually attached.
+    private var isControllerNavigationActive: Bool {
+        onClose != nil && gamepadManager.isNavigationInputAvailable
+    }
+
+    private var content: some View {
+        let palette = self.palette
+        let store = self.store
+        let visible = visibleSections
+        return VStack(spacing: 0) {
+            controlsHeader(palette: palette)
+
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 0, pinnedViews: [.sectionHeaders]) {
+                        ForEach(visible) { section in
+                            SwiftUI.Section {
+                                if !isCollapsed(section) {
+                                    sectionRows(section, store: store, palette: palette)
+                                }
+                            } header: {
+                                sectionHeader(section, palette: palette)
+                                    .id(headerID(section))
+                            }
+                        }
+
+                        if visible.isEmpty {
+                            emptyState(palette: palette)
+                        } else {
+                            resetButtons
+                                .padding(.top, 20)
+                                .padding(.bottom, 28)
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                }
+                .scrollDismissesKeyboard(.immediately)
+                .onChange(of: focusedItemID) { _, newID in
+                    guard let newID else { return }
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        proxy.scrollTo(newID, anchor: .center)
+                    }
+                }
+            }
+
+            if isControllerNavigationActive {
+                controllerHints(palette: palette)
+            }
+        }
+        .onChange(of: perGameScope) { _, _ in didChangeValue() }
+        .onReceive(gamepadManager.eventPublisher, perform: handleGamepadEvent)
+    }
+
+    // MARK: Header
+
+    private func controlsHeader(palette: CoreOptionsPalette) -> some View {
+        VStack(spacing: 10) {
+            if hasGameScope {
+                Picker("Scope", selection: $perGameScope) {
+                    Text("This Game").tag(true)
+                    Text("All Games").tag(false)
+                }
+                .pickerStyle(.segmented)
+            }
+
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(palette.detail)
+                TextField("Search options", text: $query)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .submitLabel(.search)
+                    .foregroundColor(palette.title)
+                if !query.isEmpty {
+                    Button {
+                        query = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(palette.detail)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Clear search")
+                }
+            }
+            .font(.subheadline)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(RetroPauseSearchFieldBackgroundThemed(isDark: palette.isDark))
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+    }
+
+    // MARK: Sections
+
+    private func sectionHeader(_ section: CoreOptionListSection, palette: CoreOptionsPalette) -> some View {
+        let collapsed = isCollapsed(section)
+        let isFocused = focusedItemID == headerID(section)
+        return Button {
+            guard !isSearching else { return }
+            withAnimation(.easeInOut(duration: 0.2)) { toggleCollapsed(section) }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.bold))
+                    .rotationEffect(.degrees(collapsed ? 0 : 90))
+                    .opacity(isSearching ? 0 : 1)
+                Text(section.title.uppercased())
+                    .font(.footnote.weight(.heavy))
+                    .tracking(1.2)
+                    .lineLimit(1)
+                Spacer(minLength: 8)
+                Text("\(section.rows.count)")
+                    .font(.caption.weight(.semibold).monospacedDigit())
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 2)
+                    .background(RetroPauseInsetPillBackground(isDark: palette.isDark))
+            }
+            .foregroundColor(palette.header)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 10)
+            .contentShape(Rectangle())
+            .background(
+                RoundedRectangle(cornerRadius: CoreOptionsMetrics.rowCornerRadius)
+                    .strokeBorder(palette.tint, lineWidth: isFocused ? 2 : 0)
+            )
+        }
+        .buttonStyle(.plain)
+        /// Opaque so rows scrolling underneath the pinned header don't show through.
+        .background(palette.background)
+        .accessibilityHint(collapsed ? "Expands this category" : "Collapses this category")
+    }
+
+    private func sectionRows(
+        _ section: CoreOptionListSection,
+        store: CoreOptionValueStore,
+        palette: CoreOptionsPalette
+    ) -> some View {
+        VStack(spacing: 0) {
+            ForEach(section.rows) { row in
+                CoreOptionRowView(
+                    row: row,
+                    store: store,
+                    palette: palette,
+                    isFocused: focusedItemID == row.id,
+                    showsGameOverrideBadge: perGameScope && hasGameScope,
+                    revision: revision,
+                    onChange: didChangeValue
+                )
+                .id(row.id)
+
+                if row.id != section.rows.last?.id {
+                    Divider()
+                        .padding(.leading, 12)
+                }
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: CoreOptionsMetrics.sectionCornerRadius)
+                .fill(palette.cellBackground)
+        )
+        .padding(.bottom, 12)
+    }
+
+    private func emptyState(palette: CoreOptionsPalette) -> some View {
+        VStack(spacing: 8) {
+            Image(systemName: isSearching ? "magnifyingglass" : "slider.horizontal.3")
+                .font(.title2)
+            Text(isSearching ? "No options match “\(query)”" : "This core has no options")
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+        }
+        .foregroundColor(palette.detail)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 48)
+    }
+
+    // MARK: Controller navigation
+
+    private func controllerHints(palette: CoreOptionsPalette) -> some View {
+        HStack(spacing: 14) {
+            Label("Move", systemImage: "arrow.up.arrow.down")
+            Label("Change", systemImage: "arrow.left.arrow.right")
+            Label("Select", systemImage: "a.circle")
+            Label("Category", systemImage: "l1.rectangle.roundedbottom")
+            Label("Close", systemImage: "b.circle")
+        }
+        .font(.caption.weight(.semibold))
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
+        .foregroundColor(palette.detail)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(palette.cellBackground)
+    }
+
+    /// Every header and visible row, top to bottom — the order focus walks in.
+    private func focusOrder() -> [String] {
+        visibleSections.flatMap { section in
+            [headerID(section)] + (isCollapsed(section) ? [] : section.rows.map(\.id))
+        }
+    }
+
+    private func handleGamepadEvent(_ event: GamepadEvent) {
+        guard isControllerNavigationActive, let command = CoreOptionsControllerCommand(event) else { return }
+        switch command {
+        case .move(let delta): moveFocus(by: delta)
+        case .adjust(let direction): adjustFocusedItem(direction: direction)
+        case .activate: activateFocusedItem()
+        case .jumpSection(let offset): jumpToSection(offset: offset)
+        case .close: close()
+        }
+    }
+
+    private func close() {
+        if let onClose {
+            onClose()
+        } else {
+            dismiss()
+        }
+    }
+
+    private func moveFocus(by delta: Int) {
+        let order = focusOrder()
+        guard !order.isEmpty else { return }
+        guard let current = focusedItemID, let index = order.firstIndex(of: current) else {
+            /// First press lands on the first option rather than its header:
+            /// changing something is what the user opened the list for.
+            focusedItemID = order.first { !$0.hasPrefix("header/") } ?? order.first
+            return
+        }
+        focusedItemID = order[min(order.count - 1, max(0, index + delta))]
+    }
+
+    private func focusedSection() -> CoreOptionListSection? {
+        guard let focusedItemID else { return nil }
+        return visibleSections.first { headerID($0) == focusedItemID || $0.rows.contains { $0.id == focusedItemID } }
+    }
+
+    private func focusedRow() -> CoreOptionListRow? {
+        guard let focusedItemID else { return nil }
+        return visibleSections.lazy.flatMap(\.rows).first { $0.id == focusedItemID }
+    }
+
+    private func adjustFocusedItem(direction: Int) {
+        if let row = focusedRow() {
+            store.adjust(row.option, direction: direction)
+            didChangeValue()
+        } else if let section = focusedSection(), !isSearching {
+            /// On a header, left folds the category and right opens it.
+            let shouldCollapse = direction < 0
+            guard collapsedSectionIDs.contains(section.id) != shouldCollapse else { return }
+            withAnimation(.easeInOut(duration: 0.2)) { toggleCollapsed(section) }
+        }
+    }
+
+    private func activateFocusedItem() {
+        if let row = focusedRow() {
+            store.activate(row.option)
+            didChangeValue()
+        } else if let section = focusedSection(), !isSearching {
+            withAnimation(.easeInOut(duration: 0.2)) { toggleCollapsed(section) }
+        }
+    }
+
+    private func jumpToSection(offset: Int) {
+        let visible = visibleSections
+        guard !visible.isEmpty else { return }
+        guard let current = focusedSection(), let index = visible.firstIndex(where: { $0.id == current.id }) else {
+            focusedItemID = headerID(visible[0])
+            return
+        }
+        focusedItemID = headerID(visible[min(visible.count - 1, max(0, index + offset))])
+    }
+}
+
+/// What a controller press means in the options list. Only presses count;
+/// releases map to nothing.
+private enum CoreOptionsControllerCommand {
+    case move(Int)
+    case adjust(Int)
+    case activate
+    case jumpSection(Int)
+    case close
+
+    init?(_ event: GamepadEvent) {
+        switch event {
+        case .verticalNavigation(let value, true):
+            /// Positive is "up" on a stick, which is the previous item.
+            self = .move(value > 0 ? -1 : 1)
+        case .horizontalNavigation(let value, true):
+            self = .adjust(value < 0 ? -1 : 1)
+        case .buttonPress(true):
+            self = .activate
+        case .shoulderLeft(true):
+            self = .jumpSection(-1)
+        case .shoulderRight(true):
+            self = .jumpSection(1)
+        case .buttonB(true), .menuToggle(true), .start(true):
+            self = .close
+        default:
+            return nil
+        }
+    }
+}
+
+// MARK: - Touch row
+
+/// One option: its title and description, the control that edits it, and a
+/// reset button once the user has changed it.
+private struct CoreOptionRowView: View {
+    let row: CoreOptionListRow
+    let store: CoreOptionValueStore
+    let palette: CoreOptionsPalette
+    /// Whether the controller is on this row.
+    let isFocused: Bool
+    let showsGameOverrideBadge: Bool
+    /// Changes whenever any value is written; the row's values are read from
+    /// storage, so this is its only signal to re-read them.
+    let revision: Int
+    let onChange: () -> Void
+
+    private var option: CoreOption { row.option }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .center, spacing: 12) {
+                label
+                Spacer(minLength: 8)
+                trailingControl
+                if store.isModified(option) {
+                    Button {
+                        store.reset(option)
+                        onChange()
+                    } label: {
+                        Image(systemName: "arrow.counterclockwise")
+                            .font(.footnote.weight(.semibold))
+                            .foregroundColor(palette.tint)
+                            .frame(minWidth: 28, minHeight: 28)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Reset \(row.title)")
+                }
+            }
+            inlineEditor
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: CoreOptionsMetrics.rowCornerRadius)
+                .fill(palette.tint.opacity(isFocused ? 0.16 : 0))
+                .overlay(
+                    RoundedRectangle(cornerRadius: CoreOptionsMetrics.rowCornerRadius)
+                        .strokeBorder(palette.tint, lineWidth: isFocused ? 2 : 0)
+                )
+        )
+    }
+
+    private var label: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(row.title)
+                .font(.body.weight(.medium))
+                .foregroundColor(palette.title)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let detail = row.detail, !detail.isEmpty {
+                Text(detail)
+                    .font(.footnote)
+                    .foregroundColor(palette.detail)
+                    .lineLimit(isFocused ? nil : CoreOptionsMetrics.collapsedDetailLineLimit)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            HStack(spacing: 6) {
+                if showsGameOverrideBadge && store.hasGameOverride(option) {
+                    badge("This game", systemImage: "tag.fill", color: .orange)
+                }
+                if option.display.requiresRestart {
+                    badge("Needs restart", systemImage: "arrow.triangle.2.circlepath", color: .yellow)
+                }
+            }
+        }
+    }
+
+    private func badge(_ text: LocalizedStringKey, systemImage: String, color: Color) -> some View {
+        Label(text, systemImage: systemImage)
+            .font(.caption2.weight(.semibold))
+            .foregroundColor(color)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .background(
+                RoundedRectangle(cornerRadius: CoreOptionsMetrics.badgeCornerRadius)
+                    .fill(color.opacity(0.15))
+            )
+    }
+
+    @ViewBuilder
+    private var trailingControl: some View {
+        switch option {
+        case .bool:
+            ThemedToggle(isOn: Binding(
+                get: { store.bool(option) },
+                set: { newValue in
+                    store.set(newValue, for: option)
+                    onChange()
+                }
+            )) {
+                EmptyView()
+            }
+            .labelsHidden()
+            .fixedSize()
+
+        case let .enumeration(_, values, _, _):
+            let current = store.int(option)
+            choiceMenu {
+                ForEach(values, id: \.value) { value in
+                    choiceButton(value.title, isSelected: value.value == current) {
+                        store.set(value.value, for: option)
+                    }
+                }
+            }
+
+        case let .multi(_, values, _):
+            let current = store.multiIndex(option)
+            choiceMenu {
+                ForEach(Array(values.enumerated()), id: \.offset) { index, value in
+                    choiceButton(value.title, isSelected: index == current) {
+                        store.setMulti(index: index, for: option)
+                    }
+                }
+            }
+
+        case .range, .rangef:
+            Text(store.displayValue(option))
+                .font(.body.weight(.semibold).monospacedDigit())
+                .foregroundColor(palette.tint)
+
+        case .string, .group:
+            EmptyView()
+        }
+    }
+
+    /// The current value as a tappable pill opening the full list of choices.
+    private func choiceMenu<Choices: View>(@ViewBuilder choices: () -> Choices) -> some View {
+        Menu {
+            choices()
+        } label: {
+            HStack(spacing: 4) {
+                Text(store.displayValue(option))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.caption2.weight(.bold))
+            }
+            .font(.subheadline.weight(.semibold))
+            .foregroundColor(palette.tint)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(RetroPauseInsetPillBackground(isDark: palette.isDark))
+        }
+        .frame(maxWidth: CoreOptionsMetrics.valueMaxWidth, alignment: .trailing)
+    }
+
+    private func choiceButton(_ title: String, isSelected: Bool, select: @escaping () -> Void) -> some View {
+        Button {
+            select()
+            onChange()
+        } label: {
+            if isSelected {
+                Label(title, systemImage: "checkmark")
+            } else {
+                Text(title)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var inlineEditor: some View {
+        switch option {
+        case let .range(_, range, _, _):
+            RetroWaveSlider(
+                value: Binding(
+                    get: { Double(store.int(option)) },
+                    set: { newValue in
+                        store.set(Int(newValue.rounded()), for: option)
+                        onChange()
+                    }
+                ),
+                in: Double(range.min)...Double(range.max),
+                step: 1.0
+            )
+
+        case let .rangef(_, range, _, _):
+            RetroWaveSlider(
+                value: Binding(
+                    get: { Double(store.float(option)) },
+                    set: { newValue in
+                        store.set(Float(newValue), for: option)
+                        onChange()
+                    }
+                ),
+                in: Double(range.min)...Double(range.max),
+                step: Double(CoreOptionValueStore.floatStep)
+            )
+
+        case .string:
+            TextField("Value", text: Binding(
+                get: { store.string(option) },
+                set: { newValue in
+                    store.set(newValue, for: option)
+                    onChange()
+                }
+            ))
+            .textFieldStyle(.roundedBorder)
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+
+        default:
+            EmptyView()
+        }
+    }
+}
+#endif
+
+// MARK: - tvOS layout
 
 #if os(tvOS)
+extension CoreOptionsDetailView {
+
+    /// tvOS keeps an eager stack: the focus engine can't see rows a lazy stack
+    /// hasn't built yet. Collapsed categories are what keep it small.
+    private var content: some View {
+        let store = self.store
+        return ScrollView {
+            VStack(alignment: .leading, spacing: 28) {
+                if hasGameScope {
+                    scopePicker
+                }
+
+                ForEach(sections) { section in
+                    let collapsed = collapsedSectionIDs.contains(section.id)
+                    VStack(alignment: .leading, spacing: 4) {
+                        CoreOptionFocusableRow(
+                            action: { withAnimation(.easeInOut(duration: 0.2)) { toggleCollapsed(section) } },
+                            content: { tvOSSectionHeader(section, collapsed: collapsed) }
+                        )
+
+                        if !collapsed {
+                            ForEach(section.rows) { row in
+                                tvOSRow(row, store: store)
+                            }
+                        }
+                    }
+                }
+
+                resetButtons
+                    .padding(.top, 12)
+            }
+            .padding(.horizontal, 60)
+            .padding(.vertical, 30)
+        }
+        .onChange(of: perGameScope) { _, _ in didChangeValue() }
+    }
+
+    private var scopePicker: some View {
+        HStack(spacing: 12) {
+            ScopePickerButton(title: "This Game", isSelected: perGameScope) {
+                perGameScope = true
+            }
+            ScopePickerButton(title: "All Games", isSelected: !perGameScope) {
+                perGameScope = false
+            }
+        }
+    }
+
+    private func tvOSSectionHeader(_ section: CoreOptionListSection, collapsed: Bool) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: "chevron.right")
+                .font(.system(size: 18, weight: .bold))
+                .rotationEffect(.degrees(collapsed ? 0 : 90))
+            Text(section.title)
+                .font(.system(size: 24, weight: .bold, design: .rounded))
+            Spacer()
+            CoreOptionValueBadge(text: "\(section.rows.count)")
+        }
+        .foregroundStyle(CoreOptionsGradient.accent)
+    }
+
+    @ViewBuilder
+    private func tvOSRow(_ row: CoreOptionListRow, store: CoreOptionValueStore) -> some View {
+        let option = row.option
+        switch option {
+        case .bool:
+            CoreOptionFocusableRow(
+                action: {
+                    store.activate(option)
+                    didChangeValue()
+                },
+                content: { tvOSValueLine(row, store: store) }
+            )
+
+        case let .enumeration(_, values, _, _):
+            tvOSChoiceRow(
+                row,
+                store: store,
+                choices: values.map { CoreOptionChoiceList.Choice(title: $0.title, detail: $0.description) },
+                selectedIndex: values.firstIndex { $0.value == store.int(option) } ?? 0
+            ) { index in
+                store.set(values[index].value, for: option)
+            }
+
+        case let .multi(_, values, _):
+            tvOSChoiceRow(
+                row,
+                store: store,
+                choices: values.map { CoreOptionChoiceList.Choice(title: $0.title, detail: $0.description) },
+                selectedIndex: store.multiIndex(option)
+            ) { index in
+                store.setMulti(index: index, for: option)
+            }
+
+        case .range, .rangef:
+            tvOSStepperRow(row, store: store)
+
+        case .string:
+            CoreOptionFocusableRow {
+                HStack {
+                    tvOSLabel(row, store: store)
+                    Spacer()
+                    TextField("Value", text: Binding(
+                        get: { store.string(option) },
+                        set: { newValue in
+                            store.set(newValue, for: option)
+                            didChangeValue()
+                        }
+                    ))
+                    .frame(maxWidth: 300)
+                    .multilineTextAlignment(.trailing)
+                }
+            }
+
+        case .group:
+            EmptyView()
+        }
+    }
+
+    /// Title on the left, current value on the right.
+    ///
+    /// Reading `revision` is what makes the line re-read its value after a
+    /// write; the value itself lives in storage, not in `@State`.
+    private func tvOSValueLine(_ row: CoreOptionListRow, store: CoreOptionValueStore) -> some View {
+        HStack {
+            tvOSLabel(row, store: store)
+            Spacer()
+            CoreOptionValueBadge(text: revision >= 0 ? store.displayValue(row.option) : "")
+        }
+    }
+
+    private func tvOSChoiceRow(
+        _ row: CoreOptionListRow,
+        store: CoreOptionValueStore,
+        choices: [CoreOptionChoiceList.Choice],
+        selectedIndex: Int,
+        select: @escaping (Int) -> Void
+    ) -> some View {
+        CoreOptionFocusableNavRow(
+            destination: {
+                CoreOptionChoiceList(title: row.title, choices: choices, selectedIndex: selectedIndex) { index in
+                    select(index)
+                    didChangeValue()
+                }
+            },
+            label: { tvOSValueLine(row, store: store) }
+        )
+    }
+
+    private func tvOSStepperRow(_ row: CoreOptionListRow, store: CoreOptionValueStore) -> some View {
+        HStack(spacing: 12) {
+            CoreOptionStepper(systemName: "minus") {
+                store.adjust(row.option, direction: -1)
+                didChangeValue()
+            }
+            CoreOptionFocusableRow {
+                tvOSValueLine(row, store: store)
+            }
+            CoreOptionStepper(systemName: "plus") {
+                store.adjust(row.option, direction: 1)
+                didChangeValue()
+            }
+        }
+    }
+
+    private func tvOSLabel(_ row: CoreOptionListRow, store: CoreOptionValueStore) -> some View {
+        let palette = self.palette
+        return VStack(alignment: .leading, spacing: 4) {
+            Text(row.title)
+                .font(.system(size: 22, weight: .medium))
+                .foregroundColor(palette.title)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let detail = row.detail, !detail.isEmpty {
+                Text(detail)
+                    .font(.system(size: 17))
+                    .foregroundColor(palette.detail)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            if perGameScope && store.hasGameOverride(row.option) {
+                Label("Game Override", systemImage: "tag.fill")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.orange)
+            }
+        }
+    }
+}
+
+// MARK: - tvOS components
+
 /// A focusable row container that provides retrowave focus styling matching the main settings UI.
 /// Renders gradient background, border, and glow shadow when focused via the d-pad.
 /// Pass an `action` closure for rows that need tap behavior (e.g. toggling a bool).
@@ -49,26 +996,7 @@ private struct CoreOptionFocusableRow<Content: View>: View {
         .tvOSDisableFocusEffect()
         .padding(.vertical, 14)
         .padding(.horizontal, 20)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(
-                    isFocused
-                        ? LinearGradient(colors: [Color.retroPink.opacity(0.12), Color.retroBlue.opacity(0.08)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                        : LinearGradient(colors: [Color.white.opacity(0.03), Color.white.opacity(0.01)], startPoint: .top, endPoint: .bottom)
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(
-                    isFocused
-                        ? LinearGradient(colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                        : LinearGradient(colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)], startPoint: .top, endPoint: .bottom),
-                    lineWidth: isFocused ? 2 : 1
-                )
-        )
-        .shadow(color: isFocused ? Color.retroPink.opacity(0.25) : .clear, radius: 12, x: 0, y: 4)
-        .scaleEffect(isFocused ? 1.02 : 1.0)
-        .animation(.easeInOut(duration: 0.15), value: isFocused)
+        .coreOptionFocusChrome(isFocused: isFocused)
     }
 }
 
@@ -98,26 +1026,47 @@ private struct CoreOptionFocusableNavRow<Destination: View, Label: View>: View {
         .tvOSDisableFocusEffect()
         .padding(.vertical, 14)
         .padding(.horizontal, 20)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(
+        .coreOptionFocusChrome(isFocused: isFocused)
+    }
+}
+
+/// The retrowave gradients the tvOS rows are drawn with.
+private enum CoreOptionsGradient {
+    static let accent = LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
+    static let value = LinearGradient(colors: [.retroBlue, .retroPurple], startPoint: .leading, endPoint: .trailing)
+
+    static func diagonal(_ start: Color, _ end: Color) -> LinearGradient {
+        LinearGradient(colors: [start, end], startPoint: .topLeading, endPoint: .bottomTrailing)
+    }
+
+    static func vertical(_ top: Color, _ bottom: Color) -> LinearGradient {
+        LinearGradient(colors: [top, bottom], startPoint: .top, endPoint: .bottom)
+    }
+}
+
+private extension View {
+    /// Shared focused/unfocused look for option rows: a stroke and a slight
+    /// lift rather than a blurred glow, which costs an offscreen pass per row.
+    func coreOptionFocusChrome(isFocused: Bool, isSelected: Bool = false) -> some View {
+        let shape = RoundedRectangle(cornerRadius: CoreOptionsMetrics.sectionCornerRadius, style: .continuous)
+        return self
+            .background(
+                shape.fill(
                     isFocused
-                        ? LinearGradient(colors: [Color.retroPink.opacity(0.12), Color.retroBlue.opacity(0.08)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                        : LinearGradient(colors: [Color.white.opacity(0.03), Color.white.opacity(0.01)], startPoint: .top, endPoint: .bottom)
+                        ? CoreOptionsGradient.diagonal(.retroPink.opacity(0.14), .retroBlue.opacity(0.1))
+                        : CoreOptionsGradient.vertical(.white.opacity(isSelected ? 0.05 : 0.03), .white.opacity(0.01))
                 )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(
+            )
+            .overlay(
+                shape.strokeBorder(
                     isFocused
-                        ? LinearGradient(colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                        : LinearGradient(colors: [Color.white.opacity(0.06), Color.white.opacity(0.02)], startPoint: .top, endPoint: .bottom),
+                        ? CoreOptionsGradient.diagonal(.retroPink.opacity(0.8), .retroBlue.opacity(0.6))
+                        : CoreOptionsGradient.vertical(.white.opacity(isSelected ? 0.12 : 0.06), .white.opacity(0.02)),
                     lineWidth: isFocused ? 2 : 1
                 )
-        )
-        .shadow(color: isFocused ? Color.retroPink.opacity(0.25) : .clear, radius: 12, x: 0, y: 4)
-        .scaleEffect(isFocused ? 1.02 : 1.0)
-        .animation(.easeInOut(duration: 0.15), value: isFocused)
+            )
+            .scaleEffect(isFocused ? 1.02 : 1.0)
+            .animation(.easeInOut(duration: 0.15), value: isFocused)
     }
 }
 
@@ -127,10 +1076,9 @@ private struct CoreOptionValueBadge: View {
 
     var body: some View {
         Text(text)
-            .font(.system(size: 16, weight: .semibold))
-            .foregroundStyle(
-                LinearGradient(colors: [.retroBlue, .retroPurple], startPoint: .leading, endPoint: .trailing)
-            )
+            .font(.system(size: 18, weight: .semibold))
+            .lineLimit(1)
+            .foregroundStyle(CoreOptionsGradient.value)
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
             .background(
@@ -138,10 +1086,7 @@ private struct CoreOptionValueBadge: View {
                     .fill(Color.white.opacity(0.05))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
-                            .strokeBorder(
-                                LinearGradient(colors: [Color.retroBlue.opacity(0.5), Color.retroPurple.opacity(0.3)], startPoint: .leading, endPoint: .trailing),
-                                lineWidth: 1
-                            )
+                            .strokeBorder(CoreOptionsGradient.value.opacity(0.45), lineWidth: 1)
                     )
             )
     }
@@ -157,14 +1102,14 @@ private struct CoreOptionStepper: View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .foregroundStyle(CoreOptionsGradient.accent)
                 .frame(width: 44, height: 44)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(isFocused ? Color.white.opacity(0.12) : Color.white.opacity(0.05))
+                        .fill(Color.white.opacity(isFocused ? 0.12 : 0.05))
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .strokeBorder(isFocused ? Color.retroPink.opacity(0.7) : Color.retroPink.opacity(0.3), lineWidth: isFocused ? 2 : 1)
+                                .strokeBorder(Color.retroPink.opacity(isFocused ? 0.7 : 0.3), lineWidth: isFocused ? 2 : 1)
                         )
                 )
                 .scaleEffect(isFocused ? 1.1 : 1.0)
@@ -176,10 +1121,10 @@ private struct CoreOptionStepper: View {
     }
 }
 
-/// Segmented-picker replacement tile for tvOS. Mirrors the retrowave focus styling so
+/// Segmented-picker replacement for tvOS. Mirrors the retrowave focus styling so
 /// scope selection doesn't show the default tvOS focus halo / white blow-out.
 private struct ScopePickerButton: View {
-    let title: String
+    let title: LocalizedStringKey
     let isSelected: Bool
     let action: () -> Void
     @FocusState private var isFocused: Bool
@@ -187,998 +1132,60 @@ private struct ScopePickerButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(
-                    isSelected
-                        ? LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
-                        : LinearGradient(colors: [.white.opacity(0.85), .white.opacity(0.65)], startPoint: .leading, endPoint: .trailing)
-                )
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(isSelected ? CoreOptionsGradient.accent : CoreOptionsGradient.vertical(.white, .white))
+                .opacity(isSelected ? 1 : 0.75)
                 .padding(.vertical, 12)
                 .frame(maxWidth: .infinity)
-                .background(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(
-                            isSelected
-                                ? LinearGradient(colors: [Color.retroPink.opacity(0.18), Color.retroBlue.opacity(0.12)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                                : LinearGradient(colors: [Color.white.opacity(0.04), Color.white.opacity(0.01)], startPoint: .top, endPoint: .bottom)
-                        )
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .strokeBorder(
-                            isFocused
-                                ? LinearGradient(colors: [Color.retroPink.opacity(0.8), Color.retroBlue.opacity(0.6)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                                : (isSelected
-                                    ? LinearGradient(colors: [Color.retroPink.opacity(0.5), Color.retroBlue.opacity(0.3)], startPoint: .leading, endPoint: .trailing)
-                                    : LinearGradient(colors: [Color.white.opacity(0.08), Color.white.opacity(0.03)], startPoint: .top, endPoint: .bottom)),
-                            lineWidth: isFocused ? 2 : 1
-                        )
-                )
-                .shadow(color: isFocused ? Color.retroPink.opacity(0.3) : .clear, radius: 10, x: 0, y: 3)
-                .scaleEffect(isFocused ? 1.03 : 1.0)
-                .animation(.easeInOut(duration: 0.15), value: isFocused)
         }
         .focused($isFocused)
         .buttonStyle(TVMediaPlainButtonStyle())
         .tvOSDisableFocusEffect()
+        .coreOptionFocusChrome(isFocused: isFocused, isSelected: isSelected)
     }
 }
-#endif
 
-// MARK: - CoreOptionsDetailView
-
-/// View that displays and allows editing of core options for a specific core with RetroWave styling
-public struct CoreOptionsDetailView: View {
-    let coreClass: CoreOptional.Type
-    let title: String
-    /// MD5 hash of the current game. When non-nil a scope picker is shown and
-    /// writes/reads default to the per-game key.
-    let gameMD5: String?
-    @StateObject private var state = CoreOptionsState()
-    @ObservedObject private var themeManager = ThemeManager.shared
-
-    /// Whether the user has chosen per-game scope (true) or core-global scope (false).
-    /// Only meaningful when `gameMD5` is non-nil.
-    @State private var perGameScope: Bool = true
-    @State private var isAnimating = false
-    @State private var glowOpacity = 0.0
-    @State private var scrollOffset: CGFloat = 0
-
-    public init(coreClass: CoreOptional.Type, title: String, gameMD5: String? = nil) {
-        self.coreClass = coreClass
-        self.title = title
-        self.gameMD5 = gameMD5
-    }
-
-    /// The effective MD5 to use for reads/writes given the current scope selection.
-    private var effectiveMD5: String? {
-        guard let md5 = gameMD5, perGameScope else { return nil }
-        return md5
-    }
-
-    private struct IdentifiableOption: Identifiable {
-        let id = UUID()
-        let option: CoreOption
-    }
-
-    private struct OptionGroup: Identifiable {
-        let id = UUID()
+/// Full list of an option's choices, pushed from its row.
+private struct CoreOptionChoiceList: View {
+    struct Choice {
         let title: String
-        let options: [IdentifiableOption]
-
-        init(title: String, options: [CoreOption]) {
-            self.title = title
-            self.options = options.map { IdentifiableOption(option: $0) }
-        }
+        let detail: String?
     }
 
-    private var groupedOptions: [OptionGroup] {
-        var rootOptions = [CoreOption]()
-        var groups = [OptionGroup]()
-        var processedOptionKeys = Set<String>()
-
-        coreClass.options.forEach { option in
-            if processedOptionKeys.contains(option.key) { return }
-            processedOptionKeys.insert(option.key)
-
-            switch option {
-            case let .group(display, subOptions):
-                subOptions.forEach { processedOptionKeys.insert($0.key) }
-                groups.append(OptionGroup(title: display.title, options: subOptions))
-            default:
-                rootOptions.append(option)
-            }
-        }
-
-        if !rootOptions.isEmpty {
-            groups.insert(OptionGroup(title: "General", options: rootOptions), at: 0)
-        }
-
-        return groups
-    }
-
-    // MARK: - Background
-
-    private var backgroundView: some View {
-        ZStack {
-            Color(themeManager.currentPalette.gameLibraryBackground)
-                .edgesIgnoringSafeArea(.all)
-
-            RetroGrid(
-                lineSpacing: 20,
-                lineColor: themeManager.currentPalette.dark
-                    ? themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.07)
-                    : themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.05)
-            )
-            .edgesIgnoringSafeArea(.all)
-            .opacity(themeManager.currentPalette.dark ? 0.3 : 0.2)
-        }
-    }
-
-    // MARK: - Title
-
-    private var titleView: some View {
-        Text(title.uppercased())
-            .font(.system(size: 28, weight: .bold, design: .rounded))
-            .foregroundColor(themeManager.currentPalette.gameLibraryHeaderText.swiftUIColor)
-            .padding(.top, 20)
-            .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(glowOpacity), radius: 10, x: 0, y: 0)
-    }
-
-    // MARK: - Options List
-
-    private var optionsListView: some View {
-        ScrollViewWithOffset(axes: .vertical, offsetChanged: { offset in
-            scrollOffset = offset
-        }) {
-            VStack(spacing: 32) {
-                titleView
-
-                if gameMD5 != nil {
-                    scopePickerView
-                }
-
-                ForEach(groupedOptions) { group in
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text(group.title)
-                            #if os(tvOS)
-                            .font(.system(size: 24, weight: .bold, design: .rounded))
-                            .foregroundStyle(
-                                LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .leading, endPoint: .trailing)
-                            )
-                            .padding(.horizontal, 4)
-                            #else
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
-                            .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                            .padding(.horizontal)
-                            .shadow(color: (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(glowOpacity * 0.5), radius: 4, x: 0, y: 0)
-                            #endif
-
-                        #if os(tvOS)
-                        VStack(spacing: 4) {
-                            ForEach(group.options) { identifiableOption in
-                                optionView(for: identifiableOption.option)
-                            }
-                        }
-                        #else
-                        VStack(spacing: 16) {
-                            ForEach(group.options) { identifiableOption in
-                                optionView(for: identifiableOption.option)
-                                    .padding(.horizontal, 20)
-                            }
-                        }
-                        .padding(.vertical, 16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(
-                                    (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
-                                        .opacity(themeManager.currentPalette.dark ? 0.6 : 0.9)
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .strokeBorder(
-                                            LinearGradient(
-                                                gradient: Gradient(colors: [
-                                                    (themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(themeManager.currentPalette.dark ? 0.7 : 0.5),
-                                                    (themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(themeManager.currentPalette.dark ? 0.7 : 0.5)
-                                                ]),
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
-                                            ),
-                                            lineWidth: 1.5
-                                        )
-                                )
-                        )
-                        #endif
-                    }
-                    .padding(.horizontal, 16)
-                }
-
-                // Reset all game overrides button (only shown in per-game scope)
-                if gameMD5 != nil && perGameScope {
-                    Button(action: {
-                        state.showResetGameOverridesConfirmation = true
-                    }) {
-                        HStack {
-                            Image(systemName: "arrow.counterclockwise.circle")
-                                .foregroundColor(.orange)
-                            Text("RESET GAME OVERRIDES")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.orange)
-                        }
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 30)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.orange.opacity(0.1))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(Color.orange.opacity(0.5), lineWidth: 2)
-                                )
-                        )
-                    }
-                    #if os(tvOS)
-                    .buttonStyle(TVMediaPlainButtonStyle())
-                    .tvOSDisableFocusEffect()
-                    #endif
-                    .retroSettingsRowFocus(cornerRadius: 8)
-                    .padding(.horizontal)
-                }
-
-                // Reset all global options — hidden in per-game scope (use "Reset Game Overrides" instead)
-                if effectiveMD5 == nil {
-                    Button(action: {
-                        state.showResetConfirmation = true
-                    }) {
-                        HStack {
-                            Image(systemName: "arrow.counterclockwise")
-                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                            Text("RESET ALL OPTIONS")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                        }
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 30)
-                        .frame(maxWidth: .infinity)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(
-                                    (themeManager.currentPalette.settingsCellBackground?.swiftUIColor ?? Color(themeManager.currentPalette.gameLibraryBackground))
-                                        .opacity(themeManager.currentPalette.dark ? 0.7 : 0.9)
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .strokeBorder(
-                                            LinearGradient(
-                                                gradient: Gradient(colors: [
-                                                    Color.red.opacity(themeManager.currentPalette.dark ? 0.7 : 0.5),
-                                                    themeManager.currentPalette.defaultTintColor.swiftUIColor
-                                                ]),
-                                                startPoint: .leading,
-                                                endPoint: .trailing
-                                            ),
-                                            lineWidth: 2
-                                        )
-                                )
-                        )
-                        .shadow(color: themeManager.currentPalette.defaultTintColor.swiftUIColor.opacity(0.3), radius: 5)
-                    }
-                    #if os(tvOS)
-                    .buttonStyle(TVMediaPlainButtonStyle())
-                    .tvOSDisableFocusEffect()
-                    #endif
-                    .retroSettingsRowFocus(cornerRadius: 8)
-                    .padding(.vertical, 20)
-                    .padding(.horizontal)
-                }
-            }
-            .padding(.bottom, 30)
-        }
-    }
-
-    // MARK: - Body
-
-    public var body: some View {
-        ZStack {
-            backgroundView
-            optionsListView
-        }
-        .navigationTitle(title)
-        .onAppear {
-            loadOptionValues()
-        }
-        .uiKitAlert(
-            "Reset All Options",
-            message: gameMD5 != nil
-                ? "Reset all \(title) global defaults to factory values? This affects core-wide defaults; per-game overrides will remain unchanged."
-                : "Are you sure you want to reset all options for \(title) to their default values?",
-            isPresented: $state.showResetConfirmation
-        ) {
-            UIAlertAction(title: "Reset", style: .destructive) { _ in
-                resetAllOptions()
-                state.showResetConfirmation = false
-            }
-
-            UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                state.showResetConfirmation = false
-            }
-        }
-        .uiKitAlert(
-            "Reset Game Overrides",
-            message: "Remove all per-game option overrides for this title? Core-global settings will be used instead.",
-            isPresented: $state.showResetGameOverridesConfirmation
-        ) {
-            UIAlertAction(title: "Reset", style: .destructive) { _ in
-                if let md5 = gameMD5 {
-                    coreClass.resetAllOptions(forMD5: md5)
-                    state.resetAllValues()
-                    loadOptionValues()
-                }
-                state.showResetGameOverridesConfirmation = false
-            }
-
-            UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                state.showResetGameOverridesConfirmation = false
-            }
-        }
-    }
-
-    // MARK: - Scope Picker
-
-    private var scopePickerView: some View {
-        #if os(tvOS)
-        HStack(spacing: 12) {
-            ScopePickerButton(title: "This Game", isSelected: perGameScope) {
-                guard !perGameScope else { return }
-                perGameScope = true
-            }
-            ScopePickerButton(title: "All Games", isSelected: !perGameScope) {
-                guard perGameScope else { return }
-                perGameScope = false
-            }
-        }
-        .padding(.horizontal, 16)
-        .onChange(of: perGameScope) { _ in
-            state.resetAllValues()
-            loadOptionValues()
-        }
-        #else
-        Picker("Scope", selection: $perGameScope) {
-            Text("This Game").tag(true)
-            Text("All Games").tag(false)
-        }
-        .pickerStyle(.segmented)
-        .padding(.horizontal, 16)
-        .onChange(of: perGameScope) { _ in
-            state.resetAllValues()
-            loadOptionValues()
-        }
-        #endif
-    }
-
-    // MARK: - Data Helpers
-
-    private func loadOptionValues() {
-        for group in groupedOptions {
-            for identifiableOption in group.options {
-                let value = getCurrentValue(for: identifiableOption.option)
-                if let value = value {
-                    state.optionValues[identifiableOption.option.key] = value
-                }
-            }
-        }
-    }
-
-    private func resetAllOptions() {
-        coreClass.resetAllOptions()
-        state.resetAllValues()
-        loadOptionValues()
-    }
-
-    private func getCurrentValue(for option: CoreOption) -> Any? {
-        let md5 = effectiveMD5
-        switch option {
-        case .bool(_, let defaultValue, _):
-            return coreClass.storedValueForOption(Bool.self, option.key, andMD5: md5) ?? defaultValue
-        case .string(_, let defaultValue, _):
-            return coreClass.storedValueForOption(String.self, option.key, andMD5: md5) ?? defaultValue
-        case .enumeration(_, _, let defaultValue, _):
-            return coreClass.storedValueForOption(Int.self, option.key, andMD5: md5) ?? defaultValue
-        case .range(_, _, let defaultValue, _):
-            return coreClass.storedValueForOption(Int.self, option.key, andMD5: md5) ?? defaultValue
-        case .rangef(_, _, let defaultValue, _):
-            return coreClass.storedValueForOption(Float.self, option.key, andMD5: md5) ?? defaultValue
-        case .multi(_, let values, _):
-            return coreClass.storedValueForOption(String.self, option.key, andMD5: md5) ?? values.first?.title
-        case .group(_, _):
-            return nil
-        @unknown default:
-            return nil
-        }
-    }
-
-    private func setValue(_ value: Any, for option: CoreOption) {
-        state.optionValues[option.key] = value
-        let md5 = effectiveMD5
-
-        switch value {
-        case let boolValue as Bool:
-            coreClass.setValue(boolValue, forOption: option, andMD5: md5)
-        case let stringValue as String:
-            coreClass.setValue(stringValue, forOption: option, andMD5: md5)
-        case let intValue as Int:
-            coreClass.setValue(intValue, forOption: option, andMD5: md5)
-        case let floatValue as Float:
-            coreClass.setValue(floatValue, forOption: option, andMD5: md5)
-        default:
-            WLOG("📱 Warning: Unhandled value type: \(type(of: value))")
-            break
-        }
-    }
-
-    private func resetOption(_ option: CoreOption) {
-        if let md5 = effectiveMD5 {
-            coreClass.resetOption(option, forMD5: md5)
-            let value = getCurrentValue(for: option)
-            state.optionValues[option.key] = value
-            state.selectedValues[option.key] = value
-        } else if let defaultValue = option.defaultValue {
-            setValue(defaultValue, for: option)
-            state.optionValues[option.key] = defaultValue
-            state.selectedValues[option.key] = defaultValue
-        }
-    }
-
-    /// Returns true if the option has a per-game override for the current `gameMD5`.
-    private func hasPerGameOverride(for option: CoreOption) -> Bool {
-        guard let md5 = gameMD5 else { return false }
-        return coreClass.hasPerGameOverride(for: option, md5: md5)
-    }
-
-    // MARK: - Option Row Builders
-
-    @ViewBuilder
-    private func optionView(for option: CoreOption) -> some View {
-        VStack(spacing: 2) {
-            switch option {
-            case let .bool(display, defaultValue, _):
-                boolOptionView(display: display, defaultValue: defaultValue, option: option)
-
-            case let .enumeration(display, values, defaultValue, _):
-                enumOptionView(display: display, values: values, defaultValue: defaultValue, option: option)
-
-            case let .range(display, range, defaultValue, _):
-                rangeOptionView(display: display, range: range, defaultValue: defaultValue, option: option)
-
-            case let .rangef(display, range, defaultValue, _):
-                rangefOptionView(display: display, range: range, defaultValue: defaultValue, option: option)
-
-            case let .multi(display, values, _):
-                multiOptionView(display: display, values: values, option: option)
-
-            case let .string(display, defaultValue, _):
-                stringOptionView(display: display, defaultValue: defaultValue, option: option)
-
-            case .group(_, _):
-                EmptyView()
-            }
-
-            // Per-game override badge (only shown in per-game scope)
-            if perGameScope && hasPerGameOverride(for: option) {
-                HStack {
-                    Image(systemName: "tag.fill")
-                        .font(.system(size: 9))
-                    Text("Game Override")
-                        .font(.system(size: 10, weight: .medium))
-                    Spacer()
-                }
-                .foregroundColor(.orange)
-                .padding(.horizontal, 4)
-                .padding(.bottom, 2)
-            }
-        }
-    }
-
-    // MARK: Bool
-
-    @ViewBuilder
-    private func boolOptionView(display: CoreOptionValueDisplay, defaultValue: Bool, option: CoreOption) -> some View {
-        #if os(tvOS)
-        CoreOptionFocusableRow(action: {
-            let current = state.optionValues[option.key] as? Bool ?? defaultValue
-            setValue(!current, for: option)
-        }) {
-            HStack {
-                optionLabel(title: display.title, description: display.description)
-                Spacer()
-                ThemedToggle(isOn: Binding(
-                    get: { state.optionValues[option.key] as? Bool ?? defaultValue },
-                    set: { setValue($0, for: option) }
-                )) {
-                    EmptyView()
-                }
-                .allowsHitTesting(false)
-            }
-        }
-        #else
-        HStack {
-            optionLabel(title: display.title, description: display.description)
-                .frame(minWidth: 150, maxWidth: .infinity, alignment: .leading)
-            Spacer()
-            ThemedToggle(isOn: Binding(
-                get: { state.optionValues[option.key] as? Bool ?? defaultValue },
-                set: { setValue($0, for: option) }
-            )) {
-                EmptyView()
-            }
-            Button(action: { resetOption(option) }) {
-                Image(systemName: "arrow.counterclockwise")
-                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                    .font(.system(size: 14))
-            }
-            .buttonStyle(PlainButtonStyle())
-            .padding(.leading, 8)
-        }
-        .frame(maxWidth: .infinity)
-        #endif
-    }
-
-    // MARK: Enumeration
-
-    @ViewBuilder
-    private func enumOptionView(display: CoreOptionValueDisplay, values: [CoreOptionEnumValue], defaultValue: Int, option: CoreOption) -> some View {
-        let selection = Binding(
-            get: { state.selectedValues[option.key] as? Int ?? state.optionValues[option.key] as? Int ?? defaultValue },
-            set: { newValue in
-                withAnimation {
-                    setValue(newValue, for: option)
-                    state.updateValue(newValue, forKey: option.key)
-                }
-            }
-        )
-
-        #if os(tvOS)
-        CoreOptionFocusableNavRow {
-            EnumerationSelectionList(values: values, selection: selection, title: display.title)
-        } label: {
-            HStack {
-                optionLabel(title: display.title, description: display.description)
-                Spacer()
-                CoreOptionValueBadge(text: values.first { $0.value == selection.wrappedValue }?.title ?? "")
-            }
-        }
-        #else
-        HStack {
-            NavigationLink {
-                EnumerationSelectionList(values: values, selection: selection, title: display.title)
-            } label: {
-                HStack {
-                    optionLabel(title: display.title, description: display.description)
-                        .frame(minWidth: 120, alignment: .leading)
-                    Spacer()
-                    Text(values.first { $0.value == selection.wrappedValue }?.title ?? "")
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                        .font(.system(size: 14))
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                        .font(.system(size: 14, weight: .bold))
-                }
-                .padding(.vertical, 4)
-            }
-            .buttonStyle(PlainButtonStyle())
-
-            Button(action: { resetOption(option) }) {
-                Image(systemName: "arrow.counterclockwise")
-                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                    .font(.system(size: 14))
-            }
-            .buttonStyle(PlainButtonStyle())
-            .padding(.leading, 8)
-        }
-        .frame(maxWidth: .infinity)
-        #endif
-    }
-
-    // MARK: Range (Int)
-
-    @ViewBuilder
-    private func rangeOptionView(display: CoreOptionValueDisplay, range: CoreOptionRange<Int>, defaultValue: Int, option: CoreOption) -> some View {
-        let currentValue = state.optionValues[option.key] as? Int ?? defaultValue
-
-        #if os(tvOS)
-        HStack(spacing: 12) {
-            CoreOptionStepper(systemName: "minus") {
-                let newVal = max(range.min, currentValue - 1)
-                setValue(newVal, for: option)
-            }
-
-            CoreOptionFocusableRow {
-                HStack {
-                    optionLabel(title: display.title, description: display.description)
-                    Spacer()
-                    CoreOptionValueBadge(text: "\(currentValue)")
-                }
-            }
-
-            CoreOptionStepper(systemName: "plus") {
-                let newVal = min(range.max, currentValue + 1)
-                setValue(newVal, for: option)
-            }
-        }
-        #else
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                optionLabel(title: display.title, description: display.description)
-                    .frame(minWidth: 180, alignment: .leading)
-                Spacer()
-                Text("\(currentValue)")
-                    .font(.headline)
-                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                Button(action: { resetOption(option) }) {
-                    Image(systemName: "arrow.counterclockwise")
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                        .font(.system(size: 14))
-                }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.leading, 8)
-            }
-
-            RetroWaveSlider(
-                value: Binding(
-                    get: { Double(currentValue) },
-                    set: { setValue(Int($0), for: option) }
-                ),
-                in: Double(range.min)...Double(range.max),
-                step: 1.0
-            )
-
-            HStack {
-                Text("\(range.min)")
-                    .font(.caption)
-                    .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                Spacer()
-                Text("\(range.max)")
-                    .font(.caption)
-                    .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        #endif
-    }
-
-    // MARK: Range (Float)
-
-    @ViewBuilder
-    private func rangefOptionView(display: CoreOptionValueDisplay, range: CoreOptionRange<Float>, defaultValue: Float, option: CoreOption) -> some View {
-        let currentValue = state.optionValues[option.key] as? Float ?? defaultValue
-
-        #if os(tvOS)
-        HStack(spacing: 12) {
-            CoreOptionStepper(systemName: "minus") {
-                let newVal = max(range.min, currentValue - 0.1)
-                setValue(newVal, for: option)
-            }
-
-            CoreOptionFocusableRow {
-                HStack {
-                    optionLabel(title: display.title, description: display.description)
-                    Spacer()
-                    CoreOptionValueBadge(text: String(format: "%.1f", currentValue))
-                }
-            }
-
-            CoreOptionStepper(systemName: "plus") {
-                let newVal = min(range.max, currentValue + 0.1)
-                setValue(newVal, for: option)
-            }
-        }
-        #else
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                optionLabel(title: display.title, description: display.description)
-                    .frame(minWidth: 120, alignment: .leading)
-                Spacer()
-                Text(String(format: "%.1f", currentValue))
-                    .font(.headline)
-                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                Button(action: { resetOption(option) }) {
-                    Image(systemName: "arrow.counterclockwise")
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                        .font(.system(size: 14))
-                }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.leading, 8)
-            }
-
-            RetroWaveSlider(
-                value: Binding(
-                    get: { Double(currentValue) },
-                    set: { setValue(Float($0), for: option) }
-                ),
-                in: Double(range.min)...Double(range.max),
-                step: 0.1
-            )
-
-            HStack {
-                Text(String(format: "%.1f", range.min))
-                    .font(.caption)
-                    .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                Spacer()
-                Text(String(format: "%.1f", range.max))
-                    .font(.caption)
-                    .foregroundColor(themeManager.currentPalette.settingsHeaderText?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor)
-            }
-        }
-        .frame(maxWidth: .infinity)
-        #endif
-    }
-
-    // MARK: Multi
-
-    @ViewBuilder
-    private func multiOptionView(display: CoreOptionValueDisplay, values: [CoreOptionMultiValue], option: CoreOption) -> some View {
-        let selection = Binding(
-            get: { state.selectedValues[option.key] as? String ?? state.optionValues[option.key] as? String ?? values.first?.title ?? "" },
-            set: { newValue in
-                withAnimation {
-                    setValue(newValue, for: option)
-                    state.updateValue(newValue, forKey: option.key)
-                }
-            }
-        )
-
-        #if os(tvOS)
-        CoreOptionFocusableNavRow {
-            MultiSelectionList(values: values, selection: selection, title: display.title)
-        } label: {
-            HStack {
-                optionLabel(title: display.title, description: display.description)
-                Spacer()
-                CoreOptionValueBadge(text: selection.wrappedValue)
-            }
-        }
-        #else
-        HStack {
-            NavigationLink {
-                MultiSelectionList(values: values, selection: selection, title: display.title)
-            } label: {
-                VStack(alignment: .leading) {
-                    Text(display.title)
-                        .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    if let description = display.description {
-                        Text(description)
-                            .font(.caption)
-                            .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
-                    }
-                    Text(selection.wrappedValue)
-                        .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
-                }
-            }
-            Spacer()
-            Button(action: { resetOption(option) }) {
-                Image(systemName: "arrow.counterclockwise")
-                    .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-            }
-            .buttonStyle(.borderless)
-        }
-        #endif
-    }
-
-    // MARK: String
-
-    @ViewBuilder
-    private func stringOptionView(display: CoreOptionValueDisplay, defaultValue: String, option: CoreOption) -> some View {
-        #if os(tvOS)
-        CoreOptionFocusableRow {
-            HStack {
-                optionLabel(title: display.title, description: display.description)
-                Spacer()
-                TextField("Value", text: Binding(
-                    get: { state.optionValues[option.key] as? String ?? defaultValue },
-                    set: { setValue($0, for: option) }
-                ))
-                .frame(maxWidth: 300)
-                .multilineTextAlignment(.trailing)
-            }
-        }
-        #else
-        VStack(alignment: .leading) {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(display.title)
-                        .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                    if let description = display.description {
-                        Text(description)
-                            .font(.caption)
-                            .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor))
-                    }
-                }
-                Spacer()
-                Button(action: { resetOption(option) }) {
-                    Image(systemName: "arrow.counterclockwise")
-                        .foregroundColor(themeManager.currentPalette.defaultTintColor.swiftUIColor)
-                }
-                .buttonStyle(.borderless)
-            }
-
-            TextField("Value", text: Binding(
-                get: { state.optionValues[option.key] as? String ?? defaultValue },
-                set: { setValue($0, for: option) }
-            ))
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-        }
-        #endif
-    }
-
-    // MARK: - Shared Label Builder
-
-    @ViewBuilder
-    private func optionLabel(title: String, description: String?) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                #if os(tvOS)
-                .font(.system(size: 20, weight: .medium))
-                #else
-                .font(.system(size: 16, weight: .medium))
-                #endif
-                .foregroundColor(themeManager.currentPalette.settingsCellText?.swiftUIColor ?? themeManager.currentPalette.gameLibraryText.swiftUIColor)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if let description = description {
-                Text(description)
-                    #if os(tvOS)
-                    .font(.system(size: 15))
-                    #else
-                    .font(.caption)
-                    #endif
-                    .foregroundColor((themeManager.currentPalette.settingsCellTextDetail?.swiftUIColor ?? themeManager.currentPalette.defaultTintColor.swiftUIColor).opacity(0.8))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-    }
-}
-
-// MARK: - Selection List Views
-
-private struct EnumerationSelectionList: View {
-    let values: [CoreOptionEnumValue]
-    @Binding var selection: Int
     let title: String
-    @State private var selectedValue: Int
+    let choices: [Choice]
+    let onSelect: (Int) -> Void
+    @State private var selectedIndex: Int
     @ObservedObject private var themeManager = ThemeManager.shared
 
-    init(values: [CoreOptionEnumValue], selection: Binding<Int>, title: String) {
-        self.values = values
-        self._selection = selection
+    init(title: String, choices: [Choice], selectedIndex: Int, onSelect: @escaping (Int) -> Void) {
         self.title = title
-        self._selectedValue = State(initialValue: selection.wrappedValue)
+        self.choices = choices
+        self.onSelect = onSelect
+        self._selectedIndex = State(initialValue: selectedIndex)
     }
 
     var body: some View {
-        #if os(tvOS)
-        ZStack {
-            Color(themeManager.currentPalette.gameLibraryBackground)
-                .edgesIgnoringSafeArea(.all)
-
-            ScrollView {
-                VStack(spacing: 4) {
-                    ForEach(values, id: \.value) { value in
-                        SelectionRowButton(
-                            title: value.title,
-                            description: value.description,
-                            isSelected: value.value == selectedValue
-                        ) {
-                            withAnimation {
-                                selectedValue = value.value
-                                selection = value.value
-                            }
-                        }
-                    }
-                }
-                .padding()
-            }
-        }
-        .navigationTitle(title)
-        .onAppear { selectedValue = selection }
-        .onChange(of: selection) { newValue in selectedValue = newValue }
-        #else
-        List {
-            ForEach(values, id: \.value) { value in
-                Button {
-                    withAnimation {
-                        selectedValue = value.value
-                        selection = value.value
-                    }
-                } label: {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(value.title)
-                            if let description = value.description {
-                                Text(description)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        Spacer()
-                        if value.value == selectedValue {
-                            Image(systemName: "checkmark")
-                        }
+        ScrollView {
+            VStack(spacing: 4) {
+                ForEach(Array(choices.enumerated()), id: \.offset) { index, choice in
+                    CoreOptionChoiceRow(choice: choice, isSelected: index == selectedIndex) {
+                        selectedIndex = index
+                        onSelect(index)
                     }
                 }
             }
+            .padding(.horizontal, 60)
+            .padding(.vertical, 30)
         }
+        .background(Color(themeManager.currentPalette.gameLibraryBackground).ignoresSafeArea())
         .navigationTitle(title)
-        .onAppear { selectedValue = selection }
-        .onChange(of: selection) { newValue in selectedValue = newValue }
-        #endif
     }
 }
 
-private struct MultiSelectionList: View {
-    let values: [CoreOptionMultiValue]
-    @Binding var selection: String
-    let title: String
-    @ObservedObject private var themeManager = ThemeManager.shared
-
-    var body: some View {
-        #if os(tvOS)
-        ZStack {
-            Color(themeManager.currentPalette.gameLibraryBackground)
-                .edgesIgnoringSafeArea(.all)
-
-            ScrollView {
-                VStack(spacing: 4) {
-                    ForEach(values, id: \.title) { value in
-                        SelectionRowButton(
-                            title: value.title,
-                            description: value.description,
-                            isSelected: value.title == selection
-                        ) {
-                            withAnimation { selection = value.title }
-                        }
-                    }
-                }
-                .padding()
-            }
-        }
-        .navigationTitle(title)
-        #else
-        List {
-            ForEach(values, id: \.title) { value in
-                Button {
-                    withAnimation { selection = value.title }
-                } label: {
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(value.title)
-                            if let description = value.description {
-                                Text(description)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        Spacer()
-                        if value.title == selection {
-                            Image(systemName: "checkmark")
-                        }
-                    }
-                }
-            }
-        }
-        .navigationTitle(title)
-        #endif
-    }
-}
-
-// MARK: - tvOS Selection Row
-
-#if os(tvOS)
-/// A focusable selection row for enum/multi lists on tvOS with retrowave focus styling
-/// and a checkmark indicator for the currently selected value.
-private struct SelectionRowButton: View {
-    let title: String
-    let description: String?
+/// A focusable choice with a checkmark on the selected one.
+private struct CoreOptionChoiceRow: View {
+    let choice: CoreOptionChoiceList.Choice
     let isSelected: Bool
     let action: () -> Void
     @FocusState private var isFocused: Bool
@@ -1187,13 +1194,15 @@ private struct SelectionRowButton: View {
         Button(action: action) {
             HStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(title)
-                        .font(.system(size: 20, weight: .medium))
+                    Text(choice.title)
+                        .font(.system(size: 22, weight: .medium))
                         .foregroundStyle(isFocused ? .white : Color.primary)
 
-                    if let description = description {
-                        Text(description)
-                            .font(.system(size: 15))
+                    /// Libretro choices carry their raw value as the detail; it
+                    /// is only worth showing when it says something the title doesn't.
+                    if let detail = choice.detail, !detail.isEmpty, detail != choice.title {
+                        Text(detail)
+                            .font(.system(size: 17))
                             .foregroundStyle(isFocused ? Color.white.opacity(0.8) : Color.secondary)
                     }
                 }
@@ -1203,9 +1212,7 @@ private struct SelectionRowButton: View {
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 22))
-                        .foregroundStyle(
-                            LinearGradient(colors: [.retroPink, .retroBlue], startPoint: .topLeading, endPoint: .bottomTrailing)
-                        )
+                        .foregroundStyle(CoreOptionsGradient.accent)
                 }
             }
             .padding(.vertical, 14)
@@ -1214,26 +1221,7 @@ private struct SelectionRowButton: View {
         .focused($isFocused)
         .buttonStyle(TVMediaPlainButtonStyle())
         .tvOSDisableFocusEffect()
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(
-                    isFocused
-                        ? LinearGradient(colors: [Color.retroPink.opacity(0.12), Color.retroBlue.opacity(0.08)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                        : LinearGradient(colors: [Color.white.opacity(isSelected ? 0.04 : 0.02), Color.white.opacity(0.01)], startPoint: .top, endPoint: .bottom)
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(
-                    isFocused
-                        ? LinearGradient(colors: [Color.retroPink.opacity(0.7), Color.retroBlue.opacity(0.5)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                        : LinearGradient(colors: [Color.white.opacity(isSelected ? 0.1 : 0.04), Color.white.opacity(0.02)], startPoint: .top, endPoint: .bottom),
-                    lineWidth: isFocused ? 2 : (isSelected ? 1.5 : 1)
-                )
-        )
-        .shadow(color: isFocused ? Color.retroPink.opacity(0.25) : .clear, radius: 12, x: 0, y: 4)
-        .scaleEffect(isFocused ? 1.02 : 1.0)
-        .animation(.easeInOut(duration: 0.15), value: isFocused)
+        .coreOptionFocusChrome(isFocused: isFocused, isSelected: isSelected)
     }
 }
 #endif

@@ -45,6 +45,8 @@ final class PauseTileMenuViewModel: ObservableObject {
     private(set) var descriptionsByTileID: [String: String] = [:]
     static let hardwareSwitchTilePrefix = "hardwareSwitch_"
     static let hardwareMomentaryTilePrefix = "hardwareMomentary_"
+    /// Section ID prefix for the per-category core option sections.
+    static let coreOptionSectionPrefix = "coreOptions_"
     /// Cache of route -> visible sections to support global search.
     private var sectionsByRoute: [PauseTileMenuRoute: [PauseMenuTileSection]] = [:]
 
@@ -654,10 +656,30 @@ final class PauseTileMenuViewModel: ObservableObject {
             controlsTiles.append(contentsOf: systemTiles)
         }
 
+        /// One section per option category the core declares, shown under the
+        /// CORE section on the core route.
+        var coreOptionSections: [PauseMenuTileSection] = []
         if let coreClass = type(of: emulatorVC.core) as? CoreOptional.Type {
-            coreTiles += CoreOptionTileProvider.tiles(from: coreClass.options, coreClass: coreClass, md5Scope: coreOptionsMD5)
-            if rewindQuickControlAdded {
-                coreTiles.removeAll { $0.id.hasPrefix(CoreOptionTileProvider.idPrefix) && $0.label.localizedCaseInsensitiveContains("rewind") }
+            let options = coreClass.options
+            if !options.isEmpty {
+                /// Tiles the quick-settings row already offers aren't repeated here.
+                let isDuplicateOfQuickControl: (PauseMenuTile) -> Bool = { tile in
+                    rewindQuickControlAdded && tile.label.localizedCaseInsensitiveContains("rewind")
+                }
+                let grouped = CoreOptionTileProvider.groupedTiles(from: options, coreClass: coreClass, md5Scope: coreOptionsMD5)
+                /// The list gateway leads: with dozens of options it is the
+                /// practical way in, and it used to sit after all of them.
+                coreTiles.insert(CoreOptionTileProvider.coreSettingsTile, at: 0)
+                coreTiles += grouped.ungrouped.filter { !isDuplicateOfQuickControl($0) }
+                coreOptionSections = grouped.groups.enumerated().compactMap { index, group in
+                    let tiles = group.tiles.filter { !isDuplicateOfQuickControl($0) }
+                    guard !tiles.isEmpty else { return nil }
+                    return PauseMenuTileSection(
+                        id: "\(Self.coreOptionSectionPrefix)\(index)",
+                        title: group.title.uppercased(),
+                        tiles: tiles
+                    )
+                }
             }
         }
 
@@ -695,6 +717,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         if !coreTiles.isEmpty {
             built.append(PauseMenuTileSection(id: "core", title: String(localized: "CORE"), tiles: coreTiles))
         }
+        built.append(contentsOf: coreOptionSections)
 
         if !controlsTiles.isEmpty {
             built.append(PauseMenuTileSection(id: "controlsData", title: String(localized: "CONTROLS"), tiles: controlsTiles))
@@ -766,7 +789,9 @@ final class PauseTileMenuViewModel: ObservableObject {
             return [PauseMenuTileSection(id: "recording_route", title: String(localized: "RECORDING"), tiles: tiles)]
         case .core:
             let core = rootSections.first(where: { $0.id == "core" })
-            return core.map { [PauseMenuTileSection(id: "core_route", title: String(localized: "CORE"), tiles: $0.tiles)] } ?? []
+            let optionCategories = rootSections.filter { $0.id.hasPrefix(Self.coreOptionSectionPrefix) }
+            return (core.map { [PauseMenuTileSection(id: "core_route", title: String(localized: "CORE"), tiles: $0.tiles)] } ?? [])
+                + optionCategories
         case .skins:
             if !emulatorVC.core.supportsSkins {
                 let tiles: [PauseMenuTile] = [

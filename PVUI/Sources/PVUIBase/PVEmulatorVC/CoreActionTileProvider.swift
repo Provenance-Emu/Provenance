@@ -118,15 +118,60 @@ public struct CoreOptionTileProvider {
         var result = interactiveTiles(from: options, coreClass: coreClass, md5Scope: md5Scope, counter: &counter)
 
         // Always include a "Core Settings" gateway so users can reach range/string options.
-        result.append(PauseMenuTile(
+        result.append(coreSettingsTile)
+
+        return result
+    }
+
+    /// Gateway tile that opens the full, searchable options list.
+    static var coreSettingsTile: PauseMenuTile {
+        PauseMenuTile(
             id: coreSettingsTileID,
             icon: "gearshape.fill",
             label: String(localized: "Core Settings"),
+            description: String(localized: "Every option for this core in a searchable, grouped list."),
             colorKey: .blue,
             dismissOnTap: false
-        ))
+        )
+    }
 
-        return result
+    /// Option tiles for one category the core declares.
+    public struct TileGroup: Equatable, Sendable {
+        public let title: String
+        public let tiles: [PauseMenuTile]
+    }
+
+    /// Option tiles split the way the core organises them.
+    public struct GroupedTiles: Equatable, Sendable {
+        /// Tiles for options outside any category.
+        public let ungrouped: [PauseMenuTile]
+        /// One entry per category, in the core's order. Categories whose
+        /// options have no tile representation (range/string) are omitted.
+        public let groups: [TileGroup]
+    }
+
+    /// Same tiles as ``tiles(from:coreClass:md5Scope:)`` minus the gateway,
+    /// kept in their categories instead of flattened.
+    ///
+    /// A large libretro core declares 80+ options; as one undivided grid of
+    /// near-identical tiles that is unusable. Tile IDs are assigned in the same
+    /// traversal order as the flat list, so ``findOption(atIndex:key:in:)``
+    /// resolves them identically.
+    public static func groupedTiles(from options: [CoreOption], coreClass: CoreOptional.Type, md5Scope: String?) -> GroupedTiles {
+        var counter = 0
+        var ungrouped: [PauseMenuTile] = []
+        var groups: [TileGroup] = []
+        for option in options {
+            if case let .group(display, subOptions) = option {
+                let tiles = interactiveTiles(from: subOptions, coreClass: coreClass, md5Scope: md5Scope, counter: &counter)
+                if !tiles.isEmpty {
+                    groups.append(TileGroup(title: display.title, tiles: tiles))
+                }
+            } else {
+                ungrouped += interactiveTiles(from: [option], coreClass: coreClass, md5Scope: md5Scope, counter: &counter)
+            }
+        }
+        return GroupedTiles(ungrouped: ungrouped, groups: groups)
     }
 
     /// Recursively extracts boolean and enumeration options and creates interactive tiles.

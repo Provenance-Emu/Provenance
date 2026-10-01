@@ -65,6 +65,31 @@ enum PauseTilePanelMetrics {
     static let desktopMaxWidth: CGFloat = 1100
 }
 
+/// Type sizes for the pause grid.
+///
+/// Cells carry option names and their current values, so these are sized to be
+/// read at arm's length on a phone and across a room on tvOS rather than to
+/// keep the grid as dense as possible.
+enum PauseTileMetrics {
+    #if os(tvOS)
+    static let iconSize: CGFloat = 30
+    static let labelSize: CGFloat = 16
+    static let badgeSize: CGFloat = 13
+    static let sectionTitleSize: CGFloat = 16
+    static let infoTextSize: CGFloat = 18
+    #else
+    static let iconSize: CGFloat = 20
+    static let labelSize: CGFloat = 11.5
+    static let badgeSize: CGFloat = 9.5
+    static let sectionTitleSize: CGFloat = 11
+    static let infoTextSize: CGFloat = 12
+    #endif
+    /// Long option names shrink this far before truncating.
+    static let labelMinimumScale: CGFloat = 0.8
+    /// Keeps a full-width value badge clear of the cell's leading edge.
+    static let badgeLeadingInset: CGFloat = 8
+}
+
 // MARK: - PauseTileMenuView
 
 // swiftlint:disable type_body_length
@@ -156,7 +181,7 @@ struct PauseTileMenuView: View {
     @Default(.mouseInputSource) private var mouseInputSource
     @Default(.mouseSensitivity) private var mouseSensitivity
     /// Whether core option writes should be scoped to the current game hash (if available).
-    @AppStorage("PauseTileMenu.coreOptionsPerGame") private var coreOptionsPerGame = true
+    @AppStorage(CoreOptionsScope.perGameDefaultsKey) private var coreOptionsPerGame = true
     /// Easy kill-switch for the deferred restart workflow.
     @AppStorage("PauseTileMenu.deferredRestartPromptEnabled") private var deferredRestartPromptEnabled = true
     @AppStorage("PauseTileMenu.skinScope") private var skinScopeRaw = SkinScope.game.rawValue
@@ -1225,23 +1250,19 @@ struct PauseTileMenuView: View {
         let opacity: Double = tile.isEnabled ? 1.0 : 0.4
         let isFocused = focusedTileID == tile.id
 
-        #if os(tvOS)
-        let iconSize: CGFloat = 30
-        let labelSize: CGFloat = 13
-        let badgeSize: CGFloat = 10
-        #else
-        let iconSize: CGFloat = 20
-        let labelSize: CGFloat = 10
-        let badgeSize: CGFloat = 8
-        #endif
+        let iconSize = PauseTileMetrics.iconSize
         let cornerRadius = RetroPauseChrome.menuCellCornerRadius()
 
         Button {
             handle(tile)
         } label: {
-            GeometryReader { geo in
-                let side = geo.size.width
-                ZStack(alignment: .topTrailing) {
+            /// A clear square sized by the grid column, with the content laid
+            /// over it. This replaces a `GeometryReader` per cell, which cost a
+            /// second layout pass for each one — dozens on a big core's
+            /// options route.
+            Color.clear
+                .aspectRatio(1, contentMode: .fit)
+                .overlay {
                     VStack(spacing: 4) {
                         Spacer(minLength: 0)
                         Image(systemName: tile.icon)
@@ -1250,47 +1271,50 @@ struct PauseTileMenuView: View {
                             .shadow(color: accentColor.opacity(isFocused ? 1.0 : 0.7), radius: isFocused ? 10 : 5)
 
                         Text(tile.label)
-                            .font(.system(size: labelSize, weight: isFocused ? .bold : .semibold))
+                            .font(.system(size: PauseTileMetrics.labelSize, weight: isFocused ? .bold : .semibold))
                             .foregroundColor(.white)
                             .lineLimit(2)
                             .multilineTextAlignment(.center)
-                            .minimumScaleFactor(0.75)
+                            .minimumScaleFactor(PauseTileMetrics.labelMinimumScale)
                             .padding(.horizontal, 4)
                         Spacer(minLength: 0)
                     }
-                    .frame(width: side, height: side)
-
+                }
+                .overlay(alignment: .topTrailing) {
                     if let badge = tile.badge {
+                        /// One line, truncated in the middle: option values are
+                        /// often long ("1920x1088 (4x)") and used to spill past
+                        /// the cell into its neighbours.
                         Text(badge)
-                            .font(.system(size: badgeSize, weight: .bold))
+                            .font(.system(size: PauseTileMetrics.badgeSize, weight: .bold))
                             .foregroundColor(.black)
-                            .padding(.horizontal, 4)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                            .padding(.horizontal, 5)
                             .padding(.vertical, 2)
                             .background(accentColor)
                             .clipShape(Capsule())
+                            .padding(.leading, PauseTileMetrics.badgeLeadingInset)
                             .offset(x: 4, y: -4)
                     }
                 }
-                .frame(width: side, height: side)
-            }
-            .aspectRatio(1, contentMode: .fit)
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(accentColor.opacity(isFocused ? RetroPauseChrome.menuCellFillOpacityFocused : RetroPauseChrome.menuCellFillOpacityUnfocused))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .strokeBorder(
-                                accentColor.opacity(isFocused ? RetroPauseChrome.menuCellStrokeOpacityFocused : RetroPauseChrome.menuCellStrokeOpacityUnfocused),
-                                lineWidth: isFocused ? RetroPauseChrome.menuCellStrokeWidthFocused : RetroPauseChrome.menuCellStrokeWidthUnfocused
-                            )
-                    )
-            )
-            .shadow(
-                color: isFocused ? accentColor.opacity(RetroPauseChrome.menuCellFocusShadowOpacity) : .clear,
-                radius: RetroPauseChrome.menuCellFocusShadowRadius,
-                x: 0,
-                y: 3
-            )
+                .background(
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .fill(accentColor.opacity(isFocused ? RetroPauseChrome.menuCellFillOpacityFocused : RetroPauseChrome.menuCellFillOpacityUnfocused))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .strokeBorder(
+                                    accentColor.opacity(isFocused ? RetroPauseChrome.menuCellStrokeOpacityFocused : RetroPauseChrome.menuCellStrokeOpacityUnfocused),
+                                    lineWidth: isFocused ? RetroPauseChrome.menuCellStrokeWidthFocused : RetroPauseChrome.menuCellStrokeWidthUnfocused
+                                )
+                        )
+                )
+                .shadow(
+                    color: isFocused ? accentColor.opacity(RetroPauseChrome.menuCellFocusShadowOpacity) : .clear,
+                    radius: RetroPauseChrome.menuCellFocusShadowRadius,
+                    x: 0,
+                    y: 3
+                )
         }
         .buttonStyle(TileButtonStyle(isFocused: isFocused))
         .opacity(opacity)
@@ -1329,9 +1353,10 @@ struct PauseTileMenuView: View {
         return VStack(alignment: .leading, spacing: 6) {
             if let title = section.title {
                 Text(title)
-                    .font(.system(size: tvOSAdjusted(9, tvOS: 13), weight: .heavy))
-                    .foregroundColor(.white.opacity(0.45))
+                    .font(.system(size: PauseTileMetrics.sectionTitleSize, weight: .heavy))
+                    .foregroundColor(.white.opacity(0.6))
                     .tracking(tvOSAdjusted(1.5, tvOS: 2.5))
+                    .lineLimit(1)
                     .padding(.horizontal, 2)
             }
             #if os(tvOS)
@@ -2508,11 +2533,11 @@ struct PauseTileMenuView: View {
                     .background(Color.white.opacity(0.15))
                 HStack(spacing: 6) {
                     Image(systemName: "info.circle")
-                        .font(.system(size: tvOSAdjusted(10, tvOS: 14)))
+                        .font(.system(size: PauseTileMetrics.infoTextSize))
                         .foregroundColor(.white.opacity(0.5))
                     Text(text)
-                        .font(.system(size: tvOSAdjusted(10, tvOS: 14), weight: .regular, design: .rounded))
-                        .foregroundColor(.white.opacity(0.7))
+                        .font(.system(size: PauseTileMetrics.infoTextSize, weight: .regular, design: .rounded))
+                        .foregroundColor(.white.opacity(0.8))
                         .lineLimit(3)
                         .fixedSize(horizontal: false, vertical: true)
                 }
