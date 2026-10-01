@@ -1819,9 +1819,14 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        // PPSSPP provides and renders to its own MTKView (managed by the core).
-        // Avoid running our texture update/draw path to prevent conflicts and useless errors.
-        if let coreId = emulatorCore.coreIdentifier?.lowercased(), coreId.contains("ppsspp") {
+        // The native PPSSPP core (and the thick RetroArch wrapper) present on their own
+        // surface, so skip our texture update/draw path for them. The thin libretro
+        // PPSSPP ("ppsspp.libretro.framework") is different: it renders via Vulkan and
+        // hands every frame to this presenter (didRenderVulkanFrameWithMTLTexture), so
+        // skipping it here leaves the screen black while audio plays. Only those
+        // frontend-presented cores report rendersToVulkan.
+        if let coreId = emulatorCore.coreIdentifier?.lowercased(), coreId.contains("ppsspp"),
+           !emulatorCore.rendersToVulkan {
             return
         }
 
