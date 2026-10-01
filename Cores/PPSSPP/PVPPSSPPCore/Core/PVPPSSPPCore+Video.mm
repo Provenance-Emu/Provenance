@@ -885,6 +885,14 @@ static bool threadStopped = false;
             } else {
                 NativeUpdate();
                 NativeRender(graphicsContext);
+                // One PSP frame has run on this thread (the same thread that executes the
+                // PSP CPU), so guest RAM is quiescent here. This is the only per-frame hook:
+                // `skipEmulationLoop` is set, so PVEmulatorCore never calls `executeFrame`.
+                // Gate on PSP_IsInited() so we neither tick nor read RAM while booting/quitting.
+                void (^frameHandler)(void) = self.frameCompletedHandler;
+                if (frameHandler != nil && PSP_IsInited()) {
+                    frameHandler();
+                }
             }
 		}
 		ILOG(@"runVM: Emulation thread shutting down\n");

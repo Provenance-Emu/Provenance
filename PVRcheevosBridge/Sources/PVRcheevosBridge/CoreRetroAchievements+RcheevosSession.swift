@@ -35,10 +35,28 @@ import PVRcheevos
 
 // MARK: - Region requirement
 
+/// Implemented by cores that expose their memory map to rcheevos.
+///
+/// A core MUST conform to this protocol (not merely declare a method named
+/// `rcheevosRegions()`): the default below lives in a protocol extension and is
+/// not a `CoreRetroAchievements` requirement, so Swift binds calls made from
+/// this module's extension to the empty default at compile time. Conforming
+/// here makes the call dynamically dispatched to the core's implementation.
+public protocol RcheevosRegionProviding: AnyObject {
+    func rcheevosRegions() -> [RcheevosRegion]
+}
+
 public extension CoreRetroAchievements where Self: NSObject {
-    /// Override this to expose your core's memory map to rcheevos. Default
-    /// returns an empty list, which leaves achievements off for that core.
+    /// Default returns an empty list, which leaves achievements off for that core.
+    /// Cores override this by conforming to `RcheevosRegionProviding`.
     func rcheevosRegions() -> [RcheevosRegion] { [] }
+}
+
+private extension CoreRetroAchievements where Self: NSObject {
+    /// Regions from the core's `RcheevosRegionProviding` conformance, if any.
+    func resolvedRcheevosRegions() -> [RcheevosRegion] {
+        (self as? any RcheevosRegionProviding)?.rcheevosRegions() ?? rcheevosRegions()
+    }
 }
 
 // MARK: - Adapter (private state)
@@ -108,7 +126,7 @@ public extension CoreRetroAchievements where Self: NSObject {
         // [CHEEVOS-DIAG] Log entry — proves prepareAchievements got called and with what hash.
         ILOG("[CHEEVOS-DIAG] prepareAchievements ENTER core=\(type(of: self)) gameHash=\(gameHash) hardcore=\(rcheevosBridgeAdapter.hardcoreMode)")
 
-        let regions = rcheevosRegions()
+        let regions = resolvedRcheevosRegions()
         // [CHEEVOS-DIAG] Log region count immediately so we know if the core actually exposed memory.
         ILOG("[CHEEVOS-DIAG] prepareAchievements regions.count=\(regions.count) for core=\(type(of: self))")
         guard !regions.isEmpty else {
@@ -195,7 +213,7 @@ public extension CoreRetroAchievements where Self: NSObject {
            !adapter.retryInFlight,
            adapter.tickCount &- adapter.lastRegionRetryTick >= 60 {
             adapter.lastRegionRetryTick = adapter.tickCount
-            let regions = rcheevosRegions()
+            let regions = resolvedRcheevosRegions()
             if !regions.isEmpty {
                 guard let hash = adapter.pendingGameHash else { return }
                 adapter.retryInFlight = true

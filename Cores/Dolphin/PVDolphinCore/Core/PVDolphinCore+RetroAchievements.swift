@@ -18,7 +18,7 @@ import PVCoreBridge
 import PVRcheevos
 import PVRcheevosBridge
 
-extension PVDolphinCore: CoreRetroAchievements {
+extension PVDolphinCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         var regions: [RcheevosRegion] = []

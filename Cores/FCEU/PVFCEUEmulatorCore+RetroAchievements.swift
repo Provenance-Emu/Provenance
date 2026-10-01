@@ -20,7 +20,7 @@ import PVLogging
 import PVRcheevos
 import PVRcheevosBridge
 
-extension PVFCEUEmulatorCore: CoreRetroAchievements {
+extension PVFCEUEmulatorCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         let fceuBridge = bridge as? PVFCEUEmulatorCoreBridge

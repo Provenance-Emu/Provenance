@@ -19,7 +19,7 @@ import PVRcheevos
 import PVRcheevosBridge
 import PVTGBDualBridge
 
-extension PVTGBDualCore: CoreRetroAchievements {
+extension PVTGBDualCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         var regions: [RcheevosRegion] = []

@@ -17,7 +17,7 @@ import PVProSystemBridge
 import PVRcheevos
 import PVRcheevosBridge
 
-extension PVProSystemCore: CoreRetroAchievements {
+extension PVProSystemCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         guard let ptr = _bridge.systemRAMPtr else { return [] }

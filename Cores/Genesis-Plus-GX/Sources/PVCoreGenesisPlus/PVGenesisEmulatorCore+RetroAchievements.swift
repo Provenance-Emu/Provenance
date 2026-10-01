@@ -23,7 +23,7 @@ import PVCoreGenesisPlusBridge
 import PVRcheevos
 import PVRcheevosBridge
 
-extension PVCoreGenesisPlus: CoreRetroAchievements {
+extension PVCoreGenesisPlus: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         guard let ptr = _bridge.systemRAMPtr else { return [] }

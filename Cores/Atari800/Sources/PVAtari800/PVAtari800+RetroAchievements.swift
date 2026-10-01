@@ -17,7 +17,7 @@ import PVAtari800Bridge
 import PVRcheevos
 import PVRcheevosBridge
 
-extension PVAtari800: CoreRetroAchievements {
+extension PVAtari800: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         guard let ptr = _bridge.systemRAMPtr else { return [] }

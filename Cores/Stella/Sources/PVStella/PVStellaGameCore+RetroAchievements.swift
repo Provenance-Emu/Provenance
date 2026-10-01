@@ -17,7 +17,7 @@ import PVRcheevos
 import PVRcheevosBridge
 import PVStellaBridge
 
-extension PVStellaGameCore: CoreRetroAchievements {
+extension PVStellaGameCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         guard let ptr = _bridge.stellaSystemRAMPtr else {

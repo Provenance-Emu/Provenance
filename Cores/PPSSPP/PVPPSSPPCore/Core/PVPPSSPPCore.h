@@ -89,6 +89,10 @@ typedef enum PVJaguarButton: NSInteger PVJaguarButton;
 @property (nonatomic, assign) bool isViewReady;
 @property (nonatomic, assign) bool isGFXReady;
 @property (nonatomic, assign) int8_t buttonPref;
+/// Invoked on the emulation thread after each PSP frame has run (while the PSP is initialised
+/// and not paused). Used to drive the RetroAchievements per-frame tick, because this core runs
+/// its own loop and PVEmulatorCore's `executeFrame` is never called.
+@property (nonatomic, copy, nullable) void (^frameCompletedHandler)(void);
 - (void) runVM;
 - (void) stopVM:(bool)deinitViews;
 - (void) setupVideo;

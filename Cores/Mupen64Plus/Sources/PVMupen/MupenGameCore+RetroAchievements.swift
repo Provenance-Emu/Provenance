@@ -20,7 +20,7 @@ import PVMupen64PlusBridge
 import PVRcheevos
 import PVRcheevosBridge
 
-extension MupenGameCore: CoreRetroAchievements {
+extension MupenGameCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         var rdramSize: UInt = 0

@@ -19,7 +19,7 @@ import PVPicoDriveBridge
 import PVRcheevos
 import PVRcheevosBridge
 
-extension PVPicoDrive: CoreRetroAchievements {
+extension PVPicoDrive: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         guard let ptr = _bridge.systemRAMPtr else { return [] }

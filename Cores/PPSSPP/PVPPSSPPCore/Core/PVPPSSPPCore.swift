@@ -58,13 +58,17 @@ final class PVPPSSPPCore: PVEmulatorCore, @unchecked Sendable {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
         _bridge.parseOptions()
+        // PPSSPP drives its own emulation loop (`runVM`), so PVEmulatorCore never calls
+        // `executeFrame()` on this class. The bridge reports each completed PSP frame instead.
+        // Not gated on `achievementsActive`: the lazy region retry in `tickAchievements()`
+        // must run while no session exists yet (PSP RAM only appears after boot).
+        _bridge.frameCompletedHandler = { [weak self] in
+            self?.tickAchievements()
+        }
     }
 
     public override func executeFrame() {
         bridge.executeFrame()
-        if achievementsActive {
-            tickAchievements()
-        }
     }
 }
 

@@ -18,7 +18,7 @@ import PVLogging
 import PVRcheevos
 import PVRcheevosBridge
 
-extension PVSNES9xEmulatorCore: CoreRetroAchievements {
+extension PVSNES9xEmulatorCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         let snesBridge = bridge as? PVSNESEmulatorCoreBridge

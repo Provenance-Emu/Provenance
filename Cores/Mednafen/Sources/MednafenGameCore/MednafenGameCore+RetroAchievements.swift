@@ -29,7 +29,7 @@ import PVLogging
 import MednafenGameCoreC
 import MednafenGameCoreOptions
 
-extension MednafenGameCore: CoreRetroAchievements {
+extension MednafenGameCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         guard let sysID = SystemIdentifier(rawValue: systemIdentifier ?? "") else { return [] }

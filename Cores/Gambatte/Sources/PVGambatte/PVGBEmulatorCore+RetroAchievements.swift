@@ -22,7 +22,7 @@ import PVGambatteBridge
 import PVRcheevos
 import PVRcheevosBridge
 
-extension PVGBEmulatorCore: CoreRetroAchievements {
+extension PVGBEmulatorCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         var regions: [RcheevosRegion] = []

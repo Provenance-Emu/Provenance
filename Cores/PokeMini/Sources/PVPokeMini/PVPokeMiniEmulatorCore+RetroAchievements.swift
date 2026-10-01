@@ -18,7 +18,7 @@ import PVPokeMiniBridge
 import PVRcheevos
 import PVRcheevosBridge
 
-extension PVPokeMiniEmulatorCore: CoreRetroAchievements {
+extension PVPokeMiniEmulatorCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
         guard let ptr = _bridge.systemRAMPtr else { return [] }
