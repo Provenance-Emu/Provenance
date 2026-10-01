@@ -37,44 +37,10 @@
 #include "controls.h"
 #include "movie.h"
 #include "screenshot.h"
+#include "fscompat.h"
 
-const char *S9xBasename (const char *filename)
-{
-    //DLOG(@"basename %s",filename);
-    return NULL;
-}
-
-void _splitpath(const char *path, char *drive, char *dir, char *fname, char *ext)
-{
-    NSString *nsPath = [NSString stringWithUTF8String:path];
-    
-    drive[0] = '\0';
-    
-    NSString *extension = [nsPath pathExtension];
-    NSArray *components = [nsPath pathComponents];
-    NSArray *dirComponents = [[nsPath pathComponents] subarrayWithRange:NSMakeRange(0, [components count] - 1)];
-    NSString *fileName = [[nsPath lastPathComponent] stringByDeletingPathExtension];
-    NSString *directory = [NSString pathWithComponents:dirComponents];
-    
-    strcpy(dir, [directory UTF8String]);
-    strcpy(fname, [fileName UTF8String]);
-    strcpy(ext, [extension UTF8String]);
-}
-
-void _makepath(char *path, const char *drive, const char *dir, const char *fname, const char *ext)
-{
-#pragma unused (drive)
-    
-    NSString *directory = [NSString stringWithUTF8String:dir];
-    NSString *fileName = [NSString stringWithUTF8String:fname];
-    NSString *extension = [NSString stringWithUTF8String:ext];
-    
-    fileName = [fileName stringByAppendingPathExtension:extension];
-    
-    NSString *fullPath = [directory stringByAppendingPathComponent:fileName];
-    
-    strcpy(path, [fullPath UTF8String]);
-}
+// _splitpath/_makepath, S9xBasename and S9xGetFilename are provided by
+// upstream's fscompat.cpp; this file only supplies the port hooks.
 
 void S9xExit ()
 {
@@ -106,20 +72,24 @@ const char * S9xGetSPC7110Directory(void)
     DLOG(@"7110 dir");
     return NULL;
 }
-const char *S9xGetDirectory (enum s9x_getdirtype dirtype)
+std::string S9xGetDirectory (enum s9x_getdirtype dirtype)
 {
     NSString *biosPath = [[[[NSHomeDirectory() stringByAppendingPathComponent:@"Library"]
                                   stringByAppendingPathComponent:@"Application Support"]
                                  stringByAppendingPathComponent:@"OpenEmu"]
                                 stringByAppendingPathComponent:@"BIOS"];
-    
+
     DLOG(@"Get dir");
-	switch (dirtype)
-	{
-        case SRAM_DIR:			return [NSHomeDirectory() UTF8String];	break;
-		case BIOS_DIR:			return [biosPath UTF8String];	break;
-		default:				return NULL;	break;
-	}
+    switch (dirtype)
+    {
+        case SRAM_DIR:          return std::string([NSHomeDirectory() UTF8String]);
+        case BIOS_DIR:          return std::string([biosPath UTF8String]);
+        // As in upstream's libretro port: data keyed to the ROM (MSU-1
+        // .msu/.pcm files) is looked up next to the ROM.
+        case ROM_DIR:
+        case ROMFILENAME_DIR:   return splitpath(Memory.ROMFilename).dir;
+        default:                return std::string();
+    }
 }
 
 const char *S9xChooseFilename (bool8 read_only)
@@ -172,20 +142,15 @@ unsigned char S9xContinueUpdate(int width, int height)
 }
 
 
-const char *S9xGetFilename (const char *extension, enum s9x_getdirtype dirtype)
-{
-    DLOG(@"Get filename");
-    return NULL;
-}
-
 void SetInfoDlgColor(unsigned char, unsigned char, unsigned char)
 {
     DLOG(@"Set info dlg");
 }
-const char *S9xGetFilenameInc (const char *, enum s9x_getdirtype)
+
+std::string S9xGetFilenameInc (std::string, enum s9x_getdirtype)
 {
     DLOG(@"Get filenameinc");
-    return NULL;
+    return std::string();
 }
 
 

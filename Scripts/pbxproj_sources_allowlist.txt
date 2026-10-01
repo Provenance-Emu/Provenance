@@ -22,7 +22,3 @@ Cores/Debug/PVDebug.c
 
 # Cores/Mupen64Plus/PVMupen64Plus.xcodeproj/project.pbxproj
 Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4/lto.c
-
-# Cores/snes9x/PVSNES9x.xcodeproj/project.pbxproj
-Cores/snes9x/PVSNES/SNES/SNESCore/loadzip.cpp
-Cores/snes9x/PVSNES/SNES/SNESCore/statemanager.cpp

@@ -189,3 +189,6 @@
 [submodule "Dependencies/SWCompression"]
 	path = Dependencies/SWCompression
 	url = https://github.com/JoeMatt/SWCompression.git
+[submodule "Cores/snes9x/snes9x-src"]
+	path = Cores/snes9x/snes9x-src
+	url = https://github.com/Provenance-Emu/snes9x.git

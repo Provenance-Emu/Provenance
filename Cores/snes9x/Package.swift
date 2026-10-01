@@ -17,7 +17,7 @@ import PackageDescription
  * which removes the collision. The targets still have no sources: PVSNES9x has
  * never been migrated to SPM and has no Sources/ layout, so `swift build`
  * fails with "Source files for target ... should be located under". Wiring
- * that up means splitting the mixed ObjC++/Swift core under PVSNES/ and enumerating libretro-snes9x/, which is a source
+ * that up means splitting the mixed ObjC++/Swift core under PVSNES/ and enumerating the core files in snes9x-src/, which is a source
  * migration, not a manifest change. PVSNES9x.xcodeproj remains the build path.
  */
 let package = Package(

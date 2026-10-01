@@ -56,6 +56,45 @@
 #include "snapshot.h"
 #include "screenshot.h"
 #include "cheats.h"
+#include "crosshairs.h"
+
+// Defined in upstream cheats2.cpp but not declared in cheats.h.
+bool S9xGameGenieToRaw(const std::string &code, uint32 &address, uint8 &byte);
+bool S9xProActionReplayToRaw(const std::string &code, uint32 &address, uint8 &byte);
+void S9xUpdateCheatInMemory(SCheat &c);
+
+/// Gold Finger decoder. Upstream snes9x dropped Gold Finger support after 1.60;
+/// this is that release's S9xGoldFingerToRaw (Snes9x license), kept so the
+/// "Gold Finger" cheat type keeps working. Returns true on success.
+static bool PVSNESGoldFingerToRaw(const char *code, uint32 &address, uint8 bytes[3])
+{
+    static const size_t kGoldFingerCodeLength = 14;
+    char tmp[15];
+
+    if (strlen(code) != kGoldFingerCodeLength)
+        return false;
+
+    strncpy(tmp, code, 5);
+    tmp[5] = 0;
+    if (sscanf(tmp, "%x", &address) != 1)
+        return false;
+
+    // Correct GoldFinger Address
+    address = (address & 0x7FFF) | ((address & 0x7F8000) << 1) | 0x8000;
+
+    for (int i = 0; i < 3; i++)
+    {
+        unsigned int byte;
+
+        strncpy(tmp, code + 5 + i * 2, 2);
+        tmp[2] = 0;
+        if (sscanf(tmp, "%x", &byte) != 1)
+            break;
+        bytes[i] = (uint8) byte;
+    }
+
+    return true;
+}
 
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
@@ -73,6 +112,18 @@ static const uint32_t kSNESMouseLeftBtnID  = 0x9001;
 static const uint32_t kSNESMouseRightBtnID = 0x9002;
 /// Maps one full-screen swipe to this many SNES pixels of movement.
 static const double   kSNESMouseScale      = 256.0;
+
+/// Rows of slack above and below the visible frame, matching the guard band
+/// upstream's S9xGraphicsInit gives its own GFX.ScreenBuffer. Rows are
+/// MAX_SNES_WIDTH pixels (upstream's GFX.RealPPL / GFX.Pitch).
+static const size_t   kSNESScreenGuardRows = 32;
+static const size_t   kSNESVideoBufferBytes = MAX_SNES_WIDTH * (MAX_SNES_HEIGHT + 2 * kSNESScreenGuardRows) * sizeof(uint16);
+
+/// The first visible pixel of a buffer allocated with kSNESVideoBufferBytes.
+static inline uint16 *PVSNESVisibleScreen(unsigned char *buffer)
+{
+    return buffer ? (uint16 *)buffer + MAX_SNES_WIDTH * kSNESScreenGuardRows : NULL;
+}
 
 @interface PVSNESEmulatorCoreBridge () {
 
@@ -138,11 +189,11 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)stopEmulation
 {
-    NSString *path = [NSString stringWithUTF8String:Memory.ROMFilename];
+    NSString *path = [NSString stringWithUTF8String:Memory.ROMFilename.c_str()];
     NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
-	
+
     NSString *batterySavesDirectory = [self batterySavesPath];
-    
+
     [super stopEmulation];
 	
     if([batterySavesDirectory length] != 0)
@@ -195,7 +246,6 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
     // Display
 
-    Settings.SupportHiRes               = true;
     Settings.Transparency               = true;
     Settings.DisplayFrameRate           = false;
     Settings.DisplayPressedKeys         = false;
@@ -233,32 +283,24 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
     Settings.HDMATimingHack             = 100;
     Settings.MaxSpriteTilesPerLine      = 34;
     
-    GFX.Pitch = MAX_SNES_WIDTH * sizeof(uint16_t); // 512 * 2;
+    // GFX.Pitch is now a constant (MAX_SNES_WIDTH * 2) in upstream gfx.h.
 
-    if (videoBuffer)
-        {
-        free(videoBuffer);
-        }
-    
-    if (videoBufferA)
-        {
-        free(videoBufferA);
-        }
-
-    if (videoBufferB)
-        {
-        free(videoBufferB);
-        }
-
+    // videoBuffer only ever aliases A or B, so it is not freed separately.
+    free(videoBufferA);
+    free(videoBufferB);
     videoBuffer = NULL;
 
-    videoBufferA = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
-    videoBufferB = (unsigned char *)malloc(MAX_SNES_WIDTH * MAX_SNES_HEIGHT * sizeof(uint16_t));
-
-	GFX.Screen = (short unsigned int *)videoBufferA;
+    videoBufferA = (unsigned char *)calloc(1, kSNESVideoBufferBytes);
+    videoBufferB = (unsigned char *)calloc(1, kSNESVideoBufferBytes);
 
     S9xUnmapAllControls();
     [self mapButtons];
+
+    // Provenance has never shown snes9x's built-in crosshairs (the vendored 1.60
+    // copy stubbed out S9xDrawCrosshair). Crosshair 0 is upstream's "no image".
+    for (crosscontrols ctl : { X_MOUSE1, X_MOUSE2, X_SUPERSCOPE, X_JUSTIFIER1, X_JUSTIFIER2, X_MACSRIFLE }) {
+        S9xSetControllerCrosshair(ctl, 0, NULL, NULL);
+    }
 
     S9xSetController(0, CTL_JOYPAD, 0, 0, 0, 0);
     S9xSetController(1, CTL_JOYPAD, 1, 0, 0, 0);
@@ -280,6 +322,10 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 		}
         return NO;
     }
+
+    // S9xGraphicsInit points GFX.Screen at the core's own buffer; render into
+    // ours instead so swapBuffers can double-buffer.
+    GFX.Screen = PVSNESVisibleScreen(videoBufferA);
 
     DLOG(@"loading %@", path);
 
@@ -308,11 +354,11 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
     if(Memory.LoadROM([path UTF8String]))
     {
-        NSString *path = [NSString stringWithUTF8String:Memory.ROMFilename];
+        NSString *path = [NSString stringWithUTF8String:Memory.ROMFilename.c_str()];
         NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
 
         NSString *batterySavesDirectory = [self batterySavesPath];
-        
+
         if([batterySavesDirectory length])
         {
             [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
@@ -905,12 +951,14 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 #pragma mark Video
 
 - (void)swapBuffers {
-    if (GFX.Screen == (short unsigned int *)videoBufferA) {
-        videoBuffer = videoBufferA;
-        GFX.Screen = (short unsigned int *)videoBufferB;
+    uint16 *screenA = PVSNESVisibleScreen(videoBufferA);
+    uint16 *screenB = PVSNESVisibleScreen(videoBufferB);
+    if (GFX.Screen == screenA) {
+        videoBuffer = (unsigned char *)screenA;
+        GFX.Screen = screenB;
     } else {
-        videoBuffer = videoBufferB;
-        GFX.Screen = (short unsigned int *)videoBufferA;
+        videoBuffer = (unsigned char *)screenB;
+        GFX.Screen = screenA;
     }
 }
 
@@ -1017,25 +1065,18 @@ static void FinalizeSamplesAudioCallback(void *) {
 }
 
 - (BOOL)applyCheat:(const char*)code setCodeType:(NSString *)codeType {
-    SCheat c;
-    unsigned int byte = 0;
-    unsigned int cond_byte = 0;
-    c.enabled     = false;
-    c.conditional = false;
+    SCheat c = {};
 	ELOG(@"Applying Cheat Code %s\n", code);
+    // Upstream's decoders return true on success (they returned an error string before 1.61).
     if ([codeType isEqualToString:@"Game Genie"]) {
-        if (!S9xGameGenieToRaw(code, c.address, c.byte))
-			c.enabled = true;
+        c.enabled = S9xGameGenieToRaw(code, c.address, c.byte);
         ELOG(@"GameGenie Code Decrypted: %s %d %d\n", code, c.address, c.byte);
     } else if ([codeType isEqualToString:@"Pro Action Replay" ]) {
-        if (!S9xProActionReplayToRaw(code, c.address, c.byte))
-			c.enabled = true;
+        c.enabled = S9xProActionReplayToRaw(code, c.address, c.byte);
         ELOG(@"PAR Code Decrypted: %s %d %d\n", code, c.address, c.byte);
     } else if ([codeType isEqualToString:@"Gold Finger" ]) {
-		bool8 sram;
-		uint8 bytes[3];
-		uint8 byte;
-        if (!S9xGoldFingerToRaw(code, c.address, sram, byte, bytes)) {
+		uint8 bytes[3] = {};
+        if (PVSNESGoldFingerToRaw(code, c.address, bytes)) {
 			c.byte=bytes[0];
 			c.saved_byte=bytes[0];
 			c.cond_byte=bytes[0];
@@ -1048,23 +1089,20 @@ static void FinalizeSamplesAudioCallback(void *) {
 		ELOG(@"Goldfinger Code Decrypted: %s %d %d\n", code, c.address, c.byte);
     }
     if (c.enabled) {
-		// Call Structure of S9xUpdateCheatInMemory
-		void S9xUpdateCheatInMemory(SCheat *c);
         // Update the Cheat in Memory
-		S9xUpdateCheatInMemory(&c);
+		S9xUpdateCheatInMemory(c);
 	}
 	return c.enabled;
 }
 
 - (BOOL)applyRawCheat:(uint32)mem setValue:(uint8)value {
 	mem = mem & 0xFFFFFFF;
-	SCheat c;
+	SCheat c = {};
 	c.address = mem;
 	c.byte = value;
 	c.enabled     = true;
 	c.conditional = false;
-	void S9xUpdateCheatInMemory(SCheat *c);
-    S9xUpdateCheatInMemory(&c);
+    S9xUpdateCheatInMemory(c);
 	return true;
 }
 #pragma mark - Input
