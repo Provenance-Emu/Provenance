@@ -1,1 +1,1 @@
-../atari800-src/pokey.h
+../atari800/src/pokey.h

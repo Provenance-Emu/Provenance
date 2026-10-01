@@ -1,1 +1,1 @@
-../atari800-src/compfile.h
+../atari800/src/compfile.h

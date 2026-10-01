@@ -278,11 +278,13 @@ static const NSInteger kMaxPlayers = 4;
         return NO;
     }
 
-    // TODO - still need this?
-    /* Install requested ROM cartridge */
+    // A raw ROM whose size fits several cartridge types comes back as
+    // CARTRIDGE_UNKNOWN. atari800 3.1.0 resolved that inside AFILE_OpenFile
+    // (UI_SelectCartType + auto-reboot); 4.x moved it to the frontend, so do
+    // the same here, rebooting once the type is set as 3.1.0 did.
     if (CARTRIDGE_main.type == CARTRIDGE_UNKNOWN)
     {
-        CARTRIDGE_SetType(&CARTRIDGE_main, UI_SelectCartType(CARTRIDGE_main.size));
+        CARTRIDGE_SetTypeAutoReboot(&CARTRIDGE_main, UI_SelectCartType(CARTRIDGE_main.size));
     }
 
     //POKEYSND_Init(POKEYSND_FREQ_17_EXACT, 44100, 1, POKEYSND_BIT16);
@@ -342,12 +344,14 @@ static const NSInteger kMaxPlayers = 4;
     // Battery / NVRAM persistence: intentionally not wired.
     //
     // The native atari800 core has no separate "battery save" API. After auditing
-    // the upstream source (Cores/Atari800/Sources/libatari800/atari800-src):
+    // the upstream source (Cores/Atari800/Sources/libatari800/atari800/src):
     //   * `CARTRIDGE_StateSave` / `CARTRIDGE_StateRead` are part of the full save
     //     state stream (already wired via `StateSav_SaveAtariState` /
     //     `StateSav_ReadAtariState` below), NOT a standalone cart-RAM file.
     //   * Flash carts (CARTRIDGE_MEGA_4096, CARTRIDGE_ATMAX_*) have no write-back
-    //     path in upstream — `RemoveCart` just `free()`s the in-memory image.
+    //     path in upstream. Only RAM carts (CARTRIDGE_RAMCART_*, SIDICAR_32,
+    //     which only a .car header can select) are written back to the cart
+    //     file itself by `RemoveCart` when `Atari800_Exit` runs.
     //   * 5200 cart-side RAM (used by a handful of RealSports prototypes) is not
     //     implemented in this build.
     //   * `.atr` disk-image writes happen in-place via `fwrite` to the open FILE*
@@ -1057,7 +1061,8 @@ int UI_SelectCartType(int k) {
             case 128:  return CARTRIDGE_XEGS_128;
             case 256:  return CARTRIDGE_XEGS_256;
             case 512:  return CARTRIDGE_XEGS_512;
-            case 1024: return CARTRIDGE_ATMAX_1024;
+            // Type 42, which atari800 4.x+ renamed when it added the new-firmware 1 MB cart (75).
+            case 1024: return CARTRIDGE_ATMAX_OLD_1024;
             default:
                 return CARTRIDGE_NONE;
         }
@@ -1158,6 +1163,16 @@ void UI_Run(void)
 {
 }
 
+// ui.c is not compiled: this frontend supplies its own UI_* hooks. atari.c's
+// Atari800_Initialise and cfg.c still reference these two, so they must exist,
+// but the bridge never calls Atari800_Initialise or reads a config file.
+int UI_show_hidden_files = FALSE;
+
+int UI_Initialise(int *argc, char *argv[])
+{
+    return TRUE;
+}
+
 int PLATFORM_Initialise(int *argc, char *argv[])
 {
     Sound_Initialise(argc, argv);
@@ -1241,24 +1256,15 @@ void PLATFORM_DisplayScreen(void)
 
 int PLATFORM_SoundSetup(Sound_setup_t *setup)
 {
-    int buffer_samples;
-    
-    if (setup->frag_frames == 0) {
-        /* Set frag_frames automatically. */
-        unsigned int val = setup->frag_frames = setup->freq / 50;
-        unsigned int pow_val = 1;
-        while (val >>= 1)
-            pow_val <<= 1;
-        if (pow_val < setup->frag_frames)
-            pow_val <<= 1;
-        setup->frag_frames = pow_val;
+    // Same sizing as upstream's SDL backend (src/sdl/sound.c).
+    if (setup->buffer_frames == 0) {
+        setup->buffer_frames = setup->freq / 50;
     }
-    
+    setup->buffer_frames = Sound_NextPow2(setup->buffer_frames);
+
+    // The ring buffer is fed signed 16-bit samples.
     setup->sample_size = 2;
-    
-    buffer_samples = setup->frag_frames * setup->channels;
-    setup->frag_frames = buffer_samples / setup->channels;
-    
+
     return TRUE;
 }
 

@@ -1,1 +1,1 @@
-../atari800-src/artifact.h
+../atari800/src/artifact.h

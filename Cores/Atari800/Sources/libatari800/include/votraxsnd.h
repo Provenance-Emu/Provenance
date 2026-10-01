@@ -1,1 +1,1 @@
-../atari800-src/votraxsnd.h
+../atari800/src/votraxsnd.h

@@ -1,1 +1,1 @@
-../atari800-src/sysrom.h
+../atari800/src/sysrom.h

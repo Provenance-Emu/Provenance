@@ -1,1 +1,1 @@
-../atari800-src/esc.h
+../atari800/src/esc.h

@@ -1,1 +1,1 @@
-../atari800-src/screen.h
+../atari800/src/screen.h

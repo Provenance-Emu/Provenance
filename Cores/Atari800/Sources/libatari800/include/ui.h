@@ -1,1 +1,1 @@
-../atari800-src/ui.h
+../atari800/src/ui.h

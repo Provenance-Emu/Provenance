@@ -1,1 +1,1 @@
-../atari800-src/pcjoy.h
+../atari800/src/pcjoy.h

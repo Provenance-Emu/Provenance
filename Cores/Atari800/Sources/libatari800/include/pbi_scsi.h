@@ -1,1 +1,1 @@
-../atari800-src/pbi_scsi.h
+../atari800/src/pbi_scsi.h

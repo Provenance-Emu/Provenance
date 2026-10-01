@@ -1,1 +1,1 @@
-../atari800-src/pokeysnd.h
+../atari800/src/pokeysnd.h

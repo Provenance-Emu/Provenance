@@ -1,1 +1,1 @@
-../atari800-src/cartridge.h
+../atari800/src/cartridge.h

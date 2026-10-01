@@ -1,1 +1,1 @@
-../atari800-src/cassette.h
+../atari800/src/cassette.h

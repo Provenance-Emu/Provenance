@@ -1,1 +1,1 @@
-../atari800-src/atari.h
+../atari800/src/atari.h

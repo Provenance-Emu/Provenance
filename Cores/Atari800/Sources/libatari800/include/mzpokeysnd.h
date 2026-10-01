@@ -1,1 +1,1 @@
-../atari800-src/mzpokeysnd.h
+../atari800/src/mzpokeysnd.h

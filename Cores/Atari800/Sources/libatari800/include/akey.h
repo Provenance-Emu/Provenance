@@ -1,1 +1,1 @@
-../atari800-src/akey.h
+../atari800/src/akey.h

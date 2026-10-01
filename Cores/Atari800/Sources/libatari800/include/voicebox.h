@@ -1,1 +1,1 @@
-../atari800-src/voicebox.h
+../atari800/src/voicebox.h

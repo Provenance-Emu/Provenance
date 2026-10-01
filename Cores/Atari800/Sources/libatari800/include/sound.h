@@ -1,1 +1,1 @@
-../atari800-src/sound.h
+../atari800/src/sound.h

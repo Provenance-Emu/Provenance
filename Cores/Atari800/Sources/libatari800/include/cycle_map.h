@@ -1,1 +1,1 @@
-../atari800-src/cycle_map.h
+../atari800/src/cycle_map.h

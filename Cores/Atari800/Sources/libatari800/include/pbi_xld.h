@@ -1,1 +1,1 @@
-../atari800-src/pbi_xld.h
+../atari800/src/pbi_xld.h

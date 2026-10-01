@@ -1,1 +1,1 @@
-../atari800-src/xep80_fonts.h
+../atari800/src/xep80_fonts.h

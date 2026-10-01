@@ -1,1 +1,1 @@
-../atari800-src/colours_external.h
+../atari800/src/colours_external.h

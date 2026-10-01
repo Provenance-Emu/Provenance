@@ -1,1 +1,1 @@
-../atari800-src/antic.h
+../atari800/src/antic.h

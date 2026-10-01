@@ -1,1 +1,1 @@
-../atari800-src/ide.h
+../atari800/src/ide.h

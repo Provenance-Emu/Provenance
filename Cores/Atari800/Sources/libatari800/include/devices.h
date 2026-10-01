@@ -1,1 +1,1 @@
-../atari800-src/devices.h
+../atari800/src/devices.h

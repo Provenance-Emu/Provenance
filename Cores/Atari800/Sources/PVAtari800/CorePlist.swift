@@ -42,7 +42,7 @@ extension PVAtari800: EmulatorCoreInfoPlistProvider {
      <key>PVProjectURL</key>
      <string>https://atari800.github.io</string>
      <key>PVProjectVersion</key>
-     <string>3.1.0</string>
+     <string>7.2.1</string>
      </dict>
      </plist>
      */
@@ -52,7 +52,7 @@ extension PVAtari800: EmulatorCoreInfoPlistProvider {
         supportedSystems: ["com.provenance.5200", "com.provenance.atari8bit"],
         projectName: "Atari 800",
         projectURL: "https://atari800.github.io",
-        projectVersion: "3.1.0"
+        projectVersion: "7.2.1"
     )}
 
     public static let resourceBundle: Bundle = Bundle.module

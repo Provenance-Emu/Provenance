@@ -1,1 +1,1 @@
-../atari800-src/gtia.h
+../atari800/src/gtia.h

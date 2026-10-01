@@ -1,1 +1,1 @@
-../atari800-src/platform.h
+../atari800/src/platform.h

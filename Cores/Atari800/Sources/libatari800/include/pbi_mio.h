@@ -1,1 +1,1 @@
-../atari800-src/pbi_mio.h
+../atari800/src/pbi_mio.h

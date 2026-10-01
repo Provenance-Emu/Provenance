@@ -1,1 +1,1 @@
-../atari800-src/xep80.h
+../atari800/src/xep80.h

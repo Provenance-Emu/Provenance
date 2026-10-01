@@ -1,1 +1,1 @@
-../atari800-src/colours_pal.h
+../atari800/src/colours_pal.h

@@ -1,1 +1,1 @@
-../atari800-src/input.h
+../atari800/src/input.h

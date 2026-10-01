@@ -1,1 +1,1 @@
-../atari800-src/cfg.h
+../atari800/src/cfg.h

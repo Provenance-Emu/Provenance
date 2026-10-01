@@ -1,1 +1,1 @@
-../atari800-src/crc32.h
+../atari800/src/crc32.h

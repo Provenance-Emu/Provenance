@@ -192,3 +192,6 @@
 [submodule "Cores/snes9x/snes9x-src"]
 	path = Cores/snes9x/snes9x-src
 	url = https://github.com/Provenance-Emu/snes9x.git
+[submodule "Cores/Atari800/Sources/libatari800/atari800"]
+	path = Cores/Atari800/Sources/libatari800/atari800
+	url = https://github.com/Provenance-Emu/atari800.git

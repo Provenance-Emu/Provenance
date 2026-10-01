@@ -1,1 +1,1 @@
-../atari800-src/img_tape.h
+../atari800/src/img_tape.h

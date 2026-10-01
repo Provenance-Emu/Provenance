@@ -1,1 +1,1 @@
-../atari800-src/videomode.h
+../atari800/src/videomode.h
