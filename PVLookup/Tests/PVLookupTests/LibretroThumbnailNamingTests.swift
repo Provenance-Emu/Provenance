@@ -49,4 +49,24 @@ struct LibretroThumbnailNamingTests {
         #expect(url?.absoluteString
             == "https://thumbnails.libretro.com/Sony%20-%20PlayStation/Named_Titles/Game%20(USA)%20(Disc%201).png")
     }
+
+    @Test("Dots inside a title are not mistaken for a file extension")
+    func titleDotsKept() {
+        #expect(LibretroArtwork.strippingROMFileExtension(from: "Tekken 4 (Europe) (v2.00)") == "Tekken 4 (Europe) (v2.00)")
+        #expect(LibretroArtwork.strippingROMFileExtension(from: "Yie Ar Kung-Fu (Japan) (Rev 1.2)") == "Yie Ar Kung-Fu (Japan) (Rev 1.2)")
+        #expect(LibretroArtwork.strippingROMFileExtension(from: "Dr. Mario (Japan, USA)") == "Dr. Mario (Japan, USA)")
+        #expect(LibretroArtwork.strippingROMFileExtension(from: "Tekken 4 (Europe) (v2.00).iso") == "Tekken 4 (Europe) (v2.00)")
+        #expect(LibretroArtwork.strippingROMFileExtension(from: "Super Mario Bros. 3 (USA).nes") == "Super Mario Bros. 3 (USA)")
+    }
+
+    @Test("Versioned titles keep their version in the thumbnail URL")
+    func versionedTitleURL() {
+        let url = LibretroArtwork.constructURL(
+            systemName: "Sony - PlayStation 2",
+            gameName: "Tekken Tag Tournament (USA) (v2.00)",
+            type: .boxFront
+        )
+        #expect(url?.absoluteString
+            == "https://thumbnails.libretro.com/Sony%20-%20PlayStation%202/Named_Boxarts/Tekken%20Tag%20Tournament%20(USA)%20(v2.00).png")
+    }
 }

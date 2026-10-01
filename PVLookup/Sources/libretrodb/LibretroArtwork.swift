@@ -105,8 +105,8 @@ public struct LibretroArtwork {
         let decodedSystem = systemName.removingPercentEncoding ?? systemName
         let decodedGame = gameName.removingPercentEncoding ?? gameName
 
-        // Remove file extension, then apply libretro's thumbnail filename rules
-        let gameNameWithoutExt = thumbnailFileName(for: (decodedGame as NSString).deletingPathExtension)
+        // Remove a ROM file extension, then apply libretro's thumbnail filename rules
+        let gameNameWithoutExt = thumbnailFileName(for: strippingROMFileExtension(from: decodedGame))
 
         // Build path without encoding first
         let path = "/\(decodedSystem)/\(folder)/\(gameNameWithoutExt).png"
@@ -122,6 +122,22 @@ public struct LibretroArtwork {
         #endif
 
         return components.url
+    }
+
+    private static let maxROMExtensionLength = 5
+
+    /// Removes a trailing ROM file extension (`.nes`, `.z64`, `.bin`) but keeps dots that are part
+    /// of the title. `NSString.deletingPathExtension` treats the tail of "Foo (USA) (v2.00)" or
+    /// "Foo (Rev 1.2)" as an extension and yields "Foo (USA) (v2" / "Foo (Rev 1", which never
+    /// match a libretro thumbnail. A real extension is 1-5 plain alphanumerics.
+    internal static func strippingROMFileExtension(from name: String) -> String {
+        let ext = (name as NSString).pathExtension
+        guard !ext.isEmpty,
+              ext.count <= maxROMExtensionLength,
+              ext.unicodeScalars.allSatisfy({ CharacterSet.alphanumerics.contains($0) }) else {
+            return name
+        }
+        return (name as NSString).deletingPathExtension
     }
 
     /// Characters libretro replaces with `_` in thumbnail filenames.
