@@ -2218,16 +2218,21 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
     /// Download a single artwork image and write it to PVMediaCache.
     /// Returns the md5 on success, nil on failure.
     private func downloadAndCacheArtwork(md5: String, url: URL, cacheKey: String) async -> String? {
-        do {
-            let (data, response) = try await URLSession.shared.data(from: url)
-            guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-                DLOG("Artwork download failed for \(md5): HTTP \((response as? HTTPURLResponse)?.statusCode ?? -1)")
+        switch await ArtworkSelfHealing.fetch(url) {
+        case .image(let data):
+            do {
+                _ = try PVMediaCache.writeData(toDisk: data, withKey: cacheKey)
+                return md5
+            } catch {
+                DLOG("Artwork cache write error for \(md5): \(error.localizedDescription)")
                 return nil
             }
-            _ = try PVMediaCache.writeData(toDisk: data, withKey: cacheKey)
-            return md5
-        } catch {
-            DLOG("Artwork download error for \(md5): \(error.localizedDescription)")
+        case .dead(let reason):
+            // Dead URL (403/404/410 or an error page served as 200): replace it from another source.
+            let healed = await ArtworkSelfHealing.healAndPersist(md5: md5, deadURL: cacheKey, reason: reason)
+            return healed ? md5 : nil
+        case .transient(let reason, _):
+            DLOG("Artwork download failed for \(md5): \(reason)")
             return nil
         }
     }
@@ -2840,14 +2845,19 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
 
         if PVMediaCache.fileExists(forKey: url) {
             if let localURL = PVMediaCache.filePath(forKey: url) {
-                let file = PVImageFile(withURL: localURL, relativeRoot: .platformDefault)
-                try? await RealmContext.withBackgroundRealm { realm in
-                    guard let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5).first else { return }
-                    try? realm.write {
-                        game.originalArtworkFile = file
+                if ArtworkDownsampler.isDecodableImage(atPath: localURL.path) {
+                    let file = PVImageFile(withURL: localURL, relativeRoot: .platformDefault)
+                    try? await RealmContext.withBackgroundRealm { realm in
+                        guard let game = realm.objects(PVGame.self).filter("md5Hash == %@", md5).first else { return }
+                        try? realm.write {
+                            game.originalArtworkFile = file
+                        }
                     }
+                    return
                 }
-                return
+                // An earlier sync cached an error page as the "image"; drop it and download again.
+                WLOG("CK sync: cached artwork for \(info.title) is not an image, discarding")
+                try? PVMediaCache.deleteImage(forKey: url)
             }
         }
 
@@ -2860,11 +2870,23 @@ public class CloudKitRomsSyncer: NSObject, RomsSyncing {
             return
         }
 
-        // Download artwork on background thread
-        do {
-            let request = URLRequest(url: artworkURL)
-            let (data, _) = try await URLSession.shared.data(for: request)
+        // Download artwork on background thread. Error pages (403 challenge, HTML served as 200)
+        // are never cached as the image; a dead URL is replaced from another source instead.
+        let data: Data
+        switch await ArtworkSelfHealing.fetch(artworkURL) {
+        case .image(let imageData):
+            data = imageData
+        case .dead(let reason):
+            let healed = await ArtworkSelfHealing.healAndPersist(md5: md5, deadURL: url, reason: reason)
+            CloudSyncManager.syncLog.event(.download, item: "artwork/\(info.md5Hash)", status: healed ? .ok : .failed,
+                                           detail: healed ? "replaced dead URL: \(info.title)" : "dead URL (\(reason)): \(info.title)")
+            return
+        case .transient(let reason, _):
+            CloudSyncManager.syncLog.event(.download, item: "artwork/\(info.md5Hash)", status: .failed, detail: reason)
+            return
+        }
 
+        do {
             // Cache the artwork (file I/O, can stay on background)
             try PVMediaCache.writeData(toDisk: data, withKey: url)
 

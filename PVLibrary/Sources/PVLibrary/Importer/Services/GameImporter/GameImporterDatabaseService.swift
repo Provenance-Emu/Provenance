@@ -598,9 +598,14 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
         }
         if PVMediaCache.fileExists(forKey: url) {
             if let localURL = PVMediaCache.filePath(forKey: url) {
-                let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
-                game.originalArtworkFile = file
-                return game
+                if ArtworkDownsampler.isDecodableImage(atPath: localURL.path) {
+                    let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
+                    game.originalArtworkFile = file
+                    return game
+                }
+                // An earlier download cached an error page as the "image"; drop it and re-fetch.
+                WLOG("GameImporterDatabaseService: cached artwork for \(url) is not an image, discarding")
+                try? PVMediaCache.deleteImage(forKey: url)
             }
         }
         DLOG("Starting Artwork download for \(url)")
@@ -610,18 +615,28 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
             ELOG("url is invalid url <\(url)>")
             return game
         }
-        let request = URLRequest(url: artworkURL)
-        var imageData:Data?
 
-        if let response = try? await URLSession.shared.data(for: request), (response.1  as? HTTPURLResponse)?.statusCode == 200 {
-            imageData = response.0
+        var imageData: Data?
+        var imageKey = url
+        switch await ArtworkSelfHealing.fetch(artworkURL) {
+        case .image(let data):
+            imageData = data
+        case .dead(let reason):
+            // Dead URL (403/404/410 or a non-image body): look for another source instead of keeping it.
+            if let replacement = await ArtworkSelfHealing.heal(ArtworkSelfHealing.context(for: game), deadURL: url, reason: reason) {
+                imageData = replacement.data
+                imageKey = replacement.url.absoluteString
+                game.originalArtworkURL = imageKey
+            }
+        case .transient:
+            break
         }
 
         if let data = imageData {
 #if os(macOS)
             if let artwork = NSImage(data: data) {
                 do {
-                    let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
+                    let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: imageKey)
                     let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
                     game.originalArtworkFile = file
                 } catch { ELOG("\(error.localizedDescription)") }
@@ -629,7 +644,7 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 #elseif !os(watchOS)
             if let artwork = UIImage(data: data) {
                 do {
-                    let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
+                    let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: imageKey)
                     let file = PVImageFile(withURL: localURL, relativeRoot: .documents)
                     game.originalArtworkFile = file
                 } catch { ELOG("\(error.localizedDescription)") }
@@ -725,6 +740,10 @@ class GameImporterDatabaseService : GameImporterDatabaseServicing {
 
     @discardableResult
     func getUpdatedGameInfo(for game: PVGame, forceRefresh: Bool = true) async throws -> PVGame {
+        if forceRefresh {
+            // An explicit refresh searches again even if every artwork source failed earlier this launch.
+            await ArtworkDeadURLCache.shared.forgetExhausted(gameKey: game.md5Hash.uppercased())
+        }
         do {
             var resultsMaybe: [ROMMetadata]?
 

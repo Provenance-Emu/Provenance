@@ -28,6 +28,10 @@ struct ArtworkRetryMetadata: Sendable {
     let md5Hash: String
     let artworkURL: String
     let title: String?
+    /// Fields used to look up a replacement when `artworkURL` is dead.
+    var gameID: String = ""
+    var filename: String?
+    var systemID: SystemIdentifier?
 }
 
 /// Tunables for artwork retry throttling (PROVENANCE-1AW / disk-write MetricKit noise).
@@ -36,6 +40,14 @@ struct ArtworkRetryMetadata: Sendable {
 enum ArtworkRetryLimits {
     /// Maximum artwork file retries per `retryFailedArtworkDownloads` invocation.
     static let maxRetriesPerCall = 5
+    /// Maximum dead-URL replacement lookups per `retryFailedArtworkDownloads` invocation.
+    static let maxHealAttemptsPerCall = 20
+    /// Delay after launch before the one-time artwork repair pass starts.
+    static let launchRepairDelaySeconds: UInt64 = 20
+    /// Maximum `retryFailedArtworkDownloads` passes in the launch repair (each handles a bounded batch).
+    static let launchRepairMaxPasses = 12
+    /// Maximum cached artwork files header-checked by the launch repair.
+    static let launchRepairMaxFileChecks = 5000
     /// Bytes of artwork data written per `processPendingSearches` session.
     static let sessionWriteBudgetBytes = 96 * 1024 * 1024
     /// Primary-pass batch count above which full-library retry is deferred.
@@ -56,6 +68,7 @@ public actor ArtworkSearchQueue {
     var isPaused = false
     var sessionWriteBudgetBytes = ArtworkRetryLimits.sessionWriteBudgetBytes
     var deferredRetryTask: Task<Void, Never>?
+    var didScheduleLaunchRepair = false
     private var processingTask: Task<Void, Never>? // Track processing task for cancellation
     /// Service that performs the multi-source artwork search with progressive fallback.
     private let matchingService: any ArtworkMatchingServiceProtocol
@@ -306,7 +319,9 @@ public actor ArtworkSearchQueue {
                 hasOriginalArtworkFile = lookupResult.hasOriginalFile
                 hasCustomArtworkURL = lookupResult.hasCustomURL
                 currentOriginalArtworkURL = lookupResult.originalURL
-                shouldSave = !hasOriginalArtworkFile && !hasCustomArtworkURL && currentOriginalArtworkURL.isEmpty
+                // A stored URL blocks the save unless it is known dead (then the new result replaces it).
+                let storedURLIsDead = await Self.isStoredArtworkURLDead(currentOriginalArtworkURL)
+                shouldSave = !hasOriginalArtworkFile && !hasCustomArtworkURL && (currentOriginalArtworkURL.isEmpty || storedURLIsDead)
                 break
             }
             if retryCount < maxRetries - 1 {
@@ -334,25 +349,27 @@ public actor ArtworkSearchQueue {
             return
         }
 
-        let session = artworkURLSession
-        let downloadResult = await Task.detached(priority: .utility) { () -> (Data?, Error?) in
-            do {
-                let (data, response) = try await session.data(from: artworkURL)
-                if let http = response as? HTTPURLResponse, http.statusCode != 200 {
-                    return (nil, NSError(domain: "ArtworkSearchQueue", code: http.statusCode,
-                                        userInfo: [NSLocalizedDescriptionKey: "HTTP \(http.statusCode)"]))
-                }
-                return (data, nil)
-            } catch {
-                return (nil, error)
-            }
-        }.value
+        let context = ArtworkHealContext(
+            md5: md5Hash,
+            gameID: metadata.gameID,
+            title: metadata.title,
+            romFileName: metadata.filename.isEmpty ? nil : metadata.filename,
+            systemID: metadata.systemID
+        )
 
-        if let data = downloadResult.0 {
+        switch await ArtworkSelfHealing.fetch(artworkURL, session: artworkURLSession) {
+        case .image(let data):
             ILOG("ArtworkSearchQueue: Downloaded \(data.count) bytes (box front) for \(gameTitle)")
             await persistBoxFrontImage(data: data, artworkURL: artworkURL, md5Hash: md5Hash, gameID: metadata.gameID, gameTitle: gameTitle)
-        } else {
-            let desc = downloadResult.1?.localizedDescription ?? "unknown"
+
+        case .dead(let reason):
+            // The search result itself is dead: try the next source instead of storing it.
+            WLOG("ArtworkSearchQueue: Box-front URL dead for \(gameTitle) (\(reason)): \(artworkURL.absoluteString)")
+            if let replacement = await ArtworkSelfHealing.heal(context, deadURL: artworkURL.absoluteString, reason: reason, session: artworkURLSession) {
+                await persistBoxFrontImage(data: replacement.data, artworkURL: replacement.url, md5Hash: md5Hash, gameID: metadata.gameID, gameTitle: gameTitle)
+            }
+
+        case .transient(let reason, _):
             if currentOriginalArtworkURL != artworkURL.absoluteString {
                 await Task.detached(priority: .utility) {
                     guard let realm = try? Realm(),
@@ -361,9 +378,16 @@ public actor ArtworkSearchQueue {
                     else { return }
                     try? realm.write { game.originalArtworkURL = artworkURL.absoluteString }
                 }.value
-                WLOG("ArtworkSearchQueue: Box-front download failed (\(desc)), URL saved for later: \(artworkURL.absoluteString)")
+                WLOG("ArtworkSearchQueue: Box-front download failed (\(reason)), URL saved for later: \(artworkURL.absoluteString)")
             }
         }
+    }
+
+    /// True when `urlString` is a stored artwork URL already known dead (or on a blocked host)
+    /// this launch, so it must not stop a fresh search from replacing it.
+    static func isStoredArtworkURLDead(_ urlString: String) async -> Bool {
+        guard !urlString.isEmpty, let url = URL(string: urlString) else { return false }
+        return await ArtworkDeadURLCache.shared.isDead(url)
     }
 
     /// Download a box-back image and store its URL in `game.boxBackArtworkURL`.

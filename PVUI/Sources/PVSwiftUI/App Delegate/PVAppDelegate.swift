@@ -526,6 +526,10 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
 
         _initThemeListener()
 
+        // Once per launch, a delayed low-priority pass replaces dead artwork URLs and re-downloads
+        // cached "artwork" files that are not images, so existing libraries self-heal.
+        Task { await ArtworkSearchQueue.shared.scheduleLaunchArtworkRepair() }
+
         // Legacy PVOpenIntent donation removed — Siri shortcuts are now handled
         // by LaunchGameIntent in PVAppIntents via processPendingAppIntents().
 
