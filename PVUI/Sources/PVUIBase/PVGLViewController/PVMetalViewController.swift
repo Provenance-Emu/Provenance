@@ -2108,9 +2108,30 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
         glBindFramebuffer(GLenum(GL_FRAMEBUFFER), alternateThreadFramebufferBack)
 
+        /// A core can change its render size mid-game (resolution option, a
+        /// PAL/NTSC switch) and then asks for its surface again. Handing back
+        /// the surface from the old size makes the frontend reject it as
+        /// mis-sized and render into a private one that is never presented —
+        /// a black screen with the game still audible. Rebuild it instead.
+        let requestedSize = emulatorCore?.bufferSize ?? .zero
+        if alternateThreadColorTextureBack != 0,
+           let staleSurface = backingIOSurface,
+           IOSurfaceGetWidth(staleSurface) != Int(requestedSize.width)
+            || IOSurfaceGetHeight(staleSurface) != Int(requestedSize.height) {
+            ILOG("Render size changed to \(requestedSize) — rebuilding the \(IOSurfaceGetWidth(staleSurface))x\(IOSurfaceGetHeight(staleSurface)) HW render surface")
+            glDeleteTextures(1, &alternateThreadColorTextureBack)
+            alternateThreadColorTextureBack = 0
+            if alternateThreadDepthRenderbuffer != 0 {
+                glDeleteRenderbuffers(1, &alternateThreadDepthRenderbuffer)
+                alternateThreadDepthRenderbuffer = 0
+            }
+            backingMTLTexture = nil
+            backingIOSurface = nil
+        }
+
         if alternateThreadColorTextureBack == 0 {
-            let width = emulatorCore?.bufferSize.width ?? 0
-            let height = emulatorCore?.bufferSize.height ?? 0
+            let width = requestedSize.width
+            let height = requestedSize.height
 
             let dict: [CFString: Any] = [
                 kIOSurfaceWidth: width,

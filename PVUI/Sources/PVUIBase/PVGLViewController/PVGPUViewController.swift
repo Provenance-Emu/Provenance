@@ -116,6 +116,11 @@ public class PVGPUViewController: BaseViewController {
         }
     }
 
+    /// Whether a frame has reached the screen since the last `resetFirstFrameTracking()`.
+    public var hasPresentedFirstFrame: Bool {
+        firstFrameLock.withLock { didPostFirstFrameNotification }
+    }
+
     #if os(iOS) || os(tvOS)
     /// Track frame presentation for FPS calculation on iOS/tvOS
     @objc func trackFramePresentation() {

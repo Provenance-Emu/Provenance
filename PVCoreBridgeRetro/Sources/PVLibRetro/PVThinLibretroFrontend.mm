@@ -2923,6 +2923,12 @@ static bool thin_environment(unsigned cmd, void *data) {
         // where the core cannot find the siblings it needs. Matches
         // PVRetroArchCoreBridge.mm, which also disables pre-extraction.
         self.extractArchive = NO;
+        // Frames from this frontend are only ever presented through
+        // PVMetalViewController. PVGLViewController has no Vulkan presenter, so
+        // with the legacy "Use Metal" setting off a Vulkan core (PSP, Dreamcast)
+        // ran with sound and a black screen — and no thin core was brought up
+        // against the GL presenter. That setting must not select it here.
+        self.alwaysUseMetal = YES;
         _dylibHandle = NULL;
         memset(&_sym, 0, sizeof(_sym));
         memset(&_hwRenderCallback, 0, sizeof(_hwRenderCallback));
@@ -4074,6 +4080,9 @@ static const NSTimeInterval kThinBlockingFrameWait = 0.010;
 NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
     @"PVThinLibretroFrontendCoreDidThrow";
 
+NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
+    @"PVEmulatorCoreDidFailToStart";
+
 // ---------------------------------------------------------------------------
 // MARK: - State / Cheats
 // ---------------------------------------------------------------------------
@@ -4702,7 +4711,7 @@ NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification =
                  @"coreIdentifier": self.coreIdentifier ?: @"" }
             : @{ @"coreIdentifier": self.coreIdentifier ?: @"" };
         [[NSNotificationCenter defaultCenter]
-            postNotificationName:@"PVEmulatorCoreDidFailToStart"
+            postNotificationName:PVEmulatorCoreDidFailToStartNotification
                           object:nil
                         userInfo:info];
         void (^completion)(BOOL, NSError *) = self.startCompletionBlock;

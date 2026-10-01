@@ -168,6 +168,9 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     /// the in-flight mark for the next launch to act on.
     var _optionReplayBootFailed = false
 
+    /// `NSError` code for a boot refused because a required system file is unusable.
+    private static let invalidSystemFileErrorCode = 1
+
     /// Set by `updateHatariTOSPath()` when TOS validation fails.
     /// Checked by `startEmulation()` to abort before `retro_load_game` crashes.
     private var _hatariTOSError: String?
@@ -288,6 +291,20 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         // that crashes (null input_poll_cb in input_gui → EXC_BAD_ACCESS).
         if let tosError = _hatariTOSError {
             ELOG("ThinCore: aborting startEmulation — \(tosError)")
+            /// Returning quietly left the emulator screen up, black, with a core
+            /// that would never run and nothing telling the user why.
+            NotificationCenter.default.post(
+                name: .PVEmulatorCoreDidFailToStart,
+                object: nil,
+                userInfo: [
+                    "error": NSError(
+                        domain: "PVThinLibretroCore",
+                        code: Self.invalidSystemFileErrorCode,
+                        userInfo: [NSLocalizedDescriptionKey: tosError]
+                    ),
+                    "coreIdentifier": coreIdentifier ?? ""
+                ]
+            )
             return
         }
 

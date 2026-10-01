@@ -1323,6 +1323,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // churn `recomputeSkinViewportIfLayoutChanged` was added to avoid.
         applyPostStartAspectIfChanged(from: preStartAspectSize)
         forwardScalingModeToCoreIfNeeded()
+        scheduleFirstFrameWatchdog()
 
         // Rebuild the audio graph if the core's real sample rate differs from what the
         // graph was built with before the ROM loaded (thin libretro wrapper case — see

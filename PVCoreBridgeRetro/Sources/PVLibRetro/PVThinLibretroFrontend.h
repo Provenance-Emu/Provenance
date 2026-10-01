@@ -190,6 +190,11 @@ typedef NS_ENUM(NSInteger, PVLibretroHWContextType) {
 /// from the extension defined in `PVThinLibretroCore.swift`.
 FOUNDATION_EXPORT NSNotificationName const PVThinLibretroFrontendCoreDidThrowNotification;
 
+/// Posted on the main thread when a core could not be started. `userInfo`
+/// carries `error` (NSError, when one is known) and `coreIdentifier`.
+/// PVEmulatorViewController observes it and offers a way back to the library.
+FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotification;
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 @interface PVThinLibretroFrontend : PVCoreObjCBridge <ObjCBridgedCoreBridge>
