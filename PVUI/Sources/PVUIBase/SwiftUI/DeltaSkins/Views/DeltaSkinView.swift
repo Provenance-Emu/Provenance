@@ -1485,7 +1485,7 @@ public struct DeltaSkinView: View {
                 Task {
                     if let (image, size) = await loadThumbstickImage(for: button) {
                         // Determine stick ID based on button ID (check for "left" or "right" in button ID)
-                        let stickId = button.id.lowercased().contains("right") ? "rightAnalog" : "leftAnalog"
+                        let stickId = DeltaSkinNintendoHomeConsoleMapping.stickSide(for: button.input, buttonId: button.id).analogStickId
                         let effectiveThumbstick = buttonWithEffectiveFrame(button)
                         activeThumbsticks.append(ActiveThumbstickInfo(frame: effectiveThumbstick.frame, image: image, size: size, buttonId: stickId))
                     }
@@ -2108,7 +2108,7 @@ public struct DeltaSkinView: View {
             if isThumbstick(button),
                let (image, size) = await loadThumbstickImage(for: button) {
                 // Determine stick ID based on button ID (check for "right" or "right" in button ID)
-                let stickId = button.id.lowercased().contains("right") ? "rightAnalog" : "leftAnalog"
+                let stickId = DeltaSkinNintendoHomeConsoleMapping.stickSide(for: button.input, buttonId: button.id).analogStickId
                 activeThumbsticks.append(ActiveThumbstickInfo(frame: buttonWithEffectiveFrame(button).frame, image: image, size: size, buttonId: stickId))
             }
         }

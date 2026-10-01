@@ -2140,14 +2140,26 @@ public class DeltaSkinInputHandler: ObservableObject {
             }
         case .Wii:
             if let r = core as? PVWiiSystemResponderClient {
-                let b = PVWiiMoteButton(id)
-                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                // Explicit table (not PVWiiMoteButton.init, whose fall-through is D-pad Up
+                // and whose bridge default branch presses Home). Unmapped tokens are
+                // consumed so they can't reach the controller-VC label search.
+                if let b = DeltaSkinNintendoHomeConsoleMapping.wiiButton(forSkinToken: buttonId) {
+                    if isPressed { r.didPush(b, forPlayer: 0) } else { r.didRelease(b, forPlayer: 0) }
+                } else {
+                    DLOG("Wii: skin token '\(buttonId)' has no mapping, ignoring")
+                }
                 return true
             }
         case .GameCube:
             if let r = core as? PVGameCubeSystemResponderClient {
-                let b = PVGCButton(id)
-                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                // Manic EMU GameCube skins: r1 = Z, l2 = L trigger, r2 = R trigger.
+                // PVGCButton.init(_:) maps r1 -> R and l2 -> Z (right for the legacy OSD,
+                // wrong for skins), so GameCube uses its own table.
+                if let b = DeltaSkinNintendoHomeConsoleMapping.gameCubeButton(forSkinToken: buttonId) {
+                    if isPressed { r.didPush(b, forPlayer: 0) } else { r.didRelease(b, forPlayer: 0) }
+                } else {
+                    DLOG("GameCube: skin token '\(buttonId)' has no mapping, ignoring")
+                }
                 return true
             }
         case .EP128:
