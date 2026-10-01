@@ -2,6 +2,9 @@ import SwiftUI
 import PVUIBase
 import PVThemes
 
+/// Resting opacity of the tab bar's top border gradient ends; pulses to full on tab change.
+private let restingTabBorderIntensity: CGFloat = 0.5
+
 /// A custom tab view with retrowave styling
 public struct RetroTabView<Content: View>: View {
     @Binding private var selection: Int
@@ -11,7 +14,6 @@ public struct RetroTabView<Content: View>: View {
     @State private var localSelection: Int
     @State private var itemFrames: [CGRect] = []
     @State private var tabBarHeight: CGFloat = 60
-    @State private var bottomSafeAreaInset: CGFloat = 0
 
     // Focus management for tvOS
     @State private var contentHasFocus: Bool = true
@@ -29,11 +31,14 @@ public struct RetroTabView<Content: View>: View {
     }
 
     public var body: some View {
+        // The GeometryReader sits outside `ignoresSafeArea`, so its safe-area inset is the real bottom
+        // inset (home indicator) without reaching into `UIApplication.shared.windows`.
         GeometryReader { geometry in
+            let bottomSafeAreaInset = geometry.safeAreaInsets.bottom
             ZStack(alignment: .bottom) {
                 // Main content area
 #if os(tvOS)
-                tvOSContent
+                tvOSContent(bottomSafeAreaInset: bottomSafeAreaInset)
 #else
                 content
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -41,7 +46,7 @@ public struct RetroTabView<Content: View>: View {
 #endif
 
                 // Custom tab bar
-                retroTabBar
+                retroTabBar(bottomSafeAreaInset: bottomSafeAreaInset)
                     .frame(height: tabBarHeight + bottomSafeAreaInset)
 #if os(tvOS)
                     .focused($tabBarFocused)
@@ -49,25 +54,17 @@ public struct RetroTabView<Content: View>: View {
                         contentHasFocus = !newValue
                     }
 #endif
-                    .background(
-                        GeometryReader { geo in
-                            Color.clear.onAppear {
-                                // Calculate bottom safe area inset
-                                let window = UIApplication.shared.windows.first
-                                bottomSafeAreaInset = window?.safeAreaInsets.bottom ?? 0
-                            }
-                        }
-                    )
             }
             .ignoresSafeArea(edges: .bottom)
         }
+        // The old window-based inset never included the keyboard; keep it that way so the bar does not
+        // ride up when a text field (e.g. the settings search field) is focused.
+        .ignoresSafeArea(.keyboard)
     }
 
-    @State private var borderGlowIntensity: CGFloat = 0.5
-    @State private var borderGlowRadius: CGFloat = 0.5
-    @State private var borderColorShift: CGFloat = 0
+    @State private var borderGlowIntensity: CGFloat = restingTabBorderIntensity
 
-    private var retroTabBar: some View {
+    private func retroTabBar(bottomSafeAreaInset: CGFloat) -> some View {
         ZStack(alignment: .bottom) {
             // Tab bar background with retrowave styling
             Rectangle()
@@ -82,7 +79,7 @@ public struct RetroTabView<Content: View>: View {
                     )
                 )
                 .overlay(
-                    // Top border with animated retrowave gradient
+                    // Static retrowave gradient border; no blur/shadow so the bar is cheap to composite
                     Rectangle()
                         .frame(height: 2)
                         .foregroundStyle(
@@ -92,15 +89,12 @@ public struct RetroTabView<Content: View>: View {
                                     RetroTheme.retroPurple,
                                     RetroTheme.retroBlue.opacity(borderGlowIntensity)
                                 ]),
-                                startPoint: UnitPoint(x: borderColorShift, y: 0),
-                                endPoint: UnitPoint(x: borderColorShift + 1, y: 0)
+                                startPoint: .leading,
+                                endPoint: .trailing
                             )
-                        )
-                        .blur(radius: borderGlowRadius)
-                        .padding(.bottom, tabBarHeight - 2),
+                        ),
                     alignment: .top
                 )
-                .shadow(color: RetroTheme.retroPurple.opacity(0.5), radius: 10, x: 0, y: -5)
 
             // Tab items
             HStack(spacing: 0) {
@@ -140,17 +134,12 @@ public struct RetroTabView<Content: View>: View {
         }
         .onChange(of: selection) { newValue in
             localSelection = newValue
-            animateBorderOnTabChange()
         }
         .onChange(of: localSelection) { newValue in
+            // Fires for both user taps and external `selection` changes (which funnel through
+            // `localSelection`), so the pulse runs exactly once per change.
             selection = newValue
-            animateBorderOnTabChange()
-        }
-        .onAppear {
-            // Start subtle continuous animation
-            withAnimation(Animation.easeInOut(duration: 10).repeatForever(autoreverses: true)) {
-                borderColorShift = 0.5
-            }
+            pulseBorderOnTabChange()
         }
     }
 
@@ -231,23 +220,14 @@ public struct RetroTabView<Content: View>: View {
             )
     }
 
-    private func animateBorderOnTabChange() {
-        // Animate border glow intensity
+    private func pulseBorderOnTabChange() {
         withAnimation(.easeOut(duration: 0.3)) {
             borderGlowIntensity = 1.0
-            borderGlowRadius = 2.0
         }
 
-        // Animate color shift
-        withAnimation(.easeInOut(duration: 0.5)) {
-            borderColorShift = borderColorShift == 0 ? 0.5 : 0
-        }
-
-        // Return to normal state after animation
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             withAnimation(.easeInOut(duration: 0.5)) {
-                borderGlowIntensity = 0.5
-                borderGlowRadius = 0.5
+                borderGlowIntensity = restingTabBorderIntensity
             }
         }
     }
@@ -334,7 +314,7 @@ public extension EnvironmentValues {
 #if os(tvOS)
 extension RetroTabView {
     @ViewBuilder
-    private var tvOSContent: some View {
+    private func tvOSContent(bottomSafeAreaInset: CGFloat) -> some View {
         content
             .environment(\.focusRetroTabBar, focusTabBarAction)
             .environment(\.retroTabNavigationState, navigationState)

@@ -55,44 +55,60 @@ public struct RetroGridForSettings: View {
         self.lineWidth = lineWidth
     }
     
+    /// Fixed cell pitch used to decide how many lines fit; the on-screen spacing between lines is `lines`.
+    private static let lineCountDivisor: CGFloat = 20
+
+    private static let horizontalLineGradient = Gradient(colors: [.clear, .retroPink.opacity(0.3), .clear])
+    private static let verticalLineGradient = Gradient(colors: [.clear, .retroPink.opacity(0.2), .clear])
+
+    /// Drawn with a single `Canvas` (one layer) instead of ~100 gradient `Rectangle` views, since this
+    /// is the always-on Settings background.
     public var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                // Background gradient
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color.black,
-                        Color(red: 0.1, green: 0.0, blue: 0.2),
-                        Color(red: 0.2, green: 0.0, blue: 0.3)
-                    ]),
-                    startPoint: .bottom,
-                    endPoint: .top
-                )
-                
-                // Horizontal grid lines
-                VStack(spacing: CGFloat(lines)) {
-                    ForEach(0..<Int(geometry.size.height / 20) + 1, id: \.self) { _ in
-                        Rectangle()
-                            .fill(LinearGradient(
-                                gradient: Gradient(colors: [.clear, .retroPink.opacity(0.3), .clear]),
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ))
-                            .frame(height: lineWidth)
-                    }
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.black,
+                    Color(red: 0.1, green: 0.0, blue: 0.2),
+                    Color(red: 0.2, green: 0.0, blue: 0.3)
+                ]),
+                startPoint: .bottom,
+                endPoint: .top
+            )
+
+            Canvas { context, size in
+                let spacing = CGFloat(lines)
+
+                // Lines are laid out like a centered stack, so the overflow is split evenly on both edges.
+                let rowCount = Int(size.height / Self.lineCountDivisor) + 1
+                let rowsTotal = CGFloat(rowCount) * lineWidth + CGFloat(rowCount - 1) * spacing
+                var y = (size.height - rowsTotal) / 2
+                for _ in 0..<rowCount {
+                    let rect = CGRect(x: 0, y: y, width: size.width, height: lineWidth)
+                    context.fill(
+                        Path(rect),
+                        with: .linearGradient(
+                            Self.horizontalLineGradient,
+                            startPoint: CGPoint(x: 0, y: y),
+                            endPoint: CGPoint(x: size.width, y: y)
+                        )
+                    )
+                    y += lineWidth + spacing
                 }
-                
-                // Vertical grid lines
-                HStack(spacing: CGFloat(lines)) {
-                    ForEach(0..<Int(geometry.size.width / 20) + 1, id: \.self) { _ in
-                        Rectangle()
-                            .fill(LinearGradient(
-                                gradient: Gradient(colors: [.clear, .retroPink.opacity(0.2), .clear]),
-                                startPoint: .top,
-                                endPoint: .bottom
-                            ))
-                            .frame(width: lineWidth)
-                    }
+
+                let columnCount = Int(size.width / Self.lineCountDivisor) + 1
+                let columnsTotal = CGFloat(columnCount) * lineWidth + CGFloat(columnCount - 1) * spacing
+                var x = (size.width - columnsTotal) / 2
+                for _ in 0..<columnCount {
+                    let rect = CGRect(x: x, y: 0, width: lineWidth, height: size.height)
+                    context.fill(
+                        Path(rect),
+                        with: .linearGradient(
+                            Self.verticalLineGradient,
+                            startPoint: CGPoint(x: x, y: 0),
+                            endPoint: CGPoint(x: x, y: size.height)
+                        )
+                    )
+                    x += lineWidth + spacing
                 }
             }
         }

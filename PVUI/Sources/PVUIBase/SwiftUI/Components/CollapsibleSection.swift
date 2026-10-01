@@ -8,19 +8,35 @@
 import SwiftUI
 import PVSettings
 import Defaults
-import PVLogging
+import Combine
+
+/// Lets a parent (e.g. settings search) force a `CollapsibleSection` open by its title.
+public enum CollapsibleSectionExpansion {
+    private static let requests = PassthroughSubject<String, Never>()
+
+    /// Emits the title of every section that was asked to expand.
+    static let publisher: AnyPublisher<String, Never> = requests.eraseToAnyPublisher()
+
+    /// Expands the section titled `title`. The persisted collapse state is cleared first, so a section that
+    /// is built later (tab content is recreated on tab switch) starts expanded, and one that is already
+    /// on screen is told to open.
+    public static func expand(title: String) {
+        Defaults[.collapsedSections].remove(title)
+        requests.send(title)
+    }
+}
 
 public struct CollapsibleSection<Content: View>: View {
     public let title: String
     public let content: Content
-    @Default(.collapsedSections) var collapsedSections
+    /// Source of truth while on screen; persisted to `Defaults[.collapsedSections]` on toggle. Deliberately
+    /// not `@Default`, which would invalidate every sibling section whenever any one of them toggles.
     @State private var isExpanded: Bool
 
     public init(title: String, @ViewBuilder content: () -> Content) {
         self.title = title
         self.content = content()
         self._isExpanded = State(initialValue: !Defaults[.collapsedSections].contains(title))
-        VLOG("Init CollapsibleSection '\(title)' - collapsed sections: \(Defaults[.collapsedSections])")
     }
 
     public var body: some View {
@@ -33,11 +49,10 @@ public struct CollapsibleSection<Content: View>: View {
             Button(action: {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     isExpanded.toggle()
-                    VLOG("Setting isExpanded for '\(title)' to \(isExpanded)")
                     if isExpanded {
-                        collapsedSections.remove(title)
+                        Defaults[.collapsedSections].remove(title)
                     } else {
-                        collapsedSections.insert(title)
+                        Defaults[.collapsedSections].insert(title)
                     }
                 }
             }) {
@@ -93,6 +108,15 @@ public struct CollapsibleSection<Content: View>: View {
                                 )
                         )
                 )
+            }
+            // The header is always present (the body may be collapsed), so it is the stable scroll target
+            // for `ScrollViewReader.scrollTo(title)`.
+            .id(title)
+            .onReceive(CollapsibleSectionExpansion.publisher) { requestedTitle in
+                guard requestedTitle == title, !isExpanded else { return }
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    isExpanded = true
+                }
             }
         }
     }

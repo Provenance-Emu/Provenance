@@ -377,14 +377,44 @@ struct TVOSSettingsHeader: View {
     }
 }
 
-/// Premium collapsible section for tvOS settings
+/// Persistence of tvOS section expansion. Separate keys per section (not `Defaults[.collapsedSections]`) so the
+/// iOS collapse state is unaffected: tvOS starts collapsed, iOS starts expanded.
+enum TVOSSettingsSectionState {
+    static func storageKey(for title: String) -> String {
+        "tvOSSettingsSectionExpanded.\(title)"
+    }
+}
+
+/// Section title the settings root wants focused after a search selection; sections compare it to their own title.
+private struct TVOSSettingsFocusTargetKey: EnvironmentKey {
+    static let defaultValue: String? = nil
+}
+
+extension EnvironmentValues {
+    var tvOSSettingsFocusTarget: String? {
+        get { self[TVOSSettingsFocusTargetKey.self] }
+        set { self[TVOSSettingsFocusTargetKey.self] = newValue }
+    }
+}
+
+/// Premium collapsible section for tvOS settings.
+///
+/// Collapsed sections do not build their rows, which keeps the long single-page layout cheap to scroll with a remote.
 struct TVOSSettingsSection<Content: View>: View {
     let title: String
     let icon: String
     @ViewBuilder let content: () -> Content
 
-    @State private var isExpanded: Bool = true
+    @AppStorage private var isExpanded: Bool
     @FocusState private var headerFocused: Bool
+    @Environment(\.tvOSSettingsFocusTarget) private var focusTarget
+
+    init(title: String, icon: String, defaultExpanded: Bool = false, @ViewBuilder content: @escaping () -> Content) {
+        self.title = title
+        self.icon = icon
+        self.content = content
+        _isExpanded = AppStorage(wrappedValue: defaultExpanded, TVOSSettingsSectionState.storageKey(for: title))
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -507,6 +537,13 @@ struct TVOSSettingsSection<Content: View>: View {
                 ))
             }
         }
+        // Scroll target for the settings root (search results scroll to a section by title).
+        .id(title)
+        .onChange(of: focusTarget) { _, target in
+            guard target == title else { return }
+            isExpanded = true
+            headerFocused = true
+        }
     }
 }
 
@@ -533,12 +570,20 @@ public struct PVSettingsView: View {
     @State public var showsDoneButton: Bool = true
     #if !os(tvOS)
     @State private var selectedTab: Int = 0
+    @State private var searchQuery = ""
+    @FocusState private var searchFocused: Bool
+    /// Section chosen from search; consumed by the destination tab once it is on screen.
+    @State private var pendingScrollSection: String?
     #endif
     @State private var showCloudSync = false
     @State private var showWiki = false
     @State private var destinationCancellable: AnyCancellable?
 
     #if os(tvOS)
+    /// Section chosen from search while the search page was open; revealed once the page has popped.
+    @State private var pendingSearchSection: String?
+    /// Section whose header should take focus (see `tvOSSettingsFocusTarget`).
+    @State private var focusTargetSection: String?
     /// Refcount of tracked subpages (NavigationLink destinations using `.settingsSubpageTracking()` etc.).
     @State private var settingsSubpageDepth = 0
     /// Callback to notify the parent wrapper when subpage push state changes (`depth > 0`).
@@ -582,20 +627,32 @@ public struct PVSettingsView: View {
                 RetroTabView(
                     selection: $selectedTab,
                     content: {
-                        Group {
-                            switch selectedTab {
-                            case 0:
-                                generalTabContent
-                            case 1:
-                                emulationTabContent
-                            case 2:
-                                controllerTabContent
-                            case 3:
-                                advancedTabContent
-                            case 4:
-                                aboutTabContent
-                            default:
-                                generalTabContent
+                        VStack(spacing: 0) {
+                            SettingsSearchField(text: $searchQuery, isFocused: $searchFocused)
+                                .padding(.horizontal)
+                                // Clears the hand-drawn Done / Help buttons overlaid at the top.
+                                .padding(.top, showsDoneButton ? Self.doneBarClearance : Self.searchFieldTopPadding)
+                                .padding(.bottom, 4)
+
+                            if isSearching {
+                                SettingsSearchResultsView(query: searchQuery, onSelect: selectSearchResult)
+                            } else {
+                                Group {
+                                    switch selectedTab {
+                                    case 0:
+                                        generalTabContent
+                                    case 1:
+                                        emulationTabContent
+                                    case 2:
+                                        controllerTabContent
+                                    case 3:
+                                        advancedTabContent
+                                    case 4:
+                                        aboutTabContent
+                                    default:
+                                        generalTabContent
+                                    }
+                                }
                             }
                         }
                     },
@@ -668,80 +725,96 @@ public struct PVSettingsView: View {
                     TVOSSettingsBackground()
                         .ignoresSafeArea()
 
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 28) {
-                            // Premium header
-                            TVOSSettingsHeader()
-                                .padding(.top, 40)
-                                .padding(.bottom, 20)
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            LazyVStack(alignment: .leading, spacing: 28) {
+                                // Premium header
+                                TVOSSettingsHeader()
+                                    .padding(.top, 40)
+                                    .padding(.bottom, 20)
 
-                            #if canImport(FreemiumKit)
-                            PlusStatusBanner()
-                                .padding(.bottom, 8)
-                            #endif
+                                #if canImport(FreemiumKit)
+                                PlusStatusBanner()
+                                    .padding(.bottom, 8)
+                                #endif
 
-                            // Settings sections with premium styling
-                            TVOSSettingsSection(title: "App", icon: "gearshape.fill") {
-                                AppSection(viewModel: viewModel)
-                                    .environmentObject(viewModel)
+                                NavigationLink {
+                                    TVOSSettingsSearchView(onSelect: selectSearchResult)
+                                } label: {
+                                    SettingsRow(title: "Search Settings",
+                                                subtitle: "Find a setting by name.",
+                                                icon: .sfSymbol("magnifyingglass"))
+                                }
+                                .retroFocusButtonStyle(showBorder: false)
+
+                                // Settings sections with premium styling. Only the first starts expanded.
+                                TVOSSettingsSection(title: SettingsSectionTitle.app, icon: "gearshape.fill", defaultExpanded: true) {
+                                    AppSection(viewModel: viewModel)
+                                        .environmentObject(viewModel)
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.coreOptions, icon: "cpu") {
+                                    CoreOptionsSection()
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.saves, icon: "square.and.arrow.down.fill") {
+                                    SavesSection()
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.audio, icon: "speaker.wave.3.fill") {
+                                    AudioSection()
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.video, icon: "tv.fill") {
+                                    VideoSection()
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.controller, icon: "gamecontroller.fill") {
+                                    ControllerSection()
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.retroAchievements, icon: "trophy.fill") {
+                                    RetroAchievementsSection(viewModel: viewModel)
+                                        .environmentObject(viewModel)
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.library, icon: "books.vertical.fill") {
+                                    LibrarySection(viewModel: viewModel)
+                                        .environmentObject(viewModel)
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.libraryManagement, icon: "folder.badge.gearshape") {
+                                    LibrarySection2(viewModel: viewModel)
+                                        .environmentObject(viewModel)
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.advanced, icon: "wrench.and.screwdriver.fill") {
+                                    AdvancedSection()
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.build, icon: "hammer.fill") {
+                                    BuildSection(viewModel: viewModel)
+                                        .environmentObject(viewModel)
+                                }
+
+                                TVOSSettingsSection(title: SettingsSectionTitle.tvOSAbout, icon: "info.circle.fill") {
+                                    ExtraInfoSection()
+                                }
                             }
-
-                            TVOSSettingsSection(title: "Core Options", icon: "cpu") {
-                                CoreOptionsSection()
-                            }
-
-                            TVOSSettingsSection(title: "Saves", icon: "square.and.arrow.down.fill") {
-                                SavesSection()
-                            }
-
-                            TVOSSettingsSection(title: "Audio", icon: "speaker.wave.3.fill") {
-                                AudioSection()
-                            }
-
-                            TVOSSettingsSection(title: "Video", icon: "tv.fill") {
-                                VideoSection()
-                            }
-
-                            TVOSSettingsSection(title: "Controller", icon: "gamecontroller.fill") {
-                                ControllerSection()
-                            }
-
-                            TVOSSettingsSection(title: "RetroAchievements", icon: "trophy.fill") {
-                                RetroAchievementsSection(viewModel: viewModel)
-                                    .environmentObject(viewModel)
-                            }
-
-                            TVOSSettingsSection(title: "Library", icon: "books.vertical.fill") {
-                                LibrarySection(viewModel: viewModel)
-                                    .environmentObject(viewModel)
-                            }
-
-                            TVOSSettingsSection(title: "Library Management", icon: "folder.badge.gearshape") {
-                                LibrarySection2(viewModel: viewModel)
-                                    .environmentObject(viewModel)
-                            }
-
-                            TVOSSettingsSection(title: "Advanced", icon: "wrench.and.screwdriver.fill") {
-                                AdvancedSection()
-                            }
-
-                            TVOSSettingsSection(title: "Build", icon: "hammer.fill") {
-                                BuildSection(viewModel: viewModel)
-                                    .environmentObject(viewModel)
-                            }
-
-                            TVOSSettingsSection(title: "About", icon: "info.circle.fill") {
-                                ExtraInfoSection()
-                            }
+                            .padding(.horizontal, 80)
+                            .padding(.bottom, 80)
                         }
-                        .padding(.horizontal, 80)
-                        .padding(.bottom, 80)
+                        // NOTE: Do NOT apply TVOSSettingsSectionButtonStyle here — it would
+                        // override NavigationLink buttons inside each section and prevent
+                        // navigation from working on tvOS. Each section header applies the
+                        // style to its own expand/collapse button individually (line ~430).
+                        .focusSection()
+                        .environment(\.tvOSSettingsFocusTarget, focusTargetSection)
+                        .onAppear { revealPendingSearchSection(proxy) }
+                        .onChange(of: settingsSubpageDepth) { _, depth in
+                            if depth == 0 { revealPendingSearchSection(proxy) }
+                        }
                     }
-                    // NOTE: Do NOT apply TVOSSettingsSectionButtonStyle here — it would
-                    // override NavigationLink buttons inside each section and prevent
-                    // navigation from working on tvOS. Each section header applies the
-                    // style to its own expand/collapse button individually (line ~430).
-                    .focusSection()
                 }
                 #endif
             }
@@ -779,6 +852,43 @@ public struct PVSettingsView: View {
     }
 
     #if !os(tvOS)
+    /// Top inset that keeps the search field below the Done / Help buttons overlaid on the tab content.
+    private static let doneBarClearance: CGFloat = 52
+    /// Top inset of the search field when there is no Done / Help row.
+    private static let searchFieldTopPadding: CGFloat = 8
+
+    private var isSearching: Bool {
+        searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).count >= SettingsSearchIndex.minimumQueryLength
+    }
+
+    /// Jumps to the chosen setting's tab, opens its section and (once that tab is on screen) scrolls to it.
+    private func selectSearchResult(_ entry: SettingsSearchEntry) {
+        searchQuery = ""
+        searchFocused = false
+        CollapsibleSectionExpansion.expand(title: entry.section)
+        pendingScrollSection = entry.section
+        selectedTab = entry.tab.rawValue
+    }
+
+    /// Scroll container shared by the tabs. Tab content is rebuilt on every tab switch, so the scroll to a
+    /// section picked from search happens here, after the new tab has appeared.
+    private func tabScrollView<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        let tabContent = content()
+        return ScrollViewReader { proxy in
+            ScrollView {
+                tabContent
+            }
+            .task {
+                guard let section = pendingScrollSection else { return }
+                pendingScrollSection = nil
+                await Task.yield()
+                withAnimation {
+                    proxy.scrollTo(section, anchor: .top)
+                }
+            }
+        }
+    }
+
     private var tabItems: [RetroTabItem] {
         [
             RetroTabItem(title: "General", systemImage: "gearshape.fill"),
@@ -816,7 +926,7 @@ public struct PVSettingsView: View {
     }
 
     private var generalTabContent: some View {
-        ScrollView {
+        tabScrollView {
             VStack(spacing: 16) {
                 Text("settings.tab.general", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -838,15 +948,15 @@ public struct PVSettingsView: View {
                 #endif
 
                 VStack(spacing: 16) {
-                    CollapsibleSection(title: "App") {
+                    CollapsibleSection(title: SettingsSectionTitle.app) {
                         AppSection(viewModel: viewModel)
                             .environmentObject(viewModel)
                     }
-                    CollapsibleSection(title: "Library") {
+                    CollapsibleSection(title: SettingsSectionTitle.library) {
                         LibrarySection(viewModel: viewModel)
                             .environmentObject(viewModel)
                     }
-                    CollapsibleSection(title: "Library Management") {
+                    CollapsibleSection(title: SettingsSectionTitle.libraryManagement) {
                         LibrarySection2(viewModel: viewModel)
                             .environmentObject(viewModel)
                     }
@@ -858,7 +968,7 @@ public struct PVSettingsView: View {
     }
 
     private var emulationTabContent: some View {
-        ScrollView {
+        tabScrollView {
             VStack(spacing: 16) {
                 Text("settings.tab.emulation", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -874,24 +984,24 @@ public struct PVSettingsView: View {
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
                 VStack(spacing: 16) {
-                    CollapsibleSection(title: "Core Options") {
+                    CollapsibleSection(title: SettingsSectionTitle.coreOptions) {
                         CoreOptionsSection()
                     }
-                    CollapsibleSection(title: "Saves") {
+                    CollapsibleSection(title: SettingsSectionTitle.saves) {
                         SavesSection()
                     }
-                    CollapsibleSection(title: "Audio") {
+                    CollapsibleSection(title: SettingsSectionTitle.audio) {
                         AudioSection()
                     }
-                    CollapsibleSection(title: "Video") {
+                    CollapsibleSection(title: SettingsSectionTitle.video) {
                         VideoSection()
                     }
 #if os(iOS)
-                    CollapsibleSection(title: "Recording & Streaming") {
+                    CollapsibleSection(title: SettingsSectionTitle.recording) {
                         RecordingSection()
                     }
 #endif
-                    CollapsibleSection(title: "RetroAchievements") {
+                    CollapsibleSection(title: SettingsSectionTitle.retroAchievements) {
                         RetroAchievementsSection(viewModel: viewModel)
                             .environmentObject(viewModel)
                     }
@@ -903,7 +1013,7 @@ public struct PVSettingsView: View {
     }
 
     private var controllerTabContent: some View {
-        ScrollView {
+        tabScrollView {
             VStack(spacing: 16) {
                 Text("settings.tab.controller", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -919,11 +1029,23 @@ public struct PVSettingsView: View {
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
                 VStack(spacing: 16) {
-                    CollapsibleSection(title: "Controller") {
-                        ControllerSection()
+                    CollapsibleSection(title: SettingsSectionTitle.controller) {
+                        ControllerRowsSection()
+                    }
+                    CollapsibleSection(title: SettingsSectionTitle.hapticsRumble) {
+                        HapticsRumbleSection()
+                    }
+                    CollapsibleSection(title: SettingsSectionTitle.dualSense) {
+                        DualSenseExtrasSection()
+                    }
+                    CollapsibleSection(title: SettingsSectionTitle.onScreenControls) {
+                        OnScreenControllerSection()
+                    }
+                    CollapsibleSection(title: SettingsSectionTitle.analogDeadzone) {
+                        AnalogDeadzoneSection()
                     }
                     #if !os(tvOS) && !os(macOS) && !targetEnvironment(macCatalyst)
-                    CollapsibleSection(title: "Delta Skins") {
+                    CollapsibleSection(title: SettingsSectionTitle.deltaSkins) {
                         DeltaSkinsSection()
                     }
                     #endif
@@ -935,7 +1057,7 @@ public struct PVSettingsView: View {
     }
 
     private var aboutTabContent: some View {
-        ScrollView {
+        tabScrollView {
             VStack(spacing: 16) {
                 Text("settings.tab.about", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -951,24 +1073,24 @@ public struct PVSettingsView: View {
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
                 VStack(spacing: 16) {
-                    CollapsibleSection(title: "Social Links") {
+                    CollapsibleSection(title: SettingsSectionTitle.socialLinks) {
                         SocialLinksSection()
                     }
-                    CollapsibleSection(title: "Documentation") {
+                    CollapsibleSection(title: SettingsSectionTitle.documentation) {
                         DocumentationSection()
                     }
-                    CollapsibleSection(title: "Roadmap") {
+                    CollapsibleSection(title: SettingsSectionTitle.roadmap) {
                         RoadmapSummarySection()
                         NavigationLink("View Full Roadmap →") {
                             RoadmapView()
                         }
                         .padding(.top, 4)
                     }
-                    CollapsibleSection(title: "Build") {
+                    CollapsibleSection(title: SettingsSectionTitle.build) {
                         BuildSection(viewModel: viewModel)
                             .environmentObject(viewModel)
                     }
-                    CollapsibleSection(title: "Extra Info") {
+                    CollapsibleSection(title: SettingsSectionTitle.extraInfo) {
                         ExtraInfoSection()
                     }
                 }
@@ -979,7 +1101,7 @@ public struct PVSettingsView: View {
     }
 
     private var advancedTabContent: some View {
-        ScrollView {
+        tabScrollView {
             VStack(spacing: 16) {
                 Text("settings.tab.advanced", bundle: .module)
                     .font(.system(size: 32, weight: .bold, design: .rounded))
@@ -995,13 +1117,35 @@ public struct PVSettingsView: View {
                     .shadow(color: .retroPink.opacity(0.5), radius: 10, x: 0, y: 0)
 
                 VStack(spacing: 16) {
-                    CollapsibleSection(title: "Advanced") {
+                    CollapsibleSection(title: SettingsSectionTitle.advanced) {
                         AdvancedSection()
                     }
                 }
                 .padding(.horizontal)
             }
             .padding(.bottom, 100)
+        }
+    }
+    #endif
+
+    #if os(tvOS)
+    /// Remembers the chosen section and opens it; the root reveals it after the search page has popped.
+    private func selectSearchResult(_ entry: SettingsSearchEntry) {
+        let section = entry.tvOSSection
+        UserDefaults.standard.set(true, forKey: TVOSSettingsSectionState.storageKey(for: section))
+        focusTargetSection = nil
+        pendingSearchSection = section
+    }
+
+    private func revealPendingSearchSection(_ proxy: ScrollViewProxy) {
+        guard let section = pendingSearchSection else { return }
+        pendingSearchSection = nil
+        Task { @MainActor in
+            await Task.yield()
+            withAnimation {
+                proxy.scrollTo(section, anchor: .top)
+            }
+            focusTargetSection = section
         }
     }
     #endif
@@ -1018,10 +1162,12 @@ struct SettingsRow: View {
     /// Maximum subtitle lines; `nil` uses the default of 5 so longer helper text is not truncated on iOS.
     var subtitleLineLimit: Int? = nil
 
-    @State private var isHovered = false
     @ObservedObject private var themeManager = ThemeManager.shared
     #if os(tvOS)
     @Environment(\.isFocused) private var isFocused
+    #else
+    /// Pointer hover (iPad / Mac); there is no hover on tvOS.
+    @State private var isHovered = false
     #endif
 
     private var iconBorderWidth: CGFloat {
@@ -1029,22 +1175,6 @@ struct SettingsRow: View {
         return isFocused ? 2 : 1
         #else
         return 1.5
-        #endif
-    }
-
-    private var iconShadowColor: Color {
-        #if os(tvOS)
-        return isFocused ? .retroPink.opacity(0.6) : .retroPink.opacity(0.2)
-        #else
-        return .retroPink.opacity(isHovered ? 0.5 : 0.2)
-        #endif
-    }
-
-    private var iconShadowRadius: CGFloat {
-        #if os(tvOS)
-        return isFocused ? 10 : 5
-        #else
-        return 5
         #endif
     }
 
@@ -1090,7 +1220,6 @@ struct SettingsRow: View {
                                     lineWidth: iconBorderWidth
                                 )
                         )
-                        .shadow(color: iconShadowColor, radius: iconShadowRadius)
 
                     icon.image
                         .resizable()
@@ -1117,7 +1246,7 @@ struct SettingsRow: View {
                     .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(isFocused ? .white : Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                     #else
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.body.weight(.medium))
                     .foregroundColor(Color(themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText))
                     #endif
 
@@ -1127,7 +1256,7 @@ struct SettingsRow: View {
                         .font(.system(size: 15))
                         .foregroundStyle(isFocused ? .white.opacity(0.8) : Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.7))
                         #else
-                        .font(.caption)
+                        .font(.footnote)
                         .foregroundColor(Color(themeManager.currentPalette.settingsCellTextDetail ?? themeManager.currentPalette.settingsCellText ?? themeManager.currentPalette.gameLibraryText).opacity(0.8))
                         #endif
                         .lineLimit(effectiveSubtitleLineLimit)
@@ -1224,7 +1353,6 @@ struct SettingsRow: View {
                     lineWidth: isFocused ? 2 : 1
                 )
         )
-        .shadow(color: isFocused ? Color.retroPink.opacity(0.25) : .clear, radius: 12, x: 0, y: 4)
         #else
         .padding(.vertical, 8)
         .padding(.horizontal, 4)
@@ -1249,7 +1377,7 @@ private struct AppSection: View {
     @ObservedObject private var iconManager = IconManager.shared
 
     var body: some View {
-        Section(header: Text("settings.section.app", bundle: .module)) {
+        Section {
 
             /// Information about PVSystems
             NavigationLink(destination: SystemSettingsView()) {
@@ -1284,13 +1412,8 @@ private struct AppSection: View {
             /// App icon selection section — all users can browse, premium icons gated inside
             NavigationLink(destination: AppIconSelectorView()) {
                 HStack {
-                    Image(systemName: "app")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 22, height: 22)
-                    .foregroundColor(.accentColor)
-                    Text("settings.app.change_app_icon", bundle: .module)
-                    Spacer()
+                    SettingsRow(title: NSLocalizedString("settings.app.change_app_icon", bundle: .module, comment: ""),
+                                icon: .sfSymbol("app"))
                     IconImage(
                         iconName: iconManager.currentIconName ?? "AppIcon",
                         size: 24
@@ -1302,6 +1425,30 @@ private struct AppSection: View {
     }
 }
 
+/// Values the Core Options section would otherwise recompute every time the Emulation tab is rebuilt.
+@MainActor
+private enum RetroArchSettingsCache {
+    /// The RetroArch framework is fixed for the life of the process, so scan the loaded bundles once.
+    static let isRetroArchInstalled = PVRetroArchCoreManager.shared.isRetroArchInstalled
+
+    private static var cachedResetState: (configModified: Date?, shouldReset: Bool)?
+
+    /// `shouldResetConfig()` MD5-hashes both config files. The bundled one never changes, so the result only
+    /// changes when the active config is rewritten (edit or reset); key the cache on its modification date.
+    static func shouldResetConfig() async -> Bool {
+        let manager = PVRetroArchCoreManager.shared
+        let modified = manager.activeConfigURL.flatMap {
+            (try? FileManager.default.attributesOfItem(atPath: $0.path))?[.modificationDate] as? Date
+        }
+        if let cachedResetState, cachedResetState.configModified == modified {
+            return cachedResetState.shouldReset
+        }
+        let shouldReset = await manager.shouldResetConfig()
+        cachedResetState = (modified, shouldReset)
+        return shouldReset
+    }
+}
+
 private struct CoreOptionsSection: View {
     @State private var shouldShowResetButton = false
     @State private var showResetConfirmation = false
@@ -1310,7 +1457,7 @@ private struct CoreOptionsSection: View {
     @Default(.coreLanguage) var coreLanguage
 
     var body: some View {
-        Section(header: Text("settings.section.core_options", bundle: .module)) {
+        Section {
 
             #if os(tvOS)
             NavigationLink(destination: CoreLanguageSelectionView(selection: $coreLanguage)) {
@@ -1362,7 +1509,7 @@ private struct CoreOptionsSection: View {
             .retroFocusButtonStyle(showBorder: false)
             #endif
 
-            if PVRetroArchCoreManager.shared.isRetroArchInstalled {
+            if RetroArchSettingsCache.isRetroArchInstalled {
                 NavigationLink(destination: RetroArchQuickSettingsView()) {
                     SettingsRow(
                         title: "RetroArch Settings",
@@ -1398,7 +1545,7 @@ private struct CoreOptionsSection: View {
 
         }
         .task {
-            shouldShowResetButton = await PVRetroArchCoreManager.shared.shouldResetConfig()
+            shouldShowResetButton = await RetroArchSettingsCache.shouldResetConfig()
         }
         .uiKitAlert(
             "Reset Error",
@@ -1422,7 +1569,7 @@ private struct CoreOptionsSection: View {
             do {
                 try await PVRetroArchCoreManager.shared.copyConfigFile(from: bundledURL, to: activeURL)
                 // Update the button state after successful reset
-                shouldShowResetButton = await PVRetroArchCoreManager.shared.shouldResetConfig()
+                shouldShowResetButton = await RetroArchSettingsCache.shouldResetConfig()
             } catch {
                 resetError = "Failed to reset RetroArch config: \(error.localizedDescription)"
             }
@@ -1553,7 +1700,7 @@ private struct SavesSection: View {
     private static let thirtyMinutes: TimeInterval = 1800
 
     var body: some View {
-        SwiftUI.Section(header: Text("settings.section.saves", bundle: .module)) {
+        Section {
             savesToggles
 #if !os(tvOS)
             timedAutosaveSlider
@@ -1626,7 +1773,7 @@ private struct SocialLinksSection: View {
     }()
 
     var body: some View {
-        Section(header: Text("settings.section.social", bundle: .module)) {
+        Section {
             if !isAppStore {
                 Link(destination: URL(string: "https://www.patreon.com/provenance")!) {
                     SettingsRow(title: "Patreon",
@@ -1662,7 +1809,7 @@ private struct SocialLinksSection: View {
 
 private struct DocumentationSection: View {
     var body: some View {
-        Section(header: Text("settings.section.documentation", bundle: .module)) {
+        Section {
             NavigationLink(destination: WikiHelpView()) {
                 SettingsRow(title: "Help & Wiki",
                             subtitle: "Browse the Provenance wiki for guides, FAQs, and tips.",
@@ -1681,7 +1828,7 @@ private struct BuildSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
 
     var body: some View {
-        Section(header: Text("settings.section.build_information", bundle: .module)) {
+        Section {
             SettingsRow(title: "Version",
                         subtitle: "Current app version.",
                         value: viewModel.versionText,
@@ -1717,7 +1864,7 @@ private struct ExtraInfoSection: View {
     @State private var showEULAAlert = false
 
     var body: some View {
-        Section(header: Text("settings.section.third_party_legal", bundle: .module)) {
+        Section {
             #if os(tvOS)
             /// Open source licenses - Show alert on tvOS
             Button(action: { showLicensesAlert = true }) {
@@ -1795,7 +1942,7 @@ private struct AudioSection: View {
     #endif
     @Default(.pauseOnHeadphonesDisconnect) var pauseOnHeadphonesDisconnect
     var body: some View {
-        Section(header: Text("settings.section.audio", bundle: .module)) {
+        Section {
             ThemedToggle(isOn: $pauseOnHeadphonesDisconnect) {
                 SettingsRow(title: "Pause on Headphones Disconnect",
                             subtitle: "Auto-pause emulation when AirPods or Bluetooth headphones disconnect.",
@@ -1866,7 +2013,7 @@ private struct VideoSection: View {
     @Default(.systemRegion) var systemRegion
 
     var body: some View {
-        Section(header: Text("settings.section.video", bundle: .module)) {
+        Section {
             ThemedToggle(isOn: $vsyncEnabled) {
                 SettingsRow(title: "V-Sync",
                             subtitle: "Synchronizes the rendering frame rate with the monitor refresh rate.",
@@ -1963,7 +2110,7 @@ private struct VideoSection: View {
 private struct RecordingSection: View {
     var body: some View {
 #if os(iOS)
-        Section(header: Text("settings.section.recording_streaming", bundle: .module)) {
+        Section {
             PaidFeatureView {
                 NavigationLink(destination: RecordingSettingsView()) {
                     SettingsRow(
@@ -1985,93 +2132,116 @@ private struct RecordingSection: View {
     }
 }
 
+#if os(tvOS)
+/// Everything controller-related in one section, as shown on tvOS. iOS splits these into separate collapsible
+/// sections (see `controllerTabContent`) because the combined list is ~40 rows long.
 private struct ControllerSection: View {
+    var body: some View {
+        Group {
+            subheading("settings.section.controllers")
+            ControllerRowsSection()
+            subheading("settings.section.haptics_rumble")
+            HapticsRumbleSection()
+            Text("DualSense / DS4 Features")
+                .modifier(SubheadingStyle())
+            DualSenseExtrasSection()
+            subheading("settings.section.analog_deadzone")
+            AnalogDeadzoneSection()
+        }
+    }
+
+    /// The sections are no longer headed individually, so tvOS (one combined section) labels each group here.
+    private func subheading(_ key: LocalizedStringKey) -> some View {
+        Text(key, bundle: .module)
+            .modifier(SubheadingStyle())
+    }
+
+    private struct SubheadingStyle: ViewModifier {
+        func body(content: Content) -> some View {
+            content
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(Color.white.opacity(0.7))
+                .padding(.top, 12)
+        }
+    }
+}
+#endif
+
+/// Controller selection, mapping and input-source rows.
+private struct ControllerRowsSection: View {
     @Default(.use8BitdoM30) var use8BitdoM30
     @Default(.pauseButtonIsMenuButton) var pauseButtonIsMenuButton
-    @Default(.analogDeadzone) var analogDeadzone
-    @Default(.coreDeadzoneMode) var coreDeadzoneMode
     @Default(.controllerStyleNavigation) var controllerStyleNavigation
 
     var body: some View {
         Group {
-            Section(header: Text("settings.section.controllers", bundle: .module)) {
-                NavigationLink(destination: ControllerGuideView()) {
-                    SettingsRow(title: "Controller Guide",
-                                subtitle: "Supported controllers, pairing steps, and platform notes.",
-                                icon: .sfSymbol("books.vertical.fill"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-                NavigationLink(destination: ControllerSettingsView()) {
-                    SettingsRow(title: "Controller Selection",
-                                subtitle: "Configure external controller mappings.",
-                                icon: .sfSymbol("gamecontroller"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-                NavigationLink(destination: ICadeControllerView().tvOSSubpageFocusContainment()) {
-                    SettingsRow(title: "iCade / 8Bitdo",
-                                subtitle: "Configure iCade and 8Bitdo controller settings.",
-                                icon: .sfSymbol("keyboard"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-                ThemedToggle(isOn: $use8BitdoM30) {
-                    SettingsRow(title: "Use 8BitDo M30 Mapping",
-                                subtitle: "For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine",
-                                icon: .sfSymbol("arrow.triangle.swap"),
-                                showChevron: false)
-                }
-                ThemedToggle(isOn: $pauseButtonIsMenuButton) {
-                    SettingsRow(title: "Pause/Menu button opens pause menu",
-                                subtitle: "If on, the start/menu button on the controller will open the pause menu in addition to pausing the game",
-                                icon: .sfSymbol("pause.rectangle"),
-                                showChevron: false)
-                }
-                #if !os(tvOS)
-                ThemedToggle(isOn: $controllerStyleNavigation) {
-                    SettingsRow(title: "Controller-Style Navigation",
-                                subtitle: "Use the TV-style, keyboard/controller-driven library UI when a hardware keyboard is connected.",
-                                icon: .sfSymbol("keyboard"),
-                                showChevron: false)
-                }
-                #endif
-                NavigationLink(destination: MouseInputSettingsView()) {
-                    SettingsRow(title: "Mouse Input",
-                                subtitle: "Configure input source and sensitivity for mouse emulation",
-                                icon: .sfSymbol("computermouse"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-                #if !os(tvOS)
-                NavigationLink(destination: KeyboardMappingView()) {
-                    SettingsRow(title: "Keyboard Mapping",
-                                subtitle: "Remap keyboard keys to controller buttons.",
-                                icon: .sfSymbol("keyboard.badge.ellipsis"))
-                }
-                #endif
+            NavigationLink(destination: ControllerGuideView()) {
+                SettingsRow(title: "Controller Guide",
+                            subtitle: "Supported controllers, pairing steps, and platform notes.",
+                            icon: .sfSymbol("books.vertical.fill"))
             }
-
-            HapticsRumbleSection()
-
-            DualSenseExtrasSection()
-
-            #if !os(tvOS)
-            OnScreenControllerSection()
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
             #endif
-            AnalogDeadzoneSection(analogDeadzone: $analogDeadzone, coreDeadzoneMode: $coreDeadzoneMode)
+            NavigationLink(destination: ControllerSettingsView()) {
+                SettingsRow(title: "Controller Selection",
+                            subtitle: "Configure external controller mappings.",
+                            icon: .sfSymbol("gamecontroller"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+            NavigationLink(destination: ICadeControllerView().tvOSSubpageFocusContainment()) {
+                SettingsRow(title: "iCade / 8Bitdo",
+                            subtitle: "Configure iCade and 8Bitdo controller settings.",
+                            icon: .sfSymbol("keyboard"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+            ThemedToggle(isOn: $use8BitdoM30) {
+                SettingsRow(title: "Use 8BitDo M30 Mapping",
+                            subtitle: "For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine",
+                            icon: .sfSymbol("arrow.triangle.swap"),
+                            showChevron: false)
+            }
+            ThemedToggle(isOn: $pauseButtonIsMenuButton) {
+                SettingsRow(title: "Pause/Menu button opens pause menu",
+                            subtitle: "If on, the start/menu button on the controller will open the pause menu in addition to pausing the game",
+                            icon: .sfSymbol("pause.rectangle"),
+                            showChevron: false)
+            }
+            #if !os(tvOS)
+            ThemedToggle(isOn: $controllerStyleNavigation) {
+                SettingsRow(title: "Controller-Style Navigation",
+                            subtitle: "Use the TV-style, keyboard/controller-driven library UI when a hardware keyboard is connected.",
+                            icon: .sfSymbol("keyboard"),
+                            showChevron: false)
+            }
+            #endif
+            NavigationLink(destination: MouseInputSettingsView()) {
+                SettingsRow(title: "Mouse Input",
+                            subtitle: "Configure input source and sensitivity for mouse emulation",
+                            icon: .sfSymbol("computermouse"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+            #if !os(tvOS)
+            NavigationLink(destination: KeyboardMappingView()) {
+                SettingsRow(title: "Keyboard Mapping",
+                            subtitle: "Remap keyboard keys to controller buttons.",
+                            icon: .sfSymbol("keyboard.badge.ellipsis"))
+            }
+            #endif
         }
     }
 }
 
 /// Settings section for analog-stick deadzone coordination.
 private struct AnalogDeadzoneSection: View {
-    @Binding var analogDeadzone: Float
-    @Binding var coreDeadzoneMode: Int
+    @Default(.analogDeadzone) var analogDeadzone
+    @Default(.coreDeadzoneMode) var coreDeadzoneMode
     @State private var showingCompatibility = false
 
     private let modeLabels = ["Auto", "Universal", "Core-Managed"]
@@ -2083,7 +2253,6 @@ private struct AnalogDeadzoneSection: View {
 
     var body: some View {
         Section(
-            header: Text("settings.section.analog_deadzone", bundle: .module),
             footer: Text(CoreDeadzoneCompatibilityCatalog.progressSummary)
                 .foregroundColor(.secondary)
         ) {
@@ -2242,7 +2411,7 @@ private struct HapticsRumbleSection: View {
 
     var body: some View {
         #if !os(tvOS)
-        Section(header: Text("settings.section.haptics_rumble", bundle: .module)) {
+        Section {
             ThemedToggle(isOn: $hapticFeedback) {
                 SettingsRow(title: "Haptic Feedback",
                             subtitle: "Vibrate when pressing on-screen buttons.",
@@ -2298,7 +2467,7 @@ private struct HapticsRumbleSection: View {
         }
         #else
         // tvOS: always show rumble controls since external controllers are the primary input.
-        Section(header: Text("settings.section.haptics_rumble", bundle: .module)) {
+        Section {
             ThemedToggle(isOn: $rumbleEnabled) {
                 SettingsRow(title: "Game Rumble",
                             subtitle: "Master on/off for all in-game rumble events from emulator cores.",
@@ -2351,7 +2520,7 @@ private struct DualSenseExtrasSection: View {
     @Default(.dualSenseMicButtonAction) var micButtonAction
 
     var body: some View {
-        Section(header: Text("DualSense / DS4 Features")) {
+        Section {
             ThemedToggle(isOn: $lightBarEnabled) {
                 SettingsRow(title: "Controller Light Bar",
                             subtitle: "Show a per-system color on the DualSense / DS4 light bar.",
@@ -2467,7 +2636,7 @@ private struct OnScreenControllerSection: View {
 #endif
 
     var body: some View {
-        Section(header: Text("settings.section.on_screen_controller", bundle: .module)) {
+        Section {
             HStack {
                 Text("settings.on_screen.controller_opacity", bundle: .module)
                 RetroWaveSlider<Double>(value: $controllerOpacity,
@@ -2564,7 +2733,7 @@ private struct LibrarySection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
 
     var body: some View {
-        Section(header: Text("settings.section.library", bundle: .module)) {
+        Section {
             //#if canImport(PVWebServer)
             //            Button(action: viewModel.launchWebServer) {
             //                SettingsRow(title: "Launch Web Server",
@@ -2606,7 +2775,7 @@ private struct LibrarySection2: View {
     @State private var showSaveImportWizard = false
 
     var body: some View {
-        Section(header: Text("settings.section.library_management", bundle: .module)) {
+        Section {
 
             #if os(tvOS)
                 // Cloud Sync Settings
@@ -2756,76 +2925,73 @@ private struct LibrarySection2: View {
 private struct AdvancedSection: View {
     var body: some View {
         Group {
-            Section(header: Text("settings.section.advanced", bundle: .module)) {
-                #if canImport(FreemiumKit)
-                PaidStatusView(style: .decorative(icon: .star))
-                    .freemiumKitColorReset()
-                    .listRowBackground(Color.accentColor)
-                #endif
-                AdvancedTogglesView()
+            #if canImport(FreemiumKit)
+            PaidStatusView(style: .decorative(icon: .star))
+                .freemiumKitColorReset()
+            #endif
+            AdvancedTogglesView()
 
-                // App Group File Browser for debugging
-                NavigationLink(destination: AppGroupFileBrowserView()) {
-                    SettingsRow(title: "App Group File Browser",
-                                subtitle: "Browse files in the app group container for debugging.",
-                                icon: .sfSymbol("folder.badge.gear"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-
-                #if os(tvOS)
-                // TopShelf Log Viewer
-                NavigationLink(destination: TopShelfLogView()) {
-                    SettingsRow(title: "TopShelf Log",
-                                subtitle: "View logs from the TopShelf extension.",
-
-                                icon: .sfSymbol("doc.text.magnifyingglass"))
-                }
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-
-                #if !os(tvOS)
-                // Spotlight Debug View
-                NavigationLink(destination: SpotlightDebugView()) {
-                    SettingsRow(title: "Spotlight Debug",
-                                subtitle: "View and manage Spotlight indexing for games and save states.",
-                                icon: .sfSymbol("magnifyingglass.circle"))
-                }
-                #endif
-
-                // Log view
-                NavigationLink(destination: RetroLogView().tvOSSubpageFocusContainment()) {
-                    SettingsRow(title: "Logs",
-                                subtitle: "View, search, and export app logs.",
-                                icon: .sfSymbol("doc.text.magnifyingglass"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-
-                // RetroArch log file browser
-                NavigationLink(destination: RetroArchLogBrowserView()) {
-                    SettingsRow(title: "RetroArch Logs",
-                                subtitle: "Browse, view, share, and delete RetroArch log files.",
-                                icon: .sfSymbol("doc.text.below.ecg"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-
-                // Session log file browser
-                NavigationLink(destination: PVLogSessionBrowserView()) {
-                    SettingsRow(title: "Session Logs",
-                                subtitle: "View and manage file-based session log archives.",
-                                icon: .sfSymbol("doc.on.doc"))
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-
-                SecretSettingsRow()
+            // App Group File Browser for debugging
+            NavigationLink(destination: AppGroupFileBrowserView()) {
+                SettingsRow(title: "App Group File Browser",
+                            subtitle: "Browse files in the app group container for debugging.",
+                            icon: .sfSymbol("folder.badge.gear"))
             }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+
+            #if os(tvOS)
+            // TopShelf Log Viewer
+            NavigationLink(destination: TopShelfLogView()) {
+                SettingsRow(title: "TopShelf Log",
+                            subtitle: "View logs from the TopShelf extension.",
+
+                            icon: .sfSymbol("doc.text.magnifyingglass"))
+            }
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+
+            #if !os(tvOS)
+            // Spotlight Debug View
+            NavigationLink(destination: SpotlightDebugView()) {
+                SettingsRow(title: "Spotlight Debug",
+                            subtitle: "View and manage Spotlight indexing for games and save states.",
+                            icon: .sfSymbol("magnifyingglass.circle"))
+            }
+            #endif
+
+            // Log view
+            NavigationLink(destination: RetroLogView().tvOSSubpageFocusContainment()) {
+                SettingsRow(title: "Logs",
+                            subtitle: "View, search, and export app logs.",
+                            icon: .sfSymbol("doc.text.magnifyingglass"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+
+            // RetroArch log file browser
+            NavigationLink(destination: RetroArchLogBrowserView()) {
+                SettingsRow(title: "RetroArch Logs",
+                            subtitle: "Browse, view, share, and delete RetroArch log files.",
+                            icon: .sfSymbol("doc.text.below.ecg"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+
+            // Session log file browser
+            NavigationLink(destination: PVLogSessionBrowserView()) {
+                SettingsRow(title: "Session Logs",
+                            subtitle: "View and manage file-based session log archives.",
+                            icon: .sfSymbol("doc.on.doc"))
+            }
+            #if os(tvOS)
+            .retroFocusButtonStyle(showBorder: false)
+            #endif
+
+            SecretSettingsRow()
         }
     }
 }
@@ -3097,7 +3263,8 @@ private struct DeltaStylesLinkView: View {
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 private struct RetroAchievementsSection: View {
     @ObservedObject var viewModel: PVSettingsViewModel
-    @State private var cheevosStatus: String = RetroAchievementsSection.computeStatus()
+    /// `nil` until the first `.task`: reading credentials hits the keychain, which must not run on every re-init.
+    @State private var cheevosStatus: String?
 
     static func computeStatus() -> String {
         let mgr = RetroCredentialsManager.shared
@@ -3108,7 +3275,7 @@ private struct RetroAchievementsSection: View {
     }
 
     var body: some View {
-        Section(header: Text("settings.section.retroachievements", bundle: .module)) {
+        Section {
             NavigationLink(destination: RetroAchievementsView()) {
                 SettingsRow(title: "RetroAchievements",
                             subtitle: cheevosStatus,
@@ -3117,7 +3284,7 @@ private struct RetroAchievementsSection: View {
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
-            .onAppear {
+            .task {
                 cheevosStatus = RetroAchievementsSection.computeStatus()
             }
         }
