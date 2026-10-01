@@ -1,14 +1,14 @@
 module mednafen {
-//    header "../mednafen/include/config.h"
-    header "../mednafen/src/mednafen.h"
-    header "../mednafen/src/types.h"
-//    header "../mednafen/src/settings-driver.h"
-    header "../mednafen/src/state-driver.h"
-    header "../mednafen/src/mednafen-driver.h"
-    header "../mednafen/src/mempatcher.h"
-    header "../mednafen/src/MemoryStream.h"
-    header "../mednafen/src/state.h"
-    header "../mednafen/src/endian.h"
+//    header "../config/config.h"
+    header "../mednafen-src/src/mednafen.h"
+    header "../mednafen-src/src/types.h"
+//    header "../mednafen-src/src/settings-driver.h"
+    header "../mednafen-src/src/state-driver.h"
+    header "../mednafen-src/src/mednafen-driver.h"
+    header "../mednafen-src/src/mempatcher.h"
+    header "../mednafen-src/src/MemoryStream.h"
+    header "../mednafen-src/src/state.h"
+    header "../mednafen-src/src/endian.h"
 
     requires cplusplus
     export *
@@ -16,19 +16,19 @@ module mednafen {
 }
 
 module mednafen.hw_cpu {
-    header "../mednafen/src/hw_cpu/m68k/m68k.h"
-    header "../mednafen/src/hw_cpu/v810/v810_cpu.h"
+    header "../mednafen-src/src/hw_cpu/m68k/m68k.h"
+    header "../mednafen-src/src/hw_cpu/v810/v810_cpu.h"
 
     export *
 }
 
 //module mednafen.hw_cpu.m68k {
-//    header "../mednafen/src/hw_cpu/m68k/m68k.h"
+//    header "../mednafen-src/src/hw_cpu/m68k/m68k.h"
 //    export *
 //}
 //
 //module mednafen.hw_cpu._6502 {
-//    header "../mednafen/src/hw_cpu/6502/Core6502.h"
+//    header "../mednafen-src/src/hw_cpu/6502/Core6502.h"
 //    export *
 //}
 
@@ -37,21 +37,21 @@ module mednafen.cdrom {
 }
 
 module mednafen.video {
-    header "../mednafen/src/video/surface.h"
-    header "../mednafen/src/video/primitives.h"
-    header "../mednafen/src/video/text.h"
+    header "../mednafen-src/src/video/surface.h"
+    header "../mednafen-src/src/video/primitives.h"
+    header "../mednafen-src/src/video/text.h"
 
     export *
 }
 
 /// Cores
 module mednafen.apple2 {
-    header "../mednafen/src/apple2/apple2.h"
+    header "../mednafen-src/src/apple2/apple2.h"
     
     export *
 }
 module mednafen.megadrive {
-    header "../mednafen/src/md/genesis.h"
+    header "../mednafen-src/src/md/genesis.h"
     
     export *
 }
@@ -83,9 +83,9 @@ module mednafen.snes_faust {
     export *
 }
 module mednafen.virtualboy {
-    header "../mednafen/src/vb/vb.h"
-    header "../mednafen/src/vb/input.h"
-    header "../mednafen/src/vb/vip.h"
+    header "../mednafen-src/src/vb/vb.h"
+    header "../mednafen-src/src/vb/input.h"
+    header "../mednafen-src/src/vb/vip.h"
 
     requires cplusplus
 

@@ -1,0 +1,1 @@
+../../mednafen-src/src/trio/trionan.h

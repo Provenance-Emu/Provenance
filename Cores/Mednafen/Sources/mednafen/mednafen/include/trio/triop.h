@@ -1,1 +1,0 @@
-../../src/trio/triop.h

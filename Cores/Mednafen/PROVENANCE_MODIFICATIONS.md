@@ -1,136 +1,50 @@
 # Provenance Modifications to Mednafen
 
-Mednafen is distributed as a source zip from https://mednafen.github.io/ (not a git
-repository), so modifications cannot be tracked via `git diff` against upstream.  This
-file documents every change Provenance has made to the vendored Mednafen source so they
-can be re-applied whenever the Mednafen source is updated.
+Mednafen upstream ships source tarballs only. Provenance builds it from
+`Sources/mednafen/mednafen-src`, a git submodule of
+[Provenance-Emu/mednafen-git](https://github.com/Provenance-Emu/mednafen-git), our fork
+of `libretro-mirrors/mednafen-git`. The mirror has one commit per upstream release, with
+the tarball contents at the repository root.
 
-> **When updating Mednafen:** replace `Sources/mednafen/` with the new source, then
-> re-apply every patch listed below.  Each entry includes the exact code to add/edit.
+- `master` tracks the mirror and holds unmodified upstream releases. It is currently
+  Mednafen 1.32.1, commit `f0ee9d5`.
+- `Provenance-master` is `master` plus Provenance's patches, one commit each. The
+  submodule pointer in this repo always names a `Provenance-master` commit.
 
----
+The commits on `Provenance-master` are the source of truth for what Provenance
+changes. `git log master..Provenance-master` inside the submodule lists them. The
+table below summarises them.
 
-## 1. RetroAchievements RAM accessor functions (PR #3510, Phase 1)
+| # | Patch | Files | Why | Origin |
+|---|-------|-------|-----|--------|
+| 1 | Disable `MDFN_HIDE` | `src/types.h` plus 34 declaration sites | `MDFN_HIDE` is hidden visibility. Provenance splits Mednafen into many SwiftPM targets, and the bridge needs to see `Emulated*` tables, `MDFNGameInfo`, `NVFS`, cheat tables and similar. The per-site `/*MDFN_HIDE*/` edits are no-ops once `types.h` defines it empty. | `82d5a6bfd8`, `d27bb892b9` |
+| 2 | CHD disc images | new `src/cdrom/CDAccess_CHD.{cpp,h}`, `src/cdrom/CDAccess.cpp`, `src/mednafen.cpp` | Opens `.chd` through libchdr (`ThirdParty/libchdr`). | `0a839b60c9`, `5e9e80ed7f`, `2330b3e3a2`, `0c2f3ce8ab` |
+| 3 | RetroAchievements RAM accessors | `src/{psx/psx,nes/nes,snes_faust/snes,pce/pce,pce_fast/pce,ss/ss}.cpp` | Adds `extern "C"` `mdfn_*_ptr()` / `mdfn_*_size()` functions, declared in `Sources/MednafenGameCoreC/include/MednafenGameCoreC/MednafenGameCoreC.h`. Saturn work RAM is `uint16` lane-swapped; the Swift bridge XORs offsets with 1 (`MednafenRcheevosByteSwapModeWord16`). | `ffbbe96e20` (#3510) |
+| 4 | PSX teardown guards | `src/psx/psx.cpp` | Event updates skip a destroyed `CPU` or `CDC` (crash on close). | `54e6d9ba2b` |
+| 5 | NES PPU surface guards | `src/nes/ppu/ppu.cpp` | Null surface checks and a clamped palette LUT index (close/rotation race). | `9451bc87cd` |
+| 6 | Saturn SMPC default input | `src/ss/smpc.cpp` | `MiscInputPtr` never becomes null before the frontend sets port 12. | `b84e174086` |
+| 7 | `MDFNI_LoadGame` rethrows | `src/mednafen.cpp` | Logs and rethrows instead of returning `NULL`, so the bridge can show the error. | `2330b3e3a2` |
+| 8 | `MDFNI_Init` re-entry | `src/mednafen.cpp` | Drops the empty-system-list assert so Init can run again. | `c3cdcbc762` |
+| 9 | Skip `TestSignedOverflow` | `src/tests.cpp` | That self test assumes `-fwrapv`. Upstream's configure passes it; `Package.swift` does not. | `c3cdcbc762` |
 
-**Purpose:** Expose raw RAM pointers so the rcheevos runtime can read emulator memory
-for achievement condition evaluation.
+None of the patches touch save-state code (`StateAction`, `SFORMAT`), so states are
+compatible with stock Mednafen 1.32.1.
 
-**Pattern:** At the **end** of each system `.cpp` file, after the last existing function,
-add an `extern "C"` block with a `_ptr()` accessor and a `_size()` accessor.
+## Build glue that lives outside the submodule
 
-### `src/psx/psx.cpp` — end of file
+Upstream's autotools build generates a few files. Provenance keeps its equivalents
+under `Sources/mednafen/`, outside the fork:
 
-```cpp
-// ---- Provenance RetroAchievements RAM accessors ----
-extern "C" {
-    uint8_t* mdfn_psx_mainram_ptr(void) { return MainRAM.data8; }
-    size_t   mdfn_psx_mainram_size(void) { return 2 * 1024 * 1024; }
-}
-```
+- `config/config.h` is the configure output Mednafen reads through `HAVE_CONFIG_H`.
+- `config/{trio,zstd,minilzo}/` hold the `AC_CONFIG_LINKS` header links, as symlinks
+  into `mednafen-src`. They point at the internal copies.
+- `glue/font-data-{12x13,18x18}.cpp` compile upstream's `src/video/font-data-*.c` as
+  C++, because those files include the C++-only `<mednafen/types.h>`.
+- `glue/wswan_main.cpp` compiles upstream's `src/wswan/main.cpp`. SwiftPM treats any
+  target with a `main.*` source as an executable target.
+- `include/module.modulemap` defines the `mednafen` Clang module that the bridge
+  imports.
 
-### `src/nes/nes.cpp` — end of file
-
-```cpp
-// ---- Provenance RetroAchievements RAM accessors ----
-extern "C" {
-    uint8_t* mdfn_nes_ram_ptr(void) { return MDFN_IEN_NES::RAM; }
-    size_t   mdfn_nes_ram_size(void) { return 0x800; }
-}
-```
-
-### `src/snes_faust/snes.cpp` — end of file
-
-```cpp
-// ---- Provenance RetroAchievements RAM accessors ----
-extern "C" {
-    uint8_t* mdfn_snes_faust_wram_ptr(void) { return WRAM; }
-    size_t   mdfn_snes_faust_wram_size(void) { return sizeof(WRAM); }
-}
-```
-
-### `src/pce/pce.cpp` — end of file
-
-```cpp
-// ---- Provenance RetroAchievements RAM accessors ----
-extern "C" {
-    uint8_t* mdfn_pce_baseram_ptr(void) { return BaseRAM; }
-    size_t   mdfn_pce_baseram_size(void) { return IsSGX ? 32768 : 8192; } // 32 KB for SuperGrafx, 8 KB for PCE
-}
-```
-
-### `src/pce_fast/pce.cpp` — end of file
-
-```cpp
-// ---- Provenance RetroAchievements RAM accessors ----
-extern "C" {
-    uint8_t* mdfn_pce_fast_baseram_ptr(void) { return MDFN_IEN_PCE_FAST::BaseRAM; }
-    size_t   mdfn_pce_fast_baseram_size(void) { return MDFN_IEN_PCE_FAST::IsSGX ? 32768 : 8192; } // 32 KB for SuperGrafx, 8 KB for PCE
-}
-```
-
-### `src/ss/ss.cpp` — end of file
-
-```cpp
-// ---- Provenance RetroAchievements RAM accessors ----
-//
-// NOTE: WorkRAML / WorkRAMH are uint16_t arrays that Mednafen accesses through
-// ne16_rbo_be / ne16_wbo_be helpers which swap byte lanes on little-endian hosts
-// (byte_offset ^ 1 for 8-bit reads).  The reinterpret_cast<uint8_t*> below
-// exposes raw host memory layout — byte-wise readers see scrambled byte order.
-//
-// The Swift bridge corrects this via MednafenRcheevosByteSwapModeWord16:
-// the read-memory callback XORs each logical offset by 1 before reading, which
-// reverses the ne16_rbo_be swap.  Callers that do NOT apply this correction will
-// read garbled bytes.  See MednafenRcheevosObjC.h for the byteSwapMode field.
-extern "C" {
-    uint8_t* mdfn_ss_workraml_ptr(void) { return reinterpret_cast<uint8_t*>(WorkRAML); }
-    size_t   mdfn_ss_workraml_size(void) { return sizeof(WorkRAML); }
-    uint8_t* mdfn_ss_workramh_ptr(void) { return reinterpret_cast<uint8_t*>(WorkRAMH); }
-    size_t   mdfn_ss_workramh_size(void) { return sizeof(WorkRAMH); }
-}
-```
-
----
-
-## 2. Function declarations in `MednafenGameCoreC.h` (PR #3510, Phase 1)
-
-**File:** `Cores/Mednafen/Sources/MednafenGameCoreC/include/MednafenGameCoreC/MednafenGameCoreC.h`
-
-This header is NOT upstream Mednafen — it is a Provenance-authored bridge header.
-Add the following declarations (they match the `extern "C"` blocks above):
-
-```c
-// PSX
-uint8_t* mdfn_psx_mainram_ptr(void);
-size_t   mdfn_psx_mainram_size(void);
-
-// NES
-uint8_t* mdfn_nes_ram_ptr(void);
-size_t   mdfn_nes_ram_size(void);
-
-// Saturn
-uint8_t* mdfn_ss_workraml_ptr(void);
-size_t   mdfn_ss_workraml_size(void);
-uint8_t* mdfn_ss_workramh_ptr(void);
-size_t   mdfn_ss_workramh_size(void);
-
-// PCE / PCE-fast
-uint8_t* mdfn_pce_baseram_ptr(void);
-size_t   mdfn_pce_baseram_size(void);
-uint8_t* mdfn_pce_fast_baseram_ptr(void);
-size_t   mdfn_pce_fast_baseram_size(void);
-
-// SNES fast (snes_faust)
-uint8_t* mdfn_snes_faust_wram_ptr(void);
-size_t   mdfn_snes_faust_wram_size(void);
-```
-
----
-
-## Future Work: patch-based update workflow
-
-The user (@JoeMatt) has noted that a better long-term system would be to maintain these
-changes as `.diff` patch files and apply them at build time via an SPM build plugin or
-Makefile rule (e.g. `patch -p1 < patches/ra_accessors.patch`).  This is tracked in
-issue #3380 (Phase 2+ notes) as a future improvement.  For now, this file serves as the
-manual checklist.
+`Package.swift` lists every compiled source explicitly. Files it doesn't list are
+ignored, so upstream code Provenance doesn't build (drivers, Win32, DOS, tests) stays
+in the submodule untouched.

@@ -114,9 +114,9 @@ let CSETTINGS: [CSetting] =
 
 let MEDNAFEN_C_SETTINGS: [CSetting] =
   [
-    .headerSearchPath("./mednafen/include_mednafen"),
-    .headerSearchPath("./mednafen/include"),
-    .headerSearchPath("./mednafen/"),
+    .headerSearchPath("./config"),
+    .headerSearchPath("./mednafen-src/include"),
+    .headerSearchPath("./mednafen-src/"),
   ] + CSETTINGS
 
 func mednafenTarget(
@@ -156,8 +156,8 @@ let targets: [Target] = [
       .process("Resources/Core.plist")
     ],
     cSettings: [
-      .headerSearchPath("../mednafen/mednafen/include_mednafen"),
-      .headerSearchPath("../mednafen/mednafen/include"),
+      .headerSearchPath("../mednafen/config"),
+      .headerSearchPath("../mednafen/mednafen-src/include"),
     ] + CSETTINGS,
     swiftSettings: [.interoperabilityMode(.Cxx)],
     plugins: [
@@ -185,8 +185,8 @@ let targets: [Target] = [
         "-fcxx-exceptions",
         "-fcxx-modules",
       ]),
-      .headerSearchPath("../mednafen/mednafen/include_mednafen"),
-      .headerSearchPath("../mednafen/mednafen/include"),
+      .headerSearchPath("../mednafen/config"),
+      .headerSearchPath("../mednafen/mednafen-src/include"),
     ] + CSETTINGS
   ),
   // MARK: --------- Options ------------ //
@@ -232,8 +232,8 @@ let targets: [Target] = [
       ]),
       .headerSearchPath("./include"),
       .headerSearchPath("./include/MednafenGameCoreC"),
-      .headerSearchPath("../mednafen/mednafen/include_mednafen"),
-      .headerSearchPath("../mednafen/mednafen/include"),
+      .headerSearchPath("../mednafen/config"),
+      .headerSearchPath("../mednafen/mednafen-src/include"),
     ] + CSETTINGS
   ),
   // MARK: --------- Mednafen ------------ //
@@ -285,50 +285,50 @@ let targets: [Target] = [
   .target(
     name: "apple2",
     path: "Sources/mednafen/",
-    sources: Sources.Apple2.map { "mednafen/src/apple2/\($0)" },
+    sources: Sources.Apple2.map { "mednafen-src/src/apple2/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- PSX ------------ //
   .target(
     name: "psx",
     path: "Sources/mednafen/",
-    sources: Sources.PSX.map { "mednafen/src/psx/\($0)" },
-    resources: [.copy("mednafen/src/psx/notes/")],
+    sources: Sources.PSX.map { "mednafen-src/src/psx/\($0)" },
+    resources: [.copy("mednafen-src/src/psx/notes/")],
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- NES ------------ //
   .target(
     name: "nes",
     path: "Sources/mednafen/",
-    sources: Sources.NES.map { "mednafen/src/nes/\($0)" },
+    sources: Sources.NES.map { "mednafen-src/src/nes/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- GameBoy ------------ //
   .target(
     name: "gb",
     path: "Sources/mednafen/",
-    sources: Sources.GB.map { "mednafen/src/gb/\($0)" },
+    sources: Sources.GB.map { "mednafen-src/src/gb/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- GameBoy Advanced ------------ //
   .target(
     name: "gba",
     path: "Sources/mednafen/",
-    sources: Sources.GBA.map { "mednafen/src/gba/\($0)" },
+    sources: Sources.GBA.map { "mednafen-src/src/gba/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- Lynx ------------ //
   .target(
     name: "lynx",
     path: "Sources/mednafen/",
-    sources: Sources.Lynx.map { "mednafen/src/lynx/\($0)" },
+    sources: Sources.Lynx.map { "mednafen-src/src/lynx/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- NeoGeo Pocket ------------ //
   .target(
     name: "neogeopocket",
     path: "Sources/mednafen/",
-    sources: Sources.NGP.map { "mednafen/src/ngp/\($0)" },
+    sources: Sources.NGP.map { "mednafen-src/src/ngp/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS + [.unsafeFlags(["-fno-strict-aliasing"])]
     // Neo Geo Pocket emulation code is now compiled with
     // -fno-strict-aliasing to work around issues in the TLCS-900h code.
@@ -337,102 +337,103 @@ let targets: [Target] = [
   .target(
     name: "pce",
     path: "Sources/mednafen/",
-    sources: Sources.PCE.map { "mednafen/src/pce/\($0)" },
-    resources: [.copy("mednafen/src/pce/notes/")],
+    sources: Sources.PCE.map { "mednafen-src/src/pce/\($0)" },
+    resources: [.copy("mednafen-src/src/pce/notes/")],
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- PCE Fast ------------ //
   .target(
     name: "pcefast",
     path: "Sources/mednafen/",
-    sources: Sources.PCE_Fast.map { "mednafen/src/pce_fast/\($0)" },
+    sources: Sources.PCE_Fast.map { "mednafen-src/src/pce_fast/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- Sege Master System ------------ //
   .target(
     name: "segamastersystem",
     path: "Sources/mednafen/",
-    sources: Sources.SMS.map { "mednafen/src/sms/\($0)" },
+    sources: Sources.SMS.map { "mednafen-src/src/sms/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- PCFX ------------ //
   .target(
     name: "pcfx",
     path: "Sources/mednafen/",
-    sources: Sources.PCFX.map { "mednafen/src/pcfx/\($0)" },
-    resources: [.copy("mednafen/src/pcfx/notes/")],
+    sources: Sources.PCFX.map { "mednafen-src/src/pcfx/\($0)" },
+    resources: [.copy("mednafen-src/src/pcfx/notes/")],
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- MegaDrive ------------ //
   .target(
     name: "megadrive",
     path: "Sources/mednafen/",
-    sources: Sources.MegaDrive.map { "mednafen/src/md/\($0)" },
+    sources: Sources.MegaDrive.map { "mednafen-src/src/md/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- SNES ------------ //
   .target(
     name: "snes",
     path: "Sources/mednafen/",
-    sources: Sources.SNES.map { "mednafen/src/snes/\($0)" },
+    sources: Sources.SNES.map { "mednafen-src/src/snes/\($0)" },
     cSettings: [
-      .headerSearchPath("./mednafen/include_mednafen"),
-      .headerSearchPath("./mednafen/include"),
-      .headerSearchPath("./mednafen/src/snes/src"),
-      .headerSearchPath("./mednafen/src/snes/src/lib/"),
-      .headerSearchPath("./mednafen/src/snes/src/chip/st010/"),
+      .headerSearchPath("./config"),
+      .headerSearchPath("./mednafen-src/include"),
+      .headerSearchPath("./mednafen-src/src/snes/src"),
+      .headerSearchPath("./mednafen-src/src/snes/src/lib/"),
+      .headerSearchPath("./mednafen-src/src/snes/src/chip/st010/"),
     ] + CSETTINGS
   ),
   // MARK: --------- SNES Faust ------------ //
   .target(
     name: "snes_faust",
     path: "Sources/mednafen/",
-    sources: Sources.SNES_Faust.map { "mednafen/src/snes_faust/\($0)" },
-    resources: [.copy("mednafen/src/snes_faust/notes/")],
+    sources: Sources.SNES_Faust.map { "mednafen-src/src/snes_faust/\($0)" },
+    resources: [.copy("mednafen-src/src/snes_faust/notes/")],
     cSettings: [
-      .headerSearchPath("./mednafen/include_mednafen"),
-      .headerSearchPath("./mednafen/include"),
-      .headerSearchPath("./mednafen/src/snes_faust/"),
+      .headerSearchPath("./config"),
+      .headerSearchPath("./mednafen-src/include"),
+      .headerSearchPath("./mednafen-src/src/snes_faust/"),
     ] + CSETTINGS
   ),
   // MARK: --------- Saturn ------------ //
   .target(
     name: "saturn",
     path: "Sources/mednafen/",
-    sources: Sources.Saturn.map { "mednafen/src/ss/\($0)" },
-    resources: [.copy("mednafen/src/ss/notes/")],
+    sources: Sources.Saturn.map { "mednafen-src/src/ss/\($0)" },
+    resources: [.copy("mednafen-src/src/ss/notes/")],
     cSettings: [
-      .headerSearchPath("./mednafen/include_mednafen"),
-      .headerSearchPath("./mednafen/include"),
-      .headerSearchPath("./mednafen/src/ss"),
+      .headerSearchPath("./config"),
+      .headerSearchPath("./mednafen-src/include"),
+      .headerSearchPath("./mednafen-src/src/ss"),
     ] + CSETTINGS
   ),
   // MARK: --------- VirtualBoy ------------ //
   .target(
     name: "virtualboy",
     path: "Sources/mednafen/",
-    sources: Sources.VirtualBoy.map { "mednafen/src/vb/\($0)" },
+    sources: Sources.VirtualBoy.map { "mednafen-src/src/vb/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- WonderSwan ------------ //
   .target(
     name: "wonderswan",
     path: "Sources/mednafen/",
-    sources: Sources.WonderSwan.map { "mednafen/src/wswan/\($0)" },
+    sources: Sources.WonderSwan.map { "mednafen-src/src/wswan/\($0)" }
+      + ["glue/wswan_main.cpp"],  // upstream main.cpp; see the wrapper for why
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- HW Audio ------------ //
   .target(
     name: "hwaudio",
     path: "Sources/mednafen/",
-    sources: Sources.HW.Audio.map { "mednafen/src/hw_sound/\($0)" },
+    sources: Sources.HW.Audio.map { "mednafen-src/src/hw_sound/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- HW Video ------------ //
   .target(
     name: "hwvideo",
     path: "Sources/mednafen/",
-    sources: Sources.HW.Video.map { "mednafen/src/hw_video/\($0)" },
+    sources: Sources.HW.Video.map { "mednafen-src/src/hw_video/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- HW CPU ------------ //
@@ -440,35 +441,35 @@ let targets: [Target] = [
     name: "hwcpu",
     dependencies: ["hwcpu-m68k"],
     path: "Sources/mednafen/",
-    sources: Sources.HW.CPU.map { "mednafen/src/hw_cpu/\($0)" },
+    sources: Sources.HW.CPU.map { "mednafen-src/src/hw_cpu/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- HW CPU m68k ------------ //
   .target(
     name: "hwcpu-m68k",
     path: "Sources/mednafen/",
-    sources: Sources.HW.CPU_m68K.map { "mednafen/src/hw_cpu/m68k/\($0)" },
+    sources: Sources.HW.CPU_m68K.map { "mednafen-src/src/hw_cpu/m68k/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- HW Misc ------------ //
   .target(
     name: "hwmisc",
     path: "Sources/mednafen/",
-    sources: Sources.HW.Misc.map { "mednafen/src/\($0)" },
+    sources: Sources.HW.Misc.map { "mednafen-src/src/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- MPCDEC ------------ //
   .target(
     name: "mpcdec",
     path: "Sources/mednafen/",
-    sources: Sources.MPCDEC.map { "mednafen/src/mpcdec/\($0)" },
+    sources: Sources.MPCDEC.map { "mednafen-src/src/mpcdec/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- QuickLZ ------------ //
   .target(
     name: "quicklz",
     path: "Sources/mednafen/",
-    sources: Sources.QuickLZ.map { "mednafen/src/quicklz/\($0)" },
+    sources: Sources.QuickLZ.map { "mednafen-src/src/quicklz/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS + [.unsafeFlags(["-fno-strict-aliasing"])]
     // compile QuickLZ with -fno-strict-aliasing to avoid potential future
     // trouble, since it does violate strict aliasing in at least a few places.
@@ -477,7 +478,7 @@ let targets: [Target] = [
   .target(
     name: "compress",
     path: "Sources/mednafen/",
-    sources: Sources.Compress.map { "mednafen/src/\($0)" },
+    sources: Sources.Compress.map { "mednafen-src/src/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- CD-ROM ------------ //
@@ -485,14 +486,14 @@ let targets: [Target] = [
     name: "cdrom",
     dependencies: ["libchdr"],
     path: "Sources/mednafen/",
-    sources: Sources.CDROM.map { "mednafen/src/cdrom/\($0)" },
+    sources: Sources.CDROM.map { "mednafen-src/src/cdrom/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- Sound ------------ //
   .target(
     name: "sound",
     path: "Sources/mednafen/",
-    sources: Sources.Sound.map { "mednafen/src/sound/\($0)" },
+    sources: Sources.Sound.map { "mednafen-src/src/sound/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- libchdr (CHD) ------------ //
@@ -566,13 +567,13 @@ let targets: [Target] = [
   .target(
     name: "sasplay",
     path: "Sources/mednafen/",
-    sources: Sources.SASPlay.map { "mednafen/src/sasplay/\($0)" },
+    sources: Sources.SASPlay.map { "mednafen-src/src/sasplay/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   //        // MARK: --------- Sexy AL ------------ //
   //        .target(
   //            name: "sexyal",
-  //            path: "Sources/mednafen/mednafen/",
+  //            path: "Sources/mednafen/mednafen-src/",
   //            sources: [
   //                "drivers/dummy.cpp",
   //                "drivers/sdl.cpp",
@@ -590,28 +591,29 @@ let targets: [Target] = [
   .target(
     name: "tremor",
     path: "Sources/mednafen/",
-    sources: Sources.Tremor.map { "mednafen/src/tremor/\($0)" },
+    sources: Sources.Tremor.map { "mednafen-src/src/tremor/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- Trio ------------ //
   .target(
     name: "trio",
     path: "Sources/mednafen/",
-    sources: Sources.Trio.map { "mednafen/src/trio/\($0)" },
+    sources: Sources.Trio.map { "mednafen-src/src/trio/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- Video ------------ //
   .target(
     name: "video",
     path: "Sources/mednafen/",
-    sources: Sources.Video.map { "mednafen/src/video/\($0)" },
+    sources: Sources.Video.map { "mednafen-src/src/video/\($0)" }
+      + Sources.VideoGlue.map { "glue/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS
   ),
   // MARK: --------- Net ------------ //
   .target(
     name: "net",
     path: "Sources/mednafen/",
-    sources: Sources.Net.Server.map { "mednafen/src/net/\($0)" },
+    sources: Sources.Net.Server.map { "mednafen-src/src/net/\($0)" },
     cSettings: MEDNAFEN_C_SETTINGS + Sources.Net.DEFINES
   ),
   // MARK: --------- Tests ------------ //
@@ -866,7 +868,7 @@ extension Sources {
 //    "zstd/decompress/zstd_ddict.c",
 //    "zstd/decompress/zstd_decompress_block.c",
 //    "zstd/decompress/zstd_decompress.c",
-  ].map { "mednafen/src/\($0)" }
+  ].map { "mednafen-src/src/\($0)" }
   static let MegaDrive: [String] = [
     "cart/cart.cpp",
     "cart/map_eeprom.cpp",
@@ -1351,8 +1353,12 @@ extension Sources {
     "primitives.cpp",
     "png.cpp",
     "font-data.cpp",
-    "font-data-18x18.cpp",  // Must manually rename to .cpp
-    "font-data-12x13.cpp",  // Must manually rename to .cpp
+  ]
+  /// Upstream's font-data-*.c include C++-only headers; these Provenance
+  /// wrappers (Sources/mednafen/glue/) compile them as C++.
+  static let VideoGlue: [String] = [
+    "font-data-18x18.cpp",
+    "font-data-12x13.cpp",
   ]
   static let VirtualBoy: [String] = [
     "input.cpp",
@@ -1373,7 +1379,6 @@ extension Sources {
     "sound.cpp",
     "tcache.cpp",
     "v30mz.cpp",
-    "wswan_main.cpp",
   ]
 }
 
