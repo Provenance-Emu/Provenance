@@ -587,6 +587,33 @@ void FCEUD_Message(const char *s)
     ILOG(@"FCEUX: %s", s);
 }
 
+// Driver hooks the fceux core calls into. Upstream's SDL/Qt/Win drivers own
+// these; Provenance drives emulation itself, so they are inert here. Older
+// builds #if-0'd the callers inside the fceux submodule instead.
+int eoptions = 0;          // ines.cpp ORs in the Four-Score hack bit; unused otherwise
+int KillFCEUXonFrame = 0;  // 0 = never; non-zero makes FCEUI_Emulate exit(0) on that frame
+void RefreshThrottleFPS(void) {}
+void GetMouseData(uint32 (&md)[3]) { md[0] = md[1] = md[2] = 0; } // mapper 178 IR sensor; no mouse
+void FCEUD_DebugBreakpoint(int bp_num) {}
+void FCEUD_FlushTrace() {}
+const char *FCEUD_GetCompilerString() { return "clang"; }
+void FCEUI_UseInputPreset(int preset) {}
+// Hotkey command table (input.cpp FCEUI_CommandTable); Provenance never dispatches these.
+void FCEUD_SoundToggle(void) {}
+void FCEUD_SoundVolumeAdjust(int) {}
+void FCEUD_SaveStateAs(void) {}
+void FCEUD_LoadStateFrom(void) {}
+void FCEUD_MovieRecordTo(void) {}
+void FCEUD_MovieReplayFrom(void) {}
+void FCEUD_AviRecordTo(void) {}
+void FCEUD_AviStop(void) {}
+void FCEUD_SetEmulationSpeed(int cmd) {}
+void FCEUD_TurboOn(void) {}
+void FCEUD_TurboOff(void) {}
+void FCEUD_TurboToggle(void) {}
+void FCEUD_ToggleStatusIcon(void) {}
+void FCEUD_HideMenuToggle(void) {}
+
 // MARK: - Famicom Microphone
 
 - (void)startFamicomMicMonitoring {

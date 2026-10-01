@@ -19,7 +19,7 @@ public enum CorePlist {
   public static let pvPrincipleClass: String = "PVFCEU.PVFCEUEmulatorCore"
   public static let pvProjectName: String = "FCEUX"
   public static let pvProjectURL: String = "http://sourceforge.net/projects/fceultra/"
-  public static let pvProjectVersion: String = "2.6.2"
+  public static let pvProjectVersion: String = "2.6.6-225"
   public static let pvSupportedSystems: [String] = ["com.provenance.nes", "com.provenance.fds"]
 
   #if canImport(PVCoreBridge)

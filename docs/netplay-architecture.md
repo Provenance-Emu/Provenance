@@ -91,8 +91,8 @@ These cores have upstream netplay APIs that Provenance does not currently expose
 
 #### FCEU (NES)
 - **Systems:** NES / Famicom
-- **Location:** `Cores/FCEU/fceux-netplay-server/`
-- **Status:** `fceux_netplay_server.h/.m` exists but is an **empty stub** (just `@implementation fceux_netplay_server @end`). The FCEU-2.2.3 source has `sdl-netplay.cpp` / `unix-netplay.cpp` with a working SDL-based netplay implementation but it's SDL-specific and not adapted for Provenance.
+- **Location:** `Cores/FCEU/` (core source: `Cores/FCEU/fceux` submodule)
+- **Status:** No netplay. The empty `fceux-netplay-server` stub target was removed. Upstream fceux's `drivers/sdl/sdl-netplay.cpp` / `unix-netplay.cpp` and the Qt driver's netplay are driver-specific and not adapted for Provenance; the bridge stubs `FCEUD_SendData` / `FCEUD_RecvData`.
 - **Effort to expose:** Very High (SDL dependency). Use RetroArch's fceumm/nestopia core instead.
 
 #### TGBDual (Game Boy Link Cable)
