@@ -17,6 +17,8 @@
 #   --platform tvos        Archive/upload tvOS only
 #   --platform all         Both iOS and tvOS (TestFlight); sideload stays iOS-only
 #   --no-build             Skip xcodebuild (reuse last archive)
+#   --no-distribute        Upload to TestFlight but leave the build internal-only
+#                          (skip adding it to the public groups / Beta App Review)
 #   --dry-run              Print actions without executing
 #   --help                 Show this message
 #
@@ -28,6 +30,10 @@
 #
 # Overridable config env vars:
 #   RELEASES_REPO  (default: Provenance-Emu/Provenance)
+#   TESTFLIGHT_GROUPS           comma-separated beta groups to distribute to
+#                               (default: every external group with a public link)
+#   TESTFLIGHT_TIMEOUT_MINUTES  how long to wait for App Store Connect processing
+#                               before distributing (default: 120)
 
 set -euo pipefail
 
@@ -56,6 +62,7 @@ BUILD_NUMBER=""
 CHANNEL="all"
 PLATFORM="ios"
 NO_BUILD=false
+DISTRIBUTE=true
 DRY_RUN=false
 
 while [[ $# -gt 0 ]]; do
@@ -65,6 +72,7 @@ while [[ $# -gt 0 ]]; do
         --channel) CHANNEL="$2"; shift 2 ;;
         --platform) PLATFORM="$2"; shift 2 ;;
         --no-build) NO_BUILD=true; shift ;;
+        --no-distribute) DISTRIBUTE=false; shift ;;
         --dry-run) DRY_RUN=true; shift ;;
         --help)
             sed -n '/^# Usage:/,/^[^#]/p' "$0" | sed '$d' | sed 's/^# \{0,2\}//'
@@ -360,6 +368,64 @@ if should_run testflight; then
     should_platform tvos && do_appstore_upload tvOS "$TVOS_ARCHIVE" "$EXPORT_DIR/appstore-tvos"
 fi
 
+# ── Distribute to the public TestFlight groups ────────────────────────────────────
+# The upload above only reaches the internal groups. External groups (the public
+# TestFlight links) never pick a build up on their own, so a local release used
+# to leave every public tester on the previous build until someone assigned it by
+# hand. This runs the same script CI's testflight-distribute action runs: wait for
+# processing, add the build to the external groups, submit for Beta App Review.
+# CI passes --no-distribute and keeps its own step, which reports per platform.
+DISTRIBUTE_FAILED=()
+
+# PyJWT is the only dependency. Homebrew Python is PEP 668 "externally managed",
+# so it goes in a venv kept under build/ and reused across runs.
+distribute_python() {
+    if python3 -c 'import jwt, cryptography' 2>/dev/null; then
+        echo python3
+        return
+    fi
+    local venv="$PROJECT_DIR/build/.testflight-distribute-venv"
+    if [[ ! -x "$venv/bin/python" ]] || ! "$venv/bin/python" -c 'import jwt, cryptography' 2>/dev/null; then
+        python3 -m venv "$venv" >&2
+        "$venv/bin/python" -m pip install --quiet --disable-pip-version-check "PyJWT[crypto]>=2.8" >&2
+    fi
+    echo "$venv/bin/python"
+}
+
+do_distribute() {
+    local label="$1" asc_platform="$2"
+    log "Distributing $label build $BUILD_NUMBER to external TestFlight groups..."
+    if $DRY_RUN; then
+        echo "  [dry-run] distribute.py PLATFORM=$asc_platform BUILD_NUMBER=$BUILD_NUMBER"
+        return 0
+    fi
+    local python; python="$(distribute_python)"
+    resolve_asc_key
+    local sha; sha="$(git -C "$PROJECT_DIR" rev-parse --short HEAD)"
+    local branch; branch="$(git -C "$PROJECT_DIR" rev-parse --abbrev-ref HEAD)"
+    local whats_new="Build $BUILD_NUMBER from $branch @ $sha."
+    # distribute.py reads the key's contents, not a path.
+    if ! ASC_API_KEY_CONTENT="$(cat "$_asc_key_path")" \
+        BUNDLE_ID="org.provenance-emu.provenance" \
+        BUILD_NUMBER="$BUILD_NUMBER" \
+        PLATFORM="$asc_platform" \
+        GROUPS="${TESTFLIGHT_GROUPS:-}" \
+        WHATS_NEW="$whats_new" \
+        TIMEOUT_MINUTES="${TESTFLIGHT_TIMEOUT_MINUTES:-120}" \
+        SUBMIT_FOR_REVIEW=true \
+        "$python" "$PROJECT_DIR/.github/actions/testflight-distribute/distribute.py"; then
+        warn "$label build $BUILD_NUMBER was uploaded but NOT distributed — it is internal-only."
+        warn "Retry: op run --env-file=.env -- env BUNDLE_ID=org.provenance-emu.provenance BUILD_NUMBER=$BUILD_NUMBER PLATFORM=$asc_platform python3 .github/actions/testflight-distribute/distribute.py"
+        DISTRIBUTE_FAILED+=("$label")
+    fi
+}
+
+# After both uploads, so tvOS uploads while App Store Connect processes iOS.
+if should_run testflight && $DISTRIBUTE; then
+    should_platform ios  && do_distribute iOS  IOS
+    should_platform tvos && do_distribute tvOS TV_OS
+fi
+
 # ── Export Ad Hoc IPA (only for GitHub sideload distribution — iOS only) ────────────
 # Needs an Ad Hoc / release-testing provisioning profile. Skipped for testflight-only
 # so a missing ad-hoc profile can't fail an otherwise-successful TestFlight upload.
@@ -423,5 +489,11 @@ $RELEASE_NOTES"
 # ── Dispatch channels ─────────────────────────────────────────────────────────────
 # TestFlight already uploaded during the App Store export above (destination=upload).
 should_run github && upload_github
+
+# Reported last, after the GitHub channel had its chance to run: a build stuck in
+# processing should not cost the sideload release too.
+if [[ ${#DISTRIBUTE_FAILED[@]} -gt 0 ]]; then
+    err "Release $VERSION+$BUILD_NUMBER uploaded, but distribution failed for: ${DISTRIBUTE_FAILED[*]}"
+fi
 
 log "Release $VERSION+$BUILD_NUMBER complete!"

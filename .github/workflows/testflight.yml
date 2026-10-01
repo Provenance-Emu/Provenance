@@ -261,7 +261,9 @@ jobs:
           # rejecting the upload for ITMS-90575 (TopShelf iCloud entitlements, fixed
           # 89f166dc1d), not an archive fault. fail-fast is off, so a tvOS failure
           # cannot take a healthy iOS build down with it.
-          ARGS=(--channel testflight --platform "${{ matrix.platform }}")
+          # --no-distribute: the "Distribute to external TestFlight groups" step
+          # below does it, with its own timeout and per-platform annotations.
+          ARGS=(--channel testflight --platform "${{ matrix.platform }}" --no-distribute)
           if [ -n "${{ inputs.version }}" ]; then
             ARGS+=(--version "${{ inputs.version }}")
           fi
