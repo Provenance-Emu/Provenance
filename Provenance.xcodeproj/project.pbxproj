@@ -1620,8 +1620,6 @@
 		B306E1412769FE65001DC52E /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3082DB82E274CC2009DFE5D /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3082DBD2E27520E009DFE5D /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "Cores/Dolphin/dolphin-ios/build-iphoneos-/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
-		B309C7A42717C49F00279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B309C7A72717C4B500279529 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30B0D632D8262B300093A6B /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
 		B30B0DFF2D8262B300093A6B /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
 		B30B0E1D2D8262B300093A6B /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
@@ -1799,7 +1797,6 @@
 		B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-tvOS.xcconfig"; sourceTree = "<group>"; };
 		B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Build-watchOS.xcconfig"; sourceTree = "<group>"; };
 		B3270F6227DCB1A700E83180 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3270F6527DCB1B000E83180 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3270F6827DCB1BD00E83180 /* PVVecXGL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecXGL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3270F6B27DCB1C500E83180 /* PVSnesticle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSnesticle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3270F6E27DCB1DC00E83180 /* PVCrabEmu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCrabEmu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2066,7 +2063,6 @@
 		B3918FD82873EDC3000838F6 /* PVEP128Emu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEP128Emu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3918FDB2873EE5F000838F6 /* PVfMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVfMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3918FDE2873EEA8000838F6 /* PVMiniVMac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMiniVMac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B392B3DD2CCC592600B1C760 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39313832870FCFC00372EBB /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B393420D2CC5760C008AA673 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = Cores/emuThree/lib/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B39342102CC5771B008AA673 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = Cores/emuThree/cmake/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
@@ -2074,7 +2070,6 @@
 		B394CDDF2BDEE53A006B63E8 /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B394CDE22BDF0BCE006B63E8 /* Provenance-AppStore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-AppStore-Info.plist"; sourceTree = "<group>"; };
 		B394CDE32BDF22A2006B63E8 /* Provenance-AppStore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-AppStore.entitlements"; path = "../Provenance-AppStore.entitlements"; sourceTree = "<group>"; };
-		B396804A2CE74A9C00E1AB6D /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B396B6C82D7124A400A391E9 /* Cube.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Cube.xcodeproj; sourceTree = "<group>"; };
 		B396B7642D7124A400A391E9 /* MoltenVK.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVK.xcodeproj; sourceTree = "<group>"; };
 		B396B7822D7124A400A391E9 /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
@@ -2361,9 +2356,6 @@
 		B3E2AA3B2CB6360500E2636D /* PVGME.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGME.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E2AA3C2CB6361900E2636D /* PVGearcoleco.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGearcoleco.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E2AA3D2CB6362C00E2636D /* PVGearcoleco.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGearcoleco.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3E2AA402CB6369800E2636D /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3E2AA432CB636CD00E2636D /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3E2AA462CB637F900E2636D /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E2AA472CB6381400E2636D /* PVEP128Emu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEP128Emu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E2AA4A2CB6388300E2636D /* PVEP128Emu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEP128Emu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E2AA4B2CB638A400E2636D /* PVEP128Emu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEP128Emu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3826,12 +3818,10 @@
 				B32C08EB2D053DD50024A3E2 /* PVEmuThree.framework */,
 				B32C08E12D0534450024A3E2 /* PVMelonDS.framework */,
 				B32C08E22D0534450024A3E2 /* PVMelonDSRetro.framework */,
-				B396804A2CE74A9C00E1AB6D /* PVFlycast.framework */,
 				B3FC5AC62CE4376D00D378C9 /* PVEmuThree.framework */,
 				B3A3CDB02CCC875F00589F82 /* PVDuckStation.framework */,
 				B3A3CDAD2CCC873B00589F82 /* PVDuckStation.framework */,
 				B3A3CC142CCC6BC000589F82 /* PVDuckStation.framework */,
-				B392B3DD2CCC592600B1C760 /* PVFlycast.framework */,
 				B39343952CC5B202008AA673 /* PVDolphin.framework */,
 				B39342102CC5771B008AA673 /* MoltenVK.xcframework */,
 				B31553612CC2FD5500C472CA /* PVPPSSPP.framework */,
@@ -3867,9 +3857,6 @@
 				B3E2AA4B2CB638A400E2636D /* PVEP128Emu.framework */,
 				B3E2AA4A2CB6388300E2636D /* PVEP128Emu.framework */,
 				B3E2AA472CB6381400E2636D /* PVEP128Emu.framework */,
-				B3E2AA462CB637F900E2636D /* PVFlycast.framework */,
-				B3E2AA432CB636CD00E2636D /* PVFlycast.framework */,
-				B3E2AA402CB6369800E2636D /* PVFlycast.framework */,
 				B3E2AA3D2CB6362C00E2636D /* PVGearcoleco.framework */,
 				B3E2AA3C2CB6361900E2636D /* PVGearcoleco.framework */,
 				B3E2AA3B2CB6360500E2636D /* PVGME.framework */,
@@ -4134,7 +4121,6 @@
 				B3270F6E27DCB1DC00E83180 /* PVCrabEmu.framework */,
 				B3270F6B27DCB1C500E83180 /* PVSnesticle.framework */,
 				B3270F6827DCB1BD00E83180 /* PVVecXGL.framework */,
-				B3270F6527DCB1B000E83180 /* PVFlycast.framework */,
 				B3270F6227DCB1A700E83180 /* PVPPSSPP.framework */,
 				B3C7CCC927DCB0DA0003F9D2 /* PVDolphin.framework */,
 				B3270FB727DCB62C00E83180 /* libz.dylib */,
@@ -4160,8 +4146,6 @@
 				B3D54EF62768308100476241 /* SwiftUI.framework */,
 				B33625FB26EDF88200DC41EA /* Metal.framework */,
 				B33625FA26EDF88200DC41EA /* MetalKit.framework */,
-				B309C7A72717C4B500279529 /* PVFlycast.framework */,
-				B309C7A42717C49F00279529 /* PVFlycast.framework */,
 				B3A3203C2720992500F338F6 /* PVDolphin.framework */,
 				B3A320392720991B00F338F6 /* PVDolphin.framework */,
 				B313544C26E4C3BE0047F338 /* PVPlay.framework */,

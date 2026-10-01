@@ -63,9 +63,6 @@
          location = "group:Cores/ep128emu/PVEP128Emu.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Flycast/PVFlycast.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/fmsx/PVfMSX.xcodeproj">
       </FileRef>
       <FileRef
