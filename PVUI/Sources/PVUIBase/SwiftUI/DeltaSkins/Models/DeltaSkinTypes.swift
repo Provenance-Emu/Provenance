@@ -583,7 +583,10 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case "ds", "nds": return .nds
         case "vb", "virtualboy": return .virtualBoy
         case "3ds", "three3ds", "threeds": return .threeDS
-        case "gamecube", "gc": return .gamecube
+        // "ngc" is Manic EMU's GameCube slug (`public.aoshuang.game.ngc`);
+        // "wii" is `public.aoshuang.game.wii` (both verified against Manic EMU's
+        // open-source `NGC.swift` / `Wii.swift` GameType declarations).
+        case "gamecube", "gc", "ngc", "gcn", "nintendogamecube": return .gamecube
         case "wii": return .wii
 
         // Sega
@@ -798,8 +801,10 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
         case .threeDS: return prefix + "3ds"
         case .pokemonMini: return prefix + "pm"
         case .dreamcast: return prefix + "dc"
+        case .gamecube: return prefix + "ngc"
+        case .wii: return prefix + "wii"
         // Not present in Manic's identifiers
-        case .pce, .pcecd, .pcfx, .sgfx, .vectrex, .atari2600, .atari5200, .atari7800, .jaguar, .jaguarcd, .lynx, .atari8bit, .atarist, .neogeo, .ngp, .ngpc, .wonderswan, .wonderswancolor, .gamecube, .wii, ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .pc98, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum:
+        case .pce, .pcecd, .pcfx, .sgfx, .vectrex, .atari2600, .atari5200, .atari7800, .jaguar, .jaguarcd, .lynx, .atari8bit, .atarist, .neogeo, .ngp, .ngpc, .wonderswan, .wonderswancolor, ._3do, .appleII, .c64, .cdi, .colecovision, .cps1, .cps2, .cps3, .doom, .dos, .ep128, .intellivision, .macintosh, .mame, .megaduck, .msx, .msx2, .music, .odyssey2, .palmos, .pc98, .quake, .quake2, .retroarch, .supervision, .tic80, .wolf3d, .zxspectrum:
             return nil
         }
     }
@@ -1003,7 +1008,7 @@ public enum DeltaSkinGameType: Codable, Hashable, Equatable, Comparable {
              (.ngpc, "ngpc"), (.ngpc, "neogeopocketcolor"),
              (.wonderswan, "ws"), (.wonderswan, "wonderswan"),
              (.wonderswancolor, "wsc"), (.wonderswancolor, "wonderswancolor"),
-             (.gamecube, "gamecube"), (.gamecube, "gc"),
+             (.gamecube, "gamecube"), (.gamecube, "gc"), (.gamecube, "ngc"), (.gamecube, "gcn"),
              (.wii, "wii"),
              (._3do, "3do"),
              (.appleII, "appleii"), (.appleII, "apple2"),
