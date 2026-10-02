@@ -431,6 +431,8 @@ static bool environment_callback(unsigned cmd, void *data)
     
     aud = audio_update(soundbuffer) << 1;
     audio_batch_callback(soundbuffer, aud >> 1);
+
+    [self notifyFrameCompleted];
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
@@ -449,6 +451,15 @@ static bool environment_callback(unsigned cmd, void *data)
     
     int aud = audio_update(soundbuffer) << 1;
     audio_batch_callback(soundbuffer, aud >> 1);
+
+    [self notifyFrameCompleted];
+}
+
+- (void)notifyFrameCompleted {
+    void (^handler)(void) = self.frameCompletedHandler;
+    if (handler) {
+        handler();
+    }
 }
 
 - (BOOL)loadFileAtPath:(NSString*)path error:(NSError**)error {
@@ -704,7 +715,43 @@ static bool environment_callback(unsigned cmd, void *data)
 }
 
 - (NSUInteger)systemRAMSize {
-    return (NSUInteger)retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM);
+    /* Mirrors upstream GPGX libretro.c retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM),
+       which Provenance's libretro.c predates (it reports 64 KiB for SG-1000). */
+    if ((system_hw & SYSTEM_PBC) == SYSTEM_MD)
+        return sizeof(work_ram);           /* 64 KiB 68K RAM */
+
+    int onboardRAMSize = sms_cart_ram_size();
+    if (onboardRAMSize > 0)
+        return 0x2000 + (NSUInteger)onboardRAMSize; /* on-board RAM sits at work_ram + 0x2000 */
+    if (system_hw == SYSTEM_SGII)
+        return 0x0800;                     /* 2 KiB internal RAM */
+    if (system_hw == SYSTEM_SG)
+        return 0x0400;                     /* 1 KiB internal RAM */
+    return 0x2000;                         /* 8 KiB internal RAM */
+}
+
+- (void *)cartridgeRAMPtr {
+    return sram.on ? sram.sram : NULL;
+}
+
+- (NSUInteger)cartridgeRAMSize {
+    return sram.on ? sizeof(sram.sram) : 0;
+}
+
+- (void *)segaCDPrgRAMPtr {
+    return system_hw == SYSTEM_MCD ? scd.prg_ram : NULL;
+}
+
+- (NSUInteger)segaCDPrgRAMSize {
+    return system_hw == SYSTEM_MCD ? sizeof(scd.prg_ram) : 0;
+}
+
+- (void *)segaCDWordRAMPtr {
+    return system_hw == SYSTEM_MCD ? scd.word_ram_2M : NULL;
+}
+
+- (NSUInteger)segaCDWordRAMSize {
+    return system_hw == SYSTEM_MCD ? sizeof(scd.word_ram_2M) : 0;
 }
 
 - (BOOL)writeSaveFile:(NSString *)path forType:(int)type

@@ -68,13 +68,7 @@ open class PVCoreGenesisPlus: PVEmulatorCore, @unchecked Sendable {
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
-    }
-
-    public override func executeFrame() {
-        super.executeFrame()
-        if achievementsActive {
-            tickAchievements()
-        }
+        installAchievementHooks()
     }
 }
 
