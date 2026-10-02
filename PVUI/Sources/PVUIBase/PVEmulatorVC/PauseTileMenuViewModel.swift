@@ -668,7 +668,11 @@ final class PauseTileMenuViewModel: ObservableObject {
                 let isDuplicateOfQuickControl: (PauseMenuTile) -> Bool = { tile in
                     rewindQuickControlAdded && tile.label.localizedCaseInsensitiveContains("rewind")
                 }
-                let grouped = CoreOptionTileProvider.groupedTiles(from: options, coreClass: coreClass, md5Scope: coreOptionsMD5)
+                /// A core's own "Core" category joins the CORE section it
+                /// would otherwise sit under as a second, identical header.
+                let grouped = CoreOptionTileProvider
+                    .groupedTiles(from: options, coreClass: coreClass, md5Scope: coreOptionsMD5)
+                    .absorbingGroups(titled: Self.coreSectionTitle)
                 /// The list gateway leads: with dozens of options it is the
                 /// practical way in, and it used to sit after all of them.
                 coreTiles.insert(CoreOptionTileProvider.coreSettingsTile, at: 0)
@@ -676,13 +680,6 @@ final class PauseTileMenuViewModel: ObservableObject {
                 coreOptionSections = grouped.groups.enumerated().compactMap { index, group in
                     let tiles = group.tiles.filter { !isDuplicateOfQuickControl($0) }
                     guard !tiles.isEmpty else { return nil }
-                    /// A core's own "Core" category belongs in the CORE section
-                    /// it would otherwise sit under as a second, identical header.
-                    if group.title.trimmingCharacters(in: .whitespaces)
-                        .caseInsensitiveCompare(Self.coreSectionTitle) == .orderedSame {
-                        coreTiles += tiles
-                        return nil
-                    }
                     return PauseMenuTileSection(
                         id: "\(Self.coreOptionSectionPrefix)\(index)",
                         title: group.title.uppercased(),

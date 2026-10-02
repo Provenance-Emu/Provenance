@@ -148,6 +148,22 @@ public struct CoreOptionTileProvider {
         /// One entry per category, in the core's order. Categories whose
         /// options have no tile representation (range/string) are omitted.
         public let groups: [TileGroup]
+
+        /// Folds every category named `title` into the uncategorised cells.
+        ///
+        /// The pause menu shows the uncategorised ones under its own "CORE"
+        /// header, so a core category of the same name would otherwise be a
+        /// second, identical header right below it. Matching ignores case and
+        /// surrounding whitespace.
+        public func absorbingGroups(titled title: String) -> GroupedTiles {
+            let isAbsorbed: (TileGroup) -> Bool = { group in
+                group.title.trimmingCharacters(in: .whitespaces).caseInsensitiveCompare(title) == .orderedSame
+            }
+            return GroupedTiles(
+                ungrouped: ungrouped + groups.filter(isAbsorbed).flatMap(\.tiles),
+                groups: groups.filter { !isAbsorbed($0) }
+            )
+        }
     }
 
     /// Same tiles as ``tiles(from:coreClass:md5Scope:)`` minus the gateway,

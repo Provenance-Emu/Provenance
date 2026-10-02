@@ -281,4 +281,28 @@ struct CoreOptionTileGroupingTests {
             #expect(option?.display.title == cell.label)
         }
     }
+
+    @Test("A category named like the menu's own header is folded into the loose cells",
+          arguments: ["Core", "CORE", " core "])
+    func absorbsNamesakeCategory(categoryTitle: String) {
+        let options: [CoreOption] = [
+            ListMockCore.frameskip,
+            .group(CoreOptionValueDisplay(title: categoryTitle), subOptions: [ListMockCore.interpolation]),
+            .group(CoreOptionValueDisplay(title: "Video"), subOptions: [ListMockCore.region])
+        ]
+        let grouped = CoreOptionTileProvider.groupedTiles(from: options, coreClass: ListMockCore.self, md5Scope: nil)
+        let absorbed = grouped.absorbingGroups(titled: "CORE")
+
+        #expect(grouped.groups.map(\.title) == [categoryTitle, "Video"])
+        #expect(absorbed.groups.map(\.title) == ["Video"])
+        /// Loose cells first, then the absorbed category's, with IDs untouched.
+        #expect(absorbed.ungrouped.map(\.label) == ["Frameskip", "Interpolation"])
+        #expect(absorbed.ungrouped.map(\.id) == grouped.ungrouped.map(\.id) + grouped.groups[0].tiles.map(\.id))
+    }
+
+    @Test("Without a namesake category nothing moves")
+    func absorbIsNoOpOtherwise() {
+        let grouped = CoreOptionTileProvider.groupedTiles(from: ListMockCore.options, coreClass: ListMockCore.self, md5Scope: nil)
+        #expect(grouped.absorbingGroups(titled: "CORE") == grouped)
+    }
 }
