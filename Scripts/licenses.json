@@ -1,28 +1,10 @@
 {
   "entries": [
     {
-      "name": "4DO/FreeDO",
-      "identifier": "com.provenance.core.FreeDO",
-      "projectURL": "https://github.com/OpenEmu/4DO-Core",
-      "version": "0",
-      "license": "GPL-2.0-only",
-      "licenseURL": "https://github.com/OpenEmu/4DO-Core/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2011-2016 OpenEmu Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.3DO"
-      ]
-    },
-    {
       "name": "Atari 800",
       "identifier": "com.provenance.core.atari800",
       "projectURL": "https://atari800.github.io",
-      "version": "3.1.0",
+      "version": "7.2.1",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/atari800/atari800/blob/HEAD/COPYING",
       "copyrightHolder": [
@@ -34,7 +16,7 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.5200",
-        "com.provenance.8bit"
+        "com.provenance.atari8bit"
       ]
     },
     {
@@ -56,24 +38,6 @@
       ]
     },
     {
-      "name": "Bliss",
-      "identifier": "com.provenance.core.bliss",
-      "projectURL": "https://github.com/OpenEmu/Bliss-Core",
-      "version": "2.1.2",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/OpenEmu/Bliss-Core/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2003-2016 OpenEmu Team, Kyle Davis"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.intellivision"
-      ]
-    },
-    {
       "name": "Azahar (Experimental)",
       "identifier": "com.provenance.core.azahar",
       "projectURL": "https://azahar-emu.org",
@@ -89,26 +53,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.3ds"
-      ]
-    },
-    {
-      "name": "CrabEMU",
-      "identifier": "com.provenance.core.crabemu",
-      "projectURL": "http://crabemu.sourceforge.net",
-      "version": "0.2.0",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "http://crabemu.sourceforge.net",
-      "copyrightHolder": [
-        "Copyright © 2007-2014 Lawrence Sebald"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.sms",
-        "com.provenance.sg1000",
-        "com.provenance.colecovision"
       ]
     },
     {
@@ -188,7 +132,7 @@
       "name": "FCEUX",
       "identifier": "com.provenance.core.fceu",
       "projectURL": "http://sourceforge.net/projects/fceultra/",
-      "version": "2.6.2",
+      "version": "2.6.6-225",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/TASEmulators/fceux/blob/HEAD/COPYING",
       "copyrightHolder": [
@@ -201,68 +145,6 @@
       "supportedSystems": [
         "com.provenance.nes",
         "com.provenance.fds"
-      ]
-    },
-    {
-      "name": "Final Burn Neo",
-      "identifier": "com.provenance.core.fbneo",
-      "projectURL": "https://neo-source.com",
-      "version": "1.0.0.2",
-      "license": "LicenseRef-FBNeo",
-      "licenseURL": "https://github.com/finalburnneo/FBNeo/blob/HEAD/src/license.txt",
-      "copyrightHolder": [
-        "Copyright © 2004-2024 FinalBurn Neo Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.neogeo",
-        "com.provenance.msx",
-        "com.provenance.msx2",
-        "com.provenance.arcade",
-        "com.provenance.nes",
-        "com.provenance.colecovision"
-      ]
-    },
-    {
-      "name": "FBNeo",
-      "identifier": "com.provenance.fbneo",
-      "projectURL": null,
-      "version": null,
-      "license": "LicenseRef-FBNeo",
-      "licenseURL": "https://github.com/finalburnneo/FBNeo/blob/HEAD/src/license.txt",
-      "copyrightHolder": [
-        "Copyright © 2004-2024 FinalBurn Neo Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.neogeo",
-        "com.provenance.msx",
-        "com.provenance.cps",
-        "com.provenance.colecovision"
-      ]
-    },
-    {
-      "name": "Flycast",
-      "identifier": "com.provenance.core.flycast",
-      "projectURL": "https://github.com/flyinghead/flycast",
-      "version": "5.0",
-      "license": "GPL-2.0-only",
-      "licenseURL": "https://github.com/flyinghead/flycast/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2018-2024 Flycast Contributors"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.dreamcast"
       ]
     },
     {
@@ -468,24 +350,6 @@
       ]
     },
     {
-      "name": "O2EM",
-      "identifier": "com.provenance.core.odyssey2",
-      "projectURL": "https://github.com/OpenEmu/O2EM-Core",
-      "version": "1.18.1",
-      "license": "Artistic-2.0",
-      "licenseURL": "https://github.com/OpenEmu/O2EM-Core/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 1997-2016 OpenEmu Team, Daniel Boris, Andre de la Rocha"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.odyssey2"
-      ]
-    },
-    {
       "name": "PPSSPP",
       "identifier": "com.provenance.core.ppsspp",
       "projectURL": "https://github.com/hrydgard/ppsspp.git",
@@ -507,7 +371,7 @@
       "name": "PicoDrive",
       "identifier": "com.provenance.core.picodrive",
       "projectURL": "https://github.com/notaz/picodrive",
-      "version": "2.03",
+      "version": "2.04",
       "license": "LicenseRef-PicoDrive",
       "licenseURL": "https://github.com/notaz/picodrive/blob/HEAD/COPYING",
       "copyrightHolder": [
@@ -612,28 +476,10 @@
       ]
     },
     {
-      "name": "SameDuck",
-      "identifier": "com.provenance.core.SameDuck",
-      "projectURL": "https://github.com/libretro/libretro-SameDuck",
-      "version": "0.13.6",
-      "license": "MIT",
-      "licenseURL": "https://github.com/libretro/libretro-SameDuck/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2015-2024 Lior Halphon"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.megaduck"
-      ]
-    },
-    {
       "name": "Stella",
       "identifier": "com.provenance.core.stella",
       "projectURL": "https://stella-emu.github.io",
-      "version": "3.4.1",
+      "version": "8.0_pre",
       "license": "GPL-2.0-or-later",
       "licenseURL": "https://github.com/stella-emu/stella/blob/HEAD/License.txt",
       "copyrightHolder": [
@@ -667,24 +513,6 @@
       ]
     },
     {
-      "name": "TIC80",
-      "identifier": "com.provenance.core.TIC80",
-      "projectURL": "http://fms.komkon.org/TIC80/",
-      "version": "24",
-      "license": "MIT",
-      "licenseURL": "https://github.com/nesbox/TIC-80/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2017-2024 Vadim Grigoruk (Nesbox)"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.tic80"
-      ]
-    },
-    {
       "name": "VecX",
       "identifier": "com.provenance.core.VecX",
       "projectURL": "https://github.com/libretro/libretro-vecx",
@@ -700,25 +528,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.vectrex"
-      ]
-    },
-    {
-      "name": "Virtual Jaguar",
-      "identifier": "com.provenance.core.jaguar",
-      "projectURL": "https://github.com/libretro/virtualjaguar-libretro",
-      "version": "2.1.2",
-      "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/libretro/virtualjaguar-libretro/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2003-2021 Virtual Jaguar Team, libretro"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.jaguar",
-        "com.provenance.jaguarcd"
       ]
     },
     {
@@ -755,25 +564,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.saturn"
-      ]
-    },
-    {
-      "name": "blueMSX",
-      "identifier": "com.provenance.core.blueMSX",
-      "projectURL": "http://fms.komkon.org/blueMSX/",
-      "version": "svn",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "http://fms.komkon.org/blueMSX/",
-      "copyrightHolder": [
-        "Copyright © 2003-2009 Daniel Vik"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.msx",
-        "com.provenance.msx2"
       ]
     },
     {
@@ -848,24 +638,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.zxspectrum"
-      ]
-    },
-    {
-      "name": "Hatari",
-      "identifier": "com.provenance.core.Hatari",
-      "projectURL": "http://hatari.tuxfamily.org/index.html",
-      "version": "1.8",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://git.tuxfamily.org/hatari/hatari.git/tree/gpl.txt",
-      "copyrightHolder": [
-        "Copyright © 2001-2024 Hatari Contributors"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.atarist"
       ]
     },
     {
@@ -1135,7 +907,10 @@
       "appStoreCompatible": null,
       "isRetroArch": true,
       "supportedSystems": [
-        "com.provenance.dreamcast"
+        "com.provenance.dreamcast",
+        "com.provenance.naomi",
+        "com.provenance.naomi2",
+        "com.provenance.atomiswave"
       ]
     },
     {
@@ -1153,7 +928,10 @@
       "appStoreCompatible": null,
       "isRetroArch": true,
       "supportedSystems": [
-        "com.provenance.dreamcast"
+        "com.provenance.dreamcast",
+        "com.provenance.naomi",
+        "com.provenance.naomi2",
+        "com.provenance.atomiswave"
       ]
     },
     {
@@ -2395,6 +2173,226 @@
       ]
     },
     {
+      "name": "Commodore - C64 (x64sc) (RetroArch)",
+      "identifier": "vice.x64sc.libretro.framework",
+      "projectURL": "https://github.com/libretro/vice",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
+      "copyrightHolder": [
+        "Copyright © 1998-2024 VICE Team"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch",
+        "com.provenance.c64"
+      ]
+    },
+    {
+      "name": "Commodore - CBM-II (RetroArch)",
+      "identifier": "vice.xcbm2.libretro.framework",
+      "projectURL": "https://github.com/libretro/vice",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
+      "copyrightHolder": [
+        "Copyright © 1998-2024 VICE Team"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "Commodore - PET/CBM-5x0 (RetroArch)",
+      "identifier": "vice.xcbm5x0.libretro.framework",
+      "projectURL": "https://github.com/libretro/vice",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
+      "copyrightHolder": [
+        "Copyright © 1998-2024 VICE Team"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "Commodore - Plus/4 (RetroArch)",
+      "identifier": "vice.xplus4.libretro.framework",
+      "projectURL": "https://github.com/libretro/vice",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://github.com/libretro/vice-libretro/blob/HEAD/vice/COPYING",
+      "copyrightHolder": [
+        "Copyright © 1998-2024 VICE Team"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch",
+        "com.provenance.c64"
+      ]
+    },
+    {
+      "name": "Galaksija (RetroArch)",
+      "identifier": "galaksija.libretro.framework",
+      "projectURL": "https://docs.libretro.com/library/galaksija/",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://docs.libretro.com/library/galaksija/",
+      "copyrightHolder": [
+        "Copyright © Libretro Contributors"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "Dinothawr (RetroArch)",
+      "identifier": "dinothawr.libretro.framework",
+      "projectURL": "https://docs.libretro.com/library/dinothawr/",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://docs.libretro.com/library/dinothawr/",
+      "copyrightHolder": [
+        "Copyright © Libretro Contributors"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "VirtualXT (RetroArch)",
+      "identifier": "virtualxt.libretro.framework",
+      "projectURL": "https://docs.libretro.com/library/virtualxt/",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://docs.libretro.com/library/virtualxt/",
+      "copyrightHolder": [
+        "Copyright © Libretro Contributors"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch",
+        "com.provenance.dos"
+      ]
+    },
+    {
+      "name": "PX68k (Sharp X68000) (RetroArch)",
+      "identifier": "px68k.libretro.framework",
+      "projectURL": "https://docs.libretro.com/library/px68k/",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://docs.libretro.com/library/px68k/",
+      "copyrightHolder": [
+        "Copyright © Libretro Contributors"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "Neko Project II (PC-98) (RetroArch)",
+      "identifier": "nekop2.libretro.framework",
+      "projectURL": "https://docs.libretro.com/library/neko-project-ii/",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://docs.libretro.com/library/neko-project-ii/",
+      "copyrightHolder": [
+        "Copyright © Libretro Contributors"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch",
+        "com.provenance.pc98"
+      ]
+    },
+    {
+      "name": "VeMUlator (Dreamcast VMU) (RetroArch)",
+      "identifier": "vemulator.libretro.framework",
+      "projectURL": "https://docs.libretro.com/library/vemulator/",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://docs.libretro.com/library/vemulator/",
+      "copyrightHolder": [
+        "Copyright © Libretro Contributors"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "Mr.Boom (RetroArch)",
+      "identifier": "mrboom.libretro.framework",
+      "projectURL": "https://docs.libretro.com/library/mrboom/",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://docs.libretro.com/library/mrboom/",
+      "copyrightHolder": [
+        "Copyright © Libretro Contributors"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
+      "name": "GW (Game & Watch) (RetroArch)",
+      "identifier": "gw.libretro.framework",
+      "projectURL": "https://docs.libretro.com/library/gw/",
+      "version": "Nightly",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://docs.libretro.com/library/gw/",
+      "copyrightHolder": [
+        "Copyright © Libretro Contributors"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch"
+      ]
+    },
+    {
       "name": "Philips - P2000T (RetroArch)",
       "identifier": "m2000.libretro.framework",
       "projectURL": "https://github.com/libretro/m2000",
@@ -3012,6 +3010,25 @@
       "isRetroArch": true,
       "supportedSystems": [
         "com.provenance.gba"
+      ]
+    },
+    {
+      "name": "TIC-80 (RetroArch)",
+      "identifier": "tic80.libretro.framework",
+      "projectURL": "https://github.com/nesbox/TIC-80",
+      "version": "Nightly",
+      "license": "MIT",
+      "licenseURL": "https://github.com/nesbox/TIC-80/blob/HEAD/LICENSE",
+      "copyrightHolder": [
+        "Copyright © 2017-2024 Vadim Grigoruk (Nesbox)"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": true,
+      "supportedSystems": [
+        "com.provenance.retroarch",
+        "com.provenance.tic80"
       ]
     }
   ]
