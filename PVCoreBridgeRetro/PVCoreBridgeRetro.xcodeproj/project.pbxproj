@@ -72,6 +72,7 @@
 		C0C0CAFE3000000000000011 /* PerfInterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */; };
 		C0C0CAFE3000000000000013 /* RelativeMouseScalerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000012 /* RelativeMouseScalerTests.swift */; };
 		C0C0CAFE3000000000000023 /* ThinContentArchiveResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000022 /* ThinContentArchiveResolverTests.swift */; };
+		C0C0CAFE3000000000000025 /* JaguarInputMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000024 /* JaguarInputMapTests.swift */; };
 		C0C0CAFE3000000000000015 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000014 /* Test.swift */; };
 		C0C0CAFE3000000000000017 /* ThinCoreOptionDefinitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */; };
 		C0C0CAFE3000000000000019 /* ThinSystemFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */; };
@@ -950,6 +951,7 @@
 		C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfInterfaceTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000012 /* RelativeMouseScalerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeMouseScalerTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000022 /* ThinContentArchiveResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinContentArchiveResolverTests.swift; sourceTree = "<group>"; };
+		C0C0CAFE3000000000000024 /* JaguarInputMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JaguarInputMapTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000014 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinCoreOptionDefinitionTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinSystemFileTests.swift; sourceTree = "<group>"; };
@@ -2960,6 +2962,7 @@
 				C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */,
 				C0C0CAFE3000000000000012 /* RelativeMouseScalerTests.swift */,
 				C0C0CAFE3000000000000022 /* ThinContentArchiveResolverTests.swift */,
+				C0C0CAFE3000000000000024 /* JaguarInputMapTests.swift */,
 				C0C0CAFE3000000000000014 /* Test.swift */,
 				C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */,
 				C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */,
@@ -3227,6 +3230,7 @@
 				C0C0CAFE3000000000000011 /* PerfInterfaceTests.swift in Sources */,
 				C0C0CAFE3000000000000013 /* RelativeMouseScalerTests.swift in Sources */,
 				C0C0CAFE3000000000000023 /* ThinContentArchiveResolverTests.swift in Sources */,
+				C0C0CAFE3000000000000025 /* JaguarInputMapTests.swift in Sources */,
 				C0C0CAFE3000000000000015 /* Test.swift in Sources */,
 				C0C0CAFE3000000000000017 /* ThinCoreOptionDefinitionTests.swift in Sources */,
 				C0C0CAFE3000000000000019 /* ThinSystemFileTests.swift in Sources */,

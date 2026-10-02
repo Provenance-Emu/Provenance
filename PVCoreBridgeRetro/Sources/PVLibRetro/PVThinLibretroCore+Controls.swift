@@ -83,7 +83,7 @@ private extension SystemIdentifier {
 
 // MARK: - libretro joypad button IDs (mirrors libretro.h defines)
 // These must match RETRO_DEVICE_ID_JOYPAD_* exactly.
-private enum RetroJoypad: UInt32 {
+enum RetroJoypad: UInt32 {
     case b      = 0
     case y      = 1
     case select = 2
@@ -1829,13 +1829,17 @@ extension PVThinLibretroCore: PVJaguarSystemResponderClient {
         if let kbKey = jaguarNumpadKey(button) {
             _bridge.setKeyState(kbKey, pressed: true)
         }
-        pressButton(jaguarMap(button), forPlayer: player)
+        if let joypad = Self.jaguarMap(button) {
+            pressButton(joypad, forPlayer: player)
+        }
     }
     public func didRelease(jaguarButton button: PVJaguarButton, forPlayer player: Int) {
         if let kbKey = jaguarNumpadKey(button) {
             _bridge.setKeyState(kbKey, pressed: false)
         }
-        releaseButton(jaguarMap(button), forPlayer: player)
+        if let joypad = Self.jaguarMap(button) {
+            releaseButton(joypad, forPlayer: player)
+        }
     }
 
     // The upstream virtualjaguar-libretro core reads numpad buttons via
@@ -1861,17 +1865,22 @@ extension PVThinLibretroCore: PVJaguarSystemResponderClient {
         }
     }
 
-    private func jaguarMap(_ button: PVJaguarButton) -> RetroJoypad {
+    /// RetroPad id virtualjaguar reads for `button` (`update_input()` in its
+    /// libretro.c): A→A, B→B, Y→C, SELECT→Pause, START→Option, X/L/R/L2/R2/L3/R3
+    /// → keypad 0–6. `nil` for keys with no joypad bit (7–9, `*`, `#`), which
+    /// reach the core only as keyboard events — a fallback bit would press a
+    /// second, unrelated button.
+    static func jaguarMap(_ button: PVJaguarButton) -> RetroJoypad? {
         switch button {
         case .up:       return .up
         case .down:     return .down
         case .left:     return .left
         case .right:    return .right
-        case .a:        return .b
-        case .b:        return .a
+        case .a:        return .a
+        case .b:        return .b
         case .c:        return .y
-        case .pause:    return .start
-        case .option:   return .select
+        case .pause:    return .select
+        case .option:   return .start
         case .button0:  return .x
         case .button1:  return .l
         case .button2:  return .r
@@ -1879,13 +1888,9 @@ extension PVThinLibretroCore: PVJaguarSystemResponderClient {
         case .button4:  return .r2
         case .button5:  return .l3
         case .button6:  return .r3
-        case .button7:  return .r3  // joypad fallback (keyboard is primary)
-        case .button8:  return .r3
-        case .button9:  return .r3
-        case .asterisk: return .select
-        case .pound:    return .start
-        case .count:    return .b
-        @unknown default: return .b
+        case .button7, .button8, .button9, .asterisk, .pound, .count:
+            return nil
+        @unknown default: return nil
         }
     }
 }
