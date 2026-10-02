@@ -22,18 +22,12 @@ public class PVPicoDrive: PVEmulatorCore, @unchecked Sendable {
     required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+        installAchievementHooks()
     }
 
     public override func initialize() {
         super.initialize()
         self.copyCartHWCFG()
-    }
-
-    public override func executeFrame() {
-        super.executeFrame()
-        if achievementsActive {
-            tickAchievements()
-        }
     }
 }
 

@@ -426,6 +426,10 @@ static void writeSaveFile(const char* path, int type)
         return;
     }
     retro_run();
+    void (^handler)(void) = self.frameCompletedHandler;
+    if (handler) {
+        handler();
+    }
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {
@@ -554,12 +558,78 @@ static void writeSaveFile(const char* path, int type)
     [data getBytes:ramData length:size];
 }
 
-- (void *)systemRAMPtr {
-    return retro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM);
+// RetroAchievements memory exposure. Mirrors upstream libretro/picodrive's
+// set_memory_maps() (68KRAM / PRGRAM / WORDRAM for MCD, 68KRAM / SDRAM /
+// CARTRAM for 32X) and retro_get_memory_data() (zram for 8-bit), so the raw
+// buffers match what RetroArch hands rcheevos for the same core.
+// Pico32xMem is only allocated by Pico32xStartup(), which runs when the 68K
+// first enables the 32X adapter, not at load.
+- (PVPicoDriveActiveHardware)activeHardware {
+    const unsigned short ahw = PicoIn.AHW;
+    // Sega CD keeps its BIOS in Pico_mcd and leaves Pico.rom empty unless a
+    // cartridge is also inserted, so it is checked before the ROM test.
+    if (ahw & PAHW_MCD) {
+        return Pico_mcd != NULL ? PVPicoDriveActiveHardwareSegaCD : PVPicoDriveActiveHardwareNone;
+    }
+    if (Pico.rom == NULL || Pico.romsize == 0) {
+        return PVPicoDriveActiveHardwareNone;
+    }
+    if (ahw & PAHW_32X) {
+        return Pico32xMem != NULL ? PVPicoDriveActiveHardwareSega32X : PVPicoDriveActiveHardwareMegaDrive;
+    }
+    if (ahw & (PAHW_SG | PAHW_SC | PAHW_PICO)) {
+        return PVPicoDriveActiveHardwareOther;
+    }
+    if (ahw & PAHW_GG) {
+        return PVPicoDriveActiveHardwareGameGear;
+    }
+    if (ahw & PAHW_SMS) {
+        return PVPicoDriveActiveHardwareMasterSystem;
+    }
+    return PVPicoDriveActiveHardwareMegaDrive;
 }
 
-- (NSUInteger)systemRAMSize {
-    return (NSUInteger)retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM);
+- (void *)memoryPointerForRegion:(PVPicoDriveMemoryRegion)region size:(NSUInteger *)size {
+    void *ptr = NULL;
+    NSUInteger bytes = 0;
+    switch (region) {
+        case PVPicoDriveMemoryRegionMain68KRAM:
+            ptr = PicoMem.ram;
+            bytes = sizeof(PicoMem.ram);
+            break;
+        case PVPicoDriveMemoryRegionZ80WorkRAM:
+            ptr = PicoMem.zram;
+            bytes = sizeof(PicoMem.zram);
+            break;
+        case PVPicoDriveMemoryRegionSega32XSDRAM:
+            if ((PicoIn.AHW & PAHW_32X) && Pico32xMem != NULL) {
+                ptr = Pico32xMem->sdram;
+                bytes = sizeof(Pico32xMem->sdram);
+            }
+            break;
+        case PVPicoDriveMemoryRegionSegaCDProgramRAM:
+            if ((PicoIn.AHW & PAHW_MCD) && Pico_mcd != NULL) {
+                ptr = Pico_mcd->prg_ram;
+                bytes = sizeof(Pico_mcd->prg_ram);
+            }
+            break;
+        case PVPicoDriveMemoryRegionSegaCDWordRAM:
+            if ((PicoIn.AHW & PAHW_MCD) && Pico_mcd != NULL) {
+                ptr = Pico_mcd->word_ram2M;
+                bytes = sizeof(Pico_mcd->word_ram2M);
+            }
+            break;
+        case PVPicoDriveMemoryRegionCartridgeRAM:
+            if (Pico.sv.data != NULL && Pico.sv.size > 0) {
+                ptr = Pico.sv.data;
+                bytes = Pico.sv.size;
+            }
+            break;
+    }
+    if (size) {
+        *size = bytes;
+    }
+    return ptr;
 }
 
 - (BOOL)writeSaveFile:(NSString *)path forType:(int)type {
