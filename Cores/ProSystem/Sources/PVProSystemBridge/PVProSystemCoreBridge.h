@@ -61,6 +61,12 @@ __attribute__((visibility("default")))
 /// Size in bytes of the exposed RAM (64 KiB).
 @property (nonatomic, readonly) NSUInteger systemRAMSize;
 
+/// Called on the emulation thread at the end of every emulated frame. The
+/// emulation loop runs inside this bridge, so the Swift core's
+/// `executeFrame()` is never called; this drives the per-frame achievements tick.
+/// Declared in the main @interface: SwiftPM can drop ObjC categories.
+@property (nonatomic, copy, nullable) void (^frameCompletedHandler)(void);
+
 // MARK: Light Gun (XG-1)
 // Declarations inlined into main interface — the (LightGun) category in
 // PVProSystemCoreBridge+LightGun.h was silently elided during Swift module

@@ -334,6 +334,11 @@ static const NSInteger kMaxPlayers = 4;
     [[self ringBufferAtIndex:0] write:self.soundBuffer size:size];
 
     [self renderToBuffer];
+
+    void (^frameCompleted)(void) = self.frameCompletedHandler;
+    if (frameCompleted) {
+        frameCompleted();
+    }
 }
 
 - (void)resetEmulation {

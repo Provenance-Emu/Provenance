@@ -31,18 +31,12 @@ open class PVProSystemCore: PVEmulatorCore, @unchecked Sendable {
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+        installAchievementHooks()
     }
 
     public override func startEmulation() {
         applyDifficultyOptions()
         super.startEmulation()
-    }
-
-    public override func executeFrame() {
-        super.executeFrame()
-        if achievementsActive {
-            tickAchievements()
-        }
     }
 
     /// Apply the user's difficulty-switch preferences to the bridge input state.

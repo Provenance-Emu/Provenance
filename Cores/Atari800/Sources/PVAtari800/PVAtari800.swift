@@ -23,13 +23,7 @@ public final class PVAtari800: PVEmulatorCore, @unchecked Sendable {
     public required init() {
         super.init()
         bridge = (_bridge as! any ObjCBridgedCoreBridge)
-    }
-
-    public override func executeFrame() {
-        super.executeFrame()
-        if achievementsActive {
-            tickAchievements()
-        }
+        installAchievementHooks()
     }
 }
 

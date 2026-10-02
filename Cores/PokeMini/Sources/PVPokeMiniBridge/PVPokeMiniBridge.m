@@ -278,6 +278,11 @@ int saveEEPROM(const char *filename) {
     
     MinxAudio_GetSamplesU8(self->audioStream, PMSOUNDBUFF);
     [[current ringBufferAtIndex:0] write:self->audioStream size:PMSOUNDBUFF];
+
+    void (^frameCompleted)(void) = self.frameCompletedHandler;
+    if (frameCompleted) {
+        frameCompleted();
+    }
 }
 
 - (void)startEmulation {

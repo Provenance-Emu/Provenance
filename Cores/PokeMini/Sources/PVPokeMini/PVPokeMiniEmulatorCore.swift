@@ -24,13 +24,7 @@ public final class PVPokeMiniEmulatorCore: PVEmulatorCore, @unchecked Sendable {
     required public init() {
         super.init()
         self.bridge =  (_bridge as! any ObjCBridgedCoreBridge)
-    }
-
-    public override func executeFrame() {
-        super.executeFrame()
-        if achievementsActive {
-            tickAchievements()
-        }
+        installAchievementHooks()
     }
 }
 

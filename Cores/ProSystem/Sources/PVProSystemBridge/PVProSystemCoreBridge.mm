@@ -198,6 +198,11 @@
 
     int length = sound_Store(_soundBuffer);
     [[self ringBufferAtIndex:0] write:_soundBuffer size:length];
+
+    void (^frameCompleted)(void) = self.frameCompletedHandler;
+    if (frameCompleted) {
+        frameCompleted();
+    }
 }
 
 - (void)resetEmulation {
