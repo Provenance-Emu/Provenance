@@ -79,6 +79,8 @@ extension PVEmulatorViewController {
             // Hide the standard controls
              hideStandardControls()
 
+            scheduleMenuButtonFallback()
+
             // Log skin setup info
             let skinInfo = """
             skins: Delta Skin enabled and loaded
@@ -295,6 +297,8 @@ extension PVEmulatorViewController {
             preselectedSkinIdentifier: preselectedSkinIdentifier,
             onSkinLoaded: { [weak self] in
                 guard let self else { return }
+                self.skinDidReportLoaded = true
+                self.hideOrShowMenuButton()
                 // Skin loaded → short delay for frame notification → finalize → pause pipeline
                 Just(())
                     .delay(for: .milliseconds(300), scheduler: DispatchQueue.main)

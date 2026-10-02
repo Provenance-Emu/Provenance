@@ -21,27 +21,23 @@ extension PVEmulatorViewController {
         self.controllerPauseButtonPressed(note)
     }
 
+    /// How long the skin layer gets to put its controls on screen before the
+    /// floating menu button comes back.
+    private static let skinLoadGrace: TimeInterval = 3
+
     public func hideOrShowMenuButton() {
-
-        // If DeltaSkins are enabled, hide the legacy overlay menu button
-        if isDeltaSkinEnabled {
-            menuButton?.isHidden = true
-        } else {
-            // find out how many *real* controllers we have....
-            let controllers = PVControllerManager.shared.controllers.filter { controller in
-                // 8Bitdo controllers don't have a pause button, so don't hide the menu
-                if (controller is PViCade8BitdoController || controller is PViCade8BitdoZeroController) {
-                    return false
-                }
-                // show menu for "virtual" controllers
-                if (controller.isSnapshot) {
-                    return false
-                }
-                return true
-            }
-
-            // don't hide menu button
-            menuButton?.isHidden = false; //controllers.count != 0
+        /// A skin — or the built-in controller that stands in when none is
+        /// installed — draws its own menu button, so the floating one stays
+        /// hidden while that layer is on screen or still loading. When the
+        /// layer never comes up, or is hidden because a controller is
+        /// connected, nothing else on a touch screen opens the pause menu, so
+        /// the floating button returns rather than leaving the player stuck.
+        /// That matches the classic controls, which keep it visible too.
+        let skinControlsOnScreen = skinDidReportLoaded && skinContainerView.map { !$0.isHidden && $0.superview != nil } == true
+        let skinOwnsMenuButton = isDeltaSkinEnabled && (skinControlsOnScreen || !skinLoadGraceExpired)
+        menuButton?.isHidden = skinOwnsMenuButton
+        if !skinOwnsMenuButton, let menuButton {
+            view.bringSubviewToFront(menuButton)
         }
 
         #if os(iOS)
@@ -49,6 +45,19 @@ extension PVEmulatorViewController {
             self.setNeedsUpdateOfHomeIndicatorAutoHidden()
             self.setNeedsUpdateOfScreenEdgesDeferringSystemGestures()
         #endif
+    }
+
+    /// Re-evaluates the floating menu button once the skin layer has had time
+    /// to load. Called when skin setup starts.
+    func scheduleMenuButtonFallback() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.skinLoadGrace) { [weak self] in
+            guard let self else { return }
+            self.skinLoadGraceExpired = true
+            self.hideOrShowMenuButton()
+            if self.menuButton?.isHidden == false {
+                WLOG("skins: no skin controls on screen \(Int(Self.skinLoadGrace))s after setup — showing the floating menu button")
+            }
+        }
     }
 
     @objc func controllerDidConnect(_ note: Notification?) {
@@ -106,6 +115,7 @@ extension PVEmulatorViewController {
         if isDeltaSkinEnabled {
             skinContainerView?.isHidden = hidden
             DLOG("On-screen controls (DeltaSkin): \(hidden ? "hidden" : "visible")")
+            hideOrShowMenuButton()
         }
 
         // Legacy OSD overlay

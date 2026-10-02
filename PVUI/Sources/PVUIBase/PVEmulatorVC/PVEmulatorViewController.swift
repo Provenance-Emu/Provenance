@@ -325,6 +325,12 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// Drops the duplicate `PauseGame` signals one button press can produce.
     var pauseToggleCoalescer = PauseToggleCoalescer()
 
+    /// Set once the skin layer reports its controls are on screen.
+    var skinDidReportLoaded = false
+    /// Set when the skin layer has had its chance to come up; see
+    /// `scheduleMenuButtonFallback()`.
+    var skinLoadGraceExpired = false
+
     public var isShowingMenu: Bool = false {
         didSet {
             // Single authoritative pause toggle to avoid conflicting calls
