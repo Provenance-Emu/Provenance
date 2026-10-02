@@ -1,6 +1,0 @@
-module libretro {
-    header "Sources/retro/libretro-common/libretro.h"
-    header "Sources/retro/libretro-common/libretro_vulkan.h"
-        
-    export *
-}

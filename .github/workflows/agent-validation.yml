@@ -121,6 +121,7 @@ jobs:
     outputs:
       modules: ${{ steps.detect.outputs.modules }}
       pvui: ${{ steps.detect.outputs.pvui }}
+      corebridgeretro: ${{ steps.detect.outputs.corebridgeretro }}
     steps:
       - name: Detect
         id: detect
@@ -157,6 +158,7 @@ jobs:
           if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "0" ]; then
             echo "modules=$(json_all)" >> "$GITHUB_OUTPUT"
             echo "pvui=true" >> "$GITHUB_OUTPUT"
+            echo "corebridgeretro=true" >> "$GITHUB_OUTPUT"
             echo "No PR number — running all modules"
             exit 0
           fi
@@ -168,6 +170,7 @@ jobs:
             echo "::warning::gh pr diff failed — running all modules"
             echo "modules=$(json_all)" >> "$GITHUB_OUTPUT"
             echo "pvui=true" >> "$GITHUB_OUTPUT"
+            echo "corebridgeretro=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -188,6 +191,15 @@ jobs:
             echo "pvui=true" >> "$GITHUB_OUTPUT"
           else
             echo "pvui=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # PVCoreBridgeRetro's tests only build through its xcodeproj (SwiftPM
+          # can't build the package: mixed Swift/ObjC target), so they need the
+          # workspace and run in pvcorebridgeretro-test.
+          if printf '%s\n' "$FILES" | grep -q "^PVCoreBridgeRetro/"; then
+            echo "corebridgeretro=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "corebridgeretro=false" >> "$GITHUB_OUTPUT"
           fi
 
   # Job 2b: SPM Build/Test — only for modules that actually changed.
@@ -344,6 +356,101 @@ jobs:
         with:
           name: pvui-test-log-${{ matrix.platform }}
           path: /tmp/pvui-test.log
+          retention-days: 3
+
+  # Job 2d: PVCoreBridgeRetro tests (thin libretro wrapper). They run as the
+  # PVLibRetroTests target of PVCoreBridgeRetro.xcodeproj via the workspace's
+  # PVCoreBridgeRetro scheme, so this job needs smoke-build's workspace setup
+  # (see the comments there for why each submodule is listed).
+  pvcorebridgeretro-test:
+    name: PVCoreBridgeRetro Tests (iOS Simulator)
+    needs: spm-changed
+    if: needs.spm-changed.outputs.corebridgeretro == 'true'
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
+
+      - name: Init required Core submodules (shallow)
+        run: |
+          git submodule update --init --depth 1 \
+            Cores/4DO \
+            Cores/Bliss \
+            Cores/CrabEMU \
+            Dependencies/HexColors \
+            Dependencies/SWCompression \
+            Cores/Mednafen/ThirdParty/libchdr \
+            PVRcheevos/rcheevos
+
+          # VirtualJaguar's libretro-common target reads its sources from a nested
+          # submodule, so a non-recursive init leaves the target empty. It has exactly
+          # one nested submodule and it is fetchable, so --recursive is cheap here.
+          git submodule update --init --depth 1 --recursive Cores/VirtualJaguar
+
+          # ZipArchive: custom commit not available on public remote — clone public instead
+          if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
+            echo "ZipArchive shallow init failed (custom commit). Cloning public remote..."
+            rm -rf Dependencies/ZipArchive
+            git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
+          fi
+
+      - name: Cache libretro cheat database
+        uses: actions/cache@v4
+        with:
+          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+
+      - name: Generate libretro cheat database if missing
+        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
+
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-pvcbr-deriveddata-${{ hashFiles('PVCoreBridgeRetro/**/project.pbxproj', '**/Package.swift', '**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-pvcbr-deriveddata-
+
+      - name: Test PVCoreBridgeRetro
+        run: |
+          set -eo pipefail
+          udid=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices | to_entries[] | select(.key | contains("SimRuntime.iOS-")) | .value[]
+                | select(.name | startswith("iPhone"))][0].udid')
+          if [ -z "$udid" ] || [ "$udid" = "null" ]; then
+            echo "::error::No available iOS simulator"
+            exit 1
+          fi
+          # Ad-hoc signing, not CODE_SIGNING_ALLOWED=NO: the test bundle embeds
+          # the prebuilt MoltenVK.framework, and the simulator refuses to load
+          # it unsigned. "-" needs no certificate.
+          # Swift Testing reports as "✔/✘ Test …" and "Test run with N tests".
+          xcodebuild test \
+            -workspace Provenance.xcworkspace \
+            -scheme PVCoreBridgeRetro \
+            -destination "id=$udid" \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
+            2>&1 | tee /tmp/pvcbr-test.log | grep -E "(: (fatal )?error:|^Undefined symbols|Test Case .* failed|✘|Suite .* (passed|failed) after|Test run with|TEST (SUCCEEDED|FAILED))" | tail -200
+
+      - name: Show PVCoreBridgeRetro test log tail
+        if: failure()
+        run: tail -60 /tmp/pvcbr-test.log || true
+
+      - name: Upload PVCoreBridgeRetro test log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pvcbr-test-log
+          path: /tmp/pvcbr-test.log
           retention-days: 3
 
   # Job 3: Fast CI simulator build — validates that code compiles

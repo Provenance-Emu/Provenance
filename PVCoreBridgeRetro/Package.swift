@@ -183,16 +183,10 @@ let package = Package(
 
 //        .binaryTarget(name: "MoltenVK", path: "../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework")
         // ------------------- Tests -------------------
-            .testTarget(
-                name: "PVLibRetroTests",
-                dependencies: [
-                    "PVLibRetro",
-                    "libretro",
-                    "PVCoreBridge",
-                    "PVCoreObjCBridge",
-                    "PVEmulatorCore",
-                    "PVArchiving"
-                ])
+        // Tests/PVLibRetroTests runs as the PVLibRetroTests target of
+        // PVCoreBridgeRetro.xcodeproj, not from here: SwiftPM can't build this
+        // package (Sources/PVLibRetro mixes Swift with ObjC/ObjC++, and the
+        // libretro target has no `path:`). The app builds the xcodeproj.
     ],
     swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu2x,

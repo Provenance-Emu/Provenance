@@ -7,7 +7,7 @@
 //
 
 import Testing
-@testable import PVLibRetro
+@testable import PVCoreBridgeRetro
 
 // MARK: - Gambatte palette tests
 

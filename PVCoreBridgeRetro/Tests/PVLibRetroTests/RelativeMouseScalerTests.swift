@@ -8,7 +8,7 @@
 
 import Testing
 import PVSystems
-@testable import PVLibRetro
+@testable import PVCoreBridgeRetro
 
 struct RelativeMouseScalerTests {
 

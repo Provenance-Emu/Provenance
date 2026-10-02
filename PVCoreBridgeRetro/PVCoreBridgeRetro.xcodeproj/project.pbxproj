@@ -67,6 +67,14 @@
 		C0C0CAFE00000001 /* PVThinLibretroCore+Scaling.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE00000002 /* PVThinLibretroCore+Scaling.swift */; };
 		C0C0CAFE00000003 /* RelativeMouseScaler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE00000004 /* RelativeMouseScaler.swift */; };
 		C0C0CAFE2F00000000000003 /* CRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE2F00000000000002 /* CRcheevos */; };
+		C0C0CAFE300000000000000F /* PaletteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE300000000000000E /* PaletteTests.swift */; };
+		C0C0CAFE3000000000000011 /* PerfInterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */; };
+		C0C0CAFE3000000000000013 /* RelativeMouseScalerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000012 /* RelativeMouseScalerTests.swift */; };
+		C0C0CAFE3000000000000015 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000014 /* Test.swift */; };
+		C0C0CAFE3000000000000017 /* ThinCoreOptionDefinitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */; };
+		C0C0CAFE3000000000000019 /* ThinSystemFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */; };
+		C0C0CAFE300000000000000A /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */; };
+		C0C0CAFE3000000000000021 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE3000000000000020 /* MoltenVK */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +84,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = B322512C286C4728001FDF42;
 			remoteInfo = retro;
+		};
+		C0C0CAFE3000000000000007 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1ACEA63C17F7467D0031B1C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B392848D28670348003BAC21;
+			remoteInfo = PVCoreBridgeRetro;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -928,6 +943,13 @@
 		B4F1A2B3C4D5E6001122334C /* PVLibRetro+JIT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVLibRetro+JIT.swift"; sourceTree = "<group>"; };
 		C0C0CAFE00000002 /* PVThinLibretroCore+Scaling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+Scaling.swift"; sourceTree = "<group>"; };
 		C0C0CAFE00000004 /* RelativeMouseScaler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelativeMouseScaler.swift; sourceTree = "<group>"; };
+		C0C0CAFE300000000000000E /* PaletteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteTests.swift; sourceTree = "<group>"; };
+		C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfInterfaceTests.swift; sourceTree = "<group>"; };
+		C0C0CAFE3000000000000012 /* RelativeMouseScalerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeMouseScalerTests.swift; sourceTree = "<group>"; };
+		C0C0CAFE3000000000000014 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinCoreOptionDefinitionTests.swift; sourceTree = "<group>"; };
+		C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinSystemFileTests.swift; sourceTree = "<group>"; };
+		C0C0CAFE3000000000000002 /* PVLibRetroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVLibRetroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -969,6 +991,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0C0CAFE3000000000000005 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0C0CAFE300000000000000A /* PVCoreBridgeRetro.framework in Frameworks */,
+				C0C0CAFE3000000000000021 /* MoltenVK in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -979,6 +1010,7 @@
 				B3A4FB58278FE2F200A65248 /* Sources */,
 				B392848F28670348003BAC21 /* PVLibRetro */,
 				B36C41022898776C00EAEF59 /* retro-netplay */,
+				C0C0CAFE3000000000000003 /* PVLibRetroTests */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
 			);
@@ -990,6 +1022,7 @@
 				B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */,
 				B322512D286C4728001FDF42 /* libretro.a */,
 				B36C41012898776C00EAEF59 /* libretro-netplay.a */,
+				C0C0CAFE3000000000000002 /* PVLibRetroTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2915,6 +2948,20 @@
 			name = tvOS;
 			sourceTree = "<group>";
 		};
+		C0C0CAFE3000000000000003 /* PVLibRetroTests */ = {
+			isa = PBXGroup;
+			children = (
+				C0C0CAFE300000000000000E /* PaletteTests.swift */,
+				C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */,
+				C0C0CAFE3000000000000012 /* RelativeMouseScalerTests.swift */,
+				C0C0CAFE3000000000000014 /* Test.swift */,
+				C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */,
+				C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */,
+			);
+			name = PVLibRetroTests;
+			path = Tests/PVLibRetroTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -3005,6 +3052,27 @@
 			productReference = B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		C0C0CAFE3000000000000001 /* PVLibRetroTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0C0CAFE3000000000000009 /* Build configuration list for PBXNativeTarget "PVLibRetroTests" */;
+			buildPhases = (
+				C0C0CAFE3000000000000004 /* Sources */,
+				C0C0CAFE3000000000000005 /* Frameworks */,
+				C0C0CAFE3000000000000006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C0C0CAFE3000000000000008 /* PBXTargetDependency */,
+			);
+			name = PVLibRetroTests;
+			packageProductDependencies = (
+				C0C0CAFE3000000000000020 /* MoltenVK */,
+			);
+			productName = PVLibRetroTests;
+			productReference = C0C0CAFE3000000000000002 /* PVLibRetroTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -3023,6 +3091,9 @@
 					};
 					B36C41002898776C00EAEF59 = {
 						CreatedOnToolsVersion = 14.0;
+					};
+					C0C0CAFE3000000000000001 = {
+						CreatedOnToolsVersion = 26.0;
 					};
 					B392848D28670348003BAC21 = {
 						CreatedOnToolsVersion = 13.4.1;
@@ -3062,12 +3133,20 @@
 				B392848D28670348003BAC21 /* PVCoreBridgeRetro */,
 				B322512C286C4728001FDF42 /* retro */,
 				B36C41002898776C00EAEF59 /* retro-netplay */,
+				C0C0CAFE3000000000000001 /* PVLibRetroTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B392848C28670348003BAC21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C0C0CAFE3000000000000006 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3133,6 +3212,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C0C0CAFE3000000000000004 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0C0CAFE300000000000000F /* PaletteTests.swift in Sources */,
+				C0C0CAFE3000000000000011 /* PerfInterfaceTests.swift in Sources */,
+				C0C0CAFE3000000000000013 /* RelativeMouseScalerTests.swift in Sources */,
+				C0C0CAFE3000000000000015 /* Test.swift in Sources */,
+				C0C0CAFE3000000000000017 /* ThinCoreOptionDefinitionTests.swift in Sources */,
+				C0C0CAFE3000000000000019 /* ThinSystemFileTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -3140,6 +3232,11 @@
 			isa = PBXTargetDependency;
 			target = B322512C286C4728001FDF42 /* retro */;
 			targetProxy = B3EA6C92292617F300010224 /* PBXContainerItemProxy */;
+		};
+		C0C0CAFE3000000000000008 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B392848D28670348003BAC21 /* PVCoreBridgeRetro */;
+			targetProxy = C0C0CAFE3000000000000007 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3774,6 +3871,68 @@
 			};
 			name = Archive;
 		};
+		C0C0CAFE300000000000000B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetroTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
+			};
+			name = Debug;
+		};
+		C0C0CAFE300000000000000C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetroTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
+			};
+			name = Release;
+		};
+		C0C0CAFE300000000000000D /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetroTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				TVOS_DEPLOYMENT_TARGET = 17.6;
+			};
+			name = Archive;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -3813,6 +3972,16 @@
 				B392849228670348003BAC21 /* Debug */,
 				B392849328670348003BAC21 /* Release */,
 				B392849428670348003BAC21 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0C0CAFE3000000000000009 /* Build configuration list for PBXNativeTarget "PVLibRetroTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0C0CAFE300000000000000B /* Debug */,
+				C0C0CAFE300000000000000C /* Release */,
+				C0C0CAFE300000000000000D /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -3952,6 +4121,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C0C0CAFE2F00000000000001 /* XCLocalSwiftPackageReference "../PVRcheevos" */;
 			productName = CRcheevos;
+		};
+		C0C0CAFE3000000000000020 /* MoltenVK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MoltenVK;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -6,9 +6,14 @@
 //
 
 import Testing
-@testable import libretro
-@testable import PVLibRetro
+@testable import PVCoreBridgeRetro
 
+/// `PVLibRetroCoreBridge` is an abstract base: `init` dlsym-loads the libretro
+/// entry points from `bundleForClass:`, which for a real core subclass is the
+/// core's framework. The bare class resolves them in PVCoreBridgeRetro itself,
+/// where `retro_set_environment` is the frontend's own wrapper — so `init`
+/// recurses until the stack overflows (SIGBUS). These need a core subclass.
+@Suite(.disabled("Needs a libretro core subclass; the bare bridge recurses in init"))
 struct Test {
 
     @Test func LibRetroTest() async throws {

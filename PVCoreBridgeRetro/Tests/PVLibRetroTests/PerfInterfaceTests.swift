@@ -14,8 +14,7 @@
 //
 
 import Testing
-@testable import libretro
-@testable import PVLibRetro
+@testable import PVCoreBridgeRetro
 
 /// Helper: allocate a heap-backed retro_perf_counter with a static ident string.
 /// Heap allocation ensures the pointer stored in the global perf counter array

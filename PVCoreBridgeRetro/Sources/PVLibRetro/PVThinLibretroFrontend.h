@@ -36,6 +36,10 @@
 // Wired into RETRO_ENVIRONMENT_GET_PERF_INTERFACE in both frontend paths.
 // In DEBUG builds, perf_start/perf_stop emit os_signpost intervals visible
 // in Xcode Instruments under "org.provenance-emu.PVCoreBridgeRetro / libretro-perf".
+// C linkage: they're defined in a .mm, so without it the framework exports
+// C++-mangled names that Swift and C callers can't link against.
+
+__BEGIN_DECLS
 
 /// Returns current time in microseconds via mach_absolute_time.
 retro_time_t pv_perf_get_time_usec(void);
@@ -57,6 +61,8 @@ void pv_perf_stop(struct retro_perf_counter *_Nullable counter);
 
 /// Log all registered counters to the Provenance log.
 void pv_perf_log(void);
+
+__END_DECLS
 
 /// Maximum number of players supported for input.
 /// Matches RetroArch's DEFAULT_INPUT_MAX_USERS so GET_INPUT_MAX_USERS stays consistent.

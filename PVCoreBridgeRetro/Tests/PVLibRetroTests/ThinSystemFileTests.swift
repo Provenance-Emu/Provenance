@@ -11,7 +11,7 @@
 import Testing
 import Foundation
 import PVArchiving
-@testable import PVLibRetro
+@testable import PVCoreBridgeRetro
 
 // MARK: - Manifest lookup tests
 

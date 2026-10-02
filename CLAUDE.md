@@ -212,6 +212,14 @@ cd PVUI && xcodebuild test -scheme PVUI-UnitTests \
   -destination 'platform=iOS Simulator,name=iPhone 17' \
   CODE_SIGNING_ALLOWED=NO -skipPackagePluginValidation -skipMacroValidation
 
+# PVCoreBridgeRetro (thin wrapper) tests: the PVLibRetroTests target of
+# PVCoreBridgeRetro.xcodeproj. SwiftPM can't build that package (mixed
+# Swift/ObjC target). Ad-hoc signing is required — the bundle embeds MoltenVK.
+xcodebuild test -workspace Provenance.xcworkspace -scheme PVCoreBridgeRetro \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= \
+  -skipPackagePluginValidation -skipMacroValidation
+
 # Xcode simulator build (full app, slow)
 xcodebuild build -workspace Provenance.xcworkspace \
   -scheme "Provenance-Lite (AppStore)" \

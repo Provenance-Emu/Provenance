@@ -9,7 +9,7 @@
 
 import Testing
 import Foundation
-@testable import PVLibRetro
+@testable import PVCoreBridgeRetro
 
 @Suite("ThinCoreOptionDefinition")
 struct ThinCoreOptionDefinitionTests {
