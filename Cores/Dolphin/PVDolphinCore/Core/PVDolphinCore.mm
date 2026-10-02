@@ -13,6 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <PVDolphin/PVDolphin-Swift.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
+#import <PVLogging/PVLoggingObjC.h>
 @import PVEmulatorCore;
 @import PVCoreBridge;
 @import PVSettings;
