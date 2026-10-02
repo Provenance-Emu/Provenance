@@ -82,6 +82,14 @@ typedef enum PVN64Button: NSInteger PVN64Button;
 @property (nonatomic, assign) BOOL isNTSC;
 @property (nonatomic, assign) BOOL dualJoystick;
 
+/// Called once per N64 vertical interrupt on the Mupen64Plus emulation thread,
+/// while the emulated CPU is stopped at the VI. Mupen drives its own run loop,
+/// so PVEmulatorCore never calls the Swift core's `executeFrame()`; this is the
+/// per-frame hook for work that must observe settled emulated memory
+/// (RetroAchievements `rc_client_do_frame`).
+/// Declared here, not in a category header, so Swift module synthesis keeps it.
+@property (atomic, copy, nullable) void (^frameCompletedHandler)(void);
+
 - (void) videoInterrupt;
 - (void) setMode:(NSInteger)mode forController:(NSInteger)controller;
 

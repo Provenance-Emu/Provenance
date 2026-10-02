@@ -698,6 +698,11 @@ static void *dlopen_myself()
 }
 
 - (void)videoInterrupt {
+    void (^frameHandler)(void) = self.frameCompletedHandler;
+    if (frameHandler) {
+        frameHandler();
+    }
+
     dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
 
     dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, [self frameTime]);

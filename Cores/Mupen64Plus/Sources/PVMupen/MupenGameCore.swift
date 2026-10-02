@@ -79,13 +79,17 @@ import GLKit
 
     required init() {
         super.init()
-        self.bridge = (PVMupenBridge() as! any ObjCBridgedCoreBridge)
-    }
-
-    public override func executeFrame() {
-        super.executeFrame()
-        if achievementsActive {
-            tickAchievements()
+        let runningBridge = PVMupenBridge()
+        self.bridge = runningBridge as? any ObjCBridgedCoreBridge
+        // Mupen drives its own run loop (M64CMD_EXECUTE), so PVEmulatorCore never calls
+        // `executeFrame()` on this class — the ObjC emulation loop calls the bridge's.
+        // The bridge reports each N64 VI instead, on the Mupen emulation thread.
+        // Not gated on `achievementsActive`: the lazy region retry in `tickAchievements()`
+        // must run while no session exists yet.
+        // Installed on `runningBridge` (the instance that loads and runs the ROM),
+        // not `_bridge`, which is a separate instance that never runs.
+        runningBridge.frameCompletedHandler = { [weak self] in
+            self?.tickAchievements()
         }
     }
 }
