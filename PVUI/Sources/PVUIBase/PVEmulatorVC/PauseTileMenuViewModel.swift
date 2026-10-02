@@ -47,6 +47,8 @@ final class PauseTileMenuViewModel: ObservableObject {
     static let hardwareMomentaryTilePrefix = "hardwareMomentary_"
     /// Section ID prefix for the per-category core option sections.
     static let coreOptionSectionPrefix = "coreOptions_"
+    /// Header of the section holding the core's actions and uncategorised options.
+    static var coreSectionTitle: String { String(localized: "CORE") }
     /// Cache of route -> visible sections to support global search.
     private var sectionsByRoute: [PauseTileMenuRoute: [PauseMenuTileSection]] = [:]
 
@@ -674,6 +676,13 @@ final class PauseTileMenuViewModel: ObservableObject {
                 coreOptionSections = grouped.groups.enumerated().compactMap { index, group in
                     let tiles = group.tiles.filter { !isDuplicateOfQuickControl($0) }
                     guard !tiles.isEmpty else { return nil }
+                    /// A core's own "Core" category belongs in the CORE section
+                    /// it would otherwise sit under as a second, identical header.
+                    if group.title.trimmingCharacters(in: .whitespaces)
+                        .caseInsensitiveCompare(Self.coreSectionTitle) == .orderedSame {
+                        coreTiles += tiles
+                        return nil
+                    }
                     return PauseMenuTileSection(
                         id: "\(Self.coreOptionSectionPrefix)\(index)",
                         title: group.title.uppercased(),
@@ -715,7 +724,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
 
         if !coreTiles.isEmpty {
-            built.append(PauseMenuTileSection(id: "core", title: String(localized: "CORE"), tiles: coreTiles))
+            built.append(PauseMenuTileSection(id: "core", title: Self.coreSectionTitle, tiles: coreTiles))
         }
         built.append(contentsOf: coreOptionSections)
 
@@ -790,7 +799,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         case .core:
             let core = rootSections.first(where: { $0.id == "core" })
             let optionCategories = rootSections.filter { $0.id.hasPrefix(Self.coreOptionSectionPrefix) }
-            return (core.map { [PauseMenuTileSection(id: "core_route", title: String(localized: "CORE"), tiles: $0.tiles)] } ?? [])
+            return (core.map { [PauseMenuTileSection(id: "core_route", title: Self.coreSectionTitle, tiles: $0.tiles)] } ?? [])
                 + optionCategories
         case .skins:
             if !emulatorVC.core.supportsSkins {

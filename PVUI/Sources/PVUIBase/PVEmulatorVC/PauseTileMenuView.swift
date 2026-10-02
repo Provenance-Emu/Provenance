@@ -210,6 +210,9 @@ struct PauseTileMenuView: View {
         #endif
     }
 
+    /// Scroll anchor for the panel's title row.
+    private static let panelTopID = "pauseMenu.panelTop"
+
     private var palette: UXThemePalette { themeManager.currentPalette }
     private var currentRoute: PauseTileMenuRoute { routeStack.last ?? .root }
     private var currentCoreOptionsMD5Scope: String? {
@@ -1648,6 +1651,7 @@ struct PauseTileMenuView: View {
                                 Spacer().frame(width: tvOSAdjusted(46, tvOS: 68))
                             }
                             .padding(.top, tvOSAdjusted(2, tvOS: 6))
+                            .id(Self.panelTopID)
 
                             searchBarView
                             if currentRoute == .core {
@@ -1681,6 +1685,11 @@ struct PauseTileMenuView: View {
                             }
                         }
                         .padding(tvOSAdjusted(12, tvOS: 20))
+                    }
+                    /// A submenu is a new page: start it at its top rather than
+                    /// wherever the previous one happened to be scrolled.
+                    .onChange(of: routeStack) { _ in
+                        scrollProxy.scrollTo(Self.panelTopID, anchor: .top)
                     }
                     #if os(tvOS)
                     .onChange(of: focusedTileID) { newID in
