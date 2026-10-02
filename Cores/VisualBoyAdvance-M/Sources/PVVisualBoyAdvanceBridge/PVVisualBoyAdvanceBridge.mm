@@ -36,7 +36,6 @@
 
 @import PVAudio;
 @import PVVisualBoyAdvanceOptions;
-@import libvisualboyadvance;
 @import PVLoggingObjC;
 
 #if TARGET_OS_MACCATALYST || TARGET_OS_OSX
@@ -52,13 +51,21 @@
 #endif
 
 #include <atomic>
-#include <sys/time.h>
-#include "System.h"
-#include "Util.h"
-#include "gba/GBA.h"
-#include "gba/RTC.h"
-#include "gba/Sound.h"
-#include "common/SoundDriver.h"
+#include <memory>
+
+// VBA-M 2.x core (visualboyadvance-m submodule, desktop/non-libretro build).
+#include "core/base/message.h"
+#include "core/base/sound_driver.h"
+#include "core/base/system.h"
+#include "core/gba/gba.h"
+#include "core/gba/gbaCheats.h"
+#include "core/gba/gbaEeprom.h"
+#include "core/gba/gbaFlash.h"
+#include "core/gba/gbaGlobals.h"
+#include "core/gba/gbaRtc.h"
+#include "core/gba/gbaSound.h"
+// Provenance glue compiled into libvisualboyadvance.
+#include "provenance/legacy_state.h"
 
 // ---------------------------------------------------------------------------
 // MARK: - RetroAchievements rc_client (HAVE_RCHEEVOS)
@@ -74,16 +81,16 @@ static uint32_t pvvba_read_memory(uint32_t address, uint8_t *buffer,
         uint32_t addr = address + i;
         uint8_t value = 0xFF;
         if (addr >= 0x02000000 && addr <= 0x0203FFFF) {
-            if (workRAM) {
-                value = workRAM[addr - 0x02000000];
+            if (g_workRAM) {
+                value = g_workRAM[addr - 0x02000000];
             }
         } else if (addr >= 0x03000000 && addr <= 0x03007FFF) {
-            if (internalRAM) {
-                value = internalRAM[addr - 0x03000000];
+            if (g_internalRAM) {
+                value = g_internalRAM[addr - 0x03000000];
             }
         } else if (addr >= 0x06000000 && addr <= 0x06017FFF) {
-            if (vram) {
-                value = vram[addr - 0x06000000];
+            if (g_vram) {
+                value = g_vram[addr - 0x06000000];
             }
         }
         buffer[i] = value;
@@ -194,28 +201,60 @@ EmulatedSystem vba;
 int emulating = 0;
 uint32_t pad[PVGBAButtonCount];
 
+// The core expects the embedder to instantiate this (core/base/system.h).
+// Every field the bridge relies on is set again on each load.
+struct CoreOptions coreOptions;
+
+/// GBA BIOS file name inside `BIOSPath`.
+static NSString * const PVVBABIOSFileName = @"GBA.BIOS";
+/// Flash sizes vba-over.ini may set (64K / 128K carts).
+static const int PVVBAFlash64K = 0x10000;
+static const int PVVBAFlash128K = 0x20000;
+/// Size VBA-M 1.8 wrote SRAM battery saves at (the chip is 32K).
+static const NSUInteger PVVBALegacySRAMSaveSize = 0x10000;
+/// Sample rate the core mixes at.
+static const long PVVBASampleRate = 32768;
+/// Boktai solar sensor reading with no light sensor (libretro's default).
+static const uint8_t PVVBASensorDarknessDefault = 0xE8;
+
 static __weak PVVisualBoyAdvanceBridge *_current;
 
 @interface PVVisualBoyAdvanceBridge ()
 {
     uint8_t *videoBuffer;
-    int32_t *soundBuffer;
     NSURL *_romFile, *_saveFile;
 
     NSString *_romID;
     BOOL _enableRTC, _enableMirroring, _useBIOS, _haveFrame, _migratingSave;
+    /// Which vba-over.ini keys the current game's entry actually sets.
+    BOOL _hasRTCOverride, _hasFlashSizeOverride;
     int _flashSize, _cpuSaveType;
+    /// Save type resolved at load (GBA_SAVE_*, never AUTO). It is a property
+    /// of the cart, re-applied after loading a converted legacy save state.
+    int _resolvedSaveType;
 #if HAVE_RCHEEVOS
     rc_client_t *_rcClient;
 #endif
     std::atomic<bool> _achievementsActive;
 }
 - (void)loadOverrides:(NSString *)gameID;
+- (void)resolveSaveTypeForROMSize:(int)romSize;
 - (void)writeSaveFile;
 - (void)migrateSaveFile;
 /// Called from `pvvba_load_callback` / `pvvba_login_callback` (cannot use private ivars from static C functions).
 - (void)pvvba_applyAchievementsLoadResult:(BOOL)success;
 @end
+
+/// Fills the 15-bit -> 32-bit colour lookup the GBA renderer reads.
+/// VBA-M 1.8 shipped this as utilUpdateSystemColorMaps(false) in Util.cpp;
+/// 2.x moved it into the frontends.
+static void pvvba_updateColorMaps(void) {
+    for (int i = 0; i < 0x10000; i++) {
+        systemColorMap32[i] = ((i & 0x1f) << systemRedShift) |
+            (((i & 0x3e0) >> 5) << systemGreenShift) |
+            (((i & 0x7c00) >> 10) << systemBlueShift);
+    }
+}
 
 @implementation PVVisualBoyAdvanceBridge
 @synthesize valueChangedHandler;
@@ -239,7 +278,7 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 
 - (instancetype)init {
     if((self = [super init])) {
-        self->videoBuffer = (uint8_t *) malloc(240 * 160 * 4);
+        self->videoBuffer = (uint8_t *) malloc(gbaWidth * gbaHeight * 4);
         vba = GBASystem;
         _achievementsActive.store(false);
     }
@@ -269,9 +308,18 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 
     self->_romFile = [NSURL fileURLWithPath:path];
 
-    int loaded = CPULoadRom([path UTF8String]);
+    // Options the core reads at load. CoreOptions' own defaults differ from
+    // Provenance's (e.g. skipSaveGameBattery = 1, mirroringEnable = true).
+    coreOptions.skipBios = VisualBoyAdvanceOptions.skipBios;
+    coreOptions.cpuDisableSfx = VisualBoyAdvanceOptions.cpuDisableSfx;
+    coreOptions.speedHack = VisualBoyAdvanceOptions.speedHack;
+    coreOptions.skipSaveGameBattery = VisualBoyAdvanceOptions.skipSaveGameBattery;
+    coreOptions.skipSaveGameCheats = VisualBoyAdvanceOptions.skipSaveGameCheats;
+    coreOptions.cheatsEnabled = 1;
 
-    if(loaded == 0) {
+    int romSize = CPULoadRom([path UTF8String]);
+
+    if(romSize == 0) {
 		if(error != NULL) {
 			NSDictionary *userInfo = @{
 				NSLocalizedDescriptionKey: @"Failed to load game.",
@@ -288,14 +336,14 @@ static __weak PVVisualBoyAdvanceBridge *_current;
         return NO;
     }
 
-    utilUpdateSystemColorMaps(false);
+    pvvba_updateColorMaps();
 
     // Read the cart's Game ID
     char gameID[5];
-    gameID[0] = rom[0xac];
-    gameID[1] = rom[0xad];
-    gameID[2] = rom[0xae];
-    gameID[3] = rom[0xaf];
+    gameID[0] = g_rom[0xac];
+    gameID[1] = g_rom[0xad];
+    gameID[2] = g_rom[0xae];
+    gameID[3] = g_rom[0xaf];
     gameID[4] = 0;
 
     DLOG(@"VBA: GameID in ROM is: %s\n", gameID);
@@ -304,8 +352,7 @@ static __weak PVVisualBoyAdvanceBridge *_current;
     [self loadOverrides:[NSString stringWithFormat:@"%s", gameID]];
 
     // Check if BIOS file even exists
-    NSString *romFolder = [path stringByDeletingLastPathComponent];
-    NSString *biosPath = [self.BIOSPath stringByAppendingPathComponent:@"GBA.BIOS"];
+    NSString *biosPath = [self.BIOSPath stringByAppendingPathComponent:PVVBABIOSFileName];
     if ([[NSFileManager defaultManager] fileExistsAtPath:biosPath]) {
         ILOG(@"BIOS found at %@. Will use.", biosPath);
         self->_useBIOS = YES;
@@ -326,34 +373,19 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 			}
             return NO;
         }
-        
+
         self->_useBIOS = NO;
     }
-    
-    // Apply settings
-    rtcEnable(self->_enableRTC);
-    useBios = self->_useBIOS;
-    mirroringEnable = self->_enableMirroring;
-    doMirroring(mirroringEnable);
-    cpuSaveType = (int)self->_cpuSaveType;
-    
-    // Load core options
-    skipBios = VisualBoyAdvanceOptions.skipBios;
-    cpuDisableSfx = VisualBoyAdvanceOptions.cpuDisableSfx;
-    speedHack = VisualBoyAdvanceOptions.speedHack;
-    skipSaveGameBattery = VisualBoyAdvanceOptions.skipSaveGameBattery;
-    skipSaveGameCheats = VisualBoyAdvanceOptions.skipSaveGameCheats;
 
-    if(self->_flashSize == 0x10000 || self->_flashSize == 0x20000) {
-        flashSetSize((int)self->_flashSize);
-    }
+    // Save type, flash size and RTC, in the order upstream's desktop frontend
+    // (src/wx/panel.cpp) uses: after CPULoadRom, before CPUInit/CPUReset.
+    [self resolveSaveTypeForROMSize:romSize];
+
+    coreOptions.mirroringEnable = self->_enableMirroring;
+    doMirroring(coreOptions.mirroringEnable);
 
     soundInit();
-    soundSetSampleRate(32768); // 44100 chirps
-    //soundFiltering = 0.0;
-    //soundInterpolation = false;
-
-    soundReset();
+    soundSetSampleRate(PVVBASampleRate);
 
     CPUInit(self->_useBIOS ? biosPath.UTF8String : 0, self->_useBIOS);
     CPUReset();
@@ -364,7 +396,7 @@ static __weak PVVisualBoyAdvanceBridge *_current;
     if([batterySavesDirectory length]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
     }
-    
+
     self->_saveFile = [NSURL fileURLWithPath:[batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav2"]]];
 
     if ([self->_saveFile checkResourceIsReachableAndReturnError:nil] && vba.emuReadBattery([[self->_saveFile path] UTF8String])) {
@@ -388,6 +420,34 @@ static __weak PVVisualBoyAdvanceBridge *_current;
     return YES;
 }
 
+/// Resolves the cart's save type so it is never left at GBA_SAVE_AUTO: with
+/// AUTO, VBA-M 2.x's CPUWriteBatteryFile() writes nothing.
+/// flashDetectSaveType() scans the ROM for its SDK save-library string and
+/// the Seiko RTC string (SIIRTC_V) and sets save type, flash size and RTC;
+/// the keys the game's vba-over.ini entry sets are then applied on top.
+/// (The 1.8 core Provenance shipped forced the RTC on for every game; 2.x
+/// enables it per game from that scan instead.)
+- (void)resolveSaveTypeForROMSize:(int)romSize {
+    coreOptions.cpuSaveType = self->_cpuSaveType;
+
+    flashDetectSaveType(romSize);
+    if (coreOptions.cpuSaveType != GBA_SAVE_AUTO) {
+        coreOptions.saveType = coreOptions.cpuSaveType;
+    }
+
+    if (self->_hasFlashSizeOverride && (self->_flashSize == PVVBAFlash64K || self->_flashSize == PVVBAFlash128K)) {
+        flashSetSize(self->_flashSize);
+    }
+    if (self->_hasRTCOverride) {
+        rtcEnable(self->_enableRTC);
+    }
+    // The clock only follows the wall clock when this is set too (gbaRtc.cpp).
+    coreOptions.rtcEnabled = rtcIsEnabled();
+
+    self->_resolvedSaveType = coreOptions.saveType;
+    DLOG(@"VBA: saveType %d (ini %d) flashSize %d rtc %d", coreOptions.saveType, self->_cpuSaveType, g_flashSize, coreOptions.rtcEnabled);
+}
+
 - (void)executeFrame {
     [self executeFrameSkippingFrame:NO];
 }
@@ -402,8 +462,6 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 
 - (void)stopEmulation {
     [super stopEmulation]; //Leave emulation loop first
-
-    emulating = 0;
 
 #if HAVE_RCHEEVOS
     if (_rcClient) {
@@ -427,15 +485,15 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 # pragma mark - RetroAchievements
 
 - (void *)ewramBasePtr {
-    return (void *)workRAM;
+    return (void *)g_workRAM;
 }
 
 - (void *)iwramBasePtr {
-    return (void *)internalRAM;
+    return (void *)g_internalRAM;
 }
 
 - (void *)vbaVramBasePtr {
-    return (void *)vram;
+    return (void *)g_vram;
 }
 
 - (BOOL)achievementsActive {
@@ -585,8 +643,8 @@ static void pvvba_login_callback(int result, const char * __unused error_message
 
 - (double)audioSampleRate {
     double samplerate = soundGetSampleRate();
-    if(samplerate < 32768) {
-        samplerate = 32768;
+    if(samplerate < PVVBASampleRate) {
+        samplerate = PVVBASampleRate;
     }
     return samplerate;
 }
@@ -595,51 +653,66 @@ static void pvvba_login_callback(int result, const char * __unused error_message
 
 # pragma mark - Save States
 
+static NSError *pvvba_stateError(NSInteger code, NSString *description, NSString *reason) {
+    return [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+                               code:code
+                           userInfo:@{
+                               NSLocalizedDescriptionKey: description,
+                               NSLocalizedFailureReasonErrorKey: reason,
+                               NSLocalizedRecoverySuggestionErrorKey: @""
+                           }];
+}
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-implementations"
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
     @synchronized(self) {
         BOOL success = vba.emuWriteState([fileName UTF8String]);
-		if (!success) {
-			if(error != NULL) {
-				NSDictionary *userInfo = @{
-					NSLocalizedDescriptionKey: @"Failed to save state.",
-					NSLocalizedFailureReasonErrorKey: @"Core failed to create save state.",
-					NSLocalizedRecoverySuggestionErrorKey: @""
-				};
-
-				NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
-														code:PVEmulatorCoreErrorCodeCouldNotSaveState
-													userInfo:userInfo];
-
-				*error = newError;
-			}
-		}
-		return success;
+        if (!success && error != NULL) {
+            *error = pvvba_stateError(PVEmulatorCoreErrorCodeCouldNotSaveState,
+                                      @"Failed to save state.",
+                                      @"Core failed to create save state.");
+        }
+        return success;
     }
 }
 
 /// `EmulatorCoreSavesSerializer` exposes this selector (`@objc(loadStateToFileAtPath:error:)`).
+/// Accepts states from VBA-M 2.x and from the 1.8-era core Provenance shipped
+/// before (see provenance/legacy_state.h); refuses anything else.
 - (BOOL)loadStateToFileAtPath:(NSString *)fileName error:(NSError **)error {
     @synchronized(self) {
-        BOOL success = vba.emuReadState([fileName UTF8String]);
-		if (!success) {
-			if(error != NULL) {
-				NSDictionary *userInfo = @{
-					NSLocalizedDescriptionKey: @"Failed to save state.",
-					NSLocalizedFailureReasonErrorKey: @"Core failed to load save state.",
-					NSLocalizedRecoverySuggestionErrorKey: @""
-				};
-				
-				NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
-														code:PVEmulatorCoreErrorCodeCouldNotLoadState
-													userInfo:userInfo];
-				
-				*error = newError;
-			}
-		}
-		return success;
+        const pvvba::StateLoadResult result = pvvba::LoadState(fileName.UTF8String,
+                                                               NSTemporaryDirectory().UTF8String);
+        NSString *reason = nil;
+        switch (result) {
+            case pvvba::StateLoadResult::Loaded:
+                return YES;
+            case pvvba::StateLoadResult::LoadedLegacy:
+                // 1.8 stored its own save-type numbering (1 SRAM, 2 FLASH,
+                // 3 EEPROM) where 2.x keeps GBA_SAVE_*. The type is a property
+                // of the cart, so restore the one resolved at load.
+                ILOG(@"VBA: loaded a VBA-M 1.8 save state (upgraded to the 2.x layout)");
+                coreOptions.saveType = self->_resolvedSaveType;
+                SetSaveType(coreOptions.saveType);
+                return YES;
+            case pvvba::StateLoadResult::ReadFailed:
+                reason = @"Could not read the save state file.";
+                break;
+            case pvvba::StateLoadResult::Incompatible:
+                reason = @"This save state was made by an incompatible version of the VisualBoyAdvance core.";
+                break;
+            case pvvba::StateLoadResult::CoreRejected:
+                reason = @"Core failed to load save state.";
+                break;
+        }
+        if (error != NULL) {
+            *error = pvvba_stateError(PVEmulatorCoreErrorCodeCouldNotLoadState,
+                                      @"Failed to load state.",
+                                      reason);
+        }
+        return NO;
     }
 }
 
@@ -731,8 +804,10 @@ bool systemReadJoypads() {
     self->_enableRTC       = NO;
     self->_enableMirroring = NO;
     self->_useBIOS         = NO;
-    self->_cpuSaveType     = 0;
-    self->_flashSize       = 0x10000;
+    self->_cpuSaveType     = GBA_SAVE_AUTO;
+    self->_flashSize       = PVVBAFlash64K;
+    self->_hasRTCOverride       = NO;
+    self->_hasFlashSizeOverride = NO;
 
     // Read in vba-over.ini and break it into an array of strings
     NSString *iniPath = [[NSBundle bundleForClass:[self class]] pathForResource:@"vba-over" ofType:@"ini"];
@@ -763,6 +838,9 @@ bool systemReadJoypads() {
             [scanner scanString:@"saveType=" intoString:nil];
             [scanner scanUpToString:@"\n" intoString:&temp];
             self->_cpuSaveType = [temp intValue];
+            if (self->_cpuSaveType < GBA_SAVE_AUTO || self->_cpuSaveType > GBA_SAVE_NONE) {
+                self->_cpuSaveType = GBA_SAVE_AUTO;
+            }
             [overridesFound setObject:temp forKey:@"CPU saveType"];
 
             continue;
@@ -771,6 +849,7 @@ bool systemReadJoypads() {
             [scanner scanString:@"rtcEnabled=" intoString:nil];
             [scanner scanUpToString:@"\n" intoString:&temp];
             self->_enableRTC = [temp boolValue];
+            self->_hasRTCOverride = YES;
             [overridesFound setObject:temp forKey:@"rtcEnabled"];
 
             continue;
@@ -779,6 +858,7 @@ bool systemReadJoypads() {
             [scanner scanString:@"flashSize=" intoString:nil];
             [scanner scanUpToString:@"\n" intoString:&temp];
             self->_flashSize = [temp intValue];
+            self->_hasFlashSizeOverride = YES;
             [overridesFound setObject:temp forKey:@"flashSize"];
 
             continue;
@@ -808,8 +888,20 @@ bool systemReadJoypads() {
 }
 
 - (void)writeSaveFile {
-    if (vba.emuWriteBattery([[self->_saveFile path] UTF8String]))
-        DLOG(@"VBA: Battery saved");
+    NSString *savePath = [self->_saveFile path];
+    if (!vba.emuWriteBattery(savePath.UTF8String)) { return; }
+    DLOG(@"VBA: Battery saved");
+
+    // VBA-M 2.x writes SRAM saves as 32K. The 1.8 core Provenance shipped
+    // before wrote 64K and fails to load anything else, so a 32K save synced
+    // to a device still on an older build would be ignored there and then
+    // overwritten. Keep writing the 64K image (2.x loads both sizes).
+    if (coreOptions.saveType == GBA_SAVE_SRAM && !eepromInUse) {
+        NSData *sram = [NSData dataWithBytes:flashSaveMemory length:PVVBALegacySRAMSaveSize];
+        if (![sram writeToFile:savePath atomically:YES]) {
+            ELOG(@"VBA: could not write 64K SRAM save to %@", savePath);
+        }
+    }
 }
 
 /*
@@ -830,19 +922,20 @@ bool systemReadJoypads() {
     if (![saveFileToMigrate checkResourceIsReachableAndReturnError:nil]) { return; }
 
     /*
-     +----------------+----------+-------------+-----------------+--------------------------------------+
-     |     Format     | saveType | cpuSaveType |  Size in Bytes  |            Example Games             |
-     +----------------+----------+-------------+-----------------+--------------------------------------|
-     |  (AUTODETECT)  |    0     |      0      |        -        |                                      |
-     |  SRAM          |    1     |      2      |      65536*     | F-Zero, Kirby Nightmare in Dreamland |
-     |  FLASH         |    2     |      3      | 65536 or 131072 | Golden Sun, Pokemon Emerald          |
-     |  EEPROM        |    3     |      1      |   512 or 8192   | Super Mario Advance, LoZ: Minish Cap |
-     |  EEPROM+Sensor |    3     |      4      |   512 or 8192   | Yoshi's Universal Gravitation        |
-     |  (NONE)        |    5     |      5      |        -        |                                      |
-     +-----------------------------------------------------------+--------------------------------------+
-     * According to some docs, SRAM should be 32768 bytes but VBA saves SRAM as 65536
-     Note: `saveType` = `gbaSaveType` global save var, `cpuSaveType` = `saveType=` in vba-over.ini
-     See: GBA.cpp:3500 and http://problemkaputt.de/gbatek.htm#gbacartbackupids
+     +----------------+---------------------------+-----------------+--------------------------------------+
+     |     Format     | saveType / cpuSaveType    |  Size in Bytes  |            Example Games             |
+     +----------------+---------------------------+-----------------+--------------------------------------|
+     |  (AUTODETECT)  | 0 GBA_SAVE_AUTO           |        -        |                                      |
+     |  EEPROM        | 1 GBA_SAVE_EEPROM         |   512 or 8192   | Super Mario Advance, LoZ: Minish Cap |
+     |  SRAM          | 2 GBA_SAVE_SRAM           |      65536*     | F-Zero, Kirby Nightmare in Dreamland |
+     |  FLASH         | 3 GBA_SAVE_FLASH          | 65536 or 131072 | Golden Sun, Pokemon Emerald          |
+     |  EEPROM+Sensor | 4 GBA_SAVE_EEPROM_SENSOR  |   512 or 8192   | Yoshi's Universal Gravitation        |
+     |  (NONE)        | 5 GBA_SAVE_NONE           |        -        |                                      |
+     +---------------------------------------------------------------+--------------------------------------+
+     * SRAM is 32K on the cart; Provenance keeps writing VBA-M 1.8's 64K image (see writeSaveFile).
+     VBA-M 2.x uses one numbering for vba-over.ini `saveType=` and the core's
+     coreOptions.saveType; 1.8 used a different internal one.
+     See http://problemkaputt.de/gbatek.htm#gbacartbackupids
      */
 
     // Step 0
@@ -852,133 +945,53 @@ bool systemReadJoypads() {
     [fileManager copyItemAtURL:saveFileToMigrate toURL:backupSaveFile error:nil];
 
     // Step 1
-    // Prefer the vba-over.ini override (cpuSaveType) when it is set — this is
-    // authoritative for known games (especially Pokemon FLASH 128K carts that
-    // do not touch save memory at startup, where cycle-based detection returns 0
-    // and the migration would mis-classify the save as SRAM and truncate it).
-    // _cpuSaveType comes from vba-over.ini saveType= (see loadOverrides:).
-    // Mapping (GBA.cpp::CPUReset switch cpuSaveType):
-    //   1 EEPROM -> saveType=3, 2 SRAM -> saveType=1, 3 FLASH -> saveType=2,
-    //   4 EEPROM+Sensor -> saveType=3, 5 NONE -> saveType=5
+    // The save type was resolved at load (vba-over.ini override, else the
+    // ROM's save-library string). Without an ini override, run the CPU for 500
+    // frames as before: the EEPROM size (512 vs 8K) is only known once the
+    // game touches it, which the 139KB EEPROM fix-ups below depend on.
     self->_migratingSave = YES;
 
-    if (self->_cpuSaveType != 0) {
-        switch (self->_cpuSaveType) {
-            case 1: saveType = 3; break;                       // EEPROM
-            case 2: saveType = 1; break;                       // SRAM
-            case 3:
-                saveType = 2;                                  // FLASH
-                if (self->_flashSize == 0x10000 || self->_flashSize == 0x20000) {
-                    flashSize = (int)self->_flashSize;
-                }
-                break;
-            case 4: saveType = 3; break;                       // EEPROM + Sensor
-            case 5: saveType = 5; break;                       // NONE
-            default: break;
-        }
-        DLOG(@"VBA migrate: using vba-over.ini override cpuSaveType=%d -> saveType=%d flashSize=%d",
-             (int)self->_cpuSaveType, saveType, flashSize);
-    } else {
-        // No override — fall back to running the CPU for 500 cycles to try and
-        // determine the save type. Seems high but save types for some games
-        // cannot be determined until 300+ cycles (e.g. Golden Sun).
+    if (self->_cpuSaveType == GBA_SAVE_AUTO) {
         for (int i = 0; i < 500; i++) { vba.emuMain(vba.emuCount); }
     }
 
+    const int saveType = coreOptions.saveType;
+    const bool isEEPROM = saveType == GBA_SAVE_EEPROM || saveType == GBA_SAVE_EEPROM_SENSOR || eepromInUse;
+    DLOG(@"VBA migrate: saveType %d eepromInUse %d flashSize %d eepromSize %d", saveType, eepromInUse, g_flashSize, eepromSize);
+
     // Step 2
-    // If VBA did not determine the save type while cycling the CPU, fall back to lookup by the GBA Cart Backup ID. Sometimes VBA cannot determine save types until certain points in game when memory is accessed. This routine, adapted from Util.cpp, is rarely used as cycling the CPU is usually enough.
-    // Note: Lookup via GBA Cart Backup ID is not 100% accurate http://zork.net/~st/jottings/GBA_saves.html
-    if (saveType == 0 && !eepromInUse) {
-        uint8_t *data;
-        size_t size;
-
-        // Load GBA cart, read bytes, get length
-        NSData *dataObj = [NSData dataWithContentsOfURL:[self->_romFile URLByStandardizingPath]];
-        if(dataObj == nil) return;
-        size = [dataObj length];
-        data = (uint8_t *)[dataObj bytes];
-
-        uint32_t *p = (uint32_t *)data;
-        uint32_t *end = (uint32_t *)(data + size);
-
-        while(p < end) {
-            uint32_t d = *((uint32_t *)p);
-
-            if(d == 0x52504545) {
-                if(memcmp(p, "EEPROM_", 7) == 0) {
-                    if(saveType == 0)
-                    {
-                        saveType = 3;
-                        eepromSize = 8192;
-                    }
-                }
-            } else if (d == 0x4D415253) {
-                if(memcmp(p, "SRAM_", 5) == 0) {
-                    if(saveType == 0)
-                        saveType = 1;
-                }
-            } else if (d == 0x53414C46) {
-                if(memcmp(p, "FLASH1M_", 8) == 0) {
-                    if(saveType == 0) {
-                        saveType = 2;
-                        flashSize = 0x20000;
-                    }
-                } else if(memcmp(p, "FLASH", 5) == 0) {
-                    if(saveType == 0) {
-                        saveType = 2;
-                        flashSize = 0x10000;
-                    }
-                }
-            } else if (d == 0x52494953) {
-                if(memcmp(p, "SIIRTC_V", 8) == 0)
-                    self->_enableRTC = true;
-            }
-            p++;
-        }
-        // if no matches found, then set it to NONE
-        if(saveType == 0) {
-            saveType = 5;
-        }
-
-        if (saveType == 0 || saveType == 5) DLOG(@"saveType 0 NONE");
-        if (saveType == 3) DLOG(@"saveType 3 EEPROM_");
-        if (saveType == 1) DLOG(@"saveType 1 SRAM_");
-        if (saveType == 2) DLOG(@"saveType 2 FLASH size %d", flashSize);
-        if (self->_enableRTC) DLOG(@"rtcFound");
-    }
-
-    DLOG(@"saveType: %d eepromInUse %d flashSize %d eepromSize %d", saveType, eepromInUse, flashSize, eepromSize);
-
-    // Step 3
     // Migrate save file if needed
     uint8_t *saveFileData;
     size_t saveFileSize;
 
     // Load save file, read bytes, get length
     NSData *dataObj = [NSData dataWithContentsOfURL:saveFileToMigrate];
-    if(dataObj == nil) return;
-    saveFileSize = [dataObj length];
-    saveFileData = (uint8_t *)[dataObj bytes];
+    if(dataObj == nil) {
+        CPUReset();
+        self->_migratingSave = NO;
+        return;
+    }
+    NSMutableData *mutableSave = [dataObj mutableCopy];
+    saveFileSize = [mutableSave length];
+    saveFileData = (uint8_t *)[mutableSave mutableBytes];
 
     // EEPROM saves
 
     // 139KB to 8KB - remove the front 131072 bytes
-    if ((saveType == 3 || eepromInUse) && eepromSize == 8192 && saveFileSize == 139264)
+    if (isEEPROM && eepromSize == SIZE_EEPROM_8K && saveFileSize == 139264)
         memmove(saveFileData, saveFileData + 131072, saveFileSize -= 131072);
 
     // 139KB to 512 bytes - remove the front 131072 and last 7680 bytes
-    else if ((saveType == 3 || eepromInUse) && eepromSize == 512 && saveFileSize == 139264) {
-        memmove(saveFileData, saveFileData + 131072, saveFileSize -= 131072);
-        saveFileData[512] = 0; // null terminate to drop the last 7680 bytes
-        saveFileSize = 512;
+    else if (isEEPROM && eepromSize == SIZE_EEPROM_512 && saveFileSize == 139264) {
+        memmove(saveFileData, saveFileData + 131072, SIZE_EEPROM_512);
+        saveFileSize = SIZE_EEPROM_512;
     }
 
     // FLASH saves
 
     // 139KB to 131KB - remove the last 8192 bytes
-    else if (saveType == 2 && flashSize == 131072 && saveFileSize == 139264) {
-        saveFileData[131072] = 0;
-        saveFileSize = 131072;
+    else if (saveType == GBA_SAVE_FLASH && g_flashSize == SIZE_FLASH1M && saveFileSize == 139264) {
+        saveFileSize = SIZE_FLASH1M;
     }
     // 139KB to 66KB  - remove the last 73728 bytes
     // GUARD: If the vba-over.ini override declares this cart is FLASH 128K
@@ -986,19 +999,18 @@ bool systemReadJoypads() {
     // 64KB of save data (this was the cause of Pokemon "save failed" reports
     // when the cart was mis-detected as FLASH 64K). Leave the original .sav
     // alone in that case so it can still be loaded as 128K.
-    else if (saveType == 2 && flashSize == 65536 && saveFileSize == 139264) {
-        if (self->_flashSize == 0x20000) {
+    else if (saveType == GBA_SAVE_FLASH && g_flashSize == SIZE_FLASH512 && saveFileSize == 139264) {
+        if (self->_hasFlashSizeOverride && self->_flashSize == PVVBAFlash128K) {
             DLOG(@"VBA migrate: refusing to truncate 139KB save to 64K — vba-over.ini says cart is FLASH 128K. Leaving .sav intact.");
             CPUReset();
             self->_migratingSave = NO;
             return;
         }
-        saveFileData[65536] = 0;
-        saveFileSize = 65536;
+        saveFileSize = SIZE_FLASH512;
     }
     // Case where some 131KB FLASH saved as 66KB with nothing but 0xFF bytes and no save data
     // All we can do is delete so the game doesn't crash
-    else if (saveType == 2 && flashSize == 131072 && saveFileSize == 65536) {
+    else if (saveType == GBA_SAVE_FLASH && g_flashSize == SIZE_FLASH1M && saveFileSize == 65536) {
         [fileManager removeItemAtURL:saveFileToMigrate error:nil];
         CPUReset();
         self->_migratingSave = NO;
@@ -1008,27 +1020,23 @@ bool systemReadJoypads() {
     // SRAM saves
 
     // 139KB to 66KB  - remove the last 73728 bytes
-    else if (saveType == 1 && saveFileSize == 139264) {
-        saveFileData[65536] = 0;
-        saveFileSize = 65536;
+    else if (saveType == GBA_SAVE_SRAM && saveFileSize == 139264) {
+        saveFileSize = PVVBALegacySRAMSaveSize;
     }
     // Case where some 66KB SRAM saved as 8KB - add 57344 bytes of 0xFF to the end
     // e.g. Kirby Nightmare in Dreamland
     // Note: This is a lot of potential data lost and might not fix all saves
-    else if (saveType == 1 && saveFileSize == 8192) {
-        NSMutableData *appendedData = [NSMutableData dataWithBytes:saveFileData length:saveFileSize];
-        uint8_t *bytesToAppend = (uint8_t *)malloc(57344);
-        memset(bytesToAppend, 0xFF, 57344);
-        NSData *append = [NSData dataWithBytesNoCopy:bytesToAppend length:57344 freeWhenDone:YES];
-        [appendedData appendBytes:[append bytes] length:[append length]];
-
-        saveFileData = (uint8_t *)[appendedData bytes];
-        saveFileSize = [appendedData length];
+    else if (saveType == GBA_SAVE_SRAM && saveFileSize == 8192) {
+        const size_t padding = PVVBALegacySRAMSaveSize - saveFileSize;
+        [mutableSave increaseLengthBy:padding];
+        saveFileData = (uint8_t *)[mutableSave mutableBytes];
+        memset(saveFileData + saveFileSize, 0xFF, padding);
+        saveFileSize = PVVBALegacySRAMSaveSize;
     } else {
         DLOG(@"VBA: Did not migrate save file because unnecessary or not detected.");
     }
 
-    // Step 4
+    // Step 3
     // Save migrated file to .sav2 and delete old save file
     if (saveFileSize < 139264) {
         NSError *error = nil;
@@ -1062,49 +1070,54 @@ bool systemReadJoypads() {
     [fileManager removeItemAtURL:saveFileToMigrate error:nil];
 }
 
-// VBA internal functions and stubs
+// MARK: - VBA-M embedder callbacks (core/base/system.h)
+
+// Only the 32-bit map is filled (systemColorDepth = 32); the core also
+// references the 8/16-bit ones.
+uint8_t systemColorMap8[0x10000];
 uint16_t systemColorMap16[0x10000];
 uint32_t systemColorMap32[0x10000];
 int systemColorDepth = 32;
 int systemRedShift = 19;
 int systemGreenShift = 11;
 int systemBlueShift = 3;
-int RGB_LOW_BITS_MASK = 0x00010101;
-int systemDebug = 0;
 int systemVerbose = 0;
 int systemFrameSkip = 0;
 int systemSaveUpdateCounter = SYSTEM_SAVE_NOT_UPDATED;
 int systemSpeed = 0;
-uint32_t systemGetClock()
-{
-    //struct timeval tv;
-
-    //gettimeofday(&tv, NULL);
-    //return tv.tv_sec*1000;
-    return 0;
-}
-
-int systemGetSensorX(void) {return 0;}
-int systemGetSensorY(void) {return 0;}
-bool systemPauseOnFrame() {return false;}
-bool systemCanChangeSoundQuality() {return false;} // ?
 void (*dbgOutput)(const char *s, uint32_t addr);
-void systemFrame() {}
-void systemShowSpeed(int speed) {}
-void systemScreenCapture(int a) {}
+void (*dbgSignal)(int sig, int number);
+
+uint32_t systemGetClock() { return 0; }
+
+int systemGetSensorX() { return 0; }
+int systemGetSensorY() { return 0; }
+int systemGetSensorZ() { return 0; }
+uint8_t systemGetSensorDarkness() { return PVVBASensorDarknessDefault; }
 void systemUpdateMotionSensor() {}
+void systemCartridgeRumble(bool) {}
+void systemPossibleCartridgeRumble(bool) {}
+void updateRumbleFrame() {}
+bool systemPauseOnFrame() { return false; }
+bool systemCanChangeSoundQuality() { return false; }
+void systemFrame() {}
+void systemShowSpeed(int) {}
+void systemScreenCapture(int) {}
+void systemSetTitle(const char *) {}
 void systemOnSoundShutdown() {}
-void systemOnWriteDataToSoundBuffer(const uint16_t *finalWave, int length) {}
+void systemOnWriteDataToSoundBuffer(const uint16_t *, int) {}
+void systemGbPrint(uint8_t *, int, int, int, int, int) {}
+void systemGbBorderOn() {}
 
 // VBA video and execution
-void system10Frames(int rate) {
+void system10Frames() {
     __strong PVVisualBoyAdvanceBridge *strongCurrent = _current;
 
     if(systemSaveUpdateCounter && !strongCurrent->_migratingSave)
     {
         if(--systemSaveUpdateCounter <= SYSTEM_SAVE_NOT_UPDATED)
         {
-            [_current writeSaveFile];
+            [strongCurrent writeSaveFile];
             systemSaveUpdateCounter = SYSTEM_SAVE_NOT_UPDATED;
         }
     }
@@ -1115,13 +1128,16 @@ void systemDrawScreen() {
 
     strongCurrent->_haveFrame = YES;
 
-    // Get rid of the first line and the last row
+    // g_pix rows are gbaWidth + 1 pixels wide with one guard row on top
+    // (desktop build); copy out the visible 240x160.
     dispatch_queue_t the_queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 
-    dispatch_apply(160, the_queue, ^(size_t y){
-        memcpy(strongCurrent->videoBuffer + y * 240 * 4, pix + (y + 1) * (240 + 1) * 4, 240 * 4);
+    dispatch_apply(gbaHeight, the_queue, ^(size_t y){
+        memcpy(strongCurrent->videoBuffer + y * gbaWidth * 4, g_pix + (y + 1) * (gbaWidth + 1) * 4, gbaWidth * 4);
     });
 }
+
+void systemSendScreen() {}
 
 // VBA input
 uint32_t systemReadJoypad(int which) {
@@ -1137,51 +1153,47 @@ uint32_t systemReadJoypad(int which) {
     if((res & (KEY_RIGHT | KEY_LEFT)) == (KEY_RIGHT | KEY_LEFT)) res &= ~ KEY_RIGHT;
     if((res & (KEY_UP    | KEY_DOWN)) == (KEY_UP    | KEY_DOWN)) res &= ~ KEY_UP;
 
-    //if((res & 48) == 48)
-    //    res &= ~16;
-    //if((res & 192) == 192)
-    //    res &= ~128;
-
     return res;
 }
 
 // VBA audio
-class DummySound : public SoundDriver {
+class PVVBASoundDriver : public SoundDriver {
 public:
-    DummySound();
-    virtual ~DummySound();
+    bool init(long) override { return true; }
+    void pause() override {}
+    void reset() override {}
+    void resume() override {}
+    void setThrottle(unsigned short) override {}
 
-    virtual bool init(long sampleRate);
-    virtual void pause();
-    virtual void reset();
-    virtual void resume();
-    virtual void write(uint16_t * finalWave, int length);
+    // `length` is in bytes in the desktop build (gbaSound.cpp flush_samples).
+    void write(uint16_t *finalWave, int length) override {
+        __strong PVVisualBoyAdvanceBridge *strongCurrent = _current;
+        [[strongCurrent ringBufferAtIndex:0] write:finalWave size:length];
+    }
 };
 
-DummySound::DummySound() {}
-
-void DummySound::write(u16 * finalWave, int length) {
-    __strong PVVisualBoyAdvanceBridge *strongCurrent = _current;
-
-    [[strongCurrent ringBufferAtIndex:0] write:finalWave size:length];
-}
-
-bool DummySound::init(long sampleRate) {
-    return true;
-}
-
-DummySound::~DummySound() {}
-void DummySound::pause() {}
-void DummySound::resume() {}
-void DummySound::reset() {}
-
-SoundDriver *systemSoundInit() {
-    soundShutdown();
-
-    return new DummySound();
+std::unique_ptr<SoundDriver> systemSoundInit() {
+    return std::make_unique<PVVBASoundDriver>();
 }
 
 // VBA logging
+static void pvvba_logv(const char *format, va_list args) {
+    char buf[1024];
+    vsnprintf(buf, sizeof(buf), format, args);
+    DLOG(@"VBA: %s", buf);
+}
+
+void log(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    pvvba_logv(format, args);
+    va_end(args);
+}
+
+void systemScreenMessage(const char *msg) {
+    DLOG(@"VBA screen message: %s", msg);
+}
+
 void systemMessage(int, const char * str, ...) {
     va_list args;
     va_start(args, str);

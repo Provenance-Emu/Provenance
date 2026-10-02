@@ -16,7 +16,6 @@ import PVAudio
 import PVEmulatorCore
 import PVVisualBoyAdvanceOptions
 import PVVisualBoyAdvanceBridge
-import libvisualboyadvance
 
 @objc
 @objcMembers

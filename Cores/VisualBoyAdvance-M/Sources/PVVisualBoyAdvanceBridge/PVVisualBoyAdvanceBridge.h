@@ -41,9 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 // MARK: - RetroAchievements memory access (GBA bus)
 
-/// EWRAM base (`workRAM`), 256 KiB at bus `0x02000000`, valid while a ROM is loaded.
+/// EWRAM base (`g_workRAM`), 256 KiB at bus `0x02000000`, valid while a ROM is loaded.
 @property (nonatomic, readonly, nullable) void *ewramBasePtr;
-/// IWRAM base (`internalRAM`), 32 KiB at bus `0x03000000`, valid while a ROM is loaded.
+/// IWRAM base (`g_internalRAM`), 32 KiB at bus `0x03000000`, valid while a ROM is loaded.
 @property (nonatomic, readonly, nullable) void *iwramBasePtr;
 /// VRAM base, 96 KiB at bus `0x06000000`, valid while a ROM is loaded.
 @property (nonatomic, readonly, nullable) void *vbaVramBasePtr;

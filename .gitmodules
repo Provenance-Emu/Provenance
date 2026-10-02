@@ -205,3 +205,7 @@
 	path = Cores/mGBA/Sources/libmGBA-embed/mgba
 	url = https://github.com/Provenance-Emu/mgba.git
 	branch = Provenance-master
+[submodule "Cores/VisualBoyAdvance-M/Sources/libvisualboyadvance/visualboyadvance-m"]
+	path = Cores/VisualBoyAdvance-M/Sources/libvisualboyadvance/visualboyadvance-m
+	url = https://github.com/Provenance-Emu/visualboyadvance-m.git
+	branch = Provenance-master
