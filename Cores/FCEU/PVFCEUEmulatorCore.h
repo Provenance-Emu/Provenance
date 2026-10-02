@@ -50,14 +50,35 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)internalSwapDisc:(NSUInteger)discNumber;
 
 # pragma mark - RetroAchievements
-/// Pointer to FCEUX's `RAM[0x800]` — the 2 KiB internal NES RAM mapped at
-/// CPU address 0x0000 (mirrored four times across 0x0000-0x1FFF). The
-/// rcheevos NES memory map exposes this block at the same base address,
-/// so the Swift `+RetroAchievements` extension can register it as a
-/// single `RcheevosRegion(rcAddress: 0x0000, base: RAM, size: 0x800)`.
+/// Pointer to FCEUX's `RAM[0x800]` — the 2 KiB internal NES RAM at CPU
+/// $0000 (mirrored at $0800/$1000/$1800). rcheevos' NES and FDS maps
+/// (consoleinfo.c) put it at flat address 0x0000, and their $0800-$1FFF
+/// "Mirror RAM" regions duplicate this same block.
 @property (nonatomic, readonly, nullable) void *systemRAMPtr;
-/// Size in bytes of the WRAM block exposed via @c systemRAMPtr (2 KiB).
+/// Size in bytes of the block exposed via @c systemRAMPtr (2 KiB).
 @property (nonatomic, readonly) NSUInteger systemRAMSize;
+
+/// Pointer to FCEUX's `PPU[4]` ($2000-$2003), the same 4 bytes
+/// libretro-fceumm publishes in its memory map for flat 0x2000.
+@property (nonatomic, readonly, nullable) void *ppuRegistersPtr;
+/// Size in bytes of the block exposed via @c ppuRegistersPtr.
+@property (nonatomic, readonly) NSUInteger ppuRegistersSize;
+
+/// PRG-RAM currently mapped at CPU $6000 (flat 0x6000): cartridge WRAM
+/// (battery-backed or not) for NES carts, or the 32 KiB FDS RAM spanning
+/// $6000-$DFFF for Famicom Disk System games. NULL when no game is loaded
+/// or the cart maps no RAM there. Resolved from FCEUX's page table, so a
+/// banked WRAM chip is pinned to the bank active when this is read.
+@property (nonatomic, readonly, nullable) void *cartridgeRAMPtr;
+/// Contiguous size in bytes of the block exposed via @c cartridgeRAMPtr
+/// (0 when unavailable; at most 8 KiB for carts, 32 KiB for FDS).
+@property (nonatomic, readonly) NSUInteger cartridgeRAMSize;
+
+/// Invoked on the emulation thread at the end of every emulated frame.
+/// The ObjC emulation loop calls the bridge's `executeFrame` directly, so a
+/// Swift `PVEmulatorCore.executeFrame()` override never runs; the Swift core
+/// uses this hook to drive the RetroAchievements per-frame tick instead.
+@property (nonatomic, copy, nullable) void (^frameCompletedHandler)(void);
 
 @end
 

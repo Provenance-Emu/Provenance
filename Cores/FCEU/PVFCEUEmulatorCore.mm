@@ -47,7 +47,9 @@
 
 #include <os/lock.h>
 #include "fceux/src/fceu.h"
+#include "fceux/src/cart.h"
 #include "fceux/src/driver.h"
+#include "fceux/src/ppu.h"
 #include "fceux/src/input.h"
 #include "fceux/src/sound.h"
 #include "fceux/src/movie.h"
@@ -327,6 +329,11 @@ static __weak PVFCEUEmulatorCoreBridge *_current;
         soundBuffer[i] = (soundBuffer[i] << 16) | (soundBuffer[i] & 0xffff);
 
     [[self ringBufferAtIndex:0] write:soundBuffer size:soundSize << 2];
+
+    void (^frameCompleted)(void) = self.frameCompletedHandler;
+    if (frameCompleted) {
+        frameCompleted();
+    }
 }
 
 - (void)resetEmulation
@@ -715,17 +722,89 @@ void FCEUD_HideMenuToggle(void) {}
 
 #pragma mark - RetroAchievements
 
-// FCEUX exposes the 2 KiB internal NES RAM as `extern uint8 RAM[]` in
-// `fceux/src/fceu.h`. The Swift `+RetroAchievements` extension reads this
-// pointer and registers it as a single RcheevosRegion at NES bus address
-// 0x0000. Cartridge SRAM (0x6000-0x7FFF) is per-cart and not exposed here
-// yet — most NES achievements live in the internal RAM block.
+// rcheevos flat addresses (consoleinfo.c `_rc_memory_regions_nes` and
+// `_rc_memory_regions_famicom_disk_system`). NES "Cartridge RAM" covers
+// $6000-$7FFF; FDS "FDS RAM" covers $6000-$DFFF.
+static const uint32_t kPVFCEUCartRAMStart = 0x6000;
+static const uint32_t kPVFCEUCartRAMEnd   = 0x8000;
+static const uint32_t kPVFCEUFDSRAMEnd    = 0xE000;
+static const NSUInteger kPVFCEUSystemRAMSize = 0x800;
+// FCEUX's CPU page table (`Page[]`) maps the address space in 2 KiB pages.
+static const uint32_t kPVFCEUPageShift = 11;
+static const uint32_t kPVFCEUPageSize  = 1u << kPVFCEUPageShift;
+
+// YES when the 2 KiB page starting at `p` lies inside a PRG chip registered
+// as RAM (`SetupCartPRGMapping(..., ram = 1)`): board WRAM (chip 0x10 by
+// convention) or FDSRAM (chip 1). ROM chips and FCEUX's unmapped `nothing`
+// filler fail this test.
+static BOOL PVFCEUPageIsPRGRAM(const uint8 *p) {
+    const size_t chipCount = sizeof(PRGram) / sizeof(PRGram[0]);
+    for (size_t chip = 0; chip < chipCount; chip++) {
+        const uint8 *chipBase = PRGptr[chip];
+        if (!PRGram[chip] || chipBase == NULL || PRGsize[chip] < kPVFCEUPageSize) {
+            continue;
+        }
+        if (p >= chipBase && p + kPVFCEUPageSize <= chipBase + PRGsize[chip]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+// Host pointer FCEUX's CPU reads for `address` when the page is directly
+// mapped (CartBR reads `Page[A >> 11][A]`).
+static uint8 *PVFCEUMappedPointer(uint32_t address) {
+    return Page[address >> kPVFCEUPageShift] + address;
+}
+
+// Walks the page table from $6000 and returns the contiguous run of PRG-RAM
+// backing flat 0x6000 (8 KiB max for carts, 32 KiB for FDS).
+static uint8 *PVFCEUCartridgeRAM(NSUInteger *outSize) {
+    *outSize = 0;
+    if (GameInfo == NULL) {
+        return NULL;
+    }
+    uint8 *base = PVFCEUMappedPointer(kPVFCEUCartRAMStart);
+    if (!PVFCEUPageIsPRGRAM(base)) {
+        return NULL;
+    }
+    const uint32_t end = (GameInfo->type == GIT_FDS) ? kPVFCEUFDSRAMEnd : kPVFCEUCartRAMEnd;
+    uint32_t address = kPVFCEUCartRAMStart + kPVFCEUPageSize;
+    for (; address < end; address += kPVFCEUPageSize) {
+        uint8 *page = PVFCEUMappedPointer(address);
+        if (page != base + (address - kPVFCEUCartRAMStart) || !PVFCEUPageIsPRGRAM(page)) {
+            break;
+        }
+    }
+    *outSize = address - kPVFCEUCartRAMStart;
+    return base;
+}
+
 - (void *)systemRAMPtr {
     return RAM;
 }
 
 - (NSUInteger)systemRAMSize {
-    return 0x800;
+    return kPVFCEUSystemRAMSize;
+}
+
+- (void *)ppuRegistersPtr {
+    return PPU;
+}
+
+- (NSUInteger)ppuRegistersSize {
+    return sizeof(PPU);
+}
+
+- (void *)cartridgeRAMPtr {
+    NSUInteger size = 0;
+    return PVFCEUCartridgeRAM(&size);
+}
+
+- (NSUInteger)cartridgeRAMSize {
+    NSUInteger size = 0;
+    PVFCEUCartridgeRAM(&size);
+    return size;
 }
 
 @end
