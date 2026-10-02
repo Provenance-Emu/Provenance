@@ -75,20 +75,24 @@ import GLKit
     
     // MARK: - Initialization
 
-    public var _bridge: PVMupenBridge = .init()
+    /// The one and only bridge for this core — the same instance as `bridge`, typed.
+    /// It must be created exactly once: `PVMupenBridge.init` claims the global
+    /// `_current` that every Mupen callback (video, audio, input, media loader)
+    /// resolves, and its `dealloc` tears down process-wide Mupen state
+    /// (`CoreShutdown`, plugin unload). A second, throwaway instance would leave
+    /// these Swift accessors reading an idle bridge.
+    public let _bridge: PVMupenBridge
 
     required init() {
+        _bridge = PVMupenBridge()
         super.init()
-        let runningBridge = PVMupenBridge()
-        self.bridge = runningBridge as? any ObjCBridgedCoreBridge
+        self.bridge = _bridge as? any ObjCBridgedCoreBridge
         // Mupen drives its own run loop (M64CMD_EXECUTE), so PVEmulatorCore never calls
         // `executeFrame()` on this class — the ObjC emulation loop calls the bridge's.
         // The bridge reports each N64 VI instead, on the Mupen emulation thread.
         // Not gated on `achievementsActive`: the lazy region retry in `tickAchievements()`
         // must run while no session exists yet.
-        // Installed on `runningBridge` (the instance that loads and runs the ROM),
-        // not `_bridge`, which is a separate instance that never runs.
-        runningBridge.frameCompletedHandler = { [weak self] in
+        _bridge.frameCompletedHandler = { [weak self] in
             self?.tickAchievements()
         }
     }
