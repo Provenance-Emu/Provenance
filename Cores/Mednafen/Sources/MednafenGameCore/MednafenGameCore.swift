@@ -129,14 +129,16 @@ open class MednafenGameCore: PVEmulatorCore, @unchecked Sendable {
     public required init() {
         super.init()
         self.bridge = _bridge as? any ObjCBridgedCoreBridge
-    }
 
-    // MARK: - executeFrame hook
-
-    open override func executeFrame() {
-        super.executeFrame()
-        if achievementsActive {
-            tickAchievements()
+        // The emulation loop runs inside the ObjC bridge and never calls this
+        // core's `executeFrame()`, so achievements are ticked from the bridge's
+        // per-frame callback. Not gated on `achievementsActive`: the shared lazy
+        // region retry in `tickAchievements()` must run before a session exists.
+        // Called through the existential so the PVRcheevosBridge default is
+        // used, not PVCoreBridge's no-op.
+        _bridge.frameCompletedHandler = { [weak self] in
+            guard let core: any CoreRetroAchievements = self else { return }
+            core.tickAchievements()
         }
     }
 }

@@ -1575,6 +1575,11 @@ static void emulation_run(BOOL skipFrame) {
 
     if(self.isRunning && game != NULL){
         emulation_run(skip);
+
+        void (^handler)(void) = self.frameCompletedHandler;
+        if (handler) {
+            handler();
+        }
     }
 }
 

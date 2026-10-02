@@ -87,6 +87,11 @@ __attribute__((visibility("default")))
 @property (nonatomic, assign) MednaSystem systemType;
 @property (nonatomic, assign) NSUInteger maxDiscs;
 
+/// Called on the emulation thread after every emulated frame. The emulation
+/// loop runs inside this bridge, so the Swift core's `executeFrame()` is never
+/// called; the core ticks RetroAchievements from here instead.
+@property (nonatomic, copy, nullable) void (^frameCompletedHandler)(void);
+
 -(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
 -(void)changeDisplayMode;
 -(const void *)getGame;
