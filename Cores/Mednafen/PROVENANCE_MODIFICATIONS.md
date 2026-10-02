@@ -27,6 +27,7 @@ table below summarises them.
 | 8 | `MDFNI_Init` re-entry | `src/mednafen.cpp` | Drops the empty-system-list assert so Init can run again. | `c3cdcbc762` |
 | 9 | Skip `TestSignedOverflow` | `src/tests.cpp` | That self test assumes `-fwrapv`. Upstream's configure passes it; `Package.swift` does not. | `c3cdcbc762` |
 | 10 | More RetroAchievements RAM accessors | `src/{lynx/system,ngp/neopop,pcfx/pcfx,vb/vb,wswan/memory,gb/gb,gba/GBA,nes/fds,snes/interface}.cpp` | Same `extern "C"` pattern as #3 for Lynx, NGP, PC-FX, VB, WonderSwan, GB/GBC, GBA, FDS RAM and the bsnes SNES module. Plain bytes, no swap. Patch file: `mednafen-patches/0010-rcheevos-ram-accessors-more-systems.patch`. | not yet committed |
+| 11 | NES PPU and cartridge RAM accessors | `src/nes/{cart,ppu/ppu}.cpp` | `extern "C"` `mdfn_nes_ppu_regs_*` (`PPU[4]`) and `mdfn_nes_cartram_*` (the RAM-backed pages mapped at $6000-$7FFF, read from `Page[]`/`PRGIsRAM[]`). Patch file: `mednafen-patches/0011-nes-ppu-cartram-accessors.patch`. | not yet committed |
 
 None of the patches touch save-state code (`StateAction`, `SFORMAT`), so states are
 compatible with stock Mednafen 1.32.1.

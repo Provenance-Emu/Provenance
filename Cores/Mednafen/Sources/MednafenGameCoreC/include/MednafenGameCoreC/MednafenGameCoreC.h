@@ -53,6 +53,15 @@ size_t   mdfn_psx_mainram_size(void);
 uint8_t* mdfn_nes_ram_ptr(void);
 size_t   mdfn_nes_ram_size(void);
 
+/// NES — PPU registers $2000-$2003 (PPUCTRL/PPUMASK/PPUSTATUS/OAMADDR; 4 bytes)
+uint8_t* mdfn_nes_ppu_regs_ptr(void);
+size_t   mdfn_nes_ppu_regs_size(void);
+
+/// NES — cartridge RAM mapped at $6000-$7FFF (board WRAM, up to 8 KB);
+/// NULL/0 when no game is loaded or the board maps no RAM there
+uint8_t* mdfn_nes_cartram_ptr(void);
+size_t   mdfn_nes_cartram_size(void);
+
 /// Saturn — 1 MB Work RAM Low (0x00200000–0x002FFFFF)
 uint8_t* mdfn_ss_workraml_ptr(void);
 size_t   mdfn_ss_workraml_size(void);

@@ -16,6 +16,9 @@
 //  |---------|--------------------|---------------|----------------|--------|
 //  | PSX     | Main RAM           | 0x000000      | 2 MB           | none   |
 //  | NES     | CPU RAM            | 0x0000        | 2 KB           | none   |
+//  | NES/FDS | RAM mirrors (x3)   | 0x0800-0x1800 | 2 KB each      | none   |
+//  | NES/FDS | PPU registers      | 0x2000        | 4 B ($2000-3)  | none   |
+//  | NES     | Cartridge RAM      | 0x6000        | up to 8 KB     | none   |
 //  | FDS     | FDS RAM            | 0x6000        | 32 KB          | none   |
 //  | SNES    | Work RAM           | 0x000000      | 128 KB         | none   |
 //  | PCE     | Base RAM           | 0x000000      | 8 KB / 32 KB   | none   |
@@ -54,6 +57,10 @@ import MednafenGameCoreOptions
 /// Size of one Game Boy WRAM / cartridge-RAM / VRAM bank window.
 private let gbBankSize = 0x2000
 
+/// consoleinfo.c NES / FDS System RAM and its "Mirror RAM" duplicates.
+private let nesSystemRAM: UInt32 = 0x0000
+private let nesRAMMirrors: [UInt32] = [0x0800, 0x1000, 0x1800]
+
 extension MednafenGameCore: CoreRetroAchievements, RcheevosRegionProviding {
 
     public func rcheevosRegions() -> [RcheevosRegion] {
@@ -67,14 +74,28 @@ extension MednafenGameCore: CoreRetroAchievements, RcheevosRegionProviding {
                                    size: UInt32(mdfn_psx_mainram_size()))]
 
         case .NES, .FDS:
+            // consoleinfo.c nes / famicom_disk_system: System RAM 0x0000, its
+            // three 2 KB mirrors (0x0800/0x1000/0x1800) pointing at the same
+            // buffer, PPU registers 0x2000, Cartridge RAM / FDS RAM 0x6000.
+            // rc_client disables any achievement that reads an unmapped
+            // address at load, so every one of these has to be present.
             guard let ptr = mdfn_nes_ram_ptr() else { return [] }
-            var regions = [RcheevosRegion(rcAddress: 0x0000,
-                                          base: UnsafeMutableRawPointer(ptr),
-                                          size: UInt32(mdfn_nes_ram_size()))]
-            // FDS RAM, $6000-$DFFF (consoleinfo.c famicom_disk_system). The
-            // pointer is NULL for cartridge games, so this only adds for FDS.
-            regions.appendRegion(rcAddress: 0x6000, mdfn_nes_fdsram_ptr(),
-                                 size: mdfn_nes_fdsram_size(), window: 0x8000)
+            let ramSize = UInt32(mdfn_nes_ram_size())
+            var regions = ([nesSystemRAM] + nesRAMMirrors).map {
+                RcheevosRegion(rcAddress: $0, base: UnsafeMutableRawPointer(ptr), size: ramSize)
+            }
+            // Mednafen only stores $2000-$2003; $2004-$2007 have no backing.
+            regions.appendRegion(rcAddress: 0x2000, mdfn_nes_ppu_regs_ptr(),
+                                 size: mdfn_nes_ppu_regs_size(), window: 0x8)
+            // FDS RAM, $6000-$DFFF. The pointer is NULL for cartridge games.
+            if mdfn_nes_fdsram_ptr() != nil {
+                regions.appendRegion(rcAddress: 0x6000, mdfn_nes_fdsram_ptr(),
+                                     size: mdfn_nes_fdsram_size(), window: 0x8000)
+            } else {
+                // Board WRAM at $6000-$7FFF; NULL when the cart maps none.
+                regions.appendRegion(rcAddress: 0x6000, mdfn_nes_cartram_ptr(),
+                                     size: mdfn_nes_cartram_size(), window: 0x2000)
+            }
             return regions
 
         case .SNES:
