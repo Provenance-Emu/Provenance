@@ -9,7 +9,7 @@
 	path = Cores/Mupen64Plus/Sources/Plugins/rsp/hle
 	url = https://github.com/Provenance-Emu/mupen64plus-rsp-hle.git
 	branch = Provenance-master
-[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice"]
+[submodule "mupen64plus-video-rice"]
 	path = Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice
 	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git
 	branch = Provenance-master
