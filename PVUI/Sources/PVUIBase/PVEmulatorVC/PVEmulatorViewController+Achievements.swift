@@ -17,6 +17,7 @@ import PVCheevos
 import PVLogging
 import PVRcheevos
 import PVSettings
+import PVSystems
 import SwiftUI
 #if canImport(UIKit)
 import UIKit
@@ -29,6 +30,7 @@ private enum AssociatedKeys {
     static var overlayVC = "achievementOverlayVC"
     static var startToken = "achievementStartToken"
     static var sessionPoints = "achievementSessionPoints"
+    static var loadedROMURL = "achievementLoadedROMURL"
 }
 
 /// Cancellation token that lets `stopAchievements()` invalidate an in-flight
@@ -74,6 +76,14 @@ public extension PVEmulatorViewController {
     internal var achievementOverlayViewController: AchievementOverlayViewController? {
         get { objc_getAssociatedObject(self, &AssociatedKeys.overlayVC) as? AchievementOverlayViewController }
         set { objc_setAssociatedObject(self, &AssociatedKeys.overlayVC, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
+    /// The file `createEmulator()` actually handed to the core. For a zipped
+    /// game whose core extracts archives, this is the extracted ROM rather than
+    /// the library's `.zip`.
+    internal var achievementsLoadedROMURL: URL? {
+        get { objc_getAssociatedObject(self, &AssociatedKeys.loadedROMURL) as? URL }
+        set { objc_setAssociatedObject(self, &AssociatedKeys.loadedROMURL, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
     // MARK: - Lifecycle
@@ -125,6 +135,7 @@ public extension PVEmulatorViewController {
         // boot exe rather than the disc image) and any cart format we don't
         // header-strip during import.
         let romPath = game?.file?.url?.path ?? ""
+        let extractedROMTarget = extractedArchiveHashTarget()
 
         // Attach the OSD overlay if not already present.
         setupAchievementOverlayIfNeeded()
@@ -171,8 +182,15 @@ public extension PVEmulatorViewController {
                 winningHash = fileMD5
             } catch AchievementSessionError.unknownGame {
                 ILOG("RetroAchievements: file MD5 \(fileMD5) not in database, trying rcheevos native hash…")
-                guard !romPath.isEmpty,
-                      let nativeHash = RcheevosHash.compute(filePath: romPath),
+                let candidateHash: String?
+                if let extractedROMTarget {
+                    ILOG("RetroAchievements: hashing extracted ROM \(extractedROMTarget.path) as console \(extractedROMTarget.consoleID)")
+                    candidateHash = RcheevosHash.compute(filePath: extractedROMTarget.path, consoleID: extractedROMTarget.consoleID)
+                        ?? RcheevosHash.compute(filePath: extractedROMTarget.path)
+                } else {
+                    candidateHash = romPath.isEmpty ? nil : RcheevosHash.compute(filePath: romPath)
+                }
+                guard let nativeHash = candidateHash,
                       nativeHash != fileMD5 else {
                     ILOG("RetroAchievements: no distinct rcheevos hash available, achievements unavailable.")
                     await MainActor.run {
@@ -286,6 +304,32 @@ public extension PVEmulatorViewController {
                 }
             }
         }
+    }
+
+    /// The extracted ROM to hash, and its RetroAchievements console, when the
+    /// library file is a `.zip` that the core loaded from an extracted copy.
+    ///
+    /// The stored MD5 of a zipped game is the zip's, and rcheevos maps `.zip` to
+    /// the arcade (file-name) hash, so neither identifies a cartridge or disc
+    /// game. Returns `nil` to keep hashing the library file as before: for
+    /// non-archives, for systems RetroAchievements identifies from the archive
+    /// itself (arcade sets, MS-DOS), and for zips a core loads without extracting.
+    private func extractedArchiveHashTarget() -> (path: String, consoleID: UInt32)? {
+        guard let libraryURL = game?.file?.url,
+              libraryURL.pathExtension.caseInsensitiveCompare("zip") == .orderedSame,
+              let loadedURL = achievementsLoadedROMURL,
+              loadedURL.pathExtension.caseInsensitiveCompare("zip") != .orderedSame else {
+            return nil
+        }
+        let system = [game?.systemIdentifier, core.systemIdentifier]
+            .compactMap { $0.flatMap(SystemIdentifier.init(rawValue:)) }
+            .first { $0 != .RetroArch && $0 != .Unknown }
+        guard let system,
+              let consoleID = system.retroAchievementsConsoleID,
+              !system.retroAchievementsHashesArchiveDirectly else {
+            return nil
+        }
+        return (loadedURL.path, consoleID)
     }
 
     /// Call this before `core.stopEmulation()` to tear down the achievement session.

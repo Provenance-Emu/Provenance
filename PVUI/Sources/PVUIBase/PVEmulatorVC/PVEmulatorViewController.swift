@@ -1078,6 +1078,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
 
         ILOG("Loading ROM: \(romURL.path)")
+        achievementsLoadedROMURL = romURL
 
         // NOTE: this synchronous call used to be wrapped in Task.detached
         // (to address PROVENANCE-14W "File IO on Main Thread") but that

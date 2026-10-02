@@ -78,8 +78,10 @@ public enum RcheevosHash {
         }
     }
 
-    /// Hash `filePath` as `consoleID`, skipping rcheevos' extension auto-detection.
-    static func compute(filePath: String, consoleID: UInt32) -> String? {
+    /// Hash `filePath` as `consoleID` (an `RC_CONSOLE_*` value), skipping
+    /// rcheevos' extension auto-detection. Returns `nil` when the file can't be
+    /// read or rcheevos has no hasher for that console.
+    public static func compute(filePath: String, consoleID: UInt32) -> String? {
         var buffer = [CChar](repeating: 0, count: 33)
         let success = filePath.withCString { cPath in
             buffer.withUnsafeMutableBufferPointer { ptr -> Int32 in
