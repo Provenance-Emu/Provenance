@@ -690,6 +690,19 @@ static void *dlopen_myself()
     return M64ERR_SUCCESS;
 }
 
+/// VI rates Mupen's own speed limiter targets (`vi_expected_refresh_rate_from_tv_standard`).
+static const NSTimeInterval kMupenNTSCRefreshRate = 60.0;
+static const NSTimeInterval kMupenPALRefreshRate  = 50.0;
+
+/// Paces emulation. Mupen's built-in limiter is off (`M64CORE_SPEED_LIMITER` 0) and
+/// `new_vi()` blocks in `videoInterrupt` until the PVCoreObjCBridge emulation loop calls
+/// `executeFrame`, so the loop runs exactly one N64 VI per tick at this rate.
+/// `isNTSC` is set from the ROM header when the audio plugin starts in `loadFile`,
+/// before `startEmulation` derives the loop interval from this value.
+- (NSTimeInterval)frameInterval {
+    return self.isNTSC ? kMupenNTSCRefreshRate : kMupenPALRefreshRate;
+}
+
 - (dispatch_time_t)frameTime {
     float frameTime = 1.0/[self frameInterval];
     __block BOOL expired = NO;

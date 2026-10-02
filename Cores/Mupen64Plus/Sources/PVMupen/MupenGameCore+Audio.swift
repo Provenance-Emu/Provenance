@@ -15,5 +15,6 @@ import PVCoreBridge
 public extension MupenGameCore {
     override var channelCount: UInt { 2 }
     override var audioSampleRate: Double { get { _bridge.mupenSampleRate } set {} }
-    override var frameInterval: TimeInterval { _bridge.isNTSC ? 60.0988 : 50 }
+    /// The bridge's rate is the one that paces emulation; the display must match it.
+    override var frameInterval: TimeInterval { _bridge.frameInterval }
 }

@@ -44,7 +44,8 @@ void new_vi(void)
 		cheat_apply_cheats(&g_cheat_ctx, r4300, ENTRY_VI);
 	}
     
-    // TODO: Maybe fix speed/pause here?
+    // Speed is paced by videoInterrupt blocking on the emulation loop, which ticks at
+    // PVMupenBridge.frameInterval (the ROM region's VI rate) — not by Mupen's limiter.
 //    apply_speed_limiter();
 //    main_check_inputs();
 
