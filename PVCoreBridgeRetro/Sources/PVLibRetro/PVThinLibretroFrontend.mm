@@ -863,6 +863,11 @@ typedef struct PVThinLibretroSymbols {
     BOOL _isBlockingCore;
     dispatch_semaphore_t _blockingFrameReady;  // core → frontend: frame available
     dispatch_semaphore_t _blockingCoreTick;    // frontend → core: run next tick
+    /// Path handed to `retro_load_game`: the ROM, or the file extracted from it
+    /// when it is an archive the core can't read. Held so `gameInfo.path` stays
+    /// valid for cores that keep the pointer. `_romPath` stays the library file,
+    /// which names the `.srm`.
+    NSString *_contentPath;
     @private
     struct retro_game_info _blockingGameInfo;  // persisted for core thread lifetime
     NSData *_blockingROMData;                  // keeps ROM data bytes alive on heap
@@ -2916,12 +2921,12 @@ static bool thin_environment(unsigned cmd, void *data) {
 
 - (instancetype)init {
     if ((self = [super init])) {
-        // Libretro cores load zip content themselves (via libretro-common's
-        // archive_file.c, or — for arcade cores like fbalpha2012 — by scanning
-        // the zip directly for parent/clone ROM chains). Extracting a CPS-style
-        // arcade zip would leave the loose chip files in a non-zip directory
-        // where the core cannot find the siblings it needs. Matches
-        // PVRetroArchCoreBridge.mm, which also disables pre-extraction.
+        // The app's generic pre-extraction (`handleArchives`) stays off: it runs
+        // before the dylib is loaded, so it can't tell an arcade core that reads
+        // its romset zip directly (MAME, FBNeo) from one that needs the ROM
+        // pulled out. `startWithROMPath:` decides per core from
+        // `valid_extensions` / `block_extract` instead — see
+        // `ThinContentArchiveResolver`.
         self.extractArchive = NO;
         // Frames from this frontend are only ever presented through
         // PVMetalViewController. PVGLViewController has no Vulkan presenter, so
@@ -3196,6 +3201,10 @@ static const NSTimeInterval kThinBlockingLoadWaitOffMainThread = 10.0;
 /// whenever it actually arrives.
 static const NSTimeInterval kThinBlockingFrameWait = 0.010;
 
+/// Caches subdirectory that zipped games are extracted into for cores that
+/// can't read the archive (see `ThinContentArchiveResolver`).
+static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent";
+
 /// Tear down a core that has been `retro_init`ed but whose content load failed.
 ///
 /// Every early exit in `startWithROMPath:` used to call `_sym.retro_deinit()`
@@ -3345,18 +3354,27 @@ static const NSTimeInterval kThinBlockingFrameWait = 0.010;
         }
     }
 
+    // Extract a .zip/.7z the core can't read, as RetroArch's frontend does.
+    NSString *extractionRoot = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject
+                                stringByAppendingPathComponent:kThinArchiveExtractionDirectory];
+    _contentPath = [PVThinContentArchiveResolver resolveContentPath:romPath
+                                                    validExtensions:_rawSystemInfo.valid_extensions ? @(_rawSystemInfo.valid_extensions) : nil
+                                                       blockExtract:_rawSystemInfo.block_extract
+                                                     extractionRoot:extractionRoot];
+    NSString *contentPath = _contentPath;
+
     // Load content
     struct retro_game_info gameInfo = {0};
     NSData *romData = nil;
 
     if (!_rawSystemInfo.need_fullpath) {
-        romData = [NSData dataWithContentsOfFile:romPath];
+        romData = [NSData dataWithContentsOfFile:contentPath];
         if (!romData) {
-            ELOG(@"ThinFrontend: could not read ROM at %@", romPath);
+            ELOG(@"ThinFrontend: could not read ROM at %@", contentPath);
             if (error) {
                 *error = [NSError errorWithDomain:@"PVThinLibretroFrontend"
                                              code:4
-                                         userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Cannot read ROM: %@", romPath]}];
+                                         userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Cannot read ROM: %@", contentPath]}];
             }
             [self _abortStartAfterRetroInitUnloadingGame:NO];
             return NO;
@@ -3373,20 +3391,20 @@ static const NSTimeInterval kThinBlockingFrameWait = 0.010;
     // forces the download. So force materialization, then fail gracefully if still empty.
     if (_rawSystemInfo.need_fullpath) {
         NSFileManager *fm = [NSFileManager defaultManager];
-        NSURL *romURL = [NSURL fileURLWithPath:romPath];
+        NSURL *romURL = [NSURL fileURLWithPath:contentPath];
 
         NSNumber *isUbiquitous = nil;
         [romURL getResourceValue:&isUbiquitous forKey:NSURLIsUbiquitousItemKey error:nil];
         NSString *dlStatus = nil;
         [romURL getResourceValue:&dlStatus forKey:NSURLUbiquitousItemDownloadingStatusKey error:nil];
-        unsigned long long sz = [[fm attributesOfItemAtPath:romPath error:nil][NSFileSize] unsignedLongLongValue];
+        unsigned long long sz = [[fm attributesOfItemAtPath:contentPath error:nil][NSFileSize] unsignedLongLongValue];
         ILOG(@"ThinFrontend: fullpath content %@ — size=%llu ubiquitous=%@ dlStatus=%@",
-             romPath, sz, isUbiquitous, dlStatus);
+             contentPath, sz, isUbiquitous, dlStatus);
 
         BOOL needsDownload = isUbiquitous.boolValue &&
             dlStatus && ![dlStatus isEqualToString:NSURLUbiquitousItemDownloadingStatusCurrent];
         if (needsDownload || sz == 0) {
-            ILOG(@"ThinFrontend: content not materialized — requesting iCloud download for %@", romPath);
+            ILOG(@"ThinFrontend: content not materialized — requesting iCloud download for %@", contentPath);
             [fm startDownloadingUbiquitousItemAtURL:romURL error:nil];
             // Wait for materialization, but NEVER long enough on the main thread to
             // miss a suspend/terminate request (0x8BADF00D). The download keeps
@@ -3400,14 +3418,14 @@ static const NSTimeInterval kThinBlockingFrameWait = 0.010;
                 [romURL removeCachedResourceValueForKey:NSURLUbiquitousItemDownloadingStatusKey];
                 dlStatus = nil;
                 [romURL getResourceValue:&dlStatus forKey:NSURLUbiquitousItemDownloadingStatusKey error:nil];
-                sz = [[fm attributesOfItemAtPath:romPath error:nil][NSFileSize] unsignedLongLongValue];
+                sz = [[fm attributesOfItemAtPath:contentPath error:nil][NSFileSize] unsignedLongLongValue];
                 if (sz > 0 && (!dlStatus || [dlStatus isEqualToString:NSURLUbiquitousItemDownloadingStatusCurrent])) break;
             }
             ILOG(@"ThinFrontend: after download wait — size=%llu dlStatus=%@", sz, dlStatus);
         }
 
-        if (sz == 0 || ![fm fileExistsAtPath:romPath]) {
-            ELOG(@"ThinFrontend: content file empty/unavailable at %@ — aborting load (avoids core boot-from-empty crash)", romPath);
+        if (sz == 0 || ![fm fileExistsAtPath:contentPath]) {
+            ELOG(@"ThinFrontend: content file empty/unavailable at %@ — aborting load (avoids core boot-from-empty crash)", contentPath);
             if (error) {
                 *error = [NSError errorWithDomain:@"PVThinLibretroFrontend" code:6
                     userInfo:@{NSLocalizedDescriptionKey:
@@ -3418,7 +3436,7 @@ static const NSTimeInterval kThinBlockingFrameWait = 0.010;
         }
     }
 
-    gameInfo.path = romPath.UTF8String;
+    gameInfo.path = contentPath.UTF8String;
 
     // Detect blocking cores (those that run their own loop inside retro_load_game).
     // These cores never return from retro_load_game; instead they call video_refresh
@@ -3466,7 +3484,7 @@ static const NSTimeInterval kThinBlockingFrameWait = 0.010;
         // _blockingROMPath retains the NSString so the UTF8String pointer in
         // _blockingGameInfo.path remains valid after startWithROMPath: returns.
         _blockingROMData = romData;
-        _blockingROMPath = romPath;
+        _blockingROMPath = contentPath;
         _blockingGameInfo = gameInfo;
 
         _blockingCoreThread = [[NSThread alloc] initWithTarget:self
