@@ -105,7 +105,17 @@ extension Defaults.Keys {
     /// When true, long game titles in the library scroll horizontally; when false, they stay on one line with tail truncation.
     static let scrollLongGameTitles = Key<Bool>("scrollLongGameTitles", default: true)
 
-    static let gameLibraryScale = Key<Float>("gameLibraryScale", default: 4.0)
+    /// SwiftUI library grids: columns added to (positive) or removed from
+    /// (negative) the count the grid picks for its width.
+    static let libraryGridColumnAdjustment = Key<Int>("libraryGridColumnAdjustment", default: 0)
+
+    /// UIKit collection-view library: pinch-zoom multiplier on the cell size.
+    ///
+    /// Separate from the SwiftUI grid's setting on purpose. The two used to
+    /// share one key with incompatible meanings — a 0.4–2.0 multiplier here, a
+    /// 1–8 column count there — so adjusting either library mode wrecked the
+    /// other's layout.
+    static let gameLibraryCollectionZoom = Key<Float>("gameLibraryCollectionZoom", default: 1.0)
 
     static let buttonTints = Key<Bool>("buttonTints", default: true)
     static let use8BitdoM30 = Key<Bool>("use8BitdoM30", default: false)

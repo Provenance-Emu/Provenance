@@ -29,10 +29,9 @@ public enum DesktopLibraryMetrics {
 
     /// Maximum width of the library's content column on a desktop window.
     ///
-    /// Sized from the widest grid the library can produce: `gameLibraryScale`
-    /// tops out at 8 columns, and 8 columns inside 1280pt (minus the 10pt
-    /// gutters and 10pt inter-item spacing the grid already applies) lands at
-    /// ~149pt per cell — the same cell size an iPad landscape grid produces,
+    /// Sized from the grid's automatic column count (`LibraryGrid`): 1280pt
+    /// gives 8 columns, which (minus the 10pt gutters and 10pt inter-item
+    /// spacing the grid already applies) lands at ~149pt per cell — the same cell size an iPad landscape grid produces,
     /// which is the density the artwork assets were tuned for. Wider than this
     /// and the grid gains no columns, it just stretches, so the column stays
     /// centered with gutters instead. `PauseTilePanelMetrics.desktopMaxWidth`

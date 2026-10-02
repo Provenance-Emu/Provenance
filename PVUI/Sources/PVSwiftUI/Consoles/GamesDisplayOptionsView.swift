@@ -29,7 +29,7 @@ enum SettingsContext {
 @available(iOS 14, tvOS 14, *)
 struct GamesDisplayOptionsView: SwiftUI.View {
     @ObservedObject private var themeManager = ThemeManager.shared
-    @Default(.gameLibraryScale) private var gameLibraryScale
+    @Default(.libraryGridColumnAdjustment) private var libraryGridColumnAdjustment
     @Default(.showGameTitles) private var showGameTitles
     @Default(.scrollLongGameTitles) private var scrollLongGameTitles
     @Default(.showRecentGames) private var showRecentGames
@@ -98,12 +98,13 @@ struct GamesDisplayOptionsView: SwiftUI.View {
         DesktopLibraryMetrics.isDesktop ? DesktopLibraryMetrics.toolbarMinHeight : nil
     }
 
+    /// Zooming in means bigger covers, so fewer columns.
     var canZoomIn: Bool {
-        gameLibraryScale > 1
+        libraryGridColumnAdjustment > LibraryGrid.adjustmentRange.lowerBound
     }
 
     var canZoomOut: Bool {
-        gameLibraryScale < 8
+        libraryGridColumnAdjustment < LibraryGrid.adjustmentRange.upperBound
     }
 
     var body: some SwiftUI.View {
@@ -323,14 +324,14 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     private func zoomIn() {
         if canZoomIn {
             Haptics.impact(strength: .light)
-            Defaults[.gameLibraryScale] -= 1
+            libraryGridColumnAdjustment -= 1
         }
     }
 
     private func zoomOut() {
         if canZoomOut {
             Haptics.impact(strength: .light)
-            Defaults[.gameLibraryScale] += 1
+            libraryGridColumnAdjustment += 1
         }
     }
 
@@ -396,12 +397,6 @@ struct GamesDisplayOptionsView: SwiftUI.View {
                 }
             }
         }
-    }
-
-    // MARK: - Lifecycle
-
-    private func setupView() {
-        gameLibraryScale = Defaults[.gameLibraryScale]
     }
 
     /// Present core options for a specific core

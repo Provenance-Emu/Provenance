@@ -67,7 +67,7 @@ let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedCollectionCe
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
 public final class PVGameLibraryViewController: GCEventViewController, UITextFieldDelegate, UINavigationControllerDelegate, GameLaunchingViewController, GameSharingViewController, WebServerActivatorController {
-    lazy var collectionViewZoom: CGFloat = CGFloat(Defaults[.gameLibraryScale])
+    lazy var collectionViewZoom: CGFloat = CGFloat(Defaults[.gameLibraryCollectionZoom])
 
     let disposeBag = DisposeBag()
     public var updatesController: PVGameLibraryUpdatesController!
@@ -717,7 +717,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
             }
         case .ended, .cancelled:
             collectionView.isScrollEnabled = true
-            Defaults[.gameLibraryScale] = Float(collectionViewZoom)
+            Defaults[.gameLibraryCollectionZoom] = Float(collectionViewZoom)
         default:
             break
         }

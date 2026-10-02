@@ -227,6 +227,8 @@ struct HomeView: SwiftUI.View {
                                     .id("section_allgames")
                             }
                         }
+                        /// Measured inside the desktop column, whose outer frame spans the window.
+                        .libraryGridWidth($gridWidth)
                         .desktopLibraryContentColumn()
                         .onChange(of: focusedItemInSection) { newValue in
                             if let id = newValue {
@@ -257,7 +259,6 @@ struct HomeView: SwiftUI.View {
                 .environmentObject(themeManager)
         }
         .onAppear {
-            adjustZoomLevel(for: gameLibraryScale)
             setupGamepadHandling()
             homeViewModel.sortAscending = viewModel.sortGamesAscending
 
@@ -658,44 +659,15 @@ struct HomeView: SwiftUI.View {
             }
     }
 
-    @Default(.gameLibraryScale) internal var gameLibraryScale
-    @State internal var gameLibraryItemsPerRow: Int = 4
-    private func adjustZoomLevel(for magnification: Float) {
-        gameLibraryItemsPerRow = calculatedZoomLevel(for: magnification)
-    }
-
-    private func calculatedZoomLevel(for magnification: Float) -> Int {
-        let isIPad = UIDevice.current.userInterfaceIdiom == .pad
-        let defaultZoomLevel = isIPad ? 8 : 4
-
-        // Handle invalid magnification values
-        guard !magnification.isNaN && !magnification.isInfinite else {
-            return defaultZoomLevel
-        }
-
-        // Calculate the target zoom level based on magnification
-        let targetZoomLevel = Float(defaultZoomLevel) / magnification
-
-        // Round to the nearest even number
-        let roundedZoomLevel = round(targetZoomLevel / 2) * 2
-
-        // Clamp the value between 2 and 16
-        let clampedZoomLevel = max(2, min(16, roundedZoomLevel))
-
-        return Int(clampedZoomLevel)
-    }
+    @Default(.libraryGridColumnAdjustment) internal var libraryGridColumnAdjustment
+    /// Width the grid is laid out in; drives the column count.
+    @State private var gridWidth: CGFloat = 0
 
     var itemsPerRow: Int {
-        let roundedScale = Int(gameLibraryScale.rounded())
-        // If games is less than count, just use the games to fill the row.
-        // also don't go below 0
-        let count: Int
-        if AppState.shared.isSimulator {
-            count = max(0,roundedScale )
-        } else {
-            count = min(max(0, roundedScale), allGames.count)
-        }
-        return max(1, count)
+        let columns = LibraryGrid.columns(forWidth: gridWidth, adjustment: libraryGridColumnAdjustment)
+        /// A library smaller than one row fills the row rather than leaving
+        /// most of it empty.
+        return max(1, min(columns, allGames.count))
     }
 
 
@@ -780,9 +752,9 @@ struct HomeView: SwiftUI.View {
 
     @ViewBuilder
     private func showGamesGrid(_ games: [GameCellModel]) -> some View {
-        let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
+        let columns = Array(repeating: GridItem(.flexible(), spacing: LibraryGrid.spacing), count: itemsPerRow)
 
-        LazyVGrid(columns: columns, spacing: 10) {
+        LazyVGrid(columns: columns, spacing: LibraryGrid.spacing) {
             ForEach(games, id: \.id) { model in
                 GameItemPresentableView(
                     game: model,

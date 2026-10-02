@@ -49,7 +49,6 @@ class ConsoleGamesViewModel: ObservableObject {
 
     var gameToUpdateCover: PVGame?
 
-    @Published var gameLibraryItemsPerRow: Int = 4
     @Published var showImagePicker = false
     @Published var showArtworkSearch = false
     @Published var selectedImage: UIImage? = nil

@@ -79,7 +79,9 @@ struct ConsoleGamesView: SwiftUI.View {
     @EnvironmentObject var themeManager: ThemeManager
 
     // Properties that were @Default in the View, now @Default in ViewModel
-    @Default(.gameLibraryScale) var gameLibraryScale: Float
+    @Default(.libraryGridColumnAdjustment) var libraryGridColumnAdjustment: Int
+    /// Width the grid is laid out in; drives the column count.
+    @State private var gridWidth: CGFloat = 0
     @Default(.showRecentSaveStates) var showRecentSaveStates: Bool
     @Default(.showFavorites) var showFavorites: Bool
     @Default(.showRecentGames) var showRecentGames: Bool
@@ -327,6 +329,8 @@ struct ConsoleGamesView: SwiftUI.View {
                 }
                 /// Clear the page-dots index. BiosesView sits below the scroll view and insets itself.
                 .padding(.bottom, LibraryLayout.pageIndexClearance)
+                /// Measured inside the desktop column, whose outer frame spans the window.
+                .libraryGridWidth($gridWidth)
                 .desktopLibraryContentColumn()
                 .onChange(of: gamesViewModel.focusedSection) { newSection in
                     if let section = newSection {
@@ -1027,31 +1031,16 @@ struct ConsoleGamesView: SwiftUI.View {
     }
 
     var itemsPerRow: Int {
-        let roundedScale = Int(gameLibraryScale.rounded())
-        // If games is less than count, just use the games to fill the row.
-        // also don't go below 0
-        let count: Int
-        if AppState.shared.isSimulator {
-            count = max(0,roundedScale )
-        } else {
-            // TODO: Fill space on iOS or certain layouts only, or a max width?
-            let fillSpace = false
-            if fillSpace {
-                count = min(max(1, roundedScale), allGamesModels.count)
-            } else {
-                count = max(1, roundedScale)
-            }
-        }
-        return count
+        LibraryGrid.columns(forWidth: gridWidth, adjustment: libraryGridColumnAdjustment)
     }
 
     private var columns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 10), count: itemsPerRow)
+        Array(repeating: GridItem(.flexible(), spacing: LibraryGrid.spacing), count: itemsPerRow)
     }
 
     @ViewBuilder
     private func showGamesGrid(_ games: [PVGame]) -> some View {
-        LazyVGrid(columns: columns, spacing: 10) {
+        LazyVGrid(columns: columns, spacing: LibraryGrid.spacing) {
             ForEach(games.filter { !$0.isInvalidated }, id: \.id) { game in
                 multiSelectOverlay(md5: game.md5Hash) {
                     GameItemView(
@@ -1086,7 +1075,7 @@ struct ConsoleGamesView: SwiftUI.View {
 
     @ViewBuilder
     private func showGamesGrid(_ games: [GameCellModel]) -> some View {
-        LazyVGrid(columns: columns, spacing: 10) {
+        LazyVGrid(columns: columns, spacing: LibraryGrid.spacing) {
             ForEach(games, id: \.id) { model in
                 multiSelectOverlay(md5: model.md5) {
                     GameItemPresentableView(
@@ -1122,7 +1111,7 @@ struct ConsoleGamesView: SwiftUI.View {
     @ViewBuilder
     private func showGamesGrid(_ games: Results<PVGame>) -> some View {
         ScrollViewReader { proxy in
-            LazyVGrid(columns: columns, spacing: 10) {
+            LazyVGrid(columns: columns, spacing: LibraryGrid.spacing) {
                 // Use Results<PVGame> directly (lazy) — avoid .toArray() which materialises all games
                 ForEach(games, id: \.id) { game in
                     if !game.isInvalidated {
