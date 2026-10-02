@@ -9,39 +9,37 @@ import Testing
 @Suite("PauseToggleCoalescer")
 struct PauseToggleCoalescerTests {
 
+    /// Feeds `times` to a fresh 0.4 s coalescer and returns each verdict.
+    /// `shouldAccept` is mutating, and `#expect` evaluates its argument in a
+    /// closure that can't mutate captured state, so the calls happen here.
+    private func verdicts(_ times: Double...) -> [Bool] {
+        var coalescer = PauseToggleCoalescer(window: 0.4)
+        return times.map { coalescer.shouldAccept(at: $0) }
+    }
+
     @Test("First toggle is always accepted")
     func firstToggleAccepted() {
-        var coalescer = PauseToggleCoalescer(window: 0.4)
-        #expect(coalescer.shouldAccept(at: 100))
+        #expect(verdicts(100) == [true])
     }
 
     @Test("Duplicate signals for one press collapse into one toggle",
           arguments: [0.0, 0.016, 0.15, 0.399])
     func duplicateWithinWindowRejected(gap: Double) {
-        var coalescer = PauseToggleCoalescer(window: 0.4)
-        #expect(coalescer.shouldAccept(at: 100))
-        #expect(!coalescer.shouldAccept(at: 100 + gap))
+        #expect(verdicts(100, 100 + gap) == [true, false])
     }
 
     @Test("A deliberate second press still toggles", arguments: [0.4, 0.75, 30.0])
     func pressAfterWindowAccepted(gap: Double) {
-        var coalescer = PauseToggleCoalescer(window: 0.4)
-        #expect(coalescer.shouldAccept(at: 100))
-        #expect(coalescer.shouldAccept(at: 100 + gap))
+        #expect(verdicts(100, 100 + gap) == [true, true])
     }
 
     @Test("Rejected duplicates do not extend the window")
     func rejectedDuplicateDoesNotSlideWindow() {
-        var coalescer = PauseToggleCoalescer(window: 0.4)
-        #expect(coalescer.shouldAccept(at: 100))
-        #expect(!coalescer.shouldAccept(at: 100.3))
-        #expect(coalescer.shouldAccept(at: 100.45))
+        #expect(verdicts(100, 100.3, 100.45) == [true, false, true])
     }
 
     @Test("A clock that moves backwards never wedges the toggle")
     func backwardsClockAccepted() {
-        var coalescer = PauseToggleCoalescer(window: 0.4)
-        #expect(coalescer.shouldAccept(at: 100))
-        #expect(coalescer.shouldAccept(at: 50))
+        #expect(verdicts(100, 50) == [true, true])
     }
 }

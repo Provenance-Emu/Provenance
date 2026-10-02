@@ -355,7 +355,10 @@ let package = Package(
         .testTarget(
             name: "PVUI_IOSTests",
             dependencies: [
-                "PVUI_IOS"
+                // Same platform condition as PVUIBase's dependency: the package's
+                // test scheme builds every test target for one destination, and
+                // PVUI_IOS's resources only compile for these platforms.
+                .target(name: "PVUI_IOS", condition: .when(platforms: [.iOS, .macCatalyst, .visionOS]))
             ]
         ),
 
@@ -382,7 +385,10 @@ let package = Package(
         .testTarget(
             name: "PVUI_TVTests",
             dependencies: [
-                "PVUI_TV"
+                // Same platform condition as PVUIBase's dependency: the package's
+                // test scheme builds every test target for one destination, and
+                // PVUI_TV's resources only compile for these platforms.
+                .target(name: "PVUI_TV", condition: .when(platforms: [.tvOS]))
             ]
         ),
 
@@ -400,7 +406,10 @@ let package = Package(
         .testTarget(
             name: "PVUI_AppKitTests",
             dependencies: [
-                "PVUI_AppKit"
+                // Same platform condition as PVUIBase's dependency: the package's
+                // test scheme builds every test target for one destination, and
+                // PVUI_AppKit is only meant for macOS.
+                .target(name: "PVUI_AppKit", condition: .when(platforms: [.macOS]))
             ]
         ),
 

@@ -203,6 +203,15 @@ cd PV<Module> && swift build
 # Test a standalone SPM module
 cd PV<Module> && swift test
 
+# PVUI unit tests (PVUIBaseTests + PVSwiftUITests). Use the committed
+# PVUI-UnitTests scheme, not the auto-generated PVUI one: that also builds the
+# snapshot suite, whose Prefire-generated code doesn't compile. On Xcode 26.6
+# realm-core needs `-xcconfig` with OTHER_CFLAGS/OTHER_CPLUSPLUSFLAGS =
+# $(inherited) -Wno-invalid-specialization (CI's Xcode 26.3 doesn't).
+cd PVUI && xcodebuild test -scheme PVUI-UnitTests \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  CODE_SIGNING_ALLOWED=NO -skipPackagePluginValidation -skipMacroValidation
+
 # Xcode simulator build (full app, slow)
 xcodebuild build -workspace Provenance.xcworkspace \
   -scheme "Provenance-Lite (AppStore)" \

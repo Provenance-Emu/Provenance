@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Committed on purpose (force-added past the .swiftpm ignore rule).
+  The auto-generated PVUI scheme tests every test target, and `-only-testing`
+  still builds them all: PVSwiftUISnapshotTests' Prefire-generated code does
+  not compile, and Prefire itself does not build for tvOS. This scheme holds
+  only the unit suites. Local use and CI (agent-validation.yml, pvui-test):
+    xcodebuild test -scheme PVUI-UnitTests -destination 'platform=iOS Simulator,name=iPhone 17'
+-->
+<Scheme
+   LastUpgradeVersion = "2600"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "PVUIBaseTests"
+               BuildableName = "PVUIBaseTests"
+               BlueprintName = "PVUIBaseTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "PVSwiftUITests"
+               BuildableName = "PVSwiftUITests"
+               BlueprintName = "PVSwiftUITests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+   </TestAction>
+</Scheme>
