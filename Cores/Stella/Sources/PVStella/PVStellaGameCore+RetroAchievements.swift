@@ -40,4 +40,17 @@ extension PVStellaGameCore: CoreRetroAchievements, RcheevosRegionProviding {
                 size: byteCount)
         ]
     }
+
+    /// Ticks the shared session after every emulated frame. The emulation loop
+    /// runs in the bridge, which never calls this core's `executeFrame()`.
+    func installAchievementHooks() {
+        // Not gated on `achievementsActive`: the shared lazy region retry in
+        // `tickAchievements()` must run while no session exists yet. Called
+        // through the existential so the PVRcheevosBridge default is used, not
+        // PVCoreBridge's no-op.
+        _bridge.frameCompletedHandler = { [weak self] in
+            guard let core: any CoreRetroAchievements = self else { return }
+            core.tickAchievements()
+        }
+    }
 }

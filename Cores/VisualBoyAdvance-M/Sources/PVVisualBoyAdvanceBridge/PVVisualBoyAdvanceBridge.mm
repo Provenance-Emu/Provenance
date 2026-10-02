@@ -456,6 +456,11 @@ static void pvvba_updateColorMaps(void) {
     self->_haveFrame = NO;
     while (!self->_haveFrame) { vba.emuMain(vba.emuCount); }
     [self tickAchievements];
+
+    void (^frameCompleted)(void) = self.frameCompletedHandler;
+    if (frameCompleted) {
+        frameCompleted();
+    }
 }
 
 - (void)resetEmulation { vba.emuReset(); }

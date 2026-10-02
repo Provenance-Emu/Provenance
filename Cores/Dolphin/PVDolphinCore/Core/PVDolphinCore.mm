@@ -100,6 +100,7 @@
 #include "VideoCommon/VideoConfig.h"
 #include "VideoCommon/OnScreenDisplay.h"
 #include "VideoCommon/Present.h"
+#include "VideoCommon/VideoEvents.h"
 #include "VideoBackends/Vulkan/VideoBackend.h"
 #include "VideoBackends/Vulkan/VulkanContext.h"
 
@@ -245,6 +246,10 @@ static void ResetDolphinStaticState() {
     /// The full-screen constraints `setupView` pins the render view with. Deactivated when
     /// a skin takes over the layout.
     NSArray<NSLayoutConstraint *> *_renderViewConstraints;
+
+    /// Registration on `vi_end_field_event` that runs `frameCompletedHandler`.
+    /// Resetting it blocks until an in-flight callback returns.
+    Common::EventHook _frameEndHook;
 }
 
 - (instancetype)init {
@@ -915,6 +920,7 @@ static void ResetDolphinStaticState() {
 - (void)startEmulation {
     _isShuttingDownForViewport = NO;
     self.skipEmulationLoop = true;  // Dolphin handles its own emulation loop
+    [self installFrameEndHook];
     [self prepareAudio];
     [self setupEmulation];
 
@@ -953,7 +959,22 @@ static void ResetDolphinStaticState() {
     NSLog(@"🎮 Game speed -> %ld (MAIN_EMULATION_SPEED=%.2f)", (long)gameSpeed, speed);
 }
 
+/// Runs `frameCompletedHandler` on the CPU thread at the end of each emulated
+/// field. Replaces any earlier registration.
+- (void)installFrameEndHook {
+    __weak PVDolphinCoreBridge *weakSelf = self;
+    _frameEndHook = Core::System::GetInstance().GetVideoEvents().vi_end_field_event.Register([weakSelf]() {
+        void (^frameCompleted)(void) = weakSelf.frameCompletedHandler;
+        if (frameCompleted) {
+            frameCompleted();
+        }
+    });
+}
+
 - (void)stopEmulation {
+    // First, before Core::Stop and the memory Shutdown(): the reset waits for an
+    // in-flight callback, so nothing reads MEM1/MEM2 after this line.
+    _frameEndHook.reset();
     _isShuttingDownForViewport = YES;
     [super stopEmulation];
     [[NSNotificationCenter defaultCenter] removeObserver:self];

@@ -43,4 +43,17 @@ extension PVDolphinCore: CoreRetroAchievements, RcheevosRegionProviding {
 
         return regions
     }
+
+    /// Ticks the shared session at the end of every emulated field. Dolphin runs
+    /// its own loop, so this core's `executeFrame()` is never called.
+    func installAchievementHooks() {
+        // Not gated on `achievementsActive`: the shared lazy region retry in
+        // `tickAchievements()` must run while no session exists yet. Called
+        // through the existential so the PVRcheevosBridge default is used, not
+        // PVCoreBridge's no-op.
+        _bridge.frameCompletedHandler = { [weak self] in
+            guard let core: any CoreRetroAchievements = self else { return }
+            core.tickAchievements()
+        }
+    }
 }

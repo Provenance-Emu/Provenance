@@ -705,6 +705,7 @@ static void writeSaveFile(const char* path, int type) {
     retro_run();
     [self pvstella_syncSystemRAM];
     [self tickAchievements];
+    [self pvstella_notifyFrameCompleted];
 }
 
 - (void)executeFrameSkippingFrame: (BOOL) skip {
@@ -717,6 +718,16 @@ static void writeSaveFile(const char* path, int type) {
     retro_run();
     [self pvstella_syncSystemRAM];
     [self tickAchievements];
+    [self pvstella_notifyFrameCompleted];
+}
+
+/// Runs `frameCompletedHandler` once per emulated frame, after the RAM mirror
+/// the achievement regions point at has been refreshed.
+- (void)pvstella_notifyFrameCompleted {
+    void (^frameCompleted)(void) = self.frameCompletedHandler;
+    if (frameCompleted) {
+        frameCompleted();
+    }
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {

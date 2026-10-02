@@ -64,6 +64,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// Unload the current game from `rc_client` and mark achievements inactive.
 - (void)unloadAchievements;
 
+/// Called on the emulation thread at the end of every emulated frame. The
+/// emulation loop runs inside this bridge, so the Swift core's
+/// `executeFrame()` is never called; this drives the shared achievements
+/// session's per-frame tick. Declared in the main @interface: SwiftPM can drop
+/// ObjC categories.
+@property (nonatomic, copy, nullable) void (^frameCompletedHandler)(void);
+
 // PVGBASystemResponderClient
 - (void)didPushGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
 - (void)didReleaseGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;

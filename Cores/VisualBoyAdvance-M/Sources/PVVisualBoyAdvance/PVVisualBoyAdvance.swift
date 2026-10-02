@@ -28,13 +28,7 @@ open class PVVisualBoyAdvanceCore: PVEmulatorCore {
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
-    }
-
-    public override func executeFrame() {
-        super.executeFrame()
-        if achievementsActive {
-            tickAchievements()
-        }
+        installAchievementHooks()
     }
 }
 

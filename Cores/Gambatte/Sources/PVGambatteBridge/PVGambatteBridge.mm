@@ -403,6 +403,11 @@ public:
 
     [self outputAudio:samples];
     [self tickAchievements];
+
+    void (^frameCompleted)(void) = self.frameCompletedHandler;
+    if (frameCompleted) {
+        frameCompleted();
+    }
 }
     
 - (void)resetEmulation

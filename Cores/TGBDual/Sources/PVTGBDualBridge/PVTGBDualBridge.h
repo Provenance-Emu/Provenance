@@ -59,4 +59,10 @@
 @property (nonatomic, readonly, nullable) void *vramBasePtr;
 /// Size of video RAM exposed via RETRO_MEMORY_VIDEO_RAM (in bytes).
 @property (nonatomic, readonly) NSUInteger vramSize;
+
+/// Called on the emulation thread at the end of every emulated frame. The
+/// emulation loop runs inside this bridge, so the Swift core's
+/// `executeFrame()` is never called; this drives the per-frame achievements tick.
+/// Declared in the main @interface: SwiftPM can drop ObjC categories.
+@property (nonatomic, copy, nullable) void (^frameCompletedHandler)(void);
 @end

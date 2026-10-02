@@ -29,6 +29,11 @@
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
     retro_run();
+
+    void (^frameCompleted)(void) = self.frameCompletedHandler;
+    if (frameCompleted) {
+        frameCompleted();
+    }
 }
 
 - (void)executeFrame {

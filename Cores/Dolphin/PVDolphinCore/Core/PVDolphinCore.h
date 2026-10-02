@@ -154,6 +154,16 @@
 @property (nonatomic, assign) bool enableGyroMotionControls;
 @property (nonatomic, assign) bool enableGyroIRCursor;
 @property (nonatomic, assign) bool disableJoystickIRCursor;
+
+/// Called on Dolphin's CPU thread at the end of every emulated video field
+/// (VideoInterface's `vi_end_field_event`). Dolphin runs its own emulation
+/// loop (`skipEmulationLoop`), so neither this bridge's nor the Swift core's
+/// `executeFrame` is ever called; this drives the per-frame achievements tick.
+/// Declared in the main @interface: SwiftPM can drop ObjC categories. No
+/// nullability keyword: this header has none, and one would trigger
+/// -Wnullability-completeness on every other pointer in it.
+@property (nonatomic, copy) void (^frameCompletedHandler)(void);
+
 - (void) refreshScreenSize;
 - (void) startVM:(UIView *)view;
 /// Sets the CAMetalLayer directly for Vulkan rendering, bypassing view.layer access
