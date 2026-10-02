@@ -217,6 +217,10 @@ static const long PVVBASampleRate = 32768;
 /// Boktai solar sensor reading with no light sensor (libretro's default).
 static const uint8_t PVVBASensorDarknessDefault = 0xE8;
 
+/// rcheevos maps GBA Save RAM to 64 KiB (flat 0x048000-0x057FFF in
+/// rcheevos/src/rcheevos/consoleinfo.c), so the mirror is that size.
+static const size_t PVVBASaveRAMMirrorSize = 0x10000;
+
 static __weak PVVisualBoyAdvanceBridge *_current;
 
 @interface PVVisualBoyAdvanceBridge ()
@@ -232,6 +236,10 @@ static __weak PVVisualBoyAdvanceBridge *_current;
     /// Save type resolved at load (GBA_SAVE_*, never AUTO). It is a property
     /// of the cart, re-applied after loading a converted legacy save state.
     int _resolvedSaveType;
+    /// Mirror of the cart save data for RetroAchievements; see `refreshSaveRAMMirror`.
+    uint8_t *_saveRAMMirror;
+    /// Valid bytes in `_saveRAMMirror`; 0 until a ROM is loaded or when the cart has no save.
+    NSUInteger _saveRAMMirrorSize;
 #if HAVE_RCHEEVOS
     rc_client_t *_rcClient;
 #endif
@@ -241,6 +249,7 @@ static __weak PVVisualBoyAdvanceBridge *_current;
 - (void)resolveSaveTypeForROMSize:(int)romSize;
 - (void)writeSaveFile;
 - (void)migrateSaveFile;
+- (void)refreshSaveRAMMirror;
 /// Called from `pvvba_load_callback` / `pvvba_login_callback` (cannot use private ivars from static C functions).
 - (void)pvvba_applyAchievementsLoadResult:(BOOL)success;
 @end
@@ -279,6 +288,7 @@ static void pvvba_updateColorMaps(void) {
 - (instancetype)init {
     if((self = [super init])) {
         self->videoBuffer = (uint8_t *) malloc(gbaWidth * gbaHeight * 4);
+        self->_saveRAMMirror = (uint8_t *) calloc(1, PVVBASaveRAMMirrorSize);
         vba = GBASystem;
         _achievementsActive.store(false);
     }
@@ -299,6 +309,8 @@ static void pvvba_updateColorMaps(void) {
         free(self->videoBuffer);
         self->videoBuffer = nil;
     }
+    free(self->_saveRAMMirror);
+    self->_saveRAMMirror = NULL;
 }
 
 # pragma mark - Execution
@@ -406,6 +418,7 @@ static void pvvba_updateColorMaps(void) {
         [self migrateSaveFile];
     }
     emulating = 1;
+    [self refreshSaveRAMMirror];
 
 #if HAVE_RCHEEVOS
     if (!_rcClient) {
@@ -455,6 +468,7 @@ static void pvvba_updateColorMaps(void) {
 - (void)executeFrameSkippingFrame:(BOOL)skip {
     self->_haveFrame = NO;
     while (!self->_haveFrame) { vba.emuMain(vba.emuCount); }
+    [self refreshSaveRAMMirror];
     [self tickAchievements];
 
     void (^frameCompleted)(void) = self.frameCompletedHandler;
@@ -478,6 +492,7 @@ static void pvvba_updateColorMaps(void) {
 #endif
 
     [self writeSaveFile];
+    self->_saveRAMMirrorSize = 0;
 
     vba.emuCleanUp();
     soundShutdown();
@@ -499,6 +514,56 @@ static void pvvba_updateColorMaps(void) {
 
 - (void *)vbaVramBasePtr {
     return (void *)g_vram;
+}
+
+- (void *)saveRAMMirrorPointer:(NSUInteger *)sizeOut {
+    if (sizeOut) {
+        *sizeOut = self->_saveRAMMirrorSize;
+    }
+    return self->_saveRAMMirrorSize > 0 ? self->_saveRAMMirror : NULL;
+}
+
+/// Copies the cart save data into the stable mirror rcheevos reads. Mirrors
+/// libretro's retro_get_memory_data(RETRO_MEMORY_SAVE_RAM) in vbam's
+/// src/libretro/libretro.cpp: EEPROM and EEPROM+sensor carts expose
+/// `eepromData`, SRAM and flash carts expose `flashSaveMemory`, anything else
+/// has no save RAM. RetroAchievements sets are written against that view.
+/// `capacity` is the largest the type can reach, because `eepromSize` starts
+/// at 512 bytes and grows to 8 KiB once the game's first access is detected.
+- (void)refreshSaveRAMMirror {
+    if (!self->_saveRAMMirror) {
+        return;
+    }
+    const uint8_t *save = NULL;
+    size_t used = 0;
+    size_t capacity = 0;
+    switch (coreOptions.saveType) {
+        case GBA_SAVE_EEPROM:
+        case GBA_SAVE_EEPROM_SENSOR:
+            save = eepromData;
+            used = MIN((size_t)MAX(eepromSize, 0), sizeof(eepromData));
+            capacity = sizeof(eepromData);
+            break;
+        case GBA_SAVE_SRAM:
+            save = flashSaveMemory;
+            used = SIZE_SRAM;
+            capacity = SIZE_SRAM;
+            break;
+        case GBA_SAVE_FLASH:
+            save = flashSaveMemory;
+            used = MIN((size_t)MAX(g_flashSize, 0), PVVBASaveRAMMirrorSize);
+            capacity = MIN((size_t)FLASH_128K_SZ, PVVBASaveRAMMirrorSize);
+            break;
+        default:
+            break;
+    }
+    if (!save) {
+        self->_saveRAMMirrorSize = 0;
+        return;
+    }
+    memcpy(self->_saveRAMMirror, save, used);
+    memset(self->_saveRAMMirror + used, 0, PVVBASaveRAMMirrorSize - used);
+    self->_saveRAMMirrorSize = capacity;
 }
 
 - (BOOL)achievementsActive {

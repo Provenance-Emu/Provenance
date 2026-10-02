@@ -48,6 +48,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// VRAM base, 96 KiB at bus `0x06000000`, valid while a ROM is loaded.
 @property (nonatomic, readonly, nullable) void *vbaVramBasePtr;
 
+/// A copy of the cart save data (bus `0x0E000000`), refreshed after every frame
+/// and once at load. Laid out like libretro's `RETRO_MEMORY_SAVE_RAM`, which
+/// RetroAchievements sets are written against: EEPROM carts expose
+/// `eepromData`, SRAM and flash carts expose `flashSaveMemory` (flash bank 0
+/// first). Returns NULL, with `*sizeOut` 0, until a ROM is loaded and whenever
+/// the cart has no save storage. The size is the largest the save type can
+/// reach (clamped to 64 KiB), so it does not change if the EEPROM size is
+/// detected later. The pointer stays valid until the bridge is deallocated.
+- (nullable void *)saveRAMMirrorPointer:(nullable NSUInteger *)sizeOut;
+
 /// Whether `rc_client` has a game successfully loaded for achievements.
 @property (nonatomic, readonly) BOOL achievementsActive;
 
