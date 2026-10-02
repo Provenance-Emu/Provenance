@@ -87,18 +87,35 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 - (void)resetSNESLightGunState;
 
 # pragma mark - RetroAchievements
-/// Pointer to the SNES main WRAM (`Memory.RAM`).  128 KiB lives here, mapped
-/// at SNES address 0x7E0000 in the rcheevos memory map.
+/// Invoked on the emulation thread after each SNES frame has run, while a ROM is
+/// loaded. Drives the RetroAchievements per-frame tick: the PVCoreObjCBridge
+/// emulation loop calls this bridge's @c executeFrame directly, so the Swift
+/// core's @c executeFrame() override is never reached on that path.
+@property (nonatomic, copy, nullable) void (^frameCompletedHandler)(void);
+
+/// All pointers below are NULL (and sizes 0) until a ROM has loaded, and again
+/// after @c stopEmulation. Their rcheevos FLAT addresses (consoleinfo.c,
+/// RC_CONSOLE_SUPER_NINTENDO column 1) are chosen by the Swift conformance.
+
+/// Pointer to the SNES main WRAM (`Memory.RAM`), 128 KiB. rcheevos flat address
+/// 0x000000 (its real bus address 0x7E0000 is NOT what rc_client uses).
 @property (nonatomic, readonly, nullable) void *systemRAMPtr;
 /// Size in bytes of the WRAM block exposed via @c systemRAMPtr (128 KiB).
 @property (nonatomic, readonly) NSUInteger systemRAMSize;
 
-/// Pointer to the cartridge battery-backed SRAM (`Memory.SRAM`), mapped at flat
-/// rcheevos address 0x020000.  Pair with @c cartridgeSRAMSize (0 when no SRAM).
+/// Pointer to the cartridge RAM (`Memory.SRAM`): battery SRAM, SA-1 BW-RAM and
+/// SuperFX GSU RAM all live here. rcheevos flat address 0x020000.
 @property (nonatomic, readonly, nullable) void *cartridgeSRAMPtr;
-/// Size in BYTES of the cartridge SRAM. Computed from the ROM-header SRAM size
-/// code (Memory.SRAMSize is a code, not bytes); 0 when the cart has no battery save.
+/// Size in BYTES of the cartridge RAM. Computed from the ROM-header SRAM size
+/// code (Memory.SRAMSize is a code, not bytes), clamped to the 512 KiB backing
+/// store; 0 when the cart has no RAM.
 @property (nonatomic, readonly) NSUInteger cartridgeSRAMSize;
+
+/// Pointer to the SA-1 I-RAM (2 KiB at `Memory.FillRAM + 0x3000`); NULL unless
+/// the loaded cart uses the SA-1. rcheevos flat address 0x0A0000.
+@property (nonatomic, readonly, nullable) void *sa1IRAMPtr;
+/// Size in bytes of the SA-1 I-RAM (0x800), or 0 when @c sa1IRAMPtr is NULL.
+@property (nonatomic, readonly) NSUInteger sa1IRAMSize;
 
 @end
 

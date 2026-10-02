@@ -45,6 +45,7 @@
 #import <GLUT/GLUT.h>
 #endif
 
+#include <atomic>
 #include "snes9x.h"
 #include "memmap.h"
 #include "pixform.h"
@@ -135,6 +136,12 @@ static inline uint16 *PVSNESVisibleScreen(unsigned char *buffer)
 
     BOOL isMultitap;
 
+    /// YES once Memory.LoadROM succeeded; cleared on stop / failed load. Gates the
+    /// RetroAchievements memory pointers (Memory.RAM is an inline array, so it is
+    /// never NULL even before a ROM is loaded). Written on the load thread, read
+    /// on the emulation thread and the achievements Task, hence atomic.
+    std::atomic<bool> _romLoaded;
+
     // Mouse state
     BOOL    _isMouseGame;
     int16_t _mouseX;
@@ -189,6 +196,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 
 - (void)stopEmulation
 {
+    _romLoaded.store(false);
+
     NSString *path = [NSString stringWithUTF8String:Memory.ROMFilename.c_str()];
     NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
 
@@ -213,10 +222,20 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 - (void)executeFrame {
     IPPU.RenderThisFrame = TRUE;
     S9xMainLoop();
+
+    // One full SNES frame has run on the emulation thread, so guest RAM is
+    // quiescent here. This is the only per-frame hook: the emulation loop in
+    // PVCoreObjCBridge calls this bridge method directly, never the Swift
+    // core's executeFrame(), so the RetroAchievements tick has to start here.
+    void (^frameHandler)(void) = self.frameCompletedHandler;
+    if (frameHandler != nil && _romLoaded.load()) {
+        frameHandler();
+    }
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
 
+    _romLoaded.store(false);
     CPU.Flags = 0;
     memset(&Settings, 0, sizeof(Settings));
 
@@ -819,7 +838,8 @@ NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A", @"B", 
 			S9xSetController(0, CTL_JOYPAD, 0, 0, 0, 0);
 			S9xSetController(1, CTL_JOYPAD, 1, 0, 0, 0);
 		}
-        
+
+        _romLoaded.store(true);
         return YES;
     }
 
@@ -1215,23 +1235,54 @@ static void FinalizeSamplesAudioCallback(void *) {
 
 # pragma mark - RetroAchievements
 
+/// Largest SRAM-size header code whose byte count still fits Memory.SRAM:
+/// (1 << (9 + 3)) * 128 == 0x80000 == SRAM_SIZE (memmap.h). Larger codes come
+/// from garbage headers and would overflow the shift.
+static const uint8 kSNESMaxSRAMSizeCode = 9;
+/// SA-1 I-RAM: 2 KiB at SNES $00:3000, backed by Memory.FillRAM + 0x3000
+/// (memmap.cpp Map_SA1LoROMMap: map_space(0x00, 0x3f, 0x3000, 0x37ff, FillRAM)).
+static const size_t kSNESSA1IRAMOffset = 0x3000;
+static const size_t kSNESSA1IRAMSize   = 0x800;
+/// SNES work RAM size (Memory.RAM is an inline 128 KiB array).
+static const size_t kSNESWRAMSize      = sizeof(Memory.RAM);
+
 - (void *)systemRAMPtr {
-    return Memory.RAM;
+    return _romLoaded.load() ? Memory.RAM : NULL;
 }
 
 - (NSUInteger)systemRAMSize {
-    return 0x20000; // 128 KiB SNES WRAM
+    return _romLoaded.load() ? kSNESWRAMSize : 0;
 }
 
 - (void *)cartridgeSRAMPtr {
-    return Memory.SRAM;
+    return _romLoaded.load() ? Memory.SRAM : NULL;
 }
 
 - (NSUInteger)cartridgeSRAMSize {
-    // Memory.SRAMSize is the ROM-header SRAM size CODE, not bytes (memmap.h:90).
-    // Actual bytes = (1 << (code + 3)) * 128, matching snes9x's own SRAM sizing
-    // (memmap.cpp:1960). 0 when the cart has no battery-backed save.
-    return Memory.SRAMSize ? (NSUInteger)((1u << (Memory.SRAMSize + 3)) * 128u) : 0;
+    if (!_romLoaded.load() || Memory.SRAM == NULL || Memory.SRAMSize == 0) {
+        return 0;
+    }
+    // Memory.SRAMSize is the ROM-header SRAM size CODE, not bytes (memmap.h).
+    // Bytes = (1 << (code + 3)) * 128, matching snes9x's own SRAMMask sizing
+    // (memmap.cpp). SA-1 BW-RAM and SuperFX GSU RAM both live in Memory.SRAM
+    // (sa1.cpp: BWRAM = Memory.SRAM; memmap.cpp: SuperFX.pvRam = SRAM), so this
+    // one buffer covers every cart-RAM flavour. Clamp to the SRAM_SIZE backing
+    // store (== the 0x80000-byte rcheevos "Cartridge RAM" span).
+    if (Memory.SRAMSize >= kSNESMaxSRAMSizeCode) {
+        return Memory.SRAM_SIZE;
+    }
+    return (NSUInteger)((1u << (Memory.SRAMSize + 3)) * 128u);
+}
+
+- (void *)sa1IRAMPtr {
+    if (!_romLoaded.load() || !Settings.SA1 || Memory.FillRAM == NULL) {
+        return NULL;
+    }
+    return Memory.FillRAM + kSNESSA1IRAMOffset;
+}
+
+- (NSUInteger)sa1IRAMSize {
+    return [self sa1IRAMPtr] != NULL ? kSNESSA1IRAMSize : 0;
 }
 
 @end

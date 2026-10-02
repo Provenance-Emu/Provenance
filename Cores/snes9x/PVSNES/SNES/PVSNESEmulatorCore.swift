@@ -29,26 +29,16 @@ open class PVSNES9xEmulatorCore: PVEmulatorCore, @unchecked Sendable {
 
     public required init() {
         super.init()
-        self.bridge = (PVSNESEmulatorCoreBridge() as! any ObjCBridgedCoreBridge)
-    }
-
-    // [CHEEVOS-DIAG] Diagnostic-only frame counter so we can see when the core is
-    // running frames but `achievementsActive` is false (i.e. the rc_client never
-    // finished loading). Logged every 600 frames (~10 s at 60 fps).
-    private static let diagLogStride: UInt64 = 600
-    nonisolated(unsafe) private static var diagFrameCount: UInt64 = 0
-    nonisolated(unsafe) private static var diagInactiveFrameCount: UInt64 = 0
-
-    public override func executeFrame() {
-        super.executeFrame()
-        Self.diagFrameCount &+= 1
-        if achievementsActive {
-            tickAchievements()
-        } else {
-            Self.diagInactiveFrameCount &+= 1
-            if Self.diagInactiveFrameCount % Self.diagLogStride == 0 {
-                ILOG("[CHEEVOS-DIAG] SNES9x executeFrame achievementsActive=false totalFrames=\(Self.diagFrameCount) inactiveFrames=\(Self.diagInactiveFrameCount)")
-            }
+        let snesBridge = PVSNESEmulatorCoreBridge()
+        self.bridge = (snesBridge as! any ObjCBridgedCoreBridge)
+        // The PVCoreObjCBridge emulation loop calls the bridge's `executeFrame`
+        // directly, so an `executeFrame()` override here would never run and
+        // achievements would never be evaluated. The bridge reports each
+        // completed SNES frame on the emulation thread instead.
+        // Not gated on `achievementsActive`: the lazy region retry inside
+        // `tickAchievements()` must be able to run before a session exists.
+        snesBridge.frameCompletedHandler = { [weak self] in
+            self?.tickAchievements()
         }
     }
 }
