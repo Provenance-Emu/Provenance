@@ -17,6 +17,8 @@ GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) TXFILTER_LIB=1
 GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) M64P_PLUGIN_PROTOTYPES=1
 GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) PROVENANCE=1
 GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) NO_ASM=1
+// mupen64plus-core builds its bundled subprojects/minizip without zip encryption
+GCC_PREPROCESSOR_DEFINITIONS[arch=*] = $(inherited) NOCRYPT=1 NOUNCRYPT=1
 
 OTHER_CFLAGS[arch=*] = $(inherited) -DGCC
 OTHER_CFLAGS[arch=*] = $(inherited) -pthread

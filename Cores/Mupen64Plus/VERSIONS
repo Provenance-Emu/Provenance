@@ -1,19 +1,20 @@
-mupen64plus-core v2.5.1 (0x020501) - vendored from Provenance-Emu/mupen64plus-core@provenance
-  Upstream: mupen64plus/mupen64plus-core (latest: 2026-02, 424 commits ahead)
-  iOS patches: Quick hack for paths on tvOS/iOS, buffer size increase, new_vi macro
+mupen64plus-core 2.6.0+ (0x020600) - submodule Provenance-Emu/mupen64plus-core@Provenance-master
+  Base: mupen64plus/mupen64plus-core b20b27ebf9
+  Provenance patches: compile out new_vi() under IN_OPENEMU (frontend supplies its own)
 
-GLideN64 v2.0.0 (0x020000) - vendored from Provenance-Emu/GLideN64@provenance
-  Upstream: gonetz/GLideN64 / Provenance-Emu/GLideN64@provenance_2025 (March 2025)
-  iOS patches: OS_IOS NPOT texture clamp, CommonPluginAPI int return type
+GLideN64 v2.0.0 (0x020000) - vendored from Provenance-Emu/GLideN64@provenance (2018 base cbf5821f8e)
+  Not updated: upstream is ~916 commits ahead; see PATCHES.md
+  iOS patches: iOS framebuffer binder, OS_IOS NPOT texture clamp, CommonPluginAPI int return type
 
-mupen64plus-rsp-hle - vendored from mupen64plus/mupen64plus-rsp-hle
-  iOS patches: none (standard upstream)
+mupen64plus-rsp-hle - submodule Provenance-Emu/mupen64plus-rsp-hle@Provenance-master
+  Base: mupen64plus/mupen64plus-rsp-hle 8a7a472a71; Provenance patches: none
 
-mupen64plus-rsp-cxd4 - vendored from Provenance-Emu/mupen64plus-rsp-cxd4
-  iOS patches: none significant
+mupen64plus-rsp-cxd4 - submodule Provenance-Emu/mupen64plus-rsp-cxd4@Provenance-master
+  Base: mupen64plus/mupen64plus-rsp-cxd4 00906a9264; Provenance patches: none
 
-mupen64plus-video-rice - vendored from Provenance-Emu/mupen64plus-video-rice
-  iOS patches: GLES-specific rendering paths
+mupen64plus-video-rice - submodule Provenance-Emu/mupen64plus-video-rice@Provenance-master
+  Base: mupen64plus/mupen64plus-video-rice f0a7b9f391
+  Provenance patches: SDL GL attribute skip + _PV_ForceUpdateWindowSize, GLES RGBA upload + shader swizzle
 
 Mupen64Plus-NX (RetroArch) - real git submodule
   Current: Provenance-Emu/mupen64plus-libretro-nx@spm-2024 (388bd4bfb49, 2024-10-18)

@@ -4,12 +4,15 @@
 [submodule "Cores/Mupen64Plus/Sources/Plugins/Core/Core"]
 	path = Cores/Mupen64Plus/Sources/Plugins/Core/Core
 	url = https://github.com/Provenance-Emu/mupen64plus-core.git
+	branch = Provenance-master
 [submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/hle"]
 	path = Cores/Mupen64Plus/Sources/Plugins/rsp/hle
-	url = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
+	url = https://github.com/Provenance-Emu/mupen64plus-rsp-hle.git
+	branch = Provenance-master
 [submodule "Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice"]
 	path = Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice
 	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git
+	branch = Provenance-master
 [submodule "Cores/VirtualJaguar"]
 	path = Cores/VirtualJaguar
 	url = https://github.com/Provenance-Emu/Core-VirtualJaguar.git
@@ -120,6 +123,7 @@
 [submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4"]
 	path = Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4
 	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
+	branch = Provenance-master
 [submodule "CoresRetro/RetroArch/RetroArch"]
         path = CoresRetro/RetroArch/RetroArch
         url = https://github.com/Provenance-Emu/RetroArch.git

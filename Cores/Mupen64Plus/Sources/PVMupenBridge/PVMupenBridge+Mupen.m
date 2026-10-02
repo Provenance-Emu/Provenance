@@ -22,12 +22,15 @@
 
 AUDIO_INFO AudioInfo;
 
+/// Output rate of the audio ring buffer; every AI DMA is resampled to it.
+static const unsigned int kMupenOutputSampleRate = 44100;
+
 void MupenAudioSampleRateChanged(int SystemType)
 {
     GET_CURRENT_AND_RETURN();
 
-    // Since we're forcing 44.1kHz in the AI controller, we can set this directly
-    float newRate = 44100.0f;
+    // The ring buffer always runs at kMupenOutputSampleRate; MupenAudioLenChanged resamples.
+    float newRate = (float)kMupenOutputSampleRate;
 
     // Update sample rate if changed
     if (current.mupenSampleRate != newRate) {
@@ -54,15 +57,17 @@ void MupenAudioLenChanged()
     // Get VI clock frequency based on system type
     unsigned int vi_clock = current.isNTSC ? 48681812 : 49656530;
 
-    // Calculate source frequency using DAC rate
-    // This matches how ai_init sets up the frequency
-    unsigned int source_frequency = vi_clock / (1 + *AudioInfo.AI_DACRATE_REG);
+    // Source frequency from the DAC rate. A game that DMAs audio before programming
+    // AI_DACRATE (still 0 after power-on) gets the same 44.1 kHz default the core's
+    // ai_controller uses for that case.
+    const unsigned int dacrate = *AudioInfo.AI_DACRATE_REG;
+    const unsigned int source_frequency = (dacrate == 0) ? kMupenOutputSampleRate : vi_clock / (1 + dacrate);
 
     // Calculate number of samples (16-bit stereo)
     const size_t num_input_samples = LenReg / 4;
 
     // Calculate resampled size using actual source frequency
-    const size_t num_output_samples = (size_t)((num_input_samples * 44100ULL) / source_frequency);
+    const size_t num_output_samples = (size_t)((num_input_samples * (uint64_t)kMupenOutputSampleRate) / source_frequency);
 
     // Temporary buffer for resampled audio
     static int16_t resampled[65536];
@@ -71,7 +76,7 @@ void MupenAudioLenChanged()
     }
 
     // Calculate fixed-point step ratio
-    uint32_t step_ratio = (uint32_t)(((uint64_t)source_frequency << 16) / 44100);
+    uint32_t step_ratio = (uint32_t)(((uint64_t)source_frequency << 16) / kMupenOutputSampleRate);
 
     // Do the resampling
     const int16_t *src = (int16_t*)ptr;

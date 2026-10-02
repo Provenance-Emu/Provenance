@@ -36,6 +36,10 @@
 
 #include <dlfcn.h>
 
+#if __has_include(<OpenGLES/ES3/gl.h>)
+#import <OpenGLES/ES3/gl.h>
+#endif
+
 @implementation PVMupenBridge (VidExtFunctions)
 
 static int sActive;
@@ -43,6 +47,17 @@ static int sActive;
 EXPORT m64p_error CALL VidExt_Init(void)
 {
     return M64ERR_SUCCESS;
+}
+
+/// Only the GL path exists here (EAGL context owned by the bridge); Vulkan is not provided.
+EXPORT m64p_error CALL VidExt_InitWithRenderMode(m64p_render_mode RenderMode)
+{
+    return (RenderMode == M64P_RENDER_OPENGL) ? VidExt_Init() : M64ERR_UNSUPPORTED;
+}
+
+EXPORT m64p_error CALL VidExt_ListFullscreenRates(m64p_2d_size Size, int *NumRates, int *Rates)
+{
+    return M64ERR_UNSUPPORTED;
 }
 
 EXPORT m64p_error CALL VidExt_Quit(void)
@@ -100,8 +115,14 @@ EXPORT m64p_error CALL VidExt_SetVideoMode(int Width, int Height, int BitsPerPix
     current.videoBitDepth = BitsPerPixel;
     
     sActive = 1;
-    
+
     return M64ERR_SUCCESS;
+}
+
+/// The refresh rate is driven by the frontend's display link, so it is ignored.
+EXPORT m64p_error CALL VidExt_SetVideoModeWithRate(int Width, int Height, int RefreshRate, int BitsPerPixel, m64p_video_mode ScreenMode, m64p_video_flags Flags)
+{
+    return VidExt_SetVideoMode(Width, Height, BitsPerPixel, ScreenMode, Flags);
 }
 
 EXPORT m64p_error CALL VidExt_SetCaption(const char *Title)
@@ -116,9 +137,9 @@ EXPORT m64p_error CALL VidExt_ToggleFullScreen(void)
     return M64ERR_UNSUPPORTED;
 }
 
-EXPORT void * CALL VidExt_GL_GetProcAddress(const char* Proc)
+EXPORT m64p_function CALL VidExt_GL_GetProcAddress(const char* Proc)
 {
-    return dlsym(RTLD_NEXT, Proc);
+    return (m64p_function)dlsym(RTLD_NEXT, Proc);
 }
 
 EXPORT m64p_error CALL VidExt_GL_SetAttribute(m64p_GLattr Attr, int Value)
@@ -139,6 +160,29 @@ EXPORT m64p_error CALL VidExt_GL_SwapBuffers(void)
 
     [current swapBuffers];
     return M64ERR_SUCCESS;
+}
+
+/// There is no window-system framebuffer 0 on iOS/tvOS: the bridge renders into its own
+/// FBO, which is the one bound on the GL thread when a plugin asks for this.
+EXPORT uint32_t CALL VidExt_GL_GetDefaultFramebuffer(void)
+{
+#if __has_include(<OpenGLES/ES3/gl.h>)
+    GLint framebuffer = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
+    return (uint32_t)framebuffer;
+#else
+    return 0;
+#endif
+}
+
+EXPORT m64p_error CALL VidExt_VK_GetSurface(void** Surface, void* Instance)
+{
+    return M64ERR_UNSUPPORTED;
+}
+
+EXPORT m64p_error CALL VidExt_VK_GetInstanceExtensions(const char** Extensions[], uint32_t* NumExtensions)
+{
+    return M64ERR_UNSUPPORTED;
 }
 
 m64p_error OverrideVideoFunctions(m64p_video_extension_functions *VideoFunctionStruct)

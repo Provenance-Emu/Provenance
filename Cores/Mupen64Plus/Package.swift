@@ -176,9 +176,6 @@ let package = Package(
                 "SDL"
             ],
             path: "Sources/Plugins/Core/",
-            exclude: [
-                "Core/src/api/vidext_sdl2_compat.h",
-            ],
             sources: [
                 "api/callbacks.c",
                 "api/common.c",
@@ -188,7 +185,9 @@ let package = Package(
 
                 "asm_defines/asm_defines.c",
 
+                "backends/api/video_capture_backend.c",
                 "backends/clock_ctime_plus_delta.c",
+                "backends/dummy_video_capture.c",
                 "backends/file_storage.c",
 
                 "backends/plugins_compat/audio_plugin_compat.c",
@@ -199,12 +198,18 @@ let package = Package(
                 "device/cart/cart_rom.c",
                 "device/cart/eeprom.c",
                 "device/cart/flashram.c",
+                "device/cart/is_viewer.c",
                 "device/cart/sram.c",
 
                 "device/controllers/game_controller.c",
+                "device/controllers/vru_controller.c",
+                "device/controllers/paks/biopak.c",
                 "device/controllers/paks/mempak.c",
                 "device/controllers/paks/rumblepak.c",
                 "device/controllers/paks/transferpak.c",
+
+                "device/dd/dd_controller.c",
+                "device/dd/disk.c",
 
                 "device/device.c",
 
@@ -222,6 +227,7 @@ let package = Package(
                 "device/r4300/cached_interp.c",
                 "device/r4300/cp0.c",
                 "device/r4300/cp1.c",
+                "device/r4300/cp2.c",
                 "device/r4300/idec.c",
                 "device/r4300/interrupt.c",
                 "device/r4300/pure_interp.c",
@@ -244,18 +250,11 @@ let package = Package(
                 "main/cheat.c",
                 "main/lirc.c",
 //                "main/main.c",
-                "main/md5.c",
                 "main/rom.c",
                 "main/savestates.c",
                 "main/sdl_key_converter.c",
                 "main/util.c",
                 "main/workqueue.c",
-
-                "main/xxHash/xxhash.c",
-
-                "main/zip/ioapi.c",
-                "main/zip/unzip.c",
-                "main/zip/zip.c",
 
                 "osal/dynamiclib_unix.c",
                 "osal/files_macos.c",
@@ -265,10 +264,20 @@ let package = Package(
                 "plugin/dummy_rsp.c",
                 "plugin/dummy_video.c",
                 "plugin/plugin.c"
-            ].map { "Core/src/\($0)" },
+            ].map { "Core/src/\($0)" } + [
+                "md5/md5.c",
+                "minizip/ioapi.c",
+                "minizip/unzip.c",
+                "minizip/zip.c"
+            ].map { "Core/subprojects/\($0)" },
 //            publicHeadersPath: "./include/",
             cSettings: [
                 .headerSearchPath("./Core/src/"),
+                .headerSearchPath("./Core/subprojects/"),
+                .headerSearchPath("./Core/subprojects/md5/"),
+                .headerSearchPath("./Core/subprojects/xxhash/"),
+                .define("NOCRYPT"),
+                .define("NOUNCRYPT"),
             ] + sharedCSettings
         ),
         

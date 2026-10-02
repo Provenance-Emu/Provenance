@@ -41,6 +41,9 @@ __BEGIN_DECLS
 
 Uint32 SDL_GetTicks(void);
 
+/* No SDL subsystems exist here; always reports none initialised. */
+Uint32 SDL_WasInit(Uint32 flags);
+
 void SDL_Quit(void);
 
 void SDL_Delay(Uint32 ms);

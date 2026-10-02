@@ -361,7 +361,9 @@ static void *dlopen_myself()
 
     // Register Transfer Pak media loader so the core can request GB cart ROM/RAM paths.
     // Slots without a cart return NULL, which the core treats as "no cartridge inserted".
-    m64p_media_loader mediaLoader;
+    // Zero-fill: the core calls every non-NULL callback (64DD ROM/disk/region included),
+    // so any field left uninitialised would be jumped through.
+    m64p_media_loader mediaLoader = {0};
     mediaLoader.cb_data      = (__bridge void *)self;
     mediaLoader.get_gb_cart_rom = MupenGetGBCartROM;
     mediaLoader.get_gb_cart_ram = MupenGetGBCartRAM;
@@ -452,7 +454,7 @@ static void *dlopen_myself()
         NSString *rspPath = [frameworkBundle.privateFrameworksPath stringByAppendingPathComponent:frameworkPath];
 
         rsp_handle = dlopen([rspPath fileSystemRepresentation], RTLD_LAZY | RTLD_LOCAL);
-        ptr_PluginStartup rsp_start = osal_dynlib_getproc(rsp_handle, "PluginStartup");
+        ptr_PluginStartup rsp_start = (ptr_PluginStartup)osal_dynlib_getproc(rsp_handle, "PluginStartup");
         m64p_error err = rsp_start(core_handle, (__bridge void *)self, MupenDebugCallback);
         if (err != M64ERR_SUCCESS) {
             ELOG(@"Error code %i loading plugin of type %i, name: %@", err, pluginType, pluginType);
@@ -606,7 +608,6 @@ static void *dlopen_myself()
 
 - (void)startEmulation {
     if(!self.isRunning) {
-        romdatabase_init();
         [super startEmulation];
         [NSThread detachNewThreadSelector:@selector(runMupenEmuThread) toTarget:self withObject:nil];
     }

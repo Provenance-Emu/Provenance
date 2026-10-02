@@ -24,8 +24,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "osd/osd.h"
-#import "osd/screenshot.h"
+#import "main/eventloop.h"
 
 int event_set_core_defaults(void)
 {

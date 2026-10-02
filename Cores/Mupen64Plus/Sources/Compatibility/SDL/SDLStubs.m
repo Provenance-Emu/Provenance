@@ -84,6 +84,11 @@ Uint32 SDL_GetTicks(void)
     return MupenOEMonotonicTime();
 }
 
+Uint32 SDL_WasInit(Uint32 flags)
+{
+    return 0;
+}
+
 void SDL_Quit(void)
 {
 }
