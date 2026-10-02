@@ -15,7 +15,7 @@
 	<key>PVProjectURL</key>
 	<string>https://mgba.io/</string>
 	<key>PVProjectVersion</key>
-	<string>0.10.3</string>
+	<string>0.11-9146-c3c8e5e8</string>
 	<key>PVSupportedCheatTypes</key>
 	<array>
 		<string>Game Shark</string>

@@ -38,7 +38,6 @@
 
 #include <mgba-util/common.h>
 
-//#include <mgba/core/blip_buf.h>
 #include <mgba/core/core.h>
 #include <mgba/core/cheats.h>
 #include <mgba/core/serialize.h>
@@ -70,10 +69,6 @@ const int GBAMap[] = {
     GBA_KEY_START,
     GBA_KEY_SELECT
 };
-
-const char* const binaryName = "mGBA";
-const char* const projectName = "Provenance EMU";
-const char* const projectVersion = "3.0.0";
 
 @interface PVmGBAGameCoreBridge () <PVGBASystemResponderClient> {
     struct mCore* core;
@@ -197,7 +192,7 @@ static struct mLogger logger = { .log = _log };
     core->runFrame(core);
 
     struct mAudioBuffer *buffer = core->getAudioBuffer(core);
-    int samplesAvail = mAudioBufferAvailable(buffer);
+    size_t samplesAvail = mAudioBufferAvailable(buffer);
 
     if (samplesAvail > 0) {
         // Update running average using leaky integrator
@@ -212,10 +207,10 @@ static struct mLogger logger = { .log = _log };
             audioBuffer = realloc(audioBuffer, audioBufferSize);
         }
 
-        int produced = mAudioBufferRead(buffer, audioBuffer, samplesToRead);
+        size_t produced = mAudioBufferRead(buffer, audioBuffer, samplesToRead);
         if (produced > 0) {
             if (audioLowPassEnabled) {
-                _audioLowPassFilter(audioBuffer, produced);
+                _audioLowPassFilter(audioBuffer, (int)produced);
             }
             [[self ringBufferAtIndex:0] write:audioBuffer size:produced * sizeof(int16_t) * 2];
         }

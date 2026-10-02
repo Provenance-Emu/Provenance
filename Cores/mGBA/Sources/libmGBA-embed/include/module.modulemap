@@ -1,0 +1,21 @@
+// Provenance-owned module map for the mGBA core compiled from the
+// mgba submodule (Provenance-Emu/mgba, Provenance-master).
+module libmGBA {
+    header "../mgba/include/mgba/core/cheats.h"
+    header "../mgba/include/mgba/core/config.h"
+    header "../mgba/include/mgba/core/core.h"
+    header "../mgba/include/mgba/core/cpu.h"
+    header "../mgba/include/mgba/core/directories.h"
+    header "../mgba/include/mgba/core/input.h"
+    header "../mgba/include/mgba/core/interface.h"
+    header "../mgba/include/mgba/core/log.h"
+    header "../mgba/include/mgba/core/serialize.h"
+    header "../mgba/include/mgba/core/timing.h"
+    header "../mgba/include/mgba/core/version.h"
+    header "../mgba/include/mgba/gb/core.h"
+    header "../mgba/include/mgba/gb/interface.h"
+    header "../mgba/include/mgba/gba/core.h"
+    header "../mgba/include/mgba/gba/interface.h"
+
+    export *
+}

@@ -6,13 +6,12 @@
 //
 //  ## Architecture
 //
-//  mGBA ships `src/core/achievements.c` which wraps the rcheevos `rc_client`
-//  internally. When `USE_ACHIEVEMENTS=1` is defined (Package.swift), that
-//  file is compiled into libmGBA and drives achievement evaluation via the
-//  mCoreCallbacks mechanism. This Swift extension handles Provenance-side
-//  state (active flag, hardcore mode) and memory-region exposure.
-//  TODO: Wire mGBA's unlock/progress/challenge C callbacks (registered via
-//  `mCoreCallbacks`) to `achievementsDelegate` in the Objective-C bridge layer.
+//  mGBA (upstream master) has no built-in RetroAchievements support, and no rcheevos
+//  runtime evaluates achievements for this core yet. This Swift extension
+//  handles Provenance-side state (active flag, hardcore mode) and
+//  memory-region exposure.
+//  TODO: Conform to `RcheevosRegionProviding` (PVRcheevosBridge) so the shared
+//  rc_client session drives achievements, as the VBA-M core does.
 //
 //  Memory regions:
 //   - GBA : EWRAM (256 KiB), IWRAM (32 KiB), optional cart SRAM
@@ -34,10 +33,8 @@ extension PVmGBACore: CoreRetroAchievements {
 
     // MARK: - Delegate
 
-    // TODO: Wire mGBA/rcheevos achievement events (unlock, progress, challenge) to this
-    // delegate. The rcheevos runtime is already compiled into libmGBA via
-    // USE_ACHIEVEMENTS=1 (see Package.swift); the remaining work is registering a C
-    // callback in PVmGBABridge that dispatches rc_client events to this delegate.
+    // TODO: Nothing reports achievement events (unlock, progress, challenge) to
+    // this delegate yet; see the `RcheevosRegionProviding` TODO above.
     public var achievementsDelegate: (any RetroAchievementsOSDDelegate)? {
         get { _achievementsDelegate }
         set { _achievementsDelegate = newValue }
@@ -56,11 +53,9 @@ extension PVmGBACore: CoreRetroAchievements {
 
         // Mark achievements as active so the hardcore save-state guard in
         // mGBAGameCoreBridge.m fires correctly.
-        // NOTE: The rcheevos sources are already compiled into libmGBA via
-        // USE_ACHIEVEMENTS=1 (see Package.swift). What remains is registering
-        // an rc_client event handler in the bridge that dispatches unlock/progress
-        // callbacks to `achievementsDelegate`. Until that wiring exists, we set
-        // the active flag eagerly here so hardcore restrictions are enforced.
+        // NOTE: No rcheevos runtime evaluates achievements for this core yet.
+        // Until that wiring exists, we set the active flag eagerly here so
+        // hardcore restrictions are enforced.
         _bridge.achievementsActive = true
         _achievementsActive = true
 
@@ -78,12 +73,8 @@ extension PVmGBACore: CoreRetroAchievements {
 
     /// Per-frame hook called by the emulation loop.
     ///
-    /// mGBA evaluates achievement conditions internally via the `mCoreCallbacks`
-    /// mechanism registered during core initialisation; no explicit tick call is
-    /// required from this layer. This method is a no-op placeholder for future
-    /// standalone `rc_client` bridging if needed.
+    /// No-op: there is no achievement runtime to tick for this core yet.
     public func tickAchievements() {
-        // No-op: mGBA drives its own achievement tick via mCoreCallbacks.
     }
 
     // MARK: - Memory regions
