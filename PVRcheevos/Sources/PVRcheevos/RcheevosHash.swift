@@ -37,6 +37,15 @@ public enum RcheevosHash {
     public static func compute(filePath: String) -> String? {
         guard !filePath.isEmpty else { return nil }
 
+        // rcheevos picks the console from the extension, and `.gcm` (a raw
+        // GameCube disc image, same layout as `.iso`) isn't in its table, so it
+        // fell back to a whole-file MD5 that never matches. Hash it as GameCube.
+        // `.tgc` is not included: it has its own header before the disc image,
+        // which rcheevos' GameCube hasher can't skip.
+        if let consoleID = explicitConsoleID(forPathExtension: (filePath as NSString).pathExtension) {
+            return compute(filePath: filePath, consoleID: consoleID)
+        }
+
         var hash: String?
         filePath.withCString { cPath in
             var iterator = rc_hash_iterator_t()
@@ -59,5 +68,28 @@ public enum RcheevosHash {
             }
         }
         return hash
+    }
+
+    /// Extensions rcheevos' auto-detection doesn't map, hashed as a known console.
+    static func explicitConsoleID(forPathExtension pathExtension: String) -> UInt32? {
+        switch pathExtension.lowercased() {
+        case "gcm": return UInt32(RC_CONSOLE_GAMECUBE)
+        default: return nil
+        }
+    }
+
+    /// Hash `filePath` as `consoleID`, skipping rcheevos' extension auto-detection.
+    static func compute(filePath: String, consoleID: UInt32) -> String? {
+        var buffer = [CChar](repeating: 0, count: 33)
+        let success = filePath.withCString { cPath in
+            buffer.withUnsafeMutableBufferPointer { ptr -> Int32 in
+                guard let base = ptr.baseAddress else { return 0 }
+                return rc_hash_generate_from_file(base, consoleID, cPath)
+            }
+        }
+        guard success != 0 else { return nil }
+        let nullIdx = buffer.firstIndex(of: 0) ?? buffer.endIndex
+        let result = String(bytes: buffer[..<nullIdx].map { UInt8(bitPattern: $0) }, encoding: .utf8)
+        return result?.isEmpty == false ? result : nil
     }
 }
