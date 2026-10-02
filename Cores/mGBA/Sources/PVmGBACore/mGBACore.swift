@@ -35,19 +35,8 @@ public class PVmGBACore: PVEmulatorCore {
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
+        installAchievementHooks()
     }
-
-    // MARK: - RetroAchievements backing storage
-
-    /// Weak reference to the OSD delegate (stored here because Swift extensions
-    /// cannot add stored properties).
-    weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
-
-    /// Hardcore mode flag.
-    var _hardcoreMode: Bool = false
-
-    /// Whether the achievement runtime is currently active for the loaded game.
-    var _achievementsActive: Bool = false
 }
 
 extension PVmGBACore: PVGBASystemResponderClient {

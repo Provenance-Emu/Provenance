@@ -23,7 +23,6 @@
  */
 
 #import "mGBAGameCoreBridge.h"
-#import "mGBAGameCoreBridge+Achievements.h"
 
 @import libmGBA;
 @import PVCoreBridge;
@@ -44,13 +43,28 @@
 #include <mgba/gba/core.h>
 #include <mgba/internal/gba/cheats.h>
 #include <mgba/internal/gba/input.h>
+#include <mgba/internal/gba/memory.h>
 #include <mgba-util/audio-buffer.h>
 #include <mgba-util/circle-buffer.h>
 #include <mgba-util/memory.h>
 #include <mgba-util/vfs.h>
 #include <mgba-util/audio-resampler.h>
 
-#define SAMPLES_PER_FRAME_MOVING_AVG_ALPHA (1.0f / 180.0f)
+/// Fixed rate handed to Provenance's audio graph. The GBA's own output rate
+/// follows the SOUNDBIAS resolution bits (32768/65536/131072/262144 Hz), so
+/// mGBA's buffer is resampled to this rate every frame, as upstream's SDL and
+/// Qt frontends do. 32768 Hz is the rate at the default resolution, where the
+/// resampler's step is exactly 1.
+static const double kPVmGBAOutputSampleRate = 32768.0;
+
+/// Stereo frames the resampler output buffer holds. One frame at the output
+/// rate is ~549 samples; this leaves room for a frame that runs long.
+static const size_t kPVmGBAResampledCapacity = 0x1000;
+
+/// rcheevos maps GBA Save RAM to 64 KB (flat 0x048000-0x057FFF in
+/// rcheevos/src/rcheevos/consoleinfo.c), so the mirror is that size.
+static const size_t kPVmGBASaveRAMMirrorSize = 0x10000;
+
 static void _audioLowPassFilter(int16_t* buffer, int count);
 
 static int32_t audioLowPassRange = (60 * 0x10000) / 100;
@@ -75,13 +89,12 @@ const int GBAMap[] = {
     void* outputBuffer;
     NSMutableDictionary *cheatSets;
     struct mAudioResampler resampler;
-    struct mAudioBuffer intermediateAudio;
-    size_t audioBufferSize;
+    struct mAudioBuffer resampledAudio;
     int16_t *audioBuffer;
     unsigned width, height;
-    struct mAVStream stream;
-    float audioSamplesPerFrameAvg;
     BOOL audioLowPassEnabled;
+    BOOL romLoaded;
+    uint8_t *saveRAMMirror;
 }
 @end
 
@@ -96,11 +109,6 @@ static struct mLogger logger = { .log = _log };
 
 @implementation PVmGBAGameCoreBridge
 
-// Expose the mCore pointer to achievement categories without making it public API.
-- (struct mCore *)_mCore {
-    return core;
-}
-
 - (instancetype)init {
     if ((self = [super init])) {
 
@@ -111,15 +119,14 @@ static struct mLogger logger = { .log = _log };
 
 - (void)dealloc {
     mCoreConfigDeinit(&core->config);
-    if (audioBuffer) {
-        free(audioBuffer);
-        audioBuffer = NULL;
-    }
-    audioBufferSize = 0;
+    free(audioBuffer);
+    audioBuffer = NULL;
+    free(saveRAMMirror);
+    saveRAMMirror = NULL;
     core->deinit(core);
     free(outputBuffer);
     mAudioResamplerDeinit(&resampler);
-    mAudioBufferDeinit(&intermediateAudio);
+    mAudioBufferDeinit(&resampledAudio);
 }
 
 #pragma mark - Execution
@@ -146,20 +153,14 @@ static struct mLogger logger = { .log = _log };
     outputBuffer = malloc(width * height * BYTES_PER_PIXEL);
     core->setVideoBuffer(core, outputBuffer, width);
 
-    // GBA-specific audio setup
-    size_t audioSamplesPerFrame = (size_t)((float)core->audioSampleRate(core) * (float)core->frameCycles(core) /
-                                          (float)core->frequency(core));
-    audioBufferSize = ceil(audioSamplesPerFrame) * 2;
-    audioBuffer = malloc(audioBufferSize * sizeof(int16_t));
-    audioSamplesPerFrameAvg = (float)audioSamplesPerFrame;
-
-    size_t internalAudioBufferSize = audioSamplesPerFrame * 2;
-    if (internalAudioBufferSize > 0x4000) {
-        internalAudioBufferSize = 0x4000;
-    }
-    core->setAudioBufferSize(core, internalAudioBufferSize);
+    // Audio: resample mGBA's variable-rate buffer to a fixed output rate.
+    mAudioBufferInit(&resampledAudio, kPVmGBAResampledCapacity, 2);
+    mAudioResamplerInit(&resampler, mINTERPOLATOR_SINC);
+    mAudioResamplerSetDestination(&resampler, &resampledAudio, kPVmGBAOutputSampleRate);
+    audioBuffer = malloc(kPVmGBAResampledCapacity * 2 * sizeof(int16_t));
 
     audioLowPassEnabled = YES;
+    saveRAMMirror = calloc(1, kPVmGBASaveRAMMirrorSize);
     cheatSets = [[NSMutableDictionary alloc] init];
 }
 
@@ -185,36 +186,55 @@ static struct mLogger logger = { .log = _log };
     mCoreAutoloadSave(core);
 
     core->reset(core);
+    romLoaded = YES;
     return YES;
 }
 
 - (void)executeFrame {
     core->runFrame(core);
+    [self drainAudio];
+    [self refreshSaveRAMMirror];
 
-    struct mAudioBuffer *buffer = core->getAudioBuffer(core);
-    size_t samplesAvail = mAudioBufferAvailable(buffer);
-
-    if (samplesAvail > 0) {
-        // Update running average using leaky integrator
-        audioSamplesPerFrameAvg = (SAMPLES_PER_FRAME_MOVING_AVG_ALPHA * (float)samplesAvail) +
-                ((1.0f - SAMPLES_PER_FRAME_MOVING_AVG_ALPHA) * audioSamplesPerFrameAvg);
-
-        size_t samplesToRead = (size_t)(audioSamplesPerFrameAvg);
-
-        // Ensure buffer size is correct (stereo Int16 samples)
-        if (audioBufferSize < (samplesToRead * sizeof(int16_t) * 2)) {
-            audioBufferSize = (samplesToRead * sizeof(int16_t) * 2);
-            audioBuffer = realloc(audioBuffer, audioBufferSize);
-        }
-
-        size_t produced = mAudioBufferRead(buffer, audioBuffer, samplesToRead);
-        if (produced > 0) {
-            if (audioLowPassEnabled) {
-                _audioLowPassFilter(audioBuffer, (int)produced);
-            }
-            [[self ringBufferAtIndex:0] write:audioBuffer size:produced * sizeof(int16_t) * 2];
-        }
+    void (^handler)(void) = self.frameCompletedHandler;
+    if (handler) {
+        handler();
     }
+}
+
+/// Resample everything mGBA produced this frame to the fixed output rate.
+/// The source rate is read every frame because a game can change the
+/// SOUNDBIAS resolution (and so mGBA's sample rate) at any time.
+- (void)drainAudio {
+    struct mAudioBuffer *buffer = core->getAudioBuffer(core);
+    mAudioResamplerSetSource(&resampler, buffer, core->audioSampleRate(core), true);
+    mAudioResamplerProcess(&resampler);
+
+    size_t produced = mAudioBufferRead(&resampledAudio, audioBuffer, kPVmGBAResampledCapacity);
+    if (produced > 0) {
+        if (audioLowPassEnabled) {
+            _audioLowPassFilter(audioBuffer, (int)produced);
+        }
+        [[self ringBufferAtIndex:0] write:audioBuffer size:produced * sizeof(int16_t) * 2];
+    }
+}
+
+/// Copy mGBA's current save image into the stable mirror rcheevos reads.
+- (void)refreshSaveRAMMirror {
+    if (!romLoaded || !saveRAMMirror) {
+        return;
+    }
+    size_t size = 0;
+    const void *save = core->getMemoryBlock(core, GBA_REGION_SRAM_MIRROR, &size);
+    size_t copied = save ? MIN(size, kPVmGBASaveRAMMirrorSize) : 0;
+    if (copied > 0) {
+        memcpy(saveRAMMirror, save, copied);
+    }
+    memset(saveRAMMirror + copied, 0, kPVmGBASaveRAMMirrorSize - copied);
+}
+
+- (BOOL)isSaveStateLoadBlocked {
+    BOOL (^handler)(void) = self.saveStateLoadBlockedHandler;
+    return handler ? handler() : NO;
 }
 
 - (void)resetEmulation {
@@ -278,7 +298,7 @@ static struct mLogger logger = { .log = _log };
 }
 
 - (double)audioSampleRate {
-    return 32768.0; // GBA native sample rate
+    return kPVmGBAOutputSampleRate;
 }
 
 - (NSUInteger)audioBitDepth {
@@ -308,7 +328,7 @@ static struct mLogger logger = { .log = _log };
 - (BOOL)deserializeState:(NSData *)state withError:(NSError **)outError
 {
     // Hardcore mode: save-state loads are disallowed while achievements are active.
-    if (self.hardcoreMode && self.achievementsActive) {
+    if ([self isSaveStateLoadBlocked]) {
         if (outError) {
             *outError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                            code:PVEmulatorCoreErrorCodeCouldNotLoadState
@@ -348,7 +368,7 @@ static struct mLogger logger = { .log = _log };
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     // Hardcore mode: save-state loads are disallowed while achievements are active.
-    if (self.hardcoreMode && self.achievementsActive) {
+    if ([self isSaveStateLoadBlocked]) {
         NSError *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                             code:PVEmulatorCoreErrorCodeCouldNotLoadState
                                         userInfo:@{
@@ -373,6 +393,35 @@ static struct mLogger logger = { .log = _log };
         block(nil);
     }
     vf->close(vf);
+}
+
+#pragma mark - RetroAchievements memory
+
+- (void *)iwramPointer:(NSUInteger *)sizeOut {
+    return [self memoryBlock:GBA_REGION_IWRAM size:sizeOut];
+}
+
+- (void *)ewramPointer:(NSUInteger *)sizeOut {
+    return [self memoryBlock:GBA_REGION_EWRAM size:sizeOut];
+}
+
+- (void *)saveRAMMirrorPointer:(NSUInteger *)sizeOut {
+    BOOL available = romLoaded && saveRAMMirror;
+    if (sizeOut) {
+        *sizeOut = available ? kPVmGBASaveRAMMirrorSize : 0;
+    }
+    return available ? saveRAMMirror : NULL;
+}
+
+/// IWRAM and EWRAM are mapped once when the core is created and freed only in
+/// `core->deinit`, so the pointers survive reset and state loads.
+- (void *)memoryBlock:(size_t)region size:(NSUInteger *)sizeOut {
+    size_t size = 0;
+    void *block = romLoaded ? core->getMemoryBlock(core, region, &size) : NULL;
+    if (sizeOut) {
+        *sizeOut = block ? (NSUInteger)size : 0;
+    }
+    return block;
 }
 
 #pragma mark - Input
