@@ -75,6 +75,11 @@ public:
 	const unsigned char * wramdata(unsigned area) const { return mem_.wramdata(area); }
 	const unsigned char * vramdata() const { return mem_.vramdata(); }
 	const unsigned char * vrambankptr() const { return mem_.vrambankptr(); }
+	const unsigned char * romdata() const { return mem_.romdata(); }
+	std::size_t romsize() const { return mem_.romsize(); }
+	const unsigned char * cartramdata() const { return mem_.cartramdata(); }
+	std::size_t cartramsize() const { return mem_.cartramsize(); }
+	const unsigned char * ioamhram() const { return mem_.ioamhram(); }
 
 private:
 	Memory mem_;

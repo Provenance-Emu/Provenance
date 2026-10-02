@@ -59,6 +59,28 @@
 @property (nonatomic, readonly, nullable) void *vramBasePtr;
 /// Size of video RAM exposed via RETRO_MEMORY_VIDEO_RAM (in bytes).
 @property (nonatomic, readonly) NSUInteger vramSize;
+/// YES when the loaded game runs in Game Boy Color mode (8 WRAM banks).
+@property (nonatomic, readonly) BOOL isGameBoyColorMode;
+/// ROM bank 0 storage (bank 1 follows at +0x4000). Nil before load.
+@property (nonatomic, readonly, nullable) void *romBasePtr;
+/// Size of the loaded ROM file in bytes (0 before load).
+@property (nonatomic, readonly) NSUInteger romSize;
+/// Cartridge RAM storage, all banks contiguous (0x2000 per bank). Nil before load.
+@property (nonatomic, readonly, nullable) void *cartRamBasePtr;
+/// Cartridge RAM size in bytes (0 before load).
+@property (nonatomic, readonly) NSUInteger cartRamSize;
+/// Object attribute memory, bus 0xFE00-0xFE9F (0xA0 bytes). Nil before load.
+@property (nonatomic, readonly, nullable) void *oamPtr;
+/// High RAM, bus 0xFF80-0xFFFE (0x7F bytes). Nil before load.
+@property (nonatomic, readonly, nullable) void *hramPtr;
+/// Interrupt-enable register, bus 0xFFFF (1 byte). Nil before load.
+@property (nonatomic, readonly, nullable) void *interruptEnablePtr;
+/// 0x80-byte mirror of the I/O registers at bus 0xFF00-0xFF7F, refreshed by
+/// -refreshAchievementIOMirror. The pointer is stable for the bridge's lifetime.
+@property (nonatomic, readonly) void *ioMirrorPtr;
+/// Copies the live I/O registers into the -ioMirrorPtr buffer. Called on the
+/// emulation thread after every frame, before -frameCompletedHandler.
+- (void)refreshAchievementIOMirror;
 
 /// Called on the emulation thread at the end of every emulated frame. The
 /// emulation loop runs inside this bridge, so the Swift core's

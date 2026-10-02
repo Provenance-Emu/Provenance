@@ -64,6 +64,17 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 @property (nonatomic, readonly, nullable) void *vramBankPtr;
 /// Total WRAM size in bytes: 8192 for DMG, 32768 for GBC.
 @property (nonatomic, readonly) NSUInteger wramSize;
+/// Start of ROM storage (all banks, contiguous; 0x4000 = bank 1). Stable while a ROM is loaded.
+@property (nonatomic, readonly, nullable) void *romBasePtr;
+/// ROM storage size in bytes (at least 0x8000 when loaded, 0 otherwise).
+@property (nonatomic, readonly) NSUInteger romSize;
+/// Start of cartridge RAM storage (all banks, contiguous; 0x2000 per bank). Nil when the
+/// cartridge has no RAM. Stable while a ROM is loaded.
+@property (nonatomic, readonly, nullable) void *cartRamBasePtr;
+/// Cartridge RAM size in bytes (0 when the cartridge has no RAM).
+@property (nonatomic, readonly) NSUInteger cartRamSize;
+/// 0x200-byte OAM/IO/HRAM/IE block for bus 0xFE00-0xFFFF (0x100 = I/O, 0x180 = HRAM).
+@property (nonatomic, readonly, nullable) void *ioamhramPtr;
 
 /// Whether rc_client has a game successfully loaded for achievements.
 @property (nonatomic, readonly) BOOL achievementsActive;

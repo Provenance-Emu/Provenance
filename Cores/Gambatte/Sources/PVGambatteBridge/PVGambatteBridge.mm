@@ -257,6 +257,26 @@ static __weak PVGBEmulatorCoreBridge *_current;
     return (NSUInteger)gb.wramSize();
 }
 
+- (void *)romBasePtr {
+    return (void *)gb.romData();
+}
+
+- (NSUInteger)romSize {
+    return (NSUInteger)gb.romSize();
+}
+
+- (void *)cartRamBasePtr {
+    return (void *)gb.cartRamData();
+}
+
+- (NSUInteger)cartRamSize {
+    return (NSUInteger)gb.cartRamSize();
+}
+
+- (void *)ioamhramPtr {
+    return (void *)gb.ioamhramData();
+}
+
 - (BOOL)achievementsActive {
     return _achievementsActive.load();
 }

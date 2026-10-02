@@ -14,6 +14,7 @@ updating the upstream source.
 | File | Purpose | Applied via |
 |------|---------|-------------|
 | `patches/0001-retro-achievements-memory-accessors.patch` | Expose WRAM/VRAM pointers for rc_client | `git apply` |
+| `patches/0002-retro-achievements-full-memory-map.patch` | Expose ROM, cart RAM and OAM/IO/HRAM storage for the full rcheevos GB/GBC map | `git apply` |
 
 ---
 
@@ -69,6 +70,21 @@ git apply patches/0001-retro-achievements-memory-accessors.patch
 Or apply manually by copying the relevant `+` lines shown in the patch file.
 
 **Provenance issue:** #3379
+
+---
+
+## Patch 0002 — Full RetroAchievements memory map
+
+**Upstream files modified:** `include/gambatte.h`, `src/gambatte.cpp`, `src/memory.h`,
+`src/cpu.h`, `src/mem/cartridge.h`
+
+**Why:** rcheevos' GB/GBC map (`consoleinfo.c`) also covers ROM (0x0000–0x7FFF),
+cartridge RAM (bank 0 at 0xA000, banks 1–15 at flat 0x16000), and OAM/I/O/HRAM/IE
+(0xFE00–0xFFFF). rc_client disables any achievement that touches an unreadable
+address, and HRAM / I/O live in the private `Memory::ioamhram_`, so they cannot be
+reached without a patch. Adds `romData()`, `romSize()`, `cartRamData()`,
+`cartRamSize()` and `ioamhramData()` to `gambatte::GB` — the same storage
+gambatte-libretro hands RetroArch in `retro_set_memory_maps`.
 
 ---
 

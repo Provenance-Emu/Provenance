@@ -53,6 +53,11 @@ public:
 	unsigned char const * rsrambankptr() const { return memptrs_.rsrambankptr(); }
 	unsigned char * wsrambankptr() const { return memptrs_.wsrambankptr(); }
 	unsigned char * vrambankptr() const { return memptrs_.vrambankptr(); }
+	// RetroAchievements: whole-ROM and whole-cart-RAM storage (all banks, contiguous).
+	unsigned char const * romdata() const { return memptrs_.romdata(); }
+	unsigned char const * romdataend() const { return memptrs_.romdataend(); }
+	unsigned char const * rambankdata() const { return memptrs_.rambankdata(); }
+	unsigned char const * rambankdataend() const { return memptrs_.rambankdataend(); }
 	OamDmaSrc oamDmaSrc() const { return memptrs_.oamDmaSrc(); }
 	void setVrambank(unsigned bank) { memptrs_.setVrambank(bank); }
 	void setWrambank(unsigned bank) { memptrs_.setWrambank(bank); }

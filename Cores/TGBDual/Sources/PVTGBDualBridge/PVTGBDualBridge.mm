@@ -26,6 +26,16 @@
 
 static __weak PVTGBDualBridge *_current;
 
+// Defined in tgbdual-emulator/libretro/libretro.cpp; NULL until retro_load_game.
+extern gb *g_gb[2];
+
+// GB I/O register page (bus 0xFF00-0xFF7F). tgbdual keeps these registers in
+// structs rather than a flat buffer, so RetroAchievements reads a mirror.
+static const size_t kTGBDualIOPageSize = 0x80;
+static const word kTGBDualIOPageStart = 0xFF00;
+// Highest ROM header type value tgbdual treats as DMG/SGB (gb_type: 1 GB, 2 SGB, 3 GBC, 4 GBA).
+static const int kTGBDualMaxMonochromeType = 2;
+
 
 void log(retro_log_level level, const char *fmt, ...) {
     va_list args;
@@ -45,6 +55,8 @@ void log(retro_log_level level, const char *fmt, ...) {
 @interface PVTGBDualBridge ()
 {
     bool emulationHasRun;
+    NSUInteger _loadedROMSize;
+    uint8_t _ioMirror[kTGBDualIOPageSize];
 }
 
 @end
@@ -95,6 +107,8 @@ void log(retro_log_level level, const char *fmt, ...) {
     }
     size = [dataObj length];
     data = (uint8_t*)[dataObj bytes];
+    _loadedROMSize = size;
+    memset(_ioMirror, 0, sizeof(_ioMirror));
     const char *meta = NULL;
     
     // Read force monochromatic option from persistent store before initialising the emulator.
@@ -380,20 +394,83 @@ static bool environment_callback(unsigned cmd, void *data) {
 
 #pragma mark - RetroAchievements
 
+// retro_get_memory_*_tgbdual dereference g_gb[0] unconditionally, so every
+// accessor below checks it first and reports nil / 0 before a game is loaded.
+
 - (void *)wramBasePtr {
+    if (!g_gb[0]) { return NULL; }
     return retro_get_memory_data_tgbdual(RETRO_MEMORY_SYSTEM_RAM);
 }
 
 - (NSUInteger)wramSize {
+    if (!g_gb[0]) { return 0; }
     return retro_get_memory_size_tgbdual(RETRO_MEMORY_SYSTEM_RAM);
 }
 
 - (void *)vramBasePtr {
+    if (!g_gb[0]) { return NULL; }
     return retro_get_memory_data_tgbdual(RETRO_MEMORY_VIDEO_RAM);
 }
 
 - (NSUInteger)vramSize {
+    if (!g_gb[0]) { return 0; }
     return retro_get_memory_size_tgbdual(RETRO_MEMORY_VIDEO_RAM);
+}
+
+- (BOOL)isGameBoyColorMode {
+    if (!g_gb[0]) { return NO; }
+    return g_gb[0]->get_rom()->get_info()->gb_type > kTGBDualMaxMonochromeType;
+}
+
+- (void *)romBasePtr {
+    if (!g_gb[0]) { return NULL; }
+    return g_gb[0]->get_rom()->get_rom();
+}
+
+- (NSUInteger)romSize {
+    if (!g_gb[0]) { return 0; }
+    return _loadedROMSize;
+}
+
+- (void *)cartRamBasePtr {
+    if (!g_gb[0]) { return NULL; }
+    return g_gb[0]->get_rom()->get_sram();
+}
+
+- (NSUInteger)cartRamSize {
+    if (!g_gb[0]) { return 0; }
+    return (NSUInteger)g_gb[0]->get_rom()->get_sram_size();
+}
+
+- (void *)oamPtr {
+    if (!g_gb[0]) { return NULL; }
+    return g_gb[0]->get_cpu()->get_oam();
+}
+
+- (void *)hramPtr {
+    if (!g_gb[0]) { return NULL; }
+    return g_gb[0]->get_cpu()->get_stack();
+}
+
+- (void *)interruptEnablePtr {
+    if (!g_gb[0]) { return NULL; }
+    return &g_gb[0]->get_regs()->IE;
+}
+
+- (void *)ioMirrorPtr {
+    return _ioMirror;
+}
+
+- (void)refreshAchievementIOMirror {
+    gb *core = g_gb[0];
+    if (!core) { return; }
+    cpu *gbCPU = core->get_cpu();
+    // 0xFF00 (P1): raw register — reading it through the bus polls the pad.
+    _ioMirror[0] = core->get_regs()->P1;
+    // read_direct (not read) so active cheats don't leak into achievement checks.
+    for (size_t offset = 1; offset < kTGBDualIOPageSize; ++offset) {
+        _ioMirror[offset] = gbCPU->read_direct((word)(kTGBDualIOPageStart + offset));
+    }
 }
 
 @end

@@ -124,6 +124,14 @@ public:
 	// for the currently active VRAM bank (updated when CGB register FF4F is written).
 	// On DMG this always points to bank 0. Use this instead of vramdata() for reads.
 	const unsigned char * vrambankptr() const { return cart_.vrambankptr(); }
+	// ROM storage start (index 0 = bank 0, 0x4000 = bank 1, ...); stable for the loaded ROM.
+	const unsigned char * romdata() const { return cart_.romdata(); }
+	std::size_t romsize() const { return cart_.romdataend() - cart_.romdata(); }
+	// Cartridge RAM storage start (index 0x2000 * n = bank n); stable for the loaded ROM.
+	const unsigned char * cartramdata() const { return cart_.rambankdata(); }
+	std::size_t cartramsize() const { return cart_.rambankdataend() - cart_.rambankdata(); }
+	// OAM/IO/HRAM/IE block: index 0x000 = bus 0xFE00, 0x100 = 0xFF00, 0x180 = 0xFF80, 0x1FF = 0xFFFF.
+	const unsigned char * ioamhram() const { return ioamhram_; }
 
 private:
 	Cartridge cart_;

@@ -217,6 +217,35 @@ public:
 	  */
 	std::size_t wramSize() const;
 
+	/**
+	  * Returns a pointer to the start of ROM storage (all banks, contiguous):
+	  * index 0 = bank 0 (bus 0x0000), index 0x4000 = bank 1, and so on.
+	  * Stable for the lifetime of the loaded ROM. Returns nullptr if no ROM is loaded.
+	  */
+	const unsigned char * romData() const;
+
+	/** Size of ROM storage in bytes (at least 0x8000). Returns 0 if no ROM is loaded. */
+	std::size_t romSize() const;
+
+	/**
+	  * Returns a pointer to the start of cartridge RAM storage (all banks, contiguous):
+	  * index 0x2000 * n = bank n. Stable for the lifetime of the loaded ROM.
+	  * Returns nullptr if no ROM is loaded or the cartridge has no RAM.
+	  */
+	const unsigned char * cartRamData() const;
+
+	/** Size of cartridge RAM storage in bytes. 0 if no ROM is loaded or no cart RAM. */
+	std::size_t cartRamSize() const;
+
+	/**
+	  * Returns a pointer to the 0x200-byte OAM/IO/HRAM block covering bus 0xFE00-0xFFFF:
+	  * index 0x000 = OAM (0xFE00), 0x100 = I/O (0xFF00), 0x180 = HRAM (0xFF80),
+	  * 0x1FF = IE (0xFFFF). I/O bytes are the raw register backing store (some
+	  * registers are computed lazily on bus reads). Stable for the GB object's lifetime.
+	  * Returns nullptr if no ROM is loaded.
+	  */
+	const unsigned char * ioamhramData() const;
+
 private:
 	struct Priv;
 	Priv *const p_;

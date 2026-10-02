@@ -238,4 +238,34 @@ std::size_t GB::wramSize() const {
 	return p_->cpu.isCgb() ? 0x8000u : 0x2000u;
 }
 
+const unsigned char * GB::romData() const {
+	if (!p_->cpu.loaded())
+		return nullptr;
+	return p_->cpu.romdata();
+}
+
+std::size_t GB::romSize() const {
+	if (!p_->cpu.loaded())
+		return 0;
+	return p_->cpu.romsize();
+}
+
+const unsigned char * GB::cartRamData() const {
+	if (!p_->cpu.loaded() || p_->cpu.cartramsize() == 0)
+		return nullptr;
+	return p_->cpu.cartramdata();
+}
+
+std::size_t GB::cartRamSize() const {
+	if (!p_->cpu.loaded())
+		return 0;
+	return p_->cpu.cartramsize();
+}
+
+const unsigned char * GB::ioamhramData() const {
+	if (!p_->cpu.loaded())
+		return nullptr;
+	return p_->cpu.ioamhram();
+}
+
 }

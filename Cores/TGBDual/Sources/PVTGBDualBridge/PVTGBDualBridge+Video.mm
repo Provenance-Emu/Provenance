@@ -32,6 +32,7 @@
 
     void (^frameCompleted)(void) = self.frameCompletedHandler;
     if (frameCompleted) {
+        [self refreshAchievementIOMirror];
         frameCompleted();
     }
 }
