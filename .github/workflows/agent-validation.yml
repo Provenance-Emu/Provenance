@@ -247,11 +247,21 @@ jobs:
   # Only PVUIBaseTests and PVSwiftUITests run: the snapshot suite needs recorded
   # baselines, and the platform suites are placeholders.
   pvui-test:
-    name: PVUI Tests (iOS Simulator)
+    name: PVUI Tests (${{ matrix.platform }} Simulator)
     needs: spm-changed
     if: needs.spm-changed.outputs.pvui == 'true'
     runs-on: macos-26
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: iOS
+            device-prefix: iPhone
+          # tvOS compiles different code (#if os(tvOS), PVUI_TV) and runs fewer
+          # tests — the iOS-only ones are compiled out.
+          - platform: tvOS
+            device-prefix: Apple TV
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -289,19 +299,24 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/Library/Developer/Xcode/DerivedData
-          key: ${{ runner.os }}-pvui-deriveddata-${{ hashFiles('**/Package.swift', '**/Package.resolved') }}
+          key: ${{ runner.os }}-pvui-deriveddata-${{ matrix.platform }}-${{ hashFiles('**/Package.swift', '**/Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-pvui-deriveddata-
+            ${{ runner.os }}-pvui-deriveddata-${{ matrix.platform }}-
 
       - name: Test PVUI
         working-directory: PVUI
         run: |
           set -eo pipefail
-          # Simulator names change with each Xcode; take the first available iPhone.
+          # Simulator names change with each Xcode; take the first available device.
+          # Match on the runtime as well as the name, so each leg is guaranteed a
+          # device of its own platform.
           udid=$(xcrun simctl list devices available -j \
-            | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+            | jq -r --arg prefix "${{ matrix.device-prefix }}" --arg os "${{ matrix.platform }}" \
+              '[.devices | to_entries[] | select(.key | contains("SimRuntime." + $os + "-")) | .value[]
+                | select(.name | startswith($prefix))][0].udid')
           if [ -z "$udid" ] || [ "$udid" = "null" ]; then
-            echo "::error::No available iPhone simulator"
+            echo "::error::No available ${{ matrix.platform }} simulator"
+            xcrun simctl list runtimes
             exit 1
           fi
           # PVUI-UnitTests is committed under PVUI/.swiftpm (see the comment in
@@ -327,7 +342,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: pvui-test-log
+          name: pvui-test-log-${{ matrix.platform }}
           path: /tmp/pvui-test.log
           retention-days: 3
 
