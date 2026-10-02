@@ -1,1 +1,1 @@
-../platform/libretro/libretro.h
+../picodrive/platform/libretro/libretro-common/include/libretro.h

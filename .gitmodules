@@ -196,3 +196,7 @@
 [submodule "Cores/Mednafen/Sources/mednafen/mednafen-src"]
 	path = Cores/Mednafen/Sources/mednafen/mednafen-src
 	url = https://github.com/Provenance-Emu/mednafen-git.git
+[submodule "Cores/PicoDrive/Sources/libpicodrive/picodrive"]
+	path = Cores/PicoDrive/Sources/libpicodrive/picodrive
+	url = https://github.com/Provenance-Emu/picodrive.git
+	branch = Provenance-master

@@ -1,6 +1,0 @@
-framework module PVPicoDrive {
-  umbrella header "PVPicoDrive.h"
-  export *
-
-  module * { export * }
-}

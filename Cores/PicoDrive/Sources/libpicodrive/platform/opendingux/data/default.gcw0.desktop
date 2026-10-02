@@ -1,9 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Picodrive
-Comment=A mega drive/genesis emulator
-Exec=picodrive %f
-Icon=megadrive
-Terminal=false
-Categories=emulators;
-MimeType=.md;.smd;.gen;.bin;.sms;.gg;.sg;.cue;.chd;.cso;.iso;.32x;.pco;.zip

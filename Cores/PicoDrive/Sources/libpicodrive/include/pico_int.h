@@ -1,1 +1,1 @@
-../pico/pico_int.h
+../picodrive/pico/pico_int.h

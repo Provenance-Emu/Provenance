@@ -15,7 +15,7 @@
 	<key>PVProjectURL</key>
 	<string>https://github.com/notaz/picodrive</string>
 	<key>PVProjectVersion</key>
-	<string>2.03</string>
+	<string>2.04</string>
 	<key>PVSupportedCheatTypes</key>
 	<array>
 		<string>Game Genie</string>

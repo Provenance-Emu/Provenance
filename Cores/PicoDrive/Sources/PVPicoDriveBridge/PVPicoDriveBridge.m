@@ -393,7 +393,6 @@ static void writeSaveFile(const char* path, int type)
         if ( file != NULL )
         {
             NSLog(@"Saving state %s. Size: %d bytes.", path, (int)size);
-            retro_serialize(data, size);
             if ( fwrite(data, sizeof(uint8_t), size, file) != size )
                 NSLog(@"Did not save state properly.");
             fclose(file);
@@ -569,7 +568,6 @@ static void writeSaveFile(const char* path, int type)
 
     if (ramData && (size > 0))
     {
-        retro_serialize(ramData, size);
         NSData *data = [NSData dataWithBytes:ramData length:size];
         BOOL success = [data writeToFile:path atomically:YES];
         if (!success)
@@ -917,6 +915,25 @@ static void writeSaveFile(const char* path, int type)
 
 #pragma mark - Save States
 
+// retro_unserialize applies chunks as it reads them, so a state that fails
+// part-way (truncated, or from an incompatible PicoDrive version) would leave
+// the running game half-overwritten. Snapshot first and roll back on failure.
+static BOOL unserializeOrRollBack(const void *bytes, size_t length)
+{
+    size_t backupSize = retro_serialize_size();
+    void *backup = backupSize > 0 ? malloc(backupSize) : NULL;
+    BOOL haveBackup = backup != NULL && retro_serialize(backup, backupSize);
+
+    BOOL loaded = retro_unserialize(bytes, length);
+    if (!loaded && haveBackup) {
+        ELOG(@"PicoDrive rejected the save state; restoring the previous emulation state.");
+        retro_unserialize(backup, backupSize);
+    }
+
+    free(backup);
+    return loaded;
+}
+
 - (NSData *)serializeStateWithError:(NSError *__autoreleasing *)outError {
     size_t length = retro_serialize_size();
     void *bytes = malloc(length);
@@ -935,19 +952,22 @@ static void writeSaveFile(const char* path, int type)
 }
 
 - (BOOL)deserializeState:(NSData *)state withError:(NSError *__autoreleasing *)outError {
-    size_t serial_size = retro_serialize_size();
-    if(serial_size != [state length]) {
+    // PicoDrive states are chunked and self-describing, so their size legitimately
+    // differs from retro_serialize_size(): states from older PicoDrive versions lack
+    // newer chunks, and SMS states only carry the FM chunk once FM was used. The core
+    // checks the header and every chunk length itself, so only reject empty data here.
+    if([state length] == 0) {
         if(outError) {
             *outError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain code:PVEmulatorCoreErrorCodeStateHasWrongSize userInfo:@{
                 NSLocalizedDescriptionKey : @"Save state has wrong file size.",
-                NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The save state does not have the right size, %ld expected, got: %ld.", serial_size, [state length]]
+                NSLocalizedRecoverySuggestionErrorKey : @"The save state is empty."
             }];
         }
 
         return NO;
     }
 
-    if(retro_unserialize([state bytes], [state length]))
+    if(unserializeOrRollBack([state bytes], [state length]))
         return YES;
 
     if(outError) {
@@ -1006,18 +1026,17 @@ static void writeSaveFile(const char* path, int type)
         return NO;
     }
 
-    // Use the core's CURRENT serialize size, not a hardcoded literal — the save
-    // path writes retro_serialize_size() bytes, and that size can differ (e.g.
-    // Genesis vs 32X mode, or a dylib update), so a fixed 678514 would wrongly
-    // reject valid states or accept mismatched ones.
-    size_t serial_size = retro_serialize_size();
-    if(serial_size != [data length]) {
+    // Don't require [data length] == retro_serialize_size(): PicoDrive states are
+    // chunked, so states from older PicoDrive versions (fewer chunks) and SMS
+    // states saved before/after FM was first used differ in size yet load fine.
+    // The core validates the header and each chunk length; pass the real length.
+    if([data length] == 0) {
         if (error) {
             NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                  code:PVEmulatorCoreErrorCodeStateHasWrongSize
                                              userInfo:@{
                 NSLocalizedDescriptionKey : @"Save state has wrong file size.",
-                NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The size of the file %@ does not have the right size, %zu expected, got: %ld.", fileName, serial_size, [data length]],
+                NSLocalizedRecoverySuggestionErrorKey : [NSString stringWithFormat:@"The file %@ is empty.", fileName],
             }];
 
             *error = newError;
@@ -1026,7 +1045,7 @@ static void writeSaveFile(const char* path, int type)
         return NO;
     }
 
-    if(!retro_unserialize([data bytes], serial_size)) {
+    if(!unserializeOrRollBack([data bytes], [data length])) {
         if (error) {
             NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                     code:PVEmulatorCoreErrorCodeCouldNotLoadState

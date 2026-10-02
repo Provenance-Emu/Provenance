@@ -1,1 +1,1 @@
-../pico/patch.h
+../picodrive/pico/patch.h

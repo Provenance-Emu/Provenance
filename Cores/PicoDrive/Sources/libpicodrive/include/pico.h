@@ -1,1 +1,1 @@
-../pico/pico.h
+../picodrive/pico/pico.h

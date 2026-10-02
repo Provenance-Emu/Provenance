@@ -1,1 +1,1 @@
-../pico/memory.h
+../picodrive/pico/memory.h

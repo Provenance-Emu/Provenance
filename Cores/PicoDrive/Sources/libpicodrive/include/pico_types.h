@@ -1,1 +1,1 @@
-../pico/pico_types.h
+../picodrive/pico/pico_types.h

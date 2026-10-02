@@ -1,1 +1,1 @@
-../pico/debug.h
+../picodrive/pico/debug.h

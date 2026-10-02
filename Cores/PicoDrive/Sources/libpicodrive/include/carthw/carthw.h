@@ -1,1 +1,1 @@
-../../pico/carthw/carthw.h
+../../picodrive/pico/carthw/carthw.h
