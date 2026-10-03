@@ -122,13 +122,11 @@ public enum iCloudConstants {
             return nil // No profile → App Store build → assume entitlements are valid
         }
         // The mobileprovision file is a PKCS#7 signed blob with a plist in plain text inside.
-        guard let raw = String(data: data, encoding: .ascii),
-              let plistStart = raw.range(of: "<?xml"),
-              let plistEnd   = raw.range(of: "</plist>") else { return nil }
-        let plistSlice = String(raw[plistStart.lowerBound ..< plistEnd.upperBound]) + "</plist>"
-        guard let plistData = plistSlice.data(using: .utf8),
-              let plist = try? PropertyListSerialization.propertyList(from: plistData, format: nil) as? [String: Any],
-              let entitlements = plist["Entitlements"] as? [String: Any] else { return nil }
+        guard let plistStart = data.range(of: Data("<?xml".utf8)),
+              let plistEnd = data.range(of: Data("</plist>".utf8), in: plistStart.upperBound ..< data.endIndex) else { return false }
+        let plistData = data.subdata(in: plistStart.lowerBound ..< plistEnd.upperBound)
+        guard let plist = try? PropertyListSerialization.propertyList(from: plistData, format: nil) as? [String: Any],
+              let entitlements = plist["Entitlements"] as? [String: Any] else { return false }
         if let containers = entitlements["com.apple.developer.icloud-container-identifiers"] as? [String] {
             return !containers.isEmpty
         }
