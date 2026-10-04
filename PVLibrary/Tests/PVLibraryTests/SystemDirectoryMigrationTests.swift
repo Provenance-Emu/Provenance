@@ -53,7 +53,9 @@ final class SystemDirectoryMigrationTests: XCTestCase {
 
         try await migrator.migrateIfNeeded()
 
-        XCTAssertTrue(await migrator.isMigrationCompleted)
+        let completed = await migrator.isMigrationCompleted
+
+        XCTAssertTrue(completed)
     }
 
     func testMigrationSkipsIfAlreadyCompleted() async throws {
@@ -64,7 +66,8 @@ final class SystemDirectoryMigrationTests: XCTestCase {
 
         // Should return immediately without error.
         try await migrator.migrateIfNeeded()
-        XCTAssertTrue(await migrator.isMigrationCompleted)
+        let completed = await migrator.isMigrationCompleted
+        XCTAssertTrue(completed)
     }
 
     func testResetMigrationFlag() async {
@@ -73,7 +76,8 @@ final class SystemDirectoryMigrationTests: XCTestCase {
         let migrator = SystemDirectoryMigration(defaults: defaults)
 
         await migrator.resetMigrationFlag()
-        XCTAssertFalse(await migrator.isMigrationCompleted)
+        let completed = await migrator.isMigrationCompleted
+        XCTAssertFalse(completed)
     }
 
     // MARK: - File-move tests
@@ -175,7 +179,8 @@ final class SystemDirectoryMigrationTests: XCTestCase {
         }
 
         XCTAssertFalse(threw, "Migration with no legacy dirs should not throw")
-        XCTAssertTrue(await migrator.isMigrationCompleted)
+        let completed = await migrator.isMigrationCompleted
+        XCTAssertTrue(completed)
     }
 
     func testExistingDestinationItemsAreNotOverwritten() async throws {

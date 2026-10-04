@@ -26,7 +26,8 @@ final class ArtworkSearchQueueLifecycleTests: XCTestCase {
 
         let calls = await mock.calls
         XCTAssertTrue(calls.isEmpty, "Expected no artwork lookups while paused")
-        XCTAssertTrue(await queue.isPausedForWork)
+        let paused = await queue.isPausedForWork
+        XCTAssertTrue(paused)
     }
 
     func test_setPaused_resumesProcessing() async {
@@ -48,6 +49,7 @@ final class ArtworkSearchQueueLifecycleTests: XCTestCase {
 
         let calls = await mock.calls
         XCTAssertFalse(calls.isEmpty, "Expected artwork lookup after resume")
-        XCTAssertFalse(await queue.isPausedForWork)
+        let paused = await queue.isPausedForWork
+        XCTAssertFalse(paused)
     }
 }

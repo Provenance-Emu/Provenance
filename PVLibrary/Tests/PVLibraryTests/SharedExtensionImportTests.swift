@@ -99,8 +99,8 @@ final class SharedExtensionImportTests: XCTestCase {
         guard let cue = queue.first(where: { $0.url.pathExtension.lowercased() == "cue" }) else {
             return XCTFail("The .cue item should still be in the queue")
         }
-        XCTAssertEqual(cue.status, .partial,
-                       "A cue missing one of its .bin tracks must be .partial, not imported")
+        XCTAssertTrue(cue.status.isPartial,
+                      "A cue missing one of its .bin tracks must be .partial, not imported")
         XCTAssertEqual(cue.expectedAssociatedFileNames, [missing.lastPathComponent.lowercased()],
                        "The missing track should be recorded so a later arrival can complete the cue")
     }

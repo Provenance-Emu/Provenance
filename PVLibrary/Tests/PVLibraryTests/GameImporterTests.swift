@@ -7,6 +7,7 @@
 
 @testable import PVLibrary
 import XCTest
+import ZipArchive
 
 class GameImporterTests: XCTestCase {
     
@@ -113,39 +114,24 @@ class GameImporterTests: XCTestCase {
         XCTAssertTrue(gameImporter.importQueueContainsDuplicate(queue, ofItem: item2), "Duplicate should be detected by URL")
     }
     
-    func testAddImportsThreadSafety() {
+    func testAddImportsThreadSafety() async {
         // Define paths to test
         let paths = [
             URL(string: "file:///path/to/file1.bin")!,
             URL(string: "file:///path/to/file2.bin")!,
             URL(string: "file:///path/to/file3.bin")!
         ]
-        
-        // Create an expectation for each concurrent call
-        let expectation1 = expectation(description: "Thread 1")
-        let expectation2 = expectation(description: "Thread 2")
-        let expectation3 = expectation(description: "Thread 3")
-        
-        // Dispatch the calls concurrently
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.gameImporter.addImports(forPaths: paths)
-            expectation1.fulfill()
+
+        // Add the same paths from three concurrent tasks
+        let importer: GameImporting = gameImporter
+        await withTaskGroup(of: Void.self) { group in
+            for _ in 0..<3 {
+                group.addTask { await importer.addImports(forPaths: paths) }
+            }
         }
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.gameImporter.addImports(forPaths: paths)
-            expectation2.fulfill()
-        }
-        
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.gameImporter.addImports(forPaths: paths)
-            expectation3.fulfill()
-        }
-        
-        // Wait for expectations
-        wait(for: [expectation1, expectation2, expectation3], timeout: 5.0)
-        
-        XCTAssertEqual(gameImporter.importQueue.count, 3, "Expected successful import of all 3 items")
+
+        let queue = await importer.importQueue
+        XCTAssertEqual(queue.count, 3, "Expected successful import of all 3 items")
     }
     
     // Sample URLs with different extensions for testing
@@ -252,7 +238,7 @@ class GameImporterTests: XCTestCase {
         gameImporter.organizeCueAndBinFiles(in: &importQueue)
         
         // Assert
-        XCTAssertEqual(importQueue[0].status, .partial, "The .cue file should be marked as .partial when any referenced .bin file is missing.")
+        XCTAssertTrue(importQueue[0].status.isPartial, "The .cue file should be marked as .partial when any referenced .bin file is missing.")
     }
     
     func testCueFileWithMissingBinAndThenAddBin() {
@@ -274,7 +260,7 @@ class GameImporterTests: XCTestCase {
         gameImporter.organizeCueAndBinFiles(in: &importQueue)
         
         // Assert
-        XCTAssertEqual(importQueue[0].status, .partial, "The .cue file should be marked as .partial when any referenced .bin file is missing.")
+        XCTAssertTrue(importQueue[0].status.isPartial, "The .cue file should be marked as .partial when any referenced .bin file is missing.")
         
         importQueue.append(binFile)
         mockCDFileHandler.binFilesResult = [binFile.url.lastPathComponent]
@@ -305,7 +291,7 @@ class GameImporterTests: XCTestCase {
         gameImporter.organizeM3UFiles(in: &importQueue)
         
         // Assert
-        XCTAssertEqual(m3uFile.status, .partial, "The .m3u file should be marked as .partial if any referenced .cue file is missing or incomplete.")
+        XCTAssertTrue(m3uFile.status.isPartial, "The .m3u file should be marked as .partial if any referenced .cue file is missing or incomplete.")
     }
 
     // MARK: - Artwork Filename Matching Tests
@@ -439,7 +425,7 @@ class GameImporterTests: XCTestCase {
         gameImporter.organizeM3UFiles(in: &importQueue)
         
         // Assert
-        XCTAssertEqual(m3uFile.status, .partial, "The .m3u file should be marked as .partial if any referenced .cue file is missing or incomplete.")
+        XCTAssertTrue(m3uFile.status.isPartial, "The .m3u file should be marked as .partial if any referenced .cue file is missing or incomplete.")
         
         importQueue.append(binFile)
         mockCDFileHandler.binFilesResult = [binFile.url.lastPathComponent]

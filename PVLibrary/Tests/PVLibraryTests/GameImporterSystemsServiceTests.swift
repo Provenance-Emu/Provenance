@@ -19,13 +19,13 @@ struct GameImporterSystemsServiceTests {
     let mockMD5Provider = MockMD5Provider()
     let database = RomDatabase.sharedInstance
 
-    init() {
+    init() async {
         service = GameImporterSystemsService()
-        setupTestDatabase()
+        await setupTestDatabase()
     }
 
     /// Setup test database with required systems
-    private func setupTestDatabase() {
+    private func setupTestDatabase() async {
         // Create test systems
         let testSystems: [(SystemIdentifier, [String])] = [
             (.ColecoVision, ["col"]),
@@ -49,7 +49,7 @@ struct GameImporterSystemsServiceTests {
         }
 
         // Force reload systems cache
-        RomDatabase.reloadCaches(force: true)
+        await RomDatabase.reloadCaches(force: true)
     }
 
     @Test("Determine systems for filenames with special characters")

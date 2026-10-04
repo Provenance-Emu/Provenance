@@ -225,13 +225,13 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertEqual(KnownEmulator.delta.displayName, "Delta")
         XCTAssertEqual(KnownEmulator.deltaLite.displayName, "Delta")
         XCTAssertEqual(KnownEmulator.retroArch.displayName, "RetroArch")
-        XCTAssertEqual(KnownEmulator.manticEmu.displayName, "Mantic Emu")
+        XCTAssertEqual(KnownEmulator.manicEmu.displayName, "Manic EMU")
         XCTAssertEqual(KnownEmulator.ppsspp.displayName, "PPSSPP")
 
         XCTAssertEqual(KnownEmulator.delta.urlScheme, "delta")
         XCTAssertEqual(KnownEmulator.retroArch.urlScheme, "retroarch")
         XCTAssertNil(KnownEmulator.gamma.urlScheme)
-        XCTAssertNil(KnownEmulator.manticEmu.urlScheme)
+        XCTAssertEqual(KnownEmulator.manicEmu.urlScheme, "manicemu")
 
         XCTAssertTrue(KnownEmulator.delta.saveFileExtensions.contains("sav"))
         XCTAssertTrue(KnownEmulator.retroArch.stateFileExtensions.contains("state"))
@@ -240,7 +240,7 @@ final class SaveBundleManifestV2Tests: XCTestCase {
     func testKnownEmulatorExportDeepLinks() {
         XCTAssertNotNil(KnownEmulator.delta.exportDeepLinkURL)
         XCTAssertNotNil(KnownEmulator.retroArch.exportDeepLinkURL)
-        XCTAssertNil(KnownEmulator.manticEmu.exportDeepLinkURL)
+        XCTAssertEqual(KnownEmulator.manicEmu.exportDeepLinkURL, URL(string: "manicemu://"))
         XCTAssertNil(KnownEmulator.ppsspp.exportDeepLinkURL)
     }
 
@@ -251,7 +251,7 @@ final class SaveBundleManifestV2Tests: XCTestCase {
         XCTAssertTrue(KnownEmulator.retroArch.stateFileExtensions.contains("auto")) // game.state.auto
         XCTAssertTrue(KnownEmulator.ppsspp.stateFileExtensions.contains("ppst"))
         XCTAssertTrue(KnownEmulator.gamma.stateFileExtensions.isEmpty)
-        XCTAssertTrue(KnownEmulator.manticEmu.stateFileExtensions.isEmpty)
+        XCTAssertTrue(KnownEmulator.manicEmu.stateFileExtensions.isEmpty)
     }
 
     func testKnownEmulatorBundleIDs() {

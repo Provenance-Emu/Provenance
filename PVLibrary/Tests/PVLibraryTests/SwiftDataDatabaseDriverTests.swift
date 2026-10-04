@@ -89,7 +89,7 @@ final class SwiftDataDatabaseDriverTests: XCTestCase {
     }
 
     func testFavoriteGames() throws {
-        let fav  = Game_Data(title: "Fav",    md5Hash: "fav1", isFavorite: true)
+        let fav  = Game_Data(title: "Fav",    isFavorite: true, md5Hash: "fav1")
         let notFav = Game_Data(title: "NotFav", md5Hash: "nfav1")
         try driver.insert(game: fav)
         try driver.insert(game: notFav)
@@ -122,9 +122,9 @@ final class SwiftDataDatabaseDriverTests: XCTestCase {
 
     func testGamesForSystem() throws {
         let sysID = "com.provenance.nes"
-        let g1 = Game_Data(title: "NES Game 1", md5Hash: "n1", systemIdentifier: sysID)
-        let g2 = Game_Data(title: "NES Game 2", md5Hash: "n2", systemIdentifier: sysID)
-        let g3 = Game_Data(title: "SNES Game",  md5Hash: "s1", systemIdentifier: "com.provenance.snes")
+        let g1 = Game_Data(title: "NES Game 1", systemIdentifier: sysID, md5Hash: "n1")
+        let g2 = Game_Data(title: "NES Game 2", systemIdentifier: sysID, md5Hash: "n2")
+        let g3 = Game_Data(title: "SNES Game", systemIdentifier: "com.provenance.snes", md5Hash: "s1")
         try driver.insert(game: g1)
         try driver.insert(game: g2)
         try driver.insert(game: g3)
@@ -295,9 +295,11 @@ final class SwiftDataDatabaseActorTests: XCTestCase {
     func testActorDeleteGame() async throws {
         let game = Game_Data(title: "Will Delete", md5Hash: "wd1")
         try await actor.insert(game: game)
-        XCTAssertNotNil(try await actor.game(identifier: game.md5Hash))
+        let inserted = try await actor.game(identifier: game.md5Hash)
+        XCTAssertNotNil(inserted)
 
         try await actor.delete(game: game)
-        XCTAssertNil(try await actor.game(identifier: game.md5Hash))
+        let deleted = try await actor.game(identifier: game.md5Hash)
+        XCTAssertNil(deleted)
     }
 }

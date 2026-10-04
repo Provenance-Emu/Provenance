@@ -45,6 +45,12 @@ final class ROMTitleNormalizationServiceTests: XCTestCase {
         try realm.write { realm.add(game) }
     }
 
+    /// The stored title of the game with `md5Hash`. Synchronous so `Realm()` is
+    /// the plain initializer, not the main-actor async one an async test picks.
+    private func storedTitle(md5Hash: String) throws -> String? {
+        try Realm().object(ofType: PVGame.self, forPrimaryKey: md5Hash)?.title
+    }
+
     private let service = ROMTitleNormalizationService()
 
     // MARK: - buildProposals tests
@@ -90,9 +96,7 @@ final class ROMTitleNormalizationServiceTests: XCTestCase {
 
         try await service.applyProposals([proposal])
 
-        let realm = try Realm()
-        let game = realm.object(ofType: PVGame.self, forPrimaryKey: "abc123")
-        XCTAssertEqual(game?.title, "Sonic")
+        XCTAssertEqual(try storedTitle(md5Hash: "abc123"), "Sonic")
     }
 
     func testApplyProposals_skipsUnknownID() async throws {
@@ -120,10 +124,8 @@ final class ROMTitleNormalizationServiceTests: XCTestCase {
 
         try await service.applyProposals([p1, p2])
 
-        let realm = try Realm()
-        let game = realm.object(ofType: PVGame.self, forPrimaryKey: "dup001")
         // Last-write-wins dedup — either "Game A" or "Game B", but not the original
-        XCTAssertNotEqual(game?.title, "Game (USA)")
+        XCTAssertNotEqual(try storedTitle(md5Hash: "dup001"), "Game (USA)")
     }
 
     // MARK: - buildProposals + applyProposals round-trip
@@ -134,8 +136,7 @@ final class ROMTitleNormalizationServiceTests: XCTestCase {
 
         try await service.normalizeAll()
 
-        let realm = try Realm()
-        XCTAssertEqual(realm.object(ofType: PVGame.self, forPrimaryKey: "r001")?.title, "Final Fantasy VII")
-        XCTAssertEqual(realm.object(ofType: PVGame.self, forPrimaryKey: "r002")?.title, "Mega Man X")
+        XCTAssertEqual(try storedTitle(md5Hash: "r001"), "Final Fantasy VII")
+        XCTAssertEqual(try storedTitle(md5Hash: "r002"), "Mega Man X")
     }
 }
