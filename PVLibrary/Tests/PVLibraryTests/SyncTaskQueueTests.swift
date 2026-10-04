@@ -47,6 +47,20 @@ final class SyncTaskPriorityTests: XCTestCase {
         let boosted = normal.boosted()
         XCTAssertTrue(boosted.isBoosted)
     }
+
+    func test_boostIsNotStacked() {
+        let boosted = SyncTaskPriority.romDownload.boosted()
+        XCTAssertEqual(boosted.boosted().rawValue, boosted.rawValue)
+    }
+
+    func test_boostedLowTierIsNotMistakenForStandardTier() {
+        // 100 + 500 lands on the save-state screenshot tier's value.
+        let boostedLookup = SyncTaskPriority.dbArtworkLookup.boosted()
+        XCTAssertEqual(boostedLookup.rawValue, SyncTaskPriority.saveStateScreenshot.rawValue)
+        XCTAssertTrue(boostedLookup.isBoosted)
+        XCTAssertFalse(SyncTaskPriority.saveStateScreenshot.isBoosted)
+        XCTAssertEqual(SyncTaskPriority.saveStateScreenshot.unboosted(), .saveStateScreenshot)
+    }
 }
 
 final class SyncTaskTests: XCTestCase {

@@ -12,12 +12,34 @@ import Foundation
 public struct SyncTaskPriority: Comparable, Sendable, Codable, Hashable {
     public let rawValue: Int
 
+    /// Whether this priority includes the on-demand boost. Stored rather than
+    /// inferred from `rawValue`: a boosted low tier (ROM download, 200 + 500)
+    /// stays below the top standard tier, and a boosted DB artwork lookup
+    /// (100 + 500) equals the save-state screenshot tier, so no threshold can
+    /// tell them apart.
+    public let isBoosted: Bool
+
     public init(_ rawValue: Int) {
+        self.init(rawValue, isBoosted: false)
+    }
+
+    private init(_ rawValue: Int, isBoosted: Bool) {
         self.rawValue = rawValue
+        self.isBoosted = isBoosted
     }
 
     public static func < (lhs: SyncTaskPriority, rhs: SyncTaskPriority) -> Bool {
         lhs.rawValue < rhs.rawValue
+    }
+
+    // Equality and hashing follow the ordering: two priorities with the same
+    // value are equal whether or not one of them got there by boosting.
+    public static func == (lhs: SyncTaskPriority, rhs: SyncTaskPriority) -> Bool {
+        lhs.rawValue == rhs.rawValue
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rawValue)
     }
 
     // MARK: - Predefined tiers
@@ -45,24 +67,19 @@ public struct SyncTaskPriority: Comparable, Sendable, Codable, Hashable {
     /// Offset added when a game is visible in the UI and needs immediate attention
     public static let onDemandBoost = 500
 
-    /// Return a new priority boosted by the on-demand offset
+    /// Return a new priority boosted by the on-demand offset. Boosting an
+    /// already boosted priority returns it unchanged.
     public func boosted() -> SyncTaskPriority {
-        SyncTaskPriority(rawValue + Self.onDemandBoost)
+        guard !isBoosted else { return self }
+        return SyncTaskPriority(rawValue + Self.onDemandBoost, isBoosted: true)
     }
 
-    /// Return the priority with the boost removed (floor at original tier)
+    /// Return the priority with the boost removed. An unboosted priority is
+    /// returned unchanged.
     public func unboosted() -> SyncTaskPriority {
-        SyncTaskPriority(max(rawValue - Self.onDemandBoost, 0))
+        guard isBoosted else { return self }
+        return SyncTaskPriority(max(rawValue - Self.onDemandBoost, 0), isBoosted: false)
     }
-
-    /// Whether this priority includes the on-demand boost.
-    /// True when the raw value exceeds the highest standard tier.
-    public var isBoosted: Bool {
-        rawValue > Self.highestStandardTier
-    }
-
-    /// The highest raw value among predefined (non-boosted) priority tiers.
-    private static let highestStandardTier = metadataSync.rawValue
 }
 
 extension SyncTaskPriority: CustomStringConvertible {
