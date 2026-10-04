@@ -876,19 +876,6 @@ struct ConsoleGamesView: SwiftUI.View {
                         )
                     }
                 }
-                #if !os(watchOS)
-                .sheet(isPresented: $gamesViewModel.showNetworkPlay) {
-                    if let game = gamesViewModel.networkPlayGame, !game.isInvalidated {
-                        NetplayLobbyView(
-                            gameName: game.title,
-                            coreIdentifier: gamesViewModel.networkPlayCoreIdentifier,
-                            localGameHash: game.md5Hash
-                        )
-                    } else {
-                        Color.clear.onAppear { gamesViewModel.showNetworkPlay = false }
-                    }
-                }
-                #endif
                 #if !os(tvOS)
                 .sheet(isPresented: $gamesViewModel.showSaveExportShareSheet, onDismiss: {
                     if let url = gamesViewModel.saveExportURL {

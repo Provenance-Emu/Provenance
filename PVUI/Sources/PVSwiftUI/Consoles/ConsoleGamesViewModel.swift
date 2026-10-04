@@ -68,11 +68,6 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var showControllerPakSlots = false
     @Published var controllerPakGame: PVGame?
 
-    /// Network Play sheet state
-    @Published var showNetworkPlay = false
-    @Published var networkPlayGame: PVGame?
-    @Published var networkPlayCoreIdentifier: String = ""
-
     /// Save Export share sheet state
     @Published var showSaveExportShareSheet = false
     @Published var saveExportURL: URL? = nil

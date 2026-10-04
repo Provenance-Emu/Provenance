@@ -267,7 +267,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         #endif
 
-        // Root **SETTINGS** section (after STATES): core, app, logs, RetroArch, AirPlay, shader, etc.
+        // Root **SETTINGS** section (after STATES): core, app, logs, AirPlay, shader, etc.
         var settingsTiles: [PauseMenuTile] = []
 
         gameTiles.append(PauseMenuTile(
@@ -277,33 +277,6 @@ final class PauseTileMenuViewModel: ObservableObject {
             description: String(localized: "View title, artwork, and metadata for this game."),
             colorKey: .blue
         ))
-
-        let coreTypeName = String(describing: type(of: emulatorVC.core))
-        let usingThinWrapper = coreTypeName.contains("ThinLibretro")
-
-        // RetroArch — full RetroArch cores only (not thin wrapper cores which lack RetroArch's menu system).
-        // The legacy wrapper class is PVRetroArchCoreCore; its coreIdentifier is `com.provenance.core.retroarch`
-        // (no "libretro" substring), so we identify it by class name instead.
-        if !usingThinWrapper, coreTypeName.contains("RetroArch") {
-            settingsTiles.append(PauseMenuTile(
-                id: "retroArchMenu",
-                icon: "square.grid.2x2",
-                label: String(localized: "RetroArch Menu"),
-                description: String(localized: "Open RetroArch's built-in quick menu."),
-                colorKey: .purple,
-                dismissOnTap: false
-            ))
-            if PauseMenuViewRegistry.retroArchSettingsView() != nil {
-                settingsTiles.append(PauseMenuTile(
-                    id: "retroArchSettings",
-                    icon: "gearshape.2",
-                    label: String(localized: "RetroArch Settings"),
-                    description: String(localized: "Configure RetroArch core and system settings."),
-                    colorKey: .cyan,
-                    dismissOnTap: false
-                ))
-            }
-        }
 
         settingsTiles.append(PauseMenuTile(
             id: "menu_core",
@@ -622,27 +595,11 @@ final class PauseTileMenuViewModel: ObservableObject {
 
         if let actions = (emulatorVC.core as? CoreActions)?.coreActions {
             let isPaletteProviding = (emulatorVC.core as? PaletteProviding)?.availablePalettes.isEmpty == false
-            // Legacy RA wrapper (`PVRetroArchCoreCore`) reports `com.provenance.core.retroarch`
-            // which doesn't contain "libretro", so we also detect by class name.
-            let isLibretro = emulatorVC.core.coreIdentifier?.contains("libretro") == true
-                || coreTypeName.contains("RetroArch")
-                || usingThinWrapper
-            let retroArchInputActions: Set<String> = [
-                RetroArchCoreActionTitles.toggleTouchKeyboard,
-                RetroArchCoreActionTitles.toggleTouchMouse
-            ]
-            let actionsForControlsRoute = actions.filter { retroArchInputActions.contains($0.title) }
             let filteredActions = actions.filter { action in
-                if retroArchInputActions.contains(action.title) { return false }
-                if isPaletteProviding && action.title == changePaletteLegacyActionTitle { return false }
-                if isLibretro && action.title == RetroArchCoreActionTitles.internalMenu { return false }
-                return true
+                !(isPaletteProviding && action.title == changePaletteLegacyActionTitle)
             }
             if !filteredActions.isEmpty {
                 coreTiles += CoreActionTileProvider.tiles(from: filteredActions)
-            }
-            if !actionsForControlsRoute.isEmpty {
-                controlsTiles += CoreActionTileProvider.tiles(from: actionsForControlsRoute)
             }
         }
 

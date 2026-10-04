@@ -28,7 +28,6 @@ public protocol GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestCoreOptionsFor game: PVGame, coreClassName: String, coreName: String)
     func gameContextMenu(_ menu: GameContextMenu, didRequestTransferPakConfigFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestControllerPakSlotsFor game: PVGame)
-    func gameContextMenu(_ menu: GameContextMenu, didRequestNetworkPlayFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestExportSavesFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestExportSRAMFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestImportSRAMFor game: PVGame)
@@ -97,10 +96,6 @@ public extension GameContextMenuDelegate {
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestControllerPakSlotsFor game: PVGame) {
         DLOG("Default implementation: didRequestControllerPakSlotsFor not implemented")
-    }
-
-    func gameContextMenu(_ menu: GameContextMenu, didRequestNetworkPlayFor game: PVGame) {
-        DLOG("Default implementation: didRequestNetworkPlayFor not implemented")
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestExportSavesFor game: PVGame) {

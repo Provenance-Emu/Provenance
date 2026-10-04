@@ -1240,48 +1240,6 @@ struct RetroMenuView: View {
             }
             #endif
 
-            // RetroArch internal menu (RGUI/XMB) + Provenance RetroArch settings.
-            // Only the full RA wrapper (`PVRetroArchCoreCore`) provides RGUI; the thin libretro
-            // wrapper (`PVThinLibretroCore`) does not. The legacy wrapper's coreIdentifier is
-            // `com.provenance.core.retroarch` (no "libretro" substring), so detect by class name.
-            let coreTypeName = String(describing: type(of: emulatorVC.core))
-            if coreTypeName.contains("RetroArch"), !coreTypeName.contains("ThinLibretro") {
-                let retroArchMenuAction = (emulatorVC.core as? CoreActions)?
-                    .coreActions?
-                    .first(where: { $0.title == RetroArchCoreActionTitles.internalMenu })
-                let retroArchSettings = PauseMenuViewRegistry.retroArchSettingsView()
-                if let menuAction = retroArchMenuAction, let settings = retroArchSettings {
-                    HStack(spacing: 12) {
-                        menuButton(title: String(localized: "RETROARCH MENU"), icon: "square.grid.2x2", color: .retroPurple) {
-                            emulatorVC.dismissNav(resumeEmulation: true) {
-                                emulatorVC.handleCoreAction(menuAction)
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                        menuButton(title: String(localized: "RETROARCH SETTINGS"), icon: "gearshape.2", color: .retroCyan) {
-                            showingRetroArchSettings = true
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .sheet(isPresented: $showingRetroArchSettings) {
-                        settings
-                    }
-                } else if let menuAction = retroArchMenuAction {
-                    menuButton(title: String(localized: "RETROARCH MENU"), icon: "square.grid.2x2", color: .retroPurple) {
-                        emulatorVC.dismissNav(resumeEmulation: true) {
-                            emulatorVC.handleCoreAction(menuAction)
-                        }
-                    }
-                } else if let settings = retroArchSettings {
-                    menuButton(title: String(localized: "RETROARCH SETTINGS"), icon: "gearshape.2", color: .retroCyan) {
-                        showingRetroArchSettings = true
-                    }
-                    .sheet(isPresented: $showingRetroArchSettings) {
-                        settings
-                    }
-                }
-            }
-
             let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(emulatorVC.game.system?.identifier ?? SystemIdentifier.RetroArch.rawValue)
 
             // Mouse input (only shown for games/systems that support mouse)
@@ -1505,7 +1463,6 @@ struct RetroMenuView: View {
     @State private var availableSkinObjects: [DeltaSkinProtocol] = []
     @State private var showingSkinPicker = false
     @State private var showingFilterPicker = false
-    @State private var showingRetroArchSettings = false
     @State private var showingDocumentPicker = false
     @State private var showingSkinCatalog = false
     #if os(iOS)

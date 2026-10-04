@@ -130,7 +130,6 @@ struct PauseTileMenuView: View {
     @State private var showingButtonSoundPicker = false
     @State private var showingPlusPaywall = false
     @State private var showingLogViewer = false
-    @State private var showingRetroArchSettings = false
     @State private var showingAppSettings = false
     #if !os(tvOS)
     @State private var showingSkinImporter = false
@@ -826,19 +825,6 @@ struct PauseTileMenuView: View {
             #else
             break
             #endif
-        case "retroArchMenu":
-            guard let action = (emulatorVC.core as? CoreActions)?.coreActions?.first(where: { $0.title == RetroArchCoreActionTitles.internalMenu }) else {
-                ELOG("retroArchMenu: failed to get CoreAction — core type: \(type(of: emulatorVC.core)), conforms to CoreActions: \(emulatorVC.core is CoreActions)")
-                return
-            }
-            DLOG("retroArchMenu: got action, dismissing then toggling RA menu")
-            let emulatorVC = self.emulatorVC
-            emulatorVC.dismissNav(resumeEmulation: true) {
-                DLOG("retroArchMenu: dismiss completed, calling handleCoreAction")
-                emulatorVC.handleCoreAction(action)
-            }
-        case "retroArchSettings":
-            showingRetroArchSettings = true
         case "audioVisualizer":
             #if os(iOS)
             if emulatorVC.visualizerMode == .off {
@@ -1090,22 +1076,9 @@ struct PauseTileMenuView: View {
         rebuildSections()
     }
 
-    /// Applies game-speed changes and mirrors fast-forward toggling for libretro cores.
+    /// Applies a game-speed change. Fast-forward is handled by the core's `setGameSpeed:`.
     private func applyGameSpeed(_ speed: GameSpeed) {
-        let wasFastForwarding = emulatorVC.core.gameSpeed == .fast || emulatorVC.core.gameSpeed == .veryFast
         emulatorVC.setGameSpeedRespectingAchievements(speed)
-        let isFastForwarding = emulatorVC.core.gameSpeed == .fast || emulatorVC.core.gameSpeed == .veryFast
-        // The thick RetroArch wrapper needs a hardware "togglefastforward"
-        // input event to flip RA's internal fast-forward state (separate from
-        // the bridge's framerateMultiplier). The thin wrapper handles speed
-        // entirely through setGameSpeed: → _speedMultiplier, so sending the
-        // hardware input would be a no-op at best or interfere at worst.
-        let isThinWrapper = NSStringFromClass(type(of: emulatorVC.core)).contains("ThinLibretro")
-        if !isThinWrapper,
-           emulatorVC.core.coreIdentifier?.contains("libretro") == true,
-           wasFastForwarding != isFastForwarding {
-            dispatchHardwareButton("togglefastforward")
-        }
         rebuildSections()
     }
 
@@ -1750,9 +1723,6 @@ struct PauseTileMenuView: View {
         // `showingLogViewer` above. iOS keeps the standard sheet, which
         // sizes correctly there. The settings view's own "Done" button
         // calls `dismissAction` so the user can leave the cover.
-        // RetroArch Settings stays as a sheet for now — its registered
-        // view doesn't accept a dismissAction, so a fullScreenCover
-        // could trap the user without a visible exit on tvOS.
         #if os(tvOS)
         .fullScreenCover(isPresented: $showingAppSettings) {
             if let appSettings = PauseMenuViewRegistry.appSettingsView(dismissAction: {
@@ -1774,13 +1744,6 @@ struct PauseTileMenuView: View {
             }
         }
         #endif
-        .sheet(isPresented: $showingRetroArchSettings) {
-            if let retroArchSettings = PauseMenuViewRegistry.retroArchSettingsView() {
-                retroArchSettings
-            } else {
-                EmptyView()
-            }
-        }
         .sheet(isPresented: $showingSystemSkinSelection) {
             NavigationStack {
                 SystemSkinSelectionView(

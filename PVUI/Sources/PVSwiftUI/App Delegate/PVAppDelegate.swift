@@ -482,16 +482,6 @@ public final class PVAppDelegate: UIResponder, UIApplicationDelegate, Observable
             await orchestrator.run()
         }
 
-        // Apply any pending RetroArch config migrations (partial key updates)
-        await PVLaunchProfiler.measure("launch.retroArchConfigMigrations") {
-            await RetroArchConfigMigrator.applyPendingMigrations()
-        }
-
-        // Register the RetroArch quick-settings view so the pause menu can show it
-        // (PVUIBase can't import PVSwiftUI directly, so we use a static registry)
-        PauseMenuViewRegistry.registerRetroArchSettingsView {
-            AnyView(NavigationStack { RetroArchQuickSettingsView() })
-        }
         PauseMenuViewRegistry.registerAppSettingsView { dismissAction in
             let conflictsController = AppState.shared.libraryUpdatesController
                 ?? PVGameLibraryUpdatesController(gameImporter: GameImporter.shared)

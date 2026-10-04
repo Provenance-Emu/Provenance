@@ -15,22 +15,8 @@ import SwiftUI
 /// reads the stored view builders at presentation time.
 @MainActor
 public enum PauseMenuViewRegistry {
-    /// Builder for the RetroArch quick-settings view.
-    /// Set by PVSwiftUI at app startup via `registerRetroArchSettingsView(_:)`.
-    nonisolated(unsafe) private static var _retroArchSettingsBuilder: (() -> AnyView)?
     /// Builder for the app-wide settings SwiftUI view.
     nonisolated(unsafe) private static var _appSettingsBuilder: (((() -> Void)?) -> AnyView)?
-
-    /// Register the RetroArch settings view builder.
-    /// Call once at app launch from PVSwiftUI.
-    public static func registerRetroArchSettingsView(_ builder: @escaping () -> AnyView) {
-        _retroArchSettingsBuilder = builder
-    }
-
-    /// Returns the registered RetroArch settings view, or `nil` if none was registered.
-    public static func retroArchSettingsView() -> AnyView? {
-        _retroArchSettingsBuilder?()
-    }
 
     /// Register the app settings view builder.
     /// Call once at app launch from PVSwiftUI.

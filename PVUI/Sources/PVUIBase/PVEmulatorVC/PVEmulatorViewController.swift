@@ -336,18 +336,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
             // Single authoritative pause toggle to avoid conflicting calls
             guard core.isOn, !isQuitting else { return }
             core.setPauseEmulation(isShowingMenu)
-            // When pausing for the menu, block on the emu-thread drain so the
-            // SwiftUI pause UI never paints over a half-updated frame. The
-            // drain selector is implemented by `PVRetroArchCoreBridge`; we
-            // dispatch dynamically to avoid taking a PVUI -> PVRetroArch
-            // module dependency. Non-RA cores simply won't respond to the
-            // selector and we fall through with existing behavior.
-            if isShowingMenu, let bridge = core.bridge as AnyObject? {
-                let drainSelector = NSSelectorFromString("drainEmulationThread")
-                if bridge.responds(to: drainSelector) {
-                    _ = bridge.perform(drainSelector)
-                }
-            }
             setLiveActivityPaused(isShowingMenu)
         }
     }
@@ -356,9 +344,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// that can crash RetroArch's runloop during teardown.
     private var isQuitting: Bool = false
 
-    /// Dedup guard for the core-crashed alert. Either the thin or thick
-    /// wrapper trampoline can post the throw notification — and a runaway
-    /// core that throws every frame would otherwise spam alerts.
+    /// Dedup guard for the core-crashed alert. A runaway core that throws
+    /// every frame would otherwise spam alerts.
     private var hasShownCoreDidThrowAlert: Bool = false
 
     /// Tracks the currently presented pause-menu container so we can dismiss it reliably,
@@ -367,7 +354,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
     let minimumPlayTimeToMakeAutosave: Double = 60
 
-    /// Retrowave progress HUD shown during emulator boot (and rare one-time RetroArch sync/version updates)
+    /// Retrowave progress HUD shown during emulator boot.
     private var bootHUD: RetroProgressHUD?
     private var bootHUDIsVisible = false
 
@@ -462,7 +449,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         bootHUDIsVisible = true
 
         let hud = RetroProgressHUD.show(in: view, animated: true)
-        hud.setText(initialBootHUDText())
+        hud.setText("Starting emulator…")
         bootHUD = hud
     }
 
@@ -473,47 +460,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
 
         bootHUD?.hide(animated: true, afterDelay: 0.1)
         bootHUD = nil
-    }
-
-    private func initialBootHUDText() -> String {
-        if shouldShowRetroArchSyncMessage() {
-            return "Updating RetroArch resources…"
-        }
-        return "Starting emulator…"
-    }
-
-    /// True when the running core is the thin libretro wrapper
-    /// (`PVThinLibretroCore`). The thin wrapper does not ship or
-    /// sync the RetroArch config bundle, so RetroArch-oriented
-    /// boot messaging must be suppressed for it.
-    private var isThinLibretroCore: Bool {
-        NSStringFromClass(type(of: core)) == "PVThinLibretroCore"
-    }
-
-    private func shouldShowRetroArchSyncMessage() -> Bool {
-        // The thin libretro wrapper shares "libretro" in its core
-        // identifier but has no RetroArch resource sync step.
-        if isThinLibretroCore { return false }
-
-        guard (core.coreIdentifier?.contains("libretro") == true) || (core.coreIdentifier?.localizedCaseInsensitiveContains("retroarch") == true) else {
-            return false
-        }
-
-        guard let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String,
-              !appVersion.isEmpty else {
-            return false
-        }
-
-        let fm = FileManager.default
-        let roots: [URL] = [
-            fm.urls(for: .documentDirectory, in: .userDomainMask).first,
-            fm.urls(for: .cachesDirectory, in: .userDomainMask).first
-        ].compactMap { $0 }
-
-        return !roots.contains(where: { root in
-            let marker = root.appendingPathComponent("RetroArch/config/\(appVersion).cfg", isDirectory: false)
-            return fm.fileExists(atPath: marker.path)
-        })
     }
 
     @available(*, unavailable)
@@ -615,20 +561,14 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // so the user isn't left staring at a blank emulator window.
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleCoreFailedToStart(_:)), name: Notification.Name("PVEmulatorCoreDidFailToStart"), object: nil)
 
-        // Posted by the thin libretro wrapper (PVThinLibretroFrontend.mm) or
-        // the thick RA wrapper trampoline (PVRetroArchCore+ExceptionTrampoline.mm)
+        // Posted by the thin libretro wrapper (PVThinLibretroFrontend.mm)
         // when the dlopened core throws an unhandled C++ exception (most
         // commonly `vk::DeviceLostError` from flycast on iPad GPU pressure,
-        // but every C++-internal libretro core can rethrow similarly). Both
-        // notification names point to the same handler. Names defined in
-        // `Notification.Name` extension in `PVThinLibretroCore.swift`.
+        // but every C++-internal libretro core can rethrow similarly).
+        // Name defined in `CoreDidThrow+NotificationName.swift`.
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(PVEmulatorViewController.handleCoreDidThrow(_:)),
                                                name: .pvThinLibretroFrontendCoreDidThrow,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(PVEmulatorViewController.handleCoreDidThrow(_:)),
-                                               name: .pvRetroArchCoreDidThrow,
                                                object: nil)
 
         #if !os(macOS)
@@ -701,20 +641,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         }
     }
 
-    /// Handles `PVThinLibretroFrontendCoreDidThrow` /
-    /// `PVRetroArchCoreDidThrowNotification` — posted when a libretro core
+    /// Handles `PVThinLibretroFrontendCoreDidThrow` — posted when a libretro core
     /// throws an unhandled C++ exception (typically `vk::DeviceLostError`
     /// from flycast / parallel_n64 / beetle_psx_hw / any Vulkan-HPP core
-    /// that hits a GPU resource limit). The exception trampolines
-    /// (PVThinLibretroFrontend.mm + PVRetroArchCore+ExceptionTrampoline.mm)
-    /// catch the throw at the dylib boundary so the app survives; this
+    /// that hits a GPU resource limit). The exception trampoline
+    /// (PVThinLibretroFrontend.mm) catches the throw at the dylib boundary
+    /// so the app survives; this
     /// handler tells the user what happened and gracefully closes the
     /// emulator instead of leaving them on a frozen frame.
     @objc func handleCoreDidThrow(_ note: Notification) {
-        // Dedup — both wrappers can post if the same core somehow lives
-        // across both code paths, and the thin wrapper posts via
-        // dispatch_once but the thick wrapper uses an atomic so a race
-        // could double-fire. Once is enough; subsequent calls no-op.
+        // Dedup — once is enough; subsequent calls no-op.
         guard !hasShownCoreDidThrowAlert else { return }
         hasShownCoreDidThrowAlert = true
 

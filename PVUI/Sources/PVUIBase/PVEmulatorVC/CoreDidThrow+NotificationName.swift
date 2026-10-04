@@ -2,22 +2,19 @@
 //  CoreDidThrow+NotificationName.swift
 //  PVUIBase
 //
-//  Typed `Notification.Name` constants for the "core threw a C++
-//  exception" notifications posted by the thin libretro wrapper
-//  (`PVThinLibretroFrontend.mm`) and the thick RA wrapper trampoline
-//  (`PVRetroArchCore+ExceptionTrampoline.mm`).
+//  Typed `Notification.Name` constant for the "core threw a C++
+//  exception" notification posted by the thin libretro wrapper
+//  (`PVThinLibretroFrontend.mm`).
 //
-//  Source of truth for the underlying STRING values is the ObjC
-//  `NSNotificationName` constants in those modules' headers:
+//  Source of truth for the underlying STRING value is the ObjC
+//  `NSNotificationName` constant in the wrapper's header:
 //    - PVCoreBridgeRetro/Sources/PVLibRetro/PVThinLibretroFrontend.h
 //        → PVThinLibretroFrontendCoreDidThrowNotification
-//    - CoresRetro/RetroArch/PVRetroArchCore/Core/PVRetroArchCore+ExceptionTrampoline.h
-//        → PVRetroArchCoreDidThrowNotification
 //
-//  We define a thin Swift mirror here rather than `import`-ing those
-//  modules from PVUIBase to keep the layering clean (PVUIBase doesn't
-//  depend on PVCoreBridgeRetro / PVRetroArch). The strings must stay
-//  in sync; if you change one, change the other.
+//  We define a thin Swift mirror here rather than `import`-ing that
+//  module from PVUIBase to keep the layering clean (PVUIBase doesn't
+//  depend on PVCoreBridgeRetro). The strings must stay in sync; if you
+//  change one, change the other.
 //
 
 import Foundation
@@ -30,10 +27,4 @@ public extension Notification.Name {
     /// `userInfo["reason"]` carries the `what()` / `reason` string.
     static let pvThinLibretroFrontendCoreDidThrow =
         Notification.Name("PVThinLibretroFrontendCoreDidThrow")
-
-    /// Posted (main) by the thick RetroArch wrapper's exception
-    /// trampoline when `runloop_iterate()` catches an unhandled core
-    /// throw. Same `userInfo["reason"]` payload as the thin variant.
-    static let pvRetroArchCoreDidThrow =
-        Notification.Name("PVRetroArchCoreDidThrowNotification")
 }
