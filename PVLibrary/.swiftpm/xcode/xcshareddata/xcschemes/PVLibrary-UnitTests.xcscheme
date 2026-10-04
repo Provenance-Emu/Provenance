@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Committed on purpose (force-added past the .swiftpm ignore rule).
+  The auto-generated PVLibrary scheme has no test action, so PVLibraryTests
+  can't be run from it. PVLibrary/PVLibrary.xcodeproj also shadows
+  Package.swift for a bare `xcodebuild` in this directory, so go through the
+  package workspace. Local use and CI (agent-validation.yml, pvlibrary-test):
+    xcodebuild test -workspace .swiftpm/xcode/package.xcworkspace \
+      -scheme PVLibrary-UnitTests -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+  On Xcode 26.6 realm-core also needs OTHER_CFLAGS/OTHER_CPLUSPLUSFLAGS
+  += -Wno-invalid-specialization (pass an -xcconfig); CI's Xcode 26.3 doesn't.
+-->
+<Scheme
+   LastUpgradeVersion = "2600"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "PVLibraryTests"
+               BuildableName = "PVLibraryTests"
+               BlueprintName = "PVLibraryTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+   </TestAction>
+</Scheme>

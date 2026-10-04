@@ -212,6 +212,15 @@ cd PVUI && xcodebuild test -scheme PVUI-UnitTests \
   -destination 'platform=iOS Simulator,name=iPhone 17' \
   CODE_SIGNING_ALLOWED=NO -skipPackagePluginValidation -skipMacroValidation
 
+# PVLibrary tests: the committed PVLibrary-UnitTests scheme, through the
+# package workspace (PVLibrary/PVLibrary.xcodeproj shadows Package.swift, and
+# the auto-generated scheme has no test action). Same realm-core -xcconfig on
+# Xcode 26.6. CI: agent-validation.yml pvlibrary-test.
+cd PVLibrary && xcodebuild test -workspace .swiftpm/xcode/package.xcworkspace \
+  -scheme PVLibrary-UnitTests -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -collect-test-diagnostics never CODE_SIGNING_ALLOWED=NO \
+  -skipPackagePluginValidation -skipMacroValidation
+
 # PVCoreBridgeRetro (thin wrapper) tests: the PVLibRetroTests target of
 # PVCoreBridgeRetro.xcodeproj. SwiftPM can't build that package (mixed
 # Swift/ObjC target). Ad-hoc signing is required — the bundle embeds MoltenVK.

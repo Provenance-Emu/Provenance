@@ -54,6 +54,18 @@ final class PVWebFileEventObserverTests: XCTestCase {
         try super.tearDownWithError()
     }
 
+    /// Polls the Realm until `condition` holds or `timeout` passes. The observer
+    /// writes on a background queue; the fixed 0.3 s wait these tests used was
+    /// flaky under load. The assertions that follow report a timeout.
+    private func waitForRealm(timeout: TimeInterval = 5, until condition: (Realm) -> Bool) throws {
+        let realm = try Realm(configuration: realmConfig)
+        let deadline = Date().addingTimeInterval(timeout)
+        while !condition(realm) && Date() < deadline {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.05))
+            realm.refresh()
+        }
+    }
+
     // MARK: - Lifecycle
 
     func testStartRegistersObservers() {
@@ -118,15 +130,6 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
         observer.start()
 
-        let exp = expectation(description: "delete handler completes background work")
-        // _testOnDeleteHandlerInvoked fires at the *start* of the handler, before
-        // the async dispatch.  Give the background queue time to finish its Realm write.
-        observer._testOnDeleteHandlerInvoked = { _ in
-            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) {
-                exp.fulfill()
-            }
-        }
-
         let deletedPath = romsPrefix + "SNES/mario.sfc"
         NotificationCenter.default.post(
             name: Notification.Name.pvWebServerFileDeleted,
@@ -134,7 +137,9 @@ final class PVWebFileEventObserverTests: XCTestCase {
             userInfo: ["filePath": deletedPath]
         )
 
-        wait(for: [exp], timeout: 2)
+        try waitForRealm { realm in
+            realm.objects(PVGame.self).filter("romPath == %@ AND isDownloaded == false", "SNES/mario.sfc").first != nil
+        }
 
         let freshRealm = try Realm(configuration: realmConfig)
         let found = freshRealm.objects(PVGame.self)
@@ -161,13 +166,6 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
         observer.start()
 
-        let exp = expectation(description: "delete handler completes background work")
-        observer._testOnDeleteHandlerInvoked = { _ in
-            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) {
-                exp.fulfill()
-            }
-        }
-
         let deletedPath = romsPrefix + "NES/donkeykong.nes"
         NotificationCenter.default.post(
             name: Notification.Name.pvWebServerFileDeleted,
@@ -175,7 +173,9 @@ final class PVWebFileEventObserverTests: XCTestCase {
             userInfo: ["filePath": deletedPath]
         )
 
-        wait(for: [exp], timeout: 2)
+        try waitForRealm { realm in
+            realm.objects(PVGame.self).filter("romPath == %@", "NES/donkeykong.nes").isEmpty
+        }
 
         let freshRealm = try Realm(configuration: realmConfig)
         let found = freshRealm.objects(PVGame.self)
@@ -199,18 +199,15 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
         observer.start()
 
-        let exp = expectation(description: "delete handler completes")
-        observer._testOnDeleteHandlerInvoked = { _ in
-            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) { exp.fulfill() }
-        }
-
         NotificationCenter.default.post(
             name: Notification.Name.pvWebServerFileDeleted,
             object: nil,
             userInfo: ["filePath": romsPrefix + "Arcade/pacman.rom"]
         )
 
-        wait(for: [exp], timeout: 2)
+        try waitForRealm { realm in
+            realm.objects(PVGame.self).filter("romPath == %@", "Arcade/pacman.rom").isEmpty
+        }
 
         let freshRealm = try Realm(configuration: realmConfig)
         XCTAssertNil(freshRealm.objects(PVGame.self).filter("romPath == %@", "Arcade/pacman.rom").first,
@@ -235,11 +232,6 @@ final class PVWebFileEventObserverTests: XCTestCase {
 
         observer.start()
 
-        let exp = expectation(description: "move handler completes background work")
-        observer._testOnMoveHandlerInvoked = { _, _ in
-            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.3) { exp.fulfill() }
-        }
-
         NotificationCenter.default.post(
             name: Notification.Name.pvWebServerFileMoved,
             object: nil,
@@ -249,7 +241,9 @@ final class PVWebFileEventObserverTests: XCTestCase {
             ]
         )
 
-        wait(for: [exp], timeout: 2)
+        try waitForRealm { realm in
+            realm.objects(PVGame.self).filter("romPath == %@", newRelative).first != nil
+        }
 
         let freshRealm = try Realm(configuration: realmConfig)
         XCTAssertNil(freshRealm.objects(PVGame.self).filter("romPath == %@", oldRelative).first,

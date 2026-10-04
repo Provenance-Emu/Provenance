@@ -121,6 +121,7 @@ jobs:
     outputs:
       modules: ${{ steps.detect.outputs.modules }}
       pvui: ${{ steps.detect.outputs.pvui }}
+      pvlibrary: ${{ steps.detect.outputs.pvlibrary }}
       corebridgeretro: ${{ steps.detect.outputs.corebridgeretro }}
     steps:
       - name: Detect
@@ -143,7 +144,7 @@ jobs:
           # PVLibrary is deliberately NOT listed: it cannot `swift build` standalone —
           # its realm-core dependency fails to compile under the Xcode 26 toolchain
           # ("'is_pod' cannot be specialized" in s2/util/math/vector3-inl.h). Adding it
-          # would fail every PR that touches it. It needs the workspace build instead.
+          # would fail every PR that touches it. pvlibrary-test runs it under Xcode instead.
           ALL="PVLogging PVSettings PVHashing PVPlists PVFeatureFlags PVObjCUtils PVCheevos PVHelp PVWebServer"
 
           json_all() {
@@ -158,6 +159,7 @@ jobs:
           if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "0" ]; then
             echo "modules=$(json_all)" >> "$GITHUB_OUTPUT"
             echo "pvui=true" >> "$GITHUB_OUTPUT"
+            echo "pvlibrary=true" >> "$GITHUB_OUTPUT"
             echo "corebridgeretro=true" >> "$GITHUB_OUTPUT"
             echo "No PR number — running all modules"
             exit 0
@@ -170,6 +172,7 @@ jobs:
             echo "::warning::gh pr diff failed — running all modules"
             echo "modules=$(json_all)" >> "$GITHUB_OUTPUT"
             echo "pvui=true" >> "$GITHUB_OUTPUT"
+            echo "pvlibrary=true" >> "$GITHUB_OUTPUT"
             echo "corebridgeretro=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -191,6 +194,14 @@ jobs:
             echo "pvui=true" >> "$GITHUB_OUTPUT"
           else
             echo "pvui=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          # PVLibrary can't join the matrix either (realm-core doesn't build under
+          # SwiftPM with Xcode 26); pvlibrary-test runs it on a simulator.
+          if printf '%s\n' "$FILES" | grep -q "^PVLibrary/"; then
+            echo "pvlibrary=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "pvlibrary=false" >> "$GITHUB_OUTPUT"
           fi
 
           # PVCoreBridgeRetro's tests only build through its xcodeproj (SwiftPM
@@ -356,6 +367,106 @@ jobs:
         with:
           name: pvui-test-log-${{ matrix.platform }}
           path: /tmp/pvui-test.log
+          retention-days: 3
+
+  # Job 2c-2: PVLibrary tests (importer, Realm/SwiftData, CloudKit sync queue,
+  # save export, web-server file events). Like PVUI, PVLibrary can't `swift test`
+  # (realm-core), so Xcode builds the package and runs it on an iOS simulator via
+  # the committed PVLibrary-UnitTests scheme. The auto-generated PVLibrary scheme
+  # has no test action, and PVLibrary/PVLibrary.xcodeproj shadows Package.swift
+  # for a bare xcodebuild, hence the package workspace.
+  pvlibrary-test:
+    name: PVLibrary Tests (iOS Simulator)
+    needs: spm-changed
+    if: needs.spm-changed.outputs.pvlibrary == 'true'
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
+
+      # Transitive `.package(path:)` / target-path submodules of PVLibrary's local
+      # deps (the same set pvui-test needs, since PVUI depends on PVLibrary).
+      - name: Init required submodules (shallow)
+        run: |
+          git submodule update --init --depth 1 \
+            Dependencies/HexColors \
+            Dependencies/SWCompression \
+            Cores/Mednafen/ThirdParty/libchdr \
+            PVRcheevos/rcheevos
+          if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
+            rm -rf Dependencies/ZipArchive
+            git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
+          fi
+
+      - name: Cache libretro cheat database
+        uses: actions/cache@v4
+        with:
+          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+
+      - name: Generate libretro cheat database if missing
+        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
+
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-pvlibrary-deriveddata-${{ hashFiles('**/Package.swift', '**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-pvlibrary-deriveddata-
+
+      - name: Test PVLibrary
+        working-directory: PVLibrary
+        run: |
+          set -eo pipefail
+          # Xcode writes this package workspace when it opens the package; it is
+          # git-ignored (.swiftpm), so create it on a fresh checkout.
+          ws=.swiftpm/xcode/package.xcworkspace
+          if [ ! -f "$ws/contents.xcworkspacedata" ]; then
+            mkdir -p "$ws"
+            printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' \
+              '<Workspace version = "1.0">' \
+              '   <FileRef location = "self:"></FileRef>' \
+              '</Workspace>' > "$ws/contents.xcworkspacedata"
+          fi
+          udid=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices | to_entries[] | select(.key | contains("SimRuntime.iOS-")) | .value[]
+                | select(.name | startswith("iPhone"))][0].udid')
+          if [ -z "$udid" ] || [ "$udid" = "null" ]; then
+            echo "::error::No available iOS simulator"
+            xcrun simctl list runtimes
+            exit 1
+          fi
+          # -collect-test-diagnostics never: after any failure xcodebuild otherwise
+          # spends up to 10 minutes in `simctl diagnose`, which reads as a hang.
+          # Suites are XCTest ("Executed N tests") plus Swift Testing ("Test run with").
+          xcodebuild test \
+            -workspace "$ws" \
+            -scheme PVLibrary-UnitTests \
+            -destination "id=$udid" \
+            -collect-test-diagnostics never \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee /tmp/pvlibrary-test.log | grep -E "(: (fatal )?error:|Test Case .* failed|Executed [0-9]+ tests|Restarting after|✘|Test run with|TEST (SUCCEEDED|FAILED))" | tail -200
+
+      - name: Show PVLibrary test log tail
+        if: failure()
+        run: tail -60 /tmp/pvlibrary-test.log || true
+
+      - name: Upload PVLibrary test log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pvlibrary-test-log
+          path: /tmp/pvlibrary-test.log
           retention-days: 3
 
   # Job 2d: PVCoreBridgeRetro tests (thin libretro wrapper). They run as the
