@@ -8,7 +8,7 @@ strings in version.h, configure.ac, CMakeLists.txt, etc.
 For libretro cores embedded in native wrappers (BeetlePSX, etc.): searches
 C/C++ source for retro_get_system_info() version strings.
 
-The RetroArch PVRetroArch/Core.plist sub-cores are updated at runtime via
+The CoresRetro/RetroArch/Core.plist sub-cores are updated at runtime via
 LibretroMetadataReader (reads compiled dylib __cstring sections); this script
 handles the *source-level* validation so discrepancies are visible in PRs.
 

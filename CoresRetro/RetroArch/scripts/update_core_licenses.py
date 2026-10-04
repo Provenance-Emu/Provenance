@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-update_core_licenses.py — Sync PVRetroArch/Core.plist license data from libretro .info files.
+update_core_licenses.py — Sync CoresRetro/RetroArch/Core.plist license data from libretro .info files.
 
 Usage:
   python3 Scripts/update_core_licenses.py [--dry-run]
 
-The script reads PVRetroArch/Core.plist, looks up each core in the
+The script reads CoresRetro/RetroArch/Core.plist, looks up each core in the
 libretro-super dist/info directory, and applies license name + URL updates.
 Entries with missing data are filled in; incorrect entries are corrected.
 Already-correct entries are left untouched.
@@ -22,7 +22,7 @@ import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-PLIST_PATH = os.path.join(REPO_ROOT, "PVRetroArch", "Core.plist")
+PLIST_PATH = os.path.join(REPO_ROOT, "Core.plist")
 INFO_DIR = os.path.join(REPO_ROOT, "libretro-super", "dist", "info")
 
 # ---------------------------------------------------------------------------

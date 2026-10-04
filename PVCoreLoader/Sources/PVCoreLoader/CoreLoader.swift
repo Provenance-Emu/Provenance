@@ -112,13 +112,13 @@ public final class CoreLoader: Sendable {
 //        } else {
             var plists = getCorePlistsFromFileSystem()
 
-            /// When PVRetroArch.framework isn't linked (e.g. tvOS without the RA binary),
-            /// its sub-core metadata is missing. Load the bundled RetroArchCore.plist
-            /// symlink so system ↔ core associations, orphan checks, and missing-core
-            /// diagnostics still work.
+            /// The libretro cores the thin wrapper runs are listed in
+            /// CoresRetro/RetroArch/Core.plist, bundled here as RetroArchCore.plist
+            /// (a symlink in PVCoreLoader's resources). No framework carries it, so
+            /// load it unless a plist already registered libretro sub-cores.
             if !hasStaticLibretroSubcoreRegistration(in: plists) {
                 if let fallback = loadEmbeddedRetroArchPlist() {
-                    ILOG("CoreLoader: PVRetroArch.framework absent — loaded embedded RetroArchCore.plist (\(fallback.subCores?.count ?? 0) sub-cores)")
+                    ILOG("CoreLoader: loaded embedded RetroArchCore.plist (\(fallback.subCores?.count ?? 0) sub-cores)")
                     plists.append(fallback)
                 }
             }

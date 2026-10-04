@@ -197,7 +197,7 @@ public final class PVDynamicLibretroCoreScanner: Sendable {
         /// Pre-filter: derive the synthetic identifier from the framework
         /// directory name and skip candidates already covered by static plists.
         /// The framework dirname (e.g. "scummvm.libretro.framework") matches the
-        /// identifier format used in PVRetroArch/Core.plist sub-cores.
+        /// identifier format used in CoresRetro/RetroArch/Core.plist sub-cores.
         let candidates = allCandidates.filter { url in
             let id = Self.syntheticIdentifier(fromExecutableURL: url)
             if knownIdentifiers.contains(id) {
@@ -763,15 +763,9 @@ public extension CoreLoader {
         }
 
         if !missing.isEmpty {
-            /// When PVRetroArch.framework is absent from the app bundle (e.g. tvOS without the RA binary),
-            /// sub-core frameworks that aren't embedded are expected — the fallback embedded plist
-            /// carries all entries but only a subset of frameworks ship per variant.
-            let retroArchInBundle = fm.fileExists(atPath: frameworksURL.appendingPathComponent("PVRetroArch.framework").path)
-            if retroArchInBundle {
-                ELOG("CoreLoader: \(missing.count) enabled sub-core(s) missing their framework from bundle: \(missing)")
-            } else {
-                ILOG("CoreLoader: \(missing.count) sub-core(s) missing frameworks (expected — PVRetroArch.framework not in bundle)")
-            }
+            /// Expected: Core.plist lists every libretro core, and each build variant
+            /// ships only a subset of their frameworks (Lite ships none).
+            ILOG("CoreLoader: \(missing.count) listed sub-core(s) not in this build: \(missing)")
         } else {
             ILOG("CoreLoader: all enabled libretro sub-cores have matching frameworks in bundle")
         }

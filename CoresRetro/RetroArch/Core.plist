@@ -4,6 +4,8 @@
 <dict>
 	<key>PVContentless</key>
 	<true/>
+	<key>PVDisabled</key>
+	<true/>
 	<key>PVCopyright</key>
 	<string>Copyright © 2011-2024 RetroArch Contributors</string>
 	<key>PVCoreIdentifier</key>

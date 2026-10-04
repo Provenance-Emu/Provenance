@@ -6,7 +6,7 @@
 #
 # Run `python3 Scripts/generate_core_lists.py generate` to regenerate all files.
 #
-# PVCoreIdentifier mapping (must match PVRetroArch/Core.plist PVCores entries):
+# PVCoreIdentifier mapping (must match CoresRetro/RetroArch/Core.plist PVCores entries):
 #   YAML `name` uses underscores; the bundled framework id uses dots, e.g.
 #   mednafen_psx -> mednafen.psx.libretro.framework
 # Cores not listed in Core.plist, or listed with PVDisabled (no importer support),
@@ -17,7 +17,7 @@
 #   ios       - included in iOS builds
 #   tvos      - included in tvOS builds
 #   appstore  - allowed in App Store builds (false = excluded from appstore variants).
-#               Keep in sync with PVAppStoreDisabled on each core dict in PVRetroArch/Core.plist.
+#               Keep in sync with PVAppStoreDisabled on each core dict in CoresRetro/RetroArch/Core.plist.
 #   enabled   - if false, written as a commented line (#url or #path) in ALL generated
 #               files — both url lists and xcfilelists use the same convention
 #   filename  - ONLY set for platform-neutral filenames (no _ios/_tvos suffix)
@@ -43,7 +43,7 @@ buildbot:
 cores:
   # Order: plist-registered cores first (enabled), then not-in-plist (disabled).
 
-  # --- Listed in PVRetroArch/Core.plist (RetroArch meta core) ---
+  # --- Listed in CoresRetro/RetroArch/Core.plist ---
 
   - name: snes9x
     # Super Nintendo (canonical Snes9x) — must stay enabled if listed in Core.plist
