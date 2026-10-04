@@ -1829,7 +1829,7 @@ static int64_t thin_vfs_size(struct retro_vfs_file_handle *stream) {
     // cores (MAME) query size() frequently; the seek pair was evicting the 256 KB
     // stdio cache we install for FREQUENT_ACCESS files, forcing a kernel read on
     // the next hunk access.
-    if (stream->sizeKnown) return stream->cachedSize;
+    if (stream->frequentAccess && stream->sizeKnown) return stream->cachedSize;
 
     off_t cur = ftello(stream->fp);
     if (fseeko(stream->fp, 0, SEEK_END) != 0) {
