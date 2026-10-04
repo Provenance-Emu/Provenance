@@ -547,9 +547,6 @@ struct CoreOptionsListView: View {
             item.coreClass.resetAllOptions()
         }
 
-        // Delete RetroArch config files
-        deleteRetroArchConfigFiles()
-
         // Show a toast or notification that reset is complete
         #if !os(tvOS)
         NotificationCenter.default.post(
@@ -560,82 +557,6 @@ struct CoreOptionsListView: View {
         #endif
 
         ILOG("CoreOptions: All core options have been reset")
-    }
-
-    /// Delete all RetroArch config files (.opt files)
-    private func deleteRetroArchConfigFiles() {
-        let fileManager = FileManager.default
-
-        // Get the appropriate base directory
-        #if os(tvOS)
-        /// Use Caches directory on tvOS
-        guard let baseURL = try? fileManager.url(
-            for: .cachesDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: false
-        ) else {
-            ELOG("CoreOptions: Failed to get caches directory")
-            return
-        }
-        #else
-        /// Use Documents directory on iOS
-        guard let baseURL = try? fileManager.url(
-            for: .documentDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: false
-        ) else {
-            ELOG("CoreOptions: Failed to get documents directory")
-            return
-        }
-        #endif
-
-        // Construct the RetroArch config directory path
-        let retroArchConfigURL = baseURL.appendingPathComponent("RetroArch/config", isDirectory: true)
-
-        DLOG("CoreOptions: Looking for RetroArch config files in \(retroArchConfigURL.path)")
-
-        // Check if the directory exists
-        guard fileManager.fileExists(atPath: retroArchConfigURL.path) else {
-            DLOG("CoreOptions: RetroArch config directory does not exist")
-            return
-        }
-
-        // Find and delete all .opt files recursively
-        do {
-            /// Get all files in the directory and subdirectories
-            let resourceKeys: [URLResourceKey] = [.isDirectoryKey]
-            let enumerator = fileManager.enumerator(
-                at: retroArchConfigURL,
-                includingPropertiesForKeys: resourceKeys,
-                options: [.skipsHiddenFiles],
-                errorHandler: { (url, error) -> Bool in
-                    ELOG("CoreOptions: Error accessing \(url): \(error)")
-                    return true
-                }
-            )!
-
-            var deletedCount = 0
-
-            /// Process each file
-            for case let fileURL as URL in enumerator {
-                /// Check if it's a .opt file
-                if fileURL.pathExtension == "opt" {
-                    do {
-                        try fileManager.removeItem(at: fileURL)
-                        deletedCount += 1
-                        DLOG("CoreOptions: Deleted config file: \(fileURL.lastPathComponent)")
-                    } catch {
-                        ELOG("CoreOptions: Failed to delete \(fileURL.path): \(error)")
-                    }
-                }
-            }
-
-            ILOG("CoreOptions: Deleted \(deletedCount) RetroArch config files")
-        } catch {
-            ELOG("CoreOptions: Error enumerating RetroArch config directory: \(error)")
-        }
     }
 }
 

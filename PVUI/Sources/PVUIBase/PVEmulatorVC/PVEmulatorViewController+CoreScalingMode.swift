@@ -10,7 +10,7 @@ import PVSettings
 
 extension PVEmulatorViewController {
 
-    /// Cores that draw into their own view (Dolphin, PPSSPP, the RetroArch wrapper)
+    /// Cores that draw into their own view (Dolphin, PPSSPP)
     /// never get their frame from the host's scaling-mode maths, so hand them the
     /// mode to apply with their own renderer settings: once now, then on every change.
     func forwardScalingModeToCoreIfNeeded() {

@@ -296,9 +296,8 @@ public class PVPPSSPPCoreOptions: NSObject, CoreOptions {
 extension PVPPSSPPCoreBridge {
     func parseOptions() {
         // Native PPSSPP core's Vulkan path runs through MoltenVK and silently
-        // breaks on iOS/tvOS 26+ (vm_remap-style MemoryMap_Setup failures —
-        // same family of crashes that the RetroArch wrapper guards against in
-        // PVRetroArchCore+Options.swift). Force OpenGL on those OS versions
+        // breaks on iOS/tvOS 26+ (vm_remap-style MemoryMap_Setup failures).
+        // Force OpenGL on those OS versions
         // regardless of the user's saved preference so they don't get a black
         // screen / crash. The setting UI still shows their choice; this guard
         // only affects what the renderer actually picks at boot.

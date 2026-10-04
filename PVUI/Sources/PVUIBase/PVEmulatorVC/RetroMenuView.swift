@@ -449,28 +449,13 @@ struct RetroMenuView: View {
 #endif
     }
 
-    /// True when the active core is a RetroArch/libretro-path core.
-    /// Uses case-insensitive substring checks against known stable identifier patterns:
-    /// - "libretro" substring covers sub-cores (e.g., "dosbox_pure_libretro", "mednafen_pce_libretro")
-    /// - "retroarch" substring covers the main bridge bundle identifier
-    /// Matches the established detection pattern used throughout the codebase.
-    var isLibretroCore: Bool {
-        guard let coreID = emulatorVC.core.coreIdentifier else { return false }
-        let lower = coreID.lowercased()
-        return lower.contains("libretro") || lower.contains("retroarch")
-    }
-
-    /// True when the active core is a RetroArch/libretro-path core running on a
-    /// MIDI-capable system (DOS, Atari ST, MSX, etc.).
-    /// Used to decide whether to show the RetroArch MIDI driver toggle in the CORE tab.
-    var isRetroArchMIDICapable: Bool {
+    /// True when the running core asked for the libretro MIDI interface, so the MIDI on/off
+    /// switch has something to control. Only offered where CoreMIDI ships.
+    var isMIDIToggleCapable: Bool {
 #if canImport(CoreMIDI) && !os(tvOS)
-        guard isLibretroCore else { return false }
-        guard let game = emulatorVC.game else { return false }
-        guard let sysID = SystemIdentifier(rawValue: game.systemIdentifier) else { return false }
-        return MIDISystemRegistry.shared.supportsMIDI(sysID)
+        (emulatorVC.core as? MIDIInterfaceToggleable)?.requestsMIDIInterface == true
 #else
-        return false
+        false
 #endif
     }
 
@@ -481,7 +466,7 @@ struct RetroMenuView: View {
         // Use explicit CoreMIDI guard so this flag only activates when the MIDI UI sections
         // actually render — prevents a "ghost" true that would hide the "no features" message.
         #if canImport(CoreMIDI)
-        let hasMIDI = coreSupportsMIDI || isRetroArchMIDICapable
+        let hasMIDI = coreSupportsMIDI || isMIDIToggleCapable
         #else
         let hasMIDI = coreSupportsMIDI
         #endif
@@ -687,8 +672,8 @@ struct RetroMenuView: View {
             // MIDI device picker (source / destination + TX/RX lights)
             midiPickerSection
 
-            // RetroArch MIDI driver toggle (libretro cores on MIDI-capable systems)
-            retroArchMIDISection
+            // MIDI on/off toggle (libretro cores that use the MIDI interface)
+            midiToggleSection
 
             // If no core features available, show message
             if !hasCoreFeatures {
@@ -811,8 +796,8 @@ struct RetroMenuView: View {
         .frame(maxHeight: .infinity, alignment: .top)
     }
 
-    /// Peripherals section — shows available device interfaces (mic, camera, MIDI, sensors)
-    /// and per-port device type pickers when the core reports controller info.
+    /// Peripherals section — virtual keyboard / mouse shortcuts for cores that support them.
+    /// Per-port device pickers live in the CORE tab (``portDevicePickerSection``).
     @ViewBuilder
     private var peripheralsSection: some View {
         let core = emulatorVC.core
@@ -821,12 +806,7 @@ struct RetroMenuView: View {
         let hasMouse = (core as? MouseResponder)?.gameSupportsMouse == true
         let hasKeyboard = (core as? KeyboardResponder)?.gameSupportsKeyboard == true
 
-        /// Pause-menu port rows (e.g. RetroArch) use ``PauseMenuLibretroPortPickerSource`` instead of KVC on `_bridge`.
-        let pausePortPicker = core as? PauseMenuLibretroPortPickerSource
-        let pausePortDescriptors = pausePortPicker?.pauseMenuPortDeviceDescriptors ?? []
-        let hasPauseMenuPortPickers = !hasPortDeviceOptions && pausePortDescriptors.contains { $0.count > 1 }
-
-        let showSection = hasMouse || hasKeyboard || hasPauseMenuPortPickers
+        let showSection = hasMouse || hasKeyboard
 
         if showSection {
             skinSectionHeader(String(localized: "PERIPHERALS"), systemImage: "cable.connector")
@@ -850,52 +830,6 @@ struct RetroMenuView: View {
                     #else
                     emulatorVC.showVirtualMouse()
                     #endif
-                }
-            }
-
-            // Per-port device type picker — only when CORE tab has no picker (see ``hasPortDeviceOptions``)
-            // but the core still exposes SET_CONTROLLER_INFO via ``PauseMenuLibretroPortPickerSource``.
-            if let pickerCore = pausePortPicker, !hasPortDeviceOptions {
-                ForEach(Array(pickerCore.pauseMenuPortDeviceDescriptors.enumerated()), id: \.offset) { portIndex, devices in
-                    if devices.count > 1 {
-                        let deviceNames = devices.map(\.name)
-                        Menu {
-                            ForEach(devices, id: \.deviceType) { descriptor in
-                                Button(descriptor.name) {
-                                    pickerCore.setPauseMenuPortDevice(descriptor.deviceType, forPort: portIndex)
-                                }
-                            }
-                        } label: {
-                            HStack {
-                                Image(systemName: "gamecontroller")
-                                    .foregroundColor(.retroBlue)
-                                    .frame(width: 30)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(verbatim: "PORT \(portIndex + 1)")
-                                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                        .foregroundColor(.retroBlue.opacity(0.8))
-                                    Text(deviceNames.joined(separator: " / "))
-                                        .font(.system(size: isLandscape ? 13 : 15, weight: .semibold))
-                                        .foregroundColor(.white)
-                                        .lineLimit(1)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.up.chevron.down")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.retroBlue.opacity(0.5))
-                            }
-                            .padding(.vertical, isLandscape ? 8 : 10)
-                            .padding(.horizontal, 14)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color.black.opacity(0.55))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .strokeBorder(Color.retroBlue.opacity(0.4), lineWidth: 1)
-                                    )
-                            )
-                        }
-                    }
                 }
             }
         }

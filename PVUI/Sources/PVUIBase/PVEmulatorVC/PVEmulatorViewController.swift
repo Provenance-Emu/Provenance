@@ -1159,7 +1159,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // 42240/35200 Hz) only becomes known once the core has booted. finishEmulatorStart
         // rebuilds the graph if the rate changed so the AVAudioSourceNode matches the
         // core's true output rate (otherwise the producer/consumer rate mismatch causes
-        // chronic underruns — the "bassy square-wave" glitch). No-op for native/thick
+        // chronic underruns — the "bassy square-wave" glitch). No-op for native
         // cores whose rate is already correct here (rate unchanged → no rebuild).
         let audioGraphSampleRate = core.audioSampleRate
 
@@ -1211,7 +1211,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// Re-lay-out the GPU view when the core's display aspect only became known
     /// after it booted.
     ///
-    /// Cores that report geometry during `loadFile` (native / thick wrappers)
+    /// Cores that report geometry during `loadFile` (native cores)
     /// see no change here and this is a no-op. The thin libretro wrapper fills
     /// `_rawAVInfo` at the end of its off-main boot, long after the layout pass
     /// that sized the view, so for those the ratio moves from the 256x240

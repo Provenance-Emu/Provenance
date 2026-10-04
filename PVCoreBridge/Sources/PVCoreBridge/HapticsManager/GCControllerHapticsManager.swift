@@ -64,8 +64,8 @@ public final class GCControllerHapticsManager {
     private var engineMap: [Int: [GCHapticsLocality: CHHapticEngine]] = [:]
 
     #if os(iOS) && !targetEnvironment(macCatalyst)
-    /// Device-body Taptic engine, fired ALONGSIDE the controller motor (player 0) to
-    /// match the thick wrapper's richer feel. Created lazily and reused; the device
+    /// Device-body Taptic engine, fired ALONGSIDE the controller motor (player 0) for
+    /// a richer rumble feel. Created lazily and reused; the device
     /// body has no taptic on tvOS/Catalyst, so this is iOS-only. Gated by the
     /// independent `rumbleDeviceEnabled` pref.
     private var deviceHapticEngine: CHHapticEngine?
@@ -507,10 +507,9 @@ public final class GCControllerHapticsManager {
                               sharpness: systemProfile.sharpness)
         }
 
-        // Device-body taptic, fired ALONGSIDE the controller motor (player 0 only,
-        // matching the thick wrapper) for the richer feel users expect from N64 etc.
-        // Routed through the central manager so it honors the per-system profile +
-        // user prefs — unlike the thick wrapper's bespoke path, which bypassed them.
+        // Device-body taptic, fired ALONGSIDE the controller motor (player 0 only)
+        // for the richer feel users expect from N64 etc. Routed through the central
+        // manager so it honors the per-system profile + user prefs.
         // iOS-only: tvOS/Catalyst have no device taptic.
         #if os(iOS) && !targetEnvironment(macCatalyst)
         if player == 0, deviceIntensity > 0 {
@@ -853,7 +852,7 @@ public final class GCControllerHapticsManager {
     #if os(iOS) && !targetEnvironment(macCatalyst)
     /// Fires a continuous haptic on the DEVICE BODY's Taptic Engine, mirroring
     /// `playEvent` but on a lazily-created, reused device engine. Played alongside
-    /// the controller motor (player 0) to match the thick wrapper's feel. Created on
+    /// the controller motor (player 0). Created on
     /// first use; `stopRumble`/`stopAllEngines` stop it. Safe no-op when the device
     /// has no haptics hardware. Failures are isolated (logged, never thrown).
     private func playDeviceBodyEvent(intensity: Float, sharpness: Float, duration: TimeInterval) {

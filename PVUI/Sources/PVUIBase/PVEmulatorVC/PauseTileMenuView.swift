@@ -124,7 +124,6 @@ struct PauseTileMenuView: View {
     @State private var showingPortDevices = false
     @State private var showingMIDIPicker = false
     @State private var showingSystemSkinSelection = false
-    @State private var showingLegacyPortDevices = false
     @State private var showingSkinCatalog = false
     @State private var showingButtonEffectPicker = false
     @State private var showingButtonSoundPicker = false
@@ -701,13 +700,11 @@ struct PauseTileMenuView: View {
         // MARK: Port device type picker
         case "portDevices":
             showingPortDevices = true
-        case "legacyPortDevices":
-            showingLegacyPortDevices = true
 
         // MARK: MIDI device picker
         case "midiDevice":
             showingMIDIPicker = true
-        case "retroArchMIDIToggle":
+        case "midiToggle":
             Defaults[.retroArchMIDIEnabled].toggle()
             rebuildSections()
 
@@ -1754,35 +1751,6 @@ struct PauseTileMenuView: View {
                 )
             }
         }
-        .sheet(isPresented: $showingLegacyPortDevices) {
-            NavigationStack {
-                List {
-                    if legacyPortDeviceInfo.isEmpty {
-                        Text(String(localized: "No legacy port devices available."))
-                    } else {
-                        ForEach(Array(legacyPortDeviceInfo.enumerated()), id: \.offset) { portIndex, devices in
-                            if devices.count > 1 {
-                                SwiftUI.Section(String(format: String(localized: "Port %d"), portIndex + 1)) {
-                                    ForEach(devices, id: \.deviceType) { device in
-                                        Button(device.name) {
-                                            setLegacyPortDevice(device.deviceType, forPort: portIndex)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                .navigationTitle(String(localized: "Port Devices"))
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(String(localized: "Done")) {
-                            showingLegacyPortDevices = false
-                        }
-                    }
-                }
-            }
-        }
         .sheet(isPresented: $showingSkinCatalog) {
             NavigationStack {
                 SkinCatalogBrowserView(
@@ -2482,15 +2450,6 @@ struct PauseTileMenuView: View {
         }?.offset ?? 0
         let next = presets[(nearestIndex + 1) % presets.count]
         mouseSensitivity = next
-        rebuildSections()
-    }
-
-    private var legacyPortDeviceInfo: [[PortDeviceDescriptor]] {
-        (emulatorVC.core as? PauseMenuLibretroPortPickerSource)?.pauseMenuPortDeviceDescriptors ?? []
-    }
-
-    private func setLegacyPortDevice(_ deviceID: UInt, forPort portIndex: Int) {
-        (emulatorVC.core as? PauseMenuLibretroPortPickerSource)?.setPauseMenuPortDevice(deviceID, forPort: portIndex)
         rebuildSections()
     }
 

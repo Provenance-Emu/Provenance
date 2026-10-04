@@ -8,7 +8,8 @@
 //  Observes MIDIDeviceManager.selectedDestinationIDs and routes changes to
 //  PVThinLibretroFrontend so that thin libretro cores (e.g. DOSBox-Pure)
 //  send MIDI output to the user-selected device rather than always using
-//  the hardcoded first destination.
+//  the hardcoded first destination. Also applies the user's MIDI on/off
+//  preference (`Defaults[.retroArchMIDIEnabled]`) to the frontend, live.
 //
 //  Threading: all observation and sync work runs on the @MainActor to match
 //  MIDIDeviceManager's isolation domain. The ObjC class method
@@ -19,6 +20,21 @@ import Combine
 import Foundation
 import PVCoreBridge
 import PVLogging
+import PVSettings
+
+// MARK: - MIDI on/off preference
+
+extension PVThinLibretroCore: MIDIInterfaceToggleable {
+
+    public var requestsMIDIInterface: Bool { _bridge.midiInterfaceRequested }
+
+    /// Push the saved MIDI on/off preference into the frontend. Must run before the core
+    /// boots so a core that checks `input_enabled` / `output_enabled` once at startup
+    /// sees the user's choice.
+    func applyMIDIEnabledPreference() {
+        PVThinLibretroFrontend.setMIDIEnabled(Defaults[.retroArchMIDIEnabled])
+    }
+}
 
 #if canImport(CoreMIDI) && !os(tvOS)
 import CoreMIDI
@@ -35,6 +51,12 @@ extension PVThinLibretroCore {
     @MainActor
     func startMIDIDestinationObservation() {
         let manager = MIDIDeviceManager.shared
+        // Follow the pause-menu MIDI toggle while the game runs. The value at launch is
+        // applied earlier, synchronously, by `applyMIDIEnabledPreference()`.
+        _midiEnabledCancellable = Defaults.publisher(.retroArchMIDIEnabled, options: [])
+            .sink { change in
+                PVThinLibretroFrontend.setMIDIEnabled(change.newValue)
+            }
         // Initial sync so the frontend has the correct endpoints immediately.
         syncMIDIDestinations(manager: manager)
         // Observe future changes (either destination list or selection changes).
@@ -51,7 +73,7 @@ extension PVThinLibretroCore {
     /// Must be called on the main actor.
     ///
     /// Does NOT clear the frontend's destination cache: the shared retro_midi_interface
-    /// (and its cache) is also used by the full RetroArch bridge (PVLibRetroCore).
+    /// (and its cache) is also used by PVLibRetroCore.
     /// Clearing the cache here would force it to zero, disabling the legacy fallback
     /// (-1 = MIDIGetDestination(0)) for any subsequent libretro core that does not
     /// wire its own MIDIDeviceManager observer. No MIDI is sent while emulation is
@@ -60,6 +82,7 @@ extension PVThinLibretroCore {
     @MainActor
     func stopMIDIDestinationObservation() {
         _midiDestinationCancellable = nil
+        _midiEnabledCancellable = nil
         DLOG("ThinCore MIDI: stopped destination observation")
     }
 

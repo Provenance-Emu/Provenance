@@ -39,7 +39,7 @@ import PVPrimitives
     /// the first delivered frame). Bridges that always expose true game-pixel
     /// dimensions (most native cores) should return `true`. Bridges that
     /// initialise `aspectSize` from `UIScreen.bounds` until the first frame
-    /// arrives (RetroArch wrapper) should return `false` until the geometry
+    /// arrives (e.g. the thin libretro wrapper) should return `false` until the geometry
     /// has been updated, so consumers know not to clamp the reported aspect.
     @objc optional var hasReceivedAspectFromCore: Bool { get }
     

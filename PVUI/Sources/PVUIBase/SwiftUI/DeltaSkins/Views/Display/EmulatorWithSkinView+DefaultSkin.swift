@@ -425,16 +425,14 @@ struct DefaultControllerSkinView: View {
                 lastAspectSize = .zero
             }
             // Pause-menu scaling-mode changes must re-layout the default skin
-            // for native cores and the thick RetroArch wrapper too — those
+            // for native cores too — those
             // never post `PVThinLibretroCoreAVInfoDidUpdate`. Without this,
             // switching scaling on a native core leaves the game-area frame
             // stale until the next geometry change or rotation.
             //
             // Also re-push the last broadcasted viewport so the renderer
-            // (thick RA wrapper in particular) re-runs its scaling decision
-            // — `applyRenderViewFrameInTouchView` reads `useIntegerScale`
-            // and sets `video_scale_integer` only when it fires, so a
-            // settings-only change wouldn't otherwise reach the core.
+            // re-runs its scaling decision — a settings-only change
+            // wouldn't otherwise reach the core.
             .onChange(of: Defaults[.scalingMode]) { _, _ in
                 cachedAspectRatio = nil
                 lastAspectSize = .zero

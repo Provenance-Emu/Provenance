@@ -16,7 +16,7 @@ import Combine
 /// Implement this protocol on `PVEmulatorCore` subclasses (or their Swift wrappers)
 /// to expose netplay controls to the `PVNetplayManager`.
 ///
-/// - For RetroArch cores: implemented via `PVRetroArchCoreBridge+Netplay`
+/// - For libretro cores: implemented by `PVThinLibretroCore` (`PVThinLibretroCore+Netplay.swift`)
 /// - For native cores (future): implemented directly on each core bridge
 public protocol PVNetplayCapable: AnyObject, Sendable {
     /// Whether this core instance supports netplay.

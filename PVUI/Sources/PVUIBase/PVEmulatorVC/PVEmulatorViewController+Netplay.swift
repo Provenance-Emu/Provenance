@@ -7,7 +7,7 @@
 //    • startNetplayBridgeIfNeeded()  — called right after core.startEmulation()
 //    • stopNetplayBridge()           — called before core.stopEmulation()
 //
-//  When the running core conforms to PVNetplayCapable (e.g. PVRetroArchCoreCore),
+//  When the running core conforms to PVNetplayCapable (e.g. PVThinLibretroCore),
 //  the bridge is registered with PVNetplayManager so that the manager can drive
 //  host/join/stop netplay sessions natively.
 //

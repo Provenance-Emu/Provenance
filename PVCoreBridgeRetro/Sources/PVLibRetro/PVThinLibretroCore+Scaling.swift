@@ -11,15 +11,13 @@
 //  `ScalingMode` by sizing the MTKView frame: it reads `aspectSize` /
 //  `bufferSize` / `screenRect` from the core and computes letterbox /
 //  pillarbox / fill / integer-scale / native-resolution layouts. That
-//  behaviour is shared by native cores, the full RetroArch wrapper and
-//  the thin libretro wrapper.
+//  behaviour is shared by native cores and the thin libretro wrapper.
 //
 //  But several libretro cores expose their OWN aspect-ratio toggle as a
 //  core option (`mupen64plus-aspect`, `dolphin_aspect_ratio`,
 //  `reicast_widescreen_hack`, `swanstation_GPU_WidescreenHack`, etc.).
-//  The full RetroArch wrapper translates the user's preference into these
-//  options implicitly via RA's `video_aspect_ratio_idx = ASPECT_RATIO_CORE`
-//  flow.
+//  RetroArch translates the user's preference into these options implicitly
+//  via its `video_aspect_ratio_idx = ASPECT_RATIO_CORE` flow.
 //  The thin wrapper does not run RA, so without this translation the
 //  user's "Stretch" / "Aspect Fit" pause-menu choice silently no-ops for
 //  cores that gate widescreen behind a core option.
@@ -107,8 +105,8 @@ extension PVThinLibretroCore {
     /// widescreen / stretch / aspect option return an empty array — the
     /// renderer's view-frame logic handles those cases on its own.
     ///
-    /// The mapping intentionally mirrors what the full RetroArch wrapper
-    /// achieves via its internal `video_aspect_ratio_idx` flow:
+    /// The mapping intentionally mirrors what RetroArch achieves via its
+    /// internal `video_aspect_ratio_idx` flow:
     /// - `.stretch`   → enable widescreen / stretch where supported.
     /// - `.aspectFit` / `.aspectFill` / `.integerScale` / `.nativeResolution`
     ///   → restore the core's natural aspect (disable widescreen hacks).

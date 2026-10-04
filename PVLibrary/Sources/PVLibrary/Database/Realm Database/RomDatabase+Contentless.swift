@@ -46,8 +46,9 @@ public extension RomDatabase {
         let realm = try await Realm()
 
         /// Get all contentless cores. Only those that can launch get a game: the
-        /// thick RetroArch launcher (`com.provenance.core.retroarch`) is gone, and
-        /// Lite builds register libretro cores whose dylibs they don't ship.
+        /// retired RetroArch launcher (`com.provenance.core.retroarch`) has no
+        /// runtime any more, and Lite builds register libretro cores whose
+        /// dylibs they don't ship.
         let allContentlessCores = realm.objects(PVCore.self).filter("contentless == true")
         let contentlessCores = allContentlessCores.filter { $0.hasCoreClass }
         let unlaunchableIDs = allContentlessCores.filter { !$0.hasCoreClass }.map(\.identifier)

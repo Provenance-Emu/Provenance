@@ -378,8 +378,6 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     ///
     /// ## RetroArch conventions
     /// Names follow the wider emulation community convention where possible (e.g. "PSP", "DC", "N64").
-    /// The RetroArch full-wrapper (`PVRetroArchCoreCore`) uses `<RetroArch>/system/<name>/` instead,
-    /// so its system files live under a separate `RetroArch/` prefix and don't share this table.
     ///
     /// ## Validated thin wrapper support
     /// - **PSP**: `System/PSP/` — flash0/font seeded from bundle by `PVThinLibretroCore`
@@ -435,8 +433,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable, Sendable, Equatable
     /// `Mupen64Plus-Next/`, FBNeo in `fbneo/`, MAME in `mame*`, hatari in
     /// `hatari/`, VICE in `vice/`.
     ///
-    /// Callers that resolve a system dir for a libretro core (thin-wrapper +
-    /// full RA wrapper) should prefer this property; user-facing display still
+    /// Callers that resolve a system dir for a libretro core (the thin wrapper)
+    /// should prefer this property; user-facing display still
     /// uses ``systemDirectoryName``. Falls back to `nil` for systems with no
     /// libretro core or where the upstream looks in the BIOS root.
     ///

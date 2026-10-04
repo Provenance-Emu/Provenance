@@ -35,7 +35,6 @@ typedef NS_ENUM(NSInteger, PVRetroArchNetplayStatus) {
 /// Thin ObjC bridge that wires the Provenance Swift netplay stack to
 /// RetroArch's C-level netplay engine (compiled with HAVE_NETPLAY).
 ///
-/// Call from Swift via PVRetroArchCoreBridge+Netplay.swift.
 @interface PVRetroArchNetplayBridge : NSObject
 
 /// Shared bridge; corresponds to the running RetroArch singleton.

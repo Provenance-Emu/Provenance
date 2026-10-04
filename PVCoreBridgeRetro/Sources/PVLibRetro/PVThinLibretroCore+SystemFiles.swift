@@ -16,7 +16,7 @@
 //     immediately and the files are available on the next launch.
 //
 //  2. **Legacy RetroArch directory migration** — when a user upgrades from
-//     the PVRetroArchCore backend to the thin wrapper, their existing files
+//     the retired full-RetroArch backend to the thin wrapper, their existing files
 //     in `Documents/RetroArch/system/` are copied (not moved) into the
 //     thin-wrapper's canonical `Documents/System/<name>/` tree.  The copy
 //     is idempotent, so re-launching the same game never re-copies.
@@ -247,12 +247,11 @@ extension PVThinLibretroCore {
     /// into the thin-wrapper's canonical `Documents/System/<name>/` tree.
     ///
     /// This enables a seamless upgrade path: users who already have system files
-    /// populated by the old PVRetroArchCore backend can switch to the thin wrapper
+    /// populated by the old full-RetroArch backend keep working on the thin wrapper
     /// without manually reinstalling BIOS/system data.
     ///
     /// Copies are idempotent — existing destination files are never overwritten.
-    /// The source RetroArch directory is left intact so it can still be used if the
-    /// user switches back.
+    /// The source RetroArch directory is left intact.
     func migrateRetroArchSystemDirectoryIfNeeded() {
         guard let docsDir = thinDocsDirectory else { return }
         let legacySystemDir = URL(fileURLWithPath: docsDir)

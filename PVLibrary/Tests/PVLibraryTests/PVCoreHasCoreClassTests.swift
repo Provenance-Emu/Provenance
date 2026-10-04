@@ -3,8 +3,7 @@
 //  PVLibraryTests
 //
 //  RetroArch-list cores run on the thin wrapper, which loads them from the app
-//  bundle; without PVRetroArch.framework they are available only when their
-//  libretro dylib ships.
+//  bundle; they are available only when their libretro dylib ships.
 //
 
 import XCTest

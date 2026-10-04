@@ -118,8 +118,8 @@ extension PVThinLibretroCore {
     /// physical buttonB. Identity when no mapping is stored.
     ///
     /// Resolution goes through ``ControllerMappingStore`` (PVCoreBridge) —
-    /// PVRemappableController writes there and the thick libretro wrapper
-    /// reads from the same store.
+    /// PVRemappableController writes there and this wrapper reads from the
+    /// same store.
     fileprivate func remappedPressed(
         _ source: ButtonIdentifier,
         on pad: GCExtendedGamepad,
@@ -1578,7 +1578,6 @@ extension PVThinLibretroCore: MouseResponder {
 #endif
 
     /// Mouse units for a full normalised sweep when the core's own scale isn't known.
-    /// Matches ST_MOUSE_SCALE in PVRetroArchCore+Controls+DOS.m.
     static let mouseScale: Double = 300.0
     /// DOS INT 33h virtual screen (640 × 200) in DOSBox Pure mouse units, at 2 per line vertically.
     static let dosMinSweep: (x: Double, y: Double) = (640, 400)
@@ -2057,8 +2056,7 @@ extension PVThinLibretroCore: PVMAMESystemResponderClient {
             // Insert Coin to RETRO_DEVICE_ID_JOYPAD_SELECT (libretro arcade convention —
             // hardware has no separate "Select" pin, so the same line is coin).
             // Without this case the pause-menu Coin button and DeltaSkin "coin" cell
-            // were silent no-ops on the thin libretro wrapper (matches the thick-wrapper
-            // mapping at PVRetroArchCore+Controls+MAME.m:111-119).
+            // were silent no-ops on the thin libretro wrapper.
             return .select
         case .analogMode, .leftAnalog, .rightAnalog, .count:
             return nil

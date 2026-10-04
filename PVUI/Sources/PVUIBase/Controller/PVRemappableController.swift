@@ -6,7 +6,7 @@ import PVSettings
 
 // Note: ``ButtonIdentifier`` and ``ButtonMapping`` were originally defined in
 // this file. They now live in `PVCoreBridge/Features/ControllerMapping.swift`
-// so that lower-tier consumers (thin libretro frontend, thick RA wrapper)
+// so that lower-tier consumers (thin libretro frontend)
 // can read the same mappings the UI writes without duplicating the model.
 // This file keeps the GCController handler-install glue.
 

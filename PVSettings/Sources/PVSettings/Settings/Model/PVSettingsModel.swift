@@ -838,13 +838,13 @@ internal let legacySkinModeDefaultsKey = "skinMOde"
 /// Canonical storage key for the RetroAchievements master toggle.
 internal let canonicalRetroAchievementsEnabledDefaultsKey = "retroAchievementsEnabled"
 
-/// Legacy storage key used by the RetroArch bridge before app-wide Defaults integration.
+/// Legacy storage key written before app-wide Defaults integration.
 internal let legacyRetroAchievementsEnabledDefaultsKey = "ra_cheevos_enabled"
 
 /// Canonical storage key for the RetroAchievements hardcore toggle.
 internal let canonicalRetroAchievementsHardcoreDefaultsKey = "retroAchievementsHardcoreEnabled"
 
-/// Legacy storage key used by the RetroArch bridge before app-wide Defaults integration.
+/// Legacy storage key written before app-wide Defaults integration.
 internal let legacyRetroAchievementsHardcoreDefaultsKey = "ra_cheevos_hardcore_mode"
 
 /// Migrates the original typoed skin-mode key to the canonical storage key.
@@ -1082,7 +1082,7 @@ public final class PVSettingsWrapper: NSObject {
         set { Defaults[.integerScaleEnabled] = newValue }}
 
     /// True when the user's selected scaling mode applies integer snapping.
-    /// ObjC bridges (Mupen64Plus, RetroArch wrapper) gate integer-multiple
+    /// ObjC bridges (e.g. Mupen64Plus) gate integer-multiple
     /// framebuffer sizing on this so the new ScalingMode picker actually
     /// reaches cores whose framebuffer geometry is decided in ObjC.
     @objc
@@ -1091,7 +1091,7 @@ public final class PVSettingsWrapper: NSObject {
     }
 
     /// True when the user's selected scaling mode stretches to fill the screen.
-    /// Cores that size their own output (Dolphin, PPSSPP, RetroArch wrapper)
+    /// Cores that size their own output (Dolphin, PPSSPP)
     /// map this to their own stretch setting.
     @objc
     public static var useStretchScale: Bool {
@@ -1245,9 +1245,9 @@ public extension Defaults.Keys {
     /// `nil` means "no preference" (no active output connection).
     static let midiDestinationUniqueID = Key<Int?>("midiDestinationUniqueID", default: nil)
 
-    /// Whether the RetroArch MIDI driver (CoreMIDI) is enabled for RetroArch-path cores.
-    /// When `true`, `midi_input` and `midi_output` in retroarch.cfg are set to "coremidi".
-    /// When `false`, both are set to "Off", disabling MIDI routing for all RA cores.
-    /// Applied to the user's retroarch.cfg on every core startup via `applyMIDIPreferenceToUserCfg:`.
+    /// Master switch for MIDI input and output in libretro cores (the pause-menu "MIDI" toggle).
+    /// When `false`, the thin frontend reports the libretro MIDI interface as disabled and drops
+    /// all MIDI traffic; applied at every core start and live while a game runs.
+    /// The key keeps its original `retroArchMIDIEnabled` name so existing user preferences carry over.
     static let retroArchMIDIEnabled = Key<Bool>("retroArchMIDIEnabled", default: true)
 }

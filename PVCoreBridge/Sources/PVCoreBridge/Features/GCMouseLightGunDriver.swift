@@ -15,8 +15,7 @@
 //    clamped to [0, 1] in both axes, then forwards the normalised point
 //    to the core's LightGunResponder.
 //  - On iPadOS with UIPointerInteraction the absolute position is used
-//    directly (more accurate; see EmulatorTouchMouseHandler in the
-//    RetroArch wrapper for the UIPointerInteraction path).
+//    directly (more accurate than the relative-delta path).
 //
 //  Usage:
 //    let driver = GCMouseLightGunDriver()

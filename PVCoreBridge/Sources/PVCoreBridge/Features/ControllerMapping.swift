@@ -5,8 +5,8 @@
 //  Shared data model for hardware controller button remapping. Lives in
 //  PVCoreBridge (Tier 4) so every input consumer — PVRemappableController
 //  (PVUIBase, Tier 6), the thin libretro frontend (PVCoreBridgeRetro,
-//  Tier 5), the thick RetroArch wrapper, and any future native-core
-//  bridge — can read from the same source of truth.
+//  Tier 5), and any native-core bridge — can read from the same source
+//  of truth.
 //
 //  Storage format is intentionally identical to the legacy format that
 //  shipped with PVRemappableController so existing saved mappings carry
@@ -15,16 +15,8 @@
 //      Key: "PVControllerMappings_<vendorName>"
 //      Value: JSON-encoded `[ButtonIdentifier.rawValue: {sourceId, destinationId}]`
 //
-//  ObjC consumers (the thick wrapper bindControls block) call
-//  ``ControllerMappingStore.objcDestinationButton(forSource:vendor:)`` to
-//  resolve a source identifier to its destination raw value without
-//  having to parse the JSON themselves.
-//
 
 import Foundation
-#if canImport(GameController)
-import GameController
-#endif
 
 // MARK: - ButtonIdentifier
 
@@ -95,7 +87,7 @@ public struct ButtonMapping: Codable, Equatable, Sendable {
 
 /// Thread-safe UserDefaults-backed store for controller button remaps.
 /// Read paths are cached and invalidated via `UserDefaults.didChangeNotification`
-/// so per-frame lookups (thin/thick libretro polls) stay cheap.
+/// so per-frame lookups (per-frame libretro polls) stay cheap.
 ///
 /// Vendor key is `GCController.vendorName ?? "unknown"`. The store does
 /// not know about specific controllers — callers pass the vendor string.
@@ -206,36 +198,4 @@ public final class ControllerMappingStore: @unchecked Sendable {
             self.lock.unlock()
         }
     }
-}
-
-// MARK: - Objective-C Bridge
-
-/// ObjC-callable shim for thick-wrapper `bindControls` (ObjC++ block
-/// captures don't tolerate Swift dictionary types). Returns the raw
-/// string identifier of the destination button for a given source on a
-/// given vendor; ObjC switches on the string to grab the right
-/// `GCControllerButtonInput` on its virtual target.
-@objc(PVControllerMappingStore)
-public final class ControllerMappingStoreObjC: NSObject {
-
-    @objc(destinationIdentifierForSource:vendor:)
-    public static func destinationIdentifier(forSource source: String,
-                                             vendor: String) -> String {
-        guard let id = ButtonIdentifier(rawValue: source) else { return source }
-        return ControllerMappingStore.shared
-            .destination(forSource: id, vendor: vendor)
-            .rawValue
-    }
-
-    /// Convenience for ObjC callers that already have a `GCController` in
-    /// hand — extracts `vendorName ?? "unknown"` so the call site doesn't
-    /// have to repeat the fallback string.
-    #if canImport(GameController)
-    @objc(destinationIdentifierForSource:controller:)
-    public static func destinationIdentifier(forSource source: String,
-                                             controller: GCController) -> String {
-        return destinationIdentifier(forSource: source,
-                                     vendor: controller.vendorName ?? "unknown")
-    }
-    #endif
 }

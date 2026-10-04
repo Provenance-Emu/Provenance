@@ -275,8 +275,8 @@ public final class CoreLoader: Sendable {
         }
     }
 
-    /// True when any loaded plist still declares libretro sub-cores (e.g. PVRetroArch `PVCores` with `*.libretro.framework` identifiers).
-    /// When this is false — for example tvOS builds that omit the PVRetroArch framework — the dynamic libretro scanner must register cores from `Frameworks/` instead.
+    /// True when any loaded plist still declares libretro sub-cores (e.g. the RetroArch `Core.plist` `PVCores` with `*.libretro.framework` identifiers).
+    /// When this is false — for example builds that omit the RetroArch core list — the dynamic libretro scanner must register cores from `Frameworks/` instead.
     public static func hasStaticLibretroSubcoreRegistration(in plists: [EmulatorCoreInfoPlist]) -> Bool {
         for plist in plists {
             for sub in plist.subCores ?? [] where sub.identifier.contains(".libretro.framework") {

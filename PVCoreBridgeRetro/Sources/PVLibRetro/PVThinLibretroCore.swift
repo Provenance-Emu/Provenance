@@ -35,12 +35,11 @@ public extension Notification.Name {
     /// so the next layout pass re-reads the core's current geometry.
     static let PVThinLibretroCoreAVInfoDidUpdate = Notification.Name("PVThinLibretroCoreAVInfoDidUpdate")
 
-    // Note: `pvThinLibretroFrontendCoreDidThrow` and `pvRetroArchCoreDidThrow`
-    // are defined in `PVUI/Sources/PVUIBase/PVEmulatorVC/CoreDidThrow+NotificationName.swift`
+    // Note: `pvThinLibretroFrontendCoreDidThrow` is defined in
+    // `PVUI/Sources/PVUIBase/PVEmulatorVC/CoreDidThrow+NotificationName.swift`
     // because PVUI doesn't import PVCoreBridgeRetro (different tier).
-    // The ObjC `NSNotificationName` constants in the respective wrappers'
-    // headers (`PVThinLibretroFrontend.h`, `PVRetroArchCore+ExceptionTrampoline.h`)
-    // remain the source of truth for the string values.
+    // The ObjC `NSNotificationName` constant in `PVThinLibretroFrontend.h`
+    // remains the source of truth for the string value.
 }
 
 /// Internal to keep `PVEmulatorCore` out of the generated
@@ -95,6 +94,10 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     /// destination changes to the thin libretro frontend.
     /// Only set on platforms with CoreMIDI (iOS, macOS, Catalyst); nil on tvOS.
     @MainActor var _midiDestinationCancellable: AnyCancellable?
+
+    /// Cancellable for the subscription that applies `Defaults[.retroArchMIDIEnabled]`
+    /// changes (the pause-menu MIDI toggle) to the thin frontend while the game runs.
+    @MainActor var _midiEnabledCancellable: AnyCancellable?
 
     // MARK: - RetroAchievements backing storage
     weak var _achievementsDelegate: (any RetroAchievementsOSDDelegate)?
@@ -238,7 +241,6 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
 #endif
         }
         // Apply per-core iOS-specific option defaults before the emulation loop starts.
-        // These match what PVRetroArchCore+Options.swift sets for the full RA bridge.
         applyPlatformDefaults()
         // Translate the user's Display Scaling preference into the per-core libretro
         // options that gate widescreen / stretch / aspect overrides
@@ -279,7 +281,9 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
             guard let strongSelf = self else { return }
             strongSelf.pollControllers()
         }
-        // Start observing MIDIDeviceManager so MIDI output goes to the user-selected device.
+        // Apply the saved MIDI on/off preference before the core boots, then start observing
+        // MIDIDeviceManager so MIDI output goes to the user-selected device.
+        applyMIDIEnabledPreference()
 #if canImport(CoreMIDI) && !os(tvOS)
         Task { @MainActor [weak self] in
             guard let self else { return }
@@ -516,10 +520,9 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         provisionThinSystemFilesIfNeeded()
         downloadLegacyBuildBotSystemFilesIfNeeded()
 
-        // Mupen64Plus-Next: use angrylion RDP, default pak1 to "rumble" to match
-        // the thick wrapper (PVRetroArchCore+Options.swift). In the RetroArch
-        // buildbot dylib that BOTH wrappers dlopen at runtime, pak type "rumble"
-        // (PLUGIN_RAW) is the raw-intercept mode: the core tells the game the pak
+        // Mupen64Plus-Next: use angrylion RDP and default pak1 to "rumble". In the
+        // RetroArch buildbot dylib the thin wrapper dlopens at runtime, pak type
+        // "rumble" (PLUGIN_RAW) is the raw-intercept mode: the core tells the game the pak
         // is "raw" and marshals BOTH message types, so Controller-Pak saves AND
         // rumble work together. (Our Cores/Mupen64Plus-NX submodule has this raw
         // path stubbed out — RawData hardcoded to 0 — but that source only feeds

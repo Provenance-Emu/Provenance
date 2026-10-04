@@ -62,6 +62,16 @@ void pv_perf_stop(struct retro_perf_counter *_Nullable counter);
 /// Log all registered counters to the Provenance log.
 void pv_perf_log(void);
 
+// MARK: libretro MIDI interface (C functions)
+
+/// The CoreMIDI-backed `retro_midi_interface` handed to cores via
+/// `RETRO_ENVIRONMENT_GET_MIDI_INTERFACE`, or NULL where CoreMIDI is unavailable (tvOS).
+struct retro_midi_interface *_Nullable pv_libretro_midi_interface(void);
+
+/// Push one raw MIDI byte into the interface's input ring buffer (used by `MIDIResponder`
+/// cores). Dropped while MIDI is switched off via `+[PVThinLibretroFrontend setMIDIEnabled:]`.
+void pv_libretro_midi_inject_byte(uint8_t byte);
+
 __END_DECLS
 
 /// Maximum number of players supported for input.
@@ -332,6 +342,18 @@ FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotificat
 ///                      Pass an empty array when the user selects "None" — `thin_midi_write`
 ///                      becomes a no-op until a destination is selected.
 + (void)setMIDIOutputEndpoints:(NSArray<NSNumber *> *)endpointRefs;
+
+/// Master MIDI switch (the pause-menu "MIDI" toggle, `Defaults[.retroArchMIDIEnabled]`).
+/// While off, the `retro_midi_interface` handed to the core reports `input_enabled` /
+/// `output_enabled` as false and `read` / `write` are no-ops; turning it off also drops
+/// any buffered input. Takes effect immediately for cores that re-check the interface;
+/// cores that only checked at startup pick the change up on the next launch.
+/// Defaults to on. Thread-safe; may be called from any thread. No-op where CoreMIDI is unavailable.
++ (void)setMIDIEnabled:(BOOL)enabled;
+
+/// Whether the loaded core asked for the libretro MIDI interface
+/// (`RETRO_ENVIRONMENT_GET_MIDI_INTERFACE`), i.e. whether a MIDI toggle means anything for it.
+@property (nonatomic, readonly) BOOL midiInterfaceRequested;
 
 // MARK: Netpacket interface (env 78)
 

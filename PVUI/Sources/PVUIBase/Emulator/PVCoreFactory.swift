@@ -29,8 +29,8 @@ public extension PVCore {
         var className = self.principleClass
 
         // Every libretro core runs on the thin wrapper. The full in-process
-        // RetroArch wrapper is being retired; its plist principleClass is only a
-        // marker that this is a libretro core.
+        // RetroArch wrapper has been removed; the principleClass strings that
+        // remain in the plist are only a marker that this is a libretro core.
         ILOG("createInstance: principleClass=\(className) for \(identifier)")
         if className.contains("RetroArch") || className.contains("LibRetro") || className == "PVRetroArchCoreBridge" {
             Self.ensurePVCoreBridgeRetroLoaded()

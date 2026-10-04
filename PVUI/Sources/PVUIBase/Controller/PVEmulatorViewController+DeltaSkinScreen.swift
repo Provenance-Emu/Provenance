@@ -847,7 +847,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
-        // Route ANY viewport-positioning core (thin/thick RetroArch incl. flycast,
+        // Route ANY viewport-positioning core (thin libretro incl. flycast,
         // and PPSSPP) through the RetroArch path FIRST — mirroring the boot path
         // (applyFrameToGPUView checks the viewport bridge first). Previously this was
         // gated to `coreLetterboxesInternally` (PPSSPP only), so on a scaling-mode
@@ -938,8 +938,8 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         #endif
     }
 
-    /// PPSSPP conforms to `EmulatorCoreViewportPositioning` but, unlike thin/thick
-    /// RetroArch, does NOT apply the app's `ScalingMode` itself — it aspect-fits its
+    /// PPSSPP conforms to `EmulatorCoreViewportPositioning` but, unlike thin
+    /// libretro cores, does NOT apply the app's `ScalingMode` itself — it aspect-fits its
     /// native PSP framebuffer into whatever view rect it is given. So PPSSPP needs the
     /// scaling mode pre-applied to its frame, whereas real RetroArch cores must keep
     /// the raw container rect (they scale internally; double-applying shrinks them).

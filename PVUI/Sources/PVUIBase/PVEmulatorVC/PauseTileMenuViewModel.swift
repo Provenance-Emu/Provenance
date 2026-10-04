@@ -571,24 +571,14 @@ final class PauseTileMenuViewModel: ObservableObject {
         }
         #endif
 
-        if Self.isRetroArchMIDICapable(emulatorVC: emulatorVC) {
+        if Self.isMIDIToggleCapable(emulatorVC: emulatorVC) {
             controlsTiles.append(PauseMenuTile(
-                id: "retroArchMIDIToggle",
+                id: "midiToggle",
                 icon: Defaults[.retroArchMIDIEnabled] ? "pianokeys" : "pianokeys.inverse",
-                label: String(localized: "RetroArch MIDI"),
+                label: String(localized: "MIDI"),
                 badge: Defaults[.retroArchMIDIEnabled] ? "ON" : "OFF",
-                description: String(localized: "Enable MIDI input for RetroArch cores."),
+                description: String(localized: "Enable MIDI input and output for this core."),
                 colorKey: Defaults[.retroArchMIDIEnabled] ? .green : .gray,
-                dismissOnTap: false
-            ))
-        }
-        if Self.hasLegacyPortDeviceOptions(core: emulatorVC.core) {
-            controlsTiles.append(PauseMenuTile(
-                id: "legacyPortDevices",
-                icon: "gamecontroller",
-                label: String(localized: "Port Devices (Legacy)"),
-                description: String(localized: "Configure core-reported controller port device types"),
-                colorKey: .blue,
                 dismissOnTap: false
             ))
         }
@@ -1115,26 +1105,14 @@ final class PauseTileMenuViewModel: ObservableObject {
         return parsed.first(where: { $0 != .RetroArch }) ?? parsed.first
     }
 
-    private static func isRetroArchMIDICapable(emulatorVC: PVEmulatorViewController) -> Bool {
+    /// True when the running core asked for the libretro MIDI interface, so the MIDI on/off
+    /// tile has something to control. Only offered where CoreMIDI ships.
+    private static func isMIDIToggleCapable(emulatorVC: PVEmulatorViewController) -> Bool {
 #if canImport(CoreMIDI) && !os(tvOS)
-        let coreID = (emulatorVC.core.coreIdentifier ?? "").lowercased()
-        let isLibretroCore = coreID.contains("libretro") || coreID.contains("retroarch")
-        guard isLibretroCore else { return false }
-        guard let game = emulatorVC.game,
-              let sysID = SystemIdentifier(rawValue: game.systemIdentifier) else { return false }
-        return MIDISystemRegistry.shared.supportsMIDI(sysID)
+        (emulatorVC.core as? MIDIInterfaceToggleable)?.requestsMIDIInterface == true
 #else
-        return false
+        false
 #endif
-    }
-
-    /// True for cores like RetroArch: CORE tab hides the port picker (empty ``PortDeviceConfigurable/controllerPortDescriptors``)
-    /// but ``PauseMenuLibretroPortPickerSource`` still exposes SET_CONTROLLER_INFO for the pause/tile menu.
-    private static func hasLegacyPortDeviceOptions(core: PVEmulatorCore) -> Bool {
-        guard let pause = core as? PauseMenuLibretroPortPickerSource else { return false }
-        let hasCORETabPortPicker = (core as? PortDeviceConfigurable).map { !$0.controllerPortDescriptors.isEmpty } ?? false
-        guard !hasCORETabPortPicker else { return false }
-        return pause.pauseMenuPortDeviceDescriptors.contains { $0.count > 1 }
     }
 }
 // swiftlint:enable type_body_length

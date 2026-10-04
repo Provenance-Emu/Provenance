@@ -1786,7 +1786,7 @@ struct LightGunSettingsTests {
 @Suite("ScalingMode", .serialized)
 struct ScalingModeTests {
 
-    /// ObjC cores (Dolphin, PPSSPP, the RetroArch wrapper) read the scaling mode
+    /// ObjC cores (Dolphin, PPSSPP) read the scaling mode
     /// only through these flags, so each mode must set exactly the right one.
     @Test("PVSettingsWrapper scaling flags match the mode", arguments: ScalingMode.allCases)
     func wrapperFlagsMatchMode(mode: ScalingMode) {

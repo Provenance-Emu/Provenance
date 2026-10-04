@@ -1819,7 +1819,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        // The native PPSSPP core (and the thick RetroArch wrapper) present on their own
+        // The native PPSSPP core presents on its own
         // surface, so skip our texture update/draw path for them. The thin libretro
         // PPSSPP ("ppsspp.libretro.framework") is different: it renders via Vulkan and
         // hands every frame to this presenter (didRenderVulkanFrameWithMTLTexture), so

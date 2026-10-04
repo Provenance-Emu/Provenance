@@ -45,10 +45,10 @@ public final class PVCore: RealmSwift.Object, Identifiable {
             DLOG("Class: \(String(describing: _class)) for \(principleClass)")
             return true
         }
-        // RetroArch-family principle classes resolve to PVThinLibretroCore at
-        // instantiation time (PVCoreFactory); PVRetroArch.framework no longer
-        // ships. Such a core is available when its libretro dylib is bundled —
-        // Lite builds register the whole RetroArch core list but ship no dylibs.
+        // RetroArch-family principle classes (kept in Core.plist as registry keys) have no
+        // class of their own: PVCoreFactory instantiates PVThinLibretroCore for them. Such a
+        // core is available when its libretro dylib is bundled — Lite builds register the
+        // whole RetroArch core list but ship no dylibs.
         if principleClass.contains("RetroArch") || principleClass.contains("LibRetro") || principleClass == "PVRetroArchCoreBridge" {
             let bundled = Self.isBundledLibretroCore(identifier)
             DLOG("Class: \(principleClass) not loaded — \(identifier) \(bundled ? "available via PVThinLibretroCore" : "has no bundled dylib")")

@@ -2,9 +2,9 @@
 //  PVThinLibretroCore+Features.swift
 //  PVCoreBridgeRetro
 //
-//  Adds feature protocol conformances to PVThinLibretroCore that mirror
-//  what PVRetroArchCoreCore provides, so the rest of the app detects the
-//  same capabilities regardless of which libretro backend is active.
+//  Adds feature protocol conformances to PVThinLibretroCore so the rest of
+//  the app detects the core's capabilities through the shared PVCoreBridge
+//  protocols.
 //
 //  Protocols added:
 //  - DiscSwappable       (multi-disc game support via retro_disk_control_callback)
@@ -101,10 +101,8 @@ extension PVThinLibretroCore: GameWithCheat {
 
 // MARK: - CoreRetroAchievements
 //
-// Unlike PVRetroArchCore — which bundles libretroarch.a (the full RetroArch
-// frontend) and gets rcheevos for free via HAVE_CHEEVOS — the thin wrapper
-// loads only a libretro core `.framework` that has no cheevos infrastructure.
-// The *frontend* (us) drives rcheevos externally via PVCheevos / `rc_client`,
+// The thin wrapper loads only a libretro core `.framework`, which has no
+// cheevos infrastructure of its own. The *frontend* (us) drives rcheevos externally via PVCheevos / `rc_client`,
 // reading memory directly through the libretro `retro_get_memory_data` /
 // `retro_get_memory_size` API.
 //

@@ -353,8 +353,8 @@ public extension PVEmualatorControllerProtocol {
 
         /// Save state on main thread since it interacts with core.
         /// Run the binary state write BEFORE the .jpg thumbnail write —
-        /// otherwise a failed save (e.g. RA wrapper's task_save_handler
-        /// silently dropping the write) leaves an orphan thumbnail on disk
+        /// otherwise a failed save (e.g. a libretro core silently
+        /// dropping the write) leaves an orphan thumbnail on disk
         /// that the pause-menu picker shows as a "save state" with no
         /// loadable backing file. Throw early so callers see the real error
         /// and the user gets no ghost row.

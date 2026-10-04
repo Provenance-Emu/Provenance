@@ -19,7 +19,7 @@ NSErrorDomain const PVPPSSPPAdhocErrorDomain = @"org.provenance-emu.ppsspp.adhoc
 // ---------------------------------------------------------------------------
 
 // Use self-referential pointers so each key has a unique address even if the
-// compiler/linker merges const-zero data (matching the pattern in PVRetroArchCoreBridge+Netplay.mm).
+// compiler/linker merges const-zero data (the usual self-referential key pattern).
 static const void *kAdhocStatusKey      = &kAdhocStatusKey;
 static const void *kSavedWlanKey        = &kSavedWlanKey;
 static const void *kSavedAdhocServerKey = &kSavedAdhocServerKey;

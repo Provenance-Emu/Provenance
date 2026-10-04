@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 3/28/26.
 //
 //  Thin ObjC-compatible wrapper around ArchiveManager for use from
-//  Objective-C code (e.g. PVRetroArchCore+Archive.m).
+//  Objective-C code.
 
 import Foundation
 import PVLogging

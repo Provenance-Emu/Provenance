@@ -46,14 +46,13 @@ extension RetroMenuView {
 #endif
     }
 
-    /// Toggle section for the RetroArch-level MIDI driver, shown in the CORE tab
-    /// for libretro cores on MIDI-capable systems.
-    /// The setting is applied to `retroarch.cfg` on the next session start.
+    /// MIDI on/off toggle shown in the CORE tab for libretro cores that use the
+    /// MIDI interface. The thin frontend applies the setting live.
     @ViewBuilder
-    var retroArchMIDISection: some View {
+    var midiToggleSection: some View {
 #if canImport(CoreMIDI) && !os(tvOS)
-        if isRetroArchMIDICapable {
-            RetroArchMIDIToggleView(palette: ThemeManager.shared.currentPalette)
+        if isMIDIToggleCapable {
+            MIDIToggleView(palette: ThemeManager.shared.currentPalette)
         } else {
             EmptyView()
         }
@@ -375,12 +374,12 @@ private struct AutoDetectButton: View {
     }
 }
 
-// MARK: - RetroArchMIDIToggleView
+// MARK: - MIDIToggleView
 
-/// Toggle that enables or disables the RetroArch CoreMIDI driver for the next session.
-/// Writes to `Defaults[.retroArchMIDIEnabled]`; the Obj-C `applyMIDIPreferenceToUserCfg:`
-/// method reads this key at core startup and patches `retroarch.cfg` accordingly.
-struct RetroArchMIDIToggleView: View {
+/// Toggle that enables or disables MIDI input and output for the running libretro core.
+/// Writes to `Defaults[.retroArchMIDIEnabled]`; `PVThinLibretroCore` observes the key and
+/// applies it to the frontend's `retro_midi_interface` immediately and at every core start.
+struct MIDIToggleView: View {
     let palette: UXThemePalette
 
     @Default(.retroArchMIDIEnabled) private var midiEnabled
@@ -390,7 +389,7 @@ struct RetroArchMIDIToggleView: View {
             HStack(spacing: 6) {
                 Image(systemName: "pianokeys") // SF Symbols 4 — available iOS 16+; minimum target is iOS 17
                     .font(.system(size: 10, weight: .bold))
-                Text(String(localized: "RETROARCH MIDI"))
+                Text(String(localized: "MIDI"))
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .tracking(1.5)
                 Spacer()
@@ -405,10 +404,10 @@ struct RetroArchMIDIToggleView: View {
                         .foregroundColor(palette.defaultTintColor.swiftUIColor)
                         .frame(width: 22)
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(String(localized: "Enable MIDI Driver"))
+                        Text(String(localized: "Enable MIDI"))
                             .font(.system(size: 12, weight: .semibold, design: .monospaced))
                             .foregroundColor(palette.gameLibraryText.swiftUIColor)
-                        Text(String(localized: "Applies on next session start"))
+                        Text(String(localized: "Some cores only check when the game starts"))
                             .font(.system(size: 10, design: .monospaced))
                             .foregroundColor(palette.gameLibraryText.swiftUIColor.opacity(0.5))
                     }

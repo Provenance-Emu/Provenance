@@ -23,8 +23,7 @@
 //  For immediate N64 netplay use the RetroArch path:
 //    - mupen64plus_next (RA core) — HAVE_NETPLAY enabled, works today
 //    - parallel_n64 (RA core)    — HAVE_NETPLAY enabled, works today
-//  These route through PVRetroArchCoreBridge which already conforms to
-//  PVNetplayCapable with supportsNetplay = true.
+//  These run on PVThinLibretroCore, which conforms to PVNetplayCapable.
 //
 
 #if canImport(PVNetplay)

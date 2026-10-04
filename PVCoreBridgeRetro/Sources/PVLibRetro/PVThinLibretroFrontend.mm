@@ -376,6 +376,14 @@ static os_unfair_lock s_midiRingLock = OS_UNFAIR_LOCK_INIT;
 static os_unfair_lock s_midiDestCacheLock = OS_UNFAIR_LOCK_INIT;
 static MIDIEndpointRef s_midiCachedDests[16] = {0};
 static int s_midiCachedDestCount = -1; // -1 = never set; 0 = "None"; >0 = N destinations
+
+/// User-level MIDI master switch (the pause-menu "MIDI" toggle, driven from Swift via
+/// +setMIDIEnabled:). Kept outside `s_midiState` so `thin_midi_shutdown()`'s memset does
+/// not reset it. libretro's `retro_midi_interface` contract is that `input_enabled` /
+/// `output_enabled` report the *current* state, so flipping this mid-game is visible to any
+/// core that re-checks; `read` / `write` also honour it so cores that cached an earlier
+/// "enabled" answer stop sending and receiving as soon as the user turns MIDI off.
+static _Atomic bool s_midiEnabled = true;
 #endif
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -714,6 +722,7 @@ typedef struct PVThinLibretroSymbols {
     struct retro_disk_control_callback _diskControl;
     struct retro_disk_control_ext_callback _diskControlExt;
     BOOL _hasDiskControl;
+    BOOL _midiInterfaceRequested;
     BOOL _hasDiskControlExt;
 
     // Pixel format
@@ -2048,6 +2057,7 @@ static struct retro_vfs_interface s_thinVFSInterface = {
 /// (held for < 1 µs) is acceptable here.  A true lock-free scheme would add
 /// significant complexity for negligible practical benefit.
 static bool thin_midi_ring_write_byte(uint8_t byte) {
+    if (!atomic_load_explicit(&s_midiEnabled, memory_order_relaxed)) return false;
     os_unfair_lock_lock(&s_midiRingLock);
     size_t writePos = atomic_load_explicit(&s_midiState.readWritePos, memory_order_relaxed);
     size_t readPos  = atomic_load_explicit(&s_midiState.readReadPos,  memory_order_relaxed);
@@ -2144,11 +2154,13 @@ static void thin_midi_shutdown(void) {
 }
 
 static bool thin_midi_input_enabled(void) {
+    if (!atomic_load_explicit(&s_midiEnabled, memory_order_relaxed)) return false;
     thin_midi_ensure_initialized();
     return s_midiState.inputPort != 0 && s_midiState.inputEndpoint != 0;
 }
 
 static bool thin_midi_output_enabled(void) {
+    if (!atomic_load_explicit(&s_midiEnabled, memory_order_relaxed)) return false;
     thin_midi_ensure_initialized();
     if (!s_midiState.outputPort) return false;
     os_unfair_lock_lock(&s_midiDestCacheLock);
@@ -2161,7 +2173,7 @@ static bool thin_midi_output_enabled(void) {
 }
 
 static bool thin_midi_read(uint8_t *byte) {
-    if (!byte) return false;
+    if (!byte || !atomic_load_explicit(&s_midiEnabled, memory_order_relaxed)) return false;
     os_unfair_lock_lock(&s_midiRingLock);
     size_t rp = atomic_load_explicit(&s_midiState.readReadPos,  memory_order_relaxed);
     size_t wp = atomic_load_explicit(&s_midiState.readWritePos, memory_order_acquire);
@@ -2177,6 +2189,7 @@ static bool thin_midi_read(uint8_t *byte) {
 
 static bool thin_midi_write(uint8_t byte, uint32_t delta_time) {
     (void)delta_time;
+    if (!atomic_load_explicit(&s_midiEnabled, memory_order_relaxed)) return false;
     if (!s_midiState.outputPort) return false;
 
     // Snapshot the current user-selected destinations (thread-safe).
@@ -2671,8 +2684,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 /// Copy BIOS files from the core's `BIOSPath` into the system-specific directory
-/// so that libretro cores can find them. This mirrors the thick wrapper's
-/// `syncResources:to:` step that runs before `retro_load_game`.
+/// so that libretro cores can find them. Runs before `retro_load_game`.
 ///
 /// Skips the copy when the system directory IS the BIOS path (no dedicated
 /// `systemDirectoryName` for this system — `_systemSpecificDirectory` already
@@ -2828,6 +2840,24 @@ static bool thin_environment(unsigned cmd, void *data) {
     ILOG(@"ThinFrontend MIDI: output destinations updated (count=%d)", n);
 #else
     (void)endpointRefs; // suppress unused-parameter warning on non-CoreMIDI builds
+#endif
+}
+
+/// Turn all MIDI I/O on or off (the pause-menu "MIDI" toggle). Thread-safe.
+/// Turning it off also discards any buffered input so stale bytes are not delivered
+/// when MIDI is switched back on.
++ (void)setMIDIEnabled:(BOOL)enabled {
+#if PV_HAS_COREMIDI
+    atomic_store_explicit(&s_midiEnabled, enabled, memory_order_relaxed);
+    if (!enabled) {
+        os_unfair_lock_lock(&s_midiRingLock);
+        atomic_store_explicit(&s_midiState.readReadPos, 0, memory_order_relaxed);
+        atomic_store_explicit(&s_midiState.readWritePos, 0, memory_order_relaxed);
+        os_unfair_lock_unlock(&s_midiRingLock);
+    }
+    ILOG(@"ThinFrontend MIDI: %@", enabled ? @"enabled" : @"disabled");
+#else
+    (void)enabled;
 #endif
 }
 
@@ -4062,8 +4092,8 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     // GLideN64 renders polygons as solid color fills — the exact symptom
     // we see with Mupen64Plus via the thin wrapper.
     //
-    // RetroArch's `gl.c` backend re-currents per frame for the same reason
-    // — that's why the legacy `PVRetroArchCoreCore` path works fine.
+    // RetroArch's own `gl.c` video driver re-currents the context every
+    // frame for the same reason.
     //
     // Also:
     //   • GL_UNPACK_ALIGNMENT defaults to 4. GLideN64 uploads textures whose
@@ -4193,8 +4223,8 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
     }
 
     // Validate size against what the core expects. A size mismatch usually means
-    // the save state came from a different core version or a different wrapper
-    // (e.g. full RetroArch vs thin). Allow loading if sizes differ (some cores
+    // the save state came from a different core version or a different build of the
+    // core. Allow loading if sizes differ (some cores
     // handle version differences gracefully) but warn about it.
     if (_sym.retro_serialize_size) {
         size_t expectedSize = _sym.retro_serialize_size();
@@ -4216,9 +4246,9 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
     // this, loading a save from frame 100 and playing forward can re-fire
     // achievements that already unlocked in the current session, posting
     // duplicate unlocks to the RA server (cheevos audit Section G.1).
-    // The thick RetroArch wrapper does this implicitly via RA's
-    // `rcheevos_reset_game` → `rc_client_reset` (cheevos.c:648); the thin
-    // wrapper owns its own rc_client lifecycle so the call has to live here.
+    // RetroArch itself does this via `rcheevos_reset_game` → `rc_client_reset`
+    // (cheevos.c:648); the thin wrapper owns its own rc_client lifecycle so
+    // the call has to live here.
     if (_rcClient) {
         rc_client_reset(_rcClient);
         ILOG(@"[CHEEVOS-DIAG] ThinFrontend: rc_client_reset after state load");
@@ -5633,8 +5663,8 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
         // contract: `true` means "the frontend will rotate the framebuffer for
         // you", and cores probe it before deciding who owns the rotation.
         //
-        // The thin wrapper has no display-side rotation (no equivalent of the
-        // thick wrapper's `video_driver_set_rotation`), so answering `true` was
+        // The thin wrapper has no display-side rotation (no equivalent of
+        // RetroArch's `video_driver_set_rotation`), so answering `true` was
         // a lie that actively broke vertical arcade games. mame2003-plus, for
         // example, probes with `environ_cb(SET_ROTATION, &mode)` in
         // `mame2003_video_init_orientation()`: on `true` it cancels its own
@@ -5645,8 +5675,8 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
         //
         // Returning `false` makes the core rotate internally, which keeps its
         // reported geometry and its pixels in the same orientation. This matches
-        // the thick RetroArch wrapper's behaviour when `video_allow_rotate` is
-        // off (see `runloop.c`, RETRO_ENVIRONMENT_SET_ROTATION).
+        // RetroArch's behaviour when `video_allow_rotate` is off
+        // (see `runloop.c`, RETRO_ENVIRONMENT_SET_ROTATION).
         //
         // Cores that ignore the return value and rely on frontend rotation are
         // no worse off than before — they were never being rotated either way.
@@ -6295,6 +6325,10 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
                 DLOG(@"ThinEnv GET_MIDI_INTERFACE — CoreMIDI interface unavailable");
                 return false;
             }
+            // Always hand the interface out, even while the user has MIDI switched off:
+            // the on/off state is reported live through input_enabled / output_enabled,
+            // so a core that asked while it was off still works once it is switched on.
+            _midiInterfaceRequested = YES;
             *midiPtr = iface;
             ILOG(@"ThinEnv GET_MIDI_INTERFACE: provided CoreMIDI-backed interface");
             return true;
@@ -6499,7 +6533,7 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
             // honors this preferred value: with OPENGLES3 it tries ONLY GL and (since
             // preferred != DUMMY/VULKAN) never tries Vulkan → falls to the Software
             // backend (black screen / crash for 3D titles). Prefer VULKAN for PSP — the
-            // proven thick-wrapper path via MoltenVK — so PPSSPP selects
+            // path that works via MoltenVK — so PPSSPP selects
             // LibretroVulkanContext (useEmuThread=false) and skips GL entirely.
             static NSString * const PVPSPSystemIdentifier = @"com.provenance.psp";
             if ([self.systemIdentifier isEqualToString:PVPSPSystemIdentifier]) {

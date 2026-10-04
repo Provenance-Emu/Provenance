@@ -8,8 +8,8 @@
 //  Design notes:
 //  - Calls may arrive on the emulation thread; implementors must
 //    dispatch to the main queue before touching UIKit.
-//  - RetroArch-based cores (PVCoreBridgeRetro) render their own OSD inside
-//    the GL buffer; the RetroArch bridge therefore only calls this delegate
+//  - Libretro cores (PVCoreBridgeRetro) render their own OSD inside
+//    the GL buffer; the thin wrapper therefore only calls this delegate
 //    for events that should surface outside GL (e.g. native iOS sounds or
 //    CloudKit progress tracking).
 //
