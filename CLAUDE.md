@@ -215,7 +215,7 @@ cd PVUI && xcodebuild test -scheme PVUI-UnitTests \
 # PVLibrary tests: the committed PVLibrary-UnitTests scheme, through the
 # package workspace (PVLibrary/PVLibrary.xcodeproj shadows Package.swift, and
 # the auto-generated scheme has no test action). Same realm-core -xcconfig on
-# Xcode 26.6. CI: agent-validation.yml pvlibrary-test.
+# Xcode 26.6. CI: pvlibrary-tests.yml (develop pushes + PRs via agent-validation).
 cd PVLibrary && xcodebuild test -workspace .swiftpm/xcode/package.xcworkspace \
   -scheme PVLibrary-UnitTests -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
   -collect-test-diagnostics never CODE_SIGNING_ALLOWED=NO \

@@ -4,7 +4,7 @@
   The auto-generated PVLibrary scheme has no test action, so PVLibraryTests
   can't be run from it. PVLibrary/PVLibrary.xcodeproj also shadows
   Package.swift for a bare `xcodebuild` in this directory, so go through the
-  package workspace. Local use and CI (agent-validation.yml, pvlibrary-test):
+  package workspace. Local use and CI (.github/workflows/pvlibrary-tests.yml):
     xcodebuild test -workspace .swiftpm/xcode/package.xcworkspace \
       -scheme PVLibrary-UnitTests -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
   On Xcode 26.6 realm-core also needs OTHER_CFLAGS/OTHER_CPLUSPLUSFLAGS

@@ -1,0 +1,120 @@
+name: PVLibrary Tests
+
+# PVLibrary tests (importer, Realm/SwiftData, CloudKit sync queue, save export,
+# web-server file events). Runs on pushes to develop that touch PVLibrary, and
+# is called by agent-validation.yml (pvlibrary-test) for PRs.
+#
+# Like PVUI, PVLibrary can't `swift test` (realm-core doesn't build under
+# SwiftPM with Xcode 26), so Xcode builds the package and runs it on an iOS
+# simulator via the committed PVLibrary-UnitTests scheme. The auto-generated
+# PVLibrary scheme has no test action, and PVLibrary/PVLibrary.xcodeproj
+# shadows Package.swift for a bare xcodebuild, hence the package workspace.
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - 'PVLibrary/**'
+      - '.github/workflows/pvlibrary-tests.yml'
+  workflow_call:
+  workflow_dispatch:
+
+# A newer push to develop (or a newer commit on the same PR) supersedes an
+# in-flight run. Distinct from agent-validation's group, so the call can't
+# deadlock against its caller.
+concurrency:
+  group: pvlibrary-tests-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: PVLibrary Tests (iOS Simulator)
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
+
+      # Transitive `.package(path:)` / target-path submodules of PVLibrary's local
+      # deps (the same set pvui-test needs, since PVUI depends on PVLibrary).
+      - name: Init required submodules (shallow)
+        run: |
+          git submodule update --init --depth 1 \
+            Dependencies/HexColors \
+            Dependencies/SWCompression \
+            Cores/Mednafen/ThirdParty/libchdr \
+            PVRcheevos/rcheevos
+          if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
+            rm -rf Dependencies/ZipArchive
+            git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
+          fi
+
+      - name: Cache libretro cheat database
+        uses: actions/cache@v4
+        with:
+          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+
+      - name: Generate libretro cheat database if missing
+        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
+
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-pvlibrary-deriveddata-${{ hashFiles('**/Package.swift', '**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-pvlibrary-deriveddata-
+
+      - name: Test PVLibrary
+        working-directory: PVLibrary
+        run: |
+          set -eo pipefail
+          # Xcode writes this package workspace when it opens the package; it is
+          # git-ignored (.swiftpm), so create it on a fresh checkout.
+          ws=.swiftpm/xcode/package.xcworkspace
+          if [ ! -f "$ws/contents.xcworkspacedata" ]; then
+            mkdir -p "$ws"
+            printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?>' \
+              '<Workspace version = "1.0">' \
+              '   <FileRef location = "self:"></FileRef>' \
+              '</Workspace>' > "$ws/contents.xcworkspacedata"
+          fi
+          udid=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices | to_entries[] | select(.key | contains("SimRuntime.iOS-")) | .value[]
+                | select(.name | startswith("iPhone"))][0].udid')
+          if [ -z "$udid" ] || [ "$udid" = "null" ]; then
+            echo "::error::No available iOS simulator"
+            xcrun simctl list runtimes
+            exit 1
+          fi
+          # -collect-test-diagnostics never: after any failure xcodebuild otherwise
+          # spends up to 10 minutes in `simctl diagnose`, which reads as a hang.
+          # Suites are XCTest ("Executed N tests") plus Swift Testing ("Test run with").
+          xcodebuild test \
+            -workspace "$ws" \
+            -scheme PVLibrary-UnitTests \
+            -destination "id=$udid" \
+            -collect-test-diagnostics never \
+            -skipPackagePluginValidation \
+            -skipMacroValidation \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee /tmp/pvlibrary-test.log | grep -E "(: (fatal )?error:|Test Case .* failed|Executed [0-9]+ tests|Restarting after|✘|Test run with|TEST (SUCCEEDED|FAILED))" | tail -200
+
+      - name: Show PVLibrary test log tail
+        if: failure()
+        run: tail -60 /tmp/pvlibrary-test.log || true
+
+      - name: Upload PVLibrary test log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pvlibrary-test-log
+          path: /tmp/pvlibrary-test.log
+          retention-days: 3
