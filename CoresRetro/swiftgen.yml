@@ -1,2 +1,0 @@
-input_dir: Sources/PVRetroArch/Resources
-output_dir: ${DERIVED_SOURCES_DIR}

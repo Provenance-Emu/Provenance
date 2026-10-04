@@ -81,9 +81,7 @@
 		8BC40327F78CE9F1251A5867 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26ED2BE7F8EC0066D4B6 /* libc++.tbd */; };
 		91D1E1147A6900A19126291F /* Assets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */; };
 		9304999D2A93073800BF257F /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5D9EC2959837A00907CFB /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9304999E2A93073800BF257F /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		930499A42A93073800BF257F /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		930499A72A93073800BF257F /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */; };
 		930499A82A93073800BF257F /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; };
 		930499A92A93073800BF257F /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		930499AA2A93073800BF257F /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -144,8 +142,6 @@
 		93654F76298F400B0046503F /* PVSupergrafx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93654F75298F400B0046503F /* PVSupergrafx.framework */; };
 		93654F77298F400B0046503F /* PVSupergrafx.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93654F75298F400B0046503F /* PVSupergrafx.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9368551E2A8956220087FE6B /* modules in Resources */ = {isa = PBXBuildFile; fileRef = 934BE9B3296F178400FB9933 /* modules */; };
-		936BFD852986A6CA001FF097 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; platformFilter = maccatalyst; };
-		936BFD862986A6CA001FF097 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; };
 		93F28DCA295E2F5100E4D464 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		97D397A09BCEFEAF56702A34 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D517C8D5450019F6D2 /* CoreData.framework */; };
@@ -915,13 +911,6 @@
 			remoteGlobalIDString = B3E21D6A203211BE009939D3;
 			remoteInfo = Spotlight;
 		};
-		934BE9AD296F177B00FB9933 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 934BE9A6296F177A00FB9933 /* PVRetroArch.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B3C7621020783162009950E4;
-			remoteInfo = PVRetroArch;
-		};
 		B300593E2C794D6B003010F5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -1184,7 +1173,6 @@
 				930499F42A93083B00BF257F /* PVPCSXRearmed.framework in Embed Frameworks */,
 				93049A282A930A8F00BF257F /* PVDosBox.framework in Embed Frameworks */,
 				930499F32A9307DE00BF257F /* PVSnesticle.framework in Embed Frameworks */,
-				9304999E2A93073800BF257F /* libMoltenVK.dylib in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1421,7 +1409,6 @@
 				B3F7E58F297736C200362B92 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3F7E590297736C200362B92 /* PVDolphin.framework in Embed Frameworks */,
 				B3F7E593297736C200362B92 /* PVGME.framework in Embed Frameworks */,
-				936BFD862986A6CA001FF097 /* libMoltenVK.dylib in Embed Frameworks */,
 				B3A6101B2CB88633001D99C2 /* PVPicoDrive-Dynamic in Embed Frameworks */,
 				B3F7E595297736C200362B92 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B3A610182CB88621001D99C2 /* PVFreeDO-Dynamic in Embed Frameworks */,
@@ -1561,9 +1548,7 @@
 		93049A802A930C6F00BF257F /* PVMiniVMacRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMiniVMacRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93049A822A930DC900BF257F /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93049A852A930E9B00BF257F /* PVFreeDO.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFreeDO.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		931482062AA89001002DA906 /* PVHatariRetroArch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVHatariRetroArch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9328B14B2A31837A0094C712 /* libMoltenVK_PPSSPP.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_PPSSPP.dylib; path = Cores/PPSSPP/lib/libMoltenVK_PPSSPP.dylib; sourceTree = "<group>"; };
-		934BE9A6296F177A00FB9933 /* PVRetroArch.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PVRetroArch.xcodeproj; path = RetroArch/PVRetroArch.xcodeproj; sourceTree = "<group>"; };
 		934BE9B3296F178400FB9933 /* modules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = modules; path = CoresRetro/RetroArch/modules; sourceTree = "<group>"; };
 		934BE9B5296F17A900FB9933 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		935335092A85D1FD0000E5C3 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = "Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework/ios-arm64/libMoltenVK.dylib"; sourceTree = "<group>"; };
@@ -1571,7 +1556,6 @@
 		9361E6F92BD62BFA00E3891A /* PVEmuThree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmuThree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9361E6FC2BD62C6600E3891A /* libMoltenVK_emuThree_iOS.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_emuThree_iOS.dylib; path = Cores/emuThree/lib/libMoltenVK_emuThree_iOS.dylib; sourceTree = "<group>"; };
 		93654F75298F400B0046503F /* PVSupergrafx.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupergrafx.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		936BFD802986A5B4001FF097 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules/libMoltenVK.dylib; sourceTree = "<group>"; };
 		936FDBEA295855670073628A /* libMoltenVK_Play.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Play.dylib; path = Cores/Play/lib/libMoltenVK_Play.dylib; sourceTree = "<group>"; };
 		938F29CF2A8D068B002F783A /* PVNP2Kai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVNP2Kai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93C792242954E869001212D2 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
@@ -1604,7 +1588,6 @@
 		B305F093276B5C9B003AE510 /* PVVecXGL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecXGL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305F103276B6BBD003AE510 /* PVCrabEmu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCrabEmu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30623162CC81A1000B4F954 /* Provenance-UnderDevelopment-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-UnderDevelopment-Info.plist"; sourceTree = "<group>"; };
-		B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B306E1412769FE65001DC52E /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3082DB82E274CC2009DFE5D /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3082DBD2E27520E009DFE5D /* libdolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libdolphin.dylib; path = "Cores/Dolphin/dolphin-ios/build-iphoneos-/Source/iOS/Library/libdolphin.dylib"; sourceTree = "<group>"; };
@@ -1678,7 +1661,6 @@
 		B30F586E2D6EA0F500E32CCB /* MoltenVKShaderConverter.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKShaderConverter.xcodeproj; sourceTree = "<group>"; };
 		B30F588C2D6EA0F500E32CCB /* ExternalDependencies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ExternalDependencies.xcodeproj; sourceTree = "<group>"; };
 		B30F58902D6EA0F500E32CCB /* MoltenVKPackaging.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MoltenVKPackaging.xcodeproj; sourceTree = "<group>"; };
-		B30FC95A2C8A911200E42892 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/macOS/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B311B01627A52B8B00D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B311B01927A52B9200D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B311B01C27A52B9C00D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3040,7 +3022,6 @@
 				B3F65B5C2CC0946800DB762D /* PVCoreBridgeRetro.framework in Frameworks */,
 				930499F22A9307BF00BF257F /* PVSnesticle.framework in Frameworks */,
 				B3061FBB2F776FF4000F8839 /* JITManager in Frameworks */,
-				930499A72A93073800BF257F /* libMoltenVK.dylib in Frameworks */,
 				930499A82A93073800BF257F /* CoreTelephony.framework in Frameworks */,
 				930499A92A93073800BF257F /* Photos.framework in Frameworks */,
 				930499AA2A93073800BF257F /* GameController.framework in Frameworks */,
@@ -3524,7 +3505,6 @@
 				B3F7E540297736C200362B92 /* SteamController in Frameworks */,
 				B3F7E541297736C200362B92 /* Metal.framework in Frameworks */,
 				B3F7E542297736C200362B92 /* OpenGLES.framework in Frameworks */,
-				936BFD852986A6CA001FF097 /* libMoltenVK.dylib in Frameworks */,
 				B32C08F92D053FF60024A3E2 /* PVMupen64PlusBridge.framework in Frameworks */,
 				B3F7E544297736C200362B92 /* Foundation.framework in Frameworks */,
 				93049A812A930C6F00BF257F /* PVMiniVMacRetro.framework in Frameworks */,
@@ -3913,7 +3893,6 @@
 				B30E9A262C6F212700C1431E /* gambatte_libretro_ios.dylib */,
 				B30E9A272C6F212800C1431E /* gearcoleco_libretro_ios.dylib */,
 				B30E9A292C6F212800C1431E /* genesis_plus_gx_libretro_ios.dylib */,
-				B30FC95A2C8A911200E42892 /* libMoltenVK.dylib */,
 				B30E9A3F2C6F212C00C1431E /* hatari_libretro_ios.dylib */,
 				B30E9A3A2C6F212B00C1431E /* mame_libretro_ios.dylib */,
 				B30E9A2C2C6F212800C1431E /* mame2010_libretro_ios.dylib */,
@@ -3970,7 +3949,6 @@
 				B347B3912BC4CCB7006A3B2D /* Photos.framework */,
 				B347B38E2BC4CCA6006A3B2D /* Metal.framework */,
 				B347B38D2BC4CCA6006A3B2D /* MetalKit.framework */,
-				931482062AA89001002DA906 /* PVHatariRetroArch.framework */,
 				93049A852A930E9B00BF257F /* PVFreeDO.framework */,
 				93049A822A930DC900BF257F /* PVYabause.framework */,
 				93049A802A930C6F00BF257F /* PVMiniVMacRetro.framework */,
@@ -3991,7 +3969,6 @@
 				93DB7D2C2A750966005F8B26 /* libswscale.framework */,
 				9328B14B2A31837A0094C712 /* libMoltenVK_PPSSPP.dylib */,
 				93654F75298F400B0046503F /* PVSupergrafx.framework */,
-				936BFD802986A5B4001FF097 /* libMoltenVK.dylib */,
 				935BB05829854A8700AA68DC /* PVNP2Kai.framework */,
 				B33155E62971D360008767C5 /* PVMupen64Plus-NX.framework */,
 				B39C4B652BF09F0400F199BB /* libMoltenVK.dylib */,
@@ -4058,7 +4035,6 @@
 				B380C26C2894EC2F007B76FD /* PVVecX.framework */,
 				B3D3E7612894DEBE0016EB85 /* PVGME.framework */,
 				B3D3E75E2894DEAB0016EB85 /* PVGME.framework */,
-				B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */,
 				B38E0F10289290E5004720DA /* PVPCSXRearmed.framework */,
 				B3607B80289238ED00509A68 /* PVBeetlePSX.framework */,
 				B3607B7D2892388900509A68 /* PVBeetlePSX.framework */,
@@ -4408,14 +4384,6 @@
 		1AFB16592D72B9C40038E47A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		934BE9A7296F177A00FB9933 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				934BE9AE296F177B00FB9933 /* PVRetroArch.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6318,7 +6286,6 @@
 		B3C8A6A328781E810037A946 /* CoresRetro */ = {
 			isa = PBXGroup;
 			children = (
-				934BE9A6296F177A00FB9933 /* PVRetroArch.xcodeproj */,
 			);
 			path = CoresRetro;
 			sourceTree = "<group>";
@@ -9341,10 +9308,6 @@
 					ProjectRef = B3DA4D612D70EA3E007D3776 /* MoltenVKShaderConverter.xcodeproj */;
 				},
 				{
-					ProductGroup = 934BE9A7296F177A00FB9933 /* Products */;
-					ProjectRef = 934BE9A6296F177A00FB9933 /* PVRetroArch.xcodeproj */;
-				},
-				{
 					ProductGroup = B32D18B42F8A0B12000C9C0D /* Products */;
 					ProjectRef = B32D18B22F8A0B12000C9C0D /* SWCompression.xcodeproj */;
 				},
@@ -9396,16 +9359,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		934BE9AE296F177B00FB9933 /* PVRetroArch.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = PVRetroArch.framework;
-			remoteRef = 934BE9AD296F177B00FB9933 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		1A3D409217B2DCE4004DFFFC /* Resources */ = {
@@ -10835,9 +10788,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
@@ -10905,9 +10856,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
@@ -11113,9 +11062,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
@@ -11211,9 +11158,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
@@ -11309,9 +11254,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
@@ -11388,7 +11331,6 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework/ios-arm64",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
@@ -11460,7 +11402,6 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework/ios-arm64",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
@@ -11533,7 +11474,6 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework/ios-arm64",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
@@ -12784,9 +12724,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
@@ -12882,9 +12820,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
@@ -12981,9 +12917,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
@@ -13118,9 +13052,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
@@ -13414,13 +13346,10 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/build-iphoneos-/Source/iOS/Library",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/build-appletvos-/Source/iOS/Library",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/build-iphoneos-Release/Source/iOS/Library",
@@ -13517,13 +13446,10 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/build-iphoneos-/Source/iOS/Library",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/build-appletvos-/Source/iOS/Library",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/build-iphoneos-Release/Source/iOS/Library",
@@ -13620,13 +13546,10 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/build-iphoneos-/Source/iOS/Library",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/build-appletvos-/Source/iOS/Library",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/build-iphoneos-Release/Source/iOS/Library",
@@ -14543,7 +14466,6 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework/ios-arm64",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
@@ -14618,7 +14540,6 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework/ios-arm64",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
@@ -14694,7 +14615,6 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework/ios-arm64",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
@@ -14775,9 +14695,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
@@ -14851,9 +14769,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
@@ -14928,9 +14844,7 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
 					"$(PROJECT_DIR)/Cores/Dolphin/lib",
-					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);

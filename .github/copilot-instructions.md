@@ -309,7 +309,6 @@ When modifying bridge files, ensure all controller types are handled (Extended, 
 - **Generated files** — `Version.h`, `Version.swift`, files in `cmake/` build dirs
 - **CodeSigning.xcconfig** — contains developer-specific credentials
 - **project.pbxproj** — avoid when possible; prefer SPM Package.swift changes
-- **Upstream RetroArch** — `CoresRetro/RetroArch/RetroArch/` is a submodule
 
 ### What NOT to Flag in Code Review
 - `force_cast` and `force_try` are intentionally warnings, not errors

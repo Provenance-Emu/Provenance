@@ -117,7 +117,7 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 - **PPSSPP runs on the THIN wrapper, on Vulkan** (no force-route since `2f09fd7802`, 2026-05-28). On GLES, PPSSPP spawns its own render thread (`useEmuThread = GPUCORE_GLES`) that never has a current EAGL context, so GL can't work on thin; `GET_PREFERRED_HW_RENDER` returns Vulkan for PSP and GL is rejected (`e66b2a28a4`, `79a091c4b2`), with `context_reset` deferred until after `retro_load_game`. A failed deferred Vulkan setup now fails the load, and fence waits are bounded (`f87b9d17e1`).
 - **Thin `rendersToOpenGL` is true for every HW-render core, Vulkan included.** `PVThinLibretroFrontend` returns `_hwRenderRequested`, so a Vulkan core takes the "OpenGL" branch of `PVMetalViewController.draw(in:)` and never reaches the software-upload path. `rendersToVulkan` is the one that distinguishes them.
 - **Thin core options are replayed at boot, not read on demand.** The frontend holds option values only in memory; `PVThinLibretroCore.applyPersistedCoreOptions()` pushes the saved ones in from `afterCoreInitBlock` (after `retro_init`, before `retro_load_game`). The UI stores a switch state or a choice *label*; `ThinCoreOptionDefinition.rawValue(forStored:)` maps it to the core's value. A replay that never finishes booting is skipped once on the next launch.
-- The thick RetroArch wrapper (`CoresRetro/RetroArch/PVRetroArchCore/`) is being retired: `PVCoreFactory` always routes libretro cores to thin, and PVRetroArch.framework is no longer linked or embedded in any app target (its project is still in the workspace until it's deleted). Thin still reads the core list from `CoresRetro/RetroArch/PVRetroArch/Core.plist` through the `PVCoreLoader` resource symlink; a core from that list is available (`PVCore.hasCoreClass`) only when its `<name>.libretro.framework` is in the app bundle.
+- The thick RetroArch wrapper (full in-process RetroArch, `PVRetroArch.framework`) has been removed; every libretro core runs on thin. What remains under `CoresRetro/RetroArch/` serves thin: `Core.plist` (the libretro core list, bundled via the `PVCoreLoader` resource symlink `RetroArchCore.plist`), `scripts/` (dylib download/packaging, `cores.yml`), `modules/` and `libretro-super`. A core from that list is available (`PVCore.hasCoreClass`) only when its `<name>.libretro.framework` is in the app bundle. Its top-level `com.provenance.core.retroarch` entry (the old launcher) is `PVDisabled`; its `PVRetroArch.PVRetroArchCoreCore` principleClass strings stay because `PVCoreFactory` keys on them.
 - **Thin wrapper gaps:** deferred Vulkan context setup (GL is now eagerly activated; Vulkan still deferred). BIOS files synced from `BIOSPath` into system directory before `retro_load_game`. `ScalingMode` integration works (via `PVMetalViewController` + DeltaSkin skin container). Fast-forward wired (`setGameSpeed:` override syncs `_speedMultiplier` + `_audioPaused`).
 
 ### App Targets
@@ -150,15 +150,13 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 ## Important Conventions
 
 - The `develop` branch is the main development branch
-- Emulator core submodules are in `Cores/<name>/<upstream-submodule-dir>` — avoid modifying third-party upstream source directly (exception: the RetroArch fork at `CoresRetro/RetroArch/RetroArch/` is maintained in-repo for Provenance)
+- Emulator core submodules are in `Cores/<name>/<upstream-submodule-dir>` — avoid modifying third-party upstream source directly
 - Each PV* module is a standalone Swift Package with its own `Package.swift`
 - The top-level `Package.swift` is minimal (legacy SPM support for PVLibrary only); the real build system is the Xcode workspace
 - Build variants (Lite/Standard/XL) differ in which cores are included; see `CoresRetro/RetroArch/Scripts/` for core lists per target
 
 ### Build & toolchain gotchas
 
-- **RetroArch submodule edits need two commits.** The RA fork at `CoresRetro/RetroArch/RetroArch/` is a real git submodule. To ship a change: (1) `cd` into the submodule, commit on a `Provenance/<feature>` branch, push to the `Provenance` remote; (2) `cd` back to the parent, `git add CoresRetro/RetroArch/RetroArch && git commit` to bump the pointer. Skipping (2) leaves develop pointing at the old SHA.
-- **PVRetroArch.xcodeproj is not file-system-synced for source files.** Only the `scripts/` folder is in a `PBXFileSystemSynchronizedRootGroup`. New `.mm`/`.m`/`.h` files under `CoresRetro/RetroArch/PVRetroArchCore/Core/` MUST be added explicitly to `project.pbxproj` in 4 spots: PBXBuildFile, PBXFileReference, group children, Sources build phase. Use `C0C0CAFE...`-prefixed UUIDs.
 - **Most workspace `.xcodeproj`s list sources explicitly** (e.g. `PVCoreBridgeRetro.xcodeproj`), so a new file compiles in SwiftPM yet breaks the archive build. `Scripts/check_pbxproj_sources.py` (CI: `xcode-project-sources.yml`) flags a source file sitting beside compiled ones that its project doesn't reference.
 - **`gh issue list` has no `--sort` flag.** Use `gh issue list --search "sort:created-desc"` or `gh issue list --json number,title,createdAt --jq '.'` for sorted/filtered queries.
 
@@ -174,7 +172,7 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 - **Per-game core options depend on `CoreOptionsContext.currentGameMD5`.** It is set in `initCore()` before the core initializes and cleared in `quit`; `CoreOptional.currentGameMD5` defaults to it. Without it a core reads only the core-wide key and per-game overrides are silently ignored.
 - **flycast cannot be debugged with Xcode attached.** It installs `signal(SIGSEGV, ...)` for VRAM lazy-mapping; Xcode catches SIGSEGV and pauses, breaking the core. Use Console.app (filter `Process = Provenance`) for live logs OR `iOS Settings → Privacy & Security → Analytics → Analytics Data` for `.ips` crash files post-mortem.
 - **Sentry's `enableCrashHandler` is disabled** at `SentryBootstrapTask.swift:48` because its SIGSEGV handler conflicts with flycast's MMU path. Do NOT re-enable it. Crash telemetry flows through MetricKit instead.
-- **iPad MoltenVK surface_caps lie.** On iPadOS 26 with Stage Manager / adaptive scaling, `VkSurfaceCapabilitiesKHR.currentExtent` / `minImageExtent` / `maxImageExtent` ALL report `view.bounds × contentScaleFactor`, NOT the actual `CAMetalLayer.drawableSize`. They can differ (e.g. 2732×2048 vs 2092×1568). The authoritative source for iOS Vulkan is `metalLayer.drawableSize`. Never clamp against MoltenVK surface caps on iOS — see the iOS-gated branch in `gfx/common/vulkan_common.c::vulkan_create_swapchain`.
+- **iPad MoltenVK surface_caps lie.** On iPadOS 26 with Stage Manager / adaptive scaling, `VkSurfaceCapabilitiesKHR.currentExtent` / `minImageExtent` / `maxImageExtent` ALL report `view.bounds × contentScaleFactor`, NOT the actual `CAMetalLayer.drawableSize`. They can differ (e.g. 2732×2048 vs 2092×1568). The authoritative source for iOS Vulkan is `metalLayer.drawableSize`. Never clamp against MoltenVK surface caps on iOS.
 - **libretro core option key prefixes don't always match the core name.** flycast's options are `reicast_*` (per `CORE_OPTION_NAME` in `shell/libretro/libretro_core_option_defines.h`). Always grep the core's `libretro_core_options.h` before guessing key names.
 - **Jaguar numpad uses keyboard input.** The upstream `virtualjaguar-libretro` core reads numpad buttons 0-9/*/# via `RETRO_DEVICE_KEYBOARD` (`RETROK_0`-`RETROK_9`, `RETROK_MINUS`, `RETROK_EQUALS`), NOT joypad buttons. Buttons 7-9/*/# have NO joypad mapping. The thin wrapper dispatches both keyboard events (via `_bridge.setKeyState`) and joypad presses for compatibility.
 
@@ -265,7 +263,6 @@ When modifying bridge files, ensure all controller types are handled (Extended, 
 - **Generated files** — `Version.h`, `Version.swift`, files in `cmake/` build dirs
 - **CodeSigning.xcconfig** — contains developer-specific credentials
 - **project.pbxproj** — editing is permitted and sometimes required (e.g., adding new app targets). When you add a new target, use deterministic UUID prefixes (e.g. `C0C0CAFE...`) to make additions easy to identify. Use `PBXFileSystemSynchronizedRootGroup` for source directories (Xcode 16+). Prefer minimal diffs — only touch the sections that need changing.
-- **RetroArch fork** — `CoresRetro/RetroArch/RetroArch/` is a Provenance-maintained submodule; changes for build integration or features are allowed with focused diffs
 
 ### Minimum Deployment Targets
 

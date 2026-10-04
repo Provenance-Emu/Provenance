@@ -45,9 +45,6 @@
       location = "group:"
       name = "Cores Libretro">
       <FileRef
-         location = "group:CoresRetro/RetroArch/PVRetroArch.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:PVCoreBridgeRetro/PVCoreBridgeRetro.xcodeproj">
       </FileRef>
       <FileRef

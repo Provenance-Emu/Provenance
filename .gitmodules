@@ -124,9 +124,6 @@
 	path = Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4
 	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
 	branch = Provenance-master
-[submodule "CoresRetro/RetroArch/RetroArch"]
-        path = CoresRetro/RetroArch/RetroArch
-        url = https://github.com/Provenance-Emu/RetroArch.git
 [submodule "CoresRetro/RetroArch/libretro-super"]
         path = CoresRetro/RetroArch/libretro-super
         url = https://github.com/libretro/libretro-super.git
@@ -154,12 +151,6 @@
 [submodule "Cores/Play/Play-"]
 	path = Cores/Play/Play-
 	url = https://github.com/jpd002/Play-.git
-[submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/UnrarKit"]
-	path = CoresRetro/RetroArch/UnrarKit
-	url = https://github.com/abbeycode/UnrarKit.git
-[submodule "CoresRetro/RetroArch/lhasa"]
-	path = CoresRetro/RetroArch/lhasa
-	url = https://github.com/fragglet/lhasa.git
 [submodule "Cores/emuThree/cmake/zstd"]
 	path = Cores/emuThree/cmake/zstd
 	url = https://github.com/facebook/zstd.git
