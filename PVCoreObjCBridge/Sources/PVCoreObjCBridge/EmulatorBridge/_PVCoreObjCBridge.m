@@ -320,9 +320,15 @@ static NSString *_systemName;
             [NSThread sleepForTimeInterval:sleepTime];
             //#endif
         }
-        else if (sleepTime < -0.1) {
-            // We're behind, we need to reset emulation time,
-            // otherwise emulation will "catch up" to real time
+        else if (sleepTime < -(gameInterval * 2.0)) {
+            // Reset when we fall behind by more than 2 frame periods.
+            // Disk-heavy cores (CHD-based MAME, etc.) regularly exceed a
+            // single frame budget due to I/O + decompression; the old 100ms
+            // hard-coded threshold let debt accumulate across 5-6 frames,
+            // producing a burst-then-starve cadence that stuttered both audio
+            // and video. Resetting after 2 frame periods keeps pacing smooth:
+            // one slow frame resets immediately instead of dragging subsequent
+            // frames into a catch-up spiral.
             origin = PVTimestamp();
             nextEmuTick = GetSecondsSince(origin);
         }
