@@ -63,6 +63,7 @@
 #endif
 
 #include <dlfcn.h>
+#include <fcntl.h>
 #include <os/lock.h>
 #include <string.h>
 #include <dirent.h>
@@ -1726,6 +1727,15 @@ static void thin_led_set_state(int led, int state) {
 struct retro_vfs_file_handle {
     FILE *fp;
     char *path;
+    /// True when the core opened this file with RETRO_VFS_FILE_ACCESS_HINT_FREQUENT_ACCESS.
+    /// Used to apply I/O optimisations (larger stdio buffer, kernel read-ahead).
+    bool frequentAccess;
+    /// Cached file size (populated on first size() call, invalidated by writes/truncate).
+    /// Avoids the seek-to-end + seek-back round-trip that flushes the stdio buffer on
+    /// every size() call — critical for CHD files where the core queries size frequently.
+    int64_t cachedSize;
+    /// True once cachedSize has been populated.
+    bool sizeKnown;
 };
 
 /// Opaque directory handle wrapping POSIX DIR*.
@@ -1740,8 +1750,12 @@ static const char *thin_vfs_get_path(struct retro_vfs_file_handle *stream) {
     return stream ? stream->path : NULL;
 }
 
+/// Size of the stdio buffer applied to files opened with FREQUENT_ACCESS hint.
+/// CHD hunks are typically 2–64 KB; a 256 KB buffer keeps several hunks in the
+/// stdio layer so consecutive hunk reads rarely hit the kernel.
+static const size_t kVFSFrequentAccessBufSize = 256 * 1024;
+
 static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mode, unsigned hints) {
-    (void)hints;
     if (!path) return NULL;
     const char *fmode;
     bool update = (mode & RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING) != 0;
@@ -1757,13 +1771,45 @@ static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mo
         ILOG(@"[VFS-DIAG] open FAIL path=%s mode=%s errno=%d (%s)", path, fmode, errno, strerror(errno));
         return NULL;
     }
+
+    bool frequent = (hints & RETRO_VFS_FILE_ACCESS_HINT_FREQUENT_ACCESS) != 0;
+
+    if (frequent) {
+        // Enlarge the stdio buffer so sequential CHD hunk reads stay in userspace.
+        // _IOFBF = fully buffered; the buffer is heap-allocated and stdio owns it.
+        setvbuf(fp, NULL, _IOFBF, kVFSFrequentAccessBufSize);
+
+#ifdef __APPLE__
+        int fd = fileno(fp);
+        // F_RDAHEAD tells the kernel to aggressively read-ahead for this fd,
+        // reducing latency on sequential CHD/disk-image access patterns.
+        fcntl(fd, F_RDAHEAD, 1);
+        // Ensure the UBC (Unified Buffer Cache) is active — F_NOCACHE = 0
+        // is the default, but an explicit call guards against inherited flags.
+        fcntl(fd, F_NOCACHE, 0);
+#endif
+    }
+
     struct retro_vfs_file_handle *handle = (struct retro_vfs_file_handle *)calloc(1, sizeof(*handle));
     handle->fp = fp;
     handle->path = strdup(path);
+    handle->frequentAccess = frequent;
+    handle->sizeKnown = false;
+    handle->cachedSize = -1;
     // Log open of files >100 KB (skip tiny config/lang files which spam logs).
+    // Pre-cache the file size for read-only opens to avoid the first size() call
+    // needing a seek-to-end round-trip that flushes the stdio buffer.
     struct stat _diag_st;
-    if (stat(path, &_diag_st) == 0 && _diag_st.st_size >= (off_t)100*1024) {
-        ILOG(@"[VFS-DIAG] open OK path=%s mode=%s stat_size=%lld fp=%p", path, fmode, (long long)_diag_st.st_size, fp);
+    if (stat(path, &_diag_st) == 0) {
+        if (_diag_st.st_size >= (off_t)100*1024) {
+            ILOG(@"[VFS-DIAG] open OK path=%s mode=%s stat_size=%lld fp=%p hints=0x%x%s",
+                 path, fmode, (long long)_diag_st.st_size, fp, hints,
+                 frequent ? " [FREQUENT_ACCESS]" : "");
+        }
+        if (!(mode & RETRO_VFS_FILE_ACCESS_WRITE)) {
+            handle->cachedSize = (int64_t)_diag_st.st_size;
+            handle->sizeKnown = true;
+        }
     }
     return handle;
 }
@@ -1778,8 +1824,13 @@ static int thin_vfs_close(struct retro_vfs_file_handle *stream) {
 
 static int64_t thin_vfs_size(struct retro_vfs_file_handle *stream) {
     if (!stream) return -1;
-    // Use fseeko/ftello for explicit 64-bit offsets. fseek/ftell take `long`
-    // which is 64-bit on arm64 Darwin but fseeko uses off_t unconditionally.
+    // Return cached value when available — avoids the seek-to-end + seek-back
+    // round-trip that flushes the stdio read buffer on each call.  CHD-based
+    // cores (MAME) query size() frequently; the seek pair was evicting the 256 KB
+    // stdio cache we install for FREQUENT_ACCESS files, forcing a kernel read on
+    // the next hunk access.
+    if (stream->sizeKnown) return stream->cachedSize;
+
     off_t cur = ftello(stream->fp);
     if (fseeko(stream->fp, 0, SEEK_END) != 0) {
         ILOG(@"[VFS-DIAG] size: fseeko END FAIL path=%s errno=%d", stream->path ?: "?", errno);
@@ -1787,12 +1838,11 @@ static int64_t thin_vfs_size(struct retro_vfs_file_handle *stream) {
     }
     off_t sz = ftello(stream->fp);
     fseeko(stream->fp, cur, SEEK_SET);
-    // Log EVERY call (incl. a silent 0 return) — a 0 here is what makes PPSSPP
-    // report "ReadAt from 0-sized file". cur/sz/fp let us spot a bad handle or a
-    // position-at-EOF state.
     ILOG(@"[VFS-DIAG] size() path=%s fp=%p cur=%lld sz=%lld errno=%d",
          stream->path ?: "?", stream->fp, (long long)cur, (long long)sz, errno);
-    return (int64_t)sz;
+    stream->cachedSize = (int64_t)sz;
+    stream->sizeKnown = true;
+    return stream->cachedSize;
 }
 
 static int64_t thin_vfs_tell(struct retro_vfs_file_handle *stream) {
@@ -1844,6 +1894,7 @@ static int64_t thin_vfs_read(struct retro_vfs_file_handle *stream, void *s, uint
 
 static int64_t thin_vfs_write(struct retro_vfs_file_handle *stream, const void *s, uint64_t len) {
     if (!stream || !s) return -1;
+    stream->sizeKnown = false;
     return (int64_t)fwrite(s, 1, (size_t)len, stream->fp);
 }
 
@@ -1864,6 +1915,7 @@ static int thin_vfs_rename(const char *old_path, const char *new_path) {
 
 static int64_t thin_vfs_truncate(struct retro_vfs_file_handle *stream, int64_t length) {
     if (!stream) return -1;
+    stream->sizeKnown = false;
     fflush(stream->fp);
     int fd = fileno(stream->fp);
     return ftruncate(fd, (off_t)length) == 0 ? 0 : -1;
