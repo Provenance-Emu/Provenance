@@ -13,7 +13,6 @@ import PVCoreBridge
 import PVRealm
 import PVLogging
 import PVSettings
-import Defaults
 
 // extension PVSystem {
 //    var responderClassType : AnyClass {
@@ -29,27 +28,17 @@ public extension PVCore {
     public func createInstance(forSystem system: PVSystem) -> PVEmulatorCore? {
         var className = self.principleClass
 
-        // Thin libretro wrapper is the default on all platforms. The legacy
-        // full-RetroArch in-process wrapper is available as an opt-in escape
-        // hatch via Settings > Advanced > "Use Legacy RetroArch Wrapper".
+        // Every libretro core runs on the thin wrapper. The full in-process
+        // RetroArch wrapper is being retired; its plist principleClass is only a
+        // marker that this is a libretro core.
         ILOG("createInstance: principleClass=\(className) for \(identifier)")
         if className.contains("RetroArch") || className.contains("LibRetro") || className == "PVRetroArchCoreBridge" {
-            let pvRetroArchCoreExists = NSClassFromString(className) != nil
-            let userWantsLegacy = Defaults[.useLegacyRetroArchWrapper]
-            // PPSSPP is no longer force-routed to the thick wrapper: it regressed
-            // there too (recent, cause under investigation), so both wrappers need
-            // a real fix. PSP now follows the normal thin-by-default routing; users
-            // can still opt into the thick wrapper via Settings > Advanced.
-            let useLegacy = userWantsLegacy && pvRetroArchCoreExists
-            ILOG("ThinLibretro: userWantsLegacy=\(userWantsLegacy), legacyClassExists=\(pvRetroArchCoreExists), useLegacy=\(useLegacy) (probed=\(className))")
-            if !useLegacy {
-                Self.ensurePVCoreBridgeRetroLoaded()
-                if NSClassFromString("PVThinLibretroCore") != nil {
-                    ILOG("ThinLibretro: swapping \(className) → PVThinLibretroCore for \(identifier)")
-                    className = "PVThinLibretroCore"
-                } else {
-                    WLOG("ThinLibretro: PVThinLibretroCore class not found even after loading framework — falling back to legacy")
-                }
+            Self.ensurePVCoreBridgeRetroLoaded()
+            if NSClassFromString("PVThinLibretroCore") != nil {
+                ILOG("ThinLibretro: swapping \(className) → PVThinLibretroCore for \(identifier)")
+                className = "PVThinLibretroCore"
+            } else {
+                ELOG("ThinLibretro: PVThinLibretroCore class not found after loading PVCoreBridgeRetro.framework")
             }
         }
 

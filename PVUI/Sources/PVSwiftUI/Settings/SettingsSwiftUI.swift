@@ -1425,35 +1425,7 @@ private struct AppSection: View {
     }
 }
 
-/// Values the Core Options section would otherwise recompute every time the Emulation tab is rebuilt.
-@MainActor
-private enum RetroArchSettingsCache {
-    /// The RetroArch framework is fixed for the life of the process, so scan the loaded bundles once.
-    static let isRetroArchInstalled = PVRetroArchCoreManager.shared.isRetroArchInstalled
-
-    private static var cachedResetState: (configModified: Date?, shouldReset: Bool)?
-
-    /// `shouldResetConfig()` MD5-hashes both config files. The bundled one never changes, so the result only
-    /// changes when the active config is rewritten (edit or reset); key the cache on its modification date.
-    static func shouldResetConfig() async -> Bool {
-        let manager = PVRetroArchCoreManager.shared
-        let modified = manager.activeConfigURL.flatMap {
-            (try? FileManager.default.attributesOfItem(atPath: $0.path))?[.modificationDate] as? Date
-        }
-        if let cachedResetState, cachedResetState.configModified == modified {
-            return cachedResetState.shouldReset
-        }
-        let shouldReset = await manager.shouldResetConfig()
-        cachedResetState = (modified, shouldReset)
-        return shouldReset
-    }
-}
-
 private struct CoreOptionsSection: View {
-    @State private var shouldShowResetButton = false
-    @State private var showResetConfirmation = false
-    @State private var resetError: String? = nil
-    @State private var showConfigEditor = false
     @Default(.coreLanguage) var coreLanguage
 
     var body: some View {
@@ -1508,71 +1480,6 @@ private struct CoreOptionsSection: View {
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
             #endif
-
-            if RetroArchSettingsCache.isRetroArchInstalled {
-                NavigationLink(destination: RetroArchQuickSettingsView()) {
-                    SettingsRow(
-                        title: "RetroArch Settings",
-                        subtitle: "Video, audio, notifications, performance, and more.",
-                        icon: .sfSymbol("gearshape.2.fill")
-                    )
-                }
-                #if os(tvOS)
-                .retroFocusButtonStyle(showBorder: false)
-                #endif
-            }
-
-            if shouldShowResetButton {
-                Button(action: { showResetConfirmation = true }) {
-                    SettingsRow(title: "Reset RetroArch Config",
-                                subtitle: "Restore default RetroArch configuration.",
-                                icon: .sfSymbol("arrow.uturn.backward.circle"))
-                }
-                .uiKitAlert(
-                    "Reset RetroArch Config",
-                    message: "This will overwrite your current RetroArch configuration with the default settings. Are you sure?",
-                    isPresented: $showResetConfirmation,
-                    preferredContentSize: CGSize(width: 500, height: 300)
-                ) {
-                    UIAlertAction(title: "Reset", style: .destructive) { _ in
-                        resetRetroArchConfig()
-                    }
-                    UIAlertAction(title: "Cancel", style: .cancel) { _ in
-                        showResetConfirmation = false
-                    }
-                }
-            }
-
-        }
-        .task {
-            shouldShowResetButton = await RetroArchSettingsCache.shouldResetConfig()
-        }
-        .uiKitAlert(
-            "Reset Error",
-            message: resetError ?? "",
-            isPresented: .constant(resetError != nil),
-            preferredContentSize: CGSize(width: 500, height: 300)
-        ) {
-            UIAlertAction(title: "OK", style: .default) { _ in
-                resetError = nil
-            }
-        }
-    }
-
-    private func resetRetroArchConfig() {
-        Task {
-            guard let bundledURL = PVRetroArchCoreManager.shared.bundledConfigURL,
-                  let activeURL = PVRetroArchCoreManager.shared.activeConfigURL else {
-                return
-            }
-
-            do {
-                try await PVRetroArchCoreManager.shared.copyConfigFile(from: bundledURL, to: activeURL)
-                // Update the button state after successful reset
-                shouldShowResetButton = await RetroArchSettingsCache.shouldResetConfig()
-            } catch {
-                resetError = "Failed to reset RetroArch config: \(error.localizedDescription)"
-            }
         }
     }
 }
@@ -2966,16 +2873,6 @@ private struct AdvancedSection: View {
                 SettingsRow(title: "Logs",
                             subtitle: "View, search, and export app logs.",
                             icon: .sfSymbol("doc.text.magnifyingglass"))
-            }
-            #if os(tvOS)
-            .retroFocusButtonStyle(showBorder: false)
-            #endif
-
-            // RetroArch log file browser
-            NavigationLink(destination: RetroArchLogBrowserView()) {
-                SettingsRow(title: "RetroArch Logs",
-                            subtitle: "Browse, view, share, and delete RetroArch log files.",
-                            icon: .sfSymbol("doc.text.below.ecg"))
             }
             #if os(tvOS)
             .retroFocusButtonStyle(showBorder: false)
