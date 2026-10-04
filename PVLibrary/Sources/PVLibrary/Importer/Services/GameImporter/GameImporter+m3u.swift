@@ -90,6 +90,12 @@ extension GameImporter {
 
     /// Check if any files listed in the M3U have already been imported to the database
     /// This handles the case where the M3U arrives after its associated files
+    ///
+    /// This and the consolidation chain below run on the main actor. `try await Realm()`
+    /// opens a main-actor-bound Realm, and the PVFile/PVGame objects read from it are
+    /// handed across awaits to the next step. As plain nonisolated async functions they
+    /// resumed on pool threads and threw "Realm accessed from incorrect thread".
+    @MainActor
     private func checkForAlreadyImportedFiles(_ fileNames: [String], primaryGameItem: ImportQueueItem, m3uURL: URL) async {
         ILOG("Checking if any files in M3U \(m3uURL.lastPathComponent) have already been imported to the database")
 
@@ -106,7 +112,7 @@ extension GameImporter {
         // First check for exact filename matches
         for fileName in fileNames {
             // Look for files with matching names in the database
-            let matchingFiles = realm.objects(PVFile.self).filter("fileName == %@", fileName)
+            let matchingFiles = realm.objects(PVFile.self).filter(PVFile.fileNamePredicate(fileName))
 
             for file in matchingFiles {
                 // Find games that have this file as their main file or in related files
@@ -173,6 +179,7 @@ extension GameImporter {
     }
 
     /// Consolidate already imported files under the M3U game
+    @MainActor
     private func consolidateFilesUnderM3U(_ primaryGameItem: ImportQueueItem, files: [PVFile], games: [PVGame], m3uURL: URL) async {
         ILOG("Consolidating \(files.count) files under M3U \(m3uURL.lastPathComponent)")
 
@@ -190,6 +197,7 @@ extension GameImporter {
     }
 
     /// Import the M3U file and find the corresponding game in the database
+    @MainActor
     private func findOrImportM3UGame(primaryGameItem: ImportQueueItem, m3uURL: URL) async throws -> PVGame {
         // Import the M3U file itself to create a new game entry
         let importResult = try await gameImporterDatabaseService.importGameIntoDatabase(queueItem: primaryGameItem)
@@ -205,6 +213,7 @@ extension GameImporter {
     }
 
     /// Find the imported game using multiple search strategies
+    @MainActor
     private func findImportedGame(primaryGameItem: ImportQueueItem, m3uURL: URL) async throws -> PVGame {
         let m3uFileName = m3uURL.lastPathComponent
         let realm: Realm
@@ -237,9 +246,10 @@ extension GameImporter {
     }
 
     /// Find a game by filename
+    @MainActor
     private func findGameByFileName(fileName: String, realm: Realm) async throws -> PVGame? {
         // Look for PVFiles with matching URL and find their associated games
-        let files = realm.objects(PVFile.self).filter("fileName == %@", fileName)
+        let files = realm.objects(PVFile.self).filter(PVFile.fileNamePredicate(fileName))
 
         for file in files {
             // Check games with this file as main file
@@ -259,6 +269,7 @@ extension GameImporter {
     }
 
     /// Find a game by MD5 and system identifier
+    @MainActor
     private func findGameByMD5AndSystem(primaryGameItem: ImportQueueItem, realm: Realm) async throws -> PVGame? {
         guard let md5 = await primaryGameItem.md5Async(), !primaryGameItem.systems.isEmpty else {
             return nil
@@ -276,6 +287,7 @@ extension GameImporter {
     }
 
     /// Find a game by title and system identifier
+    @MainActor
     private func findGameByTitleAndSystem(m3uURL: URL, primaryGameItem: ImportQueueItem, realm: Realm) async throws -> PVGame? {
         guard !primaryGameItem.systems.isEmpty else {
             return nil
@@ -295,6 +307,7 @@ extension GameImporter {
     }
 
     /// Consolidate all files under the M3U game
+    @MainActor
     private func consolidateFilesUnderGame(game: PVGame, files: [PVFile], games: [PVGame], m3uURL: URL) async throws {
         let gameID = game.id
 

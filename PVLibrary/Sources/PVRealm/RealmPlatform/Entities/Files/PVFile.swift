@@ -501,6 +501,13 @@ public extension PVFile {
         return url?.lastPathComponent ?? ""
     }}
 
+    /// Matches files whose `fileName` is `fileName`. `fileName` is computed from
+    /// the URL, so Realm can't query it ("Invalid property name"); this matches the
+    /// stored `partialPath` on its last path component instead.
+    static func fileNamePredicate(_ fileName: String) -> NSPredicate {
+        NSPredicate(format: "partialPath == %@ OR partialPath ENDSWITH %@", fileName, "/" + fileName)
+    }
+
     var fileNameWithoutExtension: String {get {
         return url?.deletingPathExtension().lastPathComponent ?? ""
     }}
