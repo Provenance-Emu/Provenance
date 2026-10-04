@@ -105,7 +105,7 @@ public extension PVEmulatorConfiguration {
             projectName = plist.projectName
             projectURL = plist.projectURL
             projectVersion = plist.projectVersion
-            disabled = plist.disabled
+            disabled = PVEmulatorConfiguration.isDisabled(plist)
             appStoreDisabled = plist.appStoreDisabled
             contentless = plist.contentless
             supportedCheatTypes = plist.supportedCheatTypes
@@ -115,10 +115,16 @@ public extension PVEmulatorConfiguration {
         }
     }
 
+    /// A core is off when its plist says so or it has been retired in favour of
+    /// another core that ships in this build (`PVCore.activeRetiredCoreReplacements`).
+    internal static func isDisabled(_ core: some EmulatorCoreInfoProvider) -> Bool {
+        core.disabled || PVCore.activeRetiredCoreReplacements[core.identifier] != nil
+    }
+
     /// Expands a plist into blueprint rows for the core plus nested sub-cores, applying the same skip rules as ``registerCore(_:)``.
     private class func collectBlueprints(from plist: EmulatorCoreInfoPlist, unsupportedCoresAvailable: Bool) -> [CoreImportBlueprint] {
         var rows: [CoreImportBlueprint] = []
-        if plist.disabled, !unsupportedCoresAvailable {
+        if isDisabled(plist), !unsupportedCoresAvailable {
             ILOG("Skipping disabled core \(plist.identifier)")
         } else {
             rows.append(CoreImportBlueprint(plist: plist))
@@ -172,7 +178,7 @@ public extension PVEmulatorConfiguration {
         let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.supportedSystems]))
         let unsupportedCoresAvailable: Bool = Defaults[.unsupportedCores]
         
-        if core.disabled, !unsupportedCoresAvailable {
+        if isDisabled(core), !unsupportedCoresAvailable {
             // Skip disabled core only when "unsupported cores" setting is OFF
             ILOG("Skipping disabled core \(core.identifier)")
         } else {
@@ -183,7 +189,7 @@ public extension PVEmulatorConfiguration {
                                  name: core.projectName,
                                  url: core.projectURL,
                                  version: core.projectVersion,
-                                 disabled: core.disabled,
+                                 disabled: isDisabled(core),
                                  appStoreDisabled: core.appStoreDisabled,
                                  contentless: core.contentless,
                                  supportedCheatTypes: core.supportedCheatTypes,
@@ -204,7 +210,7 @@ public extension PVEmulatorConfiguration {
                                         name: subCore.projectName,
                                         url: subCore.projectURL,
                                         version: subCore.projectVersion,
-                                        disabled: subCore.disabled,
+                                        disabled: isDisabled(subCore),
                                         appStoreDisabled: subCore.appStoreDisabled,
                                         contentless: subCore.contentless,
                                         supportedCheatTypes: subCore.supportedCheatTypes,
@@ -268,11 +274,23 @@ public extension PVEmulatorConfiguration {
             }
         }
 
+        let database = RomDatabase.sharedInstance
+
+        // Move save states and preferences off retired cores now that their
+        // replacements are registered — and before pruning, which would delete
+        // a retired core's row and leave its save states with no core.
+        do {
+            try database.writeTransaction {
+                RetiredCoreMigration.migrate(in: database.realm)
+            }
+        } catch {
+            ELOG("Retired core migration failed: \(error)")
+        }
+
         // Remove stale PVCore entries that no longer correspond to any known
         // plist.  This cleans up phantom cores left by earlier dynamic-scanner
         // runs that extracted garbage metadata from Mach-O __cstring sections
         // (e.g. "%d.mcr", ".mv" appearing as core names).
-        let database = RomDatabase.sharedInstance
         let allCores = database.all(PVCore.self).toArray()
         let staleCores = allCores.filter { !validIdentifiers.contains($0.identifier) }
         if !staleCores.isEmpty {

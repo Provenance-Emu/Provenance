@@ -449,7 +449,7 @@ public final class SaveExporter: @unchecked Sendable {
                     }
 
                     guard let coreID = entry.coreIdentifier,
-                          let core = realm.object(ofType: PVCore.self, forPrimaryKey: coreID) else {
+                          let core = realm.object(ofType: PVCore.self, forPrimaryKey: PVCore.currentIdentifier(for: coreID)) else {
                         WLOG("SaveExporter: core '\(entry.coreIdentifier ?? "nil")' not installed, skipping Realm registration for \(entry.filename)")
                         continue
                     }

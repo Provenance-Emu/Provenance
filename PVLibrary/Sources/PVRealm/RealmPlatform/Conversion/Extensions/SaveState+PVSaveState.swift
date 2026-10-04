@@ -65,7 +65,7 @@ public extension Realm {
                 object.game = buildGame(from: save.game)
             }
 
-            if let rmCore = self.object(ofType: PVCore.self, forPrimaryKey: save.core.identifier) {
+            if let rmCore = self.object(ofType: PVCore.self, forPrimaryKey: PVCore.currentIdentifier(for: save.core.identifier)) {
                 object.core = rmCore
             } else {
                 object.core = buildCore(from: save.core)

@@ -1633,7 +1633,7 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         if let preferred = preferredCoreID?
             .trimmingCharacters(in: .whitespacesAndNewlines),
            !preferred.isEmpty,
-           let matched = realm.object(ofType: PVCore.self, forPrimaryKey: preferred) {
+           let matched = realm.object(ofType: PVCore.self, forPrimaryKey: PVCore.currentIdentifier(for: preferred)) {
             return matched
         }
 
@@ -1641,14 +1641,14 @@ public class CloudKitSaveStatesSyncer: CloudKitSyncer, SaveStatesSyncing {
         if let rawIdentifier = record[CloudKitSchema.SaveStateFields.coreIdentifier] as? String {
             let coreIdentifier = rawIdentifier.trimmingCharacters(in: .whitespacesAndNewlines)
             if !coreIdentifier.isEmpty,
-               let matchedCore = realm.object(ofType: PVCore.self, forPrimaryKey: coreIdentifier) {
+               let matchedCore = realm.object(ofType: PVCore.self, forPrimaryKey: PVCore.currentIdentifier(for: coreIdentifier)) {
                 return matchedCore
             }
         }
 
         if let system = fallbackSystem,
            let preferredID = system.userPreferredCoreID,
-           let preferredCore = realm.object(ofType: PVCore.self, forPrimaryKey: preferredID) {
+           let preferredCore = realm.object(ofType: PVCore.self, forPrimaryKey: PVCore.currentIdentifier(for: preferredID)) {
             return preferredCore
         }
 

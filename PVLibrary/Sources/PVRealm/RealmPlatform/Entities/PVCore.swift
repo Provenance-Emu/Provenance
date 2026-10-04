@@ -101,3 +101,40 @@ public final class PVCore: RealmSwift.Object, Identifiable {
         return identifier
     }
 }
+
+// MARK: - Retired cores
+
+public extension PVCore {
+    /// Cores removed from the app, mapped to the core that now runs their games
+    /// and save states.
+    static let retiredCoreReplacements: [String: String] = [
+        // Native PVJaguar ran the same virtualjaguar libretro.c as the dylib,
+        // so its save states load there (the core reads older state versions).
+        "com.provenance.core.jaguar": "virtualjaguar.libretro.framework"
+    ]
+
+    /// The retirements in effect in this build: those whose replacement is
+    /// bundled. Lite builds ship no libretro dylibs and keep the old core.
+    static let activeRetiredCoreReplacements: [String: String] =
+        retiredCoreReplacements.filter { isBundledLibretroCore($0.value) }
+
+    /// The identifier of the core that now handles `identifier`. Save states,
+    /// recents and preferences are moved over at launch (`RetiredCoreMigration`);
+    /// records arriving later from iCloud, another device or an exported save
+    /// still name the old core, so lookups of an incoming identifier go through
+    /// this.
+    static func currentIdentifier(for identifier: String) -> String {
+        activeRetiredCoreReplacements[identifier] ?? identifier
+    }
+
+    /// Whether the app bundle contains the libretro core `identifier`
+    /// (`<name>.libretro.framework` in its Frameworks folder).
+    static func isBundledLibretroCore(_ identifier: String) -> Bool {
+        guard identifier.hasSuffix(".libretro.framework") else { return false }
+        let bases = [Bundle.main.privateFrameworksURL,
+                     Bundle.main.bundleURL.appendingPathComponent("Frameworks", isDirectory: true)]
+        return bases.compactMap { $0 }.contains {
+            FileManager.default.fileExists(atPath: $0.appendingPathComponent(identifier, isDirectory: true).path)
+        }
+    }
+}

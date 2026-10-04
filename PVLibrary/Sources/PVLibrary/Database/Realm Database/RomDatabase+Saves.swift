@@ -186,7 +186,7 @@ public extension RomDatabase {
                 }
 
                 // 4. Find the matching core
-                guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: saveStateMetadata.core.identifier) else {
+                guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: PVCore.currentIdentifier(for: saveStateMetadata.core.identifier)) else {
                     WLOG("No matching core found for save state: \(saveStateMetadata.id)")
                     continue
                 }
