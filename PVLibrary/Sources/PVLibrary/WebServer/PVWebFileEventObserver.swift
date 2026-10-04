@@ -177,6 +177,16 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
                             let cheatsToDelete = Array(game.cheats)
                             let recentPlaysToDelete = Array(game.recentPlays)
                             let screenShotsToDelete = Array(game.screenShots)
+                            // `game` is invalidated by the delete below, and reading any
+                            // property of it afterwards throws. Capture what the Spotlight
+                            // and cache cleanup need first.
+#if canImport(CoreSpotlight) && !os(tvOS)
+                            let spotlightIdentifier = game.spotlightUniqueIdentifier
+#endif
+                            let romPath = game.romPath
+                            let systemIdentifier = game.systemIdentifier
+                            let fileURL = game.file?.url
+                            let relatedFileURLs = Array(game.relatedFiles.compactMap(\.url))
                             try realm.write {
                                 realm.delete(saveStatesToDelete)
                                 realm.delete(cheatsToDelete)
@@ -186,13 +196,16 @@ public final class PVWebFileEventObserver: @unchecked Sendable {
                             }
                             // Remove from Spotlight so the game no longer appears in system search.
 #if canImport(CoreSpotlight) && !os(tvOS)
-                            RomDatabase.sharedInstance.deleteFromSpotlight(game: game)
+                            RomDatabase.sharedInstance.deleteFromSpotlight(spotlightIdentifier: spotlightIdentifier)
 #endif
                             // Invalidate the in-memory games cache entry for this game
                             // so stale entries (e.g. gamesCache[romPath]) don't survive
                             // the hard-delete, without reloading from a different Realm
                             // configuration.
-                            RomDatabase.removeGameFromCache(game)
+                            RomDatabase.removeGameFromCache(oldRomPath: romPath,
+                                                            oldSystemIdentifier: systemIdentifier,
+                                                            oldFileURL: fileURL,
+                                                            oldRelatedFiles: relatedFileURLs)
                         }
                         return
                     } else {

@@ -15,7 +15,12 @@ import CoreSpotlight
 
 extension RomDatabase {
     internal func deleteFromSpotlight(game: PVGame) {
-        CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { error in
+        deleteFromSpotlight(spotlightIdentifier: game.spotlightUniqueIdentifier)
+    }
+
+    /// For a game already deleted from Realm, whose properties can no longer be read.
+    internal func deleteFromSpotlight(spotlightIdentifier: String) {
+        CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [spotlightIdentifier], completionHandler: { error in
             if let error = error {
                 ELOG("Error deleting game spotlight item: \(error)")
             } else {
