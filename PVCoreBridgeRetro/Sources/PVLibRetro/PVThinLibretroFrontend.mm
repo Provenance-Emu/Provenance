@@ -1840,6 +1840,7 @@ static int64_t thin_vfs_size(struct retro_vfs_file_handle *stream) {
     fseeko(stream->fp, cur, SEEK_SET);
     ILOG(@"[VFS-DIAG] size() path=%s fp=%p cur=%lld sz=%lld errno=%d",
          stream->path ?: "?", stream->fp, (long long)cur, (long long)sz, errno);
+    if (sz < 0) return -1;
     stream->cachedSize = (int64_t)sz;
     stream->sizeKnown = true;
     return stream->cachedSize;
