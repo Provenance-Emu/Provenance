@@ -15,6 +15,10 @@ final class ROMTitleNormalizationServiceTests: XCTestCase {
     // MARK: - Setup / Teardown
 
     private var previousRealmConfiguration: Realm.Configuration?
+    /// An in-memory Realm is emptied once its last instance closes, so the
+    /// games inserted by a test would be gone by the time the service opens its
+    /// own instance on a background thread. Held for the whole test.
+    private var keepAliveRealm: Realm?
 
     override func setUp() {
         super.setUp()
@@ -22,12 +26,14 @@ final class ROMTitleNormalizationServiceTests: XCTestCase {
         Realm.Configuration.defaultConfiguration = Realm.Configuration(
             inMemoryIdentifier: "ROMTitleNormalizationServiceTests-\(name)"
         )
+        keepAliveRealm = try? Realm()
     }
 
     override func tearDown() {
         if let realm = try? Realm() {
             try? realm.write { realm.deleteAll() }
         }
+        keepAliveRealm = nil
         if let previous = previousRealmConfiguration {
             Realm.Configuration.defaultConfiguration = previous
         }

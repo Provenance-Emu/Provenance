@@ -230,8 +230,10 @@ class GameImporterTests: XCTestCase {
                                         ArtworkImporter(),
                                         mockCDFileHandler)
         let cueFile = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file.cue"))
-        mockCDFileHandler.binFilesResult = []  // Simulate missing .bin files
-        mockCDFileHandler.binUrlsResult = []  // Simulate missing .bin files
+        // The cue references a track that is neither queued nor on disk. (A cue
+        // that references nothing is treated as empty, not as waiting.)
+        mockCDFileHandler.binFilesResult = ["file.bin"]
+        mockCDFileHandler.binUrlsResult = []
         
         // Act
         var importQueue = [cueFile]
@@ -252,8 +254,10 @@ class GameImporterTests: XCTestCase {
                                         mockCDFileHandler)
         let cueFile = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file.cue"))
         let binFile = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file.bin"))
-        mockCDFileHandler.binFilesResult = []  // Simulate missing .bin files
-        mockCDFileHandler.binUrlsResult = []  // Simulate missing .bin files
+        // The cue references a track that is neither queued nor on disk. (A cue
+        // that references nothing is treated as empty, not as waiting.)
+        mockCDFileHandler.binFilesResult = ["file.bin"]
+        mockCDFileHandler.binUrlsResult = []
         
         // Act
         var importQueue = [cueFile]
@@ -284,14 +288,17 @@ class GameImporterTests: XCTestCase {
         let m3uFile = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/playlist.m3u"))
         let cueFile = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file.cue"))
         mockCDFileHandler.m3uFileContentsResult = ["file.cue"]  // Simulate the m3u file referencing the cue file
-        
+        mockCDFileHandler.binFilesResult = ["file.bin"]  // ...whose track is missing
+
         // Act
         var importQueue = [m3uFile, cueFile]
         gameImporter.organizeCueAndBinFiles(in: &importQueue)
         gameImporter.organizeM3UFiles(in: &importQueue)
-        
-        // Assert
-        XCTAssertTrue(m3uFile.status.isPartial, "The .m3u file should be marked as .partial if any referenced .cue file is missing or incomplete.")
+
+        // Assert: organizing records what the m3u still needs; the import pass
+        // turns that into .partial (GameImporterError.waitingForAssociatedFiles).
+        XCTAssertTrue(m3uFile.expectedAssociatedFileNames?.contains("file.bin") == true,
+                      "The .m3u should list the missing track of its cue as an expected file.")
     }
 
     // MARK: - Artwork Filename Matching Tests
@@ -418,14 +425,17 @@ class GameImporterTests: XCTestCase {
         let cueFile = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file.cue"))
         let binFile = ImportQueueItem(url: URL(fileURLWithPath: "/path/to/file.bin"))
         mockCDFileHandler.m3uFileContentsResult = ["file.cue"]  // Simulate the m3u file referencing the cue file
-        
+        mockCDFileHandler.binFilesResult = ["file.bin"]  // ...whose track is missing
+
         // Act
         var importQueue = [m3uFile, cueFile]
         gameImporter.organizeCueAndBinFiles(in: &importQueue)
         gameImporter.organizeM3UFiles(in: &importQueue)
-        
-        // Assert
-        XCTAssertTrue(m3uFile.status.isPartial, "The .m3u file should be marked as .partial if any referenced .cue file is missing or incomplete.")
+
+        // Assert: organizing records what the m3u still needs; the import pass
+        // turns that into .partial (GameImporterError.waitingForAssociatedFiles).
+        XCTAssertTrue(m3uFile.expectedAssociatedFileNames?.contains("file.bin") == true,
+                      "The .m3u should list the missing track of its cue as an expected file.")
         
         importQueue.append(binFile)
         mockCDFileHandler.binFilesResult = [binFile.url.lastPathComponent]
@@ -434,8 +444,10 @@ class GameImporterTests: XCTestCase {
         
         gameImporter.organizeCueAndBinFiles(in: &importQueue)
         gameImporter.organizeM3UFiles(in: &importQueue)
-        
+
         // Assert
+        XCTAssertTrue(m3uFile.resolvedAssociatedFileURLs.contains(binFile.url),
+                      "Once the track exists the .m3u should resolve it.")
         XCTAssertEqual(importQueue[0].status, .queued, "The .m3u file should be marked as .queued when any referenced .bin file is present.")
     }
 }

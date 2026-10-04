@@ -14,14 +14,19 @@ import PVFileSystem
 final class SaveExporterTests: XCTestCase {
 
     private var tempDir: URL!
-    private var realm: Realm!
+    private var realmConfig: Realm.Configuration!
+    /// Keeps the in-memory Realm's data alive for the test. Opened on the
+    /// setUp thread, so never used directly: async tests resume on other
+    /// threads and a Realm is thread-confined. Use `openRealm()`.
+    private var keepAliveRealm: Realm!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
 
         // Use unique in-memory Realm per test
         let config = Realm.Configuration(inMemoryIdentifier: "SaveExporterTests-\(UUID().uuidString)")
-        realm = try Realm(configuration: config)
+        realmConfig = config
+        keepAliveRealm = try Realm(configuration: config)
 
         tempDir = FileManager.default.temporaryDirectory
             .appendingPathComponent("SaveExporterTests-\(UUID().uuidString)")
@@ -32,7 +37,7 @@ final class SaveExporterTests: XCTestCase {
         if let tempDir {
             try? FileManager.default.removeItem(at: tempDir)
         }
-        realm = nil
+        keepAliveRealm = nil
         try super.tearDownWithError()
     }
 
@@ -517,6 +522,7 @@ final class SaveExporterTests: XCTestCase {
 
         // Build a game that has the save state referenced
         let game = makeGame(title: "SidecarGame", md5: md5, romURL: romFile)
+        let realm = try openRealm()
         try realm.write {
             let thawedGame = game.thaw() ?? realm.objects(PVGame.self).first!
             let pvFile = PVFile(withURL: svsFile)
@@ -546,6 +552,12 @@ final class SaveExporterTests: XCTestCase {
 
     // MARK: - Helpers
 
+    /// A Realm for the current thread. Synchronous, so `Realm(configuration:)`
+    /// is the plain initializer rather than the main-actor async one.
+    private func openRealm() throws -> Realm {
+        try Realm(configuration: realmConfig)
+    }
+
     private func makeGame(title: String, md5: String, romURL: URL?) -> PVGame {
         let game = PVGame()
         game.title = title
@@ -557,7 +569,9 @@ final class SaveExporterTests: XCTestCase {
             game.file = pvFile
         }
 
-        try? realm.write { realm.add(game, update: .all) }
+        if let realm = try? openRealm() {
+            try? realm.write { realm.add(game, update: .all) }
+        }
         let frozen = game.isFrozen ? game : game.freeze()
         return frozen
     }

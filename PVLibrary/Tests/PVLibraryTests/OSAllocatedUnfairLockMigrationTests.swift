@@ -70,6 +70,10 @@ private enum TestRemoteApplyGuard {
 ///
 /// These tests verify that the `OSAllocatedUnfairLock`-based patterns used to
 /// replace `NSLock` across PVLibrary maintain correct mutual-exclusion semantics.
+///
+/// Serialized: the guard tests share the global `TestRemoteApplyGuard` depth, so
+/// one running in parallel with another sees the guard as active.
+@Suite(.serialized)
 struct OSAllocatedUnfairLockMigrationTests {
 
     // MARK: Basic mutual exclusion
