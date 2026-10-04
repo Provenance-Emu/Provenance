@@ -148,7 +148,6 @@
 		B33CFF0A2ED2E8260029101B /* PVRetroArchCore+Controls+Lynx.m in Sources */ = {isa = PBXBuildFile; fileRef = B33CFF092ED2E8260029101B /* PVRetroArchCore+Controls+Lynx.m */; };
 		B34A8EF7295848360000D110 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B353DCAA2E43018C00DA569C /* PVRetroArchCore+Controls+2600.m in Sources */ = {isa = PBXBuildFile; fileRef = B353DCA92E43018C00DA569C /* PVRetroArchCore+Controls+2600.m */; };
-		B356F9B82D2F3986008D42A2 /* hatari.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B356F9A82D2F397E008D42A2 /* hatari.cfg */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
@@ -482,7 +481,6 @@
 		C0C0CAFE2F00000000000003 /* PVRetroArchCore+ExceptionTrampoline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCore+ExceptionTrampoline.h"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B353DCA92E43018C00DA569C /* PVRetroArchCore+Controls+2600.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+2600.m"; sourceTree = "<group>"; };
-		B356F9A82D2F397E008D42A2 /* hatari.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = hatari.cfg; sourceTree = "<group>"; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -865,7 +863,6 @@
 		93F66F0A296745A100203EB3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B356F9A82D2F397E008D42A2 /* hatari.cfg */,
 				93323F812AAB891100EB0C43 /* mame_plugins */,
 				9389A8F8297AA46000B27656 /* arrow.png */,
 				93D104FC29782C9D00C31705 /* pv_ui_overlay */,
@@ -1390,7 +1387,6 @@
 				B33350262078619C0036A448 /* Core.plist in Resources */,
 				93D104FD29782C9D00C31705 /* pv_ui_overlay in Resources */,
 				93835825296D58B900A23231 /* assets.zip in Resources */,
-				B356F9B82D2F3986008D42A2 /* hatari.cfg in Resources */,
 				93323F862AAB891200EB0C43 /* mame_plugins in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

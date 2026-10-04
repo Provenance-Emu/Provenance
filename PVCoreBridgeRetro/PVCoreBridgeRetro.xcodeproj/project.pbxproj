@@ -67,6 +67,7 @@
 		C0C0CAFE00000001 /* PVThinLibretroCore+Scaling.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE00000002 /* PVThinLibretroCore+Scaling.swift */; };
 		C0C0CAFE00000003 /* RelativeMouseScaler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE00000004 /* RelativeMouseScaler.swift */; };
 		C0C0CAFE00000005 /* ThinContentArchiveResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE00000006 /* ThinContentArchiveResolver.swift */; };
+		C0C0CAFE00000007 /* hatari.cfg in Resources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE00000008 /* hatari.cfg */; };
 		C0C0CAFE2F00000000000003 /* CRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE2F00000000000002 /* CRcheevos */; };
 		C0C0CAFE300000000000000F /* PaletteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE300000000000000E /* PaletteTests.swift */; };
 		C0C0CAFE3000000000000011 /* PerfInterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */; };
@@ -947,6 +948,7 @@
 		C0C0CAFE00000002 /* PVThinLibretroCore+Scaling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+Scaling.swift"; sourceTree = "<group>"; };
 		C0C0CAFE00000004 /* RelativeMouseScaler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelativeMouseScaler.swift; sourceTree = "<group>"; };
 		C0C0CAFE00000006 /* ThinContentArchiveResolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThinContentArchiveResolver.swift; sourceTree = "<group>"; };
+		C0C0CAFE00000008 /* hatari.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = Resources/hatari.cfg; sourceTree = "<group>"; };
 		C0C0CAFE300000000000000E /* PaletteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfInterfaceTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000012 /* RelativeMouseScalerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeMouseScalerTests.swift; sourceTree = "<group>"; };
@@ -2917,6 +2919,7 @@
 				C0C0CAFE00000002 /* PVThinLibretroCore+Scaling.swift */,
 				C0C0CAFE00000004 /* RelativeMouseScaler.swift */,
 				C0C0CAFE00000006 /* ThinContentArchiveResolver.swift */,
+				C0C0CAFE00000008 /* hatari.cfg */,
 				B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */,
 				9913381D03FEA56743F3544E /* ThinSystemFileManifest.swift */,
 				0AB7BACA77D3CEFB8691823A /* ThinSystemFileProvisioner.swift */,
@@ -3152,6 +3155,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0C0CAFE00000007 /* hatari.cfg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

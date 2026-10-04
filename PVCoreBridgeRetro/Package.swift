@@ -70,6 +70,8 @@ let package = Package(
                 "libretro",
                 .product(name: "CRcheevos", package: "PVRcheevos"),
             ],
+            // Seeded into the Atari ST BIOS folder by PVThinLibretroCore (Hatari).
+            resources: [.copy("Resources/hatari.cfg")],
             cSettings: [
                 .headerSearchPath("../libretro/include"),
                 .headerSearchPath("../libretro/retro/libretro-common/include"),

@@ -82,7 +82,6 @@
 		91D1E1147A6900A19126291F /* Assets-Lite.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B39D8F082D0CEC5300577667 /* Assets-Lite.xcassets */; };
 		9304999D2A93073800BF257F /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5D9EC2959837A00907CFB /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9304999E2A93073800BF257F /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		930499A22A93073800BF257F /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		930499A42A93073800BF257F /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		930499A72A93073800BF257F /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */; };
 		930499A82A93073800BF257F /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; };
@@ -110,7 +109,6 @@
 		930499C22A93073800BF257F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		930499C32A93073800BF257F /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 930498CB2A93073800BF257F /* Reachability */; };
 		930499C42A93073800BF257F /* AltKit in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = 930498C52A93073800BF257F /* AltKit */; };
-		930499C62A93073800BF257F /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		930499C92A93073800BF257F /* modules in Resources */ = {isa = PBXBuildFile; fileRef = 934BE9B3296F178400FB9933 /* modules */; };
 		930499CA2A93073800BF257F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
 		930499CB2A93073800BF257F /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
@@ -148,8 +146,6 @@
 		9368551E2A8956220087FE6B /* modules in Resources */ = {isa = PBXBuildFile; fileRef = 934BE9B3296F178400FB9933 /* modules */; };
 		936BFD852986A6CA001FF097 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; platformFilter = maccatalyst; };
 		936BFD862986A6CA001FF097 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		939A43092A35ADE2001AFF6B /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilters = (ios, maccatalyst, tvos, ); };
-		939A430A2A35AE14001AFF6B /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; };
 		93F28DCA295E2F5100E4D464 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		97D397A09BCEFEAF56702A34 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D517C8D5450019F6D2 /* CoreData.framework */; };
@@ -252,8 +248,6 @@
 		B32D45CD2CB7311C006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45CC2CB7311C006B76C2 /* PVGambatte */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
-		B334F1AA2F6E968900C9D19E /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilters = (ios, maccatalyst, ); };
-		B334F1AB2F6E968900C9D19E /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
 		B336F2EC2F6E85FD004ABEE6 /* PVCheevos in Frameworks */ = {isa = PBXBuildFile; productRef = B336F2EB2F6E85FD004ABEE6 /* PVCheevos */; };
@@ -803,7 +797,6 @@
 		B3F7E542297736C200362B92 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
 		B3F7E544297736C200362B92 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
 		B3F7E545297736C200362B92 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDA276B8B2E0031AECC /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
-		B3F7E546297736C200362B92 /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		B3F7E548297736C200362B92 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		B3F7E54D297736C200362B92 /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; };
 		B3F7E552297736C200362B92 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
@@ -822,7 +815,6 @@
 		B3F7E587297736C200362B92 /* PVEP128Emu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D72878384A00585AD8 /* PVEP128Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E58C297736C200362B92 /* PVFuse.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B33155E32971D34D008767C5 /* PVFuse.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E58D297736C200362B92 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F7E58E297736C200362B92 /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E58F297736C200362B92 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E590297736C200362B92 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3A320392720991B00F338F6 /* PVDolphin.framework */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E593297736C200362B92 /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1143,7 +1135,6 @@
 				B35AB4442CB6EDD2003273D4 /* snes9x.framework in Embed Frameworks */,
 				B3D1C1322CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */,
 				B35AB4152CB6DC20003273D4 /* PVTGBDual-Dynamic in Embed Frameworks */,
-				939A430A2A35AE14001AFF6B /* PVRetroArch.framework in Embed Frameworks */,
 				B3FAC952292B45A9005E8B11 /* PVSNES.framework in Embed Frameworks */,
 				B3FAC94E292B45A4005E8B11 /* PVPotator.framework in Embed Frameworks */,
 				B37CE66A293F23C30010B746 /* PVVecX.framework in Embed Frameworks */,
@@ -1194,7 +1185,6 @@
 				93049A282A930A8F00BF257F /* PVDosBox.framework in Embed Frameworks */,
 				930499F32A9307DE00BF257F /* PVSnesticle.framework in Embed Frameworks */,
 				9304999E2A93073800BF257F /* libMoltenVK.dylib in Embed Frameworks */,
-				930499A22A93073800BF257F /* PVRetroArch.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1312,7 +1302,6 @@
 				B3E2AA522CB63A6200E2636D /* PVBeetlePSX.framework in Embed Frameworks */,
 				B318E29B2CAB586800D0E599 /* snes9x.framework in Embed Frameworks */,
 				B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
-				B334F1AB2F6E968900C9D19E /* PVRetroArch.framework in Embed Frameworks */,
 				B336F3202F6E8701004ABEE7 /* PVCheevos in Embed Frameworks */,
 				B33B4F4C2C1A5B4B007371C5 /* RealmSwift in Embed Frameworks */,
 				B318E2782CAB4B3F00D0E599 /* PVGenesis.framework in Embed Frameworks */,
@@ -1402,7 +1391,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3F7E58E297736C200362B92 /* PVRetroArch.framework in Embed Frameworks */,
 				9361E6FB2BD62C1300E3891A /* PVEmuThree.framework in Embed Frameworks */,
 				93049A8A2A931E5E00BF257F /* PVDosBoxRetro.framework in Embed Frameworks */,
 				93049A892A931E4E00BF257F /* PVMelonDSRetro.framework in Embed Frameworks */,
@@ -2963,7 +2951,6 @@
 				1180B3182492A94200636C8A /* CoreServices.framework in Frameworks */,
 				B35AB4002CB6D0DF003273D4 /* PVJIT in Frameworks */,
 				1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */,
-				939A43092A35ADE2001AFF6B /* PVRetroArch.framework in Frameworks */,
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
 				B3FAC94F292B45A6005E8B11 /* PVRSPCXD4.framework in Frameworks */,
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
@@ -3067,7 +3054,6 @@
 				930499B22A93073800BF257F /* libsqlite3.dylib in Frameworks */,
 				930499B32A93073800BF257F /* AVFoundation.framework in Frameworks */,
 				930499B42A93073800BF257F /* CFNetwork.framework in Frameworks */,
-				930499C62A93073800BF257F /* PVRetroArch.framework in Frameworks */,
 				930499B52A93073800BF257F /* Security.framework in Frameworks */,
 				930499B62A93073800BF257F /* SystemConfiguration.framework in Frameworks */,
 				B3F65B5A2CC0941400DB762D /* PVLibrary in Frameworks */,
@@ -3271,7 +3257,6 @@
 			files = (
 				B3F9049E2C1FE9D8002283B3 /* libbz2.tbd in Frameworks */,
 				B30ED0D72CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Frameworks */,
-				B334F1AA2F6E968900C9D19E /* PVRetroArch.framework in Frameworks */,
 				C0C0CA0100000001 /* Sentry in Frameworks */,
 				B3FD98642D615C6700397643 /* MetalKit.framework in Frameworks */,
 				B33B4F4B2C1A5B4B007371C5 /* RealmSwift in Frameworks */,
@@ -3518,7 +3503,6 @@
 				B3F7E523297736C200362B92 /* PVGearcoleco.framework in Frameworks */,
 				B3F7E526297736C200362B92 /* Security.framework in Frameworks */,
 				B3A610012CB88492001D99C2 /* PVJIT in Frameworks */,
-				B3F7E546297736C200362B92 /* PVRetroArch.framework in Frameworks */,
 				B3FC973F2CB8BDB900C6DB31 /* Defaults in Frameworks */,
 				B3A610092CB885EB001D99C2 /* PVAtari800-Dynamic in Frameworks */,
 				B3A6101D2CB8863C001D99C2 /* PVPokeMini-Dynamic in Frameworks */,

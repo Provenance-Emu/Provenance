@@ -17,15 +17,16 @@ fi
 # Count libretro core frameworks in the app bundle
 LIBRETRO_COUNT=$(find "$APP_FRAMEWORKS" -maxdepth 1 -type d -name "*.libretro.framework" 2>/dev/null | wc -l | tr -d ' ')
 
-# Count PVRetroArch.framework (the bridge)
-HAS_BRIDGE=$(find "$APP_FRAMEWORKS" -maxdepth 1 -type d -name "PVRetroArch.framework" 2>/dev/null | wc -l | tr -d ' ')
+# Count PVCoreBridgeRetro.framework (the thin libretro wrapper that loads these
+# cores; PVRetroArch.framework no longer ships)
+HAS_BRIDGE=$(find "$APP_FRAMEWORKS" -maxdepth 1 -type d -name "PVCoreBridgeRetro.framework" 2>/dev/null | wc -l | tr -d ' ')
 
 echo "ValidateFrameworks: Found ${LIBRETRO_COUNT} libretro core frameworks in app bundle"
-echo "ValidateFrameworks: PVRetroArch bridge present: $([ "$HAS_BRIDGE" -gt 0 ] && echo YES || echo NO)"
+echo "ValidateFrameworks: PVCoreBridgeRetro bridge present: $([ "$HAS_BRIDGE" -gt 0 ] && echo YES || echo NO)"
 
 # If the bridge is present, cores MUST also be present
 if [ "$HAS_BRIDGE" -gt 0 ] && [ "$LIBRETRO_COUNT" -eq 0 ]; then
-    echo "ValidateFrameworks: ERROR — PVRetroArch.framework is embedded but 0 libretro core frameworks found!" >&2
+    echo "ValidateFrameworks: ERROR — PVCoreBridgeRetro.framework is embedded but 0 libretro core frameworks found!" >&2
     echo "ValidateFrameworks: ERROR — The 'Generate Frameworks' build phase likely failed silently." >&2
     echo "ValidateFrameworks: ERROR — Check the build log for make_frameworks_retroarch.sh errors." >&2
     # List what IS in the Frameworks dir for debugging

@@ -45,8 +45,12 @@ public extension RomDatabase {
 
         let realm = try await Realm()
 
-        /// Get all contentless cores
-        let contentlessCores = realm.objects(PVCore.self).filter("contentless == true")
+        /// Get all contentless cores. Only those that can launch get a game: the
+        /// thick RetroArch launcher (`com.provenance.core.retroarch`) is gone, and
+        /// Lite builds register libretro cores whose dylibs they don't ship.
+        let allContentlessCores = realm.objects(PVCore.self).filter("contentless == true")
+        let contentlessCores = allContentlessCores.filter { $0.hasCoreClass }
+        let unlaunchableIDs = allContentlessCores.filter { !$0.hasCoreClass }.map(\.identifier)
         ILOG("Found \(contentlessCores.count) contentless cores: \(contentlessCores.map(\.identifier).joined(separator: ", "))")
 
         /// Create array to hold new games that need to be added
@@ -68,8 +72,11 @@ public extension RomDatabase {
             ILOG("Game to add: \(game.title)")
         }
 
+        /// Games left behind by cores that can no longer launch
+        let staleGames = unlaunchableIDs.compactMap { realm.object(ofType: PVGame.self, forPrimaryKey: $0) }
+
         /// Perform clear and add in a single atomic transaction to prevent race conditions
-        if !gamesToAdd.isEmpty || overwrite {
+        if !gamesToAdd.isEmpty || !staleGames.isEmpty || overwrite {
             WLOG("Processing \(gamesToAdd.count) contentless PVGame(s) (overwrite: \(overwrite))...")
 
             try await realm.asyncWrite {
@@ -78,6 +85,9 @@ public extension RomDatabase {
                     let existingContentlessGames = realm.objects(PVGame.self).filter("contentless == true")
                     ILOG("Deleting \(existingContentlessGames.count) existing contentless games in atomic transaction")
                     realm.delete(existingContentlessGames)
+                } else if !staleGames.isEmpty {
+                    ILOG("Removing contentless games for cores that can't launch: \(unlaunchableIDs.joined(separator: ", "))")
+                    realm.delete(staleGames)
                 }
 
                 /// Add games with .modified policy to upsert on primary key collision

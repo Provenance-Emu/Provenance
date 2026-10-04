@@ -595,8 +595,9 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         let destPath = (dir as NSString).appendingPathComponent(fileName)
         guard !FileManager.default.fileExists(atPath: destPath) else { return }
 
-        // Look in the main bundle and all framework bundles
-        let bundles = [Bundle.main] + Bundle.allFrameworks
+        // This framework's own resources first (hatari.cfg), then the app and
+        // any other framework.
+        let bundles = [Bundle(for: PVThinLibretroCore.self), Bundle.main] + Bundle.allFrameworks
         for bundle in bundles {
             if let srcURL = bundle.url(forResource: resourceName, withExtension: ext) {
                 do {

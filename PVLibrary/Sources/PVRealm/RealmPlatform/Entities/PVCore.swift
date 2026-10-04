@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import os
 import PVLogging
 import PVPrimitives
 
@@ -44,15 +45,15 @@ public final class PVCore: RealmSwift.Object, Identifiable {
             DLOG("Class: \(String(describing: _class)) for \(principleClass)")
             return true
         }
-        #if os(tvOS)
-        // tvOS ships without PVRetroArchCore; RetroArch-family principle classes
-        // resolve to PVThinLibretroCore at instantiation time. Treat them as
-        // available here so the core picker still surfaces them.
+        // RetroArch-family principle classes resolve to PVThinLibretroCore at
+        // instantiation time (PVCoreFactory); PVRetroArch.framework no longer
+        // ships. Such a core is available when its libretro dylib is bundled —
+        // Lite builds register the whole RetroArch core list but ship no dylibs.
         if principleClass.contains("RetroArch") || principleClass.contains("LibRetro") || principleClass == "PVRetroArchCoreBridge" {
-            DLOG("Class: \(principleClass) missing on tvOS — available via PVThinLibretroCore")
-            return true
+            let bundled = Self.isBundledLibretroCore(identifier)
+            DLOG("Class: \(principleClass) not loaded — \(identifier) \(bundled ? "available via PVThinLibretroCore" : "has no bundled dylib")")
+            return bundled
         }
-        #endif
         DLOG("Class: nil for \(principleClass)")
         return false
     }
@@ -131,10 +132,19 @@ public extension PVCore {
     /// (`<name>.libretro.framework` in its Frameworks folder).
     static func isBundledLibretroCore(_ identifier: String) -> Bool {
         guard identifier.hasSuffix(".libretro.framework") else { return false }
+        // The bundle doesn't change while the app runs, and `hasCoreClass` (which
+        // calls this) runs inside core-picker filters.
+        if let cached = bundledLibretroCoreCache.withLock({ $0[identifier] }) {
+            return cached
+        }
         let bases = [Bundle.main.privateFrameworksURL,
                      Bundle.main.bundleURL.appendingPathComponent("Frameworks", isDirectory: true)]
-        return bases.compactMap { $0 }.contains {
+        let bundled = bases.compactMap { $0 }.contains {
             FileManager.default.fileExists(atPath: $0.appendingPathComponent(identifier, isDirectory: true).path)
         }
+        bundledLibretroCoreCache.withLock { $0[identifier] = bundled }
+        return bundled
     }
+
+    private static let bundledLibretroCoreCache = OSAllocatedUnfairLock<[String: Bool]>(initialState: [:])
 }
