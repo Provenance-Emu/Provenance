@@ -363,26 +363,41 @@ FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotificat
 /// The protocol_version string from the core's netpacket callback, or nil.
 @property (nonatomic, readonly, nullable) NSString *netpacketProtocolVersion;
 
-/// Block invoked from the emulation thread when the core calls send_fn.
+/// Called on the emulation thread when the core sends a packet.
 /// The Swift transport layer sets this to forward packets over the network.
-@property (nonatomic, copy, nullable) void (^netpacketSendBlock)(int flags,
+/// Atomic: the Swift side clears it from other threads while the core may be sending.
+@property (atomic, copy, nullable) void (^netpacketSendBlock)(int flags,
     const void *buf, size_t len, uint16_t clientID);
 
-/// Start a netpacket session with the given client ID.
-/// Calls the core's start callback with send_fn and poll_receive_fn.
+/// Called on the emulation thread when the core's `connected` callback refuses
+/// a client; the transport should drop it.
+@property (atomic, copy, nullable) void (^netpacketRejectPeerBlock)(uint16_t clientID);
+
+// The methods below may be called from any thread. They queue work that the
+// emulation thread hands to the core at the start of the next frame (or when
+// the core calls poll_receive_fn), as libretro requires.
+
+/// Start a netpacket session: the core gets `start` with this client ID
+/// (0 = host). Set `netpacketSendBlock` before calling.
 - (void)startNetpacketSessionWithClientID:(uint16_t)clientID;
 
-/// Stop the active netpacket session.
+/// Stop the active netpacket session: the core gets `stop`.
 - (void)stopNetpacketSession;
 
-/// Enqueue a received network packet for delivery to the core.
+/// Queue a packet received from the network for the core's `receive` callback.
 - (void)enqueueNetpacketData:(NSData *)data fromClient:(uint16_t)clientID;
 
-/// Notify the core that a remote peer connected.
+/// Host only: a client joined. The core gets `connected`.
 - (void)netpacketPeerConnected:(uint16_t)clientID;
 
-/// Notify the core that a remote peer disconnected.
+/// Host only: a client left. The core gets `disconnected`.
 - (void)netpacketPeerDisconnected:(uint16_t)clientID;
+
+/// Testing: register a netpacket callback as the core would via env 78.
+- (void)_testRegisterNetpacketCallback:(const struct retro_netpacket_callback *)callback;
+
+/// Testing: run one frame's netpacket work on the calling thread.
+- (void)_testRunNetpacketFrame;
 
 // MARK: Utility
 

@@ -110,14 +110,12 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
 
 /// How a netplay room was discovered.
 public enum DiscoverySource: String, Sendable, Codable {
-    /// Discovered via RetroArch Bonjour/NSNetService advertisement
+    /// Discovered on the local network via Bonjour
     case bonjour = "bonjour"
     /// Discovered via MultipeerConnectivity (Bluetooth / P2P Wi-Fi)
     case multipeer = "multipeer"
     /// Entered manually by the user (IP + port)
     case manual = "manual"
-    /// Fetched from the RetroArch public lobby REST API
-    case lobbyAPI = "lobbyAPI"
-    /// Discovered via libretro netpacket Bonjour advertisement
+    /// Hosted on this device by a libretro netpacket (thin wrapper) session
     case netpacket = "netpacket"
 }

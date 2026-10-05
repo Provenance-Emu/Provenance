@@ -56,16 +56,44 @@ public actor PVNetplayManager {
 
     // MARK: - Registration
 
+    #if canImport(Combine)
+    private var bridgeStateCancellable: AnyCancellable?
+    #endif
+
     /// Register the currently active emulator core.
     public func setActiveBridge(_ bridge: (any PVNetplayCapable)?) {
+        // A session belongs to the core that started it. If that core went
+        // away without disconnecting, don't leave a dead session blocking the next.
+        if bridge !== activeBridge, state.isActive {
+            state = .idle
+        }
         activeBridge = bridge
+        #if canImport(Combine)
+        bridgeStateCancellable = bridge?.netplayStatePublisher.sink { [weak self] bridgeState in
+            Task { await self?.bridgeStateChanged(bridgeState) }
+        }
+        #endif
+    }
+
+    /// Follows what the core reports while a session is up: a host's room
+    /// (player count), and a session the network ended (peer or host gone).
+    func bridgeStateChanged(_ bridgeState: NetplayState) {
+        switch (state, bridgeState) {
+        case (.hosting, .hosting(let room)):
+            state = .hosting(room: room)
+        case (.hosting, .disconnected(let reason)),
+             (.connected, .disconnected(let reason)):
+            state = .disconnected(reason: reason)
+        default:
+            break
+        }
     }
 
     // MARK: - Host
 
     /// Host a new netplay room with the given settings.
     public func host(settings: NetplaySettings) async throws {
-        guard state == .idle else { throw NetplayError.alreadyActive }
+        guard !state.isActive else { throw NetplayError.alreadyActive }
         guard let bridge = activeBridge else { throw NetplayError.bridgeNotReady }
         guard bridge.supportsNetplay else { throw NetplayError.unsupported }
 
@@ -84,7 +112,12 @@ public actor PVNetplayManager {
         state = .connecting(to: placeholder)
         do {
             try await bridge.startNetplay(role: role, settings: settings)
-            state = .hosting(room: placeholder)
+            // Prefer the room the core describes (game, port, player count).
+            if case .hosting(let room) = bridge.netplayState {
+                state = .hosting(room: room)
+            } else {
+                state = .hosting(room: placeholder)
+            }
         } catch {
             state = .idle
             throw error
@@ -95,7 +128,7 @@ public actor PVNetplayManager {
 
     /// Join an existing netplay room.
     public func join(room: NetplayRoom, settings: NetplaySettings) async throws {
-        guard state == .idle else { throw NetplayError.alreadyActive }
+        guard !state.isActive else { throw NetplayError.alreadyActive }
         guard let bridge = activeBridge else { throw NetplayError.bridgeNotReady }
         guard bridge.supportsNetplay else { throw NetplayError.unsupported }
 
@@ -123,7 +156,7 @@ public actor PVNetplayManager {
 
     /// Join a room as a spectator.
     public func spectate(room: NetplayRoom) async throws {
-        guard state == .idle else { throw NetplayError.alreadyActive }
+        guard !state.isActive else { throw NetplayError.alreadyActive }
         guard let bridge = activeBridge else { throw NetplayError.bridgeNotReady }
         guard bridge.supportsNetplay else { throw NetplayError.unsupported }
 
@@ -165,15 +198,9 @@ public final class ObservableNetplayManager: ObservableObject {
 
     @Published public private(set) var state: NetplayState = .idle
     @Published public private(set) var discoveredRooms: [NetplayRoom] = []
-    @Published public private(set) var wanRooms: [NetplayRoom] = []
-    /// Forwarded from `lobbyService.isFetching` so SwiftUI views can observe it directly.
-    @Published public private(set) var wanIsFetching: Bool = false
-    /// Forwarded from `lobbyService.lastError` so SwiftUI views can observe it directly.
-    @Published public private(set) var wanLastError: String?
 
     private let manager = PVNetplayManager.shared
     public let bonjourDiscovery = PVNetplayBonjourDiscovery()
-    public let lobbyService = RetroArchLobbyService()
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -184,18 +211,6 @@ public final class ObservableNetplayManager: ObservableObject {
 
         bonjourDiscovery.$rooms
             .assign(to: \.discoveredRooms, on: self)
-            .store(in: &cancellables)
-
-        lobbyService.$rooms
-            .assign(to: \.wanRooms, on: self)
-            .store(in: &cancellables)
-
-        lobbyService.$isFetching
-            .assign(to: \.wanIsFetching, on: self)
-            .store(in: &cancellables)
-
-        lobbyService.$lastError
-            .assign(to: \.wanLastError, on: self)
             .store(in: &cancellables)
     }
 
@@ -223,16 +238,6 @@ public final class ObservableNetplayManager: ObservableObject {
 
     public func stopDiscovery() {
         bonjourDiscovery.stopDiscovery()
-    }
-
-    /// Fetch WAN rooms from the RetroArch public lobby API.
-    public func fetchWANRooms() {
-        lobbyService.fetchRooms()
-    }
-
-    /// Cancel any in-flight WAN room fetch.
-    public func cancelWANFetch() {
-        lobbyService.cancelFetch()
     }
 }
 #endif

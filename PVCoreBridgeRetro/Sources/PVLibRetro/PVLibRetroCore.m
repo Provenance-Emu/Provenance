@@ -284,42 +284,6 @@ static slock_t *_runloop_msg_queue_lock           = NULL;
 #endif
 //static msg_queue_t *runloop_msg_queue            = NULL;
 
-// MARK: - Netpacket interface (env 78)
-
-static struct retro_netpacket_callback *s_netpacketCallback = NULL;
-static BOOL s_netpacketSessionActive = NO;
-static NSMutableArray<NSData *> *s_netpacketIncomingQueue = nil;
-static NSMutableArray<NSNumber *> *s_netpacketIncomingClientIDs = nil;
-static os_unfair_lock s_netpacketQueueLock = OS_UNFAIR_LOCK_INIT;
-
-/// Block set by the Swift transport layer to forward outgoing packets.
-static void (^s_netpacketSendBlock)(int flags, const void *buf, size_t len, uint16_t clientID) = nil;
-
-/// Called by the core to send a packet to a peer or broadcast.
-static void legacy_netpacket_send(int flags, const void *buf, size_t len, uint16_t client_id) {
-    if (!s_netpacketSessionActive) return;
-    if (s_netpacketSendBlock) {
-        s_netpacketSendBlock(flags, buf, len, client_id);
-    }
-}
-
-/// Called by the core to receive all queued incoming packets.
-static void legacy_netpacket_poll_receive(void) {
-    if (!s_netpacketCallback || !s_netpacketCallback->receive) return;
-    os_unfair_lock_lock(&s_netpacketQueueLock);
-    NSArray<NSData *> *packets = [s_netpacketIncomingQueue copy];
-    NSArray<NSNumber *> *clientIDs = [s_netpacketIncomingClientIDs copy];
-    [s_netpacketIncomingQueue removeAllObjects];
-    [s_netpacketIncomingClientIDs removeAllObjects];
-    os_unfair_lock_unlock(&s_netpacketQueueLock);
-
-    for (NSUInteger i = 0; i < packets.count; i++) {
-        NSData *pkt = packets[i];
-        uint16_t cid = clientIDs[i].unsignedShortValue;
-        s_netpacketCallback->receive(pkt.bytes, pkt.length, cid);
-    }
-}
-
 // MARK: - Config
 
 static char path_libretro[PATH_MAX_LENGTH];
@@ -2344,27 +2308,6 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
 
-        // MARK: - Netpacket interface — env 78
-        case RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE: {
-            const struct retro_netpacket_callback *cb =
-                (const struct retro_netpacket_callback *)data;
-            if (cb && cb->start && cb->receive) {
-                if (s_netpacketCallback) {
-                    free(s_netpacketCallback);
-                }
-                s_netpacketCallback = (struct retro_netpacket_callback *)malloc(sizeof(*s_netpacketCallback));
-                memcpy(s_netpacketCallback, cb, sizeof(*s_netpacketCallback));
-                s_netpacketIncomingQueue = [NSMutableArray new];
-                s_netpacketIncomingClientIDs = [NSMutableArray new];
-                s_netpacketQueueLock = OS_UNFAIR_LOCK_INIT;
-                ILOG(@"Environ SET_NETPACKET_INTERFACE: registered (protocol_version=%s)",
-                     cb->protocol_version ?: "(none)");
-                return true;
-            }
-            WLOG(@"Environ SET_NETPACKET_INTERFACE: rejected (missing start/receive)");
-            return false;
-        }
-
         default : {
             DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
             return false;
@@ -2856,79 +2799,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 }
 
 - (void)dealloc {
-    // Clean up netpacket state
-    if (s_netpacketCallback) {
-        if (s_netpacketSessionActive && s_netpacketCallback->stop) {
-            s_netpacketCallback->stop();
-        }
-        free(s_netpacketCallback);
-        s_netpacketCallback = NULL;
-    }
-    s_netpacketSessionActive = NO;
-    s_netpacketSendBlock = nil;
-    s_netpacketIncomingQueue = nil;
-    s_netpacketIncomingClientIDs = nil;
-
     core_unload();
-}
-
-// MARK: - Netpacket ObjC interface
-
-- (BOOL)hasNetpacketInterface {
-    return s_netpacketCallback != NULL;
-}
-
-- (nullable NSString *)netpacketProtocolVersion {
-    if (!s_netpacketCallback || !s_netpacketCallback->protocol_version) return nil;
-    return [NSString stringWithUTF8String:s_netpacketCallback->protocol_version];
-}
-
-- (void (^)(int, const void *, size_t, uint16_t))netpacketSendBlock {
-    return s_netpacketSendBlock;
-}
-
-- (void)setNetpacketSendBlock:(void (^)(int, const void *, size_t, uint16_t))block {
-    s_netpacketSendBlock = [block copy];
-}
-
-- (void)startNetpacketSessionWithClientID:(uint16_t)clientID {
-    if (!s_netpacketCallback || !s_netpacketCallback->start) {
-        WLOG(@"PVLibRetroCore: startNetpacketSession called without registered callback");
-        return;
-    }
-    s_netpacketSessionActive = YES;
-    ILOG(@"PVLibRetroCore: starting netpacket session (clientID=%u)", clientID);
-    s_netpacketCallback->start(clientID, legacy_netpacket_send, legacy_netpacket_poll_receive);
-}
-
-- (void)stopNetpacketSession {
-    if (!s_netpacketSessionActive) return;
-    s_netpacketSessionActive = NO;
-    if (s_netpacketCallback && s_netpacketCallback->stop) {
-        s_netpacketCallback->stop();
-    }
-    os_unfair_lock_lock(&s_netpacketQueueLock);
-    [s_netpacketIncomingQueue removeAllObjects];
-    [s_netpacketIncomingClientIDs removeAllObjects];
-    os_unfair_lock_unlock(&s_netpacketQueueLock);
-    ILOG(@"PVLibRetroCore: netpacket session stopped");
-}
-
-- (void)enqueueNetpacketData:(NSData *)data fromClient:(uint16_t)clientID {
-    os_unfair_lock_lock(&s_netpacketQueueLock);
-    [s_netpacketIncomingQueue addObject:data];
-    [s_netpacketIncomingClientIDs addObject:@(clientID)];
-    os_unfair_lock_unlock(&s_netpacketQueueLock);
-}
-
-- (void)netpacketPeerConnected:(uint16_t)clientID {
-    if (!s_netpacketCallback || !s_netpacketCallback->connected) return;
-    s_netpacketCallback->connected(clientID);
-}
-
-- (void)netpacketPeerDisconnected:(uint16_t)clientID {
-    if (!s_netpacketCallback || !s_netpacketCallback->disconnected) return;
-    s_netpacketCallback->disconnected(clientID);
 }
 
 -(void)coreInit {

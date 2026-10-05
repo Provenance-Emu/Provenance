@@ -21,9 +21,7 @@ import GameKit
 /// Shows the current game's netplay support badge, Host / Browse / Spectate
 /// action tiles, and quick-access to settings.
 ///
-/// Presented sheet-style from:
-///   - Long-press context menu on a game: "Network Play"
-///   - Pause menu: "Network Play"
+/// Presented sheet-style from the pause menu's "Network Play" tile.
 @MainActor
 public struct NetplayLobbyView: View {
     let gameName: String

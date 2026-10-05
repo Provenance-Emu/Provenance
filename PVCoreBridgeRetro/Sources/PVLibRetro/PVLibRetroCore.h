@@ -83,34 +83,6 @@ __attribute__((weak_import))
 /// Defaults to 1000; cores whose mouse maps to screen pixels set their screen size.
 @property (nonatomic, assign) CGSize relativeMouseScale;
 
-// MARK: - Netpacket interface (env 78)
-
-/// Whether the loaded core registered a netpacket callback via env 78.
-@property (nonatomic, readonly) BOOL hasNetpacketInterface;
-
-/// The protocol_version string from the core's netpacket callback, or nil.
-@property (nonatomic, readonly, nullable) NSString *netpacketProtocolVersion;
-
-/// Block invoked from the emulation thread when the core calls send_fn.
-/// The Swift transport layer sets this to forward packets over the network.
-@property (nonatomic, copy, nullable) void (^netpacketSendBlock)(int flags,
-    const void *_Nonnull buf, size_t len, uint16_t clientID);
-
-/// Start a netpacket session with the given client ID.
-- (void)startNetpacketSessionWithClientID:(uint16_t)clientID;
-
-/// Stop the active netpacket session.
-- (void)stopNetpacketSession;
-
-/// Enqueue a received network packet for delivery to the core.
-- (void)enqueueNetpacketData:(NSData *_Nonnull)data fromClient:(uint16_t)clientID;
-
-/// Notify the core that a remote peer connected.
-- (void)netpacketPeerConnected:(uint16_t)clientID;
-
-/// Notify the core that a remote peer disconnected.
-- (void)netpacketPeerDisconnected:(uint16_t)clientID;
-
 @end
 
 @interface PVLibRetroCoreBridge (Controls)

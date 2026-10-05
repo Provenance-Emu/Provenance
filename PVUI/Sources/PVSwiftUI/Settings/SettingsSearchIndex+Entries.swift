@@ -235,7 +235,7 @@ extension SettingsSearchIndex {
               .advanced, SettingsSectionTitle.advanced, keywords: ["backbone", "kishi", "pockettaco", "soolra", "skin", "delta skin"], tvOS: false),
         entry("adv.livebroadcast", "Live Broadcast", "ReplayKit Go Live button in the pause menu. Cast gameplay to Twitch / Facebook / other services.",
               .advanced, SettingsSectionTitle.advanced, keywords: ["stream", "twitch", "replaykit", "go live", "record"]),
-        entry("adv.netplay", "Netplay", "Native lobby and host / join UI for RetroArch cores.",
+        entry("adv.netplay", "Netplay", "Host and join netplay rooms from the pause menu.",
               .advanced, SettingsSectionTitle.advanced, keywords: ["multiplayer", "online", "link cable", "mgba", "lobby"]),
         entry("adv.transferpak", "N64 Transfer Pak", "Assign a Game Boy ROM to a Mupen64Plus controller port for Pokémon Stadium / Mario Golf integration.",
               .advanced, SettingsSectionTitle.advanced, keywords: ["n64", "game boy", "pokemon", "mupen"]),

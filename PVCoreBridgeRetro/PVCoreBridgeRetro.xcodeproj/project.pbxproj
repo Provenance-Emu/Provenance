@@ -26,8 +26,6 @@
 		B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
 		B345EAF72CC10F3600DE822B /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B345EAF62CC10F3600DE822B /* PVCoreBridge */; };
 		B364D4B42870E5F600B93A4B /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6D92867202D00B60497 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B36C41052898776C00EAEF59 /* retro_netplay.m in Sources */ = {isa = PBXBuildFile; fileRef = B36C41042898776C00EAEF59 /* retro_netplay.m */; };
-		B36C41062898776C00EAEF59 /* retro_netplay.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B36C41032898776C00EAEF59 /* retro_netplay.h */; };
 		B377E9F72CB25F8800E9B750 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B377E9F62CB25F8800E9B750 /* PVLogging */; };
 		B377E9FA2CB25FA000E9B750 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B377E9F92CB25FA000E9B750 /* PVCoreObjCBridge */; };
 		B377EBDF2CB2A18A00E9B750 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBDE2CB2A18A00E9B750 /* PVSettings */; };
@@ -77,6 +75,7 @@
 		C0C0CAFE3000000000000015 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000014 /* Test.swift */; };
 		C0C0CAFE3000000000000017 /* ThinCoreOptionDefinitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */; };
 		C0C0CAFE3000000000000027 /* MIDIEnabledTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000026 /* MIDIEnabledTests.swift */; };
+		C0C0CAFE3000000000000029 /* NetpacketPumpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000028 /* NetpacketPumpTests.swift */; };
 		C0C0CAFE3000000000000019 /* ThinSystemFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */; };
 		C0C0CAFE300000000000000A /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */; };
 		C0C0CAFE3000000000000021 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE3000000000000020 /* MoltenVK */; };
@@ -107,16 +106,6 @@
 			dstSubfolderSpec = 16;
 			files = (
 				B3225132286C4728001FDF42 /* retro.h in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B36C40FF2898776C00EAEF59 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-				B36C41062898776C00EAEF59 /* retro_netplay.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -913,9 +902,6 @@
 		B34DC72F2867202D00B60497 /* amd64.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = amd64.c; sourceTree = "<group>"; };
 		B34DC7302867202D00B60497 /* psp2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = psp2.c; sourceTree = "<group>"; };
 		B34DC7312867202D00B60497 /* x86.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = x86.c; sourceTree = "<group>"; };
-		B36C41012898776C00EAEF59 /* libretro-netplay.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libretro-netplay.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B36C41032898776C00EAEF59 /* retro_netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro_netplay.h; sourceTree = "<group>"; };
-		B36C41042898776C00EAEF59 /* retro_netplay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = retro_netplay.m; sourceTree = "<group>"; };
 		B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B392849028670348003BAC21 /* PVCoreBridgeRetro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVCoreBridgeRetro.h; sourceTree = "<group>"; };
 		B3928497286703CD003BAC21 /* PVLibRetroCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLibRetroCore.h; sourceTree = "<group>"; };
@@ -958,19 +944,13 @@
 		C0C0CAFE3000000000000014 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinCoreOptionDefinitionTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000026 /* MIDIEnabledTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIEnabledTests.swift; sourceTree = "<group>"; };
+		C0C0CAFE3000000000000028 /* NetpacketPumpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetpacketPumpTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinSystemFileTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000002 /* PVLibRetroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVLibRetroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B322512A286C4728001FDF42 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B36C40FE2898776C00EAEF59 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1019,7 +999,6 @@
 				B3173802278419A2002D3ACD /* Build.xcconfig */,
 				B3A4FB58278FE2F200A65248 /* Sources */,
 				B392848F28670348003BAC21 /* PVLibRetro */,
-				B36C41022898776C00EAEF59 /* retro-netplay */,
 				C0C0CAFE3000000000000003 /* PVLibRetroTests */,
 				1ACEA64617F7467D0031B1C9 /* Frameworks */,
 				1ACEA64517F7467D0031B1C9 /* Products */,
@@ -1031,7 +1010,6 @@
 			children = (
 				B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */,
 				B322512D286C4728001FDF42 /* libretro.a */,
-				B36C41012898776C00EAEF59 /* libretro-netplay.a */,
 				C0C0CAFE3000000000000002 /* PVLibRetroTests.xctest */,
 			);
 			name = Products;
@@ -2879,15 +2857,6 @@
 			path = libco;
 			sourceTree = "<group>";
 		};
-		B36C41022898776C00EAEF59 /* retro-netplay */ = {
-			isa = PBXGroup;
-			children = (
-				B36C41032898776C00EAEF59 /* retro_netplay.h */,
-				B36C41042898776C00EAEF59 /* retro_netplay.m */,
-			);
-			path = "retro-netplay";
-			sourceTree = "<group>";
-		};
 		B392848F28670348003BAC21 /* PVLibRetro */ = {
 			isa = PBXGroup;
 			children = (
@@ -2971,6 +2940,7 @@
 				C0C0CAFE3000000000000014 /* Test.swift */,
 				C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */,
 				C0C0CAFE3000000000000026 /* MIDIEnabledTests.swift */,
+				C0C0CAFE3000000000000028 /* NetpacketPumpTests.swift */,
 				C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */,
 			);
 			name = PVLibRetroTests;
@@ -3011,23 +2981,6 @@
 			name = retro;
 			productName = retro;
 			productReference = B322512D286C4728001FDF42 /* libretro.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		B36C41002898776C00EAEF59 /* retro-netplay */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B36C410A2898776C00EAEF59 /* Build configuration list for PBXNativeTarget "retro-netplay" */;
-			buildPhases = (
-				B36C40FD2898776C00EAEF59 /* Sources */,
-				B36C40FE2898776C00EAEF59 /* Frameworks */,
-				B36C40FF2898776C00EAEF59 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "retro-netplay";
-			productName = "retro-netplay";
-			productReference = B36C41012898776C00EAEF59 /* libretro-netplay.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B392848D28670348003BAC21 /* PVCoreBridgeRetro */ = {
@@ -3104,9 +3057,6 @@
 					B322512C286C4728001FDF42 = {
 						CreatedOnToolsVersion = 13.4.1;
 					};
-					B36C41002898776C00EAEF59 = {
-						CreatedOnToolsVersion = 14.0;
-					};
 					C0C0CAFE3000000000000001 = {
 						CreatedOnToolsVersion = 26.0;
 					};
@@ -3147,7 +3097,6 @@
 			targets = (
 				B392848D28670348003BAC21 /* PVCoreBridgeRetro */,
 				B322512C286C4728001FDF42 /* retro */,
-				B36C41002898776C00EAEF59 /* retro-netplay */,
 				C0C0CAFE3000000000000001 /* PVLibRetroTests */,
 			);
 		};
@@ -3187,14 +3136,6 @@
 				B322994B2878CF6200585AD8 /* input_keymaps.c in Sources */,
 				B322996E28792BA000585AD8 /* nullinput.c in Sources */,
 				B32299512878D46F00585AD8 /* performance_counters.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B36C40FD2898776C00EAEF59 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B36C41052898776C00EAEF59 /* retro_netplay.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3241,6 +3182,7 @@
 				C0C0CAFE3000000000000015 /* Test.swift in Sources */,
 				C0C0CAFE3000000000000017 /* ThinCoreOptionDefinitionTests.swift in Sources */,
 				C0C0CAFE3000000000000027 /* MIDIEnabledTests.swift in Sources */,
+				C0C0CAFE3000000000000029 /* NetpacketPumpTests.swift in Sources */,
 				C0C0CAFE3000000000000019 /* ThinSystemFileTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3584,97 +3526,6 @@
 			};
 			name = Archive;
 		};
-		B36C41072898776C00EAEF59 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
-			};
-			name = Debug;
-		};
-		B36C41082898776C00EAEF59 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
-			};
-			name = Release;
-		};
-		B36C41092898776C00EAEF59 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 15.6;
-			};
-			name = Archive;
-		};
 		B392849228670348003BAC21 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3972,16 +3823,6 @@
 				B3225133286C4728001FDF42 /* Debug */,
 				B3225134286C4728001FDF42 /* Release */,
 				B3225135286C4728001FDF42 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B36C410A2898776C00EAEF59 /* Build configuration list for PBXNativeTarget "retro-netplay" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B36C41072898776C00EAEF59 /* Debug */,
-				B36C41082898776C00EAEF59 /* Release */,
-				B36C41092898776C00EAEF59 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

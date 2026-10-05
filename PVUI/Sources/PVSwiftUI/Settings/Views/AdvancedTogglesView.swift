@@ -144,7 +144,7 @@ internal struct AdvancedTogglesView: View {
 
                 PremiumThemedToggle(isOn: $netplayEnabled) {
                     SettingsRow(title: "Netplay",
-                                subtitle: "Native lobby and host / join UI for RetroArch cores. mGBA link-cable also works. Other native cores have stub conformances and don't connect yet.",
+                                subtitle: "Host and join rooms from the pause menu. Works with mGBA link cable and with libretro cores that support netplay packets, such as gpSP and melonDS DS. Other native cores have stub conformances and don't connect yet.",
                                 icon: .sfSymbol("wifi"),
                                 showChevron: false)
                 }

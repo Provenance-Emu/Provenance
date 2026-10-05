@@ -1064,14 +1064,10 @@ final class PauseTileMenuViewModel: ObservableObject {
     /// not linked (e.g. stripped builds) so the tile is never shown unnecessarily.
     private static func coreSupportsNetplay(_ emulatorVC: PVEmulatorViewController) -> Bool {
 #if canImport(PVNetplay)
-        if let bridge = emulatorVC.core as? any PVNetplayCapable, bridge.supportsNetplay {
-            return true
-        }
-        // Fallback for bridge/type-erasure edge cases where protocol conformance isn't visible
-        // from this module even though the runtime core supports netplay.
-        let coreID = (emulatorVC.core.coreIdentifier ?? "").lowercased()
-        let knownNetplayCoreHints = ["libretro", "dolphin", "ppsspp", "mgba", "melonds", "mednafen"]
-        return knownNetplayCoreHints.contains { coreID.contains($0) }
+        // Thin libretro cores conform but support netplay only when the core
+        // registered the netpacket interface, so ask rather than match names.
+        guard let bridge = emulatorVC.core as? any PVNetplayCapable else { return false }
+        return bridge.supportsNetplay
 #else
         return false
 #endif

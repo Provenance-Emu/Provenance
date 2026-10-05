@@ -82,7 +82,7 @@
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_altserver._tcp</string>
-		<string>_retroarch._tcp</string>
+		<string>_provenance-np._tcp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Provenance uses the local network to find game controllers, communicate with AltServer, and discover netplay rooms.</string>

@@ -12,11 +12,12 @@ import Combine
 #endif
 
 #if canImport(Combine)
-/// Discovers RetroArch netplay rooms via Bonjour/NSNetService.
+/// Discovers netplay rooms that Provenance hosts on the local network.
 ///
-/// RetroArch compiled with `HAVE_NETPLAYDISCOVERY_NSNET` advertises rooms
-/// under the `_retroarch._tcp.` service type. This class subscribes to those
-/// advertisements and publishes discovered rooms to observers.
+/// A hosting `NetpacketTransport` advertises its room under
+/// `NetpacketTransport.bonjourServiceType`, with the game, core and player
+/// count in the TXT record. This class browses for those advertisements and
+/// publishes the rooms to observers.
 ///
 /// Usage:
 /// ```swift
@@ -26,8 +27,8 @@ import Combine
 /// ```
 @MainActor
 public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
-    /// The Bonjour service type RetroArch advertises under.
-    private static let retroArchServiceType = "_retroarch._tcp."
+    /// The Bonjour service type hosts advertise under.
+    private static let serviceType = NetpacketTransport.bonjourServiceType + "."
 
     @Published public private(set) var rooms: [NetplayRoom] = []
     @Published public private(set) var isSearching = false
@@ -38,14 +39,14 @@ public final class PVNetplayBonjourDiscovery: NSObject, ObservableObject {
 
     // MARK: - Discovery Control
 
-    /// Start scanning for RetroArch rooms on the local network.
+    /// Start scanning for rooms on the local network.
     public func startDiscovery() {
         guard !isSearching else { return }
         let b = NetServiceBrowser()
         b.delegate = self
         browser = b
         isSearching = true
-        b.searchForServices(ofType: Self.retroArchServiceType, inDomain: "local.")
+        b.searchForServices(ofType: Self.serviceType, inDomain: "local.")
     }
 
     /// Stop scanning and clear discovered rooms.

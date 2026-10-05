@@ -22,7 +22,7 @@ public protocol PVNetplayCapable: AnyObject, Sendable {
     /// Whether this core instance supports netplay.
     var supportsNetplay: Bool { get }
 
-    /// A short human-readable name for the core's netplay engine (e.g. "RetroArch").
+    /// A short human-readable name for the core's netplay engine (e.g. "Netpacket", "Dolphin").
     var netplayEngineName: String { get }
 
     /// Start a netplay session with the given role and settings.

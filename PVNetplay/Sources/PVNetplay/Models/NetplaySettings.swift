@@ -12,7 +12,7 @@ import Foundation
 public struct NetplaySettings: Sendable {
     /// Frame delay before each input is sent. 0 = rollback only, >0 = delay frames.
     public var frameDelay: Int
-    /// Maximum number of spectators allowed in the room (0–11 for RetroArch).
+    /// Maximum number of spectators allowed in the room.
     public var maxSpectators: Int
     /// Whether spectators are allowed.
     public var allowSpectators: Bool

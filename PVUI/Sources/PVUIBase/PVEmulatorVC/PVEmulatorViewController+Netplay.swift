@@ -40,17 +40,18 @@ extension PVEmulatorViewController {
 
     // MARK: - Lifecycle hooks
 
-    /// Register the running core as the active netplay bridge if it supports netplay.
+    /// Register the running core as the active netplay bridge.
     ///
     /// Call this immediately after `core.startEmulation()`.
     /// Does nothing if the core does not conform to `PVNetplayCapable`.
+    ///
+    /// `supportsNetplay` isn't checked here: a thin libretro core boots on its
+    /// own thread and may not have registered its netpacket interface yet.
+    /// `PVNetplayManager` checks it when a session starts, and the pause menu
+    /// only offers netplay once it is true.
     func startNetplayBridgeIfNeeded() {
         guard let bridge = core as? any PVNetplayCapable else {
             DLOG("Netplay: core does not conform to PVNetplayCapable — skipping bridge registration.")
-            return
-        }
-        guard bridge.supportsNetplay else {
-            DLOG("Netplay: core reports supportsNetplay=false — skipping bridge registration.")
             return
         }
         // Cancel any prior start task before creating a new one so that a
@@ -79,8 +80,8 @@ extension PVEmulatorViewController {
     /// Deregister the active netplay bridge when the core stops.
     ///
     /// Call this before `core.stopEmulation()` and `await` it so that
-    /// `PVNetplayManager.disconnect()` completes before RetroArch globals
-    /// are torn down by `stopEmulation()`.
+    /// `PVNetplayManager.disconnect()` completes before `stopEmulation()`
+    /// tears the core down.
     /// Cancels any in-flight start task to prevent a stale bridge from being
     /// registered after the stop completes.
     func stopNetplayBridge() async {

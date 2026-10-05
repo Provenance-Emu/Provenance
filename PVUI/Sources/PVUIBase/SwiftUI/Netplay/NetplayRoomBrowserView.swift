@@ -34,12 +34,6 @@ public struct NetplayRoomBrowserView: View {
     @State private var showManualConnect = false
     @State private var roomToConfirm: NetplayRoom?
     @State private var showInviteSheet = false
-    @State private var selectedTab: BrowserTab = .lan
-
-    private enum BrowserTab: String, CaseIterable {
-        case lan = "Local"
-        case wan = "Internet"
-    }
 
     @Environment(\.dismiss) private var dismiss
 
@@ -52,30 +46,14 @@ public struct NetplayRoomBrowserView: View {
 
     public var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                Picker("Tab", selection: $selectedTab) {
-                    ForEach(BrowserTab.allCases, id: \.self) { tab in
-                        Text(tab.rawValue).tag(tab)
-                    }
+            Group {
+                if netplay.discoveredRooms.isEmpty {
+                    lanEmptyState
+                } else {
+                    lanRoomList
                 }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-
-                Group {
-                    switch selectedTab {
-                    case .lan:
-                        if netplay.discoveredRooms.isEmpty {
-                            lanEmptyState
-                        } else {
-                            lanRoomList
-                        }
-                    case .wan:
-                        wanContent
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .navigationTitle(spectateMode ? "Find Room to Spectate" : "Browse Rooms")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -86,10 +64,7 @@ public struct NetplayRoomBrowserView: View {
                 }
                 ToolbarItem(placement: .primaryAction) {
                     HStack {
-                        if selectedTab == .lan, netplay.bonjourDiscovery.isSearching {
-                            ProgressView().scaleEffect(0.8)
-                        }
-                        if selectedTab == .wan, netplay.wanIsFetching {
+                        if netplay.bonjourDiscovery.isSearching {
                             ProgressView().scaleEffect(0.8)
                         }
                         Button {
@@ -126,23 +101,9 @@ public struct NetplayRoomBrowserView: View {
             }
             .onAppear {
                 netplay.startDiscovery()
-                if selectedTab == .wan {
-                    netplay.fetchWANRooms()
-                }
             }
             .onDisappear {
                 netplay.stopDiscovery()
-                netplay.cancelWANFetch()
-            }
-            .onChange(of: selectedTab) { _, newTab in
-                switch newTab {
-                case .lan:
-                    netplay.cancelWANFetch()
-                    netplay.startDiscovery()
-                case .wan:
-                    netplay.stopDiscovery()
-                    netplay.fetchWANRooms()
-                }
             }
         }
     }
@@ -184,95 +145,6 @@ public struct NetplayRoomBrowserView: View {
             } footer: {
                 Text("Rooms discovered on your Wi-Fi via Bonjour.")
                     .font(.caption2)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var wanContent: some View {
-        if netplay.wanIsFetching && netplay.wanRooms.isEmpty {
-            VStack(spacing: 16) {
-                ProgressView()
-                Text("Fetching internet rooms…")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let err = netplay.wanLastError, netplay.wanRooms.isEmpty {
-            VStack(spacing: 16) {
-                Image(systemName: "globe.slash")
-                    .font(.system(size: 48))
-                    .foregroundStyle(.secondary)
-                Text("Could Not Reach Lobby")
-                    .font(.headline)
-                Text(err)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                Button {
-                    netplay.fetchWANRooms()
-                } label: {
-                    Label("Retry", systemImage: "arrow.clockwise")
-                }
-                .buttonStyle(.bordered)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if netplay.wanRooms.isEmpty {
-            VStack(spacing: 16) {
-                Image(systemName: "globe")
-                    .font(.system(size: 48))
-                    .foregroundStyle(.secondary)
-                Text("No Internet Rooms")
-                    .font(.headline)
-                Text("No public rooms listed right now.\nHost a room and share the invite link with a friend.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                Button {
-                    showInviteSheet = true
-                } label: {
-                    Label("Share Invite Link", systemImage: "square.and.arrow.up")
-                }
-                .buttonStyle(.bordered)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else {
-            List {
-                SwiftUI.Section {
-                    ForEach(netplay.wanRooms) { room in
-                        roomRow(room)
-                    }
-                } header: {
-                    HStack {
-                        Text("INTERNET (\(netplay.wanRooms.count))")
-                        Spacer()
-                        Button {
-                            netplay.fetchWANRooms()
-                        } label: {
-                            Image(systemName: "arrow.clockwise")
-                                .font(.caption)
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(.secondary)
-                        .accessibilityLabel("Refresh rooms")
-                        .accessibilityHint("Fetch the latest list of internet rooms")
-                    }
-                } footer: {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Public rooms from lobby.libretro.com. Rooms using the RA.ME relay server work without port forwarding.")
-                            .font(.caption2)
-                        Button {
-                            showInviteSheet = true
-                        } label: {
-                            Label("Share my invite link", systemImage: "square.and.arrow.up")
-                                .font(.caption2)
-                        }
-                        .buttonStyle(.plain)
-                        .tint(.accentColor)
-                    }
-                }
             }
         }
     }

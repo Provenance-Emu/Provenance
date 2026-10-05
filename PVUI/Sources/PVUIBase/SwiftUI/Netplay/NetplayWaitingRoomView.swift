@@ -61,8 +61,8 @@ public struct NetplayWaitingRoomView: View {
     private var remotePeerCount: Int {
         switch netplay.state {
         case .hosting(let room):
-            // room.currentPlayers reflects the placeholder set at host() time and
-            // may not be updated when peers connect. Use it as a best-effort count.
+            // Updated as players join for cores that report their room
+            // (PVNetplayManager follows the core's state); otherwise it stays 1.
             return max(0, room.currentPlayers - 1)
         case .connected(let session):
             return session.peers.filter { !$0.isSpectator }.count
@@ -73,10 +73,9 @@ public struct NetplayWaitingRoomView: View {
 
     /// Start Game is enabled once we can confirm peers have joined.
     ///
-    /// During `.hosting` state `PVNetplayManager` does not update `currentPlayers`
-    /// after `host()` resolves, so `remotePeerCount` is unreliable. Allow the host
-    /// to start from `.hosting` state; the session will reflect actual peers.
-    /// When in `.connected` state the session peer list is authoritative.
+    /// Not every core reports joined players while hosting, so the host may
+    /// always start from `.hosting`. When in `.connected` state the session
+    /// peer list is authoritative.
     private var canStartGame: Bool {
         switch netplay.state {
         case .connected(let session):
@@ -131,8 +130,11 @@ public struct NetplayWaitingRoomView: View {
                 localIP = Self.localIPAddress()
             }
             .onChange(of: netplay.state) { _, newState in
-                if case .idle = newState {
+                switch newState {
+                case .idle, .disconnected:
                     dismiss()
+                default:
+                    break
                 }
             }
         }

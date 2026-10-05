@@ -4,6 +4,23 @@
 **Status:** Research / Pre-implementation
 **Date:** 2026-03-05
 
+> **Current state (October 2026).** This research predates the removal of the
+> in-process RetroArch wrapper (`PVRetroArchCore`), so its RetroArch netplay
+> plan (rollback netplay, `HAVE_NETPLAY`, the RA menu, `_retroarch._tcp`,
+> lobby.libretro.com, the RA.ME relay) no longer applies. What exists now:
+>
+> - **Libretro cores** run on the thin wrapper and get netplay only through the
+>   libretro netpacket interface (env 78), for cores that implement it (e.g.
+>   gpSP, melonDS DS). `PVNetplay/Sources/PVNetplay/Transport/NetpacketTransport.swift`
+>   carries the packets over one TCP connection per client, with the host
+>   relaying between clients; `PVThinLibretroCore+Netplay.swift` connects it to
+>   the core, and `PVThinLibretroFrontend.mm` delivers callbacks on the
+>   emulation thread each frame.
+> - **LAN discovery:** hosts advertise `_provenance-np._tcp` over Bonjour;
+>   `PVNetplayBonjourDiscovery` browses it. There is no internet lobby.
+> - **Native cores** (mGBA, Dolphin, PPSSPP, melonDS, Mednafen) have their own
+>   `PVNetplayCapable` conformances and share `PVNetplayManager` and the UI.
+
 ---
 
 ## Table of Contents

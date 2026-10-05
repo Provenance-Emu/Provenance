@@ -462,6 +462,29 @@ typedef struct PVThinLibretroSymbols {
 // MARK: - Private interface
 // ---------------------------------------------------------------------------
 
+/// What the network side hands the emulation thread for the core's netpacket
+/// callbacks. Delivered in arrival order so a peer's `connected` precedes its packets.
+typedef NS_ENUM(uint8_t, PVThinNetpacketEventKind) {
+    PVThinNetpacketEventStart,
+    PVThinNetpacketEventStop,
+    PVThinNetpacketEventConnected,
+    PVThinNetpacketEventDisconnected,
+    PVThinNetpacketEventPacket,
+};
+
+@interface PVThinNetpacketEvent : NSObject
+@property (nonatomic) PVThinNetpacketEventKind kind;
+@property (nonatomic) uint16_t clientID;
+@property (nonatomic, nullable) NSData *data;
+@end
+
+@implementation PVThinNetpacketEvent
+@end
+
+/// Packets waiting for the core, in bytes, beyond which new ones are dropped.
+/// Only reached when the emulation loop stops pumping (pause menu) while peers keep sending.
+static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
+
 @interface PVThinLibretroFrontend () {
     void *_dylibHandle;
     PVThinLibretroSymbols _sym;
@@ -915,9 +938,18 @@ typedef struct PVThinLibretroSymbols {
 
     // ---- Netpacket interface (env 78) ----
     struct retro_netpacket_callback *_netpacketCallback;
-    BOOL _netpacketSessionActive;
-    NSMutableArray<NSData *> *_netpacketIncomingQueue;
-    NSMutableArray<NSNumber *> *_netpacketIncomingClientIDs;
+    /// A session is up on the Swift side. Written from any thread.
+    std::atomic<bool> _netpacketSessionActive;
+    /// The core has had `start` and not yet `stop`. Emulation thread only, or
+    /// after the emulation loop has stopped.
+    BOOL _netpacketCoreStarted;
+    /// Clients the core's `connected` refused; their `disconnected` is not
+    /// passed on, since the core never accepted them. Emulation thread only.
+    NSMutableSet<NSNumber *> *_netpacketRefusedClients;
+    /// Lifecycle events and packets for the core, guarded by `_netpacketQueueLock`.
+    NSMutableArray<PVThinNetpacketEvent *> *_netpacketEvents;
+    size_t _netpacketQueuedBytes;
+    BOOL _netpacketOverflowLogged;
     os_unfair_lock _netpacketQueueLock;
 }
 
@@ -928,7 +960,9 @@ typedef struct PVThinLibretroSymbols {
 - (void)_thinInputPoll;
 - (int16_t)_thinInputStatePort:(unsigned)port device:(unsigned)dev index:(unsigned)idx id:(unsigned)bid;
 - (void)_thinNetpacketSendWithFlags:(int)flags buf:(const void *)buf len:(size_t)len clientID:(uint16_t)clientID;
-- (void)_thinNetpacketPollReceive;
+- (void)_thinNetpacketDeliverEvents;
+- (void)_thinNetpacketRunFrame;
+- (void)_thinNetpacketTeardown;
 - (BOOL)handleEnvironmentCommand:(unsigned)cmd data:(void *)data;
 - (void)_parseV1OptionDefinition:(const struct retro_core_option_definition *)def;
 - (void)_parseCoreOptionsV2:(const struct retro_core_options_v2 *)opts;
@@ -1058,12 +1092,12 @@ static void thin_netpacket_send(int flags, const void *buf, size_t len, uint16_t
     [self _thinNetpacketSendWithFlags:flags buf:buf len:len clientID:client_id];
 }
 
-/// Called by the core to receive all queued incoming packets.
-/// Drains the incoming queue and delivers each packet via the core's receive callback.
+/// Called by the core, mid-frame, to take packets now rather than at the next
+/// frame. Delivers everything queued, which may include `stop`.
 static void thin_netpacket_poll_receive(void) {
     PVThinLibretroFrontend *self = _thinCurrentTLS;
     if (!self) return;
-    [self _thinNetpacketPollReceive];
+    [self _thinNetpacketDeliverEvents];
 }
 
 /// Most recent core error line that hints at a missing system/BIOS file.
@@ -3894,15 +3928,14 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
         }
         _blockingCoreThread = nil;
     }
-    // Stop netpacket session if active
-    [self stopNetpacketSession];
-
     // Tear down the rcheevos runtime so the per-frame tick stops and the
     // server session is unloaded before retro_unload_game.
     [self unloadAchievements];
 
     [super stopEmulation]; // stops emulation loop thread before retro teardown
     [self clearAllInput];
+    // The loop is gone, so nothing else can call into the netpacket callbacks.
+    [self _thinNetpacketTeardown];
 
     // Notify the core to destroy its HW rendering resources BEFORE
     // retro_unload_game / retro_deinit. The libretro lifecycle requires
@@ -4066,6 +4099,9 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
     }
 
     _thinCurrentTLS = self;
+
+    // Netplay: lifecycle events, received packets, then the core's per-frame poll.
+    [self _thinNetpacketRunFrame];
 
 #if PV_HAS_AVFOUNDATION
     // Deliver camera frame to core if capture is active
@@ -4401,30 +4437,111 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
 }
 
 - (void)_thinNetpacketSendWithFlags:(int)flags buf:(const void *)buf len:(size_t)len clientID:(uint16_t)clientID {
-    if (!_netpacketSessionActive) return;
-    if (self.netpacketSendBlock) {
-        self.netpacketSendBlock(flags, buf, len, clientID);
+    if (!_netpacketCoreStarted || !_netpacketSessionActive.load()) return;
+    // A NULL/0 packet only asks for a flush; packets are never buffered here.
+    if (!buf || len == 0) return;
+    void (^sendBlock)(int, const void *, size_t, uint16_t) = self.netpacketSendBlock;
+    if (sendBlock) {
+        sendBlock(flags, buf, len, clientID);
     }
 }
 
-- (void)_thinNetpacketPollReceive {
-    if (!_netpacketCallback) return;
+/// Hands the core everything queued, in order. Emulation thread only: from the
+/// per-frame pump or from the core's own `poll_receive_fn`.
+- (void)_thinNetpacketDeliverEvents {
+    struct retro_netpacket_callback *cb = _netpacketCallback;
+    if (!cb) return;
 
     os_unfair_lock_lock(&_netpacketQueueLock);
-    NSArray<NSData *> *packets = [_netpacketIncomingQueue copy];
-    NSArray<NSNumber *> *clientIDs = [_netpacketIncomingClientIDs copy];
-    [_netpacketIncomingQueue removeAllObjects];
-    [_netpacketIncomingClientIDs removeAllObjects];
+    NSArray<PVThinNetpacketEvent *> *events = _netpacketEvents.count ? [_netpacketEvents copy] : nil;
+    [_netpacketEvents removeAllObjects];
+    _netpacketQueuedBytes = 0;
+    _netpacketOverflowLogged = NO;
     os_unfair_lock_unlock(&_netpacketQueueLock);
 
-    retro_netpacket_receive_t receiveFn = _netpacketCallback->receive;
-    if (!receiveFn) return;
-
-    for (NSUInteger i = 0; i < packets.count; i++) {
-        NSData *pkt = packets[i];
-        uint16_t fromClient = clientIDs[i].unsignedShortValue;
-        receiveFn(pkt.bytes, pkt.length, fromClient);
+    for (PVThinNetpacketEvent *event in events) {
+        switch (event.kind) {
+            case PVThinNetpacketEventStart:
+                if (_netpacketCoreStarted) break;
+                _netpacketCoreStarted = YES;
+                [_netpacketRefusedClients removeAllObjects];
+                ILOG(@"ThinFrontend: netpacket start (clientID=%u)", event.clientID);
+                cb->start(event.clientID, thin_netpacket_send, thin_netpacket_poll_receive);
+                break;
+            case PVThinNetpacketEventStop:
+                if (!_netpacketCoreStarted) break;
+                _netpacketCoreStarted = NO;
+                ILOG(@"ThinFrontend: netpacket stop");
+                if (cb->stop) cb->stop();
+                break;
+            case PVThinNetpacketEventConnected:
+                if (!_netpacketCoreStarted || !cb->connected) break;
+                if (!cb->connected(event.clientID)) {
+                    ILOG(@"ThinFrontend: core refused netplay client %u", event.clientID);
+                    if (!_netpacketRefusedClients) _netpacketRefusedClients = [NSMutableSet new];
+                    [_netpacketRefusedClients addObject:@(event.clientID)];
+                    void (^reject)(uint16_t) = self.netpacketRejectPeerBlock;
+                    if (reject) reject(event.clientID);
+                }
+                break;
+            case PVThinNetpacketEventDisconnected:
+                if ([_netpacketRefusedClients containsObject:@(event.clientID)]) {
+                    [_netpacketRefusedClients removeObject:@(event.clientID)];
+                    break;
+                }
+                if (_netpacketCoreStarted && cb->disconnected) cb->disconnected(event.clientID);
+                break;
+            case PVThinNetpacketEventPacket:
+                if (_netpacketCoreStarted) cb->receive(event.data.bytes, event.data.length, event.clientID);
+                break;
+        }
     }
+}
+
+/// Once per frame, before `retro_run`, like RetroArch's netplay pre-frame.
+/// Blocking cores (`_isBlockingCore`) never reach this, so they get netplay
+/// callbacks only if they call `poll_receive_fn` themselves.
+- (void)_thinNetpacketRunFrame {
+    struct retro_netpacket_callback *cb = _netpacketCallback;
+    if (!cb) return;
+    [self _thinNetpacketDeliverEvents];
+    if (_netpacketCoreStarted && cb->poll) cb->poll();
+}
+
+- (void)_thinNetpacketEnqueue:(PVThinNetpacketEventKind)kind clientID:(uint16_t)clientID data:(nullable NSData *)data {
+    PVThinNetpacketEvent *event = [PVThinNetpacketEvent new];
+    event.kind = kind;
+    event.clientID = clientID;
+    event.data = data;
+    os_unfair_lock_lock(&_netpacketQueueLock);
+    if (!_netpacketEvents) _netpacketEvents = [NSMutableArray new];
+    if (data && _netpacketQueuedBytes + data.length > kThinNetpacketQueueLimitBytes) {
+        if (!_netpacketOverflowLogged) {
+            _netpacketOverflowLogged = YES;
+            ELOG(@"ThinFrontend: netplay packets are piling up while the game isn't running; dropping new ones");
+        }
+    } else {
+        _netpacketQueuedBytes += data.length;
+        [_netpacketEvents addObject:event];
+    }
+    os_unfair_lock_unlock(&_netpacketQueueLock);
+}
+
+/// Ends the core's session after the emulation loop has stopped, then forgets
+/// the Swift side's blocks.
+- (void)_thinNetpacketTeardown {
+    _netpacketSessionActive.store(false);
+    self.netpacketSendBlock = nil;
+    self.netpacketRejectPeerBlock = nil;
+    if (_netpacketCoreStarted && _netpacketCallback && _netpacketCallback->stop) {
+        ILOG(@"ThinFrontend: netpacket stop (emulation stopping)");
+        _netpacketCallback->stop();
+    }
+    _netpacketCoreStarted = NO;
+    os_unfair_lock_lock(&_netpacketQueueLock);
+    [_netpacketEvents removeAllObjects];
+    _netpacketQueuedBytes = 0;
+    os_unfair_lock_unlock(&_netpacketQueueLock);
 }
 
 // MARK: - Netpacket interface (env 78) session lifecycle
@@ -4438,55 +4555,43 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
     return [NSString stringWithUTF8String:_netpacketCallback->protocol_version];
 }
 
-/// Start a netpacket session: invokes the core's start callback with the
-/// assigned client ID and the static send/poll_receive function pointers.
 - (void)startNetpacketSessionWithClientID:(uint16_t)clientID {
-    if (!_netpacketCallback || !_netpacketCallback->start) {
+    if (!_netpacketCallback) {
         WLOG(@"ThinFrontend: startNetpacketSession called without registered callback");
         return;
     }
-    _netpacketSessionActive = YES;
-    ILOG(@"ThinFrontend: starting netpacket session (clientID=%u)", clientID);
-    _netpacketCallback->start(clientID, thin_netpacket_send, thin_netpacket_poll_receive);
+    _netpacketSessionActive.store(true);
+    [self _thinNetpacketEnqueue:PVThinNetpacketEventStart clientID:clientID data:nil];
 }
 
-/// Stop the active netpacket session: invokes the core's stop callback.
 - (void)stopNetpacketSession {
-    if (!_netpacketSessionActive) return;
-    _netpacketSessionActive = NO;
-    if (_netpacketCallback && _netpacketCallback->stop) {
-        _netpacketCallback->stop();
-    }
-    os_unfair_lock_lock(&_netpacketQueueLock);
-    [_netpacketIncomingQueue removeAllObjects];
-    [_netpacketIncomingClientIDs removeAllObjects];
-    os_unfair_lock_unlock(&_netpacketQueueLock);
-    ILOG(@"ThinFrontend: netpacket session stopped");
+    if (!_netpacketSessionActive.exchange(false)) return;
+    [self _thinNetpacketEnqueue:PVThinNetpacketEventStop clientID:0 data:nil];
 }
 
-/// Enqueue a packet received from the network for delivery to the core
-/// during the next poll_receive call.
 - (void)enqueueNetpacketData:(NSData *)data fromClient:(uint16_t)clientID {
-    os_unfair_lock_lock(&_netpacketQueueLock);
-    [_netpacketIncomingQueue addObject:data];
-    [_netpacketIncomingClientIDs addObject:@(clientID)];
-    os_unfair_lock_unlock(&_netpacketQueueLock);
+    if (!_netpacketSessionActive.load()) return;
+    [self _thinNetpacketEnqueue:PVThinNetpacketEventPacket clientID:clientID data:data];
 }
 
-/// Notify the core that a peer has connected.
-/// Called from the network queue. The libretro API does not mandate a specific
-/// thread for connected/disconnected — RetroArch calls them from its netplay
-/// thread, so direct invocation is consistent with upstream behavior.
 - (void)netpacketPeerConnected:(uint16_t)clientID {
-    if (!_netpacketCallback || !_netpacketCallback->connected) return;
-    _netpacketCallback->connected(clientID);
+    if (!_netpacketSessionActive.load()) return;
+    [self _thinNetpacketEnqueue:PVThinNetpacketEventConnected clientID:clientID data:nil];
 }
 
-/// Notify the core that a peer has disconnected.
-/// Same threading model as netpacketPeerConnected — called from network queue.
 - (void)netpacketPeerDisconnected:(uint16_t)clientID {
-    if (!_netpacketCallback || !_netpacketCallback->disconnected) return;
-    _netpacketCallback->disconnected(clientID);
+    if (!_netpacketSessionActive.load()) return;
+    [self _thinNetpacketEnqueue:PVThinNetpacketEventDisconnected clientID:clientID data:nil];
+}
+
+- (void)_testRegisterNetpacketCallback:(const struct retro_netpacket_callback *)callback {
+    [self handleEnvironmentCommand:RETRO_ENVIRONMENT_SET_NETPACKET_INTERFACE data:(void *)callback];
+}
+
+- (void)_testRunNetpacketFrame {
+    _thinCurrentTLS = self;
+    [self _thinNetpacketRunFrame];
+    _thinCurrentTLS = nil;
 }
 
 // MARK: - Disc control
@@ -6606,9 +6711,6 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
                 }
                 _netpacketCallback = (struct retro_netpacket_callback *)malloc(sizeof(*_netpacketCallback));
                 memcpy(_netpacketCallback, cb, sizeof(*_netpacketCallback));
-                _netpacketIncomingQueue = [NSMutableArray new];
-                _netpacketIncomingClientIDs = [NSMutableArray new];
-                _netpacketQueueLock = OS_UNFAIR_LOCK_INIT;
                 ILOG(@"ThinEnv SET_NETPACKET_INTERFACE: registered (protocol_version=%s)",
                      cb->protocol_version ?: "(none)");
                 return true;
