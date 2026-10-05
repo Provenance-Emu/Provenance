@@ -169,6 +169,7 @@ let targets: [Target] = [
     name: "MednafenGameCoreBridge",
     dependencies: [
       "MednafenGameCoreC",
+      "mednafen-server",
       "MednafenGameCoreOptions",
       "PVAudio",
       "PVCoreBridge",
@@ -622,7 +623,13 @@ let targets: [Target] = [
   // MARK: --------- MednafenGameCore Tests ------------ //
   .testTarget(
     name: "MednafenGameCoreTests",
-    dependencies: ["MednafenGameCore"],
+    dependencies: ["MednafenGameCore", "MednafenGameCoreBridge", "mednafen-server"],
+    // Importing the bridge builds the `mednafen` Clang module, which needs the
+    // same defines and header paths as the core.
+    cSettings: [
+      .headerSearchPath("../../Sources/mednafen/config"),
+      .headerSearchPath("../../Sources/mednafen/mednafen-src/include"),
+    ] + CSETTINGS,
     swiftSettings: [.interoperabilityMode(.Cxx)]
   ),
   // MARK: --------- MednafenGameCore C Tests ------------ //
@@ -632,35 +639,23 @@ let targets: [Target] = [
   //            swiftSettings: [.interoperabilityMode(.Cxx)]
   //        )
   // MARK: --------- MednafenServer ------------ //
-  // MARK: C Server
+  // The vendored mednafen-server 0.5.2, built as a library (not a program) so
+  // a netplay host runs it in-process. API: public/mednafen_server.h.
+  // `include/` holds the server's autoconf config.h; it stays private so it
+  // can't shadow mednafen's own config.h in dependents.
   .target(
     name: "mednafen-server",
     path: "Sources/mednafen-server/",
+    exclude: Sources.ServerExclude,
     sources: Sources.Server.map { "src/\($0)" },
+    publicHeadersPath: "public",
     cSettings: [
-      .headerSearchPath("include")
-    ]
+      .define("HAVE_CONFIG_H", to: "1"),
+      .define("PROVENANCE_EMBEDDED_SERVER", to: "1"),
+      .headerSearchPath("include"),
+      .headerSearchPath("public"),
+    ] + Sources.ServerSymbolRenames
   ),
-  // MARK: Bridge
-  .target(
-    name: "MednafenServerBridge",
-    path: "Sources/MednafenServerBridge",
-    sources: [
-      "MednafenServerBridge.c"
-    ],
-    cSettings: [
-      .headerSearchPath("include")
-    ]
-  ),
-  // MARK: Swift Wrapper
-  .target(
-    name: "Server.swift",
-    dependencies: [
-      "mednafen-server",
-      "MednafenServerBridge",
-    ],
-    path: "Sources/Server.swift/"
-  )
 ]
 
 let package = Package(
@@ -1115,6 +1110,23 @@ extension Sources {
     "mednafen-server.cpp",
     "time64.cpp",
   ]
+  /// mednafen-server's autotools residue, which SwiftPM shouldn't look at.
+  static let ServerExclude: [String] = [
+    "AUTHORS", "COPYING", "ChangeLog", "INSTALL", "NEWS", "README", "TODO",
+    "Makefile", "Makefile.am", "Makefile.in", "acinclude.m4", "aclocal.m4", "autogen.sh",
+    "compile", "config.guess", "config.log", "config.status", "config.sub", "configure",
+    "configure.ac", "depcomp", "install-sh", "missing", "m4", "run.sh", "standard.conf",
+    "serverlog", "serverlog2",
+    "include/config.h.in", "include/config.h.in~", "include/stamp-h1",
+    "src/.deps", "src/Makefile", "src/Makefile.am", "src/Makefile.in", "src/run.sh", "src/standard.conf",
+  ]
+  /// The server's helper files are separate translation units, so their
+  /// functions can't be `static`. Prefix them so they can never clash with
+  /// mednafen's own md5/time/errno code (or anything else) in the same dylib.
+  static let ServerSymbolRenames: [CSetting] = [
+    "md5_starts", "md5_update", "md5_finish", "md5_process", "md5_asciistr",
+    "MBL_Time64", "MBL_Sleep64", "ErrnoHolder",
+  ].map { .define($0, to: "MednafenServer_\($0)") }
   static let Saturn: [String] = [
     "ak93c45.cpp",
     "cart.cpp",

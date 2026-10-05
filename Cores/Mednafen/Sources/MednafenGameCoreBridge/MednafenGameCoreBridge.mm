@@ -108,6 +108,15 @@ int mednafenCurrentDisplayMode = 1;
 - (void)resetLightGunState;
 @end
 
+// Netplay hooks for the emulation loop (MednafenGameCoreBridge+Netplay.mm).
+@interface MednafenGameCoreBridge (NetplayFrameHooks)
+- (void)netplayWillEmulateFrame;
+- (void)netplayDidEmulateFrame;
+- (void)netplayWillSetPause:(BOOL)paused;
+- (void)netplayPrepareForTeardown;
+- (void)netplayTeardown;
+@end
+
 static __weak MednafenGameCoreBridge *_current;
 
 @implementation MednafenGameCoreBridge
@@ -1574,7 +1583,11 @@ static void emulation_run(BOOL skipFrame) {
     }
 
     if(self.isRunning && game != NULL){
+        // Netplay connect/disconnect requests are carried out here, on the
+        // emulation thread, between frames.
+        [self netplayWillEmulateFrame];
         emulation_run(skip);
+        [self netplayDidEmulateFrame];
 
         void (^handler)(void) = self.frameCompletedHandler;
         if (handler) {
@@ -1591,9 +1604,24 @@ static void emulation_run(BOOL skipFrame) {
     Mednafen::MDFNI_Reset();
 }
 
+- (void)setPauseEmulation:(BOOL)flag {
+    // Pausing waits (on the main thread) for the current frame's lock. A frame
+    // blocked waiting for netplay data gives up after a short wait once it
+    // knows a pause is pending, instead of hanging the main thread.
+    [self netplayWillSetPause:flag];
+    [super setPauseEmulation:flag];
+}
+
 - (void)stopEmulation {
+    // A frame blocked waiting for netplay data must give up, or the
+    // emulation loop never stops.
+    [self netplayPrepareForTeardown];
+
     // Stop emulation loop first to prevent race conditions during shutdown
     [super stopEmulation];
+
+    // Close the netplay connection and the embedded server, if any.
+    [self netplayTeardown];
 
     // Close any loaded content and kill Mednafen to reset global/static state
     Mednafen::MDFNI_CloseGame();

@@ -72,13 +72,59 @@
 #include "types.h"
 #include "md5.h"
 #include "time64.h"
+#ifndef PROVENANCE_EMBEDDED_SERVER	// Provenance change: only LoadConfig() uses trim(), and the embedded server has no config file.
 #include "trim.inc"
+#endif
 #include "rand.inc"
 #include "errno_holder.h"
 
 #ifndef SOL_TCP
 #define 	SOL_TCP   IPPROTO_TCP
 #endif
+
+// --- Provenance change: in-process server -----------------------------------
+// With PROVENANCE_EMBEDDED_SERVER the server is a library, not a program: main()
+// becomes mednafen_server_open() + mednafen_server_run() (see
+// public/mednafen_server.h), exit() becomes an error return, the config comes
+// from a struct, and printf/puts go to a log callback instead of stdout.
+#ifdef PROVENANCE_EMBEDDED_SERVER
+#include <atomic>
+#include "mednafen_server.h"
+
+static MednafenServerLogFunction EmbeddedLog = NULL;
+static std::atomic<bool> EmbeddedStopRequested(false);
+static std::atomic<bool> EmbeddedOpen(false);
+static std::atomic<int32_t> EmbeddedClientCount(0);
+static std::atomic<bool> EmbeddedNextConnectionIsRemote(false);	// test hook
+
+static void EmbeddedPrintf(const char *format, ...) MDFN_FORMATSTR(printf, 1, 2);
+static void EmbeddedPrintf(const char *format, ...)
+{
+ char line[1024];
+ va_list ap;
+
+ va_start(ap, format);
+ vsnprintf(line, sizeof(line), format, ap);
+ va_end(ap);
+
+ // Each call is one log line; drop the trailing newline(s) printf would print.
+ size_t len = strlen(line);
+ while(len && (line[len - 1] == '\n' || line[len - 1] == '\r'))
+  line[--len] = 0;
+
+ if(len && EmbeddedLog)
+  EmbeddedLog(line);
+}
+
+static void EmbeddedPuts(const char *s)
+{
+ EmbeddedPrintf("%s", s);
+}
+
+#define printf(...) EmbeddedPrintf(__VA_ARGS__)
+#define puts(s) EmbeddedPuts(s)
+#endif
+// --- end Provenance change ---------------------------------------------------
 
 static const int MaxNickLen = 150; 		// In bytes, not glyphs(worst-case max glyphs using UTF8 is probably around MaxNickLen / 5).
 static const int MaxClientsPerGame = 32;	// Maximum number of clients per game.
@@ -210,6 +256,9 @@ struct ClientEntry
 	// Local controller buffer
 	uint8 local_controller_buffer[MaxTotalControllersDataSize];
 	char DisconnectReason[1024];
+#ifdef PROVENANCE_EMBEDDED_SERVER
+	bool ProvenanceLoopback;	// Provenance change: connected from this device (the host's own client).
+#endif
 };
 
 struct GameEntry
@@ -277,8 +326,13 @@ struct CONFIG
 	uint32 MaxCommandPayload;
 };
 
+#ifdef PROVENANCE_EMBEDDED_SERVER
+static CONFIG ServerConfig;	// Provenance change: internal linkage.
+#else
 CONFIG ServerConfig;
+#endif
 
+#ifndef PROVENANCE_EMBEDDED_SERVER	// Provenance change: the embedded server uses LoadConfigFromStruct().
 int LoadConfig(char *fn)
 {
  FILE *fp;
@@ -374,6 +428,50 @@ int LoadConfig(char *fn)
 
  return(1);
 }
+#endif // !PROVENANCE_EMBEDDED_SERVER
+
+#ifdef PROVENANCE_EMBEDDED_SERVER
+// Provenance change: LoadConfig() for a struct instead of a config file.
+// Same required keys (maxclients, connecttimeout, port) and defaults.
+static int LoadConfigFromStruct(const MednafenServerConfig *config)
+{
+ memset(&ServerConfig, 0, sizeof(ServerConfig));
+
+ if(!config || config->maxClients <= 0 || config->connectTimeoutSeconds <= 0 || config->port == 0)
+ {
+  puts("Incomplete configuration");
+  return(0);
+ }
+
+ ServerConfig.MaxClients = config->maxClients;
+ ServerConfig.ConnectTimeout = config->connectTimeoutSeconds;
+ ServerConfig.Port = config->port;
+
+ // Settings with defaults:
+ ServerConfig.IdleTimeout = config->idleTimeoutSeconds > 0 ? config->idleTimeoutSeconds : 30;
+ ServerConfig.MinSendQSize = 262144;
+ ServerConfig.MaxSendQSize = 8388608;
+ ServerConfig.MaxCommandPayload = 5 * 1024 * 1024;
+
+ if(config->password && config->password[0] != 0)
+ {
+  struct md5_context md5;
+  ServerConfig.Password = (uint8 *)malloc(16);
+  if(!ServerConfig.Password)
+   return(0);
+  md5_starts(&md5);
+  md5_update(&md5,(uint8*)config->password,strlen(config->password));
+  md5_finish(&md5,ServerConfig.Password);
+  puts("Password required to log in.");
+ }
+
+ printf("Server configuration: max clients %u, connect timeout %u s, port %u, password %s, idle timeout %u s\n",
+	ServerConfig.MaxClients, ServerConfig.ConnectTimeout, ServerConfig.Port,
+	ServerConfig.Password ? "(used)" : "(unused)", ServerConfig.IdleTimeout);
+
+ return(1);
+}
+#endif
 
 static ClientEntry *AllClients;
 static GameEntry *Games;
@@ -549,6 +647,46 @@ static inline void RecalcCInUse(GameEntry *game)
 
 
 /* Returns 1 if we are back to normal game mode, 0 if more data is yet to arrive. */
+#ifdef PROVENANCE_EMBEDDED_SERVER
+// --- Provenance change: host first ------------------------------------------
+// The host's own client connects over loopback, and only once the host's game
+// runs. A remote player who logged in first would take controller 1 and be
+// asked for the game state, overwriting the host's game. So remote players are
+// refused until the host is in that game. (A remote player with a different
+// game is refused too, instead of silently getting a game of their own.)
+static const char EmbeddedHostFirstMessage[] =
+	"The host hasn't resumed the game yet, or you are running a different game. Try again in a moment.";
+
+static bool EmbeddedIsLoopback(const struct sockaddr *addr)
+{
+ if(addr->sa_family == AF_INET)
+  return((ntohl(((const struct sockaddr_in *)addr)->sin_addr.s_addr) >> 24) == IN_LOOPBACKNET);
+ if(addr->sa_family == AF_INET6)
+ {
+  const struct in6_addr *a6 = &((const struct sockaddr_in6 *)addr)->sin6_addr;
+  // ::1, or ::ffff:127.x.x.x (IPv4-mapped loopback)
+  return(IN6_IS_ADDR_LOOPBACK(a6) || (IN6_IS_ADDR_V4MAPPED(a6) && a6->s6_addr[12] == IN_LOOPBACKNET));
+ }
+ return(false);
+}
+
+// Whether a host (loopback) client is logged in to the game with this ID.
+static bool EmbeddedHostInGame(const uint8 id[16])
+{
+ for(int wg = 0; wg < ServerConfig.MaxClients; wg++)
+ {
+  const GameEntry *game = &Games[wg];
+  if(!game->TotalControllers || game->Zombie || memcmp(game->id, id, 16))
+   continue;
+  for(int n = 0; n < MaxClientsPerGame; n++)
+   if(game->Clients[n] && game->Clients[n]->TCPSocket != -1 && game->Clients[n]->ProvenanceLoopback)
+    return(true);
+ }
+ return(false);
+}
+// --- end Provenance change ---------------------------------------------------
+#endif
+
 static int CheckNBTCPReceive(ClientEntry *client)
 {
  if(client->TCPSocket == -1)	// Client is disconnected?
@@ -1021,6 +1159,16 @@ static int CheckNBTCPReceive(ClientEntry *client)
 			    emu_id[i] = 0x20;
 			  }
 			 }
+
+#ifdef PROVENANCE_EMBEDDED_SERVER
+			 // Provenance change: host first (see EmbeddedHostInGame).
+			 if(!client->ProvenanceLoopback && !EmbeddedHostInGame(ld->gameid))
+			 {
+			  TextToClient(client, "%s", EmbeddedHostFirstMessage);
+			  DisconnectClient(client, "Remote login before the host joined the game.");
+			  return(0);
+			 }
+#endif
 
 			 // Needs to be before nickname set, but we'll fix this eventually.
                          if(!AddClientToGame(client, ld->gameid, emu_id))
@@ -1661,6 +1809,97 @@ static bool AddClientToGame(ClientEntry *client, const uint8 id[16], const uint8
  return(true);
 }
 
+#ifdef PROVENANCE_EMBEDDED_SERVER
+// --- Provenance change: teardown for the in-process server ------------------
+// Closes every socket and frees every allocation, so the server can be opened
+// again in the same process.
+static void EmbeddedShutdown(void)
+{
+ if(AllClients)
+ {
+  for(int n = 0; n < ServerConfig.MaxClients; n++)
+   DisconnectClient(&AllClients[n], "Server shutting down.");
+ }
+
+ for(unsigned lsi = 0; lsi < ListenSockets.size(); lsi++)
+  close(ListenSockets[lsi].fd);
+ ListenSockets.clear();
+
+ free(AllClients);
+ AllClients = NULL;
+ free(Games);
+ Games = NULL;
+ free(ServerConfig.Password);
+ memset(&ServerConfig, 0, sizeof(ServerConfig));
+
+ EmbeddedClientCount.store(0);
+ EmbeddedNextConnectionIsRemote.store(false);
+ EmbeddedOpen.store(false);
+}
+
+// A failed IPv6 listen socket is skipped (clients connect over IPv4); a failed
+// IPv4 one fails the whole open. Returns true when the caller should skip it.
+static bool EmbeddedSkipListenFailure(ListenSocketDef &lsd)
+{
+ close(lsd.fd);
+ return(lsd.family == AF_INET6);
+}
+
+// Accepted sockets: no SIGPIPE on send() to a dropped client (the app must not
+// ignore SIGPIPE process-wide for us), and no Nagle delay on input packets.
+static void EmbeddedConfigureClientSocket(int fd)
+{
+ int opt = 1;
+#ifdef SO_NOSIGPIPE
+ setsockopt(fd, SOL_SOCKET, SO_NOSIGPIPE, &opt, sizeof(opt));
+#endif
+ setsockopt(fd, SOL_TCP, TCP_NODELAY, &opt, sizeof(opt));
+}
+
+int32_t mednafen_server_client_count(void)
+{
+ return EmbeddedClientCount.load();
+}
+
+void mednafen_server_testing_treat_next_connection_as_remote(void)
+{
+ EmbeddedNextConnectionIsRemote.store(true);
+}
+
+void mednafen_server_request_stop(void)
+{
+ EmbeddedStopRequested.store(true);
+}
+
+MednafenServerResult mednafen_server_open(const MednafenServerConfig *config, MednafenServerLogFunction log)
+{
+ union
+ {
+  struct sockaddr_in6 sockin6;
+  struct sockaddr_in sockin;
+  struct sockaddr saddr;
+ };
+
+ bool expected_open = false;
+ if(!EmbeddedOpen.compare_exchange_strong(expected_open, true))
+  return MednafenServerResultAlreadyRunning;
+
+ EmbeddedLog = log;
+ EmbeddedStopRequested.store(false);
+ EmbeddedClientCount.store(0);
+
+ SeedRand(time(NULL));
+
+ printf("Starting Mednafen-Server %s\n\n", VERSION);
+
+ if(!LoadConfigFromStruct(config))
+ {
+  puts("Error loading configuration");
+  EmbeddedShutdown();
+  return MednafenServerResultInvalidConfig;
+ }
+#else
+// --- end Provenance change ---------------------------------------------------
 int main(int argc, char *argv[])
 {
  union
@@ -1692,9 +1931,18 @@ int main(int argc, char *argv[])
 #ifdef SIGPIPE
  signal(SIGPIPE, SIG_IGN);
 #endif
+#endif // PROVENANCE_EMBEDDED_SERVER
 
  Games = (GameEntry *)calloc(ServerConfig.MaxClients, sizeof(GameEntry));
  AllClients = (ClientEntry *)calloc(ServerConfig.MaxClients, sizeof(ClientEntry));
+
+#ifdef PROVENANCE_EMBEDDED_SERVER
+ if(!Games || !AllClients)
+ {
+  EmbeddedShutdown();
+  return MednafenServerResultOutOfMemory;
+ }
+#endif
 
  for(int x = 0; x < ServerConfig.MaxClients; x++)
  {
@@ -1703,6 +1951,9 @@ int main(int argc, char *argv[])
 
  const int family_try[2] = { AF_INET, AF_INET6 };
  const char *family_try_name[2] = { "IPv4", "IPv6" };
+#ifdef PROVENANCE_EMBEDDED_SERVER
+ MednafenServerResult embedded_failure = MednafenServerResultSocketFailed;
+#endif
 
  for(unsigned fti = 0; fti < 2; fti++)
  {
@@ -1718,6 +1969,15 @@ int main(int argc, char *argv[])
    printf("Error creating %s socket: %s\n", family_try_name[fti], ene.StrError());
    continue;
   }
+
+#ifdef PROVENANCE_EMBEDDED_SERVER
+  // Provenance change: re-hosting right after a session must not fail on
+  // the previous session's TIME_WAIT connections.
+  {
+   int reuse_opt = 1;
+   setsockopt(lsd.fd, SOL_SOCKET, SO_REUSEADDR, &reuse_opt, sizeof(int));
+  }
+#endif
 
   /* Disallow IPv4 connections on an IPv6 socket. */
   if(lsd.family == AF_INET6)
@@ -1758,7 +2018,15 @@ int main(int argc, char *argv[])
   {
    ErrnoHolder ene(errno);
    printf("Bind error: %s\n", ene.StrError());
+#ifdef PROVENANCE_EMBEDDED_SERVER
+   embedded_failure = MednafenServerResultBindFailed;
+   if(EmbeddedSkipListenFailure(lsd))
+    continue;
+   EmbeddedShutdown();
+   return embedded_failure;
+#else
    exit(-1);
+#endif
   }
 
   /* Set send buffer size to 262,144 bytes. */
@@ -1777,7 +2045,15 @@ int main(int argc, char *argv[])
    ErrnoHolder ene(errno);
 
    printf("Enabling option TCP_NODELAY failed: %s\n", ene.StrError());
+#ifdef PROVENANCE_EMBEDDED_SERVER
+   embedded_failure = MednafenServerResultListenFailed;
+   if(EmbeddedSkipListenFailure(lsd))
+    continue;
+   EmbeddedShutdown();
+   return embedded_failure;
+#else
    exit(-1);
+#endif
   }
 
   if(listen(lsd.fd, 16))
@@ -1785,7 +2061,15 @@ int main(int argc, char *argv[])
    ErrnoHolder ene(errno);
 
    printf("Listen error: %s\n", ene.StrError());
+#ifdef PROVENANCE_EMBEDDED_SERVER
+   embedded_failure = MednafenServerResultListenFailed;
+   if(EmbeddedSkipListenFailure(lsd))
+    continue;
+   EmbeddedShutdown();
+   return embedded_failure;
+#else
    exit(-1);
+#endif
   }
 
   { 
@@ -1805,10 +2089,28 @@ int main(int argc, char *argv[])
   ListenSockets.push_back(lsd);
  }
 
- if(ListenSockets.size() == 0)
-  exit(-1);
+#ifdef PROVENANCE_EMBEDDED_SERVER
+ // Provenance change: clients connect over IPv4, so IPv4 is required.
+ bool embedded_has_ipv4 = false;
+ for(unsigned lsi = 0; lsi < ListenSockets.size(); lsi++)
+  if(ListenSockets[lsi].family == AF_INET)
+   embedded_has_ipv4 = true;
 
- #if defined(HAVE_MLOCKALL) && defined(MCL_CURRENT)
+ if(!embedded_has_ipv4)
+#else
+ if(ListenSockets.size() == 0)
+#endif
+ {
+#ifdef PROVENANCE_EMBEDDED_SERVER
+  EmbeddedShutdown();
+  return embedded_failure;
+#else
+  exit(-1);
+#endif
+ }
+
+ // Provenance change: never lock the whole app's memory.
+ #if defined(HAVE_MLOCKALL) && defined(MCL_CURRENT) && !defined(PROVENANCE_EMBEDDED_SERVER)
  if(mlockall(MCL_CURRENT) != 0)
  {
   ErrnoHolder ene(errno);
@@ -1817,8 +2119,30 @@ int main(int argc, char *argv[])
  }
  #endif
 
+ #ifdef PROVENANCE_EMBEDDED_SERVER
+ // Provenance change: the select loop runs separately, on the caller's thread.
+ return MednafenServerResultOK;
+}
+
+void mednafen_server_run(void)
+{
+ union
+ {
+  struct sockaddr_in6 sockin6;
+  struct sockaddr_in sockin;
+  struct sockaddr saddr;
+ };
+
+ if(!EmbeddedOpen.load())
+  return;
+ #endif
+
  /* Now for the BIG LOOP. */
+ #ifdef PROVENANCE_EMBEDDED_SERVER
+ while(!EmbeddedStopRequested.load())
+ #else
  while(1)
+ #endif
  {
   const time_t cur_epoch_time = time(NULL);
   bool try_accept = true;
@@ -1850,10 +2174,16 @@ int main(int argc, char *argv[])
       /* We have a new client.  Yippie. */
 
       fcntl(AllClients[n].TCPSocket, F_SETFL, fcntl(AllClients[n].TCPSocket, F_GETFL) | O_NONBLOCK);
+#ifdef PROVENANCE_EMBEDDED_SERVER
+      EmbeddedConfigureClientSocket(AllClients[n].TCPSocket);
+#endif
 
       AllClients[n].InUse = true;
       AllClients[n].timeconnect_us = MBL_Time64();
       AllClients[n].id = n;
+#ifdef PROVENANCE_EMBEDDED_SERVER
+      AllClients[n].ProvenanceLoopback = EmbeddedIsLoopback(&saddr) && !EmbeddedNextConnectionIsRemote.exchange(false);
+#endif
 
       if(ListenSockets[lsi].family == AF_INET6)
        inet_ntop(ListenSockets[lsi].family, &sockin6.sin6_addr, tbuf, sizeof(tbuf));
@@ -1991,8 +2321,33 @@ int main(int argc, char *argv[])
     sleep_amount = sandwich;
   }
 
+#ifdef PROVENANCE_EMBEDDED_SERVER
+  // Provenance change: publish the player count of the biggest game. Players
+  // with a different game (MD5) land in a separate game, not this one.
+  {
+   int32_t most_players = 0;
+   for(int whichgame = 0; whichgame < ServerConfig.MaxClients; whichgame++)
+   {
+    if(!Games[whichgame].TotalControllers || Games[whichgame].Zombie)
+     continue;
+    int32_t players = 0;
+    for(int n = 0; n < MaxClientsPerGame; n++)
+     if(Games[whichgame].Clients[n] && Games[whichgame].Clients[n]->TCPSocket != -1)
+      players++;
+    if(players > most_players)
+     most_players = players;
+   }
+   EmbeddedClientCount.store(most_players);
+  }
+#endif
+
   if(sleep_amount > 0)
    MBL_Sleep64(sleep_amount);
   //printf("%lld, %lld\n", sleep_amount, MBL_Time64() - curgametime);
  } // while(1)
+
+#ifdef PROVENANCE_EMBEDDED_SERVER
+ puts("Mednafen-Server stopped.");
+ EmbeddedShutdown();
+#endif
 }

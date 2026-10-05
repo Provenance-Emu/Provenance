@@ -43,13 +43,13 @@ void MDFND_PrintError(const char* err) {
 
 namespace Mednafen {
 
+// Netplay callbacks (MDFND_NetplayText, MDFND_NetplaySetHints,
+// MDFND_CheckNeedExit) are in MednafenGameCoreBridge+Netplay.mm.
+
 void MDFND_MidSync(EmulateSpecStruct *espec, const unsigned flags) {
 
 }
 void MDFND_MediaSetNotification(uint32 drive_idx, uint32 state_idx, uint32 media_idx, uint32 orientation_idx) {
-
-}
-void MDFND_NetplayText(const char* text, bool NetEcho){
 
 }
 void MDFND_SetMovieStatus(StateStatusStruct *) noexcept {
@@ -57,12 +57,6 @@ void MDFND_SetMovieStatus(StateStatusStruct *) noexcept {
 }
 void MDFND_SetStateStatus(StateStatusStruct *) noexcept {
 
-}
-void MDFND_NetplaySetHints(bool active, bool behind, uint32 local_players_mask){
-
-}
-bool MDFND_CheckNeedExit(void){
-    return false;
 }
 void MDFND_OutputInfo(const char *s) noexcept {
     ILOG(@"Mednafen: %s", s);

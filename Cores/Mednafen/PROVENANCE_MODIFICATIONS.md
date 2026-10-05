@@ -50,3 +50,35 @@ under `Sources/mednafen/`, outside the fork:
 `Package.swift` lists every compiled source explicitly. Files it doesn't list are
 ignored, so upstream code Provenance doesn't build (drivers, Win32, DOS, tests) stays
 in the submodule untouched.
+
+## mednafen-server (embedded netplay server)
+
+`Sources/mednafen-server/` is a vendored copy of mednafen-server 0.5.2 (protocol 3,
+matching the Mednafen 1.32.1 client). It is not a submodule; the changes are made in
+place in `src/mednafen-server.cpp`, each one inside `#ifdef PROVENANCE_EMBEDDED_SERVER`
+and marked "Provenance change". Without the define the file is upstream's program.
+
+- `main()` becomes `mednafen_server_open()` (config, bind, listen; returns an error
+  code) and `mednafen_server_run()` (the select loop on the caller's thread, until
+  `mednafen_server_request_stop()`). The C API is `public/mednafen_server.h`.
+- The config comes from a `MednafenServerConfig` struct instead of a config file.
+- `exit()` becomes an error return. Shutdown closes the listen and client sockets and
+  frees everything, so the server can start again in the same process.
+- `printf`/`puts` go to a log callback (PVLogging, via the bridge) instead of stdout.
+- No `mlockall()` and no process-wide `signal(SIGPIPE, SIG_IGN)`; accepted sockets get
+  `SO_NOSIGPIPE` and `TCP_NODELAY` instead. Listen sockets get `SO_REUSEADDR`.
+- IPv4 is required; a failed IPv6 listen socket is skipped.
+- No stray global symbols: `ServerConfig` is `static`, the config-file `LoadConfig()` and
+  `trim.inc` are compiled out, and `Package.swift` prefixes the helper files' functions
+  (`md5_*`, `MBL_*`, `ErrnoHolder`) with `MednafenServer_` through `-D`, since they live
+  in separate translation units and mednafen has its own md5 code.
+- The loop publishes the player count of the biggest game (`mednafen_server_client_count()`).
+- Host first: a remote (non-loopback) login is refused, with a server text the client
+  shows, until a loopback client (the host's own) is in that game. Otherwise a joiner
+  who resumed first would take controller 1 and have their state pushed onto the host.
+  `mednafen_server_testing_treat_next_connection_as_remote()` lets tests simulate a
+  remote player over loopback.
+
+The bridge (`MednafenGameCoreBridge+Netplay.mm`) runs it on its own thread when the
+player hosts, and implements the netplay driver callbacks `MDFND_NetplayText`,
+`MDFND_NetplaySetHints` and `MDFND_CheckNeedExit`.
