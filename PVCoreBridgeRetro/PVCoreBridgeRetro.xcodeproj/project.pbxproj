@@ -76,6 +76,7 @@
 		C0C0CAFE3000000000000017 /* ThinCoreOptionDefinitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */; };
 		C0C0CAFE3000000000000027 /* MIDIEnabledTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000026 /* MIDIEnabledTests.swift */; };
 		C0C0CAFE3000000000000029 /* NetpacketPumpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000028 /* NetpacketPumpTests.swift */; };
+		C0C0CAFE300000000000002B /* PPSSPPAdhocTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE300000000000002A /* PPSSPPAdhocTests.swift */; };
 		C0C0CAFE3000000000000019 /* ThinSystemFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */; };
 		C0C0CAFE300000000000000A /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */; };
 		C0C0CAFE3000000000000021 /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE3000000000000020 /* MoltenVK */; };
@@ -945,6 +946,7 @@
 		C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinCoreOptionDefinitionTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000026 /* MIDIEnabledTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MIDIEnabledTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000028 /* NetpacketPumpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetpacketPumpTests.swift; sourceTree = "<group>"; };
+		C0C0CAFE300000000000002A /* PPSSPPAdhocTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PPSSPPAdhocTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinSystemFileTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000002 /* PVLibRetroTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVLibRetroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -2941,6 +2943,7 @@
 				C0C0CAFE3000000000000016 /* ThinCoreOptionDefinitionTests.swift */,
 				C0C0CAFE3000000000000026 /* MIDIEnabledTests.swift */,
 				C0C0CAFE3000000000000028 /* NetpacketPumpTests.swift */,
+				C0C0CAFE300000000000002A /* PPSSPPAdhocTests.swift */,
 				C0C0CAFE3000000000000018 /* ThinSystemFileTests.swift */,
 			);
 			name = PVLibRetroTests;
@@ -3183,6 +3186,7 @@
 				C0C0CAFE3000000000000017 /* ThinCoreOptionDefinitionTests.swift in Sources */,
 				C0C0CAFE3000000000000027 /* MIDIEnabledTests.swift in Sources */,
 				C0C0CAFE3000000000000029 /* NetpacketPumpTests.swift in Sources */,
+				C0C0CAFE300000000000002B /* PPSSPPAdhocTests.swift in Sources */,
 				C0C0CAFE3000000000000019 /* ThinSystemFileTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

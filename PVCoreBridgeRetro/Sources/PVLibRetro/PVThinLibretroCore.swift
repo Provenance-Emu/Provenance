@@ -1054,6 +1054,9 @@ extension PVThinLibretroCore: CoreOptional {
     /// still there next launch the replay is skipped once: the game boots on
     /// defaults and the user can get in to change or reset the option.
     func applyPersistedCoreOptions() {
+        // A netplay session killed with the app leaves its options saved.
+        restoreStalePPSSPPAdhocOptions()
+
         let md5 = Self.currentGameMD5
         let coreId = (coreIdentifier ?? "").lowercased()
         let defaults = UserDefaults.standard

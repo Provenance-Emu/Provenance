@@ -9,12 +9,18 @@
 //  PVNetplayManager can drive PPSSPP Ad Hoc sessions.
 //
 //  PPSSPP adhoc model:
-//   - All players point at the same PRO Adhoc Server address.
-//   - host(port:)      → proAdhocServer = "127.0.0.1" (the built-in adhoc
-//                        server must be enabled; this doesn't start it)
-//   - client(host:)    → proAdhocServer = host's LAN IP
-//   - spectator(host:) → same as client (PPSSPP has no spectator concept)
-//   - port parameter is unused — PPSSPP's adhoc server uses a fixed UDP port.
+//   - Every player points at the same PRO Adhoc Server (TCP 27312); game data
+//     then flows peer to peer at `gamePort + portOffset`, so all devices must
+//     also share the port offset.
+//   - host(port:)      → proAdhocServer = this device's LAN IP and PPSSPP's
+//                        built-in server on. Never loopback: that is PPSSPP's
+//                        single-machine mode and no other device could join.
+//   - client(host:)    → proAdhocServer = the host's LAN IP.
+//   - spectator(host:) → same as client (PPSSPP has no spectator concept).
+//   - port parameter is unused — the adhoc server uses a fixed TCP port.
+//   - The port offset and the built-in server are read only at boot, so
+//     hosting restarts the game. The player then opens the game's own Ad Hoc
+//     multiplayer menu on every device.
 //
 
 import Foundation
@@ -22,6 +28,7 @@ import Combine
 import PVNetplay
 import PVSettings
 import ObjectiveC
+import PVCoreObjCBridge
 
 // MARK: - Session context storage
 
@@ -32,9 +39,8 @@ private final class PPSSPPNetplayContext {
     /// checks (via UUID comparison) remain stable between timer ticks.
     let roomID: UUID
     let sessionID: UUID
-    /// The effective adhoc server address used to start/join this session.
-    /// For LAN hosts this is "127.0.0.1"; for WAN hosts or clients this is
-    /// the relay/host address passed to connectToAdhocServer.
+    /// The effective adhoc server address used to start/join this session:
+    /// this device's LAN IP for a host, otherwise the host or relay address.
     let effectiveServerAddress: String
     init(role: NetplayRole, settings: NetplaySettings, effectiveServerAddress: String) {
         self.role = role
@@ -84,39 +90,34 @@ private extension PVPPSSPPCore {
     }
 
     var currentNetplayState: NetplayState {
-        let status = _bridge.adhocStatus
-        switch status {
+        let ctx = lastNetplayContext
+        let port = UInt16(PVPPSSPPAdhocServerPort)
+        switch _bridge.adhocStatus {
         case .idle:
             return .idle
         case .hosting:
-            let ctx = lastNetplayContext
-            // PPSSPP adhoc uses a fixed UDP port; normalize to 0 so consumers
-            // don't treat NetplaySettings.port as a meaningful connection parameter.
-            let normalizedPort: UInt16 = 0
-            let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: "127.0.0.1", port: normalizedPort, context: ctx)
+            // The count is what the adhoc server has introduced to the game, so it
+            // stays at 1 until the game's own ad hoc menu is open on both devices.
+            let peers = max(0, _bridge.adhocPeerCount)
+            let room = NetplayRoom.ppssppRoom(
+                id: ctx?.roomID ?? UUID(),
+                address: ctx?.effectiveServerAddress ?? "",
+                port: port,
+                currentPlayers: 1 + peers,
+                context: ctx
+            )
             return .hosting(room: room)
         case .connected:
-            let ctx = lastNetplayContext
-            // Use the stored effective address (relay or peer IP) rather than
-            // role.clientAddress, which is nil for hosts using a relay server.
             let host = ctx?.effectiveServerAddress ?? "0.0.0.0"
-            // PPSSPP adhoc uses a fixed UDP port; normalize to 0 so consumers
-            // don't treat NetplaySettings.port as a meaningful connection parameter.
-            let normalizedPort: UInt16 = 0
-            let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: host, port: normalizedPort, context: ctx)
-            // WAN hosts call connectToAdhocServer (sets status = .connected) but
-            // are still the logical host.  Return .hosting so the UI and manager
-            // treat them correctly rather than as a remote client.
-            if case .host = ctx?.role {
-                return .hosting(room: room)
-            }
-            // Preserve the original role: .spectator falls back to .client in
-            // PPSSPP (no spectator concept), so map both non-host cases to client.
-            let sessionRole = NetplayRole.client(host: host, port: normalizedPort)
+            let room = NetplayRoom.ppssppRoom(id: ctx?.roomID ?? UUID(), address: host, port: port, context: ctx)
+            // Only claim a connection once the game's own ad hoc session is up.
+            // Until then the device is configured but not yet playing.
+            guard _bridge.adhocSessionConnected else { return .connecting(to: room) }
+            // PPSSPP has no spectator concept, so .spectator joins as a client.
             let session = NetplaySession(
                 id: ctx?.sessionID ?? UUID(),
                 room: room,
-                role: sessionRole,
+                role: .client(host: host, port: port),
                 peers: [],
                 frameDelay: ctx?.settings.frameDelay ?? 0,
                 isRollbackEnabled: false
@@ -128,6 +129,40 @@ private extension PVPPSSPPCore {
     }
 }
 
+// MARK: - LAN address selection
+
+/// Picks the address other devices on the Wi-Fi network would use to reach this one.
+enum PPSSPPLANAddress {
+
+    /// The best private IPv4 address in `addresses`, or nil when there is none.
+    /// `NetplayLocalAddresses.current()` can also list cellular and VPN
+    /// interfaces, so prefer the common home-router ranges in order.
+    static func preferred(from addresses: [String]) -> String? {
+        let ipv4 = addresses.filter { octets(of: $0) != nil }
+        return ipv4.first { rank($0) == 0 } ?? ipv4.first { rank($0) == 1 } ?? ipv4.first { rank($0) == 2 }
+    }
+
+    /// The four octets of a dotted-quad IPv4 address, or nil when `text` is not one.
+    static func octets(of text: String) -> [Int]? {
+        let parts = text.split(separator: ".", omittingEmptySubsequences: false)
+        guard parts.count == 4 else { return nil }
+        let values = parts.compactMap { part -> Int? in
+            guard !part.isEmpty, part.count <= 3, part.allSatisfy(\.isNumber) else { return nil }
+            return Int(part)
+        }
+        return values.count == 4 && values.allSatisfy { (0...255).contains($0) } ? values : nil
+    }
+
+    /// 0 = 192.168/16, 1 = 172.16/12, 2 = 10/8, nil = not a private range.
+    private static func rank(_ address: String) -> Int? {
+        guard let o = octets(of: address) else { return nil }
+        if o[0] == 192 && o[1] == 168 { return 0 }
+        if o[0] == 172 && (16...31).contains(o[1]) { return 1 }
+        if o[0] == 10 { return 2 }
+        return nil
+    }
+}
+
 // MARK: - PVNetplayCapable
 
 extension PVPPSSPPCore: PVNetplayCapable {
@@ -135,6 +170,9 @@ extension PVPPSSPPCore: PVNetplayCapable {
     public var supportsNetplay: Bool { true }
 
     public var netplayEngineName: String { "PPSSPP AdHoc" }
+
+    /// The port offset and the built-in server are read only when the game boots.
+    public var netplayHostingRestartsGame: Bool { true }
 
     // MARK: Control
 
@@ -144,28 +182,44 @@ extension PVPPSSPPCore: PVNetplayCapable {
     /// PPSSPP run loop executes).
     public func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {
         do {
-            try await MainActor.run {
+            let restart = try await MainActor.run { () -> Bool in
+                var restartRequired = ObjCBool(false)
                 let effectiveAddress: String
+                let isHost: Bool
                 switch role {
                 case .host:
+                    isHost = true
                     if let relay = settings.relayServer {
-                        // WAN mode: connect to external relay server rather than hosting locally.
+                        // WAN mode: connect to an external server rather than hosting locally.
                         effectiveAddress = relay
-                        try _bridge.connect(toAdhocServer: relay)
+                        try _bridge.connect(toAdhocServer: relay, restartRequired: &restartRequired)
                     } else {
-                        effectiveAddress = "127.0.0.1"
-                        try _bridge.startAdhocLANHost()
+                        guard let lan = PPSSPPLANAddress.preferred(from: NetplayLocalAddresses.current()) else {
+                            throw NetplayError.invalidSettings("Connect to a Wi-Fi network to host.")
+                        }
+                        effectiveAddress = lan
+                        try _bridge.startAdhocLANHost(withAddress: lan, restartRequired: &restartRequired)
                     }
-                case .client(let host, _):
-                    effectiveAddress = host
-                    try _bridge.connect(toAdhocServer: host)
-                case .spectator(let host, _):
+                case .client(let host, _), .spectator(let host, _):
                     // PPSSPP has no spectator concept — join as a regular client.
-                    effectiveAddress = host
-                    try _bridge.connect(toAdhocServer: host)
+                    isHost = false
+                    effectiveAddress = host.trimmingCharacters(in: .whitespaces)
+                    try _bridge.connect(toAdhocServer: effectiveAddress, restartRequired: &restartRequired)
                 }
                 lastNetplayContext = PPSSPPNetplayContext(role: role, settings: settings, effectiveServerAddress: effectiveAddress)
+                PVOSDNotification.postMessage(
+                    Self.sessionMessage(isHost: isHost, address: effectiveAddress, restarting: restartRequired.boolValue),
+                    type: .info,
+                    duration: Self.sessionMessageDuration
+                )
+                return restartRequired.boolValue
             }
+            if restart {
+                // Reboots through setOptionValues, which applies the pending session.
+                await MainActor.run { resetEmulation() }
+            }
+        } catch let error as NetplayError {
+            throw error
         } catch {
             let reason = (error as NSError).localizedDescription
             throw NetplayError.connectionFailed(reason)
@@ -189,6 +243,19 @@ extension PVPPSSPPCore: PVNetplayCapable {
     public var netplayStatePublisher: AnyPublisher<NetplayState, Never> {
         adhocStatePublisher
     }
+
+    // MARK: Messages
+
+    private static let sessionMessageDuration: TimeInterval = 8
+
+    /// What to tell the player: the game itself still has to open its ad hoc menu.
+    static func sessionMessage(isHost: Bool, address: String, restarting: Bool) -> String {
+        let restartNote = restarting ? " The game is restarting to apply the network settings." : ""
+        if isHost {
+            return "Hosting on \(address).\(restartNote) Open the game's Ad Hoc multiplayer menu and create a game, then have the other player join."
+        }
+        return "Joining \(address).\(restartNote) Open the game's Ad Hoc multiplayer menu and join the host's game."
+    }
 }
 
 // MARK: - NetplayRoom factory
@@ -199,6 +266,7 @@ private extension NetplayRoom {
         id: UUID = UUID(),
         address: String,
         port: UInt16,
+        currentPlayers: Int = 1,
         context: PPSSPPNetplayContext?
     ) -> NetplayRoom {
         let settings = context?.settings
@@ -216,7 +284,7 @@ private extension NetplayRoom {
             gameHash: "",
             coreIdentifier: CorePlist.pvCoreIdentifier,
             maxPlayers: settings?.maxPlayers ?? 2,
-            currentPlayers: 1,
+            currentPlayers: currentPlayers,
             isLAN: settings?.relayServer == nil,
             hostAddress: address,
             port: port,

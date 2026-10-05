@@ -81,7 +81,12 @@ public actor PVNetplayManager {
         switch (state, bridgeState) {
         case (.hosting, .hosting(let room)):
             state = .hosting(room: room)
+        case (.connecting, .connected(let session)):
+            // A core that reports its own connection (PPSSPP ad hoc,
+            // Mednafen) finished connecting after `join` returned.
+            state = .connected(session: session)
         case (.hosting, .disconnected(let reason)),
+             (.connecting, .disconnected(let reason)),
              (.connected, .disconnected(let reason)):
             state = .disconnected(reason: reason)
         default:
@@ -138,14 +143,21 @@ public actor PVNetplayManager {
         state = .connecting(to: room)
         do {
             try await bridge.startNetplay(role: role, settings: joinSettings)
-            let session = NetplaySession(
-                room: room,
-                role: role,
-                peers: [],
-                frameDelay: joinSettings.frameDelay,
-                isRollbackEnabled: false
-            )
-            state = .connected(session: session)
+            switch bridge.netplayState {
+            case .connecting:
+                // The core is still connecting and will report `.connected`.
+                break
+            case .connected(let session):
+                state = .connected(session: session)
+            default:
+                state = .connected(session: NetplaySession(
+                    room: room,
+                    role: role,
+                    peers: [],
+                    frameDelay: joinSettings.frameDelay,
+                    isRollbackEnabled: false
+                ))
+            }
         } catch {
             state = .idle
             throw error

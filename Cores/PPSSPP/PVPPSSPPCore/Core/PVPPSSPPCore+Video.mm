@@ -868,6 +868,9 @@ static bool threadStopped = false;
         ILOG(@"runVM: SetupEmulation Starting\n");
         [self setupEmulation];
         ILOG(@"runVM: SetupEmulation OK\n");
+        // A restart (reset) runs this again; clear the flag before the loop can
+        // be stopped, or the next stopVM would not wait for the emulation thread.
+        threadStopped=false;
         threadEnabled=true;
         ILOG(@"runVM: NativeInitGraphics Starting\n");
         NativeInitGraphics(graphicsContext);
@@ -918,6 +921,8 @@ static bool threadStopped = false;
                 }
                 usleep(100 * 1000);
             }
+            // The thread has finished; leave the flag clear for the next run.
+            threadStopped = false;
         }
 	}
 	[[NSNotificationCenter defaultCenter] removeObserver:self];

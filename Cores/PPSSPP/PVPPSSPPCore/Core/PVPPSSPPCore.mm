@@ -292,6 +292,10 @@
 	g_Config.bPauseOnLostFocus = true;
     g_Config.bEnableSound = true;
 
+	// Ad hoc networking: boot-only settings plus any netplay session in progress.
+	// Must run on every boot and restart, after NativeInit and before PSP_InitStart.
+	[self applyAdhocBootConfig];
+
 	// Core Options
 	PSP_CoreParameter().fileToStart     = Path(std::string([_romPath UTF8String]));
 	PSP_CoreParameter().mountIso.clear();

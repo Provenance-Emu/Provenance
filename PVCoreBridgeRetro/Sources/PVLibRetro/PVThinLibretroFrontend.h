@@ -331,6 +331,20 @@ FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotificat
 /// Update a core option at runtime.
 - (void)setCoreOption:(NSString *)key value:(NSString *)value;
 
+/// Reset the core (`retro_reset`) on the emulation thread right after the next
+/// frame, once the core has read every option changed so far.
+///
+/// A core only picks up option changes inside `retro_run`, so resetting
+/// immediately after `-setCoreOption:value:` would restart it on the old
+/// values — and a paused game runs no frame at all. Use this when options that
+/// are read only at boot (PPSSPP's ad hoc server and port offset) must take
+/// effect. Thread-safe. The reset waits for the game to be running.
+- (void)resetEmulationAfterCoreOptionsApplied;
+
+/// Withdraw a reset requested with `-resetEmulationAfterCoreOptionsApplied`
+/// that has not run yet (for example because the game was paused).
+- (void)cancelResetAfterCoreOptionsApplied;
+
 // MARK: MIDI routing
 
 /// Update the cached list of MIDI output destination endpoint refs.

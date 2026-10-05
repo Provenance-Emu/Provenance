@@ -7,14 +7,22 @@
 //
 //  Exposes PPSSPP's PSP Ad Hoc network multiplayer through the PVPPSSPPCoreBridge.
 //
-//  PSP Ad Hoc emulation works by routing PSP-to-PSP wlan traffic through a
-//  central proxy server (PRO Adhoc Server compatible protocol).  All players
-//  must point their `proAdhocServer` config entry at the same host:
+//  PSP Ad Hoc emulation works through a PRO Ad Hoc Server (TCP port 27312)
+//  that introduces players to each other; game data then flows peer to peer
+//  over UDP/TCP at `gamePort + iPortOffset`.  Every device must point
+//  `proAdhocServer` at the same server and use the same `iPortOffset`:
 //
-//    - LAN host: sets server to "127.0.0.1" (local mini-server) — other devices
-//      on the same network use this device's local IP as their server address.
-//    - LAN client: sets server to the host device's LAN IP.
-//    - WAN: sets server to a publicly-reachable PRO Adhoc Server instance.
+//    - LAN host:   enables PPSSPP's built-in server (`bEnableAdhocServer`) and
+//                  sets `proAdhocServer` to this device's own LAN IP.  A
+//                  loopback address ("127.x" / "localhost") would put PPSSPP
+//                  into single-machine mode, so it is never used here.
+//    - LAN client: `proAdhocServer` = the host device's LAN IP; no server.
+//    - WAN:        `proAdhocServer` = a publicly reachable PRO Ad Hoc Server.
+//
+//  `iPortOffset` and the built-in server start are read only when the game
+//  boots, so hosting needs a game restart.  The pending configuration is
+//  applied by `-applyAdhocBootConfig`, which `-setOptionValues` runs on every
+//  boot and restart.  `proAdhocServer` and `bEnableWlan` apply live.
 //
 
 #pragma once
@@ -41,16 +49,23 @@ typedef NS_ERROR_ENUM(PVPPSSPPAdhocErrorDomain, PVPPSSPPAdhocError) {
 typedef NS_ENUM(NSInteger, PVPPSSPPAdhocStatus) {
     /// No adhoc session is active.
     PVPPSSPPAdhocStatusIdle         = 0,
-    /// Hosting — wlan enabled, proAdhocServer == "127.0.0.1".
+    /// Hosting — wlan enabled, built-in server on, proAdhocServer = this device's LAN IP.
     PVPPSSPPAdhocStatusHosting      = 1,
-    /// Connected as a client to a remote adhoc server.
+    /// Configured as a client of another device's (or a public) adhoc server.
+    /// This says nothing about whether the game's own ad hoc session is up;
+    /// see `adhocSessionConnected`.
     PVPPSSPPAdhocStatusConnected    = 2,
 };
 
+/// The PRO Ad Hoc Server's fixed TCP port (`SERVER_PORT` in proAdhoc.h).
+#define PVPPSSPPAdhocServerPort 27312
+/// The port offset every device in a session must share (PPSSPP's default).
+#define PVPPSSPPAdhocPortOffset 10000
+
 /// Adhoc networking category on PVPPSSPPCoreBridge.
 ///
-/// Wraps `g_Config.bEnableWlan` and `g_Config.proAdhocServer` from
-/// PPSSPP's Core/Config.h so that PVNetplayManager can drive sessions.
+/// Wraps the networking fields of PPSSPP's `g_Config` (Core/Config.h) so that
+/// PVNetplayManager can drive sessions.
 @interface PVPPSSPPCoreBridge (Netplay)
 
 /// Current adhoc session status.
@@ -63,36 +78,53 @@ typedef NS_ENUM(NSInteger, PVPPSSPPAdhocStatus) {
 /// Whether PPSSPP wlan emulation is currently enabled.
 @property (nonatomic, readonly) BOOL wlanEnabled;
 
-/// Enable LAN host mode.
-///
-/// Sets `g_Config.proAdhocServer = "127.0.0.1"` and
-/// `g_Config.bEnableWlan = true`.  The caller is responsible for ensuring a
-/// PRO Adhoc Server–compatible listener is reachable at 127.0.0.1 (e.g. via
-/// a bundled mini-server or the PPSSPP internal adhoc server thread).
-///
-/// Other devices on the LAN should call `-connectToAdhocServer:error:` with
-/// this device's LAN IP address.
-///
-/// @param error  Set on failure (core not ready, already active, etc.).
-/// @return YES on success.
-- (BOOL)startAdhocLANHostWithError:(NSError *__autoreleasing _Nullable *)error;
+/// Whether the game has brought its ad hoc connection up (the game opened its
+/// own ad hoc / multiplayer menu and joined the network).
+@property (nonatomic, readonly) BOOL adhocSessionConnected;
 
-/// Enable client mode pointing at a remote adhoc server.
+/// Number of other players the adhoc server has introduced to this game.
+@property (nonatomic, readonly) NSInteger adhocPeerCount;
+
+/// This install's ad hoc MAC address ("xx:xx:xx:xx:xx:xx"): random, generated
+/// once and persisted, so no two installs share one.
++ (NSString *)adhocMACAddress;
+
+/// Configure this device as the LAN host.
 ///
-/// Sets `g_Config.proAdhocServer = host` and `g_Config.bEnableWlan = true`.
+/// Sets `proAdhocServer = lanAddress`, `bEnableWlan`, `bEnableAdhocServer` and
+/// remembers the configuration for every later boot until `-stopAdhoc`.
 ///
-/// @param host   IP address or hostname of the PRO Adhoc Server instance.
+/// @param lanAddress  This device's own LAN IPv4 address. Loopback is rejected.
+/// @param restartRequired  Set to YES when the running game booted without
+///        the built-in server (or with another port offset) and must restart.
+/// @param error  Set on failure (core not ready, already active, bad address).
+/// @return YES on success.
+- (BOOL)startAdhocLANHostWithAddress:(NSString *)lanAddress
+                     restartRequired:(BOOL * _Nullable)restartRequired
+                               error:(NSError *__autoreleasing _Nullable *)error;
+
+/// Configure this device as a client of an adhoc server.
+///
+/// Sets `proAdhocServer = host` and `bEnableWlan = true`.
+///
+/// @param host   The host device's LAN IP, or a public server's hostname.
+/// @param restartRequired  Set to YES when the running game booted with a
+///        setting that only a restart can change.
 /// @param error  Set on failure.
 /// @return YES on success.
 - (BOOL)connectToAdhocServer:(NSString *)host
+             restartRequired:(BOOL * _Nullable)restartRequired
                        error:(NSError *__autoreleasing _Nullable *)error;
 
 /// Stop the current adhoc session and restore previous networking settings.
 ///
-/// Restores `g_Config.bEnableWlan` and `g_Config.proAdhocServer` to the
-/// values that were active before adhoc was started. Falls back to disabling
-/// wlan and clearing `proAdhocServer` if no prior values were saved.
+/// Restores the `g_Config` values that were active before adhoc was started.
+/// A built-in server started at boot keeps running until the next restart.
 - (void)stopAdhoc;
+
+/// Apply the boot-only adhoc settings (port offset, MAC, UPnP) and any pending
+/// session configuration. Called from `-setOptionValues` before the PSP boots.
+- (void)applyAdhocBootConfig;
 
 @end
 

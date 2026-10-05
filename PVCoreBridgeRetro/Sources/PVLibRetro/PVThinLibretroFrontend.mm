@@ -528,6 +528,8 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
     // Core options
     NSMutableDictionary<NSString *, NSString *> *_coreOptions;
     BOOL _coreOptionsDirty;
+    /// A reset is waiting for the core to read changed options. Guarded by `_optionsLock`.
+    BOOL _resetAfterOptionsApplied;
     /// Set to YES after `retro_run` throws an uncatchable C++ exception
     /// (typically `vk::DeviceLostError` from a libretro core's own Vulkan
     /// stack). Subsequent `runFrame` calls become no-ops so we don't keep
@@ -4191,6 +4193,10 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
         _coreDidThrow = YES;
         [self notifyCoreDeadWithReason:exc.reason ?: @"NSException"];
     }
+
+    if (!_coreDidThrow) {
+        [self performPendingResetAfterCoreOptionsApplied];
+    }
 }
 
 /// Called from runFrame's @catch / catch handlers when the core throws an
@@ -4679,6 +4685,31 @@ NSNotificationName const PVEmulatorCoreDidFailToStartNotification =
     _coreOptions[key] = value;
     _coreOptionsDirty = YES;
     os_unfair_lock_unlock(&_optionsLock);
+}
+
+- (void)resetEmulationAfterCoreOptionsApplied {
+    os_unfair_lock_lock(&_optionsLock);
+    _resetAfterOptionsApplied = YES;
+    os_unfair_lock_unlock(&_optionsLock);
+}
+
+- (void)cancelResetAfterCoreOptionsApplied {
+    os_unfair_lock_lock(&_optionsLock);
+    _resetAfterOptionsApplied = NO;
+    os_unfair_lock_unlock(&_optionsLock);
+}
+
+/// Runs the reset `-resetEmulationAfterCoreOptionsApplied` asked for, once the
+/// core has read every option change. Called on the emulation thread right
+/// after `retro_run`, which is where cores look for changed options.
+- (void)performPendingResetAfterCoreOptionsApplied {
+    os_unfair_lock_lock(&_optionsLock);
+    BOOL due = _resetAfterOptionsApplied && !_coreOptionsDirty;
+    if (due) _resetAfterOptionsApplied = NO;
+    os_unfair_lock_unlock(&_optionsLock);
+    if (due) {
+        [self resetEmulation];
+    }
 }
 
 - (NSArray<NSDictionary<NSString *, id> *> *)coreOptionDefinitions {
