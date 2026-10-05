@@ -10,7 +10,8 @@
 //
 //  PPSSPP adhoc model:
 //   - All players point at the same PRO Adhoc Server address.
-//   - host(port:)      → run local adhoc server; proAdhocServer = "127.0.0.1"
+//   - host(port:)      → proAdhocServer = "127.0.0.1" (the built-in adhoc
+//                        server must be enabled; this doesn't start it)
 //   - client(host:)    → proAdhocServer = host's LAN IP
 //   - spectator(host:) → same as client (PPSSPP has no spectator concept)
 //   - port parameter is unused — PPSSPP's adhoc server uses a fixed UDP port.

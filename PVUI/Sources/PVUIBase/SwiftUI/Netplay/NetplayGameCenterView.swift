@@ -5,9 +5,11 @@
 //  Created by Joseph Mattiello on 3/27/26.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Provides Game Center matchmaking for netplay. When a GKMatch is formed,
-//  player addresses are exchanged via GKMatch data channel so that RetroArch
-//  netplay can establish a TCP connection.
+//  Provides Game Center matchmaking for netplay. Game Center pairs the
+//  players but never reveals their IP addresses, so once a GKMatch forms the
+//  host sends its own addresses and port over the match (`NetplayJoinInfo`)
+//  and the other player connects to them directly. That works on the same
+//  network, or across the internet when the host's port is reachable.
 //
 
 #if !os(watchOS) && canImport(GameKit)
@@ -15,14 +17,6 @@ import SwiftUI
 import GameKit
 import PVNetplay
 import PVLogging
-
-// MARK: - Constants
-
-/// Default RetroArch relay server used for Game Center-brokered sessions.
-/// GKMatch does not expose raw IP addresses, so all traffic is routed through
-/// a relay rather than direct P2P.
-/// Uses `NetplayDefaultsKey.defaultRelayHostname` as the single source of truth.
-private let netplayDefaultRelayServer = NetplayDefaultsKey.defaultRelayHostname
 
 // MARK: - GameKit Authenticator
 
@@ -130,18 +124,20 @@ final class NetplayGKMatchCoordinator: NSObject, ObservableObject {
     private func startAsHost(match: GKMatch) async {
         do {
             var settings = NetplaySettings.fromStoredDefaults(roomName: gameName)
-            settings.relayServer = netplayDefaultRelayServer
-            // Port 0 means OS-assigned; we cannot communicate that to peers,
-            // so fall back to the RetroArch default before hosting.
+            // The other player connects to our addresses directly.
+            settings.relayServer = nil
+            // "Any free port" can't be shared before hosting starts.
             if settings.port == 0 {
                 settings.port = NetplayJoinRequest.defaultPort
             }
             try await ObservableNetplayManager.shared.host(settings: settings)
-            // Broadcast the port so joining peers can connect.
-            let port = settings.port
-            let portData = withUnsafeBytes(of: port.bigEndian) { Data($0) }
-            try match.sendData(toAllPlayers: portData, with: .reliable)
-            ILOG("[GameKit] Sent port \(port) to peers")
+            let addresses = NetplayLocalAddresses.current()
+            guard !addresses.isEmpty else {
+                throw NetplayError.connectionFailed("This device has no network address to share.")
+            }
+            let info = NetplayJoinInfo(port: settings.port, addresses: addresses)
+            try match.sendData(toAllPlayers: info.encoded(), with: .reliable)
+            ILOG("[GameKit] Sent join info: \(addresses.joined(separator: ", ")) port \(settings.port)")
             isExchangingAddresses = false
             onConnected?()
         } catch {
@@ -153,38 +149,38 @@ final class NetplayGKMatchCoordinator: NSObject, ObservableObject {
 
     // MARK: - Client path (called from GKMatchDelegate on main thread)
 
-    fileprivate func receiveHostPort(_ port: UInt16, from hostPlayer: GKPlayer) {
-        ILOG("[GameKit] Received host port: \(port)")
-        let hostDisplayName = hostPlayer.displayName
-        // TODO: GKMatch does not expose raw IP addresses — all traffic is routed through
-        // Apple's Game Center relay. The RA.ME relay (set below) will handle the actual
-        // TCP routing using the relay traversal code rather than a direct IP connection.
-        // A future phase should exchange a relay traversal code (e.g. RA.ME session token)
-        // instead of relying on the display name as a placeholder hostAddress.
-        let room = NetplayRoom(
-            hostName: hostDisplayName,
-            gameName: gameName,
-            gameHash: localGameHash,
-            coreIdentifier: coreIdentifier,
-            maxPlayers: 2,
-            currentPlayers: 1,
-            isLAN: false,
-            hostAddress: hostDisplayName,
-            port: port,
-            discoverySource: .manual
-        )
+    fileprivate func receiveJoinInfo(_ info: NetplayJoinInfo, from hostPlayer: GKPlayer) {
+        ILOG("[GameKit] Host \(hostPlayer.displayName) is at \(info.addresses.joined(separator: ", ")) port \(info.port)")
         var settings = NetplaySettings.fromStoredDefaults()
-        settings.relayServer = netplayDefaultRelayServer
+        settings.relayServer = nil
         Task {
-            do {
-                try await ObservableNetplayManager.shared.join(room: room, settings: settings)
-                isExchangingAddresses = false
-                onConnected?()
-            } catch {
-                connectionError = error.localizedDescription
-                isExchangingAddresses = false
-                ELOG("[GameKit] Client join error: \(error)")
+            // Try each address the host has, same-network ones first.
+            var lastError: Error = NetplayError.connectionFailed("The host shared no addresses.")
+            for address in info.addresses {
+                let room = NetplayRoom(
+                    hostName: hostPlayer.displayName,
+                    gameName: gameName,
+                    gameHash: localGameHash,
+                    coreIdentifier: coreIdentifier,
+                    maxPlayers: 2,
+                    currentPlayers: 1,
+                    isLAN: false,
+                    hostAddress: address,
+                    port: info.port,
+                    discoverySource: .manual
+                )
+                do {
+                    try await ObservableNetplayManager.shared.join(room: room, settings: settings)
+                    isExchangingAddresses = false
+                    onConnected?()
+                    return
+                } catch {
+                    WLOG("[GameKit] Couldn't join \(address):\(info.port): \(error.localizedDescription)")
+                    lastError = error
+                }
             }
+            connectionError = lastError.localizedDescription
+            isExchangingAddresses = false
         }
     }
 }
@@ -193,14 +189,16 @@ final class NetplayGKMatchCoordinator: NSObject, ObservableObject {
 
 extension NetplayGKMatchCoordinator: GKMatchDelegate {
     nonisolated func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
-        guard data.count == 2 else {
-            WLOG("[GameKit] Received unexpected data length \(data.count) from \(player.displayName); expected 2 bytes (port)")
+        guard let info = NetplayJoinInfo.decode(data) else {
+            WLOG("[GameKit] Unreadable join info (\(data.count) bytes) from \(player.displayName)")
+            Task { @MainActor in
+                self.connectionError = "\(player.displayName) is running a different version of Provenance. Update both devices and try again."
+                self.isExchangingAddresses = false
+            }
             return
         }
-        // Byte-by-byte construction avoids any alignment assumption on the Data buffer.
-        let port = UInt16(data[0]) << 8 | UInt16(data[1])
         Task { @MainActor in
-            self.receiveHostPort(port, from: player)
+            self.receiveJoinInfo(info, from: player)
         }
     }
 
@@ -311,8 +309,8 @@ struct GKMatchmakerRepresentable: UIViewControllerRepresentable {
 /// 1. Authenticate with Game Center (auto-triggers on appear).
 /// 2. User taps "Find Match via Game Center".
 /// 3. GKMatchmakerViewController is presented (iOS/visionOS).
-/// 4. On match, the host player broadcasts their port; the joining player receives
-///    it and initiates a RetroArch netplay join.
+/// 4. On match, the host starts hosting and sends its addresses and port; the
+///    other player connects to them directly.
 @MainActor
 public struct NetplayGameCenterView: View {
 
@@ -471,7 +469,7 @@ public struct NetplayGameCenterView: View {
         } header: {
             Text("Matchmaking")
         } footer: {
-            Text("Game Center pairs two players, then Provenance connects them automatically via RetroArch netplay over the RA.ME relay.")
+            Text("Game Center pairs two players, then Provenance connects them directly. This works on the same Wi-Fi, or over the internet if the host's netplay port is reachable.")
         }
     }
 

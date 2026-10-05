@@ -20,10 +20,8 @@
 //       PVMupenBridge (MupenBridge+Netplay.h/.mm)
 //    4. Set supportsNetplay = true here and call through to the bridge
 //
-//  For immediate N64 netplay use the RetroArch path:
-//    - mupen64plus_next (RA core) — HAVE_NETPLAY enabled, works today
-//    - parallel_n64 (RA core)    — HAVE_NETPLAY enabled, works today
-//  These run on PVThinLibretroCore, which conforms to PVNetplayCapable.
+//  The libretro N64 cores (mupen64plus_next, parallel_n64) don't have netplay
+//  either: on the thin wrapper only cores with the netpacket interface do.
 //
 
 #if canImport(PVNetplay)

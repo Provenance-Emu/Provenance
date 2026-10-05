@@ -24,7 +24,7 @@ public struct NetplayInviteView: View {
     @State private var hostAddress: String = ""
     @State private var port: String = String(NetplayJoinRequest.defaultPort)
     @State private var useRelay: Bool = false
-    @State private var relayServer: String = NetplayDefaultsKey.defaultRelayHostname
+    @State private var relayServer: String = ""
 
     public init(gameName: String) {
         self.gameName = gameName
@@ -67,7 +67,7 @@ public struct NetplayInviteView: View {
         } header: {
             Text("Connection")
         } footer: {
-            Text("Your public IP or relay address. Leave relay ON if using RA.ME.")
+            Text("An address the other player can reach. Over the internet, forward this port to the host.")
         }
     }
 
@@ -85,7 +85,7 @@ public struct NetplayInviteView: View {
         } header: {
             Text("Relay")
         } footer: {
-            Text("The RA.ME relay (ra.me) lets friends connect without port forwarding.")
+            Text("Only PPSSPP (adhoc server address) and Dolphin (traversal code) use a relay. Leave it off otherwise.")
         }
     }
 
@@ -158,14 +158,18 @@ public struct NetplayInviteView: View {
 
     private func prefillFromActiveSession() {
         if case .hosting(let room) = netplay.state {
-            hostAddress = room.hostAddress == "0.0.0.0" ? "" : room.hostAddress
-            port = String(room.port)
+            // Cores publish a wildcard or loopback address while hosting;
+            // share this device's own address instead.
+            let unusable: Set<String> = ["", "0.0.0.0", "127.0.0.1"]
+            hostAddress = unusable.contains(room.hostAddress)
+                ? (NetplayLocalAddresses.current().first ?? "")
+                : room.hostAddress
+            if room.port != 0 {
+                port = String(room.port)
+            }
         }
-        // Pre-fill relay from stored defaults (key shared with NetplaySettingsView).
-        // Fall back to "ra.me" (matching the SettingsView @AppStorage default) so that
-        // relay is pre-checked on a fresh install before the user has opened Settings.
-        let stored = UserDefaults.standard.string(forKey: NetplayDefaultsKey.relayServer) ?? NetplayDefaultsKey.defaultRelayHostname
-        if !stored.isEmpty {
+        // Pre-fill the relay the user set in Netplay settings, if any.
+        if let stored = NetplayDefaultsKey.storedRelayServer() {
             useRelay = true
             relayServer = stored
         }

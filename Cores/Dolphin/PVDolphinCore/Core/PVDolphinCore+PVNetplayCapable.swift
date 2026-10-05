@@ -15,9 +15,10 @@
 //    .spectator(host:port:)     → mapped to .client (Dolphin has no spectator
 //                                  role; peer joins as an inactive controller).
 //
-//  Traversal (Dolphin STUN relay) is activated automatically when
-//  settings.relayServer is non-nil (pass any non-empty value;
-//  the actual relay host is always stun.dolphin-emu.org:6262).
+//  Traversal (Dolphin's STUN relay, always stun.dolphin-emu.org:6262): a
+//  client joins by traversal code instead of address when
+//  settings.relayServer is non-nil (any value). The host never enables
+//  traversal, so it has no code to hand out yet.
 //
 
 import Foundation

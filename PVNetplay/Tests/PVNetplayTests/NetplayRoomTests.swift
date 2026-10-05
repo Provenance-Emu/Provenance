@@ -170,9 +170,9 @@ struct NetplaySettingsTests {
         #expect(NetplaySettings.defaultLAN.port == 55435)
     }
 
-    @Test("defaultWAN has relay server")
-    func defaultWANRelay() {
-        #expect(NetplaySettings.defaultWAN.relayServer != nil)
+    @Test("defaultLAN connects directly")
+    func defaultLANHasNoRelay() {
+        #expect(NetplaySettings.defaultLAN.relayServer == nil)
     }
 
     @Test("custom settings round-trip")

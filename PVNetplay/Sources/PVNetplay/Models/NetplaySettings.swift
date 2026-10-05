@@ -16,7 +16,9 @@ public struct NetplaySettings: Sendable {
     public var maxSpectators: Int
     /// Whether spectators are allowed.
     public var allowSpectators: Bool
-    /// Relay server hostname. nil = direct P2P; "ra.me" = RetroArch relay.
+    /// Relay or server address. nil = direct connection. Only some cores use
+    /// it: PPSSPP connects to an adhoc server here; a Dolphin client joins by
+    /// traversal code instead of address when it is set.
     public var relayServer: String?
     /// Optional room password (nil = open room).
     public var password: String?
@@ -61,16 +63,6 @@ public struct NetplaySettings: Sendable {
         maxSpectators: 4,
         allowSpectators: true,
         relayServer: nil,
-        maxPlayers: 2,
-        port: 55435
-    )
-
-    /// Default settings for WAN play via RetroArch relay.
-    public static let defaultWAN = NetplaySettings(
-        frameDelay: 2,
-        maxSpectators: 2,
-        allowSpectators: true,
-        relayServer: "ra.me",
         maxPlayers: 2,
         port: 55435
     )

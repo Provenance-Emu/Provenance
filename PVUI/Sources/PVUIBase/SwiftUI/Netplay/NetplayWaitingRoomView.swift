@@ -9,9 +9,6 @@
 #if !os(watchOS)
 import SwiftUI
 import PVNetplay
-#if canImport(Darwin)
-import Darwin
-#endif
 
 /// Waiting room shown after a host creates a room, while waiting for players to join.
 ///
@@ -382,44 +379,9 @@ public struct NetplayWaitingRoomView: View {
 
     // MARK: - Helpers
 
-    /// Returns the first non-loopback IPv4 address of the device.
+    /// The address other players on this network can reach, or "" if none.
     private static func localIPAddress() -> String {
-        #if canImport(Darwin)
-        var address = ""
-        var ifaddr: UnsafeMutablePointer<ifaddrs>?
-        guard getifaddrs(&ifaddr) == 0 else { return "" }
-        defer { freeifaddrs(ifaddr) }
-        var ptr = ifaddr
-        while let ifa = ptr {
-            let flags = Int32(ifa.pointee.ifa_flags)
-            let isUp = (flags & IFF_UP) != 0
-            let isRunning = (flags & IFF_RUNNING) != 0
-            let isLoopback = (flags & IFF_LOOPBACK) != 0
-            guard let ifaAddr = ifa.pointee.ifa_addr else {
-                ptr = ifa.pointee.ifa_next
-                continue
-            }
-            let addr = ifaAddr.pointee
-            if isUp && isRunning && !isLoopback && addr.sa_family == UInt8(AF_INET) {
-                var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-                if getnameinfo(
-                    ifaAddr,
-                    socklen_t(addr.sa_len),
-                    &hostname,
-                    socklen_t(hostname.count),
-                    nil, 0,
-                    NI_NUMERICHOST
-                ) == 0 {
-                    address = String(cString: hostname)
-                    break
-                }
-            }
-            ptr = ifa.pointee.ifa_next
-        }
-        return address
-        #else
-        return ""
-        #endif
+        NetplayLocalAddresses.current().first ?? ""
     }
 }
 #endif

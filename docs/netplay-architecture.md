@@ -18,6 +18,11 @@
 >   emulation thread each frame.
 > - **LAN discovery:** hosts advertise `_provenance-np._tcp` over Bonjour;
 >   `PVNetplayBonjourDiscovery` browses it. There is no internet lobby.
+> - **Game Center** only pairs players: the host sends its addresses and port
+>   (`NetplayJoinInfo`) over the GKMatch and the other player connects
+>   directly, so it works on one network or with the host's port reachable.
+> - **Relay** is off by default (a stored `ra.me` counts as off). Only PPSSPP
+>   (adhoc server address) and Dolphin clients (join by traversal code) read it.
 > - **Native cores** (mGBA, Dolphin, PPSSPP, melonDS, Mednafen) have their own
 >   `PVNetplayCapable` conformances and share `PVNetplayManager` and the UI.
 

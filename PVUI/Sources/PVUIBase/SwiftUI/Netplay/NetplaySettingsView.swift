@@ -22,9 +22,18 @@ enum NetplayDefaultsKey {
     static let frameDelay          = "netplay.frameDelay"
     static let maxPlayers          = "netplay.maxPlayers"
     static let allowSpectators     = "netplay.allowSpectators"
-    /// Default relay hostname used when no custom relay has been configured.
-    /// Single source of truth shared by settings, invite, and Game Center views.
-    static let defaultRelayHostname = "ra.me"
+    /// RetroArch's relay, the old default. Nothing can use it since the
+    /// RetroArch runtime was removed, and it broke mGBA and Dolphin joins, so a
+    /// stored "ra.me" counts as no relay.
+    static let retiredRelayHostname = "ra.me"
+
+    /// The relay the user set, or nil for a direct connection.
+    static func storedRelayServer() -> String? {
+        let stored = (UserDefaults.standard.string(forKey: relayServer) ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !stored.isEmpty, stored.lowercased() != retiredRelayHostname else { return nil }
+        return stored
+    }
 }
 
 /// Valid port range: 0 = OS-assigned, 1–65535 = explicit port.
@@ -42,7 +51,7 @@ public struct NetplaySettingsView: View {
 
     @AppStorage(NetplayDefaultsKey.nickname)        private var nickname: String = ""
     @AppStorage(NetplayDefaultsKey.port)            private var port: Int = 55435
-    @AppStorage(NetplayDefaultsKey.relayServer)     private var relayServer: String = NetplayDefaultsKey.defaultRelayHostname
+    @AppStorage(NetplayDefaultsKey.relayServer)     private var relayServer: String = ""
     @AppStorage(NetplayDefaultsKey.frameDelay)      private var frameDelay: Int = 0
     @AppStorage(NetplayDefaultsKey.maxPlayers)      private var maxPlayers: Int = 2
     @AppStorage(NetplayDefaultsKey.allowSpectators) private var allowSpectators: Bool = true
@@ -103,15 +112,22 @@ public struct NetplaySettingsView: View {
     private var connectionSection: some View {
         SwiftUI.Section {
             portRow
-            TextField("e.g. ra.me (empty = LAN only)", text: $relayServer)
+            TextField("Relay (optional)", text: $relayServer)
                 .autocorrectionDisabled()
                 #if canImport(UIKit)
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
                 #endif
+                .onAppear {
+                    if relayServer.lowercased() == NetplayDefaultsKey.retiredRelayHostname {
+                        relayServer = ""
+                    }
+                }
         } header: {
             Text("Connection")
         } footer: {
+            Text("Leave the relay empty to connect directly. Only PPSSPP (the address of an adhoc server) and Dolphin (joining by traversal code) use it.")
+                .foregroundStyle(.secondary)
             if port < netplayPortRange.lowerBound || port > netplayPortRange.upperBound {
                 Text("Port must be between 0 and 65535 (0 = OS-assigned).")
                     .foregroundStyle(.red)
@@ -147,7 +163,7 @@ public struct NetplaySettingsView: View {
         } header: {
             Text("Performance")
         } footer: {
-            Text("Higher frame delay reduces network load but increases input lag. Use 0 for rollback-only mode on fast connections.")
+            Text("Frame delay trades input lag for smoother play on a slow connection. Dolphin uses it; other cores ignore it.")
         }
     }
 
@@ -202,14 +218,13 @@ extension NetplaySettings {
             storedPort = defaults.integer(forKey: NetplayDefaultsKey.port)
         }
         let clampedPort   = UInt16(clamping: max(0, min(65535, storedPort)))
-        let relayRaw      = defaults.string(forKey: NetplayDefaultsKey.relayServer) ?? NetplayDefaultsKey.defaultRelayHostname
         let storedPlayers = defaults.integer(forKey: NetplayDefaultsKey.maxPlayers)
 
         return NetplaySettings(
             frameDelay:      max(0, min(10, defaults.integer(forKey: NetplayDefaultsKey.frameDelay))),
             maxSpectators:   4,
             allowSpectators: defaults.object(forKey: NetplayDefaultsKey.allowSpectators) as? Bool ?? true,
-            relayServer:     relayRaw.isEmpty ? nil : relayRaw,
+            relayServer:     NetplayDefaultsKey.storedRelayServer(),
             roomName:        roomName,
             maxPlayers:      max(2, min(4, storedPlayers == 0 ? 2 : storedPlayers)),
             playerIndex:     0,

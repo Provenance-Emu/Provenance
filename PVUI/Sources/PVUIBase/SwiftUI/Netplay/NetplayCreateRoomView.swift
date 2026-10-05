@@ -74,7 +74,7 @@ public struct NetplayCreateRoomView: View {
                     HStack {
                         Text("Relay Server")
                         Spacer()
-                        Text(settings.relayServer ?? "LAN Only")
+                        Text(settings.relayServer ?? "None (direct)")
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .truncationMode(.middle)

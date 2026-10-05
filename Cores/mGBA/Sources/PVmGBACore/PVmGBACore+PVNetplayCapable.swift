@@ -23,6 +23,7 @@
 import Foundation
 import Combine
 import PVNetplay
+import PVLogging
 import PVmGBABridge
 import ObjectiveC
 
@@ -208,9 +209,10 @@ extension PVmGBACore: PVNetplayCapable {
             throw NetplayError.alreadyActive
         }
 
-        // This implementation is LAN-only; relay/WAN sessions are not supported.
-        if settings.relayServer != nil {
-            throw NetplayError.invalidSettings("mGBA link-cable netplay supports LAN only. Remove the relay server setting.")
+        // Link cable connects directly to the host's address; a relay means
+        // nothing to it, so ignore one rather than refuse to connect.
+        if let relay = settings.relayServer {
+            WLOG("mGBA netplay: ignoring relay \(relay); link cable connects directly")
         }
 
         // Perform the potentially blocking bridge calls off the main actor.

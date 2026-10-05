@@ -30,7 +30,7 @@ public struct NetplayRoom: Identifiable, Sendable, Hashable {
     public let isLAN: Bool
     /// Host IP address or hostname
     public let hostAddress: String
-    /// Netplay port (RetroArch default: 55435)
+    /// Netplay port (default 55435)
     public let port: UInt16
     /// Dolphin relay traversal code (non-nil when the host used STUN/traversal relay).
     ///

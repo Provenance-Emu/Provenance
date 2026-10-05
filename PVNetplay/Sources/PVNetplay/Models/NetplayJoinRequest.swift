@@ -26,7 +26,7 @@ public struct NetplayJoinRequest: Equatable, Sendable {
 // MARK: - URL parsing
 
 public extension NetplayJoinRequest {
-    /// The default RetroArch netplay port used when no port is specified.
+    /// The netplay port used when none is given (55435, as RetroArch used).
     static let defaultPort: UInt16 = 55435
 
     /// Parses a `provenance://netplay/join` deep link URL into a `NetplayJoinRequest`.

@@ -236,7 +236,8 @@ extension PVThinLibretroCore {
             currentPlayers: 1 + peerCount,
             isLAN: room.isLAN,
             hostAddress: room.hostAddress,
-            port: room.port,
+            // The bound port, which differs from the requested one when that was 0.
+            port: _netpacketTransport?.listeningPort ?? room.port,
             allowsSpectators: false,
             discoverySource: .netpacket
         )))
