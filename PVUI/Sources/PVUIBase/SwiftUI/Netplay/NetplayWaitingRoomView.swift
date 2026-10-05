@@ -28,6 +28,8 @@ public struct NetplayWaitingRoomView: View {
 
     @StateObject private var netplay = ObservableNetplayManager.shared
     @State private var localIP: String = ""
+    @State private var isStartingGame = false
+    @State private var startError: String?
 
     @Environment(\.dismiss) private var dismiss
 
@@ -125,6 +127,15 @@ public struct NetplayWaitingRoomView: View {
             }
             .onAppear {
                 localIP = Self.localIPAddress()
+            }
+            .alert(
+                "Couldn't Start",
+                isPresented: Binding(get: { startError != nil }, set: { if !$0 { startError = nil } }),
+                presenting: startError
+            ) { _ in
+                Button("OK", role: .cancel) {}
+            } message: { message in
+                Text(message)
             }
             .onChange(of: netplay.state) { _, newState in
                 switch newState {
@@ -286,12 +297,16 @@ public struct NetplayWaitingRoomView: View {
             } label: {
                 HStack {
                     Spacer()
+                    if isStartingGame {
+                        ProgressView()
+                            .padding(.trailing, 8)
+                    }
                     Text("Start Game")
                         .fontWeight(.semibold)
                     Spacer()
                 }
             }
-            .disabled(!canStartGame)
+            .disabled(!canStartGame || isStartingGame)
 
             if !canStartGame {
                 Text("Waiting for at least one player to join before starting.")
@@ -302,7 +317,11 @@ public struct NetplayWaitingRoomView: View {
             }
         }
     }
+}
 
+// MARK: - Rows and actions
+
+extension NetplayWaitingRoomView {
     // MARK: - Player Row
 
     @ViewBuilder
@@ -367,8 +386,18 @@ public struct NetplayWaitingRoomView: View {
     // MARK: - Actions
 
     private func startGame() {
-        gameStarted = true
-        dismiss()
+        isStartingGame = true
+        Task { @MainActor in
+            defer { isStartingGame = false }
+            do {
+                // Cores that start every player together (Dolphin) do it here.
+                try await netplay.startGame()
+                gameStarted = true
+                dismiss()
+            } catch {
+                startError = error.localizedDescription
+            }
+        }
     }
 
     private func cancelRoom() {

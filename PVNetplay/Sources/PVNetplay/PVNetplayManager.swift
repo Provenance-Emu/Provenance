@@ -181,6 +181,21 @@ public actor PVNetplayManager {
 
     // MARK: - Disconnect
 
+    // MARK: - Start
+
+    /// Host only: start the game for everyone who has joined, for cores that
+    /// need it (`netplayHostStartsGame`). A no-op otherwise.
+    public func startGame() async throws {
+        guard case .hosting = state else { return }
+        guard let bridge = activeBridge else { throw NetplayError.bridgeNotReady }
+        try await bridge.startNetplayGame()
+    }
+
+    /// Whether hosting would restart the running game.
+    public var hostingRestartsGame: Bool {
+        activeBridge?.netplayHostingRestartsGame ?? false
+    }
+
     /// Disconnect from the current session.
     public func disconnect() async {
         await activeBridge?.stopNetplay()
@@ -230,6 +245,14 @@ public final class ObservableNetplayManager: ObservableObject {
 
     public func disconnect() async {
         await manager.disconnect()
+    }
+
+    public func startGame() async throws {
+        try await manager.startGame()
+    }
+
+    public func hostingRestartsGame() async -> Bool {
+        await manager.hostingRestartsGame
     }
 
     public func startDiscovery() {

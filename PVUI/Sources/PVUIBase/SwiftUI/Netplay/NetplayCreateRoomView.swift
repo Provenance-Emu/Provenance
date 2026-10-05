@@ -28,6 +28,8 @@ public struct NetplayCreateRoomView: View {
     @State private var errorMessage: String?
     @State private var showError = false
     @State private var showWaitingRoom = false
+    /// Hosting restarts the running game for this core (PPSSPP ad hoc).
+    @State private var hostingRestartsGame = false
     /// Set to true by NetplayWaitingRoomView when the host taps Start Game,
     /// so onDismiss knows NOT to tear down the in-progress session.
     @State private var gameStarted = false
@@ -106,8 +108,13 @@ public struct NetplayCreateRoomView: View {
                         }
                     }
                     .disabled(isStarting || settings.roomName.isEmpty)
+                } footer: {
+                    if hostingRestartsGame {
+                        Text("Hosting restarts the game so it can use the network. Save first.")
+                    }
                 }
             }
+            .task { hostingRestartsGame = await netplay.hostingRestartsGame() }
             .navigationTitle("Create Room")
             #if !os(tvOS)
             .navigationBarTitleDisplayMode(.inline)

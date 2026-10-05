@@ -35,6 +35,13 @@ public protocol PVNetplayCapable: AnyObject, Sendable {
     /// The current netplay state.
     var netplayState: NetplayState { get }
 
+    // Optional steps; defaults below. Requirements, not just extension
+    // methods, so a core's own implementation is called through
+    // `any PVNetplayCapable`.
+    var netplayHostStartsGame: Bool { get }
+    func startNetplayGame() async throws
+    var netplayHostingRestartsGame: Bool { get }
+
     #if canImport(Combine)
     /// A publisher that emits state changes.
     var netplayStatePublisher: AnyPublisher<NetplayState, Never> { get }
@@ -44,6 +51,23 @@ public protocol PVNetplayCapable: AnyObject, Sendable {
 // MARK: - NetplayError
 
 /// Errors thrown by `PVNetplayCapable` implementations.
+// MARK: - Optional session steps
+
+extension PVNetplayCapable {
+    /// Whether the host starts the game for everyone with an explicit
+    /// "Start Game" once players have joined (Dolphin: every player reboots
+    /// into the game together). When false, players join the running game.
+    public var netplayHostStartsGame: Bool { false }
+
+    /// Host only: start the game for everyone who has joined. Called from the
+    /// waiting room's Start Game. Does nothing unless `netplayHostStartsGame`.
+    public func startNetplayGame() async throws {}
+
+    /// Whether hosting restarts the running game, because the core reads its
+    /// network settings only at boot (PPSSPP ad hoc). The UI warns first.
+    public var netplayHostingRestartsGame: Bool { false }
+}
+
 public enum NetplayError: Error, LocalizedError, Sendable {
     case unsupported
     case alreadyActive

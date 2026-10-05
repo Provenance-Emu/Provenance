@@ -310,3 +310,33 @@ struct PVNetplayCapableTests {
     }
 }
 #endif
+
+// MARK: - Optional session steps
+
+private final class StartingBridge: PVNetplayCapable, @unchecked Sendable {
+    var startCalls = 0
+    var supportsNetplay: Bool { true }
+    var netplayEngineName: String { "Test" }
+    func startNetplay(role: NetplayRole, settings: NetplaySettings) async throws {}
+    func stopNetplay() async {}
+    var netplayState: NetplayState { .idle }
+    #if canImport(Combine)
+    var netplayStatePublisher: AnyPublisher<NetplayState, Never> { Just(.idle).eraseToAnyPublisher() }
+    #endif
+    var netplayHostStartsGame: Bool { true }
+    func startNetplayGame() async throws { startCalls += 1 }
+}
+
+@Suite("PVNetplayCapable optional steps")
+struct NetplayOptionalStepsTests {
+
+    @Test("A core's own start is called through the existential")
+    func dynamicDispatch() async throws {
+        let bridge = StartingBridge()
+        let erased: any PVNetplayCapable = bridge
+        try await erased.startNetplayGame()
+        #expect(bridge.startCalls == 1)
+        #expect(erased.netplayHostStartsGame)
+        #expect(!erased.netplayHostingRestartsGame)
+    }
+}
