@@ -2048,6 +2048,8 @@
 					"\"$(SRCROOT)/dolphin-ios/Externals/Vulkan/Include\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/Vulkan-Headers/include\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/VulkanMemoryAllocator/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/SFML/SFML/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/enet/enet/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -2242,6 +2244,8 @@
 					"\"$(SRCROOT)/dolphin-ios/Externals/Vulkan/Include\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/Vulkan-Headers/include\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/VulkanMemoryAllocator/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/SFML/SFML/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/enet/enet/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

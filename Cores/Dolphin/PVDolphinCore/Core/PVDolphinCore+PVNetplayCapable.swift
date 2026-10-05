@@ -9,37 +9,53 @@
 //  so that PVNetplayManager can drive Dolphin netplay sessions natively.
 //
 //  Dolphin netplay model (as mapped to PVNetplayCapable):
-//    .host(port:)               → startNetplayHostOnPort: — starts a local
-//                                  NetPlayServer and joins it as player 1.
-//    .client(host:port:)        → joinNetplayHost:port:   — direct-IP join.
+//    .host(port:)               → startNetplayHost(onPort:…) — starts a
+//                                  NetPlayServer, selects the loaded game on
+//                                  it, and joins it as player 1.
+//    .client(host:port:)        → joinNetplay(host:…) — direct-IP join.
 //    .spectator(host:port:)     → mapped to .client (Dolphin has no spectator
 //                                  role; peer joins as an inactive controller).
 //
-//  Traversal (Dolphin's STUN relay, always stun.dolphin-emu.org:6262): a
-//  client joins by traversal code instead of address when
-//  settings.relayServer is non-nil (any value). The host never enables
-//  traversal, so it has no code to hand out yet.
+//  Traversal (Dolphin's relay, stun.dolphin-emu.org:6262): when
+//  settings.relayServer is non-nil (any value), the host registers with the
+//  relay and publishes the code it gets as room.traversalCode, and a client
+//  passes that code as `host` to join by code instead of by address.
+//
+//  Every player boots the game together (`netplayHostStartsGame`): the host's
+//  Start Game makes each player reboot the running core into the netplay
+//  session. That reboot lives in PVDolphinCore.mm and isn't wired yet, so
+//  `supportsNetplay` stays false and `startNetplayGame` throws.
 //
 
 import Foundation
 import Combine
 import PVNetplay
 import PVSettings
+import PVLogging
 import ObjectiveC
 
 // MARK: - Session context
 
 /// Boxes role + settings so they can be stored via ObjC associated objects.
-private final class DolphinNetplayContext: NSObject {
+private final class DolphinNetplayContext: NSObject, Sendable {
     let sessionID: UUID
-    var role: NetplayRole
-    var settings: NetplaySettings
+    let role: NetplayRole
+    let settings: NetplaySettings
 
     init(role: NetplayRole, settings: NetplaySettings) {
         self.sessionID = UUID()
         self.role      = role
         self.settings  = settings
     }
+}
+
+private enum DolphinNetplayDefaults {
+    static let coreIdentifier = "com.provenance.dolphin"
+    static let port: UInt16 = 2626
+    static let maxPlayers = 4
+    static let pollInterval: TimeInterval = 1.0
+    /// Dolphin's pad buffer ceiling, as the bridge clamps it.
+    static let maxFrameDelay = 127
 }
 
 // MARK: - Associated-object keys
@@ -54,13 +70,26 @@ private enum AssocKeys {
 // MARK: - PVNetplayCapable
 
 // PVDolphinCore is ObjC-backed; its netplay state is mutated by Dolphin's
-// emulation thread.  @unchecked Sendable is intentional — callers must not
+// netplay threads.  @unchecked Sendable is intentional — callers must not
 // mutate netplay state concurrently.
 extension PVDolphinCore: PVNetplayCapable {
 
-    public var supportsNetplay: Bool { _bridge.dolphinNetplaySupported }
+    /// False until step 2 lands: a session can connect, but no player can
+    /// start the game, because rebooting the running core into the netplay
+    /// session (BootGame / OnMsgStartGame) isn't wired in PVDolphinCore.mm.
+    /// Then this becomes `_bridge.dolphinNetplaySupported`.
+    public var supportsNetplay: Bool { false }
 
     public var netplayEngineName: String { "Dolphin" }
+
+    /// Dolphin starts every player together, from the host's Start Game.
+    public var netplayHostStartsGame: Bool { true }
+
+    /// Host only. Step 2 wires this to NetPlayServer::RequestStartGame once
+    /// every player can reboot into the session.
+    public func startNetplayGame() async throws {
+        throw NetplayError.unsupported
+    }
 
     // MARK: - Associated-object helpers
 
@@ -96,11 +125,20 @@ extension PVDolphinCore: PVNetplayCapable {
         guard supportsNetplay else { throw NetplayError.unsupported }
         guard _bridge.dolphinNetplayStatus == .idle else { throw NetplayError.alreadyActive }
 
+        let context = DolphinNetplayContext(role: role, settings: settings)
+        let useTraversal = settings.relayServer != nil
+
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             _netplayQueue.async { [weak self] in
                 guard let self else {
                     continuation.resume(throwing: NetplayError.bridgeNotReady)
                     return
+                }
+
+                // Captured by the bridge when the session starts.
+                let sessionID = context.sessionID
+                self._bridge.dolphinNetplayEventHandler = { [weak self] event, message in
+                    self?._handleNetplayEvent(event, message: message, sessionID: sessionID)
                 }
 
                 do {
@@ -109,40 +147,28 @@ extension PVDolphinCore: PVNetplayCapable {
                         try self._bridge.startNetplayHost(
                             onPort: port == 0 ? UInt16(settings.port) : port,
                             password: settings.password,
-                            maxPlayers: settings.maxPlayers
+                            maxPlayers: settings.maxPlayers,
+                            useTraversal: useTraversal
                         )
 
-                    case .client(let host, let port):
-                        // Dolphin traversal relay: non-nil relayServer triggers traversal mode.
-                        let traversalCode: String? = settings.relayServer != nil ? host : nil
-                        let directHost: String = settings.relayServer != nil ? "" : host
+                    case .client(let host, let port), .spectator(let host, let port):
+                        // Dolphin has no spectator role; a spectator joins as a client.
+                        // With traversal, `host` is the host's traversal code.
                         try self._bridge.joinNetplay(
-                            host: directHost,
+                            host: useTraversal ? "" : host,
                             port: port == 0 ? UInt16(settings.port) : port,
-                            traversalCode: traversalCode,
-                            password: settings.password
-                        )
-
-                    case .spectator(let host, let port):
-                        // Dolphin has no spectator role; join as inactive client.
-                        try self._bridge.joinNetplay(
-                            host: host,
-                            port: port == 0 ? UInt16(settings.port) : port,
-                            traversalCode: nil,
+                            traversalCode: useTraversal ? host : nil,
                             password: settings.password
                         )
                     }
 
-                    self._netplayContext = DolphinNetplayContext(role: role, settings: settings)
-                    // Apply input buffer size (frame delay) now that the session is live.
-                    // Dolphin supports 0–127; clamp before converting to avoid a UInt32 trap.
-                    // frameDelay of 0 maps to Dolphin's minimum-latency mode; values 1–5
-                    // are typical for LAN/WAN delay-based play.
-                    let clampedFrameDelay = max(0, min(settings.frameDelay, 127))
-                    let bufferSize = UInt32(clamping: clampedFrameDelay)
-                    self._bridge.setNetplayInputBufferSize(bufferSize)
+                    self._netplayContext = context
+                    // frameDelay is Dolphin's pad buffer; clamp before converting.
+                    let clampedFrameDelay = max(0, min(settings.frameDelay, DolphinNetplayDefaults.maxFrameDelay))
+                    self._bridge.setNetplayInputBufferSize(UInt32(clamping: clampedFrameDelay))
                     continuation.resume()
                 } catch {
+                    self._bridge.dolphinNetplayEventHandler = nil
                     continuation.resume(throwing: NetplayError.connectionFailed(error.localizedDescription))
                 }
             }
@@ -154,6 +180,7 @@ extension PVDolphinCore: PVNetplayCapable {
             _netplayQueue.async { [weak self] in
                 guard let self else { continuation.resume(); return }
                 self._bridge.stopNetplay()
+                self._bridge.dolphinNetplayEventHandler = nil
                 self._netplayContext = nil
                 DispatchQueue.main.async {
                     self._pollingCancellable?.cancel()
@@ -165,39 +192,73 @@ extension PVDolphinCore: PVNetplayCapable {
         }
     }
 
+    // MARK: - Events
+
+    /// Main thread (the bridge delivers events there).
+    private func _handleNetplayEvent(_ event: PVDolphinNetplayEvent, message: String?, sessionID: UUID) {
+        // Drop events from a session that has already been stopped or replaced.
+        guard _netplayContext?.sessionID == sessionID else { return }
+
+        let reason: DisconnectReason
+        switch event {
+        case .connectionLost:
+            if case .host = _netplayContext?.role { reason = .networkError } else { reason = .hostClosed }
+        case .connectionError:
+            reason = .networkError
+        case .desync:
+            // Dolphin keeps running after a desync; the bridge already showed it.
+            WLOG("[Dolphin Netplay] \(message ?? "Desync")")
+            return
+        case .traversalCodeReady, .traversalFailed, .playersChanged:
+            _stateSubject.send(netplayState)
+            return
+        @unknown default:
+            return
+        }
+
+        WLOG("[Dolphin Netplay] Session ended: \(message ?? "connection lost")")
+        _netplayQueue.async { [weak self] in
+            guard let self, self._netplayContext?.sessionID == sessionID else { return }
+            self._bridge.stopNetplay()
+            self._bridge.dolphinNetplayEventHandler = nil
+            self._netplayContext = nil
+            DispatchQueue.main.async {
+                self._pollingCancellable?.cancel()
+                self._pollingCancellable = nil
+                self._stateSubject.send(.disconnected(reason: reason))
+            }
+        }
+    }
+
     // MARK: - State
 
     public var netplayState: NetplayState {
+        let ctx = _netplayContext
+        let nickname = ctx?.settings.nickname ?? ""
+        let playerName = nickname.isEmpty ? PVSettingsWrapper.resolvedPlayerUsername : nickname
+        let playerCount = max(1, _bridge.dolphinNetplayPlayerCount)
+
         switch _bridge.dolphinNetplayStatus {
         case .idle:
             return .idle
 
         case .hosting:
-            let ctx = _netplayContext
-            // Use the effective port from the role (the port actually passed to the server),
-            // falling back to settings.port only when the role port is 0.
             let effectivePort: UInt16
             if case .host(let rolePort) = ctx?.role, rolePort > 0 {
                 effectivePort = rolePort
             } else {
-                effectivePort = UInt16(ctx?.settings.port ?? 2626)
+                effectivePort = ctx?.settings.port ?? DolphinNetplayDefaults.port
             }
-            // Query the traversal code on the netplay queue to avoid a race with
-            // stopNetplay(), which resets the server pointer on the same queue.
-            let traversalCode: String? = _netplayQueue.sync { [weak self] in
-                self?._bridge.queryDolphinTraversalCode()
-            }
-            let displayName = ctx?.settings.nickname.isEmpty == false
-                ? ctx!.settings.nickname
-                : PVSettingsWrapper.resolvedPlayerUsername
+            // Nil for direct sessions, and until the relay assigns a code.
+            let traversalCode = _bridge.dolphinTraversalCode
             let room = NetplayRoom(
                 id: ctx?.sessionID ?? UUID(),
-                hostName: displayName,
+                hostName: playerName,
                 gameName: "",
                 gameHash: "",
-                coreIdentifier: "com.provenance.dolphin",
-                maxPlayers: ctx?.settings.maxPlayers ?? 4,
-                currentPlayers: 1,
+                coreIdentifier: DolphinNetplayDefaults.coreIdentifier,
+                maxPlayers: ctx?.settings.maxPlayers ?? DolphinNetplayDefaults.maxPlayers,
+                currentPlayers: playerCount,
                 isLAN: traversalCode == nil,
                 hostAddress: traversalCode ?? "0.0.0.0",
                 port: effectivePort,
@@ -206,23 +267,21 @@ extension PVDolphinCore: PVNetplayCapable {
             return .hosting(room: room)
 
         case .connected:
-            let ctx = _netplayContext
-            let role = ctx?.role ?? .client(host: "0.0.0.0", port: 2626)
+            let role = ctx?.role ?? .client(host: "0.0.0.0", port: DolphinNetplayDefaults.port)
             let (hostAddr, port) = _resolvedHostPort(for: role, settings: ctx?.settings)
-            let connectedName = ctx?.settings.nickname.isEmpty == false
-                ? ctx!.settings.nickname
-                : PVSettingsWrapper.resolvedPlayerUsername
+            let usesTraversal = ctx?.settings.relayServer != nil
             let room = NetplayRoom(
                 id: ctx?.sessionID ?? UUID(),
-                hostName: connectedName,
+                hostName: playerName,
                 gameName: "",
                 gameHash: "",
-                coreIdentifier: "com.provenance.dolphin",
-                maxPlayers: ctx?.settings.maxPlayers ?? 4,
-                currentPlayers: 1,
-                isLAN: true,
+                coreIdentifier: DolphinNetplayDefaults.coreIdentifier,
+                maxPlayers: ctx?.settings.maxPlayers ?? DolphinNetplayDefaults.maxPlayers,
+                currentPlayers: playerCount,
+                isLAN: !usesTraversal,
                 hostAddress: hostAddr,
-                port: port
+                port: port,
+                traversalCode: usesTraversal ? hostAddr : nil
             )
             let session = NetplaySession(
                 room: room,
@@ -241,13 +300,13 @@ extension PVDolphinCore: PVNetplayCapable {
     public var netplayStatePublisher: AnyPublisher<NetplayState, Never> {
         let subject = _stateSubject
         if _pollingCancellable == nil {
-            _pollingCancellable = Timer.publish(every: 1.0, on: .main, in: .common)
+            _pollingCancellable = Timer.publish(every: DolphinNetplayDefaults.pollInterval, on: .main, in: .common)
                 .autoconnect()
                 .sink { [weak self] _ in
                     guard let self else { return }
                     let state = self.netplayState
                     subject.send(state)
-                    if case .idle = state {
+                    if !state.isActive {
                         self._pollingCancellable?.cancel()
                         self._pollingCancellable = nil
                     }
@@ -262,14 +321,12 @@ extension PVDolphinCore: PVNetplayCapable {
         for role: NetplayRole,
         settings: NetplaySettings?
     ) -> (String, UInt16) {
-        let defaultPort: UInt16 = settings?.port ?? 2626
+        let defaultPort: UInt16 = settings?.port ?? DolphinNetplayDefaults.port
         switch role {
         case .host(let rolePort):
             // Use the port explicitly provided in the role; fall back to settings.port.
             return ("127.0.0.1", rolePort > 0 ? rolePort : defaultPort)
-        case .client(let host, let port):
-            return (host, port == 0 ? defaultPort : port)
-        case .spectator(let host, let port):
+        case .client(let host, let port), .spectator(let host, let port):
             return (host, port == 0 ? defaultPort : port)
         }
     }

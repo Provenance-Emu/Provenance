@@ -6,25 +6,24 @@
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
 //  ObjC category on PVDolphinCoreBridge that exposes Dolphin's built-in
-//  netplay capabilities to the Provenance netplay infrastructure.
+//  netplay to the Provenance netplay infrastructure.
 //
 //  Dolphin netplay model:
-//    - Hosting:   start a local NetPlayServer on a given port, then connect
-//                 locally as the first player via NetPlayClient.
-//    - Joining:   create a NetPlayClient pointing to the host's IP:port.
-//    - Traversal: connect via Dolphin's public relay server
-//                 (stun.dolphin-emu.org:6262) using the host's traversal code
-//                 instead of a direct IP address.
+//    - Hosting:   start a NetPlayServer, then join it as player 1 over
+//                 127.0.0.1 with a NetPlayClient.
+//    - Joining:   create a NetPlayClient pointing at the host's IP:port.
+//    - Traversal: host and client meet through Dolphin's public relay
+//                 (stun.dolphin-emu.org:6262, alt 6226). The host gets a
+//                 short code from the relay; clients join with that code
+//                 instead of an address.
 //
-//  Currently exposed Dolphin netplay capabilities:
-//    - Direct IP and traversal-based hosting/joining
-//    - Per-session password protection (host side)
-//    - Input buffer size / frame delay (Config::NETPLAY_INPUT_BUFFER_SIZE)
-//    - Traversal code query after hosting
+//  Every player boots the game together: the host asks the server to start,
+//  and each client reboots into the netplay session. That in-game reboot is
+//  not wired yet (see BootGame / OnMsgStartGame in the .mm), so the sessions
+//  this category opens can connect but cannot start a game.
 //
-//  Pending wiring (not yet active):
-//    - Max-player enforcement on the server (requires NetPlayServer API confirmation)
-//    - Client-side password authentication (requires NetPlayClient password API)
+//  Not supported by this Dolphin revision: room passwords and a player cap.
+//  Both are accepted for API symmetry and ignored.
 //
 
 #pragma once
@@ -41,11 +40,30 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NS_ENUM(NSInteger, PVDolphinNetplayStatus) {
     /// No active session; engine is idle.
     PVDolphinNetplayStatusIdle = 0,
-    /// This instance is hosting a session; waiting for peers to connect.
+    /// This instance is hosting a session (its own client is joined to it).
     PVDolphinNetplayStatusHosting = 1,
     /// Connected to a remote host as a client.
     PVDolphinNetplayStatusConnected = 2,
 };
+
+/// Asynchronous session events reported by Dolphin's netplay thread.
+typedef NS_ENUM(NSInteger, PVDolphinNetplayEvent) {
+    /// The connection to the host (or the host's own server) dropped.
+    PVDolphinNetplayEventConnectionLost = 0,
+    /// The client could not connect or was rejected; `message` has the reason.
+    PVDolphinNetplayEventConnectionError = 1,
+    /// Players' emulation diverged; `message` names the player and frame.
+    PVDolphinNetplayEventDesync = 2,
+    /// The traversal relay assigned this host a code; `message` is the code.
+    PVDolphinNetplayEventTraversalCodeReady = 3,
+    /// The traversal relay could not be reached; `message` has the reason.
+    PVDolphinNetplayEventTraversalFailed = 4,
+    /// A player joined or left; `message` is the player's name.
+    PVDolphinNetplayEventPlayersChanged = 5,
+};
+
+/// Receives `PVDolphinNetplayEvent`s. Always called on the main queue.
+typedef void (^PVDolphinNetplayEventHandler)(PVDolphinNetplayEvent event, NSString * _Nullable message);
 
 // ---------------------------------------------------------------------------
 // MARK: - Error domain
@@ -79,35 +97,51 @@ typedef NS_ERROR_ENUM(PVDolphinNetplayErrorDomain, PVDolphinNetplayError) {
 /// Current netplay status — idle, hosting, or connected as a client.
 @property (nonatomic, readonly) PVDolphinNetplayStatus dolphinNetplayStatus;
 
-/// The traversal code assigned by Dolphin's relay when hosting via STUN.
+/// The traversal code the relay assigned to this host.
 ///
-/// Only valid while `dolphinNetplayStatus == PVDolphinNetplayStatusHosting`
-/// with traversal enabled.  Returns nil for direct-IP sessions.
+/// Nil until the relay answers, and always nil for direct-IP sessions.
+/// `PVDolphinNetplayEventTraversalCodeReady` fires when it becomes available.
 @property (nonatomic, readonly, nullable) NSString *dolphinTraversalCode;
 
-/// Start a Dolphin NetPlayServer on `port` and connect this instance as
-/// player 1.  Pass a nil or empty password for an open room.
+/// Number of players in the session, the local player included. 0 when idle.
+@property (nonatomic, readonly) NSInteger dolphinNetplayPlayerCount;
+
+/// Receives session events. Captured when a session starts, so set it before
+/// calling `startNetplayHostOnPort:…` or `joinNetplayHost:…`.
+@property (nonatomic, copy, nullable) PVDolphinNetplayEventHandler dolphinNetplayEventHandler;
+
+/// Extra game files Dolphin may match against the host's game, beyond the ROM
+/// that is loaded now (which is always a candidate). Captured when a session
+/// starts.
+@property (nonatomic, copy, nullable) NSArray<NSString *> *dolphinNetplayCandidateGamePaths;
+
+/// Start a Dolphin NetPlayServer and join it as player 1, then select the
+/// loaded game on the server.
 ///
-/// @param port       TCP port for the server.  Pass 0 to use the default (2626).
-/// @param password   Optional room password.
-/// @param maxPlayers Maximum number of players (1–4 for GC; 1–4 for Wii).
-/// @param error      Populated on failure.
+/// @param port         Listen port. 0 selects 2626 for direct sessions and a
+///                     random port for traversal sessions.
+/// @param password     Ignored: this Dolphin revision has no room passwords.
+/// @param maxPlayers   Ignored: this Dolphin revision has no player cap.
+/// @param useTraversal YES registers with Dolphin's traversal relay so clients
+///                     can join by code (see `dolphinTraversalCode`).
+/// @param error        Populated on failure.
 /// @return YES on success; NO on failure.
 - (BOOL)startNetplayHostOnPort:(uint16_t)port
                       password:(nullable NSString *)password
                     maxPlayers:(NSInteger)maxPlayers
+                  useTraversal:(BOOL)useTraversal
                          error:(NSError *_Nullable __autoreleasing *_Nullable)error
-NS_SWIFT_NAME(startNetplayHost(onPort:password:maxPlayers:));
+NS_SWIFT_NAME(startNetplayHost(onPort:password:maxPlayers:useTraversal:));
 
 /// Join an existing session by direct IP:port.
 ///
-/// To connect via Dolphin's STUN relay instead, pass a non-empty
-/// `traversalCode` (the host's relay identifier) and leave `host` empty.
+/// To connect via Dolphin's traversal relay instead, pass a non-empty
+/// `traversalCode` (the host's relay code) and leave `host` empty.
 ///
 /// @param host           Host IP address for direct connect (ignored when traversalCode is set).
-/// @param port           Host TCP port.  Pass 0 to use the default (2626).
+/// @param port           Host port. 0 selects 2626. Ignored for traversal.
 /// @param traversalCode  Dolphin traversal code for relay-based connect.  Pass nil for direct IP.
-/// @param password       Room password.  Pass nil for open rooms.
+/// @param password       Ignored: this Dolphin revision has no room passwords.
 /// @param error          Populated on failure.
 /// @return YES on success; NO on failure.
 - (BOOL)joinNetplayHost:(NSString *)host
@@ -118,29 +152,21 @@ NS_SWIFT_NAME(startNetplayHost(onPort:password:maxPlayers:));
 NS_SWIFT_NAME(joinNetplay(host:port:traversalCode:password:));
 
 /// Stop any active server and/or client.  Safe to call when already idle.
+/// Blocks until Dolphin's netplay threads have exited; never call it from a
+/// netplay callback.
 - (void)stopNetplay;
 
-/// Set Dolphin's input buffer size (frame delay) via Config::NETPLAY_INPUT_BUFFER_SIZE.
+/// Set the pad buffer (input delay, in frames).
 ///
-/// Can be called at any time; when a netplay session is active (or netplay
-/// headers have been compiled in) it writes to the "current" (session-scoped)
-/// Config layer so the change takes effect immediately without persisting to
-/// the INI on disk.  When the Dolphin or Config headers are absent this is a
-/// no-op.  Typical values: 0 = minimum latency (rollback-like), 1–5 for
-/// LAN/WAN delay-based play.
+/// Host: applied to the running server, which sends it to every client, and
+/// stored as Config::NETPLAY_BUFFER_SIZE. Client: stored as
+/// Config::NETPLAY_CLIENT_BUFFER_SIZE only, because the host dictates the
+/// buffer outside host-input-authority mode. Both are written to the
+/// "current" Config layer, so nothing is persisted to the INI on disk.
 ///
-/// @param bufferSize  Number of input frames to buffer (0–127).  Values above 127
-///                    are clamped to 127 to match Dolphin's internal limit.
+/// @param bufferSize  Frames to buffer (0–127; larger values are clamped).
 - (void)setNetplayInputBufferSize:(uint32_t)bufferSize
 NS_SWIFT_NAME(setNetplayInputBufferSize(_:));
-
-/// The traversal code assigned by Dolphin's relay server when hosting via STUN.
-///
-/// Queries `NetPlayServer::GetInterfaceListToSend()` (or equivalent) to retrieve
-/// the code that remote players enter to connect via stun.dolphin-emu.org.
-/// Returns nil for direct-IP sessions or when the relay has not yet assigned a code.
-- (nullable NSString *)queryDolphinTraversalCode
-NS_SWIFT_NAME(queryDolphinTraversalCode());
 
 @end
 
