@@ -31,12 +31,12 @@ public actor RetroAchievementsClient: Sendable {
     /// attempts to refresh the profile from the web API.
     @MainActor
     public func restoreSession() async {
-        // Older builds persisted the RetroAchievements password in cleartext into
+        // Older builds wrote the RetroAchievements password or token into
         // retroarch.cfg, which the in-app web uploader and WebDAV server publish.
         // Run unconditionally and before the branches below: the users still
-        // holding that password are precisely the ones with no valid session, who
-        // reach neither restore path. No-op once the file is clean.
-        RetroArchConfigManager.shared.migratePersistedPasswordToToken()
+        // holding that file are often the ones with no valid session, who reach
+        // neither restore path. No-op once the file is clean.
+        RetroAchievementsSettings.shared.scrubLegacyRetroArchConfig()
 
         if let token = credentialsManager.loadSessionToken(),
            let profile = credentialsManager.loadUserProfile() {
@@ -178,7 +178,6 @@ public actor RetroAchievementsClient: Sendable {
         } catch {
             // If full profile fetch fails, save what we have from login
             credentialsManager.saveUserProfile(partialProfile)
-            RetroArchConfigManager.shared.updateCredentials(username: username, password: password)
             return
         }
 
@@ -186,7 +185,6 @@ public actor RetroAchievementsClient: Sendable {
         await MainActor.run { currentSession = updatedSession }
 
         credentialsManager.saveUserProfile(fullProfile)
-        RetroArchConfigManager.shared.updateCredentials(username: username, password: password)
     }
 
     /// Perform login with username and password
@@ -210,9 +208,6 @@ public actor RetroAchievementsClient: Sendable {
     public func logout() {
         currentSession = nil
         credentialsManager.clearAll()
-        // clearAll() only clears the Keychain/UserDefaults store. RetroArch keeps its
-        // own copy of the session token in retroarch.cfg, so scrub that too.
-        RetroArchConfigManager.shared.clearPersistedCredentials()
     }
 
     // MARK: - Session-Based Gaming (RetroArch-style)

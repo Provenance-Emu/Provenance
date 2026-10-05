@@ -28,7 +28,7 @@ When the skin emits a diagonal token (path 1), `PV<System>Button("upleft")` fall
 
 So if a skin's mapping contains an `upleft` key, **the diagonal half is dropped at `PV<System>Button.init`**: the user holding north‑west on screen produces a single `.up` press (or worse — a stray `.b`/`.fire1`/`.menu` event for a few systems) instead of the two‑cardinal combo every core actually consumes.
 
-Path 2 (the controller‑VC fallback) is correct, but it only runs when `trySystemResponderCall` returns `false` (i.e. the core does not conform to the per‑system responder protocol). Every active native + RetroArch core conforms, so path 1 wins in practice.
+Path 2 (the controller‑VC fallback) is correct, but it only runs when `trySystemResponderCall` returns `false` (i.e. the core does not conform to the per‑system responder protocol). Every active native and thin libretro core conforms, so path 1 wins in practice.
 
 ## Per‑core verdict
 
@@ -43,7 +43,7 @@ Every bridge surveyed is a cardinal‑only consumer (per‑direction byte / bitm
 | N64 (Mupen) | `Cores/Mupen64Plus/Sources/PVMupenBridge/PVMupenBridge+Controls.m:458–464` | `padData[player][button] = 1` | ⚠️ may drop diagonals (path 1) |
 | Atari 800 / 5200 | `Cores/Atari800/Sources/PVAtari800Bridge/PVAtari800Bridge.m:659–810` | Per‑direction flags on `controllerStates[player]` | ⚠️ may drop diagonals (path 1) |
 | Atari 7800 (ProSystem) | `Cores/ProSystem/Sources/PVProSystemBridge/PVProSystemCoreBridge.mm` | Per‑direction flags | ⚠️ may drop diagonals (path 1) |
-| Atari 2600 (Stella) | bundled via `PVCoreBridgeRetro` | RetroArch joypad bitmask | ⚠️ may drop diagonals (path 1) |
+| Atari 2600 (Stella) | bundled via `PVCoreBridgeRetro` | libretro joypad bitmask | ⚠️ may drop diagonals (path 1) |
 | Dreamcast (Reicast / Flycast) | `Cores/Reicast/PVReicastCore/Core/PVReicastCore+Controls.mm:142–162`; `Cores/Flycast/.../PVFlycastCore+Controls.mm` | `kcode[player]` bitmask | ⚠️ may drop diagonals (path 1) |
 | GameCube / Wii (Dolphin) | `Cores/Dolphin/PVDolphinCore/Core/PVDolphinCore+Controls.mm` | Per‑button state stored | ⚠️ may drop diagonals (path 1) |
 | 3DS (Citra / emuThree / Azahar) | `Cores/Citra/PVAzaharCore/Core/PVAzaharCoreBridge+Controls.mm`; `Cores/emuThree/PVEmuThreeCore/Core/PVEmuThreeCoreBridge+Controls.mm` | Per‑button state into HID service | ⚠️ may drop diagonals (path 1) |
@@ -51,17 +51,17 @@ Every bridge surveyed is a cardinal‑only consumer (per‑direction byte / bitm
 | PSP (PPSSPP) | `Cores/PPSSPP/PVPPSSPPCore/Core/PVPPSSPPCore+Controls.mm` | Bitmask | ⚠️ may drop diagonals (path 1) |
 | PSX (DuckStation) | `Cores/DuckStation/PVDuckStation/Source/PVDuckStationCoreBridge.mm` | Bitmask | ⚠️ may drop diagonals (path 1) |
 | PS2 (Play!) | `Cores/Play/PVPlayCore/Core/PVPlayCore+Controls.mm` | Per‑button state | ⚠️ may drop diagonals (path 1) |
-| MAME (FinalBurnNeo / mame4iOS) | `CoresRetro/RetroArch/...` | RA joypad bitmask | ⚠️ may drop diagonals (path 1) |
+| MAME (FinalBurnNeo / mame4iOS) | `PVCoreBridgeRetro/Sources/PVLibRetro/PVThinLibretroCore+Controls.swift` | libretro joypad bitmask | ⚠️ may drop diagonals (path 1) |
 | MSX (fmsx / blueMSX) | `Cores/fmsx/PVfMSXCore/PVfMSXCoreBridge.mm` | Per‑button | ⚠️ may drop diagonals (path 1) |
 | GB (Gambatte / SameBoy / TGBDual) | `Cores/Gambatte/...`; `Cores/TGBDual/Sources/PVTGBDualBridge/PVTGBDualBridge+Controls.mm` | Bitmask | ⚠️ may drop diagonals (path 1) |
-| ColecoVision (Gearcoleco) | RetroArch bridge | Bitmask | ⚠️ may drop diagonals (path 1) |
+| ColecoVision (Gearcoleco) | `PVCoreBridgeRetro/Sources/PVLibRetro/PVThinLibretroCore+Controls.swift` | Bitmask | ⚠️ may drop diagonals (path 1) |
 | PokéMini | `Cores/PokeMini/Sources/PVPokeMiniBridge/PVPokeMiniBridge.m:393–399` | Per‑button state | ⚠️ may drop diagonals (path 1) — diagonals are **meaningless** on PokéMini hardware (no diagonal input physically possible), so risk is theoretical |
 | Vectrex (VecX) | `Cores/VecX/Sources/PVVecX/PVVecXCore+Controls.mm:142–152` | Stub (commented out — input not yet wired) | ❓ N/A — input handler is empty |
 | Intellivision (FreeIntv) | `Cores/FreeIntv/PVFreeIntvCore/PVFreeIntvCore.mm` | Pure libretro joypad bitmask, core composes its 16‑direction disc internally | ⚠️ may drop diagonals (path 1). Disc emulation relies on simultaneous cardinals — losing one half cuts the disc to 8 directions. |
-| Atari Jaguar (VirtualJaguar) | `CoresRetro/RetroArch/PVRetroArchCore/Core/PVRetroArchCore+Controls+Jaguar.m` | RA joypad bitmask | ⚠️ may drop diagonals (path 1) |
+| Atari Jaguar (VirtualJaguar) | `PVCoreBridgeRetro/Sources/PVLibRetro/PVThinLibretroCore+Controls.swift` (`jaguarMap`) | libretro joypad bitmask | ⚠️ may drop diagonals (path 1) |
 | ZX Spectrum (fuse) | `Cores/fuse/...` | Per‑button state via libretro | ⚠️ may drop diagonals (path 1) |
-| Doom (PrBoom) | RetroArch core | Bitmask + special `PVDoomButton(id)` parser | ⚠️ may drop diagonals (path 1) |
-| Other libretro cores under `Cores/` and `CoresRetro/` (4DO, Bliss, CrabEMU, ep128emu, fuse, GameMusicEmu, hatari, JollyGoodEmulation, NP2Kai, O2EM, opera, pcsx_rearmed, ProSystem, Reicast, sm64ex, snes9x, snesticle, supergrafx, TIC80) | various `+Controls.mm` / RA bridge | All are cardinal‑only consumers (bitmask or per‑direction byte). | ⚠️ may drop diagonals (path 1) |
+| Doom (PrBoom) | `PVCoreBridgeRetro/Sources/PVLibRetro/PVThinLibretroCore+Controls.swift` | Bitmask + special `PVDoomButton(id)` parser | ⚠️ may drop diagonals (path 1) |
+| Other libretro cores under `Cores/` and `CoresRetro/` (4DO, Bliss, CrabEMU, ep128emu, fuse, GameMusicEmu, hatari, JollyGoodEmulation, NP2Kai, O2EM, opera, pcsx_rearmed, ProSystem, Reicast, sm64ex, snes9x, snesticle, supergrafx, TIC80) | various `+Controls.mm` / thin libretro wrapper | All are cardinal‑only consumers (bitmask or per‑direction byte). | ⚠️ may drop diagonals (path 1) |
 
 > The verdict is **uniform** because the failure point is the per‑system button enum init, not the bridge. Every core listed handles two simultaneous cardinals correctly; none can interpret a diagonal token.
 

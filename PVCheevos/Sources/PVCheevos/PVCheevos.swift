@@ -31,10 +31,10 @@ public struct PVCheevos {
         RetroCredentialsManager.shared.clearAll()
     }
 
-    /// Access to RetroArch configuration management
+    /// The RetroAchievements on/off and hardcore settings
     @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
-    public static var retroArch: RetroArchConfigManager {
-        return RetroArchConfigManager.shared
+    public static var settings: RetroAchievementsSettings {
+        return RetroAchievementsSettings.shared
     }
 
     /// Create a new `AchievementSessionManager` backed by the stored-credentials client.
@@ -132,6 +132,3 @@ public typealias RAComments = Comments
 public typealias RASessionManager = AchievementSessionManager
 @available(iOS 15.0, tvOS 15.0, macOS 12.0, *)
 public typealias RASessionError = AchievementSessionError
-
-// MARK: - RetroArch Integration
-public typealias RARetroArchConfigManager = RetroArchConfigManager

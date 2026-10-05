@@ -597,15 +597,15 @@ public struct RetroAchievementsView: View {
     }
 
     private func loadRetroArchSettings() {
-        retroAchievementsEnabled = PVCheevos.retroArch.isRetroAchievementsEnabled
-        hardcoreModeEnabled = PVCheevos.retroArch.isHardcoreModeEnabled
+        retroAchievementsEnabled = PVCheevos.settings.isRetroAchievementsEnabled
+        hardcoreModeEnabled = PVCheevos.settings.isHardcoreModeEnabled
     }
 
     /// Turn achievements on (with hardcore mode off) right after a successful login,
     /// so users don't have to flip a second toggle to actually start earning them.
     private func enableAchievementsAfterLogin() {
-        PVCheevos.retroArch.isRetroAchievementsEnabled = true
-        PVCheevos.retroArch.isHardcoreModeEnabled = false
+        PVCheevos.settings.isRetroAchievementsEnabled = true
+        PVCheevos.settings.isHardcoreModeEnabled = false
         retroAchievementsEnabled = true
         hardcoreModeEnabled = false
     }
@@ -772,7 +772,7 @@ public struct RetroAchievementsView: View {
                     Toggle("", isOn: $retroAchievementsEnabled)
                         .toggleStyle(RetroTheme.RetroToggleStyle())
                         .onChange(of: retroAchievementsEnabled) { _, newValue in
-                            PVCheevos.retroArch.isRetroAchievementsEnabled = newValue
+                            PVCheevos.settings.isRetroAchievementsEnabled = newValue
                             postSystemToast(
                                 newValue ? "RetroAchievements enabled" : "RetroAchievements disabled",
                                 type: newValue ? .success : .info,
@@ -798,7 +798,7 @@ public struct RetroAchievementsView: View {
                     Toggle("", isOn: $hardcoreModeEnabled)
                         .toggleStyle(RetroTheme.RetroToggleStyle())
                         .onChange(of: hardcoreModeEnabled) { _, newValue in
-                            PVCheevos.retroArch.isHardcoreModeEnabled = newValue
+                            PVCheevos.settings.isHardcoreModeEnabled = newValue
                             postSystemToast(
                                 newValue ? "Hardcore Mode ON" : "Hardcore Mode OFF",
                                 type: newValue ? .warning : .info,

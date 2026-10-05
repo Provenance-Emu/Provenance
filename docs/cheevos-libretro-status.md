@@ -3,6 +3,14 @@
 > Audit date: 2026-03-22
 > Audited by: Claude / Agent (issue #3386)
 > Parent epic: #2705
+>
+> **Superseded (October 2026).** This audit describes the in-process RetroArch
+> wrapper (`PVRetroArchCore`, `retroarch.cfg`, `cheevos.c`), which has been
+> deleted. Libretro cores now run on the thin wrapper, and Provenance drives
+> rcheevos itself: see `PVCoreBridgeRetro/Sources/PVLibRetro/PVThinLibretroCore+Features.swift`
+> (`CoreRetroAchievements`) and `PVUI/Sources/PVUIBase/PVEmulatorVC/PVEmulatorViewController+Achievements.swift`.
+> Nothing reads `retroarch.cfg` any more; `RetroAchievementsSettings` only blanks
+> credentials older builds left in it.
 
 ## Summary
 

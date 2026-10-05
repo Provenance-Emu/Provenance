@@ -618,12 +618,6 @@ void audio_driver_sample(int16_t left, int16_t right)
    audio_driver_data.output_samples.conv_buf[audio_driver_data.data_ptr++] = left;
    audio_driver_data.output_samples.conv_buf[audio_driver_data.data_ptr++] = right;
 
-   /* PV: forward most-recent stereo sample for visualizer */
-   {
-      extern void pv_ra_waveform_forward(const int16_t *data, size_t frames);
-      pv_ra_waveform_forward(&audio_driver_data.output_samples.conv_buf[audio_driver_data.data_ptr - 2], 1);
-   }
-
    if (audio_driver_data.data_ptr < audio_driver_data.chunk.size)
       return;
 
@@ -632,9 +626,6 @@ void audio_driver_sample(int16_t left, int16_t right)
 
    audio_driver_data.data_ptr = 0;
 }
-
-// PV: optional forwarder (defined in PVRetroArchCore) to mirror PCM for visualization
-void pv_ra_waveform_forward(const int16_t *data, size_t frames);
 
 /**
  * audio_driver_sample_batch:
@@ -652,9 +643,6 @@ size_t audio_driver_sample_batch(const int16_t *data, size_t frames)
       frames = AUDIO_CHUNK_SIZE_NONBLOCKING >> 1;
 
    audio_driver_flush(data, frames << 1);
-
-   // PV: forward to visualization (no-op if not linked)
-   if (pv_ra_waveform_forward) pv_ra_waveform_forward(data, frames);
 
    return frames;
 }
