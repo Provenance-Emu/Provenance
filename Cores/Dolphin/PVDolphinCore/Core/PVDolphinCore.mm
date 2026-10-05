@@ -1213,7 +1213,18 @@ static void ResetDolphinStaticState() {
         [self.touchViewController.view addSubview:m_view];
         [self.touchViewController addChildViewController:rootController];
         [rootController didMoveToParentViewController:self.touchViewController];
-        [self.touchViewController.view sendSubviewToBack:m_view];
+        // Dolphin presents to its own layer, so the host's GPU view never draws a frame for
+        // it. When both live in the same superview (tvOS, where the emulator view controller
+        // is the host), sending the render view to the back left that opaque MTKView on top:
+        // as soon as it presented a frame — at boot, or when the pause menu or a settings
+        // sheet closed — it blacked out Dolphin, which kept rendering underneath. Stack the
+        // render view just above the GPU view instead; the controls and toasts stay above.
+        UIView *gpuView = gl_view_controller.isViewLoaded ? gl_view_controller.view : nil;
+        if (gpuView.superview == self.touchViewController.view) {
+            [self.touchViewController.view insertSubview:m_view aboveSubview:gpuView];
+        } else {
+            [self.touchViewController.view sendSubviewToBack:m_view];
+        }
         [rootController.view setHidden:false];
         rootController.view.translatesAutoresizingMaskIntoConstraints = false;
         _renderViewConstraints = @[
