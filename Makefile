@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # `export` makes the values visible to recipes (release.sh, fastlane, etc.).
 -include .env
 export
-.PHONY: help ios update tvos lite ci \
+.PHONY: help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
@@ -277,6 +277,24 @@ update-skin-catalog:
 		--skip-validation \
 		--output Scripts/generators/catalog_seed.json
 	cp Scripts/generators/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json
+
+## -- Maintenance --
+
+## Maintenance dashboard: stale jobs, run buttons, unregistered scripts
+maint:
+	python3 Scripts/maint/maint.py serve
+
+## Show stale maintenance jobs (add ARGS=--all for on-demand ones)
+maint-status:
+	python3 Scripts/maint/maint.py status $(ARGS)
+
+## Run every stale job that is safe to automate
+maint-run-stale:
+	python3 Scripts/maint/maint.py run --stale --auto-only
+
+## Install the report-only git hook (post-merge / post-checkout)
+maint-hooks:
+	python3 Scripts/maint/maint.py hooks install
 
 ## -- Code Generation --
 

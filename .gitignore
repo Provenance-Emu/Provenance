@@ -140,3 +140,6 @@ __pycache__
 /fastlane/screenshots/test_output/
 /fastlane/screenshots/screenshots.html
 /fastlane/screenshots/**/*.jpg
+
+# Scripts/maint state and logs (local only)
+.maint/

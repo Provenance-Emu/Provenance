@@ -1,0 +1,312 @@
+# Provenance maintenance registry — read by Scripts/maint/maint.py.
+#
+# Every script under the [scan] roots must be either named by a job (in `run`,
+# `check` or `files`) or listed under [ignore]. Anything else shows up as
+# "unregistered" in `maint status`, the dashboard and the CI tracking issue.
+#
+# Job keys:
+#   title, category, description
+#   run       command, run from the repo root. A string runs in bash; a list runs directly.
+#   check     command whose exit code decides staleness: 0 current, 1 stale, other = error.
+#             The last output line (or the first matching `reason_pattern`) is the reason.
+#   mode      "auto": deterministic and safe for CI / the launchd schedule to run and PR.
+#             "manual": needs judgement, secrets or your machine; only ever reported.
+#   inputs    globs; stale when one changed in a commit newer than the outputs' last commit.
+#             Scripts named in `run`/`check` count as inputs automatically.
+#   outputs   globs of committed files the job writes.
+#   max_age   "30d", "12h", "2w": stale when the outputs (or the last successful run on
+#             this machine) are older than this.
+#   needs     network | macos | submodules | env:VAR | py:module | path:relative/path | <tool on PATH>
+#   files     extra globs this job owns (helpers it calls), so they don't count as unregistered.
+#   args_hint shown next to the command for jobs that take arguments.
+# A job with no inputs/outputs/max_age/check is "on demand": listed, never stale.
+
+[scan]
+roots = ["Scripts", "CoresRetro/RetroArch/scripts"]
+extensions = [".py", ".sh", ".rb", ".swift", ".bash", ".js", ".pl"]
+skip_dirs = ["__pycache__", ".build"]
+
+[ignore]
+paths = [
+  # Xcode build phases call these by path.
+  "Scripts/build-phases/set_bundle_build_number.sh",
+  "Scripts/build-phases/setup_env.sh",
+  # Only meaningful inside GitHub Actions.
+  "Scripts/ci/ci-core-manifest.py",
+  "Scripts/ci/ci-init-submodules.sh",
+  "Scripts/ci/ci-local-dylib-alert.sh",
+  "Scripts/ci/setup-github-project.sh",
+  # Developer one-offs that need hand-picked arguments.
+  "Scripts/dev/StikDebug/provenance.js",
+  "Scripts/dev/create_ci_target.rb",
+  "Scripts/dev/dylibsToFramework.sh",
+  "Scripts/dev/ralph-loop.sh",
+  # Runs per pull request in auto-translate.yml, from the PR's string diff.
+  "Scripts/generators/auto_translate.py",
+  # RetroArch core download and packaging, run by the Xcode build.
+  "CoresRetro/RetroArch/scripts/get-modules.sh",
+  "CoresRetro/RetroArch/scripts/make_frameworks.sh",
+  "CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh",
+  "CoresRetro/RetroArch/scripts/code-sign-cores.sh",
+  "CoresRetro/RetroArch/scripts/validate_frameworks.sh",
+]
+
+# ─────────────────────────────────────────────────────────── generated files
+
+[jobs.contributors]
+title = "Contributors list"
+category = "Generated files"
+description = "Rebuilds CONTRIBUTORS.md from git history and Gravatar."
+run = ["python3", "Scripts/generators/generate_contributors.py"]
+mode = "auto"
+outputs = ["CONTRIBUTORS.md"]
+max_age = "30d"
+needs = ["network", "py:requests"]
+
+[jobs.core-lists]
+title = "RetroArch core URL lists"
+category = "Generated files"
+description = "Regenerates the per-target core URL lists and xcfilelists from cores.yml."
+run = ["python3", "Scripts/generators/generate_core_lists.py", "generate"]
+mode = "auto"
+inputs = ["CoresRetro/RetroArch/scripts/cores.yml"]
+outputs = ["CoresRetro/RetroArch/scripts/urls*.txt", "CoresRetro/RetroArch/scripts/output_*.xcfilelist"]
+
+[jobs.core-lists-urls]
+title = "Check every core URL resolves"
+category = "Generated files"
+description = "HTTP HEAD on every URL in cores.yml; run after bumping the buildbot pin."
+run = ["python3", "Scripts/generators/generate_core_lists.py", "validate"]
+needs = ["network"]
+
+[jobs.core-manager]
+title = "CoreManager (Swift) validation"
+category = "Generated files"
+description = """Swift port of generate_core_lists.py. Both exist today; the Python one is what
+the Makefile, cores.yml and get-modules.sh use. Retire one of them."""
+run = "swift run --package-path Scripts/generators/CoreManager CoreManager validate"
+files = ["Scripts/generators/CoreManager/**"]
+needs = ["swift", "network"]
+
+[jobs.default-skins]
+title = "Default controller skins"
+category = "Generated files"
+description = "Regenerates the bundled DeltaSkin files for physical controllers."
+run = ["python3", "Scripts/generators/generate_default_skins.py"]
+mode = "auto"
+outputs = ["PVUI/Sources/PVUIBase/Resources/DefaultSkins/**"]
+
+[jobs.licenses]
+title = "License manifest"
+category = "Generated files"
+description = "LICENSES.md and licenses.json from every Core.plist (also runs on push in generate-licenses.yml)."
+run = ["python3", "Scripts/generators/generate_licenses.py"]
+mode = "auto"
+inputs = ["Cores/*/**/Core.plist", "CoresRetro/**/Core.plist"]
+outputs = ["LICENSES.md", "Scripts/generators/licenses.json"]
+
+[jobs.license-gaps]
+title = "Cores missing license data"
+category = "Generated files"
+description = "Cores whose Core.plist lacks PVLicense or PVCopyrightHolder. Fill them in by hand."
+check = ["python3", "Scripts/generators/generate_licenses.py", "--check"]
+reason_pattern = "^CHECK:"
+mode = "manual"
+
+[jobs.controls-audit]
+title = "Controller mapping audit"
+category = "Generated files"
+description = "docs/controller-mapping-audit.md: which GameController button drives each input, per native core."
+run = ["python3", "Scripts/audits/audit_controls.py"]
+mode = "auto"
+inputs = ["Cores/*/**/*Bridge*.m", "Cores/*/**/*Bridge*.mm"]
+outputs = ["docs/controller-mapping-audit.md"]
+
+[jobs.skin-catalog]
+title = "Delta skin catalog"
+category = "Generated files"
+description = "Scrapes community skin sites into the bundled catalog_seed.json."
+run = """python3 Scripts/generators/scrape_skin_catalog.py --source all --skip-validation \
+  --output Scripts/generators/catalog_seed.json \
+  && cp Scripts/generators/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json"""
+mode = "auto"
+outputs = ["Scripts/generators/catalog_seed.json", "PVUI/Sources/PVUIBase/Resources/catalog_seed.json"]
+max_age = "14d"
+needs = ["network", "py:requests", "py:bs4"]
+
+[jobs.uti]
+title = "File types (UTIs) in Info.plist"
+category = "Generated files"
+description = """Writes UTExportedTypeDeclarations / UTImportedTypeDeclarations from systems.plist.
+REVIEW THE DIFF: the generator drops hand-added types it does not know about
+(about 900 lines on 2026-10-06), so it is manual until that is fixed."""
+run = """python3 Scripts/generators/generate_uti_declarations.py --update-plist \
+  Provenance/Provenance-Info.plist Provenance/Provenance-AppStore-Info.plist \
+  "Provenance/Provenance-Lite (AppStore)-Info.plist" Provenance/Provenance-Lite-Info.plist \
+  Provenance/Provenance-UnderDevelopment-Info.plist \
+  ProvenanceTV/ProvenanceTV-AppStore-Info.plist ProvenanceTV/ProvenanceTV-Lite-Info.plist"""
+mode = "manual"
+inputs = ["PVLibrary/Sources/PVLibrary/Resources/systems.plist"]
+outputs = ["Provenance/*-Info.plist", "ProvenanceTV/*-Info.plist"]
+files = ["Scripts/generators/gen_uti.swift"]
+
+[jobs.systems-docs]
+title = "Systems table (Markdown)"
+category = "Generated files"
+description = "Prints a Markdown table of every system in systems.plist."
+run = ["python3", "Scripts/generators/systems.py", "PVLibrary/Sources/PVLibrary/Resources/systems.plist"]
+
+[jobs.cheatdb]
+title = "Libretro cheat database"
+category = "Generated files"
+description = "Rebuilds the gitignored cheat database from libretro-database. CI builds make their own."
+run = ["make", "update-cheatdb"]
+files = ["Scripts/generators/generate_cheatdb.py"]
+needs = ["network", "git"]
+
+[jobs.core-versions]
+title = "Native core versions in Core.plist"
+category = "Generated files"
+description = """Compares each native core's Core.plist version with its submodule source.
+Scans every submodule (several minutes), so it is on demand rather than a check."""
+run = ["python3", "Scripts/generators/update_core_versions.py"]
+args_hint = "[--fix]"
+needs = ["submodules"]
+
+[jobs.changelog]
+title = "Changelog [Unreleased] section"
+category = "Generated files"
+description = "Adds conventional commits since the last tag to CHANGELOG.md. Run at release time."
+run = ["make", "generate-changelog"]
+files = ["Scripts/generators/changelog_generate_entries.py", "Scripts/generators/changelog_update_file.py"]
+
+# ─────────────────────────────────────────────────────────── RetroArch cores
+
+[jobs.ra-nightly-pin]
+title = "RetroArch buildbot pin"
+category = "RetroArch cores"
+description = """Reports newer libretro nightly dylibs than the date pinned in cores.yml.
+As of 2026-10-06 cores.yml sets no pinned_date, so builds always take the latest nightly
+(not reproducible) and this stays current. Pin with update-dylib-pins.sh to make it bite."""
+check = ["CoresRetro/RetroArch/scripts/check-dylib-updates.sh"]
+run = ["CoresRetro/RetroArch/scripts/check-dylib-updates.sh", "--update"]
+mode = "manual"
+needs = ["network"]
+files = ["CoresRetro/RetroArch/scripts/update-dylib-pins.sh"]
+
+[jobs.local-dylibs]
+title = "Custom-built core dylibs"
+category = "RetroArch cores"
+description = "flycast-jitless, virtualjaguar and other `local: true` cores live in the private dylib store."
+run = ["CoresRetro/RetroArch/scripts/local-dylibs.sh", "list"]
+args_hint = "upload|fetch|list [core…]"
+needs = ["gh"]
+
+[jobs.ra-core-licenses]
+title = "RetroArch core licenses"
+category = "RetroArch cores"
+description = "Syncs CoresRetro/RetroArch/Core.plist license fields from libretro-super's .info files."
+run = ["python3", "CoresRetro/RetroArch/scripts/update_core_licenses.py"]
+mode = "manual"
+outputs = ["CoresRetro/RetroArch/Core.plist"]
+max_age = "90d"
+needs = ["path:CoresRetro/RetroArch/libretro-super/dist/info"]
+
+[jobs.ra-script-tests]
+title = "RetroArch script tests"
+category = "RetroArch cores"
+run = ["CoresRetro/RetroArch/scripts/tests/run_tests.sh"]
+files = ["CoresRetro/RetroArch/scripts/tests/*.sh"]
+
+# ─────────────────────────────────────────────────────────── audits
+
+[jobs.pbxproj-sources]
+title = "Sources missing from Xcode projects"
+category = "Audits"
+description = "Files beside compiled sources that their .xcodeproj doesn't reference (also checked per PR)."
+check = ["python3", "Scripts/audits/check_pbxproj_sources.py"]
+mode = "manual"
+
+[jobs.localization]
+title = "Localization coverage"
+category = "Audits"
+run = ["Scripts/audits/audit_localization.sh"]
+
+[jobs.spm-validate]
+title = "Build and test standalone SPM modules"
+category = "Audits"
+run = ["Scripts/audits/spm-validate.sh"]
+args_hint = "[MODULE]"
+needs = ["swift"]
+
+[jobs.systems-plist-duplicate]
+title = "Duplicate systems.plist check"
+category = "Audits"
+run = ["python3", "Scripts/audits/diff_systems_plists.py"]
+
+[jobs.pr-reviews]
+title = "Review state of agent PRs"
+category = "Audits"
+run = ["Scripts/audits/check-pr-reviews.sh"]
+args_hint = "[PR number…]"
+needs = ["gh"]
+
+[jobs.binary-scan]
+title = "Inspect built frameworks and dylibs"
+category = "Audits"
+description = "Code-signing and architecture report for a built .app or framework folder."
+run = ["python3", "Scripts/audits/scan_ios_binaries.py"]
+args_hint = "<path>"
+
+[jobs.script-tests]
+title = "Script and maint tests"
+category = "Audits"
+run = """python3 Scripts/tests/test_check_pbxproj_sources.py \
+  && python3 Scripts/tests/test_generate_cheatdb_dat.py \
+  && python3 -m unittest discover -s Scripts/maint -p 'test_*.py' \
+  && bash Scripts/tests/test-get-modules-validation.sh"""
+
+# ─────────────────────────────────────────────────────────── release
+
+[jobs.release]
+title = "Build and upload a release"
+category = "Release"
+run = ["Scripts/release/release.sh"]
+args_hint = "[options] — see the script header"
+needs = ["macos"]
+
+[jobs.bump-build]
+title = "Bump the build number"
+category = "Release"
+run = ["Scripts/release/bump-version.sh", "--build"]
+
+[jobs.certificates]
+title = "App Store Connect certificates"
+category = "Release"
+run = ["python3", "Scripts/release/asc_certs.py"]
+args_hint = "list|revoke|create|p12 …"
+
+[jobs.release-secrets]
+title = "Set up release secrets"
+category = "Release"
+run = ["python3", "Scripts/release/setup-release-secrets.py"]
+args_hint = "[--asc|--pat]"
+
+[jobs.secrets-sync]
+title = "Sync 1Password, .env and GitHub secrets"
+category = "Release"
+run = ["Scripts/release/secrets-1p.sh"]
+args_hint = "<command> — see the script header"
+needs = ["op"]
+
+[jobs.media-assets]
+title = "App Store screenshots and press assets"
+category = "Release"
+run = ["Scripts/release/media-assets.sh"]
+args_hint = "<command> — see the script header"
+
+[jobs.gameplay-screenshots]
+title = "Capture gameplay screenshots"
+category = "Release"
+run = ["Scripts/release/capture-gameplay-screenshots.sh"]
+needs = ["macos"]

@@ -8,9 +8,8 @@ on:
         required: false
         default: 'false'
         type: boolean
-  schedule:
-    # Run weekly on Mondays at 08:00 UTC
-    - cron: '0 8 * * 1'
+  # No schedule: the scan needs every submodule and takes minutes. Run it from the
+  # Actions tab, or locally with `python3 Scripts/maint/maint.py run core-versions`.
 
 permissions:
   contents: write

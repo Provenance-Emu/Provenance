@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Provenance Maintenance</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --text: #16181d; --muted: #5d6573; --line: #e2e5ea;
+    --accent: #5b4bdb; --accent-text: #ffffff;
+    --stale: #b45309; --stale-bg: #fef3c7; --ok: #15803d; --ok-bg: #dcfce7;
+    --err: #b91c1c; --err-bg: #fee2e2; --idle: #64748b; --idle-bg: #eef1f5;
+    --code-bg: #f1f3f6; --log-bg: #0f1115; --log-text: #d6dbe4;
+    --radius: 10px; --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1014; --panel: #171a20; --text: #e7e9ee; --muted: #9aa3b2; --line: #2a2f38;
+      --accent: #8b7dff; --accent-text: #0e1014;
+      --stale: #fbbf24; --stale-bg: #3a2a0a; --ok: #4ade80; --ok-bg: #0f2e1a;
+      --err: #f87171; --err-bg: #3b1212; --idle: #94a3b8; --idle-bg: #222731;
+      --code-bg: #20242c; --log-bg: #07080a; --log-text: #c9d1dc;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  header { position: sticky; top: 0; z-index: 2; background: var(--panel); border-bottom: 1px solid var(--line); }
+  .bar { max-width: 1100px; margin: 0 auto; padding: 14px 16px; display: flex; gap: 12px;
+         align-items: center; flex-wrap: wrap; }
+  h1 { font-size: 17px; margin: 0; }
+  .repo { color: var(--muted); font-size: 12.5px; font-family: var(--mono); }
+  .spacer { flex: 1; }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  button { font: inherit; border: 1px solid var(--line); background: var(--panel); color: var(--text);
+           padding: 6px 12px; border-radius: 7px; cursor: pointer; }
+  button:hover:not(:disabled) { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  button:disabled { opacity: .45; cursor: default; }
+  .summary { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .chip { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 4px 12px;
+          font-size: 13px; cursor: pointer; }
+  .chip[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .banner { background: var(--stale-bg); border: 1px solid var(--line); border-radius: var(--radius);
+            padding: 12px 14px; margin-bottom: 16px; }
+  .banner h2 { font-size: 14px; margin: 0 0 6px; }
+  .banner details { margin-top: 6px; }
+  .banner pre { margin: 6px 0 0; }
+  h3.cat { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
+           margin: 22px 0 8px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+          padding: 12px 14px; margin-bottom: 8px; }
+  .card.stale { border-left: 3px solid var(--stale); }
+  .card.error { border-left: 3px solid var(--err); }
+  .top { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .title { font-weight: 600; }
+  .id { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .pill { font-size: 11.5px; padding: 1px 8px; border-radius: 999px; font-weight: 600; }
+  .pill.stale { color: var(--stale); background: var(--stale-bg); }
+  .pill.current { color: var(--ok); background: var(--ok-bg); }
+  .pill.error { color: var(--err); background: var(--err-bg); }
+  .pill.on-demand, .pill.mode { color: var(--idle); background: var(--idle-bg); }
+  .actions { margin-left: auto; display: flex; gap: 6px; }
+  .desc { color: var(--muted); margin: 6px 0 0; white-space: pre-line; }
+  ul.reasons { margin: 6px 0 0; padding-left: 18px; }
+  ul.reasons li { color: var(--stale); }
+  .card.error ul.reasons li { color: var(--err); }
+  .blocked { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+  code, pre { font-family: var(--mono); font-size: 12px; }
+  .cmd { display: flex; gap: 6px; align-items: center; margin-top: 8px; }
+  .cmd code { background: var(--code-bg); padding: 4px 8px; border-radius: 6px; overflow-x: auto;
+              white-space: nowrap; flex: 1; min-width: 0; }
+  .cmd button { padding: 3px 8px; font-size: 12px; }
+  .meta { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+  pre.log { background: var(--log-bg); color: var(--log-text); border-radius: 8px; padding: 10px 12px;
+            max-height: 360px; overflow: auto; margin: 10px 0 0; white-space: pre-wrap; word-break: break-word; }
+  pre.stub { background: var(--code-bg); padding: 8px 10px; border-radius: 6px; overflow-x: auto; }
+  .empty { color: var(--muted); padding: 30px 0; text-align: center; }
+  .toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--text);
+           color: var(--bg); padding: 8px 14px; border-radius: 8px; font-size: 13px; opacity: 0;
+           transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  @media (max-width: 640px) { .actions { margin-left: 0; width: 100%; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1>Provenance maintenance</h1>
+    <span class="repo" id="repo">loading…</span>
+    <span class="spacer"></span>
+    <button id="refresh" title="Re-run network checks too">Refresh checks</button>
+    <button id="runStale" class="primary">Run stale auto jobs</button>
+  </div>
+</header>
+<main>
+  <div class="summary" id="filters"></div>
+  <div id="unregistered"></div>
+  <div id="jobs"><p class="empty">Checking jobs…</p></div>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const TOKEN = "__MAINT_TOKEN__";
+const FILTERS = [
+  ["all", "All"], ["stale", "Stale"], ["current", "Current"], ["error", "Errors"],
+  ["auto", "Auto"], ["manual", "Manual"], ["on-demand", "On demand"],
+];
+let data = null;
+let filter = "stale";
+const openLogs = new Set();
+const polling = new Map();
+
+const $ = (sel) => document.querySelector(sel);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+
+function toast(msg) {
+  const el = $("#toast"); el.textContent = msg; el.classList.add("show");
+  clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
+function ago(ts) {
+  if (!ts) return "never";
+  const s = Date.now() / 1000 - ts;
+  if (s < 90) return "just now";
+  if (s < 5400) return `${Math.round(s / 60)} min ago`;
+  if (s < 172800) return `${Math.round(s / 3600)} h ago`;
+  return `${Math.round(s / 86400)} days ago`;
+}
+
+async function load({ checks = false, refresh = false } = {}) {
+  const res = await fetch(`/api/status?checks=${checks ? 1 : 0}&refresh=${refresh ? 1 : 0}`);
+  data = await res.json();
+  render();
+}
+
+function matches(job) {
+  if (filter === "all") return true;
+  if (filter === "auto" || filter === "manual") return job.mode === filter;
+  return job.state === filter;
+}
+
+function render() {
+  const r = data.repo;
+  $("#repo").textContent = `${r.branch || "detached"} · ${r.head}${r.dirty ? " · uncommitted changes" : ""}`;
+  const counts = {};
+  for (const j of data.jobs) {
+    counts[j.state] = (counts[j.state] || 0) + 1;
+    counts[j.mode] = (counts[j.mode] || 0) + 1;
+  }
+  counts.all = data.jobs.length;
+  $("#filters").innerHTML = FILTERS.map(([key, label]) =>
+    `<button class="chip" data-filter="${key}" aria-pressed="${filter === key}">${label} ${counts[key] || 0}</button>`).join("");
+
+  const staleAuto = data.jobs.filter((j) => j.state === "stale" && j.mode === "auto" && j.runnable).length;
+  $("#runStale").disabled = !staleAuto || !!data.busy;
+  $("#runStale").textContent = staleAuto ? `Run ${staleAuto} stale auto job${staleAuto > 1 ? "s" : ""}` : "No stale auto jobs";
+
+  const un = data.unregistered;
+  $("#unregistered").innerHTML = un.length ? `
+    <div class="banner">
+      <h2>❓ ${un.length} script${un.length > 1 ? "s" : ""} not in <code>Scripts/maint/jobs.toml</code></h2>
+      Add a job for each, or list it under <code>[ignore]</code>.
+      ${un.map((u) => `<details><summary><code>${esc(u.path)}</code></summary>
+        <pre class="stub">${esc(u.stub)}</pre>
+        <button data-copy="${esc(u.stub)}">Copy stub</button></details>`).join("")}
+    </div>` : "";
+
+  const jobs = data.jobs.filter(matches);
+  if (!jobs.length) {
+    $("#jobs").innerHTML = `<p class="empty">${filter === "stale" ? "Nothing is stale. 🎉" : "No jobs match."}</p>`;
+    return;
+  }
+  let html = "", cat = null;
+  for (const j of jobs) {
+    if (j.category !== cat) { cat = j.category; html += `<h3 class="cat">${esc(cat)}</h3>`; }
+    html += card(j);
+  }
+  $("#jobs").innerHTML = html;
+  for (const id of openLogs) showLog(id, false);
+}
+
+function card(j) {
+  const busy = data.busy === j.id;
+  const lr = j.last_run;
+  const lastRun = lr ? `Last run ${ago(lr.last_run)} · ${lr.exit === 0 ? "ok" : "exit " + lr.exit}` +
+    (lr.changed?.length ? ` · ${lr.changed.length} file(s) changed` : "") : "Not run on this machine";
+  const cmd = j.run ? j.run + (j.args_hint ? " " + j.args_hint : "") : "";
+  const canRun = j.runnable && !data.busy;
+  return `<div class="card ${j.state}" id="card-${esc(j.id)}">
+    <div class="top">
+      <span class="title">${esc(j.title)}</span><span class="id">${esc(j.id)}</span>
+      <span class="pill ${j.state}">${j.state}</span><span class="pill mode">${j.mode}</span>
+      <span class="actions">
+        ${j.run ? `<button data-run="${esc(j.id)}" ${canRun ? "" : "disabled"}>${busy ? "Running…" : "Run"}</button>
+        <button data-dry="${esc(j.id)}" ${canRun ? "" : "disabled"}>Dry run</button>` : ""}
+        <button data-log="${esc(j.id)}">Log</button>
+      </span>
+    </div>
+    ${j.description ? `<p class="desc">${esc(j.description)}</p>` : ""}
+    ${j.reasons.length ? `<ul class="reasons">${j.reasons.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+    ${j.blocked.length ? `<div class="blocked">⏭ Can't run here: ${esc(j.blocked.join(", "))}</div>` : ""}
+    ${cmd ? `<div class="cmd"><code>${esc(cmd)}</code><button data-copy="${esc("python3 Scripts/maint/maint.py run " + j.id)}">Copy</button></div>`
+          : `<div class="meta">Fixed by hand — no command.</div>`}
+    ${j.check ? `<div class="meta">Check: <code>${esc(j.check)}</code></div>` : ""}
+    <div class="meta">${esc(lastRun)}</div>
+    <pre class="log" id="log-${esc(j.id)}" hidden></pre>
+  </div>`;
+}
+
+async function post(path, body) {
+  const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json", "X-Maint-Token": TOKEN },
+                                  body: JSON.stringify(body) });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || res.statusText);
+  return json;
+}
+
+async function run(id, dry) {
+  try {
+    await post("/api/run", { job: id, dry_run: dry });
+    data.busy = id; openLogs.add(id); render(); poll(id, 0);
+  } catch (e) { toast(e.message); }
+}
+
+async function runStale() {
+  try {
+    const { started } = await post("/api/run-stale", { auto_only: true });
+    if (!started.length) return toast("Nothing to run");
+    data.busy = started[0];
+    started.forEach((id) => openLogs.add(id));
+    render();
+    started.forEach((id) => poll(id, 0));
+  } catch (e) { toast(e.message); }
+}
+
+function showLog(id, toggle = true) {
+  const el = document.getElementById(`log-${id}`);
+  if (!el) return;
+  if (toggle && !el.hidden) { el.hidden = true; openLogs.delete(id); return; }
+  el.hidden = false; openLogs.add(id);
+  if (!polling.has(id) && !el.dataset.loaded) poll(id, 0, true);
+}
+
+async function poll(id, offset, once = false) {
+  polling.set(id, true);
+  const res = await fetch(`/api/run/${encodeURIComponent(id)}?offset=${offset}`);
+  const j = await res.json();
+  const el = document.getElementById(`log-${id}`);
+  if (el) {
+    if (offset === 0) el.textContent = "";
+    el.textContent += j.lines.map((l) => l + "\n").join("");
+    el.dataset.loaded = "1";
+    el.scrollTop = el.scrollHeight;
+  }
+  if (j.running && !once) {
+    setTimeout(() => poll(id, j.offset), 700);
+    return;
+  }
+  polling.delete(id);
+  if (!once) {
+    if (j.result) toast(`${id}: ${j.result.exit === 0 ? "done" : "failed (exit " + j.result.exit + ")"}`);
+    const text = el?.textContent;
+    await load();
+    const after = document.getElementById(`log-${id}`);
+    if (after && text) { after.textContent = text; after.hidden = false; after.dataset.loaded = "1"; }
+  }
+}
+
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button");
+  if (!t) return;
+  if (t.dataset.filter) { filter = t.dataset.filter; render(); }
+  else if (t.dataset.run) run(t.dataset.run, false);
+  else if (t.dataset.dry) run(t.dataset.dry, true);
+  else if (t.dataset.log) showLog(t.dataset.log);
+  else if (t.dataset.copy) navigator.clipboard.writeText(t.dataset.copy).then(() => toast("Copied"));
+});
+$("#refresh").addEventListener("click", async () => {
+  $("#refresh").disabled = true; $("#refresh").textContent = "Checking…";
+  try { await load({ checks: true, refresh: true }); } finally {
+    $("#refresh").disabled = false; $("#refresh").textContent = "Refresh checks";
+  }
+});
+$("#runStale").addEventListener("click", runStale);
+
+load().then(() => load({ checks: true }));
+</script>
+</body>
+</html>

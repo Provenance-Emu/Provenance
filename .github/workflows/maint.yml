@@ -1,0 +1,126 @@
+name: Maintenance
+
+# Runs every stale `mode = "auto"` job in Scripts/maint/jobs.toml, opens one PR
+# with the regenerated files, and keeps a single tracking issue listing what
+# needs a person (manual jobs, jobs CI can't run, unregistered scripts).
+# develop is protected, so results always land through a PR, never a push.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # Mondays 06:00 UTC
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'Scripts/**'
+      - 'CoresRetro/RetroArch/scripts/**'
+      - '.github/workflows/maint.yml'
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: maint-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PR_BRANCH: maint/auto-ci
+  ISSUE_TITLE: 'Maintenance: jobs needing attention'
+  ISSUE_LABEL: maintenance
+
+jobs:
+  # On PRs that touch scripts: the tool's tests, and every script must be registered.
+  validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: maint tests
+        run: python3 -m unittest discover -s Scripts/maint -p 'test_*.py' -v
+      - name: Every script is in jobs.toml
+        run: |
+          python3 Scripts/maint/maint.py status --no-checks
+          unknown=$(python3 Scripts/maint/maint.py status --json --no-checks \
+            | python3 -c "import json,sys; print('\n'.join(u['path'] for u in json.load(sys.stdin)['unregistered']))")
+          if [ -n "$unknown" ]; then
+            echo "::error::Add these to Scripts/maint/jobs.toml (a job, or [ignore]):"
+            echo "$unknown"
+            echo "Stubs: python3 Scripts/maint/maint.py stub"
+            exit 1
+          fi
+
+  maintain:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0   # staleness is read from git history
+          submodules: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: Scripts/generators/requirements-scraper.txt
+
+      - name: Install script dependencies
+        run: pip install -r Scripts/generators/requirements-scraper.txt
+
+      - name: Status before
+        run: python3 Scripts/maint/maint.py status --all
+
+      - name: Run stale auto jobs
+        run: |
+          python3 Scripts/maint/maint.py run --stale --auto-only --keep-going \
+            --report "$RUNNER_TEMP/pr-body.md" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Open or update the pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.PR_BRANCH }}
+          base: develop
+          delete-branch: true
+          commit-message: 'chore(maint): regenerate stale outputs'
+          title: '[Auto] Maintenance: regenerate stale outputs'
+          body-path: ${{ runner.temp }}/pr-body.md
+          labels: ${{ env.ISSUE_LABEL }}
+
+      - name: Update the tracking issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 Scripts/maint/maint.py report --manual-only > "$RUNNER_TEMP/issue.md"
+          cat "$RUNNER_TEMP/issue.md" >> "$GITHUB_STEP_SUMMARY"
+          gh label create "$ISSUE_LABEL" --color 5b4bdb \
+            --description "Scripts/maint maintenance jobs" 2>/dev/null || true
+          number=$(gh issue list --label "$ISSUE_LABEL" --state open --search "in:title \"$ISSUE_TITLE\"" \
+            --json number --jq '.[0].number // empty')
+          if grep -q "^Everything is current" "$RUNNER_TEMP/issue.md"; then
+            if [ -n "$number" ]; then
+              gh issue close "$number" --comment "Everything is current as of $(date -u +%F)."
+            fi
+            exit 0
+          fi
+          {
+            echo "Updated $(date -u '+%F %H:%M UTC') by [the Maintenance workflow]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."
+            echo
+            cat "$RUNNER_TEMP/issue.md"
+            echo
+            echo "Locally: \`make maint\` (dashboard) or \`python3 Scripts/maint/maint.py status\`."
+          } > "$RUNNER_TEMP/issue-body.md"
+          if [ -n "$number" ]; then
+            gh issue edit "$number" --body-file "$RUNNER_TEMP/issue-body.md"
+          else
+            gh issue create --title "$ISSUE_TITLE" --label "$ISSUE_LABEL" --body-file "$RUNNER_TEMP/issue-body.md"
+          fi
