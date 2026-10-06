@@ -1,574 +1,568 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "ActivityIndicatorView",
-        "repositoryURL": "https://github.com/exyte/ActivityIndicatorView.git",
-        "state": {
-          "branch": null,
-          "revision": "36140867802ae4a1d2b11490bcbbefe058001d14",
-          "version": "1.2.1"
-        }
-      },
-      {
-        "package": "AnimatedGradient",
-        "repositoryURL": "https://github.com/exyte/AnimatedGradient.git",
-        "state": {
-          "branch": null,
-          "revision": "c0e19120abda483a61058721c6c7d65c82c4ebe9",
-          "version": "1.0.1"
-        }
-      },
-      {
-        "package": "AppCenter",
-        "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
-        "state": {
-          "branch": null,
-          "revision": "404f0c432ae9d6191c6ca7c6553fe5566c5f4bc6",
-          "version": "5.12.0"
-        }
-      },
-      {
-        "package": "async-http-client",
-        "repositoryURL": "https://github.com/swift-server/async-http-client.git",
-        "state": {
-          "branch": null,
-          "revision": "9544287b9416c0bc71e58b9f3aead8dd14b16103",
-          "version": "1.36.0"
-        }
-      },
-      {
-        "package": "BitByteData",
-        "repositoryURL": "https://github.com/tsolomko/BitByteData",
-        "state": {
-          "branch": null,
-          "revision": "e1a5443be67daf0833cbb5f4fa3a06a265ca3105",
-          "version": "2.1.0"
-        }
-      },
-      {
-        "package": "BuildEnvironment",
-        "repositoryURL": "https://github.com/DimaRU/BuildEnvironment.git",
-        "state": {
-          "branch": null,
-          "revision": "ecef6529c9bf3be2fb1569f19ee0b85cfb7d0a12",
-          "version": "1.1.1"
-        }
-      },
-      {
-        "package": "Checksum",
-        "repositoryURL": "https://github.com/JoeMatt/Checksum.git",
-        "state": {
-          "branch": null,
-          "revision": "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
-          "version": "1.1.1"
-        }
-      },
-      {
-        "package": "DateRangePicker",
-        "repositoryURL": "https://github.com/MrAsterisco/DateRangePicker",
-        "state": {
-          "branch": null,
-          "revision": "8bad437603a0559cfe29e69df4ef1981ddfb5f2b",
-          "version": "1.0.4"
-        }
-      },
-      {
-        "package": "Defaults",
-        "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
-        "state": {
-          "branch": "main",
-          "revision": "5bfac4928f000fabdbef7e4ed0251399bb0841c9",
-          "version": null
-        }
-      },
-      {
-        "package": "FloatingButton",
-        "repositoryURL": "https://github.com/exyte/FloatingButton.git",
-        "state": {
-          "branch": null,
-          "revision": "c1e3e6a641ef5bacbcbc2b2c80db54793f75f974",
-          "version": "1.4.0"
-        }
-      },
-      {
-        "package": "FreemiumKit",
-        "repositoryURL": "https://github.com/FlineDev/FreemiumKit.git",
-        "state": {
-          "branch": null,
-          "revision": "540652a0a0ba8b1a998e6022d944e42ee545d867",
-          "version": "1.19.0"
-        }
-      },
-      {
-        "package": "Highlightr",
-        "repositoryURL": "https://github.com/raspu/Highlightr.git",
-        "state": {
-          "branch": null,
-          "revision": "05e7fcc63b33925cd0c1faaa205cdd5681e7bbef",
-          "version": "2.3.0"
-        }
-      },
-      {
-        "package": "hummingbird",
-        "repositoryURL": "https://github.com/hummingbird-project/hummingbird.git",
-        "state": {
-          "branch": null,
-          "revision": "2f407402799c2217df69b01582f3a44856fef012",
-          "version": "2.24.0"
-        }
-      },
-      {
-        "package": "Lighter",
-        "repositoryURL": "https://github.com/JoeMatt/Lighter.git",
-        "state": {
-          "branch": null,
-          "revision": "b1c78989db429349427cd90b9b99925ff3253853",
-          "version": "1.0.0"
-        }
-      },
-      {
-        "package": "MarkdownView",
-        "repositoryURL": "https://github.com/LiYanan2004/MarkdownView.git",
-        "state": {
-          "branch": null,
-          "revision": "8b746c5146b7842e9547b4d60adb2f1712cebb33",
-          "version": "1.7.0"
-        }
-      },
-      {
-        "package": "MBProgressHUD",
-        "repositoryURL": "https://github.com/jdg/MBProgressHUD.git",
-        "state": {
-          "branch": null,
-          "revision": "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
-          "version": "1.2.0"
-        }
-      },
-      {
-        "package": "OpenDateInterval",
-        "repositoryURL": "https://github.com/MrAsterisco/OpenDateInterval",
-        "state": {
-          "branch": null,
-          "revision": "acf88f98adae4ef2f7040d3fcc23685b094b219b",
-          "version": "1.0.0"
-        }
-      },
-      {
-        "package": "OpenSSL",
-        "repositoryURL": "https://github.com/krzyzanowskim/OpenSSL",
-        "state": {
-          "branch": null,
-          "revision": "fdc9231384f37f053dffe058fd6dfc6c5072dae5",
-          "version": "3.6.2000"
-        }
-      },
-      {
-        "package": "PLCrashReporter",
-        "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
-        "state": {
-          "branch": null,
-          "revision": "0254f941c646b1ed17b243654723d0f071e990d0",
-          "version": "1.12.2"
-        }
-      },
-      {
-        "package": "PLzmaSDK",
-        "repositoryURL": "https://github.com/OlehKulykov/PLzmaSDK.git",
-        "state": {
-          "branch": "1.2.5",
-          "revision": "ee2666a06aa1f6632d5060d1cf316520ed8aecbd",
-          "version": null
-        }
-      },
-      {
-        "package": "RealmDatabase",
-        "repositoryURL": "https://github.com/realm/realm-core.git",
-        "state": {
-          "branch": null,
-          "revision": "4cc46f8607516226e5465062fdacd088fbd94552",
-          "version": "20.1.4"
-        }
-      },
-      {
-        "package": "Realm",
-        "repositoryURL": "https://github.com/realm/realm-swift.git",
-        "state": {
-          "branch": null,
-          "revision": "600e187711e5fa4e8e2c0429cacee27e8e44f112",
-          "version": "20.0.4"
-        }
-      },
-      {
-        "package": "RxDataSources",
-        "repositoryURL": "https://github.com/RxSwiftCommunity/RxDataSources.git",
-        "state": {
-          "branch": null,
-          "revision": "90c29b48b628479097fe775ed1966d75ac374518",
-          "version": "5.0.2"
-        }
-      },
-      {
-        "package": "RxRealm",
-        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm.git",
-        "state": {
-          "branch": null,
-          "revision": "a7c89c2a0ce72946a2842f1b2645d2ded84a9c69",
-          "version": null
-        }
-      },
-      {
-        "package": "RxSwift",
-        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "132aea4f236ccadc51590b38af0357a331d51fa2",
-          "version": "6.10.2"
-        }
-      },
-      {
-        "package": "Sentry",
-        "repositoryURL": "https://github.com/getsentry/sentry-cocoa",
-        "state": {
-          "branch": null,
-          "revision": "cf44aa8cb4147f39e698c1f28be0b6b2c89f79d2",
-          "version": "8.58.2"
-        }
-      },
-      {
-        "package": "SideKit",
-        "repositoryURL": "https://github.com/SideStore/SideKit.git",
-        "state": {
-          "branch": null,
-          "revision": "ab959a54fc2217464ffabd09322ec3351e3ca456",
-          "version": null
-        }
-      },
-      {
-        "package": "SiriusRating",
-        "repositoryURL": "https://github.com/theappcapital/SiriusRating-iOS.git",
-        "state": {
-          "branch": null,
-          "revision": "f2f1d88d960c6438f4b2e2562744f7814304cbf4",
-          "version": "1.0.8"
-        }
-      },
-      {
-        "package": "SQLite.swift",
-        "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
-        "state": {
-          "branch": null,
-          "revision": "964c300fb0736699ce945c9edb56ecd62eba27a3",
-          "version": "0.16.0"
-        }
-      },
-      {
-        "package": "SteamController",
-        "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
-        "state": {
-          "branch": null,
-          "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-algorithms",
-        "repositoryURL": "https://github.com/apple/swift-algorithms.git",
-        "state": {
-          "branch": null,
-          "revision": "87e50f483c54e6efd60e885f7f5aa946cee68023",
-          "version": "1.2.1"
-        }
-      },
-      {
-        "package": "swift-asn1",
-        "repositoryURL": "https://github.com/apple/swift-asn1.git",
-        "state": {
-          "branch": null,
-          "revision": "eb50cbd14606a9161cbc5d452f18797c90ef0bab",
-          "version": "1.7.0"
-        }
-      },
-      {
-        "package": "swift-async-algorithms",
-        "repositoryURL": "https://github.com/apple/swift-async-algorithms",
-        "state": {
-          "branch": null,
-          "revision": "d0b4a06d0f173a2f3be27d3ea21b3c3aa18db440",
-          "version": "1.1.4"
-        }
-      },
-      {
-        "package": "swift-atomics",
-        "repositoryURL": "https://github.com/apple/swift-atomics.git",
-        "state": {
-          "branch": null,
-          "revision": "b601256eab081c0f92f059e12818ac1d4f178ff7",
-          "version": "1.3.0"
-        }
-      },
-      {
-        "package": "swift-certificates",
-        "repositoryURL": "https://github.com/apple/swift-certificates.git",
-        "state": {
-          "branch": null,
-          "revision": "449dbbecd0f31e82b510ada227ca152caa8b5e98",
-          "version": "1.19.4"
-        }
-      },
-      {
-        "package": "cmark-gfm",
-        "repositoryURL": "https://github.com/swiftlang/swift-cmark.git",
-        "state": {
-          "branch": null,
-          "revision": "924936d0427cb25a61169739a7660230bffa6ea6",
-          "version": "0.8.0"
-        }
-      },
-      {
-        "package": "swift-collections",
-        "repositoryURL": "https://github.com/apple/swift-collections.git",
-        "state": {
-          "branch": null,
-          "revision": "fea17c02d767f46b23070fdfdacc28a03a39232a",
-          "version": "1.5.1"
-        }
-      },
-      {
-        "package": "swift-configuration",
-        "repositoryURL": "https://github.com/apple/swift-configuration.git",
-        "state": {
-          "branch": null,
-          "revision": "be76c4ad929eb6c4bcaf3351799f2adf9e6848a9",
-          "version": "1.2.0"
-        }
-      },
-      {
-        "package": "swift-crypto",
-        "repositoryURL": "https://github.com/apple/swift-crypto.git",
-        "state": {
-          "branch": null,
-          "revision": "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
-          "version": "3.15.1"
-        }
-      },
-      {
-        "package": "swift-distributed-tracing",
-        "repositoryURL": "https://github.com/apple/swift-distributed-tracing.git",
-        "state": {
-          "branch": null,
-          "revision": "dc4030184203ffafbb2ec614352487235d747fe0",
-          "version": "1.4.1"
-        }
-      },
-      {
-        "package": "swift-http-structured-headers",
-        "repositoryURL": "https://github.com/apple/swift-http-structured-headers.git",
-        "state": {
-          "branch": null,
-          "revision": "933538faa42c432d385f02e07df0ace7c5ecfc47",
-          "version": "1.7.0"
-        }
-      },
-      {
-        "package": "swift-http-types",
-        "repositoryURL": "https://github.com/apple/swift-http-types",
-        "state": {
-          "branch": null,
-          "revision": "45eb0224913ea070ec4fba17291b9e7ecf4749ca",
-          "version": "1.5.1"
-        }
-      },
-      {
-        "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log.git",
-        "state": {
-          "branch": null,
-          "revision": "7dc6101ae4dbe95cd3bc9cebad3b7cf8e49a7a63",
-          "version": "1.13.0"
-        }
-      },
-      {
-        "package": "swift-markdown",
-        "repositoryURL": "https://github.com/apple/swift-markdown.git",
-        "state": {
-          "branch": null,
-          "revision": "3c6f9523da3a1ec2fd829673e472d95b8097a3b8",
-          "version": "0.8.0"
-        }
-      },
-      {
-        "package": "swift-metrics",
-        "repositoryURL": "https://github.com/apple/swift-metrics.git",
-        "state": {
-          "branch": null,
-          "revision": "087e8074afa97040c3b870c8664fe5482fb87cc4",
-          "version": "2.11.0"
-        }
-      },
-      {
-        "package": "swift-nio",
-        "repositoryURL": "https://github.com/apple/swift-nio.git",
-        "state": {
-          "branch": null,
-          "revision": "0b18836bd8b0162e7e17a995a3fbee20ed8f3b2b",
-          "version": "2.101.3"
-        }
-      },
-      {
-        "package": "swift-nio-extras",
-        "repositoryURL": "https://github.com/apple/swift-nio-extras.git",
-        "state": {
-          "branch": null,
-          "revision": "88a51340f59cf181ebde888bd1b749296b3ec029",
-          "version": "1.34.3"
-        }
-      },
-      {
-        "package": "swift-nio-http2",
-        "repositoryURL": "https://github.com/apple/swift-nio-http2.git",
-        "state": {
-          "branch": null,
-          "revision": "61d1b44f6e4e118792be1cff88ee2bc0267c6f9a",
-          "version": "1.44.0"
-        }
-      },
-      {
-        "package": "swift-nio-ssl",
-        "repositoryURL": "https://github.com/apple/swift-nio-ssl.git",
-        "state": {
-          "branch": null,
-          "revision": "d930168b86f46ca51a4bc09c5ca45c1833db8067",
-          "version": "2.37.2"
-        }
-      },
-      {
-        "package": "swift-nio-transport-services",
-        "repositoryURL": "https://github.com/apple/swift-nio-transport-services.git",
-        "state": {
-          "branch": null,
-          "revision": "67787bb645a5e67d2edcdfbe48a216cc549222d5",
-          "version": "1.28.0"
-        }
-      },
-      {
-        "package": "swift-numerics",
-        "repositoryURL": "https://github.com/apple/swift-numerics.git",
-        "state": {
-          "branch": null,
-          "revision": "0c0290ff6b24942dadb83a929ffaaa1481df04a2",
-          "version": "1.1.1"
-        }
-      },
-      {
-        "package": "swift-openapi-runtime",
-        "repositoryURL": "https://github.com/apple/swift-openapi-runtime",
-        "state": {
-          "branch": null,
-          "revision": "3d3a8457661daf7fb260ceeb9f0e24e5204ba5fb",
-          "version": "1.12.0"
-        }
-      },
-      {
-        "package": "swift-service-context",
-        "repositoryURL": "https://github.com/apple/swift-service-context.git",
-        "state": {
-          "branch": null,
-          "revision": "d0997351b0c7779017f88e7a93bc30a1878d7f29",
-          "version": "1.3.0"
-        }
-      },
-      {
-        "package": "swift-service-lifecycle",
-        "repositoryURL": "https://github.com/swift-server/swift-service-lifecycle.git",
-        "state": {
-          "branch": null,
-          "revision": "9829955b385e5bb88128b73f1b8389e9b9c3191a",
-          "version": "2.11.0"
-        }
-      },
-      {
-        "package": "swift-syntax",
-        "repositoryURL": "https://github.com/swiftlang/swift-syntax",
-        "state": {
-          "branch": null,
-          "revision": "9de99a78f099e59caf2b2beec65a4c45d54b2081",
-          "version": "603.0.1"
-        }
-      },
-      {
-        "package": "swift-system",
-        "repositoryURL": "https://github.com/apple/swift-system",
-        "state": {
-          "branch": null,
-          "revision": "7c6ad0fc39d0763e0b699210e4124afd5041c5df",
-          "version": "1.6.4"
-        }
-      },
-      {
-        "package": "SwiftCLI",
-        "repositoryURL": "https://github.com/jakeheis/SwiftCLI",
-        "state": {
-          "branch": null,
-          "revision": "2e949055d9797c1a6bddcda0e58dada16cc8e970",
-          "version": "6.0.3"
-        }
-      },
-      {
-        "package": "SwiftGenPlugin",
-        "repositoryURL": "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
-        "state": {
-          "branch": "develop",
-          "revision": "6c9745d44daf3b9db764433e4ea84c438796a714",
-          "version": null
-        }
-      },
-      {
-        "package": "SwipeCellSUI",
-        "repositoryURL": "https://github.com/DominikButz/SwipeCellSUI.git",
-        "state": {
-          "branch": null,
-          "revision": "980921a595b098f2ad51198becada43bd0f5888e",
-          "version": "2.1.6"
-        }
-      },
-      {
-        "package": "Unrar",
-        "repositoryURL": "https://github.com/mtgto/Unrar.swift.git",
-        "state": {
-          "branch": null,
-          "revision": "0db01d94579e13bb3d316b8d385c5c370b5929b4",
-          "version": "0.5.3"
-        }
-      },
-      {
-        "package": "WhatsNewKit",
-        "repositoryURL": "https://github.com/SvenTiigi/WhatsNewKit.git",
-        "state": {
-          "branch": null,
-          "revision": "6157c77e8be9b3d2310bc680681b61a8d9e290ac",
-          "version": "2.2.1"
-        }
-      },
-      {
-        "package": "ZIPFoundation",
-        "repositoryURL": "https://github.com/weichsel/ZIPFoundation.git",
-        "state": {
-          "branch": null,
-          "revision": "22787ffb59de99e5dc1fbfe80b19c97a904ad48d",
-          "version": "0.9.20"
-        }
-      },
-      {
-        "package": "zstd",
-        "repositoryURL": "https://github.com/facebook/zstd",
-        "state": {
-          "branch": null,
-          "revision": "3ae099b48dfcfe02b1b3ba81ab85457f8a922e9f",
-          "version": null
-        }
+  "pins" : [
+    {
+      "identity" : "activityindicatorview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/ActivityIndicatorView.git",
+      "state" : {
+        "revision" : "36140867802ae4a1d2b11490bcbbefe058001d14",
+        "version" : "1.2.1"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "animatedgradient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/AnimatedGradient.git",
+      "state" : {
+        "revision" : "c0e19120abda483a61058721c6c7d65c82c4ebe9",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "appcenter-sdk-apple",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/appcenter-sdk-apple.git",
+      "state" : {
+        "revision" : "404f0c432ae9d6191c6ca7c6553fe5566c5f4bc6",
+        "version" : "5.12.0"
+      }
+    },
+    {
+      "identity" : "async-http-client",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-server/async-http-client.git",
+      "state" : {
+        "revision" : "9544287b9416c0bc71e58b9f3aead8dd14b16103",
+        "version" : "1.36.0"
+      }
+    },
+    {
+      "identity" : "bitbytedata",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tsolomko/BitByteData",
+      "state" : {
+        "revision" : "e1a5443be67daf0833cbb5f4fa3a06a265ca3105",
+        "version" : "2.1.0"
+      }
+    },
+    {
+      "identity" : "buildenvironment",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DimaRU/BuildEnvironment.git",
+      "state" : {
+        "revision" : "ecef6529c9bf3be2fb1569f19ee0b85cfb7d0a12",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "checksum",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Checksum.git",
+      "state" : {
+        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "daterangepicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MrAsterisco/DateRangePicker",
+      "state" : {
+        "revision" : "8bad437603a0559cfe29e69df4ef1981ddfb5f2b",
+        "version" : "1.0.4"
+      }
+    },
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "5bfac4928f000fabdbef7e4ed0251399bb0841c9"
+      }
+    },
+    {
+      "identity" : "floatingbutton",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/exyte/FloatingButton.git",
+      "state" : {
+        "revision" : "c1e3e6a641ef5bacbcbc2b2c80db54793f75f974",
+        "version" : "1.4.0"
+      }
+    },
+    {
+      "identity" : "freemiumkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/FlineDev/FreemiumKit.git",
+      "state" : {
+        "revision" : "540652a0a0ba8b1a998e6022d944e42ee545d867",
+        "version" : "1.19.0"
+      }
+    },
+    {
+      "identity" : "highlightr",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/raspu/Highlightr.git",
+      "state" : {
+        "revision" : "05e7fcc63b33925cd0c1faaa205cdd5681e7bbef",
+        "version" : "2.3.0"
+      }
+    },
+    {
+      "identity" : "hummingbird",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hummingbird-project/hummingbird.git",
+      "state" : {
+        "revision" : "2f407402799c2217df69b01582f3a44856fef012",
+        "version" : "2.24.0"
+      }
+    },
+    {
+      "identity" : "lighter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Lighter.git",
+      "state" : {
+        "revision" : "b1c78989db429349427cd90b9b99925ff3253853",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "markdownview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LiYanan2004/MarkdownView.git",
+      "state" : {
+        "revision" : "8b746c5146b7842e9547b4d60adb2f1712cebb33",
+        "version" : "1.7.0"
+      }
+    },
+    {
+      "identity" : "mbprogresshud",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jdg/MBProgressHUD.git",
+      "state" : {
+        "revision" : "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
+        "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "opendateinterval",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MrAsterisco/OpenDateInterval",
+      "state" : {
+        "revision" : "acf88f98adae4ef2f7040d3fcc23685b094b219b",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "openssl",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krzyzanowskim/OpenSSL",
+      "state" : {
+        "revision" : "fdc9231384f37f053dffe058fd6dfc6c5072dae5",
+        "version" : "3.6.2000"
+      }
+    },
+    {
+      "identity" : "plcrashreporter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/PLCrashReporter.git",
+      "state" : {
+        "revision" : "0254f941c646b1ed17b243654723d0f071e990d0",
+        "version" : "1.12.2"
+      }
+    },
+    {
+      "identity" : "plzmasdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/OlehKulykov/PLzmaSDK.git",
+      "state" : {
+        "branch" : "1.2.5",
+        "revision" : "ee2666a06aa1f6632d5060d1cf316520ed8aecbd"
+      }
+    },
+    {
+      "identity" : "realm-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-core.git",
+      "state" : {
+        "revision" : "4cc46f8607516226e5465062fdacd088fbd94552",
+        "version" : "20.1.4"
+      }
+    },
+    {
+      "identity" : "realm-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-swift.git",
+      "state" : {
+        "revision" : "600e187711e5fa4e8e2c0429cacee27e8e44f112",
+        "version" : "20.0.4"
+      }
+    },
+    {
+      "identity" : "rxdatasources",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RxSwiftCommunity/RxDataSources.git",
+      "state" : {
+        "revision" : "90c29b48b628479097fe775ed1966d75ac374518",
+        "version" : "5.0.2"
+      }
+    },
+    {
+      "identity" : "rxrealm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RxSwiftCommunity/RxRealm.git",
+      "state" : {
+        "revision" : "a7c89c2a0ce72946a2842f1b2645d2ded84a9c69"
+      }
+    },
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift.git",
+      "state" : {
+        "revision" : "132aea4f236ccadc51590b38af0357a331d51fa2",
+        "version" : "6.10.2"
+      }
+    },
+    {
+      "identity" : "sentry-cocoa",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/getsentry/sentry-cocoa",
+      "state" : {
+        "revision" : "cf44aa8cb4147f39e698c1f28be0b6b2c89f79d2",
+        "version" : "8.58.2"
+      }
+    },
+    {
+      "identity" : "sidekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SideStore/SideKit.git",
+      "state" : {
+        "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
+      }
+    },
+    {
+      "identity" : "siriusrating-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/theappcapital/SiriusRating-iOS.git",
+      "state" : {
+        "revision" : "f2f1d88d960c6438f4b2e2562744f7814304cbf4",
+        "version" : "1.0.8"
+      }
+    },
+    {
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stephencelis/SQLite.swift.git",
+      "state" : {
+        "revision" : "964c300fb0736699ce945c9edb56ecd62eba27a3",
+        "version" : "0.16.0"
+      }
+    },
+    {
+      "identity" : "steamcontroller",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/SteamController.git",
+      "state" : {
+        "revision" : "55d2fe0484f4cc5ed3535033af6b0218621e37b2"
+      }
+    },
+    {
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms.git",
+      "state" : {
+        "revision" : "87e50f483c54e6efd60e885f7f5aa946cee68023",
+        "version" : "1.2.1"
+      }
+    },
+    {
+      "identity" : "swift-asn1",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-asn1.git",
+      "state" : {
+        "revision" : "eb50cbd14606a9161cbc5d452f18797c90ef0bab",
+        "version" : "1.7.0"
+      }
+    },
+    {
+      "identity" : "swift-async-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-async-algorithms",
+      "state" : {
+        "revision" : "d0b4a06d0f173a2f3be27d3ea21b3c3aa18db440",
+        "version" : "1.1.4"
+      }
+    },
+    {
+      "identity" : "swift-atomics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-atomics.git",
+      "state" : {
+        "revision" : "b601256eab081c0f92f059e12818ac1d4f178ff7",
+        "version" : "1.3.0"
+      }
+    },
+    {
+      "identity" : "swift-certificates",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-certificates.git",
+      "state" : {
+        "revision" : "449dbbecd0f31e82b510ada227ca152caa8b5e98",
+        "version" : "1.19.4"
+      }
+    },
+    {
+      "identity" : "swift-cmark",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-cmark.git",
+      "state" : {
+        "revision" : "924936d0427cb25a61169739a7660230bffa6ea6",
+        "version" : "0.8.0"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections.git",
+      "state" : {
+        "revision" : "fea17c02d767f46b23070fdfdacc28a03a39232a",
+        "version" : "1.5.1"
+      }
+    },
+    {
+      "identity" : "swift-configuration",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-configuration.git",
+      "state" : {
+        "revision" : "be76c4ad929eb6c4bcaf3351799f2adf9e6848a9",
+        "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "swift-crypto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-crypto.git",
+      "state" : {
+        "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
+        "version" : "3.15.1"
+      }
+    },
+    {
+      "identity" : "swift-distributed-tracing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-distributed-tracing.git",
+      "state" : {
+        "revision" : "dc4030184203ffafbb2ec614352487235d747fe0",
+        "version" : "1.4.1"
+      }
+    },
+    {
+      "identity" : "swift-http-structured-headers",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-http-structured-headers.git",
+      "state" : {
+        "revision" : "933538faa42c432d385f02e07df0ace7c5ecfc47",
+        "version" : "1.7.0"
+      }
+    },
+    {
+      "identity" : "swift-http-types",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-http-types",
+      "state" : {
+        "revision" : "45eb0224913ea070ec4fba17291b9e7ecf4749ca",
+        "version" : "1.5.1"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "7dc6101ae4dbe95cd3bc9cebad3b7cf8e49a7a63",
+        "version" : "1.13.0"
+      }
+    },
+    {
+      "identity" : "swift-markdown",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-markdown.git",
+      "state" : {
+        "revision" : "3c6f9523da3a1ec2fd829673e472d95b8097a3b8",
+        "version" : "0.8.0"
+      }
+    },
+    {
+      "identity" : "swift-metrics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-metrics.git",
+      "state" : {
+        "revision" : "087e8074afa97040c3b870c8664fe5482fb87cc4",
+        "version" : "2.11.0"
+      }
+    },
+    {
+      "identity" : "swift-nio",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio.git",
+      "state" : {
+        "revision" : "0b18836bd8b0162e7e17a995a3fbee20ed8f3b2b",
+        "version" : "2.101.3"
+      }
+    },
+    {
+      "identity" : "swift-nio-extras",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-extras.git",
+      "state" : {
+        "revision" : "88a51340f59cf181ebde888bd1b749296b3ec029",
+        "version" : "1.34.3"
+      }
+    },
+    {
+      "identity" : "swift-nio-http2",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-http2.git",
+      "state" : {
+        "revision" : "61d1b44f6e4e118792be1cff88ee2bc0267c6f9a",
+        "version" : "1.44.0"
+      }
+    },
+    {
+      "identity" : "swift-nio-ssl",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-ssl.git",
+      "state" : {
+        "revision" : "d930168b86f46ca51a4bc09c5ca45c1833db8067",
+        "version" : "2.37.2"
+      }
+    },
+    {
+      "identity" : "swift-nio-transport-services",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-nio-transport-services.git",
+      "state" : {
+        "revision" : "67787bb645a5e67d2edcdfbe48a216cc549222d5",
+        "version" : "1.28.0"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics.git",
+      "state" : {
+        "revision" : "0c0290ff6b24942dadb83a929ffaaa1481df04a2",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "swift-openapi-runtime",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-openapi-runtime",
+      "state" : {
+        "revision" : "3d3a8457661daf7fb260ceeb9f0e24e5204ba5fb",
+        "version" : "1.12.0"
+      }
+    },
+    {
+      "identity" : "swift-service-context",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-service-context.git",
+      "state" : {
+        "revision" : "d0997351b0c7779017f88e7a93bc30a1878d7f29",
+        "version" : "1.3.0"
+      }
+    },
+    {
+      "identity" : "swift-service-lifecycle",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-server/swift-service-lifecycle.git",
+      "state" : {
+        "revision" : "9829955b385e5bb88128b73f1b8389e9b9c3191a",
+        "version" : "2.11.0"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "9de99a78f099e59caf2b2beec65a4c45d54b2081",
+        "version" : "603.0.1"
+      }
+    },
+    {
+      "identity" : "swift-system",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-system",
+      "state" : {
+        "revision" : "7c6ad0fc39d0763e0b699210e4124afd5041c5df",
+        "version" : "1.6.4"
+      }
+    },
+    {
+      "identity" : "swiftcli",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jakeheis/SwiftCLI",
+      "state" : {
+        "revision" : "2e949055d9797c1a6bddcda0e58dada16cc8e970",
+        "version" : "6.0.3"
+      }
+    },
+    {
+      "identity" : "swiftgenplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "6c9745d44daf3b9db764433e4ea84c438796a714"
+      }
+    },
+    {
+      "identity" : "swipecellsui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/DominikButz/SwipeCellSUI.git",
+      "state" : {
+        "revision" : "980921a595b098f2ad51198becada43bd0f5888e",
+        "version" : "2.1.6"
+      }
+    },
+    {
+      "identity" : "unrar.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mtgto/Unrar.swift.git",
+      "state" : {
+        "revision" : "0db01d94579e13bb3d316b8d385c5c370b5929b4",
+        "version" : "0.5.3"
+      }
+    },
+    {
+      "identity" : "whatsnewkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SvenTiigi/WhatsNewKit.git",
+      "state" : {
+        "revision" : "6157c77e8be9b3d2310bc680681b61a8d9e290ac",
+        "version" : "2.2.1"
+      }
+    },
+    {
+      "identity" : "zipfoundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/weichsel/ZIPFoundation.git",
+      "state" : {
+        "revision" : "22787ffb59de99e5dc1fbfe80b19c97a904ad48d",
+        "version" : "0.9.20"
+      }
+    },
+    {
+      "identity" : "zstd",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/facebook/zstd",
+      "state" : {
+        "revision" : "3ae099b48dfcfe02b1b3ba81ab85457f8a922e9f"
+      }
+    }
+  ],
+  "version" : 2
 }
