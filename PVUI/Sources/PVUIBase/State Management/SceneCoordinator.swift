@@ -63,6 +63,9 @@ public class SceneCoordinator: ObservableObject {
     /// Cancel this task to abort an in-progress launch (e.g. when the user taps Cancel).
     private var activeLaunchTask: Task<Void, Never>?
     private var launchTimeoutTask: Task<Void, Never>?
+    /// Which launch owns `activeLaunchTask`, so a cancelled launch that finishes late
+    /// can't clear the guard (or hide the status overlay) of the launch that replaced it.
+    private var launchGate = LaunchGate()
 
     /// Set while a battery-save restore kicked off by `downloadBatterySavesIfNeeded`
     /// is still running after the launch itself has already finished (the restore
@@ -173,9 +176,63 @@ public class SceneCoordinator: ObservableObject {
             task.cancel()
             activeLaunchTask = nil
         }
+        launchGate.cancel()
         launchTimeoutTask?.cancel()
         launchTimeoutTask = nil
         syncStatusManager.hide()
+    }
+
+    /// Clears the launch guard when the launch that set it ends. A launch that was
+    /// cancelled and replaced no longer owns the gate, so its cleanup is a no-op.
+    private func finishLaunch(_ launchID: UUID) {
+        guard launchGate.finish(launchID) else { return }
+        activeLaunchTask = nil
+        // A battery-save restore kicked off during this launch never gates
+        // it (see downloadBatterySavesIfNeeded) and may still be running
+        // now that the launch task itself is done — don't hide its status
+        // out from under it; it hides itself when it resolves.
+        if activeBatterySaveRestore == nil {
+            syncStatusManager.hide()
+        }
+    }
+
+    /// Handles a launch request that arrives while another launch is still running.
+    /// Returns true when the caller must not start its launch.
+    ///
+    /// A launch can stall (a slow iCloud download, a hung step), and dropping every
+    /// new tap with a toast left the library unusable until the 60s timeout. Instead
+    /// the user can cancel the running launch and start this one, just cancel it, or
+    /// keep waiting.
+    private func deferLaunchIfBusy(_ retry: @escaping @MainActor () -> Void) -> Bool {
+        guard activeLaunchTask != nil else { return false }
+        // The running launch may itself be waiting on a prompt (core picker, save-state
+        // version check, Transfer Pak setup) that already lets the user back out.
+        // Replacing it would strand that launch awaiting an answer it never gets.
+        guard !alertState.isPresented, !alertNavigationStack.isPresented, preLaunchTransferPakGame == nil else {
+            ILOG("SceneCoordinator: Ignoring launch request — the running launch is waiting on a prompt")
+            PVToastManager.post("Game launch already in progress", type: .info, duration: 2.0, icon: "hourglass")
+            return true
+        }
+        ILOG("SceneCoordinator: Launch requested while another is in progress — asking the user")
+        // The alert runs a button's action before it hides itself, so the retry is
+        // started on the next turn of the main queue: any prompt it shows then
+        // appears after this alert has gone, instead of being hidden with it.
+        alertState.show(
+            title: "Game Already Launching",
+            message: "Another game is still starting. Cancel it and launch this one instead?",
+            type: .warning,
+            primaryButtonTitle: "Launch This Game",
+            primaryAction: { [weak self] in
+                self?.cancelActiveLaunch()
+                DispatchQueue.main.async { retry() }
+            },
+            secondaryButtonTitle: "Keep Waiting",
+            destructiveButtonTitle: "Cancel Launch",
+            destructiveAction: { [weak self] in
+                self?.cancelActiveLaunch()
+            }
+        )
+        return true
     }
 
     /// Safety net: if a launch task runs longer than 60 seconds, cancel it so the
@@ -214,24 +271,12 @@ public class SceneCoordinator: ObservableObject {
 
     /// Launch a specific game with error handling and sync validation
     public func launchGame(_ game: PVGame) {
-        guard activeLaunchTask == nil else {
-            ILOG("SceneCoordinator: Ignoring launchGame — launch already in progress")
-            PVToastManager.post("Game launch already in progress", type: .info, duration: 2.0, icon: "hourglass")
-            return
-        }
+        if deferLaunchIfBusy({ [weak self] in self?.launchGame(game) }) { return }
         ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id))")
 
+        let launchID = launchGate.begin()
         activeLaunchTask = Task { @MainActor [weak self] in
-            defer {
-                self?.activeLaunchTask = nil
-                // A battery-save restore kicked off during this launch never gates
-                // it (see downloadBatterySavesIfNeeded) and may still be running
-                // now that the launch task itself is done — don't hide its status
-                // out from under it; it hides itself when it resolves.
-                if self?.activeBatterySaveRestore == nil {
-                    self?.syncStatusManager.hide()
-                }
-            }
+            defer { self?.finishLaunch(launchID) }
             await self?.launchGameWithValidation(game)
         }
         // Safety net: if the launch hangs, clear the task so taps aren't permanently blocked
@@ -240,11 +285,7 @@ public class SceneCoordinator: ObservableObject {
 
     /// Launch a save state with sync validation for game ROM, BIOS, and save state
     public func launchSaveState(_ saveState: PVSaveState, core: PVCore? = nil) {
-        guard activeLaunchTask == nil else {
-            ILOG("SceneCoordinator: Ignoring launchSaveState — launch already in progress")
-            PVToastManager.post("Game launch already in progress", type: .info, duration: 2.0, icon: "hourglass")
-            return
-        }
+        if deferLaunchIfBusy({ [weak self] in self?.launchSaveState(saveState, core: core) }) { return }
         guard let game = saveState.game else {
             showGameLaunchError(
                 title: "Cannot Launch Save State",
@@ -255,17 +296,9 @@ public class SceneCoordinator: ObservableObject {
 
         ILOG("SceneCoordinator: Launching save state: \(saveState.id) for game: \(game.title)")
 
+        let launchID = launchGate.begin()
         activeLaunchTask = Task { @MainActor [weak self] in
-            defer {
-                self?.activeLaunchTask = nil
-                // A battery-save restore kicked off during this launch never gates
-                // it (see downloadBatterySavesIfNeeded) and may still be running
-                // now that the launch task itself is done — don't hide its status
-                // out from under it; it hides itself when it resolves.
-                if self?.activeBatterySaveRestore == nil {
-                    self?.syncStatusManager.hide()
-                }
-            }
+            defer { self?.finishLaunch(launchID) }
             await self?.launchSaveStateWithValidation(saveState, game: game, core: core)
         }
         scheduleActiveLaunchTimeout()
@@ -273,24 +306,12 @@ public class SceneCoordinator: ObservableObject {
 
     /// Launch a game with optional core (bypasses core selection if core is provided)
     public func launchGame(_ game: PVGame, core: PVCore?) {
-        guard activeLaunchTask == nil else {
-            ILOG("SceneCoordinator: Ignoring launchGame(core:) — launch already in progress")
-            PVToastManager.post("Game launch already in progress", type: .info, duration: 2.0, icon: "hourglass")
-            return
-        }
+        if deferLaunchIfBusy({ [weak self] in self?.launchGame(game, core: core) }) { return }
         ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id)) with core: \(core?.projectName ?? "auto")")
 
+        let launchID = launchGate.begin()
         activeLaunchTask = Task { @MainActor [weak self] in
-            defer {
-                self?.activeLaunchTask = nil
-                // A battery-save restore kicked off during this launch never gates
-                // it (see downloadBatterySavesIfNeeded) and may still be running
-                // now that the launch task itself is done — don't hide its status
-                // out from under it; it hides itself when it resolves.
-                if self?.activeBatterySaveRestore == nil {
-                    self?.syncStatusManager.hide()
-                }
-            }
+            defer { self?.finishLaunch(launchID) }
             await self?.launchGameWithValidation(game, core: core)
         }
         scheduleActiveLaunchTimeout()
@@ -298,11 +319,7 @@ public class SceneCoordinator: ObservableObject {
 
     /// Launch a game with disc path (for multi-disc games)
     public func launchGame(_ game: PVGame, discPath: String, core: PVCore?, saveState: PVSaveState?) {
-        guard activeLaunchTask == nil else {
-            ILOG("SceneCoordinator: Ignoring launchGame(discPath:) — launch already in progress")
-            PVToastManager.post("Game launch already in progress", type: .info, duration: 2.0, icon: "hourglass")
-            return
-        }
+        if deferLaunchIfBusy({ [weak self] in self?.launchGame(game, discPath: discPath, core: core, saveState: saveState) }) { return }
         ILOG("SceneCoordinator: Launching game: \(game.title) with disc path: \(discPath)")
 
         // Create a temporary game object with the disc path
@@ -602,6 +619,13 @@ public class SceneCoordinator: ObservableObject {
         /// launch paths, since a save-state launch needs the cartridge save just
         /// as much.
         await downloadBatterySavesIfNeeded(for: gameForLaunch)
+
+        // Last checkpoint before the emulator opens: a launch the user cancelled (or
+        // replaced with another game) must not start its game now.
+        guard !Task.isCancelled else {
+            ILOG("SceneCoordinator: Launch cancelled before opening the emulator")
+            return
+        }
 
         // Set the current game and core in EmulationUIState
         AppState.shared.emulationUIState.currentGame = gameForLaunch
@@ -1482,6 +1506,12 @@ public class SceneCoordinator: ObservableObject {
         /// as much.
         await downloadBatterySavesIfNeeded(for: gameForLaunch)
 
+        // Last checkpoint before the emulator opens (see launchGameWithValidation).
+        guard !Task.isCancelled else {
+            ILOG("SceneCoordinator: Save state launch cancelled before opening the emulator")
+            return
+        }
+
         // Set the current game, save state, and core in EmulationUIState
         AppState.shared.emulationUIState.currentGame = gameForLaunch
         AppState.shared.emulationUIState.currentSaveState = preparedSaveState
@@ -1657,6 +1687,7 @@ public class SceneCoordinator: ObservableObject {
         // but edge cases like system-initiated dismissal can skip it).
         activeLaunchTask?.cancel()
         activeLaunchTask = nil
+        launchGate.cancel()
         launchTimeoutTask?.cancel()
         launchTimeoutTask = nil
 
@@ -1677,5 +1708,31 @@ public class SceneCoordinator: ObservableObject {
         ILOG("SceneCoordinator: Calling openMainScene()")
         openMainScene()
         ILOG("SceneCoordinator: closeEmulator() completed")
+    }
+}
+
+/// Tracks which launch owns the single in-flight launch slot. Each launch takes a
+/// fresh id; only the current owner can release the slot, so the late cleanup of a
+/// launch that was cancelled and replaced cannot release the replacement's slot.
+struct LaunchGate {
+    private(set) var ownerID: UUID?
+
+    /// Claims the slot for a new launch and returns its id.
+    mutating func begin() -> UUID {
+        let id = UUID()
+        ownerID = id
+        return id
+    }
+
+    /// Releases the slot if `id` still owns it. Returns whether it did.
+    mutating func finish(_ id: UUID) -> Bool {
+        guard ownerID == id else { return false }
+        ownerID = nil
+        return true
+    }
+
+    /// Releases the slot regardless of owner (the launch was cancelled).
+    mutating func cancel() {
+        ownerID = nil
     }
 }

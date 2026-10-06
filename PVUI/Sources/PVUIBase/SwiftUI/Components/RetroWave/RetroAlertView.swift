@@ -743,6 +743,11 @@ public class RetroAlertState: ObservableObject {
     public var onDestructiveAction: (() -> Void)?
     public var onDismiss: (() -> Void)?
 
+    /// Bumped by every `show`. `hide` resets the alert after its exit animation, and
+    /// must not wipe an alert shown in the meantime (e.g. one opened from a button's
+    /// action, which runs just before `hide`).
+    private var presentationGeneration = 0
+
     public init() {}
 
     /// Show a simple alert with an OK button
@@ -763,6 +768,7 @@ public class RetroAlertState: ObservableObject {
         self.onSecondaryAction = nil
         self.onDestructiveAction = nil
         self.onDismiss = onDismiss
+        presentationGeneration += 1
         self.isPresented = true
     }
 
@@ -789,6 +795,7 @@ public class RetroAlertState: ObservableObject {
         self.onSecondaryAction = secondaryAction
         self.onDestructiveAction = destructiveAction
         self.onDismiss = onDismiss
+        presentationGeneration += 1
         self.isPresented = true
     }
 
@@ -796,9 +803,11 @@ public class RetroAlertState: ObservableObject {
     public func hide() {
         isPresented = false
         onDismiss?()
-        // Reset state after animation
+        // Reset state after animation, unless another alert has been shown since.
+        let generation = presentationGeneration
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.reset()
+            guard let self, self.presentationGeneration == generation else { return }
+            self.reset()
         }
     }
 
