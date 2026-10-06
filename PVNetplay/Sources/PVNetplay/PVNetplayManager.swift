@@ -69,7 +69,10 @@ public actor PVNetplayManager {
         }
         activeBridge = bridge
         #if canImport(Combine)
-        bridgeStateCancellable = bridge?.netplayStatePublisher.sink { [weak self] bridgeState in
+        // @Sendable: the sink fires on the publisher's thread, outside the actor.
+        // Xcode 26.3 rejects the non-Sendable form ("passing closure as a
+        // 'sending' parameter risks causing data races").
+        bridgeStateCancellable = bridge?.netplayStatePublisher.sink { @Sendable [weak self] bridgeState in
             Task { await self?.bridgeStateChanged(bridgeState) }
         }
         #endif
