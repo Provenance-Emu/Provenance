@@ -259,12 +259,13 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 
     static var shaderCompilationModeOption: CoreOption = {
         .enumeration(.init(title: "Shader Compilation",
-                          description: "How shaders are compiled and cached. Specialized provides best performance.",
+                          description: "How shaders are compiled. Hybrid draws a new effect with an ubershader while its specialized shader compiles, so play never stalls.",
                           requiresRestart: false),
                     values: [
-                        .init(title: "Synchronous (Slowest)", description: "Compile on-demand, causes stutters", value: 0),
-                        .init(title: "Asynchronous (Uber)", description: "Background compilation with fallback shaders", value: 1),
-                        .init(title: "Specialized (Recommended)", description: "Pre-compile specialized shaders for best performance", value: 2)
+                        // Values are Dolphin's ShaderCompilationMode; don't renumber (stored per user).
+                        .init(title: "Specialized", description: "Stalls briefly the first time a new effect appears", value: 0),
+                        .init(title: "Exclusive Ubershaders", description: "Ubershaders only: no stalls, but slower", value: 1),
+                        .init(title: "Hybrid Ubershaders (Recommended)", description: "Ubershaders until the specialized shader is ready: no stalls", value: 2)
                     ],
                     defaultValue: 2)
     }()
@@ -392,19 +393,21 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         defaultValue: false)
     }()
 
-    static var pauseOnPanicOption: CoreOption = {
+    static var autoDiscChangeOption: CoreOption = {
         .bool(.init(
-            title: "Pause on Panic",
-            description: "Pause emulation when a panic occurs instead of stopping.",
+            title: "Change Discs Automatically",
+            description: "Swaps to the next disc of a multi-disc game when it asks for it.",
             requiresRestart: false),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
-    static var enableWriteBackCacheOption: CoreOption = {
+    static var accurateNaNsOption: CoreOption = {
         .bool(.init(
-            title: "Enable Write-Back Cache",
-            description: "Enable write-back cache emulation. More accurate but significantly slower.",
-            requiresRestart: true),
+            title: "Accurate NaN Emulation",
+            description: "Emulates floating-point NaNs exactly. Needed by a few games; slower.",
+            requiresRestart: true,
+            // Shipped as "Enable Write-Back Cache" while it drove this same setting.
+            storageKey: "Enable Write-Back Cache"),
         defaultValue: false)
     }()
 
@@ -522,12 +525,14 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 
     static var audioBackendOption: CoreOption = {
         .enumeration(.init(title: "Audio Backend",
-                          description: "Audio output method",
+                          description: "Audio output method. Core Audio keeps Provenance's audio session settings; AVAudioEngine switches the session to Playback.",
                           requiresRestart: true),
                     values: [
-                        .init(title: "Cubeb", description: "Cubeb (Recommended)", value: 0),
+                        // Value 0 was Cubeb; it now maps to Core Audio so stored choices move off Cubeb.
+                        .init(title: "Core Audio (Recommended)", description: "Core Audio", value: 0),
                         .init(title: "OpenAL", description: "OpenAL", value: 1),
-                        .init(title: "Null", description: "No Audio", value: 2)
+                        .init(title: "Null", description: "No Audio", value: 2),
+                        .init(title: "AVAudioEngine", description: "AVAudioEngine (spatial audio on headphones)", value: 3)
                     ],
                     defaultValue: 0)
     }()
@@ -629,51 +634,95 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         defaultValue: false)
     }()
 
-    // MARK: - Advanced CPU (Cached Interpreter) — iCube re-baseline knobs
-    // The proven wins (specialized integer ops, PIC load/store, micro-op fusion, block linking)
-    // default ON inside the core and are intentionally not exposed here. These are the
-    // measured-neutral cuts, surfaced default-OFF for on-device A/B. They are inert (harmless)
-    // on cores that predate the re-baseline.
+    // MARK: - Cached Interpreter (CIR) flags
 
-    static var cirSpecializedFpLsOption: CoreOption = {
-        .bool(.init(
-            title: "CIR: FP Load/Store Specialization",
-            description: "Direct-dispatch floating-point load/stores in the Cached Interpreter. Measured-neutral; exposed for A/B testing.",
-            requiresRestart: true),
-        defaultValue: false)
-    }()
+    /// One iCube Cached Interpreter flag: its `[Core]` ini key and the core's compiled default.
+    struct CIRFlag {
+        let key: String
+        let title: String
+        let description: String
+        let defaultValue: Bool
+    }
 
-    static var cirSpecializedPsqOption: CoreOption = {
-        .bool(.init(
-            title: "CIR: Paired-Single Load/Store Specialization",
-            description: "Direct-dispatch quantized paired-single load/stores. Measured-neutral; exposed for A/B testing.",
-            requiresRestart: true),
-        defaultValue: false)
-    }()
+    /// Every user-facing CIR flag in iCube's MainSettings.cpp, with iCube's compiled defaults: the
+    /// measured wins are on, the experiments off. Not listed: the *Validate twins (debug), CIRProfile,
+    /// the tape prefetch ints, CIRTailLink (unread by the core) and the CIRIR* flags (IR engine only).
+    /// Titles are the option storage keys: the five experiments that shipped before keep their titles.
+    static let cirFlags: [CIRFlag] = [
+        // On by default (measured wins)
+        .init(key: "CIRBlockLinking", title: "CIR: Block Linking",
+              description: "Jumps straight from one cached block to the next instead of returning to the dispatcher. The biggest Cached Interpreter win.",
+              defaultValue: true),
+        .init(key: "CIRDynLinking", title: "CIR: Dynamic Block Linking",
+              description: "Remembers the last indirect-branch target of each block and jumps straight to it. Needs Block Linking.",
+              defaultValue: true),
+        .init(key: "CIRSpecializedOps", title: "CIR: Specialized Integer Ops",
+              description: "Calls integer instruction handlers directly instead of through the generic dispatch.",
+              defaultValue: true),
+        .init(key: "CIRPICLoadStore", title: "CIR: Fast Integer Load/Store",
+              description: "Fast path for integer loads and stores to normal RAM.",
+              defaultValue: true),
+        .init(key: "CIRMicroOpFusion", title: "CIR: Micro-op Fusion",
+              description: "Fuses runs of simple integer instructions into one step.",
+              defaultValue: true),
+        .init(key: "CIRMemMicroOps", title: "CIR: Fused Load/Store Micro-ops",
+              description: "Packs integer loads and stores into fused micro-op runs. Needs Fast Integer Load/Store and Micro-op Fusion.",
+              defaultValue: true),
+        .init(key: "CIRMicroPairs", title: "CIR: Micro-op Pairs",
+              description: "Runs two adjacent micro-ops in one dispatch.",
+              defaultValue: true),
+        .init(key: "CIRRecordChaining", title: "CIR: Record Chaining",
+              description: "Chains consecutive steps together instead of returning to the executor loop between each.",
+              defaultValue: true),
+        .init(key: "CIRLongBlocks", title: "CIR: Long Blocks",
+              description: "Lets a block run on past not-taken branches and through calls, so there are fewer block transitions.",
+              defaultValue: true),
+        // Off by default (experiments)
+        .init(key: "CIRSpecializedFpLs", title: "CIR: FP Load/Store Specialization",
+              description: "Direct-dispatch floating-point loads and stores. Measured as noise.",
+              defaultValue: false),
+        .init(key: "CIRSpecializedPsq", title: "CIR: Paired-Single Load/Store Specialization",
+              description: "Direct-dispatch quantized paired-single loads and stores. Experimental.",
+              defaultValue: false),
+        .init(key: "CIRPsqFastPath", title: "CIR: Paired-Single Fast Path",
+              description: "Float fast path inside the paired-single quantize handlers. Measured as noise.",
+              defaultValue: false),
+        .init(key: "CIRPsNeon", title: "CIR: NEON Paired-Single Math",
+              description: "SIMD paired-single arithmetic on ARM64. Measured as noise.",
+              defaultValue: false),
+        .init(key: "CIRCacheLoopFF", title: "CIR: Cache-Loop Fast-Forward",
+              description: "Fast-forwards dcbf/dcbi/dcbst cache loops. Measured as noise.",
+              defaultValue: false),
+        .init(key: "CIRSpecializedFpArith", title: "CIR: FP Arithmetic Specialization",
+              description: "Direct-dispatch floating-point arithmetic. Experimental.",
+              defaultValue: false),
+        .init(key: "CIRDeadFlagElim", title: "CIR: Dead Flag Elimination",
+              description: "Skips computing CR0 when nothing reads it. Experimental.",
+              defaultValue: false),
+        .init(key: "CIRDeadFprfElim", title: "CIR: Dead FPRF Elimination",
+              description: "Skips computing FP result flags when nothing reads them. Experimental; FP-sensitive games may break.",
+              defaultValue: false),
+        .init(key: "CIRStoreLoopFF", title: "CIR: Store-Loop Fast-Forward",
+              description: "Fast-forwards simple memory-fill store loops. Experimental.",
+              defaultValue: false),
+        .init(key: "CIRDynTargetCache", title: "CIR: Dynamic Target Cache",
+              description: "Caches indirect-branch targets by address so returns hit from any caller. Experimental; measured within noise.",
+              defaultValue: false),
+        .init(key: "CIRGatherPipeCopyFusion", title: "CIR: Gather-Pipe Copy Fusion",
+              description: "Fuses copy loops into the GPU gather pipe. Experimental.",
+              defaultValue: false),
+        .init(key: "CIRSkipPerfMonitor", title: "CIR: Skip Performance Monitor",
+              description: "Stops emulating the CPU performance counters (about 4 % faster). Breaks games that read them.",
+              defaultValue: false),
+        .init(key: "CachedInterpreterPrefetch", title: "CIR: Software Prefetch",
+              description: "Adds manual prefetch hints. Usually slower on Apple chips, whose hardware prefetcher does better.",
+              defaultValue: false)
+    ]
 
-    static var cirPsqFastpathOption: CoreOption = {
-        .bool(.init(
-            title: "CIR: Paired-Single Fast Path",
-            description: "Float fast path inside the paired-single quantized handlers. Measured-neutral; exposed for A/B testing.",
-            requiresRestart: true),
-        defaultValue: false)
-    }()
-
-    static var cirCacheLoopFFOption: CoreOption = {
-        .bool(.init(
-            title: "CIR: Cache-Loop Fast-Forward",
-            description: "Fast-forwards dcbf/dcbi/dcbst counter loops. Measured-neutral; exposed for A/B testing.",
-            requiresRestart: true),
-        defaultValue: false)
-    }()
-
-    static var cirPsNeonOption: CoreOption = {
-        .bool(.init(
-            title: "CIR: NEON Paired-Single Math",
-            description: "SIMD paired-single arithmetic on ARM64. Measured-neutral; exposed for A/B testing.",
-            requiresRestart: true),
-        defaultValue: false)
-    }()
+    static let cirFlagOptions: [CoreOption] = cirFlags.map { flag in
+        .bool(.init(title: flag.title, description: flag.description, requiresRestart: true),
+              defaultValue: flag.defaultValue)
+    }
 
     // MARK: - Diagnostics
 
@@ -733,10 +782,10 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         let cpuOptions: [CoreOption] = [
             cpuOption, cpuClockOption, dualCoreOption, idleSkippingOption,
             fastMemoryOption, enableCheatOption, enableVBIOverrideOption,
-            vbiFrequencyRangeOption, enableMMUOption, pauseOnPanicOption,
+            vbiFrequencyRangeOption, enableMMUOption, autoDiscChangeOption,
             accurateCPUCacheOption, disableICacheOption, fastFPOption,
             dcbzHackOption, relaxedIdleDetectionOption, fastForwardCTRIdleOption,
-            enableWriteBackCacheOption, speedLimitOption, fallbackRegionOption,
+            accurateNaNsOption, speedLimitOption, fallbackRegionOption,
             dspHLEOption, dspThreadOption, syncGPUOption, fastDiscSpeedOption
         ]
         let cpuGroup: CoreOption = .group(.init(title: "CPU & Emulation",
@@ -780,14 +829,15 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
                                                   description: "GameCube and Wii system settings"),
                                             subOptions: systemOptions)
 
-        // Advanced CPU (CIR) Group — measured-neutral A/B knobs, default off
-        let cirOptions: [CoreOption] = [
-            cirSpecializedFpLsOption, cirSpecializedPsqOption, cirPsqFastpathOption,
-            cirCacheLoopFFOption, cirPsNeonOption
-        ]
+        // Cached Interpreter groups: the measured wins (on by default) and the experiments (off)
+        let cirOptimizationOptions = zip(cirFlags, cirFlagOptions).filter { $0.0.defaultValue }.map(\.1)
+        let cirOptimizationGroup: CoreOption = .group(.init(title: "Cached Interpreter Optimizations",
+                                                           description: "Measured speedups for the Cached Interpreter, on by default. Turn one off only to A/B test or rule it out."),
+                                                     subOptions: cirOptimizationOptions)
+        let cirExperimentOptions = zip(cirFlags, cirFlagOptions).filter { !$0.0.defaultValue }.map(\.1)
         let cirGroup: CoreOption = .group(.init(title: "Advanced CPU (CIR)",
-                                               description: "Cached Interpreter A/B knobs from the iCube re-baseline. Measured-neutral on-device; leave off unless testing."),
-                                         subOptions: cirOptions)
+                                               description: "Experimental Cached Interpreter optimizations, off by default. For testing; some can break games."),
+                                         subOptions: cirExperimentOptions)
 
         // Diagnostics Group
         let diagnosticsOptions: [CoreOption] = [
@@ -797,7 +847,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
                                                        description: "Performance instrumentation and validation tools"),
                                                  subOptions: diagnosticsOptions)
 
-		options.append(contentsOf: [graphicsGroup, enhancementGroup, hacksGroup, aaGroup, shaderGroup, cpuGroup, cirGroup, audioGroup, systemGroup, diagnosticsGroup])
+		options.append(contentsOf: [graphicsGroup, enhancementGroup, hacksGroup, aaGroup, shaderGroup, cpuGroup, cirOptimizationGroup, cirGroup, audioGroup, systemGroup, diagnosticsGroup])
 		return options
 	}
 }
@@ -806,7 +856,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     // MARK: - Graphics Settings
 
 	@objc static var resolution: Int{
-		PVDolphinCore.valueForOption(PVDolphinCoreOptions.resolutionOption).asInt ?? 0
+		PVDolphinCore.valueForOption(PVDolphinCoreOptions.resolutionOption).asInt ?? 1
 	}
 	@objc static var gs: Int{
 		PVDolphinCore.valueForOption(PVDolphinCoreOptions.gsOption).asInt ?? 0
@@ -937,11 +987,11 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     @objc static var enableMMU: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.enableMMUOption).asBool
     }
-    @objc static var pauseOnPanic: Bool{
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.pauseOnPanicOption).asBool
+    @objc static var autoDiscChange: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.autoDiscChangeOption).asBool
     }
-    @objc static var enableWriteBackCache: Bool{
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.enableWriteBackCacheOption).asBool
+    @objc static var accurateNaNs: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.accurateNaNsOption).asBool
     }
     @objc static var accurateCPUCache: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.accurateCPUCacheOption).asBool
@@ -961,20 +1011,11 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     @objc static var fastForwardCTRIdle: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.fastForwardCTRIdleOption).asBool
     }
-    @objc static var cirSpecializedFpLs: Bool{
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirSpecializedFpLsOption).asBool
-    }
-    @objc static var cirSpecializedPsq: Bool{
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirSpecializedPsqOption).asBool
-    }
-    @objc static var cirPsqFastpath: Bool{
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirPsqFastpathOption).asBool
-    }
-    @objc static var cirCacheLoopFF: Bool{
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirCacheLoopFFOption).asBool
-    }
-    @objc static var cirPsNeon: Bool{
-        PVDolphinCore.valueForOption(PVDolphinCoreOptions.cirPsNeonOption).asBool
+    /// `[Core]` ini key → value for every CIR flag, for PVDolphinCore's setOptionValues.
+    @objc static var cirFlagValues: [String: NSNumber] {
+        Dictionary(uniqueKeysWithValues: zip(cirFlags, cirFlagOptions).map { flag, option in
+            (flag.key, NSNumber(value: PVDolphinCore.valueForOption(option).asBool))
+        })
     }
     @objc static var stallMetrics: Bool{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.stallMetricsOption).asBool
@@ -1112,19 +1153,15 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         self.enableVBIOverride = PVDolphinCoreOptions.enableVBIOverride
         self.vbiFrequencyRange = PVDolphinCoreOptions.vbiFrequencyRange
         self.enableMMU = PVDolphinCoreOptions.enableMMU
-        self.pauseOnPanic = PVDolphinCoreOptions.pauseOnPanic
-        self.enableWriteBackCache = PVDolphinCoreOptions.enableWriteBackCache
+        self.autoDiscChange = PVDolphinCoreOptions.autoDiscChange
+        self.accurateNaNs = PVDolphinCoreOptions.accurateNaNs
         self.accurateCPUCache = PVDolphinCoreOptions.accurateCPUCache
         self.disableICache = PVDolphinCoreOptions.disableICache
         self.fastFP = PVDolphinCoreOptions.fastFP
         self.dcbzHack = PVDolphinCoreOptions.dcbzHack
         self.relaxedIdleDetection = PVDolphinCoreOptions.relaxedIdleDetection
         self.fastForwardCTRIdle = PVDolphinCoreOptions.fastForwardCTRIdle
-        self.cirSpecializedFpLs = PVDolphinCoreOptions.cirSpecializedFpLs
-        self.cirSpecializedPsq = PVDolphinCoreOptions.cirSpecializedPsq
-        self.cirPsqFastpath = PVDolphinCoreOptions.cirPsqFastpath
-        self.cirCacheLoopFF = PVDolphinCoreOptions.cirCacheLoopFF
-        self.cirPsNeon = PVDolphinCoreOptions.cirPsNeon
+        self.cirFlags = PVDolphinCoreOptions.cirFlagValues
         self.stallMetrics = PVDolphinCoreOptions.stallMetrics
         self.cirCacheLoopFFValidate = PVDolphinCoreOptions.cirCacheLoopFFValidate
         self.dspHLE = PVDolphinCoreOptions.dspHLE

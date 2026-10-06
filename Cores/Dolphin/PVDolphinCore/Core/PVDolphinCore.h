@@ -113,23 +113,16 @@
 @property (nonatomic, assign) bool enableVBIOverride;
 @property (nonatomic, assign) float vbiFrequencyRange;
 @property (nonatomic, assign) bool enableMMU;
-@property (nonatomic, assign) bool pauseOnPanic;
-@property (nonatomic, assign) bool enableWriteBackCache;
+@property (nonatomic, assign) bool autoDiscChange;
+@property (nonatomic, assign) bool accurateNaNs;
 @property (nonatomic, assign) bool accurateCPUCache;
 @property (nonatomic, assign) bool disableICache;
 @property (nonatomic, assign) bool fastFP;
 @property (nonatomic, assign) bool dcbzHack;
 @property (nonatomic, assign) bool relaxedIdleDetection;
 @property (nonatomic, assign) bool fastForwardCTRIdle;
-// CachedInterpreter (CIR) optimization knobs — iCube re-baseline. The proven wins
-// (specialized integer ops, PIC load/store, micro-op fusion, block linking) default ON in
-// the core itself and are intentionally NOT exposed here. These are the measured-neutral
-// cuts, surfaced default-OFF for on-device A/B. Inert on cores without the MAIN_CIR_* keys.
-@property (nonatomic, assign) bool cirSpecializedFpLs;
-@property (nonatomic, assign) bool cirSpecializedPsq;
-@property (nonatomic, assign) bool cirPsqFastpath;
-@property (nonatomic, assign) bool cirCacheLoopFF;
-@property (nonatomic, assign) bool cirPsNeon;
+// CachedInterpreter (CIR) flags: `[Core]` ini key -> value, one per PVDolphinCoreOptions.cirFlags entry.
+@property (nonatomic, copy) NSDictionary<NSString *, NSNumber *> *cirFlags;
 // Diagnostics
 @property (nonatomic, assign) bool stallMetrics;
 @property (nonatomic, assign) bool cirCacheLoopFFValidate;

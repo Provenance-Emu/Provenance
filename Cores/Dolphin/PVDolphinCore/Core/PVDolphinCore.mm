@@ -583,14 +583,14 @@ static void ResetDolphinStaticState() {
     // Memory Management Unit
     Config::SetBase(Config::MAIN_MMU, self.enableMMU);
 
-    // Pause on Panic
-    Config::SetBase(Config::MAIN_AUTO_DISC_CHANGE, !self.pauseOnPanic);
+    // Change discs automatically (multi-disc games)
+    Config::SetBase(Config::MAIN_AUTO_DISC_CHANGE, self.autoDiscChange);
 
     // Fast Disc Speed (faster loading, skip disc read delays)
     Config::SetBase(Config::MAIN_FAST_DISC_SPEED, self.fastDiscSpeed);
 
-    // Write-Back Cache (inverted: enableWriteBackCache=true means accurate NANs=true, which is slower)
-    Config::SetBase(Config::MAIN_ACCURATE_NANS, self.enableWriteBackCache);
+    // Accurate NaN emulation (slower)
+    Config::SetBase(Config::MAIN_ACCURATE_NANS, self.accurateNaNs);
 
     // Accurate CPU Cache (slower but more compatible)
     Config::SetBase(Config::MAIN_ACCURATE_CPU_CACHE, self.accurateCPUCache);
@@ -610,20 +610,14 @@ static void ResetDolphinStaticState() {
     // Fast-Forward CTR Idle Loops (better performance without JIT)
     Config::SetBase(Config::MAIN_FAST_FORWARD_CTR_IDLE, self.fastForwardCTRIdle);
 
-    // iCube CIR measured-neutral A/B cuts + diagnostics. Written via inline Config::Info so this
-    // compiles against cores that predate the re-baseline (no extern MAIN_CIR_* symbols needed);
-    // the inline Location {Main,"Core",key} is identical to the real flag's, so on a re-baseline
-    // core these drive the same ini keys, and on older cores they're inert ini entries.
-    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRSpecializedFpLs"}, false},
-                    self.cirSpecializedFpLs);
-    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRSpecializedPsq"}, false},
-                    self.cirSpecializedPsq);
-    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRPsqFastpath"}, false},
-                    self.cirPsqFastpath);
-    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRCacheLoopFF"}, false},
-                    self.cirCacheLoopFF);
-    Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRPsNeon"}, false},
-                    self.cirPsNeon);
+    // iCube Cached Interpreter flags, keyed by their [Core] ini name. Written through an inline
+    // Config::Info so this compiles against cores without the MAIN_CIR_* symbols; Location lookups
+    // are case-insensitive, so these land on the core's own flags.
+    for (NSString *key in self.cirFlags) {
+        Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", key.UTF8String}, false},
+                        self.cirFlags[key].boolValue);
+    }
+    // Diagnostics
     Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "CIRCacheLoopFFValidate"}, false},
                     self.cirCacheLoopFFValidate);
     Config::SetBase(Config::Info<bool>{{Config::System::Main, "Core", "StallMetrics"}, true},
@@ -646,12 +640,16 @@ static void ResetDolphinStaticState() {
     // === AUDIO SETTINGS ===
 
     // Audio Backend
-    if (self.audioBackend == 0) {
-        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string("Cubeb"));
-    } else if (self.audioBackend == 1) {
-        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string("OpenAL"));
+    // Value 0 used to be Cubeb; Core Audio is iCube's iOS/tvOS backend and leaves Provenance's
+    // AVAudioSession alone (AVAudioEngine sets the session to Playback).
+    if (self.audioBackend == 1) {
+        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string(BACKEND_OPENAL));
     } else if (self.audioBackend == 2) {
-        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string("Null"));
+        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string(BACKEND_NULLSOUND));
+    } else if (self.audioBackend == 3) {
+        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string("AVAudioEngine"));
+    } else {
+        Config::SetBase(Config::MAIN_AUDIO_BACKEND, std::string(BACKEND_COREAUDIO));
     }
 
     // Audio stretching setting removed in modern Dolphin; do not set MAIN_AUDIO_STRETCH
