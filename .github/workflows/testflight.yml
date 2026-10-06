@@ -85,6 +85,7 @@ jobs:
     permissions:
       contents: read
       issues: write
+      actions: read   # list the last successful run for the "What to Test" notes
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -289,6 +290,50 @@ jobs:
           ARGS+=(--build "$BUILD")
           ./Scripts/release/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | "$FORMATTER"
 
+      # "What to Test" shown in TestFlight for this build: the commit subjects
+      # since the last run of this workflow that finished successfully (found via
+      # the Actions API, so no tag or write access is needed), capped like
+      # iCube's nightly notes. Falls back to the last 10 commits when there is no
+      # usable previous run. Both matrix legs compute the same text.
+      - name: Compose "What to Test"
+        id: notes
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SHA="${GITHUB_SHA}"
+          SHORT="${SHA:0:7}"
+          case "${GITHUB_EVENT_NAME}" in
+            schedule) LABEL="Nightly" ;;
+            push)     LABEL="Release ${GITHUB_REF_NAME}" ;;
+            *)        LABEL="Manual build" ;;
+          esac
+          # Lower bound: the commit of the last run of this workflow that finished
+          # successfully. This run is still in progress, so it is never its own bound.
+          LAST=$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/testflight.yml/runs?status=success&per_page=1" \
+                  --jq '.workflow_runs[0].head_sha // ""' 2>/dev/null || echo "")
+          # Skip bot housekeeping so the list is what testers can actually notice.
+          noise='\[skip ci\]|^- (chore: (auto-update|rebuild|update)|Merge )'
+          if [[ -n "$LAST" ]] && git cat-file -e "${LAST}^{commit}" 2>/dev/null \
+             && git merge-base --is-ancestor "$LAST" "$SHA"; then
+            RANGE="since ${LAST:0:7}"
+            LOG=$(git log --no-merges --pretty=format:'- %s' "${LAST}..${SHA}" | grep -v -E "$noise" | head -25 || true)
+            [[ "$LAST" == "$SHA" ]] && LOG=""
+          else
+            RANGE="last 10 commits"
+            LOG=$(git log --no-merges --pretty=format:'- %s' -30 "$SHA" | grep -v -E "$noise" | head -10 || true)
+          fi
+          [[ -n "$LOG" ]] || LOG="- No source changes since the previous build."
+          NOTES=$(printf '%s %s (%s)\n\n%s' "$LABEL" "$SHORT" "$RANGE" "$LOG")
+          # TestFlight shows a few lines, and distribute.py caps whatsNew at 4000 chars.
+          NOTES=$(printf '%s' "$NOTES" | cut -c1-3900)
+          {
+            echo "notes<<NOTES_EOF"
+            printf '%s\n' "$NOTES"
+            echo "NOTES_EOF"
+          } >> "$GITHUB_OUTPUT"
+
       # Uploading only reaches the internal groups. Without this the public
       # TestFlight links kept serving whichever build was last assigned by hand
       # (the Public group sat on an 2026-08-18 build while nightlies piled up
@@ -309,7 +354,7 @@ jobs:
           # internal-only. The archive takes ~2 h, so 120 still fits under the
           # job's 300-minute timeout.
           timeout-minutes: "120"
-          whats-new: "Nightly build ${{ steps.archive.outputs.build }} from ${{ github.ref_name }} @ ${{ github.sha }}."
+          whats-new: ${{ steps.notes.outputs.notes }}
 
       # Print the diagnostics in the console too. Until this existed, a failed
       # archive showed only "exit 65" and you had to download the artifact below to
