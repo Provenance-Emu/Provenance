@@ -23,6 +23,7 @@
  */
 
 #import "mGBAGameCoreBridge.h"
+#import "PVmGBAGameCoreBridge+NetplayInternal.h"
 
 @import libmGBA;
 @import PVCoreBridge;
@@ -118,6 +119,8 @@ static struct mLogger logger = { .log = _log };
 }
 
 - (void)dealloc {
+    // The link driver lives in the core's SIO; take it out before the core goes.
+    [self pvmgba_detachLinkFromCore:core];
     mCoreConfigDeinit(&core->config);
     free(audioBuffer);
     audioBuffer = NULL;
@@ -191,12 +194,17 @@ static struct mLogger logger = { .log = _log };
 }
 
 - (void)executeFrame {
-    core->runFrame(core);
+    // With a network link installed, the frame runs through the link driver
+    // and can stop early while waiting for the other device.
+    BOOL frameAdvanced = YES;
+    if (![self pvmgba_runLinkedFrame:core frameAdvanced:&frameAdvanced]) {
+        core->runFrame(core);
+    }
     [self drainAudio];
     [self refreshSaveRAMMirror];
 
     void (^handler)(void) = self.frameCompletedHandler;
-    if (handler) {
+    if (handler && frameAdvanced) {
         handler();
     }
 }
@@ -233,6 +241,10 @@ static struct mLogger logger = { .log = _log };
 }
 
 - (BOOL)isSaveStateLoadBlocked {
+    // Loading a state on one side of a link cable desyncs the two GBAs.
+    if (self.isLinkConnected) {
+        return YES;
+    }
     BOOL (^handler)(void) = self.saveStateLoadBlockedHandler;
     return handler ? handler() : NO;
 }

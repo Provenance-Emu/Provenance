@@ -263,12 +263,39 @@ let package = Package(
                 "PVCoreObjCBridge",
                 "PVSupport",
                 "PVObjCUtils",
+                "PVmGBALink",
+                "PVmGBALinkDriver",
                 "libmGBA"
             ],
             publicHeadersPath: "include",
             cSettings: libmGBACSettings + [
                 .headerSearchPath("../libmGBA-embed/mgba/include"),
                 .headerSearchPath("../libmGBA-embed/mgba/src")]),
+        // MARK: ============ Link cable transport =============
+        // TCP transport for the network link cable. Plain C with no mGBA
+        // dependency, so its tests build and run on their own.
+        .target(
+            name: "PVmGBALink",
+            publicHeadersPath: "include"),
+        .testTarget(
+            name: "PVmGBALinkTests",
+            dependencies: ["PVmGBALink"]),
+        // The GBASIODriver that runs the serial port in lockstep over a
+        // PVmGBALink session.
+        .target(
+            name: "PVmGBALinkDriver",
+            dependencies: ["PVmGBALink", "libmGBA"],
+            publicHeadersPath: "include",
+            cSettings: libmGBACSettings + [
+                .headerSearchPath("../libmGBA-embed/mgba/include"),
+                .headerSearchPath("../libmGBA-embed/mgba/src")]),
+        // Two mGBA cores linked over loopback, running a test ROM.
+        .testTarget(
+            name: "PVmGBALinkDriverTests",
+            dependencies: ["PVmGBALinkDriver", "PVmGBALink", "libmGBA"],
+            cSettings: libmGBACSettings + [
+                .headerSearchPath("../../Sources/libmGBA-embed/mgba/include"),
+                .headerSearchPath("../../Sources/libmGBA-embed/mgba/src")]),
         // MARK: ============ mGBA =============
         // mGBA itself comes from the `mgba` submodule (Provenance-Emu/mgba,
         // branch Provenance-master, which tracks upstream master). Only the module map and version.c beside

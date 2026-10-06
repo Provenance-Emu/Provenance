@@ -5,19 +5,18 @@
 //  Created by Provenance Emu on 3/22/26.
 //  Copyright © 2026 Provenance Emu. All rights reserved.
 //
-//  Adapts PVmGBACore to PVNetplayCapable so that PVNetplayManager can drive
-//  mGBA link-cable sessions over a LAN TCP connection.
+//  Adapts PVmGBACore to PVNetplayCapable: a GBA link cable between two
+//  devices over the network.
 //
-//  mGBA link-cable model
-//  ──────────────────────
-//    Host   (player 1 / master): .host(port:)     → startLinkHostOnPort
-//    Client (player 2 / slave):  .client(host:port:) → joinLinkAtHost:port:
-//    Spectator:                  falls back to client (link cable is 2-player only)
+//    Host   (player 1): .host(port:)        → startLinkHost(onPort:password:)
+//    Client (player 2): .client(host:port:) → joinLink(atHost:port:password:)
+//    Spectator: not supported (a link cable has no spectator seat)
 //
-//  The actual byte exchange is performed by a custom GBASIODriver installed
-//  into the running mGBA core by PVmGBAGameCoreBridge+Netplay.mm.  The
-//  Swift layer here only manages the session lifecycle and publishes state
-//  changes for the UI.
+//  The two GBAs run in lockstep (PVmGBANetLinkDriver.c in the bridge). Each
+//  multiplayer transfer costs the host about one network round trip, so
+//  trading and battles work over a LAN at reduced speed while the link is
+//  busy; real-time multiplayer games are likely too slow. This layer only
+//  manages the session and publishes its state.
 //
 
 import Foundation
@@ -34,26 +33,36 @@ import ObjectiveC
 /// Swift concurrency does not reject the PVNetplayCapable conformance.
 extension PVmGBACore: @unchecked Sendable {}
 
-/// PVmGBAGameCoreBridge is an ObjC bridge type used from detached tasks for
-/// blocking socket setup. Access remains synchronized by the bridge internals.
+/// PVmGBAGameCoreBridge is used from a detached task for the blocking join.
+/// Its link methods are thread-safe.
 extension PVmGBAGameCoreBridge: @unchecked Sendable {}
 
 // MARK: - Session context
 
 /// Boxes session metadata so it can be stored via ObjC associated objects.
 private final class MGBALinkContext: NSObject {
-    /// Stable IDs for the lifetime of this session — prevents UUID churn in
-    /// published state updates that use value-based equality.
+    /// Fixed for the session so published states compare equal between polls.
     let roomID: UUID
     let sessionID: UUID
+    let createdAt: Date
     let role: NetplayRole
     let settings: NetplaySettings
+    /// The address another device should dial: the host's first LAN address,
+    /// or the address the client dialled.
+    let hostAddress: String
 
     init(role: NetplayRole, settings: NetplaySettings) {
-        self.roomID    = UUID()
+        self.roomID = UUID()
         self.sessionID = UUID()
-        self.role      = role
-        self.settings  = settings
+        self.createdAt = Date()
+        self.role = role
+        self.settings = settings
+        switch role {
+        case .host:
+            self.hostAddress = NetplayLocalAddresses.current().first ?? ""
+        case .client(let host, _), .spectator(let host, _):
+            self.hostAddress = host
+        }
     }
 }
 
@@ -64,6 +73,9 @@ private enum MGBALinkAssocKeys {
     nonisolated(unsafe) static var subject: UInt8 = 0
     nonisolated(unsafe) static var cancellable: UInt8 = 0
 }
+
+/// GBA link cables join two consoles in this implementation.
+private let mgbaLinkMaxPlayers = 2
 
 // MARK: - Private helpers
 
@@ -92,91 +104,65 @@ private extension PVmGBACore {
                                        .OBJC_ASSOCIATION_RETAIN) }
     }
 
-    /// Compute the current NetplayState by examining the bridge's link status.
+    /// The current NetplayState, from the bridge's link status.
     var _currentNetplayState: NetplayState {
-        let status = _bridge.linkStatus
-        let ctx    = _linkContext
+        guard let ctx = _linkContext else { return .idle }
 
-        switch status {
+        switch _bridge.linkStatus {
         case .idle:
             return .idle
 
         case .hosting:
-            // Return .idle when context is not yet set to avoid generating a
-            // new UUID on every poll tick (which causes spurious state updates).
-            guard let ctx else { return .idle }
-            let room = NetplayRoom.mgbaRoom(id: ctx.roomID,
-                                            address: "0.0.0.0",
-                                            context: ctx,
-                                            currentPlayers: 1)
-            return .hosting(room: room)
+            return .hosting(room: .mgbaRoom(context: ctx, port: _bridge.linkPort, currentPlayers: 1))
 
         case .connected:
-            guard let ctx else { return .idle }
-
-            let (hostAddr, port): (String, UInt16)
-            switch ctx.role {
-            case .host(let p):
-                // Avoid advertising loopback (127.0.0.1) as the room address —
-                // it is not reachable from other devices. Use "0.0.0.0" to
-                // indicate "bound to all interfaces" without a concrete LAN IP.
-                hostAddr = "0.0.0.0"
-                port     = p
-            case .client(let h, let p),
-                 .spectator(let h, let p):
-                hostAddr = h
-                port     = p
-            }
-
-            let room = NetplayRoom.mgbaRoom(id: ctx.roomID,
-                                            address: hostAddr,
-                                            context: ctx,
-                                            currentPlayers: 2)
-
-            // Host is still the logical host even after the client connects.
+            let room = NetplayRoom.mgbaRoom(context: ctx, port: _bridge.linkPort,
+                                            currentPlayers: mgbaLinkMaxPlayers)
+            // The host stays the room's host after the client joins.
             if ctx.role.isHost {
                 return .hosting(room: room)
             }
-
-            let session = NetplaySession(
+            return .connected(session: NetplaySession(
                 id: ctx.sessionID,
                 room: room,
-                role: .client(host: hostAddr, port: port),
+                role: ctx.role,
                 peers: [],
                 frameDelay: 0,        // lockstep — no frame delay concept
                 isRollbackEnabled: false
-            )
-            return .connected(session: session)
+            ))
 
         @unknown default:
             return .idle
         }
     }
 
-    /// Start polling bridge link status once per second and push state updates.
+    /// Poll the bridge's link status once per second and publish changes.
     func _startStatusPolling() {
         let cancellable = Timer.publish(every: 1.0, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 guard let self else { return }
 
-                // Detect unexpected peer disconnect: bridge returned to idle with
-                // a recorded error. Translate to .disconnected rather than .idle
-                // so the UI can show a meaningful message, then clean up.
+                // The session ended on its own (peer left, timed out, hosting
+                // failed): report why, then clean up.
                 if let disconnectError = self._bridge.lastDisconnectError,
                    self._bridge.linkStatus == .idle {
                     let nsErr = disconnectError as NSError
+                    let isLinkError = nsErr.domain == PVmGBALinkErrorDomain as String
                     let reason: DisconnectReason
-                    if nsErr.domain == PVmGBALinkErrorDomain as String &&
-                       nsErr.code == PVmGBALinkError.peerDisconnected.rawValue {
+                    if isLinkError && nsErr.code == PVmGBALinkError.peerDisconnected.rawValue {
                         reason = .peerDisconnected
+                    } else if isLinkError && nsErr.code == PVmGBALinkError.timedOut.rawValue {
+                        reason = .timeout
+                    } else if isLinkError && nsErr.code == PVmGBALinkError.linkFailed.rawValue {
+                        reason = .desync
                     } else {
                         reason = .networkError
                     }
+                    WLOG("mGBA link ended: \(nsErr.localizedDescription)")
                     self._stateSubject.send(.disconnected(reason: reason))
                     self._linkContext = nil
                     self._stopStatusPolling()
-                    // stopLink clears lastDisconnectError and releases all resources.
                     self._bridge.stopLink()
                     return
                 }
@@ -208,6 +194,9 @@ extension PVmGBACore: PVNetplayCapable {
         guard _bridge.linkStatus == .idle else {
             throw NetplayError.alreadyActive
         }
+        if case .spectator = role {
+            throw NetplayError.invalidSettings("A link cable has no spectator seat; join as a player.")
+        }
 
         // Link cable connects directly to the host's address; a relay means
         // nothing to it, so ignore one rather than refuse to connect.
@@ -215,37 +204,23 @@ extension PVmGBACore: PVNetplayCapable {
             WLOG("mGBA netplay: ignoring relay \(relay); link cable connects directly")
         }
 
-        // Perform the potentially blocking bridge calls off the main actor.
-        // joinLinkAtHost:port:error: performs a synchronous select(5s) on the
-        // calling thread, which would freeze the UI if called on MainActor.
-        //
-        // `Task.detached` does not inherit the caller's cancellation scope, so we
-        // wrap with `withTaskCancellationHandler` to propagate cancellation: if the
-        // caller cancels while we are blocked in connect(), the handler calls
-        // stopLink() which closes the socket and unblocks the connect() syscall.
+        // Joining blocks while it connects (up to 10 s), so run it off the
+        // main actor. Cancelling the caller's task calls stopLink(), which
+        // interrupts the connect.
         let bridge = _bridge
+        let password = settings.password
         try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                // NOTE: Task.detached is used so the potentially-blocking socket
-                // operations (connect with 5-second timeout, accept) do not run on
-                // the main actor.  Cancellation is handled by the `onCancel` closure
-                // below, which calls stopLink() to close sockets and unblock any
-                // in-progress syscall.  Task.isCancelled is NOT checked here because
-                // Task.detached does not inherit the caller's cancellation scope.
                 Task.detached(priority: .userInitiated) {
                     do {
                         switch role {
                         case .host(let port):
-                            try bridge.startLinkHost(onPort: port)
-
+                            try bridge.startLinkHost(onPort: port, password: password)
                         case .client(let host, let port):
-                            try bridge.joinLink(atHost: host, port: port)
-
-                        case .spectator(let host, let port):
-                            // Link cable is 2-player only; spectator connects as the second player.
-                            try bridge.joinLink(atHost: host, port: port)
+                            try bridge.joinLink(atHost: host, port: port, password: password)
+                        case .spectator:
+                            break // rejected above
                         }
-
                         continuation.resume()
                     } catch {
                         continuation.resume(throwing: NetplayError.connectionFailed(error.localizedDescription))
@@ -253,17 +228,17 @@ extension PVmGBACore: PVNetplayCapable {
                 }
             }
         } onCancel: {
-            // Fired when the caller's task is cancelled. Calling stopLink() closes
-            // all sockets, which unblocks any in-progress connect()/accept() syscall
-            // and causes the detached task to fail cleanly without a dangling session.
             bridge.stopLink()
         }
 
-        // Re-check cancellation: onCancel may have already called stopLink()
-        // while the detached task was completing. If so, do not set up state.
-        try Task.checkCancellation()
+        // Cancelled after the link came up: don't leave it running unowned.
+        do {
+            try Task.checkCancellation()
+        } catch {
+            bridge.stopLink()
+            throw error
+        }
 
-        // Only mutate state and notify observers on the main actor.
         await MainActor.run {
             _linkContext = MGBALinkContext(role: role, settings: settings)
             _stateSubject.send(_currentNetplayState)
@@ -292,42 +267,23 @@ extension PVmGBACore: PVNetplayCapable {
 // MARK: - NetplayRoom factory
 
 private extension NetplayRoom {
-    /// Builds a room descriptor from available mGBA link context.
-    static func mgbaRoom(
-        id: UUID = UUID(),
-        address: String,
-        context: MGBALinkContext?,
-        currentPlayers: Int = 1
-    ) -> NetplayRoom {
-        let settings = context?.settings
-        let nickname = settings.flatMap { $0.nickname.isEmpty ? nil : $0.nickname }
-
-        // Resolve port: for host/client/spectator we use the port from the role; default to 0 if unknown.
-        let port: UInt16
-        if case .host(let p) = context?.role {
-            port = p
-        } else if case .client(_, let p) = context?.role {
-            port = p
-        } else if case .spectator(_, let p) = context?.role {
-            port = p
-        } else {
-            port = 0
-        }
-
+    static func mgbaRoom(context: MGBALinkContext, port: UInt16, currentPlayers: Int) -> NetplayRoom {
+        let nickname = context.settings.nickname
         return NetplayRoom(
-            id: id,
-            hostName: nickname ?? "mGBA",
+            id: context.roomID,
+            hostName: nickname.isEmpty ? "mGBA" : nickname,
             gameName: "",
             gameHash: "",
             coreIdentifier: CorePlist.pvCoreIdentifier,
-            maxPlayers: 2,           // GBA link cable supports 2 players
+            maxPlayers: mgbaLinkMaxPlayers,
             currentPlayers: currentPlayers,
-            isLAN: settings?.relayServer == nil,
-            hostAddress: address,
+            isLAN: true,
+            hostAddress: context.hostAddress,
             port: port,
-            isPasswordProtected: !(settings?.password?.isEmpty ?? true),
-            allowsSpectators: false, // Link cable has no spectator concept
-            discoverySource: .manual
+            isPasswordProtected: !(context.settings.password?.isEmpty ?? true),
+            allowsSpectators: false,
+            discoverySource: .manual,
+            lastSeen: context.createdAt
         )
     }
 }
