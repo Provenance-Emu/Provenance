@@ -18,6 +18,7 @@
 #   --platform all         Both iOS and tvOS (TestFlight); sideload stays iOS-only
 #   --no-build             Skip xcodebuild (reuse last archive)
 #   --no-distribute        Upload to TestFlight but leave the build internal-only
+#   --notes-file PATH      TestFlight "What to Test" text (default: "Build N from <branch> @ <sha>.")
 #                          (skip adding it to the public groups / Beta App Review)
 #   --dry-run              Print actions without executing
 #   --help                 Show this message
@@ -63,6 +64,7 @@ CHANNEL="all"
 PLATFORM="ios"
 NO_BUILD=false
 DISTRIBUTE=true
+NOTES_FILE=""
 DRY_RUN=false
 
 while [[ $# -gt 0 ]]; do
@@ -73,6 +75,7 @@ while [[ $# -gt 0 ]]; do
         --platform) PLATFORM="$2"; shift 2 ;;
         --no-build) NO_BUILD=true; shift ;;
         --no-distribute) DISTRIBUTE=false; shift ;;
+        --notes-file) NOTES_FILE="$2"; shift 2 ;;
         --dry-run) DRY_RUN=true; shift ;;
         --help)
             sed -n '/^# Usage:/,/^[^#]/p' "$0" | sed '$d' | sed 's/^# \{0,2\}//'
@@ -87,6 +90,8 @@ log()  { echo "▶ $*"; }
 info() { echo "  $*"; }
 warn() { echo "⚠ $*" >&2; }
 err()  { echo "✗ $*" >&2; exit 1; }
+# Before the 30+ minute archive, not after it.
+[[ -z "$NOTES_FILE" || -s "$NOTES_FILE" ]] || err "--notes-file $NOTES_FILE is missing or empty"
 run()  {
     if $DRY_RUN; then
         echo "  [dry-run] $*"
@@ -404,6 +409,9 @@ do_distribute() {
     local sha; sha="$(git -C "$PROJECT_DIR" rev-parse --short HEAD)"
     local branch; branch="$(git -C "$PROJECT_DIR" rev-parse --abbrev-ref HEAD)"
     local whats_new="Build $BUILD_NUMBER from $branch @ $sha."
+    if [[ -n "$NOTES_FILE" ]]; then
+        whats_new="$(cat "$NOTES_FILE")"$'\n\n'"$whats_new"
+    fi
     # distribute.py reads the key's contents, not a path.
     if ! ASC_API_KEY_CONTENT="$(cat "$_asc_key_path")" \
         BUNDLE_ID="org.provenance-emu.provenance" \
