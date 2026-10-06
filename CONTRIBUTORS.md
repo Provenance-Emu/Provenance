@@ -4,10 +4,10 @@
 
 ## Summary
 
-- **Total Contributors**: 98
-- **Total Commits**: 9455
-- **Total Lines Added**: 16224966
-- **Total Lines Removed**: 6152700
+- **Total Contributors**: 101
+- **Total Commits**: 10344
+- **Total Lines Added**: 16366177
+- **Total Lines Removed**: 9949691
 
 ## Contributor Details
 
@@ -18,9 +18,9 @@
 ![Joseph Mattiello](https://www.gravatar.com/avatar/79585fbd531fa1438a73a53fb2c9eacd?s=100&d=identicon)
 
 - **Emails Used**: git@joemattiello.com, jmattiello@MacBook-Pro-M2.local, jmattiello@hearst.com, joe.mattiello@salido.com, mail@joemattiello.com
-- **Commits**: `7142`
-- **Lines Added**: `13652452`
-- **Lines Removed**: `5262803`
+- **Commits**: `7998`
+- **Lines Added**: `13748087`
+- **Lines Removed**: `9044908`
 - **Most Active File**: `Provenance.xcodeproj/project.pbxproj`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -70,9 +70,9 @@
 ![github-actions[bot]](https://www.gravatar.com/avatar/af2ab225b7c0eec44a8d0eba6b5c869a?s=100&d=identicon)
 
 - **Emails Used**: 41898282+github-actions[bot]@users.noreply.github.com
-- **Commits**: `440`
-- **Lines Added**: `344493`
-- **Lines Removed**: `95047`
+- **Commits**: `464`
+- **Lines Added**: `389725`
+- **Lines Removed**: `109763`
 - **Most Active File**: `CHANGELOG.md`
 - **Activity**: `▰▰▰▰▰▰▰▰▰▰`
 
@@ -200,7 +200,7 @@
 ![Dave Nicolson](https://www.gravatar.com/avatar/14b3bbc589a438e8e38372b132b2f9d3?s=100&d=identicon)
 
 - **Emails Used**: david.nicolson@gmail.com
-- **Commits**: `224`
+- **Commits**: `225`
 - **Lines Added**: `1569`
 - **Lines Removed**: `4430`
 - **Most Active File**: `Provenance/Settings/PVSettingsViewController.swift`
@@ -373,6 +373,19 @@
 - **Lines Added**: `241`
 - **Lines Removed**: `195`
 - **Most Active File**: `Provenance/Controller/PVControllerViewController.m`
+- **Activity**: `▰▰▰▱▱▱▱▱▱▱`
+
+---
+
+### dependabot[bot]
+
+![dependabot[bot]](https://www.gravatar.com/avatar/48ea49be76d0c68403a7f3df87e3487d?s=100&d=identicon)
+
+- **Emails Used**: 49699333+dependabot[bot]@users.noreply.github.com
+- **Commits**: `3`
+- **Lines Added**: `266`
+- **Lines Removed**: `160`
+- **Most Active File**: `Packages/RxRealm/Gemfile.lock`
 - **Activity**: `▰▰▰▱▱▱▱▱▱▱`
 
 ---
@@ -621,6 +634,19 @@
 - **Lines Removed**: `31`
 - **Most Active File**: `Provenance/Controller/PVControllerViewController.m`
 - **Activity**: `▰▰▰▰▰▱▱▱▱▱`
+
+---
+
+### Jan Kahmen
+
+![Jan Kahmen](https://www.gravatar.com/avatar/55cc87d138eaa01b887fe20ab501c1e3?s=100&d=identicon)
+
+- **Emails Used**: 36455663+kah-ja@users.noreply.github.com
+- **Commits**: `4`
+- **Lines Added**: `75`
+- **Lines Removed**: `7`
+- **Most Active File**: `.changelog/retroarch-cheevos-credential-exposure.md`
+- **Activity**: `▰▰▰▰▱▱▱▱▱▱`
 
 ---
 
@@ -946,6 +972,19 @@
 - **Lines Removed**: `1`
 - **Most Active File**: `Provenance/http/GCDWebUploader/GCDWebUploader.bundle/index.html`
 - **Activity**: `▰▰▰▰▰▰▱▱▱▱`
+
+---
+
+### sentry[bot]
+
+![sentry[bot]](https://www.gravatar.com/avatar/4daacc1121dacdf8f6abc1422249f7d1?s=100&d=identicon)
+
+- **Emails Used**: 39604003+sentry[bot]@users.noreply.github.com
+- **Commits**: `1`
+- **Lines Added**: `3`
+- **Lines Removed**: `3`
+- **Most Active File**: `PVArchiving/Sources/PVArchiving/Backends/CompressedStreamBackends.swift`
+- **Activity**: `▰▱▱▱▱▱▱▱▱▱`
 
 ---
 
