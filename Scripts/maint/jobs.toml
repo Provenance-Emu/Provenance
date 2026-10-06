@@ -266,7 +266,8 @@ category = "Audits"
 run = """python3 Scripts/tests/test_check_pbxproj_sources.py \
   && python3 Scripts/tests/test_generate_cheatdb_dat.py \
   && python3 -m unittest discover -s Scripts/maint -p 'test_*.py' \
-  && bash Scripts/tests/test-get-modules-validation.sh"""
+  && bash Scripts/tests/test-get-modules-validation.sh \
+  && bash Scripts/tests/test-ci-init-submodules.sh"""
 
 # ─────────────────────────────────────────────────────────── release
 
