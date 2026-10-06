@@ -10,6 +10,7 @@
 #import "PVDolphinCore+Controls.h"
 #import "PVDolphinCore+Audio.h"
 #import "PVDolphinCore+Video.h"
+#import "PVDolphinCore+NetplayBoot.h"
 #import <Foundation/Foundation.h>
 #import <PVDolphin/PVDolphin-Swift.h>
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
@@ -71,6 +72,7 @@
 #include "Core/HW/SI/SI_Device.h"
 #include "Core/IOS/IOS.h"
 #include "Core/IOS/STM/STM.h"
+#include "Core/NetPlayProto.h"
 #include "Core/PowerPC/PowerPC.h"
 #include "Core/PowerPC/MMU.h"
 #ifdef HAVE_JIT
@@ -113,6 +115,10 @@
 
 #include "FastmemUtil.h"
 
+#include <atomic>
+#include <chrono>
+#include <mutex>
+
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
@@ -132,6 +138,12 @@ bool _isInitialized;
 std::string user_dir;
 static bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgType style);
 static void UpdateWiiPointer();
+
+/// Marks `_netplayBootQueue` so work already on it runs inline instead of deadlocking.
+static char kPVDolphinNetplayBootQueueKey;
+/// How long a netplay reboot waits for the running game to stop, for netplay
+/// input to be released, or for the next game to start running.
+static constexpr std::chrono::seconds kPVDolphinNetplayStopTimeout{10};
 
 // Function to reset all static/global state for iOS dynamic library reloading
 static void ResetDolphinStaticState() {
@@ -250,6 +262,21 @@ static void ResetDolphinStaticState() {
     /// Registration on `vi_end_field_event` that runs `frameCompletedHandler`.
     /// Resetting it blocks until an in-flight callback returns.
     Common::EventHook _frameEndHook;
+
+    // Netplay reboot state (PVDolphinCore+NetplayBoot.h).
+    /// The surface `startDolphin` booted on. Netplay reboots boot on it again: the
+    /// render layer lives as long as the render view controller.
+    WindowSystemInfo _bootWSI;
+    /// Set once `_bootWSI` is valid. Written before any netplay reboot can run.
+    std::atomic<bool> _hasBootWSI;
+    dispatch_queue_t _netplayBootQueue;
+    /// Held across "is the emulator shutting down?" + BootCore, and by
+    /// stopEmulation to raise `_emulationShuttingDown`, so no boot starts after it.
+    std::mutex _netplayBootMutex;
+    std::atomic<bool> _emulationShuttingDown;
+    std::atomic<bool> _netplayRebootInProgress;
+    /// A netplay game is running. Boot queue only.
+    BOOL _netplayGameBooted;
 }
 
 - (instancetype)init {
@@ -264,6 +291,9 @@ static void ResetDolphinStaticState() {
         isNTSC = YES;
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
         _callbackQueue = dispatch_queue_create("org.provenance-emu.dolphin.CallbackHandlerQueue", queueAttributes);
+        _netplayBootQueue = dispatch_queue_create("org.provenance-emu.dolphin.NetplayBootQueue",
+                                                  dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INITIATED, 0));
+        dispatch_queue_set_specific(_netplayBootQueue, &kPVDolphinNetplayBootQueueKey, &kPVDolphinNetplayBootQueueKey, NULL);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
         [self parseOptions];
     }
@@ -822,6 +852,8 @@ static void ResetDolphinStaticState() {
         }
     });
     wsi.render_surface_scale = [UIScreen mainScreen].scale;
+    _bootWSI = wsi;
+    _hasBootWSI.store(true);
     NSLog(@"🐬 [DEBUG] WindowSystemInfo configured for iOS");
 
     VideoBackendBase::ActivateBackend(Config::Get(Config::MAIN_GFX_BACKEND));
@@ -919,6 +951,8 @@ static void ResetDolphinStaticState() {
 
 - (void)startEmulation {
     _isShuttingDownForViewport = NO;
+    _emulationShuttingDown.store(false);
+    _hasBootWSI.store(false);  // startDolphin captures it again for this run.
     self.skipEmulationLoop = true;  // Dolphin handles its own emulation loop
     [self installFrameEndHook];
     [self prepareAudio];
@@ -972,6 +1006,13 @@ static void ResetDolphinStaticState() {
 }
 
 - (void)stopEmulation {
+    // No netplay reboot boots after this. One already inside BootCore finishes
+    // first (it holds the mutex), and the Core::Stop below stops that game.
+    {
+        std::lock_guard<std::mutex> lock(_netplayBootMutex);
+        _emulationShuttingDown.store(true);
+        _hasBootWSI.store(false);
+    }
     // First, before Core::Stop and the memory Shutdown(): the reset waits for an
     // in-flight callback, so nothing reads MEM1/MEM2 after this line.
     _frameEndHook.reset();
@@ -1504,6 +1545,163 @@ static CGRect PVDolphinPixelAlignedFrame(CGRect frame, CGFloat scale) {
         self.multiPlayer = [value isEqualToString:@"true"];
         [self setupControllers];  // port count changed — regenerate pad config
     }
+}
+
+@end
+
+#pragma mark - Netplay reboot (PVDolphinCore+NetplayBoot.h)
+
+@implementation PVDolphinCoreBridge (NetplayBoot)
+
+- (dispatch_queue_t)netplayBootQueue {
+    return _netplayBootQueue;
+}
+
+- (nullable NSString *)netplayROMPath {
+    return _romPath;
+}
+
+- (BOOL)netplayRebootInProgress {
+    return _netplayRebootInProgress.load();
+}
+
+- (void)performOnNetplayBootQueueAndWait:(dispatch_block_t)block {
+    if (dispatch_get_specific(&kPVDolphinNetplayBootQueueKey) == &kPVDolphinNetplayBootQueueKey) {
+        block();
+    } else {
+        dispatch_sync(_netplayBootQueue, block);
+    }
+}
+
+// Stop and wait the way startVM does, without stopEmulation's teardown: the
+// host loop in startDolphin keeps running (it only exits when _isInitialized
+// drops), the render view and its layer stay, and Core::Init joins the old
+// emu thread when the next game boots.
+- (BOOL)netplayStopRunningGame {
+    {
+        std::lock_guard<std::mutex> lock(_netplayBootMutex);
+        if (_emulationShuttingDown.load() || !_hasBootWSI.load()) {
+            return NO;
+        }
+        _netplayRebootInProgress.store(true);
+    }
+
+    Core::System &system = Core::System::GetInstance();
+    if (!Core::IsUninitialized(system)) {
+        // The host usually starts from the pause menu. Mirror stopEmulation:
+        // leave the paused state before stopping.
+        if (Core::GetState(system) == Core::State::Paused) {
+            Core::SetState(system, Core::State::Running);
+        }
+        Core::Stop(system);
+    }
+
+    const auto deadline = std::chrono::steady_clock::now() + kPVDolphinNetplayStopTimeout;
+    while (!Core::IsUninitialized(system)) {
+        if (_emulationShuttingDown.load()) {
+            _netplayRebootInProgress.store(false);
+            return NO;
+        }
+        if (std::chrono::steady_clock::now() >= deadline) {
+            ELOG(@"[Dolphin Netplay] The running game didn't stop within %lld s.",
+                 (long long)kPVDolphinNetplayStopTimeout.count());
+            _netplayRebootInProgress.store(false);
+            return NO;
+        }
+        Common::SleepCurrentThread(10);
+    }
+    return YES;
+}
+
+- (BOOL)netplayBootGameAtPath:(const std::string &)path
+                      session:(std::unique_ptr<BootSessionData>)session {
+    _netplayGameBooted = [self _bootGameAtPath:path session:std::move(session)];
+    return _netplayGameBooted;
+}
+
+/// Boots on the original surface and lowers `netplayRebootInProgress`.
+- (BOOL)_bootGameAtPath:(const std::string &)path
+                session:(std::unique_ptr<BootSessionData>)session {
+    BOOL booted = NO;
+    {
+        std::lock_guard<std::mutex> lock(_netplayBootMutex);
+        if (!_emulationShuttingDown.load() && _hasBootWSI.load()) {
+            Core::System &system = Core::System::GetInstance();
+            BootSessionData data = session ? std::move(*session) : BootSessionData();
+            booted = BootManager::BootCore(system, BootParameters::GenerateFromFile(path, std::move(data)),
+                                           _bootWSI);
+            if (booted) {
+                AudioCommon::SetSoundStreamRunning(system, true);
+            }
+        }
+    }
+    _netplayRebootInProgress.store(false);
+    if (booted) {
+        [self restoreRuntimeStateAfterReboot];
+    } else {
+        ELOG(@"[Dolphin Netplay] Couldn't boot %s.", path.c_str());
+        [PVOSDNotification postMessage:@"Dolphin couldn't boot the game" type:PVOSDTypeError duration:5.0];
+    }
+    return booted;
+}
+
+/// Waits (bounded) until `predicate` holds or the emulator starts shutting down.
+- (BOOL)waitForNetplayCondition:(bool (^)(void))predicate {
+    const auto deadline = std::chrono::steady_clock::now() + kPVDolphinNetplayStopTimeout;
+    while (!predicate()) {
+        if (_emulationShuttingDown.load() || std::chrono::steady_clock::now() >= deadline) {
+            return NO;
+        }
+        Common::SleepCurrentThread(10);
+    }
+    return YES;
+}
+
+/// The reboot's stop ran RestoreConfig, which cleared the CurrentRun layer the
+/// game speed and aspect ratio live in, and the new game boots running. Put
+/// both back, and pause again if the frontend still has the game paused (the
+/// host usually starts from the pause menu), so the menu never sits over a
+/// running game; resuming from it unpauses Dolphin as usual.
+- (void)restoreRuntimeStateAfterReboot {
+    [self applyAspectRatioSetting];
+    [self setGameSpeed:self.gameSpeed];
+    if (!self.isEmulationPaused) {
+        return;
+    }
+    if ([self waitForNetplayCondition:^bool { return Core::IsRunning(Core::System::GetInstance()); }]) {
+        Core::SetState(Core::System::GetInstance(), Core::State::Paused);
+    }
+}
+
+- (void)netplayEndGame {
+    if (!_netplayGameBooted) {
+        return;
+    }
+    _netplayGameBooted = NO;
+    if (_emulationShuttingDown.load()) {
+        return;
+    }
+    ILOG(@"[Dolphin Netplay] Netplay game ended; restarting the game locally.");
+    [PVOSDNotification postMessage:@"Netplay game ended" type:PVOSDTypeInfo duration:4.0];
+    [self netplayRebootLocalGame];
+}
+
+- (void)netplayRebootLocalGame {
+    _netplayGameBooted = NO;
+    NSString *romPath = _romPath;
+    if (romPath.length == 0 || ![self netplayStopRunningGame]) {
+        return;
+    }
+    // BootCore refuses a boot without netplay settings while netplay input is
+    // enabled. Every path here ends the client's game first (NetPlayClient::
+    // StopGame disables it); wait in case that is still in flight.
+    if (![self waitForNetplayCondition:^bool { return !NetPlay::IsNetPlayRunning(); }]) {
+        ELOG(@"[Dolphin Netplay] Netplay input is still enabled; not restarting the game locally.");
+        _netplayRebootInProgress.store(false);
+        return;
+    }
+    [self _bootGameAtPath:std::string(romPath.fileSystemRepresentation)
+                  session:std::make_unique<BootSessionData>()];
 }
 
 @end

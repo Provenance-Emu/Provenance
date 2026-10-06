@@ -23,8 +23,8 @@
 //
 //  Every player boots the game together (`netplayHostStartsGame`): the host's
 //  Start Game makes each player reboot the running core into the netplay
-//  session. That reboot lives in PVDolphinCore.mm and isn't wired yet, so
-//  `supportsNetplay` stays false and `startNetplayGame` throws.
+//  session (PVDolphinCore+NetplayBoot.h), and back to the local game when the
+//  netplay game ends.
 //
 
 import Foundation
@@ -74,21 +74,40 @@ private enum AssocKeys {
 // mutate netplay state concurrently.
 extension PVDolphinCore: PVNetplayCapable {
 
-    /// False until step 2 lands: a session can connect, but no player can
-    /// start the game, because rebooting the running core into the netplay
-    /// session (BootGame / OnMsgStartGame) isn't wired in PVDolphinCore.mm.
-    /// Then this becomes `_bridge.dolphinNetplaySupported`.
-    public var supportsNetplay: Bool { false }
+    public var supportsNetplay: Bool { _bridge.dolphinNetplaySupported }
 
     public var netplayEngineName: String { "Dolphin" }
 
     /// Dolphin starts every player together, from the host's Start Game.
     public var netplayHostStartsGame: Bool { true }
 
-    /// Host only. Step 2 wires this to NetPlayServer::RequestStartGame once
-    /// every player can reboot into the session.
+    /// Host only: every player, the host included, reboots into the game.
     public func startNetplayGame() async throws {
-        throw NetplayError.unsupported
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            _netplayQueue.async { [weak self] in
+                guard let self else {
+                    continuation.resume(throwing: NetplayError.bridgeNotReady)
+                    return
+                }
+                do {
+                    try self._bridge.requestDolphinNetplayGameStart()
+                    continuation.resume()
+                } catch let error as PVDolphinNetplayError {
+                    switch error.code {
+                    case .gameMismatch:
+                        continuation.resume(throwing: NetplayError.romMismatch)
+                    case .invalidSettings:
+                        continuation.resume(throwing: NetplayError.invalidSettings(error.localizedDescription))
+                    case .unsupported:
+                        continuation.resume(throwing: NetplayError.unsupported)
+                    default:
+                        continuation.resume(throwing: NetplayError.connectionFailed(error.localizedDescription))
+                    }
+                } catch {
+                    continuation.resume(throwing: NetplayError.connectionFailed(error.localizedDescription))
+                }
+            }
+        }
     }
 
     // MARK: - Associated-object helpers

@@ -19,6 +19,19 @@
 //  never take @synchronized(self): stopNetplay holds that lock only to detach
 //  the session, then joins those threads outside it.
 //
+//  Starting a game reboots the running core into the netplay session. The
+//  callbacks never do that themselves: they queue it on the core's netplay
+//  boot queue (PVDolphinCore+NetplayBoot.h), where stopNetplay also tears the
+//  session down, so a queued boot never runs against a destroyed client.
+//
+//    host Start ─▶ requestDolphinNetplayGameStart (boot queue):
+//                  pin deterministic config, server->RequestStartGame()
+//    every player ─▶ OnMsgStartGame (netplay thread) ─▶ boot queue:
+//                  stop the running game, client->StartGame(path)
+//                  └▶ BootGame: BootCore(path, session data) on the old surface
+//    game ends   ─▶ StopGame (any thread) ─▶ boot queue: boot the ROM locally
+//    player quits ─▶ Core state Stopping ─▶ client->RequestStopGame()
+//
 
 #import "PVDolphinCore+Netplay.h"
 #import <PVLogging/PVLoggingObjC.h>
@@ -45,16 +58,21 @@
     #include <vector>
 
     #include "Common/Config/Config.h"
+    #include "Common/HookableEvent.h"
     #include "Common/TraversalClient.h"
     #include "Core/Boot/Boot.h"
+    #include "Core/Config/MainSettings.h"
     #include "Core/Config/NetplaySettings.h"
     #include "Core/Core.h"
     #include "Core/IOS/FS/FileSystem.h"
     #include "Core/NetPlayClient.h"
     #include "Core/NetPlayServer.h"
+    #include "Core/PowerPC/PowerPC.h"
     #include "Core/System.h"
     #include "UICommon/GameFile.h"
     #include "UICommon/UICommon.h"
+
+    #import "PVDolphinCore+NetplayBoot.h"
 #else
     #define HAVE_DOLPHIN_NETPLAY 0
 #endif
@@ -97,6 +115,43 @@ static const char *PVTraversalFailureName(Common::TraversalClient::FailureReason
 }
 
 // ---------------------------------------------------------------------------
+// MARK: - Determinism
+//
+// NetPlayServer::SetupNetSettings copies the host's CPU core, dual core, DSP
+// JIT and fastmem settings to every player. A JIT host would hand a jitless
+// client a core it can't run, and dual core isn't deterministic. So while the
+// host starts a game, pin them in the CurrentRun layer: it outranks the game
+// INI layers SetupNetSettings adds, and Dolphin clears it when the running
+// game stops for the reboot, so nothing is written to the user's settings.
+// The netplay config layer then carries the pinned values into every
+// player's netplay game, the host's included.
+// ---------------------------------------------------------------------------
+
+static void PVPinDeterministicNetplayConfig() {
+    const PowerPC::CPUCore core = Config::Get(Config::MAIN_CPU_CORE);
+    const bool interpreted = core == PowerPC::CPUCore::Interpreter ||
+                             core == PowerPC::CPUCore::CachedInterpreter;
+    Config::SetCurrent(Config::MAIN_CPU_CORE, interpreted ? core : PowerPC::CPUCore::CachedInterpreter);
+    Config::SetCurrent(Config::MAIN_CPU_THREAD, false);
+    Config::SetCurrent(Config::MAIN_DSP_JIT, false);
+    Config::SetCurrent(Config::MAIN_FASTMEM, false);
+}
+
+/// Undoes PVPinDeterministicNetplayConfig when the start doesn't go ahead.
+static void PVUnpinDeterministicNetplayConfig() {
+    Config::DeleteKey(Config::LayerType::CurrentRun, Config::MAIN_CPU_CORE);
+    Config::DeleteKey(Config::LayerType::CurrentRun, Config::MAIN_CPU_THREAD);
+    Config::DeleteKey(Config::LayerType::CurrentRun, Config::MAIN_DSP_JIT);
+    Config::DeleteKey(Config::LayerType::CurrentRun, Config::MAIN_FASTMEM);
+}
+
+@interface PVDolphinCoreBridge (NetplayPrivate)
+/// Boot queue. Stops the running game and boots the netplay game at `path`,
+/// if session `sessionID` is still the live one.
+- (void)_netplayStartGameAtPath:(const std::string &)path sessionID:(uint64_t)sessionID;
+@end
+
+// ---------------------------------------------------------------------------
 // MARK: - NetPlayUI
 // ---------------------------------------------------------------------------
 
@@ -110,10 +165,32 @@ namespace {
 /// atomic or guarded by `m_mutex`.
 class PVDolphinNetPlayUI final : public NetPlay::NetPlayUI {
 public:
-    PVDolphinNetPlayUI(std::vector<std::shared_ptr<const UICommon::GameFile>> games,
+    PVDolphinNetPlayUI(uint64_t session_id,
+                       PVDolphinCoreBridge *core,
+                       std::vector<std::shared_ptr<const UICommon::GameFile>> games,
                        PVDolphinNetplayEventHandler handler,
                        bool hosting)
-        : m_games(std::move(games)), m_handler([handler copy]), m_hosting(hosting) {}
+        : m_session_id(session_id), m_core(core), m_games(std::move(games)), m_handler([handler copy]), m_hosting(hosting) {
+        // A player quitting a netplay game must tell the others (as Android
+        // does). Runs on whichever thread changes the core state.
+        m_state_hook = Core::AddOnStateChangedCallback([this](Core::State state) {
+            if (state != Core::State::Stopping && state != Core::State::Uninitialized) {
+                return;
+            }
+            // The reboot's own stop, or the game already ended by the server.
+            PVDolphinCoreBridge *strongCore = m_core;
+            if (!m_game_running.load() || strongCore == nil || strongCore.netplayRebootInProgress) {
+                return;
+            }
+            if (m_stop_requested.exchange(true)) {
+                return;  // Stopping, then Uninitialized: ask once.
+            }
+            if (NetPlay::NetPlayClient *client = m_client.load()) {
+                ILOG(@"[Dolphin Netplay] Local game stopped; asking the host to stop the netplay game.");
+                client->RequestStopGame();
+            }
+        });
+    }
 
     // MARK: Bridge-facing state (called from the bridge's netplay queue)
 
@@ -130,6 +207,24 @@ public:
     /// report each other's disconnect, which isn't a lost connection.
     void BeginShutdown() { m_stopping.store(true); }
 
+    /// Unregisters the core state callback, waiting for one in flight. Must
+    /// run before the client is destroyed: the callback uses it.
+    void RemoveStateHook() { m_state_hook.reset(); }
+
+    /// The game the host selected, if any.
+    std::optional<NetPlay::SyncIdentifier> CurrentGame() {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        return m_current_game;
+    }
+
+    /// Boot queue. Called before client->StartGame; BootFailed() reports on it.
+    void PrepareForBoot() {
+        m_boot_failed.store(false);
+        m_stop_requested.store(false);
+    }
+
+    bool BootFailed() const { return m_boot_failed.load(); }
+
     std::string HostCode() {
         std::lock_guard<std::mutex> lock(m_mutex);
         return m_host_code;
@@ -139,22 +234,32 @@ public:
 
     // MARK: NetPlay::NetPlayUI
 
-    // STEP 2 placeholder. The netplay client calls this from StartGame()
-    // after NetPlay_Enable; it must reboot the running core with
-    // BootManager::BootCore(system, BootParameters::GenerateFromFile(filename,
-    // std::move(*boot_session_data)), wsi). OnMsgStartGame does not call
-    // client->StartGame yet, so this is never reached.
+    // Called by client->StartGame(), which only ever runs on the boot queue
+    // (see -_netplayStartGameAtPath:sessionID:), after the running game has
+    // stopped and NetPlay_Enable. StartGame holds the client's game lock
+    // here, so a failure is only recorded; the boot queue handles it after.
     void BootGame(const std::string &filename,
                   std::unique_ptr<BootSessionData> boot_session_data) override {
-        (void)boot_session_data;
-        WLOG(@"[Dolphin Netplay] BootGame(%s) ignored: in-game netplay boot is not wired yet.",
-             filename.c_str());
+        PVDolphinCoreBridge *core = m_core;
+        const bool booted = core != nil &&
+                            [core netplayBootGameAtPath:filename session:std::move(boot_session_data)];
+        ILOG(@"[Dolphin Netplay] Netplay boot of %s %s.", filename.c_str(), booted ? "started" : "failed");
+        m_boot_failed.store(!booted);
+        m_game_running.store(booted);
     }
 
-    // STEP 2 placeholder. Must stop the netplay-booted game (Core::Stop)
-    // without the full stopEmulation teardown.
+    // The netplay game is over (the host stopped it, the connection dropped,
+    // or the session is being torn down). Any thread; never blocks.
     void StopGame() override {
-        DLOG(@"[Dolphin Netplay] StopGame ignored: in-game netplay boot is not wired yet.");
+        m_game_running.store(false);
+        PVDolphinCoreBridge *core = m_core;
+        if (core == nil) {
+            return;
+        }
+        __weak PVDolphinCoreBridge *weakCore = core;
+        dispatch_async(core.netplayBootQueue, ^{
+            [weakCore netplayEndGame];
+        });
     }
 
     bool IsHosting() const override { return m_hosting; }
@@ -180,13 +285,29 @@ public:
     // GBA link play (mGBA in Dolphin) isn't supported by Provenance.
     void OnMsgChangeGBARom(int, const NetPlay::GBAConfig &) override {}
 
-    // STEP 2 placeholder. Must look up the selected game with
-    // FindGameFile(m_current_game) and call client->StartGame(path), which
-    // ends in BootGame above.
+    // Netplay thread. Like DolphinQt, start the game off this thread: on the
+    // boot queue, which stops the running game first so it never polls
+    // netplay pads, then calls client->StartGame (→ BootGame).
     void OnMsgStartGame() override {
-        WLOG(@"[Dolphin Netplay] Host started the game, but in-game netplay boot is not wired yet.");
-        Toast(@"The host started the game, but Dolphin netplay can't start games in Provenance yet.",
-              PVOSDTypeWarning);
+        const std::optional<NetPlay::SyncIdentifier> game_id = CurrentGame();
+        const std::shared_ptr<const UICommon::GameFile> game = game_id ? FindGameFile(*game_id, nullptr) : nullptr;
+        if (game == nullptr) {
+            ELOG(@"[Dolphin Netplay] The host started a game this device doesn't have.");
+            Toast(@"Netplay: you don't have the host's game", PVOSDTypeError);
+            return;
+        }
+        PVDolphinCoreBridge *core = m_core;
+        if (core == nil) {
+            return;
+        }
+        Toast(@"Netplay: starting the game", PVOSDTypeInfo);
+        const std::string path = game->GetFilePath();
+        // Not `this`: the session may be gone, or replaced, by the time it runs.
+        const uint64_t session_id = m_session_id;
+        __weak PVDolphinCoreBridge *weakCore = core;
+        dispatch_async(core.netplayBootQueue, ^{
+            [weakCore _netplayStartGameAtPath:path sessionID:session_id];
+        });
     }
 
     void OnMsgStopGame() override {}
@@ -277,6 +398,10 @@ public:
 
     void OnGameStartAborted() override {
         WLOG(@"[Dolphin Netplay] Game start aborted.");
+        if (m_hosting) {
+            // The running game keeps going; give it its own settings back.
+            PVUnpinDeterministicNetplayConfig();
+        }
         Toast(@"Netplay game start was aborted", PVOSDTypeWarning);
     }
 
@@ -369,6 +494,8 @@ private:
         [PVOSDNotification postMessage:message type:type duration:kDolphinNetplayOSDDuration];
     }
 
+    const uint64_t m_session_id;
+    __weak PVDolphinCoreBridge *const m_core;
     const std::vector<std::shared_ptr<const UICommon::GameFile>> m_games;
     const PVDolphinNetplayEventHandler m_handler;
     const bool m_hosting;
@@ -376,17 +503,32 @@ private:
     std::atomic<NetPlay::NetPlayClient *> m_client{nullptr};
     std::atomic<bool> m_stopping{false};
     std::atomic<int> m_player_count{0};
+    /// A netplay game booted and hasn't ended.
+    std::atomic<bool> m_game_running{false};
+    /// RequestStopGame was sent for the current game.
+    std::atomic<bool> m_stop_requested{false};
+    /// The last BootGame failed.
+    std::atomic<bool> m_boot_failed{false};
+    Common::EventHook m_state_hook;
 
     std::mutex m_mutex;
     std::string m_host_code;                              // guarded by m_mutex
-    std::optional<NetPlay::SyncIdentifier> m_current_game; // guarded by m_mutex; read in step 2
+    std::optional<NetPlay::SyncIdentifier> m_current_game; // guarded by m_mutex
     std::string m_current_game_name;                      // guarded by m_mutex
 };
 
+static uint64_t NextSessionID() {
+    static std::atomic<uint64_t> s_next_id{1};
+    return s_next_id.fetch_add(1);
+}
+
 /// One netplay session. The UI must outlive the client and server that hold
 /// a pointer to it, so teardown is client → server → UI. Destroying it joins
-/// Dolphin's netplay threads: never do that on one of them.
+/// Dolphin's netplay threads: never do that on one of them. Once a session is
+/// installed it is destroyed on the netplay boot queue (see stopNetplay).
 struct PVDolphinNetplaySession {
+    /// Distinct for every session this process creates.
+    const uint64_t id = NextSessionID();
     std::unique_ptr<PVDolphinNetPlayUI> ui;
     std::unique_ptr<NetPlay::NetPlayServer> server;
     std::unique_ptr<NetPlay::NetPlayClient> client;
@@ -394,6 +536,7 @@ struct PVDolphinNetplaySession {
     ~PVDolphinNetplaySession() {
         if (ui) {
             ui->BeginShutdown();
+            ui->RemoveStateHook();
             ui->SetClient(nullptr);
         }
         client.reset();
@@ -471,22 +614,11 @@ static NSError *PVMakeDolphinNetplayError(PVDolphinNetplayError code, NSString *
     return box != nil ? box->session.get() : nullptr;
 }
 
-/// The ROM loadFileAtPath: stored. It is an @implementation ivar of
-/// PVDolphinCore.mm, which this category can't name directly.
-- (nullable NSString *)_netplayLoadedROMPath {
-    Ivar ivar = class_getInstanceVariable([PVDolphinCoreBridge class], "_romPath");
-    if (ivar == NULL) {
-        return nil;
-    }
-    id value = object_getIvar(self, ivar);
-    return [value isKindOfClass:[NSString class]] ? (NSString *)value : nil;
-}
-
 /// Opens the loaded ROM and any extra candidates as Dolphin game files. The
 /// loaded ROM, if Dolphin can read it, comes first.
 - (std::vector<std::shared_ptr<const UICommon::GameFile>>)_netplayCandidateGames {
     NSMutableOrderedSet<NSString *> *paths = [NSMutableOrderedSet orderedSet];
-    NSString *loaded = [self _netplayLoadedROMPath];
+    NSString *loaded = self.netplayROMPath;
     if (loaded.length > 0) {
         [paths addObject:loaded];
     }
@@ -623,7 +755,9 @@ static NSError *PVMakeDolphinNetplayError(PVDolphinNetplayError code, NSString *
 
     auto session = std::make_unique<PVDolphinNetplaySession>();
     try {
-        session->ui = std::make_unique<PVDolphinNetPlayUI>(std::move(games),
+        session->ui = std::make_unique<PVDolphinNetPlayUI>(session->id,
+                                                           self,
+                                                           std::move(games),
                                                            self.dolphinNetplayEventHandler,
                                                            /* hosting */ true);
         session->server = std::make_unique<NetPlay::NetPlayServer>(
@@ -731,7 +865,9 @@ static NSError *PVMakeDolphinNetplayError(PVDolphinNetplayError code, NSString *
 
     auto session = std::make_unique<PVDolphinNetplaySession>();
     try {
-        session->ui = std::make_unique<PVDolphinNetPlayUI>([self _netplayCandidateGames],
+        session->ui = std::make_unique<PVDolphinNetPlayUI>(session->id,
+                                                           self,
+                                                           [self _netplayCandidateGames],
                                                            self.dolphinNetplayEventHandler,
                                                            /* hosting */ false);
         // Blocks until connected or failed (OnConnectionError reports why).
@@ -777,6 +913,91 @@ static NSError *PVMakeDolphinNetplayError(PVDolphinNetplayError code, NSString *
 #endif
 }
 
+// MARK: - Start game
+
+#if HAVE_DOLPHIN_NETPLAY
+
+- (void)_netplayStartGameAtPath:(const std::string &)path sessionID:(uint64_t)sessionID {
+    // Sessions are destroyed on this queue, so this one stays valid until the
+    // block returns.
+    PVDolphinNetplaySession *session = nullptr;
+    @synchronized (self) {
+        session = [self _netplaySessionLocked];
+    }
+    if (session == nullptr || session->client == nullptr || session->id != sessionID) {
+        DLOG(@"[Dolphin Netplay] Start dropped: its session has ended.");
+        return;
+    }
+    NetPlay::NetPlayClient *client = session->client.get();
+
+    // Stop first, so the running game never reads netplay pads: StartGame
+    // enables netplay input before it boots.
+    if (![self netplayStopRunningGame]) {
+        [PVOSDNotification postMessage:@"Netplay: couldn't stop the running game"
+                                  type:PVOSDTypeError
+                              duration:kDolphinNetplayOSDDuration];
+        client->RequestStopGame();
+        return;
+    }
+
+    session->ui->PrepareForBoot();
+    const bool started = client->StartGame(path);
+    if (!started || session->ui->BootFailed()) {
+        // Tell the host, then end the client's game here (outside StartGame's
+        // lock): StopGame disables netplay input now, so the local boot below
+        // isn't refused as a netplay boot without netplay settings. Its
+        // StopGame callback finds no netplay game booted and does nothing.
+        client->RequestStopGame();
+        client->StopGame();
+        [self netplayRebootLocalGame];
+    }
+}
+
+#endif // HAVE_DOLPHIN_NETPLAY
+
+- (BOOL)requestDolphinNetplayGameStart:(NSError *_Nullable __autoreleasing *_Nullable)error {
+#if HAVE_DOLPHIN_NETPLAY
+    __block NSError *failure = nil;
+    // On the boot queue, so it is ordered against session teardown and the
+    // reboots it triggers.
+    [self performOnNetplayBootQueueAndWait:^{
+        PVDolphinNetplaySession *session = nullptr;
+        @synchronized (self) {
+            session = [self _netplaySessionLocked];
+        }
+        if (session == nullptr || session->server == nullptr || session->client == nullptr) {
+            failure = PVMakeDolphinNetplayError(PVDolphinNetplayErrorInvalidSettings,
+                                                @"Only the host can start a Dolphin netplay game.");
+            return;
+        }
+        if (!session->client->DoAllPlayersHaveGame()) {
+            failure = PVMakeDolphinNetplayError(PVDolphinNetplayErrorGameMismatch,
+                                                @"Not every player has this game.");
+            return;
+        }
+        PVPinDeterministicNetplayConfig();
+        if (!session->server->RequestStartGame()) {
+            PVUnpinDeterministicNetplayConfig();
+            failure = PVMakeDolphinNetplayError(PVDolphinNetplayErrorConnectFailed,
+                                                @"Dolphin couldn't start the netplay game.");
+        }
+    }];
+    if (failure != nil) {
+        if (error) {
+            *error = failure;
+        }
+        return NO;
+    }
+    return YES;
+#else
+    if (error) {
+        *error = PVMakeDolphinNetplayError(PVDolphinNetplayErrorUnsupported,
+                                       @"Dolphin netplay is not available. Ensure the dolphin-ios submodule is initialised.");
+    }
+    return NO;
+#endif
+}
+
 // MARK: - Input buffer / frame delay
 
 - (void)setNetplayInputBufferSize:(uint32_t)bufferSize {
@@ -808,16 +1029,22 @@ static NSError *PVMakeDolphinNetplayError(PVDolphinNetplayError code, NSString *
 - (void)stopNetplay {
     DLOG(@"[Dolphin Netplay] Stopping session.");
 #if HAVE_DOLPHIN_NETPLAY
-    std::unique_ptr<PVDolphinNetplaySession> session;
-    @synchronized (self) {
-        _PVDolphinNetplaySessionBox *box = objc_getAssociatedObject(self, &kSessionBoxKey);
-        if (box != nil) {
-            session = std::move(box->session);
-            objc_setAssociatedObject(self, &kSessionBoxKey, nil, OBJC_ASSOCIATION_RETAIN);
+    // On the boot queue: a queued start or end of game then runs before the
+    // session goes, or finds it gone, never against a destroyed client.
+    [self performOnNetplayBootQueueAndWait:^{
+        std::unique_ptr<PVDolphinNetplaySession> session;
+        @synchronized (self) {
+            _PVDolphinNetplaySessionBox *box = objc_getAssociatedObject(self, &kSessionBoxKey);
+            if (box != nil) {
+                session = std::move(box->session);
+                objc_setAssociatedObject(self, &kSessionBoxKey, nil, OBJC_ASSOCIATION_RETAIN);
+            }
         }
-    }
-    // Joins the netplay threads, outside the lock their callbacks never take.
-    session.reset();
+        // Joins the netplay threads, outside the lock their callbacks never
+        // take. A running netplay game ends through StopGame, which queues
+        // the local reboot behind this block.
+        session.reset();
+    }];
 #endif
 }
 

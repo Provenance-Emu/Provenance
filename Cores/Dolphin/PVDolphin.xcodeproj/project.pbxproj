@@ -743,6 +743,7 @@
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3DE9E492E2D7ABC008E97F6 /* PVlibDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibDolphin.xcframework; path = build/xcframework/PVlibDolphin.xcframework; sourceTree = "<group>"; };
 		B3EA00042F56B000004A995B /* PVDolphinCore+Netplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVDolphinCore+Netplay.h"; sourceTree = "<group>"; };
+		C0C0CAFE0004000000000001 /* PVDolphinCore+NetplayBoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = "PVDolphinCore+NetplayBoot.h"; sourceTree = "<group>"; };
 		B3EA00052F56B000004A995B /* PVDolphinCore+Netplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVDolphinCore+Netplay.mm"; sourceTree = "<group>"; };
 		B3EA00062F56B000004A995B /* PVDolphinCore+PVNetplayCapable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVDolphinCore+PVNetplayCapable.swift"; sourceTree = "<group>"; };
 		B3F8E1252CB6007700017D1B /* PVDolphinCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDolphinCore.swift; sourceTree = "<group>"; };
@@ -834,6 +835,7 @@
 				9366AC5E295976D000162286 /* PVDolphinCore+Cheats.mm */,
 				B3EA00042F56B000004A995B /* PVDolphinCore+Netplay.h */,
 				B3EA00052F56B000004A995B /* PVDolphinCore+Netplay.mm */,
+				C0C0CAFE0004000000000001 /* PVDolphinCore+NetplayBoot.h */,
 				B3EA00062F56B000004A995B /* PVDolphinCore+PVNetplayCapable.swift */,
 				C0C0CAFE0003000000000005 /* PVDolphinCore+RetroAchievements.h */,
 				C0C0CAFE0003000000000002 /* PVDolphinCore+RetroAchievements.mm */,

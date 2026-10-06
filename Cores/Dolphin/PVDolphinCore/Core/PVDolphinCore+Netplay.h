@@ -17,10 +17,10 @@
 //                 short code from the relay; clients join with that code
 //                 instead of an address.
 //
-//  Every player boots the game together: the host asks the server to start,
-//  and each client reboots into the netplay session. That in-game reboot is
-//  not wired yet (see BootGame / OnMsgStartGame in the .mm), so the sessions
-//  this category opens can connect but cannot start a game.
+//  Every player boots the game together: the host asks the server to start
+//  (`requestDolphinNetplayGameStart:`), and every player, the host included,
+//  reboots the running core into the netplay session. When the netplay game
+//  ends, the core boots the loaded ROM again on its own.
 //
 //  Not supported by this Dolphin revision: room passwords and a player cap.
 //  Both are accepted for API symmetry and ignored.
@@ -80,6 +80,8 @@ typedef NS_ERROR_ENUM(PVDolphinNetplayErrorDomain, PVDolphinNetplayError) {
     PVDolphinNetplayErrorConnectFailed    = 2,
     /// Required parameters (host / traversal code) are missing or invalid.
     PVDolphinNetplayErrorInvalidSettings  = 3,
+    /// Some player in the session doesn't have the host's game.
+    PVDolphinNetplayErrorGameMismatch     = 4,
 };
 
 // ---------------------------------------------------------------------------
@@ -155,6 +157,17 @@ NS_SWIFT_NAME(joinNetplay(host:port:traversalCode:password:));
 /// Blocks until Dolphin's netplay threads have exited; never call it from a
 /// netplay callback.
 - (void)stopNetplay;
+
+/// Host only: start the selected game for every player. Pins the CPU core to
+/// an interpreter and turns off dual core, DSP JIT and fastmem for the
+/// session first, so a JIT host can't hand a jitless player a core it can't
+/// run. Every player then reboots into the netplay game.
+///
+/// @param error  `PVDolphinNetplayErrorGameMismatch` when a player lacks the
+///               game; `InvalidSettings` when not hosting.
+/// @return YES once the start is under way (it may still wait on save sync).
+- (BOOL)requestDolphinNetplayGameStart:(NSError *_Nullable __autoreleasing *_Nullable)error
+NS_SWIFT_NAME(requestDolphinNetplayGameStart());
 
 /// Set the pad buffer (input delay, in frames).
 ///
