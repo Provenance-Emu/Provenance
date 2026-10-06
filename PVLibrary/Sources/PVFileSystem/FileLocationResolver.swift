@@ -349,11 +349,15 @@ public final class FileLocationResolver: @unchecked Sendable {
             scanURL = base
         }
 
+        // No `.skipsPackageDescendants`: deciding whether a directory is a
+        // package costs a synchronous LaunchServices XPC round-trip per entry,
+        // which stretched a full-library scan to minutes (seen in 0xDEAD10CC
+        // crash logs). Nothing under the ROM/save/BIOS trees is a bundle.
         let keys: [URLResourceKey] = [.isRegularFileKey]
         guard let enumerator = FileManager.default.enumerator(
             at: scanURL,
             includingPropertiesForKeys: keys,
-            options: [.skipsHiddenFiles, .skipsPackageDescendants]
+            options: [.skipsHiddenFiles]
         ) else {
             WLOG("FileLocationResolver: failed to enumerate \(scanURL.path)")
             return []
