@@ -4,7 +4,9 @@ One registry ([`jobs.toml`](jobs.toml)) describes every recurring script: what i
 does, the command, and when it is out of date. `maint.py` reads it to tell you
 what needs running, run it with the right paths, and keep CI honest.
 
-Needs Python 3.11+ (`brew install python`); standard library only.
+Needs Python 3.11+, standard library only. Started by an older `python3` (mise's 3.9,
+say), it re-launches itself with the newest 3.11+ on `PATH` or in Homebrew, and
+jobs it runs see that interpreter as `python3`.
 
 ## Everyday use
 

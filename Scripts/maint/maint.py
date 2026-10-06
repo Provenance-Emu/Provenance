@@ -22,11 +22,37 @@ from __future__ import annotations
 
 import sys
 
+
+def _find_newer_python():
+    """A Python 3.11+ to re-launch under when started by an older one (e.g. mise's 3.9)."""
+    import os
+    import shutil
+    import subprocess
+
+    names = [f"python3.{minor}" for minor in range(20, 10, -1)]
+    paths = [shutil.which(name) for name in names]
+    paths += ["/opt/homebrew/bin/python3", "/usr/local/bin/python3", "/usr/bin/python3"]
+    for path in paths:
+        if not path or not os.access(path, os.X_OK) or os.path.realpath(path) == os.path.realpath(sys.executable):
+            continue
+        probe = subprocess.run([path, "-c", "import sys; sys.exit(sys.version_info < (3, 11))"],
+                               capture_output=True)
+        if probe.returncode == 0:
+            return path
+    return None
+
+
 if sys.version_info < (3, 11):
+    import os
+
+    newer = None if os.environ.get("MAINT_REEXEC") else _find_newer_python()
+    if newer:
+        os.environ["MAINT_REEXEC"] = "1"
+        os.execv(newer, [newer, os.path.abspath(__file__), *sys.argv[1:]])
     if "--quiet" not in sys.argv:
         sys.stderr.write(
-            f"maint needs Python 3.11+ (this is {sys.version.split()[0]} at {sys.executable}).\n"
-            "Install one with `brew install python` and run it with that python3.\n"
+            f"maint needs Python 3.11+ (this is {sys.version.split()[0]} at {sys.executable})\n"
+            "and found no newer one on PATH. Install one with `brew install python`.\n"
         )
     sys.exit(0 if "--quiet" in sys.argv else 2)
 
@@ -366,8 +392,23 @@ def shell_command(command: list[str] | str, extra_args: list[str] | None = None)
     return [*command, *extra_args]
 
 
+def python_shim_dir() -> Path:
+    """A folder whose `python3` is this interpreter, put first on PATH for jobs, so
+    `python3 Scripts/…` in a job doesn't fall back to an older default (mise 3.9)."""
+    shim = STATE_DIR / "bin"
+    shim.mkdir(parents=True, exist_ok=True)
+    for name in ("python3", "python"):
+        link = shim / name
+        if not link.is_symlink() or os.readlink(link) != sys.executable:
+            link.unlink(missing_ok=True)
+            link.symlink_to(sys.executable)
+    return shim
+
+
 def child_env() -> dict[str, str]:
     env = dict(os.environ)
+    env.pop("MAINT_REEXEC", None)
+    env["PATH"] = f"{python_shim_dir()}{os.pathsep}{env.get('PATH', '')}"
     env["REPO_ROOT"] = str(REPO_ROOT)
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     return env
