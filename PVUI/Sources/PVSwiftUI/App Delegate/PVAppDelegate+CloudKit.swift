@@ -92,8 +92,7 @@ public extension PVAppDelegate {
         request.requiresNetworkConnectivity = true
         request.requiresExternalPower = true
 
-        // Set earliest begin date to 15 minutes from now
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: Self.cloudKitSyncTaskInterval)
 
         do {
             try BGTaskScheduler.shared.submit(request)
@@ -103,8 +102,11 @@ public extension PVAppDelegate {
         }
     }
 
-    /// Handle a background CloudKit sync task
-    /// - Parameter task: The background processing task
+    /// How long to wait between background CloudKit sync runs. Every launch
+    /// resubmits the request, so a short interval meant iOS relaunched the
+    /// app every 15 minutes while it was charging.
+    private static let cloudKitSyncTaskInterval: TimeInterval = 4 * 60 * 60
+
     /// Handle a background processing task for CloudKit sync
     /// This is called by the BGTaskScheduler when a background task is launched
     public func handleCloudKitSyncTask(_ task: BGProcessingTask) {
@@ -113,55 +115,43 @@ public extension PVAppDelegate {
         // Schedule the next background task
         scheduleCloudKitSyncTask()
 
-        // Create a task assertion to track the background work
-        let taskAssertionID = UIApplication.shared.beginBackgroundTask {
-            // If the background task expires, complete the BGTask
-            task.setTaskCompleted(success: false)
+        let work = Task {
+            await syncCloudKitMetadataInBackground(source: "Background sync")
         }
-
-        // Perform the sync in the background
+        // Stop the work when iOS revokes our time; the task is reported
+        // complete only after the work has actually returned, so no Realm
+        // write is left running when the app is suspended.
+        task.expirationHandler = {
+            WLOG("Background CloudKit sync task expired — cancelling")
+            work.cancel()
+        }
         Task {
-            do {
-                // Sync metadata only to avoid large downloads in the background
-                var totalSynced = 0
+            let totalSynced = await work.value
+            task.setTaskCompleted(success: !work.isCancelled && totalSynced > 0)
+            DLOG("Background CloudKit sync task finished")
+        }
+    }
 
-                // Iterate over all CloudKitSyncers and sync metadata
-                for syncer in CloudKitSyncerStore.shared.cloudKitSyncers {
-                    let count = await syncer.syncMetadataOnly()
-                    if count > 0 {
-                        totalSynced += count
-                        DLOG("Background sync: Synced \(count) records for type: \(syncer.recordType)")
-                    }
-                }
-
-                if totalSynced > 0 {
-                    DLOG("Background sync: Total records synced: \(totalSynced)")
-                    task.setTaskCompleted(success: true)
-                } else {
-                    ILOG("Background sync: No data to sync or syncers not found")
-                    task.setTaskCompleted(success: false)
-                }
-
-                // End the background task assertion
-                if taskAssertionID != .invalid {
-                    ILOG("Ending background task assertion: \(taskAssertionID)")
-                    UIApplication.shared.endBackgroundTask(taskAssertionID)
-                }
-
-                DLOG("Background CloudKit sync completed successfully")
-            } catch {
-                ELOG("Error during background CloudKit sync: \(error.localizedDescription)")
-
-                // Mark the task as completed with failure
-                task.setTaskCompleted(success: false)
-
-                // End the background task assertion
-                if taskAssertionID != .invalid {
-                    ILOG("Ending background task assertion: \(taskAssertionID)")
-                    UIApplication.shared.endBackgroundTask(taskAssertionID)
-                }
+    /// Metadata-only sync for background launches: bounded, and finished
+    /// before it returns, unlike `CloudSyncManager.startSync()`, which queues
+    /// open-ended work.
+    /// - Returns: The number of records synced.
+    private func syncCloudKitMetadataInBackground(source: String) async -> Int {
+        var totalSynced = 0
+        for syncer in CloudKitSyncerStore.shared.cloudKitSyncers {
+            if Task.isCancelled { break }
+            let count = await syncer.syncMetadataOnly()
+            if count > 0 {
+                totalSynced += count
+                DLOG("\(source): Synced \(count) records for type: \(syncer.recordType)")
             }
         }
+        if totalSynced > 0 {
+            DLOG("\(source): Total records synced: \(totalSynced)")
+        } else {
+            ILOG("\(source): No data to sync or syncers not found")
+        }
+        return totalSynced
     }
 
     /// Handle a remote notification
@@ -218,32 +208,9 @@ public extension PVAppDelegate {
             return
         }
 
-        // Perform background sync
         Task {
-            do {
-                // Sync metadata only to avoid large downloads in the background
-                var totalSynced = 0
-
-                // Iterate over all CloudKitSyncers and sync metadata
-                for syncer in CloudKitSyncerStore.shared.cloudKitSyncers {
-                    let count = await syncer.syncMetadataOnly()
-                    if count > 0 {
-                        totalSynced += count
-                        DLOG("Background fetch: Synced \(count) records for type: \(syncer.recordType)")
-                    }
-                }
-
-                if totalSynced > 0 {
-                    DLOG("Background fetch: Total records synced: \(totalSynced)")
-                    completionHandler(.newData)
-                } else {
-                    ILOG("Background fetch: No data to sync or syncers not found")
-                    completionHandler(.noData)
-                }
-            } catch {
-                ELOG("Error during background fetch: \(error.localizedDescription)")
-                completionHandler(.failed)
-            }
+            let totalSynced = await syncCloudKitMetadataInBackground(source: "Background fetch")
+            completionHandler(totalSynced > 0 ? .newData : .noData)
         }
     }
 
@@ -286,17 +253,15 @@ public extension PVAppDelegate {
         // Handle notification
         CloudKitSubscriptionManager.shared.handleRemoteNotification(userInfo)
 
-        // Start sync
-        Task {
-            do {
-                // Start sync
-                try await CloudSyncManager.shared.startSync()
-
-                // Complete with new data
+        Task { @MainActor in
+            // In the background, iOS suspends the app once the completion
+            // handler runs, so only do work that finishes before it.
+            if UIApplication.shared.applicationState == .background {
+                let totalSynced = await syncCloudKitMetadataInBackground(source: "CloudKit push")
+                completionHandler(totalSynced > 0 ? .newData : .noData)
+            } else {
+                await CloudSyncManager.shared.startSync()
                 completionHandler(.newData)
-            } catch {
-                ELOG("Error handling CloudKit notification: \(error.localizedDescription)")
-                completionHandler(.failed)
             }
         }
 

@@ -770,6 +770,22 @@ extension ProvenanceApp {
 
 extension ProvenanceApp {
     func _initICloud() {
+        // A background launch (BGProcessingTask, CloudKit push, background
+        // fetch) must not start the full-library scan and sync: iOS suspends
+        // the app when the handler finishes, and a Realm commit in flight at
+        // that moment gets the app killed (0xDEAD10CC). Those handlers run
+        // their own bounded sync; the full one waits for the user.
+        if UIApplication.shared.applicationState == .background {
+            ILOG("[Boot] Launched in background — deferring iCloud init until the app becomes active")
+            Task { @MainActor in
+                for await _ in NotificationCenter.default.notifications(named: UIApplication.didBecomeActiveNotification) {
+                    _initICloud()
+                    break
+                }
+            }
+            return
+        }
+
         // Check for files stuck in iCloud Drive at startup
         #if !os(tvOS)
         Task.detached {

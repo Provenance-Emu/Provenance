@@ -262,7 +262,11 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
             let task = Task {
                 let pausedForEmulation = await MainActor.run(body: { self.isPausedForEmulation })
                 if Task.isCancelled || pausedForEmulation { return }
-                await work()
+                await BackgroundActivity.run("CloudSync metadata", onExpiration: { [weak self] in
+                    self?.cancelAllActiveSyncTasks()
+                }) {
+                    await work()
+                }
             }
             self.trackSyncTask(task)
         }
@@ -1099,13 +1103,17 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
                 try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
             }
 
-            // First, audit assets (quick check for missing files)
-            await romSyncer.auditCloudAssets()
+            await BackgroundActivity.run("CloudKit integrity audit", onExpiration: { [weak self] in
+                Task { @MainActor in self?.integrityAuditTask?.cancel() }
+            }) {
+                // First, audit assets (quick check for missing files)
+                await romSyncer.auditCloudAssets()
 
-            // Then, audit record integrity (check for incomplete metadata)
-            // Only run occasionally to avoid excessive API calls
-            if Bool.random() || reason.contains("manual") {
-                await romSyncer.auditAndRepairIncompleteRecords()
+                // Then, audit record integrity (check for incomplete metadata)
+                // Only run occasionally to avoid excessive API calls
+                if !Task.isCancelled, Bool.random() || reason.contains("manual") {
+                    await romSyncer.auditAndRepairIncompleteRecords()
+                }
             }
 
             await MainActor.run {
@@ -1633,6 +1641,7 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
         notificationTokens.append(
             NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: .main) { [weak self] _ in
                 guard let self = self else { return }
+                MainActor.assumeIsolated { self.resume(reason: .appBackgrounded) }
                 Task {
                     await CloudKitSyncerStore.shared.refreshRomRemoteChanges()
                     await self.checkForMissingROMFiles(force: false)
@@ -1642,7 +1651,11 @@ public class CloudSyncManager { // swiftlint:disable:this type_body_length
 
         notificationTokens.append(
             NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in
-                self?.scheduleIntegrityAudit(reason: "app background")
+                // Stop sync before iOS suspends us: a Realm commit in flight at
+                // suspension gets the app killed (0xDEAD10CC). Work already
+                // running holds a BackgroundActivity until it sees the cancel.
+                guard let self else { return }
+                MainActor.assumeIsolated { self.pause(reason: .appBackgrounded) }
             }
         )
     }

@@ -235,7 +235,11 @@ public final class GameFileStatusService: @unchecked Sendable {
         }
         let task = Task<RefreshResult, Never>(priority: .utility) { [weak self] in
             guard let self else { return RefreshResult() }
-            let result = await self.runRefreshAllStatuses()
+            let result = await BackgroundActivity.run("ROM status refresh", onExpiration: { [refreshGate] in
+                Task { await refreshGate.current()?.cancel() }
+            }) {
+                await self.runRefreshAllStatuses()
+            }
             await self.refreshGate.set(nil)
             return result
         }
@@ -265,6 +269,10 @@ public final class GameFileStatusService: @unchecked Sendable {
         let filenameMultimap = Self.buildFilenameMultimap(from: localIndex)
 
         var result = RefreshResult()
+        guard !Task.isCancelled else {
+            ILOG("GameFileStatusService: batch refresh cancelled before writing")
+            return result
+        }
 
         do {
             try await RealmContext.withBackgroundRealm { realm in
