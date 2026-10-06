@@ -716,7 +716,11 @@ struct TVMediaMainView: View {
         case .systemPicker(let game):
             SystemPickerView(game: game, isPresented: Binding(
                 get: { router.activeModal != nil },
-                set: { if !$0 { router.dismissModal() } }
+                set: { if !$0 {
+                    router.dismissModal()
+                    gameActions.systemPickerGame = nil
+                    libraryModel.refresh()
+                } }
             ))
         case .renameGame:
             EmptyView()
