@@ -42,6 +42,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+import socket
 import sys
 import time
 import urllib.error
@@ -87,6 +88,9 @@ def make_token() -> str:
     )
 
 
+NETWORK_ATTEMPTS = 6  # ~5 minutes of backoff before a network error ends the run
+
+
 class Client:
     def __init__(self) -> None:
         self._token = make_token()
@@ -103,15 +107,34 @@ class Client:
              **query: str) -> dict:
         url = API + path + (("?" + urllib.parse.urlencode(query)) if query else "")
         data = json.dumps(body).encode() if body is not None else None
-        req = urllib.request.Request(url, data=data, method=method,
-                                     headers=self._headers())
-        try:
-            with urllib.request.urlopen(req, timeout=60) as resp:
-                raw = resp.read()
-                return json.loads(raw) if raw else {}
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode(errors="replace")
-            raise ApiError(exc.code, detail) from None
+        # A DNS blip or a 5xx used to end a release that had waited an hour for
+        # processing. GETs retry on any network error, 429 or 5xx; writes retry
+        # only when the request never reached Apple (DNS / refused connection),
+        # so a group assignment or review submission is never sent twice.
+        for attempt in range(1, NETWORK_ATTEMPTS + 1):
+            req = urllib.request.Request(url, data=data, method=method,
+                                         headers=self._headers())
+            try:
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    raw = resp.read()
+                    return json.loads(raw) if raw else {}
+            except urllib.error.HTTPError as exc:
+                detail = exc.read().decode(errors="replace")
+                retryable = method == "GET" and (exc.code == 429 or exc.code >= 500)
+                if not retryable or attempt == NETWORK_ATTEMPTS:
+                    raise ApiError(exc.code, detail) from None
+                reason = f"HTTP {exc.code}"
+            except (urllib.error.URLError, TimeoutError, ConnectionError) as exc:
+                cause = getattr(exc, "reason", exc)
+                never_sent = isinstance(cause, (socket.gaierror, ConnectionRefusedError))
+                if (method != "GET" and not never_sent) or attempt == NETWORK_ATTEMPTS:
+                    raise
+                reason = str(cause)
+            delay = min(10 * 2 ** (attempt - 1), 120)
+            print(f"{method} {path}: {reason}; retry {attempt}/{NETWORK_ATTEMPTS - 1} in {delay}s",
+                  flush=True)
+            time.sleep(delay)
+        raise AssertionError("unreachable")
 
     def get(self, path: str, **query: str) -> dict:
         return self.call("GET", path, **query)
