@@ -260,7 +260,7 @@ jobs:
           fi
           # --no-parallel: PVSettings (and other Defaults-backed suites) share
           # process-global UserDefaults; Swift Testing's default concurrent suite
-          # execution made them flake. See Scripts/spm-validate.sh for detail.
+          # execution made them flake. See Scripts/audits/spm-validate.sh for detail.
           swift test --no-parallel 2>&1 | tail -40
 
   # Job 2c: PVUI unit tests (#3647). PVUI can't `swift build` standalone: it imports
@@ -313,7 +313,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
 
       - name: Generate libretro cheat database if missing
         run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
@@ -424,7 +424,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
 
       - name: Generate libretro cheat database if missing
         run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
@@ -595,7 +595,7 @@ jobs:
       #
       # Key hashes only the real generation inputs: the python generator and the
       # wrapper that drives it (the wrapper owns the clone URL and output path, so a
-      # change there can change the output). NOT Scripts/systems.py — despite
+      # change there can change the output). NOT Scripts/generators/systems.py — despite
       # update-catalogs.yml gating its cheatdb job on that file, generate_cheatdb.py
       # neither imports nor invokes it, so including it would only bust the cache and
       # force a needless regeneration.
@@ -603,7 +603,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
 
       - name: Generate libretro cheat database if missing
         run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh

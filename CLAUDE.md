@@ -158,7 +158,7 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 
 ### Build & toolchain gotchas
 
-- **Most workspace `.xcodeproj`s list sources explicitly** (e.g. `PVCoreBridgeRetro.xcodeproj`), so a new file compiles in SwiftPM yet breaks the archive build. `Scripts/check_pbxproj_sources.py` (CI: `xcode-project-sources.yml`) flags a source file sitting beside compiled ones that its project doesn't reference.
+- **Most workspace `.xcodeproj`s list sources explicitly** (e.g. `PVCoreBridgeRetro.xcodeproj`), so a new file compiles in SwiftPM yet breaks the archive build. `Scripts/audits/check_pbxproj_sources.py` (CI: `xcode-project-sources.yml`) flags a source file sitting beside compiled ones that its project doesn't reference.
 - **`gh issue list` has no `--sort` flag.** Use `gh issue list --search "sort:created-desc"` or `gh issue list --json number,title,createdAt --jq '.'` for sorted/filtered queries.
 
 ### Metal rendering gotchas

@@ -1,1 +1,0 @@
-../Provenance/Resources/createVersionHeader.sh

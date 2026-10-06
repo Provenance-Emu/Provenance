@@ -11,7 +11,7 @@ on:
       - 'PVFeatureFlags/**'
       - 'PVArchiving/**'
       - 'Dependencies/LzhArchive/**'
-      - 'Scripts/spm-validate.sh'
+      - 'Scripts/audits/spm-validate.sh'
   pull_request:
     branches: [develop, master]
     paths:
@@ -22,7 +22,7 @@ on:
       - 'PVFeatureFlags/**'
       - 'PVArchiving/**'
       - 'Dependencies/LzhArchive/**'
-      - 'Scripts/spm-validate.sh'
+      - 'Scripts/audits/spm-validate.sh'
   workflow_dispatch:
     inputs:
       module:
@@ -66,7 +66,7 @@ jobs:
         run: |
           MODULE="${{ inputs.module }}"
           if [ -n "$MODULE" ]; then
-            bash Scripts/spm-validate.sh "$MODULE"
+            bash Scripts/audits/spm-validate.sh "$MODULE"
           else
-            bash Scripts/spm-validate.sh
+            bash Scripts/audits/spm-validate.sh
           fi

@@ -5,7 +5,7 @@ Generate it by running:
 
 Or with MD5 cross-referencing:
     git clone --depth 1 https://github.com/libretro/libretro-database.git /tmp/libretro-database
-    python3 Scripts/generate_cheatdb.py /tmp/libretro-database/cht/ \
+    python3 Scripts/generators/generate_cheatdb.py /tmp/libretro-database/cht/ \
         --dat-dir /tmp/libretro-database \
         --output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
 

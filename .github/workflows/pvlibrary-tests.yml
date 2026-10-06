@@ -59,7 +59,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
 
       - name: Generate libretro cheat database if missing
         run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh

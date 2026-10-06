@@ -121,7 +121,7 @@ jobs:
           # sees GitHub's 302 and reports no content-length.
           #
           # buildVersion is deliberately omitted for stable. Tagged releases are
-          # cut by Scripts/release.sh, which stamps epoch-derived build numbers
+          # cut by Scripts/release/release.sh, which stamps epoch-derived build numbers
           # that `git rev-list --count` cannot reproduce — a wrong buildVersion
           # is worse than none, and distinct semver versions are already enough
           # for AltStore to order stable releases.

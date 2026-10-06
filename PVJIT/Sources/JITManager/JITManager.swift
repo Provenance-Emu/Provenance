@@ -433,7 +433,7 @@ public final class DOLJitManager {
     /// iOS 26 introduces the Trusted Execution Monitor (TXM) which prevents a single mapping
     /// from being both writable and executable at the same time.  Dynarec-based cores
     /// (Mupen64Plus, Flycast) must use the dual-mapping shadow-page pattern when this returns
-    /// `true`.  See `Scripts/StikDebug/provenance.js` for the BRK #0x69 handler.
+    /// `true`.  See `Scripts/dev/StikDebug/provenance.js` for the BRK #0x69 handler.
     ///
     /// - Note: This check is based on iOS/tvOS 26 availability (`#available(iOS 26, tvOS 26, *)`).
     ///         On the simulator W×X is never enforced.

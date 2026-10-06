@@ -3,7 +3,7 @@ name: Sync Issues & PRs to GitHub Project
 # Keeps the "Provenance Roadmap" GitHub Project v2 in sync with issue/PR activity.
 # Updates Status field automatically as work moves through the pipeline.
 #
-# One-time setup required: run Scripts/setup-github-project.sh to create the project,
+# One-time setup required: run Scripts/ci/setup-github-project.sh to create the project,
 # then update PROJECT_NUMBER below with the returned project number.
 
 on:
@@ -65,7 +65,7 @@ jobs:
 
           project_id=$(echo "$result" | jq -r '.data.organization.projectV2.id // empty')
           if [[ -z "$project_id" ]]; then
-            echo "Project not found — run Scripts/setup-github-project.sh first"
+            echo "Project not found — run Scripts/ci/setup-github-project.sh first"
             echo "skip=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi

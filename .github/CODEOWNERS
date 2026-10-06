@@ -12,4 +12,4 @@ CodeSigning.xcconfig*       @JoeMatt
 # Agent configuration
 CLAUDE.md                   @JoeMatt
 .claude/                    @JoeMatt
-Scripts/ralph-loop.sh       @JoeMatt
+Scripts/dev/ralph-loop.sh       @JoeMatt

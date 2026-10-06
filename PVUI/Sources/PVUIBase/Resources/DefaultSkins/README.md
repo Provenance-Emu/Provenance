@@ -83,10 +83,10 @@ indicating the button type (A=red, B=yellow, X=blue, Y=green, C=purple, D-pad=da
 
 ## Generating / Regenerating Skins
 
-The Python script `Scripts/generate_default_skins.py` regenerates all bundles:
+The Python script `Scripts/generators/generate_default_skins.py` regenerates all bundles:
 
 ```bash
-python3 Scripts/generate_default_skins.py
+python3 Scripts/generators/generate_default_skins.py
 ```
 
 The script overwrites `info.json` and `controller.svg` in every bundle but preserves existing
@@ -125,5 +125,5 @@ The SVG renderer (`SVGRenderer.swift`) supports a subset of SVG:
 
 - DeltaSkin format: `PVUI/Sources/PVUIBase/SwiftUI/DeltaSkins/Models/DeltaSkin.swift`
 - SVG renderer: `PVUI/Sources/PVUIBase/SwiftUI/DeltaSkins/Extensions/SVGRenderer.swift`
-- Generator script: `Scripts/generate_default_skins.py`
+- Generator script: `Scripts/generators/generate_default_skins.py`
 - Issue: https://github.com/Provenance-Emu/Provenance/issues/3252

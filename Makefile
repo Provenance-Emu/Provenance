@@ -16,7 +16,7 @@ export
 
 # --- 1Password secret resolution -------------------------------------------
 # .env may hold `op://` REFERENCES rather than values (see
-# Scripts/setup-release-secrets.py). `-include .env` above would then export the
+# Scripts/release/setup-release-secrets.py). `-include .env` above would then export the
 # literal string "op://..." into release.sh, which fails in a confusing way.
 # When references are present, run release.sh under `op run`, which resolves them
 # into the child process environment only — never to disk, and masked in output.
@@ -84,7 +84,7 @@ ifeq ($(ENV_HAS_OP_REFS),1)
 	@# authenticates at UPLOAD, so a bad issuer ID or revoked key otherwise costs a
 	@# full 30+ minute build before failing with "No Accounts with App Store Connect
 	@# Access". This round-trips in seconds via notarytool.
-	@$(RELEASE_RUNNER) python3 Scripts/setup-release-secrets.py --preflight
+	@$(RELEASE_RUNNER) python3 Scripts/release/setup-release-secrets.py --preflight
 endif
 
 .PHONY: _tag
@@ -253,14 +253,14 @@ ensure-cheatdb:
 
 # Uses MD5 cross-referencing from DAT files for ROM hash lookup support.
 # Note: libretro only ships cheats under a subset of systems in cht/; see
-# Scripts/generate_cheatdb.py (SYSTEM_SHORT_NAMES / upstream comment).
+# Scripts/generators/generate_cheatdb.py (SYSTEM_SHORT_NAMES / upstream comment).
 ## Force-regenerate libretro cheat database from libretro-database repo
 update-cheatdb:
 	$(info Generating libretro cheat database…)
 	rm -rf /tmp/libretro-database
 	rm -f PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
 	git clone --depth=1 https://github.com/libretro/libretro-database.git /tmp/libretro-database
-	python3 Scripts/generate_cheatdb.py /tmp/libretro-database/cht/ \
+	python3 Scripts/generators/generate_cheatdb.py /tmp/libretro-database/cht/ \
 		--dat-dir /tmp/libretro-database \
 		--output PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite
 	rm -rf /tmp/libretro-database
@@ -271,12 +271,12 @@ update-skin-catalog:
 	@if [ ! -d /tmp/scraper-venv ]; then \
 		python3 -m venv /tmp/scraper-venv; \
 	fi
-	/tmp/scraper-venv/bin/pip install -q -r Scripts/requirements-scraper.txt
-	/tmp/scraper-venv/bin/python3 Scripts/scrape_skin_catalog.py \
+	/tmp/scraper-venv/bin/pip install -q -r Scripts/generators/requirements-scraper.txt
+	/tmp/scraper-venv/bin/python3 Scripts/generators/scrape_skin_catalog.py \
 		--source all \
 		--skip-validation \
-		--output Scripts/catalog_seed.json
-	cp Scripts/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json
+		--output Scripts/generators/catalog_seed.json
+	cp Scripts/generators/catalog_seed.json PVUI/Sources/PVUIBase/Resources/catalog_seed.json
 
 ## -- Code Generation --
 
@@ -286,54 +286,54 @@ generate-all: generate-contributors generate-core-lists generate-default-skins g
 ## Generate CONTRIBUTORS.md from git history
 generate-contributors:
 	$(info Generating contributors…)
-	python3 Scripts/generate_contributors.py
+	python3 Scripts/generators/generate_contributors.py
 
 ## Generate libretro core URL lists from cores.yml manifest
 generate-core-lists:
 	$(info Generating core lists…)
-	python3 Scripts/generate_core_lists.py generate
+	python3 Scripts/generators/generate_core_lists.py generate
 
 ## Validate core lists match manifest (dry run)
 validate-core-lists:
 	$(info Validating core lists…)
-	python3 Scripts/generate_core_lists.py validate
+	python3 Scripts/generators/generate_core_lists.py validate
 
 ## Generate default DeltaSkin bundles for physical controllers
 generate-default-skins:
 	$(info Generating default skins…)
-	python3 Scripts/generate_default_skins.py
+	python3 Scripts/generators/generate_default_skins.py
 
 ## Generate license manifest from Core.plist + SPM dependencies
 generate-licenses:
 	$(info Generating license manifest…)
-	python3 Scripts/generate_licenses.py
+	python3 Scripts/generators/generate_licenses.py
 
 ## Check licenses are up-to-date (CI validation, no writes)
 check-licenses:
 	$(info Checking license manifest…)
-	python3 Scripts/generate_licenses.py --check
+	python3 Scripts/generators/generate_licenses.py --check
 
 ## Generate UTI/MIME type declarations for Info.plist
 generate-uti:
 	$(info Generating UTI declarations…)
-	python3 Scripts/generate_uti_declarations.py
+	python3 Scripts/generators/generate_uti_declarations.py
 
 ## Generate changelog entries from conventional commits
 generate-changelog:
 	$(info Generating changelog…)
 	git log --oneline --no-merges $$(git describe --tags --abbrev=0 2>/dev/null || echo HEAD~50)..HEAD --format="%s" > /tmp/raw_commits.txt
-	python3 Scripts/changelog_generate_entries.py
-	python3 Scripts/changelog_update_file.py
+	python3 Scripts/generators/changelog_generate_entries.py
+	python3 Scripts/generators/changelog_update_file.py
 
 ## Update core version strings in Core.plist from source
 update-core-versions:
 	$(info Updating core versions…)
-	python3 Scripts/update_core_versions.py --fix
+	python3 Scripts/generators/update_core_versions.py --fix
 
 ## Validate core versions are up-to-date (CI, no writes)
 check-core-versions:
 	$(info Checking core versions…)
-	python3 Scripts/update_core_versions.py
+	python3 Scripts/generators/update_core_versions.py
 
 ## Sync RetroArch Core.plist license data from libretro .info files
 update-core-licenses:
@@ -343,7 +343,7 @@ update-core-licenses:
 ## Generate systems markdown tables from systems.plist
 generate-systems-docs:
 	$(info Generating systems documentation…)
-	python3 Scripts/systems.py PVLibrary/Sources/PVLibrary/Resources/systems.plist
+	python3 Scripts/generators/systems.py PVLibrary/Sources/PVLibrary/Resources/systems.plist
 
 ## -- Testing --
 
@@ -353,22 +353,22 @@ test-all: test-spm test-scripts
 ## Build and test all standalone SPM modules (Tier 0-2)
 test-spm:
 	$(info Running SPM module validation…)
-	Scripts/spm-validate.sh
+	Scripts/audits/spm-validate.sh
 
 ## Build and test a single SPM module (usage: make test-module MODULE=PVLogging)
 test-module: | _var_MODULE
 	$(info Testing $(MODULE)…)
-	Scripts/spm-validate.sh $(MODULE)
+	Scripts/audits/spm-validate.sh $(MODULE)
 
 ## Run Python script unit tests
 test-scripts:
 	$(info Running script tests…)
-	python3 -m pytest Scripts/test_generate_cheatdb_dat.py -v
+	python3 -m pytest Scripts/tests/test_generate_cheatdb_dat.py -v
 
 ## Run cheatdb DAT parser tests
 test-cheatdb:
 	$(info Running cheatdb tests…)
-	python3 Scripts/test_generate_cheatdb_dat.py
+	python3 Scripts/tests/test_generate_cheatdb_dat.py
 
 ## -- Linting & Auditing --
 
@@ -380,53 +380,53 @@ lint:
 ## Audit localization coverage
 audit-localization:
 	$(info Auditing localization…)
-	Scripts/audit_localization.sh
+	Scripts/audits/audit_localization.sh
 
 ## -- Version Management --
 
 ## Bump build number in Build.xcconfig
 bump-build:
 	$(info Bumping build number…)
-	Scripts/bump-version.sh --build
+	Scripts/release/bump-version.sh --build
 
 ## Bump minor version in Build.xcconfig
 bump-minor:
 	$(info Bumping minor version…)
-	Scripts/bump-version.sh --minor
+	Scripts/release/bump-version.sh --minor
 
 ## Bump major version in Build.xcconfig
 bump-major:
 	$(info Bumping major version…)
-	Scripts/bump-version.sh --major
+	Scripts/release/bump-version.sh --major
 
 ## Set specific marketing version (usage: make set-version VERSION=3.5.0)
 set-version: | _var_VERSION
-	Scripts/bump-version.sh --set-marketing $(VERSION)
+	Scripts/release/bump-version.sh --set-marketing $(VERSION)
 
 ## -- Release / TestFlight --
-# Wraps Scripts/release.sh. Build number auto-bumps to an epoch timestamp inside the
+# Wraps Scripts/release/release.sh. Build number auto-bumps to an epoch timestamp inside the
 # script, injected into Build.xcconfig and restored on exit — no commit, no manual bump.
 # TestFlight needs ASC_API_KEY_ID, ASC_API_ISSUER_ID, ASC_API_KEY_PATH in the environment.
 
 ## Archive + auto-bump build + upload iOS to TestFlight
 testflight: _release-preflight
-	$(RELEASE_RUNNER) Scripts/release.sh --channel testflight --platform ios
+	$(RELEASE_RUNNER) Scripts/release/release.sh --channel testflight --platform ios
 
 ## Archive + auto-bump build + upload tvOS to TestFlight
 testflight-tvos: _release-preflight
-	$(RELEASE_RUNNER) Scripts/release.sh --channel testflight --platform tvos
+	$(RELEASE_RUNNER) Scripts/release/release.sh --channel testflight --platform tvos
 
 ## Archive + upload both iOS and tvOS to TestFlight
 testflight-all: _release-preflight
-	$(RELEASE_RUNNER) Scripts/release.sh --channel testflight --platform all
+	$(RELEASE_RUNNER) Scripts/release/release.sh --channel testflight --platform all
 
 ## Build + publish all channels (TestFlight + GitHub release)
 release:
-	$(RELEASE_RUNNER) Scripts/release.sh --channel all
+	$(RELEASE_RUNNER) Scripts/release/release.sh --channel all
 
 ## Print release actions without executing (dry-run)
 release-dry:
-	$(RELEASE_RUNNER) Scripts/release.sh --channel all --dry-run
+	$(RELEASE_RUNNER) Scripts/release/release.sh --channel all --dry-run
 
 ## -- Aliases --
 

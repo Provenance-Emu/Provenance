@@ -113,7 +113,7 @@ jobs:
         run: git checkout HEAD -- Cores CoresRetro Dependencies PVRcheevos 2>/dev/null || true
 
       - name: Initialize submodules
-        run: ./Scripts/ci-init-submodules.sh
+        run: ./Scripts/ci/ci-init-submodules.sh
 
       # Cores marked `local: true` in cores.yml live in the private
       # provenance-dylibs release store, not on the libretro buildbot. Without
@@ -153,7 +153,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           MISSING_LOCAL: ${{ steps.local_dylibs.outputs.missing }}
         run: |
-          ./Scripts/ci-local-dylib-alert.sh "TestFlight (${{ matrix.platform }}) \`${GITHUB_SHA:0:7}\`" \
+          ./Scripts/ci/ci-local-dylib-alert.sh "TestFlight (${{ matrix.platform }}) \`${GITHUB_SHA:0:7}\`" \
             "${MISSING_LOCAL}" "The upload was stopped."
 
       - name: Setup Xcode
@@ -174,7 +174,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
-          key: cheatdb-${{ hashFiles('Scripts/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+          key: cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
 
       - name: Generate libretro cheat database
         if: steps.cache-cheatdb.outputs.cache-hit != 'true'
@@ -195,7 +195,7 @@ jobs:
       #   error: Choose a certificate to revoke. Your account has reached the
       #          maximum number of certificates.
       # DEV_CERT_P12 is a Development identity whose key we keep (minted with
-      # Scripts/asc_certs.py create), so xcodebuild reuses it instead of minting.
+      # Scripts/release/asc_certs.py create), so xcodebuild reuses it instead of minting.
       # Certificates are team-wide: the same .p12 is set on iCube.
       #
       # Secret names match what this repo ALREADY has (CERT_P12 / P12_PASS), rather
@@ -215,7 +215,7 @@ jobs:
         run: |
           set -euo pipefail
           for v in CERT_P12 DEV_CERT_P12; do
-            [ -n "${!v}" ] || { echo "::error::$v secret is not set — cannot sign. See Scripts/asc_certs.py."; exit 1; }
+            [ -n "${!v}" ] || { echo "::error::$v secret is not set — cannot sign. See Scripts/release/asc_certs.py."; exit 1; }
           done
           KEYCHAIN_PASSWORD="$(openssl rand -base64 24)"
           echo "::add-mask::$KEYCHAIN_PASSWORD"
@@ -287,7 +287,7 @@ jobs:
           BUILD=$(date +%s)
           echo "build=$BUILD" >> "$GITHUB_OUTPUT"
           ARGS+=(--build "$BUILD")
-          ./Scripts/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | "$FORMATTER"
+          ./Scripts/release/release.sh "${ARGS[@]}" 2>&1 | tee /tmp/testflight.log | "$FORMATTER"
 
       # Uploading only reaches the internal groups. Without this the public
       # TestFlight links kept serving whichever build was last assigned by hand

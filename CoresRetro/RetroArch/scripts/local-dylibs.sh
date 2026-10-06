@@ -43,7 +43,7 @@ command -v gh >/dev/null 2>&1 || die "gh CLI is required"
 mkdir -p "$MODULES_DIR"
 
 # Defaults for ios/tvos are "true", matching CoreEntry.__init__ in
-# Scripts/generate_core_lists.py (default=True) — a core omitting the flags is
+# Scripts/generators/generate_core_lists.py (default=True) — a core omitting the flags is
 # built for both platforms. Safe only because the explicit `ios: false` /
 # `tvos: false` rules below set them back; an earlier attempt at this default
 # WITHOUT those rules made every core tvos=true and broke the build.
@@ -84,7 +84,7 @@ local_cores() {
     ' "$CORES_YML"
 }
 
-# Mirrors CoreEntry.ios_filename()/tvos_filename() in Scripts/generate_core_lists.py:
+# Mirrors CoreEntry.ios_filename()/tvos_filename() in Scripts/generators/generate_core_lists.py:
 # per-platform override wins, then the neutral `filename`, then the default
 # <name>_libretro_<platform>.dylib. Keep in step with that file — a mismatch here
 # means uploading under a name the build never looks for.

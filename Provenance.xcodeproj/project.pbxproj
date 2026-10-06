@@ -9636,7 +9636,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/Scripts/build-phases/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
@@ -9645,7 +9645,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
+			shellScript = ". Scripts/build-phases/set_bundle_build_number.sh Provenance\n";
 		};
 		930499C72A93073800BF257F /* Code Sign libretro.h Cores */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9675,7 +9675,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/Scripts/build-phases/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
@@ -9684,7 +9684,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
+			shellScript = ". Scripts/build-phases/set_bundle_build_number.sh Provenance\n";
 		};
 		9304F9652AB3557B00A92418 /* Script: Get RetroArch Modules */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9790,7 +9790,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/Scripts/build-phases/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
@@ -9799,7 +9799,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
+			shellScript = ". Scripts/build-phases/set_bundle_build_number.sh Provenance\n";
 		};
 		B383226226ED9C590029D12F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9828,7 +9828,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/Scripts/build-phases/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
@@ -9837,7 +9837,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
+			shellScript = ". Scripts/build-phases/set_bundle_build_number.sh Provenance\n";
 		};
 		B3A60E802CB76E39001D99C2 /* Script: Generate Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9928,7 +9928,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "#is_adhoc() {\n# [ ${CONFIGURATION} == AdHoc ]\n#}\n\n#if [ ${CONFIGURATION} == AdHoc ] ; then\n#    echo \"Making archice\"\n#    # TODO: TEst if device or sim also, always sign for device\n#else\n#    echo \"Code singing not needed\"\n#    exit 0\n#fi\n\n\nif [[ -f ~/.bash_profile ]]; then\n    source ~/.bash_profile 2> /dev/null\nelif [[ -f ~/.bashrc ]]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\nsource \"${SRCROOT}/Scripts/setup_env.sh\"\nbrew_install\nfastlane_install\n\nFASTLANE_CMD=\"fastlane\"\nif fastlane_installed && bundle_installed; then\n    FASTLANE_CMD=\"bundle exec fastlane\"\nfi\n\n$($FASTLANE_CMD userbuild) && $($FASTLANE_CMD updatePlistForBranch)\n";
+			shellScript = "#is_adhoc() {\n# [ ${CONFIGURATION} == AdHoc ]\n#}\n\n#if [ ${CONFIGURATION} == AdHoc ] ; then\n#    echo \"Making archice\"\n#    # TODO: TEst if device or sim also, always sign for device\n#else\n#    echo \"Code singing not needed\"\n#    exit 0\n#fi\n\n\nif [[ -f ~/.bash_profile ]]; then\n    source ~/.bash_profile 2> /dev/null\nelif [[ -f ~/.bashrc ]]; then\n    source ~/.bashrc 2> /dev/null\nfi\n\nsource \"${SRCROOT}/Scripts/build-phases/setup_env.sh\"\nbrew_install\nfastlane_install\n\nFASTLANE_CMD=\"fastlane\"\nif fastlane_installed && bundle_installed; then\n    FASTLANE_CMD=\"bundle exec fastlane\"\nfi\n\n$($FASTLANE_CMD userbuild) && $($FASTLANE_CMD updatePlistForBranch)\n";
 		};
 		B3F43DCC216802FD00CDD40A /* Set bundle version */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9940,7 +9940,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/${INFOPLIST_FILE}",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/Scripts/build-phases/set_bundle_build_number.sh",
 			);
 			name = "Set bundle version";
 			outputFileListPaths = (
@@ -9949,7 +9949,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh Spotlight\n";
+			shellScript = ". Scripts/build-phases/set_bundle_build_number.sh Spotlight\n";
 		};
 		B3F43DCD216805F600CDD40A /* Set bundle version */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9961,7 +9961,7 @@
 			inputPaths = (
 				"${PROJECT_DIR}/${INFOPLIST_FILE}",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh",
+				"${PROJECT_DIR}/Scripts/build-phases/set_bundle_build_number.sh",
 			);
 			name = "Set bundle version";
 			outputFileListPaths = (
@@ -9970,7 +9970,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "#. Scripts/set_bundle_build_number.sh TopShelf\n";
+			shellScript = "#. Scripts/build-phases/set_bundle_build_number.sh TopShelf\n";
 		};
 		B3F7E3E6297736BE00362B92 /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9982,7 +9982,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/Scripts/build-phases/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
@@ -9991,7 +9991,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
+			shellScript = ". Scripts/build-phases/set_bundle_build_number.sh Provenance\n";
 		};
 		B3F7E573297736C200362B92 /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10003,7 +10003,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/Scripts/build-phases/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
@@ -10012,7 +10012,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
+			shellScript = ". Scripts/build-phases/set_bundle_build_number.sh Provenance\n";
 		};
 		C0C0CA0100000010 /* Upload Debug Symbols to Sentry */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -10039,7 +10039,7 @@
 			inputPaths = (
 				"$(PROJECT_DIR)/$(INFOPLIST_FILE)",
 				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(PROJECT_DIR)/Scripts/build-phases/set_bundle_build_number.sh",
 			);
 			name = "Script: Set Build Number";
 			outputFileListPaths = (
@@ -10048,7 +10048,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh ProvenanceCompanion\n";
+			shellScript = ". Scripts/build-phases/set_bundle_build_number.sh ProvenanceCompanion\n";
 		};
 		C0C0CAFE0001000000000001 /* Script: Validate Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

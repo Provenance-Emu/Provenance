@@ -4,7 +4,7 @@
 #   urls.txt, urls-appstore.txt, urls-tv.txt, urls-appstore-tv.txt
 # and their corresponding xcfilelist files.
 #
-# Run `python3 Scripts/generate_core_lists.py generate` to regenerate all files.
+# Run `python3 Scripts/generators/generate_core_lists.py generate` to regenerate all files.
 #
 # PVCoreIdentifier mapping (must match CoresRetro/RetroArch/Core.plist PVCores entries):
 #   YAML `name` uses underscores; the bundled framework id uses dots, e.g.

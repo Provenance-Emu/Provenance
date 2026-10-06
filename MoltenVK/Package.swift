@@ -62,7 +62,7 @@ let package = Package(
 //            path: "MoltenVK/dynamic/dylib/macOS/"),
         /// Catalyst framework
         /// Note: dylibs aren't supported
-        /// need to make a .framework with Scripts/dylibsToFramework.sh
+        /// need to make a .framework with Scripts/dev/dylibsToFramework.sh
         /// then make an XCFramework with
         ///  xcodebuild -create-xcframework -framework MoltenVK-Catalyst.framework -output MoltenVK-Catalyst.
         .binaryTarget(

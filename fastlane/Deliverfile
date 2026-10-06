@@ -3,14 +3,14 @@
 #   bundle exec fastlane deliver --platform ios     # iPhone/iPad listing
 #   bundle exec fastlane deliver --platform appletvos  # Apple TV listing
 #
-# Auth uses the SAME App Store Connect API key as Scripts/release.sh, so if
+# Auth uses the SAME App Store Connect API key as Scripts/release/release.sh, so if
 # TestFlight uploads work, this works:
 #   ASC_API_KEY_ID, ASC_API_ISSUER_ID, ASC_API_KEY_PATH (or ASC_API_KEY_CONTENT)
 # See Fastfile+Publish for the api_key wiring.
 #
 # Metadata is tracked in git (fastlane/metadata/**). Screenshots are NOT —
 # they are large derived artifacts stored in the media release store; run
-# Scripts/media-assets.sh fetch before delivering. See fastlane/screenshots/README.md.
+# Scripts/release/media-assets.sh fetch before delivering. See fastlane/screenshots/README.md.
 
 app_identifier "org.provenance-emu.provenance"
 
@@ -20,7 +20,7 @@ app_identifier "org.provenance-emu.provenance"
 metadata_path "./fastlane/metadata"
 screenshots_path "./fastlane/screenshots"
 
-# NEVER upload a binary from here — binaries go through Scripts/release.sh /
+# NEVER upload a binary from here — binaries go through Scripts/release/release.sh /
 # the TestFlight workflow. deliver is metadata + screenshots only.
 skip_binary_upload true
 

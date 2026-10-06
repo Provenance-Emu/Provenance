@@ -16,7 +16,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 RESOURCE_DIR="$REPO_ROOT/PVLookup/Sources/LibretroCheatDB/Resources"
 ZIP_FILE="$RESOURCE_DIR/libretro_cheats.sqlite.zip"
-GENERATOR="$REPO_ROOT/Scripts/generate_cheatdb.py"
+GENERATOR="$REPO_ROOT/Scripts/generators/generate_cheatdb.py"
 
 if [ -f "$ZIP_FILE" ] && [ "$(stat -c%s "$ZIP_FILE" 2>/dev/null || stat -f%z "$ZIP_FILE" 2>/dev/null)" -gt 1000 ]; then
     echo "libretro_cheats.sqlite.zip exists and appears valid, skipping generation."

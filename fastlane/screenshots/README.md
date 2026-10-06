@@ -6,9 +6,9 @@ release), for the same reason the custom core dylibs are not in git.
 They live as release assets in the media store instead:
 
 ```bash
-Scripts/media-assets.sh fetch      # before `fastlane deliver`, or on a fresh clone
-Scripts/media-assets.sh upload     # after regenerating a set
-Scripts/media-assets.sh list       # what exists locally vs in the store
+Scripts/release/media-assets.sh fetch      # before `fastlane deliver`, or on a fresh clone
+Scripts/release/media-assets.sh upload     # after regenerating a set
+Scripts/release/media-assets.sh list       # what exists locally vs in the store
 ```
 
 Layout follows `deliver`'s conventions:
