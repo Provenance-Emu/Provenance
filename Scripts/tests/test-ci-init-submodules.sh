@@ -8,6 +8,8 @@
 # have. `git submodule update --init --recursive --jobs 4` clones a, b and c,
 # checks out a and b, fails to recurse into b, and stops — leaving c cloned with
 # HEAD at its gitlink (so `git submodule status` shows it clean) but no files.
+# A fourth submodule lives at "d e/f": real paths contain spaces
+# (Dependencies/SWCompression/Tests/Test Files) and must not be split.
 
 set -uo pipefail
 
@@ -44,7 +46,7 @@ make_super() {
     mkdir -p "$root"
     (
         cd "$root" || exit 1
-        for r in leaf a b c; do make_repo "$r"; done
+        for r in leaf a b c d; do make_repo "$r"; done
         git -C b submodule add -q "file://$root/leaf" ext
         if [ "$broken" = yes ]; then
             # A commit the leaf remote does not have, like hidapi's pin while
@@ -54,6 +56,7 @@ make_super() {
         git -C b commit -qm nested
         make_repo super
         for r in a b c; do git -C super submodule add -q "file://$root/$r" "$r"; done
+        git -C super submodule add -q "file://$root/d" "d e/f"
         git -C super commit -qm submodules
         git clone -q "file://$root/super" work
     )
@@ -103,9 +106,14 @@ else
     fail "cached tree: rc=$rc output: $out"
 fi
 
-git submodule deinit -q -f a
-expect_contains "deinited submodule is reported" "$(verify)" "a (not cloned)"
-git submodule update -q --init a
+git submodule deinit -q -f a "d e/f"
+out="$(verify)"
+expect_contains "deinited submodule is reported" "$out" "a (not cloned)"
+expect_contains "deinited path with a space is reported whole" "$out" "d e/f (not cloned)"
+git submodule update -q --init a "d e/f"
+out="$(verify)"
+if [ -z "$out" ]; then pass "re-inited tree verifies clean"; else
+    fail "re-inited tree verifies clean — got: $out"; fi
 
 rm -rf .git/modules/a
 expect_contains "broken git dir fails status" "$(verify)" "git submodule status --recursive failed"
@@ -130,6 +138,7 @@ out="$(verify)"
 expect_contains "cloned-but-empty submodule is reported" "$out" "c (empty worktree)"
 expect_contains "nested submodule at the wrong commit is reported" "$out" "b/ext (checked out at the wrong commit)"
 expect_contains "missing sentinel file is reported" "$out" "c/Package.swift (missing)"
+expect_contains "path with a space is reported whole" "$out" "d e/f (empty worktree)"
 if grep -q '^a ' <<< "$out"; then fail "checked-out submodule a is not reported — got: $out"; else
     pass "checked-out submodule a is not reported"; fi
 

@@ -62,8 +62,12 @@ incomplete_submodules() {
     while IFS= read -r line; do
         [ -n "$line" ] || continue
         prefix="${line:0:1}"
-        # "<prefix><sha> <path> (<describe>)" — the describe part is optional.
-        read -r _ path _ <<< "${line:1}"
+        # "<prefix><sha> <path> (<describe>)". Paths can contain spaces
+        # (Dependencies/SWCompression/Tests/Test Files), so cut rather than split.
+        # git prints the describe part only for a checked-out submodule.
+        path="${line#?}"
+        path="${path#* }"
+        [ "$prefix" = "-" ] || path="${path% (*)}"
         case "$prefix" in
             -) echo "$path (not cloned)" ;;
             +) echo "$path (checked out at the wrong commit)" ;;
