@@ -159,6 +159,7 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 ### Build & toolchain gotchas
 
 - **Most workspace `.xcodeproj`s list sources explicitly** (e.g. `PVCoreBridgeRetro.xcodeproj`), so a new file compiles in SwiftPM yet breaks the archive build. `Scripts/audits/check_pbxproj_sources.py` (CI: `xcode-project-sources.yml`) flags a source file sitting beside compiled ones that its project doesn't reference.
+- **Every script under `Scripts/` or `CoresRetro/RetroArch/scripts/` must be in `Scripts/maint/jobs.toml`** (as a job, or under `[ignore]`); `maint.yml` fails PRs that add an unregistered one. `make maint` (dashboard) / `python3 Scripts/maint/maint.py status` show which generated files are stale. Scripts that find the repo root from their own path sit two levels deep (`Scripts/<category>/`).
 - **`gh issue list` has no `--sort` flag.** Use `gh issue list --search "sort:created-desc"` or `gh issue list --json number,title,createdAt --jq '.'` for sorted/filtered queries.
 
 ### Metal rendering gotchas

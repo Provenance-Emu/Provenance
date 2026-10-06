@@ -400,17 +400,22 @@ def evaluate(job: Job, state: dict, *, run_checks: bool = True, refresh: bool = 
         if out_commit is None:
             reasons.append("outputs have never been committed")
         elif inputs:
+            # Commit order, not timestamps: commits made in the same second still count.
+            behind = int(git("rev-list", "--count", f"{out_commit[0]}..HEAD", "--",
+                             *pathspecs(inputs)).strip() or 0)
             in_commit = last_commit(inputs)
-            # A run after the input change that left the outputs identical commits
-            # nothing, so a successful run since then also counts as current.
-            verified = last_run and last_run.get("last_success", 0) > (in_commit or ("", 0))[1]
-            if in_commit and in_commit[1] > out_commit[1] and not verified:
-                behind = git("rev-list", "--count", f"{out_commit[0]}..HEAD", "--",
-                             *pathspecs(inputs)).strip()
-                changed = git("log", "-1", "--format=", "--name-only", in_commit[0], "--",
-                              *pathspecs(inputs)).split()
-                what = changed[0] if changed else "an input"
-                reasons.append(f"{what} changed in {behind} commit(s) since the outputs were regenerated")
+            # Regenerating after an input change can leave the outputs identical, so
+            # nothing new gets committed. run_job records the input commit such a
+            # no-change run verified; that commit still being the latest means current.
+            verified = bool(last_run and in_commit and last_run.get("verified_inputs") == in_commit[0])
+            if behind and not verified:
+                if dirty_paths(job.outputs):
+                    reasons.append("outputs regenerated but not committed yet")
+                else:
+                    changed = git("log", "-1", "--format=", "--name-only", in_commit[0], "--",
+                                  *pathspecs(inputs)).split()
+                    what = changed[0] if changed else "an input"
+                    reasons.append(f"{what} changed in {behind} commit(s) since the outputs were regenerated")
         dirty_inputs = dirty_paths(job.inputs)
         if dirty_inputs and not dirty_paths(job.outputs):
             reasons.append(f"uncommitted change to {dirty_inputs[0]}")
@@ -545,11 +550,17 @@ def run_job(job: Job, extra_args: list[str] | None = None, *, dry_run: bool = Fa
             exit_code = process.wait()
     duration = time.time() - started
     changed = sorted(entry[3:] for entry in porcelain_snapshot() - before)
+    # Outputs identical to what's committed: the committed outputs are proven
+    # current for the inputs as of now (see `verified` in evaluate()).
+    verified_inputs = None
+    if exit_code == 0 and job.outputs and not dirty_paths(job.outputs):
+        newest_input = last_commit(sorted(set(job.inputs) | job.referenced_paths()))
+        verified_inputs = newest_input[0] if newest_input else None
 
     def record(state: dict) -> None:
         entry = state["jobs"].setdefault(job.id, {})
         entry.update({"last_run": started, "exit": exit_code, "duration": round(duration, 1),
-                      "changed": changed})
+                      "changed": changed, "verified_inputs": verified_inputs})
         if exit_code == 0:
             entry["last_success"] = started
         state["checks"].pop(job.id, None)  # re-check after a run
@@ -634,7 +645,7 @@ def markdown_report(statuses: list[JobStatus], unknown: list[str], *, manual_onl
 def hooks_dir() -> Path:
     custom = git("config", "--get", "core.hooksPath", check=False).strip()
     if custom:
-        return (REPO_ROOT / custom).resolve()
+        return (REPO_ROOT / Path(custom).expanduser()).resolve()
     return (REPO_ROOT / git("rev-parse", "--git-path", "hooks").strip()).resolve()
 
 
@@ -721,7 +732,7 @@ def schedule_uninstall() -> int:
 
 def schedule_run() -> int:
     """Run stale auto jobs in a dedicated worktree and open/update a pull request."""
-    print(f"=== maint schedule run {time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"=== maint schedule run {time.strftime('%Y-%m-%d %H:%M:%S')}", flush=True)
     for need in ("network", "gh"):
         if reason := unmet_need(need):
             print(f"skipping: {reason}")
@@ -730,7 +741,7 @@ def schedule_run() -> int:
     worktree = SCHEDULE_WORKTREE
     if (worktree / ".git").exists():
         git("checkout", "--quiet", "--force", "-B", SCHEDULE_BRANCH, "origin/develop", cwd=worktree)
-        git("clean", "-fdq", cwd=worktree)
+        git("clean", "-fdqx", cwd=worktree)  # including .maint/: start from a clean slate
     else:
         worktree.parent.mkdir(parents=True, exist_ok=True)
         git("worktree", "prune")
@@ -738,10 +749,10 @@ def schedule_run() -> int:
     tool = worktree / "Scripts" / "maint" / "maint.py"
     result = subprocess.run([sys.executable, str(tool), "run", "--stale", "--auto-only", "--keep-going",
                              "--report", str(worktree / ".maint" / "report.md")], cwd=worktree)
-    if not git("status", "--porcelain", "--", ".", ":(exclude).maint", cwd=worktree).strip():
+    if not git("status", "--porcelain", cwd=worktree).strip():  # .maint/ is gitignored
         print("nothing changed")
         return result.returncode
-    git("add", "-A", "--", ".", ":(exclude).maint", cwd=worktree)
+    git("add", "-A", cwd=worktree)
     git("commit", "--quiet", "-m", "chore(maint): regenerate stale outputs",
         "-m", "Run by the local maint schedule (Scripts/maint/maint.py schedule run).", cwd=worktree)
     git("push", "--quiet", "--force", "origin", f"{SCHEDULE_BRANCH}:{SCHEDULE_BRANCH}", cwd=worktree)

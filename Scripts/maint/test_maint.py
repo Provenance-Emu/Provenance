@@ -69,9 +69,10 @@ class RepoTestCase(unittest.TestCase):
         if mode:
             path.chmod(mode)
 
-    def commit(self, message="c"):
-        """Commits with strictly increasing timestamps so ordering is deterministic."""
-        self.clock += 60
+    def commit(self, message="c", same_second=False):
+        """Commits with increasing timestamps, or the previous one with same_second."""
+        if not same_second:
+            self.clock += 60
         env = dict(os.environ, GIT_AUTHOR_DATE=f"@{self.clock}", GIT_COMMITTER_DATE=f"@{self.clock}")
         subprocess.run(["git", "add", "-A"], cwd=self.root, check=True)
         subprocess.run(["git", "commit", "-q", "-m", message], cwd=self.root, check=True, env=env)
@@ -112,6 +113,11 @@ class StalenessTests(RepoTestCase):
         self.assertEqual(status.state, maint.STALE)
         self.assertIn("data/a.txt", status.reasons[0])
 
+    def test_input_committed_in_the_same_second_is_still_newer(self):
+        self.write("data/a.txt", "two")
+        self.commit(same_second=True)
+        self.assertEqual(self.status(self.registry(self.TOML), "gen").state, maint.STALE)
+
     def test_script_named_in_run_is_an_implicit_input(self):
         self.write("gen.py", self.root.joinpath("gen.py").read_text() + "# tweak\n")
         self.commit()
@@ -145,6 +151,18 @@ class StalenessTests(RepoTestCase):
         self.assertEqual(self.status(registry, "gen").state, maint.STALE)
         maint.run_job(registry.jobs["gen"], emit=lambda line: None)
         self.assertEqual(self.status(registry, "gen").state, maint.CURRENT)
+
+    def test_discarded_regeneration_does_not_count(self):
+        # Output was committed wrong; regenerating fixes it, then the fix is thrown away.
+        self.write("out.txt", "WRONG")
+        self.commit()
+        self.write("data/a.txt", "one ")  # input changes after the bad output
+        self.commit()
+        registry = self.registry(self.TOML)
+        maint.run_job(registry.jobs["gen"], emit=lambda line: None)
+        self.assertIn("not committed", self.status(registry, "gen").reasons[0])
+        self.git("checkout", "--", "out.txt")
+        self.assertEqual(self.status(registry, "gen").state, maint.STALE)
 
     def test_dry_run_does_not_execute(self):
         self.write("data/a.txt", "two")
