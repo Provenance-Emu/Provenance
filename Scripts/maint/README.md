@@ -59,7 +59,7 @@ registered.
 |---|---|---|
 | Git hook | After `git pull` / branch switch, one line if something is stale. Never runs anything. | `make maint-hooks` (`hooks uninstall` removes it) |
 | CI | `.github/workflows/maint.yml`, Mondays: runs stale `auto` jobs into one PR (`maint/auto-ci`) and keeps one issue, *Maintenance: jobs needing attention*, for the rest. On PRs touching scripts: tests + registration check. | Nothing |
-| Your Mac (opt in) | launchd runs stale `auto` jobs weekly in a separate worktree (`~/Library/Caches/provenance-maint/worktree`, branch `maint/auto-local`) and opens a PR with `gh`. Never touches your checkout. Covers what CI can't, e.g. jobs needing submodules. | `python3 Scripts/maint/maint.py schedule install [--weekday 1 --hour 9]`; log in `~/Library/Logs/provenance-maint.log`; `schedule uninstall` |
+| Your Mac (opt in) | launchd runs stale `auto` jobs weekly in a separate worktree (`~/Library/Caches/provenance-maint/worktree`, branch `maint/auto-local`) and opens a PR with `gh`. Never touches your checkout. Like CI, the worktree has no submodules, so jobs that need them are only reported. | `python3 Scripts/maint/maint.py schedule install [--weekday 1 --hour 9]`; log in `~/Library/Logs/provenance-maint.log`; `schedule uninstall` |
 
 ## Dashboard security
 

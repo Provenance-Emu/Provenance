@@ -63,7 +63,8 @@ class Runner:
                     self.busy_with = job_id
                 buffer = self.buffers[job_id]
                 try:
-                    result = maint.run_job(registry.jobs[job_id], dry_run=dry_run, emit=buffer.emit)
+                    result = maint.run_job(registry.jobs[job_id], dry_run=dry_run, emit=buffer.emit,
+                                           interactive=False)
                     buffer.result = {"exit": result.exit_code, "duration": round(result.duration, 1),
                                      "changed": result.changed}
                 except Exception as error:  # surface any failure in the job's log
@@ -173,6 +174,9 @@ def make_handler(token: str, port: int, runner: Runner):
                 if job is None or job.run is None:
                     self._json(400, {"error": f"{job_id} is not a runnable job"})
                     return
+                if job.cli_only and not body.get("dry_run"):
+                    self._json(403, {"error": f"{job_id} only runs from the terminal"})
+                    return
                 blocked = maint.unmet_needs(job)
                 if blocked:
                     self._json(409, {"error": f"can't run here: {', '.join(blocked)}"})
@@ -181,7 +185,8 @@ def make_handler(token: str, port: int, runner: Runner):
             elif self.path == "/api/run-stale":
                 statuses = maint.evaluate_all(registry, run_checks=False)
                 ids = [s.job.id for s in statuses if s.state == maint.STALE and s.job.run
-                       and not s.blocked and (s.job.mode == "auto" or not body.get("auto_only", True))]
+                       and not s.blocked and not s.job.cli_only
+                       and (s.job.mode == "auto" or not body.get("auto_only", True))]
                 if not ids:
                     self._json(200, {"started": []})
                     return

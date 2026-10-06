@@ -19,6 +19,7 @@
 #   needs     network | macos | submodules | env:VAR | py:module | path:relative/path | <tool on PATH>
 #   files     extra globs this job owns (helpers it calls), so they don't count as unregistered.
 #   args_hint shown next to the command for jobs that take arguments.
+#   cli_only  true: the dashboard shows the command but won't run it (uploads, secrets, prompts).
 # A job with no inputs/outputs/max_age/check is "on demand": listed, never stale.
 
 [scan]
@@ -121,6 +122,7 @@ run = ["python3", "Scripts/audits/audit_controls.py"]
 mode = "auto"
 inputs = ["Cores/*/**/*Bridge*.m", "Cores/*/**/*Bridge*.mm"]
 outputs = ["docs/controller-mapping-audit.md"]
+needs = ["submodules"]   # some bridge files live in submodules; without them rows vanish
 
 [jobs.skin-catalog]
 title = "Delta skin catalog"
@@ -274,23 +276,27 @@ category = "Release"
 run = ["Scripts/release/release.sh"]
 args_hint = "[options] — see the script header"
 needs = ["macos"]
+cli_only = true
 
 [jobs.bump-build]
 title = "Bump the build number"
 category = "Release"
 run = ["Scripts/release/bump-version.sh", "--build"]
+cli_only = true
 
 [jobs.certificates]
 title = "App Store Connect certificates"
 category = "Release"
 run = ["python3", "Scripts/release/asc_certs.py"]
 args_hint = "list|revoke|create|p12 …"
+cli_only = true
 
 [jobs.release-secrets]
 title = "Set up release secrets"
 category = "Release"
 run = ["python3", "Scripts/release/setup-release-secrets.py"]
 args_hint = "[--asc|--pat]"
+cli_only = true
 
 [jobs.secrets-sync]
 title = "Sync 1Password, .env and GitHub secrets"
@@ -298,15 +304,19 @@ category = "Release"
 run = ["Scripts/release/secrets-1p.sh"]
 args_hint = "<command> — see the script header"
 needs = ["op"]
+cli_only = true
 
 [jobs.media-assets]
 title = "App Store screenshots and press assets"
 category = "Release"
 run = ["Scripts/release/media-assets.sh"]
 args_hint = "<command> — see the script header"
+cli_only = true
 
 [jobs.gameplay-screenshots]
 title = "Capture gameplay screenshots"
 category = "Release"
 run = ["Scripts/release/capture-gameplay-screenshots.sh"]
 needs = ["macos"]
+
+cli_only = true

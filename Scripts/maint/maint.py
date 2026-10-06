@@ -94,6 +94,7 @@ class Job:
     files: list[str] = field(default_factory=list)
     args_hint: str | None = None
     reason_pattern: str | None = None
+    cli_only: bool = False
 
     @property
     def has_rules(self) -> bool:
@@ -139,7 +140,7 @@ def load_registry(path: Path = REGISTRY_PATH) -> Registry:
     for job_id, raw in data.get("jobs", {}).items():
         unknown = set(raw) - {
             "title", "category", "description", "run", "check", "mode", "inputs", "outputs",
-            "max_age", "needs", "files", "args_hint", "reason_pattern",
+            "max_age", "needs", "files", "args_hint", "reason_pattern", "cli_only",
         }
         if unknown:
             raise ValueError(f"job {job_id}: unknown keys {sorted(unknown)}")
@@ -165,6 +166,7 @@ def load_registry(path: Path = REGISTRY_PATH) -> Registry:
             files=list(raw.get("files", [])),
             args_hint=raw.get("args_hint"),
             reason_pattern=raw.get("reason_pattern"),
+            cli_only=bool(raw.get("cli_only", False)),
         )
     scan = data.get("scan", {})
     return Registry(
@@ -289,8 +291,10 @@ def unmet_need(need: str) -> str | None:
         if platform.system() != "Darwin":
             reason = "needs macOS"
     elif need == "submodules":
-        out = git("submodule", "status", check=False)
-        if any(line.startswith("-") for line in out.splitlines()):
+        # `git submodule status` takes seconds on this repo; an initialized
+        # submodule simply has a .git file or folder at its path.
+        paths = git("config", "-f", ".gitmodules", "--get-regexp", r"\.path$", check=False).split()[1::2]
+        if any(not (REPO_ROOT / path / ".git").exists() for path in paths):
             reason = "submodules not checked out"
     elif need.startswith("env:"):
         if not os.environ.get(need[4:]):
@@ -336,6 +340,7 @@ class JobStatus:
             "reasons": self.reasons,
             "blocked": self.blocked,
             "runnable": job.run is not None and not self.blocked,
+            "cli_only": job.cli_only,
             "run": job.command_text(job.run),
             "check": job.command_text(job.check),
             "args_hint": job.args_hint,
@@ -475,22 +480,24 @@ def unregistered_scripts(registry: Registry) -> list[str]:
         for job in registry.jobs.values()
     )
     claim_patterns = [pattern for job in registry.jobs.values() for pattern in job.files]
-    found = []
+    found, candidates = [], []
     for root in registry.scan_roots:
         base = REPO_ROOT / root
         if not base.is_dir():
             continue
-        for path in base.rglob("*"):
-            rel = path.relative_to(REPO_ROOT).as_posix()
-            if any(part in registry.skip_dirs for part in path.relative_to(base).parts):
-                continue
-            if not path.is_file() or path.suffix not in registry.scan_extensions:
-                continue
-            if rel.startswith("Scripts/maint/"):
-                continue
-            if rel in claimed_text or matches_any(rel, claim_patterns) or matches_any(rel, registry.ignore):
-                continue
-            found.append(rel)
+        for directory, subdirs, files in os.walk(base):
+            subdirs[:] = [d for d in subdirs if d not in registry.skip_dirs]
+            for name in files:
+                path = Path(directory) / name
+                if path.suffix in registry.scan_extensions:
+                    candidates.append(path)
+    for path in candidates:
+        rel = path.relative_to(REPO_ROOT).as_posix()
+        if rel.startswith("Scripts/maint/"):
+            continue
+        if rel in claimed_text or matches_any(rel, claim_patterns) or matches_any(rel, registry.ignore):
+            continue
+        found.append(rel)
     return sorted(found)
 
 
@@ -524,7 +531,7 @@ def porcelain_snapshot() -> set[str]:
 
 
 def run_job(job: Job, extra_args: list[str] | None = None, *, dry_run: bool = False,
-            emit: Callable[[str], None] = print) -> RunResult:
+            emit: Callable[[str], None] = print, interactive: bool = True) -> RunResult:
     if job.run is None:
         raise ValueError(f"{job.id} has no `run` command — it is fixed by hand. {job.description}")
     command = shell_command(job.run, extra_args)
@@ -541,6 +548,7 @@ def run_job(job: Job, extra_args: list[str] | None = None, *, dry_run: bool = Fa
         log.write(f"$ {shlex.join(command)}\n")
         with subprocess.Popen(
             command, cwd=REPO_ROOT, env=child_env(), text=True,
+            stdin=None if interactive else subprocess.DEVNULL,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1,
         ) as process:
             assert process.stdout is not None
@@ -653,6 +661,8 @@ def hook_body() -> str:
     return (
         "#!/bin/sh\n"
         f"{HOOK_MARKER} — report-only; remove with `maint.py hooks uninstall`\n"
+        "# post-checkout: only branch switches ($3 = 1), not file checkouts or rebases\n"
+        "[ \"$(basename \"$0\")\" = post-checkout ] && [ \"$3\" != 1 ] && exit 0\n"
         "root=\"$(git rev-parse --show-toplevel)\"\n"
         "command -v python3 >/dev/null 2>&1 || exit 0\n"
         "python3 \"$root/Scripts/maint/maint.py\" status --quiet --no-checks 2>/dev/null\n"

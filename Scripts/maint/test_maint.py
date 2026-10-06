@@ -374,6 +374,8 @@ class ServerTests(unittest.TestCase):
             self.assertEqual(request("POST", "/api/run", f"127.0.0.1:{port}", body={"job": "x"})[0], 403)
             bad_job = request("POST", "/api/run", f"127.0.0.1:{port}", {"X-Maint-Token": "tok"}, {"job": "nope"})
             self.assertEqual(bad_job[0], 400)
+            release = request("POST", "/api/run", f"127.0.0.1:{port}", {"X-Maint-Token": "tok"}, {"job": "release"})
+            self.assertEqual(release[0], 403)  # cli_only: never one-click from the page
             status, page = request("GET", "/", f"localhost:{port}")
             self.assertEqual(status, 200)
             self.assertIn(b'"tok"', page)

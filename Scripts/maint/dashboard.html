@@ -191,16 +191,17 @@ function card(j) {
       <span class="title">${esc(j.title)}</span><span class="id">${esc(j.id)}</span>
       <span class="pill ${j.state}">${j.state}</span><span class="pill mode">${j.mode}</span>
       <span class="actions">
-        ${j.run ? `<button data-run="${esc(j.id)}" ${canRun ? "" : "disabled"}>${busy ? "Running…" : "Run"}</button>
-        <button data-dry="${esc(j.id)}" ${canRun ? "" : "disabled"}>Dry run</button>` : ""}
+        ${j.run && !j.cli_only ? `<button data-run="${esc(j.id)}" ${canRun ? "" : "disabled"}>${busy ? "Running…" : "Run"}</button>` : ""}
+        ${j.run ? `<button data-dry="${esc(j.id)}" ${canRun ? "" : "disabled"}>Dry run</button>` : ""}
         <button data-log="${esc(j.id)}">Log</button>
       </span>
     </div>
     ${j.description ? `<p class="desc">${esc(j.description)}</p>` : ""}
     ${j.reasons.length ? `<ul class="reasons">${j.reasons.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
     ${j.blocked.length ? `<div class="blocked">⏭ Can't run here: ${esc(j.blocked.join(", "))}</div>` : ""}
-    ${cmd ? `<div class="cmd"><code>${esc(cmd)}</code><button data-copy="${esc("python3 Scripts/maint/maint.py run " + j.id)}">Copy</button></div>`
+    ${cmd ? `<div class="cmd"><code>${esc(cmd)}</code><button data-copy="${esc("python3 Scripts/maint/maint.py run " + j.id + (j.args_hint ? " -- " : ""))}">Copy</button></div>`
           : `<div class="meta">Fixed by hand — no command.</div>`}
+    ${j.cli_only ? `<div class="meta">Terminal only (uploads, secrets or prompts): copy the command.</div>` : ""}
     ${j.check ? `<div class="meta">Check: <code>${esc(j.check)}</code></div>` : ""}
     <div class="meta">${esc(lastRun)}</div>
     <pre class="log" id="log-${esc(j.id)}" hidden></pre>
