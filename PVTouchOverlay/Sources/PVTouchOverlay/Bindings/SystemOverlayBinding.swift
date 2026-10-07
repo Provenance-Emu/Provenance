@@ -41,6 +41,20 @@ public struct OverlayPalette: Hashable, Codable, Sendable {
         quaternary: OverlayColor(0.18, 0.62, 0.30),                                       // Y green
         utility: OverlayColor(0.45, 0.45, 0.50), dpad: OverlayColor(0.30, 0.30, 0.34),
         stick: OverlayColor(0.30, 0.30, 0.34), label: .white)
+    public static let n64 = OverlayPalette(
+        shell: OverlayColor(0.35, 0.35, 0.38), primary: OverlayColor(0.86, 0.19, 0.22),
+        secondary: OverlayColor(0.98, 0.78, 0.18),   // C buttons yellow
+        tertiary: OverlayColor(0.16, 0.40, 0.80),    // A blue
+        quaternary: OverlayColor(0.18, 0.62, 0.30),  // B green
+        utility: OverlayColor(0.45, 0.45, 0.50), dpad: OverlayColor(0.30, 0.30, 0.34),
+        stick: OverlayColor(0.30, 0.30, 0.34), label: .white)
+    public static let playStation = OverlayPalette(
+        shell: OverlayColor(0.55, 0.55, 0.58), primary: OverlayColor(0.86, 0.28, 0.33),   // circle red
+        secondary: OverlayColor(0.45, 0.62, 0.86),                                         // cross blue
+        tertiary: OverlayColor(0.86, 0.50, 0.70),                                          // square pink
+        quaternary: OverlayColor(0.30, 0.72, 0.52),                                        // triangle green
+        utility: OverlayColor(0.40, 0.40, 0.44), dpad: OverlayColor(0.30, 0.30, 0.34),
+        stick: OverlayColor(0.30, 0.30, 0.34), label: .white)
 }
 
 /// Which family each subtype of a system uses, plus the tokens and art for its slots.
@@ -57,6 +71,8 @@ public struct SystemOverlayBinding: Sendable {
     public init(system: SystemIdentifier, families: [String: any OverlayFamily.Type], defaultSubtype: String,
                 tokens: [OverlayFamilySlot: String], labels: [OverlayFamilySlot: String],
                 palette: OverlayPalette, hardwareSwitches: [String]) {
+        precondition(!families.isEmpty && families[defaultSubtype] != nil,
+                     "SystemOverlayBinding needs a family for its default subtype")
         self.system = system; self.families = families; self.defaultSubtype = defaultSubtype
         self.tokens = tokens; self.labels = labels; self.palette = palette
         self.hardwareSwitches = hardwareSwitches
@@ -69,7 +85,7 @@ public struct SystemOverlayBinding: Sendable {
 
     public func family(for subtype: String) -> any OverlayFamily.Type {
         // swiftlint:disable:next force_unwrapping
-        families[subtype] ?? families[defaultSubtype] ?? families.values.first!
+        families[subtype] ?? families[defaultSubtype]!
     }
 
     public func template(padKind: OverlayPadKind, orientation: OverlayOrientation) -> OverlayTemplate {
