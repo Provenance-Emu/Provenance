@@ -4,6 +4,11 @@ import PVEmulatorCore
 import PVLogging
 import PVSupport
 
+enum PVAzaharCoreError {
+    static let domain = "PVAzaharCore"
+    static let bootFailed = 1
+}
+
 @objc @objcMembers
 public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
     let _bridge: PVAzaharCoreBridge = .init()
@@ -31,11 +36,14 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
         _bridge.onEmulationFailed = { [weak self] message in
             guard let self else { return }
             NotificationCenter.default.post(
-                name: Notification.Name("PVEmulatorCoreDidFailToStart"),
+                name: .PVEmulatorCoreDidFailToStart,
                 object: nil,
                 userInfo: [
-                    "error": NSError(domain: "PVAzaharCore", code: 1, userInfo: [NSLocalizedDescriptionKey: message]),
-                    "coreIdentifier": self.coreIdentifier ?? ""
+                    PVEmulatorCoreDidFailToStartUserInfoKey.error: NSError(
+                        domain: PVAzaharCoreError.domain,
+                        code: PVAzaharCoreError.bootFailed,
+                        userInfo: [NSLocalizedDescriptionKey: message]),
+                    PVEmulatorCoreDidFailToStartUserInfoKey.coreIdentifier: self.coreIdentifier ?? ""
                 ]
             )
             MainActor.assumeIsolated { self.emulationDidFailToStart() }
@@ -50,7 +58,11 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
 
 extension PVAzaharCore: PV3DSSystemResponderClient {
     /// Controls live in the bridge's `+Controls.mm`; Swift cannot see that conformance statically.
-    private var responder: PV3DSSystemResponderClient? { _bridge as? PV3DSSystemResponderClient }
+    private var responder: PV3DSSystemResponderClient? {
+        let responder = _bridge as? PV3DSSystemResponderClient
+        assert(responder != nil, "PVAzaharCoreBridge must conform to PV3DSSystemResponderClient")
+        return responder
+    }
 
     public func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int) {
         responder?.didMoveJoystick(button, withXValue: xValue, withYValue: yValue, forPlayer: player)

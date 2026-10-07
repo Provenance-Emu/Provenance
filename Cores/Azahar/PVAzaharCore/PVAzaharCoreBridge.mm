@@ -214,6 +214,8 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 
 /// Main thread. Hands the boot outcome to the Swift core exactly once.
 - (void)finishBootWithFailure:(NSString *)message {
+    dispatch_assert_queue(dispatch_get_main_queue());
+    if (_stopRequested) { return; }   // torn down (or tearing down) while the boot result was in flight
     void (^started)(void) = self.onEmulationStarted;
     void (^failed)(NSString *) = self.onEmulationFailed;
     self.onEmulationStarted = nil;
@@ -296,8 +298,12 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
             const int code = static_cast<int>(result);
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSString *message = [NSString stringWithFormat:@"Azahar could not load this title (%d)", code];
-                [weakSelf stopEmulationWithMessage:message];
-                [weakSelf finishBootWithFailure:message];
+                PVAzaharCoreBridge *strongSelf = weakSelf;
+                if (!strongSelf || strongSelf->_stopRequested) { return; }   // host already stopped us
+                // stopEmulationWithMessage: clears the boot blocks, so take the failure block first.
+                void (^failed)(NSString *) = strongSelf.onEmulationFailed;
+                [strongSelf stopEmulationWithMessage:message];
+                if (failed) { failed(message); }
             });
         }
         Network::Shutdown();
@@ -322,6 +328,8 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 - (void)stopEmulationWithMessage:(NSString *)message {
     _stopRequested = true;
     _running = false; _paused = false;
+    self.onEmulationStarted = nil;     // a boot result still queued for main must not reach the host
+    self.onEmulationFailed = nil;
     if (_loaded) { Core::System::GetInstance().RequestShutdown(); }   // thread-safe signal
     _jobCV.notify_all();
     if (_emuThread.joinable()) {
