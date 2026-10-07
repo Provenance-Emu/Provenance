@@ -1,6 +1,8 @@
 import Foundation
 import PVCoreBridge
+import PVLogging
 import PVSupport
+import UIKit
 
 /// Option definitions for the Azahar 3DS core. Enumeration values are the raw numbers the bridge expects
 /// (`Settings::TextureFilter` 0...5, layout UI indices 0...4, region -1 = auto).
@@ -83,12 +85,61 @@ import PVSupport
         .bool(.init(title: "Realtime Audio", description: "Lower latency; may crackle on slow devices.", requiresRestart: true), defaultValue: true)
     }
 
+    // MARK: Data
+    /// Behaves like a button: switching it on prompts for confirmation, runs the import, then switches itself off.
+    static var importFromEmuThreeOption: CoreOption {
+        .bool(.init(title: "Import 3DS data from emuThreeDS",
+                    description: "Moves NAND, SD card, system files, config and cheats into Azahar. emuThreeDS will no longer see them. Save states are not moved.",
+                    requiresRestart: false),
+              defaultValue: false,
+              valueHandler: { value in
+                  guard (value as? Bool) == true else { return }
+                  Task { @MainActor in presentImportPrompt() }
+                  setValue(false, forOption: importFromEmuThreeOption)
+              })
+    }
+
+    @MainActor private static func presentImportPrompt() {
+        let migrator = PVAzaharDataMigrator(legacyRoot: PVAzaharDataMigrator.defaultLegacyRoot(),
+                                            targetRoot: PVAzaharDataMigrator.defaultTargetRoot())
+        let plan = migrator.plan()
+        let megabytes = Double(plan.totalBytes) / bytesPerMegabyte
+        let message = plan.hasWork
+            ? String(format: "Move %.1f MB of emuThreeDS data into Azahar? emuThreeDS will stop seeing it.", megabytes)
+            : "Nothing to import: no emuThreeDS data found, or it was already imported."
+        let alert = UIAlertController(title: "Import 3DS data", message: message, preferredStyle: .alert)
+        if plan.hasWork {
+            alert.addAction(UIAlertAction(title: "Move", style: .destructive) { _ in
+                do {
+                    try migrator.apply()
+                    ILOG("[PVAzahar] imported emuThreeDS data")
+                } catch {
+                    ELOG("[PVAzahar] import failed: \(error)")
+                }
+            })
+        }
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        topViewController()?.present(alert, animated: true)
+    }
+
+    @MainActor private static func topViewController() -> UIViewController? {
+        let scene = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first { $0.activationState == .foregroundActive }
+        var controller = scene?.keyWindow?.rootViewController
+        while let presented = controller?.presentedViewController { controller = presented }
+        return controller
+    }
+
+    private static let bytesPerMegabyte = 1_048_576.0
+
     public static var options: [CoreOption] {
         [.group(.init(title: "Graphics", description: nil), subOptions: [
             resolutionOption, layoutOption, swapScreensOption, textureFilterOption, hardwareShaderOption,
             accurateMulOption, asyncShaderOption, asyncPresentOption, diskShaderCacheOption]),
          .group(.init(title: "System", description: nil), subOptions: [new3DSOption, cpuClockOption, regionOption, frameLimitOption]),
-         .group(.init(title: "Audio", description: nil), subOptions: [audioStretchOption, realtimeAudioOption])]
+         .group(.init(title: "Audio", description: nil), subOptions: [audioStretchOption, realtimeAudioOption]),
+         .group(.init(title: "Data", description: nil), subOptions: [importFromEmuThreeOption])]
     }
 
     /// Copies the stored option values into the bridge. Call before `loadFile`.

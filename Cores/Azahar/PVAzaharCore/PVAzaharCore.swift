@@ -51,8 +51,25 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
     }
 
     public override func loadFile(atPath path: String) throws {
+        Self.migrateEmuThreeDataIfNeeded()
         PVAzaharCoreOptions.apply(to: _bridge)
         try super.loadFile(atPath: path)
+    }
+}
+
+extension PVAzaharCore {
+    /// With emuThreeDS gone nothing else can claim its data, so bring it over before azahar picks its user path.
+    fileprivate static func migrateEmuThreeDataIfNeeded() {
+        guard !PVAzaharDataMigrator.emuThreeCoreIsPresent else { return }
+        let migrator = PVAzaharDataMigrator(legacyRoot: PVAzaharDataMigrator.defaultLegacyRoot(),
+                                            targetRoot: PVAzaharDataMigrator.defaultTargetRoot())
+        guard !migrator.alreadyMigrated, migrator.plan().hasWork else { return }
+        do {
+            try migrator.apply()
+            ILOG("[PVAzahar] auto-imported emuThreeDS data")
+        } catch {
+            ELOG("[PVAzahar] auto-import failed: \(error)")
+        }
     }
 }
 
