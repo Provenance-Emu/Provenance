@@ -93,6 +93,9 @@ struct ProgrammaticOverlayView: View {
                 publish(layout.screenFrames)
             }
             .onChange(of: layout.screenFrames) { _, frames in publish(frames) }
+            // The editor edits one orientation's layout against a fixed canvas; on rotation it
+            // ends (edits stay saved) and the player re-enters it in the new orientation.
+            .onChange(of: canvas.size) { _, _ in endEditingForCanvasChange() }
             .onChange(of: editController != nil) { _, editing in
                 postEditing(editing)
                 if !editing { refreshPadKind() } // catch up on a change made while editing
@@ -182,6 +185,12 @@ struct ProgrammaticOverlayView: View {
         }
         editController = OverlayEditController(store: store, key: padKind.storageKey(for: canvas.orientation),
                                                gameMD5: gameMD5, canvas: canvas, groupDefaults: defaults)
+    }
+
+    private func endEditingForCanvasChange() {
+        guard let editController else { return }
+        editController.done()
+        self.editController = nil
     }
 
     /// The editor pauses the core while it is open (the VC owns the pause).
