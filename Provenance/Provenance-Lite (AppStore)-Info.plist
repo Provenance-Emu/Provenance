@@ -1234,6 +1234,7 @@
 				<array>
 					<string>cue</string>
 					<string>m3u</string>
+					<string>cdi</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>
@@ -1314,6 +1315,7 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>cmd</string>
+					<string>chd</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>
@@ -1762,7 +1764,7 @@
 				<string>com.provenance.rom</string>
 			</array>
 			<key>UTTypeDescription</key>
-			<string>Pokemon mini ROM</string>
+			<string>Pokémon mini ROM</string>
 			<key>UTTypeIconFiles</key>
 			<array/>
 			<key>UTTypeIdentifier</key>
