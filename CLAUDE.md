@@ -162,6 +162,16 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 - **Every script under `Scripts/` or `CoresRetro/RetroArch/scripts/` must be in `Scripts/maint/jobs.toml`** (as a job, or under `[ignore]`); `maint.yml` fails PRs that add an unregistered one. `make maint` (dashboard) / `python3 Scripts/maint/maint.py status` show which generated files are stale. Scripts that find the repo root from their own path sit two levels deep (`Scripts/<category>/`).
 - **`gh issue list` has no `--sort` flag.** Use `gh issue list --search "sort:created-desc"` or `gh issue list --json number,title,createdAt --jq '.'` for sorted/filtered queries.
 
+### Azahar core build gotchas
+
+- **`PVlibAzahar.xcframework` is built by the `BuildPVlibAzahar` aggregate target** (`Cores/Azahar/project.yml`, which `PVAzahar` depends on) running `build_azahar_core.py -p <platform>`. A cold slice takes ~30–40 min; the stamp `Cores/Azahar/build/<platform>/.gitlink` (submodule HEAD) skips the rebuild while it matches. Delete it to force one. Needs cmake, ninja and python3 ≥ 3.10.
+- **PVlibAzahar is arm64-only.** The x86_64 simulator slice of `PVAzahar` is link-only (`-undefined dynamic_lookup`), so the app does not launch on Intel/Rosetta simulators.
+- **Never include azahar's `core/hle/service/nwm/nwm_uds.h`.** Azahar headers come in with `-idirafter`, so its `#include "network/network.h"` resolves to the SDK's Network framework header instead. The bridge includes azahar's own copy as `"network.h"` via a narrow `HEADER_SEARCH_PATHS` entry.
+- **Emulator changes go on the fork.** Commit them to `Provenance-Emu/azahar` branch `provenance` and list them in `Cores/Azahar/PATCHES.md`. Never edit `Cores/Azahar/azahar` in place.
+- **The tvOS user root is Caches.** `PVAzaharCore.userRootURL` is `Documents/Azahar` on iOS and `Library/Caches/Azahar` on tvOS, where Documents is not writable.
+- **`-fcxx-modules` is on** so the ObjC++ glue can `@import` the PV* Swift modules and `PVAzahar-Swift.h`.
+- **`runOnEmuThreadAndWait:` jobs can outlive their timeout.** Capture only by value or `shared_ptr`, never by reference.
+
 ### Metal rendering gotchas
 
 - **`CAMetalLayer.nextDrawable` blocks forever when backgrounded.** Metal reclaims drawables during background. The CA runloop observer fires `MTKView.draw(in:)` before `didBecomeActiveNotification`, so `currentDrawable` deadlocks the main thread. ALL `draw(in:)` implementations MUST early-return when `UIApplication.shared.applicationState != .active`.
