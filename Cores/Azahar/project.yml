@@ -21,7 +21,7 @@ settings:
     CLANG_ENABLE_OBJC_ARC: YES
     CLANG_ENABLE_MODULES: YES
     DEFINES_MODULE: YES
-    OTHER_CPLUSPLUSFLAGS: "$(inherited) -fcxx-modules -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32 -Wno-deprecated-declarations"
+    OTHER_CPLUSPLUSFLAGS: "$(inherited) -fcxx-modules -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32 -Wno-deprecated-declarations -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers"
     GCC_PREPROCESSOR_DEFINITIONS:
       - "$(inherited)"
       - "ENABLE_VULKAN=1"
@@ -31,14 +31,19 @@ settings:
       - "VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1"
       - "VULKAN_HPP_NO_EXCEPTIONS=1"
       - "FMT_HEADER_ONLY=0"
+    # The azahar headers are searched last (-idirafter), not with -I: azahar's network/network.h
+    # satisfies the SDK's <Network/Network.h> on a case-insensitive volume, which breaks AVFoundation's
+    # AVRouting module (camera, audio session). Its one collision with the SDK's <network/network.h> is
+    # side-stepped by putting just that directory on -I and including it as "network.h".
     HEADER_SEARCH_PATHS:
       - "$(inherited)"
-      - "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers"
+      - "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers/Network"
     PVAZAHAR_SLICE: ios
     "PVAZAHAR_SLICE[sdk=iphonesimulator*]": ios-sim
     "PVAZAHAR_SLICE[sdk=appletvos*]": tvos
     "PVAZAHAR_SLICE[sdk=appletvsimulator*]": tvos-sim
     "EXCLUDED_ARCHS[sdk=*simulator*]": x86_64
+    OTHER_CFLAGS: "$(inherited) -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers"
     OTHER_LDFLAGS: "$(inherited) -ObjC"
     LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @loader_path/Frameworks"
   configs:

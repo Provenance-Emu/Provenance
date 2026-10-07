@@ -6,6 +6,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PVAzaharCoreBridge (Video)
 /// Main thread. Creates the render view inside `touchViewController.view` and the emu window.
 - (void)setupRenderView;
+/// Re-runs the current layout after a Settings::values.layout_option / swap_screen change. Any thread.
+- (void)relayoutWindow;
 /// Main thread, after the emu thread has been joined.
 - (void)teardownRenderView;
 // EmulatorCoreViewportPositioning (DeltaSkin screen frame), implemented in this category.

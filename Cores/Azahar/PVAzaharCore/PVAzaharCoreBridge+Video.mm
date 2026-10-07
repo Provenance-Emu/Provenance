@@ -56,6 +56,12 @@
     [self runOnEmuThread:[self, w, h, portrait] { if (_window) { _window->Resize(w, h, portrait); } }];
 }
 
+- (void)relayoutWindow {
+    if (!NSThread.isMainThread) { dispatch_async(dispatch_get_main_queue(), ^{ [self relayoutWindow]; }); return; }
+    PVAzaharRenderView *view = (PVAzaharRenderView *)_renderView;
+    if (view) { [self resizeWindowToPixelSize:view.metalLayer.drawableSize]; }
+}
+
 - (void)teardownRenderView {
     PVAzaharRenderView *view = (PVAzaharRenderView *)_renderView;
     NSArray<NSLayoutConstraint *> *constraints = _renderViewConstraints;

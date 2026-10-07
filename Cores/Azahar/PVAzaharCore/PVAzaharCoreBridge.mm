@@ -12,6 +12,7 @@
 #include <libkern/OSCacheControl.h>
 #include <pthread.h>
 #include <sys/mman.h>
+#include "Glue/AzaharCamera.h"
 #include "Glue/AzaharEmuWindow.h"
 #include "Glue/AzaharInput.h"
 #include "common/file_util.h"
@@ -20,7 +21,8 @@
 #include "common/settings.h"
 #include "core/core.h"
 #include "core/frontend/applets/default_applets.h"
-#include "network/network.h"
+#include "core/hle/service/cam/cam.h"
+#include "network.h"   // azahar's network/network.h; see HEADER_SEARCH_PATHS in project.yml
 #include "audio_core/sink_details.h"
 
 static NSString * const PVAzaharUserDirectoryName = @"Azahar";
@@ -66,6 +68,11 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     }
 }
 
+// Controls (PV3DSSystemResponderClient, JoystickResponder), viewport positioning and setCheat: live in
+// categories, which the compiler does not see when it checks this @implementation.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wprotocol"
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation PVAzaharCoreBridge
 
 - (instancetype)init {
@@ -138,14 +145,21 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     v.factor_3d.SetValue(0);
     v.output_type.SetValue(AudioCore::SinkType::CoreAudio);
     v.use_display_refresh_rate_detection.SetValue(true);
-    v.camera_name[0] = v.camera_name[1] = v.camera_name[2] = "blank";   // Task 8 overrides on iOS
+#if TARGET_OS_TV
+    v.camera_name[0] = v.camera_name[1] = v.camera_name[2] = "blank";
+#else
+    // Indexed by Service::CAM::CameraIndex: OuterRightCamera, InnerCamera, OuterLeftCamera.
+    v.camera_name[Service::CAM::OuterRightCamera] = "av_rear_right";
+    v.camera_name[Service::CAM::InnerCamera] = "av_front";
+    v.camera_name[Service::CAM::OuterLeftCamera] = "av_rear_left";
+#endif
     AzaharInput::ApplyProfile();
     ILOG(@"[PVAzahar] settings applied: jit=%d fastinterp=%d res=%ld layout=%ld", jit, !jit,
          (long)self.resolutionFactor, (long)self.layoutOption);
 }
 
 /// Port of -[PVDolphinCoreBridge checkJITAvailable]: allocate a MAP_JIT page, write
-/// `mov w0,#1; ret`, make it RX and call it with SIGTRAP/SIGBUS/SIGSEGV trapped. This sees what the
+/// `mov w0,#1; ret`, make it RX and call it with SIGTRAP/SIGBUS/SIGSEGV/SIGILL trapped. This sees what the
 /// process can really do (debugger, StikJIT, entitlements, TXM) rather than a flag that may not be set.
 - (BOOL)probeJITAvailable {
 #if TARGET_OS_SIMULATOR
@@ -171,12 +185,13 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     }
     sys_icache_invalidate(page, sizeof(code));
 
-    struct sigaction handler = {}, oldTrap, oldBus, oldSegv;
+    struct sigaction handler = {}, oldTrap, oldBus, oldSegv, oldIll;
     sigemptyset(&handler.sa_mask);
     handler.sa_handler = PVAzaharJITProbeSignalHandler;
     sigaction(SIGTRAP, &handler, &oldTrap);
     sigaction(SIGBUS, &handler, &oldBus);
     sigaction(SIGSEGV, &handler, &oldSegv);
+    sigaction(SIGILL, &handler, &oldIll);
     s_jitProbeSignal = 0;
     BOOL works = NO;
     if (sigsetjmp(s_jitProbeJump, 1) == 0) {
@@ -187,6 +202,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     sigaction(SIGTRAP, &oldTrap, nullptr);
     sigaction(SIGBUS, &oldBus, nullptr);
     sigaction(SIGSEGV, &oldSegv, nullptr);
+    sigaction(SIGILL, &oldIll, nullptr);
     munmap(page, pageSize);
     ILOG(@"[PVAzahar] JIT probe: %@", works ? @"available" : @"unavailable");
     return works;
@@ -199,6 +215,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
         return;
     }
     [self applySettingsFromOptions];
+    [self configureAudioSession];
     [self setupRenderView];          // +Video, main thread; creates _window
     if (!_window) {
         ELOG(@"[PVAzahar] no render window; cannot start");
@@ -213,6 +230,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
         _emuThreadId = std::this_thread::get_id();
         auto& system = Core::System::GetInstance();
         AzaharInput::RegisterFactories();
+        AzaharCamera::RegisterFactories();
         Frontend::RegisterDefaultApplets(system);
         Network::Init();
         system.ApplySettings();
@@ -310,6 +328,11 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 - (void)executeFrame {}   // own loop
 
 - (void)runOnEmuThread:(std::function<void()>)job {
+    if (!_running) {
+        static std::once_flag dropLogOnce;
+        std::call_once(dropLogOnce, [] { WLOG(@"[PVAzahar] emu job dropped: emulation is not running"); });
+        return;
+    }
     { std::lock_guard lock(_jobMutex); _jobs.push_back(std::move(job)); }
     _jobCV.notify_all();
 }
@@ -332,7 +355,5 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     return state->ran ? YES : NO;
 }
 
-- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
-        setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error { return NO; } // Task 8
-
 @end
+#pragma clang diagnostic pop

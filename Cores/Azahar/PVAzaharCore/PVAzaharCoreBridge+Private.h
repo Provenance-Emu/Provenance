@@ -27,6 +27,7 @@ class AzaharEmuWindow;
     UIView *_renderView;             // PVAzaharRenderView, added to touchViewController.view
     NSArray<NSLayoutConstraint *> *_renderViewConstraints;
     BOOL _useCustomRenderViewLayout;
+    BOOL _leftStickDrivesCStick;     // PV3DSButtonAnalogMode toggles it; main thread only
 }
 /// Jobs run on the emu thread between RunLoop slices (also while paused), and are dropped
 /// unrun when emulation stops.
@@ -40,5 +41,8 @@ class AzaharEmuWindow;
 /// Executes a MAP_JIT test page (Dolphin's probe); YES on the simulator.
 - (BOOL)probeJITAvailable;
 - (NSString *)userDirectoryPath;     // <Documents>/Azahar/
-- (void)configureAudioSession;       // defined in +Audio.mm (Task 8), which also adds the call
+@end
+
+@interface PVAzaharCoreBridge (Audio)
+- (void)configureAudioSession;       // +Audio.mm; startEmulation calls it
 @end
