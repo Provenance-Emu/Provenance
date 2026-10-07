@@ -50,15 +50,30 @@ enum OverlayPadKindResolver {
         return shouldApplyVariant(resolved: target, current: coreCurrent, lastApplied: lastApplied) ? target : nil
     }
 
-    /// The player's own choice for the game: per-game, else per-system, skipping any the
-    /// system's binding has no family for. `nil` when neither is set (or the system is unbound).
+    /// The player's own choice for the game: per-game, else per-system, skipping any that is
+    /// not selectable (`selectableVariants`). `nil` when neither is set (or the system is unbound).
     static func explicitVariantID(for system: SystemIdentifier, gameMD5: String) -> String? {
-        guard let binding = SystemOverlayBindings.binding(for: system) else { return nil }
+        let selectable = Set(selectableVariants(for: system).map(\.id))
         let candidates: [String?] = [
             gameMD5.isEmpty ? nil : Defaults[.controllerLayoutVariantsByGame][gameMD5],
             Defaults.controllerLayoutVariant(forSystemID: system.rawValue)
         ]
-        return candidates.compactMap { $0 }.first { binding.families[$0] != nil }
+        return candidates.compactMap { $0 }.first { selectable.contains($0) }
+    }
+
+    /// The system's controller layout variants the overlay can draw: those the system offers
+    /// (`availableControllerLayoutVariants`, in its order) that its overlay binding has a
+    /// family for. Empty for an unbound system or one whose only family is `standard` (NES).
+    static func selectableVariants(for system: SystemIdentifier) -> [ControllerLayoutVariant] {
+        guard let binding = SystemOverlayBindings.binding(for: system),
+              let variants = system.availableControllerLayoutVariants else { return [] }
+        return variants.filter { binding.families[$0.id] != nil }
+    }
+
+    /// Whether the pause menu offers the Controller Layout picker: more than one selectable
+    /// variant (a single one is no choice).
+    static func offersVariantChoice(for system: SystemIdentifier) -> Bool {
+        selectableVariants(for: system).count > 1
     }
 
     /// The first candidate the system's binding has a family for, in order: the per-game

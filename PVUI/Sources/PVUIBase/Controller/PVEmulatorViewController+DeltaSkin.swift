@@ -265,7 +265,7 @@ extension PVEmulatorViewController {
               let game, !game.isInvalidated,
               let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
                                                                        persisted: game.systemIdentifier),
-              system.availableControllerLayoutVariants != nil,
+              !OverlayPadKindResolver.selectableVariants(for: system).isEmpty,
               let binding = SystemOverlayBindings.binding(for: system),
               let target = OverlayPadKindResolver.variantToPush(
                 explicit: OverlayPadKindResolver.explicitVariantID(for: system, gameMD5: game.md5Hash),

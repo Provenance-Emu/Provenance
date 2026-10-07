@@ -3,7 +3,7 @@
 //  PVUI
 //
 //  "Controller Layout" sheet for the pause menu: picks the controller variant
-//  (Genesis 3-/6-button, Wii remote / Classic, …) for this game or for every game of the
+//  (Genesis 3-/6-button, Wii remote upright / sideways, …) for this game or for every game of the
 //  system, and applies it to a core that can switch live. The programmatic overlay
 //  redraws from the same settings (`OverlayPadKindResolver`). iOS only, like the overlay.
 //
@@ -27,14 +27,16 @@ struct ControllerLayoutSheetContext: Identifiable {
 }
 
 extension PauseTileMenuView {
-    /// The game's system (resolved like the overlay resolves it) and hash, or `nil` when the
-    /// system has no controller variants.
+    /// The game's system (resolved like the overlay resolves it), the variants the overlay can
+    /// draw for it and the game's hash, or `nil` when there is no choice to offer.
     func makeControllerLayoutContext() -> ControllerLayoutSheetContext? {
         guard let game = emulatorVC.game, !game.isInvalidated,
               let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
                                                                        persisted: game.systemIdentifier),
-              let variants = system.availableControllerLayoutVariants else { return nil }
-        return ControllerLayoutSheetContext(system: system, variants: variants, gameMD5: game.md5Hash)
+              OverlayPadKindResolver.offersVariantChoice(for: system) else { return nil }
+        return ControllerLayoutSheetContext(system: system,
+                                            variants: OverlayPadKindResolver.selectableVariants(for: system),
+                                            gameMD5: game.md5Hash)
     }
 }
 

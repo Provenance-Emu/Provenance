@@ -86,10 +86,10 @@ public enum SystemOverlayBindings {
         palette: .playStation, hardwareSwitches: [])
 
     // GameCube: "l"/"r"/"z" resolve identically through PVGCButton and the skin table.
+    // Bongos and keyboard have no pad of their own yet, so only the standard controller is bound.
     private static let gameCube = SystemOverlayBinding(
         system: .GameCube,
-        families: ["gc-standard": GameCubeFamily.self, "gc-bongos": GameCubeFamily.self,
-                   "gc-keyboard": GameCubeFamily.self],
+        families: ["gc-standard": GameCubeFamily.self],
         defaultSubtype: "gc-standard",
         tokens: [.a: "a", .b: "b", .x: "x", .y: "y", .z: "z", .l: "l", .r: "r", .start: "start"],
         labels: [.a: "A", .b: "B", .x: "X", .y: "Y", .z: "Z", .l: "L", .r: "R", .start: "START"],

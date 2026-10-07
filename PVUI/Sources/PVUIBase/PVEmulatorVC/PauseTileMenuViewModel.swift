@@ -1095,14 +1095,14 @@ final class PauseTileMenuViewModel: ObservableObject {
     static let editOverlayLayoutTileID = "editOverlayLayout"
 
     /// Programmatic touch overlay entries: "Edit Layout" while the overlay is on screen, and
-    /// "Controller Layout" for an overlay-bound system with controller variants.
+    /// "Controller Layout" when the system has more than one variant the overlay can draw.
     private static func touchOverlayEntries(emulatorVC: PVEmulatorViewController) -> [PauseMenuTile] {
         guard let game = emulatorVC.game, !game.isInvalidated,
               let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
                                                                        persisted: game.systemIdentifier),
               ProgrammaticOverlaySupport.covers(system, enabled: Defaults[.programmaticOverlay]) else { return [] }
         var entries: [PauseMenuTile] = []
-        if system.availableControllerLayoutVariants != nil {
+        if OverlayPadKindResolver.offersVariantChoice(for: system) {
             entries.append(PauseMenuTile(
                 id: controllerLayoutTileID,
                 icon: "gamecontroller.fill",

@@ -183,6 +183,39 @@ struct OverlayPadKindResolverTests {
         #expect(push(current: "psx-digital", saved: false, lastApplied: "psx-dualshock") == nil)
     }
 
+    @Test("Selectable variants: the system's variants the binding has a family for, in system order")
+    func selectableVariants() {
+        let ids = { (system: SystemIdentifier) in OverlayPadKindResolver.selectableVariants(for: system).map(\.id) }
+        #expect(ids(.Genesis) == ["genesis-3btn", "genesis-6btn"])
+        #expect(ids(.PSX) == ["psx-dualshock", "psx-digital"])
+        #expect(ids(.Wii) == ["wii-wiimote", "wii-wiimote-nunchuck"])
+        #expect(ids(.GameCube) == ["gc-standard"])
+        // NES binds only `standard`, which is no layout variant.
+        #expect(ids(.NES).isEmpty)
+        #expect(ids(.SNES).isEmpty)
+        #expect(ids(.Atari5200).isEmpty)
+    }
+
+    @Test("The Controller Layout tile needs more than one selectable variant")
+    func offersVariantChoice() {
+        for system in [SystemIdentifier.Genesis, .Sega32X, .SegaCD, .PSX, .Wii] {
+            #expect(OverlayPadKindResolver.offersVariantChoice(for: system), "\(system)")
+        }
+        for system in [SystemIdentifier.NES, .GameCube, .SNES, .Atari5200] {
+            #expect(!OverlayPadKindResolver.offersVariantChoice(for: system), "\(system)")
+        }
+    }
+
+    @Test("An explicit choice outside the selectable variants is not pushed")
+    func explicitIgnoresUnselectable() {
+        resetSettings()
+        defer { resetSettings() }
+        Defaults.setControllerLayoutVariant("gc-bongos", forSystemID: SystemIdentifier.GameCube.rawValue)
+        #expect(OverlayPadKindResolver.explicitVariantID(for: .GameCube, gameMD5: Self.md5) == nil)
+        Defaults[.controllerLayoutVariantsByGame] = [Self.md5: "wii-classic"]
+        #expect(OverlayPadKindResolver.explicitVariantID(for: .Wii, gameMD5: Self.md5) == nil)
+    }
+
     @Test("A system without variants keeps its standard subtype")
     func standardSystem() {
         resetSettings()
