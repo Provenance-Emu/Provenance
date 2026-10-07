@@ -162,8 +162,13 @@ jobs:
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
 
+      # sentry-cli uploads the archive's dSYMs (release.sh, "Debug symbols" step).
+      # Cosmetic/best-effort like xcbeautify: without it release.sh only warns and
+      # the dSYMs stay on the runner, so TestFlight crashes are unsymbolicated.
       - name: Install tooling
-        run: brew install xcbeautify 2>/dev/null || true
+        run: |
+          brew install xcbeautify 2>/dev/null || true
+          brew install getsentry/tools/sentry-cli 2>/dev/null || true
 
       # The archive embeds PVLookup's libretro cheat database. build.yml
       # generates it before archiving; this workflow did not, so the first run
@@ -253,6 +258,11 @@ jobs:
           ASC_API_ISSUER_ID: ${{ secrets.ASC_API_ISSUER_ID }}
           # Base64-encoded .p8 — release.sh materialises it to a temp file.
           ASC_API_KEY_CONTENT: ${{ secrets.ASC_API_KEY_CONTENT }}
+          # Sentry auth token (scope org:ci or project:write) for the dSYM upload
+          # release.sh runs after the archive. Unset = release.sh warns and skips
+          # the upload; it never fails the release. Org/project default to
+          # provenance-emu/provenance inside release.sh.
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
           set -o pipefail
           # Scheduled runs archive BOTH platforms. They were iOS-only for weeks
