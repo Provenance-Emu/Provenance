@@ -4,24 +4,29 @@ import PVSettings
 
 /// Edit chrome drawn over a non-interactive `OverlayHostView`. Each group gets a dashed
 /// frame, a drag gesture, a corner resize handle and tap-to-select; a floating inspector
-/// edits the selection; the toolbar offers Undo/Redo/Reset/Cancel/Done.
+/// edits the selection; the toolbar offers Undo/Redo/Reset/Cancel/Done. Done on a per-game
+/// session asks whether the layout is for this game or every game of the system (spec §7.2).
 public struct OverlayEditorView: View {
     @Bindable var controller: OverlayEditController
     public let layout: OverlayLayout
     public let binding: SystemOverlayBinding
     public let style: OverlayStyle
+    /// Display name of the system, for the "All <system> games" save choice.
+    public let systemName: String
     public let onFinish: (_ saved: Bool) -> Void
+    @State private var choosingSaveScope = false
     @State private var dragStartCenter: CGPoint?
     @State private var pinchStart: CGFloat = 1
     @State private var lastControlTranslation: CGSize = .zero
     @State private var lastHandleWidth: CGFloat = 0
 
     public init(controller: OverlayEditController, layout: OverlayLayout, binding: SystemOverlayBinding,
-                style: OverlayStyle, onFinish: @escaping (_ saved: Bool) -> Void) {
+                style: OverlayStyle, systemName: String, onFinish: @escaping (_ saved: Bool) -> Void) {
         self.controller = controller
         self.layout = layout
         self.binding = binding
         self.style = style
+        self.systemName = systemName
         self.onFinish = onFinish
     }
 
@@ -131,7 +136,20 @@ public struct OverlayEditorView: View {
             Button("Reset Pad") { controller.resetAll() }
             Spacer()
             Button("Cancel") { controller.cancel(); onFinish(false) }
-            Button("Done") { controller.done(); onFinish(true) }.bold()
+            Button("Done") {
+                if controller.canSaveForAllGames {
+                    choosingSaveScope = true
+                } else {
+                    controller.done()
+                    onFinish(true)
+                }
+            }
+            .bold()
+            .confirmationDialog("Save layout for:", isPresented: $choosingSaveScope, titleVisibility: .visible) {
+                Button("This game") { controller.done(); onFinish(true) }
+                Button("All \(systemName) games") { controller.doneForAllGames(); onFinish(true) }
+                Button("Cancel", role: .cancel) {}
+            }
         }
         .padding(10)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))

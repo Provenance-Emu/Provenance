@@ -147,4 +147,20 @@ public final class OverlayEditController {
         session.commit()
         store.flush()
     }
+
+    /// Whether Done can offer "All games": only a per-game session has a game layer to promote.
+    public var canSaveForAllGames: Bool { gameMD5 != nil }
+
+    /// Done, saving the session's layout for every game of the pad kind (spec §7.2): the
+    /// per-game overrides move to the pad-kind layer (`OverlayLayoutStore.promoteToAllGames`).
+    public func doneForAllGames() {
+        endInteraction()
+        session.commit()
+        if let gameMD5 {
+            store.promoteToAllGames(key: key, gameMD5: gameMD5)
+        } else {
+            store.flush()
+        }
+        revision = store.revision
+    }
 }

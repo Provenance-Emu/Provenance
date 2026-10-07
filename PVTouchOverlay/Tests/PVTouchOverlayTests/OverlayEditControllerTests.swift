@@ -113,4 +113,18 @@ struct OverlayEditControllerTests {
         #expect(reloaded.overrides(for: key, gameMD5: nil).groups["face"]?.center != nil)
         #expect(!controller.canUndo)
     }
+
+    @Test("Done for all games moves the session's per-game layout to the pad-kind layer")
+    func doneForAllGames() {
+        let store = OverlayLayoutStore(fileURL: OverlayLayoutStoreTests.tempURL())
+        let controller = OverlayEditController(store: store, key: key, gameMD5: "abc", canvas: canvas)
+        #expect(controller.canSaveForAllGames)
+        controller.moveGroup("face", to: CGPoint(x: 330, y: 780))
+        let edited = store.overrides(for: key, gameMD5: "abc")
+        controller.doneForAllGames()
+        #expect(store.overrides(for: key, gameMD5: nil) == edited)
+        #expect(store.snapshot().games["abc"] == nil)
+        #expect(!controller.canUndo)
+        #expect(!make().0.canSaveForAllGames)
+    }
 }

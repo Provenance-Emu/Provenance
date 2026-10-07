@@ -61,6 +61,17 @@ public final class OverlayLayoutStore: ObservableObject {
         persist()
     }
 
+    /// "Save for all games": the game's current overrides for `key` (its own, else the pad-kind
+    /// ones it falls back to) become the pad-kind layer, and the game's entry for `key` is removed
+    /// so the shared layout applies to it too. Other keys of the game are untouched.
+    public func promoteToAllGames(key: String, gameMD5: String) {
+        let groups = overrides(for: key, gameMD5: gameMD5).groups
+        file.layouts[key] = groups.isEmpty ? nil : groups
+        file.games[gameMD5]?[key] = nil
+        if file.games[gameMD5]?.isEmpty == true { file.games[gameMD5] = nil }
+        persist()
+    }
+
     public func snapshot() -> OverlayLayoutFile { file }
     public func restore(_ snapshot: OverlayLayoutFile) { file = snapshot; persist() }
 

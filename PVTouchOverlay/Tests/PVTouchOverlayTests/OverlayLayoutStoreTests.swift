@@ -50,4 +50,35 @@ struct OverlayLayoutStoreTests {
         #expect(store.overrides(for: key, gameMD5: "abc") == .empty)
         #expect(store.revision > rev)
     }
+
+    @Test("Promoting a game's layout makes it every game's layout and drops the game's own entry")
+    func promoteToAllGames() {
+        let url = Self.tempURL()
+        defer { try? FileManager.default.removeItem(at: url) }
+        let store = OverlayLayoutStore(fileURL: url)
+        let otherKey = "com.provenance.snes.standard.landscape"
+        store.set(move, for: key, gameMD5: nil)
+        var perGame = move
+        perGame.groups["face"]?.opacity = 0.4
+        store.set(perGame, for: key, gameMD5: "abc")
+        store.set(move, for: otherKey, gameMD5: "abc")
+        let rev = store.revision
+        store.promoteToAllGames(key: key, gameMD5: "abc")
+        #expect(store.overrides(for: key, gameMD5: nil) == perGame)
+        #expect(store.overrides(for: key, gameMD5: "other") == perGame)
+        #expect(store.snapshot().games["abc"]?[key] == nil)
+        // The game's layouts for other keys are untouched.
+        #expect(store.snapshot().games["abc"]?[otherKey] == move.groups)
+        #expect(store.revision > rev)
+        #expect(OverlayLayoutStore(fileURL: url).overrides(for: key, gameMD5: nil) == perGame)
+    }
+
+    @Test("Promoting a game with no own layout keeps the pad-kind layout and leaves no empty game entry")
+    func promoteWithoutGameLayer() {
+        let store = OverlayLayoutStore(fileURL: Self.tempURL())
+        store.set(move, for: key, gameMD5: nil)
+        store.promoteToAllGames(key: key, gameMD5: "abc")
+        #expect(store.overrides(for: key, gameMD5: nil) == move)
+        #expect(store.snapshot().games["abc"] == nil)
+    }
 }
