@@ -27,14 +27,48 @@ enum OverlayPadKindResolver {
         resolved != current && resolved != lastApplied
     }
 
+    /// The variant the host pushes into the core at boot, or `nil` to leave the core alone.
+    ///
+    /// - `explicit`: the player's per-game or per-system choice the binding has a family for
+    ///   (`explicitVariantID`). It is always the target.
+    /// - Otherwise the binding default `resolvedDefault` is the target only when the core has
+    ///   port devices (`hasSavedPortDevice != nil`), the player saved no Port Devices choice
+    ///   for port 0, and the core reports a variant (`coreCurrent != nil`). A `nil` read-back
+    ///   is a device that is no variant, e.g. Genesis "Joypad Auto", which stays as it is.
+    ///   Cores without port devices (Dolphin) get explicit choices only.
+    ///
+    /// The target is then pushed only when `shouldApplyVariant` agrees.
+    static func variantToPush(explicit: String?, resolvedDefault: String, coreCurrent: String?,
+                              hasSavedPortDevice: Bool?, lastApplied: String?) -> String? {
+        let target: String
+        if let explicit {
+            target = explicit
+        } else {
+            guard hasSavedPortDevice == false, coreCurrent != nil else { return nil }
+            target = resolvedDefault
+        }
+        return shouldApplyVariant(resolved: target, current: coreCurrent, lastApplied: lastApplied) ? target : nil
+    }
+
+    /// The player's own choice for the game: per-game, else per-system, skipping any the
+    /// system's binding has no family for. `nil` when neither is set (or the system is unbound).
+    static func explicitVariantID(for system: SystemIdentifier, gameMD5: String) -> String? {
+        guard let binding = SystemOverlayBindings.binding(for: system) else { return nil }
+        let candidates: [String?] = [
+            gameMD5.isEmpty ? nil : Defaults[.controllerLayoutVariantsByGame][gameMD5],
+            Defaults.controllerLayoutVariant(forSystemID: system.rawValue)
+        ]
+        return candidates.compactMap { $0 }.first { binding.families[$0] != nil }
+    }
+
     /// The first candidate the system's binding has a family for, in order: the per-game
     /// choice, the variant `variantProvider` reports it is running, the per-system choice,
     /// then the binding's own default (not `defaultControllerLayoutVariant`, which for Wii is
     /// the sideways remote). A candidate without a family is skipped, not taken. `nil` only
     /// for a system without an overlay binding.
     ///
-    /// The overlay passes the core as `variantProvider`; the emulator view controller passes
-    /// `nil` to get the settings' answer, which it then pushes into the core at boot.
+    /// The overlay passes the core as `variantProvider`. The emulator view controller's boot
+    /// push goes through `explicitVariantID` and `variantToPush` instead.
     static func resolvedVariantID(for system: SystemIdentifier, variantProvider: (any ConsoleVariantConfigurable)?,
                                   gameMD5: String) -> String? {
         guard let binding = SystemOverlayBindings.binding(for: system) else { return nil }

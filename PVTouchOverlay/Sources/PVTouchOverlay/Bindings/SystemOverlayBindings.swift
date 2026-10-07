@@ -55,11 +55,13 @@ public enum SystemOverlayBindings {
         labels: [.a: "A", .b: "B", .l: "L", .r: "R", .start: "START", .select: "SELECT"],
         palette: .gameBoy, hardwareSwitches: [])
 
+    // Default is the 6-button pad: it is a superset of the core's "Joypad Auto", so an untouched
+    // game is drawn with every button it might use and the host never pushes a device for it.
     private static func genesisLike(_ system: SystemIdentifier) -> SystemOverlayBinding {
         SystemOverlayBinding(
             system: system,
             families: ["genesis-3btn": ThreeFaceFamily.self, "genesis-6btn": SixFaceFamily.self],
-            defaultSubtype: "genesis-3btn",
+            defaultSubtype: "genesis-6btn",
             tokens: [.a: "a", .b: "b", .c: "c", .x: "x", .y: "y", .z: "z", .start: "start", .select: "mode"],
             labels: [.a: "A", .b: "B", .c: "C", .x: "X", .y: "Y", .z: "Z", .start: "START", .select: "MODE"],
             palette: .genesis, hardwareSwitches: [])

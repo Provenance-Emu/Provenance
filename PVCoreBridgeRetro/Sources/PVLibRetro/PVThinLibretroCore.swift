@@ -1141,6 +1141,13 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
         UserDefaults.standard.set(Int(deviceType), forKey: key)
     }
 
+    /// A saved choice under the current key or one of the legacy keys `restorePortDeviceTypes` migrates.
+    public func hasSavedPortDevice(forPort port: Int) -> Bool {
+        guard port >= 0, port < thinMaxPlayers else { return false }
+        return ([portDevicePersistenceKey(port: port)] + legacyPortDevicePersistenceKeys(port: port))
+            .contains { UserDefaults.standard.object(forKey: $0) != nil }
+    }
+
     /// Restore saved device type selections (called after core loads).
     func restorePortDeviceTypes() {
         // Always apply at least port 0 even when the core never sent SET_CONTROLLER_INFO

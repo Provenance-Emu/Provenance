@@ -42,20 +42,21 @@ struct OverlayPadKindResolverTests {
         resetSettings()
         defer { resetSettings() }
         let provider = VariantProvider()
-        #expect(subtype(.Genesis, provider) == "genesis-3btn")
-        Defaults.setControllerLayoutVariant("genesis-6btn", forSystemID: SystemIdentifier.Genesis.rawValue)
         #expect(subtype(.Genesis, provider) == "genesis-6btn")
-        provider.reported = "genesis-3btn"
+        Defaults.setControllerLayoutVariant("genesis-3btn", forSystemID: SystemIdentifier.Genesis.rawValue)
         #expect(subtype(.Genesis, provider) == "genesis-3btn")
-        Defaults[.controllerLayoutVariantsByGame] = [Self.md5: "genesis-6btn"]
+        provider.reported = "genesis-6btn"
         #expect(subtype(.Genesis, provider) == "genesis-6btn")
+        Defaults[.controllerLayoutVariantsByGame] = [Self.md5: "genesis-3btn"]
+        #expect(subtype(.Genesis, provider) == "genesis-3btn")
     }
 
     @Test("Binding defaults when nothing is set")
     func bindingDefaults() {
         resetSettings()
         defer { resetSettings() }
-        #expect(subtype(.Genesis, nil) == "genesis-3btn")
+        // 6-button is a superset of the core's "Joypad Auto".
+        #expect(subtype(.Genesis, nil) == "genesis-6btn")
         // Not `defaultControllerLayoutVariant`, which for Wii is the sideways remote.
         #expect(subtype(.Wii, nil) == "wii-wiimote-nunchuck")
         #expect(subtype(.PSX, nil) == "psx-dualshock")
@@ -66,31 +67,31 @@ struct OverlayPadKindResolverTests {
         resetSettings()
         defer { resetSettings() }
         Defaults[.controllerLayoutVariantsByGame] = [Self.md5: "not-a-variant"]
-        #expect(subtype(.Genesis, VariantProvider()) == "genesis-3btn")
-        Defaults.setControllerLayoutVariant("genesis-6btn", forSystemID: SystemIdentifier.Genesis.rawValue)
         #expect(subtype(.Genesis, VariantProvider()) == "genesis-6btn")
+        Defaults.setControllerLayoutVariant("genesis-3btn", forSystemID: SystemIdentifier.Genesis.rawValue)
+        #expect(subtype(.Genesis, VariantProvider()) == "genesis-3btn")
         // Another system's variant is not a candidate for this one.
         let provider = VariantProvider()
-        provider.reported = "wii-classic"
-        #expect(subtype(.Genesis, provider) == "genesis-6btn")
+        provider.reported = "psx-digital"
+        #expect(subtype(.Genesis, provider) == "genesis-3btn")
     }
 
     @Test("An empty MD5 skips the per-game lookup")
     func emptyMD5() {
         resetSettings()
         defer { resetSettings() }
-        Defaults[.controllerLayoutVariantsByGame] = ["": "genesis-6btn"]
-        #expect(subtype(.Genesis, nil, md5: "") == "genesis-3btn")
+        Defaults[.controllerLayoutVariantsByGame] = ["": "genesis-3btn"]
+        #expect(subtype(.Genesis, nil, md5: "") == "genesis-6btn")
     }
 
     @Test("32X and Sega CD resolve the Genesis subtypes")
     func genesisFamily() {
         resetSettings()
         defer { resetSettings() }
-        Defaults.setControllerLayoutVariant("genesis-6btn", forSystemID: SystemIdentifier.Sega32X.rawValue)
-        #expect(subtype(.Sega32X, nil) == "genesis-6btn")
-        Defaults[.controllerLayoutVariantsByGame] = [Self.md5: "genesis-6btn"]
-        #expect(subtype(.SegaCD, nil) == "genesis-6btn")
+        Defaults.setControllerLayoutVariant("genesis-3btn", forSystemID: SystemIdentifier.Sega32X.rawValue)
+        #expect(subtype(.Sega32X, nil) == "genesis-3btn")
+        Defaults[.controllerLayoutVariantsByGame] = [Self.md5: "genesis-3btn"]
+        #expect(subtype(.SegaCD, nil) == "genesis-3btn")
         #expect(SystemIdentifier.SegaCD.availableControllerLayoutVariants == [.genesis3Button, .genesis6Button])
     }
 
@@ -127,6 +128,59 @@ struct OverlayPadKindResolverTests {
                                                            lastApplied: "psx-dualshock"))
         #expect(OverlayPadKindResolver.shouldApplyVariant(resolved: "psx-digital", current: "psx-dualshock",
                                                           lastApplied: "psx-dualshock"))
+    }
+
+    @Test("Explicit choice: per-game beats per-system; unbound or unset is nil")
+    func explicitVariantID() {
+        resetSettings()
+        defer { resetSettings() }
+        #expect(OverlayPadKindResolver.explicitVariantID(for: .Genesis, gameMD5: Self.md5) == nil)
+        Defaults.setControllerLayoutVariant("genesis-3btn", forSystemID: SystemIdentifier.Genesis.rawValue)
+        #expect(OverlayPadKindResolver.explicitVariantID(for: .Genesis, gameMD5: Self.md5) == "genesis-3btn")
+        Defaults[.controllerLayoutVariantsByGame] = [Self.md5: "genesis-6btn"]
+        #expect(OverlayPadKindResolver.explicitVariantID(for: .Genesis, gameMD5: Self.md5) == "genesis-6btn")
+        // A per-game choice the binding has no family for falls through to the system one.
+        Defaults[.controllerLayoutVariantsByGame] = [Self.md5: "wii-classic"]
+        #expect(OverlayPadKindResolver.explicitVariantID(for: .Genesis, gameMD5: Self.md5) == "genesis-3btn")
+        #expect(OverlayPadKindResolver.explicitVariantID(for: .RetroArch, gameMD5: Self.md5) == nil)
+    }
+
+    private func push(explicit: String? = nil, resolvedDefault: String = "psx-dualshock",
+                      current: String?, saved: Bool?, lastApplied: String? = nil) -> String? {
+        OverlayPadKindResolver.variantToPush(explicit: explicit, resolvedDefault: resolvedDefault,
+                                             coreCurrent: current, hasSavedPortDevice: saved,
+                                             lastApplied: lastApplied)
+    }
+
+    @Test("Boot push: an explicit choice is pushed whatever the port holds")
+    func pushExplicit() {
+        #expect(push(explicit: "psx-digital", current: "psx-dualshock", saved: true) == "psx-digital")
+        #expect(push(explicit: "psx-digital", current: "psx-dualshock", saved: false) == "psx-digital")
+        // Dolphin (no port devices) takes explicit choices.
+        #expect(push(explicit: "wii-wiimote", resolvedDefault: "wii-wiimote-nunchuck",
+                     current: "wii-wiimote-nunchuck", saved: nil) == "wii-wiimote")
+        // Genesis Joypad Auto (nil read-back) still takes an explicit choice.
+        #expect(push(explicit: "genesis-3btn", resolvedDefault: "genesis-6btn", current: nil, saved: false)
+                == "genesis-3btn")
+        // Already running it, or already pushed: nothing.
+        #expect(push(explicit: "psx-digital", current: "psx-digital", saved: false) == nil)
+        #expect(push(explicit: "psx-digital", current: "psx-dualshock", saved: false,
+                     lastApplied: "psx-digital") == nil)
+    }
+
+    @Test("Boot push: the binding default only into an unsaved port that reports a variant")
+    func pushDefault() {
+        // Untouched PSX port (plain joypad = digital) with no saved choice gets DualShock.
+        #expect(push(current: "psx-digital", saved: false) == "psx-dualshock")
+        // A saved Port Devices choice is never overridden by a default.
+        #expect(push(current: "psx-digital", saved: true) == nil)
+        // Cores without port devices (Dolphin) never get a default.
+        #expect(push(resolvedDefault: "wii-wiimote-nunchuck", current: "wii-wiimote", saved: nil) == nil)
+        // Genesis Joypad Auto reads back nil and is left alone.
+        #expect(push(resolvedDefault: "genesis-6btn", current: nil, saved: false) == nil)
+        // Already running the default, or already pushed it.
+        #expect(push(current: "psx-dualshock", saved: false) == nil)
+        #expect(push(current: "psx-digital", saved: false, lastApplied: "psx-dualshock") == nil)
     }
 
     @Test("A system without variants keeps its standard subtype")

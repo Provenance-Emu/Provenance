@@ -77,4 +77,13 @@ public protocol PortDeviceConfigurable: AnyObject {
 
     /// Change the device type for the given port and persist the selection.
     func setDeviceType(_ deviceType: UInt, forPort port: Int)
+
+    /// Whether the player saved a Port Devices choice for the given port (0-based) for the
+    /// running game. Hosts use it to avoid overriding that choice with a default.
+    func hasSavedPortDevice(forPort port: Int) -> Bool
+}
+
+public extension PortDeviceConfigurable {
+    /// Cores that do not persist port devices never have a saved choice.
+    func hasSavedPortDevice(forPort port: Int) -> Bool { false }
 }

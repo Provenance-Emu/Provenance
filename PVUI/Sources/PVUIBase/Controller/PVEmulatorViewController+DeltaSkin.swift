@@ -247,31 +247,35 @@ extension PVEmulatorViewController {
         }
     }
 
-    /// Makes the core run the controller variant the overlay draws: the per-game choice, else
-    /// the per-system one, else the binding default (`OverlayPadKindResolver` without core
-    /// read-back).
+    /// Makes the core run the player's controller variant: the per-game choice, else the
+    /// per-system one. With neither, the binding default is pushed only into a core with port
+    /// devices whose port 0 has no saved Port Devices choice and reports a variant (so an
+    /// untouched Genesis "Joypad Auto" is left alone). See `OverlayPadKindResolver.variantToPush`.
     ///
     /// Triggers: the overlay mounting, the core reporting a restored variant, the core
     /// starting to run, and thin AV-info updates. On the thin wrapper the first two fire
     /// before the core is running, so readiness is the core having declared its port devices
-    /// (cores without port devices, e.g. Dolphin, are ready at once), not `isOn`. A resolved
-    /// id is pushed once (`shouldApplyVariant`), so a core that cannot take it is not looped on.
+    /// (cores without port devices, e.g. Dolphin, are ready at once), not `isOn`. A target
+    /// id is pushed once, so a core that cannot take it is not looped on.
     func applyResolvedControllerVariantIfNeeded() {
+        let portDevices = core as? any PortDeviceConfigurable
         guard isProgrammaticOverlayActive,
               let provider = core as? ConsoleVariantConfigurable,
-              (core as? any PortDeviceConfigurable).map({ !$0.controllerPortDescriptors.isEmpty }) ?? true,
+              portDevices.map({ !$0.controllerPortDescriptors.isEmpty }) ?? true,
               let game, !game.isInvalidated,
               let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
                                                                        persisted: game.systemIdentifier),
               system.availableControllerLayoutVariants != nil,
-              let resolved = OverlayPadKindResolver.resolvedVariantID(for: system, variantProvider: nil,
-                                                                      gameMD5: game.md5Hash),
-              OverlayPadKindResolver.shouldApplyVariant(resolved: resolved,
-                                                        current: provider.currentControllerLayoutVariantID,
-                                                        lastApplied: hostAppliedControllerVariantID) else { return }
-        hostAppliedControllerVariantID = resolved
-        ILOG("Overlay: applying controller layout variant \(resolved) at boot")
-        provider.applyControllerLayoutVariant(resolved)
+              let binding = SystemOverlayBindings.binding(for: system),
+              let target = OverlayPadKindResolver.variantToPush(
+                explicit: OverlayPadKindResolver.explicitVariantID(for: system, gameMD5: game.md5Hash),
+                resolvedDefault: binding.defaultSubtype,
+                coreCurrent: provider.currentControllerLayoutVariantID,
+                hasSavedPortDevice: portDevices?.hasSavedPortDevice(forPort: 0),
+                lastApplied: hostAppliedControllerVariantID) else { return }
+        hostAppliedControllerVariantID = target
+        ILOG("Overlay: applying controller layout variant \(target) at boot")
+        provider.applyControllerLayoutVariant(target)
     }
 
     /// Re-runs the boot apply once the core is running; thin AV-info updates also re-run it.
