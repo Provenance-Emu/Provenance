@@ -267,6 +267,7 @@ extension PVEmulatorViewController {
         let inputHandler = DeltaSkinInputHandler(emulatorCore: core,
                                                controllerVC: controllerViewController,
                                                emulatorController: self)
+        installMetalDualScreenSwap(on: inputHandler)
 
         // CRITICAL: Store this input handler in the shared property so it can be accessed
         // throughout the emulator controller, especially for skin changes

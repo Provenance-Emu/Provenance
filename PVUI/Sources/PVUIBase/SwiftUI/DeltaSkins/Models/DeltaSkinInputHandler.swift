@@ -50,6 +50,21 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// Callback for menu button presses
     var menuButtonHandler: (() -> Void)?
 
+    /// Normalised skin id of the DS screen-swap button.
+    private static let dsScreenSwapButtonId = "screenswap"
+
+    /// Swaps the DS screens in the frontend renderer. Called with the requested
+    /// swap state; returns `true` when the renderer applied it, `false` to let the
+    /// core handle the swap itself.
+    var frontendScreenSwapHandler: ((_ swapped: Bool) -> Bool)?
+
+    /// `true` while the frontend renderer shows each DS screen in the other one's
+    /// skin slot. The skin's stylus area follows the DS bottom screen.
+    @Published var dsScreensSwapped = false
+
+    /// Whether the last screen-swap button press went to the frontend renderer.
+    private var frontendScreenSwapPressConsumed = false
+
     /// Track previous joystick state for D-pad conversion
     private var previousJoystickState: (x: Float, y: Float)? = nil
 
@@ -576,6 +591,12 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
+        // The Metal dual-screen renderer splits the framebuffer at fixed places,
+        // so it swaps the two screens itself rather than letting the core move them.
+        if toggleFrontendScreenSwap() {
+            return
+        }
+
         // DS cores understand the screenSwap button natively
         if let responder = core as? PVDSSystemResponderClient {
             responder.didPush(.screenSwap, forPlayer: 0)
@@ -590,6 +611,25 @@ public class DeltaSkinInputHandler: ObservableObject {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             self?.forwardButtonPress("screenswap", isPressed: false)
         }
+    }
+
+    /// Asks the frontend to swap the DS screens. Returns `true` when it did.
+    private func toggleFrontendScreenSwap() -> Bool {
+        guard let handler = frontendScreenSwapHandler, handler(!dsScreensSwapped) else { return false }
+        dsScreensSwapped.toggle()
+        ILOG("DS screens swapped in the renderer: \(dsScreensSwapped)")
+        return true
+    }
+
+    /// Routes a DS screen-swap skin button to the frontend swap. A consumed press
+    /// also consumes its release so the core never sees half a button press.
+    private func consumeFrontendScreenSwapButton(isPressed: Bool) -> Bool {
+        if isPressed {
+            frontendScreenSwapPressConsumed = toggleFrontendScreenSwap()
+            return frontendScreenSwapPressConsumed
+        }
+        defer { frontendScreenSwapPressConsumed = false }
+        return frontendScreenSwapPressConsumed
     }
 
     /// Toggle haptic feedback on or off globally.
@@ -1777,6 +1817,12 @@ public class DeltaSkinInputHandler: ObservableObject {
         // Normalize the button ID
         let normalizedId = buttonId.lowercased()
 
+        if SystemIdentifier(rawValue: core.systemIdentifier ?? "") == .DS,
+           normalizeSkinButtonId(normalizedId, for: .DS) == Self.dsScreenSwapButtonId,
+           consumeFrontendScreenSwapButton(isPressed: isPressed) {
+            return
+        }
+
         // Log system info for debugging
         if let systemId = core.systemIdentifier {
             DLOG("Forwarding button \(isPressed ? "press" : "release"): \(buttonId) (normalized: \(normalizedId)) for system: \(systemId)")
@@ -2540,7 +2586,7 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["l", "l1"].contains(s) { return "l" }
             if ["r", "r1"].contains(s) { return "r" }
             if ["start", "select"].contains(s) { return s }
-            if ["screenswap", "ss", "swap"].contains(s) { return "screenswap" }
+            if ["screenswap", "ss", "swap"].contains(s) { return Self.dsScreenSwapButtonId }
             if ["rotate"].contains(s) { return "rotate" }
             return s
         case .WonderSwan, .WonderSwanColor:

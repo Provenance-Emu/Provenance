@@ -2409,6 +2409,7 @@ extension PVEmulatorViewController {
             controllerVC: controllerViewController,
             emulatorController: self
         )
+        installMetalDualScreenSwap(on: inputHandler)
 
         // Store the input handler for reuse
         sharedInputHandler = inputHandler

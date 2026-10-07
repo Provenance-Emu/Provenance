@@ -51,9 +51,11 @@ extension PVEmulatorViewController {
     /// Call this instead of `applyFrameToGPUView` when `canUseMetalDualScreenRendering`
     /// is `true`.
     ///
+    /// - Parameter screensSwapped: show each skin screen's opposite DS screen;
+    ///   `nil` keeps the input handler's current swap state.
     /// - Returns: `true` if the layout was successfully applied.
     @discardableResult
-    func applyMetalDualScreenLayout() -> Bool {
+    func applyMetalDualScreenLayout(screensSwapped: Bool? = nil) -> Bool {
         guard let metalVC = gpuViewController as? PVMetalViewController else { return false }
         guard isDeltaSkinEnabled, let skin = currentSkin else { return false }
 
@@ -86,6 +88,7 @@ extension PVEmulatorViewController {
             metalVC.dualScreenLayout = nil
             return false
         }
+        let swapped = screensSwapped ?? (sharedInputHandler?.dsScreensSwapped ?? false)
 
         // View layout parameters (mirrors currentDualScreenViewportFrame()).
         let viewSize = view.bounds.size
@@ -137,7 +140,7 @@ extension PVEmulatorViewController {
             guard let srcRect = DualScreenSourceMapping.sourceRect(
                 skinInputFrame: screen.inputFrame,
                 defaultScreen: index == 0 ? .top : .bottom,
-                swapped: false,
+                swapped: swapped,
                 layout: coreLayout) else { continue }
 
             // --- Destination (view-space points) ---
@@ -187,10 +190,25 @@ extension PVEmulatorViewController {
         return true
     }
 
+    /// Lets the skin's screen-swap inputs swap the two Metal quads instead of the
+    /// core's framebuffer halves (the split is fixed to the core's layout, so a
+    /// core-side swap would also move its touch region away from the stylus area).
+    /// Carries over the swap state of the handler being replaced.
+    func installMetalDualScreenSwap(on inputHandler: DeltaSkinInputHandler) {
+        inputHandler.dsScreensSwapped = sharedInputHandler?.dsScreensSwapped ?? false
+        inputHandler.frontendScreenSwapHandler = { [weak self] swapped in
+            guard let self, self.isMetalDualScreenActive else { return false }
+            return self.applyMetalDualScreenLayout(screensSwapped: swapped)
+        }
+    }
+
     /// Removes the Metal dual-screen layout (reverts to standard fullscreen blit).
     func clearMetalDualScreenLayout() {
         (gpuViewController as? PVMetalViewController)?.dualScreenLayout = nil
         isMetalDualScreenActive = false
+        // Without the split the core draws both screens itself, so the stylus
+        // area must go back to the skin's bottom screen.
+        sharedInputHandler?.dsScreensSwapped = false
     }
 
     // MARK: Helpers
