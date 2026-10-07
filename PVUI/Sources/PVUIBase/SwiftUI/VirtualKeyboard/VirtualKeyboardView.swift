@@ -221,6 +221,14 @@ public struct VirtualKeyboardView: View {
 
     private static let dragCoordinateSpace = "VirtualKeyboardContainer"
 
+    /// Gap between the sheet and the screen's horizontal edges.
+    private static let sheetHorizontalPadding: CGFloat = 4
+
+    /// Minimum clearance between the sheet and the bottom screen edge. The
+    /// emulator view controller defers bottom-edge gestures, so keys must stay out
+    /// of roughly this zone; the safe-area inset counts toward it.
+    private static let minimumBottomPadding: CGFloat = 20
+
     private var isLandscape: Bool {
         hSizeClass == .regular && vSizeClass == .compact
     }
@@ -271,8 +279,11 @@ public struct VirtualKeyboardView: View {
                         .strokeBorder(Color.white.opacity(0.18), lineWidth: 0.5)
                 )
         )
-        // Publish the visible sheet's frame (in the container coordinate space) so
-        // the passthrough container can pass through touches outside of it.
+        .padding(.horizontal, Self.sheetHorizontalPadding)
+        // Publish the visible sheet's frame (measured AFTER the horizontal padding so
+        // it covers the 4pt gutters the user can touch) so the passthrough container
+        // can pass through touches outside of it. The frame is relative to the
+        // safe-area origin; the container converts it (see `containerFrame`).
         .background(
             GeometryReader { sheetGeo in
                 Color.clear.preference(
@@ -281,8 +292,9 @@ public struct VirtualKeyboardView: View {
                 )
             }
         )
-        .padding(.horizontal, 4)
-        .padding(.bottom, geometry.safeAreaInsets.bottom > 0 ? 0 : 4)
+        // Keep keys clear of the bottom screen-edge gesture zone even on devices
+        // without a home indicator (the safe area contributes nothing there).
+        .padding(.bottom, max(Self.minimumBottomPadding - geometry.safeAreaInsets.bottom, 0))
         .animation(.easeInOut(duration: 0.2), value: viewModel.isCollapsed)
     }
 
@@ -445,7 +457,12 @@ private struct VirtualKeyButton: View {
     let key: VirtualKey
     @ObservedObject var viewModel: VirtualKeyboardViewModel
 
-    @State private var isPressed: Bool = false
+    /// True only while a touch is physically down. A `@GestureState` resets itself
+    /// when the gesture is cancelled (scroll takeover, system gesture, view removal),
+    /// which `onEnded` never reports.
+    @GestureState private var isPressed: Bool = false
+    /// Whether `keyDown` has been sent and still awaits its matching `keyUp`.
+    @State private var keyIsDown: Bool = false
     private let haptic = UIImpactFeedbackGenerator(style: .light)
 
     private var isModifierActive: Bool {
@@ -458,26 +475,33 @@ private struct VirtualKeyButton: View {
             keyBackground
             keyLabel
         }
-        .frame(height: 36)
+        .frame(height: VirtualKeyboardViewModel.keyHeight)
         .contentShape(Rectangle())
         .gesture(
             DragGesture(minimumDistance: 0)
+                .updating($isPressed) { _, state, _ in state = true }
                 .onChanged { _ in
-                    if !isPressed {
-                        isPressed = true
+                    if !keyIsDown {
+                        keyIsDown = true
                         haptic.impactOccurred()
                         viewModel.keyDown(key)
                     }
                 }
-                .onEnded { _ in
-                    if isPressed {
-                        isPressed = false
-                        viewModel.keyUp(key)
-                    }
-                }
+                .onEnded { _ in releaseKey() }
         )
+        // A cancelled gesture resets `isPressed` without calling `onEnded`;
+        // release here so the key never sticks down.
+        .onChange(of: isPressed) { _, pressed in
+            if !pressed { releaseKey() }
+        }
         .accessibilityLabel(key.label)
         .accessibilityAddTraits(.isButton)
+    }
+
+    private func releaseKey() {
+        guard keyIsDown else { return }
+        keyIsDown = false
+        viewModel.keyUp(key)
     }
 
     @ViewBuilder

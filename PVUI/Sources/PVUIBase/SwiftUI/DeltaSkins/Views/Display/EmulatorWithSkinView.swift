@@ -78,13 +78,9 @@ struct EmulatorWithSkinView: View {
     /// Evaluated once on appear and cached to avoid repeated protocol casts.
     @State private var coreSupportsLightGun: Bool = false
 
-    // MARK: - Keyboard overlay (iOS only)
-
-    /// Whether the virtual keyboard overlay is currently shown.
-    /// Only relevant when the loaded skin declares a `keyboardOverlay` config.
-    #if !os(tvOS)
-    @State private var isKeyboardOverlayVisible: Bool = false
-    #endif
+    /// Drives the single app-level virtual keyboard (hosted by `PVEmulatorViewController`).
+    /// Injected by `EmulatorWrapperView`.
+    @EnvironmentObject private var virtualInputState: VirtualInputState
 
     // Initialize with a game, extracting the necessary properties
     init(
@@ -141,12 +137,6 @@ struct EmulatorWithSkinView: View {
                                         onRefreshRequested()
                                     }
 
-                                    #if !os(tvOS)
-                                    if let kbConfig = skin.keyboardOverlay, kbConfig.autoShow {
-                                        isKeyboardOverlayVisible = true
-                                        DLOG("🎮 EmulatorWithSkinView: Auto-showing keyboard overlay (variant: \(kbConfig.variant.rawValue))")
-                                    }
-                                    #endif
                                 }
                             }
                         }
@@ -224,16 +214,18 @@ struct EmulatorWithSkinView: View {
                 // MARK: Keyboard overlay (iOS only)
                 #if !os(tvOS)
                 if let skin = skinLoader.selectedSkin,
-                   let kbConfig = skin.keyboardOverlay {
+                   skin.keyboardOverlay != nil {
                     // Keyboard toggle button — shown in the bottom-left corner so it
                     // does not overlap the debug ladybug (bottom-right).
                     VStack {
                         Spacer()
                         HStack {
                             Button(action: {
-                                isKeyboardOverlayVisible.toggle()
+                                // The one keyboard is hosted by the emulator view controller;
+                                // this just routes to its toggle.
+                                virtualInputState.onToggleKeyboard()
                             }) {
-                                Image(systemName: isKeyboardOverlayVisible
+                                Image(systemName: virtualInputState.isKeyboardVisible
                                       ? "keyboard.fill"
                                       : "keyboard")
                                     .font(.system(size: 20))
@@ -246,13 +238,6 @@ struct EmulatorWithSkinView: View {
                             Spacer()
                         }
                     }
-
-                    // The keyboard sheet itself
-                    DeltaSkinKeyboardOverlayView(
-                        config: kbConfig,
-                        inputHandler: inputHandler,
-                        isVisible: $isKeyboardOverlayVisible
-                    )
                 }
                 #endif
             }
@@ -280,13 +265,6 @@ struct EmulatorWithSkinView: View {
 
                 // Listen for skin selection changes to refresh view dynamically
                 setupSkinChangeNotificationObserver()
-
-                // Auto-show keyboard overlay if the skin was already loaded and requests it (iOS only)
-                #if !os(tvOS)
-                if let kbConfig = skinLoader.selectedSkin?.keyboardOverlay, kbConfig.autoShow {
-                    isKeyboardOverlayVisible = true
-                }
-                #endif
             }
             .onDisappear {
                 // Cancel any in-flight skin loading task

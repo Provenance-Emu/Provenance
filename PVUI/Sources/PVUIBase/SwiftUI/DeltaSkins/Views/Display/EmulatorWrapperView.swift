@@ -18,8 +18,8 @@ struct EmulatorWrapperView: View {
     /// Observable state for virtual keyboard/mouse overlays.  Injected as an
     /// environment object so `VirtualInputToggleOverlayView` and any other child
     /// can subscribe without a direct view-controller reference.
-    /// Nil on platforms where virtual input overlays are unavailable.
-    var virtualInputState: VirtualInputState?
+    /// Inert (no keyboard/mouse support) when the host supplies none.
+    let virtualInputState: VirtualInputState
 
     /// Explicit initializer — required because `@ObservedObject` + defaulted `let` fields do not produce a reliable memberwise `init` for all call sites.
     init(
@@ -39,33 +39,20 @@ struct EmulatorWrapperView: View {
         self.preselectedSkinIdentifier = preselectedSkinIdentifier
         self.onInitialSkinResolutionComplete = onInitialSkinResolutionComplete
         _inputHandler = ObservedObject(wrappedValue: inputHandler)
-        self.virtualInputState = virtualInputState
+        self.virtualInputState = virtualInputState ?? VirtualInputState(supportsKeyboard: false, supportsMouse: false)
     }
 
     var body: some View {
-        if let state = virtualInputState {
-            EmulatorWithSkinView(
-                game: game,
-                coreInstance: coreInstance,
-                onSkinLoaded: onSkinLoaded,
-                onRefreshRequested: onRefreshRequested,
-                preselectedSkinIdentifier: preselectedSkinIdentifier,
-                onInitialSkinResolutionComplete: onInitialSkinResolutionComplete
-            )
-            .environmentObject(inputHandler)
-            .environmentObject(state)
-            .ignoresSafeArea(.all)
-        } else {
-            EmulatorWithSkinView(
-                game: game,
-                coreInstance: coreInstance,
-                onSkinLoaded: onSkinLoaded,
-                onRefreshRequested: onRefreshRequested,
-                preselectedSkinIdentifier: preselectedSkinIdentifier,
-                onInitialSkinResolutionComplete: onInitialSkinResolutionComplete
-            )
-            .environmentObject(inputHandler)
-            .ignoresSafeArea(.all)
-        }
+        EmulatorWithSkinView(
+            game: game,
+            coreInstance: coreInstance,
+            onSkinLoaded: onSkinLoaded,
+            onRefreshRequested: onRefreshRequested,
+            preselectedSkinIdentifier: preselectedSkinIdentifier,
+            onInitialSkinResolutionComplete: onInitialSkinResolutionComplete
+        )
+        .environmentObject(inputHandler)
+        .environmentObject(virtualInputState)
+        .ignoresSafeArea(.all)
     }
 }

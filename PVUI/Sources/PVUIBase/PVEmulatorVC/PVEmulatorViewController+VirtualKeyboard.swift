@@ -281,10 +281,10 @@ extension PVEmulatorViewController {
 
         // Forward the SwiftUI-published visible-sheet frame into the container so
         // its hitTest only captures touches over the actually-visible keyboard.
+        // Delivered synchronously (no RunLoop hop) so the gate never lags the sheet.
         keyboardFrameCancellable = viewModel.$keyboardFrame
-            .receive(on: RunLoop.main)
             .sink { [weak container] frame in
-                container?.visibleKeyboardFrame = frame
+                container?.visibleSheetFrame = frame
             }
 
         ILOG("[VirtualKeyboard] Keyboard overlay shown (layout: \(layout), opacity: \(opacity), animated: \(animated))")
@@ -470,20 +470,29 @@ extension PVEmulatorViewController: VirtualKeyboardDelegate {
 ///
 /// The hosting controller's view fills this container edge-to-edge, so a naive
 /// `hit === self` check never passes (the hit is always the hosting view). Instead
-/// we gate hit-testing to `visibleKeyboardFrame`, which the SwiftUI view publishes
-/// (via a preference key → view model → here) as the actual on-screen bounds of
-/// the visible sheet — collapsed handle or full keyboard. Touches outside that
-/// rect fall through to the game / skin / on-screen controls below.
+/// we gate hit-testing to `visibleSheetFrame`, which the SwiftUI view publishes
+/// (via a preference key -> view model -> here) as the bounds of the visible
+/// sheet (collapsed handle or full keyboard). Touches outside that rect fall
+/// through to the game / skin / on-screen controls below.
+///
+/// SwiftUI measures that frame relative to the SAFE-AREA origin, while `hitTest`
+/// receives full-bleed container points, so the gate converts at hit-test time via
+/// `VirtualKeyboardViewModel.containerFrame(forSheetFrame:safeAreaInsets:)`.
+/// Reading the live insets means rotation never leaves a stale gate.
 final class KeyboardPassthroughView: UIView {
-    /// The frame of the visible keyboard sheet, in this view's coordinate space.
-    /// When `.zero` (not yet measured) the view passes all touches through.
-    var visibleKeyboardFrame: CGRect = .zero
+    /// The frame of the visible keyboard sheet in the SwiftUI safe-area-relative
+    /// space. When `.zero` (not yet measured) the view passes all touches through.
+    var visibleSheetFrame: CGRect = .zero
 
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let gate = VirtualKeyboardViewModel.containerFrame(
+            forSheetFrame: visibleSheetFrame,
+            safeAreaInsets: safeAreaInsets
+        )
         // Until the SwiftUI view reports its frame, don't steal any touches.
-        guard !visibleKeyboardFrame.isEmpty else { return nil }
+        guard !gate.isEmpty else { return nil }
         // Only capture touches that land within the visible keyboard sheet.
-        guard visibleKeyboardFrame.contains(point) else { return nil }
+        guard gate.contains(point) else { return nil }
         return super.hitTest(point, with: event)
     }
 }
