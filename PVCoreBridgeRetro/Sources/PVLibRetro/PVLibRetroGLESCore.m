@@ -215,6 +215,12 @@ static void pv_vulkan_set_signal_semaphore(void *handle, VkSemaphore semaphore);
 
 - (BOOL)rendersToOpenGL { return YES; }
 - (BOOL)isDoubleBuffered { return YES; }
+/// Frames reach the render delegate from runGLESRenderThread (and the core's own
+/// swap callback), never from the emulation loop. The loop would call
+/// -swapBuffers while holding frontBufferLock, and the delegate's
+/// didRenderFrameOnAlternateThread takes that same non-recursive NSLock, which
+/// deadlocks the "PV Emulation" thread (and then the main thread in draw).
+- (BOOL)presentsFramesOffEmulationLoop { return YES; }
 // Use dynamic pixel format from base class instead of hardcoded values
 // This allows the GLES core to adapt to different pixel formats (RGB565, XRGB8888, etc.)
 - (GLenum)pixelFormat { return [super pixelFormat]; }

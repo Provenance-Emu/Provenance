@@ -345,7 +345,11 @@ public final class GCControllerHapticsManager {
         #endif
 
         // Keep intensity cache and adaptive trigger state in sync with UserDefaults changes.
-        let udObs = nc.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+        // queue: nil, not .main: with .main, NotificationCenter makes the POSTING thread wait
+        // until the main queue runs this block. The first read of a `Defaults` key registers its
+        // default (posting this notification), so an emulation thread holding the emu lock blocked
+        // on main while main waited for that lock: 0x8badf00d. The body already hops to the main actor.
+        let udObs = nc.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: nil) { [weak self] _ in
             Task { @MainActor in
                 self?.refreshIntensityCache()
                 if #available(iOS 14.5, tvOS 14.5, *) {

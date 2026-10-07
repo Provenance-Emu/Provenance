@@ -514,6 +514,13 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
     /// who unlocks early (e.g. first-frame trigger) still sees the toast.
     /// Cheevos audit Section F.1.
     NSMutableArray<NSDictionary *> *_pendingUnlocks;
+    /// Guards `_achievementTriggeredBlock` and `_pendingUnlocks` ONLY. Deliberately
+    /// NOT `@synchronized(self)`: the emulation loop holds that around every
+    /// `executeFrame`, and the main thread wires the block while the emu thread
+    /// can be parked inside `executeFrame` waiting on the main queue (e.g. a
+    /// synchronous main-queue NSNotification observer). Held for a pointer
+    /// copy / array swap only — never across a callback or any blocking call.
+    os_unfair_lock _cheevosBlockLock;
 
     // AV info & system info
     struct retro_system_info _rawSystemInfo;
@@ -1003,9 +1010,9 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
 /// Builds the flat<->bus rc_libretro memory map for the loaded console.
 - (void)_pvthin_buildRcheevosMemoryRegionsForConsole:(uint32_t)consoleID;
 
-// Enqueue an unlock notification when achievementTriggeredBlock isn't wired
-// yet — drained by the custom setter (cheevos audit Section F.1).
-- (void)_pvthin_enqueuePendingUnlockWithID:(uint32_t)achievementID
+// Deliver an unlock to achievementTriggeredBlock, or — when it isn't wired yet —
+// enqueue it for the custom setter to drain (cheevos audit Section F.1).
+- (void)_pvthin_deliverOrEnqueueUnlockWithID:(uint32_t)achievementID
                                      title:(NSString *)title
                                       desc:(NSString *)desc
                                     points:(uint32_t)points
@@ -2639,6 +2646,9 @@ static bool thin_environment(unsigned cmd, void *data) {
 @synthesize biosPath = _biosPath;
 @synthesize savePath = _savePath;
 @synthesize frontendDelegate = _frontendDelegate;
+// achievementTriggeredBlock has a custom getter/setter (below) that guard the ivar with
+// `_cheevosBlockLock`, so the ivar must be named explicitly.
+@synthesize achievementTriggeredBlock = _achievementTriggeredBlock;
 // Note: controllerPortInfo is a readonly property with an explicit getter below; no @synthesize needed.
 
 #if !TARGET_OS_WATCH
@@ -3061,6 +3071,7 @@ static bool thin_environment(unsigned cmd, void *data) {
         _coreOptions = [NSMutableDictionary dictionary];
         _coreOptionsDirty = NO;
         _optionsLock = OS_UNFAIR_LOCK_INIT;
+        _cheevosBlockLock = OS_UNFAIR_LOCK_INIT;
         _coreOptionDefinitions = [NSMutableArray array];
         _coreOptionCategories = [NSMutableArray array];
         _coreOptionVisibility = [NSMutableDictionary dictionary];
@@ -3311,8 +3322,8 @@ static const NSTimeInterval kThinBlockingLoadWaitOffMainThread = 10.0;
 ///
 /// This is NOT a "give the core longer to finish" timeout — it is the maximum
 /// time the emulation thread may hold `@synchronized(self)`. That lock is the
-/// same one `-[PVCoreObjCBridge setPauseEmulation:]` and
-/// `-setAchievementTriggeredBlock:` take ON THE MAIN THREAD, so a wait of
+/// same one `-[PVCoreObjCBridge setPauseEmulation:]` takes ON THE MAIN THREAD
+/// (`-setAchievementTriggeredBlock:` no longer does — see `_cheevosBlockLock`), so a wait of
 /// `DISPATCH_TIME_FOREVER` under it turns any stall on the core's own thread
 /// into a whole-app hang. Expiring costs nothing: no extra tick is banked (see
 /// `_blockingTickOutstanding`), the lock is released so main can make progress,
@@ -8596,23 +8607,17 @@ static void pvthin_rcheevos_event_handler(const rc_client_event_t *event, rc_cli
             NSString *desc  = ach->description ? @(ach->description) : @"";
             NSURL *badge = pvthin_rcheevos_badge_url(ach);
             BOOL hardcore = (BOOL)rc_client_get_hardcore_enabled(client);
-            ILOG(@"[CHEEVOS-DIAG] TRIGGERED id=%u points=%u hardcore=%d title=%@ hasBlock=%d",
-                 ach->id, ach->points, (int)hardcore, title,
-                 (int)(bridge.achievementTriggeredBlock != nil));
-            if (bridge.achievementTriggeredBlock) {
-                bridge.achievementTriggeredBlock(ach->id, title, desc, ach->points, badge, hardcore);
-            } else {
-                // OSD wiring not in place yet (early-boot trigger). Queue the
-                // unlock so the toast still shows once the Swift core sets
-                // achievementTriggeredBlock — see flushPendingUnlocks (audit F.1).
-                WLOG(@"[CHEEVOS-DIAG] TRIGGERED queued — achievementTriggeredBlock is nil; will replay on wire-up.");
-                [bridge _pvthin_enqueuePendingUnlockWithID:ach->id
-                                                     title:title
-                                                      desc:desc
-                                                    points:ach->points
-                                                  badgeURL:badge
-                                                  hardcore:hardcore];
-            }
+            ILOG(@"[CHEEVOS-DIAG] TRIGGERED id=%u points=%u hardcore=%d title=%@",
+                 ach->id, ach->points, (int)hardcore, title);
+            // Snapshots the block under `_cheevosBlockLock` (or queues the unlock
+            // when the OSD wiring isn't in place yet — early-boot trigger; replayed
+            // by the setter, audit F.1) and invokes it OUTSIDE the lock.
+            [bridge _pvthin_deliverOrEnqueueUnlockWithID:ach->id
+                                                   title:title
+                                                    desc:desc
+                                                  points:ach->points
+                                                badgeURL:badge
+                                                hardcore:hardcore];
             break;
         }
         case RC_CLIENT_EVENT_ACHIEVEMENT_PROGRESS_INDICATOR_SHOW: {
@@ -8891,13 +8896,19 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
 
 #pragma mark - Pending-unlock queue (cheevos audit F.1)
 
-- (void)_pvthin_enqueuePendingUnlockWithID:(uint32_t)achievementID
-                                     title:(NSString *)title
-                                      desc:(NSString *)desc
-                                    points:(uint32_t)points
-                                  badgeURL:(nullable NSURL *)badgeURL
-                                  hardcore:(BOOL)hardcore {
-    @synchronized(self) {
+- (void)_pvthin_deliverOrEnqueueUnlockWithID:(uint32_t)achievementID
+                                      title:(NSString *)title
+                                       desc:(NSString *)desc
+                                     points:(uint32_t)points
+                                   badgeURL:(nullable NSURL *)badgeURL
+                                   hardcore:(BOOL)hardcore {
+    // Runs on the emulation thread, inside the loop's `@synchronized(self)`.
+    // `_cheevosBlockLock` is a separate lock, so the main thread wiring the block
+    // never has to wait on the emulation loop (0x8BADF00D in 3.4.0 / Saturn).
+    void (^block)(uint32_t, NSString *, NSString *, uint32_t, NSURL * _Nullable, BOOL) = nil;
+    os_unfair_lock_lock(&_cheevosBlockLock);
+    block = _achievementTriggeredBlock;
+    if (!block) {
         if (!_pendingUnlocks) {
             _pendingUnlocks = [NSMutableArray array];
         }
@@ -8918,34 +8929,51 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
         };
         [_pendingUnlocks addObject:entry];
     }
+    os_unfair_lock_unlock(&_cheevosBlockLock);
+
+    if (block) {
+        block(achievementID, title, desc, points, badgeURL, hardcore);
+    } else {
+        WLOG(@"[CHEEVOS-DIAG] TRIGGERED queued — achievementTriggeredBlock is nil; will replay on wire-up.");
+    }
+}
+
+- (void (^)(uint32_t, NSString *, NSString *, uint32_t, NSURL * _Nullable, BOOL))achievementTriggeredBlock {
+    os_unfair_lock_lock(&_cheevosBlockLock);
+    void (^block)(uint32_t, NSString *, NSString *, uint32_t, NSURL * _Nullable, BOOL) = _achievementTriggeredBlock;
+    os_unfair_lock_unlock(&_cheevosBlockLock);
+    return block;
 }
 
 /// Custom setter that drains the pending-unlock queue when the Swift core
 /// wires its block. Without this, unlocks that fired before wire-up would
 /// be lost (per audit F.1).
+///
+/// Called on the MAIN thread. It must never take `@synchronized(self)` — the
+/// emulation loop holds that lock around `executeFrame`, and the emu thread can
+/// be blocked on the main queue while holding it (see `_cheevosBlockLock`).
 - (void)setAchievementTriggeredBlock:(void (^)(uint32_t, NSString *, NSString *,
                                                uint32_t, NSURL * _Nullable, BOOL))block {
-    // Standard @synthesize-style storage; we don't have an ivar declared for
-    // the property because @property auto-synthesizes one.  Use the same name.
-    _achievementTriggeredBlock = [block copy];
-    if (!block) { return; }
-
-    NSArray<NSDictionary *> *drained;
-    @synchronized(self) {
+    void (^copied)(uint32_t, NSString *, NSString *, uint32_t, NSURL * _Nullable, BOOL) = [block copy];
+    NSArray<NSDictionary *> *drained = nil;
+    os_unfair_lock_lock(&_cheevosBlockLock);
+    _achievementTriggeredBlock = copied;
+    if (copied) {
         drained = _pendingUnlocks;
         _pendingUnlocks = nil;
     }
+    os_unfair_lock_unlock(&_cheevosBlockLock);
     if (drained.count == 0) { return; }
     ILOG(@"[CHEEVOS-DIAG] flushing %lu pending unlock(s) to newly-wired block", (unsigned long)drained.count);
     for (NSDictionary *entry in drained) {
         id badge = entry[@"badge"];
         NSURL *badgeURL = (badge == [NSNull null]) ? nil : (NSURL *)badge;
-        block(((NSNumber *)entry[@"id"]).unsignedIntValue,
-              entry[@"title"],
-              entry[@"desc"],
-              ((NSNumber *)entry[@"points"]).unsignedIntValue,
-              badgeURL,
-              ((NSNumber *)entry[@"hardcore"]).boolValue);
+        copied(((NSNumber *)entry[@"id"]).unsignedIntValue,
+               entry[@"title"],
+               entry[@"desc"],
+               ((NSNumber *)entry[@"points"]).unsignedIntValue,
+               badgeURL,
+               ((NSNumber *)entry[@"hardcore"]).boolValue);
     }
 }
 
