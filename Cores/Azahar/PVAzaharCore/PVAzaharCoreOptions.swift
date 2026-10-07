@@ -12,18 +12,25 @@ import UIKit
         .enumeration(.init(title: "Resolution Upscaling", description: "Internal render scale. Higher costs GPU time.", requiresRestart: true),
                      values: (1...6).map { .init(title: "\($0)X", description: nil, value: $0) }, defaultValue: 1)
     }
+    /// tvOS has no touch screen to stack under the top one, so it defaults to Large Screen.
+    #if os(tvOS)
+    static let defaultLayout = 2
+    #else
+    static let defaultLayout = 0
+    #endif
+    // The bridge reads layout, swap, CPU clock and speed limit only at boot, hence requiresRestart.
     static var layoutOption: CoreOption {
-        .enumeration(.init(title: "Screen Layout", description: nil, requiresRestart: false),
+        .enumeration(.init(title: "Screen Layout", description: nil, requiresRestart: true),
                      values: [
                         .init(title: "Default (stacked)", description: nil, value: 0),
                         .init(title: "Single Screen", description: nil, value: 1),
                         .init(title: "Large Screen", description: nil, value: 2),
                         .init(title: "Side by Side", description: nil, value: 3),
                         .init(title: "Hybrid", description: nil, value: 4)
-                     ], defaultValue: 0)
+                     ], defaultValue: defaultLayout)
     }
     static var swapScreensOption: CoreOption {
-        .bool(.init(title: "Swap Screens", description: nil, requiresRestart: false), defaultValue: false)
+        .bool(.init(title: "Swap Screens", description: nil, requiresRestart: true), defaultValue: false)
     }
     static var hardwareShaderOption: CoreOption {
         .bool(.init(title: "Hardware Shader", description: "GPU vertex/geometry shaders. Disable only for debugging.", requiresRestart: true), defaultValue: true)
@@ -57,7 +64,7 @@ import UIKit
         .bool(.init(title: "New 3DS Mode", description: "Extra CPU cores and memory. Required by some games.", requiresRestart: true), defaultValue: true)
     }
     static var cpuClockOption: CoreOption {
-        .enumeration(.init(title: "CPU Clock", description: "Below 100% speeds up some games; above 100% can reduce lag or break games.", requiresRestart: false),
+        .enumeration(.init(title: "CPU Clock", description: "Below 100% speeds up some games; above 100% can reduce lag or break games.", requiresRestart: true),
                      values: [25, 50, 75, 100, 125, 150, 200, 300, 400].map { .init(title: "\($0)%", description: nil, value: $0) }, defaultValue: 100)
     }
     static var regionOption: CoreOption {
@@ -69,9 +76,10 @@ import UIKit
                         .init(title: "Korea", description: nil, value: 5), .init(title: "Taiwan", description: nil, value: 6)
                      ], defaultValue: -1)
     }
-    static let unlimitedSpeedPercent = 1000
+    /// azahar treats `frame_limit == 0` as unlimited.
+    static let unlimitedSpeedPercent = 0
     static var frameLimitOption: CoreOption {
-        .enumeration(.init(title: "Speed Limit", description: nil, requiresRestart: false),
+        .enumeration(.init(title: "Speed Limit", description: nil, requiresRestart: true),
                      values: [50, 100, 150, 200, unlimitedSpeedPercent].map {
                          .init(title: $0 == unlimitedSpeedPercent ? "Unlimited" : "\($0)%", description: nil, value: $0)
                      }, defaultValue: 100)
@@ -112,8 +120,9 @@ import UIKit
                                             targetRoot: PVAzaharDataMigrator.defaultTargetRoot())
         let plan = migrator.plan()
         let megabytes = Double(plan.totalBytes) / bytesPerMegabyte
+        let kept = plan.conflicts.isEmpty ? "" : " \(plan.conflicts.count) file(s) Azahar already has will be left in place."
         let message = plan.hasWork
-            ? String(format: "Move %.1f MB of emuThreeDS data into Azahar? emuThreeDS will stop seeing it.", megabytes)
+            ? String(format: "Move %.1f MB of emuThreeDS data into Azahar? emuThreeDS will stop seeing it.", megabytes) + kept
             : "Nothing to import: no emuThreeDS data found, or it was already imported."
         let alert = UIAlertController(title: "Import 3DS data", message: message, preferredStyle: .alert)
         if plan.hasWork {
