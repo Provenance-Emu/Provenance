@@ -157,7 +157,6 @@ check = """python3 Scripts/generators/generate_uti_declarations.py --check --upd
 mode = "manual"
 inputs = ["PVLibrary/Sources/PVLibrary/Resources/systems.plist"]
 outputs = ["Provenance/*-Info.plist", "ProvenanceTV/*-Info.plist"]
-files = ["Scripts/generators/gen_uti.swift"]
 
 [jobs.systems-docs]
 title = "Systems table (Markdown)"
