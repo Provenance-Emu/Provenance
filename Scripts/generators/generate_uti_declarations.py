@@ -8,6 +8,12 @@ for embedding in iOS/tvOS Info.plist files.
 Usage:
     python3 Scripts/generators/generate_uti_declarations.py
     python3 Scripts/generators/generate_uti_declarations.py --update-plist Provenance/Provenance-Info.plist
+    python3 Scripts/generators/generate_uti_declarations.py --check Provenance/Provenance-Info.plist
+
+--update-plist MERGES into the plist: it adds/refreshes only the declarations it
+generates and leaves every other declaration (save bundles, skins, BIOS, ...)
+untouched; --check exits 1 if any plist would change. See "Merging into an
+existing Info.plist" below for the exact rule.
 
 Design:
 - Provenance-owned ROM types → UTExportedTypeDeclarations
@@ -25,8 +31,10 @@ The per-system hierarchy lets QuickLook, Spotlight, File Provider, and "Open Wit
 discover all supported ROM types via the com.provenance.rom parent.
 """
 
-import plistlib
 import argparse
+import copy
+import plistlib
+import re
 import sys
 from pathlib import Path
 from collections import defaultdict
@@ -355,27 +363,220 @@ def build_document_types() -> list:
     ]
 
 
-def update_plist(plist_path: Path, exported: list, imported: list):
-    """Update a target Info.plist with generated UTI declarations."""
-    with open(plist_path, "rb") as f:
-        plist = plistlib.load(f)
+# ── Merging into an existing Info.plist ────────────────────────────────────────
+#
+# The Info.plists carry many declarations this script does not generate (save
+# bundles, skins, RetroArch configs, BIOS, ...). --update-plist therefore MERGES:
+#
+#   * "Generator-owned" UTIs are exactly the identifiers generate_declarations()
+#     emits (com.provenance.rom, com.provenance.rom.<system>, savestate, cheat,
+#     artwork, and the imported archive types). Missing ones are added; existing
+#     ones are topped up (see merge_declaration) -- never trimmed or reordered.
+#   * Every other declaration is left byte-for-byte untouched, in place.
+#   * CFBundleDocumentTypes are merged by CFBundleTypeName the same way.
+#
+# The file is edited as text, not re-dumped through plistlib, because a plistlib
+# round trip would drop XML comments, rewrite &apos; escapes and reorder keys in
+# unrelated parts of the plist. Only the changed or added <dict> elements are
+# re-rendered (plistlib, sort_keys=True, tab indented, like the files).
 
-    plist["UTExportedTypeDeclarations"] = exported
-    plist["UTImportedTypeDeclarations"] = imported
-    # Keep hand-maintained document types (e.g. "Log File", "RetroArch
-    # Configuration") and replace only the generated ones, as gen_uti.swift does.
-    generated = build_document_types()
-    generated_names = {entry["CFBundleTypeName"] for entry in generated}
-    kept = [
-        entry for entry in plist.get("CFBundleDocumentTypes", [])
-        if entry.get("CFBundleTypeName") not in generated_names
-    ]
-    plist["CFBundleDocumentTypes"] = kept + generated
+EXPORTED_KEY = "UTExportedTypeDeclarations"
+IMPORTED_KEY = "UTImportedTypeDeclarations"
+DOCTYPES_KEY = "CFBundleDocumentTypes"
+FILENAME_EXT_KEY = "public.filename-extension"
+SYSTEM_UTI_PREFIX = "com.provenance.rom."
 
-    with open(plist_path, "wb") as f:
-        plistlib.dump(plist, f, fmt=plistlib.FMT_XML, sort_keys=True)
+_PLIST_OPEN = '<plist version="1.0">'
+_XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>\n' + _PLIST_OPEN + "\n"
+_TAG_RE = re.compile(r"<!--.*?-->|<(/?)(dict|array)(/?)>", re.DOTALL)
 
-    print(f"  Updated {plist_path}")
+
+def _union(existing: list, wanted: list) -> list:
+    """existing + any item of wanted not already present (order preserved)."""
+    return list(existing) + [x for x in wanted if x not in existing]
+
+
+def merge_declaration(existing: dict, generated: dict) -> dict:
+    """
+    Merge a generated UT*TypeDeclarations entry into the one already in the plist.
+    Additive only: the description is refreshed, lists (conformance, extensions,
+    MIME types) gain what is missing, and nothing the plist already has is removed
+    (hand-added extensions such as .rvz on the base ROM type survive).
+    """
+    merged = copy.deepcopy(existing)
+    merged["UTTypeDescription"] = generated["UTTypeDescription"]
+    merged["UTTypeConformsTo"] = _union(merged.get("UTTypeConformsTo", []),
+                                        generated["UTTypeConformsTo"])
+    for field in ("UTTypeIconFiles", "UTTypeReferenceURL"):
+        if field in generated:
+            merged.setdefault(field, copy.deepcopy(generated[field]))
+    spec = merged.setdefault("UTTypeTagSpecification", {})
+    for tag, wanted in generated.get("UTTypeTagSpecification", {}).items():
+        spec[tag] = _union(spec.get(tag, []), wanted)
+    return merged
+
+
+def merge_document_type(existing: dict, generated: dict) -> dict:
+    """Additive merge of a CFBundleDocumentTypes entry (matched by name)."""
+    merged = copy.deepcopy(existing)
+    for field, value in generated.items():
+        if field == "LSItemContentTypes":
+            merged[field] = _union(merged.get(field, []), value)
+        else:
+            merged.setdefault(field, copy.deepcopy(value))
+    return merged
+
+
+def _find_array(text: str, key: str):
+    """Span (start, end) of the <array> element following <key>key</key>, or None."""
+    m = re.search(rf"<key>{re.escape(key)}</key>\s*", text)
+    if not m:
+        return None
+    start = m.end()
+    if text.startswith("<array/>", start):
+        return start, start + len("<array/>")
+    if not text.startswith("<array>", start):
+        return None
+    depth = 0
+    for tag in _TAG_RE.finditer(text, start):
+        if tag.group(2) is None:  # comment
+            continue
+        closing, name, selfclosing = tag.group(1), tag.group(2), tag.group(3)
+        if selfclosing:
+            continue
+        depth += -1 if closing else 1
+        if depth == 0 and name == "array":
+            return start, tag.end()
+    raise ValueError(f"unterminated <array> for key {key}")
+
+
+def _split_children(text: str, span) -> list:
+    """Spans of the direct <dict> children of the array occupying `span`."""
+    start, end = span
+    children, depth, child_start = [], 0, None
+    for tag in _TAG_RE.finditer(text, start, end):
+        if tag.group(2) is None:
+            continue
+        closing, name, selfclosing = tag.group(1), tag.group(2), tag.group(3)
+        if selfclosing:
+            if depth == 1 and name == "dict":
+                children.append((tag.start(), tag.end()))
+            continue
+        if closing:
+            depth -= 1
+            if depth == 1 and name == "dict":
+                children.append((child_start, tag.end()))
+        else:
+            depth += 1
+            if depth == 2 and name == "dict":
+                child_start = tag.start()
+    return children
+
+
+def _parse_fragment(fragment: str):
+    return plistlib.loads((_XML_HEADER + fragment + "\n</plist>\n").encode("utf-8"))
+
+
+def _render(value, indent: str) -> str:
+    """Render a plist value as XML, every line prefixed with `indent`."""
+    body = plistlib.dumps(value, fmt=plistlib.FMT_XML, sort_keys=True).decode("utf-8")
+    body = body[body.index(_PLIST_OPEN) + len(_PLIST_OPEN) + 1:]
+    body = body[:body.rindex("</plist>")].rstrip("\n")
+    return "\n".join(indent + line for line in body.split("\n"))
+
+
+def _line_indent(text: str, pos: int) -> str:
+    """Leading whitespace of the line containing `pos` (empty if pos is mid-line)."""
+    line_start = text.rfind("\n", 0, pos) + 1
+    prefix = text[line_start:pos]
+    return prefix if not prefix.strip() else ""
+
+
+def merge_array_text(text: str, key: str, generated: list, id_field: str, merge_fn) -> str:
+    """
+    Merge `generated` (dicts identified by id_field) into the array stored under
+    `key`, editing only the changed or added elements. Returns the new text.
+    """
+    span = _find_array(text, key)
+    if span is None:
+        # Key absent: append a fresh array at the end of the root dict.
+        wrapper = _render({key: generated}, "").split("\n")
+        root_end = text.rindex("</dict>")
+        return text[:root_end] + "\n".join(wrapper[1:-1]) + "\n" + text[root_end:]
+
+    children = _split_children(text, span)
+    existing = [_parse_fragment(text[s:e]) for s, e in children]
+    by_id = {d.get(id_field): i for i, d in enumerate(existing)}
+    indent = _line_indent(text, children[0][0]) if children else "\t\t"
+
+    edits = []  # (start, end, replacement)
+    additions = []
+    for gen in generated:
+        idx = by_id.get(gen[id_field])
+        if idx is None:
+            additions.append(_render(gen, indent))
+            continue
+        merged = merge_fn(existing[idx], gen)
+        if merged != existing[idx]:
+            s, e = children[idx]
+            edits.append((s, e, _render(merged, indent).lstrip()))
+
+    if additions:
+        owned = [by_id[g[id_field]] for g in generated if g[id_field] in by_id]
+        if children:
+            # After the last existing generator-owned entry, else at the end.
+            anchor = children[max(owned) if owned else -1][1]
+            edits.append((anchor, anchor, "\n" + "\n".join(additions)))
+        else:
+            s, e = span
+            outer = _line_indent(text, text.rfind("<key>", 0, s))
+            edits.append((s, e, "<array>\n" + "\n".join(additions) + "\n" + outer + "</array>"))
+
+    for s, e, repl in sorted(edits, key=lambda edit: edit[0], reverse=True):
+        text = text[:s] + repl + text[e:]
+    return text
+
+
+def stale_system_utis(text: str, generated_exported: list) -> list:
+    """com.provenance.rom.* exported UTIs in the plist that no system generates any more."""
+    span = _find_array(text, EXPORTED_KEY)
+    if span is None:
+        return []
+    current = {g["UTTypeIdentifier"] for g in generated_exported}
+    found = []
+    for s, e in _split_children(text, span):
+        ident = _parse_fragment(text[s:e]).get("UTTypeIdentifier", "")
+        if ident.startswith(SYSTEM_UTI_PREFIX) and ident not in current:
+            found.append(ident)
+    return found
+
+
+def merge_plist_text(text: str, exported: list, imported: list, doc_types: list) -> str:
+    text = merge_array_text(text, EXPORTED_KEY, exported, "UTTypeIdentifier", merge_declaration)
+    text = merge_array_text(text, IMPORTED_KEY, imported, "UTTypeIdentifier", merge_declaration)
+    return merge_array_text(text, DOCTYPES_KEY, doc_types, "CFBundleTypeName", merge_document_type)
+
+
+def update_plist(plist_path: Path, exported: list, imported: list,
+                 check_only: bool = False, report_stale: bool = False) -> bool:
+    """
+    Merge the generated declarations into an Info.plist. Returns True when the file
+    changed (or, with check_only, would change). Nothing is written in check mode.
+    """
+    original = plist_path.read_text(encoding="utf-8")
+    updated = merge_plist_text(original, exported, imported, build_document_types())
+    plistlib.loads(updated.encode("utf-8"))  # never write something that is not a valid plist
+    changed = updated != original
+
+    if report_stale:
+        for ident in stale_system_utis(original, exported):
+            print(f"  {plist_path}: stale {ident} (no matching system; left in place)")
+
+    if changed and not check_only:
+        plist_path.write_text(updated, encoding="utf-8")
+    verb = "Would update" if check_only else "Updated"
+    print(f"  {verb if changed else 'Unchanged'} {plist_path}")
+    return changed
 
 
 def print_summary(exported: list, imported: list):
@@ -396,7 +597,7 @@ def print_summary(exported: list, imported: list):
             print(f"  {e['UTTypeIdentifier']}: {exts}")
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Generate UTI declarations from systems.plist"
     )
@@ -404,7 +605,19 @@ def main():
         "--update-plist",
         metavar="INFO_PLIST",
         nargs="+",
-        help="Info.plist file(s) to update in-place",
+        help="Info.plist file(s) to merge the generated declarations into, in place",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="With --update-plist: write nothing; list the plists that would change and "
+             "exit 1 if there are any (exit 0 when all are current)",
+    )
+    parser.add_argument(
+        "--prune",
+        action="store_true",
+        help="With --update-plist: also REPORT com.provenance.rom.* types in a plist that "
+             "no system generates any more. Report only; nothing is ever deleted",
     )
     parser.add_argument(
         "--systems-plist",
@@ -416,30 +629,46 @@ def main():
         action="store_true",
         help="Print summary without writing any files",
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
+
+    if args.check and not args.update_plist:
+        parser.error("--check needs --update-plist <Info.plist...>")
 
     systems_plist_path = Path(args.systems_plist)
     if not systems_plist_path.exists():
         print(f"Error: systems.plist not found at {systems_plist_path}", file=sys.stderr)
-        sys.exit(1)
+        return 2
 
     exported, imported = generate_declarations(systems_plist_path)
-    print_summary(exported, imported)
+    if not args.check:
+        print_summary(exported, imported)
 
-    if args.dry_run or not args.update_plist:
+    if (args.dry_run or not args.update_plist) and not args.check:
         print("\n(dry run — no files written)")
-        return
+        return 0
 
-    print("\nUpdating Info.plist files:")
+    check_only = args.check or args.dry_run
+    print("\nChecking Info.plist files:" if check_only else "\nUpdating Info.plist files:")
+    stale, missing = 0, 0
     for plist_path_str in args.update_plist:
         p = Path(plist_path_str)
         if not p.exists():
             print(f"  Warning: {p} not found, skipping", file=sys.stderr)
+            missing += 1
             continue
-        update_plist(p, exported, imported)
+        if update_plist(p, exported, imported, check_only=check_only, report_stale=args.prune):
+            stale += 1
 
-    print("\nDone. Remember to run 'swiftlint lint' on any changed Swift files.")
+    if args.check:
+        if missing:
+            print(f"{missing} plist(s) not found")
+            return 2
+        if stale:
+            print(f"{stale} of {len(args.update_plist)} Info.plist(s) out of date with systems.plist")
+            return 1
+        print("All Info.plist file-type declarations are current")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

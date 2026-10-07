@@ -139,10 +139,17 @@ needs = ["network", "py:requests", "py:bs4"]
 [jobs.uti]
 title = "File types (UTIs) in Info.plist"
 category = "Generated files"
-description = """Writes UTExportedTypeDeclarations / UTImportedTypeDeclarations from systems.plist.
-REVIEW THE DIFF: the generator drops hand-added types it does not know about
-(about 900 lines on 2026-10-06), so it is manual until that is fixed."""
+description = """Merges the file types derived from systems.plist into each app Info.plist:
+adds missing UTExported/ImportedTypeDeclarations and CFBundleDocumentTypes entries and
+tops up the extension lists of the generated ones. Hand-added declarations are never removed.
+Manual because it edits shipped Info.plists: review the diff, since new extensions
+become file types the app claims."""
 run = """python3 Scripts/generators/generate_uti_declarations.py --update-plist \
+  Provenance/Provenance-Info.plist Provenance/Provenance-AppStore-Info.plist \
+  "Provenance/Provenance-Lite (AppStore)-Info.plist" Provenance/Provenance-Lite-Info.plist \
+  Provenance/Provenance-UnderDevelopment-Info.plist \
+  ProvenanceTV/ProvenanceTV-AppStore-Info.plist ProvenanceTV/ProvenanceTV-Lite-Info.plist"""
+check = """python3 Scripts/generators/generate_uti_declarations.py --check --update-plist \
   Provenance/Provenance-Info.plist Provenance/Provenance-AppStore-Info.plist \
   "Provenance/Provenance-Lite (AppStore)-Info.plist" Provenance/Provenance-Lite-Info.plist \
   Provenance/Provenance-UnderDevelopment-Info.plist \
@@ -265,6 +272,7 @@ title = "Script and maint tests"
 category = "Audits"
 run = """python3 Scripts/tests/test_check_pbxproj_sources.py \
   && python3 Scripts/tests/test_generate_cheatdb_dat.py \
+  && python3 Scripts/tests/test_generate_uti_declarations.py \
   && python3 -m unittest discover -s Scripts/maint -p 'test_*.py' \
   && bash Scripts/tests/test-get-modules-validation.sh \
   && bash Scripts/tests/test-ci-init-submodules.sh"""
