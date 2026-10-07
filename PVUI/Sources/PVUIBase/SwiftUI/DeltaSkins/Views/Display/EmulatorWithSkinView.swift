@@ -98,7 +98,8 @@ struct EmulatorWithSkinView: View {
         self.systemName = game.system?.name
 
         // Linked PVSystem is authoritative; fall back to persisted PVGame.systemIdentifier when the relationship is missing so skin reload notifications still match.
-        self.systemId = game.system?.systemIdentifier ?? SystemIdentifier(rawValue: game.systemIdentifier)
+        self.systemId = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
+                                                                     persisted: game.systemIdentifier)
 
         // Get game ID for skin preferences (must match game.id used in skin selection)
         self.gameId = game.id
@@ -292,7 +293,7 @@ struct EmulatorWithSkinView: View {
             // (neither its `size` nor its `layout` changed, so nothing else would wake it).
             // The default-skin path has its own observer; this covers custom skins.
             .onReceive(NotificationCenter.default.publisher(
-                for: Notification.Name("PVThinLibretroCoreAVInfoDidUpdate")
+                for: .thinLibretroCoreAVInfoDidUpdate
             )) { _ in
                 coreAVInfoRevision &+= 1
                 DispatchQueue.main.async {
@@ -320,7 +321,7 @@ struct EmulatorWithSkinView: View {
             ) { frames in
                 NotificationCenter.default.post(
                     name: .overlayScreenFramesDidChange, object: nil,
-                    userInfo: [OverlayScreenFramesKey.frames: frames.map { NSValue(cgRect: $0) }])
+                    userInfo: OverlayNotificationPayload.userInfo(frames: frames))
             }
             .onAppear { markFallbackControlsRendered("programmatic overlay") }
         } else {

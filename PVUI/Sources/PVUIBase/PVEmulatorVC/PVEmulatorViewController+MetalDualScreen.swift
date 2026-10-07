@@ -29,7 +29,8 @@ extension PVEmulatorViewController {
     /// rendering are met:
     ///   • the GPU view controller is a `PVMetalViewController`
     ///   • the emulator core declares dual-screen support
-    ///   • a DeltaSkin with screen-group data is active
+    ///   • a DeltaSkin with screen-group data is active, or the programmatic touch
+    ///     overlay is mounted (it supplies both screens' frames itself)
     ///   • we are NOT running on tvOS (skins are disabled there)
     var canUseMetalDualScreenRendering: Bool {
         #if os(tvOS)

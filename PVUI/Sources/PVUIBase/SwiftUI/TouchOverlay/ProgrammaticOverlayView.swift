@@ -35,6 +35,7 @@ struct ProgrammaticOverlayView: View {
     @Default(.controllerOpacity) private var globalOpacity
     @Default(.overlayHapticIntensity) private var hapticIntensity
     @Default(.buttonVibration) private var hapticsOn
+    @Default(.scalingMode) private var scalingMode
     @State private var padKind: OverlayPadKind
     @State private var sink: OverlayInputSinkAdapter?
     @State private var viewport = OverlayViewportPublisher()
@@ -47,8 +48,6 @@ struct ProgrammaticOverlayView: View {
     /// Accepted game aspect ratios; anything else is a not-yet-booted core's fallback.
     private static let plausibleAspect: ClosedRange<CGFloat> = 0.5...2.5
     private static let fallbackAspect: CGFloat = 4.0 / 3.0
-    /// Posted by `PVThinLibretroCore` when the core reports new AV info (late geometry).
-    private static let coreAVInfoDidUpdate = Notification.Name("PVThinLibretroCoreAVInfoDidUpdate")
 
     init(systemId: SystemIdentifier, binding: SystemOverlayBinding, coreInstance: PVEmulatorCore,
          inputHandler: DeltaSkinInputHandler, gameMD5: String?, padKind: OverlayPadKind,
@@ -90,16 +89,26 @@ struct ProgrammaticOverlayView: View {
                 publish(layout.screenFrames)
             }
             .onChange(of: layout.screenFrames) { _, frames in publish(frames) }
+            .onChange(of: editController != nil) { _, editing in postEditing(editing) }
             .onReceive(NotificationCenter.default.publisher(for: .overlayEditLayoutRequested)) { _ in
                 beginEditing(template: template, canvas: canvas)
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: Self.coreAVInfoDidUpdate)) { _ in
+        .onReceive(NotificationCenter.default.publisher(for: .thinLibretroCoreAVInfoDidUpdate)) { _ in
             coreAVInfoRevision &+= 1
         }
+        // The controller cleared its frame (rotation) or a scaling change needs the frame
+        // pushed again: re-send the current frames even though they did not change.
+        .onReceive(NotificationCenter.default.publisher(for: .deltaSkinForceRecalculate)) { _ in
+            republish()
+        }
+        .onChange(of: scalingMode) { _, _ in republish() }
         .onDisappear {
-            editController?.cancel()
-            editController = nil
+            if let editController {
+                editController.cancel()
+                self.editController = nil
+                postEditing(false)
+            }
             viewport.detach(from: coreInstance)
             onScreenFrames([])
         }
@@ -150,8 +159,18 @@ struct ProgrammaticOverlayView: View {
                                                gameMD5: gameMD5, canvas: canvas, groupDefaults: defaults)
     }
 
-    private func publish(_ frames: [CGRect]) {
-        guard frames != viewport.lastFrames, let first = frames.first, first.width > 0, first.height > 0 else {
+    /// The editor pauses the core while it is open (the VC owns the pause).
+    private func postEditing(_ editing: Bool) {
+        NotificationCenter.default.post(name: .overlayEditingDidChange, object: nil,
+                                        userInfo: OverlayNotificationPayload.userInfo(editing: editing))
+    }
+
+    private func republish() {
+        publish(viewport.lastFrames, force: true)
+    }
+
+    private func publish(_ frames: [CGRect], force: Bool = false) {
+        guard force || frames != viewport.lastFrames, let first = frames.first, first.width > 0, first.height > 0 else {
             return
         }
         viewport.lastFrames = frames

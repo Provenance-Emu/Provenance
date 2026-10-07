@@ -203,6 +203,14 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
+        // The mounted overlay's published frame is authoritative for single-screen games.
+        if isProgrammaticOverlayActive {
+            if overlayScreenFrames.count == 1 {
+                applyFrameToGPUView(overlayScreenFrames[0], reason: "viewport-overlay")
+            }
+            return
+        }
+
         // For default skins, use notification frame if already received
         // Only wait for fresh notification if we don't have a valid frame yet
         if isDefaultSkin {
@@ -344,6 +352,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     internal func recomputeSkinViewportIfLayoutChanged() {
         guard Thread.isMainThread else { return }
         guard isDeltaSkinEnabled, currentSkin != nil else { return }
+        guard !isProgrammaticOverlayActive else { return } // the overlay publishes its own frame
         guard !isHandlingRotation else { return }
         guard !isApplyingViewport else { return }
         guard !isBridgeShuttingDownForViewport() else { return }
@@ -505,6 +514,9 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// Calculate frame from skin - single, clear calculation path
     /// Uses same calculation for bootup and rotation - accounts for safe areas
     private func calculateFrameFromSkin() -> CGRect? {
+        // The mounted overlay publishes the game frame itself; the skin mapping (a
+        // DefaultDeltaSkin after a rebuild) would compete with it.
+        guard !isProgrammaticOverlayActive else { return nil }
         guard let skin = currentSkin else { return nil }
         guard view.bounds.width > 0 && view.bounds.height > 0 else { return nil }
 

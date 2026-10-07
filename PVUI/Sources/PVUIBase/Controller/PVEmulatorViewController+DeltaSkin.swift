@@ -33,8 +33,11 @@ extension PVEmulatorViewController {
     /// The programmatic touch overlay is enabled and has a binding for this game's system,
     /// so the skin layer always has controls to show even without a packaged skin.
     var programmaticOverlayCoversGame: Bool {
-        guard Defaults[.programmaticOverlay], let systemId = game?.system?.systemIdentifier else { return false }
-        return SystemOverlayBindings.binding(for: systemId) != nil
+        guard let game else { return false }
+        // Resolved like `EmulatorWithSkinView` does, so both sides agree on the system.
+        let systemId = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
+                                                                   persisted: game.systemIdentifier)
+        return ProgrammaticOverlaySupport.covers(systemId, enabled: Defaults[.programmaticOverlay])
     }
 
     /// Whether the player has picked a packaged skin for this game or its system. Gates
@@ -193,15 +196,35 @@ extension PVEmulatorViewController {
     /// later subscription would miss a stable layout. Not in `skinCancellables`, which
     /// `observeAppStateChanges()` clears.
     private func observeOverlayScreenFrames() {
-        NotificationCenter.default.removeObserver(self, name: .overlayScreenFramesDidChange, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleOverlayScreenFrames(_:)),
-                                               name: .overlayScreenFramesDidChange, object: nil)
+        let center = NotificationCenter.default
+        center.removeObserver(self, name: .overlayScreenFramesDidChange, object: nil)
+        center.addObserver(self, selector: #selector(handleOverlayScreenFrames(_:)),
+                           name: .overlayScreenFramesDidChange, object: nil)
+        center.removeObserver(self, name: .overlayEditingDidChange, object: nil)
+        center.addObserver(self, selector: #selector(handleOverlayEditing(_:)),
+                           name: .overlayEditingDidChange, object: nil)
     }
 
     @objc private func handleOverlayScreenFrames(_ notification: Notification) {
-        let values = notification.userInfo?[OverlayScreenFramesKey.frames] as? [NSValue] ?? []
-        let frames = values.map(\.cgRectValue)
+        let frames = OverlayNotificationPayload.frames(from: notification.userInfo)
         DispatchQueue.main.async { [weak self] in self?.overlayScreenFramesDidChange(frames) }
+    }
+
+    /// The layout editor pauses the game while it is open and resumes it when it closes,
+    /// unless something else (the pause menu) wants it paused by then.
+    @objc private func handleOverlayEditing(_ notification: Notification) {
+        guard let editing = OverlayNotificationPayload.editing(from: notification.userInfo) else { return }
+        DispatchQueue.main.async { [weak self] in
+            guard let self, self.core.isOn else { return }
+            if editing {
+                guard !self.core.isEmulationPaused else { return }
+                self.overlayEditorPausedCore = true
+                self.core.setPauseEmulation(true)
+            } else if self.overlayEditorPausedCore {
+                self.overlayEditorPausedCore = false
+                if !self.isShowingMenu { self.core.setPauseEmulation(false) }
+            }
+        }
     }
 
     /// Single-screen games get their viewport through the overlay's viewport bridge; this
@@ -210,11 +233,8 @@ extension PVEmulatorViewController {
         overlayScreenFrames = frames
         hideOrShowMenuButton()
         guard core.supportsDualScreens else { return }
-        if frames.isEmpty {
-            clearMetalDualScreenLayout()
-        } else {
-            applyDualScreenViewport()
-        }
+        // Also when the overlay leaves (empty frames): a packaged skin can re-assert its split.
+        applyDualScreenViewport()
     }
 
     /// Reactive skin-load pipeline: waits for core to be running, pauses briefly,

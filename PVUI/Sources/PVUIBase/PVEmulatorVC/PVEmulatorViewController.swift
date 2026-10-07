@@ -161,6 +161,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// coordinates, top screen first). Empty while no overlay is on screen.
     var overlayScreenFrames: [CGRect] = []
 
+    /// `true` while the overlay's layout editor holds a pause it started itself.
+    var overlayEditorPausedCore = false
+
     // Keep track of whether we've positioned the GPU view
     static var hasPositionedGPUView = false
 
@@ -2648,9 +2651,16 @@ extension PVEmulatorViewController {
     public func resetToDefaultSkin() async throws {
         DLOG("Resetting to default skin")
 
+        // The programmatic overlay already is the built-in controls and lays itself out from
+        // its own geometry, so there is nothing to rebuild or swap (rotation, "Default" picks).
+        if isProgrammaticOverlayActive {
+            DLOG("skins: programmatic overlay is mounted, keeping it")
+            return
+        }
+
         // Cores that only use a skin the player picked fall back to the classic on-screen
-        // controller, never to the generated default skin.
-        if core.requiresExplicitSkinSelection {
+        // controller, never to the generated default skin, unless the overlay covers the game.
+        if core.requiresExplicitSkinSelection && !programmaticOverlayCoversGame {
             await MainActor.run {
                 restoreClassicControlsAfterSkin()
             }
@@ -2713,6 +2723,11 @@ extension PVEmulatorViewController {
     private func restoreClassicControlsAfterSkin() {
         guard currentSkin != nil || skinContainerView != nil else {
             DLOG("skins: no skin active, keeping the classic controller")
+            return
+        }
+        // The overlay replaces the classic controller for games it covers.
+        guard !programmaticOverlayCoversGame else {
+            DLOG("skins: programmatic overlay covers this game, not restoring the classic controller")
             return
         }
         ILOG("skins: skin removed, restoring the classic controller")
