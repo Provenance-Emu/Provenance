@@ -14,6 +14,7 @@
 // Called from applyDualScreenViewport() in PVEmulatorViewController+DualScreen.
 
 import UIKit
+import PVCoreBridge
 import PVEmulatorCore
 import PVLogging
 import PVPrimitives
@@ -76,10 +77,15 @@ extension PVEmulatorViewController {
             return false
         }
 
-        // Input-texture dimensions — used to normalise the skin's inputFrame.
-        let bufferSize = core.bufferSize
-        let texW = bufferSize.width > 0 ? bufferSize.width : 256
-        let texH = bufferSize.height > 0 ? bufferSize.height : 384
+        // Where the core actually draws each DS screen. Layouts without both
+        // screens (single-screen, hybrid, rotated) can't be split: let the core's
+        // own composite go through the normal viewport path instead.
+        let coreLayout = (core as? NDSScreenLayoutProviding)?.ndsScreenLayout ?? .default
+        guard coreLayout.showsBothScreens, let framebufferSize = coreLayout.framebufferSize else {
+            ILOG("dual-screen metal: core layout \(coreLayout.arrangement) shows one screen, falling back")
+            metalVC.dualScreenLayout = nil
+            return false
+        }
 
         // View layout parameters (mirrors currentDualScreenViewportFrame()).
         let viewSize = view.bounds.size
@@ -109,6 +115,9 @@ extension PVEmulatorViewController {
 
         // Sort screens top-to-bottom (then left-to-right) so landscape side-by-side
         // layouts (same minY for both screens) get a stable deterministic order.
+        // A screen without an inputFrame shows the DS top screen when it sorts
+        // first and the bottom screen otherwise (DS convention: top screen
+        // above / left of the touchscreen).
         let sorted = group.screens.sorted { a, b in
             let ay = a.outputFrame?.minY ?? 0
             let by = b.outputFrame?.minY ?? 0
@@ -121,29 +130,15 @@ extension PVEmulatorViewController {
         for (index, screen) in sorted.enumerated() {
             guard let outputFrame = screen.outputFrame else { continue }
 
-            // --- Source UV ---
-            // Use skin-specified inputFrame if available; otherwise default to
-            // equal halves of the combined framebuffer (DS convention).
-            let srcRect: CGRect
-            if let inFrame = screen.inputFrame, inFrame.width > 0, inFrame.height > 0 {
-                srcRect = CGRect(x: inFrame.minX / texW,
-                                 y: inFrame.minY / texH,
-                                 width: inFrame.width  / texW,
-                                 height: inFrame.height / texH)
-            } else {
-                // Default: split the framebuffer based on DS native screen dimensions.
-                // DS native: 256 px wide, 192 px per screen, 384 px combined height.
-                // Some emulators (e.g. DeSmuME2015) report a large padded bufferSize
-                // (2048×2048) where the valid DS content sits only in the top-left
-                // 256×384 region.  Normalising by texW/texH ensures the UVs land on
-                // the correct texels rather than always splitting the full 0–1 range.
-                let dsNativeW: CGFloat = 256  // DS screen width in native pixels
-                let dsNativeH: CGFloat = 192  // DS per-screen height in native pixels
-                srcRect = CGRect(x: 0,
-                                 y: CGFloat(index) * (dsNativeH / texH),
-                                 width:  dsNativeW / texW,
-                                 height: dsNativeH / texH)
-            }
+            // --- Source (native framebuffer pixels) ---
+            // The skin's inputFrame names a DS screen in the stacked 256×384 skin
+            // convention; re-base it onto the core's real layout. The renderer
+            // normalises against the bound texture each frame.
+            guard let srcRect = DualScreenSourceMapping.sourceRect(
+                skinInputFrame: screen.inputFrame,
+                defaultScreen: index == 0 ? .top : .bottom,
+                swapped: false,
+                layout: coreLayout) else { continue }
 
             // --- Destination (view-space points) ---
             // Mirror the calculation in currentDualScreenViewportFrame() exactly.
@@ -170,7 +165,8 @@ extension PVEmulatorViewController {
                                   width:  inLayout.width,
                                   height: inLayout.height)
 
-            renderInfos.append(DualScreenRenderInfo(normalizedSourceRect: srcRect,
+            renderInfos.append(DualScreenRenderInfo(sourceRect: srcRect,
+                                                    framebufferSize: framebufferSize,
                                                     viewDestRect: destRect))
         }
 
