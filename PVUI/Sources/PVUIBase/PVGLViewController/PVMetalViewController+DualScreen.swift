@@ -27,24 +27,37 @@ import PVLogging
 
 /// Describes how one sub-screen should be sampled and displayed by the Metal renderer.
 ///
-/// - `normalizedSourceRect`: which region of the *combined* input texture to sample
-///   (0…1 in both axes).  For a 256×384 DS framebuffer the defaults are:
-///   - top screen:    `CGRect(x: 0, y: 0,   width: 1, height: 0.5)`
-///   - bottom screen: `CGRect(x: 0, y: 0.5, width: 1, height: 0.5)`
+/// - `sourceRect`: which region of the core's *combined* framebuffer to sample, in
+///   native (1x) pixels of a framebuffer of `framebufferSize`. For the default
+///   stacked 256×384 DS framebuffer:
+///   - top screen:    `CGRect(x: 0, y: 0,   width: 256, height: 192)`
+///   - bottom screen: `CGRect(x: 0, y: 192, width: 256, height: 192)`
+///   It is normalised against the bound texture every frame (see
+///   `DualScreenSourceMapping.normalizedSourceRect`), because the texture is only
+///   resized to the core's real geometry after the layout is installed.
 ///
 /// - `viewDestRect`: where to paint the result, expressed in the MTKView's
 ///   UIKit-point coordinate space.  The renderer converts to NDC at draw time
 ///   so it stays correct regardless of the drawable's `contentScaleFactor`.
 struct DualScreenRenderInfo: Sendable {
-    /// Normalized (0…1) source sub-rectangle inside the combined input texture.
-    let normalizedSourceRect: CGRect
+    /// Source sub-rectangle in native framebuffer pixels.
+    let sourceRect: CGRect
+    /// Native size of the whole framebuffer `sourceRect` lives in.
+    let framebufferSize: CGSize
     /// Destination in the Metal view's UIKit-point coordinate space.
     let viewDestRect: CGRect
+}
 
-    init(normalizedSourceRect: CGRect, viewDestRect: CGRect) {
-        self.normalizedSourceRect = normalizedSourceRect
-        self.viewDestRect = viewDestRect
-    }
+/// Result of one `renderDualScreenLayout` call.
+enum DualScreenRenderOutcome {
+    /// Every screen was encoded.
+    case drawn
+    /// Nothing was encoded because the bound texture does not have the layout's
+    /// proportions yet (e.g. a thin core still on its pre-boot fallback geometry).
+    /// Transient: the caller should draw a plain blit for this frame only.
+    case textureMismatch
+    /// No layout, or the pipeline could not be built.
+    case unavailable
 }
 
 // MARK: - PVMetalViewController + dual-screen rendering
@@ -151,21 +164,34 @@ extension PVMetalViewController {
     ///   - encoder:      Active render command encoder already bound to the current drawable.
     ///   - sourceTexture: The combined emulator framebuffer (e.g. 256×384 for DS).
     ///   - drawableSize:  Pixel dimensions of the current drawable.
-    ///   - flipY:         Pass `true` when `sourceTexture` has OpenGL/bottom-up origin.
-    /// - Returns: `true` if at least one screen was drawn; `false` if the layout
-    ///   was empty or the pipeline was unavailable (caller should fall back to
-    ///   the standard fullscreen blit to avoid presenting a black frame).
-    @discardableResult
-    func renderDualScreenLayout(encoder:       MTLRenderCommandEncoder,
-                                 sourceTexture: MTLTexture,
-                                 drawableSize:  CGSize,
-                                 flipY:         Bool) -> Bool {
-        guard let layout = dualScreenLayout, !layout.isEmpty else { return false }
+    ///   - sourceIsBottomUp: Pass `true` when `sourceTexture` stores its image bottom
+    ///                       row first (OpenGL / IOSurface frames).
+    /// - Returns: `.drawn` when every screen was encoded. Otherwise nothing was
+    ///   encoded and the caller should fall back to the standard fullscreen blit to
+    ///   avoid presenting a black frame.
+    func renderDualScreenLayout(encoder:          MTLRenderCommandEncoder,
+                                sourceTexture:    MTLTexture,
+                                drawableSize:     CGSize,
+                                sourceIsBottomUp: Bool) -> DualScreenRenderOutcome {
+        guard let layout = dualScreenLayout, !layout.isEmpty else { return .unavailable }
 
         buildDualScreenBlitPipelineIfNeeded()
         guard let pipeline = dualScreenBlitPipeline else {
             ELOG("dual-screen: pipeline unavailable, skipping dual-screen render")
-            return false
+            return .unavailable
+        }
+
+        // Normalise every source rect against the texture actually bound before
+        // encoding anything, so a mismatch leaves the encoder untouched.
+        let textureSize = CGSize(width: sourceTexture.width, height: sourceTexture.height)
+        var sources: [DualScreenTextureCoordinates] = []
+        for info in layout {
+            guard let normalized = DualScreenSourceMapping.normalizedSourceRect(
+                info.sourceRect, framebufferSize: info.framebufferSize, textureSize: textureSize) else {
+                return .textureMismatch
+            }
+            sources.append(DualScreenSourceMapping.textureCoordinates(for: normalized,
+                                                                     sourceIsBottomUp: sourceIsBottomUp))
         }
 
         encoder.setRenderPipelineState(pipeline)
@@ -175,7 +201,7 @@ extension PVMetalViewController {
         let dh = Float(drawableSize.height)
         let scale = Float(mtlView.contentScaleFactor)
 
-        for info in layout {
+        for (info, source) in zip(layout, sources) {
             // Destination in drawable-pixel space
             let px0 = Float(info.viewDestRect.minX) * scale
             let px1 = Float(info.viewDestRect.maxX) * scale
@@ -188,20 +214,12 @@ extension PVMetalViewController {
             let ny0 = 1.0 - (2.0 * py0 / dh)   // top edge in Metal NDC
             let ny1 = 1.0 - (2.0 * py1 / dh)   // bottom edge in Metal NDC
 
-            // Source UV  — flip V for OpenGL-origin textures
-            let u0 = Float(info.normalizedSourceRect.minX)
-            let u1 = Float(info.normalizedSourceRect.maxX)
-            let v0 = flipY ? Float(info.normalizedSourceRect.maxY)
-                           : Float(info.normalizedSourceRect.minY)
-            let v1 = flipY ? Float(info.normalizedSourceRect.minY)
-                           : Float(info.normalizedSourceRect.maxY)
-
             // Triangle-strip quad: top-left, top-right, bottom-left, bottom-right
             var vertices: [SIMD4<Float>] = [
-                SIMD4(nx0, ny0, u0, v0),
-                SIMD4(nx1, ny0, u1, v0),
-                SIMD4(nx0, ny1, u0, v1),
-                SIMD4(nx1, ny1, u1, v1),
+                SIMD4(nx0, ny0, source.u0, source.vTop),
+                SIMD4(nx1, ny0, source.u1, source.vTop),
+                SIMD4(nx0, ny1, source.u0, source.vBottom),
+                SIMD4(nx1, ny1, source.u1, source.vBottom)
             ]
 
             let byteLength = vertices.count * MemoryLayout<SIMD4<Float>>.stride
@@ -210,6 +228,6 @@ extension PVMetalViewController {
             }
             encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         }
-        return true
+        return .drawn
     }
 }

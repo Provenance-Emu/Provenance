@@ -2798,11 +2798,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         if dualScreenLayout != nil {
             let drawableSize = CGSize(width: drawable.texture.width,
                                      height: drawable.texture.height)
-            let didRender = renderDualScreenLayout(encoder:       renderEncoder,
-                                                   sourceTexture: inputTexture,
-                                                   drawableSize:  drawableSize,
-                                                   flipY:         flipY)
-            if didRender {
+            // `flipY` is true for top-row-first textures, so the source is bottom-up when it is false.
+            let outcome = renderDualScreenLayout(encoder:          renderEncoder,
+                                                 sourceTexture:    inputTexture,
+                                                 drawableSize:     drawableSize,
+                                                 sourceIsBottomUp: !flipY)
+            if outcome == .drawn {
                 renderEncoder.endEncoding()
                 commandBuffer.present(drawable)
                 commandBuffer.addCompletedHandler { [weak self] buffer in
@@ -2817,10 +2818,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 markFramePresented()
                 return
             }
-            // renderDualScreenLayout produced no output (empty layout or pipeline
-            // failure) — fall through to the standard fullscreen blit below to
-            // avoid presenting a black frame.
-            if !dualScreenPipelineBuildFailed {
+            // renderDualScreenLayout produced no output — fall through to the
+            // standard fullscreen blit below to avoid presenting a black frame.
+            // A texture mismatch is transient (the core's real geometry has not
+            // reached the texture yet), so only a missing layout or pipeline
+            // disables the dual-screen path.
+            if outcome == .unavailable && !dualScreenPipelineBuildFailed {
                 WLOG("dual-screen: renderDualScreenLayout produced no output, falling back to standard blit")
                 dualScreenPipelineBuildFailed = true
             }
