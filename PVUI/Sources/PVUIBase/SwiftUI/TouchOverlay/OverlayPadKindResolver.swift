@@ -70,10 +70,11 @@ enum OverlayPadKindResolver {
         return variants.filter { binding.families[$0.id] != nil }
     }
 
-    /// Whether the pause menu offers the Controller Layout picker: more than one selectable
-    /// variant (a single one is no choice).
+    /// Whether the pause menu offers the Controller Layout picker: any selectable variant. A
+    /// single one (GameCube) is still shown, as the in-game way to overwrite a stored choice
+    /// the overlay cannot draw (e.g. `gc-bongos` saved before it was unbound).
     static func offersVariantChoice(for system: SystemIdentifier) -> Bool {
-        selectableVariants(for: system).count > 1
+        !selectableVariants(for: system).isEmpty
     }
 
     /// The first candidate the system's binding has a family for, in order: the per-game

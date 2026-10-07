@@ -28,7 +28,7 @@ struct ControllerLayoutSheetContext: Identifiable {
 
 extension PauseTileMenuView {
     /// The game's system (resolved like the overlay resolves it), the variants the overlay can
-    /// draw for it and the game's hash, or `nil` when there is no choice to offer.
+    /// draw for it and the game's hash, or `nil` when it has none.
     func makeControllerLayoutContext() -> ControllerLayoutSheetContext? {
         guard let game = emulatorVC.game, !game.isInvalidated,
               let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
