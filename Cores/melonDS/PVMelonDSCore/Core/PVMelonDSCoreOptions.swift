@@ -30,8 +30,8 @@ public class MelonDSOptions: NSObject, CoreOptions {
     private enum Keys {
         static let consoleMode = "melonds_console_mode"
         static let bootDirectly = "melonds_boot_directly"
-        static let screenLayout = "melonds_screen_layout"
-        static let screenGap = "melonds_screen_gap"
+        static let screenLayout = NDSCoreFamily.melonDS.layoutOptionKey
+        static let screenGap = NDSCoreFamily.melonDS.gapOptionKey
         static let hybridSmallScreen = "melonds_hybrid_small_screen"
         static let swapScreenMode = "melonds_swapscreen_mode"
         static let randomizeMAC = "melonds_randomize_mac_address"
@@ -360,6 +360,12 @@ public extension MelonDSOptions {
             WLOG("Unsupported melonds option key: \(variable)")
             return nil
         }
+    }
+
+    /// The DS screen layout selected in these options, shared by the Metal
+    /// dual-screen renderer and the stylus mapping.
+    static var ndsScreenLayout: NDSScreenLayout {
+        NDSScreenLayout(family: .melonDS) { get(variable: $0) as? String }
     }
 
     // MARK: - Value helpers

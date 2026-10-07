@@ -35,8 +35,8 @@ public class Desmume2015Options: NSObject, CoreOptions {
         static let frameskip = "desmume_frameskip"
         static let loadToMemory = "desmume_load_to_memory"
         static let advancedTiming = "desmume_advanced_timing"
-        static let screensLayout = "desmume_screens_layout"
-        static let screensGap = "desmume_screens_gap"
+        static let screensLayout = NDSCoreFamily.desmume.layoutOptionKey
+        static let screensGap = NDSCoreFamily.desmume.gapOptionKey
         static let hybridScale = "desmume_hybrid_layout_scale"
         static let hybridShowBoth = "desmume_hybrid_showboth_screens"
         static let hybridCursorSmall = "desmume_hybrid_cursor_always_smallscreen"
@@ -376,6 +376,12 @@ public extension Desmume2015Options {
             WLOG("Unsupported Desmume option key: \(variable)")
             return nil
         }
+    }
+
+    /// The DS screen layout selected in these options, shared by the Metal
+    /// dual-screen renderer and the stylus mapping.
+    static var ndsScreenLayout: NDSScreenLayout {
+        NDSScreenLayout(family: .desmume) { get(variable: $0) as? String }
     }
 
     // MARK: - Value helpers
