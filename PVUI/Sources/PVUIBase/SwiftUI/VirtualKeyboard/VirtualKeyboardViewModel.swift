@@ -11,6 +11,7 @@
 import Foundation
 import Combine
 import GameController
+import UIKit
 import PVCoreBridge
 import PVSettings
 
@@ -42,16 +43,29 @@ public final class VirtualKeyboardViewModel: ObservableObject {
     /// User-triggered toggles (skin button, pause menu) start expanded (`startExpanded: true`).
     @Published public var isCollapsed: Bool = true
 
-    /// The on-screen frame of the visible keyboard sheet, in the coordinate space
-    /// of the hosting container view. Updated by the SwiftUI view via a preference
-    /// key. The passthrough container uses this to gate hit-testing so touches
-    /// outside the visible sheet fall through to the game/controls below.
+    /// The on-screen frame of the visible keyboard sheet, in the SwiftUI
+    /// "VirtualKeyboardContainer" coordinate space, whose origin is the top-left of
+    /// the hosting view's SAFE AREA (not of the full-bleed container). Use
+    /// `containerFrame(forSheetFrame:safeAreaInsets:)` to convert it before
+    /// hit-testing. Updated by the SwiftUI view via a preference key.
     @Published public var keyboardFrame: CGRect = .zero
 
     /// Vertical offset (in points) applied to the keyboard sheet so the user can
     /// drag the (collapsed or expanded) keyboard up/down to reposition it.
     /// Negative moves the sheet up from its default bottom-anchored position.
     @Published public var verticalOffset: CGFloat = 0
+
+    /// Minimum height of a key, meeting the 44pt HIG touch-target guideline.
+    public static let keyHeight: CGFloat = 44
+
+    /// Convert a sheet frame measured in the safe-area-relative SwiftUI coordinate
+    /// space into the full-bleed container's coordinate space, so the passthrough
+    /// gate and the drawn sheet agree. An unmeasured (empty) frame stays empty so
+    /// the gate keeps passing every touch through.
+    public static func containerFrame(forSheetFrame frame: CGRect, safeAreaInsets: UIEdgeInsets) -> CGRect {
+        guard !frame.isEmpty else { return .zero }
+        return frame.offsetBy(dx: safeAreaInsets.left, dy: safeAreaInsets.top)
+    }
 
     /// Clamp a proposed vertical offset to keep the sheet on-screen.
     /// - Parameters:
