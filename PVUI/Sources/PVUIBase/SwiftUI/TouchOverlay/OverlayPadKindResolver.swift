@@ -21,6 +21,12 @@ enum OverlayPadKindResolver {
         return OverlayPadKind(system: system, subtype: subtype)
     }
 
+    /// Whether the host should push `resolved` into the core: the core runs something else
+    /// and the host has not pushed this id already. A different resolved id is pushed again.
+    static func shouldApplyVariant(resolved: String, current: String?, lastApplied: String?) -> Bool {
+        resolved != current && resolved != lastApplied
+    }
+
     /// The first candidate the system's binding has a family for, in order: the per-game
     /// choice, the variant `variantProvider` reports it is running, the per-system choice,
     /// then the binding's own default (not `defaultControllerLayoutVariant`, which for Wii is

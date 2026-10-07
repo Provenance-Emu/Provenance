@@ -209,6 +209,10 @@ extension PVEmulatorViewController {
         center.removeObserver(self, name: .controllerLayoutVariantDidChange, object: nil)
         center.addObserver(self, selector: #selector(handleControllerLayoutVariantChange(_:)),
                            name: .controllerLayoutVariantDidChange, object: nil)
+        center.removeObserver(self, name: .thinLibretroCoreAVInfoDidUpdate, object: nil)
+        center.addObserver(self, selector: #selector(handleThinCoreAVInfoForControllerVariant(_:)),
+                           name: .thinLibretroCoreAVInfoDidUpdate, object: nil)
+        observeCoreStartForControllerVariant()
         // A scaling-mode switch leaves the overlay's frame unchanged, so the frame dedup would
         // swallow a re-publish; re-apply the mounted overlay's frame with `force` instead.
         overlayScalingModeCancellable = Defaults.publisher(.scalingMode, options: [])
@@ -245,22 +249,41 @@ extension PVEmulatorViewController {
 
     /// Makes the core run the controller variant the overlay draws: the per-game choice, else
     /// the per-system one, else the binding default (`OverlayPadKindResolver` without core
-    /// read-back). Runs when the overlay mounts and when the core reports a restored variant;
-    /// each resolved id is pushed at most once, so a core that cannot take it is not looped on.
+    /// read-back).
+    ///
+    /// Triggers: the overlay mounting, the core reporting a restored variant, the core
+    /// starting to run, and thin AV-info updates. On the thin wrapper the first two fire
+    /// before the core is running, so readiness is the core having declared its port devices
+    /// (cores without port devices, e.g. Dolphin, are ready at once), not `isOn`. A resolved
+    /// id is pushed once (`shouldApplyVariant`), so a core that cannot take it is not looped on.
     func applyResolvedControllerVariantIfNeeded() {
-        guard isProgrammaticOverlayActive, core.isOn,
+        guard isProgrammaticOverlayActive,
               let provider = core as? ConsoleVariantConfigurable,
+              (core as? any PortDeviceConfigurable).map({ !$0.controllerPortDescriptors.isEmpty }) ?? true,
               let game, !game.isInvalidated,
               let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
                                                                        persisted: game.systemIdentifier),
               system.availableControllerLayoutVariants != nil,
               let resolved = OverlayPadKindResolver.resolvedVariantID(for: system, variantProvider: nil,
                                                                       gameMD5: game.md5Hash),
-              provider.currentControllerLayoutVariantID != resolved,
-              hostAppliedControllerVariantID != resolved else { return }
+              OverlayPadKindResolver.shouldApplyVariant(resolved: resolved,
+                                                        current: provider.currentControllerLayoutVariantID,
+                                                        lastApplied: hostAppliedControllerVariantID) else { return }
         hostAppliedControllerVariantID = resolved
         ILOG("Overlay: applying controller layout variant \(resolved) at boot")
         provider.applyControllerLayoutVariant(resolved)
+    }
+
+    /// Re-runs the boot apply once the core is running; thin AV-info updates also re-run it.
+    private func observeCoreStartForControllerVariant() {
+        overlayCoreRunningCancellable = core.publisher(for: \.isRunning)
+            .first(where: { $0 })
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.applyResolvedControllerVariantIfNeeded() }
+    }
+
+    @objc private func handleThinCoreAVInfoForControllerVariant(_ notification: Notification) {
+        DispatchQueue.main.async { [weak self] in self?.applyResolvedControllerVariantIfNeeded() }
     }
 
     @objc private func handleOverlayScreenFrames(_ notification: Notification) {

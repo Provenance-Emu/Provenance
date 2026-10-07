@@ -116,6 +116,19 @@ struct OverlayPadKindResolverTests {
                                                          gameMD5: Self.md5) == nil)
     }
 
+    @Test("The host applies a variant the core is not running, once per resolved id")
+    func shouldApplyVariant() {
+        #expect(OverlayPadKindResolver.shouldApplyVariant(resolved: "psx-dualshock", current: "psx-digital",
+                                                          lastApplied: nil))
+        #expect(OverlayPadKindResolver.shouldApplyVariant(resolved: "psx-dualshock", current: nil, lastApplied: nil))
+        #expect(!OverlayPadKindResolver.shouldApplyVariant(resolved: "psx-dualshock", current: "psx-dualshock",
+                                                           lastApplied: nil))
+        #expect(!OverlayPadKindResolver.shouldApplyVariant(resolved: "psx-dualshock", current: "psx-digital",
+                                                           lastApplied: "psx-dualshock"))
+        #expect(OverlayPadKindResolver.shouldApplyVariant(resolved: "psx-digital", current: "psx-dualshock",
+                                                          lastApplied: "psx-dualshock"))
+    }
+
     @Test("A system without variants keeps its standard subtype")
     func standardSystem() {
         resetSettings()

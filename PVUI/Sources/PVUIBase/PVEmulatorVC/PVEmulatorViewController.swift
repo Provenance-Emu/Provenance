@@ -168,6 +168,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// that cannot take it is not asked again on every change notification.
     var hostAppliedControllerVariantID: String?
 
+    /// Runs the controller-variant boot apply once the core starts running.
+    var overlayCoreRunningCancellable: AnyCancellable?
+
     /// Re-applies the overlay's viewport when the scaling mode changes.
     var overlayScalingModeCancellable: AnyCancellable?
 
