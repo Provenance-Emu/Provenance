@@ -127,7 +127,11 @@ public final class ControllerLightBarManager {
         // Defer reapply to the next main run-loop turn: `registerDefaults` posts `UserDefaults.didChangeNotification`
         // synchronously while `Defaults` keys may still be in one-time initialization; reading `Defaults` here would
         // re-enter `dispatch_once` and trap in `_dispatch_once_wait`.
-        let udObs = nc.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+        // queue: nil, not .main: with .main, NotificationCenter makes the POSTING thread wait
+        // until the main queue runs this block. The first read of a `Defaults` key registers its
+        // default (posting this notification), so an emulation thread holding the emu lock blocked
+        // on main while main waited for that lock: 0x8badf00d. The body already hops to the main actor.
+        let udObs = nc.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: nil) { [weak self] _ in
             guard let self else { return }
             Task { @MainActor in
                 self.reapplyCurrentSystemColor()
