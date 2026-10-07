@@ -6,8 +6,24 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		F568AD11FE36C6561FEB0DA8 /* BuildPVlibAzahar */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 6B9F07D985A31965EB6921AA /* Build configuration list for PBXAggregateTarget "BuildPVlibAzahar" */;
+			buildPhases = (
+				3EEEB32A1ECE41C0CF0EE800 /* Build PVlibAzahar */,
+			);
+			dependencies = (
+			);
+			name = BuildPVlibAzahar;
+			packageProductDependencies = (
+			);
+			productName = BuildPVlibAzahar;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
-		0022D33F6F43C78EFD073410 /* AzaharGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EDC3DCC8AD0C8DA52CAE7FE /* AzaharGraphicsContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0022D33F6F43C78EFD073410 /* AzaharGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EDC3DCC8AD0C8DA52CAE7FE /* AzaharGraphicsContext.h */; };
 		075A1E0E63D35C797E56AE88 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 003A3F581E4C5CC430F5AAEB /* CorePlist-Generated.swift */; };
 		116F66E03BCCA5F1D03B2CB4 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F01E8A14043A3DFBE941AE5 /* AudioToolbox.framework */; };
 		12ABC64F7E1EEEEC40530B59 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = CBCEED13FDDB5ABDCE3D6297 /* PVPlists */; };
@@ -33,12 +49,12 @@
 		8B6399CC48D17CCCD24949C8 /* PVLoggingObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0A996641FE07FCF0A2C19C /* PVLoggingObjC */; };
 		8D18589612295F60E9E76849 /* PVAzaharCoreBridge+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDC942AED2CDD5BD427418A5 /* PVAzaharCoreBridge+Video.mm */; };
 		9104B3BD7CAFC8CBEB3163E1 /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 922620D6C7DA781A431333E9 /* PVObjCUtils */; };
-		9287CF50C1997AFE259D8B7F /* AzaharCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C75246CB905ADE858908166 /* AzaharCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9287CF50C1997AFE259D8B7F /* AzaharCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C75246CB905ADE858908166 /* AzaharCamera.h */; };
 		945C33A8AD85D745F7F696A8 /* PVAzaharDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */; };
 		98F795DC88DC87866D40CF7E /* PVAzaharCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */; };
 		9C8CF7AC65E25060BC59F9F1 /* AzaharInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F1FE2E2E4B8FE114B403270 /* AzaharInput.cpp */; };
 		A0B017D4981E7952F846C7C4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C79157998291504790FD90A /* libz.tbd */; };
-		A4C3C27989B22D6EFC38ACD9 /* AzaharInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1140F7AB6702FE554AAC9BE9 /* AzaharInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4C3C27989B22D6EFC38ACD9 /* AzaharInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1140F7AB6702FE554AAC9BE9 /* AzaharInput.h */; };
 		AECF066E880D15755E99BACD /* AzaharAppleUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A26EA6E6424EDF04CFFEB2 /* AzaharAppleUtils.mm */; };
 		AFA064E5FE287EE746471374 /* PVAzaharDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */; };
 		B12E678C0F8F05DE5EF76D82 /* PVAzaharCoreBridge+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF309D698E9638944364388F /* PVAzaharCoreBridge+Audio.mm */; };
@@ -46,7 +62,7 @@
 		BCFF083498CD5ABEEEFCDB17 /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = 1E237605816D66792B8B5630 /* PVPrimitives */; };
 		C19531EB55244E6DF9EC4A9E /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = 64BA6FBE0866EAFBB5D752FA /* PVJIT */; };
 		C315813F9EF08BEC087F4848 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6503B39B2E205E91CFBA6201 /* Core.plist */; };
-		C415574B0C1412AEFD8446CB /* AzaharEmuWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 01DA7C3922A362D00C8AC676 /* AzaharEmuWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C415574B0C1412AEFD8446CB /* AzaharEmuWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 01DA7C3922A362D00C8AC676 /* AzaharEmuWindow.h */; };
 		C941F43DE462D541DE0B0CC9 /* PVAzaharCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC25BB3E95A28038AEDAAC8 /* PVAzaharCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CE412627F69342D1BD02543C /* PVAzaharCoreBridge+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3735A948AF5179C25A70511D /* PVAzaharCoreBridge+Saves.mm */; };
 		D1F35EBCDFF3746F2DC7198C /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 10392391D0CCA6D171E8C6AF /* PVLogging */; };
@@ -58,6 +74,16 @@
 		F4AA9923F528F0C712231253 /* AzaharGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 79F96C6CB0762431065B1329 /* AzaharGraphicsContext.mm */; };
 		FBF42C2895B082E575AD8887 /* PVAzahar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C4747365172063E8D2C5A19 /* PVAzahar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5D7E98255CE229030F1A23C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6717E8240BB82C60B0D4CA45 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F568AD11FE36C6561FEB0DA8;
+			remoteInfo = BuildPVlibAzahar;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		003A3F581E4C5CC430F5AAEB /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
@@ -306,7 +332,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E7A2F1239DE7355840B62EF4 /* Build configuration list for PBXNativeTarget "PVAzahar" */;
 			buildPhases = (
-				7E35FDC61865D0A809F793AD /* Build PVlibAzahar */,
 				C8C11B27787A9A6710AF72CF /* Headers */,
 				9E36B802CACFF6B784F3D927 /* Sources */,
 				E740353CB14FBF4F7EAB66D1 /* Resources */,
@@ -315,6 +340,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9C35DE75EF98795FCC75A422 /* PBXTargetDependency */,
 			);
 			name = PVAzahar;
 			packageProductDependencies = (
@@ -375,6 +401,7 @@
 			targets = (
 				AB646ECA6A8DECFB45A8C1C0 /* PVAzahar */,
 				A9EAD8D700730FFBC57AC5C0 /* PVAzaharTests_iOS */,
+				F568AD11FE36C6561FEB0DA8 /* BuildPVlibAzahar */,
 			);
 		};
 /* End PBXProject section */
@@ -391,7 +418,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		7E35FDC61865D0A809F793AD /* Build PVlibAzahar */ = {
+		3EEEB32A1ECE41C0CF0EE800 /* Build PVlibAzahar */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -408,7 +435,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\npython3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo \"error: python3 >= 3.10 required for build_azahar_core.py (brew install python)\"; exit 1; }\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\ncase \"$slice\" in\n  ios)      xcfw_id=ios-arm64 ;;\n  ios-sim)  xcfw_id=ios-arm64-simulator ;;\n  tvos)     xcfw_id=tvos-arm64 ;;\n  tvos-sim) xcfw_id=tvos-arm64-simulator ;;\nesac\n# Rebuilding rewrites the shared xcframework in place, which races concurrent builds;\n# skip it when this slice exists and was built from the current submodule HEAD.\nbuilt_lib=\"$PROJECT_DIR/build/xcframework/PVlibAzahar.xcframework/${xcfw_id}/PVlibAzahar.framework/PVlibAzahar\"\nstamp=\"$PROJECT_DIR/build/${platform}/.gitlink\"\nhead=\"$(git -C \"$PROJECT_DIR/azahar\" rev-parse HEAD)\"\nif [[ -f \"$built_lib\" && -f \"$stamp\" && \"$(cat \"$stamp\")\" == \"$head\" ]]; then\n  echo \"PVlibAzahar ${slice} is current (azahar ${head}); skipping build_azahar_core.py\"\nelse\n  python3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\nfi\n# ProcessXCFramework copies the slice before this phase rebuilt it; put the fresh one where the linker looks.\nfresh=\"$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework\"\nif [[ -d \"$fresh\" && -n \"${BUILT_PRODUCTS_DIR:-}\" ]]; then\n  mkdir -p \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework\"\n  /usr/bin/rsync -a --delete \"$fresh/\" \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework/\"\nfi\n";
+			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\npython3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo \"error: python3 >= 3.10 required for build_azahar_core.py (brew install python)\"; exit 1; }\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\ncase \"$slice\" in\n  ios)      xcfw_id=ios-arm64 ;;\n  ios-sim)  xcfw_id=ios-arm64-simulator ;;\n  tvos)     xcfw_id=tvos-arm64 ;;\n  tvos-sim) xcfw_id=tvos-arm64-simulator ;;\nesac\n# Rebuilding rewrites the shared xcframework in place, which races concurrent builds;\n# skip it when this slice exists and was built from the current submodule HEAD.\nbuilt_lib=\"$PROJECT_DIR/build/xcframework/PVlibAzahar.xcframework/${xcfw_id}/PVlibAzahar.framework/PVlibAzahar\"\nstamp=\"$PROJECT_DIR/build/${platform}/.gitlink\"\nhead=\"$(git -C \"$PROJECT_DIR/azahar\" rev-parse HEAD)\"\nif [[ -f \"$built_lib\" && -f \"$stamp\" && \"$(cat \"$stamp\")\" == \"$head\" ]]; then\n  echo \"PVlibAzahar ${slice} is current (azahar ${head}); skipping build_azahar_core.py\"\nelse\n  python3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -447,6 +474,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		9C35DE75EF98795FCC75A422 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F568AD11FE36C6561FEB0DA8 /* BuildPVlibAzahar */;
+			targetProxy = 5D7E98255CE229030F1A23C6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		01ACCEAA8CD09198EC6FD993 /* Release */ = {
@@ -531,6 +566,22 @@
 			};
 			name = Debug;
 		};
+		C3624BCDA2FCF1E5D079BC29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator";
+			};
+			name = Release;
+		};
+		D47CC55C09265ACCDD04E73B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator";
+			};
+			name = Debug;
+		};
 		E31E29974165D31BAE6B2F19 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -596,7 +647,6 @@
 					"VK_NO_PROTOTYPES=1",
 					"VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1",
 					"VULKAN_HPP_NO_EXCEPTIONS=1",
-					"FMT_HEADER_ONLY=0",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -681,7 +731,6 @@
 					"VK_NO_PROTOTYPES=1",
 					"VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1",
 					"VULKAN_HPP_NO_EXCEPTIONS=1",
-					"FMT_HEADER_ONLY=0",
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -719,6 +768,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6B9F07D985A31965EB6921AA /* Build configuration list for PBXAggregateTarget "BuildPVlibAzahar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D47CC55C09265ACCDD04E73B /* Debug */,
+				C3624BCDA2FCF1E5D079BC29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9700E0E17C7FF9A4721B5AEB /* Build configuration list for PBXNativeTarget "PVAzaharTests_iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

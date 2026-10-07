@@ -119,6 +119,7 @@ jobs:
             CoresRetro
             Dependencies
             PVRcheevos
+            !Cores/Azahar/build
           key: submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-${{ github.sha }}
           restore-keys: |
             submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-
@@ -288,11 +289,18 @@ jobs:
           path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
           key: cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
 
+      # Keyed on the gitlink the parent commit records, not .git/modules/.../HEAD (which only
+      # exists once the submodule is initialized, and then reflects the cached checkout).
+      - name: Azahar submodule gitlink
+        id: azahar-gitlink
+        run: echo "sha=$(git ls-tree HEAD Cores/Azahar/azahar | awk '{print $3}')" >> "$GITHUB_OUTPUT"
+
+      # Excluded from the submodules cache above so the ~GB xcframework build is saved only here.
       - name: Cache azahar build
         uses: actions/cache@v4
         with:
           path: Cores/Azahar/build
-          key: azahar-${{ runner.os }}-${{ hashFiles('Cores/Azahar/build_azahar_core.py', 'Cores/Azahar/cmake/ios.toolchain.cmake') }}-${{ hashFiles('.git/modules/Cores/Azahar/azahar/HEAD') }}
+          key: azahar-${{ runner.os }}-${{ hashFiles('Cores/Azahar/build_azahar_core.py', 'Cores/Azahar/cmake/ios.toolchain.cmake') }}-${{ steps.azahar-gitlink.outputs.sha }}
           restore-keys: |
             azahar-${{ runner.os }}-
 
@@ -304,6 +312,8 @@ jobs:
       - name: Install dependencies
         run: |
           brew install ldid xcbeautify 2>/dev/null || true
+          # PVAzahar's pre-build builds PVlibAzahar with cmake + ninja and needs python3 >= 3.10.
+          brew install cmake ninja python@3.12 2>/dev/null || true
 
       - name: Clean Build Directory
         run: |
