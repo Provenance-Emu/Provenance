@@ -27,7 +27,10 @@ public final class PVMelonDSCore: PVEmulatorCore, @unchecked Sendable {
     public override var jitRequirement: PVJITRequirement { .optional(fallback: "Interpreter") }
 
     lazy var _bridge: PVMelonDSCoreBridge = .init()
-    
+
+    /// Whether the stylus is down, so drags don't re-send the press.
+    private var ndsStylusDown = false
+
     public required init() {
         super.init()
         self.bridge = (_bridge as! any ObjCBridgedCoreBridge)
@@ -41,12 +44,24 @@ extension PVMelonDSCore: PVDSSystemResponderClient {
     public func didRelease(_ button: PVCoreBridge.PVDSButton, forPlayer player: Int) {
         (_bridge as! PVDSSystemResponderClient).didRelease(button, forPlayer: player)
     }
+    /// Feeds the libretro pointer, whose coordinates span the whole framebuffer:
+    /// the DS point is placed inside the bottom screen of the active layout.
     public func touchScreenAtPoint(_ point: CGPoint) {
-        (_bridge as! PVDSSystemResponderClient).touchScreenAtPoint?(point)
+        guard let position = ndsScreenLayout.normalizedPointerPosition(forTouchScreenPoint: point) else { return }
+        _bridge.setMousePosition(position)
+        if !ndsStylusDown {
+            ndsStylusDown = true
+            _bridge.setLeftMouseButtonPressed(true)
+        }
     }
     public func releaseScreenTouch() {
-        (_bridge as! PVDSSystemResponderClient).releaseScreenTouch?()
+        ndsStylusDown = false
+        _bridge.setLeftMouseButtonPressed(false)
     }
+}
+
+extension PVMelonDSCore: NDSScreenLayoutProviding {
+    public var ndsScreenLayout: NDSScreenLayout { MelonDSOptions.ndsScreenLayout }
 }
 
 extension PVMelonDSCore: CoreOptional {

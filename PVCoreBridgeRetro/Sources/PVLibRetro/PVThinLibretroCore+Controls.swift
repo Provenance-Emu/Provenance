@@ -911,11 +911,14 @@ extension PVThinLibretroCore: PVDSSystemResponderClient {
     }
 
     /// Forward DS touchscreen tap to the libretro pointer device.
+    ///
+    /// Pointer coordinates span the whole framebuffer, so the DS point is placed
+    /// inside the bottom screen of the core's active screen layout.
     @objc public func touchScreenAtPoint(_ point: CGPoint) {
-        // DS touchscreen is 256×192; normalize to libretro pointer range (-0x7fff…0x7fff)
-        let nx = Int16(clamping: Int(((point.x / 256.0) * 2.0 - 1.0) * 0x7fff))
-        let ny = Int16(clamping: Int(((point.y / 192.0) * 2.0 - 1.0) * 0x7fff))
-        _bridge.setPointerX(nx, y: ny, pressed: true)
+        guard let position = ndsScreenLayout.normalizedPointerPosition(forTouchScreenPoint: point) else { return }
+        _bridge.setPointerX(NDSScreenLayout.libretroPointerCoordinate(position.x),
+                            y: NDSScreenLayout.libretroPointerCoordinate(position.y),
+                            pressed: true)
     }
 
     /// Release DS touchscreen.
@@ -942,6 +945,16 @@ extension PVThinLibretroCore: PVDSSystemResponderClient {
         case .count:      return .b
         @unknown default: return .b
         }
+    }
+}
+
+extension PVThinLibretroCore: NDSScreenLayoutProviding {
+    /// The DS screen layout selected in the running core's options; the upstream
+    /// default (stacked, no gap) for non-DS cores or before options are reported.
+    public var ndsScreenLayout: NDSScreenLayout {
+        guard let family = NDSCoreFamily(coreIdentifier: coreIdentifier) else { return .default }
+        let options = _bridge.coreOptions
+        return NDSScreenLayout(family: family) { options[$0] }
     }
 }
 
