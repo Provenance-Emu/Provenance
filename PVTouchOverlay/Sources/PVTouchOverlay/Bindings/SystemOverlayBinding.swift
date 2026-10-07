@@ -1,0 +1,78 @@
+import Foundation
+import PVSystems
+
+public struct OverlayColor: Hashable, Codable, Sendable {
+    public var red: Double, green: Double, blue: Double, alpha: Double
+    public init(_ red: Double, _ green: Double, _ blue: Double, _ alpha: Double = 1) {
+        self.red = red; self.green = green; self.blue = blue; self.alpha = alpha
+    }
+    public static let white = OverlayColor(1, 1, 1), black = OverlayColor(0, 0, 0)
+}
+
+public struct OverlayPalette: Hashable, Codable, Sendable {
+    public var shell: OverlayColor, primary: OverlayColor, secondary: OverlayColor, tertiary: OverlayColor
+    public var quaternary: OverlayColor, utility: OverlayColor, dpad: OverlayColor
+    public var stick: OverlayColor, label: OverlayColor
+    public init(shell: OverlayColor, primary: OverlayColor, secondary: OverlayColor, tertiary: OverlayColor,
+                quaternary: OverlayColor, utility: OverlayColor, dpad: OverlayColor,
+                stick: OverlayColor, label: OverlayColor) {
+        self.shell = shell; self.primary = primary; self.secondary = secondary; self.tertiary = tertiary
+        self.quaternary = quaternary; self.utility = utility; self.dpad = dpad; self.stick = stick
+        self.label = label
+    }
+    public func color(for slot: OverlayPaletteSlot) -> OverlayColor {
+        switch slot {
+        case .shell: return shell
+        case .primary: return primary
+        case .secondary: return secondary
+        case .tertiary: return tertiary
+        case .quaternary: return quaternary
+        case .utility: return utility
+        case .dpad: return dpad
+        case .stick: return stick
+        case .label: return label
+        }
+    }
+    /// Super Famicom / PAL SNES colours.
+    public static let snes = OverlayPalette(
+        shell: OverlayColor(0.80, 0.80, 0.84), primary: OverlayColor(0.86, 0.19, 0.22),  // A red
+        secondary: OverlayColor(0.98, 0.78, 0.18),                                        // B yellow
+        tertiary: OverlayColor(0.16, 0.40, 0.80),                                         // X blue
+        quaternary: OverlayColor(0.18, 0.62, 0.30),                                       // Y green
+        utility: OverlayColor(0.45, 0.45, 0.50), dpad: OverlayColor(0.30, 0.30, 0.34),
+        stick: OverlayColor(0.30, 0.30, 0.34), label: .white)
+}
+
+/// Which family each subtype of a system uses, plus the tokens and art for its slots.
+public struct SystemOverlayBinding: Sendable {
+    public let system: SystemIdentifier
+    public let families: [String: any OverlayFamily.Type]      // subtype -> family
+    public let defaultSubtype: String
+    public let tokens: [OverlayFamilySlot: String]
+    public let labels: [OverlayFamilySlot: String]
+    public let palette: OverlayPalette
+    /// `HardwareSwitchDescriptor.id`s to show (Phase 2 families use these).
+    public let hardwareSwitches: [String]
+
+    public init(system: SystemIdentifier, families: [String: any OverlayFamily.Type], defaultSubtype: String,
+                tokens: [OverlayFamilySlot: String], labels: [OverlayFamilySlot: String],
+                palette: OverlayPalette, hardwareSwitches: [String]) {
+        self.system = system; self.families = families; self.defaultSubtype = defaultSubtype
+        self.tokens = tokens; self.labels = labels; self.palette = palette
+        self.hardwareSwitches = hardwareSwitches
+    }
+
+    public func inputID(_ slot: OverlayFamilySlot) -> OverlayInputID {
+        OverlayInputID(system: system, token: tokens[slot] ?? slot.rawValue)
+    }
+    public func label(_ slot: OverlayFamilySlot) -> String { labels[slot] ?? slot.rawValue.uppercased() }
+
+    public func family(for subtype: String) -> any OverlayFamily.Type {
+        // swiftlint:disable:next force_unwrapping
+        families[subtype] ?? families[defaultSubtype] ?? families.values.first!
+    }
+
+    public func template(padKind: OverlayPadKind, orientation: OverlayOrientation) -> OverlayTemplate {
+        family(for: padKind.subtype).template(binding: self, padKind: padKind, orientation: orientation)
+    }
+}
