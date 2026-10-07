@@ -4,8 +4,10 @@ Build the azahar 3DS emulator libraries for iOS/tvOS and package them as
 PVlibAzahar.xcframework for Cores/Azahar/PVAzahar.xcodeproj.
 
 Source: Cores/Azahar/azahar (Provenance-Emu/azahar, branch `provenance`; see PATCHES.md)
-Output: Cores/Azahar/build/xcframework/PVlibAzahar.xcframework
-        (one static PVlibAzahar-<slice>.framework per platform, then combined)
+Output: Cores/Azahar/build/xcframework/PVlibAzahar-<slice>.framework/{PVlibAzahar, Headers/}
+        per platform (PVlibAzahar = every built static archive merged with libtool), then
+        Cores/Azahar/build/xcframework/PVlibAzahar.xcframework, a library xcframework
+        (<slice>/libPVlibAzahar.a + Headers/) combining every slice present.
 
 MoltenVK is linked from the repo's static xcframework at
 MoltenVK/MoltenVK/static/MoltenVK.xcframework/<slice>/libMoltenVK.a
@@ -59,8 +61,14 @@ CMAKE_OPTIONS = [
     "-DENABLE_CUBEB=OFF", "-DENABLE_LIBUSB=OFF", "-DENABLE_FFMPEG=OFF",
     "-DENABLE_COREAUDIO=ON", "-DENABLE_SOFTWARE_RENDERER=OFF", "-DENABLE_VULKAN=ON",
     "-DENABLE_TESTS=OFF", "-DENABLE_ROOM=OFF", "-DENABLE_DISCORD_RPC=OFF",
-    "-DENABLE_LTO=ON", "-DUSE_SYSTEM_MOLTENVK=ON",
+    # LTO off: with it every object is LLVM bitcode, which `xcodebuild -create-xcframework`
+    # rejects ("unable to find any architecture information") and which only links with
+    # the exact clang that produced it.
+    "-DENABLE_LTO=OFF", "-DUSE_SYSTEM_MOLTENVK=ON",
     "-DCITRA_WARNINGS_AS_ERRORS=OFF", "-DENABLE_COMPATIBILITY_LIST_DOWNLOAD=OFF",
+    # libressl's option. The ios toolchain reports CMAKE_C_COMPILER_ABI=ELF, so libressl
+    # picks its 32-bit ELF armv4 assembly, which cannot assemble for arm64 Mach-O.
+    "-DENABLE_ASM=OFF",
 ]
 
 # CMake targets whose static archives make up PVlibAzahar. Externals are pulled in
@@ -123,7 +131,11 @@ class AzaharBuilder:
         cmd = ["cmake", str(SRC), "-GNinja",
                f"-DCMAKE_TOOLCHAIN_FILE={TOOLCHAIN}", f"-DPLATFORM={platform}",
                f"-DDEPLOYMENT_TARGET={p['min']}", "-DENABLE_BITCODE=OFF", "-DENABLE_ARC=OFF",
-               "-DENABLE_VISIBILITY=OFF", f"-DMOLTENVK_LIBRARY={mvk}",
+               "-DENABLE_VISIBILITY=OFF",
+               # Without strict checks every check_function_exists() passes (try_compile only
+               # builds a static lib), and libressl then uses syslog_r/explicit_bzero/getauxval.
+               "-DENABLE_STRICT_TRY_COMPILE=ON",
+               f"-DMOLTENVK_LIBRARY={mvk}",
                *CMAKE_OPTIONS]
         if shutil.which("ccache"):
             cmd += ["-DCMAKE_C_COMPILER_LAUNCHER=ccache", "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache"]
@@ -133,8 +145,11 @@ class AzaharBuilder:
     @staticmethod
     def harvest(out: Path) -> list[Path]:
         libs = sorted(set(out.rglob("*.a")))
-        # Exclude anything we never link (tests) and MoltenVK itself (linked by the app).
-        return [lib for lib in libs if not any(s in lib.name for s in ("MoltenVK", "catch2", "Catch2"))]
+        # Exclude anything we never link (tests), MoltenVK itself (linked by the app), and
+        # CMake's own probe archives under CMakeFiles/ (e.g. _CMakeLTOTest-*/bin/libfoo.a).
+        return [lib for lib in libs
+                if "CMakeFiles" not in lib.relative_to(out).parts
+                and not any(s in lib.name for s in ("MoltenVK", "catch2", "Catch2"))]
 
     def merge(self, platform: str, out: Path, libs: list[Path]) -> Path:
         p = PLATFORMS[platform]
@@ -150,7 +165,14 @@ class AzaharBuilder:
         return fw
 
     def create_xcframework(self) -> Path:
-        """Combine every PVlibAzahar-*.framework present (this run's and earlier ones)."""
+        """Combine every PVlibAzahar-*.framework present (this run's and earlier ones).
+
+        Slices go in as `-library <archive> -headers <Headers>`: `-framework` requires the
+        binary to be named after the bundle directory (PVlibAzahar-ios), and a library
+        xcframework puts Headers/ on the consumer's header search path, which azahar's
+        own `#include "core/core.h"` style needs. `-library` insists on a `.a` name, so each
+        archive is hard-linked to build/staging/<slice>/libPVlibAzahar.a first.
+        """
         frameworks = sorted(XCFRAMEWORK_DIR.glob(f"{LIB_NAME}-*.framework"))
         if not frameworks:
             raise BuildError(f"no {LIB_NAME}-*.framework in {XCFRAMEWORK_DIR}")
@@ -159,7 +181,11 @@ class AzaharBuilder:
             shutil.rmtree(xcfw)
         cmd = ["xcodebuild", "-create-xcframework", "-output", str(xcfw)]
         for fw in frameworks:
-            cmd += ["-framework", str(fw)]
+            staged = BUILD / "staging" / fw.stem / f"lib{LIB_NAME}.a"
+            staged.parent.mkdir(parents=True, exist_ok=True)
+            staged.unlink(missing_ok=True)
+            staged.hardlink_to(fw / LIB_NAME)
+            cmd += ["-library", str(staged), "-headers", str(fw / "Headers")]
         log(f"Creating {xcfw.name} from {len(frameworks)} framework(s)", "package")
         run(cmd, verbose=self.verbose)
         return xcfw
