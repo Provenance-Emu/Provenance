@@ -295,7 +295,7 @@ static NSString *_systemName;
         nextEmuTick += gameInterval;
         sleepTime = nextEmuTick - GetSecondsSince(origin);
 
-        if (_isDoubleBufferedCached) {
+        if (_isDoubleBufferedCached && !self.presentsFramesOffEmulationLoop) {
             NSDate* bufferSwapLimit = [[NSDate date] dateByAddingTimeInterval:sleepTime];
             if ([self.frontBufferLock tryLock] || [self.frontBufferLock lockBeforeDate:bufferSwapLimit]) {
                 [self swapBuffers];
@@ -727,6 +727,10 @@ static NSString *_systemName;
 }
 
 - (BOOL)isDoubleBuffered {
+    return NO;
+}
+
+- (BOOL)presentsFramesOffEmulationLoop {
     return NO;
 }
 
