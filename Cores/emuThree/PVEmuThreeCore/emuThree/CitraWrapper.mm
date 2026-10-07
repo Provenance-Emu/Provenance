@@ -408,28 +408,11 @@ static void InitializeLogging() {
     int retionType = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.System Region"]] intValue];
     Settings::values.region_value.SetValue(retionType);
 
-    // System Language & Username — applied via CFG service after core init
-    auto cfg = Service::CFG::GetModule(core);
-    if (cfg) {
-        int languageValue = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.System Language"]] intValue];
-        if (languageValue >= 0 && languageValue <= 11) {
-            cfg->SetSystemLanguage(static_cast<Service::CFG::SystemLanguage>(languageValue));
-        }
-
-        // Read player username from NSUserDefaults (mirrors PVSettingsWrapper.resolvedPlayerUsername)
-        NSString *username = [[NSUserDefaults standardUserDefaults] stringForKey:@"playerUsername"];
-        if (username.length == 0) {
-            username = [[UIDevice currentDevice] name];
-        }
-        if (username.length > 0) {
-            NSString *truncated = username.length > 10 ? [username substringToIndex:10] : username;
-            std::u16string u16name;
-            for (NSUInteger i = 0; i < truncated.length; ++i) {
-                u16name.push_back(static_cast<char16_t>([truncated characterAtIndex:i]));
-            }
-            cfg->SetUsername(u16name);
-        }
-    }
+    // System Language & Username live in the CFG service, which only exists once the
+    // system has booted (see applySystemConfiguration). This method also runs from
+    // -load: BEFORE core.Load(), so it must not touch CFG then; -run re-applies it
+    // right after the system boots.
+    [self applySystemConfiguration];
 
     if (resetButtons)
         [CitraWrapper.sharedInstance setButtons];
@@ -441,6 +424,42 @@ static void InitializeLogging() {
 
     [self getModelType];
     Settings::Apply();
+}
+
+/// Pushes the system language and username into the emulated CFG service.
+///
+/// `Service::CFG::GetModule` dereferences `system.ServiceManager()`, which is a null
+/// `unique_ptr` until `Core::System::Load()` has initialised the system. Calling it earlier
+/// does a hash-map lookup on a null object (EXC_BAD_ACCESS at 0x20, TestFlight 3.4.0), so
+/// bail out unless the system is up. Safe to call at any time.
+-(void) applySystemConfiguration {
+    if (!core.IsPoweredOn()) {
+        NSLog(@"EmuThree: system not booted yet, deferring CFG language/username until after Load");
+        return;
+    }
+    auto cfg = Service::CFG::GetModule(core);
+    if (!cfg) {
+        NSLog(@"EmuThree: CFG module unavailable, skipping language/username");
+        return;
+    }
+    int languageValue = [[NSNumber numberWithInteger:[[NSUserDefaults standardUserDefaults] integerForKey:@"PVEmuThreeCore.System Language"]] intValue];
+    if (languageValue >= 0 && languageValue <= 11) {
+        cfg->SetSystemLanguage(static_cast<Service::CFG::SystemLanguage>(languageValue));
+    }
+
+    // Read player username from NSUserDefaults (mirrors PVSettingsWrapper.resolvedPlayerUsername)
+    NSString *username = [[NSUserDefaults standardUserDefaults] stringForKey:@"playerUsername"];
+    if (username.length == 0) {
+        username = [[UIDevice currentDevice] name];
+    }
+    if (username.length > 0) {
+        NSString *truncated = username.length > 10 ? [username substringToIndex:10] : username;
+        std::u16string u16name;
+        for (NSUInteger i = 0; i < truncated.length; ++i) {
+            u16name.push_back(static_cast<char16_t>([truncated characterAtIndex:i]));
+        }
+        cfg->SetUsername(u16name);
+    }
 }
 
 -(void) getModelType {
@@ -512,9 +531,13 @@ static void InitializeLogging() {
 
 -(void) resetController {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01* NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
-        auto hid = Service::HID::GetModule(core.GetInstance());
         Settings::values.isReloading.SetValue(false);
-        if (core.GetInstance().IsPoweredOn() && hid) {
+        // GetModule needs the booted service manager; check power state before calling it.
+        if (!core.GetInstance().IsPoweredOn()) {
+            return;
+        }
+        auto hid = Service::HID::GetModule(core.GetInstance());
+        if (hid) {
             hid->ReloadInputDevices();
         }
     });
@@ -561,8 +584,16 @@ static void InitializeLogging() {
     shouldSave=false;
     shouldLoad=false;
     shouldShutdown=false;
-    if (!CitraWrapper.sharedInstance.isRunning)
+    if (!CitraWrapper.sharedInstance.isRunning) {
         auto resultStatus = core.Load(*emu_window, std::string([_path UTF8String]));
+        if (resultStatus != Core::System::ResultStatus::Success) {
+            // A failed Load leaves the system torn down; RunLoop() would dereference it.
+            NSLog(@"EmuThree: core.Load failed (status %d), not starting the run loop", (int)resultStatus);
+            return;
+        }
+        // The CFG service only exists now that the system has booted.
+        [self applySystemConfiguration];
+    }
     if (!CitraWrapper.sharedInstance.isRunning)
         [NSThread detachNewThreadSelector:@selector(start) toTarget:self withObject:nil];
     CitraWrapper.sharedInstance.isRunning = true;
