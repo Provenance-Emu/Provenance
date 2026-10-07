@@ -3321,11 +3321,13 @@ static const NSTimeInterval kThinBlockingLoadWaitOffMainThread = 10.0;
 /// Per-frame budget for `-runFrame`'s wait on a blocking core's next frame.
 ///
 /// This is NOT a "give the core longer to finish" timeout — it is the maximum
-/// time the emulation thread may hold `@synchronized(self)`. That lock is the
-/// same one `-[PVCoreObjCBridge setPauseEmulation:]` takes ON THE MAIN THREAD
-/// (`-setAchievementTriggeredBlock:` no longer does — see `_cheevosBlockLock`), so a wait of
-/// `DISPATCH_TIME_FOREVER` under it turns any stall on the core's own thread
-/// into a whole-app hang. Expiring costs nothing: no extra tick is banked (see
+/// time the emulation thread may hold `@synchronized(self)` and the bridge's
+/// frame-execution lock. `-[PVCoreObjCBridge setPauseEmulation:]` no longer takes
+/// the monitor on main, but it still waits (bounded, 250 ms) for the in-flight
+/// frame to end so a save state right after a pause can't overlap `retro_run`;
+/// a wait of `DISPATCH_TIME_FOREVER` under it would make every pause eat that
+/// full timeout, and any other main-side `@synchronized(self)` would hang the
+/// app outright. Expiring costs nothing: no extra tick is banked (see
 /// `_blockingTickOutstanding`), the lock is released so main can make progress,
 /// and the next loop iteration resumes the wait — the frame is picked up
 /// whenever it actually arrives.
@@ -8622,33 +8624,37 @@ static void pvthin_rcheevos_event_handler(const rc_client_event_t *event, rc_cli
         }
         case RC_CLIENT_EVENT_ACHIEVEMENT_PROGRESS_INDICATOR_SHOW: {
             const rc_client_achievement_t *ach = event->achievement;
-            if (!ach || !bridge.achievementProgressBlock) { break; }
+            auto progressBlock = bridge.achievementProgressBlock;
+            if (!ach || !progressBlock) { break; }
             NSString *title = ach->title ? @(ach->title) : @"";
             NSString *progress = ach->measured_progress ? @(ach->measured_progress) : @"";
-            bridge.achievementProgressBlock(ach->id, title, progress);
+            progressBlock(ach->id, title, progress);
             break;
         }
         case RC_CLIENT_EVENT_LEADERBOARD_STARTED: {
             const rc_client_leaderboard_t *lb = event->leaderboard;
-            if (!lb || !bridge.leaderboardStartedBlock) { break; }
+            auto startedBlock = bridge.leaderboardStartedBlock;
+            if (!lb || !startedBlock) { break; }
             NSString *title = lb->title ? @(lb->title) : @"";
             NSString *desc  = lb->description ? @(lb->description) : @"";
             NSString *score = lb->tracker_value ? @(lb->tracker_value) : @"";
-            bridge.leaderboardStartedBlock(lb->id, title, desc, score);
+            startedBlock(lb->id, title, desc, score);
             break;
         }
         case RC_CLIENT_EVENT_LEADERBOARD_FAILED: {
-            if (!event->leaderboard || !bridge.leaderboardFailedBlock) { break; }
-            bridge.leaderboardFailedBlock(event->leaderboard->id);
+            auto failedBlock = bridge.leaderboardFailedBlock;
+            if (!event->leaderboard || !failedBlock) { break; }
+            failedBlock(event->leaderboard->id);
             break;
         }
         case RC_CLIENT_EVENT_LEADERBOARD_SUBMITTED: {
             const rc_client_leaderboard_t *lb = event->leaderboard;
-            if (!lb || !bridge.leaderboardSubmittedBlock) { break; }
+            auto submittedBlock = bridge.leaderboardSubmittedBlock;
+            if (!lb || !submittedBlock) { break; }
             NSString *title = lb->title ? @(lb->title) : @"";
             NSString *desc  = lb->description ? @(lb->description) : @"";
             NSString *score = lb->tracker_value ? @(lb->tracker_value) : @"";
-            bridge.leaderboardSubmittedBlock(lb->id, title, desc, score);
+            submittedBlock(lb->id, title, desc, score);
             break;
         }
         default:
@@ -8691,9 +8697,9 @@ static void pvthin_rcheevos_load_callback(int result, const char *error_message,
         // Surface the failure to UI so the user sees a toast instead of
         // silent "cheevos not tracking" (audit Section J.1). The Swift
         // wrapper bridges this into RetroAchievementsOSDDelegate.
-        if (bridge.sessionLoadFailedBlock) {
+        if (auto failedBlock = bridge.sessionLoadFailedBlock) {
             NSString *msg = error_message ? @(error_message) : nil;
-            bridge.sessionLoadFailedBlock((int32_t)result, msg);
+            failedBlock((int32_t)result, msg);
         }
     }
     [bridge _pvthin_setAchievementsActive:success];
@@ -8720,9 +8726,9 @@ static void pvthin_rcheevos_login_callback(int result, const char *error_message
         // Surface login failures to UI alongside load failures — both block
         // the session from starting, both were previously silent. The user
         // sees one categorised toast either way (audit Section J.1).
-        if (bridge.sessionLoadFailedBlock) {
+        if (auto failedBlock = bridge.sessionLoadFailedBlock) {
             NSString *msg = error_message ? @(error_message) : nil;
-            bridge.sessionLoadFailedBlock((int32_t)result, msg);
+            failedBlock((int32_t)result, msg);
         }
         [bridge _pvthin_setAchievementsActive:NO];
         if (completion) { completion(NO); }

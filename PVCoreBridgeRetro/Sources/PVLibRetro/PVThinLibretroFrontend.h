@@ -643,18 +643,20 @@ FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotificat
     NSString *title, NSString *desc, uint32_t points, NSURL * _Nullable badgeURL, BOOL isHardcore);
 
 /// Block invoked when measurable achievement progress changes.
-@property (nonatomic, copy, nullable) void (^achievementProgressBlock)(uint32_t achievementID,
+/// The cheevos callback blocks below are `atomic`: wired on the main thread, read
+/// on the emulation thread. Readers must snapshot into a local before calling.
+@property (atomic, copy, nullable) void (^achievementProgressBlock)(uint32_t achievementID,
     NSString *title, NSString *progressText);
 
 /// Block invoked when a leaderboard attempt starts.
-@property (nonatomic, copy, nullable) void (^leaderboardStartedBlock)(uint32_t leaderboardID,
+@property (atomic, copy, nullable) void (^leaderboardStartedBlock)(uint32_t leaderboardID,
     NSString *title, NSString *desc, NSString *scoreText);
 
 /// Block invoked when a leaderboard attempt is cancelled or fails.
-@property (nonatomic, copy, nullable) void (^leaderboardFailedBlock)(uint32_t leaderboardID);
+@property (atomic, copy, nullable) void (^leaderboardFailedBlock)(uint32_t leaderboardID);
 
 /// Block invoked when a leaderboard score is submitted successfully.
-@property (nonatomic, copy, nullable) void (^leaderboardSubmittedBlock)(uint32_t leaderboardID,
+@property (atomic, copy, nullable) void (^leaderboardSubmittedBlock)(uint32_t leaderboardID,
     NSString *title, NSString *desc, NSString *scoreText);
 
 /// Toggle rcheevos hardcore mode on the live session. The initial value
@@ -671,7 +673,7 @@ FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotificat
 /// so the UI can surface a categorised toast (network vs unknown game
 /// vs auth). Without this, load failures were log-only — the user had no
 /// way to tell why their cheevos weren't tracking (audit Section J.1).
-@property (nonatomic, copy, nullable) void (^sessionLoadFailedBlock)(int32_t rcResult,
+@property (atomic, copy, nullable) void (^sessionLoadFailedBlock)(int32_t rcResult,
     NSString * _Nullable message);
 
 // MARK: Light gun input
