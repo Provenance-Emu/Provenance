@@ -290,9 +290,15 @@ extension PVEmulatorViewController {
         DispatchQueue.main.async { [weak self] in self?.applyResolvedControllerVariantIfNeeded() }
     }
 
+    /// Posted from the overlay's SwiftUI callbacks, so on main: handled synchronously so the
+    /// mounted state is never a turn late. An off-main post is hopped as a fallback.
     @objc private func handleOverlayScreenFrames(_ notification: Notification) {
         let frames = OverlayNotificationPayload.frames(from: notification.userInfo)
-        DispatchQueue.main.async { [weak self] in self?.overlayScreenFramesDidChange(frames) }
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in self?.overlayScreenFramesDidChange(frames) }
+            return
+        }
+        overlayScreenFramesDidChange(frames)
     }
 
     /// The layout editor pauses the game while it is open and resumes it when it closes,
@@ -316,10 +322,19 @@ extension PVEmulatorViewController {
     /// covers the floating menu button (the overlay has no menu control) and the DS split.
     private func overlayScreenFramesDidChange(_ frames: [CGRect]) {
         let mounting = overlayScreenFrames.isEmpty && !frames.isEmpty
+        let unmounting = !overlayScreenFrames.isEmpty && frames.isEmpty
         overlayScreenFrames = frames
         if mounting { applyResolvedControllerVariantIfNeeded() }
         hideOrShowMenuButton()
-        guard core.supportsDualScreens else { return }
+        guard core.supportsDualScreens else {
+            // A returning packaged skin re-broadcasts the frame it had before the overlay, which
+            // `validateAndStoreFrame` drops as unchanged while the GPU view still sits at the
+            // overlay's frame: put the stored skin frame back explicitly.
+            if unmounting, let frame = currentTargetFrame {
+                applyFrameToGPUView(frame, reason: "overlay-unmounted", force: true)
+            }
+            return
+        }
         // Also when the overlay leaves (empty frames): a packaged skin can re-assert its split.
         applyDualScreenViewport()
     }
