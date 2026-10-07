@@ -48,6 +48,12 @@ MIME_BASE = "application/x-provenance-"
 
 # Map system identifiers from systems.plist → (uti_suffix, display_name)
 # Systems not in this map get added to the base com.provenance.rom type.
+# Generic extensions some systems use (NAOMI/Atomiswave .dat and .lst) that the
+# base ROM type must not claim: the ROM document type is the Owner of everything on
+# the base type, and claiming every .dat/.lst file on the device is what 4d9a200d77
+# ("Don't claim ownership of all ROM filetypes") undid.
+GENERIC_EXTENSIONS_NOT_CLAIMED = {"dat", "lst"}
+
 SYSTEM_UTI_MAP = {
     "com.provenance.2600":         ("atari2600",    "Atari 2600"),
     "com.provenance.5200":         ("atari5200",    "Atari 5200"),
@@ -252,7 +258,8 @@ def generate_declarations(systems_plist: Path = SYSTEMS_PLIST):
     base_exts_final = []
     for e in sorted(set(BASE_ROM_EXTENSIONS) | (all_system_exts - system_claimed_exts
                                                   - set(STANDARD_ARCHIVE_UTIS.keys())
-                                                  - {"zip", "rar", "7z", "iso"}),
+                                                  - {"zip", "rar", "7z", "iso"}
+                                                  - GENERIC_EXTENSIONS_NOT_CLAIMED),
                     key=lambda x: x.lower()):
         if e.lower() not in seen:
             seen.add(e.lower())
