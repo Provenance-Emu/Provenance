@@ -288,6 +288,14 @@ jobs:
           path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
           key: cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
 
+      - name: Cache azahar build
+        uses: actions/cache@v4
+        with:
+          path: Cores/Azahar/build
+          key: azahar-${{ runner.os }}-${{ hashFiles('Cores/Azahar/build_azahar_core.py', 'Cores/Azahar/cmake/ios.toolchain.cmake') }}-${{ hashFiles('.git/modules/Cores/Azahar/azahar/HEAD') }}
+          restore-keys: |
+            azahar-${{ runner.os }}-
+
       - name: Generate libretro cheat database
         if: steps.cache-cheatdb.outputs.cache-hit != 'true'
         run: |
