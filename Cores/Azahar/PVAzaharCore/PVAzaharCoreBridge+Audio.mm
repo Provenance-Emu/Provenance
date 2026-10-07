@@ -1,6 +1,8 @@
 #import "PVAzaharCoreBridge.h"
 #import "PVAzaharCoreBridge+Private.h"
 #import <AVFoundation/AVFoundation.h>
+#import <PVAzahar/PVAzahar-Swift.h>
+#import <PVLogging/PVLoggingObjC.h>
 #include "common/settings.h"
 
 static const double PVAzahar3DSSampleRate = 32728.0;
@@ -12,13 +14,22 @@ static const NSUInteger PVAzaharChannelCount = 2;
 - (double)audioSampleRate { return PVAzahar3DSSampleRate; }
 - (NSUInteger)channelCount { return PVAzaharChannelCount; }
 
-// Volume is host-side: the base bridge exposes no volume property, so there is nothing to override here.
+// volume/mute: host exposes no bridge hook; follow-up.
 
+/// Same policy as PVCoreAudio's engines: honour the "Respect mute switch" setting.
 - (void)configureAudioSession {
     NSError *error = nil;
     AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setCategory:AVAudioSessionCategoryAmbient mode:AVAudioSessionModeDefault options:0 error:&error];
-    [session setActive:YES error:&error];
+    AVAudioSessionCategory category = PVAzaharCore.respectsMuteSwitch ? AVAudioSessionCategoryAmbient
+                                                                      : AVAudioSessionCategoryPlayback;
+    const AVAudioSessionCategoryOptions options = AVAudioSessionCategoryOptionMixWithOthers
+        | AVAudioSessionCategoryOptionAllowBluetoothA2DP | AVAudioSessionCategoryOptionAllowAirPlay;
+    if (![session setCategory:category mode:AVAudioSessionModeDefault options:options error:&error]) {
+        ELOG(@"[PVAzahar] audio session category failed: %@", error);
+    }
+    if (![session setActive:YES error:&error]) {
+        ELOG(@"[PVAzahar] audio session activation failed: %@", error);
+    }
 }
 
 @end

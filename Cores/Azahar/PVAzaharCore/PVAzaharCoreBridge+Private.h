@@ -23,6 +23,8 @@ class AzaharEmuWindow;
     std::atomic<bool> _loaded;       // Core::System::Load succeeded
     std::atomic<bool> _stopRequested; // set by stop before the join; the emu thread skips the loop
     std::atomic<std::thread::id> _emuThreadId;  // set inside the emu thread; default id when none runs
+    std::atomic<bool> _emuThreadExited; // last statement of the emu thread; stop pumps main until it is set
+    std::atomic<bool> _stopping;        // stopEmulationWithMessage: in progress (its pumped run loop can re-enter it)
     NSString *_romPath;              // set in loadFileAtPath:, loaded on the emu thread
     UIView *_renderView;             // PVAzaharRenderView, added to touchViewController.view
     NSArray<NSLayoutConstraint *> *_renderViewConstraints;
@@ -40,7 +42,7 @@ class AzaharEmuWindow;
 - (void)applySettingsFromOptions;
 /// Executes a MAP_JIT test page (Dolphin's probe); YES on the simulator.
 - (BOOL)probeJITAvailable;
-- (NSString *)userDirectoryPath;     // <Documents>/Azahar/
+- (NSString *)userDirectoryPath;     // PVAzaharCore.userRootURL: <Documents>/Azahar (iOS), <Caches>/Azahar (tvOS)
 @end
 
 @interface PVAzaharCoreBridge (Cheats)

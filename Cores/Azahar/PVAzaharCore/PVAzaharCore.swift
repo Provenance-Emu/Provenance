@@ -2,6 +2,7 @@ import Foundation
 import PVCoreBridge
 import PVEmulatorCore
 import PVLogging
+import PVSettings
 import PVSupport
 
 enum PVAzaharCoreError {
@@ -11,8 +12,11 @@ enum PVAzaharCoreError {
 
 @objc @objcMembers
 public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
-    /// Name of the Azahar user directory under Documents; read by `PVAzaharCoreBridge.mm` too.
-    public static let userDirectoryName = PVAzaharDataMigrator.userDirectoryName
+    /// azahar's user directory: Documents/Azahar on iOS, Library/Caches/Azahar on tvOS (Documents is not
+    /// writable there). `PVAzaharCoreBridge.mm` hands it to FileUtil::SetUserPath.
+    public static var userRootURL: URL { PVAzaharDataMigrator.defaultTargetRoot() }
+    /// Mirrors PVCoreAudio: `.ambient` (silenced by the ring/silent switch) when true, `.playback` otherwise.
+    public static var respectsMuteSwitch: Bool { Defaults[.respectMuteSwitch] }
 
     let _bridge: PVAzaharCoreBridge = .init()
 

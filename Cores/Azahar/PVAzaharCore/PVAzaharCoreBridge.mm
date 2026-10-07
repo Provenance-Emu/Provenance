@@ -78,6 +78,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 - (instancetype)init {
     if ((self = [super init])) {
         _running = false; _paused = false; _loaded = false; _stopRequested = false;
+        _emuThreadExited = true; _stopping = false;
         self.skipEmulationLoop = YES;   // azahar runs its own loop (see startEmulation)
         self.skipLayout = YES;          // we draw into our own view (Dolphin pattern)
         self.resolutionFactor = 1; self.cpuClockPercent = 100; self.new3DSMode = YES;
@@ -95,13 +96,15 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 }
 
 - (NSString *)userDirectoryPath {
-    NSString *docs = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-    return [docs stringByAppendingPathComponent:PVAzaharCore.userDirectoryName];
+    return PVAzaharCore.userRootURL.path;   // Documents/Azahar on iOS, Caches/Azahar on tvOS
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
     NSString *userDir = [self userDirectoryPath];
-    [[NSFileManager defaultManager] createDirectoryAtPath:userDir withIntermediateDirectories:YES attributes:nil error:nil];
+    NSError *dirError = nil;
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:userDir withIntermediateDirectories:YES attributes:nil error:&dirError]) {
+        ELOG(@"[PVAzahar] could not create user directory %@: %@", userDir, dirError);
+    }
     FileUtil::SetUserPath(std::string([userDir fileSystemRepresentation]) + "/");
 
     static std::once_flag logOnce;
@@ -239,7 +242,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
         [self finishBootWithFailure:@"Azahar could not create its render view"];
         return;
     }
-    _running = true; _paused = false; _stopRequested = false;
+    _running = true; _paused = false; _stopRequested = false; _emuThreadExited = false;
     std::string romPath([_romPath fileSystemRepresentation]);
     __weak PVAzaharCoreBridge *weakSelf = self;
     // The thread keeps `self` alive until it exits; stopEmulationWithMessage: joins it.
@@ -300,8 +303,9 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
                 PVAzaharCoreBridge *strongSelf = weakSelf;
                 if (!strongSelf || strongSelf->_stopRequested) { return; }   // host already stopped us
                 // stopEmulationWithMessage: clears the boot blocks, so take the failure block first.
+                // nil message: the host presents `failed`'s error; the base would show a second alert.
                 void (^failed)(NSString *) = strongSelf.onEmulationFailed;
-                [strongSelf stopEmulationWithMessage:message];
+                [strongSelf stopEmulationWithMessage:nil];
                 if (failed) { failed(message); }
             });
         }
@@ -312,6 +316,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
             _jobs.clear();   // nothing will run them now; releases any runOnEmuThreadAndWait: waiter
         }
         _emuThreadId = std::thread::id();
+        _emuThreadExited = true;   // after this the thread touches nothing of ours; stop may join
     });
     [super startEmulation];
 }
@@ -325,6 +330,11 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 /// The base `stopEmulation` calls this, and so do the load-failure and guest-shutdown paths, so all
 /// teardown lives here. Main thread. Idempotent.
 - (void)stopEmulationWithMessage:(NSString *)message {
+    // The wait below pumps the main run loop, which can deliver a queued guest-shutdown stop.
+    if (_stopping.exchange(true)) {
+        ILOG(@"[PVAzahar] stop already in progress; ignoring re-entrant stop");
+        return;
+    }
     _stopRequested = true;
     _running = false; _paused = false;
     self.onEmulationStarted = nil;     // a boot result still queued for main must not reach the host
@@ -335,8 +345,14 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
         if (_emuThread.get_id() == std::this_thread::get_id()) {
             _emuThread.detach();   // never expected; joining ourselves would throw
         } else {
-            // Kept unbounded on purpose: a half-torn-down Core::System is worse than a wait.
+            // Kept unbounded on purpose: a half-torn-down Core::System is worse than a wait. On main, the
+            // run loop keeps turning while we wait: MoltenVK dispatch_syncs to main for surface/swapchain
+            // work, so a quit during Load or a resize would otherwise deadlock. (A stop issued from inside a
+            // main-queue block cannot drain the main queue this way; GCD does not re-enter it.)
             ILOG(@"[PVAzahar] joining emu thread");
+            if ([NSThread isMainThread]) {
+                while (!_emuThreadExited) { CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.01, true); }
+            }
             _emuThread.join();
             ILOG(@"[PVAzahar] joined emu thread");
         }
@@ -348,6 +364,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     [self teardownRenderView];   // hops to main itself when called off-main (e.g. from dealloc)
     _window.reset();
     [super stopEmulationWithMessage:message];
+    _stopping = false;
 }
 
 - (void)resetEmulation {
