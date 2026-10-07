@@ -14,6 +14,10 @@ MoltenVK/MoltenVK/static/MoltenVK.xcframework/<slice>/libMoltenVK.a
 (USE_SYSTEM_MOLTENVK=ON, so azahar never downloads its own copy). It is passed to
 CMake only to satisfy configure; it is not merged into PVlibAzahar.
 
+cmake/ios.toolchain.cmake is a copy of Cores/Dolphin/dolphin-ios/Externals/ios-cmake (the one
+build_dolphin_core.py uses); the older Cores/Dolphin/cmake copy has no SIMULATORARM64 and leaks
+-miphoneos-version-min into tvOS builds. Every slice is arm64-only.
+
 Submodules of the azahar checkout needed besides the externals: dist/compatibility_list
 (CMakeLists.txt configure_file()s its .qrc unconditionally).
 
@@ -135,7 +139,9 @@ class AzaharBuilder:
             raise BuildError(f"MoltenVK static slice missing: {mvk}")
         cmd = ["cmake", str(SRC), "-GNinja",
                f"-DCMAKE_TOOLCHAIN_FILE={TOOLCHAIN}", f"-DPLATFORM={platform}",
-               f"-DDEPLOYMENT_TARGET={p['min']}", "-DENABLE_BITCODE=OFF", "-DENABLE_ARC=OFF",
+               # arm64 only: the toolchain defaults SIMULATOR_TVOS to x86_64.
+               f"-DDEPLOYMENT_TARGET={p['min']}", "-DARCHS=arm64",
+               "-DENABLE_BITCODE=OFF", "-DENABLE_ARC=OFF",
                "-DENABLE_VISIBILITY=OFF",
                # Without strict checks every check_function_exists() passes (try_compile only
                # builds a static lib), and libressl then uses syslog_r/explicit_bzero/getauxval.
