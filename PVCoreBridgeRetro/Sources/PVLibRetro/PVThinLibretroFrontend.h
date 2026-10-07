@@ -209,7 +209,10 @@ FOUNDATION_EXPORT NSNotificationName const PVThinLibretroFrontendCoreDidThrowNot
 /// Posted on the main thread when a core could not be started. `userInfo`
 /// carries `error` (NSError, when one is known) and `coreIdentifier`.
 /// PVEmulatorViewController observes it and offers a way back to the library.
-FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotification;
+/// Swift uses `Notification.Name.PVEmulatorCoreDidFailToStart` from PVCoreBridge
+/// (same string); hiding this import keeps that name unambiguous.
+FOUNDATION_EXPORT NSNotificationName const PVEmulatorCoreDidFailToStartNotification
+    NS_SWIFT_UNAVAILABLE("Use Notification.Name.PVEmulatorCoreDidFailToStart from PVCoreBridge");
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
