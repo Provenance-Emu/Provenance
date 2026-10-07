@@ -8,7 +8,7 @@
 #if !TARGET_OS_TV
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import <PVLogging/PVLoggingObjC.h>
 #import <AVFoundation/AVFoundation.h>   // before the azahar headers, whose include paths shadow Network/Network.h
 #import <CoreImage/CoreImage.h>
 #import <CoreVideo/CoreVideo.h>
@@ -272,13 +272,14 @@ static std::vector<u16> ConvertSampleBuffer(CMSampleBufferRef sampleBuffer, int 
 
 @implementation AzaharCaptureCamera {
     AVCaptureDevicePosition _position;
-    AVCaptureSession *_session;       // guarded by @synchronized(self)
+    AVCaptureSession *_session;       // only touched on _queue
     dispatch_queue_t _queue;
     std::mutex _mutex;                 // guards everything below, shared with the capture queue
     std::vector<u16> _framebuffer;
     int _width, _height;
     BOOL _rgb565;
     int _minFps, _maxFps;
+    BOOL _wantRunning;
 }
 
 - (instancetype)initWithPosition:(AVCaptureDevicePosition)position {
@@ -290,15 +291,33 @@ static std::vector<u16> ConvertSampleBuffer(CMSampleBufferRef sampleBuffer, int 
     return self;
 }
 
+/// All session work runs serially on `_queue`, in call order, so a stop can never be overtaken by the
+/// start before it. `_wantRunning` lets queued starts (and the permission callback) bail after a stop.
 - (void)start {
+    { std::lock_guard lock(_mutex); _wantRunning = true; }
+    dispatch_async(_queue, ^{ [self startOnQueue]; });
+}
+
+- (void)stop {
+    { std::lock_guard lock(_mutex); _wantRunning = false; }
+    dispatch_async(_queue, ^{ [self stopOnQueue]; });
+}
+
+- (BOOL)wantsRunning {
+    std::lock_guard lock(_mutex);
+    return _wantRunning;
+}
+
+- (void)startOnQueue {
+    if (![self wantsRunning]) { return; }
     switch ([AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo]) {
     case AVAuthorizationStatusAuthorized: {
-        dispatch_async(_queue, ^{ [self startAuthorized]; });   // startRunning blocks; keep it off the emu thread
+        [self startAuthorized];
         break;
     }
     case AVAuthorizationStatusNotDetermined: {
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
-            if (granted) { dispatch_async(self->_queue, ^{ [self startAuthorized]; }); }
+            if (granted) { dispatch_async(self->_queue, ^{ if ([self wantsRunning]) { [self startAuthorized]; } }); }
         }];
         break;
     }
@@ -307,7 +326,14 @@ static std::vector<u16> ConvertSampleBuffer(CMSampleBufferRef sampleBuffer, int 
     }
 }
 
+- (void)stopOnQueue {
+    [_session stopRunning];
+    _session = nil;
+}
+
+/// On `_queue`.
 - (void)startAuthorized {
+    [self stopOnQueue];   // never leave a running session behind when replacing it
     AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera
                                                                  mediaType:AVMediaTypeVideo position:_position];
     if (!device) { return; }
@@ -322,8 +348,10 @@ static std::vector<u16> ConvertSampleBuffer(CMSampleBufferRef sampleBuffer, int 
     if ([session canAddInput:input]) { [session addInput:input]; }
     if ([session canAddOutput:output]) { [session addOutput:output]; }
     [self applyFrameRateTo:device];   // after the preset: applying a preset resets the durations
-    @synchronized (self) { _session = session; }
+    if (![self wantsRunning]) { return; }
+    _session = session;
     [session startRunning];
+    if (![self wantsRunning]) { [self stopOnQueue]; }
 }
 
 /// Frame durations outside the active format's supported ranges raise an exception, so clamp first.
@@ -345,15 +373,9 @@ static std::vector<u16> ConvertSampleBuffer(CMSampleBufferRef sampleBuffer, int 
         device.activeVideoMinFrameDuration = CMTimeMake(1, (int32_t)hi);   // shortest frame = fastest rate
         device.activeVideoMaxFrameDuration = CMTimeMake(1, (int32_t)lo);
     } @catch (NSException *exception) {
-        NSLog(@"[PVAzahar] camera frame rate rejected: %@", exception.reason);
+        WLOG(@"[PVAzahar] camera frame rate rejected: %@", exception.reason);
     }
     [device unlockForConfiguration];
-}
-
-- (void)stop {
-    AVCaptureSession *session;
-    @synchronized (self) { session = _session; _session = nil; }
-    if (session) { dispatch_async(_queue, ^{ [session stopRunning]; }); }
 }
 
 - (BOOL)isAvailable {
@@ -448,9 +470,9 @@ private:
 
 namespace AzaharCamera {
 void RegisterFactories() {
-    Camera::RegisterFactory("av_front", std::make_unique<Camera::AVCameraFactory>(AVCaptureDevicePositionFront));
-    Camera::RegisterFactory("av_rear_left", std::make_unique<Camera::AVCameraFactory>(AVCaptureDevicePositionBack));
-    Camera::RegisterFactory("av_rear_right", std::make_unique<Camera::AVCameraFactory>(AVCaptureDevicePositionBack));
+    Camera::RegisterFactory(kFrontCamera, std::make_unique<Camera::AVCameraFactory>(AVCaptureDevicePositionFront));
+    Camera::RegisterFactory(kRearLeftCamera, std::make_unique<Camera::AVCameraFactory>(AVCaptureDevicePositionBack));
+    Camera::RegisterFactory(kRearRightCamera, std::make_unique<Camera::AVCameraFactory>(AVCaptureDevicePositionBack));
 }
 }
 

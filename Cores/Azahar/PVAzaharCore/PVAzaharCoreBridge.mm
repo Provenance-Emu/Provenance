@@ -68,11 +68,12 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     }
 }
 
-// Controls (PV3DSSystemResponderClient, JoystickResponder), viewport positioning and setCheat: live in
-// categories, which the compiler does not see when it checks this @implementation.
+// Residual -Wprotocol on this @implementation is inherited from ObjCBridgedCoreBridge, not from this core:
+// EmulatorCoreSavesSerializer's misspelled loadStateToFileAtPath:error: and EmulatorCoreControllerDataSource's
+// controllerN properties are satisfied (or not) by the PVCoreObjCBridge base. Controls, viewport positioning
+// and save states are declared on their own categories, so a missing method there still warns.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wprotocol"
-#pragma clang diagnostic ignored "-Wincomplete-implementation"
 @implementation PVAzaharCoreBridge
 
 - (instancetype)init {
@@ -149,9 +150,9 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     v.camera_name[0] = v.camera_name[1] = v.camera_name[2] = "blank";
 #else
     // Indexed by Service::CAM::CameraIndex: OuterRightCamera, InnerCamera, OuterLeftCamera.
-    v.camera_name[Service::CAM::OuterRightCamera] = "av_rear_right";
-    v.camera_name[Service::CAM::InnerCamera] = "av_front";
-    v.camera_name[Service::CAM::OuterLeftCamera] = "av_rear_left";
+    v.camera_name[Service::CAM::OuterRightCamera] = AzaharCamera::kRearRightCamera;
+    v.camera_name[Service::CAM::InnerCamera] = AzaharCamera::kFrontCamera;
+    v.camera_name[Service::CAM::OuterLeftCamera] = AzaharCamera::kRearLeftCamera;
 #endif
     AzaharInput::ApplyProfile();
     ILOG(@"[PVAzahar] settings applied: jit=%d fastinterp=%d res=%ld layout=%ld", jit, !jit,
@@ -353,6 +354,11 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     std::unique_lock lock(state->m);
     state->cv.wait_until(lock, deadline, [&state] { return state->finished; });
     return state->ran ? YES : NO;
+}
+
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
+        setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error {
+    return [self applyCheat:code index:cheatIndex enabled:enabled];   // +Cheats.mm
 }
 
 @end

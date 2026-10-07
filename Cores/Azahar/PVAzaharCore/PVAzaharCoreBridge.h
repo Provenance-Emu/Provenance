@@ -3,15 +3,13 @@
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 @protocol ObjCBridgedCoreBridge;
-@protocol PV3DSSystemResponderClient;
-@protocol EmulatorCoreViewportPositioning;
 typedef enum PV3DSButton: NSInteger PV3DSButton;
 
 NS_ASSUME_NONNULL_BEGIN
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything"
-@interface PVAzaharCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PV3DSSystemResponderClient, EmulatorCoreViewportPositioning>
+@interface PVAzaharCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge>
 #pragma clang diagnostic pop
 
 /// Values pushed from PVAzaharCoreOptions before `loadFileAtPath:` (see Task 9).

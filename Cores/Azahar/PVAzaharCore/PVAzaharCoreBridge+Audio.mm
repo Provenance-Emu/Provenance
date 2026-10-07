@@ -12,6 +12,8 @@ static const NSUInteger PVAzaharChannelCount = 2;
 - (double)audioSampleRate { return PVAzahar3DSSampleRate; }
 - (NSUInteger)channelCount { return PVAzaharChannelCount; }
 
+// Volume is host-side: the base bridge exposes no volume property, so there is nothing to override here.
+
 - (void)configureAudioSession {
     NSError *error = nil;
     AVAudioSession *session = [AVAudioSession sharedInstance];

@@ -34,9 +34,14 @@ static Settings::LayoutOption NextLayout(Settings::LayoutOption current) {
     }
 }
 
-// The protocol methods are declared by the primary class's conformance but, by design, defined here.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-protocol-method-implementation"
+/// Analog the left stick (analog or digital directions) currently drives; PV3DSButtonAnalogMode flips it.
+static int LeftStickTarget(PVAzaharCoreBridge *bridge) {
+    return bridge->_leftStickDrivesCStick ? Settings::NativeAnalog::CStick : Settings::NativeAnalog::CirclePad;
+}
+
+@interface PVAzaharCoreBridge (Controls) <PV3DSSystemResponderClient>
+@end
+
 @implementation PVAzaharCoreBridge (Controls)
 
 /// Layout settings are read by the emu thread, so the write and ApplySettings happen there; the
@@ -64,12 +69,16 @@ static Settings::LayoutOption NextLayout(Settings::LayoutOption current) {
                 Settings::values.layout_option.SetValue(NextLayout(Settings::values.layout_option.GetValue()));
             }];
             return;
-        case PV3DSButtonAnalogMode: _leftStickDrivesCStick = !_leftStickDrivesCStick; return;
+        case PV3DSButtonAnalogMode:
+            _leftStickDrivesCStick = !_leftStickDrivesCStick;
+            AzaharInput::SetAnalog(Settings::NativeAnalog::CirclePad, 0, 0);   // a held stick must not stay latched
+            AzaharInput::SetAnalog(Settings::NativeAnalog::CStick, 0, 0);
+            return;
         // Digital analog directions (keyboard/skin D-pad style)
-        case PV3DSButtonLeftAnalogUp:    AzaharInput::SetAnalog(Settings::NativeAnalog::CirclePad, 0, 1); return;
-        case PV3DSButtonLeftAnalogDown:  AzaharInput::SetAnalog(Settings::NativeAnalog::CirclePad, 0, -1); return;
-        case PV3DSButtonLeftAnalogLeft:  AzaharInput::SetAnalog(Settings::NativeAnalog::CirclePad, -1, 0); return;
-        case PV3DSButtonLeftAnalogRight: AzaharInput::SetAnalog(Settings::NativeAnalog::CirclePad, 1, 0); return;
+        case PV3DSButtonLeftAnalogUp:    AzaharInput::SetAnalog(LeftStickTarget(self), 0, 1); return;
+        case PV3DSButtonLeftAnalogDown:  AzaharInput::SetAnalog(LeftStickTarget(self), 0, -1); return;
+        case PV3DSButtonLeftAnalogLeft:  AzaharInput::SetAnalog(LeftStickTarget(self), -1, 0); return;
+        case PV3DSButtonLeftAnalogRight: AzaharInput::SetAnalog(LeftStickTarget(self), 1, 0); return;
         case PV3DSButtonRightAnalogUp:    AzaharInput::SetAnalog(Settings::NativeAnalog::CStick, 0, 1); return;
         case PV3DSButtonRightAnalogDown:  AzaharInput::SetAnalog(Settings::NativeAnalog::CStick, 0, -1); return;
         case PV3DSButtonRightAnalogLeft:  AzaharInput::SetAnalog(Settings::NativeAnalog::CStick, -1, 0); return;
@@ -84,7 +93,7 @@ static Settings::LayoutOption NextLayout(Settings::LayoutOption current) {
     switch (button) {
         case PV3DSButtonLeftAnalogUp: case PV3DSButtonLeftAnalogDown:
         case PV3DSButtonLeftAnalogLeft: case PV3DSButtonLeftAnalogRight:
-            AzaharInput::SetAnalog(Settings::NativeAnalog::CirclePad, 0, 0); return;
+            AzaharInput::SetAnalog(LeftStickTarget(self), 0, 0); return;
         case PV3DSButtonRightAnalogUp: case PV3DSButtonRightAnalogDown:
         case PV3DSButtonRightAnalogLeft: case PV3DSButtonRightAnalogRight:
             AzaharInput::SetAnalog(Settings::NativeAnalog::CStick, 0, 0); return;
@@ -98,7 +107,7 @@ static Settings::LayoutOption NextLayout(Settings::LayoutOption current) {
     // PV gives y with +1 = up; azahar's analog also uses +1 = up.
     switch (button) {
         case PV3DSButtonLeftAnalog:
-            AzaharInput::SetAnalog(_leftStickDrivesCStick ? Settings::NativeAnalog::CStick : Settings::NativeAnalog::CirclePad, (float)x, (float)y); break;
+            AzaharInput::SetAnalog(LeftStickTarget(self), (float)x, (float)y); break;
         case PV3DSButtonRightAnalog:
             AzaharInput::SetAnalog(Settings::NativeAnalog::CStick, (float)x, (float)y); break;
         default: break;
@@ -110,4 +119,3 @@ static Settings::LayoutOption NextLayout(Settings::LayoutOption current) {
 }
 
 @end
-#pragma clang diagnostic pop

@@ -8,14 +8,10 @@
 
 static const NSTimeInterval PVAzaharCheatTimeout = 2.0;
 
-// setCheat: is declared in the primary @interface (CLAUDE.md: categories can be elided) and defined here.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wobjc-protocol-method-implementation"
 @implementation PVAzaharCoreBridge (Cheats)
 
 /// Replaces the engine entry named "PV<index>". Enabled -> a Gateway cheat from `code`; disabled -> removed.
-- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
-        setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error {
+- (BOOL)applyCheat:(NSString *)code index:(UInt8)cheatIndex enabled:(BOOL)enabled {
     const std::string codeText([code UTF8String] ?: "");
     const std::string name = "PV" + std::to_string(cheatIndex);
     return [self runOnEmuThreadAndWait:[=] {
@@ -33,4 +29,3 @@ static const NSTimeInterval PVAzaharCheatTimeout = 2.0;
 }
 
 @end
-#pragma clang diagnostic pop

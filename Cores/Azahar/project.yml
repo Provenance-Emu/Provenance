@@ -35,9 +35,12 @@ settings:
     # satisfies the SDK's <Network/Network.h> on a case-insensitive volume, which breaks AVFoundation's
     # AVRouting module (camera, audio session). Its one collision with the SDK's <network/network.h> is
     # side-stepped by putting just that directory on -I and including it as "network.h".
+    # HAZARD: azahar's own core/hle/service/nwm/nwm_uds.h does #include "network/network.h", which with
+    # -idirafter resolves to the SDK's Network framework header instead. No file here includes nwm_uds.h
+    # today; one that does must not (#pragma once cannot make the SDK header skip, they are different files).
     HEADER_SEARCH_PATHS:
       - "$(inherited)"
-      - "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers/Network"
+      - "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers/network"
     PVAZAHAR_SLICE: ios
     "PVAZAHAR_SLICE[sdk=iphonesimulator*]": ios-sim
     "PVAZAHAR_SLICE[sdk=appletvos*]": tvos

@@ -2,7 +2,12 @@
 #import "PVAzaharCoreBridge+Private.h"
 #import <PVAzahar/PVAzahar-Swift.h>
 #import <PVLogging/PVLoggingObjC.h>
+@import PVCoreBridge;
 #include "Glue/AzaharEmuWindow.h"
+
+// Conformance lives on the category that defines the methods, so a missing one still warns.
+@interface PVAzaharCoreBridge (ViewportPositioning) <EmulatorCoreViewportPositioning>
+@end
 
 @implementation PVAzaharCoreBridge (Video)
 
@@ -80,27 +85,6 @@
     if (NSThread.isMainThread) { detach(); } else { dispatch_async(dispatch_get_main_queue(), detach); }
 }
 
-#pragma mark - EmulatorCoreViewportPositioning (DeltaSkin screen frame)
-
-- (void)setUseCustomRenderViewLayout:(BOOL)enabled {
-    _useCustomRenderViewLayout = enabled;
-    if (!enabled && _renderView && _renderViewConstraints) {
-        _renderView.translatesAutoresizingMaskIntoConstraints = NO;
-        [NSLayoutConstraint activateConstraints:_renderViewConstraints];
-        [_renderView.superview layoutIfNeeded];   // layoutSubviews reports the new drawable size
-    }
-}
-
-- (void)applyRenderViewFrameInTouchView:(CGRect)frame {
-    if (!_renderView) { return; }
-    if (_renderViewConstraints) { [NSLayoutConstraint deactivateConstraints:_renderViewConstraints]; }
-    _renderView.translatesAutoresizingMaskIntoConstraints = YES;
-    _renderView.frame = frame;
-    [_renderView layoutIfNeeded];   // layoutSubviews reports the new drawable size
-}
-
-- (BOOL)isShuttingDownForViewportUpdates { return !_running; }
-
 #pragma mark - PVCoreObjCBridge video properties
 
 - (CGSize)bufferSize { return CGSizeMake(400 * MAX(1, self.resolutionFactor), 480 * MAX(1, self.resolutionFactor)); }
@@ -126,5 +110,30 @@
     [self runOnEmuThread:[self, x, y, ended] { if (_window) { _window->Touch(!ended, x, y); } }];
 }
 #endif
+
+@end
+
+@implementation PVAzaharCoreBridge (ViewportPositioning)
+
+#pragma mark - EmulatorCoreViewportPositioning (DeltaSkin screen frame)
+
+- (void)setUseCustomRenderViewLayout:(BOOL)enabled {
+    _useCustomRenderViewLayout = enabled;
+    if (!enabled && _renderView && _renderViewConstraints) {
+        _renderView.translatesAutoresizingMaskIntoConstraints = NO;
+        [NSLayoutConstraint activateConstraints:_renderViewConstraints];
+        [_renderView.superview layoutIfNeeded];   // layoutSubviews reports the new drawable size
+    }
+}
+
+- (void)applyRenderViewFrameInTouchView:(CGRect)frame {
+    if (!_renderView) { return; }
+    if (_renderViewConstraints) { [NSLayoutConstraint deactivateConstraints:_renderViewConstraints]; }
+    _renderView.translatesAutoresizingMaskIntoConstraints = YES;
+    _renderView.frame = frame;
+    [_renderView layoutIfNeeded];   // layoutSubviews reports the new drawable size
+}
+
+- (BOOL)isShuttingDownForViewportUpdates { return !_running; }
 
 @end

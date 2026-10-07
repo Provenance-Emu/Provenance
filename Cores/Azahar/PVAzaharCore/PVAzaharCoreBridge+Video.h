@@ -10,10 +10,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)relayoutWindow;
 /// Main thread, after the emu thread has been joined.
 - (void)teardownRenderView;
-// EmulatorCoreViewportPositioning (DeltaSkin screen frame), implemented in this category.
-- (void)setUseCustomRenderViewLayout:(BOOL)enabled;
-- (void)applyRenderViewFrameInTouchView:(CGRect)frame;
-- (BOOL)isShuttingDownForViewportUpdates;
 #if !TARGET_OS_TV
 - (void)sendTouchEvent:(UITouch *)touch ended:(BOOL)ended;
 #endif

@@ -27,7 +27,7 @@ class AzaharEmuWindow;
     UIView *_renderView;             // PVAzaharRenderView, added to touchViewController.view
     NSArray<NSLayoutConstraint *> *_renderViewConstraints;
     BOOL _useCustomRenderViewLayout;
-    BOOL _leftStickDrivesCStick;     // PV3DSButtonAnalogMode toggles it; main thread only
+    std::atomic<bool> _leftStickDrivesCStick;   // PV3DSButtonAnalogMode toggles it
 }
 /// Jobs run on the emu thread between RunLoop slices (also while paused), and are dropped
 /// unrun when emulation stops.
@@ -41,6 +41,10 @@ class AzaharEmuWindow;
 /// Executes a MAP_JIT test page (Dolphin's probe); YES on the simulator.
 - (BOOL)probeJITAvailable;
 - (NSString *)userDirectoryPath;     // <Documents>/Azahar/
+@end
+
+@interface PVAzaharCoreBridge (Cheats)
+- (BOOL)applyCheat:(NSString *)code index:(UInt8)index enabled:(BOOL)enabled;   // +Cheats.mm; setCheat: forwards here
 @end
 
 @interface PVAzaharCoreBridge (Audio)
