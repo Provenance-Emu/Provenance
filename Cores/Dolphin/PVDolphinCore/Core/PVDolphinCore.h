@@ -201,8 +201,24 @@
 // JIT detection
 -(BOOL)checkJITAvailable;
 
-// Applies the Aspect Ratio option, or the app's Stretch scaling mode when it is Auto.
+// Applies the Aspect Ratio option and the app's scaling mode to Dolphin's aspect setting,
+// then asks the render view to lay itself out again. Safe to call from any thread.
 -(void)applyAspectRatioSetting;
+
+/// YES when the app's Aspect Fill, Integer Scale or Native Resolution mode is applied by
+/// sizing the render layer (Dolphin itself then stretches to that layer). Aspect Fit and
+/// Stretch are Dolphin's own aspect modes, and the OpenGL backend has no sizable layer.
+@property (nonatomic, readonly) BOOL sizesRenderLayerForScalingMode;
+/// Width / height of the picture Dolphin is drawing, ignoring stretch. 0 until known.
+@property (nonatomic, readonly) CGFloat gameDisplayAspect;
+/// Where the render layer sits inside the render view. Main thread; used to map touches.
+- (void)renderLayerFrameDidChange:(CGRect)frame;
+/// The rect, in `view`'s coordinates, that the game picture occupies: the render layer's
+/// frame while it is sized for the scaling mode, otherwise all of `view`. For touch input.
+- (CGRect)renderPictureRectInView:(UIView *)view;
+/// Lays the render view out again, so the render layer picks up a new scaling mode or aspect.
+/// Safe to call from any thread.
+- (void)requestRenderLayerRelayout;
 
 // DeltaSkin viewport (EmulatorCoreViewportPositioning). Declared here, not in a category
 // header, so Swift module synthesis can't drop them.

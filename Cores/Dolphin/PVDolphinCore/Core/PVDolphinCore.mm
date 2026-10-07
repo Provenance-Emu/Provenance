@@ -144,6 +144,11 @@ static char kPVDolphinNetplayBootQueueKey;
 /// How long a netplay reboot waits for the running game to stop, for netplay
 /// input to be released, or for the next game to start running.
 static constexpr std::chrono::seconds kPVDolphinNetplayStopTimeout{10};
+/// The game's display aspect is sampled once per this many emulated video fields
+/// (about four times a second at 60 Hz).
+static constexpr uint32_t kPVDolphinAspectSampleFieldInterval = 15;
+/// How far the sampled aspect must move before the render layer is laid out again.
+static constexpr float kPVDolphinAspectChangeEpsilon = 0.005f;
 
 // Function to reset all static/global state for iOS dynamic library reloading
 static void ResetDolphinStaticState() {
@@ -255,6 +260,11 @@ static void ResetDolphinStaticState() {
     /// before `setupView` (PVUI lays the skin out before `startEmulation`) is not lost.
     CGRect _pendingCustomFrame;
     BOOL _isShuttingDownForViewport;
+    /// Where the render layer sits inside the render view (`renderLayerFrameDidChange:`). Main thread only.
+    CGRect _renderLayerFrame;
+    /// The game's own display aspect, ignoring stretch. Written on the CPU thread by
+    /// `sampleGameDisplayAspect`, read on the main thread. 0 until the first sample.
+    std::atomic<float> _sampledGameAspect;
     /// The full-screen constraints `setupView` pins the render view with. Deactivated when
     /// a skin takes over the layout.
     NSArray<NSLayoutConstraint *> *_renderViewConstraints;
@@ -346,10 +356,25 @@ static void ResetDolphinStaticState() {
     return YES;
 }
 
-/// Dolphin sizes its own output, so the app's scaling mode can't be applied to its
-/// view frame. An explicit Aspect Ratio option wins; on Auto, follow the app's
-/// Stretch mode. Other modes have no Dolphin equivalent and keep Auto (aspect fit).
+/// Dolphin draws into its own layer, so the host's GPU view layout never touches it.
+///
+/// Aspect Fit and Stretch map onto Dolphin's own aspect modes. Aspect Fill, Integer Scale and
+/// Native Resolution have no Dolphin equivalent: the render view controller sizes the render
+/// layer for them (`renderLayerFrame(inContainer:scale:)`) and Dolphin stretches to that layer.
+/// An explicit Stretch Aspect Ratio option always means "fill the view".
+/// The OpenGL backend's view is its GL layer, so it only gets the Dolphin-side modes.
+- (BOOL)sizesRenderLayerForScalingMode {
+    if (self.gsPreference == 1 || (AspectMode)self.aspectRatio == AspectMode::Stretch) {
+        return NO;
+    }
+    return PVSettingsWrapper.useAspectFill || PVSettingsWrapper.useIntegerScale || PVSettingsWrapper.useNativeResolution;
+}
+
+/// An explicit Aspect Ratio option wins; on Auto, follow the app's Stretch mode.
 - (AspectMode)effectiveAspectMode {
+    if ([self sizesRenderLayerForScalingMode]) {
+        return AspectMode::Stretch;
+    }
     AspectMode mode = (AspectMode)self.aspectRatio;
     if (mode == AspectMode::Auto && PVSettingsWrapper.useStretchScale) {
         return AspectMode::Stretch;
@@ -359,6 +384,59 @@ static void ResetDolphinStaticState() {
 
 - (void)applyAspectRatioSetting {
     Config::SetBaseOrCurrent(Config::GFX_ASPECT_RATIO, [self effectiveAspectMode]);
+    [self requestRenderLayerRelayout];
+}
+
+- (CGFloat)gameDisplayAspect {
+    switch ((AspectMode)self.aspectRatio) {
+        case AspectMode::ForceWide:
+            return 16.0 / 9.0;
+        case AspectMode::ForceStandard:
+            return 4.0 / 3.0;
+        default:
+            return _sampledGameAspect.load();
+    }
+}
+
+/// Samples the aspect Dolphin draws the game with. CPU thread, a few times a second.
+/// `allow_stretch = false` asks for the picture's own aspect even while Dolphin is on
+/// Stretch, which is what it is whenever the render layer is sized here.
+- (void)sampleGameDisplayAspect {
+    if (!g_presenter) {
+        return;
+    }
+    const float aspect = g_presenter->CalculateDrawAspectRatio(false);
+    if (!std::isfinite(aspect) || aspect <= 0.0f) {
+        return;
+    }
+    const float previous = _sampledGameAspect.exchange(aspect);
+    if (std::fabs(previous - aspect) > kPVDolphinAspectChangeEpsilon && [self sizesRenderLayerForScalingMode]) {
+        [self requestRenderLayerRelayout];
+    }
+}
+
+- (void)requestRenderLayerRelayout {
+    __weak __typeof__(self) weakSelf = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        __strong __typeof__(self) strongSelf = weakSelf;
+        if (!strongSelf || strongSelf->_isShuttingDownForViewport) {
+            return;
+        }
+        // The render view controller lays the render layer out in viewDidLayoutSubviews.
+        [strongSelf->m_view setNeedsLayout];
+    });
+}
+
+- (void)renderLayerFrameDidChange:(CGRect)frame {
+    _renderLayerFrame = frame;
+}
+
+- (CGRect)renderPictureRectInView:(UIView *)view {
+    if (![self sizesRenderLayerForScalingMode] || !m_view.window || CGRectIsEmpty(_renderLayerFrame)) {
+        return view.bounds;
+    }
+    const CGRect picture = [view convertRect:_renderLayerFrame fromView:m_view];
+    return (picture.size.width > 0 && picture.size.height > 0) ? picture : view.bounds;
 }
 
 /* Config at dolphin-ios/Source/Core/Core/Config */
@@ -387,6 +465,7 @@ static void ResetDolphinStaticState() {
 
     // Aspect Ratio
     Config::SetBase(Config::GFX_ASPECT_RATIO, [self effectiveAspectMode]);
+    [self requestRenderLayerRelayout];
 
     // V-Sync
     Config::SetBase(Config::GFX_VSYNC, self.vsync);
@@ -995,12 +1074,16 @@ static void ResetDolphinStaticState() {
 /// field. Replaces any earlier registration.
 - (void)installFrameEndHook {
     __weak PVDolphinCoreBridge *weakSelf = self;
-    _frameEndHook = Core::System::GetInstance().GetVideoEvents().vi_end_field_event.Register([weakSelf]() {
-        void (^frameCompleted)(void) = weakSelf.frameCompletedHandler;
-        if (frameCompleted) {
-            frameCompleted();
-        }
-    });
+    _frameEndHook = Core::System::GetInstance().GetVideoEvents().vi_end_field_event.Register(
+        [weakSelf, fields = uint32_t{0}]() mutable {
+            if (++fields % kPVDolphinAspectSampleFieldInterval == 0) {
+                [weakSelf sampleGameDisplayAspect];
+            }
+            void (^frameCompleted)(void) = weakSelf.frameCompletedHandler;
+            if (frameCompleted) {
+                frameCompleted();
+            }
+        });
 }
 
 - (void)stopEmulation {

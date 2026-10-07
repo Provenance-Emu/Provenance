@@ -129,3 +129,89 @@ public enum ScalingMode: String, Codable, Equatable, Hashable,
 
     public var description: String { displayName }
 }
+
+// MARK: - Frame calculation
+
+/// Pure frame maths for `ScalingMode`, for cores that draw into their own view and so
+/// can't use the shared GPU view layout (Dolphin sizes its render layer with this).
+///
+/// Native sizes follow the DeltaSkin container's convention: `nativePixelHeight` is in
+/// device PIXELS and the resulting frame is in view POINTS (pixels / `screenScale`).
+public enum ScalingModeLayout {
+
+    /// The rect, in the container's coordinate space, that the content occupies.
+    ///
+    /// - Parameters:
+    ///   - mode: The scaling mode to apply.
+    ///   - container: Size of the area available, in points.
+    ///   - contentAspect: Width / height of the game picture.
+    ///   - nativePixelHeight: Height of the game's native output, in pixels. Its width is
+    ///     `nativePixelHeight * contentAspect`.
+    ///   - screenScale: Device pixels per point.
+    /// - Returns: A centred rect. `.stretch`, and any input too degenerate to lay out
+    ///   (empty container, no usable aspect), give the whole container. `.aspectFill` may
+    ///   exceed the container, so the host must clip. `.integerScale` and `.nativeResolution`
+    ///   fall back to `.aspectFit` when the picture at that size would not fit.
+    public static func frame(for mode: ScalingMode,
+                             container: CGSize,
+                             contentAspect: CGFloat,
+                             nativePixelHeight: CGFloat,
+                             screenScale: CGFloat) -> CGRect {
+        let whole = CGRect(origin: .zero, size: container)
+        guard container.width > 0, container.height > 0,
+              contentAspect.isFinite, contentAspect > 0 else { return whole }
+
+        let size: CGSize
+        switch mode {
+        case .stretch:
+            return whole
+        case .aspectFit:
+            size = fitted(aspect: contentAspect, in: container)
+        case .aspectFill:
+            size = filled(aspect: contentAspect, in: container)
+        case .integerScale:
+            guard let native = nativeSize(aspect: contentAspect, pixelHeight: nativePixelHeight, scale: screenScale) else {
+                return whole
+            }
+            let multiple = floor(min(container.width / native.width, container.height / native.height))
+            size = multiple >= 1
+                ? CGSize(width: native.width * multiple, height: native.height * multiple)
+                : fitted(aspect: contentAspect, in: container)
+        case .nativeResolution:
+            guard let native = nativeSize(aspect: contentAspect, pixelHeight: nativePixelHeight, scale: screenScale) else {
+                return whole
+            }
+            size = native.width <= container.width && native.height <= container.height
+                ? native
+                : fitted(aspect: contentAspect, in: container)
+        }
+
+        return CGRect(x: (container.width - size.width) / 2,
+                      y: (container.height - size.height) / 2,
+                      width: size.width,
+                      height: size.height)
+    }
+
+    /// Largest `aspect` rect inside `container`.
+    private static func fitted(aspect: CGFloat, in container: CGSize) -> CGSize {
+        if container.width / container.height > aspect {
+            return CGSize(width: container.height * aspect, height: container.height)
+        }
+        return CGSize(width: container.width, height: container.width / aspect)
+    }
+
+    /// Smallest `aspect` rect covering `container`.
+    private static func filled(aspect: CGFloat, in container: CGSize) -> CGSize {
+        if container.width / container.height > aspect {
+            return CGSize(width: container.width, height: container.width / aspect)
+        }
+        return CGSize(width: container.height * aspect, height: container.height)
+    }
+
+    /// The native output size in points, or nil when it can't be worked out.
+    private static func nativeSize(aspect: CGFloat, pixelHeight: CGFloat, scale: CGFloat) -> CGSize? {
+        guard pixelHeight > 0, scale > 0 else { return nil }
+        let height = pixelHeight / scale
+        return CGSize(width: height * aspect, height: height)
+    }
+}

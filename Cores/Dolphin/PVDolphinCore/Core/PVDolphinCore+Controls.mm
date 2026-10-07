@@ -1506,8 +1506,11 @@ static SerialInterface::SIDevices s_gcSIDevice = SerialInterface::SIDEVICE_GC_CO
 
     // Convert touch coordinates to normalized [-1.0, 1.0] range
     // Origin (0,0) is top-left, we want center to be (0,0)
-    float normalizedX = (location.x / view.bounds.size.width) * 2.0f - 1.0f;
-    float normalizedY = (location.y / view.bounds.size.height) * 2.0f - 1.0f;
+    // Relative to the game picture, not the touched view: Dolphin only corrects for the
+    // bars it draws itself, and not for a render layer sized for the app's scaling mode.
+    const CGRect picture = [self renderPictureRectInView:view];
+    float normalizedX = ((location.x - picture.origin.x) / picture.size.width) * 2.0f - 1.0f;
+    float normalizedY = ((location.y - picture.origin.y) / picture.size.height) * 2.0f - 1.0f;
 
     // Clamp to valid range
     normalizedX = fmaxf(-1.0f, fminf(1.0f, normalizedX));

@@ -1098,6 +1098,13 @@ public final class PVSettingsWrapper: NSObject {
         Defaults[.scalingMode] == .stretch
     }
 
+    /// True when the user's selected scaling mode fills the screen while keeping the
+    /// aspect ratio (cropping the overflow).
+    @objc
+    public static var useAspectFill: Bool {
+        Defaults[.scalingMode] == .aspectFill
+    }
+
     /// True when the user's selected scaling mode is native-resolution
     /// (1:1 pixels). ObjC bridges read this to drop legacy upscale paths.
     @objc

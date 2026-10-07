@@ -1189,7 +1189,32 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 }
 
 extension PVDolphinCoreBridge: EmulatorCoreScalingModeApplying {
+    /// Re-applies the aspect setting for the app's scaling mode and relays the render view out.
     public func applyUserScalingMode() {
         applyAspectRatioSetting()
+    }
+
+    /// Height in pixels of the picture Integer Scale and Native Resolution measure against:
+    /// the 640x480 output a GameCube or Wii game's video interface produces.
+    static let nativeOutputPixelHeight: CGFloat = 480
+
+    /// Where the render layer goes inside a render view of `container` points, for the user's
+    /// scaling mode (shared `ScalingModeLayout` maths). The whole container unless
+    /// `sizesRenderLayerForScalingMode`, when Dolphin itself fits or stretches to it. Aspect
+    /// Fill's rect is larger than the container, which the render view clips.
+    func renderLayerFrame(inContainer container: CGSize, scale: CGFloat) -> CGRect {
+        let whole = CGRect(origin: .zero, size: container)
+        guard sizesRenderLayerForScalingMode else { return whole }
+
+        var aspect = gameDisplayAspect
+        if aspect <= 0, videoHeight > 0 {
+            // Dolphin hasn't reported what it draws yet (before the first frames).
+            aspect = CGFloat(videoWidth) / CGFloat(videoHeight)
+        }
+        return ScalingModeLayout.frame(for: Defaults[.scalingMode],
+                                       container: container,
+                                       contentAspect: aspect,
+                                       nativePixelHeight: Self.nativeOutputPixelHeight,
+                                       screenScale: scale)
     }
 }

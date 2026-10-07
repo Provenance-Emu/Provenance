@@ -44,6 +44,8 @@ import PVPrimitives
         renderHostView = UIView(frame: .zero)
         renderHostView.backgroundColor = .black
         renderHostView.isUserInteractionEnabled = false
+        /// Aspect Fill sizes the render layer past the view, and the overflow must be cropped
+        renderHostView.clipsToBounds = true
         renderHostView.translatesAutoresizingMaskIntoConstraints = false
         renderHostView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
 
@@ -294,14 +296,23 @@ import PVPrimitives
             return
         }
 
-        /// Update the standalone renderLayer to match view bounds and orientation
-        /// This is critical for correct landscape rendering
-        renderLayer.frame = viewBounds
-        renderLayer.contentsScale = scale
+        /// Place the standalone renderLayer in the view for the current orientation and the app's
+        /// scaling mode. Usually that is the whole view, and Dolphin letterboxes or stretches inside
+        /// it itself. For Aspect Fill, Integer Scale and Native Resolution it is a smaller or larger
+        /// rect (the host view clips the overflow) that Dolphin then stretches to fill.
+        let layerFrame = renderLayerFrame(in: viewBounds, scale: scale)
 
-        /// Calculate drawable size based on actual view bounds (respects current orientation)
-        let drawableWidth = viewBounds.width * scale
-        let drawableHeight = viewBounds.height * scale
+        /// A standalone sublayer animates frame changes implicitly: a mode change would glide.
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        renderLayer.frame = layerFrame
+        renderLayer.contentsScale = scale
+        CATransaction.commit()
+        core.renderLayerFrameDidChange(layerFrame)
+
+        /// Calculate drawable size from the layer, which is what Dolphin sizes its surface from
+        let drawableWidth = layerFrame.width * scale
+        let drawableHeight = layerFrame.height * scale
         let newDrawableSize = CGSize(width: drawableWidth, height: drawableHeight)
 
         /// Only update if size actually changed
@@ -334,6 +345,20 @@ import PVPrimitives
             core.refreshScreenSize()
         }
 	}
+
+    /// Where the render layer goes inside `bounds`: all of it, unless the app's scaling mode is applied
+    /// by sizing the layer. A sized layer is snapped to device pixels so the drawable maps 1:1 onto
+    /// the screen, and never degenerate, since the VM must not start on an empty surface.
+    private func renderLayerFrame(in bounds: CGRect, scale: CGFloat) -> CGRect {
+        guard core.sizesRenderLayerForScalingMode else { return bounds }
+        let frame = core.renderLayerFrame(inContainer: bounds.size, scale: scale)
+        let snapped = CGRect(x: bounds.minX + floor(frame.minX * scale) / scale,
+                             y: bounds.minY + floor(frame.minY * scale) / scale,
+                             width: round(frame.width * scale) / scale,
+                             height: round(frame.height * scale) / scale)
+        guard snapped.width > 0, snapped.height > 0 else { return bounds }
+        return snapped
+    }
 
     /// Dolphin's post-process hook exists only in its Metal backend (`gsPreference`), which
     /// this view controller also hosts; Vulkan ignores the routing flag.

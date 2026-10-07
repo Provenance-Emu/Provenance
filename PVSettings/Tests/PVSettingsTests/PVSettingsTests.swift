@@ -1794,6 +1794,7 @@ struct ScalingModeTests {
         Defaults[.scalingMode] = mode
 
         #expect(PVSettingsWrapper.useStretchScale == (mode == .stretch))
+        #expect(PVSettingsWrapper.useAspectFill == (mode == .aspectFill))
         #expect(PVSettingsWrapper.useIntegerScale == (mode == .integerScale))
         #expect(PVSettingsWrapper.useNativeResolution == (mode == .nativeResolution))
     }
