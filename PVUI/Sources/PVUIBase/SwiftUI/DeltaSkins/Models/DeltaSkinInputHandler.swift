@@ -105,6 +105,29 @@ public class DeltaSkinInputHandler: ObservableObject {
         }
     }
 
+    /// Per-session position memory for the current system's console switches.
+    private var hardwareSwitchLatch: (system: SystemIdentifier, latch: HardwareSwitchLatch)?
+
+    /// Turns a position-less switch id (Manic `tvType`, `leftDifficulty`...) into the
+    /// position-specific id for the core; any other id comes back unchanged.
+    /// `nil` means "drop this event" (a release whose press was never seen).
+    private func resolveHardwareSwitch(_ id: String, isPressed: Bool) -> String? {
+        guard let raw = emulatorCore?.systemIdentifier,
+              let systemId = SystemIdentifier(rawValue: raw),
+              let descriptors = systemId.hardwareSwitches else {
+            return id
+        }
+        var latch: HardwareSwitchLatch
+        if let existing = hardwareSwitchLatch, existing.system == systemId {
+            latch = existing.latch
+        } else {
+            latch = HardwareSwitchLatch(descriptors: descriptors)
+        }
+        let resolved = latch.resolve(id, isPressed: isPressed)
+        hardwareSwitchLatch = (systemId, latch)
+        return resolved
+    }
+
     /// Handle button press
     @MainActor
     func buttonPressed(_ buttonId: String) {
@@ -273,8 +296,8 @@ public class DeltaSkinInputHandler: ObservableObject {
             core.setPauseEmulation(false)
         }
 
-        // Normalize the button ID
-        let normalizedId = buttonId.lowercased()
+        // Normalize the button ID (position-less console switches resolve to a position here)
+        let normalizedId = resolveHardwareSwitch(buttonId.lowercased(), isPressed: true) ?? buttonId.lowercased()
         DLOG("Normalized button ID: \(normalizedId)")
 
         // If this button has turbo enabled, let TurboManager drive the press/release cycle
@@ -334,8 +357,11 @@ public class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
-        // Normalize the button ID
-        let normalizedId = buttonId.lowercased()
+        // Normalize the button ID; a switch release repeats the id its press emitted
+        guard let normalizedId = resolveHardwareSwitch(buttonId.lowercased(), isPressed: false) else {
+            DLOG("Dropping release with no matching hardware switch press: \(buttonId)")
+            return
+        }
         DLOG("Normalized button ID for release: \(normalizedId)")
 
         // If turbo is active for this button, let TurboManager handle the release
@@ -2331,7 +2357,8 @@ public class DeltaSkinInputHandler: ObservableObject {
             // Difficulty switches
             if ["leftdiffa", "leftdiffb", "rightdiffa", "rightdiffb"].contains(s) { return s }
             // TV type switch
-            if ["colorbw", "color", "bw", "tvtype"].contains(s) { return "colorbw" }
+            if let tvType = HardwareSwitchTokens.canonicalTVType(s) { return tvType }
+            if s == "tvtype" { return "colorbw" }
         case .Vectrex:
             /// Vectrex uses analog directions and numbered buttons
             /// D-pad directions map to analog directions
@@ -2652,7 +2679,8 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["start", "s"].contains(s) { return "start" }
             if ["pause", "p", "select"].contains(s) { return "pause" }
             if ["reset", "r"].contains(s) { return "reset" }
-            if ["colorbw", "color", "bw", "tvtype"].contains(s) { return "colorbw" }
+            if let tvType = HardwareSwitchTokens.canonicalTVType(s) { return tvType }
+            if s == "tvtype" { return "colorbw" }
             if ["number1", "1"].contains(s) { return "number1" }
             if ["number2", "2"].contains(s) { return "number2" }
             if ["number3", "3"].contains(s) { return "number3" }
@@ -2676,7 +2704,8 @@ public class DeltaSkinInputHandler: ObservableObject {
             if ["reset", "r"].contains(s) { return "reset" }
             if ["leftdiff", "l", "l1"].contains(s) { return "leftdiff" }
             if ["rightdiff", "r", "r1"].contains(s) { return "rightdiff" }
-            if ["colorbw", "color", "bw", "tvtype"].contains(s) { return "colorbw" }
+            if let tvType = HardwareSwitchTokens.canonicalTVType(s) { return tvType }
+            if s == "tvtype" { return "colorbw" }
             return s
         default:
             break

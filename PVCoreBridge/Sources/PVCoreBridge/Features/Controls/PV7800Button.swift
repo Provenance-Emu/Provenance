@@ -76,6 +76,9 @@
 // MARK: - Hardware switches
 
 extension PV7800Button: HardwareSwitchProvider {
+    /// Both positions of each switch share one id (`HardwareSwitchDescriptor.isPressToToggle`).
+    /// ProSystem flips a difficulty switch on every push, so one press per flip is
+    /// correct. TV type has no 7800 hardware behind it and is ignored by the core.
     public static var hardwareSwitches: [HardwareSwitchDescriptor]? {
         [
             HardwareSwitchDescriptor(
