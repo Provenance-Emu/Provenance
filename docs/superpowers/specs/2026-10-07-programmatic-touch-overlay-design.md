@@ -64,9 +64,9 @@ public struct OverlayPadKind: Hashable, Codable {
                                         // "wheel", "arcadeStick", ...
 }
 
-public struct OverlayInputID: Hashable, Codable {
-    public let system: SystemIdentifier  // tag prevents cross-system presses
-    public let rawButton: Int            // the PV*Button raw value
+public struct OverlayInputID: Hashable, Codable, Sendable {
+    public let system: SystemIdentifier
+    public let token: String      // skin vocabulary: "a", "b", "up", "l1", "start", "leftThumbstick", …
 }
 
 public enum OverlayControlKind: Hashable, Codable {
@@ -130,6 +130,8 @@ public struct OverlayLayout {               // resolved, canvas-specific
 }
 ```
 
+Tokens are the Delta/Manic skin vocabulary already understood by `DeltaSkinInputHandler`, so bindings are shareable with skins and the Phase 1 sink is a thin adapter.
+
 `OverlayLayoutEngine.resolve(template:canvas:safeArea:overrides:) -> OverlayLayout`
 is a pure function. Reference scale `u = clamp(min(w,h)/390, 1...1.35)`.
 Hit frames are draw frames outset by `extendedEdges` (default 20pt).
@@ -184,15 +186,7 @@ and every slot the family uses resolves to a valid `OverlayInputID`.
 
 ### 4.3 Subtype resolution
 
-```swift
-// PVCoreBridge
-@objc public protocol ControllerSubtypeProvider {
-    func availableControllerSubtypes(forPlayer player: Int) -> [String]
-    func activeControllerSubtype(forPlayer player: Int) -> String
-    func setControllerSubtype(_ subtype: String, forPlayer player: Int)
-}
-public extension Notification.Name { static let controllerSubtypeDidChange: Notification.Name }
-```
+`OverlayPadKind.subtype` is a `ControllerLayoutVariant.id` (or `standard`). `ConsoleVariantConfigurable` gains a read-back `currentControllerLayoutVariantID` and a `Notification.Name.controllerLayoutVariantDidChange`; the thin wrapper and Dolphin implement both. The existing Settings picker remains the system-wide override; the pause menu gets a per-game override that also calls `applyControllerLayoutVariant`.
 
 - Thin wrapper implements it from the libretro controller-port device and the
   relevant core options (`pcsx_rearmed_pad1type`, Genesis Plus GX pad type,
