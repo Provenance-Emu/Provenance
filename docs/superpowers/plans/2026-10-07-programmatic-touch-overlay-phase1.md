@@ -3669,3 +3669,27 @@ Then follow `superpowers:finishing-a-development-branch`.
 - **Spec coverage:** §3 model → Tasks 1–2; §4 families and subtypes → Tasks 4–8 and 15; §5 rendering/art/haptics → Tasks 9 and 11; §6 input and screen placement → Tasks 3, 7, 10, 11, 14; §7 editor and store → Tasks 12–13; §8 Phase 1 migration → Task 14; §9 tests → every task plus Task 16. Snapshot image tests from §9 are deferred to Phase 2 because the Prefire snapshot scheme does not compile today (CLAUDE.md); structural art tests stand in.
 - **Deviations from the spec, recorded in Task 0:** token-string ids instead of integer ids; `ControllerLayoutVariant` reused instead of a new `ControllerSubtypeProvider`. `twoButton` and GBA bindings were added to Phase 1 because they cost one file each and cover the largest user base.
 - **Type consistency check:** `OverlayInputID(system:token:)`, `OverlayPadKind.storageKey(for:)`, `OverlayLayoutEngine.resolve(template:canvas:overrides:gameAspect:)`, `OverlayLayout.screenFrames`/`surfaceFrame(for:)`, `OverlayHitDispatcher.apply(_:)`, `OverlayInputSink` method names, `OverlayLayoutStore.overrides(for:gameMD5:)`/`set(_:for:gameMD5:)`, `OverlayEditController` method names, `SystemOverlayBindings.binding(for:)` are used identically across Tasks 2–15.
+
+## Device smoke list (Phase 1)
+
+A simulator cannot verify touch feel. Run these on device and record results here or in the merge notes.
+
+**Controls and screens**
+- SNES, Genesis 3-button and 6-button, N64, PS1 DualShock, GameCube, Wii (nunchuk and classic), DS: controls press the right buttons, sticks move, DS stylus taps register on the bottom screen.
+- Rotate on each system. Change the safe area (Stage Manager on iPad). The picture follows `screenFrames`.
+- Menu access (blocking): no Phase 1 template has a menu button. Confirm the floating menu button stays visible and tappable while the overlay is active.
+- Default-on: the toggle ships enabled, so Dolphin GameCube/Wii now show the overlay instead of the classic pad. Confirm that is acceptable.
+
+**Editor and persistence**
+- Long-press empty space opens the editor (holding a control must not). Move, resize, detach a button, undo, Done. Relaunch: the layout persists. Reset Pad works.
+- Pause menu "Edit Layout" opens the editor with the game paused; the game resumes on Done.
+- Toggle off in Advanced: the classic pad returns.
+
+**Controller variants (Task 15)**
+- Genesis (Genesis Plus GX thin): set 6-button via the pause menu. The overlay switches to six face buttons and Port Devices shows "MD Joypad 6 Button". Relaunch and confirm both persist.
+- Untouched Genesis game: the core now gets "MD Joypad 3 Button" pushed instead of "Joypad Auto" (binding default). Confirm it plays normally.
+- PSX (PCSX-ReARMed / Beetle): launch an untouched game; Port Devices should show dualshock once the game runs and the overlay draws two sticks. Switch to Digital Pad: sticks disappear and the port device is standard/joypad. Switch back to DualShock. Confirm Beetle's "DualShock"/"DualAnalog" names map.
+- Wii/GC (Dolphin): pick Classic Controller during play; the overlay changes and the extension hot-swaps. Launch with a per-game Classic choice; it boots Classic.
+- "All <system> games" in the Controller Layout sheet clears this game's per-game override.
+- 32X and Sega CD games offer the Genesis variants.
+- The Port Devices picker's port-0 choice is overridden at boot by the resolved variant while the overlay is active (expected).

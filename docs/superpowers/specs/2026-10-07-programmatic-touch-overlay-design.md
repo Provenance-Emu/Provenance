@@ -1,7 +1,7 @@
 # Programmatic Touch Overlay Engine — Design
 
 **Date:** 2026-10-07
-**Status:** Approved design, awaiting implementation plan
+**Status:** Phase 1 implemented (feature/programmatic-touch-overlay)
 **Package:** `PVTouchOverlay` (new, Tier 4)
 
 ## 1. Why
@@ -58,10 +58,10 @@ Pure Swift, no UIKit, no Realm. Serializable, unit-testable.
 ```swift
 public struct OverlayPadKind: Hashable, Codable {
     public let system: SystemIdentifier
-    public let subtype: String          // "standard", "genesis3", "genesis6", "ps1Digital",
-                                        // "dualShock", "wiiRemote", "wiiRemoteSideways",
-                                        // "wiiClassic", "nunchuk", "dsStylus", "paddle",
-                                        // "wheel", "arcadeStick", ...
+    public let subtype: String          // a ControllerLayoutVariant.id, or "standard":
+                                        // "genesis-3btn", "genesis-6btn", "psx-digital",
+                                        // "psx-dualshock", "wii-wiimote", "wii-wiimote-nunchuck",
+                                        // "wii-classic", "gc-standard", ...
 }
 
 public struct OverlayInputID: Hashable, Codable, Sendable {
@@ -72,7 +72,7 @@ public struct OverlayInputID: Hashable, Codable, Sendable {
 public enum OverlayControlKind: Hashable, Codable {
     case button(OverlayInputID)
     case dpad(up: OverlayInputID, down: OverlayInputID, left: OverlayInputID, right: OverlayInputID)
-    case stick(axes: OverlayStickAxes, click: OverlayInputID?)
+    case stick(OverlayStickSide, click: OverlayInputID?)
     case analogTrigger(OverlayInputID)
     case touchSurface(OverlaySurfaceRole)   // .dsScreen, .wiiPointer, .lightGun, .trackpad
     case hardwareSwitch(descriptorID: String) // latched console switches (HardwareSwitchDescriptor)
@@ -192,12 +192,8 @@ and every slot the family uses resolves to a valid `OverlayInputID`.
   relevant core options (`pcsx_rearmed_pad1type`, Genesis Plus GX pad type,
   `melonds_touch_mode`, ...). Dolphin from Wiimote extension and sideways
   state. Native cores from their own options.
-- The engine observes `controllerSubtypeDidChange` and re-resolves the
-  template. A pause-menu override calls `setControllerSubtype`, so core and
-  overlay never disagree. Per-game overrides persist by MD5 via
-  `CoreOptionsContext.currentGameMD5`.
-- Cores without the protocol get `defaultSubtype`; a manual family pick is
-  overlay-only and saved per game.
+
+The host applies the resolved variant at boot, and the pause menu offers a per-game override (persisted by MD5 via `CoreOptionsContext.currentGameMD5`), so core and overlay never disagree.
 
 ## 5. Rendering and art
 

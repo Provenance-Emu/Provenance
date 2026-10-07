@@ -80,6 +80,7 @@ The app is split into ~26 `PV*` Swift Package frameworks. Key modules:
 - **PVShaders** — Metal shader manager support
 - **PVSupport** — Shared utilities
 - **PVThemes** — UI Theming Support
+- **PVTouchOverlay** — Programmatic on-screen controller: layout families, live editor, shared touch primitives
 - **PVUI** — SwiftUI-based shared UI components
 - **PVWebServer** — Swift/Objective-C SwiftPM module for GCDWebServer and WIP new Swift webserver for webdav and http file management, future REST API
 
@@ -160,6 +161,7 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 
 - **Most workspace `.xcodeproj`s list sources explicitly** (e.g. `PVCoreBridgeRetro.xcodeproj`), so a new file compiles in SwiftPM yet breaks the archive build. `Scripts/audits/check_pbxproj_sources.py` (CI: `xcode-project-sources.yml`) flags a source file sitting beside compiled ones that its project doesn't reference.
 - **Every script under `Scripts/` or `CoresRetro/RetroArch/scripts/` must be in `Scripts/maint/jobs.toml`** (as a job, or under `[ignore]`); `maint.yml` fails PRs that add an unregistered one. `make maint` (dashboard) / `python3 Scripts/maint/maint.py status` show which generated files are stale. Scripts that find the repo root from their own path sit two levels deep (`Scripts/<category>/`).
+- **PVUI cannot build inside a git worktree.** The PackageBuildInfo plugin reads `.git/HEAD`; a worktree's `.git` is a file. Run PVUI tests from an rsync'd copy with a fake `.git/HEAD` and submodule symlinks (see the Phase 1 overlay plan, Global Constraints).
 - **`gh issue list` has no `--sort` flag.** Use `gh issue list --search "sort:created-desc"` or `gh issue list --json number,title,createdAt --jq '.'` for sorted/filtered queries.
 
 ### Metal rendering gotchas
