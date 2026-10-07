@@ -1,0 +1,198 @@
+name: PVAzahar
+options:
+  bundleIdPrefix: org.provenance-emu
+  createIntermediateGroups: true
+  defaultConfig: Release
+  deploymentTarget:
+    iOS: "17.0"
+    tvOS: "17.0"
+  minimumXcodeGenVersion: "2.36"
+  xcodeVersion: "16.0"
+configs:
+  Debug: debug
+  Release: release
+settings:
+  base:
+    ALLOW_TARGET_PLATFORM_SPECIALIZATION: YES
+    SWIFT_VERSION: "6.0"
+    SWIFT_OBJC_INTEROP_MODE: objcxx
+    CLANG_CXX_LANGUAGE_STANDARD: "gnu++20"
+    GCC_C_LANGUAGE_STANDARD: "gnu11"
+    CLANG_ENABLE_OBJC_ARC: YES
+    CLANG_ENABLE_MODULES: YES
+    DEFINES_MODULE: YES
+    OTHER_CPLUSPLUSFLAGS: "$(inherited) -fcxx-modules -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32 -Wno-deprecated-declarations -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers"
+    GCC_PREPROCESSOR_DEFINITIONS:
+      - "$(inherited)"
+      - "ENABLE_VULKAN=1"
+      - "HAVE_COREAUDIO=1"
+      - "HAVE_FASTINTERP=1"
+      - "VK_NO_PROTOTYPES=1"
+      - "VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1"
+      - "VULKAN_HPP_NO_EXCEPTIONS=1"
+    # The azahar headers are searched last (-idirafter), not with -I: azahar's network/network.h
+    # satisfies the SDK's <Network/Network.h> on a case-insensitive volume, which breaks AVFoundation's
+    # AVRouting module (camera, audio session). Its one collision with the SDK's <network/network.h> is
+    # side-stepped by putting just that directory on -I and including it as "network.h".
+    # HAZARD: azahar's own core/hle/service/nwm/nwm_uds.h does #include "network/network.h", which with
+    # -idirafter resolves to the SDK's Network framework header instead. No file here includes nwm_uds.h
+    # today; one that does must not (#pragma once cannot make the SDK header skip, they are different files).
+    HEADER_SEARCH_PATHS:
+      - "$(inherited)"
+      - "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers/network"
+    PVAZAHAR_SLICE: ios
+    "PVAZAHAR_SLICE[sdk=iphonesimulator*]": ios-sim
+    "PVAZAHAR_SLICE[sdk=appletvos*]": tvos
+    "PVAZAHAR_SLICE[sdk=appletvsimulator*]": tvos-sim
+    # PVlibAzahar is arm64-only: no x86_64 simulator slice exists. EXCLUDED_ARCHS would hide this target
+    # from the app's implicit dependency on generic (arm64+x86_64) simulator builds, so the x86_64 simulator
+    # slice is link-only: it compiles and links with PVlibAzahar's symbols left unresolved. Because this
+    # framework is linked by the app, the whole app fails to launch on an Intel (or Rosetta) simulator;
+    # only Apple Silicon simulators are supported.
+    "OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]": "$(inherited) -ObjC -Wl,-undefined,dynamic_lookup"
+    OTHER_CFLAGS: "$(inherited) -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers"
+    OTHER_LDFLAGS: "$(inherited) -ObjC"
+    LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @loader_path/Frameworks"
+  configs:
+    Debug:
+      GCC_OPTIMIZATION_LEVEL: "0"
+      SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+    Release:
+      SWIFT_OPTIMIZATION_LEVEL: "-O"
+packages:
+  PVAudio: { path: ../../PVAudio }
+  PVCoreBridge: { path: ../../PVCoreBridge }
+  PVCoreObjCBridge: { path: ../../PVCoreObjCBridge }
+  PVEmulatorCore: { path: ../../PVEmulatorCore }
+  PVJIT: { path: ../../PVJIT }
+  PVLogging: { path: ../../PVLogging }
+  PVObjCUtils: { path: ../../PVObjCUtils }
+  PVPlists: { path: ../../PVPlists }
+  PVPrimitives: { path: ../../PVPrimitives }
+  PVSettings: { path: ../../PVSettings }
+  PVSupport: { path: ../../PVSupport }
+aggregateTargets:
+  # Runs build_azahar_core.py for the platform being built. PVAzahar depends on it, so the slice's
+  # framework (headers + static archive) exists before PVAzahar compiles and links, on a cold checkout too.
+  BuildPVlibAzahar:
+    settings:
+      base:
+        SDKROOT: auto
+        SUPPORTED_PLATFORMS: "iphoneos iphonesimulator appletvos appletvsimulator"
+    buildScripts:
+      - name: Build PVlibAzahar
+        shell: /bin/bash
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          SCRIPT="$PROJECT_DIR/build_azahar_core.py"
+          if [ ! -f "$PROJECT_DIR/azahar/CMakeLists.txt" ]; then
+            echo "error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild."; exit 1
+          fi
+          command -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo "error: cmake not found - 'brew install cmake ninja'"; exit 1; }
+          command -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo "error: ninja not found - 'brew install cmake ninja'"; exit 1; }
+          export PATH="/opt/homebrew/bin:$PATH"
+          python3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo "error: python3 >= 3.10 required for build_azahar_core.py (brew install python)"; exit 1; }
+          case "${PLATFORM_NAME}" in
+            iphoneos)         platform=OS64;           slice=ios ;;
+            iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;
+            appletvos)        platform=TVOS;           slice=tvos ;;
+            appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;
+            *) echo "error: unsupported PLATFORM_NAME ${PLATFORM_NAME}"; exit 1 ;;
+          esac
+          # Rebuilding rewrites the shared xcframework in place, which races concurrent builds;
+          # skip it when this slice exists and was built from the current submodule HEAD.
+          # built_lib is the archive PVAzahar links (OTHER_LDFLAGS); the xcframework is for distribution.
+          built_lib="$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework/PVlibAzahar"
+          stamp="$PROJECT_DIR/build/${platform}/.gitlink"
+          head="$(git -C "$PROJECT_DIR/azahar" rev-parse HEAD)"
+          if [[ -f "$built_lib" && -f "$stamp" && "$(cat "$stamp")" == "$head" ]]; then
+            echo "PVlibAzahar ${slice} is current (azahar ${head}); skipping build_azahar_core.py"
+          else
+            python3 "$SCRIPT" -p "$platform"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)
+          fi
+targets:
+  PVAzahar:
+    type: framework
+    # One target for both OSes: with separate PVAzahar_iOS/_tvOS targets (same product name)
+    # the app's implicit dependency never scheduled the tvOS one.
+    platform: iOS
+    supportedDestinations: [iOS, tvOS]
+    sources:
+      - path: PVAzaharCore
+        excludes:
+          - "PVAzaharCoreBridge+Private.h"
+          - "PVAzaharCoreBridge+Video.h"
+          - "Glue/*.h"
+      # Bridge-internal headers (C++ ivars); never shipped in the framework's Headers/.
+      - path: PVAzaharCore/PVAzaharCoreBridge+Private.h
+        headerVisibility: project
+      - path: PVAzaharCore/PVAzaharCoreBridge+Video.h
+        headerVisibility: project
+      # C++ glue headers include azahar headers; public, they would land in Headers/ outside the umbrella.
+      - path: PVAzaharCore/Glue/AzaharCamera.h
+        headerVisibility: project
+      - path: PVAzaharCore/Glue/AzaharEmuWindow.h
+        headerVisibility: project
+      - path: PVAzaharCore/Glue/AzaharGraphicsContext.h
+        headerVisibility: project
+      - path: PVAzaharCore/Glue/AzaharInput.h
+        headerVisibility: project
+      - path: PVAzahar/PVAzahar.h
+      - path: PVAzahar/Core.plist
+        buildPhase: resources
+    dependencies:
+      # Builds the PVlibAzahar slice first: compiling needs its -idirafter headers, linking its archive.
+      - target: BuildPVlibAzahar
+      - sdk: Metal.framework
+      - sdk: QuartzCore.framework
+      - sdk: AudioToolbox.framework
+      - sdk: CoreAudio.framework
+      - sdk: AVFoundation.framework
+      - sdk: IOSurface.framework
+      - sdk: libz.tbd
+      - sdk: libc++.tbd
+      - package: PVAudio
+      - package: PVCoreBridge
+      - package: PVCoreObjCBridge
+      - package: PVEmulatorCore
+      - package: PVJIT
+      - package: PVLogging
+      - package: PVLogging
+        product: PVLoggingObjC
+      - package: PVObjCUtils
+      - package: PVPlists
+      - package: PVPrimitives
+      - package: PVSettings
+      - package: PVSupport
+    settings:
+      base:
+        PRODUCT_NAME: PVAzahar
+        PRODUCT_MODULE_NAME: PVAzahar
+        # The slice's static archive is linked by path, not as an xcframework dependency: Xcode resolves an
+        # xcframework while planning the build, before BuildPVlibAzahar can create it on a cold checkout.
+        PVAZAHAR_ARCHIVE: "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/PVlibAzahar"
+        "PVAZAHAR_ARCHIVE[sdk=*simulator*][arch=x86_64]": ""   # no x86_64 archive; that slice is link-only
+        OTHER_LDFLAGS: "$(inherited) $(PVAZAHAR_ARCHIVE)"
+        SDKROOT: auto
+        INFOPLIST_FILE: PVAzahar/Info.plist
+        SKIP_INSTALL: YES
+  PVAzaharTests:
+    type: bundle.unit-test
+    platform: [iOS]
+    # The migrator is compiled straight into the test bundle (no `@testable import PVAzahar`): importing the
+    # framework pulls in PVAzahar-Swift.h, whose `@import PVCoreBridge;` needs SwiftPM module maps this bundle lacks.
+    sources:
+      - path: Tests
+      - path: PVAzaharCore/PVAzaharDataMigrator.swift
+    dependencies:
+      - package: PVLogging
+schemes:
+  PVAzahar:
+    build:
+      targets:
+        PVAzahar: all
+    test:
+      config: Debug
+      targets:
+        - PVAzaharTests_iOS

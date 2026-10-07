@@ -58,8 +58,9 @@ let package = Package(
 
         // MARK: SwiftPM tests
         .testTarget(
-            name: "PVCoreBridgeTests",
-            dependencies: ["PVCoreObjCBridge"]
+            name: "PVCoreObjCBridgeTests",
+            dependencies: ["PVCoreObjCBridge"],
+            path: "Tests/PVCoreBridgeTests"
         )
     ],
     swiftLanguageModes: [.v5, .v6],

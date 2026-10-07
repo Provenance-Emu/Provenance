@@ -576,7 +576,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // Posted by PVThinLibretroFrontend when retro_load_game returns false
         // (typically a missing BIOS / system file). Surface a toaster + dismiss
         // so the user isn't left staring at a blank emulator window.
-        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleCoreFailedToStart(_:)), name: Notification.Name("PVEmulatorCoreDidFailToStart"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleCoreFailedToStart(_:)), name: .PVEmulatorCoreDidFailToStart, object: nil)
 
         // Posted by the thin libretro wrapper (PVThinLibretroFrontend.mm)
         // when the dlopened core throws an unhandled C++ exception (most

@@ -164,6 +164,17 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 - **PVUI cannot build inside a git worktree.** The PackageBuildInfo plugin reads `.git/HEAD`; a worktree's `.git` is a file. Run PVUI tests from an rsync'd copy with a fake `.git/HEAD` and submodule symlinks (see the Phase 1 overlay plan, Global Constraints).
 - **`gh issue list` has no `--sort` flag.** Use `gh issue list --search "sort:created-desc"` or `gh issue list --json number,title,createdAt --jq '.'` for sorted/filtered queries.
 
+### Azahar core build gotchas
+
+- **PVlibAzahar is built by the `BuildPVlibAzahar` aggregate target** (`Cores/Azahar/project.yml`; `PVAzahar` depends on it), which runs `build_azahar_core.py -p <platform>`. A cold slice takes ~30–40 min. The stamp `Cores/Azahar/build/<platform>/.gitlink` (submodule HEAD) skips the rebuild while it matches; delete it to force one. Needs cmake, ninja and python3 ≥ 3.10.
+- **`PVAzahar` links the per-slice archive `build/xcframework/PVlibAzahar-<slice>.framework/PVlibAzahar` by path, not the xcframework.** Xcode resolves an xcframework dependency while planning, before any target runs, so a cold checkout failed with "There is no XCFramework found". Don't add the xcframework back as a dependency. `PVlibAzahar.xcframework` is still produced, for distribution only.
+- **PVlibAzahar is arm64-only.** The x86_64 simulator slice of `PVAzahar` is link-only (`-undefined dynamic_lookup`), so the app does not launch on Intel/Rosetta simulators.
+- **Never include azahar's `core/hle/service/nwm/nwm_uds.h`.** Azahar headers come in with `-idirafter`, so its `#include "network/network.h"` resolves to the SDK's Network framework header instead. The bridge includes azahar's own copy as `"network.h"` via a narrow `HEADER_SEARCH_PATHS` entry.
+- **Emulator changes go on the fork.** Commit them to `Provenance-Emu/azahar` branch `provenance` and list them in `Cores/Azahar/PATCHES.md`. Never edit `Cores/Azahar/azahar` in place.
+- **The tvOS user root is Caches.** `PVAzaharCore.userRootURL` is `Documents/Azahar` on iOS and `Library/Caches/Azahar` on tvOS, where Documents is not writable.
+- **`-fcxx-modules` is on** so the ObjC++ glue can `@import` the PV* Swift modules and `PVAzahar-Swift.h`.
+- **`runOnEmuThreadAndWait:` jobs can outlive their timeout.** Capture only by value or `shared_ptr`, never by reference.
+
 ### Metal rendering gotchas
 
 - **`CAMetalLayer.nextDrawable` blocks forever when backgrounded.** Metal reclaims drawables during background. The CA runloop observer fires `MTKView.draw(in:)` before `didBecomeActiveNotification`, so `currentDrawable` deadlocks the main thread. ALL `draw(in:)` implementations MUST early-return when `UIApplication.shared.applicationState != .active`.

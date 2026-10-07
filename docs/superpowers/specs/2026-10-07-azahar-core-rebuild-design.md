@@ -342,3 +342,13 @@ work is not forwarded.
    options, Core.plist) to first frame on iOS Simulator.
 4. **Migrator + settings entry point + tests.**
 5. **tvOS + device hardening** (checklist), then **retirement PR**.
+
+## 9. Follow-up: Apple Silicon performance pass (not in this plan)
+
+After the device checklist passes, a separate spec will port the jitless-interpreter and
+platform work done for iCube (Dolphin) and iFly (flycast) onto the fork: FastInterp
+dispatch instruction-count reduction (upstream already uses computed goto), fused
+adjacent ops, NEON/FPU fast paths, fastmem, idle-loop detection, and an audit of
+azahar's assumptions about disk I/O, CPU/GPU memory sharing, core count and cache
+size that do not hold on Apple Silicon (unified memory, fast SSD, many cores).
+Patches follow the same fork + `PATCHES.md` rule.
