@@ -47,6 +47,18 @@ struct OverlayInputSinkAdapterTests {
         #expect(stick.id == "leftThumbstick" && stick.horizontal == 0.5 && stick.vertical == -0.25)
     }
 
+    @Test("A PlayStation stick click reaches the handler as the L3/R3 skin tokens")
+    func stickClick() throws {
+        let spy = SpyHandler()
+        let adapter = OverlayInputSinkAdapter(handler: spy)
+        let psx = try #require(SystemOverlayBindings.binding(for: .PSX))
+        adapter.overlayPress(psx.inputID(.l3))
+        adapter.overlayRelease(psx.inputID(.l3))
+        adapter.overlayPress(psx.inputID(.r3))
+        #expect(spy.pressed == ["l3", "r3"])
+        #expect(spy.released == ["l3"])
+    }
+
     @Test("Analog triggers press at a positive value and release at zero")
     func analogTrigger() {
         let spy = SpyHandler()
