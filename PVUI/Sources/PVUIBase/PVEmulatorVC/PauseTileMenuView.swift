@@ -2047,7 +2047,7 @@ struct PauseTileMenuView: View {
     private func dispatchHardwareButton(_ buttonId: String) {
         if let inputHandler = emulatorVC.sharedInputHandler {
             inputHandler.buttonPressed(buttonId)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + HardwareSwitchTiming.pressDuration) {
                 inputHandler.buttonReleased(buttonId)
             }
             return
@@ -2056,17 +2056,49 @@ struct PauseTileMenuView: View {
     }
 
     /// Sends switch input through the controller bridge first, then falls back to skin input.
+    /// Wrapped in `withCoreRunningForInput` because the pause menu stops the core, and
+    /// level-sampled cores only see a press if a frame runs while it is held.
     private func dispatchHardwareSwitchButton(_ buttonId: String) {
-        if emulatorVC.controllerViewController != nil {
-            emulatorVC.controllerViewController?.didReceiveHardwareSwitchInput(buttonId: buttonId, player: 0)
+        withCoreRunningForInput {
+            if emulatorVC.controllerViewController != nil {
+                emulatorVC.controllerViewController?.didReceiveHardwareSwitchInput(buttonId: buttonId, player: 0)
+            } else {
+                dispatchHardwareButton(buttonId)
+            }
+        }
+    }
+
+    /// Runs `input` (a press whose release is already scheduled) with the core
+    /// resumed, then re-pauses it. The pause menu pauses the core, so `retro_run()`
+    /// never executes and a push/release pair is never sampled by level-sampled
+    /// cores (Stella, thin libretro, fmsx...).
+    ///
+    /// We deliberately do NOT toggle `isShowingMenu`: `cleanupAfterMenuDismissal()`
+    /// is gated on `isShowingMenu == true`, so flipping it false during this window
+    /// would make a concurrent menu dismissal silently skip cleanup (input
+    /// re-enable, overlay restore) and leave the VC stuck. The menu stays open.
+    ///
+    /// No-op wrapper when the core is not paused: `input` runs and nothing is
+    /// resumed or re-paused.
+    private func withCoreRunningForInput(window: TimeInterval = HardwareSwitchTiming.pausedMenuSampleWindow,
+                                         _ input: () -> Void) {
+        let core = emulatorVC.core
+        guard core.isOn, core.isEmulationPaused else {
+            input()
             return
         }
-        dispatchHardwareButton(buttonId)
+        core.setPauseEmulation(false)
+        input()
+        DispatchQueue.main.asyncAfter(deadline: .now() + window) { [weak emulatorVC] in
+            // Menu dismissed in the meantime: dismissal owns the pause state.
+            guard let emulatorVC, emulatorVC.menuPresentationViewController != nil else { return }
+            emulatorVC.core.setPauseEmulation(true)
+        }
     }
 
     /// Briefly fires a press → release on the main queue, mimicking a momentary
-    /// physical button tap. The 50 ms delay matches `dispatchHardwareButton`.
-    private func fireMomentaryRelease(after: TimeInterval = 0.05, _ block: @escaping () -> Void) {
+    /// physical button tap. The delay matches `dispatchHardwareButton`.
+    private func fireMomentaryRelease(after: TimeInterval = HardwareSwitchTiming.pressDuration, _ block: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + after, execute: block)
     }
 
@@ -2320,23 +2352,14 @@ struct PauseTileMenuView: View {
                 r.didPush(.select, forPlayer: player)
                 fireMomentaryRelease { r.didRelease(.select, forPlayer: player) }
             case "coin":
-                // `isShowingMenu` fully pauses the core, so `retro_run()` never
-                // executes and the coin press/release never gets sampled by the
-                // libretro core. Coin has no physical-controller equivalent, so
-                // this tile is the only way to trigger it — briefly resume the
-                // core directly so a frame runs, then re-pause. We deliberately
-                // do NOT toggle `isShowingMenu` here: `cleanupAfterMenuDismissal()`
-                // is gated on `isShowingMenu == true`, so flipping it false during
-                // this window would make a concurrent menu dismissal silently skip
-                // cleanup (input re-enable, overlay restore) and leave the VC stuck.
-                // The menu itself stays open throughout.
+                // Coin has no physical-controller equivalent, so this entry is
+                // the only way to trigger it. The core is paused by the menu, so
+                // resume it long enough to sample the press (see helper).
                 guard emulatorVC.core.isOn else { return }
-                emulatorVC.core.setPauseEmulation(false)
-                r.didPush(.coin, forPlayer: player)
-                fireMomentaryRelease(after: 0.15) {
-                    r.didRelease(.coin, forPlayer: player)
-                    if emulatorVC.menuPresentationViewController != nil {
-                        emulatorVC.core.setPauseEmulation(true)
+                withCoreRunningForInput {
+                    r.didPush(.coin, forPlayer: player)
+                    fireMomentaryRelease(after: HardwareSwitchTiming.coinPressDuration) {
+                        r.didRelease(.coin, forPlayer: player)
                     }
                 }
             default: break
