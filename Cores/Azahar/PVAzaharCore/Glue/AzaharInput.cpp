@@ -47,6 +47,10 @@ constexpr const char* kEngine = "provenance";
 
 namespace AzaharInput {
 void RegisterFactories() {
+    // Start every session neutral; nothing held in a previous game leaks into this one.
+    for (auto& b : g_buttons) b.store(false, std::memory_order_relaxed);
+    for (auto& a : g_axis_x) a.store(0.f, std::memory_order_relaxed);
+    for (auto& a : g_axis_y) a.store(0.f, std::memory_order_relaxed);
     Input::RegisterFactory<Input::ButtonDevice>(kEngine, std::make_shared<ButtonFactory>());
     Input::RegisterFactory<Input::AnalogDevice>(kEngine, std::make_shared<AnalogFactory>());
 }

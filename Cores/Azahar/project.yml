@@ -65,6 +65,14 @@ targets:
     platform: [iOS, tvOS]
     sources:
       - path: PVAzaharCore
+        excludes:
+          - "PVAzaharCoreBridge+Private.h"
+          - "PVAzaharCoreBridge+Video.h"
+      # Bridge-internal headers (C++ ivars); never shipped in the framework's Headers/.
+      - path: PVAzaharCore/PVAzaharCoreBridge+Private.h
+        headerVisibility: project
+      - path: PVAzaharCore/PVAzaharCoreBridge+Video.h
+        headerVisibility: project
       - path: PVAzahar/PVAzahar.h
       - path: PVAzahar/Core.plist
         buildPhase: resources

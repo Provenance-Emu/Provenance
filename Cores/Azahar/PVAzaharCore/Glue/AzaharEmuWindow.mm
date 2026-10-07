@@ -1,4 +1,5 @@
 #import <QuartzCore/CAMetalLayer.h>
+#include <cmath>
 #include "AzaharEmuWindow.h"
 #include "AzaharGraphicsContext.h"
 
@@ -21,12 +22,17 @@ void AzaharEmuWindow::Resize(unsigned widthPx, unsigned heightPx, bool portrait)
 }
 
 void AzaharEmuWindow::Touch(bool down, float xPx, float yPx) {
+    if (!std::isfinite(xPx) || !std::isfinite(yPx)) {
+        return;   // casting NaN/inf to unsigned is undefined
+    }
     const unsigned x = xPx < 0 ? 0u : static_cast<unsigned>(xPx);
     const unsigned y = yPx < 0 ? 0u : static_cast<unsigned>(yPx);
     if (!down) {
         TouchReleased();
         return;
     }
+    // TouchPressed is false outside the bottom screen; TouchMoved then clips a held touch to the
+    // screen edge and ignores a fresh one, which is the behaviour we want for both.
     if (!TouchPressed(x, y)) {
         TouchMoved(x, y);
     }
