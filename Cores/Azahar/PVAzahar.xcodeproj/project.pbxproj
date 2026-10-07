@@ -31,6 +31,7 @@
 		36E6D8D01B753D25631AFF65 /* PVAzaharCoreBridge+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = 722CA6B3EB98EA29058EE708 /* PVAzaharCoreBridge+Controls.mm */; };
 		38327E5EA682D4C886BB42F3 /* AzaharEmuWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7C066A600E73B32F26A2BA /* AzaharEmuWindow.mm */; };
 		391369573B18BF2BAF6A5D4A /* PVAzaharCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 785B20780FB9F684BD0E4099 /* PVAzaharCoreBridge.mm */; };
+		3AD8432485137B85FA81853B /* PVAzaharCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */; };
 		3BE5F8A5A916AF1416649BDE /* PVAzaharCoreBridge+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3735A948AF5179C25A70511D /* PVAzaharCoreBridge+Saves.mm */; };
 		3CC79029477B93678AA20E69 /* AzaharInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1140F7AB6702FE554AAC9BE9 /* AzaharInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3D469128C613840319A42D57 /* AzaharInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F1FE2E2E4B8FE114B403270 /* AzaharInput.cpp */; };
@@ -50,6 +51,7 @@
 		68540C93F06A578B85BAD8A5 /* AzaharEmuWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7C066A600E73B32F26A2BA /* AzaharEmuWindow.mm */; };
 		6BA09EA8384B6744B9676FB7 /* AzaharCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C75246CB905ADE858908166 /* AzaharCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6EDFDD0B4134054084519F9E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B9C7D7A48848512D4F14F91A /* PVCoreBridge */; };
+		72493E1037E4AB3D804F8355 /* PVAzaharCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */; };
 		742CB364E8FF6CAC535B9DA2 /* AzaharEmuWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 01DA7C3922A362D00C8AC676 /* AzaharEmuWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		755166F2978E6D05E648FDF0 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = 15C531D33E19ABFBB02F47B6 /* PVEmulatorCore */; };
 		7B80C2601E05E720EBC60C40 /* PVAzahar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C4747365172063E8D2C5A19 /* PVAzahar.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -149,6 +151,7 @@
 		6503B39B2E205E91CFBA6201 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Core.plist; sourceTree = "<group>"; };
 		68485E3ED08D2F8358A16EA5 /* PVAzaharDataMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAzaharDataMigratorTests.swift; sourceTree = "<group>"; };
 		6DE84F35983D6D1ABF12F45D /* PVAzaharRenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAzaharRenderView.swift; sourceTree = "<group>"; };
+		6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAzaharCoreOptions.swift; sourceTree = "<group>"; };
 		6F084488EAC660B7FE2D5F4F /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		722CA6B3EB98EA29058EE708 /* PVAzaharCoreBridge+Controls.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVAzaharCoreBridge+Controls.mm"; sourceTree = "<group>"; };
 		785B20780FB9F684BD0E4099 /* PVAzaharCoreBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVAzaharCoreBridge.mm; sourceTree = "<group>"; };
@@ -284,6 +287,7 @@
 				3735A948AF5179C25A70511D /* PVAzaharCoreBridge+Saves.mm */,
 				AD7820473F9C7058843F609D /* PVAzaharCoreBridge+Video.h */,
 				DDC942AED2CDD5BD427418A5 /* PVAzaharCoreBridge+Video.mm */,
+				6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */,
 				6DE84F35983D6D1ABF12F45D /* PVAzaharRenderView.swift */,
 				6F7DA46DE0C679356DE29A78 /* Glue */,
 			);
@@ -601,6 +605,7 @@
 				3F4A4533625AD37F958DDDB9 /* PVAzaharCoreBridge+Saves.mm in Sources */,
 				2DB33F9DE763F4921D934880 /* PVAzaharCoreBridge+Video.mm in Sources */,
 				8EB745345467AF969DD7D181 /* PVAzaharCoreBridge.mm in Sources */,
+				3AD8432485137B85FA81853B /* PVAzaharCoreOptions.swift in Sources */,
 				C6CBC9BEA7C215E796229F88 /* PVAzaharRenderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -631,6 +636,7 @@
 				3BE5F8A5A916AF1416649BDE /* PVAzaharCoreBridge+Saves.mm in Sources */,
 				4578A21C7AB877E3CE2F926A /* PVAzaharCoreBridge+Video.mm in Sources */,
 				391369573B18BF2BAF6A5D4A /* PVAzaharCoreBridge.mm in Sources */,
+				72493E1037E4AB3D804F8355 /* PVAzaharCoreOptions.swift in Sources */,
 				01AA46B12E2943E5237BBE88 /* PVAzaharRenderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

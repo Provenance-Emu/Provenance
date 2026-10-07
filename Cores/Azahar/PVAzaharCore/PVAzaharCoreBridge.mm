@@ -210,6 +210,21 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 #endif
 }
 
+- (BOOL)startsEmulationAsynchronously { return YES; }
+
+/// Main thread. Hands the boot outcome to the Swift core exactly once.
+- (void)finishBootWithFailure:(NSString *)message {
+    void (^started)(void) = self.onEmulationStarted;
+    void (^failed)(NSString *) = self.onEmulationFailed;
+    self.onEmulationStarted = nil;
+    self.onEmulationFailed = nil;
+    if (message) {
+        if (failed) { failed(message); }
+    } else if (started) {
+        started();
+    }
+}
+
 - (void)startEmulation {
     if (_running || _emuThread.joinable()) {
         WLOG(@"[PVAzahar] startEmulation called while the emu thread exists; ignoring");
@@ -220,6 +235,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     [self setupRenderView];          // +Video, main thread; creates _window
     if (!_window) {
         ELOG(@"[PVAzahar] no render window; cannot start");
+        [self finishBootWithFailure:@"Azahar could not create its render view"];
         return;
     }
     _running = true; _paused = false; _stopRequested = false;
@@ -238,6 +254,9 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
         const auto result = system.Load(*_window, romPath);
         if (result == Core::System::ResultStatus::Success) {
             _loaded = true;
+            if (!_stopRequested) {
+                dispatch_async(dispatch_get_main_queue(), ^{ [weakSelf finishBootWithFailure:nil]; });
+            }
             bool guestShutdown = false;
             // A stop that arrived during Load (before _loaded was set) could not RequestShutdown;
             // _stopRequested makes us leave without entering the loop.
@@ -276,7 +295,9 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
             _running = false;
             const int code = static_cast<int>(result);
             dispatch_async(dispatch_get_main_queue(), ^{
-                [weakSelf stopEmulationWithMessage:[NSString stringWithFormat:@"Azahar could not load this title (%d)", code]];
+                NSString *message = [NSString stringWithFormat:@"Azahar could not load this title (%d)", code];
+                [weakSelf stopEmulationWithMessage:message];
+                [weakSelf finishBootWithFailure:message];
             });
         }
         Network::Shutdown();

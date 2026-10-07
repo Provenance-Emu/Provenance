@@ -29,6 +29,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger regionValue;
 @property (nonatomic, assign) NSInteger frameLimitPercent;
 
+/// The host (`PVEmulatorCore.startEmulation`) reads this: `Load` runs on the emu thread, so the core
+/// is only marked running once `onEmulationStarted` fires, and a failed boot fires `onEmulationFailed`.
+@property (nonatomic, readonly) BOOL startsEmulationAsynchronously;
+/// Invoked on the main queue after `Core::System::Load` succeeds. Cleared once either block has fired.
+@property (nonatomic, copy, nullable) void (^onEmulationStarted)(void);
+/// Invoked on the main queue after a failed boot, once the bridge has torn itself down.
+@property (nonatomic, copy, nullable) void (^onEmulationFailed)(NSString *message);
+
 /// Declared in the main @interface (SwiftPM/Xcode can drop ObjC categories, see CLAUDE.md).
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
         setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError **)error;
