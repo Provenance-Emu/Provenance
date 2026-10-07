@@ -35,6 +35,15 @@ public struct HardwareSwitchDescriptor: Identifiable, Sendable {
         self.positions = (off: offPosition, on: onPosition)
         self.defaultState = defaultState
     }
+
+    /// True when both positions forward the same button id, so the core can only
+    /// see "the switch was pressed" and not which position was chosen. Such a
+    /// switch is a press-to-toggle (e.g. the 7800 difficulty switches, which
+    /// ProSystem flips on every push); the UI must send that single id once per
+    /// flip rather than trying to select a position.
+    public var isPressToToggle: Bool {
+        positions.off.buttonId == positions.on.buttonId
+    }
 }
 
 // MARK: - Momentary Button Models
