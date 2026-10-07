@@ -133,23 +133,11 @@ struct WiiSkinTokenTests {
         }
     }
 
-    @Test("Classic Controller tokens used by the programmatic overlay")
-    func classicController() {
+    @Test("Programmatic overlay Wii Remote tokens map to their Wii Remote cases")
+    func overlayWiiRemoteTokens() {
         let expected: [(String, PVWiiMoteButton)] = [
-            ("classicx", .classicX), ("classicy", .classicY),
-            ("classictriggerl", .classicTriggerL), ("classictriggerr", .classicTriggerR),
-            ("classiczl", .classicZL), ("classiczr", .classicZR),
-            ("ClassicZR", .classicZR)
-        ]
-        for (token, button) in expected {
-            #expect(DeltaSkinNintendoHomeConsoleMapping.wiiButton(forSkinToken: token) == button)
-        }
-    }
-
-    @Test("Classic pad's shared buttons keep their Wii Remote cases")
-    func classicSharedButtons() {
-        let expected: [(String, PVWiiMoteButton)] = [
-            ("a", .wiiA), ("b", .wiiB), ("+", .wiiPlus), ("-", .wiiMinus), ("home", .wiiHome)
+            ("a", .wiiA), ("b", .wiiB), ("1", .wiiOne), ("2", .wiiTwo),
+            ("+", .wiiPlus), ("-", .wiiMinus), ("home", .wiiHome)
         ]
         for (token, button) in expected {
             #expect(DeltaSkinNintendoHomeConsoleMapping.wiiButton(forSkinToken: token) == button)
@@ -158,7 +146,8 @@ struct WiiSkinTokenTests {
 
     @Test("Unmapped tokens return nil instead of reaching the bridge's Home default")
     func unmapped() {
-        for token in ["l3", "bogus", "quicksave"] {
+        // Classic Controller tokens stay unmapped until the Dolphin bridge routes them (Phase 2).
+        for token in ["l3", "bogus", "quicksave", "classicx", "classiczr"] {
             #expect(DeltaSkinNintendoHomeConsoleMapping.wiiButton(forSkinToken: token) == nil)
         }
     }

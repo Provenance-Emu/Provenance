@@ -94,17 +94,14 @@ public enum SystemOverlayBindings {
         palette: .gameCube, hardwareSwitches: [])
 
     // Wii: the Wiimote/Nunchuk tokens resolve identically through PVWiiMoteButton and the skin table.
-    // The Classic-only slots use PVWiiMoteButton's "classic*" tokens (the skin table has no Classic buttons).
+    // Classic / Classic Pro are not bound in Phase 1: the Dolphin bridge's skin path has no Classic routing,
+    // so `WiiClassicFamily` waits for Phase 2 (see DeltaSkinNintendoHomeConsoleMapping.wiiButton).
     private static let wii = SystemOverlayBinding(
         system: .Wii,
-        families: ["wii-wiimote": WiiRemoteSidewaysFamily.self, "wii-wiimote-nunchuck": WiiRemoteFamily.self,
-                   "wii-classic": WiiClassicFamily.self, "wii-classic-pro": WiiClassicFamily.self],
+        families: ["wii-wiimote": WiiRemoteSidewaysFamily.self, "wii-wiimote-nunchuck": WiiRemoteFamily.self],
         defaultSubtype: "wii-wiimote-nunchuck",
         tokens: [.a: "a", .b: "b", .one: "1", .two: "2", .plus: "+", .minus: "-", .home: "home",
-                 .c: "c", .z: "z",
-                 .x: "classicx", .y: "classicy", .l: "classictriggerl", .r: "classictriggerr",
-                 .l2: "classiczl", .r2: "classiczr"],
-        labels: [.a: "A", .b: "B", .one: "1", .two: "2", .plus: "+", .minus: "−", .home: "⌂", .c: "C", .z: "Z",
-                 .x: "X", .y: "Y", .l: "L", .r: "R", .l2: "ZL", .r2: "ZR"],
+                 .c: "c", .z: "z"],
+        labels: [.a: "A", .b: "B", .one: "1", .two: "2", .plus: "+", .minus: "−", .home: "⌂", .c: "C", .z: "Z"],
         palette: .wii, hardwareSwitches: [])
 }

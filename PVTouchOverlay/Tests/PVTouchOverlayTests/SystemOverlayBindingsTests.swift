@@ -39,6 +39,13 @@ struct SystemOverlayBindingsTests {
         }
     }
 
+    @Test("Wii binds only the Wii Remote pads until the Dolphin bridge routes Classic buttons")
+    func wiiHasNoClassicPad() throws {
+        let wii = try #require(SystemOverlayBindings.binding(for: .Wii))
+        #expect(Set(wii.families.keys) == ["wii-wiimote", "wii-wiimote-nunchuck"])
+        #expect(!wii.tokens.values.contains { $0.hasPrefix("classic") })
+    }
+
     @Test("PlayStation exposes digital and DualShock variants")
     func psxVariants() {
         #expect(SystemIdentifier.PSX.availableControllerLayoutVariants?.map(\.id)
