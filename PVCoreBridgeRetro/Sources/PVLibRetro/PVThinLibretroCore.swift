@@ -1180,10 +1180,13 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
                 }
             }
         }
-        // The restored device can be a controller layout variant the overlay should draw.
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            NotificationCenter.default.post(name: .controllerLayoutVariantDidChange, object: self)
+        // The restored device can be a controller layout variant the overlay should draw and
+        // the host should reconcile with the player's settings.
+        if SystemIdentifier(rawValue: systemIdentifier ?? "")?.availableControllerLayoutVariants != nil {
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                NotificationCenter.default.post(name: .controllerLayoutVariantDidChange, object: self)
+            }
         }
     }
 
@@ -1236,7 +1239,7 @@ extension PVThinLibretroCore: PortDeviceConfigurable {
     }
 
     /// New-style per-port key: <ClassName>.<md5>.<coreIdentifier>.portDeviceType.port<port>
-    func portDevicePersistenceKey(port: Int) -> String {
+    private func portDevicePersistenceKey(port: Int) -> String {
         // Key format matches CoreOptions+Serialization convention: <ClassName>.<md5>.<key>
         let md5 = PVThinLibretroCore.currentGameMD5 ?? "global"
         return "PVThinLibretroCore.\(md5).\(portDeviceCoreIdentifierComponent).portDeviceType.port\(port)"

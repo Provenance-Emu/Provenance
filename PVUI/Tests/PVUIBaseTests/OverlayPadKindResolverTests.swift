@@ -94,6 +94,28 @@ struct OverlayPadKindResolverTests {
         #expect(SystemIdentifier.SegaCD.availableControllerLayoutVariants == [.genesis3Button, .genesis6Button])
     }
 
+    @Test("Host resolution: per-game beats system beats binding default; no core read-back")
+    func resolvedVariantID() {
+        resetSettings()
+        defer { resetSettings() }
+        let resolve = { (provider: VariantProvider?) in
+            OverlayPadKindResolver.resolvedVariantID(for: .PSX, variantProvider: provider, gameMD5: Self.md5)
+        }
+        #expect(resolve(nil) == "psx-dualshock")
+        Defaults.setControllerLayoutVariant("psx-digital", forSystemID: SystemIdentifier.PSX.rawValue)
+        #expect(resolve(nil) == "psx-digital")
+        Defaults[.controllerLayoutVariantsByGame] = [Self.md5: "psx-dualshock"]
+        #expect(resolve(nil) == "psx-dualshock")
+        // With a provider the core's report sits between per-game and system choices.
+        Defaults[.controllerLayoutVariantsByGame] = [:]
+        let provider = VariantProvider()
+        provider.reported = "psx-dualshock"
+        #expect(resolve(provider) == "psx-dualshock")
+        // Unbound systems have nothing to resolve.
+        #expect(OverlayPadKindResolver.resolvedVariantID(for: .RetroArch, variantProvider: nil,
+                                                         gameMD5: Self.md5) == nil)
+    }
+
     @Test("A system without variants keeps its standard subtype")
     func standardSystem() {
         resetSettings()

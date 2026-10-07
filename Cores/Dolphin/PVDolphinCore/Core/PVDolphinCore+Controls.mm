@@ -1092,11 +1092,20 @@ static NSString *s_controllerVariantID = nil;
 }
 
 - (void)loadPersistedControllerVariant {
-    s_controllerVariantID = nil; // the statics outlive the previous game's core
-    // ControllerLayoutSettings (PVSettings/Defaults) persists [systemID: variantID] as a plain
-    // plist dictionary under this key; an absent key/entry means "system default".
-    NSDictionary *map = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"controllerLayoutVariantsBySystem"];
-    NSString *variantID = [map isKindOfClass:[NSDictionary class]] ? map[[self systemIdentifier]] : nil;
+    // The statics outlive the previous game's core: start from the defaults every boot.
+    s_controllerVariantID = nil;
+    s_wiimoteExtension = @"Nunchuk";
+    s_gcSIDevice = SerialInterface::SIDEVICE_GC_CONTROLLER;
+    // ControllerLayoutSettings (PVSettings/Defaults) persists plain plist dictionaries: the
+    // per-game choice [md5: variantID] wins over the per-system one [systemID: variantID],
+    // the order the touch overlay resolves in. An absent entry means "system default".
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *byGame = [defaults dictionaryForKey:@"controllerLayoutVariantsByGame"];
+    NSDictionary *bySystem = [defaults dictionaryForKey:@"controllerLayoutVariantsBySystem"];
+    NSString *md5 = self.romMD5;
+    id variantID = md5.length > 0 ? byGame[md5] : nil;
+    if (![variantID isKindOfClass:[NSString class]])
+        variantID = bySystem[[self systemIdentifier]];
     if ([variantID isKindOfClass:[NSString class]])
         [self setControllerVariantValues:variantID];
 }

@@ -93,7 +93,10 @@ struct ProgrammaticOverlayView: View {
                 publish(layout.screenFrames)
             }
             .onChange(of: layout.screenFrames) { _, frames in publish(frames) }
-            .onChange(of: editController != nil) { _, editing in postEditing(editing) }
+            .onChange(of: editController != nil) { _, editing in
+                postEditing(editing)
+                if !editing { refreshPadKind() } // catch up on a change made while editing
+            }
             .onReceive(NotificationCenter.default.publisher(for: .overlayEditLayoutRequested)) { _ in
                 beginEditing(template: template, canvas: canvas)
             }
@@ -162,7 +165,9 @@ struct ProgrammaticOverlayView: View {
         return Self.plausibleAspect.contains(ratio) ? ratio : Self.fallbackAspect
     }
 
+    /// Not while the editor is open: it keeps the storage key of the layout it is editing.
     private func refreshPadKind() {
+        guard editController == nil else { return }
         let resolved = OverlayPadKindResolver.padKind(for: systemId,
                                                       variantProvider: coreInstance as? ConsoleVariantConfigurable,
                                                       gameMD5: gameMD5 ?? "")

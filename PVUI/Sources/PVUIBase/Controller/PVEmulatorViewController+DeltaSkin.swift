@@ -1,5 +1,6 @@
 import UIKit
 import SwiftUI
+import PVCoreBridge
 import PVEmulatorCore
 import PVLibrary
 import PVLogging
@@ -205,6 +206,9 @@ extension PVEmulatorViewController {
         center.removeObserver(self, name: .overlayEditingDidChange, object: nil)
         center.addObserver(self, selector: #selector(handleOverlayEditing(_:)),
                            name: .overlayEditingDidChange, object: nil)
+        center.removeObserver(self, name: .controllerLayoutVariantDidChange, object: nil)
+        center.addObserver(self, selector: #selector(handleControllerLayoutVariantChange(_:)),
+                           name: .controllerLayoutVariantDidChange, object: nil)
         // A scaling-mode switch leaves the overlay's frame unchanged, so the frame dedup would
         // swallow a re-publish; re-apply the mounted overlay's frame with `force` instead.
         overlayScalingModeCancellable = Defaults.publisher(.scalingMode, options: [])
@@ -229,6 +233,34 @@ extension PVEmulatorViewController {
             self?.restoreIndicatorOverlay()
             NotificationCenter.default.post(name: .overlayEditLayoutRequested, object: nil)
         }
+    }
+
+    /// A core restored or applied a variant (the thin core restores its port devices at load).
+    @objc private func handleControllerLayoutVariantChange(_ notification: Notification) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self, notification.object as? PVEmulatorCore === self.core else { return }
+            self.applyResolvedControllerVariantIfNeeded()
+        }
+    }
+
+    /// Makes the core run the controller variant the overlay draws: the per-game choice, else
+    /// the per-system one, else the binding default (`OverlayPadKindResolver` without core
+    /// read-back). Runs when the overlay mounts and when the core reports a restored variant;
+    /// each resolved id is pushed at most once, so a core that cannot take it is not looped on.
+    func applyResolvedControllerVariantIfNeeded() {
+        guard isProgrammaticOverlayActive, core.isOn,
+              let provider = core as? ConsoleVariantConfigurable,
+              let game, !game.isInvalidated,
+              let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
+                                                                       persisted: game.systemIdentifier),
+              system.availableControllerLayoutVariants != nil,
+              let resolved = OverlayPadKindResolver.resolvedVariantID(for: system, variantProvider: nil,
+                                                                      gameMD5: game.md5Hash),
+              provider.currentControllerLayoutVariantID != resolved,
+              hostAppliedControllerVariantID != resolved else { return }
+        hostAppliedControllerVariantID = resolved
+        ILOG("Overlay: applying controller layout variant \(resolved) at boot")
+        provider.applyControllerLayoutVariant(resolved)
     }
 
     @objc private func handleOverlayScreenFrames(_ notification: Notification) {
@@ -256,7 +288,9 @@ extension PVEmulatorViewController {
     /// Single-screen games get their viewport through the overlay's viewport bridge; this
     /// covers the floating menu button (the overlay has no menu control) and the DS split.
     private func overlayScreenFramesDidChange(_ frames: [CGRect]) {
+        let mounting = overlayScreenFrames.isEmpty && !frames.isEmpty
         overlayScreenFrames = frames
+        if mounting { applyResolvedControllerVariantIfNeeded() }
         hideOrShowMenuButton()
         guard core.supportsDualScreens else { return }
         // Also when the overlay leaves (empty frames): a packaged skin can re-assert its split.

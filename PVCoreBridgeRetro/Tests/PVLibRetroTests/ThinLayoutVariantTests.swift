@@ -70,17 +70,14 @@ struct ThinLayoutVariantTests {
         #expect(PVThinLibretroCore.variantID(for: beetle, system: .PSX) == "psx-dualshock")
     }
 
-    @Test("Only a chosen device reads back: the untouched default joypad is no variant")
-    func storedDeviceOnly() {
+    @Test("Port 0 reads back as the device it runs, including the untouched joypad")
+    func currentDeviceReadBack() {
         let devices = Self.pcsxReARMed
-        #expect(PVThinLibretroCore.variantID(currentDevice: 1, hasStoredDevice: false,
-                                             in: devices, system: .PSX) == nil)
-        #expect(PVThinLibretroCore.variantID(currentDevice: 1, hasStoredDevice: true,
-                                             in: devices, system: .PSX) == "psx-digital")
-        #expect(PVThinLibretroCore.variantID(currentDevice: Self.subclass(Self.analogBase, 1), hasStoredDevice: true,
+        #expect(PVThinLibretroCore.variantID(currentDevice: 1, in: devices, system: .PSX) == "psx-digital")
+        #expect(PVThinLibretroCore.variantID(currentDevice: Self.subclass(Self.analogBase, 1),
                                              in: devices, system: .PSX) == "psx-dualshock")
-        #expect(PVThinLibretroCore.variantID(currentDevice: 99, hasStoredDevice: true,
-                                             in: devices, system: .PSX) == nil)
+        #expect(PVThinLibretroCore.variantID(currentDevice: 99, in: devices, system: .PSX) == nil)
+        #expect(PVThinLibretroCore.variantID(currentDevice: 1, in: Self.genesisPlusGX, system: .Genesis) == nil)
     }
 
     @Test("Systems without variants report none")

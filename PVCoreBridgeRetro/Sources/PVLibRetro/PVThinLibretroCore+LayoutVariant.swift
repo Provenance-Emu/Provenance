@@ -23,28 +23,29 @@ import PVSystems
 
 extension PVThinLibretroCore: ConsoleVariantConfigurable {
 
+    /// Pushes the variant's device into port 0 without saving it as this game's Port Devices
+    /// choice: the player's variant lives in the per-game / per-system settings, and the
+    /// emulator view controller re-applies the resolved one at every boot. Saving it here
+    /// would turn an "All games" choice into a per-game device that outlives the setting.
     public func applyControllerLayoutVariant(_ variantID: String) {
         guard let descriptors = controllerPortDescriptors.first,
               let device = Self.portDevice(for: variantID, in: descriptors) else {
             WLOG("ThinCore: no port device for controller layout variant \(variantID)")
             return
         }
-        setDeviceType(device.deviceType, forPort: 0)
+        _bridge.setControllerPortDevice(UInt32(device.deviceType), forPort: 0)
         ILOG("ThinCore: controller layout variant \(variantID) -> port 0 device '\(device.name)'")
         NotificationCenter.default.post(
             name: .controllerLayoutVariantDidChange, object: self,
             userInfo: [ControllerLayoutVariantNotificationKey.variantID: variantID])
     }
 
-    /// Only a port-0 device the player chose (saved for this core and game) counts: every
-    /// port starts as the plain joypad, which on PlayStation would otherwise read back as the
-    /// digital pad and outrank the settings for every untouched game.
+    /// The variant port 0 is running; the core is the source of truth (an untouched PSX
+    /// port is the plain joypad, i.e. the digital pad, until the host applies the setting).
     public var currentControllerLayoutVariantID: String? {
         guard let system = SystemIdentifier(rawValue: systemIdentifier ?? ""),
               let descriptors = controllerPortDescriptors.first else { return nil }
-        let hasStoredDevice = UserDefaults.standard.object(forKey: portDevicePersistenceKey(port: 0)) != nil
-        return Self.variantID(currentDevice: currentDeviceType(forPort: 0), hasStoredDevice: hasStoredDevice,
-                              in: descriptors, system: system)
+        return Self.variantID(currentDevice: currentDeviceType(forPort: 0), in: descriptors, system: system)
     }
 
     // MARK: Device matching
@@ -67,12 +68,10 @@ extension PVThinLibretroCore: ConsoleVariantConfigurable {
         }
     }
 
-    /// The variant port 0 reports: `nil` unless the device was chosen and stands for one.
-    static func variantID(currentDevice: UInt, hasStoredDevice: Bool, in descriptors: [PortDeviceDescriptor],
+    /// The variant the port-0 device `currentDevice` stands for, or `nil` when it is none.
+    static func variantID(currentDevice: UInt, in descriptors: [PortDeviceDescriptor],
                           system: SystemIdentifier) -> String? {
-        guard hasStoredDevice, let device = descriptors.first(where: { $0.deviceType == currentDevice }) else {
-            return nil
-        }
+        guard let device = descriptors.first(where: { $0.deviceType == currentDevice }) else { return nil }
         return variantID(for: device, system: system)
     }
 

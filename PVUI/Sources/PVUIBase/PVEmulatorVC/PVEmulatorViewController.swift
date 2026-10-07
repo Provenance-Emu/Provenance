@@ -164,6 +164,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// `true` while the overlay's layout editor holds a pause it started itself.
     var overlayEditorPausedCore = false
 
+    /// Controller layout variant this controller last pushed into the core at boot, so a core
+    /// that cannot take it is not asked again on every change notification.
+    var hostAppliedControllerVariantID: String?
+
     /// Re-applies the overlay's viewport when the scaling mode changes.
     var overlayScalingModeCancellable: AnyCancellable?
 
