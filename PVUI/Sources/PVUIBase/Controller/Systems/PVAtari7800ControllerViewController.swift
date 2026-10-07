@@ -41,7 +41,7 @@ final class PVAtari7800ControllerViewController: PVControllerViewController<PV78
     override func didReceiveHardwareSwitchInput(buttonId: String, player: Int) {
         let button = PV7800Button(buttonId)
         emulatorCore.didPush(button, forPlayer: player)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + HardwareSwitchTiming.pressDuration) { [weak self] in
             self?.emulatorCore.didRelease(button, forPlayer: player)
         }
     }

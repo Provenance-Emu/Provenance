@@ -33,7 +33,7 @@ final class PVAtari5200ControllerViewController: PVControllerViewController<PV52
     override func didReceiveHardwareSwitchInput(buttonId: String, player: Int) {
         let button = PV5200Button(buttonId)
         emulatorCore.didPush(button, forPlayer: player)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + HardwareSwitchTiming.pressDuration) { [weak self] in
             self?.emulatorCore.didRelease(button, forPlayer: player)
         }
     }
