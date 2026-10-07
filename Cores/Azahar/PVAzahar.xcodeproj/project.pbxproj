@@ -7,112 +7,65 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		009EBECBDE116113A6F55753 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20DCD16C32EDDF81674637A5 /* CoreAudio.framework */; };
-		01AA46B12E2943E5237BBE88 /* PVAzaharRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE84F35983D6D1ABF12F45D /* PVAzaharRenderView.swift */; };
-		043C84C25A78F030BE24B3D7 /* AzaharCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C75246CB905ADE858908166 /* AzaharCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		069D51C4BF71D68D6319EE7A /* PVAzaharCoreBridge+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF309D698E9638944364388F /* PVAzaharCoreBridge+Audio.mm */; };
-		0DC7E995863E2C0EEE8887EC /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = A8EB76D8A6464552C15A0F0A /* PVPrimitives */; };
-		11103EF2D068E14DB946D051 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = 83B1F96E752E3F9FD25F0D4B /* PVEmulatorCore */; };
-		134D81BDAEDE16E134A61F68 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C79157998291504790FD90A /* libz.tbd */; };
-		17E836C66248D3BC5896B31A /* PVAzaharCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890BCDE8FE350738500DD6CD /* PVAzaharCore.swift */; };
-		1996911390B19BC03E53C963 /* PVAzaharCoreBridge+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D9CC59B171C08AF67E80139 /* PVAzaharCoreBridge+Private.h */; };
-		217A99F78D1D7362BD757524 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = ED90E07174A1A0DBAFC9DC46 /* PVSettings */; };
-		24D96D89414A9D8877B993C0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3113E8D170D23A457A3DFA4 /* QuartzCore.framework */; };
-		24E4EB4FED2D27AC1A5711D7 /* PVAzaharCoreBridge+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 42C81334E355B4029035C49E /* PVAzaharCoreBridge+Cheats.mm */; };
-		28F9712A1B71438931541ECA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4047C6C37A480AF41578EC85 /* Metal.framework */; };
-		2BA6186F0FA2399352DEAE25 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = 3D8833DF5CB4CDBF360FF2A4 /* PVPlists */; };
-		2DB33F9DE763F4921D934880 /* PVAzaharCoreBridge+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDC942AED2CDD5BD427418A5 /* PVAzaharCoreBridge+Video.mm */; };
-		301F6E733DB0A6C9F73AA55A /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = 260FA77D02753864906F24BD /* PVJIT */; };
-		315A6202B775B81F7CA63FDA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4047C6C37A480AF41578EC85 /* Metal.framework */; };
-		32150BF8DCB8C461C24B7C8F /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = 09B42D73AD930CA4FF9B040E /* PVJIT */; };
-		335544CB99A2BB735A08192F /* PVAzaharCoreBridge+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF309D698E9638944364388F /* PVAzaharCoreBridge+Audio.mm */; };
-		3393420E45AFFB6FA2F8541C /* PVAzaharCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC25BB3E95A28038AEDAAC8 /* PVAzaharCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		34A5DCCDDB2C367D758F3C52 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CE90E615524E315A37667AA /* AVFoundation.framework */; };
-		36E6D8D01B753D25631AFF65 /* PVAzaharCoreBridge+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = 722CA6B3EB98EA29058EE708 /* PVAzaharCoreBridge+Controls.mm */; };
-		38327E5EA682D4C886BB42F3 /* AzaharEmuWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7C066A600E73B32F26A2BA /* AzaharEmuWindow.mm */; };
-		391369573B18BF2BAF6A5D4A /* PVAzaharCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 785B20780FB9F684BD0E4099 /* PVAzaharCoreBridge.mm */; };
-		3AD8432485137B85FA81853B /* PVAzaharCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */; };
-		3BE5F8A5A916AF1416649BDE /* PVAzaharCoreBridge+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3735A948AF5179C25A70511D /* PVAzaharCoreBridge+Saves.mm */; };
-		3CC79029477B93678AA20E69 /* AzaharInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1140F7AB6702FE554AAC9BE9 /* AzaharInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		3D469128C613840319A42D57 /* AzaharInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F1FE2E2E4B8FE114B403270 /* AzaharInput.cpp */; };
-		3E1A6F3008EFC72700D4D351 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F01E8A14043A3DFBE941AE5 /* AudioToolbox.framework */; };
-		3EC9B44792C85FE519E4484E /* PVlibAzahar.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC8E5D4696D9F30C47886394 /* PVlibAzahar.xcframework */; };
-		3F4A4533625AD37F958DDDB9 /* PVAzaharCoreBridge+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3735A948AF5179C25A70511D /* PVAzaharCoreBridge+Saves.mm */; };
-		3FB49AF4B69B1398B77C4229 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = BF1381055A7F6462811E2442 /* PVLogging */; };
-		41C8ED83156174E0432B5437 /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = F070FC08DB66A7AD06981D12 /* PVObjCUtils */; };
-		4578A21C7AB877E3CE2F926A /* PVAzaharCoreBridge+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDC942AED2CDD5BD427418A5 /* PVAzaharCoreBridge+Video.mm */; };
-		4BC4EF621286E35F5E7B8A09 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20DCD16C32EDDF81674637A5 /* CoreAudio.framework */; };
-		54D1EDF50E2B01839A6ADD3F /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E1254CB87772DAD67B8DF9 /* CorePlist.swift */; };
-		57B85802149B434BB929BB5F /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FE295865800BD0292501D5B2 /* libc++.tbd */; };
-		5A5F5A3115C53A87F5488953 /* PVAzaharCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890BCDE8FE350738500DD6CD /* PVAzaharCore.swift */; };
-		5CF67F3986B3C3119E572C11 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B72CFFDE6FB302C69DCEBC1 /* IOSurface.framework */; };
-		6055057EE054B83A4A819BBD /* AzaharCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = 182AFEFC45503FA4231E8614 /* AzaharCamera.mm */; };
-		62BF19A54676907159D6ED7E /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = C89C6003D0040582D5C51E08 /* PVSettings */; };
-		68540C93F06A578B85BAD8A5 /* AzaharEmuWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7C066A600E73B32F26A2BA /* AzaharEmuWindow.mm */; };
-		6BA09EA8384B6744B9676FB7 /* AzaharCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C75246CB905ADE858908166 /* AzaharCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6EDFDD0B4134054084519F9E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B9C7D7A48848512D4F14F91A /* PVCoreBridge */; };
-		72493E1037E4AB3D804F8355 /* PVAzaharCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */; };
-		742CB364E8FF6CAC535B9DA2 /* AzaharEmuWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 01DA7C3922A362D00C8AC676 /* AzaharEmuWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		755166F2978E6D05E648FDF0 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = 15C531D33E19ABFBB02F47B6 /* PVEmulatorCore */; };
-		7B80C2601E05E720EBC60C40 /* PVAzahar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C4747365172063E8D2C5A19 /* PVAzahar.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		80E0364C13FD83A014D7A623 /* PVAzaharDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */; };
-		81FE72E701303D0944C69486 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C79157998291504790FD90A /* libz.tbd */; };
-		821A7A49B9850DA8FA6716CE /* AzaharCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = 182AFEFC45503FA4231E8614 /* AzaharCamera.mm */; };
-		849298E87552D4DA2240D93C /* PVAzaharDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */; };
-		84E30B7267CECF60C926E508 /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 0F729D13C154C5A41319ED4B /* PVObjCUtils */; };
-		86553A2373025B8FC2BF2E4F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CE90E615524E315A37667AA /* AVFoundation.framework */; };
-		8EB745345467AF969DD7D181 /* PVAzaharCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 785B20780FB9F684BD0E4099 /* PVAzaharCoreBridge.mm */; };
-		935D7B81C43C5CBB89872059 /* PVAzaharCoreBridge+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = 722CA6B3EB98EA29058EE708 /* PVAzaharCoreBridge+Controls.mm */; };
-		9A02D6C3A3463D74BA1160F6 /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = BCFCD9715CD88D76535B636A /* PVAudio */; };
-		9B2978BA71CE472A2D715864 /* AzaharAppleUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A26EA6E6424EDF04CFFEB2 /* AzaharAppleUtils.mm */; };
-		9C06CDE43BED1FD0FD11D750 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 93D1BEBA178E561BDDF805EC /* PVSupport */; };
-		9C95336C6151674DB13C1704 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6503B39B2E205E91CFBA6201 /* Core.plist */; };
-		9E4B81B5A581015339451423 /* PVAzaharCoreBridge+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D9CC59B171C08AF67E80139 /* PVAzaharCoreBridge+Private.h */; };
-		9EFE3FC943125E95AA48BC7E /* PVAzaharCoreBridge+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7820473F9C7058843F609D /* PVAzaharCoreBridge+Video.h */; };
-		A3C609D187DBF31AEA67117D /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6F084488EAC660B7FE2D5F4F /* PVAzahar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A6FA30A8EA586297E636682C /* PVLoggingObjC in Frameworks */ = {isa = PBXBuildFile; productRef = B9380A8E90B94C00D4DAEF9F /* PVLoggingObjC */; };
-		A75E64116DC7CF2794BEBEBA /* PVlibAzahar.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC8E5D4696D9F30C47886394 /* PVlibAzahar.xcframework */; };
-		A8D3DD0D69A9A3ED03700EBE /* AzaharAppleUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A26EA6E6424EDF04CFFEB2 /* AzaharAppleUtils.mm */; };
-		AA2BAF53BCB90050F6CC83BC /* AzaharGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 79F96C6CB0762431065B1329 /* AzaharGraphicsContext.mm */; };
-		AF03AA642C12C84045BFEA6D /* AzaharGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EDC3DCC8AD0C8DA52CAE7FE /* AzaharGraphicsContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B294B70C81D5D9EE65B3BAD6 /* AzaharEmuWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 01DA7C3922A362D00C8AC676 /* AzaharEmuWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B5C61C902805EAD75EBEAEE8 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = C0C35E7BA76F373055337095 /* PVCoreObjCBridge */; };
-		B6412EAFA18945ABAE0D624A /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F084488EAC660B7FE2D5F4F /* PVAzahar.framework */; };
-		B71BEAAC7E975607D0601A6E /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 876EA39EF9E9534C2EF09BFD /* PVLogging */; };
-		C067C5F1C529532DBD3B133C /* PVAzaharCoreBridge+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7820473F9C7058843F609D /* PVAzaharCoreBridge+Video.h */; };
-		C2F25B8228DECFC48368EDD3 /* AzaharGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EDC3DCC8AD0C8DA52CAE7FE /* AzaharGraphicsContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C69D3619465F279C621AF380 /* PVAzahar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C4747365172063E8D2C5A19 /* PVAzahar.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		C6CBC9BEA7C215E796229F88 /* PVAzaharRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE84F35983D6D1ABF12F45D /* PVAzaharRenderView.swift */; };
-		C7141060298B1E9D00284538 /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B72CFFDE6FB302C69DCEBC1 /* IOSurface.framework */; };
-		C7E11527E96785F704604CA9 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = 73335DCBE169678E2A783B71 /* PVPlists */; };
-		C7E1956220F9072BFA2BBA2C /* PVLoggingObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 8CE8F86D03ADC89604CF8170 /* PVLoggingObjC */; };
-		CB4772C40F337EEAD5915B15 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F01E8A14043A3DFBE941AE5 /* AudioToolbox.framework */; };
-		D4D35FF6019CAF15D89AD2AD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3113E8D170D23A457A3DFA4 /* QuartzCore.framework */; };
-		D61D2E5649C0014DCBA9485C /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 80BFDC0163B261E495ADC86C /* PVAudio */; };
-		DA2F3AA9AFB0843D35AB3894 /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = EACFC952BAD8900D357AE624 /* PVPrimitives */; };
-		DBAFE644CA1171A6B486A561 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E1254CB87772DAD67B8DF9 /* CorePlist.swift */; };
-		DBE3BE98A2EB8379D939FE38 /* AzaharInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1140F7AB6702FE554AAC9BE9 /* AzaharInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		E0E3914B3120BF67FEAC2316 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = 3F07E8586EFD082529EE84E4 /* PVCoreObjCBridge */; };
-		E67584F4F5AE3F6AADB134D7 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 003A3F581E4C5CC430F5AAEB /* CorePlist-Generated.swift */; };
-		E86EE807F7918930CB7B2090 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = 9EDCCA7AA584466687EFFA3D /* PVCoreBridge */; };
-		E9FCEE898DC089DEF98D4199 /* AzaharInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F1FE2E2E4B8FE114B403270 /* AzaharInput.cpp */; };
-		ECC1BC6079F1F28661341774 /* PVAzaharCoreBridge+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 42C81334E355B4029035C49E /* PVAzaharCoreBridge+Cheats.mm */; };
+		0022D33F6F43C78EFD073410 /* AzaharGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EDC3DCC8AD0C8DA52CAE7FE /* AzaharGraphicsContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		075A1E0E63D35C797E56AE88 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 003A3F581E4C5CC430F5AAEB /* CorePlist-Generated.swift */; };
+		116F66E03BCCA5F1D03B2CB4 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F01E8A14043A3DFBE941AE5 /* AudioToolbox.framework */; };
+		12ABC64F7E1EEEEC40530B59 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = CBCEED13FDDB5ABDCE3D6297 /* PVPlists */; };
+		1ACBB8FF4E1DF1D58DF9104E /* PVAzaharCoreBridge+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = AD7820473F9C7058843F609D /* PVAzaharCoreBridge+Video.h */; };
+		1B6F945E45636D0712FB31AF /* IOSurface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9B72CFFDE6FB302C69DCEBC1 /* IOSurface.framework */; };
+		1EC1290033604691A1D35611 /* PVAzaharCoreBridge+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = 722CA6B3EB98EA29058EE708 /* PVAzaharCoreBridge+Controls.mm */; };
+		2213E7C1ADB9D18AA100C536 /* PVAzaharCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890BCDE8FE350738500DD6CD /* PVAzaharCore.swift */; };
+		2E45BC871A3A1509FEACD016 /* PVAzaharCoreBridge+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 8D9CC59B171C08AF67E80139 /* PVAzaharCoreBridge+Private.h */; };
+		3431AF66A4329EB6BF4F79C3 /* PVAzaharCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 785B20780FB9F684BD0E4099 /* PVAzaharCoreBridge.mm */; };
+		38160476FA3286D28806F7A8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CE90E615524E315A37667AA /* AVFoundation.framework */; };
+		460B2B435EE8E2A46327D701 /* AzaharCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = 182AFEFC45503FA4231E8614 /* AzaharCamera.mm */; };
+		51B6E650E74B9C4E6C8EFBEC /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 493F65DF5BCECEBAA30EE740 /* PVAudio */; };
+		52D72D137447D44BFE95A1D3 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = 1E716B31DF5EECEDD0642A7C /* PVCoreObjCBridge */; };
+		586235D53FC22829DA4A0F5C /* PVlibAzahar.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC8E5D4696D9F30C47886394 /* PVlibAzahar.xcframework */; };
+		58E751CE818B179C736B804C /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 83E28487102D424751CDA87B /* PVSupport */; };
+		5CA2A7702CD49A24F297FB20 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FE295865800BD0292501D5B2 /* libc++.tbd */; };
+		681B050AF06F9CD288145481 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = 1FB4DE9405A6F23F6D2F73FB /* PVCoreBridge */; };
+		69B49A9F6102D2911E51EA85 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3113E8D170D23A457A3DFA4 /* QuartzCore.framework */; };
+		69C77FF65BFFB3F98F0168B7 /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0F7E0DCDCAA5C23443642D5A /* PVAzahar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		75D9A75F36D3EAEAD9AB9683 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8C481379B05C273F622EAF5B /* PVEmulatorCore */; };
+		76C8B6E14568FDF06625F7A0 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55E1254CB87772DAD67B8DF9 /* CorePlist.swift */; };
+		84A83661827F7B79E3F28247 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20DCD16C32EDDF81674637A5 /* CoreAudio.framework */; };
+		85E5F6F440A7C8EA7FA4F5FB /* PVAzaharCoreBridge+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 42C81334E355B4029035C49E /* PVAzaharCoreBridge+Cheats.mm */; };
+		8B6399CC48D17CCCD24949C8 /* PVLoggingObjC in Frameworks */ = {isa = PBXBuildFile; productRef = 4B0A996641FE07FCF0A2C19C /* PVLoggingObjC */; };
+		8D18589612295F60E9E76849 /* PVAzaharCoreBridge+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = DDC942AED2CDD5BD427418A5 /* PVAzaharCoreBridge+Video.mm */; };
+		9104B3BD7CAFC8CBEB3163E1 /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 922620D6C7DA781A431333E9 /* PVObjCUtils */; };
+		9287CF50C1997AFE259D8B7F /* AzaharCamera.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C75246CB905ADE858908166 /* AzaharCamera.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		98F795DC88DC87866D40CF7E /* PVAzaharCoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */; };
+		9C8CF7AC65E25060BC59F9F1 /* AzaharInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F1FE2E2E4B8FE114B403270 /* AzaharInput.cpp */; };
+		A0B017D4981E7952F846C7C4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C79157998291504790FD90A /* libz.tbd */; };
+		A4C3C27989B22D6EFC38ACD9 /* AzaharInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1140F7AB6702FE554AAC9BE9 /* AzaharInput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AECF066E880D15755E99BACD /* AzaharAppleUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A26EA6E6424EDF04CFFEB2 /* AzaharAppleUtils.mm */; };
+		AFA064E5FE287EE746471374 /* PVAzaharDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */; };
+		B12E678C0F8F05DE5EF76D82 /* PVAzaharCoreBridge+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF309D698E9638944364388F /* PVAzaharCoreBridge+Audio.mm */; };
+		BCFF083498CD5ABEEEFCDB17 /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = 1E237605816D66792B8B5630 /* PVPrimitives */; };
+		C19531EB55244E6DF9EC4A9E /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = 64BA6FBE0866EAFBB5D752FA /* PVJIT */; };
+		C315813F9EF08BEC087F4848 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6503B39B2E205E91CFBA6201 /* Core.plist */; };
+		C35E3FFD9DA4F57F68EB4DB5 /* PVAzahar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F7E0DCDCAA5C23443642D5A /* PVAzahar.framework */; };
+		C415574B0C1412AEFD8446CB /* AzaharEmuWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 01DA7C3922A362D00C8AC676 /* AzaharEmuWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C941F43DE462D541DE0B0CC9 /* PVAzaharCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC25BB3E95A28038AEDAAC8 /* PVAzaharCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CE412627F69342D1BD02543C /* PVAzaharCoreBridge+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3735A948AF5179C25A70511D /* PVAzaharCoreBridge+Saves.mm */; };
+		D1F35EBCDFF3746F2DC7198C /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 10392391D0CCA6D171E8C6AF /* PVLogging */; };
+		DEE190781D459400CCD42A37 /* PVAzaharRenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE84F35983D6D1ABF12F45D /* PVAzaharRenderView.swift */; };
+		E39A0A04FB15B789EEFF0960 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4047C6C37A480AF41578EC85 /* Metal.framework */; };
+		EDC3EFED034733A03FDB16F1 /* AzaharEmuWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7C7C066A600E73B32F26A2BA /* AzaharEmuWindow.mm */; };
 		EFEABA306083F67BB8862F5E /* PVAzaharDataMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68485E3ED08D2F8358A16EA5 /* PVAzaharDataMigratorTests.swift */; };
-		F11E0ADE754FE04D88B37EAB /* AzaharGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 79F96C6CB0762431065B1329 /* AzaharGraphicsContext.mm */; };
-		F2182887587EB9B0AB4167BE /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FE295865800BD0292501D5B2 /* libc++.tbd */; };
-		F25E3F1F4E9B960E456AB07C /* PVAzaharCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC25BB3E95A28038AEDAAC8 /* PVAzaharCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F732A2F88C36F8DB2872631C /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6503B39B2E205E91CFBA6201 /* Core.plist */; };
-		F9F546E3577F4B9DB46A9B04 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 003A3F581E4C5CC430F5AAEB /* CorePlist-Generated.swift */; };
-		FD2DB28055A427C82CB5BF74 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 1F45FD485ACF598BE5B26E56 /* PVSupport */; };
+		F49A15B5607B28B1A24F14F8 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = A3A3725AFB5464B7A1924970 /* PVSettings */; };
+		F4AA9923F528F0C712231253 /* AzaharGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 79F96C6CB0762431065B1329 /* AzaharGraphicsContext.mm */; };
+		FBF42C2895B082E575AD8887 /* PVAzahar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C4747365172063E8D2C5A19 /* PVAzahar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		E298124578D289CAC5ECB396 /* PBXContainerItemProxy */ = {
+		C156486A64B9FF52A91AF035 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6717E8240BB82C60B0D4CA45 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 00FFB398308D10B2330ED37D;
-			remoteInfo = PVAzahar_iOS;
+			remoteGlobalIDString = AB646ECA6A8DECFB45A8C1C0;
+			remoteInfo = PVAzahar;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -123,7 +76,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A3C609D187DBF31AEA67117D /* PVAzahar.framework in Embed Frameworks */,
+				69C77FF65BFFB3F98F0168B7 /* PVAzahar.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -133,11 +86,11 @@
 /* Begin PBXFileReference section */
 		003A3F581E4C5CC430F5AAEB /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		01DA7C3922A362D00C8AC676 /* AzaharEmuWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AzaharEmuWindow.h; sourceTree = "<group>"; };
+		0F7E0DCDCAA5C23443642D5A /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1140F7AB6702FE554AAC9BE9 /* AzaharInput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AzaharInput.h; sourceTree = "<group>"; };
 		1307CD2FEDC4CC78AD06D986 /* PVPrimitives */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PVPrimitives; path = ../../PVPrimitives; sourceTree = SOURCE_ROOT; };
 		167737510E79EFBB6B783BBB /* PVPlists */ = {isa = PBXFileReference; lastKnownFileType = folder; name = PVPlists; path = ../../PVPlists; sourceTree = SOURCE_ROOT; };
 		182AFEFC45503FA4231E8614 /* AzaharCamera.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AzaharCamera.mm; sourceTree = "<group>"; };
-		1A5C5E95D9E253481F5BA8AF /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C75246CB905ADE858908166 /* AzaharCamera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AzaharCamera.h; sourceTree = "<group>"; };
 		20DCD16C32EDDF81674637A5 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		2C4747365172063E8D2C5A19 /* PVAzahar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVAzahar.h; sourceTree = "<group>"; };
@@ -154,7 +107,6 @@
 		68485E3ED08D2F8358A16EA5 /* PVAzaharDataMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAzaharDataMigratorTests.swift; sourceTree = "<group>"; };
 		6DE84F35983D6D1ABF12F45D /* PVAzaharRenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAzaharRenderView.swift; sourceTree = "<group>"; };
 		6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAzaharCoreOptions.swift; sourceTree = "<group>"; };
-		6F084488EAC660B7FE2D5F4F /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		722CA6B3EB98EA29058EE708 /* PVAzaharCoreBridge+Controls.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVAzaharCoreBridge+Controls.mm"; sourceTree = "<group>"; };
 		74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAzaharDataMigrator.swift; sourceTree = "<group>"; };
 		785B20780FB9F684BD0E4099 /* PVAzaharCoreBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVAzaharCoreBridge.mm; sourceTree = "<group>"; };
@@ -184,59 +136,31 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		49260630FC2C652DA38BB74E /* Frameworks */ = {
+		09AC03D569286E7278827300 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A75E64116DC7CF2794BEBEBA /* PVlibAzahar.xcframework in Frameworks */,
-				28F9712A1B71438931541ECA /* Metal.framework in Frameworks */,
-				D4D35FF6019CAF15D89AD2AD /* QuartzCore.framework in Frameworks */,
-				CB4772C40F337EEAD5915B15 /* AudioToolbox.framework in Frameworks */,
-				009EBECBDE116113A6F55753 /* CoreAudio.framework in Frameworks */,
-				86553A2373025B8FC2BF2E4F /* AVFoundation.framework in Frameworks */,
-				5CF67F3986B3C3119E572C11 /* IOSurface.framework in Frameworks */,
-				81FE72E701303D0944C69486 /* libz.tbd in Frameworks */,
-				F2182887587EB9B0AB4167BE /* libc++.tbd in Frameworks */,
-				D61D2E5649C0014DCBA9485C /* PVAudio in Frameworks */,
-				6EDFDD0B4134054084519F9E /* PVCoreBridge in Frameworks */,
-				B5C61C902805EAD75EBEAEE8 /* PVCoreObjCBridge in Frameworks */,
-				11103EF2D068E14DB946D051 /* PVEmulatorCore in Frameworks */,
-				301F6E733DB0A6C9F73AA55A /* PVJIT in Frameworks */,
-				B71BEAAC7E975607D0601A6E /* PVLogging in Frameworks */,
-				A6FA30A8EA586297E636682C /* PVLoggingObjC in Frameworks */,
-				41C8ED83156174E0432B5437 /* PVObjCUtils in Frameworks */,
-				C7E11527E96785F704604CA9 /* PVPlists in Frameworks */,
-				0DC7E995863E2C0EEE8887EC /* PVPrimitives in Frameworks */,
-				62BF19A54676907159D6ED7E /* PVSettings in Frameworks */,
-				9C06CDE43BED1FD0FD11D750 /* PVSupport in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C49CC760E1F1F4670F96AE39 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				3EC9B44792C85FE519E4484E /* PVlibAzahar.xcframework in Frameworks */,
-				315A6202B775B81F7CA63FDA /* Metal.framework in Frameworks */,
-				24D96D89414A9D8877B993C0 /* QuartzCore.framework in Frameworks */,
-				3E1A6F3008EFC72700D4D351 /* AudioToolbox.framework in Frameworks */,
-				4BC4EF621286E35F5E7B8A09 /* CoreAudio.framework in Frameworks */,
-				34A5DCCDDB2C367D758F3C52 /* AVFoundation.framework in Frameworks */,
-				C7141060298B1E9D00284538 /* IOSurface.framework in Frameworks */,
-				134D81BDAEDE16E134A61F68 /* libz.tbd in Frameworks */,
-				57B85802149B434BB929BB5F /* libc++.tbd in Frameworks */,
-				9A02D6C3A3463D74BA1160F6 /* PVAudio in Frameworks */,
-				E86EE807F7918930CB7B2090 /* PVCoreBridge in Frameworks */,
-				E0E3914B3120BF67FEAC2316 /* PVCoreObjCBridge in Frameworks */,
-				755166F2978E6D05E648FDF0 /* PVEmulatorCore in Frameworks */,
-				32150BF8DCB8C461C24B7C8F /* PVJIT in Frameworks */,
-				3FB49AF4B69B1398B77C4229 /* PVLogging in Frameworks */,
-				C7E1956220F9072BFA2BBA2C /* PVLoggingObjC in Frameworks */,
-				84E30B7267CECF60C926E508 /* PVObjCUtils in Frameworks */,
-				2BA6186F0FA2399352DEAE25 /* PVPlists in Frameworks */,
-				DA2F3AA9AFB0843D35AB3894 /* PVPrimitives in Frameworks */,
-				217A99F78D1D7362BD757524 /* PVSettings in Frameworks */,
-				FD2DB28055A427C82CB5BF74 /* PVSupport in Frameworks */,
+				586235D53FC22829DA4A0F5C /* PVlibAzahar.xcframework in Frameworks */,
+				E39A0A04FB15B789EEFF0960 /* Metal.framework in Frameworks */,
+				69B49A9F6102D2911E51EA85 /* QuartzCore.framework in Frameworks */,
+				116F66E03BCCA5F1D03B2CB4 /* AudioToolbox.framework in Frameworks */,
+				84A83661827F7B79E3F28247 /* CoreAudio.framework in Frameworks */,
+				38160476FA3286D28806F7A8 /* AVFoundation.framework in Frameworks */,
+				1B6F945E45636D0712FB31AF /* IOSurface.framework in Frameworks */,
+				A0B017D4981E7952F846C7C4 /* libz.tbd in Frameworks */,
+				5CA2A7702CD49A24F297FB20 /* libc++.tbd in Frameworks */,
+				51B6E650E74B9C4E6C8EFBEC /* PVAudio in Frameworks */,
+				681B050AF06F9CD288145481 /* PVCoreBridge in Frameworks */,
+				52D72D137447D44BFE95A1D3 /* PVCoreObjCBridge in Frameworks */,
+				75D9A75F36D3EAEAD9AB9683 /* PVEmulatorCore in Frameworks */,
+				C19531EB55244E6DF9EC4A9E /* PVJIT in Frameworks */,
+				D1F35EBCDFF3746F2DC7198C /* PVLogging in Frameworks */,
+				8B6399CC48D17CCCD24949C8 /* PVLoggingObjC in Frameworks */,
+				9104B3BD7CAFC8CBEB3163E1 /* PVObjCUtils in Frameworks */,
+				12ABC64F7E1EEEEC40530B59 /* PVPlists in Frameworks */,
+				BCFF083498CD5ABEEEFCDB17 /* PVPrimitives in Frameworks */,
+				F49A15B5607B28B1A24F14F8 /* PVSettings in Frameworks */,
+				58E751CE818B179C736B804C /* PVSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,7 +168,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6412EAFA18945ABAE0D624A /* PVAzahar.framework in Frameworks */,
+				C35E3FFD9DA4F57F68EB4DB5 /* PVAzahar.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,8 +259,7 @@
 		C13D189C51EFD39EF28B1B88 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6F084488EAC660B7FE2D5F4F /* PVAzahar.framework */,
-				1A5C5E95D9E253481F5BA8AF /* PVAzahar.framework */,
+				0F7E0DCDCAA5C23443642D5A /* PVAzahar.framework */,
 				E2BA61D68AE417ED30D74838 /* PVAzaharTests.xctest */,
 			);
 			name = Products;
@@ -366,105 +289,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		91738DC618CD0F9155A7D1BF /* Headers */ = {
+		C8C11B27787A9A6710AF72CF /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6BA09EA8384B6744B9676FB7 /* AzaharCamera.h in Headers */,
-				B294B70C81D5D9EE65B3BAD6 /* AzaharEmuWindow.h in Headers */,
-				C2F25B8228DECFC48368EDD3 /* AzaharGraphicsContext.h in Headers */,
-				3CC79029477B93678AA20E69 /* AzaharInput.h in Headers */,
-				C69D3619465F279C621AF380 /* PVAzahar.h in Headers */,
-				9E4B81B5A581015339451423 /* PVAzaharCoreBridge+Private.h in Headers */,
-				C067C5F1C529532DBD3B133C /* PVAzaharCoreBridge+Video.h in Headers */,
-				F25E3F1F4E9B960E456AB07C /* PVAzaharCoreBridge.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B26B60C5853A05E7EF4B4CCA /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				043C84C25A78F030BE24B3D7 /* AzaharCamera.h in Headers */,
-				742CB364E8FF6CAC535B9DA2 /* AzaharEmuWindow.h in Headers */,
-				AF03AA642C12C84045BFEA6D /* AzaharGraphicsContext.h in Headers */,
-				DBE3BE98A2EB8379D939FE38 /* AzaharInput.h in Headers */,
-				7B80C2601E05E720EBC60C40 /* PVAzahar.h in Headers */,
-				1996911390B19BC03E53C963 /* PVAzaharCoreBridge+Private.h in Headers */,
-				9EFE3FC943125E95AA48BC7E /* PVAzaharCoreBridge+Video.h in Headers */,
-				3393420E45AFFB6FA2F8541C /* PVAzaharCoreBridge.h in Headers */,
+				9287CF50C1997AFE259D8B7F /* AzaharCamera.h in Headers */,
+				C415574B0C1412AEFD8446CB /* AzaharEmuWindow.h in Headers */,
+				0022D33F6F43C78EFD073410 /* AzaharGraphicsContext.h in Headers */,
+				A4C3C27989B22D6EFC38ACD9 /* AzaharInput.h in Headers */,
+				FBF42C2895B082E575AD8887 /* PVAzahar.h in Headers */,
+				2E45BC871A3A1509FEACD016 /* PVAzaharCoreBridge+Private.h in Headers */,
+				1ACBB8FF4E1DF1D58DF9104E /* PVAzaharCoreBridge+Video.h in Headers */,
+				C941F43DE462D541DE0B0CC9 /* PVAzaharCoreBridge.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		00FFB398308D10B2330ED37D /* PVAzahar_iOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 49017E0B48AAA8C2C39A1101 /* Build configuration list for PBXNativeTarget "PVAzahar_iOS" */;
-			buildPhases = (
-				A7850DA75912471207AF3CEB /* Build PVlibAzahar */,
-				91738DC618CD0F9155A7D1BF /* Headers */,
-				A6F2DC8BB4A7586010A34146 /* Sources */,
-				1193422A68D6C47ABE2AB0E6 /* Resources */,
-				49260630FC2C652DA38BB74E /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = PVAzahar_iOS;
-			packageProductDependencies = (
-				80BFDC0163B261E495ADC86C /* PVAudio */,
-				B9C7D7A48848512D4F14F91A /* PVCoreBridge */,
-				C0C35E7BA76F373055337095 /* PVCoreObjCBridge */,
-				83B1F96E752E3F9FD25F0D4B /* PVEmulatorCore */,
-				260FA77D02753864906F24BD /* PVJIT */,
-				876EA39EF9E9534C2EF09BFD /* PVLogging */,
-				B9380A8E90B94C00D4DAEF9F /* PVLoggingObjC */,
-				F070FC08DB66A7AD06981D12 /* PVObjCUtils */,
-				73335DCBE169678E2A783B71 /* PVPlists */,
-				A8EB76D8A6464552C15A0F0A /* PVPrimitives */,
-				C89C6003D0040582D5C51E08 /* PVSettings */,
-				93D1BEBA178E561BDDF805EC /* PVSupport */,
-			);
-			productName = PVAzahar_iOS;
-			productReference = 6F084488EAC660B7FE2D5F4F /* PVAzahar.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		9B259483F2FAF4EB7BAEA0CA /* PVAzahar_tvOS */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E7F1DA14BBCA0BB5758D3E42 /* Build configuration list for PBXNativeTarget "PVAzahar_tvOS" */;
-			buildPhases = (
-				2EADD615896AFD06A5D7296C /* Build PVlibAzahar */,
-				B26B60C5853A05E7EF4B4CCA /* Headers */,
-				D761CDBC3EF0438603712B48 /* Sources */,
-				A2D3934C7516F2B12C928A96 /* Resources */,
-				C49CC760E1F1F4670F96AE39 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = PVAzahar_tvOS;
-			packageProductDependencies = (
-				BCFCD9715CD88D76535B636A /* PVAudio */,
-				9EDCCA7AA584466687EFFA3D /* PVCoreBridge */,
-				3F07E8586EFD082529EE84E4 /* PVCoreObjCBridge */,
-				15C531D33E19ABFBB02F47B6 /* PVEmulatorCore */,
-				09B42D73AD930CA4FF9B040E /* PVJIT */,
-				BF1381055A7F6462811E2442 /* PVLogging */,
-				8CE8F86D03ADC89604CF8170 /* PVLoggingObjC */,
-				0F729D13C154C5A41319ED4B /* PVObjCUtils */,
-				3D8833DF5CB4CDBF360FF2A4 /* PVPlists */,
-				EACFC952BAD8900D357AE624 /* PVPrimitives */,
-				ED90E07174A1A0DBAFC9DC46 /* PVSettings */,
-				1F45FD485ACF598BE5B26E56 /* PVSupport */,
-			);
-			productName = PVAzahar_tvOS;
-			productReference = 1A5C5E95D9E253481F5BA8AF /* PVAzahar.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		A9EAD8D700730FFBC57AC5C0 /* PVAzaharTests_iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9700E0E17C7FF9A4721B5AEB /* Build configuration list for PBXNativeTarget "PVAzaharTests_iOS" */;
@@ -476,7 +318,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				3E275136796D6A16DD2FC637 /* PBXTargetDependency */,
+				1E93F0A41BAAA3DC28B2DACE /* PBXTargetDependency */,
 			);
 			name = PVAzaharTests_iOS;
 			packageProductDependencies = (
@@ -484,6 +326,39 @@
 			productName = PVAzaharTests_iOS;
 			productReference = E2BA61D68AE417ED30D74838 /* PVAzaharTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AB646ECA6A8DECFB45A8C1C0 /* PVAzahar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E7A2F1239DE7355840B62EF4 /* Build configuration list for PBXNativeTarget "PVAzahar" */;
+			buildPhases = (
+				7E35FDC61865D0A809F793AD /* Build PVlibAzahar */,
+				C8C11B27787A9A6710AF72CF /* Headers */,
+				9E36B802CACFF6B784F3D927 /* Sources */,
+				E740353CB14FBF4F7EAB66D1 /* Resources */,
+				09AC03D569286E7278827300 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PVAzahar;
+			packageProductDependencies = (
+				493F65DF5BCECEBAA30EE740 /* PVAudio */,
+				1FB4DE9405A6F23F6D2F73FB /* PVCoreBridge */,
+				1E716B31DF5EECEDD0642A7C /* PVCoreObjCBridge */,
+				8C481379B05C273F622EAF5B /* PVEmulatorCore */,
+				64BA6FBE0866EAFBB5D752FA /* PVJIT */,
+				10392391D0CCA6D171E8C6AF /* PVLogging */,
+				4B0A996641FE07FCF0A2C19C /* PVLoggingObjC */,
+				922620D6C7DA781A431333E9 /* PVObjCUtils */,
+				CBCEED13FDDB5ABDCE3D6297 /* PVPlists */,
+				1E237605816D66792B8B5630 /* PVPrimitives */,
+				A3A3725AFB5464B7A1924970 /* PVSettings */,
+				83E28487102D424751CDA87B /* PVSupport */,
+			);
+			productName = PVAzahar;
+			productReference = 0F7E0DCDCAA5C23443642D5A /* PVAzahar.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
@@ -523,34 +398,25 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				00FFB398308D10B2330ED37D /* PVAzahar_iOS */,
-				9B259483F2FAF4EB7BAEA0CA /* PVAzahar_tvOS */,
+				AB646ECA6A8DECFB45A8C1C0 /* PVAzahar */,
 				A9EAD8D700730FFBC57AC5C0 /* PVAzaharTests_iOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		1193422A68D6C47ABE2AB0E6 /* Resources */ = {
+		E740353CB14FBF4F7EAB66D1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F732A2F88C36F8DB2872631C /* Core.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A2D3934C7516F2B12C928A96 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9C95336C6151674DB13C1704 /* Core.plist in Resources */,
+				C315813F9EF08BEC087F4848 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2EADD615896AFD06A5D7296C /* Build PVlibAzahar */ = {
+		7E35FDC61865D0A809F793AD /* Build PVlibAzahar */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -567,51 +433,32 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\npython3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo \"error: python3 >= 3.10 required for build_azahar_core.py (brew install python)\"; exit 1; }\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\npython3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\n# ProcessXCFramework copies the slice before this phase rebuilt it; put the fresh one where the linker looks.\nfresh=\"$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework\"\nif [[ -d \"$fresh\" && -n \"${BUILT_PRODUCTS_DIR:-}\" ]]; then\n  mkdir -p \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework\"\n  /usr/bin/rsync -a --delete \"$fresh/\" \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework/\"\nfi\n";
-		};
-		A7850DA75912471207AF3CEB /* Build PVlibAzahar */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Build PVlibAzahar";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\npython3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo \"error: python3 >= 3.10 required for build_azahar_core.py (brew install python)\"; exit 1; }\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\npython3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\n# ProcessXCFramework copies the slice before this phase rebuilt it; put the fresh one where the linker looks.\nfresh=\"$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework\"\nif [[ -d \"$fresh\" && -n \"${BUILT_PRODUCTS_DIR:-}\" ]]; then\n  mkdir -p \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework\"\n  /usr/bin/rsync -a --delete \"$fresh/\" \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework/\"\nfi\n";
+			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\npython3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo \"error: python3 >= 3.10 required for build_azahar_core.py (brew install python)\"; exit 1; }\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\ncase \"$slice\" in\n  ios)      xcfw_id=ios-arm64 ;;\n  ios-sim)  xcfw_id=ios-arm64-simulator ;;\n  tvos)     xcfw_id=tvos-arm64 ;;\n  tvos-sim) xcfw_id=tvos-arm64-simulator ;;\nesac\n# Rebuilding rewrites the shared xcframework in place, which races concurrent builds;\n# skip it when this slice exists and was built from the current submodule HEAD.\nbuilt_lib=\"$PROJECT_DIR/build/xcframework/PVlibAzahar.xcframework/${xcfw_id}/PVlibAzahar.framework/PVlibAzahar\"\nstamp=\"$PROJECT_DIR/build/${platform}/.gitlink\"\nhead=\"$(git -C \"$PROJECT_DIR/azahar\" rev-parse HEAD)\"\nif [[ -f \"$built_lib\" && -f \"$stamp\" && \"$(cat \"$stamp\")\" == \"$head\" ]]; then\n  echo \"PVlibAzahar ${slice} is current (azahar ${head}); skipping build_azahar_core.py\"\nelse\n  python3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\nfi\n# ProcessXCFramework copies the slice before this phase rebuilt it; put the fresh one where the linker looks.\nfresh=\"$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework\"\nif [[ -d \"$fresh\" && -n \"${BUILT_PRODUCTS_DIR:-}\" ]]; then\n  mkdir -p \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework\"\n  /usr/bin/rsync -a --delete \"$fresh/\" \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework/\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A6F2DC8BB4A7586010A34146 /* Sources */ = {
+		9E36B802CACFF6B784F3D927 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A8D3DD0D69A9A3ED03700EBE /* AzaharAppleUtils.mm in Sources */,
-				821A7A49B9850DA8FA6716CE /* AzaharCamera.mm in Sources */,
-				38327E5EA682D4C886BB42F3 /* AzaharEmuWindow.mm in Sources */,
-				AA2BAF53BCB90050F6CC83BC /* AzaharGraphicsContext.mm in Sources */,
-				3D469128C613840319A42D57 /* AzaharInput.cpp in Sources */,
-				F9F546E3577F4B9DB46A9B04 /* CorePlist-Generated.swift in Sources */,
-				54D1EDF50E2B01839A6ADD3F /* CorePlist.swift in Sources */,
-				5A5F5A3115C53A87F5488953 /* PVAzaharCore.swift in Sources */,
-				069D51C4BF71D68D6319EE7A /* PVAzaharCoreBridge+Audio.mm in Sources */,
-				ECC1BC6079F1F28661341774 /* PVAzaharCoreBridge+Cheats.mm in Sources */,
-				36E6D8D01B753D25631AFF65 /* PVAzaharCoreBridge+Controls.mm in Sources */,
-				3F4A4533625AD37F958DDDB9 /* PVAzaharCoreBridge+Saves.mm in Sources */,
-				2DB33F9DE763F4921D934880 /* PVAzaharCoreBridge+Video.mm in Sources */,
-				8EB745345467AF969DD7D181 /* PVAzaharCoreBridge.mm in Sources */,
-				3AD8432485137B85FA81853B /* PVAzaharCoreOptions.swift in Sources */,
-				849298E87552D4DA2240D93C /* PVAzaharDataMigrator.swift in Sources */,
-				C6CBC9BEA7C215E796229F88 /* PVAzaharRenderView.swift in Sources */,
+				AECF066E880D15755E99BACD /* AzaharAppleUtils.mm in Sources */,
+				460B2B435EE8E2A46327D701 /* AzaharCamera.mm in Sources */,
+				EDC3EFED034733A03FDB16F1 /* AzaharEmuWindow.mm in Sources */,
+				F4AA9923F528F0C712231253 /* AzaharGraphicsContext.mm in Sources */,
+				9C8CF7AC65E25060BC59F9F1 /* AzaharInput.cpp in Sources */,
+				075A1E0E63D35C797E56AE88 /* CorePlist-Generated.swift in Sources */,
+				76C8B6E14568FDF06625F7A0 /* CorePlist.swift in Sources */,
+				2213E7C1ADB9D18AA100C536 /* PVAzaharCore.swift in Sources */,
+				B12E678C0F8F05DE5EF76D82 /* PVAzaharCoreBridge+Audio.mm in Sources */,
+				85E5F6F440A7C8EA7FA4F5FB /* PVAzaharCoreBridge+Cheats.mm in Sources */,
+				1EC1290033604691A1D35611 /* PVAzaharCoreBridge+Controls.mm in Sources */,
+				CE412627F69342D1BD02543C /* PVAzaharCoreBridge+Saves.mm in Sources */,
+				8D18589612295F60E9E76849 /* PVAzaharCoreBridge+Video.mm in Sources */,
+				3431AF66A4329EB6BF4F79C3 /* PVAzaharCoreBridge.mm in Sources */,
+				98F795DC88DC87866D40CF7E /* PVAzaharCoreOptions.swift in Sources */,
+				AFA064E5FE287EE746471374 /* PVAzaharDataMigrator.swift in Sources */,
+				DEE190781D459400CCD42A37 /* PVAzaharRenderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -623,42 +470,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D761CDBC3EF0438603712B48 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				9B2978BA71CE472A2D715864 /* AzaharAppleUtils.mm in Sources */,
-				6055057EE054B83A4A819BBD /* AzaharCamera.mm in Sources */,
-				68540C93F06A578B85BAD8A5 /* AzaharEmuWindow.mm in Sources */,
-				F11E0ADE754FE04D88B37EAB /* AzaharGraphicsContext.mm in Sources */,
-				E9FCEE898DC089DEF98D4199 /* AzaharInput.cpp in Sources */,
-				E67584F4F5AE3F6AADB134D7 /* CorePlist-Generated.swift in Sources */,
-				DBAFE644CA1171A6B486A561 /* CorePlist.swift in Sources */,
-				17E836C66248D3BC5896B31A /* PVAzaharCore.swift in Sources */,
-				335544CB99A2BB735A08192F /* PVAzaharCoreBridge+Audio.mm in Sources */,
-				24E4EB4FED2D27AC1A5711D7 /* PVAzaharCoreBridge+Cheats.mm in Sources */,
-				935D7B81C43C5CBB89872059 /* PVAzaharCoreBridge+Controls.mm in Sources */,
-				3BE5F8A5A916AF1416649BDE /* PVAzaharCoreBridge+Saves.mm in Sources */,
-				4578A21C7AB877E3CE2F926A /* PVAzaharCoreBridge+Video.mm in Sources */,
-				391369573B18BF2BAF6A5D4A /* PVAzaharCoreBridge.mm in Sources */,
-				72493E1037E4AB3D804F8355 /* PVAzaharCoreOptions.swift in Sources */,
-				80E0364C13FD83A014D7A623 /* PVAzaharDataMigrator.swift in Sources */,
-				01AA46B12E2943E5237BBE88 /* PVAzaharRenderView.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3E275136796D6A16DD2FC637 /* PBXTargetDependency */ = {
+		1E93F0A41BAAA3DC28B2DACE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 00FFB398308D10B2330ED37D /* PVAzahar_iOS */;
-			targetProxy = E298124578D289CAC5ECB396 /* PBXContainerItemProxy */;
+			target = AB646ECA6A8DECFB45A8C1C0 /* PVAzahar */;
+			targetProxy = C156486A64B9FF52A91AF035 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		379866D56373B862544D15B9 /* Debug */ = {
+		01ACCEAA8CD09198EC6FD993 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
@@ -677,73 +500,52 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzahar-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzahar";
 				PRODUCT_MODULE_NAME = PVAzahar;
 				PRODUCT_NAME = PVAzahar;
-				SDKROOT = appletvos;
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		24385463B3FCBE8717A087F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"build/xcframework\"",
+				);
+				INFOPLIST_FILE = PVAzahar/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzahar";
+				PRODUCT_MODULE_NAME = PVAzahar;
+				PRODUCT_NAME = PVAzahar;
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
-		};
-		38AEBA2C9C736A6F63F3812D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"build/xcframework\"",
-				);
-				INFOPLIST_FILE = PVAzahar/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzahar-iOS";
-				PRODUCT_MODULE_NAME = PVAzahar;
-				PRODUCT_NAME = PVAzahar;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Release;
-		};
-		54ABFEC6AD0FB2B2FEDCC3BB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"build/xcframework\"",
-				);
-				INFOPLIST_FILE = PVAzahar/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzahar-tvOS";
-				PRODUCT_MODULE_NAME = PVAzahar;
-				PRODUCT_NAME = PVAzahar;
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Release;
 		};
 		910275133D67BBF5140CBA72 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -759,35 +561,6 @@
 				PRODUCT_NAME = PVAzaharTests;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		BA5FF95B122C2C72437CFC0C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"build/xcframework\"",
-				);
-				INFOPLIST_FILE = PVAzahar/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzahar-iOS";
-				PRODUCT_MODULE_NAME = PVAzahar;
-				PRODUCT_NAME = PVAzahar;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -847,7 +620,6 @@
 				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=*simulator*]" = x86_64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -877,11 +649,13 @@
 				OTHER_CFLAGS = "$(inherited) -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited) -fcxx-modules -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32 -Wno-deprecated-declarations -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers";
 				OTHER_LDFLAGS = "$(inherited) -ObjC";
+				"OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]" = "$(inherited) -ObjC -Wl,-undefined,dynamic_lookup";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PVAZAHAR_SLICE = ios;
 				"PVAZAHAR_SLICE[sdk=appletvos*]" = tvos;
 				"PVAZAHAR_SLICE[sdk=appletvsimulator*]" = "tvos-sim";
 				"PVAZAHAR_SLICE[sdk=iphonesimulator*]" = "ios-sim";
+				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -929,7 +703,6 @@
 				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=*simulator*]" = x86_64;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -962,11 +735,13 @@
 				OTHER_CFLAGS = "$(inherited) -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited) -fcxx-modules -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32 -Wno-deprecated-declarations -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers";
 				OTHER_LDFLAGS = "$(inherited) -ObjC";
+				"OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]" = "$(inherited) -ObjC -Wl,-undefined,dynamic_lookup";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PVAZAHAR_SLICE = ios;
 				"PVAZAHAR_SLICE[sdk=appletvos*]" = tvos;
 				"PVAZAHAR_SLICE[sdk=appletvsimulator*]" = "tvos-sim";
 				"PVAZAHAR_SLICE[sdk=iphonesimulator*]" = "ios-sim";
+				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -978,15 +753,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		49017E0B48AAA8C2C39A1101 /* Build configuration list for PBXNativeTarget "PVAzahar_iOS" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				BA5FF95B122C2C72437CFC0C /* Debug */,
-				38AEBA2C9C736A6F63F3812D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		9700E0E17C7FF9A4721B5AEB /* Build configuration list for PBXNativeTarget "PVAzaharTests_iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -1005,11 +771,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E7F1DA14BBCA0BB5758D3E42 /* Build configuration list for PBXNativeTarget "PVAzahar_tvOS" */ = {
+		E7A2F1239DE7355840B62EF4 /* Build configuration list for PBXNativeTarget "PVAzahar" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				379866D56373B862544D15B9 /* Debug */,
-				54ABFEC6AD0FB2B2FEDCC3BB /* Release */,
+				24385463B3FCBE8717A087F8 /* Debug */,
+				01ACCEAA8CD09198EC6FD993 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1064,101 +830,53 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		09B42D73AD930CA4FF9B040E /* PVJIT */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVJIT;
-		};
-		0F729D13C154C5A41319ED4B /* PVObjCUtils */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVObjCUtils;
-		};
-		15C531D33E19ABFBB02F47B6 /* PVEmulatorCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVEmulatorCore;
-		};
-		1F45FD485ACF598BE5B26E56 /* PVSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVSupport;
-		};
-		260FA77D02753864906F24BD /* PVJIT */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVJIT;
-		};
-		3D8833DF5CB4CDBF360FF2A4 /* PVPlists */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVPlists;
-		};
-		3F07E8586EFD082529EE84E4 /* PVCoreObjCBridge */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVCoreObjCBridge;
-		};
-		73335DCBE169678E2A783B71 /* PVPlists */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVPlists;
-		};
-		80BFDC0163B261E495ADC86C /* PVAudio */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVAudio;
-		};
-		83B1F96E752E3F9FD25F0D4B /* PVEmulatorCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVEmulatorCore;
-		};
-		876EA39EF9E9534C2EF09BFD /* PVLogging */ = {
+		10392391D0CCA6D171E8C6AF /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
 		};
-		8CE8F86D03ADC89604CF8170 /* PVLoggingObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLoggingObjC;
-		};
-		93D1BEBA178E561BDDF805EC /* PVSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVSupport;
-		};
-		9EDCCA7AA584466687EFFA3D /* PVCoreBridge */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVCoreBridge;
-		};
-		A8EB76D8A6464552C15A0F0A /* PVPrimitives */ = {
+		1E237605816D66792B8B5630 /* PVPrimitives */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVPrimitives;
 		};
-		B9380A8E90B94C00D4DAEF9F /* PVLoggingObjC */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLoggingObjC;
-		};
-		B9C7D7A48848512D4F14F91A /* PVCoreBridge */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVCoreBridge;
-		};
-		BCFCD9715CD88D76535B636A /* PVAudio */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVAudio;
-		};
-		BF1381055A7F6462811E2442 /* PVLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLogging;
-		};
-		C0C35E7BA76F373055337095 /* PVCoreObjCBridge */ = {
+		1E716B31DF5EECEDD0642A7C /* PVCoreObjCBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreObjCBridge;
 		};
-		C89C6003D0040582D5C51E08 /* PVSettings */ = {
+		1FB4DE9405A6F23F6D2F73FB /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = PVSettings;
+			productName = PVCoreBridge;
 		};
-		EACFC952BAD8900D357AE624 /* PVPrimitives */ = {
+		493F65DF5BCECEBAA30EE740 /* PVAudio */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = PVPrimitives;
+			productName = PVAudio;
 		};
-		ED90E07174A1A0DBAFC9DC46 /* PVSettings */ = {
+		4B0A996641FE07FCF0A2C19C /* PVLoggingObjC */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = PVSettings;
+			productName = PVLoggingObjC;
 		};
-		F070FC08DB66A7AD06981D12 /* PVObjCUtils */ = {
+		64BA6FBE0866EAFBB5D752FA /* PVJIT */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVJIT;
+		};
+		83E28487102D424751CDA87B /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		8C481379B05C273F622EAF5B /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		922620D6C7DA781A431333E9 /* PVObjCUtils */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVObjCUtils;
+		};
+		A3A3725AFB5464B7A1924970 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		CBCEED13FDDB5ABDCE3D6297 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

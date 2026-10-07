@@ -266,6 +266,21 @@ def write_framework_plist(fw: Path, sdk: str, min_os: str) -> None:
     (fw / "Info.plist").write_text(plist)
 
 
+def write_gitlink_stamps(platforms: list[str]) -> None:
+    """Record the azahar submodule HEAD each platform was built from.
+
+    The Xcode pre-build phase skips this script when the active slice is already in the
+    xcframework and build/<platform>/.gitlink matches the submodule HEAD.
+    """
+    try:
+        head = subprocess.run(["git", "-C", str(SRC), "rev-parse", "HEAD"],
+                              check=True, capture_output=True, text=True).stdout.strip()
+    except subprocess.CalledProcessError as e:
+        raise BuildError(f"cannot read azahar submodule HEAD: {e.stderr.strip()}") from e
+    for platform in platforms:
+        (BUILD / platform / ".gitlink").write_text(head + "\n")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build the azahar core libraries for iOS/tvOS")
     parser.add_argument("-p", "--platforms", nargs="+", choices=PLATFORMS.keys(),
@@ -281,6 +296,7 @@ def main() -> int:
         for platform in platforms:
             builder.build_platform(platform)
         xcfw = builder.create_xcframework()
+        write_gitlink_stamps(platforms)
     except BuildError as e:
         log(f"Build failed: {e}", "error")
         return 1

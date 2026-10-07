@@ -45,7 +45,10 @@ settings:
     "PVAZAHAR_SLICE[sdk=iphonesimulator*]": ios-sim
     "PVAZAHAR_SLICE[sdk=appletvos*]": tvos
     "PVAZAHAR_SLICE[sdk=appletvsimulator*]": tvos-sim
-    "EXCLUDED_ARCHS[sdk=*simulator*]": x86_64
+    # No x86_64 simulator slice of PVlibAzahar exists, but EXCLUDED_ARCHS would hide this target
+    # from the app's implicit dependency on generic (arm64+x86_64) simulator builds. So the x86_64
+    # simulator slice compiles and links with PVlibAzahar's symbols left unresolved; it is never run.
+    "OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]": "$(inherited) -ObjC -Wl,-undefined,dynamic_lookup"
     OTHER_CFLAGS: "$(inherited) -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers"
     OTHER_LDFLAGS: "$(inherited) -ObjC"
     LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @loader_path/Frameworks"
@@ -70,7 +73,10 @@ packages:
 targets:
   PVAzahar:
     type: framework
-    platform: [iOS, tvOS]
+    # One target for both OSes: with separate PVAzahar_iOS/_tvOS targets (same product name)
+    # the app's implicit dependency never scheduled the tvOS one.
+    platform: iOS
+    supportedDestinations: [iOS, tvOS]
     sources:
       - path: PVAzaharCore
         excludes:
@@ -129,7 +135,22 @@ targets:
             appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;
             *) echo "error: unsupported PLATFORM_NAME ${PLATFORM_NAME}"; exit 1 ;;
           esac
-          python3 "$SCRIPT" -p "$platform"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)
+          case "$slice" in
+            ios)      xcfw_id=ios-arm64 ;;
+            ios-sim)  xcfw_id=ios-arm64-simulator ;;
+            tvos)     xcfw_id=tvos-arm64 ;;
+            tvos-sim) xcfw_id=tvos-arm64-simulator ;;
+          esac
+          # Rebuilding rewrites the shared xcframework in place, which races concurrent builds;
+          # skip it when this slice exists and was built from the current submodule HEAD.
+          built_lib="$PROJECT_DIR/build/xcframework/PVlibAzahar.xcframework/${xcfw_id}/PVlibAzahar.framework/PVlibAzahar"
+          stamp="$PROJECT_DIR/build/${platform}/.gitlink"
+          head="$(git -C "$PROJECT_DIR/azahar" rev-parse HEAD)"
+          if [[ -f "$built_lib" && -f "$stamp" && "$(cat "$stamp")" == "$head" ]]; then
+            echo "PVlibAzahar ${slice} is current (azahar ${head}); skipping build_azahar_core.py"
+          else
+            python3 "$SCRIPT" -p "$platform"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)
+          fi
           # ProcessXCFramework copies the slice before this phase rebuilt it; put the fresh one where the linker looks.
           fresh="$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework"
           if [[ -d "$fresh" && -n "${BUILT_PRODUCTS_DIR:-}" ]]; then
@@ -140,6 +161,7 @@ targets:
       base:
         PRODUCT_NAME: PVAzahar
         PRODUCT_MODULE_NAME: PVAzahar
+        SDKROOT: auto
         INFOPLIST_FILE: PVAzahar/Info.plist
         SKIP_INSTALL: YES
   PVAzaharTests:
@@ -148,7 +170,7 @@ targets:
     sources:
       - path: Tests
     dependencies:
-      - target: PVAzahar_iOS
+      - target: PVAzahar
     settings:
       base:
         # PVAzahar-Swift.h does `@import PVCoreBridge;` etc. Clang only finds SwiftPM's generated module maps
@@ -163,12 +185,8 @@ schemes:
   PVAzahar:
     build:
       targets:
-        PVAzahar_iOS: all
+        PVAzahar: all
     test:
       config: Debug
       targets:
         - PVAzaharTests_iOS
-  PVAzahar-tvOS:
-    build:
-      targets:
-        PVAzahar_tvOS: all

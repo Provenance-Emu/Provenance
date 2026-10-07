@@ -15,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "00FFB398308D10B2330ED37D"
+               BlueprintIdentifier = "AB646ECA6A8DECFB45A8C1C0"
                BuildableName = "PVAzahar.framework"
-               BlueprintName = "PVAzahar_iOS"
+               BlueprintName = "PVAzahar"
                ReferencedContainer = "container:PVAzahar.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "00FFB398308D10B2330ED37D"
+            BlueprintIdentifier = "AB646ECA6A8DECFB45A8C1C0"
             BuildableName = "PVAzahar.framework"
-            BlueprintName = "PVAzahar_iOS"
+            BlueprintName = "PVAzahar"
             ReferencedContainer = "container:PVAzahar.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -67,9 +67,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "00FFB398308D10B2330ED37D"
+            BlueprintIdentifier = "AB646ECA6A8DECFB45A8C1C0"
             BuildableName = "PVAzahar.framework"
-            BlueprintName = "PVAzahar_iOS"
+            BlueprintName = "PVAzahar"
             ReferencedContainer = "container:PVAzahar.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -83,9 +83,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "00FFB398308D10B2330ED37D"
+            BlueprintIdentifier = "AB646ECA6A8DECFB45A8C1C0"
             BuildableName = "PVAzahar.framework"
-            BlueprintName = "PVAzahar_iOS"
+            BlueprintName = "PVAzahar"
             ReferencedContainer = "container:PVAzahar.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
