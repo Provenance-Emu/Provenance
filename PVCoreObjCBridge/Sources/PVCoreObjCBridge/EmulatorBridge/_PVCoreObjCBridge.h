@@ -217,6 +217,13 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, readonly) CGSize aspectSize;
 @property (nonatomic, readonly) CGSize bufferSize;
 @property (nonatomic, readonly) BOOL isDoubleBuffered;
+/// YES when frames are delivered to the render delegate from a thread the core
+/// owns (e.g. the GLES bridge's render thread), not from the emulation loop.
+/// The loop's swap runs with `frontBufferLock` held, but the delegate's
+/// `didRenderFrameOnAlternateThread` takes that same non-recursive lock, so
+/// calling it from the loop deadlocks the emulation thread on itself. Bridges
+/// that answer YES are skipped by the loop's lock-and-swap step. Default NO.
+@property (nonatomic, readonly) BOOL presentsFramesOffEmulationLoop;
 @property (nonatomic, readonly) BOOL rendersToOpenGL;
 /// YES when the core renders via Vulkan HW context (MoltenVK → Metal interop).
 @property (nonatomic, readonly) BOOL rendersToVulkan;
