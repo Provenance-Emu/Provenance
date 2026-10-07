@@ -118,8 +118,9 @@ ENABLE_BITCODE = NO
 // reference these names get a no-op. Round 2 can restore individual entries
 // after rebuilding the corresponding xcframework with a simulator slice
 // (e.g. OpenAL-Soft is small enough to ship sim slices).
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = libopenal.xcframework PVDolphin.framework PVEmuThree.framework PVAzahar.framework glslang.xcframework PVlibDolphin.xcframework PVDolphin.xcframework
-EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*] = libopenal.xcframework PVDolphin.framework PVEmuThree.framework PVAzahar.framework glslang.xcframework PVlibDolphin.xcframework PVDolphin.xcframework
+// PVAzahar is not listed: its PVlibAzahar xcframework ships ios-sim/tvos-sim slices.
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = libopenal.xcframework PVDolphin.framework PVEmuThree.framework glslang.xcframework PVlibDolphin.xcframework PVDolphin.xcframework
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*] = libopenal.xcframework PVDolphin.framework PVEmuThree.framework glslang.xcframework PVlibDolphin.xcframework PVDolphin.xcframework
 
 // -- Explicitly Built Modules (Xcode 16+) --
 // DISABLED: Explicit modules conflict with -fmodules/-fcxx-modules in OTHER_CFLAGS
