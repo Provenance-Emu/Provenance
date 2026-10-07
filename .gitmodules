@@ -200,3 +200,7 @@
 	path = Cores/VisualBoyAdvance-M/Sources/libvisualboyadvance/visualboyadvance-m
 	url = https://github.com/Provenance-Emu/visualboyadvance-m.git
 	branch = Provenance-master
+[submodule "Cores/Azahar/azahar"]
+	path = Cores/Azahar/azahar
+	url = https://github.com/Provenance-Emu/azahar.git
+	branch = provenance
