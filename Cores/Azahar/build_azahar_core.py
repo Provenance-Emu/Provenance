@@ -6,8 +6,8 @@ PVlibAzahar.xcframework for Cores/Azahar/PVAzahar.xcodeproj.
 Source: Cores/Azahar/azahar (Provenance-Emu/azahar, branch `provenance`; see PATCHES.md)
 Output: Cores/Azahar/build/xcframework/PVlibAzahar-<slice>.framework/{PVlibAzahar, Headers/}
         per platform (PVlibAzahar = every built static archive merged with libtool), then
-        Cores/Azahar/build/xcframework/PVlibAzahar.xcframework, a library xcframework
-        (<slice>/libPVlibAzahar.a + Headers/) combining every slice present.
+        Cores/Azahar/build/xcframework/PVlibAzahar.xcframework
+        (<library-id>/PVlibAzahar.framework/{PVlibAzahar, Headers/}) combining every slice present.
 
 MoltenVK is linked from the repo's static xcframework at
 MoltenVK/MoltenVK/static/MoltenVK.xcframework/<slice>/libMoltenVK.a
@@ -25,6 +25,7 @@ Usage:
 
 import argparse
 import multiprocessing
+import os
 import shutil
 import subprocess
 import sys
@@ -167,11 +168,9 @@ class AzaharBuilder:
     def create_xcframework(self) -> Path:
         """Combine every PVlibAzahar-*.framework present (this run's and earlier ones).
 
-        Slices go in as `-library <archive> -headers <Headers>`: `-framework` requires the
-        binary to be named after the bundle directory (PVlibAzahar-ios), and a library
-        xcframework puts Headers/ on the consumer's header search path, which azahar's
-        own `#include "core/core.h"` style needs. `-library` insists on a `.a` name, so each
-        archive is hard-linked to build/staging/<slice>/libPVlibAzahar.a first.
+        `-framework` requires the binary to be named after the bundle directory, so each
+        slice is hard-linked into build/staging/<slice>/PVlibAzahar.framework first; the
+        xcframework then holds <library-id>/PVlibAzahar.framework/PVlibAzahar.
         """
         frameworks = sorted(XCFRAMEWORK_DIR.glob(f"{LIB_NAME}-*.framework"))
         if not frameworks:
@@ -181,11 +180,11 @@ class AzaharBuilder:
             shutil.rmtree(xcfw)
         cmd = ["xcodebuild", "-create-xcframework", "-output", str(xcfw)]
         for fw in frameworks:
-            staged = BUILD / "staging" / fw.stem / f"lib{LIB_NAME}.a"
-            staged.parent.mkdir(parents=True, exist_ok=True)
-            staged.unlink(missing_ok=True)
-            staged.hardlink_to(fw / LIB_NAME)
-            cmd += ["-library", str(staged), "-headers", str(fw / "Headers")]
+            staged = BUILD / "staging" / fw.stem / f"{LIB_NAME}.framework"
+            if staged.exists():
+                shutil.rmtree(staged)
+            shutil.copytree(fw, staged, copy_function=os.link)
+            cmd += ["-framework", str(staged)]
         log(f"Creating {xcfw.name} from {len(frameworks)} framework(s)", "package")
         run(cmd, verbose=self.verbose)
         return xcfw
