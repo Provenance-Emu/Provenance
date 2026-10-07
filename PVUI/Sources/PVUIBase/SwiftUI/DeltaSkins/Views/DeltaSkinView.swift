@@ -1729,7 +1729,7 @@ public struct DeltaSkinView: View {
 
         // Prefer explicit id; fall back to the screen with the largest minY (portrait-stacked bottom),
         // and when minY ties (e.g., side-by-side landscape), choose the one with the largest minX.
-        let bottomScreen: DeltaSkinScreen? = allScreens.first { $0.id == "nds_bottom" }
+        let bottomSkinScreen: DeltaSkinScreen? = allScreens.first { $0.id == "nds_bottom" }
             ?? allScreens.compactMap { screen -> (DeltaSkinScreen, CGRect)? in
                 guard let frame = screen.outputFrame else { return nil }
                 return (screen, frame)
@@ -1740,7 +1740,16 @@ public struct DeltaSkinView: View {
                 return lhs.1.minY < rhs.1.minY
             })?.0
 
-        guard let screen = bottomScreen, let outputFrame = screen.outputFrame else { return nil }
+        // When the renderer swaps the screens, the DS touchscreen is drawn in the
+        // other skin screen, so the stylus area moves with it.
+        let touchSkinScreen: DeltaSkinScreen?
+        if inputHandler.dsScreensSwapped, let bottom = bottomSkinScreen {
+            touchSkinScreen = allScreens.first { $0.id != bottom.id && $0.outputFrame != nil }
+        } else {
+            touchSkinScreen = bottomSkinScreen
+        }
+
+        guard let screen = touchSkinScreen, let outputFrame = screen.outputFrame else { return nil }
 
         // Normalize outputFrame into 0–1 space if it is specified in mappingSize pixels.
         // Some skins (e.g. DefaultDeltaSkin) already use normalized coordinates (0–1),
