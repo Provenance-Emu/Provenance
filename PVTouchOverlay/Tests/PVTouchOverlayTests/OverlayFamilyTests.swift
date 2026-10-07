@@ -20,7 +20,9 @@ struct OverlayFamilyTests {
 
     @Test("Every family resolves with all groups inside the canvas on every canvas",
           arguments: [TwoButtonFamily.id, FourFaceFamily.id, ThreeFaceFamily.id, SixFaceFamily.id,
-                      N64Family.id, DigitalPadFamily.id, DualStickFamily.id])
+                      N64Family.id, DigitalPadFamily.id, DualStickFamily.id,
+                      GameCubeFamily.id, WiiRemoteFamily.id, WiiRemoteSidewaysFamily.id, WiiClassicFamily.id,
+                      DSPadFamily.id, GBAFamily.id])
     func groupsStayOnCanvas(familyID: String) throws {
         let family = try #require(OverlayFamilyRegistry.family(id: familyID))
         for canvas in Self.canvases {
@@ -36,16 +38,71 @@ struct OverlayFamilyTests {
         }
     }
 
-    @Test("Face buttons never overlap each other", arguments: OverlayFamilyRegistry.all.map { $0.id })
+    @Test("Controls within a group never overlap each other", arguments: OverlayFamilyRegistry.all.map { $0.id })
     func noOverlap(familyID: String) throws {
         let family = try #require(OverlayFamilyRegistry.family(id: familyID))
-        let template = family.template(binding: Self.snes, padKind: .standard(.SNES), orientation: .portrait)
-        let layout = OverlayLayoutEngine.resolve(template: template, canvas: Self.canvases[0],
-                                                 overrides: .empty, gameAspect: 4.0 / 3.0)
-        guard let face = layout.groups.first(where: { $0.id == "face" }) else { return }
-        for (index, first) in face.controls.enumerated() {
-            for second in face.controls.dropFirst(index + 1) {
-                #expect(!first.frame.intersects(second.frame), "\(familyID) \(first.id) overlaps \(second.id)")
+        for canvas in Self.canvases {
+            let template = family.template(binding: Self.snes, padKind: .standard(.SNES),
+                                           orientation: canvas.orientation)
+            let layout = OverlayLayoutEngine.resolve(template: template, canvas: canvas,
+                                                     overrides: .empty, gameAspect: 4.0 / 3.0)
+            for group in layout.groups {
+                let solid = group.controls.filter { !OverlayScreenPlanner.isTouchSurface($0.control.kind) }
+                for (index, first) in solid.enumerated() {
+                    for second in solid.dropFirst(index + 1) {
+                        #expect(!first.frame.intersects(second.frame),
+                                "\(familyID) \(group.id): \(first.id) overlaps \(second.id) on \(canvas.size)")
+                    }
+                }
+            }
+        }
+    }
+
+    @Test("Controls from different groups never overlap", arguments: OverlayFamilyRegistry.all.map { $0.id })
+    func noCrossGroupOverlap(familyID: String) throws {
+        let family = try #require(OverlayFamilyRegistry.family(id: familyID))
+        for canvas in Self.canvases {
+            let template = family.template(binding: Self.snes, padKind: .standard(.SNES),
+                                           orientation: canvas.orientation)
+            let layout = OverlayLayoutEngine.resolve(template: template, canvas: canvas,
+                                                     overrides: .empty, gameAspect: 4.0 / 3.0)
+            let solid = layout.groups.flatMap { group in
+                group.controls.filter { !OverlayScreenPlanner.isTouchSurface($0.control.kind) }
+                    .map { (group: group.id, control: $0) }
+            }
+            for (index, first) in solid.enumerated() {
+                for second in solid.dropFirst(index + 1) where first.group != second.group {
+                    let message = "\(familyID) \(first.group)/\(first.control.id) overlaps "
+                        + "\(second.group)/\(second.control.id) on \(canvas.size)"
+                    #expect(!first.control.frame.intersects(second.control.frame), Comment(rawValue: message))
+                }
+            }
+        }
+    }
+
+    @Test("Controls stay clear of the picture and the picture stays large",
+          arguments: OverlayFamilyRegistry.all.map { $0.id })
+    func pictureClearance(familyID: String) throws {
+        let family = try #require(OverlayFamilyRegistry.family(id: familyID))
+        for canvas in Self.canvases {
+            let template = family.template(binding: Self.snes, padKind: .standard(.SNES),
+                                           orientation: canvas.orientation)
+            let layout = OverlayLayoutEngine.resolve(template: template, canvas: canvas,
+                                                     overrides: .empty, gameAspect: 4.0 / 3.0)
+            for group in layout.groups {
+                for control in group.controls where !OverlayScreenPlanner.isTouchSurface(control.control.kind) {
+                    for screen in layout.screenFrames {
+                        let message = "\(familyID) \(group.id)/\(control.id) over the picture on \(canvas.size)"
+                        #expect(!control.frame.intersects(screen), Comment(rawValue: message))
+                    }
+                }
+            }
+            let picture = layout.screenFrames.dropFirst().reduce(layout.screenFrames[0]) { $0.union($1) }
+            let safe = canvas.safeRect
+            if canvas.orientation == .landscape {
+                #expect(picture.width >= 0.4 * safe.width, "\(familyID) picture too narrow on \(canvas.size)")
+            } else {
+                #expect(picture.height >= 0.3 * safe.height, "\(familyID) picture too short on \(canvas.size)")
             }
         }
     }
@@ -101,5 +158,39 @@ struct OverlayFamilyTests {
         let template = N64Family.template(binding: n64, padKind: .standard(.N64), orientation: .portrait)
         let ids = Set(template.groups.flatMap(\.controls).map(\.id))
         #expect(ids.isSuperset(of: ["leftStick", "cUp", "cDown", "cLeft", "cRight", "z", "a", "b"]))
+    }
+
+    static let wiiBinding = SystemOverlayBinding(
+        system: .Wii,
+        families: ["wii-wiimote": WiiRemoteSidewaysFamily.self, "wii-wiimote-nunchuck": WiiRemoteFamily.self,
+                   "wii-classic": WiiClassicFamily.self, "wii-classic-pro": WiiClassicFamily.self],
+        defaultSubtype: "wii-wiimote-nunchuck",
+        tokens: [.a: "a", .b: "b", .one: "x", .two: "y", .plus: "start", .minus: "select", .home: "r3",
+                 .c: "l1", .z: "r1", .x: "x", .y: "y", .l: "l1", .r: "r1", .l2: "l2", .r2: "r2",
+                 .start: "start", .select: "select"],
+        labels: [:], palette: .wii, hardwareSwitches: [])
+
+    @Test("Upright Wii Remote has a wiiPointer surface; sideways has none")
+    func wiiPointer() {
+        func hasPointer(_ family: any OverlayFamily.Type, _ subtype: String) -> Bool {
+            let kind = OverlayPadKind(system: .Wii, subtype: subtype)
+            return family.template(binding: Self.wiiBinding, padKind: kind, orientation: .portrait)
+                .groups.flatMap(\.controls).contains { $0.kind == .touchSurface(.wiiPointer) }
+        }
+        #expect(hasPointer(WiiRemoteFamily.self, "wii-wiimote-nunchuck"))
+        #expect(!hasPointer(WiiRemoteSidewaysFamily.self, "wii-wiimote"))
+    }
+
+    @Test("GameCube L and R are analog triggers and Z is a button")
+    func gcTriggers() {
+        let cube = SystemOverlayBinding(
+            system: .GameCube, families: [OverlayPadKind.standardSubtype: GameCubeFamily.self],
+            defaultSubtype: OverlayPadKind.standardSubtype,
+            tokens: [.a: "a", .b: "b", .x: "x", .y: "y", .z: "z", .l: "l2", .r: "r2", .start: "start"],
+            labels: [:], palette: .gameCube, hardwareSwitches: [])
+        let kinds = GameCubeFamily.template(binding: cube, padKind: .standard(.GameCube), orientation: .landscape)
+            .groups.flatMap(\.controls).reduce(into: [String: OverlayControlKind]()) { $0[$1.id] = $1.kind }
+        #expect(kinds["l"] == .analogTrigger(OverlayInputID(system: .GameCube, token: "l2")))
+        #expect(kinds["z"] == .button(OverlayInputID(system: .GameCube, token: "z")))
     }
 }

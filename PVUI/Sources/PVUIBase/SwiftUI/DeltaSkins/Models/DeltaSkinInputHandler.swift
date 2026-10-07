@@ -14,7 +14,7 @@ import GameController
 #endif
 
 /// Handles input from Delta Skins and forwards it to the emulator core or controller
-public class DeltaSkinInputHandler: ObservableObject {
+open class DeltaSkinInputHandler: ObservableObject {
     /// Button IDs that fire only on press — release events are suppressed.
     /// This Set is `static` so it is allocated once rather than on every release call.
     private static let extendedFunctionIds: Set<String> = [
@@ -145,7 +145,7 @@ public class DeltaSkinInputHandler: ObservableObject {
 
     /// Handle button press
     @MainActor
-    func buttonPressed(_ buttonId: String) {
+    open func buttonPressed(_ buttonId: String) {
         ILOG("🔘 buttonPressed: \(buttonId) core=\(emulatorCore != nil ? String(describing: type(of: emulatorCore!)) : "nil") sysId=\(emulatorCore?.systemIdentifier ?? "nil")")
 
         // One-shot diagnostic: log the first DeltaSkin button press after each resume
@@ -334,7 +334,7 @@ public class DeltaSkinInputHandler: ObservableObject {
 
     /// Handle button release
     @MainActor
-    func buttonReleased(_ buttonId: String) {
+    open func buttonReleased(_ buttonId: String) {
         DLOG("Delta Skin button released: \(buttonId)")
 
         // Check if the emulator is not running or is paused
@@ -884,7 +884,7 @@ public class DeltaSkinInputHandler: ObservableObject {
     /// (x: 0–255, y: 0–191) and calls `PVDSSystemResponderClient.touchScreenAtPoint(_:)`
     /// on the emulator core when it conforms to the protocol.
     @MainActor
-    func ndsBottomScreenTouched(at normalizedPoint: CGPoint) {
+    open func ndsBottomScreenTouched(at normalizedPoint: CGPoint) {
         guard let core = emulatorCore else {
             ELOG("DS touch: no emulator core available")
             return
@@ -906,7 +906,7 @@ public class DeltaSkinInputHandler: ObservableObject {
 
     /// Notify the emulator core that the DS touchscreen stylus was lifted.
     @MainActor
-    func ndsBottomScreenTouchReleased() {
+    open func ndsBottomScreenTouchReleased() {
         guard let core = emulatorCore,
               let responder = core as? PVDSSystemResponderClient else { return }
         responder.releaseScreenTouch?()
@@ -951,7 +951,7 @@ public class DeltaSkinInputHandler: ObservableObject {
     }
 
     /// Handle analog stick movement
-    func analogStickMoved(_ stickId: String, x: Float, y: Float) {
+    open func analogStickMoved(_ stickId: String, x: Float, y: Float) {
         ILOG("🔵 analogStickMoved called: stickId=\(stickId), x=\(x), y=\(y)")
 
         guard let core = emulatorCore else {

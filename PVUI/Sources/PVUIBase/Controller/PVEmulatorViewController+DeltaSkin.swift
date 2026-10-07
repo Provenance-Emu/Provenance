@@ -6,6 +6,7 @@ import PVLogging
 import PVUIBase
 import QuartzCore
 import Combine
+import PVTouchOverlay
 
 // MARK: - DeltaSkin Extension
 
@@ -20,6 +21,12 @@ extension PVEmulatorViewController {
         // surface for the skin to render on; keyboard/gamepad drive input instead.
         guard !GamepadManager.isDesktopInputMode else { return false }
         guard Defaults[.skinMode] != .off && core.supportsSkins else { return false }
+        // The programmatic overlay covers every bound system without a packaged skin, including
+        // explicit-selection cores (Dolphin): a bound system always has an overlay to show.
+        if Defaults[.programmaticOverlay],
+           let systemId = game?.system?.systemIdentifier, SystemOverlayBindings.binding(for: systemId) != nil {
+            return true
+        }
         guard core.requiresExplicitSkinSelection else { return true }
         return hasExplicitSkinSelectionForGame
         #endif
@@ -163,6 +170,15 @@ extension PVEmulatorViewController {
             }
             .store(in: &skinCancellables)
 
+        // Programmatic touch overlay — its screen frames drive the menu button and the DS split
+        NotificationCenter.default.publisher(for: .overlayScreenFramesDidChange)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] notification in
+                let values = notification.userInfo?[OverlayScreenFramesKey.frames] as? [NSValue] ?? []
+                self?.overlayScreenFramesDidChange(values.map(\.cgRectValue))
+            }
+            .store(in: &skinCancellables)
+
         // Background — placeholder for future cleanup
         NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
             .receive(on: DispatchQueue.main)
@@ -170,6 +186,19 @@ extension PVEmulatorViewController {
                 DLOG("App entering background")
             }
             .store(in: &skinCancellables)
+    }
+
+    /// Single-screen games get their viewport through the overlay's viewport bridge; this
+    /// covers the floating menu button (the overlay has no menu control) and the DS split.
+    private func overlayScreenFramesDidChange(_ frames: [CGRect]) {
+        overlayScreenFrames = frames
+        hideOrShowMenuButton()
+        guard core.supportsDualScreens else { return }
+        if frames.isEmpty {
+            clearMetalDualScreenLayout()
+        } else {
+            applyDualScreenViewport()
+        }
     }
 
     /// Reactive skin-load pipeline: waits for core to be running, pauses briefly,

@@ -79,6 +79,9 @@ enum DeltaSkinNintendoHomeConsoleMapping {
     /// | `r1`, `r2`, `z`             | Nunchuk Z                           |
     /// | `r3`, `home`                | Wiimote Home                        |
     /// | `l3`                        | none                                |
+    /// | `classicx` / `classicy`     | Classic X / Y                       |
+    /// | `classictriggerl` / `...r`  | Classic L / R                       |
+    /// | `classiczl` / `classiczr`   | Classic ZL / ZR                     |
     ///
     /// Left thumbstick drives the Nunchuk stick (and IR cursor); the right
     /// thumbstick drives Wiimote swing motion (see `analogStickMoved`).
@@ -99,6 +102,14 @@ enum DeltaSkinNintendoHomeConsoleMapping {
         case "l1", "l2", "c": return .nunchukC
         case "r1", "r2", "z": return .nunchukZ
         case "r3", "home": return .wiiHome
+        // Classic Controller-only buttons (programmatic overlay "wii-classic" pad). The
+        // shared A/B/+/-/Home/D-pad tokens stay on the Wii Remote cases above.
+        case "classicx": return .classicX
+        case "classicy": return .classicY
+        case "classictriggerl": return .classicTriggerL
+        case "classictriggerr": return .classicTriggerR
+        case "classiczl": return .classicZL
+        case "classiczr": return .classicZR
         default: return nil
         }
     }

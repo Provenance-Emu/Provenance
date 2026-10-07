@@ -8,22 +8,18 @@ public enum DualStickFamily: OverlayFamily {
         let base = DigitalPadFamily.template(binding: binding, padKind: padKind, orientation: orientation)
         let landscape = orientation == .landscape
         let kit = OverlayFamilyKit.self
-        // Sticks sit below and inside the d-pad / face clusters so thumbs rest on them.
-        let inset = landscape ? CGPoint(x: kit.edge + kit.dpadSize + 12, y: 12) : CGPoint(x: kit.edge + 20, y: 12)
+        // Portrait: sticks along the bottom, inset toward the middle. Landscape: small sticks in the bottom
+        // corners under the d-pad and face cluster.
+        let stickSize = landscape ? kit.landscapeStickSize : kit.stickSize
+        let inset = landscape ? CGPoint(x: kit.edge + 30, y: 12) : CGPoint(x: kit.edge + 20, y: 12)
         let groups = base.groups + [
-            OverlayGroup(id: "leftStick", controls: [kit.stick(.left, click: binding.inputID(.l3))],
+            OverlayGroup(id: "leftStick", controls: [kit.stick(.left, click: binding.inputID(.l3), size: stickSize)],
                          placement: OverlayPlacement(anchor: .bottomLeading, inset: inset)),
-            OverlayGroup(id: "rightStick", controls: [kit.stick(.right, click: binding.inputID(.r3))],
+            OverlayGroup(id: "rightStick", controls: [kit.stick(.right, click: binding.inputID(.r3), size: stickSize)],
                          placement: OverlayPlacement(anchor: .bottomTrailing, inset: inset))
         ]
-        // In portrait, lift the d-pad and face above the sticks.
-        let lifted = groups.map { group -> OverlayGroup in
-            guard !landscape, group.id == "dpad" || group.id == "face" else { return group }
-            var lifted = group
-            lifted.placement.inset.y += kit.stickSize + 24
-            return lifted
-        }
-        return OverlayTemplate(padKind: padKind, orientation: orientation, groups: lifted,
+        let stacked = kit.stackAboveSticks(groups, orientation: orientation)
+        return OverlayTemplate(padKind: padKind, orientation: orientation, groups: stacked,
                                screenPolicy: base.screenPolicy)
     }
 }

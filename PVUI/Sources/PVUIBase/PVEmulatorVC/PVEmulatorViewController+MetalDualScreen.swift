@@ -39,9 +39,16 @@ extension PVEmulatorViewController {
         // Only use the DS split-framebuffer path for Nintendo DS systems.
         // Other dual-screen cores (e.g. 3DS/emuThree) use their own layout logic.
         guard SystemIdentifier(rawValue: core.systemIdentifier ?? "") == .DS else { return false }
-        guard isDeltaSkinEnabled, currentSkin != nil else { return false }
+        guard isDeltaSkinEnabled, currentSkin != nil || isProgrammaticOverlayActive else { return false }
         return true
         #endif
+    }
+
+    /// `true` while the programmatic touch overlay is on screen. Derived from the frames it
+    /// publishes rather than `currentSkin`, which can still hold a packaged skin that does
+    /// not support the current orientation while the overlay stands in for it.
+    var isProgrammaticOverlayActive: Bool {
+        !overlayScreenFrames.isEmpty
     }
 
     /// Computes the Metal dual-screen layout from the current skin and installs it
@@ -179,6 +186,43 @@ extension PVEmulatorViewController {
             return false
         }
 
+        installDualScreenLayout(renderInfos, on: metalVC)
+        return true
+    }
+
+    /// Dual-screen split driven by explicit view-space output frames (programmatic overlay).
+    /// `outputFrames[0]` shows the DS top screen and `[1]` the bottom one; the sources are the
+    /// core's real screen halves, as for a skin screen without an `inputFrame`.
+    /// - Returns: `true` if the layout was installed.
+    @discardableResult
+    func applyMetalDualScreenLayout(outputFrames: [CGRect]) -> Bool {
+        guard outputFrames.count == 2, canUseMetalDualScreenRendering,
+              let metalVC = gpuViewController as? PVMetalViewController else { return false }
+        let coreLayout = (core as? NDSScreenLayoutProviding)?.ndsScreenLayout ?? .default
+        guard coreLayout.showsBothScreens, let framebufferSize = coreLayout.framebufferSize else {
+            ILOG("dual-screen metal: core layout \(coreLayout.arrangement) shows one screen, overlay falls back")
+            metalVC.dualScreenLayout = nil
+            return false
+        }
+        let screens: [NDSScreen] = [.top, .bottom]
+        let renderInfos = zip(screens, outputFrames).compactMap { screen, destRect -> DualScreenRenderInfo? in
+            // The overlay has no screen-swap control, so the stylus surface always sits on
+            // the bottom screen's frame.
+            guard let srcRect = DualScreenSourceMapping.sourceRect(
+                skinInputFrame: nil, defaultScreen: screen, swapped: false, layout: coreLayout) else { return nil }
+            return DualScreenRenderInfo(sourceRect: srcRect, framebufferSize: framebufferSize, viewDestRect: destRect)
+        }
+        guard renderInfos.count == 2 else {
+            metalVC.dualScreenLayout = nil
+            return false
+        }
+        installDualScreenLayout(renderInfos, on: metalVC)
+        return true
+    }
+
+    /// Installs computed render infos on the Metal view controller and expands its view to
+    /// fill the parent so every screen quad can be placed anywhere.
+    private func installDualScreenLayout(_ renderInfos: [DualScreenRenderInfo], on metalVC: PVMetalViewController) {
         ILOG("dual-screen metal: installing layout with \(renderInfos.count) screens")
         metalVC.dualScreenLayout = renderInfos
         // Reset failure flag so the pipeline gets another build attempt on new layout.
@@ -187,7 +231,6 @@ extension PVEmulatorViewController {
 
         // Expand the Metal view to fill the parent so both screen quads are visible.
         expandMetalViewToFillParent(metalVC)
-        return true
     }
 
     /// Lets the skin's screen-swap inputs swap the two Metal quads instead of the
@@ -197,7 +240,8 @@ extension PVEmulatorViewController {
     func installMetalDualScreenSwap(on inputHandler: DeltaSkinInputHandler) {
         inputHandler.dsScreensSwapped = sharedInputHandler?.dsScreensSwapped ?? false
         inputHandler.frontendScreenSwapHandler = { [weak self] swapped in
-            guard let self, self.isMetalDualScreenActive else { return false }
+            // The overlay's split has no swap; the core swaps its own screens instead.
+            guard let self, self.isMetalDualScreenActive, !self.isProgrammaticOverlayActive else { return false }
             return self.applyMetalDualScreenLayout(screensSwapped: swapped)
         }
     }

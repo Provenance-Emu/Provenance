@@ -7,8 +7,9 @@ struct OverlayScreenPlannerTests {
     let portrait = OverlayLayoutEngineTests.phonePortrait
     let landscape = OverlayLayoutEngineTests.phoneLandscape
 
-    func group(_ id: String, _ frame: CGRect) -> ResolvedGroup {
-        let grp = OverlayGroup(id: id, controls: [], placement: OverlayPlacement(anchor: .bottomLeading))
+    func group(_ id: String, _ frame: CGRect,
+               anchor: OverlayPlacement.Anchor = .bottomLeading) -> ResolvedGroup {
+        let grp = OverlayGroup(id: id, controls: [], placement: OverlayPlacement(anchor: anchor))
         return ResolvedGroup(group: grp, frame: frame, controls: [], scale: CGSize(width: 1, height: 1), opacity: 1)
     }
 
@@ -78,13 +79,21 @@ struct OverlayScreenPlannerTests {
         #expect(frames[0].minX >= 0 && frames[0].maxX <= 390)
     }
 
-    @Test("topBand ignores groups in the upper half")
+    @Test("topBand ignores top-anchored groups")
     func topBandIgnoresUpperGroups() {
-        let groups = [group("float", CGRect(x: 0, y: 70, width: 100, height: 100))]
+        let groups = [group("float", CGRect(x: 0, y: 70, width: 100, height: 100), anchor: .topLeading)]
         let frames = OverlayScreenPlanner.screenFrames(policy: .topBand, canvas: portrait,
                                                        groups: groups, gameAspect: 1)
         #expect(frames[0].size.width == 390)
         #expect(frames[0].height == 390)
+    }
+
+    @Test("topBand reserves space for a bottom-anchored group even high on the canvas")
+    func topBandReservesLiftedBottomGroup() {
+        let groups = [group("shoulder", CGRect(x: 0, y: 300, width: 90, height: 40))]
+        let frames = OverlayScreenPlanner.screenFrames(policy: .topBand, canvas: portrait,
+                                                       groups: groups, gameAspect: 1)
+        #expect(frames[0].maxY <= 300 - OverlayScreenPlanner.gap)
     }
 
     @Test("topBand ignores touch-surface groups")

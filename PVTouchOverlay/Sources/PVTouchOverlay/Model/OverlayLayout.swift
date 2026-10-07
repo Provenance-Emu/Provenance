@@ -48,4 +48,9 @@ public struct OverlayLayout: Hashable, Sendable {
     public let groups: [ResolvedGroup]
     /// One rect, or two for `.dualStacked` (top screen first).
     public let screenFrames: [CGRect]
+
+    /// Resolved frame of the first touch surface with this role.
+    public func surfaceFrame(for role: OverlaySurfaceRole) -> CGRect? {
+        groups.flatMap(\.controls).first { $0.control.kind == .touchSurface(role) }?.frame
+    }
 }

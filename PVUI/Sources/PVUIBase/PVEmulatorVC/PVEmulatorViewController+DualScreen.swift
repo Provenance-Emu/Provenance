@@ -218,6 +218,23 @@ extension PVEmulatorViewController {
         // Metal dual-screen path: for DS cores (melonDS, DeSmuME) with an active
         // skin, hand the sub-rectangle layout to PVMetalViewController so it can
         // render both screens in a single GPU pass instead of resizing the view.
+        // Programmatic touch overlay: its own screen frames drive the split. When the split
+        // can't be used (non-Metal view, single-screen core layout) the core's composite fills
+        // the area both screens span.
+        if isProgrammaticOverlayActive {
+            if applyMetalDualScreenLayout(outputFrames: overlayScreenFrames) {
+                DLOG("🎮 Applied Metal dual-screen layout from the touch overlay")
+                return
+            }
+            clearMetalDualScreenLayout()
+            ensureGPUViewVisibilityAndZOrder()
+            if let first = overlayScreenFrames.first {
+                applyFrameToGPUView(overlayScreenFrames.dropFirst().reduce(first) { $0.union($1) },
+                                    reason: "overlay-dual-screen-fallback")
+            }
+            return
+        }
+
         if canUseMetalDualScreenRendering {
             if applyMetalDualScreenLayout() {
                 DLOG("🎮 Applied Metal dual-screen layout")

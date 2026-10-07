@@ -1006,6 +1006,16 @@ public extension Defaults.Keys {
     /// Drag-to-reposition on-screen skin buttons (layout editor). iOS only.
     static let skinButtonReposition = Key<Bool>("skinButtonReposition", default: false)
 
+    /// Programmatic touch overlay (PVTouchOverlay) replaces the generated default skin
+    /// and the classic on-screen pad when no packaged skin is selected. iOS only.
+    static let programmaticOverlay = Key<Bool>("programmaticOverlay", default: true)
+
+    /// Visual style of the programmatic overlay controls.
+    static let overlayStyle = Key<OverlayStyle>("overlayStyle", default: .defaultStyle)
+
+    /// Haptic strength for programmatic overlay presses: 0 disables, 1 is full strength.
+    static let overlayHapticIntensity = Key<Double>("overlayHapticIntensity", default: 0.8)
+
     /// AirPlay audio route-picker button in the pause menu. Audio only —
     /// video AirPlay not yet implemented.
     static let airPlayMenu = Key<Bool>("airPlayMenu", default: false)

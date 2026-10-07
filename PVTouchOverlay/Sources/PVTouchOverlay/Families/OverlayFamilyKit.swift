@@ -10,6 +10,8 @@ public enum OverlayFamilyKit {
     public static let shoulderSize = CGSize(width: 90, height: 40)
     public static let pillSize = CGSize(width: 70, height: 30)
     public static let edge: CGFloat = 16
+    /// Stick size on two-stick pads in landscape, where height is scarce.
+    public static let landscapeStickSize: CGFloat = 80
     /// Height of the lowest control band above the safe bottom in portrait.
     public static let portraitBottom: CGFloat = 60
 
@@ -93,5 +95,34 @@ public enum OverlayFamilyKit {
         }
         return OverlayTemplate(padKind: padKind, orientation: orientation, groups: groups,
                                screenPolicy: landscape ? .centerColumn : .topBand)
+    }
+
+    /// For pads with two sticks along the bottom edge. Portrait: lifts the d-pad, face cluster and shoulders
+    /// above the sticks and sits the system pills just above the stick band. Landscape: the sticks sit in the
+    /// bottom corners, so the d-pad and face cluster move up onto them and the centre column stays wide.
+    public static func stackAboveSticks(_ groups: [OverlayGroup],
+                                        orientation: OverlayOrientation) -> [OverlayGroup] {
+        let landscape = orientation == .landscape
+        let lift = stickSize + 12
+        let pillY = 12 + stickSize + 8
+        let landscapeClusterY = 12 + landscapeStickSize + 6
+        return groups.map { group in
+            var moved = group
+            switch group.id {
+            case "system" where !landscape:
+                moved.placement.inset.y = pillY
+            case "dpad" where landscape:
+                moved.placement = OverlayPlacement(anchor: .bottomLeading,
+                                                   inset: CGPoint(x: edge, y: landscapeClusterY))
+            case "face" where landscape:
+                moved.placement = OverlayPlacement(anchor: .bottomTrailing,
+                                                   inset: CGPoint(x: edge, y: landscapeClusterY))
+            case "dpad", "face", _ where group.id.hasPrefix("shoulder-"):
+                if !landscape { moved.placement.inset.y += lift }
+            default:
+                break
+            }
+            return moved
+        }
     }
 }

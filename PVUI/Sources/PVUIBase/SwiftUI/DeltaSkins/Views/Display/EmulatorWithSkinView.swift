@@ -10,6 +10,7 @@ import PVLogging
 import RealmSwift
 import Defaults
 import PVSettings
+import PVTouchOverlay
 
 /// A SwiftUI view that displays a custom skin for the emulator
 struct EmulatorWithSkinView: View {
@@ -18,6 +19,8 @@ struct EmulatorWithSkinView: View {
     let systemName: String?
     let systemId: SystemIdentifier?
     let gameId: String?
+    /// ROM MD5 of the game, `nil` when unknown; keys the overlay's per-game layout.
+    let gameMD5: String?
 
     let coreInstance: PVEmulatorCore
     let onSkinLoaded: () -> Void
@@ -99,6 +102,7 @@ struct EmulatorWithSkinView: View {
 
         // Get game ID for skin preferences (must match game.id used in skin selection)
         self.gameId = game.id
+        self.gameMD5 = game.md5Hash.isEmpty ? nil : game.md5Hash
 
         self.coreInstance = coreInstance
         self.onSkinLoaded = onSkinLoaded
@@ -143,15 +147,7 @@ struct EmulatorWithSkinView: View {
                 } else {
                     // No skin, or selected skin doesn't support the current orientation.
                     // Show the built-in fallback controller so the game remains playable.
-                    defaultControllerSkin()
-                        .background(Color.clear)
-                        .onAppear {
-                            if !skinRenderComplete {
-                                skinRenderComplete = true
-                                onSkinLoaded()
-                                DLOG("🎮 EmulatorWithSkinView: Showing fallback controller (no skin or unsupported orientation)")
-                            }
-                        }
+                    fallbackControls()
                 }
 
                 // Light gun crosshair overlay (gated by feature flag)
@@ -306,6 +302,46 @@ struct EmulatorWithSkinView: View {
             .environment(\.debugSkinMappings, showDebugOverlay)
         }
         .background(Color.clear) // Ensure the background is transparent
+    }
+
+    // MARK: - Fallback controls
+
+    /// Controls shown when no packaged skin fits: the programmatic overlay for a bound
+    /// system when it is enabled (iOS), otherwise the generated default controller.
+    @ViewBuilder
+    private func fallbackControls() -> some View {
+        #if !os(tvOS)
+        if Defaults[.programmaticOverlay], let systemId,
+           let binding = SystemOverlayBindings.binding(for: systemId) {
+            ProgrammaticOverlayView(
+                systemId: systemId, binding: binding, coreInstance: coreInstance, inputHandler: inputHandler,
+                gameMD5: gameMD5,
+                padKind: OverlayPadKindResolver.padKind(for: systemId, core: coreInstance, gameMD5: gameMD5 ?? "")
+            ) { frames in
+                NotificationCenter.default.post(
+                    name: .overlayScreenFramesDidChange, object: nil,
+                    userInfo: [OverlayScreenFramesKey.frames: frames.map { NSValue(cgRect: $0) }])
+            }
+            .onAppear { markFallbackControlsRendered("programmatic overlay") }
+        } else {
+            defaultFallbackControls()
+        }
+        #else
+        defaultFallbackControls()
+        #endif
+    }
+
+    private func defaultFallbackControls() -> some View {
+        defaultControllerSkin()
+            .background(Color.clear)
+            .onAppear { markFallbackControlsRendered("fallback controller") }
+    }
+
+    private func markFallbackControlsRendered(_ kind: String) {
+        guard !skinRenderComplete else { return }
+        skinRenderComplete = true
+        onSkinLoaded()
+        DLOG("🎮 EmulatorWithSkinView: Showing \(kind) (no skin or unsupported orientation)")
     }
 
     // MARK: - Skin Content View

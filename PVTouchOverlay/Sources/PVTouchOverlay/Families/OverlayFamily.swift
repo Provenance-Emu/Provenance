@@ -31,9 +31,9 @@ public protocol OverlayFamily {
 public enum OverlayFamilyRegistry {
     public static let all: [any OverlayFamily.Type] = [
         TwoButtonFamily.self, FourFaceFamily.self, ThreeFaceFamily.self, SixFaceFamily.self,
-        N64Family.self, DigitalPadFamily.self, DualStickFamily.self
-        // Later tasks append: GameCubeFamily,
-        // WiiRemoteFamily, WiiRemoteSidewaysFamily, WiiClassicFamily, DSPadFamily
+        N64Family.self, DigitalPadFamily.self, DualStickFamily.self,
+        GameCubeFamily.self, WiiRemoteFamily.self, WiiRemoteSidewaysFamily.self, WiiClassicFamily.self,
+        DSPadFamily.self, GBAFamily.self
     ]
     public static func family(id: String) -> (any OverlayFamily.Type)? { all.first { $0.id == id } }
 }

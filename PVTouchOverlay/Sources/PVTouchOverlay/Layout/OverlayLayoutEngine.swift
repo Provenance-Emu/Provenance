@@ -18,14 +18,14 @@ public enum OverlayLayoutEngine {
                                overrides: OverlayLayoutOverrides,
                                gameAspect: CGFloat) -> OverlayLayout {
         let unit = referenceScale(for: canvas)
-        let groups = template.groups.map { group -> ResolvedGroup in
+        let resolved = template.groups.map { group -> ResolvedGroup in
             let override = overrides.groups[group.id] ?? .empty
             let scale = clampedScale(override.scale ?? CGSize(width: group.scale, height: group.scale))
             let natural = group.naturalSize
             let size = CGSize(width: natural.width * unit * scale.width, height: natural.height * unit * scale.height)
 
             var center = override.center?.resolve(in: canvas)
-                ?? placementCenter(group.placement, size: size, canvas: canvas)
+                ?? placementCenter(group.placement, size: size, canvas: canvas, unit: unit)
             center = clampCenter(center, size: size, within: canvas.safeRect)
             let origin = CGPoint(x: center.x - size.width / 2, y: center.y - size.height / 2)
 
@@ -43,9 +43,21 @@ public enum OverlayLayoutEngine {
                                  scale: scale, opacity: group.opacity * clampedOpacity(override.opacity ?? 1))
         }
         let screens = OverlayScreenPlanner.screenFrames(policy: template.screenPolicy, canvas: canvas,
-                                                        groups: groups, gameAspect: gameAspect)
+                                                        groups: resolved, gameAspect: gameAspect)
+        let groups = resolved.map { snapSurface($0, to: screens) }
         return OverlayLayout(padKind: template.padKind, orientation: template.orientation,
                              groups: groups, screenFrames: screens)
+    }
+
+    /// A group holding a single touch surface fills the screen it drives: the bottom screen for the DS
+    /// stylus, the first (only) picture for everything else. Left as resolved when there are no screens.
+    static func snapSurface(_ group: ResolvedGroup, to screenFrames: [CGRect]) -> ResolvedGroup {
+        guard group.controls.count == 1, let resolved = group.controls.first,
+              case .touchSurface(let role) = resolved.control.kind,
+              let target = role == .dsScreen ? screenFrames.last : screenFrames.first else { return group }
+        let control = ResolvedControl(control: resolved.control, frame: target, hitFrame: target)
+        return ResolvedGroup(group: group.group, frame: target, controls: [control],
+                             scale: group.scale, opacity: group.opacity)
     }
 
     static let opacityRange: ClosedRange<CGFloat> = 0.1...1
@@ -58,23 +70,26 @@ public enum OverlayLayoutEngine {
         min(max(value, opacityRange.lowerBound), opacityRange.upperBound)
     }
 
-    static func clampedScale(_ scale: CGSize) -> CGSize {
+    public static func clampedScale(_ scale: CGSize) -> CGSize {
         CGSize(width: min(max(scale.width, scaleRange.lowerBound), scaleRange.upperBound),
                height: min(max(scale.height, scaleRange.lowerBound), scaleRange.upperBound))
     }
 
-    static func placementCenter(_ placement: OverlayPlacement, size: CGSize, canvas: OverlayCanvas) -> CGPoint {
+    /// `placement.inset` is authored at reference scale, so it is multiplied by `unit` here.
+    static func placementCenter(_ placement: OverlayPlacement, size: CGSize, canvas: OverlayCanvas,
+                                unit: CGFloat) -> CGPoint {
         let rect = canvas.safeRect
+        let inset = CGPoint(x: placement.inset.x * unit, y: placement.inset.y * unit)
         let posX: CGFloat
         let posY: CGFloat
         switch placement.anchor {
-        case .bottomLeading, .topLeading, .centerLeading: posX = rect.minX + placement.inset.x + size.width / 2
-        case .bottomTrailing, .topTrailing, .centerTrailing: posX = rect.maxX - placement.inset.x - size.width / 2
+        case .bottomLeading, .topLeading, .centerLeading: posX = rect.minX + inset.x + size.width / 2
+        case .bottomTrailing, .topTrailing, .centerTrailing: posX = rect.maxX - inset.x - size.width / 2
         case .bottomCenter, .topCenter, .center, .fill, .fillInset: posX = rect.midX
         }
         switch placement.anchor {
-        case .bottomLeading, .bottomTrailing, .bottomCenter: posY = rect.maxY - placement.inset.y - size.height / 2
-        case .topLeading, .topTrailing, .topCenter: posY = rect.minY + placement.inset.y + size.height / 2
+        case .bottomLeading, .bottomTrailing, .bottomCenter: posY = rect.maxY - inset.y - size.height / 2
+        case .topLeading, .topTrailing, .topCenter: posY = rect.minY + inset.y + size.height / 2
         case .centerLeading, .centerTrailing, .center, .fill, .fillInset: posY = rect.midY
         }
         return CGPoint(x: posX, y: posY)

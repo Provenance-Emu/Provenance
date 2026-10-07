@@ -32,14 +32,21 @@ public enum OverlayScreenPlanner {
         }
     }
 
-    /// The band above the controls. Only non-touch-surface groups whose centre lies in the lower half of the
-    /// safe rect reserve space; groups dragged into the upper half float over the picture. With no such group
-    /// the band is the whole safe rect.
+    /// The band above the controls. Every non-touch-surface group anchored to the bottom edge (leading,
+    /// trailing or centre) reserves space, wherever it resolved; groups with top or centre anchors and touch
+    /// surfaces float over the picture. With no reserving group the band is the whole safe rect.
     static func topBand(safe: CGRect, groups: [ResolvedGroup]) -> CGRect {
-        let highest = groups.filter { !isTouchSurfaceGroup($0) && $0.frame.midY >= safe.midY }
+        let highest = groups.filter { !isTouchSurfaceGroup($0) && isBottomAnchored($0) }
             .map(\.frame.minY).min() ?? safe.maxY
         let bottom = max(safe.minY, min(safe.maxY, highest - gap))
         return CGRect(x: safe.minX, y: safe.minY, width: safe.width, height: bottom - safe.minY)
+    }
+
+    static func isBottomAnchored(_ group: ResolvedGroup) -> Bool {
+        switch group.group.placement.anchor {
+        case .bottomLeading, .bottomTrailing, .bottomCenter: return true
+        default: return false
+        }
     }
 
     static func isTouchSurfaceGroup(_ group: ResolvedGroup) -> Bool {

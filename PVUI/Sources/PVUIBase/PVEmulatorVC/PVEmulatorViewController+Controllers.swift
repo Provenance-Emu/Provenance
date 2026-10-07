@@ -34,7 +34,9 @@ extension PVEmulatorViewController {
         /// the floating button returns rather than leaving the player stuck.
         /// That matches the classic controls, which keep it visible too.
         let skinControlsOnScreen = skinDidReportLoaded && skinContainerView.map { !$0.isHidden && $0.superview != nil } == true
-        let skinOwnsMenuButton = isDeltaSkinEnabled && (skinControlsOnScreen || !skinLoadGraceExpired)
+        /// The programmatic touch overlay has no menu control in Phase 1, so it keeps the floating one.
+        let skinOwnsMenuButton = isDeltaSkinEnabled && !isProgrammaticOverlayActive
+            && (skinControlsOnScreen || !skinLoadGraceExpired)
         menuButton?.isHidden = skinOwnsMenuButton
         if !skinOwnsMenuButton, let menuButton {
             view.bringSubviewToFront(menuButton)

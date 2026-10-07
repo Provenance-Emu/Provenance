@@ -117,6 +117,20 @@ public extension ControllerLayoutVariant {
         sfSymbol: "dpad"
     )
 
+    // MARK: PlayStation
+    static let psxDualShock = ControllerLayoutVariant(
+        id: "psx-dualshock",
+        displayName: "DualShock",
+        description: "Analog controller with two sticks, L3/R3 and analog mode.",
+        sfSymbol: "gamecontroller.fill"
+    )
+    static let psxDigital = ControllerLayoutVariant(
+        id: "psx-digital",
+        displayName: "Digital Pad",
+        description: "Original PlayStation controller without analog sticks.",
+        sfSymbol: "gamecontroller"
+    )
+
     // MARK: NES
     static let nesStandard = ControllerLayoutVariant(
         id: "nes-standard",
@@ -150,6 +164,8 @@ public extension SystemIdentifier {
             return [.atari5200Joystick, .atari5200JoystickOnly]
         case .NES:
             return [.nesStandard, .nesZapper]
+        case .PSX:
+            return [.psxDualShock, .psxDigital]
         default:
             return nil
         }

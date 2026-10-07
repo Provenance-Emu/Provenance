@@ -15,31 +15,31 @@ public enum N64Family: OverlayFamily {
                        palette: .tertiary)
         ]
         let cCluster = cButtons(binding: binding)
-        let shoulderInset = CGPoint(x: kit.edge, y: landscape ? 12 : kit.portraitBottom + kit.stickSize + 140)
+        let shoulderInset = CGPoint(x: kit.edge, y: landscape ? 12 : kit.portraitBottom + kit.stickSize + 160)
         let zBottom = 20 + kit.pillSize.height + 12
         let groups: [OverlayGroup] = [
             OverlayGroup(id: "leftStick", controls: [kit.stick(.left)],
                          placement: landscape
                             ? OverlayPlacement(anchor: .centerLeading, inset: CGPoint(x: kit.edge, y: 0))
                             : OverlayPlacement(anchor: .bottomLeading,
-                                               inset: CGPoint(x: kit.edge + 12, y: kit.portraitBottom))),
+                                               inset: CGPoint(x: kit.edge, y: kit.portraitBottom))),
             OverlayGroup(id: "dpad", controls: [kit.dpad(binding: binding, size: 110)],
                          placement: landscape
                             ? OverlayPlacement(anchor: .bottomLeading, inset: CGPoint(x: kit.edge, y: 12))
                             : OverlayPlacement(anchor: .bottomLeading,
                                                inset: CGPoint(x: kit.edge,
-                                                              y: kit.portraitBottom + kit.stickSize + 20))),
+                                                              y: kit.portraitBottom + kit.stickSize + 12))),
             OverlayGroup(id: "face", controls: faceButtons,
                          placement: landscape
-                            ? OverlayPlacement(anchor: .centerTrailing,
-                                               inset: CGPoint(x: kit.edge + 3 * cell + 12, y: 0))
+                            ? OverlayPlacement(anchor: .bottomTrailing, inset: CGPoint(x: kit.edge, y: 12))
                             : OverlayPlacement(anchor: .bottomTrailing,
-                                               inset: CGPoint(x: kit.edge + 3 * cell + 12, y: kit.portraitBottom))),
+                                               inset: CGPoint(x: kit.edge, y: kit.portraitBottom))),
             OverlayGroup(id: "cCluster", controls: cCluster,
                          placement: landscape
-                            ? OverlayPlacement(anchor: .centerTrailing, inset: CGPoint(x: kit.edge, y: 0))
+                            ? OverlayPlacement(anchor: .bottomTrailing,
+                                               inset: CGPoint(x: kit.edge, y: 12 + 2 * face + 4 + 12))
                             : OverlayPlacement(anchor: .bottomTrailing,
-                                               inset: CGPoint(x: kit.edge, y: kit.portraitBottom + 20))),
+                                               inset: CGPoint(x: kit.edge, y: kit.portraitBottom + 2 * face + 4 + 12))),
             OverlayGroup(id: "shoulder-l", controls: [kit.shoulder(.l, binding: binding)],
                          placement: OverlayPlacement(anchor: landscape ? .topLeading : .bottomLeading,
                                                      inset: shoulderInset)),

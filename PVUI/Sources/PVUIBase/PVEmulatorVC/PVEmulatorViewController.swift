@@ -157,6 +157,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// dual-screen blitting is *active* (not just *eligible*).
     var isMetalDualScreenActive: Bool = false
 
+    /// Game-screen frames last published by the programmatic touch overlay (view
+    /// coordinates, top screen first). Empty while no overlay is on screen.
+    var overlayScreenFrames: [CGRect] = []
+
     // Keep track of whether we've positioned the GPU view
     static var hasPositionedGPUView = false
 
