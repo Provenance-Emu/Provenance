@@ -327,9 +327,10 @@ extension PVEmulatorViewController {
         if mounting { applyResolvedControllerVariantIfNeeded() }
         hideOrShowMenuButton()
         guard core.supportsDualScreens else {
-            // A returning packaged skin re-broadcasts the frame it had before the overlay, which
-            // `validateAndStoreFrame` drops as unchanged while the GPU view still sits at the
-            // overlay's frame: put the stored skin frame back explicitly.
+            // A returning packaged skin's frame can be stored (`validateAndStoreFrame`) and then
+            // covered by a late overlay frame; its re-broadcast is then dropped as unchanged. Force
+            // the stored frame back. If the overlay's own frame is still the stored one (teardown
+            // ran first) this is a no-op and the skin's next broadcast applies normally.
             if unmounting, let frame = currentTargetFrame {
                 applyFrameToGPUView(frame, reason: "overlay-unmounted", force: true)
             }
