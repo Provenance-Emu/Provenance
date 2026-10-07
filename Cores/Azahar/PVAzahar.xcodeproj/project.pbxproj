@@ -41,6 +41,7 @@
 		8EB745345467AF969DD7D181 /* PVAzaharCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 785B20780FB9F684BD0E4099 /* PVAzaharCoreBridge.mm */; };
 		9A02D6C3A3463D74BA1160F6 /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = BCFCD9715CD88D76535B636A /* PVAudio */; };
 		9C06CDE43BED1FD0FD11D750 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 93D1BEBA178E561BDDF805EC /* PVSupport */; };
+		9C95336C6151674DB13C1704 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6503B39B2E205E91CFBA6201 /* Core.plist */; };
 		A3C609D187DBF31AEA67117D /* PVAzahar.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6F084488EAC660B7FE2D5F4F /* PVAzahar.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A6FA30A8EA586297E636682C /* PVLoggingObjC in Frameworks */ = {isa = PBXBuildFile; productRef = B9380A8E90B94C00D4DAEF9F /* PVLoggingObjC */; };
 		A75E64116DC7CF2794BEBEBA /* PVlibAzahar.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC8E5D4696D9F30C47886394 /* PVlibAzahar.xcframework */; };
@@ -62,6 +63,7 @@
 		EFEABA306083F67BB8862F5E /* PVAzaharDataMigratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68485E3ED08D2F8358A16EA5 /* PVAzaharDataMigratorTests.swift */; };
 		F2182887587EB9B0AB4167BE /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FE295865800BD0292501D5B2 /* libc++.tbd */; };
 		F25E3F1F4E9B960E456AB07C /* PVAzaharCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC25BB3E95A28038AEDAAC8 /* PVAzaharCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F732A2F88C36F8DB2872631C /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6503B39B2E205E91CFBA6201 /* Core.plist */; };
 		F9F546E3577F4B9DB46A9B04 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 003A3F581E4C5CC430F5AAEB /* CorePlist-Generated.swift */; };
 		FD2DB28055A427C82CB5BF74 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 1F45FD485ACF598BE5B26E56 /* PVSupport */; };
 /* End PBXBuildFile section */
@@ -103,6 +105,7 @@
 		4F01E8A14043A3DFBE941AE5 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		55E1254CB87772DAD67B8DF9 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
 		5CE90E615524E315A37667AA /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		6503B39B2E205E91CFBA6201 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Core.plist; sourceTree = "<group>"; };
 		68485E3ED08D2F8358A16EA5 /* PVAzaharDataMigratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAzaharDataMigratorTests.swift; sourceTree = "<group>"; };
 		6F084488EAC660B7FE2D5F4F /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		785B20780FB9F684BD0E4099 /* PVAzaharCoreBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVAzaharCoreBridge.mm; sourceTree = "<group>"; };
@@ -258,6 +261,7 @@
 		E1A9298409894177853D8385 /* PVAzahar */ = {
 			isa = PBXGroup;
 			children = (
+				6503B39B2E205E91CFBA6201 /* Core.plist */,
 				2C4747365172063E8D2C5A19 /* PVAzahar.h */,
 			);
 			path = PVAzahar;
@@ -306,6 +310,7 @@
 				A7850DA75912471207AF3CEB /* Build PVlibAzahar */,
 				91738DC618CD0F9155A7D1BF /* Headers */,
 				A6F2DC8BB4A7586010A34146 /* Sources */,
+				1193422A68D6C47ABE2AB0E6 /* Resources */,
 				49260630FC2C652DA38BB74E /* Frameworks */,
 			);
 			buildRules = (
@@ -338,6 +343,7 @@
 				2EADD615896AFD06A5D7296C /* Build PVlibAzahar */,
 				B26B60C5853A05E7EF4B4CCA /* Headers */,
 				D761CDBC3EF0438603712B48 /* Sources */,
+				A2D3934C7516F2B12C928A96 /* Resources */,
 				C49CC760E1F1F4670F96AE39 /* Frameworks */,
 			);
 			buildRules = (
@@ -428,6 +434,25 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		1193422A68D6C47ABE2AB0E6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F732A2F88C36F8DB2872631C /* Core.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A2D3934C7516F2B12C928A96 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9C95336C6151674DB13C1704 /* Core.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXShellScriptBuildPhase section */
 		2EADD615896AFD06A5D7296C /* Build PVlibAzahar */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -446,7 +471,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\npython3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\n# ProcessXCFramework copies the slice before this phase rebuilt it; put the fresh one where the linker looks.\nfresh=\"$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework\"\nif [[ -d \"$fresh\" && -n \"${BUILT_PRODUCTS_DIR:-}\" ]]; then\n  mkdir -p \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework\"\n  /usr/bin/rsync -a --delete \"$fresh/\" \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework/\"\nfi\n";
+			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\npython3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo \"error: python3 >= 3.10 required for build_azahar_core.py (brew install python)\"; exit 1; }\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\npython3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\n# ProcessXCFramework copies the slice before this phase rebuilt it; put the fresh one where the linker looks.\nfresh=\"$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework\"\nif [[ -d \"$fresh\" && -n \"${BUILT_PRODUCTS_DIR:-}\" ]]; then\n  mkdir -p \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework\"\n  /usr/bin/rsync -a --delete \"$fresh/\" \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework/\"\nfi\n";
 		};
 		A7850DA75912471207AF3CEB /* Build PVlibAzahar */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -465,7 +490,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\npython3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\n# ProcessXCFramework copies the slice before this phase rebuilt it; put the fresh one where the linker looks.\nfresh=\"$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework\"\nif [[ -d \"$fresh\" && -n \"${BUILT_PRODUCTS_DIR:-}\" ]]; then\n  mkdir -p \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework\"\n  /usr/bin/rsync -a --delete \"$fresh/\" \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework/\"\nfi\n";
+			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\npython3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo \"error: python3 >= 3.10 required for build_azahar_core.py (brew install python)\"; exit 1; }\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\npython3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\n# ProcessXCFramework copies the slice before this phase rebuilt it; put the fresh one where the linker looks.\nfresh=\"$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework\"\nif [[ -d \"$fresh\" && -n \"${BUILT_PRODUCTS_DIR:-}\" ]]; then\n  mkdir -p \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework\"\n  /usr/bin/rsync -a --delete \"$fresh/\" \"${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework/\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

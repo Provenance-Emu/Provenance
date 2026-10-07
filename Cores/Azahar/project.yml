@@ -66,8 +66,8 @@ targets:
     sources:
       - path: PVAzaharCore
       - path: PVAzahar/PVAzahar.h
-    resources:
       - path: PVAzahar/Core.plist
+        buildPhase: resources
     dependencies:
       - framework: build/xcframework/PVlibAzahar.xcframework
         embed: false
@@ -105,6 +105,7 @@ targets:
           command -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo "error: cmake not found - 'brew install cmake ninja'"; exit 1; }
           command -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo "error: ninja not found - 'brew install cmake ninja'"; exit 1; }
           export PATH="/opt/homebrew/bin:$PATH"
+          python3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo "error: python3 >= 3.10 required for build_azahar_core.py (brew install python)"; exit 1; }
           case "${PLATFORM_NAME}" in
             iphoneos)         platform=OS64;           slice=ios ;;
             iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;
