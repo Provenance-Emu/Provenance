@@ -23,14 +23,18 @@ extension PVEmulatorViewController {
         guard Defaults[.skinMode] != .off && core.supportsSkins else { return false }
         // The programmatic overlay covers every bound system without a packaged skin, including
         // explicit-selection cores (Dolphin): a bound system always has an overlay to show.
-        if Defaults[.programmaticOverlay],
-           let systemId = game?.system?.systemIdentifier, SystemOverlayBindings.binding(for: systemId) != nil {
-            return true
-        }
+        if programmaticOverlayCoversGame { return true }
         guard core.requiresExplicitSkinSelection else { return true }
         return hasExplicitSkinSelectionForGame
         #endif
 //        return true
+    }
+
+    /// The programmatic touch overlay is enabled and has a binding for this game's system,
+    /// so the skin layer always has controls to show even without a packaged skin.
+    var programmaticOverlayCoversGame: Bool {
+        guard Defaults[.programmaticOverlay], let systemId = game?.system?.systemIdentifier else { return false }
+        return SystemOverlayBindings.binding(for: systemId) != nil
     }
 
     /// Whether the player has picked a packaged skin for this game or its system. Gates
@@ -60,6 +64,8 @@ extension PVEmulatorViewController {
         DispatchQueue.main.async { [weak self] in
             guard let self, self.currentSkin != nil || self.skinContainerView != nil else { return }
             guard !self.hasExplicitSkinSelectionForGame else { return }
+            // Clearing the pick falls back to the overlay inside the skin view, not to the classic pad.
+            guard !self.programmaticOverlayCoversGame else { return }
             Task { @MainActor in
                 // No-op when no skin is up, so a duplicate call from the menu path is harmless.
                 try? await self.resetToDefaultSkin()
@@ -79,6 +85,8 @@ extension PVEmulatorViewController {
             ILOG("skins: Setting up DeltaSkin view for game: \(game.title)")
             // CRITICAL: First add/configure the GPU view BEFORE creating skin
             configureGPUView()
+
+            observeOverlayScreenFrames()
 
             // Now create and add the skin view
             await addSkinView()
@@ -143,6 +151,7 @@ extension PVEmulatorViewController {
                 view.insertSubview(gpuView, belowSubview: skinContainer)
             }
             view.bringSubviewToFront(skinContainer)
+            keepOverlayMenuButtonInFront()
         }
 
         // For non-RetroArch cores, compute a fallback frame if the notification didn't arrive
@@ -170,15 +179,6 @@ extension PVEmulatorViewController {
             }
             .store(in: &skinCancellables)
 
-        // Programmatic touch overlay — its screen frames drive the menu button and the DS split
-        NotificationCenter.default.publisher(for: .overlayScreenFramesDidChange)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] notification in
-                let values = notification.userInfo?[OverlayScreenFramesKey.frames] as? [NSValue] ?? []
-                self?.overlayScreenFramesDidChange(values.map(\.cgRectValue))
-            }
-            .store(in: &skinCancellables)
-
         // Background — placeholder for future cleanup
         NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)
             .receive(on: DispatchQueue.main)
@@ -186,6 +186,22 @@ extension PVEmulatorViewController {
                 DLOG("App entering background")
             }
             .store(in: &skinCancellables)
+    }
+
+    /// Listens for the programmatic overlay's screen frames. Registered before the skin view
+    /// is added: the overlay publishes once on appear and re-publishes only on change, so a
+    /// later subscription would miss a stable layout. Not in `skinCancellables`, which
+    /// `observeAppStateChanges()` clears.
+    private func observeOverlayScreenFrames() {
+        NotificationCenter.default.removeObserver(self, name: .overlayScreenFramesDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleOverlayScreenFrames(_:)),
+                                               name: .overlayScreenFramesDidChange, object: nil)
+    }
+
+    @objc private func handleOverlayScreenFrames(_ notification: Notification) {
+        let values = notification.userInfo?[OverlayScreenFramesKey.frames] as? [NSValue] ?? []
+        let frames = values.map(\.cgRectValue)
+        DispatchQueue.main.async { [weak self] in self?.overlayScreenFramesDidChange(frames) }
     }
 
     /// Single-screen games get their viewport through the overlay's viewport bridge; this

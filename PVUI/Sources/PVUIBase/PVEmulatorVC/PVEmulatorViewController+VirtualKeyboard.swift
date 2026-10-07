@@ -369,6 +369,7 @@ extension PVEmulatorViewController {
         // are never blocked by a view that isn't there.
         if isDeltaSkinEnabled, let skinContainer = skinContainerView {
             view.bringSubviewToFront(skinContainer)
+            keepOverlayMenuButtonInFront()
             // Raise trackpad above skin when mouse is active — its hitTest() gates
             // to the viewport rect so skin button touches still reach the skin below.
             if isVirtualMouseVisible, let trackpad = touchTrackpadView {

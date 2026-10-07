@@ -1942,6 +1942,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
                 view.insertSubview(gpuView, belowSubview: skinContainer)
             }
             view.bringSubviewToFront(skinContainer)
+            keepOverlayMenuButtonInFront()
         }
 
         // Now that the layout has settled to its real bounds/safe-area, recompute the
@@ -3120,6 +3121,7 @@ extension PVEmulatorViewController {
                 view.insertSubview(gpuView, belowSubview: skinContainer)
             }
             view.bringSubviewToFront(skinContainer)
+            keepOverlayMenuButtonInFront()
         }
 
         #if os(iOS)

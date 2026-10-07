@@ -49,6 +49,13 @@ extension PVEmulatorViewController {
         #endif
     }
 
+    /// The skin container is re-fronted on every layout pass; while the programmatic overlay
+    /// relies on the floating menu button, put the button back above it.
+    func keepOverlayMenuButtonInFront() {
+        guard isProgrammaticOverlayActive, let menuButton, !menuButton.isHidden else { return }
+        view.bringSubviewToFront(menuButton)
+    }
+
     /// Re-evaluates the floating menu button once the skin layer has had time
     /// to load. Called when skin setup starts.
     func scheduleMenuButtonFallback() {
