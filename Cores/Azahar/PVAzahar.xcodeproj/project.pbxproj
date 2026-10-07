@@ -37,7 +37,6 @@
 		460B2B435EE8E2A46327D701 /* AzaharCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = 182AFEFC45503FA4231E8614 /* AzaharCamera.mm */; };
 		51B6E650E74B9C4E6C8EFBEC /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = 493F65DF5BCECEBAA30EE740 /* PVAudio */; };
 		52D72D137447D44BFE95A1D3 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = 1E716B31DF5EECEDD0642A7C /* PVCoreObjCBridge */; };
-		586235D53FC22829DA4A0F5C /* PVlibAzahar.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC8E5D4696D9F30C47886394 /* PVlibAzahar.xcframework */; };
 		58E751CE818B179C736B804C /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 83E28487102D424751CDA87B /* PVSupport */; };
 		5CA2A7702CD49A24F297FB20 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = FE295865800BD0292501D5B2 /* libc++.tbd */; };
 		681B050AF06F9CD288145481 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = 1FB4DE9405A6F23F6D2F73FB /* PVCoreBridge */; };
@@ -132,7 +131,6 @@
 		E1A26EA6E6424EDF04CFFEB2 /* AzaharAppleUtils.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AzaharAppleUtils.mm; sourceTree = "<group>"; };
 		E2BA61D68AE417ED30D74838 /* PVAzaharTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PVAzaharTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3113E8D170D23A457A3DFA4 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		FC8E5D4696D9F30C47886394 /* PVlibAzahar.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibAzahar.xcframework; path = build/xcframework/PVlibAzahar.xcframework; sourceTree = "<group>"; };
 		FDC25BB3E95A28038AEDAAC8 /* PVAzaharCoreBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVAzaharCoreBridge.h; sourceTree = "<group>"; };
 		FE295865800BD0292501D5B2 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -142,7 +140,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				586235D53FC22829DA4A0F5C /* PVlibAzahar.xcframework in Frameworks */,
 				E39A0A04FB15B789EEFF0960 /* Metal.framework in Frameworks */,
 				69B49A9F6102D2911E51EA85 /* QuartzCore.framework in Frameworks */,
 				116F66E03BCCA5F1D03B2CB4 /* AudioToolbox.framework in Frameworks */,
@@ -187,7 +184,6 @@
 				FE295865800BD0292501D5B2 /* libc++.tbd */,
 				3C79157998291504790FD90A /* libz.tbd */,
 				4047C6C37A480AF41578EC85 /* Metal.framework */,
-				FC8E5D4696D9F30C47886394 /* PVlibAzahar.xcframework */,
 				E3113E8D170D23A457A3DFA4 /* QuartzCore.framework */,
 			);
 			name = Frameworks;
@@ -435,7 +431,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\npython3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo \"error: python3 >= 3.10 required for build_azahar_core.py (brew install python)\"; exit 1; }\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\ncase \"$slice\" in\n  ios)      xcfw_id=ios-arm64 ;;\n  ios-sim)  xcfw_id=ios-arm64-simulator ;;\n  tvos)     xcfw_id=tvos-arm64 ;;\n  tvos-sim) xcfw_id=tvos-arm64-simulator ;;\nesac\n# Rebuilding rewrites the shared xcframework in place, which races concurrent builds;\n# skip it when this slice exists and was built from the current submodule HEAD.\nbuilt_lib=\"$PROJECT_DIR/build/xcframework/PVlibAzahar.xcframework/${xcfw_id}/PVlibAzahar.framework/PVlibAzahar\"\nstamp=\"$PROJECT_DIR/build/${platform}/.gitlink\"\nhead=\"$(git -C \"$PROJECT_DIR/azahar\" rev-parse HEAD)\"\nif [[ -f \"$built_lib\" && -f \"$stamp\" && \"$(cat \"$stamp\")\" == \"$head\" ]]; then\n  echo \"PVlibAzahar ${slice} is current (azahar ${head}); skipping build_azahar_core.py\"\nelse\n  python3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\nfi\n";
+			shellScript = "set -euo pipefail\nSCRIPT=\"$PROJECT_DIR/build_azahar_core.py\"\nif [ ! -f \"$PROJECT_DIR/azahar/CMakeLists.txt\" ]; then\n  echo \"error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild.\"; exit 1\nfi\ncommand -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo \"error: cmake not found - 'brew install cmake ninja'\"; exit 1; }\ncommand -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo \"error: ninja not found - 'brew install cmake ninja'\"; exit 1; }\nexport PATH=\"/opt/homebrew/bin:$PATH\"\npython3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo \"error: python3 >= 3.10 required for build_azahar_core.py (brew install python)\"; exit 1; }\ncase \"${PLATFORM_NAME}\" in\n  iphoneos)         platform=OS64;           slice=ios ;;\n  iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;\n  appletvos)        platform=TVOS;           slice=tvos ;;\n  appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;\n  *) echo \"error: unsupported PLATFORM_NAME ${PLATFORM_NAME}\"; exit 1 ;;\nesac\n# Rebuilding rewrites the shared xcframework in place, which races concurrent builds;\n# skip it when this slice exists and was built from the current submodule HEAD.\n# built_lib is the archive PVAzahar links (OTHER_LDFLAGS); the xcframework is for distribution.\nbuilt_lib=\"$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework/PVlibAzahar\"\nstamp=\"$PROJECT_DIR/build/${platform}/.gitlink\"\nhead=\"$(git -C \"$PROJECT_DIR/azahar\" rev-parse HEAD)\"\nif [[ -f \"$built_lib\" && -f \"$stamp\" && \"$(cat \"$stamp\")\" == \"$head\" ]]; then\n  echo \"PVlibAzahar ${slice} is current (azahar ${head}); skipping build_azahar_core.py\"\nelse\n  python3 \"$SCRIPT\" -p \"$platform\"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -493,19 +489,18 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"build/xcframework\"",
-				);
 				INFOPLIST_FILE = PVAzahar/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "$(inherited) $(PVAZAHAR_ARCHIVE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzahar";
 				PRODUCT_MODULE_NAME = PVAzahar;
 				PRODUCT_NAME = PVAzahar;
+				PVAZAHAR_ARCHIVE = "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/PVlibAzahar";
+				"PVAZAHAR_ARCHIVE[sdk=*simulator*][arch=x86_64]" = "";
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator";
@@ -526,19 +521,18 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"build/xcframework\"",
-				);
 				INFOPLIST_FILE = PVAzahar/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "$(inherited) $(PVAZAHAR_ARCHIVE)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzahar";
 				PRODUCT_MODULE_NAME = PVAzahar;
 				PRODUCT_NAME = PVAzahar;
+				PVAZAHAR_ARCHIVE = "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/PVlibAzahar";
+				"PVAZAHAR_ARCHIVE[sdk=*simulator*][arch=x86_64]" = "";
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator appletvos appletvsimulator";

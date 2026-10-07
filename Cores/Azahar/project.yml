@@ -72,8 +72,8 @@ packages:
   PVSettings: { path: ../../PVSettings }
   PVSupport: { path: ../../PVSupport }
 aggregateTargets:
-  # Runs build_azahar_core.py for the platform being built. PVAzahar depends on it, so the slice is in
-  # build/xcframework before PVAzahar's ProcessXCFramework and compile steps run, on a cold checkout too.
+  # Runs build_azahar_core.py for the platform being built. PVAzahar depends on it, so the slice's
+  # framework (headers + static archive) exists before PVAzahar compiles and links, on a cold checkout too.
   BuildPVlibAzahar:
     settings:
       base:
@@ -100,15 +100,10 @@ aggregateTargets:
             appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;
             *) echo "error: unsupported PLATFORM_NAME ${PLATFORM_NAME}"; exit 1 ;;
           esac
-          case "$slice" in
-            ios)      xcfw_id=ios-arm64 ;;
-            ios-sim)  xcfw_id=ios-arm64-simulator ;;
-            tvos)     xcfw_id=tvos-arm64 ;;
-            tvos-sim) xcfw_id=tvos-arm64-simulator ;;
-          esac
           # Rebuilding rewrites the shared xcframework in place, which races concurrent builds;
           # skip it when this slice exists and was built from the current submodule HEAD.
-          built_lib="$PROJECT_DIR/build/xcframework/PVlibAzahar.xcframework/${xcfw_id}/PVlibAzahar.framework/PVlibAzahar"
+          # built_lib is the archive PVAzahar links (OTHER_LDFLAGS); the xcframework is for distribution.
+          built_lib="$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework/PVlibAzahar"
           stamp="$PROJECT_DIR/build/${platform}/.gitlink"
           head="$(git -C "$PROJECT_DIR/azahar" rev-parse HEAD)"
           if [[ -f "$built_lib" && -f "$stamp" && "$(cat "$stamp")" == "$head" ]]; then
@@ -147,10 +142,8 @@ targets:
       - path: PVAzahar/Core.plist
         buildPhase: resources
     dependencies:
-      # Builds the xcframework slice first, so ProcessXCFramework and the -idirafter headers see it.
+      # Builds the PVlibAzahar slice first: compiling needs its -idirafter headers, linking its archive.
       - target: BuildPVlibAzahar
-      - framework: build/xcframework/PVlibAzahar.xcframework
-        embed: false
       - sdk: Metal.framework
       - sdk: QuartzCore.framework
       - sdk: AudioToolbox.framework
@@ -176,6 +169,11 @@ targets:
       base:
         PRODUCT_NAME: PVAzahar
         PRODUCT_MODULE_NAME: PVAzahar
+        # The slice's static archive is linked by path, not as an xcframework dependency: Xcode resolves an
+        # xcframework while planning the build, before BuildPVlibAzahar can create it on a cold checkout.
+        PVAZAHAR_ARCHIVE: "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/PVlibAzahar"
+        "PVAZAHAR_ARCHIVE[sdk=*simulator*][arch=x86_64]": ""   # no x86_64 archive; that slice is link-only
+        OTHER_LDFLAGS: "$(inherited) $(PVAZAHAR_ARCHIVE)"
         SDKROOT: auto
         INFOPLIST_FILE: PVAzahar/Info.plist
         SKIP_INSTALL: YES
