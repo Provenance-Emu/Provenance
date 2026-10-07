@@ -6,7 +6,7 @@ Submodule `Cores/Azahar/azahar` tracks `Provenance-Emu/azahar` branch `provenanc
 then `python3 Cores/Azahar/build_azahar_core.py --clean --all-platforms`.
 
 Upstream base: c9e1e946a0b5d30a58ae14dee83c1f203a49622d (2026-10-06)
-Fork head:     c55090719afa310aad1acb3af077f17672391859
+Fork head:     eed2b86cbc36775384c731dec146d7995979958a
 
 | # | Commit subject | Upstream PR | Status |
 |---|---|---|---|
