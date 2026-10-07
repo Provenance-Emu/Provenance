@@ -39,6 +39,15 @@
 static Class PVEmulatorCoreClass = Nil;
 static NSTimeInterval defaultFrameInterval = 60.0;
 
+/// Longest the MAIN thread will wait, in `-setPauseEmulation:`, for the
+/// emulation loop to finish the frame it is inside. A frame is a few
+/// milliseconds; this is generous enough to cover a slow frame yet far below
+/// the ~10 s the watchdog gives a blocked main thread (0x8BADF00D). It exists
+/// because the emulation thread can itself be parked on the main queue while
+/// inside `executeFrame` (e.g. `dispatch_sync(main)` from a core), which would
+/// turn an unbounded wait into a permanent deadlock.
+static const NSTimeInterval kPauseFrameBarrierTimeout = 0.25;
+
 // Different machines have different mach_absolute_time to ms ratios
 // calculate this on init
 static double timebase_ratio;
@@ -62,6 +71,12 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 @property (nonatomic, strong, readwrite, nonnull) NSLock  *emulationLoopThreadLock;
 @property (nonatomic, strong, readwrite, nonnull) NSCondition  *frontBufferCondition;
 @property (nonatomic, strong, readwrite, nonnull) NSLock  *frontBufferLock;
+/// Held by the emulation loop for exactly the duration of `executeFrame`.
+/// Gives `-setPauseEmulation:` something it can wait on WITH A TIMEOUT --
+/// `@synchronized` has no timed variant. Private and created in `-init` on
+/// purpose: Swift's `PVEmulatorCore.initialize()` replaces the two locks above
+/// through their setters, so this must not be tied to either of them.
+@property (nonatomic, strong, nonnull) NSLock  *frameExecutionLock;
 
 @property (nonatomic, assign) CGFloat  framerateMultiplier;
 @property (nonatomic, assign, readwrite) BOOL isRunning;
@@ -96,6 +111,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         _emulationLoopThreadLock = [NSLock new];
         _frontBufferCondition    = [NSCondition new];
         _frontBufferLock         = [NSLock new];
+        _frameExecutionLock      = [NSLock new];
         _isFrontBufferReady      = NO;
         _gameSpeed               = GameSpeedNormal;
         _isDoubleBufferedCached = [self isDoubleBuffered];
@@ -282,11 +298,19 @@ static NSString *_systemName;
 
         @synchronized (self) {
             if (_isRunning) {
-                if (self.isSpeedModified) {
-                    // TODO: Is this correct? We should expose the skip version
-                    [self executeFrame];
-                } else {
-                    [self executeFrame];
+                // `frameExecutionLock` is what `-setPauseEmulation:` waits on
+                // (bounded) to know no frame is in flight. `@finally` so a
+                // throwing core can never leave it held.
+                [self.frameExecutionLock lock];
+                @try {
+                    if (self.isSpeedModified) {
+                        // TODO: Is this correct? We should expose the skip version
+                        [self executeFrame];
+                    } else {
+                        [self executeFrame];
+                    }
+                } @finally {
+                    [self.frameExecutionLock unlock];
                 }
             }
         }
@@ -429,19 +453,48 @@ static NSString *_systemName;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
-    // Set _isRunning BEFORE acquiring @synchronized so the emulation loop
-    // (which also holds @synchronized(self) around executeFrame) sees the
-    // change on its next iteration and releases the lock. Without this,
-    // the main thread starves waiting for @synchronized while the emu loop
-    // tight-loops at 60fps — producing a permanent main-thread hang that
-    // blocks UIKit touches and app-lifecycle notifications.
+    // Set _isRunning FIRST so the emulation loop sees the change on its next
+    // iteration and skips executeFrame.
     _isRunning = !flag;
-    @synchronized (self) {
-        if (flag) {
-            [self stopHaptic];
-        } else {
-            [self startHaptic];
-        }
+
+    // Haptic start/stop needs no emulation-loop lock: `rumbleGenerator` is only
+    // touched by start/stopHaptic (never inside executeFrame), and
+    // startHaptic hops to main itself when called off-main. This used to run
+    // inside `@synchronized(self)` -- the same monitor the emulation loop holds
+    // around every executeFrame -- so a pause on the MAIN thread waited on the
+    // emulation thread, and when the emulation thread was in turn waiting on
+    // main (dispatch_sync to the main queue from a core) the app deadlocked and
+    // the watchdog killed it (0x8BADF00D).
+    if (flag) {
+        [self stopHaptic];
+        [self waitForInFlightFrameToFinish];
+    } else {
+        [self startHaptic];
+    }
+}
+
+/// The barrier half of what `@synchronized(self)` used to give pause: when a
+/// pause returns, the frame that was running has finished, so a save/load state
+/// issued right after the pause (see `PVEmulatorControllerProtocol`, the
+/// Mupen/NX `+Saves` files, the thin frontend's `saveState`) never overlaps
+/// `executeFrame`. Unlike the monitor it is BOUNDED: if the frame has not ended
+/// within `kPauseFrameBarrierTimeout` we log and carry on, so main can never
+/// hang on the emulation thread.
+///
+/// Skipped off the main thread. That includes the emulation thread itself, a
+/// real path (cores call `setPauseEmulation:` from inside `executeFrame`;
+/// `@synchronized` is recursive but `NSLock` is not, so waiting there would only
+/// stall for the full timeout on a lock this very thread holds).
+- (void)waitForInFlightFrameToFinish {
+    if (!NSThread.isMainThread) {
+        return;
+    }
+    NSLock *frameLock = self.frameExecutionLock;
+    if ([frameLock lockBeforeDate:[NSDate dateWithTimeIntervalSinceNow:kPauseFrameBarrierTimeout]]) {
+        [frameLock unlock];
+    } else {
+        WLOG(@"setPauseEmulation: emulation loop still inside executeFrame after %.0f ms; proceeding without the frame barrier",
+             kPauseFrameBarrierTimeout * 1000.0);
     }
 }
 

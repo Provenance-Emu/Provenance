@@ -13,6 +13,10 @@ import PVLogging
 @objc extension PVEmulatorCore {// : EmulatorCoreRunLoop {
     @objc open var framerateMultiplier: Float { gameSpeed.multiplier }
 
+    /// Longest `setPauseEmulation(true)` waits, on the main thread, for an
+    /// in-flight front-buffer swap (a swap is microseconds; this is ~3 frames).
+    private static var pauseFrontBufferWait: TimeInterval { 0.05 }
+
     @MainActor
     @objc open func setPauseEmulation(_ flag: Bool) {
         /// A bridge that boots asynchronously has not spawned its emulation-loop
@@ -38,9 +42,21 @@ import PVLogging
         if flag {
             stopHaptic()
             skipEmulationLoop = true
-            // Wait until any in-flight front-buffer access completes before marking
-            // the core as paused.  The empty critical section is intentional.
-            frontBufferLock.withLock { }
+            // Let any in-flight front-buffer swap/draw finish before marking the
+            // core paused, so a pause never freezes the presenter on a
+            // half-swapped buffer (da47669485, "fix pause/resume freezing
+            // video"). The empty critical section is intentional.
+            //
+            // BOUNDED: this runs on the main thread, and the emulation thread
+            // (swap) or a draw can hold the lock across work that itself waits
+            // on main. An unbounded wait there is a 0x8BADF00D watchdog kill, so
+            // give up after `Self.pauseFrontBufferWait` and carry on -- the swap
+            // is short, so in practice we always acquire it.
+            if frontBufferLock.lock(before: Date(timeIntervalSinceNow: Self.pauseFrontBufferWait)) {
+                frontBufferLock.unlock()
+            } else {
+                WLOG("setPauseEmulation: frontBufferLock still held after \(Int(Self.pauseFrontBufferWait * 1000)) ms; pausing without waiting for the swap")
+            }
             isRunning = false
         } else {
             startHaptic()
