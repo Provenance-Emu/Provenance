@@ -58,13 +58,20 @@
 
 - (void)teardownRenderView {
     PVAzaharRenderView *view = (PVAzaharRenderView *)_renderView;
-    view.onDrawableSizeChange = nil;
-#if !TARGET_OS_TV
-    view.onTouch = nil;
-#endif
-    if (_renderViewConstraints) { [NSLayoutConstraint deactivateConstraints:_renderViewConstraints]; _renderViewConstraints = nil; }
-    [view removeFromSuperview];
+    NSArray<NSLayoutConstraint *> *constraints = _renderViewConstraints;
     _renderView = nil;
+    _renderViewConstraints = nil;
+    if (!view) { return; }
+    // Captures only the view and constraints, never self: this can run from the base class's dealloc.
+    void (^detach)(void) = ^{
+        view.onDrawableSizeChange = nil;
+#if !TARGET_OS_TV
+        view.onTouch = nil;
+#endif
+        if (constraints) { [NSLayoutConstraint deactivateConstraints:constraints]; }
+        [view removeFromSuperview];
+    };
+    if (NSThread.isMainThread) { detach(); } else { dispatch_async(dispatch_get_main_queue(), detach); }
 }
 
 #pragma mark - EmulatorCoreViewportPositioning (DeltaSkin screen frame)

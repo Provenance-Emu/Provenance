@@ -21,14 +21,24 @@ class AzaharEmuWindow;
     std::condition_variable _jobCV;  // wakes a paused loop
     std::deque<std::function<void()>> _jobs;   // run on the emu thread between RunLoop calls
     std::atomic<bool> _loaded;       // Core::System::Load succeeded
+    std::atomic<bool> _stopRequested; // set by stop before the join; the emu thread skips the loop
+    std::atomic<std::thread::id> _emuThreadId;  // set inside the emu thread; default id when none runs
     NSString *_romPath;              // set in loadFileAtPath:, loaded on the emu thread
     UIView *_renderView;             // PVAzaharRenderView, added to touchViewController.view
     NSArray<NSLayoutConstraint *> *_renderViewConstraints;
     BOOL _useCustomRenderViewLayout;
 }
+/// Jobs run on the emu thread between RunLoop slices (also while paused), and are dropped
+/// unrun when emulation stops.
 - (void)runOnEmuThread:(std::function<void()>)job;          // async
-- (BOOL)runOnEmuThreadAndWait:(std::function<void()>)job timeout:(NSTimeInterval)seconds; // sync, NO on timeout
-- (void)applySettingsFromOptions;    // bridge properties -> Settings::values
+/// Returns YES once the job has run; NO on timeout, when not running, or if it was dropped at stop.
+/// The job may outlive a timeout; capture only by value or shared_ptr, never by reference.
+- (BOOL)runOnEmuThreadAndWait:(std::function<void()>)job timeout:(NSTimeInterval)seconds;
+/// Bridge properties -> Settings::values. Called on main before the emu thread starts; any call
+/// after that must go through runOnEmuThread: followed by Core::System::ApplySettings().
+- (void)applySettingsFromOptions;
+/// Executes a MAP_JIT test page (Dolphin's probe); YES on the simulator.
+- (BOOL)probeJITAvailable;
 - (NSString *)userDirectoryPath;     // <Documents>/Azahar/
 - (void)configureAudioSession;       // defined in +Audio.mm (Task 8), which also adds the call
 @end

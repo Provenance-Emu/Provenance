@@ -36,11 +36,26 @@ import QuartzCore
     }
 
     #if !os(tvOS)
-    /// Bottom-screen touch; the Bool is `ended`.
+    /// Bottom-screen touch; the Bool is `ended`. Only the first finger down drives it.
     @objc public var onTouch: ((UITouch, Bool) -> Void)?
-    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) { touches.first.map { onTouch?($0, false) } }
-    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) { touches.first.map { onTouch?($0, false) } }
-    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) { touches.first.map { onTouch?($0, true) } }
-    public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) { touches.first.map { onTouch?($0, true) } }
+    private weak var trackedTouch: UITouch?
+
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard trackedTouch == nil, let touch = touches.first else { return }
+        trackedTouch = touch
+        onTouch?(touch, false)
+    }
+    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = trackedTouch, touches.contains(touch) else { return }
+        onTouch?(touch, false)
+    }
+    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) { endTrackedTouch(in: touches) }
+    public override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) { endTrackedTouch(in: touches) }
+
+    private func endTrackedTouch(in touches: Set<UITouch>) {
+        guard let touch = trackedTouch, touches.contains(touch) else { return }
+        trackedTouch = nil
+        onTouch?(touch, true)
+    }
     #endif
 }

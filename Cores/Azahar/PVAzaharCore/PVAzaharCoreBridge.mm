@@ -5,7 +5,13 @@
 #import <PVLogging/PVLoggingObjC.h>
 @import PVCoreBridge;  // defines the protocols the public header only forward-declares
 #include <chrono>
+#include <csetjmp>
+#include <csignal>
+#include <cstring>
+#include <dlfcn.h>
+#include <libkern/OSCacheControl.h>
 #include <pthread.h>
+#include <sys/mman.h>
 #include "Glue/AzaharEmuWindow.h"
 #include "Glue/AzaharInput.h"
 #include "common/file_util.h"
@@ -17,10 +23,37 @@
 #include "network/network.h"
 #include "audio_core/sink_details.h"
 
-/// PVJIT exports this via @_cdecl; weak so a build without PVJIT reads "no JIT" instead of failing to link.
-extern "C" bool PVJITManagerIsAcquired(void) __attribute__((weak));
-
 static NSString * const PVAzaharUserDirectoryName = @"Azahar";
+
+namespace {
+/// Shared by runOnEmuThreadAndWait: and its job. `finished` is set when the job is destroyed,
+/// whether it ran or was dropped at stop, so a waiter never sleeps out the timeout for nothing.
+struct PVAzaharWaitState {
+    std::mutex m;
+    std::condition_variable cv;
+    bool ran = false;
+    bool finished = false;
+};
+struct PVAzaharJobCompletion {
+    explicit PVAzaharJobCompletion(std::shared_ptr<PVAzaharWaitState> s) : state(std::move(s)) {}
+    PVAzaharJobCompletion(const PVAzaharJobCompletion&) = delete;
+    PVAzaharJobCompletion& operator=(const PVAzaharJobCompletion&) = delete;
+    ~PVAzaharJobCompletion() {
+        { std::lock_guard lock(state->m); state->finished = true; }
+        state->cv.notify_all();
+    }
+    const std::shared_ptr<PVAzaharWaitState> state;
+};
+
+#if !TARGET_OS_SIMULATOR
+volatile sig_atomic_t s_jitProbeSignal = 0;
+sigjmp_buf s_jitProbeJump;
+void PVAzaharJITProbeSignalHandler(int sig) {
+    s_jitProbeSignal = sig;
+    siglongjmp(s_jitProbeJump, 1);
+}
+#endif
+} // namespace
 
 /// UI index (Default, Single, Large, Side by Side, Hybrid) -> azahar layout. SeparateWindows is skipped.
 static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
@@ -37,7 +70,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 
 - (instancetype)init {
     if ((self = [super init])) {
-        _running = false; _paused = false; _loaded = false;
+        _running = false; _paused = false; _loaded = false; _stopRequested = false;
         self.skipEmulationLoop = YES;   // azahar runs its own loop (see startEmulation)
         self.skipLayout = YES;          // we draw into our own view (Dolphin pattern)
         self.resolutionFactor = 1; self.cpuClockPercent = 100; self.new3DSMode = YES;
@@ -81,7 +114,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 
 - (void)applySettingsFromOptions {
     auto& v = Settings::values;
-    const bool jit = PVJITManagerIsAcquired != nullptr && PVJITManagerIsAcquired();
+    const bool jit = [self probeJITAvailable];
     v.use_cpu_jit.SetValue(jit);
     v.use_fastinterp.SetValue(!jit);
     v.graphics_api.SetValue(Settings::GraphicsAPI::Vulkan);
@@ -111,19 +144,73 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
          (long)self.resolutionFactor, (long)self.layoutOption);
 }
 
+/// Port of -[PVDolphinCoreBridge checkJITAvailable]: allocate a MAP_JIT page, write
+/// `mov w0,#1; ret`, make it RX and call it with SIGTRAP/SIGBUS/SIGSEGV trapped. This sees what the
+/// process can really do (debugger, StikJIT, entitlements, TXM) rather than a flag that may not be set.
+- (BOOL)probeJITAvailable {
+#if TARGET_OS_SIMULATOR
+    return YES;
+#else
+    const size_t pageSize = static_cast<size_t>(getpagesize());
+    void *page = mmap(nullptr, pageSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_JIT, -1, 0);
+    if (page == MAP_FAILED) {
+        ILOG(@"[PVAzahar] JIT probe: MAP_JIT allocation failed");
+        return NO;
+    }
+    const uint32_t code[] = { 0x52800020 /* mov w0, #1 */, 0xD65F03C0 /* ret */ };
+    // pthread_jit_write_protect_np is missing from the iOS 26 / tvOS SDKs; look it up at runtime.
+    typedef void (*PVJITWriteProtect)(int);
+    const auto writeProtect = reinterpret_cast<PVJITWriteProtect>(dlsym(RTLD_DEFAULT, "pthread_jit_write_protect_np"));
+    if (writeProtect) { writeProtect(0); }
+    memcpy(page, code, sizeof(code));
+    if (writeProtect) { writeProtect(1); }
+    if (mprotect(page, pageSize, PROT_READ | PROT_EXEC) != 0) {
+        ILOG(@"[PVAzahar] JIT probe: mprotect RX failed");
+        munmap(page, pageSize);
+        return NO;
+    }
+    sys_icache_invalidate(page, sizeof(code));
+
+    struct sigaction handler = {}, oldTrap, oldBus, oldSegv;
+    sigemptyset(&handler.sa_mask);
+    handler.sa_handler = PVAzaharJITProbeSignalHandler;
+    sigaction(SIGTRAP, &handler, &oldTrap);
+    sigaction(SIGBUS, &handler, &oldBus);
+    sigaction(SIGSEGV, &handler, &oldSegv);
+    s_jitProbeSignal = 0;
+    BOOL works = NO;
+    if (sigsetjmp(s_jitProbeJump, 1) == 0) {
+        works = reinterpret_cast<int (*)(void)>(page)() == 1;
+    } else {
+        WLOG(@"[PVAzahar] JIT probe: execution raised signal %d", static_cast<int>(s_jitProbeSignal));
+    }
+    sigaction(SIGTRAP, &oldTrap, nullptr);
+    sigaction(SIGBUS, &oldBus, nullptr);
+    sigaction(SIGSEGV, &oldSegv, nullptr);
+    munmap(page, pageSize);
+    ILOG(@"[PVAzahar] JIT probe: %@", works ? @"available" : @"unavailable");
+    return works;
+#endif
+}
+
 - (void)startEmulation {
+    if (_running || _emuThread.joinable()) {
+        WLOG(@"[PVAzahar] startEmulation called while the emu thread exists; ignoring");
+        return;
+    }
     [self applySettingsFromOptions];
     [self setupRenderView];          // +Video, main thread; creates _window
     if (!_window) {
         ELOG(@"[PVAzahar] no render window; cannot start");
         return;
     }
-    _running = true; _paused = false;
+    _running = true; _paused = false; _stopRequested = false;
     std::string romPath([_romPath fileSystemRepresentation]);
     __weak PVAzaharCoreBridge *weakSelf = self;
     // The thread keeps `self` alive until it exits; stopEmulationWithMessage: joins it.
     _emuThread = std::thread([self, weakSelf, romPath] {
         pthread_setname_np("Azahar Emulation");
+        _emuThreadId = std::this_thread::get_id();
         auto& system = Core::System::GetInstance();
         AzaharInput::RegisterFactories();
         Frontend::RegisterDefaultApplets(system);
@@ -133,7 +220,9 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
         if (result == Core::System::ResultStatus::Success) {
             _loaded = true;
             bool guestShutdown = false;
-            while (_running) {
+            // A stop that arrived during Load (before _loaded was set) could not RequestShutdown;
+            // _stopRequested makes us leave without entering the loop.
+            while (_running && !_stopRequested) {
                 {
                     std::unique_lock lock(_jobMutex);
                     while (!_jobs.empty()) {
@@ -173,6 +262,11 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
         }
         Network::Shutdown();
         AzaharInput::UnregisterFactories();
+        {
+            std::lock_guard lock(_jobMutex);
+            _jobs.clear();   // nothing will run them now; releases any runOnEmuThreadAndWait: waiter
+        }
+        _emuThreadId = std::thread::id();
     });
     [super startEmulation];
 }
@@ -186,6 +280,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 /// The base `stopEmulation` calls this, and so do the load-failure and guest-shutdown paths, so all
 /// teardown lives here. Main thread. Idempotent.
 - (void)stopEmulationWithMessage:(NSString *)message {
+    _stopRequested = true;
     _running = false; _paused = false;
     if (_loaded) { Core::System::GetInstance().RequestShutdown(); }   // thread-safe signal
     _jobCV.notify_all();
@@ -193,20 +288,23 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
         if (_emuThread.get_id() == std::this_thread::get_id()) {
             _emuThread.detach();   // never expected; joining ourselves would throw
         } else {
+            // Kept unbounded on purpose: a half-torn-down Core::System is worse than a wait.
+            ILOG(@"[PVAzahar] joining emu thread");
             _emuThread.join();
+            ILOG(@"[PVAzahar] joined emu thread");
         }
     }
     {
         std::lock_guard lock(_jobMutex);
         _jobs.clear();   // queued jobs capture self; drop them now the loop is gone
     }
-    [self teardownRenderView];
+    [self teardownRenderView];   // hops to main itself when called off-main (e.g. from dealloc)
     _window.reset();
     [super stopEmulationWithMessage:message];
 }
 
 - (void)resetEmulation {
-    [self runOnEmuThread:[] { Core::System::GetInstance().Reset(); }];
+    if (_loaded) { Core::System::GetInstance().RequestReset(); }   // signal; the loop resets itself
 }
 
 - (void)executeFrame {}   // own loop
@@ -218,15 +316,20 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 
 - (BOOL)runOnEmuThreadAndWait:(std::function<void()>)job timeout:(NSTimeInterval)seconds {
     if (!_running) { return NO; }
-    if (_emuThread.get_id() == std::this_thread::get_id()) { job(); return YES; }   // already there
-    auto done = std::make_shared<std::atomic<bool>>(false);
-    [self runOnEmuThread:[job = std::move(job), done] { job(); done->store(true); }];
-    const auto deadline = std::chrono::steady_clock::now() + std::chrono::duration<double>(seconds);
-    while (!done->load()) {
-        if (std::chrono::steady_clock::now() > deadline) { return NO; }
-        std::this_thread::sleep_for(std::chrono::milliseconds(2));
-    }
-    return YES;
+    if (_emuThreadId.load() == std::this_thread::get_id()) { job(); return YES; }   // already there
+    auto state = std::make_shared<PVAzaharWaitState>();
+    auto completion = std::make_shared<PVAzaharJobCompletion>(state);
+    [self runOnEmuThread:[job = std::move(job), state, completion] {
+        job();
+        std::lock_guard lock(state->m);
+        state->ran = true;
+    }];
+    completion.reset();   // only the queued job holds it now; its destruction marks `finished`
+    const auto deadline = std::chrono::steady_clock::now()
+        + std::chrono::duration_cast<std::chrono::steady_clock::duration>(std::chrono::duration<double>(seconds));
+    std::unique_lock lock(state->m);
+    state->cv.wait_until(lock, deadline, [&state] { return state->finished; });
+    return state->ran ? YES : NO;
 }
 
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType
