@@ -50,6 +50,8 @@ struct OverlaySurfaceRepresentable: UIViewRepresentable {
 /// Draws one resolved group: art layer (never redraws on press) + touch layer.
 struct OverlayGroupView: View {
     private static let knobTravelFraction: CGFloat = 0.3
+    /// How long a stick click is held, so a core polling once per frame sees it.
+    private static let stickClickHold: TimeInterval = 0.1
 
     let group: ResolvedGroup
     let palette: OverlayPalette
@@ -60,6 +62,7 @@ struct OverlayGroupView: View {
     let editing: Bool
     @State private var pressedState = OverlayPressedState()
     @State private var knob = OverlayKnobState()
+    @State private var clickDetectors: [OverlayStickSide: OverlayStickClickDetector] = [:]
 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -122,13 +125,23 @@ struct OverlayGroupView: View {
             .offset(x: clusterFrame.minX - group.frame.minX, y: clusterFrame.minY - group.frame.minY)
         }
         ForEach(stickControls) { control in
-            if case .stick(let side, _) = control.control.kind {
+            if case .stick(let side, let click) = control.control.kind {
                 OverlaySurfaceRepresentable(
-                    onBegan: { point in moveStick(side, point, control) },
-                    onMoved: { point in moveStick(side, point, control) },
+                    onBegan: { point in
+                        var detector = OverlayStickClickDetector(radius: control.frame.width / 2)
+                        detector.began(at: hitPoint(point, control), time: ProcessInfo.processInfo.systemUptime)
+                        clickDetectors[side] = detector
+                        moveStick(side, point, control)
+                    },
+                    onMoved: { point in
+                        clickDetectors[side]?.moved(to: hitPoint(point, control))
+                        moveStick(side, point, control)
+                    },
                     onEnded: {
                         knob.offset = .zero
                         sink.overlayStick(side, x: 0, y: 0)
+                        let clicked = clickDetectors[side]?.ended(at: ProcessInfo.processInfo.systemUptime) ?? false
+                        if clicked, let click { pressStickClick(click) }
                     })
                 .frame(width: control.hitFrame.width, height: control.hitFrame.height)
                 .offset(x: control.hitFrame.minX - group.frame.minX, y: control.hitFrame.minY - group.frame.minY)
@@ -149,6 +162,20 @@ struct OverlayGroupView: View {
         guard now != before else { return }
         if before.isEmpty { OverlayHaptics.press(intensity: hapticIntensity) }
         pressedState.pressed = now
+    }
+
+    /// A point normalized in the control's hit frame, in points.
+    private func hitPoint(_ point: CGPoint, _ control: ResolvedControl) -> CGPoint {
+        CGPoint(x: point.x * control.hitFrame.width, y: point.y * control.hitFrame.height)
+    }
+
+    /// L3/R3 from a tap: pressed now, released after `stickClickHold`.
+    private func pressStickClick(_ click: OverlayInputID) {
+        sink.overlayPress(click)
+        OverlayHaptics.press(intensity: hapticIntensity)
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.stickClickHold) { [sink] in
+            sink.overlayRelease(click)
+        }
     }
 
     private func moveStick(_ side: OverlayStickSide, _ point: CGPoint, _ control: ResolvedControl) {
