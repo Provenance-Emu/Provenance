@@ -952,7 +952,7 @@ open class DeltaSkinInputHandler: ObservableObject {
 
     /// Handle analog stick movement
     open func analogStickMoved(_ stickId: String, x: Float, y: Float) {
-        ILOG("🔵 analogStickMoved called: stickId=\(stickId), x=\(x), y=\(y)")
+        DLOG("🔵 analogStickMoved called: stickId=\(stickId), x=\(x), y=\(y)")
 
         guard let core = emulatorCore else {
             ELOG("No emulator core available for analog stick: \(stickId)")
@@ -992,15 +992,15 @@ open class DeltaSkinInputHandler: ObservableObject {
         // Handle systems that require system-specific button enums instead of Int
         // These systems have their own joystick responder protocols that take enum values
         if let systemId = systemId {
-            ILOG("🔵 System detected: \(systemId), isLeftStick: \(isLeftStick)")
+            DLOG("🔵 System detected: \(systemId), isLeftStick: \(isLeftStick)")
             switch systemId {
             case .N64:
                 // N64 only has a left analog stick
-                ILOG("🔵 N64 case matched, isLeftStick: \(isLeftStick)")
+                DLOG("🔵 N64 case matched, isLeftStick: \(isLeftStick)")
                 if isLeftStick {
-                    ILOG("🔵 Checking if core conforms to PVN64SystemResponderClient...")
+                    DLOG("🔵 Checking if core conforms to PVN64SystemResponderClient...")
                     if let responder = core as? PVN64SystemResponderClient {
-                        ILOG("✅ Core conforms! Calling didMoveJoystick with .leftAnalog, x=\(x), y=\(y)")
+                        DLOG("✅ Core conforms! Calling didMoveJoystick with .leftAnalog, x=\(x), y=\(y)")
                         responder.didMoveJoystick(.leftAnalog, withXValue: CGFloat(x), withYValue: CGFloat(y), forPlayer: 0)
                         DLOG("Forwarded joystick event via PVN64SystemResponderClient: button=leftAnalog, x=\(x), y=\(y)")
                         return

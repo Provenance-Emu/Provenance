@@ -117,8 +117,8 @@ public enum OverlayFamilyKit {
             case "face" where landscape:
                 moved.placement = OverlayPlacement(anchor: .bottomTrailing,
                                                    inset: CGPoint(x: edge, y: landscapeClusterY))
-            case "dpad", "face", _ where group.id.hasPrefix("shoulder-"):
-                if !landscape { moved.placement.inset.y += lift }
+            case let id where !landscape && (id == "dpad" || id == "face" || id.hasPrefix("shoulder-")):
+                moved.placement.inset.y += lift
             default:
                 break
             }

@@ -11,6 +11,8 @@ public struct OverlayEditorView: View {
     public let layout: OverlayLayout
     public let binding: SystemOverlayBinding
     public let style: OverlayStyle
+    /// The player's controller opacity, so the pad is previewed as it will look in play.
+    public let globalOpacity: Double
     /// Display name of the system, for the "All <system> games" save choice.
     public let systemName: String
     public let onFinish: (_ saved: Bool) -> Void
@@ -21,11 +23,13 @@ public struct OverlayEditorView: View {
     @State private var lastHandleWidth: CGFloat = 0
 
     public init(controller: OverlayEditController, layout: OverlayLayout, binding: SystemOverlayBinding,
-                style: OverlayStyle, systemName: String, onFinish: @escaping (_ saved: Bool) -> Void) {
+                style: OverlayStyle, globalOpacity: Double, systemName: String,
+                onFinish: @escaping (_ saved: Bool) -> Void) {
         self.controller = controller
         self.layout = layout
         self.binding = binding
         self.style = style
+        self.globalOpacity = globalOpacity
         self.systemName = systemName
         self.onFinish = onFinish
     }
@@ -34,8 +38,8 @@ public struct OverlayEditorView: View {
         // swiftlint:disable:next redundant_discardable_let
         let _ = controller.revision // read so edits re-render this view
         ZStack(alignment: .topLeading) {
-            OverlayHostView(layout: layout, binding: binding, style: style, globalOpacity: 1, hapticIntensity: 0,
-                            sink: OverlayNullSink.shared, editing: true)
+            OverlayHostView(layout: layout, binding: binding, style: style, globalOpacity: globalOpacity,
+                            hapticIntensity: 0, sink: OverlayNullSink.shared, editing: true)
             ForEach(layout.groups) { group in groupChrome(group) }
             VStack {
                 toolbar
@@ -43,9 +47,14 @@ public struct OverlayEditorView: View {
                 if controller.selectedGroupID != nil { inspector }
             }
             .padding()
+            // The editor ignores the safe area (it draws on the canvas); keep its chrome out of the notch.
+            .padding(EdgeInsets(top: safeArea.top, leading: safeArea.left,
+                                bottom: safeArea.bottom, trailing: safeArea.right))
         }
         .ignoresSafeArea()
     }
+
+    private var safeArea: OverlayInsets { controller.canvas.safeArea }
 
     @ViewBuilder private func groupChrome(_ group: ResolvedGroup) -> some View {
         let selected = controller.selectedGroupID == group.id

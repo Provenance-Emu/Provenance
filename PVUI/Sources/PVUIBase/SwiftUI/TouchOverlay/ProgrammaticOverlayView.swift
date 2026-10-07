@@ -81,7 +81,8 @@ struct ProgrammaticOverlayView: View {
                 }
                 if let editController {
                     OverlayEditorView(controller: editController, layout: layout, binding: binding,
-                                      style: style, systemName: systemId.systemName) { _ in
+                                      style: style, globalOpacity: globalOpacity,
+                                      systemName: systemId.systemName) { _ in
                         self.editController = nil
                     }
                 }

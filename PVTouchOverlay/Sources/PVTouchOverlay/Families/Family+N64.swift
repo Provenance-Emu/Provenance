@@ -7,7 +7,7 @@ public enum N64Family: OverlayFamily {
                                 orientation: OverlayOrientation) -> OverlayTemplate {
         let kit = OverlayFamilyKit.self
         let landscape = orientation == .landscape
-        let face = kit.faceButton, cell = kit.smallButton
+        let face = kit.faceButton
         let faceButtons = [
             kit.button(.b, binding: binding, at: .zero, palette: .quaternary),                   // green B upper-left
             // Blue A, larger, diagonally down-right of B; clear of B so the two never overlap.

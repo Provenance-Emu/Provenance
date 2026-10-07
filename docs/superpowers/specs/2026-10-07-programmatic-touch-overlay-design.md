@@ -188,10 +188,14 @@ and every slot the family uses resolves to a valid `OverlayInputID`.
 
 `OverlayPadKind.subtype` is a `ControllerLayoutVariant.id` (or `standard`). `ConsoleVariantConfigurable` gains a read-back `currentControllerLayoutVariantID` and a `Notification.Name.controllerLayoutVariantDidChange`; the thin wrapper and Dolphin implement both. The existing Settings picker remains the system-wide override; the pause menu gets a per-game override that also calls `applyControllerLayoutVariant`.
 
-- Thin wrapper implements it from the libretro controller-port device and the
-  relevant core options (`pcsx_rearmed_pad1type`, Genesis Plus GX pad type,
-  `melonds_touch_mode`, ...). Dolphin from Wiimote extension and sideways
-  state. Native cores from their own options.
+- Thin wrapper implements it from the libretro controller-port device: Genesis
+  3-/6-button and PlayStation digital/DualShock are both port devices the core
+  declares through `RETRO_ENVIRONMENT_SET_CONTROLLER_INFO` (PCSX-ReARMed has no
+  pad-type core option). Dolphin from Wiimote extension and sideways state.
+  Native cores from their own options.
+- The overlay's own notification names (screen frames, editing, edit-layout
+  request, and the mirrored thin AV-info constant) live in PVUIBase
+  (`OverlayNotifications.swift`), since PVUI cannot import PVCoreBridgeRetro.
 
 The host applies the resolved variant at boot, and the pause menu offers a per-game override (persisted by MD5 via `CoreOptionsContext.currentGameMD5`), so core and overlay never disagree.
 

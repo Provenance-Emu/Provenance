@@ -196,7 +196,7 @@ struct OverlayPadKindResolverTests {
         #expect(ids(.Atari5200).isEmpty)
     }
 
-    @Test("The Controller Layout tile needs more than one selectable variant")
+    @Test("The Controller Layout picker needs more than one selectable variant")
     func offersVariantChoice() {
         for system in [SystemIdentifier.Genesis, .Sega32X, .SegaCD, .PSX, .Wii] {
             #expect(OverlayPadKindResolver.offersVariantChoice(for: system), "\(system)")
