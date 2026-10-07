@@ -1,6 +1,9 @@
 import Foundation
 import CoreGraphics
 
+// `h`/`x`/`v`/`y` are the stored (Codable) field names of AnchoredCenter.
+// swiftlint:disable identifier_name
+
 /// A centre point stored relative to the nearest canvas edge (or the centre line
 /// when the point lies in the middle third), so it survives device changes.
 public struct AnchoredCenter: Hashable, Codable, Sendable {
@@ -37,6 +40,7 @@ public struct AnchoredCenter: Hashable, Codable, Sendable {
 }
 
 public struct ControlOverride: Hashable, Codable, Sendable {
+    /// Stored in canvas points (not multiplied by the reference scale), like `AnchoredCenter`.
     public var offset: CGPoint
     public var scale: CGFloat
     public init(offset: CGPoint = .zero, scale: CGFloat = 1) { self.offset = offset; self.scale = scale }
@@ -58,3 +62,4 @@ public struct OverlayLayoutOverrides: Hashable, Codable, Sendable {
     public init(groups: [String: GroupOverride] = [:]) { self.groups = groups }
     public static let empty = OverlayLayoutOverrides()
 }
+// swiftlint:enable identifier_name

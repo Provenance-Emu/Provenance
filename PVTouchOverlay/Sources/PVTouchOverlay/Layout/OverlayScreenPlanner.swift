@@ -22,21 +22,28 @@ public enum OverlayScreenPlanner {
             return [aspectFit(aspect, in: column)]
         case .dualStacked:
             let band = topBand(safe: safe, groups: groups)
-            let half = CGRect(x: band.minX, y: band.minY, width: band.width, height: (band.height - gap) / 2)
-            let top = aspectFit(dsAspect, in: half)
-            let bottom = top.offsetBy(dx: 0, dy: top.height + gap)
-            // Centre the pair vertically in the band.
-            let pairHeight = bottom.maxY - top.minY
-            let shift = (band.height - pairHeight) / 2
-            return [top.offsetBy(dx: 0, dy: shift), bottom.offsetBy(dx: 0, dy: shift)]
+            let half = CGRect(x: band.minX, y: band.minY, width: band.width, height: max(0, (band.height - gap) / 2))
+            let size = aspectFit(dsAspect, in: half).size
+            // Centre the pair in the band so the slack above equals the slack below.
+            let slack = max(0, (band.height - (size.height * 2 + gap)) / 2)
+            let top = CGRect(x: band.midX - size.width / 2, y: band.minY + slack,
+                             width: size.width, height: size.height)
+            return [top, top.offsetBy(dx: 0, dy: size.height + gap)]
         }
     }
 
+    /// The band above the controls. Only non-touch-surface groups whose centre lies in the lower half of the
+    /// safe rect reserve space; groups dragged into the upper half float over the picture. With no such group
+    /// the band is the whole safe rect.
     static func topBand(safe: CGRect, groups: [ResolvedGroup]) -> CGRect {
-        let highest = groups.filter { !$0.group.controls.contains { isTouchSurface($0.kind) } }
+        let highest = groups.filter { !isTouchSurfaceGroup($0) && $0.frame.midY >= safe.midY }
             .map(\.frame.minY).min() ?? safe.maxY
         let bottom = max(safe.minY, min(safe.maxY, highest - gap))
         return CGRect(x: safe.minX, y: safe.minY, width: safe.width, height: bottom - safe.minY)
+    }
+
+    static func isTouchSurfaceGroup(_ group: ResolvedGroup) -> Bool {
+        group.group.controls.contains { isTouchSurface($0.kind) }
     }
 
     static func isTouchSurface(_ kind: OverlayControlKind) -> Bool {
@@ -44,13 +51,19 @@ public enum OverlayScreenPlanner {
         return false
     }
 
+    /// The column between the side clusters. Touch-surface groups are ignored. A group spanning the safe
+    /// rect's centre line lowers the column's bottom edge; only the remaining groups set the side edges.
     static func centerColumn(safe: CGRect, groups: [ResolvedGroup]) -> CGRect {
         let mid = safe.midX
-        let leftEdge = groups.filter { $0.frame.midX < mid }.map(\.frame.maxX).max() ?? safe.minX
-        let rightEdge = groups.filter { $0.frame.midX >= mid }.map(\.frame.minX).min() ?? safe.maxX
-        let minX = min(max(safe.minX, leftEdge + gap), safe.maxX)
-        let maxX = max(minX, min(safe.maxX, rightEdge - gap))
-        return CGRect(x: minX, y: safe.minY, width: maxX - minX, height: safe.height)
+        let candidates = groups.filter { !isTouchSurfaceGroup($0) }
+        let centred = candidates.filter { $0.frame.minX < mid && mid < $0.frame.maxX }
+        let sides = candidates.filter { !($0.frame.minX < mid && mid < $0.frame.maxX) }
+        let leftEdge = sides.filter { $0.frame.midX < mid }.map { $0.frame.maxX + gap }.max() ?? safe.minX
+        let rightEdge = sides.filter { $0.frame.midX >= mid }.map { $0.frame.minX - gap }.min() ?? safe.maxX
+        let minX = min(max(safe.minX, leftEdge), safe.maxX)
+        let maxX = max(minX, min(safe.maxX, rightEdge))
+        let bottom = max(safe.minY, min(safe.maxY, (centred.map(\.frame.minY).min() ?? safe.maxY + gap) - gap))
+        return CGRect(x: minX, y: safe.minY, width: maxX - minX, height: bottom - safe.minY)
     }
 
     static func aspectFit(_ aspect: CGFloat, in rect: CGRect) -> CGRect {

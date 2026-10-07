@@ -31,8 +31,8 @@ public enum OverlayLayoutEngine {
 
             let controls = group.controls.map { control -> ResolvedControl in
                 let ctl = override.buttons[control.id] ?? ControlOverride()
-                let width = control.frame.width * unit * scale.width * ctl.scale
-                let height = control.frame.height * unit * scale.height * ctl.scale
+                let width = control.frame.width * unit * scale.width * clampedControlScale(ctl.scale)
+                let height = control.frame.height * unit * scale.height * clampedControlScale(ctl.scale)
                 let midX = origin.x + (control.frame.midX * unit * scale.width) + ctl.offset.x
                 let midY = origin.y + (control.frame.midY * unit * scale.height) + ctl.offset.y
                 let frame = CGRect(x: midX - width / 2, y: midY - height / 2, width: width, height: height)
@@ -40,12 +40,22 @@ public enum OverlayLayoutEngine {
                                        hitFrame: frame.insetBy(dx: -extendedEdges * unit, dy: -extendedEdges * unit))
             }
             return ResolvedGroup(group: group, frame: CGRect(origin: origin, size: size), controls: controls,
-                                 scale: scale, opacity: group.opacity * (override.opacity ?? 1))
+                                 scale: scale, opacity: group.opacity * clampedOpacity(override.opacity ?? 1))
         }
         let screens = OverlayScreenPlanner.screenFrames(policy: template.screenPolicy, canvas: canvas,
                                                         groups: groups, gameAspect: gameAspect)
         return OverlayLayout(padKind: template.padKind, orientation: template.orientation,
                              groups: groups, screenFrames: screens)
+    }
+
+    static let opacityRange: ClosedRange<CGFloat> = 0.1...1
+
+    static func clampedControlScale(_ value: CGFloat) -> CGFloat {
+        min(max(value, scaleRange.lowerBound), scaleRange.upperBound)
+    }
+
+    static func clampedOpacity(_ value: CGFloat) -> CGFloat {
+        min(max(value, opacityRange.lowerBound), opacityRange.upperBound)
     }
 
     static func clampedScale(_ scale: CGSize) -> CGSize {
