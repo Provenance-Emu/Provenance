@@ -1,0 +1,147 @@
+name: PVAzahar
+options:
+  bundleIdPrefix: org.provenance-emu
+  createIntermediateGroups: true
+  defaultConfig: Release
+  deploymentTarget:
+    iOS: "17.0"
+    tvOS: "17.0"
+  minimumXcodeGenVersion: "2.36"
+  xcodeVersion: "16.0"
+configs:
+  Debug: debug
+  Release: release
+settings:
+  base:
+    ALLOW_TARGET_PLATFORM_SPECIALIZATION: YES
+    SWIFT_VERSION: "6.0"
+    SWIFT_OBJC_INTEROP_MODE: objcxx
+    CLANG_CXX_LANGUAGE_STANDARD: "gnu++20"
+    GCC_C_LANGUAGE_STANDARD: "gnu11"
+    CLANG_ENABLE_OBJC_ARC: YES
+    CLANG_ENABLE_MODULES: YES
+    DEFINES_MODULE: YES
+    OTHER_CPLUSPLUSFLAGS: "$(inherited) -fcxx-modules -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32 -Wno-deprecated-declarations"
+    GCC_PREPROCESSOR_DEFINITIONS:
+      - "$(inherited)"
+      - "ENABLE_VULKAN=1"
+      - "HAVE_COREAUDIO=1"
+      - "HAVE_FASTINTERP=1"
+      - "VK_NO_PROTOTYPES=1"
+      - "VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1"
+      - "VULKAN_HPP_NO_EXCEPTIONS=1"
+      - "FMT_HEADER_ONLY=0"
+    HEADER_SEARCH_PATHS:
+      - "$(inherited)"
+      - "$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers"
+    PVAZAHAR_SLICE: ios
+    "PVAZAHAR_SLICE[sdk=iphonesimulator*]": ios-sim
+    "PVAZAHAR_SLICE[sdk=appletvos*]": tvos
+    "PVAZAHAR_SLICE[sdk=appletvsimulator*]": tvos-sim
+    "EXCLUDED_ARCHS[sdk=*simulator*]": x86_64
+    OTHER_LDFLAGS: "$(inherited) -ObjC"
+    LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @loader_path/Frameworks"
+  configs:
+    Debug:
+      GCC_OPTIMIZATION_LEVEL: "0"
+      SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+    Release:
+      SWIFT_OPTIMIZATION_LEVEL: "-O"
+packages:
+  PVAudio: { path: ../../PVAudio }
+  PVCoreBridge: { path: ../../PVCoreBridge }
+  PVCoreObjCBridge: { path: ../../PVCoreObjCBridge }
+  PVEmulatorCore: { path: ../../PVEmulatorCore }
+  PVJIT: { path: ../../PVJIT }
+  PVLogging: { path: ../../PVLogging }
+  PVObjCUtils: { path: ../../PVObjCUtils }
+  PVPlists: { path: ../../PVPlists }
+  PVPrimitives: { path: ../../PVPrimitives }
+  PVSettings: { path: ../../PVSettings }
+  PVSupport: { path: ../../PVSupport }
+targets:
+  PVAzahar:
+    type: framework
+    platform: [iOS, tvOS]
+    sources:
+      - path: PVAzaharCore
+      - path: PVAzahar/PVAzahar.h
+    resources:
+      - path: PVAzahar/Core.plist
+    dependencies:
+      - framework: build/xcframework/PVlibAzahar.xcframework
+        embed: false
+      - sdk: Metal.framework
+      - sdk: QuartzCore.framework
+      - sdk: AudioToolbox.framework
+      - sdk: CoreAudio.framework
+      - sdk: AVFoundation.framework
+      - sdk: IOSurface.framework
+      - sdk: libz.tbd
+      - sdk: libc++.tbd
+      - package: PVAudio
+      - package: PVCoreBridge
+      - package: PVCoreObjCBridge
+      - package: PVEmulatorCore
+      - package: PVJIT
+      - package: PVLogging
+      - package: PVLogging
+        product: PVLoggingObjC
+      - package: PVObjCUtils
+      - package: PVPlists
+      - package: PVPrimitives
+      - package: PVSettings
+      - package: PVSupport
+    preBuildScripts:
+      - name: Build PVlibAzahar
+        shell: /bin/bash
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          SCRIPT="$PROJECT_DIR/build_azahar_core.py"
+          if [ ! -f "$PROJECT_DIR/azahar/CMakeLists.txt" ]; then
+            echo "error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild."; exit 1
+          fi
+          command -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo "error: cmake not found - 'brew install cmake ninja'"; exit 1; }
+          command -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo "error: ninja not found - 'brew install cmake ninja'"; exit 1; }
+          export PATH="/opt/homebrew/bin:$PATH"
+          case "${PLATFORM_NAME}" in
+            iphoneos)         platform=OS64;           slice=ios ;;
+            iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;
+            appletvos)        platform=TVOS;           slice=tvos ;;
+            appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;
+            *) echo "error: unsupported PLATFORM_NAME ${PLATFORM_NAME}"; exit 1 ;;
+          esac
+          python3 "$SCRIPT" -p "$platform"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)
+          # ProcessXCFramework copies the slice before this phase rebuilt it; put the fresh one where the linker looks.
+          fresh="$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework"
+          if [[ -d "$fresh" && -n "${BUILT_PRODUCTS_DIR:-}" ]]; then
+            mkdir -p "${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework"
+            /usr/bin/rsync -a --delete "$fresh/" "${BUILT_PRODUCTS_DIR}/PVlibAzahar-${slice}.framework/"
+          fi
+    settings:
+      base:
+        PRODUCT_NAME: PVAzahar
+        PRODUCT_MODULE_NAME: PVAzahar
+        INFOPLIST_FILE: PVAzahar/Info.plist
+        SKIP_INSTALL: YES
+  PVAzaharTests:
+    type: bundle.unit-test
+    platform: [iOS]
+    sources:
+      - path: Tests
+    dependencies:
+      - target: PVAzahar_iOS
+schemes:
+  PVAzahar:
+    build:
+      targets:
+        PVAzahar_iOS: all
+    test:
+      config: Debug
+      targets:
+        - PVAzaharTests_iOS
+  PVAzahar-tvOS:
+    build:
+      targets:
+        PVAzahar_tvOS: all
