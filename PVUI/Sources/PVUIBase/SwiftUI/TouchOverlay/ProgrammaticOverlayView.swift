@@ -35,7 +35,6 @@ struct ProgrammaticOverlayView: View {
     @Default(.controllerOpacity) private var globalOpacity
     @Default(.overlayHapticIntensity) private var hapticIntensity
     @Default(.buttonVibration) private var hapticsOn
-    @Default(.scalingMode) private var scalingMode
     @State private var padKind: OverlayPadKind
     @State private var sink: OverlayInputSinkAdapter?
     @State private var viewport = OverlayViewportPublisher()
@@ -97,12 +96,11 @@ struct ProgrammaticOverlayView: View {
         .onReceive(NotificationCenter.default.publisher(for: .thinLibretroCoreAVInfoDidUpdate)) { _ in
             coreAVInfoRevision &+= 1
         }
-        // The controller cleared its frame (rotation) or a scaling change needs the frame
-        // pushed again: re-send the current frames even though they did not change.
+        // The controller cleared its frame (rotation): re-send the current frames even
+        // though they did not change. (Scaling-mode changes are re-applied by the VC.)
         .onReceive(NotificationCenter.default.publisher(for: .deltaSkinForceRecalculate)) { _ in
             republish()
         }
-        .onChange(of: scalingMode) { _, _ in republish() }
         .onDisappear {
             if let editController {
                 editController.cancel()

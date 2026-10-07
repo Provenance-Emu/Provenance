@@ -7,6 +7,8 @@ import PVUIBase
 import QuartzCore
 import Combine
 import PVTouchOverlay
+import Defaults
+import PVSettings
 
 // MARK: - DeltaSkin Extension
 
@@ -203,6 +205,20 @@ extension PVEmulatorViewController {
         center.removeObserver(self, name: .overlayEditingDidChange, object: nil)
         center.addObserver(self, selector: #selector(handleOverlayEditing(_:)),
                            name: .overlayEditingDidChange, object: nil)
+        // A scaling-mode switch leaves the overlay's frame unchanged, so the frame dedup would
+        // swallow a re-publish; re-apply the mounted overlay's frame with `force` instead.
+        overlayScalingModeCancellable = Defaults.publisher(.scalingMode, options: [])
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.reapplyOverlayViewportForScalingMode() }
+    }
+
+    private func reapplyOverlayViewportForScalingMode() {
+        guard isProgrammaticOverlayActive else { return }
+        if core.supportsDualScreens {
+            applyDualScreenViewport()
+        } else if overlayScreenFrames.count == 1 {
+            applyFrameToGPUView(overlayScreenFrames[0], reason: "overlay-scaling-mode", force: true)
+        }
     }
 
     @objc private func handleOverlayScreenFrames(_ notification: Notification) {

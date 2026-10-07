@@ -161,12 +161,8 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // Check if we're in the middle of a rotation (currentTargetFrame was recently cleared)
         let isAfterRotation = currentTargetFrame == nil
 
-        if let current = currentTargetFrame,
-           !isAfterRotation,
-           abs(current.origin.x - frame.origin.x) < 0.5 &&
-           abs(current.origin.y - frame.origin.y) < 0.5 &&
-           abs(current.width - frame.width) < 0.5 &&
-           abs(current.height - frame.height) < 0.5 {
+        guard ViewportFrameDedup.shouldApply(new: frame, current: isAfterRotation ? nil : currentTargetFrame,
+                                             force: false) else {
             return false
         }
 
@@ -909,7 +905,9 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     }
 
     /// Apply frame to GPU view - single, clear application path
-    internal func applyFrameToGPUView(_ frame: CGRect, reason: String = "?") {
+    /// - Parameter force: re-apply even when the view already has this frame (a scaling-mode
+    ///   change alters the scaled frame computed from it, not the frame itself).
+    internal func applyFrameToGPUView(_ frame: CGRect, reason: String = "?", force: Bool = false) {
         guard !isBridgeShuttingDownForViewport() else { return }
         guard let gameScreenView = gpuViewController.view else { return }
         guard isValidFrame(frame) else {
@@ -918,10 +916,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         }
 
         // Check if frame changed
-        if abs(gameScreenView.frame.origin.x - frame.origin.x) < 0.5 &&
-           abs(gameScreenView.frame.origin.y - frame.origin.y) < 0.5 &&
-           abs(gameScreenView.frame.width - frame.width) < 0.5 &&
-           abs(gameScreenView.frame.height - frame.height) < 0.5 {
+        guard ViewportFrameDedup.shouldApply(new: frame, current: gameScreenView.frame, force: force) else {
             return
         }
 

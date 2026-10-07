@@ -164,6 +164,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
     /// `true` while the overlay's layout editor holds a pause it started itself.
     var overlayEditorPausedCore = false
 
+    /// Re-applies the overlay's viewport when the scaling mode changes.
+    var overlayScalingModeCancellable: AnyCancellable?
+
     // Keep track of whether we've positioned the GPU view
     static var hasPositionedGPUView = false
 
