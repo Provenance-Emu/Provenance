@@ -28,6 +28,9 @@
 #                (consumed by xcodebuild via the App Store Connect API key you have configured
 #                 for automatic signing / Xcode; store the .p8 where xcodebuild can find it)
 #   GitHub:      GITHUB_TOKEN (or uses gh CLI auth)
+#   Symbols:     SENTRY_AUTH_TOKEN (or a ~/.sentryclirc login) + sentry-cli on PATH, to upload
+#                the archive's dSYMs to Sentry. Optional: without them the dSYMs are only
+#                kept locally and the script warns. An upload failure never fails the release.
 #
 # Overridable config env vars:
 #   RELEASES_REPO  (default: Provenance-Emu/Provenance)
@@ -35,6 +38,13 @@
 #                               (default: every external group with a public link)
 #   TESTFLIGHT_TIMEOUT_MINUTES  how long to wait for App Store Connect processing
 #                               before distributing (default: 120)
+#   SENTRY_ORG / SENTRY_PROJECT  Sentry destination for dSYMs
+#                               (default: provenance-emu / provenance)
+#
+# Every archive's dSYMs (app + embedded frameworks) are copied to
+#   build/export/<version>-<build>/dSYMs/<ios|tvos>/
+# and uploaded to Sentry, so crash logs can be symbolicated later even without
+# Sentry (see "Symbolicating a crash log" under CI in CLAUDE.md).
 
 set -euo pipefail
 
@@ -48,6 +58,8 @@ ARCHIVES_DIR="$PROJECT_DIR/build/archives"
 EXPORT_DIR="$PROJECT_DIR/build/export"
 WORKSPACE="$PROJECT_DIR/Provenance.xcworkspace"
 RELEASES_REPO="${RELEASES_REPO:-Provenance-Emu/Provenance}"
+SENTRY_ORG="${SENTRY_ORG:-provenance-emu}"
+SENTRY_PROJECT="${SENTRY_PROJECT:-provenance}"
 
 # Single multiplatform AppStore scheme for ALL platforms — the app target is
 # cross-platform (iOS + tvOS), so iOS and tvOS archive from the same scheme and
@@ -334,7 +346,10 @@ do_archive() {
             # invisible in the formatted stream. Same rationale as build.yml.
             local logfile="$ARCHIVES_DIR/xcodebuild-${label}.log"
             info "Raw build log: $logfile"
-            "${cmd[@]}" 2>&1 | tee "$logfile" | "$formatter"
+            # release.sh uploads every dSYM itself once the archive succeeds (see
+            # save_and_upload_dsyms), so tell the app's "Upload Debug Symbols to
+            # Sentry" Run Script phase not to repeat the same upload mid-build.
+            PV_SKIP_XCODE_SENTRY_UPLOAD=1 "${cmd[@]}" 2>&1 | tee "$logfile" | "$formatter"
         fi
     fi
     $DRY_RUN || [[ -d "$archive" ]] || err "Archive not found: $archive (run without --no-build)"
@@ -342,6 +357,79 @@ do_archive() {
 
 should_platform ios  && do_archive iOS  "$IOS_SCHEME"  "generic/platform=iOS"  "$IOS_ARCHIVE"
 should_platform tvos && do_archive tvOS "$TVOS_SCHEME" "generic/platform=tvOS" "$TVOS_ARCHIVE"
+
+# ── Debug symbols (dSYMs) ───────────────────────────────────────────────────────────
+# Crashes from App Store / TestFlight builds are unsymbolicated unless the dSYMs of
+# THAT archive reach Sentry (or are kept locally for atos). The archive's dSYMs/
+# folder holds the app AND every embedded framework built from source, so it is
+# the one place to take them from. Runs right after the archive and before
+# export/upload, so symbols exist before the build can reach a tester.
+#
+# Never fatal: a missing token / sentry-cli / network error only WARNS, because
+# losing symbols must not block shipping a build.
+#
+# Not covered (no dSYM exists to collect — prebuilt binaries copied into the
+# bundle): the libretro buildbot *.libretro.framework cores, ffmpeg/libav*,
+# MoltenVK, Sentry.framework, and PVlibDolphin-ios.
+DSYM_KEPT_PATHS=()
+
+# $1 label, $2 short dir name (ios|tvos), $3 .xcarchive path
+save_and_upload_dsyms() {
+    local label="$1" short="$2" archive="$3"
+    # Name the folder after the ARCHIVE's own version/build (read from its
+    # Info.plist) so --no-build reuse of an older archive can't be mislabelled.
+    local av="$VERSION" ab="$BUILD_NUMBER" plist="$archive/Info.plist" v b
+    if [[ -f "$plist" ]]; then
+        v="$(/usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:CFBundleShortVersionString' "$plist" 2>/dev/null || true)"
+        b="$(/usr/libexec/PlistBuddy -c 'Print :ApplicationProperties:CFBundleVersion' "$plist" 2>/dev/null || true)"
+        av="${v:-$av}"
+        ab="${b:-$ab}"
+    fi
+    local src="$archive/dSYMs" dest="$EXPORT_DIR/${av}-${ab}/dSYMs/$short"
+    log "Saving + uploading $label dSYMs (Sentry $SENTRY_ORG/$SENTRY_PROJECT)..."
+    if $DRY_RUN; then
+        echo "  [dry-run] cp -cR $src/. $dest/"
+        echo "  [dry-run] sentry-cli debug-files upload --org $SENTRY_ORG --project $SENTRY_PROJECT $src"
+        return 0
+    fi
+    if ! compgen -G "$src/*.dSYM" >/dev/null; then
+        warn "$label archive has no dSYMs at $src — crashes from this build will NOT symbolicate"
+        return 0
+    fi
+
+    # Local copy for atos/symbolicatecrash. `cp -c` is an APFS clone (instant, no
+    # extra disk for the ~1.3 GB set); fall back to a plain copy elsewhere.
+    mkdir -p "$dest" || { warn "could not create $dest"; return 0; }
+    if cp -cR "$src/." "$dest/" 2>/dev/null || cp -R "$src/." "$dest/"; then
+        DSYM_KEPT_PATHS+=("$dest")
+        info "$label dSYMs kept at: $dest ($(find "$dest" -maxdepth 1 -name '*.dSYM' | wc -l | tr -d ' ') bundles)"
+    else
+        warn "could not copy $label dSYMs to $dest"
+    fi
+
+    if ! command -v sentry-cli >/dev/null 2>&1; then
+        warn "sentry-cli not installed — $label dSYMs NOT uploaded to Sentry (brew install getsentry/tools/sentry-cli)"
+        return 0
+    fi
+    if [[ -z "${SENTRY_AUTH_TOKEN:-}" && ! -f "$HOME/.sentryclirc" ]]; then
+        warn "SENTRY_AUTH_TOKEN not set and no ~/.sentryclirc — $label dSYMs NOT uploaded to Sentry"
+        return 0
+    fi
+    local upload_log="$ARCHIVES_DIR/sentry-dsyms-${short}.log"
+    # --org/--project are explicit: CI has no ~/.sentryclirc to supply them.
+    if sentry-cli debug-files upload \
+            --org "$SENTRY_ORG" --project "$SENTRY_PROJECT" \
+            "$src" >"$upload_log" 2>&1; then
+        info "$label dSYMs uploaded to Sentry (log: $upload_log)"
+    else
+        warn "Sentry dSYM upload failed for $label — see $upload_log; symbols are still in $dest"
+        tail -n 5 "$upload_log" >&2 || true
+    fi
+    return 0
+}
+
+should_platform ios  && save_and_upload_dsyms iOS  ios  "$IOS_ARCHIVE"
+should_platform tvos && save_and_upload_dsyms tvOS tvos "$TVOS_ARCHIVE"
 
 
 do_appstore_upload() {
@@ -505,3 +593,6 @@ if [[ ${#DISTRIBUTE_FAILED[@]} -gt 0 ]]; then
 fi
 
 log "Release $VERSION+$BUILD_NUMBER complete!"
+for kept in ${DSYM_KEPT_PATHS[@]+"${DSYM_KEPT_PATHS[@]}"}; do
+    info "dSYMs (for atos / symbolicatecrash): $kept"
+done

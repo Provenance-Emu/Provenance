@@ -50,6 +50,8 @@ GitHub Actions (`.github/workflows/build.yml`) builds all target variants on pus
 
   The failure-report step also prints, in order: `: error:` diagnostics, the `The following build commands failed:` block, and the last 100 raw lines. It greps `": (fatal )?error:"` with a **leading colon** on purpose — a bare `"error:"` also matches ObjC selectors like `loadStateToFileAtPath:error:` inside `-Wincomplete-implementation` warnings, which floods the report and buries the real errors. Run Script failures (e.g. "Generate Frameworks" exiting non-zero) produce no `error:` line at all and surface *only* in the `build commands failed` block.
 
+- **Symbolicating a crash log.** `release.sh` (local and `testflight.yml`) copies each archive's dSYMs to `build/export/<version>-<build>/dSYMs/<ios|tvos>/` and uploads them to Sentry (`provenance-emu/provenance`, needs `SENTRY_AUTH_TOKEN` or `~/.sentryclirc`; a failed upload only warns). Sentry's crash handler is off, so crashes arrive via MetricKit and on-device `.ips` files. To symbolicate by hand, match the `.ips` binary UUID to a dSYM (`dwarfdump --uuid <x>.dSYM`), then `xcrun atos -arch arm64 -o <x>.dSYM/Contents/Resources/DWARF/<name> -l <load address> <address>` (frames in an embedded framework need that framework's dSYM). Prebuilt binaries — libretro buildbot `*.libretro.framework`, ffmpeg, MoltenVK, Sentry, `PVlibDolphin-ios` — ship no dSYM and stay unsymbolicated.
+
 ## Architecture
 
 ### Module Structure
