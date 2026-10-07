@@ -511,6 +511,10 @@ final class PauseTileMenuViewModel: ObservableObject {
             ))
         }
 
+        #if !os(tvOS)
+        controlsTiles.append(contentsOf: Self.touchOverlayEntries(emulatorVC: emulatorVC))
+        #endif
+
         // Light Gun overlay toggle — shown when the active core supports light
         // gun input (NES with Zapper, SNES with Super Scope, PSX with GunCon,
         // Saturn with Stunner, etc.). Auto-install is disabled in
@@ -1085,6 +1089,42 @@ final class PauseTileMenuViewModel: ObservableObject {
         result = result && emulatorVC.core.supportsSaveStates
         return result
     }
+
+    #if !os(tvOS)
+    static let controllerLayoutTileID = "controllerLayout"
+    static let editOverlayLayoutTileID = "editOverlayLayout"
+
+    /// Programmatic touch overlay entries: "Edit Layout" while the overlay is on screen, and
+    /// "Controller Layout" for an overlay-bound system with controller variants.
+    private static func touchOverlayEntries(emulatorVC: PVEmulatorViewController) -> [PauseMenuTile] {
+        guard let game = emulatorVC.game, !game.isInvalidated,
+              let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
+                                                                       persisted: game.systemIdentifier),
+              ProgrammaticOverlaySupport.covers(system, enabled: Defaults[.programmaticOverlay]) else { return [] }
+        var entries: [PauseMenuTile] = []
+        if system.availableControllerLayoutVariants != nil {
+            entries.append(PauseMenuTile(
+                id: controllerLayoutTileID,
+                icon: "gamecontroller.fill",
+                label: String(localized: "Controller Layout"),
+                description: String(localized: "Pick the controller the touch controls and the core use."),
+                colorKey: .blue,
+                dismissOnTap: false
+            ))
+        }
+        if emulatorVC.isProgrammaticOverlayActive {
+            entries.append(PauseMenuTile(
+                id: editOverlayLayoutTileID,
+                icon: "square.and.pencil",
+                label: String(localized: "Edit Layout"),
+                description: String(localized: "Move, resize and fade the touch controls."),
+                colorKey: .purple,
+                dismissOnTap: false
+            ))
+        }
+        return entries
+    }
+    #endif
 
     /// Resolves the most accurate runtime system identifier for tile-generation.
     /// Prefers concrete game-system identifiers before core-level fallback.

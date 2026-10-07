@@ -170,6 +170,8 @@
 /// ControllerLayoutVariant ids: wii-wiimote / wii-wiimote-nunchuck / wii-classic[-pro],
 /// gc-standard / gc-bongos / gc-keyboard. Regenerates config inis and hot-swaps when running.
 - (void) applyControllerVariant:(NSString *)variantID;
+/// The ControllerLayoutVariant id last loaded or applied, or nil when the core runs its defaults.
+- (NSString *) currentControllerVariantID;
 - (void) resetCheatCodes;
 -(void)controllerConnected:(NSNotification *)notification;
 -(void)controllerDisconnected:(NSNotification *)notification;

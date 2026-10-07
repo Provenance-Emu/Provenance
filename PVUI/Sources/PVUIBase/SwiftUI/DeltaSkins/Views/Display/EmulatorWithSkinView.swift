@@ -317,7 +317,9 @@ struct EmulatorWithSkinView: View {
             ProgrammaticOverlayView(
                 systemId: systemId, binding: binding, coreInstance: coreInstance, inputHandler: inputHandler,
                 gameMD5: gameMD5,
-                padKind: OverlayPadKindResolver.padKind(for: systemId, core: coreInstance, gameMD5: gameMD5 ?? "")
+                padKind: OverlayPadKindResolver.padKind(for: systemId,
+                                                        variantProvider: coreInstance as? ConsoleVariantConfigurable,
+                                                        gameMD5: gameMD5 ?? "")
             ) { frames in
                 NotificationCenter.default.post(
                     name: .overlayScreenFramesDidChange, object: nil,

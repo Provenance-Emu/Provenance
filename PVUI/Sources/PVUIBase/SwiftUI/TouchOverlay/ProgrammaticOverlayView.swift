@@ -8,6 +8,7 @@
 #if !os(tvOS)
 import SwiftUI
 import Defaults
+import PVCoreBridge
 import PVEmulatorCore
 import PVSettings
 import PVSystems
@@ -47,6 +48,10 @@ struct ProgrammaticOverlayView: View {
     /// Accepted game aspect ratios; anything else is a not-yet-booted core's fallback.
     private static let plausibleAspect: ClosedRange<CGFloat> = 0.5...2.5
     private static let fallbackAspect: CGFloat = 4.0 / 3.0
+    /// Per-game or per-system controller variant choices changed.
+    private static let variantSettingsChanged = Defaults
+        .publisher(keys: .controllerLayoutVariantsByGame, .controllerLayoutVariantsBySystem, options: [])
+        .receive(on: DispatchQueue.main)
 
     init(systemId: SystemIdentifier, binding: SystemOverlayBinding, coreInstance: PVEmulatorCore,
          inputHandler: DeltaSkinInputHandler, gameMD5: String?, padKind: OverlayPadKind,
@@ -95,6 +100,16 @@ struct ProgrammaticOverlayView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .thinLibretroCoreAVInfoDidUpdate)) { _ in
             coreAVInfoRevision &+= 1
+            // The thin core declares its port devices at load, after the overlay mounted.
+            refreshPadKind()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .controllerLayoutVariantDidChange)) { notification in
+            guard notification.object as? PVEmulatorCore === coreInstance else { return }
+            refreshPadKind()
+        }
+        // Pause-menu and Settings choices, including ones the core could not apply.
+        .onReceive(Self.variantSettingsChanged) { _ in
+            refreshPadKind()
         }
         // The controller cleared its frame (rotation): re-send the current frames even
         // though they did not change. (Scaling-mode changes are re-applied by the VC.)
@@ -145,6 +160,13 @@ struct ProgrammaticOverlayView: View {
         guard size.width > 0, size.height > 0 else { return Self.fallbackAspect }
         let ratio = size.width / size.height
         return Self.plausibleAspect.contains(ratio) ? ratio : Self.fallbackAspect
+    }
+
+    private func refreshPadKind() {
+        let resolved = OverlayPadKindResolver.padKind(for: systemId,
+                                                      variantProvider: coreInstance as? ConsoleVariantConfigurable,
+                                                      gameMD5: gameMD5 ?? "")
+        if resolved != padKind { padKind = resolved }
     }
 
     private func beginEditing(template: OverlayTemplate, canvas: OverlayCanvas) {

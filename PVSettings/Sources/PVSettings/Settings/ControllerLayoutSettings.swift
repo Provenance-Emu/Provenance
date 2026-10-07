@@ -23,6 +23,12 @@ public extension Defaults.Keys {
     /// are stored here; if a system is absent, the default (first) variant applies.
     static let controllerLayoutVariantsBySystem =
         Key<[String: String]>("controllerLayoutVariantsBySystem", default: [:])
+
+    /// Per-game controller layout variant override, keyed by game MD5.
+    ///
+    /// - Value: `ControllerLayoutVariant.id` string. Wins over the per-system choice.
+    static let controllerLayoutVariantsByGame =
+        Key<[String: String]>("controllerLayoutVariantsByGame", default: [:])
 }
 
 // MARK: - Helpers

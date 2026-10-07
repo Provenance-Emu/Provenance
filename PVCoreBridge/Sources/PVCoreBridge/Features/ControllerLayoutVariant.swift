@@ -154,7 +154,7 @@ public extension SystemIdentifier {
     /// or `nil` if the system has only one fixed layout.
     var availableControllerLayoutVariants: [ControllerLayoutVariant]? {
         switch self {
-        case .Genesis:
+        case .Genesis, .Sega32X, .SegaCD:
             return [.genesis3Button, .genesis6Button]
         case .Wii:
             return [.wiiWiimote, .wiiWiimoteNunchuck, .wiiClassicController, .wiiClassicControllerPro]
@@ -179,18 +179,37 @@ public extension SystemIdentifier {
 
 // MARK: - ConsoleVariantConfigurable Protocol
 
-/// Implement this protocol in an emulator core to receive layout-variant change
-/// notifications when the user switches the per-system controller layout in Settings.
+/// Implement this protocol in an emulator core to receive layout-variant changes
+/// and to report the variant it is actually running.
 ///
 /// The variant `id` corresponds to one of the `ControllerLayoutVariant` constants
 /// (e.g. `"genesis-6btn"`, `"wii-classic"`). Cores should map those IDs to their
 /// own device-type or core-option values.
 ///
-/// - Note: This PR introduces the model, persistence layer, and Settings UI picker.
-///   The emulator VC / core-bridge call-site that invokes `applyControllerLayoutVariant(_:)`
-///   at launch and on variant change will be wired in a follow-up PR.
+/// Conformers post `.controllerLayoutVariantDidChange` after applying a variant so
+/// views that draw the controller (the programmatic touch overlay) can follow it.
 public protocol ConsoleVariantConfigurable: AnyObject {
     /// Apply the selected controller layout variant.
     /// - Parameter variantID: The `ControllerLayoutVariant.id` string chosen by the user.
     func applyControllerLayoutVariant(_ variantID: String)
+
+    /// The variant the core is actually running, or `nil` when it cannot tell.
+    var currentControllerLayoutVariantID: String? { get }
+}
+
+public extension ConsoleVariantConfigurable {
+    /// Cores that cannot report their running variant leave resolution to the settings.
+    var currentControllerLayoutVariantID: String? { nil }
+}
+
+public extension Notification.Name {
+    /// A core applied (or restored) a controller layout variant. `object` is the core;
+    /// `userInfo[ControllerLayoutVariantNotificationKey.variantID]` is the variant id `String`
+    /// when the poster knows it — re-read `currentControllerLayoutVariantID` otherwise.
+    static let controllerLayoutVariantDidChange = Notification.Name("PVControllerLayoutVariantDidChange")
+}
+
+/// `userInfo` keys of `.controllerLayoutVariantDidChange`.
+public enum ControllerLayoutVariantNotificationKey {
+    public static let variantID = "variantID"
 }

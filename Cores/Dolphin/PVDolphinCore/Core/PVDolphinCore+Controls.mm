@@ -1075,6 +1075,9 @@ s8 joyx[4], joyy[4];
 // changes is still pending upstream, so the boot-time read is what keeps the picker honest.
 static NSString *s_wiimoteExtension = @"Nunchuk";
 static SerialInterface::SIDevices s_gcSIDevice = SerialInterface::SIDEVICE_GC_CONTROLLER;
+// The variant id last applied (both Classic variants map to one extension, so the id is kept
+// as given). nil until a variant is loaded or applied: the core runs its defaults.
+static NSString *s_controllerVariantID = nil;
 
 - (void)setControllerVariantValues:(NSString *)variantID {
     if ([variantID isEqualToString:@"wii-wiimote"])               s_wiimoteExtension = @"None";
@@ -1084,16 +1087,22 @@ static SerialInterface::SIDevices s_gcSIDevice = SerialInterface::SIDEVICE_GC_CO
     else if ([variantID isEqualToString:@"gc-bongos"])    s_gcSIDevice = SerialInterface::SIDEVICE_GC_TARUKONGA;
     else if ([variantID isEqualToString:@"gc-keyboard"])  s_gcSIDevice = SerialInterface::SIDEVICE_GC_KEYBOARD;
     else { ILOG(@"🎮 Unknown controller variant id: %@", variantID); return; }
+    s_controllerVariantID = [variantID copy];
     ILOG(@"🎮 Controller variant set: %@ (wii ext=%@, gc dev=%d)", variantID, s_wiimoteExtension, (int)s_gcSIDevice);
 }
 
 - (void)loadPersistedControllerVariant {
+    s_controllerVariantID = nil; // the statics outlive the previous game's core
     // ControllerLayoutSettings (PVSettings/Defaults) persists [systemID: variantID] as a plain
     // plist dictionary under this key; an absent key/entry means "system default".
     NSDictionary *map = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"controllerLayoutVariantsBySystem"];
     NSString *variantID = [map isKindOfClass:[NSDictionary class]] ? map[[self systemIdentifier]] : nil;
     if ([variantID isKindOfClass:[NSString class]])
         [self setControllerVariantValues:variantID];
+}
+
+- (NSString *)currentControllerVariantID {
+    return s_controllerVariantID;
 }
 
 - (void)applyControllerVariant:(NSString *)variantID {

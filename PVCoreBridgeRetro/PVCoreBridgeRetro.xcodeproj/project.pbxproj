@@ -41,6 +41,7 @@
 		B3D180A328964C40001207AF /* PVLibRetroCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A128964C3B001207AF /* PVLibRetroCore+Controls.m */; };
 		B3D180A528964C40001207AF /* PVLibRetroCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A228964C40001207AF /* PVLibRetroCore+Saves.m */; };
 		B3D991C72F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D991C62F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift */; };
+		C0C0CAFE300000000000002D /* PVThinLibretroCore+LayoutVariant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE300000000000002C /* PVThinLibretroCore+LayoutVariant.swift */; };
 		B3D991C92F788AF2002F1DCB /* PVLibRetroRumbleHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D991C82F788AF2002F1DCB /* PVLibRetroRumbleHelper.swift */; };
 		B3D991CB2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D991CA2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift */; };
 		B3D9A2B52F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */; };
@@ -68,6 +69,7 @@
 		C0C0CAFE00000007 /* hatari.cfg in Resources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE00000008 /* hatari.cfg */; };
 		C0C0CAFE2F00000000000003 /* CRcheevos in Frameworks */ = {isa = PBXBuildFile; productRef = C0C0CAFE2F00000000000002 /* CRcheevos */; };
 		C0C0CAFE300000000000000F /* PaletteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE300000000000000E /* PaletteTests.swift */; };
+		C0C0CAFE300000000000002F /* ThinLayoutVariantTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE300000000000002E /* ThinLayoutVariantTests.swift */; };
 		C0C0CAFE3000000000000011 /* PerfInterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */; };
 		C0C0CAFE3000000000000013 /* RelativeMouseScalerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000012 /* RelativeMouseScalerTests.swift */; };
 		C0C0CAFE3000000000000023 /* ThinContentArchiveResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C0CAFE3000000000000022 /* ThinContentArchiveResolverTests.swift */; };
@@ -916,6 +918,7 @@
 		B3D180A128964C3B001207AF /* PVLibRetroCore+Controls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Controls.m"; sourceTree = "<group>"; };
 		B3D180A228964C40001207AF /* PVLibRetroCore+Saves.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Saves.m"; sourceTree = "<group>"; };
 		B3D991C62F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+Palette.swift"; sourceTree = "<group>"; };
+		C0C0CAFE300000000000002C /* PVThinLibretroCore+LayoutVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+LayoutVariant.swift"; sourceTree = "<group>"; };
 		B3D991C82F788AF2002F1DCB /* PVLibRetroRumbleHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVLibRetroRumbleHelper.swift; sourceTree = "<group>"; };
 		B3D991CA2F788B6B002F1DCB /* SystemIdentifier+ObjCBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SystemIdentifier+ObjCBridge.swift"; sourceTree = "<group>"; };
 		B3D9A2B42F78B551002F1DCB /* PVThinLibretroCore+SystemFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVThinLibretroCore+SystemFiles.swift"; sourceTree = "<group>"; };
@@ -938,6 +941,7 @@
 		C0C0CAFE00000006 /* ThinContentArchiveResolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThinContentArchiveResolver.swift; sourceTree = "<group>"; };
 		C0C0CAFE00000008 /* hatari.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; path = Resources/hatari.cfg; sourceTree = "<group>"; };
 		C0C0CAFE300000000000000E /* PaletteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteTests.swift; sourceTree = "<group>"; };
+		C0C0CAFE300000000000002E /* ThinLayoutVariantTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinLayoutVariantTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfInterfaceTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000012 /* RelativeMouseScalerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeMouseScalerTests.swift; sourceTree = "<group>"; };
 		C0C0CAFE3000000000000022 /* ThinContentArchiveResolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinContentArchiveResolverTests.swift; sourceTree = "<group>"; };
@@ -2889,6 +2893,7 @@
 				B330D5442F7731A200440DFA /* PVThinLibretroCore+MIDI.swift */,
 				B3D9A2B62F78B568002F1DCB /* PVThinLibretroCore+Netplay.swift */,
 				B3D991C62F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift */,
+				C0C0CAFE300000000000002C /* PVThinLibretroCore+LayoutVariant.swift */,
 				C0C0CAFE00000002 /* PVThinLibretroCore+Scaling.swift */,
 				C0C0CAFE00000004 /* RelativeMouseScaler.swift */,
 				C0C0CAFE00000006 /* ThinContentArchiveResolver.swift */,
@@ -2935,6 +2940,7 @@
 			isa = PBXGroup;
 			children = (
 				C0C0CAFE300000000000000E /* PaletteTests.swift */,
+				C0C0CAFE300000000000002E /* ThinLayoutVariantTests.swift */,
 				C0C0CAFE3000000000000010 /* PerfInterfaceTests.swift */,
 				C0C0CAFE3000000000000012 /* RelativeMouseScalerTests.swift */,
 				C0C0CAFE3000000000000022 /* ThinContentArchiveResolverTests.swift */,
@@ -3160,6 +3166,7 @@
 				B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */,
 				B4F1A2B3C4D5E60011223345 /* PVThinLibretroFrontend.mm in Sources */,
 				B3D991C72F788AD4002F1DCB /* PVThinLibretroCore+Palette.swift in Sources */,
+				C0C0CAFE300000000000002D /* PVThinLibretroCore+LayoutVariant.swift in Sources */,
 				B4F1A2B3C4D5E60011223346 /* PVThinLibretroCore.swift in Sources */,
 				B4F1A2B3C4D5E60011223347 /* PVThinLibretroCore+Controls.swift in Sources */,
 				B4F1A2B3C4D5E60011223349 /* PVThinLibretroCore+Features.swift in Sources */,
@@ -3178,6 +3185,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0C0CAFE300000000000000F /* PaletteTests.swift in Sources */,
+				C0C0CAFE300000000000002F /* ThinLayoutVariantTests.swift in Sources */,
 				C0C0CAFE3000000000000011 /* PerfInterfaceTests.swift in Sources */,
 				C0C0CAFE3000000000000013 /* RelativeMouseScalerTests.swift in Sources */,
 				C0C0CAFE3000000000000023 /* ThinContentArchiveResolverTests.swift in Sources */,

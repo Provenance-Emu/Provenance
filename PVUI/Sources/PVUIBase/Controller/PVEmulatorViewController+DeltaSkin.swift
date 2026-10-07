@@ -221,6 +221,16 @@ extension PVEmulatorViewController {
         }
     }
 
+    /// Pause menu "Edit Layout": closes the menu, then asks the overlay for its editor once
+    /// the menu has resumed the core, so the editor's own pause takes over (and is released
+    /// when it closes) instead of the game resuming under it.
+    func openOverlayLayoutEditor() {
+        dismissNav(resumeEmulation: true) { [weak self] in
+            self?.restoreIndicatorOverlay()
+            NotificationCenter.default.post(name: .overlayEditLayoutRequested, object: nil)
+        }
+    }
+
     @objc private func handleOverlayScreenFrames(_ notification: Notification) {
         let frames = OverlayNotificationPayload.frames(from: notification.userInfo)
         DispatchQueue.main.async { [weak self] in self?.overlayScreenFramesDidChange(frames) }

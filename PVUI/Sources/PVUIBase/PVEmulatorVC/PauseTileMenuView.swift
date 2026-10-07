@@ -122,6 +122,9 @@ struct PauseTileMenuView: View {
     #endif
     @State private var showingShaderSettings = false
     @State private var showingPortDevices = false
+    #if !os(tvOS)
+    @State private var controllerLayoutContext: ControllerLayoutSheetContext?
+    #endif
     @State private var showingMIDIPicker = false
     @State private var showingSystemSkinSelection = false
     @State private var showingSkinCatalog = false
@@ -700,6 +703,14 @@ struct PauseTileMenuView: View {
         // MARK: Port device type picker
         case "portDevices":
             showingPortDevices = true
+
+        // MARK: Programmatic touch overlay
+        #if !os(tvOS)
+        case PauseTileMenuViewModel.controllerLayoutTileID:
+            controllerLayoutContext = makeControllerLayoutContext()
+        case PauseTileMenuViewModel.editOverlayLayoutTileID:
+            emulatorVC.openOverlayLayoutEditor()
+        #endif
 
         // MARK: MIDI device picker
         case "midiDevice":
@@ -1853,6 +1864,11 @@ struct PauseTileMenuView: View {
         .sheet(isPresented: $showingPortDevices) {
             PortDevicesPauseSheet(emulatorVC: emulatorVC)
         }
+        #if !os(tvOS)
+        .sheet(item: $controllerLayoutContext, onDismiss: { rebuildSections() }, content: { context in
+            ControllerLayoutPauseSheet(context: context, core: emulatorVC.core)
+        })
+        #endif
         #if !os(tvOS)
         .fileImporter(
             isPresented: $showingSkinImporter,
