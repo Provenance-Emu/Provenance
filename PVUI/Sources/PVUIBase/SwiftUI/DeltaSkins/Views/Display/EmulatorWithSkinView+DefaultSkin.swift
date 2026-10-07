@@ -348,7 +348,7 @@ struct DefaultControllerSkinView: View {
                                     HardwareSwitchRowView(switches: switches) { buttonId, _ in
                                         // Send a momentary press+release so the core registers the edge.
                                         inputHandler.buttonPressed(buttonId)
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + HardwareSwitchTiming.pressDuration) {
                                             inputHandler.buttonReleased(buttonId)
                                         }
                                     }
