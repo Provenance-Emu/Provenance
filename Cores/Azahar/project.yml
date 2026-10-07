@@ -149,6 +149,16 @@ targets:
       - path: Tests
     dependencies:
       - target: PVAzahar_iOS
+    settings:
+      base:
+        # PVAzahar-Swift.h does `@import PVCoreBridge;` etc. Clang only finds SwiftPM's generated module maps
+        # when told, and the test bundle has no package dependencies of its own to add them.
+        OTHER_SWIFT_FLAGS: >-
+          $(inherited)
+          -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVCoreBridge.modulemap
+          -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVEmulatorCore.modulemap
+          -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVSupport.modulemap
+          -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVPlists.modulemap
 schemes:
   PVAzahar:
     build:

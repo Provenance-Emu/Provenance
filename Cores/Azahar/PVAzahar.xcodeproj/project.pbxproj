@@ -55,8 +55,10 @@
 		742CB364E8FF6CAC535B9DA2 /* AzaharEmuWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 01DA7C3922A362D00C8AC676 /* AzaharEmuWindow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		755166F2978E6D05E648FDF0 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = 15C531D33E19ABFBB02F47B6 /* PVEmulatorCore */; };
 		7B80C2601E05E720EBC60C40 /* PVAzahar.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C4747365172063E8D2C5A19 /* PVAzahar.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		80E0364C13FD83A014D7A623 /* PVAzaharDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */; };
 		81FE72E701303D0944C69486 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C79157998291504790FD90A /* libz.tbd */; };
 		821A7A49B9850DA8FA6716CE /* AzaharCamera.mm in Sources */ = {isa = PBXBuildFile; fileRef = 182AFEFC45503FA4231E8614 /* AzaharCamera.mm */; };
+		849298E87552D4DA2240D93C /* PVAzaharDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */; };
 		84E30B7267CECF60C926E508 /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 0F729D13C154C5A41319ED4B /* PVObjCUtils */; };
 		86553A2373025B8FC2BF2E4F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CE90E615524E315A37667AA /* AVFoundation.framework */; };
 		8EB745345467AF969DD7D181 /* PVAzaharCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 785B20780FB9F684BD0E4099 /* PVAzaharCoreBridge.mm */; };
@@ -154,6 +156,7 @@
 		6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAzaharCoreOptions.swift; sourceTree = "<group>"; };
 		6F084488EAC660B7FE2D5F4F /* PVAzahar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVAzahar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		722CA6B3EB98EA29058EE708 /* PVAzaharCoreBridge+Controls.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVAzaharCoreBridge+Controls.mm"; sourceTree = "<group>"; };
+		74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVAzaharDataMigrator.swift; sourceTree = "<group>"; };
 		785B20780FB9F684BD0E4099 /* PVAzaharCoreBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVAzaharCoreBridge.mm; sourceTree = "<group>"; };
 		79F96C6CB0762431065B1329 /* AzaharGraphicsContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AzaharGraphicsContext.mm; sourceTree = "<group>"; };
 		7C7C066A600E73B32F26A2BA /* AzaharEmuWindow.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AzaharEmuWindow.mm; sourceTree = "<group>"; };
@@ -288,6 +291,7 @@
 				AD7820473F9C7058843F609D /* PVAzaharCoreBridge+Video.h */,
 				DDC942AED2CDD5BD427418A5 /* PVAzaharCoreBridge+Video.mm */,
 				6E58A3A9BA2D42FDE09BE6E9 /* PVAzaharCoreOptions.swift */,
+				74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */,
 				6DE84F35983D6D1ABF12F45D /* PVAzaharRenderView.swift */,
 				6F7DA46DE0C679356DE29A78 /* Glue */,
 			);
@@ -606,6 +610,7 @@
 				2DB33F9DE763F4921D934880 /* PVAzaharCoreBridge+Video.mm in Sources */,
 				8EB745345467AF969DD7D181 /* PVAzaharCoreBridge.mm in Sources */,
 				3AD8432485137B85FA81853B /* PVAzaharCoreOptions.swift in Sources */,
+				849298E87552D4DA2240D93C /* PVAzaharDataMigrator.swift in Sources */,
 				C6CBC9BEA7C215E796229F88 /* PVAzaharRenderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -637,6 +642,7 @@
 				4578A21C7AB877E3CE2F926A /* PVAzaharCoreBridge+Video.mm in Sources */,
 				391369573B18BF2BAF6A5D4A /* PVAzaharCoreBridge.mm in Sources */,
 				72493E1037E4AB3D804F8355 /* PVAzaharCoreOptions.swift in Sources */,
+				80E0364C13FD83A014D7A623 /* PVAzaharDataMigrator.swift in Sources */,
 				01AA46B12E2943E5237BBE88 /* PVAzaharRenderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -748,6 +754,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVCoreBridge.modulemap -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVEmulatorCore.modulemap -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVSupport.modulemap -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVPlists.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzaharTests-iOS";
 				PRODUCT_NAME = PVAzaharTests;
 				SDKROOT = iphoneos;
@@ -793,6 +800,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVCoreBridge.modulemap -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVEmulatorCore.modulemap -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVSupport.modulemap -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVPlists.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzaharTests-iOS";
 				PRODUCT_NAME = PVAzaharTests;
 				SDKROOT = iphoneos;
