@@ -66,7 +66,7 @@ CMAKE_OPTIONS = [
     # rejects ("unable to find any architecture information") and which only links with
     # the exact clang that produced it.
     "-DENABLE_LTO=OFF", "-DUSE_SYSTEM_MOLTENVK=ON",
-    "-DCITRA_WARNINGS_AS_ERRORS=OFF", "-DENABLE_COMPATIBILITY_LIST_DOWNLOAD=OFF",
+    "-DCITRA_WARNINGS_AS_ERRORS=OFF",
     # libressl's option. The ios toolchain reports CMAKE_C_COMPILER_ABI=ELF, so libressl
     # picks its 32-bit ELF armv4 assembly, which cannot assemble for arm64 Mach-O.
     "-DENABLE_ASM=OFF",
@@ -76,6 +76,9 @@ CMAKE_OPTIONS = [
 # transitively by `ninja <targets>`; we then harvest every .a under the build dir.
 TARGETS = ["citra_core", "citra_common", "video_core", "audio_core", "network", "input_common"]
 
+# src/ subdirectories whose headers the frontend glue may include (one per TARGETS entry).
+HEADER_MODULES = ["common", "core", "video_core", "audio_core", "network", "input_common"]
+
 HEADER_EXTS = (".h", ".hpp", ".inc", ".inl")
 
 
@@ -84,7 +87,8 @@ class BuildError(Exception):
 
 
 def log(message: str, level: str = "info") -> None:
-    prefix = {"info": "ℹ️", "success": "✅", "error": "❌", "build": "🔨", "package": "📦", "debug": "🔍"}
+    prefix = {"info": "ℹ️", "success": "✅", "warning": "⚠️", "error": "❌", "build": "🔨", "package": "📦",
+              "debug": "🔍"}
     stream = sys.stderr if level == "error" else sys.stdout
     print(f"{prefix.get(level, 'ℹ️')} {message}", file=stream, flush=True)
 
@@ -166,15 +170,21 @@ class AzaharBuilder:
         return fw
 
     def create_xcframework(self) -> Path:
-        """Combine every PVlibAzahar-*.framework present (this run's and earlier ones).
+        """Combine the per-platform frameworks of every known slice that has been built.
 
         `-framework` requires the binary to be named after the bundle directory, so each
         slice is hard-linked into build/staging/<slice>/PVlibAzahar.framework first; the
         xcframework then holds <library-id>/PVlibAzahar.framework/PVlibAzahar.
         """
-        frameworks = sorted(XCFRAMEWORK_DIR.glob(f"{LIB_NAME}-*.framework"))
+        frameworks = []
+        for platform, p in PLATFORMS.items():
+            fw = XCFRAMEWORK_DIR / f"{LIB_NAME}-{p['slice']}.framework"
+            if (fw / LIB_NAME).exists():
+                frameworks.append(fw)
+            else:
+                log(f"{platform} slice not built ({fw.name} missing); xcframework will lack it", "warning")
         if not frameworks:
-            raise BuildError(f"no {LIB_NAME}-*.framework in {XCFRAMEWORK_DIR}")
+            raise BuildError(f"no {LIB_NAME}-<slice>.framework in {XCFRAMEWORK_DIR}")
         xcfw = XCFRAMEWORK_DIR / f"{LIB_NAME}.xcframework"
         if xcfw.exists():
             shutil.rmtree(xcfw)
@@ -191,24 +201,30 @@ class AzaharBuilder:
 
 
 def copy_headers(dst: Path, out: Path) -> None:
-    def cp_tree(src: Path, sub: str) -> None:
+    def cp_tree(src: Path, sub: str, skip: Path | None = None) -> None:
         for f in src.rglob("*"):
-            if f.suffix in HEADER_EXTS and f.is_file():
+            if f.suffix in HEADER_EXTS and f.is_file() and not (skip and f.is_relative_to(skip)):
                 target = dst / sub / f.relative_to(src)
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(f, target)
 
     ext = SRC / "externals"
-    cp_tree(SRC / "src", "")  # core/, common/, video_core/, audio_core/, network/, input_common/
+    for module in HEADER_MODULES:
+        cp_tree(SRC / "src" / module, module)
     cp_tree(ext / "boost" / "boost", "boost")
     cp_tree(ext / "fmt" / "include" / "fmt", "fmt")
     cp_tree(ext / "vulkan-headers" / "include" / "vulkan", "vulkan")
     cp_tree(ext / "vulkan-headers" / "include" / "vk_video", "vk_video")
     cp_tree(ext / "vma" / "include", "")
     cp_tree(ext / "nihstro" / "include" / "nihstro", "nihstro")
-    cp_tree(ext / "dds-ktx", "")
-    # Generated headers (scm_rev.h, host_shaders) live in the platform's build dir.
-    cp_tree(out / "src", "")
+    shutil.copy2(ext / "dds-ktx" / "dds-ktx.h", dst / "dds-ktx.h")
+    # Generated headers live in the platform's build dir. host_shaders are generated under
+    # their own include root (<build>/src/video_core/host_shaders/include/video_core/...),
+    # matching `#include "video_core/host_shaders/..."`, so that root maps to Headers/.
+    shaders_root = out / "src" / "video_core" / "host_shaders" / "include"
+    for module in HEADER_MODULES:
+        cp_tree(out / "src" / module, module, skip=shaders_root)
+    cp_tree(shaders_root, "")
 
 
 def write_framework_plist(fw: Path, sdk: str, min_os: str) -> None:
