@@ -167,20 +167,13 @@ targets:
   PVAzaharTests:
     type: bundle.unit-test
     platform: [iOS]
+    # The migrator is compiled straight into the test bundle (no `@testable import PVAzahar`): importing the
+    # framework pulls in PVAzahar-Swift.h, whose `@import PVCoreBridge;` needs SwiftPM module maps this bundle lacks.
     sources:
       - path: Tests
+      - path: PVAzaharCore/PVAzaharDataMigrator.swift
     dependencies:
-      - target: PVAzahar
-    settings:
-      base:
-        # PVAzahar-Swift.h does `@import PVCoreBridge;` etc. Clang only finds SwiftPM's generated module maps
-        # when told, and the test bundle has no package dependencies of its own to add them.
-        OTHER_SWIFT_FLAGS: >-
-          $(inherited)
-          -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVCoreBridge.modulemap
-          -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVEmulatorCore.modulemap
-          -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVSupport.modulemap
-          -Xcc -fmodule-map-file=$(OBJROOT)/GeneratedModuleMaps-$(PLATFORM_NAME)/PVPlists.modulemap
+      - package: PVLogging
 schemes:
   PVAzahar:
     build:

@@ -95,8 +95,16 @@ import UIKit
               valueHandler: { value in
                   guard (value as? Bool) == true else { return }
                   Task { @MainActor in presentImportPrompt() }
+                  // Reset the global key and, in per-game scope, the key the UI just wrote for this game.
                   setValue(false, forOption: importFromEmuThreeOption)
+                  if let md5 = currentGameMD5 { setValue(false, forOption: importFromEmuThreeOption, andMD5: md5) }
               })
+    }
+
+    @MainActor private static func presentImportFailure(_ error: Swift.Error) {
+        let alert = UIAlertController(title: "Import failed", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        topViewController()?.present(alert, animated: true)
     }
 
     @MainActor private static func presentImportPrompt() {
@@ -110,11 +118,18 @@ import UIKit
         let alert = UIAlertController(title: "Import 3DS data", message: message, preferredStyle: .alert)
         if plan.hasWork {
             alert.addAction(UIAlertAction(title: "Move", style: .destructive) { _ in
-                do {
-                    try migrator.apply()
-                    ILOG("[PVAzahar] imported emuThreeDS data")
-                } catch {
-                    ELOG("[PVAzahar] import failed: \(error)")
+                DispatchQueue.global(qos: .utility).async {
+                    let failure: Swift.Error?
+                    do {
+                        try migrator.apply()
+                        ILOG("[PVAzahar] imported emuThreeDS data")
+                        failure = nil
+                    } catch {
+                        ELOG("[PVAzahar] import failed: \(error)")
+                        failure = error
+                    }
+                    guard let failure else { return }
+                    DispatchQueue.main.async { presentImportFailure(failure) }
                 }
             })
         }

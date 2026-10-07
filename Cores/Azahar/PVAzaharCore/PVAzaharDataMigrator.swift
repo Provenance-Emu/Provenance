@@ -11,9 +11,17 @@ public struct PVAzaharDataMigrator {
         public let totalBytes: Int64
         public var hasWork: Bool { items.contains { $0.action == .move } }
     }
-    public enum Error: Swift.Error { case moveFailed(directory: String, underlying: Swift.Error) }
+    public enum Error: Swift.Error, LocalizedError {
+        case moveFailed(directory: String, underlying: Swift.Error)
+        public var errorDescription: String? {
+            switch self {
+            case let .moveFailed(directory, underlying): return "Could not move \(directory): \(underlying.localizedDescription)"
+            }
+        }
+    }
 
     public static let candidates = ["nand", "sdmc", "sysdata", "config", "cheats", "shaders"]
+    public static let userDirectoryName = "Azahar"
     public static let markerName = ".migrated-from-emuthree"
     private static let emuThreeCoreClassName = "PVEmuThree.PVEmuThreeCore"
 
@@ -37,7 +45,7 @@ public struct PVAzaharDataMigrator {
     }
 
     public static func defaultTargetRoot() -> URL {
-        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("Azahar")
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent(userDirectoryName)
     }
 
     public static var emuThreeCoreIsPresent: Bool { NSClassFromString(emuThreeCoreClassName) != nil }

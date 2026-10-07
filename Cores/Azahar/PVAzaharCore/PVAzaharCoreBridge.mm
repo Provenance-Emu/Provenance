@@ -25,7 +25,6 @@
 #include "network.h"   // azahar's network/network.h; see HEADER_SEARCH_PATHS in project.yml
 #include "audio_core/sink_details.h"
 
-static NSString * const PVAzaharUserDirectoryName = @"Azahar";
 
 namespace {
 /// Shared by runOnEmuThreadAndWait: and its job. `finished` is set when the job is destroyed,
@@ -97,7 +96,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 
 - (NSString *)userDirectoryPath {
     NSString *docs = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-    return [docs stringByAppendingPathComponent:PVAzaharUserDirectoryName];
+    return [docs stringByAppendingPathComponent:PVAzaharCore.userDirectoryName];
 }
 
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {

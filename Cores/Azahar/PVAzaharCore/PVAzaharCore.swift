@@ -11,6 +11,9 @@ enum PVAzaharCoreError {
 
 @objc @objcMembers
 public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
+    /// Name of the Azahar user directory under Documents; read by `PVAzaharCoreBridge.mm` too.
+    public static let userDirectoryName = PVAzaharDataMigrator.userDirectoryName
+
     let _bridge: PVAzaharCoreBridge = .init()
 
     #if os(tvOS)
