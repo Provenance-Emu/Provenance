@@ -1,0 +1,4 @@
+# Linked into PVEmuThree with -unexported_symbols_list: keep every C++ symbol private to
+# this image so dyld never coalesces its glslang/fmt weak definitions with another core's.
+# See CLAUDE.md "Azahar core build gotchas".
+__Z*

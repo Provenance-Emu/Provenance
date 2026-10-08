@@ -45363,6 +45363,10 @@
 					"-fmodules",
 					"-fcxx-modules",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVEmuThree";
 				PRODUCT_NAME = PVEmuThree;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -45629,6 +45633,10 @@
 					"$(inherited)",
 					"-fmodules",
 					"-fcxx-modules",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVEmuThree";
 				PRODUCT_NAME = PVEmuThree;
