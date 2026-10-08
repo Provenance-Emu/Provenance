@@ -7,6 +7,20 @@ delete them a release later. Add new items at the top of "Next release".
 
 ## Next release
 
+### Emulation-lock deadlocks (pause + quit off the main thread)
+- [ ] Quit to the library from a native core (e.g. Genesis Plus GX), a thin
+      core (e.g. snes9x libretro) and a thin blocking core: returns promptly,
+      no freeze, no `stopEmulationAfterLoopExits ... joining on the main
+      thread` warning in the log.
+- [ ] Regression only: quit 3DS (Azahar) and Dolphin. They run their own
+      emulation thread and still join it on main; this fix does not cover them.
+- [ ] Quit while a thin core is still booting (tap Quit on the loading
+      screen): no crash, and the next launch boots.
+- [ ] Pause/resume repeatedly, then save and load a state right after pausing:
+      the state loads correctly.
+- [ ] Atari 2600 light-gun game (an XG-1 cart) and trackball via the companion
+      controller: aim, fire and movement still register.
+
 ### Programmatic touch overlay (Phase 1, `PVTouchOverlay`, toggle on by default)
 - [ ] Fresh install, no user skins: overlay appears on all 13 bound systems
       (NES, GB, GBC, SNES, GBA, Genesis, 32X, Sega CD, N64, PS1, GameCube,

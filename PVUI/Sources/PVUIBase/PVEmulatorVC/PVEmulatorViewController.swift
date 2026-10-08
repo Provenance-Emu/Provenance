@@ -2037,7 +2037,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // End Live Activity before the core shuts down.
         endLiveActivity()
 
-        core.stopEmulation()
+        // Joins the emulation loop off the main thread, so a last frame that
+        // waits on main cannot deadlock the quit.
+        await core.stopEmulationAfterLoopExits()
 
         // Safe now: stopEmulation() joined the emu loop, so no frame can tick
         // rc_client_do_frame while we destroy the rc_client (rcheevos is

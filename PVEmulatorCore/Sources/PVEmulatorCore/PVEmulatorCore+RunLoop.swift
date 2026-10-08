@@ -99,11 +99,7 @@ import PVLogging
         isBootPending = false
         pendingPauseWhileBooting = nil
         startEmulationCompletion = nil
-        shouldStop = true
-        isRunning = false
-
-        isFrontBufferReady = false
-        frontBufferCondition.signal()
+        signalEmulationLoopToStop()
 
         bridge.stopEmulation()
         isOn = false
@@ -113,6 +109,74 @@ import PVLogging
                 state.coreClassName = ""
                 state.systemName = ""
                 state.isOn = false
+            }
+        }
+    }
+
+    /// Tells the emulation loop to exit after its current frame and wakes a
+    /// presenter waiting for a front buffer. Does not wait for the exit.
+    @MainActor
+    private func signalEmulationLoopToStop() {
+        shouldStop = true
+        isRunning = false
+        isFrontBufferReady = false
+        frontBufferCondition.signal()
+    }
+
+    /// Longest `stopEmulationAfterLoopExits()` waits for the emulation loop to
+    /// exit before falling back to `stopEmulation()`'s unbounded main-thread join.
+    private static var loopExitWait: TimeInterval { 5 }
+
+    /// `stopEmulation()`, with the emulation-loop join moved OFF the main thread.
+    ///
+    /// `stopEmulation()` ends in `-[PVCoreObjCBridge stopEmulationWithMessage:]`,
+    /// which waits on `emulationLoopThreadLock` until the loop exits. That wait
+    /// is on main and unbounded, so a final frame that itself waits on main
+    /// (`dispatch_sync` to the main queue from a core) deadlocks and the
+    /// watchdog kills the app (0x8BADF00D). It cannot simply be given a timeout:
+    /// returning early would let the core be torn down under a frame still
+    /// running.
+    ///
+    /// Here the loop is told to stop exactly as `stopEmulation()` does, and the
+    /// join happens on a background queue while main stays free to serve that
+    /// last frame. `stopEmulation()` then runs unchanged and finds the loop
+    /// already gone. If the loop has not exited within `loopExitWait` this
+    /// falls through to the old blocking join, so it is never worse than before.
+    ///
+    /// Main must not take the bridge's `@synchronized` monitor while this is
+    /// suspended: the loop holds it around every frame, so that would reopen
+    /// the same deadlock.
+    @MainActor
+    @nonobjc public func stopEmulationAfterLoopExits() async {
+        // An asynchronous boot has no loop to join yet, and `stopEmulation()`
+        // must run now to drop the boot completion before it can fire into a
+        // caller that is going away.
+        guard !isBootPending else {
+            stopEmulation()
+            return
+        }
+        signalEmulationLoopToStop()
+
+        if await !Self.waitForUnlock(emulationLoopThreadLock, timeout: Self.loopExitWait) {
+            WLOG("stopEmulationAfterLoopExits: emulation loop still running after \(Int(Self.loopExitWait)) s; joining on the main thread")
+        }
+        stopEmulation()
+    }
+
+    /// Waits on a GCD queue until `lock` can be acquired, then releases it.
+    /// Returns `false` if `timeout` elapsed first. A GCD queue rather than a
+    /// task, because blocking a Swift-concurrency thread for seconds starves the
+    /// cooperative pool.
+    @nonobjc nonisolated static func waitForUnlock(_ lock: NSLock, timeout: TimeInterval) async -> Bool {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                // Lock and unlock on this one thread: NSLock must be unlocked by
+                // the thread that locked it.
+                let acquired = lock.lock(before: Date(timeIntervalSinceNow: timeout))
+                if acquired {
+                    lock.unlock()
+                }
+                continuation.resume(returning: acquired)
             }
         }
     }
