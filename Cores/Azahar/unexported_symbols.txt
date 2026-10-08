@@ -1,0 +1,5 @@
+# Linked into PVAzahar with -unexported_symbols_list. Every C++ symbol stays private to this
+# image: dyld coalesces *exported* weak definitions (template instantiations, inline functions)
+# across all loaded images, and PVlibDolphin exports its own glslang/fmt instantiations from
+# different library versions. azahar then ran Dolphin's addSwizzle and crashed in glslang.
+__Z*

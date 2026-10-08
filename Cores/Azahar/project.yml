@@ -49,9 +49,10 @@ settings:
     # slice is link-only: it compiles and links with PVlibAzahar's symbols left unresolved. Because this
     # framework is linked by the app, the whole app fails to launch on an Intel (or Rosetta) simulator;
     # only Apple Silicon simulators are supported.
-    "OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]": "$(inherited) -ObjC -Wl,-undefined,dynamic_lookup"
+    "OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]": "$(inherited) -ObjC -Wl,-undefined,dynamic_lookup -Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt"
     OTHER_CFLAGS: "$(inherited) -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers"
-    OTHER_LDFLAGS: "$(inherited) -ObjC"
+    # unexported_symbols.txt keeps C++ weak symbols private: see the file for why.
+    OTHER_LDFLAGS: "$(inherited) -ObjC -Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt"
     LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @loader_path/Frameworks"
   configs:
     Debug:

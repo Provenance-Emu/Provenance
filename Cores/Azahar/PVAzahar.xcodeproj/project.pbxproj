@@ -689,10 +689,12 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
+					"-Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt",
 				);
 				"OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]" = (
 					"$(inherited)",
 					"-ObjC",
+					"-Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt",
 					"-Wl,-undefined,dynamic_lookup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -798,10 +800,12 @@
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
+					"-Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt",
 				);
 				"OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]" = (
 					"$(inherited)",
 					"-ObjC",
+					"-Wl,-unexported_symbols_list,$(SRCROOT)/unexported_symbols.txt",
 					"-Wl,-undefined,dynamic_lookup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
