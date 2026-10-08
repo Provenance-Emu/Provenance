@@ -176,6 +176,8 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 - **The tvOS user root is Caches.** `PVAzaharCore.userRootURL` is `Documents/Azahar` on iOS and `Library/Caches/Azahar` on tvOS, where Documents is not writable.
 - **`-fcxx-modules` is on** so the ObjC++ glue can `@import` the PV* Swift modules and `PVAzahar-Swift.h`.
 - **`runOnEmuThreadAndWait:` jobs can outlive their timeout.** Capture only by value or `shared_ptr`, never by reference.
+- **PVAzahar links with `-unexported_symbols_list unexported_symbols.txt` (`__Z*`).** dyld coalesces *exported* weak C++ definitions (template instantiations, inline functions) across every loaded image. PVlibDolphin loads first and exports its own glslang and fmt instantiations from different library versions, and azahar's shader compiler crashed in glslang's parser after calling Dolphin's `addSwizzle`. Keep the C++ surface private; apply the same to any new core framework that static-links glslang, fmt, SPIRV-Cross or similar.
+- **Don't regenerate `PVAzahar.xcodeproj` from `project.yml` blindly.** The committed pbxproj has hand-added Defaults/DefaultsMacros package references (18e4cf6946) that the yml doesn't declare; xcodegen drops them. Hand-edit the pbxproj, and mirror the change in the yml.
 
 ### Metal rendering gotchas
 
