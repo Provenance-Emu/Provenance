@@ -42,6 +42,7 @@
 #import "PVStellaBridge.h"
 
 #include <atomic>
+#include <os/lock.h>
 #import <CommonCrypto/CommonDigest.h>
 
 // Atari 2600 RIOT RAM exposed to RetroAchievements (rcheevos addresses 0x00-0x7F).
@@ -198,10 +199,17 @@ static void pvstella_event_handler(const rc_client_event_t *event, rc_client_t *
     // stopEmulation()'s teardown or against a fresh loadFileAtPath:.
     std::atomic<bool> _loaded;
 
+    // Guards the trackball and light-gun input fields below: written on the
+    // main thread by the input setters, read by input_state_callback on the
+    // emulation thread. NOT @synchronized(self) -- the emulation loop holds that
+    // around every frame, so a setter on main would wait out the frame, and
+    // deadlock outright if the frame were waiting on main. Lock order when both
+    // are held: the monitor first, then this.
+    os_unfair_lock _inputLock;
+
     // Trackball / Mouse state (Companion Controller input).
     // Accumulated relative deltas consumed each frame by input_state_callback.
-    // Both the write side (main thread, companion input) and the read side
-    // (emulation thread, input_state_callback) are guarded by @synchronized(self).
+    // Guarded by _inputLock.
     float _pendingMouseDX;
     float _pendingMouseDY;
     BOOL  _mouseButtonLeft;
@@ -210,7 +218,8 @@ static void pvstella_event_handler(const rc_client_event_t *event, rc_client_t *
     // signed-16-bit range of [-0x8000, 0x7FFF] for `SCREEN_X` / `SCREEN_Y`.
     // We store the latest normalised aim (0…1) here and convert in the input
     // state callback. Off-screen reload is tracked separately.
-    // Both sides guarded by @synchronized(self).
+    // Guarded by _inputLock (except _isStellaLightGunGame, which the input
+    // callback never reads).
     int16_t _lightGunScreenX;
     int16_t _lightGunScreenY;
     BOOL    _lightGunIsOffscreen;
@@ -429,7 +438,8 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
         // `update_input()` in src/os/libretro/libretro.cxx). It also reads
         // TRIGGER (and uses it for both left/right mouse buttons inside the
         // Stella event system) and IS_OFFSCREEN.
-        @synchronized(strongCurrent) {
+        os_unfair_lock_lock(&strongCurrent->_inputLock);
+        {
             switch (_id) {
                 case RETRO_DEVICE_ID_LIGHTGUN_SCREEN_X:
                     value = strongCurrent->_lightGunScreenX;
@@ -454,13 +464,15 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
                     break;
             }
         }
+        os_unfair_lock_unlock(&strongCurrent->_inputLock);
     }
     else if (port == 0 && device == RETRO_DEVICE_MOUSE)
     {
         // Trackball / companion controller mouse input.
         // Deltas are consumed (zeroed) after being read so they represent
         // per-frame relative movement, not an absolute position.
-        @synchronized(strongCurrent) {
+        os_unfair_lock_lock(&strongCurrent->_inputLock);
+        {
             switch (_id) {
                 case RETRO_DEVICE_ID_MOUSE_X: {
                     // Scale -1…1 normalised delta to pixel-delta range.
@@ -481,6 +493,7 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
                     break;
             }
         }
+        os_unfair_lock_unlock(&strongCurrent->_inputLock);
     }
 
     strongCurrent = nil;
@@ -606,6 +619,7 @@ static void writeSaveFile(const char* path, int type) {
         _current = self;
         self.optionHandler = optionHandler;
         self.cheats = [[NSMutableArray alloc] init];
+        _inputLock = OS_UNFAIR_LOCK_INIT;
         _pendingMouseDX = 0.0f;
         _pendingMouseDY = 0.0f;
         _mouseButtonLeft = NO;
@@ -639,11 +653,11 @@ static void writeSaveFile(const char* path, int type) {
     // to tear down.
     _loaded.store(false);
     // Clear light-gun session state so the next ROM load starts clean.
-    @synchronized(self) {
-        _isStellaLightGunGame = NO;
-        _lightGunTrigger      = NO;
-        _lightGunIsOffscreen  = NO;
-    }
+    _isStellaLightGunGame = NO;
+    os_unfair_lock_lock(&_inputLock);
+    _lightGunTrigger      = NO;
+    _lightGunIsOffscreen  = NO;
+    os_unfair_lock_unlock(&_inputLock);
 
 #if HAVE_RCHEEVOS
     if (_rcClient) {
@@ -688,11 +702,19 @@ static void writeSaveFile(const char* path, int type) {
         _rcClient = NULL;
     }
 #endif
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        if(self->_videoBuffer) {
-            free(self->_videoBuffer);
-        }
-    });
+    // Free on main, where the presenter reads the buffer. Directly when already
+    // there: dispatch_sync to the main queue from main traps in libdispatch.
+    stellabuffer_t *videoBuffer = self->_videoBuffer;
+    if (!videoBuffer) {
+        return;
+    }
+    if (NSThread.isMainThread) {
+        free(videoBuffer);
+    } else {
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            free(videoBuffer);
+        });
+    }
 }
 
 - (void)executeFrame {
@@ -769,10 +791,12 @@ static void writeSaveFile(const char* path, int type) {
         // so a free/alloc outside the lock would race the emulation thread.
         memset(_pad, 0, sizeof(int16_t) * NUMBER_OF_PADS * NUMBER_OF_PAD_INPUTS);
         _isStellaLightGunGame = NO;
+        os_unfair_lock_lock(&_inputLock);
         _lightGunTrigger      = NO;
         _lightGunIsOffscreen  = NO;
         _lightGunScreenX      = 0;
         _lightGunScreenY      = 0;
+        os_unfair_lock_unlock(&_inputLock);
         memset(_systemRAM, 0, sizeof(_systemRAM));
         if(self->_videoBuffer) {
             free(self->_videoBuffer);
@@ -1294,17 +1318,17 @@ static void writeSaveFile(const char* path, int type) {
     if (sy >  0x7FFF) sy =  0x7FFF;
     if (sy < -0x8000) sy = -0x8000;
 
-    @synchronized(self) {
-        _lightGunScreenX     = (int16_t)sx;
-        _lightGunScreenY     = (int16_t)sy;
-        _lightGunIsOffscreen = isOffscreen;
-    }
+    os_unfair_lock_lock(&_inputLock);
+    _lightGunScreenX     = (int16_t)sx;
+    _lightGunScreenY     = (int16_t)sy;
+    _lightGunIsOffscreen = isOffscreen;
+    os_unfair_lock_unlock(&_inputLock);
 }
 
 - (void)setLightGunTrigger:(BOOL)pressed {
-    @synchronized(self) {
-        _lightGunTrigger = pressed;
-    }
+    os_unfair_lock_lock(&_inputLock);
+    _lightGunTrigger = pressed;
+    os_unfair_lock_unlock(&_inputLock);
 }
 
 @end
@@ -1386,16 +1410,16 @@ static void writeSaveFile(const char* path, int type) {
 
 - (void)setTrackballDeltaX:(float)deltaX deltaY:(float)deltaY {
     // Accumulate: multiple companion events may arrive between emulation frames.
-    @synchronized(self) {
-        _pendingMouseDX += deltaX;
-        _pendingMouseDY += deltaY;
-    }
+    os_unfair_lock_lock(&_inputLock);
+    _pendingMouseDX += deltaX;
+    _pendingMouseDY += deltaY;
+    os_unfair_lock_unlock(&_inputLock);
 }
 
 - (void)setMouseButtonLeft:(BOOL)pressed {
-    @synchronized(self) {
-        _mouseButtonLeft = pressed;
-    }
+    os_unfair_lock_lock(&_inputLock);
+    _mouseButtonLeft = pressed;
+    os_unfair_lock_unlock(&_inputLock);
 }
 
 @end
