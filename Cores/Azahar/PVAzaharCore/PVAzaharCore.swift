@@ -38,7 +38,10 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
         self.bridge = objcBridge
         // Load runs on the bridge's emulation thread, so the host only learns the outcome from these.
         _bridge.onEmulationStarted = { [weak self] in
-            MainActor.assumeIsolated { self?.emulationDidStart() }
+            // Bind `self` before entering the main-actor region: capturing the weak optional
+            // inside `assumeIsolated` fails Swift 6 region checking in Release builds.
+            guard let self else { return }
+            MainActor.assumeIsolated { self.emulationDidStart() }
         }
         _bridge.onEmulationFailed = { [weak self] message in
             guard let self else { return }
