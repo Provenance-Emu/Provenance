@@ -1203,11 +1203,6 @@ struct DefaultControllerSkinView: View {
                     .position(x: 135, y: 135)
             }
 
-            // Touch indicator overlay - positioned above the gesture area but below the gesture recognizer
-            if dpadState.isTouching {
-                DeltaSkinTouchIndicator(at: dpadState.touchPosition)
-                    .allowsHitTesting(false) // Prevent the indicator from interfering with touches
-            }
             #if !os(tvOS)
             // Gesture area
             Color.clear
@@ -1326,11 +1321,6 @@ struct DefaultControllerSkinView: View {
                         .offset(x: joystickState.position.width, y: joystickState.position.height)
                         .shadow(color: ThemeManager.shared.currentPalette.defaultTintColor.swiftUIColor ?? Color(red: 0.0, green: 0.8, blue: 0.9), radius: joystickState.isActive ? 10 : 0)
 
-                    // Touch indicator overlay
-                    if joystickState.isTouching {
-                        DeltaSkinTouchIndicator(at: joystickState.touchPosition)
-                            .allowsHitTesting(false)
-                    }
                 }
                 .contentShape(Circle())
                 #if !os(tvOS)
@@ -2307,15 +2297,6 @@ struct DefaultControllerSkinView: View {
                 // The button itself
                 configuration.label
                     .opacity(configuration.isPressed ? 0.7 : 1.0)
-                    .overlay(
-                        // Touch overlay that appears when pressed - positioned as an overlay to avoid layout issues
-                        Group {
-                            if configuration.isPressed || isShowingOverlay {
-                                DeltaSkinTouchIndicator(at: touchPosition)
-                                    .allowsHitTesting(false) // Prevent the indicator from interfering with touches
-                            }
-                        }
-                    )
             }
             .onChange(of: configuration.isPressed) { isPressed in
                 // Only trigger actions on state changes to avoid duplicate calls

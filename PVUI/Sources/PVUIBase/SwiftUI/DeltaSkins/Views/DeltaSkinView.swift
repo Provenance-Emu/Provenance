@@ -762,14 +762,6 @@ public struct DeltaSkinView: View {
                             .zIndex(4)
                         }
 
-                        // Touch indicators - always on top
-                        // Use enumerated with index as ID to avoid CGPoint hash instability
-                        ForEach(Array(touchLocations.enumerated()), id: \.offset) { _, location in
-                            DeltaSkinTouchIndicator(at: location)
-                                .zIndex(5)
-                                .allowsHitTesting(false)
-                        }
-
                         // Edit mode overlay — drag handles for repositioning buttons
                         if isEditMode, let mappingSize = skin.mappingSize(for: traits) {
                             DeltaSkinEditModeOverlay(
