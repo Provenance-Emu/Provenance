@@ -61,7 +61,7 @@ import UIKit
 
     // MARK: System
     static var new3DSOption: CoreOption {
-        .bool(.init(title: "New 3DS Mode", description: "Extra CPU cores and memory. Required by some games.", requiresRestart: true), defaultValue: true)
+        .bool(.init(title: "New 3DS Mode", description: "Extra CPU cores and memory. Only needed by a few New 3DS-only games; can change behaviour in others.", requiresRestart: true), defaultValue: false)
     }
     static var cpuClockOption: CoreOption {
         .enumeration(.init(title: "CPU Clock", description: "Below 100% speeds up some games; above 100% can reduce lag or break games.", requiresRestart: true),

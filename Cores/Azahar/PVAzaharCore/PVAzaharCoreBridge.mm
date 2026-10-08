@@ -82,7 +82,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
         _emuThreadExited = true; _stopping = false;
         self.skipEmulationLoop = YES;   // azahar runs its own loop (see startEmulation)
         self.skipLayout = YES;          // we draw into our own view (Dolphin pattern)
-        self.resolutionFactor = 1; self.cpuClockPercent = 100; self.new3DSMode = YES;
+        self.resolutionFactor = 1; self.cpuClockPercent = 100; self.new3DSMode = NO;
         self.hardwareShader = YES; self.accurateMultiplication = YES; self.asyncShaderCompilation = YES;
         self.asyncPresentation = YES; self.diskShaderCache = YES; self.audioStretching = YES;
         self.realtimeAudio = YES; self.frameLimitPercent = 100; self.regionValue = -1;
@@ -149,12 +149,12 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     v.factor_3d.SetValue(0);
     v.output_type.SetValue(AudioCore::SinkType::CoreAudio);
     v.use_display_refresh_rate_detection.SetValue(true);
-#if TARGET_OS_TV
     // Service::Init does `lle_modules.at(name)` for every HLE module; azahar's frontends
     // populate this map from their config. Default every module to HLE (false).
     for (const auto& module : Service::service_module_map) {
         v.lle_modules.emplace(module.name, false);
     }
+#if TARGET_OS_TV
     v.camera_name[0] = v.camera_name[1] = v.camera_name[2] = "blank";
 #else
     // Indexed by Service::CAM::CameraIndex: OuterRightCamera, InnerCamera, OuterLeftCamera.
