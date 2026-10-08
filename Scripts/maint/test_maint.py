@@ -383,6 +383,22 @@ class ServerTests(unittest.TestCase):
             httpd.shutdown()
             httpd.server_close()
 
+    def test_bind_server_skips_a_port_in_use(self):
+        import socket
+
+        import server
+
+        with socket.socket() as busy:
+            busy.bind(("127.0.0.1", 0))
+            busy.listen()
+            taken = busy.getsockname()[1]
+            httpd = server.bind_server(taken, "tok", server.Runner())
+            try:
+                self.assertIsNotNone(httpd)
+                self.assertGreater(httpd.server_address[1], taken)
+            finally:
+                httpd.server_close()
+
 
 if __name__ == "__main__":
     unittest.main()

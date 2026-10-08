@@ -6,6 +6,7 @@ embedded in the page, so another site open in the browser cannot start a job.
 """
 from __future__ import annotations
 
+import errno
 import json
 import secrets
 import subprocess
@@ -20,6 +21,7 @@ import maint
 
 DASHBOARD = Path(__file__).resolve().parent / "dashboard.html"
 MAX_LOG_LINES = 20_000
+PORT_ATTEMPTS = 20  # serve() tries --port, then the next ports up
 
 
 class RunBuffer:
@@ -205,10 +207,26 @@ def make_handler(token: str, port: int, runner: Runner):
     return Handler
 
 
+def bind_server(port: int, token: str, runner: Runner) -> ThreadingHTTPServer | None:
+    """Binds the first free port from `port` up, or returns None if all are taken."""
+    for candidate in range(port, port + PORT_ATTEMPTS):
+        try:
+            return ThreadingHTTPServer(("127.0.0.1", candidate), make_handler(token, candidate, runner))
+        except OSError as error:
+            if error.errno != errno.EADDRINUSE:
+                raise
+    return None
+
+
 def serve(port: int, open_browser: bool = True) -> int:
     token = secrets.token_urlsafe(24)
-    runner = Runner()
-    server = ThreadingHTTPServer(("127.0.0.1", port), make_handler(token, port, runner))
+    server = bind_server(port, token, Runner())
+    if server is None:
+        print(f"maint: ports {port}-{port + PORT_ATTEMPTS - 1} are all in use; pass --port")
+        return 1
+    if server.server_address[1] != port:
+        print(f"maint: port {port} is in use, using {server.server_address[1]}")
+    port = server.server_address[1]
     url = f"http://127.0.0.1:{port}/"
     print(f"maint dashboard: {url}  (Ctrl-C to stop)")
     if open_browser:
