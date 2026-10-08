@@ -57,6 +57,8 @@
 		AECF066E880D15755E99BACD /* AzaharAppleUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A26EA6E6424EDF04CFFEB2 /* AzaharAppleUtils.mm */; };
 		AFA064E5FE287EE746471374 /* PVAzaharDataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D5CF8AED7F3A29647A0824 /* PVAzaharDataMigrator.swift */; };
 		B12E678C0F8F05DE5EF76D82 /* PVAzaharCoreBridge+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF309D698E9638944364388F /* PVAzaharCoreBridge+Audio.mm */; };
+		B317442B30775C4300AB6223 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B317442A30775C4300AB6223 /* Defaults */; };
+		B317442D30775C4300AB6223 /* DefaultsMacros in Frameworks */ = {isa = PBXBuildFile; productRef = B317442C30775C4300AB6223 /* DefaultsMacros */; };
 		BA7BE614B75DC728DEFB0299 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 87C3E7D7EF7235C8B903A3A2 /* PVLogging */; };
 		BCFF083498CD5ABEEEFCDB17 /* PVPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = 1E237605816D66792B8B5630 /* PVPrimitives */; };
 		C19531EB55244E6DF9EC4A9E /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = 64BA6FBE0866EAFBB5D752FA /* PVJIT */; };
@@ -146,8 +148,10 @@
 				84A83661827F7B79E3F28247 /* CoreAudio.framework in Frameworks */,
 				38160476FA3286D28806F7A8 /* AVFoundation.framework in Frameworks */,
 				1B6F945E45636D0712FB31AF /* IOSurface.framework in Frameworks */,
+				B317442B30775C4300AB6223 /* Defaults in Frameworks */,
 				A0B017D4981E7952F846C7C4 /* libz.tbd in Frameworks */,
 				5CA2A7702CD49A24F297FB20 /* libc++.tbd in Frameworks */,
+				B317442D30775C4300AB6223 /* DefaultsMacros in Frameworks */,
 				51B6E650E74B9C4E6C8EFBEC /* PVAudio in Frameworks */,
 				681B050AF06F9CD288145481 /* PVCoreBridge in Frameworks */,
 				52D72D137447D44BFE95A1D3 /* PVCoreObjCBridge in Frameworks */,
@@ -352,6 +356,8 @@
 				1E237605816D66792B8B5630 /* PVPrimitives */,
 				A3A3725AFB5464B7A1924970 /* PVSettings */,
 				83E28487102D424751CDA87B /* PVSupport */,
+				B317442A30775C4300AB6223 /* Defaults */,
+				B317442C30775C4300AB6223 /* DefaultsMacros */,
 			);
 			productName = PVAzahar;
 			productReference = 0F7E0DCDCAA5C23443642D5A /* PVAzahar.framework */;
@@ -365,8 +371,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = BF41262EBC1E2F7A0D021392 /* Build configuration list for PBXProject "PVAzahar" */;
 			developmentRegion = en;
@@ -389,6 +393,7 @@
 				3E06F5D42B349FF99AE627DA /* XCLocalSwiftPackageReference "../../PVPrimitives" */,
 				7E75C28DB380A337F232D947 /* XCLocalSwiftPackageReference "../../PVSettings" */,
 				D13742C6C28B3164AB693F56 /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B317442930775C4300AB6223 /* XCRemoteSwiftPackageReference "Defaults" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C13D189C51EFD39EF28B1B88 /* Products */;
@@ -495,7 +500,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = "$(inherited) $(PVAZAHAR_ARCHIVE)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(PVAZAHAR_ARCHIVE)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzahar";
 				PRODUCT_MODULE_NAME = PVAzahar;
 				PRODUCT_NAME = PVAzahar;
@@ -527,7 +535,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = "$(inherited) $(PVAZAHAR_ARCHIVE)";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"$(PVAZAHAR_ARCHIVE)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVAzahar";
 				PRODUCT_MODULE_NAME = PVAzahar;
 				PRODUCT_NAME = PVAzahar;
@@ -653,13 +664,37 @@
 					"$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers/network",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = "$(inherited) -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers";
-				OTHER_CPLUSPLUSFLAGS = "$(inherited) -fcxx-modules -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32 -Wno-deprecated-declarations -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers";
-				OTHER_LDFLAGS = "$(inherited) -ObjC";
-				"OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]" = "$(inherited) -ObjC -Wl,-undefined,dynamic_lookup";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-idirafter",
+					"$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
+					"-fcxx-modules",
+					"-fvisibility=hidden",
+					"-fvisibility-inlines-hidden",
+					"-Wno-shorten-64-to-32",
+					"-Wno-deprecated-declarations",
+					"-idirafter",
+					"$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				"OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]" = (
+					"$(inherited)",
+					"-ObjC",
+					"-Wl,-undefined,dynamic_lookup",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PVAZAHAR_SLICE = ios;
 				"PVAZAHAR_SLICE[sdk=appletvos*]" = tvos;
@@ -737,14 +772,38 @@
 					"$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers/network",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "$(inherited) -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers";
-				OTHER_CPLUSPLUSFLAGS = "$(inherited) -fcxx-modules -fvisibility=hidden -fvisibility-inlines-hidden -Wno-shorten-64-to-32 -Wno-deprecated-declarations -idirafter $(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers";
-				OTHER_LDFLAGS = "$(inherited) -ObjC";
-				"OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]" = "$(inherited) -ObjC -Wl,-undefined,dynamic_lookup";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-idirafter",
+					"$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers",
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(inherited)",
+					"-fcxx-modules",
+					"-fvisibility=hidden",
+					"-fvisibility-inlines-hidden",
+					"-Wno-shorten-64-to-32",
+					"-Wno-deprecated-declarations",
+					"-idirafter",
+					"$(SRCROOT)/build/xcframework/PVlibAzahar-$(PVAZAHAR_SLICE).framework/Headers",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				"OTHER_LDFLAGS[sdk=*simulator*][arch=x86_64]" = (
+					"$(inherited)",
+					"-ObjC",
+					"-Wl,-undefined,dynamic_lookup",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PVAZAHAR_SLICE = ios;
 				"PVAZAHAR_SLICE[sdk=appletvos*]" = tvos;
@@ -847,6 +906,17 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		B317442930775C4300AB6223 /* XCRemoteSwiftPackageReference "Defaults" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Defaults.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.9;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		10392391D0CCA6D171E8C6AF /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -895,6 +965,16 @@
 		A3A3725AFB5464B7A1924970 /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSettings;
+		};
+		B317442A30775C4300AB6223 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B317442930775C4300AB6223 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
+		B317442C30775C4300AB6223 /* DefaultsMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B317442930775C4300AB6223 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = DefaultsMacros;
 		};
 		CBCEED13FDDB5ABDCE3D6297 /* PVPlists */ = {
 			isa = XCSwiftPackageProductDependency;
