@@ -253,7 +253,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     std::string romPath([_romPath fileSystemRepresentation]);
     __weak PVAzaharCoreBridge *weakSelf = self;
     // The thread keeps `self` alive until it exits; stopEmulationWithMessage: joins it.
-    _emuThread = std::thread([self, weakSelf, romPath] {
+    _emuThread = AzaharEmuThread([self, weakSelf, romPath] {
         pthread_setname_np("Azahar Emulation");
         _emuThreadId = std::this_thread::get_id();
         auto& system = Core::System::GetInstance();
@@ -349,7 +349,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     if (_loaded) { Core::System::GetInstance().RequestShutdown(); }   // thread-safe signal
     _jobCV.notify_all();
     if (_emuThread.joinable()) {
-        if (_emuThread.get_id() == std::this_thread::get_id()) {
+        if (_emuThread.isCurrent()) {
             _emuThread.detach();   // never expected; joining ourselves would throw
         } else {
             // Kept unbounded on purpose: a half-torn-down Core::System is worse than a wait. On main, the
