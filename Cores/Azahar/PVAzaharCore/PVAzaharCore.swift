@@ -29,6 +29,7 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
     public override var supportsFilters: Bool { false }
     public override var supportsAudioVisualizer: Bool { false }
     public override var jitRequirement: PVJITRequirement { .automaticWithFallback }
+    public override var isJITActive: Bool { _bridge.jitActive }
 
     public required init() {
         super.init()

@@ -12,6 +12,8 @@
 
 import UIKit
 import PVSettings
+import PVPrimitives
+import PVEmulatorCore
 import Defaults
 
 #if canImport(JITManager)
@@ -62,6 +64,10 @@ public final class JITContextualPromptManager {
     /// Per-session set of core identifiers for which a recommended (non-required)
     /// prompt has already been shown. Prevents repeated prompts within one app session.
     private var sessionShownCoreIDs: Set<String> = []
+
+    /// Per-session set of core identifiers that already got the post-launch
+    /// "Running without JIT" toast.
+    private var sessionNoJITToastCoreIDs: Set<String> = []
 
     // MARK: - Decision
 
@@ -167,6 +173,79 @@ public final class JITContextualPromptManager {
     /// Resets the per-session suppression state (call e.g. on foreground resume).
     public func resetSessionState() {
         sessionShownCoreIDs.removeAll()
+        sessionNoJITToastCoreIDs.removeAll()
+    }
+
+    // MARK: - Post-launch "Running without JIT" notice
+
+    /// What to tell the user, after launch, about a core running without JIT.
+    public struct NoJITNotice: Equatable {
+        public let message: String
+        /// `true` when JIT could plausibly be enabled for this install (not a genuine
+        /// App Store build, W^X not enforced), so the toast offers an "Open StikDebug" action.
+        public let offersEnable: Bool
+    }
+
+    /// Pure decision: should a core with `requirement` get the non-blocking toast?
+    /// Only `.automaticWithFallback` cores qualify — `.requiredOrCrash` cores get the
+    /// blocking pre-launch warning, and cores without JIT never need a notice.
+    public static func noJITNotice(
+        requirement: PVJITRequirement,
+        coreName: String,
+        jitAcquired: Bool,
+        jitEnableAvailable: Bool
+    ) -> NoJITNotice? {
+        guard requirement == .automaticWithFallback, !jitAcquired else { return nil }
+        return NoJITNotice(
+            message: "\(coreName) is running without JIT. It works fine; JIT can make it faster.",
+            offersEnable: jitEnableAvailable
+        )
+    }
+
+    /// Whether JIT could be enabled for this install via an external tool.
+    public static var jitEnableAvailable: Bool {
+        #if os(tvOS) || !canImport(JITManager)
+        return false
+        #else
+        return !JITManager.DOLJitManager.isGenuinelyAppStoreDistributed() && !DOLJitManager.isWXEnforced
+        #endif
+    }
+
+    /// StikDebug's JIT-enable URL for this app, or `nil` when there is no bundle id.
+    /// Scheme `stikjit://enable-jit?bundle-id=` is StikDebug's documented automation
+    /// URL (not otherwise referenced in this repo).
+    public static func stikDebugEnableURL(bundleID: String? = Bundle.main.bundleIdentifier) -> URL? {
+        guard let bundleID, !bundleID.isEmpty else { return nil }
+        var components = URLComponents()
+        components.scheme = "stikjit"
+        components.host = "enable-jit"
+        components.queryItems = [URLQueryItem(name: "bundle-id", value: bundleID)]
+        return components.url
+    }
+
+    /// Posts the once-per-session-per-core "Running without JIT" toast for `core`.
+    public func notifyRunningWithoutJITIfNeeded(core: PVEmulatorCore, coreName: String) {
+        let coreID = String(describing: type(of: core))
+        guard !sessionNoJITToastCoreIDs.contains(coreID),
+              let notice = Self.noJITNotice(
+                requirement: core.jitRequirement,
+                coreName: coreName,
+                jitAcquired: core.isJITActive,
+                jitEnableAvailable: Self.jitEnableAvailable
+              ) else { return }
+        sessionNoJITToastCoreIDs.insert(coreID)
+
+        #if !os(tvOS)
+        if notice.offersEnable, let url = Self.stikDebugEnableURL() {
+            PVToastManager.shared.show(
+                notice.message, type: .jit, duration: 8.0,
+                actionTitle: "Open StikDebug",
+                action: { UIApplication.shared.open(url) }
+            )
+            return
+        }
+        #endif
+        PVToastManager.shared.show(notice.message, type: .jit, duration: 5.0)
     }
 
     // MARK: - Alert Presentation

@@ -9,6 +9,7 @@ import Testing
 @testable import PVUIBase
 import PVSettings
 import Defaults
+import PVPrimitives
 
 @MainActor
 @Suite("JITContextualPromptManager Tests")
@@ -139,5 +140,47 @@ struct JITContextualPromptManagerTests {
                 Issue.record("After reset, expected .showRecommendedPrompt, got \(result)")
             }
         }
+    }
+
+    // MARK: - Post-launch "Running without JIT" notice
+
+    @Test("Dolphin, Flycast and Azahar never get a pre-launch alert")
+    func fallbackCoresSkipPreLaunchAlert() {
+        for id in ["com.provenance.dolphin", "com.provenance.flycast", "com.provenance.azahar"] {
+            let result = manager.recommendation(forGameMD5: "md5", coreIdentifier: id, coreName: id)
+            #expect(result == .proceed, "\(id) should not prompt")
+        }
+    }
+
+    @Test("automaticWithFallback core without JIT gets a notice")
+    func noticeForAutomaticFallback() {
+        let n = JITContextualPromptManager.noJITNotice(
+            requirement: .automaticWithFallback, coreName: "GameCube", jitAcquired: false, jitEnableAvailable: true)
+        #expect(n?.offersEnable == true)
+        #expect(n?.message.contains("without JIT") == true)
+    }
+
+    @Test("No notice when JIT is active or core is not automaticWithFallback")
+    func noNoticeOtherwise() {
+        #expect(JITContextualPromptManager.noJITNotice(
+            requirement: .automaticWithFallback, coreName: "X", jitAcquired: true, jitEnableAvailable: true) == nil)
+        for req in [PVJITRequirement.notSupported, .optional(fallback: "Interpreter"), .requiredOrCrash] {
+            #expect(JITContextualPromptManager.noJITNotice(
+                requirement: req, coreName: "X", jitAcquired: false, jitEnableAvailable: true) == nil)
+        }
+    }
+
+    @Test("Enable action is omitted when JIT cannot be enabled")
+    func noEnableActionWhenUnavailable() {
+        let n = JITContextualPromptManager.noJITNotice(
+            requirement: .automaticWithFallback, coreName: "X", jitAcquired: false, jitEnableAvailable: false)
+        #expect(n?.offersEnable == false)
+    }
+
+    @Test("StikDebug URL carries the bundle id")
+    func stikDebugURL() {
+        #expect(JITContextualPromptManager.stikDebugEnableURL(bundleID: "com.example.app")?.absoluteString
+                == "stikjit://enable-jit?bundle-id=com.example.app")
+        #expect(JITContextualPromptManager.stikDebugEnableURL(bundleID: nil) == nil)
     }
 }

@@ -621,6 +621,8 @@ static void ResetDolphinStaticState() {
         NSLog(@"⚡ CPU Core: Cached Interpreter (IR)");
     }
 
+    self.jitActive = (effectiveCpuType == 2);
+
     // CPU Overclock
     float clockMultiplier = self.cpuOClock / 100.0f;
     Config::SetBase(Config::MAIN_OVERCLOCK, clockMultiplier);

@@ -111,7 +111,9 @@ public final class PVToastManager: ObservableObject {
         icon: String? = nil,
         category: String? = nil,
         replaceKey: String? = nil,
-        progress: Double? = nil
+        progress: Double? = nil,
+        actionTitle: String? = nil,
+        action: (@MainActor @Sendable () -> Void)? = nil
     ) {
         // If a replaceKey is provided, update the existing toast in-place
         // instead of creating a new one (for progress messages, etc.)
@@ -135,7 +137,7 @@ public final class PVToastManager: ObservableObject {
             enforceMaxVisible()
             return
         }
-        let toast = PVToast(message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category, progress: progress)
+        let toast = PVToast(message: message, type: type, icon: icon, duration: duration, isPersistent: false, category: category, progress: progress, actionTitle: actionTitle, action: action)
         processToast(toast)
     }
 

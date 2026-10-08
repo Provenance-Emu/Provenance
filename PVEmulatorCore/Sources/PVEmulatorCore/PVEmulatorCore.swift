@@ -367,6 +367,10 @@ open class PVEmulatorCore: NSObject, ObjCBridgedCore, PVEmulatorCoreT {
     /// from this module, so unqualified `PVJITRequirement` could be misread.
     open var jitRequirement: PVPrimitives.PVJITRequirement { .notSupported }
 
+    /// Whether this core acquired JIT for the current session. Only meaningful after
+    /// emulation starts; cores that never JIT return false.
+    open var isJITActive: Bool { false }
+
     @objc dynamic open var supportsAudioVisualizer: Bool { true }
 }
 

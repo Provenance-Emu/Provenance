@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// The host (`PVEmulatorCore.startEmulation`) reads this: `Load` runs on the emu thread, so the core
 /// is only marked running once `onEmulationStarted` fires, and a failed boot fires `onEmulationFailed`.
 @property (nonatomic, readonly) BOOL startsEmulationAsynchronously;
+/// YES when the MAP_JIT probe succeeded and the CPU JIT is in use (set in `applySettingsFromOptions`).
+@property (nonatomic, readonly) BOOL jitActive;
 /// Invoked on the main queue after `Core::System::Load` succeeds. Cleared once either block has fired.
 @property (nonatomic, copy, nullable) void (^onEmulationStarted)(void);
 /// Invoked on the main queue after a failed boot, once the bridge has torn itself down.

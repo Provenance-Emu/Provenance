@@ -1282,6 +1282,8 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVEmual
         // here re-runs the skin viewport maths on every launch, which is the
         // churn `recomputeSkinViewportIfLayoutChanged` was added to avoid.
         applyPostStartAspectIfChanged(from: preStartAspectSize)
+        JITContextualPromptManager.shared.notifyRunningWithoutJITIfNeeded(
+            core: core, coreName: game.system?.name ?? "This core")
         forwardScalingModeToCoreIfNeeded()
         scheduleFirstFrameWatchdog()
 

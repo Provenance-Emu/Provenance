@@ -58,6 +58,8 @@
 }
 // System Properties
 @property (nonatomic, assign) bool isWii;
+/// True when the JIT recompiler is the CPU engine actually selected for this session.
+@property (nonatomic, assign) bool jitActive;
 @property (nonatomic, assign) int videoWidth;
 @property (nonatomic, assign) int videoHeight;
 @property (nonatomic, assign) int videoBitDepth;

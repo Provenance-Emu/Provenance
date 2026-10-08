@@ -126,6 +126,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
 - (void)applySettingsFromOptions {
     auto& v = Settings::values;
     const bool jit = [self probeJITAvailable];
+    _jitActive = jit;
     v.use_cpu_jit.SetValue(jit);
     v.use_fastinterp.SetValue(!jit);
     v.graphics_api.SetValue(Settings::GraphicsAPI::Vulkan);

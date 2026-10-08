@@ -25,6 +25,10 @@ public struct PVToast: Identifiable, Sendable {
     public let category: String?
     /// Optional progress value (0.0–1.0) for progress-bar display
     public var progress: Double?
+    /// Optional tappable action (e.g. "Open StikDebug"). Rendered as a button on iOS;
+    /// tvOS ignores it (no focusable control inside the toast overlay).
+    public let actionTitle: String?
+    public let action: (@MainActor @Sendable () -> Void)?
 
     init(
         id: String = UUID().uuidString,
@@ -35,8 +39,12 @@ public struct PVToast: Identifiable, Sendable {
         isPersistent: Bool = false,
         repeatCount: Int = 1,
         category: String? = nil,
-        progress: Double? = nil
+        progress: Double? = nil,
+        actionTitle: String? = nil,
+        action: (@MainActor @Sendable () -> Void)? = nil
     ) {
+        self.actionTitle = actionTitle
+        self.action = action
         self.id = id
         self.message = message
         self.type = type
@@ -86,6 +94,15 @@ struct PVToastItemView: View {
                 Spacer(minLength: 4)
 
                 #if !os(tvOS)
+                if let actionTitle = toast.actionTitle, let action = toast.action {
+                    Button(actionTitle) {
+                        action()
+                        onDismiss()
+                    }
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundColor(toast.type.color)
+                    .buttonStyle(PlainButtonStyle())
+                }
                 if !toast.isPersistent {
                     Button(action: onDismiss) {
                         Image(systemName: "xmark.circle.fill")

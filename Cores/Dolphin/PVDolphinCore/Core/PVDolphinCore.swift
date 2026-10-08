@@ -50,6 +50,7 @@ open class PVDolphinCore: PVEmulatorCore, @unchecked Sendable {
     /// Dolphin detects JIT availability at startup and selects the appropriate
     /// execution back-end (JIT or Cached Interpreter) automatically.
     open override var jitRequirement: PVJITRequirement { .automaticWithFallback }
+    open override var isJITActive: Bool { _bridge.jitActive }
 
     public required init() {
         super.init()

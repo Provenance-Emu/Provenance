@@ -119,8 +119,9 @@ public enum JITCoreCapability: CaseIterable {
     /// Whether this core's shipping build runs at full speed without JIT, so an
     /// optional "Performance Mode" prompt before launch would only be noise.
     ///
-    /// - `true`: Dolphin (GameCube/Wii) and Flycast (Dreamcast) now ship JIT-less
-    ///   engines (iCube's jitless core, the flycast-jitless interpreter build).
+    /// - `true`: Dolphin (GameCube/Wii), Flycast (Dreamcast) and Azahar (3DS) ship
+    ///   JIT-less paths (`jitRequirement == .automaticWithFallback`). They get a
+    ///   non-blocking "Running without JIT" toast after launch instead.
     /// - `false`: everything else.
     ///
     /// This only suppresses OPTIONAL prompts. A build of these cores that genuinely
@@ -128,9 +129,9 @@ public enum JITCoreCapability: CaseIterable {
     /// is caught by `coreIsJITRequired` first and still gets the blocking warning.
     public var shipsFullSpeedWithoutJIT: Bool {
         switch self {
-        case .dolphin, .flycast:
+        case .dolphin, .flycast, .azahar:
             return true
-        case .azahar, .ppsspp, .mupen, .pcsx2:
+        case .ppsspp, .mupen, .pcsx2:
             return false
         }
     }
@@ -138,10 +139,8 @@ public enum JITCoreCapability: CaseIterable {
     /// Whether this core runs significantly worse without JIT and should show a
     /// one-time performance notice even when JIT cannot be acquired on the device.
     ///
-    /// - `true`: Azahar (3DS) — JIT makes the difference between "barely playable"
-    ///   and a good experience. Users should be warned to set expectations, even if
-    ///   JIT is structurally unavailable (e.g. iOS 26 App Store build without the JIT
-    ///   entitlement).
+    /// - `true`: Azahar (3DS) — kept for the registry-level classification, but the
+    ///   pre-launch notice is suppressed via `shipsFullSpeedWithoutJIT`.
     /// - `false`: Dolphin and Flycast (full speed without JIT — see
     ///   `shipsFullSpeedWithoutJIT`), PPSSPP (interpreter fallback is acceptable),
     ///   Mupen64Plus (cached interpreter is tolerable for many games). PS2 is excluded
