@@ -14,6 +14,13 @@ on:
       - 'Scripts/**'
       - 'CoresRetro/RetroArch/scripts/**'
       - '.github/workflows/maint.yml'
+  # Most script changes are pushed straight to develop, so validate there too.
+  push:
+    branches: [develop]
+    paths:
+      - 'Scripts/**'
+      - 'CoresRetro/RetroArch/scripts/**'
+      - '.github/workflows/maint.yml'
 
 permissions:
   contents: write
@@ -30,9 +37,10 @@ env:
   ISSUE_LABEL: maintenance
 
 jobs:
-  # On PRs that touch scripts: the tool's tests, and every script must be registered.
+  # On PRs and develop pushes that touch scripts: the script-tests job from
+  # jobs.toml, and every script must be registered.
   validate:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -42,8 +50,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: maint tests
-        run: python3 -m unittest discover -s Scripts/maint -p 'test_*.py' -v
+      # Includes the maint tool's own unit tests.
+      - name: Script tests
+        run: python3 Scripts/maint/maint.py run script-tests
       - name: Every script is in jobs.toml
         run: |
           python3 Scripts/maint/maint.py status --no-checks
@@ -57,7 +66,7 @@ jobs:
           fi
 
   maintain:
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
