@@ -354,9 +354,9 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
     static var dualCoreOption: CoreOption = {
         .bool(.init(
             title: "Dual Core",
-            description: "Run CPU and GPU on separate threads. Faster when stable, but deadlocks most games on the jitless Cached Interpreter — leave OFF unless a specific game needs it.",
+            description: "Run CPU and GPU on separate threads. Faster on most games.",
             requiresRestart: true),
-        defaultValue: false)
+        defaultValue: true)
     }()
 
     static var idleSkippingOption: CoreOption = {
