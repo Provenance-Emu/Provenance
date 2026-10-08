@@ -17,7 +17,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-GET_MODULES="$REPO_ROOT/CoresRetro/RetroArch/Scripts/get-modules.sh"
+GET_MODULES="$REPO_ROOT/CoresRetro/RetroArch/scripts/get-modules.sh"
 
 if [ ! -f "$GET_MODULES" ]; then
     echo "FAIL: get-modules.sh not found at $GET_MODULES" >&2
@@ -88,7 +88,7 @@ test_sentinel_rejects_bad_url() {
 # Lightweight syntax-only check: confirm the 0-dylib branch is present
 # and uses `exit 1`.
 test_make_frameworks_zero_dylib_check() {
-    local fw="$REPO_ROOT/CoresRetro/RetroArch/Scripts/make_frameworks_retroarch.sh"
+    local fw="$REPO_ROOT/CoresRetro/RetroArch/scripts/make_frameworks_retroarch.sh"
     if [ ! -f "$fw" ]; then
         echo "FAIL: make_frameworks_retroarch.sh not found" >&2
         return 1
