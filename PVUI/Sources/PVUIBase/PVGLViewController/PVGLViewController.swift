@@ -1093,10 +1093,10 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                         shouldPresent = true
                     }
                 } else {
-                    // Non-double-buffered: synchronize with emulator core's @synchronized(self)
-                    // (executeFrame is wrapped in @synchronized(self) / objc_sync_enter(self))
-                    objc_sync_enter(emulatorCore)
-                    defer { objc_sync_exit(emulatorCore) }
+                    // Non-double-buffered: read unsynchronized, as the Metal
+                    // presenter does. (This used to `objc_sync_enter` the Swift
+                    // core, but the loop's monitor is the bridge's, so it never
+                    // excluded `executeFrame`.)
                     fetchVideoBuffer()
                     renderBlock()
                     shouldPresent = true
@@ -1290,10 +1290,10 @@ final class PVGLViewController: PVGPUViewController, PVRenderDelegate {
                     }
                 }
             } else {
-                // Non-double-buffered: synchronize with emulator core's @synchronized(self)
-                // (executeFrame is wrapped in @synchronized(self) / objc_sync_enter(self))
-                objc_sync_enter(emulatorCore)
-                defer { objc_sync_exit(emulatorCore) }
+                // Non-double-buffered: read unsynchronized, as the Metal
+                // presenter does. (This used to `objc_sync_enter` the Swift
+                // core, but the loop's monitor is the bridge's, so it never
+                // excluded `executeFrame`.)
                 fetchVideoBuffer()
                 renderBlock()
             }
