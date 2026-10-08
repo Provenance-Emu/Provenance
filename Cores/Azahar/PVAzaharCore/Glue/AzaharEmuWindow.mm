@@ -13,6 +13,10 @@ AzaharEmuWindow::AzaharEmuWindow(CAMetalLayer* layer, float scale, unsigned widt
 
 AzaharEmuWindow::~AzaharEmuWindow() = default;
 
+std::shared_ptr<Common::DynamicLibrary> AzaharEmuWindow::GetDriverLibrary() {
+    return AzaharMoltenVKLibrary();
+}
+
 std::unique_ptr<Frontend::GraphicsContext> AzaharEmuWindow::CreateSharedContext() const {
     return std::make_unique<AzaharGraphicsContext>();
 }

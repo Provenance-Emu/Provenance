@@ -16,6 +16,9 @@ public:
     void MakeCurrent() override {}
     void DoneCurrent() override {}
     std::unique_ptr<Frontend::GraphicsContext> CreateSharedContext() const override;
+    /// Vulkan::Instance opens the driver through the window itself (`OpenLibrary(&window)`),
+    /// not the shared context, so the window must hand out MoltenVK too.
+    std::shared_ptr<Common::DynamicLibrary> GetDriverLibrary() override;
 
     /// Call from the emulation thread (the bridge queues it) after the layer's drawableSize changed.
     void Resize(unsigned widthPx, unsigned heightPx, bool portrait);
