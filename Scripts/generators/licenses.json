@@ -20,6 +20,24 @@
       ]
     },
     {
+      "name": "Azahar",
+      "identifier": "com.provenance.core.azahar",
+      "projectURL": "https://azahar-emu.org",
+      "version": "2126.1.2+provenance",
+      "license": "GPL-2.0-or-later",
+      "licenseURL": "https://github.com/azahar-emu/azahar/blob/HEAD/license.txt",
+      "copyrightHolder": [
+        "Copyright © 2014-2026 Citra Emulator Project / Azahar Emulator Project"
+      ],
+      "upstreamProjectURL": null,
+      "forkNotes": null,
+      "appStoreCompatible": null,
+      "isRetroArch": false,
+      "supportedSystems": [
+        "com.provenance.3ds"
+      ]
+    },
+    {
       "name": "BeetlePSX",
       "identifier": "com.provenance.core.beetlepsx",
       "projectURL": "https://github.com/libretro/beetle-psx-libretro",
@@ -35,24 +53,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.psx"
-      ]
-    },
-    {
-      "name": "Azahar (Experimental)",
-      "identifier": "com.provenance.core.azahar",
-      "projectURL": "https://azahar-emu.org",
-      "version": "git",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/azahar-emu/azahar/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2013-2024 Citra Emulator Project, Azahar Emulator Contributors"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.3ds"
       ]
     },
     {
