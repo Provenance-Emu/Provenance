@@ -14,7 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Values pushed from PVAzaharCoreOptions before `loadFileAtPath:` (see Task 9).
 @property (nonatomic, assign) NSInteger resolutionFactor;
-@property (nonatomic, assign) NSInteger layoutOption;
+@property (nonatomic, assign) NSInteger layoutOption;          // landscape: PVAzaharLayoutOption index
+@property (nonatomic, assign) NSInteger portraitLayoutOption;  // 0 top full width, 1 original
 @property (nonatomic, assign) BOOL swapScreens;
 @property (nonatomic, assign) BOOL new3DSMode;
 @property (nonatomic, assign) NSInteger cpuClockPercent;
@@ -34,6 +35,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL startsEmulationAsynchronously;
 /// YES when the MAP_JIT probe succeeded and the CPU JIT is in use (set in `applySettingsFromOptions`).
 @property (nonatomic, readonly) BOOL jitActive;
+
+/// Re-applies the live-safe options (layout, portrait layout, swap, speed limit) to a running core.
+/// The Swift side calls it after copying fresh option values into the bridge properties.
+- (void)applyLiveSettings;
 /// Invoked on the main queue after `Core::System::Load` succeeds. Cleared once either block has fired.
 @property (nonatomic, copy, nullable) void (^onEmulationStarted)(void);
 /// Invoked on the main queue after a failed boot, once the bridge has torn itself down.

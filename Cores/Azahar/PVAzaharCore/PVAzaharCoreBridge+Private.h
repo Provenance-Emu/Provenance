@@ -9,6 +9,23 @@
 #include <mutex>
 #include <thread>
 #include <pthread.h>
+#include "common/settings.h"
+
+/// UI index (Default, Single, Large, Side by Side, Hybrid) -> azahar layout. SeparateWindows is skipped.
+static inline Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
+    switch (index) {
+    case 1: return Settings::LayoutOption::SingleScreen;
+    case 2: return Settings::LayoutOption::LargeScreen;
+    case 3: return Settings::LayoutOption::SideScreen;
+    case 4: return Settings::LayoutOption::HybridScreen;
+    default: return Settings::LayoutOption::Default;
+    }
+}
+/// UI index (Top Full Width, Original) -> azahar portrait layout. Custom is driven by skins, not the option.
+static inline Settings::PortraitLayoutOption PVAzaharPortraitLayoutOption(NSInteger index) {
+    return index == 1 ? Settings::PortraitLayoutOption::PortraitOriginal
+                      : Settings::PortraitLayoutOption::PortraitTopFullWidth;
+}
 
 class AzaharEmuWindow;
 
@@ -66,6 +83,9 @@ private:
     UIView *_renderView;             // PVAzaharRenderView, added to touchViewController.view
     NSArray<NSLayoutConstraint *> *_renderViewConstraints;
     BOOL _useCustomRenderViewLayout;
+    BOOL _skinLayoutActive;          // a dual-screen skin supplied both screen rects (custom layout)
+    CGRect _skinTopPx, _skinBottomPx; // skin screen rects in render-view pixels, relative to the view
+    CGSize _lastDrawablePx;          // last size handed to the window; relayout reuses it
     std::atomic<bool> _leftStickDrivesCStick;   // PV3DSButtonAnalogMode toggles it
 }
 /// Jobs run on the emu thread between RunLoop slices (also while paused), and are dropped

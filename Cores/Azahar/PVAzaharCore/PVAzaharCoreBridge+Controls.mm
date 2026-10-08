@@ -1,5 +1,7 @@
 #import "PVAzaharCoreBridge.h"
 #import "PVAzaharCoreBridge+Private.h"
+#include "Glue/AzaharEmuWindow.h"
+#include <algorithm>
 #import "PVAzaharCoreBridge+Video.h"
 @import PVCoreBridge;
 #include "Glue/AzaharInput.h"
@@ -23,16 +25,6 @@ static int NativeButtonFor(PV3DSButton button) {
 
 /// Default -> Single -> Large -> Side -> Hybrid -> Default. SeparateWindows and CustomLayout are not
 /// reachable from the UI, so a stray value falls back to Default.
-static Settings::LayoutOption NextLayout(Settings::LayoutOption current) {
-    using L = Settings::LayoutOption;
-    switch (current) {
-        case L::Default: return L::SingleScreen;
-        case L::SingleScreen: return L::LargeScreen;
-        case L::LargeScreen: return L::SideScreen;
-        case L::SideScreen: return L::HybridScreen;
-        default: return L::Default;
-    }
-}
 
 /// Analog the left stick (analog or digital directions) currently drives; PV3DSButtonAnalogMode flips it.
 static int LeftStickTarget(PVAzaharCoreBridge *bridge) {
@@ -44,30 +36,20 @@ static int LeftStickTarget(PVAzaharCoreBridge *bridge) {
 
 @implementation PVAzaharCoreBridge (Controls)
 
-/// Layout settings are read by the emu thread, so the write and ApplySettings happen there; the
-/// window relayout is queued behind it.
-- (void)changeLayoutOnEmuThread:(std::function<void()>)change {
-    [self runOnEmuThread:[change = std::move(change)] {
-        change();
-        Core::System::GetInstance().ApplySettings();
-    }];
-    [self relayoutWindow];
-}
 
 /// ButtonResponder requirement; this core takes input through the 3DS methods below, not a gamepad handler.
 - (GCExtendedGamepadValueChangedHandler)valueChangedHandler { return nil; }
 
 - (void)didPush3DSButton:(PV3DSButton)button forPlayer:(NSInteger)player {
     switch (button) {
+        // The relayout reads the bridge properties, so the toggles live there (not in Settings directly).
         case PV3DSButtonSwap:
-            [self changeLayoutOnEmuThread:[] {
-                Settings::values.swap_screen.SetValue(!Settings::values.swap_screen.GetValue());
-            }];
+            self.swapScreens = !self.swapScreens;
+            [self relayoutWindow];
             return;
         case PV3DSButtonRotate:
-            [self changeLayoutOnEmuThread:[] {
-                Settings::values.layout_option.SetValue(NextLayout(Settings::values.layout_option.GetValue()));
-            }];
+            self.layoutOption = (self.layoutOption + 1) % 5;   // PVAzaharLayoutOption indices
+            [self relayoutWindow];
             return;
         case PV3DSButtonAnalogMode:
             _leftStickDrivesCStick = !_leftStickDrivesCStick;
@@ -116,6 +98,24 @@ static int LeftStickTarget(PVAzaharCoreBridge *bridge) {
 
 - (void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)x withYValue:(CGFloat)y forPlayer:(NSInteger)player {
     [self didMove3DSJoystickDirection:(PV3DSButton)button withXValue:x withYValue:y forPlayer:player];
+}
+
+#pragma mark - Bottom-screen touch from skins (PV3DSSystemResponderClient)
+
+/// `point` is in 3DS bottom-screen pixels (320x240). The window layout lives on the emu thread, so
+/// the mapping to window pixels happens there against the current bottom-screen rect.
+- (void)touchScreenAtPoint:(CGPoint)point {
+    const float nx = (float)std::clamp<CGFloat>(point.x / 319.0, 0, 1);
+    const float ny = (float)std::clamp<CGFloat>(point.y / 239.0, 0, 1);
+    [self runOnEmuThread:[self, nx, ny] {
+        if (!_window) { return; }
+        const auto& bottom = _window->GetFramebufferLayout().bottom_screen;
+        _window->Touch(true, bottom.left + nx * bottom.GetWidth(), bottom.top + ny * bottom.GetHeight());
+    }];
+}
+
+- (void)releaseScreenTouch {
+    [self runOnEmuThread:[self] { if (_window) { _window->Touch(false, 0, 0); } }];
 }
 
 @end

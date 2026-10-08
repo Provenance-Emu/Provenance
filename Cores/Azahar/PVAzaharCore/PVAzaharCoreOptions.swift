@@ -18,9 +18,10 @@ import UIKit
     #else
     static let defaultLayout = 0
     #endif
-    // The bridge reads layout, swap, CPU clock and speed limit only at boot, hence requiresRestart.
+    // Layout, portrait layout, swap and speed limit are re-applied live (the core observes
+    // OptionUpdated); CPU clock and the renderer flags are read only at boot.
     static var layoutOption: CoreOption {
-        .enumeration(.init(title: "Screen Layout", description: nil, requiresRestart: true),
+        .enumeration(.init(title: "Landscape Layout", description: "Used when the screen is wider than tall. A skin with two screens overrides it.", requiresRestart: false),
                      values: [
                         .init(title: "Default (stacked)", description: nil, value: 0),
                         .init(title: "Single Screen", description: nil, value: 1),
@@ -29,8 +30,15 @@ import UIKit
                         .init(title: "Hybrid", description: nil, value: 4)
                      ], defaultValue: defaultLayout)
     }
+    static var portraitLayoutOption: CoreOption {
+        .enumeration(.init(title: "Portrait Layout", description: "Used when the screen is taller than wide. A skin with two screens overrides it.", requiresRestart: false),
+                     values: [
+                        .init(title: "Top Screen Full Width", description: nil, value: 0),
+                        .init(title: "Original", description: "Both screens at the same scale", value: 1)
+                     ], defaultValue: 0)
+    }
     static var swapScreensOption: CoreOption {
-        .bool(.init(title: "Swap Screens", description: nil, requiresRestart: true), defaultValue: false)
+        .bool(.init(title: "Swap Screens", description: nil, requiresRestart: false), defaultValue: false)
     }
     static var hardwareShaderOption: CoreOption {
         .bool(.init(title: "Hardware Shader", description: "GPU vertex/geometry shaders. Disable only for debugging.", requiresRestart: true), defaultValue: true)
@@ -79,7 +87,7 @@ import UIKit
     /// azahar treats `frame_limit == 0` as unlimited.
     static let unlimitedSpeedPercent = 0
     static var frameLimitOption: CoreOption {
-        .enumeration(.init(title: "Speed Limit", description: nil, requiresRestart: true),
+        .enumeration(.init(title: "Speed Limit", description: nil, requiresRestart: false),
                      values: [50, 100, 150, 200, unlimitedSpeedPercent].map {
                          .init(title: $0 == unlimitedSpeedPercent ? "Unlimited" : "\($0)%", description: nil, value: $0)
                      }, defaultValue: 100)
@@ -159,7 +167,7 @@ import UIKit
 
     public static var options: [CoreOption] {
         [.group(.init(title: "Graphics", description: nil), subOptions: [
-            resolutionOption, layoutOption, swapScreensOption, textureFilterOption, hardwareShaderOption,
+            resolutionOption, layoutOption, portraitLayoutOption, swapScreensOption, textureFilterOption, hardwareShaderOption,
             accurateMulOption, asyncShaderOption, asyncPresentOption, diskShaderCacheOption]),
          .group(.init(title: "System", description: nil), subOptions: [new3DSOption, cpuClockOption, regionOption, frameLimitOption]),
          .group(.init(title: "Audio", description: nil), subOptions: [audioStretchOption, realtimeAudioOption]),
@@ -172,6 +180,7 @@ import UIKit
         func bool(_ option: CoreOption) -> Bool { PVAzaharCore.valueForOption(option) }
         bridge.resolutionFactor = int(resolutionOption)
         bridge.layoutOption = int(layoutOption)
+        bridge.portraitLayoutOption = int(portraitLayoutOption)
         bridge.swapScreens = bool(swapScreensOption)
         bridge.hardwareShader = bool(hardwareShaderOption)
         bridge.accurateMultiplication = bool(accurateMulOption)

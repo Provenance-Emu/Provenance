@@ -6,6 +6,47 @@
 #include "Glue/AzaharEmuWindow.h"
 
 // Conformance lives on the category that defines the methods, so a missing one still warns.
+#include <algorithm>
+#include <cmath>
+
+namespace {
+u16 ToU16(CGFloat v) { return static_cast<u16>(std::clamp<CGFloat>(std::round(v), 0, 65535)); }
+
+/// Window layout from bridge state, on the emu thread. A dual-screen skin's two rects become azahar's
+/// custom layout for the current orientation; otherwise the user's layout options apply.
+void ApplyLayoutSettings(bool skin, CGRect top, CGRect bottom, NSInteger layoutOpt, NSInteger portraitOpt,
+                         bool swap, bool portrait) {
+    auto& v = Settings::values;
+    v.swap_screen.SetValue(swap);
+    if (!skin) {
+        v.layout_option.SetValue(PVAzaharLayoutOption(layoutOpt));
+        v.portrait_layout_option.SetValue(PVAzaharPortraitLayoutOption(portraitOpt));
+        return;
+    }
+    if (portrait) {
+        v.custom_portrait_top_x.SetValue(ToU16(top.origin.x));
+        v.custom_portrait_top_y.SetValue(ToU16(top.origin.y));
+        v.custom_portrait_top_width.SetValue(ToU16(top.size.width));
+        v.custom_portrait_top_height.SetValue(ToU16(top.size.height));
+        v.custom_portrait_bottom_x.SetValue(ToU16(bottom.origin.x));
+        v.custom_portrait_bottom_y.SetValue(ToU16(bottom.origin.y));
+        v.custom_portrait_bottom_width.SetValue(ToU16(bottom.size.width));
+        v.custom_portrait_bottom_height.SetValue(ToU16(bottom.size.height));
+        v.portrait_layout_option.SetValue(Settings::PortraitLayoutOption::PortraitCustomLayout);
+    } else {
+        v.custom_top_x.SetValue(ToU16(top.origin.x));
+        v.custom_top_y.SetValue(ToU16(top.origin.y));
+        v.custom_top_width.SetValue(ToU16(top.size.width));
+        v.custom_top_height.SetValue(ToU16(top.size.height));
+        v.custom_bottom_x.SetValue(ToU16(bottom.origin.x));
+        v.custom_bottom_y.SetValue(ToU16(bottom.origin.y));
+        v.custom_bottom_width.SetValue(ToU16(bottom.size.width));
+        v.custom_bottom_height.SetValue(ToU16(bottom.size.height));
+        v.layout_option.SetValue(Settings::LayoutOption::CustomLayout);
+    }
+}
+} // namespace
+
 @interface PVAzaharCoreBridge (ViewportPositioning) <EmulatorCoreViewportPositioning>
 @end
 
@@ -56,9 +97,21 @@
 /// Main thread (layoutSubviews). Queues the layout change onto the emu thread, which owns the window.
 - (void)resizeWindowToPixelSize:(CGSize)px {
     if (!_window || px.width < 1 || px.height < 1) { return; }
-    const BOOL portrait = px.height > px.width;
+    _lastDrawablePx = px;
+    const bool portrait = px.height > px.width;
     const unsigned w = (unsigned)px.width, h = (unsigned)px.height;
-    [self runOnEmuThread:[self, w, h, portrait] { if (_window) { _window->Resize(w, h, portrait); } }];
+    // Snapshot on main: the emu thread must not read the bridge's properties.
+    const bool skin = _skinLayoutActive;
+    const CGRect top = _skinTopPx, bottom = _skinBottomPx;
+    const NSInteger layoutOpt = self.layoutOption, portraitOpt = self.portraitLayoutOption;
+    const bool swap = self.swapScreens;
+    ILOG(@"[PVAzahar] relayout %ux%u portrait=%d skinLayout=%d layout=%ld portraitLayout=%ld swap=%d",
+         w, h, portrait, skin, (long)layoutOpt, (long)portraitOpt, swap);
+    [self runOnEmuThread:[self, w, h, portrait, skin, top, bottom, layoutOpt, portraitOpt, swap] {
+        if (!_window) { return; }
+        ApplyLayoutSettings(skin, top, bottom, layoutOpt, portraitOpt, swap, portrait);
+        _window->Resize(w, h, portrait);
+    }];
 }
 
 - (void)relayoutWindow {
@@ -119,6 +172,7 @@
 
 - (void)setUseCustomRenderViewLayout:(BOOL)enabled {
     _useCustomRenderViewLayout = enabled;
+    if (!enabled) { _skinLayoutActive = NO; }
     if (!enabled && _renderView && _renderViewConstraints) {
         _renderView.translatesAutoresizingMaskIntoConstraints = NO;
         [NSLayoutConstraint activateConstraints:_renderViewConstraints];
@@ -128,10 +182,34 @@
 
 - (void)applyRenderViewFrameInTouchView:(CGRect)frame {
     if (!_renderView) { return; }
+    const BOOL hadSkinLayout = _skinLayoutActive;
+    _skinLayoutActive = NO;   // one frame: azahar lays both screens out inside it with the user's option
     if (_renderViewConstraints) { [NSLayoutConstraint deactivateConstraints:_renderViewConstraints]; }
     _renderView.translatesAutoresizingMaskIntoConstraints = YES;
     _renderView.frame = frame;
     [_renderView layoutIfNeeded];   // layoutSubviews reports the new drawable size
+    if (hadSkinLayout) { [self relayoutWindow]; }   // same size, different layout
+}
+
+/// Both skin screens, in touch-view points. The view covers their union and azahar's custom layout
+/// puts each screen exactly where the skin drew it, so the skin's art and touch areas line up.
+- (void)applyDualScreenRenderFramesInTouchView:(CGRect)top bottom:(CGRect)bottom {
+    if (!_renderView || CGRectIsEmpty(top) || CGRectIsEmpty(bottom)) { return; }
+    const CGRect unionRect = CGRectIntegral(CGRectUnion(top, bottom));
+    if (_renderViewConstraints) { [NSLayoutConstraint deactivateConstraints:_renderViewConstraints]; }
+    _renderView.translatesAutoresizingMaskIntoConstraints = YES;
+    _renderView.frame = unionRect;
+    [_renderView layoutIfNeeded];
+    const CGFloat scale = ((PVAzaharRenderView *)_renderView).metalLayer.contentsScale ?: UIScreen.mainScreen.nativeScale;
+    auto toPx = [&](CGRect r) {
+        return CGRectMake((r.origin.x - unionRect.origin.x) * scale, (r.origin.y - unionRect.origin.y) * scale,
+                          r.size.width * scale, r.size.height * scale);
+    };
+    _skinTopPx = toPx(top);
+    _skinBottomPx = toPx(bottom);
+    _skinLayoutActive = YES;
+    _useCustomRenderViewLayout = YES;
+    [self relayoutWindow];   // layoutSubviews only reports size changes; the rects may differ at the same size
 }
 
 - (BOOL)isShuttingDownForViewportUpdates { return !_running; }

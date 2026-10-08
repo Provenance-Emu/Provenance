@@ -145,4 +145,13 @@
     func didRelease(_ button: PV3DSButton, forPlayer player: Int)
     @objc(didMove3DSJoystickDirection:withXValue:withYValue:forPlayer:)
     func didMoveJoystick(_ button: PV3DSButton, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int)
+
+    /// Forward a stylus/touch event to the 3DS bottom screen.
+    ///
+    /// - Parameter point: bottom-screen coordinates, `x` 0–319 and `y` 0–239.
+    ///   Skins deliver these when a touch lands on their bottom-screen frame.
+    @objc optional func touchScreenAtPoint(_ point: CGPoint)
+
+    /// Release the 3DS touch screen (stylus lifted).
+    @objc optional func releaseScreenTouch()
 }

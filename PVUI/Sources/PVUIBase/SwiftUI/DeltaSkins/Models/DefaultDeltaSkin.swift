@@ -255,6 +255,9 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
         if systemIdentifier == .DS {
             return ndsScreens(for: traits)
         }
+        if systemIdentifier == ._3DS {
+            return n3dsScreens(for: traits)
+        }
 
         // Calculate screen frame based on actual button positions
         // This ensures the screen area is properly positioned above the controls
@@ -419,6 +422,28 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
                 DeltaSkinScreen(id: "nds_bottom",  inputFrame: bottomInputFrame,  outputFrame: bottomOutputFrame,  placement: .controller, filters: nil)
             ]
         }
+    }
+
+    /// The two 3DS screens: a 5:3 top screen over a centred 4:3 bottom screen. Azahar draws both into
+    /// its own view using these as its custom layout, so the frames only need the right shape; it
+    /// also takes bottom-screen touches from the skin through `PV3DSSystemResponderClient`.
+    private func n3dsScreens(for traits: DeltaSkinTraits) -> [DeltaSkinScreen] {
+        let topInputFrame    = CGRect(x: 0, y:   0, width: 400, height: 240)
+        let bottomInputFrame = CGRect(x: 0, y: 240, width: 320, height: 240)
+        let topOutputFrame: CGRect
+        let bottomOutputFrame: CGRect
+        if traits.orientation == .landscape {
+            // Stacked in the middle third so the controls keep both side columns.
+            topOutputFrame    = CGRect(x: 0.3225, y: 0.04, width: 0.355, height: 0.46)
+            bottomOutputFrame = CGRect(x: 0.358,  y: 0.52, width: 0.284, height: 0.46)
+        } else {
+            topOutputFrame    = CGRect(x: 0.05, y: 0.03,  width: 0.90, height: 0.25)
+            bottomOutputFrame = CGRect(x: 0.14, y: 0.295, width: 0.72, height: 0.25)
+        }
+        return [
+            DeltaSkinScreen(id: "n3ds_top",    inputFrame: topInputFrame,    outputFrame: topOutputFrame,    placement: .controller, filters: nil),
+            DeltaSkinScreen(id: "n3ds_bottom", inputFrame: bottomInputFrame, outputFrame: bottomOutputFrame, placement: .controller, filters: nil)
+        ]
     }
 
     public func mappingSize(for traits: DeltaSkinTraits) -> CGSize? {
@@ -691,14 +716,14 @@ public class DefaultDeltaSkin: DeltaSkinProtocol {
             return nil
         }
 
-        if systemIdentifier == .DS {
-            // NDS: one group containing both screens; gameScreenFrame spans the full
+        if systemIdentifier == .DS || systemIdentifier == ._3DS {
+            // NDS/3DS: one group containing both screens; gameScreenFrame spans the full
             // combined area (union of top and bottom output frames).
             let frames = screens.compactMap { $0.outputFrame }
             let gameScreenFrame = frames.reduce(CGRect.null) { $0.union($1) }
 
             return [DeltaSkinScreenGroup(
-                id: "nds_group",
+                id: systemIdentifier == .DS ? "nds_group" : "n3ds_group",
                 screens: screens,
                 extendedEdges: nil,
                 translucent: true,

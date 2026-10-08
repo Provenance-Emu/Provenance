@@ -19,6 +19,7 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
     public static var respectsMuteSwitch: Bool { Defaults[.respectMuteSwitch] }
 
     let _bridge: PVAzaharCoreBridge = .init()
+    private var optionObserver: NSObjectProtocol?
 
     #if os(tvOS)
     public override var supportsSkins: Bool { false }
@@ -29,6 +30,8 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
     public override var supportsFilters: Bool { true }
     public override var supportsAudioVisualizer: Bool { true }
     public override var jitRequirement: PVJITRequirement { .automaticWithFallback }
+    /// Skins lay out two screens; the emulator VC hands both frames to the bridge.
+    public override var supportsDualScreens: Bool { true }
     public override var isJITActive: Bool { _bridge.jitActive }
 
     public required init() {
@@ -64,7 +67,25 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
     public override func loadFile(atPath path: String) throws {
         Self.migrateEmuThreeDataIfNeeded()
         PVAzaharCoreOptions.apply(to: _bridge)
+        observeOptionUpdates()
         try super.loadFile(atPath: path)
+    }
+
+    /// Settings posts "OptionUpdated" when the user changes a core option in-game; layout, swap and
+    /// speed limit apply without a restart.
+    private func observeOptionUpdates() {
+        guard optionObserver == nil else { return }
+        optionObserver = NotificationCenter.default.addObserver(
+            forName: Notification.Name("OptionUpdated"), object: nil, queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            PVAzaharCoreOptions.apply(to: self._bridge)
+            self._bridge.applyLiveSettings()
+        }
+    }
+
+    deinit {
+        if let optionObserver { NotificationCenter.default.removeObserver(optionObserver) }
     }
 }
 
@@ -103,6 +124,12 @@ extension PVAzaharCore: PV3DSSystemResponderClient {
     }
     public func didRelease(_ button: PV3DSButton, forPlayer player: Int) {
         responder?.didRelease(button, forPlayer: player)
+    }
+    public func touchScreenAtPoint(_ point: CGPoint) {
+        responder?.touchScreenAtPoint?(point)
+    }
+    public func releaseScreenTouch() {
+        responder?.releaseScreenTouch?()
     }
 }
 

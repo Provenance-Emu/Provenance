@@ -16,6 +16,7 @@
 #include "Glue/AzaharEmuWindow.h"
 #include "Glue/AzaharInput.h"
 #include "common/file_util.h"
+#include "common/string_util.h"
 #include "common/logging/backend.h"
 #include "common/logging/filter.h"
 #include "common/settings.h"
@@ -25,6 +26,46 @@
 #include "core/hle/service/cam/cam.h"
 #include "network.h"   // azahar's network/network.h; see HEADER_SEARCH_PATHS in project.yml
 #include "audio_core/sink_details.h"
+#include "core/hle/service/am/am.h"
+#include "core/hle/service/fs/archive.h"
+
+namespace {
+/// A .cia is an installable package, not a bootable image: azahar's loader has no case for it. Install
+/// it into the emulated NAND/SD once (skipped when the title content already exists) and boot the
+/// installed title's content instead. Returns false, with `path` untouched, when the file is not a CIA
+/// or the install failed; the normal Load then reports the error.
+bool ResolveCIABootPath(std::string& path) {
+    std::string ext;
+    Common::SplitPath(path, nullptr, nullptr, &ext);
+    ext = Common::ToLower(ext);
+    if (ext != ".cia" && ext != ".zcia") { return false; }
+
+    const auto infos = Service::AM::GetCIAInfos(path);
+    if (infos.Failed()) {
+        ELOG(@"[PVAzahar] could not read CIA metadata for %s", path.c_str());
+        return false;
+    }
+    const u64 tid = infos->first.tid;
+    const auto media = Service::AM::GetTitleMediaType(tid);
+    const std::string content = Service::AM::GetTitleContentPath(media, tid);
+    if (!FileUtil::Exists(content)) {
+        ILOG(@"[PVAzahar] installing CIA %s (title %016llx)", path.c_str(), (unsigned long long)tid);
+        const auto status = Service::AM::InstallCIA(path);
+        if (status != Service::AM::InstallStatus::Success) {
+            ELOG(@"[PVAzahar] CIA install failed: %d", static_cast<int>(status));
+            return false;
+        }
+    }
+    if (!FileUtil::Exists(content)) {
+        // Updates and DLC install fine but have nothing to boot.
+        ELOG(@"[PVAzahar] title %016llx has no bootable content at %s", (unsigned long long)tid, content.c_str());
+        return false;
+    }
+    ILOG(@"[PVAzahar] booting installed title %016llx from %s", (unsigned long long)tid, content.c_str());
+    path = content;
+    return true;
+}
+} // namespace
 
 
 namespace {
@@ -56,17 +97,6 @@ void PVAzaharJITProbeSignalHandler(int sig) {
 }
 #endif
 } // namespace
-
-/// UI index (Default, Single, Large, Side by Side, Hybrid) -> azahar layout. SeparateWindows is skipped.
-static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
-    switch (index) {
-    case 1: return Settings::LayoutOption::SingleScreen;
-    case 2: return Settings::LayoutOption::LargeScreen;
-    case 3: return Settings::LayoutOption::SideScreen;
-    case 4: return Settings::LayoutOption::HybridScreen;
-    default: return Settings::LayoutOption::Default;
-    }
-}
 
 // Residual -Wprotocol on this @implementation is inherited from ObjCBridgedCoreBridge, not from this core:
 // EmulatorCoreSavesSerializer's misspelled loadStateToFileAtPath:error: and EmulatorCoreControllerDataSource's
@@ -133,6 +163,7 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     v.physical_device.SetValue(0);
     v.resolution_factor.SetValue(static_cast<u32>(MAX(1, self.resolutionFactor)));
     v.layout_option.SetValue(PVAzaharLayoutOption(self.layoutOption));
+    v.portrait_layout_option.SetValue(PVAzaharPortraitLayoutOption(self.portraitLayoutOption));
     v.swap_screen.SetValue(self.swapScreens);
     v.is_new_3ds.SetValue(self.new3DSMode);
     v.cpu_clock_percentage.SetValue(static_cast<s32>(self.cpuClockPercent));
@@ -166,6 +197,14 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     AzaharInput::ApplyProfile();
     ILOG(@"[PVAzahar] settings applied: jit=%d fastinterp=%d res=%ld layout=%ld", jit, !jit,
          (long)self.resolutionFactor, (long)self.layoutOption);
+}
+
+- (void)applyLiveSettings {
+    if (!NSThread.isMainThread) { dispatch_async(dispatch_get_main_queue(), ^{ [self applyLiveSettings]; }); return; }
+    if (!_running) { return; }
+    const double frameLimit = (double)self.frameLimitPercent;
+    [self runOnEmuThread:[frameLimit] { Settings::values.frame_limit.SetValue(frameLimit); }];
+    [self relayoutWindow];   // layout, portrait layout and swap are applied by the relayout
 }
 
 /// Port of -[PVDolphinCoreBridge checkJITAvailable]: allocate a MAP_JIT page, write
@@ -262,7 +301,9 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
         Frontend::RegisterDefaultApplets(system);
         Network::Init();
         system.ApplySettings();
-        const auto result = system.Load(*_window, romPath);
+        std::string bootPath = romPath;
+        ResolveCIABootPath(bootPath);   // .cia: install once, boot the installed title
+        const auto result = system.Load(*_window, bootPath);
         if (result == Core::System::ResultStatus::Success) {
             _loaded = true;
             if (!_stopRequested) {

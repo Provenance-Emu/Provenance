@@ -65,6 +65,9 @@ import PVPrimitives
     @objc func applyRenderViewFrameInTouchView(_ frame: CGRect)
     /// Returns true when bridge teardown has started and delayed viewport work should be skipped.
     @objc optional func isShuttingDownForViewportUpdates() -> Bool
+    /// Dual-screen cores that draw both screens into one view of their own (Azahar): the skin's two
+    /// screen frames, in touch-view coordinates, so the core's internal layout can match the skin.
+    @objc optional func applyDualScreenRenderFramesInTouchView(_ top: CGRect, bottom: CGRect)
 }
 
 /// Cores that draw into their own view or size their own output, so the host's

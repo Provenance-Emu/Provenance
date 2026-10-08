@@ -35,7 +35,7 @@ extension PVEmulatorViewController {
     }
 
     /// Compute viewport frame for dual screen systems using screen groups
-    internal func currentDualScreenViewportFrame() -> CGRect? {
+    internal func dualScreenViewportRects() -> (top: CGRect, bottom: CGRect)? {
         guard isDualScreenSystem,
               isDeltaSkinEnabled,
               let skin = currentSkin else {
@@ -64,7 +64,7 @@ extension PVEmulatorViewController {
               let mainGroup = screenGroups.first,
               mainGroup.screens.count >= 2 else {
             // Fall back to single screen positioning
-            return currentSkinViewportFrame()
+            return nil
         }
 
         // Use the EXACT same scale calculation as DeltaSkinView.calculateLayout
@@ -124,7 +124,7 @@ extension PVEmulatorViewController {
         guard screens.count >= 2,
               let topScreenFrame = screens[0].outputFrame,
               let bottomScreenFrame = screens[1].outputFrame else {
-            return currentSkinViewportFrame()
+            return nil
         }
 
         // Determine which screen is which based on swap state
@@ -183,7 +183,38 @@ extension PVEmulatorViewController {
         DLOG("🎮   Combined rect: \(combinedRect)")
         DLOG("🎮   View bounds: \(view.bounds)")
 
-        return combinedRect
+        _ = combinedRect
+        return (topScaled, bottomScaled)
+    }
+    /// Union of both skin screens in view coordinates, or the single-screen frame when the skin has one.
+    internal func currentDualScreenViewportFrame() -> CGRect? {
+        guard isDualScreenSystem, isDeltaSkinEnabled, currentSkin != nil else { return nil }
+        guard let rects = dualScreenViewportRects() else { return currentSkinViewportFrame() }
+        return rects.top.union(rects.bottom)
+    }
+
+    /// Cores that draw both screens into one view of their own (Azahar) get each skin screen's frame,
+    /// so their internal layout matches the skin instead of guessing inside the union. Returns false
+    /// when the bridge has no such method; the caller then positions the union frame as before.
+    @discardableResult
+    private func applyDualScreenFramesToPositioningBridge(_ frames: [CGRect]) -> Bool {
+        guard frames.count >= 2,
+              let bridge = core.bridge as? EmulatorCoreViewportPositioning,
+              bridge.applyDualScreenRenderFramesInTouchView != nil,
+              let touchView = core.touchViewController?.view else { return false }
+        // Effect screens (blurred backdrops) are larger than the game screens: keep the two smallest.
+        let screens = Array(frames.sorted { $0.width * $0.height < $1.width * $1.height }.prefix(2))
+        // The 3DS top screen is the wider one (5:3 against 4:3); when the aspects tie, the upper one is the top.
+        let ordered = screens.sorted { a, b in
+            let ra = a.width / max(a.height, 1), rb = b.width / max(b.height, 1)
+            return abs(ra - rb) > 0.05 ? ra > rb : a.minY < b.minY
+        }
+        touchView.layoutIfNeeded()
+        let top = view.convert(ordered[0], to: touchView)
+        let bottom = view.convert(ordered[1], to: touchView)
+        DLOG("🎮 SKIN: handing both screen frames to the bridge: top=\(top) bottom=\(bottom)")
+        bridge.applyDualScreenRenderFramesInTouchView?(top, bottom: bottom)
+        return true
     }
 
     /// Scale a frame using the EXACT same method as DeltaSkinScreenPositionWrapper
@@ -270,7 +301,9 @@ extension PVEmulatorViewController {
 
             if lastAppliedViewportFrame != combinedRect {
                 DLOG("🎮 Using notification-based dual screen frame: \(combinedRect)")
-                if core.coreIdentifier?.contains("emuThree") == true || core.coreIdentifier?.contains("3DS") == true || core.coreIdentifier?.contains("azahar") == true {
+                if applyDualScreenFramesToPositioningBridge(Array(receivedScreenFrames.values)) {
+                    // Both frames went to the core's own layout.
+                } else if core.coreIdentifier?.contains("emuThree") == true || core.coreIdentifier?.contains("3DS") == true || core.coreIdentifier?.contains("azahar") == true {
                     applyDualScreenViewportForEmuThree(frame: combinedRect)
                 } else {
                     applyFrameToGPUView(combinedRect)
@@ -327,7 +360,9 @@ extension PVEmulatorViewController {
 
         if lastAppliedViewportFrame != frame {
             // Special handling for emuThreeDS - it uses touchViewController directly
-            if core.coreIdentifier?.contains("emuThree") == true || core.coreIdentifier?.contains("3DS") == true {
+            if let rects = dualScreenViewportRects(), applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom]) {
+                // Both frames went to the core's own layout.
+            } else if core.coreIdentifier?.contains("emuThree") == true || core.coreIdentifier?.contains("3DS") == true || core.coreIdentifier?.contains("azahar") == true {
                 applyDualScreenViewportForEmuThree(frame: frame)
             } else {
                 applyFrameToGPUView(frame)
@@ -560,7 +595,9 @@ extension PVEmulatorViewController {
                 self.isApplyingViewport = true
                 defer { self.isApplyingViewport = false }
 
-                if self.core.coreIdentifier?.contains("emuThree") == true || self.core.coreIdentifier?.contains("3DS") == true {
+                if self.applyDualScreenFramesToPositioningBridge(Array(self.receivedScreenFrames.values)) {
+                    // Both frames went to the core's own layout.
+                } else if self.core.coreIdentifier?.contains("emuThree") == true || self.core.coreIdentifier?.contains("3DS") == true || self.core.coreIdentifier?.contains("azahar") == true {
                     DLOG("🎮 SKIN: Applying dual screen viewport for emuThreeDS: \(combinedRect)")
                     self.applyDualScreenViewportForEmuThree(frame: combinedRect)
                 } else if (self.gpuViewController as? PVMetalViewController)?.dualScreenLayout != nil {
@@ -585,7 +622,7 @@ extension PVEmulatorViewController {
                 // Only one screen received after timeout - apply it anyway
                 let frame = self.receivedScreenFrames.values.first!
                 DLOG("🎮 SKIN: Timeout - only one screen received, applying single frame: \(frame)")
-                if self.core.coreIdentifier?.contains("emuThree") == true || self.core.coreIdentifier?.contains("3DS") == true {
+                if self.core.coreIdentifier?.contains("emuThree") == true || self.core.coreIdentifier?.contains("3DS") == true || self.core.coreIdentifier?.contains("azahar") == true {
                     self.applyDualScreenViewportForEmuThree(frame: frame)
                 } else if (self.gpuViewController as? PVMetalViewController)?.dualScreenLayout == nil {
                     self.applyFrameToGPUView(frame)

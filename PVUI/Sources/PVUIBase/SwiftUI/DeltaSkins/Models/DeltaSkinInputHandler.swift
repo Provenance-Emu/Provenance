@@ -890,6 +890,14 @@ open class DeltaSkinInputHandler: ObservableObject {
             return
         }
 
+        if let responder3DS = core as? PV3DSSystemResponderClient {
+            // 3DS bottom screen native resolution: 320 × 240
+            let point = CGPoint(x: max(0, min(319, normalizedPoint.x * 319)),
+                                y: max(0, min(239, normalizedPoint.y * 239)))
+            responder3DS.touchScreenAtPoint?(point)
+            return
+        }
+
         // DS touchscreen native resolution: 256 × 192
         let dsX = max(0, min(255, normalizedPoint.x * 255))
         let dsY = max(0, min(191, normalizedPoint.y * 191))
@@ -907,8 +915,12 @@ open class DeltaSkinInputHandler: ObservableObject {
     /// Notify the emulator core that the DS touchscreen stylus was lifted.
     @MainActor
     open func ndsBottomScreenTouchReleased() {
-        guard let core = emulatorCore,
-              let responder = core as? PVDSSystemResponderClient else { return }
+        guard let core = emulatorCore else { return }
+        if let responder3DS = core as? PV3DSSystemResponderClient {
+            responder3DS.releaseScreenTouch?()
+            return
+        }
+        guard let responder = core as? PVDSSystemResponderClient else { return }
         responder.releaseScreenTouch?()
     }
 
