@@ -177,10 +177,10 @@ struct JITContextualPromptManagerTests {
         #expect(n?.offersEnable == false)
     }
 
-    @Test("StikDebug URL carries the bundle id")
+    @Test("StikDebug URL carries the bundle id and pid")
     func stikDebugURL() {
-        #expect(JITContextualPromptManager.stikDebugEnableURL(bundleID: "com.example.app")?.absoluteString
-                == "stikjit://enable-jit?bundle-id=com.example.app")
+        #expect(JITContextualPromptManager.stikDebugEnableURL(bundleID: "com.example.app", pid: 4242)?.absoluteString
+                == "stikjit://enable-jit?bundle-id=com.example.app&pid=4242")
         #expect(JITContextualPromptManager.stikDebugEnableURL(bundleID: nil) == nil)
     }
 }

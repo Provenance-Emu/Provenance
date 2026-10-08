@@ -214,12 +214,16 @@ public final class JITContextualPromptManager {
     /// StikDebug's JIT-enable URL for this app, or `nil` when there is no bundle id.
     /// Scheme `stikjit://enable-jit?bundle-id=` is StikDebug's documented automation
     /// URL (not otherwise referenced in this repo).
-    public static func stikDebugEnableURL(bundleID: String? = Bundle.main.bundleIdentifier) -> URL? {
+    public static func stikDebugEnableURL(bundleID: String? = Bundle.main.bundleIdentifier,
+                                          pid: pid_t = getpid()) -> URL? {
         guard let bundleID, !bundleID.isEmpty else { return nil }
         var components = URLComponents()
         components.scheme = "stikjit"
         components.host = "enable-jit"
-        components.queryItems = [URLQueryItem(name: "bundle-id", value: bundleID)]
+        // StikDebug's HomeView.handleExternalURL reads `bundle-id` and an optional `pid`;
+        // the pid lets it attach to this running process instead of resolving by bundle id.
+        components.queryItems = [URLQueryItem(name: "bundle-id", value: bundleID),
+                                 URLQueryItem(name: "pid", value: String(pid))]
         return components.url
     }
 
