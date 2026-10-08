@@ -95,6 +95,12 @@
 @property (nonatomic, assign) bool vertexRounding;
 @property (nonatomic, assign) int8_t viSkipMode;  // 0=Off 1=On(legacy) 2=Auto(bounded)
 
+// Textures & Mods
+@property (nonatomic, assign) bool customTextures;
+@property (nonatomic, assign) bool prefetchCustomTextures;
+@property (nonatomic, assign) bool graphicsMods;
+@property (nonatomic, assign) bool osdMessages;
+
 // Shader Settings
 @property (nonatomic, assign) int8_t shaderCompilationMode;
 @property (nonatomic, assign) bool waitForShaders;

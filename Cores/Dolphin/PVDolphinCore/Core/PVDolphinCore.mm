@@ -454,14 +454,19 @@ static void ResetDolphinStaticState() {
     // Graphics renderer
     if (self.gsPreference == 0) {
         Config::SetBase(Config::MAIN_GFX_BACKEND, std::string("Vulkan"));
-        Config::SetBase(Config::MAIN_OSD_MESSAGES, true);
     } else if (self.gsPreference == 1) {
         Config::SetBase(Config::MAIN_GFX_BACKEND, std::string("OGL"));
-        Config::SetBase(Config::MAIN_OSD_MESSAGES, false);
     } else if (self.gsPreference == 2) {
         Config::SetBase(Config::MAIN_GFX_BACKEND, std::string("Metal"));
-        Config::SetBase(Config::MAIN_OSD_MESSAGES, true);
     }
+    // On-screen messages (shader compile progress, notices). Was tied to debug logging, which
+    // hid the "Compiling shaders" overlay for everyone.
+    Config::SetBase(Config::MAIN_OSD_MESSAGES, self.osdMessages);
+
+    // Texture packs and graphics mods under <user dir>/Load/, like desktop Dolphin and iCube.
+    Config::SetBase(Config::GFX_HIRES_TEXTURES, self.customTextures);
+    Config::SetBase(Config::GFX_CACHE_HIRES_TEXTURES, self.prefetchCustomTextures);
+    Config::SetBase(Config::GFX_MODS_ENABLE, self.graphicsMods);
 
     // Aspect Ratio
     Config::SetBase(Config::GFX_ASPECT_RATIO, [self effectiveAspectMode]);
@@ -764,9 +769,6 @@ static void ResetDolphinStaticState() {
 
     // Debug Settings
     Config::SetBase(Config::MAIN_ENABLE_DEBUGGING, self.enableLogging);
-
-    // OSD Messages (logging configuration is handled in setupEmulation)
-    Config::SetBase(Config::MAIN_OSD_MESSAGES, self.enableLogging);
 
     // === iOS OPTIMIZATIONS ===
 

@@ -255,6 +255,42 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
                     defaultValue: 2)
     }()
 
+    // MARK: - Textures & Mods
+
+    /// Dolphin's user dir is `Battery Saves/DolphinData`; texture packs and graphics mods live under
+    /// its `Load/` folder, the same layout as desktop Dolphin and iCube.
+    static var customTexturesOption: CoreOption = {
+        .bool(.init(
+            title: "Load Custom Textures",
+            description: "Load texture packs from Battery Saves/DolphinData/Load/Textures/<Game ID>.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var prefetchCustomTexturesOption: CoreOption = {
+        .bool(.init(
+            title: "Prefetch Custom Textures",
+            description: "Load the whole texture pack into memory at boot. Removes texture-pack stutter but large packs need a lot of RAM.",
+            requiresRestart: false),
+        defaultValue: false)
+    }()
+
+    static var graphicsModsOption: CoreOption = {
+        .bool(.init(
+            title: "Graphics Mods",
+            description: "Load graphics mods from Battery Saves/DolphinData/Load/GraphicsMods.",
+            requiresRestart: true),
+        defaultValue: false)
+    }()
+
+    static var osdMessagesOption: CoreOption = {
+        .bool(.init(
+            title: "On-Screen Messages",
+            description: "Dolphin's on-screen notices, including shader compilation progress.",
+            requiresRestart: false),
+        defaultValue: true)
+    }()
+
     // MARK: - Shader Settings
 
     static var shaderCompilationModeOption: CoreOption = {
@@ -747,7 +783,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         // Graphics Settings Group
 		let graphicsOptions: [CoreOption] = [
 			gsOption, resolutionOption, aspectRatioOption, vsyncOption,
-            anisotropicFilteringOption, forceBilinearFilteringOption, showFPSOption
+            anisotropicFilteringOption, forceBilinearFilteringOption, showFPSOption, osdMessagesOption
         ]
 		let graphicsGroup: CoreOption = .group(.init(title: "Graphics",
 												description: "Graphics rendering and display settings"),
@@ -761,6 +797,14 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         let enhancementGroup: CoreOption = .group(.init(title: "Graphics Enhancements",
                                                        description: "Visual enhancement options"),
                                                  subOptions: enhancementOptions)
+
+        // Textures & Mods Group
+        let textureOptions: [CoreOption] = [
+            customTexturesOption, prefetchCustomTexturesOption, graphicsModsOption
+        ]
+        let textureGroup: CoreOption = .group(.init(title: "Textures & Mods",
+                                                   description: "Texture packs and graphics mods from the DolphinData/Load folder"),
+                                             subOptions: textureOptions)
 
         // Anti-Aliasing Group
         let aaOptions: [CoreOption] = [
@@ -847,7 +891,7 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
                                                        description: "Performance instrumentation and validation tools"),
                                                  subOptions: diagnosticsOptions)
 
-		options.append(contentsOf: [graphicsGroup, enhancementGroup, hacksGroup, aaGroup, shaderGroup, cpuGroup, cirOptimizationGroup, cirGroup, audioGroup, systemGroup, diagnosticsGroup])
+		options.append(contentsOf: [graphicsGroup, enhancementGroup, textureGroup, hacksGroup, aaGroup, shaderGroup, cpuGroup, cirOptimizationGroup, cirGroup, audioGroup, systemGroup, diagnosticsGroup])
 		return options
 	}
 }
@@ -939,6 +983,18 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
 
     // MARK: - Shader Settings
 
+    @objc static var customTextures: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.customTexturesOption).asBool
+    }
+    @objc static var prefetchCustomTextures: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.prefetchCustomTexturesOption).asBool
+    }
+    @objc static var graphicsMods: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.graphicsModsOption).asBool
+    }
+    @objc static var osdMessages: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCoreOptions.osdMessagesOption).asBool
+    }
     @objc static var shaderCompilationMode: Int{
         PVDolphinCore.valueForOption(PVDolphinCoreOptions.shaderCompilationModeOption).asInt ?? 0
     }
@@ -1129,6 +1185,12 @@ public class PVDolphinCoreOptions: NSObject, CoreOptions {
         self.saveTextureCacheToState = PVDolphinCoreOptions.saveTextureCacheToState
         self.vertexRounding = PVDolphinCoreOptions.vertexRounding
         self.viSkipMode = NSNumber(value: PVDolphinCoreOptions.viSkipMode).int8Value
+
+        // Textures & Mods
+        self.customTextures = PVDolphinCoreOptions.customTextures
+        self.prefetchCustomTextures = PVDolphinCoreOptions.prefetchCustomTextures
+        self.graphicsMods = PVDolphinCoreOptions.graphicsMods
+        self.osdMessages = PVDolphinCoreOptions.osdMessages
 
         // Shader Settings
         self.shaderCompilationMode = NSNumber(value: PVDolphinCoreOptions.shaderCompilationMode).int8Value
