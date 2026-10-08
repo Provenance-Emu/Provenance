@@ -144,7 +144,10 @@ void ApplyLayoutSettings(bool skin, CGRect top, CGRect bottom, NSInteger layoutO
 - (CGRect)screenRect { CGSize s = [self bufferSize]; return CGRectMake(0, 0, s.width, s.height); }
 - (CGSize)aspectSize { return CGSizeMake(400, 480); }
 - (BOOL)rendersToOpenGL { return YES; }   // "own surface" branch of PVMetalViewController.draw(in:)
-- (BOOL)rendersToVulkan { return YES; }
+// NO like Dolphin: rendersToVulkan marks frontend-presented cores that hand every frame to
+// PVMetalViewController (thin PPSSPP). We present into our own layer, so claiming it left the host
+// view waiting for an input texture it never gets and logging a GPU-recovery error every frame.
+- (BOOL)rendersToVulkan { return NO; }
 - (BOOL)isDoubleBuffered { return YES; }
 - (const void *)videoBuffer { return NULL; }
 - (NSTimeInterval)frameInterval { return 60.0; }
