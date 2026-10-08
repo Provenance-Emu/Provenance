@@ -26,8 +26,8 @@ public final class PVAzaharCore: PVEmulatorCore, @unchecked Sendable {
     public override var supportsSkins: Bool { true }
     #endif
     public override var requiresExplicitSkinSelection: Bool { false }
-    public override var supportsFilters: Bool { false }
-    public override var supportsAudioVisualizer: Bool { false }
+    public override var supportsFilters: Bool { true }
+    public override var supportsAudioVisualizer: Bool { true }
     public override var jitRequirement: PVJITRequirement { .automaticWithFallback }
     public override var isJITActive: Bool { _bridge.jitActive }
 

@@ -19,7 +19,8 @@ import GameController
 @objcMembers
 public final class PVEmuThreeCore: PVEmulatorCore {
 
-    public override var supportsSkins: Bool { false }
+    public override var supportsSkins: Bool { true }
+    public override var requiresExplicitSkinSelection: Bool { false }
 
     public override var supportsDualScreens: Bool { true }
 
@@ -33,7 +34,7 @@ public final class PVEmuThreeCore: PVEmulatorCore {
     /// sees its output. Report no filter support so the pause menu hides shader
     /// options that would otherwise do nothing.
     public override var supportsFilters: Bool { false }
-
+    
     let _bridge: PVEmuThreeCoreBridge = .init()
 
     // MARK: Audio
