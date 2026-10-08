@@ -22,8 +22,8 @@ static const NSUInteger PVAzaharChannelCount = 2;
     AVAudioSession *session = [AVAudioSession sharedInstance];
     AVAudioSessionCategory category = PVAzaharCore.respectsMuteSwitch ? AVAudioSessionCategoryAmbient
                                                                       : AVAudioSessionCategoryPlayback;
-    const AVAudioSessionCategoryOptions options = AVAudioSessionCategoryOptionMixWithOthers
-        | AVAudioSessionCategoryOptionAllowBluetoothA2DP | AVAudioSessionCategoryOptionAllowAirPlay;
+    // Only MixWithOthers, like PVCoreAudio: AllowAirPlay/A2DP are rejected (-50) with .ambient/.playback.
+    const AVAudioSessionCategoryOptions options = AVAudioSessionCategoryOptionMixWithOthers;
     if (![session setCategory:category mode:AVAudioSessionModeDefault options:options error:&error]) {
         ELOG(@"[PVAzahar] audio session category failed: %@", error);
     }

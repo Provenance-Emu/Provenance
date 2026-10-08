@@ -19,6 +19,7 @@
 #include "common/logging/backend.h"
 #include "common/logging/filter.h"
 #include "common/settings.h"
+#include "core/hle/service/service.h"
 #include "core/core.h"
 #include "core/frontend/applets/default_applets.h"
 #include "core/hle/service/cam/cam.h"
@@ -149,6 +150,11 @@ static Settings::LayoutOption PVAzaharLayoutOption(NSInteger index) {
     v.output_type.SetValue(AudioCore::SinkType::CoreAudio);
     v.use_display_refresh_rate_detection.SetValue(true);
 #if TARGET_OS_TV
+    // Service::Init does `lle_modules.at(name)` for every HLE module; azahar's frontends
+    // populate this map from their config. Default every module to HLE (false).
+    for (const auto& module : Service::service_module_map) {
+        v.lle_modules.emplace(module.name, false);
+    }
     v.camera_name[0] = v.camera_name[1] = v.camera_name[2] = "blank";
 #else
     // Indexed by Service::CAM::CameraIndex: OuterRightCamera, InnerCamera, OuterLeftCamera.
