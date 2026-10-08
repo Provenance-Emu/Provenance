@@ -151,6 +151,20 @@ expect_contains "script names the failing nested submodule" "$out" "::error::  n
 if grep -qF "Submodule init complete." <<< "$out"; then fail "script must not claim success"; else
     pass "script does not claim success"; fi
 
+# ── report ordering ──────────────────────────────────────────────────────────
+out="$(
+    # shellcheck source=Scripts/ci/ci-init-submodules.sh
+    source "$INIT_SCRIPT"
+    report_and_exit "$(printf '%s\n' "a (empty worktree)" "b/ext (not cloned)" "c (checked out at the wrong commit)" "d/x (not cloned)")" 128
+)"
+rc=$?
+order="$(grep 'not initialized:' <<< "$out" | sed 's/.*not initialized: //' | tr '\n' '|')"
+if [ "$rc" -eq 1 ] && [ "$order" = "b/ext (not cloned)|d/x (not cloned)|a (empty worktree)|c (checked out at the wrong commit)|" ]; then
+    pass "report lists not-cloned paths first, others in original order"
+else
+    fail "report ordering — rc=$rc order: $order"
+fi
+
 echo
 if [ "$FAILS" -eq 0 ]; then
     echo "All ci-init-submodules tests passed."

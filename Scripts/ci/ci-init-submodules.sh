@@ -93,6 +93,10 @@ report_and_exit() {
          "likely cause is an upstream host outage — check the log above for a" \
          "'fatal: unable to access' line naming the remote."
     [ "$rc" -ne 0 ] && echo "::error::  git submodule update exited $rc"
+    # A nested failure strands every submodule sorted after it, so an outage
+    # reports ~80 paths. The ones that never cloned are where the fetch actually
+    # failed (e.g. Dolphin's hidapi-src); list them first.
+    missing="$(grep -F '(not cloned)' <<< "$missing"; grep -vF '(not cloned)' <<< "$missing")"
     while IFS= read -r sub; do
         [ -n "$sub" ] && echo "::error::  not initialized: $sub"
     done <<< "$missing"
