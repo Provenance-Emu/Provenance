@@ -2348,11 +2348,11 @@ open class DeltaSkinInputHandler: ObservableObject {
     }
 
     /// Normalize skin button IDs to canonical names per system
-    private func normalizeSkinButtonId(_ id: String, for system: SystemIdentifier) -> String {
+    func normalizeSkinButtonId(_ id: String, for system: SystemIdentifier) -> String {
         let s = id.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
 
         switch system {
-        case .PSX, .PS2, .PSP:
+        case .PSX, .PS2, .PS3, .PSP:
             // Prefer PS shape names/symbols
             /*
              case "triangle", "x", "▵": self = .triangle
@@ -2603,6 +2603,11 @@ open class DeltaSkinInputHandler: ObservableObject {
             return s
         case .WonderSwan, .WonderSwanColor:
             /// WonderSwan button normalization - supports: x1-x4, y1-y4, a, b, start, sound
+            /// The d-pad is the X cluster (x1 up, x2 right, x3 down, x4 left); PVWSButton has no directions.
+            if s == "up" { return "x1" }
+            if s == "right" { return "x2" }
+            if s == "down" { return "x3" }
+            if s == "left" { return "x4" }
             if ["x1", "x"].contains(s) { return "x1" }
             if ["x3"].contains(s) { return "x3" }
             if ["x4"].contains(s) { return "x4" }

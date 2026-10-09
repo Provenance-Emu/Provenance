@@ -126,4 +126,21 @@ struct OverlayInputSinkAdapterTests {
         }
         #expect(spy.pressed == ["leftdiff", "rightdiff", "tvtype"])
     }
+
+    @Test("WonderSwan d-pad directions resolve to the X cluster, PS3 shape names stay shape names")
+    func batch2Normalisation() {
+        let handler = DeltaSkinInputHandler()
+        for system in [SystemIdentifier.WonderSwan, .WonderSwanColor] {
+            let directions = ["up", "right", "down", "left"].map { handler.normalizeSkinButtonId($0, for: system) }
+            #expect(directions == ["x1", "x2", "x3", "x4"], "\(system)")
+            // The Y cluster the second d-pad presses is left alone.
+            let cluster = ["y1", "y2", "y3", "y4"].map { handler.normalizeSkinButtonId($0, for: system) }
+            #expect(cluster == ["y1", "y2", "y3", "y4"], "\(system)")
+        }
+        for system in [SystemIdentifier.PS2, .PS3, .PSP] {
+            let shapes = ["triangle", "square", "circle", "cross"].map { handler.normalizeSkinButtonId($0, for: system) }
+            #expect(shapes == ["triangle", "square", "circle", "cross"], "\(system)")
+            #expect(handler.normalizeSkinButtonId("x", for: system) == "triangle")
+        }
+    }
 }
