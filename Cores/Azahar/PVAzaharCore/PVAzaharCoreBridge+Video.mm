@@ -14,13 +14,20 @@ u16 ToU16(CGFloat v) { return static_cast<u16>(std::clamp<CGFloat>(std::round(v)
 
 /// Window layout from bridge state, on the emu thread. A dual-screen skin's two rects become azahar's
 /// custom layout for the current orientation; otherwise the user's layout options apply.
-void ApplyLayoutSettings(bool skin, CGRect top, CGRect bottom, NSInteger layoutOpt, NSInteger portraitOpt,
-                         bool swap, bool portrait) {
+void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, NSInteger layoutOpt,
+                         NSInteger portraitOpt, bool swap, bool portrait) {
     auto& v = Settings::values;
     v.swap_screen.SetValue(swap);
     if (!skin) {
-        v.layout_option.SetValue(PVAzaharLayoutOption(layoutOpt));
-        v.portrait_layout_option.SetValue(PVAzaharPortraitLayoutOption(portraitOpt));
+        if (singleArea) {
+            // One skin area holds both screens: a wide area reads as side by side, anything else
+            // as stacked. The user's layout option only applies without a skin.
+            v.layout_option.SetValue(portrait ? Settings::LayoutOption::Default : Settings::LayoutOption::SideScreen);
+            v.portrait_layout_option.SetValue(Settings::PortraitLayoutOption::PortraitTopFullWidth);
+        } else {
+            v.layout_option.SetValue(PVAzaharLayoutOption(layoutOpt));
+            v.portrait_layout_option.SetValue(PVAzaharPortraitLayoutOption(portraitOpt));
+        }
         return;
     }
     if (portrait) {
@@ -104,14 +111,15 @@ void ApplyLayoutSettings(bool skin, CGRect top, CGRect bottom, NSInteger layoutO
     // the drawable they were computed for; after a rotation the user layout fills in until the
     // host hands over new frames, instead of rects that overflow the window and show black.
     const bool skin = _skinLayoutActive && fabs(px.width - _skinUnionPx.width) < 2 && fabs(px.height - _skinUnionPx.height) < 2;
+    const bool singleArea = _skinSingleAreaActive;
     const CGRect top = _skinTopPx, bottom = _skinBottomPx;
     const NSInteger layoutOpt = self.layoutOption, portraitOpt = self.portraitLayoutOption;
     const bool swap = self.swapScreens;
     ILOG(@"[PVAzahar] relayout %ux%u portrait=%d skinLayout=%d layout=%ld portraitLayout=%ld swap=%d",
          w, h, portrait, skin, (long)layoutOpt, (long)portraitOpt, swap);
-    [self runOnEmuThread:[self, w, h, portrait, skin, top, bottom, layoutOpt, portraitOpt, swap] {
+    [self runOnEmuThread:[self, w, h, portrait, skin, singleArea, top, bottom, layoutOpt, portraitOpt, swap] {
         if (!_window) { return; }
-        ApplyLayoutSettings(skin, top, bottom, layoutOpt, portraitOpt, swap, portrait);
+        ApplyLayoutSettings(skin, singleArea, top, bottom, layoutOpt, portraitOpt, swap, portrait);
         _window->Resize(w, h, portrait);
     }];
 }
@@ -177,7 +185,7 @@ void ApplyLayoutSettings(bool skin, CGRect top, CGRect bottom, NSInteger layoutO
 
 - (void)setUseCustomRenderViewLayout:(BOOL)enabled {
     _useCustomRenderViewLayout = enabled;
-    if (!enabled) { _skinLayoutActive = NO; }
+    if (!enabled) { _skinLayoutActive = NO; _skinSingleAreaActive = NO; }
     if (!enabled && _renderView && _renderViewConstraints) {
         _renderView.translatesAutoresizingMaskIntoConstraints = NO;
         [NSLayoutConstraint activateConstraints:_renderViewConstraints];
@@ -188,7 +196,8 @@ void ApplyLayoutSettings(bool skin, CGRect top, CGRect bottom, NSInteger layoutO
 - (void)applyRenderViewFrameInTouchView:(CGRect)frame {
     if (!_renderView) { return; }
     const BOOL hadSkinLayout = _skinLayoutActive;
-    _skinLayoutActive = NO;   // one frame: azahar lays both screens out inside it with the user's option
+    _skinLayoutActive = NO;          // one frame: both screens go inside it...
+    _skinSingleAreaActive = YES;     // ...laid out by the area's shape, not the user's option
     if (_renderViewConstraints) { [NSLayoutConstraint deactivateConstraints:_renderViewConstraints]; }
     _renderView.translatesAutoresizingMaskIntoConstraints = YES;
     _renderView.frame = frame;
@@ -214,6 +223,7 @@ void ApplyLayoutSettings(bool skin, CGRect top, CGRect bottom, NSInteger layoutO
     _skinBottomPx = toPx(bottom);
     _skinUnionPx = CGSizeMake(unionRect.size.width * scale, unionRect.size.height * scale);
     _skinLayoutActive = YES;
+    _skinSingleAreaActive = NO;
     _useCustomRenderViewLayout = YES;
     [self relayoutWindow];   // layoutSubviews only reports size changes; the rects may differ at the same size
 }
