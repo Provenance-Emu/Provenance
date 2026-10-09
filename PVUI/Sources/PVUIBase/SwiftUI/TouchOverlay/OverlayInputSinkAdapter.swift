@@ -16,6 +16,10 @@ import PVTouchOverlay
 public final class OverlayInputSinkAdapter: @preconcurrency OverlayInputSink {
     private let handler: DeltaSkinInputHandler
 
+    /// Runs when the player taps the keypad pill. The keypad is a group of the overlay itself, so the
+    /// toggle never reaches the core.
+    public var onKeypadToggle: (() -> Void)?
+
     public init(handler: DeltaSkinInputHandler) {
         self.handler = handler
     }
@@ -53,10 +57,21 @@ public final class OverlayInputSinkAdapter: @preconcurrency OverlayInputSink {
     }
 
     public func overlayAction(_ action: OverlayAction) {
+        if action == .keypad {
+            onKeypadToggle?()
+            return
+        }
         guard let token = Self.handlerToken(for: action) else { return }
         handler.buttonPressed(token)
-        // The handler opens the pause menu on the press; it has no release to send.
-        if action != .menu {
+        switch action {
+        case .menu:
+            break // The handler opens the pause menu on the press; it has no release to send.
+        case .service:
+            // A switch the core samples once per frame: hold it long enough for a frame to see it.
+            DispatchQueue.main.asyncAfter(deadline: .now() + HardwareSwitchTiming.pressDuration) { [handler] in
+                MainActor.assumeIsolated { handler.buttonReleased(token) }
+            }
+        default:
             handler.buttonReleased(token)
         }
     }
@@ -66,8 +81,9 @@ public final class OverlayInputSinkAdapter: @preconcurrency OverlayInputSink {
     }
 
     /// Function tokens `DeltaSkinInputHandler.buttonPressed(_:)` recognises. The handler has
-    /// no keyboard or mouse toggle, and an unknown token would fall through to the gameplay
-    /// path (where a system's button enum maps it to a real button), so those are dropped.
+    /// no keyboard, mouse, flip or disk-side action, and an unknown token would fall through to the
+    /// gameplay path (where a system's button enum maps it to a real button), so those are dropped.
+    /// `.keypad` is handled by `overlayAction` before this runs.
     private static func handlerToken(for action: OverlayAction) -> String? {
         switch action {
         case .menu: return "menu"
@@ -75,7 +91,8 @@ public final class OverlayInputSinkAdapter: @preconcurrency OverlayInputSink {
         case .quickLoad: return "quickload"
         case .fastForward: return "togglefastforward"
         case .screenshot: return "screenshot"
-        case .toggleKeyboard, .toggleMouse: return nil
+        case .service: return "service"
+        case .toggleKeyboard, .toggleMouse, .keypad, .flip, .diskSide: return nil
         }
     }
 }

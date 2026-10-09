@@ -2573,8 +2573,8 @@ open class DeltaSkinInputHandler: ObservableObject {
             if ["start", "mode"].contains(s) { return "start" }
             if ["select", "back"].contains(s) { return "select" }
             return s
-        case .MAME:
-            /// MAME button normalization - uses PS-style buttons and L/R
+        case .MAME, .CPS1, .CPS2, .CPS3:
+            /// MAME button normalization - uses PS-style buttons and L/R (the Capcom boards share PVMAMEButton)
             if ["up", "down", "left", "right"].contains(s) { return s }
             if ["triangle", "a", "▵"].contains(s) { return "triangle" }
             if ["circle", "b", "○"].contains(s) { return "circle" }

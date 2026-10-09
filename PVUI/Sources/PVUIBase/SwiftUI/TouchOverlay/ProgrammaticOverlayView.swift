@@ -40,6 +40,8 @@ struct ProgrammaticOverlayView: View {
     @State private var sink: OverlayInputSinkAdapter?
     @State private var viewport = OverlayViewportPublisher()
     @State private var editController: OverlayEditController?
+    /// Whether the keypad group is shown. The editor always shows it so it can be moved.
+    @State private var keypadShown = false
     /// Bumped when the core reports its real geometry, so `body` re-reads the game aspect.
     @State private var coreAVInfoRevision = 0
 
@@ -69,7 +71,7 @@ struct ProgrammaticOverlayView: View {
         GeometryReader { geo in
             let canvas = Self.canvas(for: geo)
             let template = binding.template(padKind: padKind, orientation: canvas.orientation)
-            let layout = resolve(template, on: canvas)
+            let layout = resolve(template, on: canvas, editing: editController != nil)
             ZStack(alignment: .topLeading) {
                 editHoldArea(canvas: canvas, screens: layout.screenFrames) {
                     beginEditing(template: template, canvas: canvas)
@@ -89,7 +91,11 @@ struct ProgrammaticOverlayView: View {
             }
             .frame(width: canvas.size.width, height: canvas.size.height, alignment: .topLeading)
             .onAppear {
-                if sink == nil { sink = OverlayInputSinkAdapter(handler: inputHandler) }
+                if sink == nil {
+                    let adapter = OverlayInputSinkAdapter(handler: inputHandler)
+                    adapter.onKeypadToggle = { keypadShown.toggle() }
+                    sink = adapter
+                }
                 viewport.attach(to: coreInstance)
                 publish(layout.screenFrames)
             }
@@ -153,13 +159,14 @@ struct ProgrammaticOverlayView: View {
                                                      bottom: insets.bottom, right: insets.trailing))
     }
 
-    private func resolve(_ template: OverlayTemplate, on canvas: OverlayCanvas) -> OverlayLayout {
+    private func resolve(_ template: OverlayTemplate, on canvas: OverlayCanvas, editing: Bool) -> OverlayLayout {
         _ = store.revision // re-resolve when the stored layout changes
         _ = coreAVInfoRevision
-        let key = padKind.storageKey(for: canvas.orientation)
+        let key = padKind.storageKey(for: template.orientation)
         return OverlayLayoutEngine.resolve(template: template, canvas: canvas,
                                            overrides: store.overrides(for: key, gameMD5: gameMD5),
-                                           gameAspect: gameAspect())
+                                           gameAspect: gameAspect(),
+                                           shownToggles: editing || keypadShown ? [.keypad] : [])
     }
 
     private func gameAspect() -> CGFloat {
@@ -184,7 +191,7 @@ struct ProgrammaticOverlayView: View {
         for group in template.groups where defaults[group.id] == nil {
             defaults[group.id] = (scale: CGSize(width: group.scale, height: group.scale), opacity: group.opacity)
         }
-        editController = OverlayEditController(store: store, key: padKind.storageKey(for: canvas.orientation),
+        editController = OverlayEditController(store: store, key: padKind.storageKey(for: template.orientation),
                                                gameMD5: gameMD5, canvas: canvas, groupDefaults: defaults)
     }
 
