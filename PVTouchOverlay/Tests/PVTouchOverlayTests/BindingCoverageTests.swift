@@ -5,14 +5,14 @@ import PVSystems
 
 @Suite("Binding coverage")
 struct BindingCoverageTests {
-    /// Systems with no overlay binding yet. A system added to `SystemIdentifier` must either get a binding or
-    /// be listed here on purpose, so this list shrinks as the console-style overlay batches land.
+    /// Systems with no overlay binding. A system added to `SystemIdentifier` must either get a binding or be
+    /// listed here on purpose. After batch 3 every system with a shipping core is bound, so this is only the
+    /// systems that are never launched with an overlay.
     static let unsupported: Set<SystemIdentifier> = [
-        .AppleII, .Atari8bit, .AtariST, .C64, .DOOM, .DOS, .EP128, .FDS, .GameGear, .Lynx,
-        .Macintosh, .MasterSystem, .MegaDuck, .MSX, .MSX2, .PalmOS, .PC98, .PokemonMini, .Quake, .Quake2,
-        .SG1000, .Supervision, .TIC80, .Wolf3D, .ZXSpectrum, ._3DO,
-        // Never launched with an overlay.
-        .RetroArch, .Music, .Unknown
+        // A libretro launcher entry and the audio player: neither draws a game picture to put a pad under.
+        .RetroArch, .Music,
+        // The sentinel for a game whose system could not be identified.
+        .Unknown
     ]
 
     @Test("Every system has a binding or is on the unsupported list, never both")

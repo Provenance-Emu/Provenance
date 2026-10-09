@@ -23,8 +23,16 @@ public enum SystemOverlayBindings {
         .PS2, .PS3, .PSP, .CDi, .Vectrex, .Odyssey2, .VirtualBoy
     ]
 
+    /// Computers, handhelds and 8-bit consoles added with the console-style default overlays (batch 3).
+    public static let batch3Systems: [SystemIdentifier] = [
+        .DOS, .DOOM, .Wolf3D, .Quake, .Quake2, .C64, .MSX, .MSX2, .Atari8bit, .AtariST, .ZXSpectrum, .EP128,
+        .PC98, .Macintosh, .PalmOS, .AppleII, .TIC80, .Lynx, .MegaDuck, .Supervision, .PokemonMini, .GameGear,
+        .MasterSystem, .SG1000, .FDS, ._3DO
+    ]
+
     /// Every system with a binding.
-    public static let boundSystems: [SystemIdentifier] = phase1Systems + batch1Systems + batch2Systems
+    public static let boundSystems: [SystemIdentifier] =
+        phase1Systems + batch1Systems + batch2Systems + batch3Systems
 
     public static func binding(for system: SystemIdentifier) -> SystemOverlayBinding? { table[system] }
 
@@ -32,21 +40,21 @@ public enum SystemOverlayBindings {
     private static let standardSubtype = OverlayPadKind.standardSubtype
 
     private static let table: [SystemIdentifier: SystemOverlayBinding] = {
-        var result: [SystemIdentifier: SystemOverlayBinding] = [:]
-        for binding in [twoButton(.NES, palette: .nes), twoButton(.GB, palette: .gameBoy),
-                        twoButton(.GBC, palette: .gameBoy), snes, gba, n64, psx, gameCube, wii, nintendoDS,
-                        nintendo3DS]
-            + [genesisLike(.Genesis), genesisLike(.Sega32X), genesisLike(.SegaCD)]
-            + [atari2600, atari5200, atari7800, jaguar(.AtariJaguar), jaguar(.AtariJaguarCD), colecoVision,
-               intellivision, mame, neoGeo(.NeoGeo, coinLabel: "COIN"), neoGeo(.NeoGeoCD, coinLabel: "SELECT")]
-            + [capcom(.CPS1), capcom(.CPS2), capcom(.CPS3)]
-            + [segaArcade(.NAOMI), segaArcade(.NAOMI2), segaArcade(.Atomiswave)]
-            + [saturn, dreamcast, pcEngine(.PCE), pcEngine(.SGFX), pcEngine(.PCECD), pcFX]
-            + [neoGeoPocket(.NGP), neoGeoPocket(.NGPC), wonderSwan(.WonderSwan), wonderSwan(.WonderSwanColor)]
-            + [playStation2(.PS2), playStation2(.PS3), psp, cdi, vectrex, odyssey2, virtualBoy] {
-            result[binding.system] = binding
-        }
-        return result
+        var all: [SystemOverlayBinding] = [
+            twoButton(.NES, palette: .nes), twoButton(.GB, palette: .gameBoy), twoButton(.GBC, palette: .gameBoy),
+            snes, gba, n64, psx, gameCube, wii, nintendoDS, nintendo3DS,
+            genesisLike(.Genesis), genesisLike(.Sega32X), genesisLike(.SegaCD)
+        ]
+        all += [atari2600, atari5200, atari7800, jaguar(.AtariJaguar), jaguar(.AtariJaguarCD), colecoVision,
+                intellivision, mame, neoGeo(.NeoGeo, coinLabel: "COIN"), neoGeo(.NeoGeoCD, coinLabel: "SELECT"),
+                capcom(.CPS1), capcom(.CPS2), capcom(.CPS3),
+                segaArcade(.NAOMI), segaArcade(.NAOMI2), segaArcade(.Atomiswave)]
+        all += [saturn, dreamcast, pcEngine(.PCE), pcEngine(.SGFX), pcEngine(.PCECD), pcFX,
+                neoGeoPocket(.NGP), neoGeoPocket(.NGPC), wonderSwan(.WonderSwan), wonderSwan(.WonderSwanColor),
+                playStation2(.PS2), playStation2(.PS3), psp, cdi, vectrex, odyssey2, virtualBoy]
+        all += batch3Bindings
+        all += [twoButton(.FDS, palette: .nes), twoButton(.MegaDuck, palette: .gameBoy)]
+        return Dictionary(uniqueKeysWithValues: all.map { ($0.system, $0) })
     }()
 
     private static func twoButton(_ system: SystemIdentifier, palette: OverlayPalette) -> SystemOverlayBinding {

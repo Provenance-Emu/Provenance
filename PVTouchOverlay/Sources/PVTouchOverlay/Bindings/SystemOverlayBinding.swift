@@ -185,6 +185,35 @@ public struct OverlayPalette: Hashable, Codable, Sendable {
         quaternary: OverlayColor(0.80, 0.10, 0.12),
         utility: OverlayColor(0.45, 0.10, 0.12), dpad: OverlayColor(0.18, 0.18, 0.20),
         stick: OverlayColor(0.18, 0.18, 0.20), label: .white)
+    /// Home computers: beige case, brown keys.
+    public static let computer = OverlayPalette(
+        shell: OverlayColor(0.80, 0.76, 0.66), primary: OverlayColor(0.40, 0.30, 0.22),
+        secondary: OverlayColor(0.40, 0.30, 0.22), tertiary: OverlayColor(0.40, 0.30, 0.22),
+        quaternary: OverlayColor(0.40, 0.30, 0.22),
+        utility: OverlayColor(0.52, 0.46, 0.38), dpad: OverlayColor(0.28, 0.25, 0.22),
+        stick: OverlayColor(0.28, 0.25, 0.22), label: .white)
+    /// ZX Spectrum: black case with the rainbow stripe on the face buttons.
+    public static let zxSpectrum = OverlayPalette(
+        shell: OverlayColor(0.07, 0.07, 0.08), primary: OverlayColor(0.85, 0.15, 0.17),   // red
+        secondary: OverlayColor(0.98, 0.80, 0.18),                                          // yellow
+        tertiary: OverlayColor(0.18, 0.62, 0.30),                                           // green
+        quaternary: OverlayColor(0.16, 0.50, 0.85),                                         // blue
+        utility: OverlayColor(0.35, 0.35, 0.38), dpad: OverlayColor(0.18, 0.18, 0.20),
+        stick: OverlayColor(0.18, 0.18, 0.20), label: .white)
+    /// TIC-80: dark navy with teal buttons.
+    public static let tic80 = OverlayPalette(
+        shell: OverlayColor(0.10, 0.11, 0.17), primary: OverlayColor(0.16, 0.70, 0.72),
+        secondary: OverlayColor(0.16, 0.70, 0.72), tertiary: OverlayColor(0.36, 0.43, 0.80),
+        quaternary: OverlayColor(0.36, 0.43, 0.80),
+        utility: OverlayColor(0.24, 0.26, 0.38), dpad: OverlayColor(0.20, 0.22, 0.32),
+        stick: OverlayColor(0.20, 0.22, 0.32), label: .white)
+    /// Atari Lynx: black shell, orange buttons.
+    public static let lynx = OverlayPalette(
+        shell: OverlayColor(0.07, 0.07, 0.08), primary: OverlayColor(0.93, 0.45, 0.10),
+        secondary: OverlayColor(0.93, 0.45, 0.10), tertiary: OverlayColor(0.93, 0.45, 0.10),
+        quaternary: OverlayColor(0.93, 0.45, 0.10),
+        utility: OverlayColor(0.30, 0.30, 0.33), dpad: OverlayColor(0.18, 0.18, 0.20),
+        stick: OverlayColor(0.18, 0.18, 0.20), label: .white)
     public static let wii = OverlayPalette(
         shell: OverlayColor(0.96, 0.96, 0.97), primary: OverlayColor(0.45, 0.70, 0.95),     // A light blue
         secondary: OverlayColor(0.85, 0.85, 0.88), tertiary: OverlayColor(0.85, 0.85, 0.88),
