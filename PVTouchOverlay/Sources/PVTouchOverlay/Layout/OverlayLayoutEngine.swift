@@ -16,9 +16,12 @@ public enum OverlayLayoutEngine {
     public static func resolve(template: OverlayTemplate,
                                canvas: OverlayCanvas,
                                overrides: OverlayLayoutOverrides,
-                               gameAspect: CGFloat) -> OverlayLayout {
+                               gameAspect: CGFloat,
+                               shownToggles: Set<OverlayAction> = []) -> OverlayLayout {
         let unit = referenceScale(for: canvas)
-        let resolved = template.groups.map { group -> ResolvedGroup in
+        // A toggled group that is off takes no part in the layout, so the screen planner never reserves room for it.
+        let present = template.groups.filter { $0.toggledBy.map(shownToggles.contains) ?? true }
+        let resolved = present.map { group -> ResolvedGroup in
             let override = overrides.groups[group.id] ?? .empty
             let scale = clampedScale(override.scale ?? CGSize(width: group.scale, height: group.scale))
             let natural = group.naturalSize

@@ -101,17 +101,23 @@ public struct SystemOverlayBinding: Sendable {
     public let tokens: [OverlayFamilySlot: String]
     public let labels: [OverlayFamilySlot: String]
     public let palette: OverlayPalette
-    /// `HardwareSwitchDescriptor.id`s to show (Phase 2 families use these).
+    /// `HardwareSwitchDescriptor.id`s to show as latching console switches (see `OverlayHardwareSwitch`).
     public let hardwareSwitches: [String]
+    /// Function buttons the pad adds beside its inputs (service, flip, disk side).
+    public let actions: [OverlayAction]
+    /// The system is played sideways: the landscape template is used in either orientation.
+    public let landscapeOnly: Bool
 
     public init(system: SystemIdentifier, families: [String: any OverlayFamily.Type], defaultSubtype: String,
                 tokens: [OverlayFamilySlot: String], labels: [OverlayFamilySlot: String],
-                palette: OverlayPalette, hardwareSwitches: [String]) {
+                palette: OverlayPalette, hardwareSwitches: [String],
+                actions: [OverlayAction] = [], landscapeOnly: Bool = false) {
         precondition(!families.isEmpty && families[defaultSubtype] != nil,
                      "SystemOverlayBinding needs a family for its default subtype")
         self.system = system; self.families = families; self.defaultSubtype = defaultSubtype
         self.tokens = tokens; self.labels = labels; self.palette = palette
         self.hardwareSwitches = hardwareSwitches
+        self.actions = actions; self.landscapeOnly = landscapeOnly
     }
 
     public func inputID(_ slot: OverlayFamilySlot) -> OverlayInputID {
@@ -124,7 +130,25 @@ public struct SystemOverlayBinding: Sendable {
         families[subtype] ?? families[defaultSubtype]!
     }
 
+    /// Whether `slot` has no control: the binding gave it no token and the slot may be omitted.
+    public func isHidden(_ slot: OverlayFamilySlot) -> Bool {
+        tokens[slot] == nil && OverlayFamilySlot.omittable.contains(slot)
+    }
+
+    /// The orientation whose template is drawn for a canvas in `orientation`.
+    public func effectiveOrientation(for orientation: OverlayOrientation) -> OverlayOrientation {
+        landscapeOnly ? .landscape : orientation
+    }
+
+    /// The family's template for the pad kind, without the controls of hidden slots.
     public func template(padKind: OverlayPadKind, orientation: OverlayOrientation) -> OverlayTemplate {
-        family(for: padKind.subtype).template(binding: self, padKind: padKind, orientation: orientation)
+        let drawn = effectiveOrientation(for: orientation)
+        let template = family(for: padKind.subtype).template(binding: self, padKind: padKind, orientation: drawn)
+        return template.removingControls { control in
+            switch control.kind {
+            case .button, .analogTrigger: return isHidden(OverlayFamilySlot(rawValue: control.id))
+            default: return false
+            }
+        }
     }
 }

@@ -49,10 +49,11 @@ public enum OverlayScreenPlanner {
     }
 
     /// The band above the controls. Every non-touch-surface group anchored to the bottom edge (leading,
-    /// trailing or centre) reserves space, wherever it resolved; groups with top or centre anchors and touch
-    /// surfaces float over the picture. With no reserving group the band is the whole safe rect.
+    /// trailing or centre) reserves space, wherever it resolved; groups with top or centre anchors, touch
+    /// surfaces and toggled groups (a keypad) float over the picture. With no reserving group the band is
+    /// the whole safe rect.
     static func topBand(safe: CGRect, groups: [ResolvedGroup]) -> CGRect {
-        let highest = groups.filter { !isTouchSurfaceGroup($0) && isBottomAnchored($0) }
+        let highest = groups.filter { !isTouchSurfaceGroup($0) && !isToggled($0) && isBottomAnchored($0) }
             .map(\.frame.minY).min() ?? safe.maxY
         let bottom = max(safe.minY, min(safe.maxY, highest - gap))
         return CGRect(x: safe.minX, y: safe.minY, width: safe.width, height: bottom - safe.minY)
@@ -65,6 +66,11 @@ public enum OverlayScreenPlanner {
         }
     }
 
+    /// A group that exists only while an action's toggle is on; it overlays the picture and never moves it.
+    static func isToggled(_ group: ResolvedGroup) -> Bool {
+        group.group.toggledBy != nil
+    }
+
     static func isTouchSurfaceGroup(_ group: ResolvedGroup) -> Bool {
         group.group.controls.contains { isTouchSurface($0.kind) }
     }
@@ -74,11 +80,11 @@ public enum OverlayScreenPlanner {
         return false
     }
 
-    /// The column between the side clusters. Touch-surface groups are ignored. A group spanning the safe
+    /// The column between the side clusters. Touch-surface and toggled groups are ignored. A group spanning the safe
     /// rect's centre line lowers the column's bottom edge; only the remaining groups set the side edges.
     static func centerColumn(safe: CGRect, groups: [ResolvedGroup]) -> CGRect {
         let mid = safe.midX
-        let candidates = groups.filter { !isTouchSurfaceGroup($0) }
+        let candidates = groups.filter { !isTouchSurfaceGroup($0) && !isToggled($0) }
         let centred = candidates.filter { $0.frame.minX < mid && mid < $0.frame.maxX }
         let sides = candidates.filter { !($0.frame.minX < mid && mid < $0.frame.maxX) }
         let leftEdge = sides.filter { $0.frame.midX < mid }.map { $0.frame.maxX + gap }.max() ?? safe.minX

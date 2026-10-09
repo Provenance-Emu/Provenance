@@ -16,3 +16,15 @@ public struct OverlayTemplate: Hashable, Codable, Sendable {
         self.groups = groups; self.screenPolicy = screenPolicy
     }
 }
+
+public extension OverlayTemplate {
+    /// The template without the controls `shouldRemove` picks; a group left with no controls goes too.
+    func removingControls(where shouldRemove: (OverlayControl) -> Bool) -> OverlayTemplate {
+        let kept = groups.compactMap { group -> OverlayGroup? in
+            var trimmed = group
+            trimmed.controls = group.controls.filter { !shouldRemove($0) }
+            return trimmed.controls.isEmpty ? nil : trimmed
+        }
+        return OverlayTemplate(padKind: padKind, orientation: orientation, groups: kept, screenPolicy: screenPolicy)
+    }
+}

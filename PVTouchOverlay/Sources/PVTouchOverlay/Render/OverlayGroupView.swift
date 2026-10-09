@@ -91,7 +91,7 @@ struct OverlayGroupView: View {
                                   labelColor: palette.label, style: style,
                                   pressed: pressedState.pressed.contains(control.id), label: control.control.label)
         if case .stick = control.control.kind {
-            OverlayStickArt(spec: spec, knob: knob).equatable()
+            OverlayStickArt(spec: spec, knob: knob, axis: control.control.axis).equatable()
         } else {
             OverlayControlArt(spec: spec).equatable()
         }
@@ -180,15 +180,20 @@ struct OverlayGroupView: View {
 
     private func moveStick(_ side: OverlayStickSide, _ point: CGPoint, _ control: ResolvedControl) {
         // `point` is normalized in the hit frame; convert to -1...1 about the centre, clamp to the unit circle.
-        var stickX = Float((point.x - 0.5) * 2)
-        var stickY = Float((0.5 - point.y) * 2)
+        let axis = control.control.axis
+        var (stickX, stickY) = axis.constrained(x: Float((point.x - 0.5) * 2), y: Float((0.5 - point.y) * 2))
         let magnitude = hypotf(stickX, stickY)
         if magnitude > 1 {
             stickX /= magnitude
             stickY /= magnitude
         }
-        let travel = control.frame.width * Self.knobTravelFraction
-        knob.offset = CGSize(width: CGFloat(stickX) * travel, height: -CGFloat(stickY) * travel)
+        if axis == .horizontal {
+            let travel = (control.frame.width - OverlayKnobView.diameter(in: control.frame.size, axis: axis)) / 2
+            knob.offset = CGSize(width: CGFloat(stickX) * travel, height: 0)
+        } else {
+            let travel = control.frame.width * Self.knobTravelFraction
+            knob.offset = CGSize(width: CGFloat(stickX) * travel, height: -CGFloat(stickY) * travel)
+        }
         sink.overlayStick(side, x: stickX, y: stickY)
     }
 }
@@ -197,28 +202,39 @@ struct OverlayGroupView: View {
 struct OverlayStickArt: View, Equatable {
     let spec: OverlayArtSpec
     let knob: OverlayKnobState
+    let axis: OverlayStickAxis
 
-    nonisolated static func == (lhs: OverlayStickArt, rhs: OverlayStickArt) -> Bool { lhs.spec == rhs.spec }
+    nonisolated static func == (lhs: OverlayStickArt, rhs: OverlayStickArt) -> Bool {
+        lhs.spec == rhs.spec && lhs.axis == rhs.axis
+    }
 
     var body: some View {
         ZStack {
             OverlayControlArt(spec: spec)
-            OverlayKnobView(color: spec.color, knob: knob)
+            OverlayKnobView(color: spec.color, knob: knob, axis: axis)
         }
     }
 }
 
 struct OverlayKnobView: View {
     private static let sizeFraction: CGFloat = 0.45
+    /// A horizontal slider's knob fills most of the track's height.
+    private static let sliderKnobFraction: CGFloat = 0.8
     private static let opacity: Double = 0.9
 
     let color: OverlayColor
     let knob: OverlayKnobState
+    let axis: OverlayStickAxis
+
+    static func diameter(in size: CGSize, axis: OverlayStickAxis) -> CGFloat {
+        axis == .horizontal ? size.height * sliderKnobFraction : size.width * sizeFraction
+    }
 
     var body: some View {
         GeometryReader { geo in
+            let diameter = Self.diameter(in: geo.size, axis: axis)
             Circle().fill(Color(color).opacity(Self.opacity))
-                .frame(width: geo.size.width * Self.sizeFraction, height: geo.size.height * Self.sizeFraction)
+                .frame(width: diameter, height: axis == .horizontal ? diameter : geo.size.height * Self.sizeFraction)
                 .position(x: geo.size.width / 2 + knob.offset.width, y: geo.size.height / 2 + knob.offset.height)
         }
     }

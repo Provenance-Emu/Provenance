@@ -2,7 +2,7 @@ import Foundation
 
 public enum TwoButtonFamily: OverlayFamily {
     public static let id = "twoButton"
-    public static let requiredSlots: [OverlayFamilySlot] = [.a, .b, .start, .select]
+    public static let requiredSlots: [OverlayFamilySlot] = [.a, .b, .start, .select, .reset]
     public static func template(binding: SystemOverlayBinding, padKind: OverlayPadKind,
                                 orientation: OverlayOrientation) -> OverlayTemplate {
         let size = OverlayFamilyKit.faceButton
@@ -11,7 +11,7 @@ public enum TwoButtonFamily: OverlayFamily {
             OverlayFamilyKit.button(.a, binding: binding, at: CGPoint(x: size + 12, y: 0), size: size,
                                     palette: .primary)
         ]
-        return OverlayFamilyKit.padTemplate(face: face, shoulders: [], systemButtons: [.select, .start],
+        return OverlayFamilyKit.padTemplate(face: face, shoulders: [], systemButtons: [.select, .start, .reset],
                                             binding: binding, padKind: padKind, orientation: orientation)
     }
 }

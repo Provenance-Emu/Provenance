@@ -23,7 +23,8 @@ public enum OverlayFamilyKit {
                        label: binding.label(slot), shape: shape, paletteSlot: palette)
     }
 
-    public static func dpad(binding: SystemOverlayBinding, size: CGFloat = dpadSize) -> OverlayControl {
+    public static func dpad(binding: SystemOverlayBinding, size: CGFloat = dpadSize,
+                            shape: OverlayShape = .cross, palette: OverlayPaletteSlot = .dpad) -> OverlayControl {
         let system = binding.system
         return OverlayControl(
             id: "dpad",
@@ -31,6 +32,15 @@ public enum OverlayFamilyKit {
                         down: OverlayInputID(system: system, token: "down"),
                         left: OverlayInputID(system: system, token: "left"),
                         right: OverlayInputID(system: system, token: "right")),
+            frame: CGRect(x: 0, y: 0, width: size, height: size), shape: shape, paletteSlot: palette)
+    }
+
+    /// A second d-pad whose directions come from the binding's `dpad2*` slots.
+    public static func secondDPad(binding: SystemOverlayBinding, size: CGFloat) -> OverlayControl {
+        OverlayControl(
+            id: "dpad2",
+            kind: .dpad(up: binding.inputID(.dpad2Up), down: binding.inputID(.dpad2Down),
+                        left: binding.inputID(.dpad2Left), right: binding.inputID(.dpad2Right)),
             frame: CGRect(x: 0, y: 0, width: size, height: size), shape: .cross, paletteSlot: .dpad)
     }
 
@@ -48,14 +58,54 @@ public enum OverlayFamilyKit {
                               shape: .bar, paletteSlot: .utility)
     }
 
-    /// Start/Select style pills in a row, 16pt apart.
-    public static func pillRow(_ slots: [OverlayFamilySlot], binding: SystemOverlayBinding) -> [OverlayControl] {
-        slots.enumerated().map { index, slot in
+    /// Start/Select style pills in a row, 16pt apart. Hidden slots leave no gap.
+    public static func pillRow(_ slots: [OverlayFamilySlot], binding: SystemOverlayBinding,
+                               size: CGSize = pillSize, gap: CGFloat = edge) -> [OverlayControl] {
+        slots.filter { !binding.isHidden($0) }.enumerated().map { index, slot in
             OverlayControl(id: slot.rawValue, kind: .button(binding.inputID(slot)),
-                           frame: CGRect(x: CGFloat(index) * (pillSize.width + edge), y: 0,
-                                         width: pillSize.width, height: pillSize.height),
+                           frame: CGRect(x: CGFloat(index) * (size.width + gap), y: 0,
+                                         width: size.width, height: size.height),
                            label: binding.label(slot), shape: .pill, paletteSlot: .utility)
         }
+    }
+
+    /// One pill per action, in a row, appended after `controls` (used for the system row's extras).
+    public static func actionPills(_ actions: [OverlayAction], startingAt column: Int = 0,
+                                   size: CGSize = pillSize, gap: CGFloat = edge) -> [OverlayControl] {
+        actions.enumerated().map { index, action in
+            OverlayControl(id: "action-\(action.rawValue)", kind: .action(action),
+                           frame: CGRect(x: CGFloat(column + index) * (size.width + gap), y: 0,
+                                         width: size.width, height: size.height),
+                           label: action.defaultLabel, shape: .pill, paletteSlot: .utility)
+        }
+    }
+
+    /// The binding's function buttons floating at the top-right corner, or nil when it has none.
+    public static func actionsGroup(binding: SystemOverlayBinding) -> OverlayGroup? {
+        let actions = binding.actions.filter { $0 != .keypad }
+        guard !actions.isEmpty else { return nil }
+        return OverlayGroup(id: "actions", controls: actionPills(actions),
+                            placement: OverlayPlacement(anchor: .topTrailing, inset: CGPoint(x: edge, y: 8)))
+    }
+
+    /// Latching console switches (2600 difficulty and TV type) as pills in a row. Each press flips the switch
+    /// through `DeltaSkinInputHandler`'s position-less tokens.
+    public static func switchesGroup(binding: SystemOverlayBinding, orientation: OverlayOrientation) -> OverlayGroup? {
+        let switches = binding.hardwareSwitches.compactMap { OverlayHardwareSwitch.named($0) }
+        guard !switches.isEmpty else { return nil }
+        let controls = switches.enumerated().map { index, entry in
+            OverlayControl(id: "switch-\(entry.id)",
+                           kind: .button(OverlayInputID(system: binding.system, token: entry.token)),
+                           frame: CGRect(x: CGFloat(index) * (pillSize.width + edge), y: 0,
+                                         width: pillSize.width, height: pillSize.height),
+                           label: entry.label, shape: .pill, paletteSlot: .utility)
+        }
+        let landscape = orientation == .landscape
+        // Above the system pills in landscape; above the d-pad and face row in portrait, where the
+        // clusters flank too little room for a row beside them.
+        let bottom = landscape ? 12 + pillSize.height + 8 : portraitBottom + dpadSize + 24
+        return OverlayGroup(id: "switches", controls: controls,
+                            placement: OverlayPlacement(anchor: .bottomCenter, inset: CGPoint(x: 0, y: bottom)))
     }
 
     // Standard group set shared by the pad families. `face` is supplied by the family.
@@ -76,9 +126,11 @@ public enum OverlayFamilyKit {
             OverlayGroup(id: "face", controls: face, placement: facePlacement)
         ]
         let shoulderY: CGFloat = portraitBottom + dpadSize + 24
-        for (index, slot) in shoulders.enumerated() {
+        // l, r on row 0; l2, r2 on row 1, or row 0 when l and r are hidden.
+        let hasFirstRow = shoulders.contains { !$0.rawValue.hasSuffix("2") && !binding.isHidden($0) }
+        for slot in shoulders where !binding.isHidden(slot) {
             let leading = slot.rawValue.hasPrefix("l")
-            let row = CGFloat(index / 2)        // l, r on row 0; l2, r2 on row 1
+            let row: CGFloat = slot.rawValue.hasSuffix("2") && hasFirstRow ? 1 : 0
             let anchor: OverlayPlacement.Anchor = landscape ? (leading ? .topLeading : .topTrailing)
                                                             : (leading ? .bottomLeading : .bottomTrailing)
             let rowOffset = row * (shoulderSize.height + 8)
@@ -88,11 +140,14 @@ public enum OverlayFamilyKit {
                                        controls: [shoulder(slot, binding: binding, analog: analogShoulders)],
                                        placement: OverlayPlacement(anchor: anchor, inset: inset)))
         }
-        if !systemButtons.isEmpty {
+        let pills = pillRow(systemButtons, binding: binding)
+        if !pills.isEmpty {
             groups.append(OverlayGroup(
-                id: "system", controls: pillRow(systemButtons, binding: binding),
+                id: "system", controls: pills,
                 placement: OverlayPlacement(anchor: .bottomCenter, inset: CGPoint(x: 0, y: landscape ? 12 : 20))))
         }
+        if let actions = actionsGroup(binding: binding) { groups.append(actions) }
+        if let switches = switchesGroup(binding: binding, orientation: orientation) { groups.append(switches) }
         return OverlayTemplate(padKind: padKind, orientation: orientation, groups: groups,
                                screenPolicy: landscape ? .centerColumn : .topBand)
     }

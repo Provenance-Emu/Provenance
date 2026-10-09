@@ -20,11 +20,13 @@ public struct OverlayGroup: Hashable, Codable, Sendable, Identifiable {
     public var placement: OverlayPlacement
     public var scale: CGFloat
     public var opacity: CGFloat
+    /// When set, the group exists only while this action's toggle is on (see `OverlayLayoutEngine.resolve`).
+    public var toggledBy: OverlayAction?
 
     public init(id: String, controls: [OverlayControl], placement: OverlayPlacement,
-                scale: CGFloat = 1, opacity: CGFloat = 1) {
+                scale: CGFloat = 1, opacity: CGFloat = 1, toggledBy: OverlayAction? = nil) {
         self.id = id; self.controls = controls; self.placement = placement
-        self.scale = scale; self.opacity = opacity
+        self.scale = scale; self.opacity = opacity; self.toggledBy = toggledBy
     }
 
     /// Union of control frames at reference scale, origin-normalised to (0,0).

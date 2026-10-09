@@ -4,6 +4,41 @@ import CoreGraphics
 public enum OverlaySurfaceRole: String, Codable, Sendable, Hashable { case dsScreen, wiiPointer, lightGun, trackpad }
 public enum OverlayAction: String, Codable, Sendable, Hashable {
     case menu, quickSave, quickLoad, fastForward, toggleKeyboard, toggleMouse, screenshot
+    /// Shows or hides the template's keypad group. Handled inside the overlay; the core never sees it.
+    case keypad
+    /// Lynx: rotates the picture for games drawn sideways.
+    case flip
+    /// Famicom Disk System: turns the disk over.
+    case diskSide
+    /// Arcade service / test switch.
+    case service
+
+    /// Text on the action's pill.
+    public var defaultLabel: String {
+        switch self {
+        case .menu: return "MENU"
+        case .quickSave: return "SAVE"
+        case .quickLoad: return "LOAD"
+        case .fastForward: return "FF"
+        case .toggleKeyboard: return "KEYS"
+        case .toggleMouse: return "MOUSE"
+        case .screenshot: return "SHOT"
+        case .keypad: return "KEYPAD"
+        case .flip: return "FLIP"
+        case .diskSide: return "DISK"
+        case .service: return "SERVICE"
+        }
+    }
+}
+
+/// Which axes a stick reports. A paddle only turns left and right.
+public enum OverlayStickAxis: String, Codable, Sendable, Hashable {
+    case both, horizontal
+
+    /// Drops the vertical component of a horizontal-only stick.
+    public func constrained(x horizontal: Float, y vertical: Float) -> (x: Float, y: Float) {
+        self == .horizontal ? (horizontal, 0) : (horizontal, vertical)
+    }
 }
 public enum OverlayStickSide: String, Codable, Sendable, Hashable {
     case left, right
@@ -37,10 +72,12 @@ public struct OverlayControl: Hashable, Codable, Sendable, Identifiable {
     public var label: String?
     public var shape: OverlayShape
     public var paletteSlot: OverlayPaletteSlot
+    /// Only meaningful for sticks.
+    public var axis: OverlayStickAxis
 
     public init(id: String, kind: OverlayControlKind, frame: CGRect, label: String? = nil,
-                shape: OverlayShape, paletteSlot: OverlayPaletteSlot) {
+                shape: OverlayShape, paletteSlot: OverlayPaletteSlot, axis: OverlayStickAxis = .both) {
         self.id = id; self.kind = kind; self.frame = frame
-        self.label = label; self.shape = shape; self.paletteSlot = paletteSlot
+        self.label = label; self.shape = shape; self.paletteSlot = paletteSlot; self.axis = axis
     }
 }
