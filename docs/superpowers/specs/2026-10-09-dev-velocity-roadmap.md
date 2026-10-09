@@ -39,8 +39,7 @@ Sources to port: `Cores/Dolphin/dolphin-ios/Source/iOS/PVWebServer/Sources/PVWeb
 (`WebRoute`, `WebServerClientMode`, `WebServerLifecyclePolicy`, `WebServerPathSafety`,
 `ROMUploadServer`) and `PVContinuity/Sources/PVContinuity/Server/` (`BearerTokenValidator`,
 `ByteRangeRequest`, `ContinuityRoutes`, session/library servers, WebSocket frame handling
-tested in `WebSocketFrameTests`). iFly has the same lineage; locate its checkout before
-writing the spec (not under this workspace).
+tested in `WebSocketFrameTests`). iFly (`~/Workspace/Provenance/iFly`) has the same lineage; diff both before writing the spec.
 
 Scope for the spec:
 1. REST + WebSocket endpoints on the existing server: app state, library query, launch
