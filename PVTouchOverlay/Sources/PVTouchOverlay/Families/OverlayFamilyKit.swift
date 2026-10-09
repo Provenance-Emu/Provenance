@@ -148,6 +148,15 @@ public enum OverlayFamilyKit {
         }
         if let actions = actionsGroup(binding: binding) { groups.append(actions) }
         if let switches = switchesGroup(binding: binding, orientation: orientation) { groups.append(switches) }
+        if binding.leftStick {
+            // One stick in the bottom-left corner under the d-pad (`DualStickFamily` adds the pair).
+            let size = landscape ? landscapeStickSize : stickSize
+            groups.append(OverlayGroup(id: "leftStick", controls: [stick(.left, size: size)],
+                                       placement: OverlayPlacement(
+                                        anchor: .bottomLeading,
+                                        inset: CGPoint(x: edge + (landscape ? 30 : 20), y: 12))))
+            groups = stackAboveSticks(groups, orientation: orientation)
+        }
         return OverlayTemplate(padKind: padKind, orientation: orientation, groups: groups,
                                screenPolicy: landscape ? .centerColumn : .topBand)
     }

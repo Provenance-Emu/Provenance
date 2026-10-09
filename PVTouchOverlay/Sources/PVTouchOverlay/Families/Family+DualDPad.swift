@@ -27,6 +27,11 @@ public enum DualDPadFamily: OverlayFamily {
         if landscape, let index = groups.firstIndex(where: { $0.id == "face" }) {
             groups[index].placement = OverlayPlacement(anchor: .bottomTrailing, inset: CGPoint(x: kit.edge, y: 12))
         }
+        // ... and the system pills move under the first d-pad, off the face buttons on a narrow canvas
+        // (a sideways pad drawn in portrait).
+        if landscape, let index = groups.firstIndex(where: { $0.id == "system" }) {
+            groups[index].placement = OverlayPlacement(anchor: .bottomLeading, inset: CGPoint(x: kit.edge, y: 12))
+        }
         let pad2Placement = landscape
             ? OverlayPlacement(anchor: .centerTrailing, inset: CGPoint(x: kit.edge, y: 0))
             : OverlayPlacement(anchor: .bottomTrailing,

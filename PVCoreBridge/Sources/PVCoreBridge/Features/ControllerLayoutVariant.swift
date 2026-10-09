@@ -131,6 +131,48 @@ public extension ControllerLayoutVariant {
         sfSymbol: "gamecontroller"
     )
 
+    // MARK: Dreamcast
+    static let dreamcastStandard = ControllerLayoutVariant(
+        id: "dreamcast-standard",
+        displayName: "Standard Controller",
+        description: "Dreamcast controller with analog stick, D-pad, A B X Y and analog triggers.",
+        sfSymbol: "gamecontroller"
+    )
+    static let dreamcastArcade = ControllerLayoutVariant(
+        id: "dreamcast-arcade",
+        displayName: "Arcade Stick",
+        description: "Joystick and four buttons, as on the Dreamcast arcade stick.",
+        sfSymbol: "gamecontroller.fill"
+    )
+
+    // MARK: PC Engine
+    static let pce2Button = ControllerLayoutVariant(
+        id: "pce-2btn",
+        displayName: "2-Button Pad",
+        description: "Standard PC Engine / TurboGrafx-16 pad (I, II, Run, Select).",
+        sfSymbol: "gamecontroller"
+    )
+    static let pce6Button = ControllerLayoutVariant(
+        id: "pce-6btn",
+        displayName: "6-Button Pad",
+        description: "Avenue Pad 6 with the extra III to VI buttons for fighting games.",
+        sfSymbol: "gamecontroller.fill"
+    )
+
+    // MARK: WonderSwan
+    static let wonderSwanHorizontal = ControllerLayoutVariant(
+        id: "ws-horizontal",
+        displayName: "Horizontal",
+        description: "Console held sideways, as for most games.",
+        sfSymbol: "iphone.landscape"
+    )
+    static let wonderSwanVertical = ControllerLayoutVariant(
+        id: "ws-vertical",
+        displayName: "Vertical",
+        description: "Console held upright, for games drawn in portrait.",
+        sfSymbol: "iphone"
+    )
+
     // MARK: NES
     static let nesStandard = ControllerLayoutVariant(
         id: "nes-standard",
@@ -166,6 +208,12 @@ public extension SystemIdentifier {
             return [.nesStandard, .nesZapper]
         case .PSX:
             return [.psxDualShock, .psxDigital]
+        case .Dreamcast:
+            return [.dreamcastStandard, .dreamcastArcade]
+        case .PCE, .SGFX, .PCECD:
+            return [.pce2Button, .pce6Button]
+        case .WonderSwan, .WonderSwanColor:
+            return [.wonderSwanHorizontal, .wonderSwanVertical]
         default:
             return nil
         }

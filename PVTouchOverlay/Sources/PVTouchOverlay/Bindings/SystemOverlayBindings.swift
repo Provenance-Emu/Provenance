@@ -17,8 +17,14 @@ public enum SystemOverlayBindings {
         .MAME, .CPS1, .CPS2, .CPS3, .NeoGeo, .NeoGeoCD, .NAOMI, .NAOMI2, .Atomiswave
     ]
 
+    /// Sega, NEC, SNK, Sony and the smaller consoles added with the console-style default overlays (batch 2).
+    public static let batch2Systems: [SystemIdentifier] = [
+        .Saturn, .Dreamcast, .PCE, .SGFX, .PCECD, .PCFX, .NGP, .NGPC, .WonderSwan, .WonderSwanColor,
+        .PS2, .PS3, .PSP, .CDi, .Vectrex, .Odyssey2, .VirtualBoy
+    ]
+
     /// Every system with a binding.
-    public static let boundSystems: [SystemIdentifier] = phase1Systems + batch1Systems
+    public static let boundSystems: [SystemIdentifier] = phase1Systems + batch1Systems + batch2Systems
 
     public static func binding(for system: SystemIdentifier) -> SystemOverlayBinding? { table[system] }
 
@@ -34,7 +40,10 @@ public enum SystemOverlayBindings {
             + [atari2600, atari5200, atari7800, jaguar(.AtariJaguar), jaguar(.AtariJaguarCD), colecoVision,
                intellivision, mame, neoGeo(.NeoGeo, coinLabel: "COIN"), neoGeo(.NeoGeoCD, coinLabel: "SELECT")]
             + [capcom(.CPS1), capcom(.CPS2), capcom(.CPS3)]
-            + [segaArcade(.NAOMI), segaArcade(.NAOMI2), segaArcade(.Atomiswave)] {
+            + [segaArcade(.NAOMI), segaArcade(.NAOMI2), segaArcade(.Atomiswave)]
+            + [saturn, dreamcast, pcEngine(.PCE), pcEngine(.SGFX), pcEngine(.PCECD), pcFX]
+            + [neoGeoPocket(.NGP), neoGeoPocket(.NGPC), wonderSwan(.WonderSwan), wonderSwan(.WonderSwanColor)]
+            + [playStation2(.PS2), playStation2(.PS3), psp, cdi, vectrex, odyssey2, virtualBoy] {
             result[binding.system] = binding
         }
         return result
@@ -234,4 +243,114 @@ public enum SystemOverlayBindings {
         let slots: [OverlayFamilySlot] = [.x, .y, .z, .a, .b, .c]
         return arcadeTailLabels.merging(Dictionary(uniqueKeysWithValues: zip(slots, top + bottom))) { $1 }
     }
+
+    // MARK: - Batch 2: Sega, NEC, SNK, Sony and the smaller consoles
+    //
+    // Same rule as batch 1: every token is the system button enum's own spelling, pinned by
+    // BindingTokenResolutionTests. Slots a system has no button for get no token and are hidden.
+
+    /// The six numbered buttons of a PC Engine / PC-FX pad. Bottom row I II III, top row IV V VI.
+    private static let numberedFaceTokens: Tokens = [
+        .a: "button1", .b: "button2", .c: "button3", .x: "button4", .y: "button5", .z: "button6",
+        .start: "run", .select: "select"
+    ]
+    private static let numberedFaceLabels: Tokens = [
+        .a: "I", .b: "II", .c: "III", .x: "IV", .y: "V", .z: "VI", .start: "RUN", .select: "SELECT"
+    ]
+
+    private static let saturn = SystemOverlayBinding(
+        system: .Saturn, families: [standardSubtype: SixFaceFamily.self], defaultSubtype: standardSubtype,
+        tokens: [.a: "a", .b: "b", .c: "c", .x: "x", .y: "y", .z: "z", .l: "l", .r: "r", .start: "start"],
+        labels: [.a: "A", .b: "B", .c: "C", .x: "X", .y: "Y", .z: "Z", .l: "L", .r: "R", .start: "START"],
+        palette: .saturn, hardwareSwitches: [])
+
+    /// The standard pad has the analog stick, d-pad and triggers; the arcade stick draws A B X Y. The
+    /// triggers are `PVDreamcastButton.l` / `.r` (there is no l2 / r2 case).
+    private static let dreamcast = SystemOverlayBinding(
+        system: .Dreamcast,
+        families: ["dreamcast-standard": FourFaceFamily.self, "dreamcast-arcade": ArcadeStickFamily.self],
+        defaultSubtype: "dreamcast-standard",
+        tokens: [.a: "a", .b: "b", .x: "x", .y: "y", .l: "l", .r: "r", .start: "start"],
+        labels: [.a: "A", .b: "B", .x: "X", .y: "Y", .l: "L", .r: "R", .start: "START"],
+        palette: .dreamcast, hardwareSwitches: [],
+        leftStick: true, analogShoulders: true, faceArrangement: .dreamcast)
+
+    /// PCE, SuperGrafx and PC Engine CD: Run is "run" (the enums' "start" alias is not in `PVPCFXButton`).
+    private static func pcEngine(_ system: SystemIdentifier) -> SystemOverlayBinding {
+        SystemOverlayBinding(
+            system: system, families: ["pce-2btn": TwoButtonFamily.self, "pce-6btn": SixFaceFamily.self],
+            defaultSubtype: "pce-2btn", tokens: numberedFaceTokens, labels: numberedFaceLabels,
+            palette: .pcEngine, hardwareSwitches: [])
+    }
+
+    private static let pcFX = SystemOverlayBinding(
+        system: .PCFX, families: [standardSubtype: SixFaceFamily.self], defaultSubtype: standardSubtype,
+        tokens: numberedFaceTokens, labels: numberedFaceLabels, palette: .pcEngine, hardwareSwitches: [])
+
+    /// `PVNGPButton` has no start: Option is the one system button.
+    private static func neoGeoPocket(_ system: SystemIdentifier) -> SystemOverlayBinding {
+        SystemOverlayBinding(
+            system: system, families: [standardSubtype: TwoButtonFamily.self], defaultSubtype: standardSubtype,
+            tokens: [.a: "a", .b: "b", .start: "option"], labels: [.a: "A", .b: "B", .start: "OPTION"],
+            palette: .neoGeoPocket, hardwareSwitches: [])
+    }
+
+    /// The d-pad is the X cluster (x1 up, x2 right, x3 down, x4 left) and the second d-pad the Y cluster,
+    /// as in `PVThinLibretroCore.wsMap`. Vertical is drawn sideways: both d-pads flank a tall picture.
+    private static func wonderSwan(_ system: SystemIdentifier) -> SystemOverlayBinding {
+        SystemOverlayBinding(
+            system: system,
+            families: ["ws-horizontal": DualDPadFamily.self, "ws-vertical": DualDPadFamily.self],
+            defaultSubtype: "ws-horizontal",
+            tokens: [.a: "a", .b: "b", .start: "start", .select: "sound",
+                     .dpad2Up: "y1", .dpad2Right: "y2", .dpad2Down: "y3", .dpad2Left: "y4"],
+            labels: [.a: "A", .b: "B", .start: "START", .select: "SOUND"],
+            palette: .neoGeoPocket, hardwareSwitches: [], landscapeOnlySubtypes: ["ws-vertical"])
+    }
+
+    /// PS2 and PS3 share `PVPS2Button`. Shape names, as for the PSX binding.
+    private static func playStation2(_ system: SystemIdentifier) -> SystemOverlayBinding {
+        SystemOverlayBinding(
+            system: system, families: [standardSubtype: DualStickFamily.self], defaultSubtype: standardSubtype,
+            tokens: [.a: "cross", .b: "circle", .x: "triangle", .y: "square", .l: "l1", .r: "r1",
+                     .l2: "l2", .r2: "r2", .l3: "l3", .r3: "r3", .start: "start", .select: "select"],
+            labels: [.a: "✕", .b: "○", .x: "△", .y: "□", .l: "L1", .r: "R1", .l2: "L2", .r2: "R2",
+                     .l3: "L3", .r3: "R3", .start: "START", .select: "SELECT"],
+            palette: .playStation, hardwareSwitches: [])
+    }
+
+    /// One analog stick, no L2 / R2 / L3 / R3.
+    private static let psp = SystemOverlayBinding(
+        system: .PSP, families: [standardSubtype: DigitalPadFamily.self], defaultSubtype: standardSubtype,
+        tokens: [.a: "cross", .b: "circle", .x: "triangle", .y: "square", .l: "l1", .r: "r1",
+                 .start: "start", .select: "select"],
+        labels: [.a: "✕", .b: "○", .x: "△", .y: "□", .l: "L", .r: "R", .start: "START", .select: "SELECT"],
+        palette: .playStation, hardwareSwitches: [], leftStick: true)
+
+    /// Two buttons side by side, I left and II right. There is no start: `PVCDiButton` maps it to RESET.
+    private static let cdi = SystemOverlayBinding(
+        system: .CDi, families: [standardSubtype: TwoButtonFamily.self], defaultSubtype: standardSubtype,
+        tokens: [.a: "button2", .b: "button1"], labels: [.a: "II", .b: "I"],
+        palette: .cdi, hardwareSwitches: [])
+
+    /// Four numbered buttons; the stick is the d-pad (`PVVectrexButton` maps directions to analog). The
+    /// picture is tall, so the pad is drawn sideways in either orientation.
+    private static let vectrex = SystemOverlayBinding(
+        system: .Vectrex, families: [standardSubtype: FourFaceFamily.self], defaultSubtype: standardSubtype,
+        tokens: [.a: "button1", .b: "button2", .x: "button3", .y: "button4"],
+        labels: [.a: "1", .b: "2", .x: "3", .y: "4"],
+        palette: .vectrex, hardwareSwitches: [], landscapeOnly: true)
+
+    /// One Action button. The keypad toggle is not offered: the handler has no keyboard action.
+    private static let odyssey2 = SystemOverlayBinding(
+        system: .Odyssey2, families: [standardSubtype: TwoButtonFamily.self], defaultSubtype: standardSubtype,
+        tokens: [.a: "action"], labels: [.a: "ACTION"], palette: .odyssey, hardwareSwitches: [])
+
+    /// Left d-pad, right d-pad (`PVVBButton.rightUp` ...), A B, L R. Always drawn sideways.
+    private static let virtualBoy = SystemOverlayBinding(
+        system: .VirtualBoy, families: [standardSubtype: DualDPadFamily.self], defaultSubtype: standardSubtype,
+        tokens: [.a: "a", .b: "b", .l: "l", .r: "r", .start: "start", .select: "select",
+                 .dpad2Up: "rightUp", .dpad2Down: "rightDown", .dpad2Left: "rightLeft", .dpad2Right: "rightRight"],
+        labels: [.a: "A", .b: "B", .l: "L", .r: "R", .start: "START", .select: "SELECT"],
+        palette: .virtualBoy, hardwareSwitches: [], landscapeOnly: true)
 }

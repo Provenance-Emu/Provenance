@@ -136,12 +136,69 @@ public struct OverlayPalette: Hashable, Codable, Sendable {
         quaternary: OverlayColor(0.82, 0.14, 0.16),
         utility: OverlayColor(0.55, 0.55, 0.58), dpad: OverlayColor(0.25, 0.25, 0.28),
         stick: OverlayColor(0.25, 0.25, 0.28), label: .white)
+    /// Saturn: charcoal shell, grey face buttons, a blue Start (the Saturn ring).
+    public static let saturn = OverlayPalette(
+        shell: OverlayColor(0.18, 0.18, 0.20), primary: OverlayColor(0.58, 0.58, 0.62),
+        secondary: OverlayColor(0.58, 0.58, 0.62), tertiary: OverlayColor(0.58, 0.58, 0.62),
+        quaternary: OverlayColor(0.58, 0.58, 0.62),
+        utility: OverlayColor(0.22, 0.38, 0.75), dpad: OverlayColor(0.30, 0.30, 0.33),    // Start blue
+        stick: OverlayColor(0.30, 0.30, 0.33), label: .white)
+    /// PC Engine: white shell, dark face buttons, orange Run.
+    public static let pcEngine = OverlayPalette(
+        shell: OverlayColor(0.93, 0.93, 0.94), primary: OverlayColor(0.22, 0.22, 0.25),
+        secondary: OverlayColor(0.22, 0.22, 0.25), tertiary: OverlayColor(0.22, 0.22, 0.25),
+        quaternary: OverlayColor(0.22, 0.22, 0.25),
+        utility: OverlayColor(0.92, 0.50, 0.12), dpad: OverlayColor(0.22, 0.22, 0.25),    // Run orange
+        stick: OverlayColor(0.22, 0.22, 0.25), label: .white)
+    /// Neo Geo Pocket and WonderSwan: silver shell, blue buttons.
+    public static let neoGeoPocket = OverlayPalette(
+        shell: OverlayColor(0.78, 0.79, 0.82), primary: OverlayColor(0.16, 0.34, 0.72),
+        secondary: OverlayColor(0.16, 0.34, 0.72), tertiary: OverlayColor(0.16, 0.34, 0.72),
+        quaternary: OverlayColor(0.16, 0.34, 0.72),
+        utility: OverlayColor(0.45, 0.46, 0.50), dpad: OverlayColor(0.20, 0.21, 0.25),
+        stick: OverlayColor(0.20, 0.21, 0.25), label: .white)
+    /// Magnavox Odyssey 2: silver shell, black buttons.
+    public static let odyssey = OverlayPalette(
+        shell: OverlayColor(0.72, 0.73, 0.75), primary: OverlayColor(0.10, 0.10, 0.11),
+        secondary: OverlayColor(0.10, 0.10, 0.11), tertiary: OverlayColor(0.10, 0.10, 0.11),
+        quaternary: OverlayColor(0.10, 0.10, 0.11),
+        utility: OverlayColor(0.35, 0.35, 0.38), dpad: OverlayColor(0.12, 0.12, 0.13),
+        stick: OverlayColor(0.12, 0.12, 0.13), label: .white)
+    /// Vectrex: black shell, white buttons.
+    public static let vectrex = OverlayPalette(
+        shell: OverlayColor(0.07, 0.07, 0.08), primary: OverlayColor(0.92, 0.92, 0.94),
+        secondary: OverlayColor(0.92, 0.92, 0.94), tertiary: OverlayColor(0.92, 0.92, 0.94),
+        quaternary: OverlayColor(0.92, 0.92, 0.94),
+        utility: OverlayColor(0.40, 0.40, 0.43), dpad: OverlayColor(0.20, 0.20, 0.22),
+        stick: OverlayColor(0.20, 0.20, 0.22), label: OverlayColor(0.08, 0.08, 0.10))
+    /// Philips CD-i: black remote, white buttons.
+    public static let cdi = OverlayPalette(
+        shell: OverlayColor(0.09, 0.09, 0.10), primary: OverlayColor(0.94, 0.94, 0.96),
+        secondary: OverlayColor(0.94, 0.94, 0.96), tertiary: OverlayColor(0.94, 0.94, 0.96),
+        quaternary: OverlayColor(0.94, 0.94, 0.96),
+        utility: OverlayColor(0.45, 0.45, 0.48), dpad: OverlayColor(0.22, 0.22, 0.25),
+        stick: OverlayColor(0.22, 0.22, 0.25), label: OverlayColor(0.08, 0.08, 0.10))
+    /// Virtual Boy: black visor, red buttons.
+    public static let virtualBoy = OverlayPalette(
+        shell: OverlayColor(0.08, 0.08, 0.09), primary: OverlayColor(0.80, 0.10, 0.12),
+        secondary: OverlayColor(0.80, 0.10, 0.12), tertiary: OverlayColor(0.80, 0.10, 0.12),
+        quaternary: OverlayColor(0.80, 0.10, 0.12),
+        utility: OverlayColor(0.45, 0.10, 0.12), dpad: OverlayColor(0.18, 0.18, 0.20),
+        stick: OverlayColor(0.18, 0.18, 0.20), label: .white)
     public static let wii = OverlayPalette(
         shell: OverlayColor(0.96, 0.96, 0.97), primary: OverlayColor(0.45, 0.70, 0.95),     // A light blue
         secondary: OverlayColor(0.85, 0.85, 0.88), tertiary: OverlayColor(0.85, 0.85, 0.88),
         quaternary: OverlayColor(0.85, 0.85, 0.88),
         utility: OverlayColor(0.85, 0.85, 0.88), dpad: OverlayColor(0.85, 0.85, 0.88),
         stick: OverlayColor(0.85, 0.85, 0.88), label: OverlayColor(0.15, 0.15, 0.18))
+}
+
+/// The diamond of a four-button pad. Slots keep their colours; only their positions change.
+public enum FourFaceArrangement: Sendable {
+    /// X top, Y left, A right, B bottom.
+    case superNintendo
+    /// Y top, X left, B right, A bottom.
+    case dreamcast
 }
 
 /// Which family each subtype of a system uses, plus the tokens and art for its slots.
@@ -158,17 +215,30 @@ public struct SystemOverlayBinding: Sendable {
     public let actions: [OverlayAction]
     /// The system is played sideways: the landscape template is used in either orientation.
     public let landscapeOnly: Bool
+    /// Subtypes played sideways although the system is not (WonderSwan "vertical").
+    public let landscapeOnlySubtypes: Set<String>
+    /// The pad carries a left analog stick (Dreamcast, PSP). `OverlayFamilyKit.padTemplate` adds it.
+    public let leftStick: Bool
+    /// The shoulder buttons are analog triggers (Dreamcast). Honoured by `FourFaceFamily`.
+    public let analogShoulders: Bool
+    /// Where `FourFaceFamily` puts the four face buttons.
+    public let faceArrangement: FourFaceArrangement
 
     public init(system: SystemIdentifier, families: [String: any OverlayFamily.Type], defaultSubtype: String,
                 tokens: [OverlayFamilySlot: String], labels: [OverlayFamilySlot: String],
                 palette: OverlayPalette, hardwareSwitches: [String],
-                actions: [OverlayAction] = [], landscapeOnly: Bool = false) {
+                actions: [OverlayAction] = [], landscapeOnly: Bool = false,
+                landscapeOnlySubtypes: Set<String> = [], leftStick: Bool = false, analogShoulders: Bool = false,
+                faceArrangement: FourFaceArrangement = .superNintendo) {
         precondition(!families.isEmpty && families[defaultSubtype] != nil,
                      "SystemOverlayBinding needs a family for its default subtype")
         self.system = system; self.families = families; self.defaultSubtype = defaultSubtype
         self.tokens = tokens; self.labels = labels; self.palette = palette
         self.hardwareSwitches = hardwareSwitches
         self.actions = actions; self.landscapeOnly = landscapeOnly
+        self.landscapeOnlySubtypes = landscapeOnlySubtypes
+        self.leftStick = leftStick; self.analogShoulders = analogShoulders
+        self.faceArrangement = faceArrangement
     }
 
     public func inputID(_ slot: OverlayFamilySlot) -> OverlayInputID {
@@ -187,13 +257,15 @@ public struct SystemOverlayBinding: Sendable {
     }
 
     /// The orientation whose template is drawn for a canvas in `orientation`.
-    public func effectiveOrientation(for orientation: OverlayOrientation) -> OverlayOrientation {
-        landscapeOnly ? .landscape : orientation
+    public func effectiveOrientation(for orientation: OverlayOrientation,
+                                     subtype: String? = nil) -> OverlayOrientation {
+        let sideways = landscapeOnly || subtype.map(landscapeOnlySubtypes.contains) == true
+        return sideways ? .landscape : orientation
     }
 
     /// The family's template for the pad kind, without the controls of hidden slots.
     public func template(padKind: OverlayPadKind, orientation: OverlayOrientation) -> OverlayTemplate {
-        let drawn = effectiveOrientation(for: orientation)
+        let drawn = effectiveOrientation(for: orientation, subtype: padKind.subtype)
         let template = family(for: padKind.subtype).template(binding: self, padKind: padKind, orientation: drawn)
         return template.removingControls { control in
             switch control.kind {
