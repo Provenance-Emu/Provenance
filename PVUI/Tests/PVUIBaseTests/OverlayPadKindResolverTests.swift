@@ -193,15 +193,15 @@ struct OverlayPadKindResolverTests {
         // NES binds only `standard`, which is no layout variant.
         #expect(ids(.NES).isEmpty)
         #expect(ids(.SNES).isEmpty)
-        #expect(ids(.Atari5200).isEmpty)
+        #expect(ids(.Atari5200) == ["5200-joystick", "5200-joystick-only"])
     }
 
     @Test("The Controller Layout picker needs a selectable variant")
     func offersVariantChoice() {
-        for system in [SystemIdentifier.Genesis, .Sega32X, .SegaCD, .PSX, .Wii, .GameCube] {
+        for system in [SystemIdentifier.Genesis, .Sega32X, .SegaCD, .PSX, .Wii, .GameCube, .Atari5200] {
             #expect(OverlayPadKindResolver.offersVariantChoice(for: system), "\(system)")
         }
-        for system in [SystemIdentifier.NES, .SNES, .Atari5200] {
+        for system in [SystemIdentifier.NES, .SNES] {
             #expect(!OverlayPadKindResolver.offersVariantChoice(for: system), "\(system)")
         }
     }

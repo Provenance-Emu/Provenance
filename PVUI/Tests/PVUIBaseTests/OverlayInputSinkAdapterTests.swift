@@ -75,6 +75,8 @@ struct OverlayInputSinkAdapterTests {
         let adapter = OverlayInputSinkAdapter(handler: spy)
         adapter.overlayAction(.toggleKeyboard)
         adapter.overlayAction(.toggleMouse)
+        adapter.overlayAction(.flip)
+        adapter.overlayAction(.diskSide)
         adapter.overlayHardwareSwitch(descriptorID: "tvType", isOn: true)
         #expect(spy.pressed.isEmpty)
         #expect(spy.released.isEmpty)
@@ -90,5 +92,38 @@ struct OverlayInputSinkAdapterTests {
         adapter.overlaySurface(.wiiPointer, normalized: CGPoint(x: 0.1, y: 0.1), phase: .began)
         #expect(spy.ndsTouches == [CGPoint(x: 0.25, y: 0.75), CGPoint(x: 0.5, y: 0.5)])
         #expect(spy.ndsReleases == 1)
+    }
+
+    @Test("The keypad action only runs the keypad toggle: the core never sees it")
+    func keypadAction() {
+        let spy = SpyHandler()
+        let adapter = OverlayInputSinkAdapter(handler: spy)
+        var toggles = 0
+        adapter.onKeypadToggle = { toggles += 1 }
+        adapter.overlayAction(.keypad)
+        adapter.overlayAction(.keypad)
+        #expect(toggles == 2)
+        #expect(spy.pressed.isEmpty && spy.released.isEmpty)
+    }
+
+    @Test("The service action presses at once and releases after the switch timing, not in the same tick")
+    func serviceAction() async throws {
+        let spy = SpyHandler()
+        let adapter = OverlayInputSinkAdapter(handler: spy)
+        adapter.overlayAction(.service)
+        #expect(spy.pressed == ["service"])
+        #expect(spy.released.isEmpty)
+        try await Task.sleep(for: .seconds(HardwareSwitchTiming.pressDuration * 4))
+        #expect(spy.released == ["service"])
+    }
+
+    @Test("Batch 1 console switches reach the handler as the latch tokens the 2600 resolves")
+    func consoleSwitchTokens() {
+        let spy = SpyHandler()
+        let adapter = OverlayInputSinkAdapter(handler: spy)
+        for entry in OverlayHardwareSwitch.all {
+            adapter.overlayPress(OverlayInputID(system: .Atari2600, token: entry.token))
+        }
+        #expect(spy.pressed == ["leftdiff", "rightdiff", "tvtype"])
     }
 }

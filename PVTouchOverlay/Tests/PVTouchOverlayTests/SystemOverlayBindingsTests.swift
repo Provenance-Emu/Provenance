@@ -6,12 +6,12 @@ import PVSystems
 
 @Suite("System bindings")
 struct SystemOverlayBindingsTests {
-    @Test("Every Phase 1 system has a binding whose families' required slots are all tokenised",
-          arguments: SystemOverlayBindings.phase1Systems)
+    @Test("Every bound system has a binding whose families' non-omittable slots are all tokenised",
+          arguments: SystemOverlayBindings.boundSystems)
     func complete(system: SystemIdentifier) throws {
         let binding = try #require(SystemOverlayBindings.binding(for: system))
         for (subtype, family) in binding.families {
-            for slot in family.requiredSlots {
+            for slot in family.requiredSlots where !OverlayFamilySlot.omittable.contains(slot) {
                 #expect(binding.tokens[slot] != nil, "\(system) \(subtype) missing token for \(slot.rawValue)")
             }
         }
@@ -20,7 +20,7 @@ struct SystemOverlayBindingsTests {
 
     @Test("Variant ids used as subtypes exist in ControllerLayoutVariant")
     func variantsExist() {
-        for system in SystemOverlayBindings.phase1Systems {
+        for system in SystemOverlayBindings.boundSystems {
             guard let binding = SystemOverlayBindings.binding(for: system),
                   let variants = system.availableControllerLayoutVariants else { continue }
             let ids = Set(variants.map(\.id))
@@ -53,7 +53,7 @@ struct SystemOverlayBindingsTests {
     }
 
     @Test("Tokens are unique within a binding except for the documented shared slots",
-          arguments: SystemOverlayBindings.phase1Systems)
+          arguments: SystemOverlayBindings.boundSystems)
     func tokensAreDistinct(system: SystemIdentifier) throws {
         let binding = try #require(SystemOverlayBindings.binding(for: system))
         var seen: [String: OverlayFamilySlot] = [:]
@@ -66,7 +66,7 @@ struct SystemOverlayBindingsTests {
     }
 
     @Test("Every family renders from its system binding on every canvas",
-          arguments: SystemOverlayBindings.phase1Systems)
+          arguments: SystemOverlayBindings.boundSystems)
     func templatesResolve(system: SystemIdentifier) throws {
         let binding = try #require(SystemOverlayBindings.binding(for: system))
         for subtype in binding.families.keys {
