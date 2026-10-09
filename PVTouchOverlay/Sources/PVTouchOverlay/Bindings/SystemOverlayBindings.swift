@@ -305,7 +305,7 @@ public enum SystemOverlayBindings {
             tokens: [.a: "a", .b: "b", .start: "start", .select: "sound",
                      .dpad2Up: "y1", .dpad2Right: "y2", .dpad2Down: "y3", .dpad2Left: "y4"],
             labels: [.a: "A", .b: "B", .start: "START", .select: "SOUND"],
-            palette: .neoGeoPocket, hardwareSwitches: [], landscapeOnlySubtypes: ["ws-vertical"])
+            palette: .neoGeoPocket, hardwareSwitches: [])
     }
 
     /// PS2 and PS3 share `PVPS2Button`. Shape names, as for the PSX binding.
@@ -339,7 +339,7 @@ public enum SystemOverlayBindings {
         system: .Vectrex, families: [standardSubtype: FourFaceFamily.self], defaultSubtype: standardSubtype,
         tokens: [.a: "button1", .b: "button2", .x: "button3", .y: "button4"],
         labels: [.a: "1", .b: "2", .x: "3", .y: "4"],
-        palette: .vectrex, hardwareSwitches: [], landscapeOnly: true)
+        palette: .vectrex, hardwareSwitches: [])
 
     /// One Action button. The keypad toggle is not offered: the handler has no keyboard action.
     private static let odyssey2 = SystemOverlayBinding(
@@ -352,5 +352,5 @@ public enum SystemOverlayBindings {
         tokens: [.a: "a", .b: "b", .l: "l", .r: "r", .start: "start", .select: "select",
                  .dpad2Up: "rightUp", .dpad2Down: "rightDown", .dpad2Left: "rightLeft", .dpad2Right: "rightRight"],
         labels: [.a: "A", .b: "B", .l: "L", .r: "R", .start: "START", .select: "SELECT"],
-        palette: .virtualBoy, hardwareSwitches: [], landscapeOnly: true)
+        palette: .virtualBoy, hardwareSwitches: [])
 }

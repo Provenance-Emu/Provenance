@@ -192,15 +192,18 @@ struct Batch2BindingTests {
 
     // MARK: Orientation and screen policy
 
-    @Test("Sideways pads draw the landscape template and a centre-column picture in portrait")
-    func sideways() throws {
-        let sideways: [(SystemIdentifier, String)] = [
+    @Test("Tall-screen pads keep the portrait template: a tall picture fits the top band")
+    func tallScreens() throws {
+        // Vectrex, Virtual Boy and the vertical WonderSwan have tall pictures. Forcing the landscape
+        // template on a portrait phone left a ~40pt centre column, so they use the normal portrait
+        // top band, where the planner aspect-fits the tall picture from the core's aspect.
+        let tall: [(SystemIdentifier, String)] = [
             (.WonderSwan, "ws-vertical"), (.WonderSwanColor, "ws-vertical"),
             (.VirtualBoy, OverlayPadKind.standardSubtype), (.Vectrex, OverlayPadKind.standardSubtype)
         ]
-        for (system, subtype) in sideways {
+        for (system, subtype) in tall {
             let template = try Self.template(system, subtype: subtype, .portrait)
-            #expect(template.orientation == .landscape && template.screenPolicy == .centerColumn, "\(system)")
+            #expect(template.orientation == .portrait && template.screenPolicy == .topBand, "\(system)")
         }
     }
 
@@ -216,8 +219,7 @@ struct Batch2BindingTests {
 
     @Test("Every other batch 2 system keeps the top band in portrait")
     func topBand() throws {
-        let sideways: Set<SystemIdentifier> = [.VirtualBoy, .Vectrex]
-        for system in SystemOverlayBindings.batch2Systems where !sideways.contains(system) {
+        for system in SystemOverlayBindings.batch2Systems {
             let binding = try Self.binding(system)
             let template = try Self.template(system, subtype: binding.defaultSubtype, .portrait)
             #expect(template.screenPolicy == .topBand, "\(system)")
