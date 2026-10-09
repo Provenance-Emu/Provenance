@@ -42,20 +42,9 @@ extension PVEmulatorViewController {
             return nil
         }
 
-        let device: DeltaSkinDevice = {
-            #if os(tvOS)
-            return .tv
-            #else
-            return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-            #endif
-        }()
-        let orientation: DeltaSkinOrientation = (currentOrientation == .landscape) ? .landscape : .portrait
-        let traits = DeltaSkinTraits(
-            device: device,
-            displayType: .standard,
-            orientation: orientation,
-            gameIdentifier: game?.title
-        )
+        // The traits the renderer drew the skin with (edgeToEdge on home-indicator phones);
+        // a different representation can carry different screens and mapping size.
+        let traits = skinRenderTraits()
 
         guard let mappingSize = skin.mappingSize(for: traits) else { return nil }
 
@@ -340,20 +329,9 @@ extension PVEmulatorViewController {
             return
         }
 
-        let device: DeltaSkinDevice = {
-            #if os(tvOS)
-            return .tv
-            #else
-            return UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-            #endif
-        }()
-        let orientation: DeltaSkinOrientation = (currentOrientation == .landscape) ? .landscape : .portrait
-        let traits = DeltaSkinTraits(
-            device: device,
-            displayType: .standard,
-            orientation: orientation,
-            gameIdentifier: game?.title
-        )
+        // The traits the renderer drew the skin with (edgeToEdge on home-indicator phones);
+        // a different representation can carry different screens and mapping size.
+        let traits = skinRenderTraits()
 
         guard let screenGroups = skin.screenGroups(for: traits),
               let mainGroup = screenGroups.first,

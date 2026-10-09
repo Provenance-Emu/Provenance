@@ -465,7 +465,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     ///
     /// Orientation is derived from the settled view bounds rather than
     /// `UIDevice.current.orientation` so it can't report a transient/face-up value.
-    private func skinRenderTraits() -> DeltaSkinTraits {
+    internal func skinRenderTraits() -> DeltaSkinTraits {
         #if os(tvOS)
         let device: DeltaSkinDevice = .tv
         #else
@@ -959,11 +959,13 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         guard !isBridgeShuttingDownForViewport(viewport) else { return }
         // The single frame is the skin's smallest screen. A dual-screen core that lays both screens
         // out itself (Azahar) wants both skin screens instead, or it ends up squeezed into one.
-        if core.supportsDualScreens, viewport.applyDualScreenRenderFramesInTouchView != nil,
-           let rects = dualScreenViewportRects(),
-           applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom]) {
-            logViewportApply("RA-dual:\(reason)", frame: rects.top.union(rects.bottom))
-            return
+        if core.supportsDualScreens, viewport.applyDualScreenRenderFramesInTouchView != nil {
+            if let rects = dualScreenViewportRects(),
+               applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom]) {
+                logViewportApply("RA-dual:\(reason)", frame: rects.top.union(rects.bottom))
+                return
+            }
+            ILOG("🎮 SKIN: dual-screen core but no skin screen pair for \(skinRenderTraits()); applying the single frame")
         }
         let mtkView = gameScreenView.superview ?? gameScreenView
 

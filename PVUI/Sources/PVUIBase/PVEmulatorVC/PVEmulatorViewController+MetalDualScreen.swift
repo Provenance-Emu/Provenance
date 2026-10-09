@@ -67,16 +67,7 @@ extension PVEmulatorViewController {
         guard let metalVC = gpuViewController as? PVMetalViewController else { return false }
         guard isDeltaSkinEnabled, let skin = currentSkin else { return false }
 
-        #if !os(tvOS)
-        let skinDevice: DeltaSkinDevice = UIDevice.current.userInterfaceIdiom == .pad ? .ipad : .iphone
-        #else
-        let skinDevice: DeltaSkinDevice = .tv
-        #endif
-        let orientation: DeltaSkinOrientation = (currentOrientation == .landscape) ? .landscape : .portrait
-        let traits = DeltaSkinTraits(device: skinDevice,
-                                     displayType: .standard,
-                                     orientation: orientation,
-                                     gameIdentifier: game?.title)
+        let traits = skinRenderTraits()   // the representation the renderer actually drew
 
         // We need a skin with at least two screens in a screen group.
         guard let screenGroups = skin.screenGroups(for: traits),
@@ -107,7 +98,7 @@ extension PVEmulatorViewController {
 
         // Scale factor: fit the skin's mapping size into the view.
         // Mirrors the calculation in currentDualScreenViewportFrame().
-        let isPortraitPhone = skinDevice == .iphone && orientation == .portrait
+        let isPortraitPhone = traits.device == .iphone && traits.orientation == .portrait
         let scale: CGFloat
         if isPortraitPhone {
             let ws = viewSize.width  / mappingSize.width
