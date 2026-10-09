@@ -194,11 +194,21 @@ struct OverlayPadKindResolverTests {
         #expect(ids(.NES).isEmpty)
         #expect(ids(.SNES).isEmpty)
         #expect(ids(.Atari5200) == ["5200-joystick", "5200-joystick-only"])
+        #expect(ids(.Dreamcast) == ["dreamcast-standard", "dreamcast-arcade"])
+        for system in [SystemIdentifier.PCE, .SGFX, .PCECD] {
+            #expect(ids(system) == ["pce-2btn", "pce-6btn"], "\(system)")
+        }
+        for system in [SystemIdentifier.WonderSwan, .WonderSwanColor] {
+            #expect(ids(system) == ["ws-horizontal", "ws-vertical"], "\(system)")
+        }
+        // Single-pad batch 2 systems bind `standard` only.
+        #expect(ids(.Saturn).isEmpty && ids(.PSP).isEmpty && ids(.VirtualBoy).isEmpty)
     }
 
     @Test("The Controller Layout picker needs a selectable variant")
     func offersVariantChoice() {
-        for system in [SystemIdentifier.Genesis, .Sega32X, .SegaCD, .PSX, .Wii, .GameCube, .Atari5200] {
+        for system in [SystemIdentifier.Genesis, .Sega32X, .SegaCD, .PSX, .Wii, .GameCube, .Atari5200, .Dreamcast, .PCE,
+                       .WonderSwan] {
             #expect(OverlayPadKindResolver.offersVariantChoice(for: system), "\(system)")
         }
         for system in [SystemIdentifier.NES, .SNES] {

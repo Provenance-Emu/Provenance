@@ -8,10 +8,9 @@ struct BindingCoverageTests {
     /// Systems with no overlay binding yet. A system added to `SystemIdentifier` must either get a binding or
     /// be listed here on purpose, so this list shrinks as the console-style overlay batches land.
     static let unsupported: Set<SystemIdentifier> = [
-        .AppleII, .Atari8bit, .AtariST, .C64, .CDi, .DOOM, .DOS, .Dreamcast, .EP128, .FDS, .GameGear, .Lynx,
-        .Macintosh, .MasterSystem, .MegaDuck, .MSX, .MSX2, .NGP, .NGPC, .Odyssey2, .PalmOS, .PC98, .PCE, .PCECD,
-        .PCFX, .PokemonMini, .PS2, .PS3, .PSP, .Quake, .Quake2, .Saturn, .SG1000, .SGFX, .Supervision, .TIC80,
-        .Vectrex, .VirtualBoy, .Wolf3D, .WonderSwan, .WonderSwanColor, .ZXSpectrum, ._3DO,
+        .AppleII, .Atari8bit, .AtariST, .C64, .DOOM, .DOS, .EP128, .FDS, .GameGear, .Lynx,
+        .Macintosh, .MasterSystem, .MegaDuck, .MSX, .MSX2, .PalmOS, .PC98, .PokemonMini, .Quake, .Quake2,
+        .SG1000, .Supervision, .TIC80, .Wolf3D, .ZXSpectrum, ._3DO,
         // Never launched with an overlay.
         .RetroArch, .Music, .Unknown
     ]
