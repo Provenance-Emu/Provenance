@@ -8,7 +8,7 @@ import PVSystems
 /// (`DeltaSkinInputHandler`, `DeltaSkinNintendoHomeConsoleMapping`); see the Task 8 report.
 public enum SystemOverlayBindings {
     public static let phase1Systems: [SystemIdentifier] = [
-        .NES, .GB, .GBC, .SNES, .GBA, .Genesis, .Sega32X, .SegaCD, .N64, .PSX, .GameCube, .Wii, .DS
+        .NES, .GB, .GBC, .SNES, .GBA, .Genesis, .Sega32X, .SegaCD, .N64, .PSX, .GameCube, .Wii, .DS, ._3DS
     ]
 
     public static func binding(for system: SystemIdentifier) -> SystemOverlayBinding? { table[system] }
@@ -19,7 +19,8 @@ public enum SystemOverlayBindings {
     private static let table: [SystemIdentifier: SystemOverlayBinding] = {
         var result: [SystemIdentifier: SystemOverlayBinding] = [:]
         for binding in [twoButton(.NES, palette: .nes), twoButton(.GB, palette: .gameBoy),
-                        twoButton(.GBC, palette: .gameBoy), snes, gba, n64, psx, gameCube, wii, nintendoDS]
+                        twoButton(.GBC, palette: .gameBoy), snes, gba, n64, psx, gameCube, wii, nintendoDS,
+                        nintendo3DS]
             + [genesisLike(.Genesis), genesisLike(.Sega32X), genesisLike(.SegaCD)] {
             result[binding.system] = binding
         }
@@ -47,6 +48,10 @@ public enum SystemOverlayBindings {
 
     private static let nintendoDS = SystemOverlayBinding(
         system: .DS, families: [standardSubtype: DSPadFamily.self], defaultSubtype: standardSubtype,
+        tokens: fourFaceTokens, labels: fourFaceLabels, palette: .ds, hardwareSwitches: [])
+
+    private static let nintendo3DS = SystemOverlayBinding(
+        system: ._3DS, families: [standardSubtype: N3DSPadFamily.self], defaultSubtype: standardSubtype,
         tokens: fourFaceTokens, labels: fourFaceLabels, palette: .ds, hardwareSwitches: [])
 
     private static let gba = SystemOverlayBinding(

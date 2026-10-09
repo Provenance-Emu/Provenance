@@ -1,7 +1,7 @@
 import Foundation
 
 public enum OverlayScreenPolicy: String, Codable, Sendable, Hashable {
-    case topBand, centerColumn, dualStacked, fill
+    case topBand, centerColumn, dualStacked, dualStacked3DS, fill
 }
 
 public struct OverlayTemplate: Hashable, Codable, Sendable {

@@ -1829,6 +1829,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
            !emulatorCore.rendersToVulkan {
             return
         }
+        // Cores that present into their own layer (skipLayout, GL/Vulkan surface of their own, no
+        // frontend presentation: Dolphin, Azahar) never hand us a frame. Drawing here would only
+        // paint a blank texture over their view.
+        if emulatorCore.skipLayout && emulatorCore.rendersToOpenGL && !emulatorCore.rendersToVulkan {
+            return
+        }
 
         // Get screen rect and buffer size
         let screenRect = emulatorCore.screenRect

@@ -6,6 +6,9 @@ public enum OverlayScreenPlanner {
     public static let gap: CGFloat = 8
     /// Each DS screen is 256x192.
     public static let dsAspect: CGFloat = 4.0 / 3.0
+    /// 3DS: 400x240 top over 320x240 bottom.
+    public static let n3dsTopAspect: CGFloat = 400.0 / 240.0
+    public static let n3dsBottomAspect: CGFloat = 320.0 / 240.0
 
     public static func screenFrames(policy: OverlayScreenPolicy, canvas: OverlayCanvas,
                                     groups: [ResolvedGroup], gameAspect: CGFloat) -> [CGRect] {
@@ -29,6 +32,19 @@ public enum OverlayScreenPlanner {
             let top = CGRect(x: band.midX - size.width / 2, y: band.minY + slack,
                              width: size.width, height: size.height)
             return [top, top.offsetBy(dx: 0, dy: size.height + gap)]
+        case .dualStacked3DS:
+            // Both screens share the band's width budget; the 5:3 top screen is the wider one, so it
+            // sets the width and the 4:3 bottom screen is centred under it at the same height.
+            let band = topBand(safe: safe, groups: groups)
+            let half = CGRect(x: band.minX, y: band.minY, width: band.width, height: max(0, (band.height - gap) / 2))
+            let topSize = aspectFit(n3dsTopAspect, in: half).size
+            let bottomWidth = topSize.height * n3dsBottomAspect
+            let slack = max(0, (band.height - (topSize.height * 2 + gap)) / 2)
+            let top = CGRect(x: band.midX - topSize.width / 2, y: band.minY + slack,
+                             width: topSize.width, height: topSize.height)
+            let bottom = CGRect(x: band.midX - bottomWidth / 2, y: top.maxY + gap,
+                                width: bottomWidth, height: topSize.height)
+            return [top, bottom]
         }
     }
 

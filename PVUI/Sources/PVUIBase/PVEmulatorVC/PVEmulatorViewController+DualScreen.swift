@@ -127,9 +127,17 @@ extension PVEmulatorViewController {
             return nil
         }
 
+        // Skins give output frames either normalised (0...1, the default skins) or in mapping
+        // pixels (most real skins); the position wrapper normalises the same way.
+        func normalised(_ frame: CGRect) -> CGRect {
+            let isAbsolute = frame.minX > 1 || frame.minY > 1 || frame.width > 1 || frame.height > 1
+            guard isAbsolute, mappingSize.width > 0, mappingSize.height > 0 else { return frame }
+            return CGRect(x: frame.minX / mappingSize.width, y: frame.minY / mappingSize.height,
+                          width: frame.width / mappingSize.width, height: frame.height / mappingSize.height)
+        }
         // Determine which screen is which based on swap state
-        let actualTopFrame = isScreenSwapped ? bottomScreenFrame : topScreenFrame
-        let actualBottomFrame = isScreenSwapped ? topScreenFrame : bottomScreenFrame
+        let actualTopFrame = normalised(isScreenSwapped ? bottomScreenFrame : topScreenFrame)
+        let actualBottomFrame = normalised(isScreenSwapped ? topScreenFrame : bottomScreenFrame)
 
         // Match DeltaSkinView.screenView calculation EXACTLY
         // In screenView: frame.minX * layout.width, frame.minY * layout.height
@@ -197,7 +205,7 @@ extension PVEmulatorViewController {
     /// so their internal layout matches the skin instead of guessing inside the union. Returns false
     /// when the bridge has no such method; the caller then positions the union frame as before.
     @discardableResult
-    private func applyDualScreenFramesToPositioningBridge(_ frames: [CGRect]) -> Bool {
+    internal func applyDualScreenFramesToPositioningBridge(_ frames: [CGRect]) -> Bool {
         guard frames.count >= 2,
               let bridge = core.bridge as? EmulatorCoreViewportPositioning,
               bridge.applyDualScreenRenderFramesInTouchView != nil,
@@ -253,6 +261,9 @@ extension PVEmulatorViewController {
         // can't be used (non-Metal view, single-screen core layout) the core's composite fills
         // the area both screens span.
         if isProgrammaticOverlayActive {
+            if applyDualScreenFramesToPositioningBridge(overlayScreenFrames) {
+                return
+            }
             if applyMetalDualScreenLayout(outputFrames: overlayScreenFrames) {
                 DLOG("🎮 Applied Metal dual-screen layout from the touch overlay")
                 return

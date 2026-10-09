@@ -85,6 +85,7 @@ private:
     BOOL _useCustomRenderViewLayout;
     BOOL _skinLayoutActive;          // a dual-screen skin supplied both screen rects (custom layout)
     CGRect _skinTopPx, _skinBottomPx; // skin screen rects in render-view pixels, relative to the view
+    CGSize _skinUnionPx;             // drawable size those rects were computed for
     CGSize _lastDrawablePx;          // last size handed to the window; relayout reuses it
     std::atomic<bool> _leftStickDrivesCStick;   // PV3DSButtonAnalogMode toggles it
 }

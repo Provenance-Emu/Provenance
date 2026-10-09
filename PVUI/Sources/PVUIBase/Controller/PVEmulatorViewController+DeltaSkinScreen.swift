@@ -957,6 +957,14 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// Apply frame to RetroArch core
     private func applyFrameToRetroArch(_ frame: CGRect, gameScreenView: UIView, viewport: EmulatorCoreViewportPositioning, reason: String = "?") {
         guard !isBridgeShuttingDownForViewport(viewport) else { return }
+        // The single frame is the skin's smallest screen. A dual-screen core that lays both screens
+        // out itself (Azahar) wants both skin screens instead, or it ends up squeezed into one.
+        if core.supportsDualScreens, viewport.applyDualScreenRenderFramesInTouchView != nil,
+           let rects = dualScreenViewportRects(),
+           applyDualScreenFramesToPositioningBridge([rects.top, rects.bottom]) {
+            logViewportApply("RA-dual:\(reason)", frame: rects.top.union(rects.bottom))
+            return
+        }
         let mtkView = gameScreenView.superview ?? gameScreenView
 
         // Ensure layout
@@ -1084,6 +1092,12 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// Ensure GPU view is visible and below skin
     internal func ensureGPUViewVisibilityAndZOrder() {
         guard let gameScreenView = gpuViewController.view else { return }
+        // Own-surface cores (Dolphin, Azahar) draw into a view of their own inside the touch view;
+        // the host GPU view has nothing to show and, stacked above theirs, blacked them out.
+        if core.skipLayout, core.bridge is EmulatorCoreViewportPositioning {
+            gameScreenView.isHidden = true
+            return
+        }
         gameScreenView.isHidden = false
         gameScreenView.alpha = 1.0
 

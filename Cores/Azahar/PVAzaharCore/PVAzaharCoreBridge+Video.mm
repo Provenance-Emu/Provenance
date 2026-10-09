@@ -100,8 +100,10 @@ void ApplyLayoutSettings(bool skin, CGRect top, CGRect bottom, NSInteger layoutO
     _lastDrawablePx = px;
     const bool portrait = px.height > px.width;
     const unsigned w = (unsigned)px.width, h = (unsigned)px.height;
-    // Snapshot on main: the emu thread must not read the bridge's properties.
-    const bool skin = _skinLayoutActive;
+    // Snapshot on main: the emu thread must not read the bridge's properties. Skin rects only fit
+    // the drawable they were computed for; after a rotation the user layout fills in until the
+    // host hands over new frames, instead of rects that overflow the window and show black.
+    const bool skin = _skinLayoutActive && fabs(px.width - _skinUnionPx.width) < 2 && fabs(px.height - _skinUnionPx.height) < 2;
     const CGRect top = _skinTopPx, bottom = _skinBottomPx;
     const NSInteger layoutOpt = self.layoutOption, portraitOpt = self.portraitLayoutOption;
     const bool swap = self.swapScreens;
@@ -210,6 +212,7 @@ void ApplyLayoutSettings(bool skin, CGRect top, CGRect bottom, NSInteger layoutO
     };
     _skinTopPx = toPx(top);
     _skinBottomPx = toPx(bottom);
+    _skinUnionPx = CGSizeMake(unionRect.size.width * scale, unionRect.size.height * scale);
     _skinLayoutActive = YES;
     _useCustomRenderViewLayout = YES;
     [self relayoutWindow];   // layoutSubviews only reports size changes; the rects may differ at the same size
