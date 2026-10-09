@@ -46,7 +46,7 @@
             case "down": self = .down
             case "left": self = .left
             case "right": self = .right
-            case "topAction", "a": self = .topAction
+            case "topaction", "a": self = .topAction
             case "bottomleftaction", "b": self = .bottomLeftAction
             case "bottomrightaction", "c": self = .bottomRightAction
             case "button1", "1": self = .button1

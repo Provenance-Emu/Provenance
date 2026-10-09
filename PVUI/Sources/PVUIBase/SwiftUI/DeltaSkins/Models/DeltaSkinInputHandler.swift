@@ -1221,7 +1221,7 @@ open class DeltaSkinInputHandler: ObservableObject {
                 let b = PVGBAButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
-        case .GB, .GBC:
+        case .GB, .GBC, .MegaDuck:
             if let r = core as? PVGBSystemResponderClient {
                 let b = PVGBButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
@@ -1427,12 +1427,17 @@ open class DeltaSkinInputHandler: ObservableObject {
                 let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
-        case .DOS, .Macintosh, .AppleII, .Quake, .Quake2, .TIC80, .ZXSpectrum:
+        case .DOS, .Macintosh, .AppleII, .Quake, .Quake2, .ZXSpectrum, .C64, .PalmOS, .PC98:
             if let r = core as? PVDOSSystemResponderClient {
                 let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
             }
-        case .C64, .MegaDuck, .Music, .PalmOS, .PC98, .RetroArch, .Unknown:
+        case .TIC80:
+            if let r = core as? PVTIC80SystemResponderClient {
+                let b = PVTIC80Button(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+            }
+        case .Music, .RetroArch, .Unknown:
             DLOG("No specific D-pad handler for system \(systemId)")
             break
         }
@@ -1997,7 +2002,7 @@ open class DeltaSkinInputHandler: ObservableObject {
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
-        case .GB, .GBC:
+        case .GB, .GBC, .MegaDuck:
             if let r = core as? PVGBSystemResponderClient {
                 let b = PVGBButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
@@ -2273,13 +2278,19 @@ open class DeltaSkinInputHandler: ObservableObject {
             } else {
                 ELOG("🎮 DOOM → core does NOT conform to PVDoomSystemResponderClient or PVDOSSystemResponderClient!")
             }
-        case .DOS, .Macintosh, .AppleII, .Quake, .Quake2, .TIC80, .ZXSpectrum:
+        case .DOS, .Macintosh, .AppleII, .Quake, .Quake2, .ZXSpectrum, .C64, .PalmOS, .PC98:
             if let r = core as? PVDOSSystemResponderClient {
                 let b = PVDOSButton(id)
                 isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
                 return true
             }
-        case .C64, .MegaDuck, .Music, .PalmOS, .PC98, .RetroArch, .Unknown:
+        case .TIC80:
+            if let r = core as? PVTIC80SystemResponderClient {
+                let b = PVTIC80Button(id)
+                isPressed ? r.didPush(b, forPlayer: 0) : r.didRelease(b, forPlayer: 0)
+                return true
+            }
+        case .Music, .RetroArch, .Unknown:
             break
         }
 
@@ -2489,8 +2500,8 @@ open class DeltaSkinInputHandler: ObservableObject {
             if ["r", "r1"].contains(s) { return "r" }
             if ["start", "select"].contains(s) { return s }
             return s
-        case .GB, .GBC:
-            /// GB/GBC button normalization - supports: up, down, left, right, a, b, start, select
+        case .GB, .GBC, .MegaDuck:
+            /// GB/GBC/Mega Duck button normalization - supports: up, down, left, right, a, b, start, select
             /// PVGBButton maps x->a and y->b
             if ["up", "down", "left", "right"].contains(s) { return s }
             if ["a", "x"].contains(s) { return "a" }

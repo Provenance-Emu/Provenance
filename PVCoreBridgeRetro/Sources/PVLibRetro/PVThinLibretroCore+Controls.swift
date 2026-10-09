@@ -2004,6 +2004,36 @@ extension PVThinLibretroCore: PVDOSSystemResponderClient {
     }
 }
 
+// MARK: - TIC-80
+
+extension PVThinLibretroCore: PVTIC80SystemResponderClient {
+    public func didPush(_ button: PVTIC80Button, forPlayer player: Int) {
+        pressButton(tic80Map(button), forPlayer: player)
+    }
+    public func didRelease(_ button: PVTIC80Button, forPlayer player: Int) {
+        releaseButton(tic80Map(button), forPlayer: player)
+    }
+
+    private func tic80Map(_ button: PVTIC80Button) -> RetroJoypad {
+        switch button {
+        case .up:     return .up
+        case .down:   return .down
+        case .left:   return .left
+        case .right:  return .right
+        case .a:      return .a
+        case .b:      return .b
+        case .x:      return .x
+        case .y:      return .y
+        case .l:      return .l
+        case .r:      return .r
+        case .start:  return .start
+        case .select: return .select
+        case .count:  return .b
+        @unknown default: return .b
+        }
+    }
+}
+
 // MARK: - MAME
 
 extension PVThinLibretroCore: PVMAMESystemResponderClient {
