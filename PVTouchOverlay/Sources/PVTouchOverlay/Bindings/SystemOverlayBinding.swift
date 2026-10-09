@@ -85,6 +85,57 @@ public struct OverlayPalette: Hashable, Codable, Sendable {
         tertiary: OverlayColor(0.62, 0.62, 0.66), quaternary: OverlayColor(0.62, 0.62, 0.66),
         utility: OverlayColor(0.62, 0.62, 0.66), dpad: OverlayColor(0.30, 0.30, 0.34),       // X/Y/Z grey
         stick: OverlayColor(0.30, 0.30, 0.34), label: .white)
+    /// Atari: woodgrain-brown shell, orange fire buttons, black keypad and stick.
+    public static let atari = OverlayPalette(
+        shell: OverlayColor(0.40, 0.26, 0.15), primary: OverlayColor(0.93, 0.45, 0.10),   // fire orange
+        secondary: OverlayColor(0.93, 0.45, 0.10), tertiary: OverlayColor(0.93, 0.45, 0.10),
+        quaternary: OverlayColor(0.93, 0.45, 0.10),
+        utility: OverlayColor(0.12, 0.12, 0.13), dpad: OverlayColor(0.12, 0.12, 0.13),     // keypad black
+        stick: OverlayColor(0.12, 0.12, 0.13), label: .white)
+    /// Generic arcade cabinet: black panel, red, white, blue and green buttons.
+    public static let arcade = OverlayPalette(
+        shell: OverlayColor(0.07, 0.07, 0.09), primary: OverlayColor(0.85, 0.15, 0.17),
+        secondary: OverlayColor(0.92, 0.92, 0.94), tertiary: OverlayColor(0.15, 0.38, 0.80),
+        quaternary: OverlayColor(0.18, 0.62, 0.30),
+        utility: OverlayColor(0.40, 0.40, 0.45), dpad: OverlayColor(0.20, 0.20, 0.23),
+        stick: OverlayColor(0.85, 0.15, 0.17), label: OverlayColor(0.10, 0.10, 0.12))
+    /// Capcom cabinet: blue panel, white buttons, red ball top.
+    public static let capcom = OverlayPalette(
+        shell: OverlayColor(0.10, 0.20, 0.55), primary: OverlayColor(0.94, 0.94, 0.96),
+        secondary: OverlayColor(0.94, 0.94, 0.96), tertiary: OverlayColor(0.94, 0.94, 0.96),
+        quaternary: OverlayColor(0.94, 0.94, 0.96),
+        utility: OverlayColor(0.80, 0.15, 0.17), dpad: OverlayColor(0.15, 0.15, 0.18),    // Start red
+        stick: OverlayColor(0.80, 0.12, 0.14), label: OverlayColor(0.10, 0.10, 0.12))
+    /// Neo Geo MVS: black panel, red, yellow, green and blue A B C D.
+    public static let neoGeo = OverlayPalette(
+        shell: OverlayColor(0.08, 0.08, 0.10), primary: OverlayColor(0.85, 0.15, 0.17),   // A red
+        secondary: OverlayColor(0.98, 0.80, 0.18),                                          // B yellow
+        tertiary: OverlayColor(0.18, 0.62, 0.30),                                           // C green
+        quaternary: OverlayColor(0.16, 0.40, 0.80),                                         // D blue
+        utility: OverlayColor(0.35, 0.35, 0.40), dpad: OverlayColor(0.18, 0.18, 0.20),
+        stick: OverlayColor(0.15, 0.15, 0.17), label: OverlayColor(0.10, 0.10, 0.12))
+    /// Dreamcast: white shell with the red, blue, yellow and green face buttons.
+    public static let dreamcast = OverlayPalette(
+        shell: OverlayColor(0.94, 0.94, 0.95), primary: OverlayColor(0.86, 0.19, 0.22),   // A red
+        secondary: OverlayColor(0.16, 0.40, 0.80),                                          // B blue
+        tertiary: OverlayColor(0.98, 0.78, 0.18),                                           // X yellow
+        quaternary: OverlayColor(0.18, 0.62, 0.30),                                         // Y green
+        utility: OverlayColor(0.62, 0.62, 0.66), dpad: OverlayColor(0.35, 0.35, 0.38),
+        stick: OverlayColor(0.35, 0.35, 0.38), label: .white)
+    /// Intellivision: brown shell, gold side buttons, cream keypad.
+    public static let intellivision = OverlayPalette(
+        shell: OverlayColor(0.35, 0.22, 0.13), primary: OverlayColor(0.85, 0.65, 0.20),
+        secondary: OverlayColor(0.85, 0.65, 0.20), tertiary: OverlayColor(0.85, 0.65, 0.20),
+        quaternary: OverlayColor(0.85, 0.65, 0.20),
+        utility: OverlayColor(0.93, 0.88, 0.75), dpad: OverlayColor(0.85, 0.65, 0.20),     // gold disc
+        stick: OverlayColor(0.85, 0.65, 0.20), label: OverlayColor(0.15, 0.12, 0.10))
+    /// ColecoVision: black shell, red fire buttons, grey keypad.
+    public static let coleco = OverlayPalette(
+        shell: OverlayColor(0.08, 0.08, 0.09), primary: OverlayColor(0.82, 0.14, 0.16),
+        secondary: OverlayColor(0.82, 0.14, 0.16), tertiary: OverlayColor(0.82, 0.14, 0.16),
+        quaternary: OverlayColor(0.82, 0.14, 0.16),
+        utility: OverlayColor(0.55, 0.55, 0.58), dpad: OverlayColor(0.25, 0.25, 0.28),
+        stick: OverlayColor(0.25, 0.25, 0.28), label: .white)
     public static let wii = OverlayPalette(
         shell: OverlayColor(0.96, 0.96, 0.97), primary: OverlayColor(0.45, 0.70, 0.95),     // A light blue
         secondary: OverlayColor(0.85, 0.85, 0.88), tertiary: OverlayColor(0.85, 0.85, 0.88),
