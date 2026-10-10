@@ -12,10 +12,16 @@ import PVLibrary
 import PVLogging
 import PVPatching
 import PVFileSystem
+import PVRealm
 
 /// Create a BPS or IPS/IPS32 patch from an original + modified ROM pair.
 /// Never modifies either input. Optionally imports/links the result.
 public struct CreatePatchView: View {
+    private enum PickerTarget {
+        case original
+        case modified
+    }
+
     @State private var originalURL: URL?
     @State private var modifiedURL: URL?
     @State private var format: PatchCreator.CreationFormat = .bps
@@ -25,8 +31,8 @@ public struct CreatePatchView: View {
     @State private var linkGameMD5: String?
     @State private var statusMessage: String?
     @State private var isBusy = false
-    @State private var pickingOriginal = false
-    @State private var pickingModified = false
+    @State private var showFilePicker = false
+    @State private var pickerTarget: PickerTarget = .original
     @State private var games: [PVGame] = []
 
     public init() {}
@@ -35,10 +41,12 @@ public struct CreatePatchView: View {
         Form {
             Section("Source ROMs") {
                 Button(originalURL?.lastPathComponent ?? "Choose Original ROM…") {
-                    pickingOriginal = true
+                    pickerTarget = .original
+                    showFilePicker = true
                 }
                 Button(modifiedURL?.lastPathComponent ?? "Choose Modified ROM…") {
-                    pickingModified = true
+                    pickerTarget = .modified
+                    showFilePicker = true
                 }
             }
 
@@ -97,11 +105,16 @@ public struct CreatePatchView: View {
         .navigationTitle("Create Patch")
 #if !os(tvOS)
         .navigationBarTitleDisplayMode(.inline)
-        .fileImporter(isPresented: $pickingOriginal, allowedContentTypes: [.data, .item]) { result in
-            if case .success(let urls) = result { originalURL = urls.first }
-        }
-        .fileImporter(isPresented: $pickingModified, allowedContentTypes: [.data, .item]) { result in
-            if case .success(let urls) = result { modifiedURL = urls.first }
+        .fileImporter(
+            isPresented: $showFilePicker,
+            allowedContentTypes: [.data, .item],
+            allowsMultipleSelection: false
+        ) { result in
+            guard case .success(let urls) = result, let url = urls.first else { return }
+            switch pickerTarget {
+            case .original: originalURL = url
+            case .modified: modifiedURL = url
+            }
         }
 #endif
         .onAppear {
@@ -118,6 +131,12 @@ public struct CreatePatchView: View {
         guard let originalURL, let modifiedURL else { return }
         isBusy = true
         statusMessage = "Creating…"
+        let format = self.format
+        let titleText = self.titleText
+        let authorText = self.authorText
+        let importAfterCreate = self.importAfterCreate
+        let linkGameMD5 = self.linkGameMD5
+
         Task {
             let accessedO = originalURL.startAccessingSecurityScopedResource()
             let accessedM = modifiedURL.startAccessingSecurityScopedResource()
@@ -137,14 +156,18 @@ public struct CreatePatchView: View {
                     title: titleText.isEmpty ? nil : titleText,
                     author: authorText.isEmpty ? nil : authorText
                 )
-                let created = try PatchCreator().create(
-                    originalURL: originalURL,
-                    modifiedURL: modifiedURL,
-                    outputURL: output,
-                    format: format,
-                    metadata: metadata,
-                    verifyRoundTrip: true
-                )
+
+                // Encoding can be CPU-heavy — keep it off the main actor.
+                let created = try await Task.detached(priority: .userInitiated) {
+                    try PatchCreator().create(
+                        originalURL: originalURL,
+                        modifiedURL: modifiedURL,
+                        outputURL: output,
+                        format: format,
+                        metadata: metadata,
+                        verifyRoundTrip: true
+                    )
+                }.value
 
                 if importAfterCreate {
                     let preferred: PVGame? = {
@@ -158,7 +181,7 @@ public struct CreatePatchView: View {
                     )
                     statusMessage = "Created and imported \(created.lastPathComponent)"
                 } else {
-                    statusMessage = "Created \(created.path)"
+                    statusMessage = "Created \(created.lastPathComponent)"
                 }
             } catch {
                 statusMessage = error.localizedDescription
