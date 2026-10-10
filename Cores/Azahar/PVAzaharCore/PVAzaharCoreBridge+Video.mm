@@ -148,6 +148,9 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
     NSArray<NSLayoutConstraint *> *constraints = _renderViewConstraints;
     _renderView = nil;
     _renderViewConstraints = nil;
+    // Frames queued before this render view existed must not replay into the next one.
+    _hasPendingSkinFrames = NO;
+    _hasPendingSingleArea = NO;
     if (!view) { return; }
     // Captures only the view and constraints, never self: this can run from the base class's dealloc.
     void (^detach)(void) = ^{
