@@ -46,7 +46,8 @@ public final class DeltaSkinSelectionManager: ObservableObject {
     ///   - gameId: Optional game identifier
     ///   - orientation: The orientation (portrait or landscape)
     ///   - scope: The scope (session, game, or system)
-    /// - Note: When setting Game or System scope, session skin is ALWAYS also set for immediate application
+    /// - Note: Only session scope writes an in-memory session skin. Game and System scope persist a
+    ///   preference and clear the session entries that would outrank it.
     @MainActor
     public func setSkin(
         _ skinIdentifier: String?,
@@ -78,20 +79,23 @@ public final class DeltaSkinSelectionManager: ObservableObject {
 
         // Update the in-memory session skin via the serial queue for thread-safety
         // (effectiveSkinIdentifier can be called from any thread via queue.sync).
+        // Only session scope writes a session entry. Persistent picks clear the session
+        // entries that would outrank them, so a newer pick is never shadowed by an older one.
         queue.sync {
             switch scope {
             case .session:
                 setSessionSkin(skinIdentifier, for: systemId, gameId: gameId, orientation: orientation)
 
             case .game:
-                if let gameId = gameId {
-                    setSessionSkin(skinIdentifier, for: systemId, gameId: gameId, orientation: orientation)
-                    ILOG("skins: Set game session skin: \(skinIdentifier ?? "nil") for game \(gameId)")
-                }
+                setSessionSkin(nil, for: systemId, gameId: gameId, orientation: orientation)
+                ILOG("skins: Set game preference, cleared game session skin for game \(gameId ?? "nil")")
 
             case .system:
-                setSessionSkin(skinIdentifier, for: systemId, gameId: gameId, orientation: orientation)
-                ILOG("skins: Set system session skin: \(skinIdentifier ?? "nil") for system \(systemId.rawValue)")
+                if let gameId = gameId {
+                    setSessionSkin(nil, for: systemId, gameId: gameId, orientation: orientation)
+                }
+                setSessionSkin(nil, for: systemId, gameId: nil, orientation: orientation)
+                ILOG("skins: Set system preference, cleared session skins for system \(systemId.rawValue)")
             }
         }
 

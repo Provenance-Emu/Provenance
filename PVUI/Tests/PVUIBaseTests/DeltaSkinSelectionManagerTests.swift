@@ -150,4 +150,45 @@ final class DeltaSkinSelectionManagerTests: XCTestCase {
         manager.setSkin(caseSkinId, for: testSystem, gameId: nil, orientation: .portrait, scope: .session)
         XCTAssertFalse(manager.hasExplicitPackagedSkinSelection(for: testSystem, gameIds: [testGameId]))
     }
+
+    func testSystemPickAfterGameSessionPickBecomesEffective() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        manager.setSkin("com.example.game-session", for: testSystem, gameId: testGameId, orientation: .portrait, scope: .session)
+        manager.setSkin("com.example.system-pick", for: testSystem, gameId: nil, orientation: .portrait, scope: .system)
+        manager.setSkin(nil, for: testSystem, gameId: testGameId, orientation: .portrait, scope: .session)
+
+        XCTAssertEqual(manager.effectiveSkinIdentifier(for: testSystem, gameId: nil, orientation: .portrait), "com.example.system-pick")
+    }
+
+    func testSystemPickClearsGameSessionOverride() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        manager.setSkin("com.example.game-session", for: testSystem, gameId: testGameId, orientation: .portrait, scope: .session)
+        manager.setSkin("com.example.system-pick", for: testSystem, gameId: testGameId, orientation: .portrait, scope: .system)
+
+        XCTAssertEqual(manager.effectiveSkinIdentifier(for: testSystem, gameId: testGameId, orientation: .portrait), "com.example.system-pick")
+    }
+
+    func testGamePickClearsItsGameSession() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        manager.setSkin("com.example.game-session", for: testSystem, gameId: testGameId, orientation: .landscape, scope: .session)
+        manager.setSkin("com.example.game-pick", for: testSystem, gameId: testGameId, orientation: .landscape, scope: .game)
+
+        XCTAssertEqual(manager.effectiveSkinIdentifier(for: testSystem, gameId: testGameId, orientation: .landscape), "com.example.game-pick")
+    }
+
+    func testSessionPickStillWinsWhilePresent() {
+        let manager = DeltaSkinSelectionManager.shared
+        defer { cleanupSelectionState() }
+
+        manager.setSkin("com.example.game-pick", for: testSystem, gameId: testGameId, orientation: .portrait, scope: .game)
+        manager.setSkin("com.example.session-pick", for: testSystem, gameId: testGameId, orientation: .portrait, scope: .session)
+
+        XCTAssertEqual(manager.effectiveSkinIdentifier(for: testSystem, gameId: testGameId, orientation: .portrait), "com.example.session-pick")
+    }
 }
