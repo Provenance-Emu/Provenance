@@ -38,11 +38,26 @@ for app in FocusedApp.all {
     }
 }
 
-// 2. Every CoreProduct path exists.
+// 2. Every CoreProduct path exists. Build artefacts (prebuilt links, anything under build/ or
+// ending in .framework/.xcframework) are required only for rows a FocusedApp uses.
+func isBuildArtefact(_ link: CoreLink, path: String) -> Bool {
+    if case .prebuilt = link { return true }
+    return path.contains("/build/") || path.hasSuffix(".xcframework") || path.hasSuffix(".framework")
+}
+
+let usedCoreIDs = Set(FocusedApp.all.flatMap { $0.allCores.map(\.id) })
 for core in CoreProduct.all {
     for link in core.links {
         for path in link.paths where !exists(path) {
-            failures.append("CoreProduct '\(core.id)': missing \(path)")
+            if isBuildArtefact(link, path: path) {
+                if usedCoreIDs.contains(core.id) {
+                    failures.append("CoreProduct '\(core.id)': missing \(path)")
+                } else {
+                    print("dev manifest: note: '\(core.id)' artefact not built (unused by any focused app): \(path)")
+                }
+            } else {
+                failures.append("CoreProduct '\(core.id)': missing \(path)")
+            }
         }
     }
 }
