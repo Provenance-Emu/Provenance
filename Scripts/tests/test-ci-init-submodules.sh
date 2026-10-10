@@ -86,7 +86,7 @@ cd "$TMP/good/work" || exit 1
 out="$(bash "$INIT_SCRIPT" 2>&1)"
 rc=$?
 # The real repo's sentinel does not exist here, so a fresh clone reports only it.
-if [ "$rc" -eq 1 ] && grep -qF "not initialized: Cores/VirtualJaguar/Package.swift (missing)" <<< "$out" \
+if [ "$rc" -eq 1 ] && grep -qF "not initialized: Cores/4DO/Package.swift (missing)" <<< "$out" \
     && [ "$(grep -c 'not initialized:' <<< "$out")" -eq 1 ]; then
     pass "complete tree: only the absent sentinel file is reported"
 else
@@ -97,7 +97,7 @@ out="$(verify)"
 if [ -z "$out" ]; then pass "complete tree verifies clean"; else
     fail "complete tree verifies clean — got: $out"; fi
 
-mkdir -p Cores/VirtualJaguar && echo "// stub" > Cores/VirtualJaguar/Package.swift
+mkdir -p Cores/4DO && echo "// stub" > Cores/4DO/Package.swift
 out="$(bash "$INIT_SCRIPT" 2>&1)"
 rc=$?
 if [ "$rc" -eq 0 ] && grep -qF "Submodule cache restored" <<< "$out" && grep -qF "Submodule init complete." <<< "$out"; then
