@@ -201,11 +201,13 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
 
 - (void)setUseCustomRenderViewLayout:(BOOL)enabled {
     _useCustomRenderViewLayout = enabled;
+    const BOOL hadSkinLayout = _skinLayoutActive || _skinSingleAreaActive;
     if (!enabled) { _skinLayoutActive = NO; _skinSingleAreaActive = NO; _hasPendingSkinFrames = NO; _hasPendingSingleArea = NO; }
     if (!enabled && _renderView && _renderViewConstraints) {
         _renderView.translatesAutoresizingMaskIntoConstraints = NO;
         [NSLayoutConstraint activateConstraints:_renderViewConstraints];
         [_renderView.superview layoutIfNeeded];   // layoutSubviews reports the new drawable size
+        if (hadSkinLayout) { [self relayoutWindow]; }   // same size, different layout: the user's option again
     }
 }
 

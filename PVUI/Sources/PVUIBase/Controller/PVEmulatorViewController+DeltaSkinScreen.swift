@@ -950,6 +950,19 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                 logViewportApply("RA-dual:\(reason)", frame: rects.top.union(rects.bottom))
                 return
             }
+            // With no skin at all (tvOS, skins off, desktop input mode) the only frame on offer is the
+            // scaling-mode fit of the core's stacked 400x480 aspect. The bridge reads any frame smaller
+            // than its host as a skin screen area and lays both screens out by that area's shape, so the
+            // user's layout option never applied on tvOS. Give the host back; the core fills it and lays
+            // the screens out from the option.
+            if !isDeltaSkinEnabled || (currentSkin == nil && !isProgrammaticOverlayActive) {
+                viewport.setUseCustomRenderViewLayout(false)
+                let host = gameScreenView.superview ?? gameScreenView
+                ILOG("🎮 SKIN: dual-screen core without a skin; the core lays out the full host \(host.bounds)")
+                logViewportApply("RA-dual-noskin:\(reason)", frame: host.bounds)
+                ensureGPUViewVisibilityAndZOrder()
+                return
+            }
             ILOG("🎮 SKIN: dual-screen core but no skin screen pair for \(skinRenderTraits()); applying the single frame")
         }
         let mtkView = gameScreenView.superview ?? gameScreenView
