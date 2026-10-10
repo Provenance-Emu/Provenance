@@ -30,6 +30,7 @@ import datetime
 import hashlib
 import json
 import os
+import plistlib
 import shutil
 import subprocess
 import sys
@@ -102,7 +103,8 @@ def log(message: str) -> None:
 
 
 def default_runner(cmd: List[str], cwd: Optional[Path] = None) -> str:
-    result = subprocess.run(cmd, cwd=str(cwd) if cwd else None, check=True, capture_output=True, text=True)
+    result = subprocess.run(cmd, cwd=str(cwd) if cwd else None, check=True, capture_output=True,
+                            text=True, errors="surrogateescape")
     return result.stdout.strip()
 
 
@@ -127,16 +129,43 @@ def normalize_submodule_status(text: str) -> str:
     return "\n".join(sorted(entries))
 
 
-def dolphin_profile(spec: CoreSpec, env: Mapping[str, str]) -> Optional[Path]:
-    """The profile BuildiOSXCFramework.resolve_pgo would use (None for off/generate)."""
-    mode = env.get("DOL_PGO", "").strip().lower()
-    if mode in ("off", "generate"):
-        return None
-    explicit = env.get("DOL_PGO_PROFILE", "").strip()
-    if explicit:
-        return Path(explicit)
+def dolphin_pgo(spec: CoreSpec, env: Mapping[str, str]) -> Tuple[str, Optional[Path]]:
+    """(mode, profile) exactly as BuildiOSXCFramework.resolve_pgo decides them."""
     default = spec.submodule / "pgo" / "icube.profdata"
-    return default if default.exists() else None
+    mode = env.get("DOL_PGO", "").strip().lower()
+    explicit = env.get("DOL_PGO_PROFILE", "").strip()
+    if mode in ("", "auto"):
+        return ("use", default) if default.exists() else ("off", None)
+    if mode == "use" and not explicit:
+        return mode, default
+    return mode, (Path(explicit) if explicit else None)
+
+
+def worktree_state(spec: CoreSpec, runner: Runner) -> str:
+    """Hash of uncommitted edits in the core submodule and its nested submodules."""
+    status = runner(["git", "-C", str(spec.submodule), "submodule", "status", "--recursive"], None)
+    repos = [spec.submodule]
+    for line in status.splitlines():
+        body = line[1:] if line[:1] in " +-U" else line
+        parts = body.split()
+        if len(parts) >= 2 and line[:1] != "-":
+            repos.append(spec.submodule / parts[1])
+    digest = hashlib.sha256()
+    for repo in repos:
+        porcelain = runner(["git", "-C", str(repo), "status", "--porcelain=v1", "--untracked-files=all",
+                            "--ignore-submodules=none"], None)
+        diff = runner(["git", "-C", str(repo), "diff", "HEAD", "--binary"], None)
+        if not porcelain and not diff:
+            continue  # clean (or not checked out): contributes nothing, so init state doesn't matter
+        rel = repo.relative_to(spec.submodule)
+        digest.update(f"{rel}\0{porcelain}\0".encode("utf-8", "surrogateescape"))
+        digest.update(diff.encode("utf-8", "surrogateescape"))
+        for line in porcelain.splitlines():
+            if line.startswith("?? "):
+                untracked = repo / line[3:].strip('"')
+                if untracked.is_file():
+                    digest.update(f"{line}\0{file_hash(untracked)}\0".encode("utf-8", "surrogateescape"))
+    return digest.hexdigest()
 
 
 def key_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> Dict[str, str]:
@@ -149,17 +178,17 @@ def key_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str
             runner(["git", "-C", str(spec.submodule), "submodule", "status", "--recursive"], None)),
         "script": file_hash(spec.script),
         "toolchain": file_hash(spec.toolchain),
+        "worktree": worktree_state(spec, runner),
         "xcode": runner(["xcodebuild", "-version"], None),
         "sdk": runner(["xcrun", "--sdk", sl["sdk"], "--show-sdk-version"], None),
     }
-    for name in spec.env_flags:
-        if name not in ("DOL_PGO", "DOL_PGO_PROFILE"):
-            inputs["env:" + name] = env.get(name, "")
     if spec.name == "dolphin":
-        # Only the effective PGO state matters: "off" and "no profile" build the same binary.
-        inputs["pgo_generate"] = "1" if env.get("DOL_PGO", "").strip().lower() == "generate" else ""
-        profile = dolphin_profile(spec, env)
-        inputs["pgo_profile"] = file_hash(profile) if profile is not None and profile.exists() else ""
+        inputs["env:DOL_FULL_LTO"] = "1" if env.get("DOL_FULL_LTO") == "1" else ""
+        mode, profile = dolphin_pgo(spec, env)
+        # "use" with a missing profile and "off" both build without one.
+        has_profile = mode == "use" and profile is not None and profile.exists()
+        inputs["pgo_mode"] = "generate" if mode == "generate" else ("use" if has_profile else "off")
+        inputs["pgo_profile"] = file_hash(profile) if has_profile and profile is not None else ""
     if spec.moltenvk is not None:
         inputs["moltenvk"] = file_hash(spec.moltenvk / sl["mvk"] / "libMoltenVK.a")
     return inputs
@@ -197,12 +226,36 @@ def prune_entries(slice_dir: Path, keep: int, current: Path) -> None:
         shutil.rmtree(stale)
 
 
+def is_cached(spec: CoreSpec, slice_name: str, cache: Path, key: str) -> bool:
+    entry = cache / spec.name / slice_name / key[:12]
+    return (entry / framework_name(spec, slice_name)).is_dir() and (entry / "stamp.json").is_file()
+
+
+def xcframework_has_slice(spec: CoreSpec, slice_name: str) -> bool:
+    plist = spec.legacy_dir / f"{spec.product}.xcframework" / "Info.plist"
+    try:
+        with plist.open("rb") as handle:
+            libraries = plistlib.load(handle).get("AvailableLibraries", [])
+    except (OSError, ValueError, plistlib.InvalidFileException):
+        return False
+    return any(lib.get("LibraryPath") == framework_name(spec, slice_name) for lib in libraries)
+
+
+def needs_xcframework(spec: CoreSpec, slice_name: str, produced: bool, requested: bool) -> bool:
+    """Azahar links the per-slice archive; Dolphin links the multi-slice xcframework at planning time."""
+    if requested:
+        return True
+    if spec.name != "dolphin":
+        return False
+    return produced or not xcframework_has_slice(spec, slice_name)
+
+
 def ensure_slice(spec: CoreSpec, slice_name: str, cache: Path, key: str, inputs: Mapping[str, str],
                  force: bool, builder: Builder) -> Path:
     entry = cache / spec.name / slice_name / key[:12]
     framework = entry / framework_name(spec, slice_name)
     stamp = entry / "stamp.json"
-    if not force and framework.is_dir() and stamp.is_file():
+    if not force and is_cached(spec, slice_name, cache, key):
         link_legacy(spec, slice_name, framework)
         log(f"{spec.name} {slice_name}: cache hit {key[:12]}")
         return framework
@@ -220,7 +273,7 @@ def ensure_slice(spec: CoreSpec, slice_name: str, cache: Path, key: str, inputs:
     stamp.write_text(json.dumps({
         "key": key,
         "inputs": dict(inputs),
-        "built": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+        "built": datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat(),
     }, indent=2, sort_keys=True) + "\n")
     link_legacy(spec, slice_name, framework)
     prune_entries(entry.parent, KEEP_ENTRIES, entry)
@@ -303,9 +356,10 @@ def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
         return 0
 
     cache = args.cache_dir or Path(environment.get("PV_CORE_CACHE") or DEFAULT_CACHE)
-    ensure_slice(spec, args.slice, cache.expanduser(), key, inputs, args.force, builder)
-    xcframework = spec.legacy_dir / f"{spec.product}.xcframework"
-    if args.xcframework or (spec.name == "dolphin" and not xcframework.exists()):
+    cache = cache.expanduser()
+    produced = args.force or not is_cached(spec, args.slice, cache, key)
+    ensure_slice(spec, args.slice, cache, key, inputs, args.force, builder)
+    if needs_xcframework(spec, args.slice, produced, args.xcframework):
         pack_xcframework(spec)
     return 0
 

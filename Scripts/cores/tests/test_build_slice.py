@@ -26,10 +26,15 @@ class FakeRunner:
 
     def __init__(self, head="aaaa", status=" bbbb externals/x (v1)\n-cccc externals/y", xcode="Xcode 26.3\nBuild version 17C1", sdk="26.2"):
         self.head, self.status, self.xcode, self.sdk = head, status, xcode, sdk
+        self.dirty = {}  # repo path -> (porcelain, diff)
 
     def __call__(self, cmd, cwd=None):
         if cmd[-2:] == ["rev-parse", "HEAD"]:
             return self.head
+        if cmd[:1] == ["git"] and "status" in cmd and "--porcelain=v1" in cmd:
+            return self.dirty.get(cmd[2], ("", ""))[0]
+        if cmd[:1] == ["git"] and "diff" in cmd:
+            return self.dirty.get(cmd[2], ("", ""))[1]
         if "submodule" in cmd:
             return self.status
         if cmd[:2] == ["xcodebuild", "-version"]:
@@ -106,8 +111,87 @@ class KeyTests(unittest.TestCase):
         with_profile = self.key(self.dolphin)
         self.assertNotEqual(base, with_profile)
         profile.write_text("profile v2")
-        self.assertNotEqual(with_profile, self.key(self.dolphin))
+        v2 = self.key(self.dolphin)
+        self.assertNotEqual(with_profile, v2)
         self.assertEqual(base, self.key(self.dolphin, env={"DOL_PGO": "off"}))
+        self.assertEqual(v2, self.key(self.dolphin, env={"DOL_PGO": "auto"}))
+        self.assertEqual(v2, self.key(self.dolphin, env={"DOL_PGO": "use"}))
+
+    def test_lto_is_boolean(self):
+        base = self.key(self.dolphin)
+        self.assertEqual(base, self.key(self.dolphin, env={"DOL_FULL_LTO": "0"}))
+        self.assertEqual(base, self.key(self.dolphin, env={"DOL_FULL_LTO": "yes"}))
+        self.assertNotEqual(base, self.key(self.dolphin, env={"DOL_FULL_LTO": "1"}))
+
+    def test_pgo_profile_only_counts_when_selected(self):
+        other = write(self.repo.root / "custom.profdata", "x")
+        base = self.key(self.dolphin)
+        self.assertEqual(base, self.key(self.dolphin, env={"DOL_PGO_PROFILE": str(other)}))
+        self.assertNotEqual(base, self.key(self.dolphin, env={"DOL_PGO": "use", "DOL_PGO_PROFILE": str(other)}))
+
+    def test_dirty_tree_changes_key_and_revert_restores(self):
+        clean = self.key()
+        sub = str(self.azahar.submodule)
+        runner = FakeRunner()
+        runner.dirty[sub] = (" M src/a.cpp", "diff --git a/src/a.cpp\n+x")
+        dirty = self.key(runner=runner)
+        self.assertNotEqual(clean, dirty)
+        runner.dirty[sub] = (" M src/a.cpp", "diff --git a/src/a.cpp\n+y")
+        self.assertNotEqual(dirty, self.key(runner=runner))
+        runner.dirty.clear()
+        self.assertEqual(clean, self.key(runner=runner))
+
+    def test_nested_dirty_tree_changes_key(self):
+        nested = str(self.azahar.submodule / "externals/x")
+        runner = FakeRunner()
+        runner.dirty[nested] = (" M a.c", "+1")
+        self.assertNotEqual(self.key(), self.key(runner=runner))
+
+    def test_untracked_file_contents_change_key(self):
+        runner = FakeRunner()
+        sub = self.azahar.submodule
+        runner.dirty[str(sub)] = ("?? new.cpp", "")
+        write(sub / "new.cpp", "one")
+        first = self.key(runner=runner)
+        write(sub / "new.cpp", "two")
+        self.assertNotEqual(first, self.key(runner=runner))
+
+
+class XCFrameworkTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.repo = FakeRepo(Path(self.tmp.name))
+        self.dolphin = self.repo.specs["dolphin"]
+        self.azahar = self.repo.specs["azahar"]
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def write_xcframework(self, spec, slices):
+        import plistlib
+        path = spec.legacy_dir / f"{spec.product}.xcframework" / "Info.plist"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        libs = [{"LibraryPath": f"{spec.product}-{s}.framework"} for s in slices]
+        path.write_bytes(plistlib.dumps({"AvailableLibraries": libs}))
+
+    def test_dolphin_missing_xcframework_repacks(self):
+        self.assertTrue(build_slice.needs_xcframework(self.dolphin, "ios", False, False))
+
+    def test_dolphin_hit_with_slice_present_does_not_repack(self):
+        self.write_xcframework(self.dolphin, ["ios", "ios-sim"])
+        self.assertFalse(build_slice.needs_xcframework(self.dolphin, "ios", False, False))
+
+    def test_dolphin_hit_missing_this_slice_repacks(self):
+        self.write_xcframework(self.dolphin, ["ios-sim"])
+        self.assertTrue(build_slice.needs_xcframework(self.dolphin, "ios", False, False))
+
+    def test_dolphin_produced_slice_always_repacks(self):
+        self.write_xcframework(self.dolphin, ["ios"])
+        self.assertTrue(build_slice.needs_xcframework(self.dolphin, "ios", True, False))
+
+    def test_azahar_only_when_requested(self):
+        self.assertFalse(build_slice.needs_xcframework(self.azahar, "ios", True, False))
+        self.assertTrue(build_slice.needs_xcframework(self.azahar, "ios", False, True))
 
 
 class CacheTests(unittest.TestCase):
