@@ -10,23 +10,6 @@ import PVSettings
 
 // MARK: - Identifiable wrapper types for stable ForEach IDs
 
-/// Wrapper for active button info with stable ID to prevent SwiftUI view graph corruption
-private struct ActiveButtonInfo: Identifiable {
-    let id: String  // Unique ID combining buttonId + UUID
-    let frame: CGRect
-    let mappingSize: CGSize
-    let buttonId: String
-    let timestamp: Date
-
-    init(frame: CGRect, mappingSize: CGSize, buttonId: String, timestamp: Date = Date()) {
-        self.id = "\(buttonId)-\(UUID().uuidString)"
-        self.frame = frame
-        self.mappingSize = mappingSize
-        self.buttonId = buttonId
-        self.timestamp = timestamp
-    }
-}
-
 /// Wrapper for active thumbstick info with stable ID
 private struct ActiveThumbstickInfo: Identifiable {
     let id: String
@@ -128,9 +111,6 @@ public struct DeltaSkinView: View {
     /// captured by the thumbstick's own drag gesture instead of the general multitouch button
     /// overlay.
     private static let thumbstickIgnoredRectMargin: CGFloat = 12
-
-    // Track multiple active buttons - using Identifiable wrapper for stable ForEach IDs
-    @State private var activeButtons: [ActiveButtonInfo] = []
 
     // Track the currently pressed button (legacy support)
     @State private var currentlyPressedButton: DeltaSkinButton?
@@ -689,18 +669,6 @@ public struct DeltaSkinView: View {
                             .allowsHitTesting(false)
                         }
 
-                        // Effects and thumbsticks inside the skin container
-                        ForEach(activeButtons) { button in
-                            DeltaSkinButtonHighlight(
-                                frame: button.frame,
-                                mappingSize: button.mappingSize,
-                                previewSize: geometry.size,
-                                buttonId: button.buttonId
-                            )
-                            .zIndex(3)
-                            .allowsHitTesting(false)
-                        }
-
                         // Turbo badges for buttons with turbo enabled
                         if Defaults[.turboEnabled] {
                             let turboButtons = turboManager.turboButtons
@@ -1014,9 +982,6 @@ public struct DeltaSkinView: View {
                             // If all touches are gone, ensure everything is reset
                             if touchToButtonMap.isEmpty && touchToDPadMap.isEmpty && ndsScreenTouches.isEmpty {
                                 DLOG("All touches ended, cleaning up")
-
-                                // Clear active buttons to ensure visual feedback is removed
-                                activeButtons.removeAll()
 
                                 // Reset state
                                 touchLocations.removeAll()
@@ -1514,22 +1479,6 @@ public struct DeltaSkinView: View {
 
                 // Don't update currentlyPressedButton - it's legacy and causes issues with multi-touch
                 // Each touch is tracked independently via touchToButtonMap and touchToDPadMap
-
-                // Add visual feedback
-                let highlightButtonId = button.id
-
-                let newButton = ActiveButtonInfo(
-                    frame: buttonWithEffectiveFrame(button).frame,
-                    mappingSize: mappingSize,
-                    buttonId: highlightButtonId
-                )
-                activeButtons.append(newButton)
-
-                // Clean up old highlights after delay
-                let buttonTimestamp = newButton.timestamp
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    activeButtons.removeAll { $0.timestamp <= buttonTimestamp }
-                }
             }
 
         } else {
@@ -2028,17 +1977,7 @@ public struct DeltaSkinView: View {
             currentlyPressedButton = button
         }
 
-        // Add visual feedback for active directions (show all merged directions)
         if !allResolvedDirections.isEmpty {
-            for direction in allResolvedDirections {
-                let newButton = ActiveButtonInfo(
-                    frame: button.frame,
-                    mappingSize: mappingSize,
-                    buttonId: direction
-                )
-                activeButtons.append(newButton)
-            }
-
             #if canImport(UIKit) && !os(tvOS)
             if !ProcessInfo.processInfo.isiOSAppOnMac {
                 if let haptic = button.haptic {
@@ -2051,14 +1990,6 @@ public struct DeltaSkinView: View {
 
             // Play sound with current position (only once)
             playClickSound(for: button)
-
-            // Clean up old highlights after delay
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                self.activeButtons.removeAll { buttonInfo in
-                    let now = Date()
-                    return now.timeIntervalSince(buttonInfo.timestamp) > 0.2
-                }
-            }
         }
     }
 
@@ -2699,7 +2630,6 @@ public struct DeltaSkinView: View {
         touchLocations.removeAll()
         touchToButtonMap.removeAll()
         currentlyPressedButton = nil
-        activeButtons.removeAll()
         activeThumbsticks.removeAll()
     }
 
