@@ -29,6 +29,9 @@ public enum DevSettings {
     /// Base xcconfig for the project and every app target (repo-relative).
     public static let xcconfig: Path = .relativeToRoot("Dev/Config/Dev.xcconfig")
 
+    /// Compilation condition that pulls PVDevHarness into a focused app.
+    public static let harnessFlag = "PV_DEV_HARNESS"
+
     // MARK: Packages
 
     /// Local packages whose products the app links directly (Provenance-Lite (AppStore) minus cores).
@@ -61,6 +64,9 @@ public enum DevSettings {
                     if case let .package(path, _) = link { paths.insert(path) }
                 }
             }
+        }
+        if apps.contains(where: { $0.flags.contains(harnessFlag) }) {
+            paths.insert("PVDevHarness")
         }
         return paths.sorted()
     }

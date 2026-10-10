@@ -113,7 +113,8 @@ public struct FocusedApp {
             resources: DevSettings.appResources,
             entitlements: nil,
             scripts: scripts,
-            dependencies: DevSettings.appDependencies + coreDependencies,
+            dependencies: DevSettings.appDependencies + coreDependencies
+                + (flags.contains(DevSettings.harnessFlag) ? [.package(product: "PVDevHarness")] : []),
             settings: DevSettings.appSettings(for: self)
         )
     }
@@ -130,19 +131,19 @@ public struct FocusedApp {
 }
 
 public extension FocusedApp {
-    static let ui = FocusedApp(slug: "ui", title: "UI", cores: [.mGBA, .stella, .snes9x], flags: ["PV_DEV_HARNESS"])
+    static let ui = FocusedApp(slug: "ui", title: "UI", cores: [.mGBA, .stella, .snes9x], flags: [DevSettings.harnessFlag])
 
     static let thin = FocusedApp(
         slug: "thin",
         title: "Thin",
         cores: [],
         libretro: ["mednafen_psx_hw", "mupen64plus_next", "snes9x", "ppsspp"],
-        flags: ["PV_DEV_HARNESS"]
+        flags: [DevSettings.harnessFlag]
     )
 
     // PVAzahar depends on its BuildPVlibAzahar aggregate inside PVAzahar.xcodeproj, so the
     // implicit dependency on PVAzahar also builds (or cache-links) the PVlibAzahar slice.
-    static let azahar = FocusedApp(slug: "azahar", title: "Azahar", cores: [.azahar], flags: ["PV_DEV_HARNESS"])
+    static let azahar = FocusedApp(slug: "azahar", title: "Azahar", cores: [.azahar], flags: [DevSettings.harnessFlag])
 
     static let all: [FocusedApp] = [.ui, .azahar, .thin]
 }

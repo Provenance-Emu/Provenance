@@ -29,6 +29,7 @@ final class HarnessArgumentsTests: XCTestCase {
     func testBadFramesFallBackAndClamp() throws {
         XCTAssertEqual(HarnessArguments.parse(["-PVHarnessROM", "a", "-PVHarnessFrames", "abc"])?.frames, 300)
         XCTAssertEqual(HarnessArguments.parse(["-PVHarnessROM", "a", "-PVHarnessFrames", "0"])?.frames, 1)
+        XCTAssertEqual(HarnessArguments.parse(["-PVHarnessROM", "a", "-PVHarnessFrames", "99999999"])?.frames, HarnessArguments.maxFrames)
     }
 
     func testMissingValueIsIgnored() {
@@ -48,7 +49,7 @@ final class HarnessArgumentsTests: XCTestCase {
         let args = try XCTUnwrap(HarnessArguments.parse(["-PVHarnessROM", "a"]))
         let docs = URL(fileURLWithPath: "/docs", isDirectory: true)
         let date = Date(timeIntervalSince1970: 0)
-        XCTAssertEqual(args.outputDirectory(home: docs, documents: docs, now: date).path, "/docs/Harness/19700101-000000")
+        XCTAssertEqual(args.outputDirectory(home: docs, documents: docs, now: date).path, "/docs/Harness/19700101-000000-000")
     }
 }
 
@@ -91,5 +92,13 @@ final class HarnessOutputTests: XCTestCase {
     func testWaitSeconds() {
         XCTAssertEqual(HarnessOutput.waitSeconds(frames: 300, frameInterval: 1.0 / 60.0), 5, accuracy: 0.0001)
         XCTAssertEqual(HarnessOutput.waitSeconds(frames: 120, frameInterval: 0), 2, accuracy: 0.0001)
+    }
+
+    func testReportEncodesNonFiniteDoubles() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try HarnessOutput.prepare(dir)
+        let report = HarnessReport(core: "c", game: "g", frames: 1, frameCountSource: "estimated",
+                                   frameInterval: 0, fps: .infinity, waitedSeconds: 0, elapsedSeconds: .nan)
+        XCTAssertNoThrow(try HarnessOutput.writeReport(report, to: dir))
     }
 }

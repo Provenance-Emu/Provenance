@@ -18,6 +18,9 @@ import FreemiumKit
 #if canImport(WhatsNewKit)
 import WhatsNewKit
 #endif
+#if PV_DEV_HARNESS
+import PVDevHarness
+#endif
 @main
 struct ProvenanceApp: App {
     @StateObject private var appState = AppState.shared
@@ -96,6 +99,10 @@ struct ProvenanceApp: App {
                 .onAppear {
                     ILOG("ProvenanceApp: onAppear called, setting `appDelegate.appState = appState`")
                     appDelegate.appState = appState
+#if PV_DEV_HARNESS
+                    // Tuist focused apps only (-PVHarnessROM …); a no-op without harness arguments.
+                    DevHarness.start(appState: appState)
+#endif
 
                     // Initialize the settings factory and import presenter
 #if os(tvOS)

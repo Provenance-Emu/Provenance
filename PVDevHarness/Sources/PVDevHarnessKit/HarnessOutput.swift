@@ -42,6 +42,7 @@ public enum HarnessOutput {
     public static func writeReport(_ report: HarnessReport, to directory: URL) throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.nonConformingFloatEncodingStrategy = .convertToString(positiveInfinity: "inf", negativeInfinity: "-inf", nan: "nan")
         try encoder.encode(report).write(to: directory.appendingPathComponent(framesFile), options: .atomic)
     }
 
