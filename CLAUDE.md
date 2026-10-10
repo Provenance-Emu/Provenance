@@ -104,14 +104,19 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
   `docs/superpowers/specs/2026-10-10-core-audit.md` (KEEP rows). Retired
   cores live on as `PVCore.retiredCores` entries (`RetiredCoreMigration`,
   `RetiredBatterySaveMigration`); `Cores/Debug` stays for its `PVDebug.c` simulator stub; no new `Cores/` project without an audit row.
-- **Pruned (2026-10, `feature/prune-dead-cores`):** 32 `Cores/` projects that
+- **Deprecated native cores** (`PVCore.deprecatedCores`): Atari800 and Gambatte
+  still ship because users have save states and habits on them (both were the
+  only core for their systems for a long time), but their libretro dylibs are
+  the recommended choice. Pickers label them "(Deprecated)" and sort them last;
+  nothing migrates away from them. Don't extend them.
+- **Pruned (2026-10, `feature/prune-dead-cores`):** 30 `Cores/` projects that
   duplicated a libretro buildbot dylib or were never wired were deleted:
-  Atari800, Bliss, CrabEMU, Gambatte, PokeMini, VisualBoyAdvance-M,
+  Bliss, CrabEMU, PokeMini, VisualBoyAdvance-M,
   VirtualJaguar, O2EM, Desmume2015, melonDS, BeetlePSX, DosBox, DuckStation,
   FreeIntv, GameMusicEmu, Gearcoleco, JollyGoodEmulation, Mini_vMac, Mu,
   Mupen64Plus-NX, Play, Potator, Reicast, Sudachi, VecX, Yabause, fuse, opera,
   pcsx_rearmed, sm64ex, snesticle, supergrafx. Their games run on the thin
-  wrapper through the replacement table in `PVCore.swift` where a replacement exists (22
+  wrapper through the replacement table in `PVCore.swift` where a replacement exists (20
   entries); cores that were disabled or never shipped have no entry.
 - **Rule of thumb:** if a libretro buildbot dylib already serves the
   core and the thin wrapper handles it, fix the thin wrapper (or the

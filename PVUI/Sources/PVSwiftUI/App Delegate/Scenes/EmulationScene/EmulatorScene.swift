@@ -166,11 +166,13 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
                 return
             } else {
                 WLOG("EmulatorContainerView: Save state's core \(saveStateCore.projectName) is not available for system \(system.name)")
-                displayAndLogError(
-                    withTitle: "Core Not Available",
-                    message: "The save state was created with core '\(saveStateCore.projectName)', but this core is not available for \(system.name).\n\nPlease install the required core or use a different save state.",
-                    customActions: nil
-                )
+                let message: String
+                if PVCore.retiredCores[saveStateCore.identifier] != nil {
+                    message = "This save state was made with '\(saveStateCore.projectName)', which is no longer included in Provenance. Its save states can't be loaded by the core that replaced it.\n\nStart the game normally; in-game saves carry over."
+                } else {
+                    message = "The save state was created with core '\(saveStateCore.projectName)', but this core is not available for \(system.name).\n\nPlease install the required core or use a different save state."
+                }
+                displayAndLogError(withTitle: "Core Not Available", message: message, customActions: nil)
                 return
             }
         }
@@ -273,7 +275,7 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
         let items = availableCores.map { core in
             let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
             let subtitle = formatSaveCountSubtitle(saveCount)
-            return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
+            return RetroSelectionItem(id: core.identifier, title: core.displayName, subtitle: subtitle)
         }
 
         // Capture hostingVC in a variable so onSelect/onCancel can dismiss it
@@ -444,7 +446,7 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
             case 1: subtitle = "1 save"
             default: subtitle = "\(saveCount) saves"
             }
-            return RetroSelectionItem(id: core.identifier, title: core.projectName, subtitle: subtitle)
+            return RetroSelectionItem(id: core.identifier, title: core.displayName, subtitle: subtitle)
         }
 
         // Capture hostingVC so onSelect/onCancel can dismiss it

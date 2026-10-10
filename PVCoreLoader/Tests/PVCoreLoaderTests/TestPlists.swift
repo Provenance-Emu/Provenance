@@ -2,6 +2,9 @@ import XCTest
 import PVCoreBridge
 @testable import PVCoreLoader
 
+#if canImport(PVAtari800)
+@_exported import PVAtari800
+#endif
 #if canImport(PVPicoDrive)
 @_exported import PVPicoDrive
 #endif

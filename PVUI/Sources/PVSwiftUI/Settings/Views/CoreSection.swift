@@ -56,6 +56,22 @@ struct CoreSection: View {
 
                     Spacer()
 
+                    if core.isDeprecated {
+                        Text("DEPRECATED")
+                            .font(.system(size: 12, weight: .bold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.black.opacity(0.6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .strokeBorder(Color.orange, lineWidth: 1)
+                                    )
+                            )
+                            .foregroundColor(.orange)
+                    }
+
                     if core.disabled {
                         Text("DISABLED")
                             .font(.system(size: 12, weight: .bold))

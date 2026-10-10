@@ -205,6 +205,10 @@
 		C0C0CAFE0000000000006001 /* QuickLookPreview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3CC22000000000100000001 /* QuickLookPreview.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B32CEE3F2D20D40C0083552D /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B32CEE3E2D20D40C0083552D /* PVFeatureFlags */; };
 		B32CEE412D20D4530083552D /* PVFeatureFlags in Frameworks */ = {isa = PBXBuildFile; productRef = B32CEE402D20D4530083552D /* PVFeatureFlags */; };
+		B32D45BD2CB730AE006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45BC2CB730AE006B76C2 /* PVGambatte */; };
+		B32D45C72CB7310C006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45C62CB7310C006B76C2 /* PVGambatte */; };
+		B32D45C92CB73112006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45C82CB73112006B76C2 /* PVGambatte */; };
+		B32D45CD2CB7311C006B76C2 /* PVGambatte in Frameworks */ = {isa = PBXBuildFile; productRef = B32D45CC2CB7311C006B76C2 /* PVGambatte */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
@@ -224,6 +228,8 @@
 		B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F3F2C198F32007371C5 /* MBProgressHUD */; };
 		B33B4F4B2C1A5B4B007371C5 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F4A2C1A5B4B007371C5 /* RealmSwift */; };
 		B33B4F4C2C1A5B4B007371C5 /* RealmSwift in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F4A2C1A5B4B007371C5 /* RealmSwift */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B33BD1B52C6A619F001E933A /* PVAtari800-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */; };
+		B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B33BD1BF2C6A6212001E933A /* PVPicoDrive-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1BE2C6A6212001E933A /* PVPicoDrive-Dynamic */; };
 		B33BD1C02C6A6212001E933A /* PVPicoDrive-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1BE2C6A6212001E933A /* PVPicoDrive-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B33BD1C52C6A622A001E933A /* PVTGBDual-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */; };
@@ -259,6 +265,8 @@
 		B355E03B2920AC1A00E4C858 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D54EF42768306200476241 /* SwiftUI.framework */; };
 		B35AB3FE2CB6CF4A003273D4 /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B35AB3FD2CB6CF4A003273D4 /* PVUI */; };
 		B35AB4002CB6D0DF003273D4 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B35AB3FF2CB6D0DF003273D4 /* PVJIT */; };
+		B35AB40B2CB6DBEC003273D4 /* PVAtari800-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35AB40A2CB6DBEC003273D4 /* PVAtari800-Dynamic */; };
+		B35AB40C2CB6DBEC003273D4 /* PVAtari800-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35AB40A2CB6DBEC003273D4 /* PVAtari800-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B35AB4112CB6DC14003273D4 /* PVFreeDO-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35AB4102CB6DC14003273D4 /* PVFreeDO-Dynamic */; };
 		B35AB4122CB6DC14003273D4 /* PVFreeDO-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B35AB4102CB6DC14003273D4 /* PVFreeDO-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B35AB4142CB6DC20003273D4 /* PVTGBDual-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B35AB4132CB6DC20003273D4 /* PVTGBDual-Dynamic */; };
@@ -364,6 +372,8 @@
 		B37228D12CCDC80B00E6F627 /* AppStoreAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B37228CD2CCDC80B00E6F627 /* AppStoreAssets.xcassets */; };
 		B373219E2C900A5200CF59EF /* PVPicoDrive-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B373219D2C900A5200CF59EF /* PVPicoDrive-Dynamic */; };
 		B373219F2C900A5200CF59EF /* PVPicoDrive-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B373219D2C900A5200CF59EF /* PVPicoDrive-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B37321A12C900A6400CF59EF /* PVAtari800-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B37321A02C900A6400CF59EF /* PVAtari800-Dynamic */; };
+		B37321A22C900A6400CF59EF /* PVAtari800-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B37321A02C900A6400CF59EF /* PVAtari800-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B37321A72C900B1E00CF59EF /* PVTGBDual-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; };
 		B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -490,6 +500,10 @@
 		B3A610012CB88492001D99C2 /* PVJIT in Frameworks */ = {isa = PBXBuildFile; productRef = B3A610002CB88492001D99C2 /* PVJIT */; };
 		B3A610032CB885BD001D99C2 /* PVCoremGBA-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3A610022CB885BD001D99C2 /* PVCoremGBA-Dynamic */; };
 		B3A610042CB885BD001D99C2 /* PVCoremGBA-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3A610022CB885BD001D99C2 /* PVCoremGBA-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B3A610062CB885D5001D99C2 /* PVGambatte-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3A610052CB885D5001D99C2 /* PVGambatte-Dynamic */; };
+		B3A610072CB885D5001D99C2 /* PVGambatte-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3A610052CB885D5001D99C2 /* PVGambatte-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B3A610092CB885EB001D99C2 /* PVAtari800-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3A610082CB885EB001D99C2 /* PVAtari800-Dynamic */; };
+		B3A6100A2CB885EB001D99C2 /* PVAtari800-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3A610082CB885EB001D99C2 /* PVAtari800-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3A6100F2CB885FD001D99C2 /* PVCoreMednafen in Frameworks */ = {isa = PBXBuildFile; productRef = B3A6100E2CB885FD001D99C2 /* PVCoreMednafen */; };
 		B3A610112CB88610001D99C2 /* PVProSystem-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3A610102CB88610001D99C2 /* PVProSystem-Dynamic */; };
 		B3A610122CB88610001D99C2 /* PVProSystem-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3A610102CB88610001D99C2 /* PVProSystem-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -982,6 +996,7 @@
 				B3D1C1322CB70D4C00F1F46B /* PVCoremGBA-Dynamic in Embed Frameworks */,
 				B35AB4152CB6DC20003273D4 /* PVTGBDual-Dynamic in Embed Frameworks */,
 				B3FAC952292B45A9005E8B11 /* PVSNES.framework in Embed Frameworks */,
+				B35AB40C2CB6DBEC003273D4 /* PVAtari800-Dynamic in Embed Frameworks */,
 				B37CE670293F23F70010B746 /* PVfMSX.framework in Embed Frameworks */,
 				B35AB41F2CB6DC9C003273D4 /* PVPicoDrive-Dynamic in Embed Frameworks */,
 				B3FAC934292B451B005E8B11 /* PVGenesis.framework in Embed Frameworks */,
@@ -1089,6 +1104,7 @@
 				B3E264DA2CA548E3002BB0FE /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3AD724F2D246DC7001E5EC3 /* PVfMSX.framework in Embed Frameworks */,
 				B35EEFA52C6C6D1A00EBD1A8 /* RealmSwift in Embed Frameworks */,
+				B37321A22C900A6400CF59EF /* PVAtari800-Dynamic in Embed Frameworks */,
 				B3C65E5B2CA53666000E37B0 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3E1C0482C96F86000EB4238 /* PVProSystem-Dynamic in Embed Frameworks */,
 			);
@@ -1114,6 +1130,7 @@
 				B33B4F4C2C1A5B4B007371C5 /* RealmSwift in Embed Frameworks */,
 				B318E2782CAB4B3F00D0E599 /* PVGenesis.framework in Embed Frameworks */,
 				B318E29E2CAB58A300D0E599 /* PVRSPCXD4.framework in Embed Frameworks */,
+				B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */,
 				B30ED0D82CFD3C4200AFCFCE /* PVCoreMednafen-Dynamic in Embed Frameworks */,
 				B3636EF82F087C6500C64AAD /* PVlibDolphin.xcframework in Embed Frameworks */,
 				B318E27E2CAB4C4200D0E599 /* PVSNES.framework in Embed Frameworks */,
@@ -1198,6 +1215,8 @@
 				B3A610212CB88646001D99C2 /* PVStella-Dynamic in Embed Frameworks */,
 				B3FC97472CB8C24600C6DB31 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
 				B3F7E578297736C200362B92 /* PVFCEU.framework in Embed Frameworks */,
+				B3A610072CB885D5001D99C2 /* PVGambatte-Dynamic in Embed Frameworks */,
+				B3A6100A2CB885EB001D99C2 /* PVAtari800-Dynamic in Embed Frameworks */,
 				B3A610242CB8864F001D99C2 /* PVTGBDual-Dynamic in Embed Frameworks */,
 				B3F7E57C297736C200362B92 /* PVSNES.framework in Embed Frameworks */,
 				9348D7502A32092900CC7998 /* PVPPSSPP.framework in Embed Frameworks */,
@@ -1502,6 +1521,7 @@
 		B324C311219195CE009F4EDC /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/CFNetwork.framework; sourceTree = DEVELOPER_DIR; };
 		B324C313219195E0009F4EDC /* TVServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TVServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/TVServices.framework; sourceTree = DEVELOPER_DIR; };
 		B324C31D219197D7009F4EDC /* PicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B324C6072191FF9A009F4EDC /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C61021920037009F4EDC /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C61421920384009F4EDC /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B324C6162192038C009F4EDC /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/usr/lib/libxml2.tbd; sourceTree = DEVELOPER_DIR; };
@@ -1611,6 +1631,7 @@
 		B351E7CB2CBE072D0000E087 /* libavcodec.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavcodec.xcframework; path = Cores/emuThree/lib/libavcodec.xcframework; sourceTree = "<group>"; };
 		B351E7CC2CBE072D0000E087 /* libavutil.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libavutil.xcframework; path = Cores/emuThree/lib/libavutil.xcframework; sourceTree = "<group>"; };
 		B351E7CD2CBE072D0000E087 /* libswscale.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libswscale.xcframework; path = Cores/emuThree/lib/libswscale.xcframework; sourceTree = "<group>"; };
+		B354693B1DECDA710018B6F3 /* PVAtari800.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVAtari800.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B355DF9829209B6300E4C858 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
 		B355DF9D29209B6700E4C858 /* PreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
 		B355DFA229209B6700E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1658,6 +1679,7 @@
 		B364D1CD2E2DE6A90038EB2A /* PVEmuThree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmuThree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D1D02E2DEC4A0038EB2A /* glslang.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = glslang.xcframework; path = MoltenVK/glslang.xcframework; sourceTree = "<group>"; };
 		B36A8D422CCD53DB002357DD /* Provenance-Lite-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-Lite-Info.plist"; sourceTree = "<group>"; };
+		B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37021F52872538400B3F6DA /* PVFBNeo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFBNeo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37113892E70AD14006C1ED7 /* PVlibDolphin.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PVlibDolphin.xcframework; path = "Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework"; sourceTree = "<group>"; };
 		B37228CD2CCDC80B00E6F627 /* AppStoreAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = AppStoreAssets.xcassets; sourceTree = "<group>"; };
@@ -1917,6 +1939,8 @@
 		B3C65E592CA53666000E37B0 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7CCC927DCB0DA0003F9D2 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D4321DEA1B340068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C9D4AD1DEA74390068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C9D4B01DEA74500068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D55C1DEA85C60068D057 /* PVSNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D55F1DEA85D10068D057 /* PVSNES.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSNES.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D5E01DEA8A290068D057 /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2578,6 +2602,8 @@
 				B35AB41C2CB6DC6B003273D4 /* PVEmulatorCore in Frameworks */,
 				B35AB4212CB6DCB1003273D4 /* PVPlists in Frameworks */,
 				1A4869DF17C8D60C0019F6D2 /* Security.framework in Frameworks */,
+				B32D45C92CB73112006B76C2 /* PVGambatte in Frameworks */,
+				B35AB40B2CB6DBEC003273D4 /* PVAtari800-Dynamic in Frameworks */,
 				B3FAC929292B4505005E8B11 /* PVFCEU.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
@@ -2656,6 +2682,7 @@
 				930499C02A93073800BF257F /* Foundation.framework in Frameworks */,
 				930499C12A93073800BF257F /* OpenGL.framework in Frameworks */,
 				930499C22A93073800BF257F /* CoreGraphics.framework in Frameworks */,
+				B32D45CD2CB7311C006B76C2 /* PVGambatte in Frameworks */,
 				930499C32A93073800BF257F /* Reachability in Frameworks */,
 				930499C42A93073800BF257F /* AltKit in Frameworks */,
 				B3BDD4212D349220005F5AF9 /* (null) in Frameworks */,
@@ -2765,6 +2792,7 @@
 				B35EEFB52C6C6D1A00EBD1A8 /* libxml2.tbd in Frameworks */,
 				B35EEFB62C6C6D1A00EBD1A8 /* RxDataSources in Frameworks */,
 				B3E1BC4B2C96DD0500EB4238 /* PVProSystem-Dynamic in Frameworks */,
+				B32D45BD2CB730AE006B76C2 /* PVGambatte in Frameworks */,
 				B3A1868B2CBCBAF900BB1FFE /* PVMupen64PlusBridge.framework in Frameworks */,
 				B35EEFB82C6C6D1A00EBD1A8 /* Defaults in Frameworks */,
 				B35EEFB92C6C6D1A00EBD1A8 /* PVUI in Frameworks */,
@@ -2814,6 +2842,7 @@
 				B3061FB92F776FEA000F8839 /* PVJIT in Frameworks */,
 				B35EEFDA2C6C6D1A00EBD1A8 /* PVLogging in Frameworks */,
 				B35EEFDB2C6C6D1A00EBD1A8 /* Foundation.framework in Frameworks */,
+				B37321A12C900A6400CF59EF /* PVAtari800-Dynamic in Frameworks */,
 				B35D52822C96C83E006BE5BF /* PVFreeDO-Dynamic in Frameworks */,
 				B35EEFDD2C6C6D1A00EBD1A8 /* OpenGL.framework in Frameworks */,
 				B35EEFDE2C6C6D1A00EBD1A8 /* CoreGraphics.framework in Frameworks */,
@@ -2869,10 +2898,12 @@
 				B3B521E72F78DABC008244D1 /* PVArchivingFormats in Frameworks */,
 				B305856E2C0D52F200B91D7A /* PVLibrary in Frameworks */,
 				B318E28C2CAB512F00D0E599 /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				B33BD1B52C6A619F001E933A /* PVAtari800-Dynamic in Frameworks */,
 				B35B17812CCCDFD1007059CA /* PVAudio in Frameworks */,
 				B35573742CC4843600A4BA16 /* MoltenVK in Frameworks */,
 				B3E2A9FA2CB60F1200E2636D /* PVPPSSPP.framework in Frameworks */,
 				B33A09342D2D0B0C00BFB6C9 /* PVJIT in Frameworks */,
+				B32D45C72CB7310C006B76C2 /* PVGambatte in Frameworks */,
 				B394CD7C2BDEE53A006B63E8 /* CoreServices.framework in Frameworks */,
 				B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */,
 				B394CD892BDEE53A006B63E8 /* CFNetwork.framework in Frameworks */,
@@ -3052,6 +3083,7 @@
 				B3F7E526297736C200362B92 /* Security.framework in Frameworks */,
 				B3A610012CB88492001D99C2 /* PVJIT in Frameworks */,
 				B3FC973F2CB8BDB900C6DB31 /* Defaults in Frameworks */,
+				B3A610092CB885EB001D99C2 /* PVAtari800-Dynamic in Frameworks */,
 				B3F7E529297736C200362B92 /* PVFCEU.framework in Frameworks */,
 				B3F7E52C297736C200362B92 /* SystemConfiguration.framework in Frameworks */,
 				B3F7E530297736C200362B92 /* CoreData.framework in Frameworks */,
@@ -3069,6 +3101,7 @@
 				B3F7E542297736C200362B92 /* OpenGLES.framework in Frameworks */,
 				B32C08F92D053FF60024A3E2 /* PVMupen64PlusBridge.framework in Frameworks */,
 				B3F7E544297736C200362B92 /* Foundation.framework in Frameworks */,
+				B3A610062CB885D5001D99C2 /* PVGambatte-Dynamic in Frameworks */,
 				B3F7E545297736C200362B92 /* OpenGL.framework in Frameworks */,
 				B3F7E548297736C200362B92 /* CoreGraphics.framework in Frameworks */,
 				B3A610032CB885BD001D99C2 /* PVCoremGBA-Dynamic in Frameworks */,
@@ -3502,6 +3535,7 @@
 				B3270F6227DCB1A700E83180 /* PVPPSSPP.framework */,
 				B3C7CCC927DCB0DA0003F9D2 /* PVDolphin.framework */,
 				B3270FB727DCB62C00E83180 /* libz.dylib */,
+				B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */,
 				B311B1C127A52F1700D1DE41 /* UIKit.framework */,
 				B311B01C27A52B9C00D1DE41 /* PVUI.framework */,
 				B311B01927A52B9200D1DE41 /* PVUI.framework */,
@@ -3605,7 +3639,9 @@
 				B324C305219195A0009F4EDC /* OpenGLES.framework */,
 				B324C31D219197D7009F4EDC /* PicoDrive.framework */,
 				B324C61021920037009F4EDC /* ProSystem.framework */,
+				B324C6072191FF9A009F4EDC /* PVAtari800.framework */,
 				B3995E4E2058229F001D4985 /* PVFCEU.framework */,
+				B3C9D4B01DEA74500068D057 /* PVGB.framework */,
 				14C8EF2121D9443E001B7E37 /* PVTGBDual.framework */,
 				B3C9D5E01DEA8A290068D057 /* PVGenesis.framework */,
 				B324C64E219216DD009F4EDC /* PVLibrary.framework */,
@@ -3647,6 +3683,8 @@
 				1A3D432B17B2FDFE004DFFFC /* libz.dylib */,
 				1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */,
 				B3AD689A1D6EA6180021B949 /* PicoDrive.framework */,
+				B354693B1DECDA710018B6F3 /* PVAtari800.framework */,
+				B3C9D4AD1DEA74390068D057 /* PVGB.framework */,
 				5525388625574D48004B00B6 /* PVTGBDual.framework */,
 				B3C9D4321DEA1B340068D057 /* PVGenesis.framework */,
 				B3AF701221916C3A000FA7F9 /* PVLibrary.framework */,
@@ -6346,6 +6384,7 @@
 				B3E88CB72977AB4400C90E86 /* Reachability */,
 				B35AB3FD2CB6CF4A003273D4 /* PVUI */,
 				B35AB3FF2CB6D0DF003273D4 /* PVJIT */,
+				B35AB40A2CB6DBEC003273D4 /* PVAtari800-Dynamic */,
 				B35AB4102CB6DC14003273D4 /* PVFreeDO-Dynamic */,
 				B35AB4132CB6DC20003273D4 /* PVTGBDual-Dynamic */,
 				B35AB4162CB6DC46003273D4 /* PVStella-Dynamic */,
@@ -6360,6 +6399,7 @@
 				B35AB43E2CB6E795003273D4 /* PVLogging */,
 				B35AB4402CB6E8C0003273D4 /* PVSupport */,
 				B3D1C1302CB70D4C00F1F46B /* PVCoremGBA-Dynamic */,
+				B32D45C82CB73112006B76C2 /* PVGambatte */,
 				B32C08E52D0538240024A3E2 /* MoltenVK */,
 				B32C08E72D05382F0024A3E2 /* MoltenVK-Catalyst */,
 				B3E77F872D1F5803004A3AD2 /* PVFeatureFlags */,
@@ -6465,6 +6505,7 @@
 				930498C52A93073800BF257F /* AltKit */,
 				930498C72A93073800BF257F /* SteamController */,
 				930498CB2A93073800BF257F /* Reachability */,
+				B32D45CC2CB7311C006B76C2 /* PVGambatte */,
 				B3F65B572CC093FE00DB762D /* PVSupport */,
 				B3F65B592CC0941400DB762D /* PVLibrary */,
 				B3E77F8D2D1F5820004A3AD2 /* PVFeatureFlags */,
@@ -6683,9 +6724,11 @@
 				B35EEF782C6C6D1A00EBD1A8 /* Defaults */,
 				B36C8E7A2C7ECE6100BD4377 /* PVStella-Dynamic */,
 				B373219D2C900A5200CF59EF /* PVPicoDrive-Dynamic */,
+				B37321A02C900A6400CF59EF /* PVAtari800-Dynamic */,
 				B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */,
 				B35D52812C96C83E006BE5BF /* PVFreeDO-Dynamic */,
 				B3E1BC4A2C96DD0500EB4238 /* PVProSystem-Dynamic */,
+				B32D45BC2CB730AE006B76C2 /* PVGambatte */,
 				B33A763A2CC5168C00FC746F /* SiriusRating */,
 				B39342132CC57837008AA673 /* MoltenVK */,
 				B37228CB2CCDC7D300E6F627 /* FreemiumKit */,
@@ -6749,11 +6792,13 @@
 				B39B53872C66E7A900C220C6 /* PVSettings */,
 				B3952F552C697A02000B0308 /* PVUI */,
 				B3952F572C698F54000B0308 /* Defaults */,
+				B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */,
 				B33BD1BE2C6A6212001E933A /* PVPicoDrive-Dynamic */,
 				B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */,
 				B33BD1C72C6A6261001E933A /* PVStella-Dynamic */,
 				B386DD672C8939C60021A7BA /* PVFreeDO-Dynamic */,
 				B318E29F2CAB5A2600D0E599 /* PVProSystem-Dynamic */,
+				B32D45C62CB7310C006B76C2 /* PVGambatte */,
 				B382362B2CC4623100DCE080 /* SiriusRating */,
 				B35573732CC4843600A4BA16 /* MoltenVK */,
 				B39343982CC5C432008AA673 /* MoltenVK-Catalyst */,
@@ -6983,6 +7028,8 @@
 				B3A60FFE2CB880BE001D99C2 /* PVUI */,
 				B3A610002CB88492001D99C2 /* PVJIT */,
 				B3A610022CB885BD001D99C2 /* PVCoremGBA-Dynamic */,
+				B3A610052CB885D5001D99C2 /* PVGambatte-Dynamic */,
+				B3A610082CB885EB001D99C2 /* PVAtari800-Dynamic */,
 				B3A6100E2CB885FD001D99C2 /* PVCoreMednafen */,
 				B3A610102CB88610001D99C2 /* PVProSystem-Dynamic */,
 				B3A610162CB88621001D99C2 /* PVFreeDO-Dynamic */,
@@ -7258,6 +7305,7 @@
 				B34E4F482C11796B001559E8 /* XCLocalSwiftPackageReference "PVLogging" */,
 				B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */,
 				B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */,
+				B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */,
 				B34969562C4E64AD00D37F79 /* XCLocalSwiftPackageReference "PVThemes" */,
 				B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */,
 				B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */,
@@ -7271,6 +7319,7 @@
 				B383D5232C96680700469713 /* XCLocalSwiftPackageReference "PVCoreObjCBridge" */,
 				B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */,
 				B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */,
+				B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */,
 				B382362A2CC4623100DCE080 /* XCRemoteSwiftPackageReference "SiriusRating-iOS" */,
 				B3D1679D2CC481D600EBB132 /* XCLocalSwiftPackageReference "MoltenVK" */,
 				B35B177D2CCCDFC7007059CA /* XCLocalSwiftPackageReference "PVAudio" */,
@@ -14980,6 +15029,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVSupport;
 		};
+		B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Cores/Gambatte;
+		};
 		B336F2EA2F6E85FD004ABEE6 /* XCLocalSwiftPackageReference "PVCheevos" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVCheevos;
@@ -15031,6 +15084,10 @@
 		B3B521E32F78DABC008244D1 /* XCLocalSwiftPackageReference "PVArchiving" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVArchiving;
+		};
+		B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Cores/Atari800;
 		};
 		B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -15529,6 +15586,25 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = PVFeatureFlags;
 		};
+		B32D45BC2CB730AE006B76C2 /* PVGambatte */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVGambatte;
+		};
+		B32D45C62CB7310C006B76C2 /* PVGambatte */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			productName = PVGambatte;
+		};
+		B32D45C82CB73112006B76C2 /* PVGambatte */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			productName = PVGambatte;
+		};
+		B32D45CC2CB7311C006B76C2 /* PVGambatte */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			productName = PVGambatte;
+		};
 		B336F2EB2F6E85FD004ABEE6 /* PVCheevos */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCheevos;
@@ -15572,6 +15648,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3E0CF982C054D3F00F45074 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
+		};
+		B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			productName = "PVAtari800-Dynamic";
 		};
 		B33BD1BE2C6A6212001E933A /* PVPicoDrive-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -15664,6 +15745,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B305856A2C0C150100B91D7A /* XCLocalSwiftPackageReference "PVJIT" */;
 			productName = PVJIT;
+		};
+		B35AB40A2CB6DBEC003273D4 /* PVAtari800-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			productName = "PVAtari800-Dynamic";
 		};
 		B35AB4102CB6DC14003273D4 /* PVFreeDO-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -15887,6 +15973,11 @@
 			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */;
 			productName = "PVPicoDrive-Dynamic";
 		};
+		B37321A02C900A6400CF59EF /* PVAtari800-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			productName = "PVAtari800-Dynamic";
+		};
 		B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */;
@@ -16016,6 +16107,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B306E5642CB70C5700068610 /* XCLocalSwiftPackageReference "Cores/mGBA" */;
 			productName = "PVCoremGBA-Dynamic";
+		};
+		B3A610052CB885D5001D99C2 /* PVGambatte-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B32D45BB2CB730AE006B76C2 /* XCLocalSwiftPackageReference "Cores/Gambatte" */;
+			productName = "PVGambatte-Dynamic";
+		};
+		B3A610082CB885EB001D99C2 /* PVAtari800-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			productName = "PVAtari800-Dynamic";
 		};
 		B3A6100E2CB885FD001D99C2 /* PVCoreMednafen */ = {
 			isa = XCSwiftPackageProductDependency;
