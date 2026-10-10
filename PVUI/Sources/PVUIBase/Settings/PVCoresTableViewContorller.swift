@@ -38,7 +38,10 @@ public final class PVCoresTableViewController: QuickTableViewController {
                 /// Show the project version and the systems it supports
                 let detailLabelText = "\(core.projectVersion) : \(systemsText)"
 
-                return NavigationRow(text: core.projectName, detailText: .subtitle(detailLabelText), icon: nil, customization: { cell, _ in
+                let badge = core.isLibretroCore
+                    ? UIImage(named: LibretroCoreBadge.assetName, in: Bundle.module, with: nil).map { Icon.image($0) }
+                    : nil
+                return NavigationRow(text: core.displayName, detailText: .subtitle(detailLabelText), icon: badge, customization: { cell, _ in
 #if os(iOS)
                     /// If the core has a URL, show a disclosure indicator
                     if URL(string: core.projectURL) != nil {

@@ -6,13 +6,6 @@
 # Cores/Dolphin/PVDolphin.xcodeproj/project.pbxproj
 Cores/Debug/PVDebug.m
 
-# Cores/DuckStation/PVDuckStation.xcodeproj/project.pbxproj
-Cores/DuckStation/PVDuckStation/PlayStationGameHacks.m
-Cores/DuckStation/PVDuckStation/cpu_recompiler_multiarch.cpp
-Cores/DuckStation/PVDuckStation/Source/DuckStationGameCore.mm
-Cores/DuckStation/PVDuckStation/Source/PVDuckStationCore+RetroAchievements.swift
-Cores/DuckStation/PVDuckStation/Source/cpu_recompiler_multiarch.cpp
-Cores/DuckStation/PVDuckStation/Source/xxh_dispatch.c
 
 # Cores/Flycast/PVFlycast.xcodeproj/project.pbxproj
 Cores/Debug/PVDebug.c

@@ -15,11 +15,14 @@ public struct RetroSelectionItem: Identifiable {
     public let id: String
     public let title: String
     public let subtitle: String?
+    /// Shows the RetroArch mark next to the title (a core on the thin libretro wrapper).
+    public let isLibretroCore: Bool
 
-    public init(id: String, title: String, subtitle: String? = nil) {
+    public init(id: String, title: String, subtitle: String? = nil, isLibretroCore: Bool = false) {
         self.id = id
         self.title = title
         self.subtitle = subtitle
+        self.isLibretroCore = isLibretroCore
     }
 }
 
@@ -99,6 +102,7 @@ public struct RetroSelectionAlertView: View {
                                     title: item.title,
                                     subtitle: item.subtitle,
                                     style: .primary,
+                                    isLibretroCore: item.isLibretroCore,
                                     isExternallyFocused: isItemFocused(item.id)
                                 ) {
                                     isPresented = false
@@ -117,6 +121,7 @@ public struct RetroSelectionAlertView: View {
                                     title: item.title,
                                     subtitle: item.subtitle,
                                     style: .primary,
+                                    isLibretroCore: item.isLibretroCore,
                                     isExternallyFocused: isItemFocused(item.id)
                                 ) {
                                     isPresented = false

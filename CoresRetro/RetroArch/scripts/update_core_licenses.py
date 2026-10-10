@@ -52,188 +52,188 @@ LICENSE_NAME_MAP = {
 # ---------------------------------------------------------------------------
 MANUAL_OVERRIDES = {
     # --- Wrong BSD-3-Clause + MAME URL mismatches ---
-    "MAME 2000 (RetroArch)": (
+    "MAME 2000": (
         "LicenseRef-MAME",
         "https://github.com/libretro/mame2000-libretro/blob/HEAD/LICENSE.md",
         None,
     ),
-    "MAME 2003 (RetroArch)": (
+    "MAME 2003": (
         "LicenseRef-MAME",
         "https://github.com/libretro/mame2003-libretro/blob/HEAD/LICENSE.md",
         None,
     ),
-    "MAME 2003 Plus (RetroArch)": (
+    "MAME 2003 Plus": (
         "LicenseRef-MAME-NC",
         "https://github.com/libretro/mame2003-plus-libretro/blob/HEAD/LICENSE.md",
         "https://github.com/libretro/mame2003-plus-libretro",  # plist has wrong URL
     ),
-    "MAME 2010 (RetroArch)": (
+    "MAME 2010": (
         "LicenseRef-MAME",
         "https://github.com/libretro/mame2010-libretro/blob/HEAD/LICENSE.md",
         None,
     ),
-    "MAME (Current) (RetroArch)": (
+    "MAME (Current)": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/mame/blob/HEAD/LICENSE.md",
         None,
     ),
-    "Same CDi (RetroArch)": (
+    "Same CDi": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/same_cdi/blob/HEAD/LICENSE.md",
         None,
     ),
     # --- Missing license data ---
-    "EightyOne (ZX81) (RetroArch)": (
+    "EightyOne (ZX81)": (
         "GPL-3.0-or-later",
         "https://github.com/libretro/81-libretro/blob/HEAD/COPYING",
         None,
     ),
-    "BSNES Mercury (Performance) (RetroArch)": (
+    "BSNES Mercury (Performance)": (
         "GPL-3.0-or-later",
         "https://github.com/libretro/bsnes-mercury/blob/HEAD/COPYING",
         "https://github.com/libretro/bsnes-mercury",
     ),
-    "FBAlpha 2012 (RetroArch)": (
+    "FBAlpha 2012": (
         "LicenseRef-NonCommercial",
         "https://github.com/libretro/fbalpha/blob/HEAD/LICENSE.md",
         None,
     ),
-    "FBAlpha 2012 NeoGeo (RetroArch)": (
+    "FBAlpha 2012 NeoGeo": (
         "LicenseRef-NonCommercial",
         "https://github.com/libretro/fbalpha/blob/HEAD/LICENSE.md",
         None,
     ),
-    "fMSX (RetroArch)": (
+    "fMSX": (
         "LicenseRef-NonCommercial",
         "https://github.com/libretro/fmsx-libretro/blob/HEAD/LICENSE",
         None,
     ),
-    "Fairchild ChannelF (FreeChaf) (RetroArch)": (
+    "Fairchild ChannelF (FreeChaf)": (
         "GPL-3.0-or-later",
         "https://github.com/libretro/freechaf/blob/HEAD/COPYING",
         None,
     ),
-    "FreeINTV (RetroArch)": (
+    "FreeINTV": (
         "GPL-3.0-or-later",
         "https://github.com/libretro/FreeIntv/blob/HEAD/COPYING",
         None,
     ),
-    "Gambatte (RetroArch)": (
+    "Gambatte": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/gambatte-libretro/blob/HEAD/COPYING",
         None,
     ),
-    "Gearcoleco (RetroArch)": (
+    "Gearcoleco": (
         "GPL-3.0-or-later",
         "https://github.com/drhelius/Gearcoleco/blob/HEAD/COPYING",
         None,
     ),
-    "gpSP (RetroArch)": (
+    "gpSP": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/gpsp/blob/HEAD/COPYING",
         None,
     ),
-    "Handy (Atari Lynx) (RetroArch)": (
+    "Handy (Atari Lynx)": (
         "Zlib",
         "https://github.com/libretro/libretro-handy/blob/HEAD/COPYING",
         None,
     ),
-    "Beetle PC Engine (RetroArch)": (
+    "Beetle PC Engine": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/beetle-pce-libretro/blob/HEAD/COPYING",
         None,
     ),
-    "Beetle PC Engine Fast (RetroArch)": (
+    "Beetle PC Engine Fast": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/beetle-pce-fast-libretro/blob/HEAD/COPYING",
         None,
     ),
-    "Beetle PC-FX (RetroArch)": (
+    "Beetle PC-FX": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/beetle-pcfx-libretro/blob/HEAD/COPYING",
         None,
     ),
-    "Beetle SNES (RetroArch)": (
+    "Beetle SNES": (
         "GPL-3.0-or-later",
         "https://github.com/libretro/beetle-bsnes-libretro/blob/HEAD/COPYING",
         None,
     ),
-    "Beetle WonderSwan (RetroArch)": (
+    "Beetle WonderSwan": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/beetle-wswan-libretro/blob/HEAD/COPYING",
         None,
     ),
-    "NeoCD (RetroArch)": (
+    "NeoCD": (
         "LGPL-3.0-only",
         "https://github.com/libretro/neocd_libretro/blob/HEAD/LICENSE",
         None,
     ),
-    "O2EM (Odyssey 2) (RetroArch)": (
+    "O2EM (Odyssey 2)": (
         "Artistic-2.0",
         "https://github.com/libretro/libretro-o2em/blob/HEAD/COPYING",
         None,
     ),
-    "PUAE (Amiga) (RetroArch)": (
+    "PUAE (Amiga)": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/libretro-uae/blob/HEAD/LICENSE",
         None,
     ),
-    "PUAE 2021 (Amiga) (RetroArch)": (
+    "PUAE 2021 (Amiga)": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/libretro-uae/blob/HEAD/LICENSE",
         None,
     ),
-    "QuickNES (RetroArch)": (
+    "QuickNES": (
         "LGPL-2.1-or-later",
         "https://github.com/libretro/QuickNES_Core/blob/HEAD/COPYING",
         None,
     ),
-    "SameDuck (RetroArch)": (
+    "SameDuck": (
         "MIT",
         "https://github.com/libretro/libretro-SameDuck/blob/HEAD/LICENSE",
         None,
     ),
-    "ScummVM (RetroArch)": (
+    "ScummVM": (
         "GPL-3.0-or-later",
         "https://github.com/libretro/scummvm/blob/HEAD/COPYING",
         None,
     ),
-    "SMS Plus GX (RetroArch)": (
+    "SMS Plus GX": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/smsplus-gx/blob/HEAD/COPYING",
         None,
     ),
-    "Snes9x 2002 (RetroArch)": (
+    "Snes9x 2002": (
         "LicenseRef-Snes9x",
         "https://github.com/libretro/snes9x2002/blob/HEAD/LICENSE",
         None,
     ),
-    "Snes9x 2005 (RetroArch)": (
+    "Snes9x 2005": (
         "LicenseRef-Snes9x",
         "https://github.com/libretro/snes9x2005/blob/HEAD/LICENSE",
         None,
     ),
-    "Snes9x 2005 Plus (RetroArch)": (
+    "Snes9x 2005 Plus": (
         "LicenseRef-Snes9x",
         "https://github.com/libretro/snes9x2005/blob/HEAD/LICENSE",
         None,
     ),
-    "Snes9x 2010 (RetroArch)": (
+    "Snes9x 2010": (
         "LicenseRef-Snes9x",
         "https://github.com/libretro/snes9x2010/blob/HEAD/LICENSE",
         None,
     ),
-    "Stella (Current) (RetroArch)": (
+    "Stella (Current)": (
         "GPL-2.0-or-later",
         "https://github.com/stella-emu/stella/blob/HEAD/License.txt",
         None,
     ),
-    "Stella 2023 (RetroArch)": (
+    "Stella 2023": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/stella2023-libretro/blob/HEAD/COPYING",
         None,
     ),
-    "VBA Next (RetroArch)": (
+    "VBA Next": (
         "GPL-2.0-or-later",
         "https://github.com/libretro/vba-next/blob/HEAD/COPYING",
         None,

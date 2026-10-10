@@ -31,10 +31,8 @@ let package = Package(
         // MARK: Cores
         .package(path: "../Cores/Atari800/"),
         .package(path: "../Cores/PicoDrive/"),
-        .package(path: "../Cores/PokeMini/"),
         .package(path: "../Cores/Stella/"),
         .package(path: "../Cores/TGBDual/"),
-        .package(path: "../Cores/VirtualJaguar/"),
         .package(path: "../Cores/VisualBoyAdvance-M/")
 
         // MARK: Plugins
@@ -77,10 +75,8 @@ let package = Package(
 
 //                .product(name: "PVAtari800-Dynamic", package: "Atari800"),
 //                .product(name: "PVPicoDrive-Dynamic", package: "PicoDrive"),
-//                .product(name: "PVPokeMini-Dynamic", package: "PokeMini"),
 //                .product(name: "PVStella-Dynamic", package: "Stella"),
 //                .product(name: "PVTGBDual-Dynamic", package: "TGBDual"),
-//                .product(name: "PVVirtualJaguar-Dynamic", package: "VirtualJaguar"),
 //                .product(name: "PVVisualBoyAdvance-Dynamic", package: "VisualBoyAdvance-M")
             ],
             resources: [
@@ -95,10 +91,8 @@ let package = Package(
             dependencies: [
                 .product(name: "PVAtari800-Dynamic", package: "Atari800"),
                 .product(name: "PVPicoDrive-Dynamic", package: "PicoDrive"),
-                .product(name: "PVPokeMini-Dynamic", package: "PokeMini"),
                 .product(name: "PVStella-Dynamic", package: "Stella"),
                 .product(name: "PVTGBDual-Dynamic", package: "TGBDual"),
-                .product(name: "PVVirtualJaguar-Dynamic", package: "VirtualJaguar"),
                 .product(name: "PVVisualBoyAdvance-Dynamic", package: "VisualBoyAdvance-M")
             ],
             swiftSettings: [

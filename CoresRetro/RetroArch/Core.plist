@@ -24,7 +24,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle PSX (HW Renderer) (RetroArch)</string>
+			<string>Beetle PSX (HW Renderer)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-psx-libretro</string>
 			<key>PVProjectVersion</key>
@@ -46,7 +46,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle PSX (SW Renderer) (RetroArch)</string>
+			<string>Beetle PSX (SW Renderer)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-psx-libretro</string>
 			<key>PVProjectVersion</key>
@@ -68,7 +68,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Snes9x (RetroArch)</string>
+			<string>Snes9x</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/snes9x/</string>
 			<key>PVProjectVersion</key>
@@ -90,7 +90,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>BSNES (RetroArch)</string>
+			<string>BSNES</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/bsnes/</string>
 			<key>PVProjectVersion</key>
@@ -112,7 +112,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>BSNES HD (RetroArch)</string>
+			<string>BSNES HD</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/bsnes/</string>
 			<key>PVProjectVersion</key>
@@ -134,7 +134,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>BSNES Mercury (Accuracy) (RetroArch)</string>
+			<string>BSNES Mercury (Accuracy)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/bsnes/</string>
 			<key>PVProjectVersion</key>
@@ -156,7 +156,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>BSNES Mercury (Balanced) (RetroArch)</string>
+			<string>BSNES Mercury (Balanced)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/bsnes/</string>
 			<key>PVProjectVersion</key>
@@ -180,7 +180,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Flycast JIT (RetroArch)</string>
+			<string>Flycast JIT</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/flyinghead/flycast</string>
 			<key>PVProjectVersion</key>
@@ -240,7 +240,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Parallel N64 (RetroArch)</string>
+			<string>Parallel N64</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/parallel-n64</string>
 			<key>PVProjectVersion</key>
@@ -264,7 +264,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Mupen64Plus-Next (RetroArch)</string>
+			<string>Mupen64Plus-Next</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mupen64plus-libretro-nx</string>
 			<key>PVProjectVersion</key>
@@ -288,7 +288,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Dolphin (RetroArch)</string>
+			<string>Dolphin</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/dolphin</string>
 			<key>PVProjectVersion</key>
@@ -313,7 +313,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Mini vMac (RetroArch)</string>
+			<string>Mini vMac</string>
 			<key>PVProjectURL</key>
 			<string>https://www.gryphel.com/c/minivmac/</string>
 			<key>PVProjectVersion</key>
@@ -337,7 +337,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>DosBox-Pure (RetroArch)</string>
+			<string>DosBox-Pure</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/schellingb/dosbox-pure</string>
 			<key>PVProjectVersion</key>
@@ -360,7 +360,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>MelonDS (RetroArch)</string>
+			<string>MelonDS</string>
 			<key>PVProjectURL</key>
 			<string>https://melonds.kuribo64.net</string>
 			<key>PVProjectVersion</key>
@@ -384,7 +384,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>MelonDS DS (RetroArch)</string>
+			<string>MelonDS DS</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/melonds_ds/</string>
 			<key>PVProjectVersion</key>
@@ -409,7 +409,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>NooDS (RetroArch)</string>
+			<string>NooDS</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/Hydr8gon/NooDS</string>
 			<key>PVProjectVersion</key>
@@ -432,7 +432,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>DeSmuME (RetroArch)</string>
+			<string>DeSmuME</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/desmume/</string>
 			<key>PVProjectVersion</key>
@@ -456,7 +456,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Opera (RetroArch)</string>
+			<string>Opera</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/opera-libretro</string>
 			<key>PVProjectVersion</key>
@@ -481,7 +481,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>NP2Kai (PC-98) (RetroArch)</string>
+			<string>NP2Kai (PC-98)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/AZO234/NP2kai</string>
 			<key>PVProjectVersion</key>
@@ -503,7 +503,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle Supergrafx (PC Engine) (RetroArch)</string>
+			<string>Beetle Supergrafx (PC Engine)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-supergrafx-libretro</string>
 			<key>PVProjectVersion</key>
@@ -527,7 +527,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Nestopia (RetroArch)</string>
+			<string>Nestopia</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/nestopia</string>
 			<key>PVProjectVersion</key>
@@ -550,7 +550,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>FCEUmm (RetroArch)</string>
+			<string>FCEUmm</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/fceumm</string>
 			<key>PVProjectVersion</key>
@@ -573,7 +573,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle Saturn (RetroArch)</string>
+			<string>Beetle Saturn</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-saturn-libretro</string>
 			<key>PVProjectVersion</key>
@@ -595,7 +595,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Yabause (Saturn) (RetroArch)</string>
+			<string>Yabause (Saturn)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/yabause</string>
 			<key>PVProjectVersion</key>
@@ -617,7 +617,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Genesis Plus GX (RetroArch)</string>
+			<string>Genesis Plus GX</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/Genesis-Plus-GX</string>
 			<key>PVProjectVersion</key>
@@ -643,7 +643,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Genesis Plus GX (Wide) (RetroArch)</string>
+			<string>Genesis Plus GX (Wide)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/Genesis-Plus-GX-Wide</string>
 			<key>PVProjectVersion</key>
@@ -671,7 +671,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>FBAlpha CPS1 (RetroArch)</string>
+			<string>FBAlpha CPS1</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/fbalpha</string>
 			<key>PVProjectVersion</key>
@@ -695,7 +695,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>FBAlpha CPS2 (RetroArch)</string>
+			<string>FBAlpha CPS2</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/fbalpha</string>
 			<key>PVProjectVersion</key>
@@ -719,7 +719,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>FBAlpha CPS3 (RetroArch)</string>
+			<string>FBAlpha CPS3</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/fbalpha</string>
 			<key>PVProjectVersion</key>
@@ -741,7 +741,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>FBNeo (RetroArch)</string>
+			<string>FBNeo</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/FBNeo</string>
 			<key>PVProjectVersion</key>
@@ -764,7 +764,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Geolith (RetroArch)</string>
+			<string>Geolith</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/geolith-libretro</string>
 			<key>PVProjectVersion</key>
@@ -786,7 +786,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle GBA (RetroArch)</string>
+			<string>Beetle GBA</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-gba-libretro</string>
 			<key>PVProjectVersion</key>
@@ -808,7 +808,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle VB (RetroArch)</string>
+			<string>Beetle VB</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-vb-libretro</string>
 			<key>PVProjectVersion</key>
@@ -830,7 +830,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>mGBA (RetroArch)</string>
+			<string>mGBA</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mgba</string>
 			<key>PVProjectVersion</key>
@@ -854,7 +854,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>VBA-M (RetroArch)</string>
+			<string>VBA-M</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/vba_m/</string>
 			<key>PVProjectVersion</key>
@@ -878,7 +878,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>SameBoy (RetroArch)</string>
+			<string>SameBoy</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/SameBoy</string>
 			<key>PVProjectVersion</key>
@@ -901,7 +901,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>MAME 2000 (RetroArch)</string>
+			<string>MAME 2000</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mame2000-libretro</string>
 			<key>PVProjectVersion</key>
@@ -923,7 +923,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>MAME 2003 (RetroArch)</string>
+			<string>MAME 2003</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mame2003-libretro</string>
 			<key>PVProjectVersion</key>
@@ -945,7 +945,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>MAME 2003 Plus (RetroArch)</string>
+			<string>MAME 2003 Plus</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mame2003-plus-libretro</string>
 			<key>PVProjectVersion</key>
@@ -967,7 +967,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>MAME 2010 (RetroArch)</string>
+			<string>MAME 2010</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mame2010-libretro</string>
 			<key>PVProjectVersion</key>
@@ -991,7 +991,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>MAME (Current) (RetroArch)</string>
+			<string>MAME (Current)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/development/cores/core-specific/mame/</string>
 			<key>PVProjectVersion</key>
@@ -1016,7 +1016,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>PCSX ReARMed (RetroArch)</string>
+			<string>PCSX ReARMed</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/pcsx_rearmed/</string>
 			<key>PVProjectVersion</key>
@@ -1040,7 +1040,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Play! (RetroArch)</string>
+			<string>Play!</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/play/</string>
 			<key>PVProjectVersion</key>
@@ -1062,7 +1062,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>PPSSPP (RetroArch)</string>
+			<string>PPSSPP</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/ppsspp/</string>
 			<key>PVProjectVersion</key>
@@ -1086,7 +1086,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Atari 400/800/600XL/800XL/130XE (RetroArch)</string>
+			<string>Atari 400/800/600XL/800XL/130XE</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/atari800/</string>
 			<key>PVProjectVersion</key>
@@ -1109,7 +1109,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Atari 5200 (RetroArch)</string>
+			<string>Atari 5200</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/atari800/</string>
 			<key>PVProjectVersion</key>
@@ -1131,7 +1131,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Atari 2600 (RetroArch)</string>
+			<string>Atari 2600</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/stella/</string>
 			<key>PVProjectVersion</key>
@@ -1153,7 +1153,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Atari 7800 (RetroArch)</string>
+			<string>Atari 7800</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/prosystem/</string>
 			<key>PVProjectVersion</key>
@@ -1175,7 +1175,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Atari ST/STE/TT/Falcon (RetroArch)</string>
+			<string>Atari ST/STE/TT/Falcon</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/hatari/</string>
 			<key>PVProjectVersion</key>
@@ -1197,7 +1197,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Atari Lynx (RetroArch)</string>
+			<string>Atari Lynx</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/beetle_lynx/</string>
 			<key>PVProjectVersion</key>
@@ -1219,7 +1219,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Atari Jaguar (Virtual Jaguar) (RetroArch)</string>
+			<string>Atari Jaguar (Virtual Jaguar)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/virtual_jaguar/</string>
 			<key>PVProjectVersion</key>
@@ -1249,7 +1249,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>RACE (RetroArch)</string>
+			<string>RACE</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/race/</string>
 			<key>PVProjectVersion</key>
@@ -1272,7 +1272,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle Neopop (RetroArch)</string>
+			<string>Beetle Neopop</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/beetle_neopop/</string>
 			<key>PVProjectVersion</key>
@@ -1295,7 +1295,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Game Music Emu (RetroArch)</string>
+			<string>Game Music Emu</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/game_music_emu/</string>
 			<key>PVProjectVersion</key>
@@ -1317,7 +1317,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Potator (RetroArch)</string>
+			<string>Potator</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/potator</string>
 			<key>PVProjectVersion</key>
@@ -1341,7 +1341,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Same CDi (RetroArch)</string>
+			<string>Same CDi</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/same_cdi</string>
 			<key>PVProjectVersion</key>
@@ -1365,7 +1365,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>PalmOS (Mu) (RetroArch)</string>
+			<string>PalmOS (Mu)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/mu/</string>
 			<key>PVProjectVersion</key>
@@ -1388,7 +1388,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>PokeMini (RetroArch)</string>
+			<string>PokeMini</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/pokemini/</string>
 			<key>PVProjectVersion</key>
@@ -1412,7 +1412,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>VecX (RetroArch)</string>
+			<string>VecX</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/vecx/</string>
 			<key>PVProjectVersion</key>
@@ -1436,7 +1436,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>prBoom (RetroArch)</string>
+			<string>prBoom</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/prboom/</string>
 			<key>PVProjectVersion</key>
@@ -1460,7 +1460,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>ECWolf (RetroArch)</string>
+			<string>ECWolf</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/ecwolf/</string>
 			<key>PVProjectVersion</key>
@@ -1484,7 +1484,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>TyrQuake (RetroArch)</string>
+			<string>TyrQuake</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/tyrquake/</string>
 			<key>PVProjectVersion</key>
@@ -1510,7 +1510,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Vitaquake2 (RetroArch)</string>
+			<string>Vitaquake2</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vitaquake2</string>
 			<key>PVProjectVersion</key>
@@ -1536,7 +1536,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Vitaquake2 (Rogue) (RetroArch)</string>
+			<string>Vitaquake2 (Rogue)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vitaquake2</string>
 			<key>PVProjectVersion</key>
@@ -1562,7 +1562,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Vitaquake2 (Xatrix) (RetroArch)</string>
+			<string>Vitaquake2 (Xatrix)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vitaquake2</string>
 			<key>PVProjectVersion</key>
@@ -1588,7 +1588,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Vitaquake2 (Zaero) (RetroArch)</string>
+			<string>Vitaquake2 (Zaero)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vitaquake2</string>
 			<key>PVProjectVersion</key>
@@ -1614,7 +1614,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>2048 (RetroArch)</string>
+			<string>2048</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/2048</string>
 			<key>PVProjectVersion</key>
@@ -1640,7 +1640,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Rick Dangerous (RetroArch)</string>
+			<string>Rick Dangerous</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/xrick</string>
 			<key>PVProjectVersion</key>
@@ -1666,7 +1666,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Sharp X1 (RetroArch)</string>
+			<string>Sharp X1</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/x1</string>
 			<key>PVProjectVersion</key>
@@ -1692,7 +1692,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Thomson - MO/TO (RetroArch)</string>
+			<string>Thomson - MO/TO</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/theodore</string>
 			<key>PVProjectVersion</key>
@@ -1720,7 +1720,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Amstrad - CPC/GX40000 (RetroArch)</string>
+			<string>Amstrad - CPC/GX40000</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/caprice32</string>
 			<key>PVProjectVersion</key>
@@ -1746,7 +1746,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Commodore - C64 (RetroArch)</string>
+			<string>Commodore - C64</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vice</string>
 			<key>PVProjectVersion</key>
@@ -1773,7 +1773,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Commodore - C128 (RetroArch)</string>
+			<string>Commodore - C128</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vice</string>
 			<key>PVProjectVersion</key>
@@ -1799,7 +1799,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Commodore - PET (RetroArch)</string>
+			<string>Commodore - PET</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vice</string>
 			<key>PVProjectVersion</key>
@@ -1825,7 +1825,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Commodore - VIC-20 (RetroArch)</string>
+			<string>Commodore - VIC-20</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vice</string>
 			<key>PVProjectVersion</key>
@@ -1851,7 +1851,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Commodore - C64 (x64sc) (RetroArch)</string>
+			<string>Commodore - C64 (x64sc)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vice</string>
 			<key>PVProjectVersion</key>
@@ -1880,7 +1880,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Commodore - CBM-II (RetroArch)</string>
+			<string>Commodore - CBM-II</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vice</string>
 			<key>PVProjectVersion</key>
@@ -1908,7 +1908,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Commodore - PET/CBM-5x0 (RetroArch)</string>
+			<string>Commodore - PET/CBM-5x0</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vice</string>
 			<key>PVProjectVersion</key>
@@ -1934,7 +1934,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Commodore - Plus/4 (RetroArch)</string>
+			<string>Commodore - Plus/4</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vice</string>
 			<key>PVProjectVersion</key>
@@ -1963,7 +1963,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Galaksija (RetroArch)</string>
+			<string>Galaksija</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/galaksija/</string>
 			<key>PVProjectVersion</key>
@@ -1991,7 +1991,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Dinothawr (RetroArch)</string>
+			<string>Dinothawr</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/dinothawr/</string>
 			<key>PVProjectVersion</key>
@@ -2019,7 +2019,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>VirtualXT (RetroArch)</string>
+			<string>VirtualXT</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/virtualxt/</string>
 			<key>PVProjectVersion</key>
@@ -2048,7 +2048,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>PX68k (Sharp X68000) (RetroArch)</string>
+			<string>PX68k (Sharp X68000)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/px68k/</string>
 			<key>PVProjectVersion</key>
@@ -2076,7 +2076,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Neko Project II (PC-98) (RetroArch)</string>
+			<string>Neko Project II (PC-98)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/neko-project-ii/</string>
 			<key>PVProjectVersion</key>
@@ -2105,7 +2105,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>VeMUlator (Dreamcast VMU) (RetroArch)</string>
+			<string>VeMUlator (Dreamcast VMU)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/vemulator/</string>
 			<key>PVProjectVersion</key>
@@ -2131,7 +2131,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Mr.Boom (RetroArch)</string>
+			<string>Mr.Boom</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/mrboom/</string>
 			<key>PVProjectVersion</key>
@@ -2159,7 +2159,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>GW (Game &amp; Watch) (RetroArch)</string>
+			<string>GW (Game &amp; Watch)</string>
 			<key>PVProjectURL</key>
 			<string>https://docs.libretro.com/library/gw/</string>
 			<key>PVProjectVersion</key>
@@ -2185,7 +2185,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Philips - P2000T (RetroArch)</string>
+			<string>Philips - P2000T</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/m2000</string>
 			<key>PVProjectVersion</key>
@@ -2211,7 +2211,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Sinclair - ZX Spectrum (RetroArch)</string>
+			<string>Sinclair - ZX Spectrum</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/fuse</string>
 			<key>PVProjectVersion</key>
@@ -2238,7 +2238,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>MSX/SVI/ColecoVision/SG-1000 (blueMSX) (RetroArch)</string>
+			<string>MSX/SVI/ColecoVision/SG-1000 (blueMSX)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/blueMSX</string>
 			<key>PVProjectVersion</key>
@@ -2268,7 +2268,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>TI-83 (Numero) (RetroArch)</string>
+			<string>TI-83 (Numero)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/numero</string>
 			<key>PVProjectVersion</key>
@@ -2294,7 +2294,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Mesen (RetroArch)</string>
+			<string>Mesen</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mesen</string>
 			<key>PVProjectVersion</key>
@@ -2321,7 +2321,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Mesen-S (RetroArch)</string>
+			<string>Mesen-S</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/mesen</string>
 			<key>PVProjectVersion</key>
@@ -2345,7 +2345,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>EightyOne (ZX81) (RetroArch)</string>
+			<string>EightyOne (ZX81)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/81-libretro</string>
 			<key>PVProjectVersion</key>
@@ -2365,7 +2365,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>BSNES Mercury (Performance) (RetroArch)</string>
+			<string>BSNES Mercury (Performance)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/bsnes-mercury</string>
 			<key>PVProjectVersion</key>
@@ -2387,7 +2387,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>FBAlpha 2012 (RetroArch)</string>
+			<string>FBAlpha 2012</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/fbalpha</string>
 			<key>PVProjectVersion</key>
@@ -2410,7 +2410,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>FBAlpha 2012 NeoGeo (RetroArch)</string>
+			<string>FBAlpha 2012 NeoGeo</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/fbalpha</string>
 			<key>PVProjectVersion</key>
@@ -2430,7 +2430,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>fMSX (RetroArch)</string>
+			<string>fMSX</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/fmsx-libretro</string>
 			<key>PVProjectVersion</key>
@@ -2453,7 +2453,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Fairchild ChannelF (FreeChaf) (RetroArch)</string>
+			<string>Fairchild ChannelF (FreeChaf)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/freechaf</string>
 			<key>PVProjectVersion</key>
@@ -2473,7 +2473,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>FreeINTV (RetroArch)</string>
+			<string>FreeINTV</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/FreeIntv</string>
 			<key>PVProjectVersion</key>
@@ -2493,7 +2493,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Gambatte (RetroArch)</string>
+			<string>Gambatte</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/gambatte-libretro</string>
 			<key>PVProjectVersion</key>
@@ -2514,7 +2514,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Gearcoleco (RetroArch)</string>
+			<string>Gearcoleco</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/drhelius/Gearcoleco</string>
 			<key>PVProjectVersion</key>
@@ -2534,7 +2534,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>gpSP (RetroArch)</string>
+			<string>gpSP</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/gpsp</string>
 			<key>PVProjectVersion</key>
@@ -2554,7 +2554,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Handy (Atari Lynx) (RetroArch)</string>
+			<string>Handy (Atari Lynx)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/libretro-handy</string>
 			<key>PVProjectVersion</key>
@@ -2574,7 +2574,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle PC Engine (RetroArch)</string>
+			<string>Beetle PC Engine</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-pce-libretro</string>
 			<key>PVProjectVersion</key>
@@ -2596,7 +2596,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle PC Engine Fast (RetroArch)</string>
+			<string>Beetle PC Engine Fast</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-pce-fast-libretro</string>
 			<key>PVProjectVersion</key>
@@ -2617,7 +2617,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle PC-FX (RetroArch)</string>
+			<string>Beetle PC-FX</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-pcfx-libretro</string>
 			<key>PVProjectVersion</key>
@@ -2637,7 +2637,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle SNES (RetroArch)</string>
+			<string>Beetle SNES</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-bsnes-libretro</string>
 			<key>PVProjectVersion</key>
@@ -2657,7 +2657,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Beetle WonderSwan (RetroArch)</string>
+			<string>Beetle WonderSwan</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/beetle-wswan-libretro</string>
 			<key>PVProjectVersion</key>
@@ -2678,7 +2678,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>NeoCD (RetroArch)</string>
+			<string>NeoCD</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/neocd_libretro</string>
 			<key>PVProjectVersion</key>
@@ -2698,7 +2698,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>O2EM (Odyssey 2) (RetroArch)</string>
+			<string>O2EM (Odyssey 2)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/libretro-o2em</string>
 			<key>PVProjectVersion</key>
@@ -2720,7 +2720,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>PUAE (Amiga) (RetroArch)</string>
+			<string>PUAE (Amiga)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/libretro-uae</string>
 			<key>PVProjectVersion</key>
@@ -2742,7 +2742,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>PUAE 2021 (Amiga) (RetroArch)</string>
+			<string>PUAE 2021 (Amiga)</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/libretro-uae</string>
 			<key>PVProjectVersion</key>
@@ -2762,7 +2762,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>QuickNES (RetroArch)</string>
+			<string>QuickNES</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/QuickNES_Core</string>
 			<key>PVProjectVersion</key>
@@ -2782,7 +2782,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>SameDuck (RetroArch)</string>
+			<string>SameDuck</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/libretro-SameDuck</string>
 			<key>PVProjectVersion</key>
@@ -2806,7 +2806,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>ScummVM (RetroArch)</string>
+			<string>ScummVM</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/scummvm</string>
 			<key>PVProjectVersion</key>
@@ -2826,7 +2826,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>SMS Plus GX (RetroArch)</string>
+			<string>SMS Plus GX</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/smsplus-gx</string>
 			<key>PVProjectVersion</key>
@@ -2847,7 +2847,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Snes9x 2002 (RetroArch)</string>
+			<string>Snes9x 2002</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/snes9x2002</string>
 			<key>PVProjectVersion</key>
@@ -2867,7 +2867,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Snes9x 2005 (RetroArch)</string>
+			<string>Snes9x 2005</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/snes9x2005</string>
 			<key>PVProjectVersion</key>
@@ -2887,7 +2887,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Snes9x 2005 Plus (RetroArch)</string>
+			<string>Snes9x 2005 Plus</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/snes9x2005</string>
 			<key>PVProjectVersion</key>
@@ -2907,7 +2907,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Snes9x 2010 (RetroArch)</string>
+			<string>Snes9x 2010</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/snes9x2010</string>
 			<key>PVProjectVersion</key>
@@ -2927,7 +2927,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Stella (Current) (RetroArch)</string>
+			<string>Stella (Current)</string>
 			<key>PVProjectURL</key>
 			<string>https://stella-emu.github.io</string>
 			<key>PVProjectVersion</key>
@@ -2947,7 +2947,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>Stella 2023 (RetroArch)</string>
+			<string>Stella 2023</string>
 			<key>PVProjectURL</key>
 			<string>https://stella-emu.github.io</string>
 			<key>PVProjectVersion</key>
@@ -2967,7 +2967,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>VBA Next (RetroArch)</string>
+			<string>VBA Next</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/libretro/vba-next</string>
 			<key>PVProjectVersion</key>
@@ -2995,7 +2995,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArch.PVRetroArchCoreCore</string>
 			<key>PVProjectName</key>
-			<string>TIC-80 (RetroArch)</string>
+			<string>TIC-80</string>
 			<key>PVProjectURL</key>
 			<string>https://github.com/nesbox/TIC-80</string>
 			<key>PVProjectVersion</key>

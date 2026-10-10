@@ -403,8 +403,8 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         // framebuffer — letterboxed to slivers on a 16:9 TV) to "Left/Right"
         // (512×192 widescreen-ish framebuffer) which fills more of the
         // screen. The upstream key + value strings come from melonDS
-        // libretro core_options (see Cores/melonDS/melonDS/src/libretro/
-        // libretro.cpp ~line 185 and 322).
+        // libretro core_options (see src/libretro/libretro.cpp
+        // in the upstream melonDS repo, ~line 185 and 322).
         if coreId.contains("melonds") {
             setDefaultOption("melonds_touch_mode", value: "Touch")
             #if os(tvOS)
@@ -422,8 +422,8 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         // upstream default `desmume_screens_layout` is "top/bottom"; on tvOS
         // switch to "left/right" so the framebuffer is landscape-friendly.
         // Option key + lowercase value strings verified against
-        // Cores/Desmume2015/desmume2015/desmume/src/libretro/libretro.cpp
-        // (lines 701 / 1051) — desmume and desmume2015 share the same keys.
+        // desmume/src/libretro/libretro.cpp in the upstream desmume2015
+        // repo (lines 701 / 1051) — desmume and desmume2015 share the same keys.
         if coreId.contains("desmume") {
             setDefaultOption("desmume_pointer_type", value: "touch")
             #if os(tvOS)
@@ -524,9 +524,9 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
         // RetroArch buildbot dylib the thin wrapper dlopens at runtime, pak type
         // "rumble" (PLUGIN_RAW) is the raw-intercept mode: the core tells the game the pak
         // is "raw" and marshals BOTH message types, so Controller-Pak saves AND
-        // rumble work together. (Our Cores/Mupen64Plus-NX submodule has this raw
-        // path stubbed out — RawData hardcoded to 0 — but that source only feeds
-        // the native PV build, not the dylib the thin wrapper runs.) Users can
+        // rumble work together. (The retired Mupen64Plus-NX native core's source had this raw
+        // path stubbed out — RawData hardcoded to 0 — which never mattered to the
+        // dylib the thin wrapper runs.) Users can
         // still override per game via pause-menu Core Options. Transfer Pak after.
         if coreId.contains("mupen") {
             setDefaultOption("mupen64plus-rdp-plugin", value: "angrylion")

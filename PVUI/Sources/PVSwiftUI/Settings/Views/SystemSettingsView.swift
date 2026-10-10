@@ -364,7 +364,12 @@ struct SystemSection: View {
                                 .fill(Color.retroBlue.opacity(0.7))
                                 .frame(width: 6, height: 6)
 
-                            Text(core.projectName)
+                            if core.isLibretroCore {
+                                LibretroCoreBadge(size: 14)
+                                    .foregroundColor(.white.opacity(0.7))
+                            }
+
+                            Text(core.displayName)
                                 .font(.system(size: 14))
                                 .foregroundColor(.white.opacity(0.9))
                         }

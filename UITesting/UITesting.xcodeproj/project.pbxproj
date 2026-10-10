@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B300D3982DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B300D3972DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic */; };
-		B3F1D0012E1A0001000000A1 /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B300D3972DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B300D6392DA0A95E003A9ED4 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B300D6382DA0A95E003A9ED4 /* PVSettings */; };
 		B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */ = {isa = PBXBuildFile; productRef = B36DFC3D2CF1975B00BAE9BE /* PVUI */; };
 		B37444812D444B09002306B0 /* GBC-Sunrise.deltaskin in Resources */ = {isa = PBXBuildFile; fileRef = B374447F2D444B09002306B0 /* GBC-Sunrise.deltaskin */; };
@@ -44,7 +42,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3F1D0012E1A0001000000A1 /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -116,7 +113,6 @@
 				B3C427D72D9392F000E367CF /* PVCoreLoader in Frameworks */,
 				B300D6392DA0A95E003A9ED4 /* PVSettings in Frameworks */,
 				B3C42D562D9398A200E367CF /* PVCoreMednafen in Frameworks */,
-				B300D3982DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic in Frameworks */,
 				B36DFC3E2CF1975B00BAE9BE /* PVUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -196,7 +192,6 @@
 				B3C42D582D93999900E367CF /* PVSupport */,
 				B3A8C35E2D9B6187005A032F /* PVCrabEmu */,
 				B3A8C3C02D9B6385005A032F /* PVCoremGBA */,
-				B300D3972DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic */,
 				B300D6382DA0A95E003A9ED4 /* PVSettings */,
 			);
 			productName = UITesting;
@@ -289,7 +284,6 @@
 				B3A8C35D2D9B6110005A032F /* XCLocalSwiftPackageReference "../Cores/CrabEMU" */,
 				B3A8C3BF2D9B6385005A032F /* XCLocalSwiftPackageReference "../Cores/mGBA" */,
 				B300D3932DA0966A003A9ED4 /* XCLocalSwiftPackageReference "../Cores/Stella" */,
-				B300D3962DA096CA003A9ED4 /* XCLocalSwiftPackageReference "../Cores/VirtualJaguar" */,
 				B300D6372DA0A95E003A9ED4 /* XCLocalSwiftPackageReference "../PVSettings" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -679,10 +673,6 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Cores/Stella;
 		};
-		B300D3962DA096CA003A9ED4 /* XCLocalSwiftPackageReference "../Cores/VirtualJaguar" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Cores/VirtualJaguar;
-		};
 		B300D6372DA0A95E003A9ED4 /* XCLocalSwiftPackageReference "../PVSettings" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVSettings;
@@ -714,11 +704,6 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B300D3972DA096CA003A9ED4 /* PVVirtualJaguar-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B300D3962DA096CA003A9ED4 /* XCLocalSwiftPackageReference "../Cores/VirtualJaguar" */;
-			productName = "PVVirtualJaguar-Dynamic";
-		};
 		B300D6382DA0A95E003A9ED4 /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSettings;

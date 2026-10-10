@@ -397,6 +397,8 @@ public struct RetroAlertButton: View {
     let title: String
     let subtitle: String?
     let style: RetroAlertButtonStyle
+    /// Shows the RetroArch mark before the title (a core on the thin libretro wrapper).
+    let isLibretroCore: Bool
     let action: () -> Void
     /// Optional externally-controlled focus state for custom navigation.
     let isExternallyFocused: Bool?
@@ -409,12 +411,14 @@ public struct RetroAlertButton: View {
         title: String,
         subtitle: String? = nil,
         style: RetroAlertButtonStyle = .primary,
+        isLibretroCore: Bool = false,
         isExternallyFocused: Bool? = nil,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.subtitle = subtitle
         self.style = style
+        self.isLibretroCore = isLibretroCore
         self.isExternallyFocused = isExternallyFocused
         self.action = action
     }
@@ -427,9 +431,15 @@ public struct RetroAlertButton: View {
         #endif
         Button(action: action) {
             VStack(spacing: 2) {
-                Text(title)
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(textColor)
+                HStack(spacing: 6) {
+                    if isLibretroCore {
+                        LibretroCoreBadge(size: 16)
+                            .foregroundColor(textColor)
+                    }
+                    Text(title)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(textColor)
+                }
                 if let subtitle = subtitle {
                     Text(subtitle)
                         .font(.system(size: 12, weight: .medium))

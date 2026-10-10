@@ -8,6 +8,7 @@
 import SwiftUI
 import PVThemes
 import PVLibrary
+import PVUIBase
 
 struct CoreSection: View {
     let core: PVCore
@@ -37,15 +38,21 @@ struct CoreSection: View {
                 // Header with retrowave styling
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(core.projectName)
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    gradient: Gradient(colors: [.retroPink, .retroPurple]),
-                                    startPoint: .leading,
-                                    endPoint: .trailing
+                        HStack(spacing: 8) {
+                            if core.isLibretroCore {
+                                LibretroCoreBadge(size: 18)
+                                    .foregroundColor(.retroPink)
+                            }
+                            Text(core.projectName)
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [.retroPink, .retroPurple]),
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
                                 )
-                            )
+                        }
 
                         if !core.projectVersion.isEmpty {
                             Text("v\(core.projectVersion)")
@@ -55,6 +62,22 @@ struct CoreSection: View {
                     }
 
                     Spacer()
+
+                    if core.isDeprecated {
+                        Text("DEPRECATED")
+                            .font(.system(size: 12, weight: .bold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color.black.opacity(0.6))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 4)
+                                            .strokeBorder(Color.orange, lineWidth: 1)
+                                    )
+                            )
+                            .foregroundColor(.orange)
+                    }
 
                     if core.disabled {
                         Text("DISABLED")

@@ -1,5 +1,0 @@
-module vfs [system][extern_c] {
-    umbrella header "../include/vfs/vfs.h"
-    link "vfs"
-    export *
-}
