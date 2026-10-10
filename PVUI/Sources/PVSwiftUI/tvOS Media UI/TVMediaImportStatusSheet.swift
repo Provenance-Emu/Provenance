@@ -37,6 +37,9 @@ struct TVMediaImportStatusSheet: View {
 
     /// Drives `navigationDestination` for system selection rows.
     @State private var systemSelectionItemID: UUID?
+
+    /// Tracks which import item the user tapped to show the action dialog.
+    @State private var actionItem: ImportQueueItem?
     
     init(gameImporter: any GameImporting, updatesController: PVGameLibraryUpdatesController, onDismiss: @escaping () -> Void) {
         self.gameImporter = gameImporter
@@ -100,6 +103,29 @@ struct TVMediaImportStatusSheet: View {
                 }
             }
             #endif
+            .confirmationDialog(
+                actionItem?.url.lastPathComponent ?? "",
+                isPresented: Binding(
+                    get: { actionItem != nil },
+                    set: { if !$0 { actionItem = nil } }
+                ),
+                titleVisibility: .visible
+            ) {
+                if let item = actionItem {
+                    if case .conflict = item.status {
+                        Button("Select System") {
+                            systemSelectionItemID = item.id
+                        }
+                    }
+                    Button("Delete", role: .destructive) {
+                        Task {
+                            if let index = viewModel.importQueueItems.firstIndex(where: { $0.id == item.id }) {
+                                await gameImporter.removeImports(at: IndexSet(integer: index))
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -249,79 +275,53 @@ struct TVMediaImportStatusSheet: View {
     private func importItemRow(_ item: ImportQueueItem) -> some View {
         let isFocused = focusedItemID == item.id.uuidString
         
-        HStack(spacing: 18) {
-            // Status icon
-            statusIcon(for: item.status)
-                .frame(width: 36, height: 36)
-            
-            // File info
-            VStack(alignment: .leading, spacing: 4) {
-                Text(item.url.lastPathComponent)
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .lineLimit(1)
+        Button {
+            actionItem = item
+        } label: {
+            HStack(spacing: 18) {
+                statusIcon(for: item.status)
+                    .frame(width: 36, height: 36)
                 
-                HStack(spacing: 10) {
-                    Text(statusText(for: item.status))
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(statusColor(for: item.status).opacity(0.9))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(item.url.lastPathComponent)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .lineLimit(1)
                     
-                    if let system = item.targetSystem() {
-                        Text(verbatim: "→ \(system.rawValue)")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(.white.opacity(0.5))
+                    HStack(spacing: 10) {
+                        Text(statusText(for: item.status))
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(statusColor(for: item.status).opacity(0.9))
+                        
+                        if let system = item.targetSystem() {
+                            Text(verbatim: "→ \(system.rawValue)")
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundStyle(.white.opacity(0.5))
+                        }
                     }
                 }
-            }
-            
-            Spacer()
-            
-            // Action buttons for conflict resolution
-            if case .conflict = item.status {
-                Button("Select System") {
-                    systemSelectionItemID = item.id
+                
+                Spacer()
+
+                if case .conflict = item.status {
+                    Text("Select System")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(Color.retroBlue.opacity(0.7))
                 }
-                .font(.system(size: 12, weight: .bold))
-                .foregroundStyle(Color.retroBlue)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                // Use a solid fill background to prevent iOS/tvOS 26 liquid glass from
-                // clashing with the border. The strokeBorder is drawn as an overlay on
-                // top so it remains visible regardless of any system glass treatment.
-                .background(Color.retroBlue.opacity(0.1))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(Color.retroBlue.opacity(0.6), lineWidth: 1.5)
-                )
-                .buttonStyle(TVMediaCardButtonStyle())
-                .tvOSDisableFocusEffect()
-            }
-            
-            // Delete button
-            Button {
-                Task {
-                    if let index = viewModel.importQueueItems.firstIndex(where: { $0.id == item.id }) {
-                        await gameImporter.removeImports(at: IndexSet(integer: index))
-                    }
-                }
-            } label: {
-                Image(systemName: "trash")
+
+                Image(systemName: "ellipsis")
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(Color.retroPink.opacity(0.7))
+                    .foregroundStyle(.white.opacity(0.4))
             }
-            .buttonStyle(TVMediaCardButtonStyle())
-            .tvOSDisableFocusEffect()
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
+        .buttonStyle(TVMediaCardButtonStyle())
+        .tvOSDisableFocusEffect()
         .background(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(Color.white.opacity(isFocused ? 0.06 : 0.03))
         )
-        // Draw the border as an overlay so it renders above any iOS/tvOS 26 liquid glass
-        // that may be applied to the background material. Only show the border when focused
-        // to avoid double-border artifacts caused by glass interacting with a permanent stroke.
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(
@@ -339,7 +339,6 @@ struct TVMediaImportStatusSheet: View {
                     lineWidth: isFocused ? 2 : 0
                 )
         )
-        .focusable()
         .focused($focusedItemID, equals: item.id.uuidString)
         .scaleEffect(isFocused ? 1.01 : 1.0)
         .animation(Animation.spring(response: 0.25, dampingFraction: 0.8), value: isFocused)
