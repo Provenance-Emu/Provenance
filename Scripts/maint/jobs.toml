@@ -35,6 +35,9 @@ paths = [
   # Called by the PVAzahar / PVDolphin Xcode build phases; its tests run directly.
   "Scripts/cores/build_slice.py",
   "Scripts/cores/tests/test_build_slice.py",
+  # Wrapped by Scripts/cores/build_slice.py (outside the scan roots; listed for discoverability).
+  "Cores/Azahar/build_azahar_core.py",
+  "Cores/Dolphin/dolphin-ios/BuildiOSXCFramework.py",
   # Only meaningful inside GitHub Actions.
   "Scripts/ci/ci-core-manifest.py",
   "Scripts/ci/ci-init-submodules.sh",
@@ -278,6 +281,16 @@ description = "Code-signing and architecture report for a built .app or framewor
 run = ["python3", "Scripts/audits/scan_ios_binaries.py"]
 args_hint = "<path>"
 
+[jobs.core-slices]
+title = "Build or link a cached core slice"
+category = "Dev workspace"
+description = "Azahar/Dolphin per-slice build keyed by submodule, script, toolchain, flags, Xcode and SDK; called by the BuildPVlibAzahar and Make XCFrameworks aggregates."
+run = ["python3", "Scripts/cores/build_slice.py"]
+args_hint = "<azahar|dolphin> <ios|ios-sim|tvos|tvos-sim> [--print-key] [--force] [--xcframework]"
+files = ["Scripts/cores/tests/*.py"]
+needs = ["macos", "submodules"]
+cli_only = true
+
 [jobs.script-tests]
 title = "Script and maint tests"
 category = "Audits"
@@ -285,6 +298,7 @@ run = """python3 Scripts/tests/test_check_pbxproj_sources.py \
   && python3 Scripts/tests/test_generate_cheatdb_dat.py \
   && python3 Scripts/tests/test_generate_uti_declarations.py \
   && python3 -m unittest discover -s Scripts/maint -p 'test_*.py' \
+  && python3 -m unittest discover -s Scripts/cores/tests -p 'test_*.py' \
   && bash Scripts/tests/test-get-modules-validation.sh \
   && bash Scripts/tests/test-ci-init-submodules.sh"""
 

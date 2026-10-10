@@ -257,7 +257,12 @@ DEV_WORKSPACE := Provenance-Dev.xcworkspace
 DEV_DERIVED ?= $(CURDIR)/build/dev-dd
 DEV_DESTINATION ?= generic/platform=iOS Simulator
 
+# Cores linked as .prebuilt xcframeworks must exist before `tuist generate` (Tuist reads them
+# eagerly). None of the initial focused apps use one; add e.g. "dolphin" when one does.
+DEV_PREBUILT_CORES ?=
+DEV_SLICE ?= ios-sim
 dev-generate:
+	@for core in $(DEV_PREBUILT_CORES); do python3 Scripts/cores/build_slice.py $$core $(DEV_SLICE) || exit 1; done
 	$(TUIST) generate --no-open
 
 dev: dev-generate
