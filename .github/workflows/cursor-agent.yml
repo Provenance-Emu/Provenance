@@ -392,7 +392,8 @@ jobs:
           EOF
           fi
 
-          agent -p "$(cat /tmp/cursor_prompt.md)" --model default
+          # --trust: headless runs refuse an untrusted workspace without it.
+          agent -p "$(cat /tmp/cursor_prompt.md)" --model default --trust
 
       - name: Publish code changes
         id: publish
