@@ -275,7 +275,8 @@ struct EmulatorContainerView: UIViewControllerRepresentable {
         let items = availableCores.map { core in
             let saveCount = game.saveStates.filter("core.identifier == %@", core.identifier).count
             let subtitle = formatSaveCountSubtitle(saveCount)
-            return RetroSelectionItem(id: core.identifier, title: core.displayName, subtitle: subtitle)
+            return RetroSelectionItem(id: core.identifier, title: core.displayName, subtitle: subtitle,
+                                      isLibretroCore: core.isLibretroCore)
         }
 
         // Capture hostingVC in a variable so onSelect/onCancel can dismiss it
@@ -446,7 +447,8 @@ class EmulatorContainerViewController: UIViewController, GameLaunchingViewContro
             case 1: subtitle = "1 save"
             default: subtitle = "\(saveCount) saves"
             }
-            return RetroSelectionItem(id: core.identifier, title: core.displayName, subtitle: subtitle)
+            return RetroSelectionItem(id: core.identifier, title: core.displayName, subtitle: subtitle,
+                                      isLibretroCore: core.isLibretroCore)
         }
 
         // Capture hostingVC so onSelect/onCancel can dismiss it
