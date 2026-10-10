@@ -1362,6 +1362,8 @@ struct SkinSelectionPreviewCell: View {
             } onCancel: {
                 render.cancel()
             }
+            // A superseded .task(id:) run must not overwrite the current orientation's state.
+            try Task.checkCancellation()
             SkinPreviewThumbnailCache.shared.store(thumbnail, forKey: key)
             thumbnailImage = thumbnail
             isLoading = false
