@@ -183,7 +183,7 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     /// Systems that don't have adequate skin support — disable skins to show
     /// the native on-screen controls or core-specific overlays instead.
     /// NOTE: "com.provenance.ds" is intentionally NOT listed here — DS skins
-    /// use the DefaultDeltaSkin NDS dual-screen layout (portrait + landscape).
+    /// use the programmatic overlay's NDS dual-screen layout (portrait + landscape).
     private static let skinUnsupportedSystems: Set<String> = [
         SystemIdentifier._3DS.rawValue,
         SystemIdentifier.DOS.rawValue,
@@ -203,7 +203,7 @@ class PVThinLibretroCore: PVEmulatorCore, @unchecked Sendable {
     }
 
     /// DS (NDS) cores output a combined 256×384 framebuffer (top screen + bottom screen).
-    /// The DefaultDeltaSkin NDS layout splits this into two independently positioned viewports.
+    /// The overlay's NDS layout splits this into two independently positioned viewports.
     public override var supportsDualScreens: Bool {
         systemIdentifier == SystemIdentifier.DS.rawValue
     }

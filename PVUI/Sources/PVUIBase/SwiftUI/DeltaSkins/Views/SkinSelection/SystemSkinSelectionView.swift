@@ -199,7 +199,7 @@ public struct SystemSkinSelectionView: View {
                             // Orientation picker
                             orientationPickerView
 
-                            // Skin grid for selected orientation (always shown so Default is accessible)
+                            // Skin grid for selected orientation (always shown so Built-in is accessible)
                             skinGridView
                         }
                     }
@@ -657,7 +657,7 @@ public struct SystemSkinSelectionView: View {
 
                 // Skin grid with retrowave styling (iOS: case companion skins may appear in a disclosure section below)
                 LazyVGrid(columns: skinSelectionGridColumns, spacing: 24) {
-                    defaultSkinCell
+                    builtInControlsCell
 
                     ForEach(regularSkinsForCurrentOrientation, id: \.identifier) { skin in
                         skinCell(for: skin)
@@ -683,7 +683,7 @@ public struct SystemSkinSelectionView: View {
                 Spacer(minLength: 0)
                     .frame(height: 20)
 
-                // No third-party skins message (shown inline so Default is still accessible)
+                // No third-party skins message (shown inline so Built-in is still accessible)
                 if regularSkinsForCurrentOrientation.isEmpty && caseCompanionSkinsForCurrentOrientation.isEmpty {
                     VStack(spacing: 8) {
                         Text("No custom skins available for \(system.fullName)")
@@ -716,7 +716,7 @@ public struct SystemSkinSelectionView: View {
         .scrollIndicators(.hidden)
     }
 
-    private var defaultSkinCell: some View {
+    private var builtInControlsCell: some View {
         VStack(spacing: 8) {
             ZStack {
                 // Background with retrowave styling
@@ -747,7 +747,7 @@ public struct SystemSkinSelectionView: View {
             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentSelectedSkinId)
 
             // Label
-            Text("SYSTEM DEFAULT")
+            Text("BUILT-IN")
                 .font(.system(size: 12, weight: .bold, design: .rounded))
                 .foregroundColor(currentSelectedSkinId == nil ? .white : .white.opacity(0.7))
                 .lineLimit(1)

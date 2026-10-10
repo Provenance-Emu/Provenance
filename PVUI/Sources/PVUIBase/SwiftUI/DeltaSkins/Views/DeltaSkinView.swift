@@ -1744,7 +1744,7 @@ public struct DeltaSkinView: View {
         guard let screen = touchSkinScreen, let outputFrame = screen.outputFrame else { return nil }
 
         // Normalize outputFrame into 0–1 space if it is specified in mappingSize pixels.
-        // Some skins (e.g. DefaultDeltaSkin) already use normalized coordinates (0–1),
+        // Some skins already use normalized coordinates (0–1),
         // while others may specify absolute positions in the skin's mapping space.
         let isPixelBased = outputFrame.maxX > 1 || outputFrame.maxY > 1
         let normalizedFrame: CGRect

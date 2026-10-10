@@ -41,18 +41,6 @@ struct DeltaSkinScreenPositionWrapper: View {
         }
         ILOG("skins: calculateScreenFrame() - layout: width=\(layout.width), height=\(layout.height), xOffset=\(layout.xOffset), yOffset=\(layout.yOffset), mappingSize=\(mappingSize)")
 
-        // For default skins, don't calculate here - let calculateDefaultViewport handle it
-        // Default skins are identified by "default" identifier prefix or name containing "default"
-        // Also check if it's a DefaultDeltaSkin instance
-        let isDefaultSkin = skin.identifier.hasPrefix("default-") ||
-                           skin.identifier == "default" ||
-                           skin.name.lowercased() == "default" ||
-                           String(describing: type(of: skin)).contains("DefaultDeltaSkin")
-        if isDefaultSkin {
-            DLOG("🎮 SKIN: DeltaSkinScreenPositionWrapper - skipping calculation for default skin (\(skin.identifier)), use calculateDefaultViewport instead")
-            return nil
-        }
-
         // Determine whether this is a simple skin (no screens or screenGroups).
         // Simple skins that carry a `gameScreenFrame` use that frame for positioning;
         // those without fall back to the button-based calculation below.
@@ -525,16 +513,6 @@ struct DeltaSkinScreenPositionWrapper: View {
     /// Broadcast frame to emulator controller via protocol (replaces notification system)
     private func broadcastFrame(_ frame: CGRect) {
         guard isInEmulator else { return }
-
-        // Never broadcast frames for default skins - they use calculateDefaultViewport instead
-        let isDefaultSkin = skin.identifier.hasPrefix("default-") ||
-                           skin.identifier == "default" ||
-                           skin.name.lowercased() == "default" ||
-                           String(describing: type(of: skin)).contains("DefaultDeltaSkin")
-        if isDefaultSkin {
-            DLOG("🎮 SKIN: DeltaSkinScreenPositionWrapper - skipping broadcast for default skin (\(skin.identifier)), use calculateDefaultViewport instead")
-            return
-        }
 
         // Prevent duplicate broadcasts - only broadcast if frame actually changed
         if let lastFrame = lastBroadcastFrame,

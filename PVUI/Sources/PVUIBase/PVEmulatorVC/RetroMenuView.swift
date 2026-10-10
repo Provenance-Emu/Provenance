@@ -22,6 +22,9 @@ import FreemiumKit
 
 // MARK: - SwiftUI Menu Views
 
+/// The skin picker row that clears the packaged skin and shows the built-in touch controls.
+private let builtInSkinName = String(localized: "Built-in")
+
 // Main menu view with retrowave styling
 // RetroMenuView is over the 600-line type_body_length limit and already was on develop —
 // verified by linting develop's copy, which reports the identical violation. The
@@ -1388,12 +1391,12 @@ struct RetroMenuView: View {
     }
 
     // Skins and filters related buttons
-    @State private var selectedSkin: String = "Default"
-    @State private var selectedPortraitSkin: String = "Default"
-    @State private var selectedLandscapeSkin: String = "Default"
+    @State private var selectedSkin: String = builtInSkinName
+    @State private var selectedPortraitSkin: String = builtInSkinName
+    @State private var selectedLandscapeSkin: String = builtInSkinName
     @Default(.metalFilterMode) private var metalFilterMode
     @State private var selectedMetalFilter: MetalFilterSelectionOption = .none
-    @State private var availableSkins: [String] = ["Default"]
+    @State private var availableSkins: [String] = [builtInSkinName]
     @State private var availableSkinObjects: [DeltaSkinProtocol] = []
     @State private var showingSkinPicker = false
     @State private var showingFilterPicker = false
@@ -1753,17 +1756,17 @@ struct RetroMenuView: View {
                         // Skin content when loaded
                         ScrollView {
                             VStack(spacing: 16) {
-                                // Default skin option - always show
+                                // Built-in controls option - always show
                                 skinItemView(
-                                    name: "Default",
+                                    name: builtInSkinName,
                                     preview: nil,
-                                    isSelected: (currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin) == "Default",
+                                    isSelected: (currentOrientation == .portrait ? selectedPortraitSkin : selectedLandscapeSkin) == builtInSkinName,
                                     skinId: nil,
                                     onSelect: {
                                         showingSkinPicker = false
                                         // Apply immediately using the scope already chosen in the SKINS tab
                                         Task { @MainActor in
-                                            await applySkinSelection(skinName: "Default", identifier: "", orientation: currentOrientation, scope: selectedSkinScope)
+                                            await applySkinSelection(skinName: builtInSkinName, identifier: "", orientation: currentOrientation, scope: selectedSkinScope)
                                             await applySkinAndFilterChanges()
                                         }
                                     }
@@ -1883,7 +1886,7 @@ struct RetroMenuView: View {
         }
     }
 
-    // Custom skin item view for Default option
+    // Custom skin item view for the Built-in option
     private func skinItemView(name: String, preview: UIImage?, isSelected: Bool, skinId: String? = nil, onSelect: @escaping () -> Void) -> some View {
         GeometryReader { geometry in
             Button(action: onSelect) {
@@ -1948,7 +1951,7 @@ struct RetroMenuView: View {
                             .shadow(color: palette.defaultTintColor.swiftUIColor.opacity(glowOpacity * 0.8), radius: 2, x: 0, y: 0)
                             .lineLimit(1)
 
-                        if name != "Default" {
+                        if name != builtInSkinName {
                             Text(String(localized: "Custom Skin"))
                                 .font(.system(size: geometry.size.width < 350 ? 12 : 14))
                                 .foregroundColor((palette.settingsHeaderText?.swiftUIColor ?? palette.defaultTintColor.swiftUIColor))
@@ -2529,7 +2532,7 @@ struct RetroMenuView: View {
 
                 // Create a set of unique skin names to avoid duplicates
                 var uniqueSkinNames = Set<String>()
-                uniqueSkinNames.insert("Default")
+                uniqueSkinNames.insert(builtInSkinName)
 
                 // Add names of available skins, avoiding duplicates
                 for skin in filteredSkins {
@@ -2580,8 +2583,8 @@ struct RetroMenuView: View {
                     self.selectedPortraitSkin = portraitSkin.name
                     ILOG("skins: loadAvailableSkins - set portrait skin to: \(portraitSkin.name)")
                 } else {
-                    self.selectedPortraitSkin = "Default"
-                    ILOG("skins: loadAvailableSkins - set portrait skin to: Default")
+                    self.selectedPortraitSkin = builtInSkinName
+                    ILOG("skins: loadAvailableSkins - set portrait skin to: \(builtInSkinName)")
                 }
             }
 
@@ -2613,8 +2616,8 @@ struct RetroMenuView: View {
                     self.selectedLandscapeSkin = landscapeSkin.name
                     ILOG("skins: loadAvailableSkins - set landscape skin to: \(landscapeSkin.name)")
                 } else {
-                    self.selectedLandscapeSkin = "Default"
-                    ILOG("skins: loadAvailableSkins - set landscape skin to: Default")
+                    self.selectedLandscapeSkin = builtInSkinName
+                    ILOG("skins: loadAvailableSkins - set landscape skin to: \(builtInSkinName)")
                 }
 
 #if !os(tvOS)
@@ -2761,7 +2764,7 @@ struct RetroMenuView: View {
         do {
             let skinIdentifier: String?
 
-            if skinName != "Default" {
+            if skinName != builtInSkinName {
                 // Find the skin by identifier if provided, otherwise by name
                 let skins = try await DeltaSkinManager.shared.skins(for: systemId)
                 let skin: DeltaSkinProtocol?
@@ -2783,9 +2786,9 @@ struct RetroMenuView: View {
                     // Skin doesn't support the selected orientation
                     await MainActor.run {
                         if orientation == .portrait {
-                            selectedPortraitSkin = "Default"
+                            selectedPortraitSkin = builtInSkinName
                         } else {
-                            selectedLandscapeSkin = "Default"
+                            selectedLandscapeSkin = builtInSkinName
                         }
                     }
                     return
@@ -2823,7 +2826,7 @@ struct RetroMenuView: View {
                 // Don't apply skin immediately - wait for apply button to be clicked
                 ILOG("skins: Skin preference saved, will be applied when Apply button is clicked")
             } else {
-                // User selected "Default" skin — session/game store a built-in token so resolution does not fall through to a saved `.deltaskin`; system scope clears the system preference.
+                // User selected the Built-in controls — session/game store a built-in token so resolution does not fall through to a saved `.deltaskin`; system scope clears the system preference.
                 await MainActor.run {
                     let storedIdentifier: String? = {
                         switch scope {
@@ -2850,16 +2853,16 @@ struct RetroMenuView: View {
 
                     // Update UI display immediately
                     if orientation == .portrait {
-                        selectedPortraitSkin = "Default"
+                        selectedPortraitSkin = builtInSkinName
                     } else {
-                        selectedLandscapeSkin = "Default"
+                        selectedLandscapeSkin = builtInSkinName
                     }
                     // Force reload on next open
                     didLoadSkins = false
                 }
 
                 // Don't reset skin immediately - wait for apply button to be clicked
-                ILOG("skins: Default skin preference saved, will be applied when Apply button is clicked")
+                ILOG("skins: Built-in controls preference saved, will be applied when Apply button is clicked")
             }
         } catch {
             ELOG("Error applying skin selection: \(error)")
@@ -2912,13 +2915,13 @@ struct RetroMenuView: View {
                     // applySkin will automatically handle fallback if skin doesn't support orientation
                     try await emulatorVC.applySkin(skin)
                 } else {
-                    ILOG("skins: Skin with identifier '\(skinId)' not found, resetting to default")
-                    try await emulatorVC.resetToDefaultSkin()
+                    ILOG("skins: Skin with identifier '\(skinId)' not found, resetting to built-in controls")
+                    try await emulatorVC.resetToBuiltInControls()
                 }
             } else {
-                // No skin preference, reset to default
-                ILOG("skins: No skin preference for current orientation, resetting to default")
-                try await emulatorVC.resetToDefaultSkin()
+                // No skin preference, reset to the built-in controls
+                ILOG("skins: No skin preference for current orientation, resetting to built-in controls")
+                try await emulatorVC.resetToBuiltInControls()
             }
         } catch {
             ELOG("Error applying skin and filter changes: \(error)")
@@ -3081,15 +3084,15 @@ struct RetroMenuView: View {
                     try await emulatorVC.applySkin(skin)
                 }
             } else {
-                // No preference, reset to default
+                // No preference, reset to the built-in controls
                 if let emulatorVC = emulatorVC as? PVEmulatorViewController {
-                    try await emulatorVC.resetToDefaultSkin()
+                    try await emulatorVC.resetToBuiltInControls()
                 }
                 await MainActor.run {
                     if orientation == .portrait {
-                        selectedPortraitSkin = "Default"
+                        selectedPortraitSkin = builtInSkinName
                     } else {
-                        selectedLandscapeSkin = "Default"
+                        selectedLandscapeSkin = builtInSkinName
                     }
                 }
             }

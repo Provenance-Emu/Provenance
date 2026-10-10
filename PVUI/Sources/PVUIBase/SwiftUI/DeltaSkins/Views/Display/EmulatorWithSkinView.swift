@@ -314,7 +314,7 @@ struct EmulatorWithSkinView: View {
         #if !os(tvOS)
         if let systemId {
             ProgrammaticOverlayView(
-                systemId: systemId, binding: SystemOverlayBindings.binding(for: systemId) ?? .generic, coreInstance: coreInstance, inputHandler: inputHandler,
+                systemId: systemId, binding: SystemOverlayBindings.binding(for: systemId) ?? SystemOverlayBindings.generic, coreInstance: coreInstance, inputHandler: inputHandler,
                 gameMD5: gameMD5,
                 padKind: OverlayPadKindResolver.padKind(for: systemId,
                                                         variantProvider: coreInstance as? ConsoleVariantConfigurable,

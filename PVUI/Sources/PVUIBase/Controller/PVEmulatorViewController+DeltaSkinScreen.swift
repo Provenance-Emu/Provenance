@@ -207,9 +207,9 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
-        // For default skins, use notification frame if already received
+        // With no skin mounted yet, use the notification frame if already received.
         // Only wait for fresh notification if we don't have a valid frame yet
-        if isDefaultSkin {
+        if currentSkin == nil {
             // If we already have a valid frame from notification, use it immediately
             if let frame = currentTargetFrame, isValidFrame(frame) {
                 // Check if frame is already correctly applied to avoid unnecessary work
@@ -221,7 +221,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                     // Frame already correctly applied, no need to re-apply
                     return
                 }
-                applyFrameToGPUView(frame, reason: "viewport-default-immediate")
+                applyFrameToGPUView(frame, reason: "viewport-noskin-immediate")
                 return
             }
 
@@ -231,7 +231,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                 guard let self = self else { return }
                 guard !self.isBridgeShuttingDownForViewport() else { return }
                 if let frame = self.currentTargetFrame, self.isValidFrame(frame) {
-                    self.applyFrameToGPUView(frame, reason: "viewport-default-async0.15")
+                    self.applyFrameToGPUView(frame, reason: "viewport-noskin-async0.15")
                 } else {
                     // Only reset if we truly don't have a frame (e.g., during initial boot)
                     // Don't reset if frame was already applied successfully
@@ -245,9 +245,9 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             return
         }
 
-        // For non-default skins, use notification frame if available (preferred - most accurate)
+        // Use the notification frame if available (preferred - most accurate)
         if let frame = currentTargetFrame, isValidFrame(frame) {
-            applyFrameToGPUView(frame, reason: "viewport-nondefault-cached")
+            applyFrameToGPUView(frame, reason: "viewport-skin-cached")
             return
         }
 
@@ -369,7 +369,7 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
         // `calculateFrameFromSkin()` — that approximation resolves the skin representation
         // and the vertical anchor independently of the renderer, so making it the last
         // writer is what leaves the render view mis-sized/off the skin's cutout.
-        if !isDefaultSkin, skinDeclaresScreenArea {
+        if skinDeclaresScreenArea {
             lastViewportLayoutBounds = bounds
             lastViewportLayoutSafeArea = safeArea
             requestSkinRendererViewportRecalculation(reason: "layout-settle")
@@ -483,14 +483,6 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
                                gameIdentifier: game?.title)
     }
 
-    /// Check if current skin is a default skin
-    private var isDefaultSkin: Bool {
-        guard let skin = currentSkin else { return true }
-        return skin.identifier.hasPrefix("default-") ||
-               skin.identifier == "default" ||
-               skin.name.lowercased().contains("default")
-    }
-
     /// Simple frame validation
     private func isValidFrame(_ frame: CGRect) -> Bool {
         return frame.width > 0 && frame.height > 0 &&
@@ -510,8 +502,8 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
     /// Calculate frame from skin - single, clear calculation path
     /// Uses same calculation for bootup and rotation - accounts for safe areas
     private func calculateFrameFromSkin() -> CGRect? {
-        // The mounted overlay publishes the game frame itself; the skin mapping (a
-        // DefaultDeltaSkin after a rebuild) would compete with it.
+        // The mounted overlay publishes the game frame itself; the skin mapping would
+        // compete with it.
         guard !isProgrammaticOverlayActive else { return nil }
         guard let skin = currentSkin else { return nil }
         guard view.bounds.width > 0 && view.bounds.height > 0 else { return nil }
@@ -567,17 +559,10 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
             // The screen rect is normalised (0-1) against `mappingSize`, i.e. it is a
             // position *inside the skin image*. It must therefore be anchored to where
             // the skin image was actually drawn, not to the centred fallback rect.
-            //
-            // Default skins are the exception: there is no skin image, and
-            // `defaultControllerSkin()` / `calculateDefaultViewport` centre the game area
-            // in the safe area. Anchoring their (synthesised) screen rect to the bottom
-            // would move the default-skin game screen down in iPhone portrait.
-            let skinOrigin = isDefaultSkin
-                ? offset
-                : skinImageOrigin(for: traits,
-                                  viewSize: viewSize,
-                                  safeInsets: safeInsets,
-                                  scaledSize: scaledSize)
+            let skinOrigin = skinImageOrigin(for: traits,
+                                             viewSize: viewSize,
+                                             safeInsets: safeInsets,
+                                             scaledSize: scaledSize)
             return CGRect(
                 x: skinOrigin.x + screenFrame.minX * scaledSize.width,
                 y: skinOrigin.y + screenFrame.minY * scaledSize.height,

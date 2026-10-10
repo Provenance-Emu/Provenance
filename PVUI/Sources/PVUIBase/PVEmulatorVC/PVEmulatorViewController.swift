@@ -2265,7 +2265,11 @@ extension PVEmulatorViewController {
         DLOG("Using orientation for skin application: \(currentOrientation)")
 
         // Check if skin supports current orientation, find fallback if not
-        var skinToApply = try await findSkinWithFallback(skin: skin, orientation: currentOrientation)
+        guard var skinToApply = try await findSkinWithFallback(skin: skin, orientation: currentOrientation) else {
+            ILOG("skins: No packaged skin fits \(currentOrientation.rawValue), mounting the built-in controls")
+            try await resetToBuiltInControls()
+            return
+        }
 
         // CRITICAL: Validate BEFORE creating view - check if skin can actually render
         // This catches cases where supports() returns true but representation/mappingSize is missing
@@ -2280,11 +2284,9 @@ extension PVEmulatorViewController {
                 ILOG("skins: Found fallback skin '\(fallbackSkin.name)'")
                 skinToApply = fallbackSkin
             } else {
-                // No fallback found, MUST use default skin
-                ILOG("skins: No fallback found, MUST use default skin")
-                let systemId = game.system?.systemIdentifier ?? SystemIdentifier.RetroArch
-                skinToApply = EmulatorWithSkinView.defaultSkin(for: systemId)
-                ILOG("skins: Using default skin '\(skinToApply.name)' for system \(systemId.rawValue)")
+                ILOG("skins: No fallback found, mounting the built-in controls")
+                try await resetToBuiltInControls()
+                return
             }
         }
 
@@ -2317,21 +2319,18 @@ extension PVEmulatorViewController {
         // Pause emulation while building the skin to avoid glitches
         core.setPauseEmulation(true)
 
-        // Try to create the skin view, with fallback to default if it fails
-        // Note: skinToApply has already been validated and may be a fallback/default skin
-        var skinView: UIView
-        var finalSkin = skinToApply
-        let systemId = game.system?.systemIdentifier ?? SystemIdentifier.RetroArch
+        // Try to create the skin view; the built-in controls stand in if it fails.
+        // Note: skinToApply has already been validated and may be a fallback skin
+        let skinView: UIView
+        let finalSkin = skinToApply
 
         do {
             skinView = try await createSkinView(from: skinToApply)
-            finalSkin = skinToApply
         } catch {
-            // If creation fails, MUST use default skin
-            ILOG("skins: Failed to create skin view for '\(skinToApply.name)': \(error), using default skin")
-            finalSkin = EmulatorWithSkinView.defaultSkin(for: systemId)
-            ILOG("skins: Using default skin '\(finalSkin.name)' for system \(systemId.rawValue)")
-            skinView = try await createSkinView(from: finalSkin)
+            ELOG("skins: Failed to create skin view for '\(skinToApply.name)': \(error), mounting the built-in controls")
+            core.setPauseEmulation(false)
+            try await resetToBuiltInControls()
+            return
         }
 
         await MainActor.run {
@@ -2661,19 +2660,19 @@ extension PVEmulatorViewController {
         )
     }
 
-    /// Reset to the default skin
-    public func resetToDefaultSkin() async throws {
-        DLOG("Resetting to default skin")
+    /// Clears the packaged skin and mounts the built-in controls (the programmatic overlay).
+    public func resetToBuiltInControls() async throws {
+        DLOG("Resetting to the built-in controls")
 
         // The programmatic overlay already is the built-in controls and lays itself out from
-        // its own geometry, so there is nothing to rebuild or swap (rotation, "Default" picks).
+        // its own geometry, so there is nothing to rebuild or swap (rotation, "Built-in" picks).
         if isProgrammaticOverlayActive {
             DLOG("skins: programmatic overlay is mounted, keeping it")
             return
         }
 
         // Cores that only use a skin the player picked fall back to the classic on-screen
-        // controller, never to the generated default skin, unless the overlay covers the game.
+        // controller unless the overlay covers the game.
         if core.requiresExplicitSkinSelection && !programmaticOverlayCoversGame {
             await MainActor.run {
                 restoreClassicControlsAfterSkin()
@@ -2694,37 +2693,12 @@ extension PVEmulatorViewController {
             }
         }
 
-        // Create and apply the default skin
-        if let systemId = game.system?.systemIdentifier {
-            // Get the default skin for the system
-            let defaultSkin = EmulatorWithSkinView.defaultSkin(for: systemId)
+        // With no packaged skin selected the skin container hosts the overlay.
+        try await setupDeltaSkinView()
 
-            // Apply the skin - this will handle all the UI setup
-            try await applySkin(defaultSkin)
-
-            // Post notification that the skin has changed to trigger input handler reconnection
-            // This is in addition to the notification sent by applySkin
-            await MainActor.run {
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("DeltaSkinChanged"),
-                    object: nil,
-                    userInfo: ["skinIdentifier": defaultSkin.identifier, "isDefault": true]
-                )
-            }
-        } else {
-            // If we can't load a default skin, still post the reconnect notifications
-            await MainActor.run {
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("DeltaSkinChanged"),
-                    object: nil,
-                    userInfo: ["isDefault": true]
-                )
-
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("DeltaSkinInputHandlerReconnect"),
-                    object: nil
-                )
-            }
+        await MainActor.run {
+            NotificationCenter.default.post(name: NSNotification.Name("DeltaSkinChanged"), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name("DeltaSkinInputHandlerReconnect"), object: nil)
         }
     }
 
@@ -2987,8 +2961,8 @@ extension PVEmulatorViewController {
     /// - Parameters:
     ///   - skin: The requested skin
     ///   - orientation: The current orientation
-    /// - Returns: A skin that supports the orientation (fallback or default if needed)
-    private func findSkinWithFallback(skin: DeltaSkinProtocol, orientation: SkinOrientation) async throws -> DeltaSkinProtocol {
+    /// - Returns: A skin that supports the orientation, or nil when none does (the built-in controls apply)
+    private func findSkinWithFallback(skin: DeltaSkinProtocol, orientation: SkinOrientation) async throws -> DeltaSkinProtocol? {
         // Check if the requested skin supports the current orientation
         let device: DeltaSkinDevice = {
             #if os(tvOS)
@@ -3034,9 +3008,8 @@ extension PVEmulatorViewController {
         ILOG("skins: Skin '\(skin.name)' doesn't support \(orientation.rawValue), finding fallback")
 
         guard let systemId = game.system?.systemIdentifier else {
-            // No system ID, use default skin
-            ILOG("skins: No system ID, using default skin")
-            return EmulatorWithSkinView.defaultSkin(for: SystemIdentifier.RetroArch)
+            ILOG("skins: No system ID, no fallback skin")
+            return nil
         }
 
         // Get all available skins for this system
@@ -3075,11 +3048,8 @@ extension PVEmulatorViewController {
             }
         }
 
-        // No fallback skin found, MUST use default skin
-        ILOG("skins: No fallback skin found for \(orientation.rawValue), MUST use default skin")
-        let defaultSkin = EmulatorWithSkinView.defaultSkin(for: systemId)
-        ILOG("skins: Returning default skin '\(defaultSkin.name)' for system \(systemId.rawValue)")
-        return defaultSkin
+        ILOG("skins: No fallback skin found for \(orientation.rawValue) on \(systemId.rawValue)")
+        return nil
     }
 
     /// Debug helper to print the view hierarchy
@@ -3257,15 +3227,10 @@ extension PVEmulatorViewController {
                     DLOG("Effective skin id: \(effectiveId ?? "nil"), current: \(currentId ?? "nil"), prefersBuiltIn: \(prefersBuiltIn)")
 
                     // Built-in choice: do not keep a stray `.deltaskin` on screen when effective id is nil.
-                    if effectiveId == nil, prefersBuiltIn, let current = self.currentSkin {
-                        let isSwiftUIDefault = current.identifier.hasPrefix("default-") ||
-                            current.identifier == "default" ||
-                            current.name.lowercased() == "default"
-                        if !isSwiftUIDefault {
-                            try? await self.resetToDefaultSkin()
-                            self.ensureProperZOrder()
-                            return
-                        }
+                    if effectiveId == nil, prefersBuiltIn, self.currentSkin != nil {
+                        try? await self.resetToBuiltInControls()
+                        self.ensureProperZOrder()
+                        return
                     }
 
                     // If effective id is nil but we have a current skin, keep current and relayout
@@ -3279,13 +3244,13 @@ extension PVEmulatorViewController {
                         if let skin = try? await DeltaSkinManager.shared.skin(withIdentifier: eid) {
                             try? await self.applySkin(skin)
                         } else {
-                            try? await self.resetToDefaultSkin()
+                            try? await self.resetToBuiltInControls()
                         }
                         self.ensureProperZOrder()
                     } else if let current = self.currentSkin {
                         self.minimalRelayout(with: current, orientation: newOrientation)
                     } else {
-                        try? await self.resetToDefaultSkin()
+                        try? await self.resetToBuiltInControls()
                     }
                 }
             } else {
@@ -3352,25 +3317,7 @@ extension PVEmulatorViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
             guard let self = self else { return }
 
-            // Check if this is a default skin - default skins use their own calculation system
-            let isDefaultSkin = skin.identifier.hasPrefix("default-") ||
-                               skin.identifier == "default" ||
-                               skin.name.lowercased() == "default"
-
-            // For default skins, don't use fallback - they broadcast frames via protocol
-            // The protocol callback should have arrived by now (0.4 seconds)
-            if isDefaultSkin {
-                if let frame = self.currentTargetFrame {
-                    // Frame received via protocol - apply it
-                    self.applyFrameToGPUView(frame, reason: "rotation-async0.4-default")
-                } else {
-                    DLOG("🎮 SKIN: Default skin - no frame received after rotation, protocol callback may be delayed")
-                    // Don't use fallback for default skins - let the protocol system handle it
-                }
-                return
-            }
-
-            // For non-default skins and non-RetroArch cores, ensure we have a frame
+            // For non-RetroArch cores, ensure we have a frame
             if self.core.coreIdentifier?.contains("libretro") != true {
                 // If we still don't have a frame, calculate one manually
                 if self.currentTargetFrame == nil {

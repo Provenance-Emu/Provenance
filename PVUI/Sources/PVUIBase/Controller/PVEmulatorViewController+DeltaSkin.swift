@@ -74,7 +74,7 @@ extension PVEmulatorViewController {
             guard !self.programmaticOverlayCoversGame else { return }
             Task { @MainActor in
                 // No-op when no skin is up, so a duplicate call from the menu path is harmless.
-                try? await self.resetToDefaultSkin()
+                try? await self.resetToBuiltInControls()
             }
         }
     }
