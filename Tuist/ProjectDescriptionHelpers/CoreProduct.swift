@@ -65,6 +65,42 @@ public extension CoreProduct {
         link: .project(path: "Cores/snes9x/PVSNES9x.xcodeproj", target: "PVSNES9x", product: "PVSNES"),
         embeds: [.project(path: "Cores/snes9x/PVSNES9x.xcodeproj", target: "snes9x", product: "snes9x")]
     )
+    static let fceu = CoreProduct(
+        id: "fceu",
+        link: .project(path: "Cores/FCEU/PVFCEU.xcodeproj", target: "PVFCEU", product: "PVFCEU")
+    )
+    static let genesis = CoreProduct(
+        id: "genesis",
+        link: .project(path: "Cores/Genesis-Plus-GX/PVGenesis.xcodeproj", target: "PVGenesis", product: "PVGenesis")
+    )
+    static let mupen64Plus = CoreProduct(
+        id: "mupen64plus",
+        link: .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64Plus", product: "PVMupen64Plus"),
+        embeds: [
+            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusRspHLE", product: "PVMupen64PlusRspHLE"),
+            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusBridge", product: "PVMupen64PlusBridge"),
+            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusVideoGlideN64", product: "PVMupen64PlusVideoGlideN64"),
+            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVMupen64PlusVideoRice", product: "PVMupen64PlusVideoRice"),
+            .project(path: "Cores/Mupen64Plus/PVMupen64Plus.xcodeproj", target: "PVRSPCXD4", product: "PVRSPCXD4")
+        ]
+    )
+    static let mednafen = CoreProduct(id: "mednafen", link: .package(path: "Cores/Mednafen", product: "PVCoreMednafen-Dynamic"))
+    static let proSystem = CoreProduct(id: "prosystem", link: .package(path: "Cores/ProSystem", product: "PVProSystem-Dynamic"))
+    static let picoDrive = CoreProduct(id: "picodrive", link: .package(path: "Cores/PicoDrive", product: "PVPicoDrive-Dynamic"))
+    static let tgbDual = CoreProduct(id: "tgbdual", link: .package(path: "Cores/TGBDual", product: "PVTGBDual-Dynamic"))
+    static let azahar = CoreProduct(
+        id: "azahar",
+        link: .project(path: "Cores/Azahar/PVAzahar.xcodeproj", target: "PVAzahar", product: "PVAzahar"),
+        needsAggregate: "BuildPVlibAzahar"
+    )
+    // PVDolphin links PVlibDolphin.xcframework, which `Make XCFrameworks` (build_slice.py) produces.
+    // Build.xcconfig excludes both from simulator SDKs; no focused app uses Dolphin yet.
+    static let dolphin = CoreProduct(
+        id: "dolphin",
+        link: .project(path: "Cores/Dolphin/PVDolphin.xcodeproj", target: "PVDolphin", product: "PVDolphin"),
+        embeds: [.prebuilt(path: "Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin.xcframework")],
+        needsAggregate: "Make XCFrameworks"
+    )
 
     // MARK: Non-core products every app embeds
 
@@ -80,5 +116,8 @@ public extension CoreProduct {
     static let nonCore: [CoreProduct] = [.cheevos, .moltenVK, .coreBridgeRetro]
 
     /// Every row, for the manifest checks.
-    static let all: [CoreProduct] = [.mGBA, .stella, .snes9x] + nonCore
+    static let all: [CoreProduct] = [
+        .mGBA, .stella, .snes9x, .fceu, .genesis, .mupen64Plus, .mednafen,
+        .proSystem, .picoDrive, .tgbDual, .azahar, .dolphin
+    ] + nonCore
 }
