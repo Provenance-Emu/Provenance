@@ -1,2 +1,0 @@
-Target dependency graph (1 target)
-Target 'CompilerIdC' in project 'CompilerIdC' (no dependencies)

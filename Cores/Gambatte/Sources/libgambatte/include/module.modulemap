@@ -1,9 +1,0 @@
-module libgambatte {
-    header "../libgambatte/include/gambatte.h"
-    header "../libgambatte/include/gbint.h"
-    header "../libgambatte/include/inputgetter.h"
-    header "../libgambatte/include/loadres.h"
-    header "../libgambatte/include/pakinfo.h"
-
-    export *
-}

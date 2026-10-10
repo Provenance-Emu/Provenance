@@ -20,9 +20,6 @@
          location = "group:Cores/snes9x/PVSNES9x.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/O2EM/PVO2EM.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
       </FileRef>
       <FileRef
@@ -34,12 +31,6 @@
       <FileRef
          location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
       </FileRef>
-      <FileRef
-         location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Reicast/PVReicast.xcodeproj">
-      </FileRef>
    </Group>
    <Group
       location = "group:"
@@ -48,61 +39,10 @@
          location = "group:PVCoreBridgeRetro/PVCoreBridgeRetro.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Desmume2015/PVDesmume2015.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/DosBox/PVDosBox.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/ep128emu/PVEP128Emu.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/fmsx/PVfMSX.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/FreeIntv/PVFreeIntv.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/fuse/PVFuse.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Gearcoleco/PVGearcoleco.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/GameMusicEmu/PVGME.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/melonDS/PVMelonDS.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Mini_vMac/PVMiniVMac.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Mu/PVMu.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/opera/PVOpera.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Potator/PVPotator.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/supergrafx/PVSupergrafx.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/VecX/PVVecX.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Yabause/PVYabause.xcodeproj">
       </FileRef>
    </Group>
 </Workspace>

@@ -1,4 +1,0 @@
-module PVVisualBoyAdvanceBridge {
-    header "../PVVisualBoyAdvanceBridge.h"
-    export *
-}
