@@ -312,6 +312,17 @@ public extension PVEmulatorConfiguration {
             }
         }
 
+        // Battery saves retired native cores left on disk go where their libretro
+        // replacements read them. File work only, off the main thread, once per core.
+        let batteryJobs = RetiredBatterySaveMigration.pendingJobs(in: database)
+        if !batteryJobs.isEmpty {
+            Task.detached(priority: .utility) {
+                RetiredBatterySaveMigration.run(batteryJobs,
+                                                batteryRoot: Paths.batterySavesPath,
+                                                saveStatesRoot: Paths.saveSavesPath)
+            }
+        }
+
         // Reload RomDatabase caches to ensure in-memory state matches the
         // newly-registered cores for non-boot call paths (e.g. reset library).
         // Boot-time initialization may still trigger an additional reload later,
