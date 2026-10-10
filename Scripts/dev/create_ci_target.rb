@@ -12,13 +12,13 @@ CI_TARGET_NAME = 'Provenance-CI'
 
 # Core framework patterns to strip
 CORE_PATTERNS = [
-  /^PVStella/, /^PVPokeMini/, /^PVVirtualJaguar/, /^PVPicoDrive/,
-  /^PVAtari800/, /^PVCrabEmu/, /^PVTGBDual/, /^PVFreeDO/,
-  /^PVProSystem/, /^PVBliss/, /^PVGambatte/, /^PVVisualBoyAdvance/,
+  /^PVStella/, /^PVPicoDrive/,
+  /^PVTGBDual/, /^PVFreeDO/,
+  /^PVProSystem/,
   /^PVCoreMednafen/, /^PVEmuThree/, /^PVPPSSPP/, /^PVMupen64Plus/,
-  /^PVBeetlePSX/, /^PVSNES/, /^PVFCEU/, /^PVO2EM/,
-  /^PVGenesis/, /^PVGME/, /^PVVecX/, /^PVRSPCXD4/,
-  /^PVPotator/, /^PVDesmume/, /^PVCoreBridgeRetro/,
+  /^PVSNES/, /^PVFCEU/,
+  /^PVGenesis/, /^PVRSPCXD4/,
+  /^PVCoreBridgeRetro/,
   /^libMoltenVK/, /^MoltenVK/,
   /^snes9x/,  # SNES emulator core framework
 ]

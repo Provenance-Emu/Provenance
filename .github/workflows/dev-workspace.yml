@@ -57,8 +57,6 @@ jobs:
         run: |
           git submodule update --init --depth 1 \
             Cores/4DO \
-            Cores/Bliss \
-            Cores/CrabEMU \
             Dependencies/HexColors \
             Dependencies/SWCompression \
             Cores/Mednafen/ThirdParty/libchdr \
@@ -67,7 +65,6 @@ jobs:
             Cores/Stella/Sources/libstella/stella \
             Cores/snes9x/snes9x-src \
             Cores/snes9x/libretro-snes9x
-          git submodule update --init --depth 1 --recursive Cores/VirtualJaguar
           if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
             rm -rf Dependencies/ZipArchive
             git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive

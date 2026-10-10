@@ -1,43 +1,6 @@
 {
   "entries": [
     {
-      "name": "4DO/FreeDO",
-      "identifier": "com.provenance.core.FreeDO",
-      "projectURL": "https://github.com/OpenEmu/4DO-Core",
-      "version": "0",
-      "license": "GPL-2.0-only",
-      "licenseURL": "https://github.com/OpenEmu/4DO-Core/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2011-2016 OpenEmu Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.3DO"
-      ]
-    },
-    {
-      "name": "Atari 800",
-      "identifier": "com.provenance.core.atari800",
-      "projectURL": "https://atari800.github.io",
-      "version": "7.2.1",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/atari800/atari800/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 1995-2014 The Atari800 Development Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.5200",
-        "com.provenance.atari8bit"
-      ]
-    },
-    {
       "name": "Azahar",
       "identifier": "com.provenance.core.azahar",
       "projectURL": "https://azahar-emu.org",
@@ -53,80 +16,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.3ds"
-      ]
-    },
-    {
-      "name": "BeetlePSX",
-      "identifier": "com.provenance.core.beetlepsx",
-      "projectURL": "https://github.com/libretro/beetle-psx-libretro",
-      "version": "0",
-      "license": "GPL-2.0-only",
-      "licenseURL": "https://github.com/libretro/beetle-psx-libretro/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 1998-2014 Mednafen Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.psx"
-      ]
-    },
-    {
-      "name": "Bliss",
-      "identifier": "com.provenance.core.bliss",
-      "projectURL": "https://github.com/OpenEmu/Bliss-Core",
-      "version": "2.1.2",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/OpenEmu/Bliss-Core/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2003-2016 OpenEmu Team, Kyle Davis"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.intellivision"
-      ]
-    },
-    {
-      "name": "CrabEMU",
-      "identifier": "com.provenance.core.crabemu",
-      "projectURL": "http://crabemu.sourceforge.net",
-      "version": "0.2.0",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "http://crabemu.sourceforge.net",
-      "copyrightHolder": [
-        "Copyright © 2007-2014 Lawrence Sebald"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.sms",
-        "com.provenance.sg1000",
-        "com.provenance.colecovision"
-      ]
-    },
-    {
-      "name": "Desmume2015",
-      "identifier": "com.provenance.core.desmume2015",
-      "projectURL": "https://github.com/flyinghead/desmume2015",
-      "version": "1.1",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/TASEmulators/desmume/blob/HEAD/desmume/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2005-2015 The DeSmuME Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.ds"
       ]
     },
     {
@@ -149,42 +38,6 @@
       ]
     },
     {
-      "name": "DosBox",
-      "identifier": "com.provenance.core.dosbox",
-      "projectURL": "https://github.com/schellingb/dosbox-pure",
-      "version": "0.9.2",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/schellingb/dosbox-pure/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2002-2021 The DOSBox Team, 2020-2024 Bernhard Schelling"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.dos"
-      ]
-    },
-    {
-      "name": "DuckStation",
-      "identifier": "com.provenance.core.duckstation",
-      "projectURL": "https://github.com/stenzek/duckstation/",
-      "version": "2023.01.11",
-      "license": "GPL-3.0-only",
-      "licenseURL": "https://github.com/stenzek/duckstation/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2019-2024 Connor McLaughlin"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.psx"
-      ]
-    },
-    {
       "name": "FCEUX",
       "identifier": "com.provenance.core.fceu",
       "projectURL": "http://sourceforge.net/projects/fceultra/",
@@ -201,79 +54,6 @@
       "supportedSystems": [
         "com.provenance.nes",
         "com.provenance.fds"
-      ]
-    },
-    {
-      "name": "FreeIntv",
-      "identifier": "com.provenance.core.FreeIntv",
-      "projectURL": "https://github.com/libretro/FreeIntv",
-      "version": "2018.1.5",
-      "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/libretro/FreeIntv/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2018 David Richardson"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.intellivision"
-      ]
-    },
-    {
-      "name": "Gambatte",
-      "identifier": "com.provenance.core.gambatte",
-      "projectURL": "https://github.com/sinamas/gambatte",
-      "version": "0.5.0",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/sinamas/gambatte/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2007-2014 Sindre Aaen"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.gb",
-        "com.provenance.gbc"
-      ]
-    },
-    {
-      "name": "GME",
-      "identifier": "com.provenance.core.GME",
-      "projectURL": "https://github.com/libretro/libretro-gme",
-      "version": "v0.6.1",
-      "license": "LGPL-2.1-or-later",
-      "licenseURL": "https://github.com/libretro/libretro-gme/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2003-2009 Shay Green"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.music"
-      ]
-    },
-    {
-      "name": "Gearcoleco",
-      "identifier": "com.provenance.core.gearcoleco",
-      "projectURL": "https://github.com/drhelius/Gearcoleco",
-      "version": "1.0.1",
-      "license": "MIT",
-      "licenseURL": "https://github.com/drhelius/Gearcoleco/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2021 Ignacio Sanchez Gines"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.colecovision"
       ]
     },
     {
@@ -334,42 +114,6 @@
       ]
     },
     {
-      "name": "Mini vMac",
-      "identifier": "com.provenance.core.minivmac",
-      "projectURL": "https://www.gryphel.com/c/minivmac/",
-      "version": "b36",
-      "license": "MIT",
-      "licenseURL": "https://www.gryphel.com/c/minivmac/license.html",
-      "copyrightHolder": [
-        "Copyright © 2001-2020 Paul C. Pratt"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.macintosh"
-      ]
-    },
-    {
-      "name": "Mu",
-      "identifier": "com.provenance.core.Mu",
-      "projectURL": "https://meepingsnesroms.github.io",
-      "version": "v1.3.0",
-      "license": "MIT",
-      "licenseURL": "https://github.com/meepingsnesroms/Mu/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2019-2023 Adin Scannell"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.palmos"
-      ]
-    },
-    {
       "name": "Mupen64Plus",
       "identifier": "com.provenance.core.mupen64plus",
       "projectURL": "https://github.com/mupen64plus",
@@ -385,42 +129,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.n64"
-      ]
-    },
-    {
-      "name": "Mupen64Plus-Next",
-      "identifier": "com.provenance.core.mupen64plusnx",
-      "projectURL": "https://github.com/libretro/mupen64plus-libretro-nx",
-      "version": "2.4",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/mupen64plus-libretro-nx/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2008-2024 Mupen64Plus Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.n64"
-      ]
-    },
-    {
-      "name": "O2EM",
-      "identifier": "com.provenance.core.odyssey2",
-      "projectURL": "https://github.com/OpenEmu/O2EM-Core",
-      "version": "1.18.1",
-      "license": "Artistic-2.0",
-      "licenseURL": "https://github.com/OpenEmu/O2EM-Core/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 1997-2016 OpenEmu Team, Daniel Boris, Andre de la Rocha"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.odyssey2"
       ]
     },
     {
@@ -460,60 +168,6 @@
       ]
     },
     {
-      "name": "Play!",
-      "identifier": "com.provenance.core.play",
-      "projectURL": "https://github.com/jpd002/Play-",
-      "version": "0.58",
-      "license": "MIT",
-      "licenseURL": "https://github.com/jpd002/Play-/blob/HEAD/LICENSE.md",
-      "copyrightHolder": [
-        "Copyright © 2012-2024 Jean-Philip Desjardins"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.ps2"
-      ]
-    },
-    {
-      "name": "PokeMini",
-      "identifier": "com.provenance.core.pokemini",
-      "projectURL": "http://sourceforge.net/projects/pokemini/",
-      "version": "v0.60",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://sourceforge.net/projects/pokemini/",
-      "copyrightHolder": [
-        "Copyright © 2011-2016 JustBurn"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.pokemonmini"
-      ]
-    },
-    {
-      "name": "Potator",
-      "identifier": "com.provenance.core.potator",
-      "projectURL": "https://github.com/alekmaul/potator",
-      "version": "1.1",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/alekmaul/potator/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2000 Norbert Kehrer, 2011-2024 alekmaul"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.supervision"
-      ]
-    },
-    {
       "name": "ProSystem",
       "identifier": "com.provenance.core.prosystem",
       "projectURL": "https://gstanton.github.io/ProSystem1_3/",
@@ -529,24 +183,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.7800"
-      ]
-    },
-    {
-      "name": "Reicast",
-      "identifier": "com.provenance.core.reicast",
-      "projectURL": "https://github.com/reicast/reicast-emulator",
-      "version": "18.04",
-      "license": "BSD-2-Clause",
-      "licenseURL": "https://github.com/reicast/reicast-emulator/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2013-2019 Reicast Contributors"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.dreamcast"
       ]
     },
     {
@@ -584,78 +220,6 @@
       "supportedSystems": [
         "com.provenance.gb",
         "com.provenance.gbc"
-      ]
-    },
-    {
-      "name": "VecX",
-      "identifier": "com.provenance.core.VecX",
-      "projectURL": "https://github.com/libretro/libretro-vecx",
-      "version": "a4ae282",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/libretro/libretro-vecx/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2002 Valavan Manohararajah"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.vectrex"
-      ]
-    },
-    {
-      "name": "Virtual Jaguar",
-      "identifier": "com.provenance.core.jaguar",
-      "projectURL": "https://github.com/libretro/virtualjaguar-libretro",
-      "version": "2.1.2",
-      "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/libretro/virtualjaguar-libretro/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2003-2021 Virtual Jaguar Team, libretro"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.jaguar"
-      ]
-    },
-    {
-      "name": "VisualBoyAdvance",
-      "identifier": "com.provenance.core.visualboyadvance",
-      "projectURL": "https://github.com/visualboyadvance-m/visualboyadvance-m",
-      "version": "2.2.3",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/visualboyadvance-m/visualboyadvance-m/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2004-2024 VBA-M Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.gba"
-      ]
-    },
-    {
-      "name": "Yabause",
-      "identifier": "com.provenance.core.Yabause",
-      "projectURL": "https://yabause.org",
-      "version": "v0.9.15",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/Yabause/yabause/blob/HEAD/yabause/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2002-2024 Yabause Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.saturn"
       ]
     },
     {
@@ -715,24 +279,6 @@
       ]
     },
     {
-      "name": "Fuse",
-      "identifier": "com.provenance.core.Fuse",
-      "projectURL": "http://fuse-emulator.sourceforge.net",
-      "version": "0",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "http://fuse-emulator.sourceforge.net",
-      "copyrightHolder": [
-        "Copyright © 1999-2024 Philip Kendall and Fuse Contributors"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.zxspectrum"
-      ]
-    },
-    {
       "name": "mGBA",
       "identifier": "com.provenance.core.mGBA",
       "projectURL": "https://mgba.io/",
@@ -751,60 +297,6 @@
       ]
     },
     {
-      "name": "MelonDS",
-      "identifier": "com.provenance.core.MelonDS",
-      "projectURL": "https://melonds.kuribo64.net",
-      "version": "0.9.4",
-      "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/melonDS-emu/melonDS/blob/HEAD/LICENSE",
-      "copyrightHolder": [
-        "Copyright © 2016-2024 melonDS Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.ds"
-      ]
-    },
-    {
-      "name": "Opera",
-      "identifier": "com.provenance.core.opera",
-      "projectURL": "https://github.com/libretro/opera-libretro",
-      "version": "1.0.0",
-      "license": "LGPL-2.1-or-later",
-      "licenseURL": "https://github.com/libretro/opera-libretro/blob/HEAD/LICENSES",
-      "copyrightHolder": [
-        "Copyright © 2012-2024 Opera Libretro Contributors"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.3DO"
-      ]
-    },
-    {
-      "name": "PCSX (Rearmed)",
-      "identifier": "com.provenance.core.PCSXRearmed",
-      "projectURL": "https://github.com/notaz/pcsx_rearmed",
-      "version": "r23l",
-      "license": "LGPL-2.1-or-later",
-      "licenseURL": "https://github.com/notaz/pcsx_rearmed/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 1999-2024 PCSX-R Contributors"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.psx"
-      ]
-    },
-    {
       "name": "Snes9x",
       "identifier": "com.provenance.core.snes9x",
       "projectURL": "http://www.snes9x.com",
@@ -813,24 +305,6 @@
       "licenseURL": "https://github.com/snes9xgit/snes9x/blob/HEAD/LICENSE",
       "copyrightHolder": [
         "Copyright © 1996-2024 Snes9x Contributors"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.snes"
-      ]
-    },
-    {
-      "name": "Snesticle",
-      "identifier": "com.provenance.core.snesticle",
-      "projectURL": "https://github.com/iaddis/SNESticle",
-      "version": "1.0",
-      "license": "LicenseRef-SNESticle",
-      "licenseURL": "https://github.com/iaddis/SNESticle",
-      "copyrightHolder": [
-        "Copyright © 1997-2024 icer"
       ],
       "upstreamProjectURL": null,
       "forkNotes": null,

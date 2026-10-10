@@ -19,7 +19,7 @@
 #   * A third-party host has an outage mid-clone (gitlab.com returned HTTP 500 for
 #     Dolphin's bzip2 dependency). Nothing here can fix that, but the build must
 #     fail HERE, naming the submodule, instead of proceeding and dying six minutes
-#     later inside SwiftPM ("Cores/VirtualJaguar/Package.swift doesn't exist").
+#     later inside SwiftPM ("Cores/4DO/Package.swift doesn't exist").
 #
 # Correctness therefore comes from VERIFYING the tree after each attempt rather
 # than from the exit code of `git submodule update`: a partial failure can still
@@ -33,7 +33,7 @@
 # the failure is left cloned — HEAD at the gitlink, so `status` prints it as
 # clean — with a worktree holding nothing but `.git`. That is how the
 # 2026-10-06 build (github.com unreachable for hidapi) reported "Submodule init
-# complete." with an empty Cores/VirtualJaguar.
+# complete." with an empty Cores/4DO.
 #
 # Usage: ci-init-submodules.sh
 #        CI_SUBMODULE_RETRY_DELAY overrides the first retry delay in seconds
@@ -43,7 +43,7 @@ set -uo pipefail
 # Files the build reads from a submodule before any core build script runs, so a
 # missing one fails xcodebuild's package resolution rather than a later step.
 REQUIRED_FILES=(
-    "Cores/VirtualJaguar/Package.swift"
+    "Cores/4DO/Package.swift"
 )
 
 # Prints "<path> (<reason>)" for every submodule that is not fully checked out,
