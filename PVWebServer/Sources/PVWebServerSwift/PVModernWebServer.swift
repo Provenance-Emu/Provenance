@@ -45,6 +45,12 @@ import Hummingbird
 import PVLogging
 import PVPrimitives
 
+/// Cached PROPFIND multistatus body. Finder repeats the same path and depth during a mount.
+private struct PVModernPropfindCacheEntry {
+    let xml: String
+    let storedAt: Date
+}
+
 // MARK: - PVModernWebServer
 
 /// Swift-native HTTP + WebDAV server using Hummingbird 2 / Swift NIO.
@@ -89,6 +95,11 @@ public final class PVModernWebServer: @unchecked Sendable {
 
     private var _isHTTPRunning: Bool = false
     private var _isWebDAVRunning: Bool = false
+
+    /// Short-lived PROPFIND bodies so a mount storm does not re-list the same folder.
+    private let propfindCacheLock = NSLock()
+    private var propfindCache: [String: PVModernPropfindCacheEntry] = [:]
+    private static let propfindCacheTTL: TimeInterval = 2
 
     // MARK: Init
 
@@ -1075,6 +1086,7 @@ private extension PVModernWebServer {
             do {
                 let bytesWritten = try await self.streamRequestBodyToFile(request, destination: target)
                 let fileSize = Int(bytesWritten)
+                self.invalidatePropfindCache()
                 self.postUploadCompletedNotifications(path: target.path, fileSize: fileSize)
                 self.sseBroadcast(
                     type: "upload",
@@ -1101,6 +1113,7 @@ private extension PVModernWebServer {
             }
             do {
                 try FileManager.default.removeItem(at: target)
+                self.invalidatePropfindCache()
                 NotificationCenter.default.post(
                     name: .pvWebServerFileDeleted,
                     object: self,
@@ -1125,6 +1138,7 @@ private extension PVModernWebServer {
             }
             do {
                 try FileManager.default.createDirectory(at: target, withIntermediateDirectories: true)
+                self.invalidatePropfindCache()
                 self.sseBroadcast(type: "folder", path: target.path)
                 return Response(status: .created)
             } catch {
@@ -1246,6 +1260,7 @@ private extension PVModernWebServer {
             if exists {
                 try FileManager.default.removeItem(at: dst)
             }
+            self.invalidatePropfindCache()
             if isMove {
                 try FileManager.default.moveItem(at: src, to: dst)
                 NotificationCenter.default.post(
@@ -1292,20 +1307,33 @@ private extension PVModernWebServer {
             return Response(status: .forbidden)
         }
 
+        // Finder sends `infinity` and sometimes omits Depth. One level matches iFly;
+        // depth 0 stays a single stat so mount probes do not list the ROM folder.
+        let depthHeader: String = {
+            guard let name = HTTPField.Name("Depth"),
+                  let value = request.headers[name] else { return "infinity" }
+            return String(value).lowercased()
+        }()
+        let listingDepth = depthHeader == "0" ? "0" : "1"
+        let cacheKey = "\(target.path)\u{0}\(listingDepth)"
+        if let cached = cachedPROPFIND(for: cacheKey) {
+            return propfindMultistatusResponse(xml: cached)
+        }
+
         var isDirectory: ObjCBool = false
         guard FileManager.default.fileExists(atPath: target.path, isDirectory: &isDirectory) else {
             return Response(status: .notFound)
         }
 
         let responses: [String]
-        if isDirectory.boolValue {
+        if listingDepth == "0" || !isDirectory.boolValue {
+            responses = [propfindResponse(for: target, baseURL: uploadDirectory)]
+        } else {
             let contents = (try? FileManager.default.contentsOfDirectory(at: target,
                 includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey])) ?? []
             responses = ([target] + contents).map { url in
                 propfindResponse(for: url, baseURL: uploadDirectory)
             }
-        } else {
-            responses = [propfindResponse(for: target, baseURL: uploadDirectory)]
         }
 
         let xml = """
@@ -1314,12 +1342,47 @@ private extension PVModernWebServer {
         \(responses.joined(separator: "\n"))
         </D:multistatus>
         """
+        storePROPFIND(xml, for: cacheKey)
+        return propfindMultistatusResponse(xml: xml)
+    }
 
-        return Response(
+    /// 207 Multi-Status body for a PROPFIND.
+    func propfindMultistatusResponse(xml: String) -> Response {
+        Response(
             status: .init(code: 207),
             headers: [.contentType: "application/xml; charset=utf-8"],
             body: .init(byteBuffer: ByteBuffer(string: xml))
         )
+    }
+
+    /// Returns a cached multistatus body when it is still inside `propfindCacheTTL`.
+    func cachedPROPFIND(for key: String) -> String? {
+        propfindCacheLock.lock()
+        defer { propfindCacheLock.unlock() }
+        guard let entry = propfindCache[key] else { return nil }
+        guard Date().timeIntervalSince(entry.storedAt) < Self.propfindCacheTTL else {
+            propfindCache.removeValue(forKey: key)
+            return nil
+        }
+        return entry.xml
+    }
+
+    /// Remember a PROPFIND body and drop entries that have already expired.
+    func storePROPFIND(_ xml: String, for key: String) {
+        let now = Date()
+        propfindCacheLock.lock()
+        propfindCache = propfindCache.filter {
+            now.timeIntervalSince($0.value.storedAt) < Self.propfindCacheTTL
+        }
+        propfindCache[key] = PVModernPropfindCacheEntry(xml: xml, storedAt: now)
+        propfindCacheLock.unlock()
+    }
+
+    /// Drop cached listings after a write so Finder does not see a stale tree.
+    func invalidatePropfindCache() {
+        propfindCacheLock.lock()
+        propfindCache.removeAll()
+        propfindCacheLock.unlock()
     }
 
     func propfindResponse(for url: URL, baseURL: URL) -> String {

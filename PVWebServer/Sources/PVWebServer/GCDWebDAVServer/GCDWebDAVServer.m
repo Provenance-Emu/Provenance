@@ -499,14 +499,12 @@ static inline xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name
 }
 
 - (GCDWebServerResponse*)performPROPFIND:(GCDWebServerDataRequest*)request {
-  NSInteger depth;
+  // Finder sends `Depth: infinity` and sometimes omits Depth. A 400 makes
+  // WebDAVFS retry until the mount times out. Answer one level, same as iFly.
+  NSInteger depth = 1;
   NSString* depthHeader = [request.headers objectForKey:@"Depth"];
   if ([depthHeader isEqualToString:@"0"]) {
     depth = 0;
-  } else if ([depthHeader isEqualToString:@"1"]) {
-    depth = 1;
-  } else {
-    return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_BadRequest message:@"Unsupported 'Depth' header: %@", depthHeader];  // TODO: Return 403 / propfind-finite-depth for "infinity" depth
   }
 
   DAVProperties properties = 0;
@@ -563,7 +561,9 @@ static inline xmlNodePtr _XMLChildWithName(xmlNodePtr child, const xmlChar* name
   }
 
   NSArray* items = nil;
-  if (isDirectory) {
+  // Depth 0 is a single stat. Listing the directory here is what stalls Finder's
+  // first mount probes on a large ROM folder.
+  if (isDirectory && depth == 1) {
     NSError* error = nil;
     items = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:absolutePath error:&error];
     if (items == nil) {
