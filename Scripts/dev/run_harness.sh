@@ -1,6 +1,8 @@
 #!/bin/bash
 # Builds a Tuist focused app for the iOS Simulator, installs it on the booted simulator, runs
 # the dev harness against a ROM and copies its outputs to build/harness/<Scheme>/.
+# ROMs: Scripts/dev/make_harness_rom.py <out.a26|out.gba> writes a synthetic loop ROM (GBA runs on
+# mGBA: core com.provenance.core.mGBA; 2600 on Stella: com.provenance.core.stella).
 # Usage: Scripts/dev/run_harness.sh <rom path> [ui|azahar] [frames] [core identifier]
 # Exit: 0 success, 1 harness error (error.txt) or missing outputs, 2 usage/setup error.
 # Provenance-Dev-Thin is device-only: buildbot libretro dylibs are iOS-platform binaries and
