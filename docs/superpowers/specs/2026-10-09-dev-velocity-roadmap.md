@@ -22,7 +22,8 @@ Shipped:
   Stella VFS regression (`16da1e4c40`).
 - `Scripts/cores/build_slice.py`, a content-keyed slice cache that both core aggregates and CI use.
 - The `dev-workspace.yml` smoke build.
-- 32 retired native cores pruned behind `RetiredCoreMigration`.
+- 27 retired native cores pruned behind `RetiredCoreMigration` (#3731); Atari800, Bliss,
+  CrabEMU, Gambatte and VBA-M kept as deprecated natives (`PVCore.deprecatedCores`).
 
 How-to: CLAUDE.md "Dev workspace (Tuist)" and the `fast-iteration` skill.
 
