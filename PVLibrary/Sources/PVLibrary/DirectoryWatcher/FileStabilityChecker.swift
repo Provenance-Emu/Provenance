@@ -8,6 +8,22 @@
 import Foundation
 import PVLogging
 
+/// Schedules `FileStabilityChecker`'s quiesce and timeout timers. Production
+/// uses wall-clock dispatch; tests substitute a manual clock so timing does
+/// not depend on how loaded the machine is.
+protocol StabilityTimerScheduler: Sendable {
+    /// Runs `work` on `queue` once `interval` seconds have elapsed.
+    /// A cancelled `work` item must not run.
+    func schedule(after interval: TimeInterval, on queue: DispatchQueue, _ work: DispatchWorkItem)
+}
+
+/// Wall-clock scheduler backed by `DispatchQueue.asyncAfter`.
+struct DispatchStabilityTimerScheduler: StabilityTimerScheduler {
+    func schedule(after interval: TimeInterval, on queue: DispatchQueue, _ work: DispatchWorkItem) {
+        queue.asyncAfter(deadline: .now() + interval, execute: work)
+    }
+}
+
 /// Uses kqueue-based `DispatchSource` monitoring to determine when a file
 /// has finished being written. This replaces fixed-interval polling delays
 /// with event-driven detection: a dispatch source watches for `.write`,
@@ -60,6 +76,8 @@ enum FileStabilityChecker {
     ///     considered stable. Defaults to 0.3 s.
     ///   - timeout: Maximum seconds to wait before giving up.
     ///     Defaults to 10 s.
+    ///   - scheduler: Runs the quiesce and timeout timers. Defaults to
+    ///     wall-clock dispatch.
     /// - Returns: `true` if the file became stable within `timeout`.
     ///   `false` if the timeout was reached or the enclosing `Task`
     ///   was cancelled. When the file descriptor cannot be opened
@@ -68,7 +86,8 @@ enum FileStabilityChecker {
     /// - Note: See `FileStabilityCheckerTests` for coverage of immediate
     ///   stability, continuous-write timeout, task cancellation, and
     ///   nonexistent-file scenarios.
-    static func waitForStability(at url: URL, quiesceInterval: TimeInterval = 0.3, timeout: TimeInterval = 10.0) async -> Bool {
+    static func waitForStability(at url: URL, quiesceInterval: TimeInterval = 0.3, timeout: TimeInterval = 10.0,
+                                 scheduler: StabilityTimerScheduler = DispatchStabilityTimerScheduler()) async -> Bool {
         let fd = open(url.path, O_EVTONLY)
         guard fd >= 0 else {
             let code = errno
@@ -125,10 +144,7 @@ enum FileStabilityChecker {
                             finish(true)
                         }
                         stabilityTimer = timer
-                        queue.asyncAfter(
-                            deadline: .now() + quiesceInterval,
-                            execute: timer
-                        )
+                        scheduler.schedule(after: quiesceInterval, on: queue, timer)
                     }
 
                     source.setEventHandler {
@@ -145,7 +161,7 @@ enum FileStabilityChecker {
                         finish(false)
                     }
                     timeoutTimer = hardTimeout
-                    queue.asyncAfter(deadline: .now() + timeout, execute: hardTimeout)
+                    scheduler.schedule(after: timeout, on: queue, hardTimeout)
 
                     source.resume()
                     scheduleQuiesceTimer()
