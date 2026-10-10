@@ -121,6 +121,12 @@ public extension PVEmulatorConfiguration {
         core.disabled || PVCore.activeRetiredCoreReplacements[core.identifier] != nil
     }
 
+    /// A core row is stale when no plist names it, except a retired core's: that row stays
+    /// (disabled) so save states that were not moved to the replacement still name a core.
+    internal static func isStaleCore(_ identifier: String, validIdentifiers: Set<String>) -> Bool {
+        !validIdentifiers.contains(identifier) && PVCore.retiredCores[identifier] == nil
+    }
+
     /// Expands a plist into blueprint rows for the core plus nested sub-cores, applying the same skip rules as ``registerCore(_:)``.
     private class func collectBlueprints(from plist: EmulatorCoreInfoPlist, unsupportedCoresAvailable: Bool) -> [CoreImportBlueprint] {
         var rows: [CoreImportBlueprint] = []
@@ -292,7 +298,7 @@ public extension PVEmulatorConfiguration {
         // runs that extracted garbage metadata from Mach-O __cstring sections
         // (e.g. "%d.mcr", ".mv" appearing as core names).
         let allCores = database.all(PVCore.self).toArray()
-        let staleCores = allCores.filter { !validIdentifiers.contains($0.identifier) }
+        let staleCores = allCores.filter { isStaleCore($0.identifier, validIdentifiers: validIdentifiers) }
         if !staleCores.isEmpty {
             ILOG("Pruning \(staleCores.count) stale PVCore entries: \(staleCores.map(\.identifier).joined(separator: ", "))")
             do {
