@@ -11,10 +11,12 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import PVFileSystem
 import PVThemes
 import Combine
 import PVUIBase
 import PVWebServer
+import UniformTypeIdentifiers
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -93,6 +95,11 @@ struct HomeView: SwiftUI.View {
     @State private var showArtworkSourceAlert = false
 
     @State private var discSelectionAlert: DiscSelectionAlert?
+
+    @State private var showPatchManager = false
+    @State private var patchManagerGame: PVGame?
+    @State private var showPatchImportPicker = false
+    @State private var patchImportGame: PVGame?
 
     @State private var searchText = ""
 
@@ -583,6 +590,29 @@ struct HomeView: SwiftUI.View {
                 }
             }
         )
+        .sheet(isPresented: $showPatchManager) {
+            NavigationStack {
+                if let game = patchManagerGame, !game.isInvalidated {
+                    PatchManagerView(gameMD5: game.md5Hash, gameTitle: game.title)
+                } else {
+                    Text("Game unavailable").padding()
+                }
+            }
+        }
+#if !os(tvOS)
+        .fileImporter(
+            isPresented: $showPatchImportPicker,
+            allowedContentTypes: [.data, .item],
+            allowsMultipleSelection: false
+        ) { result in
+            let game = patchImportGame
+            patchImportGame = nil
+            guard let game, case .success(let urls) = result, let url = urls.first else { return }
+            Task { @MainActor in
+                await importPatch(url, for: game)
+            }
+        }
+#endif
         .onReceive(LibraryNavigator.shared.$pendingAction) { _ in
             // Hot-launch / foreground Siri handoff: ConsolesWrapperView switches the
             // tab in the SAME render pass.  Delay the search population by one tab-
@@ -1468,6 +1498,18 @@ extension HomeView: GameContextMenuDelegate {
         presentDiscSelectionAlert(for: game, rootDelegate: rootDelegate)
     }
 
+    func gameContextMenu(_ menu: GameContextMenu, didRequestImportPatchFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        patchImportGame = game.isFrozen ? game : game.freeze()
+        showPatchImportPicker = true
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame) {
+        guard !game.isInvalidated else { return }
+        patchManagerGame = game.isFrozen ? game : game.freeze()
+        showPatchManager = true
+    }
+
     private func presentDiscSelectionAlert(for game: PVGame, rootDelegate: PVRootDelegate?) {
         let discs = game.relatedFiles.toArray()
         let alertDiscs: [DiscSelectionAlert.Disc] = discs.compactMap { (disc: PVFile?) -> DiscSelectionAlert.Disc? in
@@ -1482,6 +1524,27 @@ extension HomeView: GameContextMenuDelegate {
             game: game,
             discs: alertDiscs
         )
+    }
+
+    @MainActor
+    private func importPatch(_ url: URL, for game: PVGame) async {
+        let accessed = url.startAccessingSecurityScopedResource()
+        defer { if accessed { url.stopAccessingSecurityScopedResource() } }
+        do {
+            let dir = Paths.patchesPath
+            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+            var dest = dir.appendingPathComponent(url.lastPathComponent)
+            if FileManager.default.fileExists(atPath: dest.path) {
+                let stem = dest.deletingPathExtension().lastPathComponent
+                let ext = dest.pathExtension
+                dest = dir.appendingPathComponent("\(stem)-\(UUID().uuidString.prefix(8)).\(ext)")
+            }
+            try FileManager.default.copyItem(at: url, to: dest)
+            _ = try await PatchRepository.shared.importPatch(at: dest, preferredGame: game, autoMatch: false)
+            rootDelegate?.showMessage("Imported patch for \(game.title).", title: "Patch Imported")
+        } catch {
+            rootDelegate?.showMessage("Patch import failed: \(error.localizedDescription)", title: "Import Error")
+        }
     }
 }
 

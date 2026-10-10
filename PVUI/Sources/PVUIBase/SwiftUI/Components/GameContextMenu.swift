@@ -143,6 +143,50 @@ private struct GameContextMenuItems: View {
                     }
                 }
 
+                // Patches submenu — modeled after disc selection; base games only.
+                if !game.isPatchVariant {
+                    let linkedPatches = Array(
+                        PatchRepository.shared.patches(forGameMD5: game.md5Hash)
+                            .map { $0.isFrozen ? $0 : $0.freeze() }
+                    )
+                    Menu {
+                        Button {
+                            contextMenuDelegate?.gameContextMenu(menu, didRequestPlayOriginalFor: game)
+                        } label: {
+                            Label("Play Original", systemImage: "play.circle")
+                        }
+                        if !linkedPatches.isEmpty {
+                            Divider()
+                            ForEach(linkedPatches, id: \.id) { patch in
+                                Button {
+                                    contextMenuDelegate?.gameContextMenu(menu, didRequestPlayPatch: patch, for: game)
+                                } label: {
+                                    Label(
+                                        patch.isDefaultLaunch ? "\(patch.displayTitle) ★" : patch.displayTitle,
+                                        systemImage: "bandage"
+                                    )
+                                }
+                            }
+                            Divider()
+                        }
+                        Button {
+                            contextMenuDelegate?.gameContextMenu(menu, didRequestImportPatchFor: game)
+                        } label: {
+                            Label("Import Patch…", systemImage: "square.and.arrow.down")
+                        }
+                        Button {
+                            contextMenuDelegate?.gameContextMenu(menu, didRequestManagePatchesFor: game)
+                        } label: {
+                            Label("Manage Patches…", systemImage: "list.bullet.rectangle")
+                        }
+                    } label: {
+                        Label(
+                            linkedPatches.isEmpty ? "Patches" : "Patches (\(linkedPatches.count))",
+                            systemImage: "bandage"
+                        )
+                    }
+                }
+
                 // Transfer Pak configuration — only shown for N64 games that are known to
                 // support the Transfer Pak accessory (e.g. Pokémon Stadium, Mario Tennis).
                 // Showing the option for all N64 games is confusing because most titles

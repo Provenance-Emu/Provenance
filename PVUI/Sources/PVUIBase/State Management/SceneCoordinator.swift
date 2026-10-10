@@ -271,15 +271,39 @@ public class SceneCoordinator: ObservableObject {
 
     /// Launch a specific game with error handling and sync validation
     public func launchGame(_ game: PVGame) {
-        if deferLaunchIfBusy({ [weak self] in self?.launchGame(game) }) { return }
-        ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id))")
+        launchGame(game, core: nil, bypassDefaultPatch: false)
+    }
+
+    /// Always launch the original ROM, ignoring any default patch.
+    public func launchOriginalGame(_ game: PVGame, core: PVCore? = nil) {
+        launchGame(game, core: core, bypassDefaultPatch: true)
+    }
+
+    /// Prepare and launch a matched patch variant with isolated identity.
+    public func launchPatch(_ patch: PVPatch, core: PVCore? = nil) {
+        if deferLaunchIfBusy({ [weak self] in self?.launchPatch(patch, core: core) }) { return }
+        ILOG("SceneCoordinator: Launching patch: \(patch.displayTitle)")
+
+        let launchID = launchGate.begin()
+        let frozenPatch = patch.isFrozen ? patch : patch.freeze()
+        let frozenCore = core?.isFrozen == true ? core : core?.freeze()
+        activeLaunchTask = Task { @MainActor [weak self] in
+            defer { self?.finishLaunch(launchID) }
+            await self?.launchPatchWithPreparation(frozenPatch, core: frozenCore)
+        }
+        scheduleActiveLaunchTimeout()
+    }
+
+    /// Launch a game with optional core and optional default-patch bypass.
+    public func launchGame(_ game: PVGame, core: PVCore?, bypassDefaultPatch: Bool) {
+        if deferLaunchIfBusy({ [weak self] in self?.launchGame(game, core: core, bypassDefaultPatch: bypassDefaultPatch) }) { return }
+        ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id)) bypassDefaultPatch=\(bypassDefaultPatch)")
 
         let launchID = launchGate.begin()
         activeLaunchTask = Task { @MainActor [weak self] in
             defer { self?.finishLaunch(launchID) }
-            await self?.launchGameWithValidation(game)
+            await self?.launchGameWithValidation(game, core: core, bypassDefaultPatch: bypassDefaultPatch)
         }
-        // Safety net: if the launch hangs, clear the task so taps aren't permanently blocked
         scheduleActiveLaunchTimeout()
     }
 
@@ -306,15 +330,7 @@ public class SceneCoordinator: ObservableObject {
 
     /// Launch a game with optional core (bypasses core selection if core is provided)
     public func launchGame(_ game: PVGame, core: PVCore?) {
-        if deferLaunchIfBusy({ [weak self] in self?.launchGame(game, core: core) }) { return }
-        ILOG("SceneCoordinator: Launching game: \(game.title) (ID: \(game.id)) with core: \(core?.projectName ?? "auto")")
-
-        let launchID = launchGate.begin()
-        activeLaunchTask = Task { @MainActor [weak self] in
-            defer { self?.finishLaunch(launchID) }
-            await self?.launchGameWithValidation(game, core: core)
-        }
-        scheduleActiveLaunchTimeout()
+        launchGame(game, core: core, bypassDefaultPatch: false)
     }
 
     /// Launch a game with disc path (for multi-disc games)
@@ -335,11 +351,19 @@ public class SceneCoordinator: ObservableObject {
     }
 
     /// Launch game with sync validation
-    private func launchGameWithValidation(_ game: PVGame, core: PVCore? = nil) async {
+    private func launchGameWithValidation(_ game: PVGame, core: PVCore? = nil, bypassDefaultPatch: Bool = false) async {
         // Pause background sync so on-demand downloads get full CloudKit bandwidth
         // and background BIOS processing doesn't interfere with targeted downloads.
         CloudSyncManager.shared.pause(reason: .gameLaunch)
         defer { CloudSyncManager.shared.resume(reason: .gameLaunch) }
+
+        // Default patch redirect — only for base games, never for already-patched variants.
+        if !bypassDefaultPatch, !game.isPatchVariant,
+           let defaultPatch = PatchRepository.shared.defaultPatch(forGameMD5: game.md5Hash) {
+            ILOG("SceneCoordinator: Redirecting launch to default patch \(defaultPatch.displayTitle)")
+            await launchPatchWithPreparation(defaultPatch, core: core)
+            return
+        }
 
         guard let system = game.system else {
             showGameLaunchError(
@@ -1613,6 +1637,43 @@ public class SceneCoordinator: ObservableObject {
     /// `actionButtonTitle`/`action` let a caller attach one recovery affordance
     /// (e.g. "BIOS Guide") without every error path having to know about the
     /// alert plumbing.
+    /// Apply/reuse the patch cache off the critical path, then launch the managed variant.
+    private func launchPatchWithPreparation(_ patch: PVPatch, core: PVCore?) async {
+        syncStatusManager.show(
+            gameTitle: patch.displayTitle,
+            statusMessage: "Preparing patched ROM…",
+            onCancel: { [weak self] in
+                self?.activeLaunchTask?.cancel()
+                self?.syncStatusManager.hide()
+            }
+        )
+
+        do {
+            let variant = try await PatchRepository.shared.prepareForLaunch(patch: patch) { [weak self] progress in
+                Task { @MainActor in
+                    let message = progress.status.isEmpty
+                        ? String(format: "Patching… %.0f%%", progress.fractionCompleted * 100)
+                        : progress.status
+                    self?.syncStatusManager.update(statusMessage: message)
+                }
+            }
+            guard !Task.isCancelled else {
+                syncStatusManager.hide()
+                return
+            }
+            syncStatusManager.hide()
+            // Launch the prepared variant with isolated identity (saves/cheats/achievements).
+            await launchGameWithValidation(variant, core: core, bypassDefaultPatch: true)
+        } catch {
+            syncStatusManager.hide()
+            ELOG("SceneCoordinator: Patch launch failed — \(error.localizedDescription)")
+            showGameLaunchError(
+                title: "Cannot Apply Patch",
+                message: error.localizedDescription
+            )
+        }
+    }
+
     private func showGameLaunchError(title: String,
                                      message: String,
                                      actionButtonTitle: String? = nil,

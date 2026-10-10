@@ -22,6 +22,10 @@ public protocol GameContextMenuDelegate {
     func gameContextMenu(_ menu: GameContextMenu, didRequestShowArtworkSearchFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestChooseArtworkSourceFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestPlayOriginalFor game: PVGame)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestPlayPatch patch: PVPatch, for game: PVGame)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestImportPatchFor game: PVGame)
+    func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestDownloadFromCloudFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestSkinSelectionFor game: PVGame)
     func gameContextMenu(_ menu: GameContextMenu, didRequestResetSkinFor game: PVGame)
@@ -72,6 +76,22 @@ public extension GameContextMenuDelegate {
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestDiscSelectionFor game: PVGame) {
         DLOG("Default implementation: didRequestDiscSelectionFor not implemented")
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestPlayOriginalFor game: PVGame) {
+        SceneCoordinator.shared.launchOriginalGame(game)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestPlayPatch patch: PVPatch, for game: PVGame) {
+        SceneCoordinator.shared.launchPatch(patch)
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestImportPatchFor game: PVGame) {
+        DLOG("Default implementation: didRequestImportPatchFor not implemented")
+    }
+
+    func gameContextMenu(_ menu: GameContextMenu, didRequestManagePatchesFor game: PVGame) {
+        DLOG("Default implementation: didRequestManagePatchesFor not implemented")
     }
 
     func gameContextMenu(_ menu: GameContextMenu, didRequestDownloadFromCloudFor game: PVGame) {

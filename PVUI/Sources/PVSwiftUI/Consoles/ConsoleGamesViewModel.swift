@@ -68,6 +68,13 @@ class ConsoleGamesViewModel: ObservableObject {
     @Published var showControllerPakSlots = false
     @Published var controllerPakGame: PVGame?
 
+    /// Patch manager / import state
+    @Published var showPatchManager = false
+    @Published var patchManagerGame: PVGame?
+    @Published var showPatchImportPicker = false
+    @Published var patchImportGame: PVGame?
+    @Published var patchStatusMessage: String?
+
     /// Save Export share sheet state
     @Published var showSaveExportShareSheet = false
     @Published var saveExportURL: URL? = nil
@@ -392,7 +399,7 @@ private extension ConsoleGamesViewModel {
                 self.modelsRealm = realm
 
                 let games = realm.objects(PVGame.self)
-                    .filter("systemIdentifier == %@", self.consoleIdentifier)
+                    .filter("systemIdentifier == %@ AND isHiddenPatchVariant == false", self.consoleIdentifier)
 
                 self.gamesToken = games.observe(keyPaths: GameCellModel.observedKeyPaths, on: self.modelsQueue) { [weak self] change in
                     autoreleasepool {
