@@ -1,24 +1,6 @@
 {
   "entries": [
     {
-      "name": "4DO/FreeDO",
-      "identifier": "com.provenance.core.FreeDO",
-      "projectURL": "https://github.com/OpenEmu/4DO-Core",
-      "version": "0",
-      "license": "GPL-2.0-only",
-      "licenseURL": "https://github.com/OpenEmu/4DO-Core/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2011-2016 OpenEmu Team"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.3DO"
-      ]
-    },
-    {
       "name": "Atari 800",
       "identifier": "com.provenance.core.atari800",
       "projectURL": "https://atari800.github.io",
@@ -71,44 +53,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.psx"
-      ]
-    },
-    {
-      "name": "Bliss",
-      "identifier": "com.provenance.core.bliss",
-      "projectURL": "https://github.com/OpenEmu/Bliss-Core",
-      "version": "2.1.2",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "https://github.com/OpenEmu/Bliss-Core/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2003-2016 OpenEmu Team, Kyle Davis"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.intellivision"
-      ]
-    },
-    {
-      "name": "CrabEMU",
-      "identifier": "com.provenance.core.crabemu",
-      "projectURL": "http://crabemu.sourceforge.net",
-      "version": "0.2.0",
-      "license": "GPL-2.0-or-later",
-      "licenseURL": "http://crabemu.sourceforge.net",
-      "copyrightHolder": [
-        "Copyright © 2007-2014 Lawrence Sebald"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.sms",
-        "com.provenance.sg1000",
-        "com.provenance.colecovision"
       ]
     },
     {
@@ -406,24 +350,6 @@
       ]
     },
     {
-      "name": "O2EM",
-      "identifier": "com.provenance.core.odyssey2",
-      "projectURL": "https://github.com/OpenEmu/O2EM-Core",
-      "version": "1.18.1",
-      "license": "Artistic-2.0",
-      "licenseURL": "https://github.com/OpenEmu/O2EM-Core/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 1997-2016 OpenEmu Team, Daniel Boris, Andre de la Rocha"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.odyssey2"
-      ]
-    },
-    {
       "name": "PPSSPP",
       "identifier": "com.provenance.core.ppsspp",
       "projectURL": "https://github.com/hrydgard/ppsspp.git",
@@ -602,24 +528,6 @@
       "isRetroArch": false,
       "supportedSystems": [
         "com.provenance.vectrex"
-      ]
-    },
-    {
-      "name": "Virtual Jaguar",
-      "identifier": "com.provenance.core.jaguar",
-      "projectURL": "https://github.com/libretro/virtualjaguar-libretro",
-      "version": "2.1.2",
-      "license": "GPL-3.0-or-later",
-      "licenseURL": "https://github.com/libretro/virtualjaguar-libretro/blob/HEAD/COPYING",
-      "copyrightHolder": [
-        "Copyright © 2003-2021 Virtual Jaguar Team, libretro"
-      ],
-      "upstreamProjectURL": null,
-      "forkNotes": null,
-      "appStoreCompatible": null,
-      "isRetroArch": false,
-      "supportedSystems": [
-        "com.provenance.jaguar"
       ]
     },
     {
