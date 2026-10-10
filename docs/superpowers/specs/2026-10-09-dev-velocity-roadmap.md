@@ -74,7 +74,10 @@ Scope for the spec:
 
 ## Related, already open
 
-- Console-style overlays: batches 1–3 bound every system; follow-ups are a device palette
-  pass, the 2600 paddle variant, snapshot tests, and deleting the legacy default skin.
+- Console-style overlays: batches 1–3 bound every system; the legacy default skin and its
+  setting are removed. Follow-ups: device palette pass, snapshot tests.
+- **Session D — unified input surface** (`2026-10-09-unified-input-surface-design.md`):
+  keyboard drawer, pointer surface (mouse + light gun), media/accessory actions, output
+  state pills, external-display policy. Brainstorm the open questions in its §6 first.
 - Azahar: scaling-mode hook (`EmulatorCoreScalingModeApplying`), Apple Silicon FastInterp
   work (memory: azahar-apple-silicon-perf-followup), upstream PRs for the fork patches.
