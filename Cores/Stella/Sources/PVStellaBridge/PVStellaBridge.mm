@@ -42,6 +42,9 @@
 #import "PVStellaBridge.h"
 
 #include <atomic>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <os/lock.h>
 #import <CommonCrypto/CommonDigest.h>
 
@@ -501,6 +504,167 @@ static int16_t input_state_callback(unsigned port, unsigned device, unsigned ind
     return value;
 }
 
+// MARK: - Minimal libretro VFS (v3, POSIX)
+// libstella's FSNodeLIBRETRO answers isFile()/exists()/read/write through the frontend's VFS and
+// treats every path as "not a file" without one, so OSystem::openROM rejected every ROM.
+
+static const unsigned kPVStellaVFSVersion = 3;
+
+struct retro_vfs_file_handle {
+    FILE *fp;
+    char *path;
+};
+
+struct retro_vfs_dir_handle {
+    DIR *dirp;
+    struct dirent *entry;
+    char *dirPath;
+    bool includeHidden;
+};
+
+static const char *pvstella_vfs_get_path(struct retro_vfs_file_handle *stream) {
+    return stream ? stream->path : NULL;
+}
+
+static struct retro_vfs_file_handle *pvstella_vfs_open(const char *path, unsigned mode, unsigned hints) {
+    (void)hints;
+    if (!path) return NULL;
+    const bool update = (mode & RETRO_VFS_FILE_ACCESS_UPDATE_EXISTING) != 0;
+    const char *fmode = "rb";
+    if ((mode & RETRO_VFS_FILE_ACCESS_READ_WRITE) == RETRO_VFS_FILE_ACCESS_READ_WRITE) {
+        fmode = update ? "r+b" : "w+b";
+    } else if (mode & RETRO_VFS_FILE_ACCESS_WRITE) {
+        fmode = update ? "r+b" : "wb";
+    }
+    FILE *fp = fopen(path, fmode);
+    if (!fp) return NULL;
+    struct retro_vfs_file_handle *handle = (struct retro_vfs_file_handle *)calloc(1, sizeof(*handle));
+    handle->fp = fp;
+    handle->path = strdup(path);
+    return handle;
+}
+
+static int pvstella_vfs_close(struct retro_vfs_file_handle *stream) {
+    if (!stream) return -1;
+    const int result = fclose(stream->fp) == 0 ? 0 : -1;
+    free(stream->path);
+    free(stream);
+    return result;
+}
+
+static int64_t pvstella_vfs_size(struct retro_vfs_file_handle *stream) {
+    if (!stream) return -1;
+    struct stat st;
+    if (fflush(stream->fp) != 0 || fstat(fileno(stream->fp), &st) != 0) return -1;
+    return (int64_t)st.st_size;
+}
+
+static int64_t pvstella_vfs_tell(struct retro_vfs_file_handle *stream) {
+    return stream ? (int64_t)ftello(stream->fp) : -1;
+}
+
+static int64_t pvstella_vfs_seek(struct retro_vfs_file_handle *stream, int64_t offset, int position) {
+    if (!stream) return -1;
+    int whence = SEEK_SET;
+    switch (position) {
+        case RETRO_VFS_SEEK_POSITION_START:   whence = SEEK_SET; break;
+        case RETRO_VFS_SEEK_POSITION_CURRENT: whence = SEEK_CUR; break;
+        case RETRO_VFS_SEEK_POSITION_END:     whence = SEEK_END; break;
+        default: return -1;
+    }
+    return fseeko(stream->fp, (off_t)offset, whence) == 0 ? 0 : -1;
+}
+
+static int64_t pvstella_vfs_read(struct retro_vfs_file_handle *stream, void *buffer, uint64_t length) {
+    return stream ? (int64_t)fread(buffer, 1, (size_t)length, stream->fp) : -1;
+}
+
+static int64_t pvstella_vfs_write(struct retro_vfs_file_handle *stream, const void *buffer, uint64_t length) {
+    return stream ? (int64_t)fwrite(buffer, 1, (size_t)length, stream->fp) : -1;
+}
+
+static int pvstella_vfs_flush(struct retro_vfs_file_handle *stream) {
+    return stream && fflush(stream->fp) == 0 ? 0 : -1;
+}
+
+static int pvstella_vfs_remove(const char *path) {
+    return path && remove(path) == 0 ? 0 : -1;
+}
+
+static int pvstella_vfs_rename(const char *oldPath, const char *newPath) {
+    return oldPath && newPath && rename(oldPath, newPath) == 0 ? 0 : -1;
+}
+
+static int64_t pvstella_vfs_truncate(struct retro_vfs_file_handle *stream, int64_t length) {
+    if (!stream || fflush(stream->fp) != 0) return -1;
+    return ftruncate(fileno(stream->fp), (off_t)length) == 0 ? 0 : -1;
+}
+
+static int pvstella_vfs_stat(const char *path, int32_t *size) {
+    struct stat st;
+    if (!path || stat(path, &st) != 0) return 0;
+    int flags = RETRO_VFS_STAT_IS_VALID;
+    if (S_ISDIR(st.st_mode)) flags |= RETRO_VFS_STAT_IS_DIRECTORY;
+    if (S_ISCHR(st.st_mode)) flags |= RETRO_VFS_STAT_IS_CHARACTER_SPECIAL;
+    if (size) *size = (int32_t)st.st_size;
+    return flags;
+}
+
+static int pvstella_vfs_mkdir(const char *dir) {
+    if (!dir) return -1;
+    if (mkdir(dir, 0755) == 0) return 0;
+    return errno == EEXIST ? -2 : -1;
+}
+
+static struct retro_vfs_dir_handle *pvstella_vfs_opendir(const char *dir, bool includeHidden) {
+    DIR *dirp = dir ? opendir(dir) : NULL;
+    if (!dirp) return NULL;
+    struct retro_vfs_dir_handle *handle = (struct retro_vfs_dir_handle *)calloc(1, sizeof(*handle));
+    handle->dirp = dirp;
+    handle->dirPath = strdup(dir);
+    handle->includeHidden = includeHidden;
+    return handle;
+}
+
+static bool pvstella_vfs_readdir(struct retro_vfs_dir_handle *dirstream) {
+    if (!dirstream) return false;
+    while ((dirstream->entry = readdir(dirstream->dirp)) != NULL) {
+        if (dirstream->includeHidden || dirstream->entry->d_name[0] != '.') return true;
+    }
+    return false;
+}
+
+static const char *pvstella_vfs_dirent_get_name(struct retro_vfs_dir_handle *dirstream) {
+    return dirstream && dirstream->entry ? dirstream->entry->d_name : NULL;
+}
+
+static bool pvstella_vfs_dirent_is_dir(struct retro_vfs_dir_handle *dirstream) {
+    if (!dirstream || !dirstream->entry) return false;
+    if (dirstream->entry->d_type == DT_DIR) return true;
+    if (dirstream->entry->d_type != DT_UNKNOWN) return false;
+    char fullPath[PATH_MAX];
+    snprintf(fullPath, sizeof(fullPath), "%s/%s", dirstream->dirPath, dirstream->entry->d_name);
+    struct stat st;
+    return stat(fullPath, &st) == 0 && S_ISDIR(st.st_mode);
+}
+
+static int pvstella_vfs_closedir(struct retro_vfs_dir_handle *dirstream) {
+    if (!dirstream) return -1;
+    const int result = closedir(dirstream->dirp) == 0 ? 0 : -1;
+    free(dirstream->dirPath);
+    free(dirstream);
+    return result;
+}
+
+static struct retro_vfs_interface sPVStellaVFS = {
+    pvstella_vfs_get_path, pvstella_vfs_open, pvstella_vfs_close, pvstella_vfs_size,
+    pvstella_vfs_tell, pvstella_vfs_seek, pvstella_vfs_read, pvstella_vfs_write,
+    pvstella_vfs_flush, pvstella_vfs_remove, pvstella_vfs_rename,
+    pvstella_vfs_truncate,
+    pvstella_vfs_stat, pvstella_vfs_mkdir, pvstella_vfs_opendir, pvstella_vfs_readdir,
+    pvstella_vfs_dirent_get_name, pvstella_vfs_dirent_is_dir, pvstella_vfs_closedir,
+};
+
 static bool environment_callback(unsigned cmd, void *data) {
     __strong PVStellaBridge *strongCurrent = _current;
     
@@ -510,6 +674,13 @@ static bool environment_callback(unsigned cmd, void *data) {
             
             *(const char **)data = [appSupportPath UTF8String];
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
+            return true;
+        }
+        case RETRO_ENVIRONMENT_GET_VFS_INTERFACE: {
+            struct retro_vfs_interface_info *info = (struct retro_vfs_interface_info *)data;
+            if (info->required_interface_version > kPVStellaVFSVersion) return false;
+            info->required_interface_version = kPVStellaVFSVersion;
+            info->iface = &sPVStellaVFS;
             return true;
         }
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
