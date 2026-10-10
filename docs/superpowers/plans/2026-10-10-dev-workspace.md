@@ -1432,7 +1432,7 @@ git -c commit.gpgsign=false commit -m "build: add Provenance-Dev-Azahar and make
 
 ---
 
-> **Batch 6 is an outline (batches 3–5 are detailed below).** Each task gives its files, interfaces, model tier, and what it does and how it is verified. Full step-by-step code is written when that batch starts. The facts below were verified against the tree on 2026-10-10.
+> **All batches are detailed.** Batches 3–6 were expanded from outlines as each batch started; facts were re-verified against the tree at that point.
 
 # Batch 3 — Core harness (develop)
 
@@ -4700,11 +4700,279 @@ The PR merges only after both legs pass.
 
 # Batch 6 — Docs (develop)
 
-### Task 21: CLAUDE.md "Dev workspace", fast-iteration skill, roadmap  *(model: sonnet)*
+### Task 21: CLAUDE.md "Dev workspace", fast-iteration skill, roadmap, taxonomy  *(model: sonnet)*
 
-**Files:** `CLAUDE.md` (new "Dev workspace" section: `make dev` / `dev-generate`, the three targets, the harness arguments, the slice cache and `--print-key`, the helper location `Tuist/ProjectDescriptionHelpers`, the `.xcodeproj` link mechanism, the pruning rule), `.claude/skills/fast-iteration/SKILL.md` (four recipes: add a focused target, build one core slice, run the harness against a ROM, add a libretro dylib to a target), `docs/superpowers/specs/2026-10-09-dev-velocity-roadmap.md` (mark Workstream A done; follow-ups: move CI, fastlane and release.sh to the generated project, retire `Provenance-CI` and `create_ci_target.rb`).
+**Files:**
+- Modify: `CLAUDE.md`. Add a new `### Dev workspace (Tuist)` section after `### Build & toolchain gotchas` (before `### Azahar core build gotchas`), update the first two Azahar gotcha bullets, and fix the core taxonomy if batch 5's Task 20 hasn't landed on develop yet.
+- Create: `.claude/skills/fast-iteration/SKILL.md`
+- Modify: `docs/superpowers/specs/2026-10-09-dev-velocity-roadmap.md` (`## Workstream A` section)
 
-Verified by: the skill's commands are copy-pasted from the merged Makefile and scripts. The coordinator writes the handoff memory file.
+**Interfaces:**
+- Consumes: the merged batches 1–5. Every command quoted below exists on develop when this task runs. Step 1 checks that.
+- Produces: docs only.
+
+- [ ] **Step 1: Check that every documented command exists**
+
+```bash
+grep -n -E '^(dev|dev-generate|dev-ui|dev-azahar|dev-thin|dev-harness):' Makefile
+ls Scripts/dev/check_dev_manifest.sh Scripts/dev/run_harness.sh Scripts/dev/make_harness_rom.py Scripts/cores/build_slice.py .github/workflows/dev-workspace.yml
+python3 Scripts/cores/build_slice.py --help | head -3
+grep -n 'SIM_DEVICE\|CORE ?=\|FRAMES ?=\|TARGET ?=' Makefile
+grep -n 'runtimeEmbedded' Tuist/ProjectDescriptionHelpers/FocusedApp.swift
+grep -n 'gba\|2600\|a26' Scripts/dev/make_harness_rom.py | head -5
+```
+
+Expected: all six Make targets, all five files, the `build_slice.py` usage, the four harness variables, a `.runtimeEmbedded` hit, and both ROM kinds. If any of them is missing, fix the doc text below to match what exists (never the other way round), and say so in the commit body.
+
+- [ ] **Step 2: Add the CLAUDE.md "Dev workspace" section**
+
+Insert directly before the line `### Azahar core build gotchas`:
+
+```markdown
+### Dev workspace (Tuist)
+
+A second, generated workspace for fast iteration. `Provenance.xcodeproj` still ships
+(CI, fastlane, release.sh). Spec: `docs/superpowers/specs/2026-10-10-dev-workspace-design.md`.
+
+- **Generate / open:** Tuist 4.200.0 is pinned in `.mise.toml`. Run `mise exec -- tuist generate --no-open`
+  (or `make dev-generate`) from the repo root; `make dev` also opens `Provenance-Dev.xcworkspace`.
+  Generated files (`Provenance-Dev.xcworkspace`, `Dev/Provenance.xcodeproj`, `Dev/Derived`) are
+  gitignored. Never commit them. The Tuist project is named `Provenance` and lives in `Dev/`
+  because `Build.xcconfig` derives bundle ids, the app group and the iCloud container from
+  `$(PROJECT_NAME:lower)`.
+- **Focused apps:**
+  - `Provenance-Dev-UI`: mGBA, Stella, snes9x.
+  - `Provenance-Dev-Thin`: no native cores; 4 libretro dylibs (mednafen_psx_hw, mupen64plus_next, snes9x, ppsspp).
+  - `Provenance-Dev-Azahar`: Azahar.
+
+  Build with `make dev-ui|dev-azahar|dev-thin` (derived data in `build/dev-dd`; override with
+  `DEV_DERIVED=`). Each app is one iOS+tvOS target with bundle id
+  `org.provenance-emu.provenance.dev.<slug>`.
+- **Simulator builds are ad-hoc signed by `Dev/Config/Dev.xcconfig`.** Never pass
+  `CODE_SIGNING_ALLOWED=NO` to a dev build: the app then dies in dyld on the unsigned embedded
+  MoltenVK.
+- **Helpers:** `Tuist/ProjectDescriptionHelpers/` holds `CoreProduct` (the core table),
+  `FocusedApp` (the target template plus `FocusedApp.all`), `LibretroCores` and `DevSettings`. Tuist
+  only finds helpers at `<root>/Tuist/ProjectDescriptionHelpers`; don't add a `Dev/Tuist/`.
+- **How cores get in:**
+  - SwiftPM dynamic cores are embedded with `.package(product:, type: .runtimeEmbedded)`.
+  - Cores from a hand-maintained `Cores/<X>/*.xcodeproj` are linked by `-framework <Product>` in `OTHER_LDFLAGS`.
+    That project is referenced from `Workspace.swift` (Xcode then builds it as an implicit dependency),
+    and the "Embed core frameworks" post script copies and signs the framework. Tuist can't
+    depend on targets of projects it doesn't generate.
+- **Libretro dylibs per app:**
+  - `FocusedApp.libretro` names (cores.yml) become a pre script calling
+    `CoresRetro/RetroArch/scripts/get-modules.sh --urls <file>`, plus a post script running
+    `make_frameworks_retroarch.sh` and `validate_frameworks.sh`.
+  - `--urls` keeps its own state dir (`modules_compressed/<iOS|tvOS>-urls-<sha12>`) and never prunes the shared `modules/`.
+  - The buildbot dylibs are iOS-platform binaries and cannot `dlopen` in a simulator, so
+    **Provenance-Dev-Thin plays games on a device only**.
+- **Manifest checks:** `Scripts/dev/check_dev_manifest.sh` compiles the helpers against Tuist's
+  `ProjectDescription.framework` and checks three things: every libretro name is enabled in cores.yml,
+  every path exists, and no local package is declared twice. Prebuilt artefacts (e.g. `PVlibDolphin.xcframework`) are
+  required only for rows a `FocusedApp` uses.
+- **Harness:** `make dev-harness ROM=<path> TARGET=ui|thin|azahar FRAMES=n CORE=<id> SIM_DEVICE=<udid|booted>`
+  builds the app, launches it with the `-PVHarnessROM`, `-PVHarnessCore`, `-PVHarnessFrames`,
+  `-PVHarnessOut` and `-PVHarnessExit` launch arguments, and copies `screenshot.png`, `frames.json`, `log.txt` (or
+  `error.txt`) to `build/harness/<app>/`. Synthetic test ROMs come from
+  `Scripts/dev/make_harness_rom.py` (2600 and gba). Frame counts are time-based estimates
+  (`"frameCountSource": "estimated"`).
+- **Core slices:** `Scripts/cores/build_slice.py <azahar|dolphin> <ios|ios-sim|tvos|tvos-sim>
+  [--print-key|--force|--xcframework|--cache-dir DIR]` builds or links one slice.
+  - The key is a content hash: submodule and nested externals, build script and toolchain, flags,
+    Xcode and SDK, and Azahar's MoltenVK slice.
+  - The cache is `$PV_CORE_CACHE` or `~/Library/Caches/Provenance/cores/<core>/<slice>/<key12>/`.
+  - On a hit, the legacy `build/xcframework/<Product>-<slice>.framework` path is a symlink into it.
+  - Only `--xcframework` repacks the multi-slice xcframework. If its hard links fail, set
+    `PV_CORE_CACHE` to a folder on the repo's volume.
+- **CI:** `build.yml` and `testflight.yml` cache `~/Library/Caches/Provenance/cores` per platform,
+  keyed on `build_slice.py --print-key`. `dev-workspace.yml` smoke-builds `Provenance-Dev-UI` on
+  both simulators (Tuist via mise, using `GITHUB_TOKEN`).
+- **Pruning rule:** no new `Cores/` project without an audit row in
+  `docs/superpowers/specs/2026-10-10-core-audit.md`.
+```
+
+- [ ] **Step 3: Update the two Azahar gotchas that changed**
+
+Run this from the repo root. It replaces the first two bullets under `### Azahar core build gotchas` exactly:
+
+```bash
+python3 - <<'PY'
+from pathlib import Path
+
+p = Path("CLAUDE.md")
+text = p.read_text()
+old_built = ("- **PVlibAzahar is built by the `BuildPVlibAzahar` aggregate target** (`Cores/Azahar/project.yml`; "
+             "`PVAzahar` depends on it), which runs `build_azahar_core.py -p <platform>`. A cold slice takes ~30–40 min. "
+             "The stamp `Cores/Azahar/build/<platform>/.gitlink` (submodule HEAD) skips the rebuild while it matches; "
+             "delete it to force one. Needs cmake, ninja and python3 ≥ 3.10.")
+new_built = ("- **PVlibAzahar is built by the `BuildPVlibAzahar` aggregate target** (`Cores/Azahar/project.yml` and the "
+             "hand-edited pbxproj; `PVAzahar` depends on it), which runs `Scripts/cores/build_slice.py azahar <slice>` "
+             "for the slice matching `$PLATFORM_NAME`. A cold slice takes ~30–40 min. The stamp is the content key "
+             "(`build_slice.py --print-key`: submodule + externals, script, toolchain, Xcode/SDK, MoltenVK slice), not "
+             "the gitlink; a hit only symlinks the cached slice. Force a rebuild with `build_slice.py azahar <slice> "
+             "--force`. Needs cmake, ninja and python3 ≥ 3.10. Dolphin's `Make XCFrameworks` aggregate works the same "
+             "way (`build_slice.py dolphin <slice>`).")
+old_link = ("- **`PVAzahar` links the per-slice archive `build/xcframework/PVlibAzahar-<slice>.framework/PVlibAzahar` by "
+            "path, not the xcframework.**")
+new_link = ("- **`PVAzahar` links the per-slice archive `build/xcframework/PVlibAzahar-<slice>.framework/PVlibAzahar` by "
+            "path, not the xcframework** (that path is now a symlink into the slice cache).")
+assert text.count(old_built) == 1, "Azahar 'built by' bullet changed; edit by hand"
+assert text.count(old_link) == 1, "Azahar 'links the per-slice archive' bullet changed; edit by hand"
+p.write_text(text.replace(old_built, new_built).replace(old_link, new_link))
+print("CLAUDE.md Azahar gotchas updated")
+PY
+```
+
+Expected: `CLAUDE.md Azahar gotchas updated`.
+
+- [ ] **Step 4: Fix the core taxonomy if batch 5 hasn't merged it yet**
+
+Run: `grep -n 'Mupen, snes9x, Stella, Mednafen, Jaguar, Dolphin' CLAUDE.md`
+
+If it finds a line, replace these three lines:
+
+```markdown
+- **Active native PV* cores** (custom forks or long-supported legacy we
+  actively extend): Mupen, snes9x, Stella, Mednafen, Jaguar, Dolphin,
+  FCEU, ProSystem, Genesis-Plus-GX, Flycast, and similar.
+```
+
+with:
+
+```markdown
+- **Active native PV* cores** (custom forks or long-supported legacy we
+  actively extend): Azahar, Dolphin, FCEU, Genesis-Plus-GX, Mednafen,
+  Mupen64Plus, ProSystem, snes9x, Stella, plus mGBA, PicoDrive and TGBDual
+  for native-only features. Source of truth:
+  `docs/superpowers/specs/2026-10-10-core-audit.md` (KEEP rows). Jaguar and
+  Flycast are not native cores (Jaguar runs on the virtualjaguar dylib; there is no
+  `Cores/Flycast`). The 32 retired cores (the audit's 24 RETIRE rows minus `Debug`,
+  plus Desmume2015, melonDS, Atari800, Bliss, CrabEMU, Gambatte, O2EM, PokeMini,
+  VisualBoyAdvance-M) live on as `PVCore.retiredCores` entries (`RetiredCoreMigration`,
+  `RetiredBatterySaveMigration`); `Cores/Debug` stays for its `PVDebug.c` simulator stub.
+```
+
+If Task 20's text is already there, append the same "Jaguar and Flycast …" and "The 32 retired cores …" sentences to it unless they are present.
+
+- [ ] **Step 5: Write `.claude/skills/fast-iteration/SKILL.md`**
+
+````markdown
+---
+name: fast-iteration
+description: Use when iterating on Provenance UI or a single emulator core and the full app build is too slow — adding or building a Tuist focused app (Provenance-Dev-UI/-Thin/-Azahar), building one Azahar/Dolphin core slice, running a ROM through the dev harness, or adding a libretro dylib to a focused app. Trigger phrases: "dev workspace", "focused app", "make dev", "tuist", "build_slice", "core slice", "dev harness", "screenshot a core".
+version: 1.0.0
+---
+
+# Fast iteration (Tuist dev workspace)
+
+Background and rules: CLAUDE.md "Dev workspace (Tuist)". Generate with
+`mise exec -- tuist generate --no-open` (`make dev` opens it). Never pass
+`CODE_SIGNING_ALLOWED=NO` to a dev build (Dev.xcconfig ad-hoc signs simulators; unsigned
+MoltenVK kills the app in dyld).
+
+## 1. Add a focused target
+
+1. Every core must already be a row in `Tuist/ProjectDescriptionHelpers/CoreProduct.swift`
+   (and have a KEEP row in `docs/superpowers/specs/2026-10-10-core-audit.md`). Row kinds:
+   `.package(path:product:)` for SwiftPM dynamic products, `.project(path:target:product:)` for
+   `Cores/<X>/*.xcodeproj` targets, `.prebuilt(path:)` for an on-disk (xc)framework.
+2. Append one literal to `FocusedApp.all` in `Tuist/ProjectDescriptionHelpers/FocusedApp.swift`:
+   ```swift
+   static let genesis = FocusedApp(slug: "genesis", title: "Genesis", cores: [.genesis], flags: ["PV_DEV_HARNESS"])
+   static let all: [FocusedApp] = [.ui, .azahar, .thin, .genesis]
+   ```
+3. `Scripts/dev/check_dev_manifest.sh`, then `make dev-generate`, then build:
+   `make _dev-build DEV_SCHEME=Provenance-Dev-Genesis` (add a `dev-genesis` Make target if
+   it's going to stay). Check iOS and tvOS Simulator.
+
+## 2. Build one core slice
+
+```bash
+python3 Scripts/cores/build_slice.py azahar ios-sim            # hit: symlink; miss: build + cache
+python3 Scripts/cores/build_slice.py dolphin tvos --print-key   # the CI cache key
+python3 Scripts/cores/build_slice.py azahar ios --force         # rebuild this key
+python3 Scripts/cores/build_slice.py azahar ios --xcframework   # also repack PVlibAzahar.xcframework
+```
+Cache: `$PV_CORE_CACHE` or `~/Library/Caches/Provenance/cores/<core>/<slice>/<key12>/`. If
+`--xcframework` fails on hard links, set `PV_CORE_CACHE` to a folder on the repo's volume. Cold
+slices take 30–40 min (Azahar) / 30–60 min (Dolphin): run them in the background and poll.
+
+## 3. Run the harness against a ROM
+
+```bash
+xcrun simctl boot "iPhone 17" 2>/dev/null || true
+python3 Scripts/dev/make_harness_rom.py /tmp/loop.a26      # synthetic 2600 ROM (gba also supported)
+make dev-harness ROM=/tmp/loop.a26 TARGET=ui FRAMES=120 CORE=com.provenance.core.stella SIM_DEVICE=booted
+open build/harness/Provenance-Dev-UI/screenshot.png
+```
+Outputs: `screenshot.png`, `frames.json`, `log.txt`, or `error.txt` on failure, in
+`build/harness/<app>/`. Launch arguments: `-PVHarnessROM`, `-PVHarnessCore`, `-PVHarnessFrames`,
+`-PVHarnessOut`, `-PVHarnessExit`. `TARGET=thin` needs a device: libretro buildbot dylibs are
+iOS-platform binaries and can't `dlopen` in a simulator.
+
+## 4. Add a libretro dylib to a target
+
+1. The name must be an `enabled: true` entry in `CoresRetro/RetroArch/scripts/cores.yml`
+   (and present in the generated `urls.txt` / `urls-tv.txt`).
+2. Add it to the app's `libretro:` list in `FocusedApp.swift`, e.g.
+   `libretro: ["mednafen_psx_hw", "mupen64plus_next", "snes9x", "ppsspp", "genesis_plus_gx"]`.
+3. `Scripts/dev/check_dev_manifest.sh` (fails on unknown/disabled names), `make dev-generate`,
+   `make dev-thin`. The pre script fetches through `get-modules.sh --urls`, which never prunes
+   the shared `modules/`. The dylib only plays on a device.
+````
+
+- [ ] **Step 6: Update the roadmap**
+
+In `docs/superpowers/specs/2026-10-09-dev-velocity-roadmap.md`, insert directly under the heading `## Workstream A — Project generation and fast iteration targets`:
+
+```markdown
+**Status: done (2026-10-10).** Spec `2026-10-10-dev-workspace-design.md`, plan
+`docs/superpowers/plans/2026-10-10-dev-workspace.md`, audit `2026-10-10-core-audit.md`.
+Shipped:
+- Tuist dev workspace (`make dev`) with `Provenance-Dev-UI`, `-Thin` and `-Azahar`.
+- The `PVDevHarness` launch-argument harness (`make dev-harness`).
+- `Scripts/cores/build_slice.py`, a content-keyed slice cache that both core aggregates and CI use.
+- The `dev-workspace.yml` smoke build.
+- 32 retired native cores pruned behind `RetiredCoreMigration`.
+
+How-to: CLAUDE.md "Dev workspace (Tuist)" and the `fast-iteration` skill.
+
+Follow-ups:
+- Move CI (`build.yml`, `testflight.yml`), fastlane and `Scripts/release/release.sh` onto the
+  generated project; retire `Provenance-CI` and `Scripts/dev/create_ci_target.rb` (switch
+  `agent-validation.yml`'s smoke build to `dev-workspace.yml`).
+- A Dolphin focused app, which needs `Make XCFrameworks` scheduled before the app links the
+  prebuilt `PVlibDolphin.xcframework` (`DEV_PREBUILT_CORES=dolphin make dev-generate`).
+- A device harness runner for `Provenance-Dev-Thin` (libretro dylibs can't load in the simulator).
+- Rule on the four UNSURE cores and emuThree (audit), after Azahar's device skin test.
+```
+
+- [ ] **Step 7: Check the docs**
+
+```bash
+grep -c 'Dev workspace (Tuist)' CLAUDE.md
+grep -n 'build_slice.py azahar <slice>' CLAUDE.md
+grep -n '\.gitlink' CLAUDE.md || echo "no stale gitlink stamp text"
+head -5 .claude/skills/fast-iteration/SKILL.md
+grep -n 'Status: done (2026-10-10)' docs/superpowers/specs/2026-10-09-dev-velocity-roadmap.md
+```
+
+Expected:
+- `1`;
+- one hit;
+- `no stale gitlink stamp text`;
+- the skill frontmatter (`name: fast-iteration`);
+- one roadmap hit.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add CLAUDE.md .claude/skills/fast-iteration/SKILL.md docs/superpowers/specs/2026-10-09-dev-velocity-roadmap.md
+git -c commit.gpgsign=false commit -m "docs: dev workspace guide, fast-iteration skill, roadmap A done" -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+The coordinator writes the handoff memory file in `~/.claude/projects/-Users-jmattiello-Workspace-Provenance-Provenance/memory/` and adds it to the `MEMORY.md` index.
 
 ---
 
@@ -4728,7 +4996,7 @@ Verified by: the skill's commands are copy-pasted from the merged Makefile and s
 | §8 | `build_slice.py`, aggregates, registry | T12, T13 (detailed; deviation 6) |
 | §9 | `build.yml` / `testflight.yml` caches, `dev-workspace.yml` | T14 (detailed) |
 | §10 | Pruning, `RetiredCoreMigration` entries, battery rules, docs | T15–T20 (detailed; Debug kept, deviation 7) |
-| §11 | CLAUDE.md, fast-iteration skill, roadmap | T20, T21 (outlined) |
+| §11 | CLAUDE.md, fast-iteration skill, roadmap | T20, T21 (detailed) |
 | §12 | Verification: generate, builds, harness, unittest, manifest tests, pruning CI | T2/T3/T7/T8 builds, T4 manifest checks, T11, T12, T19 |
 | §13 | Six batches | Batches 1–6 |
 | §14 | Out of scope | Not touched |

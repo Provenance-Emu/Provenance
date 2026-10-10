@@ -73,7 +73,7 @@ packages:
   PVSettings: { path: ../../PVSettings }
   PVSupport: { path: ../../PVSupport }
 aggregateTargets:
-  # Runs build_azahar_core.py for the platform being built. PVAzahar depends on it, so the slice's
+  # Runs Scripts/cores/build_slice.py (which wraps build_azahar_core.py) for the platform being built. PVAzahar depends on it, so the slice's
   # framework (headers + static archive) exists before PVAzahar compiles and links, on a cold checkout too.
   BuildPVlibAzahar:
     settings:
@@ -86,32 +86,22 @@ aggregateTargets:
         basedOnDependencyAnalysis: false
         script: |
           set -euo pipefail
-          SCRIPT="$PROJECT_DIR/build_azahar_core.py"
           if [ ! -f "$PROJECT_DIR/azahar/CMakeLists.txt" ]; then
             echo "error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild."; exit 1
           fi
           command -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo "error: cmake not found - 'brew install cmake ninja'"; exit 1; }
           command -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo "error: ninja not found - 'brew install cmake ninja'"; exit 1; }
           export PATH="/opt/homebrew/bin:$PATH"
-          python3 -c 'import sys; sys.exit(sys.version_info < (3,10))' || { echo "error: python3 >= 3.10 required for build_azahar_core.py (brew install python)"; exit 1; }
           case "${PLATFORM_NAME}" in
-            iphoneos)         platform=OS64;           slice=ios ;;
-            iphonesimulator)  platform=SIMULATORARM64; slice=ios-sim ;;
-            appletvos)        platform=TVOS;           slice=tvos ;;
-            appletvsimulator) platform=SIMULATOR_TVOS; slice=tvos-sim ;;
+            iphoneos)         slice=ios ;;
+            iphonesimulator)  slice=ios-sim ;;
+            appletvos)        slice=tvos ;;
+            appletvsimulator) slice=tvos-sim ;;
             *) echo "error: unsupported PLATFORM_NAME ${PLATFORM_NAME}"; exit 1 ;;
           esac
-          # Rebuilding rewrites the shared xcframework in place, which races concurrent builds;
-          # skip it when this slice exists and was built from the current submodule HEAD.
-          # built_lib is the archive PVAzahar links (OTHER_LDFLAGS); the xcframework is for distribution.
-          built_lib="$PROJECT_DIR/build/xcframework/PVlibAzahar-${slice}.framework/PVlibAzahar"
-          stamp="$PROJECT_DIR/build/${platform}/.gitlink"
-          head="$(git -C "$PROJECT_DIR/azahar" rev-parse HEAD)"
-          if [[ -f "$built_lib" && -f "$stamp" && "$(cat "$stamp")" == "$head" ]]; then
-            echo "PVlibAzahar ${slice} is current (azahar ${head}); skipping build_azahar_core.py"
-          else
-            python3 "$SCRIPT" -p "$platform"   # PATH has Homebrew python (script needs >= 3.10; /usr/bin/python3 is 3.9)
-          fi
+          # Links the cached slice for this content key into build/xcframework/PVlibAzahar-<slice>.framework
+          # (the archive PVAzahar links via PVAZAHAR_ARCHIVE), building it on a miss. Never repacks the xcframework.
+          python3 "$PROJECT_DIR/../../Scripts/cores/build_slice.py" azahar "$slice"
 targets:
   PVAzahar:
     type: framework

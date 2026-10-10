@@ -65,7 +65,18 @@ public enum HarnessOutput {
         }
     }
 
+    /// Cores disagree on `frameInterval`: most report seconds per frame, but the default
+    /// (`PVEmulatorCore.frameInterval` returns 60.0) and some bridges report frames per second.
+    /// A value of 1 or more cannot be a frame time, so it is read as a rate.
     public static func waitSeconds(frames: Int, frameInterval: Double) -> Double {
-        Double(frames) * (frameInterval > 0 ? frameInterval : fallbackFrameInterval)
+        let secondsPerFrame: Double
+        if frameInterval >= 1 {
+            secondsPerFrame = 1 / frameInterval
+        } else if frameInterval > 0 {
+            secondsPerFrame = frameInterval
+        } else {
+            secondsPerFrame = fallbackFrameInterval
+        }
+        return Double(frames) * secondsPerFrame
     }
 }
