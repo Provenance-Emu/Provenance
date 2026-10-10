@@ -43,6 +43,11 @@
 
 #include <atomic>
 #include <dirent.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <os/lock.h>
@@ -539,8 +544,15 @@ static struct retro_vfs_file_handle *pvstella_vfs_open(const char *path, unsigne
     FILE *fp = fopen(path, fmode);
     if (!fp) return NULL;
     struct retro_vfs_file_handle *handle = (struct retro_vfs_file_handle *)calloc(1, sizeof(*handle));
+    char *pathCopy = strdup(path);
+    if (!handle || !pathCopy) {
+        free(handle);
+        free(pathCopy);
+        fclose(fp);
+        return NULL;
+    }
     handle->fp = fp;
-    handle->path = strdup(path);
+    handle->path = pathCopy;
     return handle;
 }
 
@@ -572,7 +584,8 @@ static int64_t pvstella_vfs_seek(struct retro_vfs_file_handle *stream, int64_t o
         case RETRO_VFS_SEEK_POSITION_END:     whence = SEEK_END; break;
         default: return -1;
     }
-    return fseeko(stream->fp, (off_t)offset, whence) == 0 ? 0 : -1;
+    if (fseeko(stream->fp, (off_t)offset, whence) != 0) return -1;
+    return (int64_t)ftello(stream->fp);
 }
 
 static int64_t pvstella_vfs_read(struct retro_vfs_file_handle *stream, void *buffer, uint64_t length) {
@@ -620,8 +633,15 @@ static struct retro_vfs_dir_handle *pvstella_vfs_opendir(const char *dir, bool i
     DIR *dirp = dir ? opendir(dir) : NULL;
     if (!dirp) return NULL;
     struct retro_vfs_dir_handle *handle = (struct retro_vfs_dir_handle *)calloc(1, sizeof(*handle));
+    char *dirCopy = strdup(dir);
+    if (!handle || !dirCopy) {
+        free(handle);
+        free(dirCopy);
+        closedir(dirp);
+        return NULL;
+    }
     handle->dirp = dirp;
-    handle->dirPath = strdup(dir);
+    handle->dirPath = dirCopy;
     handle->includeHidden = includeHidden;
     return handle;
 }

@@ -25,7 +25,11 @@ case "$TARGET" in
     *) echo "run_harness: unknown target '$TARGET' (ui|azahar)" >&2; exit 2 ;;
 esac
 
-xcrun simctl list devices booted | grep -q Booted || { echo "run_harness: boot a simulator first (xcrun simctl boot \"iPhone 17\")" >&2; exit 2; }
+if [ "$SIM" = booted ]; then
+    xcrun simctl list devices booted | grep -q Booted
+else
+    xcrun simctl list devices | grep "$SIM" | grep -q Booted
+fi || { echo "run_harness: boot a simulator first (xcrun simctl boot \"iPhone 17\")" >&2; exit 2; }
 
 DERIVED="${DEV_DERIVED:-$ROOT/build/dev-dd}"
 (cd "$ROOT" && mise exec -- tuist generate --no-open)
@@ -37,6 +41,7 @@ xcodebuild build -workspace "$ROOT/Provenance-Dev.xcworkspace" -scheme "$SCHEME"
 APP="$DERIVED/Build/Products/Debug-iphonesimulator/$SCHEME.app"
 [ -d "$APP" ] || { echo "run_harness: build produced no $APP" >&2; exit 2; }
 BUNDLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")
+xcrun simctl uninstall "$SIM" "$BUNDLE" 2>/dev/null || true
 xcrun simctl install "$SIM" "$APP"
 
 OUT_REL="Documents/Harness/run"
@@ -47,11 +52,26 @@ ARGS=(-PVHarnessROM "$ROM_ABS" -PVHarnessFrames "$FRAMES" -PVHarnessOut "$OUT_RE
 [ -n "$CORE" ] && ARGS+=(-PVHarnessCore "$CORE")
 
 # --console-pty blocks until the app exits; the harness calls exit() when it is done.
-xcrun simctl launch --console-pty --terminate-running-process "$SIM" "$BUNDLE" "${ARGS[@]}" || true
+# A hung app must not hang the script: bound the launch by the frame count (macOS has no timeout(1)).
+LAUNCH_TIMEOUT=$((FRAMES / 30 + 120 + 240))  # + import (180 s) and core-start (60 s) timeouts
+xcrun simctl launch --console-pty --terminate-running-process "$SIM" "$BUNDLE" "${ARGS[@]}" &
+LAUNCH_PID=$!
+TIMEOUT_FLAG="$(mktemp -u)"
+( sleep "$LAUNCH_TIMEOUT"; touch "$TIMEOUT_FLAG"; kill "$LAUNCH_PID" 2>/dev/null ) &
+WATCHDOG_PID=$!
+wait "$LAUNCH_PID" || true
+kill "$WATCHDOG_PID" 2>/dev/null || true
+TIMED_OUT=0
+[ -e "$TIMEOUT_FLAG" ] && TIMED_OUT=1
+rm -f "$TIMEOUT_FLAG"
+if [ "$TIMED_OUT" = 1 ]; then
+    xcrun simctl terminate "$SIM" "$BUNDLE" 2>/dev/null || true
+fi
 
 DEST="$ROOT/build/harness/$SCHEME"
 rm -rf "$DEST" && mkdir -p "$DEST"
 cp -R "$DATA/$OUT_REL/." "$DEST/" 2>/dev/null || true
+[ "$TIMED_OUT" = 1 ] && [ ! -f "$DEST/error.txt" ] && echo "launch timed out after ${LAUNCH_TIMEOUT}s" > "$DEST/error.txt"
 ls -1 "$DEST"
 if [ -f "$DEST/error.txt" ]; then
     echo "run_harness: harness error: $(cat "$DEST/error.txt")"
