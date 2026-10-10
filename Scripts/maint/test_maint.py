@@ -321,6 +321,18 @@ class RegistryTests(RepoTestCase):
         self.assertIn("Scripts/orphan.py", report)
 
 
+def _in_unchecked_out_submodule(path):
+    """True when `path` sits in a submodule this checkout never initialised
+    (CI's maint job clones without submodules)."""
+    out = subprocess.run(["git", "config", "-f", ".gitmodules", "--get-regexp", r"\.path$"],
+                         cwd=maint.REPO_ROOT, capture_output=True, text=True).stdout
+    for line in out.splitlines():
+        sub = line.split(" ", 1)[1]
+        if path.startswith(sub + "/") and not (maint.REPO_ROOT / sub / ".git").exists():
+            return True
+    return False
+
+
 class RealRegistryTests(unittest.TestCase):
     def test_repo_registry_loads_and_names_real_files(self):
         registry = maint.load_registry()
@@ -335,7 +347,9 @@ class RealRegistryTests(unittest.TestCase):
                         if arg.endswith((".py", ".sh")) and not (maint.REPO_ROOT / arg).exists():
                             missing.append(f"{job.id}: {arg}")
         for path in registry.ignore:
-            if "*" not in path and not (maint.REPO_ROOT / path).exists():
+            if "*" in path or _in_unchecked_out_submodule(path):
+                continue
+            if not (maint.REPO_ROOT / path).exists():
                 missing.append(f"[ignore] {path}")
         self.assertEqual(missing, [])
 
