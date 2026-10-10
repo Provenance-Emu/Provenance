@@ -1,6 +1,32 @@
 import ProjectDescription
 
 public enum DevSettings {
+
+    /// Copies frameworks built by the workspace's vendored .xcodeproj files into the app and
+    /// signs them (ad-hoc when signing is off). Tuist can't embed products of projects it
+    /// doesn't generate; the matching `-framework` linker flags make Xcode build them first.
+    public static func embedProjectFrameworksScript(products: [String]) -> TargetScript {
+        .post(
+            script: """
+            set -euo pipefail
+            dest="${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
+            mkdir -p "$dest"
+            identity="${EXPANDED_CODE_SIGN_IDENTITY:-}"
+            if [ -z "$identity" ] || [ "${CODE_SIGNING_ALLOWED:-YES}" = "NO" ]; then identity="-"; fi
+            for fw in \(products.joined(separator: " ")); do
+              src="${BUILT_PRODUCTS_DIR}/${fw}.framework"
+              if [ ! -d "$src" ]; then
+                echo "error: ${fw}.framework was not built (expected ${src}); is its project in Provenance-Dev.xcworkspace?"
+                exit 1
+              fi
+              /usr/bin/rsync -a --delete --exclude Headers --exclude PrivateHeaders --exclude Modules "$src/" "$dest/${fw}.framework/"
+              /usr/bin/codesign --force --sign "$identity" --preserve-metadata=identifier,entitlements "$dest/${fw}.framework"
+            done
+            """,
+            name: "Embed core frameworks",
+            basedOnDependencyAnalysis: false
+        )
+    }
     /// Base xcconfig for the project and every app target (repo-relative).
     public static let xcconfig: Path = .relativeToRoot("Dev/Config/Dev.xcconfig")
 

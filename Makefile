@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # `export` makes the values visible to recipes (release.sh, fastlane, etc.).
 -include .env
 export
-.PHONY: help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
+.PHONY: dev dev-generate dev-ui help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
@@ -246,6 +246,32 @@ tvos: | update developer_tvos
 ## Open the workspace
 open:
 	open Provenance.xcworkspace
+
+## Dev workspace (Tuist; see docs/superpowers/specs/2026-10-10-dev-workspace-design.md)
+TUIST ?= mise exec -- tuist
+DEV_WORKSPACE := Provenance-Dev.xcworkspace
+DEV_DERIVED ?= $(CURDIR)/build/dev-dd
+DEV_DESTINATION ?= generic/platform=iOS Simulator
+
+dev-generate:
+	$(TUIST) generate --no-open
+
+dev: dev-generate
+	open $(DEV_WORKSPACE)
+
+# Build one focused app: make _dev-build DEV_SCHEME=Provenance-Dev-UI
+_dev-build: dev-generate
+	xcodebuild build \
+		-workspace $(DEV_WORKSPACE) \
+		-scheme "$(DEV_SCHEME)" \
+		-destination "$(DEV_DESTINATION)" \
+		-derivedDataPath "$(DEV_DERIVED)" \
+		-skipPackagePluginValidation \
+		-skipMacroValidation \
+		CODE_SIGNING_ALLOWED=NO
+
+dev-ui:
+	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-UI
 
 ## Generate libretro cheat database if missing (for builds/tests)
 ensure-cheatdb:

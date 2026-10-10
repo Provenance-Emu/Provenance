@@ -26,8 +26,56 @@ public struct FocusedApp {
     /// `cores` plus the non-core products every app embeds.
     public var allCores: [CoreProduct] { CoreProduct.nonCore + cores }
 
-    /// OTHER_LDFLAGS for `project` links (empty until Task 3).
-    var linkerSettings: SettingsDictionary { [:] }
+    /// Products of `project` links, in table order, without duplicates.
+    var projectProducts: [(product: String, platforms: Set<PlatformFilter>)] {
+        var seen = Set<String>()
+        var result: [(product: String, platforms: Set<PlatformFilter>)] = []
+        for core in allCores {
+            for link in core.links {
+                if case let .project(_, _, product) = link, seen.insert(product).inserted {
+                    result.append((product, core.platforms))
+                }
+            }
+        }
+        return result
+    }
+
+    /// `-framework <Product>` per project link. Platform-limited rows get an sdk-conditioned key.
+    var linkerSettings: SettingsDictionary {
+        func flags(_ filter: (Set<PlatformFilter>) -> Bool) -> [String] {
+            projectProducts.filter { filter($0.platforms) }.flatMap { ["-framework", $0.product] }
+        }
+        let shared = ["$(inherited)"] + flags { $0.contains(.ios) && $0.contains(.tvos) }
+        var settings: SettingsDictionary = ["OTHER_LDFLAGS": .array(shared)]
+        // A conditional key replaces the unconditional one for that SDK, so it repeats the shared flags.
+        let iosOnly = flags { $0.contains(.ios) && !$0.contains(.tvos) }
+        let tvosOnly = flags { $0.contains(.tvos) && !$0.contains(.ios) }
+        if !iosOnly.isEmpty {
+            settings["OTHER_LDFLAGS[sdk=iphone*]"] = .array(shared + iosOnly)
+        }
+        if !tvosOnly.isEmpty {
+            settings["OTHER_LDFLAGS[sdk=appletv*]"] = .array(shared + tvosOnly)
+        }
+        return settings
+    }
+
+    var scripts: [TargetScript] {
+        let products = projectProducts.map(\.product)
+        return products.isEmpty ? [] : [DevSettings.embedProjectFrameworksScript(products: products)]
+    }
+
+    /// Vendored .xcodeproj files the workspace must contain for these apps.
+    public static func workspaceProjects(for apps: [FocusedApp]) -> [String] {
+        var paths = Set<String>()
+        for app in apps {
+            for core in app.allCores {
+                for link in core.links {
+                    if case let .project(path, _, _) = link { paths.insert(path) }
+                }
+            }
+        }
+        return paths.sorted()
+    }
 
     var coreDependencies: [TargetDependency] {
         allCores.flatMap { core -> [TargetDependency] in
@@ -59,7 +107,7 @@ public struct FocusedApp {
             sources: [.glob(.relativeToRoot("Provenance/Main UI/**/*.swift"))],
             resources: DevSettings.appResources,
             entitlements: nil,
-            scripts: [],
+            scripts: scripts,
             dependencies: DevSettings.appDependencies + coreDependencies,
             settings: DevSettings.appSettings(for: self)
         )
@@ -77,7 +125,7 @@ public struct FocusedApp {
 }
 
 public extension FocusedApp {
-    static let ui = FocusedApp(slug: "ui", title: "UI", cores: [.mGBA, .stella], flags: ["PV_DEV_HARNESS"])
+    static let ui = FocusedApp(slug: "ui", title: "UI", cores: [.mGBA, .stella, .snes9x], flags: ["PV_DEV_HARNESS"])
 
     static let all: [FocusedApp] = [.ui]
 }
