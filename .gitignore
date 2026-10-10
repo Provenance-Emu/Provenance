@@ -128,7 +128,10 @@ build
 /Cores/Dolphin/venv
 
 # Claude Code
-.claude/
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/fast-iteration/
 memory-bank/
 Package.resolved
 __pycache__
