@@ -1432,7 +1432,7 @@ git -c commit.gpgsign=false commit -m "build: add Provenance-Dev-Azahar and make
 
 ---
 
-> **Batches 5–6 are outlines (batches 3–4 are detailed below).** Each task gives its files, interfaces, model tier, and what it does and how it is verified. Full step-by-step code is written when that batch starts. The facts below were verified against the tree on 2026-10-10.
+> **Batch 6 is an outline (batches 3–5 are detailed below).** Each task gives its files, interfaces, model tier, and what it does and how it is verified. Full step-by-step code is written when that batch starts. The facts below were verified against the tree on 2026-10-10.
 
 # Batch 3 — Core harness (develop)
 
@@ -3271,174 +3271,1432 @@ git -c commit.gpgsign=false commit -m "ci: cache core slices per leg; add dev wo
 
 ---
 
-# Batch 5 — Pruning PR (branch `feature/prune-dead-cores`; merged only after `build.yml` passes both legs)
+# Batch 5 — Pruning PR (branch `feature/prune-dead-cores`)
+
+**Branch rule.** Every batch 5 commit goes on `feature/prune-dead-cores`. The coordinator creates the branch from `develop` before Task 15, pushes it, opens the PR, and starts `build.yml` (owner PRs need the build label or a `/build` comment). The PR merges only after the iOS and tvOS legs of `build.yml` both pass. Each implementer begins by running `git branch --show-current`, which must print `feature/prune-dead-cores`. If it prints anything else, stop and report. Never switch branches yourself.
+
+**Prune list (32 cores).** These are the 24 RETIRE rows of `docs/superpowers/specs/2026-10-10-core-audit.md` minus `Debug`, plus Desmume2015, melonDS, Atari800, Bliss, CrabEMU, Gambatte, O2EM, PokeMini and VisualBoyAdvance-M:
+
+BeetlePSX, DosBox, DuckStation, FreeIntv, GameMusicEmu, Gearcoleco, JollyGoodEmulation, Mini_vMac, Mu, Mupen64Plus-NX, Play, Potator, Reicast, Sudachi, VecX, VirtualJaguar, Yabause, fuse, opera, pcsx_rearmed, sm64ex, snesticle, supergrafx, Desmume2015, melonDS, Atari800, Bliss, CrabEMU, Gambatte, O2EM, PokeMini, VisualBoyAdvance-M.
+
+`Cores/Debug` stays. `PVMupen64Plus.xcodeproj`, `PVDolphin.xcodeproj`, `PVPPSSPP.xcodeproj` and `Provenance.xcodeproj` reference its `PVDebug.c` simulator stub.
+
+**Replacement availability.** Every replacement dylib is `enabled: true`, `ios: true`, `tvos: true` in `cores.yml`. All of them appear in `urls.txt`, `urls-tv.txt`, `urls-appstore.txt` and `urls-appstore-tv.txt`, except `minivmac` (`appstore: false`). The native Mini_vMac was embedded only in the sideload targets (UnderDevelopment, XL), and `PVCore.activeRetiredCores` keeps a retirement inactive wherever its replacement isn't bundled, so no core has to stay. If a re-check at implementation time shows a replacement missing for a platform, keep that core out of the prune table (Task 18) and out of the retired table (Task 17), and say so in the PR.
+
+---
 
 ### Task 15: Retired-core model, per-system migration, save-state flag, prune guard  *(model: sonnet)*
 
-**Files:** `PVLibrary/Sources/PVRealm/RealmPlatform/Entities/PVCore.swift`, `PVLibrary/Sources/PVLibrary/Migration/RetiredCoreMigration.swift`, `PVLibrary/Sources/PVLibrary/Configuration/PVEmulatorConfiguration+Frameworks.swift` (stale-core prune at line ~295), `PVLibrary/Tests/PVLibraryTests/RetiredCoreMigrationTests.swift`.
+**Files:**
+- Modify: `PVLibrary/Sources/PVRealm/RealmPlatform/Entities/PVCore.swift` (replace the `public extension PVCore` block at lines 108–129, i.e. `retiredCoreReplacements` through `currentIdentifier(for:)`; keep `isBundledLibretroCore` and its cache unchanged)
+- Modify: `PVLibrary/Sources/PVLibrary/Migration/RetiredCoreMigration.swift` (whole file)
+- Modify: `PVLibrary/Sources/PVLibrary/Configuration/PVEmulatorConfiguration+Frameworks.swift` (the `staleCores` filter at line ~295)
+- Test: `PVLibrary/Tests/PVLibraryTests/RetiredCoreMigrationTests.swift`
 
-**Interfaces:** produces
-- `public enum RetiredCoreID` and `public enum LibretroCoreID` (string constants; the Jaguar entry moves onto them);
-- `public struct RetiredBatterySaveRule { location: .batterySaves | .saveStates; fileExtension; moveToBatterySaves; copyToSRM }`;
-- `public struct RetiredCore { replacement; systemReplacements: [SystemIdentifier: String]; migratesSaveStates; batterySaves; func replacement(forSystem:) ; allReplacements }`;
-- `PVCore.retiredCores: [String: RetiredCore]` and `PVCore.activeRetiredCores` (every replacement bundled). The existing `retiredCoreReplacements` / `activeRetiredCoreReplacements` stay as derived views;
-- `currentIdentifier(for:)` remaps only entries with `migratesSaveStates == true`;
-- `RetiredCoreMigration.migrate(in:retiredCores:)`.
+**Interfaces:**
+- Produces (PVRealm):
+  - `public enum RetiredCoreID { static let jaguar }` and `public enum LibretroCoreID { static let virtualJaguar }`. Task 17 adds the rest.
+  - `public struct RetiredBatterySaveRule: Equatable, Sendable` with `enum Location { case batterySaves, saveStates }`, `location`, `fileExtension`, `moveToBatterySaves`, `copyToSRM`, an `init`, and the factories `.copiedToSRM(_ ext:)`, `.movedFromSaveStates(_ ext:, copyToSRM:)`.
+  - `public struct RetiredCore: Equatable, Sendable { replacement: String; systemReplacements: [SystemIdentifier: String]; migratesSaveStates: Bool; batterySaves: [RetiredBatterySaveRule]; func replacement(forSystem: String?) -> String; var allReplacements: [String] }`.
+  - On `PVCore`: `static let retiredCores: [String: RetiredCore]`; `static var retiredCoreReplacements: [String: String]` (derived); `static let activeRetiredCores`; `static let activeRetiredCoreReplacements` (derived); `static func currentIdentifier(for:)`; `static func currentIdentifier(for:in:)`.
+- Produces (PVLibrary): `RetiredCoreMigration.migrate(in: Realm, retiredCores: [String: RetiredCore] = PVCore.activeRetiredCores) -> Result` and `PVEmulatorConfiguration.isStaleCore(_ identifier: String, validIdentifiers: Set<String>) -> Bool`.
+- Existing callers keep compiling: `activeRetiredCoreReplacements` is still used by `isDisabled`, and `currentIdentifier(for:)` by SaveExporter, RomDatabase+Saves, CloudKitSaveStatesSyncer and SaveState+PVSaveState.
 
-What it does:
-- `migrate` checks that every replacement is registered. It then repoints game and system preferences and recents through `replacement(forSystem:)`, using the game's or system's identifier. It moves save states only when `migratesSaveStates` is true.
-- The stale-core prune skips identifiers in `PVCore.retiredCores`. Otherwise the disabled row would be deleted, leaving unmigrated save states with a nil core; Lite builds, which bundle no replacements, would be hit too.
+- [ ] **Step 1: Write the failing tests**
 
-Verified by the PVLibrary-UnitTests scheme (`-only-testing:PVLibraryTests/RetiredCoreMigrationTests`): the existing tests adapted, plus per-system choice (Coleco vs SG-1000), states left alone when formats differ, and a testable `currentIdentifier(for:in:)`.
+Replace `PVLibrary/Tests/PVLibraryTests/RetiredCoreMigrationTests.swift` with:
+
+```swift
+//
+//  RetiredCoreMigrationTests.swift
+//  PVLibraryTests
+//
+//  Records on a retired core move to its replacement (per system when the entry says so),
+//  save states move only when the formats are compatible, and the retired core ends up
+//  disabled but is never pruned.
+//
+
+import XCTest
+import RealmSwift
+import PVRealm
+import PVSystems
+@testable import PVLibrary
+
+final class RetiredCoreMigrationTests: XCTestCase {
+
+    private let retiredID = "com.example.core.retired"
+    private let replacementID = "replacement.libretro.framework"
+    private let colecoID = "coleco.libretro.framework"
+    private let otherID = "com.example.core.other"
+
+    private var realm: Realm!
+
+    override func setUpWithError() throws {
+        realm = try Realm(configuration: Realm.Configuration(inMemoryIdentifier: UUID().uuidString))
+        try realm.write {
+            for (identifier, version) in [(retiredID, "2.1.2"), (replacementID, "3.6.1"), (colecoID, "1.2"), (otherID, "1.0")] {
+                let core = PVCore()
+                core.identifier = identifier
+                core.projectVersion = version
+                realm.add(core)
+            }
+        }
+    }
+
+    private func core(_ identifier: String) -> PVCore {
+        guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: identifier) else {
+            fatalError("test core \(identifier) missing")
+        }
+        return core
+    }
+
+    private func addState(core identifier: String, version: String) throws -> PVSaveState {
+        let state = PVSaveState()
+        state.core = core(identifier)
+        state.createdWithCoreVersion = version
+        try realm.write { realm.add(state) }
+        return state
+    }
+
+    private func migrate(_ retired: RetiredCore? = nil) throws -> RetiredCoreMigration.Result {
+        let entry = retired ?? RetiredCore(replacement: replacementID, migratesSaveStates: true)
+        var result = RetiredCoreMigration.Result()
+        try realm.write {
+            result = RetiredCoreMigration.migrate(in: realm, retiredCores: [retiredID: entry])
+        }
+        return result
+    }
+
+    func testMovesSaveStatesAndAdoptsReplacementVersion() throws {
+        let retiredState = try addState(core: retiredID, version: "2.1.2")
+        let otherState = try addState(core: otherID, version: "1.0")
+
+        let result = try migrate()
+
+        XCTAssertEqual(result.saveStates, 1)
+        XCTAssertEqual(retiredState.core.identifier, replacementID)
+        XCTAssertEqual(retiredState.createdWithCoreVersion, "3.6.1")
+        XCTAssertEqual(otherState.core.identifier, otherID)
+        XCTAssertEqual(otherState.createdWithCoreVersion, "1.0")
+    }
+
+    func testLeavesSaveStatesWhenFormatsDiffer() throws {
+        let state = try addState(core: retiredID, version: "2.1.2")
+        let game = PVGame()
+        game.md5Hash = "def"
+        game.userPreferredCoreID = retiredID
+        try realm.write { realm.add(game) }
+
+        let result = try migrate(RetiredCore(replacement: replacementID, migratesSaveStates: false))
+
+        XCTAssertEqual(result.saveStates, 0)
+        XCTAssertEqual(result.gamePreferences, 1)
+        XCTAssertEqual(state.core.identifier, retiredID)
+        XCTAssertEqual(game.userPreferredCoreID, replacementID)
+    }
+
+    func testMovesRecentsAndPreferences() throws {
+        let recent = PVRecentGame()
+        recent.core = core(retiredID)
+        let game = PVGame()
+        game.md5Hash = "abc"
+        game.userPreferredCoreID = retiredID
+        let system = PVSystem()
+        system.identifier = SystemIdentifier.Jaguar.rawValue
+        system.userPreferredCoreID = retiredID
+        try realm.write { realm.add([recent, game, system] as [Object]) }
+
+        let result = try migrate()
+
+        XCTAssertEqual(result, .init(saveStates: 0, recentGames: 1, gamePreferences: 1, systemPreferences: 1))
+        XCTAssertEqual(recent.core?.identifier, replacementID)
+        XCTAssertEqual(game.userPreferredCoreID, replacementID)
+        XCTAssertEqual(system.userPreferredCoreID, replacementID)
+    }
+
+    func testPicksReplacementPerSystem() throws {
+        let coleco = PVGame()
+        coleco.md5Hash = "c1"
+        coleco.systemIdentifier = SystemIdentifier.ColecoVision.rawValue
+        coleco.userPreferredCoreID = retiredID
+        let sg1000 = PVGame()
+        sg1000.md5Hash = "s1"
+        sg1000.systemIdentifier = SystemIdentifier.SG1000.rawValue
+        sg1000.userPreferredCoreID = retiredID
+        let colecoSystem = PVSystem()
+        colecoSystem.identifier = SystemIdentifier.ColecoVision.rawValue
+        colecoSystem.userPreferredCoreID = retiredID
+        try realm.write { realm.add([coleco, sg1000, colecoSystem] as [Object]) }
+
+        _ = try migrate(RetiredCore(replacement: replacementID, systemReplacements: [.ColecoVision: colecoID]))
+
+        XCTAssertEqual(coleco.userPreferredCoreID, colecoID)
+        XCTAssertEqual(sg1000.userPreferredCoreID, replacementID)
+        XCTAssertEqual(colecoSystem.userPreferredCoreID, colecoID)
+    }
+
+    func testWaitsForEveryReplacementToBeRegistered() throws {
+        let state = try addState(core: retiredID, version: "2.1.2")
+        try realm.write { realm.delete(core(colecoID)) }
+
+        let result = try migrate(RetiredCore(replacement: replacementID, systemReplacements: [.ColecoVision: colecoID], migratesSaveStates: true))
+
+        XCTAssertEqual(result, RetiredCoreMigration.Result())
+        XCTAssertEqual(state.core.identifier, retiredID)
+        XCTAssertFalse(core(retiredID).disabled)
+    }
+
+    func testDisablesRetiredCore() throws {
+        _ = try migrate()
+        XCTAssertTrue(core(retiredID).disabled)
+        XCTAssertFalse(core(replacementID).disabled)
+    }
+
+    func testSecondRunIsANoOp() throws {
+        _ = try addState(core: retiredID, version: "2.1.2")
+        _ = try migrate()
+        XCTAssertEqual(try migrate(), RetiredCoreMigration.Result())
+    }
+
+    func testLeavesRecordsAloneWhileReplacementIsMissing() throws {
+        let state = try addState(core: retiredID, version: "2.1.2")
+        try realm.write { realm.delete(core(replacementID)) }
+
+        let result = try migrate()
+
+        XCTAssertEqual(result, RetiredCoreMigration.Result())
+        XCTAssertEqual(state.core.identifier, retiredID)
+        XCTAssertFalse(core(retiredID).disabled)
+    }
+
+    func testCurrentIdentifierOnlyRemapsCoresWhoseStatesMigrate() {
+        let cores = [
+            "a": RetiredCore(replacement: "a.libretro.framework", migratesSaveStates: true),
+            "b": RetiredCore(replacement: "b.libretro.framework", migratesSaveStates: false),
+        ]
+        XCTAssertEqual(PVCore.currentIdentifier(for: "a", in: cores), "a.libretro.framework")
+        XCTAssertEqual(PVCore.currentIdentifier(for: "b", in: cores), "b")
+        XCTAssertEqual(PVCore.currentIdentifier(for: "c", in: cores), "c")
+    }
+
+    func testRetiredRowsAreNeverPruned() {
+        XCTAssertFalse(PVEmulatorConfiguration.isStaleCore(RetiredCoreID.jaguar, validIdentifiers: []))
+        XCTAssertTrue(PVEmulatorConfiguration.isStaleCore("com.example.phantom", validIdentifiers: []))
+        XCTAssertFalse(PVEmulatorConfiguration.isStaleCore("com.example.phantom", validIdentifiers: ["com.example.phantom"]))
+    }
+
+    func testRetirementWaitsForTheReplacementToBeBundled() {
+        XCTAssertEqual(PVCore.retiredCoreReplacements[RetiredCoreID.jaguar], LibretroCoreID.virtualJaguar)
+        // The test runner bundles no libretro cores, like a Lite build: Jaguar
+        // stays on its native core and incoming records keep their identifier.
+        XCTAssertFalse(PVCore.isBundledLibretroCore(LibretroCoreID.virtualJaguar))
+        XCTAssertNil(PVCore.activeRetiredCoreReplacements[RetiredCoreID.jaguar])
+        XCTAssertEqual(PVCore.currentIdentifier(for: RetiredCoreID.jaguar), RetiredCoreID.jaguar)
+    }
+}
+```
+
+Run: `grep -n "case Jaguar\b\|case Jaguar =" PVPrimitives/Sources/PVSystems/SystemIdentifier.swift`. If the enum case is named differently, use that name in `testMovesRecentsAndPreferences`.
+
+- [ ] **Step 2: Run the tests and see them fail**
+
+Run: the PVLibrary test command from Global Constraints with `-only-testing:PVLibraryTests/RetiredCoreMigrationTests`.
+Expected: compile errors: `cannot find 'RetiredCore' in scope`, `isStaleCore`, `RetiredCoreID`.
+
+- [ ] **Step 3: Replace the retirement block in `PVCore.swift`**
+
+Add `import PVSystems` beside the other imports. Then replace the `public extension PVCore {` block that starts with `/// Cores removed from the app` and ends after `currentIdentifier(for:)` (the `isBundledLibretroCore` function and the `bundledLibretroCoreCache` stay) with:
+
+```swift
+/// Identifiers of native cores removed from the app (their Core.plist `PVCoreIdentifier`).
+/// Kept so records naming them can still be found and moved.
+public enum RetiredCoreID {
+    public static let jaguar = "com.provenance.core.jaguar"
+}
+
+/// Identifiers of the libretro cores that replace them (`PVCoreIdentifier` in
+/// CoresRetro/RetroArch/Core.plist: the cores.yml name with dots, plus `.libretro.framework`).
+public enum LibretroCoreID {
+    public static let virtualJaguar = "virtualjaguar.libretro.framework"
+}
+
+/// Where a retired core kept a battery save, and how its replacement gets it.
+/// The thin wrapper reads `Battery States/<rom>/<rom>.srm` (RETRO_MEMORY_SAVE_RAM).
+public struct RetiredBatterySaveRule: Equatable, Sendable {
+    public enum Location: Equatable, Sendable {
+        /// `Battery States/<rom>/`: the core's `batterySavesPath`.
+        case batterySaves
+        /// `Save States/<rom>/`: the legacy libretro bridge answered GET_SAVE_DIRECTORY with it.
+        case saveStates
+    }
+
+    public let location: Location
+    /// Extension of `<rom>.<ext>`, the file the retired core wrote.
+    public let fileExtension: String
+    /// Move the file into `Battery States/<rom>/` (for `.saveStates`).
+    public let moveToBatterySaves: Bool
+    /// Copy it to `Battery States/<rom>/<rom>.srm` when that file doesn't exist yet.
+    public let copyToSRM: Bool
+
+    public init(location: Location, fileExtension: String, moveToBatterySaves: Bool = false, copyToSRM: Bool = false) {
+        self.location = location
+        self.fileExtension = fileExtension
+        self.moveToBatterySaves = moveToBatterySaves
+        self.copyToSRM = copyToSRM
+    }
+
+    /// A raw battery file in Battery States, copied to the thin wrapper's `.srm`.
+    public static func copiedToSRM(_ fileExtension: String) -> RetiredBatterySaveRule {
+        RetiredBatterySaveRule(location: .batterySaves, fileExtension: fileExtension, copyToSRM: true)
+    }
+
+    /// A file the legacy bridge left in Save States, moved to Battery States.
+    public static func movedFromSaveStates(_ fileExtension: String, copyToSRM: Bool = false) -> RetiredBatterySaveRule {
+        RetiredBatterySaveRule(location: .saveStates, fileExtension: fileExtension, moveToBatterySaves: true, copyToSRM: copyToSRM)
+    }
+}
+
+/// A native core removed from the app and the libretro core(s) that now run its games.
+public struct RetiredCore: Equatable, Sendable {
+    public let replacement: String
+    /// Systems whose games go to a different replacement than `replacement`.
+    public let systemReplacements: [SystemIdentifier: String]
+    /// Save states load in the replacement (same emulator code). When false they keep the
+    /// retired core, whose disabled row is never pruned.
+    public let migratesSaveStates: Bool
+    public let batterySaves: [RetiredBatterySaveRule]
+
+    public init(replacement: String, systemReplacements: [SystemIdentifier: String] = [:],
+                migratesSaveStates: Bool = false, batterySaves: [RetiredBatterySaveRule] = []) {
+        self.replacement = replacement
+        self.systemReplacements = systemReplacements
+        self.migratesSaveStates = migratesSaveStates
+        self.batterySaves = batterySaves
+    }
+
+    public func replacement(forSystem systemIdentifier: String?) -> String {
+        guard let system = systemIdentifier.flatMap(SystemIdentifier.init(rawValue:)),
+              let override = systemReplacements[system] else { return replacement }
+        return override
+    }
+
+    public var allReplacements: [String] { [replacement] + systemReplacements.values.sorted() }
+}
+
+public extension PVCore {
+    /// Cores removed from the app. See RetiredCoreMigration and RetiredBatterySaveMigration.
+    static let retiredCores: [String: RetiredCore] = [
+        // Native PVJaguar ran the same virtualjaguar libretro.c as the dylib,
+        // so its save states load there (the core reads older state versions).
+        RetiredCoreID.jaguar: RetiredCore(replacement: LibretroCoreID.virtualJaguar, migratesSaveStates: true),
+    ]
+
+    /// Retired core → its default replacement.
+    static var retiredCoreReplacements: [String: String] { retiredCores.mapValues(\.replacement) }
+
+    /// The retirements in effect in this build: those whose replacements are all
+    /// bundled. Lite builds ship no libretro dylibs and keep the old core.
+    static let activeRetiredCores: [String: RetiredCore] =
+        retiredCores.filter { $0.value.allReplacements.allSatisfy(isBundledLibretroCore) }
+
+    static let activeRetiredCoreReplacements: [String: String] = activeRetiredCores.mapValues(\.replacement)
+
+    /// The identifier of the core that now loads `identifier`'s save states. Records arriving
+    /// from iCloud, another device or an export still name the old core, so save-state lookups
+    /// go through this. Only retirements whose save states migrate are remapped.
+    static func currentIdentifier(for identifier: String) -> String {
+        currentIdentifier(for: identifier, in: activeRetiredCores)
+    }
+
+    static func currentIdentifier(for identifier: String, in cores: [String: RetiredCore]) -> String {
+        guard let retired = cores[identifier], retired.migratesSaveStates else { return identifier }
+        return retired.replacement
+    }
+```
+
+The existing `static func isBundledLibretroCore`, its doc comment, the `bundledLibretroCoreCache` and the closing `}` stay as they are.
+
+- [ ] **Step 4: Rewrite `RetiredCoreMigration.swift`**
+
+```swift
+//
+//  RetiredCoreMigration.swift
+//  PVLibrary
+//
+//  Copyright © 2026 Provenance Emu. All rights reserved.
+//
+//  Moves what points at a retired core (`PVCore.activeRetiredCores`) over to its
+//  replacement for that game's system: recently played entries, per-game and per-system
+//  core preferences, and save states when the formats are compatible. The retired
+//  core's row is kept but marked disabled, so it only shows up with "unsupported cores"
+//  turned on and unmigrated save states still name a core. Battery files are moved
+//  separately (RetiredBatterySaveMigration), outside the Realm write.
+//
+//  Runs on every core registration; once nothing points at a retired core it is
+//  a handful of empty queries.
+//
+
+import Foundation
+import RealmSwift
+import PVLogging
+import PVRealm
+
+enum RetiredCoreMigration {
+
+    struct Result: Equatable {
+        var saveStates = 0
+        var recentGames = 0
+        var gamePreferences = 0
+        var systemPreferences = 0
+    }
+
+    /// Repoints records from each retired core to its replacements. Must be called
+    /// inside a write transaction. A retired core is skipped while any of its
+    /// replacements isn't registered, so nothing is left pointing at a missing core.
+    @discardableResult
+    static func migrate(in realm: Realm,
+                        retiredCores: [String: RetiredCore] = PVCore.activeRetiredCores) -> Result {
+        var result = Result()
+        for (retiredID, retired) in retiredCores.sorted(by: { $0.key < $1.key }) {
+            let missing = retired.allReplacements.filter { realm.object(ofType: PVCore.self, forPrimaryKey: $0) == nil }
+            guard missing.isEmpty else {
+                WLOG("RetiredCoreMigration: \(missing.joined(separator: ", ")) not registered; leaving \(retiredID) records for now")
+                continue
+            }
+            func replacementCore(forSystem systemIdentifier: String?) -> PVCore? {
+                realm.object(ofType: PVCore.self, forPrimaryKey: retired.replacement(forSystem: systemIdentifier))
+            }
+            let before = result
+
+            if retired.migratesSaveStates {
+                for state in Array(realm.objects(PVSaveState.self).filter("core.identifier == %@", retiredID)) {
+                    guard let replacement = replacementCore(forSystem: state.game?.systemIdentifier) else { continue }
+                    state.core = replacement
+                    // The version was the retired core's; keeping it would warn about
+                    // a version mismatch on every load.
+                    state.createdWithCoreVersion = replacement.projectVersion
+                    result.saveStates += 1
+                }
+            }
+            for recent in Array(realm.objects(PVRecentGame.self).filter("core.identifier == %@", retiredID)) {
+                recent.core = replacementCore(forSystem: recent.game?.systemIdentifier)
+                result.recentGames += 1
+            }
+            for game in Array(realm.objects(PVGame.self).filter("userPreferredCoreID == %@", retiredID)) {
+                game.userPreferredCoreID = retired.replacement(forSystem: game.systemIdentifier)
+                result.gamePreferences += 1
+            }
+            for system in Array(realm.objects(PVSystem.self).filter("userPreferredCoreID == %@", retiredID)) {
+                system.userPreferredCoreID = retired.replacement(forSystem: system.identifier)
+                result.systemPreferences += 1
+            }
+
+            if let core = realm.object(ofType: PVCore.self, forPrimaryKey: retiredID), !core.disabled {
+                core.disabled = true
+            }
+
+            if result != before {
+                ILOG("RetiredCoreMigration: \(retiredID) → \(retired.allReplacements.joined(separator: "/")): \(result)")
+            }
+        }
+        return result
+    }
+}
+```
+
+- [ ] **Step 5: Guard the stale-core prune**
+
+In `PVEmulatorConfiguration+Frameworks.swift`, replace
+
+```swift
+        let staleCores = allCores.filter { !validIdentifiers.contains($0.identifier) }
+```
+
+with
+
+```swift
+        let staleCores = allCores.filter { isStaleCore($0.identifier, validIdentifiers: validIdentifiers) }
+```
+
+and add, inside the same `extension PVEmulatorConfiguration` and next to `isDisabled(_:)`:
+
+```swift
+    /// A core row is stale when no plist names it, except a retired core's: that row stays
+    /// (disabled) so save states that were not moved to the replacement still name a core.
+    internal static func isStaleCore(_ identifier: String, validIdentifiers: Set<String>) -> Bool {
+        !validIdentifiers.contains(identifier) && PVCore.retiredCores[identifier] == nil
+    }
+```
+
+- [ ] **Step 6: Run the tests and see them pass**
+
+Run: the PVLibrary test command with `-only-testing:PVLibraryTests/RetiredCoreMigrationTests`.
+Expected: `Executed 11 tests, with 0 failures`.
+
+- [ ] **Step 7: Lint and commit**
+
+Run: `swiftlint lint --path PVLibrary/Sources/PVRealm/RealmPlatform/Entities/PVCore.swift --path PVLibrary/Sources/PVLibrary/Migration/RetiredCoreMigration.swift --path PVLibrary/Sources/PVLibrary/Configuration/PVEmulatorConfiguration+Frameworks.swift`
+
+```bash
+git add PVLibrary/Sources/PVRealm/RealmPlatform/Entities/PVCore.swift PVLibrary/Sources/PVLibrary/Migration/RetiredCoreMigration.swift "PVLibrary/Sources/PVLibrary/Configuration/PVEmulatorConfiguration+Frameworks.swift" PVLibrary/Tests/PVLibraryTests/RetiredCoreMigrationTests.swift
+git -c commit.gpgsign=false commit -m "feat(library): per-system retired cores; keep their rows and states" -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+---
 
 ### Task 16: Battery-save file pass  *(model: sonnet)*
 
-**Files:** new `PVLibrary/Sources/PVLibrary/Migration/RetiredBatterySaveMigration.swift`, `PVEmulatorConfiguration+Frameworks.swift` (launch after migrate + prune), new `PVLibrary/Tests/PVLibraryTests/RetiredBatterySaveMigrationTests.swift`.
+**Files:**
+- Create: `PVLibrary/Sources/PVLibrary/Migration/RetiredBatterySaveMigration.swift`
+- Modify: `PVLibrary/Sources/PVLibrary/Configuration/PVEmulatorConfiguration+Frameworks.swift` (after the stale-core prune block in `updateCores(fromPlists:)`)
+- Test: `PVLibrary/Tests/PVLibraryTests/RetiredBatterySaveMigrationTests.swift`
 
-**Interfaces:** `struct RetiredBatterySaveJob: Sendable { retiredID; rules; romBases }`; `enum RetiredBatterySaveMigration { migrate(romBase:rules:batteryRoot:saveStatesRoot:fileManager:) -> [String]; run(_:batteryRoot:saveStatesRoot:fileManager:defaults:); isDone/markDone (UserDefaults key "RetiredBatterySaveMigration.<id>") }`.
+**Interfaces:**
+- Consumes: `RetiredBatterySaveRule`, `RetiredCore.batterySaves`, `PVCore.activeRetiredCores` (Task 15); `Paths.batterySavesPath`, `Paths.saveSavesPath` (each ROM gets `<root>/<rom base name>/`); the thin frontend's file `Battery States/<rom>/<rom>.srm` (`PVThinLibretroFrontend.mm` `saveBatterySaveData`: `batterySavesPath` + ROM file name without extension + `.srm`).
+- Produces:
+  - `struct RetiredBatterySaveJob: Sendable, Equatable { retiredID: String; rules: [RetiredBatterySaveRule]; romBases: [String] }`;
+  - `enum RetiredBatterySaveMigration` with `static let srmExtension = "srm"`, `static let doneKeyPrefix = "RetiredBatterySaveMigration."`, `romBase(of:)`, `isDone(_:defaults:)`, `markDone(_:defaults:)`, `migrate(romBase:rules:batteryRoot:saveStatesRoot:fileManager:) -> [String]`, `pendingJobs(in:retiredCores:defaults:)`, and `run(_:batteryRoot:saveStatesRoot:fileManager:defaults:)`.
 
-What it does:
-- Games are chosen through the retired core row's `supportedSystems`. The ROM base is computed from `game.romPath` without touching iCloud paths, outside the Realm write.
-- A detached utility task then resolves `Paths.batterySavesPath` and `Paths.saveSavesPath`.
-- For each rule, the source `<root>/<rom>/<rom>.<ext>` is optionally moved into `Battery States/<rom>/`, then copied to `<rom>.srm` if that file is absent. Nothing is overwritten. The pass logs what it did and runs once per retired core.
+- [ ] **Step 1: Write the failing tests**
 
-Verified by temp-dir unit tests: copy to `.srm` keeping the original; no overwrite of an existing `.srm`; move from Save States plus `.srm` (melonDS); `.dsv` move without `.srm` (DeSmuME); a missing source is a no-op; `run` marks the core done in an injected `UserDefaults(suiteName:)`.
+```swift
+//
+//  RetiredBatterySaveMigrationTests.swift
+//  PVLibraryTests
+//
+
+import XCTest
+import PVRealm
+@testable import PVLibrary
+
+final class RetiredBatterySaveMigrationTests: XCTestCase {
+    private var root: URL!
+    private var battery: URL!
+    private var states: URL!
+    private let rom = "Game (USA)"
+
+    override func setUpWithError() throws {
+        root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        battery = root.appendingPathComponent("Battery States")
+        states = root.appendingPathComponent("Save States")
+        try FileManager.default.createDirectory(at: battery, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: states, withIntermediateDirectories: true)
+    }
+
+    override func tearDownWithError() throws {
+        try? FileManager.default.removeItem(at: root)
+    }
+
+    @discardableResult
+    private func write(_ dir: URL, _ ext: String, _ text: String) throws -> URL {
+        let folder = dir.appendingPathComponent(rom, isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let file = folder.appendingPathComponent(rom).appendingPathExtension(ext)
+        try text.write(to: file, atomically: true, encoding: .utf8)
+        return file
+    }
+
+    private func read(_ dir: URL, _ ext: String) -> String? {
+        try? String(contentsOf: dir.appendingPathComponent(rom).appendingPathComponent(rom).appendingPathExtension(ext), encoding: .utf8)
+    }
+
+    private func migrate(_ rules: [RetiredBatterySaveRule]) -> [String] {
+        RetiredBatterySaveMigration.migrate(romBase: rom, rules: rules, batteryRoot: battery, saveStatesRoot: states)
+    }
+
+    func testCopiesBatteryFileToSRMAndKeepsOriginal() throws {
+        try write(battery, "sav", "ram")
+        let log = migrate([.copiedToSRM("sav")])
+        XCTAssertEqual(read(battery, "srm"), "ram")
+        XCTAssertEqual(read(battery, "sav"), "ram")
+        XCTAssertEqual(log.count, 1)
+    }
+
+    func testNeverOverwritesAnExistingSRM() throws {
+        try write(battery, "eep", "old native")
+        try write(battery, "srm", "newer thin")
+        XCTAssertTrue(migrate([.copiedToSRM("eep")]).isEmpty)
+        XCTAssertEqual(read(battery, "srm"), "newer thin")
+    }
+
+    func testMovesFromSaveStatesAndCopiesSRM() throws {
+        try write(states, "sav", "ds")
+        _ = migrate([.movedFromSaveStates("sav", copyToSRM: true)])
+        XCTAssertNil(read(states, "sav"))
+        XCTAssertEqual(read(battery, "sav"), "ds")
+        XCTAssertEqual(read(battery, "srm"), "ds")
+    }
+
+    func testMovesDSVWithoutSRM() throws {
+        try write(states, "dsv", "desmume")
+        _ = migrate([.movedFromSaveStates("dsv")])
+        XCTAssertEqual(read(battery, "dsv"), "desmume")
+        XCTAssertNil(read(battery, "srm"))
+    }
+
+    func testMissingSourceIsANoOp() {
+        XCTAssertTrue(migrate([.copiedToSRM("sav"), .movedFromSaveStates("dsv")]).isEmpty)
+    }
+
+    func testRomBaseDropsDirectoryAndExtension() {
+        XCTAssertEqual(RetiredBatterySaveMigration.romBase(of: "com.provenance.gb/Game (USA).gb"), "Game (USA)")
+    }
+
+    func testRunMarksEachRetiredCoreDone() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
+        try write(battery, "sav2", "gba")
+        let job = RetiredBatterySaveJob(retiredID: "com.example.retired", rules: [.copiedToSRM("sav2")], romBases: [rom])
+        XCTAssertFalse(RetiredBatterySaveMigration.isDone(job.retiredID, defaults: defaults))
+
+        RetiredBatterySaveMigration.run([job], batteryRoot: battery, saveStatesRoot: states, defaults: defaults)
+
+        XCTAssertEqual(read(battery, "srm"), "gba")
+        XCTAssertTrue(RetiredBatterySaveMigration.isDone(job.retiredID, defaults: defaults))
+    }
+}
+```
+
+- [ ] **Step 2: Run the tests and see them fail**
+
+Run: the PVLibrary test command with `-only-testing:PVLibraryTests/RetiredBatterySaveMigrationTests`.
+Expected: `cannot find 'RetiredBatterySaveMigration' in scope`.
+
+- [ ] **Step 3: Write `RetiredBatterySaveMigration.swift`**
+
+```swift
+//
+//  RetiredBatterySaveMigration.swift
+//  PVLibrary
+//
+//  Copyright © 2026 Provenance Emu. All rights reserved.
+//
+//  Puts battery saves that retired native cores left on disk where their libretro
+//  replacements read them: `Battery States/<rom>/<rom>.srm` (thin wrapper SAVE_RAM),
+//  and for the legacy libretro bridge, which answered GET_SAVE_DIRECTORY with the Save
+//  States folder, back into Battery States. Copies (never overwrites); moves only out of
+//  Save States. Runs once per retired core, off the main thread, after core registration.
+//
+
+import Foundation
+import PVLogging
+import PVRealm
+
+struct RetiredBatterySaveJob: Sendable, Equatable {
+    let retiredID: String
+    let rules: [RetiredBatterySaveRule]
+    /// ROM file names without extension: each has `<root>/<romBase>/` folders.
+    let romBases: [String]
+}
+
+enum RetiredBatterySaveMigration {
+    static let srmExtension = "srm"
+    static let doneKeyPrefix = "RetiredBatterySaveMigration."
+
+    static func romBase(of romPath: String) -> String {
+        URL(fileURLWithPath: romPath).deletingPathExtension().lastPathComponent
+    }
+
+    static func isDone(_ retiredID: String, defaults: UserDefaults = .standard) -> Bool {
+        defaults.bool(forKey: doneKeyPrefix + retiredID)
+    }
+
+    static func markDone(_ retiredID: String, defaults: UserDefaults = .standard) {
+        defaults.set(true, forKey: doneKeyPrefix + retiredID)
+    }
+
+    /// Applies `rules` to one ROM. Returns one line per file moved or copied.
+    @discardableResult
+    static func migrate(romBase: String, rules: [RetiredBatterySaveRule], batteryRoot: URL, saveStatesRoot: URL,
+                        fileManager: FileManager = .default) -> [String] {
+        var log: [String] = []
+        let batteryFolder = batteryRoot.appendingPathComponent(romBase, isDirectory: true)
+        func file(in folder: URL, _ ext: String) -> URL {
+            folder.appendingPathComponent(romBase).appendingPathExtension(ext)
+        }
+        for rule in rules {
+            let sourceFolder = rule.location == .batterySaves
+                ? batteryFolder
+                : saveStatesRoot.appendingPathComponent(romBase, isDirectory: true)
+            var current = file(in: sourceFolder, rule.fileExtension)
+
+            if rule.moveToBatterySaves, sourceFolder != batteryFolder {
+                let destination = file(in: batteryFolder, rule.fileExtension)
+                if fileManager.fileExists(atPath: current.path), !fileManager.fileExists(atPath: destination.path) {
+                    do {
+                        try fileManager.createDirectory(at: batteryFolder, withIntermediateDirectories: true)
+                        try fileManager.moveItem(at: current, to: destination)
+                        log.append("moved \(current.lastPathComponent) from Save States to Battery States")
+                    } catch {
+                        log.append("could not move \(current.lastPathComponent): \(error.localizedDescription)")
+                        continue
+                    }
+                }
+                current = destination
+            }
+
+            guard rule.copyToSRM, fileManager.fileExists(atPath: current.path) else { continue }
+            let srm = file(in: batteryFolder, srmExtension)
+            guard !fileManager.fileExists(atPath: srm.path) else { continue }
+            do {
+                try fileManager.createDirectory(at: batteryFolder, withIntermediateDirectories: true)
+                try fileManager.copyItem(at: current, to: srm)
+                log.append("copied \(current.lastPathComponent) to \(srm.lastPathComponent)")
+            } catch {
+                log.append("could not copy \(current.lastPathComponent) to .\(srmExtension): \(error.localizedDescription)")
+            }
+        }
+        return log
+    }
+
+    /// Jobs for active retired cores with battery rules that haven't run yet. Reads Realm
+    /// only (call on the thread that owns `database`); games are matched through the retired
+    /// core row's supported systems, which the stale-core prune keeps.
+    static func pendingJobs(in database: RomDatabase,
+                            retiredCores: [String: RetiredCore] = PVCore.activeRetiredCores,
+                            defaults: UserDefaults = .standard) -> [RetiredBatterySaveJob] {
+        retiredCores.sorted { $0.key < $1.key }.compactMap { retiredID, retired in
+            guard !retired.batterySaves.isEmpty, !isDone(retiredID, defaults: defaults),
+                  let core = database.realm.object(ofType: PVCore.self, forPrimaryKey: retiredID) else { return nil }
+            let systems = Array(core.supportedSystems.map(\.identifier))
+            let bases = database.all(PVGame.self).filter("systemIdentifier IN %@", systems).map { romBase(of: $0.romPath) }
+            return RetiredBatterySaveJob(retiredID: retiredID, rules: retired.batterySaves, romBases: Array(Set(bases)).sorted())
+        }
+    }
+
+    /// File work; call off the main thread (the Paths roots may block on iCloud).
+    static func run(_ jobs: [RetiredBatterySaveJob], batteryRoot: URL, saveStatesRoot: URL,
+                    fileManager: FileManager = .default, defaults: UserDefaults = .standard) {
+        for job in jobs {
+            for romBase in job.romBases {
+                for line in migrate(romBase: romBase, rules: job.rules, batteryRoot: batteryRoot,
+                                    saveStatesRoot: saveStatesRoot, fileManager: fileManager) {
+                    ILOG("RetiredBatterySaveMigration: \(job.retiredID) \(romBase): \(line)")
+                }
+            }
+            markDone(job.retiredID, defaults: defaults)
+        }
+    }
+}
+```
+
+- [ ] **Step 4: Launch the pass after the prune**
+
+In `PVEmulatorConfiguration+Frameworks.swift`, `updateCores(fromPlists:)`, directly after the stale-core prune `if !staleCores.isEmpty { … }` block and before `await RomDatabase.reloadCache(force: true)`, add:
+
+```swift
+        // Battery saves retired native cores left on disk go where their libretro
+        // replacements read them. File work only, off the main thread, once per core.
+        let batteryJobs = RetiredBatterySaveMigration.pendingJobs(in: database)
+        if !batteryJobs.isEmpty {
+            Task.detached(priority: .utility) {
+                RetiredBatterySaveMigration.run(batteryJobs,
+                                                batteryRoot: Paths.batterySavesPath,
+                                                saveStatesRoot: Paths.saveSavesPath)
+            }
+        }
+```
+
+- [ ] **Step 5: Run the tests and see them pass**
+
+Run: the PVLibrary test command with `-only-testing:PVLibraryTests/RetiredBatterySaveMigrationTests -only-testing:PVLibraryTests/RetiredCoreMigrationTests`.
+Expected: `Executed 18 tests, with 0 failures`.
+
+- [ ] **Step 6: Lint and commit**
+
+```bash
+swiftlint lint --path PVLibrary/Sources/PVLibrary/Migration/RetiredBatterySaveMigration.swift --path "PVLibrary/Sources/PVLibrary/Configuration/PVEmulatorConfiguration+Frameworks.swift"
+git add PVLibrary/Sources/PVLibrary/Migration/RetiredBatterySaveMigration.swift "PVLibrary/Sources/PVLibrary/Configuration/PVEmulatorConfiguration+Frameworks.swift" PVLibrary/Tests/PVLibraryTests/RetiredBatterySaveMigrationTests.swift
+git -c commit.gpgsign=false commit -m "feat(library): move retired cores' battery saves to thin .srm" -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+---
 
 ### Task 17: Retired-core entries  *(model: sonnet)*
 
-**Files:** `PVCore.swift` (table), `RetiredCoreMigrationTests.swift` (table test).
+**Files:**
+- Modify: `PVLibrary/Sources/PVRealm/RealmPlatform/Entities/PVCore.swift` (`RetiredCoreID`, `LibretroCoreID`, `retiredCores`)
+- Test: `PVLibrary/Tests/PVLibraryTests/RetiredCoreTableTests.swift`
 
-What it adds:
+**Interfaces:**
+- Consumes: the Task 15 types.
+- Produces: one entry per native core that users could run (embedded and not `PVDisabled`), plus the DS pair.
 
-| Retired ID | Replacement |
-|---|---|
-| `com.provenance.core.atari800` | `atari800.libretro.framework`; `.Atari5200` → `a5200.libretro.framework` |
-| `com.provenance.core.bliss` | `freeintv` |
-| `com.provenance.core.crabemu` | `genesis.plus.gx`; `.ColecoVision` → `gearcoleco`. The plist also lists the non-existent `com.provenance.sms` |
-| `com.provenance.core.gambatte` | `gambatte` |
-| `com.provenance.core.odyssey2` | `o2em` |
-| `com.provenance.core.pokemini` | `pokemini` |
-| `com.provenance.core.visualboyadvance` | `vbam` |
-| `com.provenance.core.desmume2015` | `desmume` |
-| `com.provenance.core.MelonDS` | `melonds` |
-| `beetlepsx` | `mednafen.psx.hw` |
-| `FreeIntv` | `freeintv` |
-| `GME` | `gme` |
-| `gearcoleco` | `gearcoleco` |
-| `Mu` | `mu` |
-| `mupen64plusnx` | `mupen64plus.next` |
-| `potator` | `potator` |
-| `minivmac` | `minivmac` (not App Store; the retirement stays inactive where it isn't bundled) |
-| `Yabause` | `yabause` |
-| `PCSXRearmed` | `pcsx.rearmed` |
-| `Fuse` | `fuse` |
-| `opera` | `opera` |
+Identifiers come from each core's `Core.plist` (`PVCoreIdentifier`) and from `CoresRetro/RetroArch/Core.plist`. Battery rules come from each bridge:
 
-In the table, IDs without a prefix are `com.provenance.core.<id>`, and every replacement is `<name>.libretro.framework`. All replacements are `enabled: true` for iOS and tvOS in `cores.yml`.
+| Retired core (`PVCoreIdentifier`) | Replacement | Battery source (verified) | Rule |
+|---|---|---|---|
+| Atari800 `com.provenance.core.atari800` | `atari800`; `.Atari5200` → `a5200` | `PVAtari800Bridge.m`: "`batterySavesPath` is unused for this core by design" | none |
+| Bliss `com.provenance.core.bliss` | `freeintv` | no battery code in `PVCoreBliss*` | none |
+| CrabEMU `com.provenance.core.crabemu` | `genesis.plus.gx`; `.ColecoVision` → `gearcoleco` | `PVCrabEmuBridge.m`: `<batterySavesPath>/<rom>.sav` (SMS/SG-1000 cart RAM; Coleco none) | `.copiedToSRM("sav")` |
+| Gambatte `com.provenance.core.gambatte` | `gambatte` | `gb.setSaveDir(batterySavesPath)`; libgambatte writes `<rom>.sav` (+ `.rtc`) | `.copiedToSRM("sav")`; `.rtc` not carried |
+| O2EM `com.provenance.core.odyssey2` | `o2em` | no battery code in `PVOdysseyGameCore` | none |
+| PokeMini `com.provenance.core.pokemini` | `pokemini` | `PVPokeMiniBridge.m`: `<batterySavesPath>/<rom>.eep` | `.copiedToSRM("eep")` |
+| VBA-M `com.provenance.core.visualboyadvance` | `vbam` | `PVVisualBoyAdvanceBridge.mm`: `<batterySavesPath>/<rom>.sav2` | `.copiedToSRM("sav2")` |
+| Desmume2015 `com.provenance.core.desmume2015` | `desmume` | legacy bridge GET_SAVE_DIRECTORY = Save States; core writes `<rom>.dsv` (or reads `<rom>.sav`) | `.movedFromSaveStates("dsv")`, `.movedFromSaveStates("sav")` |
+| melonDS `com.provenance.core.MelonDS` | `melonds` | same bridge; core writes raw `<rom>.sav` | `.movedFromSaveStates("sav", copyToSRM: true)` (`.srm` for `melondsds`) |
+| BeetlePSX `com.provenance.core.beetlepsx` | `mednafen.psx.hw` | legacy `PVLibRetroCoreBridge`: never persisted `RETRO_MEMORY_SAVE_RAM` (`PVLibRetroCore+Saves.m` only serializes states) | none |
+| FreeIntv `com.provenance.core.FreeIntv` | `freeintv` | legacy bridge, nothing saved | none |
+| GME `com.provenance.core.GME` | `gme` | legacy bridge, nothing saved | none |
+| Gearcoleco `com.provenance.core.gearcoleco` | `gearcoleco` | legacy bridge, nothing saved | none |
+| Mu `com.provenance.core.Mu` | `mu` | legacy bridge, nothing saved | none |
+| Mupen64Plus-NX `com.provenance.core.mupen64plusnx` | `mupen64plus.next` | `SaveSRAMPath = batterySavesPath`: per-type mupen files (`.eep/.sra/.fla/.mpk`), not libretro's combined SAVE_RAM | none (layout differs) |
+| Potator `com.provenance.core.potator` | `potator` | legacy bridge, nothing saved | none |
+| Mini vMac `com.provenance.core.minivmac` | `minivmac` | legacy bridge, nothing saved; replacement not in App Store lists, so inactive there | none |
+| Yabause `com.provenance.core.Yabause` | `yabause` | legacy bridge, nothing saved | none |
+| PCSX-ReARMed `com.provenance.core.PCSXRearmed` | `pcsx.rearmed` | legacy bridge, nothing saved | none |
+| Fuse `com.provenance.core.Fuse` | `fuse` | legacy bridge, nothing saved | none |
+| Opera `com.provenance.core.opera` | `opera` | legacy bridge, nothing saved | none |
 
-Battery rules, read from each bridge:
+Every replacement in the table is `<name>.libretro.framework`.
 
-| Retired core | Rule |
-|---|---|
-| CrabEMU | `.sav` in Battery States (not Coleco) → `.srm` |
-| Gambatte | `.sav` → `.srm`; `.rtc` is not carried |
-| PokeMini | `.eep` → `.srm` |
-| VBA-M | `.sav2` → `.srm` |
-| melonDS | `.sav` in Save States → move + `.srm` |
-| Desmume2015 | `.sav` and `.dsv` in Save States → move |
-| Atari800 | none: the bridge says `batterySavesPath` is unused |
-| Bliss, O2EM | no battery code found |
-| Legacy-libretro-bridge cores (BeetlePSX, FreeIntv, GME, Gearcoleco, Mu, Potator, Mini vMac, Yabause, PCSX-ReARMed, Fuse, Opera) | none: `PVLibRetroCore+Saves.m` never persisted `RETRO_MEMORY_SAVE_RAM` |
-| Mupen64Plus-NX | none: its per-type mupen files differ from libretro's combined SAVE_RAM |
+No entry for:
+- DosBox and VecX, which are `PVDisabled`;
+- snesticle, whose `PVSnesticle.framework` has no producer;
+- supergrafx, which has no Core.plist;
+- DuckStation, Play, Reicast, JollyGoodEmulation, Sudachi and sm64ex, which were never embedded.
 
-`migratesSaveStates` is false for all new entries; Jaguar keeps true.
+VirtualJaguar keeps its existing Jaguar entry. `migratesSaveStates` is false for every new entry.
 
-Skipped as never runnable: DosBox and VecX (`PVDisabled`), snesticle (no producer), supergrafx (no Core.plist), and DuckStation, Play and Reicast (never embedded).
+- [ ] **Step 1: Write the failing table test**
 
-Verified by a test that locates the repo through `#filePath`, reads `CoresRetro/RetroArch/Core.plist`, and asserts every replacement ID is a `PVCoreIdentifier` there.
+```swift
+//
+//  RetiredCoreTableTests.swift
+//  PVLibraryTests
+//
+//  Every retired-core replacement must be a libretro core the app registers
+//  (CoresRetro/RetroArch/Core.plist), or the retirement never activates.
+//
+
+import XCTest
+import PVRealm
+import PVSystems
+
+final class RetiredCoreTableTests: XCTestCase {
+    private func libretroIdentifiers() throws -> Set<String> {
+        let repo = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent()
+            .deletingLastPathComponent().deletingLastPathComponent()
+        let data = try Data(contentsOf: repo.appendingPathComponent("CoresRetro/RetroArch/Core.plist"))
+        let plist = try XCTUnwrap(PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any])
+        let cores = try XCTUnwrap(plist["PVCores"] as? [[String: Any]])
+        return Set(cores.compactMap { $0["PVCoreIdentifier"] as? String })
+    }
+
+    func testEveryReplacementIsARegisteredLibretroCore() throws {
+        let known = try libretroIdentifiers()
+        for (retiredID, retired) in PVCore.retiredCores {
+            for replacement in retired.allReplacements {
+                XCTAssertTrue(known.contains(replacement), "\(retiredID) → \(replacement) is not in Core.plist")
+            }
+        }
+    }
+
+    func testTableCoversThePrunedCores() {
+        XCTAssertEqual(PVCore.retiredCores.count, 22)
+        XCTAssertEqual(PVCore.retiredCores[RetiredCoreID.crabEMU]?.replacement(forSystem: SystemIdentifier.ColecoVision.rawValue),
+                       LibretroCoreID.gearcoleco)
+        XCTAssertEqual(PVCore.retiredCores[RetiredCoreID.atari800]?.replacement(forSystem: SystemIdentifier.Atari5200.rawValue),
+                       LibretroCoreID.a5200)
+        XCTAssertEqual(PVCore.retiredCores[RetiredCoreID.melonDS]?.batterySaves,
+                       [.movedFromSaveStates("sav", copyToSRM: true)])
+        XCTAssertTrue(PVCore.retiredCores.filter { $0.key != RetiredCoreID.jaguar }.values.allSatisfy { !$0.migratesSaveStates })
+    }
+}
+```
+
+Run: the PVLibrary test command with `-only-testing:PVLibraryTests/RetiredCoreTableTests`.
+Expected: compile errors (`crabEMU`, `gearcoleco` and the other new constants are missing).
+
+- [ ] **Step 2: Fill in the constants and the table**
+
+Replace `RetiredCoreID`, `LibretroCoreID` and `retiredCores` in `PVCore.swift` with:
+
+```swift
+public enum RetiredCoreID {
+    public static let jaguar = "com.provenance.core.jaguar"
+    public static let atari800 = "com.provenance.core.atari800"
+    public static let bliss = "com.provenance.core.bliss"
+    public static let crabEMU = "com.provenance.core.crabemu"
+    public static let gambatte = "com.provenance.core.gambatte"
+    public static let odyssey2 = "com.provenance.core.odyssey2"
+    public static let pokeMini = "com.provenance.core.pokemini"
+    public static let visualBoyAdvance = "com.provenance.core.visualboyadvance"
+    public static let desmume2015 = "com.provenance.core.desmume2015"
+    public static let melonDS = "com.provenance.core.MelonDS"
+    public static let beetlePSX = "com.provenance.core.beetlepsx"
+    public static let freeIntv = "com.provenance.core.FreeIntv"
+    public static let gme = "com.provenance.core.GME"
+    public static let gearcoleco = "com.provenance.core.gearcoleco"
+    public static let mu = "com.provenance.core.Mu"
+    public static let mupen64PlusNX = "com.provenance.core.mupen64plusnx"
+    public static let potator = "com.provenance.core.potator"
+    public static let miniVMac = "com.provenance.core.minivmac"
+    public static let yabause = "com.provenance.core.Yabause"
+    public static let pcsxRearmed = "com.provenance.core.PCSXRearmed"
+    public static let fuse = "com.provenance.core.Fuse"
+    public static let opera = "com.provenance.core.opera"
+}
+
+public enum LibretroCoreID {
+    public static let virtualJaguar = "virtualjaguar.libretro.framework"
+    public static let atari800 = "atari800.libretro.framework"
+    public static let a5200 = "a5200.libretro.framework"
+    public static let freeIntv = "freeintv.libretro.framework"
+    public static let genesisPlusGX = "genesis.plus.gx.libretro.framework"
+    public static let gearcoleco = "gearcoleco.libretro.framework"
+    public static let gambatte = "gambatte.libretro.framework"
+    public static let o2em = "o2em.libretro.framework"
+    public static let pokeMini = "pokemini.libretro.framework"
+    public static let vbam = "vbam.libretro.framework"
+    public static let desmume = "desmume.libretro.framework"
+    public static let melonDS = "melonds.libretro.framework"
+    public static let mednafenPSXHW = "mednafen.psx.hw.libretro.framework"
+    public static let gme = "gme.libretro.framework"
+    public static let mu = "mu.libretro.framework"
+    public static let mupen64PlusNext = "mupen64plus.next.libretro.framework"
+    public static let potator = "potator.libretro.framework"
+    public static let miniVMac = "minivmac.libretro.framework"
+    public static let yabause = "yabause.libretro.framework"
+    public static let pcsxRearmed = "pcsx.rearmed.libretro.framework"
+    public static let fuse = "fuse.libretro.framework"
+    public static let opera = "opera.libretro.framework"
+}
+```
+
+```swift
+    static let retiredCores: [String: RetiredCore] = [
+        // Native PVJaguar ran the same virtualjaguar libretro.c as the dylib,
+        // so its save states load there (the core reads older state versions).
+        RetiredCoreID.jaguar: RetiredCore(replacement: LibretroCoreID.virtualJaguar, migratesSaveStates: true),
+
+        // Save-check cores (docs/superpowers/specs/2026-10-10-core-audit.md). Native save
+        // states don't load in the dylibs; battery files are copied to the thin .srm.
+        RetiredCoreID.atari800: RetiredCore(replacement: LibretroCoreID.atari800,
+                                            systemReplacements: [.Atari5200: LibretroCoreID.a5200]),
+        RetiredCoreID.bliss: RetiredCore(replacement: LibretroCoreID.freeIntv),
+        RetiredCoreID.crabEMU: RetiredCore(replacement: LibretroCoreID.genesisPlusGX,
+                                           systemReplacements: [.ColecoVision: LibretroCoreID.gearcoleco],
+                                           batterySaves: [.copiedToSRM("sav")]),
+        RetiredCoreID.gambatte: RetiredCore(replacement: LibretroCoreID.gambatte, batterySaves: [.copiedToSRM("sav")]),
+        RetiredCoreID.odyssey2: RetiredCore(replacement: LibretroCoreID.o2em),
+        RetiredCoreID.pokeMini: RetiredCore(replacement: LibretroCoreID.pokeMini, batterySaves: [.copiedToSRM("eep")]),
+        RetiredCoreID.visualBoyAdvance: RetiredCore(replacement: LibretroCoreID.vbam, batterySaves: [.copiedToSRM("sav2")]),
+
+        // Native DS (PVDisabled): the legacy bridge stored battery files in Save States.
+        RetiredCoreID.desmume2015: RetiredCore(replacement: LibretroCoreID.desmume,
+                                               batterySaves: [.movedFromSaveStates("dsv"), .movedFromSaveStates("sav")]),
+        RetiredCoreID.melonDS: RetiredCore(replacement: LibretroCoreID.melonDS,
+                                           batterySaves: [.movedFromSaveStates("sav", copyToSRM: true)]),
+
+        // Legacy PVLibRetroCoreBridge shells: the bridge never persisted SAVE_RAM, so there
+        // are no battery files to carry.
+        RetiredCoreID.beetlePSX: RetiredCore(replacement: LibretroCoreID.mednafenPSXHW),
+        RetiredCoreID.freeIntv: RetiredCore(replacement: LibretroCoreID.freeIntv),
+        RetiredCoreID.gme: RetiredCore(replacement: LibretroCoreID.gme),
+        RetiredCoreID.gearcoleco: RetiredCore(replacement: LibretroCoreID.gearcoleco),
+        RetiredCoreID.mu: RetiredCore(replacement: LibretroCoreID.mu),
+        RetiredCoreID.potator: RetiredCore(replacement: LibretroCoreID.potator),
+        RetiredCoreID.miniVMac: RetiredCore(replacement: LibretroCoreID.miniVMac),
+        RetiredCoreID.yabause: RetiredCore(replacement: LibretroCoreID.yabause),
+        RetiredCoreID.pcsxRearmed: RetiredCore(replacement: LibretroCoreID.pcsxRearmed),
+        RetiredCoreID.fuse: RetiredCore(replacement: LibretroCoreID.fuse),
+        RetiredCoreID.opera: RetiredCore(replacement: LibretroCoreID.opera),
+        // Per-type mupen battery files don't match mupen64plus_next's combined SAVE_RAM.
+        RetiredCoreID.mupen64PlusNX: RetiredCore(replacement: LibretroCoreID.mupen64PlusNext),
+    ]
+```
+
+- [ ] **Step 3: Run the migration tests and see them pass**
+
+Run: the PVLibrary test command with `-only-testing:PVLibraryTests/RetiredCoreTableTests -only-testing:PVLibraryTests/RetiredCoreMigrationTests -only-testing:PVLibraryTests/RetiredBatterySaveMigrationTests`.
+Expected: `Executed 20 tests, with 0 failures`.
+
+- [ ] **Step 4: Check that no identifier string is inline**
+
+Run: `grep -n '"com.provenance.core\.' PVLibrary/Sources/PVLibrary/Migration/*.swift PVLibrary/Sources/PVRealm/RealmPlatform/Entities/PVCore.swift | grep -v "public static let"`
+Expected: no output.
+
+- [ ] **Step 5: Lint and commit**
+
+```bash
+swiftlint lint --path PVLibrary/Sources/PVRealm/RealmPlatform/Entities/PVCore.swift
+git add PVLibrary/Sources/PVRealm/RealmPlatform/Entities/PVCore.swift PVLibrary/Tests/PVLibraryTests/RetiredCoreTableTests.swift
+git -c commit.gpgsign=false commit -m "feat(library): retire 21 native cores to their libretro replacements" -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+---
 
 ### Task 18: Prune the shipping project with a script  *(model: opus)*
 
-**Files:** new `Scripts/dev/prune_cores.rb` (registered under `[ignore]` "Developer one-offs"), `Provenance.xcodeproj/project.pbxproj`, `Provenance.xcworkspace/contents.xcworkspacedata`, `.gitmodules`, `Cores/<X>` (deleted).
+**Files:**
+- Create: `Scripts/dev/prune_cores.rb`
+- Modify (by the script): `Provenance.xcodeproj/project.pbxproj`, `Provenance.xcworkspace/contents.xcworkspacedata`, `.gitmodules`; `Cores/<X>` removed for the 32 cores
+- Modify: `Scripts/maint/jobs.toml` (`[ignore]`)
 
-What it does: a Ruby `xcodeproj` script with a `CORES` table and the flags `--dry-run` (default) and `--apply`. Per core it removes these object kinds:
-- `PBXBuildFile`s in every target's Frameworks and Embed (copy-files) phases, matched by file-ref basename or by `product_ref.product_name`;
-- target `packageProductDependencies` and every `XCSwiftPackageProductDependency` with those product names (many lack a `package` key, so match on `productName`);
-- `XCLocalSwiftPackageReference` objects (root list and orphans) by `relativePath`;
-- `PBXFileReference`s by basename;
-- any `PBXContainerItemProxy` / `PBXReferenceProxy` / `projectReferences` entries that point at a removed `.xcodeproj`;
-- `LIBRARY_/FRAMEWORK_/HEADER_SEARCH_PATHS` entries containing `Cores/<X>/` (e.g. `Cores/Play/lib`);
-- the workspace `<FileRef location = "group:Cores/<X>/….xcodeproj">` elements (text edit);
-- the core directories and their `.gitmodules` sections, via `git rm -r -f Cores/<X>` and then `rm -rf` of the untracked leftovers.
+**Interfaces:**
+- Produces: `ruby Scripts/dev/prune_cores.rb [--apply]`. The default is a dry run that applies the edits to a temp copy and prints the full `git diff --no-index` of `project.pbxproj` and `contents.xcworkspacedata`, plus the `git rm` commands it would run. `--apply` edits in place and runs them.
 
-The table:
+Objects to remove, counted on `develop` at 74c23b3b3a. The counts are what the dry run must report, ±1 if the project moved since.
 
-| Core | Frameworks / products | Package or project |
-|---|---|---|
-| Atari800 | `PVAtari800-Dynamic` | package `Cores/Atari800` |
-| Bliss | `PVBliss-Dynamic` | package `Cores/Bliss` |
-| CrabEMU | `PVCrabEmu-Dynamic` | package `Cores/CrabEMU` |
-| Gambatte | `PVGambatte`, `PVGambatte-Dynamic` | package `Cores/Gambatte` |
-| PokeMini | `PVPokeMini-Dynamic` | package `Cores/PokeMini` |
-| VisualBoyAdvance-M | `PVVisualBoyAdvance-Dynamic` | package `Cores/VisualBoyAdvance-M` |
-| VirtualJaguar | `PVVirtualJaguar-Dynamic` | package `Cores/VirtualJaguar` |
-| O2EM | `PVO2EM.framework` | `Cores/O2EM/PVO2EM.xcodeproj` |
-| Desmume2015 | `PVDesmume2015.framework` | `Cores/Desmume2015/PVDesmume2015.xcodeproj` |
-| melonDS | `PVMelonDS.framework`, `PVMelonDSRetro.framework` | `Cores/melonDS/PVMelonDS.xcodeproj` |
-| BeetlePSX | `PVBeetlePSX.framework` | `Cores/BeetlePSX/PVBeetlePSX.xcodeproj` |
-| DosBox | `PVDosBox.framework`, `PVDosBoxRetro.framework` | `Cores/DosBox/PVDosBox.xcodeproj` |
-| DuckStation | — | workspace only |
-| FreeIntv | `PVFreeIntv.framework` | `Cores/FreeIntv/PVFreeIntv.xcodeproj` |
-| GameMusicEmu | `PVGME.framework` | `Cores/GameMusicEmu/PVGME.xcodeproj` |
-| Gearcoleco | `PVGearcoleco.framework` | `Cores/Gearcoleco/PVGearcoleco.xcodeproj` |
-| Mini_vMac | `PVMiniVMac.framework`, `PVMiniVMacRetro.framework` | `Cores/Mini_vMac/PVMiniVMac.xcodeproj` |
-| Mu | `PVMu.framework` | `Cores/Mu/PVMu.xcodeproj` |
-| Mupen64Plus-NX | `PVMupen64Plus-NX.framework` | `Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj` |
-| Potator | `PVPotator.framework` | `Cores/Potator/PVPotator.xcodeproj` |
-| Reicast | — | workspace only |
-| VecX | `PVVecX.framework` | `Cores/VecX/PVVecX.xcodeproj` |
-| Yabause | `PVYabause.framework` | `Cores/Yabause/PVYabause.xcodeproj` |
-| fuse | `PVFuse.framework` | `Cores/fuse/PVFuse.xcodeproj` |
-| opera | `PVOpera.framework` | `Cores/opera/PVOpera.xcodeproj` |
-| pcsx_rearmed | `PVPCSXRearmed.framework` | `Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj` |
-| supergrafx | `PVSupergrafx.framework` | `Cores/supergrafx/PVSupergrafx.xcodeproj` |
-| snesticle | `PVSnesticle.framework` | — |
-| Play | — | search path only |
-| JollyGoodEmulation, Sudachi, sm64ex | — | directory and submodules only |
+| Core | Kinds and counts in Provenance.xcodeproj | Workspace FileRef | Submodules under `Cores/<X>/` |
+|---|---|---|---|
+| Atari800 | XCLocalSwiftPackageReference 1 (`Cores/Atari800`), XCSwiftPackageProductDependency 4 (`PVAtari800-Dynamic`, incl. key-less refs), PBXBuildFile 8 | — | yes |
+| Bliss | XCLocalSwiftPackageReference 1, XCSwiftPackageProductDependency 4 (`PVBliss-Dynamic`), PBXBuildFile 8 | — | yes (whole dir) |
+| CrabEMU | XCLocalSwiftPackageReference 1, XCSwiftPackageProductDependency 4 (`PVCrabEmu-Dynamic`), PBXBuildFile 8 | — | yes (whole dir) |
+| Gambatte | XCLocalSwiftPackageReference 1, XCSwiftPackageProductDependency 5 (`PVGambatte`, `PVGambatte-Dynamic`), PBXBuildFile 6 | — | yes |
+| PokeMini | XCLocalSwiftPackageReference 1, XCSwiftPackageProductDependency 5 (`PVPokeMini-Dynamic`, incl. Watch app), PBXBuildFile 10 | — | `Sources/libpokemini/PokeMini-libretro` |
+| VisualBoyAdvance-M | XCLocalSwiftPackageReference 1, XCSwiftPackageProductDependency 6 (`PVVisualBoyAdvance-Dynamic`), PBXBuildFile 11 | — | yes |
+| VirtualJaguar | XCLocalSwiftPackageReference 1, XCSwiftPackageProductDependency 5 (`PVVirtualJaguar-Dynamic`, incl. Watch app), PBXBuildFile 10 | — | yes (whole dir, recursive) |
+| O2EM | PBXFileReference 8 (`PVO2EM.framework`), PBXBuildFile 6 | `Cores/O2EM/PVO2EM.xcodeproj` | if any |
+| Desmume2015 | PBXFileReference 11 (`PVDesmume2015.framework`), PBXBuildFile 6 | `Cores/Desmume2015/PVDesmume2015.xcodeproj` | `desmume2015` |
+| melonDS | PBXFileReference 14 (`PVMelonDS`, `PVMelonDSRetro`), PBXBuildFile 10 | `Cores/melonDS/PVMelonDS.xcodeproj` | `melonDS`, `melonds-libretro` |
+| BeetlePSX | PBXFileReference 11, PBXBuildFile 6 | `Cores/BeetlePSX/PVBeetlePSX.xcodeproj` | `beetle-psx-libretro`, `beetle-psx` |
+| DosBox | PBXFileReference 7 (`PVDosBox`, `PVDosBoxRetro`), PBXBuildFile 6 | `Cores/DosBox/PVDosBox.xcodeproj` | `dosbox-pure`, `dosbox` |
+| DuckStation | — | `Cores/DuckStation/PVDuckStation.xcodeproj` | `duckstation` |
+| FreeIntv | PBXFileReference 3, PBXBuildFile 4 | `Cores/FreeIntv/PVFreeIntv.xcodeproj` | `FreeIntv` |
+| GameMusicEmu | PBXFileReference 9 (`PVGME`), PBXBuildFile 8 | `Cores/GameMusicEmu/PVGME.xcodeproj` | `libretro-gme` |
+| Gearcoleco | PBXFileReference 7, PBXBuildFile 4 | `Cores/Gearcoleco/PVGearcoleco.xcodeproj` | `Gearcoleco` |
+| Mini_vMac | PBXFileReference 7 (`PVMiniVMac`, `PVMiniVMacRetro`), PBXBuildFile 4 | `Cores/Mini_vMac/PVMiniVMac.xcodeproj` | `libretro-minivmac` |
+| Mu | PBXFileReference 5, PBXBuildFile 4 | `Cores/Mu/PVMu.xcodeproj` | `Mu` |
+| Mupen64Plus-NX | PBXFileReference 1 (`PVMupen64Plus-NX`), PBXBuildFile 2 | `Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj` | `mupen64plus-libretro-nx` |
+| Potator | PBXFileReference 6, PBXBuildFile 6 | `Cores/Potator/PVPotator.xcodeproj` | `potator` |
+| Reicast | — | `Cores/Reicast/PVReicast.xcodeproj` | `reicast-emulator` |
+| VecX | PBXFileReference 7, PBXBuildFile 8 | `Cores/VecX/PVVecX.xcodeproj` | `Sources/libvecx/libretro-vecx` |
+| Yabause | PBXFileReference 6, PBXBuildFile 2 | `Cores/Yabause/PVYabause.xcodeproj` | `yabause` |
+| fuse | PBXFileReference 1, PBXBuildFile 2 | `Cores/fuse/PVFuse.xcodeproj` | `fuse-libretro` |
+| opera | PBXFileReference 4, PBXBuildFile 2 | `Cores/opera/PVOpera.xcodeproj` | `opera-libretro` |
+| pcsx_rearmed | PBXFileReference 7, PBXBuildFile 2 | `Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj` | `pcsx_rearmed` |
+| supergrafx | PBXFileReference 1, PBXBuildFile 2 | `Cores/supergrafx/PVSupergrafx.xcodeproj` | `libretro-supergrafx` |
+| snesticle | PBXFileReference 3 (`PVSnesticle`), PBXBuildFile 2 | — | `Sources/libSNESticle/SNESticle` |
+| Play | search path `$(PROJECT_DIR)/Cores/Play/lib` only | — (`PVPlayCore.xcodeproj` is not in the workspace) | if any |
+| JollyGoodEmulation, Sudachi, sm64ex | — | — | `sm64ex-ios` etc. |
+| orphans | PBXFileReference 4 + PBXBuildFile 3 for `PVLibRetro.framework` and `PVFreeDO.framework` (the dangling ref only; 4DO's `PVFreeDO-Dynamic` product stays) | — | — |
 
-Orphans with no producer: `PVLibRetro.framework` and `PVFreeDO.framework`. Only the framework reference goes; `PVFreeDO-Dynamic` (4DO) stays.
+**Not present for any pruned core, verified:** PBXContainerItemProxy and PBXReferenceProxy. The app consumes core products as `BUILT_PRODUCTS_DIR` file references, not through project references. The script still removes any it finds that point at a removed `.xcodeproj` or framework.
 
-**`Cores/Debug` stays.** `PVMupen64Plus.xcodeproj`, `PVDolphin.xcodeproj`, `PVPPSSPP.xcodeproj` and `Provenance.xcodeproj` reference `PVDebug.c`.
+**Core.plist / PVCoreLoader.** Each native core's `Core.plist` lives inside its `Cores/<X>` directory and goes with it. `CoresRetro/RetroArch/Core.plist` (bundled as `PVCoreLoader/…/RetroArchCore.plist`) has no principal class from a pruned native module (all 126 entries checked), so it is unchanged. PVCoreLoader's `Package.swift` and `CoreEnumerator.swift` are handled in Task 19.
 
-Verified by:
-1. A round-trip check first: open and save with no changes, then `git diff --stat Provenance.xcodeproj` must be near zero. Gemfile.lock pins xcodeproj 1.25.0; if it can't open objectVersion 74, use `gem install --user-install xcodeproj -v '>= 1.27'`, and stop if the format churns.
-2. The dry-run report (counts per object kind per core), reviewed before `--apply`.
-3. After applying: `plutil -lint`; `xcodebuild -list -workspace Provenance.xcworkspace` has no removed project; `grep` finds no removed product names left in the pbxproj.
+- [ ] **Step 1: Confirm the branch and make the gem loadable**
+
+Run: `git branch --show-current`
+Expected: `feature/prune-dead-cores`.
+
+Run: `ruby -v; ruby -e 'require "xcodeproj"; puts Xcodeproj::VERSION' 2>&1 | tail -1`
+If that fails, or prints a version below 1.27.0 (the first release with `PBXFileSystemSynchronizedRootGroup` support, needed for objectVersion 74), run `gem install --user-install xcodeproj -v '~> 1.27'`, falling back to `bundle install` if your Ruby prefers the Gemfile, and run the check again.
+Expected: `1.27.x` or newer.
+
+- [ ] **Step 2: Round-trip check (must be byte-identical)**
+
+```bash
+rm -rf /tmp/claude-501/prune-rt && mkdir -p /tmp/claude-501/prune-rt
+cp -R Provenance.xcodeproj /tmp/claude-501/prune-rt/
+ruby -e 'require "xcodeproj"; p = Xcodeproj::Project.open(ARGV[0]); p.save' /tmp/claude-501/prune-rt/Provenance.xcodeproj
+diff -u Provenance.xcodeproj/project.pbxproj /tmp/claude-501/prune-rt/Provenance.xcodeproj/project.pbxproj | head -40; echo "diff-exit=${PIPESTATUS[0]}"
+```
+
+Expected: no diff output and `diff-exit=0`. If the gem reorders or reformats anything, stop and report BLOCKED with the first 40 diff lines. Do not apply a script whose output can't be reviewed against a clean baseline.
+
+- [ ] **Step 3: Write `Scripts/dev/prune_cores.rb`**
+
+```ruby
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+#
+# Removes retired native cores from the shipping project, workspace and submodules
+# (docs/superpowers/specs/2026-10-10-core-audit.md; batch 5 of the dev-workspace plan).
+#
+#   ruby Scripts/dev/prune_cores.rb            # dry run: edits a temp copy, prints the full diff
+#   ruby Scripts/dev/prune_cores.rb --apply    # edits in place and `git rm`s the core dirs
+#
+# Cores/Debug is NOT pruned: Mupen64Plus, Dolphin, PPSSPP and Provenance.xcodeproj use its
+# PVDebug.c simulator stub.
+
+require 'xcodeproj'
+require 'fileutils'
+require 'tmpdir'
+require 'set'
+
+ROOT = File.expand_path('../..', __dir__)
+APPLY = ARGV.include?('--apply')
+
+# dir => frameworks (file-reference basenames), SPM products, local package paths, workspace projects
+CORES = {
+  'Atari800' => { products: %w[PVAtari800-Dynamic], packages: %w[Cores/Atari800] },
+  'Bliss' => { products: %w[PVBliss-Dynamic], packages: %w[Cores/Bliss] },
+  'CrabEMU' => { products: %w[PVCrabEmu-Dynamic], packages: %w[Cores/CrabEMU] },
+  'Gambatte' => { products: %w[PVGambatte PVGambatte-Dynamic], packages: %w[Cores/Gambatte] },
+  'PokeMini' => { products: %w[PVPokeMini-Dynamic], packages: %w[Cores/PokeMini] },
+  'VisualBoyAdvance-M' => { products: %w[PVVisualBoyAdvance-Dynamic], packages: %w[Cores/VisualBoyAdvance-M] },
+  'VirtualJaguar' => { products: %w[PVVirtualJaguar-Dynamic], packages: %w[Cores/VirtualJaguar] },
+  'O2EM' => { frameworks: %w[PVO2EM.framework], projects: %w[Cores/O2EM/PVO2EM.xcodeproj] },
+  'Desmume2015' => { frameworks: %w[PVDesmume2015.framework], projects: %w[Cores/Desmume2015/PVDesmume2015.xcodeproj] },
+  'melonDS' => { frameworks: %w[PVMelonDS.framework PVMelonDSRetro.framework], projects: %w[Cores/melonDS/PVMelonDS.xcodeproj] },
+  'BeetlePSX' => { frameworks: %w[PVBeetlePSX.framework], projects: %w[Cores/BeetlePSX/PVBeetlePSX.xcodeproj] },
+  'DosBox' => { frameworks: %w[PVDosBox.framework PVDosBoxRetro.framework], projects: %w[Cores/DosBox/PVDosBox.xcodeproj] },
+  'DuckStation' => { projects: %w[Cores/DuckStation/PVDuckStation.xcodeproj] },
+  'FreeIntv' => { frameworks: %w[PVFreeIntv.framework], projects: %w[Cores/FreeIntv/PVFreeIntv.xcodeproj] },
+  'GameMusicEmu' => { frameworks: %w[PVGME.framework], projects: %w[Cores/GameMusicEmu/PVGME.xcodeproj] },
+  'Gearcoleco' => { frameworks: %w[PVGearcoleco.framework], projects: %w[Cores/Gearcoleco/PVGearcoleco.xcodeproj] },
+  'Mini_vMac' => { frameworks: %w[PVMiniVMac.framework PVMiniVMacRetro.framework], projects: %w[Cores/Mini_vMac/PVMiniVMac.xcodeproj] },
+  'Mu' => { frameworks: %w[PVMu.framework], projects: %w[Cores/Mu/PVMu.xcodeproj] },
+  'Mupen64Plus-NX' => { frameworks: %w[PVMupen64Plus-NX.framework], projects: %w[Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj] },
+  'Potator' => { frameworks: %w[PVPotator.framework], projects: %w[Cores/Potator/PVPotator.xcodeproj] },
+  'Reicast' => { projects: %w[Cores/Reicast/PVReicast.xcodeproj] },
+  'VecX' => { frameworks: %w[PVVecX.framework], projects: %w[Cores/VecX/PVVecX.xcodeproj] },
+  'Yabause' => { frameworks: %w[PVYabause.framework], projects: %w[Cores/Yabause/PVYabause.xcodeproj] },
+  'fuse' => { frameworks: %w[PVFuse.framework], projects: %w[Cores/fuse/PVFuse.xcodeproj] },
+  'opera' => { frameworks: %w[PVOpera.framework], projects: %w[Cores/opera/PVOpera.xcodeproj] },
+  'pcsx_rearmed' => { frameworks: %w[PVPCSXRearmed.framework], projects: %w[Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj] },
+  'supergrafx' => { frameworks: %w[PVSupergrafx.framework], projects: %w[Cores/supergrafx/PVSupergrafx.xcodeproj] },
+  'snesticle' => { frameworks: %w[PVSnesticle.framework] },
+  'Play' => {},
+  'JollyGoodEmulation' => {},
+  'Sudachi' => {},
+  'sm64ex' => {},
+}.freeze
+
+# Embedded frameworks with no producer anywhere (PVFreeDO-Dynamic, 4DO's product, stays).
+ORPHAN_FRAMEWORKS = %w[PVLibRetro.framework PVFreeDO.framework].freeze
+
+FRAMEWORKS = (CORES.values.flat_map { |c| c[:frameworks] || [] } + ORPHAN_FRAMEWORKS).to_set
+PRODUCTS = CORES.values.flat_map { |c| c[:products] || [] }.to_set
+PACKAGES = CORES.values.flat_map { |c| c[:packages] || [] }.to_set
+PROJECTS = CORES.values.flat_map { |c| c[:projects] || [] }.to_set
+DIR_PATTERN = %r{Cores/(?:#{CORES.keys.map { |k| Regexp.escape(k) }.join('|')})/}
+SEARCH_PATH_KEYS = %w[LIBRARY_SEARCH_PATHS FRAMEWORK_SEARCH_PATHS HEADER_SEARCH_PATHS].freeze
+
+def basename_of(ref)
+  return nil unless ref.respond_to?(:path) || ref.respond_to?(:name)
+  File.basename((ref.respond_to?(:path) && ref.path) || ref.name.to_s)
+end
+
+def prune_project(project_path, counts)
+  project = Xcodeproj::Project.open(project_path)
+  removed_refs = Set.new
+
+  project.objects.select { |o| o.isa == 'PBXFileReference' && FRAMEWORKS.include?(basename_of(o)) }.each do |ref|
+    removed_refs << ref.uuid
+  end
+
+  project.objects.select { |o| o.isa == 'PBXBuildFile' }.each do |bf|
+    by_ref = bf.file_ref && removed_refs.include?(bf.file_ref.uuid)
+    by_product = bf.product_ref && PRODUCTS.include?(bf.product_ref.product_name)
+    next unless by_ref || by_product
+    counts['PBXBuildFile'] += 1
+    bf.remove_from_project
+  end
+
+  project.targets.each do |target|
+    next unless target.respond_to?(:package_product_dependencies)
+    target.package_product_dependencies.select { |d| PRODUCTS.include?(d.product_name) }.each do |dep|
+      target.package_product_dependencies.delete(dep)
+    end
+  end
+  project.objects.select { |o| o.isa == 'XCSwiftPackageProductDependency' && PRODUCTS.include?(o.product_name) }.each do |dep|
+    counts['XCSwiftPackageProductDependency'] += 1
+    dep.remove_from_project
+  end
+
+  project.objects.select { |o| o.isa == 'XCLocalSwiftPackageReference' && PACKAGES.include?(o.relative_path.to_s.chomp('/')) }.each do |pkg|
+    counts['XCLocalSwiftPackageReference'] += 1
+    project.root_object.package_references.delete(pkg)
+    pkg.remove_from_project
+  end
+
+  project.objects.select { |o| %w[PBXContainerItemProxy].include?(o.isa) && o.container_portal && removed_refs.include?(o.container_portal) }.each do |proxy|
+    counts['PBXContainerItemProxy'] += 1
+    proxy.remove_from_project
+  end
+  project.objects.select { |o| o.isa == 'PBXReferenceProxy' && FRAMEWORKS.include?(basename_of(o)) }.each do |proxy|
+    counts['PBXReferenceProxy'] += 1
+    proxy.remove_from_project
+  end
+
+  project.objects.select { |o| removed_refs.include?(o.uuid) }.each do |ref|
+    counts['PBXFileReference'] += 1
+    ref.remove_from_project
+  end
+
+  configs = project.build_configurations + project.targets.flat_map(&:build_configurations)
+  configs.each do |config|
+    SEARCH_PATH_KEYS.each do |key|
+      value = config.build_settings[key]
+      next unless value.is_a?(Array)
+      kept = value.reject { |entry| entry.to_s.match?(DIR_PATTERN) }
+      next if kept.size == value.size
+      counts["#{key} entries"] += value.size - kept.size
+      config.build_settings[key] = kept
+    end
+  end
+
+  project.save
+end
+
+def prune_workspace(path, counts)
+  xml = File.read(path)
+  PROJECTS.each do |proj|
+    pattern = /\n\s*<FileRef\s+location\s*=\s*"group:#{Regexp.escape(proj)}">\s*<\/FileRef>/m
+    counts['workspace FileRef'] += xml.scan(pattern).size
+    xml = xml.gsub(pattern, '')
+  end
+  File.write(path, xml)
+end
+
+counts = Hash.new(0)
+if APPLY
+  prune_project(File.join(ROOT, 'Provenance.xcodeproj'), counts)
+  prune_workspace(File.join(ROOT, 'Provenance.xcworkspace', 'contents.xcworkspacedata'), counts)
+  CORES.each_key do |dir|
+    path = File.join('Cores', dir)
+    next unless File.exist?(File.join(ROOT, path))
+    system('git', '-C', ROOT, 'rm', '-r', '-q', '-f', path) || abort("git rm #{path} failed")
+    FileUtils.rm_rf(File.join(ROOT, path))
+    FileUtils.rm_rf(File.join(ROOT, '.git', 'modules', path))
+    counts['core directories'] += 1
+  end
+else
+  Dir.mktmpdir('prune-cores') do |tmp|
+    FileUtils.cp_r(File.join(ROOT, 'Provenance.xcodeproj'), tmp)
+    FileUtils.mkdir_p(File.join(tmp, 'Provenance.xcworkspace'))
+    FileUtils.cp(File.join(ROOT, 'Provenance.xcworkspace', 'contents.xcworkspacedata'), File.join(tmp, 'Provenance.xcworkspace'))
+    prune_project(File.join(tmp, 'Provenance.xcodeproj'), counts)
+    prune_workspace(File.join(tmp, 'Provenance.xcworkspace', 'contents.xcworkspacedata'), counts)
+    system('git', 'diff', '--no-index', '--', File.join(ROOT, 'Provenance.xcodeproj/project.pbxproj'), File.join(tmp, 'Provenance.xcodeproj/project.pbxproj'))
+    system('git', 'diff', '--no-index', '--', File.join(ROOT, 'Provenance.xcworkspace/contents.xcworkspacedata'), File.join(tmp, 'Provenance.xcworkspace/contents.xcworkspacedata'))
+  end
+  CORES.each_key do |dir|
+    path = File.join('Cores', dir)
+    puts "would run: git rm -r -q -f #{path}" if File.exist?(File.join(ROOT, path))
+  end
+end
+
+puts "\nprune_cores (#{APPLY ? 'applied' : 'dry run'}):"
+counts.sort.each { |kind, n| puts format('  %-34s %d', kind, n) }
+```
+
+Every `.gitmodules` section under `Cores/<X>/` is removed by `git rm`, which also updates `.gitmodules`.
+
+- [ ] **Step 4: Dry run and review**
+
+Run: `ruby Scripts/dev/prune_cores.rb > /tmp/claude-501/prune-dry.txt; tail -12 /tmp/claude-501/prune-dry.txt; grep -c '^-' /tmp/claude-501/prune-dry.txt`
+Expected, within ±1 of each total in the table above:
+- `PBXBuildFile 150` (the sum of the table rows);
+- `PBXFileReference 122`;
+- `XCSwiftPackageProductDependency 33`;
+- `XCLocalSwiftPackageReference 7`;
+- `workspace FileRef 20`;
+- `LIBRARY_SEARCH_PATHS entries` ≥ 1 (Play);
+- 32 `would run: git rm` lines.
+
+Every removed line in the diff names a pruned core, a removed product, or a list entry pointing at one. Check with:
+
+`grep '^-[^-]' /tmp/claude-501/prune-dry.txt | grep -v -E 'PVAtari800|PVBliss|PVCrabEmu|PVGambatte|PVPokeMini|PVVisualBoyAdvance|PVVirtualJaguar|PVO2EM|PVDesmume2015|PVMelonDS|PVBeetlePSX|PVDosBox|DuckStation|PVFreeIntv|PVGME|PVGearcoleco|PVMiniVMac|PVMu\.|PVMupen64Plus-NX|PVPotator|Reicast|PVVecX|PVYabause|PVFuse|PVOpera|PVPCSXRearmed|PVSupergrafx|PVSnesticle|PVLibRetro\.framework|PVFreeDO\.framework|Cores/(Atari800|Bliss|CrabEMU|Gambatte|PokeMini|VisualBoyAdvance-M|VirtualJaguar|Play)|^-\s+[0-9A-F]{24},?$'`
+
+Expected: no output. The bare-UUID lines are list entries for removed objects. Investigate anything else before applying.
+
+- [ ] **Step 5: Apply**
+
+Run: `ruby Scripts/dev/prune_cores.rb --apply | tail -12`
+Expected: the same counts as the dry run, plus `core directories 32`.
+
+- [ ] **Step 6: Verify**
+
+```bash
+plutil -lint Provenance.xcodeproj/project.pbxproj
+xcodebuild -list -workspace Provenance.xcworkspace 2>&1 | grep -E -c 'PVO2EM|PVMelonDS|PVBeetlePSX|PVDesmume|PVGME|PVYabause|PVReicast|PVDuckStation'
+grep -c -E 'PVAtari800|PVBliss|PVCrabEmu|PVGambatte|PVPokeMini|PVVisualBoyAdvance|PVVirtualJaguar|PVO2EM|PVDesmume2015|PVMelonDS|PVBeetlePSX|PVDosBox|PVFreeIntv|PVGME|PVGearcoleco|PVMiniVMac|PVMupen64Plus-NX|PVPotator|PVVecX|PVYabause|PVFuse|PVOpera|PVPCSXRearmed|PVSupergrafx|PVSnesticle|PVLibRetro\.framework|PVFreeDO\.framework|Cores/Play' Provenance.xcodeproj/project.pbxproj
+git config -f .gitmodules --get-regexp '^submodule\..*\.path$' | grep -E 'Cores/(Atari800|Bliss|CrabEMU|Gambatte|PokeMini|VisualBoyAdvance-M|VirtualJaguar|O2EM|Desmume2015|melonDS|BeetlePSX|DosBox|DuckStation|FreeIntv|GameMusicEmu|Gearcoleco|JollyGoodEmulation|Mini_vMac|Mu|Mupen64Plus-NX|Play|Potator|Reicast|Sudachi|VecX|Yabause|fuse|opera|pcsx_rearmed|sm64ex|snesticle|supergrafx)/' | wc -l
+ls Cores | wc -l; ls Cores/Debug
+```
+
+Expected:
+- `OK`, then `0`, `0` and `0`;
+- 50 minus 32, i.e. 18 entries left in `Cores/` (plus any untracked non-core folders);
+- `Cores/Debug` still lists `PVDebug.c`.
+
+- [ ] **Step 7: Register the script and commit**
+
+Add `"Scripts/dev/prune_cores.rb",` to `[ignore].paths` in `Scripts/maint/jobs.toml`, under the `# Developer one-offs that need hand-picked arguments.` comment.
+
+```bash
+git add -A Provenance.xcodeproj Provenance.xcworkspace .gitmodules Cores Scripts/dev/prune_cores.rb Scripts/maint/jobs.toml
+git status --short | grep -v '^D ' | head -20
+git -c commit.gpgsign=false commit -m "chore(cores): prune 32 retired native cores from the shipping project" -m "Removed by Scripts/dev/prune_cores.rb (dry-run diff reviewed). Cores/Debug kept: PVDebug.c stub." -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+The `git status` line should list only `.gitmodules`, the project files, the script and `jobs.toml` besides deletions.
+
+---
 
 ### Task 19: Remaining references to pruned cores  *(model: sonnet)*
 
 **Files:**
-- `PVCoreLoader/Package.swift`: drop the `../Cores/Atari800`, `PokeMini`, `VirtualJaguar` and `VisualBoyAdvance-M` dependencies and their `PVCoreEnumerator` products;
-- `PVCoreLoader/Sources/PVCoreEnumerator/CoreEnumerator.swift`: drop the four `canImport` cases;
-- `Scripts/ci/ci-init-submodules.sh`: `REQUIRED_FILES` currently names `Cores/VirtualJaguar/Package.swift`; pick a kept package such as `Cores/Stella/Package.swift`;
-- `Scripts/tests/test-ci-init-submodules.sh`;
-- `.github/workflows/agent-validation.yml` (smoke-build and pvcorebridgeretro-test init lists: Bliss, CrabEMU, VirtualJaguar) and `dev-workspace.yml`;
-- `Scripts/audits/pbxproj_sources_allowlist.txt` and `check_pbxproj_sources.py` inputs;
-- `Scripts/maint/jobs.toml`.
+- Modify: `PVCoreLoader/Package.swift`, `PVCoreLoader/Sources/PVCoreEnumerator/CoreEnumerator.swift`
+- Modify: `Scripts/ci/ci-init-submodules.sh`, `Scripts/tests/test-ci-init-submodules.sh`
+- Modify: `.github/workflows/agent-validation.yml`, `.github/workflows/dev-workspace.yml`
+- Modify: `Scripts/audits/pbxproj_sources_allowlist.txt`
 
-Verified by:
-- `grep -rn` for each pruned directory and product name across `*.swift`, `Package.swift`, `*.yml`, `*.sh`, `*.toml`, `*.pbxproj` and `*.xcworkspacedata` (worktrees and `.build` excluded) returns nothing;
-- `bash Scripts/tests/test-ci-init-submodules.sh` and `python3 Scripts/audits/check_pbxproj_sources.py` pass;
-- PVLibrary-UnitTests are green;
-- `make dev-ui` is green.
+**Interfaces:**
+- Consumes: the pruned tree from Task 18.
+- Produces: no reference to a pruned core outside docs and history.
 
-The coordinator then pushes the branch and triggers `build.yml` (owner PRs need the label or `/build`).
+- [ ] **Step 1: Find every reference**
+
+Run:
+
+```bash
+PRUNED='Cores/(Atari800|Bliss|CrabEMU|Gambatte|PokeMini|VisualBoyAdvance-M|VirtualJaguar|O2EM|Desmume2015|melonDS|BeetlePSX|DosBox|DuckStation|FreeIntv|GameMusicEmu|Gearcoleco|JollyGoodEmulation|Mini_vMac|Mu|Mupen64Plus-NX|Play|Potator|Reicast|Sudachi|VecX|Yabause|fuse|opera|pcsx_rearmed|sm64ex|snesticle|supergrafx)\b'
+git grep -n -E "$PRUNED" -- ':!docs' ':!CHANGELOG.md' ':!LICENSES.md' ':!*.md' | grep -v '^Cores/' | tee /tmp/claude-501/prune-refs.txt | wc -l
+git grep -n -E 'PVAtari800|PVPokeMini|PVVirtualJaguar|PVVisualBoyAdvance|PVBliss|PVCrabEmu|PVGambatte' -- '*.swift' '*/Package.swift' | grep -v '^Cores/' >> /tmp/claude-501/prune-refs.txt
+cat /tmp/claude-501/prune-refs.txt
+```
+
+Expected: hits only in the files listed above. Any other hit gets the same treatment in this task; add its path to the commit.
+
+- [ ] **Step 2: `PVCoreLoader/Package.swift`**
+
+Delete these four lines from the dependencies:
+
+```swift
+        .package(path: "../Cores/Atari800/"),
+        .package(path: "../Cores/PokeMini/"),
+        .package(path: "../Cores/VirtualJaguar/"),
+        .package(path: "../Cores/VisualBoyAdvance-M/")
+```
+
+Add a comma after `.package(path: "../Cores/TGBDual/")`, or remove the trailing comma if it becomes the last element. In the `PVCoreEnumerator` target, delete:
+
+```swift
+                .product(name: "PVAtari800-Dynamic", package: "Atari800"),
+                .product(name: "PVPokeMini-Dynamic", package: "PokeMini"),
+                .product(name: "PVVirtualJaguar-Dynamic", package: "VirtualJaguar"),
+                .product(name: "PVVisualBoyAdvance-Dynamic", package: "VisualBoyAdvance-M")
+```
+
+Delete the commented-out lines that name them in the `PVCoreLoader` target too. Then fix the comma after the last remaining product (`PVTGBDual-Dynamic`).
+
+- [ ] **Step 3: `CoreEnumerator.swift`**
+
+Delete the four `#if canImport(PVAtari800)` / `PVPokeMini` / `PVVirtualJaguar` / `PVVisualBoyAdvance` blocks in each of the three places they appear: the `@_exported` imports, the enum cases, and the `case .X: return …()` switch arms. Keep the PicoDrive, Stella and TGBDual blocks.
+
+Run: `cd PVCoreLoader && swift package describe >/dev/null && echo resolves`
+Expected: `resolves`.
+
+- [ ] **Step 4: CI submodule sentinel**
+
+In `Scripts/ci/ci-init-submodules.sh`:
+- change `REQUIRED_FILES=( "Cores/VirtualJaguar/Package.swift" )` to `"Cores/4DO/Package.swift"` (4DO is a kept, submodule-rooted SwiftPM package, initialized by the same CI lists);
+- update the comments on lines 22 and 36 that name VirtualJaguar.
+
+In `Scripts/tests/test-ci-init-submodules.sh`:
+- replace `Cores/VirtualJaguar` with `Cores/4DO` on lines 89 and 100;
+- keep the `c/Package.swift` fixture at line 72 as is.
+
+Run: `bash Scripts/tests/test-ci-init-submodules.sh 2>&1 | tail -3`
+Expected: all PASS.
+
+- [ ] **Step 5: Workflow init lists**
+
+In `.github/workflows/agent-validation.yml`, both the smoke-build and pvcorebridgeretro-test init steps:
+- delete the `Cores/Bliss \` and `Cores/CrabEMU \` lines;
+- delete the `git submodule update --init --depth 1 --recursive Cores/VirtualJaguar` line and its three-line comment;
+- delete any VirtualJaguar mention in the job comments (around lines 511–541).
+
+Make the same three deletions in `.github/workflows/dev-workspace.yml`.
+
+Run: `ruby -ryaml -e 'ARGV.each { |f| YAML.load_file(f) }; puts "ok"' .github/workflows/agent-validation.yml .github/workflows/dev-workspace.yml && grep -n -E 'Bliss|CrabEMU|VirtualJaguar' .github/workflows/*.yml`
+Expected: `ok`, then no grep hits.
+
+- [ ] **Step 6: Audit allowlist**
+
+Delete the `# Cores/DuckStation/PVDuckStation.xcodeproj/project.pbxproj` block (the header comment and its six `Cores/DuckStation/...` lines) from `Scripts/audits/pbxproj_sources_allowlist.txt`. Keep the `Cores/Debug/*` lines.
+
+Run: `python3 Scripts/audits/check_pbxproj_sources.py; echo "exit=$?"`
+Expected: `exit=0`. The script enumerates projects from `Provenance.xcworkspace`, which no longer lists the pruned ones.
+
+- [ ] **Step 7: Build checks**
+
+Run, in order:
+- the PVLibrary unit tests (full `PVLibrary-UnitTests` scheme);
+- `make dev-ui` (Dev workspace, iOS Simulator);
+- `xcodebuild -workspace Provenance.xcworkspace -scheme "Provenance-CI" -destination "generic/platform=iOS Simulator" -skipPackagePluginValidation -skipMacroValidation CODE_SIGNING_ALLOWED=NO build 2>&1 | tail -3` (the agent smoke target).
+
+Expected: all succeed. The two shipping archives (iOS and tvOS) are validated by `build.yml` on the PR, not locally.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add PVCoreLoader Scripts/ci/ci-init-submodules.sh Scripts/tests/test-ci-init-submodules.sh .github/workflows/agent-validation.yml .github/workflows/dev-workspace.yml Scripts/audits/pbxproj_sources_allowlist.txt
+git -c commit.gpgsign=false commit -m "chore(cores): drop remaining references to pruned cores" -m "Workflow files changed: a maintainer must push them." -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+---
 
 ### Task 20: Pruning-PR docs  *(model: haiku)*
 
-**Files:** `CLAUDE.md` (core taxonomy: drop Jaguar and "Flycast" from the active natives, link the audit doc, add "no new `Cores/` project without an audit row"), `docs/RELEASE_SMOKE_TESTS.md` (a DS game boots through `melondsds` with a migrated `.sav` → `.srm`; one native-core battery save shows up in its thin replacement).
+**Files:**
+- Modify: `CLAUDE.md` (Core taxonomy)
+- Modify: `docs/RELEASE_SMOKE_TESTS.md` (`## Next release`)
 
-Verified by a review of the diff. The PR description lists the retirements and accepted losses: Gambatte/VBA-M cheats; the Atari800, Gambatte, PokeMini and VBA-M rcheevos maps; Atari800 mouse; Gambatte `.rtc`; Lite (AppStore) losing the pruned systems.
+**Interfaces:** none (docs only).
+
+- [ ] **Step 1: CLAUDE.md core taxonomy**
+
+Replace
+
+```markdown
+- **Active native PV* cores** (custom forks or long-supported legacy we
+  actively extend): Mupen, snes9x, Stella, Mednafen, Jaguar, Dolphin,
+  FCEU, ProSystem, Genesis-Plus-GX, Flycast, and similar.
+```
+
+with
+
+```markdown
+- **Active native PV* cores** (custom forks or long-supported legacy we
+  actively extend): Azahar, Dolphin, FCEU, Genesis-Plus-GX, Mednafen,
+  Mupen64Plus, ProSystem, snes9x, Stella, plus mGBA, PicoDrive and TGBDual
+  for native-only features. Source of truth:
+  `docs/superpowers/specs/2026-10-10-core-audit.md` (KEEP rows). Retired
+  cores live on as `PVCore.retiredCores` entries (`RetiredCoreMigration`,
+  `RetiredBatterySaveMigration`); no new `Cores/` project without an audit row.
+```
+
+- [ ] **Step 2: Smoke tests**
+
+Under `## Next release` in `docs/RELEASE_SMOKE_TESTS.md`, add:
+
+```markdown
+### Retired native cores (pruning PR, `feature/prune-dead-cores`)
+
+- [ ] DS: put a native melonDS battery file at `Save States/<rom>/<rom>.sav`, launch the app
+      once, then boot the game through `melondsds`: the save is there
+      (`Battery States/<rom>/<rom>.srm` exists).
+- [ ] GBA: a VBA-M `Battery States/<rom>/<rom>.sav2` shows up in `vbam` after first launch.
+- [ ] Atari 5200 game with a per-game core preference on the old Atari800 core opens in `a5200`.
+- [ ] Settings → Cores: none of the 32 pruned native cores is listed (unsupported cores off).
+- [ ] A save state made with a retired core is still listed, labelled with the retired core
+      (it does not load in the replacement; formats differ).
+```
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add CLAUDE.md docs/RELEASE_SMOKE_TESTS.md
+git -c commit.gpgsign=false commit -m "docs: retired-core taxonomy and pruning smoke tests" -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+The coordinator then pushes `feature/prune-dead-cores`, opens the PR against `develop` and starts `build.yml`. The PR body lists the retirements and the accepted losses:
+- Gambatte and VBA-M cheats;
+- the Atari800, Gambatte, PokeMini and VBA-M RetroAchievements memory maps;
+- Atari800 mouse;
+- Gambatte `.rtc`;
+- the pruned systems in Lite (AppStore), which bundles no libretro dylibs.
+
+The PR merges only after both legs pass.
+
+---
 
 # Batch 6 — Docs (develop)
 
@@ -3459,7 +4717,7 @@ Verified by: the skill's commands are copy-pasted from the merged Makefile and s
 | §2.1 | Second workspace; shipping project untouched | T1–T3 (Global Constraints) |
 | §2.2 | Generated files gitignored | T1 |
 | §2.3 | Tuist 4.200.0 in `.mise.toml` | T1 |
-| §2.4 | Only audited cores modelled; prune RETIRE + DS + 7 save-check cores | T2, T3, T5 (rows); T15–T19 (outlined) |
+| §2.4 | Only audited cores modelled; prune RETIRE + DS + 7 save-check cores | T2, T3, T5 (rows); T15–T19 (detailed) |
 | §2.5 | iOS + tvOS from the start | T2, T3, T7 (both-sim builds); T8 is iOS-only per §12 |
 | §2.6 | Project named `Provenance` in `Dev/` | T2 |
 | §3 | Layout, `Tuist.swift`, `Workspace.swift`, `Dev.xcconfig`, delete root `project.yml`, local package pattern | T1, T2 (helpers moved to `Tuist/ProjectDescriptionHelpers`, deviation 1) |
@@ -3469,7 +4727,7 @@ Verified by: the skill's commands are copy-pasted from the merged Makefile and s
 | §7 | `PVDevHarness`, app hook, `make dev-harness` | T9–T11 (detailed; Thin harness is device-only) |
 | §8 | `build_slice.py`, aggregates, registry | T12, T13 (detailed; deviation 6) |
 | §9 | `build.yml` / `testflight.yml` caches, `dev-workspace.yml` | T14 (detailed) |
-| §10 | Pruning, `RetiredCoreMigration` entries, battery rules, docs | T15–T20 (outlined; Debug kept, deviation 7) |
+| §10 | Pruning, `RetiredCoreMigration` entries, battery rules, docs | T15–T20 (detailed; Debug kept, deviation 7) |
 | §11 | CLAUDE.md, fast-iteration skill, roadmap | T20, T21 (outlined) |
 | §12 | Verification: generate, builds, harness, unittest, manifest tests, pruning CI | T2/T3/T7/T8 builds, T4 manifest checks, T11, T12, T19 |
 | §13 | Six batches | Batches 1–6 |
