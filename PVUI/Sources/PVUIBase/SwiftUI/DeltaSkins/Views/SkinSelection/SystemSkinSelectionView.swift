@@ -263,6 +263,12 @@ public struct SystemSkinSelectionView: View {
                 await loadSkinsFromCache()
             }
         }
+        .onChange(of: selectedScope) { _, _ in
+            // Re-resolve the highlighted skin for the new scope's game/system key
+            Task {
+                await loadSkinsFromCache()
+            }
+        }
         .onChange(of: selectedOrientation) { newOrientation in
             // Validate current selection when orientation changes
             Task {
