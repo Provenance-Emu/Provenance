@@ -83,16 +83,27 @@ jobs:
         run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
 
       - name: Install Tuist (mise)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MISE_GITHUB_TOKEN: ${{ github.token }}
         run: |
           curl -fsSL https://mise.run | sh
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           echo "$HOME/.local/share/mise/shims" >> "$GITHUB_PATH"
           "$HOME/.local/bin/mise" install "tuist@${TUIST_VERSION}"
+          "$HOME/.local/bin/mise" exec -- tuist version | tee /dev/stderr | grep -qx "${TUIST_VERSION}" \
+            || { echo "::error::tuist ${TUIST_VERSION} not installed"; exit 1; }
 
       - name: Manifest checks
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MISE_GITHUB_TOKEN: ${{ github.token }}
         run: Scripts/dev/check_dev_manifest.sh
 
       - name: Generate
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          MISE_GITHUB_TOKEN: ${{ github.token }}
         run: mise exec -- tuist generate --no-open
 
       - name: Build
