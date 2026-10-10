@@ -1,0 +1,470 @@
+//
+//  PatchRepository.swift
+//  PVLibrary
+//
+//  Created by Provenance Emu on 2026-10-10.
+//  Copyright © 2026 Provenance Emu. All rights reserved.
+//
+
+import Foundation
+import RealmSwift
+import PVLogging
+import PVPatching
+import PVRealm
+import PVFileSystem
+import PVPrimitives
+
+/// Owns patch import, matching, variant lifecycle, and launch preparation.
+@MainActor
+public final class PatchRepository {
+    public static let shared = PatchRepository()
+
+    private let inspector = PatchInspector()
+    private let applier = PatchApplier()
+
+    private init() {}
+
+    // MARK: - Queries
+
+    public func patches(forGameMD5 md5: String) -> Results<PVPatch> {
+        RomDatabase.sharedInstance.realm.objects(PVPatch.self)
+            .filter("baseGameMD5 == %@ OR game.md5Hash == %@", md5, md5)
+            .sorted(byKeyPath: "date", ascending: false)
+    }
+
+    public func pendingPatches() -> Results<PVPatch> {
+        RomDatabase.sharedInstance.realm.objects(PVPatch.self)
+            .filter("matchState == %@", PVPatchMatchState.pending.rawValue)
+            .sorted(byKeyPath: "date", ascending: false)
+    }
+
+    public func visibleLibraryGames(excludingHiddenVariants from: Results<PVGame>) -> Results<PVGame> {
+        from.filter("isHiddenPatchVariant == false")
+    }
+
+    public func defaultPatch(forGameMD5 md5: String) -> PVPatch? {
+        patches(forGameMD5: md5).first(where: { $0.isDefaultLaunch && !$0.isInvalidated })
+    }
+
+    // MARK: - Import
+
+    /// Import a patch file already moved to `Paths.patchesPath`.
+    @discardableResult
+    public func importPatch(
+        at url: URL,
+        preferredGame: PVGame? = nil,
+        autoMatch: Bool = true
+    ) async throws -> PVPatch {
+        guard let format = PatchFormat.detect(from: url) else {
+            throw PatchError.unsupportedFormat(url.pathExtension)
+        }
+
+        let inspection = try inspector.inspect(patchURL: url)
+        let database = RomDatabase.sharedInstance
+        let realm = database.realm
+
+        let pvFile = PVFile(withURL: url)
+        let existingID = !pvFile.partialPath.isEmpty ? pvFile.partialPath : url.path
+        let patch: PVPatch
+        if let existing = realm.object(ofType: PVPatch.self, forPrimaryKey: existingID) {
+            patch = existing
+        } else {
+            patch = PVPatch(
+                file: pvFile,
+                game: preferredGame,
+                format: format,
+                title: inspection.title ?? url.deletingPathExtension().lastPathComponent,
+                author: inspection.author,
+                version: inspection.version,
+                patchDescription: inspection.patchDescription,
+                matchState: preferredGame == nil ? .pending : .manual
+            )
+            try database.add(patch, update: true)
+        }
+
+        try database.writeTransaction {
+            guard let live = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id) else { return }
+            live.formatRawValue = format.rawValue
+            live.title = inspection.title ?? live.title
+            live.author = inspection.author ?? live.author
+            live.version = inspection.version ?? live.version
+            live.patchDescription = inspection.patchDescription ?? live.patchDescription
+            live.patchSHA256 = inspection.patchSHA256
+            if let crc = inspection.sourceCRC32 {
+                live.hasSourceCRC32 = true
+                live.sourceCRC32 = Int(Int32(bitPattern: crc))
+            }
+            if live.outputStem == nil || live.outputStem?.isEmpty == true {
+                live.outputStem = PatchApplier.defaultOutputStem(
+                    romURL: preferredGame?.file?.url ?? url,
+                    patchURL: url
+                )
+            }
+            if let preferredGame {
+                live.game = preferredGame.thaw() ?? preferredGame
+                live.baseGameMD5 = preferredGame.md5Hash
+                live.matchState = .manual
+                live.matchConfidenceRaw = PatchMatchConfidence.exact.rawValue
+                live.matchScore = 1
+            }
+        }
+
+        if preferredGame == nil, autoMatch {
+            _ = try await matchPatch(patch)
+        } else if let preferredGame {
+            _ = try await ensureVariant(for: patch, baseGame: preferredGame)
+        }
+
+        return realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id) ?? patch
+    }
+
+    /// Attempt to auto-match a pending patch to a library ROM.
+    @discardableResult
+    public func matchPatch(_ patch: PVPatch) async throws -> PVGame? {
+        let realm = RomDatabase.sharedInstance.realm
+        guard let livePatch = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id),
+              let patchURL = livePatch.file?.url else {
+            return nil
+        }
+
+        let inspection = try inspector.inspect(patchURL: patchURL)
+        let games = realm.objects(PVGame.self).filter("isPatchVariant == false AND contentless == false")
+        var candidates: [PatchMatchCandidate] = []
+        for game in games {
+            guard let filename = game.file?.fileName else { continue }
+            var crc: UInt32?
+            if livePatch.hasSourceCRC32, let url = game.file?.url,
+               let data = try? Data(contentsOf: url, options: .mappedIfSafe) {
+                crc = patchCRC32(data)
+            } else if !game.crc.isEmpty, let value = UInt32(game.crc, radix: 16) {
+                crc = value
+            }
+            candidates.append(
+                PatchMatchCandidate(
+                    id: game.md5Hash,
+                    title: game.title,
+                    md5: game.md5Hash,
+                    crc32: crc,
+                    filename: filename,
+                    confidence: .none,
+                    score: 0
+                )
+            )
+        }
+
+        let ranked = inspector.rank(
+            candidates: candidates,
+            inspection: inspection,
+            patchFilename: patchURL.lastPathComponent
+        )
+        guard let best = inspector.unambiguousMatch(from: ranked),
+              let game = realm.object(ofType: PVGame.self, forPrimaryKey: best.md5) else {
+            try RomDatabase.sharedInstance.writeTransaction {
+                guard let p = livePatch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: livePatch.id) else { return }
+                p.matchState = .pending
+                if let top = ranked.first {
+                    p.matchConfidenceRaw = top.confidence.rawValue
+                    p.matchScore = top.score
+                }
+            }
+            return nil
+        }
+
+        try RomDatabase.sharedInstance.writeTransaction {
+            guard let p = livePatch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: livePatch.id) else { return }
+            p.game = game
+            p.baseGameMD5 = game.md5Hash
+            p.matchState = .matched
+            p.matchConfidenceRaw = best.confidence.rawValue
+            p.matchScore = best.score
+            p.title = p.title ?? inspection.title
+            p.author = p.author ?? inspection.author
+            p.version = p.version ?? inspection.version
+            p.patchDescription = p.patchDescription ?? inspection.patchDescription
+        }
+
+        _ = try await ensureVariant(for: livePatch, baseGame: game)
+        return game
+    }
+
+    /// Rematch every pending patch — call after a new ROM import.
+    public func rematchPendingPatches() async {
+        let pending = Array(pendingPatches().freeze())
+        for patch in pending {
+            do {
+                _ = try await matchPatch(patch)
+            } catch {
+                WLOG("Failed to rematch patch \(patch.id): \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// Manually link a patch to a base game.
+    public func link(_ patch: PVPatch, to game: PVGame) async throws {
+        let realm = RomDatabase.sharedInstance.realm
+        try RomDatabase.sharedInstance.writeTransaction {
+            guard let p = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id),
+                  let g = game.thaw() ?? realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) else { return }
+            p.game = g
+            p.baseGameMD5 = g.md5Hash
+            p.matchState = .manual
+            p.matchConfidenceRaw = PatchMatchConfidence.exact.rawValue
+            p.matchScore = 1
+        }
+        _ = try await ensureVariant(for: patch, baseGame: game)
+    }
+
+    // MARK: - Variant lifecycle
+
+    /// Ensure a hidden/visible variant `PVGame` exists for the patch.
+    @discardableResult
+    public func ensureVariant(for patch: PVPatch, baseGame: PVGame) async throws -> PVGame {
+        let realm = RomDatabase.sharedInstance.realm
+        if let existingMD5 = patch.variantGameMD5,
+           let existing = realm.object(ofType: PVGame.self, forPrimaryKey: existingMD5) {
+            return existing
+        }
+
+        guard let patchURL = patch.file?.url, let romURL = baseGame.file?.url else {
+            throw PatchError.sourceROMNotFound(baseGame.file?.url ?? URL(fileURLWithPath: "/"))
+        }
+
+        let stem = patch.outputStem ?? PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL)
+        let artifact = try await applier.apply(patchURL: patchURL, to: romURL, outputStem: stem)
+        let variantMD5 = artifact.patchedMD5
+        let patchedCRC: String = {
+            if let data = try? Data(contentsOf: artifact.url, options: .mappedIfSafe) {
+                return String(format: "%08X", patchCRC32(data))
+            }
+            return ""
+        }()
+
+        var result: PVGame?
+        try RomDatabase.sharedInstance.writeTransaction {
+            let livePatch = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id)
+            let liveBase = baseGame.thaw() ?? realm.object(ofType: PVGame.self, forPrimaryKey: baseGame.md5Hash)
+
+            if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: variantMD5) {
+                livePatch?.variantGame = existing
+                livePatch?.variantGameMD5 = variantMD5
+                livePatch?.sourceSHA256 = artifact.sourceSHA256
+                livePatch?.outputStem = artifact.outputStem
+                existing.isPatchVariant = true
+                existing.baseGameMD5 = liveBase?.md5Hash
+                existing.patchID = livePatch?.id
+                result = existing
+                return
+            }
+
+            let variant = PVGame()
+            variant.md5Hash = variantMD5
+            variant.title = "\(liveBase?.title ?? "Game") — \(livePatch?.displayTitle ?? "Patch")"
+            variant.systemIdentifier = liveBase?.systemIdentifier ?? ""
+            variant.system = liveBase?.system
+            variant.isPatchVariant = true
+            variant.isHiddenPatchVariant = !(livePatch?.showAsLibraryTile ?? false)
+            variant.baseGameMD5 = liveBase?.md5Hash
+            variant.patchID = livePatch?.id
+            variant.originalArtworkURL = liveBase?.originalArtworkURL ?? ""
+            variant.customArtworkURL = liveBase?.customArtworkURL ?? ""
+            variant.userPreferredCoreID = liveBase?.userPreferredCoreID
+            variant.isDownloaded = true
+            variant.file = PVFile(withURL: artifact.url)
+            variant.romPath = artifact.url.lastPathComponent
+            variant.crc = patchedCRC
+
+            realm.add(variant, update: .modified)
+            livePatch?.variantGame = variant
+            livePatch?.variantGameMD5 = variantMD5
+            livePatch?.sourceSHA256 = artifact.sourceSHA256
+            livePatch?.outputStem = artifact.outputStem
+            livePatch?.baseGameMD5 = liveBase?.md5Hash
+            livePatch?.game = liveBase
+            result = variant
+        }
+        guard let result else {
+            throw PatchError.patchApplicationFailed("Failed to persist patch variant")
+        }
+        return result
+    }
+
+    public func setShowAsLibraryTile(_ show: Bool, for patch: PVPatch) throws {
+        let realm = RomDatabase.sharedInstance.realm
+        try RomDatabase.sharedInstance.writeTransaction {
+            guard let p = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id) else { return }
+            p.showAsLibraryTile = show
+            if let variant = p.variantGame {
+                variant.isHiddenPatchVariant = !show
+            }
+        }
+    }
+
+    public func setDefaultLaunch(_ enabled: Bool, for patch: PVPatch) throws {
+        let realm = RomDatabase.sharedInstance.realm
+        try RomDatabase.sharedInstance.writeTransaction {
+            guard let p = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id) else { return }
+            if enabled, let md5 = p.baseGameMD5 {
+                realm.objects(PVPatch.self)
+                    .filter("baseGameMD5 == %@ AND isDefaultLaunch == true", md5)
+                    .forEach {
+                        $0.isDefaultLaunch = false
+                        $0.isEnabled = false
+                    }
+            }
+            p.isDefaultLaunch = enabled
+            p.isEnabled = enabled
+        }
+    }
+
+    // MARK: - Launch preparation
+
+    /// Prepare a patched variant for launch and return it.
+    public func prepareForLaunch(
+        patch: PVPatch,
+        progress: (@Sendable (PatchProgress) -> Void)? = nil
+    ) async throws -> PVGame {
+        let realm = RomDatabase.sharedInstance.realm
+        guard let livePatch = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id) else {
+            throw PatchError.patchFileNotFound(URL(fileURLWithPath: "/"))
+        }
+        guard let baseMD5 = livePatch.baseGameMD5 ?? livePatch.game?.md5Hash,
+              let baseGame = realm.object(ofType: PVGame.self, forPrimaryKey: baseMD5) else {
+            throw PatchError.sourceROMMismatch
+        }
+        guard let patchURL = livePatch.file?.url, let romURL = baseGame.file?.url else {
+            throw PatchError.sourceROMNotFound(baseGame.file?.url ?? URL(fileURLWithPath: "/"))
+        }
+
+        let stem = livePatch.outputStem ?? PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL)
+        let artifact = try await applier.apply(
+            patchURL: patchURL,
+            to: romURL,
+            outputStem: stem,
+            progress: progress
+        )
+
+        var result: PVGame?
+        try RomDatabase.sharedInstance.writeTransaction {
+            let p = livePatch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: livePatch.id)
+            let base = baseGame.thaw() ?? realm.object(ofType: PVGame.self, forPrimaryKey: baseMD5)
+            let variantMD5 = artifact.patchedMD5
+
+            let variant: PVGame
+            if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: variantMD5) {
+                variant = existing
+            } else {
+                variant = PVGame()
+                variant.md5Hash = variantMD5
+                variant.title = "\(base?.title ?? "Game") — \(p?.displayTitle ?? "Patch")"
+                variant.systemIdentifier = base?.systemIdentifier ?? ""
+                variant.system = base?.system
+                variant.isPatchVariant = true
+                variant.isHiddenPatchVariant = !(p?.showAsLibraryTile ?? false)
+                variant.baseGameMD5 = baseMD5
+                variant.patchID = p?.id
+                variant.originalArtworkURL = base?.originalArtworkURL ?? ""
+                variant.customArtworkURL = base?.customArtworkURL ?? ""
+                variant.userPreferredCoreID = base?.userPreferredCoreID
+                realm.add(variant, update: .modified)
+            }
+
+            variant.file = PVFile(withURL: artifact.url)
+            variant.romPath = artifact.url.lastPathComponent
+            variant.isDownloaded = true
+            variant.isPatchVariant = true
+            variant.baseGameMD5 = baseMD5
+            variant.patchID = p?.id
+            p?.variantGame = variant
+            p?.variantGameMD5 = variantMD5
+            p?.sourceSHA256 = artifact.sourceSHA256
+            p?.outputStem = artifact.outputStem
+            result = variant
+        }
+        guard let result else {
+            throw PatchError.patchApplicationFailed("Failed to prepare patch variant for launch")
+        }
+        return result
+    }
+
+    /// Export a collision-safe patched ROM copy into Documents/PatchedROMs (or provided dir).
+    public func exportPatchedCopy(
+        patch: PVPatch,
+        to directory: URL? = nil,
+        progress: (@Sendable (PatchProgress) -> Void)? = nil
+    ) async throws -> URL {
+        let realm = RomDatabase.sharedInstance.realm
+        guard let livePatch = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id),
+              let patchURL = livePatch.file?.url,
+              let baseMD5 = livePatch.baseGameMD5 ?? livePatch.game?.md5Hash,
+              let baseGame = realm.object(ofType: PVGame.self, forPrimaryKey: baseMD5),
+              let romURL = baseGame.file?.url else {
+            throw PatchError.sourceROMMismatch
+        }
+        let dest = directory ?? URL.documentsPath
+            .appendingPathComponent("PatchedROMs", isDirectory: true)
+        let preferred = "\(livePatch.outputStem ?? PatchApplier.defaultOutputStem(romURL: romURL, patchURL: patchURL)).\(romURL.pathExtension)"
+        return try await applier.exportPatchedCopy(
+            patchURL: patchURL,
+            romURL: romURL,
+            to: dest,
+            preferredName: preferred,
+            progress: progress
+        )
+    }
+
+    public func reapply(_ patch: PVPatch, progress: (@Sendable (PatchProgress) -> Void)? = nil) async throws -> PVGame {
+        let realm = RomDatabase.sharedInstance.realm
+        guard let livePatch = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id),
+              let patchURL = livePatch.file?.url,
+              let baseMD5 = livePatch.baseGameMD5 ?? livePatch.game?.md5Hash,
+              let baseGame = realm.object(ofType: PVGame.self, forPrimaryKey: baseMD5),
+              let romURL = baseGame.file?.url else {
+            throw PatchError.sourceROMMismatch
+        }
+        try await applier.invalidateCache(patchURL: patchURL, romURL: romURL)
+        return try await prepareForLaunch(patch: livePatch, progress: progress)
+    }
+
+    /// Delete a patch and its variant/cache. Never deletes the original ROM.
+    public func deletePatch(_ patch: PVPatch, deleteVariantSaves: Bool = true) throws {
+        let realm = RomDatabase.sharedInstance.realm
+        guard let live = patch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: patch.id) else { return }
+
+        if let patchURL = live.file?.url,
+           let baseMD5 = live.baseGameMD5 ?? live.game?.md5Hash,
+           let base = realm.object(ofType: PVGame.self, forPrimaryKey: baseMD5),
+           let romURL = base.file?.url {
+            let applier = self.applier
+            Task {
+                try? await applier.invalidateCache(patchURL: patchURL, romURL: romURL)
+            }
+        }
+
+        let variant = live.variantGame
+        let patchFileURL = live.file?.url
+
+        try RomDatabase.sharedInstance.writeTransaction {
+            if let variant {
+                if deleteVariantSaves {
+                    variant.saveStates.forEach { realm.delete($0) }
+                    variant.cheats.forEach { realm.delete($0) }
+                    variant.recentPlays.forEach { realm.delete($0) }
+                }
+                realm.delete(variant)
+            }
+            realm.delete(live)
+        }
+
+        if let patchFileURL, FileManager.default.fileExists(atPath: patchFileURL.path) {
+            try? FileManager.default.removeItem(at: patchFileURL)
+        }
+    }
+
+    /// Delete every patch / variant owned by a base game. Never deletes the base ROM itself.
+    public func deletePatches(forBaseGameMD5 md5: String) throws {
+        let owned = Array(patches(forGameMD5: md5).freeze())
+        for patch in owned {
+            try deletePatch(patch)
+        }
+    }
+}

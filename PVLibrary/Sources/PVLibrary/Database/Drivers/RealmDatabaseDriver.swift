@@ -134,7 +134,12 @@ extension RealmDatabaseDriver {
     /// - Parameter systemIdentifier: ID String of the system to query
     /// - Returns: A query result with live updating as long as the reference is active
     public func gamesForSystem(systemIdentifier: String) -> Results<GameType> {
-        database.all(GameType.self).filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [systemIdentifier]))
+        database.all(GameType.self).filter(
+            NSPredicate(
+                format: "systemIdentifier == %@ AND isHiddenPatchVariant == false",
+                argumentArray: [systemIdentifier]
+            )
+        )
     }
 
     /// Systems sorted by Options -> RxRealm.Observable

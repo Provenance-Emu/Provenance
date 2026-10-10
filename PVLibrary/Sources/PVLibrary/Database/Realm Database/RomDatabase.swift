@@ -20,7 +20,7 @@ import AsyncAlgorithms
 import PVSystems
 import PVMediaCache
 
-public let schemaVersion: UInt64 = 28
+public let schemaVersion: UInt64 = 29
 
 public enum RomDeletionError: Error {
     case relatedFiledDeletionError
@@ -297,6 +297,26 @@ public final class RealmConfiguration {
             if oldSchemaVersion < 28 {
                 // PVControllerProfile.lightBarColorHex — optional String; Realm defaults new optional fields to nil.
                 ILOG("Migration to version 28 complete. (Added PVControllerProfile.lightBarColorHex)")
+            }
+            if oldSchemaVersion < 29 {
+                // Patch variant support: PVGame patch-variant fields + extended PVPatch metadata.
+                migration.enumerateObjects(ofType: PVGame.className()) { _, newObject in
+                    newObject?["isPatchVariant"] = false
+                    newObject?["baseGameMD5"] = nil
+                    newObject?["patchID"] = nil
+                    newObject?["isHiddenPatchVariant"] = false
+                }
+                migration.enumerateObjects(ofType: PVPatch.className()) { oldObject, newObject in
+                    newObject?["baseGameMD5"] = oldObject?["game"] != nil ? nil : nil
+                    newObject?["matchState"] = "pending"
+                    newObject?["matchConfidenceRaw"] = "none"
+                    newObject?["matchScore"] = 0.0
+                    newObject?["hasSourceCRC32"] = false
+                    newObject?["sourceCRC32"] = 0
+                    newObject?["showAsLibraryTile"] = false
+                    newObject?["isDefaultLaunch"] = (oldObject?["isEnabled"] as? Bool) ?? false
+                }
+                ILOG("Migration to version 29 complete. (Patch variants + PVPatch matching metadata)")
             }
         }
 
@@ -1143,6 +1163,13 @@ public extension RomDatabase {
             RomDatabase.reloadGamesCache()
         }
         do {
+            // Patch lifecycle: deleting a base game removes its variants/patches (never other ROMs).
+            // Deleting a variant tile removes that patch + variant only (original ROM stays).
+            if game.isPatchVariant {
+                deletePatchRecords(linkedToVariantMD5: md5, patchID: game.patchID)
+                return
+            }
+            deletePatchRecords(ownedByBaseGameMD5: md5)
             deleteRelatedFilesGame(game)
             game.saveStates.forEach { try? $0.delete() }
             game.cheats.forEach { try? $0.delete() }
@@ -1155,6 +1182,47 @@ public extension RomDatabase {
                 ELOG("\(error.localizedDescription)")
             }
             ELOG("\(error.localizedDescription)")
+        }
+    }
+
+    /// Delete patch Realm records + variant games for a base ROM. Never deletes the base ROM file.
+    private func deletePatchRecords(ownedByBaseGameMD5 md5: String) {
+        let patches = Array(realm.objects(PVPatch.self).filter("baseGameMD5 == %@", md5))
+        for patch in patches {
+            deleteSinglePatchRecord(patch)
+        }
+    }
+
+    private func deletePatchRecords(linkedToVariantMD5 md5: String, patchID: String?) {
+        if let patchID, let patch = realm.object(ofType: PVPatch.self, forPrimaryKey: patchID) {
+            deleteSinglePatchRecord(patch)
+            return
+        }
+        if let patch = realm.objects(PVPatch.self).filter("variantGameMD5 == %@", md5).first {
+            deleteSinglePatchRecord(patch)
+        }
+    }
+
+    private func deleteSinglePatchRecord(_ patch: PVPatch) {
+        let patchFileURL = patch.file?.url
+        let variant = patch.variantGame
+        do {
+            try writeTransaction {
+                if let variant, !variant.isInvalidated {
+                    variant.saveStates.forEach { realm.delete($0) }
+                    variant.cheats.forEach { realm.delete($0) }
+                    variant.recentPlays.forEach { realm.delete($0) }
+                    realm.delete(variant)
+                }
+                if !patch.isInvalidated {
+                    realm.delete(patch)
+                }
+            }
+        } catch {
+            WLOG("Failed to delete patch record \(patch.id): \(error.localizedDescription)")
+        }
+        if let patchFileURL, FileManager.default.fileExists(atPath: patchFileURL.path) {
+            try? FileManager.default.removeItem(at: patchFileURL)
         }
     }
 
