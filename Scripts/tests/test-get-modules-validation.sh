@@ -164,6 +164,40 @@ PY
     [ "$ok" -eq 1 ]
 }
 
+# ---- Test 7: --urls never deletes seeded other-platform or neutral dylibs (no active_platform.txt) ----
+test_get_modules_urls_no_purge() {
+    local tmp
+    tmp=$(mktemp -d "${TMPDIR:-/tmp}/get_modules_urls_nopurge.XXXXXX")
+    local ra="$tmp/CoresRetro/RetroArch"
+    mkdir -p "$ra/scripts" "$ra/modules" "$tmp/zips"
+    python3 - "$tmp" <<'PY'
+import struct, sys, zipfile, os
+root = sys.argv[1]
+header = struct.pack("<IiiIIIII", 0xfeedfacf, 0x0100000c, 0, 6, 0, 0, 0, 0)
+dylib = os.path.join(root, "fake_libretro_ios.dylib")
+with open(dylib, "wb") as f:
+    f.write(header)
+with zipfile.ZipFile(os.path.join(root, "zips", "fake_libretro_ios.dylib.zip"), "w") as z:
+    z.write(dylib, "fake_libretro_ios.dylib")
+for n in ("seed_libretro_tvos.dylib", "neutral_libretro.dylib"):
+    with open(os.path.join(root, "CoresRetro/RetroArch/modules", n), "wb") as f:
+        f.write(header)
+PY
+    echo "file://$tmp/zips/fake_libretro_ios.dylib.zip" > "$tmp/urls.txt"
+
+    local out rc=0 ok=1
+    out=$(SRCROOT="$tmp" PLATFORM_NAME=iphonesimulator GETMODULES_MIN_DYLIB_SIZE=1 \
+        bash "$GET_MODULES" --urls "$tmp/urls.txt" 2>&1) || rc=$?
+    [ "$rc" -eq 0 ] || { echo "FAIL: --urls run exited $rc"; echo "$out" | tail -20; ok=0; }
+    [ -f "$ra/modules/seed_libretro_tvos.dylib" ] || { echo "FAIL: --urls deleted an other-platform dylib"; ok=0; }
+    [ -f "$ra/modules/neutral_libretro.dylib" ] || { echo "FAIL: --urls deleted a neutral dylib"; ok=0; }
+    [ -f "$ra/modules/fake_libretro_ios.dylib" ] || { echo "FAIL: listed dylib not extracted"; ok=0; }
+
+    rm -rf "$tmp"
+    [ "$ok" -eq 1 ] && echo "PASS: --urls leaves seeded other-platform and neutral dylibs alone"
+    [ "$ok" -eq 1 ]
+}
+
 # ---- Run all tests ----
 run_test() {
     if ! "$1"; then
@@ -178,6 +212,7 @@ run_test test_make_frameworks_zero_dylib_check
 run_test test_get_modules_uses_curl_fail
 run_test test_get_modules_validates_zip_magic
 run_test test_get_modules_custom_url_list
+run_test test_get_modules_urls_no_purge
 
 echo "==="
 if [ "$FAIL_COUNT" -eq 0 ]; then

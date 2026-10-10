@@ -336,7 +336,9 @@ remove_stale_other_platform_dylibs() {
 		echo "GetModule: removed ${removed} other-platform dylib(s) — mixed modules/ cleaned for current platform '${plat}'"
 	fi
 }
-remove_stale_other_platform_dylibs "${CORES_DIR}" "${CURRENT_PLATFORM}"
+if [ -z "${CUSTOM_URLS}" ]; then
+	remove_stale_other_platform_dylibs "${CORES_DIR}" "${CURRENT_PLATFORM}"
+fi
 
 # Custom lists: skip when the timestamp is fresh and every listed dylib is already in modules/.
 # (The count-based fast path below would count all ~100 shared dylibs.)
@@ -394,7 +396,7 @@ fi
 # On a platform switch we also remove platform-neutral dylibs (those without an
 # ios/tvos suffix, e.g. dolphin_libretro.dylib) so they are re-extracted for the
 # new platform rather than silently reused from the previous build.
-if [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; then
+if [ -z "${CUSTOM_URLS}" ] && { [ "${PLATFORM_CHANGED}" = "1" ] || [ -z "${STORED_PLATFORM}" ]; }; then
 	# Remove other-platform dylibs (suffix-matched), preserving any with a
 	# .local sentinel or matching LOCAL_DYLIB_PATTERNS.
 	if [ "${CURRENT_PLATFORM}" = "tvos" ]; then
@@ -530,7 +532,10 @@ fi
 # new snapshot are not left behind (unzip -o only overwrites, never deletes).
 # When the platform changed, platform-specific and neutral dylibs were already
 # purged above; -o ensures any remaining shared names are overwritten correctly.
-if [ "${PIN_CHANGED}" = "1" ]; then
+if [ -n "${CUSTOM_URLS}" ]; then
+	# Custom list: only overwrite our own dylibs; never purge the shared modules/ dir.
+	find "${CORES_ARCHIVE_DIR}" -name "*.zip" -exec unzip -o {} "${UNZIP_EXCLUDE_ARGS[@]}" -d "${CORES_DIR}/" ';'
+elif [ "${PIN_CHANGED}" = "1" ]; then
 	# Purge all downloaded dylibs but preserve locally-built ones (pattern or sentinel).
 	for dylib in "${CORES_DIR}/"*.dylib; do
 		[ -f "$dylib" ] || continue
