@@ -98,23 +98,23 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 
 **Core taxonomy — not every `Cores/PV*` directory is an active shipping core.**
 - **Active native PV* cores** (custom forks or long-supported legacy we
-  actively extend): Mupen, snes9x, Stella, Mednafen, Jaguar, Dolphin,
-  FCEU, ProSystem, Genesis-Plus-GX, Flycast, and similar.
-  Source of truth: `docs/superpowers/specs/2026-10-10-core-audit.md` (KEEP rows). Jaguar and
-  Flycast are not native cores (Jaguar runs on the virtualjaguar dylib; there is no
-  `Cores/Flycast`). The 32 retired cores (the audit's 24 RETIRE rows minus `Debug`,
-  plus Desmume2015, melonDS, Atari800, Bliss, CrabEMU, Gambatte, O2EM, PokeMini,
-  VisualBoyAdvance-M) live on as `PVCore.retiredCores` entries (`RetiredCoreMigration`,
-  `RetiredBatterySaveMigration`); `Cores/Debug` stays for its `PVDebug.c` simulator stub.
-- **Placeholder PV* targets** (in the workspace as scaffolding but NOT
-  actively used in the shipping app): DuckStation, BeetlePSX, and
-  similar — these duplicate libretro cores we now serve via the thin
-  wrapper (`PVCoreBridgeRetro/.../PVThinLibretroCore`) against upstream
-  libretro buildbot dylibs. Don't extend these PV* shells; the thin
-  wrapper is the supported path.
+  actively extend): Azahar, Dolphin, FCEU, Genesis-Plus-GX, Mednafen,
+  Mupen64Plus, ProSystem, snes9x, Stella, plus mGBA, PicoDrive and TGBDual
+  for native-only features. Source of truth:
+  `docs/superpowers/specs/2026-10-10-core-audit.md` (KEEP rows). Retired
+  cores live on as `PVCore.retiredCores` entries (`RetiredCoreMigration`,
+  `RetiredBatterySaveMigration`); `Cores/Debug` stays for its `PVDebug.c` simulator stub; no new `Cores/` project without an audit row.
+- **Pruned (2026-10, `feature/prune-dead-cores`):** 32 `Cores/` projects that
+  duplicated a libretro buildbot dylib or were never wired were deleted:
+  Atari800, Bliss, CrabEMU, Gambatte, PokeMini, VisualBoyAdvance-M,
+  VirtualJaguar, O2EM, Desmume2015, melonDS, BeetlePSX, DosBox, DuckStation,
+  FreeIntv, GameMusicEmu, Gearcoleco, JollyGoodEmulation, Mini_vMac, Mu,
+  Mupen64Plus-NX, Play, Potator, Reicast, Sudachi, VecX, Yabause, fuse, opera,
+  pcsx_rearmed, sm64ex, snesticle, supergrafx. Their games run on the thin
+  wrapper through the replacement table in `PVCore.swift`.
 - **Rule of thumb:** if a libretro buildbot dylib already serves the
   core and the thin wrapper handles it, fix the thin wrapper (or the
-  upstream dylib via Provenance fork), not the placeholder PV* shell.
+  upstream dylib via Provenance fork), not a native PV* shell.
   The whole point of the thin wrapper is to make those cores feel
   basically native without per-core PV* maintenance.
 
