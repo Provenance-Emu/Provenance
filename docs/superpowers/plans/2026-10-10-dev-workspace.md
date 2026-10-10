@@ -1432,67 +1432,855 @@ git -c commit.gpgsign=false commit -m "build: add Provenance-Dev-Azahar and make
 
 ---
 
-> **Batches 3–6 are outlines.** Each task gives its files, interfaces, model tier, and what it does and how it is verified. Full step-by-step code is written when that batch starts. The facts below were verified against the tree on 2026-10-10.
+> **Batches 4–6 are outlines (batch 3 is detailed below).** Each task gives its files, interfaces, model tier, and what it does and how it is verified. Full step-by-step code is written when that batch starts. The facts below were verified against the tree on 2026-10-10.
 
 # Batch 3 — Core harness (develop)
 
-### Task 9: `PVDevHarness` package and its pure `PVDevHarnessKit`  *(model: sonnet)*
+### Task 9: `PVDevHarness` package and its pure core `PVDevHarnessKit`  *(model: sonnet)*
 
-**Files:** `PVDevHarness/Package.swift`, `PVDevHarness/Sources/PVDevHarnessKit/{HarnessArguments,HarnessOutput}.swift`, `PVDevHarness/Sources/PVDevHarness/DevHarness.swift` (placeholder), `PVDevHarness/Tests/PVDevHarnessKitTests/HarnessKitTests.swift`.
+**Files:**
+- Create: `PVDevHarness/Package.swift`
+- Create: `PVDevHarness/Sources/PVDevHarnessKit/HarnessArguments.swift`
+- Create: `PVDevHarness/Sources/PVDevHarnessKit/HarnessOutput.swift`
+- Create: `PVDevHarness/Sources/PVDevHarness/DevHarness.swift` (placeholder in this task; Task 10 replaces it)
+- Test: `PVDevHarness/Tests/PVDevHarnessKitTests/HarnessKitTests.swift`
 
-**Interfaces:** produces
-- `HarnessArguments { romPath, coreIdentifier?, frames (default 300, min 1), outputPath?, exitWhenDone }`, with `parse([String]) -> HarnessArguments?`, `romURL(home:)`, `outputDirectory(home:documents:now:)` (default `<documents>/Harness/<yyyyMMdd-HHmmss UTC>`);
-- `HarnessReport: Codable { core, game, frames, frameCountSource, frameInterval, fps, waitedSeconds, elapsedSeconds }`;
-- `HarnessOutput` with the constants `screenshot.png`, `frames.json`, `log.txt`, `error.txt` and the writers;
-- library product `PVDevHarness`.
+**Interfaces:**
+- Produces, in module `PVDevHarnessKit`:
+  - `public struct HarnessArguments: Equatable, Sendable { romPath: String; coreIdentifier: String?; frames: Int; outputPath: String?; exitWhenDone: Bool }`
+  - `static let defaultFrames = 300`; `static func parse(_ arguments: [String]) -> HarnessArguments?`
+  - `func romURL(home: URL) -> URL`; `func outputDirectory(home: URL, documents: URL, now: Date) -> URL`; `static func timestamp(_ date: Date) -> String`
+  - `public struct HarnessReport: Codable, Equatable, Sendable { core, game: String; frames: Int; frameCountSource: String; frameInterval, fps, waitedSeconds, elapsedSeconds: Double }`
+  - `public enum HarnessOutput` with the file-name constants `screenshotFile`, `framesFile`, `logFile`, `errorFile`, and `prepare(_:)`, `writeReport(_:to:)`, `writeError(_:to:)`, `writeScreenshot(_:to:)`, `copyLog(from:to:)`, `waitSeconds(frames:frameInterval:)`.
+- Product `PVDevHarness` (library). On iOS and tvOS it depends on PVUI, PVLibrary and PVLogging. On macOS those dependencies are skipped, so `swift test` builds and runs only the Kit tests.
 
-What it does:
-- The package targets swift-tools 6.0, Swift 5 language mode, iOS 17 / tvOS 17 / macOS 14 / visionOS 1.
-- `PVDevHarness` depends on the `PVUI`, `PVLibrary` and `PVLogging` products with `condition: .when(platforms: [.iOS, .tvOS])`, so `cd PVDevHarness && swift test` on macOS builds only the Kit.
+- [ ] **Step 1: Write `PVDevHarness/Package.swift`**
 
-Verified by: TDD on the Kit with `swift test` (argument parsing, defaults, clamping, path resolution, timestamped default dir, report round-trip, error/screenshot/log writers, `waitSeconds`). If SwiftPM still builds PVUI on macOS, fall back to `xcodebuild test -scheme PVDevHarness-Package` on the iPhone 17 simulator.
+```swift
+// swift-tools-version:6.0
+import PackageDescription
+
+// Dev-only launch-argument harness, compiled into Tuist focused apps under PV_DEV_HARNESS.
+// PVDevHarnessKit is platform-neutral (arguments, report, output files) and unit-tested with
+// `swift test` on macOS; PVDevHarness drives the app and only builds for iOS/tvOS.
+let appPlatforms: [Platform] = [.iOS, .tvOS]
+
+let package = Package(
+    name: "PVDevHarness",
+    platforms: [.iOS(.v17), .tvOS(.v17), .macOS(.v14), .visionOS(.v1)],
+    products: [
+        .library(name: "PVDevHarness", targets: ["PVDevHarness"]),
+    ],
+    dependencies: [
+        .package(path: "../PVUI"),
+        .package(path: "../PVLibrary"),
+        .package(path: "../PVLogging"),
+    ],
+    targets: [
+        .target(name: "PVDevHarnessKit"),
+        .target(
+            name: "PVDevHarness",
+            dependencies: [
+                "PVDevHarnessKit",
+                .product(name: "PVUI", package: "PVUI", condition: .when(platforms: appPlatforms)),
+                .product(name: "PVLibrary", package: "PVLibrary", condition: .when(platforms: appPlatforms)),
+                .product(name: "PVLogging", package: "PVLogging", condition: .when(platforms: appPlatforms)),
+            ]
+        ),
+        .testTarget(name: "PVDevHarnessKitTests", dependencies: ["PVDevHarnessKit"]),
+    ],
+    swiftLanguageModes: [.v5]
+)
+```
+
+- [ ] **Step 2: Write the failing tests**
+
+`PVDevHarness/Tests/PVDevHarnessKitTests/HarnessKitTests.swift`:
+
+```swift
+import XCTest
+@testable import PVDevHarnessKit
+
+final class HarnessArgumentsTests: XCTestCase {
+    func testNoROMMeansNormalLaunch() {
+        XCTAssertNil(HarnessArguments.parse(["/app", "-NSDoubleLocalizedStrings", "YES"]))
+    }
+
+    func testDefaults() throws {
+        let args = try XCTUnwrap(HarnessArguments.parse(["/app", "-PVHarnessROM", "/tmp/a.gba"]))
+        XCTAssertEqual(args.romPath, "/tmp/a.gba")
+        XCTAssertNil(args.coreIdentifier)
+        XCTAssertEqual(args.frames, HarnessArguments.defaultFrames)
+        XCTAssertNil(args.outputPath)
+        XCTAssertTrue(args.exitWhenDone)
+    }
+
+    func testAllArguments() throws {
+        let args = try XCTUnwrap(HarnessArguments.parse([
+            "/app", "-PVHarnessROM", "Documents/a.gba", "-PVHarnessCore", "com.provenance.core.mgba",
+            "-PVHarnessFrames", "120", "-PVHarnessOut", "Documents/out", "-PVHarnessExit", "0",
+        ]))
+        XCTAssertEqual(args.coreIdentifier, "com.provenance.core.mgba")
+        XCTAssertEqual(args.frames, 120)
+        XCTAssertEqual(args.outputPath, "Documents/out")
+        XCTAssertFalse(args.exitWhenDone)
+    }
+
+    func testBadFramesFallBackAndClamp() throws {
+        XCTAssertEqual(HarnessArguments.parse(["-PVHarnessROM", "a", "-PVHarnessFrames", "abc"])?.frames, 300)
+        XCTAssertEqual(HarnessArguments.parse(["-PVHarnessROM", "a", "-PVHarnessFrames", "0"])?.frames, 1)
+    }
+
+    func testMissingValueIsIgnored() {
+        XCTAssertNil(HarnessArguments.parse(["-PVHarnessROM", "-PVHarnessFrames", "10"]))
+    }
+
+    func testPathsResolveAgainstHome() throws {
+        let home = URL(fileURLWithPath: "/container", isDirectory: true)
+        let relative = try XCTUnwrap(HarnessArguments.parse(["-PVHarnessROM", "Documents/a.gba", "-PVHarnessOut", "Documents/out"]))
+        XCTAssertEqual(relative.romURL(home: home).path, "/container/Documents/a.gba")
+        XCTAssertEqual(relative.outputDirectory(home: home, documents: home, now: Date()).path, "/container/Documents/out")
+        let absolute = try XCTUnwrap(HarnessArguments.parse(["-PVHarnessROM", "/roms/a.gba"]))
+        XCTAssertEqual(absolute.romURL(home: home).path, "/roms/a.gba")
+    }
+
+    func testDefaultOutputDirectoryIsTimestamped() throws {
+        let args = try XCTUnwrap(HarnessArguments.parse(["-PVHarnessROM", "a"]))
+        let docs = URL(fileURLWithPath: "/docs", isDirectory: true)
+        let date = Date(timeIntervalSince1970: 0)
+        XCTAssertEqual(args.outputDirectory(home: docs, documents: docs, now: date).path, "/docs/Harness/19700101-000000")
+    }
+}
+
+final class HarnessOutputTests: XCTestCase {
+    private var dir: URL!
+
+    override func setUpWithError() throws {
+        dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try HarnessOutput.prepare(dir)
+    }
+
+    override func tearDownWithError() throws {
+        try? FileManager.default.removeItem(at: dir)
+    }
+
+    func testReportRoundTrips() throws {
+        let report = HarnessReport(core: "c", game: "g", frames: 300, frameCountSource: "estimated",
+                                   frameInterval: 1.0 / 60.0, fps: 60, waitedSeconds: 5, elapsedSeconds: 9.5)
+        try HarnessOutput.writeReport(report, to: dir)
+        let data = try Data(contentsOf: dir.appendingPathComponent(HarnessOutput.framesFile))
+        XCTAssertEqual(try JSONDecoder().decode(HarnessReport.self, from: data), report)
+    }
+
+    func testErrorAndScreenshotAndLog() throws {
+        try HarnessOutput.writeError("boom", to: dir)
+        try HarnessOutput.writeScreenshot(Data([0x89, 0x50]), to: dir)
+        let log = dir.appendingPathComponent("source.log")
+        try "line".write(to: log, atomically: true, encoding: .utf8)
+        try HarnessOutput.copyLog(from: log, to: dir)
+        XCTAssertEqual(try String(contentsOf: dir.appendingPathComponent(HarnessOutput.errorFile), encoding: .utf8), "boom\n")
+        XCTAssertEqual(try Data(contentsOf: dir.appendingPathComponent(HarnessOutput.screenshotFile)), Data([0x89, 0x50]))
+        XCTAssertEqual(try String(contentsOf: dir.appendingPathComponent(HarnessOutput.logFile), encoding: .utf8), "line")
+    }
+
+    func testMissingLogStillWritesAFile() throws {
+        try HarnessOutput.copyLog(from: nil, to: dir)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: dir.appendingPathComponent(HarnessOutput.logFile).path))
+    }
+
+    func testWaitSeconds() {
+        XCTAssertEqual(HarnessOutput.waitSeconds(frames: 300, frameInterval: 1.0 / 60.0), 5, accuracy: 0.0001)
+        XCTAssertEqual(HarnessOutput.waitSeconds(frames: 120, frameInterval: 0), 2, accuracy: 0.0001)
+    }
+}
+```
+
+Write the placeholder `PVDevHarness/Sources/PVDevHarness/DevHarness.swift` so the package resolves:
+
+```swift
+// Replaced in the next task with the app driver (iOS/tvOS only).
+import PVDevHarnessKit
+```
+
+- [ ] **Step 3: Run the tests and see them fail**
+
+Run: `cd PVDevHarness && swift test 2>&1 | tail -15`
+Expected: compile errors such as `cannot find 'HarnessArguments' in scope`.
+
+- [ ] **Step 4: Write `HarnessArguments.swift`**
+
+```swift
+import Foundation
+
+/// Launch arguments of the dev harness. A normal launch has no `-PVHarnessROM` and
+/// `parse(_:)` returns nil.
+public struct HarnessArguments: Equatable, Sendable {
+    public enum Key {
+        public static let rom = "-PVHarnessROM"
+        public static let core = "-PVHarnessCore"
+        public static let frames = "-PVHarnessFrames"
+        public static let out = "-PVHarnessOut"
+        public static let exit = "-PVHarnessExit"
+        static let prefix = "-PVHarness"
+    }
+
+    public static let defaultFrames = 300
+
+    public var romPath: String
+    public var coreIdentifier: String?
+    public var frames: Int
+    public var outputPath: String?
+    public var exitWhenDone: Bool
+
+    public init(romPath: String, coreIdentifier: String? = nil, frames: Int = defaultFrames,
+                outputPath: String? = nil, exitWhenDone: Bool = true) {
+        self.romPath = romPath
+        self.coreIdentifier = coreIdentifier
+        self.frames = frames
+        self.outputPath = outputPath
+        self.exitWhenDone = exitWhenDone
+    }
+
+    public static func parse(_ arguments: [String]) -> HarnessArguments? {
+        func value(_ key: String) -> String? {
+            guard let index = arguments.firstIndex(of: key), index + 1 < arguments.count else { return nil }
+            let candidate = arguments[index + 1]
+            return candidate.hasPrefix(Key.prefix) ? nil : candidate
+        }
+        guard let rom = value(Key.rom), !rom.isEmpty else { return nil }
+        let frames = value(Key.frames).flatMap(Int.init).map { max(1, $0) } ?? defaultFrames
+        return HarnessArguments(
+            romPath: rom,
+            coreIdentifier: value(Key.core),
+            frames: frames,
+            outputPath: value(Key.out),
+            exitWhenDone: value(Key.exit).map { $0 != "0" } ?? true
+        )
+    }
+
+    /// Absolute paths as given; anything else relative to the app's home (its data container).
+    static func resolve(_ path: String, home: URL) -> URL {
+        path.hasPrefix("/") ? URL(fileURLWithPath: path) : home.appendingPathComponent(path)
+    }
+
+    public func romURL(home: URL) -> URL { Self.resolve(romPath, home: home) }
+
+    /// `-PVHarnessOut`, else `<documents>/Harness/<yyyyMMdd-HHmmss>` (UTC).
+    public func outputDirectory(home: URL, documents: URL, now: Date) -> URL {
+        if let outputPath { return Self.resolve(outputPath, home: home) }
+        return documents.appendingPathComponent("Harness", isDirectory: true)
+            .appendingPathComponent(Self.timestamp(now), isDirectory: true)
+    }
+
+    public static func timestamp(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(identifier: "UTC")
+        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        return formatter.string(from: date)
+    }
+}
+```
+
+- [ ] **Step 5: Write `HarnessOutput.swift`**
+
+```swift
+import Foundation
+
+/// What a harness run measured. `frameCountSource` is "estimated": no core exposes a public
+/// frame counter, so `frames` frames are assumed to render in `frames * frameInterval` seconds.
+public struct HarnessReport: Codable, Equatable, Sendable {
+    public var core: String
+    public var game: String
+    public var frames: Int
+    public var frameCountSource: String
+    public var frameInterval: Double
+    public var fps: Double
+    public var waitedSeconds: Double
+    public var elapsedSeconds: Double
+
+    public init(core: String, game: String, frames: Int, frameCountSource: String, frameInterval: Double,
+                fps: Double, waitedSeconds: Double, elapsedSeconds: Double) {
+        self.core = core
+        self.game = game
+        self.frames = frames
+        self.frameCountSource = frameCountSource
+        self.frameInterval = frameInterval
+        self.fps = fps
+        self.waitedSeconds = waitedSeconds
+        self.elapsedSeconds = elapsedSeconds
+    }
+}
+
+/// The files a harness run leaves in its output directory.
+public enum HarnessOutput {
+    public static let screenshotFile = "screenshot.png"
+    public static let framesFile = "frames.json"
+    public static let logFile = "log.txt"
+    public static let errorFile = "error.txt"
+
+    /// Frame interval used when the core reports none.
+    static let fallbackFrameInterval = 1.0 / 60.0
+
+    public static func prepare(_ directory: URL) throws {
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    }
+
+    public static func writeReport(_ report: HarnessReport, to directory: URL) throws {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        try encoder.encode(report).write(to: directory.appendingPathComponent(framesFile), options: .atomic)
+    }
+
+    public static func writeError(_ message: String, to directory: URL) throws {
+        try (message + "\n").write(to: directory.appendingPathComponent(errorFile), atomically: true, encoding: .utf8)
+    }
+
+    public static func writeScreenshot(_ png: Data, to directory: URL) throws {
+        try png.write(to: directory.appendingPathComponent(screenshotFile), options: .atomic)
+    }
+
+    /// Copies the current log file; writes a one-line note when there is none.
+    public static func copyLog(from source: URL?, to directory: URL) throws {
+        let destination = directory.appendingPathComponent(logFile)
+        try? FileManager.default.removeItem(at: destination)
+        if let source, FileManager.default.fileExists(atPath: source.path) {
+            try FileManager.default.copyItem(at: source, to: destination)
+        } else {
+            try "no log file\n".write(to: destination, atomically: true, encoding: .utf8)
+        }
+    }
+
+    public static func waitSeconds(frames: Int, frameInterval: Double) -> Double {
+        Double(frames) * (frameInterval > 0 ? frameInterval : fallbackFrameInterval)
+    }
+}
+```
+
+- [ ] **Step 6: Run the tests and see them pass**
+
+Run: `cd PVDevHarness && swift test 2>&1 | tail -5`
+Expected: `Executed 11 tests, with 0 failures`. On macOS the iOS-only dependencies are skipped. If SwiftPM still tries to build PVUI on macOS, run the tests on the simulator instead: `cd PVDevHarness && xcodebuild test -scheme PVDevHarness-Package -destination 'platform=iOS Simulator,name=iPhone 17' -skipPackagePluginValidation -skipMacroValidation`. Record which command passed in the commit body.
+
+- [ ] **Step 7: Lint and commit**
+
+Run: `swiftlint lint --path PVDevHarness`
+
+```bash
+git add PVDevHarness
+git -c commit.gpgsign=false commit -m "feat(harness): add PVDevHarness package with argument/report kit" -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+---
 
 ### Task 10: Harness runtime, app hook, Tuist wiring  *(model: sonnet)*
 
-**Files:** `PVDevHarness/Sources/PVDevHarness/DevHarness.swift`, `Provenance/Main UI/ProvenanceApp.swift`, `Tuist/ProjectDescriptionHelpers/{DevSettings,FocusedApp}.swift`.
+**Files:**
+- Modify: `PVDevHarness/Sources/PVDevHarness/DevHarness.swift` (replace the placeholder)
+- Modify: `Provenance/Main UI/ProvenanceApp.swift` (import and hook, both under `#if PV_DEV_HARNESS`)
+- Modify: `Tuist/ProjectDescriptionHelpers/DevSettings.swift`, `Tuist/ProjectDescriptionHelpers/FocusedApp.swift`
 
 **Interfaces:**
-- Consumes these verified public APIs:
-  - from `AppState.shared`: `bootupState` (`AppBootupState.State`, `.completed` / `.error`) and `emulationUIState.currentGame` / `currentCore` / `core`;
-  - `SceneCoordinator.shared.openEmulatorScene()` (the same path as `ProvenanceApp.openEmulatorSceneIfNeeded`);
-  - `GameImporter.shared.addImports(forPaths:)` + `startProcessing()`;
-  - `Paths.romsImportPath`, `URL.documentsPath`, and `RomDatabase.sharedInstance.realm` / `.all(PVGame.self)`, filtered with `romPath ENDSWITH[c] <file>`;
-  - `PVEmulatorCore.isRunning`, `.frameInterval`;
-  - `PVLogFileManager.shared.currentSessionURL`, `PVLogging.shared.flushLogs()`.
-- Produces `@MainActor public enum DevHarness { static func start(appState: AppState, arguments: [String] = ProcessInfo.processInfo.arguments) }` and `DevSettings.harnessFlag = "PV_DEV_HARNESS"`.
+- Consumes:
+  - `HarnessArguments`, `HarnessReport`, `HarnessOutput` (Task 9).
+  - `AppState` (`bootupState: AppBootupState.State`, `emulationUIState.currentGame/currentCore/core`), `SceneCoordinator.shared.openEmulatorScene()`, `GameImporter.shared.addImports(forPaths:)` and `.startProcessing()`, `Paths.romsImportPath`, `URL.documentsPath`, `RomDatabase.sharedInstance.realm` / `.all(_:)`, `PVLogFileManager.shared.currentSessionURL` / `.logFiles()`, `PVLogging.shared.flushLogs()`.
+- Produces: `@MainActor public enum DevHarness { static func start(appState: AppState, arguments: [String] = ProcessInfo.processInfo.arguments) }`; `DevSettings.harnessFlag = "PV_DEV_HARNESS"`.
 
-What it does:
-1. Waits for bootup to finish.
-2. Imports the ROM if no game matches its file name, by copying it into `Imports/`.
-3. Picks the core: the explicit argument, else the game's preference, else the system's preference, else the first enabled core of the system sorted by identifier.
-4. Sets `currentCore` and `currentGame` and opens the emulator scene.
-5. Waits for `core.isRunning`, then sleeps `frames × frameInterval`. The time-based fallback is used because no public frame counter exists.
-6. Writes `screenshot.png` (key-window `drawHierarchy`), `frames.json` and `log.txt`, then calls `exit(0)`. Any error writes `error.txt` and calls `exit(1)`.
+- [ ] **Step 1: Write `DevHarness.swift`**
 
-`ProvenanceApp.swift` gets `#if PV_DEV_HARNESS import PVDevHarness` and a `DevHarness.start(appState:)` call after `appDelegate.appState = appState` in `.onAppear`. Tuist adds `.local(path: "PVDevHarness")` and `.package(product: "PVDevHarness")` for apps whose flags contain the harness flag.
+```swift
+#if os(iOS) || os(tvOS)
+import Foundation
+import UIKit
+import PVDevHarnessKit
+import PVLibrary
+import PVLogging
+import PVUIBase
 
-Verified by:
-- `Scripts/dev/check_dev_manifest.sh`;
-- builds of `Provenance-Dev-UI` for iOS and tvOS Simulator;
-- `grep PV_DEV_HARNESS Provenance.xcodeproj/project.pbxproj Build.xcconfig` is empty, so the shipping app compiles the hook out.
+/// Launch-argument harness for the Tuist focused apps (`-PVHarnessROM <path>` …): imports the
+/// ROM if needed, launches it through the normal emulator-scene path, waits, writes
+/// screenshot.png / frames.json / log.txt (or error.txt) and exits.
+@MainActor
+public enum DevHarness {
+    enum HarnessError: Error, CustomStringConvertible {
+        case bootTimedOut
+        case bootFailed(String)
+        case romNotFound(String)
+        case importTimedOut(String)
+        case coreNotFound(String)
+        case noCoreForSystem(String)
+        case coreDidNotStart(String)
+        case screenshotFailed
 
-### Task 11: `make dev-harness` and a simulator run  *(model: sonnet)*
+        var description: String {
+            switch self {
+            case .bootTimedOut: return "app bootup did not complete"
+            case let .bootFailed(reason): return "app bootup failed: \(reason)"
+            case let .romNotFound(path): return "ROM not found: \(path)"
+            case let .importTimedOut(name): return "import of \(name) did not finish"
+            case let .coreNotFound(id): return "no registered core \(id)"
+            case let .noCoreForSystem(id): return "no enabled core for system \(id)"
+            case let .coreDidNotStart(id): return "core \(id) did not start running"
+            case .screenshotFailed: return "could not snapshot a window"
+            }
+        }
+    }
 
-**Files:** `Scripts/dev/run_harness.sh`, `Makefile` (`dev-harness: | _var_ROM`, `TARGET ?= ui`, `FRAMES ?= 300`), `Scripts/maint/jobs.toml` (`cli_only` job `dev-harness`).
+    static let bootTimeout: TimeInterval = 120
+    static let importTimeout: TimeInterval = 180
+    static let coreStartTimeout: TimeInterval = 60
+    static let pollNanoseconds: UInt64 = 250_000_000
+    static let frameCountSource = "estimated"
 
-**Interfaces:** `run_harness.sh <rom> [ui|azahar|thin] [frames]` exits 0 on success, 1 on a harness error or missing outputs, and 2 on usage errors. It copies the outputs to `build/harness/<Scheme>/`.
+    private static var started = false
 
-What it does:
-1. Builds for the booted iOS simulator (`-destination id=<udid>`, ad-hoc `CODE_SIGN_IDENTITY=-`).
-2. Runs `simctl install`, then `simctl launch --console … -PVHarnessROM <abs> -PVHarnessOut Documents/Harness/run`.
-3. Copies the outputs from `simctl get_app_container … data`.
+    public static func start(appState: AppState, arguments: [String] = ProcessInfo.processInfo.arguments) {
+        guard !started, let args = HarnessArguments.parse(arguments) else { return }
+        started = true
+        let home = URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true)
+        let output = args.outputDirectory(home: home, documents: URL.documentsPath, now: Date())
+        ILOG("DevHarness: ROM \(args.romPath), \(args.frames) frames, output \(output.path)")
+        Task { @MainActor in
+            let began = Date()
+            do {
+                try HarnessOutput.prepare(output)
+                let report = try await run(args, appState: appState, home: home, began: began)
+                guard let png = screenshotPNG() else { throw HarnessError.screenshotFailed }
+                try HarnessOutput.writeScreenshot(png, to: output)
+                try HarnessOutput.writeReport(report, to: output)
+                finish(args, output: output, status: 0)
+            } catch {
+                ELOG("DevHarness: \(error)")
+                try? HarnessOutput.writeError(String(describing: error), to: output)
+                finish(args, output: output, status: 1)
+            }
+        }
+    }
 
-Verified by: no GBA homebrew ROM ships (`UITesting/UITesting/Resources/240p.nes` is the only ROM, and no Dev-UI core plays NES), so a 1-byte `placeholder.gba` must produce `error.txt` and a non-zero exit. When `$HARNESS_GBA_ROM` is set, the success path must produce all four files.
+    private static func run(_ args: HarnessArguments, appState: AppState, home: URL, began: Date) async throws -> HarnessReport {
+        let booted = await waitUntil(bootTimeout) {
+            if case .completed = appState.bootupState { return true }
+            return false
+        }
+        if case let .error(error) = appState.bootupState { throw HarnessError.bootFailed(String(describing: error)) }
+        guard booted else { throw HarnessError.bootTimedOut }
+
+        let game = try await importIfNeeded(args.romURL(home: home))
+        let core = try resolveCore(args.coreIdentifier, for: game)
+        ILOG("DevHarness: launching \(game.title) with \(core.identifier)")
+
+        // Same path as ProvenanceApp.openEmulatorSceneIfNeeded(): the scene reads these.
+        appState.emulationUIState.currentCore = core
+        appState.emulationUIState.currentGame = game
+        SceneCoordinator.shared.openEmulatorScene()
+
+        let coreID = core.identifier
+        guard await waitUntil(coreStartTimeout, { appState.emulationUIState.core?.isRunning == true }) else {
+            throw HarnessError.coreDidNotStart(coreID)
+        }
+        let frameInterval = appState.emulationUIState.core?.frameInterval ?? 0
+        let wait = HarnessOutput.waitSeconds(frames: args.frames, frameInterval: frameInterval)
+        let waitStart = Date()
+        try await Task.sleep(nanoseconds: UInt64(wait * 1_000_000_000))
+        let waited = Date().timeIntervalSince(waitStart)
+        return HarnessReport(
+            core: coreID,
+            game: game.title,
+            frames: args.frames,
+            frameCountSource: frameCountSource,
+            frameInterval: frameInterval,
+            fps: waited > 0 ? Double(args.frames) / waited : 0,
+            waitedSeconds: waited,
+            elapsedSeconds: Date().timeIntervalSince(began)
+        )
+    }
+
+    // MARK: Import
+
+    private static func findGame(named fileName: String) -> PVGame? {
+        let database = RomDatabase.sharedInstance
+        database.realm.refresh()
+        return database.all(PVGame.self).filter("romPath ENDSWITH[c] %@", fileName).first
+    }
+
+    private static func importIfNeeded(_ romURL: URL) async throws -> PVGame {
+        let fileName = romURL.lastPathComponent
+        if let game = findGame(named: fileName) { return game }
+        guard FileManager.default.fileExists(atPath: romURL.path) else { throw HarnessError.romNotFound(romURL.path) }
+
+        let importDirectory = Paths.romsImportPath
+        try FileManager.default.createDirectory(at: importDirectory, withIntermediateDirectories: true)
+        let staged = importDirectory.appendingPathComponent(fileName)
+        if !FileManager.default.fileExists(atPath: staged.path) {
+            try FileManager.default.copyItem(at: romURL, to: staged)
+        }
+        await GameImporter.shared.addImports(forPaths: [staged])
+        GameImporter.shared.startProcessing()
+
+        var found: PVGame?
+        _ = await waitUntil(importTimeout) {
+            found = findGame(named: fileName)
+            return found != nil
+        }
+        guard let game = found else { throw HarnessError.importTimedOut(fileName) }
+        return game
+    }
+
+    // MARK: Core choice: explicit, else the game's, else the system's preference, else the first enabled core.
+
+    private static func resolveCore(_ explicit: String?, for game: PVGame) throws -> PVCore {
+        let realm = RomDatabase.sharedInstance.realm
+        func core(_ identifier: String?) -> PVCore? {
+            identifier.flatMap { realm.object(ofType: PVCore.self, forPrimaryKey: $0) }
+        }
+        if let explicit {
+            guard let chosen = core(explicit) else { throw HarnessError.coreNotFound(explicit) }
+            return chosen
+        }
+        if let preferred = core(game.userPreferredCoreID) ?? core(game.system?.userPreferredCoreID) {
+            return preferred
+        }
+        guard let first = game.system?.cores.filter("disabled == false").sorted(byKeyPath: "identifier").first else {
+            throw HarnessError.noCoreForSystem(game.systemIdentifier)
+        }
+        return first
+    }
+
+    // MARK: Output
+
+    private static func screenshotPNG() -> Data? {
+        let windows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows)
+        guard let window = windows.first(where: \.isKeyWindow) ?? windows.first else { return nil }
+        let renderer = UIGraphicsImageRenderer(bounds: window.bounds)
+        return renderer.pngData { _ in
+            _ = window.drawHierarchy(in: window.bounds, afterScreenUpdates: true)
+        }
+    }
+
+    private static func finish(_ args: HarnessArguments, output: URL, status: Int32) {
+        PVLogging.shared.flushLogs()
+        let log = PVLogFileManager.shared.currentSessionURL ?? PVLogFileManager.shared.logFiles().last
+        try? HarnessOutput.copyLog(from: log, to: output)
+        ILOG("DevHarness: done (status \(status)) → \(output.path)")
+        if args.exitWhenDone { exit(status) }
+    }
+
+    private static func waitUntil(_ timeout: TimeInterval, _ condition: @MainActor () -> Bool) async -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if condition() { return true }
+            try? await Task.sleep(nanoseconds: pollNanoseconds)
+        }
+        return condition()
+    }
+}
+#endif
+```
+
+If a symbol does not resolve, fix the import. Do not change the API being used:
+- `PVLogFileManager` is in PVLogging.
+- `Paths`, `URL.documentsPath`, `PVGame` and `PVCore` are re-exported by PVLibrary.
+- `AppState` and `SceneCoordinator` are in PVUIBase.
+
+- [ ] **Step 2: Hook the app**
+
+In `Provenance/Main UI/ProvenanceApp.swift`, after the `#if canImport(WhatsNewKit)` import block (around line 20), add:
+
+```swift
+#if PV_DEV_HARNESS
+import PVDevHarness
+#endif
+```
+
+In `.onAppear {`, directly after `appDelegate.appState = appState`, add:
+
+```swift
+#if PV_DEV_HARNESS
+                    // Tuist focused apps only (-PVHarnessROM …); a no-op without harness arguments.
+                    DevHarness.start(appState: appState)
+#endif
+```
+
+- [ ] **Step 3: Wire the package into Tuist**
+
+In `DevSettings`:
+
+```swift
+    /// Compilation condition that pulls PVDevHarness into a focused app.
+    public static let harnessFlag = "PV_DEV_HARNESS"
+```
+
+In `localPackagePaths(for:)`, after the `for app in apps` loop and before `return`:
+
+```swift
+        if apps.contains(where: { $0.flags.contains(harnessFlag) }) {
+            paths.insert("PVDevHarness")
+        }
+```
+
+In `FocusedApp.target()`, change the `dependencies:` argument to:
+
+```swift
+            dependencies: DevSettings.appDependencies + coreDependencies
+                + (flags.contains(DevSettings.harnessFlag) ? [.package(product: "PVDevHarness")] : []),
+```
+
+- [ ] **Step 4: Check that the shipping app is unaffected**
+
+Run: `grep -rn "PV_DEV_HARNESS" Provenance.xcodeproj/project.pbxproj Build.xcconfig || echo "not defined in shipping"`
+Expected: `not defined in shipping`. The shipping targets compile the hook out.
+
+- [ ] **Step 5: Run the manifest checks, generate, and build both simulators**
+
+Dev simulator builds are ad-hoc signed by `Dev/Config/Dev.xcconfig`, so these commands pass no signing flags.
+
+```bash
+Scripts/dev/check_dev_manifest.sh
+mise exec -- tuist generate --no-open
+for dest in 'generic/platform=iOS Simulator' 'generic/platform=tvOS Simulator'; do
+  xcodebuild -workspace Provenance-Dev.xcworkspace -scheme Provenance-Dev-UI -destination "$dest" \
+    -skipPackagePluginValidation -skipMacroValidation -derivedDataPath /tmp/claude-501/dev-dd build \
+    2>&1 | tee "/tmp/claude-501/t10-$(echo "$dest" | tr -cd 'a-zA-Z').log" | tail -3
+done
+```
+
+Expected: `dev manifest: OK (3 apps, …)` (`PVDevHarness` is now a local package), and `** BUILD SUCCEEDED **` twice.
+
+- [ ] **Step 6: A normal launch is unaffected**
+
+```bash
+xcrun simctl boot "iPhone 17" 2>/dev/null || true
+xcrun simctl install booted /tmp/claude-501/dev-dd/Build/Products/Debug-iphonesimulator/Provenance-Dev-UI.app
+timeout 60 xcrun simctl launch --console-pty --terminate-running-process booted org.provenance-emu.provenance.dev.ui 2>&1 | grep -m1 -E "DevHarness|Bootup completed" || true
+```
+
+Expected: no `DevHarness:` line before `Bootup completed`. Without `-PVHarnessROM`, `start` returns immediately. Quit with `xcrun simctl terminate booted org.provenance-emu.provenance.dev.ui`.
+
+- [ ] **Step 7: Lint and commit**
+
+
+Run: `swiftlint lint --path PVDevHarness --path "Provenance/Main UI/ProvenanceApp.swift"`
+
+```bash
+git add PVDevHarness "Provenance/Main UI/ProvenanceApp.swift" Tuist
+git -c commit.gpgsign=false commit -m "feat(harness): drive ROM launch, screenshot and report in dev apps" -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+---
+
+### Task 11: Test ROM, `make dev-harness`, and simulator runs  *(model: sonnet)*
+
+**Files:**
+- Create: `Scripts/dev/make_harness_rom.py` (mode 755): writes a minimal Atari 2600 ROM.
+- Create: `Scripts/dev/run_harness.sh` (mode 755)
+- Modify: `Makefile`, `Scripts/maint/jobs.toml`
+
+**Interfaces:**
+- Consumes:
+  - the `-PVHarness*` arguments and the output files `error.txt`, `frames.json`, `screenshot.png`, `log.txt` (Tasks 9–10);
+  - `Provenance-Dev-UI` (bundle id `org.provenance-emu.provenance.dev.ui`), which embeds the native SPM cores Stella (`com.provenance.core.stella`, system `com.provenance.2600`, extensions `a26`/`bin`/`zip`), mGBA (`com.provenance.core.mGBA`) and snes9x (`com.provenance.core.snes9x`);
+  - Make variables `DEV_WORKSPACE`, `DEV_DERIVED`, and the `_var_%` "must be set" rule.
+- Produces:
+  - `make_harness_rom.py <out.a26>`, a 4 KiB ROM that loops forever (`JMP $F000`) and renders black;
+  - `run_harness.sh <rom> [ui|azahar] [frames] [core id]`, which exits 0 on success, 1 on a harness error or missing outputs, and 2 on usage or setup errors, and copies the outputs to `build/harness/<Scheme>/`;
+  - `make dev-harness ROM=<path> [TARGET=ui] [FRAMES=300] [CORE=<id>]`.
+
+**Simulator scope.** The libretro buildbot dylibs are iOS-platform Mach-O binaries and cannot be loaded (`dlopen`) in a simulator process. Simulator runs therefore use native SPM cores in `Provenance-Dev-UI`. `Provenance-Dev-Thin` runs the harness on a device only, through Xcode's scheme arguments (Step 7); `run_harness.sh` refuses `thin`. `Provenance-Dev-Azahar` runs on the arm64 simulator, but a 3DS test ROM is not in the repo, so this task does not exercise it.
+
+- [ ] **Step 1: Write `Scripts/dev/make_harness_rom.py`**
+
+```python
+#!/usr/bin/env python3
+"""Write a minimal 4 KiB Atari 2600 ROM for the dev harness (Stella).
+
+The ROM is `JMP $F000` at $F000, NOP padding, and reset/IRQ vectors pointing at $F000: it
+loops forever and draws a black screen, which is enough to prove import -> launch -> run.
+Usage: make_harness_rom.py <output.a26>
+"""
+import sys
+from pathlib import Path
+
+ROM_SIZE = 4096
+ENTRY = 0xF000
+NOP = 0xEA
+JMP_ABS = 0x4C
+
+
+def rom_bytes() -> bytes:
+    data = bytearray([NOP] * ROM_SIZE)
+    data[0:3] = bytes([JMP_ABS, ENTRY & 0xFF, ENTRY >> 8])
+    for vector in (0xFFC, 0xFFE):  # RESET, IRQ/BRK
+        data[vector] = ENTRY & 0xFF
+        data[vector + 1] = ENTRY >> 8
+    return bytes(data)
+
+
+def main(argv):
+    if len(argv) != 2:
+        print(__doc__.strip().splitlines()[-1], file=sys.stderr)
+        return 2
+    out = Path(argv[1])
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(rom_bytes())
+    print(out)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
+```
+
+Run: `chmod +x Scripts/dev/make_harness_rom.py && Scripts/dev/make_harness_rom.py /tmp/claude-501/harness/loop.a26 && xxd -s 0 -l 4 /tmp/claude-501/harness/loop.a26 && xxd -s 4092 -l 4 /tmp/claude-501/harness/loop.a26`
+Expected: the path, then `4c00 f0ea`, then `00f0 00f0`.
+
+- [ ] **Step 2: Write `Scripts/dev/run_harness.sh`**
+
+```bash
+#!/bin/bash
+# Builds a Tuist focused app for the iOS Simulator, installs it on the booted simulator, runs
+# the dev harness against a ROM and copies its outputs to build/harness/<Scheme>/.
+# Usage: Scripts/dev/run_harness.sh <rom path> [ui|azahar] [frames] [core identifier]
+# Exit: 0 success, 1 harness error (error.txt) or missing outputs, 2 usage/setup error.
+# Provenance-Dev-Thin is device-only: buildbot libretro dylibs are iOS-platform binaries and
+# cannot be dlopen'ed in a simulator process.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+ROM="${1:-}"
+TARGET="${2:-ui}"
+FRAMES="${3:-300}"
+CORE="${4:-}"
+[ -n "$ROM" ] && [ -f "$ROM" ] || { echo "usage: $0 <rom path> [ui|azahar] [frames] [core id]" >&2; exit 2; }
+
+case "$TARGET" in
+    ui) SCHEME="Provenance-Dev-UI" ;;
+    azahar) SCHEME="Provenance-Dev-Azahar" ;;
+    thin) echo "run_harness: Provenance-Dev-Thin runs the harness on a device only (libretro dylibs can't load in the simulator)" >&2; exit 2 ;;
+    *) echo "run_harness: unknown target '$TARGET' (ui|azahar)" >&2; exit 2 ;;
+esac
+
+xcrun simctl list devices booted | grep -q Booted || { echo "run_harness: boot a simulator first (xcrun simctl boot \"iPhone 17\")" >&2; exit 2; }
+
+DERIVED="${DEV_DERIVED:-$ROOT/build/dev-dd}"
+(cd "$ROOT" && mise exec -- tuist generate --no-open)
+# Ad-hoc signing for simulator SDKs comes from Dev/Config/Dev.xcconfig.
+xcodebuild build -workspace "$ROOT/Provenance-Dev.xcworkspace" -scheme "$SCHEME" \
+    -destination "generic/platform=iOS Simulator" -derivedDataPath "$DERIVED" \
+    -skipPackagePluginValidation -skipMacroValidation 2>&1 | tail -3
+
+APP="$DERIVED/Build/Products/Debug-iphonesimulator/$SCHEME.app"
+[ -d "$APP" ] || { echo "run_harness: build produced no $APP" >&2; exit 2; }
+BUNDLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist")
+xcrun simctl install booted "$APP"
+
+OUT_REL="Documents/Harness/run"
+DATA=$(xcrun simctl get_app_container booted "$BUNDLE" data)
+rm -rf "${DATA:?}/$OUT_REL"
+ROM_ABS="$(cd "$(dirname "$ROM")" && pwd)/$(basename "$ROM")"
+ARGS=(-PVHarnessROM "$ROM_ABS" -PVHarnessFrames "$FRAMES" -PVHarnessOut "$OUT_REL")
+[ -n "$CORE" ] && ARGS+=(-PVHarnessCore "$CORE")
+
+# --console-pty blocks until the app exits; the harness calls exit() when it is done.
+xcrun simctl launch --console-pty --terminate-running-process booted "$BUNDLE" "${ARGS[@]}" || true
+
+DEST="$ROOT/build/harness/$SCHEME"
+rm -rf "$DEST" && mkdir -p "$DEST"
+cp -R "$DATA/$OUT_REL/." "$DEST/" 2>/dev/null || true
+ls -1 "$DEST"
+if [ -f "$DEST/error.txt" ]; then
+    echo "run_harness: harness error: $(cat "$DEST/error.txt")"
+    exit 1
+fi
+for f in frames.json screenshot.png log.txt; do
+    [ -f "$DEST/$f" ] || { echo "run_harness: missing $f" >&2; exit 1; }
+done
+cat "$DEST/frames.json"
+```
+
+Run: `chmod +x Scripts/dev/run_harness.sh && bash -n Scripts/dev/run_harness.sh && Scripts/dev/run_harness.sh; echo "exit=$?"`
+Expected: the usage line and `exit=2`.
+
+- [ ] **Step 3: Add the Makefile target**
+
+Add `dev-harness` to `.PHONY`. Then, after `dev-thin:`, add:
+
+```make
+## Run the dev harness on the booted simulator:
+##   make dev-harness ROM=path/to/rom [TARGET=ui|azahar] [FRAMES=300] [CORE=com.provenance.core.stella]
+## Provenance-Dev-Thin is device-only (libretro dylibs don't load in the simulator).
+TARGET ?= ui
+FRAMES ?= 300
+CORE ?=
+dev-harness: | _var_ROM
+	DEV_DERIVED="$(DEV_DERIVED)" Scripts/dev/run_harness.sh "$(ROM)" "$(TARGET)" "$(FRAMES)" "$(CORE)"
+```
+
+Run: `make dev-harness 2>&1 | tail -2`
+Expected: the `_var_%` rule fails, asking for `ROM`.
+
+- [ ] **Step 4: Register both scripts**
+
+Append to `Scripts/maint/jobs.toml`:
+
+```toml
+[jobs.dev-harness]
+title = "Dev harness run"
+category = "Dev workspace"
+description = "Builds a focused app for the iOS Simulator and runs a ROM through the launch-argument harness (Thin: device only)."
+run = ["Scripts/dev/run_harness.sh"]
+args_hint = "<rom> [ui|azahar] [frames] [core id]"
+files = ["Scripts/dev/make_harness_rom.py"]
+needs = ["macos", "mise"]
+cli_only = true
+```
+
+Run: `python3 Scripts/maint/maint.py status 2>&1 | grep -i unregistered || echo "no unregistered scripts"`
+Expected: `no unregistered scripts`.
+
+- [ ] **Step 5: Success path on the simulator (Stella, native SPM core)**
+
+```bash
+xcrun simctl boot "iPhone 17" 2>/dev/null || true
+Scripts/dev/make_harness_rom.py /tmp/claude-501/harness/loop.a26
+make dev-harness ROM=/tmp/claude-501/harness/loop.a26 TARGET=ui FRAMES=120 CORE=com.provenance.core.stella; echo "exit=$?"
+```
+
+Expected:
+- `exit=0`.
+- `build/harness/Provenance-Dev-UI/` holds `frames.json`, `screenshot.png` and `log.txt`, and no `error.txt`.
+- `frames.json` shows `"core" : "com.provenance.core.stella"`, `"frames" : 120`, `"frameCountSource" : "estimated"`, and `"waitedSeconds"` ≈ 2.
+- `file build/harness/Provenance-Dev-UI/screenshot.png` reports `PNG image data`.
+
+If the run ends with `error.txt`, read `log.txt` (it holds the `DevHarness:` lines) and report the failing stage. Do not weaken the harness.
+
+- [ ] **Step 6: Error path on the simulator**
+
+```bash
+printf 'x' > /tmp/claude-501/harness/garbage.a26
+Scripts/dev/run_harness.sh /tmp/claude-501/harness/garbage.a26 ui 60; echo "exit=$?"
+```
+
+Expected: `exit=1`, `run_harness: harness error: …` (`did not start running` or `import of garbage.a26 did not finish`), and `error.txt` plus `log.txt` in `build/harness/Provenance-Dev-UI/`. The default system core is chosen because no `CORE` is passed, which also covers that branch. This run can take up to the 180 s import timeout plus 60 s for the core to start.
+
+- [ ] **Step 7: Document the device-only Thin run (no command to execute here)**
+
+Add this comment block above the `dev-harness` Makefile target:
+
+```make
+## Thin on a device: run Provenance-Dev-Thin from Xcode with scheme arguments
+##   -PVHarnessROM Documents/<rom> -PVHarnessFrames 300
+## after copying the ROM into the app's Documents (Files app or Xcode's Devices window), then
+## download the container and read Documents/Harness/<timestamp>/.
+```
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add Scripts/dev/make_harness_rom.py Scripts/dev/run_harness.sh Makefile Scripts/maint/jobs.toml
+git -c commit.gpgsign=false commit -m "feat(harness): add make dev-harness and a 2600 test ROM" -m "Simulator runs: Stella success path and garbage-ROM error path." -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+---
 
 # Batch 4 — Slice cache (develop)
 
@@ -1765,7 +2553,7 @@ Verified by: the skill's commands are copy-pasted from the merged Makefile and s
 | §4 | `CoreLink` / `CoreProduct` table | T2, T3, T5 (`.project` reinterpreted, deviation 2) |
 | §5 | `FocusedApp` template and target table | T2, T3, T7, T8 |
 | §6 | `LibretroCores` pre/post scripts; `get-modules.sh --urls` | T6, T7 (deviations 4, 5) |
-| §7 | `PVDevHarness`, app hook, `make dev-harness` | T9–T11 (outlined) |
+| §7 | `PVDevHarness`, app hook, `make dev-harness` | T9–T11 (detailed; Thin harness is device-only) |
 | §8 | `build_slice.py`, aggregates, registry | T12, T13 (outlined; deviation 6) |
 | §9 | `build.yml` / `testflight.yml` caches, `dev-workspace.yml` | T14 (outlined) |
 | §10 | Pruning, `RetiredCoreMigration` entries, battery rules, docs | T15–T20 (outlined; Debug kept, deviation 7) |
@@ -1774,11 +2562,11 @@ Verified by: the skill's commands are copy-pasted from the merged Makefile and s
 | §13 | Six batches | Batches 1–6 |
 | §14 | Out of scope | Not touched |
 
-Batches 3–6 are outlined only. Each will get full step-by-step code when its batch starts.
+Batches 4–6 are outlined only; batch 3 was detailed on 2026-10-10. Each remaining batch gets full step-by-step code when it starts.
 
 ## Placeholder scan
 
-Batches 1–2 contain no TBD, TODO or "similar to Task N"; every code step shows the code. The intentionally empty values are `DEV_PREBUILT_CORES` (empty by default, explained) and `linkerSettings` returning `[:]` in T2, which T3 replaces with the shown code. Batches 3–6 are outlines by the coordinator's scope cut.
+Batches 1–2 contain no TBD, TODO or "similar to Task N"; every code step shows the code. The intentionally empty values are `DEV_PREBUILT_CORES` (empty by default, explained) and `linkerSettings` returning `[:]` in T2, which T3 replaces with the shown code. Batches 4–6 are outlines by the coordinator's scope cut; batch 3 (T9–T11) is detailed.
 
 ## Name consistency
 
