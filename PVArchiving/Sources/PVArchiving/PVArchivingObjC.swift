@@ -9,6 +9,7 @@
 
 import Foundation
 import PVLogging
+import SWCompression
 
 /// ObjC-compatible archive extraction facade.
 /// Bridges PVArchiving's Swift API to Objective-C callers.
@@ -113,6 +114,42 @@ public final class PVArchiveHelper: NSObject {
         ArchiveManager.isArchiveExtension(ext)
     }
 
+    /// Names of the files in a zip, or an empty list when the archive is larger
+    /// than `maxArchiveBytes` or cannot be read. Does not inflate entry data.
+    /// The size cap keeps a disc-image zip from being pulled entirely into RAM
+    /// just to see what it holds.
+    @objc public func zipEntryNames(atPath: String, maxArchiveBytes: Int) -> [String] {
+        guard let container = zipContainerData(atPath: atPath, maxArchiveBytes: maxArchiveBytes) else {
+            return []
+        }
+        guard let infos = try? ZipContainer.info(container: container) else { return [] }
+        return infos
+            .filter { $0.type != .directory }
+            .map(\.name)
+    }
+
+    /// Inflate one zip entry into memory.
+    ///
+    /// Returns nil when the archive exceeds `maxArchiveBytes`, the entries'
+    /// combined uncompressed size exceeds `maxUncompressedBytes` (zip-bomb
+    /// guard), or `entryName` is not a file in the archive. `ZipContainer.open`
+    /// inflates every entry, so both caps have to hold before it is called.
+    @objc public func readZipEntry(_ entryName: String,
+                                   atPath: String,
+                                   maxArchiveBytes: Int,
+                                   maxUncompressedBytes: Int) -> Data? {
+        guard let container = zipContainerData(atPath: atPath, maxArchiveBytes: maxArchiveBytes) else {
+            return nil
+        }
+        guard let infos = try? ZipContainer.info(container: container) else { return nil }
+        let files = infos.filter { $0.type != .directory }
+        let total = files.reduce(0) { $0 + ($1.size ?? 0) }
+        guard total <= maxUncompressedBytes else { return nil }
+        guard files.contains(where: { $0.name == entryName }) else { return nil }
+        guard let entries = try? ZipContainer.open(container: container) else { return nil }
+        return entries.first { $0.info.name == entryName && $0.info.type != .directory }?.data
+    }
+
     /// Create a ZIP archive from a directory.
     /// - Returns: `YES` on success.
     @objc public func createZIP(at destinationPath: String, fromDirectory directoryPath: String) -> Bool {
@@ -129,6 +166,19 @@ public final class PVArchiveHelper: NSObject {
     }
 
     // MARK: - Private
+
+    /// The zip's bytes, when the file exists and is no larger than `maxArchiveBytes`.
+    private func zipContainerData(atPath: String, maxArchiveBytes: Int) -> Data? {
+        guard maxArchiveBytes > 0,
+              let attrs = try? FileManager.default.attributesOfItem(atPath: atPath),
+              let fileSize = attrs[.size] as? NSNumber,
+              fileSize.int64Value >= 0,
+              fileSize.int64Value <= Int64(maxArchiveBytes),
+              let data = try? Data(contentsOf: URL(fileURLWithPath: atPath)) else {
+            return nil
+        }
+        return data
+    }
 
     /// Run an async throwing closure synchronously on a GCD thread (not the cooperative pool).
     /// This avoids the deadlock risk of DispatchSemaphore + Task, which can starve

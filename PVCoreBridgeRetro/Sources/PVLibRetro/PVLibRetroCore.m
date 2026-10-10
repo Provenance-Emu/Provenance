@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
 #import "PVCoreBridgeRetro.h"
+#import <PVCoreBridgeRetro/PVCoreBridgeRetro-Swift.h>
 
 @import PVLoggingObjC;
 @import PVSettings;
@@ -2834,9 +2835,33 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 
     [self coreInit];
 
-    // Load ROM data and retain it
-    NSData *romData = [NSData dataWithContentsOfFile:path];
-    if (!romData) {
+    // Compiled-in cores take the same archive path as the thin frontend:
+    // native zip when `valid_extensions` says so, one small ROM inflated into
+    // memory, otherwise a reused cache extract. Loose files are unchanged.
+    NSString *ext = path.pathExtension.lowercaseString;
+    BOOL isArchive = [ext isEqualToString:@"zip"] || [ext isEqualToString:@"7z"];
+    NSString *contentPath = path;
+    NSData *romData = nil;
+    PVThinResolvedContent *resolved = nil;
+    struct retro_system_info sysInfo = {0};
+    if (isArchive && core->retro_get_system_info) {
+        core->retro_get_system_info(&sysInfo);
+        NSString *extractionRoot = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject
+                                    stringByAppendingPathComponent:@"ThinLibretroContent"];
+        resolved = [PVThinContentArchiveResolver resolveContentAtPath:path
+                                                      validExtensions:sysInfo.valid_extensions ? @(sysInfo.valid_extensions) : nil
+                                                       infoExtensions:nil
+                                                         blockExtract:sysInfo.block_extract
+                                                         needFullPath:sysInfo.need_fullpath
+                                                         forceExtract:NO
+                                                       extractionRoot:extractionRoot];
+        contentPath = resolved.path ?: path;
+        romData = resolved.data;
+    }
+    if (!romData && !(isArchive && sysInfo.need_fullpath)) {
+        romData = [NSData dataWithContentsOfFile:contentPath];
+    }
+    if (!romData && !(isArchive && sysInfo.need_fullpath)) {
         if (error) {
             *error = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
                                          code:PVEmulatorCoreErrorCodeCouldNotLoadRom
@@ -2849,12 +2874,46 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     self.currentRomData = romData;
 
     struct retro_game_info info;
-    info.path = [path fileSystemRepresentation];
-    info.data = romData.bytes;
-    info.size = romData.length;
-    info.meta = NULL;
+    memset(&info, 0, sizeof(info));
+    info.path = [contentPath fileSystemRepresentation];
+    if (romData) {
+        info.data = romData.bytes;
+        info.size = romData.length;
+    }
 
     BOOL loaded = core->retro_load_game(&info);
+
+    if (!loaded && resolved.retryUncompressedOnFailure) {
+        NSString *extractionRoot = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject
+                                    stringByAppendingPathComponent:@"ThinLibretroContent"];
+        PVThinResolvedContent *retry = [PVThinContentArchiveResolver resolveContentAtPath:path
+                                                                          validExtensions:sysInfo.valid_extensions ? @(sysInfo.valid_extensions) : nil
+                                                                           infoExtensions:nil
+                                                                             blockExtract:sysInfo.block_extract
+                                                                             needFullPath:sysInfo.need_fullpath
+                                                                             forceExtract:YES
+                                                                           extractionRoot:extractionRoot];
+        BOOL pathChanged = ![retry.path isEqualToString:contentPath];
+        BOOL memoryBecameFile = resolved.data != nil && retry.data == nil;
+        if (retry.path.length > 0 && (pathChanged || memoryBecameFile)) {
+            ILOG(@"LibRetroCore: archive load failed; extracting and retrying once");
+            contentPath = retry.path;
+            romData = retry.data;
+            if (!romData && !sysInfo.need_fullpath) {
+                romData = [NSData dataWithContentsOfFile:contentPath];
+            }
+            self.currentRomData = romData;
+            memset(&info, 0, sizeof(info));
+            info.path = [contentPath fileSystemRepresentation];
+            if (romData) {
+                info.data = romData.bytes;
+                info.size = romData.length;
+            }
+            if (sysInfo.need_fullpath || romData) {
+                loaded = core->retro_load_game(&info);
+            }
+        }
+    }
 
     if (loaded) {
         core->retro_get_system_av_info(&self->av_info);

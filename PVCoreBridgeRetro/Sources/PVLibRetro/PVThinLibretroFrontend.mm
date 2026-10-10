@@ -910,6 +910,9 @@ static const size_t kThinNetpacketQueueLimitBytes = 32 * 1024 * 1024;
     /// valid for cores that keep the pointer. `_romPath` stays the library file,
     /// which names the `.srm`.
     NSString *_contentPath;
+    /// dylib path from `loadCoreAtPath:`, so a sibling `.info` can supply
+    /// `supported_extensions` when the core reports an empty list.
+    NSString *_loadedCorePath;
     @private
     struct retro_game_info _blockingGameInfo;  // persisted for core thread lifetime
     NSData *_blockingROMData;                  // keeps ROM data bytes alive on heap
@@ -1802,6 +1805,20 @@ static const char *thin_vfs_get_path(struct retro_vfs_file_handle *stream) {
     return stream ? stream->path : NULL;
 }
 
+/// `archive.zip#entry` is RetroArch's virtual path for one member of an archive.
+/// Materialize it into the content cache (reused while the archive is unchanged)
+/// so a core that opens files through the VFS does not need the whole archive
+/// unpacked first. The returned string is only valid while the autoreleased
+/// result is retained by the caller.
+static NSString *thin_vfs_materialize_archive_path(const char *path) {
+    if (!path || !strchr(path, '#')) return nil;
+    NSString *root = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject
+                      stringByAppendingPathComponent:@"ThinLibretroContent"];
+    if (root.length == 0) return nil;
+    return [PVThinContentArchiveResolver materializeVirtualPath:[NSString stringWithUTF8String:path]
+                                                  extractionRoot:root];
+}
+
 /// Size of the stdio buffer applied to files opened with FREQUENT_ACCESS hint.
 /// CHD hunks are typically 2–64 KB; a 256 KB buffer keeps several hunks in the
 /// stdio layer so consecutive hunk reads rarely hit the kernel.
@@ -1818,9 +1835,19 @@ static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mo
     } else {
         fmode = "rb";
     }
-    FILE *fp = fopen(path, fmode);
+    // Read-only opens of `archive.zip#entry` go through the content cache.
+    // Writes stay on the real filesystem; a virtual member is not a place to
+    // create a file.
+    NSString *materialized = nil;
+    const char *openPath = path;
+    if (strchr(path, '#') && !(mode & RETRO_VFS_FILE_ACCESS_WRITE)
+        && (mode & RETRO_VFS_FILE_ACCESS_READ_WRITE) != RETRO_VFS_FILE_ACCESS_READ_WRITE) {
+        materialized = thin_vfs_materialize_archive_path(path);
+        if (materialized.length > 0) openPath = materialized.UTF8String;
+    }
+    FILE *fp = fopen(openPath, fmode);
     if (!fp) {
-        ILOG(@"[VFS-DIAG] open FAIL path=%s mode=%s errno=%d (%s)", path, fmode, errno, strerror(errno));
+        ILOG(@"[VFS-DIAG] open FAIL path=%s mode=%s errno=%d (%s)", openPath, fmode, errno, strerror(errno));
         return NULL;
     }
 
@@ -1844,7 +1871,7 @@ static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mo
 
     struct retro_vfs_file_handle *handle = (struct retro_vfs_file_handle *)calloc(1, sizeof(*handle));
     handle->fp = fp;
-    handle->path = strdup(path);
+    handle->path = strdup(openPath);
     handle->frequentAccess = frequent;
     handle->sizeKnown = false;
     handle->cachedSize = -1;
@@ -1852,7 +1879,7 @@ static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mo
     // Pre-cache the file size for read-only opens to avoid the first size() call
     // needing a seek-to-end round-trip that flushes the stdio buffer.
     struct stat _diag_st;
-    if (stat(path, &_diag_st) == 0) {
+    if (stat(openPath, &_diag_st) == 0) {
         if (_diag_st.st_size >= (off_t)100*1024) {
             ILOG(@"[VFS-DIAG] open OK path=%s mode=%s stat_size=%lld fp=%p hints=0x%x%s",
                  path, fmode, (long long)_diag_st.st_size, fp, hints,
@@ -1976,8 +2003,10 @@ static int64_t thin_vfs_truncate(struct retro_vfs_file_handle *stream, int64_t l
 
 static int thin_vfs_stat(const char *path, int32_t *size) {
     if (!path) return 0;
+    NSString *materialized = thin_vfs_materialize_archive_path(path);
+    const char *statPath = materialized.length > 0 ? materialized.UTF8String : path;
     struct stat st;
-    if (stat(path, &st) != 0) {
+    if (stat(statPath, &st) != 0) {
         ILOG(@"[VFS-DIAG] stat FAIL path=%s errno=%d (%s)", path, errno, strerror(errno));
         return 0;
     }
@@ -3208,6 +3237,7 @@ static bool thin_environment(unsigned cmd, void *data) {
     }
 
     ILOG(@"ThinFrontend: loading core at %@", corePath);
+    _loadedCorePath = [corePath copy];
     _dylibHandle = dlopen(corePath.UTF8String, RTLD_LOCAL | RTLD_LAZY);
     if (!_dylibHandle) {
         NSString *reason = [NSString stringWithUTF8String:(dlerror() ?: "unknown error")];
@@ -3284,6 +3314,7 @@ static bool thin_environment(unsigned cmd, void *data) {
 }
 
 - (void)unloadCore {
+    _loadedCorePath = nil;
     if (_dylibHandle) {
         ILOG(@"ThinFrontend: unloading core dylib");
         dlclose(_dylibHandle);
@@ -3486,21 +3517,30 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
         }
     }
 
-    // Extract a .zip/.7z the core can't read, as RetroArch's frontend does.
+    // Native zip cores (valid_extensions / the .info file lists `zip`) get the
+    // archive. A single small ROM is inflated into memory. Everything else is
+    // unpacked into the cache and reused. See ThinContentArchiveResolver.
     NSString *extractionRoot = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES).firstObject
                                 stringByAppendingPathComponent:kThinArchiveExtractionDirectory];
-    _contentPath = [PVThinContentArchiveResolver resolveContentPath:romPath
-                                                    validExtensions:_rawSystemInfo.valid_extensions ? @(_rawSystemInfo.valid_extensions) : nil
-                                                       blockExtract:_rawSystemInfo.block_extract
-                                                     extractionRoot:extractionRoot];
+    NSString *infoExtensions = [PVThinContentArchiveResolver supportedExtensionsBesideDylib:_loadedCorePath];
+    PVThinResolvedContent *resolved = [PVThinContentArchiveResolver resolveContentAtPath:romPath
+                                                                        validExtensions:_rawSystemInfo.valid_extensions ? @(_rawSystemInfo.valid_extensions) : nil
+                                                                         infoExtensions:infoExtensions
+                                                                           blockExtract:_rawSystemInfo.block_extract
+                                                                           needFullPath:_rawSystemInfo.need_fullpath
+                                                                           forceExtract:NO
+                                                                         extractionRoot:extractionRoot];
+    _contentPath = resolved.path;
     NSString *contentPath = _contentPath;
 
     // Load content
     struct retro_game_info gameInfo = {0};
-    NSData *romData = nil;
+    NSData *romData = resolved.data;
 
     if (!_rawSystemInfo.need_fullpath) {
-        romData = [NSData dataWithContentsOfFile:contentPath];
+        if (!romData) {
+            romData = [NSData dataWithContentsOfFile:contentPath];
+        }
         if (!romData) {
             ELOG(@"ThinFrontend: could not read ROM at %@", contentPath);
             if (error) {
@@ -3684,6 +3724,50 @@ static NSString * const kThinArchiveExtractionDirectory = @"ThinLibretroContent"
         if (diagThinIsPPSSPP) {
             ILOG(@"[PPSSPP-DIAG] ThinFrontend: retro_load_game returned %d (%.2fs)",
                  loaded, CACurrentMediaTime() - _tLoad0);
+        }
+    }
+
+    // The archive was passed through (the core lists `zip`, or it never said
+    // which extensions it accepts) and the core rejected it. Unpack and try
+    // once. Arcade romsets are not retried; see ThinContentArchiveResolver.
+    if (!loaded && resolved.retryUncompressedOnFailure && !_isBlockingCore) {
+        ILOG(@"ThinFrontend: archive load failed; extracting and retrying once");
+        PVThinResolvedContent *retry = [PVThinContentArchiveResolver resolveContentAtPath:romPath
+                                                                          validExtensions:_rawSystemInfo.valid_extensions ? @(_rawSystemInfo.valid_extensions) : nil
+                                                                           infoExtensions:infoExtensions
+                                                                             blockExtract:_rawSystemInfo.block_extract
+                                                                             needFullPath:_rawSystemInfo.need_fullpath
+                                                                             forceExtract:YES
+                                                                           extractionRoot:extractionRoot];
+        // The in-memory path string matches the cache file written on retry, so
+        // a path compare alone would skip the second load. A new path, or a
+        // memory buffer replaced by a real file, is worth trying.
+        BOOL pathChanged = ![retry.path isEqualToString:contentPath];
+        BOOL memoryBecameFile = resolved.data != nil && retry.data == nil;
+        if (retry.path.length > 0 && (pathChanged || memoryBecameFile)) {
+            _contentPath = retry.path;
+            contentPath = _contentPath;
+            romData = retry.data;
+            if (!romData && !_rawSystemInfo.need_fullpath) {
+                romData = [NSData dataWithContentsOfFile:contentPath];
+            }
+            memset(&gameInfo, 0, sizeof(gameInfo));
+            gameInfo.path = contentPath.UTF8String;
+            if (!_rawSystemInfo.need_fullpath && romData) {
+                gameInfo.data = romData.bytes;
+                gameInfo.size = romData.length;
+            }
+            if (_rawSystemInfo.need_fullpath || romData) {
+#if HAVE_VULKAN
+                _inRetroLoadGame = YES;
+#endif
+                loaded = _sym.retro_load_game(&gameInfo);
+#if HAVE_VULKAN
+                _inRetroLoadGame = NO;
+#endif
+                ILOG(@"ThinFrontend: uncompressed retry returned %d (%@)",
+                     loaded, contentPath.lastPathComponent);
+            }
         }
     }
 
