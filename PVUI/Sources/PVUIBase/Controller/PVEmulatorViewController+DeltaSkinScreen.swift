@@ -1033,7 +1033,13 @@ extension PVEmulatorViewController: PVViewportLayoutDelegate {
 
         UIView.performWithoutAnimation {
             metalVC.view.frame = scaledFrame
-            metalVC.mtlView.frame = metalVC.view.bounds
+            // `PVMetalViewController.loadView()` makes the MTKView the controller's own view, so
+            // `mtlView` and `view` are one object. Assigning `view.bounds` (origin .zero) to its
+            // frame would throw away the origin just set above and pin the picture to the
+            // top-left of the parent. Only a separate render view needs sizing to the bounds.
+            if metalVC.mtlView !== metalVC.view {
+                metalVC.mtlView.frame = metalVC.view.bounds
+            }
         }
 
         // ALWAYS use the device's native scale for DeltaSkin-hosted drawables.
