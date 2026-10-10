@@ -32,6 +32,9 @@ paths = [
   # Xcode build phases call these by path.
   "Scripts/build-phases/set_bundle_build_number.sh",
   "Scripts/build-phases/setup_env.sh",
+  # Called by the PVAzahar / PVDolphin Xcode build phases; its tests run directly.
+  "Scripts/cores/build_slice.py",
+  "Scripts/cores/tests/test_build_slice.py",
   # Only meaningful inside GitHub Actions.
   "Scripts/ci/ci-core-manifest.py",
   "Scripts/ci/ci-init-submodules.sh",
