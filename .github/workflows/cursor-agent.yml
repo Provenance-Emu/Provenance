@@ -29,21 +29,52 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
-  actions: write
-
-concurrency:
-  group: cursor-agent-${{ github.event.inputs.pr_number || github.event.inputs.issue_number || github.event.issue.number }}
-  cancel-in-progress: false
 
 jobs:
-  cursor-agent:
+  # Only people with write access may drive the agent (GHSA-ghmr-j7fw-8g5g).
+  # The `if` drops outsiders' comments without starting a runner; the step
+  # checks the commenter's real permission, since MEMBER and COLLABORATOR can
+  # still be read-only. Dispatching a workflow already requires write access.
+  authorize:
     if: |
       github.event_name == 'workflow_dispatch' ||
       (
         github.event_name == 'issue_comment' &&
         github.event.issue.pull_request &&
+        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
         contains(github.event.comment.body, '@cursoragent')
       )
+    runs-on: ubuntu-latest
+    outputs:
+      trusted: ${{ steps.check.outputs.trusted }}
+    steps:
+      - name: Check sender has write access
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SENDER: ${{ github.event.sender.login }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "trusted=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          PERM=$(gh api "repos/$REPO/collaborators/$SENDER/permission" --jq '.permission' 2>/dev/null || echo "none")
+          case "$PERM" in
+            admin|maintain|write) TRUSTED=true ;;
+            *)                    TRUSTED=false ;;
+          esac
+          echo "$SENDER has '$PERM' permission; trusted=$TRUSTED"
+          echo "trusted=$TRUSTED" >> "$GITHUB_OUTPUT"
+
+  cursor-agent:
+    needs: authorize
+    if: needs.authorize.outputs.trusted == 'true'
+    # Job-level so skipped runs from untrusted comments never claim the group.
+    concurrency:
+      group: cursor-agent-${{ github.event.inputs.pr_number || github.event.inputs.issue_number || github.event.issue.number }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:

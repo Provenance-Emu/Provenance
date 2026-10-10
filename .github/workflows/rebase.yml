@@ -26,7 +26,12 @@ jobs:
     concurrency:
       group: rebase-${{ github.event.issue.number }}
       cancel-in-progress: true
-    if: github.event.issue.pull_request != '' && github.event.comment.body == '/rebase'
+    # Write-access commenters only: this pushes to the PR branch and can
+    # dispatch the Claude agent on conflict (GHSA-ghmr-j7fw-8g5g).
+    if: |
+      github.event.issue.pull_request != '' &&
+      github.event.comment.body == '/rebase' &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
     runs-on: ubuntu-latest
     steps:
       - name: Acknowledge

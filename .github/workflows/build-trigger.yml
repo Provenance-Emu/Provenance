@@ -37,9 +37,10 @@ jobs:
       - name: Acknowledge and dispatch build
         env:
           GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
-          BRANCH="${{ github.event.pull_request.head.ref }}"
+          BRANCH="$HEAD_REF"
           REPO="${{ github.repository }}"
 
           echo "build-ipa label added to PR #${PR_NUMBER} (${BRANCH}) — checking for in-progress builds"
@@ -79,9 +80,10 @@ jobs:
       - name: Dispatch build for external contributor PR
         env:
           GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
-          BRANCH="${{ github.event.pull_request.head.ref }}"
+          BRANCH="$HEAD_REF"
           REPO="${{ github.repository }}"
 
           echo "External PR #${PR_NUMBER} marked ready-for-review — dispatching build"
@@ -101,7 +103,8 @@ jobs:
     if: |
       github.event_name == 'issue_comment' &&
       github.event.issue.pull_request != null &&
-      github.event.comment.body == '/build'
+      github.event.comment.body == '/build' &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
     runs-on: ubuntu-latest
     steps:
       - name: Get PR branch

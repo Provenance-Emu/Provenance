@@ -17,10 +17,12 @@ permissions:
 jobs:
   dispatch:
     name: Dispatch on /ai-review comment
-    # Only fire on `/ai-review` comments on PRs (not issues)
+    # Only fire on `/ai-review` comments on PRs (not issues), from trusted
+    # commenters: an approval chains into auto-merge (GHSA-ghmr-j7fw-8g5g).
     if: |
       github.event.issue.pull_request != '' &&
-      github.event.comment.body == '/ai-review'
+      github.event.comment.body == '/ai-review' &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association)
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch ai-review.yml

@@ -28,13 +28,65 @@ permissions:
   actions: write
   id-token: write
 
-concurrency:
-  group: claude-code-${{ github.event.inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}
-  cancel-in-progress: false
-
 jobs:
+  # Only people with write access may drive the agent (GHSA-ghmr-j7fw-8g5g).
+  # The `if` drops comments and reviews from outsiders without starting a
+  # runner. The step then checks the sender's real permission: an
+  # author_association of MEMBER or COLLABORATOR can still be read-only, and an
+  # issue template applies `agent-work` with the outsider as the sender of the
+  # `labeled` event, which carries no association at all. A maintainer adding
+  # the label to an outsider's issue still passes, so labelling is the approval.
+  authorize:
+    if: |
+      (github.event_name == 'issue_comment' &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+       (contains(github.event.comment.body, '@claude') ||
+        (github.event.issue.pull_request && contains(github.event.comment.body, '/claude-fix')))) ||
+      (github.event_name == 'issues' &&
+       github.event.action == 'labeled' &&
+       github.event.label.name == 'agent-work' &&
+       !contains(toJSON(github.event.issue.labels.*.name), 'cursor-work')) ||
+      (github.event_name == 'issues' &&
+       github.event.action == 'opened' &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association) &&
+       contains(toJSON(github.event.issue.labels.*.name), 'agent-work') &&
+       !contains(toJSON(github.event.issue.labels.*.name), 'cursor-work')) ||
+      (github.event_name == 'pull_request_review_comment' &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+       contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' &&
+       contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.review.author_association) &&
+       github.event.review.state == 'changes_requested' &&
+       startsWith(github.event.pull_request.title, '[Agent]') &&
+       github.event.review.user.type != 'Bot') ||
+      (github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    outputs:
+      trusted: ${{ steps.check.outputs.trusted }}
+    steps:
+      - name: Check sender has write access
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SENDER: ${{ github.event.sender.login }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          # Dispatching a workflow already requires write access.
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "trusted=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          PERM=$(gh api "repos/$REPO/collaborators/$SENDER/permission" --jq '.permission' 2>/dev/null || echo "none")
+          case "$PERM" in
+            admin|maintain|write) TRUSTED=true ;;
+            *)                    TRUSTED=false ;;
+          esac
+          echo "$SENDER has '$PERM' permission; trusted=$TRUSTED"
+          echo "trusted=$TRUSTED" >> "$GITHUB_OUTPUT"
+
   claude:
-    # Run when:
+    # Run when (all non-dispatch triggers need a sender with write access):
     # 1. @claude is mentioned in issue or PR comments
     # 2. Issues labeled/opened with 'agent-work'
     # 3. @claude is mentioned in a PR review comment (inline)
@@ -43,27 +95,13 @@ jobs:
     # 6. Dispatched by ai-review.yml (fix_ai_review or ai_approved)
     # 7. Dispatched by rebase workflow (fix_rebase_conflict)
     # 8. Dispatched by copilot-review-poller.yml (fix_copilot_review or copilot_approved)
-    if: |
-      (github.event_name == 'issue_comment' &&
-       contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'issue_comment' &&
-       github.event.issue.pull_request &&
-       contains(github.event.comment.body, '/claude-fix')) ||
-      (github.event_name == 'issues' &&
-       github.event.action == 'labeled' &&
-       github.event.label.name == 'agent-work' &&
-       !contains(toJSON(github.event.issue.labels.*.name), 'cursor-work')) ||
-      (github.event_name == 'issues' &&
-       github.event.action == 'opened' &&
-       contains(toJSON(github.event.issue.labels.*.name), 'agent-work') &&
-       !contains(toJSON(github.event.issue.labels.*.name), 'cursor-work')) ||
-      (github.event_name == 'pull_request_review_comment' &&
-       contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' &&
-       github.event.review.state == 'changes_requested' &&
-       startsWith(github.event.pull_request.title, '[Agent]') &&
-       github.event.review.user.type != 'Bot') ||
-      (github.event_name == 'workflow_dispatch')
+    needs: authorize
+    if: needs.authorize.outputs.trusted == 'true'
+    # Job-level so skipped runs from untrusted events never claim the group and
+    # cancel a maintainer's pending run.
+    concurrency:
+      group: claude-code-${{ github.event.inputs.pr_number || github.event.issue.number || github.event.pull_request.number }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
@@ -404,9 +442,12 @@ jobs:
                   --method PATCH --field body=@/tmp/claude_status.md 2>/dev/null || true
                 ```
 
+      # The dispatched run's actor is github-actions[bot], so cursor-agent.yml
+      # cannot see who started this chain. Re-check trust here rather than rely
+      # on the job gate alone.
       - name: Dispatch Cursor fallback
         id: cursor_fallback
-        if: steps.claude_run.outcome == 'failure'
+        if: steps.claude_run.outcome == 'failure' && needs.authorize.outputs.trusted == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
