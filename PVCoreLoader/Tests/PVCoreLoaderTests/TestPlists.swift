@@ -8,28 +8,14 @@ import PVCoreBridge
 #if canImport(PVPicoDrive)
 @_exported import PVPicoDrive
 #endif
-#if canImport(PVPokeMini)
-@_exported import PVPokeMini
-#endif
 #if canImport(PVStella)
 @_exported import PVStella
 #endif
 #if canImport(PVTGBDUal)
 @_exported import PVTGBDUal
 #endif
-#if canImport(PVVirtualJaguar)
-@_exported import PVVirtualJaguar
-@_exported import PVVirtualJaguarC
-@_exported import PVVirtualJaguarSwift
-#endif
 
 final class PVCoreLoaderTests: XCTestCase {
-
-    func testVirtualJaguar() throws {
-        let jaguarPlist = PVVirtualJaguarSwift.PVJaguarGameCore.corePlist
-
-        XCTAssertNotNil(jaguarPlist)
-    }
 
     func testGetCorePlists() async {
         let corePlists: [EmulatorCoreInfoPlist] = CoreLoader.shared.getCorePlists()

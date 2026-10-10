@@ -1,4 +1,0 @@
-module PVPokeMiniBridge {
-    header "../PVPokeMiniBridge.h"
-    export *
-}

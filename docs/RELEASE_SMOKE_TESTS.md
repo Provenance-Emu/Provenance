@@ -7,6 +7,43 @@ delete them a release later. Add new items at the top of "Next release".
 
 ## Next release
 
+### Retired native cores (pruning PR, `feature/prune-dead-cores`)
+
+Migrations run on first launch after the update; use a library that existed
+before it (or seed the files below by hand, then relaunch).
+
+- [ ] DS, `melondsds`: put a native melonDS battery file at
+      `Save States/<rom>/<rom>.sav`, launch the app once, then boot the game
+      through `melondsds` (Core options / per-game core): the save is there
+      (`Battery States/<rom>/<rom>.srm` exists). Repeat with the default
+      `melonds` replacement.
+- [ ] DS, `desmume`: put a DeSmuME2015 `Save States/<rom>/<rom>.dsv` in place,
+      launch the app once, boot the game in `desmume`: the save loads.
+      UNVERIFIED conversion (the audit asks for this check): the migration
+      moves the `.dsv` as is and does not strip its 122-byte footer. If the
+      save is missing or garbled, record it as a defect.
+- [ ] GBA: a VBA-M `Battery States/<rom>/<rom>.sav2` shows up in `vbam` after first launch.
+- [ ] Pokemon Mini `.eep` carries over in `pokemini`. Genesis/SMS/GG game with a
+      CrabEMU `.sav` loads it.
+- [ ] Deprecated natives still work: a GB game with a native Gambatte save state
+      and an Atari 800/5200 game with a native Atari800 state both still load
+      those states. The picker lists "Gambatte (Deprecated)" / "Atari 800
+      (Deprecated)" after the libretro cores; Settings → Cores shows a
+      DEPRECATED badge; an existing default-core preference on them is kept.
+- [ ] One game per other retired system boots through its replacement:
+      Intellivision (`freeintv`), Odyssey2 (`o2em`),
+      ColecoVision (`gearcoleco`), SMS/Game Gear (Genesis Plus GX), PS1
+      (`mednafen_psx_hw`, then `pcsx_rearmed`), Saturn (`yabause`), N64
+      (`mupen64plus_next`), Jaguar (`virtualjaguar`, native v13 states load),
+      3DO (`opera`), ZX Spectrum (`fuse`), Palm (`mu`), Mac (`minivmac`),
+      Supervision (`potator`), music files (`gme`).
+- [ ] Settings → Cores: none of the 30 pruned native cores is listed (unsupported cores off).
+      Libretro cores no longer carry a "(RetroArch)" suffix; native cores still list first.
+- [ ] A save state made with a retired core is still listed, labelled with the retired core.
+      Opening it shows the "no longer included in Provenance" alert, not "install the core".
+- [ ] Lite (AppStore) build, which bundles no libretro dylibs: the pruned systems
+      are unavailable (accepted loss); the app does not crash on a library that has them.
+
 ### Emulation-lock deadlocks (pause + quit off the main thread)
 - [ ] Quit to the library from a native core (e.g. Genesis Plus GX), a thin
       core (e.g. snes9x libretro) and a thin blocking core: returns promptly,
