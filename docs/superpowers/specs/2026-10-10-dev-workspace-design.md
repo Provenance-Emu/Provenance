@@ -287,5 +287,6 @@ project, retire `Provenance-CI` and `create_ci_target.rb`).
 - Replacing `Provenance.xcodeproj` for shipping builds; fastlane, release.sh, `Provenance-CI`.
 - Tuist binary caching (`tuist cache`), `Tuist/Package.swift` / `.external` packages.
 - Regenerating the `Cores/*` xcodeprojs (Azahar/Mupen xcodegen ymls stay as they are).
-- Retiring the save-check and UNSURE cores, and emuThree.
+- Retiring emuThree and the four UNSURE cores. `Cores/Debug` stays: Mupen64Plus, Dolphin, PPSSPP and the
+  app reference its simulator stub, so the prune list is 32 cores.
 - The debug/automation API (Workstream B) beyond the harness entry point it will reuse.
