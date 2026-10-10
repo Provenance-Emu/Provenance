@@ -82,7 +82,7 @@ public enum DevSettings {
         .package(product: "PVLibrary"),
         .package(product: "PVLogging"),
         .package(product: "MBProgressHUD"),
-        .package(product: "RealmSwift"),
+        .package(product: "RealmSwift", type: .runtimeEmbedded),
         .package(product: "PVThemes"),
         .package(product: "PVPlists"),
         .package(product: "PVSettings"),

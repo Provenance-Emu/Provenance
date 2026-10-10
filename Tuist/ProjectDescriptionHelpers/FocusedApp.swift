@@ -82,7 +82,9 @@ public struct FocusedApp {
             core.links.compactMap { link -> TargetDependency? in
                 switch link {
                 case let .package(_, product):
-                    return .package(product: product, condition: .when(core.platforms))
+                    // MoltenVK is already embedded through its dependents; embedding it again
+                    // fails with "Unexpected duplicate tasks".
+                    return .package(product: product, type: product == "MoltenVK" ? .runtime : .runtimeEmbedded, condition: .when(core.platforms))
                 case let .prebuilt(path):
                     return path.hasSuffix(".xcframework")
                         ? .xcframework(path: .relativeToRoot(path), condition: .when(core.platforms))
