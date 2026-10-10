@@ -121,6 +121,49 @@ test_get_modules_validates_zip_magic() {
     return 1
 }
 
+# ---- Test 6: --urls fetches only the listed dylibs and never prunes the shared modules/ ----
+test_get_modules_custom_url_list() {
+    local tmp
+    tmp=$(mktemp -d "${TMPDIR:-/tmp}/get_modules_urls.XXXXXX")
+    local ra="$tmp/CoresRetro/RetroArch"
+    mkdir -p "$ra/scripts" "$ra/modules" "$tmp/zips"
+
+    # A minimal arm64 Mach-O dylib header: `file` reports "Mach-O 64-bit ... dynamically linked shared library".
+    python3 - "$tmp" <<'PY'
+import struct, sys, zipfile, os
+root = sys.argv[1]
+header = struct.pack("<IiiIIIII", 0xfeedfacf, 0x0100000c, 0, 6, 0, 0, 0, 0)
+dylib = os.path.join(root, "fake_libretro_ios.dylib")
+with open(dylib, "wb") as f:
+    f.write(header)
+with zipfile.ZipFile(os.path.join(root, "zips", "fake_libretro_ios.dylib.zip"), "w") as z:
+    z.write(dylib, "fake_libretro_ios.dylib")
+with open(os.path.join(root, "CoresRetro/RetroArch/modules/other_libretro_ios.dylib"), "wb") as f:
+    f.write(header)
+PY
+    echo "file://$tmp/zips/fake_libretro_ios.dylib.zip" > "$tmp/urls.txt"
+
+    local out rc=0
+    out=$(SRCROOT="$tmp" PLATFORM_NAME=iphonesimulator GETMODULES_MIN_DYLIB_SIZE=1 \
+        bash "$GET_MODULES" --urls "$tmp/urls.txt" 2>&1) || rc=$?
+
+    local ok=1
+    [ "$rc" -eq 0 ] || { echo "FAIL: --urls run exited $rc"; echo "$out" | tail -20; ok=0; }
+    [ -f "$ra/modules/fake_libretro_ios.dylib" ] || { echo "FAIL: listed dylib not extracted"; ok=0; }
+    [ -f "$ra/modules/other_libretro_ios.dylib" ] || { echo "FAIL: --urls pruned an unlisted dylib from shared modules/"; ok=0; }
+    ls -d "$ra"/modules_compressed/iOS-urls-* >/dev/null 2>&1 || { echo "FAIL: no iOS-urls-<sha> state dir"; ok=0; }
+    [ ! -f "$ra/modules_compressed/iOS/url_manifest.sha256" ] || { echo "FAIL: --urls wrote the shared iOS manifest"; ok=0; }
+
+    # Second run: everything present and fresh -> fast path.
+    out=$(SRCROOT="$tmp" PLATFORM_NAME=iphonesimulator GETMODULES_MIN_DYLIB_SIZE=1 \
+        bash "$GET_MODULES" --urls "$tmp/urls.txt" 2>&1) || true
+    echo "$out" | grep -q "all 1 listed dylib(s) present" || { echo "FAIL: second --urls run did not take the fast path"; ok=0; }
+
+    rm -rf "$tmp"
+    [ "$ok" -eq 1 ] && echo "PASS: --urls fetches the listed dylibs into shared modules/ without pruning"
+    [ "$ok" -eq 1 ]
+}
+
 # ---- Run all tests ----
 run_test() {
     if ! "$1"; then
@@ -134,6 +177,7 @@ run_test test_sentinel_rejects_bad_url
 run_test test_make_frameworks_zero_dylib_check
 run_test test_get_modules_uses_curl_fail
 run_test test_get_modules_validates_zip_magic
+run_test test_get_modules_custom_url_list
 
 echo "==="
 if [ "$FAIL_COUNT" -eq 0 ]; then

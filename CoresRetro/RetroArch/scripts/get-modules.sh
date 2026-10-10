@@ -74,11 +74,22 @@ if [ "${#LOCAL_OVERRIDE_NAMES[@]}" -gt 0 ]; then
 	echo "GetModule: protecting ${#LOCAL_OVERRIDE_NAMES[@]} locally-overridden dylib(s) from extraction (.local sentinel): ${LOCAL_OVERRIDE_NAMES[*]}"
 fi
 
-# Add parameter check
+# Arguments: [-appstore] [--urls <file>]
+#   --urls <file>  fetch exactly the URLs in <file> (a focused dev app's list). Download state
+#                  lives in modules_compressed/<iOS|tvOS>-urls-<sha12> and modules/ is never
+#                  pruned, because shipping builds share it.
 URL_SUFFIX=""
-if [ "$1" = "-appstore" ]; then
-    URL_SUFFIX="-appstore"
-fi
+CUSTOM_URLS=""
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-appstore) URL_SUFFIX="-appstore" ;;
+		--urls)
+			[ $# -ge 2 ] || { echo "GetModule: ERROR — --urls needs a file" >&2; exit 1; }
+			CUSTOM_URLS="$2"; shift ;;
+		*) echo "GetModule: WARNING — ignoring unknown argument '$1'" >&2 ;;
+	esac
+	shift
+done
 
 cd "${SCRIPTS_DIR}"
 # tvOS device is appletvos; tvOS Simulator is appletvsimulator — both must use
@@ -92,6 +103,18 @@ else
 	CORES_ARCHIVE_DIR="${SRCROOT}/CoresRetro/RetroArch/modules_compressed/iOS"
 	MODULE_LIST="${SCRIPTS_DIR}/urls${URL_SUFFIX}.txt"
 	CURRENT_PLATFORM="ios"
+fi
+
+if [ -n "${CUSTOM_URLS}" ]; then
+	if [ ! -f "${CUSTOM_URLS}" ]; then
+		echo "GetModule: ERROR — --urls file not found: ${CUSTOM_URLS}" >&2
+		exit 1
+	fi
+	MODULE_LIST="${CUSTOM_URLS}"
+	CUSTOM_LIST_ID=$(shasum -a 256 "${CUSTOM_URLS}" | cut -c1-12)
+	# Sibling of the platform dir, not a child: the shipping extraction runs `find` recursively there.
+	CORES_ARCHIVE_DIR="${CORES_ARCHIVE_DIR}-urls-${CUSTOM_LIST_ID}"
+	echo "GetModule: custom URL list ${CUSTOM_URLS} (state in ${CORES_ARCHIVE_DIR})"
 fi
 
 # Detect platform switch: compare current platform to the last-active platform
@@ -275,7 +298,9 @@ prune_dylibs_not_in_manifest() {
 		echo "GetModule: pruned ${removed} stale dylib(s) (dropped from manifest — was still in modules/)"
 	fi
 }
-prune_dylibs_not_in_manifest "${EFFECTIVE_MODULE_LIST}" "${CORES_DIR}"
+if [ -z "${CUSTOM_URLS}" ]; then
+	prune_dylibs_not_in_manifest "${EFFECTIVE_MODULE_LIST}" "${CORES_DIR}"
+fi
 
 # Even when PLATFORM_CHANGED=0, modules/ can still contain the other platform's dylibs
 # (interrupted switch, manual copy, or a previous run that exited before purge). That
@@ -313,6 +338,28 @@ remove_stale_other_platform_dylibs() {
 }
 remove_stale_other_platform_dylibs "${CORES_DIR}" "${CURRENT_PLATFORM}"
 
+# Custom lists: skip when the timestamp is fresh and every listed dylib is already in modules/.
+# (The count-based fast path below would count all ~100 shared dylibs.)
+custom_list_present() {
+	local url base stem missing=0 total=0
+	while IFS= read -r url || [ -n "$url" ]; do
+		case "$url" in \#*|"") continue ;; esac
+		total=$((total + 1))
+		base=$(basename "$url"); base="${base%.zip}"; stem="${base%.dylib}"
+		if [ ! -f "${CORES_DIR}/${base}" ] && [ ! -f "${CORES_DIR}/${stem}_ios.dylib" ] && [ ! -f "${CORES_DIR}/${stem}_tvos.dylib" ]; then
+			missing=$((missing + 1))
+		fi
+	done < "${EFFECTIVE_MODULE_LIST}"
+	[ "$missing" -eq 0 ] && echo "$total"
+}
+if [ -n "${CUSTOM_URLS}" ] && (( TIMESTAMP <= LAST_TIMESTAMP )) && [ "${PLATFORM_CHANGED}" = "0" ] \
+	&& [ "${PIN_CHANGED}" = "0" ] && [ "${MANIFEST_CHANGED}" = "0" ]; then
+	if PRESENT=$(custom_list_present) && [ -n "${PRESENT}" ]; then
+		echo "GetModule: custom list — all ${PRESENT} listed dylib(s) present, timestamp fresh — skipping"
+		exit 0
+	fi
+fi
+
 # Fast-path: when the platform is known (active_platform.txt exists), unchanged,
 # the pin is unchanged, the timestamp is still fresh (no download due), and ≥80%
 # of expected dylibs are already present, skip both the purge and extraction.
@@ -320,7 +367,7 @@ remove_stale_other_platform_dylibs "${CORES_DIR}" "${CURRENT_PLATFORM}"
 # when STORED_PLATFORM="" (first run, no sentinel).  The explicit [ -n "${STORED_PLATFORM}" ]
 # guard below prevents the fast-path from firing on that first run.  Without it, a fresh
 # machine with no sentinel but a populated modules/ dir could incorrectly skip extraction.
-if (( TIMESTAMP <= LAST_TIMESTAMP )) && [ -n "${STORED_PLATFORM}" ] && [ "${PLATFORM_CHANGED}" = "0" ] && [ "${PIN_CHANGED}" = "0" ] && [ "${MANIFEST_CHANGED}" = "0" ]; then
+if [ -z "${CUSTOM_URLS}" ] && (( TIMESTAMP <= LAST_TIMESTAMP )) && [ -n "${STORED_PLATFORM}" ] && [ "${PLATFORM_CHANGED}" = "0" ] && [ "${PIN_CHANGED}" = "0" ] && [ "${MANIFEST_CHANGED}" = "0" ]; then
 	# Count dylibs belonging to the current platform: include both platform-suffixed
 	# dylibs (e.g. *ios*.dylib / *tvos*.dylib) and platform-neutral ones (e.g.
 	# dolphin_libretro.dylib) so the 80% threshold is not artificially low when the
