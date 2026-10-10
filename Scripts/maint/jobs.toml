@@ -48,6 +48,7 @@ paths = [
   "Scripts/dev/StikDebug/provenance.js",
   "Scripts/dev/create_ci_target.rb",
   "Scripts/dev/dylibsToFramework.sh",
+  "Scripts/dev/prune_cores.rb",
   "Scripts/dev/ralph-loop.sh",
   # Runs per pull request in auto-translate.yml, from the PR's string diff.
   "Scripts/generators/auto_translate.py",
