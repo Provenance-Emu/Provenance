@@ -58,8 +58,8 @@
 /// resampler's step is exactly 1.
 static const double kPVmGBAOutputSampleRate = 32768.0;
 
-/// Seconds per frame reported before the mGBA core exists (the GBA runs at ~59.73 Hz).
-static const double kPVmGBAFallbackFrameInterval = 1.0 / 59.7275;
+/// Frame rate reported before the mGBA core exists (the GBA runs at ~59.73 Hz).
+static const double kPVmGBAFallbackFramesPerSecond = 59.7275;
 
 /// Stereo frames the resampler output buffer holds. One frame at the output
 /// rate is ~549 samples; this leaves room for a frame that runs long.
@@ -305,10 +305,9 @@ static struct mLogger logger = { .log = _log };
 - (NSTimeInterval)frameInterval {
     // The GPU view asks for this during viewDidLoad, before -initialize has created the core.
     if (core == NULL) {
-        return kPVmGBAFallbackFrameInterval;
+        return kPVmGBAFallbackFramesPerSecond;
     }
-    // Seconds per frame (callers compute fps as 1 / frameInterval), not frames per second.
-    return core->frameCycles(core) / (double) core->frequency(core);
+    return core->frequency(core) / (double) core->frameCycles(core);
 }
 
 #pragma mark - Audio
