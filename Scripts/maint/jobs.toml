@@ -231,7 +231,7 @@ title = "Dev workspace manifest checks"
 category = "Audits"
 description = "Tuist helper tables: libretro names enabled in cores.yml, core paths exist, no duplicate local package."
 check = ["Scripts/dev/check_dev_manifest.sh"]
-files = ["Dev/Tests/ManifestChecks/main.swift"]
+files = ["Dev/Tests/ManifestChecks/main.swift", "Tuist/ProjectDescriptionHelpers/*.swift"]
 needs = ["macos", "mise"]
 mode = "manual"
 
