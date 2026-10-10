@@ -18,6 +18,17 @@ struct SystemOverlayBindingsTests {
         #expect(binding.families[binding.defaultSubtype] != nil)
     }
 
+    @Test("The generic binding is tokenised for its family and stays out of the per-system table")
+    func genericBinding() throws {
+        let generic = SystemOverlayBindings.generic
+        let family = try #require(generic.families[generic.defaultSubtype])
+        for slot in family.requiredSlots where !OverlayFamilySlot.omittable.contains(slot) {
+            #expect(generic.tokens[slot] != nil, "generic missing token for \(slot.rawValue)")
+        }
+        #expect(SystemOverlayBindings.binding(for: .Unknown) == nil)
+        #expect(!SystemOverlayBindings.boundSystems.contains(generic.system))
+    }
+
     @Test("Variant ids used as subtypes exist in ControllerLayoutVariant")
     func variantsExist() {
         for system in SystemOverlayBindings.boundSystems {

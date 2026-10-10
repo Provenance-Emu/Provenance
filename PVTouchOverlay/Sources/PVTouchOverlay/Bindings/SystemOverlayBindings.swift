@@ -36,6 +36,12 @@ public enum SystemOverlayBindings {
 
     public static func binding(for system: SystemIdentifier) -> SystemOverlayBinding? { table[system] }
 
+    /// The pad for a system without a binding of its own: four face buttons, shoulders, start and select,
+    /// in the neutral PlayStation grey. Not in `table`, so `binding(for:)` still reports a system as unbound.
+    public static let generic = SystemOverlayBinding(
+        system: .Unknown, families: [standardSubtype: FourFaceFamily.self], defaultSubtype: standardSubtype,
+        tokens: fourFaceTokens, labels: fourFaceLabels, palette: .playStation, hardwareSwitches: [])
+
     private typealias Tokens = [OverlayFamilySlot: String]
     private static let standardSubtype = OverlayPadKind.standardSubtype
 
