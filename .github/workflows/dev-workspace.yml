@@ -1,0 +1,114 @@
+name: Dev workspace
+
+# Generates Provenance-Dev.xcworkspace with Tuist and builds Provenance-Dev-UI for both
+# simulators (ad-hoc signed by Dev/Config/Dev.xcconfig). The fast smoke build for agent PRs
+# (replaces Provenance-CI in a follow-up).
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - "Tuist.swift"
+      - "Workspace.swift"
+      - "Tuist/**"
+      - "Dev/**"
+      - ".mise.toml"
+      - "Build.xcconfig"
+      - "Build-iOS.xcconfig"
+      - "Provenance/Main UI/**"
+      - "Provenance/Provenance-Lite (AppStore)-Info.plist"
+      - "PV*/**"
+      - "Cores/mGBA/**"
+      - "Cores/Stella/**"
+      - "Cores/snes9x/**"
+      - ".github/workflows/dev-workspace.yml"
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+concurrency:
+  group: dev-workspace-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TUIST_VERSION: "4.200.0"
+
+jobs:
+  build:
+    name: Provenance-Dev-UI (${{ matrix.destination }})
+    runs-on: macos-26
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        destination: ["generic/platform=iOS Simulator", "generic/platform=tvOS Simulator"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
+
+      # Same set as agent-validation's smoke build (package resolution needs them), plus the
+      # three cores Provenance-Dev-UI embeds.
+      - name: Init required submodules (shallow)
+        run: |
+          git submodule update --init --depth 1 \
+            Cores/4DO \
+            Cores/Bliss \
+            Cores/CrabEMU \
+            Dependencies/HexColors \
+            Dependencies/SWCompression \
+            Cores/Mednafen/ThirdParty/libchdr \
+            PVRcheevos/rcheevos \
+            Cores/mGBA/Sources/libmGBA-embed/mgba \
+            Cores/Stella/Sources/libstella/stella \
+            Cores/snes9x/snes9x-src \
+            Cores/snes9x/libretro-snes9x
+          git submodule update --init --depth 1 --recursive Cores/VirtualJaguar
+          if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
+            rm -rf Dependencies/ZipArchive
+            git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
+          fi
+
+      - name: Cache libretro cheat database
+        uses: actions/cache@v4
+        with:
+          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+
+      - name: Generate libretro cheat database if missing
+        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
+
+      - name: Install Tuist (mise)
+        run: |
+          curl -fsSL https://mise.run | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.local/share/mise/shims" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/mise" install "tuist@${TUIST_VERSION}"
+
+      - name: Manifest checks
+        run: Scripts/dev/check_dev_manifest.sh
+
+      - name: Generate
+        run: mise exec -- tuist generate --no-open
+
+      - name: Build
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -workspace Provenance-Dev.xcworkspace \
+            -scheme Provenance-Dev-UI \
+            -destination "${{ matrix.destination }}" \
+            -skipPackagePluginValidation -skipMacroValidation \
+            2>&1 | tee /tmp/dev-xcodebuild.log | grep -E "(: (fatal )?error:|BUILD (SUCCEEDED|FAILED)|The following build commands failed)" | tail -60
+
+      - name: Upload log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-xcodebuild-log-${{ strategy.job-index }}
+          path: /tmp/dev-xcodebuild.log
+          retention-days: 3

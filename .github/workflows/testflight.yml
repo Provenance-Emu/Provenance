@@ -103,6 +103,8 @@ jobs:
             CoresRetro
             Dependencies
             PVRcheevos
+            !Cores/Azahar/build
+            !Cores/Dolphin/dolphin-ios/build-*
           key: submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-${{ github.sha }}
           restore-keys: |
             submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-
@@ -161,6 +163,21 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
           xcode-version: ${{ env.XCODE_VERSION }}
+
+      - name: Core slice cache keys
+        id: core-keys
+        run: |
+          slice="${{ matrix.platform }}"   # ios | tvos (device slices)
+          echo "azahar=$(python3 Scripts/cores/build_slice.py azahar "$slice" --print-key | cut -c1-16)" >> "$GITHUB_OUTPUT"
+          echo "dolphin=$(python3 Scripts/cores/build_slice.py dolphin "$slice" --print-key | cut -c1-16)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache core slices
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Provenance/cores
+          key: cores-${{ runner.os }}-${{ matrix.platform }}-${{ steps.core-keys.outputs.azahar }}-${{ steps.core-keys.outputs.dolphin }}
+          restore-keys: |
+            cores-${{ runner.os }}-${{ matrix.platform }}-
 
       # sentry-cli uploads the archive's dSYMs (release.sh, "Debug symbols" step).
       # Cosmetic/best-effort like xcbeautify: without it release.sh only warns and

@@ -120,6 +120,7 @@ jobs:
             Dependencies
             PVRcheevos
             !Cores/Azahar/build
+            !Cores/Dolphin/dolphin-ios/build-*
           key: submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-${{ github.sha }}
           restore-keys: |
             submodules-${{ runner.os }}-${{ hashFiles('.gitmodules') }}-
@@ -289,20 +290,28 @@ jobs:
           path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
           key: cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
 
-      # Keyed on the gitlink the parent commit records, not .git/modules/.../HEAD (which only
-      # exists once the submodule is initialized, and then reflects the cached checkout).
-      - name: Azahar submodule gitlink
-        id: azahar-gitlink
-        run: echo "sha=$(git ls-tree HEAD Cores/Azahar/azahar | awk '{print $3}')" >> "$GITHUB_OUTPUT"
+      # Core slices (Azahar, Dolphin) are cached by Scripts/cores/build_slice.py content keys:
+      # submodule + nested externals, build script, toolchain, flags, Xcode and SDK. One entry per
+      # leg; the aggregates then link the cached slice instead of rebuilding it.
+      - name: Core slice cache keys
+        id: core-keys
+        run: |
+          case "${{ matrix.sdk }}" in
+            iphoneos) slice=ios ;;
+            appletvos) slice=tvos ;;
+            *) echo "::error::unknown sdk ${{ matrix.sdk }}"; exit 1 ;;
+          esac
+          echo "slice=$slice" >> "$GITHUB_OUTPUT"
+          echo "azahar=$(python3 Scripts/cores/build_slice.py azahar "$slice" --print-key | cut -c1-16)" >> "$GITHUB_OUTPUT"
+          echo "dolphin=$(python3 Scripts/cores/build_slice.py dolphin "$slice" --print-key | cut -c1-16)" >> "$GITHUB_OUTPUT"
 
-      # Excluded from the submodules cache above so the ~GB xcframework build is saved only here.
-      - name: Cache azahar build
+      - name: Cache core slices
         uses: actions/cache@v4
         with:
-          path: Cores/Azahar/build
-          key: azahar-${{ runner.os }}-${{ hashFiles('Cores/Azahar/build_azahar_core.py', 'Cores/Azahar/cmake/ios.toolchain.cmake') }}-${{ steps.azahar-gitlink.outputs.sha }}
+          path: ~/Library/Caches/Provenance/cores
+          key: cores-${{ runner.os }}-${{ matrix.sdk }}-${{ steps.core-keys.outputs.azahar }}-${{ steps.core-keys.outputs.dolphin }}
           restore-keys: |
-            azahar-${{ runner.os }}-
+            cores-${{ runner.os }}-${{ matrix.sdk }}-
 
       - name: Generate libretro cheat database
         if: steps.cache-cheatdb.outputs.cache-hit != 'true'
