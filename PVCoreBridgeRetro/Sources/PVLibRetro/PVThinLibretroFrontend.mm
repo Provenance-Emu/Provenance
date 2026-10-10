@@ -68,7 +68,10 @@
 #include <string.h>
 #include <dirent.h>
 #include <exception>
+#include <stdint.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
+#include <unistd.h>
 #include <mach/mach_time.h>
 #import <objc/message.h>
 
@@ -79,6 +82,10 @@
 /// Returns true if Provenance has acquired JIT at runtime (bridged from DOLJitManager).
 /// Defined in PVLibRetro+JIT.swift via @_cdecl("pvjit_acquired").
 extern "C" bool pvjit_acquired(void);
+
+/// Returns true when the thin VFS should memory-map this open (FREQUENT_ACCESS or
+/// read-only disk image). Defined in ThinVFSDiskImagePolicy.swift.
+extern "C" bool pv_thin_vfs_should_memory_map(const char *path, uint32_t mode, uint32_t hints, int64_t fileSize);
 
 // Peripheral interfaces: sensor (CoreMotion), location (CoreLocation), LED (GameController)
 #if __has_include(<CoreMotion/CoreMotion.h>) && !TARGET_OS_TV && !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -1778,19 +1785,23 @@ static void thin_led_set_state(int led, int state) {
 // MARK: - VFS interface (v3, POSIX/stdio)
 // ---------------------------------------------------------------------------
 
-/// Opaque file handle wrapping stdio FILE*.
+/// Opaque file handle wrapping either an mmap'd view or stdio FILE*.
 struct retro_vfs_file_handle {
-    FILE *fp;
+    FILE *fp;               ///< stdio path; NULL when `mapped` is set
+    int fd;                 ///< descriptor backing an mmap; -1 when unused
     char *path;
     /// True when the core opened this file with RETRO_VFS_FILE_ACCESS_HINT_FREQUENT_ACCESS.
-    /// Used to apply I/O optimisations (larger stdio buffer, kernel read-ahead).
     bool frequentAccess;
-    /// Cached file size (populated on first size() call, invalidated by writes/truncate).
+    /// Cached file size (populated on open / first size() call, invalidated by writes/truncate).
     /// Avoids the seek-to-end + seek-back round-trip that flushes the stdio buffer on
     /// every size() call — critical for CHD files where the core queries size frequently.
     int64_t cachedSize;
     /// True once cachedSize has been populated.
     bool sizeKnown;
+    /// mmap'd file bytes (RetroArch FREQUENT_ACCESS path). NULL for stdio handles.
+    uint8_t *mapped;
+    size_t mapSize;
+    int64_t mapPos;
 };
 
 /// Opaque directory handle wrapping POSIX DIR*.
@@ -1819,10 +1830,75 @@ static NSString *thin_vfs_materialize_archive_path(const char *path) {
                                                   extractionRoot:root];
 }
 
-/// Size of the stdio buffer applied to files opened with FREQUENT_ACCESS hint.
+/// Size of the stdio buffer applied to aggressively-cached files when mmap is unavailable.
 /// CHD hunks are typically 2–64 KB; a 256 KB buffer keeps several hunks in the
 /// stdio layer so consecutive hunk reads rarely hit the kernel.
 static const size_t kVFSFrequentAccessBufSize = 256 * 1024;
+
+/// Cap for `MADV_WILLNEED` after mmap. Larger CHDs stay demand-paged to avoid
+/// reclaim pressure on tvOS (Apple TV) while still benefiting from the mapping.
+static const int64_t kVFSWillNeedMaxBytes = 512LL * 1024 * 1024;
+
+/// Apply Darwin kernel readahead / UBC flags used for disk-image access.
+static void thin_vfs_apply_darwin_readahead(int fd) {
+#ifdef __APPLE__
+    if (fd < 0) return;
+    // F_RDAHEAD tells the kernel to aggressively read-ahead for this fd,
+    // reducing latency on sequential CHD/disk-image access patterns.
+    fcntl(fd, F_RDAHEAD, 1);
+    // Ensure the UBC (Unified Buffer Cache) is active — F_NOCACHE = 0
+    // is the default, but an explicit call guards against inherited flags.
+    fcntl(fd, F_NOCACHE, 0);
+#else
+    (void)fd;
+#endif
+}
+
+/// Try to open `path` as a read-only mmap'd handle (RetroArch FREQUENT_ACCESS path).
+/// Returns a populated handle on success, NULL when mapping is unavailable.
+static struct retro_vfs_file_handle *thin_vfs_open_mapped(const char *path, int64_t size, unsigned hints, bool frequent) {
+    if (!path || size <= 0) return NULL;
+    // mmap takes size_t; refuse files that would truncate on narrower hosts.
+    if ((uint64_t)size > (uint64_t)SIZE_MAX) return NULL;
+
+    int fd = open(path, O_RDONLY);
+    if (fd < 0) return NULL;
+
+    void *map = mmap(NULL, (size_t)size, PROT_READ, MAP_SHARED, fd, 0);
+    if (map == MAP_FAILED) {
+        close(fd);
+        return NULL;
+    }
+
+    thin_vfs_apply_darwin_readahead(fd);
+    if (size <= kVFSWillNeedMaxBytes) {
+        // Kick asynchronous page-in so MAME's first CHD hunk reads hit warm pages.
+        madvise(map, (size_t)size, MADV_WILLNEED);
+    }
+
+    struct retro_vfs_file_handle *handle = (struct retro_vfs_file_handle *)calloc(1, sizeof(*handle));
+    if (!handle) {
+        munmap(map, (size_t)size);
+        close(fd);
+        return NULL;
+    }
+    handle->fp = NULL;
+    handle->fd = fd;
+    handle->path = strdup(path);
+    handle->frequentAccess = frequent;
+    handle->cachedSize = size;
+    handle->sizeKnown = true;
+    handle->mapped = (uint8_t *)map;
+    handle->mapSize = (size_t)size;
+    handle->mapPos = 0;
+
+    if (size >= (int64_t)100 * 1024) {
+        ILOG(@"[VFS-DIAG] open OK path=%s mode=rb stat_size=%lld fp=<mmap> hints=0x%x%s [MMAP]",
+             path, (long long)size, hints,
+             frequent ? " [FREQUENT_ACCESS]" : " [DISK_IMAGE]");
+    }
+    return handle;
+}
 
 static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mode, unsigned hints) {
     if (!path) return NULL;
@@ -1835,6 +1911,7 @@ static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mo
     } else {
         fmode = "rb";
     }
+
     // Read-only opens of `archive.zip#entry` go through the content cache.
     // Writes stay on the real filesystem; a virtual member is not a place to
     // create a file.
@@ -1845,48 +1922,60 @@ static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mo
         materialized = thin_vfs_materialize_archive_path(path);
         if (materialized.length > 0) openPath = materialized.UTF8String;
     }
+
+    bool frequent = (hints & RETRO_VFS_FILE_ACCESS_HINT_FREQUENT_ACCESS) != 0;
+    struct stat st;
+    bool haveStat = (stat(openPath, &st) == 0);
+    int64_t fileSize = haveStat ? (int64_t)st.st_size : (int64_t)-1;
+    // MAME opens CHD files with HINT_NONE (libretro_vfs.cpp). Memory-map those
+    // read-only disk images anyway — RetroArch's VFS does the same for FREQUENT_ACCESS,
+    // and stdio + a 256 KB buffer cannot absorb random CHD hunk I/O.
+    bool wantMap = haveStat
+        && pv_thin_vfs_should_memory_map(openPath, (uint32_t)mode, (uint32_t)hints, fileSize);
+
+    if (wantMap) {
+        struct retro_vfs_file_handle *mapped = thin_vfs_open_mapped(openPath, fileSize, hints, frequent);
+        if (mapped) return mapped;
+        WLOG(@"[VFS-DIAG] mmap failed path=%s size=%lld — falling back to stdio",
+             openPath, (long long)fileSize);
+    }
+
     FILE *fp = fopen(openPath, fmode);
     if (!fp) {
         ILOG(@"[VFS-DIAG] open FAIL path=%s mode=%s errno=%d (%s)", openPath, fmode, errno, strerror(errno));
         return NULL;
     }
 
-    bool frequent = (hints & RETRO_VFS_FILE_ACCESS_HINT_FREQUENT_ACCESS) != 0;
-
-    if (frequent) {
+    // Aggressive stdio caching for FREQUENT_ACCESS or disk images when mmap failed.
+    bool aggressive = frequent || wantMap;
+    if (aggressive) {
         // Enlarge the stdio buffer so sequential CHD hunk reads stay in userspace.
         // _IOFBF = fully buffered; the buffer is heap-allocated and stdio owns it.
         setvbuf(fp, NULL, _IOFBF, kVFSFrequentAccessBufSize);
-
-#ifdef __APPLE__
-        int fd = fileno(fp);
-        // F_RDAHEAD tells the kernel to aggressively read-ahead for this fd,
-        // reducing latency on sequential CHD/disk-image access patterns.
-        fcntl(fd, F_RDAHEAD, 1);
-        // Ensure the UBC (Unified Buffer Cache) is active — F_NOCACHE = 0
-        // is the default, but an explicit call guards against inherited flags.
-        fcntl(fd, F_NOCACHE, 0);
-#endif
+        thin_vfs_apply_darwin_readahead(fileno(fp));
     }
 
     struct retro_vfs_file_handle *handle = (struct retro_vfs_file_handle *)calloc(1, sizeof(*handle));
     handle->fp = fp;
+    handle->fd = -1;
     handle->path = strdup(openPath);
     handle->frequentAccess = frequent;
     handle->sizeKnown = false;
     handle->cachedSize = -1;
+    handle->mapped = NULL;
+    handle->mapSize = 0;
+    handle->mapPos = 0;
     // Log open of files >100 KB (skip tiny config/lang files which spam logs).
     // Pre-cache the file size for read-only opens to avoid the first size() call
     // needing a seek-to-end round-trip that flushes the stdio buffer.
-    struct stat _diag_st;
-    if (stat(openPath, &_diag_st) == 0) {
-        if (_diag_st.st_size >= (off_t)100*1024) {
+    if (haveStat) {
+        if (st.st_size >= (off_t)100*1024) {
             ILOG(@"[VFS-DIAG] open OK path=%s mode=%s stat_size=%lld fp=%p hints=0x%x%s",
-                 path, fmode, (long long)_diag_st.st_size, fp, hints,
-                 frequent ? " [FREQUENT_ACCESS]" : "");
+                 openPath, fmode, (long long)st.st_size, fp, hints,
+                 frequent ? " [FREQUENT_ACCESS]" : (aggressive ? " [DISK_IMAGE]" : ""));
         }
         if (!(mode & RETRO_VFS_FILE_ACCESS_WRITE)) {
-            handle->cachedSize = (int64_t)_diag_st.st_size;
+            handle->cachedSize = (int64_t)st.st_size;
             handle->sizeKnown = true;
         }
     }
@@ -1895,7 +1984,13 @@ static struct retro_vfs_file_handle *thin_vfs_open(const char *path, unsigned mo
 
 static int thin_vfs_close(struct retro_vfs_file_handle *stream) {
     if (!stream) return -1;
-    int ret = fclose(stream->fp) == 0 ? 0 : -1;
+    int ret = 0;
+    if (stream->mapped) {
+        if (munmap(stream->mapped, stream->mapSize) != 0) ret = -1;
+        if (stream->fd >= 0 && close(stream->fd) != 0) ret = -1;
+    } else if (stream->fp) {
+        if (fclose(stream->fp) != 0) ret = -1;
+    }
     free(stream->path);
     free(stream);
     return ret;
@@ -1906,9 +2001,16 @@ static int64_t thin_vfs_size(struct retro_vfs_file_handle *stream) {
     // Return cached value when available — avoids the seek-to-end + seek-back
     // round-trip that flushes the stdio read buffer on each call.  CHD-based
     // cores (MAME) query size() frequently; the seek pair was evicting the 256 KB
-    // stdio cache we install for FREQUENT_ACCESS files, forcing a kernel read on
-    // the next hunk access.
-    if (stream->frequentAccess && stream->sizeKnown) return stream->cachedSize;
+    // stdio cache, forcing a kernel read on the next hunk access.
+    // Use the cache for every handle (not only FREQUENT_ACCESS): MAME opens CHD
+    // files with HINT_NONE, so a frequent-only gate never helped those games.
+    if (stream->sizeKnown) return stream->cachedSize;
+    if (stream->mapped) {
+        stream->cachedSize = (int64_t)stream->mapSize;
+        stream->sizeKnown = true;
+        return stream->cachedSize;
+    }
+    if (!stream->fp) return -1;
 
     off_t cur = ftello(stream->fp);
     if (fseeko(stream->fp, 0, SEEK_END) != 0) {
@@ -1927,12 +2029,27 @@ static int64_t thin_vfs_size(struct retro_vfs_file_handle *stream) {
 
 static int64_t thin_vfs_tell(struct retro_vfs_file_handle *stream) {
     if (!stream) return -1;
+    if (stream->mapped) return stream->mapPos;
+    if (!stream->fp) return -1;
     off_t pos = ftello(stream->fp);
     return (int64_t)pos;
 }
 
 static int64_t thin_vfs_seek(struct retro_vfs_file_handle *stream, int64_t offset, int seek_position) {
     if (!stream) return -1;
+    if (stream->mapped) {
+        int64_t newPos;
+        switch (seek_position) {
+            case RETRO_VFS_SEEK_POSITION_START:   newPos = offset; break;
+            case RETRO_VFS_SEEK_POSITION_CURRENT: newPos = stream->mapPos + offset; break;
+            case RETRO_VFS_SEEK_POSITION_END:     newPos = (int64_t)stream->mapSize + offset; break;
+            default: return -1;
+        }
+        if (newPos < 0) return -1;
+        stream->mapPos = newPos;
+        return 0;
+    }
+    if (!stream->fp) return -1;
     int whence;
     switch (seek_position) {
         case RETRO_VFS_SEEK_POSITION_START:   whence = SEEK_SET; break;
@@ -1963,6 +2080,17 @@ static int64_t thin_vfs_seek(struct retro_vfs_file_handle *stream, int64_t offse
 
 static int64_t thin_vfs_read(struct retro_vfs_file_handle *stream, void *s, uint64_t len) {
     if (!stream || !s) return -1;
+    if (len > (uint64_t)INT64_MAX) return -1;
+    if (stream->mapped) {
+        if (stream->mapPos > (int64_t)stream->mapSize) return -1;
+        if (stream->mapPos == (int64_t)stream->mapSize) return 0;
+        uint64_t remaining = (uint64_t)stream->mapSize - (uint64_t)stream->mapPos;
+        if (len > remaining) len = remaining;
+        memcpy(s, stream->mapped + stream->mapPos, (size_t)len);
+        stream->mapPos += (int64_t)len;
+        return (int64_t)len;
+    }
+    if (!stream->fp) return -1;
     int64_t n = (int64_t)fread(s, 1, (size_t)len, stream->fp);
     if (n == 0 && len > 0) {
         ILOG(@"[VFS-DIAG] read() ZERO path=%s fp=%p len=%llu pos=%lld feof=%d ferror=%d",
@@ -1974,12 +2102,16 @@ static int64_t thin_vfs_read(struct retro_vfs_file_handle *stream, void *s, uint
 
 static int64_t thin_vfs_write(struct retro_vfs_file_handle *stream, const void *s, uint64_t len) {
     if (!stream || !s) return -1;
+    if (stream->mapped) return -1;
+    if (!stream->fp) return -1;
     stream->sizeKnown = false;
     return (int64_t)fwrite(s, 1, (size_t)len, stream->fp);
 }
 
 static int thin_vfs_flush(struct retro_vfs_file_handle *stream) {
     if (!stream) return -1;
+    if (stream->mapped) return 0;
+    if (!stream->fp) return -1;
     return fflush(stream->fp) == 0 ? 0 : -1;
 }
 
@@ -1995,6 +2127,8 @@ static int thin_vfs_rename(const char *old_path, const char *new_path) {
 
 static int64_t thin_vfs_truncate(struct retro_vfs_file_handle *stream, int64_t length) {
     if (!stream) return -1;
+    if (stream->mapped) return -1;
+    if (!stream->fp) return -1;
     stream->sizeKnown = false;
     fflush(stream->fp);
     int fd = fileno(stream->fp);
