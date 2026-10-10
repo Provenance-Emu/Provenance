@@ -131,9 +131,14 @@ struct HardwareSwitchDescriptorTests {
 
     @Test("Descriptors whose positions share an id are press-to-toggle")
     func sharedIdsAreToggles() {
-        let all = (PV7800Button.hardwareSwitches ?? []) + (PV5200Button.hardwareSwitches ?? [])
-            + (PVMSXButton.hardwareSwitches ?? []) + (PVA8Button.hardwareSwitches ?? [])
-            + (PVPCEButton.hardwareSwitches ?? [])
+        // Built up step by step: a single `+` chain over optionals makes the
+        // type checker time out on CI's compiler.
+        var all: [HardwareSwitchDescriptor] = []
+        all += PV7800Button.hardwareSwitches ?? []
+        all += PV5200Button.hardwareSwitches ?? []
+        all += PVMSXButton.hardwareSwitches ?? []
+        all += PVA8Button.hardwareSwitches ?? []
+        all += PVPCEButton.hardwareSwitches ?? []
         #expect(!all.isEmpty)
         #expect(all.allSatisfy { $0.isPressToToggle })
     }
