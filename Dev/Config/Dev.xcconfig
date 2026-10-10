@@ -1,0 +1,13 @@
+// Base config for Dev/Provenance.xcodeproj (Tuist-generated; see Tuist/ProjectDescriptionHelpers).
+// Build.xcconfig's path-valued settings are relative to the shipping project's SRCROOT (the
+// repo root). This project's SRCROOT is Dev/, so those settings are restated here.
+#include "../../Build-iOS.xcconfig"
+
+PV_REPO_ROOT = $(SRCROOT)/..
+
+// Provenance-Lite (AppStore) entitlements (Build.xcconfig's selector would resolve Dev/Provenance/...)
+CODE_SIGN_ENTITLEMENTS = $(PV_REPO_ROOT)/Provenance/Provenance-AppStore.entitlements
+CODE_SIGN_ENTITLEMENTS[sdk=appletvos*] = $(PV_REPO_ROOT)/ProvenanceTV/ProvenanceTV-AppStore.entitlements
+CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*] = $(PV_REPO_ROOT)/ProvenanceTV/ProvenanceTV-AppStore.entitlements
+
+TVOS_DEPLOYMENT_TARGET = 17.0

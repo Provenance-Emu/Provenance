@@ -149,3 +149,4 @@ __pycache__
 /Dev/Provenance.xcodeproj
 /Dev/Derived
 /Tuist/.build
+/.package.resolved
