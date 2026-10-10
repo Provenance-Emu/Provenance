@@ -340,3 +340,13 @@ run = ["Scripts/release/capture-gameplay-screenshots.sh"]
 needs = ["macos"]
 
 cli_only = true
+
+[jobs.dev-harness]
+title = "Dev harness run"
+category = "Dev workspace"
+description = "Builds a focused app for the iOS Simulator and runs a ROM through the launch-argument harness (Thin: device only)."
+run = ["Scripts/dev/run_harness.sh"]
+args_hint = "<rom> [ui|azahar] [frames] [core id]"
+files = ["Scripts/dev/make_harness_rom.py"]
+needs = ["macos", "mise"]
+cli_only = true

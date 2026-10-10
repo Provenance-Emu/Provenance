@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # `export` makes the values visible to recipes (release.sh, fastlane, etc.).
 -include .env
 export
-.PHONY: dev dev-generate dev-ui dev-azahar dev-thin help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
+.PHONY: dev dev-generate dev-ui dev-azahar dev-thin dev-harness help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
@@ -44,6 +44,10 @@ WHITE  := $(shell tput -Txterm setaf 7)
 RESET  := $(shell tput -Txterm sgr0)
 
 ## ----- Helper functions ------
+
+# Pattern-rule prerequisite below: make 3.81 (macOS) skips a pattern rule whose prerequisite has no rule.
+FORCE:
+.PHONY: FORCE
 
 # Helper target for declaring an external executable as a recipe dependency.
 # For example,
@@ -277,6 +281,19 @@ dev-azahar:
 
 dev-thin:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Thin
+
+## Run the dev harness on the booted simulator:
+##   make dev-harness ROM=path/to/rom [TARGET=ui|azahar] [FRAMES=300] [CORE=com.provenance.core.stella]
+## Provenance-Dev-Thin is device-only (libretro dylibs don't load in the simulator).
+## Thin on a device: run Provenance-Dev-Thin from Xcode with scheme arguments
+##   -PVHarnessROM Documents/<rom> -PVHarnessFrames 300
+## after copying the ROM into the app's Documents (Files app or Xcode's Devices window), then
+## download the container and read Documents/Harness/<timestamp>/.
+TARGET ?= ui
+FRAMES ?= 300
+CORE ?=
+dev-harness: | _var_ROM
+	DEV_DERIVED="$(DEV_DERIVED)" Scripts/dev/run_harness.sh "$(ROM)" "$(TARGET)" "$(FRAMES)" "$(CORE)"
 
 ## Generate libretro cheat database if missing (for builds/tests)
 ensure-cheatdb:

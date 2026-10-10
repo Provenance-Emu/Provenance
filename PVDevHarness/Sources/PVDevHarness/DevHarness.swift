@@ -46,6 +46,8 @@ public enum DevHarness {
     public static func start(appState: AppState, arguments: [String] = ProcessInfo.processInfo.arguments) {
         guard !started, let args = HarnessArguments.parse(arguments) else { return }
         started = true
+        // File logging is otherwise only started from the log browser; log.txt needs a session file.
+        PVLogFileManager.shared.startLogging()
         let home = URL(fileURLWithPath: NSHomeDirectory(), isDirectory: true)
         let output = args.outputDirectory(home: home, documents: URL.documentsPath, now: Date())
         ILOG("DevHarness: ROM \(args.romPath), \(args.frames) frames, output \(output.path)")
@@ -168,7 +170,7 @@ public enum DevHarness {
 
     private static func finish(_ args: HarnessArguments, output: URL, status: Int32) {
         PVLogging.shared.flushLogs()
-        let log = PVLogFileManager.shared.currentSessionURL ?? PVLogFileManager.shared.logFiles().last
+        let log = PVLogFileManager.shared.currentSessionURL
         try? HarnessOutput.copyLog(from: log, to: output)
         ILOG("DevHarness: done (status \(status)) → \(output.path)")
         if args.exitWhenDone { exit(status) }
