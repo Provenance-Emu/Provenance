@@ -1321,45 +1321,56 @@ struct SkinSelectionPreviewCell: View {
                 .background(Color.gray.opacity(0.15))
             }
         }
-        .onAppear {
-            loadThumbnail()
-        }
-        .onChange(of: orientation) { _ in
-            isLoading = true
-            loadFailed = false
-            thumbnailImage = nil
-            loadThumbnail()
+        .task(id: cacheKey) {
+            // Restarts on re-appearance and when the traits/orientation change,
+            // and is cancelled on disappear. A previous failure is retried here.
+            await loadThumbnail()
         }
     }
 
     // MARK: - Loading
 
-    private func loadThumbnail() {
+    /// Longest side of a stored preview, in points.
+    private static let thumbnailMaxPointSize: CGFloat = 256
+
+    private var cacheKey: String {
         let traits = previewTraits
-        let cacheKey = "\(skin.identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)"
+        return "\(skin.identifier)-\(traits.device.rawValue)-\(traits.displayType.rawValue)-\(traits.orientation.rawValue)"
+    }
+
+    private func loadThumbnail() async {
+        let traits = previewTraits
+        let key = cacheKey
+        loadFailed = false
 
         // Fast path: use shared cache
-        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: cacheKey) {
+        if let cached = SkinPreviewThumbnailCache.shared.thumbnail(forKey: key) {
             thumbnailImage = cached
             isLoading = false
             return
         }
 
-        Task.detached(priority: .utility) {
-            do {
-                let image = try await skin.image(for: traits)
-                SkinPreviewThumbnailCache.shared.store(image, forKey: cacheKey)
-                await MainActor.run {
-                    self.thumbnailImage = image
-                    self.isLoading = false
-                }
-            } catch {
-                ELOG("skins: SkinSelectionPreviewCell failed to load thumbnail for '\(skin.name)' traits=\(traits.description): \(error)")
-                await MainActor.run {
-                    self.loadFailed = true
-                    self.isLoading = false
-                }
+        thumbnailImage = nil
+        isLoading = true
+        let skin = self.skin
+        let render = Task.detached(priority: .utility) { () throws -> UIImage in
+            try await skin.thumbnail(for: traits, maxDimension: Self.thumbnailMaxPointSize)
+        }
+        do {
+            let thumbnail = try await withTaskCancellationHandler {
+                try await render.value
+            } onCancel: {
+                render.cancel()
             }
+            SkinPreviewThumbnailCache.shared.store(thumbnail, forKey: key)
+            thumbnailImage = thumbnail
+            isLoading = false
+        } catch is CancellationError {
+            // View disappeared or the key changed; the restarted task handles loading.
+        } catch {
+            ELOG("skins: SkinSelectionPreviewCell failed to load thumbnail for '\(skin.name)' traits=\(traits.description): \(error)")
+            loadFailed = true
+            isLoading = false
         }
     }
 }

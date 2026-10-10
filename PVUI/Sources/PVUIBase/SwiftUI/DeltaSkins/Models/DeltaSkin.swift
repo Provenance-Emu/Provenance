@@ -442,6 +442,67 @@ public struct DeltaSkin: DeltaSkinProtocol {
         }
     }
 
+    /// Pixel density of list/grid thumbnails (independent of the screen scale, to bound memory).
+    private static let thumbnailPixelScale: CGFloat = 2
+
+    /// Renders a small preview of the skin directly at thumbnail size, so no full-size
+    /// intermediate raster is created. Vector assets draw natively into the smaller context and
+    /// bitmap assets are drawn scaled. Results are stored as PNGs in the skin disk cache, keyed by
+    /// skin id + asset + traits + thumbnail size + the skin file's mod-date.
+    /// - Parameter maxDimension: Longest side of the result in points (at ``thumbnailPixelScale``).
+    public func thumbnail(for traits: DeltaSkinTraits, maxDimension: CGFloat) async throws -> UIImage {
+        guard let rep = representation(for: traits) else { throw DeltaSkinError.unsupportedTraits }
+        let source = rep.mappingSize.width > 0 && rep.mappingSize.height > 0 ? rep.mappingSize : CGSize(width: 1, height: 1)
+        let fit = min(maxDimension / max(source.width, source.height), 1)
+        let thumbSize = CGSize(width: max(1, (source.width * fit).rounded()), height: max(1, (source.height * fit).rounded()))
+        // Canvas size in points such that pixels = thumbSize * thumbnailPixelScale at the screen scale.
+        let canvas = CGSize(
+            width: thumbSize.width * Self.thumbnailPixelScale / UIScreen.main.scale,
+            height: thumbSize.height * Self.thumbnailPixelScale / UIScreen.main.scale
+        )
+
+        var candidates = rep.assets.candidates()
+        if let themeId = selectedThemeId,
+           let theme = availableThemes.first(where: { $0.id == themeId }),
+           let themeAsset = theme.assets?[traits.device.rawValue]?[traits.displayType.rawValue]?[traits.orientation.rawValue] {
+            candidates = themeAsset.candidates() + candidates
+        }
+
+        var lastError: Error = DeltaSkinError.unsupportedTraits
+        for name in candidates {
+            try Task.checkCancellation()
+            let diskURL = diskCacheURL(assetName: "thumbnail-\(name)", traits: traits, renderSize: thumbSize)
+            if let cached = loadFromDiskCache(diskURL) { return cached }
+            do {
+                let data = try loadAssetData(name)
+                let lower = name.lowercased()
+                let rendered: UIImage?
+                if lower.hasSuffix(".pdf") {
+                    rendered = UIImage(pdfData: data, preserveTransparency: true, size: canvas)
+                } else if lower.hasSuffix(".svg") {
+                    rendered = UIImage(svgData: data, size: canvas)
+                } else if let full = UIImage(data: data) {
+                    let format = UIGraphicsImageRendererFormat()
+                    format.scale = UIScreen.main.scale
+                    rendered = UIGraphicsImageRenderer(size: canvas, format: format).image { _ in
+                        full.draw(in: CGRect(origin: .zero, size: canvas))
+                    }
+                } else {
+                    rendered = nil
+                }
+                guard let rendered else {
+                    lastError = DeltaSkinError.invalidPNG
+                    continue
+                }
+                Self.writeToDiskCache(rendered, to: diskURL)
+                return rendered
+            } catch {
+                lastError = error
+            }
+        }
+        throw lastError
+    }
+
     /// Loads the primary skin artwork for the given traits; decoded rasters are memoized in an in-memory LRU cache on this type. Prefer calling from an `async` context so PDF/PNG work can run without blocking synchronous UI callbacks.
     public func image(for traits: DeltaSkinTraits) async throws -> UIImage {
         ILOG("skins: image(for:) called - device: \(traits.device.rawValue), displayType: \(traits.displayType.rawValue), orientation: \(traits.orientation.rawValue)")

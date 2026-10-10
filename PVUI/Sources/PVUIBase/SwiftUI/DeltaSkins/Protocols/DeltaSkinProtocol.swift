@@ -18,6 +18,9 @@ public protocol DeltaSkinProtocol: Identifiable, Equatable {
     /// Get the skin image for given traits
     func image(for traits: DeltaSkinTraits) async throws -> UIImage
 
+    /// Get a small preview image whose longest side is about `maxDimension` points
+    func thumbnail(for traits: DeltaSkinTraits, maxDimension: CGFloat) async throws -> UIImage
+
     /// Get screen layouts for the current skin and traits
     func screens(for traits: DeltaSkinTraits) -> [DeltaSkinScreen]?
 
@@ -87,5 +90,21 @@ public extension Identifiable where  Self: DeltaSkinProtocol  {
 public extension Equatable where  Self: DeltaSkinProtocol  {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.identifier == rhs.identifier
+    }
+}
+
+public extension DeltaSkinProtocol {
+    /// Default: render the full-size image and scale it down. Conformers that can render
+    /// directly at thumbnail size (``DeltaSkin``) override this to avoid the large intermediate.
+    func thumbnail(for traits: DeltaSkinTraits, maxDimension: CGFloat) async throws -> UIImage {
+        let image = try await image(for: traits)
+        let longest = max(image.size.width, image.size.height)
+        guard longest > maxDimension else { return image }
+        let size = CGSize(width: image.size.width * maxDimension / longest, height: image.size.height * maxDimension / longest)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 2
+        return UIGraphicsImageRenderer(size: size, format: format).image { _ in
+            image.draw(in: CGRect(origin: .zero, size: size))
+        }
     }
 }
