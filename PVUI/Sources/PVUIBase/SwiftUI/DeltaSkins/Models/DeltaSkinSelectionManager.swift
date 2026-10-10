@@ -80,7 +80,10 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         // Update the in-memory session skin via the serial queue for thread-safety
         // (effectiveSkinIdentifier can be called from any thread via queue.sync).
         // Only session scope writes a session entry. Persistent picks clear the session
-        // entries that would outrank them, so a newer pick is never shadowed by an older one.
+        // entries that would outrank them (a `.game` or `.system` pick clears both the game-level and
+        // the system-level (`gameId == nil`) entry), so an explicit user pick is never shadowed by an
+        // older session or case-companion entry; the case-companion coordinator re-writes its entry
+        // on the next detection.
         queue.sync {
             switch scope {
             case .session:
@@ -88,7 +91,8 @@ public final class DeltaSkinSelectionManager: ObservableObject {
 
             case .game:
                 setSessionSkin(nil, for: systemId, gameId: gameId, orientation: orientation)
-                ILOG("skins: Set game preference, cleared game session skin for game \(gameId ?? "nil")")
+                setSessionSkin(nil, for: systemId, gameId: nil, orientation: orientation)
+                ILOG("skins: Set game preference, cleared game and system session skins for game \(gameId ?? "nil")")
 
             case .system:
                 if let gameId = gameId {
@@ -265,7 +269,8 @@ public final class DeltaSkinSelectionManager: ObservableObject {
         }
     }
 
-    private func getSessionSkin(
+    /// Internal for tests: reads the in-memory session override for a key.
+    func getSessionSkin(
         for systemId: SystemIdentifier,
         gameId: String?,
         orientation: SkinOrientation
