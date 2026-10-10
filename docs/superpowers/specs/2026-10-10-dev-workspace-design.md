@@ -23,8 +23,10 @@ and the core builds outside the app, per slice, cached.
    and `Dev/Derived` are gitignored; `make dev` generates before opening.
 3. **Tuist 4.200.0**, pinned in `.mise.toml` (the version installed here and in iCube's CI).
 4. **Only audited cores are modelled.** The focused targets draw from the 12 KEEP cores in the
-   audit; the 24 RETIRE cores and the two native DS cores are pruned from the shipping project
-   in this session. The remaining save-check and UNSURE cores stay until the maintainer rules.
+   audit; the 24 RETIRE cores, the two native DS cores and the seven other save-check cores
+   (Atari800, Bliss, CrabEMU, Gambatte, O2EM, PokeMini, VisualBoyAdvance-M) are pruned from the
+   shipping project in this session, each with a `RetiredCoreMigration` entry. emuThree and the
+   four UNSURE cores stay until the maintainer rules.
 5. **iOS and tvOS from the start.** Every focused target is one multiplatform target, like
    `Provenance (AppStore)`.
 6. **The Tuist project is named `Provenance`.** `Build.xcconfig` derives bundle ids, the app
@@ -209,24 +211,32 @@ the agent smoke build, replacing `Provenance-CI` in `agent-validation.yml` in th
 
 Removed in this session, as one PR so `build.yml` validates both legs before merge:
 
-- The 24 RETIRE cores from the audit, plus Desmume2015 and melonDS: their embed/link/file
+- The 24 RETIRE cores from the audit, plus Desmume2015, melonDS, Atari800, Bliss, CrabEMU,
+  Gambatte, O2EM, PokeMini and VisualBoyAdvance-M (33 cores): their embed/link/file
   references in every `Provenance.xcodeproj` target, their projects in
   `Provenance.xcworkspace`, `Cores/<X>` directories and `.gitmodules` entries, Core.plist /
   PVCoreLoader entries, and the orphan embedded frameworks with no producer (`PVLibRetro`,
   `PVFreeDO`, `PVSnesticle`, `PVMiniVMac`, `PVYabause`, `PVPCSXRearmed`, `PVDosBoxRetro`,
   `PVMelonDSRetro`, `PVMiniVMacRetro`). `PVFreeDO`'s producer is 4DO (UNSURE), so only the
   dangling reference goes, not the core.
-- `RetiredCoreMigration` gains the DS entries: native melonDS → `melonds` (move `<rom>.sav` from
-  Save States to Battery Saves) and `melondsds` (also copy to `<rom>.srm`); Desmume2015 →
-  `desmume` (move `<rom>.dsv`). The migration runs once per game on first launch after update,
-  as the Jaguar entry does.
+- `RetiredCoreMigration` gains one entry per retired core that users could run (every core that
+  was embedded and not `PVDisabled`, plus the DS pair): replacement thin core identifier
+  (`atari800`, `freeintv`, `genesis_plus_gx`/`gearcoleco` for CrabEMU's SMS/Coleco, `gambatte`,
+  `o2em`, `pokemini`, `vbam`; `melonds`+`melondsds`; `desmume`) and a battery-save rule derived
+  from the native bridge's save path and extension versus the thin frontend's `<rom>.srm` in
+  Battery Saves (DS: move `<rom>.sav`/`<rom>.dsv` from Save States to Battery Saves, also copy
+  `.sav` → `.srm` for `melondsds`). Save states are not migrated (formats differ); the migration
+  logs what it moved. It runs once per game on first launch after update, as the Jaguar entry does.
+  Each replacement must be `enabled: true` for the platform in `cores.yml`; if one is not, that
+  core is left in place and the PR says so.
 - `Scripts/audits/check_pbxproj_sources.py` allowlist, `Scripts/maint/jobs.toml`, CLAUDE.md's core
   taxonomy (drop Jaguar and "Flycast" from active native; list the audit doc), and
   `docs/RELEASE_SMOKE_TESTS.md` (DS via `melondsds`, one migrated save).
 
-Not pruned here, pending the maintainer: emuThree (Azahar must pass a device skin test first),
-Atari800, Bliss, CrabEMU, Gambatte, O2EM, PokeMini, VisualBoyAdvance-M, and the four UNSURE
-cores.
+Not pruned here, pending the maintainer: emuThree (Azahar must pass a device skin test first)
+and the four UNSURE cores. Native extras lost with the seven save-check cores (Gambatte/VBA-M
+cheats, Atari800/Gambatte/PokeMini/VBA-M rcheevos maps, Atari800 mouse) are accepted; the thin
+wrapper's generic libretro cheat and memory-map paths cover them where the dylib exposes them.
 
 ## 11. Docs and skill
 
