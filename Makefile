@@ -5,7 +5,7 @@ SHELL := /bin/bash
 # `export` makes the values visible to recipes (release.sh, fastlane, etc.).
 -include .env
 export
-.PHONY: dev dev-generate dev-ui help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
+.PHONY: dev dev-generate dev-ui dev-azahar dev-thin help ios update tvos lite ci maint maint-status maint-run-stale maint-hooks \
 	generate-all generate-cheatdb generate-contributors generate-core-lists \
 	generate-default-skins generate-licenses generate-uti generate-changelog \
 	update-cheatdb update-skin-catalog update-core-versions update-core-licenses \
@@ -271,6 +271,12 @@ _dev-build: dev-generate
 
 dev-ui:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-UI
+
+dev-azahar:
+	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Azahar
+
+dev-thin:
+	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-Thin
 
 ## Generate libretro cheat database if missing (for builds/tests)
 ensure-cheatdb:

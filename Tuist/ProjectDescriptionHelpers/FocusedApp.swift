@@ -140,5 +140,9 @@ public extension FocusedApp {
         flags: ["PV_DEV_HARNESS"]
     )
 
-    static let all: [FocusedApp] = [.ui, .thin]
+    // PVAzahar depends on its BuildPVlibAzahar aggregate inside PVAzahar.xcodeproj, so the
+    // implicit dependency on PVAzahar also builds (or cache-links) the PVlibAzahar slice.
+    static let azahar = FocusedApp(slug: "azahar", title: "Azahar", cores: [.azahar], flags: ["PV_DEV_HARNESS"])
+
+    static let all: [FocusedApp] = [.ui, .azahar, .thin]
 }
