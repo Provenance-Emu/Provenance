@@ -123,6 +123,8 @@ fi
 PLATFORM_CHANGED=0
 STORED_PLATFORM=""
 ACTIVE_PLATFORM_FILE="${CORES_DIR}/active_platform.txt"
+# A --urls run must not touch the shared sentinel (shipping builds key off it); it keeps its own.
+[ -n "${CUSTOM_URLS}" ] && ACTIVE_PLATFORM_FILE="${CORES_ARCHIVE_DIR}/active_platform.txt"
 if [ -f "${ACTIVE_PLATFORM_FILE}" ]; then
 	STORED_PLATFORM=$(cat "${ACTIVE_PLATFORM_FILE}" 2>/dev/null || true)
 fi
@@ -614,7 +616,8 @@ echo "GetModule: Completed — ${VALID_ZIPS} valid zips, ${DYLIB_COUNT} dylibs (
 
 # Record the active platform so the fast-path check above can skip extraction
 # on subsequent same-platform builds without re-purging or re-extracting.
-echo "${CURRENT_PLATFORM}" > "${CORES_DIR}/active_platform.txt"
+mkdir -p "$(dirname "${ACTIVE_PLATFORM_FILE}")"
+echo "${CURRENT_PLATFORM}" > "${ACTIVE_PLATFORM_FILE}"
 
 # Save manifest fingerprint after a full run so regen of urls*.txt invalidates cache.
 if [ -n "${CURRENT_MANIFEST_SHA}" ]; then

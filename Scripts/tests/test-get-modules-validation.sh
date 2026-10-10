@@ -179,6 +179,8 @@ with open(dylib, "wb") as f:
     f.write(header)
 with zipfile.ZipFile(os.path.join(root, "zips", "fake_libretro_ios.dylib.zip"), "w") as z:
     z.write(dylib, "fake_libretro_ios.dylib")
+with open(os.path.join(root, "CoresRetro/RetroArch/modules/active_platform.txt"), "w") as f:
+    f.write("tvos\n")
 for n in ("seed_libretro_tvos.dylib", "neutral_libretro.dylib"):
     with open(os.path.join(root, "CoresRetro/RetroArch/modules", n), "wb") as f:
         f.write(header)
@@ -192,9 +194,40 @@ PY
     [ -f "$ra/modules/seed_libretro_tvos.dylib" ] || { echo "FAIL: --urls deleted an other-platform dylib"; ok=0; }
     [ -f "$ra/modules/neutral_libretro.dylib" ] || { echo "FAIL: --urls deleted a neutral dylib"; ok=0; }
     [ -f "$ra/modules/fake_libretro_ios.dylib" ] || { echo "FAIL: listed dylib not extracted"; ok=0; }
+    [ "$(cat "$ra/modules/active_platform.txt")" = "tvos" ] || { echo "FAIL: --urls changed the shared active_platform.txt"; ok=0; }
 
     rm -rf "$tmp"
     [ "$ok" -eq 1 ] && echo "PASS: --urls leaves seeded other-platform and neutral dylibs alone"
+    [ "$ok" -eq 1 ]
+}
+
+# ---- Test 8: two identical --urls runs on a platform differing from the shared sentinel take the fast path ----
+test_get_modules_urls_fast_path() {
+    local tmp
+    tmp=$(mktemp -d "${TMPDIR:-/tmp}/get_modules_urls_fast.XXXXXX")
+    local ra="$tmp/CoresRetro/RetroArch"
+    mkdir -p "$ra/scripts" "$ra/modules" "$tmp/zips"
+    python3 - "$tmp" <<'PY'
+import struct, sys, zipfile, os
+root = sys.argv[1]
+header = struct.pack("<IiiIIIII", 0xfeedfacf, 0x0100000c, 0, 6, 0, 0, 0, 0)
+dylib = os.path.join(root, "fake_libretro_ios.dylib")
+with open(dylib, "wb") as f:
+    f.write(header)
+with zipfile.ZipFile(os.path.join(root, "zips", "fake_libretro_ios.dylib.zip"), "w") as z:
+    z.write(dylib, "fake_libretro_ios.dylib")
+with open(os.path.join(root, "CoresRetro/RetroArch/modules/active_platform.txt"), "w") as f:
+    f.write("tvos\n")
+PY
+    echo "file://$tmp/zips/fake_libretro_ios.dylib.zip" > "$tmp/urls.txt"
+    local out ok=1 i
+    for i in 1 2; do
+        out=$(SRCROOT="$tmp" PLATFORM_NAME=iphonesimulator GETMODULES_MIN_DYLIB_SIZE=1 \
+            bash "$GET_MODULES" --urls "$tmp/urls.txt" 2>&1) || { echo "FAIL: run $i failed"; ok=0; }
+    done
+    echo "$out" | grep -q "all 1 listed dylib(s) present" || { echo "FAIL: second run did not take the fast path"; echo "$out" | tail -8; ok=0; }
+    rm -rf "$tmp"
+    [ "$ok" -eq 1 ] && echo "PASS: repeated --urls runs take the fast path despite a different shared sentinel"
     [ "$ok" -eq 1 ]
 }
 
@@ -213,6 +246,7 @@ run_test test_get_modules_uses_curl_fail
 run_test test_get_modules_validates_zip_magic
 run_test test_get_modules_custom_url_list
 run_test test_get_modules_urls_no_purge
+run_test test_get_modules_urls_fast_path
 
 echo "==="
 if [ "$FAIL_COUNT" -eq 0 ]; then
