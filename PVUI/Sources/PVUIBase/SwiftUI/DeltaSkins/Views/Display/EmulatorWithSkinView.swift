@@ -307,15 +307,14 @@ struct EmulatorWithSkinView: View {
 
     // MARK: - Fallback controls
 
-    /// Controls shown when no packaged skin fits: the programmatic overlay for a bound
-    /// system when it is enabled (iOS), otherwise the generated default controller.
+    /// Controls shown when no packaged skin fits: the programmatic overlay (iOS), using the
+    /// system's binding or the generic pad. tvOS has no on-screen controls.
     @ViewBuilder
     private func fallbackControls() -> some View {
         #if !os(tvOS)
-        if Defaults[.programmaticOverlay], let systemId,
-           let binding = SystemOverlayBindings.binding(for: systemId) {
+        if let systemId {
             ProgrammaticOverlayView(
-                systemId: systemId, binding: binding, coreInstance: coreInstance, inputHandler: inputHandler,
+                systemId: systemId, binding: SystemOverlayBindings.binding(for: systemId) ?? .generic, coreInstance: coreInstance, inputHandler: inputHandler,
                 gameMD5: gameMD5,
                 padKind: OverlayPadKindResolver.padKind(for: systemId,
                                                         variantProvider: coreInstance as? ConsoleVariantConfigurable,
@@ -326,18 +325,10 @@ struct EmulatorWithSkinView: View {
                     userInfo: OverlayNotificationPayload.userInfo(frames: frames))
             }
             .onAppear { markFallbackControlsRendered("programmatic overlay") }
-        } else {
-            defaultFallbackControls()
         }
         #else
-        defaultFallbackControls()
+        EmptyView()
         #endif
-    }
-
-    private func defaultFallbackControls() -> some View {
-        defaultControllerSkin()
-            .background(Color.clear)
-            .onAppear { markFallbackControlsRendered("fallback controller") }
     }
 
     private func markFallbackControlsRendered(_ kind: String) {

@@ -1100,7 +1100,7 @@ final class PauseTileMenuViewModel: ObservableObject {
         guard let game = emulatorVC.game, !game.isInvalidated,
               let system = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
                                                                        persisted: game.systemIdentifier),
-              ProgrammaticOverlaySupport.covers(system, enabled: Defaults[.programmaticOverlay]) else { return [] }
+              ProgrammaticOverlaySupport.covers(system) else { return [] }
         var entries: [PauseMenuTile] = []
         if OverlayPadKindResolver.offersVariantChoice(for: system) {
             entries.append(PauseMenuTile(

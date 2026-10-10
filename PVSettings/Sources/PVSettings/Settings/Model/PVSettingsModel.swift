@@ -1008,7 +1008,6 @@ public extension Defaults.Keys {
 
     /// Programmatic touch overlay (PVTouchOverlay) replaces the generated default skin
     /// and the classic on-screen pad when no packaged skin is selected. iOS only.
-    static let programmaticOverlay = Key<Bool>("programmaticOverlay", default: true)
 
     /// Visual style of the programmatic overlay controls.
     static let overlayStyle = Key<OverlayStyle>("overlayStyle", default: .defaultStyle)

@@ -16,10 +16,9 @@ enum ProgrammaticOverlaySupport {
         linked ?? SystemIdentifier(rawValue: persisted)
     }
 
-    /// Whether the overlay stands in for missing skin controls: the setting is on and the
-    /// system has an overlay binding.
-    static func covers(_ systemId: SystemIdentifier?, enabled: Bool) -> Bool {
-        guard enabled, let systemId else { return false }
-        return SystemOverlayBindings.binding(for: systemId) != nil
+    /// Whether the overlay stands in for missing skin controls: any game with a known system
+    /// gets either its system's binding or `SystemOverlayBindings.generic`.
+    static func covers(_ systemId: SystemIdentifier?) -> Bool {
+        systemId != nil
     }
 }

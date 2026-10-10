@@ -40,7 +40,7 @@ extension PVEmulatorViewController {
         // Resolved like `EmulatorWithSkinView` does, so both sides agree on the system.
         let systemId = ProgrammaticOverlaySupport.systemIdentifier(linked: game.system?.systemIdentifier,
                                                                    persisted: game.systemIdentifier)
-        return ProgrammaticOverlaySupport.covers(systemId, enabled: Defaults[.programmaticOverlay])
+        return ProgrammaticOverlaySupport.covers(systemId)
     }
 
     /// Whether the player has picked a packaged skin for this game or its system. Gates

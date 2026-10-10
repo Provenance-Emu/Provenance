@@ -35,7 +35,6 @@ internal struct AdvancedTogglesView: View {
     @Default(.companionController) var companionController
     @Default(.lightGunCrosshair) var lightGunCrosshair
     @Default(.skinButtonReposition) var skinButtonReposition
-    @Default(.programmaticOverlay) var programmaticOverlay
     @Default(.overlayStyle) var overlayStyle
     @Default(.airPlayMenu) var airPlayMenu
 
@@ -195,23 +194,12 @@ internal struct AdvancedTogglesView: View {
                 }
                 .padding(.vertical, 4)
 
-                PremiumThemedToggle(isOn: $programmaticOverlay) {
-                    SettingsRow(title: "Programmatic Touch Overlay",
-                                subtitle: "Console-style on-screen controls with a live layout editor. "
-                                    + "Off uses the classic pad.",
-                                icon: .sfSymbol("gamecontroller.fill"),
-                                showChevron: false)
+                Picker("Overlay Style", selection: $overlayStyle) {
+                    ForEach(OverlayStyle.allCases) { style in
+                        Text(style.displayName).tag(style)
+                    }
                 }
                 .padding(.vertical, 4)
-
-                if programmaticOverlay {
-                    Picker("Overlay Style", selection: $overlayStyle) {
-                        ForEach(OverlayStyle.allCases) { style in
-                            Text(style.displayName).tag(style)
-                        }
-                    }
-                    .padding(.vertical, 4)
-                }
                 #endif
 
                 PremiumThemedToggle(isOn: $airPlayMenu) {

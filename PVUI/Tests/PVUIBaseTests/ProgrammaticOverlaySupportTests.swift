@@ -22,17 +22,12 @@ struct ProgrammaticOverlaySupportTests {
         #expect(ProgrammaticOverlaySupport.systemIdentifier(linked: nil, persisted: "not-a-system") == nil)
     }
 
-    @Test("Covers a bound system only while the setting is on")
+    @Test("Covers every known system, bound or not; an unknown system is not covered")
     func covers() {
-        #expect(ProgrammaticOverlaySupport.covers(.SNES, enabled: true))
-        #expect(ProgrammaticOverlaySupport.covers(.GameCube, enabled: true))
-        #expect(!ProgrammaticOverlaySupport.covers(.SNES, enabled: false))
-        #expect(!ProgrammaticOverlaySupport.covers(nil, enabled: true))
-    }
-
-    @Test("Systems without an overlay binding are not covered")
-    func unboundSystem() {
-        #expect(!ProgrammaticOverlaySupport.covers(._3DS, enabled: true))
+        #expect(ProgrammaticOverlaySupport.covers(.SNES))
+        #expect(ProgrammaticOverlaySupport.covers(.GameCube))
+        #expect(ProgrammaticOverlaySupport.covers(._3DS))
+        #expect(!ProgrammaticOverlaySupport.covers(nil))
     }
 }
 
