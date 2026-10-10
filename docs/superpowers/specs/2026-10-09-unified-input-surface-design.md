@@ -1,4 +1,4 @@
-# Unified Input Surface — keyboard, mouse, light gun, media and accessories in the overlay
+# Unified Input Surface and Emulation Scene — one skin system, one scene, one quick action bar
 
 Status: draft for review (written 2026-10-09 from a code map; not yet brainstormed with the
 maintainer). Depends on the console-style overlays
@@ -36,7 +36,8 @@ show state.
 
 ## 2. Goal
 
-One touch surface. The overlay layout owns the whole device screen and every touch input a
+Everything on screen during play is a skin: a packaged `.deltaskin`/`.manicskin` or the
+code-generated overlay, through the same layer, for every core. One touch surface. The overlay layout owns the whole device screen and every touch input a
 core can take is an overlay control: pads, keyboard, pointer surfaces, media and accessory
 actions, hardware switches. The game picture is a rectangle the overlay knows about
 (`screenFrames`), not a view it reaches into. Output state flows back into the same layout
@@ -210,6 +211,64 @@ DuckStation. `DiscSwappable` stays as the simple case and gets a default
 Device smoke list per batch appended to `docs/RELEASE_SMOKE_TESTS.md`: DOS (keyboard +
 mouse), NES Duck Hunt (gun), PSX multi-disc, FDS side flip, Lynx rotate, SNES mouse via
 accessory pick, 2600 paddle.
+
+## Part II — Scene consolidation and deletions
+
+Maintainer direction (2026-10-09): once every core renders under the same skin layer, the
+emulation scene can lose its parallel paths. Measured on develop:
+
+| Path | Lines | Status after this spec |
+|---|---|---|
+| `Controller/OSD/PVControllerViewController` + `JSDPad`/`JSButton`/`Moveable`/`PVButtonGroupOverlayView` + `Controller/Systems/PV*ControllerViewController` (≈30 subclasses) | ≈10,400 | deleted |
+| `PVEmulatorViewController` + extensions, `PVMetalViewController`, `PVGLViewController` | ≈20,200 | one scene host, GL VC deleted if no core still needs it |
+| `PVUIKit` module + `PVUIBase/Game Library`, `Menus` (legacy UIKit library UI) | map in batch 0 | deleted where SwiftUI `ContentView` already covers it |
+| `SkinMode` setting (off / selectedOnly / always) | — | removed on iOS: a skin is always present (packaged or generated); tvOS unchanged |
+
+### II.1 Scene
+
+`EmulatorSceneView` (SwiftUI, iOS) with exactly these layers, bottom to top: GPU surface
+(`MTKView` or the core's own view, one wrapper, no `skipLayout` special cases in the
+scene), skin layer (packaged skin renderer or the overlay), quick action bar, HUD
+(indicators, cheevos toasts, performance labels), pause menu. Z-order is the layer list;
+`ensureGPUViewVisibilityAndZOrder`, `bringSubviewToFront` chains and the
+rotation re-stack code go. `PVEmulatorViewController` shrinks to lifecycle, core start/stop,
+audio and the scene host; its `+DeltaSkin`, `+DeltaSkinScreen`, `+VirtualKeyboard`,
+`+VirtualMouse`, `+LightGun`, `+Controllers` (touch parts) extensions fold into the scene
+model or are deleted per Part I.
+
+The shader pipeline (`PVMetalViewController`, PVShaders) keeps its renderer but drops the
+view-controller-level layout, dual-screen frame juggling and own-surface detection; the
+scene gives it one drawable rectangle per screen and nothing else.
+
+### II.2 Quick action bar
+
+One bar for every core, replacing the partial sets in the UIKit controller bar (FF, load,
+save, keyboard, mouse, record) and the deleted purple skin (keyboard/mouse toggles, JIT
+pill). Items are the existing pause-menu tile providers (`PauseTileMenuViewModel`,
+`SystemButtonTileProvider`, `systemMenuButtons(for:)`, hardware switches, port devices,
+pak slots, disc swap, keyboard/mouse/light-gun toggles) rendered compact. Default set per
+system comes from the binding; the user edits it per system and per game with the same
+editor the overlay uses (`PauseTileMenu` customisation store). Status indicators
+(`PVIndicatorID`: JIT, netplay ping/bandwidth, player count, analog, swap; plus disc
+activity and DSU) are bar items driven by `OverlayStatus` (§3.6). The bar lives in the skin
+layer so packaged skins can place or hide it.
+
+### II.3 Deletion order
+
+0. **Map and delete the UIKit controller path.** `PVControllerViewController`, OSD views,
+   `Controller/Systems/*`, `VirtualInputState` Combine plumbing, `pressStart/pressSelect`
+   bridges from `PVControllerManager` (route hardware keyboard Start/Select through the
+   handler instead), `SkinMode` on iOS. Map `PVUIKit` and `Game Library`/`Menus` usage from
+   `ProvenanceApp` → `ContentView`; delete what nothing reaches. This is the first batch of
+   the session because Part I §3.3–3.5 would otherwise have to keep both paths working.
+1–4. Part I batches, each deleting the sibling views it replaces.
+5. **Scene host.** `EmulatorSceneView`, z-order removal, GL VC retirement, pause menu as a
+   layer. Device smoke across native (Dolphin, Azahar, Mupen), thin (PSX, N64, PPSSPP
+   Vulkan), dual-screen (DS, 3DS), rotation, background/resume, external display.
+
+Expected payoff beyond behaviour: PVUI loses roughly 30k lines of UIKit scene and controller
+code, which is the slowest-compiling part of the module, and the test surface for skins
+drops to one layer.
 
 ## 6. Open questions for the maintainer
 
