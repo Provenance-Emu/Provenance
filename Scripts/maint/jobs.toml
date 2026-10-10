@@ -226,6 +226,15 @@ category = "RetroArch cores"
 run = ["CoresRetro/RetroArch/scripts/tests/run_tests.sh"]
 files = ["CoresRetro/RetroArch/scripts/tests/*.sh"]
 
+[jobs.dev-manifest]
+title = "Dev workspace manifest checks"
+category = "Audits"
+description = "Tuist helper tables: libretro names enabled in cores.yml, core paths exist, no duplicate local package."
+check = ["Scripts/dev/check_dev_manifest.sh"]
+files = ["Dev/Tests/ManifestChecks/main.swift"]
+needs = ["macos", "mise"]
+mode = "manual"
+
 # ─────────────────────────────────────────────────────────── audits
 
 [jobs.pbxproj-sources]
