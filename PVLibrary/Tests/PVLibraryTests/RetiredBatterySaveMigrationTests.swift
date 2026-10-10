@@ -91,4 +91,34 @@ final class RetiredBatterySaveMigrationTests: XCTestCase {
         XCTAssertEqual(read(battery, "srm"), "gba")
         XCTAssertTrue(RetiredBatterySaveMigration.isDone(job.retiredID, defaults: defaults))
     }
+
+    func testFailedMoveLeavesFlagUnsetAndRerunRetries() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
+        try write(states, "dsv", "desmume")
+        // A plain file where the ROM's Battery States folder should be makes the move fail.
+        try "x".write(to: battery.appendingPathComponent(rom), atomically: true, encoding: .utf8)
+        let job = RetiredBatterySaveJob(retiredID: "com.example.retired", rules: [.movedFromSaveStates("dsv")], romBases: [rom])
+
+        RetiredBatterySaveMigration.run([job], batteryRoot: battery, saveStatesRoot: states, defaults: defaults)
+        XCTAssertFalse(RetiredBatterySaveMigration.isDone(job.retiredID, defaults: defaults))
+
+        try FileManager.default.removeItem(at: battery.appendingPathComponent(rom))
+        RetiredBatterySaveMigration.run([job], batteryRoot: battery, saveStatesRoot: states, defaults: defaults)
+        XCTAssertEqual(read(battery, "dsv"), "desmume")
+        XCTAssertTrue(RetiredBatterySaveMigration.isDone(job.retiredID, defaults: defaults))
+    }
+
+    func testMissingSourceWithCandidatesLeavesFlagUnset() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
+        let job = RetiredBatterySaveJob(retiredID: "com.example.retired", rules: [.copiedToSRM("sav")], romBases: [rom])
+        RetiredBatterySaveMigration.run([job], batteryRoot: battery, saveStatesRoot: states, defaults: defaults)
+        XCTAssertFalse(RetiredBatterySaveMigration.isDone(job.retiredID, defaults: defaults))
+    }
+
+    func testNoCandidateGamesMarksDone() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: UUID().uuidString))
+        let job = RetiredBatterySaveJob(retiredID: "com.example.retired", rules: [.copiedToSRM("sav")], romBases: [])
+        RetiredBatterySaveMigration.run([job], batteryRoot: battery, saveStatesRoot: states, defaults: defaults)
+        XCTAssertTrue(RetiredBatterySaveMigration.isDone(job.retiredID, defaults: defaults))
+    }
 }

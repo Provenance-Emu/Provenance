@@ -38,11 +38,26 @@ enum RetiredBatterySaveMigration {
         defaults.set(true, forKey: doneKeyPrefix + retiredID)
     }
 
+    /// What one ROM's pass did.
+    struct Outcome: Equatable {
+        /// One line per file moved or copied, or that failed.
+        var log: [String] = []
+        /// A source file for some rule existed (even if already migrated).
+        var foundSource = false
+        var failed = false
+    }
+
     /// Applies `rules` to one ROM. Returns one line per file moved or copied.
     @discardableResult
     static func migrate(romBase: String, rules: [RetiredBatterySaveRule], batteryRoot: URL, saveStatesRoot: URL,
                         fileManager: FileManager = .default) -> [String] {
-        var log: [String] = []
+        migrateOutcome(romBase: romBase, rules: rules, batteryRoot: batteryRoot,
+                       saveStatesRoot: saveStatesRoot, fileManager: fileManager).log
+    }
+
+    static func migrateOutcome(romBase: String, rules: [RetiredBatterySaveRule], batteryRoot: URL, saveStatesRoot: URL,
+                               fileManager: FileManager = .default) -> Outcome {
+        var outcome = Outcome()
         let batteryFolder = batteryRoot.appendingPathComponent(romBase, isDirectory: true)
         func file(in folder: URL, _ ext: String) -> URL {
             folder.appendingPathComponent(romBase).appendingPathExtension(ext)
@@ -52,6 +67,7 @@ enum RetiredBatterySaveMigration {
                 ? batteryFolder
                 : saveStatesRoot.appendingPathComponent(romBase, isDirectory: true)
             var current = file(in: sourceFolder, rule.fileExtension)
+            if fileManager.fileExists(atPath: current.path) { outcome.foundSource = true }
 
             if rule.moveToBatterySaves, sourceFolder != batteryFolder {
                 let destination = file(in: batteryFolder, rule.fileExtension)
@@ -59,13 +75,15 @@ enum RetiredBatterySaveMigration {
                     do {
                         try fileManager.createDirectory(at: batteryFolder, withIntermediateDirectories: true)
                         try fileManager.moveItem(at: current, to: destination)
-                        log.append("moved \(current.lastPathComponent) from Save States to Battery States")
+                        outcome.log.append("moved \(current.lastPathComponent) from Save States to Battery States")
                     } catch {
-                        log.append("could not move \(current.lastPathComponent): \(error.localizedDescription)")
+                        outcome.log.append("could not move \(current.lastPathComponent): \(error.localizedDescription)")
+                        outcome.failed = true
                         continue
                     }
                 }
                 current = destination
+                if fileManager.fileExists(atPath: current.path) { outcome.foundSource = true }
             }
 
             guard rule.copyToSRM, fileManager.fileExists(atPath: current.path) else { continue }
@@ -74,12 +92,13 @@ enum RetiredBatterySaveMigration {
             do {
                 try fileManager.createDirectory(at: batteryFolder, withIntermediateDirectories: true)
                 try fileManager.copyItem(at: current, to: srm)
-                log.append("copied \(current.lastPathComponent) to \(srm.lastPathComponent)")
+                outcome.log.append("copied \(current.lastPathComponent) to \(srm.lastPathComponent)")
             } catch {
-                log.append("could not copy \(current.lastPathComponent) to .\(srmExtension): \(error.localizedDescription)")
+                outcome.log.append("could not copy \(current.lastPathComponent) to .\(srmExtension): \(error.localizedDescription)")
+                outcome.failed = true
             }
         }
-        return log
+        return outcome
     }
 
     /// Jobs for active retired cores with battery rules that haven't run yet. Reads Realm
@@ -98,16 +117,26 @@ enum RetiredBatterySaveMigration {
     }
 
     /// File work; call off the main thread (the Paths roots may block on iCloud).
+    /// A retired core is marked done only when nothing failed and either a source file was
+    /// found or there are no candidate games. Otherwise (a failed move, a not-yet-downloaded
+    /// iCloud file, a game imported later) `pendingJobs` returns it again next launch.
     static func run(_ jobs: [RetiredBatterySaveJob], batteryRoot: URL, saveStatesRoot: URL,
                     fileManager: FileManager = .default, defaults: UserDefaults = .standard) {
         for job in jobs {
+            var found = false
+            var failed = false
             for romBase in job.romBases {
-                for line in migrate(romBase: romBase, rules: job.rules, batteryRoot: batteryRoot,
-                                    saveStatesRoot: saveStatesRoot, fileManager: fileManager) {
+                let outcome = migrateOutcome(romBase: romBase, rules: job.rules, batteryRoot: batteryRoot,
+                                             saveStatesRoot: saveStatesRoot, fileManager: fileManager)
+                for line in outcome.log {
                     ILOG("RetiredBatterySaveMigration: \(job.retiredID) \(romBase): \(line)")
                 }
+                found = found || outcome.foundSource
+                failed = failed || outcome.failed
             }
-            markDone(job.retiredID, defaults: defaults)
+            if !failed, found || job.romBases.isEmpty {
+                markDone(job.retiredID, defaults: defaults)
+            }
         }
     }
 }
