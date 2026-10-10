@@ -87,6 +87,10 @@ private:
     CGRect _skinTopPx, _skinBottomPx; // skin screen rects in render-view pixels, relative to the view
     CGSize _skinUnionPx;             // drawable size those rects were computed for
     BOOL _skinSingleAreaActive;      // a skin gave one area for both screens: its shape picks the layout
+    CGRect _pendingSkinTop, _pendingSkinBottom; // skin frames that arrived before the render view existed
+    BOOL _hasPendingSkinFrames;
+    CGRect _pendingSingleArea;       // single-area frame queued the same way
+    BOOL _hasPendingSingleArea;
     CGSize _lastDrawablePx;          // last size handed to the window; relayout reuses it
     std::atomic<bool> _leftStickDrivesCStick;   // PV3DSButtonAnalogMode toggles it
 }

@@ -210,6 +210,7 @@ extension PVEmulatorViewController {
         let top = view.convert(ordered[0], to: touchView)
         let bottom = view.convert(ordered[1], to: touchView)
         DLOG("🎮 SKIN: handing both screen frames to the bridge: top=\(top) bottom=\(bottom)")
+        if !core.isRunning { DLOG("🎮 SKIN: dual-screen frames handed over before the core started; the bridge queues them") }
         bridge.applyDualScreenRenderFramesInTouchView?(top, bottom: bottom)
         return true
     }

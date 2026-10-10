@@ -18,6 +18,7 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
                          NSInteger portraitOpt, bool swap, bool portrait) {
     auto& v = Settings::values;
     v.swap_screen.SetValue(swap);
+    ILOG(@"[PVAzahar] layout branch=%s", skin ? "skin" : (singleArea ? "singleArea" : "user"));
     if (!skin) {
         if (singleArea) {
             // One skin area holds both screens: a wide area reads as side by side, anything else
@@ -99,6 +100,18 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
 #if !TARGET_OS_TV
     view.onTouch = ^(UITouch *touch, BOOL ended) { [weakSelf sendTouchEvent:touch ended:ended]; };
 #endif
+
+    // Skin frames published before this view existed (the host does it in viewDidLoad) replay now,
+    // so the first relayout already runs with the skin layout instead of waiting for a rotation.
+    if (_hasPendingSkinFrames) {
+        _hasPendingSkinFrames = NO;
+        ILOG(@"[PVAzahar] replaying queued skin frames top=%@ bottom=%@", NSStringFromCGRect(_pendingSkinTop), NSStringFromCGRect(_pendingSkinBottom));
+        [self applyDualScreenRenderFramesInTouchView:_pendingSkinTop bottom:_pendingSkinBottom];
+    } else if (_hasPendingSingleArea) {
+        _hasPendingSingleArea = NO;
+        ILOG(@"[PVAzahar] replaying queued skin area %@", NSStringFromCGRect(_pendingSingleArea));
+        [self applyRenderViewFrameInTouchView:_pendingSingleArea];
+    }
 }
 
 /// Main thread (layoutSubviews). Queues the layout change onto the emu thread, which owns the window.
@@ -115,8 +128,8 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
     const CGRect top = _skinTopPx, bottom = _skinBottomPx;
     const NSInteger layoutOpt = self.layoutOption, portraitOpt = self.portraitLayoutOption;
     const bool swap = self.swapScreens;
-    ILOG(@"[PVAzahar] relayout %ux%u portrait=%d skinLayout=%d layout=%ld portraitLayout=%ld swap=%d",
-         w, h, portrait, skin, (long)layoutOpt, (long)portraitOpt, swap);
+    ILOG(@"[PVAzahar] relayout %ux%u portrait=%d skinLayout=%d singleArea=%d pendingFrames=%d layout=%ld portraitLayout=%ld swap=%d",
+         w, h, portrait, skin, singleArea, (int)(_hasPendingSkinFrames || _hasPendingSingleArea), (long)layoutOpt, (long)portraitOpt, swap);
     [self runOnEmuThread:[self, w, h, portrait, skin, singleArea, top, bottom, layoutOpt, portraitOpt, swap] {
         if (!_window) { return; }
         ApplyLayoutSettings(skin, singleArea, top, bottom, layoutOpt, portraitOpt, swap, portrait);
@@ -194,21 +207,35 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
 }
 
 - (void)applyRenderViewFrameInTouchView:(CGRect)frame {
-    if (!_renderView) { return; }
-    const BOOL hadSkinLayout = _skinLayoutActive;
+    if (!_renderView) {
+        ILOG(@"[PVAzahar] skin area queued before render view");
+        _pendingSingleArea = frame; _hasPendingSingleArea = YES; _hasPendingSkinFrames = NO;
+        return;
+    }
+    _hasPendingSingleArea = NO;
+    const BOOL hadSkinLayout = _skinLayoutActive, hadSingleArea = _skinSingleAreaActive;
+    // A frame covering the whole host is "no skin" (tvOS, or a reset): keep the user's layout.
+    UIView *host = _renderView.superview;
+    const BOOL fullBounds = host && CGRectEqualToRect(CGRectIntegral(frame), CGRectIntegral(host.bounds));
     _skinLayoutActive = NO;          // one frame: both screens go inside it...
-    _skinSingleAreaActive = YES;     // ...laid out by the area's shape, not the user's option
+    _skinSingleAreaActive = !fullBounds;     // ...laid out by the area's shape, not the user's option
     if (_renderViewConstraints) { [NSLayoutConstraint deactivateConstraints:_renderViewConstraints]; }
     _renderView.translatesAutoresizingMaskIntoConstraints = YES;
     _renderView.frame = frame;
     [_renderView layoutIfNeeded];   // layoutSubviews reports the new drawable size
-    if (hadSkinLayout) { [self relayoutWindow]; }   // same size, different layout
+    if (hadSkinLayout || hadSingleArea != _skinSingleAreaActive) { [self relayoutWindow]; }   // same size, different layout
 }
 
 /// Both skin screens, in touch-view points. The view covers their union and azahar's custom layout
 /// puts each screen exactly where the skin drew it, so the skin's art and touch areas line up.
 - (void)applyDualScreenRenderFramesInTouchView:(CGRect)top bottom:(CGRect)bottom {
-    if (!_renderView || CGRectIsEmpty(top) || CGRectIsEmpty(bottom)) { return; }
+    if (CGRectIsEmpty(top) || CGRectIsEmpty(bottom)) { return; }
+    if (!_renderView) {
+        ILOG(@"[PVAzahar] skin frames queued before render view");
+        _pendingSkinTop = top; _pendingSkinBottom = bottom; _hasPendingSkinFrames = YES; _hasPendingSingleArea = NO;
+        return;
+    }
+    _hasPendingSkinFrames = NO;
     const CGRect unionRect = CGRectIntegral(CGRectUnion(top, bottom));
     if (_renderViewConstraints) { [NSLayoutConstraint deactivateConstraints:_renderViewConstraints]; }
     _renderView.translatesAutoresizingMaskIntoConstraints = YES;
