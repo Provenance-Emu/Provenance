@@ -13,7 +13,9 @@ import Foundation
 /// Cache entries are keyed by a hash derived from both the source ROM and the patch file,
 /// so changing either invalidates the cache entry. Original ROMs are never modified.
 ///
-/// Cache directory: `Library/Caches/PVPatchedROMs/<key>/<outputStem>.<ext>`
+/// Cache directory: `Documents/PatchedROMs/<key>/<outputStem>.<ext>` on iOS/macOS
+/// (so `FileLocationResolver` / `PVFile` can resolve them), and
+/// `Library/Caches/PatchedROMs/...` on tvOS.
 public actor PatchCache {
 
     private let cacheDirectory: URL
@@ -22,10 +24,21 @@ public actor PatchCache {
         if let dir = cacheDirectory {
             self.cacheDirectory = dir
         } else {
-            let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
-                ?? URL(fileURLWithPath: NSTemporaryDirectory())
-            self.cacheDirectory = caches.appendingPathComponent("PVPatchedROMs", isDirectory: true)
+            self.cacheDirectory = Self.defaultCacheDirectory()
         }
+    }
+
+    /// Platform-appropriate root for patched ROM artifacts.
+    public static func defaultCacheDirectory() -> URL {
+#if os(tvOS)
+        let base = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            ?? URL(fileURLWithPath: NSTemporaryDirectory())
+#else
+        let base = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+            ?? FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+            ?? URL(fileURLWithPath: NSTemporaryDirectory())
+#endif
+        return base.appendingPathComponent("PatchedROMs", isDirectory: true)
     }
 
     /// Look up a cached patched ROM using already-loaded file data.

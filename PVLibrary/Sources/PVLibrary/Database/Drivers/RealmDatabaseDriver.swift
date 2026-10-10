@@ -68,17 +68,23 @@ public final class RealmDatabaseDriver: DatabaseDriver, GameLibraryRealm, GameLi
     
     ///
     public lazy var favoritesResults: Results<GameType> = {
-        database.all(GameType.self, where: #keyPath(GameType.isFavorite), value: true).sorted(byKeyPath: #keyPath(GameType.title), ascending: false)
+        database.all(GameType.self)
+            .filter("isFavorite == true AND isHiddenPatchVariant == false")
+            .sorted(byKeyPath: #keyPath(GameType.title), ascending: false)
     }()
     
     ///
     public lazy var recentsResults: Results<RecentGame> = {
-        database.all(RecentGame.self).sorted(byKeyPath: #keyPath(RecentGame.lastPlayedDate), ascending: false)
+        database.all(RecentGame.self)
+            .filter("game == nil OR game.isHiddenPatchVariant == false")
+            .sorted(byKeyPath: #keyPath(RecentGame.lastPlayedDate), ascending: false)
     }()
     
     ///
     public lazy var mostPlayedResults: Results<GameType> = {
-        database.all(GameType.self).sorted(byKeyPath: #keyPath(GameType.playCount), ascending: false)
+        database.all(GameType.self)
+            .filter("isHiddenPatchVariant == false")
+            .sorted(byKeyPath: #keyPath(GameType.playCount), ascending: false)
     }()
     
     ///
@@ -206,19 +212,22 @@ extension RealmDatabaseDriver {
     /// - Parameter searchText: Text to search for
     /// - Returns: Live updating results of GameTypes
     public func searchResults(for searchText: String) -> Results<GameType> {
+        let visible = NSPredicate(format: "isHiddenPatchVariant == false")
         // Search first by title, and a broader search if that one's empty
         if searchText.count == 0 {
-            return self.database.all(GameType.self).sorted(byKeyPath: #keyPath(GameType.title), ascending: true)
+            return self.database.all(GameType.self)
+                .filter(visible)
+                .sorted(byKeyPath: #keyPath(GameType.title), ascending: true)
         } else {
             
             /// Search by title contains
             let titlePredicate = NSPredicate(
-                format: "title CONTAINS[c] %@",
+                format: "isHiddenPatchVariant == false AND title CONTAINS[c] %@",
                 argumentArray: [searchText])
 
             /// Search LIKE in genre, region, description, developer or publisher
             let searchPredicate = NSPredicate(
-                format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@",
+                format: "isHiddenPatchVariant == false AND (genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@)",
                 argumentArray: [searchText, searchText, searchText, searchText, searchText])
             
             let titleResults = self.database.all(GameType.self, filter: titlePredicate)

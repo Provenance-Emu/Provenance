@@ -9,8 +9,9 @@
 /// PVPatching — ROM patch file support for Provenance.
 ///
 /// Supports applying and creating patches in common formats (IPS, BPS, UPS, PPF).
-/// Original ROMs are never modified; patched ROMs are cached with unique filenames
-/// so each variant gets isolated battery-save / save-state directories.
+/// Original ROMs are never modified; patched ROMs are stored under `PatchedROMs/`
+/// with unique filenames so each variant gets isolated battery-save / save-state
+/// directories and resolves through the normal Documents/Caches file roots.
 ///
 /// ## Quick start
 /// ```swift

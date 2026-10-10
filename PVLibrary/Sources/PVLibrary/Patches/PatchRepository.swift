@@ -276,9 +276,18 @@ public final class PatchRepository {
                 livePatch?.variantGameMD5 = variantMD5
                 livePatch?.sourceSHA256 = artifact.sourceSHA256
                 livePatch?.outputStem = artifact.outputStem
-                existing.isPatchVariant = true
-                existing.baseGameMD5 = liveBase?.md5Hash
-                existing.patchID = livePatch?.id
+                if existing.isPatchVariant || existing.patchID == livePatch?.id {
+                    // Our managed variant — refresh metadata / file pointer.
+                    existing.isPatchVariant = true
+                    existing.isHiddenPatchVariant = !(livePatch?.showAsLibraryTile ?? false)
+                    existing.baseGameMD5 = liveBase?.md5Hash
+                    existing.patchID = livePatch?.id
+                    existing.file = Self.makeVariantFile(for: artifact.url)
+                    existing.romPath = artifact.url.lastPathComponent
+                    existing.isDownloaded = true
+                }
+                // Else: a standalone library ROM already has this content hash.
+                // Link the patch to it for launch, but do not absorb / re-flag it.
                 result = existing
                 return
             }
@@ -296,7 +305,7 @@ public final class PatchRepository {
             variant.customArtworkURL = liveBase?.customArtworkURL ?? ""
             variant.userPreferredCoreID = liveBase?.userPreferredCoreID
             variant.isDownloaded = true
-            variant.file = PVFile(withURL: artifact.url)
+            variant.file = Self.makeVariantFile(for: artifact.url)
             variant.romPath = artifact.url.lastPathComponent
             variant.crc = patchedCRC
 
@@ -376,31 +385,42 @@ public final class PatchRepository {
             let base = baseGame.thaw() ?? realm.object(ofType: PVGame.self, forPrimaryKey: baseMD5)
             let variantMD5 = artifact.patchedMD5
 
-            let variant: PVGame
             if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: variantMD5) {
-                variant = existing
-            } else {
-                variant = PVGame()
-                variant.md5Hash = variantMD5
-                variant.title = "\(base?.title ?? "Game") — \(p?.displayTitle ?? "Patch")"
-                variant.systemIdentifier = base?.systemIdentifier ?? ""
-                variant.system = base?.system
-                variant.isPatchVariant = true
-                variant.isHiddenPatchVariant = !(p?.showAsLibraryTile ?? false)
-                variant.baseGameMD5 = baseMD5
-                variant.patchID = p?.id
-                variant.originalArtworkURL = base?.originalArtworkURL ?? ""
-                variant.customArtworkURL = base?.customArtworkURL ?? ""
-                variant.userPreferredCoreID = base?.userPreferredCoreID
-                realm.add(variant, update: .modified)
+                p?.variantGame = existing
+                p?.variantGameMD5 = variantMD5
+                p?.sourceSHA256 = artifact.sourceSHA256
+                p?.outputStem = artifact.outputStem
+                if existing.isPatchVariant || existing.patchID == p?.id {
+                    existing.file = Self.makeVariantFile(for: artifact.url)
+                    existing.romPath = artifact.url.lastPathComponent
+                    existing.isDownloaded = true
+                    existing.isPatchVariant = true
+                    existing.isHiddenPatchVariant = !(p?.showAsLibraryTile ?? false)
+                    existing.baseGameMD5 = baseMD5
+                    existing.patchID = p?.id
+                }
+                // Standalone ROM with matching content: launch as-is, don't absorb.
+                result = existing
+                return
             }
 
-            variant.file = PVFile(withURL: artifact.url)
-            variant.romPath = artifact.url.lastPathComponent
-            variant.isDownloaded = true
+            let variant = PVGame()
+            variant.md5Hash = variantMD5
+            variant.title = "\(base?.title ?? "Game") — \(p?.displayTitle ?? "Patch")"
+            variant.systemIdentifier = base?.systemIdentifier ?? ""
+            variant.system = base?.system
             variant.isPatchVariant = true
+            variant.isHiddenPatchVariant = !(p?.showAsLibraryTile ?? false)
             variant.baseGameMD5 = baseMD5
             variant.patchID = p?.id
+            variant.originalArtworkURL = base?.originalArtworkURL ?? ""
+            variant.customArtworkURL = base?.customArtworkURL ?? ""
+            variant.userPreferredCoreID = base?.userPreferredCoreID
+            variant.file = Self.makeVariantFile(for: artifact.url)
+            variant.romPath = artifact.url.lastPathComponent
+            variant.isDownloaded = true
+            realm.add(variant, update: .modified)
+
             p?.variantGame = variant
             p?.variantGameMD5 = variantMD5
             p?.sourceSHA256 = artifact.sourceSHA256
@@ -411,6 +431,12 @@ public final class PatchRepository {
             throw PatchError.patchApplicationFailed("Failed to prepare patch variant for launch")
         }
         return result
+    }
+
+    /// Build a `PVFile` rooted at the platform documents/caches directory so
+    /// `FileLocationResolver` can find patched artifacts under `PatchedROMs/`.
+    private static func makeVariantFile(for artifactURL: URL) -> PVFile {
+        PVFile(withURL: artifactURL, relativeRoot: .platformDefault)
     }
 
     /// Export a collision-safe patched ROM copy into Documents/PatchedROMs (or provided dir).

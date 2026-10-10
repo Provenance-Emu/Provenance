@@ -1111,6 +1111,10 @@ public extension RomDatabase {
         // --- Cloud Sync Pre-Deletion Hook ---
         // Capture MD5 *before* attempting any local deletion.
         let md5 = game.md5Hash
+        let isPatchVariant = game.isPatchVariant
+        let patchID = game.patchID
+        // Prefer the real on-disk file for variants (PatchedROMs/…); never the ROMs/ path.
+        let variantFileURL = isPatchVariant ? game.file?.url : nil
 
         // Only post notification if the deletion was initiated by the user AND md5 is valid
         if source == .userInitiated {
@@ -1126,7 +1130,6 @@ public extension RomDatabase {
         }
         // --- End Cloud Sync Hook ---
 
-        let romURL = PVEmulatorConfiguration.path(forGame: game)
         if deleteArtwork, !game.customArtworkURL.isEmpty {
             do {
                 try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
@@ -1154,6 +1157,40 @@ public extension RomDatabase {
                 }
             }
         }
+
+        // Patch variants: never call path(forGame:) — that points at ROMs/<system>/<filename>
+        // and can erase the original ROM when stems collide. Delete the patched artifact only.
+        if isPatchVariant {
+#if os(iOS)
+            deleteFromSpotlight(game: game)
+#endif
+            defer { RomDatabase.reloadGamesCache() }
+            deletePatchRecords(linkedToVariantMD5: md5, patchID: patchID)
+            // Orphan cleanup: if no PVPatch owned the row, still remove the PVGame.
+            if let orphan = realm.object(ofType: PVGame.self, forPrimaryKey: md5), !orphan.isInvalidated {
+                do {
+                    try writeTransaction {
+                        orphan.saveStates.forEach { realm.delete($0) }
+                        orphan.cheats.forEach { realm.delete($0) }
+                        orphan.recentPlays.forEach { realm.delete($0) }
+                        orphan.screenShots.forEach { realm.delete($0) }
+                        realm.delete(orphan)
+                    }
+                } catch {
+                    WLOG("Failed to delete orphan patch variant \(md5): \(error.localizedDescription)")
+                }
+            }
+            if let variantFileURL, FileManager.default.fileExists(atPath: variantFileURL.path) {
+                // Only remove files under PatchedROMs / cache — never ROMs/.
+                let path = variantFileURL.path
+                if path.contains("/PatchedROMs/") || path.contains("/PVPatchedROMs/") {
+                    try? FileManager.default.removeItem(at: variantFileURL)
+                }
+            }
+            return
+        }
+
+        let romURL = PVEmulatorConfiguration.path(forGame: game)
         if let romURL = romURL, FileManager.default.fileExists(atPath: romURL.path) {
             do {
                 try FileManager.default.removeItem(at: romURL)
@@ -1172,12 +1209,7 @@ public extension RomDatabase {
             RomDatabase.reloadGamesCache()
         }
         do {
-            // Patch lifecycle: deleting a base game removes its variants/patches (never other ROMs).
-            // Deleting a variant tile removes that patch + variant only (original ROM stays).
-            if game.isPatchVariant {
-                deletePatchRecords(linkedToVariantMD5: md5, patchID: game.patchID)
-                return
-            }
+            // Deleting a base game removes its managed variants/patches (never other ROMs).
             deletePatchRecords(ownedByBaseGameMD5: md5)
             deleteRelatedFilesGame(game)
             game.saveStates.forEach { try? $0.delete() }
@@ -1215,9 +1247,12 @@ public extension RomDatabase {
     private func deleteSinglePatchRecord(_ patch: PVPatch) {
         let patchFileURL = patch.file?.url
         let variant = patch.variantGame
+        // Capture before Realm delete — only remove managed variant artifacts, never base ROMs.
+        let variantFileURL = variant?.isPatchVariant == true ? variant?.file?.url : nil
+        let shouldDeleteVariantGame = variant?.isPatchVariant == true
         do {
             try writeTransaction {
-                if let variant, !variant.isInvalidated {
+                if let variant, !variant.isInvalidated, shouldDeleteVariantGame {
                     variant.saveStates.forEach { realm.delete($0) }
                     variant.cheats.forEach { realm.delete($0) }
                     variant.recentPlays.forEach { realm.delete($0) }
@@ -1232,6 +1267,12 @@ public extension RomDatabase {
         }
         if let patchFileURL, FileManager.default.fileExists(atPath: patchFileURL.path) {
             try? FileManager.default.removeItem(at: patchFileURL)
+        }
+        if let variantFileURL, FileManager.default.fileExists(atPath: variantFileURL.path) {
+            let path = variantFileURL.path
+            if path.contains("/PatchedROMs/") || path.contains("/PVPatchedROMs/") {
+                try? FileManager.default.removeItem(at: variantFileURL)
+            }
         }
     }
 
