@@ -111,7 +111,8 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
   FreeIntv, GameMusicEmu, Gearcoleco, JollyGoodEmulation, Mini_vMac, Mu,
   Mupen64Plus-NX, Play, Potator, Reicast, Sudachi, VecX, Yabause, fuse, opera,
   pcsx_rearmed, sm64ex, snesticle, supergrafx. Their games run on the thin
-  wrapper through the replacement table in `PVCore.swift`.
+  wrapper through the replacement table in `PVCore.swift` where a replacement exists (22
+  entries); cores that were disabled or never shipped have no entry.
 - **Rule of thumb:** if a libretro buildbot dylib already serves the
   core and the thin wrapper handles it, fix the thin wrapper (or the
   upstream dylib via Provenance fork), not a native PV* shell.
