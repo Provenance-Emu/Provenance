@@ -229,7 +229,7 @@ Higher tiers may import lower tiers. **Never the reverse.**
 
 ### DS Dual-Screen Skins
 - `supportsSkins` flag on native DS cores (`PVDesmume2015Core`, `PVMelonDSCore`).
-- `DefaultDeltaSkin` layout handles dual-screen sizing independently.
+- Without a packaged skin the programmatic overlay (`PVTouchOverlay`, `DSPad`/`N3DSPad` families) places both screens; the generated `DefaultDeltaSkin` was deleted in Oct 2026.
 - Touch routing: only works with native cores, not RetroArch-wrapped dylib cores.
 
 ### NSLock Pattern (Modern)
