@@ -1,0 +1,4 @@
+# Tool versions for the dev workspace (`make dev`). Tuist generates
+# Provenance-Dev.xcworkspace; CI (.github/workflows/dev-workspace.yml) installs the same pin.
+[tools]
+tuist = "4.200.0"
