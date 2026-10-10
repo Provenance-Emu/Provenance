@@ -127,40 +127,66 @@ public final class PatchRepository {
             return nil
         }
 
-        let inspection = try inspector.inspect(patchURL: patchURL)
-        let games = realm.objects(PVGame.self).filter("isPatchVariant == false AND contentless == false")
-        var candidates: [PatchMatchCandidate] = []
-        for game in games {
-            guard let filename = game.file?.fileName else { continue }
-            var crc: UInt32?
-            if livePatch.hasSourceCRC32, let url = game.file?.url,
-               let data = try? Data(contentsOf: url, options: .mappedIfSafe) {
-                crc = patchCRC32(data)
-            } else if !game.crc.isEmpty, let value = UInt32(game.crc, radix: 16) {
-                crc = value
-            }
-            candidates.append(
-                PatchMatchCandidate(
-                    id: game.md5Hash,
-                    title: game.title,
+        let patchID = livePatch.id
+        let needsSourceCRC = livePatch.hasSourceCRC32
+        let patchFilename = patchURL.lastPathComponent
+
+        // Snapshot lightweight game metadata on the main actor, then do any
+        // disk CRC work off-main so large libraries can't stall the UI.
+        struct GameSnapshot: Sendable {
+            let md5: String
+            let title: String
+            let filename: String
+            let storedCRC: String
+            let filePath: String?
+        }
+        let snapshots: [GameSnapshot] = realm.objects(PVGame.self)
+            .filter("isPatchVariant == false AND contentless == false")
+            .compactMap { game in
+                guard let filename = game.file?.fileName else { return nil }
+                return GameSnapshot(
                     md5: game.md5Hash,
-                    crc32: crc,
+                    title: game.title,
                     filename: filename,
+                    storedCRC: game.crc,
+                    filePath: game.file?.url?.path
+                )
+            }
+
+        let inspection = try await Task.detached(priority: .userInitiated) {
+            try PatchInspector().inspect(patchURL: patchURL)
+        }.value
+
+        let candidates: [PatchMatchCandidate] = await Task.detached(priority: .userInitiated) {
+            snapshots.map { snap in
+                var crc: UInt32?
+                if !snap.storedCRC.isEmpty, let value = UInt32(snap.storedCRC, radix: 16) {
+                    crc = value
+                } else if needsSourceCRC, let path = snap.filePath,
+                          let data = try? Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe) {
+                    crc = patchCRC32(data)
+                }
+                return PatchMatchCandidate(
+                    id: snap.md5,
+                    title: snap.title,
+                    md5: snap.md5,
+                    crc32: crc,
+                    filename: snap.filename,
                     confidence: .none,
                     score: 0
                 )
-            )
-        }
+            }
+        }.value
 
         let ranked = inspector.rank(
             candidates: candidates,
             inspection: inspection,
-            patchFilename: patchURL.lastPathComponent
+            patchFilename: patchFilename
         )
         guard let best = inspector.unambiguousMatch(from: ranked),
               let game = realm.object(ofType: PVGame.self, forPrimaryKey: best.md5) else {
             try RomDatabase.sharedInstance.writeTransaction {
-                guard let p = livePatch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: livePatch.id) else { return }
+                guard let p = realm.object(ofType: PVPatch.self, forPrimaryKey: patchID) else { return }
                 p.matchState = .pending
                 if let top = ranked.first {
                     p.matchConfidenceRaw = top.confidence.rawValue
@@ -171,7 +197,7 @@ public final class PatchRepository {
         }
 
         try RomDatabase.sharedInstance.writeTransaction {
-            guard let p = livePatch.thaw() ?? realm.object(ofType: PVPatch.self, forPrimaryKey: livePatch.id) else { return }
+            guard let p = realm.object(ofType: PVPatch.self, forPrimaryKey: patchID) else { return }
             p.game = game
             p.baseGameMD5 = game.md5Hash
             p.matchState = .matched
@@ -183,7 +209,8 @@ public final class PatchRepository {
             p.patchDescription = p.patchDescription ?? inspection.patchDescription
         }
 
-        _ = try await ensureVariant(for: livePatch, baseGame: game)
+        guard let refreshed = realm.object(ofType: PVPatch.self, forPrimaryKey: patchID) else { return game }
+        _ = try await ensureVariant(for: refreshed, baseGame: game)
         return game
     }
 
@@ -467,4 +494,16 @@ public final class PatchRepository {
             try deletePatch(patch)
         }
     }
+}
+
+/// Local CRC32 for matching (mirrors PVPatching's internal `patchCRC32`).
+private func patchCRC32(_ data: Data) -> UInt32 {
+    var crc: UInt32 = 0xFFFF_FFFF
+    for byte in data {
+        crc ^= UInt32(byte)
+        for _ in 0..<8 {
+            crc = (crc >> 1) ^ (0xEDB8_8320 * (crc & 1))
+        }
+    }
+    return ~crc
 }

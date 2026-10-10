@@ -45,6 +45,32 @@ final class PatchCreatorTests: XCTestCase {
         XCTAssertEqual(applied, modified)
     }
 
+    func testCreateBPSWhenModifiedIsShorterThanOriginal() throws {
+        let original = Data((0..<64).map { UInt8($0) })
+        let modified = Data(original.prefix(40)) // shrink
+
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PatchCreatorBPSShrink-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: dir) }
+
+        let originalURL = dir.appendingPathComponent("long.rom")
+        let modifiedURL = dir.appendingPathComponent("short.rom")
+        let patchURL = dir.appendingPathComponent("shrink.bps")
+        try original.write(to: originalURL)
+        try modified.write(to: modifiedURL)
+
+        _ = try PatchCreator().create(
+            originalURL: originalURL,
+            modifiedURL: modifiedURL,
+            outputURL: patchURL,
+            format: .bps
+        )
+
+        let applied = try BPSPatcher().apply(patch: Data(contentsOf: patchURL), to: original)
+        XCTAssertEqual(applied, modified)
+    }
+
     func testCreateAndApplyIPSRoundTrip() throws {
         let original = Data(repeating: 0x00, count: 64)
         var modified = original

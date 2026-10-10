@@ -307,10 +307,19 @@ public final class RealmConfiguration {
                     newObject?["isHiddenPatchVariant"] = false
                 }
                 migration.enumerateObjects(ofType: PVPatch.className()) { oldObject, newObject in
-                    newObject?["baseGameMD5"] = oldObject?["game"] != nil ? nil : nil
-                    newObject?["matchState"] = "pending"
-                    newObject?["matchConfidenceRaw"] = "none"
-                    newObject?["matchScore"] = 0.0
+                    // Preserve existing game links — never orphan linked patches as pending.
+                    if let linkedGame = oldObject?["game"] as? MigrationObject,
+                       let md5 = linkedGame["md5Hash"] as? String, !md5.isEmpty {
+                        newObject?["baseGameMD5"] = md5
+                        newObject?["matchState"] = "manual"
+                        newObject?["matchConfidenceRaw"] = "exact"
+                        newObject?["matchScore"] = 1.0
+                    } else {
+                        newObject?["baseGameMD5"] = nil
+                        newObject?["matchState"] = "pending"
+                        newObject?["matchConfidenceRaw"] = "none"
+                        newObject?["matchScore"] = 0.0
+                    }
                     newObject?["hasSourceCRC32"] = false
                     newObject?["sourceCRC32"] = 0
                     newObject?["showAsLibraryTile"] = false

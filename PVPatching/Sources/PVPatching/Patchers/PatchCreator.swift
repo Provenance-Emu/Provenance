@@ -121,11 +121,12 @@ public struct PatchCreator: Sendable {
         body.append(contentsOf: encodeVLI(metaData.count))
         body.append(metaData)
 
-        // Encode as TargetRead runs of differing bytes and SourceRead runs of matching bytes.
+        // Encode only up to the modified (target) size. Extra source bytes when the
+        // target is shorter are simply ignored — never emit zero-padding TargetReads
+        // past `modified.count` or BPS apply will reject the patch as corrupt.
         var index = 0
-        let maxLen = max(original.count, modified.count)
-        while index < maxLen {
-            if index < original.count, index < modified.count, original[index] == modified[index] {
+        while index < modified.count {
+            if index < original.count, original[index] == modified[index] {
                 var length = 0
                 while index + length < original.count,
                       index + length < modified.count,
@@ -136,12 +137,11 @@ public struct PatchCreator: Sendable {
                 index += length
             } else {
                 var bytes = [UInt8]()
-                while index + bytes.count < maxLen {
+                while index + bytes.count < modified.count {
                     let i = index + bytes.count
-                    let same = i < original.count && i < modified.count && original[i] == modified[i]
+                    let same = i < original.count && original[i] == modified[i]
                     if same { break }
-                    let value: UInt8 = i < modified.count ? modified[i] : 0
-                    bytes.append(value)
+                    bytes.append(modified[i])
                     // Cap TargetRead chunks to keep VLI encoding simple / bounded.
                     if bytes.count >= 1024 { break }
                 }
@@ -164,28 +164,29 @@ public struct PatchCreator: Sendable {
     private func createIPS(original: Data, modified: Data, isIPS32: Bool) throws -> Data {
         var patch = Data(Array("PATCH".utf8))
         let maxOffset = isIPS32 ? 0xFFFF_FFFF : 0xFF_FFFF
-        let maxLen = max(original.count, modified.count)
+        // Only encode bytes that exist in the modified ROM. Shrinks are represented
+        // by the optional truncation trailer after EOF (classic IPS) rather than
+        // writing zero-padding records past the new end.
         var index = 0
 
-        while index < maxLen {
+        while index < modified.count {
             // Skip matching bytes
-            while index < maxLen {
-                let same = index < original.count && index < modified.count && original[index] == modified[index]
+            while index < modified.count {
+                let same = index < original.count && original[index] == modified[index]
                 if !same { break }
                 index += 1
             }
-            guard index < maxLen else { break }
+            guard index < modified.count else { break }
             guard index <= maxOffset else {
                 throw PatchError.patchApplicationFailed("ROM too large for \(isIPS32 ? "IPS32" : "IPS") offsets")
             }
 
             let recordStart = index
             var bytes = [UInt8]()
-            while index < maxLen {
-                let same = index < original.count && index < modified.count && original[index] == modified[index]
+            while index < modified.count {
+                let same = index < original.count && original[index] == modified[index]
                 if same { break }
-                let value: UInt8 = index < modified.count ? modified[index] : 0
-                bytes.append(value)
+                bytes.append(modified[index])
                 index += 1
                 if bytes.count >= 0xFFFF { break }
             }
