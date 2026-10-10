@@ -100,6 +100,12 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 - **Active native PV* cores** (custom forks or long-supported legacy we
   actively extend): Mupen, snes9x, Stella, Mednafen, Jaguar, Dolphin,
   FCEU, ProSystem, Genesis-Plus-GX, Flycast, and similar.
+  Source of truth: `docs/superpowers/specs/2026-10-10-core-audit.md` (KEEP rows). Jaguar and
+  Flycast are not native cores (Jaguar runs on the virtualjaguar dylib; there is no
+  `Cores/Flycast`). The 32 retired cores (the audit's 24 RETIRE rows minus `Debug`,
+  plus Desmume2015, melonDS, Atari800, Bliss, CrabEMU, Gambatte, O2EM, PokeMini,
+  VisualBoyAdvance-M) live on as `PVCore.retiredCores` entries (`RetiredCoreMigration`,
+  `RetiredBatterySaveMigration`); `Cores/Debug` stays for its `PVDebug.c` simulator stub.
 - **Placeholder PV* targets** (in the workspace as scaffolding but NOT
   actively used in the shipping app): DuckStation, BeetlePSX, and
   similar — these duplicate libretro cores we now serve via the thin
@@ -166,10 +172,73 @@ RetroArch-based cores live in `CoresRetro/RetroArch/` and use `PVCoreBridgeRetro
 - **PVUI cannot build inside a git worktree.** The PackageBuildInfo plugin reads `.git/HEAD`; a worktree's `.git` is a file. Run PVUI tests from an rsync'd copy with a fake `.git/HEAD` and submodule symlinks (see the Phase 1 overlay plan, Global Constraints).
 - **`gh issue list` has no `--sort` flag.** Use `gh issue list --search "sort:created-desc"` or `gh issue list --json number,title,createdAt --jq '.'` for sorted/filtered queries.
 
+### Dev workspace (Tuist)
+
+A second, generated workspace for fast iteration. `Provenance.xcodeproj` still ships
+(CI, fastlane, release.sh). Spec: `docs/superpowers/specs/2026-10-10-dev-workspace-design.md`.
+
+- **Generate / open:** Tuist 4.200.0 is pinned in `.mise.toml`. Run `mise exec -- tuist generate --no-open`
+  (or `make dev-generate`) from the repo root; `make dev` also opens `Provenance-Dev.xcworkspace`.
+  Generated files (`Provenance-Dev.xcworkspace`, `Dev/Provenance.xcodeproj`, `Dev/Derived`) are
+  gitignored. Never commit them. The Tuist project is named `Provenance` and lives in `Dev/`
+  because `Build.xcconfig` derives bundle ids, the app group and the iCloud container from
+  `$(PROJECT_NAME:lower)`.
+- **Focused apps:**
+  - `Provenance-Dev-UI`: mGBA, Stella, snes9x.
+  - `Provenance-Dev-Thin`: no native cores; 4 libretro dylibs (mednafen_psx_hw, mupen64plus_next, snes9x, ppsspp).
+  - `Provenance-Dev-Azahar`: Azahar.
+
+  Build with `make dev-ui|dev-azahar|dev-thin` (derived data in `build/dev-dd`; override with
+  `DEV_DERIVED=`). Each app is one iOS+tvOS target with bundle id
+  `org.provenance-emu.provenance.dev.<slug>`.
+- **Simulator builds are ad-hoc signed by `Dev/Config/Dev.xcconfig`.** Never pass
+  `CODE_SIGNING_ALLOWED=NO` to a dev build: the app then dies in dyld on the unsigned embedded
+  MoltenVK.
+- **Helpers:** `Tuist/ProjectDescriptionHelpers/` holds `CoreProduct` (the core table),
+  `FocusedApp` (the target template plus `FocusedApp.all`), `LibretroCores` and `DevSettings`. Tuist
+  only finds helpers at `<root>/Tuist/ProjectDescriptionHelpers`; don't add a `Dev/Tuist/`.
+- **How cores get in:**
+  - SwiftPM dynamic cores are embedded with `.package(product:, type: .runtimeEmbedded)`.
+  - Cores from a hand-maintained `Cores/<X>/*.xcodeproj` are linked by `-framework <Product>` in `OTHER_LDFLAGS`.
+    That project is referenced from `Workspace.swift` (Xcode then builds it as an implicit dependency),
+    and the "Embed core frameworks" post script copies and signs the framework. Tuist can't
+    depend on targets of projects it doesn't generate.
+- **Libretro dylibs per app:**
+  - `FocusedApp.libretro` names (cores.yml) become a pre script calling
+    `CoresRetro/RetroArch/scripts/get-modules.sh --urls <file>`, plus a post script running
+    `make_frameworks_retroarch.sh` and `validate_frameworks.sh`.
+  - `--urls` keeps its own state dir (`modules_compressed/<iOS|tvOS>-urls-<sha12>`) and never prunes the shared `modules/`.
+  - The buildbot dylibs are iOS-platform binaries and cannot `dlopen` in a simulator, so
+    **Provenance-Dev-Thin plays games on a device only**.
+- **Manifest checks:** `Scripts/dev/check_dev_manifest.sh` compiles the helpers against Tuist's
+  `ProjectDescription.framework` and checks three things: every libretro name is enabled in cores.yml,
+  every path exists, and no local package is declared twice. Prebuilt artefacts (e.g. `PVlibDolphin.xcframework`) are
+  required only for rows a `FocusedApp` uses.
+- **Harness:** `make dev-harness ROM=<path> TARGET=ui|azahar FRAMES=n CORE=<id> SIM_DEVICE=<udid|booted>`
+  builds the app, launches it with the `-PVHarnessROM`, `-PVHarnessCore`, `-PVHarnessFrames`,
+  `-PVHarnessOut` and `-PVHarnessExit` launch arguments, and copies `screenshot.png`, `frames.json`, `log.txt` (or
+  `error.txt`) to `build/harness/<Scheme>/`. `TARGET=thin` is refused (exit 2): Thin runs on a device only.
+  Synthetic test ROMs come from `Scripts/dev/make_harness_rom.py` (2600 and gba). Frame counts are
+  time-based estimates (`"frameCountSource": "estimated"`). Its first catch was a native Stella VFS
+  regression (`16da1e4c40`).
+- **Core slices:** `Scripts/cores/build_slice.py <azahar|dolphin> <ios|ios-sim|tvos|tvos-sim>
+  [--print-key|--force|--xcframework|--cache-dir DIR]` builds or links one slice.
+  - The key is a content hash: submodule working tree (dirty edits bust the cache; `--force` rebuilds) and
+    nested externals, build script and toolchain, flags, Xcode and SDK, and Azahar's MoltenVK slice.
+  - The cache is `$PV_CORE_CACHE` or `~/Library/Caches/Provenance/cores/<core>/<slice>/<key12>/`.
+  - On a hit, the legacy `build/xcframework/<Product>-<slice>.framework` path is a symlink into it.
+  - Only `--xcframework` repacks the multi-slice xcframework (Dolphin's is repacked after every miss).
+    If its hard links fail, set `PV_CORE_CACHE` to a folder on the repo's volume.
+- **CI:** `build.yml` and `testflight.yml` cache `~/Library/Caches/Provenance/cores` per platform,
+  keyed on `build_slice.py --print-key`. `dev-workspace.yml` smoke-builds `Provenance-Dev-UI` on
+  both simulators (Tuist via mise, which needs `GITHUB_TOKEN`).
+- **Pruning rule:** no new `Cores/` project without an audit row in
+  `docs/superpowers/specs/2026-10-10-core-audit.md`.
+
 ### Azahar core build gotchas
 
-- **PVlibAzahar is built by the `BuildPVlibAzahar` aggregate target** (`Cores/Azahar/project.yml`; `PVAzahar` depends on it), which runs `build_azahar_core.py -p <platform>`. A cold slice takes ~30–40 min. The stamp `Cores/Azahar/build/<platform>/.gitlink` (submodule HEAD) skips the rebuild while it matches; delete it to force one. Needs cmake, ninja and python3 ≥ 3.10.
-- **`PVAzahar` links the per-slice archive `build/xcframework/PVlibAzahar-<slice>.framework/PVlibAzahar` by path, not the xcframework.** Xcode resolves an xcframework dependency while planning, before any target runs, so a cold checkout failed with "There is no XCFramework found". Don't add the xcframework back as a dependency. `PVlibAzahar.xcframework` is still produced, for distribution only.
+- **PVlibAzahar is built by the `BuildPVlibAzahar` aggregate target** (`Cores/Azahar/project.yml` and the hand-edited pbxproj; `PVAzahar` depends on it), which runs `Scripts/cores/build_slice.py azahar <slice>` for the slice matching `$PLATFORM_NAME`. A cold slice takes ~30–40 min. The stamp is the content key (`build_slice.py --print-key`: submodule + externals, script, toolchain, Xcode/SDK, MoltenVK slice), not the gitlink; a hit only symlinks the cached slice. Force a rebuild with `build_slice.py azahar <slice> --force`. Needs cmake, ninja and python3 ≥ 3.10. Dolphin's `Make XCFrameworks` aggregate works the same way (`build_slice.py dolphin <slice>`).
+- **`PVAzahar` links the per-slice archive `build/xcframework/PVlibAzahar-<slice>.framework/PVlibAzahar` by path, not the xcframework** (that path is now a symlink into the slice cache). Xcode resolves an xcframework dependency while planning, before any target runs, so a cold checkout failed with "There is no XCFramework found". Don't add the xcframework back as a dependency. `PVlibAzahar.xcframework` is still produced, for distribution only.
 - **PVlibAzahar is arm64-only.** The x86_64 simulator slice of `PVAzahar` is link-only (`-undefined dynamic_lookup`), so the app does not launch on Intel/Rosetta simulators.
 - **Never include azahar's `core/hle/service/nwm/nwm_uds.h`.** Azahar headers come in with `-idirafter`, so its `#include "network/network.h"` resolves to the SDK's Network framework header instead. The bridge includes azahar's own copy as `"network.h"` via a narrow `HEADER_SEARCH_PATHS` entry.
 - **Emulator changes go on the fork.** Commit them to `Provenance-Emu/azahar` branch `provenance` and list them in `Cores/Azahar/PATCHES.md`. Never edit `Cores/Azahar/azahar` in place.

@@ -14,6 +14,32 @@ debugging means a paste of Console output. This costs wall-clock and tokens on e
 
 ## Workstream A — Project generation and fast iteration targets
 
+**Status: done (2026-10-10).** Spec `2026-10-10-dev-workspace-design.md`, plan
+`docs/superpowers/plans/2026-10-10-dev-workspace.md`, audit `2026-10-10-core-audit.md`.
+Shipped:
+- Tuist dev workspace (`make dev`) with `Provenance-Dev-UI`, `-Thin` and `-Azahar`.
+- The `PVDevHarness` launch-argument harness (`make dev-harness`); its first catch was a native
+  Stella VFS regression (`16da1e4c40`).
+- `Scripts/cores/build_slice.py`, a content-keyed slice cache that both core aggregates and CI use.
+- The `dev-workspace.yml` smoke build.
+- 32 retired native cores pruned behind `RetiredCoreMigration`.
+
+How-to: CLAUDE.md "Dev workspace (Tuist)" and the `fast-iteration` skill.
+
+Follow-ups:
+- Move CI (`build.yml`, `testflight.yml`), fastlane and `Scripts/release/release.sh` onto the
+  generated project; retire `Provenance-CI` and `Scripts/dev/create_ci_target.rb` once
+  `dev-workspace.yml` is the smoke build (switch `agent-validation.yml` over).
+- A Dolphin focused app, which needs `Make XCFrameworks` scheduled from the dev workspace before the app
+  links the prebuilt `PVlibDolphin.xcframework` (`DEV_PREBUILT_CORES=dolphin make dev-generate`).
+- A device harness runner for `Provenance-Dev-Thin` (libretro dylibs can't load in the simulator).
+- One shared libretro VFS module for the native bridges (the thin frontend has a full v3 copy;
+  Stella has another).
+- One `frameInterval` convention (`PVMetalViewController` treats it as seconds, everything else as FPS).
+- Retarget retired core ids in `CoreCapabilities.json` and test fixtures.
+- Regenerate the controls audit.
+- Rule on the four UNSURE cores and emuThree (audit), after Azahar's device skin test.
+
 **Decision:** Tuist, because iCube already runs it (`Source/iOS/App/Project.swift`,
 `Tuist.swift`, CI step "tuist generate" in iCube's build.yml) and its lessons are fresh
 (xcframework binary targets must resolve before generate; version pinned via mise).
