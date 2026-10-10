@@ -58,3 +58,29 @@ func patchCRC32(_ data: some DataProtocol) -> UInt32 {
     }
     return ~crc
 }
+
+/// Encode an integer as a BPS/UPS variable-length integer.
+func encodeVLI(_ n: Int) -> [UInt8] {
+    var bytes: [UInt8] = []
+    var value = n
+    while true {
+        if value <= 127 {
+            bytes.append(UInt8(0x80 | value))
+            break
+        } else {
+            bytes.append(UInt8(value & 0x7F))
+            value = (value - 128) >> 7
+        }
+    }
+    return bytes
+}
+
+/// Write a UInt32 as 4 bytes little-endian.
+func encodeLE32(_ value: UInt32) -> [UInt8] {
+    [
+        UInt8(value & 0xFF),
+        UInt8((value >> 8) & 0xFF),
+        UInt8((value >> 16) & 0xFF),
+        UInt8((value >> 24) & 0xFF)
+    ]
+}

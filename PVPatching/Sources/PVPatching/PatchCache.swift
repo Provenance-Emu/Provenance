@@ -7,18 +7,13 @@
 //
 
 import Foundation
-#if canImport(CryptoKit)
-import CryptoKit
-#elseif canImport(Crypto)
-import Crypto
-#endif
 
 /// Manages a disk cache of pre-applied patched ROMs.
 ///
 /// Cache entries are keyed by a hash derived from both the source ROM and the patch file,
 /// so changing either invalidates the cache entry. Original ROMs are never modified.
 ///
-/// Cache directory: `Library/Caches/PVPatchedROMs/<key>/patched.<ext>`
+/// Cache directory: `Library/Caches/PVPatchedROMs/<key>/<outputStem>.<ext>`
 public actor PatchCache {
 
     private let cacheDirectory: URL
@@ -34,33 +29,74 @@ public actor PatchCache {
     }
 
     /// Look up a cached patched ROM using already-loaded file data.
-    ///
-    /// - Parameters:
-    ///   - romData: The source ROM data (used to compute cache key).
-    ///   - patchData: The patch file data (used to compute cache key).
-    ///   - ext: The file extension of the original ROM (for the cached filename).
-    /// - Returns: URL of the cached patched ROM, or `nil` if not cached.
-    public func cachedURL(romData: Data, patchData: Data, extension ext: String) -> URL? {
-        let key = cacheKey(romData: romData, patchData: patchData)
-        let candidate = cacheEntry(for: key, extension: ext)
-        return FileManager.default.fileExists(atPath: candidate.path) ? candidate : nil
+    public func cachedURL(
+        romData: Data,
+        patchData: Data,
+        outputStem: String,
+        extension ext: String
+    ) -> URL? {
+        let key = PatchHashing.cacheKey(romData: romData, patchData: patchData)
+        let candidate = cacheEntry(for: key, outputStem: outputStem, extension: ext)
+        if FileManager.default.fileExists(atPath: candidate.path) {
+            return candidate
+        }
+        // Migrate older "patched.<ext>" cache entries into the unique name.
+        let legacy = cacheEntry(for: key, outputStem: "patched", extension: ext)
+        if FileManager.default.fileExists(atPath: legacy.path) {
+            do {
+                try FileManager.default.moveItem(at: legacy, to: candidate)
+                return candidate
+            } catch {
+                return legacy
+            }
+        }
+        return nil
     }
 
     /// Store patched ROM data in the cache.
-    ///
-    /// - Parameters:
-    ///   - data: The patched ROM data to cache.
-    ///   - romData: The source ROM data (used to compute cache key).
-    ///   - patchData: The patch file data (used to compute cache key).
-    ///   - ext: File extension for the cached output file.
-    /// - Returns: URL of the saved cached file.
-    public func store(_ data: Data, romData: Data, patchData: Data, extension ext: String) throws -> URL {
-        let key = cacheKey(romData: romData, patchData: patchData)
+    public func store(
+        _ data: Data,
+        romData: Data,
+        patchData: Data,
+        outputStem: String,
+        extension ext: String
+    ) throws -> URL {
+        let key = PatchHashing.cacheKey(romData: romData, patchData: patchData)
         let entryDir = cacheDirectory.appendingPathComponent(key, isDirectory: true)
         try FileManager.default.createDirectory(at: entryDir, withIntermediateDirectories: true)
-        let outputURL = cacheEntry(for: key, extension: ext)
+        let outputURL = cacheEntry(for: key, outputStem: outputStem, extension: ext)
+        if FileManager.default.fileExists(atPath: outputURL.path) {
+            try FileManager.default.removeItem(at: outputURL)
+        }
         try data.write(to: outputURL, options: .atomic)
         return outputURL
+    }
+
+    /// Copy a cached (or newly applied) artifact into a destination directory with a
+    /// collision-safe filename. Never overwrites an existing different file.
+    public func export(
+        artifactURL: URL,
+        to directory: URL,
+        preferredName: String
+    ) throws -> URL {
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let preferred = directory.appendingPathComponent(preferredName)
+        if !FileManager.default.fileExists(atPath: preferred.path) {
+            try FileManager.default.copyItem(at: artifactURL, to: preferred)
+            return preferred
+        }
+        let stem = (preferredName as NSString).deletingPathExtension
+        let ext = (preferredName as NSString).pathExtension
+        var index = 1
+        while true {
+            let candidateName = ext.isEmpty ? "\(stem)-\(index)" : "\(stem)-\(index).\(ext)"
+            let candidate = directory.appendingPathComponent(candidateName)
+            if !FileManager.default.fileExists(atPath: candidate.path) {
+                try FileManager.default.copyItem(at: artifactURL, to: candidate)
+                return candidate
+            }
+            index += 1
+        }
     }
 
     /// Remove all cached patched ROMs.
@@ -72,7 +108,7 @@ public actor PatchCache {
 
     /// Remove the cached entry for a specific ROM + patch pair.
     public func remove(romData: Data, patchData: Data) throws {
-        let key = cacheKey(romData: romData, patchData: patchData)
+        let key = PatchHashing.cacheKey(romData: romData, patchData: patchData)
         let entryDir = cacheDirectory.appendingPathComponent(key, isDirectory: true)
         if FileManager.default.fileExists(atPath: entryDir.path) {
             try FileManager.default.removeItem(at: entryDir)
@@ -81,35 +117,18 @@ public actor PatchCache {
 
     // MARK: - Private helpers
 
-    private func cacheEntry(for key: String, extension ext: String) -> URL {
+    private func cacheEntry(for key: String, outputStem: String, extension ext: String) -> URL {
         let dir = cacheDirectory.appendingPathComponent(key, isDirectory: true)
-        return dir.appendingPathComponent("patched.\(ext.isEmpty ? "rom" : ext)")
+        let safeStem = sanitizedStem(outputStem)
+        let suffix = ext.isEmpty ? "rom" : ext
+        return dir.appendingPathComponent("\(safeStem).\(suffix)")
     }
 
-    /// Cache key derived from the rom and patch data.
-    private func cacheKey(romData: Data, patchData: Data) -> String {
-#if canImport(CryptoKit)
-        let romHash = SHA256.hash(data: romData).compactMap { String(format: "%02x", $0) }.joined()
-        let patchHash = SHA256.hash(data: patchData).compactMap { String(format: "%02x", $0) }.joined()
-        let combined = Data((romHash + patchHash).utf8)
-        return String(SHA256.hash(data: combined).compactMap { String(format: "%02x", $0) }.joined().prefix(32))
-#elseif canImport(Crypto)
-        let romHash = Crypto.SHA256.hash(data: romData).compactMap { String(format: "%02x", $0) }.joined()
-        let patchHash = Crypto.SHA256.hash(data: patchData).compactMap { String(format: "%02x", $0) }.joined()
-        let combined = Data((romHash + patchHash).utf8)
-        return String(Crypto.SHA256.hash(data: combined).compactMap { String(format: "%02x", $0) }.joined().prefix(32))
-#else
-        // Fallback: deterministic but weaker hash for platforms without CryptoKit or Crypto.
-        // Includes CRC32 of both inputs and their (possibly truncated) sizes.
-        let romCRC = patchCRC32(romData)
-        let patchCRC = patchCRC32(patchData)
-        return String(
-            format: "%08x%08x%08x%08x",
-            romCRC,
-            patchCRC,
-            UInt32(truncatingIfNeeded: romData.count),
-            UInt32(truncatingIfNeeded: patchData.count)
-        )
-#endif
+    private func sanitizedStem(_ stem: String) -> String {
+        let trimmed = stem.trimmingCharacters(in: .whitespacesAndNewlines)
+        let invalid = CharacterSet(charactersIn: "/\\:?%*|\"<>")
+        let cleaned = trimmed.unicodeScalars.map { invalid.contains($0) ? "_" : Character($0) }
+        let value = String(cleaned)
+        return value.isEmpty ? "patched" : value
     }
 }
