@@ -60,8 +60,11 @@ public struct FocusedApp {
     }
 
     var scripts: [TargetScript] {
+        let libretroScripts = LibretroCores.scripts(slug: slug, names: libretro)
         let products = projectProducts.map(\.product)
-        return products.isEmpty ? [] : [DevSettings.embedProjectFrameworksScript(products: products)]
+        let embed = products.isEmpty ? [] : [DevSettings.embedProjectFrameworksScript(products: products)]
+        // Post order: embed vendored frameworks, then wrap libretro dylibs, then validate.
+        return libretroScripts.pre + embed + libretroScripts.post
     }
 
     /// Vendored .xcodeproj files the workspace must contain for these apps.
@@ -129,5 +132,13 @@ public struct FocusedApp {
 public extension FocusedApp {
     static let ui = FocusedApp(slug: "ui", title: "UI", cores: [.mGBA, .stella, .snes9x], flags: ["PV_DEV_HARNESS"])
 
-    static let all: [FocusedApp] = [.ui]
+    static let thin = FocusedApp(
+        slug: "thin",
+        title: "Thin",
+        cores: [],
+        libretro: ["mednafen_psx_hw", "mupen64plus_next", "snes9x", "ppsspp"],
+        flags: ["PV_DEV_HARNESS"]
+    )
+
+    static let all: [FocusedApp] = [.ui, .thin]
 }

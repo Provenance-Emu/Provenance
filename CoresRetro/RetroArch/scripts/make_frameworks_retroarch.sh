@@ -91,19 +91,28 @@ esac
 # When modules/ contains only one platform suffix, align MF with that tree — Xcode sometimes
 # leaves PLATFORM_FAMILY_NAME=iOS while building tvOS (or omits env), which skips every *_tvos.dylib.
 # When PLATFORM_NAME clearly targets one OS but modules/ only has the other suffix, fail with a direct message.
+EARLY_FILTER_FILE="${2:-}"
 align_or_resolve_platform() {
 	local n_ios n_tvos pn
 	pn="${PLATFORM_NAME:-}"
 	if [ ! -d "$MODULES_DIR" ]; then
 		return 0
 	fi
-	# Count non-local dylibs per platform (local cores legitimately have both)
+	# Count non-local dylibs per platform (local cores legitimately have both).
+	# With the filter list (arg 2), only dylibs it names count: a focused dev app (get-modules.sh --urls)
+	# never prunes modules/, so the other platform's dylibs may sit beside the listed ones.
+	local early_filter=""
+	if [ -n "$EARLY_FILTER_FILE" ] && [ -f "$EARLY_FILTER_FILE" ]; then
+		early_filter=$(grep -v '^#' "$EARLY_FILTER_FILE" | sed 's|.*/||' | sed 's/\.zip$//' | sort -u)
+	fi
 	n_ios=0
 	n_tvos=0
 	for _dyl in $(find "$MODULES_DIR" -maxdepth 1 -type f -name '*_ios.dylib' 2>/dev/null); do
+		[ -n "$early_filter" ] && ! echo "$early_filter" | grep -qx "$(basename "$_dyl")" && continue
 		_is_early_local_dylib "$(basename "$_dyl")" || n_ios=$((n_ios + 1))
 	done
 	for _dyl in $(find "$MODULES_DIR" -maxdepth 1 -type f -name '*_tvos.dylib' 2>/dev/null); do
+		[ -n "$early_filter" ] && ! echo "$early_filter" | grep -qx "$(basename "$_dyl")" && continue
 		_is_early_local_dylib "$(basename "$_dyl")" || n_tvos=$((n_tvos + 1))
 	done
 	if [ "${n_ios}" -gt 0 ] && [ "${n_tvos}" -gt 0 ]; then
