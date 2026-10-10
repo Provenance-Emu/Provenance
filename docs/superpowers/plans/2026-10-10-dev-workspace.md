@@ -1432,7 +1432,7 @@ git -c commit.gpgsign=false commit -m "build: add Provenance-Dev-Azahar and make
 
 ---
 
-> **Batches 4–6 are outlines (batch 3 is detailed below).** Each task gives its files, interfaces, model tier, and what it does and how it is verified. Full step-by-step code is written when that batch starts. The facts below were verified against the tree on 2026-10-10.
+> **Batches 5–6 are outlines (batches 3–4 are detailed below).** Each task gives its files, interfaces, model tier, and what it does and how it is verified. Full step-by-step code is written when that batch starts. The facts below were verified against the tree on 2026-10-10.
 
 # Batch 3 — Core harness (develop)
 
@@ -2284,79 +2284,992 @@ git -c commit.gpgsign=false commit -m "feat(harness): add make dev-harness and a
 
 # Batch 4 — Slice cache (develop)
 
-### Task 12: `Scripts/cores/build_slice.py` + `Scripts/cores/tests/test_build_slice.py`  *(model: sonnet)*
+### Task 12: `Scripts/cores/build_slice.py` and its tests  *(model: sonnet)*
+
+**Files:**
+- Create: `Scripts/cores/build_slice.py` (mode 755)
+- Test: `Scripts/cores/tests/test_build_slice.py`
 
 **Interfaces:**
-- CLI: `build_slice.py <azahar|dolphin> <ios|ios-sim|tvos|tvos-sim> [--print-key] [--force] [--cache-dir DIR] [--xcframework] [--repo-root DIR(hidden, tests)]`.
-- Functions: `core_specs(repo)`, `key_inputs(spec, slice, runner, env)`, `compute_key(...)`, `ensure_slice(spec, slice, cache, key, inputs, force, builder) -> Path`, `main(argv, runner, env, builder) -> int`.
-- Constants: `SLICES` (cmake platform / sdk / MoltenVK slice dir), `SLICE_FOR_PLATFORM_NAME`, `KEEP_ENTRIES = 2`.
-- Python 3.9-compatible: `/usr/bin/python3` runs it from the Dolphin phase.
+- Consumes:
+  - `Cores/Azahar/build_azahar_core.py`: `AzaharBuilder(verbose=)`, `.build_platform(<OS64|SIMULATORARM64|TVOS|SIMULATOR_TVOS>)`, `write_gitlink_stamps([platform])`, `.create_xcframework()`. It needs Python ≥ 3.10.
+  - `Cores/Dolphin/dolphin-ios/BuildiOSXCFramework.py`: `DolphinBuilder(verbose=)`, `.build_platform(p) -> bool`, `.dylibs[p]`, `.create_framework(dylib, p)`, and the CLI flag `-x` (xcframework only).
+- Produces:
+  - `build_slice.py <azahar|dolphin> <ios|ios-sim|tvos|tvos-sim> [--print-key] [--force] [--cache-dir DIR] [--xcframework] [--repo-root DIR]`;
+  - Python functions `core_specs(repo) -> Dict[str, CoreSpec]`, `key_inputs(spec, slice_name, runner, env) -> Dict[str, str]`, `compute_key(spec, slice_name, runner, env) -> str`, `ensure_slice(spec, slice_name, cache, key, inputs, force, builder) -> Path`, `main(argv) -> int`;
+  - cache layout `<cache>/<core>/<slice>/<key[:12]>/<Product>-<slice>.framework` + `stamp.json`;
+  - legacy symlinks `Cores/Azahar/build/xcframework/PVlibAzahar-<slice>.framework` and `Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin-<slice>.framework`;
+  - default cache `$PV_CORE_CACHE`, else `~/Library/Caches/Provenance/cores`.
+  - Python 3.9-compatible: Dolphin's Xcode phase runs `/usr/bin/python3`.
 
-What it does:
-- **Key.** sha256 of JSON with these fields:
-  - the submodule HEAD;
-  - normalized `git submodule status --recursive` (sha + path; the init flag and describe text are dropped);
-  - hashes of the build script and the toolchain (`Cores/Azahar/cmake/ios.toolchain.cmake`, `dolphin-ios/Externals/ios-cmake/ios.toolchain.cmake`);
-  - for Dolphin, `DOL_FULL_LTO` / `DOL_PGO` / `DOL_PGO_PROFILE` and the hash of the profile `resolve_pgo` would use;
-  - `xcodebuild -version` and `xcrun --sdk <sdk> --show-sdk-version`;
-  - for Azahar, the hash of `MoltenVK/MoltenVK/static/MoltenVK.xcframework/<mvk>/libMoltenVK.a`.
-- **Cache.** `$PV_CORE_CACHE` or `~/Library/Caches/Provenance/cores/<core>/<slice>/<key12>/<Product>-<slice>.framework` + `stamp.json`.
-- **On a hit,** the legacy path becomes a symlink into the cache.
-- **On a miss:**
-  1. Remove the legacy path first: both builders `rmtree` it, and `rmtree` fails on a symlink.
-  2. Run the builder's per-platform methods in a subprocess. For Azahar that is `AzaharBuilder.build_platform` + `write_gitlink_stamps` in a Python ≥ 3.10 interpreter (`PV_PYTHON3`, Homebrew, `python3.1x`). For Dolphin it is `DolphinBuilder.build_platform` + `create_framework` with `sys.executable`. `PATH` is prefixed with `/opt/homebrew/bin`.
-  3. Move the product into the cache, write the stamp, link it, and prune old entries.
-- **Xcframework.** `--xcframework` repacks through the builders' own packers: Azahar `create_xcframework()`, Dolphin `-x`. Dolphin repacks automatically when `PVlibDolphin.xcframework` is missing.
+- [ ] **Step 1: Write the failing tests**
 
-Verified by unittests that use a fake runner and a fake repo in a temp dir:
-- the key is stable;
-- the key changes with the HEAD, nested submodules, script, toolchain, Xcode, SDK, MoltenVK and the Dolphin flags/profile;
-- the init state does not change the key;
-- a miss builds, moves and links, and the stamp holds the key and inputs;
-- a hit only links (the builder raises if called);
-- `--force` rebuilds over an existing symlink;
-- pruning keeps 2 entries;
-- a missing product fails;
-- `--print-key` equals `compute_key`.
+`Scripts/cores/tests/test_build_slice.py`:
 
-They must pass with `python3` and `/usr/bin/python3`.
+```python
+#!/usr/bin/env python3
+"""Unit tests for Scripts/cores/build_slice.py (stdlib unittest; no git, Xcode or network)."""
+from __future__ import annotations
+
+import io
+import json
+import os
+import sys
+import tempfile
+import unittest
+from contextlib import redirect_stdout
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import build_slice  # noqa: E402
+
+
+def write(path: Path, text: str) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text)
+    return path
+
+
+class FakeRunner:
+    """Stands in for git / xcodebuild / xcrun."""
+
+    def __init__(self, head="aaaa", status=" bbbb externals/x (v1)\n-cccc externals/y", xcode="Xcode 26.3\nBuild version 17C1", sdk="26.2"):
+        self.head, self.status, self.xcode, self.sdk = head, status, xcode, sdk
+
+    def __call__(self, cmd, cwd=None):
+        if cmd[-2:] == ["rev-parse", "HEAD"]:
+            return self.head
+        if "submodule" in cmd:
+            return self.status
+        if cmd[:2] == ["xcodebuild", "-version"]:
+            return self.xcode
+        if cmd[0] == "xcrun":
+            return self.sdk
+        raise AssertionError(f"unexpected command {cmd}")
+
+
+class FakeRepo:
+    def __init__(self, root: Path):
+        self.root = root
+        write(root / "Cores/Azahar/build_azahar_core.py", "CMAKE_OPTIONS = ['-DENABLE_LTO=OFF']\n")
+        write(root / "Cores/Azahar/cmake/ios.toolchain.cmake", "toolchain v1\n")
+        (root / "Cores/Azahar/azahar").mkdir(parents=True)
+        for mvk in ("ios-arm64", "ios-arm64_x86_64-simulator", "tvos-arm64_arm64e", "tvos-arm64_x86_64-simulator"):
+            write(root / f"MoltenVK/MoltenVK/static/MoltenVK.xcframework/{mvk}/libMoltenVK.a", f"mvk {mvk}\n")
+        write(root / "Cores/Dolphin/dolphin-ios/BuildiOSXCFramework.py", "# dolphin\n")
+        write(root / "Cores/Dolphin/dolphin-ios/Externals/ios-cmake/ios.toolchain.cmake", "dolphin toolchain\n")
+        self.specs = build_slice.core_specs(root)
+
+
+class KeyTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.repo = FakeRepo(Path(self.tmp.name))
+        self.azahar = self.repo.specs["azahar"]
+        self.dolphin = self.repo.specs["dolphin"]
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def key(self, spec=None, slice_name="ios-sim", runner=None, env=None):
+        return build_slice.compute_key(spec or self.azahar, slice_name, runner or FakeRunner(), env or {})
+
+    def test_stable(self):
+        self.assertEqual(self.key(), self.key())
+
+    def test_changes_with_submodule_head(self):
+        self.assertNotEqual(self.key(), self.key(runner=FakeRunner(head="dddd")))
+
+    def test_changes_with_nested_submodule(self):
+        self.assertNotEqual(self.key(), self.key(runner=FakeRunner(status=" eeee externals/x (v2)")))
+
+    def test_submodule_init_state_does_not_change_key(self):
+        a = FakeRunner(status=" bbbb externals/x (v1)")
+        b = FakeRunner(status="-bbbb externals/x")
+        self.assertEqual(self.key(runner=a), self.key(runner=b))
+
+    def test_changes_with_script_and_toolchain(self):
+        before = self.key()
+        write(self.repo.root / "Cores/Azahar/build_azahar_core.py", "CMAKE_OPTIONS = ['-DENABLE_LTO=ON']\n")
+        after_script = self.key()
+        write(self.repo.root / "Cores/Azahar/cmake/ios.toolchain.cmake", "toolchain v2\n")
+        self.assertNotEqual(before, after_script)
+        self.assertNotEqual(after_script, self.key())
+
+    def test_changes_with_xcode_and_sdk(self):
+        self.assertNotEqual(self.key(), self.key(runner=FakeRunner(xcode="Xcode 26.4")))
+        self.assertNotEqual(self.key(), self.key(runner=FakeRunner(sdk="26.4")))
+
+    def test_changes_with_moltenvk_slice(self):
+        before = self.key()
+        write(self.repo.root / "MoltenVK/MoltenVK/static/MoltenVK.xcframework/ios-arm64_x86_64-simulator/libMoltenVK.a", "new\n")
+        self.assertNotEqual(before, self.key())
+
+    def test_slices_differ(self):
+        self.assertNotEqual(self.key(slice_name="ios"), self.key(slice_name="ios-sim"))
+
+    def test_dolphin_flags_and_profile(self):
+        base = self.key(self.dolphin)
+        self.assertNotEqual(base, self.key(self.dolphin, env={"DOL_FULL_LTO": "1"}))
+        profile = write(self.repo.root / "Cores/Dolphin/dolphin-ios/pgo/icube.profdata", "profile v1")
+        with_profile = self.key(self.dolphin)
+        self.assertNotEqual(base, with_profile)
+        profile.write_text("profile v2")
+        self.assertNotEqual(with_profile, self.key(self.dolphin))
+        self.assertEqual(base, self.key(self.dolphin, env={"DOL_PGO": "off"}))
+
+
+class CacheTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        root = Path(self.tmp.name)
+        self.repo = FakeRepo(root / "repo")
+        self.cache = root / "cache"
+        self.spec = self.repo.specs["azahar"]
+        self.legacy = self.spec.legacy_dir / "PVlibAzahar-ios-sim.framework"
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def fake_build(self, calls):
+        def builder(spec, slice_name):
+            calls.append(slice_name)
+            assert not self.legacy.exists() and not self.legacy.is_symlink(), "legacy path must be cleared before building"
+            write(self.legacy / "PVlibAzahar", "archive")
+        return builder
+
+    def test_miss_builds_moves_and_links(self):
+        calls = []
+        fw = build_slice.ensure_slice(self.spec, "ios-sim", self.cache, "k" * 64, {"a": "b"}, False, self.fake_build(calls))
+        self.assertEqual(calls, ["ios-sim"])
+        self.assertEqual(fw, self.cache / "azahar/ios-sim" / ("k" * 12) / "PVlibAzahar-ios-sim.framework")
+        self.assertTrue((fw / "PVlibAzahar").is_file())
+        self.assertTrue(self.legacy.is_symlink())
+        self.assertEqual(Path(os.readlink(self.legacy)), fw)
+        stamp = json.loads((fw.parent / "stamp.json").read_text())
+        self.assertEqual(stamp["key"], "k" * 64)
+        self.assertEqual(stamp["inputs"], {"a": "b"})
+
+    def test_hit_only_links(self):
+        calls = []
+        build_slice.ensure_slice(self.spec, "ios-sim", self.cache, "k" * 64, {}, False, self.fake_build(calls))
+        self.legacy.unlink()
+        write(self.legacy / "PVlibAzahar", "stale real dir from an old build")
+
+        def must_not_build(spec, slice_name):
+            raise AssertionError("cache hit must not build")
+
+        fw = build_slice.ensure_slice(self.spec, "ios-sim", self.cache, "k" * 64, {}, False, must_not_build)
+        self.assertTrue(self.legacy.is_symlink())
+        self.assertEqual(Path(os.readlink(self.legacy)), fw)
+
+    def test_force_rebuilds_over_existing_symlink(self):
+        calls = []
+        build_slice.ensure_slice(self.spec, "ios-sim", self.cache, "k" * 64, {}, False, self.fake_build(calls))
+        build_slice.ensure_slice(self.spec, "ios-sim", self.cache, "k" * 64, {}, True, self.fake_build(calls))
+        self.assertEqual(calls, ["ios-sim", "ios-sim"])
+        self.assertTrue(self.legacy.is_symlink())
+
+    def test_old_entries_pruned(self):
+        calls = []
+        for key in ("a" * 64, "b" * 64, "c" * 64):
+            build_slice.ensure_slice(self.spec, "ios-sim", self.cache, key, {}, False, self.fake_build(calls))
+        entries = sorted(p.name for p in (self.cache / "azahar/ios-sim").iterdir())
+        self.assertEqual(len(entries), build_slice.KEEP_ENTRIES)
+        self.assertIn("c" * 12, entries)
+
+    def test_missing_product_fails(self):
+        with self.assertRaises(SystemExit):
+            build_slice.ensure_slice(self.spec, "ios-sim", self.cache, "k" * 64, {}, False, lambda spec, s: None)
+
+
+class CLITests(unittest.TestCase):
+    def test_print_key_matches_compute_key(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = FakeRepo(Path(tmp))
+            runner = FakeRunner()
+            out = io.StringIO()
+            with redirect_stdout(out):
+                code = build_slice.main(["azahar", "tvos", "--print-key", "--repo-root", tmp], runner=runner, env={})
+            self.assertEqual(code, 0)
+            self.assertEqual(out.getvalue().strip(), build_slice.compute_key(repo.specs["azahar"], "tvos", runner, {}))
+
+    def test_slice_from_platform_name(self):
+        self.assertEqual(build_slice.SLICE_FOR_PLATFORM_NAME["appletvsimulator"], "tvos-sim")
+        self.assertEqual(build_slice.SLICE_FOR_PLATFORM_NAME["iphoneos"], "ios")
+
+
+if __name__ == "__main__":
+    unittest.main()
+```
+
+- [ ] **Step 2: Run the tests and see them fail**
+
+Run: `python3 -m unittest Scripts/cores/tests/test_build_slice.py 2>&1 | tail -3`
+Expected: `ModuleNotFoundError: No module named 'build_slice'`.
+
+- [ ] **Step 3: Write `Scripts/cores/build_slice.py`**
+
+```python
+#!/usr/bin/env python3
+"""Build one Azahar or Dolphin core slice outside the app, cached by a content key.
+
+  build_slice.py <azahar|dolphin> <ios|ios-sim|tvos|tvos-sim> [--print-key] [--force]
+                 [--cache-dir DIR] [--xcframework]
+
+Key: sha256 over the core submodule HEAD and `git submodule status --recursive` inside it,
+the wrapped build script and CMake toolchain contents (Azahar's CMAKE_OPTIONS live in its
+script), Dolphin's DOL_FULL_LTO / DOL_PGO / DOL_PGO_PROFILE and the PGO profile it would use,
+`xcodebuild -version`, the slice SDK version and, for Azahar, the MoltenVK static slice it
+configures against. `--print-key` prints it (CI cache keys).
+
+Cache: $PV_CORE_CACHE or ~/Library/Caches/Provenance/cores, laid out as
+<core>/<slice>/<key[:12]>/<Product>-<slice>.framework + stamp.json. On a hit the legacy output
+path (Cores/Azahar/build/xcframework/PVlibAzahar-<slice>.framework,
+Cores/Dolphin/dolphin-ios/build/xcframework/PVlibDolphin-<slice>.framework) becomes a symlink
+into the cache, so PVAzahar's PVAZAHAR_ARCHIVE path and PVDolphin's references don't change.
+On a miss the wrapped builder builds that one slice (its per-platform methods, not its main(),
+which would also repack the xcframework), the product moves into the cache and is linked.
+--xcframework repacks <Product>.xcframework for distribution; Dolphin also repacks it when it
+is missing, since PVDolphin.xcodeproj links the xcframework at planning time.
+
+Python 3.9 compatible (Dolphin's Xcode phase runs /usr/bin/python3). Azahar's builder needs
+3.10+, so it runs in a separate interpreter (PV_PYTHON3, Homebrew python3, python3.1x).
+"""
+from __future__ import annotations
+
+import argparse
+import datetime
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Callable, Dict, List, Mapping, Optional, Tuple
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_CACHE = Path.home() / "Library" / "Caches" / "Provenance" / "cores"
+KEEP_ENTRIES = 2
+HOMEBREW_BIN = "/opt/homebrew/bin"
+
+SLICES: Dict[str, Dict[str, str]] = {
+    "ios": {"cmake": "OS64", "sdk": "iphoneos", "mvk": "ios-arm64"},
+    "ios-sim": {"cmake": "SIMULATORARM64", "sdk": "iphonesimulator", "mvk": "ios-arm64_x86_64-simulator"},
+    "tvos": {"cmake": "TVOS", "sdk": "appletvos", "mvk": "tvos-arm64_arm64e"},
+    "tvos-sim": {"cmake": "SIMULATOR_TVOS", "sdk": "appletvsimulator", "mvk": "tvos-arm64_x86_64-simulator"},
+}
+
+SLICE_FOR_PLATFORM_NAME: Dict[str, str] = {
+    "iphoneos": "ios",
+    "iphonesimulator": "ios-sim",
+    "appletvos": "tvos",
+    "appletvsimulator": "tvos-sim",
+}
+
+Runner = Callable[[List[str], Optional[Path]], str]
+Builder = Callable[["CoreSpec", str], None]
+
+
+@dataclass(frozen=True)
+class CoreSpec:
+    name: str
+    product: str
+    submodule: Path
+    script: Path
+    toolchain: Path
+    legacy_dir: Path
+    env_flags: Tuple[str, ...]
+    moltenvk: Optional[Path]
+
+
+def core_specs(repo: Path) -> Dict[str, CoreSpec]:
+    return {
+        "azahar": CoreSpec(
+            name="azahar",
+            product="PVlibAzahar",
+            submodule=repo / "Cores/Azahar/azahar",
+            script=repo / "Cores/Azahar/build_azahar_core.py",
+            toolchain=repo / "Cores/Azahar/cmake/ios.toolchain.cmake",
+            legacy_dir=repo / "Cores/Azahar/build/xcframework",
+            env_flags=(),
+            moltenvk=repo / "MoltenVK/MoltenVK/static/MoltenVK.xcframework",
+        ),
+        "dolphin": CoreSpec(
+            name="dolphin",
+            product="PVlibDolphin",
+            submodule=repo / "Cores/Dolphin/dolphin-ios",
+            script=repo / "Cores/Dolphin/dolphin-ios/BuildiOSXCFramework.py",
+            toolchain=repo / "Cores/Dolphin/dolphin-ios/Externals/ios-cmake/ios.toolchain.cmake",
+            legacy_dir=repo / "Cores/Dolphin/dolphin-ios/build/xcframework",
+            env_flags=("DOL_FULL_LTO", "DOL_PGO", "DOL_PGO_PROFILE"),
+            moltenvk=None,
+        ),
+    }
+
+
+def log(message: str) -> None:
+    print(f"build_slice: {message}", file=sys.stderr, flush=True)
+
+
+def default_runner(cmd: List[str], cwd: Optional[Path] = None) -> str:
+    result = subprocess.run(cmd, cwd=str(cwd) if cwd else None, check=True, capture_output=True, text=True)
+    return result.stdout.strip()
+
+
+def file_hash(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def normalize_submodule_status(text: str) -> str:
+    """'<flag><sha> <path> (<describe>)' -> '<sha> <path>', sorted. Init state and describe drop out."""
+    entries = []
+    for line in text.splitlines():
+        if not line.strip():
+            continue
+        body = line[1:] if line[:1] in " +-U" else line
+        parts = body.split()
+        if len(parts) >= 2:
+            entries.append(f"{parts[0]} {parts[1]}")
+    return "\n".join(sorted(entries))
+
+
+def dolphin_profile(spec: CoreSpec, env: Mapping[str, str]) -> Optional[Path]:
+    """The profile BuildiOSXCFramework.resolve_pgo would use (None for off/generate)."""
+    mode = env.get("DOL_PGO", "").strip().lower()
+    if mode in ("off", "generate"):
+        return None
+    explicit = env.get("DOL_PGO_PROFILE", "").strip()
+    if explicit:
+        return Path(explicit)
+    default = spec.submodule / "pgo" / "icube.profdata"
+    return default if default.exists() else None
+
+
+def key_inputs(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> Dict[str, str]:
+    sl = SLICES[slice_name]
+    inputs = {
+        "core": spec.name,
+        "slice": slice_name,
+        "submodule_head": runner(["git", "-C", str(spec.submodule), "rev-parse", "HEAD"], None),
+        "submodule_tree": normalize_submodule_status(
+            runner(["git", "-C", str(spec.submodule), "submodule", "status", "--recursive"], None)),
+        "script": file_hash(spec.script),
+        "toolchain": file_hash(spec.toolchain),
+        "xcode": runner(["xcodebuild", "-version"], None),
+        "sdk": runner(["xcrun", "--sdk", sl["sdk"], "--show-sdk-version"], None),
+    }
+    for name in spec.env_flags:
+        inputs["env:" + name] = env.get(name, "")
+    if spec.name == "dolphin":
+        profile = dolphin_profile(spec, env)
+        inputs["pgo_profile"] = file_hash(profile) if profile is not None and profile.exists() else ""
+    if spec.moltenvk is not None:
+        inputs["moltenvk"] = file_hash(spec.moltenvk / sl["mvk"] / "libMoltenVK.a")
+    return inputs
+
+
+def compute_key(spec: CoreSpec, slice_name: str, runner: Runner, env: Mapping[str, str]) -> str:
+    blob = json.dumps(key_inputs(spec, slice_name, runner, env), sort_keys=True).encode()
+    return hashlib.sha256(blob).hexdigest()
+
+
+def framework_name(spec: CoreSpec, slice_name: str) -> str:
+    return f"{spec.product}-{slice_name}.framework"
+
+
+def remove_path(path: Path) -> None:
+    if path.is_symlink() or path.is_file():
+        path.unlink()
+    elif path.is_dir():
+        shutil.rmtree(path)
+
+
+def link_legacy(spec: CoreSpec, slice_name: str, target: Path) -> Path:
+    legacy = spec.legacy_dir / framework_name(spec, slice_name)
+    remove_path(legacy)
+    legacy.parent.mkdir(parents=True, exist_ok=True)
+    os.symlink(str(target), str(legacy))
+    return legacy
+
+
+def prune_entries(slice_dir: Path, keep: int, current: Path) -> None:
+    entries = [p for p in slice_dir.iterdir() if p.is_dir() and p != current]
+    entries.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    for stale in entries[max(0, keep - 1):]:
+        log(f"pruning old cache entry {stale}")
+        shutil.rmtree(stale)
+
+
+def ensure_slice(spec: CoreSpec, slice_name: str, cache: Path, key: str, inputs: Mapping[str, str],
+                 force: bool, builder: Builder) -> Path:
+    entry = cache / spec.name / slice_name / key[:12]
+    framework = entry / framework_name(spec, slice_name)
+    stamp = entry / "stamp.json"
+    if not force and framework.is_dir() and stamp.is_file():
+        link_legacy(spec, slice_name, framework)
+        log(f"{spec.name} {slice_name}: cache hit {key[:12]}")
+        return framework
+
+    legacy = spec.legacy_dir / framework_name(spec, slice_name)
+    remove_path(legacy)  # the builders rmtree() this path, which fails on a symlink
+    log(f"{spec.name} {slice_name}: cache miss {key[:12]}; building")
+    builder(spec, slice_name)
+    if legacy.is_symlink() or not legacy.is_dir():
+        raise SystemExit(f"build_slice: {legacy} was not produced by the {spec.name} builder")
+
+    remove_path(entry)
+    entry.mkdir(parents=True)
+    shutil.move(str(legacy), str(framework))
+    stamp.write_text(json.dumps({
+        "key": key,
+        "inputs": dict(inputs),
+        "built": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+    }, indent=2, sort_keys=True) + "\n")
+    link_legacy(spec, slice_name, framework)
+    prune_entries(entry.parent, KEEP_ENTRIES, entry)
+    log(f"{spec.name} {slice_name}: cached {framework}")
+    return framework
+
+
+AZAHAR_BUILD = (
+    "import sys; sys.path.insert(0, sys.argv[1]); import build_azahar_core as b; "
+    "builder = b.AzaharBuilder(verbose=True); builder.build_platform(sys.argv[2]); "
+    "b.write_gitlink_stamps([sys.argv[2]])"
+)
+AZAHAR_XCFRAMEWORK = (
+    "import sys; sys.path.insert(0, sys.argv[1]); import build_azahar_core as b; "
+    "b.AzaharBuilder(verbose=True).create_xcframework()"
+)
+DOLPHIN_BUILD = (
+    "import sys; sys.path.insert(0, sys.argv[1]); import BuildiOSXCFramework as d; "
+    "builder = d.DolphinBuilder(verbose=True); p = sys.argv[2]; ok = builder.build_platform(p); "
+    "sys.exit(1) if ok is False or p not in builder.dylibs else builder.create_framework(builder.dylibs[p], p)"
+)
+
+
+def python_for(spec: CoreSpec) -> str:
+    if spec.name != "azahar":
+        return sys.executable
+    candidates = [os.environ.get("PV_PYTHON3", ""), HOMEBREW_BIN + "/python3", "python3", "python3.12", "python3.11", "python3.10"]
+    for candidate in candidates:
+        if not candidate:
+            continue
+        path = candidate if os.path.isabs(candidate) else shutil.which(candidate)
+        if not path or not os.path.exists(path):
+            continue
+        check = subprocess.run([path, "-c", "import sys; print(sys.version_info >= (3, 10))"],
+                               capture_output=True, text=True)
+        if check.stdout.strip() == "True":
+            return path
+    raise SystemExit("build_slice: Azahar needs python3 >= 3.10 (brew install python@3.12, or set PV_PYTHON3)")
+
+
+def build_env() -> Dict[str, str]:
+    env = dict(os.environ)
+    env["PATH"] = HOMEBREW_BIN + os.pathsep + env.get("PATH", "")
+    return env
+
+
+def run_wrapped_build(spec: CoreSpec, slice_name: str) -> None:
+    snippet = AZAHAR_BUILD if spec.name == "azahar" else DOLPHIN_BUILD
+    subprocess.run([python_for(spec), "-c", snippet, str(spec.script.parent), SLICES[slice_name]["cmake"]],
+                   check=True, env=build_env(), cwd=str(spec.script.parent))
+
+
+def pack_xcframework(spec: CoreSpec) -> None:
+    log(f"{spec.name}: packing {spec.product}.xcframework from the slices present")
+    if spec.name == "azahar":
+        cmd = [python_for(spec), "-c", AZAHAR_XCFRAMEWORK, str(spec.script.parent)]
+    else:
+        cmd = [sys.executable, str(spec.script), "-x"]
+    subprocess.run(cmd, check=True, env=build_env(), cwd=str(spec.script.parent))
+
+
+def main(argv: Optional[List[str]] = None, runner: Runner = default_runner,
+         env: Optional[Mapping[str, str]] = None, builder: Builder = run_wrapped_build) -> int:
+    parser = argparse.ArgumentParser(description="Build or link one cached Azahar/Dolphin core slice.")
+    parser.add_argument("core", choices=["azahar", "dolphin"])
+    parser.add_argument("slice", choices=sorted(SLICES))
+    parser.add_argument("--print-key", action="store_true", help="print the cache key and exit")
+    parser.add_argument("--force", action="store_true", help="rebuild even on a cache hit")
+    parser.add_argument("--cache-dir", type=Path, help="cache root (default $PV_CORE_CACHE or ~/Library/Caches/Provenance/cores)")
+    parser.add_argument("--xcframework", action="store_true", help="also repack <Product>.xcframework (distribution)")
+    parser.add_argument("--repo-root", type=Path, default=REPO_ROOT, help=argparse.SUPPRESS)
+    args = parser.parse_args(argv)
+
+    environment = dict(os.environ) if env is None else dict(env)
+    spec = core_specs(args.repo_root.resolve())[args.core]
+    inputs = key_inputs(spec, args.slice, runner, environment)
+    key = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
+    if args.print_key:
+        print(key)
+        return 0
+
+    cache = args.cache_dir or Path(environment.get("PV_CORE_CACHE") or DEFAULT_CACHE)
+    ensure_slice(spec, args.slice, cache.expanduser(), key, inputs, args.force, builder)
+    xcframework = spec.legacy_dir / f"{spec.product}.xcframework"
+    if args.xcframework or (spec.name == "dolphin" and not xcframework.exists()):
+        pack_xcframework(spec)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+```
+
+Run: `chmod +x Scripts/cores/build_slice.py`
+
+- [ ] **Step 4: Run the tests and see them pass**
+
+Run: `python3 -m unittest Scripts/cores/tests/test_build_slice.py -v 2>&1 | tail -5`
+Expected: `Ran 16 tests` … `OK`.
+Then run `/usr/bin/python3 -m unittest Scripts/cores/tests/test_build_slice.py 2>&1 | tail -2`.
+Expected: `OK` (Python 3.9).
+
+- [ ] **Step 5: Check the real key**
+
+Run: `python3 Scripts/cores/build_slice.py azahar ios-sim --print-key; python3 Scripts/cores/build_slice.py azahar ios-sim --print-key`
+Expected: the same 64-hex line twice.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add Scripts/cores
+git -c commit.gpgsign=false commit -m "feat(cores): cache Azahar/Dolphin slices by content key" -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+---
 
 ### Task 13: Aggregates call `build_slice.py`; registry; `dev-generate` pre-build  *(model: sonnet)*
 
-**Files:** `Cores/Azahar/project.yml` (`BuildPVlibAzahar` script) and `Cores/Azahar/PVAzahar.xcodeproj/project.pbxproj` (phase `3EEEB32A1ECE41C0CF0EE800 /* Build PVlibAzahar */`, the only `shellScript` containing `build_azahar_core.py`); `Cores/Dolphin/PVDolphin.xcodeproj/project.pbxproj` (phase `B3DE9E412E2D7333008E97F6 /* build_dolphin_core */` of aggregate `Make XCFrameworks`, the `shellScript` containing `BuildiOSXCFramework.py`); `Scripts/maint/jobs.toml`; `Makefile`.
+**Files:**
+- Modify: `Cores/Azahar/PVAzahar.xcodeproj/project.pbxproj` (the shell of phase `3EEEB32A1ECE41C0CF0EE800 /* Build PVlibAzahar */`)
+- Modify: `Cores/Azahar/project.yml` (`BuildPVlibAzahar.buildScripts[0].script`)
+- Modify: `Cores/Dolphin/PVDolphin.xcodeproj/project.pbxproj` (the shell of phase `B3DE9E412E2D7333008E97F6 /* build_dolphin_core */` in aggregate `Make XCFrameworks`)
+- Modify: `Scripts/maint/jobs.toml`, `Makefile`
 
-What it does:
-- **Azahar.** Keep the submodule/cmake/ninja preflight, map `$PLATFORM_NAME` to the slice, then run `python3 "$PROJECT_DIR/../../Scripts/cores/build_slice.py" azahar "$slice"`. Edit the yml first, then copy the same text into the pbxproj `shellScript` line with a small Python escaper (`\\`, `\"`, `\n`). Never use xcodegen.
-- **Dolphin.** Keep the preflight. `macosx` becomes an error, since Catalyst is unsupported. Run `/usr/bin/python3 …/build_slice.py dolphin "$slice"`, then keep the `rsync` of `PVlibDolphin-${slice}.framework` into `$BUILT_PRODUCTS_DIR`.
-- **`jobs.toml`.** Add a `core-slices` job (`cli_only`) and the `Scripts/cores/tests` unittest in `script-tests`. List `Cores/Azahar/build_azahar_core.py` and `Cores/Dolphin/dolphin-ios/BuildiOSXCFramework.py` under `[ignore]`, with a comment.
-- **Makefile.** `dev-generate` loops over `DEV_PREBUILT_CORES` (empty by default) with `DEV_SLICE ?= ios-sim` before `tuist generate`.
+**Interfaces:**
+- Consumes: `build_slice.py <core> <slice>` (Task 12).
+- Produces: aggregates that cache-link or build the active slice; Make variables `DEV_PREBUILT_CORES ?=` and `DEV_SLICE ?= ios-sim`.
 
-Verified by:
-- `plutil -lint` on both pbxprojs;
-- `xcodebuild -project Cores/Azahar/PVAzahar.xcodeproj -target BuildPVlibAzahar -sdk iphonesimulator build`: a miss then a hit (the hit takes seconds), and the legacy path is a symlink into the cache;
-- `make dev-azahar` succeeds;
-- `maint.py status` shows no unregistered scripts.
+- [ ] **Step 1: Write the new Azahar script into `project.yml`**
 
-Dolphin's cold build (30–60 min) is left to CI.
+Replace the whole `script: |` block of `BuildPVlibAzahar` (from `set -euo pipefail` to the final `fi`) with:
+
+```yaml
+        script: |
+          set -euo pipefail
+          if [ ! -f "$PROJECT_DIR/azahar/CMakeLists.txt" ]; then
+            echo "error: azahar submodule not initialized. Run 'git submodule update --init --recursive Cores/Azahar' (or 'make setup'), then rebuild."; exit 1
+          fi
+          command -v cmake >/dev/null 2>&1 || [ -x /opt/homebrew/bin/cmake ] || { echo "error: cmake not found - 'brew install cmake ninja'"; exit 1; }
+          command -v ninja >/dev/null 2>&1 || [ -x /opt/homebrew/bin/ninja ] || { echo "error: ninja not found - 'brew install cmake ninja'"; exit 1; }
+          export PATH="/opt/homebrew/bin:$PATH"
+          case "${PLATFORM_NAME}" in
+            iphoneos)         slice=ios ;;
+            iphonesimulator)  slice=ios-sim ;;
+            appletvos)        slice=tvos ;;
+            appletvsimulator) slice=tvos-sim ;;
+            *) echo "error: unsupported PLATFORM_NAME ${PLATFORM_NAME}"; exit 1 ;;
+          esac
+          # Links the cached slice for this content key into build/xcframework/PVlibAzahar-<slice>.framework
+          # (the archive PVAzahar links via PVAZAHAR_ARCHIVE), building it on a miss. Never repacks the xcframework.
+          python3 "$PROJECT_DIR/../../Scripts/cores/build_slice.py" azahar "$slice"
+```
+
+- [ ] **Step 2: Mirror it into the hand-edited pbxproj**
+
+Do not run xcodegen. Run this Python from the repo root. It reads the script back out of `project.yml`, so the two copies stay identical:
+
+```bash
+python3 - <<'PY'
+from pathlib import Path
+
+yml = Path("Cores/Azahar/project.yml").read_text().splitlines()
+start = next(i for i, l in enumerate(yml) if l.strip() == "script: |" and "Build PVlibAzahar" in "\n".join(yml[i-4:i]))
+indent = len(yml[start + 1]) - len(yml[start + 1].lstrip())
+body = []
+for line in yml[start + 1:]:
+    if line.strip() and (len(line) - len(line.lstrip())) < indent:
+        break
+    body.append(line[indent:])
+while body and not body[-1].strip():
+    body.pop()
+script = "\n".join(body) + "\n"
+
+def pbx_quote(s: str) -> str:
+    return s.replace("\\", "\\\\").replace('"', '\\"').replace("\t", "\\t").replace("\n", "\\n")
+
+p = Path("Cores/Azahar/PVAzahar.xcodeproj/project.pbxproj")
+lines = p.read_text().split("\n")
+idx = [i for i, l in enumerate(lines) if l.lstrip().startswith("shellScript = ") and "build_azahar_core.py" in l]
+assert len(idx) == 1, idx
+lead = lines[idx[0]][: len(lines[idx[0]]) - len(lines[idx[0]].lstrip())]
+lines[idx[0]] = f'{lead}shellScript = "{pbx_quote(script)}";'
+p.write_text("\n".join(lines))
+print("updated", p)
+PY
+```
+
+Run: `plutil -lint Cores/Azahar/PVAzahar.xcodeproj/project.pbxproj && grep -c 'build_slice.py' Cores/Azahar/PVAzahar.xcodeproj/project.pbxproj`
+Expected: `OK` and `1`.
+
+- [ ] **Step 3: Replace the Dolphin phase script**
+
+The new script for `build_dolphin_core` keeps the preflight and the rsync, and replaces the direct `BuildiOSXCFramework.py` call:
+
+```bash
+set -euo pipefail
+
+SCRIPT="$PROJECT_DIR/dolphin-ios/BuildiOSXCFramework.py"
+
+# --- Preflight: fail early with actionable guidance instead of an opaque 'no XCFramework found' link error ---
+if [ ! -f "$SCRIPT" ]; then
+  echo "error: Dolphin submodule not initialized - $SCRIPT is missing. Run 'git submodule update --init --recursive' (or 'make setup') from the repo root, then rebuild."
+  exit 1
+fi
+if [ ! -x /opt/homebrew/bin/cmake ] && ! command -v cmake >/dev/null 2>&1; then
+  echo "error: cmake not found - required to build the Dolphin core. Install with 'brew install cmake ninja' (or run 'make setup'), then rebuild."
+  exit 1
+fi
+if [ ! -x /opt/homebrew/bin/ninja ] && ! command -v ninja >/dev/null 2>&1; then
+  echo "error: ninja not found - required to build the Dolphin core. Install with 'brew install ninja' (or run 'make setup'), then rebuild."
+  exit 1
+fi
+
+case "${PLATFORM_NAME}" in
+  iphoneos)         slice="ios" ;;
+  iphonesimulator)  slice="ios-sim" ;;
+  appletvos)        slice="tvos" ;;
+  appletvsimulator) slice="tvos-sim" ;;
+  *) echo "error: unsupported PLATFORM_NAME ${PLATFORM_NAME} (Mac Catalyst is not supported)"; exit 1 ;;
+esac
+
+# Links the cached slice for this content key into dolphin-ios/build/xcframework/PVlibDolphin-<slice>.framework,
+# building it on a miss; packs PVlibDolphin.xcframework only when it is missing.
+/usr/bin/python3 "$PROJECT_DIR/../../Scripts/cores/build_slice.py" dolphin "$slice"
+
+# Xcode's ProcessXCFramework step copies the slice into BUILT_PRODUCTS_DIR BEFORE this phase
+# has rebuilt it, so the first app build after any core change would link and embed the
+# PREVIOUS core. Put the slice that was just built where the linker and the embed step look.
+fresh="$PROJECT_DIR/dolphin-ios/build/xcframework/PVlibDolphin-${slice}.framework"
+if [[ -d "${fresh}" && -n "${BUILT_PRODUCTS_DIR:-}" ]]; then
+  mkdir -p "${BUILT_PRODUCTS_DIR}/PVlibDolphin-${slice}.framework"
+  /usr/bin/rsync -a --delete "${fresh}/" "${BUILT_PRODUCTS_DIR}/PVlibDolphin-${slice}.framework/"
+  echo "Synced fresh PVlibDolphin-${slice}.framework into ${BUILT_PRODUCTS_DIR}"
+fi
+```
+
+Save it as `/tmp/claude-501/dolphin-phase.sh`, then substitute it:
+
+```bash
+python3 - <<'PY'
+from pathlib import Path
+
+script = Path("/tmp/claude-501/dolphin-phase.sh").read_text()
+if not script.endswith("\n"):
+    script += "\n"
+
+def pbx_quote(s: str) -> str:
+    return s.replace("\\", "\\\\").replace('"', '\\"').replace("\t", "\\t").replace("\n", "\\n")
+
+p = Path("Cores/Dolphin/PVDolphin.xcodeproj/project.pbxproj")
+lines = p.read_text().split("\n")
+idx = [i for i, l in enumerate(lines) if l.lstrip().startswith("shellScript = ") and "BuildiOSXCFramework.py" in l]
+assert len(idx) == 1, idx
+lead = lines[idx[0]][: len(lines[idx[0]]) - len(lines[idx[0]].lstrip())]
+lines[idx[0]] = f'{lead}shellScript = "{pbx_quote(script)}";'
+p.write_text("\n".join(lines))
+print("updated", p)
+PY
+plutil -lint Cores/Dolphin/PVDolphin.xcodeproj/project.pbxproj
+```
+
+Expected: `updated …` and `OK`.
+
+- [ ] **Step 4: Verify Azahar through the aggregate (warm and cold-link paths)**
+
+Run: `xcodebuild -project Cores/Azahar/PVAzahar.xcodeproj -target BuildPVlibAzahar -sdk iphonesimulator -configuration Debug build 2>&1 | grep -E "build_slice|BUILD" | tail -5`
+Expected:
+- The first run prints `build_slice: azahar ios-sim: cache miss …`. If `Cores/Azahar/build/SIMULATORARM64` already holds a finished ninja tree, ninja relinks in minutes; otherwise this is the 30–40 minute cold build, so run it in the background and poll.
+- `ls -l Cores/Azahar/build/xcframework/PVlibAzahar-ios-sim.framework` shows a symlink into `~/Library/Caches/Provenance/cores/azahar/ios-sim/`.
+- A second run prints `cache hit` and finishes in seconds.
+
+- [ ] **Step 5: Verify the Azahar dev app still links**
+
+Run: `make dev-azahar 2>&1 | tail -2`
+Expected: `** BUILD SUCCEEDED **`.
+
+- [ ] **Step 6: Register in `jobs.toml`**
+
+Add under `[ignore].paths`:
+
+```toml
+  # Wrapped by Scripts/cores/build_slice.py (outside the scan roots; listed for discoverability).
+  "Cores/Azahar/build_azahar_core.py",
+  "Cores/Dolphin/dolphin-ios/BuildiOSXCFramework.py",
+```
+
+Add a job:
+
+```toml
+[jobs.core-slices]
+title = "Build or link a cached core slice"
+category = "Dev workspace"
+description = "Azahar/Dolphin per-slice build keyed by submodule, script, toolchain, flags, Xcode and SDK; called by the BuildPVlibAzahar and Make XCFrameworks aggregates."
+run = ["python3", "Scripts/cores/build_slice.py"]
+args_hint = "<azahar|dolphin> <ios|ios-sim|tvos|tvos-sim> [--print-key] [--force] [--xcframework]"
+files = ["Scripts/cores/tests/*.py"]
+needs = ["macos", "submodules"]
+cli_only = true
+```
+
+In `[jobs.script-tests]`, add `&& python3 -m unittest discover -s Scripts/cores/tests -p 'test_*.py'` before `&& bash Scripts/tests/test-get-modules-validation.sh`.
+
+Run: `python3 Scripts/maint/maint.py status 2>&1 | grep -i unregistered || echo "no unregistered scripts"`
+Expected: `no unregistered scripts`.
+
+- [ ] **Step 7: Add the `dev-generate` pre-build**
+
+Replace the `dev-generate` recipe from Task 3 with:
+
+```make
+# Cores linked as .prebuilt xcframeworks must exist before `tuist generate` (Tuist reads them
+# eagerly). None of the initial focused apps use one; add e.g. "dolphin" when one does.
+DEV_PREBUILT_CORES ?=
+DEV_SLICE ?= ios-sim
+dev-generate:
+	@for core in $(DEV_PREBUILT_CORES); do python3 Scripts/cores/build_slice.py $$core $(DEV_SLICE) || exit 1; done
+	$(TUIST) generate --no-open
+```
+
+Run: `make dev-generate 2>&1 | tail -1`
+Expected: `Project generated.`
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add Cores/Azahar/project.yml Cores/Azahar/PVAzahar.xcodeproj/project.pbxproj Cores/Dolphin/PVDolphin.xcodeproj/project.pbxproj Scripts/maint/jobs.toml Makefile
+git -c commit.gpgsign=false commit -m "build(cores): Azahar and Dolphin aggregates use the slice cache" -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+The Dolphin aggregate is not built here: a cold Dolphin slice takes 30–60 minutes. CI in Task 14 exercises it on both legs.
+
+---
 
 ### Task 14: CI caches and `dev-workspace.yml`  *(model: sonnet)*
 
-**Files:** `.github/workflows/build.yml`, `.github/workflows/testflight.yml`, new `.github/workflows/dev-workspace.yml`. Workflow changes need a maintainer push.
+**Files:**
+- Modify: `.github/workflows/build.yml`, `.github/workflows/testflight.yml`
+- Create: `.github/workflows/dev-workspace.yml`
 
-What it does:
-- **`build.yml`.** Add `!Cores/Dolphin/dolphin-ios/build-*` to the submodules cache; keep `!Cores/Azahar/build`. Replace the steps `Azahar submodule gitlink` and `Cache azahar build` with:
-  - `Core slice cache keys`: the slice comes from `matrix.sdk` (`iphoneos→ios`, `appletvos→tvos`). The matrix has no `platform` key. The step runs after `Initialize submodules` and `Setup Xcode`.
-  - `Cache core slices`: path `~/Library/Caches/Provenance/cores`, key `cores-${{ runner.os }}-${{ matrix.sdk }}-<azahar16>-<dolphin16>`, restore-key prefix `cores-${{ runner.os }}-${{ matrix.sdk }}-`.
-- **`testflight.yml`.** Add the same steps keyed on `matrix.platform` (`ios`/`tvos`), and add both exclusions to its submodules cache.
-- **`dev-workspace.yml`** (PR to develop with path filters, push to develop, dispatch) does the following on `macos-26` with Xcode 26.3:
-  1. Shallow-inits agent-validation's smoke submodule list plus the mGBA, Stella and snes9x submodules.
-  2. Generates the cheat database.
-  3. Installs mise and `tuist@4.200.0`.
-  4. Runs `Scripts/dev/check_dev_manifest.sh`.
-  5. Runs `tuist generate --no-open`.
-  6. Builds `Provenance-Dev-UI` for iOS and tvOS Simulator with `CODE_SIGNING_ALLOWED=NO`, and uploads the raw log on failure.
+**Interfaces:**
+- Consumes: `build_slice.py --print-key`; `Provenance-Dev-UI`.
+- Produces: per-leg cache `cores-${{ runner.os }}-<sdk|platform>-<azahar16>-<dolphin16>`.
 
-Verified by: YAML parse (`actionlint` if available) and step order by `grep -n`. The real check is the next CI run on develop.
+The GitHub Actions bot cannot push workflow changes, so this task commits locally only. The coordinator pushes it.
+
+- [ ] **Step 1: `build.yml`: exclude the Dolphin build trees from the submodules cache**
+
+In the `Cache submodules` step's `path:` list, after `!Cores/Azahar/build`, add:
+
+```yaml
+            !Cores/Dolphin/dolphin-ios/build-*
+```
+
+- [ ] **Step 2: `build.yml`: replace the Azahar cache with the slice cache**
+
+Delete the steps `Azahar submodule gitlink` and `Cache azahar build`, including their comments. Insert in their place:
+
+```yaml
+      # Core slices (Azahar, Dolphin) are cached by Scripts/cores/build_slice.py content keys:
+      # submodule + nested externals, build script, toolchain, flags, Xcode and SDK. One entry per
+      # leg; the aggregates then link the cached slice instead of rebuilding it.
+      - name: Core slice cache keys
+        id: core-keys
+        run: |
+          case "${{ matrix.sdk }}" in
+            iphoneos) slice=ios ;;
+            appletvos) slice=tvos ;;
+            *) echo "::error::unknown sdk ${{ matrix.sdk }}"; exit 1 ;;
+          esac
+          echo "slice=$slice" >> "$GITHUB_OUTPUT"
+          echo "azahar=$(python3 Scripts/cores/build_slice.py azahar "$slice" --print-key | cut -c1-16)" >> "$GITHUB_OUTPUT"
+          echo "dolphin=$(python3 Scripts/cores/build_slice.py dolphin "$slice" --print-key | cut -c1-16)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache core slices
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Provenance/cores
+          key: cores-${{ runner.os }}-${{ matrix.sdk }}-${{ steps.core-keys.outputs.azahar }}-${{ steps.core-keys.outputs.dolphin }}
+          restore-keys: |
+            cores-${{ runner.os }}-${{ matrix.sdk }}-
+```
+
+These steps sit where the old ones were, which is after `Initialize submodules` and `Setup Xcode`. Both are required: the key reads submodule HEADs and `xcodebuild -version`. Confirm with `grep -n "name: Initialize submodules\|name: Setup Xcode\|name: Core slice cache keys" .github/workflows/build.yml`: the line numbers increase in that order.
+
+- [ ] **Step 3: `testflight.yml`: same caches**
+
+In its `Cache submodules` `path:` list, add `!Cores/Azahar/build` and `!Cores/Dolphin/dolphin-ios/build-*`. After the `Setup Xcode` step, insert:
+
+```yaml
+      - name: Core slice cache keys
+        id: core-keys
+        run: |
+          slice="${{ matrix.platform }}"   # ios | tvos (device slices)
+          echo "azahar=$(python3 Scripts/cores/build_slice.py azahar "$slice" --print-key | cut -c1-16)" >> "$GITHUB_OUTPUT"
+          echo "dolphin=$(python3 Scripts/cores/build_slice.py dolphin "$slice" --print-key | cut -c1-16)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache core slices
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Provenance/cores
+          key: cores-${{ runner.os }}-${{ matrix.platform }}-${{ steps.core-keys.outputs.azahar }}-${{ steps.core-keys.outputs.dolphin }}
+          restore-keys: |
+            cores-${{ runner.os }}-${{ matrix.platform }}-
+```
+
+- [ ] **Step 4: Write `.github/workflows/dev-workspace.yml`**
+
+```yaml
+name: Dev workspace
+
+# Generates Provenance-Dev.xcworkspace with Tuist and builds Provenance-Dev-UI for both
+# simulators (ad-hoc signed by Dev/Config/Dev.xcconfig). The fast smoke build for agent PRs
+# (replaces Provenance-CI in a follow-up).
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - "Tuist.swift"
+      - "Workspace.swift"
+      - "Tuist/**"
+      - "Dev/**"
+      - ".mise.toml"
+      - "Build.xcconfig"
+      - "Build-iOS.xcconfig"
+      - "Provenance/Main UI/**"
+      - "Provenance/Provenance-Lite (AppStore)-Info.plist"
+      - "PV*/**"
+      - "Cores/mGBA/**"
+      - "Cores/Stella/**"
+      - "Cores/snes9x/**"
+      - ".github/workflows/dev-workspace.yml"
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+concurrency:
+  group: dev-workspace-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TUIST_VERSION: "4.200.0"
+
+jobs:
+  build:
+    name: Provenance-Dev-UI (${{ matrix.destination }})
+    runs-on: macos-26
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        destination: ["generic/platform=iOS Simulator", "generic/platform=tvOS Simulator"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 1
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
+
+      # Same set as agent-validation's smoke build (package resolution needs them), plus the
+      # three cores Provenance-Dev-UI embeds.
+      - name: Init required submodules (shallow)
+        run: |
+          git submodule update --init --depth 1 \
+            Cores/4DO \
+            Cores/Bliss \
+            Cores/CrabEMU \
+            Dependencies/HexColors \
+            Dependencies/SWCompression \
+            Cores/Mednafen/ThirdParty/libchdr \
+            PVRcheevos/rcheevos \
+            Cores/mGBA/Sources/libmGBA-embed/mgba \
+            Cores/Stella/Sources/libstella/stella \
+            Cores/snes9x/snes9x-src \
+            Cores/snes9x/libretro-snes9x
+          git submodule update --init --depth 1 --recursive Cores/VirtualJaguar
+          if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
+            rm -rf Dependencies/ZipArchive
+            git clone --depth 1 https://github.com/ZipArchive/ZipArchive.git Dependencies/ZipArchive
+          fi
+
+      - name: Cache libretro cheat database
+        uses: actions/cache@v4
+        with:
+          path: PVLookup/Sources/LibretroCheatDB/Resources/libretro_cheats.sqlite.zip
+          key: ${{ runner.os }}-cheatdb-${{ hashFiles('Scripts/generators/generate_cheatdb.py', 'PVLookup/Scripts/generate_cheatdb_if_needed.sh') }}
+
+      - name: Generate libretro cheat database if missing
+        run: ./PVLookup/Scripts/generate_cheatdb_if_needed.sh
+
+      - name: Install Tuist (mise)
+        run: |
+          curl -fsSL https://mise.run | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          echo "$HOME/.local/share/mise/shims" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/mise" install "tuist@${TUIST_VERSION}"
+
+      - name: Manifest checks
+        run: Scripts/dev/check_dev_manifest.sh
+
+      - name: Generate
+        run: mise exec -- tuist generate --no-open
+
+      - name: Build
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -workspace Provenance-Dev.xcworkspace \
+            -scheme Provenance-Dev-UI \
+            -destination "${{ matrix.destination }}" \
+            -skipPackagePluginValidation -skipMacroValidation \
+            2>&1 | tee /tmp/dev-xcodebuild.log | grep -E "(: (fatal )?error:|BUILD (SUCCEEDED|FAILED)|The following build commands failed)" | tail -60
+
+      - name: Upload log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-xcodebuild-log-${{ strategy.job-index }}
+          path: /tmp/dev-xcodebuild.log
+          retention-days: 3
+```
+
+Check the submodule paths for snes9x against `.gitmodules` (`path = Cores/snes9x/libretro-snes9x` and `path = Cores/snes9x/snes9x-src` at the time of writing). Remove one if `grep -n "path = Cores/snes9x" .gitmodules` disagrees.
+
+- [ ] **Step 5: Validate the workflow syntax**
+
+Run: `python3 -c "import yaml,sys; [yaml.safe_load(open(f)) for f in sys.argv[1:]]; print('ok')" .github/workflows/build.yml .github/workflows/testflight.yml .github/workflows/dev-workspace.yml 2>/dev/null || ruby -ryaml -e 'ARGV.each { |f| YAML.load_file(f) }; puts "ok"' .github/workflows/build.yml .github/workflows/testflight.yml .github/workflows/dev-workspace.yml`
+Expected: `ok`. If `actionlint` is installed, also run `actionlint .github/workflows/dev-workspace.yml .github/workflows/build.yml .github/workflows/testflight.yml`.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add .github/workflows/build.yml .github/workflows/testflight.yml .github/workflows/dev-workspace.yml
+git -c commit.gpgsign=false commit -m "ci: cache core slices per leg; add dev workspace smoke build" -m "Workflow files: a maintainer must push (bot lacks workflows permission)." -m "Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
+```
+
+---
 
 # Batch 5 — Pruning PR (branch `feature/prune-dead-cores`; merged only after `build.yml` passes both legs)
 
@@ -2554,8 +3467,8 @@ Verified by: the skill's commands are copy-pasted from the merged Makefile and s
 | §5 | `FocusedApp` template and target table | T2, T3, T7, T8 |
 | §6 | `LibretroCores` pre/post scripts; `get-modules.sh --urls` | T6, T7 (deviations 4, 5) |
 | §7 | `PVDevHarness`, app hook, `make dev-harness` | T9–T11 (detailed; Thin harness is device-only) |
-| §8 | `build_slice.py`, aggregates, registry | T12, T13 (outlined; deviation 6) |
-| §9 | `build.yml` / `testflight.yml` caches, `dev-workspace.yml` | T14 (outlined) |
+| §8 | `build_slice.py`, aggregates, registry | T12, T13 (detailed; deviation 6) |
+| §9 | `build.yml` / `testflight.yml` caches, `dev-workspace.yml` | T14 (detailed) |
 | §10 | Pruning, `RetiredCoreMigration` entries, battery rules, docs | T15–T20 (outlined; Debug kept, deviation 7) |
 | §11 | CLAUDE.md, fast-iteration skill, roadmap | T20, T21 (outlined) |
 | §12 | Verification: generate, builds, harness, unittest, manifest tests, pruning CI | T2/T3/T7/T8 builds, T4 manifest checks, T11, T12, T19 |
