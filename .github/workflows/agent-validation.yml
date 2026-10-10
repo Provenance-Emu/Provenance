@@ -401,17 +401,10 @@ jobs:
         run: |
           git submodule update --init --depth 1 \
             Cores/4DO \
-            Cores/Bliss \
-            Cores/CrabEMU \
             Dependencies/HexColors \
             Dependencies/SWCompression \
             Cores/Mednafen/ThirdParty/libchdr \
             PVRcheevos/rcheevos
-
-          # VirtualJaguar's libretro-common target reads its sources from a nested
-          # submodule, so a non-recursive init leaves the target empty. It has exactly
-          # one nested submodule and it is fetchable, so --recursive is cheap here.
-          git submodule update --init --depth 1 --recursive Cores/VirtualJaguar
 
           # ZipArchive: custom commit not available on public remote — clone public instead
           if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then
@@ -510,7 +503,7 @@ jobs:
       # The list has TWO sources, and missing either fails resolution with
       # "the package manifest at '<path>/Package.swift' cannot be accessed":
       #   1. XCLocalSwiftPackageReference entries in Provenance.xcodeproj that are
-      #      submodules — Cores/4DO, Bliss, CrabEMU, VirtualJaguar.
+      #      submodules — Cores/4DO.
       #   2. TRANSITIVE `.package(path:)` deps of the local packages. These are easy
       #      to miss because nothing in the workspace names them: PVLibrary and
       #      PVArchiving pull in Dependencies/SWCompression, PVThemes pulls in
@@ -534,11 +527,9 @@ jobs:
       #      and are NOT found by the command above. Swap `.package\(.*path:` for
       #      `\.(target|systemLibrary|binaryTarget)\(` to enumerate them.
       #
-      #      Only three are actually resolved by the CI scheme: PVRcheevos/rcheevos
-      #      (target CRcheevos), Cores/Mednafen/ThirdParty/libchdr (target zstd — its
-      #      deps/ is vendored, not nested submodules, so libchdr alone is enough),
-      #      and VirtualJaguar's NESTED Sources/virtualjaguar-libretro (target
-      #      libretro-common), which is why VirtualJaguar needs --recursive.
+      #      Only two are actually resolved by the CI scheme: PVRcheevos/rcheevos
+      #      (target CRcheevos) and Cores/Mednafen/ThirdParty/libchdr (target zstd — its
+      #      deps/ is vendored, not nested submodules, so libchdr alone is enough).
       #
       #      The scan also turns up gliden64, rsp/cxd4, rsp/hle, potator, libretro-vecx
       #      and SNESticle. Those are deliberately NOT listed: SwiftPM reports every
@@ -552,17 +543,10 @@ jobs:
         run: |
           git submodule update --init --depth 1 \
             Cores/4DO \
-            Cores/Bliss \
-            Cores/CrabEMU \
             Dependencies/HexColors \
             Dependencies/SWCompression \
             Cores/Mednafen/ThirdParty/libchdr \
             PVRcheevos/rcheevos
-
-          # VirtualJaguar's libretro-common target reads its sources from a nested
-          # submodule, so a non-recursive init leaves the target empty. It has exactly
-          # one nested submodule and it is fetchable, so --recursive is cheap here.
-          git submodule update --init --depth 1 --recursive Cores/VirtualJaguar
 
           # ZipArchive: custom commit not available on public remote — clone public instead
           if ! git submodule update --init --depth 1 Dependencies/ZipArchive 2>/dev/null; then

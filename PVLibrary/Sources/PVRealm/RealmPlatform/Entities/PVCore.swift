@@ -265,9 +265,6 @@ public extension PVCore {
         RetiredCoreID.mupen64PlusNX: RetiredCore(replacement: LibretroCoreID.mupen64PlusNext),
     ]
 
-    /// Retired core → its default replacement.
-    static var retiredCoreReplacements: [String: String] { retiredCores.mapValues(\.replacement) }
-
     /// The retirements in effect in this build: those whose replacements are all
     /// bundled. Lite builds ship no libretro dylibs and keep the old core.
     static let activeRetiredCores: [String: RetiredCore] =

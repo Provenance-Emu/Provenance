@@ -177,7 +177,7 @@ final class RetiredCoreMigrationTests: XCTestCase {
     }
 
     func testRetirementWaitsForTheReplacementToBeBundled() {
-        XCTAssertEqual(PVCore.retiredCoreReplacements[RetiredCoreID.jaguar], LibretroCoreID.virtualJaguar)
+        XCTAssertEqual(PVCore.retiredCores[RetiredCoreID.jaguar]?.replacement, LibretroCoreID.virtualJaguar)
         // The test runner bundles no libretro cores, like a Lite build: Jaguar
         // stays on its native core and incoming records keep their identifier.
         XCTAssertFalse(PVCore.isBundledLibretroCore(LibretroCoreID.virtualJaguar))

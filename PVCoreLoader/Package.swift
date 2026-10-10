@@ -29,13 +29,9 @@ let package = Package(
         .package(path: "../PVFeatureFlags/"),
 
         // MARK: Cores
-        .package(path: "../Cores/Atari800/"),
         .package(path: "../Cores/PicoDrive/"),
-        .package(path: "../Cores/PokeMini/"),
         .package(path: "../Cores/Stella/"),
         .package(path: "../Cores/TGBDual/"),
-        .package(path: "../Cores/VirtualJaguar/"),
-        .package(path: "../Cores/VisualBoyAdvance-M/")
 
         // MARK: Plugins
 
@@ -75,13 +71,9 @@ let package = Package(
                 "PVLogging",
                 "PVSupport"
 
-//                .product(name: "PVAtari800-Dynamic", package: "Atari800"),
 //                .product(name: "PVPicoDrive-Dynamic", package: "PicoDrive"),
-//                .product(name: "PVPokeMini-Dynamic", package: "PokeMini"),
 //                .product(name: "PVStella-Dynamic", package: "Stella"),
-//                .product(name: "PVTGBDual-Dynamic", package: "TGBDual"),
-//                .product(name: "PVVirtualJaguar-Dynamic", package: "VirtualJaguar"),
-//                .product(name: "PVVisualBoyAdvance-Dynamic", package: "VisualBoyAdvance-M")
+//                .product(name: "PVTGBDual-Dynamic", package: "TGBDual")
             ],
             resources: [
                 .process("Resources/CoreCapabilities.json"),
@@ -93,13 +85,9 @@ let package = Package(
         .target(
             name: "PVCoreEnumerator",
             dependencies: [
-                .product(name: "PVAtari800-Dynamic", package: "Atari800"),
                 .product(name: "PVPicoDrive-Dynamic", package: "PicoDrive"),
-                .product(name: "PVPokeMini-Dynamic", package: "PokeMini"),
                 .product(name: "PVStella-Dynamic", package: "Stella"),
-                .product(name: "PVTGBDual-Dynamic", package: "TGBDual"),
-                .product(name: "PVVirtualJaguar-Dynamic", package: "VirtualJaguar"),
-                .product(name: "PVVisualBoyAdvance-Dynamic", package: "VisualBoyAdvance-M")
+                .product(name: "PVTGBDual-Dynamic", package: "TGBDual")
             ],
             swiftSettings: [
                 .interoperabilityMode(.Cxx)
