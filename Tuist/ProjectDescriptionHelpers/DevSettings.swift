@@ -11,8 +11,7 @@ public enum DevSettings {
             set -euo pipefail
             dest="${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
             mkdir -p "$dest"
-            identity="${EXPANDED_CODE_SIGN_IDENTITY:-}"
-            if [ -z "$identity" ] || [ "${CODE_SIGNING_ALLOWED:-YES}" = "NO" ]; then identity="-"; fi
+            identity="${EXPANDED_CODE_SIGN_IDENTITY:--}"
             for fw in \(products.joined(separator: " ")); do
               src="${BUILT_PRODUCTS_DIR}/${fw}.framework"
               if [ ! -d "$src" ]; then
@@ -20,7 +19,7 @@ public enum DevSettings {
                 exit 1
               fi
               /usr/bin/rsync -a --delete --exclude Headers --exclude PrivateHeaders --exclude Modules "$src/" "$dest/${fw}.framework/"
-              /usr/bin/codesign --force --sign "$identity" --preserve-metadata=identifier,entitlements "$dest/${fw}.framework"
+              /usr/bin/codesign --force --sign "$identity" --preserve-metadata=identifier,entitlements --timestamp=none "$dest/${fw}.framework"
             done
             """,
             name: "Embed core frameworks",

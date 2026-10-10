@@ -11,3 +11,15 @@ CODE_SIGN_ENTITLEMENTS[sdk=appletvos*] = $(PV_REPO_ROOT)/ProvenanceTV/Provenance
 CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*] = $(PV_REPO_ROOT)/ProvenanceTV/ProvenanceTV-AppStore.entitlements
 
 TVOS_DEPLOYMENT_TARGET = 17.0
+
+// Simulators need at least an ad-hoc signature (iOS/tvOS 26+ runtimes refuse unsigned embedded
+// frameworks), and a team-less project can't use automatic signing there. Device SDKs keep
+// the automatic signing from Build-iOS.xcconfig / CodeSigning.xcconfig.
+CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = -
+CODE_SIGN_IDENTITY[sdk=appletvsimulator*] = -
+CODE_SIGN_STYLE[sdk=iphonesimulator*] = Manual
+CODE_SIGN_STYLE[sdk=appletvsimulator*] = Manual
+DEVELOPMENT_TEAM[sdk=iphonesimulator*] =
+DEVELOPMENT_TEAM[sdk=appletvsimulator*] =
+PROVISIONING_PROFILE_SPECIFIER[sdk=iphonesimulator*] =
+PROVISIONING_PROFILE_SPECIFIER[sdk=appletvsimulator*] =

@@ -267,8 +267,7 @@ _dev-build: dev-generate
 		-destination "$(DEV_DESTINATION)" \
 		-derivedDataPath "$(DEV_DERIVED)" \
 		-skipPackagePluginValidation \
-		-skipMacroValidation \
-		CODE_SIGNING_ALLOWED=NO
+		-skipMacroValidation
 
 dev-ui:
 	$(MAKE) _dev-build DEV_SCHEME=Provenance-Dev-UI

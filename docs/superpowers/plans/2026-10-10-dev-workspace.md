@@ -26,8 +26,9 @@
 - Every new script under `Scripts/` or `CoresRetro/RetroArch/scripts/` is registered in `Scripts/maint/jobs.toml`, either as a job or under `[ignore]`.
 - Build verification (main worktree only, because PVUI cannot build in a git worktree):
   - `mise exec -- tuist generate --no-open` (from the repo root)
-  - `xcodebuild -workspace Provenance-Dev.xcworkspace -scheme <Scheme> -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -skipPackagePluginValidation -skipMacroValidation -derivedDataPath /tmp/claude-501/dev-dd build`
+  - `xcodebuild -workspace Provenance-Dev.xcworkspace -scheme <Scheme> -destination 'generic/platform=iOS Simulator' -skipPackagePluginValidation -skipMacroValidation -derivedDataPath /tmp/claude-501/dev-dd build`
   - the same command with `-destination 'generic/platform=tvOS Simulator'`
+  - launch check (iOS): `xcrun simctl install booted /tmp/claude-501/dev-dd/Build/Products/Debug-iphonesimulator/<App>.app && xcrun simctl launch --console-pty booted <bundle id>` must print the app's startup log, not a dyld error (simulator builds are ad-hoc signed by `Dev/Config/Dev.xcconfig`; do not pass `CODE_SIGNING_ALLOWED=NO`)
   - Pipe to `tee /tmp/claude-501/<task>.log | tail -40`. A Run Script failure prints no `error:` line, so read the `The following build commands failed:` block.
   - Never run two `xcodebuild`s against `/tmp/claude-501/dev-dd` at once.
 - PVLibrary tests: `cd PVLibrary && xcodebuild test -workspace .swiftpm/xcode/package.xcworkspace -scheme PVLibrary-UnitTests -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -collect-test-diagnostics never CODE_SIGNING_ALLOWED=NO -skipPackagePluginValidation -skipMacroValidation` (add `-only-testing:PVLibraryTests/<Class>` to scope). On Xcode 26.6, add `-xcconfig` with `OTHER_CFLAGS = $(inherited) -Wno-invalid-specialization` and `OTHER_CPLUSPLUSFLAGS = $(inherited) -Wno-invalid-specialization`.
