@@ -366,6 +366,10 @@ void PVAzaharJITProbeSignalHandler(int sig) {
         _emuThreadId = std::thread::id();
         _emuThreadExited = true;   // after this the thread touches nothing of ours; stop may join
     });
+    // Skin frames replayed by setupRenderView queued their window jobs while !_running and were
+    // dropped; push the current layout state now that the emu thread accepts jobs.
+    ILOG(@"[PVAzahar] post-start relayout");
+    [self relayoutWindow];
     [super startEmulation];
 }
 

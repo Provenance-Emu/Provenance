@@ -201,7 +201,7 @@ void ApplyLayoutSettings(bool skin, bool singleArea, CGRect top, CGRect bottom, 
 
 - (void)setUseCustomRenderViewLayout:(BOOL)enabled {
     _useCustomRenderViewLayout = enabled;
-    if (!enabled) { _skinLayoutActive = NO; _skinSingleAreaActive = NO; }
+    if (!enabled) { _skinLayoutActive = NO; _skinSingleAreaActive = NO; _hasPendingSkinFrames = NO; _hasPendingSingleArea = NO; }
     if (!enabled && _renderView && _renderViewConstraints) {
         _renderView.translatesAutoresizingMaskIntoConstraints = NO;
         [NSLayoutConstraint activateConstraints:_renderViewConstraints];
