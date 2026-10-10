@@ -59,42 +59,24 @@ jobs:
           echo "skip=false" >> "$GITHUB_OUTPUT"
           echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
-      - name: Post artifact links to PR
+      # Scripts come from the default branch (workflow_run never runs PR code).
+      - name: Checkout CI scripts
+        if: steps.pr.outputs.skip == 'false'
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: Scripts/ci
+
+      - name: Post download links to PR
         if: steps.pr.outputs.skip == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ steps.pr.outputs.pr_number }}
         run: |
-          RUN_ID="${{ github.event.workflow_run.id }}"
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${RUN_ID}"
-
-          # Fetch artifact names for the completed build run
-          ARTIFACT_NAMES=$(gh api \
-            "repos/${{ github.repository }}/actions/runs/${RUN_ID}/artifacts" \
-            --jq '.artifacts[].name' 2>/dev/null || echo "")
-
-          ARTIFACT_LIST=""
-          while IFS= read -r name; do
-            [ -n "$name" ] && ARTIFACT_LIST="${ARTIFACT_LIST}- \`${name}\`"$'\n'
-          done <<< "$ARTIFACT_NAMES"
-
-          SHA="${{ github.event.workflow_run.head_sha }}"
-          SHORT_SHA="${SHA:0:7}"
-
-          cat > /tmp/ipa_links.md << COMMENTEOF
-          ## 📦 IPA Builds Ready — \`${SHORT_SHA}\`
-
-          Download from the [Actions run page](${RUN_URL}).
-
-          ### Available IPAs
-          ${ARTIFACT_LIST}
-          > **Install:** Download the \`.ipa\`, then sideload via AltStore, SideStore, or TrollStore.
-          > Artifacts expire after 90 days.
-          COMMENTEOF
-
-          gh pr comment "$PR_NUMBER" \
-            --repo "${{ github.repository }}" \
-            --body-file /tmp/ipa_links.md 2>/dev/null || \
+          Scripts/ci/ci-pr-build-comment.sh "${{ github.repository }}" \
+            "${{ github.event.workflow_run.id }}" "${{ github.event.workflow_run.head_sha }}" \
+            > "${RUNNER_TEMP}/ipa_links.md"
+          gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+            --body-file "${RUNNER_TEMP}/ipa_links.md" || \
           echo "::warning::Could not post comment to PR #${PR_NUMBER}"
 
       - name: Notify Discord

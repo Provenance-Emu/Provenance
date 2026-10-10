@@ -42,6 +42,7 @@ paths = [
   "Scripts/ci/ci-core-manifest.py",
   "Scripts/ci/ci-init-submodules.sh",
   "Scripts/ci/ci-local-dylib-alert.sh",
+  "Scripts/ci/ci-pr-build-comment.sh",
   "Scripts/ci/setup-github-project.sh",
   # Developer one-offs that need hand-picked arguments.
   "Scripts/dev/StikDebug/provenance.js",

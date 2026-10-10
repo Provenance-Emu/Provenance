@@ -927,36 +927,18 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Post build links comment
+      - name: Checkout CI scripts
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: Scripts/ci
+
+      - name: Post download links comment
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.inputs.pr_number }}
         run: |
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-
-          # Fetch artifact names for this run
-          ARTIFACT_NAMES=$(gh api \
-            "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts" \
-            --jq '.artifacts[].name' 2>/dev/null || echo "")
-
-          # Build artifact list
-          ARTIFACT_LIST=""
-          while IFS= read -r name; do
-            [ -n "$name" ] && ARTIFACT_LIST="${ARTIFACT_LIST}- \`${name}\`"$'\n'
-          done <<< "$ARTIFACT_NAMES"
-
-          cat > /tmp/build_links.md << COMMENTEOF
-          ## 📦 IPA Builds Ready
-
-          Download from the [Actions run page](${RUN_URL}).
-
-          ### Available IPAs
-          ${ARTIFACT_LIST}
-          > **Install:** Download the \`.ipa\`, then sideload via AltStore, SideStore, or TrollStore.
-          > Artifacts expire after 90 days.
-          COMMENTEOF
-
-          gh pr comment "$PR_NUMBER" \
-            --repo "${{ github.repository }}" \
-            --body-file /tmp/build_links.md 2>/dev/null || \
+          Scripts/ci/ci-pr-build-comment.sh "${{ github.repository }}" "${{ github.run_id }}" "${{ github.sha }}" \
+            > "${RUNNER_TEMP}/build_links.md"
+          gh pr comment "$PR_NUMBER" --repo "${{ github.repository }}" \
+            --body-file "${RUNNER_TEMP}/build_links.md" || \
           echo "::warning::Could not post comment to PR #${PR_NUMBER}"
