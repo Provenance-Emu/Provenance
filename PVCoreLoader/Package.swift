@@ -33,6 +33,7 @@ let package = Package(
         .package(path: "../Cores/PicoDrive/"),
         .package(path: "../Cores/Stella/"),
         .package(path: "../Cores/TGBDual/"),
+        .package(path: "../Cores/VisualBoyAdvance-M/")
 
         // MARK: Plugins
 
@@ -75,7 +76,8 @@ let package = Package(
 //                .product(name: "PVAtari800-Dynamic", package: "Atari800"),
 //                .product(name: "PVPicoDrive-Dynamic", package: "PicoDrive"),
 //                .product(name: "PVStella-Dynamic", package: "Stella"),
-//                .product(name: "PVTGBDual-Dynamic", package: "TGBDual")
+//                .product(name: "PVTGBDual-Dynamic", package: "TGBDual"),
+//                .product(name: "PVVisualBoyAdvance-Dynamic", package: "VisualBoyAdvance-M")
             ],
             resources: [
                 .process("Resources/CoreCapabilities.json"),
@@ -90,7 +92,8 @@ let package = Package(
                 .product(name: "PVAtari800-Dynamic", package: "Atari800"),
                 .product(name: "PVPicoDrive-Dynamic", package: "PicoDrive"),
                 .product(name: "PVStella-Dynamic", package: "Stella"),
-                .product(name: "PVTGBDual-Dynamic", package: "TGBDual")
+                .product(name: "PVTGBDual-Dynamic", package: "TGBDual"),
+                .product(name: "PVVisualBoyAdvance-Dynamic", package: "VisualBoyAdvance-M")
             ],
             swiftSettings: [
                 .interoperabilityMode(.Cxx)

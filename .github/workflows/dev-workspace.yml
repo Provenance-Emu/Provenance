@@ -57,6 +57,8 @@ jobs:
         run: |
           git submodule update --init --depth 1 \
             Cores/4DO \
+            Cores/Bliss \
+            Cores/CrabEMU \
             Dependencies/HexColors \
             Dependencies/SWCompression \
             Cores/Mednafen/ThirdParty/libchdr \

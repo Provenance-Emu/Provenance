@@ -3,7 +3,8 @@
 #
 # Removes retired native cores from the shipping project, workspace and submodules
 # (docs/superpowers/specs/2026-10-10-core-audit.md; batch 5 of the dev-workspace plan).
-# Atari800 and Gambatte are deliberately not listed: they ship deprecated (`PVCore.deprecatedCores`).
+# Atari800, Bliss, CrabEMU, Gambatte and VisualBoyAdvance-M are deliberately not listed: they ship
+# deprecated (`PVCore.deprecatedCores`).
 #
 #   ruby Scripts/dev/prune_cores.rb            # dry run: edits a temp copy, prints the diff + counts
 #   ruby Scripts/dev/prune_cores.rb --apply    # edits in place, `git rm`s the core dirs, trims .gitmodules
@@ -32,10 +33,7 @@ WORKSPACE = 'Provenance.xcworkspace/contents.xcworkspacedata'
 # dir => frameworks (file-reference basenames, incl. the pre-SPM group-only refs), SPM products,
 # local package paths
 CORES = {
-  'Bliss' => { frameworks: %w[PVBliss.framework PVBliss-tvOS.framework], products: %w[PVBliss-Dynamic], packages: %w[Cores/Bliss] },
-  'CrabEMU' => { frameworks: %w[PVCrabEmu.framework], products: %w[PVCrabEmu-Dynamic], packages: %w[Cores/CrabEMU] },
   'PokeMini' => { frameworks: %w[PVPokeMini.framework], products: %w[PVPokeMini-Dynamic], packages: %w[Cores/PokeMini] },
-  'VisualBoyAdvance-M' => { frameworks: %w[PVGBA.framework], products: %w[PVVisualBoyAdvance-Dynamic], packages: %w[Cores/VisualBoyAdvance-M] },
   'VirtualJaguar' => { frameworks: %w[PVVirtualJaguar.framework], products: %w[PVVirtualJaguar-Dynamic], packages: %w[Cores/VirtualJaguar] },
   'O2EM' => { frameworks: %w[PVO2EM.framework] },
   'Desmume2015' => { frameworks: %w[PVDesmume2015.framework] },

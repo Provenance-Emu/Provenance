@@ -20,6 +20,12 @@
 	path = Cores/Dolphin/dolphin-ios
 	url = https://github.com/Provenance-Emu/iCube.git
 	branch = develop
+[submodule "Cores/CrabEMU"]
+	path = Cores/CrabEMU
+	url = https://github.com/Provenance-Emu/CrabEmu-Core.git
+[submodule "Cores/Bliss"]
+	path = Cores/Bliss
+	url = https://github.com/Provenance-Emu/Bliss-Core.git
 [submodule "Cores/4DO"]
 	path = Cores/4DO
 	url = https://github.com/Provenance-Emu/4DO-Core.git
@@ -93,6 +99,10 @@
 [submodule "Cores/mGBA/Sources/libmGBA-embed/mgba"]
 	path = Cores/mGBA/Sources/libmGBA-embed/mgba
 	url = https://github.com/Provenance-Emu/mgba.git
+	branch = Provenance-master
+[submodule "Cores/VisualBoyAdvance-M/Sources/libvisualboyadvance/visualboyadvance-m"]
+	path = Cores/VisualBoyAdvance-M/Sources/libvisualboyadvance/visualboyadvance-m
+	url = https://github.com/Provenance-Emu/visualboyadvance-m.git
 	branch = Provenance-master
 [submodule "Cores/Azahar/azahar"]
 	path = Cores/Azahar/azahar

@@ -401,6 +401,8 @@ jobs:
         run: |
           git submodule update --init --depth 1 \
             Cores/4DO \
+            Cores/Bliss \
+            Cores/CrabEMU \
             Dependencies/HexColors \
             Dependencies/SWCompression \
             Cores/Mednafen/ThirdParty/libchdr \
@@ -503,7 +505,7 @@ jobs:
       # The list has TWO sources, and missing either fails resolution with
       # "the package manifest at '<path>/Package.swift' cannot be accessed":
       #   1. XCLocalSwiftPackageReference entries in Provenance.xcodeproj that are
-      #      submodules — Cores/4DO.
+      #      submodules — Cores/4DO, Bliss, CrabEMU.
       #   2. TRANSITIVE `.package(path:)` deps of the local packages. These are easy
       #      to miss because nothing in the workspace names them: PVLibrary and
       #      PVArchiving pull in Dependencies/SWCompression, PVThemes pulls in
@@ -543,6 +545,8 @@ jobs:
         run: |
           git submodule update --init --depth 1 \
             Cores/4DO \
+            Cores/Bliss \
+            Cores/CrabEMU \
             Dependencies/HexColors \
             Dependencies/SWCompression \
             Cores/Mednafen/ThirdParty/libchdr \

@@ -24,6 +24,10 @@ import PVEmulatorCore
 @_exported public import PVTGBDual
 @_exported public  import PVTGBDualSwift
 #endif
+#if canImport(PVVisualBoyAdvance)
+@_exported public import PVVisualBoyAdvance
+@_exported public import PVVisualBoyAdvanceSwift
+#endif
 
 public enum CoreEnumerator: String, CaseIterable, Codable, Hashable {
 #if canImport(PVAtari800)
@@ -37,6 +41,9 @@ public enum CoreEnumerator: String, CaseIterable, Codable, Hashable {
 #endif
 #if canImport(PVTGBDual)
     case TGBDual
+#endif
+#if canImport(PVVisualBoyAdvance)
+    case PVVisualBoyAdvance
 #endif
 
     var core: PVEmulatorCore {
@@ -52,6 +59,9 @@ public enum CoreEnumerator: String, CaseIterable, Codable, Hashable {
 #endif
 #if canImport(PVTGBDual)
         case .TGBDual: return PVTGBDualCore()
+#endif
+#if canImport(PVVisualBoyAdvance)
+        case .PVVisualBoyAdvance: return PVVisualBoyAdvanceCore()
 #endif
         }
     }

@@ -111,11 +111,17 @@ public final class PVCore: RealmSwift.Object, Identifiable {
 /// Pickers sort them last and label them; nothing migrates away from them.
 public enum DeprecatedCoreID {
     public static let atari800 = "com.provenance.core.atari800"
+    public static let bliss = "com.provenance.core.bliss"
+    public static let crabEMU = "com.provenance.core.crabemu"
     public static let gambatte = "com.provenance.core.gambatte"
+    public static let visualBoyAdvance = "com.provenance.core.visualboyadvance"
 }
 
 public extension PVCore {
-    static let deprecatedCores: Set<String> = [DeprecatedCoreID.atari800, DeprecatedCoreID.gambatte]
+    static let deprecatedCores: Set<String> = [
+        DeprecatedCoreID.atari800, DeprecatedCoreID.bliss, DeprecatedCoreID.crabEMU,
+        DeprecatedCoreID.gambatte, DeprecatedCoreID.visualBoyAdvance,
+    ]
 
     var isDeprecated: Bool { Self.deprecatedCores.contains(identifier) }
 
@@ -133,11 +139,8 @@ public extension PVCore {
 /// the old cores can still be found and moved.
 public enum RetiredCoreID {
     public static let jaguar = "com.provenance.core.jaguar"
-    public static let bliss = "com.provenance.core.bliss"
-    public static let crabEMU = "com.provenance.core.crabemu"
     public static let odyssey2 = "com.provenance.core.odyssey2"
     public static let pokeMini = "com.provenance.core.pokemini"
-    public static let visualBoyAdvance = "com.provenance.core.visualboyadvance"
     public static let desmume2015 = "com.provenance.core.desmume2015"
     public static let melonDS = "com.provenance.core.MelonDS"
     public static let beetlePSX = "com.provenance.core.beetlepsx"
@@ -251,13 +254,9 @@ public extension PVCore {
 
         // Save-check cores (docs/superpowers/specs/2026-10-10-core-audit.md). Native save
         // states don't load in the dylibs; battery files are copied to the thin .srm.
-        RetiredCoreID.bliss: RetiredCore(replacement: LibretroCoreID.freeIntv),
-        RetiredCoreID.crabEMU: RetiredCore(replacement: LibretroCoreID.genesisPlusGX,
-                                           systemReplacements: [.ColecoVision: LibretroCoreID.gearcoleco],
-                                           batterySaves: [.copiedToSRM("sav")]),
+        // Atari800, Bliss, CrabEMU, Gambatte and VBA-M stay as deprecated cores instead.
         RetiredCoreID.odyssey2: RetiredCore(replacement: LibretroCoreID.o2em),
         RetiredCoreID.pokeMini: RetiredCore(replacement: LibretroCoreID.pokeMini, batterySaves: [.copiedToSRM("eep")]),
-        RetiredCoreID.visualBoyAdvance: RetiredCore(replacement: LibretroCoreID.vbam, batterySaves: [.copiedToSRM("sav2")]),
 
         // Native DS (PVDisabled): the legacy bridge stored battery files in Save States.
         RetiredCoreID.desmume2015: RetiredCore(replacement: LibretroCoreID.desmume,

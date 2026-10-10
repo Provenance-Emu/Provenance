@@ -8,7 +8,6 @@
 
 import XCTest
 import PVRealm
-import PVSystems
 
 final class RetiredCoreTableTests: XCTestCase {
     private func libretroIdentifiers() throws -> Set<String> {
@@ -31,16 +30,15 @@ final class RetiredCoreTableTests: XCTestCase {
     }
 
     func testTableCoversThePrunedCores() {
-        XCTAssertEqual(PVCore.retiredCores.count, 20)
-        XCTAssertEqual(PVCore.retiredCores[RetiredCoreID.crabEMU]?.replacement(forSystem: SystemIdentifier.ColecoVision.rawValue),
-                       LibretroCoreID.gearcoleco)
+        XCTAssertEqual(PVCore.retiredCores.count, 17)
         XCTAssertEqual(PVCore.retiredCores[RetiredCoreID.melonDS]?.batterySaves,
                        [.movedFromSaveStates("sav", copyToSRM: true)])
         XCTAssertTrue(PVCore.retiredCores.filter { $0.key != RetiredCoreID.jaguar }.values.allSatisfy { !$0.migratesSaveStates })
     }
 
     func testDeprecatedCoresAreNotRetired() {
-        XCTAssertEqual(PVCore.deprecatedCores, [DeprecatedCoreID.atari800, DeprecatedCoreID.gambatte])
+        XCTAssertEqual(PVCore.deprecatedCores, [DeprecatedCoreID.atari800, DeprecatedCoreID.bliss, DeprecatedCoreID.crabEMU,
+                                                DeprecatedCoreID.gambatte, DeprecatedCoreID.visualBoyAdvance])
         for id in PVCore.deprecatedCores {
             XCTAssertNil(PVCore.retiredCores[id], "\(id) is deprecated, not retired")
         }

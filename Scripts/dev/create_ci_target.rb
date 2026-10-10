@@ -13,8 +13,8 @@ CI_TARGET_NAME = 'Provenance-CI'
 # Core framework patterns to strip
 CORE_PATTERNS = [
   /^PVStella/, /^PVPicoDrive/,
-  /^PVTGBDual/, /^PVFreeDO/,
-  /^PVProSystem/,
+  /^PVAtari800/, /^PVCrabEmu/, /^PVTGBDual/, /^PVFreeDO/,
+  /^PVProSystem/, /^PVBliss/, /^PVGambatte/, /^PVVisualBoyAdvance/,
   /^PVCoreMednafen/, /^PVEmuThree/, /^PVPPSSPP/, /^PVMupen64Plus/,
   /^PVSNES/, /^PVFCEU/,
   /^PVGenesis/, /^PVRSPCXD4/,
